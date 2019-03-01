@@ -1,0 +1,15 @@
+{
+    "properties": {
+        "length": {"type": "number"},
+        "width": {"type": "number"},
+        "height": {"type": "number"}
+    },
+
+    "required": ["length", "width", "height"],
+
+    "relations": {
+    	"out": {
+    		"locatedAt": ["site"]
+    	}
+    }
+}

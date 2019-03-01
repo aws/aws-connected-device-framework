@@ -1,0 +1,31 @@
+neptuneUrl: ASSETLIBRARY_NEPTUNE_URL
+aws:
+  region: AWS_REGION
+  iot:
+    endpoint: AWS_IOT_ENDPOINT
+    
+events:
+  groups:
+    topic: ASSETLIBRARY_GROUPS_TOPIC
+  devices:
+    topic: ASSETLIBRARY_DEVICES_TOPIC
+  policies:
+    topic: ASSETLIBRARY_POLICIES_TOPIC
+  groupTemplates:
+    topic: ASSETLIBRARY_GROUPTEMPLATES_TOPIC
+  deviceTemplates:
+    topic: ASSETLIBRARY_DEVICETEMPLATES_TOPIC
+  profiles:
+    topic: ASSETLIBRARY_PROFILES_TOPIC
+
+defaults:
+  devices:
+    parent:
+      relation: ASSETLIBRARY_DEFAULTS_DEVICES_PARENT_RELATION
+      groupPath: ASSETLIBRARY_DEFAULTS_DEVICES_PARENT_GROUPPATH
+    state: ASSETLIBRARY_DEFAULTS_DEVICES_STATE
+
+cors:
+  origin: ASSETLIBRARY_CORS_ORIGIN
+
+mode: ASSETLIBRARY_MODE

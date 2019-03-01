@@ -1,0 +1,56 @@
+{
+  "name": "@cdf/config-inject",
+  "version": "1.2.0",
+  "description": "node-config variables are injected into inversify IoC container. If you are using inversify with node-config this library will be useful. Loosly based on inversify-config-injection library.",
+  "author": "Atul Bargaje <atulbar@amazon.com>",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "scripts": {
+    "clean": "del-cli dist",
+    "build": "tsc -b tsconfig.json",
+    "test": "echo config-inject tests TODO"
+  },
+  "dependencies": {
+    "@cdf/errors": "^1.2.0",
+    "@cdf/logger": "^1.2.0",
+    "config": "^3.0.1",
+    "inversify": "^5.0.1",
+    "reflect-metadata": "^0.1.13"
+  },
+  "devDependencies": {
+    "@types/jest": "~24.0.0",
+    "@types/config": "0.0.34",
+    "@types/node": "~8.10.40",
+    "jest": "~24.1.0",
+    "nyc": "^13.1.0",
+    "ts-jest": "24.0.0",
+    "ts-node": "^8.0.2",
+    "tslint": "^5.12.1",
+    "typescript": "^3.3.3",
+    "del-cli": "^1.1.0"
+  },
+  "jest": {
+    "globals": {
+      "NODE_CONFIG_STRICT_MODE": false,
+      "SUPPRESS_NO_CONFIG_WARNING": true
+    },
+    "roots": [
+      "<rootDir>/src"
+    ],
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testMatch": [
+      "<rootDir>/**/?(*.)+(spec|test).ts?(x)"
+    ],
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
+  },
+  "license": "ISC"
+}

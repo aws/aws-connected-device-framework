@@ -1,0 +1,376 @@
+AWSTemplateFormatVersion : '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Description: CDF Asset Library Service
+
+
+Parameters:
+  Environment:
+    Description:  Name of environment.  Used to name the created resources.
+    Type: String
+    MinLength: 1
+
+  ApplicationConfigurationOverride:
+    Description: This allows you to override any configuration application configuration. Must be a JSON formatted string. Any configurations contained in this will override the configurations found and merged from the config files.
+    Type: String
+    MinLength: 1
+
+  VpcId:
+    Description: ID of VPC to deploy the Asset Library into
+    Type: String
+  SourceSecurityGroupId:
+    Description: ID of an existing security group to allow access to the Asset Library
+    Type: String
+  PrivateSubNetIds:
+    Description: Comma delimited list of private subnetIds to deploy the Asset Library into
+    Type: CommaDelimitedList
+
+  Mode:
+    Description: Run in 'lite' mode which includes device registry only, al 'full' mode which augments the device registry with an additional datastore
+    Type: String
+    Default: full
+    AllowedValues: 
+      - full
+      - lite
+    MinLength: 1
+
+  CustAuthStackName:
+    Description: Name of custom authorizer Stack (if required).
+    Type: String
+
+Conditions:
+  DeployFullMode: !Equals [ !Ref Mode, 'full' ]
+  DeployWithCustomAuth: !Not [ !Equals [ !Ref CustAuthStackName, "" ]]
+
+Resources:
+
+  ApiGatewayApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      EndpointConfiguration: REGIONAL
+      DefinitionBody:
+        swagger: 2.0
+        info:
+          title: CDF Asset Library API
+
+        basePath: "/"
+        schemes:
+        - https
+        paths:
+          /:
+            x-amazon-apigateway-any-method:
+              produces:
+              - application/vnd.aws-cdf-v1.0+json
+              responses:
+                '200':
+                  description: '200 response'
+                  schema:
+                    $ref: "#/definitions/Empty"
+              security:
+                Fn::If:
+                - DeployWithCustomAuth
+                - CustomAuthorizer: []
+                - Ref: AWS::NoValue
+              x-amazon-apigateway-integration:
+                responses:
+                  default:
+                    statusCode: '200'
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaFunction.Arn}/invocations"
+                passthroughBehavior: when_no_match
+                httpMethod: POST
+                type: aws_proxy
+
+            options:
+              consumes:
+              - application/vnd.aws-cdf-v1.0+json
+              produces:
+              - application/vnd.aws-cdf-v1.0+json
+              responses:
+                '200':
+                  description: '200 response'
+                  schema:
+                    $ref: "#/definitions/Empty"
+                  headers:
+                    Access-Control-Allow-Origin:
+                      type: string
+                    Access-Control-Allow-Methods:
+                      type: string
+                    Access-Control-Allow-Headers:
+                      type: string
+              x-amazon-apigateway-integration:
+                contentHandling: CONVERT_TO_TEXT
+                responses:
+                  default:
+                    statusCode: 200
+                    responseParameters:
+                      method.response.header.Access-Control-Allow-Methods: "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'"
+                      method.response.header.Access-Control-Allow-Headers: "'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token'"
+                      method.response.header.Access-Control-Allow-Origin: "'*'"
+                passthroughBehavior: when_no_match
+                requestTemplates:
+                  # a CORS options request will have no content type, API Gateway then defaults to application/json
+                  application/json: "{\"statusCode\": 200}"
+                  application/vnd.aws-cdf-v1.0+json: "{\"statusCode\": 200}"
+                type: mock
+
+          /{proxy+}:
+            x-amazon-apigateway-any-method:
+              produces:
+              - application/vnd.aws-cdf-v1.0+json
+              parameters:
+              - name: proxy
+                in: path
+                required: true
+                type: string
+              responses: {}
+              security:
+                Fn::If:
+                - DeployWithCustomAuth
+                - CustomAuthorizer: []
+                - Ref: AWS::NoValue
+              x-amazon-apigateway-integration:
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaFunction.Arn}/invocations"
+                httpMethod: POST
+                type: aws_proxy
+
+            options:
+              consumes:
+              - application/vnd.aws-cdf-v1.0+json
+              produces:
+              - application/vnd.aws-cdf-v1.0+json
+              responses:
+                '200':
+                  description: '200 response'
+                  schema:
+                    $ref: "#/definitions/Empty"
+                  headers:
+                    Access-Control-Allow-Origin:
+                      type: string
+                    Access-Control-Allow-Methods:
+                      type: string
+                    Access-Control-Allow-Headers:
+                      type: string
+              x-amazon-apigateway-integration:
+                contentHandling: CONVERT_TO_TEXT
+                responses:
+                  default:
+                    statusCode: 200
+                    responseParameters:
+                      method.response.header.Access-Control-Allow-Methods: "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'"
+                      method.response.header.Access-Control-Allow-Headers: "'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token'"
+                      method.response.header.Access-Control-Allow-Origin: "'*'"
+                passthroughBehavior: when_no_match
+                requestTemplates:
+                  # a CORS options request will have no content type, API Gateway then defaults to application/json
+                  application/json: "{\"statusCode\": 200}"
+                  application/vnd.aws-cdf-v1.0+json: "{\"statusCode\": 200}"
+                type: mock
+        x-amazon-apigateway-binary-media-types:
+          - '*/*'
+        definitions:
+          Empty:
+            type: object
+            title: Empty Schema
+        securityDefinitions:
+          Fn::If:
+          - DeployWithCustomAuth
+          - CustomAuthorizer:
+              type: apiKey
+              name: Authorization
+              in: header
+              x-amazon-apigateway-authtype: custom
+              x-amazon-apigateway-authorizer:
+                type: token
+                authorizerUri: !Sub
+                - "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CustAuthLambdaArn}/invocations"
+                - CustAuthLambdaArn: 
+                    Fn::ImportValue: !Sub 
+                      '${CustAuthStackName}-CustAuthLambdaArn'
+                authorizerCredentials: !Sub '${ApiGatewayAuthorizerInvokeRole.Arn}'
+                authorizerResultTtlInSeconds: 60
+          - Ref: AWS::NoValue
+          
+    DependsOn:
+      - LambdaFunction
+
+  ApiGatewayAuthorizerInvokeRole:
+    Type: AWS::IAM::Role
+    Condition: DeployWithCustomAuth
+    Properties:
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement: 
+          - 
+            Effect: "Allow"
+            Principal: 
+              Service: 
+                - "apigateway.amazonaws.com"
+            Action: 
+              - sts:AssumeRole
+      Policies: 
+        - 
+          PolicyName: "InvokeAuthorizerFunction"
+          PolicyDocument: 
+            Version: "2012-10-17"
+            Statement: 
+              - 
+                Effect: "Allow"
+                Action:
+                  - lambda:InvokeAsync
+                  - lambda:InvokeFunction
+                Resource:
+                  Fn::ImportValue: !Sub
+                    "${CustAuthStackName}-CustAuthLambdaArn"  
+    DependsOn:
+    - LambdaFunction
+
+  AssetLibrarySecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Condition: DeployFullMode
+    Properties:
+      GroupDescription: Asset library security group
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 0
+        ToPort: 65535
+        SourceSecurityGroupId: !Ref SourceSecurityGroupId
+      SecurityGroupEgress:
+      - IpProtocol: tcp
+        FromPort: 0
+        ToPort: 65535
+        CidrIp: 0.0.0.0/0
+
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: sts:AssumeRole
+      Path: "/cdf/assetlibrary/"
+      ManagedPolicyArns:
+        - !Ref ApplicationPolicies
+        - arn:aws:iam::aws:policy/AWSLambdaExecute
+        - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
+    DependsOn:
+      - ApplicationPolicies
+
+  ApplicationPolicies:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      Description: 'cdf-assetlibrary application policies'
+      Path: "/cdf/assetlibrary/"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Action:
+              - "iot:Publish"
+            Effect: Allow
+            Resource: !Sub "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:topic/cdf/*"
+          - Action:
+              - "iot:CreateThing"
+              - "iot:DescribeThing"
+              - "iot:DeleteThing"
+              - "iot:UpdateThing"
+              - "iot:AddThingToThingGroup"
+              - "iot:ListThingGroupsForThing"
+              - "iot:RemoveThingFromThingGroup"
+            Effect: Allow
+            Resource: 
+            - !Sub "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:thing/*"
+          - Action:
+              - "iot:DescribeThingType"
+              - "iot:CreateThingType"
+            Effect: Allow
+            Resource: 
+            - !Sub "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:thingtype/*"
+          - Action:
+              - "iot:AddThingToThingGroup"
+              - "iot:CreateThingGroup"
+              - "iot:DescribeThingGroup"
+              - "iot:DeleteThingGroup"
+              - "iot:ListThingGroupsForThing"
+              - "iot:ListThingsInThingGroup"
+              - "iot:RemoveThingFromThingGroup"
+              - "iot:UpdateThingGroup"
+            Effect: Allow
+            Resource: 
+            - !Sub "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:thinggroup/*"
+          - Action:
+              - "iot:SearchIndex"
+            Effect: Allow
+            Resource: 
+            - !Sub "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:index/*"
+          - Action:
+              - "iot:ListThingGroups"
+            Effect: Allow
+            Resource: 
+            - "*"
+
+  LambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../build/build.zip
+      Handler: lambda_proxy.handler
+
+      MemorySize: 512
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Runtime: nodejs8.10
+      Timeout: 30
+      Environment:
+        Variables:
+          NODE_CONFIG_DIR: './config'
+          NODE_CONFIG: !Ref ApplicationConfigurationOverride
+      Tracing: Active
+      # Difference between full and lite lambda is that lite is not deployed within a VPC
+      VpcConfig:
+        Fn::If:
+        - DeployFullMode
+        - SubnetIds: !Ref PrivateSubNetIds
+          SecurityGroupIds: 
+          - !Ref AssetLibrarySecurityGroup
+        - Ref: AWS::NoValue
+
+      Events:
+        ProxyApiRoot:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiGatewayApi
+            Path: /
+            Method: ANY
+        ProxyApiGreedy:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiGatewayApi
+            Path: /{proxy+}
+            Method: ANY
+    DependsOn:
+      - LambdaExecutionRole
+
+Outputs:
+  LambdaFunctionConsoleUrl:
+    Description: Console URL for the Lambda Function.
+    Value: !Sub "https://{AWS::Region}.console.aws.amazon.com/lambda/home?region={AWS::Region}#/functions/{LambdaFunction}"
+  AssetLibrarySecurityGroupID:
+    Condition: DeployFullMode
+    Description: Asset library security group
+    Value: !Ref AssetLibrarySecurityGroup
+    Export: 
+      Name: !Sub "${AWS::StackName}-AssetLibrarySecurityGroupID"
+  ApiGatewayUrl:
+    Description: URL for application
+    Value: !Join
+      - ''
+      - - 'https://'
+        - !Ref ApiGatewayApi
+        - '.execute-api.'
+        - !Ref 'AWS::Region'
+        - '.amazonaws.com/Prod'
+    Export:
+      Name: !Sub '${AWS::StackName}-apigatewayurl'

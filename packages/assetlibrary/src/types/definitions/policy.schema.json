@@ -1,0 +1,35 @@
+{
+    "$id": "http://aws.com/cdf/schemas/policy.json",
+    "type": "object",
+
+    "properties": {
+        "policyId": {
+            "type": "string"
+        }, 
+        "type": {
+            "type": "string"
+        }, 
+        "category": {
+            "description": "Category of template",
+            "type": "string",
+            "const": "policy"
+        }, 
+        "description": {
+            "description": "Description of the group",
+            "type": "string"
+        }, 
+        "appliesTo": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "minItems": 1,
+            "uniqueItems": true
+        },
+        "document": {
+            "type": "string"
+        }
+    },
+    "additionalProperties": false,
+    "required": ["policyId","type","appliesTo","document"]
+}

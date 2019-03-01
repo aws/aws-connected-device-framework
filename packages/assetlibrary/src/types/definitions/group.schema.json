@@ -1,0 +1,57 @@
+{
+    "$id": "http://aws.com/cdf/schemas/group.json",
+    "type": "object",
+
+    "properties": {
+        "groupPath": {
+            "description": "Globally unique path of the group",
+            "type": "string"
+        }, 
+        "parentPath": {
+            "description": "Parent path of the group",
+            "type": "string"
+        }, 
+        "templateId": {
+            "description": "Type of the group",
+            "type": "string"
+        }, 
+        "category": {
+            "description": "Category of template",
+            "type": ["string","null"],
+            "const": "group"
+        }, 
+        "name": {
+            "description": "Name of the group",
+            "type": "string"
+        }, 
+        "description": {
+            "description": "Description of the group",
+            "type": ["string","null"]
+        }, 
+        "attributes": {
+            "$ref": "#/definitions/subType"
+        },
+        "groups": {
+            "description": "Groups associated with the group",
+            "type": "object",
+            "patternProperties": {
+                "^.*$": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            },
+            "uniqueItems": true
+        }
+    },
+    "additionalProperties": false,
+    "required": ["name","parentPath","templateId","attributes"],
+
+    "definitions": {
+        "subType": {
+            "type": "object",
+            "additionalProperties": false
+        }
+    }
+}

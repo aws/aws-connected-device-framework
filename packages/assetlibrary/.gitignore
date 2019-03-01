@@ -1,0 +1,14 @@
+.DS_Store
+node_modules
+typings
+**/*.js
+npm-debug.log
+build
+dist
+.vscode
+.nyc_output
+*.iml
+infrastructure/cloudformation-template.config.json
+infrastructure/cfn-assetLibrary.config.json
+cfn-assetLibrary-output.yml
+.tmp

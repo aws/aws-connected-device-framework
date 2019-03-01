@@ -1,0 +1,350 @@
+Description: Base Template to create Neptune Stack inside a VPC
+
+Parameters:
+  VpcId:
+    Description: ID of VPC to deploy Neptune into
+    Type: AWS::EC2::VPC::Id
+    MinLength: 1
+  SecurityGroupId:
+    Description: ID of an existing security group to allow access to Neptune
+    Type: AWS::EC2::SecurityGroup::Id
+    MinLength: 1
+  PrivateSubNetIds:
+    Description: Comma delimited list of private subnetIds to deploy Neptune into
+    Type: List<AWS::EC2::Subnet::Id>
+    MinLength: 1
+  PrivateRouteTableIds:
+    Description: Comma delimited list of private route table ids to allow access to Neptune
+    Type: CommaDelimitedList
+  CreateVPCS3Endpoint:
+    Description: Create an S3 VPC endpoint?  Choose false if one already exists.
+    Type: String
+    Default: 'false'
+    AllowedValues:
+    - 'true'
+    - 'false'
+  DbInstanceType:
+    Description: Neptune DB instance type
+    Type: String
+    Default: db.r4.xlarge
+    AllowedValues:
+      - db.r4.large
+      - db.r4.xlarge
+      - db.r4.2xlarge
+      - db.r4.4xlarge
+      - db.r4.8xlarge
+    ConstraintDescription: Must be a valid Neptune instance type.
+  CreateDBReplicaInstance:
+    Description: Create a read replica?
+    Type: String
+    Default: 'false'
+    AllowedValues:
+    - 'true'
+    - 'false'
+  NeptuneQueryTimeout:
+    Type: Number
+    Default: 20000
+    Description: Neptune Query Time out (in milliseconds)
+  NeptuneEnableAuditLog:
+    Type: Number
+    Default: 1
+    AllowedValues:
+      - 0
+      - 1
+    Description: Enable Audit Log. 0 means disable and 1 means enable.
+  IamAuthEnabled:
+    Type: String
+    Default: 'false'
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Description: Enable IAM Auth for Neptune.
+
+
+Conditions:
+  CreateDBReplicaInstance: !Equals [ !Ref CreateDBReplicaInstance, 'true' ]
+  CreateVPCS3Endpoint: !Equals [ !Ref CreateVPCS3Endpoint, 'true' ]
+
+
+Resources:
+
+  NeptuneDBSubnetGroup:
+    Type: 'AWS::Neptune::DBSubnetGroup'
+    Properties:
+      DBSubnetGroupDescription: Neptune DB subnet group
+      SubnetIds: !Ref PrivateSubNetIds
+
+  VPCS3Endpoint:
+    Type: 'AWS::EC2::VPCEndpoint'
+    Condition: CreateVPCS3Endpoint
+    Properties:
+      RouteTableIds: !Ref PrivateRouteTableIds
+      ServiceName: !Join 
+        - ''
+        - - com.amazonaws.
+          - !Ref 'AWS::Region'
+          - .s3
+      VpcId: !Ref VpcId
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal: '*'
+            Action:
+              - 's3:*'
+            Resource:
+              - '*'
+
+  NeptuneSG:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      VpcId: !Ref VpcId
+      GroupDescription: Allow Access
+      SecurityGroupIngress:
+        - FromPort: '8182'
+          ToPort: '8182'
+          IpProtocol: tcp
+          SourceSecurityGroupId: !Ref SecurityGroupId
+          Description: Allow access from default securty group
+
+  NeptuneEC2InstanceProfile:
+    Type: 'AWS::IAM::InstanceProfile'
+    Properties:
+      Path: /
+      Roles:
+        - !Ref NeptuneEC2ClientRole
+    DependsOn:
+      - NeptuneEC2ClientRole
+
+  NeptuneEC2ClientRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Path: /
+
+  NeptuneAccessPolicy:
+    Type: 'AWS::IAM::Policy'
+    Properties:
+      PolicyName: NeptuneAccessPolicy
+      PolicyDocument:
+        Statement:
+          - Effect: Allow
+            Action:
+              - 'rds:*'
+              - 'iam:GetAccountSummary'
+              - 'iam:ListAccountAliases'
+              - 'iam:PassRole'
+            Resource: '*'
+      Roles:
+        - !Ref NeptuneEC2ClientRole
+
+  NeptuneIAMAuthPolicy:
+    Type: 'AWS::IAM::Policy'
+    Properties:
+      PolicyName: NeptuneIAMAuthPolicy
+      PolicyDocument:
+        Statement:
+          - Effect: Allow
+            Action:
+              - 'neptune-db:*'
+            Resource: !Join 
+              - ':'
+              - - 'arn:aws:neptune-db'
+                - !Ref 'AWS::Region'
+                - !Ref 'AWS::AccountId'
+                - !GetAtt 
+                  - NeptuneDBCluster
+                  - ClusterResourceId
+                - '*'
+      Roles:
+        - !Ref NeptuneEC2ClientRole
+
+  NeptuneLoadFromS3Role:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - rds.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Path: /
+
+  NeptuneLoadFromS3Policy:
+    Type: 'AWS::IAM::Policy'
+    Properties:
+      PolicyName: NeptuneLoadFromS3Policy
+      PolicyDocument:
+        Statement:
+          - Effect: Allow
+            Action:
+              - 's3:Get*'
+              - 's3:List*'
+            Resource: '*'
+      Roles:
+        - !Ref NeptuneLoadFromS3Role
+
+  NeptuneDBClusterParameterGroup:
+    Type: 'AWS::Neptune::DBClusterParameterGroup'
+    Properties:
+      Family: neptune1
+      Description: CDF parameters
+      Parameters:
+        neptune_enable_audit_log: !Ref NeptuneEnableAuditLog
+
+  NeptuneDBParameterGroup:
+    Type: 'AWS::Neptune::DBParameterGroup'
+    Properties:
+      Family: neptune1
+      Description: CDF parameters
+      Parameters:
+        neptune_query_timeout: !Ref NeptuneQueryTimeout
+
+  NeptuneDBCluster:
+    Type: 'AWS::Neptune::DBCluster'
+    Properties:
+      DBSubnetGroupName: !Ref NeptuneDBSubnetGroup
+      VpcSecurityGroupIds:
+        - !Ref SecurityGroupId
+        - !Ref NeptuneSG
+      DBClusterParameterGroupName: !Ref NeptuneDBClusterParameterGroup
+      IamAuthEnabled: !Ref IamAuthEnabled
+    DependsOn:
+      - NeptuneDBSubnetGroup
+      - NeptuneDBClusterParameterGroup
+
+  NeptuneDBInstance:
+    Type: 'AWS::Neptune::DBInstance'
+    Properties:
+      DBClusterIdentifier: !Ref NeptuneDBCluster
+      DBInstanceClass: !Ref DbInstanceType
+      DBParameterGroupName: !Ref NeptuneDBParameterGroup
+    DependsOn:
+      - NeptuneDBCluster
+      - NeptuneDBParameterGroup
+
+  NeptuneDBReplicaInstance:
+    Type: 'AWS::Neptune::DBInstance'
+    Condition: CreateDBReplicaInstance
+    Properties:
+      DBClusterIdentifier: !Ref NeptuneDBCluster
+      DBInstanceClass: !Ref DbInstanceType
+    DependsOn:
+      - NeptuneDBCluster
+      - NeptuneDBInstance
+
+
+
+Outputs:
+  DBClusterId:
+    Description: Neptune Cluster Identifier
+    Value: !Ref NeptuneDBCluster
+  DBSubnetGroupId:
+    Description: Neptune DBSubnetGroup Identifier
+    Value: !Ref NeptuneDBSubnetGroup
+  DBClusterResourceId:
+    Description: Neptune Cluster Resource Identifier
+    Value: !GetAtt 
+      - NeptuneDBCluster
+      - ClusterResourceId
+  DBClusterEndpoint:
+    Description: Master Endpoint for Neptune Cluster
+    Value: !GetAtt 
+      - NeptuneDBCluster
+      - Endpoint
+    Export: 
+      Name: !Sub "${AWS::StackName}-DBClusterEndpoint"
+  DBInstanceEndpoint:
+    Description: Master Instance Endpoint
+    Value: !GetAtt 
+      - NeptuneDBInstance
+      - Endpoint
+  DBReplicaInstanceEndpoint:
+    Description: ReadReplica Instance Endpoint
+    Condition: CreateDBReplicaInstance
+    Value: !GetAtt 
+      - NeptuneDBReplicaInstance
+      - Endpoint
+  SparqlEndpoint:
+    Description: Sparql Endpoint for Neptune
+    Value: !Join 
+      - ''
+      - - 'http://'
+        - !GetAtt 
+          - NeptuneDBCluster
+          - Endpoint
+        - ':'
+        - !GetAtt 
+          - NeptuneDBCluster
+          - Port
+        - /sparql
+    Export: 
+      Name: !Sub "${AWS::StackName}-SparqlEndpoint"
+  GremlinEndpoint:
+    Description: Gremlin Endpoint for Neptune
+    Value: !Join 
+      - ''
+      - - 'ws://'
+        - !GetAtt 
+          - NeptuneDBCluster
+          - Endpoint
+        - ':'
+        - !GetAtt 
+          - NeptuneDBCluster
+          - Port
+        - /gremlin
+    Export: 
+      Name: !Sub "${AWS::StackName}-GremlinEndpoint"
+  LoaderEndpoint:
+    Description: Loader Endpoint for Neptune
+    Value: !Join 
+      - ''
+      - - 'http://'
+        - !GetAtt 
+          - NeptuneDBCluster
+          - Endpoint
+        - ':'
+        - !GetAtt 
+          - NeptuneDBCluster
+          - Port
+        - /loader
+    Export: 
+      Name: !Sub "${AWS::StackName}-LoaderEndpoint"
+  DBClusterReadEndpoint:
+    Description: DB cluster Read Endpoint
+    Value: !GetAtt 
+      - NeptuneDBCluster
+      - ReadEndpoint
+    Export: 
+      Name: !Sub "${AWS::StackName}-DBClusterReadEndpoint"
+  DBClusterPort:
+    Description: Port for the Neptune Cluster
+    Value: !GetAtt 
+      - NeptuneDBCluster
+      - Port
+    Export: 
+      Name: !Sub "${AWS::StackName}-DBClusterPort"
+  NeptuneLoadFromS3IAMRoleArn:
+    Description: IAM Role for loading data in Neptune
+    Value: !GetAtt 
+      - NeptuneLoadFromS3Role
+      - Arn
+  NeptuneIamAuthRole:
+    Description: IAM Role for IAM Auth
+    Value: !Ref NeptuneEC2ClientRole
+  NeptuneSecurityGroupID:
+    Description: Neptune security group
+    Value: !Ref NeptuneSG
+    Export: 
+      Name: !Sub "${AWS::StackName}-NeptuneSecurityGroupID"

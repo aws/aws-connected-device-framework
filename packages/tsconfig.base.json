@@ -1,0 +1,23 @@
+{
+	"compilerOptions": {
+		"target": "es2016",
+		"module": "commonjs",
+
+		"declaration": true,
+		"declarationMap": true,
+		"sourceMap": true,
+		"esModuleInterop": true,
+
+		"allowSyntheticDefaultImports": true,
+		"allowUnreachableCode": false,
+		"allowUnusedLabels": false,
+		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true,
+		"noImplicitAny": true,
+		"noImplicitReturns": true,
+		"noImplicitUseStrict": false,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"pretty": true,
+	}
+}

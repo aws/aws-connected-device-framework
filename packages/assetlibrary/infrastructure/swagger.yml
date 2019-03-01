@@ -1,0 +1,1722 @@
+swagger: '2.0'
+info:
+  title: "Connected Device Framework: Asset Library"
+  description: |
+    The Asset Library service is a device registry that allows you to manage your fleet of devices within multiple hierarchical groups.  Each one of the branches of the hierarchy can represent something meaningful to your business such as supplier, location, customer, vehicle, etc.
+    
+    The hierarchies within Asset Library are represented as `Groups`.  Each Group has a single parent, but can comprise of many groups and/or devices as its members.
+    
+    `Devices` can be associated with one or more `Groups`, each with a named relationship to its group to give context.
+    
+    `Devices` themselves can be associated with other `Devices`, representing a composition type of relationship.  Examples being a mote that comprises of a number of differnet sensors, or a car engine that is comprised of a number of different components.
+    
+    Different `Group Templates` can be created to align with your business, with each Group Template having its own attributes.  An example Group Template could be a _Site_, with its _address_ being an example of an attribute.
+    
+    Likewise, `Device Templates` can be created to represent the different types of devices within your fleet, each with their own attributes.
+    
+    `Profiles` can be created and applied to device and groups to populate with default attirbutes and/or relations.
+    
+    `Policies` represent a document that can be attached to one or more groups within a hierarchy, and are automatically inherited by the devices and groups.
+
+  version: 1.0.0
+
+
+consumes:
+- application/vnd.aws-cdf-v1.0+json
+produces:
+- application/vnd.aws-cdf-v1.0+json
+
+parameters:
+  offset:
+    in: query
+    name: offset
+    type: integer
+    minimum: 0
+  count:
+    in: query
+    name: offset
+    type: integer
+    minimum: 0    
+
+tags:
+- name: Devices
+  description: |
+    A `Device` represents a real world physical device that needs to be registered within the Asset Library, such as a sensor, switch, or a robotic arm.  Each device is the equivalent of a `Thing` within AWS IoT.
+    
+    Devices can be attached to Groups within a hierarchy.
+    
+    A Device can represent an assembly of other Devices using the `component` relationship, where the device could optionally be represented as a `Thing` within AWS IoT also. 
+    Devices are identified by a unique `deviceId`.  Devices comprise of a number of standard attributes, as well as custom attributes.  Refer to the `Device Templates` section for further info.
+    
+    A Device may have the following state:
+    - `unprovisioned`:  The metadata for the device has been created, but the device has not yet been provisioned within AWS IoT
+    - `active`:  The device is active and available for use within AWS IoT
+    - `decommissioned`:  The device has been decommissioned, therefore is unable to connect to AWS IoT, though may be redeployed and recommissioned elsewhere
+    - `retired`:  The device has been retired, and has been removed from AWS IoT
+    
+- name: Groups
+  description: |
+    A `Group` can represent both physical and logical groupings of devices and other groups.  Examples of physical groups include locations and suppliers.  Examples of logical groupings include bill of material structures.
+    
+    Groups can be constructured with a parent/child relationship to other groups, thus building up a hierarchy of groups.  Device can then be associated to any group within the hierarchy.
+    
+    Groups are identified by a unique `path`.  Groups comprise of a number of standard attributes, as well as custom attributes.  Refer to the `Group Templates` section for further info.
+
+- name: Templates
+  description: |
+    Templates represent custom device and group templates that you define, each with their own attributes and constraints.
+    
+    Devices are identified by a unique `deviceId`, each have the following built-in attributes:
+    - `templateId`:  a specific device template that represents what custom attributes the device can have
+    - `name`:  name of the device
+    - `description`:  description of the device
+    - `imageUrl`:  URL of an image of the device
+    - `awsIotThingArn`:  the ARN to lookup devices that have been registered as Things within AWS IoT
+    - `connected`:  indicates whether the device is currently connected to AWS IoT
+    - `state`:  the state of the device (unprovisioned, active, decommissioned or retired)
+    - `groups`:  the paths of the groups that the device has been attached to
+    - `attributes`:  A key value map of attributes that have been created as part of defining a custom device template.
+    
+    When a Device is created as a component of another Device, it has all the same built-in attributes as described above with the exception of `groups`.  
+    
+    Groups are identified by a unique `path`, and each have the following built-on attributes:
+    - `templateId`:  a specific group template that represents what custom attributes the group can have
+    - `parentPath`:  the path of the parent group that the group belongs to
+    - `name`:  name of the group
+    - `description`:  description of the group
+    - `attributes`:  A key value map of attributes that have been created as part of defining a custom group template.
+    
+    When defining the attributes of a custom device/group template, constraints can be applied using JSON Schema notation.  Each of these custom attributes is accessible as `attributes.<name>` within the custom device/group template.
+    
+    A simple example request body to register a new device template:
+    
+        {
+            "properties": {
+                "length": {"type": "number"},
+                "width": {"type": "number"},
+                "height": {"type": "number"}
+            }
+        }
+    
+    A more complex example request body to register a new device template:
+    
+        {
+            "properties": {
+                "length": {
+                    "type": "number",
+                    "minimum": 1,
+                    "maximum": 5
+                },
+                "width": {
+                    "type": "integer",
+                    "multipleOf": 2
+                },
+                "fleet": {
+                    "type": "string",
+                    "minLength": 5,
+                    "maxLength": 50
+                },
+                "firmware": {
+                    "type": "string",
+                    "pattern": "[abc]+"
+                  
+                },
+                "ipAddress": {
+                    "type": "string",
+                    "format": "ipv4"
+                },
+                "colors": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                    "maxItems": 5,
+                    "uniqueItems": true
+                },
+                "level": {
+                    "type": "string",
+                    "enum": ["low", "medium", "high"]
+                }
+            },
+            "additionalItems": false,
+            "required": ["fleet", "firmware", "ipAddress"]
+        }
+        
+- name: Profiles
+  description: |
+    A profile represents a set of default attributes and/or relations that can be applied to a device/group for a particular template.  Multiple profiles can be created per template.
+        
+- name: Policies
+  description: |
+    A policy represents a document that can be attached to one or more hierarchies, and then be inherited by any groups or devices that belong to all the hierarchies that the policy is applied to.
+    
+    A good use for policies is to look up appropriate documents or authorization levels based on a device or groups associations to specific hierarchies.  As an example, let's say you need to apply different AWS IoT security policies when registering devices as Things depending upon their location.  This would be handled by assigning a policy representing a provisoning template to different groups within a hierarchy representing the location.  The appropriate provisioning template will be returned for the device/group depending on which and where in a hierarchy they are attached to.  
+  
+- name: Search
+  description: |
+    The search api allows you to search across both devices and groups applying a variety of different filters.
+    
+    Filters are applied via query parameters.  For filters that require both an attribute and value specifying, those values are separated by a double colon '::'.  For example:
+    
+        ?eq=deviceId::MOD123
+        ?lte=cycles::5
+
+    Multiple queries of the same type may be specified, for example if two equal filters are required:
+  
+        ?eq=deviceId::MOD123&eq=state::active
+
+paths:
+
+  /templates/devices/{templateId}:
+    parameters:
+    - name: templateId
+      in: path
+      description: ID of device template to publish
+      required: true
+      type: string
+      
+    post:
+      tags:
+      - Templates
+      summary: |
+        Registers a new device template within the system, using the JSON Schema standard to define the device template attributes and constraints.
+      operationId: "createDeviceTemplate"
+      parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/TemplateDefinition'
+      responses:
+        201:
+          $ref: '#/responses/Created'
+        400:
+          $ref: '#/responses/BadRequest'
+      
+    get:
+      tags:
+      - Templates
+      summary: Find device template by ID
+      description: Returns a single device template definition
+      operationId: "getDeviceTemplate"
+      parameters:
+      - name: status
+        in: query
+        description: Status of device template to return
+        required: true
+        type: string
+        enum: [draft, published]
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/TemplateInfo'
+        400:
+          $ref: '#/responses/BadRequest'
+        404:
+          $ref: '#/responses/NotFound'
+    patch:
+      tags:
+      - Templates
+      summary: Update an existing device template.
+      operationId: "updateDeviceTemplate"
+      parameters:
+      - name: body
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/TemplateDefinition'
+      responses:
+        204:
+          description: OK
+        400:
+          $ref: '#/responses/BadRequest'
+        404:
+          $ref: '#/responses/NotFound'
+    delete:
+      tags:
+      - Templates
+      summary: Deletes an existing device template.
+      operationId: "deleteDeviceTemplate"
+      responses:
+        204:
+          description: OK
+        400:
+          $ref: '#/responses/BadRequest'
+        404:
+          $ref: '#/responses/NotFound'
+
+  /templates/devices/{templateId}/publish:
+    parameters:
+    - name: templateId
+      in: path
+      description: ID of device template to publish
+      required: true
+      type: string
+        
+    put:
+      tags:
+      - Templates
+      summary: Publishes an existing device template.
+      operationId: "publishDeviceTemplate"
+      responses:
+        204:
+          description: OK
+        400:
+          $ref: '#/responses/BadRequest'
+        404:
+          $ref: '#/responses/NotFound'
+          
+
+  /templates/groups/{templateId}:
+    parameters:
+    - name: templateId
+      in: path
+      description: ID of group template to return
+      required: true
+      type: string
+      
+    post:
+      tags:
+      - Templates
+      summary: |
+        Registers a new group template within the system, using the JSON Schema standard to define the group template attributes and constraints.
+      operationId: "createGroupTemplate"
+      parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/TemplateDefinition'
+      responses:
+        201:
+          $ref: '#/responses/Created'
+        400:
+          $ref: '#/responses/BadRequest'
+      
+    get:
+      tags:
+      - Templates
+      summary: Find group template by ID
+      description: Returns a single group template definition
+      operationId: "getGroupTemplate"
+      parameters:
+      - name: status
+        in: query
+        description: Status of group template to return
+        required: true
+        type: string
+        enum: [draft, published]
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/TemplateInfo'
+        400:
+          $ref: '#/responses/BadRequest'
+        404:
+          $ref: '#/responses/NotFound'
+    patch:
+      tags:
+      - Templates
+      summary: Update an existing group template.
+      operationId: "updateGroupTemplate"
+      parameters:
+      - name: body
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/TemplateDefinition'
+      responses:
+        204:
+          description: OK
+        400:
+          $ref: '#/responses/BadRequest'
+        404:
+          $ref: '#/responses/NotFound'
+    delete:
+      tags:
+      - Templates
+      summary: Deletes an existing group template.
+      operationId: "deleteGroupTemplate"
+      responses:
+        204:
+          description: OK
+        400:
+          $ref: '#/responses/BadRequest'
+        404:
+          $ref: '#/responses/NotFound'
+
+  /templates/groups/{templateId}/publish:
+    parameters:
+    - name: templateId
+      in: path
+      description: ID of group template to publish
+      required: true
+      type: string
+        
+    put:
+      tags:
+      - Templates
+      summary: Publishes an existing group template.
+      operationId: "publishGroupTemplate"
+      responses:
+        204:
+          description: OK
+        400:
+          $ref: '#/responses/BadRequest'
+        404:
+          $ref: '#/responses/NotFound'
+
+  /devices:
+    post:
+      tags:
+      - Devices
+      summary: Add a new device to the asset library, adding it to the `/unprovisioned` group if no group is specified.
+      operationId: "createDevice"
+      parameters:
+      - in: body
+        name: body
+        description: Device to add to the asset library
+        required: true
+        schema:
+          $ref: '#/definitions/Device'
+      - name: applyProfile
+        in: query
+        description: Optionally apply a profile to the device to update unset attributes with attributes from the profile.
+        type: string
+      responses:
+        201:
+          $ref: '#/responses/Created'
+        400:
+          $ref: '#/responses/BadRequest'
+
+  /bulkdevices:
+    post:
+      tags:
+      - Devices
+      summary: Adds a batch of devices in bulk to the asset library, adding them to the `/unprovisioned` group if no groups are specified.
+      operationId: "createDeviceBatch"
+      parameters:
+      - in: body
+        name: body
+        description: List of devices to add to the asset library
+        required: true
+        schema:
+          $ref: '#/definitions/BulkDevices'
+      - name: applyProfile
+        in: query
+        description: Optionally apply a profile to the device to update unset attributes with attributes from the profile.
+        type: string
+      responses:
+        201:
+          $ref: '#/responses/Created'
+        400:
+          $ref: '#/responses/BadRequest'
+    patch:
+      tags:
+      - Devices
+      summary: Update a batch of existing devices
+      operationId: "updateDeviceBatch"
+      parameters:
+      - name: body
+        in: body
+        description: List of devices and their attributes to update
+        required: true
+        schema:
+          $ref: '#/definitions/BulkDevices'
+      - name: applyProfile
+        in: query
+        description: Optionally apply a profile to the device to update unset attributes with attributes from the profile.
+        type: string
+      responses:
+        204:
+          description: successful operation
+        400:
+          $ref: '#/responses/BadRequest'
+        404:
+          $ref: '#/responses/NotFound'
+          
+  /devices/{deviceId}:
+    parameters:
+    - name: deviceId
+      in: path
+      description: ID of device to return
+      required: true
+      type: string
+        
+    get:
+      tags:
+      - Devices
+      summary: Find device by ID
+      description: Returns a single device
+      operationId: "getDeviceByID"
+      parameters:
+      - name: includeComponents
+        in: query
+        description: By default, components of a device are not returned. Passing `true` will return and expand a devices components.
+        type: boolean
+      - name: attributes
+        in: query
+        description: Optionally only return these specific attributes.  By default returns all attributes.
+        type: array
+        items:
+          type: string
+      - name: includeGroups
+        in: query
+        description: Optionally only return these specific related groups.  By default returns all related groups.
+        type: array
+        items:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Device'
+        400:
+          $ref: '#/responses/BadRequest'
+        404:
+          $ref: '#/responses/NotFound'
+    delete:
+      tags:
+      - Devices
+      summary: Delete device of specified ID
+      description: Deletes a single device
+      operationId: "deleteDevice"
+      responses:
+        204:
+          description: successful operation
+        404:
+          $ref: '#/responses/NotFound'
+    patch:
+      tags:
+      - Devices
+      summary: Update an existing device attributes
+      operationId: "updateDevice"
+      parameters:
+      - name: body
+        in: body
+        description: Device object that needs to be updated in device store
+        required: true
+        schema:
+          $ref: '#/definitions/Device'
+      - name: applyProfile
+        in: query
+        description: Optionally apply a profile to the device to update unset attributes with attributes from the profile.
+        type: string
+      responses:
+        204:
+          description: successful operation
+        400:
+          $ref: '#/responses/BadRequest'
+        404:
+          $ref: '#/responses/NotFound'
+            
+  /devices/{deviceId}/{relationship}/groups/{groupPath}:
+    parameters:
+    - name: deviceId
+      in: path
+      description: Id of device to attach to the group
+      required: true
+      type: string
+    - name: relationship
+      in: path
+      description: The relationship between the device and group. For example, this may reflect `locatedAt` or `manufacturedAt` relations.
+      required: true
+      type: string
+    - name: groupPath
+      in: path
+      description: Path of group. 
+      required: true
+      type: string
+        
+    put:
+      tags:
+      - Devices
+      summary: Associates a device to a group, giving context to its relationship.
+      operationId: "attachToGroup"
+      responses:
+        204:
+          description: successful operation
+        400:
+          $ref: '#/responses/BadRequest'
+        404:
+          $ref: '#/responses/NotFound'
+    delete:
+      tags:
+      - Devices
+      summary: Removes a device from an associated group
+      operationId: "detachFromGroup"
+      responses:
+        204:
+          description: successful operation
+        400:
+          $ref: '#/responses/BadRequest'
+        404:
+          $ref: '#/responses/NotFound'
+            
+  /devices/{deviceId}/{relationship}/devices/{otherDeviceId}:
+    parameters:
+    - name: deviceId
+      in: path
+      description: Id of device to attach to the group
+      required: true
+      type: string
+    - name: relationship
+      in: path
+      description: The relationship between the device and group. For example, this may reflect `locatedAt` or `manufacturedAt` relations.
+      required: true
+      type: string
+    - name: otherDeviceId
+      in: path
+      description: ID of device to create relationship to. 
+      required: true
+      type: string
+        
+    put:
+      tags:
+      - Devices
+      summary: Associates a device to another device, giving context to its relationship.
+      operationId: "attachToDevice"
+      responses:
+        204:
+          description: successful operation
+        400:
+          $ref: '#/responses/BadRequest'
+        404:
+          $ref: '#/responses/NotFound'
+    delete:
+      tags:
+      - Devices
+      summary: Removes a device from an associated device
+      operationId: "detachFromDevice"
+      responses:
+        204:
+          description: successful operation
+        400:
+          $ref: '#/responses/BadRequest'
+        404:
+          $ref: '#/responses/NotFound'
+          
+            
+  /devices/{deviceId}/components:
+    parameters:
+    - name: deviceId
+      in: path
+      description: Id of parent device
+      required: true
+      type: string
+    post:
+      tags:
+      - Devices
+      summary: Createa a new component and adds to the device.
+      operationId: "createComponent"
+      parameters:
+      - in: body
+        name: body
+        description: Device to add as a component
+        required: true
+        schema:
+          $ref: '#/definitions/Device'
+      responses:
+        201:
+          $ref: '#/responses/Created'
+        400:
+          $ref: '#/responses/BadRequest'
+          
+            
+  /devices/{deviceId}/components/{componentId}:
+    parameters:
+    - name: deviceId
+      in: path
+      description: Id of parent device
+      required: true
+      type: string
+    - name: componentId
+      in: path
+      description: ID of child component
+      required: true
+      type: string
+        
+    patch:
+      tags:
+      - Devices
+      summary: Updates the component of a device.
+      operationId: "updateComponent"
+      responses:
+        204:
+          description: successful operation
+        400:
+          $ref: '#/responses/BadRequest'
+        404:
+          $ref: '#/responses/NotFound'
+    delete:
+      tags:
+      - Devices
+      summary: Deletes a component of a devoce.
+      operationId: "deleteComponent"
+      responses:
+        204:
+          description: successful operation
+        400:
+          $ref: '#/responses/BadRequest'
+        404:
+          $ref: '#/responses/NotFound'
+          
+  /groups:
+    post:
+      tags:
+      - Groups
+      summary: Adds a new group to the device library as a child of the `parentPath` as specified in the request body.
+      operationId: "createGroup"
+      parameters:
+      - in: body
+        name: body
+        description: Group to add to the asset library
+        required: true
+        schema:
+          $ref: '#/definitions/Group'
+      - name: applyProfile
+        in: query
+        description: Optionally apply a profile to the device to update unset attributes with attributes from the profile.
+        type: string
+      responses:
+        201:
+          $ref: '#/responses/Created'
+        400:
+          $ref: '#/responses/BadRequest'
+            
+  /bulkgroups:
+    post:
+      tags:
+      - Groups
+      summary: Adds a batch of new group to the asset library as a child of the `parentPath` as specified in the request body.
+      operationId: "createGroupBatch"
+      parameters:
+      - in: body
+        name: body
+        description: Group to add to the asset library
+        required: true
+        schema:
+          type: array
+          items:
+            $ref: '#/definitions/BulkGroups'
+      - name: applyProfile
+        in: query
+        description: Optionally apply a profile to the device to update unset attributes with attributes from the profile.
+        type: string
+      responses:
+        201:
+          $ref: '#/responses/Created'
+        400:
+          $ref: '#/responses/BadRequest'
+            
+  /groups/{groupPath}:
+    parameters:
+    - name: groupPath
+      in: path
+      description: Path of group to return
+      required: true
+      type: string
+      
+    get:
+      tags:
+      - Groups
+      summary: Find group by Group's path
+      description: Returns a single group
+      operationId: "getGroup"
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Group'
+        404:
+          $ref: '#/responses/NotFound'
+    delete:
+      tags:
+      - Groups
+      summary: Delete group with supplied path
+      description: Deletes a single group
+      operationId: "deleteGroup"
+      responses:
+        204:
+          description: successful operation
+        404:
+          $ref: '#/responses/NotFound'
+    patch:
+      tags:
+      - Groups
+      summary: Update an existing group attributes, including changing its parent group.
+      operationId: "updateGroup"
+      parameters:
+      - name: body
+        in: body
+        description: Group object that needs to be updated
+        required: true
+        schema:
+          $ref: '#/definitions/Group'
+      - name: applyProfile
+        in: query
+        description: Optionally apply a profile to the device to update unset attributes with attributes from the profile.
+        type: string
+      responses:
+        204:
+          description: successful operation
+        400:
+          $ref: '#/responses/BadRequest'
+        404:
+          $ref: '#/responses/NotFound'
+            
+            
+  /groups/{groupPath}/members/devices:
+    parameters:
+    - name: groupPath
+      in: path
+      description: Path of group to return its device members. A path of '/' can be passed as id to return top level device members
+      required: true
+      type: string
+        
+    get:
+      tags:
+      - Groups
+      summary: List device members of group for supplied Group name
+      description: Returns device members of group
+      operationId: "listGroupMembersDevices"
+      parameters:
+      - name: template
+        in: query
+        description: Optional filter to return a specific device sub-type
+        type: string
+      - name: state
+        in: query
+        description: Return devices of a specific state
+        type: string
+        default: active
+      - name: offset
+        in: query
+        description: The index to start paginated results from
+        type: integer
+      - name: count
+        in: query
+        description: The maximum number of results to return
+        type: integer
+      responses:
+        200:
+          description: successful operation
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/DeviceList'
+        400:
+          $ref: '#/responses/BadRequest'
+        404:
+          $ref: '#/responses/NotFound'
+            
+            
+  /groups/{groupPath}/members/groups:
+    parameters:
+    - name: groupPath
+      in: path
+      description: Path of group to return its group members. A path of '/' can be passed as id to return top level group members
+      required: true
+      type: string
+        
+    get:
+      tags:
+      - Groups
+      summary: List group members of group for supplied Group name
+      description: Returns group members of group
+      operationId: "listGroupMembersGroups"
+      parameters:
+      - name: template
+        in: query
+        description: Optional filter to return a specific group sub-type
+        type: string
+      - name: offset
+        in: query
+        description: The index to start paginated results from
+        type: integer
+      - name: count
+        in: query
+        description: The maximum number of results to return
+        type: integer
+      responses:
+        200:
+          description: successful operation
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/GroupList'
+        400:
+          $ref: '#/responses/BadRequest'
+        404:
+          $ref: '#/responses/NotFound'
+          
+  /groups/{groupPath}/memberships:
+    parameters:
+    - name: groupPath
+      in: path
+      description: Path of group for fetching the membership
+      required: true
+      type: string
+        
+    get:
+      tags:
+      - Groups
+      summary: List all ancestor groups of a specific group.
+      description: List all ancestor groups of a specific group.
+      operationId: "listGroupMemberships"
+      parameters:
+      - name: offset
+        in: query
+        description: The index to start paginated results from
+        type: integer
+      - name: count
+        in: query
+        description: The maximum number of results to return
+        type: integer
+      responses:
+        200:
+          description: successful operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Group'
+        400:
+          $ref: '#/responses/BadRequest'
+        404:
+          $ref: '#/responses/NotFound'
+        
+  /groups/{sourceGroupPath}/{relationship}/groups/{targetGroupPath}:
+    parameters:
+    - name: sourceGroupPath
+      in: path
+      description: Path of source group
+      required: true
+      type: string
+    - name: relationship
+      in: path
+      description: The relationship between the groups. For example, this may reflect `locatedAt` or `manufacturedAt` relations.
+      required: true
+      type: string
+    - name: targetGroupPath
+      in: path
+      description: Path of target group 
+      required: true
+      type: string
+        
+    put:
+      tags:
+      - Groups
+      summary: Associates a group with another group, giving context to its relationship.
+      operationId: "attachGroupToGroup"
+      responses:
+        204:
+          description: successful operation
+        400:
+          $ref: '#/responses/BadRequest'
+        404:
+          $ref: '#/responses/NotFound'
+    delete:
+      tags:
+      - Groups
+      summary: Removes a group from an associated group
+      operationId: "detachGroupFromGroup"
+      responses:
+        204:
+          description: successful operation
+        400:
+          $ref: '#/responses/BadRequest'
+        404:
+          $ref: '#/responses/NotFound'
+          
+          
+  /profiles/device/{templateId}:
+    parameters:
+    - name: templateId
+      in: path
+      description: ID of the device template
+      required: true
+      type: string
+      
+    post:
+      tags:
+      - Profiles
+      summary: Adds a new device profile for a specific template.
+      operationId: "createDeviceProfile"
+      parameters:
+      - in: body
+        name: body
+        description: Device Profile to add to the asset library
+        required: true
+        schema:
+          $ref: '#/definitions/DeviceProfile'
+      responses:
+        201:
+          $ref: '#/responses/Created'
+        400:
+          $ref: '#/responses/BadRequest'
+    get:
+      tags:
+      - Profiles
+      summary: Return all device profiles for a specific template
+      description: ReturnsReturn all device profiles for a specific template
+      operationId: "listDeviceProfiles"
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/DeviceProfileList'
+        404:
+          $ref: '#/responses/NotFound'
+          
+  /profiles/device/{templateId}/{profileId}:
+    parameters:
+    - name: templateId
+      in: path
+      description: ID of the device template
+      required: true
+      type: string
+    - name: profileId
+      in: path
+      description: ID of the profile
+      required: true
+      type: string
+      
+    get:
+      tags:
+      - Profiles
+      summary: Retrieve a device profile
+      description: Returns a single device profile
+      operationId: "getDeviceProfile"
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/DeviceProfile'
+        404:
+          $ref: '#/responses/NotFound'
+    delete:
+      tags:
+      - Profiles
+      summary: Delete a specific device profile
+      description: Delete a specific device profile
+      operationId: "deleteDeviceProfile"
+      responses:
+        204:
+          description: successful operation
+        404:
+          $ref: '#/responses/NotFound'
+    patch:
+      tags:
+      - Profiles
+      summary: Update an existing device profile.
+      operationId: "updateDeviceProfile"
+      parameters:
+      - name: body
+        in: body
+        description: Profile that needs to be updated
+        required: true
+        schema:
+          $ref: '#/definitions/DeviceProfile'
+      responses:
+        204:
+          description: successful operation
+        400:
+          $ref: '#/responses/BadRequest'
+        404:
+          $ref: '#/responses/NotFound'
+          
+          
+  /profiles/group/{templateId}:
+    parameters:
+    - name: templateId
+      in: path
+      description: ID of the group template
+      required: true
+      type: string
+      
+    post:
+      tags:
+      - Profiles
+      summary: Adds a new group profile for a specific template.
+      operationId: "createGroupProfile"
+      parameters:
+      - in: body
+        name: body
+        description: Group Profile to add to the asset library
+        required: true
+        schema:
+          $ref: '#/definitions/GroupProfile'
+      responses:
+        201:
+          $ref: '#/responses/Created'
+        400:
+          $ref: '#/responses/BadRequest'
+    get:
+      tags:
+      - Profiles
+      summary: Return all group profiles for a specific template
+      description: Return all group profiles for a specific template
+      operationId: "listGroupProfiles"
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/GroupProfileList'
+        404:
+          $ref: '#/responses/NotFound'
+          
+  /profiles/group/{templateId}/{profileId}:
+    parameters:
+    - name: templateId
+      in: path
+      description: ID of the group template
+      required: true
+      type: string
+    - name: profileId
+      in: path
+      description: ID of the profile
+      required: true
+      type: string
+      
+    get:
+      tags:
+      - Profiles
+      summary: Retrieve a group profile
+      description: Returns a single group profile
+      operationId: "getGroupProfile"
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/GroupProfile'
+        404:
+          $ref: '#/responses/NotFound'
+    delete:
+      tags:
+      - Profiles
+      summary: Delete a specific group profile
+      description: Delete a specific group profile
+      operationId: "deleteGroupProfile"
+      responses:
+        204:
+          description: successful operation
+        404:
+          $ref: '#/responses/NotFound'
+    patch:
+      tags:
+      - Profiles
+      summary: Update an existing group profile.
+      operationId: "updateGroupProfile"
+      parameters:
+      - name: body
+        in: body
+        description: Profile that needs to be updated
+        required: true
+        schema:
+          $ref: '#/definitions/GroupProfile'
+      responses:
+        204:
+          description: successful operation
+        400:
+          $ref: '#/responses/BadRequest'
+        404:
+          $ref: '#/responses/NotFound'
+          
+
+  /search:
+    get:
+      tags:
+      - Search
+      summary: Search for groups and devices.
+      operationId: "search"
+      parameters:
+
+      - name: type
+        in: query
+        description: Type of group/device to filter.  This can be the high level `group` or `device`, as well as any custom group or device template that may have been registered.
+        type: array
+        collectionFormat: multi
+        items:
+          type: string
+      - name: ancestorGroupPath
+        in: query
+        description: The path of a common ancestor group to filter results by.
+        type: string
+      - name: eq
+        in: query
+        description: "Filter an attribute based on an exact match. E.g. `?eq=attributes.firmwareVersion:ABC123`"
+        type: array
+        collectionFormat: multi
+        items:
+          type: string
+      - name: neq
+        in: query
+        description: "Filter by an attribute based on not matching. E.g. `?neq=attributes.firmwareVersion:ABC123`"
+        type: array
+        collectionFormat: multi
+        items:
+          type: string
+      - name: lt
+        in: query
+        description: "Filter an attribute based on having a value less than. E.g. `?lt=attributes.deploymentId:3`"
+        type: array
+        collectionFormat: multi
+        items:
+          type: number
+      - name: lte
+        in: query
+        description: "Filter an attribute based on having a value less than or equal to. E.g. `?lte=attributes.deploymentId:3`"
+        type: array
+        collectionFormat: multi
+        items:
+          type: number
+      - name: gt
+        in: query
+        description: "Filter an attribute based on having a value greater than. E.g. `?gt=attributes.deploymentId:3`"
+        type: array
+        collectionFormat: multi
+        items:
+          type: number
+      - name: gte
+        in: query
+        description: "Filter an attribute based on having a value greater than or equal to. E.g. `?gte=attributes.deploymentId:3`"
+        type: array
+        collectionFormat: multi
+        items:
+          type: number
+      - name: startsWith
+        in: query
+        description: "Filter by an attribute based on starting with specific text. E.g. `?startsWith=attributes.model:MOD123`"
+        type: array
+        collectionFormat: multi
+        items:
+          type: string
+      - name: endsWith
+        in: query
+        description: "NOT IMPLEMENTED!  Filter by an attribute based on ending with specific text. E.g. `?endsWith=attributes.model:MOD123`"
+        type: array
+        collectionFormat: multi
+        items:
+          type: string
+      - name: contains
+        in: query
+        description: "NOT IMPLEMENTED!  Filter by an attribute based on containing specific text. E.g. `?contains=attributes.model:MOD123`"
+        type: array
+        collectionFormat: multi
+        items:
+          type: string
+      - name: summarize
+        in: query
+        description: "Summarize the search results by providing a total, instead of returning the results themselves."
+        type: boolean
+      - name: offset
+        in: query
+        description: The index to start paginated results from
+        type: integer
+      - name: count
+        in: query
+        description: The maximum number of results to return
+        type: integer
+        
+      responses:
+        200:
+          description: successful operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/SearchResults'
+        400:
+          $ref: '#/responses/BadRequest'
+        404:
+          $ref: '#/responses/NotFound'
+
+  /policies:
+    post:
+      tags:
+      - Policies
+      summary: Creates a new `Policy`, and applies it to the provided `Groups`.
+      operationId: "createPolicy"
+      parameters:
+      - in: body
+        name: body
+        description: Policy to create.
+        required: true
+        schema:
+          $ref: '#/definitions/Policy'
+      responses:
+        201:
+          $ref: '#/responses/Created'
+        400:
+          $ref: '#/responses/BadRequest'
+    get:
+      tags:
+      - Policies
+      summary: List policies, optionally filtered by policy type.
+      operationId: "listPolicies"
+      parameters:
+      - name: type
+        in: query
+        description: Policy type to refilterturn
+        type: string
+        required: true
+      responses:
+        200:
+          description: successful operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/PolicyList'
+        400:
+          $ref: '#/responses/BadRequest'
+        404:
+          $ref: '#/responses/NotFound'
+            
+
+  /policies/inherited:   
+    get:
+      tags:
+      - Policies
+      summary: Returns all inherited `Policies` for a `Device` or set of `Groups` where the `Device`/`Groups` are associated with all the hierarchies that the `Policy` applies to.  Either `deviceId` or `groupPath` must be provided.
+      operationId: "listInheritedPolicies"
+      parameters:
+      - name: deviceId
+        in: query
+        description: ID of device to list policies
+        type: string
+      - name: groupPath
+        in: query
+        description: Path of groups to list policies
+        type: array
+        collectionFormat: multi
+        items:
+          type: string
+      - name: type
+        in: query
+        description: Policy type to return
+        type: string
+        required: true
+      responses:
+        200:
+          description: successful operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/PolicyList'
+        400:
+          $ref: '#/responses/BadRequest'
+        404:
+          $ref: '#/responses/NotFound'
+            
+
+  /policies/{policyId}:
+    parameters:
+    - name: policyId
+      in: path
+      description: ID of policy
+      required: true
+      type: string
+      
+    patch:
+      tags:
+      - Policies
+      summary: Update the attributes of an existing policy.
+      operationId: "updatePolicy"
+      parameters:
+      - name: body
+        in: body
+        description: Policy that needs to be updated
+        required: true
+        schema:
+          $ref: '#/definitions/Policy'
+      responses:
+        204:
+          description: successful operation
+        400:
+          $ref: '#/responses/BadRequest'
+        404:
+          $ref: '#/responses/NotFound'
+      
+    delete:
+      tags:
+      - Policies
+      summary: Delete an existing policy.
+      operationId: "deletePolicy"
+      responses:
+        204:
+          description: successful operation
+        400:
+          $ref: '#/responses/BadRequest'
+        404:
+          $ref: '#/responses/NotFound'
+        
+    get:
+      tags:
+      - Policies
+      summary: Retrieve a specific policy.
+      operationId: "getPolicy"
+      responses:
+        200:
+          description: successful operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Policy'
+        400:
+          $ref: '#/responses/BadRequest'
+        404:
+          $ref: '#/responses/NotFound'
+            
+    
+          
+
+definitions:
+
+  Entity:
+    type: object
+    properties:
+      category:
+        type: string
+        description: Category of entity.
+        enum:
+          - group
+          - device
+    discriminator: category
+
+  Device:
+    allOf:
+      - $ref: '#/definitions/Entity'
+      - type: object
+        properties:
+          deviceId:
+            type: string
+            description: Globally unique id of the Device.  
+          templateId:
+            type: string
+            description: Template of Device.
+          description:
+            type: string
+            description: Description of the group.
+          awsIotThingArn:
+            type: string
+            description: Arn of the device if registered within the AWS IoT registry.
+          imageUrl:
+            type: string
+            description: URL of an image of the device. 
+          connected:
+            type: boolean
+            description: AWS IoT connectivity status
+          state:
+            type: string
+            enum: [unprovisioned, active, decommissioned, retired]
+            description:  The current state of the device
+          groups:
+            description: Paths of the groups that this Device is associated with.
+            type: object
+            additionalProperties:
+              type: array
+              items:
+                type: string
+          assemblyOf:
+            description: The device that this Device is a component of. 
+            $ref: '#/definitions/Device'
+          components:
+            type: array
+            description: The device components that this Device is assembled of.  
+            items:
+              $ref: '#/definitions/Device'
+          attributes:
+            type: object
+            additionalProperties: true
+    required:
+    - deviceId
+    - templateId
+    
+  DeviceProfile:
+    allOf:
+      - $ref: '#/definitions/Device'
+      - type: object
+        properties:  
+          profileId:
+            type: string
+            description: ID of the profile. 
+    required:
+    - profileId
+    - templateId
+        
+  Group:
+    allOf:
+      - $ref: '#/definitions/Entity'
+      - type: object
+        properties:  
+          groupPath:
+            type: string
+            description: Path of the group. 
+          templateId:
+            type: string
+            description: Template of group.  Use 'Group' if no custom attributes are required.
+          name:
+            type: string
+            description: name of group. 
+          parentPath:
+            type: string
+            description: Path of the groups parent.
+          description:
+            type: string
+            description: Description of the group.
+          attributes:
+            type: object
+            additionalProperties: true
+          groups:
+            description: Paths of the groups that this Group is associated with.
+            type: object
+            additionalProperties:
+              type: array
+              items:
+                type: string
+    required:
+    - groupPath
+    - templateId
+    
+  GroupProfile:
+    allOf:
+      - $ref: '#/definitions/Group'
+      - type: object
+        properties:  
+          profileId:
+            type: string
+            description: ID of the profile. 
+    required:
+    - profileId
+    - templateId
+      
+
+  BulkDevices:
+    type: object
+    properties:
+      devices:
+        type: array
+        items:
+          $ref: '#/definitions/Device'
+
+  BulkGroups:
+    type: object
+    properties:
+      groups:
+        type: array
+        items:
+          $ref: '#/definitions/Group'
+          
+  GroupList:
+    type: object
+    properties:
+      results:
+        type: array
+        items:
+          $ref: '#/definitions/Group'
+      pagination:
+        type: object
+        properties:
+          offset:
+            type: integer
+          count:
+            type: integer
+      total:
+        type: number
+        description:  Total number of search results.  Only returned by the search API's when `summarize` is set to true.
+      
+  DeviceList:
+    type: object
+    properties:
+      results:
+        type: array
+        items:
+          $ref: '#/definitions/Device'
+      pagination:
+        type: object
+        properties:
+          offset:
+            type: integer
+          count:
+            type: integer
+      total:
+        type: number
+        description:  Total number of search results.  Only returned by the search API's when `summarize` is set to true.
+      
+  DeviceProfileList:
+    type: object
+    properties:
+      results:
+        type: array
+        items:
+          $ref: '#/definitions/DeviceProfile'
+      pagination:
+        type: object
+        properties:
+          offset:
+            type: integer
+          count:
+            type: integer
+      
+  GroupProfileList:
+    type: object
+    properties:
+      results:
+        type: array
+        items:
+          $ref: '#/definitions/GroupProfile'
+      pagination:
+        type: object
+        properties:
+          offset:
+            type: integer
+          count:
+            type: integer
+
+
+  SearchResults:
+    properties:
+      results:
+        type: array
+        items:
+          $ref: '#/definitions/Entity'
+
+  TemplateInfo:
+    properties:
+      templateId:
+        description: Unique ID of template
+        type: string
+      category:
+        description: Category of template
+        type: string
+        enum: [device, group]
+      schema:
+        type: object
+        properties:
+          version:
+            description: Version of template definition (auto-incrementing)
+            type: number
+          definition:
+            description: Template schema definition
+            $ref: '#/definitions/TemplateDefinition'
+          status:
+            description: Status of template
+            type: string
+            enum: [draft, published]
+
+  TemplateDefinition:
+    properties:
+      properties:
+        description: Map of allowed properties (string, number, boolean and datetime types allowed only)
+        type: object
+        additionalProperties:
+          type: string
+          enum: [string,number,boolean,datettime]
+      required:
+        description: List of required properties
+        type: array
+        items:
+          type: string
+      relations:
+        type: object
+        properties:
+          out:
+            description: Map of defined relationships from this template to others
+            type: object
+            additionalProperties:
+              type: array
+              items:  
+                type: string
+          in:
+            description: Map of defined relationships from other templates to this
+            type: object
+            additionalProperties:
+              type: array
+              items:  
+                type: string
+      messagePayload:
+        description: Message payload definition
+        $ref: '#/definitions/MessagePayloadDefinition'
+
+  Policy:
+    properties:
+      policyId:
+        type: string
+        description: unique ID of policy
+      type:
+        type: string
+        description: type of policy
+      description:
+        type: string
+        description: description of policy
+      appliesTo:
+        type: array
+        description:  the paths of the group that this policy applies to
+        items:
+          type: string
+      document:
+        type: string
+        description: the policy document (e.g. a provisioning template)
+        
+  PolicyList:
+    properties:
+      policies:
+        type: array
+        description:  a list of policies
+        items:
+          $ref: '#/definitions/Policy'
+      pagination:
+        type: object
+        properties:
+          offset:
+            type: integer
+          count:
+            type: integer
+
+  MessagePayloadDefinition:
+    properties:
+      timeStampAttributeName:
+        description: Name of time stamp attribute in message payload
+        type: string
+      properties:
+        description: Map of defined message payload properties, where the key represents the attribtue name, and the value reprents the attribute display name and type.
+        type: object
+        additionalProperties:
+          type: object
+          properties:
+            displayName:
+              type: string
+            type:
+              type: string
+              enum: [string,number,binary,boolean,datettime]
+      required:
+        description: List of required properties
+        type: array
+        items:
+          type: string
+      periodicFrequency:
+        description: No. seconds that a telemtry should be broadcast from the device
+        type: number
+      
+  Error:
+    type: object
+    properties:
+      message:
+        type: string
+
+responses:          
+  Created:
+    description: Created successfully
+    headers:
+      location:
+        type: string
+  BadRequest:
+    description: Invalid input
+    schema:
+      $ref: '#/definitions/Error'
+  NotFound:
+    description: Not found
+    schema:
+      $ref: '#/definitions/Error'
+        

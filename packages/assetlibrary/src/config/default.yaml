@@ -1,0 +1,31 @@
+neptuneUrl:
+aws:
+  region: 
+  iot:
+    endpoint:
+
+events:
+  groups:
+    topic: cdf/assetlibrary/events/groups/{objectId}/{event}
+  devices:
+    topic: cdf/assetlibrary/events/devices/{objectId}/{event}
+  policies:
+    topic: cdf/assetlibrary/events/policies/{objectId}/{event}
+  groupTemplates:
+    topic: cdf/assetlibrary/events/groupTemplates/{objectId}/{event}
+  deviceTemplates:
+    topic: cdf/assetlibrary/events/deviceTemplates/{objectId}/{event}
+  profiles:
+    topic: cdf/assetlibrary/events/profiles/{objectId}/{event}
+
+defaults:
+  devices:
+    parent:
+      relation: parent
+      groupPath: /unprovisioned
+    state: unprovisioned    
+
+cors:
+  origin:
+
+mode: lite
