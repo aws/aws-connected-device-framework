@@ -57,7 +57,7 @@ container.bind<interfaces.Factory<AWS.IotData>>(TYPES.IotDataFactory)
         if (!container.isBound(TYPES.IotData)) {
             const iotData = new AWS.IotData({
                 region: config.get('aws.region'),
-                endpoint: config.get('aws.iot.endpoint'),
+                endpoint: `https://${config.get('aws.iot.endpoint')}`
             });
             container.bind<AWS.IotData>(TYPES.IotData).toConstantValue(iotData);
         }

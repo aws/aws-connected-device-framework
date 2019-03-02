@@ -54,7 +54,8 @@ export const LiteContainerModule = new ContainerModule (
 
                 if (!isBound(TYPES.Iot)) {
                     const iotData = new AWS.Iot({
-                        region: config.get('aws.region')
+                        region: config.get('aws.region'),
+                        endpoint: `https://${config.get('aws.iot.endpoint')}`
                     });
                     bind<AWS.Iot>(TYPES.Iot).toConstantValue(iotData);
                 }

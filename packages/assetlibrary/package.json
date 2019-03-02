@@ -3,14 +3,16 @@
   "version": "1.3.0",
   "description": "CDF Asset Library",
   "author": "Dean Hart <deanhart@amazon.com>",
-  "main": "dist/app.js",
   "scripts": {
+    "reset": "pnpm run clean && del-cli node_modules",
     "clean": "del-cli dist build",
     "build": "tsc -b tsconfig.json",
-    "prebundle": "cpy package.json dist && cpy src/types/definitions/* dist/types/definitions/ && cpy src/config/* dist/config/ && del-cli ../../../cdf-monorepo-builds/assetlibrary/dist --force && cpy dist ../../../cdf-monorepo-builds/assetlibrary/ --parents && del-cli ../../../cdf-monorepo-builds/assetlibrary/dist/node_modules --force && pnpm i --prod --shamefully-flatten --force && cp -LR node_modules ../../../cdf-monorepo-builds/assetlibrary/dist/",
-    "bundle": "cd ../../../cdf-monorepo-builds/assetlibrary/dist && zip -rq ../build.zip *",
-    "postbundle": "echo '\n\n******   node_modules have been resolved in production mode.  If this is a dev environment, make sure you run `pnpm i --force` to reset.'",
-    "start": "NODE_CONFIG=$(cat ${ASSETLIBRARY_CONFIG_LOCATION}) NODE_CONFIG_DIR='./src/config' ts-node src/lambda_proxy.ts"
+    "prebundle": "pnpm run clean && pnpm run build && cpy package.json dist && cpy src/types/definitions/* dist/types/definitions/ && cpy src/config/* dist/config/ && make-dir build && cd dist && make-dir node_modules && pnpm i --prod --shamefully-flatten --force",
+    "prebundle:orig": "cpy package.json dist && cpy src/types/definitions/* dist/types/definitions/ && cpy src/config/* dist/config/ && del-cli ../../builds/assetlibrary/dist --force && cpy dist ../../builds/assetlibrary/ --parents && del-cli ../../builds/assetlibrary/dist/node_modules --force && pnpm i --prod --shamefully-flatten --force && cp -LR node_modules ../../builds/assetlibrary/dist/",
+    "bundle": "cd dist && zip -rq ../build/build.zip *",
+    "postbundle": "echo '\n\n******   node_modules have been flattened and resolved in production mode.  If this is a dev environment, make sure you run `pnpm run reset` from the root to reset.'",
+    "start": "NODE_CONFIG=$(cat ${ASSETLIBRARY_CONFIG_LOCATION}) NODE_CONFIG_DIR='./src/config' ts-node src/lambda_proxy.ts",
+    "start-dist": "NODE_CONFIG=$(cat ${ASSETLIBRARY_CONFIG_LOCATION}) NODE_CONFIG_DIR='./src/config' node lambda_proxy.js"
   },
   "dependencies": {
     "@cdf/config-inject": "^1.2.0",
@@ -18,7 +20,7 @@
     "aws-sdk": "^2.398.0",
     "aws-serverless-express": "^3.3.5",
     "body-parser": "^1.18.3",
-    "config": "^3.0.1",
+    "config": "^1.30.0",
     "express": "^4.16.4",
     "fast-json-patch": "^2.0.7",
     "flatted": "^2.0.0",
@@ -26,11 +28,12 @@
     "inversify": "^5.0.1",
     "inversify-binding-decorators": "4.0.0",
     "inversify-express-utils": "^6.3.2",
-    "js-yaml": "^3.12.1",
+    "js-yaml": "^3.12.0",
     "node-cache": "^4.2.0",
+    "npm": "^6.1.0",
     "ow": "^0.12.0",
     "reflect-metadata": "^0.1.13",
-    "winston": "^3.1.0"
+    "winston": "^2.4.2"
   },
   "devDependencies": {
     "@types/aws-serverless-express": "^3.3.0",

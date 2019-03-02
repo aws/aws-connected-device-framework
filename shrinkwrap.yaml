@@ -6,7 +6,7 @@ importers:
       aws-sdk: 2.413.0
       aws-serverless-express: 3.3.5
       body-parser: 1.18.3
-      config: 3.0.1
+      config: 1.31.0
       express: 4.16.4
       fast-json-patch: 2.0.7
       flatted: 2.0.0
@@ -16,9 +16,10 @@ importers:
       inversify-express-utils: 6.3.2
       js-yaml: 3.12.2
       node-cache: 4.2.0
+      npm: 6.8.0
       ow: 0.12.0
       reflect-metadata: 0.1.13
-      winston: 3.2.1
+      winston: 2.4.4
     devDependencies:
       '@types/aws-serverless-express': 3.3.0
       '@types/body-parser': 1.17.0
@@ -51,7 +52,7 @@ importers:
       aws-sdk-mock: ^4.3.0
       aws-serverless-express: ^3.3.5
       body-parser: ^1.18.3
-      config: ^3.0.1
+      config: ^1.30.0
       cpy-cli: ^2.0.0
       del-cli: ^1.1.0
       express: ^4.16.4
@@ -64,9 +65,10 @@ importers:
       jest: ~24.1.0
       jest-create-mock-instance: ^1.1.0
       jest-mock: ^24.0.0
-      js-yaml: ^3.12.1
+      js-yaml: ^3.12.0
       make-dir-cli: ^1.0.0
       node-cache: ^4.2.0
+      npm: ^6.1.0
       nyc: ^13.1.0
       ow: ^0.12.0
       reflect-metadata: ^0.1.13
@@ -74,7 +76,7 @@ importers:
       ts-node: ^8.0.2
       tslint: ^5.12.1
       typescript: ^3.3.1
-      winston: ^3.1.0
+      winston: ^2.4.2
   packages/assetlibrary/dist:
     dependencies:
       '@cdf/config-inject': 'link:../../config-inject'
@@ -82,7 +84,7 @@ importers:
       aws-sdk: 2.413.0
       aws-serverless-express: 3.3.5
       body-parser: 1.18.3
-      config: 3.0.1
+      config: 1.31.0
       express: 4.16.4
       fast-json-patch: 2.0.7
       flatted: 2.0.0
@@ -92,16 +94,17 @@ importers:
       inversify-express-utils: 6.3.2
       js-yaml: 3.12.2
       node-cache: 4.2.0
+      npm: 6.8.0
       ow: 0.12.0
       reflect-metadata: 0.1.13
-      winston: 3.2.1
+      winston: 2.4.4
     devDependencies:
       '@types/aws-serverless-express': 3.3.0
       '@types/body-parser': 1.17.0
       '@types/config': 0.0.34
       '@types/express': 4.16.1
       '@types/jest': 24.0.9
-      '@types/node': 8.10.40
+      '@types/node': 8.10.41
       aws-sdk-mock: 4.3.1
       cpy-cli: 2.0.0
       del-cli: 1.1.0
@@ -127,7 +130,7 @@ importers:
       aws-sdk-mock: ^4.3.0
       aws-serverless-express: ^3.3.5
       body-parser: ^1.18.3
-      config: ^3.0.1
+      config: ^1.30.0
       cpy-cli: ^2.0.0
       del-cli: ^1.1.0
       express: ^4.16.4
@@ -140,9 +143,10 @@ importers:
       jest: ~24.1.0
       jest-create-mock-instance: ^1.1.0
       jest-mock: ^24.0.0
-      js-yaml: ^3.12.1
+      js-yaml: ^3.12.0
       make-dir-cli: ^1.0.0
       node-cache: ^4.2.0
+      npm: ^6.1.0
       nyc: ^13.1.0
       ow: ^0.12.0
       reflect-metadata: ^0.1.13
@@ -150,7 +154,7 @@ importers:
       ts-node: ^8.0.2
       tslint: ^5.12.1
       typescript: ^3.3.1
-      winston: ^3.1.0
+      winston: ^2.4.2
   packages/config-inject:
     dependencies:
       '@cdf/errors': 'link:../errors'
@@ -223,7 +227,7 @@ importers:
       ts-node: ^8.0.2
       tslint: ^5.12.1
       typescript: ^3.3.3333
-      winston: ^3.1.0
+      winston: ^3.0.0
 packages:
   /@babel/code-frame/7.0.0:
     dependencies:
@@ -397,14 +401,14 @@ packages:
     dependencies:
       '@types/aws-lambda': 8.10.20
       '@types/express': 4.16.1
-      '@types/node': 8.10.40
+      '@types/node': 8.10.41
     dev: true
     resolution:
       integrity: sha512-pGaTXVKtevSraTtPMP58ReJFvW9w9S3ValgdIZFghNinzIwMUvS18qqdTrnLjRDUQmUww9nVHb+7vGVSOAOyLw==
   /@types/body-parser/1.17.0:
     dependencies:
       '@types/connect': 3.4.32
-      '@types/node': 8.10.40
+      '@types/node': 8.10.41
     resolution:
       integrity: sha512-a2+YeUjPkztKJu5aIF2yArYFQQp8d51wZ7DavSHjFuY1mqVgidGyzEQ41JIVNy82fXj8yPgy2vJmfIywgESW6w==
   /@types/config/0.0.34:
@@ -413,12 +417,12 @@ packages:
       integrity: sha512-jWi9DXx77hnzN4kHCNEvP/kab+nchRLTg9yjXYxjTcMBkuc5iBb3QuwJ4sPrb+nzy1GQjrfyfMqZOdR4i7opRQ==
   /@types/connect/3.4.32:
     dependencies:
-      '@types/node': 8.10.40
+      '@types/node': 8.10.41
     resolution:
       integrity: sha512-4r8qa0quOvh7lGD0pre62CAb1oni1OO6ecJLGCezTmhQ8Fz50Arx9RUszryR8KlgK6avuSXvviL6yWyViQABOg==
   /@types/express-serve-static-core/4.16.1:
     dependencies:
-      '@types/node': 8.10.40
+      '@types/node': 8.10.41
       '@types/range-parser': 1.2.3
     resolution:
       integrity: sha512-QgbIMRU1EVRry5cIu1ORCQP4flSYqLM1lS5LYyGWfKnFT3E58f0gKto7BR13clBFVrVZ0G0rbLZ1hUpSkgQQOA==
@@ -456,8 +460,12 @@ packages:
     resolution:
       integrity: sha512-FwI9gX75FgVBJ7ywgnq/P7tw+/o1GUbtP0KzbtusLigAOgIgNISRK0ZPl4qertvXSIE8YbsVJueQ90cDt9YYyw==
   /@types/node/8.10.40:
+    dev: true
     resolution:
       integrity: sha512-RRSjdwz63kS4u7edIwJUn8NqKLLQ6LyqF/X4+4jp38MBT3Vwetewi2N4dgJEshLbDwNgOJXNYoOwzVZUSSLhkQ==
+  /@types/node/8.10.41:
+    resolution:
+      integrity: sha512-nCFRAbtEFz3/UhnciUEEf89TDMPejjRkEcCmhSadtnSr6TfPC+0tGyL1T+slzU+J7r44hq8PEr0XsrkhIGZJhw==
   /@types/range-parser/1.2.3:
     resolution:
       integrity: sha512-ewFXqrQHlFsgc09MK5jP5iR7vumV/BYayNC6PgJO2LPe8vrnNFyjQjSppfEngITi0qvfKtzFvgKymGheFM9UOA==
@@ -672,6 +680,10 @@ packages:
   /async-limiter/1.0.0:
     resolution:
       integrity: sha512-jp/uFnooOiO+L211eZOoSyzpOITMXx1rBITauYykG3BRYPu8h0UcxsPNB04RR5vo4Tyz3+ay17tR6JVf9qzYWg==
+  /async/1.0.0:
+    dev: false
+    resolution:
+      integrity: sha1-+PwEyjoTeErenhZBr5hXjPvWR6k=
   /async/2.6.2:
     dependencies:
       lodash: 4.17.11
@@ -691,7 +703,7 @@ packages:
   /aws-sdk-mock/4.3.1:
     dependencies:
       aws-sdk: 2.413.0
-      sinon: 7.2.5
+      sinon: 7.2.6
       traverse: 0.6.6
     dev: true
     resolution:
@@ -1119,6 +1131,12 @@ packages:
     dev: false
     resolution:
       integrity: sha1-+IiQMGhcfE/54qVZ9Qd+t2qBb5Y=
+  /colors/1.0.3:
+    dev: false
+    engines:
+      node: '>=0.1.90'
+    resolution:
+      integrity: sha1-BDP0TYCWgP3rYO0mDxsMJi6CpAs=
   /colors/1.3.3:
     dev: false
     engines:
@@ -1161,6 +1179,14 @@ packages:
     dev: true
     resolution:
       integrity: sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=
+  /config/1.31.0:
+    dependencies:
+      json5: 1.0.1
+    dev: false
+    engines:
+      node: '>= 4.0.0'
+    resolution:
+      integrity: sha512-Ep/l9Rd1J9IPueztJfpbOqVzuKHQh4ZODMNt9xqTYdBBNRXbV4oTu34kCkkfdRVcDq0ohtpaeXGgb+c0LQxFRA==
   /config/3.0.1:
     dependencies:
       json5: 1.0.1
@@ -1304,6 +1330,12 @@ packages:
       node: '>=0.10.0'
     resolution:
       integrity: sha1-mI3zP+qxke95mmE2nddsF635V+o=
+  /cycle/1.0.3:
+    dev: false
+    engines:
+      node: '>=0.4.0'
+    resolution:
+      integrity: sha1-IegLK+hYD5i0aPN5QwZisEbDStI=
   /dashdash/1.14.1:
     dependencies:
       assert-plus: 1.0.0
@@ -1816,6 +1848,12 @@ packages:
       '0': node >=0.6.0
     resolution:
       integrity: sha1-4mifjzVvrWLMplo6kcXfX5VRaS8=
+  /eyes/0.1.8:
+    dev: false
+    engines:
+      node: '> 0.1.90'
+    resolution:
+      integrity: sha1-Ys8SAjTGg3hdkCNIqADvPgzCC8A=
   /fast-deep-equal/2.0.1:
     resolution:
       integrity: sha1-ewUhjd+WZ79/Nwv3/bLLFf3Qqkk=
@@ -2681,7 +2719,6 @@ packages:
     resolution:
       integrity: sha1-TkMekrEalzFjaqH5yNHMvP2reN8=
   /isstream/0.1.2:
-    dev: true
     resolution:
       integrity: sha1-R+Y/evVa+m+S4VAOaQ64uFKcCZo=
   /istanbul-api/2.1.1:
@@ -3746,6 +3783,134 @@ packages:
       node: '>=4'
     resolution:
       integrity: sha1-NakjLfo11wZ7TLLd8jV7GHFTbF8=
+  /npm/6.8.0:
+    bundledDependencies:
+      - abbrev
+      - ansicolors
+      - ansistyles
+      - aproba
+      - archy
+      - bin-links
+      - bluebird
+      - byte-size
+      - cacache
+      - call-limit
+      - chownr
+      - ci-info
+      - cli-columns
+      - cli-table3
+      - cmd-shim
+      - columnify
+      - config-chain
+      - debuglog
+      - detect-indent
+      - detect-newline
+      - dezalgo
+      - editor
+      - figgy-pudding
+      - find-npm-prefix
+      - fs-vacuum
+      - fs-write-stream-atomic
+      - gentle-fs
+      - glob
+      - graceful-fs
+      - has-unicode
+      - hosted-git-info
+      - iferr
+      - imurmurhash
+      - inflight
+      - inherits
+      - ini
+      - init-package-json
+      - is-cidr
+      - json-parse-better-errors
+      - JSONStream
+      - lazy-property
+      - libcipm
+      - libnpm
+      - libnpmaccess
+      - libnpmhook
+      - libnpmorg
+      - libnpmsearch
+      - libnpmteam
+      - libnpx
+      - lock-verify
+      - lockfile
+      - lodash._baseindexof
+      - lodash._baseuniq
+      - lodash._bindcallback
+      - lodash._cacheindexof
+      - lodash._createcache
+      - lodash._getnative
+      - lodash.clonedeep
+      - lodash.restparam
+      - lodash.union
+      - lodash.uniq
+      - lodash.without
+      - lru-cache
+      - meant
+      - mississippi
+      - mkdirp
+      - move-concurrently
+      - node-gyp
+      - nopt
+      - normalize-package-data
+      - npm-audit-report
+      - npm-cache-filename
+      - npm-install-checks
+      - npm-lifecycle
+      - npm-package-arg
+      - npm-packlist
+      - npm-pick-manifest
+      - npm-profile
+      - npm-registry-fetch
+      - npm-user-validate
+      - npmlog
+      - once
+      - opener
+      - osenv
+      - pacote
+      - path-is-inside
+      - promise-inflight
+      - qrcode-terminal
+      - query-string
+      - qw
+      - read-cmd-shim
+      - read-installed
+      - read-package-json
+      - read-package-tree
+      - read
+      - readable-stream
+      - readdir-scoped-modules
+      - request
+      - retry
+      - rimraf
+      - safe-buffer
+      - semver
+      - sha
+      - slide
+      - sorted-object
+      - sorted-union-stream
+      - ssri
+      - stringify-package
+      - tar
+      - text-table
+      - tiny-relative-date
+      - uid-number
+      - umask
+      - unique-filename
+      - unpipe
+      - update-notifier
+      - uuid
+      - validate-npm-package-license
+      - validate-npm-package-name
+      - which
+      - worker-farm
+      - write-file-atomic
+    dev: false
+    hasBin: true
+    resolution:
+      integrity: sha512-xMH6V0OCSJ5ZET6yWPI3BmJSqMMCuVJSIcLx3LSH/SrratFSt6EDuCuGRFMQYty98Q1l6x/7vKmfURosoyWgrA==
   /number-is-nan/1.0.1:
     dev: true
     engines:
@@ -4705,7 +4870,7 @@ packages:
     dev: false
     resolution:
       integrity: sha1-pNprY1/8zMoz9w0Xy5JZLeleVXo=
-  /sinon/7.2.5:
+  /sinon/7.2.6:
     dependencies:
       '@sinonjs/commons': 1.3.1
       '@sinonjs/formatio': 3.2.0
@@ -4716,7 +4881,7 @@ packages:
       supports-color: 5.5.0
     dev: true
     resolution:
-      integrity: sha512-1c2KK6g5NQr9XNYCEcUbeFtBpKZD1FXEw0VX7gNhWUBtkchguT2lNdS7XmS7y64OpQWfSNeeV/f8py3NNcQ63Q==
+      integrity: sha512-n5r5wZ/VyrP7oAJpGGGjSxvw2Yy8T+qdGjDBltK01KBqB33O60V/xcG0Hgqm6SbJEIyCGuICpaXg9uFzY5DOYw==
   /sisteransi/1.0.0:
     dev: true
     resolution:
@@ -5485,6 +5650,19 @@ packages:
       node: '>= 6.4.0'
     resolution:
       integrity: sha512-B2wPuwUi3vhzn/51Uukcao4dIduEiPOcOt9HJ3QeaXgkJ5Z7UwpBzxS4ZGNHtrxrUvTwemsQiSys0ihOf8Mp1A==
+  /winston/2.4.4:
+    dependencies:
+      async: 1.0.0
+      colors: 1.0.3
+      cycle: 1.0.3
+      eyes: 0.1.8
+      isstream: 0.1.2
+      stack-trace: 0.0.10
+    dev: false
+    engines:
+      node: '>= 0.10.0'
+    resolution:
+      integrity: sha512-NBo2Pepn4hK4V01UfcWcDlmiVTs7VTB1h7bgnB0rgP146bYhMxX0ypCz3lBOfNxCO4Zuek7yeT+y/zM1OfMw4Q==
   /winston/3.2.1:
     dependencies:
       async: 2.6.2

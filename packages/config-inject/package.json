@@ -6,7 +6,8 @@
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "scripts": {
-    "clean": "del-cli dist",
+    "reset": "pnpm run clean && del-cli node_modules",
+    "clean": "del-cli dist build",
     "build": "tsc -b tsconfig.json",
     "test": "echo config-inject tests TODO"
   },

@@ -6,11 +6,13 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
+    "reset": "pnpm run clean && del-cli node_modules",
+    "clean": "del-cli dist build",
     "prebuild": "del-cli dist",
     "build": "tsc -p tsconfig.json"
   },
   "dependencies": {
-    "winston": "^3.1.0"
+    "winston": "^3.0.0"
   },
   "devDependencies": {
     "@types/jest": "^24.0.9",

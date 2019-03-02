@@ -3,12 +3,15 @@
 #
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
-import {Logger, transports, createLogger} from 'winston';
+import {Logger, LoggerInstance, LoggerOptions, transports} from 'winston';
 
-export const logger: Logger = createLogger( {
+export const logger: LoggerInstance = new Logger(<LoggerOptions> {
     level: 'debug',
     exitOnError: false,
     transports: [
-        new transports.Console()
+        new transports.Console({
+            timestamp: true,
+            showLevel: true,
+        }),
     ],
 });
