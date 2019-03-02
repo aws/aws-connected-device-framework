@@ -44,5 +44,3 @@ Refer to `/docs/development/local_development.md` of the `documentation` project
 ## Known Issues
 
 The `SchemaValidatorService` tests are failing when running via `npm run test`.  As part of this command, the typescript files are transpiled to javascript.  The `import * as Ajv from 'ajv'` statement functions fine in typescript, but is failing when transpiled to javascript.  Need to investigate further.
-
-
