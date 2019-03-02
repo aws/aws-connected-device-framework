@@ -1,32 +1,29 @@
 {
-    "extends": "../tsconfig.base.json",
+    "extends": "../../tsconfig.base.json",
     "compilerOptions": {
         "outDir": "dist",
         "rootDir": "src",
-        "composite": true,
-
+        
         "typeRoots": [
             "./src/@types",
             "./node_modules/@types",
-            "../../node_modules/@types"
+            "../../../node_modules/@types"
         ],
         "types": [
-            "node", "jest", "config"
+            "jest", "gremlin", "express", "reflect-metadata", "node"
         ]
     },
+    "references": [
+        {
+            "path": "../../libraries/config/config-inject"
+        }
+    ],
     "include": [
         "src"
     ],
-    "references": [
-        {
-            "path": "../errors",
-        },
-        {
-            "path": "../logger"
-        }
-    ],
     "exclude": [
         "node_modules",
+        "../../../node_modules",
         "dist",
         ".vscode",
         ".git",

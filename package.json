@@ -2,8 +2,7 @@
   "name": "cdf",
   "author": "Dean Hart <deanhart@amazon.com>",
   "scripts": {
-    "reset": "pnpm m run clean && pnpm m run reset && pnpm m i --force",
-    "reset:orig": "pnpm m i --force && pnpm m run clean && pnpm m run reset && pnpm m i --force"
+    "reset": "pnpm m i --force && pnpm m run clean && pnpm m run reset && pnpm m i --force"
   },
   "devDependencies": {
   }

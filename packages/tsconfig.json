@@ -3,16 +3,7 @@
     "files": [],
     "references": [
         {
-            "path": "./libraries/core/errors"
-        },
-        {
-            "path": "./libraries/core/logger"
-        },
-        {
-            "path": "./libraries/config/config-inject"
-        },
-        {
-            "path": "./services/assetlibrary"
+            "path": "./packages/**"
         }
     ]
 }
