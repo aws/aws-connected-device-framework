@@ -38,3 +38,4 @@ aws:
   db:
     connection_url: 'https://testdb'
 ```
+
