@@ -6,11 +6,20 @@
   "scripts": {
     "reset": "pnpm run clean && del-cli node_modules",
     "clean": "del-cli dist build",
+    
+    "lint": "tslint \"src/**/*.ts\"",
+    "test": "pnpm run lint && nyc jest",
     "build": "tsc -b tsconfig.json",
+
+    "preversion": "pnpm run test",
+    "version": "pnpm run build && git add -A",
+    "postversion": "git push && git push origin --tags",
+
     "prebundle": "pnpm run clean && pnpm run build && cpy package.json dist && cpy src/types/definitions/* dist/types/definitions/ && cpy src/config/* dist/config/ && make-dir build && cd dist && make-dir node_modules && pnpm i --prod --shamefully-flatten --force",
     "prebundle:orig": "cpy package.json dist && cpy src/types/definitions/* dist/types/definitions/ && cpy src/config/* dist/config/ && del-cli ../../builds/assetlibrary/dist --force && cpy dist ../../builds/assetlibrary/ --parents && del-cli ../../builds/assetlibrary/dist/node_modules --force && pnpm i --prod --shamefully-flatten --force && cp -LR node_modules ../../builds/assetlibrary/dist/",
     "bundle": "cd dist && zip -rq ../build/build.zip *",
     "postbundle": "echo '\n\n******   node_modules have been flattened and resolved in production mode.  If this is a dev environment, make sure you run `pnpm run reset` from the root to reset.'",
+
     "start": "NODE_CONFIG=$(cat ${ASSETLIBRARY_CONFIG_LOCATION}) NODE_CONFIG_DIR='./src/config' ts-node src/lambda_proxy.ts",
     "start-dist": "NODE_CONFIG=$(cat ${ASSETLIBRARY_CONFIG_LOCATION}) NODE_CONFIG_DIR='./src/config' node lambda_proxy.js"
   },

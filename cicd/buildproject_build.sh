@@ -6,8 +6,6 @@ echo buildproject_build started on `date`
 
 printenv | sort
 
-echo Running tests...
-npm run test
-
 echo Versioning...
-npm version patch
+
+pnpm m version patch -- -m "CICD: $npm_package_name %s"

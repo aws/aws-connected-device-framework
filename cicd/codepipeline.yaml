@@ -97,6 +97,63 @@ Resources:
             files:
               - '**/*'
 
+  BuildProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !If [CodePipelineNameProvided, !Sub '${CodePipelineName}-build', !Sub '${RepoName}-cicd-${Environment}-build' ]
+      Description: !Sub 'Builds, unit tests, and performs code analysis as part of a ${RepoName} CodePipeline.'
+      ServiceRole: 
+        Fn::ImportValue:
+          !Sub '${CommonCICDStackName}-CodeBuildRole'
+      Artifacts:
+        NamespaceType: NONE
+        Packaging: NONE
+        Type: CODEPIPELINE
+        Name: !Sub '${CodePipelineName}-build'
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/nodejs:8.11.0
+        Type: LINUX_CONTAINER
+      Source: 
+        Type: CODEPIPELINE
+        BuildSpec: |
+
+          version: 0.2
+          env:
+            parameter-store:
+              CDF_CODECOMMIT_USERNAME: "CDF_CODECOMMIT_USERNAME"
+              CDF_CODECOMMIT_EMAIL: "CDF_CODECOMMIT_EMAIL"
+              CDF_CODECOMMIT_PASSWORD: "CDF_CODECOMMIT_PASSWORD"
+          phases:
+            install:
+              commands:
+                - printenv
+                - cicd/buildproject_install.sh
+
+            pre_build:
+              commands:
+                - cicd/buildproject_prebuild.sh
+
+            build:
+              commands:
+                - cicd/buildproject_build.sh
+
+          artifacts:
+            files:
+              - 'README.md'
+              - 'build/**/*'
+              - 'dist/**/*'
+              - 'infrastructure/**/*'
+              - 'node_modules/**/*'
+              - 'package-lock.json'
+              - 'package.json'
+              - 'src/**/*'
+              - 'tsconfig.json'
+              - 'tslint.json'
+            discard-paths: no
+          cache:
+            paths:
+              - 'node_modules/**/*'
 
   ###  CodeBuild project that calls the package and deploy scripts to deploy the service, along with
   ###  setting any necessary CloudFormation configuration.
@@ -234,9 +291,7 @@ Resources:
               OutputArtifacts:
                 - Name: compiled
               Configuration:
-                ProjectName: 
-                  Fn::ImportValue:
-                    !Sub '${CommonCICDStackName}-BuildProject'
+                ProjectName: !Ref BuildProject
                 PrimarySource: gitified_main
               RunOrder: 1
 

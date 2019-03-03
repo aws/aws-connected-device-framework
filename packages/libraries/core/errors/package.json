@@ -9,7 +9,13 @@
   "scripts": {
     "reset": "pnpm run clean && del-cli node_modules",
     "clean": "del-cli dist build",
-    "build": "tsc -b tsconfig.json"
+    
+    "lint": "tslint \"src/**/*.ts\"",
+    "test": "pnpm run lint && nyc jest",
+    "build": "tsc -b tsconfig.json",
+
+    "version": "pnpm run build && git add -A",
+    "postversion": "git push && git push origin --tags"
   },
   "devDependencies": {
     "@types/jest": "^23.3.3",
