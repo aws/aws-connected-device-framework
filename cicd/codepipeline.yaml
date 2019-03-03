@@ -65,7 +65,7 @@ Resources:
         Type: CODEPIPELINE
         Name: !Sub '${CodePipelineName}-filterCommits'
       Environment:
-        ComputeType: BUILD_GENERAL1_SMALL
+        ComputeType: BUILD_GENERAL1_MEDIUM
         Image: aws/codebuild/nodejs:8.11.0
         Type: LINUX_CONTAINER
         EnvironmentVariables:

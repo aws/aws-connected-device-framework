@@ -12,7 +12,7 @@ pnpm m run test
 
 echo versioning...
 export GIT_CREDENTIALS="$CDF_CODECOMMIT_USERNAME:$CDF_CODECOMMIT_PASSWORD"
-pnpm m run semantic-release
+pnpm run semantic-release
 
 # echo Versioning...
 # #TODO: read the .unique_changed_paths file that we created as part of the filterproject_prebuild step 
