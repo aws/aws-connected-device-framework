@@ -16,12 +16,15 @@
   "devDependencies": {
     "@semantic-release/git": "^7.0.8",
     "@semantic-release/npm": "^5.1.4",
-    "@types/jest": "^23.3.3",
+    "@types/jest": "^24.0.9",
     "@types/node": "~8.10.40",
     "commitizen": "^3.0.7",
     "del-cli": "^1.1.0",
+    "jest": "^24.0.0",
+    "nyc": "^13.3.0",
     "semantic-release": "^15.13.3",
     "semantic-release-monorepo": "^6.1.1",
+    "ts-jest": "^24.0.0",
     "ts-node": "^8.0.2",
     "tslint": "^5.12.1",
     "typescript": "^3.3.3333"
