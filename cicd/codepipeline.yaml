@@ -6,9 +6,6 @@ Parameters:
   CodePipelineName:
     Description: Name of CICD pipeline to create.  If not provided, '${RepoName}-cicd-${Environment}' will be used.
     Type: String
-  ServiceStackName:
-    Description: Stack name of the CloudFormation template that deploys the service,.  If not provided, '${RepoName}-${Environment}' will be used.
-    Type: String
   Environment:
     Description: The name of the environment this stack is being deployed to.
     Type: String
@@ -21,14 +18,6 @@ Parameters:
     Default: master
     Description: Name of codecommit branch.
     Type: String
-  CICDRepoName:
-    Default: cdf-cicd
-    Description: Name of codecommit repository for the CDF CICD module.
-    Type: String
-  CICDBranch:
-    Default: master
-    Description: Name of codecommit branch for the CDF CICD module.
-    Type: String
   InfrastructureRepoName:
     Description: Name of codecommit repository for the cdf-infrastructure-{customer} module.
     Type: String
@@ -38,38 +27,27 @@ Parameters:
     Description: Name of codecommit branch for the cdf-infrastructure-{customer} module.
     Type: String
     MinLength: 1
-  LibrariesRepoName:
-    Default: cdf-libraries
-    Description: Name of codecommit repository for the CDF Libraries module.
-    Type: String
-  LibrariesBranch:
-    Default: master
-    Description: Name of codecommit branch for the CDF libraries module.
-    Type: String
   CommonCICDStackName:
     Description: Name of CICD common stack name.
     Type: String
     MinLength: 1
-  VpcId:
+  
+  AssetLibraryVpcId:
     Description: Id of VPC where Neptune resides (if running Asset Library in 'full' mode)
     Type: String
-  SourceSecurityGroupId:
+  AssetLibrarySourceSecurityGroupId:
     Description: Id of security group with access to Neptune (if running Asset Library in 'full' mode)
     Type: String
-  PrivateSubnetIds:
+  AssetLibraryPrivateSubnetIds:
     Description: Id of private subnets where Neptune resides (if running Asset Library in 'full' mode)
     Type: String
-  PrivateRouteTableIds:
+  AssetLibraryPrivateRouteTableIds:
     Description: Id of private route table ids where Neptune resides (if running Asset Library in 'full' mode)
     Type: String
-  # CustAuthStackName:
-  #   Description: Name of custom auth cloudformation stack (if running with custom auth enabled)
-  #   Type: String
 
 
 Conditions:
   CodePipelineNameProvided:  !Not [ !Equals [ !Ref CodePipelineName, "" ] ]
-  ServiceStackNameProvided:  !Not [ !Equals [ !Ref ServiceStackName, "" ] ]
 
 Resources:
 
@@ -97,12 +75,6 @@ Resources:
           - Name: BRANCH_CODEBUILD_SRC_DIR
             Type: PLAINTEXT
             Value: !Ref Branch
-          - Name: REPO_NAME_CODEBUILD_SRC_DIR_source_libraries
-            Type: PLAINTEXT
-            Value: !Ref LibrariesRepoName
-          - Name: BRANCH_CODEBUILD_SRC_DIR_source_libraries
-            Type: PLAINTEXT
-            Value: !Ref LibrariesBranch
       Source: 
         Type: CODEPIPELINE
         BuildSpec: |
@@ -115,27 +87,20 @@ Resources:
           phases:
             install:
               commands:
-                - bash -c $CODEBUILD_SRC_DIR_source_cicd/scripts/filterproject_install.bash
+                - bash -c packages/cicd/scripts/filterproject_install.bash
             pre_build:
               commands:
-                - bash -c $CODEBUILD_SRC_DIR_source_cicd/scripts/filterproject_prebuild.bash
+                - bash -c packages/cicd/scripts/filterproject_prebuild.bash
           artifacts:
-            secondary-artifacts:
-              gitified_main:
-                base-directory: $CODEBUILD_SRC_DIR
-                discard-paths: no
-                files:
-                  - '**/*'
-              gitified_libraries:
-                base-directory: $CODEBUILD_SRC_DIR_source_libraries
-                discard-paths: no
-                files:
-                  - '**/*'
+            base-directory: $CODEBUILD_SRC_DIR
+            discard-paths: no
+            files:
+              - '**/*'
 
 
   ###  CodeBuild project that calls the package and deploy scripts to deploy the service, along with
   ###  setting any necessary CloudFormation configuration.
-  DeployCfn:
+  DeployAssetLibrary:
     Type: AWS::CodeBuild::Project
     Properties:
       Name: !If [CodePipelineNameProvided, !Sub '${CodePipelineName}-deploy', !Sub '${RepoName}-cicd-${Environment}-deploy' ]
@@ -164,16 +129,16 @@ Resources:
             Value: !Ref Environment
           - Name: VPC_ID
             Type: PLAINTEXT
-            Value: !Ref VpcId
+            Value: !Ref AssetLibraryVpcId
           - Name: SOURCE_SECURITY_GROUP_ID
             Type: PLAINTEXT
-            Value: !Ref SourceSecurityGroupId
+            Value: !Ref AssetLibrarySourceSecurityGroupId
           - Name: PRIVATE_SUBNET_IDS
             Type: PLAINTEXT
-            Value: !Ref PrivateSubnetIds
+            Value: !Ref AssetLibraryPrivateSubnetIds
           - Name: PRIVATE_ROUTE_TABLE_IDS
             Type: PLAINTEXT
-            Value: !Ref PrivateRouteTableIds
+            Value: !Ref AssetLibraryPrivateRouteTableIds
           # - Name: CUST_AUTH_STACK_NAME
           #   Type: PLAINTEXT
           #   Value: !Ref CustAuthStackName
@@ -189,11 +154,11 @@ Resources:
                 - chmod +x /usr/bin/jq
             build:
               commands:
-                - bash -c infrastructure/package-cfn.bash
+                - bash -c packages/services/assetlibrary/infrastructure/package-cfn.bash
             post_build:
               commands:
                 - export ASSETLIBRARY_CONFIG_LOCATION="$CODEBUILD_SRC_DIR_source_infrastructure/assetlibrary/${ENVIRONMENT}-config.json"
-                - bash -c infrastructure/deploy-cfn.bash
+                - bash -c packages/services/assetlibrary/infrastructure/deploy-cfn.bash
       EncryptionKey: !Sub 'arn:aws:kms:${AWS::Region}:${AWS::AccountId}:alias/aws/s3'
 
 
@@ -222,19 +187,6 @@ Resources:
                 RepositoryName: !Ref RepoName
               RunOrder: 1
             -
-              Name: cicd
-              ActionTypeId:
-                Category: Source
-                Owner: AWS
-                Version: 1
-                Provider: CodeCommit
-              OutputArtifacts:
-                - Name: source_cicd
-              Configuration:
-                BranchName: !Ref CICDBranch
-                RepositoryName: !Ref CICDRepoName
-              RunOrder: 1
-            -
               Name: infrastructure
               ActionTypeId:
                 Category: Source
@@ -246,19 +198,6 @@ Resources:
               Configuration:
                 BranchName: !Ref InfrastructureBranch
                 RepositoryName: !Ref InfrastructureRepoName
-              RunOrder: 1
-            -
-              Name: libraries
-              ActionTypeId:
-                Category: Source
-                Owner: AWS
-                Version: 1
-                Provider: CodeCommit
-              OutputArtifacts:
-                - Name: source_libraries
-              Configuration:
-                BranchName: !Ref LibrariesBranch
-                RepositoryName: !Ref LibrariesRepoName
               RunOrder: 1
 
         -
@@ -273,14 +212,10 @@ Resources:
                 Provider: CodeBuild
               InputArtifacts:
                 - Name: source_main
-                - Name: source_cicd
-                - Name: source_libraries
               OutputArtifacts:
                 - Name: gitified_main
-                - Name: gitified_libraries
               Configuration:
                 ProjectName: !Ref FilterCommitsProject
-                PrimarySource: source_main
               RunOrder: 1
 
         -
@@ -295,9 +230,7 @@ Resources:
                 Provider: CodeBuild
               InputArtifacts:
                 - Name: gitified_main
-                - Name: source_cicd
                 - Name: source_infrastructure
-                - Name: gitified_libraries
               OutputArtifacts:
                 - Name: compiled
               Configuration:
@@ -308,7 +241,7 @@ Resources:
               RunOrder: 1
 
         -
-          Name: deploy
+          Name: deploy-assetlibrary
           Actions:
             -
               Name: deploy
@@ -319,10 +252,9 @@ Resources:
                 Provider: CodeBuild
               InputArtifacts:
                 - Name: compiled
-                - Name: source_cicd
                 - Name: source_infrastructure
               Configuration:
-                ProjectName: !Ref DeployCfn
+                ProjectName: !Ref DeployAssetLibrary
                 PrimarySource: compiled
               RunOrder: 1
 
@@ -332,73 +264,17 @@ Resources:
           Fn::ImportValue:
             !Sub '${CommonCICDStackName}-ArtifactBucket'
 
-  SuccessTopic:
-    Type: "AWS::SNS::Topic"
-    Properties: 
-      DisplayName: !Sub '${DeployPipeline}-onSuccess'
-      TopicName: !Sub '${DeployPipeline}-onSuccess'
 
-  SuccessTopicPolicy:
-    Type: 'AWS::SNS::TopicPolicy'
+  ### Nested stack creates the success and failure topics and rules
+  NestedStack:
+    Type: AWS::CloudFormation::Stack
     Properties:
-      PolicyDocument:
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service: events.amazonaws.com
-            Action: 'sns:Publish'
-            Resource: '*'
-      Topics:
-        - !Ref SuccessTopic
-        
-  SuccessRule:
-    Type: "AWS::Events::Rule"
-    Properties: 
-      Name: !Sub '${DeployPipeline}-onSuccess'
-      Description: !Sub '${RepoName} CodePipeline success.'
-      EventPattern: 
-        source:
-          - "aws.codepipeline"
-        detail-type:
-          - "CodePipeline Pipeline Execution State Change"
-        detail:
-          state:
-            - "SUCCEEDED"
-          pipeline:
-            - !Ref DeployPipeline
-      State: "ENABLED"
-      Targets:
-        - 
-          Id: success
-          Arn: !Ref SuccessTopic
-
-  ###  Trigger SNS upon failed CodePipelines  ###
-  FailedRule:
-    Type: "AWS::Events::Rule"
-    Properties:
-      Name: !Sub '${DeployPipeline}-onFail'
-      Description: !Sub '${RepoName} CodePipeline failure.'
-      EventPattern:
-        source:
-          - "aws.codepipeline"
-        detail-type:
-          - "CodePipeline Pipeline Execution State Change"
-        detail:
-          state:
-            - "FAILED"
-          pipeline:
-            - !Ref DeployPipeline
-      State: "ENABLED"
-      Targets:
-        -
-          Id: failed
-          Arn:
-            Fn::ImportValue:
-              !Sub '${CommonCICDStackName}-FailedTopic'
-          InputTransformer:
-            InputTemplate: '"The Pipeline <pipeline> has failed." '
-            InputPathsMap:
-              pipeline: "$.detail.pipeline" 
+      TemplateURL: ../../cdf-js/cdf-cicd/infrastructure/cicd-nested-library.yaml
+      Parameters:
+        CodePipelineName: !If [CodePipelineNameProvided, !Ref CodePipelineName, !Sub '${RepoName}-cicd-${Environment}' ]
+        RepoName: !Ref RepoName
+        DeployPipeline: !Ref DeployPipeline
+        CommonCICDStackName: !Ref CommonCICDStackName
 
     DependsOn: 
       - DeployPipeline
