@@ -69,10 +69,10 @@ Resources:
         Image: aws/codebuild/nodejs:8.11.0
         Type: LINUX_CONTAINER
         EnvironmentVariables:
-          - Name: REPO_NAME_CODEBUILD_SRC_DIR
+          - Name: REPO_NAME
             Type: PLAINTEXT
             Value: !Ref RepoName
-          - Name: BRANCH_CODEBUILD_SRC_DIR
+          - Name: BRANCH
             Type: PLAINTEXT
             Value: !Ref Branch
       Source: 
