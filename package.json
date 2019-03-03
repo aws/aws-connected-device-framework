@@ -3,7 +3,7 @@
   "author": "Dean Hart <deanhart@amazon.com>",
   "scripts": {
     "reset": "pnpm m i --force && pnpm m run clean && pnpm m run reset && pnpm m i --force",
-    "commit": "git-cz"
+    "commit": "npx git-cz"
   },
   "devDependencies": {
     "cz-conventional-changelog": "^2.1.0"
