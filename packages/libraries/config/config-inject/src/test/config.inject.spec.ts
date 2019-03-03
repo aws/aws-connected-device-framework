@@ -1,5 +1,6 @@
-// process.env.NODE_CONFIG = '{"aws":{"region":"us-west-2","db":{"connection_url":"testdb"}}}';
 process.env['NODE_CONFIG_DIR'] = __dirname + '/config';
+
+console.log(`NODE_CONFIG_DIR: ${process.env['NODE_CONFIG_DIR'] }`);
 
 import { CDFConfigInjector } from '../index';
 import { CDFLogger } from '@cdf/logger';

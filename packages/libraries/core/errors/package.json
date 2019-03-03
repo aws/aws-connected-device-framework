@@ -10,7 +10,7 @@
     "reset": "pnpm run clean && del-cli node_modules",
     "clean": "del-cli dist build",
     "lint": "tslint \"src/**/*.ts\"",
-    "test": "pnpm run lint && nyc jest",
+    "test": "pnpm run lint && nyc jest --passWithNoTests",
     "build": "tsc -b tsconfig.json"
   },
   "devDependencies": {
@@ -68,8 +68,5 @@
     "verifyConditions": [
       "@semantic-release/git"
     ]
-  },
-  "dependencies": {
-    "build": "^0.1.4"
   }
 }

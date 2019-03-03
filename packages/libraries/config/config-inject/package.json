@@ -15,8 +15,8 @@
   "dependencies": {
     "@cdf/errors": "^1.2.0",
     "@cdf/logger": "^1.2.0",
-    "build": "^0.1.4",
     "config": "^3.0.1",
+    "js-yaml": "^3.12.0",
     "inversify": "^5.0.1",
     "reflect-metadata": "^0.1.13"
   },
@@ -29,6 +29,8 @@
     "commitizen": "^3.0.7",
     "del-cli": "^1.1.0",
     "jest": "~24.1.0",
+    "jest-create-mock-instance": "^1.1.0",
+    "jest-mock": "^24.0.0",
     "nyc": "^13.1.0",
     "semantic-release": "^15.13.3",
     "semantic-release-monorepo": "^6.1.1",
