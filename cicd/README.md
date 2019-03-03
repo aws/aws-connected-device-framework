@@ -1,6 +1,8 @@
-# Examples deploying a new cicd pipeline:
+# CICD
 
-## 'full' mode into an existing VPC
+## Examples deploying a new cicd pipeline:
+
+### 'full' mode into an existing VPC
 ```sh
 ./deploy-cicd-pipeline.bash \
   -b cdf-157731826412-us-west-2 \
@@ -14,4 +16,25 @@
   -t rtb-0fc5765aa27fc5fda,rtb-047e1214af8916769 \
   -P deanhart-1577 \
   -R us-west-2 
+```
+
+## Testing locally
+
+Run all from the main root...
+
+### filterproject_install.bash
+
+To mimic the behavior of CodePipeline not using git, need to clone the latest then remove git:
+
+```sh
+cd /tmp
+git clone --max-depth=1 ](git clone --depth=1 https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core src
+cd src
+rm -rf .git
+```
+
+Then run the script, first setting the environment variables that are set by CodePipeline:
+```fish
+cd /tmp/src
+set AWS_REGION 'us-west-2'; and set CDF_CODECOMMIT_USERNAME 'deanhart-at-157731826412';and set CDF_CODECOMMIT_PASSWORD 'ZhrIAjpn8OYR0d9fSQVMBCM/eUtv2KQqdOvmjcHQs/o=';and set CDF_CODECOMMIT_EMAIL 'deanhart@amazon.com'; and set CODEBUILD_SRC_DIR '/tmp/src'; and set REPO_NAME 'cdf-core'; and ./cicd/filterproject_install.bash
 ```

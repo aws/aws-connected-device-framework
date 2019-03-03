@@ -5,3 +5,6 @@ packages/*/lib
 **/dist
 .DS_Store
 builds
+
+# files created by cicd pipeline to manage state between pipeline stages
+.cicd_*

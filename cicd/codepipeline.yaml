@@ -139,18 +139,10 @@ Resources:
                 - cicd/buildproject_build.sh
 
           artifacts:
-            files:
-              - 'README.md'
-              - 'build/**/*'
-              - 'dist/**/*'
-              - 'infrastructure/**/*'
-              - 'node_modules/**/*'
-              - 'package-lock.json'
-              - 'package.json'
-              - 'src/**/*'
-              - 'tsconfig.json'
-              - 'tslint.json'
+            base-directory: $CODEBUILD_SRC_DIR
             discard-paths: no
+            files:
+              - '**/*'
           cache:
             paths:
               - 'node_modules/**/*'

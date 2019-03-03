@@ -9,18 +9,19 @@
   "scripts": {
     "reset": "pnpm run clean && del-cli node_modules",
     "clean": "del-cli dist build",
-    
     "lint": "tslint \"src/**/*.ts\"",
     "test": "pnpm run lint && nyc jest",
-    "build": "tsc -b tsconfig.json",
-
-    "version": "pnpm run build && git add -A",
-    "postversion": "git push && git push origin --tags"
+    "build": "tsc -b tsconfig.json"
   },
   "devDependencies": {
+    "@semantic-release/git": "^7.0.8",
+    "@semantic-release/npm": "^5.1.4",
     "@types/jest": "^23.3.3",
     "@types/node": "~8.10.40",
+    "commitizen": "^3.0.7",
     "del-cli": "^1.1.0",
+    "semantic-release": "^15.13.3",
+    "semantic-release-monorepo": "^6.1.1",
     "ts-node": "^8.0.2",
     "tslint": "^5.12.1",
     "typescript": "^3.3.3333"
@@ -49,5 +50,20 @@
     ]
   },
   "license": "ISC",
-  "bundledDependencies": []
+  "private": true,
+  "release": {
+    "monorepo": {
+      "analyzeCommits": {
+        "format": "atom"
+      },
+      "generateNotes": "myNotesGenerator"
+    },
+    "prepare": [
+      "@semantic-release/npm",
+      "@semantic-release/git"
+    ],
+    "verifyConditions": [
+      "@semantic-release/git"
+    ]
+  }
 }

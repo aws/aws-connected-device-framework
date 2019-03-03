@@ -4,8 +4,6 @@ set -e
 
 echo filterproject_prebuild started on `date`
 
-printenv | sort
-
 cd $CODEBUILD_SRC_DIR
 
 #  retrieve the latest git message for this specific commit
@@ -13,7 +11,7 @@ git_commit_message="$(git log --format=%B -n 1)"
 echo git_commit_message: $git_commit_message
 
 # don't proceed if the commit was made by the CICD pipeline
-if [[ $git_commit_message == CICD:* ]]; then
+if [[ $git_commit_message == "[CICD]:"* ]]; then
     echo A CICD commit, therefore ignoring
     exit 1
 fi
@@ -48,16 +46,16 @@ if git rev-parse CICD_LATEST_RELEASE >/dev/null 2>&1; then
                 changed_paths+=(changed_path);;
             * )
                 # everything else, which should be root,trigger a full build
-                changed_paths+=('ALL');;
+                changed_paths+=('___ALL___');;
         esac
 
     done
 else
     echo "Initial deployment, therefore mark all projects as needing to be processed"
-    changed_paths+=('ALL');
+    changed_paths+=('___ALL___');
 fi
 unique_changed_paths=$(echo $changed_paths | sort | uniq)
 
 echo "Store the unique changed paths"
-echo "$unique_changed_paths" > ".unique_changed_paths"
+echo "$unique_changed_paths" > ".cicd_unique_changed_paths"
 cat .unique_changed_paths

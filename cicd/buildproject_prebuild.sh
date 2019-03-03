@@ -14,7 +14,7 @@ set -e
 if [ $differences -eq 1 ]; then
     echo Yes we have changes, lets commit them...
     # package-lock.json probably changed.  needs committing for the npm versioning to function
-    git commit -am 'CICD: buildproject_prebuild'
+    git commit -am '[CICD]: buildproject_prebuild'
 fi
 
 

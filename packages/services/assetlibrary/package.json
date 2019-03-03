@@ -6,20 +6,13 @@
   "scripts": {
     "reset": "pnpm run clean && del-cli node_modules",
     "clean": "del-cli dist build",
-    
     "lint": "tslint \"src/**/*.ts\"",
-    "test": "pnpm run lint && nyc jest",
     "build": "tsc -b tsconfig.json",
-
-    "preversion": "pnpm run test",
-    "version": "pnpm run build && git add -A",
-    "postversion": "git push && git push origin --tags",
-
+    "test": "pnpm run lint && nyc jest",
     "prebundle": "pnpm run clean && pnpm run build && cpy package.json dist && cpy src/types/definitions/* dist/types/definitions/ && cpy src/config/* dist/config/ && make-dir build && cd dist && make-dir node_modules && pnpm i --prod --shamefully-flatten --force",
     "prebundle:orig": "cpy package.json dist && cpy src/types/definitions/* dist/types/definitions/ && cpy src/config/* dist/config/ && del-cli ../../builds/assetlibrary/dist --force && cpy dist ../../builds/assetlibrary/ --parents && del-cli ../../builds/assetlibrary/dist/node_modules --force && pnpm i --prod --shamefully-flatten --force && cp -LR node_modules ../../builds/assetlibrary/dist/",
     "bundle": "cd dist && zip -rq ../build/build.zip *",
     "postbundle": "echo '\n\n******   node_modules have been flattened and resolved in production mode.  If this is a dev environment, make sure you run `pnpm run reset` from the root to reset.'",
-
     "start": "NODE_CONFIG=$(cat ${ASSETLIBRARY_CONFIG_LOCATION}) NODE_CONFIG_DIR='./src/config' ts-node src/lambda_proxy.ts",
     "start-dist": "NODE_CONFIG=$(cat ${ASSETLIBRARY_CONFIG_LOCATION}) NODE_CONFIG_DIR='./src/config' node lambda_proxy.js"
   },
@@ -45,6 +38,8 @@
     "winston": "^2.4.2"
   },
   "devDependencies": {
+    "@semantic-release/git": "^7.0.8",
+    "@semantic-release/npm": "^5.1.4",
     "@types/aws-serverless-express": "^3.3.0",
     "@types/body-parser": "^1.17.0",
     "@types/config": "0.0.34",
@@ -52,6 +47,7 @@
     "@types/jest": "~24.0.0",
     "@types/node": "~8.10.40",
     "aws-sdk-mock": "^4.3.0",
+    "commitizen": "^3.0.7",
     "cpy-cli": "^2.0.0",
     "del-cli": "^1.1.0",
     "jest": "~24.1.0",
@@ -59,6 +55,8 @@
     "jest-mock": "^24.0.0",
     "make-dir-cli": "^1.0.0",
     "nyc": "^13.1.0",
+    "semantic-release": "^15.13.3",
+    "semantic-release-monorepo": "^6.1.1",
     "ts-jest": "24.0.0",
     "ts-node": "^8.0.2",
     "tslint": "^5.12.1",
@@ -85,6 +83,22 @@
       "jsx",
       "json",
       "node"
+    ]
+  },
+  "private": true,
+  "release": {
+    "monorepo": {
+      "analyzeCommits": {
+        "format": "atom"
+      },
+      "generateNotes": "myNotesGenerator"
+    },
+    "prepare": [
+      "@semantic-release/npm",
+      "@semantic-release/git"
+    ],
+    "verifyConditions": [
+      "@semantic-release/git"
     ]
   }
 }
