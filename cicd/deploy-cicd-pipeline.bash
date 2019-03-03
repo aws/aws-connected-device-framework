@@ -77,7 +77,7 @@ if [ -z "$ENVIRONMENT" ]; then
 fi
 
 if [ -z "$REPO_NAME" ]; then
-  export REPO_NAME=cdf-assetlibrary
+  export REPO_NAME=cdf-core
 	echo -r REPO_NAME not provided, therefore defaulted to $REPO_NAME
 fi
 

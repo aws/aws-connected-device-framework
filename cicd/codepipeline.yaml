@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: CodePipeline for building cdf-assetlibrary
+Description: CodePipeline for building and deploying cdf-core services
 
 Parameters:
   CodePipelineName:
@@ -11,7 +11,7 @@ Parameters:
     Type: String
     MinLength: 1
   RepoName:
-    Default: cdf-assetlibrary
+    Default: cdf-core
     Description: Name of codecommit repository for this application.
     Type: String
   Branch:
@@ -87,10 +87,10 @@ Resources:
           phases:
             install:
               commands:
-                - bash -c packages/cicd/scripts/filterproject_install.bash
+                - bash -c cicd/filterproject_install.bash
             pre_build:
               commands:
-                - bash -c packages/cicd/scripts/filterproject_prebuild.bash
+                - bash -c cicd/filterproject_prebuild.bash
           artifacts:
             base-directory: $CODEBUILD_SRC_DIR
             discard-paths: no

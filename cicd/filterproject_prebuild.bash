@@ -13,7 +13,7 @@ git_commit_message="$(git log --format=%B -n 1)"
 
 echo git_commit_message: $git_commit_message
 
-if [[ $git_commit_message == CICD* ]; th
+if [[ $git_commit_message == CICD* ]]; then
     echo A CICD commit, therefore ignoring
     exit 1
 else
