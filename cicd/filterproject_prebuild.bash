@@ -54,7 +54,7 @@ if git rev-parse CICD_LATEST_RELEASE >/dev/null 2>&1; then
     done
 else
     echo "Initial deployment, therefore mark all projects as needing to be processed"
-    changed_paths+=('ALL');;
+    changed_paths+=('ALL');
 fi
 unique_changed_paths=$(echo $changed_paths | sort | uniq)
 
