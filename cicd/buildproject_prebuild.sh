@@ -5,7 +5,7 @@ set -e
 echo buildproject_prebuild started on `date`
 
 echo Installing...
-pnpm i
+pnpm run reset
 
 echo Checking to see if we have changes that need committing...
 set +e
