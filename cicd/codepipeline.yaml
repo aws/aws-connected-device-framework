@@ -148,13 +148,13 @@ Resources:
             files:
               - node_modules
               - '**/*'
-          cache:
-            paths:
-              - 'node_modules/**/*'
-      Cache:
-        Type: LOCAL
-        Modes: 
-          - LOCAL_CUSTOM_CACHE
+      #     cache:
+      #       paths:
+      #         - 'node_modules/**/*'
+      # Cache:
+      #   Type: LOCAL
+      #   Modes: 
+      #     - LOCAL_CUSTOM_CACHE
 
   ###  CodeBuild project that calls the package and deploy scripts to deploy the service, along with
   ###  setting any necessary CloudFormation configuration.
@@ -207,17 +207,13 @@ Resources:
           phases:
             install:
               commands:
-                # install required binary
-                - curl -s -qL -o /usr/bin/jq https://stedolan.github.io/jq/download/linux64/jq
-                - chmod +x /usr/bin/jq
+                - cicd/deployproject_install.sh
             pre_build:
               commands:
                 - cicd/deployproject_prebuild.sh
             build:
               commands:
-                - bash -c packages/services/assetlibrary/infrastructure/package-cfn.bash
-                - export ASSETLIBRARY_CONFIG_LOCATION="$CODEBUILD_SRC_DIR_source_infrastructure/assetlibrary/${ENVIRONMENT}-config.json"
-                - bash -c packages/services/assetlibrary/infrastructure/deploy-cfn.bash
+                - cicd/deployproject_build.sh
             post_build:
               commands:
                 - echo 'TODO tag git with the release'
