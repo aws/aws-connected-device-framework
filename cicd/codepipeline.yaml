@@ -207,14 +207,15 @@ Resources:
                 - chmod +x /usr/bin/jq
             pre_build:
               commands:
-                - bash cicd/deployproject_prebuild.sh
+                - cicd/deployproject_prebuild.sh
             build:
               commands:
                 - bash -c packages/services/assetlibrary/infrastructure/package-cfn.bash
-            post_build:
-              commands:
                 - export ASSETLIBRARY_CONFIG_LOCATION="$CODEBUILD_SRC_DIR_source_infrastructure/assetlibrary/${ENVIRONMENT}-config.json"
                 - bash -c packages/services/assetlibrary/infrastructure/deploy-cfn.bash
+            post_build:
+              commands:
+                - echo 'TODO tag git with the release'
       EncryptionKey: !Sub 'arn:aws:kms:${AWS::Region}:${AWS::AccountId}:alias/aws/s3'
 
 
