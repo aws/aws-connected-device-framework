@@ -45,5 +45,11 @@ module.exports = {
       path: '@semantic-release/git',
       assets: ['**/CHANGELOG.md', '**/package.json', '**/package-lock.json', 'shrinkwrap.yaml']
     }
-  ]
+  ],
+  /**
+   * By default, semantic-release pushes to github on success/fail.  override this
+   * behavior by setting to false
+   */
+  success: false,
+  failure: false
 };
