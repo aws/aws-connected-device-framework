@@ -3,6 +3,7 @@ npm-debug.log
 packages/*/lib
 .vscode
 **/dist
+**/build
 .DS_Store
 builds
 packages/**/.nyc_output/

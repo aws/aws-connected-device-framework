@@ -118,6 +118,9 @@ Running with:
   AWS_PROFILE:                      $AWS_PROFILE
 "
 
+
+cwd=$(dirname "$0")
+
 if [ "$MODE" = "full" ]; then
   echo '
   **********************************************************
@@ -140,7 +143,7 @@ if [ "$MODE" = "full" ]; then
   '
 
   aws cloudformation deploy \
-    --template-file infrastructure/cfn-neptune.yml \
+    --template-file $cwd/cfn-neptune.yml \
     --stack-name $NEPTUNE_STACK_NAME \
     --parameter-overrides \
         VpcId=$VPC_ID \
@@ -154,7 +157,7 @@ if [ "$MODE" = "full" ]; then
 
   aws cloudformation set-stack-policy \
     --stack-name $NEPTUNE_STACK_NAME \
-    --stack-policy-body "$(cat ./infrastructure/cfn-neptune-stack-policy.json)" \
+    --stack-policy-body "$(cat $cwd/cfn-neptune-stack-policy.json)" \
     $AWS_ARGS
 fi
 
@@ -211,7 +214,7 @@ echo '
 **********************************************************
 '
 aws cloudformation deploy \
-  --template-file build/cfn-assetLibrary-output.yml \
+  --template-file $cwd/build/cfn-assetLibrary-output.yml \
   --stack-name $ASSETLIBRARY_STACK_NAME \
   --parameter-overrides \
       Environment=$ENVIRONMENT \
