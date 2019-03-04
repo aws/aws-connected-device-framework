@@ -6,6 +6,7 @@
  * - https://github.com/Updater/semantic-release-monorepo
  * - https://github.com/semantic-release/semantic-release
  */
+const releaseRules = require('./cicd//releaseRules');
 
 module.exports = {
   branch: 'master',
@@ -13,7 +14,7 @@ module.exports = {
     analyzeCommits: [
       {
         path: '@semantic-release/commit-analyzer',
-        releaseRules: 'cicd/releaseRules.js'
+        releaseRules
       }
       
     ],
@@ -35,10 +36,13 @@ module.exports = {
     .map(x => x.verifyConditions),
   prepare: [
     '@semantic-release/changelog',
-    '@semantic-release/npm',
     {
-      'path': '@semantic-release/git',
-      'message': 'chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}'
+      path: '@semantic-release/npm',
+      npmPublish: false
+    },
+    {
+      path: '@semantic-release/git',
+      message: 'chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}'
     }
   ]
 };
