@@ -1,5 +1,11 @@
 'use strict'
 
+/**
+ * pnpm uses this file to override 3rd party package dependencies which is useful
+ * when 3rd party package.json's are missing dependencies, or when upstream changes
+ * have broken a 3rd psrty package and we can't wait for a fix.
+ */
+
 module.exports = {
     hooks: {
         readPackage
@@ -26,6 +32,14 @@ function readPackage(pkg, context) {
             context.log('pnpmfile.js: inversify should be a dependency of inversify-express-utils, but is configured as a devDependency.')
             pkg.dependencies['inversify'] = pkg.devDependencies.inversify
             delete pkg.devDependencies.inversify
+            break;
+
+        case 'semantic-release-monorepo':
+
+            context.log('pnpmfile.js: an update to semantic-release-plugin-decorators has broken semantic-release-monorepo, therefore updating to temporary fix until upstream fix is merged.')
+            pkg.dependencies['semantic-release-plugin-decorators'] = 'boardthatpowder/semantic-release-plugin-decorators'
+            break;
+
 
     }
 

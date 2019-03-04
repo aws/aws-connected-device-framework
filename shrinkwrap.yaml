@@ -6,6 +6,7 @@ importers:
       '@semantic-release/changelog': 3.0.2
       '@semantic-release/git': 7.0.8
       '@semantic-release/npm': 5.1.4
+      '@semantic-release/release-notes-generator': 7.1.4
       commitizen: 3.0.7
       cz-conventional-changelog: 2.1.0
       husky: 1.3.1
@@ -17,6 +18,7 @@ importers:
       '@semantic-release/changelog': ^3.0.2
       '@semantic-release/git': ^7.0.8
       '@semantic-release/npm': ^5.1.4
+      '@semantic-release/release-notes-generator': ^7.1.4
       commitizen: ^3.0.7
       cz-conventional-changelog: ^2.1.0
       husky: ^1.3.1
@@ -36,6 +38,7 @@ importers:
       '@semantic-release/changelog': /@semantic-release/changelog/3.0.2/semantic-release@15.13.3
       '@semantic-release/git': /@semantic-release/git/7.0.8/semantic-release@15.13.3
       '@semantic-release/npm': /@semantic-release/npm/5.1.4/semantic-release@15.13.3
+      '@semantic-release/release-notes-generator': /@semantic-release/release-notes-generator/7.1.4/semantic-release@15.13.3
       '@types/config': 0.0.34
       '@types/jest': 24.0.9
       '@types/node': 8.10.42
@@ -60,6 +63,7 @@ importers:
       '@semantic-release/changelog': ^3.0.2
       '@semantic-release/git': ^7.0.8
       '@semantic-release/npm': ^5.1.4
+      '@semantic-release/release-notes-generator': ^7.1.4
       '@types/config': 0.0.34
       '@types/jest': ~24.0.0
       '@types/node': ~8.10.40
@@ -87,6 +91,7 @@ importers:
       '@semantic-release/changelog': /@semantic-release/changelog/3.0.2/semantic-release@15.13.3
       '@semantic-release/git': /@semantic-release/git/7.0.8/semantic-release@15.13.3
       '@semantic-release/npm': /@semantic-release/npm/5.1.4/semantic-release@15.13.3
+      '@semantic-release/release-notes-generator': /@semantic-release/release-notes-generator/7.1.4/semantic-release@15.13.3
       '@types/jest': 24.0.9
       '@types/node': 8.10.42
       commitizen: 3.0.7
@@ -106,6 +111,7 @@ importers:
       '@semantic-release/changelog': ^3.0.2
       '@semantic-release/git': ^7.0.8
       '@semantic-release/npm': ^5.1.4
+      '@semantic-release/release-notes-generator': ^7.1.4
       '@types/jest': ^24.0.9
       '@types/node': ~8.10.40
       commitizen: ^3.0.7
@@ -128,6 +134,7 @@ importers:
       '@semantic-release/changelog': /@semantic-release/changelog/3.0.2/semantic-release@15.13.3
       '@semantic-release/git': /@semantic-release/git/7.0.8/semantic-release@15.13.3
       '@semantic-release/npm': /@semantic-release/npm/5.1.4/semantic-release@15.13.3
+      '@semantic-release/release-notes-generator': /@semantic-release/release-notes-generator/7.1.4/semantic-release@15.13.3
       '@types/jest': 24.0.9
       '@types/node': 8.10.42
       commitizen: 3.0.7
@@ -147,6 +154,7 @@ importers:
       '@semantic-release/changelog': ^3.0.2
       '@semantic-release/git': ^7.0.8
       '@semantic-release/npm': ^5.1.4
+      '@semantic-release/release-notes-generator': ^7.1.4
       '@types/jest': ^24.0.9
       '@types/node': ~8.10.40
       commitizen: ^3.0.7
@@ -188,6 +196,7 @@ importers:
       '@semantic-release/changelog': /@semantic-release/changelog/3.0.2/semantic-release@15.13.3
       '@semantic-release/git': /@semantic-release/git/7.0.8/semantic-release@15.13.3
       '@semantic-release/npm': /@semantic-release/npm/5.1.4/semantic-release@15.13.3
+      '@semantic-release/release-notes-generator': /@semantic-release/release-notes-generator/7.1.4/semantic-release@15.13.3
       '@types/aws-serverless-express': 3.3.0
       '@types/body-parser': 1.17.0
       '@types/config': 0.0.34
@@ -217,6 +226,7 @@ importers:
       '@semantic-release/changelog': ^3.0.2
       '@semantic-release/git': ^7.0.8
       '@semantic-release/npm': ^5.1.4
+      '@semantic-release/release-notes-generator': ^7.1.4
       '@types/aws-serverless-express': ^3.3.0
       '@types/body-parser': ^1.17.0
       '@types/config': 0.0.34
@@ -826,13 +836,13 @@ packages:
     dev: true
     resolution:
       integrity: sha512-rgmZk5CrBGAMATk0HlHOFvo8V44/r+On6cKS80tqid0Eljd+fFBWBOXZp9H2/EB3faxdNdzXTx6QZIKLkbJ7mA==
-  /@sinonjs/formatio/3.2.0:
+  /@sinonjs/formatio/3.2.1:
     dependencies:
       '@sinonjs/commons': 1.3.1
       '@sinonjs/samsam': 3.2.0
     dev: true
     resolution:
-      integrity: sha512-hskkZG4qB0HgsxrPUlnk2EiIyBwntM+ETIxCha/gidl172MCfdosNezB5706ciS5P2VhueM7MoACWwMc4A4gMQ==
+      integrity: sha512-tsHvOB24rvyvV2+zKMmPkZ7dXX6LSLKZ7aOtXY6Edklp0uRcgGpOsQTTGTcWViFyx4uhWc6GV8QdnALbIbIdeQ==
   /@sinonjs/samsam/3.2.0:
     dependencies:
       '@sinonjs/commons': 1.3.1
@@ -902,7 +912,7 @@ packages:
     dependencies:
       '@types/events': 3.0.0
       '@types/minimatch': 3.0.3
-      '@types/node': 11.10.4
+      '@types/node': 8.10.42
     dev: true
     resolution:
       integrity: sha512-1Bh06cbWJUHMC97acuD6UMG29nMt0Aqz1vF3guLfG+kHHJhy3AyohZFFxYk2f7Q1SQIrNwvncxAE0N/9s70F2w==
@@ -923,10 +933,6 @@ packages:
     dev: true
     resolution:
       integrity: sha512-tHq6qdbT9U1IRSGf14CL0pUlULksvY9OZ+5eEgl1N7t+OA3tGvNpxJCzuKQlsNgCVwbAs670L1vcVQi8j9HjnA==
-  /@types/node/11.10.4:
-    dev: true
-    resolution:
-      integrity: sha512-wa09itaLE8L705aXd8F80jnFpxz3Y1/KRHfKsYL2bPc0XF+wEWu8sR9n5bmeu8Ba1N9z2GRNzm/YdHcghLkLKg==
   /@types/node/8.10.42:
     resolution:
       integrity: sha512-8LCqostMfYwQs9by1k21/P4KZp9uFQk3Q528y3qtPKQnCJmKz0Em3YzgeNjTNV1FVrG/7n/6j12d4UKg9zSgDw==
@@ -1210,7 +1216,7 @@ packages:
   /aws-sdk-mock/4.3.1:
     dependencies:
       aws-sdk: 2.413.0
-      sinon: 7.2.6
+      sinon: 7.2.7
       traverse: 0.6.6
     dev: true
     resolution:
@@ -1558,12 +1564,12 @@ packages:
       node: '>=4'
     resolution:
       integrity: sha1-1UVjW+HjPFQmScaRc+Xeas+uNN0=
-  /camelcase/5.0.0:
+  /camelcase/5.1.0:
     dev: true
     engines:
       node: '>=6'
     resolution:
-      integrity: sha512-faqwZqnWxbxn+F1d399ygeamQNy3lPp/H9H6rNrqYh4FSVCtcY+3cub1MxA8o9mDd55mM8Aghuu/kuyYA6VTsA==
+      integrity: sha512-WP9f9OBL/TAbwOFBJL79FoS9UKUmnp82RWnhlwTgrAJeMq7lytHhe0Jzc6/P7Zq0+2oviXJuPlvkZalWUug9gg==
   /capture-exit/1.2.0:
     dependencies:
       rsvp: 3.6.2
@@ -4297,7 +4303,7 @@ packages:
       integrity: sha512-QxsALc4wguYS7cfjdQSOr5HTkmjzkHgmZvIDkcmPfl1ib8PNV8QUWLwbKefCudWS0PRKioV+VbQ0oCUPC691fQ==
   /jest-validate/24.0.0:
     dependencies:
-      camelcase: 5.0.0
+      camelcase: 5.1.0
       chalk: 2.4.2
       jest-get-type: 24.0.0
       leven: 2.1.0
@@ -5036,7 +5042,7 @@ packages:
       integrity: sha512-1nh45deeb5olNY7eX82BkPO7SSxR5SSYJiPTrTdFUVYwAl8CKMA5N9PjTYkHiRjisVcxcQ1HXdLhx2qxxJzLNQ==
   /nise/1.4.10:
     dependencies:
-      '@sinonjs/formatio': 3.2.0
+      '@sinonjs/formatio': 3.2.1
       '@sinonjs/text-encoding': 0.7.1
       just-extend: 4.0.2
       lolex: 2.7.5
@@ -6407,7 +6413,7 @@ packages:
       pkg-up: 2.0.0
       ramda: 0.25.0
       read-pkg: 3.0.0
-      semantic-release-plugin-decorators: 1.2.3
+      semantic-release-plugin-decorators: github.com/boardthatpowder/semantic-release-plugin-decorators/0f89322cb9231b2812e6e66bbc7215b88efd02b5
     dev: true
     peerDependencies:
       semantic-release: 13.4.1 - 15.x.x
@@ -6422,33 +6428,13 @@ packages:
       ramda: 0.25.0
       read-pkg: 3.0.0
       semantic-release: /semantic-release/15.13.3/semantic-release@15.13.3
-      semantic-release-plugin-decorators: /semantic-release-plugin-decorators/1.2.3/semantic-release@15.13.3
+      semantic-release-plugin-decorators: github.com/boardthatpowder/semantic-release-plugin-decorators/0f89322cb9231b2812e6e66bbc7215b88efd02b5/semantic-release@15.13.3
     dev: true
     id: registry.npmjs.org/semantic-release-monorepo/6.1.1
     peerDependencies:
       semantic-release: 13.4.1 - 15.x.x
     resolution:
       integrity: sha512-qObVQYU4MuUAx1lr/tpIYfhebRl6NxVk52wo+bG2RTg2ePtqmHDunXNpSkDIi1Mqvq2CgyG50IdDnceZ8N5+gQ==
-  /semantic-release-plugin-decorators/1.2.3:
-    dependencies:
-      import-from: 2.1.0
-      lodash: 4.17.11
-    dev: true
-    peerDependencies:
-      semantic-release: '>=11'
-    resolution:
-      integrity: sha512-bEXRStCDiVIgFMiqvF2Chxt1JouFYGVQGA2F6i5GjI9Aq7hukdmkl8P2hB0HAzY7ezJB5lvdlJPcAf16wpfkcg==
-  /semantic-release-plugin-decorators/1.2.3/semantic-release@15.13.3:
-    dependencies:
-      import-from: 2.1.0
-      lodash: 4.17.11
-      semantic-release: /semantic-release/15.13.3/semantic-release@15.13.3
-    dev: true
-    id: registry.npmjs.org/semantic-release-plugin-decorators/1.2.3
-    peerDependencies:
-      semantic-release: '>=11'
-    resolution:
-      integrity: sha512-bEXRStCDiVIgFMiqvF2Chxt1JouFYGVQGA2F6i5GjI9Aq7hukdmkl8P2hB0HAzY7ezJB5lvdlJPcAf16wpfkcg==
   /semantic-release/15.13.3:
     dependencies:
       '@semantic-release/commit-analyzer': 6.1.0
@@ -6686,10 +6672,10 @@ packages:
     dev: false
     resolution:
       integrity: sha1-pNprY1/8zMoz9w0Xy5JZLeleVXo=
-  /sinon/7.2.6:
+  /sinon/7.2.7:
     dependencies:
       '@sinonjs/commons': 1.3.1
-      '@sinonjs/formatio': 3.2.0
+      '@sinonjs/formatio': 3.2.1
       '@sinonjs/samsam': 3.2.0
       diff: 3.5.0
       lolex: 3.1.0
@@ -6697,7 +6683,7 @@ packages:
       supports-color: 5.5.0
     dev: true
     resolution:
-      integrity: sha512-n5r5wZ/VyrP7oAJpGGGjSxvw2Yy8T+qdGjDBltK01KBqB33O60V/xcG0Hgqm6SbJEIyCGuICpaXg9uFzY5DOYw==
+      integrity: sha512-rlrre9F80pIQr3M36gOdoCEWzFAMDgHYD8+tocqOw+Zw9OZ8F84a80Ds69eZfcjnzDqqG88ulFld0oin/6rG/g==
   /sisteransi/1.0.0:
     dev: true
     resolution:
@@ -7694,7 +7680,7 @@ packages:
       integrity: sha512-VCIyR1wJoEBZUqk5PA+oOBF6ypbwh5aNB3I50guxAL/quggdfs4TtNHQrSazFA3fYZ+tEqfs0zIGlv0c/rgjbQ==
   /yargs-parser/11.1.1:
     dependencies:
-      camelcase: 5.0.0
+      camelcase: 5.1.0
       decamelize: 1.2.0
     dev: true
     resolution:
@@ -7722,4 +7708,28 @@ packages:
       node: '>=6'
     resolution:
       integrity: sha512-+Wo/p5VRfxUgBUGy2j/6KX2mj9AYJWOHuhMjMcbBFc3y54o9/4buK1ksBvuiK01C3kby8DH9lSmJdSxw+4G/2Q==
+  github.com/boardthatpowder/semantic-release-plugin-decorators/0f89322cb9231b2812e6e66bbc7215b88efd02b5:
+    dependencies:
+      import-from: 2.1.0
+      lodash: 4.17.11
+    dev: true
+    name: semantic-release-plugin-decorators
+    peerDependencies:
+      semantic-release: '>=11'
+    resolution:
+      tarball: 'https://codeload.github.com/boardthatpowder/semantic-release-plugin-decorators/tar.gz/0f89322cb9231b2812e6e66bbc7215b88efd02b5'
+    version: 0.0.0-development
+  github.com/boardthatpowder/semantic-release-plugin-decorators/0f89322cb9231b2812e6e66bbc7215b88efd02b5/semantic-release@15.13.3:
+    dependencies:
+      import-from: 2.1.0
+      lodash: 4.17.11
+      semantic-release: /semantic-release/15.13.3/semantic-release@15.13.3
+    dev: true
+    id: github.com/boardthatpowder/semantic-release-plugin-decorators/0f89322cb9231b2812e6e66bbc7215b88efd02b5
+    name: semantic-release-plugin-decorators
+    peerDependencies:
+      semantic-release: '>=11'
+    resolution:
+      tarball: 'https://codeload.github.com/boardthatpowder/semantic-release-plugin-decorators/tar.gz/0f89322cb9231b2812e6e66bbc7215b88efd02b5'
+    version: 0.0.0-development
 shrinkwrapVersion: 4

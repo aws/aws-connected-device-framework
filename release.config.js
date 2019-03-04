@@ -6,7 +6,7 @@
  * - https://github.com/Updater/semantic-release-monorepo
  * - https://github.com/semantic-release/semantic-release
  */
-const releaseRules = require('./cicd//releaseRules');
+const releaseRules = require('./cicd/releaseRules');
 
 module.exports = {
   branch: 'master',
@@ -14,6 +14,7 @@ module.exports = {
     analyzeCommits: [
       {
         path: '@semantic-release/commit-analyzer',
+        preset: 'angular',
         releaseRules
       }
       
