@@ -114,6 +114,10 @@ Resources:
         ComputeType: BUILD_GENERAL1_MEDIUM
         Image: aws/codebuild/nodejs:8.11.0
         Type: LINUX_CONTAINER
+        EnvironmentVariables:
+          - Name: BRANCH
+            Type: PLAINTEXT
+            Value: !Ref Branch
       Source: 
         Type: CODEPIPELINE
         BuildSpec: |
