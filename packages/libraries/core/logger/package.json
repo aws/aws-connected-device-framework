@@ -1,7 +1,7 @@
 {
   "name": "@cdf/logger",
   "description": "Common logging capability for platform.",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "author": "Atul Bargaje <atulbar@amazon.com>",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
