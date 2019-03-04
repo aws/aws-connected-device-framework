@@ -146,6 +146,7 @@ Resources:
             base-directory: $CODEBUILD_SRC_DIR
             discard-paths: no
             files:
+              - node_modules
               - '**/*'
           cache:
             paths:

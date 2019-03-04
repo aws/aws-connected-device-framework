@@ -7,3 +7,6 @@ echo buildproject_postbuild started on `date`
 echo versioning...
 export GIT_CREDENTIALS="$CDF_CODECOMMIT_USERNAME:$CDF_CODECOMMIT_PASSWORD"
 pnpm m run semantic-release -- --debug
+
+echo node_modules...
+ls -la node_modules
