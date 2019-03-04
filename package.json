@@ -1,10 +1,9 @@
 {
-  "name": "cdf",
+  "name": "@cdf",
   "author": "Dean Hart <deanhart@amazon.com>",
   "scripts": {
     "reset": "pnpm m i --force && pnpm m run clean && pnpm m run reset && pnpm m i --force",
-    "commit": "npx git-cz",
-    "semantic-release": "npx semantic-release -e semantic-release-monorepo"
+    "commit": "npx git-cz"
   },
   "devDependencies": {
     "@commitlint/cli": "^7.5.2",

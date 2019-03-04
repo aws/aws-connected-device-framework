@@ -14,7 +14,8 @@
     "bundle": "cd dist && zip -rq ../build/build.zip *",
     "postbundle": "echo '\n\n******   node_modules have been flattened and resolved in production mode.  If this is a dev environment, make sure you run `pnpm run reset` from the root to reset.'",
     "start": "NODE_CONFIG=$(cat ${ASSETLIBRARY_CONFIG_LOCATION}) NODE_CONFIG_DIR='./src/config' ts-node src/lambda_proxy.ts",
-    "start-dist": "NODE_CONFIG=$(cat ${ASSETLIBRARY_CONFIG_LOCATION}) NODE_CONFIG_DIR='./src/config' node lambda_proxy.js"
+    "start-dist": "NODE_CONFIG=$(cat ${ASSETLIBRARY_CONFIG_LOCATION}) NODE_CONFIG_DIR='./src/config' node lambda_proxy.js",
+    "semantic-release": "npx semantic-release -e semantic-release-monorepo"
   },
   "dependencies": {
     "@cdf/config-inject": "^1.2.0",
@@ -90,20 +91,5 @@
       "node"
     ]
   },
-  "private": true,
-  "release": {
-    "monorepo": {
-      "analyzeCommits": {
-        "format": "atom"
-      },
-      "generateNotes": "myNotesGenerator"
-    },
-    "prepare": [
-      "@semantic-release/npm",
-      "@semantic-release/git"
-    ],
-    "verifyConditions": [
-      "@semantic-release/git"
-    ]
-  }
+  "private": true
 }

@@ -10,7 +10,8 @@
     "clean": "del-cli dist build",
     "lint": "tslint \"src/**/*.ts\"",
     "test": "pnpm run lint && nyc jest",
-    "build": "tsc -b tsconfig.json"
+    "build": "tsc -b tsconfig.json",
+    "semantic-release": "npx semantic-release -e semantic-release-monorepo"
   },
   "dependencies": {
     "@cdf/errors": "^1.2.0",
@@ -68,20 +69,5 @@
     ]
   },
   "license": "ISC",
-  "private": true,
-  "release": {
-    "monorepo": {
-      "analyzeCommits": {
-        "format": "atom"
-      },
-      "generateNotes": "myNotesGenerator"
-    },
-    "prepare": [
-      "@semantic-release/npm",
-      "@semantic-release/git"
-    ],
-    "verifyConditions": [
-      "@semantic-release/git"
-    ]
-  }
+  "private": true
 }
