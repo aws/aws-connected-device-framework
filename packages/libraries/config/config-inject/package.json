@@ -6,10 +6,10 @@
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "scripts": {
-    "reset": "pnpm run clean && del-cli node_modules",
+    "reset": "npm run clean && del-cli node_modules",
     "clean": "del-cli dist build",
     "lint": "tslint \"src/**/*.ts\"",
-    "test": "pnpm run lint && nyc jest",
+    "test": "npm run lint && nyc jest",
     "build": "tsc -b tsconfig.json",
     "semantic-release": "npx semantic-release -e semantic-release-monorepo"
   },
