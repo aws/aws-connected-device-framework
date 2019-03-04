@@ -13,6 +13,7 @@ module.exports = {
   monorepo: {
     analyzeCommits: [
       {
+        // Determine the type of release by analyzing commits with conventional-changelog.
         path: '@semantic-release/commit-analyzer',
         preset: 'angular',
         releaseRules
@@ -20,28 +21,33 @@ module.exports = {
       
     ],
     generateNotes: [
+      // Generate release notes for the commits added since the last release with conventional-changelog.
       '@semantic-release/release-notes-generator'
     ]
   },
-  verifyConditions: [],
   /**
-   * Move plugins from verifyConditions to verifyRelease to
-   * reduce expensive network calls (50%+ runtime reduction).
+   * Move plugins from verifyConditions to verifyRelease to reduce expensive network calls (50%+ runtime reduction).
    * https://github.com/Updater/semantic-release-monorepo#reduce-expensive-network-calls-50-runtime-reduction
    */
+  verifyConditions: [],
   verifyRelease: [
+    // Verify the changelogFile and changelogTitle options configuration
     '@semantic-release/changelog',
+    // Verify the access to the remote Git repository, the commit message and the assets option configuration.
     '@semantic-release/git'
   ]
     .map(require)
     .map(x => x.verifyConditions),
   prepare: [
+    // Create or update a changelog file in the local project directory with the changelog content created in the generate notes step.
     '@semantic-release/changelog',
     {
+      // Updates the package.json version
       path: '@semantic-release/npm',
       npmPublish: false
     },
     {
+      // Create a release commit, including configurable file assets.
       path: '@semantic-release/git',
       assets: ['**/CHANGELOG.md', '**/package.json', '**/package-lock.json', 'shrinkwrap.yaml']
     }

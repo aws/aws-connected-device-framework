@@ -4,8 +4,6 @@ set -e
 
 echo deployproject_prebuild started on `date`
 
-echo files...
-ls -la
-
 echo Bundling...
+pnpm i --force
 pnpm m run bundle
