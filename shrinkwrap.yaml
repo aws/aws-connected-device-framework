@@ -33,6 +33,7 @@ importers:
     devDependencies:
       '@commitlint/cli': 7.5.2
       '@commitlint/config-conventional': 7.5.0
+      '@semantic-release/changelog': /@semantic-release/changelog/3.0.2/semantic-release@15.13.3
       '@semantic-release/git': /@semantic-release/git/7.0.8/semantic-release@15.13.3
       '@semantic-release/npm': /@semantic-release/npm/5.1.4/semantic-release@15.13.3
       '@types/config': 0.0.34
@@ -56,6 +57,7 @@ importers:
       '@cdf/logger': ^1.2.0
       '@commitlint/cli': ^7.5.2
       '@commitlint/config-conventional': ^7.5.0
+      '@semantic-release/changelog': ^3.0.2
       '@semantic-release/git': ^7.0.8
       '@semantic-release/npm': ^5.1.4
       '@types/config': 0.0.34
@@ -82,6 +84,7 @@ importers:
     devDependencies:
       '@commitlint/cli': 7.5.2
       '@commitlint/config-conventional': 7.5.0
+      '@semantic-release/changelog': /@semantic-release/changelog/3.0.2/semantic-release@15.13.3
       '@semantic-release/git': /@semantic-release/git/7.0.8/semantic-release@15.13.3
       '@semantic-release/npm': /@semantic-release/npm/5.1.4/semantic-release@15.13.3
       '@types/jest': 24.0.9
@@ -100,6 +103,7 @@ importers:
     specifiers:
       '@commitlint/cli': ^7.5.2
       '@commitlint/config-conventional': ^7.5.0
+      '@semantic-release/changelog': ^3.0.2
       '@semantic-release/git': ^7.0.8
       '@semantic-release/npm': ^5.1.4
       '@types/jest': ^24.0.9
@@ -121,6 +125,7 @@ importers:
     devDependencies:
       '@commitlint/cli': 7.5.2
       '@commitlint/config-conventional': 7.5.0
+      '@semantic-release/changelog': /@semantic-release/changelog/3.0.2/semantic-release@15.13.3
       '@semantic-release/git': /@semantic-release/git/7.0.8/semantic-release@15.13.3
       '@semantic-release/npm': /@semantic-release/npm/5.1.4/semantic-release@15.13.3
       '@types/jest': 24.0.9
@@ -139,6 +144,7 @@ importers:
     specifiers:
       '@commitlint/cli': ^7.5.2
       '@commitlint/config-conventional': ^7.5.0
+      '@semantic-release/changelog': ^3.0.2
       '@semantic-release/git': ^7.0.8
       '@semantic-release/npm': ^5.1.4
       '@types/jest': ^24.0.9
@@ -179,6 +185,7 @@ importers:
     devDependencies:
       '@commitlint/cli': 7.5.2
       '@commitlint/config-conventional': 7.5.0
+      '@semantic-release/changelog': /@semantic-release/changelog/3.0.2/semantic-release@15.13.3
       '@semantic-release/git': /@semantic-release/git/7.0.8/semantic-release@15.13.3
       '@semantic-release/npm': /@semantic-release/npm/5.1.4/semantic-release@15.13.3
       '@types/aws-serverless-express': 3.3.0
@@ -207,6 +214,7 @@ importers:
       '@cdf/config-inject': ^1.2.0
       '@commitlint/cli': ^7.5.2
       '@commitlint/config-conventional': ^7.5.0
+      '@semantic-release/changelog': ^3.0.2
       '@semantic-release/git': ^7.0.8
       '@semantic-release/npm': ^5.1.4
       '@types/aws-serverless-express': ^3.3.0
@@ -587,6 +595,21 @@ packages:
       semantic-release: '>=15.8.0 <16.0.0'
     resolution:
       integrity: sha512-pDUaBNAuPAqQ+ArHwvR160RG2LbfyIVz9EJXgxH0V547rlx/hCs0Sp7L4Rtzi5Z+d6CHcv9g2ynxplE1xAzp2g==
+  /@semantic-release/changelog/3.0.2/semantic-release@15.13.3:
+    dependencies:
+      '@semantic-release/error': 2.2.0
+      aggregate-error: 2.2.0
+      fs-extra: 7.0.1
+      lodash: 4.17.11
+      semantic-release: /semantic-release/15.13.3/semantic-release@15.13.3
+    dev: true
+    engines:
+      node: '>=8.3'
+    id: registry.npmjs.org/@semantic-release/changelog/3.0.2
+    peerDependencies:
+      semantic-release: '>=15.8.0 <16.0.0'
+    resolution:
+      integrity: sha512-pDUaBNAuPAqQ+ArHwvR160RG2LbfyIVz9EJXgxH0V547rlx/hCs0Sp7L4Rtzi5Z+d6CHcv9g2ynxplE1xAzp2g==
   /@semantic-release/commit-analyzer/6.1.0:
     dependencies:
       conventional-changelog-angular: 5.0.3
@@ -879,7 +902,7 @@ packages:
     dependencies:
       '@types/events': 3.0.0
       '@types/minimatch': 3.0.3
-      '@types/node': 8.10.42
+      '@types/node': 11.10.4
     dev: true
     resolution:
       integrity: sha512-1Bh06cbWJUHMC97acuD6UMG29nMt0Aqz1vF3guLfG+kHHJhy3AyohZFFxYk2f7Q1SQIrNwvncxAE0N/9s70F2w==
@@ -900,6 +923,10 @@ packages:
     dev: true
     resolution:
       integrity: sha512-tHq6qdbT9U1IRSGf14CL0pUlULksvY9OZ+5eEgl1N7t+OA3tGvNpxJCzuKQlsNgCVwbAs670L1vcVQi8j9HjnA==
+  /@types/node/11.10.4:
+    dev: true
+    resolution:
+      integrity: sha512-wa09itaLE8L705aXd8F80jnFpxz3Y1/KRHfKsYL2bPc0XF+wEWu8sR9n5bmeu8Ba1N9z2GRNzm/YdHcghLkLKg==
   /@types/node/8.10.42:
     resolution:
       integrity: sha512-8LCqostMfYwQs9by1k21/P4KZp9uFQk3Q528y3qtPKQnCJmKz0Em3YzgeNjTNV1FVrG/7n/6j12d4UKg9zSgDw==
