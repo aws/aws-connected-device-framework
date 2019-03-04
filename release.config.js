@@ -47,9 +47,10 @@ module.exports = {
     }
   ],
   /**
-   * By default, semantic-release pushes to github on success/fail.  override this
+   * By default, semantic-release pushes to github on publish/uccess/fail.  override this
    * behavior by setting to false
    */
   publish: false,
-  fail: false
+  fail: false,
+  success: false
 };
