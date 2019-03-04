@@ -220,7 +220,7 @@ Resources:
                 - cicd/deployproject_build.sh
             post_build:
               commands:
-                - echo 'TODO tag git with the release'
+                - cicd/deployproject_postbuild.sh
 
 
   DeployPipeline:

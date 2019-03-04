@@ -11,3 +11,4 @@ packages/**/.nyc_output/
 # files created by cicd pipeline to manage state between pipeline stages
 .cicd_*
 pnpm-debug.log
+cicd/codepipeline-packaged.yaml
