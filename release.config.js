@@ -29,12 +29,12 @@ module.exports = {
    * Move plugins from verifyConditions to verifyRelease to reduce expensive network calls (50%+ runtime reduction).
    * https://github.com/Updater/semantic-release-monorepo#reduce-expensive-network-calls-50-runtime-reduction
    */
-  verifyConditions: [],
+  verifyConditions: ['@semantic-release/git'],
   verifyRelease: [
     // Verify the changelogFile and changelogTitle options configuration
-    '@semantic-release/changelog',
+    '@semantic-release/changelog'
     // Verify the access to the remote Git repository, the commit message and the assets option configuration.
-    '@semantic-release/git'
+    //'@semantic-release/git'
   ]
     .map(require)
     .map(x => x.verifyConditions),
