@@ -3,12 +3,13 @@
   "author": "Dean Hart <deanhart@amazon.com>",
   "scripts": {
     "reset": "pnpm m i --force && pnpm m run clean && pnpm m run reset && pnpm m i --force",
-    "cm": "npx git-cz",
-    "semantic-release": "semantic-release -e semantic-release-monorepo"
+    "commit": "npx git-cz",
+    "semantic-release": "npx semantic-release -e semantic-release-monorepo"
   },
   "devDependencies": {
     "@commitlint/cli": "^7.5.2",
     "@commitlint/config-conventional": "^7.5.0",
+    "@semantic-release/changelog": "^3.0.2",
     "@semantic-release/git": "^7.0.8",
     "@semantic-release/npm": "^5.1.4",
     "commitizen": "^3.0.7",
