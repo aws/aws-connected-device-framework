@@ -40,7 +40,10 @@ function readPackage(pkg, context) {
             pkg.dependencies['semantic-release-plugin-decorators'] = 'boardthatpowder/semantic-release-plugin-decorators'
             break;
 
-
+        case 'semantic-release':
+            context.log('pnpmfile.js:  replace env-ci of semantic-release with forked version for temporary logging')
+            pkg.dependencies['env-ci'] = 'boardthatpowder/env-ci'
+            break;
     }
 
     return pkg
