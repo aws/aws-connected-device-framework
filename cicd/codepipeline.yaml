@@ -205,6 +205,9 @@ Resources:
                 # install required binary
                 - curl -s -qL -o /usr/bin/jq https://stedolan.github.io/jq/download/linux64/jq
                 - chmod +x /usr/bin/jq
+            pre_build:
+              commands:
+                - bash cicd/deployproject_prebuild.sh
             build:
               commands:
                 - bash -c packages/services/assetlibrary/infrastructure/package-cfn.bash
