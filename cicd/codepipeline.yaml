@@ -138,6 +138,10 @@ Resources:
               commands:
                 - cicd/buildproject_build.sh
 
+            postbuild:
+              commands:
+                - cicd/buildproject_postbuild.sh
+
           artifacts:
             base-directory: $CODEBUILD_SRC_DIR
             discard-paths: no
