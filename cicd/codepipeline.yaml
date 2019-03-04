@@ -150,6 +150,10 @@ Resources:
           cache:
             paths:
               - 'node_modules/**/*'
+      Cache:
+        Type: LOCAL
+        Modes: 
+          - LOCAL_CUSTOM_CACHE
 
   ###  CodeBuild project that calls the package and deploy scripts to deploy the service, along with
   ###  setting any necessary CloudFormation configuration.
@@ -216,7 +220,6 @@ Resources:
             post_build:
               commands:
                 - echo 'TODO tag git with the release'
-      EncryptionKey: !Sub 'arn:aws:kms:${AWS::Region}:${AWS::AccountId}:alias/aws/s3'
 
 
   DeployPipeline:
