@@ -8,12 +8,14 @@ if [ "$CODEBUILD_BUILD_SUCCEEDING" -eq 1 ]; then
 
     echo tagging release...
     if [[ $ENVIRONMENT == *"-staging" ]]; then
-        tagName="RELEASE-STAGING-$(date -u +%Y%m%d%H%M%S)"
+        tagNames=("RELEASE-STAGING-$(date -u +%Y%m%d%H%M%S)" "RELEASE-STAGING-LATEST")
     else
-        tagName="RELEASE-LIVE-$(date -u +%Y%m%d%H%M%S)"
+        tagNames=("RELEASE-LIVE-$(date -u +%Y%m%d%H%M%S)" "RELEASE-LIVE-LATEST")
     fi
     
-    git tag $tagName
-    git push origin $tagName
+    for tagName in "${tagNames[@]}"; do 
+        git tag -fa $tagName
+        git push origin $tagName
+    done
 
 fi
