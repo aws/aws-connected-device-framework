@@ -187,10 +187,10 @@ Resources:
           phases:
             install:
               commands:
-                - bash -c cicd/integrationtestingproject_install.bash
+                - bash -c cicd/integrationtestsproject_install.bash
             build:
               commands:
-                - bash -c cicd/integrationtestingproject_build.bash
+                - bash -c cicd/integrationtestsproject_build.bash
 
 
   ###  CodeBuild project that calls the package and deploy scripts to deploy the service, along with

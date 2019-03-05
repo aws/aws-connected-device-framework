@@ -40,6 +40,10 @@ bulkcerts_invoke_url=$(echo $stack_exports \
 
 echo setting integration test config...
 
+INTEGRATIONTESTS_CONFIG_LOCATION="CODEBUILD_SRC_DIR_source_infrastructure/integration-tests/$ENVIRONMENT-config.json"
+
+echo using configuration from $INTEGRATIONTESTS_CONFIG_LOCATION
+
 cat $INTEGRATIONTESTS_CONFIG_LOCATION | \
   jq \
     --arg assetlibrary_invoke_url "$assetlibrary_invoke_url" \
