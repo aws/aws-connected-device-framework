@@ -192,9 +192,7 @@ Resources:
             build:
               commands:
                 - cicd/integrationtestingproject_build.sh
-            post_build:
-              commands:
-                - cicd/integrationtestingproject_postbuild.sh
+                
 
   ###  CodeBuild project that calls the package and deploy scripts to deploy the service, along with
   ###  setting any necessary CloudFormation configuration.
