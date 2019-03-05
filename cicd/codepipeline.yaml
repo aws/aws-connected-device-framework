@@ -188,6 +188,9 @@ Resources:
             install:
               commands:
                 - bash -c cicd/integrationtestsproject_install.bash
+            pre_build:
+              commands:
+                - bash -c cicd/integrationtestsproject_prebuild.bash
             build:
               commands:
                 - bash -c cicd/integrationtestsproject_build.bash

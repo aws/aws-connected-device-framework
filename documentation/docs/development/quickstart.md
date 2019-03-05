@@ -28,6 +28,12 @@ curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | b
 ```sh
 > npm install -g pnpm
 
++ clone the project:
+
+```sh
+> git clone https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core
+```
+
 
 ## FAQ
 
