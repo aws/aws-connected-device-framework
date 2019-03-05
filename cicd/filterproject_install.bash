@@ -10,8 +10,8 @@ echo Adding workaround for unsupported characters in the auto-generated codecomm
 export ESCAPED_CREDENTIALS=$(echo "$CDF_CODECOMMIT_USERNAME:$CDF_CODECOMMIT_PASSWORD" | sed -r 's:/:%2F:g' )
 
 echo configuring git
-git config --global user.email "$CDF_CODECOMMIT_EMAIL"
-git config --global user.name "$CDF_CODECOMMIT_USERNAME"
+git config user.email "$CDF_CODECOMMIT_EMAIL"
+git config user.name "$CDF_CODECOMMIT_USERNAME"
 
 echo Adding workaround for CodeCommit not cloning source as git
 cd $CODEBUILD_SRC_DIR/..

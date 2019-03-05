@@ -61,4 +61,5 @@ echo "\naugmented configuration:\n$(cat $INTEGRATIONTESTS_CONFIG_LOCATION)\n"
 echo running integration tests...
 
 cd packages/integration-tests
+pnpm i
 npm run integration-test -- "features/assetlibrary/$ASSETLIBRARY_MODE/*.feature"
