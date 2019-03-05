@@ -3,19 +3,25 @@
     "compilerOptions": {
         "outDir": "dist",
         "rootDir": "src",
+        "composite": true,
 
-        "composite": true
+        "typeRoots": [
+            "./src/@types",
+            "./node_modules/@types",
+            "../../../../node_modules/@types"
+        ],
+        "types": [
+            "node"
+        ]
     },
     "include": [
         "src"
     ],
     "exclude": [
         "node_modules",
-        "../../node_modules",
-        "src/**/*.spec.ts",
-        "src/**/*.test.ts",
         "dist",
         ".vscode",
-        ".git"
+        ".git",
+        "./**/__mocks__/*.ts"
     ]
 }
