@@ -8,6 +8,15 @@ echo integrationtestsproject_build started on `date`
 
 echo determining deployed urls...
 
+ASSETLIBRARY_STACK_NAME="cdf-assetlibrary-$ENVIRONMENT"
+ASSETLIBRARYHISTORY_STACK_NAME="cdf-assetlibraryhistory-$ENVIRONMENT"
+PROVISIONING_STACK_NAME="cdf-provisioning-$ENVIRONMENT"
+COMMANDS_STACK_NAME="cdf-commands-$ENVIRONMENT"
+BULKCERTS_STACK_NAME="cdf-bulkcerts-$ENVIRONMENT"
+
+
+
+
 stack_exports=$(aws cloudformation list-exports $AWS_ARGS)
 
 assetlibrary_invoke_url_export="$ASSETLIBRARY_STACK_NAME-apigatewayurl"
