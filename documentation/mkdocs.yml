@@ -1,0 +1,73 @@
+site_name: Connected Device Framework (CDF)
+
+pages:
+  - Start: index.md
+  - Overview: projects/overview.md
+  - Tracks:
+    - Beginner: beginner/index.md
+    - Intermediate: intermediate/index.md
+    - Advanced: advanced/index.md
+  - Projects:
+    - Asset Library:
+      - 'Asset Library Overview': projects/assetlibrary/overview.md
+      - 'Asset Library Modes': projects/assetlibrary/modes.md
+      - 'Templates (User)': projects/assetlibrary/templates-user.md
+      - 'Templates (Developer)': projects/assetlibrary/templates-developer.md
+      - 'Asset Library Events': projects/assetlibrary/events.md
+      - 'Asset Library Swagger': projects/assetlibrary/assetlibrary-swagger.md
+      - 'Profiles': projects/assetlibrary/profiles.md
+    - Asset Library History:
+      - 'Asset Library History Overview': projects/assetlibrary-history/overview.md
+      - 'Asset Library History Swagger': projects/assetlibrary-history/assetlibraryhistory-swagger.md
+    - Bulk Certs:
+      - 'Bulk Certs Overview' : projects/bulkcerts/overview.md 
+      - 'Bulk Certs Swagger': projects/bulkcerts/bulkcerts-swagger.md
+    - Certificate Vendor:
+      - 'Certificate Vendor Overview' : projects/certificatevendor/overview.md
+    - Commands:
+      - 'Commands Overview' : projects/commands/overview.md  
+      - 'Commands Pre-signed Urls (User)' : projects/commands/presigned-urls-user.md  
+      - 'Commands Pre-signed Urls (Developer)' : projects/commands/presigned-urls-developer.md  
+      - 'Commands Ephemeral Groups' : projects/commands/ephemeral-groups.md
+      - 'Commands Swagger': projects/commands/commands-swagger.md
+    - Custom Device Authorizer:
+      - 'Custom Device Authorizer Overview' : projects/auth-devicecert/overview.md
+    - Device Monitoring:
+      - 'Device Monitoring Overview' : projects/devicemonitoring/overview.md  
+    - Provisioning:
+      - 'Provisioning Overview': projects/provisioning/overview.md
+      - 'Provisioning Templates': projects/provisioning/provisioning-templates.md
+      - 'Provisioning Swagger': projects/provisioning/provisioning-swagger.md
+    - Request Queue:
+      - 'Request Queue Overview' : projects/request-queue/overview.md
+    - Reusable Libraries:
+      - 'Libraries Overview' : projects/libraries/README.md
+  - User:
+    - Postman: postman/index.md
+  - Development:
+    - 'Prerequisites': development/prerequisites.md
+    - 'Tech Stack': development/tech-stack.md
+    - 'Local Development': development/local_development.md
+    - 'NPM Private Repo': development/npm-user.md
+    - 'Dependency Injection': development/dependency-injection.md
+    - 'Asynchronous Programming': development/async.md
+    - 'Config': development/config.md
+    - 'Unit Testing': development/unit-testing.md
+    - 'Integration Testing': development/integration-testing.md
+  - Admin:
+    - 'NPM Private Repo (Installation)': development/npm-installation.md
+    - 'Deployment': advanced/deployment.md
+    
+theme:
+  name: 'material'
+
+markdown_extensions:
+  - markdown.extensions.admonition:
+  - markdown_include.include:
+      base_path: docs
+  - pymdownx.emoji:
+  - pymdownx.details:
+  - pymdownx.mark:
+  - pymdownx.superfences:
+  - toc:
+      permalink: True
