@@ -55,4 +55,6 @@ cat $INTEGRATIONTESTS_CONFIG_LOCATION | \
 
 echo running integration tests...
 
-npm run integration-test
+npm run integration-test -- "features/assetlibrary/$ASSETLIBRARY_MODE/*.feature"
+
+
