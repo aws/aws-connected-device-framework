@@ -17,7 +17,7 @@ if [ "$CODEBUILD_BUILD_SUCCEEDING" -eq 1 ]; then
     tagNames[1]="RELEASE-$DEPLOY_ENV-LATEST"
     
     for tagName in "${tagNames[@]}"; do 
-        git tag -fa $tagName
+        git tag -f $tagName
         git push origin $tagName
     done
 
