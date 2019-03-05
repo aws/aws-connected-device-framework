@@ -2,7 +2,7 @@
   "name": "cdf",
   "author": "Dean Hart <deanhart@amazon.com>",
   "scripts": {
-    "reset": "pnpm m i --force && pnpm m run clean && pnpm m run reset && pnpm m i --force",
+    "reset": "pnpm i && pnpm m run reset && rm -rf node_modules && pnpm i --force",
     "commit": "npx git-cz"
   },
   "devDependencies": {
