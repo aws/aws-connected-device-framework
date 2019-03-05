@@ -27,4 +27,4 @@ infrastructure/package-cfn.bash -b cdf-157731826412-us-east-1 -R us-east-1 -P de
 ./deploy.bash -e dean -p 157731826412 -i 0.0.0.0/0 -k 2d6d7741-3930-4556-ac69-2ea395bfec77 -b cdf-157731826412-us-east-1 -R us-east-1 -P deanhart-1577
 ```
 
-In addition, a top level `deploy.bash` script orchestrates the deployment of the entire platform.  
+In addition, a top level `deploy.bash` script (located in the `cdf-infrastructure-{customer}` project) orchestrates the deployment of the entire platform.  

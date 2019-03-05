@@ -12,5 +12,5 @@ Tool / Technology | Reason
 ---|---
 [aws cli](http://docs.aws.amazon.com/cli/latest/userguide/installing.html) | Used as part of some deployment scripts
 [jq](https://stedolan.github.io/jq/download/) | Used as part of some deployment scripts
-[sam cli](https://docs.aws.amazon.com/lambda/latest/dg/sam-cli-requirements.html) | Allows for testing and running Lamdba and API Gateway locally
+
 

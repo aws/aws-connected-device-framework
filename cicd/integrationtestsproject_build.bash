@@ -55,9 +55,10 @@ cat $INTEGRATIONTESTS_CONFIG_LOCATION | \
   '.assetLibrary.baseUrl=$assetlibrary_invoke_url | .assetLibraryHistory.baseUrl=$assetlibraryhistory_invoke_url | .commands.baseUrl=$commands_invoke_url | .provisioning.baseUrl=$provisioning_invoke_url | .bulkCerts.baseUrl=$bulkcerts_invoke_url' \
   > $INTEGRATIONTESTS_CONFIG_LOCATION.tmp && mv $INTEGRATIONTESTS_CONFIG_LOCATION.tmp $INTEGRATIONTESTS_CONFIG_LOCATION
 
-
+echo "\naugmented configuration:\n$(cat $INTEGRATIONTESTS_CONFIG_LOCATION)\n"
 
 
 echo running integration tests...
 
-pnpm m run integration-test -- "features/assetlibrary/$ASSETLIBRARY_MODE/*.feature"
+cd packages/integration-tests
+npm run integration-test -- "features/assetlibrary/$ASSETLIBRARY_MODE/*.feature"
