@@ -131,20 +131,19 @@ Resources:
           phases:
             install:
               commands:
-                - printenv
-                - cicd/buildproject_install.sh
+                - bash -c cicd/buildproject_install.bash
 
             pre_build:
               commands:
-                - cicd/buildproject_prebuild.sh
+                - bash -c cicd/buildproject_prebuild.bash
 
             build:
               commands:
-                - cicd/buildproject_build.sh
+                - bash -c cicd/buildproject_build.bash
 
             post_build:
               commands:
-                - cicd/buildproject_postbuild.sh
+                - bash -c cicd/buildproject_postbuild.bash
 
           artifacts:
             base-directory: $CODEBUILD_SRC_DIR
@@ -188,11 +187,11 @@ Resources:
           phases:
             install:
               commands:
-                - cicd/integrationtestingproject_install.sh
+                - bash -c cicd/integrationtestingproject_install.bash
             build:
               commands:
-                - cicd/integrationtestingproject_build.sh
-                
+                - bash -c cicd/integrationtestingproject_build.bash
+
 
   ###  CodeBuild project that calls the package and deploy scripts to deploy the service, along with
   ###  setting any necessary CloudFormation configuration.
@@ -245,13 +244,13 @@ Resources:
           phases:
             install:
               commands:
-                - cicd/deployproject_install.sh
+                - bash -c cicd/deployproject_install.bash
             build:
               commands:
-                - cicd/deployproject_build.sh
+                - bash -c cicd/deployproject_build.bash
             post_build:
               commands:
-                - cicd/deployproject_postbuild.sh
+                - bash -c cicd/deployproject_postbuild.bash
 
 
   ###  CodeBuild project that calls the package and deploy scripts to deploy the service, along with
@@ -305,13 +304,13 @@ Resources:
           phases:
             install:
               commands:
-                - cicd/deployproject_install.sh
+                - bash -c cicd/deployproject_install.bash
             build:
               commands:
-                - cicd/deployproject_build.sh
+                - bash -c cicd/deployproject_build.bash
             post_build:
               commands:
-                - cicd/deployproject_postbuild.sh
+                - bash -c cicd/deployproject_postbuild.bash
 
 
   DeployPipeline:

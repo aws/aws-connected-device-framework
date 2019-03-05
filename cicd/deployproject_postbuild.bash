@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 set -e
 
@@ -8,10 +8,13 @@ if [ "$CODEBUILD_BUILD_SUCCEEDING" -eq 1 ]; then
 
     echo tagging release...
     if [[ $ENVIRONMENT == *"-staging" ]]; then
-        tagNames=("RELEASE-STAGING-$(date -u +%Y%m%d%H%M%S)" "RELEASE-STAGING-LATEST")
+        DEPLOY_ENV='STAGING'
     else
-        tagNames=("RELEASE-LIVE-$(date -u +%Y%m%d%H%M%S)" "RELEASE-LIVE-LATEST")
+        DEPLOY_ENV='LIVE'
     fi
+
+    tagNames[0]="RELEASE-$DEPLOY_ENV-$(date -u +%Y%m%d%H%M%S)"
+    tagNames[1]="RELEASE-$DEPLOY_ENV-LATEST"
     
     for tagName in "${tagNames[@]}"; do 
         git tag -fa $tagName

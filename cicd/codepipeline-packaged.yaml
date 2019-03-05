@@ -1,0 +1,454 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Conditions:
+  CodePipelineNameProvided:
+    Fn::Not:
+    - Fn::Equals:
+      - Ref: CodePipelineName
+      - ''
+Description: CodePipeline for building and deploying cdf-core services
+Outputs:
+  SuccessTopic:
+    Export:
+      Name:
+        Fn::Sub: ${AWS::StackName}-SuccessTopic
+    Value:
+      Fn::GetAtt:
+      - NestedStack
+      - Outputs.SuccessTopic
+Parameters:
+  AssetLibraryPrivateRouteTableIds:
+    Description: Id of private route table ids where Neptune resides (if running Asset
+      Library in 'full' mode)
+    Type: String
+  AssetLibraryPrivateSubnetIds:
+    Description: Id of private subnets where Neptune resides (if running Asset Library
+      in 'full' mode)
+    Type: String
+  AssetLibrarySourceSecurityGroupId:
+    Description: Id of security group with access to Neptune (if running Asset Library
+      in 'full' mode)
+    Type: String
+  AssetLibraryVpcId:
+    Description: Id of VPC where Neptune resides (if running Asset Library in 'full'
+      mode)
+    Type: String
+  Branch:
+    Default: master
+    Description: Name of codecommit branch.
+    Type: String
+  CodePipelineName:
+    Description: Name of CICD pipeline to create.  If not provided, '${RepoName}-cicd-${Environment}'
+      will be used.
+    Type: String
+  CommonCICDStackName:
+    Description: Name of CICD common stack name.
+    MinLength: 1
+    Type: String
+  Environment:
+    Description: The name of the environment this stack is being deployed to.
+    MinLength: 1
+    Type: String
+  InfrastructureBranch:
+    Default: master
+    Description: Name of codecommit branch for the cdf-infrastructure-{customer} module.
+    MinLength: 1
+    Type: String
+  InfrastructureRepoName:
+    Description: Name of codecommit repository for the cdf-infrastructure-{customer}
+      module.
+    MinLength: 1
+    Type: String
+  RepoName:
+    Default: cdf-core
+    Description: Name of codecommit repository for this application.
+    Type: String
+Resources:
+  BuildProject:
+    Properties:
+      Artifacts:
+        Name:
+          Fn::Sub: ${CodePipelineName}-build
+        NamespaceType: NONE
+        Packaging: NONE
+        Type: CODEPIPELINE
+      Description:
+        Fn::Sub: Builds, unit tests, and performs code analysis as part of a ${RepoName}
+          CodePipeline.
+      Environment:
+        ComputeType: BUILD_GENERAL1_MEDIUM
+        EnvironmentVariables:
+        - Name: BRANCH
+          Type: PLAINTEXT
+          Value:
+            Ref: Branch
+        Image: aws/codebuild/nodejs:8.11.0
+        Type: LINUX_CONTAINER
+      Name:
+        Fn::If:
+        - CodePipelineNameProvided
+        - Fn::Sub: ${CodePipelineName}-build
+        - Fn::Sub: ${RepoName}-cicd-${Environment}-build
+      ServiceRole:
+        Fn::ImportValue:
+          Fn::Sub: ${CommonCICDStackName}-CodeBuildRole
+      Source:
+        BuildSpec: "\nversion: 0.2\nenv:\n  parameter-store:\n    CDF_CODECOMMIT_USERNAME:\
+          \ \"CDF_CODECOMMIT_USERNAME\"\n    CDF_CODECOMMIT_EMAIL: \"CDF_CODECOMMIT_EMAIL\"\
+          \n    CDF_CODECOMMIT_PASSWORD: \"CDF_CODECOMMIT_PASSWORD\"\nphases:\n  install:\n\
+          \    commands:\n      - bash -c cicd/buildproject_install.bash\n\n  pre_build:\n\
+          \    commands:\n      - bash -c cicd/buildproject_prebuild.bash\n\n  build:\n\
+          \    commands:\n      - bash -c cicd/buildproject_build.bash\n\n  post_build:\n\
+          \    commands:\n      - bash -c cicd/buildproject_postbuild.bash\n\nartifacts:\n\
+          \  base-directory: $CODEBUILD_SRC_DIR\n  discard-paths: no\n  files:\n \
+          \   - node_modules\n    - '**/*'\n"
+        Type: CODEPIPELINE
+    Type: AWS::CodeBuild::Project
+  DeployLiveProject:
+    Properties:
+      Artifacts:
+        Name:
+          Fn::If:
+          - CodePipelineNameProvided
+          - Fn::Sub: ${CodePipelineName}-deployLive
+          - Fn::Sub: ${RepoName}-cicd-${Environment}-deployLive
+        NamespaceType: NONE
+        Packaging: NONE
+        Type: CODEPIPELINE
+      Description:
+        Fn::Sub: Packages and deploys the CFN for deployment of ${RepoName}.
+      Environment:
+        ComputeType: BUILD_GENERAL1_MEDIUM
+        EnvironmentVariables:
+        - Name: DEPLOY_ARTIFACTS_STORE_BUCKET
+          Type: PLAINTEXT
+          Value:
+            Fn::ImportValue:
+              Fn::Sub: ${CommonCICDStackName}-ArtifactBucket
+        - Name: ENVIRONMENT
+          Type: PLAINTEXT
+          Value:
+            Ref: Environment
+        - Name: VPC_ID
+          Type: PLAINTEXT
+          Value:
+            Ref: AssetLibraryVpcId
+        - Name: SOURCE_SECURITY_GROUP_ID
+          Type: PLAINTEXT
+          Value:
+            Ref: AssetLibrarySourceSecurityGroupId
+        - Name: PRIVATE_SUBNET_IDS
+          Type: PLAINTEXT
+          Value:
+            Ref: AssetLibraryPrivateSubnetIds
+        - Name: PRIVATE_ROUTE_TABLE_IDS
+          Type: PLAINTEXT
+          Value:
+            Ref: AssetLibraryPrivateRouteTableIds
+        Image: aws/codebuild/nodejs:8.11.0
+        Type: LINUX_CONTAINER
+      Name:
+        Fn::If:
+        - CodePipelineNameProvided
+        - Fn::Sub: ${CodePipelineName}-deployLive
+        - Fn::Sub: ${RepoName}-cicd-${Environment}-deployLive
+      ServiceRole:
+        Fn::ImportValue:
+          Fn::Sub: ${CommonCICDStackName}-CodeBuildRole
+      Source:
+        BuildSpec: "version: 0.2\nphases:\n  install:\n    commands:\n      - bash\
+          \ -c cicd/deployproject_install.bash\n  build:\n    commands:\n      - bash\
+          \ -c cicd/deployproject_build.bash\n  post_build:\n    commands:\n     \
+          \ - bash -c cicd/deployproject_postbuild.bash\n"
+        Type: CODEPIPELINE
+      TimeoutInMinutes: 30
+    Type: AWS::CodeBuild::Project
+  DeployPipeline:
+    Properties:
+      ArtifactStore:
+        Location:
+          Fn::ImportValue:
+            Fn::Sub: ${CommonCICDStackName}-ArtifactBucket
+        Type: S3
+      Name:
+        Fn::If:
+        - CodePipelineNameProvided
+        - Ref: CodePipelineName
+        - Fn::Sub: ${RepoName}-cicd-${Environment}
+      RoleArn:
+        Fn::ImportValue:
+          Fn::Sub: ${CommonCICDStackName}-CodePipelineRoleArn
+      Stages:
+      - Actions:
+        - ActionTypeId:
+            Category: Source
+            Owner: AWS
+            Provider: CodeCommit
+            Version: 1
+          Configuration:
+            BranchName:
+              Ref: Branch
+            RepositoryName:
+              Ref: RepoName
+          Name: main
+          OutputArtifacts:
+          - Name: source_main
+          RunOrder: 1
+        - ActionTypeId:
+            Category: Source
+            Owner: AWS
+            Provider: CodeCommit
+            Version: 1
+          Configuration:
+            BranchName:
+              Ref: InfrastructureBranch
+            RepositoryName:
+              Ref: InfrastructureRepoName
+          Name: infrastructure
+          OutputArtifacts:
+          - Name: source_infrastructure
+          RunOrder: 1
+        Name: source
+      - Actions:
+        - ActionTypeId:
+            Category: Build
+            Owner: AWS
+            Provider: CodeBuild
+            Version: 1
+          Configuration:
+            ProjectName:
+              Ref: FilterCommitsProject
+          InputArtifacts:
+          - Name: source_main
+          Name: filter
+          OutputArtifacts:
+          - Name: gitified_main
+          RunOrder: 1
+        Name: filter-commits
+      - Actions:
+        - ActionTypeId:
+            Category: Build
+            Owner: AWS
+            Provider: CodeBuild
+            Version: 1
+          Configuration:
+            PrimarySource: gitified_main
+            ProjectName:
+              Ref: BuildProject
+          InputArtifacts:
+          - Name: gitified_main
+          - Name: source_infrastructure
+          Name: build
+          OutputArtifacts:
+          - Name: compiled
+          RunOrder: 1
+        Name: build
+      - Actions:
+        - ActionTypeId:
+            Category: Build
+            Owner: AWS
+            Provider: CodeBuild
+            Version: 1
+          Configuration:
+            PrimarySource: compiled
+            ProjectName:
+              Ref: DeployStagingProject
+          InputArtifacts:
+          - Name: compiled
+          - Name: source_infrastructure
+          Name: deploy
+          RunOrder: 1
+        Name: deploy-staging
+      - Actions:
+        - ActionTypeId:
+            Category: Build
+            Owner: AWS
+            Provider: CodeBuild
+            Version: 1
+          Configuration:
+            PrimarySource: compiled
+            ProjectName:
+              Ref: IntegrationTestingProject
+          InputArtifacts:
+          - Name: compiled
+          - Name: source_infrastructure
+          Name: test
+          RunOrder: 1
+        Name: integration-tests
+      - Actions:
+        - ActionTypeId:
+            Category: Build
+            Owner: AWS
+            Provider: CodeBuild
+            Version: 1
+          Configuration:
+            PrimarySource: compiled
+            ProjectName:
+              Ref: DeployLiveProject
+          InputArtifacts:
+          - Name: compiled
+          - Name: source_infrastructure
+          Name: deploy
+          RunOrder: 1
+        Name: deploy-live
+    Type: AWS::CodePipeline::Pipeline
+  DeployStagingProject:
+    Properties:
+      Artifacts:
+        Name:
+          Fn::If:
+          - CodePipelineNameProvided
+          - Fn::Sub: ${CodePipelineName}-deployStaging
+          - Fn::Sub: ${RepoName}-cicd-${Environment}-deployStaging
+        NamespaceType: NONE
+        Packaging: NONE
+        Type: CODEPIPELINE
+      Description:
+        Fn::Sub: Packages and deploys the CFN for deployment of ${RepoName}.
+      Environment:
+        ComputeType: BUILD_GENERAL1_MEDIUM
+        EnvironmentVariables:
+        - Name: DEPLOY_ARTIFACTS_STORE_BUCKET
+          Type: PLAINTEXT
+          Value:
+            Fn::ImportValue:
+              Fn::Sub: ${CommonCICDStackName}-ArtifactBucket
+        - Name: ENVIRONMENT
+          Type: PLAINTEXT
+          Value:
+            Fn::Sub: ${Environment}-staging
+        - Name: VPC_ID
+          Type: PLAINTEXT
+          Value:
+            Ref: AssetLibraryVpcId
+        - Name: SOURCE_SECURITY_GROUP_ID
+          Type: PLAINTEXT
+          Value:
+            Ref: AssetLibrarySourceSecurityGroupId
+        - Name: PRIVATE_SUBNET_IDS
+          Type: PLAINTEXT
+          Value:
+            Ref: AssetLibraryPrivateSubnetIds
+        - Name: PRIVATE_ROUTE_TABLE_IDS
+          Type: PLAINTEXT
+          Value:
+            Ref: AssetLibraryPrivateRouteTableIds
+        Image: aws/codebuild/nodejs:8.11.0
+        Type: LINUX_CONTAINER
+      Name:
+        Fn::If:
+        - CodePipelineNameProvided
+        - Fn::Sub: ${CodePipelineName}-deployStaging
+        - Fn::Sub: ${RepoName}-cicd-${Environment}-deployStaging
+      ServiceRole:
+        Fn::ImportValue:
+          Fn::Sub: ${CommonCICDStackName}-CodeBuildRole
+      Source:
+        BuildSpec: "version: 0.2\nphases:\n  install:\n    commands:\n      - bash\
+          \ -c cicd/deployproject_install.bash\n  build:\n    commands:\n      - bash\
+          \ -c cicd/deployproject_build.bash\n  post_build:\n    commands:\n     \
+          \ - bash -c cicd/deployproject_postbuild.bash\n"
+        Type: CODEPIPELINE
+      TimeoutInMinutes: 30
+    Type: AWS::CodeBuild::Project
+  FilterCommitsProject:
+    Properties:
+      Artifacts:
+        Name:
+          Fn::Sub: ${CodePipelineName}-filterCommits
+        NamespaceType: NONE
+        Packaging: NONE
+        Type: CODEPIPELINE
+      Description:
+        Fn::Sub: Filters git commits for the ${CodePipelineName} pipeline.
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        EnvironmentVariables:
+        - Name: REPO_NAME
+          Type: PLAINTEXT
+          Value:
+            Ref: RepoName
+        - Name: BRANCH
+          Type: PLAINTEXT
+          Value:
+            Ref: Branch
+        Image: aws/codebuild/nodejs:8.11.0
+        Type: LINUX_CONTAINER
+      Name:
+        Fn::If:
+        - CodePipelineNameProvided
+        - Fn::Sub: ${CodePipelineName}-filterCommits
+        - Fn::Sub: ${RepoName}-cicd-${Environment}-filterCommits
+      ServiceRole:
+        Fn::ImportValue:
+          Fn::Sub: ${CommonCICDStackName}-CodeBuildRole
+      Source:
+        BuildSpec: "version: 0.2\nenv:\n  parameter-store:\n    CDF_CODECOMMIT_USERNAME:\
+          \ \"CDF_CODECOMMIT_USERNAME\"\n    CDF_CODECOMMIT_EMAIL: \"CDF_CODECOMMIT_EMAIL\"\
+          \n    CDF_CODECOMMIT_PASSWORD: \"CDF_CODECOMMIT_PASSWORD\"\nphases:\n  install:\n\
+          \    commands:\n      - bash -c cicd/filterproject_install.bash\n  pre_build:\n\
+          \    commands:\n      - bash -c cicd/filterproject_prebuild.bash\nartifacts:\n\
+          \  base-directory: $CODEBUILD_SRC_DIR\n  discard-paths: no\n  files:\n \
+          \   - '**/*'\n"
+        Type: CODEPIPELINE
+    Type: AWS::CodeBuild::Project
+  IntegrationTestingProject:
+    Properties:
+      Artifacts:
+        Name:
+          Fn::If:
+          - CodePipelineNameProvided
+          - Fn::Sub: ${CodePipelineName}-integrationTests
+          - Fn::Sub: ${RepoName}-cicd-${Environment}-integrationTests
+        NamespaceType: NONE
+        Packaging: NONE
+        Type: CODEPIPELINE
+      Description:
+        Fn::Sub: Runs integration tests against a deployment of ${RepoName}.
+      Environment:
+        ComputeType: BUILD_GENERAL1_MEDIUM
+        EnvironmentVariables:
+        - Name: DEPLOY_ARTIFACTS_STORE_BUCKET
+          Type: PLAINTEXT
+          Value:
+            Fn::ImportValue:
+              Fn::Sub: ${CommonCICDStackName}-ArtifactBucket
+        - Name: ENVIRONMENT
+          Type: PLAINTEXT
+          Value:
+            Fn::Sub: ${Environment}-staging
+        Image: aws/codebuild/nodejs:8.11.0
+        Type: LINUX_CONTAINER
+      Name:
+        Fn::If:
+        - CodePipelineNameProvided
+        - Fn::Sub: ${CodePipelineName}-integrationTests
+        - Fn::Sub: ${RepoName}-cicd-${Environment}-integrationTests
+      ServiceRole:
+        Fn::ImportValue:
+          Fn::Sub: ${CommonCICDStackName}-CodeBuildRole
+      Source:
+        BuildSpec: "version: 0.2\nphases:\n  install:\n    commands:\n      - bash\
+          \ -c cicd/integrationtestingproject_install.bash\n  build:\n    commands:\n\
+          \      - bash -c cicd/integrationtestingproject_build.bash\n"
+        Type: CODEPIPELINE
+      TimeoutInMinutes: 10
+    Type: AWS::CodeBuild::Project
+  NestedStack:
+    DependsOn:
+    - DeployPipeline
+    Properties:
+      Parameters:
+        CodePipelineName:
+          Fn::If:
+          - CodePipelineNameProvided
+          - Ref: CodePipelineName
+          - Fn::Sub: ${RepoName}-cicd-${Environment}
+        CommonCICDStackName:
+          Ref: CommonCICDStackName
+        DeployPipeline:
+          Ref: DeployPipeline
+        RepoName:
+          Ref: RepoName
+      TemplateURL: https://s3-us-west-2.amazonaws.com/cdf-157731826412-us-west-2/d3e6a86c2f6442a75e9199bded776c87.template
+    Type: AWS::CloudFormation::Stack
+Transform: AWS::Serverless-2016-10-31
