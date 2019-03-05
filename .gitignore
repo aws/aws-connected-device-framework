@@ -8,3 +8,6 @@
 **/builds
 **/.nyc_output
 .gitignore
+
+cicd/codepipeline-packaged.yaml
+

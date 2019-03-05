@@ -241,6 +241,11 @@ Resources:
         Type: CODEPIPELINE
         BuildSpec: |
           version: 0.2
+          env:
+            parameter-store:
+              CDF_CODECOMMIT_USERNAME: "CDF_CODECOMMIT_USERNAME"
+              CDF_CODECOMMIT_EMAIL: "CDF_CODECOMMIT_EMAIL"
+              CDF_CODECOMMIT_PASSWORD: "CDF_CODECOMMIT_PASSWORD"
           phases:
             install:
               commands:
@@ -301,6 +306,11 @@ Resources:
         Type: CODEPIPELINE
         BuildSpec: |
           version: 0.2
+          env:
+            parameter-store:
+              CDF_CODECOMMIT_USERNAME: "CDF_CODECOMMIT_USERNAME"
+              CDF_CODECOMMIT_EMAIL: "CDF_CODECOMMIT_EMAIL"
+              CDF_CODECOMMIT_PASSWORD: "CDF_CODECOMMIT_PASSWORD"
           phases:
             install:
               commands:
