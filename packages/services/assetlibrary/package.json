@@ -31,6 +31,7 @@
     "inversify-binding-decorators": "4.0.0",
     "inversify-express-utils": "^6.3.2",
     "js-yaml": "^3.12.0",
+    "mime": "1.6.0",
     "node-cache": "^4.2.0",
     "ow": "^0.12.0",
     "reflect-metadata": "^0.1.13",
