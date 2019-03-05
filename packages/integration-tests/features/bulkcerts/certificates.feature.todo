@@ -1,0 +1,30 @@
+Feature: Bulk Certificates
+
+  # Note: Testing of Get call is done in the create and delete steps
+
+  Scenario: Request a New Batch of Certificates
+    Given batch "integration-test-batch" does not exist
+    When I request batch certificates with batch id "integration-test-batch" and batchInfo
+      """
+      {
+        "certInfo":{
+          "commonName": "test.org",
+          "organization": "integration",
+          "organizationalUnit": "test",
+          "locality": "Testville",
+          "state": "CA",
+          "country": "US",
+          "emailAddress": "info@test.org"
+        },
+        "tag": "integration-test-bulk-certs",
+        "quantity":5,
+        "register": false,
+        "batchId": "integration-test-batch"
+      }
+      """
+    Then batch id "integration-test-batch" will have been created with a quantity of 5 and a tag of "integration-test-bulk-certs"
+
+  Scenario: Delete a Batch of Certificates
+    Given batch "integration-test-batch" exists
+    When I delete the batch "integration-test-batch"
+    Then batch id "integration-test-batch" does not exist

@@ -1,0 +1,69 @@
+/*-------------------------------------------------------------------------------
+# Copyright (c) 2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+#
+# This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
+#-------------------------------------------------------------------------------*/
+import 'reflect-metadata';
+import { Before, Given, setDefaultTimeout, When, Then } from 'cucumber';
+import { CertificatesService, CertificateBatch } from '@cdf/provisioning-client';
+import chai_string = require('chai-string');
+import {expect, use} from 'chai';
+import { fail } from 'assert';
+use(chai_string);
+
+setDefaultTimeout(10 * 1000);
+
+let certificatesService: CertificatesService;
+
+Before(function () {
+    certificatesService = new CertificatesService();
+});
+
+Given('batch {string} exists', async function (batchId:string) {
+    const batch = await certificatesService.getBatchInfo(batchId);
+    expect(batch.batchId).eq(batchId);
+});
+
+Given('batch {string} does not exist', async function (batchId:string) {
+    try {
+        const batch = await certificatesService.getBatchInfo(batchId);
+        fail(`batch ${batchId} exists: ${JSON.stringify(batch)}`);
+    } catch (e) {
+        expect(e.status).eq(404);
+    }
+});
+
+When('I request batch certificates with batch id {string} and batchInfo', async function (batchId:string, batchInfo:string) {
+    const batchInfoJson = JSON.parse(batchInfo);
+
+    const batchRequest:CertificateBatch = {
+        certInfo: batchInfoJson.certInfo,
+        quantity: batchInfoJson.quantity,
+        batchId,
+        tag: batchInfoJson.tag
+    };
+
+    const batchResponse = await certificatesService.createBatch(batchRequest);
+    expect(batchResponse.batchId).eq('integration-test-batch');
+});
+
+When('I delete the batch {string}', async function (batchId:string) {
+
+    await certificatesService.deleteBatch(batchId);
+});
+
+Then('batch id {string} will have been created with a quantity of {int} and a tag of {string}', async function (batchId:string, quantity:number, tag:string) {
+    const batch = await certificatesService.getBatchInfo(batchId);
+    expect(batch.batchId).eq(batchId);
+    expect(batch.tag).eq(tag);
+    expect(batch.quantity).eq(quantity);
+});
+
+Then('batch id {string} does not exist', async function (batchId:string) {
+    try {
+        const batch = await certificatesService.getBatchInfo(batchId);
+        fail(`batch ${batchId} exists: ${JSON.stringify(batch)}`);
+    } catch (e) {
+        expect(e.status).eq(404);
+    }
+});

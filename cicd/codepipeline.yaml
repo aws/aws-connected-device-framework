@@ -152,20 +152,56 @@ Resources:
             files:
               - node_modules
               - '**/*'
-      #     cache:
-      #       paths:
-      #         - 'node_modules/**/*'
-      # Cache:
-      #   Type: LOCAL
-      #   Modes: 
-      #     - LOCAL_CUSTOM_CACHE
+
+  IntegrationTestingProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !If [CodePipelineNameProvided, !Sub '${CodePipelineName}-integrationTests', !Sub '${RepoName}-cicd-${Environment}-integrationTests' ]
+      Description: !Sub 'Runs integration tests against a deployment of ${RepoName}.'
+      ServiceRole:
+        Fn::ImportValue:
+          !Sub '${CommonCICDStackName}-CodeBuildRole'
+      Artifacts:
+        NamespaceType: NONE
+        Packaging: NONE
+        Type: CODEPIPELINE
+        Name: !If [CodePipelineNameProvided, !Sub '${CodePipelineName}-integrationTests', !Sub '${RepoName}-cicd-${Environment}-integrationTests' ]
+      TimeoutInMinutes: 10
+      Environment:
+        ComputeType: BUILD_GENERAL1_MEDIUM
+        Image: aws/codebuild/nodejs:8.11.0
+        Type: LINUX_CONTAINER
+        EnvironmentVariables:
+          - Name: DEPLOY_ARTIFACTS_STORE_BUCKET
+            Type: PLAINTEXT
+            Value:
+              Fn::ImportValue:
+                !Sub '${CommonCICDStackName}-ArtifactBucket'
+          - Name: ENVIRONMENT
+            Type: PLAINTEXT
+            Value: !Sub '${Environment}-staging'
+
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: |
+          version: 0.2
+          phases:
+            install:
+              commands:
+                - cicd/integrationtestingproject_install.sh
+            build:
+              commands:
+                - cicd/integrationtestingproject_build.sh
+            post_build:
+              commands:
+                - cicd/integrationtestingproject_postbuild.sh
 
   ###  CodeBuild project that calls the package and deploy scripts to deploy the service, along with
   ###  setting any necessary CloudFormation configuration.
-  DeployAssetLibrary:
+  DeployStagingProject:
     Type: AWS::CodeBuild::Project
     Properties:
-      Name: !If [CodePipelineNameProvided, !Sub '${CodePipelineName}-deploy', !Sub '${RepoName}-cicd-${Environment}-deploy' ]
+      Name: !If [CodePipelineNameProvided, !Sub '${CodePipelineName}-deployStaging', !Sub '${RepoName}-cicd-${Environment}-deployStaging' ]
       Description: !Sub 'Packages and deploys the CFN for deployment of ${RepoName}.'
       ServiceRole:
         Fn::ImportValue:
@@ -174,10 +210,70 @@ Resources:
         NamespaceType: NONE
         Packaging: NONE
         Type: CODEPIPELINE
-        Name: !If [CodePipelineNameProvided, !Sub '${CodePipelineName}-deploy', !Sub '${RepoName}-cicd-${Environment}-deploy' ]
-      TimeoutInMinutes: 5
+        Name: !If [CodePipelineNameProvided, !Sub '${CodePipelineName}-deployStaging', !Sub '${RepoName}-cicd-${Environment}-deployStaging' ]
+      TimeoutInMinutes: 30
       Environment:
-        ComputeType: BUILD_GENERAL1_SMALL
+        ComputeType: BUILD_GENERAL1_MEDIUM
+        Image: aws/codebuild/nodejs:8.11.0
+        Type: LINUX_CONTAINER
+        EnvironmentVariables:
+          - Name: DEPLOY_ARTIFACTS_STORE_BUCKET
+            Type: PLAINTEXT
+            Value:
+              Fn::ImportValue:
+                !Sub '${CommonCICDStackName}-ArtifactBucket'
+          - Name: ENVIRONMENT
+            Type: PLAINTEXT
+            Value: !Sub '${Environment}-staging'
+          - Name: VPC_ID
+            Type: PLAINTEXT
+            Value: !Ref AssetLibraryVpcId
+          - Name: SOURCE_SECURITY_GROUP_ID
+            Type: PLAINTEXT
+            Value: !Ref AssetLibrarySourceSecurityGroupId
+          - Name: PRIVATE_SUBNET_IDS
+            Type: PLAINTEXT
+            Value: !Ref AssetLibraryPrivateSubnetIds
+          - Name: PRIVATE_ROUTE_TABLE_IDS
+            Type: PLAINTEXT
+            Value: !Ref AssetLibraryPrivateRouteTableIds
+          # - Name: CUST_AUTH_STACK_NAME
+          #   Type: PLAINTEXT
+          #   Value: !Ref CustAuthStackName
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: |
+          version: 0.2
+          phases:
+            install:
+              commands:
+                - cicd/deployproject_install.sh
+            build:
+              commands:
+                - cicd/deployproject_build.sh
+            post_build:
+              commands:
+                - cicd/deployproject_postbuild.sh
+
+
+  ###  CodeBuild project that calls the package and deploy scripts to deploy the service, along with
+  ###  setting any necessary CloudFormation configuration.
+  DeployLiveProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !If [CodePipelineNameProvided, !Sub '${CodePipelineName}-deployLive', !Sub '${RepoName}-cicd-${Environment}-deployLive' ]
+      Description: !Sub 'Packages and deploys the CFN for deployment of ${RepoName}.'
+      ServiceRole:
+        Fn::ImportValue:
+          !Sub '${CommonCICDStackName}-CodeBuildRole'
+      Artifacts:
+        NamespaceType: NONE
+        Packaging: NONE
+        Type: CODEPIPELINE
+        Name: !If [CodePipelineNameProvided, !Sub '${CodePipelineName}-deployLive', !Sub '${RepoName}-cicd-${Environment}-deployLive' ]
+      TimeoutInMinutes: 30
+      Environment:
+        ComputeType: BUILD_GENERAL1_MEDIUM
         Image: aws/codebuild/nodejs:8.11.0
         Type: LINUX_CONTAINER
         EnvironmentVariables:
@@ -212,9 +308,6 @@ Resources:
             install:
               commands:
                 - cicd/deployproject_install.sh
-            pre_build:
-              commands:
-                - cicd/deployproject_prebuild.sh
             build:
               commands:
                 - cicd/deployproject_build.sh
@@ -300,7 +393,7 @@ Resources:
               RunOrder: 1
 
         -
-          Name: deploy-assetlibrary
+          Name: deploy-staging
           Actions:
             -
               Name: deploy
@@ -313,7 +406,43 @@ Resources:
                 - Name: compiled
                 - Name: source_infrastructure
               Configuration:
-                ProjectName: !Ref DeployAssetLibrary
+                ProjectName: !Ref DeployStagingProject
+                PrimarySource: compiled
+              RunOrder: 1
+
+        -
+          Name: integration-tests
+          Actions:
+            -
+              Name: test
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Version: 1
+                Provider: CodeBuild
+              InputArtifacts:
+                - Name: compiled
+                - Name: source_infrastructure
+              Configuration:
+                ProjectName: !Ref IntegrationTestingProject
+                PrimarySource: compiled
+              RunOrder: 1
+
+        -
+          Name: deploy-live
+          Actions:
+            -
+              Name: deploy
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Version: 1
+                Provider: CodeBuild
+              InputArtifacts:
+                - Name: compiled
+                - Name: source_infrastructure
+              Configuration:
+                ProjectName: !Ref DeployLiveProject
                 PrimarySource: compiled
               RunOrder: 1
 

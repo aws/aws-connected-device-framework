@@ -1,0 +1,32 @@
+{
+    "extends": "../../../tsconfig.base.json",
+    "compilerOptions": {
+        "outDir": "dist",
+        "rootDir": "src",
+        "composite": true,
+
+        "typeRoots": [
+            "./src/@types",
+            "./node_modules/@types",
+            "../../../../node_modules/@types"
+        ],
+        "types": [
+            "node"
+        ]
+    },
+    "include": [
+        "src"
+    ],
+    "references": [
+        {
+            "path": "../../config/config-inject",
+        }
+    ],
+    "exclude": [
+        "node_modules",
+        "dist",
+        ".vscode",
+        ".git",
+        "./**/__mocks__/*.ts"
+    ]
+}

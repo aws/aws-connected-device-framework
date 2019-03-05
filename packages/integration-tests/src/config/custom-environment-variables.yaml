@@ -1,0 +1,15 @@
+aws:
+  accountid: AWS_ACCOUNTID
+  region: AWS_REGION
+assetLibrary:
+  baseUrl: CDF_ASSETLIBRARY_BASEURL
+commands:
+  baseUrl: CDF_COMMANDS_BASEURL
+  thing:
+    arn: CDF_COMMANDS_THING_ARN
+provisioning:
+  baseUrl: CDF_PROVISIONING_BASEURL
+  templates:
+    bucket: CDF_PROVISIONING_TEMPLATES_BUCKET
+    prefix: CDF_PROVISIONING_TEMPLATES_PREFIX
+    suffix: CDF_PROVISIONING_TEMPLATES_PREFIX

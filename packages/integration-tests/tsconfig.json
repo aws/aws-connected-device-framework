@@ -1,0 +1,43 @@
+{
+    "extends": "../tsconfig.base.json",
+    "compilerOptions": {
+        "outDir": "dist",
+        "rootDir": "src",
+
+		"suppressImplicitAnyIndexErrors": true,
+        
+        "typeRoots": [
+            "./src/@types",
+            "./node_modules/@types",
+            "../../node_modules/@types"
+        ],
+        "types": [
+            "node", "config", "winston"
+        ]
+    },
+    "references": [
+        {
+            "path": "../libraries/clients/assetlibrary-client"
+        },
+        {
+            "path": "../libraries/clients/assetlibraryhistory-client"
+        },
+        {
+            "path": "../libraries/clients/commands-client"
+        },
+        {
+            "path": "../libraries/clients/provisioning-client"
+        }
+    ],
+    "include": [
+        "src"
+    ],
+    "exclude": [
+        "node_modules",
+        "../../../node_modules",
+        "dist",
+        ".vscode",
+        ".git",
+        "./**/__mocks__/*.ts"
+    ]
+}

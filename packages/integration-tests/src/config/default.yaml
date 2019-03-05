@@ -1,0 +1,15 @@
+aws:
+  accountid:
+  region:
+assetLibrary:
+  baseUrl:
+commands:
+    baseUrl:
+    thing:
+      arn:
+provisioning:
+  baseUrl:
+  templates:
+    bucket:
+    prefix:
+    suffix:

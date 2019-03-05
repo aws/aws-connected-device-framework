@@ -1,14 +1,10 @@
-node_modules/
-npm-debug.log
-packages/*/lib
+**/node_modules
+**/*.log
+**/lib
 .vscode
 **/dist
 **/build
-.DS_Store
-builds
-packages/**/.nyc_output/
-
-# files created by cicd pipeline to manage state between pipeline stages
-.cicd_*
-pnpm-debug.log
-cicd/codepipeline-packaged.yaml
+**/.DS_Store
+**/builds
+**/.nyc_output
+.gitignore
