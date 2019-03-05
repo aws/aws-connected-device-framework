@@ -18,7 +18,7 @@ if [ "$CODEBUILD_BUILD_SUCCEEDING" -eq 1 ]; then
     
     for tagName in "${tagNames[@]}"; do 
         git tag -f $tagName
-        git push origin $tagName
+        git push -f origin $tagName
     done
 
 fi
