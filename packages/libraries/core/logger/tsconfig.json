@@ -1,9 +1,8 @@
 {
-    "extends": "../../../tsconfig.base.json",
+    "extends": "../../tsconfig.libraries.json",
     "compilerOptions": {
         "outDir": "dist",
         "rootDir": "src",
-        "composite": true,
 
         "typeRoots": [
             "./src/@types",
@@ -16,12 +15,5 @@
     },
     "include": [
         "src"
-    ],
-    "exclude": [
-        "node_modules",
-        "dist",
-        ".vscode",
-        ".git",
-        "./**/__mocks__/*.ts"
     ]
 }

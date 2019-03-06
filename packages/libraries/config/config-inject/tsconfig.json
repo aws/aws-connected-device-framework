@@ -1,9 +1,8 @@
 {
-    "extends": "../../../tsconfig.base.json",
+    "extends": "../../tsconfig.libraries.json",
     "compilerOptions": {
         "outDir": "dist",
         "rootDir": "src",
-        "composite": true,
 
         "typeRoots": [
             "./src/@types",
@@ -11,25 +10,15 @@
             "../../../../node_modules/@types"
         ],
         "types": [
-            "node", "jest", "config"
+            "node", "jest"
         ]
     },
-    "include": [
-        "src"
-    ],
     "references": [
-        {
-            "path": "../../core/errors",
-        },
         {
             "path": "../../core/logger"
         }
     ],
-    "exclude": [
-        "node_modules",
-        "dist",
-        ".vscode",
-        ".git",
-        "./**/__mocks__/*.ts"
+    "include": [
+        "src"
     ]
 }

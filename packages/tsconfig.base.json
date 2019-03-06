@@ -3,7 +3,7 @@
 		"target": "es2016",
 		"module": "commonjs",
 
-		"declaration": true,
+        "declaration": true,
 		"declarationMap": true,
 		"sourceMap": true,
 		"esModuleInterop": true,
@@ -19,5 +19,7 @@
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
 		"pretty": true,
+
+		"suppressImplicitAnyIndexErrors": true,
 	}
 }

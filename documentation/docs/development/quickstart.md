@@ -34,11 +34,19 @@ curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | b
 > git clone https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core
 ```
 
++ initialize the project dependencies:
+
+```sh
+> cd cdf-core
+> pnpm i
+```
+
 
 ## FAQ
 
-Q: **I use the [fish shell](https://fishshell.com) on macOS (installed via homebrew) instead of the default shell.  How do I configure `nvm`?**
-A: Add the following to `cat ~/.config/fish/config.fish`, then open a new terminal:
+> **I use the [fish shell](https://fishshell.com) on macOS (installed via homebrew) instead of the default shell.  How do I configure `nvm`?**
+
+Add the following to `cat ~/.config/fish/config.fish`, then open a new terminal:
 
 ```sh
 function nvm
