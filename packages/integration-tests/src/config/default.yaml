@@ -3,6 +3,8 @@ aws:
   region:
 assetLibrary:
   baseUrl:
+assetLibraryHistory:
+  baseUrl:
 commands:
     baseUrl:
     thing:

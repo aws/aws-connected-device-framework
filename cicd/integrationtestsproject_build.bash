@@ -45,25 +45,6 @@ bulkcerts_invoke_url=$(echo $stack_exports \
     '.Exports[] | select(.Name==$bulkcerts_invoke_url_export) | .Value')
 
 
-# if we don't have a particular service deployed, set its url to something other than
-# empty so that we don't run into issues with the integration tests hooks
-if [ -z "$assetlibrary_invoke_url" ]; then
-    assetlibrary_invoke_url='not_set'
-fi
-if [ -z "$assetlibraryhistory_invoke_url" ]; then
-    assetlibraryhistory_invoke_url='not_set'
-fi
-if [ -z "$provisioning_invoke_url" ]; then
-    provisioning_invoke_url='not_set'
-fi
-if [ -z "$commands_invoke_url" ]; then
-    commands_invoke_url='not_set'
-fi
-if [ -z "$bulkcerts_invoke_url" ]; then
-    bulkcerts_invoke_url='not_set'
-fi
-
-
 echo setting integration test config...
 
 CONFIG_ENVIRONMENT=${ENVIRONMENT%-staging}

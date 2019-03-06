@@ -6,7 +6,7 @@ The following describes the steps involved to initialize a CDF development envir
 
 Due to the scripts used as part of both the build and deployment steps, only linux type environments (including macOS) are supported.
 
-## Configuring the Development Environment
+## Configuring the development environment
 
 The following is a one-time setup to configure the CDF development environment:
 
@@ -38,7 +38,15 @@ curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | b
 
 ```sh
 > cd cdf-core
-> pnpm i
+cdf-core> pnpm i
+```
+
+## Building the platform
+
+To run a specific service:
+
+```sh
+cdf-core> pnpm 
 ```
 
 
