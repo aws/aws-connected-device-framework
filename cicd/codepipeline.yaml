@@ -32,6 +32,14 @@ Parameters:
     Type: String
     MinLength: 1
   
+  AssetLibraryMode:
+    Description: Run in 'full' (IoT Registry augmentation) or 'lite' (IoT Registry only)
+    Type: String
+    Default: full
+    AllowedValues: 
+      - full
+      - lite
+    MinLength: 1
   AssetLibraryVpcId:
     Description: Id of VPC where Neptune resides (if running Asset Library in 'full' mode)
     Type: String
@@ -179,6 +187,9 @@ Resources:
           - Name: ENVIRONMENT
             Type: PLAINTEXT
             Value: !Sub '${Environment}-staging'
+          - Name: ASSETLIBRARY_MODE
+            Type: PLAINTEXT
+            Value: !Ref AssetLibraryMode
 
       Source:
         Type: CODEPIPELINE
@@ -237,6 +248,9 @@ Resources:
           - Name: PRIVATE_ROUTE_TABLE_IDS
             Type: PLAINTEXT
             Value: !Ref AssetLibraryPrivateRouteTableIds
+          - Name: ASSETLIBRARY_MODE
+            Type: PLAINTEXT
+            Value: !Ref AssetLibraryMode
           # - Name: CUST_AUTH_STACK_NAME
           #   Type: PLAINTEXT
           #   Value: !Ref CustAuthStackName

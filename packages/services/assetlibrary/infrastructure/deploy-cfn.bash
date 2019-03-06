@@ -43,7 +43,7 @@ while getopts ":e:c:v:g:n:m:r:C:R:P:" opt; do
     g  ) export SOURCE_SECURITY_GROUP_ID=$OPTARG;;
     n  ) export PRIVATE_SUBNET_IDS=$OPTARG;;
     r  ) export PRIVATE_ROUTE_TABLE_IDS=$OPTARG;;
-    m  ) export MODE=$OPTARG;;
+    m  ) export ASSETLIBRARY_MODE=$OPTARG;;
 
     C  ) export CUST_AUTH_STACK_NAME=$OPTARG;;
 
@@ -65,14 +65,14 @@ if [ -z "$ASSETLIBRARY_CONFIG_LOCATION" ]; then
 	echo -c ASSETLIBRARY_CONFIG_LOCATION is required; help_message; exit 1;
 fi
 
-if [ -z "$MODE" ]; then
-	export MODE=full
+if [ -z "$ASSETLIBRARY_MODE" ]; then
+	export ASSETLIBRARY_MODE=full
 fi
-if [[ "$MODE" != "lite" && "$MODE" != "full" ]]; then
-	echo -m MODE allowed values: 'full', 'lite'; help_message; exit 1;
+if [[ "$ASSETLIBRARY_MODE" != "lite" && "$ASSETLIBRARY_MODE" != "full" ]]; then
+	echo -m ASSETLIBRARY_MODE allowed values: 'full', 'lite'; help_message; exit 1;
 fi
 
-if [[ "$MODE" = "full" ]]; then
+if [[ "$ASSETLIBRARY_MODE" = "full" ]]; then
   if [ -z "$VPC_ID" ]; then
     echo -v VPC_ID is required in 'full' mode; help_message; exit 1;
   fi
@@ -108,7 +108,7 @@ echo "
 Running with:
   ENVIRONMENT:                      $ENVIRONMENT
   ASSETLIBRARY_CONFIG_LOCATION:     $ASSETLIBRARY_CONFIG_LOCATION
-  MODE:                             $MODE
+  ASSETLIBRARY_MODE:                $ASSETLIBRARY_MODE
   VPC_ID:                           $VPC_ID
   SOURCE_SECURITY_GROUP_ID:         $SOURCE_SECURITY_GROUP_ID
   PRIVATE_SUBNET_IDS:               $PRIVATE_SUBNET_IDS
@@ -121,7 +121,7 @@ Running with:
 
 cwd=$(dirname "$0")
 
-if [ "$MODE" = "full" ]; then
+if [ "$ASSETLIBRARY_MODE" = "full" ]; then
   echo '
   **********************************************************
     Determinig whether the VPC to deploy Neptune into has an S3 VPC endpoint
@@ -171,12 +171,12 @@ aws_iot_endpoint=$(aws iot describe-endpoint $AWS_ARGS \
     | jq -r '.endpointAddress')
 
 cat $ASSETLIBRARY_CONFIG_LOCATION | \
-  jq --arg mode "$MODE" --arg aws_iot_endpoint "$aws_iot_endpoint" \
+  jq --arg mode "$ASSETLIBRARY_MODE" --arg aws_iot_endpoint "$aws_iot_endpoint" \
   '.mode=$mode | .aws.iot.endpoint=$aws_iot_endpoint' \
   > $ASSETLIBRARY_CONFIG_LOCATION.tmp && mv $ASSETLIBRARY_CONFIG_LOCATION.tmp $ASSETLIBRARY_CONFIG_LOCATION
 
 
-if [ "$MODE" = "full" ]; then
+if [ "$ASSETLIBRARY_MODE" = "full" ]; then
 
   stack_exports=$(aws cloudformation list-exports $AWS_ARGS)
 
@@ -194,7 +194,7 @@ fi
 application_configuration_override=$(cat $ASSETLIBRARY_CONFIG_LOCATION)
 
 
-if [ "$MODE" = "lite" ]; then
+if [ "$ASSETLIBRARY_MODE" = "lite" ]; then
 
   echo '
   **********************************************************
@@ -223,14 +223,14 @@ aws cloudformation deploy \
       SourceSecurityGroupId=$SOURCE_SECURITY_GROUP_ID \
       PrivateSubNetIds=$PRIVATE_SUBNET_IDS \
       CustAuthStackName=$CUST_AUTH_STACK_NAME \
-      Mode=$MODE \
+      Mode=$ASSETLIBRARY_MODE \
   --capabilities CAPABILITY_NAMED_IAM \
   --no-fail-on-empty-changeset \
   $AWS_ARGS
 
 
 
-if [ "$MODE" = "full" ]; then
+if [ "$ASSETLIBRARY_MODE" = "full" ]; then
 
   echo '
   **********************************************************
