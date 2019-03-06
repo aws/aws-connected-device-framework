@@ -311,6 +311,7 @@ export class DevicesServiceFull implements DevicesService {
 
         // Assemble devicemodel into node
         model.category = TypeCategory.Device;
+        model.templateId = templateId;
         const node = this.devicesAssembler.toNode(model);
 
         // Save to datastore

@@ -77,6 +77,7 @@ Feature: Device lifecycle
   Scenario: Update existing device attributes
     Given device "TEST-devices-device001" exists
     When I update device "TEST-devices-device001" with attributes
+      | templateId | TEST-devices-type |
       | attributes | {"model":"B"} |
     Then device "TEST-devices-device001" exists with attributes
       | description | My description |
@@ -87,6 +88,7 @@ Feature: Device lifecycle
   Scenario: Clear existing custom device attribute
     Given device "TEST-devices-device001" exists
     When I update device "TEST-devices-device001" with attributes
+      | templateId | TEST-devices-type |
       | attributes | {"serialNumber":null} |
     Then device "TEST-devices-device001" exists with attributes
       | description | My description |
@@ -97,6 +99,7 @@ Feature: Device lifecycle
   Scenario: Clear existing top level device attribute
     Given device "TEST-devices-device001" exists
     When I update device "TEST-devices-device001" with attributes
+      | templateId | TEST-devices-type |
       | awsIotThingArn | ___null___ |
     Then device "TEST-devices-device001" exists with attributes
       | description | My description |

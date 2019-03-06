@@ -214,6 +214,7 @@ export class GroupsServiceFull implements GroupsService {
         }
 
         model.category = TypeCategory.Group;
+        model.templateId = templateId;
         const node = this.groupsAssembler.toNode(model);
 
         // Save to datastore

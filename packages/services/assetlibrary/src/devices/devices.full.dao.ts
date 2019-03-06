@@ -92,19 +92,30 @@ export class DevicesDaoFull {
 
         const id = 'device___' + deviceId;
 
-        const result = await this._g.V(id).label().next();
+        const labelResults = await this._g.V(id).label().toList();
 
-        if (result!==undefined && result.value!==undefined && result.value!==null) {
-            const labels = (<string>result.value).split('::');
-
-            logger.debug(`devices.dao getLabels: exit: labels: ${labels}`);
-            return labels;
-        } else {
+        if (labelResults===undefined || labelResults.length===0) {
             logger.debug('devices.dao getLabels: exit: labels:undefined');
             return undefined;
-
+        } else {
+            const labels:string[] = JSON.parse(JSON.stringify(labelResults)) as string[];
+            if (labels.length===1) {
+                // all devices/groups should have 2 labels
+                // if only 1 is returned it is an older version of the Neptune engine
+                // which returns labels as a concatinated string (label1::label2)
+                // attempt to be compatable with this
+                const splitLabels:string[] = labels[0].split('::');
+                if (splitLabels.length < 2) {
+                    logger.error(`devices.dao getLabels: device ${deviceId} does not have correct labels`);
+                    throw new Error('INVALID_LABELS');
+                }
+                logger.debug(`devices.dao getLabels: exit: labels: ${labels}`);
+                return labels;
+            } else {
+                logger.debug(`devices.dao getLabels: exit: labels: ${labels}`);
+                return labels;
+            }
         }
-
     }
 
     private assembleNode(device:{ [key:string]: AttributeValue}):Node {
