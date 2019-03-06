@@ -48,14 +48,12 @@ pages:
     - 'Prerequisites': development/prerequisites.md
     - 'Tech Stack': development/tech-stack.md
     - 'Local Development': development/local_development.md
-    - 'NPM Private Repo': development/npm-user.md
     - 'Dependency Injection': development/dependency-injection.md
     - 'Asynchronous Programming': development/async.md
     - 'Config': development/config.md
     - 'Unit Testing': development/unit-testing.md
     - 'Integration Testing': development/integration-testing.md
   - Admin:
-    - 'NPM Private Repo (Installation)': development/npm-installation.md
     - 'Deployment': advanced/deployment.md
     
 theme:
