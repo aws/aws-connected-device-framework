@@ -48,7 +48,7 @@ bulkcerts_invoke_url=$(echo $stack_exports \
 echo setting integration test config...
 
 CONFIG_ENVIRONMENT=${ENVIRONMENT%-staging}
-INTEGRATIONTESTS_CONFIG_LOCATION="$CODEBUILD_SRC_DIR_source_infrastructure/integration-tests/$CONFIG_ENVIRONMENT-config.json"
+export INTEGRATIONTESTS_CONFIG_LOCATION="$CODEBUILD_SRC_DIR_source_infrastructure/integration-tests/$CONFIG_ENVIRONMENT-config.json"
 
 echo using configuration from $INTEGRATIONTESTS_CONFIG_LOCATION
 
