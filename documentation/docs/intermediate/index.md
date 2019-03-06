@@ -1,5 +1,20 @@
 # Intermediate Track
 
+## Development
+Topic | Description
+---|---
+[Getting started](/development/quickstart)
+[Pre-requisities](/development/prerequisites) |
+[Tech Stack](/development/tech-stack) |
+[Local Development](/development/local_development) |
+[NPM Private Repository](/development/npm-user) |
+[Dependency Injection](/development/dependency-injection) |
+[Asynchronous Programming](/development/async) |
+[Config](/development/config) |
+[Unit Testing](/development/unit-testing) |
+[Integration Testing](/development/integration-testing) |
+
+
 ## Overview
 Topic | Description
 ---|---
@@ -57,16 +72,3 @@ Topic | Description
 Topic | Description
 ---|---
 [Overview](/projects/request-queue/overview) | A service for queueing API requests. Can be used as part of an high-availabilty strategy.
-
-## Development
-Topic | Description
----|---
-[Pre-requisities](/development/prerequisites) |
-[Tech Stack](/development/tech-stack) |
-[Local Development](/development/local_development) |
-[NPM Private Repository](/development/npm-user) |
-[Dependency Injection](/development/dependency-injection) |
-[Asynchronous Programming](/development/async) |
-[Config](/development/config) |
-[Unit Testing](/development/unit-testing) |
-[Integration Testing](/development/integration-testing) |
