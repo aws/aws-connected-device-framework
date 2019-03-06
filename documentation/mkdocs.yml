@@ -1,6 +1,6 @@
 site_name: Connected Device Framework (CDF)
 
-pages:
+nav:
   - Start: index.md
   - Overview: projects/overview.md
   - Tracks:
@@ -45,6 +45,7 @@ pages:
   - User:
     - Postman: postman/index.md
   - Development:
+    - 'Getting Started': development/quickstart.md 
     - 'Prerequisites': development/prerequisites.md
     - 'Tech Stack': development/tech-stack.md
     - 'Local Development': development/local_development.md

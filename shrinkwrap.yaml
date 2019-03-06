@@ -935,18 +935,20 @@ packages:
     dev: true
     resolution:
       integrity: sha512-vAWzeoj9Lzpl3V3YkWKhGzmDUoMfKpyxJhpq74/ohMvmLXDoEuAGnApy/7TRi3OmnjyX2Lr+e9UGGAD0919ohA==
-  /@octokit/request/2.4.0:
+  /@octokit/request/2.4.1:
     dependencies:
       '@octokit/endpoint': 3.1.3
+      deprecation: 1.0.1
       is-plain-object: 2.0.4
       node-fetch: 2.3.0
+      once: 1.4.0
       universal-user-agent: 2.0.3
     dev: true
     resolution:
-      integrity: sha512-Bm2P0duVRUeKhyepNyFg5GX+yhCK71fqdtpsw5Rz+PQPjSha8HYwPMF5QfpzpD8b6/Xl3xhTgu3V90W362gZ1A==
-  /@octokit/rest/16.16.4:
+      integrity: sha512-nN8W24ZXEpJQJoVgMsGZeK9FOzxkc39Xn9ykseUpPpPMNEDFSvqfkCeqqKrjUiXRm72ubGLWG1SOz0aJPcgGww==
+  /@octokit/rest/16.16.5:
     dependencies:
-      '@octokit/request': 2.4.0
+      '@octokit/request': 2.4.1
       before-after-hook: 1.4.0
       btoa-lite: 1.0.0
       lodash.get: 4.4.2
@@ -957,7 +959,7 @@ packages:
       url-template: 2.0.8
     dev: true
     resolution:
-      integrity: sha512-9Itw0hQgEf26hg4IOsI7HYKbJBRYaTAAD0pA9ZxXyXjzTUU36Wx+EWkl8w4PNSdX2/79Ggdl6ekD5z1h3jyc7A==
+      integrity: sha512-R7SD1DUUJVwNuiJWYiIYOm20Q/MFObN48o4BLnfhkzn4ArENWe4Vl5YOvVRZIC0vHGoYCgRtKhzBA6/WOjE/ig==
   /@semantic-release/changelog/3.0.2:
     dependencies:
       '@semantic-release/error': 2.2.0
@@ -1064,7 +1066,7 @@ packages:
       integrity: sha512-sA+XoPU6GrV+A4YswO0b5JWL1KbzmyyaqUK6Y2poDkIVPlj+oQdi/stpKz/bKF5z9ChMGP87OVPMeUyXGaNFtw==
   /@semantic-release/github/5.2.10:
     dependencies:
-      '@octokit/rest': 16.16.4
+      '@octokit/rest': 16.16.5
       '@semantic-release/error': 2.2.0
       aggregate-error: 2.2.0
       bottleneck: 2.17.1
@@ -1090,7 +1092,7 @@ packages:
       integrity: sha512-z/UwIxKb+EMiJDIy/57MBzJ80ar5H9GJQRyML/ILQ8dlrPwXs7cTyTvC7AesrF7t1mJZtg3ht9Qf9RdtR/LGzw==
   /@semantic-release/github/5.2.10/semantic-release@15.13.3:
     dependencies:
-      '@octokit/rest': 16.16.4
+      '@octokit/rest': 16.16.5
       '@semantic-release/error': 2.2.0
       aggregate-error: 2.2.0
       bottleneck: 2.17.1
@@ -2847,6 +2849,10 @@ packages:
       node: '>= 0.6'
     resolution:
       integrity: sha1-m81S4UwJd2PnSbJ0xDRu0uVgtak=
+  /deprecation/1.0.1:
+    dev: true
+    resolution:
+      integrity: sha512-ccVHpE72+tcIKaGMql33x5MAjKQIZrk+3x2GbJ7TeraUCZWHoT+KSZpoC+JQFsUBlSTXUrBaGiF0j6zVTepPLg==
   /destroy/1.0.4:
     dev: false
     resolution:
@@ -8559,7 +8565,6 @@ packages:
       node: '>=6'
     name: env-ci
     resolution:
-      registry: 'https://registry.npmjs.org/'
       tarball: 'https://codeload.github.com/boardthatpowder/env-ci/tar.gz/45ee1f3169d13f1a2c3842f5f2458b6bd8cb6dd5'
     version: 0.0.0-development
   github.com/boardthatpowder/semantic-release-plugin-decorators/0f89322cb9231b2812e6e66bbc7215b88efd02b5:
@@ -8584,7 +8589,6 @@ packages:
     peerDependencies:
       semantic-release: '>=11'
     resolution:
-      registry: 'https://registry.npmjs.org/'
       tarball: 'https://codeload.github.com/boardthatpowder/semantic-release-plugin-decorators/tar.gz/0f89322cb9231b2812e6e66bbc7215b88efd02b5'
     version: 0.0.0-development
 shrinkwrapVersion: 4

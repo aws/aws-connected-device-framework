@@ -1,2 +1,3 @@
+### Instruct pnpm where to find our packages
 packages:
   - 'packages/**'
