@@ -1,0 +1,9 @@
+
+{
+	"Parameters": {
+		"Environment": "development",
+		"ApplicationConfigurationOverride": "../cdf-infrastructure-woodside/assetlibrary/development-config.json",
+		"KmsKeyId": "4e76dd3c-bf66-4943-af4b-16e47a9c2274",
+		"CustAuthStackName": "cdf-auth-cognito-development"
+	}
+}

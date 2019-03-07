@@ -1,0 +1,345 @@
+swagger: '2.0'
+info:
+  title: 'Connected Device Framework: Provisioning'
+  description: |
+    The provisioning service utilizes [AWS IoT Device Provisioning](https://docs.aws.amazon.com/iot/latest/developerguide/iot-provision.html) to provide both programmatic (just-in-time) and bulk device provisioning capabilities.  The provisioning service simplifies the use of AWS IoT Device Provisioning by allowing for the use of S3 based provisioning templates, and abstracting a standard interface over both device provisioning capabilities.
+
+    In addition, the CDF Provisioning Service allows for extending the capabilities of the AWS IoT Device Provisioning templating functionality.  To provide an example, the AWS IoT Device Provisioning allows for creating certificate resources by providing a certificate signing request (CSR), a certificate ID of an existing device certificate, or a device certificate created with a CA certificate registered with AWS IoT.  This service extends these capabilities by also providing the ability to automatically create (and return) new keys and certificates for a device.
+
+    If used in conjunction with the CDF Asset Library service, provisioning templates can be assigned to one or more hierarchies, and then the appropriate provisioning template obtained based on the location of an asset within a hierarchy.
+
+
+
+  version: 1.0.0
+
+
+consumes:
+- application/vnd.aws-cdf-v1.0+json
+produces:
+- application/vnd.aws-cdf-v1.0+json
+
+
+tags:
+
+- name: Things
+  description: |
+    The provisioning service provides the capability to provision a Thing in AWS IoT using AWS IoT Device Management's device onboarding feature. This allows for a provisioning template to be used to specify resources such as device certificates and device policies along with thing creation.
+
+- name: Bulkregistrations
+  description: |
+    The provisioning service provides the capability to register a number things in a bulk operation. This service uses AWS IoT Device Management's bulk registration capability to create an asyncronous registration task.
+
+
+paths:
+
+  
+  /things:
+    post:
+      tags:
+      - Things
+      summary: Provision a new thing within the AWS IoT Device Registry
+      operationId: provisionThing
+      parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/ProvisionRequest'
+      responses:
+        201:
+          description: OK
+          schema:
+            $ref: '#/definitions/ProvisionResponse'
+        400:
+          $ref: '#/responses/BadRequest'
+        404:
+          $ref: '#/responses/NotFound'
+
+  /things/{thingName}:
+    parameters:
+    - name: thingName
+      in: path
+      description: Name of thing
+      required: true
+      type: string
+    get:
+      tags:
+      - Things
+      summary: Retrieve details of a provisioned thing from the AWS IoT Device Registry
+      operationId: getThing
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Thing'
+        400:
+          $ref: '#/responses/BadRequest'
+        404:
+          $ref: '#/responses/NotFound'
+    delete:
+      tags:
+      - Things
+      summary: Delete a thing from the AWS IoT Device Registry.
+      operationId: deleteThing
+      responses:
+        204:
+          description: OK
+        400:
+          $ref: '#/responses/BadRequest'
+        404:
+          $ref: '#/responses/NotFound'
+          
+          
+  /things/{thingName}/certificates:
+    parameters:
+    - name: thingName
+      in: path
+      description: Name of thing
+      required: true
+      type: string
+    patch:
+      tags:
+      - Things
+      summary: Sets the status of all attached certificates.
+      operationId: updateThingCertificates
+      parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/PatchCertificateRequest'
+      responses:
+        204:
+          description: OK
+        400:
+          $ref: '#/responses/BadRequest'
+        404:
+          $ref: '#/responses/NotFound'
+          
+  /bulkthings/{taskId}:
+    parameters:
+    - name: taskId
+      in: path
+      description: Id of the registration task
+      required: true
+      type: string
+        
+    get:
+      tags:
+      - Bulkregistrations
+      summary: Retrieve details about a bulk registration task
+      operationId: getBulkProvisionTask
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/BulkRegistrationTask'
+        400:
+          $ref: '#/responses/BadRequest'
+        404:
+          $ref: '#/responses/NotFound'
+
+  /bulkthings:          
+    post:
+      tags:
+      - Bulkregistrations
+      summary: Bulk provision a set of new things within the AWS IoT Device Registry
+      operationId: bulkProvisionThings
+      parameters:
+      - in: body
+        name: body
+        required: false
+        schema:
+          $ref: '#/definitions/BulkRegistrationRequest'
+      responses:
+        201:
+          description: OK
+          schema:
+            $ref: '#/definitions/BulkRegistrationTask'
+        400:
+          $ref: '#/responses/BadRequest'
+        404:
+          $ref: '#/responses/NotFound'
+      
+definitions:
+
+  Thing:
+    type: object
+    properties:
+      thingName:
+        type: string
+      arn:
+        type: string
+      thingType:
+        type: string
+      attributes:
+        type: object
+        additionalProperties: true
+      taskId:
+        type: string
+      certificates:
+        type: array
+        items: 
+          $ref: '#/definitions/Certificate'
+      policies:
+        type: array
+        items:
+          $ref: '#/definitions/IotPolicy'
+      groups:
+        type: array
+        items:
+          $ref: '#/definitions/IotGroup'
+
+  Certificate:
+    type: object
+    properties:
+      certificateId:
+        type: string
+      arn:
+        type: string
+      certificateStatus:
+        type: string
+        enum:
+        - ACTIVE
+        - INACTIVE
+      certificatePem:
+        type: string
+
+  IotPolicy:
+    type: object
+    properties:
+      policyName:
+        type: string
+      arn:
+        type: string
+      policyDocument:
+        type: string
+
+  IotGroup:
+    type: object
+    properties:
+      groupName:
+        type: string
+      arn:
+        type: string
+      attributes:
+        type: object
+        additionalProperties: true
+
+
+  ProvisionRequest:
+    type: object
+    properties:
+      provisioningTemplateId:
+        type: string
+        description: Id of an existing provisioning template
+      parameters:
+        type: object
+        description: Map of key value pairs for all parameters defined in the provisioning template.
+        additionalProperties:
+          type: string
+      cdfProvisioningParameters:
+        type: object
+        description: Optional parameters used by CDF in provisioning process.
+    description: Provisiong a new thing request
+        
+  ProvisionResponse:
+    type: object
+    properties:
+      certificatePem:
+        type: string
+      publicKey:
+        type: string
+      privateKey:
+        type: string
+      resourceArns:
+        type: object
+        properties:
+          policyLogicalName:
+            type: string
+          certificate:
+            type: string
+          thing:
+            type: string
+    
+  BulkRegistrationTask:
+    type: object
+    properties:
+      taskId:
+        type: string
+        description: Id of the registration task
+      status:
+        type: string
+        description: Status of the task
+      percentageProgress:
+        type: integer
+        format: int32
+        description: Percentage complete
+      successCount:
+        type: integer
+        format: int32
+        description: No. assets that were provisioned successful
+      failureCount:
+        type: integer
+        format: int32
+        description: No. assets that failed during provisioning
+      creationDate:
+        type: string
+        format: date-time
+        description: Date/time the task was created
+      lastModifiedDate:
+        type: string
+        format: date-time
+        description: Date/time the task was last updated
+    description: Thing bulk registration task
+        
+  BulkRegistrationTaskList:
+    properties:
+      tasks:
+        type: array
+        description:  a list of bulk registration tasks
+        items:
+          $ref: '#/definitions/BulkRegistrationTask'
+          
+  BulkRegistrationRequest:
+    type: object
+    properties:
+      provisioningTemplateId:
+        type: string
+        description: Id of an existing provisioning template
+      parameters:
+        type: array
+        description: List containing a map of key value pairs for all parameters defined in the provisioning template.  Each element in the list represents a new thing to provision.
+        items:
+          type: object
+          additionalProperties:
+            type: string
+            
+  PatchCertificateRequest:
+    type: object
+    properties:
+      certificateStatus:
+        type: string
+        description: Certificate status
+  
+      
+  Error:
+    type: object
+    properties:
+      message:
+        type: string
+
+responses:          
+  Created:
+    description: Created successfully
+    headers:
+      location:
+        type: string
+  BadRequest:
+    description: Invalid input
+    schema:
+      $ref: '#/definitions/Error'
+  NotFound:
+    description: Not found
+    schema:
+      $ref: '#/definitions/Error'
