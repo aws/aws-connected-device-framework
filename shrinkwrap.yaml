@@ -1,38 +1,11 @@
 importers:
-  .:
-    devDependencies:
-      '@commitlint/cli': 7.5.2
-      '@commitlint/config-conventional': 7.5.0
-      '@semantic-release/changelog': 3.0.2
-      '@semantic-release/git': 7.0.8
-      '@semantic-release/npm': 5.1.4
-      '@semantic-release/release-notes-generator': 7.1.4
-      commitizen: 3.0.7
-      cz-conventional-changelog: 2.1.0
-      del-cli: 1.1.0
-      husky: 1.3.1
-      semantic-release: 15.13.3
-      semantic-release-monorepo: 6.1.1
-    specifiers:
-      '@commitlint/cli': ^7.5.2
-      '@commitlint/config-conventional': ^7.5.0
-      '@semantic-release/changelog': ^3.0.2
-      '@semantic-release/git': ^7.0.8
-      '@semantic-release/npm': ^5.1.4
-      '@semantic-release/release-notes-generator': ^7.1.4
-      commitizen: ^3.0.7
-      cz-conventional-changelog: ^2.1.0
-      del-cli: ^1.1.0
-      husky: ^1.3.1
-      semantic-release: ^15.13.3
-      semantic-release-monorepo: ^6.1.1
   packages/integration-tests:
     dependencies:
       '@cdf/assetlibrary-client': 'link:../libraries/clients/assetlibrary-client'
       '@cdf/assetlibraryhistory-client': 'link:../libraries/clients/assetlibraryhistory-client'
       '@cdf/commands-client': 'link:../libraries/clients/commands-client'
       '@cdf/provisioning-client': 'link:../libraries/clients/provisioning-client'
-      aws-sdk: 2.415.0
+      aws-sdk: 2.417.0
       chai: 4.2.0
       chai-string: /chai-string/1.5.0/chai@4.2.0
       config: 1.31.0
@@ -54,15 +27,16 @@ importers:
       '@types/config': 0.0.34
       '@types/cucumber': 4.0.5
       '@types/json-stable-stringify': 1.0.32
-      '@types/node': 8.10.42
+      '@types/node': 8.10.43
       commitizen: 3.0.7
+      concurrently: 4.1.0
       cpy-cli: 1.0.1
       del-cli: 0.2.1
       husky: 1.3.1
       make-dir-cli: 1.0.0
+      nodemon: 1.18.10
       semantic-release: /semantic-release/15.13.3/semantic-release@15.13.3
       semantic-release-monorepo: /semantic-release-monorepo/6.1.1/semantic-release@15.13.3
-      ts-node: /ts-node/8.0.1/typescript@3.1.6
       tslint: /tslint/5.13.1/typescript@3.1.6
       typescript: 3.1.6
     specifiers:
@@ -86,6 +60,7 @@ importers:
       chai: ^4.1.2
       chai-string: ^1.4.0
       commitizen: ^3.0.7
+      concurrently: ^4.1.0
       config: ^1.31.0
       cpy-cli: ^1.0.1
       cucumber: ^4.2.1
@@ -94,10 +69,10 @@ importers:
       js-yaml: ^3.12.0
       json-stable-stringify: ^1.0.1
       make-dir-cli: ^1.0.0
+      nodemon: ^1.18.10
       reflect-metadata: ^0.1.13
       semantic-release: ^15.13.3
       semantic-release-monorepo: ^6.1.1
-      ts-node: 8.0.1
       tslint: ^5.12.1
       typed-rest-client: ^1.0.7
       typescript: 3.1.6
@@ -109,7 +84,7 @@ importers:
       inversify-binding-decorators: 4.0.0
       inversify-express-utils: 6.3.2
       js-yaml: 3.12.2
-      npm: 6.8.0
+      npm: 6.9.0
       ow: 0.12.0
       reflect-metadata: 0.1.13
       superagent: 4.1.0
@@ -123,20 +98,21 @@ importers:
       '@semantic-release/release-notes-generator': /@semantic-release/release-notes-generator/7.1.4/semantic-release@15.13.3
       '@types/config': 0.0.34
       '@types/jest': 23.3.14
-      '@types/node': 8.10.42
+      '@types/node': 8.10.43
       '@types/superagent': 3.8.7
       commitizen: 3.0.7
+      concurrently: 4.1.0
       cpy-cli: 2.0.0
       del-cli: 1.1.0
       husky: 1.3.1
-      jest: 24.1.0
+      jest: 24.3.0
       jest-create-mock-instance: 1.1.0
       make-dir-cli: 1.0.0
+      nodemon: 1.18.10
       nyc: 13.3.0
       semantic-release: /semantic-release/15.13.3/semantic-release@15.13.3
       semantic-release-monorepo: /semantic-release-monorepo/6.1.1/semantic-release@15.13.3
       ts-jest: /ts-jest/24.0.0/jest@24.1.0
-      ts-node: /ts-node/8.0.1/typescript@3.1.6
       tslint: /tslint/5.13.1/typescript@3.1.6
       typescript: 3.1.6
     specifiers:
@@ -151,6 +127,7 @@ importers:
       '@types/node': ~8.10.40
       '@types/superagent': ^3.8.6
       commitizen: ^3.0.7
+      concurrently: ^4.1.0
       config: ^3.0.1
       cpy-cli: ^2.0.0
       del-cli: ^1.1.0
@@ -159,9 +136,10 @@ importers:
       inversify-binding-decorators: 4.0.0
       inversify-express-utils: ^6.3.2
       jest: ^24.1.0
-      jest-create-mock-instance: ^1.1.0
+      jest-create-mock-instance: 1.1.0
       js-yaml: ^3.12.1
       make-dir-cli: ^1.0.0
+      nodemon: ^1.18.10
       npm: ^6.7.0
       nyc: ^13.1.0
       ow: ^0.12.0
@@ -170,7 +148,6 @@ importers:
       semantic-release-monorepo: ^6.1.1
       superagent: ^4.1.0
       ts-jest: 24.0.0
-      ts-node: 8.0.1
       tslint: ^5.12.1
       typescript: 3.1.6
       winston: ^2.4.2
@@ -182,7 +159,7 @@ importers:
       inversify-binding-decorators: 4.0.0
       inversify-express-utils: 6.3.2
       js-yaml: 3.12.2
-      npm: 6.8.0
+      npm: 6.9.0
       ow: 0.12.0
       reflect-metadata: 0.1.13
       superagent: 4.1.0
@@ -196,19 +173,20 @@ importers:
       '@semantic-release/release-notes-generator': /@semantic-release/release-notes-generator/7.1.4/semantic-release@15.13.3
       '@types/config': 0.0.34
       '@types/jest': 23.3.14
-      '@types/node': 8.10.42
+      '@types/node': 8.10.43
       '@types/superagent': 3.8.7
+      concurrently: 4.1.0
       cpy-cli: 2.0.0
       del-cli: 1.1.0
       husky: 1.3.1
-      jest: 24.1.0
+      jest: 24.3.0
       jest-create-mock-instance: 1.1.0
       make-dir-cli: 1.0.0
+      nodemon: 1.18.10
       nyc: 13.3.0
       semantic-release: /semantic-release/15.13.3/semantic-release@15.13.3
       semantic-release-monorepo: /semantic-release-monorepo/6.1.1/semantic-release@15.13.3
       ts-jest: /ts-jest/24.0.0/jest@24.1.0
-      ts-node: /ts-node/8.0.1/typescript@3.1.6
       tslint: /tslint/5.13.1/typescript@3.1.6
       typescript: 3.1.6
     specifiers:
@@ -223,6 +201,7 @@ importers:
       '@types/jest': ^23.3.3
       '@types/node': ~8.10.40
       '@types/superagent': ^3.8.3
+      concurrently: ^4.1.0
       config: ^3.0.1
       cpy-cli: ^2.0.0
       del-cli: ^1.1.0
@@ -231,9 +210,10 @@ importers:
       inversify-binding-decorators: 4.0.0
       inversify-express-utils: ^6.3.2
       jest: ^24.1.0
-      jest-create-mock-instance: ^1.1.0
+      jest-create-mock-instance: 1.1.0
       js-yaml: ^3.12.1
       make-dir-cli: ^1.0.0
+      nodemon: ^1.18.10
       npm: ^6.7.0
       nyc: ^13.1.0
       ow: ^0.12.0
@@ -242,7 +222,6 @@ importers:
       semantic-release-monorepo: ^6.1.1
       superagent: ^4.1.0
       ts-jest: 24.0.0
-      ts-node: 8.0.1
       tslint: ^5.12.1
       typescript: 3.1.6
       winston: ^2.4.2
@@ -254,7 +233,7 @@ importers:
       inversify-binding-decorators: 4.0.0
       inversify-express-utils: 6.3.2
       js-yaml: 3.12.2
-      npm: 6.8.0
+      npm: 6.9.0
       ow: 0.12.0
       reflect-metadata: 0.1.13
       superagent: 4.1.0
@@ -268,20 +247,21 @@ importers:
       '@semantic-release/release-notes-generator': /@semantic-release/release-notes-generator/7.1.4/semantic-release@15.13.3
       '@types/config': 0.0.34
       '@types/jest': 23.3.14
-      '@types/node': 8.10.42
+      '@types/node': 8.10.43
       '@types/superagent': 3.8.7
       commitizen: 3.0.7
+      concurrently: 4.1.0
       cpy-cli: 2.0.0
       del-cli: 1.1.0
       husky: 1.3.1
-      jest: 24.1.0
+      jest: 24.3.0
       jest-create-mock-instance: 1.1.0
       make-dir-cli: 1.0.0
+      nodemon: 1.18.10
       nyc: 13.3.0
       semantic-release: /semantic-release/15.13.3/semantic-release@15.13.3
       semantic-release-monorepo: /semantic-release-monorepo/6.1.1/semantic-release@15.13.3
       ts-jest: /ts-jest/24.0.0/jest@24.1.0
-      ts-node: /ts-node/8.0.1/typescript@3.1.6
       tslint: /tslint/5.13.1/typescript@3.1.6
       typescript: 3.1.6
     specifiers:
@@ -297,6 +277,7 @@ importers:
       '@types/node': ~8.10.40
       '@types/superagent': ^3.8.6
       commitizen: ^3.0.7
+      concurrently: ^4.1.0
       config: ^3.0.1
       cpy-cli: ^2.0.0
       del-cli: ^1.1.0
@@ -305,9 +286,10 @@ importers:
       inversify-binding-decorators: 4.0.0
       inversify-express-utils: ^6.3.2
       jest: ^24.1.0
-      jest-create-mock-instance: ^1.1.0
+      jest-create-mock-instance: 1.1.0
       js-yaml: ^3.12.1
       make-dir-cli: ^1.0.0
+      nodemon: ^1.18.10
       npm: ^6.7.0
       nyc: ^13.1.0
       ow: ^0.12.0
@@ -316,7 +298,6 @@ importers:
       semantic-release-monorepo: ^6.1.1
       superagent: ^4.1.0
       ts-jest: 24.0.0
-      ts-node: 8.0.1
       tslint: ^5.12.1
       typescript: 3.1.6
       winston: ^2.4.2
@@ -327,7 +308,7 @@ importers:
       inversify-binding-decorators: 4.0.0
       inversify-express-utils: 6.3.2
       js-yaml: 3.12.2
-      npm: 6.8.0
+      npm: 6.9.0
       ow: 0.12.0
       reflect-metadata: 0.1.13
       superagent: 4.1.0
@@ -341,19 +322,20 @@ importers:
       '@semantic-release/release-notes-generator': /@semantic-release/release-notes-generator/7.1.4/semantic-release@15.13.3
       '@types/config': 0.0.34
       '@types/jest': 23.3.14
-      '@types/node': 8.10.42
+      '@types/node': 8.10.43
       '@types/superagent': 3.8.7
+      concurrently: 4.1.0
       cpy-cli: 2.0.0
       del-cli: 1.1.0
       husky: 1.3.1
-      jest: 24.1.0
+      jest: 24.3.0
       jest-create-mock-instance: 1.1.0
       make-dir-cli: 1.0.0
+      nodemon: 1.18.10
       nyc: 13.3.0
       semantic-release: /semantic-release/15.13.3/semantic-release@15.13.3
       semantic-release-monorepo: /semantic-release-monorepo/6.1.1/semantic-release@15.13.3
       ts-jest: /ts-jest/24.0.0/jest@24.1.0
-      ts-node: /ts-node/8.0.1/typescript@3.1.6
       tslint: /tslint/5.13.1/typescript@3.1.6
       typescript: 3.1.6
     specifiers:
@@ -367,6 +349,7 @@ importers:
       '@types/jest': ^23.3.3
       '@types/node': ~8.10.40
       '@types/superagent': ^3.8.3
+      concurrently: ^4.1.0
       config: ^3.0.1
       cpy-cli: ^2.0.0
       del-cli: ^1.1.0
@@ -375,9 +358,10 @@ importers:
       inversify-binding-decorators: 4.0.0
       inversify-express-utils: ^6.3.2
       jest: ^24.1.0
-      jest-create-mock-instance: ^1.1.0
+      jest-create-mock-instance: 1.1.0
       js-yaml: ^3.12.1
       make-dir-cli: ^1.0.0
+      nodemon: ^1.18.10
       npm: ^6.7.0
       nyc: ^13.1.0
       ow: ^0.12.0
@@ -386,7 +370,6 @@ importers:
       semantic-release-monorepo: ^6.1.1
       superagent: ^4.1.0
       ts-jest: 24.0.0
-      ts-node: 8.0.1
       tslint: ^5.12.1
       typescript: 3.1.6
       winston: ^2.4.2
@@ -407,18 +390,19 @@ importers:
       '@semantic-release/release-notes-generator': /@semantic-release/release-notes-generator/7.1.4/semantic-release@15.13.3
       '@types/config': 0.0.34
       '@types/jest': 24.0.9
-      '@types/node': 8.10.42
+      '@types/node': 8.10.43
       commitizen: 3.0.7
+      concurrently: 4.1.0
       del-cli: 1.1.0
       husky: 1.3.1
       jest: 24.1.0
       jest-create-mock-instance: 1.1.0
       jest-mock: 24.0.0
+      nodemon: 1.18.10
       nyc: 13.3.0
       semantic-release: /semantic-release/15.13.3/semantic-release@15.13.3
       semantic-release-monorepo: /semantic-release-monorepo/6.1.1/semantic-release@15.13.3
       ts-jest: /ts-jest/24.0.0/jest@24.1.0
-      ts-node: /ts-node/8.0.1/typescript@3.1.6
       tslint: /tslint/5.13.1/typescript@3.1.6
       typescript: 3.1.6
     specifiers:
@@ -434,20 +418,21 @@ importers:
       '@types/jest': ~24.0.0
       '@types/node': ~8.10.40
       commitizen: ^3.0.7
+      concurrently: ^4.1.0
       config: ^3.0.1
       del-cli: ^1.1.0
       husky: ^1.3.1
       inversify: ^5.0.1
-      jest: ~24.1.0
-      jest-create-mock-instance: ^1.1.0
-      jest-mock: ^24.0.0
+      jest: 24.1.0
+      jest-create-mock-instance: 1.1.0
+      jest-mock: 24.0.0
       js-yaml: ^3.12.0
+      nodemon: ^1.18.10
       nyc: ^13.1.0
       reflect-metadata: ^0.1.13
       semantic-release: ^15.13.3
       semantic-release-monorepo: ^6.1.1
       ts-jest: 24.0.0
-      ts-node: 8.0.1
       tslint: ^5.12.1
       typescript: 3.1.6
   packages/libraries/core/errors:
@@ -459,16 +444,17 @@ importers:
       '@semantic-release/npm': /@semantic-release/npm/5.1.4/semantic-release@15.13.3
       '@semantic-release/release-notes-generator': /@semantic-release/release-notes-generator/7.1.4/semantic-release@15.13.3
       '@types/jest': 24.0.9
-      '@types/node': 8.10.42
+      '@types/node': 8.10.43
       commitizen: 3.0.7
+      concurrently: 4.1.0
       del-cli: 1.1.0
       husky: 1.3.1
-      jest: 24.1.0
+      jest: 24.3.0
+      nodemon: 1.18.10
       nyc: 13.3.0
       semantic-release: /semantic-release/15.13.3/semantic-release@15.13.3
       semantic-release-monorepo: /semantic-release-monorepo/6.1.1/semantic-release@15.13.3
       ts-jest: /ts-jest/24.0.0/jest@24.1.0
-      ts-node: /ts-node/8.0.1/typescript@3.1.6
       tslint: /tslint/5.13.1/typescript@3.1.6
       typescript: 3.1.6
     specifiers:
@@ -481,14 +467,15 @@ importers:
       '@types/jest': ^24.0.9
       '@types/node': ~8.10.40
       commitizen: ^3.0.7
+      concurrently: ^4.1.0
       del-cli: ^1.1.0
       husky: ^1.3.1
       jest: ^24.0.0
+      nodemon: ^1.18.10
       nyc: ^13.3.0
       semantic-release: ^15.13.3
       semantic-release-monorepo: ^6.1.1
       ts-jest: ^24.0.0
-      ts-node: 8.0.1
       tslint: ^5.12.1
       typescript: 3.1.6
   packages/libraries/core/logger:
@@ -502,16 +489,17 @@ importers:
       '@semantic-release/npm': /@semantic-release/npm/5.1.4/semantic-release@15.13.3
       '@semantic-release/release-notes-generator': /@semantic-release/release-notes-generator/7.1.4/semantic-release@15.13.3
       '@types/jest': 24.0.9
-      '@types/node': 8.10.42
+      '@types/node': 8.10.43
       commitizen: 3.0.7
+      concurrently: 4.1.0
       del-cli: 1.1.0
       husky: 1.3.1
-      jest: 24.1.0
+      jest: 24.3.0
+      nodemon: 1.18.10
       nyc: 13.3.0
       semantic-release: /semantic-release/15.13.3/semantic-release@15.13.3
       semantic-release-monorepo: /semantic-release-monorepo/6.1.1/semantic-release@15.13.3
       ts-jest: /ts-jest/24.0.0/jest@24.1.0
-      ts-node: /ts-node/8.0.1/typescript@3.1.6
       tslint: /tslint/5.13.1/typescript@3.1.6
       typescript: 3.1.6
     specifiers:
@@ -524,14 +512,15 @@ importers:
       '@types/jest': ^24.0.9
       '@types/node': ~8.10.40
       commitizen: ^3.0.7
+      concurrently: ^4.1.0
       del-cli: ^1.1.0
       husky: ^1.3.1
       jest: ^24.0.0
+      nodemon: ^1.18.10
       nyc: ^13.3.0
       semantic-release: ^15.13.3
       semantic-release-monorepo: ^6.1.1
       ts-jest: ^24.0.0
-      ts-node: 8.0.1
       tslint: ^5.12.1
       typescript: 3.1.6
       winston: ^2.4.2
@@ -539,7 +528,7 @@ importers:
     dependencies:
       '@cdf/config-inject': 'link:../../libraries/config/config-inject'
       ajv: 6.10.0
-      aws-sdk: 2.415.0
+      aws-sdk: 2.417.0
       aws-serverless-express: 3.3.5
       body-parser: 1.18.3
       config: 1.31.0
@@ -568,9 +557,10 @@ importers:
       '@types/config': 0.0.34
       '@types/express': 4.16.1
       '@types/jest': 24.0.9
-      '@types/node': 8.10.42
+      '@types/node': 8.10.43
       aws-sdk-mock: 4.3.1
       commitizen: 3.0.7
+      concurrently: 4.1.0
       cpy-cli: 2.0.0
       del-cli: 1.1.0
       husky: 1.3.1
@@ -578,11 +568,11 @@ importers:
       jest-create-mock-instance: 1.1.0
       jest-mock: 24.0.0
       make-dir-cli: 1.0.0
+      nodemon: 1.18.10
       nyc: 13.3.0
       semantic-release: /semantic-release/15.13.3/semantic-release@15.13.3
       semantic-release-monorepo: /semantic-release-monorepo/6.1.1/semantic-release@15.13.3
       ts-jest: /ts-jest/24.0.0/jest@24.1.0
-      ts-node: /ts-node/8.0.1/typescript@3.1.6
       tslint: /tslint/5.13.1/typescript@3.1.6
       typescript: 3.1.6
     specifiers:
@@ -605,6 +595,7 @@ importers:
       aws-serverless-express: ^3.3.5
       body-parser: ^1.18.3
       commitizen: ^3.0.7
+      concurrently: ^4.1.0
       config: ^1.30.0
       cpy-cli: ^2.0.0
       del-cli: ^1.1.0
@@ -616,20 +607,118 @@ importers:
       inversify: ^5.0.1
       inversify-binding-decorators: 4.0.0
       inversify-express-utils: ^6.3.2
-      jest: ~24.1.0
-      jest-create-mock-instance: ^1.1.0
-      jest-mock: ^24.0.0
+      jest: 24.1.0
+      jest-create-mock-instance: 1.1.0
+      jest-mock: 24.0.0
       js-yaml: ^3.12.0
       make-dir-cli: ^1.0.0
       mime: 1.6.0
       node-cache: ^4.2.0
+      nodemon: ^1.18.10
       nyc: ^13.1.0
       ow: ^0.12.0
       reflect-metadata: ^0.1.13
       semantic-release: ^15.13.3
       semantic-release-monorepo: ^6.1.1
       ts-jest: 24.0.0
-      ts-node: 8.0.1
+      tslint: ^5.12.1
+      typescript: 3.1.6
+      winston: ^2.4.2
+  packages/services/assetlibraryhistory:
+    dependencies:
+      '@cdf/config-inject': 'link:../../libraries/config/config-inject'
+      atob: 2.1.2
+      aws-sdk: 2.417.0
+      aws-serverless-express: 3.3.5
+      body-parser: 1.18.3
+      btoa: 1.2.1
+      config: 1.31.0
+      express: 4.16.4
+      inversify: 5.0.1
+      inversify-binding-decorators: 4.0.0
+      inversify-express-utils: 6.3.2
+      js-yaml: 3.12.2
+      morgan: 1.9.1
+      ow: 0.12.0
+      reflect-metadata: 0.1.13
+      winston: 2.4.4
+    devDependencies:
+      '@commitlint/cli': 7.5.2
+      '@commitlint/config-conventional': 7.5.0
+      '@semantic-release/changelog': /@semantic-release/changelog/3.0.2/semantic-release@15.13.3
+      '@semantic-release/git': /@semantic-release/git/7.0.8/semantic-release@15.13.3
+      '@semantic-release/npm': /@semantic-release/npm/5.1.4/semantic-release@15.13.3
+      '@semantic-release/release-notes-generator': /@semantic-release/release-notes-generator/7.1.4/semantic-release@15.13.3
+      '@types/atob': 2.1.1
+      '@types/aws-serverless-express': 3.3.0
+      '@types/body-parser': 1.17.0
+      '@types/btoa': 1.2.2
+      '@types/config': 0.0.34
+      '@types/express': 4.16.1
+      '@types/jest': 24.0.9
+      '@types/json-stable-stringify': 1.0.32
+      '@types/morgan': 1.7.35
+      '@types/node': 8.10.43
+      concurrently: 4.1.0
+      cpy-cli: 2.0.0
+      del-cli: 1.1.0
+      husky: 1.3.1
+      jest: 24.1.0
+      jest-create-mock-instance: 1.1.0
+      jest-mock: 24.0.0
+      make-dir-cli: 1.0.0
+      nodemon: 1.18.10
+      nyc: 13.3.0
+      semantic-release: /semantic-release/15.13.3/semantic-release@15.13.3
+      semantic-release-monorepo: /semantic-release-monorepo/6.1.1/semantic-release@15.13.3
+      ts-jest: /ts-jest/24.0.0/jest@24.1.0
+      tslint: /tslint/5.13.1/typescript@3.1.6
+      typescript: 3.1.6
+    specifiers:
+      '@cdf/config-inject': ^1.2.0
+      '@commitlint/cli': ^7.5.2
+      '@commitlint/config-conventional': ^7.5.0
+      '@semantic-release/changelog': ^3.0.2
+      '@semantic-release/git': ^7.0.8
+      '@semantic-release/npm': ^5.1.4
+      '@semantic-release/release-notes-generator': ^7.1.4
+      '@types/atob': ^2.1.1
+      '@types/aws-serverless-express': ^3.3.0
+      '@types/body-parser': ^1.17.0
+      '@types/btoa': ^1.2.0
+      '@types/config': 0.0.34
+      '@types/express': ^4.16.1
+      '@types/jest': ~24.0.0
+      '@types/json-stable-stringify': ^1.0.32
+      '@types/morgan': ^1.7.35
+      '@types/node': ~8.10.40
+      atob: ^2.1.2
+      aws-sdk: ^2.398.0
+      aws-serverless-express: ^3.3.5
+      body-parser: ^1.18.3
+      btoa: ^1.2.1
+      concurrently: ^4.1.0
+      config: ^1.30.0
+      cpy-cli: ^2.0.0
+      del-cli: ^1.1.0
+      express: ^4.16.4
+      husky: ^1.3.1
+      inversify: ^5.0.1
+      inversify-binding-decorators: 4.0.0
+      inversify-express-utils: ^6.3.2
+      jest: 24.1.0
+      jest-create-mock-instance: 1.1.0
+      jest-mock: 24.0.0
+      js-yaml: ^3.12.0
+      make-dir-cli: ^1.0.0
+      morgan: ^1.9.0
+      nodemon: ^1.18.10
+      nyc: ^13.1.0
+      ow: ^0.12.0
+      reflect-metadata: ^0.1.13
+      semantic-release: ^15.13.3
+      semantic-release-monorepo: ^6.1.1
+      ts-jest: 24.0.0
       tslint: ^5.12.1
       typescript: 3.1.6
       winston: ^2.4.2
@@ -639,7 +728,7 @@ importers:
       '@cdf/config-inject': 'link:../../libraries/config/config-inject'
       '@cdf/provisioning-client': 'link:../../libraries/clients/provisioning-client'
       ajv: 6.10.0
-      aws-sdk: 2.416.0
+      aws-sdk: 2.417.0
       aws-serverless-express: 3.3.5
       body-parser: 1.18.3
       busboy: 0.2.14
@@ -672,6 +761,7 @@ importers:
       '@types/uuid': 3.4.4
       aws-sdk-mock: 4.3.1
       commitizen: 3.0.7
+      concurrently: 4.1.0
       cpy-cli: 2.0.0
       del-cli: 1.1.0
       husky: 1.3.1
@@ -679,11 +769,11 @@ importers:
       jest-create-mock-instance: 1.1.0
       jest-mock: 24.0.0
       make-dir-cli: 1.0.0
+      nodemon: 1.18.10
       nyc: 13.3.0
       semantic-release: /semantic-release/15.13.3/semantic-release@15.13.3
       semantic-release-monorepo: /semantic-release-monorepo/6.1.1/semantic-release@15.13.3
       ts-jest: /ts-jest/24.0.0/jest@24.1.0
-      ts-node: /ts-node/8.0.1/typescript@3.1.6
       tslint: /tslint/5.13.1/typescript@3.1.6
       typescript: 3.1.6
     specifiers:
@@ -712,6 +802,7 @@ importers:
       body-parser: ^1.18.3
       busboy: ^0.2.14
       commitizen: ^3.0.7
+      concurrently: ^4.1.0
       config: ^1.30.0
       cpy-cli: ^2.0.0
       del-cli: ^1.1.0
@@ -720,11 +811,12 @@ importers:
       inversify: ^5.0.1
       inversify-binding-decorators: 4.0.0
       inversify-express-utils: ^6.3.2
-      jest: ~24.1.0
-      jest-create-mock-instance: ^1.1.0
-      jest-mock: ^24.0.0
+      jest: 24.1.0
+      jest-create-mock-instance: 1.1.0
+      jest-mock: 24.0.0
       js-yaml: ^3.12.0
       make-dir-cli: ^1.0.0
+      nodemon: ^1.18.10
       nyc: ^13.1.0
       ow: ^0.12.0
       reflect-metadata: ^0.1.13
@@ -732,7 +824,6 @@ importers:
       semantic-release-monorepo: ^6.1.1
       sinon: ^7.0.0
       ts-jest: 24.0.0
-      ts-node: 8.0.1
       tslint: ^5.12.1
       typescript: 3.1.6
       uuid: ^3.2.1
@@ -774,18 +865,19 @@ importers:
       '@types/uuid': 3.4.4
       aws-sdk-mock: 4.3.1
       commitizen: 3.0.7
+      concurrently: 4.1.0
       cpy-cli: 2.0.0
       del-cli: 1.1.0
       husky: 1.3.1
       jest: 24.1.0
       jest-create-mock-instance: 1.1.0
-      jest-mock: 24.3.0
+      jest-mock: 24.0.0
       make-dir-cli: 1.0.0
+      nodemon: 1.18.10
       nyc: 13.3.0
       semantic-release: /semantic-release/15.13.3/semantic-release@15.13.3
       semantic-release-monorepo: /semantic-release-monorepo/6.1.1/semantic-release@15.13.3
       ts-jest: /ts-jest/24.0.0/jest@24.1.0
-      ts-node: /ts-node/8.0.1/typescript@3.1.6
       tslint: /tslint/5.13.1/typescript@3.1.6
       typescript: 3.1.6
     specifiers:
@@ -810,6 +902,7 @@ importers:
       aws-serverless-express: ^3.3.5
       body-parser: ^1.18.3
       commitizen: ^3.0.7
+      concurrently: ^4.1.0
       config: ^1.30.0
       cpy-cli: ^2.0.0
       del-cli: ^1.1.0
@@ -819,12 +912,13 @@ importers:
       inversify: ^5.0.1
       inversify-binding-decorators: 4.0.0
       inversify-express-utils: ^6.3.2
-      jest: ~24.1.0
-      jest-create-mock-instance: ^1.1.0
-      jest-mock: ^24.0.0
+      jest: 24.1.0
+      jest-create-mock-instance: 1.1.0
+      jest-mock: 24.0.0
       js-yaml: ^3.12.0
       jszip: ^3.1.5
       make-dir-cli: ^1.0.0
+      nodemon: ^1.18.10
       nyc: ^13.1.0
       ow: ^0.12.0
       pem: ^1.12.5
@@ -832,7 +926,6 @@ importers:
       semantic-release: ^15.13.3
       semantic-release-monorepo: ^6.1.1
       ts-jest: 24.0.0
-      ts-node: 8.0.1
       tslint: ^5.12.1
       typescript: 3.1.6
       uuid: ^3.2.1
@@ -1306,20 +1399,6 @@ packages:
     dev: true
     resolution:
       integrity: sha512-nN8W24ZXEpJQJoVgMsGZeK9FOzxkc39Xn9ykseUpPpPMNEDFSvqfkCeqqKrjUiXRm72ubGLWG1SOz0aJPcgGww==
-  /@octokit/rest/16.16.5:
-    dependencies:
-      '@octokit/request': 2.4.1
-      before-after-hook: 1.4.0
-      btoa-lite: 1.0.0
-      lodash.get: 4.4.2
-      lodash.set: 4.3.2
-      lodash.uniq: 4.5.0
-      octokit-pagination-methods: 1.1.0
-      universal-user-agent: 2.0.3
-      url-template: 2.0.8
-    dev: true
-    resolution:
-      integrity: sha512-R7SD1DUUJVwNuiJWYiIYOm20Q/MFObN48o4BLnfhkzn4ArENWe4Vl5YOvVRZIC0vHGoYCgRtKhzBA6/WOjE/ig==
   /@octokit/rest/16.17.0:
     dependencies:
       '@octokit/request': 2.4.1
@@ -1334,19 +1413,6 @@ packages:
     dev: true
     resolution:
       integrity: sha512-1RB7e4ptR/M+1Ik3Qn84pbppbSadBaCtpgFqgqsXn6s4ZVE6hqW9SOm6UW5yd3KT7ObVfdYUkhMlgR937oKyDw==
-  /@semantic-release/changelog/3.0.2:
-    dependencies:
-      '@semantic-release/error': 2.2.0
-      aggregate-error: 2.2.0
-      fs-extra: 7.0.1
-      lodash: 4.17.11
-    dev: true
-    engines:
-      node: '>=8.3'
-    peerDependencies:
-      semantic-release: '>=15.8.0 <16.0.0'
-    resolution:
-      integrity: sha512-pDUaBNAuPAqQ+ArHwvR160RG2LbfyIVz9EJXgxH0V547rlx/hCs0Sp7L4Rtzi5Z+d6CHcv9g2ynxplE1xAzp2g==
   /@semantic-release/changelog/3.0.2/semantic-release@15.13.3:
     dependencies:
       '@semantic-release/error': 2.2.0
@@ -1362,21 +1428,6 @@ packages:
       semantic-release: '>=15.8.0 <16.0.0'
     resolution:
       integrity: sha512-pDUaBNAuPAqQ+ArHwvR160RG2LbfyIVz9EJXgxH0V547rlx/hCs0Sp7L4Rtzi5Z+d6CHcv9g2ynxplE1xAzp2g==
-  /@semantic-release/commit-analyzer/6.1.0:
-    dependencies:
-      conventional-changelog-angular: 5.0.3
-      conventional-commits-filter: 2.0.1
-      conventional-commits-parser: 3.0.1
-      debug: 4.1.1
-      import-from: 2.1.0
-      lodash: 4.17.11
-    dev: true
-    engines:
-      node: '>=8.3'
-    peerDependencies:
-      semantic-release: '>=15.8.0 <16.0.0'
-    resolution:
-      integrity: sha512-2lb+t6muGenI86mYGpZYOgITx9L3oZYF697tJoqXeQEk0uw0fm+OkkOuDTBA3Oax9ftoNIrCKv9bwgYvxrbM6w==
   /@semantic-release/commit-analyzer/6.1.0/semantic-release@15.13.3:
     dependencies:
       conventional-changelog-angular: 5.0.3
@@ -1398,25 +1449,6 @@ packages:
     dev: true
     resolution:
       integrity: sha512-9Tj/qn+y2j+sjCI3Jd+qseGtHjOAeg7dU2/lVcqIQ9TV3QDaDXDYXcoOHU+7o2Hwh8L8ymL4gfuO7KxDs3q2zg==
-  /@semantic-release/git/7.0.8:
-    dependencies:
-      '@semantic-release/error': 2.2.0
-      aggregate-error: 2.2.0
-      debug: 4.1.1
-      dir-glob: 2.2.2
-      execa: 1.0.0
-      fs-extra: 7.0.1
-      globby: 9.1.0
-      lodash: 4.17.11
-      micromatch: 3.1.10
-      p-reduce: 1.0.0
-    dev: true
-    engines:
-      node: '>=8.3'
-    peerDependencies:
-      semantic-release: '>=15.4.0 <16.0.0'
-    resolution:
-      integrity: sha512-sA+XoPU6GrV+A4YswO0b5JWL1KbzmyyaqUK6Y2poDkIVPlj+oQdi/stpKz/bKF5z9ChMGP87OVPMeUyXGaNFtw==
   /@semantic-release/git/7.0.8/semantic-release@15.13.3:
     dependencies:
       '@semantic-release/error': 2.2.0
@@ -1438,32 +1470,6 @@ packages:
       semantic-release: '>=15.4.0 <16.0.0'
     resolution:
       integrity: sha512-sA+XoPU6GrV+A4YswO0b5JWL1KbzmyyaqUK6Y2poDkIVPlj+oQdi/stpKz/bKF5z9ChMGP87OVPMeUyXGaNFtw==
-  /@semantic-release/github/5.2.10:
-    dependencies:
-      '@octokit/rest': 16.16.5
-      '@semantic-release/error': 2.2.0
-      aggregate-error: 2.2.0
-      bottleneck: 2.17.1
-      debug: 4.1.1
-      dir-glob: 2.2.2
-      fs-extra: 7.0.1
-      globby: 9.1.0
-      http-proxy-agent: 2.1.0
-      https-proxy-agent: 2.2.1
-      issue-parser: 3.0.1
-      lodash: 4.17.11
-      mime: 2.4.0
-      p-filter: 1.0.0
-      p-retry: 3.0.1
-      parse-github-url: 1.0.2
-      url-join: 4.0.0
-    dev: true
-    engines:
-      node: '>=8.3'
-    peerDependencies:
-      semantic-release: '>=15.8.0 <16.0.0'
-    resolution:
-      integrity: sha512-z/UwIxKb+EMiJDIy/57MBzJ80ar5H9GJQRyML/ILQ8dlrPwXs7cTyTvC7AesrF7t1mJZtg3ht9Qf9RdtR/LGzw==
   /@semantic-release/github/5.2.10/semantic-release@15.13.3:
     dependencies:
       '@octokit/rest': 16.17.0
@@ -1492,26 +1498,6 @@ packages:
       semantic-release: '>=15.8.0 <16.0.0'
     resolution:
       integrity: sha512-z/UwIxKb+EMiJDIy/57MBzJ80ar5H9GJQRyML/ILQ8dlrPwXs7cTyTvC7AesrF7t1mJZtg3ht9Qf9RdtR/LGzw==
-  /@semantic-release/npm/5.1.4:
-    dependencies:
-      '@semantic-release/error': 2.2.0
-      aggregate-error: 2.2.0
-      execa: 1.0.0
-      fs-extra: 7.0.1
-      lodash: 4.17.11
-      nerf-dart: 1.0.0
-      normalize-url: 4.2.0
-      npm: 6.5.0
-      rc: 1.2.8
-      read-pkg: 4.0.1
-      registry-auth-token: 3.3.2
-    dev: true
-    engines:
-      node: '>=8.3'
-    peerDependencies:
-      semantic-release: '>=15.9.0 <16.0.0'
-    resolution:
-      integrity: sha512-YRl8VTVwnRTl/sVRvTXs1ncYcuvuGrqPEXYy+lUK1YRLq25hkrhIdv3Ju0u1zGLqVCA8qRlF3NzWl7pULJXVog==
   /@semantic-release/npm/5.1.4/semantic-release@15.13.3:
     dependencies:
       '@semantic-release/error': 2.2.0
@@ -1534,24 +1520,6 @@ packages:
       semantic-release: '>=15.9.0 <16.0.0'
     resolution:
       integrity: sha512-YRl8VTVwnRTl/sVRvTXs1ncYcuvuGrqPEXYy+lUK1YRLq25hkrhIdv3Ju0u1zGLqVCA8qRlF3NzWl7pULJXVog==
-  /@semantic-release/release-notes-generator/7.1.4:
-    dependencies:
-      conventional-changelog-angular: 5.0.3
-      conventional-changelog-writer: 4.0.3
-      conventional-commits-filter: 2.0.1
-      conventional-commits-parser: 3.0.1
-      debug: 4.1.1
-      get-stream: 4.1.0
-      import-from: 2.1.0
-      into-stream: 4.0.0
-      lodash: 4.17.11
-    dev: true
-    engines:
-      node: '>=8.3'
-    peerDependencies:
-      semantic-release: '>=15.8.0 <16.0.0'
-    resolution:
-      integrity: sha512-pWPouZujddgb6t61t9iA9G3yIfp3TeQ7bPbV1ixYSeP6L7gI1+Du82fY/OHfEwyifpymLUQW0XnIKgKct5IMMw==
   /@semantic-release/release-notes-generator/7.1.4/semantic-release@15.13.3:
     dependencies:
       conventional-changelog-angular: 5.0.3
@@ -1593,6 +1561,10 @@ packages:
   /@sinonjs/text-encoding/0.7.1:
     resolution:
       integrity: sha512-+iTbntw2IZPb/anVDbypzfQa+ay64MW0Zo8aJ8gZPWMMK6/OubMVb6lUPMagqjOPnmtauXnFCACVl3O7ogjeqQ==
+  /@types/atob/2.1.1:
+    dev: true
+    resolution:
+      integrity: sha512-/6Tp90Jzphdqu/m2Re8x9qWG7rZdwmp9BmB1bRSyyt0oY8lRE+H43oqOpdi5gm3CA0lvfbQMxk/Ma9+ISRmMkA==
   /@types/aws-lambda/8.10.21:
     dev: true
     resolution:
@@ -1640,6 +1612,10 @@ packages:
       '@types/node': 8.10.43
     resolution:
       integrity: sha512-a2+YeUjPkztKJu5aIF2yArYFQQp8d51wZ7DavSHjFuY1mqVgidGyzEQ41JIVNy82fXj8yPgy2vJmfIywgESW6w==
+  /@types/btoa/1.2.2:
+    dev: true
+    resolution:
+      integrity: sha512-uPugUTgPrYH6jKs/mE58JpSLhLRC5i5QoxQBMuk8wBDvvH4cw+YQwMo8mhi8ORgmlAVaeLhFlBgfvvKRnl5/iQ==
   /@types/busboy/0.2.3:
     dependencies:
       '@types/node': 8.10.43
@@ -1742,10 +1718,12 @@ packages:
     dev: true
     resolution:
       integrity: sha512-tHq6qdbT9U1IRSGf14CL0pUlULksvY9OZ+5eEgl1N7t+OA3tGvNpxJCzuKQlsNgCVwbAs670L1vcVQi8j9HjnA==
-  /@types/node/8.10.42:
+  /@types/morgan/1.7.35:
+    dependencies:
+      '@types/express': 4.16.1
     dev: true
     resolution:
-      integrity: sha512-8LCqostMfYwQs9by1k21/P4KZp9uFQk3Q528y3qtPKQnCJmKz0Em3YzgeNjTNV1FVrG/7n/6j12d4UKg9zSgDw==
+      integrity: sha512-E9qFi0seOkdlQnCTPv54brNfGWeFdRaEhI5tSue4pdx/V+xfxvMETsxXhOEcj1cYL+0n/jcTEmj/jD2gjzCwMg==
   /@types/node/8.10.43:
     resolution:
       integrity: sha512-5m5W13HR2k3cu88mpzlnPBBv5+GyMHtj4F0P83RG4mqoC0AYVYHVMHfF3SgwKNtqEZiZQASMxU92QsLEekKcnw==
@@ -1775,7 +1753,7 @@ packages:
   /@types/superagent/3.8.7:
     dependencies:
       '@types/cookiejar': 2.1.1
-      '@types/node': 8.10.42
+      '@types/node': 8.10.43
     dev: true
     resolution:
       integrity: sha512-9KhCkyXv268A2nZ1Wvu7rQWM+BmdYUVkycFeNnYrUL5Zwu7o8wPQ3wBfW59dDP+wuoxw0ww8YKgTNv8j/cgscA==
@@ -1801,6 +1779,10 @@ packages:
     dev: true
     resolution:
       integrity: sha512-sY5AXXVZv4Y1VACTtR11UJCPHHudgY5i26Qj5TypE6DKlIApbwb5uqhXcJ5UUGbvZNRh7EeIoW+LrJumBsKp7w==
+  /abbrev/1.1.1:
+    dev: true
+    resolution:
+      integrity: sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==
   /accepts/1.3.5:
     dependencies:
       mime-types: 2.1.22
@@ -1935,10 +1917,6 @@ packages:
       node: '>=4'
     resolution:
       integrity: sha512-P009oYkeHyU742iSZJzZZywj4QRJdnTWffaKuJQLablCZ1uz6/cW4yaRgcDaoQ+uwOxxnt0gRUcwfsNP2ri0gw==
-  /arg/4.1.0:
-    dev: true
-    resolution:
-      integrity: sha512-ZWc51jO3qegGkVh8Hwpv636EkbesNV5ZNQPCtRa+0qytRYPEs9IYT9qITY9buezqUH5uqyzlWLcufrzU2rffdg==
   /argparse/1.0.10:
     dependencies:
       sprintf-js: 1.0.3
@@ -2054,6 +2032,10 @@ packages:
       node: '>=4'
     resolution:
       integrity: sha512-+Ryf6g3BKoRc7jfp7ad8tM4TtMiaWvbF/1/sQcZPkkS7ag3D5nMBCe2UfOTONtAkaG0tO0ij3C5Lwmf1EiyjHg==
+  /async-each/1.0.1:
+    dev: true
+    resolution:
+      integrity: sha1-GdOGodntxufByF04iu28xW0zYC0=
   /async-limiter/1.0.0:
     resolution:
       integrity: sha512-jp/uFnooOiO+L211eZOoSyzpOITMXx1rBITauYykG3BRYPu8h0UcxsPNB04RR5vo4Tyz3+ay17tR6JVf9qzYWg==
@@ -2071,7 +2053,6 @@ packages:
     resolution:
       integrity: sha1-x57Zf380y48robyXkLzDZkdLS3k=
   /atob/2.1.2:
-    dev: true
     engines:
       node: '>= 4.5.0'
     hasBin: true
@@ -2085,38 +2066,6 @@ packages:
     dev: true
     resolution:
       integrity: sha512-uOaf7/Tq9kSoRc2/EQfAn24AAwU6UwvR8xSFSg0vTRxK0xHHEZ5UB/KF6ibF2gj0I4977lM35237E5sbzhRxKA==
-  /aws-sdk/2.415.0:
-    dependencies:
-      buffer: 4.9.1
-      events: 1.1.1
-      ieee754: 1.1.8
-      jmespath: 0.15.0
-      querystring: 0.2.0
-      sax: 1.2.1
-      url: 0.10.3
-      uuid: 3.3.2
-      xml2js: 0.4.19
-    dev: false
-    engines:
-      node: '>= 0.8.0'
-    resolution:
-      integrity: sha512-QPrJNWR4f56N2VPNLCD/XVnEufiZB08bvRPO7xkajHJdeOvrECpjFlJNkvXmjpnkCfTwaQC0sHHMsJyzMeL7+g==
-  /aws-sdk/2.416.0:
-    dependencies:
-      buffer: 4.9.1
-      events: 1.1.1
-      ieee754: 1.1.8
-      jmespath: 0.15.0
-      querystring: 0.2.0
-      sax: 1.2.1
-      url: 0.10.3
-      uuid: 3.3.2
-      xml2js: 0.4.19
-    dev: false
-    engines:
-      node: '>= 0.8.0'
-    resolution:
-      integrity: sha512-Z1KKOwHxi+wD9ydad6IMC8zlYVJefzTKNbjJcBj+ASYNJHWUXCdqCcriUQipFAERjD/xYW7Bi2Ygrp96i23kSg==
   /aws-sdk/2.417.0:
     dependencies:
       buffer: 4.9.1
@@ -2240,6 +2189,14 @@ packages:
   /base64-js/1.3.0:
     resolution:
       integrity: sha512-ccav/yGvoa80BQDljCxsmmQ3Xvx60/UpBIij5QN21W3wBi/hhIC9OoO+KLpu9IJTS9j4DRVJ3aDDF9cMSoa2lw==
+  /basic-auth/2.0.1:
+    dependencies:
+      safe-buffer: 5.1.2
+    dev: false
+    engines:
+      node: '>= 0.8'
+    resolution:
+      integrity: sha512-NF+epuEdnUYVlGuhaxbbq+dvJttwLnGY+YixlXlME5KpQ5W3CnXA5cVTneY3SPbPDRkcjMbifrwmFYcClgOZeg==
   /bcrypt-pbkdf/1.0.2:
     dependencies:
       tweetnacl: 0.14.5
@@ -2258,6 +2215,12 @@ packages:
     dev: false
     resolution:
       integrity: sha512-9Kq8m6NZTAgy05Ryuh7U3Qc4/ujLQU1AZ5vMw4cr3igTdi5itZC6kCNrRr2X8NzPiDn2oUIFTfa71DKMnue/Zg==
+  /binary-extensions/1.13.0:
+    dev: true
+    engines:
+      node: '>=0.10.0'
+    resolution:
+      integrity: sha512-EgmjVLMn22z7eGGv3kcnHwSnJXmFHjISTY9E/S5lIcTD3Oxw05QTcBLNkJFzcb3cNueUdF/IN4U+d78V0zO8Hw==
   /bluebird/3.5.3:
     dev: false
     resolution:
@@ -2381,6 +2344,13 @@ packages:
     dev: true
     resolution:
       integrity: sha1-M3dm2hWAEhD92VbCLpxokaudAzc=
+  /btoa/1.2.1:
+    dev: false
+    engines:
+      node: '>= 0.4.0'
+    hasBin: true
+    resolution:
+      integrity: sha512-SB4/MIGlsiVkMcHmT+pSmIPoNDoHg+7cMzmt3Uxt628MTz2487DKSqK/fuhFBrkuqrYv5UCEnACpF4dTFNKc/g==
   /buffer-from/1.1.1:
     dev: true
     resolution:
@@ -2594,6 +2564,24 @@ packages:
     dev: false
     resolution:
       integrity: sha1-V00xLt2Iu13YkS6Sht1sCu1KrII=
+  /chokidar/2.1.2:
+    dependencies:
+      anymatch: 2.0.0
+      async-each: 1.0.1
+      braces: 2.3.2
+      glob-parent: 3.1.0
+      inherits: 2.0.3
+      is-binary-path: 1.0.1
+      is-glob: 4.0.0
+      normalize-path: 3.0.0
+      path-is-absolute: 1.0.1
+      readdirp: 2.2.1
+      upath: 1.1.1
+    dev: true
+    optionalDependencies:
+      fsevents: 1.2.7
+    resolution:
+      integrity: sha512-IwXUx0FXc5ibYmPC2XeEj5mpXoV66sR+t3jqu2NS2GYwCktt3KF1/Qqjws/NkegajBA4RbZ5+DDwlOiJsxDHEg==
   /ci-info/1.6.0:
     dev: true
     resolution:
@@ -2756,6 +2744,23 @@ packages:
   /concat-map/0.0.1:
     resolution:
       integrity: sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=
+  /concurrently/4.1.0:
+    dependencies:
+      chalk: 2.4.2
+      date-fns: 1.30.1
+      lodash: 4.17.11
+      read-pkg: 4.0.1
+      rxjs: 6.4.0
+      spawn-command: 0.0.2-1
+      supports-color: 4.5.0
+      tree-kill: 1.2.1
+      yargs: 12.0.5
+    dev: true
+    engines:
+      node: '>=6.0.0'
+    hasBin: true
+    resolution:
+      integrity: sha512-pwzXCE7qtOB346LyO9eFWpkFJVO3JQZ/qU/feGeaAHiX1M3Rw3zgXKc5cZ8vSH5DGygkjzLFDzA/pwoQDkRNGg==
   /config/1.31.0:
     dependencies:
       json5: 1.0.1
@@ -3162,6 +3167,10 @@ packages:
     dev: true
     resolution:
       integrity: sha512-YTWYI9se1P55u58gL5GkQHW4P6VJBJ5iBT+B5a7i2Tjadhv52paJG0qHX4A0OR6/t52odI64KP2YvFpkDOi3eQ==
+  /date-fns/1.30.1:
+    dev: true
+    resolution:
+      integrity: sha512-hBSVCvSmWC+QypYObzwGOd9wqdDpOt+0wl0KbU+R+uuZBS1jN8VsD1ss3irQDknRj5NvxiTF6oj/nDRnN/UQNw==
   /dateformat/3.0.3:
     dev: true
     resolution:
@@ -3464,15 +3473,6 @@ packages:
     dev: true
     resolution:
       integrity: sha512-1MkrZNvWTKCaigbn+W15elq2BB/L22nqrSY5DKlo3X6+vclJm8Bb5djXJBmEX6fS3+zCh/F4VBK5Z2KxJt4s2Q==
-  /env-ci/3.2.0:
-    dependencies:
-      execa: 1.0.0
-      java-properties: 0.2.10
-    dev: true
-    engines:
-      node: '>=6'
-    resolution:
-      integrity: sha512-TFjNiDlXrL8/pfHswdvJGEZzJcq3aBPb8Eka83hlGLwuNw9F9BC9S9ETlkfkItLRT9k5JgpGgeP+rL6/3cEbcw==
   /error-ex/1.3.2:
     dependencies:
       is-arrayish: 0.2.1
@@ -4065,6 +4065,18 @@ packages:
     dev: false
     resolution:
       integrity: sha1-invTcYa23d84E/I4WLV+yq9eQdQ=
+  /fsevents/1.2.7:
+    bundledDependencies:
+      - node-pre-gyp
+    dependencies:
+      nan: 2.12.1
+    dev: true
+    engines:
+      node: '>=4.0'
+    optional: true
+    requiresBuild: true
+    resolution:
+      integrity: sha512-Pxm6sI2MeBD7RdD12RYsqaP0nMiwx8eZBXCa6z2L+mRHm2DYrOYwihmhjpkdjUHwQhslWQjRpEgNq4XvBmaAuw==
   /function-bind/1.1.1:
     dev: true
     resolution:
@@ -4546,6 +4558,10 @@ packages:
   /ieee754/1.1.8:
     resolution:
       integrity: sha1-vjPUCsEO8ZJnAfbwii2G+/0a0+Q=
+  /ignore-by-default/1.0.1:
+    dev: true
+    resolution:
+      integrity: sha1-SMptcvbGo68Aqa1K5odr44ieKwk=
   /ignore/4.0.6:
     dev: true
     engines:
@@ -4720,6 +4736,14 @@ packages:
     dev: true
     resolution:
       integrity: sha1-d8mYQFJ6qOyxqLppe4BkWnqSap0=
+  /is-binary-path/1.0.1:
+    dependencies:
+      binary-extensions: 1.13.0
+    dev: true
+    engines:
+      node: '>=0.10.0'
+    resolution:
+      integrity: sha1-dfFmQrSA8YenEcgUFh/TpKdlWJg=
   /is-buffer/1.1.6:
     resolution:
       integrity: sha512-NcdALwpXkTm5Zvvbk7owOUSvVvBKDgKP5/ewfXEznmQFfs4ZRmanOeKBTjRVjka3QFoN6XJ+9F3USqfHqTaU5w==
@@ -5594,6 +5618,16 @@ packages:
     hasBin: true
     resolution:
       integrity: sha512-+q91L65kypqklvlRFfXfdzUKyngQLOcwGhXQaLmVHv+d09LkNXuBuGxlofTFW42XMzu3giIcChchTsCNUjQ78A==
+  /jest/24.3.0:
+    dependencies:
+      import-local: 2.0.0
+      jest-cli: 24.3.0
+    dev: true
+    engines:
+      node: '>= 6'
+    hasBin: true
+    resolution:
+      integrity: sha512-c1EFvnRkTClSj9qcAF3r0UHCf5bpxdGs4+cKJwp53tct6S/ZhSk3NGjjMGBHxm41+6wnJSBl48u6nzIFxoNs9g==
   /jmespath/0.15.0:
     engines:
       node: '>= 0.6.0'
@@ -6278,6 +6312,18 @@ packages:
       node: '>=0.10.0'
     resolution:
       integrity: sha512-xV2bxeN6F7oYjZWTe/YPAy6MN2M+sL4u/Rlm2AHCIVGfo2p1yGmBHQ6vHehl4bRTZBdHu3TSkWdYgkwpYzAGSw==
+  /morgan/1.9.1:
+    dependencies:
+      basic-auth: 2.0.1
+      debug: 2.6.9
+      depd: 1.1.2
+      on-finished: 2.3.0
+      on-headers: 1.0.2
+    dev: false
+    engines:
+      node: '>= 0.8.0'
+    resolution:
+      integrity: sha512-HQStPIV4y3afTiCYVxirakhlCfGkI161c76kKFca7Fk1JusM//Qeo1ej2XaMniiNeaZklMVrh3vTtIzpzwbpmA==
   /ms/2.0.0:
     resolution:
       integrity: sha1-VgiurfwAvmwpAd9fmGF4jeDVl8g=
@@ -6296,6 +6342,11 @@ packages:
     dev: false
     resolution:
       integrity: sha512-z81GNO7nnYMEhrGh9LeymoE4+Yr0Wn5McHIZMK5cfQCl+NDX08sCZgUc9/6MHni9IWuFLm1Z3HTCXu2z9fN62Q==
+  /nan/2.12.1:
+    dev: true
+    optional: true
+    resolution:
+      integrity: sha512-JY7V6lRkStKcKTvHO5NVSQRv+RV+FIL5pvDoLiAtSL9pKlC5x9PKQcZDsq7m4FO4d57mkhC6Z+QhAh3Jdk5JFw==
   /nanomatch/1.2.13:
     dependencies:
       arr-diff: 4.0.0
@@ -6408,6 +6459,32 @@ packages:
       node: '>=0.10.0'
     resolution:
       integrity: sha1-WuVUHQJGRdMqWPzdyc7s6nrjrC8=
+  /nodemon/1.18.10:
+    dependencies:
+      chokidar: 2.1.2
+      debug: 3.2.6
+      ignore-by-default: 1.0.1
+      minimatch: 3.0.4
+      pstree.remy: 1.1.6
+      semver: 5.6.0
+      supports-color: 5.5.0
+      touch: 3.1.0
+      undefsafe: 2.0.2
+      update-notifier: 2.5.0
+    dev: true
+    engines:
+      node: '>=4'
+    hasBin: true
+    requiresBuild: true
+    resolution:
+      integrity: sha512-we51yBb1TfEvZamFchRgcfLbVYgg0xlGbyXmOtbBzDwxwgewYS/YbZ5tnlnsH51+AoSTTsT3A2E/FloUbtH8cQ==
+  /nopt/1.0.10:
+    dependencies:
+      abbrev: 1.1.1
+    dev: true
+    hasBin: true
+    resolution:
+      integrity: sha1-bd0hvSoxQXuScn3Vhfim83YI6+4=
   /normalize-package-data/2.5.0:
     dependencies:
       hosted-git-info: 2.7.1
@@ -6425,6 +6502,12 @@ packages:
       node: '>=0.10.0'
     resolution:
       integrity: sha1-GrKLVW4Zg2Oowab35vogE3/mrtk=
+  /normalize-path/3.0.0:
+    dev: true
+    engines:
+      node: '>=0.10.0'
+    resolution:
+      integrity: sha512-6eZs5Ls3WtCisHWp9S2GUy8dqkpGi4BVSz3GaqiE6ezub0512ESztXUwUB6C6IKbQkY2Pnb/mD4WYojCRwcwLA==
   /normalize-url/4.2.0:
     dev: true
     engines:
@@ -6563,7 +6646,7 @@ packages:
     hasBin: true
     resolution:
       integrity: sha512-SPq8zG2Kto+Xrq55E97O14Jla13PmQT5kSnvwBj88BmJZ5Nvw++OmlWfhjkB67pcgP5UEXljEtnGFKZtOgt6MQ==
-  /npm/6.8.0:
+  /npm/6.9.0:
     bundledDependencies:
       - abbrev
       - ansicolors
@@ -6690,7 +6773,7 @@ packages:
     dev: false
     hasBin: true
     resolution:
-      integrity: sha512-xMH6V0OCSJ5ZET6yWPI3BmJSqMMCuVJSIcLx3LSH/SrratFSt6EDuCuGRFMQYty98Q1l6x/7vKmfURosoyWgrA==
+      integrity: sha512-91V+zB5hDxO+Jyp2sUKS7juHlIM95dGQxTeQtmZI1nAI/7kjWXFipPrtwwKjhyKmV4GsS2LzJhrxRjGWsU9z/w==
   /number-is-nan/1.0.1:
     dev: true
     engines:
@@ -6796,6 +6879,12 @@ packages:
       node: '>= 0.8'
     resolution:
       integrity: sha1-IPEzZIGwg811M3mSoWlxqi2QaUc=
+  /on-headers/1.0.2:
+    dev: false
+    engines:
+      node: '>= 0.8'
+    resolution:
+      integrity: sha512-pZAE+FJLoyITytdqK0U5s+FIpjN0JP3OzFi/u8Rx+EV5/W+JTWGXG8xFzevE7AjBfDqHv/8vL8qQsIhHnqRkrA==
   /once/1.4.0:
     dependencies:
       wrappy: 1.0.2
@@ -7278,6 +7367,10 @@ packages:
     dev: true
     resolution:
       integrity: sha512-/6pt4+C+T+wZUieKR620OpzN/LlnNKuWjy1iFLQ/UG35JqHlR/89MP1d96dUfkf6Dne3TuLQzOYEYshJ+Hx8mw==
+  /pstree.remy/1.1.6:
+    dev: true
+    resolution:
+      integrity: sha512-NdF35+QsqD7EgNEI5mkI/X+UwaxVEbQaz9f4IooEmMUv6ZPmlTQYGjBPJGgrlzNdjSvIy4MWMg6Q6vCgBO2K+w==
   /pump/3.0.0:
     dependencies:
       end-of-stream: 1.4.1
@@ -7470,6 +7563,16 @@ packages:
       node: '>= 6'
     resolution:
       integrity: sha512-RV20kLjdmpZuTF1INEb9IA3L68Nmi+Ri7ppZqo78wj//Pn62fCoJyV9zalccNzDD/OuJpMG4f+pfMl8+L6QdGw==
+  /readdirp/2.2.1:
+    dependencies:
+      graceful-fs: 4.1.15
+      micromatch: 3.1.10
+      readable-stream: 2.3.6
+    dev: true
+    engines:
+      node: '>=0.10'
+    resolution:
+      integrity: sha512-1JU/8q+VgFZyxwrJ+SVIOsh+KywWGpds3NTqikiKpDMZWScmAYyKIgqkO+ARvNWJfXeXR1zxz7aHF4u4CyH6vQ==
   /realpath-native/1.1.0:
     dependencies:
       util.promisify: 1.0.0
@@ -7793,20 +7896,6 @@ packages:
     dev: false
     resolution:
       integrity: sha1-KpsZ4lCoFwmSMaW5mk2vgLf77VQ=
-  /semantic-release-monorepo/6.1.1:
-    dependencies:
-      debug: 3.2.6
-      execa: 0.8.0
-      p-limit: 1.3.0
-      pkg-up: 2.0.0
-      ramda: 0.25.0
-      read-pkg: 3.0.0
-      semantic-release-plugin-decorators: github.com/boardthatpowder/semantic-release-plugin-decorators/0f89322cb9231b2812e6e66bbc7215b88efd02b5
-    dev: true
-    peerDependencies:
-      semantic-release: 13.4.1 - 15.x.x
-    resolution:
-      integrity: sha512-qObVQYU4MuUAx1lr/tpIYfhebRl6NxVk52wo+bG2RTg2ePtqmHDunXNpSkDIi1Mqvq2CgyG50IdDnceZ8N5+gQ==
   /semantic-release-monorepo/6.1.1/semantic-release@15.13.3:
     dependencies:
       debug: 3.2.6
@@ -7816,58 +7905,13 @@ packages:
       ramda: 0.25.0
       read-pkg: 3.0.0
       semantic-release: /semantic-release/15.13.3/semantic-release@15.13.3
-      semantic-release-plugin-decorators: /semantic-release-plugin-decorators/1.2.3/semantic-release@15.13.3
+      semantic-release-plugin-decorators: github.com/boardthatpowder/semantic-release-plugin-decorators/0f89322cb9231b2812e6e66bbc7215b88efd02b5/semantic-release@15.13.3
     dev: true
     id: registry.npmjs.org/semantic-release-monorepo/6.1.1
     peerDependencies:
       semantic-release: 13.4.1 - 15.x.x
     resolution:
       integrity: sha512-qObVQYU4MuUAx1lr/tpIYfhebRl6NxVk52wo+bG2RTg2ePtqmHDunXNpSkDIi1Mqvq2CgyG50IdDnceZ8N5+gQ==
-  /semantic-release-plugin-decorators/1.2.3/semantic-release@15.13.3:
-    dependencies:
-      import-from: 2.1.0
-      lodash: 4.17.11
-      semantic-release: /semantic-release/15.13.3/semantic-release@15.13.3
-    dev: true
-    id: registry.npmjs.org/semantic-release-plugin-decorators/1.2.3
-    peerDependencies:
-      semantic-release: '>=11'
-    resolution:
-      integrity: sha512-bEXRStCDiVIgFMiqvF2Chxt1JouFYGVQGA2F6i5GjI9Aq7hukdmkl8P2hB0HAzY7ezJB5lvdlJPcAf16wpfkcg==
-  /semantic-release/15.13.3:
-    dependencies:
-      '@semantic-release/commit-analyzer': 6.1.0
-      '@semantic-release/error': 2.2.0
-      '@semantic-release/github': 5.2.10
-      '@semantic-release/npm': 5.1.4
-      '@semantic-release/release-notes-generator': 7.1.4
-      aggregate-error: 2.2.0
-      cosmiconfig: 5.1.0
-      debug: 4.1.1
-      env-ci: github.com/boardthatpowder/env-ci/45ee1f3169d13f1a2c3842f5f2458b6bd8cb6dd5
-      execa: 1.0.0
-      figures: 2.0.0
-      find-versions: 3.0.0
-      get-stream: 4.1.0
-      git-log-parser: 1.2.0
-      hook-std: 1.2.0
-      hosted-git-info: 2.7.1
-      lodash: 4.17.11
-      marked: 0.6.1
-      marked-terminal: /marked-terminal/3.2.0/marked@0.6.1
-      p-locate: 3.0.0
-      p-reduce: 1.0.0
-      read-pkg-up: 4.0.0
-      resolve-from: 4.0.0
-      semver: 5.6.0
-      signale: 1.4.0
-      yargs: 12.0.5
-    dev: true
-    engines:
-      node: '>=8.3'
-    hasBin: true
-    resolution:
-      integrity: sha512-cax0xPPTtsxHlrty2HxhPql2TTvS74Ni2O8BzwFHxNY/mviVKEhI4OxHzBYJkpVxx1fMVj36+oH7IlP+SJtPNA==
   /semantic-release/15.13.3/semantic-release@15.13.3:
     dependencies:
       '@semantic-release/commit-analyzer': /@semantic-release/commit-analyzer/6.1.0/semantic-release@15.13.3
@@ -7878,7 +7922,7 @@ packages:
       aggregate-error: 2.2.0
       cosmiconfig: 5.1.0
       debug: 4.1.1
-      env-ci: 3.2.0
+      env-ci: github.com/boardthatpowder/env-ci/45ee1f3169d13f1a2c3842f5f2458b6bd8cb6dd5
       execa: 1.0.0
       figures: 2.0.0
       find-versions: 3.0.0
@@ -8174,6 +8218,10 @@ packages:
       node: '>=0.10.0'
     resolution:
       integrity: sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g==
+  /spawn-command/0.0.2-1:
+    dev: true
+    resolution:
+      integrity: sha1-YvXpRmmBwbeW3Fkpk34RycaSG9A=
   /spawn-error-forwarder/1.0.0:
     dev: true
     resolution:
@@ -8467,6 +8515,14 @@ packages:
       node: '>=0.8.0'
     resolution:
       integrity: sha1-U10EXOa2Nj+kARcIRimZXp3zJMc=
+  /supports-color/4.5.0:
+    dependencies:
+      has-flag: 2.0.0
+    dev: true
+    engines:
+      node: '>=4'
+    resolution:
+      integrity: sha1-vnoN5ITexcXN34s9WRJQRJEvY1s=
   /supports-color/5.5.0:
     dependencies:
       has-flag: 3.0.0
@@ -8614,6 +8670,13 @@ packages:
       node: '>=0.10.0'
     resolution:
       integrity: sha512-FWtleNAtZ/Ki2qtqej2CXTOayOH9bHDQF+Q48VpWyDXjbYxA4Yz8iDB31zXOBUlOHHKidDbqGVrTUvQMPmBGBw==
+  /touch/3.1.0:
+    dependencies:
+      nopt: 1.0.10
+    dev: true
+    hasBin: true
+    resolution:
+      integrity: sha512-WBx8Uy5TLtOSRtIq+M03/sKDrXCLHxwDcquSP2c43Le03/9serjQBIztjRz6FkJez9D/hleyAXTBGLwwZUw9lA==
   /tough-cookie/2.4.3:
     dependencies:
       psl: 1.1.31
@@ -8642,6 +8705,11 @@ packages:
     dev: true
     resolution:
       integrity: sha1-y99WD9e5r2MlAv7UD5GMFX6pcTc=
+  /tree-kill/1.2.1:
+    dev: true
+    hasBin: true
+    resolution:
+      integrity: sha512-4hjqbObwlh2dLyW4tcz0Ymw0ggoaVDMveUB9w8kFSQScdRLo0gxO9J7WFcUBo+W3C1TLdFIEwNOWebgZZ0RH9Q==
   /trim-newlines/1.0.0:
     dev: true
     engines:
@@ -8687,24 +8755,6 @@ packages:
       jest: '>=24 <25'
     resolution:
       integrity: sha512-o8BO3TkMREpAATaFTrXkovMsCpBl2z4NDBoLJuWZcJJj1ijI49UnvDMfVpj+iogn/Jl8Pbhuei5nc/Ti+frEHw==
-  /ts-node/8.0.1/typescript@3.1.6:
-    dependencies:
-      arg: 4.1.0
-      arrify: 1.0.1
-      diff: 3.5.0
-      make-error: 1.3.5
-      source-map-support: 0.5.10
-      typescript: 3.1.6
-      yn: 2.0.0
-    dev: true
-    engines:
-      node: '>=4.2.0'
-    hasBin: true
-    id: registry.npmjs.org/ts-node/8.0.1
-    peerDependencies:
-      typescript: '>=2.0'
-    resolution:
-      integrity: sha512-zER3Js6Iotp31ghen6nKjgX75UOipwTWX9T5fAVmHaaYAizWhOes4uAsLmDC8H51UG5tHL8gNjoa/wLFjo7wtA==
   /tslib/1.9.3:
     dev: true
     resolution:
@@ -8811,6 +8861,12 @@ packages:
     dev: false
     resolution:
       integrity: sha512-UIEXBNeYmKptWH6z8ZnqTeS8fV74zG0/eRU9VGkpzz+LIJNs8W/zM/L+7ctCkRrgbNnnR0xxw4bKOr0cW0N0Og==
+  /undefsafe/2.0.2:
+    dependencies:
+      debug: 2.6.9
+    dev: true
+    resolution:
+      integrity: sha1-Il9rngM3Zj4Njnz9aG/Cg2zKznY=
   /underscore/1.8.3:
     dev: false
     resolution:
@@ -8873,6 +8929,13 @@ packages:
       node: '>=4'
     resolution:
       integrity: sha1-0vD3N9FrBhXnKmk17QQhRXLVb5c=
+  /upath/1.1.1:
+    dev: true
+    engines:
+      node: '>=4'
+      yarn: '>=1'
+    resolution:
+      integrity: sha512-D0yetkpIOKiZQquxjM2Syvy48Y1DbZ0SWxgsZiwd9GCWRpc75vN8ytzem14WDSg+oiX6+Qt31FpiS/ExODCrLg==
   /update-notifier/1.0.3:
     dependencies:
       boxen: 0.6.0
@@ -9224,12 +9287,6 @@ packages:
     dev: true
     resolution:
       integrity: sha512-Lhz8TLaYnxq/2ObqHDql8dX8CJi97oHxrjUcYtzKbbykPtVW9WB+poxI+NM2UIzsMgNCZTIf0AQwsjK5yMAqZw==
-  /yn/2.0.0:
-    dev: true
-    engines:
-      node: '>=4'
-    resolution:
-      integrity: sha1-5a2ryKz0CPY4X8dklWhMiOavaJo=
   github.com/boardthatpowder/env-ci/45ee1f3169d13f1a2c3842f5f2458b6bd8cb6dd5:
     dependencies:
       execa: 1.0.0
@@ -9239,17 +9296,21 @@ packages:
       node: '>=6'
     name: env-ci
     resolution:
+      registry: 'https://registry.npmjs.org/'
       tarball: 'https://codeload.github.com/boardthatpowder/env-ci/tar.gz/45ee1f3169d13f1a2c3842f5f2458b6bd8cb6dd5'
     version: 0.0.0-development
-  github.com/boardthatpowder/semantic-release-plugin-decorators/0f89322cb9231b2812e6e66bbc7215b88efd02b5:
+  github.com/boardthatpowder/semantic-release-plugin-decorators/0f89322cb9231b2812e6e66bbc7215b88efd02b5/semantic-release@15.13.3:
     dependencies:
       import-from: 2.1.0
       lodash: 4.17.11
+      semantic-release: /semantic-release/15.13.3/semantic-release@15.13.3
     dev: true
+    id: github.com/boardthatpowder/semantic-release-plugin-decorators/0f89322cb9231b2812e6e66bbc7215b88efd02b5
     name: semantic-release-plugin-decorators
     peerDependencies:
       semantic-release: '>=11'
     resolution:
+      registry: 'https://registry.npmjs.org/'
       tarball: 'https://codeload.github.com/boardthatpowder/semantic-release-plugin-decorators/tar.gz/0f89322cb9231b2812e6e66bbc7215b88efd02b5'
     version: 0.0.0-development
 shrinkwrapVersion: 4
