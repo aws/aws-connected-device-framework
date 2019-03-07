@@ -1,0 +1,6 @@
+aws:
+  region: 
+
+  dynamoDb:
+    tables: 
+      events: cdf-assetlibraryhistory

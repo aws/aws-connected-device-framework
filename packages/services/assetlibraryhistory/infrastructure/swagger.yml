@@ -1,0 +1,211 @@
+swagger: '2.0'
+info:
+  title: "Connected Device Framework: Asset Library History"
+  description: |
+    The Asset Library History service tracks changes to all devices, groups, policies, and templates within the Asset Library.
+
+  version: 1.0.0
+
+
+consumes:
+- application/vnd.aws-cdf-v1.0+json
+produces:
+- application/vnd.aws-cdf-v1.0+json
+
+paths:
+
+  /{category}:
+    parameters:
+    - name: category
+      in: path
+      description: Asset Library category
+      required: true
+      type: string
+      enum: [device, group, policy, groupTemplate, deviceTemplate]
+      
+    get:
+      summary: List all events of a given category
+      description: List all events of a given category
+      operationId: "listCategoryEvents"
+      parameters:
+      - name: timeFrom
+        in: query
+        description: Only display category events since this time
+        type: string
+        format: date-time
+      - name: timeTo
+        in: query
+        description: Only display category events prior to this time
+        type: string
+        format: date-time
+      - name: user
+        in: query
+        description: Only display category events authored by this user
+        type: string
+      - name: event
+        in: query
+        description: Only display category events of this type
+        type: string
+        enum: [create, modify, delete]
+      - name: sort
+        in: query
+        description: Sort order
+        type: string
+        enum: [asc, desc]
+        default: desc
+      - name: token
+        in: query
+        description: Pagination token
+        type: string
+        format: binary
+      - name: limit
+        in: query
+        description: Maximum no. events to return
+        type: number
+        format: int32
+
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Events'
+        400:
+          $ref: '#/responses/BadRequest'
+        404:
+          $ref: '#/responses/NotFound'
+
+  /{category}/{objectId}:
+    parameters:
+    - name: category
+      in: path
+      description: Asset Library category
+      required: true
+      type: string
+      enum: [device, group, policy, groupTemplate, deviceTemplate]
+    - name: objectId
+      in: path
+      description: Asset Library object id (deviceId, groupPath, policyId, or templateId)
+      required: true
+      type: string
+      
+    get:
+      summary: List all events of a specific Asset Library object
+      description: List all events of a specific Asset Library object
+      operationId: "listObjectEvents"
+      parameters:
+      - name: timeAt
+        in: query
+        description: Return the known state of a specific object at this time
+        type: string
+        format: date-time
+      - name: timeFrom
+        in: query
+        description: Only display category events since this time
+        type: string
+        format: date-time
+      - name: timeTo
+        in: query
+        description: Only display category events prior to this time
+        type: string
+        format: date-time
+      - name: user
+        in: query
+        description: Only display category events authored by this user
+        type: string
+      - name: event
+        in: query
+        description: Only display category events of this type
+        type: string
+        enum: [create, modify, delete]
+      - name: sort
+        in: query
+        description: Sort order
+        type: string
+        enum: [asc, desc]
+        default: desc
+      - name: token
+        in: query
+        description: Pagination token
+        type: string
+        format: binary
+      - name: limit
+        in: query
+        description: Maximum no. events to return
+        type: number
+        format: int32
+
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Events'
+        400:
+          $ref: '#/responses/BadRequest'
+        404:
+          $ref: '#/responses/NotFound'
+
+definitions:
+
+  Event:
+    type: object
+    properties:
+      objectId:
+        type: string
+        description: DeviceId, groupPath, policyId or templateId of the object.  
+      type:
+        type: string
+        description: category of object.
+        enum: [devices, groups, deviceTemplates, groupTemplates, policies]
+      time:
+        type: string
+        description: Date/time of event.
+        format: date-time
+      event:
+        type: string
+        description: Event type.
+        enum: [create, modify, delete]
+      user:
+        type: string
+        description: User who authored the change.
+      state:
+        type: object
+        additionalProperties: true
+        description: Full json representation of the object (e.g. a Device) at the time the change was made.
+     
+  Events:
+    type: object
+    properties:
+      results:
+        type: array
+        items:
+          $ref: '#/definitions/Event'
+      pagination:
+        type: object
+        properties:
+          token:
+            type: string
+            format: binary
+          limit:
+            type: integer
+      
+  Error:
+    type: object
+    properties:
+      message:
+        type: string
+
+responses:          
+  Created:
+    description: Created successfully
+    headers:
+      location:
+        type: string
+  BadRequest:
+    description: Invalid input
+    schema:
+      $ref: '#/definitions/Error'
+  NotFound:
+    description: Not found
+    schema:
+      $ref: '#/definitions/Error'
+        

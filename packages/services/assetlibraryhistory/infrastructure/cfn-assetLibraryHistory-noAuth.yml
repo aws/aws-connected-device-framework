@@ -1,0 +1,299 @@
+AWSTemplateFormatVersion : '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Description: CDF Asset Library Service
+
+
+Parameters:
+  Environment:
+    Description:  Name of environment.  Used to name the created resources.
+    Type: String
+    MinLength: 1
+  ApplicationConfigurationOverride:
+    Description: This allows you to override any configuration application configuration. Must be a JSON formatted string. Any configurations contained in this will override the configurations found and merged from the config files.
+    Type: String
+    MinLength: 1
+  AssetLibraryEventsTopic:
+    Description: The AssetLibrary events topic to subscribe to.
+    Default: cdf/assetlibrary/events/#
+    Type: String
+    MinLength: 1
+
+Resources:
+
+  ApiGatewayApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      EndpointConfiguration: REGIONAL
+      DefinitionBody:
+        swagger: 2.0
+        info:
+          title: CDF Asset Library History API
+
+        basePath: "/"
+        schemes:
+        - https
+        paths:
+          /:
+            x-amazon-apigateway-any-method:
+              produces:
+              - application/vnd.aws-cdf-v1.0+json
+              responses:
+                '200':
+                  description: '200 response'
+                  schema:
+                    $ref: "#/definitions/Empty"
+              x-amazon-apigateway-integration:
+                responses:
+                  default:
+                    statusCode: '200'
+                uri:
+                  Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RESTLambdaFunction.Arn}/invocations"
+                passthroughBehavior: when_no_match
+                httpMethod: POST
+                type: aws_proxy
+
+            options:
+              consumes:
+              - application/vnd.aws-cdf-v1.0+json
+              produces:
+              - application/vnd.aws-cdf-v1.0+json
+              responses:
+                '200':
+                  description: '200 response'
+                  schema:
+                    $ref: "#/definitions/Empty"
+                  headers:
+                    Access-Control-Allow-Origin:
+                      type: string
+                    Access-Control-Allow-Methods:
+                      type: string
+                    Access-Control-Allow-Headers:
+                      type: string
+              x-amazon-apigateway-integration:
+                contentHandling: CONVERT_TO_TEXT
+                responses:
+                  default:
+                    statusCode: 200
+                    responseParameters:
+                      method.response.header.Access-Control-Allow-Methods: "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'"
+                      method.response.header.Access-Control-Allow-Headers: "'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token'"
+                      method.response.header.Access-Control-Allow-Origin: "'*'"
+                passthroughBehavior: when_no_match
+                requestTemplates:
+                  # a CORS options request will have no content type, API Gateway then defaults to application/json
+                  application/json: "{\"statusCode\": 200}"
+                  application/vnd.aws-cdf-v1.0+json: "{\"statusCode\": 200}"
+                type: mock
+
+          /{proxy+}:
+            x-amazon-apigateway-any-method:
+              produces:
+              - application/vnd.aws-cdf-v1.0+json
+              parameters:
+              - name: proxy
+                in: path
+                required: true
+                type: string
+              responses: {}
+              x-amazon-apigateway-integration:
+                uri: 
+                  Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RESTLambdaFunction.Arn}/invocations"
+                httpMethod: POST
+                type: aws_proxy
+
+            options:
+              consumes:
+              - application/vnd.aws-cdf-v1.0+json
+              produces:
+              - application/vnd.aws-cdf-v1.0+json
+              responses:
+                '200':
+                  description: '200 response'
+                  schema:
+                    $ref: "#/definitions/Empty"
+                  headers:
+                    Access-Control-Allow-Origin:
+                      type: string
+                    Access-Control-Allow-Methods:
+                      type: string
+                    Access-Control-Allow-Headers:
+                      type: string
+              x-amazon-apigateway-integration:
+                contentHandling: CONVERT_TO_TEXT
+                responses:
+                  default:
+                    statusCode: 200
+                    responseParameters:
+                      method.response.header.Access-Control-Allow-Methods: "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'"
+                      method.response.header.Access-Control-Allow-Headers: "'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token'"
+                      method.response.header.Access-Control-Allow-Origin: "'*'"
+                passthroughBehavior: when_no_match
+                requestTemplates:
+                  # a CORS options request will have no content type, API Gateway then defaults to application/json
+                  application/json: "{\"statusCode\": 200}"
+                  application/vnd.aws-cdf-v1.0+json: "{\"statusCode\": 200}"
+                type: mock
+        x-amazon-apigateway-binary-media-types:
+          - '*/*'
+        definitions:
+          Empty:
+            type: object
+            title: Empty Schema
+    DependsOn:
+      - RESTLambdaFunction
+
+  AssetLibraryEventsRule:
+    Type: "AWS::IoT::TopicRule"
+    Properties:
+      TopicRulePayload: 
+        Actions:
+          -
+            Lambda:
+              FunctionArn: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${EventsLambdaFunction}'
+        Description: "Saves AssetLIbrary configuration changes"
+        AwsIotSqlVersion: "2016-03-23"
+        RuleDisabled: "false" 
+        Sql: !Sub "SELECT * FROM '${AssetLibraryEventsTopic}'"    
+
+  LambdaInvocationPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      SourceArn: !Sub 'arn:aws:iot:${AWS::Region}:${AWS::AccountId}:rule/${AssetLibraryEventsRule}'
+      Action: lambda:InvokeFunction
+      Principal: iot.amazonaws.com
+      FunctionName: !GetAtt EventsLambdaFunction.Arn
+      SourceAccount: !Ref AWS::AccountId 
+  
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - 
+            Effect: Allow
+            Principal:
+              Service: 
+                - lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Path: "/cdf/assetlibraryhistory/"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AWSLambdaExecute
+        - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
+      Policies:
+        -
+          PolicyName: "DynamoDB"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Action:
+                  - 'dynamodb:*'
+                Effect: Allow
+                Resource:
+                  - !GetAtt HistoryTable.Arn
+                  - !Sub '${HistoryTable.Arn}/index/type-time-index'
+  
+  HistoryTable:
+    Type: AWS::DynamoDB::Table
+    Properties: 
+      AttributeDefinitions: 
+        - 
+          AttributeName: "objectId"
+          AttributeType: "S"
+        - 
+          AttributeName: "time"
+          AttributeType: "S"
+        - 
+          AttributeName: "type"
+          AttributeType: "S"
+      KeySchema: 
+        - 
+          AttributeName: "objectId"
+          KeyType: "HASH"
+        - 
+          AttributeName: "time"
+          KeyType: "RANGE"
+      GlobalSecondaryIndexes:
+        -
+          IndexName: type-time-index
+          KeySchema: 
+            - 
+              AttributeName: "type"
+              KeyType: "HASH"
+            -
+              AttributeName: "time"
+              KeyType: "RANGE"
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: "5"
+            WriteCapacityUnits: "5"
+      ProvisionedThroughput: 
+        ReadCapacityUnits: "5"
+        WriteCapacityUnits: "5"
+      TableName: !Sub 'cdf-assetlibraryhistory-${Environment}'
+
+  EventsLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../build/build.zip
+      Handler: lambda_iot_rule.iot_rule_handler
+      MemorySize: 128
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Runtime: nodejs8.10
+      Timeout: 30
+      Environment:
+        Variables:
+          NODE_CONFIG_DIR: './config'
+          NODE_CONFIG: !Ref ApplicationConfigurationOverride
+      Tracing: Active
+
+  RESTLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../build/build.zip
+      Handler: lambda_proxy.rest_handler
+      MemorySize: 256
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Runtime: nodejs8.10
+      Timeout: 30
+      Environment:
+        Variables:
+          NODE_CONFIG_DIR: './config'
+          NODE_CONFIG: !Ref ApplicationConfigurationOverride
+      Tracing: Active
+      Events:
+        ProxyApiRoot:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiGatewayApi
+            Path: /
+            Method: ANY
+        ProxyApiGreedy:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiGatewayApi
+            Path: /{proxy+}
+            Method: ANY
+            
+Outputs:
+  EventsLambdaFunction:
+    Description: Console URL for the Event (IT Rule) Lambda Function.
+    Value: !Sub "https://{AWS::Region}.console.aws.amazon.com/lambda/home?region={AWS::Region}#/functions/{EventsLambdaFunction}"
+  RESTLambdaFunctionConsoleUrl:
+    Description: Console URL for the REST Lambda Function.
+    Value: !Sub "https://{AWS::Region}.console.aws.amazon.com/lambda/home?region={AWS::Region}#/functions/{RESTLambdaFunction}"
+  ApiGatewayUrl:
+    Description: URL for application
+    Value: !Join
+      - ''
+      - - 'https://'
+        - !Ref ApiGatewayApi
+        - '.execute-api.'
+        - !Ref 'AWS::Region'
+        - '.amazonaws.com/Prod'
+    Export:
+      Name: !Sub 'cdf-assetlibraryhistory-${Environment}-apigatewayurl'
+
