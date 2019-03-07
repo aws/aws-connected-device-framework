@@ -1,3 +1,10 @@
+# [@cdf/assetlibrary-v1.1.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v1.0.2...@cdf/assetlibrary-v1.1.0) (2019-03-07)
+
+
+### Features
+
+* **commands:** ported over commands from old repo ([7fa76e1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/7fa76e1))
+
 # [@cdf/assetlibrary-v1.0.2](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v1.0.1...@cdf/assetlibrary-v1.0.2) (2019-03-06)
 
 
