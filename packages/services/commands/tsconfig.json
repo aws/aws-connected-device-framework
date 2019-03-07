@@ -1,0 +1,45 @@
+{
+    "extends": "../../tsconfig.base.json",
+    "compilerOptions": {
+        "outDir": "dist",
+        "rootDir": "src",
+        
+        "typeRoots": [
+            "./src/@types",
+            "./node_modules/@types",
+            "../../../node_modules/@types"
+        ],
+        "types": [
+            "node",
+			"config",
+			"jest",
+			"aws-serverless-express",
+			"express",
+			"winston",
+			"uuid",
+			"busboy"
+        ]
+    },
+    "references": [
+        {
+            "path": "../../libraries/config/config-inject"
+        },
+        {
+            "path": "../../libraries/clients/assetlibrary-client"
+        },
+        {
+            "path": "../../libraries/clients/provisioning-client"
+        }
+    ],
+    "include": [
+        "src"
+    ],
+    "exclude": [
+        "node_modules",
+        "../../../node_modules",
+        "dist",
+        ".vscode",
+        ".git",
+        "./**/__mocks__/*.ts"
+    ]
+}

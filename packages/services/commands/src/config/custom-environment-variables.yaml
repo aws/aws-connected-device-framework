@@ -1,0 +1,31 @@
+aws:
+  region: AWS_REGION
+  s3:
+    bucket: COMMANDS_S3_BUCKET
+    prefix: COMMANDS_S3_PREFIX
+    roleArn: COMMANDS_S3_ROLE_ARN
+  iot:
+    endpoint: COMMANDS_IOT_ENDPOINT
+  jobs:
+    maxTargets: COMMAND_JOBS_MAXTARGETS
+
+tmpdir: COMMANDS_TMPDIR
+
+tables:
+  templates: COMMANDS_TABLES_TEMPLATES
+  jobs: COMMANDS_TABLES_JOBS
+
+mqtt:
+  topics:
+    presigned: COMMANDS_MQTT_TOPICS_PRESIGNED
+
+cors:
+  origin: COMMANDS_CORS_ORIGIN
+
+templates:
+  addThingToGroup: COMMANDS_TEMPLATES_ADDTHINGTOGROUP
+
+assetLibrary:
+  baseUrl: COMMANDS_ASSETLIBRARY_BASEURL
+provisioning:
+  baseUrl: COMMANDS_PROVISIONING_BASEURL

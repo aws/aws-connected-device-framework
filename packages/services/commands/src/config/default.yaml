@@ -1,0 +1,31 @@
+aws:
+  region: 
+  s3:
+    bucket:
+    prefix:
+    roleArn:
+  iot:
+    endpoint:
+  jobs:
+    maxTargets: 100
+
+tmpdir:
+
+tables:
+  templates: cdf-commands-templates
+  jobs: cdf-commands-jobs
+
+mqtt:
+  topics:
+    presigned: cdf/commands/presignedurl/{commandId}/{thingName}/{direction}
+
+cors:
+  origin:
+
+templates:
+  addThingToGroup: add_thing_to_group
+
+assetLibrary:
+  baseUrl:
+provisioning:
+  baseUrl:
