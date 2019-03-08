@@ -27,12 +27,14 @@ OPTIONAL ARGUMENTS
 	-g (string)   Name of git branch (defaults to master).
 	-h (string)   Name of cdf-infrastructure-* git branch (defaults to master).
 
+  -B (flag)     Use an existing bucket.
+
+  -m (string)   Asset library mode - 'full' or 'lite'.  Defaults to 'full'
   -v (string)   Id of VPC where Neptune resides (if running Asset Library in 'full' mode)
   -s (string)   Id of security group with access to Neptune (if running Asset Library in 'full' mode)
   -n (string)   Id of private subnets where Neptune resides (if running Asset Library in 'full' mode)
   -t (string)   Id of private route table ids where Neptune resides (if running Asset Library in 'full' mode)
 
-  -c (string)   Name of common CICD Cloudformation stack name (defaults to cdf-cicd-common-${ENVIRONMENT})
   -a (string)   Name of custom auth cloudformation stack (if running with custom auth enabled)
 
   -R (string)   AWS region.
@@ -42,7 +44,7 @@ EOF
 }
 
 
-while getopts ":b:e:r:g:h:i:v:s:n:t:c:a:R:P:" opt; do
+while getopts ":b:e:r:g:h:i:m:v:s:n:t:a:BR:P:" opt; do
   case $opt in
 	  b  ) export DEPLOY_ARTIFACTS_STORE_BUCKET=$OPTARG;;
     e  ) export ENVIRONMENT=$OPTARG;;
@@ -51,13 +53,15 @@ while getopts ":b:e:r:g:h:i:v:s:n:t:c:a:R:P:" opt; do
     i  ) export INFRASTRUCTURE_REPO_NAME=$OPTARG;;
     h  ) export INFRASTRUCTURE_BRANCH=$OPTARG;;
 
-    v  ) export VPC_ID=$OPTARG;;
-    s  ) export SOURCE_SECURITY_GROUP_ID=$OPTARG;;
-    n  ) export PRIVATE_SUBNET_IDS=$OPTARG;;
-    t  ) export PRIVATE_ROUTE_TABLE_IDS=$OPTARG;;
+    m  ) export ASSET_LIBRARY_MODE=$OPTARG;;
+    v  ) export ASSET_LIBRARY_VPC_ID=$OPTARG;;
+    s  ) export ASSET_LIBRARY_SOURCE_SECURITY_GROUP_ID=$OPTARG;;
+    n  ) export ASSET_LIBRARY_PRIVATE_SUBNET_IDS=$OPTARG;;
+    t  ) export ASSET_LIBRARY_PRIVATE_ROUTE_TABLE_IDS=$OPTARG;;
 
-    c  ) export COMMON_CICD_STACK_NAME=$OPTARG;;
     a  ) export CUSTOM_AUTH_STACK_NAME=$OPTARG;;
+
+    B  ) export USE_EXISTING_BUCKET=true;;
 
     R  ) export AWS_REGION=$OPTARG;;
     P  ) export AWS_PROFILE=$OPTARG;;
@@ -100,6 +104,16 @@ if [ -z "$COMMON_CICD_STACK_NAME" ]; then
 	echo -g COMMON_CICD_STACK_NAME not provided, therefore defaulted to $COMMON_CICD_STACK_NAME
 fi
 
+if [ -z "$USE_EXISTING_BUCKET" ]; then
+	echo -B USE_EXISTING_BUCKET not provided, therefore will create a new artifact bucket
+  export USE_EXISTING_BUCKET=false
+fi
+
+if [ -z "$ASSET_LIBRARY_MODE" ]; then
+  export ASSET_LIBRARY_MODE=full
+	echo -m ASSET_LIBRARY_MODE not provided, therefore defaulted to $ASSET_LIBRARY_MODE
+fi
+
 AWS_ARGS=
 if [ -n "$AWS_REGION" ]; then
 	AWS_ARGS="--region $AWS_REGION "
@@ -135,11 +149,13 @@ aws cloudformation deploy \
       Branch=$BRANCH \
       InfrastructureRepoName=$INFRASTRUCTURE_REPO_NAME \
       InfrastructureBranch=$INFRASTRUCTURE_BRANCH \
-      CommonCICDStackName=$COMMON_CICD_STACK_NAME \
-      AssetLibraryVpcId=$VPC_ID \
-      AssetLibrarySourceSecurityGroupId=$SOURCE_SECURITY_GROUP_ID \
-      AssetLibraryPrivateSubnetIds=$PRIVATE_SUBNET_IDS \
-      AssetLibraryPrivateRouteTableIds=$PRIVATE_ROUTE_TABLE_IDS \
+      UseExistingArtifactStoreBucket=$USE_EXISTING_BUCKET \
+      ArtifactStoreBucketName=$DEPLOY_ARTIFACTS_STORE_BUCKET \
+      AssetLibraryMode=$ASSET_LIBRARY_MODE \
+      AssetLibraryVpcId=$ASSET_LIBRARY_VPC_ID \
+      AssetLibrarySourceSecurityGroupId=$ASSET_LIBRARY_SOURCE_SECURITY_GROUP_ID \
+      AssetLibraryPrivateSubnetIds=$ASSET_LIBRARY_PRIVATE_SUBNET_IDS \
+      AssetLibraryPrivateRouteTableIds=$ASSET_LIBRARY_PRIVATE_ROUTE_TABLE_IDS \
       CustomAuthStackName=  \
   --capabilities CAPABILITY_NAMED_IAM \
   $AWS_ARGS

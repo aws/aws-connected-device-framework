@@ -27,10 +27,16 @@ Parameters:
     Description: Name of codecommit branch for the cdf-infrastructure-{customer} module.
     Type: String
     MinLength: 1
-  CommonCICDStackName:
-    Description: Name of CICD common stack name.
+  UseExistingArtifactStoreBucket:
+    Description: Use an existing artifact stire bucket, or create a new one.
     Type: String
-    MinLength: 1
+    Default: 'false'
+    AllowedValues:
+    - 'true'
+    - 'false'
+  ArtifactStoreBucketName:
+    Description: Name of artifact store bucket.
+    Type: String
   
   AssetLibraryMode:
     Description: Run in 'full' (IoT Registry augmentation) or 'lite' (IoT Registry only)
@@ -56,6 +62,8 @@ Parameters:
 
 Conditions:
   CodePipelineNameProvided:  !Not [ !Equals [ !Ref CodePipelineName, "" ] ]
+  ArtifactStoreBucketProvided:  !Not [ !Equals [ !Ref ArtifactStoreBucketName, "" ] ]
+  CreateArtifactStoreBucket:  !Equals [ !Ref UseExistingArtifactStoreBucket, "false" ]
 
 Resources:
 
@@ -64,9 +72,7 @@ Resources:
     Properties:
       Name: !If [CodePipelineNameProvided, !Sub '${CodePipelineName}-filterCommits', !Sub '${RepoName}-cicd-${Environment}-filterCommits' ]
       Description: !Sub 'Filters git commits for the ${CodePipelineName} pipeline.'
-      ServiceRole:
-        Fn::ImportValue:
-          !Sub '${CommonCICDStackName}-CodeBuildRole'
+      ServiceRole: !Ref CodeBuildRole
       Artifacts:
         NamespaceType: NONE
         Packaging: NONE
@@ -110,9 +116,7 @@ Resources:
     Properties:
       Name: !If [CodePipelineNameProvided, !Sub '${CodePipelineName}-build', !Sub '${RepoName}-cicd-${Environment}-build' ]
       Description: !Sub 'Builds, unit tests, and performs code analysis as part of a ${RepoName} CodePipeline.'
-      ServiceRole: 
-        Fn::ImportValue:
-          !Sub '${CommonCICDStackName}-CodeBuildRole'
+      ServiceRole: !Ref CodeBuildRole
       Artifacts:
         NamespaceType: NONE
         Packaging: NONE
@@ -165,9 +169,7 @@ Resources:
     Properties:
       Name: !If [CodePipelineNameProvided, !Sub '${CodePipelineName}-integrationTests', !Sub '${RepoName}-cicd-${Environment}-integrationTests' ]
       Description: !Sub 'Runs integration tests against a deployment of ${RepoName}.'
-      ServiceRole:
-        Fn::ImportValue:
-          !Sub '${CommonCICDStackName}-CodeBuildRole'
+      ServiceRole: !Ref CodeBuildRole
       Artifacts:
         NamespaceType: NONE
         Packaging: NONE
@@ -181,9 +183,7 @@ Resources:
         EnvironmentVariables:
           - Name: DEPLOY_ARTIFACTS_STORE_BUCKET
             Type: PLAINTEXT
-            Value:
-              Fn::ImportValue:
-                !Sub '${CommonCICDStackName}-ArtifactBucket'
+            Value: !If [CreateArtifactStoreBucket, !Ref ArtifactBucket, !Ref ArtifactStoreBucketName]
           - Name: ENVIRONMENT
             Type: PLAINTEXT
             Value: !Sub '${Environment}-staging'
@@ -214,9 +214,7 @@ Resources:
     Properties:
       Name: !If [CodePipelineNameProvided, !Sub '${CodePipelineName}-deployStaging', !Sub '${RepoName}-cicd-${Environment}-deployStaging' ]
       Description: !Sub 'Packages and deploys the CFN for deployment of ${RepoName}.'
-      ServiceRole:
-        Fn::ImportValue:
-          !Sub '${CommonCICDStackName}-CodeBuildRole'
+      ServiceRole: !Ref CodeBuildRole
       Artifacts:
         NamespaceType: NONE
         Packaging: NONE
@@ -230,9 +228,7 @@ Resources:
         EnvironmentVariables:
           - Name: DEPLOY_ARTIFACTS_STORE_BUCKET
             Type: PLAINTEXT
-            Value:
-              Fn::ImportValue:
-                !Sub '${CommonCICDStackName}-ArtifactBucket'
+            Value: !If [CreateArtifactStoreBucket, !Ref ArtifactBucket, !Ref ArtifactStoreBucketName]
           - Name: ENVIRONMENT
             Type: PLAINTEXT
             Value: !Sub '${Environment}-staging'
@@ -282,9 +278,7 @@ Resources:
     Properties:
       Name: !If [CodePipelineNameProvided, !Sub '${CodePipelineName}-deployLive', !Sub '${RepoName}-cicd-${Environment}-deployLive' ]
       Description: !Sub 'Packages and deploys the CFN for deployment of ${RepoName}.'
-      ServiceRole:
-        Fn::ImportValue:
-          !Sub '${CommonCICDStackName}-CodeBuildRole'
+      ServiceRole: !Ref CodeBuildRole
       Artifacts:
         NamespaceType: NONE
         Packaging: NONE
@@ -298,9 +292,7 @@ Resources:
         EnvironmentVariables:
           - Name: DEPLOY_ARTIFACTS_STORE_BUCKET
             Type: PLAINTEXT
-            Value:
-              Fn::ImportValue:
-                !Sub '${CommonCICDStackName}-ArtifactBucket'
+            Value: !If [CreateArtifactStoreBucket, !Ref ArtifactBucket, !Ref ArtifactStoreBucketName]
           - Name: ENVIRONMENT
             Type: PLAINTEXT
             Value: !Ref Environment
@@ -344,9 +336,7 @@ Resources:
     Type: "AWS::CodePipeline::Pipeline"
     Properties:
       Name: !If [CodePipelineNameProvided, !Ref CodePipelineName, !Sub '${RepoName}-cicd-${Environment}' ]
-      RoleArn:
-        Fn::ImportValue:
-          !Sub '${CommonCICDStackName}-CodePipelineRoleArn'
+      RoleArn: !GetAtt CodePipelineRole.Arn
       Stages:
         -
           Name: source
@@ -472,28 +462,401 @@ Resources:
 
       ArtifactStore:
         Type: S3
-        Location:
-          Fn::ImportValue:
-            !Sub '${CommonCICDStackName}-ArtifactBucket'
+        Location: !If [CreateArtifactStoreBucket, !Ref ArtifactBucket, !Ref ArtifactStoreBucketName]
 
-
-  ### Nested stack creates the success and failure topics and rules
-  NestedStack:
-    Type: AWS::CloudFormation::Stack
+  ArtifactBucket:
+    Type: AWS::S3::Bucket
+    Condition: CreateArtifactStoreBucket
     Properties:
-      TemplateURL: ../../cdf-js/cdf-cicd/infrastructure/cicd-nested-library.yaml
-      Parameters:
-        CodePipelineName: !If [CodePipelineNameProvided, !Ref CodePipelineName, !Sub '${RepoName}-cicd-${Environment}' ]
-        RepoName: !Ref RepoName
-        DeployPipeline: !Ref DeployPipeline
-        CommonCICDStackName: !Ref CommonCICDStackName
+      BucketName: !If [ArtifactStoreBucketProvided, !Ref ArtifactStoreBucketName, !Sub '${RepoName}-cicd-${AWS::AccountId}-${AWS::Region}-${Environment}' ]
+      WebsiteConfiguration:
+        IndexDocument: index.html
+    DeletionPolicy: Retain
+      
+  BucketPolicy:
+    Type: 'AWS::S3::BucketPolicy'
+    Condition: CreateArtifactStoreBucket
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - 
+            Sid: AllowCodeBuildUploads
+            Effect: Allow
+            Principal: 
+              Service:
+                - codebuild.amazonaws.com
+            Action: 's3:PutObject'
+            Resource: !Sub 'arn:aws:s3:::${ArtifactBucket}/*'
+            
+          - 
+            Sid: AllowCodePipeline
+            Effect: Allow
+            Principal: 
+              Service:
+                - codepipeline.amazonaws.com
+                - codecommit.amazonaws.com
+            Action: 's3:*'
+            Resource: 
+              - !Sub 'arn:aws:s3:::${ArtifactBucket}/*'
+              - !Sub 'arn:aws:s3:::${ArtifactBucket}'
+      Bucket: !Ref ArtifactBucket
 
+  CodeBuildRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: !If [CodePipelineNameProvided, !Sub '${CodePipelineName}-codeBuildRole', !Sub '${RepoName}-cicd-${Environment}-codeBuildRole' ]
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action:
+              - 'sts:AssumeRole'
+            Effect: Allow
+            Principal:
+              Service:
+                - codebuild.amazonaws.com
+                - cloudformation.amazonaws.com
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AWSCodePipelineReadOnlyAccess
+      Policies: 
+        - 
+          PolicyName: "CodeBuildServicePolicies"
+          PolicyDocument: 
+            Version: "2012-10-17"
+            Statement: 
+
+              -
+                Sid: SSM
+                Effect: Allow
+                Action:
+                  - ssm:GetParameters
+                Resource:
+                  - !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/CDF_CODECOMMIT_USERNAME'
+                  - !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/CDF_CODECOMMIT_PASSWORD'
+                  - !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/CDF_CODECOMMIT_EMAIL'
+              - 
+                Sid: CloudWatchLogsPolicy
+                Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource:
+                  - "*"
+              - 
+                Sid: CodeCommitPolicy
+                Effect: Allow
+                Action:
+                  - codecommit:GitPull
+                Resource:
+                  - "*"
+              - 
+                Sid: S3Policy
+                Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:GetObjectVersion
+                  - s3:PutObject
+                  - s3:PutBucketPolicy
+                  - s3:CreateBucket
+                  - s3:DeleteBucket
+                  - s3:DeleteBucketPolicy
+                  - s3:PutBucketVersioning
+                Resource:
+                  - "*"
+              - 
+                Sid: CloudFormationPolicy
+                Effect: Allow
+                Action:
+                  - cloudformation:DeleteStack
+                  - cloudformation:DescribeStacks
+                  - cloudformation:DescribeChangeSet
+                  - cloudformation:CreateChangeSet
+                  - cloudformation:ExecuteChangeSet
+                  - cloudformation:ListExports
+                  - cloudformation:GetTemplateSummary
+                  - cloudformation:SetStackPolicy
+                Resource:
+                  - "*"
+              - 
+                Sid: SNSPolicy
+                Effect: Allow
+                Action:
+                  - SNS:CreateTopic
+                  - SNS:DeleteTopic
+                  - SNS:GetTopicAttributes
+                  - SNS:SetTopicAttributes
+                Resource:
+                  - "*"
+                  - "*"
+              - 
+                Sid: CognitoPolicy
+                Effect: Allow
+                Action:
+                  - cognito-idp:*
+                Resource:
+                  - "*"
+              - 
+                Sid: IamPolicy
+                Effect: Allow
+                Action:
+                  - iam:*
+                Resource:
+                  - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/cdf*'
+                  - !Sub 'arn:aws:iam::${AWS::AccountId}:role/cdf*'
+                  - !Sub 'arn:aws:iam::${AWS::AccountId}:instance-profile/cdf*'
+              - 
+                Sid: LambdaPolicy
+                Effect: Allow
+                Action:
+                  - lambda:*
+                Resource:
+                  - !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:cdf-*-${Environment}-*'
+              - 
+                Sid: ApiGatewayPolicy
+                Effect: Allow
+                Action:
+                  - apigateway:POST
+                  - apigateway:PUT
+                  - apigateway:PATCH
+                  - apigateway:DELETE
+                  - apigateway:GET
+                Resource:
+                  - !Sub 'arn:aws:apigateway:${AWS::Region}::/*'
+              - 
+                Sid: DynamoDBPolicy
+                Action:
+                  - 'dynamodb:*'
+                Effect: Allow
+                Resource: 
+                  - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/cdf-*-${Environment}'
+              - 
+                Sid: ec2
+                Action:
+                  - 'ec2:DescribeSubnets'
+                  - 'ec2:DescribeVpcs'
+                  - 'ec2:DescribeSecurityGroups'
+                  - 'ec2:CreateSecurityGroup'
+                  - 'ec2:DeleteSecurityGroup'
+                  - 'ec2:CreateVpcEndpoint'
+                  - 'ec2:DescribeVpcEndpoints'
+                  - 'ec2:CreateVpcEndpoint'
+                  - 'ec2:AuthorizeSecurityGroupIngress'
+                  - 'ec2:AuthorizeSecurityGroupEgress'
+                  - 'ec2:RevokeSecurityGroupEgress'
+                Effect: Allow
+                Resource: 
+                  - "*"
+              - 
+                Sid: rds
+                Action:
+                  - 'rds:*'
+                Effect: Allow
+                Resource: 
+                  - "*"
+              - 
+                Sid: iot
+                Action:
+                  - 'iot:DescribeEndpoint'
+                Effect: Allow
+                Resource: 
+                  - "*"
+                   
+  CodePipelineRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: !If [CodePipelineNameProvided, !Sub '${CodePipelineName}-codePipelineRole', !Sub '${RepoName}-cicd-${Environment}-codePipelineRole' ]
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action:
+              - 'sts:AssumeRole'
+            Effect: Allow
+            Principal:
+              Service:
+                - codepipeline.amazonaws.com
+      Policies: 
+        - 
+          PolicyName: "CodePipelineServicePolicies"
+          PolicyDocument: 
+            Version: "2012-10-17"
+            Statement: 
+              - 
+                Action:
+                  - s3:*
+                Resource:
+                  - !If [CreateArtifactStoreBucket, !Sub 'arn:aws:s3:::${ArtifactBucket}/*', !Sub 'arn:aws:s3:::${ArtifactStoreBucketName}/*' ]
+                  - !If [CreateArtifactStoreBucket, !Sub 'arn:aws:s3:::${ArtifactBucket}', !Sub 'arn:aws:s3:::${ArtifactStoreBucketName}' ]
+                Effect: Allow
+              - 
+                Action:
+                  - s3:PutObject
+                Resource:
+                  - arn:aws:s3:::codepipeline*
+                Effect: Allow
+              - 
+                Action:
+                  - codecommit:CancelUploadArchive
+                  - codecommit:GetBranch
+                  - codecommit:GetCommit
+                  - codecommit:GetUploadArchiveStatus
+                  - codecommit:UploadArchive
+                Resource: "*"
+                Effect: Allow
+              - 
+                Action:
+                  - codedeploy:CreateDeployment
+                  - codedeploy:GetApplicationRevision
+                  - codedeploy:GetDeployment
+                  - codedeploy:GetDeploymentConfig
+                  - codedeploy:RegisterApplicationRevision
+                Resource: "*"
+                Effect: Allow
+              - 
+                Action:
+                  - lambda:InvokeFunction
+                  - lambda:ListFunctions
+                  - lambda:ListTags
+                  - lambda:TagResource
+                  - lambda:UntagResource
+                Resource: "*"
+                Effect: Allow
+              - 
+                Action:
+                  - cloudformation:CreateStack
+                  - cloudformation:DeleteStack
+                  - cloudformation:DescribeStacks
+                  - cloudformation:UpdateStack
+                  - cloudformation:CreateChangeSet
+                  - cloudformation:DeleteChangeSet
+                  - cloudformation:DescribeChangeSet
+                  - cloudformation:ExecuteChangeSet
+                  - cloudformation:SetStackPolicy
+                  - cloudformation:ValidateTemplate
+                  - iam:PassRole
+                Resource: "*"
+                Effect: Allow
+              - 
+                Action:
+                  - codebuild:BatchGetBuilds
+                  - codebuild:StartBuild
+                Resource: "*"
+                Effect: Allow
+                  
+  CicdInvokerRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: !If [CodePipelineNameProvided, !Sub '${CodePipelineName}-cicdInvokerRole', !Sub '${RepoName}-cicd-${Environment}-cicdInvokerRole' ]
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action:
+              - 'sts:AssumeRole'
+            Effect: Allow
+            Principal:
+              Service:
+                - events.amazonaws.com
+      Policies: 
+        - 
+          PolicyName: "CodePipelinePolicies"
+          PolicyDocument: 
+            Version: "2012-10-17"
+            Statement: 
+              - 
+                Action:
+                  - 'codepipeline:StartPipelineExecution'
+                Resource: !Sub 'arn:aws:codepipeline:${AWS::Region}:${AWS::AccountId}:cdf-*-${Environment}'
+                Effect: Allow   
+                
+  FailedTopic:
+    Type: "AWS::SNS::Topic"
+    Properties: 
+      DisplayName: !Sub '${DeployPipeline}-onFailure'
+      TopicName: !Sub '${DeployPipeline}-onFailure'
+
+  FailedTopicPolicy:
+    Type: 'AWS::SNS::TopicPolicy'
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: events.amazonaws.com
+            Action: 'sns:Publish'
+            Resource: '*'
+      Topics:
+        - !Ref FailedTopic
+
+  SuccessTopic:
+    Type: "AWS::SNS::Topic"
+    Properties: 
+      DisplayName: !Sub '${DeployPipeline}-onSuccess'
+      TopicName: !Sub '${DeployPipeline}-onSuccess'
+    DependsOn: 
+      - DeployPipeline
+
+  SuccessTopicPolicy:
+    Type: 'AWS::SNS::TopicPolicy'
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: events.amazonaws.com
+            Action: 'sns:Publish'
+            Resource: '*'
+      Topics:
+        - !Ref SuccessTopic
+        
+  SuccessRule:
+    Type: "AWS::Events::Rule"
+    Properties: 
+      Name: !Sub '${DeployPipeline}-onSuccess'
+      Description: !Sub '${RepoName} CodePipeline success.'
+      EventPattern: 
+        source:
+          - "aws.codepipeline"
+        detail-type:
+          - "CodePipeline Pipeline Execution State Change"
+        detail:
+          state:
+            - "SUCCEEDED"
+          pipeline:
+            - !Ref DeployPipeline
+      State: "ENABLED"
+      Targets:
+        - 
+          Id: success
+          Arn: !Ref SuccessTopic
+    DependsOn: 
+      - DeployPipeline
+
+  ###  Trigger SNS upon failed CodePipelines  ###
+  FailedRule:
+    Type: "AWS::Events::Rule"
+    Properties:
+      Name: !Sub '${DeployPipeline}-onFail'
+      Description: !Sub '${RepoName} CodePipeline failure.'
+      EventPattern:
+        source:
+          - "aws.codepipeline"
+        detail-type:
+          - "CodePipeline Pipeline Execution State Change"
+        detail:
+          state:
+            - "FAILED"
+          pipeline:
+            - !Ref DeployPipeline
+      State: "ENABLED"
+      Targets:
+        -
+          Id: failed
+          Arn: !Ref FailedTopic
+          InputTransformer:
+            InputTemplate: '"The Pipeline <pipeline> has failed." '
+            InputPathsMap:
+              pipeline: "$.detail.pipeline" 
     DependsOn: 
       - DeployPipeline
 
       
-Outputs:  
-  SuccessTopic:
-    Value: !GetAtt NestedStack.Outputs.SuccessTopic
-    Export: 
-      Name: !Sub '${AWS::StackName}-SuccessTopic'
