@@ -1,0 +1,88 @@
+{
+  "name": "@cdf/custom-auth-devicecert",
+  "version": "0.0.1",
+  "description": "API Gateway custom authorizer that authenticates based on a supplied device certificate",
+  "author": "Rahul Sareen <rssareen@amazon.com>",
+  "main": "lib/index.js",
+  "scripts": {
+    "reset": "npm run clean && del-cli node_modules",
+    "clean": "del-cli dist build",
+    "lint": "tslint \"src/**/*.ts\"",
+    "build": "tsc -b tsconfig.json",
+    "test": "npm run lint && NODE_ENV= NODE_CONFIG_DIR='./src/config' nyc jest",
+    "start": "npm run build && NODE_CONFIG=$(cat ${CONFIG_LOCATION}/commands/${npm_package_config_environment}-config.json) NODE_CONFIG_DIR='./src/config' concurrently \"npm run build -- -w\" \"nodemon dist/lambda_proxy.js\"",
+    "prebundle": "npm run clean && npm run build && cpy package.json dist && cpy src/config/* dist/config/ && make-dir build && cd dist && make-dir node_modules && pnpm i --prod --shamefully-flatten --force",
+    "bundle": "cd dist && zip -rq ../build/build.zip *",
+    "postbundle": "echo '\n\n******   node_modules have been flattened and resolved in production mode.  If this is a dev environment, make sure you run `pnpm run reset` from the root to reset.'",
+    "semantic-release": "npx semantic-release -e semantic-release-monorepo"
+  },
+  "dependencies": {
+    "@cdf/errors": "^1.0.0",
+    "aws-sdk": "^2.398.0",
+    "config": "^1.30.0",
+    "js-yaml": "^3.12.0",
+    "pem": "^1.12.5",
+    "reflect-metadata": "^0.1.13",
+    "request-promise-native": "^1.0.5",
+    "request": "^2.87.0",
+    "uuid": "^3.2.1",
+    "winston": "^2.4.2"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^7.5.2",
+    "@commitlint/config-conventional": "^7.5.0",
+    "@semantic-release/changelog": "^3.0.2",
+    "@semantic-release/git": "^7.0.8",
+    "@semantic-release/npm": "^5.1.4",
+    "@semantic-release/release-notes-generator": "^7.1.4",
+    "@types/config": "0.0.34",
+    "@types/jest": "~24.0.0",
+    "@types/node": "~8.10.40",
+    "@types/pem": "^1.9.3",
+    "@types/request-promise-native": "^1.0.15",
+    "@types/request": "^2.47.0",
+    "cpy-cli": "^2.0.0",
+    "del-cli": "^1.1.0",
+    "jest-create-mock-instance": "^1.1.0",
+    "jest": "^22.4.3",
+    "commitizen": "^3.0.7",
+    "concurrently": "^4.1.0",
+    "cpy-cli": "^2.0.0",
+    "del-cli": "^1.1.0",
+    "husky": "^1.3.1",
+    "jest": "24.1.0",
+    "jest-create-mock-instance": "1.1.0",
+    "jest-mock": "24.0.0",
+    "make-dir-cli": "^1.0.0",
+    "nodemon": "^1.18.10",
+    "nyc": "^13.1.0",
+    "semantic-release": "^15.13.3",
+    "semantic-release-monorepo": "^6.1.1",
+    "ts-jest": "24.0.0",
+    "tslint": "^5.12.1",
+    "typescript": "3.1.6"
+  },
+  "jest": {
+    "globals": {
+      "NODE_CONFIG_DIR": "./src/config"
+    },
+    "roots": [
+      "<rootDir>/src"
+    ],
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testMatch": [
+      "<rootDir>/**/?(*.)+(spec|test).ts?(x)"
+    ],
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
+  },
+  "private": true
+}

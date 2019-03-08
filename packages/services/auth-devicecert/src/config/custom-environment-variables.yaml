@@ -1,0 +1,3 @@
+aws:
+  region: AWS_REGION
+  accountId: AWS_ACCOUNTID

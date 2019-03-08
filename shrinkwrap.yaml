@@ -747,6 +747,86 @@ importers:
       tslint: ^5.12.1
       typescript: 3.1.6
       winston: ^2.4.2
+  packages/services/auth-devicecert:
+    dependencies:
+      '@cdf/errors': 'link:../../libraries/core/errors'
+      aws-sdk: 2.417.0
+      config: 1.31.0
+      js-yaml: 3.12.2
+      pem: 1.14.2
+      reflect-metadata: 0.1.13
+      request: 2.88.0
+      request-promise-native: /request-promise-native/1.0.7/request@2.88.0
+      uuid: 3.3.2
+      winston: 2.4.4
+    devDependencies:
+      '@commitlint/cli': 7.5.2
+      '@commitlint/config-conventional': 7.5.0
+      '@semantic-release/changelog': /@semantic-release/changelog/3.0.2/semantic-release@15.13.3
+      '@semantic-release/git': /@semantic-release/git/7.0.8/semantic-release@15.13.3
+      '@semantic-release/npm': /@semantic-release/npm/5.1.4/semantic-release@15.13.3
+      '@semantic-release/release-notes-generator': /@semantic-release/release-notes-generator/7.1.4/semantic-release@15.13.3
+      '@types/config': 0.0.34
+      '@types/jest': 24.0.9
+      '@types/node': 8.10.43
+      '@types/pem': 1.9.5
+      '@types/request': 2.48.1
+      '@types/request-promise-native': 1.0.15
+      commitizen: 3.0.7
+      concurrently: 4.1.0
+      cpy-cli: 2.0.0
+      del-cli: 1.1.0
+      husky: 1.3.1
+      jest: 24.1.0
+      jest-create-mock-instance: 1.1.0
+      jest-mock: 24.0.0
+      make-dir-cli: 1.0.0
+      nodemon: 1.18.10
+      nyc: 13.3.0
+      semantic-release: /semantic-release/15.13.3/semantic-release@15.13.3
+      semantic-release-monorepo: /semantic-release-monorepo/6.1.1/semantic-release@15.13.3
+      ts-jest: /ts-jest/24.0.0/jest@24.1.0
+      tslint: /tslint/5.13.1/typescript@3.1.6
+      typescript: 3.1.6
+    specifiers:
+      '@cdf/errors': ^1.0.0
+      '@commitlint/cli': ^7.5.2
+      '@commitlint/config-conventional': ^7.5.0
+      '@semantic-release/changelog': ^3.0.2
+      '@semantic-release/git': ^7.0.8
+      '@semantic-release/npm': ^5.1.4
+      '@semantic-release/release-notes-generator': ^7.1.4
+      '@types/config': 0.0.34
+      '@types/jest': ~24.0.0
+      '@types/node': ~8.10.40
+      '@types/pem': ^1.9.3
+      '@types/request': ^2.47.0
+      '@types/request-promise-native': ^1.0.15
+      aws-sdk: ^2.398.0
+      commitizen: ^3.0.7
+      concurrently: ^4.1.0
+      config: ^1.30.0
+      cpy-cli: ^2.0.0
+      del-cli: ^1.1.0
+      husky: ^1.3.1
+      jest: 24.1.0
+      jest-create-mock-instance: 1.1.0
+      jest-mock: 24.0.0
+      js-yaml: ^3.12.0
+      make-dir-cli: ^1.0.0
+      nodemon: ^1.18.10
+      nyc: ^13.1.0
+      pem: ^1.12.5
+      reflect-metadata: ^0.1.13
+      request: ^2.87.0
+      request-promise-native: ^1.0.5
+      semantic-release: ^15.13.3
+      semantic-release-monorepo: ^6.1.1
+      ts-jest: 24.0.0
+      tslint: ^5.12.1
+      typescript: 3.1.6
+      uuid: ^3.2.1
+      winston: ^2.4.2
   packages/services/certificatevendor:
     dependencies:
       '@cdf/assetlibrary-client': 'link:../../libraries/clients/assetlibrary-client'
@@ -1492,7 +1572,7 @@ packages:
       pirates: 4.0.1
       realpath-native: 1.1.0
       rimraf: 2.6.3
-      strip-ansi: 5.0.0
+      strip-ansi: 5.1.0
     dev: true
     engines:
       node: '>= 6'
@@ -1980,6 +2060,10 @@ packages:
     dev: true
     resolution:
       integrity: sha1-ZpetKYcyRsUw8Jo/9aQIYYJCMNU=
+  /@types/caseless/0.12.1:
+    dev: true
+    resolution:
+      integrity: sha512-FhlMa34NHp9K5MY1Uz8yb+ZvuX0pnvn3jScRSNAb75KHGB8d3rEU6hqMs3Z2vjuytcMfRg6c5CHMc3wtYyD2/A==
   /@types/chai-string/1.4.1:
     dependencies:
       '@types/chai': 4.1.7
@@ -2033,6 +2117,12 @@ packages:
     dev: true
     resolution:
       integrity: sha512-V0clmJow23WeyblmACoxbHBu2JKlE5TiIme6Lem14FnPW9gsttyHtk6wq7njcdIWH1njAaFgR8gW09lgY98gQg==
+  /@types/form-data/2.2.1:
+    dependencies:
+      '@types/node': 8.10.43
+    dev: true
+    resolution:
+      integrity: sha512-JAMFhOaHIciYVh8fb5/83nmuO/AHwmto+Hq7a9y8FzLDcC1KCU344XDOMEmahnrTFlHjgh4L0WJFczNIX2GxnQ==
   /@types/glob/7.1.1:
     dependencies:
       '@types/events': 3.0.0
@@ -2098,6 +2188,21 @@ packages:
   /@types/range-parser/1.2.3:
     resolution:
       integrity: sha512-ewFXqrQHlFsgc09MK5jP5iR7vumV/BYayNC6PgJO2LPe8vrnNFyjQjSppfEngITi0qvfKtzFvgKymGheFM9UOA==
+  /@types/request-promise-native/1.0.15:
+    dependencies:
+      '@types/request': 2.48.1
+    dev: true
+    resolution:
+      integrity: sha512-uYPjTChD9TpjlvbBjNpZfNc64TBejBS52u7pbxhQLnlxw+5Em7wLb6DU2wdJVhJ2Mou7v50N0qgL4Gia5mmRYg==
+  /@types/request/2.48.1:
+    dependencies:
+      '@types/caseless': 0.12.1
+      '@types/form-data': 2.2.1
+      '@types/node': 8.10.43
+      '@types/tough-cookie': 2.3.5
+    dev: true
+    resolution:
+      integrity: sha512-ZgEZ1TiD+KGA9LiAAPPJL68Id2UWfeSO62ijSXZjFJArVV+2pKcsVHmrcu+1oiE3q6eDGiFiSolRc4JHoerBBg==
   /@types/serve-static/1.13.2:
     dependencies:
       '@types/express-serve-static-core': 4.16.1
@@ -2119,6 +2224,10 @@ packages:
     dev: true
     resolution:
       integrity: sha512-9KhCkyXv268A2nZ1Wvu7rQWM+BmdYUVkycFeNnYrUL5Zwu7o8wPQ3wBfW59dDP+wuoxw0ww8YKgTNv8j/cgscA==
+  /@types/tough-cookie/2.3.5:
+    dev: true
+    resolution:
+      integrity: sha512-SCcK7mvGi3+ZNz833RRjFIxrn4gI1PPR3NtuIS+6vMkvmsGjosqTJwRt5bAEFLRz+wtJMWv8+uOnZf2hi2QXTg==
   /@types/uuid/3.4.4:
     dependencies:
       '@types/node': 8.10.43
@@ -2236,12 +2345,12 @@ packages:
       node: '>=4'
     resolution:
       integrity: sha1-7QMXwyIGT3lGbAKWa922Bas32Zg=
-  /ansi-regex/4.0.0:
+  /ansi-regex/4.1.0:
     dev: true
     engines:
       node: '>=6'
     resolution:
-      integrity: sha512-iB5Dda8t/UqpPI/IjsejXu5jOGDrzn41wJyljwPH65VCIbk6+1BzFIMJGFwTNrYXT1CrD+B4l19U7awiQ8rk7w==
+      integrity: sha512-1apePfXM1UOSqw0o9IiFAovVz9M5S1Dg+4TrDwfMewQ6p/rmMueb7tWZjQ1rx4Loy1ArBggoqGpfqqdI4rondg==
   /ansi-styles/2.2.1:
     dev: true
     engines:
@@ -2367,7 +2476,6 @@ packages:
   /asn1/0.2.4:
     dependencies:
       safer-buffer: 2.1.2
-    dev: true
     resolution:
       integrity: sha512-jxwzQpLQjSmWXgwaCZE9Nz+glAG01yF1QnWgbhGwHI5A6FRIEY6IVqtHhIepHqI7/kyEyQEagBC5mBEFlIYvdg==
   /assert-plus/1.0.0:
@@ -2451,11 +2559,9 @@ packages:
     resolution:
       integrity: sha512-j/rVn0opGkksCQjUd0ji9HZKjcx2E+MbBM3p68ocYStG6B16Wl88Hqxd/d1TdwE5RRo8g0uhiFaLTfp8tA4eKg==
   /aws-sign2/0.7.0:
-    dev: true
     resolution:
       integrity: sha1-tG6JCTSpWR8tL2+G1+ap8bP+dqg=
   /aws4/1.8.0:
-    dev: true
     resolution:
       integrity: sha512-ReZxvNHIOv88FlT7rxcXIIC0fPt4KZqZbOlivyWtXLt8ESx84zd3kMC6iK5jVeS2qt+g7ftS7ye4fi06X5rtRQ==
   /babel-code-frame/6.26.0:
@@ -2561,7 +2667,6 @@ packages:
   /bcrypt-pbkdf/1.0.2:
     dependencies:
       tweetnacl: 0.14.5
-    dev: true
     resolution:
       integrity: sha1-pDAdOJtqQ/m2f/PKEaP2Y342Dp4=
   /becke-ch--regex--s0-0-v1--base--pl--lib/1.4.0:
@@ -2856,7 +2961,6 @@ packages:
     resolution:
       integrity: sha1-fMEFXYItISlU0HsIXeolHMe8VQU=
   /caseless/0.12.0:
-    dev: true
     resolution:
       integrity: sha1-G2gcIf+EAzyCZUMJBolCDRhxUdw=
   /chai-string/1.5.0/chai@4.2.0:
@@ -3526,7 +3630,6 @@ packages:
   /dashdash/1.14.1:
     dependencies:
       assert-plus: 1.0.0
-    dev: true
     engines:
       node: '>=0.10'
     resolution:
@@ -3825,7 +3928,6 @@ packages:
     dependencies:
       jsbn: 0.1.1
       safer-buffer: 2.1.2
-    dev: true
     resolution:
       integrity: sha1-OoOpBOVDUyh4dMVkt1SThoSamMk=
   /ee-first/1.1.1:
@@ -3844,6 +3946,15 @@ packages:
     dev: true
     resolution:
       integrity: sha512-1MkrZNvWTKCaigbn+W15elq2BB/L22nqrSY5DKlo3X6+vclJm8Bb5djXJBmEX6fS3+zCh/F4VBK5Z2KxJt4s2Q==
+  /env-ci/3.2.0:
+    dependencies:
+      execa: 1.0.0
+      java-properties: 0.2.10
+    dev: true
+    engines:
+      node: '>=6'
+    resolution:
+      integrity: sha512-TFjNiDlXrL8/pfHswdvJGEZzJcq3aBPb8Eka83hlGLwuNw9F9BC9S9ETlkfkItLRT9k5JgpGgeP+rL6/3cEbcw==
   /error-ex/1.3.2:
     dependencies:
       is-arrayish: 0.2.1
@@ -4197,7 +4308,6 @@ packages:
     resolution:
       integrity: sha512-Nmb6QXkELsuBr24CJSkilo6UHHgbekK5UiZgfE6UHD3Eb27YC6oD+bhcT+tJ6cl8dmsgdQxnWlcry8ksBIBLpw==
   /extsprintf/1.3.0:
-    dev: true
     engines:
       '0': node >=0.6.0
     resolution:
@@ -4376,7 +4486,6 @@ packages:
     resolution:
       integrity: sha1-gQaNKVqBQuwKxybG4iAMMPttXoA=
   /forever-agent/0.6.1:
-    dev: true
     resolution:
       integrity: sha1-+8cfDEGt6zf5bFd60e1C2P2sypE=
   /form-data/2.3.3:
@@ -4501,7 +4610,6 @@ packages:
   /getpass/0.1.7:
     dependencies:
       assert-plus: 1.0.0
-    dev: true
     resolution:
       integrity: sha1-Xv+OPmhNVprkyysSgmBOi6YhSfo=
   /gherkin/5.1.0:
@@ -4721,7 +4829,6 @@ packages:
     resolution:
       integrity: sha512-l2jRuU1NAWK6AW5qqcTATWQJvNPEwkM7NEKSiv/gqOsoSQbVoWyqVEY5GS+XPQ88zLNmqASRpzfdm8d79hJS+w==
   /har-schema/2.0.0:
-    dev: true
     engines:
       node: '>=4'
     resolution:
@@ -4730,7 +4837,6 @@ packages:
     dependencies:
       ajv: 6.10.0
       har-schema: 2.0.0
-    dev: true
     engines:
       node: '>=6'
     resolution:
@@ -4863,7 +4969,6 @@ packages:
       assert-plus: 1.0.0
       jsprim: 1.4.1
       sshpk: 1.16.1
-    dev: true
     engines:
       node: '>=0.8'
       npm: '>=1.3.7'
@@ -5371,7 +5476,6 @@ packages:
     resolution:
       integrity: sha1-Thqg+1G/vLPpJogAE5cgLBd1tm4=
   /is-typedarray/1.0.0:
-    dev: true
     resolution:
       integrity: sha1-5HnICFjfDBsR3dppQPlgEfzaSpo=
   /is-utf8/0.2.1:
@@ -6024,7 +6128,6 @@ packages:
     resolution:
       integrity: sha512-QHn/Lh/7HhZ/Twc7vJYQTkjuCa0kaCcDcjK5Zlk2rvnUpy7DxMJ23+Jc2dcyvltwQVg1nygAVlB2oRDFHoRS5Q==
   /jsbn/0.1.1:
-    dev: true
     resolution:
       integrity: sha1-peZUwuWi3rXyAdls77yoDA7y9RM=
   /jsdom/11.12.0:
@@ -6073,7 +6176,6 @@ packages:
     resolution:
       integrity: sha512-xbbCH5dCYU5T8LcEhhuh7HJ88HXuW3qsI3Y0zOZFKfZEHcpWiHU/Jxzk629Brsab/mMiHQti9wMP+845RPe3Vg==
   /json-schema/0.2.3:
-    dev: true
     resolution:
       integrity: sha1-tIDIkuWaLwWVTOcnvT8qTogvnhM=
   /json-stable-stringify/1.0.1:
@@ -6083,7 +6185,6 @@ packages:
     resolution:
       integrity: sha1-mnWdOcXy/1A/1TAGRu1EX4jE+a8=
   /json-stringify-safe/5.0.1:
-    dev: true
     resolution:
       integrity: sha1-Epai1Y/UXxmg9s4B1lcB4sc1tus=
   /json5/1.0.1:
@@ -6124,7 +6225,6 @@ packages:
       extsprintf: 1.3.0
       json-schema: 0.2.3
       verror: 1.10.0
-    dev: true
     engines:
       '0': node >=0.6.0
     resolution:
@@ -7216,7 +7316,6 @@ packages:
     resolution:
       integrity: sha512-P+FwIuro2aFG6B0Esd9ZDWUd51uZrAEoGutqZxzrVmYl3qSfkLgcQpBPBjtDFsUQLFY1dvTQJPOyeqr8S9GF8w==
   /oauth-sign/0.9.0:
-    dev: true
     resolution:
       integrity: sha512-fexhUFFPTGV8ybAtSIGbV6gOkSv8UtRbDBnAyLQw4QPKkgNlsH2ByPGtMUqdWkos6YCRmAqViwgZrJc/mRDzZQ==
   /object-assign/4.1.1:
@@ -7625,7 +7724,6 @@ packages:
     resolution:
       integrity: sha512-TOnPtq3ZFnCniOZ+rka4pk8UIze9xG1qI+wNE7EmkiR/cg+53uVvk5QbkWZ7M6RsuOxzz62FW1hlAobJr/lTOA==
   /performance-now/2.1.0:
-    dev: true
     resolution:
       integrity: sha1-Ywn04OX6kT7BxpMHrjZLSzd8nns=
   /pify/2.3.0:
@@ -7724,7 +7822,7 @@ packages:
   /pretty-format/24.3.1:
     dependencies:
       '@jest/types': 24.3.0
-      ansi-regex: 4.0.0
+      ansi-regex: 4.1.0
       ansi-styles: 3.2.1
       react-is: 16.8.4
     dev: true
@@ -7764,7 +7862,6 @@ packages:
     resolution:
       integrity: sha1-8FKijacOYYkX7wqKw0wa5aaChrM=
   /psl/1.1.31:
-    dev: true
     resolution:
       integrity: sha512-/6pt4+C+T+wZUieKR620OpzN/LlnNKuWjy1iFLQ/UG35JqHlR/89MP1d96dUfkf6Dne3TuLQzOYEYshJ+Hx8mw==
   /pstree.remy/1.1.6:
@@ -7783,7 +7880,6 @@ packages:
     resolution:
       integrity: sha1-llOgNvt8HuQjQvIyXM7v6jkmxI0=
   /punycode/1.4.1:
-    dev: true
     resolution:
       integrity: sha1-wNWmOycYgArY4esPpSachN1BhF4=
   /punycode/2.1.1:
@@ -8081,7 +8177,6 @@ packages:
     dependencies:
       lodash: 4.17.11
       request: 2.88.0
-    dev: true
     engines:
       node: '>=0.10.0'
     id: registry.npmjs.org/request-promise-core/1.1.2
@@ -8095,7 +8190,6 @@ packages:
       request-promise-core: /request-promise-core/1.1.2/request@2.88.0
       stealthy-require: 1.1.1
       tough-cookie: 2.5.0
-    dev: true
     engines:
       node: '>=0.12.0'
     id: registry.npmjs.org/request-promise-native/1.0.7
@@ -8125,7 +8219,6 @@ packages:
       tough-cookie: 2.4.3
       tunnel-agent: 0.6.0
       uuid: 3.3.2
-    dev: true
     engines:
       node: '>= 4'
     resolution:
@@ -8326,13 +8419,24 @@ packages:
       ramda: 0.25.0
       read-pkg: 3.0.0
       semantic-release: /semantic-release/15.13.3/semantic-release@15.13.3
-      semantic-release-plugin-decorators: github.com/boardthatpowder/semantic-release-plugin-decorators/0f89322cb9231b2812e6e66bbc7215b88efd02b5/semantic-release@15.13.3
+      semantic-release-plugin-decorators: /semantic-release-plugin-decorators/1.2.3/semantic-release@15.13.3
     dev: true
     id: registry.npmjs.org/semantic-release-monorepo/6.1.1
     peerDependencies:
       semantic-release: 13.4.1 - 15.x.x
     resolution:
       integrity: sha512-qObVQYU4MuUAx1lr/tpIYfhebRl6NxVk52wo+bG2RTg2ePtqmHDunXNpSkDIi1Mqvq2CgyG50IdDnceZ8N5+gQ==
+  /semantic-release-plugin-decorators/1.2.3/semantic-release@15.13.3:
+    dependencies:
+      import-from: 2.1.0
+      lodash: 4.17.11
+      semantic-release: /semantic-release/15.13.3/semantic-release@15.13.3
+    dev: true
+    id: registry.npmjs.org/semantic-release-plugin-decorators/1.2.3
+    peerDependencies:
+      semantic-release: '>=11'
+    resolution:
+      integrity: sha512-bEXRStCDiVIgFMiqvF2Chxt1JouFYGVQGA2F6i5GjI9Aq7hukdmkl8P2hB0HAzY7ezJB5lvdlJPcAf16wpfkcg==
   /semantic-release/15.13.3:
     dependencies:
       '@semantic-release/commit-analyzer': 6.1.0
@@ -8377,7 +8481,7 @@ packages:
       aggregate-error: 2.2.0
       cosmiconfig: 5.1.0
       debug: 4.1.1
-      env-ci: github.com/boardthatpowder/env-ci/45ee1f3169d13f1a2c3842f5f2458b6bd8cb6dd5
+      env-ci: 3.2.0
       execa: 1.0.0
       figures: 2.0.0
       find-versions: 3.0.0
@@ -8744,7 +8848,6 @@ packages:
       jsbn: 0.1.1
       safer-buffer: 2.1.2
       tweetnacl: 0.14.5
-    dev: true
     engines:
       node: '>=0.10.0'
     hasBin: true
@@ -8817,7 +8920,6 @@ packages:
     resolution:
       integrity: sha1-Fhx9rBd2Wf2YEfQ3cfqZOBR4Yow=
   /stealthy-require/1.1.1:
-    dev: true
     engines:
       node: '>=0.10.0'
     resolution:
@@ -8900,14 +9002,14 @@ packages:
       node: '>=4'
     resolution:
       integrity: sha1-qEeQIusaw2iocTibY1JixQXuNo8=
-  /strip-ansi/5.0.0:
+  /strip-ansi/5.1.0:
     dependencies:
-      ansi-regex: 4.0.0
+      ansi-regex: 4.1.0
     dev: true
     engines:
       node: '>=6'
     resolution:
-      integrity: sha512-Uu7gQyZI7J7gn5qLn1Np3G9vcYGTVqB+lFTytnDJv83dd8T22aGH451P3jueT2/QemInJDfxHB5Tde5OzgG1Ow==
+      integrity: sha512-TjxrkPONqO2Z8QDCpeE2j6n0M6EwxzyDgzEeGp+FbdvaJAt//ClYi6W5my+3ROlC/hZX2KACUwDfK49Ka5eDvg==
   /strip-bom/2.0.0:
     dependencies:
       is-utf8: 0.2.1
@@ -9154,7 +9256,6 @@ packages:
     dependencies:
       psl: 1.1.31
       punycode: 1.4.1
-    dev: true
     engines:
       node: '>=0.8'
     resolution:
@@ -9163,7 +9264,6 @@ packages:
     dependencies:
       psl: 1.1.31
       punycode: 2.1.1
-    dev: true
     engines:
       node: '>=0.8'
     resolution:
@@ -9270,7 +9370,6 @@ packages:
   /tunnel-agent/0.6.0:
     dependencies:
       safe-buffer: 5.1.2
-    dev: true
     resolution:
       integrity: sha1-J6XeoGs2sEoKmWZ3SykIaPD8QP0=
   /tunnel/0.0.4:
@@ -9280,7 +9379,6 @@ packages:
     resolution:
       integrity: sha1-LTeFoVjBdMmhbcLARuxfxfF0IhM=
   /tweetnacl/0.14.5:
-    dev: true
     resolution:
       integrity: sha1-WuaBd/GS1EViadEIr6k/+HQ/T2Q=
   /type-check/0.3.2:
@@ -9783,19 +9881,6 @@ packages:
       import-from: 2.1.0
       lodash: 4.17.11
     dev: true
-    name: semantic-release-plugin-decorators
-    peerDependencies:
-      semantic-release: '>=11'
-    resolution:
-      tarball: 'https://codeload.github.com/boardthatpowder/semantic-release-plugin-decorators/tar.gz/0f89322cb9231b2812e6e66bbc7215b88efd02b5'
-    version: 0.0.0-development
-  github.com/boardthatpowder/semantic-release-plugin-decorators/0f89322cb9231b2812e6e66bbc7215b88efd02b5/semantic-release@15.13.3:
-    dependencies:
-      import-from: 2.1.0
-      lodash: 4.17.11
-      semantic-release: /semantic-release/15.13.3/semantic-release@15.13.3
-    dev: true
-    id: github.com/boardthatpowder/semantic-release-plugin-decorators/0f89322cb9231b2812e6e66bbc7215b88efd02b5
     name: semantic-release-plugin-decorators
     peerDependencies:
       semantic-release: '>=11'
