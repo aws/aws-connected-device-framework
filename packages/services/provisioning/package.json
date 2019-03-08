@@ -53,7 +53,6 @@
     "@types/node": "~8.10.40",
     "@types/pem": "^1.9.3",
     "@types/uuid": "^3.4.3",
-    "aws-sdk-mock": "^4.3.1",
     "commitizen": "^3.0.7",
     "concurrently": "^4.1.0",
     "cpy-cli": "^2.0.0",

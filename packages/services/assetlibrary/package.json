@@ -52,7 +52,6 @@
     "@types/express": "^4.16.1",
     "@types/jest": "~24.0.0",
     "@types/node": "~8.10.40",
-    "aws-sdk-mock": "^4.3.0",
     "commitizen": "^3.0.7",
     "concurrently": "^4.1.0",
     "cpy-cli": "^2.0.0",

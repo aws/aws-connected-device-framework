@@ -1,4 +1,31 @@
 importers:
+  .:
+    devDependencies:
+      '@commitlint/cli': 7.5.2
+      '@commitlint/config-conventional': 7.5.0
+      '@semantic-release/changelog': 3.0.2
+      '@semantic-release/git': 7.0.8
+      '@semantic-release/npm': 5.1.4
+      '@semantic-release/release-notes-generator': 7.1.4
+      commitizen: 3.0.7
+      cz-conventional-changelog: 2.1.0
+      del-cli: 1.1.0
+      husky: 1.3.1
+      semantic-release: 15.13.3
+      semantic-release-monorepo: 6.1.1
+    specifiers:
+      '@commitlint/cli': ^7.5.2
+      '@commitlint/config-conventional': ^7.5.0
+      '@semantic-release/changelog': ^3.0.2
+      '@semantic-release/git': ^7.0.8
+      '@semantic-release/npm': ^5.1.4
+      '@semantic-release/release-notes-generator': ^7.1.4
+      commitizen: ^3.0.7
+      cz-conventional-changelog: ^2.1.0
+      del-cli: ^1.1.0
+      husky: ^1.3.1
+      semantic-release: ^15.13.3
+      semantic-release-monorepo: ^6.1.1
   packages/integration-tests:
     dependencies:
       '@cdf/assetlibrary-client': 'link:../libraries/clients/assetlibrary-client'
@@ -558,7 +585,6 @@ importers:
       '@types/express': 4.16.1
       '@types/jest': 24.0.9
       '@types/node': 8.10.43
-      aws-sdk-mock: 4.3.1
       commitizen: 3.0.7
       concurrently: 4.1.0
       cpy-cli: 2.0.0
@@ -591,7 +617,6 @@ importers:
       '@types/node': ~8.10.40
       ajv: ^6.8.1
       aws-sdk: ^2.398.0
-      aws-sdk-mock: ^4.3.0
       aws-serverless-express: ^3.3.5
       body-parser: ^1.18.3
       commitizen: ^3.0.7
@@ -744,7 +769,6 @@ importers:
       '@types/config': 0.0.34
       '@types/jest': 24.0.9
       '@types/node': 8.10.43
-      aws-sdk-mock: 4.3.1
       commitizen: 3.0.7
       concurrently: 4.1.0
       cpy-cli: 2.0.0
@@ -774,7 +798,6 @@ importers:
       '@types/jest': ~24.0.0
       '@types/node': ~8.10.40
       aws-sdk: ^2.398.0
-      aws-sdk-mock: ^4.3.1
       commitizen: ^3.0.7
       concurrently: ^4.1.0
       config: ^1.30.0
@@ -939,7 +962,6 @@ importers:
       '@types/node': 8.10.43
       '@types/pem': 1.9.5
       '@types/uuid': 3.4.4
-      aws-sdk-mock: 4.3.1
       commitizen: 3.0.7
       concurrently: 4.1.0
       cpy-cli: 2.0.0
@@ -974,7 +996,6 @@ importers:
       '@types/pem': ^1.9.3
       '@types/uuid': ^3.4.3
       aws-sdk: ^2.398.0
-      aws-sdk-mock: ^4.3.1
       aws-serverless-express: ^3.3.5
       body-parser: ^1.18.3
       commitizen: ^3.0.7
@@ -1584,6 +1605,19 @@ packages:
     dev: true
     resolution:
       integrity: sha512-1RB7e4ptR/M+1Ik3Qn84pbppbSadBaCtpgFqgqsXn6s4ZVE6hqW9SOm6UW5yd3KT7ObVfdYUkhMlgR937oKyDw==
+  /@semantic-release/changelog/3.0.2:
+    dependencies:
+      '@semantic-release/error': 2.2.0
+      aggregate-error: 2.2.0
+      fs-extra: 7.0.1
+      lodash: 4.17.11
+    dev: true
+    engines:
+      node: '>=8.3'
+    peerDependencies:
+      semantic-release: '>=15.8.0 <16.0.0'
+    resolution:
+      integrity: sha512-pDUaBNAuPAqQ+ArHwvR160RG2LbfyIVz9EJXgxH0V547rlx/hCs0Sp7L4Rtzi5Z+d6CHcv9g2ynxplE1xAzp2g==
   /@semantic-release/changelog/3.0.2/semantic-release@15.13.3:
     dependencies:
       '@semantic-release/error': 2.2.0
@@ -1599,6 +1633,21 @@ packages:
       semantic-release: '>=15.8.0 <16.0.0'
     resolution:
       integrity: sha512-pDUaBNAuPAqQ+ArHwvR160RG2LbfyIVz9EJXgxH0V547rlx/hCs0Sp7L4Rtzi5Z+d6CHcv9g2ynxplE1xAzp2g==
+  /@semantic-release/commit-analyzer/6.1.0:
+    dependencies:
+      conventional-changelog-angular: 5.0.3
+      conventional-commits-filter: 2.0.1
+      conventional-commits-parser: 3.0.1
+      debug: 4.1.1
+      import-from: 2.1.0
+      lodash: 4.17.11
+    dev: true
+    engines:
+      node: '>=8.3'
+    peerDependencies:
+      semantic-release: '>=15.8.0 <16.0.0'
+    resolution:
+      integrity: sha512-2lb+t6muGenI86mYGpZYOgITx9L3oZYF697tJoqXeQEk0uw0fm+OkkOuDTBA3Oax9ftoNIrCKv9bwgYvxrbM6w==
   /@semantic-release/commit-analyzer/6.1.0/semantic-release@15.13.3:
     dependencies:
       conventional-changelog-angular: 5.0.3
@@ -1620,6 +1669,25 @@ packages:
     dev: true
     resolution:
       integrity: sha512-9Tj/qn+y2j+sjCI3Jd+qseGtHjOAeg7dU2/lVcqIQ9TV3QDaDXDYXcoOHU+7o2Hwh8L8ymL4gfuO7KxDs3q2zg==
+  /@semantic-release/git/7.0.8:
+    dependencies:
+      '@semantic-release/error': 2.2.0
+      aggregate-error: 2.2.0
+      debug: 4.1.1
+      dir-glob: 2.2.2
+      execa: 1.0.0
+      fs-extra: 7.0.1
+      globby: 9.1.0
+      lodash: 4.17.11
+      micromatch: 3.1.10
+      p-reduce: 1.0.0
+    dev: true
+    engines:
+      node: '>=8.3'
+    peerDependencies:
+      semantic-release: '>=15.4.0 <16.0.0'
+    resolution:
+      integrity: sha512-sA+XoPU6GrV+A4YswO0b5JWL1KbzmyyaqUK6Y2poDkIVPlj+oQdi/stpKz/bKF5z9ChMGP87OVPMeUyXGaNFtw==
   /@semantic-release/git/7.0.8/semantic-release@15.13.3:
     dependencies:
       '@semantic-release/error': 2.2.0
@@ -1641,6 +1709,32 @@ packages:
       semantic-release: '>=15.4.0 <16.0.0'
     resolution:
       integrity: sha512-sA+XoPU6GrV+A4YswO0b5JWL1KbzmyyaqUK6Y2poDkIVPlj+oQdi/stpKz/bKF5z9ChMGP87OVPMeUyXGaNFtw==
+  /@semantic-release/github/5.2.10:
+    dependencies:
+      '@octokit/rest': 16.17.0
+      '@semantic-release/error': 2.2.0
+      aggregate-error: 2.2.0
+      bottleneck: 2.17.1
+      debug: 4.1.1
+      dir-glob: 2.2.2
+      fs-extra: 7.0.1
+      globby: 9.1.0
+      http-proxy-agent: 2.1.0
+      https-proxy-agent: 2.2.1
+      issue-parser: 3.0.1
+      lodash: 4.17.11
+      mime: 2.4.0
+      p-filter: 1.0.0
+      p-retry: 3.0.1
+      parse-github-url: 1.0.2
+      url-join: 4.0.0
+    dev: true
+    engines:
+      node: '>=8.3'
+    peerDependencies:
+      semantic-release: '>=15.8.0 <16.0.0'
+    resolution:
+      integrity: sha512-z/UwIxKb+EMiJDIy/57MBzJ80ar5H9GJQRyML/ILQ8dlrPwXs7cTyTvC7AesrF7t1mJZtg3ht9Qf9RdtR/LGzw==
   /@semantic-release/github/5.2.10/semantic-release@15.13.3:
     dependencies:
       '@octokit/rest': 16.17.0
@@ -1669,6 +1763,26 @@ packages:
       semantic-release: '>=15.8.0 <16.0.0'
     resolution:
       integrity: sha512-z/UwIxKb+EMiJDIy/57MBzJ80ar5H9GJQRyML/ILQ8dlrPwXs7cTyTvC7AesrF7t1mJZtg3ht9Qf9RdtR/LGzw==
+  /@semantic-release/npm/5.1.4:
+    dependencies:
+      '@semantic-release/error': 2.2.0
+      aggregate-error: 2.2.0
+      execa: 1.0.0
+      fs-extra: 7.0.1
+      lodash: 4.17.11
+      nerf-dart: 1.0.0
+      normalize-url: 4.2.0
+      npm: 6.5.0
+      rc: 1.2.8
+      read-pkg: 4.0.1
+      registry-auth-token: 3.3.2
+    dev: true
+    engines:
+      node: '>=8.3'
+    peerDependencies:
+      semantic-release: '>=15.9.0 <16.0.0'
+    resolution:
+      integrity: sha512-YRl8VTVwnRTl/sVRvTXs1ncYcuvuGrqPEXYy+lUK1YRLq25hkrhIdv3Ju0u1zGLqVCA8qRlF3NzWl7pULJXVog==
   /@semantic-release/npm/5.1.4/semantic-release@15.13.3:
     dependencies:
       '@semantic-release/error': 2.2.0
@@ -1691,6 +1805,24 @@ packages:
       semantic-release: '>=15.9.0 <16.0.0'
     resolution:
       integrity: sha512-YRl8VTVwnRTl/sVRvTXs1ncYcuvuGrqPEXYy+lUK1YRLq25hkrhIdv3Ju0u1zGLqVCA8qRlF3NzWl7pULJXVog==
+  /@semantic-release/release-notes-generator/7.1.4:
+    dependencies:
+      conventional-changelog-angular: 5.0.3
+      conventional-changelog-writer: 4.0.3
+      conventional-commits-filter: 2.0.1
+      conventional-commits-parser: 3.0.1
+      debug: 4.1.1
+      get-stream: 4.1.0
+      import-from: 2.1.0
+      into-stream: 4.0.0
+      lodash: 4.17.11
+    dev: true
+    engines:
+      node: '>=8.3'
+    peerDependencies:
+      semantic-release: '>=15.8.0 <16.0.0'
+    resolution:
+      integrity: sha512-pWPouZujddgb6t61t9iA9G3yIfp3TeQ7bPbV1ixYSeP6L7gI1+Du82fY/OHfEwyifpymLUQW0XnIKgKct5IMMw==
   /@semantic-release/release-notes-generator/7.1.4/semantic-release@15.13.3:
     dependencies:
       conventional-changelog-angular: 5.0.3
@@ -1850,7 +1982,7 @@ packages:
     dependencies:
       '@types/events': 3.0.0
       '@types/minimatch': 3.0.3
-      '@types/node': 8.10.43
+      '@types/node': 11.10.5
     dev: true
     resolution:
       integrity: sha512-1Bh06cbWJUHMC97acuD6UMG29nMt0Aqz1vF3guLfG+kHHJhy3AyohZFFxYk2f7Q1SQIrNwvncxAE0N/9s70F2w==
@@ -1895,6 +2027,10 @@ packages:
     dev: true
     resolution:
       integrity: sha512-E9qFi0seOkdlQnCTPv54brNfGWeFdRaEhI5tSue4pdx/V+xfxvMETsxXhOEcj1cYL+0n/jcTEmj/jD2gjzCwMg==
+  /@types/node/11.10.5:
+    dev: true
+    resolution:
+      integrity: sha512-DuIRlQbX4K+d5I+GMnv+UfnGh+ist0RdlvOp+JZ7ePJ6KQONCFQv/gKYSU1ZzbVdFSUCKZOltjmpFAGGv5MdYA==
   /@types/node/8.10.43:
     resolution:
       integrity: sha512-5m5W13HR2k3cu88mpzlnPBBv5+GyMHtj4F0P83RG4mqoC0AYVYHVMHfF3SgwKNtqEZiZQASMxU92QsLEekKcnw==
@@ -8487,6 +8623,20 @@ packages:
     dev: false
     resolution:
       integrity: sha1-KpsZ4lCoFwmSMaW5mk2vgLf77VQ=
+  /semantic-release-monorepo/6.1.1:
+    dependencies:
+      debug: 3.2.6
+      execa: 0.8.0
+      p-limit: 1.3.0
+      pkg-up: 2.0.0
+      ramda: 0.25.0
+      read-pkg: 3.0.0
+      semantic-release-plugin-decorators: github.com/boardthatpowder/semantic-release-plugin-decorators/0f89322cb9231b2812e6e66bbc7215b88efd02b5
+    dev: true
+    peerDependencies:
+      semantic-release: 13.4.1 - 15.x.x
+    resolution:
+      integrity: sha512-qObVQYU4MuUAx1lr/tpIYfhebRl6NxVk52wo+bG2RTg2ePtqmHDunXNpSkDIi1Mqvq2CgyG50IdDnceZ8N5+gQ==
   /semantic-release-monorepo/6.1.1/semantic-release@15.13.3:
     dependencies:
       debug: 3.2.6
@@ -8514,6 +8664,40 @@ packages:
       semantic-release: '>=11'
     resolution:
       integrity: sha512-bEXRStCDiVIgFMiqvF2Chxt1JouFYGVQGA2F6i5GjI9Aq7hukdmkl8P2hB0HAzY7ezJB5lvdlJPcAf16wpfkcg==
+  /semantic-release/15.13.3:
+    dependencies:
+      '@semantic-release/commit-analyzer': 6.1.0
+      '@semantic-release/error': 2.2.0
+      '@semantic-release/github': 5.2.10
+      '@semantic-release/npm': 5.1.4
+      '@semantic-release/release-notes-generator': 7.1.4
+      aggregate-error: 2.2.0
+      cosmiconfig: 5.1.0
+      debug: 4.1.1
+      env-ci: github.com/boardthatpowder/env-ci/45ee1f3169d13f1a2c3842f5f2458b6bd8cb6dd5
+      execa: 1.0.0
+      figures: 2.0.0
+      find-versions: 3.0.0
+      get-stream: 4.1.0
+      git-log-parser: 1.2.0
+      hook-std: 1.2.0
+      hosted-git-info: 2.7.1
+      lodash: 4.17.11
+      marked: 0.6.1
+      marked-terminal: /marked-terminal/3.2.0/marked@0.6.1
+      p-locate: 3.0.0
+      p-reduce: 1.0.0
+      read-pkg-up: 4.0.0
+      resolve-from: 4.0.0
+      semver: 5.6.0
+      signale: 1.4.0
+      yargs: 12.0.5
+    dev: true
+    engines:
+      node: '>=8.3'
+    hasBin: true
+    resolution:
+      integrity: sha512-cax0xPPTtsxHlrty2HxhPql2TTvS74Ni2O8BzwFHxNY/mviVKEhI4OxHzBYJkpVxx1fMVj36+oH7IlP+SJtPNA==
   /semantic-release/15.13.3/semantic-release@15.13.3:
     dependencies:
       '@semantic-release/commit-analyzer': /@semantic-release/commit-analyzer/6.1.0/semantic-release@15.13.3
@@ -9889,4 +10073,26 @@ packages:
     dev: true
     resolution:
       integrity: sha512-Lhz8TLaYnxq/2ObqHDql8dX8CJi97oHxrjUcYtzKbbykPtVW9WB+poxI+NM2UIzsMgNCZTIf0AQwsjK5yMAqZw==
+  github.com/boardthatpowder/env-ci/45ee1f3169d13f1a2c3842f5f2458b6bd8cb6dd5:
+    dependencies:
+      execa: 1.0.0
+      java-properties: 0.2.10
+    dev: true
+    engines:
+      node: '>=6'
+    name: env-ci
+    resolution:
+      tarball: 'https://codeload.github.com/boardthatpowder/env-ci/tar.gz/45ee1f3169d13f1a2c3842f5f2458b6bd8cb6dd5'
+    version: 0.0.0-development
+  github.com/boardthatpowder/semantic-release-plugin-decorators/0f89322cb9231b2812e6e66bbc7215b88efd02b5:
+    dependencies:
+      import-from: 2.1.0
+      lodash: 4.17.11
+    dev: true
+    name: semantic-release-plugin-decorators
+    peerDependencies:
+      semantic-release: '>=11'
+    resolution:
+      tarball: 'https://codeload.github.com/boardthatpowder/semantic-release-plugin-decorators/tar.gz/0f89322cb9231b2812e6e66bbc7215b88efd02b5'
+    version: 0.0.0-development
 shrinkwrapVersion: 4

@@ -11,13 +11,8 @@ import { DevicesService, GroupsService } from '@cdf/assetlibrary-client/dist';
 import { ThingsService } from '@cdf/provisioning-client/dist';
 import { StartJobAction, TargetType } from './workflow.startjob';
 
+import AWS from 'aws-sdk';
 import { CommandsDao } from '../commands.dao';
-
-// tslint:disable-next-line:no-var-requires
-const AWSMock = require('aws-sdk-mock');
-import AWS = require('aws-sdk');
-AWSMock.setSDKInstance(AWS);
-AWS.config.update({ region: 'us-east-1' });
 
 let mockedTemplatesService: jest.Mocked<TemplatesService>;
 let mockedCommandsDao: jest.Mocked<CommandsDao>;
@@ -26,19 +21,18 @@ let mockedAssetLibraryGroupsService: jest.Mocked<GroupsService>;
 let mockedProvisioningThingsService: jest.Mocked<ThingsService>;
 let instance: StartJobAction;
 let mockedIot: AWS.Iot;
-const mockedS3: AWS.S3 = null;
+let mockedS3: AWS.S3;
 
 describe('StartJobAction', () => {
 
     beforeEach(() => {
-
         mockedTemplatesService = createMockInstance(TemplatesService);
         mockedCommandsDao = createMockInstance(CommandsDao);
         mockedAssetLibraryDevicesService = createMockInstance(DevicesService);
         mockedAssetLibraryGroupsService = createMockInstance(GroupsService);
         mockedProvisioningThingsService = createMockInstance(ThingsService);
-        // mockedS3 = new AWS.S3();
-        // mockedIot = new AWS.Iot();
+        mockedS3 = new AWS.S3();
+        mockedIot = new AWS.Iot();
 
         const mockedS3Factory = () => {
             return mockedS3;
@@ -77,11 +71,6 @@ describe('StartJobAction', () => {
 
     }, 15000);
 
-    // aws-sdk-mock mocks cannot be made within an async method, therefore must mock the call OUTSIDE the test method
-    AWSMock.mock('Iot', 'createThingGroup', (_params:AWS.Iot.Types.CreateThingGroupRequest, callback?: (err: AWS.AWSError, data: AWS.Iot.Types.CreateThingGroupResponse) => void) => {
-        callback(null, {thingGroupArn: 'arn:aws:iot:us-east-1:123456789012:thinggroup/ephemeral-cmd-002'});
-    });
-    mockedIot = new AWS.Iot();
     it('should build target list - 130 things returns 1 ephemeral group as final target', async () => {
 
         const commandId = 'cmd-002';
@@ -91,6 +80,22 @@ describe('StartJobAction', () => {
         }
         const expected = [`arn:aws:iot:us-east-1:123456789012:thinggroup/ephemeral-${commandId}`];
 
+        // set up mocks
+        // const mockCreateThingGroup = new MockCreateThingGroupResponse();
+        // mockCreateThingGroup.error = null;
+        // mockCreateThingGroup.response = {
+        //     thingGroupArn: `arn:aws:iot:us-east-1:123456789012:thinggroup/ephemeral-${commandId}`
+        // };
+        mockedIot.createThingGroup = jest.fn().mockImplementationOnce(()=> {
+            return {
+              promise: () =>  {
+                  return {
+                    thingGroupArn: `arn:aws:iot:us-east-1:123456789012:thinggroup/ephemeral-${commandId}`
+                };
+              }
+            };
+        });
+
         mockedProvisioningThingsService.bulkProvisionThings.mockResolvedValueOnce({taskId:'123'});
 
         mockedProvisioningThingsService.getBulkProvisionTask
@@ -99,8 +104,6 @@ describe('StartJobAction', () => {
 
         // execute
         const actual = await instance.___testonly___buildTargetList(commandId, targets);
-        // must call restore once all mocked promises have resolved
-        AWSMock.restore();
 
         // Finally, verify the results
         expect(actual).toBeDefined();
@@ -239,18 +242,3 @@ describe('StartJobAction', () => {
 
     });
 });
-
-// class MockCreateThingGroupResponse {
-//     public response: AWS.Iot.Types.CreateThingGroupResponse;
-//     public error: AWSError;
-
-//     promise(): Promise<AWS.Iot.Types.CreateThingGroupResponse> {
-//         return new Promise((resolve, reject) => {
-//             if (this.error !== null) {
-//                 return reject(this.error);
-//             } else {
-//                 return resolve(this.response);
-//             }
-//         });
-//     }
-// }
