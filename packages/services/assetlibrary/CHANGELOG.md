@@ -1,3 +1,16 @@
+# [@cdf/assetlibrary-v1.4.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v1.3.0...@cdf/assetlibrary-v1.4.0) (2019-03-08)
+
+
+### Bug Fixes
+
+* **assetlibrary:** ported over fix for missing labels ([ed0b3c9](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/ed0b3c9))
+
+
+### Features
+
+* **commands:** ported over commands from old repo ([7fa76e1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/7fa76e1))
+* **provisioning:** ported over provisioning service ([89c2ed8](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/89c2ed8))
+
 # [@cdf/assetlibrary-v1.1.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v1.0.2...@cdf/assetlibrary-v1.1.0) (2019-03-07)
 
 
