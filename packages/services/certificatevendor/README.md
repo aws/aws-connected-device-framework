@@ -1,1 +1,1 @@
-Refer to [documentation](../../../documentation/docs/projects/assetlibrary/overview.md).
+Refer to [documentation](../../../documentation/docs/projects/certificatevendor/overview.md).

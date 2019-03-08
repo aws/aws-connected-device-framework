@@ -1,0 +1,35 @@
+{
+    "extends": "../../tsconfig.base.json",
+    "compilerOptions": {
+        "outDir": "dist",
+        "rootDir": "src",
+        
+        "typeRoots": [
+            "./src/@types",
+            "./node_modules/@types",
+            "../../../node_modules/@types"
+        ],
+        "types": [
+			"node",
+			"config",
+			"reflect-metadata",
+			"jest",
+        ]
+    },
+    "references": [
+        {
+            "path": "../../libraries/clients/assetlibrary-client"
+        }
+    ],
+    "include": [
+        "src"
+    ],
+    "exclude": [
+        "node_modules",
+        "../../../node_modules",
+        "dist",
+        ".vscode",
+        ".git",
+        "./**/__mocks__/*.ts"
+    ]
+}

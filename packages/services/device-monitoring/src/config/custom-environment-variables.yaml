@@ -1,0 +1,6 @@
+aws:
+  accountId: AWS_ACCOUNTID
+  region: AWS_REGION
+
+assetLibrary:
+  baseUrl: FACADE_ASSETLIBRARY_BASEURL
