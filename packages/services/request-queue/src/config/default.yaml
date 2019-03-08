@@ -1,0 +1,27 @@
+aws:
+  region:
+  accountId:
+
+sqs:
+  requestQueue:
+    queueUrl:
+    replayBatchSize:
+  dlqQueue:
+    queueUrl:
+
+lambda:
+  stopLambdaAtRemainingMillis:
+
+primary:
+  healthCheckUrl:
+  healthCheckResponse:
+  apiLambdaArn:
+
+cdf:
+  mimeType:
+  allowedMethods:
+
+cors:
+  origin:
+
+  

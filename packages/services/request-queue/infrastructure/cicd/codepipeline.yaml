@@ -1,0 +1,177 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Create a CodePipeline to include Nested CloudFormation, CodeBuild and Approval steps.
+
+Parameters:
+  CodePipelineName:
+    Description: Name of CICD pipeline to create.  If not provided, 'cdf-${Project}-${Environment}'' will be used.
+    Type: String
+  Project:
+    Default: request-queue
+    Description: The name of the project this CICD pipeline represents.
+    Type: String
+    MinLength: 1
+  Environment:
+    Description: The name of the environment this stack is being deployed to.
+    Type: String
+    MinLength: 1
+  RepoName:
+    Default: cdf-request-queue
+    Description: Name of codecommit repository.
+    Type: String
+    MinLength: 1
+  Branch:
+    Default: master
+    Description: Name of codecommit branch.
+    Type: String
+    MinLength: 1
+
+
+Conditions:
+  CodePipelineNameProvided:  !Not [ !Equals [ !Ref CodePipelineName, "" ] ]
+
+Resources:
+
+  BuildProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !If [CodePipelineNameProvided, !Sub '${CodePipelineName}-build', !Sub 'cdf-${Project}-${Environment}-build' ]
+      Description: !Sub 'Builds, unit tests, and performs code analysis of the ${Project} project.'
+      ServiceRole:
+        Fn::ImportValue:
+          !Sub 'CdfBuildRoleArn-${Environment}-${Branch}'
+      Artifacts:
+        NamespaceType: NONE
+        Packaging: NONE
+        Type: CODEPIPELINE
+        Name: !If [CodePipelineNameProvided, !Sub '${CodePipelineName}-build', !Sub 'cdf-${Project}-${Environment}-build' ]
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/nodejs:8.11.0
+        Type: LINUX_CONTAINER
+      Source: 
+        Type: CODEPIPELINE
+        BuildSpec: |
+
+          version: 0.2
+          env:
+            parameter-store:
+              NPM_REPO_PROTOCOL: "CDF_NPM_REPO_PROTOCOL"
+              NPM_REPO_HOSTNAME: "CDF_NPM_REPO_HOSTNAME"
+              NPM_REPO_AUTHTOKEN: "CDF_NPM_REPO_AUTHTOKEN"
+          phases:
+            install:
+              commands:
+                - echo install started on `date`
+                - printenv
+                - echo "@cdf:registry=$NPM_REPO_PROTOCOL://$NPM_REPO_HOSTNAME/" > ~/.npmrc
+                - echo "//$NPM_REPO_HOSTNAME/:_authToken=\"$NPM_REPO_AUTHTOKEN\"" > ~/.npmrc
+              finally:
+                - echo install completed on `date`
+            pre_build:
+              commands:
+                - echo pre_build started on `date`
+                - npm install
+              finally:
+                - echo pre_build completed on `date`
+            build:
+              commands:
+                - echo build started on `date`
+                - npm version patch
+              finally:
+                - echo Build completed on `date`
+            post_build:
+              commands:
+                - echo post_build started on `date`
+                - npm publish --registry "$NPM_REPO_PROTOCOL://$NPM_REPO_HOSTNAME"
+              finally:
+                - echo post_build completed on `date`
+          artifacts:
+            files:
+              - 'README.md'
+              - 'dist/**/*'
+              - 'infrastructure/**/*'
+              - 'package-lock.json'
+              - 'package.json'
+              - 'src/**/*'
+              - 'tsconfig.json'
+              - 'tslint.json'
+            discard-paths: no
+          cache:
+            paths:
+              - 'node_modules/**/*'
+
+  DeployPipeline:
+    Type: "AWS::CodePipeline::Pipeline"
+    Properties:
+      Name: !If [CodePipelineNameProvided, !Ref CodePipelineName, !Sub 'cdf-${Project}-${Environment}-${Branch}' ]
+      RoleArn:
+        Fn::ImportValue:
+          !Sub 'CdfCodePipelineRoleArn-${Environment}-${Branch}'
+      Stages:
+        -
+          Name: source
+          Actions:
+            -
+              Name: Source
+              ActionTypeId:
+                Category: Source
+                Owner: AWS
+                Version: 1
+                Provider: CodeCommit
+              OutputArtifacts:
+                - Name: source
+              Configuration:
+                BranchName: !Ref Branch
+                RepositoryName: !Ref RepoName
+              RunOrder: 1
+
+        -
+          Name: build
+          Actions:
+            -
+              Name: build
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Version: 1
+                Provider: CodeBuild
+              InputArtifacts:
+                - Name: source
+              Configuration:
+                ProjectName: !Ref BuildProject
+              RunOrder: 1
+
+      ArtifactStore:
+        Type: S3
+        Location:
+          Fn::ImportValue:
+            !Sub 'CdfArtifactBucket-${Environment}-${Branch}'
+
+
+
+  ###  Trigger SNS upon failed CodePipelines  ###
+  FailedCodePipelineTrigger:
+    Type: "AWS::Events::Rule"
+    Properties:
+      Name: !If [CodePipelineNameProvided, !Sub '${CodePipelineName}-onfailed', !Sub 'cdf-${Project}-${Environment}-${Branch}-onfailed' ]
+      Description: !Sub 'Triggers upon failed ${Project} CodePipeline.'
+      EventPattern:
+        source:
+          - "aws.codepipeline"
+        detail-type:
+          - "CodePipeline Pipeline Execution State Change"
+        detail:
+          state:
+            - "FAILED"
+          pipeline:
+            - !If [CodePipelineNameProvided, !Ref CodePipelineName, !Sub 'cdf-${Project}-${Environment}-${Branch}' ]
+      State: "ENABLED"
+      Targets:
+        -
+          Id: !Sub 'cdf-failed-${Environment}-${Branch}'
+          Arn:
+            Fn::ImportValue:
+              !Sub 'CdfFailedCodePiplineNotification-${Environment}-${Branch}'
+
+
