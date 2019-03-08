@@ -1,0 +1,1 @@
+Refer to [documentation](../../../documentation/docs/projects/assetlibrary/overview.md).

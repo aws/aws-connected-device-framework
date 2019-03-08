@@ -1,0 +1,175 @@
+AWSTemplateFormatVersion : '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Description: CDF Certificate Vendor Service
+
+
+Parameters:
+  ApplicationConfigurationOverride:
+    Description: This allows you to override any configuration application configuration. Must be a JSON formatted string. Any configurations contained in this will override the configurations found and merged from the config files.
+    Type: String
+    MinLength: 1
+  BucketName:
+    Description: Name of bucket of where certificates are stored.
+    Type: String
+    MinLength: 1
+  BucketPrefix:
+    Description: Key prefix of bucket of where certificates are stored.
+    Type: String
+  MQTTGetTopic:
+    Description: The MQTT topic where certificate requests are published by a device.
+    Default: cdf/certificates/+/get
+    Type: String
+  MQTTAckTopic:
+    Description: The MQTT topic where certificate acknowledgements are published by a device.
+    Default: cdf/certificates/+/ack
+    Type: String
+
+Resources:
+
+  MQTTGetRule:
+    Type: "AWS::IoT::TopicRule"
+    Properties:
+      TopicRulePayload: 
+        Actions:
+          -
+            Lambda:
+              FunctionArn: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${LambdaFunction}'
+        Description: "Certificate requests (CDF Certificate Vendor service)"
+        AwsIotSqlVersion: "2016-03-23"
+        RuleDisabled: "false" 
+        Sql: !Sub "SELECT topic(3) as deviceId, topic(4) as action, * FROM '${MQTTGetTopic}'" 
+
+  MQTTAckRule:
+    Type: "AWS::IoT::TopicRule"
+    Properties:
+      TopicRulePayload: 
+        Actions:
+          -
+            Lambda:
+              FunctionArn: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${LambdaFunction}'
+        Description: "Certificate acknowledgements (CDF Certificate Vendor service)"
+        AwsIotSqlVersion: "2016-03-23"
+        RuleDisabled: "false" 
+        Sql: !Sub "SELECT topic(3) as deviceId, topic(4) as action, * FROM '${MQTTAckTopic}'"   
+
+  LambdaFunctionGetInvocationPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      SourceArn: !Sub 'arn:aws:iot:${AWS::Region}:${AWS::AccountId}:rule/${MQTTGetRule}'
+      Action: lambda:InvokeFunction
+      Principal: iot.amazonaws.com
+      FunctionName: !GetAtt LambdaFunction.Arn
+      SourceAccount: !Ref AWS::AccountId   
+
+  LambdaFunctionAckInvocationPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      SourceArn: !Sub 'arn:aws:iot:${AWS::Region}:${AWS::AccountId}:rule/${MQTTAckRule}'
+      Action: lambda:InvokeFunction
+      Principal: iot.amazonaws.com
+      FunctionName: !GetAtt LambdaFunction.Arn
+      SourceAccount: !Ref AWS::AccountId   
+
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: 
+              - lambda.amazonaws.com
+              - iot.amazonaws.com
+          Action: sts:AssumeRole
+      Path: "/"
+      ManagedPolicyArns:
+        - !Ref ApplicationPolicies
+        - arn:aws:iam::aws:policy/AWSLambdaExecute
+        - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
+    DependsOn:
+      - ApplicationPolicies
+
+  ApplicationPolicies:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      Description: 'cdf-certificatvendor application policies'
+      Path: "/"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: "iot"
+            Action:
+              - "iot:UpdateCertificate"
+            Effect: Allow
+            Resource: 
+                - !Sub "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:cert/*"
+          - Sid: "iotgroup"
+            Action:
+              - "iot:RemoveThingFromThingGroup"
+            Effect: Allow
+            Resource:
+                - !Sub "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:thinggroup/*"
+                - !Sub "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:thing/*"
+          - Sid: "iotthing"
+            Action:
+              - "iot:DescribeThing"
+              - "iot:UpdateThing"
+            Effect: Allow
+            Resource:
+                - !Sub "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:thing/*"
+          - Sid: "s3bucket"
+            Action:
+              - 's3:ListBucket'
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:s3:::${BucketName}'
+          - Sid: "s3objects"
+            Action:
+              - 's3:Get*'
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:s3:::${BucketName}/*'
+          - Sid: "mqtt"
+            Action:
+              - 'iot:Publish'
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:iot:${AWS::Region}:${AWS::AccountId}:topic/cdf/certificates/*'
+
+  LambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../build/build.zip
+      Handler: lambda_proxy.handler
+      MemorySize: 128
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Runtime: nodejs8.10
+      Timeout: 30
+      Environment:
+        Variables:
+          NODE_CONFIG_DIR: './config'
+          NODE_CONFIG: !Ref ApplicationConfigurationOverride
+      Tracing: Active
+
+
+Outputs:
+  MQTTGetRuleName:
+    Description: Name of get rule
+    Value: !Sub "${MQTTGetRule}"
+    Export: 
+      Name: !Sub "${AWS::StackName}-MQTTGetRuleName"
+  MQTTAckRuleName:
+    Description: Name of ack rule
+    Value: !Sub "${MQTTAckRule}"
+    Export: 
+      Name: !Sub "${AWS::StackName}-MQTTAckRuleName"
+  LambdaArn:
+    Description: Lambda Arn
+    Value: !Sub "${LambdaFunction.Arn}"
+    Export: 
+      Name: !Sub "${AWS::StackName}-LambdaArn"
+  LambdaFunctionConsoleUrl:
+    Description: Console URL for the Lambda Function.
+    Value: !Sub "https://{AWS::Region}.console.aws.amazon.com/lambda/home?region={AWS::Region}#/functions/{LambdaFunction}"
