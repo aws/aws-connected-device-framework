@@ -518,6 +518,7 @@ Resources:
                 - cloudformation.amazonaws.com
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AWSCodePipelineReadOnlyAccess
+        - arn:aws:iam::aws:policy/AWSCodeCommitPowerUser
       Policies: 
         - 
           PolicyName: "CodeBuildServicePolicies"
@@ -541,13 +542,6 @@ Resources:
                   - logs:CreateLogGroup
                   - logs:CreateLogStream
                   - logs:PutLogEvents
-                Resource:
-                  - "*"
-              - 
-                Sid: CodeCommitPolicy
-                Effect: Allow
-                Action:
-                  - codecommit:GitPull
                 Resource:
                   - "*"
               - 
@@ -675,6 +669,8 @@ Resources:
             Principal:
               Service:
                 - codepipeline.amazonaws.com
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AWSCodeCommitPowerUser
       Policies: 
         - 
           PolicyName: "CodePipelineServicePolicies"
@@ -693,15 +689,6 @@ Resources:
                   - s3:PutObject
                 Resource:
                   - arn:aws:s3:::codepipeline*
-                Effect: Allow
-              - 
-                Action:
-                  - codecommit:CancelUploadArchive
-                  - codecommit:GetBranch
-                  - codecommit:GetCommit
-                  - codecommit:GetUploadArchiveStatus
-                  - codecommit:UploadArchive
-                Resource: "*"
                 Effect: Allow
               - 
                 Action:
