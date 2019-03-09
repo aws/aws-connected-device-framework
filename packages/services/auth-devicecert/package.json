@@ -1,5 +1,5 @@
 {
-  "name": "@cdf/custom-auth-devicecert",
+  "name": "@cdf/auth-devicecert",
   "version": "1.0.0",
   "description": "API Gateway custom authorizer that authenticates based on a supplied device certificate",
   "author": "Rahul Sareen <rssareen@amazon.com>",
