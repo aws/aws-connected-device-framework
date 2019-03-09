@@ -1,3 +1,11 @@
+# @cdf/logger-v1.0.0 (2019-03-09)
+
+
+### Bug Fixes
+
+* 🐛 Versioning within CICD pipeline ([ba3ea76](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/ba3ea76))
+* **@cdf:** use npm for running sibling scripts ([4fa2fa8](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/4fa2fa8))
+
 # [@cdf/logger-v1.0.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/logger-v1.0.0...@cdf/logger-v1.0.1) (2019-03-04)
 
 
