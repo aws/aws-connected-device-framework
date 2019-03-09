@@ -1,6 +1,6 @@
 {
   "name": "@cdf/certificatevendor",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "CDF Certificate Vendor",
   "author": "Dean Hart <deanhart@amazon.com>",
   "config": {
@@ -19,8 +19,8 @@
     "semantic-release": "npx semantic-release -e semantic-release-monorepo"
   },
   "dependencies": {
-    "@cdf/assetlibrary-client": "^1.0.0",
-    "@cdf/config-inject": "^1.0.0",
+    "@cdf/assetlibrary-client": "^2.0.0",
+    "@cdf/config-inject": "^2.0.0",
     "aws-sdk": "^2.398.0",
     "config": "^1.30.0",
     "inversify": "^5.0.1",

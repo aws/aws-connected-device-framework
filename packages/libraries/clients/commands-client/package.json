@@ -1,6 +1,6 @@
 {
   "name": "@cdf/commands-client",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "CDF Commands Client",
   "author": "Dean Hart <deanhart@amazon.com>",
   "main": "dist/index.js",
@@ -14,7 +14,7 @@
     "semantic-release": "npx semantic-release -e semantic-release-monorepo"
   },
   "dependencies": {
-    "@cdf/config-inject": "^1.1.0",
+    "@cdf/config-inject": "^2.0.0",
     "config": "^3.0.1",
     "inversify": "^5.0.1",
     "inversify-binding-decorators": "4.0.0",

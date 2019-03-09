@@ -1,6 +1,6 @@
 {
   "name": "@cdf/assetlibrary-history",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "CDF Asset Library History",
   "author": "Dean Hart <deanhart@amazon.com>",
   "config": {
@@ -19,7 +19,7 @@
     "semantic-release": "npx semantic-release -e semantic-release-monorepo"
   },
   "dependencies": {
-    "@cdf/config-inject": "^1.2.0",
+    "@cdf/config-inject": "^2.0.0",
     "atob": "^2.1.2",
     "aws-sdk": "^2.398.0",
     "aws-serverless-express": "^3.3.5",
