@@ -32,7 +32,7 @@ importers:
       '@cdf/assetlibraryhistory-client': 'link:../libraries/clients/assetlibraryhistory-client'
       '@cdf/commands-client': 'link:../libraries/clients/commands-client'
       '@cdf/provisioning-client': 'link:../libraries/clients/provisioning-client'
-      aws-sdk: 2.417.0
+      aws-sdk: 2.418.0
       chai: 4.2.0
       chai-string: /chai-string/1.5.0/chai@4.2.0
       config: 1.31.0
@@ -67,10 +67,10 @@ importers:
       tslint: /tslint/5.13.1/typescript@3.1.6
       typescript: 3.1.6
     specifiers:
-      '@cdf/assetlibrary-client': ^1.0.0
-      '@cdf/assetlibraryhistory-client': ^1.0.0
-      '@cdf/commands-client': ^1.0.0
-      '@cdf/provisioning-client': ^1.0.0
+      '@cdf/assetlibrary-client': ^2.0.0
+      '@cdf/assetlibraryhistory-client': ^2.0.0
+      '@cdf/commands-client': ^2.0.0
+      '@cdf/provisioning-client': ^2.0.0
       '@commitlint/cli': ^7.5.2
       '@commitlint/config-conventional': ^7.5.0
       '@semantic-release/changelog': ^3.0.2
@@ -217,7 +217,7 @@ importers:
       tslint: /tslint/5.13.1/typescript@3.1.6
       typescript: 3.1.6
     specifiers:
-      '@cdf/config-inject': ^1.1.0
+      '@cdf/config-inject': ^2.0.0
       '@commitlint/cli': ^7.5.2
       '@commitlint/config-conventional': ^7.5.0
       '@semantic-release/changelog': ^3.0.2
@@ -292,7 +292,7 @@ importers:
       tslint: /tslint/5.13.1/typescript@3.1.6
       typescript: 3.1.6
     specifiers:
-      '@cdf/config-inject': ^1.1.0
+      '@cdf/config-inject': ^2.0.0
       '@commitlint/cli': ^7.5.2
       '@commitlint/config-conventional': ^7.5.0
       '@semantic-release/changelog': ^3.0.2
@@ -416,7 +416,7 @@ importers:
       '@semantic-release/npm': /@semantic-release/npm/5.1.4/semantic-release@15.13.3
       '@semantic-release/release-notes-generator': /@semantic-release/release-notes-generator/7.1.4/semantic-release@15.13.3
       '@types/config': 0.0.34
-      '@types/jest': 24.0.9
+      '@types/jest': 24.0.11
       '@types/node': 8.10.43
       commitizen: 3.0.7
       concurrently: 4.1.0
@@ -433,8 +433,8 @@ importers:
       tslint: /tslint/5.13.1/typescript@3.1.6
       typescript: 3.1.6
     specifiers:
-      '@cdf/errors': ^1.2.0
-      '@cdf/logger': ^1.2.0
+      '@cdf/errors': ^2.0.0
+      '@cdf/logger': ^2.0.0
       '@commitlint/cli': ^7.5.2
       '@commitlint/config-conventional': ^7.5.0
       '@semantic-release/changelog': ^3.0.2
@@ -470,7 +470,7 @@ importers:
       '@semantic-release/git': /@semantic-release/git/7.0.8/semantic-release@15.13.3
       '@semantic-release/npm': /@semantic-release/npm/5.1.4/semantic-release@15.13.3
       '@semantic-release/release-notes-generator': /@semantic-release/release-notes-generator/7.1.4/semantic-release@15.13.3
-      '@types/jest': 24.0.9
+      '@types/jest': 24.0.11
       '@types/node': 8.10.43
       commitizen: 3.0.7
       concurrently: 4.1.0
@@ -515,7 +515,7 @@ importers:
       '@semantic-release/git': /@semantic-release/git/7.0.8/semantic-release@15.13.3
       '@semantic-release/npm': /@semantic-release/npm/5.1.4/semantic-release@15.13.3
       '@semantic-release/release-notes-generator': /@semantic-release/release-notes-generator/7.1.4/semantic-release@15.13.3
-      '@types/jest': 24.0.9
+      '@types/jest': 24.0.11
       '@types/node': 8.10.43
       commitizen: 3.0.7
       concurrently: 4.1.0
@@ -555,7 +555,7 @@ importers:
     dependencies:
       '@cdf/config-inject': 'link:../../libraries/config/config-inject'
       ajv: 6.10.0
-      aws-sdk: 2.417.0
+      aws-sdk: 2.418.0
       aws-serverless-express: 3.3.5
       body-parser: 1.18.3
       config: 1.31.0
@@ -583,7 +583,7 @@ importers:
       '@types/body-parser': 1.17.0
       '@types/config': 0.0.34
       '@types/express': 4.16.1
-      '@types/jest': 24.0.9
+      '@types/jest': 24.0.11
       '@types/node': 8.10.43
       commitizen: 3.0.7
       concurrently: 4.1.0
@@ -602,7 +602,7 @@ importers:
       tslint: /tslint/5.13.1/typescript@3.1.6
       typescript: 3.1.6
     specifiers:
-      '@cdf/config-inject': ^1.2.0
+      '@cdf/config-inject': ^2.0.0
       '@commitlint/cli': ^7.5.2
       '@commitlint/config-conventional': ^7.5.0
       '@semantic-release/changelog': ^3.0.2
@@ -653,7 +653,7 @@ importers:
     dependencies:
       '@cdf/config-inject': 'link:../../libraries/config/config-inject'
       atob: 2.1.2
-      aws-sdk: 2.417.0
+      aws-sdk: 2.418.0
       aws-serverless-express: 3.3.5
       body-parser: 1.18.3
       btoa: 1.2.1
@@ -680,7 +680,7 @@ importers:
       '@types/btoa': 1.2.2
       '@types/config': 0.0.34
       '@types/express': 4.16.1
-      '@types/jest': 24.0.9
+      '@types/jest': 24.0.11
       '@types/json-stable-stringify': 1.0.32
       '@types/morgan': 1.7.35
       '@types/node': 8.10.43
@@ -700,7 +700,7 @@ importers:
       tslint: /tslint/5.13.1/typescript@3.1.6
       typescript: 3.1.6
     specifiers:
-      '@cdf/config-inject': ^1.2.0
+      '@cdf/config-inject': ^2.0.0
       '@commitlint/cli': ^7.5.2
       '@commitlint/config-conventional': ^7.5.0
       '@semantic-release/changelog': ^3.0.2
@@ -750,7 +750,7 @@ importers:
   packages/services/auth-devicecert:
     dependencies:
       '@cdf/errors': 'link:../../libraries/core/errors'
-      aws-sdk: 2.417.0
+      aws-sdk: 2.418.0
       config: 1.31.0
       js-yaml: 3.12.2
       pem: 1.14.2
@@ -767,7 +767,7 @@ importers:
       '@semantic-release/npm': /@semantic-release/npm/5.1.4/semantic-release@15.13.3
       '@semantic-release/release-notes-generator': /@semantic-release/release-notes-generator/7.1.4/semantic-release@15.13.3
       '@types/config': 0.0.34
-      '@types/jest': 24.0.9
+      '@types/jest': 24.0.11
       '@types/node': 8.10.43
       '@types/pem': 1.9.5
       '@types/request': 2.48.1
@@ -789,7 +789,7 @@ importers:
       tslint: /tslint/5.13.1/typescript@3.1.6
       typescript: 3.1.6
     specifiers:
-      '@cdf/errors': ^1.0.0
+      '@cdf/errors': ^2.0.0
       '@commitlint/cli': ^7.5.2
       '@commitlint/config-conventional': ^7.5.0
       '@semantic-release/changelog': ^3.0.2
@@ -830,7 +830,7 @@ importers:
   packages/services/bulkcerts:
     dependencies:
       '@cdf/config-inject': 'link:../../libraries/config/config-inject'
-      aws-sdk: 2.417.0
+      aws-sdk: 2.418.0
       aws-serverless-express: 3.3.5
       body-parser: 1.18.3
       config: 1.31.0
@@ -856,7 +856,7 @@ importers:
       '@types/body-parser': 1.17.0
       '@types/config': 0.0.34
       '@types/express': 4.16.1
-      '@types/jest': 24.0.9
+      '@types/jest': 24.0.11
       '@types/jszip': 3.1.5
       '@types/multer': 1.3.7
       '@types/node': 8.10.43
@@ -879,7 +879,7 @@ importers:
       tslint: /tslint/5.13.1/typescript@3.1.6
       typescript: 3.1.6
     specifiers:
-      '@cdf/config-inject': ^1.0.0
+      '@cdf/config-inject': ^2.0.0
       '@commitlint/cli': ^7.5.2
       '@commitlint/config-conventional': ^7.5.0
       '@semantic-release/changelog': ^3.0.2
@@ -931,7 +931,7 @@ importers:
     dependencies:
       '@cdf/assetlibrary-client': 'link:../../libraries/clients/assetlibrary-client'
       '@cdf/config-inject': 'link:../../libraries/config/config-inject'
-      aws-sdk: 2.417.0
+      aws-sdk: 2.418.0
       config: 1.31.0
       inversify: 5.0.1
       inversify-binding-decorators: 4.0.0
@@ -947,7 +947,7 @@ importers:
       '@semantic-release/npm': /@semantic-release/npm/5.1.4/semantic-release@15.13.3
       '@semantic-release/release-notes-generator': /@semantic-release/release-notes-generator/7.1.4/semantic-release@15.13.3
       '@types/config': 0.0.34
-      '@types/jest': 24.0.9
+      '@types/jest': 24.0.11
       '@types/node': 8.10.43
       commitizen: 3.0.7
       concurrently: 4.1.0
@@ -966,8 +966,8 @@ importers:
       tslint: /tslint/5.13.1/typescript@3.1.6
       typescript: 3.1.6
     specifiers:
-      '@cdf/assetlibrary-client': ^1.0.0
-      '@cdf/config-inject': ^1.0.0
+      '@cdf/assetlibrary-client': ^2.0.0
+      '@cdf/config-inject': ^2.0.0
       '@commitlint/cli': ^7.5.2
       '@commitlint/config-conventional': ^7.5.0
       '@semantic-release/changelog': ^3.0.2
@@ -1007,7 +1007,7 @@ importers:
       '@cdf/config-inject': 'link:../../libraries/config/config-inject'
       '@cdf/provisioning-client': 'link:../../libraries/clients/provisioning-client'
       ajv: 6.10.0
-      aws-sdk: 2.417.0
+      aws-sdk: 2.418.0
       aws-serverless-express: 3.3.5
       body-parser: 1.18.3
       busboy: 0.2.14
@@ -1034,7 +1034,7 @@ importers:
       '@types/busboy': 0.2.3
       '@types/config': 0.0.34
       '@types/express': 4.16.1
-      '@types/jest': 24.0.9
+      '@types/jest': 24.0.11
       '@types/node': 8.10.43
       '@types/sinon': 5.0.7
       '@types/uuid': 3.4.4
@@ -1055,9 +1055,9 @@ importers:
       tslint: /tslint/5.13.1/typescript@3.1.6
       typescript: 3.1.6
     specifiers:
-      '@cdf/assetlibrary-client': ^1.0.0
-      '@cdf/config-inject': ^1.0.0
-      '@cdf/provisioning-client': ^1.0.0
+      '@cdf/assetlibrary-client': ^2.0.0
+      '@cdf/config-inject': ^2.0.0
+      '@cdf/provisioning-client': ^2.0.0
       '@commitlint/cli': ^7.5.2
       '@commitlint/config-conventional': ^7.5.0
       '@semantic-release/changelog': ^3.0.2
@@ -1141,7 +1141,7 @@ importers:
       tslint: /tslint/5.13.1/typescript@3.1.6
       typescript: 3.1.6
     specifiers:
-      '@cdf/assetlibrary-client': ^1.0.0
+      '@cdf/assetlibrary-client': ^2.0.0
       '@commitlint/cli': ^7.5.2
       '@commitlint/config-conventional': ^7.5.0
       '@semantic-release/changelog': ^3.0.2
@@ -1176,7 +1176,7 @@ importers:
   packages/services/provisioning:
     dependencies:
       '@cdf/config-inject': 'link:../../libraries/config/config-inject'
-      aws-sdk: 2.417.0
+      aws-sdk: 2.418.0
       aws-serverless-express: 3.3.5
       body-parser: 1.18.3
       config: 1.31.0
@@ -1203,7 +1203,7 @@ importers:
       '@types/body-parser': 1.17.0
       '@types/config': 0.0.34
       '@types/express': 4.16.1
-      '@types/jest': 24.0.9
+      '@types/jest': 24.0.11
       '@types/jszip': 3.1.5
       '@types/node': 8.10.43
       '@types/pem': 1.9.5
@@ -1225,7 +1225,7 @@ importers:
       tslint: /tslint/5.13.1/typescript@3.1.6
       typescript: 3.1.6
     specifiers:
-      '@cdf/config-inject': ^1.2.0
+      '@cdf/config-inject': ^2.0.0
       '@commitlint/cli': ^7.5.2
       '@commitlint/config-conventional': ^7.5.0
       '@semantic-release/changelog': ^3.0.2
@@ -1276,7 +1276,7 @@ importers:
   packages/services/request-queue:
     dependencies:
       '@cdf/config-inject': 'link:../../libraries/config/config-inject'
-      aws-sdk: 2.417.0
+      aws-sdk: 2.418.0
       busboy: 0.2.14
       config: 1.31.0
       inversify: 5.0.1
@@ -1296,7 +1296,7 @@ importers:
       '@semantic-release/npm': /@semantic-release/npm/5.1.4/semantic-release@15.13.3
       '@semantic-release/release-notes-generator': /@semantic-release/release-notes-generator/7.1.4/semantic-release@15.13.3
       '@types/config': 0.0.34
-      '@types/jest': 24.0.9
+      '@types/jest': 24.0.11
       '@types/node': 8.10.43
       '@types/superagent': 3.8.7
       '@types/uuid': 3.4.4
@@ -1315,7 +1315,7 @@ importers:
       tslint: /tslint/5.13.1/typescript@3.1.6
       typescript: 3.1.6
     specifiers:
-      '@cdf/config-inject': ^1.0.0
+      '@cdf/config-inject': ^2.0.0
       '@commitlint/cli': ^7.5.2
       '@commitlint/config-conventional': ^7.5.0
       '@semantic-release/changelog': ^3.0.2
@@ -2083,18 +2083,18 @@ packages:
   /@sinonjs/formatio/3.2.1:
     dependencies:
       '@sinonjs/commons': 1.4.0
-      '@sinonjs/samsam': 3.2.0
+      '@sinonjs/samsam': 3.3.0
     dev: false
     resolution:
       integrity: sha512-tsHvOB24rvyvV2+zKMmPkZ7dXX6LSLKZ7aOtXY6Edklp0uRcgGpOsQTTGTcWViFyx4uhWc6GV8QdnALbIbIdeQ==
-  /@sinonjs/samsam/3.2.0:
+  /@sinonjs/samsam/3.3.0:
     dependencies:
       '@sinonjs/commons': 1.4.0
       array-from: 2.1.1
       lodash: 4.17.11
     dev: false
     resolution:
-      integrity: sha512-j5F1rScewLtx6pbTK0UAjA3jJj4RYiSKOix53YWv+Jzy/AZ69qHxUpU8fwVLjyKbEEud9QrLpv6Ggs7WqTimYw==
+      integrity: sha512-beHeJM/RRAaLLsMJhsCvHK31rIqZuobfPLa/80yGH5hnD8PV1hyh9xJBJNFfNmO7yWqm+zomijHsXpI6iTQJfQ==
   /@sinonjs/text-encoding/0.7.1:
     dev: false
     resolution:
@@ -2103,13 +2103,13 @@ packages:
     dev: true
     resolution:
       integrity: sha512-/6Tp90Jzphdqu/m2Re8x9qWG7rZdwmp9BmB1bRSyyt0oY8lRE+H43oqOpdi5gm3CA0lvfbQMxk/Ma9+ISRmMkA==
-  /@types/aws-lambda/8.10.21:
+  /@types/aws-lambda/8.10.22:
     dev: true
     resolution:
-      integrity: sha512-HaYGrmMYxOfjqSyOZywYlPMwf0V8AwhM8CXLfPiqnurGHrJL//0p50gq+C5+LHW5aD6W4Brt739w+Y/KWsQamw==
+      integrity: sha512-FzGmRH253fQDxH0YRfDDwQqKF3IBAiBEVT2cvJR0pI3O+W4L0PktZOxpp5MMNHp1rlHWmHb7VN9X0NAX8IgDKA==
   /@types/aws-serverless-express/3.3.0:
     dependencies:
-      '@types/aws-lambda': 8.10.21
+      '@types/aws-lambda': 8.10.22
       '@types/express': 4.16.1
       '@types/node': 8.10.43
     dev: true
@@ -2247,12 +2247,12 @@ packages:
     dev: true
     resolution:
       integrity: sha512-Q5hTcfdudEL2yOmluA1zaSyPbzWPmJ3XfSWeP3RyoYvS9hnje1ZyagrZOuQ6+1nQC1Gw+7gap3pLNL3xL6UBug==
-  /@types/jest/24.0.9:
+  /@types/jest/24.0.11:
     dependencies:
       '@types/jest-diff': 20.0.1
     dev: true
     resolution:
-      integrity: sha512-k3OOeevcBYLR5pdsOv5g3OP94h3mrJmLPHFEPWgbbVy2tGv0TZ/TlygiC848ogXhK8NL0I5up7YYtwpCp8xCJA==
+      integrity: sha512-2kLuPC5FDnWIDvaJBzsGTBQaBbnDweznicvK7UGYzlIJP4RJR2a4A/ByLUXEyEgag6jz8eHdlWExGDtH3EYUXQ==
   /@types/json-stable-stringify/1.0.32:
     dev: true
     resolution:
@@ -2639,7 +2639,7 @@ packages:
     hasBin: true
     resolution:
       integrity: sha512-Wm6ukoaOGJi/73p/cl2GvLjTI5JM1k/O14isD73YML8StrH/7/lRFgmg8nICZgD3bZZvjwCGxtMOD3wWNAu8cg==
-  /aws-sdk/2.417.0:
+  /aws-sdk/2.418.0:
     dependencies:
       buffer: 4.9.1
       events: 1.1.1
@@ -2654,7 +2654,7 @@ packages:
     engines:
       node: '>= 0.8.0'
     resolution:
-      integrity: sha512-05bynZKhzRLhMrWHAWW/hSeA0MftkE4GxwNUJ0A4Usf10UOZHEm40Y0+AujefHBZimAAM33iRH8tdIjKAN/GHA==
+      integrity: sha512-15aCtqqCsiyMW+CDwo6Fq3V5jDzpgb5//aPMosL+5FQnQu65t2GiLidcIPx4fWvsYpRiE/i4enz3a0Kqtt2acQ==
   /aws-serverless-express/3.3.5:
     dependencies:
       binary-case: 1.1.4
@@ -4052,15 +4052,6 @@ packages:
     dev: true
     resolution:
       integrity: sha512-1MkrZNvWTKCaigbn+W15elq2BB/L22nqrSY5DKlo3X6+vclJm8Bb5djXJBmEX6fS3+zCh/F4VBK5Z2KxJt4s2Q==
-  /env-ci/3.2.0:
-    dependencies:
-      execa: 1.0.0
-      java-properties: 0.2.10
-    dev: true
-    engines:
-      node: '>=6'
-    resolution:
-      integrity: sha512-TFjNiDlXrL8/pfHswdvJGEZzJcq3aBPb8Eka83hlGLwuNw9F9BC9S9ETlkfkItLRT9k5JgpGgeP+rL6/3cEbcw==
   /error-ex/1.3.2:
     dependencies:
       is-arrayish: 0.2.1
@@ -8525,24 +8516,13 @@ packages:
       ramda: 0.25.0
       read-pkg: 3.0.0
       semantic-release: /semantic-release/15.13.3/semantic-release@15.13.3
-      semantic-release-plugin-decorators: /semantic-release-plugin-decorators/1.2.3/semantic-release@15.13.3
+      semantic-release-plugin-decorators: github.com/boardthatpowder/semantic-release-plugin-decorators/0f89322cb9231b2812e6e66bbc7215b88efd02b5/semantic-release@15.13.3
     dev: true
     id: registry.npmjs.org/semantic-release-monorepo/6.1.1
     peerDependencies:
       semantic-release: 13.4.1 - 15.x.x
     resolution:
       integrity: sha512-qObVQYU4MuUAx1lr/tpIYfhebRl6NxVk52wo+bG2RTg2ePtqmHDunXNpSkDIi1Mqvq2CgyG50IdDnceZ8N5+gQ==
-  /semantic-release-plugin-decorators/1.2.3/semantic-release@15.13.3:
-    dependencies:
-      import-from: 2.1.0
-      lodash: 4.17.11
-      semantic-release: /semantic-release/15.13.3/semantic-release@15.13.3
-    dev: true
-    id: registry.npmjs.org/semantic-release-plugin-decorators/1.2.3
-    peerDependencies:
-      semantic-release: '>=11'
-    resolution:
-      integrity: sha512-bEXRStCDiVIgFMiqvF2Chxt1JouFYGVQGA2F6i5GjI9Aq7hukdmkl8P2hB0HAzY7ezJB5lvdlJPcAf16wpfkcg==
   /semantic-release/15.13.3:
     dependencies:
       '@semantic-release/commit-analyzer': 6.1.0
@@ -8587,7 +8567,7 @@ packages:
       aggregate-error: 2.2.0
       cosmiconfig: 5.1.0
       debug: 4.1.1
-      env-ci: 3.2.0
+      env-ci: github.com/boardthatpowder/env-ci/45ee1f3169d13f1a2c3842f5f2458b6bd8cb6dd5
       execa: 1.0.0
       figures: 2.0.0
       find-versions: 3.0.0
@@ -8790,7 +8770,7 @@ packages:
     dependencies:
       '@sinonjs/commons': 1.4.0
       '@sinonjs/formatio': 3.2.1
-      '@sinonjs/samsam': 3.2.0
+      '@sinonjs/samsam': 3.3.0
       diff: 3.5.0
       lolex: 3.1.0
       nise: 1.4.10
@@ -9987,6 +9967,19 @@ packages:
       import-from: 2.1.0
       lodash: 4.17.11
     dev: true
+    name: semantic-release-plugin-decorators
+    peerDependencies:
+      semantic-release: '>=11'
+    resolution:
+      tarball: 'https://codeload.github.com/boardthatpowder/semantic-release-plugin-decorators/tar.gz/0f89322cb9231b2812e6e66bbc7215b88efd02b5'
+    version: 0.0.0-development
+  github.com/boardthatpowder/semantic-release-plugin-decorators/0f89322cb9231b2812e6e66bbc7215b88efd02b5/semantic-release@15.13.3:
+    dependencies:
+      import-from: 2.1.0
+      lodash: 4.17.11
+      semantic-release: /semantic-release/15.13.3/semantic-release@15.13.3
+    dev: true
+    id: github.com/boardthatpowder/semantic-release-plugin-decorators/0f89322cb9231b2812e6e66bbc7215b88efd02b5
     name: semantic-release-plugin-decorators
     peerDependencies:
       semantic-release: '>=11'
