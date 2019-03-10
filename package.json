@@ -5,10 +5,10 @@
     "reset": "pnpm i --force && pnpm m run reset && del-cli node_modules shrinkwrap.json && pnpm i --force",
     "commit": "npx git-cz",
 
-    "prebundle": "pnpm m run clean && pnpm m run build && pnpm m run prebundle:module",
+    "prebundle": "pnpm m run prebundle:module",
     "bundle": "pnpm i --prod --shamefully-flatten --force && pnpm m run bundle:module",
     "postbundle": "echo '\n\n******   node_modules have been flattened and resolved in production mode.  If this is a dev environment, make sure you run `pnpm run reset` from the root to reset.'"
-    
+
   },
   "devDependencies": {
     "@commitlint/cli": "^7.5.2",
