@@ -13,7 +13,7 @@
     "build": "tsc -b tsconfig.json",
     "test": "npm run lint && NODE_ENV= NODE_CONFIG_DIR='./src/config' nyc jest",
     "start": "npm run build && NODE_CONFIG=$(cat ${CONFIG_LOCATION}/provisioning/${npm_package_config_environment}-config.json) NODE_CONFIG_DIR='./src/config' concurrently \"npm run build -- -w\" \"nodemon dist/lambda_proxy.js\"",
-    "prebundle:module": "cpy package.json dist && cpy src/config/* dist/config/ && cpy src/things/policies/* dist/things/policies/ && make-dir build && cd dist && make-dir node_modules",
+    "prebundle:module": "cpy package.json dist && cpy src/config/* dist/config/ && cpy src/things/policies/* dist/things/policies/ && make-dir build && make-dir dist/node_modules",
     "bundle:module": "cd dist && zip -rq ../build/build.zip *",
     "semantic-release": "npx semantic-release -e semantic-release-monorepo"
   },
