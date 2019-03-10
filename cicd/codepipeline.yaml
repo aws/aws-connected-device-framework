@@ -679,6 +679,13 @@ Resources:
             Statement: 
               - 
                 Action:
+                  - codecommit:CancelUploadArchive
+                  - codecommit:GetUploadArchiveStatus
+                  - codecommit:UploadArchive
+                Resource: "*"
+                Effect: Allow
+              - 
+                Action:
                   - s3:*
                 Resource:
                   - !If [CreateArtifactStoreBucket, !Sub 'arn:aws:s3:::${ArtifactBucket}/*', !Sub 'arn:aws:s3:::${ArtifactStoreBucketName}/*' ]

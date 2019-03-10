@@ -13,9 +13,8 @@
     "build": "tsc -b tsconfig.json",
     "test": "npm run lint && NODE_ENV= NODE_CONFIG_DIR='./src/config' nyc jest",
     "start": "npm run build && NODE_CONFIG=$(cat ${CONFIG_LOCATION}/assetlibrary/${npm_package_config_environment}-config.json) NODE_CONFIG_DIR='./src/config' concurrently \"npm run build -- -w\" \"nodemon dist/lambda_proxy.js\"",
-    "prebundle": "npm run clean && npm run build && cpy package.json dist && cpy src/types/definitions/* dist/types/definitions/ && cpy src/config/* dist/config/ && make-dir build && cd dist && make-dir node_modules && pnpm i --prod --shamefully-flatten --force",
-    "bundle": "cd dist && zip -rq ../build/build.zip *",
-    "postbundle": "echo '\n\n******   node_modules have been flattened and resolved in production mode.  If this is a dev environment, make sure you run `pnpm run reset` from the root to reset.'",
+    "prebundle:module": "cpy package.json dist && cpy src/types/definitions/* dist/types/definitions/ && cpy src/config/* dist/config/ && make-dir build && cd dist && make-dir node_modules",
+    "bundle:module": "cd dist && zip -rq ../build/build.zip *",
     "semantic-release": "npx semantic-release -e semantic-release-monorepo"
   },
   "dependencies": {
