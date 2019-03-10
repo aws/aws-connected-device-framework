@@ -649,6 +649,104 @@ importers:
       tslint: ^5.12.1
       typescript: 3.1.6
       winston: ^2.4.2
+  packages/services/assetlibrary/dist:
+    dependencies:
+      '@cdf/config-inject': 'link:../../../libraries/config/config-inject'
+      ajv: 6.10.0
+      aws-sdk: 2.418.0
+      aws-serverless-express: 3.3.5
+      body-parser: 1.18.3
+      config: 1.31.0
+      express: 4.16.4
+      fast-json-patch: 2.0.7
+      flatted: 2.0.0
+      gremlin: 3.2.9
+      inversify: 5.0.1
+      inversify-binding-decorators: 4.0.0
+      inversify-express-utils: 6.3.2
+      js-yaml: 3.12.2
+      mime: 1.6.0
+      node-cache: 4.2.0
+      ow: 0.12.0
+      reflect-metadata: 0.1.13
+      winston: 2.4.4
+    devDependencies:
+      '@commitlint/cli': 7.5.2
+      '@commitlint/config-conventional': 7.5.0
+      '@semantic-release/changelog': /@semantic-release/changelog/3.0.2/semantic-release@15.13.3
+      '@semantic-release/git': /@semantic-release/git/7.0.8/semantic-release@15.13.3
+      '@semantic-release/npm': /@semantic-release/npm/5.1.4/semantic-release@15.13.3
+      '@semantic-release/release-notes-generator': /@semantic-release/release-notes-generator/7.1.4/semantic-release@15.13.3
+      '@types/aws-serverless-express': 3.3.0
+      '@types/body-parser': 1.17.0
+      '@types/config': 0.0.34
+      '@types/express': 4.16.1
+      '@types/jest': 24.0.11
+      '@types/node': 8.10.43
+      commitizen: 3.0.7
+      concurrently: 4.1.0
+      cpy-cli: 2.0.0
+      del-cli: 1.1.0
+      husky: 1.3.1
+      jest: 24.1.0
+      jest-create-mock-instance: 1.1.0
+      jest-mock: 24.0.0
+      make-dir-cli: 1.0.0
+      nodemon: 1.18.10
+      nyc: 13.3.0
+      semantic-release: /semantic-release/15.13.3/semantic-release@15.13.3
+      semantic-release-monorepo: /semantic-release-monorepo/6.1.1/semantic-release@15.13.3
+      ts-jest: /ts-jest/24.0.0/jest@24.1.0
+      tslint: /tslint/5.13.1/typescript@3.1.6
+      typescript: 3.1.6
+    specifiers:
+      '@cdf/config-inject': ^2.0.0
+      '@commitlint/cli': ^7.5.2
+      '@commitlint/config-conventional': ^7.5.0
+      '@semantic-release/changelog': ^3.0.2
+      '@semantic-release/git': ^7.0.8
+      '@semantic-release/npm': ^5.1.4
+      '@semantic-release/release-notes-generator': ^7.1.4
+      '@types/aws-serverless-express': ^3.3.0
+      '@types/body-parser': ^1.17.0
+      '@types/config': 0.0.34
+      '@types/express': ^4.16.1
+      '@types/jest': ~24.0.0
+      '@types/node': ~8.10.40
+      ajv: ^6.8.1
+      aws-sdk: ^2.398.0
+      aws-serverless-express: ^3.3.5
+      body-parser: ^1.18.3
+      commitizen: ^3.0.7
+      concurrently: ^4.1.0
+      config: ^1.30.0
+      cpy-cli: ^2.0.0
+      del-cli: ^1.1.0
+      express: ^4.16.4
+      fast-json-patch: ^2.0.7
+      flatted: ^2.0.0
+      gremlin: 3.2.9
+      husky: ^1.3.1
+      inversify: ^5.0.1
+      inversify-binding-decorators: 4.0.0
+      inversify-express-utils: ^6.3.2
+      jest: 24.1.0
+      jest-create-mock-instance: 1.1.0
+      jest-mock: 24.0.0
+      js-yaml: ^3.12.0
+      make-dir-cli: ^1.0.0
+      mime: 1.6.0
+      node-cache: ^4.2.0
+      nodemon: ^1.18.10
+      nyc: ^13.1.0
+      ow: ^0.12.0
+      reflect-metadata: ^0.1.13
+      semantic-release: ^15.13.3
+      semantic-release-monorepo: ^6.1.1
+      ts-jest: 24.0.0
+      tslint: ^5.12.1
+      typescript: 3.1.6
+      winston: ^2.4.2
   packages/services/assetlibraryhistory:
     dependencies:
       '@cdf/config-inject': 'link:../../libraries/config/config-inject'
@@ -747,9 +845,187 @@ importers:
       tslint: ^5.12.1
       typescript: 3.1.6
       winston: ^2.4.2
+  packages/services/assetlibraryhistory/dist:
+    dependencies:
+      '@cdf/config-inject': 'link:../../../libraries/config/config-inject'
+      atob: 2.1.2
+      aws-sdk: 2.418.0
+      aws-serverless-express: 3.3.5
+      body-parser: 1.18.3
+      btoa: 1.2.1
+      config: 1.31.0
+      express: 4.16.4
+      inversify: 5.0.1
+      inversify-binding-decorators: 4.0.0
+      inversify-express-utils: 6.3.2
+      js-yaml: 3.12.2
+      morgan: 1.9.1
+      ow: 0.12.0
+      reflect-metadata: 0.1.13
+      winston: 2.4.4
+    devDependencies:
+      '@commitlint/cli': 7.5.2
+      '@commitlint/config-conventional': 7.5.0
+      '@semantic-release/changelog': /@semantic-release/changelog/3.0.2/semantic-release@15.13.3
+      '@semantic-release/git': /@semantic-release/git/7.0.8/semantic-release@15.13.3
+      '@semantic-release/npm': /@semantic-release/npm/5.1.4/semantic-release@15.13.3
+      '@semantic-release/release-notes-generator': /@semantic-release/release-notes-generator/7.1.4/semantic-release@15.13.3
+      '@types/atob': 2.1.1
+      '@types/aws-serverless-express': 3.3.0
+      '@types/body-parser': 1.17.0
+      '@types/btoa': 1.2.2
+      '@types/config': 0.0.34
+      '@types/express': 4.16.1
+      '@types/jest': 24.0.11
+      '@types/json-stable-stringify': 1.0.32
+      '@types/morgan': 1.7.35
+      '@types/node': 8.10.43
+      concurrently: 4.1.0
+      cpy-cli: 2.0.0
+      del-cli: 1.1.0
+      husky: 1.3.1
+      jest: 24.1.0
+      jest-create-mock-instance: 1.1.0
+      jest-mock: 24.0.0
+      make-dir-cli: 1.0.0
+      nodemon: 1.18.10
+      nyc: 13.3.0
+      semantic-release: /semantic-release/15.13.3/semantic-release@15.13.3
+      semantic-release-monorepo: /semantic-release-monorepo/6.1.1/semantic-release@15.13.3
+      ts-jest: /ts-jest/24.0.0/jest@24.1.0
+      tslint: /tslint/5.13.1/typescript@3.1.6
+      typescript: 3.1.6
+    specifiers:
+      '@cdf/config-inject': ^2.0.0
+      '@commitlint/cli': ^7.5.2
+      '@commitlint/config-conventional': ^7.5.0
+      '@semantic-release/changelog': ^3.0.2
+      '@semantic-release/git': ^7.0.8
+      '@semantic-release/npm': ^5.1.4
+      '@semantic-release/release-notes-generator': ^7.1.4
+      '@types/atob': ^2.1.1
+      '@types/aws-serverless-express': ^3.3.0
+      '@types/body-parser': ^1.17.0
+      '@types/btoa': ^1.2.0
+      '@types/config': 0.0.34
+      '@types/express': ^4.16.1
+      '@types/jest': ~24.0.0
+      '@types/json-stable-stringify': ^1.0.32
+      '@types/morgan': ^1.7.35
+      '@types/node': ~8.10.40
+      atob: ^2.1.2
+      aws-sdk: ^2.398.0
+      aws-serverless-express: ^3.3.5
+      body-parser: ^1.18.3
+      btoa: ^1.2.1
+      concurrently: ^4.1.0
+      config: ^1.30.0
+      cpy-cli: ^2.0.0
+      del-cli: ^1.1.0
+      express: ^4.16.4
+      husky: ^1.3.1
+      inversify: ^5.0.1
+      inversify-binding-decorators: 4.0.0
+      inversify-express-utils: ^6.3.2
+      jest: 24.1.0
+      jest-create-mock-instance: 1.1.0
+      jest-mock: 24.0.0
+      js-yaml: ^3.12.0
+      make-dir-cli: ^1.0.0
+      morgan: ^1.9.0
+      nodemon: ^1.18.10
+      nyc: ^13.1.0
+      ow: ^0.12.0
+      reflect-metadata: ^0.1.13
+      semantic-release: ^15.13.3
+      semantic-release-monorepo: ^6.1.1
+      ts-jest: 24.0.0
+      tslint: ^5.12.1
+      typescript: 3.1.6
+      winston: ^2.4.2
   packages/services/auth-devicecert:
     dependencies:
       '@cdf/errors': 'link:../../libraries/core/errors'
+      aws-sdk: 2.418.0
+      config: 1.31.0
+      js-yaml: 3.12.2
+      pem: 1.14.2
+      reflect-metadata: 0.1.13
+      request: 2.88.0
+      request-promise-native: /request-promise-native/1.0.7/request@2.88.0
+      uuid: 3.3.2
+      winston: 2.4.4
+    devDependencies:
+      '@commitlint/cli': 7.5.2
+      '@commitlint/config-conventional': 7.5.0
+      '@semantic-release/changelog': /@semantic-release/changelog/3.0.2/semantic-release@15.13.3
+      '@semantic-release/git': /@semantic-release/git/7.0.8/semantic-release@15.13.3
+      '@semantic-release/npm': /@semantic-release/npm/5.1.4/semantic-release@15.13.3
+      '@semantic-release/release-notes-generator': /@semantic-release/release-notes-generator/7.1.4/semantic-release@15.13.3
+      '@types/config': 0.0.34
+      '@types/jest': 24.0.11
+      '@types/node': 8.10.43
+      '@types/pem': 1.9.5
+      '@types/request': 2.48.1
+      '@types/request-promise-native': 1.0.15
+      commitizen: 3.0.7
+      concurrently: 4.1.0
+      cpy-cli: 2.0.0
+      del-cli: 1.1.0
+      husky: 1.3.1
+      jest: 24.1.0
+      jest-create-mock-instance: 1.1.0
+      jest-mock: 24.0.0
+      make-dir-cli: 1.0.0
+      nodemon: 1.18.10
+      nyc: 13.3.0
+      semantic-release: /semantic-release/15.13.3/semantic-release@15.13.3
+      semantic-release-monorepo: /semantic-release-monorepo/6.1.1/semantic-release@15.13.3
+      ts-jest: /ts-jest/24.0.0/jest@24.1.0
+      tslint: /tslint/5.13.1/typescript@3.1.6
+      typescript: 3.1.6
+    specifiers:
+      '@cdf/errors': ^2.0.0
+      '@commitlint/cli': ^7.5.2
+      '@commitlint/config-conventional': ^7.5.0
+      '@semantic-release/changelog': ^3.0.2
+      '@semantic-release/git': ^7.0.8
+      '@semantic-release/npm': ^5.1.4
+      '@semantic-release/release-notes-generator': ^7.1.4
+      '@types/config': 0.0.34
+      '@types/jest': ~24.0.0
+      '@types/node': ~8.10.40
+      '@types/pem': ^1.9.3
+      '@types/request': ^2.47.0
+      '@types/request-promise-native': ^1.0.15
+      aws-sdk: ^2.398.0
+      commitizen: ^3.0.7
+      concurrently: ^4.1.0
+      config: ^1.30.0
+      cpy-cli: ^2.0.0
+      del-cli: ^1.1.0
+      husky: ^1.3.1
+      jest: 24.1.0
+      jest-create-mock-instance: 1.1.0
+      jest-mock: 24.0.0
+      js-yaml: ^3.12.0
+      make-dir-cli: ^1.0.0
+      nodemon: ^1.18.10
+      nyc: ^13.1.0
+      pem: ^1.12.5
+      reflect-metadata: ^0.1.13
+      request: ^2.87.0
+      request-promise-native: ^1.0.5
+      semantic-release: ^15.13.3
+      semantic-release-monorepo: ^6.1.1
+      ts-jest: 24.0.0
+      tslint: ^5.12.1
+      typescript: 3.1.6
+      uuid: ^3.2.1
+      winston: ^2.4.2
+  packages/services/auth-devicecert/dist:
+    dependencies:
+      '@cdf/errors': 'link:../../../libraries/core/errors'
       aws-sdk: 2.418.0
       config: 1.31.0
       js-yaml: 3.12.2
@@ -927,10 +1203,184 @@ importers:
       typescript: 3.1.6
       uuid: ^3.3.0
       winston: ^2.4.2
+  packages/services/bulkcerts/dist:
+    dependencies:
+      '@cdf/config-inject': 'link:../../../libraries/config/config-inject'
+      aws-sdk: 2.418.0
+      aws-serverless-express: 3.3.5
+      body-parser: 1.18.3
+      config: 1.31.0
+      express: 4.16.4
+      inversify: 5.0.1
+      inversify-binding-decorators: 4.0.0
+      inversify-express-utils: 6.3.2
+      js-yaml: 3.12.2
+      jszip: 3.2.0
+      ow: 0.12.0
+      pem: 1.14.2
+      reflect-metadata: 0.1.13
+      uuid: 3.3.2
+      winston: 2.4.4
+    devDependencies:
+      '@commitlint/cli': 7.5.2
+      '@commitlint/config-conventional': 7.5.0
+      '@semantic-release/changelog': /@semantic-release/changelog/3.0.2/semantic-release@15.13.3
+      '@semantic-release/git': /@semantic-release/git/7.0.8/semantic-release@15.13.3
+      '@semantic-release/npm': /@semantic-release/npm/5.1.4/semantic-release@15.13.3
+      '@semantic-release/release-notes-generator': /@semantic-release/release-notes-generator/7.1.4/semantic-release@15.13.3
+      '@types/aws-serverless-express': 3.3.0
+      '@types/body-parser': 1.17.0
+      '@types/config': 0.0.34
+      '@types/express': 4.16.1
+      '@types/jest': 24.0.11
+      '@types/jszip': 3.1.5
+      '@types/multer': 1.3.7
+      '@types/node': 8.10.43
+      '@types/pem': 1.9.5
+      '@types/uuid': 3.4.4
+      commitizen: 3.0.7
+      concurrently: 4.1.0
+      cpy-cli: 2.0.0
+      del-cli: 1.1.0
+      husky: 1.3.1
+      jest: 24.1.0
+      jest-create-mock-instance: 1.1.0
+      jest-mock: 24.0.0
+      make-dir-cli: 1.0.0
+      nodemon: 1.18.10
+      nyc: 13.3.0
+      semantic-release: /semantic-release/15.13.3/semantic-release@15.13.3
+      semantic-release-monorepo: /semantic-release-monorepo/6.1.1/semantic-release@15.13.3
+      ts-jest: /ts-jest/24.0.0/jest@24.1.0
+      tslint: /tslint/5.13.1/typescript@3.1.6
+      typescript: 3.1.6
+    specifiers:
+      '@cdf/config-inject': ^2.0.0
+      '@commitlint/cli': ^7.5.2
+      '@commitlint/config-conventional': ^7.5.0
+      '@semantic-release/changelog': ^3.0.2
+      '@semantic-release/git': ^7.0.8
+      '@semantic-release/npm': ^5.1.4
+      '@semantic-release/release-notes-generator': ^7.1.4
+      '@types/aws-serverless-express': ^3.3.0
+      '@types/body-parser': ^1.17.0
+      '@types/config': 0.0.34
+      '@types/express': ^4.16.1
+      '@types/jest': ~24.0.0
+      '@types/jszip': ^3.1.4
+      '@types/multer': ^1.3.7
+      '@types/node': ~8.10.40
+      '@types/pem': ^1.9.3
+      '@types/uuid': ^3.4.3
+      aws-sdk: ^2.398.0
+      aws-serverless-express: ^3.3.5
+      body-parser: ^1.18.3
+      commitizen: ^3.0.7
+      concurrently: ^4.1.0
+      config: ^1.30.0
+      cpy-cli: ^2.0.0
+      del-cli: ^1.1.0
+      express: ^4.16.4
+      husky: ^1.3.1
+      inversify: ^5.0.1
+      inversify-binding-decorators: 4.0.0
+      inversify-express-utils: ^6.3.2
+      jest: 24.1.0
+      jest-create-mock-instance: 1.1.0
+      jest-mock: 24.0.0
+      js-yaml: ^3.12.0
+      jszip: ^3.1.5
+      make-dir-cli: ^1.0.0
+      nodemon: ^1.18.10
+      nyc: ^13.1.0
+      ow: ^0.12.0
+      pem: ^1.12.5
+      reflect-metadata: ^0.1.13
+      semantic-release: ^15.13.3
+      semantic-release-monorepo: ^6.1.1
+      ts-jest: 24.0.0
+      tslint: ^5.12.1
+      typescript: 3.1.6
+      uuid: ^3.3.0
+      winston: ^2.4.2
   packages/services/certificatevendor:
     dependencies:
       '@cdf/assetlibrary-client': 'link:../../libraries/clients/assetlibrary-client'
       '@cdf/config-inject': 'link:../../libraries/config/config-inject'
+      aws-sdk: 2.418.0
+      config: 1.31.0
+      inversify: 5.0.1
+      inversify-binding-decorators: 4.0.0
+      js-yaml: 3.12.2
+      ow: 0.12.0
+      reflect-metadata: 0.1.13
+      winston: 2.4.4
+    devDependencies:
+      '@commitlint/cli': 7.5.2
+      '@commitlint/config-conventional': 7.5.0
+      '@semantic-release/changelog': /@semantic-release/changelog/3.0.2/semantic-release@15.13.3
+      '@semantic-release/git': /@semantic-release/git/7.0.8/semantic-release@15.13.3
+      '@semantic-release/npm': /@semantic-release/npm/5.1.4/semantic-release@15.13.3
+      '@semantic-release/release-notes-generator': /@semantic-release/release-notes-generator/7.1.4/semantic-release@15.13.3
+      '@types/config': 0.0.34
+      '@types/jest': 24.0.11
+      '@types/node': 8.10.43
+      commitizen: 3.0.7
+      concurrently: 4.1.0
+      cpy-cli: 2.0.0
+      del-cli: 1.1.0
+      husky: 1.3.1
+      jest: 24.1.0
+      jest-create-mock-instance: 1.1.0
+      jest-mock: 24.0.0
+      make-dir-cli: 1.0.0
+      nodemon: 1.18.10
+      nyc: 13.3.0
+      semantic-release: /semantic-release/15.13.3/semantic-release@15.13.3
+      semantic-release-monorepo: /semantic-release-monorepo/6.1.1/semantic-release@15.13.3
+      ts-jest: /ts-jest/24.0.0/jest@24.1.0
+      tslint: /tslint/5.13.1/typescript@3.1.6
+      typescript: 3.1.6
+    specifiers:
+      '@cdf/assetlibrary-client': ^2.0.0
+      '@cdf/config-inject': ^2.0.0
+      '@commitlint/cli': ^7.5.2
+      '@commitlint/config-conventional': ^7.5.0
+      '@semantic-release/changelog': ^3.0.2
+      '@semantic-release/git': ^7.0.8
+      '@semantic-release/npm': ^5.1.4
+      '@semantic-release/release-notes-generator': ^7.1.4
+      '@types/config': 0.0.34
+      '@types/jest': ~24.0.0
+      '@types/node': ~8.10.40
+      aws-sdk: ^2.398.0
+      commitizen: ^3.0.7
+      concurrently: ^4.1.0
+      config: ^1.30.0
+      cpy-cli: ^2.0.0
+      del-cli: ^1.1.0
+      husky: ^1.3.1
+      inversify: ^5.0.1
+      inversify-binding-decorators: 4.0.0
+      jest: 24.1.0
+      jest-create-mock-instance: 1.1.0
+      jest-mock: 24.0.0
+      js-yaml: ^3.12.0
+      make-dir-cli: ^1.0.0
+      nodemon: ^1.18.10
+      nyc: ^13.1.0
+      ow: ^0.12.0
+      reflect-metadata: ^0.1.13
+      semantic-release: ^15.13.3
+      semantic-release-monorepo: ^6.1.1
+      ts-jest: 24.0.0
+      tslint: ^5.12.1
+      typescript: 3.1.6
+      winston: ^2.4.2
+  packages/services/certificatevendor/dist:
+    dependencies:
+      '@cdf/assetlibrary-client': 'link:../../../libraries/clients/assetlibrary-client'
+      '@cdf/config-inject': 'link:../../../libraries/config/config-inject'
       aws-sdk: 2.418.0
       config: 1.31.0
       inversify: 5.0.1
@@ -1105,9 +1555,249 @@ importers:
       typescript: 3.1.6
       uuid: ^3.2.1
       winston: ^2.4.2
+  packages/services/commands/dist:
+    dependencies:
+      '@cdf/assetlibrary-client': 'link:../../../libraries/clients/assetlibrary-client'
+      '@cdf/config-inject': 'link:../../../libraries/config/config-inject'
+      '@cdf/provisioning-client': 'link:../../../libraries/clients/provisioning-client'
+      ajv: 6.10.0
+      aws-sdk: 2.418.0
+      aws-serverless-express: 3.3.5
+      body-parser: 1.18.3
+      busboy: 0.2.14
+      config: 1.31.0
+      express: 4.16.4
+      inversify: 5.0.1
+      inversify-binding-decorators: 4.0.0
+      inversify-express-utils: 6.3.2
+      js-yaml: 3.12.2
+      ow: 0.12.0
+      reflect-metadata: 0.1.13
+      sinon: 7.2.7
+      uuid: 3.3.2
+      winston: 2.4.4
+    devDependencies:
+      '@commitlint/cli': 7.5.2
+      '@commitlint/config-conventional': 7.5.0
+      '@semantic-release/changelog': /@semantic-release/changelog/3.0.2/semantic-release@15.13.3
+      '@semantic-release/git': /@semantic-release/git/7.0.8/semantic-release@15.13.3
+      '@semantic-release/npm': /@semantic-release/npm/5.1.4/semantic-release@15.13.3
+      '@semantic-release/release-notes-generator': /@semantic-release/release-notes-generator/7.1.4/semantic-release@15.13.3
+      '@types/aws-serverless-express': 3.3.0
+      '@types/body-parser': 1.17.0
+      '@types/busboy': 0.2.3
+      '@types/config': 0.0.34
+      '@types/express': 4.16.1
+      '@types/jest': 24.0.11
+      '@types/node': 8.10.43
+      '@types/sinon': 5.0.7
+      '@types/uuid': 3.4.4
+      commitizen: 3.0.7
+      concurrently: 4.1.0
+      cpy-cli: 2.0.0
+      del-cli: 1.1.0
+      husky: 1.3.1
+      jest: 24.1.0
+      jest-create-mock-instance: 1.1.0
+      jest-mock: 24.0.0
+      make-dir-cli: 1.0.0
+      nodemon: 1.18.10
+      nyc: 13.3.0
+      semantic-release: /semantic-release/15.13.3/semantic-release@15.13.3
+      semantic-release-monorepo: /semantic-release-monorepo/6.1.1/semantic-release@15.13.3
+      ts-jest: /ts-jest/24.0.0/jest@24.1.0
+      tslint: /tslint/5.13.1/typescript@3.1.6
+      typescript: 3.1.6
+    specifiers:
+      '@cdf/assetlibrary-client': ^2.0.0
+      '@cdf/config-inject': ^2.0.0
+      '@cdf/provisioning-client': ^2.0.0
+      '@commitlint/cli': ^7.5.2
+      '@commitlint/config-conventional': ^7.5.0
+      '@semantic-release/changelog': ^3.0.2
+      '@semantic-release/git': ^7.0.8
+      '@semantic-release/npm': ^5.1.4
+      '@semantic-release/release-notes-generator': ^7.1.4
+      '@types/aws-serverless-express': ^3.3.0
+      '@types/body-parser': ^1.17.0
+      '@types/busboy': ^0.2.3
+      '@types/config': 0.0.34
+      '@types/express': ^4.16.1
+      '@types/jest': ~24.0.0
+      '@types/node': ~8.10.40
+      '@types/sinon': ^5.0.5
+      '@types/uuid': ^3.4.3
+      ajv: ^6.8.1
+      aws-sdk: ^2.398.0
+      aws-serverless-express: ^3.3.5
+      body-parser: ^1.18.3
+      busboy: ^0.2.14
+      commitizen: ^3.0.7
+      concurrently: ^4.1.0
+      config: ^1.30.0
+      cpy-cli: ^2.0.0
+      del-cli: ^1.1.0
+      express: ^4.16.4
+      husky: ^1.3.1
+      inversify: ^5.0.1
+      inversify-binding-decorators: 4.0.0
+      inversify-express-utils: ^6.3.2
+      jest: 24.1.0
+      jest-create-mock-instance: 1.1.0
+      jest-mock: 24.0.0
+      js-yaml: ^3.12.0
+      make-dir-cli: ^1.0.0
+      nodemon: ^1.18.10
+      nyc: ^13.1.0
+      ow: ^0.12.0
+      reflect-metadata: ^0.1.13
+      semantic-release: ^15.13.3
+      semantic-release-monorepo: ^6.1.1
+      sinon: ^7.0.0
+      ts-jest: 24.0.0
+      tslint: ^5.12.1
+      typescript: 3.1.6
+      uuid: ^3.2.1
+      winston: ^2.4.2
   packages/services/device-monitoring:
     dependencies:
       '@cdf/assetlibrary-client': 'link:../../libraries/clients/assetlibrary-client'
+      config: 1.31.0
+      js-yaml: 3.12.2
+      reflect-metadata: 0.1.13
+      winston: 2.4.4
+    devDependencies:
+      '@commitlint/cli': 7.5.2
+      '@commitlint/config-conventional': 7.5.0
+      '@semantic-release/changelog': /@semantic-release/changelog/3.0.2/semantic-release@15.13.3
+      '@semantic-release/git': /@semantic-release/git/7.0.8/semantic-release@15.13.3
+      '@semantic-release/npm': /@semantic-release/npm/5.1.4/semantic-release@15.13.3
+      '@semantic-release/release-notes-generator': /@semantic-release/release-notes-generator/7.1.4/semantic-release@15.13.3
+      '@types/aws-serverless-express': 3.3.0
+      '@types/config': 0.0.34
+      '@types/jest': 22.2.3
+      '@types/node': 8.10.43
+      '@types/superagent': 3.8.7
+      commitizen: 3.0.7
+      concurrently: 4.1.0
+      cpy-cli: 2.0.0
+      del-cli: 1.1.0
+      husky: 1.3.1
+      jest: 24.1.0
+      jest-create-mock-instance: 1.1.0
+      jest-mock: 24.0.0
+      make-dir-cli: 1.0.0
+      nodemon: 1.18.10
+      nyc: 13.3.0
+      semantic-release: /semantic-release/15.13.3/semantic-release@15.13.3
+      semantic-release-monorepo: /semantic-release-monorepo/6.1.1/semantic-release@15.13.3
+      ts-jest: /ts-jest/24.0.0/jest@24.1.0
+      tslint: /tslint/5.13.1/typescript@3.1.6
+      typescript: 3.1.6
+    specifiers:
+      '@cdf/assetlibrary-client': ^2.0.0
+      '@commitlint/cli': ^7.5.2
+      '@commitlint/config-conventional': ^7.5.0
+      '@semantic-release/changelog': ^3.0.2
+      '@semantic-release/git': ^7.0.8
+      '@semantic-release/npm': ^5.1.4
+      '@semantic-release/release-notes-generator': ^7.1.4
+      '@types/aws-serverless-express': ^3.3.0
+      '@types/config': 0.0.34
+      '@types/jest': ^22.2.3
+      '@types/node': ~8.10.40
+      '@types/superagent': ^3.8.3
+      commitizen: ^3.0.7
+      concurrently: ^4.1.0
+      config: ^1.30.0
+      cpy-cli: ^2.0.0
+      del-cli: ^1.1.0
+      husky: ^1.3.1
+      jest: 24.1.0
+      jest-create-mock-instance: 1.1.0
+      jest-mock: 24.0.0
+      js-yaml: ^3.12.0
+      make-dir-cli: ^1.0.0
+      nodemon: ^1.18.10
+      nyc: ^13.1.0
+      reflect-metadata: ^0.1.13
+      semantic-release: ^15.13.3
+      semantic-release-monorepo: ^6.1.1
+      ts-jest: 24.0.0
+      tslint: ^5.12.1
+      typescript: 3.1.6
+      winston: ^2.4.2
+  packages/services/device-monitoring/build/build:
+    dependencies:
+      '@cdf/assetlibrary-client': 'link:../../../../libraries/clients/assetlibrary-client'
+      config: 1.31.0
+      js-yaml: 3.12.2
+      reflect-metadata: 0.1.13
+      winston: 2.4.4
+    devDependencies:
+      '@commitlint/cli': 7.5.2
+      '@commitlint/config-conventional': 7.5.0
+      '@semantic-release/changelog': /@semantic-release/changelog/3.0.2/semantic-release@15.13.3
+      '@semantic-release/git': /@semantic-release/git/7.0.8/semantic-release@15.13.3
+      '@semantic-release/npm': /@semantic-release/npm/5.1.4/semantic-release@15.13.3
+      '@semantic-release/release-notes-generator': /@semantic-release/release-notes-generator/7.1.4/semantic-release@15.13.3
+      '@types/aws-serverless-express': 3.3.0
+      '@types/config': 0.0.34
+      '@types/jest': 22.2.3
+      '@types/node': 8.10.43
+      '@types/superagent': 3.8.7
+      commitizen: 3.0.7
+      concurrently: 4.1.0
+      cpy-cli: 2.0.0
+      del-cli: 1.1.0
+      husky: 1.3.1
+      jest: 24.1.0
+      jest-create-mock-instance: 1.1.0
+      jest-mock: 24.0.0
+      make-dir-cli: 1.0.0
+      nodemon: 1.18.10
+      nyc: 13.3.0
+      semantic-release: /semantic-release/15.13.3/semantic-release@15.13.3
+      semantic-release-monorepo: /semantic-release-monorepo/6.1.1/semantic-release@15.13.3
+      ts-jest: /ts-jest/24.0.0/jest@24.1.0
+      tslint: /tslint/5.13.1/typescript@3.1.6
+      typescript: 3.1.6
+    specifiers:
+      '@cdf/assetlibrary-client': ^2.0.0
+      '@commitlint/cli': ^7.5.2
+      '@commitlint/config-conventional': ^7.5.0
+      '@semantic-release/changelog': ^3.0.2
+      '@semantic-release/git': ^7.0.8
+      '@semantic-release/npm': ^5.1.4
+      '@semantic-release/release-notes-generator': ^7.1.4
+      '@types/aws-serverless-express': ^3.3.0
+      '@types/config': 0.0.34
+      '@types/jest': ^22.2.3
+      '@types/node': ~8.10.40
+      '@types/superagent': ^3.8.3
+      commitizen: ^3.0.7
+      concurrently: ^4.1.0
+      config: ^1.30.0
+      cpy-cli: ^2.0.0
+      del-cli: ^1.1.0
+      husky: ^1.3.1
+      jest: 24.1.0
+      jest-create-mock-instance: 1.1.0
+      jest-mock: 24.0.0
+      js-yaml: ^3.12.0
+      make-dir-cli: ^1.0.0
+      nodemon: ^1.18.10
+      nyc: ^13.1.0
+      reflect-metadata: ^0.1.13
+      semantic-release: ^15.13.3
+      semantic-release-monorepo: ^6.1.1
+      ts-jest: 24.0.0
+      tslint: ^5.12.1
+      typescript: 3.1.6
+      winston: ^2.4.2
+  packages/services/device-monitoring/dist:
+    dependencies:
+      '@cdf/assetlibrary-client': 'link:../../../libraries/clients/assetlibrary-client'
       config: 1.31.0
       js-yaml: 3.12.2
       reflect-metadata: 0.1.13
@@ -1273,9 +1963,189 @@ importers:
       typescript: 3.1.6
       uuid: ^3.2.1
       winston: ^2.4.2
+  packages/services/provisioning/dist:
+    dependencies:
+      '@cdf/config-inject': 'link:../../../libraries/config/config-inject'
+      aws-sdk: 2.418.0
+      aws-serverless-express: 3.3.5
+      body-parser: 1.18.3
+      config: 1.31.0
+      express: 4.16.4
+      fs: 0.0.1-security
+      inversify: 5.0.1
+      inversify-binding-decorators: 4.0.0
+      inversify-express-utils: 6.3.2
+      js-yaml: 3.12.2
+      jszip: 3.2.0
+      ow: 0.12.0
+      pem: 1.14.2
+      reflect-metadata: 0.1.13
+      uuid: 3.3.2
+      winston: 2.4.4
+    devDependencies:
+      '@commitlint/cli': 7.5.2
+      '@commitlint/config-conventional': 7.5.0
+      '@semantic-release/changelog': /@semantic-release/changelog/3.0.2/semantic-release@15.13.3
+      '@semantic-release/git': /@semantic-release/git/7.0.8/semantic-release@15.13.3
+      '@semantic-release/npm': /@semantic-release/npm/5.1.4/semantic-release@15.13.3
+      '@semantic-release/release-notes-generator': /@semantic-release/release-notes-generator/7.1.4/semantic-release@15.13.3
+      '@types/aws-serverless-express': 3.3.0
+      '@types/body-parser': 1.17.0
+      '@types/config': 0.0.34
+      '@types/express': 4.16.1
+      '@types/jest': 24.0.11
+      '@types/jszip': 3.1.5
+      '@types/node': 8.10.43
+      '@types/pem': 1.9.5
+      '@types/uuid': 3.4.4
+      commitizen: 3.0.7
+      concurrently: 4.1.0
+      cpy-cli: 2.0.0
+      del-cli: 1.1.0
+      husky: 1.3.1
+      jest: 24.1.0
+      jest-create-mock-instance: 1.1.0
+      jest-mock: 24.0.0
+      make-dir-cli: 1.0.0
+      nodemon: 1.18.10
+      nyc: 13.3.0
+      semantic-release: /semantic-release/15.13.3/semantic-release@15.13.3
+      semantic-release-monorepo: /semantic-release-monorepo/6.1.1/semantic-release@15.13.3
+      ts-jest: /ts-jest/24.0.0/jest@24.1.0
+      tslint: /tslint/5.13.1/typescript@3.1.6
+      typescript: 3.1.6
+    specifiers:
+      '@cdf/config-inject': ^2.0.0
+      '@commitlint/cli': ^7.5.2
+      '@commitlint/config-conventional': ^7.5.0
+      '@semantic-release/changelog': ^3.0.2
+      '@semantic-release/git': ^7.0.8
+      '@semantic-release/npm': ^5.1.4
+      '@semantic-release/release-notes-generator': ^7.1.4
+      '@types/aws-serverless-express': ^3.3.0
+      '@types/body-parser': ^1.17.0
+      '@types/config': 0.0.34
+      '@types/express': ^4.16.1
+      '@types/jest': ~24.0.0
+      '@types/jszip': ^3.1.4
+      '@types/node': ~8.10.40
+      '@types/pem': ^1.9.3
+      '@types/uuid': ^3.4.3
+      aws-sdk: ^2.398.0
+      aws-serverless-express: ^3.3.5
+      body-parser: ^1.18.3
+      commitizen: ^3.0.7
+      concurrently: ^4.1.0
+      config: ^1.30.0
+      cpy-cli: ^2.0.0
+      del-cli: ^1.1.0
+      express: ^4.16.4
+      fs: 0.0.1-security
+      husky: ^1.3.1
+      inversify: ^5.0.1
+      inversify-binding-decorators: 4.0.0
+      inversify-express-utils: ^6.3.2
+      jest: 24.1.0
+      jest-create-mock-instance: 1.1.0
+      jest-mock: 24.0.0
+      js-yaml: ^3.12.0
+      jszip: ^3.1.5
+      make-dir-cli: ^1.0.0
+      nodemon: ^1.18.10
+      nyc: ^13.1.0
+      ow: ^0.12.0
+      pem: ^1.12.5
+      reflect-metadata: ^0.1.13
+      semantic-release: ^15.13.3
+      semantic-release-monorepo: ^6.1.1
+      ts-jest: 24.0.0
+      tslint: ^5.12.1
+      typescript: 3.1.6
+      uuid: ^3.2.1
+      winston: ^2.4.2
   packages/services/request-queue:
     dependencies:
       '@cdf/config-inject': 'link:../../libraries/config/config-inject'
+      aws-sdk: 2.418.0
+      busboy: 0.2.14
+      config: 1.31.0
+      inversify: 5.0.1
+      inversify-binding-decorators: 4.0.0
+      js-yaml: 3.12.2
+      math: 0.0.3
+      multer: 1.4.1
+      reflect-metadata: 0.1.13
+      superagent: 3.8.3
+      uuid: 3.3.2
+      winston: 2.4.4
+    devDependencies:
+      '@commitlint/cli': 7.5.2
+      '@commitlint/config-conventional': 7.5.0
+      '@semantic-release/changelog': /@semantic-release/changelog/3.0.2/semantic-release@15.13.3
+      '@semantic-release/git': /@semantic-release/git/7.0.8/semantic-release@15.13.3
+      '@semantic-release/npm': /@semantic-release/npm/5.1.4/semantic-release@15.13.3
+      '@semantic-release/release-notes-generator': /@semantic-release/release-notes-generator/7.1.4/semantic-release@15.13.3
+      '@types/config': 0.0.34
+      '@types/jest': 24.0.11
+      '@types/node': 8.10.43
+      '@types/superagent': 3.8.7
+      '@types/uuid': 3.4.4
+      cpy-cli: 2.0.0
+      del-cli: 1.1.0
+      husky: 1.3.1
+      jest: 24.1.0
+      jest-create-mock-instance: 1.1.0
+      jest-mock: 24.0.0
+      make-dir-cli: 1.0.0
+      nodemon: 1.18.10
+      nyc: 13.3.0
+      semantic-release: /semantic-release/15.13.3/semantic-release@15.13.3
+      semantic-release-monorepo: /semantic-release-monorepo/6.1.1/semantic-release@15.13.3
+      ts-jest: /ts-jest/24.0.0/jest@24.1.0
+      tslint: /tslint/5.13.1/typescript@3.1.6
+      typescript: 3.1.6
+    specifiers:
+      '@cdf/config-inject': ^2.0.0
+      '@commitlint/cli': ^7.5.2
+      '@commitlint/config-conventional': ^7.5.0
+      '@semantic-release/changelog': ^3.0.2
+      '@semantic-release/git': ^7.0.8
+      '@semantic-release/npm': ^5.1.4
+      '@semantic-release/release-notes-generator': ^7.1.4
+      '@types/config': 0.0.34
+      '@types/jest': ~24.0.0
+      '@types/node': ~8.10.40
+      '@types/superagent': ^3.8.4
+      '@types/uuid': ^3.4.3
+      aws-sdk: ^2.398.0
+      busboy: ^0.2.14
+      config: ^1.30.0
+      cpy-cli: ^2.0.0
+      del-cli: ^1.1.0
+      husky: ^1.3.1
+      inversify: ^5.0.1
+      inversify-binding-decorators: 4.0.0
+      jest: 24.1.0
+      jest-create-mock-instance: 1.1.0
+      jest-mock: 24.0.0
+      js-yaml: ^3.12.0
+      make-dir-cli: ^1.0.0
+      math: 0.0.3
+      multer: ^1.3.1
+      nodemon: ^1.18.10
+      nyc: ^13.1.0
+      reflect-metadata: ^0.1.13
+      semantic-release: ^15.13.3
+      semantic-release-monorepo: ^6.1.1
+      superagent: ^3.8.3
+      ts-jest: 24.0.0
+      tslint: ^5.12.1
+      typescript: 3.1.6
+      uuid: ^3.3.0
+      winston: ^2.4.2
+  packages/services/request-queue/dist:
+    dependencies:
+      '@cdf/config-inject': 'link:../../../libraries/config/config-inject'
       aws-sdk: 2.418.0
       busboy: 0.2.14
       config: 1.31.0
@@ -9960,6 +10830,7 @@ packages:
       node: '>=6'
     name: env-ci
     resolution:
+      registry: 'https://registry.npmjs.org/'
       tarball: 'https://codeload.github.com/boardthatpowder/env-ci/tar.gz/45ee1f3169d13f1a2c3842f5f2458b6bd8cb6dd5'
     version: 0.0.0-development
   github.com/boardthatpowder/semantic-release-plugin-decorators/0f89322cb9231b2812e6e66bbc7215b88efd02b5:
@@ -9984,6 +10855,7 @@ packages:
     peerDependencies:
       semantic-release: '>=11'
     resolution:
+      registry: 'https://registry.npmjs.org/'
       tarball: 'https://codeload.github.com/boardthatpowder/semantic-release-plugin-decorators/tar.gz/0f89322cb9231b2812e6e66bbc7215b88efd02b5'
     version: 0.0.0-development
 shrinkwrapVersion: 4

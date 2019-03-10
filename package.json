@@ -2,11 +2,12 @@
   "name": "cdf",
   "author": "Dean Hart <deanhart@amazon.com>",
   "scripts": {
-    "reset": "pnpm i --force && pnpm m run reset && del-cli node_modules shrinkwrap.json && pnpm i --force",
+    "reset": "pnpm m exec -- rm -rf dist && pnpm m exec -- rm -rf build && pnpm i --force",
+
     "commit": "npx git-cz",
 
     "prebundle": "pnpm m run prebundle:prepare",
-    "bundle": "pnpm i --prod --shamefully-flatten --force && pnpm m run bundle:package",
+    "bundle": "pnpm i --no-lock --prod --shamefully-flatten --force && pnpm m exec -- rm -rf dist/package.json && pnpm m run bundle:package",
     "postbundle": "echo '\n\n******   node_modules have been flattened and resolved in production mode.  If this is a dev environment, make sure you run `pnpm run reset` from the root to reset.'"
 
   },
