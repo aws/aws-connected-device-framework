@@ -27,13 +27,6 @@ Parameters:
     Description: Name of codecommit branch for the cdf-infrastructure-{customer} module.
     Type: String
     MinLength: 1
-  UseExistingArtifactStoreBucket:
-    Description: Use an existing artifact stire bucket, or create a new one.
-    Type: String
-    Default: 'false'
-    AllowedValues:
-    - 'true'
-    - 'false'
   ArtifactStoreBucketName:
     Description: Name of artifact store bucket.
     Type: String
@@ -46,6 +39,13 @@ Parameters:
       - full
       - lite
     MinLength: 1
+  AssetLibraryUseExistingVpc:
+    Description:  Use an existing VPC instead of creating a new one
+    Type: String
+    Default: 'false'
+    AllowedValues: 
+      - 'true'
+      - 'false'
   AssetLibraryVpcId:
     Description: Id of VPC where Neptune resides (if running Asset Library in 'full' mode)
     Type: String
@@ -58,12 +58,26 @@ Parameters:
   AssetLibraryPrivateRouteTableIds:
     Description: Id of private route table ids where Neptune resides (if running Asset Library in 'full' mode)
     Type: String
+  KeyPairName:
+    Description:  Name of key pair to use to create a Bastion host (required if running Asset Library in 'full' mode)
+    Type: String
+  BastionPublicSubnetIds:
+    Description: Id of public subnets for Bastion access (if running Asset Library in 'full' mode)
+    Type: String
+  BastionRemoteAccessCIDR:
+    Description:  CIDR range to allow remote access from (required if running Asset Library in 'full' mode)
+    Type: String
+  KmsKeyId:
+    Description:  The KMS Key id that the provisoning service will use to decrypt sensitive information.  If not provided, a new KMS key with the alias 'cdf' is created
+    Type: String
+  DeviceUploadBucket:
+    Description:  The name of the S3 bucket where devices shall be allowed to upload content to.
+    Type: String
+    MinLength: 1
 
 
 Conditions:
   CodePipelineNameProvided:  !Not [ !Equals [ !Ref CodePipelineName, "" ] ]
-  ArtifactStoreBucketProvided:  !Not [ !Equals [ !Ref ArtifactStoreBucketName, "" ] ]
-  CreateArtifactStoreBucket:  !Equals [ !Ref UseExistingArtifactStoreBucket, "false" ]
 
 Resources:
 
@@ -183,7 +197,7 @@ Resources:
         EnvironmentVariables:
           - Name: DEPLOY_ARTIFACTS_STORE_BUCKET
             Type: PLAINTEXT
-            Value: !If [CreateArtifactStoreBucket, !Ref ArtifactBucket, !Ref ArtifactStoreBucketName]
+            Value: !Ref ArtifactStoreBucketName
           - Name: ENVIRONMENT
             Type: PLAINTEXT
             Value: !Sub '${Environment}-staging'
@@ -228,7 +242,7 @@ Resources:
         EnvironmentVariables:
           - Name: DEPLOY_ARTIFACTS_STORE_BUCKET
             Type: PLAINTEXT
-            Value: !If [CreateArtifactStoreBucket, !Ref ArtifactBucket, !Ref ArtifactStoreBucketName]
+            Value: !Ref ArtifactStoreBucketName
           - Name: ENVIRONMENT
             Type: PLAINTEXT
             Value: !Sub '${Environment}-staging'
@@ -241,12 +255,30 @@ Resources:
           - Name: PRIVATE_SUBNET_IDS
             Type: PLAINTEXT
             Value: !Ref AssetLibraryPrivateSubnetIds
+          - Name: PUBLIC_SUBNET_IDS
+            Type: PLAINTEXT
+            Value: !Ref BastionPublicSubnetIds
           - Name: PRIVATE_ROUTE_TABLE_IDS
             Type: PLAINTEXT
             Value: !Ref AssetLibraryPrivateRouteTableIds
           - Name: ASSETLIBRARY_MODE
             Type: PLAINTEXT
             Value: !Ref AssetLibraryMode
+          - Name: KEY_PAIR_NAME
+            Type: PLAINTEXT
+            Value: !Ref KeyPairName
+          - Name: BASTION_REMOTE_ACCESS_CIDR
+            Type: PLAINTEXT
+            Value: !Ref BastionRemoteAccessCIDR
+          - Name: KMS_KEY_ID
+            Type: PLAINTEXT
+            Value: !Ref KmsKeyId
+          - Name: DEVICE_UPLOAD_BUCKET
+            Type: PLAINTEXT
+            Value: !Ref DeviceUploadBucket
+          - Name: USE_EXISTING_VPC
+            Type: PLAINTEXT
+            Value: !Ref AssetLibraryUseExistingVpc   
           # - Name: CUST_AUTH_STACK_NAME
           #   Type: PLAINTEXT
           #   Value: !Ref CustAuthStackName
@@ -292,7 +324,7 @@ Resources:
         EnvironmentVariables:
           - Name: DEPLOY_ARTIFACTS_STORE_BUCKET
             Type: PLAINTEXT
-            Value: !If [CreateArtifactStoreBucket, !Ref ArtifactBucket, !Ref ArtifactStoreBucketName]
+            Value: !Ref ArtifactStoreBucketName
           - Name: ENVIRONMENT
             Type: PLAINTEXT
             Value: !Ref Environment
@@ -305,9 +337,30 @@ Resources:
           - Name: PRIVATE_SUBNET_IDS
             Type: PLAINTEXT
             Value: !Ref AssetLibraryPrivateSubnetIds
+          - Name: PUBLIC_SUBNET_IDS
+            Type: PLAINTEXT
+            Value: !Ref BastionPublicSubnetIds
           - Name: PRIVATE_ROUTE_TABLE_IDS
             Type: PLAINTEXT
             Value: !Ref AssetLibraryPrivateRouteTableIds
+          - Name: KEY_PAIR_NAME
+            Type: PLAINTEXT
+            Value: !Ref KeyPairName
+          - Name: BASTION_REMOTE_ACCESS_CIDR
+            Type: PLAINTEXT
+            Value: !Ref BastionRemoteAccessCIDR
+          - Name: KMS_KEY_ID
+            Type: PLAINTEXT
+            Value: !Ref KmsKeyId
+          - Name: DEVICE_UPLOAD_BUCKET
+            Type: PLAINTEXT
+            Value: !Ref DeviceUploadBucket
+          - Name: USE_EXISTING_VPC
+            Type: PLAINTEXT
+            Value: !Ref AssetLibraryUseExistingVpc
+          - Name: MODE
+            Type: PLAINTEXT
+            Value: !Ref AssetLibraryMode
           # - Name: CUST_AUTH_STACK_NAME
           #   Type: PLAINTEXT
           #   Value: !Ref CustAuthStackName
@@ -462,45 +515,7 @@ Resources:
 
       ArtifactStore:
         Type: S3
-        Location: !If [CreateArtifactStoreBucket, !Ref ArtifactBucket, !Ref ArtifactStoreBucketName]
-
-  ArtifactBucket:
-    Type: AWS::S3::Bucket
-    Condition: CreateArtifactStoreBucket
-    Properties:
-      BucketName: !If [ArtifactStoreBucketProvided, !Ref ArtifactStoreBucketName, !Sub '${RepoName}-cicd-${AWS::AccountId}-${AWS::Region}-${Environment}' ]
-      WebsiteConfiguration:
-        IndexDocument: index.html
-    DeletionPolicy: Retain
-      
-  BucketPolicy:
-    Type: 'AWS::S3::BucketPolicy'
-    Condition: CreateArtifactStoreBucket
-    Properties:
-      PolicyDocument:
-        Version: 2012-10-17
-        Statement:
-          - 
-            Sid: AllowCodeBuildUploads
-            Effect: Allow
-            Principal: 
-              Service:
-                - codebuild.amazonaws.com
-            Action: 's3:PutObject'
-            Resource: !Sub 'arn:aws:s3:::${ArtifactBucket}/*'
-            
-          - 
-            Sid: AllowCodePipeline
-            Effect: Allow
-            Principal: 
-              Service:
-                - codepipeline.amazonaws.com
-                - codecommit.amazonaws.com
-            Action: 's3:*'
-            Resource: 
-              - !Sub 'arn:aws:s3:::${ArtifactBucket}/*'
-              - !Sub 'arn:aws:s3:::${ArtifactBucket}'
-      Bucket: !Ref ArtifactBucket
+        Location: !Ref ArtifactStoreBucketName
 
   CodeBuildRole:
     Type: 'AWS::IAM::Role'
@@ -688,8 +703,8 @@ Resources:
                 Action:
                   - s3:*
                 Resource:
-                  - !If [CreateArtifactStoreBucket, !Sub 'arn:aws:s3:::${ArtifactBucket}/*', !Sub 'arn:aws:s3:::${ArtifactStoreBucketName}/*' ]
-                  - !If [CreateArtifactStoreBucket, !Sub 'arn:aws:s3:::${ArtifactBucket}', !Sub 'arn:aws:s3:::${ArtifactStoreBucketName}' ]
+                  - !Sub 'arn:aws:s3:::${ArtifactStoreBucketName}/*'
+                  - !Sub 'arn:aws:s3:::${ArtifactStoreBucketName}'
                 Effect: Allow
               - 
                 Action:
