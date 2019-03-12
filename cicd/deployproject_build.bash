@@ -10,7 +10,7 @@ CONFIG_ENVIRONMENT=${ENVIRONMENT%-staging}
 
 cmd="bash -c infrastructure/deploy-core.bash \
   -e $CONFIG_ENVIRONMENT \
-  -c $CODEBUILD_SRC_DIR_source_infrastructure \
+  -c \"$CODEBUILD_SRC_DIR_source_infrastructure\" \
   -IB"
 
 if [ -n "$KEY_PAIR_NAME" ]; then
