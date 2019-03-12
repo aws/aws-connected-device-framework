@@ -11,7 +11,7 @@ import AWS = require('aws-sdk');
 import { DocumentClient, AttributeValue } from 'aws-sdk/clients/dynamodb';
 // import * as btoa from 'btoa';
 import btoa = require('btoa');
-import atob = require('atob');
+import * as atob from 'atob';
 
 @injectable()
 export class EventsDao {
