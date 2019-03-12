@@ -37,6 +37,7 @@ OPTIONAL ARGUMENTS
     -I (flag)     Bypass running 'npm install' on each checked out project.  If 'npm install' has previously been run, and no changes to dependencies have been made, setting this flag will speed up the deploy.
     -B (flag)     Bypass running 'npm run build' on each checked out project.  If 'npm run build' has previously been run, and no changes to the source code have been made, setting this flag will speed up the deploy.
 
+    -Y (flag)     Proceed with install bypassing the prompt requesting permission continue.
     -R (string)   AWS region.
     -P (string)   AWS profile.
 
@@ -54,7 +55,7 @@ EOF
 ######  parse and validate the provided arguments   ######
 ##########################################################
 
-while getopts ":e:c:p:i:k:b:Nv:g:n:m:o:r:IBR:P:" opt; do
+while getopts ":e:c:p:i:k:b:Nv:g:n:m:o:r:IBYR:P:" opt; do
   case $opt in
     e  ) ENVIRONMENT=$OPTARG;;
     c  ) CONFIG_LOCATION=$OPTARG;;
@@ -74,6 +75,7 @@ while getopts ":e:c:p:i:k:b:Nv:g:n:m:o:r:IBR:P:" opt; do
 
     I  ) BYPASS_NPM_INSTALL=true;;
     B  ) BYPASS_NPM_BUILD=true;;
+    Y  ) BYPASS_PROMPT=true;;
 
     R  ) AWS_REGION=$OPTARG;;
     P  ) AWS_PROFILE=$OPTARG;;
@@ -208,12 +210,14 @@ Are you sure you want to proceed (Y/N)?
     return $retval
 }
 
-if asksure; then
-  echo "Okay, installation of CDF will continue....
-  "
-else
-  echo "Installation of CDF aborted"
-  exit 1
+if [ -z "$BYPASS_PROMPT" ]; then
+    if asksure; then
+    echo "Okay, installation of CDF will continue....
+    "
+    else
+    echo "Installation of CDF aborted"
+    exit 1
+    fi
 fi
 
 function shouldDeployService() {

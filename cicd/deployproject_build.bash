@@ -8,10 +8,10 @@ echo deployproject_build started on `date`
 # note that each service's own installation scripts automatically updates environment specific urls)
 CONFIG_ENVIRONMENT=${ENVIRONMENT%-staging}
 
-cmd="bash -c infrastructure/deploy-core.bash \
+cmd="infrastructure/deploy-core.bash \
   -e $CONFIG_ENVIRONMENT \
   -c \"$CODEBUILD_SRC_DIR_source_infrastructure\" \
-  -IB"
+  -IBY"
 
 if [ -n "$KEY_PAIR_NAME" ]; then
     cmd+=" -p $KEY_PAIR_NAME"
