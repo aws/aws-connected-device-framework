@@ -228,7 +228,7 @@ if [ -z "$BYPASS_PROMPT" ]; then
 fi
 
 
-root_dir=$(dirname $(pwd))
+root_dir=$(dirname)
 
 ######################################################################
 ######  stack names                                             ######
