@@ -243,6 +243,9 @@ Resources:
           - Name: DEPLOY_ARTIFACTS_STORE_BUCKET
             Type: PLAINTEXT
             Value: !Ref ArtifactStoreBucketName
+          - Name: CONFIG_ENVIRONMENT
+            Type: PLAINTEXT
+            Value: !Ref Environment
           - Name: ENVIRONMENT
             Type: PLAINTEXT
             Value: !Sub '${Environment}-staging'
@@ -325,6 +328,9 @@ Resources:
           - Name: DEPLOY_ARTIFACTS_STORE_BUCKET
             Type: PLAINTEXT
             Value: !Ref ArtifactStoreBucketName
+          - Name: CONFIG_ENVIRONMENT
+            Type: PLAINTEXT
+            Value: !Ref Environment
           - Name: ENVIRONMENT
             Type: PLAINTEXT
             Value: !Ref Environment

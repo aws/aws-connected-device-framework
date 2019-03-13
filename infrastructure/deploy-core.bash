@@ -20,6 +20,7 @@ MANDATORY ARGUMENTS:
 
 OPTIONAL ARGUMENTS
 
+    -E (string)   Name of configuration environment.  If not provided, then '-e ENVIRONMENT' is used.
     -p (string)   The name of the key pair to use to deploy the Bastion EC2 host.
     -i (string)   The remote access CIDR to configure Bastion SSH access (e.g. 1.2.3.4/32).
     -b (string)   The name of the S3 bucket to deploy CloudFormation templates into.  If not provided, a new bucket named 'cdf-cfn-artifacts-$AWS_ACCOUNT_ID-$AWS_REGION' is created.
@@ -55,9 +56,10 @@ EOF
 ######  parse and validate the provided arguments   ######
 ##########################################################
 
-while getopts ":e:c:p:i:k:b:Nv:g:n:m:o:r:IBYR:P:" opt; do
+while getopts ":e:E:c:p:i:k:b:Nv:g:n:m:o:r:IBYR:P:" opt; do
   case $opt in
     e  ) ENVIRONMENT=$OPTARG;;
+    E  ) CONFIG_ENVIRONMENT=$OPTARG;;
     c  ) CONFIG_LOCATION=$OPTARG;;
 
     p  ) KEY_PAIR_NAME=$OPTARG;;
@@ -89,6 +91,10 @@ done
 
 if [ -z "$ENVIRONMENT" ]; then
 	echo -e ENVIRONMENT is required; help_message; exit 1;
+fi
+if [ -z "$CONFIG_ENVIRONMENT" ]; then
+    CONFIG_ENVIRONMENT=$ENVIRONMENT
+	echo -E CONFIG_ENVIRONMENT not provided, therefore set to $CONFIG_ENVIRONMENT
 fi
 
 if [ -z "$CONFIG_LOCATION" ]; then
@@ -160,6 +166,7 @@ asksure() {
 The Connected Device Framework (CDF) will install using the following configuration:
 
     -e (ENVIRONMENT)                    : $ENVIRONMENT
+    -E (CONFIG_ENVIRONMENT)             : $CONFIG_ENVIRONMENT
     -c (CONFIG_LOCATION)                : $CONFIG_LOCATION
     -b (DEPLOY_ARTIFACTS_STORE_BUCKET)  : $DEPLOY_ARTIFACTS_STORE_BUCKET
     -p (KEY_PAIR_NAME)                  : $KEY_PAIR_NAME
@@ -220,14 +227,14 @@ if [ -z "$BYPASS_PROMPT" ]; then
     fi
 fi
 
-function shouldDeployService() {
+function appConfigLocation() {
     service=$1
-    config_file_location=$CONFIG_LOCATION/$service/$ENVIRONMENT-config.json
+    config_file_location=$CONFIG_LOCATION/$service/$CONFIG_ENVIRONMENT-config.json
     if [ -f $config_file_location ]; then
-        return 0
+        return $config_file_location
     else
         echo WARNING! $config_file_location does not exist therefore will not deploy $service
-        return 1
+        return 
     fi
 
 }
@@ -311,7 +318,7 @@ echo '
 **********************************************************
 '
 
-if [[ "$(shouldDeployService assetlibrary)" = "0" && "$ASSETLIBRARY_MODE" = "full" && -z "$USE_EXISTING_VPC" ]]; then
+if [[ "$(appConfigLocation assetlibrary)" = "0" && "$ASSETLIBRARY_MODE" = "full" && -z "$USE_EXISTING_VPC" ]]; then
 
     cd "$root_dir/infrastructure"
 
@@ -372,7 +379,8 @@ fi
 
 stacks=()
 
-if [ "$(shouldDeployService assetlibrary)" = "0" ]; then
+assetlibrary_config=$(appConfigLocation assetlibrary)
+if [ "$assetlibrary_config" != "" ]; then
 
     echo '
     **********************************************************
@@ -426,7 +434,8 @@ if [ "$(shouldDeployService assetlibrary)" = "0" ]; then
 fi
 
 
-if [ "$(shouldDeployService provisioning)" = "0" ]; then
+provisioning_config=$(appConfigLocation provisioning)
+if [ "$provisioning_config" != "" ]; then
 
     echo '
     **********************************************************
@@ -448,8 +457,8 @@ if [ "$(shouldDeployService provisioning)" = "0" ]; then
     **********************************************************
     '
 
-    template_bucket=$(cat $CONFIG_LOCATION/provisioning/$ENVIRONMENT-config.json | jq -r '.aws.s3.templates.bucket')
-    template_prefix=$(cat $CONFIG_LOCATION/provisioning/$ENVIRONMENT-config.json | jq -r '.aws.s3.templates.prefix')
+    template_bucket=$(cat $provisioning_config | jq -r '.aws.s3.templates.bucket')
+    template_prefix=$(cat $provisioning_config | jq -r '.aws.s3.templates.prefix')
 
     for template in $(ls $CONFIG_LOCATION/provisioning/templates/*); do
         key="s3://$template_bucket/$template_prefix$(basename $template)"
@@ -507,7 +516,8 @@ if [ "$(shouldDeployService provisioning)" = "0" ]; then
 fi
 
 
-if [ "$(shouldDeployService commands)" = "0" ]; then
+commands_config=$(appConfigLocation commands)
+if [ "$commands_config" != "" ]; then
 
     echo '
     **********************************************************
@@ -517,7 +527,7 @@ if [ "$(shouldDeployService commands)" = "0" ]; then
 
     cd "$root_dir/packages/services/commands"
 
-    commands_bucket=$(cat $CONFIG_LOCATION/commands/$ENVIRONMENT-config.json | jq -r '.aws.s3.bucket')
+    commands_bucket=$(cat $commands_config | jq -r '.aws.s3.bucket')
 
     infrastructure/package-cfn.bash -b $DEPLOY_ARTIFACTS_STORE_BUCKET -R $AWS_REGION -P $AWS_PROFILE
     infrastructure/deploy-cfn.bash -e $ENVIRONMENT -c $commands_config -f $commands_bucket \
@@ -528,7 +538,8 @@ if [ "$(shouldDeployService commands)" = "0" ]; then
 fi
 
 
-if [ "$(shouldDeployService devicemonitoring)" = "0" ]; then
+devicemonitoring_config=$(appConfigLocation devicemonitoring)
+if [ "$devicemonitoring_config" != "" ]; then
 
     echo '
     **********************************************************
@@ -539,7 +550,7 @@ if [ "$(shouldDeployService devicemonitoring)" = "0" ]; then
     cd "$root_dir/packages/services/device-monitoring"
 
     infrastructure/package-cfn.bash -b $DEPLOY_ARTIFACTS_STORE_BUCKET -R $AWS_REGION -P $AWS_PROFILE
-    infrastructure/deploy-cfn.bash -e $ENVIRONMENT -c $device_monitoring_config \
+    infrastructure/deploy-cfn.bash -e $ENVIRONMENT -c $devicemonitoring_config \
     -R $AWS_REGION -P $AWS_PROFILE &
 
     stacks+=($DEVICE_MONITORING_STACK_NAME)
@@ -606,7 +617,8 @@ fi
 
 stacks=()
 
-if [ "$(shouldDeployService bulkcerts)" = "0" ]; then
+bulkcerts_config=$(appConfigLocation bulkcerts)
+if [ "$bulkcerts_config" != "" ]; then
 
     echo '
     **********************************************************
@@ -617,7 +629,7 @@ if [ "$(shouldDeployService bulkcerts)" = "0" ]; then
     cd "$root_dir/packages/services/bulkcerts"
 
     infrastructure/package-cfn.bash -b $DEPLOY_ARTIFACTS_STORE_BUCKET -R $AWS_REGION -P $AWS_PROFILE
-    infrastructure/deploy-cfn.bash -e $ENVIRONMENT -c $bulk_certs_config -k $KMS_KEY_ID \
+    infrastructure/deploy-cfn.bash -e $ENVIRONMENT -c $bulkcerts_config -k $KMS_KEY_ID \
     -R $AWS_REGION -P $AWS_PROFILE &
 
     stacks+=($BULKCERTS_STACK_NAME)
