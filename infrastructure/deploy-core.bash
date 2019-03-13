@@ -227,21 +227,8 @@ if [ -z "$BYPASS_PROMPT" ]; then
     fi
 fi
 
-function appConfigLocation() {
-    service=$1
-    config_file_location=$CONFIG_LOCATION/$service/$CONFIG_ENVIRONMENT-config.json
-    if [ -f $config_file_location ]; then
-        return $config_file_location
-    else
-        echo WARNING! $config_file_location does not exist therefore will not deploy $service
-        return 
-    fi
-
-}
 
 root_dir=$(dirname $(pwd))
-
-
 
 ######################################################################
 ######  stack names                                             ######
@@ -318,7 +305,8 @@ echo '
 **********************************************************
 '
 
-if [[ "$(appConfigLocation assetlibrary)" = "0" && "$ASSETLIBRARY_MODE" = "full" && -z "$USE_EXISTING_VPC" ]]; then
+assetlibrary_config=$CONFIG_LOCATION/assetlibrary/$CONFIG_ENVIRONMENT-config.json
+if [[ -f $assetlibrary_config && "$ASSETLIBRARY_MODE" = "full" && -z "$USE_EXISTING_VPC" ]]; then
 
     cd "$root_dir/infrastructure"
 
@@ -379,8 +367,7 @@ fi
 
 stacks=()
 
-assetlibrary_config=$(appConfigLocation assetlibrary)
-if [ "$assetlibrary_config" != "" ]; then
+if [ -f $assetlibrary_config ]; then
 
     echo '
     **********************************************************
@@ -434,8 +421,8 @@ if [ "$assetlibrary_config" != "" ]; then
 fi
 
 
-provisioning_config=$(appConfigLocation provisioning)
-if [ "$provisioning_config" != "" ]; then
+provisioning_config=$CONFIG_LOCATION/provisioning/$CONFIG_ENVIRONMENT-config.json
+if [ -f $provisioning_config ]; then
 
     echo '
     **********************************************************
@@ -515,9 +502,8 @@ if [ "$provisioning_config" != "" ]; then
     done
 fi
 
-
-commands_config=$(appConfigLocation commands)
-if [ "$commands_config" != "" ]; then
+commands_config=$CONFIG_LOCATION/commands/$CONFIG_ENVIRONMENT-config.json
+if [ -f $commands_config ]; then
 
     echo '
     **********************************************************
@@ -537,9 +523,8 @@ if [ "$commands_config" != "" ]; then
 
 fi
 
-
-devicemonitoring_config=$(appConfigLocation devicemonitoring)
-if [ "$devicemonitoring_config" != "" ]; then
+devicemonitoring_config=$CONFIG_LOCATION/devicemonitoring/$CONFIG_ENVIRONMENT-config.json
+if [ -f $devicemonitoring_config ]; then
 
     echo '
     **********************************************************
@@ -617,8 +602,8 @@ fi
 
 stacks=()
 
-bulkcerts_config=$(appConfigLocation bulkcerts)
-if [ "$bulkcerts_config" != "" ]; then
+bulkcerts_config=$CONFIG_LOCATION/bulkcerts/$CONFIG_ENVIRONMENT-config.json
+if [ -f $bulkcerts_config ]; then
 
     echo '
     **********************************************************
