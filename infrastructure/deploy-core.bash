@@ -282,7 +282,6 @@ if [ -z "$DEPLOY_ARTIFACTS_STORE_BUCKET" ]; then
     DEPLOY_ARTIFACTS_STORE_BUCKET="cdf-cfn-artifacts-$AWS_ACCOUNT_ID-$AWS_REGION"
 fi
 
-********** check bucket exist before creating rather than throwing then ignoring error
 if [ "$AWS_REGION" = "us-east-1" ]; then
     aws s3api create-bucket --bucket $DEPLOY_ARTIFACTS_STORE_BUCKET $AWS_ARGS &
 else
