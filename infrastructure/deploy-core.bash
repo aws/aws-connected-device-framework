@@ -136,17 +136,16 @@ if [[ "$ASSETLIBRARY_MODE" = "full" ]]; then
 fi
 
 
-
-AWS_ARGS=
-if [ -n "$AWS_REGION" ]; then
-	AWS_ARGS="--region $AWS_REGION "
-fi
-if [ -n "$AWS_PROFILE" ]; then
-	AWS_ARGS="$AWS_ARGS--profile $AWS_PROFILE"
-fi
-
 if [ -z "$AWS_REGION" ]; then
 	AWS_REGION=$(aws configure get region $AWS_ARGS)
+fi
+
+AWS_ARGS="--region $AWS_REGION "
+AWS_SCRIPT_ARGS="-R $AWS_REGION "
+
+if [ -n "$AWS_PROFILE" ]; then
+	AWS_ARGS="$AWS_ARGS--profile $AWS_PROFILE"
+	AWS_SCRIPT_ARGS="$AWS_SCRIPT_ARGS-P $AWS_PROFILE"
 fi
 
 AWS_ACCOUNT_ID=$(aws sts get-caller-identity --output text --query 'Account' $AWS_ARGS)
@@ -377,17 +376,17 @@ if [ -f $assetlibrary_config ]; then
 
     cd "$root_dir/packages/services/assetlibrary"
 
-    infrastructure/package-cfn.bash -b $DEPLOY_ARTIFACTS_STORE_BUCKET -R $AWS_REGION -P $AWS_PROFILE
+    infrastructure/package-cfn.bash -b $DEPLOY_ARTIFACTS_STORE_BUCKET $AWS_SCRIPT_ARGS
 
     if [ "$ASSETLIBRARY_MODE" = "full" ]; then
         infrastructure/deploy-cfn.bash -e $ENVIRONMENT -c $assetlibrary_config \
         -m $ASSETLIBRARY_MODE \
         -v $VPC_ID -g $SOURCE_SECURITY_GROUP_ID -n $PRIVATE_SUBNET_IDS -r $PRIVATE_ROUTE_TABLE_IDS \
-        -R $AWS_REGION -P $AWS_PROFILE &
+        $AWS_SCRIPT_ARGS &
     else
         infrastructure/deploy-cfn.bash -e $ENVIRONMENT -c $assetlibrary_config \
         -m $ASSETLIBRARY_MODE \
-        -R $AWS_REGION -P $AWS_PROFILE &
+        $AWS_SCRIPT_ARGS &
     fi
 
 
@@ -432,9 +431,9 @@ if [ -f $provisioning_config ]; then
 
     cd "$root_dir/packages/services/provisioning"
 
-    infrastructure/package-cfn.bash -b $DEPLOY_ARTIFACTS_STORE_BUCKET -R $AWS_REGION -P $AWS_PROFILE
+    infrastructure/package-cfn.bash -b $DEPLOY_ARTIFACTS_STORE_BUCKET $AWS_SCRIPT_ARGS
     infrastructure/deploy-cfn.bash -e $ENVIRONMENT -c $provisioning_config -k $KMS_KEY_ID \
-    -R $AWS_REGION -P $AWS_PROFILE &
+    $AWS_SCRIPT_ARGS &
 
     stacks+=($PROVISIONING_STACK_NAME)
 
@@ -515,9 +514,9 @@ if [ -f $commands_config ]; then
 
     commands_bucket=$(cat $commands_config | jq -r '.aws.s3.bucket')
 
-    infrastructure/package-cfn.bash -b $DEPLOY_ARTIFACTS_STORE_BUCKET -R $AWS_REGION -P $AWS_PROFILE
+    infrastructure/package-cfn.bash -b $DEPLOY_ARTIFACTS_STORE_BUCKET $AWS_SCRIPT_ARGS
     infrastructure/deploy-cfn.bash -e $ENVIRONMENT -c $commands_config -f $commands_bucket \
-    -R $AWS_REGION -P $AWS_PROFILE &
+    $AWS_SCRIPT_ARGS &
 
     stacks+=($COMMANDS_STACK_NAME)
 
@@ -534,9 +533,9 @@ if [ -f $devicemonitoring_config ]; then
 
     cd "$root_dir/packages/services/device-monitoring"
 
-    infrastructure/package-cfn.bash -b $DEPLOY_ARTIFACTS_STORE_BUCKET -R $AWS_REGION -P $AWS_PROFILE
+    infrastructure/package-cfn.bash -b $DEPLOY_ARTIFACTS_STORE_BUCKET $AWS_SCRIPT_ARGS
     infrastructure/deploy-cfn.bash -e $ENVIRONMENT -c $devicemonitoring_config \
-    -R $AWS_REGION -P $AWS_PROFILE &
+    $AWS_SCRIPT_ARGS &
 
     stacks+=($DEVICE_MONITORING_STACK_NAME)
 
@@ -613,9 +612,9 @@ if [ -f $bulkcerts_config ]; then
 
     cd "$root_dir/packages/services/bulkcerts"
 
-    infrastructure/package-cfn.bash -b $DEPLOY_ARTIFACTS_STORE_BUCKET -R $AWS_REGION -P $AWS_PROFILE
+    infrastructure/package-cfn.bash -b $DEPLOY_ARTIFACTS_STORE_BUCKET $AWS_SCRIPT_ARGS
     infrastructure/deploy-cfn.bash -e $ENVIRONMENT -c $bulkcerts_config -k $KMS_KEY_ID \
-    -R $AWS_REGION -P $AWS_PROFILE &
+    $AWS_SCRIPT_ARGS &
 
     stacks+=($BULKCERTS_STACK_NAME)
 

@@ -9,7 +9,8 @@ echo deployproject_build started on `date`
 CONFIG_ENVIRONMENT=${ENVIRONMENT%-staging}
 
 cmd="infrastructure/deploy-core.bash \
-  -e $CONFIG_ENVIRONMENT \
+  -e $ENVIRONMENT \
+  -E $CONFIG_ENVIRONMENT \
   -c \"$CODEBUILD_SRC_DIR_source_infrastructure\" \
   -IBY"
 
