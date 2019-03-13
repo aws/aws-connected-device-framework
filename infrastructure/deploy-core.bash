@@ -311,7 +311,7 @@ echo '
 **********************************************************
 '
 
-if [[ "$(shouldDeployService assetlibrary)" -eq 0 && "$ASSETLIBRARY_MODE" = "full" && -z "$USE_EXISTING_VPC" ]]; then
+if [[ "$(shouldDeployService assetlibrary)" = "0" && "$ASSETLIBRARY_MODE" = "full" && -z "$USE_EXISTING_VPC" ]]; then
 
     cd "$root_dir/infrastructure"
 
@@ -372,7 +372,7 @@ fi
 
 stacks=()
 
-if [ "$(shouldDeployService assetlibrary)" -eq 0 ]; then
+if [ "$(shouldDeployService assetlibrary)" = "0" ]; then
 
     echo '
     **********************************************************
@@ -426,7 +426,7 @@ if [ "$(shouldDeployService assetlibrary)" -eq 0 ]; then
 fi
 
 
-if [ "$(shouldDeployService provisioning)" -eq 0 ]; then
+if [ "$(shouldDeployService provisioning)" = "0" ]; then
 
     echo '
     **********************************************************
@@ -507,7 +507,7 @@ if [ "$(shouldDeployService provisioning)" -eq 0 ]; then
 fi
 
 
-if [ "$(shouldDeployService commands)" -eq 0 ]; then
+if [ "$(shouldDeployService commands)" = "0" ]; then
 
     echo '
     **********************************************************
@@ -528,7 +528,7 @@ if [ "$(shouldDeployService commands)" -eq 0 ]; then
 fi
 
 
-if [ "$(shouldDeployService devicemonitoring)" -eq 0 ]; then
+if [ "$(shouldDeployService devicemonitoring)" = "0" ]; then
 
     echo '
     **********************************************************
@@ -606,7 +606,7 @@ fi
 
 stacks=()
 
-if [ "$(shouldDeployService bulkcerts)" -eq 0 ]; then
+if [ "$(shouldDeployService bulkcerts)" = "0" ]; then
 
     echo '
     **********************************************************
