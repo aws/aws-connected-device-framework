@@ -49,7 +49,7 @@ module.exports = {
     {
       // Create a release commit, including configurable file assets.
       path: '@semantic-release/git',
-      assets: ['**/CHANGELOG.md', '**/package.json', '**/package-lock.json', 'shrinkwrap.yaml']
+      assets: ['**/CHANGELOG.md', '**/package.json', '**/package-lock.json', 'pnpm-lock.yaml']
     }
   ],
   /**
