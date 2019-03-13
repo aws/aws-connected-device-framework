@@ -96,11 +96,10 @@ describe('StartJobAction', () => {
             };
         });
 
-        mockedProvisioningThingsService.bulkProvisionThings.mockResolvedValueOnce({taskId:'123'});
+        mockedProvisioningThingsService.bulkProvisionThings = jest.fn().mockImplementationOnce(()=> ({taskId:'123'}) );
 
-        mockedProvisioningThingsService.getBulkProvisionTask
-            .mockResolvedValueOnce({taskId:'123', status:'InProgress'})
-            .mockResolvedValueOnce({taskId:'123', status:'Completed'});
+        mockedProvisioningThingsService.getBulkProvisionTask = jest.fn().mockImplementationOnce(()=> ({taskId:'123', status:'InProgress'}));
+        mockedProvisioningThingsService.getBulkProvisionTask = jest.fn().mockImplementationOnce(()=> ({taskId:'123', status:'Completed'}));
 
         // execute
         const actual = await instance.___testonly___buildTargetList(commandId, targets);
@@ -161,8 +160,9 @@ describe('StartJobAction', () => {
         ];
 
         // set up mocks
-        mockedAssetLibraryDevicesService.getDevicesByID
-            .mockResolvedValueOnce({results:[{awsIotThingArn:expected[0]},{awsIotThingArn:expected[1]}]});
+        mockedAssetLibraryDevicesService.getDevicesByID = jest.fn().mockImplementationOnce(()=> {
+            return {results:[{awsIotThingArn:expected[0]},{awsIotThingArn:expected[1]}]};
+        });
 
         // execute
         const actual = await instance.___testonly___buildTargetList(commandId, targets);
@@ -187,9 +187,9 @@ describe('StartJobAction', () => {
         ];
 
         // set up mocks
-        mockedAssetLibraryGroupsService.listGroupMembersDevices
-            .mockResolvedValueOnce({results:[{awsIotThingArn:expected[0]},{awsIotThingArn:expected[1]}]})
-            .mockResolvedValueOnce({results:[{awsIotThingArn:expected[2]},{awsIotThingArn:expected[3]}]});
+        mockedAssetLibraryGroupsService.listGroupMembersDevices =
+            jest.fn().mockImplementationOnce(()=> ({results:[{awsIotThingArn:expected[0]},{awsIotThingArn:expected[1]}]}))
+            .mockImplementationOnce(()=> ({results:[{awsIotThingArn:expected[2]},{awsIotThingArn:expected[3]}]}));
 
         // execute
         const actual = await instance.___testonly___buildTargetList(commandId, targets);
