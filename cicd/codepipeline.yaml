@@ -542,6 +542,13 @@ Resources:
             Statement: 
 
               -
+                Sid: kms
+                Effect: Allow
+                Action:
+                  - kms:CreateKey
+                Resource:
+                  - '*'
+              -
                 Sid: SSM
                 Effect: Allow
                 Action:

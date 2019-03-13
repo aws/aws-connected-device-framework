@@ -372,7 +372,7 @@ fi
 
 stacks=()
 
-if [ "$(shouldDeployService assetlibrary)" -eq 0 && ]; then
+if [ "$(shouldDeployService assetlibrary)" -eq 0 ]; then
 
     echo '
     **********************************************************
@@ -426,7 +426,7 @@ if [ "$(shouldDeployService assetlibrary)" -eq 0 && ]; then
 fi
 
 
-if [ "$(shouldDeployService provisioning)" -eq 0 && ]; then
+if [ "$(shouldDeployService provisioning)" -eq 0 ]; then
 
     echo '
     **********************************************************
@@ -507,7 +507,7 @@ if [ "$(shouldDeployService provisioning)" -eq 0 && ]; then
 fi
 
 
-if [ "$(shouldDeployService commands)" -eq 0 && ]; then
+if [ "$(shouldDeployService commands)" -eq 0 ]; then
 
     echo '
     **********************************************************
@@ -528,7 +528,7 @@ if [ "$(shouldDeployService commands)" -eq 0 && ]; then
 fi
 
 
-if [ "$(shouldDeployService devicemonitoring)" -eq 0 && ]; then
+if [ "$(shouldDeployService devicemonitoring)" -eq 0 ]; then
 
     echo '
     **********************************************************
@@ -606,7 +606,7 @@ fi
 
 stacks=()
 
-if [ "$(shouldDeployService bulkcerts)" -eq 0 && ]; then
+if [ "$(shouldDeployService bulkcerts)" -eq 0 ]; then
 
     echo '
     **********************************************************
