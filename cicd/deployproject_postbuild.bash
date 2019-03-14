@@ -62,7 +62,7 @@ if [ "$CODEBUILD_BUILD_SUCCEEDING" -eq 1 ]; then
     done
 
     ### Next, if this was a live deploy, publish the artifacts as an installable package
-    if [ "$DEPLOY_ENV"="LIVE" ]; then
+    if [[ "$DEPLOY_ENV" = "LIVE" ]]; then
         echo publishing artifacts...
         publish_artifacts "$tagNames[0]"
     fi
