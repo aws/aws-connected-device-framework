@@ -64,11 +64,6 @@ if [ -n "$AWS_PROFILE" ]; then
 	AWS_ARGS="$AWS_ARGS--profile $AWS_PROFILE"
 fi
 
-
-if [ -z "$CUST_AUTH_STACK_NAME" ]; then
-  CUST_AUTH_STACK_NAME=cdf-custom-auth-${ENVIRONMENT}
-fi
-
 PROVISIONING_STACK_NAME=cdf-provisioning-${ENVIRONMENT}
 
 
