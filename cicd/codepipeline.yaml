@@ -178,7 +178,7 @@ Resources:
                 - bash -c cicd/buildproject_postbuild.bash
 
           artifacts:
-            base-directory: $CODEBUILD_SRC_DIR/../bundled
+            base-directory: $CODEBUILD_SRC_DIR
             discard-paths: no
             files:
               - '**/*'
@@ -473,7 +473,7 @@ Resources:
                 - Name: gitified_main
                 - Name: source_infrastructure
               OutputArtifacts:
-                - Name: bundled
+                - Name: compiled
               Configuration:
                 ProjectName: !Ref BuildProject
                 PrimarySource: gitified_main
@@ -490,11 +490,11 @@ Resources:
                 Version: 1
                 Provider: CodeBuild
               InputArtifacts:
-                - Name: bundled
+                - Name: compiled
                 - Name: source_infrastructure
               Configuration:
                 ProjectName: !Ref DeployStagingProject
-                PrimarySource: bundled
+                PrimarySource: compiled
               RunOrder: 1
 
         -
@@ -508,11 +508,11 @@ Resources:
                 Version: 1
                 Provider: CodeBuild
               InputArtifacts:
-                - Name: bundled
+                - Name: compiled
                 - Name: source_infrastructure
               Configuration:
                 ProjectName: !Ref IntegrationTestingProject
-                PrimarySource: bundled
+                PrimarySource: compiled
               RunOrder: 1
 
         -
@@ -526,11 +526,11 @@ Resources:
                 Version: 1
                 Provider: CodeBuild
               InputArtifacts:
-                - Name: bundled
+                - Name: compiled
                 - Name: source_infrastructure
               Configuration:
                 ProjectName: !Ref DeployLiveProject
-                PrimarySource: bundled
+                PrimarySource: compiled
               RunOrder: 1
 
       ArtifactStore:

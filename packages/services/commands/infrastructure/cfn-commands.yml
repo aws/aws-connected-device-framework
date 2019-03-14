@@ -22,14 +22,15 @@ Parameters:
     Default: cdf/commands/presignedurl/+/+/+
     Type: String
     MinLength: 1
-  CustAuthStackName:
-    Description: Name of custom authorizer Stack.
-    Type: String
-    MinLength: 1
 
+  CustAuthStackName:
+    Description: Name of custom authorizer Stack (if required).
+    Type: String
+
+Conditions:
+  DeployWithCustomAuth: !Not [ !Equals [ !Ref CustAuthStackName, "" ]]
 
 Resources:
-
   ApiGatewayApi:
     Type: AWS::Serverless::Api
     Properties:
@@ -38,7 +39,7 @@ Resources:
       DefinitionBody:
         swagger: 2.0
         info:
-          title: CDF Commands API
+          title: !Sub 'CDF Commands API (${Environment})'
 
         basePath: "/"
         schemes:
@@ -54,7 +55,10 @@ Resources:
                   schema:
                     $ref: "#/definitions/Empty"
               security:
-              - CustomAuthorizer: []
+                Fn::If:
+                - DeployWithCustomAuth
+                - CustomAuthorizer: []
+                - Ref: AWS::NoValue
               x-amazon-apigateway-integration:
                 responses:
                   default:
@@ -109,7 +113,10 @@ Resources:
                 type: string
               responses: {}
               security:
-              - CustomAuthorizer: []
+                Fn::If:
+                - DeployWithCustomAuth
+                - CustomAuthorizer: []
+                - Ref: AWS::NoValue
               x-amazon-apigateway-integration:
                 uri: 
                   Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RESTLambdaFunction.Arn}/invocations"
@@ -155,54 +162,25 @@ Resources:
             type: object
             title: Empty Schema
         securityDefinitions:
-          CustomAuthorizer:
-            type: apiKey
-            name: Authorization
-            in: header
-            x-amazon-apigateway-authtype: custom
-            x-amazon-apigateway-authorizer:
-              type: token
-              authorizerUri: !Sub
-              - "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CustAuthLambdaArn}/invocations"
-              - CustAuthLambdaArn: 
-                  Fn::ImportValue: !Sub 
-                    '${CustAuthStackName}-CustAuthLambdaArn'
-              authorizerCredentials: !Sub '${ApiGatewayAuthorizerInvokeRole.Arn}'
-              authorizerResultTtlInSeconds: 60
+          Fn::If:
+          - DeployWithCustomAuth
+          - CustomAuthorizer:
+              type: apiKey
+              name: Authorization
+              in: header
+              x-amazon-apigateway-authtype: custom
+              x-amazon-apigateway-authorizer:
+                type: token
+                authorizerUri: !Sub
+                - "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CustAuthLambdaArn}/invocations"
+                - CustAuthLambdaArn: 
+                    Fn::ImportValue: !Sub 
+                      '${CustAuthStackName}-CustAuthLambdaArn'
+                authorizerCredentials: !Sub '${ApiGatewayAuthorizerInvokeRole.Arn}'
+                authorizerResultTtlInSeconds: 60
+          - Ref: AWS::NoValue
     DependsOn:
-      - ApiGatewayAuthorizerInvokeRole
       - RESTLambdaFunction
-      
-  ApiGatewayAuthorizerInvokeRole:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument: 
-        Version: "2012-10-17"
-        Statement: 
-          - 
-            Effect: "Allow"
-            Principal: 
-              Service: 
-                - "apigateway.amazonaws.com"
-            Action: 
-              - sts:AssumeRole
-      Policies: 
-        - 
-          PolicyName: "InvokeAuthorizerFunction"
-          PolicyDocument: 
-            Version: "2012-10-17"
-            Statement: 
-              - 
-                Effect: "Allow"
-                Action:
-                  - lambda:InvokeAsync
-                  - lambda:InvokeFunction
-                Resource:
-                  Fn::ImportValue: !Sub
-                    "${CustAuthStackName}-CustAuthLambdaArn"  
-    DependsOn:
-    - RESTLambdaFunction
-
 
   PresignedUrlMQTTRule:
     Type: "AWS::IoT::TopicRule"
@@ -355,7 +333,7 @@ Resources:
           COMMANDS_TABLES_TEMPLATES: !Ref TemplatesTable
           COMMANDS_TABLES_JOBS: !Ref JobsTable
       Tracing: Active
-      
+
   RESTLambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -392,7 +370,6 @@ Resources:
   TemplatesTable:
     Type: AWS::DynamoDB::Table
     Properties: 
-      TableName: !Sub 'cdf-commands-templates-${Environment}'
       AttributeDefinitions: 
         - 
           AttributeName: "templateId"
@@ -404,6 +381,7 @@ Resources:
       ProvisionedThroughput: 
         ReadCapacityUnits: "5"
         WriteCapacityUnits: "5"
+      TableName: !Sub 'cdf-commands-templates-${Environment}'
 
   JobsTable:
     Type: AWS::DynamoDB::Table
@@ -437,6 +415,7 @@ Resources:
           ProvisionedThroughput:
             ReadCapacityUnits: "5"
             WriteCapacityUnits: "5"
+
 
 Outputs:
   PresignedUrlLambdaArn:

@@ -19,19 +19,19 @@ Parameters:
     Description: This allows you to override any configuration application configuration. Must be a JSON formatted string. Any configurations contained in this will override the configurations found and merged from the config files.
     Type: String
     MinLength: 1
-
-  CustAuthStackName:
-    Description: Name of custom authorizer Stack.  Leave blank to disable authorization.
-    Type: String
-    MinLength: 1
   KmsKeyId:
     Description: The KMS key ID used to encrypt SSM parameters
     Type: String
     MinLength: 1
 
+  CustAuthStackName:
+    Description: Name of custom authorizer Stack (if required).
+    Type: String
+
+Conditions:
+  DeployWithCustomAuth: !Not [ !Equals [ !Ref CustAuthStackName, "" ]]
 
 Resources:
-
   ApiGatewayApi:
     Type: AWS::Serverless::Api
     Properties:
@@ -40,7 +40,7 @@ Resources:
       DefinitionBody:
         swagger: 2.0
         info:
-          title: !Sub 'CDF Bulk Certs API - ${Environment}'
+          title: !Sub 'CDF Bulk Certs API (${Environment})'
 
         basePath: "/"
         schemes:
@@ -56,7 +56,10 @@ Resources:
                   schema:
                     $ref: "#/definitions/Empty"
               security:
-              - CustomAuthorizer: []
+                Fn::If:
+                - DeployWithCustomAuth
+                - CustomAuthorizer: []
+                - Ref: AWS::NoValue
               x-amazon-apigateway-integration:
                 responses:
                   default:
@@ -111,7 +114,10 @@ Resources:
                 type: string
               responses: {}
               security:
-              - CustomAuthorizer: []
+                Fn::If:
+                - DeployWithCustomAuth
+                - CustomAuthorizer: []
+                - Ref: AWS::NoValue
               x-amazon-apigateway-integration:
                 uri: 
                   Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaFunction.Arn}/invocations"
@@ -157,55 +163,27 @@ Resources:
             type: object
             title: Empty Schema
         securityDefinitions:
-          CustomAuthorizer:
-            type: apiKey
-            name: Authorization
-            in: header
-            x-amazon-apigateway-authtype: custom
-            x-amazon-apigateway-authorizer:
-              type: token
-              authorizerUri: !Sub
-              - "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CustAuthLambdaArn}/invocations"
-              - CustAuthLambdaArn: 
-                  Fn::ImportValue: !Sub 
-                    '${CustAuthStackName}-CustAuthLambdaArn'
-              authorizerCredentials: !Sub '${ApiGatewayAuthorizerInvokeRole.Arn}'
-              authorizerResultTtlInSeconds: 60
+          Fn::If:
+          - DeployWithCustomAuth
+          - CustomAuthorizer:
+              type: apiKey
+              name: Authorization
+              in: header
+              x-amazon-apigateway-authtype: custom
+              x-amazon-apigateway-authorizer:
+                type: token
+                authorizerUri: !Sub
+                - "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CustAuthLambdaArn}/invocations"
+                - CustAuthLambdaArn: 
+                    Fn::ImportValue: !Sub 
+                      '${CustAuthStackName}-CustAuthLambdaArn'
+                authorizerCredentials: !Sub '${ApiGatewayAuthorizerInvokeRole.Arn}'
+                authorizerResultTtlInSeconds: 60
+          - Ref: AWS::NoValue
     DependsOn:
-      - ApiGatewayAuthorizerInvokeRole
       - LambdaFunction
-      
-  ApiGatewayAuthorizerInvokeRole:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument: 
-        Version: "2012-10-17"
-        Statement: 
-          - 
-            Effect: "Allow"
-            Principal: 
-              Service: 
-                - "apigateway.amazonaws.com"
-            Action: 
-              - sts:AssumeRole
-      Policies: 
-        - 
-          PolicyName: "InvokeAuthorizerFunction"
-          PolicyDocument: 
-            Version: "2012-10-17"
-            Statement: 
-              - 
-                Effect: "Allow"
-                Action:
-                  - lambda:InvokeAsync
-                  - lambda:InvokeFunction
-                Resource:
-                  Fn::ImportValue: !Sub
-                    "${CustAuthStackName}-CustAuthLambdaArn"  
-    DependsOn:
-    - LambdaFunction
 
- LambdaExecutionRole:
+  LambdaExecutionRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
@@ -383,6 +361,8 @@ Resources:
       ProvisionedThroughput: 
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5
+
+
 Outputs:
   LambdaFunctionConsoleUrl:
     Description: Console URL for the Lambda Function.

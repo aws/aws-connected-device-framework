@@ -1,8 +1,0 @@
-
-{
-	"Parameters": {
-		"Environment": "sandbox",
-		"ApplicationConfigurationOverride": "./sandbox-config.json",
-		"CustAuthStackName": ""
-	}
-}

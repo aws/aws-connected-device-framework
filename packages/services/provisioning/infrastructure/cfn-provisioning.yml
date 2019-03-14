@@ -19,14 +19,12 @@ Parameters:
     Type: String
 
   CustAuthStackName:
-    Description: Name of custom authorizer Stack.  Leave blank to disable authorization.
+    Description: Name of custom authorizer Stack (if required).
     Type: String
-    MinLength: 1
-
 
 Conditions:
   KmsKeyIdProvided: !Not [ !Equals [ !Ref KmsKeyId, "" ] ]
-
+  DeployWithCustomAuth: !Not [ !Equals [ !Ref CustAuthStackName, "" ]]
 
 Resources:
   ApiGatewayApi:
@@ -37,7 +35,7 @@ Resources:
       DefinitionBody:
         swagger: 2.0
         info:
-          title: CDF Provisioning API
+          title: !Sub 'CDF Provisioning API (${Environment})'
 
         basePath: "/"
         schemes:
@@ -53,7 +51,10 @@ Resources:
                   schema:
                     $ref: "#/definitions/Empty"
               security:
-              - CustomAuthorizer: []
+                Fn::If:
+                - DeployWithCustomAuth
+                - CustomAuthorizer: []
+                - Ref: AWS::NoValue
               x-amazon-apigateway-integration:
                 responses:
                   default:
@@ -108,7 +109,10 @@ Resources:
                 type: string
               responses: {}
               security:
-              - CustomAuthorizer: []
+                Fn::If:
+                - DeployWithCustomAuth
+                - CustomAuthorizer: []
+                - Ref: AWS::NoValue
               x-amazon-apigateway-integration:
                 uri: 
                   Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaFunction.Arn}/invocations"
@@ -154,54 +158,25 @@ Resources:
             type: object
             title: Empty Schema
         securityDefinitions:
-          CustomAuthorizer:
-            type: apiKey
-            name: Authorization
-            in: header
-            x-amazon-apigateway-authtype: custom
-            x-amazon-apigateway-authorizer:
-              type: token
-              authorizerUri: !Sub
-              - "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CustAuthLambdaArn}/invocations"
-              - CustAuthLambdaArn: 
-                  Fn::ImportValue: !Sub 
-                    '${CustAuthStackName}-CustAuthLambdaArn'
-              authorizerCredentials: !Sub '${ApiGatewayAuthorizerInvokeRole.Arn}'
-              authorizerResultTtlInSeconds: 60
+          Fn::If:
+          - DeployWithCustomAuth
+          - CustomAuthorizer:
+              type: apiKey
+              name: Authorization
+              in: header
+              x-amazon-apigateway-authtype: custom
+              x-amazon-apigateway-authorizer:
+                type: token
+                authorizerUri: !Sub
+                - "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CustAuthLambdaArn}/invocations"
+                - CustAuthLambdaArn: 
+                    Fn::ImportValue: !Sub 
+                      '${CustAuthStackName}-CustAuthLambdaArn'
+                authorizerCredentials: !Sub '${ApiGatewayAuthorizerInvokeRole.Arn}'
+                authorizerResultTtlInSeconds: 60
+          - Ref: AWS::NoValue
     DependsOn:
-      - ApiGatewayAuthorizerInvokeRole
       - LambdaFunction
-      
-  ApiGatewayAuthorizerInvokeRole:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument: 
-        Version: "2012-10-17"
-        Statement: 
-          - 
-            Effect: "Allow"
-            Principal: 
-              Service: 
-                - "apigateway.amazonaws.com"
-            Action: 
-              - sts:AssumeRole
-      Policies: 
-        - 
-          PolicyName: "InvokeAuthorizerFunction"
-          PolicyDocument: 
-            Version: "2012-10-17"
-            Statement: 
-              - 
-                Effect: "Allow"
-                Action:
-                  - lambda:InvokeAsync
-                  - lambda:InvokeFunction
-                Resource:
-                  Fn::ImportValue: !Sub
-                    "${CustAuthStackName}-CustAuthLambdaArn"  
-    DependsOn:
-    - LambdaFunction
-
 
   LambdaExecutionRole:
     Type: AWS::IAM::Role
@@ -218,12 +193,25 @@ Resources:
       Path: "/"
       ManagedPolicyArns:
         - !If [KmsKeyIdProvided, !Ref SSMPolicy, !Ref "AWS::NoValue"]
+        - !Ref BulkProvisioningPolicy
         - arn:aws:iam::aws:policy/AWSLambdaExecute
         - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
         - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
         - arn:aws:iam::aws:policy/AmazonS3FullAccess
         - arn:aws:iam::aws:policy/AWSIoTConfigAccess
 
+  BulkProvisioningPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: "cdf-provisioning policy for enabling bulk provisoning"
+      Path: "/cdf/provisioning/"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Action:
+              - 'iam:PassRole'
+            Effect: Allow
+            Resource: "*"
 
   SSMPolicy:
     Type: AWS::IAM::ManagedPolicy
@@ -256,7 +244,7 @@ Resources:
         Variables:
           NODE_CONFIG_DIR: './config'
           NODE_CONFIG: !Ref ApplicationConfigurationOverride
-          CDF_PROVISIONING_S3_ROLEARN: !Ref LambdaExecutionRole
+          CDF_PROVISIONING_S3_ROLEARN: !GetAtt LambdaExecutionRole.Arn
       Tracing: Active
       Events:
         ProxyApiRoot:

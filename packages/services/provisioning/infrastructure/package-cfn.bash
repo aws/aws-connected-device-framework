@@ -20,17 +20,15 @@ MANDATORY ARGUMENTS:
     -b (string)   The name of the S3 bucket to deploy CloudFormation templates into.
 
 OPTIONAL ARGUMENTS
-    -a (flag)     Apply a custom authorizer to the deployed service?
     -R (string)   AWS region.
     -P (string)   AWS profile.
     
 EOF
 }
 
-while getopts ":b:aR:P:" opt; do
+while getopts ":b:R:P:" opt; do
   case $opt in
     b  ) export DEPLOY_ARTIFACTS_STORE_BUCKET=$OPTARG;;
-    a  ) export AUTH=true;;
     R  ) export AWS_REGION=$OPTARG;;
     P  ) export AWS_PROFILE=$OPTARG;;
     \? ) echo "Unknown option: -$OPTARG" >&2; help_message; exit 1;;
@@ -43,13 +41,6 @@ if [ -z "$DEPLOY_ARTIFACTS_STORE_BUCKET" ]; then
 	echo -b DEPLOY_ARTIFACTS_STORE_BUCKET is required; help_message; exit 1;
 fi
 
-if [ -z "$AUTH" ]; then
-  echo Warning!  No authorization will be applied.
-  template_file='infrastructure/cfn-provisioning-noAuth.yml'
-else
-  template_file='infrastructure/cfn-provisioning.yml' 
-fi
-
 AWS_ARGS=
 if [ -n "$AWS_REGION" ]; then
 	AWS_ARGS="--region $AWS_REGION "
@@ -58,6 +49,9 @@ if [ -n "$AWS_PROFILE" ]; then
 	AWS_ARGS="$AWS_ARGS--profile $AWS_PROFILE"
 fi
 
+cwd=$(dirname "$0")
+mkdir -p $cwd/build
+
 
 echo '
 **********************************************************
@@ -65,8 +59,8 @@ echo '
 **********************************************************
 '
 aws cloudformation package \
-  --template-file $template_file \
-  --output-template-file build/cfn-provisioning-output.yml \
+  --template-file $cwd/cfn-provisioning.yml \
+  --output-template-file $cwd/build/cfn-provisioning-output.yml \
   --s3-bucket $DEPLOY_ARTIFACTS_STORE_BUCKET \
   $AWS_ARGS
 

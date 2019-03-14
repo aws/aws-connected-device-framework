@@ -1,25 +1,36 @@
 AWSTemplateFormatVersion : '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 
-Description: CDF Provisioning Service
+Description: CDF Request Queue Service
 
-Parameters:
+Parameters:  
   Environment:
     Description:  Name of environment.  Used to name the created resources.
     Type: String
     MinLength: 1
-    
+  PrimaryLambdaArn:
+    Description:  ARN of API Lambda function in primary region to be used when replaying API events.
+    Type: String
+    MinLength: 1
+  ReplayPollingEnabled:
+    Description:  Should replay Lambda be invoked periodically to check for queued events to replay
+    Type: String
+    Default: DISABLED
+    AllowedValues:
+      - ENABLED
+      - DISABLED
   ApplicationConfigurationOverride:
     Description: This allows you to override any configuration application configuration. Must be a JSON formatted string. Any configurations contained in this will override the configurations found and merged from the config files.
     Type: String
     MinLength: 1
 
-  KmsKeyId:
-    Description: The KMS key ID used to encrypt SSM parameters
+  CustAuthStackName:
+    Description: Name of custom authorizer Stack (if required).
     Type: String
 
 Conditions:
-  KmsKeyIdProvided: !Not [ !Equals [ !Ref KmsKeyId, "" ] ]
+  DeployWithCustomAuth: !Not [ !Equals [ !Ref CustAuthStackName, "" ]]
+
 
 Resources:
   ApiGatewayApi:
@@ -30,7 +41,7 @@ Resources:
       DefinitionBody:
         swagger: 2.0
         info:
-          title: CDF Provisioning API
+          title: !Sub 'CDF Request Queue API (${Environment})'
 
         basePath: "/"
         schemes:
@@ -45,12 +56,17 @@ Resources:
                   description: '200 response'
                   schema:
                     $ref: "#/definitions/Empty"
+              security:
+                Fn::If:
+                - DeployWithCustomAuth
+                - CustomAuthorizer: []
+                - Ref: AWS::NoValue
               x-amazon-apigateway-integration:
                 responses:
                   default:
                     statusCode: '200'
                 uri:
-                  Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaFunction.Arn}/invocations"
+                  Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ProxyLambdaFunction.Arn}/invocations"
                 passthroughBehavior: when_no_match
                 httpMethod: POST
                 type: aws_proxy
@@ -98,9 +114,14 @@ Resources:
                 required: true
                 type: string
               responses: {}
+              security:
+                Fn::If:
+                - DeployWithCustomAuth
+                - CustomAuthorizer: []
+                - Ref: AWS::NoValue
               x-amazon-apigateway-integration:
                 uri: 
-                  Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaFunction.Arn}/invocations"
+                  Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ProxyLambdaFunction.Arn}/invocations"
                 httpMethod: POST
                 type: aws_proxy
 
@@ -142,10 +163,28 @@ Resources:
           Empty:
             type: object
             title: Empty Schema
+        securityDefinitions:
+          Fn::If:
+          - DeployWithCustomAuth
+          - CustomAuthorizer:
+              type: apiKey
+              name: Authorization
+              in: header
+              x-amazon-apigateway-authtype: custom
+              x-amazon-apigateway-authorizer:
+                type: token
+                authorizerUri: !Sub
+                - "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CustAuthLambdaArn}/invocations"
+                - CustAuthLambdaArn: 
+                    Fn::ImportValue: !Sub 
+                      '${CustAuthStackName}-CustAuthLambdaArn'
+                authorizerCredentials: !Sub '${ApiGatewayAuthorizerInvokeRole.Arn}'
+                authorizerResultTtlInSeconds: 60
+          - Ref: AWS::NoValue
     DependsOn:
-      - LambdaFunction
+      - ProxyLambdaFunction
 
-  LambdaExecutionRole:
+  RestLambdaExecutionRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
@@ -153,65 +192,91 @@ Resources:
         Statement:
           Effect: Allow
           Principal:
-            Service: 
-              - lambda.amazonaws.com
-              - iot.amazonaws.com
+            Service: lambda.amazonaws.com
           Action: sts:AssumeRole
       Path: "/"
       ManagedPolicyArns:
-        - !If [KmsKeyIdProvided, !Ref SSMPolicy, !Ref "AWS::NoValue"]
-        - !Ref BulkProvisioningPolicy
+        - !Ref SqsPolicy
         - arn:aws:iam::aws:policy/AWSLambdaExecute
         - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
         - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
-        - arn:aws:iam::aws:policy/AmazonS3FullAccess
-        - arn:aws:iam::aws:policy/AWSIoTConfigAccess
+    DependsOn:
+      - SqsPolicy
 
-  BulkProvisioningPolicy:
+  ReplayLambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: sts:AssumeRole
+      Path: "/"
+      ManagedPolicyArns:
+        - !Ref SqsPolicy
+        - !Ref PrimaryRegionLambdaInvokePolicy
+        - arn:aws:iam::aws:policy/AWSLambdaExecute
+        - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
+    DependsOn:
+      - SqsPolicy
+      - PrimaryRegionLambdaInvokePolicy
+
+  SqsPolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
-      Description: "cdf-provisioning policy for enabling bulk provisoning"
-      Path: "/cdf/provisioning/"
+      Description: "cdf-request-queue policy for accessing SQS"
+      Path: "/cdf/requestqueue/"
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
           - Action:
-              - 'iam:PassRole'
+              - 'sqs:*'
             Effect: Allow
-            Resource: "*"
+            Resource:
+              Fn::GetAtt: 
+                - 'RequestQueue'
+                - 'Arn'
+          - Action:
+              - 'sqs:*'
+            Effect: Allow
+            Resource:
+              Fn::GetAtt: 
+                - 'DlqQueue'
+                - 'Arn'
+    DependsOn:
+      - RequestQueue
+      - DlqQueue
 
-  SSMPolicy:
+  PrimaryRegionLambdaInvokePolicy:
     Type: AWS::IAM::ManagedPolicy
-    Condition: KmsKeyIdProvided
     Properties:
-      Description: "cdf-provisioning policy for accessing SSM and KMS"
-      Path: "/cdf/provisioning/"
+      Description: "cdf-request-queue policy for invoking lambda in primary region"
+      Path: "/cdf/requestqueue/"
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
           - Action:
-              - 'ssm:GetParameter*'
+              - 'lambda:InvokeFunction'
             Effect: Allow
-            Resource: !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/cdf-ca-key-*"
-          - Action:
-              - 'kms:Decrypt'
-            Effect: Allow
-            Resource: !Sub "arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/${KmsKeyId}"
+            Resource: !Ref PrimaryLambdaArn
 
-  LambdaFunction:
+  ProxyLambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: ../build/build.zip
       Handler: lambda_proxy.handler
-      MemorySize: 1024
-      Role: !GetAtt LambdaExecutionRole.Arn
+      MemorySize: 512
+      Role: !GetAtt RestLambdaExecutionRole.Arn
       Runtime: nodejs8.10
-      Timeout: 60
+      Timeout: 30
       Environment:
         Variables:
           NODE_CONFIG_DIR: './config'
           NODE_CONFIG: !Ref ApplicationConfigurationOverride
-          CDF_PROVISIONING_S3_ROLEARN: !GetAtt LambdaExecutionRole.Arn
+          REQUESTQUEUE_REQUEST_QUEUE_URL: !Ref RequestQueue
       Tracing: Active
       Events:
         ProxyApiRoot:
@@ -227,21 +292,85 @@ Resources:
             Path: /{proxy+}
             Method: ANY
     DependsOn:
-      - LambdaExecutionRole
+      - RestLambdaExecutionRole
 
+  ReplayLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../build/build.zip
+      Handler: replay.handler
+      MemorySize: 512
+      Role: !GetAtt ReplayLambdaExecutionRole.Arn
+      Runtime: nodejs8.10
+      Timeout: 300
+      Environment:
+        Variables:
+          NODE_CONFIG_DIR: './config'
+          NODE_CONFIG: !Ref ApplicationConfigurationOverride
+          REQUESTQUEUE_REQUEST_QUEUE_URL: !Ref RequestQueue
+          REQUESTQUEUE_DLQ_QUEUE_URL: !Ref DlqQueue
+      Tracing: Active
+    DependsOn:
+      - ReplayLambdaExecutionRole
+
+  RequestQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      FifoQueue: true
+      MessageRetentionPeriod: 604800
+      VisibilityTimeout: 60
+      ContentBasedDeduplication: true
+
+  DlqQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      FifoQueue: true
+      MessageRetentionPeriod: 1209600
+      VisibilityTimeout: 60
+      ContentBasedDeduplication: true
+
+  ScheduledReplayRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Description: 'CloudWatch Event Rule which periodically invokes the replay Lambda function to check for calls to replay'
+      ScheduleExpression: 'rate(5 minutes)'
+      State: !Ref ReplayPollingEnabled
+      Targets:
+        -
+          Arn:
+            Fn::GetAtt:
+              - 'ReplayLambdaFunction'
+              - 'Arn'
+          Id: 'ReplayFunctionTarget'
+
+  ReplayLambdaEventInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName:
+        Ref: ReplayLambdaFunction
+      Action: lambda:InvokeFunction
+      Principal: events.amazonaws.com
+      SourceArn:
+        Fn::GetAtt:
+          - 'ScheduledReplayRule'
+          - 'Arn'
 
 Outputs:
-  LambdaFunctionConsoleUrl:
+  ProxyLambdaFunctionConsoleUrl:
     Description: Console URL for the Lambda Function.
-    Value: !Sub "https://{AWS::Region}.console.aws.amazon.com/lambda/home?region={AWS::Region}#/functions/{LambdaFunction}"
-  ApiGatewayUrl:
-    Description: URL for application
-    Value: !Join
-      - ''
-      - - 'https://'
-        - !Ref ApiGatewayApi
-        - '.execute-api.'
-        - !Ref 'AWS::Region'
-        - '.amazonaws.com/Prod'
+    Value: !Sub "https://{AWS::Region}.console.aws.amazon.com/lambda/home?region={AWS::Region}#/functions/{ProxyLambdaFunction}"
+  ProxyLambdaFunction:
+    Description: RequestQueue lambda function
+    Value: !Sub '${ProxyLambdaFunction.Arn}'
     Export:
-      Name: !Sub 'cdf-provisioning-${Environment}-apigatewayurl'
+        Name: !Sub '${AWS::StackName}-LambdaFunction'
+  RequestQueueUrl:
+    Description: Request Queue SQS URL
+    Value: !Sub '${RequestQueue}'
+    Export:
+        Name: !Sub '${AWS::StackName}-Request-Queue-URL'
+  RequestDlqUrl:
+    Description: Request DLQ SQS URL
+    Value: !Sub '${DlqQueue}'
+    Export:
+        Name: !Sub '${AWS::StackName}-Request-DLQ-URL'

@@ -52,7 +52,7 @@ Resources:
       DefinitionBody:
         swagger: 2.0
         info:
-          title: CDF Asset Library API
+          title: !Sub 'CDF Asset Library API (${Environment})'
 
         basePath: "/"
         schemes:
