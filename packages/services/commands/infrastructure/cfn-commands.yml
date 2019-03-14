@@ -211,7 +211,7 @@ Resources:
                   Fn::ImportValue: !Sub
                     "${CustAuthStackName}-CustAuthLambdaArn"  
     DependsOn:
-    - LambdaFunction
+    - RESTLambdaFunction
 
   PresignedUrlMQTTRule:
     Type: "AWS::IoT::TopicRule"

@@ -213,7 +213,7 @@ Resources:
                   Fn::ImportValue: !Sub
                     "${CustAuthStackName}-CustAuthLambdaArn"  
     DependsOn:
-    - LambdaFunction
+    - ProxyLambdaFunction
 
   RestLambdaExecutionRole:
     Type: AWS::IAM::Role

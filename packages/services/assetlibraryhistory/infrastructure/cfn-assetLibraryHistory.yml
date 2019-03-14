@@ -208,7 +208,7 @@ Resources:
                   Fn::ImportValue: !Sub
                     "${CustAuthStackName}-CustAuthLambdaArn"  
     DependsOn:
-    - LambdaFunction
+    - RESTLambdaFunction
 
   AssetLibraryEventsRule:
     Type: "AWS::IoT::TopicRule"
