@@ -7,7 +7,7 @@ echo deployproject_postbuild started on `date`
 
 function publish_artifacts() {
     bundleName="$1.zip"
-    basedir=$(dirname $(pwd))
+    basedir=$(dirname)
 
     rm -rf $basedir/bundled
     releasedir=$basedir/bundled
@@ -60,7 +60,7 @@ if [ "$CODEBUILD_BUILD_SUCCEEDING" -eq 1 ]; then
     ### Next, if this was a live deploy, publish the artifacts as an installable package
     if [ "$DEPLOY_ENV"="LIVE" ]; then
         echo publishing artifacts...
-        publish_artifacts tagNames[0]
+        publish_artifacts "$tagNames[0]"
     fi
 
 fi
