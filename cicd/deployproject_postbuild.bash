@@ -7,7 +7,7 @@ echo deployproject_postbuild started on `date`
 
 function publish_artifacts() {
     bundleName="$1.zip"
-    basedir=$(dirname)
+    basedir=$(pwd)
 
     rm -rf $basedir/bundled
     releasedir=$basedir/bundled

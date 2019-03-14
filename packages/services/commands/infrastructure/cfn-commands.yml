@@ -39,7 +39,7 @@ Resources:
       DefinitionBody:
         swagger: 2.0
         info:
-          title: !Sub 'CDF Commands API (${Environment})'
+          title: !Sub 'CDF Commands (${Environment})'
 
         basePath: "/"
         schemes:

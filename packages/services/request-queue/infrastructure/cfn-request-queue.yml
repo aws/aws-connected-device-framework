@@ -41,7 +41,7 @@ Resources:
       DefinitionBody:
         swagger: 2.0
         info:
-          title: !Sub 'CDF Request Queue API (${Environment})'
+          title: !Sub 'CDF Request Queue (${Environment})'
 
         basePath: "/"
         schemes:

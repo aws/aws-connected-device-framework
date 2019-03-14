@@ -35,7 +35,7 @@ Resources:
       DefinitionBody:
         swagger: 2.0
         info:
-          title: !Sub 'CDF Provisioning API (${Environment})'
+          title: !Sub 'CDF Provisioning (${Environment})'
 
         basePath: "/"
         schemes:
