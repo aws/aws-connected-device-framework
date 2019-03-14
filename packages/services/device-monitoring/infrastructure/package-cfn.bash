@@ -50,6 +50,9 @@ if [ -n "$AWS_PROFILE" ]; then
 	AWS_ARGS="$AWS_ARGS--profile $AWS_PROFILE"
 fi
 
+cwd=$(dirname "$0")
+mkdir -p $cwd/build
+
 
 echo '
 **********************************************************
@@ -57,8 +60,8 @@ echo '
 **********************************************************
 '
 aws cloudformation package \
-  --template-file infrastructure/cfn-device-monitoring.yaml \
-  --output-template-file build/cfn-device-monitoring-output.yaml \
+  --template-file $cwd/cfn-device-monitoring.yml \
+  --output-template-file $cwd/build/cfn-device-monitoring-output.yml \
   --s3-bucket $DEPLOY_ARTIFACTS_STORE_BUCKET \
   $AWS_ARGS
 

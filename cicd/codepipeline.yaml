@@ -79,7 +79,6 @@ Parameters:
     Description: A space delimited list of packages to publish.
     Type: String
     MinLength: 1
-    Default: 'assetlibrary assetlibraryhistory auth-devicecert bulkcerts certificatevendor commands device-monitoring provisioning request-queue'
 
 
 Conditions:

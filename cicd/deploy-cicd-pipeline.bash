@@ -157,6 +157,8 @@ if [ -n "$AWS_PROFILE" ]; then
 	AWS_ARGS="$AWS_ARGS--profile $AWS_PROFILE"
 fi
 
+PACKAGES_TO_PUBLISH='assetlibrary,assetlibraryhistory,auth-devicecert,bulkcerts,certificatevendor,commands,device-monitoring,provisioning,request-queue'
+
 
 echo '
 **********************************************************
@@ -197,6 +199,7 @@ aws cloudformation deploy \
       KmsKeyId=$KMS_KEY_ID \
       DeviceUploadBucket=$DEVICE_UPLOAD_BUCKET \
       CustomAuthStackName=  \
+      PackagesToPublish="$PACKAGES_TO_PUBLISH" \
   --capabilities CAPABILITY_NAMED_IAM \
   $AWS_ARGS
 
