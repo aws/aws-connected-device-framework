@@ -14,23 +14,24 @@ function publish_artifacts() {
     mkdir $releasedir
 
     ### copy the main infrastructure scripts/templates
-    cp -R $basedir/infrastructure $releasedir/
+    cp -R $basedir/infrastructure $releasedir/infrastructure
 
     ### copy each of the pre-compiled packages along with its related infrastructure scripts/templates
     for package in $PACKAGES_TO_PUBLISH; do
         mkdir -p $releasedir/packages/services/$package/build
-        cp $basedir/packages/services/$package/build/build.zip $releasedir/packages/services/$package/build/
-        cp -R $basedir/packages/services/$package/infrastructure $releasedir/packages/services/$package/
+        cp $basedir/packages/services/$package/build/build.zip $releasedir/packages/services/$package/build/build.zip
+        cp -R $basedir/packages/services/$package/infrastructure $releasedir/packages/services/$package/infrastructure
     done
 
     ### copy the integration tests
-    cp -R $basedir/packages/integration-tests $releasedir/packages/
+    cp -R $basedir/packages/integration-tests $releasedir/packages/integration-tests
 
     ### copy the documentation
-    cp -R $basedir/documentation $releasedir/
+    cp -R $basedir/documentation $releasedir/documentation
 
     ### zip and save to s3
     zip -r "$bundleName" $releasedir/*
+    echo Uploading "$bundleName" to "$PUBLISH_LOCATION/$bundleName"
     aws s3 cp "$bundleName" "$PUBLISH_LOCATION/$bundleName"
 
 }
