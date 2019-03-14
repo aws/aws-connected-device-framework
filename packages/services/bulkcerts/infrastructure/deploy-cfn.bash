@@ -99,6 +99,7 @@ Running with:
   AWS_REGION:                       $AWS_REGION
   AWS_PROFILE:                      $AWS_PROFILE
 "
+cwd=$(dirname "$0")
 
 echo '
 **********************************************************
@@ -138,7 +139,7 @@ echo '
 application_configuration_override=$(cat $BULKCERTS_CONFIG_LOCATION)
 
 aws cloudformation deploy \
-  --template-file build/cfn-bulkcerts-output.yml \
+  --template-file $cwd/build/cfn-bulkcerts-output.yml \
   --stack-name $BULKCERTS_STACK_NAME \
   --parameter-overrides \
       Environment=$ENVIRONMENT \

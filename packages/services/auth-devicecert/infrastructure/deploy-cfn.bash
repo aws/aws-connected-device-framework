@@ -69,6 +69,7 @@ Running with:
   AWS_PROFILE:                      $AWS_PROFILE
 "
 
+cwd=$(dirname "$0")
 
 echo '
 **********************************************************
@@ -76,7 +77,7 @@ echo '
 **********************************************************
 '
 aws cloudformation deploy \
-  --template-file build/cfn-auth-devicecert-output.yaml \
+  --template-file $cwd/build/cfn-auth-devicecert-output.yaml \
   --stack-name cdf-auth-devicecert-${ENVIRONMENT} \
   --parameter-overrides \
       Environment=$ENVIRONMENT \

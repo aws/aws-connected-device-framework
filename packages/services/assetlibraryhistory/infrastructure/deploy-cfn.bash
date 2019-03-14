@@ -88,6 +88,8 @@ Running with:
   AWS_PROFILE:                      $AWS_PROFILE
 "
 
+cwd=$(dirname "$0")
+
 echo '
 **********************************************************
   Deploying the Asset Library History CloudFormation template 
@@ -96,7 +98,7 @@ echo '
 application_configuration_override=$(cat $ASSETLIBRARYHISTORY_CONFIG_LOCATION)
 
 aws cloudformation deploy \
-  --template-file build/cfn-assetLibraryHistory-output.yml \
+  --template-file $cwd/build/cfn-assetLibraryHistory-output.yml \
   --stack-name $ASSETLIBRARYHISTORY_STACK_NAME \
   --parameter-overrides \
       Environment=$ENVIRONMENT \

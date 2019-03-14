@@ -71,6 +71,8 @@ Running with:
   AWS_PROFILE:                      $AWS_PROFILE
 "
 
+cwd=$(dirname "$0")
+
 echo '
 **********************************************************
 *****  Device Monitoring Identifying deployed endpoints ******
@@ -106,7 +108,7 @@ echo '
 application_configuration_override=$(cat $DEVICEMONITORING_CONFIG_LOCATION)
 
 aws cloudformation deploy \
-  --template-file build/cfn-device-monitoring-output.yaml \
+  --template-file $cwd/build/cfn-device-monitoring-output.yaml \
   --stack-name cdf-device-monitoring-${ENVIRONMENT} \
   --parameter-overrides \
       ApplicationConfigurationOverride="$application_configuration_override" \

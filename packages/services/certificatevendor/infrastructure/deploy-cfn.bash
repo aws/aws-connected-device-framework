@@ -140,6 +140,7 @@ echo "
   AWS_PROFILE:                      $AWS_PROFILE
 "
 
+cwd=$(dirname "$0")
 
 
 if [ -z "$BYPASS_CREATE_THING_GROUP" ]; then
@@ -210,7 +211,7 @@ echo '
 **********************************************************
 '
 aws cloudformation deploy \
-  --template-file build/cfn-certificatevendor-output.yml \
+  --template-file $cwd/build/cfn-certificatevendor-output.yml \
   --stack-name $CERTIFICATEVENDOR_STACK_NAME \
   --parameter-overrides \
       BucketName=$BUCKET \

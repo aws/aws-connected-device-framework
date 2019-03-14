@@ -98,6 +98,8 @@ Running with:
   AWS_PROFILE:                      $AWS_PROFILE
 "
 
+cwd=$(dirname "$0")
+
 echo '
 **********************************************************
   Deploying the CDF Request Queue CloudFormation template 
@@ -106,7 +108,7 @@ echo '
 application_configuration_override=$(cat $REQUESTQUEUE_CONFIG_LOCATION)
 
 aws cloudformation deploy \
-  --template-file build/cfn-cdf-request-queue-output.yml \
+  --template-file $cwd/build/cfn-request-queue-output.yml \
   --stack-name $REQUESTQUEUE_STACK_NAME \
   --parameter-overrides \
       Environment=$ENVIRONMENT \

@@ -82,6 +82,7 @@ Running with:
   AWS_PROFILE:                      $AWS_PROFILE
 "
 
+cwd=$(dirname "$0")
 
 echo '
 **********************************************************
@@ -91,7 +92,7 @@ echo '
 application_configuration_override=$(cat $PROVISIONING_CONFIG_LOCATION)
 
 aws cloudformation deploy \
-  --template-file build/cfn-provisioning-output.yml \
+  --template-file $cwd/build/cfn-provisioning-output.yml \
   --stack-name $PROVISIONING_STACK_NAME \
   --parameter-overrides \
       Environment=$ENVIRONMENT \

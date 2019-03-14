@@ -100,6 +100,7 @@ Running with:
   AWS_PROFILE:                      $AWS_PROFILE
 "
 
+cwd=$(dirname "$0")
 
 
 echo '
@@ -151,7 +152,7 @@ echo '
 **********************************************************
 '
 aws cloudformation deploy \
-  --template-file build/cfn-commands-output.yml \
+  --template-file $cwd/build/cfn-commands-output.yml \
   --stack-name $COMMANDS_STACK_NAME \
   --parameter-overrides \
       Environment=$ENVIRONMENT \
