@@ -75,6 +75,12 @@ Parameters:
     Type: String
     MinLength: 1
 
+  PackagesToPublish:
+    Description: A space delimited list of packages to publish.
+    Type: String
+    MinLength: 1
+    Default: 'assetlibrary assetlibraryhistory auth-devicecert bulkcerts certificatevendor commands device-monitoring provisioning request-queue'
+
 
 Conditions:
   CodePipelineNameProvided:  !Not [ !Equals [ !Ref CodePipelineName, "" ] ]
@@ -172,10 +178,9 @@ Resources:
                 - bash -c cicd/buildproject_postbuild.bash
 
           artifacts:
-            base-directory: $CODEBUILD_SRC_DIR
+            base-directory: $CODEBUILD_SRC_DIR/../bundled
             discard-paths: no
             files:
-              - node_modules
               - '**/*'
 
   IntegrationTestingProject:
@@ -367,6 +372,15 @@ Resources:
           - Name: MODE
             Type: PLAINTEXT
             Value: !Ref AssetLibraryMode
+
+          - Name: PACKAGES_TO_PUBLISH
+            Type: PLAINTEXT
+            Value: !Ref PackagesToPublish
+          - Name: PUBLISH_LOCATION
+            Type: PLAINTEXT
+            Value: !Sub 's3://${ArtifactStoreBucketName}/releases'
+
+            
           # - Name: CUST_AUTH_STACK_NAME
           #   Type: PLAINTEXT
           #   Value: !Ref CustAuthStackName
@@ -459,7 +473,7 @@ Resources:
                 - Name: gitified_main
                 - Name: source_infrastructure
               OutputArtifacts:
-                - Name: compiled
+                - Name: bundled
               Configuration:
                 ProjectName: !Ref BuildProject
                 PrimarySource: gitified_main
@@ -476,11 +490,11 @@ Resources:
                 Version: 1
                 Provider: CodeBuild
               InputArtifacts:
-                - Name: compiled
+                - Name: bundled
                 - Name: source_infrastructure
               Configuration:
                 ProjectName: !Ref DeployStagingProject
-                PrimarySource: compiled
+                PrimarySource: bundled
               RunOrder: 1
 
         -
@@ -494,11 +508,11 @@ Resources:
                 Version: 1
                 Provider: CodeBuild
               InputArtifacts:
-                - Name: compiled
+                - Name: bundled
                 - Name: source_infrastructure
               Configuration:
                 ProjectName: !Ref IntegrationTestingProject
-                PrimarySource: compiled
+                PrimarySource: bundled
               RunOrder: 1
 
         -
@@ -512,11 +526,11 @@ Resources:
                 Version: 1
                 Provider: CodeBuild
               InputArtifacts:
-                - Name: compiled
+                - Name: bundled
                 - Name: source_infrastructure
               Configuration:
                 ProjectName: !Ref DeployLiveProject
-                PrimarySource: compiled
+                PrimarySource: bundled
               RunOrder: 1
 
       ArtifactStore:
@@ -567,9 +581,7 @@ Resources:
                 Sid: CloudWatchLogsPolicy
                 Effect: Allow
                 Action:
-                  - logs:CreateLogGroup
-                  - logs:CreateLogStream
-                  - logs:PutLogEvents
+                  - 'logs:*'
                 Resource:
                   - "*"
               - 
@@ -604,12 +616,12 @@ Resources:
                 Sid: SNSPolicy
                 Effect: Allow
                 Action:
-                  - SNS:CreateTopic
-                  - SNS:DeleteTopic
-                  - SNS:GetTopicAttributes
-                  - SNS:SetTopicAttributes
+                  - sns:CreateTopic
+                  - sns:DeleteTopic
+                  - sns:GetTopicAttributes
+                  - sns:SetTopicAttributes
+                  - sns:Subscribe
                 Resource:
-                  - "*"
                   - "*"
               - 
                 Sid: CognitoPolicy
@@ -633,7 +645,7 @@ Resources:
                 Action:
                   - lambda:*
                 Resource:
-                  - !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:cdf-*-${Environment}-*'
+                  - !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:cdf-*'
               - 
                 Sid: ApiGatewayPolicy
                 Effect: Allow
@@ -651,21 +663,36 @@ Resources:
                   - 'dynamodb:*'
                 Effect: Allow
                 Resource: 
-                  - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/cdf-*-${Environment}'
+                  - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/cdf-commands-*-${Environment}*'
+                  - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/cdf-bulkcerts-*-${Environment}*'
               - 
                 Sid: ec2
                 Action:
-                  - 'ec2:DescribeSubnets'
-                  - 'ec2:DescribeVpcs'
-                  - 'ec2:DescribeSecurityGroups'
-                  - 'ec2:CreateSecurityGroup'
-                  - 'ec2:DeleteSecurityGroup'
-                  - 'ec2:CreateVpcEndpoint'
-                  - 'ec2:DescribeVpcEndpoints'
-                  - 'ec2:CreateVpcEndpoint'
-                  - 'ec2:AuthorizeSecurityGroupIngress'
+                  - 'ec2:AllocateAddress'
+                  - 'ec2:AssociateAddress'
                   - 'ec2:AuthorizeSecurityGroupEgress'
+                  - 'ec2:AuthorizeSecurityGroupIngress'
+                  - 'ec2:CreateSecurityGroup'
+                  - 'ec2:CreateVpcEndpoint'
+                  - 'ec2:DeleteSecurityGroup'
+                  - 'ec2:DescribeAddresses'
+                  - 'ec2:DescribeInstances'
+                  - 'ec2:DescribeKeyPairs'
+                  - 'ec2:DescribeNetworkInterfaces'
+                  - 'ec2:DescribeSecurityGroups'
+                  - 'ec2:DescribeSubnets'
+                  - 'ec2:DescribeVpcEndpoints'
+                  - 'ec2:DescribeVpcs'
+                  - 'ec2:DisassociateAddress'
+                  - 'ec2:ReleaseAddress'
                   - 'ec2:RevokeSecurityGroupEgress'
+                Effect: Allow
+                Resource: 
+                  - "*"
+              -
+                Sid: autoscaling
+                Action:
+                  - 'autoscaling:*'
                 Effect: Allow
                 Resource: 
                   - "*"
@@ -679,7 +706,13 @@ Resources:
               - 
                 Sid: iot
                 Action:
+                  - 'iot:CreateTopicRule'
+                  - 'iot:CreatePolicy'
+                  - 'iot:CreatePolicyVersion'
+                  - 'iot:DeletePolicyVersion'
                   - 'iot:DescribeEndpoint'
+                  - 'iot:ListPolicyVersions'
+                  - 'iot:UpdateEventConfigurations'
                 Effect: Allow
                 Resource: 
                   - "*"
