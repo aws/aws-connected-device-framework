@@ -184,6 +184,37 @@ Resources:
     DependsOn:
       - ProxyLambdaFunction
 
+  ApiGatewayAuthorizerInvokeRole:
+    Type: AWS::IAM::Role
+    Condition: DeployWithCustomAuth
+    Properties:
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement: 
+          - 
+            Effect: "Allow"
+            Principal: 
+              Service: 
+                - "apigateway.amazonaws.com"
+            Action: 
+              - sts:AssumeRole
+      Policies: 
+        - 
+          PolicyName: "InvokeAuthorizerFunction"
+          PolicyDocument: 
+            Version: "2012-10-17"
+            Statement: 
+              - 
+                Effect: "Allow"
+                Action:
+                  - lambda:InvokeAsync
+                  - lambda:InvokeFunction
+                Resource:
+                  Fn::ImportValue: !Sub
+                    "${CustAuthStackName}-CustAuthLambdaArn"  
+    DependsOn:
+    - LambdaFunction
+
   RestLambdaExecutionRole:
     Type: AWS::IAM::Role
     Properties:
