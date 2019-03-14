@@ -33,7 +33,9 @@ function publish_artifacts() {
     cp -R $basedir/documentation $releasedir/documentation
 
     ### zip and save to s3
-    zip -r "$bundleName" "$releasedir/*"
+    cd $releasedir
+    echo Zipping "$releasedir" to "$bundleName"
+    zip -r "$bundleName" .
     echo Uploading "$bundleName" to "$PUBLISH_LOCATION/$bundleName"
     aws s3 cp "$bundleName" "$PUBLISH_LOCATION/$bundleName"
 
@@ -53,7 +55,8 @@ if [ "$CODEBUILD_BUILD_SUCCEEDING" -eq 1 ]; then
         DEPLOY_ENV='LIVE'
     fi
 
-    tagNames[0]="RELEASE-$DEPLOY_ENV-$(date -u +%Y%m%d%H%M%S)"
+    tagName="RELEASE-$DEPLOY_ENV-$(date -u +%Y%m%d%H%M%S)"
+    tagNames[0]=$tagName
     tagNames[1]="RELEASE-$DEPLOY_ENV-LATEST"
     
     for tagName in "${tagNames[@]}"; do 
@@ -64,7 +67,7 @@ if [ "$CODEBUILD_BUILD_SUCCEEDING" -eq 1 ]; then
     ### Next, if this was a live deploy, publish the artifacts as an installable package
     if [[ "$DEPLOY_ENV" = "LIVE" ]]; then
         echo publishing artifacts...
-        publish_artifacts "$tagNames[0]"
+        publish_artifacts "$tagName"
     fi
 
 fi
