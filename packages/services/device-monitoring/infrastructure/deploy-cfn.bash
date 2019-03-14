@@ -108,7 +108,7 @@ echo '
 application_configuration_override=$(cat $DEVICEMONITORING_CONFIG_LOCATION)
 
 aws cloudformation deploy \
-  --template-file $cwd/build/cfn-device-monitoring-output.yaml \
+  --template-file $cwd/build/cfn-device-monitoring-output.yml \
   --stack-name cdf-device-monitoring-${ENVIRONMENT} \
   --parameter-overrides \
       ApplicationConfigurationOverride="$application_configuration_override" \
