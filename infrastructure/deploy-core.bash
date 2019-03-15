@@ -242,6 +242,7 @@ COMMANDS_STACK_NAME=cdf-commands-${ENVIRONMENT}
 AUTH_DEVICECERT_STACK_NAME=cdf-auth-devicecert-${ENVIRONMENT}
 DEVICE_MONITORING_STACK_NAME=cdf-device-monitoring-${ENVIRONMENT}
 BULKCERTS_STACK_NAME=cdf-bulkcerts-${ENVIRONMENT}
+CERTIFICATEVENDOR_STACK_NAME=cdf-certificatevendor-${ENVIRONMENT}
 
 
 if [ -z "$BYPASS_NPM_INSTALL" ]; then
@@ -538,6 +539,30 @@ if [ -f $devicemonitoring_config ]; then
     $AWS_SCRIPT_ARGS &
 
     stacks+=($DEVICE_MONITORING_STACK_NAME)
+
+fi
+
+
+certificatevendor_config=$CONFIG_LOCATION/certificatevendor/$CONFIG_ENVIRONMENT-config.json
+if [ -f $certificatevendor_config ]; then
+
+    echo '
+    **********************************************************
+    *****  Deploying certificate vendor                 ******
+    **********************************************************
+    '
+
+    cd "$root_dir/packages/services/certificatevendor"
+
+    certificatevendor_bucket=$(cat $certificatevendor_config | jq -r '.aws.s3.certificates.bucket')
+    certificatevendor_prefix=$(cat $certificatevendor_config | jq -r '.aws.s3.certificates.prefix')
+
+    infrastructure/package-cfn.bash -b $DEPLOY_ARTIFACTS_STORE_BUCKET $AWS_SCRIPT_ARGS
+    infrastructure/deploy-cfn.bash -e $ENVIRONMENT -c $certificatevendor_config -b $certificatevendor_bucket -p $certificatevendor_prefix \
+    -r AssetLibrary \
+    $AWS_SCRIPT_ARGS &
+
+    stacks+=($CERTIFICATEVENDOR_STACK_NAME)
 
 fi
 
