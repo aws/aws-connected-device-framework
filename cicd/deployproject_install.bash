@@ -11,5 +11,9 @@ curl -s -qL -o /usr/bin/jq https://stedolan.github.io/jq/download/linux64/jq
 chmod +x /usr/bin/jq
 
 echo installing mkdocs...
-pip install mkdocs markdown-include pymdown-extensions mkdocs-material
+### note this must be installed individually else pip struggles with dependency resolution
+pip install mkdocs 
+pip install markdown-include 
+pip install pymdown-extensions 
+pip install mkdocs-material
 

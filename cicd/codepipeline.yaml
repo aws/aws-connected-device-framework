@@ -901,5 +901,3 @@ Resources:
               pipeline: "$.detail.pipeline" 
     DependsOn: 
       - DeployPipeline
-
-      
