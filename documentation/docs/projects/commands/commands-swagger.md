@@ -1,22 +1,23 @@
-Connected Device Framework: Commands Service
-============================================
+# Connected Device Framework: Commands Service
 
 
-**Version:** 1.0.0
+## Version: 1.0.0
 
 ### /templates
----
-##### ***POST***
-**Summary:** Registers a new job template.
+
+#### POST
+##### Summary:
+
+Registers a new job template.
 
 
-**Parameters**
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | body | body |  | Yes | [Template](#template) |
 
-**Responses**
+##### Responses
 
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
@@ -25,10 +26,12 @@ Connected Device Framework: Commands Service
 | 409 | Template already exists | [Conflict](#conflict) |
 | 500 |  |  |
 
-##### ***GET***
-**Summary:** Returns a list of all job templates
+#### GET
+##### Summary:
 
-**Responses**
+Returns a list of all job templates
+
+##### Responses
 
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
@@ -36,17 +39,19 @@ Connected Device Framework: Commands Service
 | 500 |  |  |
 
 ### /templates/{templateId}
----
-##### ***GET***
-**Summary:** Returns a specific template
 
-**Parameters**
+#### GET
+##### Summary:
+
+Returns a specific template
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | templateId | path | ID of job template | Yes | string |
 
-**Responses**
+##### Responses
 
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
@@ -55,17 +60,19 @@ Connected Device Framework: Commands Service
 | 404 |  |  |
 | 500 |  |  |
 
-##### ***PATCH***
-**Summary:** Updates a specific template
+#### PATCH
+##### Summary:
 
-**Parameters**
+Updates a specific template
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | templateId | path | ID of job template | Yes | string |
 | body | body |  | Yes | [Template](#template) |
 
-**Responses**
+##### Responses
 
 | Code | Description |
 | ---- | ----------- |
@@ -74,16 +81,18 @@ Connected Device Framework: Commands Service
 | 404 |  |
 | 500 |  |
 
-##### ***DELETE***
-**Summary:** Deleets a specific template
+#### DELETE
+##### Summary:
 
-**Parameters**
+Deleets a specific template
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | templateId | path | ID of job template | Yes | string |
 
-**Responses**
+##### Responses
 
 | Code | Description |
 | ---- | ----------- |
@@ -92,34 +101,38 @@ Connected Device Framework: Commands Service
 | 500 |  |
 
 ### /commands
----
-##### ***POST***
-**Summary:** Submits a new command.
+
+#### POST
+##### Summary:
+
+Submits a new command.
 
 
-**Parameters**
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | body | body |  | Yes | [Command](#command) |
 
-**Responses**
+##### Responses
 
 | Code | Description |
 | ---- | ----------- |
 | 201 |  |
 | 400 |  |
 
-##### ***GET***
-**Summary:** Returns a list of all commands
+#### GET
+##### Summary:
 
-**Parameters**
+Returns a list of all commands
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | status | query |  | No | string |
 
-**Responses**
+##### Responses
 
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
@@ -128,17 +141,19 @@ Connected Device Framework: Commands Service
 | 404 |  |  |
 
 ### /commands/{commandId}
----
-##### ***GET***
-**Summary:** Returns a specific command
 
-**Parameters**
+#### GET
+##### Summary:
+
+Returns a specific command
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | commandId | path | ID of command | Yes | string |
 
-**Responses**
+##### Responses
 
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
@@ -146,17 +161,19 @@ Connected Device Framework: Commands Service
 | 400 |  |  |
 | 404 |  |  |
 
-##### ***PATCH***
-**Summary:** Updates a specific command, including setting its status to `in_progress` to start the command.
+#### PATCH
+##### Summary:
 
-**Parameters**
+Updates a specific command, including setting its status to `in_progress` to start the command.
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | commandId | path | ID of command | Yes | string |
 | body | body |  | Yes | [Command](#command) |
 
-**Responses**
+##### Responses
 
 | Code | Description |
 | ---- | ----------- |
@@ -165,11 +182,13 @@ Connected Device Framework: Commands Service
 | 404 |  |
 
 ### /commands/{commandId}/files/{fileId}
----
-##### ***PUT***
-**Summary:** Uploads a file required for the command
 
-**Parameters**
+#### PUT
+##### Summary:
+
+Uploads a file required for the command
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
@@ -177,25 +196,27 @@ Connected Device Framework: Commands Service
 | fileId | path | ID of file as defined in the templates `requiredFiles` attribute | Yes | string |
 | file | formData |  | No | file |
 
-**Responses**
+##### Responses
 
 | Code | Description |
 | ---- | ----------- |
 | 201 |  |
 | 400 |  |
 
-##### ***DELETE***
-**Summary:** Removes a file from the command
+#### DELETE
+##### Summary:
+
+Removes a file from the command
 
 
-**Parameters**
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | commandId | path | ID of command | Yes | string |
 | fileId | path | ID of file as defined in the templates `requiredFiles` attribute | Yes | string |
 
-**Responses**
+##### Responses
 
 | Code | Description |
 | ---- | ----------- |
@@ -204,18 +225,20 @@ Connected Device Framework: Commands Service
 | 404 |  |
 
 ### /commands/{commandId}/executions
----
-##### ***GET***
-**Summary:** Lists the executions of a command
 
-**Parameters**
+#### GET
+##### Summary:
+
+Lists the executions of a command
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | commandId | path | ID of command | Yes | string |
 | status | query |  | No | string |
 
-**Responses**
+##### Responses
 
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
@@ -224,18 +247,20 @@ Connected Device Framework: Commands Service
 | 404 |  |  |
 
 ### /commands/{commandId}/executions/{thingName}
----
-##### ***GET***
-**Summary:** Returns execution details of a specific command for a specific thing
 
-**Parameters**
+#### GET
+##### Summary:
+
+Returns execution details of a specific command for a specific thing
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | commandId | path | ID of command | Yes | string |
 | thingName | path | Name of thing | Yes | string |
 
-**Responses**
+##### Responses
 
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
@@ -243,17 +268,19 @@ Connected Device Framework: Commands Service
 | 400 |  |  |
 | 404 |  |  |
 
-##### ***DELETE***
-**Summary:** Cancels an execution for a specific thing
+#### DELETE
+##### Summary:
 
-**Parameters**
+Cancels an execution for a specific thing
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | commandId | path | ID of command | Yes | string |
 | thingName | path | Name of thing | Yes | string |
 
-**Responses**
+##### Responses
 
 | Code | Description |
 | ---- | ----------- |
@@ -262,16 +289,16 @@ Connected Device Framework: Commands Service
 | 404 |  |
 
 ### Models
----
 
-### TemplateSummary  
+
+#### TemplateSummary
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | templateId | string |  | No |
 | description | string |  | No |
 
-### Template  
+#### Template
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
@@ -283,14 +310,14 @@ Connected Device Framework: Commands Service
 | requiredFiles | [ string ] |  | No |
 | presignedUrlExpiresInSeconds | integer |  | No |
 
-### TemplateList  
+#### TemplateList
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | results | [ [TemplateSummary](#templatesummary) ] |  | No |
 | pagination | object |  | No |
 
-### Command  
+#### Command
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
@@ -304,21 +331,21 @@ Connected Device Framework: Commands Service
 | rolloutMaximumPerMinute | undefined (integer) |  | No |
 | jobId | string |  | No |
 
-### File  
+#### File
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | bucketName | string |  | No |
 | s3ObjectKey | string |  | No |
 
-### CommandList  
+#### CommandList
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | results | [ [Command](#command) ] |  | No |
 | pagination | object |  | No |
 
-### Execution  
+#### Execution
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
@@ -330,26 +357,26 @@ Connected Device Framework: Commands Service
 | status | string |  | No |
 | percentComplete | number |  | No |
 
-### ExecutionList  
+#### ExecutionList
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | executions | [ [Execution](#execution) ] |  | No |
 
-### ExecutionSummary  
+#### ExecutionSummary
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | thingName | string |  | No |
 | status | string |  | No |
 
-### ExecutionSummaryList  
+#### ExecutionSummaryList
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | executions | [ [ExecutionSummary](#executionsummary) ] |  | No |
 
-### Error  
+#### Error
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |

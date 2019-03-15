@@ -30,6 +30,11 @@ Parameters:
   ArtifactStoreBucketName:
     Description: Name of artifact store bucket.
     Type: String
+    MinLength: 1
+  DocumentationBucketName:
+    Description: Name of bucket where CDF core documentation is published to and hosted from.
+    Type: String
+    MinLength: 1
   
   AssetLibraryMode:
     Description: Run in 'full' (IoT Registry augmentation) or 'lite' (IoT Registry only)
@@ -70,16 +75,6 @@ Parameters:
   KmsKeyId:
     Description:  The KMS Key id that the provisoning service will use to decrypt sensitive information.  If not provided, a new KMS key with the alias 'cdf' is created
     Type: String
-  DeviceUploadBucket:
-    Description:  The name of the S3 bucket where devices shall be allowed to upload content to.
-    Type: String
-    MinLength: 1
-
-  PackagesToPublish:
-    Description: A space delimited list of packages to publish.
-    Type: String
-    MinLength: 1
-
 
 Conditions:
   CodePipelineNameProvided:  !Not [ !Equals [ !Ref CodePipelineName, "" ] ]
@@ -280,9 +275,6 @@ Resources:
           - Name: KMS_KEY_ID
             Type: PLAINTEXT
             Value: !Ref KmsKeyId
-          - Name: DEVICE_UPLOAD_BUCKET
-            Type: PLAINTEXT
-            Value: !Ref DeviceUploadBucket
           - Name: USE_EXISTING_VPC
             Type: PLAINTEXT
             Value: !Ref AssetLibraryUseExistingVpc   
@@ -362,9 +354,6 @@ Resources:
           - Name: KMS_KEY_ID
             Type: PLAINTEXT
             Value: !Ref KmsKeyId
-          - Name: DEVICE_UPLOAD_BUCKET
-            Type: PLAINTEXT
-            Value: !Ref DeviceUploadBucket
           - Name: USE_EXISTING_VPC
             Type: PLAINTEXT
             Value: !Ref AssetLibraryUseExistingVpc
@@ -372,12 +361,12 @@ Resources:
             Type: PLAINTEXT
             Value: !Ref AssetLibraryMode
 
-          - Name: PACKAGES_TO_PUBLISH
-            Type: PLAINTEXT
-            Value: !Ref PackagesToPublish
-          - Name: PUBLISH_LOCATION
+          - Name: ARTIFACT_PUBLISH_LOCATION
             Type: PLAINTEXT
             Value: !Sub 's3://${ArtifactStoreBucketName}/releases'
+          - Name: DOCUMENTATION_PUBLISH_LOCATION
+            Type: PLAINTEXT
+            Value: !Sub 's3://${DocumentationBucketName}'
 
             
           # - Name: CUST_AUTH_STACK_NAME

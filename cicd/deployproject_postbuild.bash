@@ -6,41 +6,72 @@ echo deployproject_postbuild started on `date`
 
 
 function publish_artifacts() {
-    bundleName="$1.zip"
+    buildId=$1
     basedir=$(pwd)
 
-    releasedir=$basedir/../bundled
-    rm -rf $releasedir
-    mkdir -p $releasedir
+    coreBundleName="cdf-core-$1.zip"
+    coreReleasedir=$basedir/../bundled-core
+    rm -rf $coreReleasedir
+    mkdir -p $coreReleasedir
+    
+    clientsBundleName="cdf-clients-$1.zip"
+    clientsReleasedir=$basedir/../bundled-clients
+    rm -rf $clientsReleasedir
+    mkdir -p $clientsReleasedir
+
+    docsBundleName="cdf-documentation-$1.zip"
+    docsReleasedir=$basedir/documentation/site
 
     ### copy the main infrastructure scripts/templates
-    cp -R $basedir/infrastructure $releasedir/infrastructure
+    cp -R $basedir/infrastructure $coreReleasedir/infrastructure
 
     ### copy each of the pre-compiled packages along with its related infrastructure scripts/templates
-    IFS=','; set -f
-    packages=($PACKAGES_TO_PUBLISH)
-    for package in "${packages[@]}"; do
+    cd $basedir/packages/services
+    for package in */; do
         echo Copying $package bundle...
-        mkdir -p $releasedir/packages/services/$package/build
-        cp $basedir/packages/services/$package/build/build.zip $releasedir/packages/services/$package/build/build.zip
-        cp -R $basedir/packages/services/$package/infrastructure $releasedir/packages/services/$package/infrastructure
+        mkdir -p $coreReleasedir/packages/services/$package/build
+        cp $package/build/build.zip $coreReleasedir/packages/services/$package/build/build.zip
+        cp -R $package/infrastructure $coreReleasedir/packages/services/$package/infrastructure
     done
 
-    ### copy the integration tests
-    cp -R $basedir/packages/integration-tests $releasedir/packages/integration-tests
+    ### copy each of the pre-compiled clients
+    cd $basedir/packages/libraries/clients
+    for package in */; do
+        echo Copying $package bundle...
+        mkdir -p $clientsReleasedir/packages/libraries/clients/$package/build
+        cp $package/build/build.zip $clientsReleasedir/packages/libraries/clients/$package/build/build.zip
+    done
 
-    ### copy the documentation
-    cp -R $basedir/documentation $releasedir/documentation
+    ### compile the documentation
+    cd $basedir/documentation
+    ./compile_documentation.bash
 
-    ### zip and save to s3
-    cd $releasedir
-    echo Zipping "$releasedir" to "$bundleName"
-    zip -r "$bundleName" .
-    echo Uploading "$bundleName" to "$PUBLISH_LOCATION/$bundleName"
-    aws s3 cp "$bundleName" "$PUBLISH_LOCATION/$bundleName"
+    ### zip and save the bundles to s3
+    cd $coreReleasedir
+    echo Zipping "$coreReleasedir" to "$coreBundleName"
+    zip -r "$coreBundleName" .
+    echo Uploading "$coreBundleName" to "$ARTIFACT_PUBLISH_LOCATION/$coreBundleName"
+    aws s3 cp "$coreBundleName" "$ARTIFACT_PUBLISH_LOCATION/$coreBundleName" &
 
+    cd $clientsReleasedir
+    echo Zipping "$clientsReleasedir" to "$clientsBundleName"
+    zip -r "$clientsBundleName" .
+    echo Uploading "$clientsBundleName" to "$ARTIFACT_PUBLISH_LOCATION/$clientsBundleName"
+    aws s3 cp "$clientsBundleName" "$ARTIFACT_PUBLISH_LOCATION/$clientsBundleName" &
+
+    cd $docsReleasedir
+    echo Zipping "$docsReleasedir" to "$docsBundleName"
+    zip -r "$docsBundleName" .
+    echo Uploading "$docsBundleName" to "$ARTIFACT_PUBLISH_LOCATION/$docsBundleName"
+    aws s3 cp "$docsBundleName" "$ARTIFACT_PUBLISH_LOCATION/$docsBundleName" &
+
+
+    ### push the documentation up to our public site
+    #TODO: make this configurable
+    aws s3 sync $docsReleasedir "$DOCUMENTATION_PUBLISH_LOCATION" &
+
+    wait
 }
-
 
 
 if [ "$CODEBUILD_BUILD_SUCCEEDING" -eq 1 ]; then
@@ -55,8 +86,8 @@ if [ "$CODEBUILD_BUILD_SUCCEEDING" -eq 1 ]; then
         DEPLOY_ENV='LIVE'
     fi
 
-    releaseName="RELEASE-$DEPLOY_ENV-$(date -u +%Y%m%d%H%M%S)"
-    tagNames[0]=$releaseName
+    buildId=$(date -u +%Y%m%d%H%M%S)
+    tagNames[0]="RELEASE-$DEPLOY_ENV-$buildId"
     tagNames[1]="RELEASE-$DEPLOY_ENV-LATEST"
     
     for tagName in "${tagNames[@]}"; do 
@@ -67,7 +98,7 @@ if [ "$CODEBUILD_BUILD_SUCCEEDING" -eq 1 ]; then
     ### Next, if this was a live deploy, publish the artifacts as an installable package
     if [[ "$DEPLOY_ENV" = "LIVE" ]]; then
         echo publishing artifacts...
-        publish_artifacts "$releaseName"
+        publish_artifacts "$buildId"
     fi
 
 fi

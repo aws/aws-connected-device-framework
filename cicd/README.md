@@ -6,14 +6,19 @@
 ```sh
 ./deploy-cicd-pipeline.bash \
   -b cdf-157731826412-us-west-2 \
+  -d cdf-157731826412-us-west-2-docs \
+  -I cdf-infrastructure-cummins \
   -e development \
-  -g cicd \
-  -l cicd \
-  -i cdf-infrastructure-cummins \
+  -N \
+  -m full \
   -v vpc-034b3ce7ffacce9d0 \
   -s sg-031fcef7b2821037e \
   -n subnet-0df8ef64dfa6dc825,subnet-0be681a72c7db1c2d \
   -t rtb-0fc5765aa27fc5fda,rtb-047e1214af8916769 \
+  -p 157731826412 \
+  -o subnet-0d819cf4a71c37aff,subnet-0975de9740ea67251 \
+  -i 205.251.233.178/32 \
+  -k dc00f56e-fc96-4c4e-8a78-ce033b7d5c8f \
   -P deanhart-1577 \
   -R us-west-2 
 ```

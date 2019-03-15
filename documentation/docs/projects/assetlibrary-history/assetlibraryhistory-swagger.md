@@ -1,18 +1,21 @@
-Connected Device Framework: Asset Library History
-=================================================
+# Connected Device Framework: Asset Library History
 The Asset Library History service tracks changes to all devices, groups, policies, and templates within the Asset Library.
 
 
-**Version:** 1.0.0
+## Version: 1.0.0
 
 ### /{category}
----
-##### ***GET***
-**Summary:** List all events of a given category
 
-**Description:** List all events of a given category
+#### GET
+##### Summary:
 
-**Parameters**
+List all events of a given category
+
+##### Description:
+
+List all events of a given category
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
@@ -25,7 +28,7 @@ The Asset Library History service tracks changes to all devices, groups, policie
 | token | query | Pagination token | No | binary |
 | limit | query | Maximum no. events to return | No | number (int32) |
 
-**Responses**
+##### Responses
 
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
@@ -34,13 +37,17 @@ The Asset Library History service tracks changes to all devices, groups, policie
 | 404 |  |  |
 
 ### /{category}/{objectId}
----
-##### ***GET***
-**Summary:** List all events of a specific Asset Library object
 
-**Description:** List all events of a specific Asset Library object
+#### GET
+##### Summary:
 
-**Parameters**
+List all events of a specific Asset Library object
+
+##### Description:
+
+List all events of a specific Asset Library object
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
@@ -55,7 +62,7 @@ The Asset Library History service tracks changes to all devices, groups, policie
 | token | query | Pagination token | No | binary |
 | limit | query | Maximum no. events to return | No | number (int32) |
 
-**Responses**
+##### Responses
 
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
@@ -64,9 +71,9 @@ The Asset Library History service tracks changes to all devices, groups, policie
 | 404 |  |  |
 
 ### Models
----
 
-### Event  
+
+#### Event
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
@@ -77,14 +84,14 @@ The Asset Library History service tracks changes to all devices, groups, policie
 | user | string | User who authored the change. | No |
 | state | object | Full json representation of the object (e.g. a Device) at the time the change was made. | No |
 
-### Events  
+#### Events
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | results | [ [Event](#event) ] |  | No |
 | pagination | object |  | No |
 
-### Error  
+#### Error
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |

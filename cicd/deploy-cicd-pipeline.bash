@@ -18,10 +18,10 @@ DESCRIPTION
     Deploys the CICD pipeline.
 
 MANDATORY ARGUMENTS:
-  -b (string)   The name of the S3 bucket to deploy CloudFormation templates into.
+  -b (string)   The name of the S3 bucket to deploy CloudFormation templates to.
+  -d (string)   The name of the S3 bucket to deploy cdf core documentation to.
   -I (string)   Name of repo of cdf-infrastructure-* project
 	-e (string)	  Name of environment.
-  -u (string)   The name of the S3 bucket where devices shall be allowed to upload content to.
 
 OPTIONAL ARGUMENTS
   -r (string)   Name of CodeCommit repo (defaults to cdf-core).
@@ -49,16 +49,15 @@ EOF
 }
 
 
-while getopts ":b:u:e:r:g:h:I:Nm:v:s:n:o:t:p:i:k:a:R:P:" opt; do
+while getopts ":b:d:e:r:g:h:I:Nm:v:s:n:o:t:p:i:k:a:R:P:" opt; do
   case $opt in
 	  b  ) export DEPLOY_ARTIFACTS_STORE_BUCKET=$OPTARG;;
+	  d  ) export DOCUMENTATION_STORE_BUCKET=$OPTARG;;
     e  ) export ENVIRONMENT=$OPTARG;;
     r  ) export REPO_NAME=$OPTARG;;
     g  ) export BRANCH=$OPTARG;;
     I  ) export INFRASTRUCTURE_REPO_NAME=$OPTARG;;
     h  ) export INFRASTRUCTURE_BRANCH=$OPTARG;;
-
-    u  ) export DEVICE_UPLOAD_BUCKET=$OPTARG;;
 
     N  ) export ASSET_LIBRARY_USE_EXISTING_VPC=true;;
     m  ) export ASSET_LIBRARY_MODE=$OPTARG;;
@@ -85,6 +84,10 @@ done
 
 if [ -z "$DEPLOY_ARTIFACTS_STORE_BUCKET" ]; then
 	echo -b DEPLOY_ARTIFACTS_STORE_BUCKET is required; help_message; exit 1;
+fi
+
+if [ -z "$DOCUMENTATION_STORE_BUCKET" ]; then
+	echo -d DOCUMENTATION_STORE_BUCKET is required; help_message; exit 1;
 fi
 
 if [ -z "$ENVIRONMENT" ]; then
@@ -157,9 +160,6 @@ if [ -n "$AWS_PROFILE" ]; then
 	AWS_ARGS="$AWS_ARGS--profile $AWS_PROFILE"
 fi
 
-PACKAGES_TO_PUBLISH='assetlibrary,assetlibraryhistory,auth-devicecert,bulkcerts,certificatevendor,commands,device-monitoring,provisioning,request-queue'
-
-
 echo '
 **********************************************************
   Packaging the CloudFormation template and uploading to S3...
@@ -187,6 +187,7 @@ aws cloudformation deploy \
       InfrastructureRepoName=$INFRASTRUCTURE_REPO_NAME \
       InfrastructureBranch=$INFRASTRUCTURE_BRANCH \
       ArtifactStoreBucketName=$DEPLOY_ARTIFACTS_STORE_BUCKET \
+      DocumentationBucketName=$DOCUMENTATION_STORE_BUCKET \
       AssetLibraryMode=$ASSET_LIBRARY_MODE \
       AssetLibraryUseExistingVpc=$ASSET_LIBRARY_USE_EXISTING_VPC \
       AssetLibraryVpcId=$ASSET_LIBRARY_VPC_ID \
@@ -197,9 +198,7 @@ aws cloudformation deploy \
       BastionPublicSubnetIds=$BASTION_PUBLIC_SUBNET_IDS \
       BastionRemoteAccessCIDR=$BASTION_REMOTE_ACCESS_CIDR \
       KmsKeyId=$KMS_KEY_ID \
-      DeviceUploadBucket=$DEVICE_UPLOAD_BUCKET \
       CustomAuthStackName=  \
-      PackagesToPublish="$PACKAGES_TO_PUBLISH" \
   --capabilities CAPABILITY_NAMED_IAM \
   $AWS_ARGS
 

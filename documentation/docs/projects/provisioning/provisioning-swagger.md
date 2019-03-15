@@ -1,5 +1,4 @@
-Connected Device Framework: Provisioning
-========================================
+# Connected Device Framework: Provisioning
 The provisioning service utilizes [AWS IoT Device Provisioning](https://docs.aws.amazon.com/iot/latest/developerguide/iot-provision.html) to provide both programmatic (just-in-time) and bulk device provisioning capabilities.  The provisioning service simplifies the use of AWS IoT Device Provisioning by allowing for the use of S3 based provisioning templates, and abstracting a standard interface over both device provisioning capabilities.
 
 In addition, the CDF Provisioning Service allows for extending the capabilities of the AWS IoT Device Provisioning templating functionality.  To provide an example, the AWS IoT Device Provisioning allows for creating certificate resources by providing a certificate signing request (CSR), a certificate ID of an existing device certificate, or a device certificate created with a CA certificate registered with AWS IoT.  This service extends these capabilities by also providing the ability to automatically create (and return) new keys and certificates for a device.
@@ -7,20 +6,22 @@ In addition, the CDF Provisioning Service allows for extending the capabilities 
 If used in conjunction with the CDF Asset Library service, provisioning templates can be assigned to one or more hierarchies, and then the appropriate provisioning template obtained based on the location of an asset within a hierarchy.
 
 
-**Version:** 1.0.0
+## Version: 1.0.0
 
 ### /things
----
-##### ***POST***
-**Summary:** Provision a new thing within the AWS IoT Device Registry
 
-**Parameters**
+#### POST
+##### Summary:
+
+Provision a new thing within the AWS IoT Device Registry
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | body | body |  | Yes | [ProvisionRequest](#provisionrequest) |
 
-**Responses**
+##### Responses
 
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
@@ -29,17 +30,19 @@ If used in conjunction with the CDF Asset Library service, provisioning template
 | 404 |  |  |
 
 ### /things/{thingName}
----
-##### ***GET***
-**Summary:** Retrieve details of a provisioned thing from the AWS IoT Device Registry
 
-**Parameters**
+#### GET
+##### Summary:
+
+Retrieve details of a provisioned thing from the AWS IoT Device Registry
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | thingName | path | Name of thing | Yes | string |
 
-**Responses**
+##### Responses
 
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
@@ -47,16 +50,18 @@ If used in conjunction with the CDF Asset Library service, provisioning template
 | 400 |  |  |
 | 404 |  |  |
 
-##### ***DELETE***
-**Summary:** Delete a thing from the AWS IoT Device Registry.
+#### DELETE
+##### Summary:
 
-**Parameters**
+Delete a thing from the AWS IoT Device Registry.
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | thingName | path | Name of thing | Yes | string |
 
-**Responses**
+##### Responses
 
 | Code | Description |
 | ---- | ----------- |
@@ -65,18 +70,20 @@ If used in conjunction with the CDF Asset Library service, provisioning template
 | 404 |  |
 
 ### /things/{thingName}/certificates
----
-##### ***PATCH***
-**Summary:** Sets the status of all attached certificates.
 
-**Parameters**
+#### PATCH
+##### Summary:
+
+Sets the status of all attached certificates.
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | thingName | path | Name of thing | Yes | string |
 | body | body |  | Yes | [PatchCertificateRequest](#patchcertificaterequest) |
 
-**Responses**
+##### Responses
 
 | Code | Description |
 | ---- | ----------- |
@@ -85,17 +92,19 @@ If used in conjunction with the CDF Asset Library service, provisioning template
 | 404 |  |
 
 ### /bulkthings/{taskId}
----
-##### ***GET***
-**Summary:** Retrieve details about a bulk registration task
 
-**Parameters**
+#### GET
+##### Summary:
+
+Retrieve details about a bulk registration task
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | taskId | path | Id of the registration task | Yes | string |
 
-**Responses**
+##### Responses
 
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
@@ -104,17 +113,19 @@ If used in conjunction with the CDF Asset Library service, provisioning template
 | 404 |  |  |
 
 ### /bulkthings
----
-##### ***POST***
-**Summary:** Bulk provision a set of new things within the AWS IoT Device Registry
 
-**Parameters**
+#### POST
+##### Summary:
+
+Bulk provision a set of new things within the AWS IoT Device Registry
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | body | body |  | No | [BulkRegistrationRequest](#bulkregistrationrequest) |
 
-**Responses**
+##### Responses
 
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
@@ -123,9 +134,9 @@ If used in conjunction with the CDF Asset Library service, provisioning template
 | 404 |  |  |
 
 ### Models
----
 
-### Thing  
+
+#### Thing
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
@@ -138,7 +149,7 @@ If used in conjunction with the CDF Asset Library service, provisioning template
 | policies | [ [IotPolicy](#iotpolicy) ] |  | No |
 | groups | [ [IotGroup](#iotgroup) ] |  | No |
 
-### Certificate  
+#### Certificate
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
@@ -147,7 +158,7 @@ If used in conjunction with the CDF Asset Library service, provisioning template
 | certificateStatus | string |  | No |
 | certificatePem | string |  | No |
 
-### IotPolicy  
+#### IotPolicy
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
@@ -155,7 +166,7 @@ If used in conjunction with the CDF Asset Library service, provisioning template
 | arn | string |  | No |
 | policyDocument | string |  | No |
 
-### IotGroup  
+#### IotGroup
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
@@ -163,7 +174,7 @@ If used in conjunction with the CDF Asset Library service, provisioning template
 | arn | string |  | No |
 | attributes | object |  | No |
 
-### ProvisionRequest  
+#### ProvisionRequest
 
 Provisiong a new thing request
 
@@ -173,7 +184,7 @@ Provisiong a new thing request
 | parameters | object | Map of key value pairs for all parameters defined in the provisioning template. | No |
 | cdfProvisioningParameters | object | Optional parameters used by CDF in provisioning process. | No |
 
-### ProvisionResponse  
+#### ProvisionResponse
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
@@ -182,7 +193,7 @@ Provisiong a new thing request
 | privateKey | string |  | No |
 | resourceArns | object |  | No |
 
-### BulkRegistrationTask  
+#### BulkRegistrationTask
 
 Thing bulk registration task
 
@@ -196,26 +207,26 @@ Thing bulk registration task
 | creationDate | dateTime | Date/time the task was created | No |
 | lastModifiedDate | dateTime | Date/time the task was last updated | No |
 
-### BulkRegistrationTaskList  
+#### BulkRegistrationTaskList
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | tasks | [ [BulkRegistrationTask](#bulkregistrationtask) ] | a list of bulk registration tasks | No |
 
-### BulkRegistrationRequest  
+#### BulkRegistrationRequest
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | provisioningTemplateId | string | Id of an existing provisioning template | No |
 | parameters | [ object ] | List containing a map of key value pairs for all parameters defined in the provisioning template.  Each element in the list represents a new thing to provision. | No |
 
-### PatchCertificateRequest  
+#### PatchCertificateRequest
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | certificateStatus | string | Certificate status | No |
 
-### Error  
+#### Error
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |

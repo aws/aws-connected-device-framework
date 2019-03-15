@@ -1,5 +1,4 @@
-Connected Device Framework: Asset Library
-=========================================
+# Connected Device Framework: Asset Library
 The Asset Library service is a device registry that allows you to manage your fleet of devices within multiple hierarchical groups.  Each one of the branches of the hierarchy can represent something meaningful to your business such as supplier, location, customer, vehicle, etc.
 
 The hierarchies within Asset Library are represented as `Groups`.  Each Group has a single parent, but can comprise of many groups and/or devices as its members.
@@ -17,41 +16,47 @@ Likewise, `Device Templates` can be created to represent the different types of 
 `Policies` represent a document that can be attached to one or more groups within a hierarchy, and are automatically inherited by the devices and groups.
 
 
-**Version:** 1.0.0
+## Version: 1.0.0
 
 ### /templates/devices/{templateId}
----
-##### ***POST***
-**Summary:** Registers a new device template within the system, using the JSON Schema standard to define the device template attributes and constraints.
+
+#### POST
+##### Summary:
+
+Registers a new device template within the system, using the JSON Schema standard to define the device template attributes and constraints.
 
 
-**Parameters**
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | templateId | path | ID of device template to publish | Yes | string |
 | body | body |  | Yes | [TemplateDefinition](#templatedefinition) |
 
-**Responses**
+##### Responses
 
 | Code | Description |
 | ---- | ----------- |
 | 201 |  |
 | 400 |  |
 
-##### ***GET***
-**Summary:** Find device template by ID
+#### GET
+##### Summary:
 
-**Description:** Returns a single device template definition
+Find device template by ID
 
-**Parameters**
+##### Description:
+
+Returns a single device template definition
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | templateId | path | ID of device template to publish | Yes | string |
 | status | query | Status of device template to return | Yes | string |
 
-**Responses**
+##### Responses
 
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
@@ -59,17 +64,19 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | 400 |  |  |
 | 404 |  |  |
 
-##### ***PATCH***
-**Summary:** Update an existing device template.
+#### PATCH
+##### Summary:
 
-**Parameters**
+Update an existing device template.
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | templateId | path | ID of device template to publish | Yes | string |
 | body | body |  | Yes | [TemplateDefinition](#templatedefinition) |
 
-**Responses**
+##### Responses
 
 | Code | Description |
 | ---- | ----------- |
@@ -77,16 +84,18 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | 400 |  |
 | 404 |  |
 
-##### ***DELETE***
-**Summary:** Deletes an existing device template.
+#### DELETE
+##### Summary:
 
-**Parameters**
+Deletes an existing device template.
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | templateId | path | ID of device template to publish | Yes | string |
 
-**Responses**
+##### Responses
 
 | Code | Description |
 | ---- | ----------- |
@@ -95,17 +104,19 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | 404 |  |
 
 ### /templates/devices/{templateId}/publish
----
-##### ***PUT***
-**Summary:** Publishes an existing device template.
 
-**Parameters**
+#### PUT
+##### Summary:
+
+Publishes an existing device template.
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | templateId | path | ID of device template to publish | Yes | string |
 
-**Responses**
+##### Responses
 
 | Code | Description |
 | ---- | ----------- |
@@ -114,38 +125,44 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | 404 |  |
 
 ### /templates/groups/{templateId}
----
-##### ***POST***
-**Summary:** Registers a new group template within the system, using the JSON Schema standard to define the group template attributes and constraints.
+
+#### POST
+##### Summary:
+
+Registers a new group template within the system, using the JSON Schema standard to define the group template attributes and constraints.
 
 
-**Parameters**
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | templateId | path | ID of group template to return | Yes | string |
 | body | body |  | Yes | [TemplateDefinition](#templatedefinition) |
 
-**Responses**
+##### Responses
 
 | Code | Description |
 | ---- | ----------- |
 | 201 |  |
 | 400 |  |
 
-##### ***GET***
-**Summary:** Find group template by ID
+#### GET
+##### Summary:
 
-**Description:** Returns a single group template definition
+Find group template by ID
 
-**Parameters**
+##### Description:
+
+Returns a single group template definition
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | templateId | path | ID of group template to return | Yes | string |
 | status | query | Status of group template to return | Yes | string |
 
-**Responses**
+##### Responses
 
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
@@ -153,17 +170,19 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | 400 |  |  |
 | 404 |  |  |
 
-##### ***PATCH***
-**Summary:** Update an existing group template.
+#### PATCH
+##### Summary:
 
-**Parameters**
+Update an existing group template.
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | templateId | path | ID of group template to return | Yes | string |
 | body | body |  | Yes | [TemplateDefinition](#templatedefinition) |
 
-**Responses**
+##### Responses
 
 | Code | Description |
 | ---- | ----------- |
@@ -171,16 +190,18 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | 400 |  |
 | 404 |  |
 
-##### ***DELETE***
-**Summary:** Deletes an existing group template.
+#### DELETE
+##### Summary:
 
-**Parameters**
+Deletes an existing group template.
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | templateId | path | ID of group template to return | Yes | string |
 
-**Responses**
+##### Responses
 
 | Code | Description |
 | ---- | ----------- |
@@ -189,17 +210,19 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | 404 |  |
 
 ### /templates/groups/{templateId}/publish
----
-##### ***PUT***
-**Summary:** Publishes an existing group template.
 
-**Parameters**
+#### PUT
+##### Summary:
+
+Publishes an existing group template.
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | templateId | path | ID of group template to publish | Yes | string |
 
-**Responses**
+##### Responses
 
 | Code | Description |
 | ---- | ----------- |
@@ -208,18 +231,20 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | 404 |  |
 
 ### /devices
----
-##### ***POST***
-**Summary:** Add a new device to the asset library, adding it to the `/unprovisioned` group if no group is specified.
 
-**Parameters**
+#### POST
+##### Summary:
+
+Add a new device to the asset library, adding it to the `/unprovisioned` group if no group is specified.
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | body | body | Device to add to the asset library | Yes | [Device](#device) |
 | applyProfile | query | Optionally apply a profile to the device to update unset attributes with attributes from the profile. | No | string |
 
-**Responses**
+##### Responses
 
 | Code | Description |
 | ---- | ----------- |
@@ -227,35 +252,39 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | 400 |  |
 
 ### /bulkdevices
----
-##### ***POST***
-**Summary:** Adds a batch of devices in bulk to the asset library, adding them to the `/unprovisioned` group if no groups are specified.
 
-**Parameters**
+#### POST
+##### Summary:
+
+Adds a batch of devices in bulk to the asset library, adding them to the `/unprovisioned` group if no groups are specified.
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | body | body | List of devices to add to the asset library | Yes | [BulkDevices](#bulkdevices) |
 | applyProfile | query | Optionally apply a profile to the device to update unset attributes with attributes from the profile. | No | string |
 
-**Responses**
+##### Responses
 
 | Code | Description |
 | ---- | ----------- |
 | 201 |  |
 | 400 |  |
 
-##### ***PATCH***
-**Summary:** Update a batch of existing devices
+#### PATCH
+##### Summary:
 
-**Parameters**
+Update a batch of existing devices
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | body | body | List of devices and their attributes to update | Yes | [BulkDevices](#bulkdevices) |
 | applyProfile | query | Optionally apply a profile to the device to update unset attributes with attributes from the profile. | No | string |
 
-**Responses**
+##### Responses
 
 | Code | Description |
 | ---- | ----------- |
@@ -264,13 +293,17 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | 404 |  |
 
 ### /devices/{deviceId}
----
-##### ***GET***
-**Summary:** Find device by ID
 
-**Description:** Returns a single device
+#### GET
+##### Summary:
 
-**Parameters**
+Find device by ID
+
+##### Description:
+
+Returns a single device
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
@@ -279,7 +312,7 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | attributes | query | Optionally only return these specific attributes.  By default returns all attributes. | No | [ string ] |
 | includeGroups | query | Optionally only return these specific related groups.  By default returns all related groups. | No | [ string ] |
 
-**Responses**
+##### Responses
 
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
@@ -287,28 +320,34 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | 400 |  |  |
 | 404 |  |  |
 
-##### ***DELETE***
-**Summary:** Delete device of specified ID
+#### DELETE
+##### Summary:
 
-**Description:** Deletes a single device
+Delete device of specified ID
 
-**Parameters**
+##### Description:
+
+Deletes a single device
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | deviceId | path | ID of device to return | Yes | string |
 
-**Responses**
+##### Responses
 
 | Code | Description |
 | ---- | ----------- |
 | 204 | successful operation |
 | 404 |  |
 
-##### ***PATCH***
-**Summary:** Update an existing device attributes
+#### PATCH
+##### Summary:
 
-**Parameters**
+Update an existing device attributes
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
@@ -316,7 +355,7 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | body | body | Device object that needs to be updated in device store | Yes | [Device](#device) |
 | applyProfile | query | Optionally apply a profile to the device to update unset attributes with attributes from the profile. | No | string |
 
-**Responses**
+##### Responses
 
 | Code | Description |
 | ---- | ----------- |
@@ -325,11 +364,13 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | 404 |  |
 
 ### /devices/{deviceId}/{relationship}/groups/{groupPath}
----
-##### ***PUT***
-**Summary:** Associates a device to a group, giving context to its relationship.
 
-**Parameters**
+#### PUT
+##### Summary:
+
+Associates a device to a group, giving context to its relationship.
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
@@ -337,7 +378,7 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | relationship | path | The relationship between the device and group. For example, this may reflect `locatedAt` or `manufacturedAt` relations. | Yes | string |
 | groupPath | path | Path of group. | Yes | string |
 
-**Responses**
+##### Responses
 
 | Code | Description |
 | ---- | ----------- |
@@ -345,10 +386,12 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | 400 |  |
 | 404 |  |
 
-##### ***DELETE***
-**Summary:** Removes a device from an associated group
+#### DELETE
+##### Summary:
 
-**Parameters**
+Removes a device from an associated group
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
@@ -356,7 +399,7 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | relationship | path | The relationship between the device and group. For example, this may reflect `locatedAt` or `manufacturedAt` relations. | Yes | string |
 | groupPath | path | Path of group. | Yes | string |
 
-**Responses**
+##### Responses
 
 | Code | Description |
 | ---- | ----------- |
@@ -365,11 +408,13 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | 404 |  |
 
 ### /devices/{deviceId}/{relationship}/devices/{otherDeviceId}
----
-##### ***PUT***
-**Summary:** Associates a device to another device, giving context to its relationship.
 
-**Parameters**
+#### PUT
+##### Summary:
+
+Associates a device to another device, giving context to its relationship.
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
@@ -377,7 +422,7 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | relationship | path | The relationship between the device and group. For example, this may reflect `locatedAt` or `manufacturedAt` relations. | Yes | string |
 | otherDeviceId | path | ID of device to create relationship to. | Yes | string |
 
-**Responses**
+##### Responses
 
 | Code | Description |
 | ---- | ----------- |
@@ -385,10 +430,12 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | 400 |  |
 | 404 |  |
 
-##### ***DELETE***
-**Summary:** Removes a device from an associated device
+#### DELETE
+##### Summary:
 
-**Parameters**
+Removes a device from an associated device
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
@@ -396,7 +443,7 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | relationship | path | The relationship between the device and group. For example, this may reflect `locatedAt` or `manufacturedAt` relations. | Yes | string |
 | otherDeviceId | path | ID of device to create relationship to. | Yes | string |
 
-**Responses**
+##### Responses
 
 | Code | Description |
 | ---- | ----------- |
@@ -405,18 +452,20 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | 404 |  |
 
 ### /devices/{deviceId}/components
----
-##### ***POST***
-**Summary:** Createa a new component and adds to the device.
 
-**Parameters**
+#### POST
+##### Summary:
+
+Createa a new component and adds to the device.
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | deviceId | path | Id of parent device | Yes | string |
 | body | body | Device to add as a component | Yes | [Device](#device) |
 
-**Responses**
+##### Responses
 
 | Code | Description |
 | ---- | ----------- |
@@ -424,18 +473,20 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | 400 |  |
 
 ### /devices/{deviceId}/components/{componentId}
----
-##### ***PATCH***
-**Summary:** Updates the component of a device.
 
-**Parameters**
+#### PATCH
+##### Summary:
+
+Updates the component of a device.
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | deviceId | path | Id of parent device | Yes | string |
 | componentId | path | ID of child component | Yes | string |
 
-**Responses**
+##### Responses
 
 | Code | Description |
 | ---- | ----------- |
@@ -443,17 +494,19 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | 400 |  |
 | 404 |  |
 
-##### ***DELETE***
-**Summary:** Deletes a component of a devoce.
+#### DELETE
+##### Summary:
 
-**Parameters**
+Deletes a component of a devoce.
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | deviceId | path | Id of parent device | Yes | string |
 | componentId | path | ID of child component | Yes | string |
 
-**Responses**
+##### Responses
 
 | Code | Description |
 | ---- | ----------- |
@@ -462,18 +515,20 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | 404 |  |
 
 ### /groups
----
-##### ***POST***
-**Summary:** Adds a new group to the device library as a child of the `parentPath` as specified in the request body.
 
-**Parameters**
+#### POST
+##### Summary:
+
+Adds a new group to the device library as a child of the `parentPath` as specified in the request body.
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | body | body | Group to add to the asset library | Yes | [Group](#group) |
 | applyProfile | query | Optionally apply a profile to the device to update unset attributes with attributes from the profile. | No | string |
 
-**Responses**
+##### Responses
 
 | Code | Description |
 | ---- | ----------- |
@@ -481,18 +536,20 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | 400 |  |
 
 ### /bulkgroups
----
-##### ***POST***
-**Summary:** Adds a batch of new group to the asset library as a child of the `parentPath` as specified in the request body.
 
-**Parameters**
+#### POST
+##### Summary:
+
+Adds a batch of new group to the asset library as a child of the `parentPath` as specified in the request body.
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | body | body | Group to add to the asset library | Yes | [ [BulkGroups](#bulkgroups) ] |
 | applyProfile | query | Optionally apply a profile to the device to update unset attributes with attributes from the profile. | No | string |
 
-**Responses**
+##### Responses
 
 | Code | Description |
 | ---- | ----------- |
@@ -500,47 +557,57 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | 400 |  |
 
 ### /groups/{groupPath}
----
-##### ***GET***
-**Summary:** Find group by Group's path
 
-**Description:** Returns a single group
+#### GET
+##### Summary:
 
-**Parameters**
+Find group by Group's path
+
+##### Description:
+
+Returns a single group
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | groupPath | path | Path of group to return | Yes | string |
 
-**Responses**
+##### Responses
 
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
 | 200 | successful operation | [Group](#group) |
 | 404 |  |  |
 
-##### ***DELETE***
-**Summary:** Delete group with supplied path
+#### DELETE
+##### Summary:
 
-**Description:** Deletes a single group
+Delete group with supplied path
 
-**Parameters**
+##### Description:
+
+Deletes a single group
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | groupPath | path | Path of group to return | Yes | string |
 
-**Responses**
+##### Responses
 
 | Code | Description |
 | ---- | ----------- |
 | 204 | successful operation |
 | 404 |  |
 
-##### ***PATCH***
-**Summary:** Update an existing group attributes, including changing its parent group.
+#### PATCH
+##### Summary:
 
-**Parameters**
+Update an existing group attributes, including changing its parent group.
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
@@ -548,7 +615,7 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | body | body | Group object that needs to be updated | Yes | [Group](#group) |
 | applyProfile | query | Optionally apply a profile to the device to update unset attributes with attributes from the profile. | No | string |
 
-**Responses**
+##### Responses
 
 | Code | Description |
 | ---- | ----------- |
@@ -557,13 +624,17 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | 404 |  |
 
 ### /groups/{groupPath}/members/devices
----
-##### ***GET***
-**Summary:** List device members of group for supplied Group name
 
-**Description:** Returns device members of group
+#### GET
+##### Summary:
 
-**Parameters**
+List device members of group for supplied Group name
+
+##### Description:
+
+Returns device members of group
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
@@ -573,7 +644,7 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | offset | query | The index to start paginated results from | No | integer |
 | count | query | The maximum number of results to return | No | integer |
 
-**Responses**
+##### Responses
 
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
@@ -582,13 +653,17 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | 404 |  |  |
 
 ### /groups/{groupPath}/members/groups
----
-##### ***GET***
-**Summary:** List group members of group for supplied Group name
 
-**Description:** Returns group members of group
+#### GET
+##### Summary:
 
-**Parameters**
+List group members of group for supplied Group name
+
+##### Description:
+
+Returns group members of group
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
@@ -597,7 +672,7 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | offset | query | The index to start paginated results from | No | integer |
 | count | query | The maximum number of results to return | No | integer |
 
-**Responses**
+##### Responses
 
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
@@ -606,13 +681,17 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | 404 |  |  |
 
 ### /groups/{groupPath}/memberships
----
-##### ***GET***
-**Summary:** List all ancestor groups of a specific group.
 
-**Description:** List all ancestor groups of a specific group.
+#### GET
+##### Summary:
 
-**Parameters**
+List all ancestor groups of a specific group.
+
+##### Description:
+
+List all ancestor groups of a specific group.
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
@@ -620,7 +699,7 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | offset | query | The index to start paginated results from | No | integer |
 | count | query | The maximum number of results to return | No | integer |
 
-**Responses**
+##### Responses
 
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
@@ -629,11 +708,13 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | 404 |  |  |
 
 ### /groups/{sourceGroupPath}/{relationship}/groups/{targetGroupPath}
----
-##### ***PUT***
-**Summary:** Associates a group with another group, giving context to its relationship.
 
-**Parameters**
+#### PUT
+##### Summary:
+
+Associates a group with another group, giving context to its relationship.
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
@@ -641,7 +722,7 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | relationship | path | The relationship between the groups. For example, this may reflect `locatedAt` or `manufacturedAt` relations. | Yes | string |
 | targetGroupPath | path | Path of target group | Yes | string |
 
-**Responses**
+##### Responses
 
 | Code | Description |
 | ---- | ----------- |
@@ -649,10 +730,12 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | 400 |  |
 | 404 |  |
 
-##### ***DELETE***
-**Summary:** Removes a group from an associated group
+#### DELETE
+##### Summary:
 
-**Parameters**
+Removes a group from an associated group
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
@@ -660,7 +743,7 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | relationship | path | The relationship between the groups. For example, this may reflect `locatedAt` or `manufacturedAt` relations. | Yes | string |
 | targetGroupPath | path | Path of target group | Yes | string |
 
-**Responses**
+##### Responses
 
 | Code | Description |
 | ---- | ----------- |
@@ -669,36 +752,42 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | 404 |  |
 
 ### /profiles/device/{templateId}
----
-##### ***POST***
-**Summary:** Adds a new device profile for a specific template.
 
-**Parameters**
+#### POST
+##### Summary:
+
+Adds a new device profile for a specific template.
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | templateId | path | ID of the device template | Yes | string |
 | body | body | Device Profile to add to the asset library | Yes | [DeviceProfile](#deviceprofile) |
 
-**Responses**
+##### Responses
 
 | Code | Description |
 | ---- | ----------- |
 | 201 |  |
 | 400 |  |
 
-##### ***GET***
-**Summary:** Return all device profiles for a specific template
+#### GET
+##### Summary:
 
-**Description:** ReturnsReturn all device profiles for a specific template
+Return all device profiles for a specific template
 
-**Parameters**
+##### Description:
+
+ReturnsReturn all device profiles for a specific template
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | templateId | path | ID of the device template | Yes | string |
 
-**Responses**
+##### Responses
 
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
@@ -706,49 +795,59 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | 404 |  |  |
 
 ### /profiles/device/{templateId}/{profileId}
----
-##### ***GET***
-**Summary:** Retrieve a device profile
 
-**Description:** Returns a single device profile
+#### GET
+##### Summary:
 
-**Parameters**
+Retrieve a device profile
+
+##### Description:
+
+Returns a single device profile
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | templateId | path | ID of the device template | Yes | string |
 | profileId | path | ID of the profile | Yes | string |
 
-**Responses**
+##### Responses
 
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
 | 200 | successful operation | [DeviceProfile](#deviceprofile) |
 | 404 |  |  |
 
-##### ***DELETE***
-**Summary:** Delete a specific device profile
+#### DELETE
+##### Summary:
 
-**Description:** Delete a specific device profile
+Delete a specific device profile
 
-**Parameters**
+##### Description:
+
+Delete a specific device profile
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | templateId | path | ID of the device template | Yes | string |
 | profileId | path | ID of the profile | Yes | string |
 
-**Responses**
+##### Responses
 
 | Code | Description |
 | ---- | ----------- |
 | 204 | successful operation |
 | 404 |  |
 
-##### ***PATCH***
-**Summary:** Update an existing device profile.
+#### PATCH
+##### Summary:
 
-**Parameters**
+Update an existing device profile.
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
@@ -756,7 +855,7 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | profileId | path | ID of the profile | Yes | string |
 | body | body | Profile that needs to be updated | Yes | [DeviceProfile](#deviceprofile) |
 
-**Responses**
+##### Responses
 
 | Code | Description |
 | ---- | ----------- |
@@ -765,36 +864,42 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | 404 |  |
 
 ### /profiles/group/{templateId}
----
-##### ***POST***
-**Summary:** Adds a new group profile for a specific template.
 
-**Parameters**
+#### POST
+##### Summary:
+
+Adds a new group profile for a specific template.
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | templateId | path | ID of the group template | Yes | string |
 | body | body | Group Profile to add to the asset library | Yes | [GroupProfile](#groupprofile) |
 
-**Responses**
+##### Responses
 
 | Code | Description |
 | ---- | ----------- |
 | 201 |  |
 | 400 |  |
 
-##### ***GET***
-**Summary:** Return all group profiles for a specific template
+#### GET
+##### Summary:
 
-**Description:** Return all group profiles for a specific template
+Return all group profiles for a specific template
 
-**Parameters**
+##### Description:
+
+Return all group profiles for a specific template
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | templateId | path | ID of the group template | Yes | string |
 
-**Responses**
+##### Responses
 
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
@@ -802,49 +907,59 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | 404 |  |  |
 
 ### /profiles/group/{templateId}/{profileId}
----
-##### ***GET***
-**Summary:** Retrieve a group profile
 
-**Description:** Returns a single group profile
+#### GET
+##### Summary:
 
-**Parameters**
+Retrieve a group profile
+
+##### Description:
+
+Returns a single group profile
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | templateId | path | ID of the group template | Yes | string |
 | profileId | path | ID of the profile | Yes | string |
 
-**Responses**
+##### Responses
 
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
 | 200 | successful operation | [GroupProfile](#groupprofile) |
 | 404 |  |  |
 
-##### ***DELETE***
-**Summary:** Delete a specific group profile
+#### DELETE
+##### Summary:
 
-**Description:** Delete a specific group profile
+Delete a specific group profile
 
-**Parameters**
+##### Description:
+
+Delete a specific group profile
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | templateId | path | ID of the group template | Yes | string |
 | profileId | path | ID of the profile | Yes | string |
 
-**Responses**
+##### Responses
 
 | Code | Description |
 | ---- | ----------- |
 | 204 | successful operation |
 | 404 |  |
 
-##### ***PATCH***
-**Summary:** Update an existing group profile.
+#### PATCH
+##### Summary:
 
-**Parameters**
+Update an existing group profile.
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
@@ -852,7 +967,7 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | profileId | path | ID of the profile | Yes | string |
 | body | body | Profile that needs to be updated | Yes | [GroupProfile](#groupprofile) |
 
-**Responses**
+##### Responses
 
 | Code | Description |
 | ---- | ----------- |
@@ -861,11 +976,13 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | 404 |  |
 
 ### /search
----
-##### ***GET***
-**Summary:** Search for groups and devices.
 
-**Parameters**
+#### GET
+##### Summary:
+
+Search for groups and devices.
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
@@ -884,7 +1001,7 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | offset | query | The index to start paginated results from | No | integer |
 | count | query | The maximum number of results to return | No | integer |
 
-**Responses**
+##### Responses
 
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
@@ -893,33 +1010,37 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | 404 |  |  |
 
 ### /policies
----
-##### ***POST***
-**Summary:** Creates a new `Policy`, and applies it to the provided `Groups`.
 
-**Parameters**
+#### POST
+##### Summary:
+
+Creates a new `Policy`, and applies it to the provided `Groups`.
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | body | body | Policy to create. | Yes | [Policy](#policy) |
 
-**Responses**
+##### Responses
 
 | Code | Description |
 | ---- | ----------- |
 | 201 |  |
 | 400 |  |
 
-##### ***GET***
-**Summary:** List policies, optionally filtered by policy type.
+#### GET
+##### Summary:
 
-**Parameters**
+List policies, optionally filtered by policy type.
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | type | query | Policy type to refilterturn | Yes | string |
 
-**Responses**
+##### Responses
 
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
@@ -928,11 +1049,13 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | 404 |  |  |
 
 ### /policies/inherited
----
-##### ***GET***
-**Summary:** Returns all inherited `Policies` for a `Device` or set of `Groups` where the `Device`/`Groups` are associated with all the hierarchies that the `Policy` applies to.  Either `deviceId` or `groupPath` must be provided.
 
-**Parameters**
+#### GET
+##### Summary:
+
+Returns all inherited `Policies` for a `Device` or set of `Groups` where the `Device`/`Groups` are associated with all the hierarchies that the `Policy` applies to.  Either `deviceId` or `groupPath` must be provided.
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
@@ -940,7 +1063,7 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | groupPath | query | Path of groups to list policies | No | [ string ] |
 | type | query | Policy type to return | Yes | string |
 
-**Responses**
+##### Responses
 
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
@@ -949,18 +1072,20 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | 404 |  |  |
 
 ### /policies/{policyId}
----
-##### ***PATCH***
-**Summary:** Update the attributes of an existing policy.
 
-**Parameters**
+#### PATCH
+##### Summary:
+
+Update the attributes of an existing policy.
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | policyId | path | ID of policy | Yes | string |
 | body | body | Policy that needs to be updated | Yes | [Policy](#policy) |
 
-**Responses**
+##### Responses
 
 | Code | Description |
 | ---- | ----------- |
@@ -968,16 +1093,18 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | 400 |  |
 | 404 |  |
 
-##### ***DELETE***
-**Summary:** Delete an existing policy.
+#### DELETE
+##### Summary:
 
-**Parameters**
+Delete an existing policy.
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | policyId | path | ID of policy | Yes | string |
 
-**Responses**
+##### Responses
 
 | Code | Description |
 | ---- | ----------- |
@@ -985,16 +1112,18 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | 400 |  |
 | 404 |  |
 
-##### ***GET***
-**Summary:** Retrieve a specific policy.
+#### GET
+##### Summary:
 
-**Parameters**
+Retrieve a specific policy.
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | policyId | path | ID of policy | Yes | string |
 
-**Responses**
+##### Responses
 
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
@@ -1003,51 +1132,51 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | 404 |  |  |
 
 ### Models
----
 
-### Entity  
+
+#### Entity
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | category | string | Category of entity. | No |
 
-### Device  
+#### Device
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | Device |  |  |  |
 
-### DeviceProfile  
+#### DeviceProfile
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | DeviceProfile |  |  |  |
 
-### Group  
+#### Group
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | Group |  |  |  |
 
-### GroupProfile  
+#### GroupProfile
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | GroupProfile |  |  |  |
 
-### BulkDevices  
+#### BulkDevices
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | devices | [ [Device](#device) ] |  | No |
 
-### BulkGroups  
+#### BulkGroups
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | groups | [ [Group](#group) ] |  | No |
 
-### GroupList  
+#### GroupList
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
@@ -1055,7 +1184,7 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | pagination | object |  | No |
 | total | number | Total number of search results.  Only returned by the search API's when `summarize` is set to true. | No |
 
-### DeviceList  
+#### DeviceList
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
@@ -1063,27 +1192,27 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | pagination | object |  | No |
 | total | number | Total number of search results.  Only returned by the search API's when `summarize` is set to true. | No |
 
-### DeviceProfileList  
+#### DeviceProfileList
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | results | [ [DeviceProfile](#deviceprofile) ] |  | No |
 | pagination | object |  | No |
 
-### GroupProfileList  
+#### GroupProfileList
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | results | [ [GroupProfile](#groupprofile) ] |  | No |
 | pagination | object |  | No |
 
-### SearchResults  
+#### SearchResults
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | results | [ [Entity](#entity) ] |  | No |
 
-### TemplateInfo  
+#### TemplateInfo
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
@@ -1091,7 +1220,7 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | category | string | Category of template | No |
 | schema | object |  | No |
 
-### TemplateDefinition  
+#### TemplateDefinition
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
@@ -1100,7 +1229,7 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | relations | object |  | No |
 | messagePayload | [MessagePayloadDefinition](#messagepayloaddefinition) | Message payload definition | No |
 
-### Policy  
+#### Policy
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
@@ -1110,14 +1239,14 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | appliesTo | [ string ] | the paths of the group that this policy applies to | No |
 | document | string | the policy document (e.g. a provisioning template) | No |
 
-### PolicyList  
+#### PolicyList
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | policies | [ [Policy](#policy) ] | a list of policies | No |
 | pagination | object |  | No |
 
-### MessagePayloadDefinition  
+#### MessagePayloadDefinition
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
@@ -1126,7 +1255,7 @@ Likewise, `Device Templates` can be created to represent the different types of 
 | required | [ string ] | List of required properties | No |
 | periodicFrequency | number | No. seconds that a telemtry should be broadcast from the device | No |
 
-### Error  
+#### Error
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |

@@ -1,22 +1,23 @@
-Connected Device Framework: Bulk Certs
-======================================
+# Connected Device Framework: Bulk Certs
 REST API for bulk creating certificates.
 
-**Version:** 1.0.0
+## Version: 1.0.0
 
 ### /certificates
----
-##### ***POST***
-**Summary:** Creates a batch of certificates.
+
+#### POST
+##### Summary:
+
+Creates a batch of certificates.
 
 
-**Parameters**
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | body | body |  | Yes | [BulkCertificatesTaskRequest](#bulkcertificatestaskrequest) |
 
-**Responses**
+##### Responses
 
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
@@ -24,17 +25,19 @@ REST API for bulk creating certificates.
 | 400 |  |  |
 
 ### /certificates/{taskId}
----
-##### ***GET***
-**Summary:** Retrieve a batch of pre-generated certificates (the outcome of a batch certificate creation task)
 
-**Parameters**
+#### GET
+##### Summary:
+
+Retrieve a batch of pre-generated certificates (the outcome of a batch certificate creation task)
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | taskId | path | Id of the bulk certificate creation task | Yes | string |
 
-**Responses**
+##### Responses
 
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
@@ -43,17 +46,19 @@ REST API for bulk creating certificates.
 | 404 |  |  |
 
 ### /certificates/{taskId}/task
----
-##### ***GET***
-**Summary:** Retrieve status of a bulk certificates task
 
-**Parameters**
+#### GET
+##### Summary:
+
+Retrieve status of a bulk certificates task
+
+##### Parameters
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | taskId | path | Id of the bulk certificate creation task | Yes | string |
 
-**Responses**
+##### Responses
 
 | Code | Description | Schema |
 | ---- | ----------- | ------ |
@@ -62,22 +67,22 @@ REST API for bulk creating certificates.
 | 404 |  |  |
 
 ### Models
----
 
-### BulkCertificatesTaskRequest  
+
+#### BulkCertificatesTaskRequest
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | quantity | number |  | No |
 | register | boolean |  | No |
 
-### BulkCertificatesTaskResponse  
+#### BulkCertificatesTaskResponse
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
 | BulkCertificatesTaskResponse | object |  |  |
 
-### BulkCertificatesTaskStatusResponse  
+#### BulkCertificatesTaskStatusResponse
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
@@ -87,7 +92,7 @@ REST API for bulk creating certificates.
 | chunksPending | number | number of certificate chunks yet to be completed | No |
 | chunksTotal | number | total number of chunks in this batch | No |
 
-### Error  
+#### Error
 
 | Name | Type | Description | Required |
 | ---- | ---- | ----------- | -------- |
