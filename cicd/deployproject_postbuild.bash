@@ -19,7 +19,7 @@ function publish_artifacts() {
     ### copy each of the pre-compiled packages along with its related infrastructure scripts/templates
     IFS=','; set -f
     packages=($PACKAGES_TO_PUBLISH)
-    for package in $packages; do
+    for package in "${packages[@]}"; do
         echo Copying $package bundle...
         mkdir -p $releasedir/packages/services/$package/build
         cp $basedir/packages/services/$package/build/build.zip $releasedir/packages/services/$package/build/build.zip
@@ -55,8 +55,8 @@ if [ "$CODEBUILD_BUILD_SUCCEEDING" -eq 1 ]; then
         DEPLOY_ENV='LIVE'
     fi
 
-    tagName="RELEASE-$DEPLOY_ENV-$(date -u +%Y%m%d%H%M%S)"
-    tagNames[0]=$tagName
+    releaseName="RELEASE-$DEPLOY_ENV-$(date -u +%Y%m%d%H%M%S)"
+    tagNames[0]=$releaseName
     tagNames[1]="RELEASE-$DEPLOY_ENV-LATEST"
     
     for tagName in "${tagNames[@]}"; do 
@@ -67,7 +67,7 @@ if [ "$CODEBUILD_BUILD_SUCCEEDING" -eq 1 ]; then
     ### Next, if this was a live deploy, publish the artifacts as an installable package
     if [[ "$DEPLOY_ENV" = "LIVE" ]]; then
         echo publishing artifacts...
-        publish_artifacts "$tagName"
+        publish_artifacts "$releaseName"
     fi
 
 fi
