@@ -131,8 +131,11 @@ importers:
       cpy-cli: 2.0.0
       del-cli: 1.1.0
       husky: 1.3.1
-      jest: 24.1.0
+      jest: 24.1.0_b2377ed855f581a50cdaeacf386d75ca
       jest-create-mock-instance: 1.1.0
+      jest-haste-map: 24.0.0
+      jest-mock: 24.0.0
+      jest-resolve: 24.5.0_b2377ed855f581a50cdaeacf386d75ca
       make-dir-cli: 1.0.0
       nodemon: 1.18.10
       nyc: 13.3.0
@@ -163,6 +166,9 @@ importers:
       inversify-express-utils: 6.3.2
       jest: 24.1.0
       jest-create-mock-instance: 1.1.0
+      jest-haste-map: 24.0.0
+      jest-mock: 24.0.0
+      jest-resolve: 24.5.0
       js-yaml: 3.12.2
       make-dir-cli: 1.0.0
       nodemon: 1.18.10
@@ -203,8 +209,11 @@ importers:
       cpy-cli: 2.0.0
       del-cli: 1.1.0
       husky: 1.3.1
-      jest: 24.1.0
+      jest: 24.1.0_b2377ed855f581a50cdaeacf386d75ca
       jest-create-mock-instance: 1.1.0
+      jest-haste-map: 24.0.0
+      jest-mock: 24.0.0
+      jest-resolve: 24.5.0_b2377ed855f581a50cdaeacf386d75ca
       make-dir-cli: 1.0.0
       nodemon: 1.18.10
       nyc: 13.3.0
@@ -235,6 +244,9 @@ importers:
       inversify-express-utils: 6.3.2
       jest: 24.1.0
       jest-create-mock-instance: 1.1.0
+      jest-haste-map: 24.0.0
+      jest-mock: 24.0.0
+      jest-resolve: 24.5.0
       js-yaml: 3.12.2
       make-dir-cli: 1.0.0
       nodemon: 1.18.10
@@ -276,8 +288,11 @@ importers:
       cpy-cli: 2.0.0
       del-cli: 1.1.0
       husky: 1.3.1
-      jest: 24.1.0
+      jest: 24.1.0_b2377ed855f581a50cdaeacf386d75ca
       jest-create-mock-instance: 1.1.0
+      jest-haste-map: 24.0.0
+      jest-mock: 24.0.0
+      jest-resolve: 24.5.0_b2377ed855f581a50cdaeacf386d75ca
       make-dir-cli: 1.0.0
       nodemon: 1.18.10
       nyc: 13.3.0
@@ -309,6 +324,9 @@ importers:
       inversify-express-utils: 6.3.2
       jest: 24.1.0
       jest-create-mock-instance: 1.1.0
+      jest-haste-map: 24.0.0
+      jest-mock: 24.0.0
+      jest-resolve: 24.5.0
       js-yaml: 3.12.2
       make-dir-cli: 1.0.0
       nodemon: 1.18.10
@@ -348,8 +366,11 @@ importers:
       cpy-cli: 2.0.0
       del-cli: 1.1.0
       husky: 1.3.1
-      jest: 24.1.0
+      jest: 24.1.0_b2377ed855f581a50cdaeacf386d75ca
       jest-create-mock-instance: 1.1.0
+      jest-haste-map: 24.0.0
+      jest-mock: 24.0.0
+      jest-resolve: 24.5.0_b2377ed855f581a50cdaeacf386d75ca
       make-dir-cli: 1.0.0
       nodemon: 1.18.10
       nyc: 13.3.0
@@ -379,6 +400,9 @@ importers:
       inversify-express-utils: 6.3.2
       jest: 24.1.0
       jest-create-mock-instance: 1.1.0
+      jest-haste-map: 24.0.0
+      jest-mock: 24.0.0
+      jest-resolve: 24.5.0
       js-yaml: 3.12.2
       make-dir-cli: 1.0.0
       nodemon: 1.18.10
@@ -414,9 +438,11 @@ importers:
       concurrently: 4.1.0
       del-cli: 1.1.0
       husky: 1.3.1
-      jest: 24.1.0
+      jest: 24.1.0_b2377ed855f581a50cdaeacf386d75ca
       jest-create-mock-instance: 1.1.0
+      jest-haste-map: 24.0.0
       jest-mock: 24.0.0
+      jest-resolve: 24.5.0_b2377ed855f581a50cdaeacf386d75ca
       nodemon: 1.18.10
       nyc: 13.3.0
       semantic-release: 15.13.3_semantic-release@15.13.3
@@ -444,7 +470,9 @@ importers:
       inversify: 5.0.1
       jest: 24.1.0
       jest-create-mock-instance: 1.1.0
+      jest-haste-map: 24.0.0
       jest-mock: 24.0.0
+      jest-resolve: 24.5.0
       js-yaml: 3.12.2
       nodemon: 1.18.10
       nyc: 13.3.0
@@ -468,7 +496,10 @@ importers:
       concurrently: 4.1.0
       del-cli: 1.1.0
       husky: 1.3.1
-      jest: 24.1.0
+      jest: 24.1.0_b2377ed855f581a50cdaeacf386d75ca
+      jest-haste-map: 24.0.0
+      jest-mock: 24.0.0
+      jest-resolve: 24.5.0_b2377ed855f581a50cdaeacf386d75ca
       nodemon: 1.18.10
       nyc: 13.3.0
       semantic-release: 15.13.3_semantic-release@15.13.3
@@ -490,6 +521,9 @@ importers:
       del-cli: 1.1.0
       husky: 1.3.1
       jest: 24.1.0
+      jest-haste-map: 24.0.0
+      jest-mock: 24.0.0
+      jest-resolve: 24.5.0
       nodemon: 1.18.10
       nyc: 13.3.0
       semantic-release: 15.13.3
@@ -513,7 +547,10 @@ importers:
       concurrently: 4.1.0
       del-cli: 1.1.0
       husky: 1.3.1
-      jest: 24.1.0
+      jest: 24.1.0_b2377ed855f581a50cdaeacf386d75ca
+      jest-haste-map: 24.0.0
+      jest-mock: 24.0.0
+      jest-resolve: 24.5.0_b2377ed855f581a50cdaeacf386d75ca
       nodemon: 1.18.10
       nyc: 13.3.0
       semantic-release: 15.13.3_semantic-release@15.13.3
@@ -535,6 +572,9 @@ importers:
       del-cli: 1.1.0
       husky: 1.3.1
       jest: 24.1.0
+      jest-haste-map: 24.0.0
+      jest-mock: 24.0.0
+      jest-resolve: 24.5.0
       nodemon: 1.18.10
       nyc: 13.3.0
       semantic-release: 15.13.3
@@ -582,9 +622,11 @@ importers:
       cpy-cli: 2.0.0
       del-cli: 1.1.0
       husky: 1.3.1
-      jest: 24.1.0
+      jest: 24.1.0_b2377ed855f581a50cdaeacf386d75ca
       jest-create-mock-instance: 1.1.0
+      jest-haste-map: 24.0.0
       jest-mock: 24.0.0
+      jest-resolve: 24.5.0_b2377ed855f581a50cdaeacf386d75ca
       make-dir-cli: 1.0.0
       nodemon: 1.18.10
       nyc: 13.3.0
@@ -626,7 +668,9 @@ importers:
       inversify-express-utils: 6.3.2
       jest: 24.1.0
       jest-create-mock-instance: 1.1.0
+      jest-haste-map: 24.0.0
       jest-mock: 24.0.0
+      jest-resolve: 24.5.0
       js-yaml: 3.12.2
       make-dir-cli: 1.0.0
       mime: 1.6.0
@@ -680,9 +724,11 @@ importers:
       cpy-cli: 2.0.0
       del-cli: 1.1.0
       husky: 1.3.1
-      jest: 24.1.0
+      jest: 24.1.0_b2377ed855f581a50cdaeacf386d75ca
       jest-create-mock-instance: 1.1.0
+      jest-haste-map: 24.0.0
       jest-mock: 24.0.0
+      jest-resolve: 24.5.0_b2377ed855f581a50cdaeacf386d75ca
       make-dir-cli: 1.0.0
       nodemon: 1.18.10
       nyc: 13.3.0
@@ -725,7 +771,9 @@ importers:
       inversify-express-utils: 6.3.2
       jest: 24.1.0
       jest-create-mock-instance: 1.1.0
+      jest-haste-map: 24.0.0
       jest-mock: 24.0.0
+      jest-resolve: 24.5.0
       js-yaml: 3.12.2
       make-dir-cli: 1.0.0
       morgan: 1.9.1
@@ -769,9 +817,11 @@ importers:
       cpy-cli: 2.0.0
       del-cli: 1.1.0
       husky: 1.3.1
-      jest: 24.1.0
+      jest: 24.1.0_b2377ed855f581a50cdaeacf386d75ca
       jest-create-mock-instance: 1.1.0
+      jest-haste-map: 24.0.0
       jest-mock: 24.0.0
+      jest-resolve: 24.5.0_b2377ed855f581a50cdaeacf386d75ca
       make-dir-cli: 1.0.0
       nodemon: 1.18.10
       nyc: 13.3.0
@@ -803,7 +853,9 @@ importers:
       husky: 1.3.1
       jest: 24.1.0
       jest-create-mock-instance: 1.1.0
+      jest-haste-map: 24.0.0
       jest-mock: 24.0.0
+      jest-resolve: 24.5.0
       js-yaml: 3.12.2
       make-dir-cli: 1.0.0
       nodemon: 1.18.10
@@ -859,9 +911,11 @@ importers:
       cpy-cli: 2.0.0
       del-cli: 1.1.0
       husky: 1.3.1
-      jest: 24.1.0
+      jest: 24.1.0_b2377ed855f581a50cdaeacf386d75ca
       jest-create-mock-instance: 1.1.0
+      jest-haste-map: 24.0.0
       jest-mock: 24.0.0
+      jest-resolve: 24.5.0_b2377ed855f581a50cdaeacf386d75ca
       make-dir-cli: 1.0.0
       nodemon: 1.18.10
       nyc: 13.3.0
@@ -903,7 +957,9 @@ importers:
       inversify-express-utils: 6.3.2
       jest: 24.1.0
       jest-create-mock-instance: 1.1.0
+      jest-haste-map: 24.0.0
       jest-mock: 24.0.0
+      jest-resolve: 24.5.0
       js-yaml: 3.12.2
       jszip: 3.2.0
       make-dir-cli: 1.0.0
@@ -946,9 +1002,11 @@ importers:
       cpy-cli: 2.0.0
       del-cli: 1.1.0
       husky: 1.3.1
-      jest: 24.1.0
+      jest: 24.1.0_b2377ed855f581a50cdaeacf386d75ca
       jest-create-mock-instance: 1.1.0
+      jest-haste-map: 24.0.0
       jest-mock: 24.0.0
+      jest-resolve: 24.5.0_b2377ed855f581a50cdaeacf386d75ca
       make-dir-cli: 1.0.0
       nodemon: 1.18.10
       nyc: 13.3.0
@@ -980,7 +1038,9 @@ importers:
       inversify-binding-decorators: 4.0.0
       jest: 24.1.0
       jest-create-mock-instance: 1.1.0
+      jest-haste-map: 24.0.0
       jest-mock: 24.0.0
+      jest-resolve: 24.5.0
       js-yaml: 3.12.2
       make-dir-cli: 1.0.0
       nodemon: 1.18.10
@@ -1035,9 +1095,11 @@ importers:
       cpy-cli: 2.0.0
       del-cli: 1.1.0
       husky: 1.3.1
-      jest: 24.1.0
+      jest: 24.1.0_b2377ed855f581a50cdaeacf386d75ca
       jest-create-mock-instance: 1.1.0
+      jest-haste-map: 24.0.0
       jest-mock: 24.0.0
+      jest-resolve: 24.5.0_b2377ed855f581a50cdaeacf386d75ca
       make-dir-cli: 1.0.0
       nodemon: 1.18.10
       nyc: 13.3.0
@@ -1082,7 +1144,9 @@ importers:
       inversify-express-utils: 6.3.2
       jest: 24.1.0
       jest-create-mock-instance: 1.1.0
+      jest-haste-map: 24.0.0
       jest-mock: 24.0.0
+      jest-resolve: 24.5.0
       js-yaml: 3.12.2
       make-dir-cli: 1.0.0
       nodemon: 1.18.10
@@ -1121,9 +1185,11 @@ importers:
       cpy-cli: 2.0.0
       del-cli: 1.1.0
       husky: 1.3.1
-      jest: 24.1.0
+      jest: 24.1.0_b2377ed855f581a50cdaeacf386d75ca
       jest-create-mock-instance: 1.1.0
+      jest-haste-map: 24.0.0
       jest-mock: 24.0.0
+      jest-resolve: 24.5.0_b2377ed855f581a50cdaeacf386d75ca
       make-dir-cli: 1.0.0
       nodemon: 1.18.10
       nyc: 13.3.0
@@ -1153,7 +1219,9 @@ importers:
       husky: 1.3.1
       jest: 24.1.0
       jest-create-mock-instance: 1.1.0
+      jest-haste-map: 24.0.0
       jest-mock: 24.0.0
+      jest-resolve: 24.5.0
       js-yaml: 3.12.2
       make-dir-cli: 1.0.0
       nodemon: 1.18.10
@@ -1205,9 +1273,11 @@ importers:
       cpy-cli: 2.0.0
       del-cli: 1.1.0
       husky: 1.3.1
-      jest: 24.1.0
+      jest: 24.1.0_b2377ed855f581a50cdaeacf386d75ca
       jest-create-mock-instance: 1.1.0
+      jest-haste-map: 24.0.0
       jest-mock: 24.0.0
+      jest-resolve: 24.5.0_b2377ed855f581a50cdaeacf386d75ca
       make-dir-cli: 1.0.0
       nodemon: 1.18.10
       nyc: 13.3.0
@@ -1249,7 +1319,9 @@ importers:
       inversify-express-utils: 6.3.2
       jest: 24.1.0
       jest-create-mock-instance: 1.1.0
+      jest-haste-map: 24.0.0
       jest-mock: 24.0.0
+      jest-resolve: 24.5.0
       js-yaml: 3.12.2
       jszip: 3.2.0
       make-dir-cli: 1.0.0
@@ -1295,9 +1367,11 @@ importers:
       cpy-cli: 2.0.0
       del-cli: 1.1.0
       husky: 1.3.1
-      jest: 24.1.0
+      jest: 24.1.0_b2377ed855f581a50cdaeacf386d75ca
       jest-create-mock-instance: 1.1.0
+      jest-haste-map: 24.0.0
       jest-mock: 24.0.0
+      jest-resolve: 24.5.0_b2377ed855f581a50cdaeacf386d75ca
       make-dir-cli: 1.0.0
       nodemon: 1.18.10
       nyc: 13.3.0
@@ -1329,7 +1403,9 @@ importers:
       inversify-binding-decorators: 4.0.0
       jest: 24.1.0
       jest-create-mock-instance: 1.1.0
+      jest-haste-map: 24.0.0
       jest-mock: 24.0.0
+      jest-resolve: 24.5.0
       js-yaml: 3.12.2
       make-dir-cli: 1.0.0
       math: 0.0.3
@@ -1636,7 +1712,7 @@ packages:
       node: '>= 6'
     resolution:
       integrity: sha512-NaCty/OOei6rSDcbPdMiCbYCI0KGFGPgGO6B09lwWt5QTxnkuhKYET9El5u5z1GAcSxkQmSMtM63e24YabCWqA==
-  /@jest/core/24.5.0:
+  /@jest/core/24.5.0_jest-resolve@24.5.0:
     dependencies:
       '@jest/console': 24.3.0
       '@jest/reporters': 24.5.0
@@ -1652,7 +1728,7 @@ packages:
       jest-haste-map: 24.5.0
       jest-message-util: 24.5.0
       jest-regex-util: 24.3.0
-      jest-resolve-dependencies: 24.5.0_jest-haste-map@24.5.0
+      jest-resolve-dependencies: 24.5.0_fd4c04b991421147177cc9f9fc45aa17
       jest-runner: 24.5.0
       jest-runtime: 24.5.0
       jest-snapshot: 24.5.0_jest-haste-map@24.5.0
@@ -1668,6 +1744,8 @@ packages:
     dev: true
     engines:
       node: '>= 6'
+    peerDependencies:
+      jest-resolve: '*'
     resolution:
       integrity: sha512-RDZArRzAs51YS7dXG1pbXbWGxK53rvUu8mCDYsgqqqQ6uSOaTjcVyBl2Jce0exT2rSLk38ca7az7t2f3b0/oYQ==
   /@jest/environment/24.5.0:
@@ -1794,7 +1872,7 @@ packages:
       node: '>= 6'
     resolution:
       integrity: sha512-shAmDyaQC4H92APFoIaVDHCx5bStIocgvbwQyxPRrbUY20V1EYTbSDchWbuwlMG3V17cprZhA6+78JfB+3DTPw==
-  /@octokit/endpoint/3.1.3:
+  /@octokit/endpoint/3.2.3:
     dependencies:
       deepmerge: 3.2.0
       is-plain-object: 2.0.4
@@ -1802,10 +1880,10 @@ packages:
       url-template: 2.0.8
     dev: true
     resolution:
-      integrity: sha512-vAWzeoj9Lzpl3V3YkWKhGzmDUoMfKpyxJhpq74/ohMvmLXDoEuAGnApy/7TRi3OmnjyX2Lr+e9UGGAD0919ohA==
-  /@octokit/request/2.4.1:
+      integrity: sha512-yUPCt4vMIOclox13CUxzuKiPJIFo46b/6GhUnUTw5QySczN1L0DtSxgmIZrZV4SAb9EyAqrceoyrWoYVnfF2AA==
+  /@octokit/request/2.4.2:
     dependencies:
-      '@octokit/endpoint': 3.1.3
+      '@octokit/endpoint': 3.2.3
       deprecation: 1.0.1
       is-plain-object: 2.0.4
       node-fetch: 2.3.0
@@ -1813,10 +1891,10 @@ packages:
       universal-user-agent: 2.0.3
     dev: true
     resolution:
-      integrity: sha512-nN8W24ZXEpJQJoVgMsGZeK9FOzxkc39Xn9ykseUpPpPMNEDFSvqfkCeqqKrjUiXRm72ubGLWG1SOz0aJPcgGww==
-  /@octokit/rest/16.17.1:
+      integrity: sha512-lxVlYYvwGbKSHXfbPk5vxEA8w4zHOH1wobado4a9EfsyD3Cbhuhus1w0Ye9Ro0eMubGO8kNy5d+xNFisM3Tvaw==
+  /@octokit/rest/16.19.0:
     dependencies:
-      '@octokit/request': 2.4.1
+      '@octokit/request': 2.4.2
       before-after-hook: 1.4.0
       btoa-lite: 1.0.0
       deprecation: 1.0.1
@@ -1829,7 +1907,7 @@ packages:
       url-template: 2.0.8
     dev: true
     resolution:
-      integrity: sha512-cRosFoYEXraBsXe+FDHFW4b98RM0WuvSv9HUsbV69E+j8aRGAU/4FudEdpgBSIiXv8HvUOLlo6fAdJmmJHSVKw==
+      integrity: sha512-mUk/GU2LtV95OAM3FnvK7KFFNzUUzEGFldOhWliJnuhwBqxEag1gW85o//L6YphC9wLoTaZQOhCHmQcsCnt2ag==
   /@semantic-release/changelog/3.0.2:
     dependencies:
       '@semantic-release/error': 2.2.0
@@ -1933,7 +2011,7 @@ packages:
       integrity: sha512-sA+XoPU6GrV+A4YswO0b5JWL1KbzmyyaqUK6Y2poDkIVPlj+oQdi/stpKz/bKF5z9ChMGP87OVPMeUyXGaNFtw==
   /@semantic-release/github/5.2.10:
     dependencies:
-      '@octokit/rest': 16.17.1
+      '@octokit/rest': 16.19.0
       '@semantic-release/error': 2.2.0
       aggregate-error: 2.2.0
       bottleneck: 2.17.1
@@ -1959,7 +2037,7 @@ packages:
       integrity: sha512-z/UwIxKb+EMiJDIy/57MBzJ80ar5H9GJQRyML/ILQ8dlrPwXs7cTyTvC7AesrF7t1mJZtg3ht9Qf9RdtR/LGzw==
   /@semantic-release/github/5.2.10_semantic-release@15.13.3:
     dependencies:
-      '@octokit/rest': 16.17.1
+      '@octokit/rest': 16.19.0
       '@semantic-release/error': 2.2.0
       aggregate-error: 2.2.0
       bottleneck: 2.17.1
@@ -2582,10 +2660,10 @@ packages:
       node: '>=4'
     resolution:
       integrity: sha512-+Ryf6g3BKoRc7jfp7ad8tM4TtMiaWvbF/1/sQcZPkkS7ag3D5nMBCe2UfOTONtAkaG0tO0ij3C5Lwmf1EiyjHg==
-  /async-each/1.0.1:
+  /async-each/1.0.2:
     dev: true
     resolution:
-      integrity: sha1-GdOGodntxufByF04iu28xW0zYC0=
+      integrity: sha512-6xrbvN0MOBKSJDdonmSSz2OwFSgxRaVtBDes26mj9KIGtDo+g9xosFRSC+i1gQh2oAN/tQ62AI/pGZGQjVOiRg==
   /async-limiter/1.0.0:
     resolution:
       integrity: sha512-jp/uFnooOiO+L211eZOoSyzpOITMXx1rBITauYykG3BRYPu8h0UcxsPNB04RR5vo4Tyz3+ay17tR6JVf9qzYWg==
@@ -3003,6 +3081,14 @@ packages:
     dev: true
     resolution:
       integrity: sha1-HF/MSJ/QqwDU8ax64QcuMXP7q28=
+  /capture-exit/2.0.0:
+    dependencies:
+      rsvp: 4.8.4
+    dev: true
+    engines:
+      node: 6.* || 8.* || >= 10.*
+    resolution:
+      integrity: sha512-PiT/hQmTonHhl/HFGN+Lx3JJUznrVYJ3+AQsnthneZbvW7x+f08Tk7yLJTLEOUvBTbduLeeBkxEaYXUOUrRq6g==
   /capture-stack-trace/1.0.1:
     dev: true
     engines:
@@ -3088,7 +3174,7 @@ packages:
   /chokidar/2.1.2:
     dependencies:
       anymatch: 2.0.0
-      async-each: 1.0.1
+      async-each: 1.0.2
       braces: 2.3.2
       glob-parent: 3.1.0
       inherits: 2.0.3
@@ -3217,11 +3303,6 @@ packages:
       node: '>= 0.8'
     resolution:
       integrity: sha512-brWl9y6vOB1xYPZcpZde3N9zDByXTosAeMDo4p1wzo6UMOX4vumB+TP1RZ76sfE6Md68Q0NJSrE/gbezd4Ul+w==
-  /commander/2.17.1:
-    dev: true
-    optional: true
-    resolution:
-      integrity: sha512-wPMUt6FnH2yzG95SA6mzjQOEKUU3aLaDEmzs1ti+1E9h+CsrZghRlqEM/EJ4KscsQVG8uNN4uVreUeT8+drlgg==
   /commander/2.19.0:
     resolution:
       integrity: sha512-6tvAOO+D6OENvRAh524Dh9jcfKTYDQAqvqezbCW82xj5X0pSrcpxtvRKHLG0yBY6SD7PSDrJaj+0AiOcKVd1Xg==
@@ -4049,6 +4130,12 @@ packages:
       node: '>=0.4.x'
     resolution:
       integrity: sha1-nr23Y1rQmccNzEwqH1AEKI6L2SQ=
+  /exec-sh/0.2.2:
+    dependencies:
+      merge: 1.2.1
+    dev: true
+    resolution:
+      integrity: sha512-FIUCJz1RbuS0FKTdaAafAByGS0CPvU3R0MeHxgtl+djzCc//F8HakL8GzmVNZanasTbTAY/3DRFA0KpVqj/eAw==
   /exec-sh/0.3.2:
     dev: true
     resolution:
@@ -4505,7 +4592,7 @@ packages:
     bundledDependencies:
       - node-pre-gyp
     dependencies:
-      nan: 2.12.1
+      nan: 2.13.1
     dev: true
     engines:
       node: '>=4.0'
@@ -4723,7 +4810,7 @@ packages:
       node: '>=0.4.7'
     hasBin: true
     optionalDependencies:
-      uglify-js: 3.4.9
+      uglify-js: 3.4.10
     resolution:
       integrity: sha512-l2jRuU1NAWK6AW5qqcTATWQJvNPEwkM7NEKSiv/gqOsoSQbVoWyqVEY5GS+XPQ88zLNmqASRpzfdm8d79hJS+w==
   /har-schema/2.0.0:
@@ -4872,10 +4959,10 @@ packages:
       npm: '>=1.3.7'
     resolution:
       integrity: sha1-muzZJRFHcvPZW2WmCruPfBj7rOE=
-  /http-status-codes/1.3.1:
+  /http-status-codes/1.3.2:
     dev: false
     resolution:
-      integrity: sha512-j7EfK9geezX8jYI/GCe4N/8y14K67+TB/bseZrYjbGdt5E/j5tx5wY8s450EDdfQFlHKfF1tgfXVIzqyJXfM6w==
+      integrity: sha512-nDUtj0ltIt08tGi2VWSpSzNNFye0v3YSe9lX3lIqLTuVvvRiYCvs4QQBSHo0eomFYw1wlUuofurUAlTm+vHnXg==
   /https-proxy-agent/2.2.1:
     dependencies:
       agent-base: 4.2.1
@@ -5071,7 +5158,7 @@ packages:
     dependencies:
       '@types/express': 4.16.1
       express: 4.16.2
-      http-status-codes: 1.3.1
+      http-status-codes: 1.3.2
       inversify: 5.0.1
     dev: false
     resolution:
@@ -5525,16 +5612,16 @@ packages:
       node: '>= 6'
     resolution:
       integrity: sha512-Ikl29dosYnTsH9pYa1Tv9POkILBhN/TLZ37xbzgNsZ1D2+2n+8oEZS2yP1BrHn/T4Rs4Ggwwbp/x8CKOS5YJOg==
-  /jest-cli/24.5.0:
+  /jest-cli/24.5.0_b2377ed855f581a50cdaeacf386d75ca:
     dependencies:
-      '@jest/core': 24.5.0
+      '@jest/core': 24.5.0_jest-resolve@24.5.0
       '@jest/test-result': 24.5.0
       '@jest/types': 24.5.0
       chalk: 2.4.2
       exit: 0.1.2
       import-local: 2.0.0
       is-ci: 2.0.0
-      jest-config: 24.5.0
+      jest-config: 24.5.0_jest-haste-map@24.0.0
       jest-util: 24.5.0
       jest-validate: 24.5.0
       prompts: 2.0.3
@@ -5544,9 +5631,12 @@ packages:
     engines:
       node: '>= 6'
     hasBin: true
+    peerDependencies:
+      jest-haste-map: '*'
+      jest-resolve: '*'
     resolution:
       integrity: sha512-P+Jp0SLO4KWN0cGlNtC7JV0dW1eSFR7eRpoOucP2UM0sqlzp/bVHeo71Omonvigrj9AvCKy7NtQANtqJ7FXz8g==
-  /jest-config/24.5.0:
+  /jest-config/24.5.0_jest-haste-map@24.0.0:
     dependencies:
       '@babel/core': 7.3.4
       '@jest/types': 24.5.0
@@ -5556,9 +5646,9 @@ packages:
       jest-environment-jsdom: 24.5.0
       jest-environment-node: 24.5.0
       jest-get-type: 24.3.0
-      jest-jasmine2: 24.5.0
+      jest-jasmine2: 24.5.0_jest-haste-map@24.0.0
       jest-regex-util: 24.3.0
-      jest-resolve: 24.5.0_jest-resolve@24.5.0
+      jest-resolve: 24.5.0_b2377ed855f581a50cdaeacf386d75ca
       jest-util: 24.5.0
       jest-validate: 24.5.0
       micromatch: 3.1.10
@@ -5662,6 +5752,21 @@ packages:
       node: '>= 6'
     resolution:
       integrity: sha512-HYF6pry72YUlVcvUx3sEpMRwXEWGEPlJ0bSPVnB3b3n++j4phUEoSPcS6GC0pPJ9rpyPSe4cb5muFo6D39cXow==
+  /jest-haste-map/24.0.0:
+    dependencies:
+      fb-watchman: 2.0.0
+      graceful-fs: 4.1.15
+      invariant: 2.2.4
+      jest-serializer: 24.4.0
+      jest-util: 24.5.0
+      jest-worker: 24.4.0
+      micromatch: 3.1.10
+      sane: 3.1.0
+    dev: true
+    engines:
+      node: '>= 6'
+    resolution:
+      integrity: sha512-CcViJyUo41IQqttLxXVdI41YErkzBKbE6cS6dRAploCeutePYfUimWd3C9rQEWhX0YBOQzvNsC0O9nYxK2nnxQ==
   /jest-haste-map/24.5.0:
     dependencies:
       '@jest/types': 24.5.0
@@ -5672,13 +5777,13 @@ packages:
       jest-util: 24.5.0
       jest-worker: 24.4.0
       micromatch: 3.1.10
-      sane: 4.0.3
+      sane: 4.1.0
     dev: true
     engines:
       node: '>= 6'
     resolution:
       integrity: sha512-mb4Yrcjw9vBgSvobDwH8QUovxApdimGcOkp+V1ucGGw4Uvr3VzZQBJhNm1UY3dXYm4XXyTW2G7IBEZ9pM2ggRQ==
-  /jest-jasmine2/24.5.0:
+  /jest-jasmine2/24.5.0_jest-haste-map@24.0.0:
     dependencies:
       '@babel/traverse': 7.3.4
       '@jest/environment': 24.5.0
@@ -5692,7 +5797,7 @@ packages:
       jest-matcher-utils: 24.5.0
       jest-message-util: 24.5.0
       jest-runtime: 24.5.0
-      jest-snapshot: 24.5.0
+      jest-snapshot: 24.5.0_jest-haste-map@24.0.0
       jest-util: 24.5.0
       pretty-format: 24.5.0
       throat: 4.1.0
@@ -5778,7 +5883,7 @@ packages:
       integrity: sha512-ZnAtkWrKf48eERgAOiUxVoFavVBziO2pAi2MfZ1+bGXVkDfxWLxU0//oJBkgwbsv6OAmuLBz4XFFqvCFMqnGUw==
   /jest-pnp-resolver/1.2.1_jest-resolve@24.5.0:
     dependencies:
-      jest-resolve: 24.5.0_jest-resolve@24.5.0
+      jest-resolve: 24.5.0_b2377ed855f581a50cdaeacf386d75ca
     dev: true
     engines:
       node: '>=6'
@@ -5792,11 +5897,12 @@ packages:
       node: '>= 6'
     resolution:
       integrity: sha512-tXQR1NEOyGlfylyEjg1ImtScwMq8Oh3iJbGTjN7p0J23EuVX1MA8rwU69K4sLbCmwzgCUbVkm0FkSF9TdzOhtg==
-  /jest-resolve-dependencies/24.5.0_jest-haste-map@24.5.0:
+  /jest-resolve-dependencies/24.5.0_fd4c04b991421147177cc9f9fc45aa17:
     dependencies:
       '@jest/types': 24.5.0
       jest-haste-map: 24.5.0
       jest-regex-util: 24.3.0
+      jest-resolve: 24.5.0_b2377ed855f581a50cdaeacf386d75ca
       jest-snapshot: 24.5.0_jest-haste-map@24.5.0
     dev: true
     engines:
@@ -5806,13 +5912,14 @@ packages:
       jest-resolve: ^24.1.0
     resolution:
       integrity: sha512-dRVM1D+gWrFfrq2vlL5P9P/i8kB4BOYqYf3S7xczZ+A6PC3SgXYSErX/ScW/469pWMboM1uAhgLF+39nXlirCQ==
-  /jest-resolve/24.5.0_fd4c04b991421147177cc9f9fc45aa17:
+  /jest-resolve/24.5.0_b2377ed855f581a50cdaeacf386d75ca:
     dependencies:
       '@jest/types': 24.5.0
       browser-resolve: 1.11.3
       chalk: 2.4.2
-      jest-haste-map: 24.5.0
+      jest-haste-map: 24.0.0
       jest-pnp-resolver: 1.2.1_jest-resolve@24.5.0
+      jest-resolve: 24.5.0_b2377ed855f581a50cdaeacf386d75ca
       realpath-native: 1.1.0
     dev: true
     engines:
@@ -5822,13 +5929,13 @@ packages:
       jest-resolve: '*'
     resolution:
       integrity: sha512-ZIfGqLX1Rg8xJpQqNjdoO8MuxHV1q/i2OO1hLXjgCWFWs5bsedS8UrOdgjUqqNae6DXA+pCyRmdcB7lQEEbXew==
-  /jest-resolve/24.5.0_jest-resolve@24.5.0:
+  /jest-resolve/24.5.0_fd4c04b991421147177cc9f9fc45aa17:
     dependencies:
       '@jest/types': 24.5.0
       browser-resolve: 1.11.3
       chalk: 2.4.2
+      jest-haste-map: 24.5.0
       jest-pnp-resolver: 1.2.1_jest-resolve@24.5.0
-      jest-resolve: 24.5.0_jest-resolve@24.5.0
       realpath-native: 1.1.0
     dev: true
     engines:
@@ -5901,16 +6008,17 @@ packages:
       node: '>= 6'
     resolution:
       integrity: sha512-k//0DtglVstc1fv+GY/VHDIjrtNjdYvYjMlbLUed4kxrE92sIUewOi5Hj3vrpB8CXfkJntRPDRjCrCvUhBdL8Q==
-  /jest-snapshot/24.5.0:
+  /jest-snapshot/24.5.0_jest-haste-map@24.0.0:
     dependencies:
       '@babel/types': 7.3.4
       '@jest/types': 24.5.0
       chalk: 2.4.2
       expect: 24.5.0
       jest-diff: 24.5.0
+      jest-haste-map: 24.0.0
       jest-matcher-utils: 24.5.0
       jest-message-util: 24.5.0
-      jest-resolve: 24.5.0_jest-resolve@24.5.0
+      jest-resolve: 24.5.0_b2377ed855f581a50cdaeacf386d75ca
       mkdirp: 0.5.1
       natural-compare: 1.4.0
       pretty-format: 24.5.0
@@ -6002,14 +6110,17 @@ packages:
       node: '>= 6'
     resolution:
       integrity: sha512-BH9X/klG9vxwoO99ZBUbZFfV8qO0XNZ5SIiCyYK2zOuJBl6YJVAeNIQjcoOVNu4HGEHeYEKsUWws8kSlSbZ9YQ==
-  /jest/24.1.0:
+  /jest/24.1.0_b2377ed855f581a50cdaeacf386d75ca:
     dependencies:
       import-local: 2.0.0
-      jest-cli: 24.5.0
+      jest-cli: 24.5.0_b2377ed855f581a50cdaeacf386d75ca
     dev: true
     engines:
       node: '>= 6'
     hasBin: true
+    peerDependencies:
+      jest-haste-map: '*'
+      jest-resolve: '*'
     resolution:
       integrity: sha512-+q91L65kypqklvlRFfXfdzUKyngQLOcwGhXQaLmVHv+d09LkNXuBuGxlofTFW42XMzu3giIcChchTsCNUjQ78A==
   /jmespath/0.15.0:
@@ -6736,11 +6847,11 @@ packages:
     dev: false
     resolution:
       integrity: sha512-z81GNO7nnYMEhrGh9LeymoE4+Yr0Wn5McHIZMK5cfQCl+NDX08sCZgUc9/6MHni9IWuFLm1Z3HTCXu2z9fN62Q==
-  /nan/2.12.1:
+  /nan/2.13.1:
     dev: true
     optional: true
     resolution:
-      integrity: sha512-JY7V6lRkStKcKTvHO5NVSQRv+RV+FIL5pvDoLiAtSL9pKlC5x9PKQcZDsq7m4FO4d57mkhC6Z+QhAh3Jdk5JFw==
+      integrity: sha512-I6YB/YEuDeUZMmhscXKxGgZlFnhsn5y0hgOZBadkzfTRrZBtJDZeg6eQf7PYMIEclwmorTKK8GztsyOUSVBREA==
   /nanomatch/1.2.13:
     dependencies:
       arr-diff: 4.0.0
@@ -8051,6 +8162,12 @@ packages:
       node: 0.12.* || 4.* || 6.* || >= 7.*
     resolution:
       integrity: sha512-OfWGQTb9vnwRjwtA2QwpG2ICclHC3pgXZO5xt8H2EfgDquO0qVdSb5T88L4qJVAEugbS56pAuV4XZM58UX8ulw==
+  /rsvp/4.8.4:
+    dev: true
+    engines:
+      node: 0.12.* || 4.* || 6.* || >= 7.*
+    resolution:
+      integrity: sha512-6FomvYPfs+Jy9TfXmBpBuMWNH94SgCsZmJKcanySzgNNP6LjWxBvyLTa9KaMfDDM5oxRfrKDB0r/qeRsLwnBfA==
   /run-async/2.3.0:
     dependencies:
       is-promise: 2.1.0
@@ -8090,11 +8207,30 @@ packages:
   /safer-buffer/2.1.2:
     resolution:
       integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==
-  /sane/4.0.3:
+  /sane/3.1.0:
+    dependencies:
+      anymatch: 2.0.0
+      capture-exit: 1.2.0
+      exec-sh: 0.2.2
+      execa: 1.0.0
+      fb-watchman: 2.0.0
+      micromatch: 3.1.10
+      minimist: 1.2.0
+      walker: 1.0.7
+      watch: 0.18.0
+    dev: true
+    engines:
+      node: 6.* || 8.* || >= 10.*
+    hasBin: true
+    optionalDependencies:
+      fsevents: 1.2.7
+    resolution:
+      integrity: sha512-G5GClRRxT1cELXfdAq7UKtUsv8q/ZC5k8lQGmjEm4HcAl3HzBy68iglyNCmw4+0tiXPCBZntslHlRhbnsSws+Q==
+  /sane/4.1.0:
     dependencies:
       '@cnakazawa/watch': 1.0.3
       anymatch: 2.0.0
-      capture-exit: 1.2.0
+      capture-exit: 2.0.0
       exec-sh: 0.3.2
       execa: 1.0.0
       fb-watchman: 2.0.0
@@ -8106,7 +8242,7 @@ packages:
       node: 6.* || 8.* || >= 10.*
     hasBin: true
     resolution:
-      integrity: sha512-hSLkC+cPHiBQs7LSyXkotC3UUtyn8C4FMn50TNaacRyvBlI+3ebcxMpqckmTdtXVtel87YS7GXN3UIOj7NiGVQ==
+      integrity: sha512-hhbzAgTIX8O7SHfp2c8/kREfEn4qO/9q8C9beyY6+tvZ87EpoZ3i1RIEvp27YBswnNbY9mWd6paKVmKbAgLfZA==
   /sax/1.2.1:
     dev: false
     resolution:
@@ -8996,7 +9132,7 @@ packages:
       bs-logger: 0.2.6
       buffer-from: 1.1.1
       fast-json-stable-stringify: 2.0.0
-      jest: 24.1.0
+      jest: 24.1.0_b2377ed855f581a50cdaeacf386d75ca
       json5: 2.1.0
       make-error: 1.3.5
       mkdirp: 0.5.1
@@ -9103,9 +9239,9 @@ packages:
     hasBin: true
     resolution:
       integrity: sha512-tDMYfVtvpb96msS1lDX9MEdHrW4yOuZ4Kdc4Him9oU796XldPYF/t2+uKoX0BBa0hXXwDlqYQbXY5Rzjzc5hBA==
-  /uglify-js/3.4.9:
+  /uglify-js/3.4.10:
     dependencies:
-      commander: 2.17.1
+      commander: 2.19.0
       source-map: 0.6.1
     dev: true
     engines:
@@ -9113,7 +9249,7 @@ packages:
     hasBin: true
     optional: true
     resolution:
-      integrity: sha512-8CJsbKOtEbnJsTyv6LE6m6ZKniqMiFWmm9sRbopbkGs3gMPPfd3Fh8iIA4Ykv5MgaTbqHr4BaoGLJLZNhsrW1Q==
+      integrity: sha512-Y2VsbPVs0FIshJztycsO2SfPk7/KAF/T72qzv9u5EpQ4kB2hQoHlhNQTsNyy6ul7lQtqJN/AoWeS23OzEiEFxw==
   /ultron/1.1.1:
     dev: false
     resolution:
@@ -9303,6 +9439,16 @@ packages:
     dev: true
     resolution:
       integrity: sha1-L3+bj9ENZ3JisYqITijRlhjgKPs=
+  /watch/0.18.0:
+    dependencies:
+      exec-sh: 0.2.2
+      minimist: 1.2.0
+    dev: true
+    engines:
+      node: '>=0.1.95'
+    hasBin: true
+    resolution:
+      integrity: sha1-KAlUdsbffJDJYxOJkMClQj60uYY=
   /webidl-conversions/4.0.2:
     dev: true
     resolution:
