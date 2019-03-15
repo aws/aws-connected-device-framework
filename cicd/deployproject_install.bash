@@ -12,8 +12,8 @@ chmod +x /usr/bin/jq
 
 echo installing mkdocs...
 ### note this must be installed individually else pip struggles with dependency resolution
+pip install --upgrade pip
 pip install mkdocs 
 pip install markdown-include 
 pip install pymdown-extensions 
-pip install mkdocs-material
-
+pip install mkdocs-material==2.9.4
