@@ -50,7 +50,7 @@ function publish_artifacts() {
         cp -R $package $clientsReleasedir/packages/libraries/clients/$package
 
         echo Extracting $package changeLog...
-        mkdir -p $coreReleasedir/packages/libraries/clients/$package
+        mkdir -p $changeLogsReleasedir/packages/libraries/clients/$package
         if [ -f "${package}CHANGELOG.md" ]; then
             cp ${package}CHANGELOG.md $changeLogsReleasedir/packages/libraries/clients/${package}CHANGELOG.md
         fi
