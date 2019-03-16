@@ -11,13 +11,15 @@ function publish_artifacts() {
 
     coreBundleName="cdf-core-$1.zip"
     coreReleasedir=$basedir/../bundled-core
-    rm -rf $coreReleasedir
-    mkdir -p $coreReleasedir
+    rm -rf $coreReleasedir && mkdir -p $coreReleasedir
     
     clientsBundleName="cdf-clients-$1.zip"
     clientsReleasedir=$basedir/../bundled-clients
-    rm -rf $clientsReleasedir
-    mkdir -p $clientsReleasedir
+    rm -rf $clientsReleasedir && mkdir -p $clientsReleasedir
+    
+    changeLogsBundleName="cdf-changeLogs-$1.zip"
+    changeLogsReleasedir=$basedir/../bundled-changeLogs
+    rm -rf $changeLogsReleasedir && mkdir -p $changeLogsReleasedir
 
     docsBundleName="cdf-documentation-$1.zip"
     docsReleasedir=$basedir/documentation/site
@@ -32,6 +34,12 @@ function publish_artifacts() {
         mkdir -p $coreReleasedir/packages/services/$package/build
         cp $package/build/build.zip $coreReleasedir/packages/services/$package/build/build.zip
         cp -R $package/infrastructure $coreReleasedir/packages/services/$package/infrastructure
+
+        echo Extracting $package changeLog...
+        mkdir -p $coreReleasedir/packages/services/$package/build
+        if [ -f "$package/CHANGELOG.md" ]; then
+            cp $package/CHANGELOG.md $changeLogsReleasedir/packages/services/$package/
+        fi
     done
 
     ### copy the entire package of each of the client libraries
@@ -40,6 +48,12 @@ function publish_artifacts() {
     for package in */; do
         echo Copying $package...
         cp -R $package $clientsReleasedir/packages/libraries/clients/$package
+
+        echo Extracting $package changeLog...
+        mkdir -p $coreReleasedir/packages/libraries/clients/$package
+        if [ -f "$package/CHANGELOG.md" ]; then
+            cp $package/CHANGELOG.md $changeLogsReleasedir/packages/libraries/clients/$package/
+        fi
     done
 
     ### compile the documentation
@@ -51,19 +65,25 @@ function publish_artifacts() {
     echo Zipping "$coreReleasedir" to "$coreBundleName"
     zip -r "$coreBundleName" .
     echo Uploading "$coreBundleName" to "$ARTIFACT_PUBLISH_LOCATION/$coreBundleName"
-    aws s3 cp "$coreBundleName" "$ARTIFACT_PUBLISH_LOCATION/$coreBundleName" &
+    aws s3 cp "$coreBundleName" "$ARTIFACT_PUBLISH_LOCATION/core/$coreBundleName" &
 
     cd $clientsReleasedir
     echo Zipping "$clientsReleasedir" to "$clientsBundleName"
     zip -r "$clientsBundleName" .
     echo Uploading "$clientsBundleName" to "$ARTIFACT_PUBLISH_LOCATION/$clientsBundleName"
-    aws s3 cp "$clientsBundleName" "$ARTIFACT_PUBLISH_LOCATION/$clientsBundleName" &
+    aws s3 cp "$clientsBundleName" "$ARTIFACT_PUBLISH_LOCATION/clients/$clientsBundleName" &
+
+    cd $changeLogsReleasedir
+    echo Zipping "$changeLogsReleasedir" to "$changeLogsBundleName"
+    zip -r "$changeLogsBundleName" .
+    echo Uploading "$changeLogsBundleName" to "$ARTIFACT_PUBLISH_LOCATION/$changeLogsBundleName"
+    aws s3 cp "$changeLogsBundleName" "$ARTIFACT_PUBLISH_LOCATION/changeLogs/$changeLogsBundleName" &
 
     cd $docsReleasedir
     echo Zipping "$docsReleasedir" to "$docsBundleName"
     zip -r "$docsBundleName" .
     echo Uploading "$docsBundleName" to "$ARTIFACT_PUBLISH_LOCATION/$docsBundleName"
-    aws s3 cp "$docsBundleName" "$ARTIFACT_PUBLISH_LOCATION/$docsBundleName" &
+    aws s3 cp "$docsBundleName" "$ARTIFACT_PUBLISH_LOCATION/docs/$docsBundleName" &
 
     ### push the documentation up to our public site
     aws s3 sync $docsReleasedir "$DOCUMENTATION_PUBLISH_LOCATION" &
