@@ -12,9 +12,6 @@
     "test": "npm run lint && nyc jest --passWithNoTests",
     "build": "tsc -b tsconfig.json",
 
-    "prebundle:prepare": "cpy package.json dist  && cpy src/config/* dist/config/ && make-dir build && make-dir dist/node_modules",
-    "bundle:package": "cd dist && zip -rq ../build/build.zip * && zip -ur ../build/build.zip ../package.json",
-
     "semantic-release": "npx semantic-release -e semantic-release-monorepo"
   },
   "dependencies": {

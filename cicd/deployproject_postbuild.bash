@@ -34,12 +34,12 @@ function publish_artifacts() {
         cp -R $package/infrastructure $coreReleasedir/packages/services/$package/infrastructure
     done
 
-    ### copy each of the pre-compiled clients
+    ### copy the entire package of each of the client libraries
     cd $basedir/packages/libraries/clients
+    mkdir -p $clientsReleasedir/packages/libraries/clients
     for package in */; do
-        echo Copying $package bundle...
-        mkdir -p $clientsReleasedir/packages/libraries/clients/$package/build
-        cp $package/build/build.zip $clientsReleasedir/packages/libraries/clients/$package/build/build.zip
+        echo Copying $package...
+        cp -R $package $clientsReleasedir/packages/libraries/clients/$package
     done
 
     ### compile the documentation
@@ -65,9 +65,7 @@ function publish_artifacts() {
     echo Uploading "$docsBundleName" to "$ARTIFACT_PUBLISH_LOCATION/$docsBundleName"
     aws s3 cp "$docsBundleName" "$ARTIFACT_PUBLISH_LOCATION/$docsBundleName" &
 
-
     ### push the documentation up to our public site
-    #TODO: make this configurable
     aws s3 sync $docsReleasedir "$DOCUMENTATION_PUBLISH_LOCATION" &
 
     wait
