@@ -56,6 +56,20 @@ function publish_artifacts() {
         fi
     done
 
+    ### copy the entire package of the config library (a depedency of the client libraries)
+    cd $basedir/packages/libraries/config
+    mkdir -p $clientsReleasedir/packages/libraries/config
+    for package in */; do
+        echo Copying $package...
+        cp -R $package $clientsReleasedir/packages/libraries/config/$package
+
+        echo Extracting $package changeLog...
+        mkdir -p $coreReleasedir/packages/libraries/config/$package
+        if [ -f "${package}CHANGELOG.md" ]; then
+            cp ${package}CHANGELOG.md $changeLogsReleasedir/packages/libraries/config/${package}CHANGELOG.md
+        fi
+    done
+
     ### compile the documentation
     cd $basedir/documentation
     ./compile_documentation.bash
