@@ -2,7 +2,7 @@
 
 ## Introduction
 
-The following describes the steps involved to initialize a CDF development environment from scratch, to build, run and test the project, then finally on how to commit modifications to the source code.
+The following describes the steps involved to initialize a CDF development environment from scratch, to build, run and test a project, then finally on how to commit modifications to the source code.
 
 Due to the scripts used as part of both the build and deployment steps, only linux type environments (including macOS) are supported.
 
@@ -50,7 +50,7 @@ To build all the modules:
 cdf-core> pnpm recursive run build
 ```
 
-To build a specific modules (e.g. the Asset Library)
+To build a specific module (e.g. the Asset Library)
 
 ```sh
 cdf-core> cd packages/services/assetlibrary
@@ -65,7 +65,7 @@ To run unit tests for all the modules:
 cdf-core> pnpm recursive run test
 ```
 
-To run unit tests for a specific modules (e.g. the Asset Library)
+To run unit tests for a specific module (e.g. the Asset Library)
 
 ```sh
 cdf-core> cd packages/services/assetlibrary

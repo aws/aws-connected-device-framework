@@ -36,7 +36,7 @@ function publish_artifacts() {
         cp -R ${package}infrastructure $coreReleasedir/packages/services/${package}infrastructure
 
         echo Extracting $package changeLog...
-        mkdir -p $coreReleasedir/packages/services/${package}build
+        mkdir -p $changeLogsReleasedir/packages/services/$package
         if [ -f "${package}CHANGELOG.md" ]; then
             cp ${package}CHANGELOG.md $changeLogsReleasedir/packages/services/${package}CHANGELOG.md
         fi
