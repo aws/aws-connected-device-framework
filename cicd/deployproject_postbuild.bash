@@ -31,14 +31,14 @@ function publish_artifacts() {
     cd $basedir/packages/services
     for package in */; do
         echo Copying $package bundle...
-        mkdir -p $coreReleasedir/packages/services/$package/build
-        cp $package/build/build.zip $coreReleasedir/packages/services/$package/build/build.zip
-        cp -R $package/infrastructure $coreReleasedir/packages/services/$package/infrastructure
+        mkdir -p $coreReleasedir/packages/services/${package}build
+        cp ${package}build/build.zip $coreReleasedir/packages/services/${package}build/build.zip
+        cp -R ${package}infrastructure $coreReleasedir/packages/services/${package}infrastructure
 
         echo Extracting $package changeLog...
-        mkdir -p $coreReleasedir/packages/services/$package/build
-        if [ -f "$package/CHANGELOG.md" ]; then
-            cp $package/CHANGELOG.md $changeLogsReleasedir/packages/services/$package/
+        mkdir -p $coreReleasedir/packages/services/${package}build
+        if [ -f "${package}CHANGELOG.md" ]; then
+            cp ${package}CHANGELOG.md $changeLogsReleasedir/packages/services/${package}CHANGELOG.md
         fi
     done
 
@@ -51,8 +51,8 @@ function publish_artifacts() {
 
         echo Extracting $package changeLog...
         mkdir -p $coreReleasedir/packages/libraries/clients/$package
-        if [ -f "$package/CHANGELOG.md" ]; then
-            cp $package/CHANGELOG.md $changeLogsReleasedir/packages/libraries/clients/$package/
+        if [ -f "${package}CHANGELOG.md" ]; then
+            cp ${package}CHANGELOG.md $changeLogsReleasedir/packages/libraries/clients/${package}CHANGELOG.md
         fi
     done
 
