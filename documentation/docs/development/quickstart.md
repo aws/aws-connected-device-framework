@@ -42,7 +42,7 @@ curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | b
 cdf-core> pnpm install
 ```
 
-## Building the modules
+## Building a module
 
 To build all the modules:
 
@@ -50,14 +50,14 @@ To build all the modules:
 cdf-core> pnpm recursive run build
 ```
 
-To build a specific module (e.g. the Asset Library)
+To build a specific module (e.g. the Asset Library):
 
 ```sh
 cdf-core> cd packages/services/assetlibrary
 cdf-core/packages/services/assetlibrary> pnpm run build
 ```
 
-## Testing the modules
+## Testing a module
 
 To run unit tests for all the modules:
 
@@ -65,7 +65,7 @@ To run unit tests for all the modules:
 cdf-core> pnpm recursive run test
 ```
 
-To run unit tests for a specific module (e.g. the Asset Library)
+To run unit tests for a specific module (e.g. the Asset Library):
 
 ```sh
 cdf-core> cd packages/services/assetlibrary
@@ -75,27 +75,29 @@ cdf-core/packages/services/assetlibrary> pnpm run test
 Note that integration tests are automatically run by the CI/CD pipeline upon each commit to the `master` branch.
 
 
-## Running the modules
+## Running a module
+
+Each service has its configuration properties stored in an external file.  We follow a convention of storing these property files within the customers _infrastructure_ project (e.g. _cdf-infrastructure-demo_), where the name of the property file is of the format "<environment\>-config.json".  When starting a service we need to set the variable _CONFIG_LOCATION_ to the root of the _infrastructure_ project.
 
 To start all the runnable services:
 
 ```sh
-cdf-core> pnpm recursive run start
+cdf-core> CONFIG_LOCATION=<path to infrastructure project> pnpm recursive run start
 ```
 
-To start a specific runnable service e.g. the Asset Library)
+To start a specific runnable service (e.g. the Asset Library):
 
 ```sh
 cdf-core> cd packages/services/assetlibrary
-cdf-core/packages/services/assetlibrary> pnpm run start
+cdf-core/packages/services/assetlibrary> CONFIG_LOCATION=<path to infrastructure project> pnpm run start
 ```
 
-## Making changes
+## Making changes to an existing module
 
 We adhere to what is known as a [GitHub flow](https://guides.github.com/introduction/flow/) as far as our approach to branching is concerned.  Basically this boils down to:
 
-+ The `master` branch represents a working version of the code that may be deployed to a production environment
-+ Under no circumstances never commit directly to `master`!
++ The `master` branch always represents a working version of the code that may be deployed to a production environment
++ Under no circumstances ever commit directly to `master`!
 + When starting a new feature or fixing a bug, create a new branch from `master`:
 
 ```sh
@@ -111,7 +113,7 @@ cdf-core> git add -A
 cdf-core> pnpm run commit
 ```
 
-+ When you finished your implementation, and ensured that all existing tests run as well as adding any new tests, push your branch to the CodeCommit repo:
++ When you have finished with your implementation, and ensured that all existing unit tests pass as well as creating any new tests, push your branch to the CodeCommit repo:
 
 ```sh
 cdf-core> git push my-branch
@@ -134,9 +136,24 @@ cdf-core> git merge --no-ff my-branch
 # re-run tests to make sure everything is still ok
 cdf-core> pnpm recursive run test
 
-# if tests still pass, delete your local branch, and push the changes
+# if tests still pass, push the changes
+cdf-core> git push origin master
+
+# once pushed, delete your local branch
 cdf-core> git branch -d my-branch
 cdf-core> git push origin master
+```
+
+## Understanding the directory structure
+
+Directory | Description
+---|---
+cdf-core/cicd/ | The CloudFormation template to deploy the cicd pipeline, along with the related CodeBuild scripts
+cdf-core/documentation/ | CDF core related documentation
+cdf-core/infrastructure/ | The main deployment script for deploying the CDF core services, along with CloudFormation templates that are not specific to any service
+cdf-core/packages/integration-tests/ | BDD related automated integration tests
+cdf-core/packages/libraries/ | All internal libraries, as well as CDF client libraries
+cdf-core/packages/services/ | Deployable services, such as the Asset Library
 ```
 
 ## FAQ

@@ -1,30 +1,44 @@
 # Deployment
 
-Each deployable CDF service contains an `infrastructure/package.bash` and `infrastructure/deploy.bash` script to package and deploy the service to AWS.  Refer to each script for details on project specific options.
+## TL;DR
 
-As each deployment may require environment specific properties, the `package.bash` and `deploy.bash` scripts accept a parameter providing the location to an external configuration file.
-
-As an example, to deploy the asset library, the following external configuration file is required:
+The _cdf-core_ releases are available from S3 for installation.  Retrieve a list of the available releases as follows:
 
 ```sh
-{
-  "neptuneUrl": "",
-  "aws": {
-    "iot": {
-      "endpoint": ""
-    }
-  }
-}
+> aws s3 ls s3://cdf-157731826412-us-west-2/releases/core/
+
+2019-03-16 16:27:33  343978991 cdf-core-20190316222725.zip
 ```
 
-The `deploy.bash` script would determine the correct information for the environment and automatically populate these values.
-
-The deployment process would look as follows:
+Download and extract the release using the name of the file from the previous step:
 
 ```sh
-infrastructure/package-cfn.bash -b cdf-157731826412-us-east-1 -R us-east-1 -P deanhart-1577
-
-./deploy.bash -e dean -p 157731826412 -i 0.0.0.0/0 -k 2d6d7741-3930-4556-ac69-2ea395bfec77 -b cdf-157731826412-us-east-1 -R us-east-1 -P deanhart-1577
+> aws s3 cp s3://cdf-157731826412-us-west-2/releases/core/cdf-core-20190316222725.zip .
+> unzip cdf-core-20190316222725.zip -d cdf-core
 ```
 
-In addition, a top level `deploy.bash` script (located in the `cdf-infrastructure-{customer}` project) orchestrates the deployment of the entire platform.  
+Along with the _cdf-core_ release package, an _infrastructure_ and _facade_ project need cloning to the same parent directory.  The following is an example of how to clone the cdf demo projects:
+
+```sh
+> git clone https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-facade-demo
+> git clone https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-infrastructure-demo
+```
+
+To install, run the _deploy.bash_ script from the _infrastructure_ project:
+
+```sh
+> cd cdf-infrastructure-demo
+cdf-infrastructure-demo> ./deploy.bash -e demo -c "../cdf-core" -p 157731826412 -i 0.0.0.0/0 -u cdf-157721836412-us-west-2 -b cdf-157721836412-us-west-2 -R us-west-2 -P 1577
+```
+
+For a description of the arguments of the above script, run the script with no arguments as follows:
+
+```sh
+cdf-infrastructure-demo> ./deploy.bash
+```
+
+## FAQ
+
+???+ question "I'm trying to run the _aws s3_ commands but it reports _Access Denied_"
+
+    Your account must have access to the S3 bucket where the cdf-core releases are stored (currently bucket _cdf-157731826412-us-west-2_ located within account _1577-3182-6412_).  Do you have multiple accounts configured on your computer?  If so, you may need to indicate the specific profile to use by setting the _--profile_ attribute.
