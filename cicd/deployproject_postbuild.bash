@@ -13,10 +13,6 @@ function publish_artifacts() {
     coreReleasedir=$basedir/../bundled-core
     rm -rf $coreReleasedir && mkdir -p $coreReleasedir
     
-    clientsBundleName="cdf-clients-$1.zip"
-    clientsReleasedir=$basedir/../bundled-clients
-    rm -rf $clientsReleasedir && mkdir -p $clientsReleasedir
-    
     changeLogsBundleName="cdf-changeLogs-$1.zip"
     changeLogsReleasedir=$basedir/../bundled-changeLogs
     rm -rf $changeLogsReleasedir && mkdir -p $changeLogsReleasedir
@@ -24,17 +20,12 @@ function publish_artifacts() {
     docsBundleName="cdf-documentation-$1.zip"
     docsReleasedir=$basedir/documentation/site
 
-    ### copy the main infrastructure scripts/templates
-    cp -R $basedir/infrastructure $coreReleasedir/infrastructure
+    ### copy the core services
+    cp -R $basedir $coreReleasedir
 
-    ### copy each of the pre-compiled packages along with its related infrastructure scripts/templates
+    ### copy each of the pre-compiled service changelogs
     cd $basedir/packages/services
     for package in */; do
-        echo Copying $package bundle...
-        mkdir -p $coreReleasedir/packages/services/${package}build
-        cp ${package}build/build.zip $coreReleasedir/packages/services/${package}build/build.zip
-        cp -R ${package}infrastructure $coreReleasedir/packages/services/${package}infrastructure
-
         echo Extracting $package changeLog...
         mkdir -p $changeLogsReleasedir/packages/services/$package
         if [ -f "${package}CHANGELOG.md" ]; then
@@ -42,13 +33,10 @@ function publish_artifacts() {
         fi
     done
 
-    ### copy the entire package of each of the client libraries
+    ### copy each of the pre-compiled library changelogs
     cd $basedir/packages/libraries/clients
     mkdir -p $clientsReleasedir/packages/libraries/clients
     for package in */; do
-        echo Copying $package...
-        cp -R $package $clientsReleasedir/packages/libraries/clients/$package
-
         echo Extracting $package changeLog...
         mkdir -p $changeLogsReleasedir/packages/libraries/clients/$package
         if [ -f "${package}CHANGELOG.md" ]; then
@@ -56,13 +44,10 @@ function publish_artifacts() {
         fi
     done
 
-    ### copy the entire package of the config library (a depedency of the client libraries)
+    ### copy the pre-compiled config changelogs
     cd $basedir/packages/libraries/config
     mkdir -p $clientsReleasedir/packages/libraries/config
     for package in */; do
-        echo Copying $package...
-        cp -R $package $clientsReleasedir/packages/libraries/config/$package
-
         echo Extracting $package changeLog...
         mkdir -p $changeLogsReleasedir/packages/libraries/config/$package
         if [ -f "${package}CHANGELOG.md" ]; then
@@ -80,12 +65,6 @@ function publish_artifacts() {
     zip -r "$coreBundleName" .
     echo Uploading "$coreBundleName" to "$ARTIFACT_PUBLISH_LOCATION/$coreBundleName"
     aws s3 cp "$coreBundleName" "$ARTIFACT_PUBLISH_LOCATION/core/$coreBundleName" &
-
-    cd $clientsReleasedir
-    echo Zipping "$clientsReleasedir" to "$clientsBundleName"
-    zip -r "$clientsBundleName" .
-    echo Uploading "$clientsBundleName" to "$ARTIFACT_PUBLISH_LOCATION/$clientsBundleName"
-    aws s3 cp "$clientsBundleName" "$ARTIFACT_PUBLISH_LOCATION/clients/$clientsBundleName" &
 
     cd $changeLogsReleasedir
     echo Zipping "$changeLogsReleasedir" to "$changeLogsBundleName"
