@@ -7,8 +7,8 @@ import 'reflect-metadata';
 
 import AWS, { AWSError } from 'aws-sdk';
 import { ActivationService } from './activation.service';
-import { DevicesService, PoliciesService } from '@cdf/assetlibrary-client/dist';
-import { ThingsService } from '@cdf/provisioning-client/dist';
+import { DevicesService, PoliciesService } from '@cdf/assetlibrary-client';
+import { ThingsService } from '@cdf/provisioning-client';
 import { createMockInstance } from 'jest-create-mock-instance';
 
 let mockedIot: AWS.Iot;
@@ -302,10 +302,11 @@ describe('ActivationService', () => {
         mockDescribeCertResponse.error = null;
         const mockDescribeCert = mockedIot.describeCertificate = <any>(jest.fn((_params) => mockDescribeCertResponse));
 
-        const createDeviceMock = jest.fn((_params) => {
-            return Promise.resolve({'status':201});
+        const mockedCreateDevice = mockedDevicesService.createDevice = jest.fn().mockImplementationOnce(()=> {
+            return {
+              promise: () => Promise.resolve({'status':201})
+            };
         });
-        const mockedCreateDevice = mockedDevicesService.createDevice = <any>createDeviceMock;
 
         const listPoliciesMock = jest.fn((_params) => {
             return Promise.resolve({

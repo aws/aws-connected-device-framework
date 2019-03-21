@@ -93,6 +93,7 @@ Running with:
   AWS_REGION:                           $AWS_REGION
   AWS_PROFILE:                          $AWS_PROFILE
 "
+cwd=$(dirname "$0")
 
 
 echo '
@@ -127,7 +128,7 @@ echo '
 ***************************************************************
 '
 aws cloudformation deploy \
-  --template-file build/cfn-certificateactivator-output.yml \
+  --template-file $cwd/build/cfn-certificateactivator-output.yml \
   --stack-name $CERTIFICATEACTIVATOR_STACK_NAME \
   --parameter-overrides \
       BucketName=$CRL_BUCKET \

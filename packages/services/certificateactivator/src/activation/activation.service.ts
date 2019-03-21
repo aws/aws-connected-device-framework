@@ -10,8 +10,8 @@ import { logger } from '../utils/logger';
 import ow from 'ow';
 import config from 'config';
 import { RegistrationEvent, CertificateRevocationList, CertificateStatus } from './activation.models';
-import { DevicesService, Device, PoliciesService ,ASSTLIBRARY_CLIENT_TYPES } from '@cdf/assetlibrary-client/dist';
-import { ThingsService, ProvisionThingRequest, ProvisionThingResponse, PROVISIONING_CLIENT_TYPES } from '@cdf/provisioning-client/dist';
+import { DevicesService, Device, PoliciesService ,ASSTLIBRARY_CLIENT_TYPES } from '@cdf/assetlibrary-client';
+import { ThingsService, ProvisionThingRequest, ProvisionThingResponse, PROVISIONING_CLIENT_TYPES } from '@cdf/provisioning-client';
 
 @injectable()
 export class ActivationService {

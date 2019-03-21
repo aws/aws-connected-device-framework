@@ -41,7 +41,6 @@ if [ -z "$DEPLOY_ARTIFACTS_STORE_BUCKET" ]; then
 	echo -b DEPLOY_ARTIFACTS_STORE_BUCKET is required; help_message; exit 1;
 fi
 
-template_file='infrastructure/cfn-certificatevendor.yml' 
 
 AWS_ARGS=
 if [ -n "$AWS_REGION" ]; then
@@ -51,6 +50,9 @@ if [ -n "$AWS_PROFILE" ]; then
 	AWS_ARGS="$AWS_ARGS--profile $AWS_PROFILE"
 fi
 
+cwd=$(dirname "$0")
+mkdir -p $cwd/build
+
 
 echo '
 **********************************************************
@@ -59,8 +61,8 @@ echo '
 '
 
 aws cloudformation package \
-  --template-file $template_file \
-  --output-template-file build/cfn-certificatevendor-output.yml \
+  --template-file $cwd/cfn-certificatevendor.yml \
+  --output-template-file $cwd/build/cfn-certificatevendor-output.yml \
   --s3-bucket $DEPLOY_ARTIFACTS_STORE_BUCKET \
   $AWS_ARGS
 
