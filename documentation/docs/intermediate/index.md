@@ -44,6 +44,11 @@ Topic | Description
 ---|---
 [Overview](/projects/provisioning/overview) | An overview of the _provisioning_ service.
 
+## Certificate Activator Service
+Topic | Description
+---|---
+[Overview](/projects/certificateactivator/overview) | An overview of the _certificateactivator_ service.
+
 ## Certificate Vendor Service
 Topic | Description
 ---|---

@@ -22,6 +22,8 @@ nav:
     - Bulk Certs:
       - 'Bulk Certs Overview' : projects/bulkcerts/overview.md 
       - 'Bulk Certs Swagger': projects/bulkcerts/bulkcerts-swagger.md
+    - Certificate Activator:
+      - 'Certificate Activator Overview' : projects/certificateactivator/overview.md
     - Certificate Vendor:
       - 'Certificate Vendor Overview' : projects/certificatevendor/overview.md
     - Commands:
@@ -56,6 +58,7 @@ nav:
     - 'Integration Testing': development/integration-testing.md
   - Admin:
     - 'Deployment': advanced/deployment.md
+    - 'CI/CD': advanced/cicd.md
     
 theme:
   name: 'material'

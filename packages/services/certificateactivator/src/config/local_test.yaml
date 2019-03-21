@@ -1,0 +1,14 @@
+aws:
+  region: 
+  s3:
+    crl:
+      bucket:
+      key:
+
+assetLibrary:
+  baseUrl:
+  templateProfiles:
+    edge: 'unittestprofile'
+
+provisioning:
+  baseUrl:

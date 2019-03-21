@@ -1,0 +1,113 @@
+AWSTemplateFormatVersion : '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Description: CDF Certificate Activator Service
+
+
+Parameters:
+  ApplicationConfigurationOverride:
+    Description: This allows you to override any configuration application configuration. Must be a JSON formatted string. Any configurations contained in this will override the configurations found and merged from the config files.
+    Type: String
+    MinLength: 1
+  BucketName:
+    Description: Name of bucket of where the Certificate Revocation List (CRL) is stored.
+    Type: String
+    MinLength: 1
+
+Resources:
+
+  JITRRule:
+    Type: "AWS::IoT::TopicRule"
+    Properties:
+      TopicRulePayload: 
+        Actions:
+          -
+            Lambda:
+              FunctionArn: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${LambdaFunction}'
+        Description: "Certificate requests (CDF Certificate Activator service)"
+        AwsIotSqlVersion: "2016-03-23"
+        RuleDisabled: "false"
+        Sql: !Sub "SELECT * FROM '$aws/events/certificates/registered/+'"
+
+  LambdaFunctionGetInvocationPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      SourceArn: !Sub 'arn:aws:iot:${AWS::Region}:${AWS::AccountId}:rule/${JITRRule}'
+      Action: lambda:InvokeFunction
+      Principal: iot.amazonaws.com
+      FunctionName: !GetAtt LambdaFunction.Arn
+      SourceAccount: !Ref AWS::AccountId
+
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          Effect: Allow
+          Principal:
+            Service:
+              - lambda.amazonaws.com
+              - iot.amazonaws.com
+          Action: sts:AssumeRole
+      Path: "/"
+      ManagedPolicyArns:
+        - !Ref ApplicationPolicies
+        - arn:aws:iam::aws:policy/AWSLambdaExecute
+        - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
+    DependsOn:
+      - ApplicationPolicies
+
+  ApplicationPolicies:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      Description: 'cdf-certificateactivator application policies'
+      Path: "/"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: "iot"
+            Action:
+              - "iot:RegisterThing"
+              - "iot:DescribeCertificate"
+              - "iot:UpdateCertificate"
+            Effect: Allow
+            Resource:
+                - !Sub "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:cert/*"
+          - Sid: "s3"
+            Action:
+              - 's3:Get*'
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:s3:::${BucketName}/crl/*'
+
+  LambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../build/build.zip
+      Handler: certificateactivator.handler
+      MemorySize: 128
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Runtime: nodejs8.10
+      Timeout: 30
+      Environment:
+        Variables:
+          NODE_CONFIG_DIR: './config'
+          NODE_CONFIG: !Ref ApplicationConfigurationOverride
+      Tracing: Active
+
+
+Outputs:
+  JITRRuleName:
+    Description: Name of JITR rule
+    Value: !Sub "${JITRRule}"
+    Export: 
+      Name: !Sub "${AWS::StackName}-JITRRuleName"
+  LambdaArn:
+    Description: Lambda Arn
+    Value: !Sub "${LambdaFunction.Arn}"
+    Export: 
+      Name: !Sub "${AWS::StackName}-LambdaArn"
+  LambdaFunctionConsoleUrl:
+    Description: Console URL for the Lambda Function.
+    Value: !Sub "https://{AWS::Region}.console.aws.amazon.com/lambda/home?region={AWS::Region}#/functions/{LambdaFunction}"

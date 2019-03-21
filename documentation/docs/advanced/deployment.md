@@ -2,22 +2,36 @@
 
 ## TL;DR
 
-The _cdf-core_ releases are available from S3 for installation.  Retrieve a list of the available releases as follows:
+The cdf releases are available from S3 for installation.  The core services and clients are released as two separate packages so as to reduce the download size for those only interested in consuming the clients. Retrieve a list of the available releases as follows:
 
 ```sh
 > aws s3 ls s3://cdf-157731826412-us-west-2/releases/core/
 
 2019-03-16 16:27:33  343978991 cdf-core-20190316222725.zip
+
+> aws s3 ls s3://cdf-157731826412-us-west-2/releases/clients/
+
+2019-03-16 16:27:33  343978991 cdf-clients-20190316222725.zip
 ```
 
-Download and extract the release using the name of the file from the previous step:
+Download and extract the core and clients releases using the name of the file from the previous step:
 
 ```sh
 > aws s3 cp s3://cdf-157731826412-us-west-2/releases/core/cdf-core-20190316222725.zip .
 > unzip cdf-core-20190316222725.zip -d cdf-core
+> aws s3 cp s3://cdf-157731826412-us-west-2/releases/clients/cdf-clients-20190316222725.zip .
+> unzip cdf-clients-20190316222725.zip -d cdf-clients
 ```
 
-Along with the _cdf-core_ release package, an _infrastructure_ and _facade_ project need cloning to the same parent directory.  The following is an example of how to clone the cdf demo projects:
+The _cdf-core_ package contains precompiled services ready for deployment, but the _cdf-clients_ package will need building before use if the intention is to consume the clients by a service such as a _facade_.  To do this:
+
+```sh
+> cd cdf-clients
+cdf-clients> pnpm install
+cdf-clients> pnpm run build
+```
+
+Along with the _cdf-core_ and _cdf-clients_ release packages, an _infrastructure_ and _facade_ project need cloning to the same parent directory.  The following is an example of how to clone the cdf demo projects:
 
 ```sh
 > git clone https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-facade-demo

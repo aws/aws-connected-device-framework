@@ -4,86 +4,48 @@ set -e
 
 echo deployproject_postbuild started on `date`
 
-
 function publish_artifacts() {
     buildId=$1
     basedir=$(pwd)
 
-    coreBundleName="cdf-core-$1.zip"
-    coreReleasedir=$basedir/../bundled-core
-    rm -rf $coreReleasedir && mkdir -p $coreReleasedir
-    
-    changeLogsBundleName="cdf-changeLogs-$1.zip"
-    changeLogsReleasedir=$basedir/../bundled-changeLogs
-    rm -rf $changeLogsReleasedir && mkdir -p $changeLogsReleasedir
+    coreBundleName="cdf-core-$1.tar"
+    clientsBundleName="cdf-clients-$1.tar"
+    changeLogsBundleName="cdf-changeLogs-$1.tar"
+    docsBundleName="cdf-documentation-$1.tar"
+    docsReleaseDir="$basedir/documentation/site"
 
-    docsBundleName="cdf-documentation-$1.zip"
-    docsReleasedir=$basedir/documentation/site
 
-    ### copy the core services
-    cp -R $basedir $coreReleasedir
+    cd $basedir
+    echo Tarring core to "$coreBundleName"
+    tar -cvf ../$coreBundleName --exclude=./documentation --exclude=node_modules --exclude=.git .
+    echo Uploading "$coreBundleName" to "$ARTIFACT_PUBLISH_LOCATION/$coreBundleName"
+    aws s3 cp "../$coreBundleName" "$ARTIFACT_PUBLISH_LOCATION/core/$coreBundleName" &
 
-    ### copy each of the pre-compiled service changelogs
-    cd $basedir/packages/services
-    for package in */; do
-        echo Extracting $package changeLog...
-        mkdir -p $changeLogsReleasedir/packages/services/$package
-        if [ -f "${package}CHANGELOG.md" ]; then
-            cp ${package}CHANGELOG.md $changeLogsReleasedir/packages/services/${package}CHANGELOG.md
-        fi
-    done
+    echo Tarring clients to "$clientsBundleName"
+    tar -cvf ../$clientsBundleName --exclude=./documentation --exclude=./cicd --exclude=./infrastructure --exclude=node_modules --exclude=.git --exclude=./packages/services --exclude=./packages/integration-tests .
+    echo Uploading "$clientsBundleName" to "$ARTIFACT_PUBLISH_LOCATION/$clientsBundleName"
+    aws s3 cp "../$clientsBundleName" "$ARTIFACT_PUBLISH_LOCATION/clients/$clientsBundleName" &
 
-    ### copy each of the pre-compiled library changelogs
-    cd $basedir/packages/libraries/clients
-    mkdir -p $clientsReleasedir/packages/libraries/clients
-    for package in */; do
-        echo Extracting $package changeLog...
-        mkdir -p $changeLogsReleasedir/packages/libraries/clients/$package
-        if [ -f "${package}CHANGELOG.md" ]; then
-            cp ${package}CHANGELOG.md $changeLogsReleasedir/packages/libraries/clients/${package}CHANGELOG.md
-        fi
-    done
-
-    ### copy the pre-compiled config changelogs
-    cd $basedir/packages/libraries/config
-    mkdir -p $clientsReleasedir/packages/libraries/config
-    for package in */; do
-        echo Extracting $package changeLog...
-        mkdir -p $changeLogsReleasedir/packages/libraries/config/$package
-        if [ -f "${package}CHANGELOG.md" ]; then
-            cp ${package}CHANGELOG.md $changeLogsReleasedir/packages/libraries/config/${package}CHANGELOG.md
-        fi
-    done
+    echo Tarring changeLogs to "$changeLogsBundleName"
+    find . -name CHANGELOG.md -path "./packages/*" | tar -cvf ../$changeLogsBundleName -T -
+    echo Uploading "$changeLogsBundleName" to "$ARTIFACT_PUBLISH_LOCATION/$changeLogsBundleName"
+    aws s3 cp "../$changeLogsBundleName" "$ARTIFACT_PUBLISH_LOCATION/changeLogs/$changeLogsBundleName" &
 
     ### compile the documentation
     cd $basedir/documentation
     ./compile_documentation.bash
 
-    ### zip and save the bundles to s3
-    cd $coreReleasedir
-    echo Zipping "$coreReleasedir" to "$coreBundleName"
-    zip -r "$coreBundleName" .
-    echo Uploading "$coreBundleName" to "$ARTIFACT_PUBLISH_LOCATION/$coreBundleName"
-    aws s3 cp "$coreBundleName" "$ARTIFACT_PUBLISH_LOCATION/core/$coreBundleName" &
-
-    cd $changeLogsReleasedir
-    echo Zipping "$changeLogsReleasedir" to "$changeLogsBundleName"
-    zip -r "$changeLogsBundleName" .
-    echo Uploading "$changeLogsBundleName" to "$ARTIFACT_PUBLISH_LOCATION/$changeLogsBundleName"
-    aws s3 cp "$changeLogsBundleName" "$ARTIFACT_PUBLISH_LOCATION/changeLogs/$changeLogsBundleName" &
-
-    cd $docsReleasedir
-    echo Zipping "$docsReleasedir" to "$docsBundleName"
-    zip -r "$docsBundleName" .
+    echo Tarring docs to "$docsBundleName"
+    cd $docsReleaseDir
+    tar -cvf ../../../$docsBundleName .
     echo Uploading "$docsBundleName" to "$ARTIFACT_PUBLISH_LOCATION/$docsBundleName"
-    aws s3 cp "$docsBundleName" "$ARTIFACT_PUBLISH_LOCATION/docs/$docsBundleName" &
+    aws s3 cp "../../../$docsBundleName" "$ARTIFACT_PUBLISH_LOCATION/docs/$docsBundleName" &
 
     ### push the documentation up to our public site
-    aws s3 sync $docsReleasedir "$DOCUMENTATION_PUBLISH_LOCATION" &
+    aws s3 sync $docsReleaseDir "$DOCUMENTATION_PUBLISH_LOCATION" &
 
     wait
 }
-
 
 if [ "$CODEBUILD_BUILD_SUCCEEDING" -eq 1 ]; then
 
@@ -105,6 +67,8 @@ if [ "$CODEBUILD_BUILD_SUCCEEDING" -eq 1 ]; then
         git tag -f $tagName
         git push -f origin $tagName
     done
+
+    echo DEPLOY_ENV $DEPLOY_ENV
 
     ### Next, if this was a live deploy, publish the artifacts as an installable package
     if [[ "$DEPLOY_ENV" = "LIVE" ]]; then
