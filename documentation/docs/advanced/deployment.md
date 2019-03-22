@@ -28,7 +28,7 @@ The _cdf-core_ package contains precompiled services ready for deployment, but t
 ```sh
 > cd cdf-clients
 cdf-clients> pnpm install
-cdf-clients> pnpm run build
+cdf-clients> pnpm recursive run build
 ```
 
 Along with the _cdf-core_ and _cdf-clients_ release packages, an _infrastructure_ and _facade_ project need cloning to the same parent directory.  The following is an example of how to clone the cdf demo projects:
