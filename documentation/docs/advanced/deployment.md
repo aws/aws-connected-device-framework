@@ -23,14 +23,6 @@ Download and extract the core and clients releases using the name of the file fr
 > unzip cdf-clients-20190316222725.zip -d cdf-clients
 ```
 
-The _cdf-core_ package contains precompiled services ready for deployment, but the _cdf-clients_ package will need building before use if the intention is to consume the clients by a service such as a _facade_.  To do this:
-
-```sh
-> cd cdf-clients
-cdf-clients> pnpm install
-cdf-clients> pnpm recursive run build
-```
-
 Along with the _cdf-core_ and _cdf-clients_ release packages, an _infrastructure_ and _facade_ project need cloning to the same parent directory.  The following is an example of how to clone the cdf demo projects:
 
 ```sh
@@ -42,7 +34,7 @@ To install, run the _deploy.bash_ script from the _infrastructure_ project:
 
 ```sh
 > cd cdf-infrastructure-demo
-cdf-infrastructure-demo> ./deploy.bash -e demo -c "../cdf-core" -p 157731826412 -i 0.0.0.0/0 -u cdf-157721836412-us-west-2 -b cdf-157721836412-us-west-2 -R us-west-2 -P 1577
+cdf-infrastructure-demo> ./deploy.bash -e demo -p 157731826412 -i 0.0.0.0/0 -u cdf-157721836412-us-west-2 -b cdf-157721836412-us-west-2 -R us-west-2 -P 1577
 ```
 
 For a description of the arguments of the above script, run the script with no arguments as follows:

@@ -330,29 +330,6 @@ Resources:
       - Ref: BastionHostRole
       Path: "/"
 
-  EIP1:
-    Type: AWS::EC2::EIP
-    Properties:
-      Domain: vpc
-
-  EIP2:
-    Type: AWS::EC2::EIP
-    Condition: 2BastionCondition
-    Properties:
-      Domain: vpc
-
-  EIP3:
-    Type: AWS::EC2::EIP
-    Condition: 3BastionCondition
-    Properties:
-      Domain: vpc
-
-  EIP4:
-    Type: AWS::EC2::EIP
-    Condition: 4BastionCondition
-    Properties:
-      Domain: vpc
-
   BastionAutoScalingGroup:
     Type: AWS::AutoScaling::AutoScalingGroup
     Properties:
@@ -480,24 +457,6 @@ Resources:
             - 'easy_install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz
 
 '
-            - EIP_LIST="
-            - Ref: EIP1
-            - ","
-            - Fn::If:
-              - 2BastionCondition
-              - Ref: EIP2
-              - 'Null'
-            - ","
-            - Fn::If:
-              - 3BastionCondition
-              - Ref: EIP3
-              - 'Null'
-            - ","
-            - Fn::If:
-              - 4BastionCondition
-              - Ref: EIP4
-              - 'Null'
-            - "\"\n"
             - CLOUDWATCHGROUP=
             - Ref: BastionMainLogGroup
             - "\n"
@@ -537,37 +496,6 @@ Outputs:
     Export:
       Name:
         Fn::Sub: "${AWS::StackName}-BastionAutoScalingGroup"
-  EIP1:
-    Description: Elastic IP 1 for Bastion
-    Value:
-      Ref: EIP1
-    Export:
-      Name:
-        Fn::Sub: "${AWS::StackName}-EIP1"
-  EIP2:
-    Condition: 2BastionCondition
-    Description: Elastic IP 2 for Bastion
-    Value:
-      Ref: EIP2
-    Export:
-      Name:
-        Fn::Sub: "${AWS::StackName}-EIP2"
-  EIP3:
-    Condition: 3BastionCondition
-    Description: Elastic IP 3 for Bastion
-    Value:
-      Ref: EIP3
-    Export:
-      Name:
-        Fn::Sub: "${AWS::StackName}-EIP3"
-  EIP4:
-    Condition: 4BastionCondition
-    Description: Elastic IP 4 for Bastion
-    Value:
-      Ref: EIP4
-    Export:
-      Name:
-        Fn::Sub: "${AWS::StackName}-EIP4"
   CloudWatchLogs:
     Description: CloudWatch Logs GroupName. Your SSH logs will be stored here.
     Value:
