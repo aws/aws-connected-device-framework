@@ -1317,110 +1317,6 @@ importers:
       tslint: 5.13.1
       typescript: 3.1.6
       winston: 2.4.4
-  packages/services/gg-deployment-manager:
-    dependencies:
-      '@cdf/config-inject': 'link:../../libraries/config/config-inject'
-      aws-sdk: 2.418.0
-      aws-serverless-express: 3.3.5
-      body-parser: 1.18.3
-      config: 3.0.1
-      express: 4.16.4
-      fs: 0.0.1-security
-      inversify: 5.0.1
-      inversify-binding-decorators: 4.0.0
-      inversify-express-utils: 6.3.2
-      js-yaml: 3.12.2
-      jszip: 3.2.0
-      ow: 0.12.0
-      pem: 1.14.2
-      reflect-metadata: 0.1.13
-      uuid: 3.3.2
-      winston: 2.4.4
-    devDependencies:
-      '@commitlint/cli': 7.5.2
-      '@commitlint/config-conventional': 7.5.0
-      '@semantic-release/changelog': 3.0.2_semantic-release@15.13.3
-      '@semantic-release/git': 7.0.8_semantic-release@15.13.3
-      '@semantic-release/npm': 5.1.4_semantic-release@15.13.3
-      '@semantic-release/release-notes-generator': 7.1.4_semantic-release@15.13.3
-      '@types/aws-serverless-express': 3.3.0
-      '@types/body-parser': 1.17.0
-      '@types/config': 0.0.34
-      '@types/express': 4.16.1
-      '@types/jest': 24.0.0
-      '@types/jszip': 3.1.5
-      '@types/node': 8.10.43
-      '@types/pem': 1.9.5
-      '@types/uuid': 3.4.4
-      commitizen: 3.0.7
-      concurrently: 4.1.0
-      cpy-cli: 2.0.0
-      del-cli: 1.1.0
-      husky: 1.3.1
-      jest: 24.1.0_b2377ed855f581a50cdaeacf386d75ca
-      jest-create-mock-instance: 1.1.0
-      jest-haste-map: 24.0.0
-      jest-mock: 24.0.0
-      jest-resolve: 24.5.0_b2377ed855f581a50cdaeacf386d75ca
-      make-dir-cli: 1.0.0
-      nodemon: 1.18.10
-      nyc: 13.3.0
-      semantic-release: 15.13.3_semantic-release@15.13.3
-      semantic-release-monorepo: 6.1.1_semantic-release@15.13.3
-      ts-jest: 24.0.0_jest@24.1.0
-      tslint: 5.13.1_typescript@3.1.6
-      typescript: 3.1.6
-    specifiers:
-      '@cdf/config-inject': ^2.0.0
-      '@commitlint/cli': 7.5.2
-      '@commitlint/config-conventional': 7.5.0
-      '@semantic-release/changelog': 3.0.2
-      '@semantic-release/git': 7.0.8
-      '@semantic-release/npm': 5.1.4
-      '@semantic-release/release-notes-generator': 7.1.4
-      '@types/aws-serverless-express': 3.3.0
-      '@types/body-parser': 1.17.0
-      '@types/config': 0.0.34
-      '@types/express': 4.16.1
-      '@types/jest': 24.0.0
-      '@types/jszip': 3.1.5
-      '@types/node': 8.10.43
-      '@types/pem': 1.9.5
-      '@types/uuid': 3.4.4
-      aws-sdk: 2.418.0
-      aws-serverless-express: 3.3.5
-      body-parser: 1.18.3
-      commitizen: 3.0.7
-      concurrently: 4.1.0
-      config: 3.0.1
-      cpy-cli: 2.0.0
-      del-cli: 1.1.0
-      express: 4.16.4
-      fs: 0.0.1-security
-      husky: 1.3.1
-      inversify: 5.0.1
-      inversify-binding-decorators: 4.0.0
-      inversify-express-utils: 6.3.2
-      jest: 24.1.0
-      jest-create-mock-instance: 1.1.0
-      jest-haste-map: 24.0.0
-      jest-mock: 24.0.0
-      jest-resolve: 24.5.0
-      js-yaml: 3.12.2
-      jszip: 3.2.0
-      make-dir-cli: 1.0.0
-      nodemon: 1.18.10
-      nyc: 13.3.0
-      ow: 0.12.0
-      pem: 1.14.2
-      reflect-metadata: 0.1.13
-      semantic-release: 15.13.3
-      semantic-release-monorepo: 6.1.1
-      ts-jest: 24.0.0
-      tslint: 5.13.1
-      typescript: 3.1.6
-      uuid: 3.3.2
-      winston: 2.4.4
   packages/services/provisioning:
     dependencies:
       '@cdf/config-inject': 'link:../../libraries/config/config-inject'
@@ -2080,7 +1976,7 @@ packages:
     dev: true
     resolution:
       integrity: sha512-lxVlYYvwGbKSHXfbPk5vxEA8w4zHOH1wobado4a9EfsyD3Cbhuhus1w0Ye9Ro0eMubGO8kNy5d+xNFisM3Tvaw==
-  /@octokit/rest/16.21.0:
+  /@octokit/rest/16.21.1:
     dependencies:
       '@octokit/request': 2.4.2
       before-after-hook: 1.4.0
@@ -2095,7 +1991,7 @@ packages:
       url-template: 2.0.8
     dev: true
     resolution:
-      integrity: sha512-4tT+uUPqwOHfPdSSt8RtSZw6vgAbBMTGb+BualKkq3vjpeqmSfmN9h5VxhM4xqV1KAGCeLzBGdH6nwgf18eEPA==
+      integrity: sha512-T9YhgHMrpDK5fOnOOeF71HmHLjk7rRi+kaFt13NL9xVRYMj/lsQqyc6Kf9D5ZQf3fGkDJqgHgUvdWGa7vH1J6A==
   /@semantic-release/changelog/3.0.2:
     dependencies:
       '@semantic-release/error': 2.2.0
@@ -2199,7 +2095,7 @@ packages:
       integrity: sha512-sA+XoPU6GrV+A4YswO0b5JWL1KbzmyyaqUK6Y2poDkIVPlj+oQdi/stpKz/bKF5z9ChMGP87OVPMeUyXGaNFtw==
   /@semantic-release/github/5.2.10:
     dependencies:
-      '@octokit/rest': 16.21.0
+      '@octokit/rest': 16.21.1
       '@semantic-release/error': 2.2.0
       aggregate-error: 2.2.0
       bottleneck: 2.17.1
@@ -2225,7 +2121,7 @@ packages:
       integrity: sha512-z/UwIxKb+EMiJDIy/57MBzJ80ar5H9GJQRyML/ILQ8dlrPwXs7cTyTvC7AesrF7t1mJZtg3ht9Qf9RdtR/LGzw==
   /@semantic-release/github/5.2.10_semantic-release@15.13.3:
     dependencies:
-      '@octokit/rest': 16.21.0
+      '@octokit/rest': 16.21.1
       '@semantic-release/error': 2.2.0
       aggregate-error: 2.2.0
       bottleneck: 2.17.1
@@ -6355,7 +6251,7 @@ packages:
       escodegen: 1.11.1
       html-encoding-sniffer: 1.0.2
       left-pad: 1.3.0
-      nwsapi: 2.1.1
+      nwsapi: 2.1.2
       parse5: 4.0.0
       pn: 1.1.0
       request: 2.88.0
@@ -6373,6 +6269,39 @@ packages:
     dev: true
     resolution:
       integrity: sha512-y8Px43oyiBM13Zc1z780FrfNLJCXTL40EWlty/LXUtcjykRBNgLlCjWXpfSPBl2iv+N7koQN+dvqszHZgT/Fjw==
+  /jsdom/14.0.0:
+    dependencies:
+      abab: 2.0.0
+      acorn: 6.1.1
+      acorn-globals: 4.3.0
+      array-equal: 1.0.0
+      cssom: 0.3.6
+      cssstyle: 1.2.2
+      data-urls: 1.1.0
+      domexception: 1.0.1
+      escodegen: 1.11.1
+      html-encoding-sniffer: 1.0.2
+      nwsapi: 2.1.2
+      parse5: 5.1.0
+      pn: 1.1.0
+      request: 2.88.0
+      request-promise-native: 1.0.7_request@2.88.0
+      saxes: 3.1.9
+      symbol-tree: 3.2.2
+      tough-cookie: 2.5.0
+      w3c-hr-time: 1.0.1
+      w3c-xmlserializer: 1.1.2
+      webidl-conversions: 4.0.2
+      whatwg-encoding: 1.0.5
+      whatwg-mimetype: 2.3.0
+      whatwg-url: 7.0.0
+      ws: 6.2.1
+      xml-name-validator: 3.0.0
+    dev: true
+    engines:
+      node: '>=8'
+    resolution:
+      integrity: sha512-/VkyPmdtbwqpJSkwDx3YyJ3U1oawYNB/h5z8vTUZGAzjtu2OHTeFRfnJqyMHsJ5Cyes23trOmvUpM1GfHH1leA==
   /jsesc/2.5.2:
     dev: true
     engines:
@@ -7345,10 +7274,12 @@ packages:
       node: '>=0.10.0'
     resolution:
       integrity: sha1-CXtgK1NCKlIsGvuHkDGDNpQaAR0=
-  /nwsapi/2.1.1:
+  /nwsapi/2.1.2:
+    dependencies:
+      jsdom: 14.0.0
     dev: true
     resolution:
-      integrity: sha512-T5GaA1J/d34AC8mkrFD2O0DR17kwJ702ZOtJOsS8RpbsQZVOC2/xYFb1i/cw+xdM54JIlMuojjDOYct8GIWtwg==
+      integrity: sha512-TQOQNxqEdxVjwgwNZyvKDF0vALmzQKZJEZwE3fZWDb7Ns5Hw6l9PxJTGKOHZGsmf7R6grsOe8lWxI43Clz79zg==
   /nyc/13.3.0:
     bundledDependencies:
       - archy
@@ -7675,6 +7606,10 @@ packages:
     dev: true
     resolution:
       integrity: sha512-VrZ7eOd3T1Fk4XWNXMgiGBK/z0MG48BWG2uQNU4I72fkQuKUTZpl+u9k+CxEG0twMVzSmXEEz12z5Fnw1jIQFA==
+  /parse5/5.1.0:
+    dev: true
+    resolution:
+      integrity: sha512-fxNG2sQjHvlVAYmzBZS9YlDp6PTSSDwa98vkD4QgVDDCAo84z5X1t5XyJQ62ImdLXx5NdIIfihey6xpum9/gRQ==
   /parseurl/1.3.2:
     dev: false
     engines:
@@ -8449,6 +8384,14 @@ packages:
   /sax/1.2.4:
     resolution:
       integrity: sha512-NqVDv9TpANUjFm0N8uM5GxL36UgKi9/atZw+x7YFnQ8ckwFGKrl4xX4yWtrey3UJm5nP1kUbnYgLopqWNSRhWw==
+  /saxes/3.1.9:
+    dependencies:
+      xmlchars: 1.3.1
+    dev: true
+    engines:
+      node: '>=8'
+    resolution:
+      integrity: sha512-FZeKhJglhJHk7eWG5YM0z46VHmI3KJpMBAQm3xa9meDvd+wevB5GuBB0wc0exPInZiBBHqi00DbS8AcvCGCFMw==
   /seed-random/2.2.0:
     dev: false
     resolution:
@@ -9637,6 +9580,14 @@ packages:
     dev: true
     resolution:
       integrity: sha1-gqwr/2PZUOqeMYmlimViX+3xkEU=
+  /w3c-xmlserializer/1.1.2:
+    dependencies:
+      domexception: 1.0.1
+      webidl-conversions: 4.0.2
+      xml-name-validator: 3.0.0
+    dev: true
+    resolution:
+      integrity: sha512-p10l/ayESzrBMYWRID6xbuCKh2Fp77+sA0doRuGn4tTIMrrZVeqfpKjXHY+oDh3K4nLdPgNwMTVP6Vp4pvqbNg==
   /walker/1.0.7:
     dependencies:
       makeerror: 1.0.11
@@ -9780,6 +9731,12 @@ packages:
     dev: true
     resolution:
       integrity: sha512-jaHFD6PFv6UgoIVda6qZllptQsMlDEJkTQcybzzXDYM1XO9Y8em691FGMPmM46WGyLU4z9KMgQN+qrux/nhlHA==
+  /ws/6.2.1:
+    dependencies:
+      async-limiter: 1.0.0
+    dev: true
+    resolution:
+      integrity: sha512-GIyAXC2cB7LjvpgMt9EKS2ldqr0MTrORaleiOno6TweZ6r3TKtoFQWay/2PceJ3RuBasOHzXNn5Lrw1X0bEjqA==
   /xdg-basedir/3.0.0:
     dev: true
     engines:
@@ -9803,6 +9760,10 @@ packages:
       node: '>=4.0'
     resolution:
       integrity: sha1-Ey7mPS7FVlxVfiD0wi35rKaGsQ0=
+  /xmlchars/1.3.1:
+    dev: true
+    resolution:
+      integrity: sha512-tGkGJkN8XqCod7OT+EvGYK5Z4SfDQGD30zAa58OcnAa0RRWgzUEK72tkXhsX1FZd+rgnhRxFtmO+ihkp8LHSkw==
   /xtend/4.0.1:
     engines:
       node: '>=0.4'

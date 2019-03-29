@@ -12,7 +12,7 @@ cmd="infrastructure/deploy-core.bash \
   -e $ENVIRONMENT \
   -E $CONFIG_ENVIRONMENT \
   -c \"$CODEBUILD_SRC_DIR_source_infrastructure\" \
-  -IBY"
+  -BY"
 
 if [ -n "$KEY_PAIR_NAME" ]; then
     cmd+=" -p $KEY_PAIR_NAME"
