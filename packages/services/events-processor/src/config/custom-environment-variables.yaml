@@ -1,0 +1,4 @@
+aws:
+  region: AWS_REGION
+  iot:
+    endpoint: AWS_IOT_ENDPOINT

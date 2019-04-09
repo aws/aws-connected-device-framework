@@ -1,0 +1,20 @@
+aws:
+  region: 
+  iot:
+    endpoint:
+
+  dynamoDb:
+    tables:
+      eventConfig:
+        name: 
+        gsi1: sk-gsi1Sort-index
+        gsi2: sk-gsi2Sort-index
+        gsi3: sk-gsi3Sort-index
+        partitions: 2
+      eventNotifications:
+        name: 
+        gsi1: gsiBucket-gsi1Sort-index  
+        partitions: 2
+
+cors:
+  origin:
