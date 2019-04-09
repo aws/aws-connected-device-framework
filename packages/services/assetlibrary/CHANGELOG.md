@@ -1,3 +1,10 @@
+# [@cdf/assetlibrary-v2.0.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v2.0.0...@cdf/assetlibrary-v2.0.1) (2019-04-09)
+
+
+### Bug Fixes
+
+* **assetlibrary:** templates not deployed when running locally ([aacffad](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/aacffad))
+
 # [@cdf/assetlibrary-v1.4.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v1.3.0...@cdf/assetlibrary-v1.4.0) (2019-03-08)
 
 
