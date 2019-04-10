@@ -48,8 +48,8 @@ export class EventService  {
             throw new Error('EVENT_SOURCE_NOT_FOUND');
         }
 
-        const [item, typeGsiSort] = this.eventAssembler.toItem(resource, eventSource.principal);
-        await this.eventDao.create(item,typeGsiSort);
+        const item = this.eventAssembler.toItem(resource, eventSource.principal);
+        await this.eventDao.create(item);
 
         logger.debug(`event.full.service create: exit:`);
 

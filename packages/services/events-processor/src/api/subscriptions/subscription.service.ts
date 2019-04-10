@@ -46,8 +46,8 @@ export class SubscriptionService  {
 
         // TODO: extract ruleParameterValues against the event
 
-        const [item, typeGsiSort, userGsiSk, userGsiSort] = this.subscriptionAssembler.toItem(resource, event.eventId, event.principal);
-        await this.subscriptionDao.create(item, typeGsiSort, userGsiSk, userGsiSort);
+        const item = this.subscriptionAssembler.toItem(resource, event.eventSourceId, event.principal, event.ruleDefinition);
+        await this.subscriptionDao.create(item);
 
         logger.debug(`subscription.full.service create: exit:`);
 

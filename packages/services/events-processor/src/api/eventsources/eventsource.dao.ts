@@ -8,7 +8,7 @@ import {logger} from '../../utils/logger';
 import { TYPES } from '../../di/types';
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import { EventSourceItem } from './eventsource.models';
-import { delimitedAttributePrefix, PkType, createDelimitedAttribute } from '../../utils/pkUtils';
+import { delimitedAttributePrefix, PkType, createDelimitedAttribute, expandDelimitedAttribute } from '../../utils/pkUtils';
 
 @injectable()
 export class EventSourceDao {
@@ -27,19 +27,21 @@ export class EventSourceDao {
      * Creates the EventSource DynamoDB items (pk='ES-$(eventSourceId}, sk='ES-$(eventSourceId}' and sk='type').
      * @param es
      */
-    public async create(es:EventSourceItem, typeGsiSk:string): Promise<void> {
-        logger.debug(`eventsource.dao create: in: es:${JSON.stringify(es)}, typeGsiSk:${typeGsiSk}`);
+    public async create(es:EventSourceItem,): Promise<void> {
+        logger.debug(`eventsource.dao create: in: es:${JSON.stringify(es)}`);
 
         const params:DocumentClient.BatchWriteItemInput = {
             RequestItems: {
             }
         };
 
+        const eventSourceDbId = createDelimitedAttribute(PkType.EventSource, es.id);
+
         const eventSourceCreate = {
             PutRequest: {
                 Item: {
-                    pk: es.pk,
-                    sk: es.sk,
+                    pk: eventSourceDbId,
+                    sk: eventSourceDbId,
                     sourceType: es.sourceType,
                     principal: es.principal,
                     enabled: es.enabled,
@@ -51,9 +53,9 @@ export class EventSourceDao {
         const typeCreate = {
             PutRequest: {
                 Item: {
-                    pk: es.pk,
+                    pk: eventSourceDbId,
                     sk: 'type',
-                    gsi1Sort: typeGsiSk,
+                    gsi1Sort: createDelimitedAttribute(PkType.EventSource, es.enabled, es.id),
                 }
             }
         };
@@ -96,19 +98,22 @@ export class EventSourceDao {
 
         const response:EventSourceItem[]=[];
         for(const i of results.Items) {
-            const r:EventSourceItem = {
-                pk:undefined,
-                sk:undefined
-            } ;
-            Object.keys(i).forEach( key => {
-                r[key] = i[key];
-            });
-
-            response.push(r);
+            response.push( this.assembleItem(i));
         }
 
         logger.debug(`eventsource.dao list: exit: response:${JSON.stringify(response)}`);
         return response;
+    }
+
+    private assembleItem(attrs:DocumentClient.AttributeMap) {
+        const r:EventSourceItem = {
+            id: expandDelimitedAttribute(attrs['pk'])[1],
+            sourceType: attrs['sourceType'],
+            principal: attrs['principal'],
+            enabled: attrs['enabled'],
+            tableName: attrs['tableName']
+        } ;
+        return r;
     }
 
     public async get(eventSourceId:string): Promise<EventSourceItem> {
@@ -137,13 +142,7 @@ export class EventSourceDao {
 
         logger.debug(`query result: ${JSON.stringify(results)}`);
 
-        const response:EventSourceItem = {
-            pk:undefined,
-            sk:undefined
-        } ;
-        Object.keys(results.Items[0]).forEach( key => {
-            response[key] = results.Items[0][key];
-        });
+        const response:EventSourceItem = this.assembleItem(results.Items[0]);
 
         logger.debug(`eventsource.dao get: exit: response:${JSON.stringify(response)}`);
         return response;

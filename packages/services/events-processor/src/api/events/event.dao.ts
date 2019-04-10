@@ -8,7 +8,7 @@ import {logger} from '../../utils/logger';
 import { TYPES } from '../../di/types';
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import { EventItem } from './event.models';
-import { createDelimitedAttribute, PkType, createDelimitedAttributePrefix } from '../../utils/pkUtils';
+import { createDelimitedAttribute, PkType, createDelimitedAttributePrefix, expandDelimitedAttribute } from '../../utils/pkUtils';
 
 @injectable()
 export class EventDao {
@@ -29,25 +29,28 @@ export class EventDao {
      *   pk='E-$(eventId}, sk='type').
      * @param event
      */
-    public async create(event:EventItem, typeGsiSort:string): Promise<void> {
-        logger.debug(`event.dao create: in: event:${JSON.stringify(event)}, typeGsiSort:${typeGsiSort}`);
+    public async create(item:EventItem): Promise<void> {
+        logger.debug(`event.dao create: in: event:${JSON.stringify(event)}`);
 
         const params:DocumentClient.BatchWriteItemInput = {
             RequestItems: {
             }
         };
 
+        const eventSourceDbId = createDelimitedAttribute(PkType.EventSource, item.eventSourceId);
+        const eventDbId = createDelimitedAttribute(PkType.Event, item.id);
+
         const eventCreate = {
             PutRequest: {
                 Item: {
-                    pk: event.pk,
-                    sk: event.sk,
-                    gsi1Sort: event.gsi1Sort,
-                    name: event.name,
-                    principal: event.principal,
-                    ruleDefinition: event.ruleDefinition,
-                    ruleParameters: event.ruleParameters,
-                    enabled: event.enabled
+                    pk: eventSourceDbId,
+                    sk: eventDbId,
+                    gsi1Sort: createDelimitedAttribute(PkType.Event, item.id, PkType.EventSource, item.eventSourceId),
+                    name: item.name,
+                    principal: item.principal,
+                    ruleDefinition: item.ruleDefinition,
+                    ruleParameters: item.ruleParameters,
+                    enabled: item.enabled
                 }
             }
         };
@@ -55,9 +58,9 @@ export class EventDao {
         const typeCreate = {
             PutRequest: {
                 Item: {
-                    pk: event.sk,
+                    pk: eventDbId,
                     sk: 'type',
-                    gsi1Sort: typeGsiSort,
+                    gsi1Sort: createDelimitedAttribute(PkType.Event, item.enabled, item.id),
                 }
             }
         };
@@ -97,13 +100,16 @@ export class EventDao {
 
         logger.debug(`query result: ${JSON.stringify(results)}`);
 
+        const i = results.Items[0];
         const response:EventItem = {
-            pk:undefined,
-            sk:undefined
+            id: expandDelimitedAttribute(i['sk'])[1],
+            eventSourceId: expandDelimitedAttribute(i['pk'])[1],
+            name: i['name'],
+            principal: i['principal'],
+            ruleDefinition: i['ruleDefinition'],
+            ruleParameters: i['ruleParameters'],
+            enabled: i['enabled']
         } ;
-        Object.keys(results.Items[0]).forEach( key => {
-            response[key] = results.Items[0][key];
-        });
 
         logger.debug(`event.dao get: exit: response:${JSON.stringify(response)}`);
         return response;

@@ -9,7 +9,6 @@ import {logger} from '../../utils/logger';
 import ow from 'ow';
 import { EventSourceType, EventSourceResourceList, EventSourceDetailResource, EventSourceSummaryResource } from './eventSource.models';
 import { EventSourceDao } from './eventsource.dao';
-import { expandDelimitedAttribute } from '../../utils/pkUtils';
 import { EventSourceAssembler } from './eventsource.assembler';
 
 @injectable()
@@ -46,8 +45,8 @@ export class EventSourceService  {
                 throw new Error('NOT_IMPLEMENTED');
         }
 
-        const [item, typeGsiSort] = this.eventSourceAssembler.toItem(resource);
-        await this.eventSourceDao.create(item, typeGsiSort);
+        const item = this.eventSourceAssembler.toItem(resource);
+        await this.eventSourceDao.create(item);
 
         logger.debug(`eventSource.full.service create: exit:`);
     }
@@ -91,7 +90,7 @@ export class EventSourceService  {
         };
         items.forEach(i=> {
             const resource:EventSourceSummaryResource = {
-                eventSourceId: expandDelimitedAttribute(i.pk)[1]
+                eventSourceId: i.eventSourceId
             };
             r.results.push(resource);
         });

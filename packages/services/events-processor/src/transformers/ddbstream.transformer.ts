@@ -22,7 +22,7 @@ export class DDBStreamTransformer  {
         for(const rec of event.Records) {
             // arn:aws:dynamodb:us-west-2:account-id:table/ExampleTableWithStream/stream/2015-06-27T00:48:05.899
             // becomes arn:aws:dynamodb:us-west-2:account-id:table/ExampleTableWithStream
-            const arnSplit = rec.eventSourceARN('/');
+            const arnSplit = rec.eventSourceARN.split('/');
             const eventSourceId = `${arnSplit[0]}/${arnSplit[1]}`;
 
             /**

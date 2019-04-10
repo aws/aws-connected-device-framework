@@ -6,37 +6,32 @@
 import { injectable } from 'inversify';
 import {logger} from '../../utils/logger';
 import { EventItem, EventResource } from './event.models';
-import { createDelimitedAttribute, PkType, expandDelimitedAttribute } from '../../utils/pkUtils';
 
 @injectable()
 export class EventAssembler {
 
-    public toItem(resource:EventResource, principal:string): [EventItem,string] {
+    public toItem(resource:EventResource, principal:string): EventItem {
         logger.debug(`event.assembler toItem: in: resource:${JSON.stringify(resource)}`);
 
         const item:EventItem = {
-            pk: createDelimitedAttribute(PkType.EventSource, resource.eventSourceId),
-            sk: createDelimitedAttribute(PkType.Event, resource.eventId),
-            gsi1Sort: createDelimitedAttribute(PkType.Event, resource.eventId, resource.eventSourceId),
+            eventId: resource.eventId,
+            eventSourceId: resource.eventSourceId,
             name: resource.name,
             principal,
             ruleDefinition: resource.ruleDefinition,
             ruleParameters: resource.ruleParameters,
             enabled: resource.enabled
         };
-
-        const typeGsiSort = createDelimitedAttribute(PkType.Event, resource.enabled, resource.eventId);
-
-        logger.debug(`event.assembler toItem: exit: ${[JSON.stringify(item),typeGsiSort]}`);
-        return [item, typeGsiSort];
+        logger.debug(`event.assembler toItem: exit: ${JSON.stringify(item)}`);
+        return item;
     }
 
     public toResource(item:EventItem): EventResource {
         logger.debug(`event.assembler toRe: in: re:${JSON.stringify(item)}`);
 
         const resource:EventResource = {
-            eventId: expandDelimitedAttribute(item.sk)[1],
-            eventSourceId: expandDelimitedAttribute(item.pk)[1],
+            eventId: item.eventId,
+            eventSourceId: item.eventSourceId,
             name: item.name,
             ruleDefinition: item.ruleDefinition,
             ruleParameters: item.ruleParameters,

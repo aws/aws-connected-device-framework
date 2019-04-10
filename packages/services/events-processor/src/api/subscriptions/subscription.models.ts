@@ -14,16 +14,28 @@ export interface SubscriptionResource {
 }
 
 export class SubscriptionItem {
-    pk: string;
-    sk: string;
+    id: string;
 
-    userId: string;
     ruleParameterValues?: { [key: string] : string[]};
-    enabled: boolean;
-    alerted: boolean;
+    enabled?: boolean;
+    alerted?: boolean;
 
-    // gsi keys...
-    gsiBucket?: string;
-    gsi2Sort?: string;
-    gsi3Sort?: string;
+    event?: SubscriptionEventItem;
+    eventSource?: SubscriptionEventSourceItem;
+    user?: SubscriptionUserItem;
+
+}
+
+export class SubscriptionEventSourceItem {
+    id: string;
+    principal: string;
+}
+
+export class SubscriptionEventItem {
+    id: string;
+    ruleDefinition: string;
+}
+
+export class SubscriptionUserItem {
+    id: string;
 }

@@ -20,9 +20,8 @@ exports.handler = async (event: any, _context: any) => {
   }
   const commonMessage = await transformer.transform(event);
 
-  if (commonMessage!=undefined && commonMessage.length>0) {
+  if (commonMessage!==undefined && commonMessage.length>0) {
     // TODO: process the message
   }
-
 
 };

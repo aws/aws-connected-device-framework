@@ -3,49 +3,49 @@
 #
 # This  code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
-import { injectable, inject } from 'inversify';
+import { injectable } from 'inversify';
 import {logger} from '../../utils/logger';
 import { SubscriptionItem, SubscriptionResource } from './subscription.models';
-import { createDelimitedAttribute, PkType, expandDelimitedAttribute } from '../../utils/pkUtils';
 
 @injectable()
 export class SubscriptionAssembler {
 
-    constructor(
-        @inject('aws.dynamoDb.tables.eventConfig.partitions') private eventConfigPartitions:number) {
-    }
-
-    public toItem(resource:SubscriptionResource, eventSourceId:string, principal:string): [SubscriptionItem,string,string,string] {
+    public toItem(resource:SubscriptionResource, eventSourceId:string, principal:string, ruleDefinition:string): SubscriptionItem {
         logger.debug(`subscription.assembler toItem: in: resource:${JSON.stringify(resource)}, eventSourceId:${eventSourceId}`);
 
         const item:SubscriptionItem = {
-            pk: createDelimitedAttribute(PkType.Subscription, resource.subscriptionId),
-            sk: createDelimitedAttribute(PkType.Subscription, resource.subscriptionId),
-            userId: resource.userId,
+            id: resource.subscriptionId,
+
             ruleParameterValues: resource.ruleParameterValues,
             enabled: resource.enabled,
             alerted: resource.alerted,
-            gsiBucket: `${Math.floor(Math.random() * this.eventConfigPartitions)}`,
-            gsi2Sort: createDelimitedAttribute(PkType.Event, resource.enabled, resource.subscriptionId),
-            gsi3Sort: createDelimitedAttribute(PkType.EventSource, eventSourceId, principal, resource.subscriptionId)
 
+            event: {
+                id: resource.eventId,
+                ruleDefinition
+            },
+
+            eventSource: {
+                id: eventSourceId,
+                principal
+            },
+
+            user: {
+                id: resource.userId
+            }
         };
 
-        const typeGsiSort = createDelimitedAttribute(PkType.Subscription, resource.enabled, resource.subscriptionId);
-        const userGsiSk = createDelimitedAttribute(PkType.User, resource.userId);
-        const userGsiSort = createDelimitedAttribute(PkType.Subscription, resource.enabled, resource.subscriptionId);
-
-        logger.debug(`subscription.assembler toItem: exit: ${[JSON.stringify(item),typeGsiSort]}`);
-        return [item, typeGsiSort, userGsiSk, userGsiSort];
+        logger.debug(`subscription.assembler toItem: exit: ${JSON.stringify(item)}`);
+        return item;
     }
 
     public toResource(item:SubscriptionItem): SubscriptionResource {
         logger.debug(`subscription.assembler toRe: in: re:${JSON.stringify(item)}`);
 
         const resource:SubscriptionResource = {
-            subscriptionId: expandDelimitedAttribute(item.pk)[1],
-            userId: item.userId,
-            eventId: expandDelimitedAttribute(item.gsi2Sort)[1],
+            subscriptionId: item.id,
+            userId: item.user.id,
+            eventId: item.event.id,
             ruleParameterValues: item.ruleParameterValues,
             alerted: item.alerted,
             enabled: item.enabled

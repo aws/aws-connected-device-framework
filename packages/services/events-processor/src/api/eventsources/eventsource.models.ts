@@ -33,8 +33,7 @@ export class EventSourceResourceList {
 
 export interface EventSourceItem {
     // common...
-    pk: string;
-    sk: string;
+    id: string;
     sourceType?: EventSourceType;
     principal?: string;
     enabled?: boolean;

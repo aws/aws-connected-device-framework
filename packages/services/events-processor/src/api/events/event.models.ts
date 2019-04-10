@@ -17,15 +17,12 @@ export interface EventResource {
 }
 
 export interface EventItem {
-    pk: string;
-    sk: string;
+    id: string;
+    eventSourceId: string;
 
     name?: string;
     principal?: string;
     ruleDefinition?: string;
     ruleParameters?: string[];
     enabled?: boolean;
-
-    // gsi keys...
-    gsi1Sort?: string;
 }

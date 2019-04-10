@@ -11,7 +11,6 @@ import { createMockInstance } from 'jest-create-mock-instance';
 import { EventSourceDao } from '../api/eventsources/eventsource.dao';
 import { DDBStreamTransformer } from './ddbstream.transformer';
 import { EventSourceItem, EventSourceType } from '../api/eventsources/eventSource.models';
-import { createDelimitedAttribute, PkType } from '../utils/pkUtils';
 import { CommonEvent } from './transformers.model';
 
 const readFileAsync = util.promisify(fs.readFile);
@@ -33,6 +32,7 @@ describe('DDBStreamTransformer', () => {
 
         const expected:CommonEvent[] = [
             {
+                eventSourceId,
                 principal: 'A101',
                 attributes: {
                     Device: 'A101',
@@ -41,6 +41,7 @@ describe('DDBStreamTransformer', () => {
                     Enabled: true
                 }
             }, {
+                eventSourceId,
                 principal: 'A102',
                 attributes: {
                     Device: 'A102',
@@ -116,8 +117,7 @@ describe('DDBStreamTransformer', () => {
 
     function stubbedEventSource(eventSourceId:string, principal:string, enabled:boolean) {
         const eventSource:EventSourceItem = {
-            pk: createDelimitedAttribute(PkType.EventSource, eventSourceId),
-            sk: createDelimitedAttribute(PkType.EventSource, eventSourceId),
+            id: eventSourceId,
             sourceType: EventSourceType.DynamoDBStream,
             principal,
             enabled
