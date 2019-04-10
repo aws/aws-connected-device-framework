@@ -1,0 +1,102 @@
+{
+    "Records": [
+        {
+            "eventID": "1",
+            "eventVersion": "1.0",
+            "dynamodb": {
+                "Keys": {
+                    "Device": {
+                        "S": "A101"
+                    }
+                },
+                "NewImage": {
+                    "Message": {
+                        "S": "New item!"
+                    },
+                    "Count": {
+                        "N": "1"
+                    },
+                    "Device": {
+                        "S": "A101"
+                    },
+                    "Enabled": {
+                        "BOOL": "true"
+                    }
+                },
+                "StreamViewType": "NEW_AND_OLD_IMAGES",
+                "SequenceNumber": "111",
+                "SizeBytes": 26
+            },
+            "awsRegion": "us-west-2",
+            "eventName": "INSERT",
+            "eventSourceARN": "arn:aws:dynamodb:us-west-2:123456789012:table/ExampleTableWithStream/stream/2015-06-27T00:48:05.899",
+            "eventSource": "aws:somethingelse"
+        },
+        {
+            "eventID": "2",
+            "eventVersion": "1.0",
+            "dynamodb": {
+                "OldImage": {
+                    "Message": {
+                        "S": "New item!"
+                    },
+                    "Device": {
+                        "S": "A102"
+                    }
+                },
+                "SequenceNumber": "222",
+                "Keys": {
+                    "Device": {
+                        "S": "A102"
+                    }
+                },
+                "SizeBytes": 59,
+                "NewImage": {
+                    "Message": {
+                        "S": "This item has changed"
+                    },
+                    "Device": {
+                        "S": "A102"
+                    },
+                    "Colors": {
+                        "SS": ["red","amber","green"]
+                    },
+                    "Brackets": {
+                        "NS": [1000,2000,3000]
+                    }
+                },
+                "StreamViewType": "NEW_AND_OLD_IMAGES"
+            },
+            "awsRegion": "us-west-2",
+            "eventName": "MODIFY",
+            "eventSourceARN": "arn:aws:dynamodb:us-west-2:123456789012:table/ExampleTableWithStream/stream/2015-06-27T00:48:05.899",
+            "eventSource": "aws:somethingelse"
+        },
+        {
+            "eventID": "3",
+            "eventVersion": "1.0",
+            "dynamodb": {
+                "Keys": {
+                    "Device": {
+                        "S": "A103"
+                    }
+                },
+                "SizeBytes": 38,
+                "SequenceNumber": "333",
+                "OldImage": {
+                    "Message": {
+                        "S": "This item has changed"
+                    },
+                    "Device": {
+                        "S": "A103"
+                    }
+                },
+                "StreamViewType": "NEW_AND_OLD_IMAGES"
+            },
+            "awsRegion": "us-west-2",
+            "eventName": "REMOVE",
+            "eventSourceARN": "arn:aws:dynamodb:us-west-2:123456789012:table/ExampleTableWithStream/stream/2015-06-27T00:48:05.899",
+            "eventSource": "aws:somethingelse"
+        }
+    ]
+}

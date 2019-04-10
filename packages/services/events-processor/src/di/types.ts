@@ -5,6 +5,8 @@
 #-------------------------------------------------------------------------------*/
 export const TYPES = {
 
+    DDBStreamTransformer: Symbol.for('DDBStreamTransformer'),
+
     EventSourceService: Symbol.for('EventSourceService'),
     EventSourceDao: Symbol.for('EventSourceDao'),
     EventSourceAssembler: Symbol.for('EventSourceAssembler'),
@@ -13,9 +15,12 @@ export const TYPES = {
     EventDao: Symbol.for('EventDao'),
     EventAssembler: Symbol.for('EventAssembler'),
 
-    SubscriptionService: Symbol.for('Subscriptionervice'),
+    SubscriptionService: Symbol.for('SubscriptionService'),
     SubscriptionDao: Symbol.for('SubscriptionDao'),
     SubscriptionAssembler: Symbol.for('SubscriptionAssembler'),
+
+    FilterService: Symbol.for('FilterService'),
+    FilterDao: Symbol.for('FilterDao'),
 
     Controller: Symbol.for('Controller'),
 

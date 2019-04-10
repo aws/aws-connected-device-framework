@@ -11,6 +11,10 @@ export function createDelimitedAttribute(type:PkType, ...items:(string|number|bo
     return `${delimitedAttributePrefix(type)}${escapedItems.join(PK_DELIMITER)}`;
 }
 
+export function createDelimitedAttributePrefix(type:PkType, ...items:(string|number|boolean)[]) {
+    return `${createDelimitedAttribute(type, ...items)}${PK_DELIMITER}`;
+}
+
 export function expandDelimitedAttribute(value:string) {
     if (value===undefined) {
         return undefined;

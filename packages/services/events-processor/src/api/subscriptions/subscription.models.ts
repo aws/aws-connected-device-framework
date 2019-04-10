@@ -13,7 +13,7 @@ export interface SubscriptionResource {
     enabled: boolean;
 }
 
-export interface SubscriptionItem {
+export class SubscriptionItem {
     pk: string;
     sk: string;
 

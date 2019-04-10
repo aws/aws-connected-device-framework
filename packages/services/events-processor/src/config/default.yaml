@@ -8,8 +8,8 @@ aws:
       eventConfig:
         name: 
         gsi1: sk-gsi1Sort-index
-        gsi2: sk-gsi2Sort-index
-        gsi3: sk-gsi3Sort-index
+        gsi2: gsiBucket-gsi2Sort-index
+        gsi3: gsiBucket-gsi3Sort-index
         partitions: 2
       eventNotifications:
         name: 

@@ -13,7 +13,6 @@ import config from 'config';
 const CDF_V1_TYPE = 'application/vnd.aws-cdf-v1.0+json';
 const corsAllowedOrigin = config.get('cors.origin') as string;
 
-
 const PORT = 3008;
 
 // Start the server

@@ -61,6 +61,8 @@ export class SubscriptionDao {
             }
         };
 
+        *****************  TODO: save the denormalized event item
+
         const userCreate = {
             PutRequest: {
                 Item: {

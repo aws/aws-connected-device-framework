@@ -8,7 +8,7 @@ import {logger} from '../../utils/logger';
 import { TYPES } from '../../di/types';
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import { EventItem } from './event.models';
-import { createDelimitedAttribute, PkType } from '../../utils/pkUtils';
+import { createDelimitedAttribute, PkType, createDelimitedAttributePrefix } from '../../utils/pkUtils';
 
 @injectable()
 export class EventDao {
@@ -83,7 +83,7 @@ export class EventDao {
             },
             ExpressionAttributeValues: {
                 ':sk': createDelimitedAttribute(PkType.Event, eventId),
-                ':gsi1Sort': createDelimitedAttribute(PkType.Event, eventId)
+                ':gsi1Sort': createDelimitedAttributePrefix(PkType.Event, eventId)
             }
         };
 

@@ -11,7 +11,7 @@ export class DDBStreamTransformer  {
     constructor(
         @inject(TYPES.EventSourceDao) private eventSourceDao: EventSourceDao) {}
 
-    public async transform(event: any) {
+    public async transform(event: any): Promise<CommonEvent[]> {
         logger.debug(`ddbstream.transformer transform: in: event:${JSON.stringify(event)}`);
 
         // TODO: performance improvement, move to class level, but then how do we reset if it changes?
@@ -19,13 +19,31 @@ export class DDBStreamTransformer  {
 
         const transformedEvents:CommonEvent[]=[];
 
-        for(const rec of event['Records']) {
+        for(const rec of event.Records) {
+            // arn:aws:dynamodb:us-west-2:account-id:table/ExampleTableWithStream/stream/2015-06-27T00:48:05.899
+            // becomes arn:aws:dynamodb:us-west-2:account-id:table/ExampleTableWithStream
+            const arnSplit = rec.eventSourceARN('/');
+            const eventSourceId = `${arnSplit[0]}/${arnSplit[1]}`;
+
+            /**
+             *   validate the event stream
+             */
+            if (rec.eventSource!=='aws:dynamodb') {
+                logger.error(`eventSource ${eventSourceId} incorrectly configured as a dynamodb stream!`);
+                break;
+            }
+
+            /**
+             *   only interested in certain event types
+             */
+            if (rec.eventName!=='INSERT' && rec.eventName!=='MODIFY') {
+                continue;
+            }
 
             /**
              *   identify the principal of the incoming event source
              */
 
-            const eventSourceId = rec['eventSourceARN'];
             let principalAttribute=principalAttributes[eventSourceId];
             if (principalAttribute===undefined) {
                 const r = await this.eventSourceDao.get(eventSourceId);
@@ -37,50 +55,70 @@ export class DDBStreamTransformer  {
                 principalAttribute=principalAttributes[eventSourceId];
             }
 
-            if (rec['dynamodb']===undefined || rec['dynamodb']['Keys']===undefined) {
+            if (rec.dynamodb===undefined || rec.dynamodb.Keys===undefined) {
                 logger.warn(`eventSource ${eventSourceId} missing 'Keys' therefore ignoring: ${rec}`);
                 continue;
             }
 
             /**
-             *   find the principal in the incoming event
-             */
-
-            let principal:string;
-            const keys=rec['dynamodb']['Keys'];
-            const newImage=rec['dynamodb']['NewImage'];
-
-            if (keys[principalAttribute]!==undefined) {
-                principal=keys[principalAttribute][0];
-            }
-
-            if (principal===undefined && newImage[principalAttribute]!==undefined) {
-                principal=newImage[principalAttribute][0];
-            }
-
-            if (principal===undefined) {
-                logger.warn(`eventSource ${eventSourceId} missing value for principal therefore ignoring: ${rec}`);
-                continue;
-            }
-
-            /**
-             *   transform the rest of the attributes
+             *   transform the incoming event
              */
 
             const transformedEvent:CommonEvent = {
-                principal,
+                eventSourceId,
+                principal:undefined,
                 attributes:{}
             };
 
-            Object.keys(keys).forEach(key=> {
-                if (key!==principalAttribute) {
-                    transformedEvent.attributes[key] = keys[key][0];
+            const keys=rec.dynamodb.Keys;
+            const newImage=rec.dynamodb.NewImage;
+
+            Object.keys(keys).forEach(prop=> {
+                const value = this.extractValue(keys[prop]);
+                if (prop===principalAttribute) {
+                    transformedEvent.principal = <string>value;
                 }
+                transformedEvent.attributes[prop] = value;
             });
-            transformedEvents.push();
+
+            if (newImage!==undefined) {
+                Object.keys(newImage).forEach(prop=> {
+                    const value = this.extractValue(newImage[prop]);
+                    if (prop===principalAttribute) {
+                        transformedEvent.principal = <string>value;
+                    }
+                    transformedEvent.attributes[prop] = value;
+                });
+            }
+
+            if (transformedEvent.principal===undefined) {
+                logger.warn(`eventSource ${eventSourceId} missing value for principal therefore ignoring.  attributes: ${transformedEvent.attributes}`);
+                continue;
+            }
+
+            transformedEvents.push(transformedEvent);
         }
 
-        logger.debug(`ddbstream.transformer transform: exit:`);
+        logger.debug(`ddbstream.transformer transform: exit: ${JSON.stringify(transformedEvents)}`);
+        return transformedEvents;
+
+    }
+
+    private extractValue(json:any): string|boolean|number|string[]|number[] {
+        if (json.S!==undefined) {
+            return json.S;
+        } else if (json.N!==undefined) {
+            return parseFloat(json.N);
+        } else if (json.BOOL!==undefined) {
+            return json.BOOL==='true';
+        } else  if (json.SS!==undefined) {
+            return <string[]>json.SS;
+        } else if (json.NS!==undefined) {
+            return <number[]>json.NS;
+        } else {
+            // not supported
+            return undefined;
+        }
     }
 
 }
