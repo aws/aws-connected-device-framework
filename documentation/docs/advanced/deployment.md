@@ -41,7 +41,7 @@ To install, run the _deploy.bash_ script from the _infrastructure_ project:
 
 ```sh
 > cd cdf-infrastructure-demo
-cdf-infrastructure-demo> ./deploy.bash -B -e demo -p 157731826412 -i 0.0.0.0/0 -u cdf-157721836412-us-west-2 -b cdf-157721836412-us-west-2 -R us-west-2 -P 1577
+cdf-infrastructure-demo> ./deploy.bash -C -e demo -p 157731826412 -i 0.0.0.0/0 -u cdf-157721836412-us-west-2 -b cdf-157721836412-us-west-2 -R us-west-2 -P 1577
 ```
 
 For a description of the arguments of the above script, run the script with no arguments as follows:
