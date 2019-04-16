@@ -66,6 +66,28 @@ Retrieve status of a bulk certificates task
 | 400 |  |  |
 | 404 |  |  |
 
+### /supplier/{supplierId}/certificates
+
+#### POST
+##### Summary:
+
+Creates a batch of certificates for a supplier, using a supplier's specific CA.
+
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| supplierId | path | Id supplier for which to create certificates | Yes | string |
+| body | body |  | Yes | [BulkCertificatesTaskRequest](#bulkcertificatestaskrequest) |
+
+##### Responses
+
+| Code | Description | Schema |
+| ---- | ----------- | ------ |
+| 202 | Created successfully | [BulkCertificatesTaskResponse](#bulkcertificatestaskresponse) |
+| 400 |  |  |
+
 ### Models
 
 
