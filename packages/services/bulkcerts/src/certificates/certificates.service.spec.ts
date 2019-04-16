@@ -1,12 +1,13 @@
 /*-------------------------------------------------------------------------------
-# Copyright (c) 2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# Copyright (c) 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
 import 'reflect-metadata';
 import { createMockInstance } from 'jest-create-mock-instance';
+import { logger } from '../utils/logger';
 import { CertificatesService } from './certificates.service';
-import AWS from 'aws-sdk';
+import AWS, { AWSError } from 'aws-sdk';
 import { CertificatesTaskDao } from './certificatestask.dao';
 import { CertificateChunkRequest } from './certificates.models';
 
@@ -14,21 +15,36 @@ describe('CertificatesService', () => {
     let mockedCertificatesTaskDao: jest.Mocked<CertificatesTaskDao>;
     let instance: CertificatesService;
 
-    let mockS3 : AWS.S3;
-    let mockIot : AWS.Iot;
-    let mockSsm : AWS.SSM;
+    let mockS3: AWS.S3;
+    let mockIot: AWS.Iot;
+    let mockSsm: AWS.SSM;
 
     beforeEach(() => {
-
         mockS3 = new AWS.S3();
         mockIot = new AWS.Iot();
         mockSsm = new AWS.SSM();
-
         mockedCertificatesTaskDao = createMockInstance(CertificatesTaskDao);
-        instance = new CertificatesService( mockedCertificatesTaskDao, () => mockIot, () => mockS3, () => mockSsm, 'unit-test-bucket', 'certs/', 365);
+
+        const mockS3Factory = () => {
+            return mockS3;
+        };
+        const mockIotFactory = () => {
+            return mockIot;
+        };
+        const mockSsmFactory = () => {
+            return mockSsm;
+        };
+
+        instance = new CertificatesService( mockedCertificatesTaskDao, mockIotFactory, mockS3Factory, mockSsmFactory, 'unit-test-bucket', 'certs/', 365);
     });
 
     it('createBatch should create batch', async () => {
+
+        jest.setTimeout(10000);
+
+        const mockUpload = mockS3.upload = <any>(jest.fn((_params, cb) => {
+            cb(null, 'pass');
+        }));
 
         const listCaCertsResponse:AWS.Iot.ListCACertificatesResponse = {
             certificates: [
@@ -42,11 +58,10 @@ describe('CertificatesService', () => {
             nextMarker: null as any
         };
 
-        mockIot.listCACertificates = jest.fn().mockImplementationOnce(()=> {
-            return {
-            promise: ():AWS.Iot.Types.ListCertificatesResponse => listCaCertsResponse
-            };
-        });
+        const mockListCaCertsResponse = new MockListCaCertsResponse();
+        mockListCaCertsResponse.error = null;
+        mockListCaCertsResponse.response = listCaCertsResponse;
+        const mockListCaCerts = mockIot.listCACertificates = <any>(jest.fn((_params) => mockListCaCertsResponse));
 
         // fake CA PEM
         const describeCaCertResponse:AWS.Iot.Types.DescribeCACertificateResponse = {
@@ -64,11 +79,10 @@ describe('CertificatesService', () => {
             }
         };
 
-        mockIot.describeCACertificate = jest.fn().mockImplementationOnce(()=> {
-            return {
-              promise: ():AWS.Iot.Types.DescribeCACertificateResponse => describeCaCertResponse
-            };
-        });
+        const mockDescribeCaCertResponse = new MockDescribeCaCertResponse();
+        mockDescribeCaCertResponse.error = null;
+        mockDescribeCaCertResponse.response = describeCaCertResponse;
+        const mockDescribeCaCert = mockIot.describeCACertificate = <any>(jest.fn((_params) => mockDescribeCaCertResponse));
 
         // fake private key
         const getParameterResponse = {
@@ -80,19 +94,12 @@ describe('CertificatesService', () => {
             }
         };
 
-        mockSsm.getParameter = jest.fn().mockImplementationOnce(()=> {
-            return {
-                promise: ():AWS.SSM.Types.GetParameterResult => getParameterResponse
-            };
-        });
+        const mockGetParameterResponse = new MockGetParameterResponse();
+        mockGetParameterResponse.error = null;
+        mockGetParameterResponse.response = getParameterResponse;
+        const mockGetParameter = mockSsm.getParameter = <any>(jest.fn((_params) => mockGetParameterResponse));
 
-        mockS3.upload = jest.fn().mockImplementationOnce(()=> {
-            return {
-                promise: () => Promise.resolve({})
-            };
-        });
-
-        const chunckRequest:CertificateChunkRequest = {
+        const chunkRequest:CertificateChunkRequest = {
             certInfo:{
                 commonName: 'unittest.org',
                 organization: 'test',
@@ -108,12 +115,13 @@ describe('CertificatesService', () => {
             quantity: 4
         };
 
-        await instance.createChunk(chunckRequest);
+        await instance.createChunk(chunkRequest);
 
-        const uploadParams = <AWS.S3.Types.PutObjectRequest> ((<jest.Mock>mockS3.upload).mock.calls[0][0]);
-        expect( uploadParams.Bucket ).toEqual('unit-test-bucket');
-        expect(uploadParams.Key).toEqual('certs/123/456/certs.zip');
-    }, 30000);
+        expect(mockUpload).toBeCalled();
+        expect(mockListCaCerts).toBeCalledWith({ascendingOrder: true});
+        expect(mockDescribeCaCert).toBeCalledWith({certificateId: '3d2ecfdb0eba2898626291e7e18a37cee791dbc81940a39e8ce922f9ff2feb32'});
+        expect(mockGetParameter).toBeCalledWith({Name: `cdf-ca-key-3d2ecfdb0eba2898626291e7e18a37cee791dbc81940a39e8ce922f9ff2feb32`,WithDecryption: true});
+    });
 
     it('createBatch should throw error for invalid parameter', async () => {
 
@@ -124,7 +132,8 @@ describe('CertificatesService', () => {
                 chunkId: 1,
                 certInfo: {}
             };
-            await instance.createChunk(createBatchParameters);
+            const createResponse = await instance.createChunk(createBatchParameters);
+            logger.debug(`createResponse: ${JSON.stringify(createResponse)}`);
             fail(); // expecting error
         } catch (e) {
             expect(e.name).toEqual('ArgumentError');
@@ -132,33 +141,7 @@ describe('CertificatesService', () => {
     });
 
     it('deleteBatch should delete batch for valid id', async () => {
-
-        // first delete looks for manifest, so mock this
-        const bulkCertsManifestJson = {
-            status: 'COMPLETE',
-            quantityComplete:100,
-            quantityRequested:100,
-            tag:'unit-test-batch-tag'
-        };
-
-        const s3BodyBuffer = new Buffer(JSON.stringify(bulkCertsManifestJson));
-        const s3Response:AWS.S3.Types.GetObjectOutput = {
-            AcceptRanges: 'bytes',
-            LastModified: new Date('2018-08-07T16:22:39.000Z'),
-            ContentLength:100,
-            ETag:'e0e8d74cd1095fae4cd91153eb882a48',
-            ContentType:'application/octet-stream',
-            'Metadata':{},
-            'Body': s3BodyBuffer
-        };
-
-        mockS3.getObject = jest.fn().mockImplementationOnce(()=> {
-            return {
-              promise: ():AWS.S3.Types.GetObjectOutput => s3Response
-            };
-        });
-
-        // next delete lists objects in the bucket with the bulk id prefix, so mock this (return zip and manifest file)
+        // first delete lists objects in the bucket with the bulk id prefix, so mock this (return zip)
         const listObjectsV2Data:AWS.S3.Types.ListObjectsV2Output = {
             IsTruncated:false,
             Contents: [
@@ -167,13 +150,6 @@ describe('CertificatesService', () => {
                     LastModified: new Date('2018-08-07T16:22:39.000Z'),
                     ETag:'\"ddc5b279ffe980efe2506025cc5fb889\"',
                     Size:327714,
-                    StorageClass:'STANDARD'
-                },
-                {
-                    Key:'testBatchId/manifest.json',
-                    LastModified: new Date('2018-08-07T16:22:39.000Z'),
-                    ETag:'\"e0e8d74cd1095fae4cd91153eb882a48\"',
-                    Size:100,
                     StorageClass:'STANDARD'
                 }
             ],
@@ -184,36 +160,37 @@ describe('CertificatesService', () => {
             KeyCount:2
         };
 
-        mockS3.listObjectsV2 = jest.fn().mockImplementationOnce(()=> {
-            return {
-              promise: ():AWS.S3.Types.ListObjectsV2Output => listObjectsV2Data
-            };
-        });
+        const mockListObjectsV2Response = new MockListObjectsV2Response();
+        mockListObjectsV2Response.error = null;
+        mockListObjectsV2Response.response = listObjectsV2Data;
+        const mockListObjectsV2 = mockS3.listObjectsV2 = <any>(jest.fn((_params) => mockListObjectsV2Response));
 
         // then delete issue a request to delete the objects
         const deleteObjectsData = {
             Deleted: [
-                {Key: 'testBatchId/manifest.json'},
                 {Key: 'testBatchId/certs.zip'}
             ],
             Errors:[] as any
         };
 
-        mockS3.deleteObjects = jest.fn().mockImplementationOnce(()=> {
-            return {
-              promise: ():AWS.S3.Types.DeleteObjectsOutput=> deleteObjectsData
-            };
-        });
+        const mockDeleteObjectsResponse = new MockDeleteObjectsResponse();
+        mockDeleteObjectsResponse.error = null;
+        mockDeleteObjectsResponse.response = deleteObjectsData;
+        const mockDeleteObjects = mockS3.deleteObjects = <any>(jest.fn((_params) => mockDeleteObjectsResponse));
 
         // now do the delete call
         const deletedResponse = await instance.deleteBatch('testBatchId');
+
+        // validation
         expect(deletedResponse).toBeTruthy();
+        expect(mockListObjectsV2).toBeCalledWith({Bucket: 'unit-test-bucket', Prefix: 'certs/testBatchId'});
+        expect(mockDeleteObjects).toBeCalledWith({Bucket: 'unit-test-bucket', Delete: { Objects: [{'Key': 'testBatchId/certs.zip'}]}});
     });
 
     it('deleteBatch should throw error for non-existent batch', async () => {
-
         // delete does a list in bucket first, so mock that as an error
-        const noSuchKeyError = {
+        const mockListObjectsV2Response = new MockListObjectsV2Response();
+        mockListObjectsV2Response.error = {
             name: 'NoSuchKeyError',
             code: 'NoSuchKey',
             message: 'Object does not exist',
@@ -227,17 +204,95 @@ describe('CertificatesService', () => {
             extendedRequestId: 'even-longer-unit-test-id',
             cfId: 'unit-test-cf-id'
         };
-        mockS3.listObjectsV2 = jest.fn().mockImplementationOnce(()=> {
-            return {
-              promise: () => Promise.reject(noSuchKeyError)
-            };
-        });
+        mockListObjectsV2Response.response = null;
+        const mockListObjectsV2 = mockS3.listObjectsV2 = <any>(jest.fn((_params) => mockListObjectsV2Response));
 
         try {
-            await instance.deleteBatch('testBatchId');
+            const s3Manifest = await instance.deleteBatch('testBatchId');
+            logger.debug(`s3Manifest: ${JSON.stringify(s3Manifest)}`);
             fail(); // expecting error
         } catch (e) {
             expect(e.message).toEqual('Object does not exist');
         }
+
+        // validation
+        expect(mockListObjectsV2).toBeCalledWith({Bucket: 'unit-test-bucket', Prefix: 'certs/testBatchId'});
     });
 });
+
+class MockListObjectsV2Response {
+    public response: AWS.S3.Types.ListObjectsV2Output;
+    public error: AWSError;
+
+    promise(): Promise<AWS.S3.Types.ListObjectsV2Output> {
+        return new Promise((resolve, reject) => {
+            if (this.error !== null) {
+                return reject(this.error);
+            } else {
+                return resolve(this.response);
+            }
+        });
+    }
+}
+class MockDeleteObjectsResponse {
+    public response: AWS.S3.Types.DeleteObjectsOutput;
+    public error: AWSError;
+
+    promise(): Promise<AWS.S3.Types.DeleteObjectsOutput> {
+        return new Promise((resolve, reject) => {
+            if (this.error !== null) {
+                return reject(this.error);
+            } else {
+                return resolve(this.response);
+            }
+        });
+    }
+}
+
+// IoT
+
+class MockListCaCertsResponse {
+    public response: AWS.Iot.Types.ListCACertificatesResponse;
+    public error: AWSError;
+
+    promise(): Promise<AWS.Iot.Types.ListCACertificatesResponse> {
+        return new Promise((resolve, reject) => {
+            if (this.error !== null) {
+                return reject(this.error);
+            } else {
+                return resolve(this.response);
+            }
+        });
+    }
+}
+class MockDescribeCaCertResponse {
+    public response: AWS.Iot.Types.DescribeCACertificateResponse;
+    public error: AWSError;
+
+    promise(): Promise<AWS.Iot.Types.DescribeCACertificateResponse> {
+        return new Promise((resolve, reject) => {
+            if (this.error !== null) {
+                return reject(this.error);
+            } else {
+                return resolve(this.response);
+            }
+        });
+    }
+}
+
+// SSM
+
+class MockGetParameterResponse {
+    public response: AWS.SSM.Types.GetParameterResult;
+    public error: AWSError;
+
+    promise(): Promise<AWS.SSM.Types.GetParameterResult> {
+        return new Promise((resolve, reject) => {
+            if (this.error !== null) {
+                return reject(this.error);
+            } else {
+                return resolve(this.response);
+            }
+        });
+    }
+}

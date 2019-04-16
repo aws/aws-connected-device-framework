@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------------
-# Copyright (c) 2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# Copyright (c) 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
@@ -7,46 +7,60 @@ import 'reflect-metadata';
 import { createMockInstance } from 'jest-create-mock-instance';
 import { logger } from '../utils/logger';
 import { CertificatesTaskService } from './certificatestask.service';
-import AWS from 'aws-sdk';
+import AWS, { AWSError } from 'aws-sdk';
 import { CertificatesTaskDao } from './certificatestask.dao';
 
 describe('CertificatesService', () => {
     let mockedCertificatesTaskDao: jest.Mocked<CertificatesTaskDao>;
     let instance: CertificatesTaskService;
-
     let mockSNS: AWS.SNS;
+
     const testChunkSize = 50;
 
     beforeEach(() => {
-        mockedCertificatesTaskDao = createMockInstance(CertificatesTaskDao);
         mockSNS = new AWS.SNS();
+
+        const mockSNSFactory = () => {
+            return mockSNS;
+        };
+
+        mockedCertificatesTaskDao = createMockInstance(CertificatesTaskDao);
+
         instance = new CertificatesTaskService('unit-test-topic', 'UnitTestCN', 'UnitTestOrg',
                                                'UnitTestOU', 'UnitTestLand', 'Testorado', 'Testville',
                                                'info@unit.test', 'cdf.unit.test', '1234', 'testid', testChunkSize,
-                                               mockedCertificatesTaskDao, () => mockSNS);
+                                               mockedCertificatesTaskDao, mockSNSFactory);
     });
 
     it('createTask with requested certs equally divisible into chunks', async () => {
 
-        const mockSnsPublishResponse= {
+        const mockSnsPublishResponse:AWS.SNS.PublishResponse = {
             MessageId: 'unit-test-publish-id'
         };
 
-        mockSNS.publish = jest.fn().mockImplementation(()=> {
-            return {
-                promise: ():AWS.SNS.Types.PublishResponse => mockSnsPublishResponse
-            };
+        const mockPublishResponse = new MockPublishResponse();
+        mockPublishResponse.response = mockSnsPublishResponse;
+        mockPublishResponse.error = null;
+        const publishParameters:AWS.SNS.Types.PublishInput[] = [];
+
+        const mockPublish = mockSNS.publish = <any> jest.fn((params) => {
+            publishParameters.push(params);
+            return mockPublishResponse;
         });
 
-        await instance.createTask(1000, 'unit-test-ca');
-        const expectedChunks = 1000/testChunkSize;
-        expect((<jest.Mock>mockSNS.publish).mock.calls.length).toEqual(expectedChunks);
+        // call createTask
+        const taskId = await instance.createTask(1000, 'unit-test-ca');
+        logger.debug(`taskId: ${taskId}`);
 
+        // validation
+        const expectedChunks = 1000/testChunkSize;
+        expect(mockPublish).toBeCalledTimes(expectedChunks);
+        expect(publishParameters.length).toEqual(expectedChunks);
         for (let i=1; i<=expectedChunks; ++i) {
-            const publishParams = <AWS.SNS.Types.PublishInput> (<jest.Mock>mockSNS.publish).mock.calls[i-1][0];
-            expect(publishParams.Subject).toEqual('CreateChunk');
-            expect(publishParams.TopicArn).toEqual('unit-test-topic');
-            const message = JSON.parse(publishParams.Message);
+            const publish = publishParameters[i-1];
+            expect(publish.Subject).toEqual('CreateChunk');
+            expect(publish.TopicArn).toEqual('unit-test-topic');
+            const message = JSON.parse(publish.Message);
             expect(message.chunkId).toEqual(i);
             expect(message.quantity).toEqual(50);
         }
@@ -54,27 +68,50 @@ describe('CertificatesService', () => {
 
     it('createTask with requested certs not equally divisible into chunks', async () => {
 
-        const mockSnsPublishResponse= {
+        const mockSnsPublishResponse:AWS.SNS.PublishResponse = {
             MessageId: 'unit-test-publish-id'
         };
 
-        mockSNS.publish = jest.fn().mockImplementation(()=> {
-            return {
-            promise: ():AWS.SNS.Types.PublishResponse => mockSnsPublishResponse
-            };
+        const mockPublishResponse = new MockPublishResponse();
+        mockPublishResponse.response = mockSnsPublishResponse;
+        mockPublishResponse.error = null;
+        const publishParameters:AWS.SNS.Types.PublishInput[] = [];
+
+        const mockPublish = mockSNS.publish = <any> jest.fn((params) => {
+            publishParameters.push(params);
+            return mockPublishResponse;
         });
 
+        // call createTask
         const taskId = await instance.createTask(1015, 'unit-test-ca');
         logger.debug(`taskId: ${taskId}`);
+
+        // validation
         const expectedChunks = Math.floor(1015/testChunkSize)+1;
-        expect((<jest.Mock>mockSNS.publish).mock.calls.length).toEqual(expectedChunks);
+        expect(mockPublish).toBeCalledTimes(expectedChunks);
+        expect(publishParameters.length).toEqual(expectedChunks);
         for (let i=1; i<=expectedChunks; ++i) {
-            const publishParams = <AWS.SNS.Types.PublishInput> (<jest.Mock>mockSNS.publish).mock.calls[i-1][0];
-            expect(publishParams.Subject).toEqual('CreateChunk');
-            expect(publishParams.TopicArn).toEqual('unit-test-topic');
-            const message = JSON.parse(publishParams.Message);
+            const publish = publishParameters[i-1];
+            expect(publish.Subject).toEqual('CreateChunk');
+            expect(publish.TopicArn).toEqual('unit-test-topic');
+            const message = JSON.parse(publish.Message);
             expect(message.chunkId).toEqual(i);
             expect(message.quantity).toEqual(i === expectedChunks ? 15 : 50);
         }
     });
 });
+
+class MockPublishResponse {
+    public response: AWS.SNS.Types.PublishResponse;
+    public error: AWSError;
+
+    promise(): Promise<AWS.SNS.Types.PublishResponse> {
+        return new Promise((resolve, reject) => {
+            if (this.error !== null) {
+                return reject(this.error);
+            } else {
+                return resolve(this.response);
+            }
+        });
+    }
+}

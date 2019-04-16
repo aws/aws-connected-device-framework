@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------------
-# Copyright (c) 2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# Copyright (c) 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
@@ -11,7 +11,6 @@ import { inject } from 'inversify';
 import { TYPES } from '../di/types';
 import { handleError } from '../utils/errors';
 import { CertificatesTaskService } from './certificatestask.service';
-import { CertificateChunkRequest } from './certificates.models';
 import * as fs from 'fs';
 import { CertificateBatchRequest, TaskStatus, CertificateBatchTaskWithChunks, CertificateBatchTask } from './certificatestask.models';
 import { CertificatesService } from './certificates.service';
@@ -41,21 +40,6 @@ export class CertificatesController implements interfaces.Controller {
             handleError(e, res);
         }
         return null;
-    }
-
-    @httpPost('/:taskId/chunks/:chunkId')
-    public async createCertificateChunk(@requestParam('taskId') taskId:string, @requestParam('chunkId') chunkId:number,
-        @requestBody() request: CertificateChunkRequest, @response() res: Response) : Promise<void> {
-        logger.debug(`certificates.controller createCertificateChunk: in: request: taskId:${taskId}, chunkId:${chunkId}, request:${JSON.stringify(request)}`);
-        try {
-            request.taskId = taskId;
-            request.chunkId = Number(chunkId);
-            const certs = await this.certificatesService.createChunk(request);
-            logger.debug(JSON.stringify(certs));
-            res.status(201).json(certs);
-        } catch (e) {
-            handleError(e, res);
-        }
     }
 
     @httpGet('/:taskId')

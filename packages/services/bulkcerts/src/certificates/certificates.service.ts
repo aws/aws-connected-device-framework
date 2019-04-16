@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------------
-# Copyright (c) 2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# Copyright (c) 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
@@ -248,15 +248,22 @@ export class CertificatesService {
         return data.certificateDescription.certificatePem;
     }
 
-    private async uploadStreamToS3(bucket:string, key:string, body:NodeJS.ReadableStream) : Promise<string> {
-        const params = {
-            Bucket: bucket,
-            Key: key,
-            Body: body
-        };
+    private uploadStreamToS3(bucket:string, key:string, body:NodeJS.ReadableStream) : Promise<string> {
+        return new Promise((resolve:any,reject:any) =>  {
+            const params = {
+                Bucket: bucket,
+                Key: key,
+                Body: body
+            };
+            this._s3.upload(params, (err: any, data: any) => {
+                if (err) {
+                    return reject(err);
+                }
+                const eTag = data.ETag;
 
-        const r = await this._s3.upload(params).promise();
-        return r.ETag;
+                return resolve(eTag);
+            });
+        });
     }
 
     private async deleteCertificates(taskId:string) : Promise<void> {

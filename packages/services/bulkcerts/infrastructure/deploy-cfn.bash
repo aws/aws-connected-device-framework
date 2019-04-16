@@ -2,7 +2,7 @@
 set -e
 
 #-------------------------------------------------------------------------------
-# Copyright (c) 2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# Copyright (c) 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 # 
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------
@@ -23,7 +23,6 @@ MANDATORY ARGUMENTS:
 
 OPTIONAL ARGUMENTS
     -C (string)   Name of customer authorizer stack.  Defaults to cdf-custom-auth-${ENVIRONMENT}.
-    -Q (string)   Name of provisioning stack.  Defaults to cdf-provisioning-${ENVIRONMENT}.
     -S (string)   What to name this stack.  Defaults to cdf-bulkcerts-${ENVIRONMENT}.
     -R (string)   AWS region.
     -P (string)   AWS profile.
@@ -31,14 +30,13 @@ OPTIONAL ARGUMENTS
 EOF
 }
 
-while getopts ":e:c:k:N:Q:C:S:R:P:" opt; do
+while getopts ":e:c:k:N:C:S:R:P:" opt; do
   case $opt in
 
     e  ) export ENVIRONMENT=$OPTARG;;
     c  ) export BULKCERTS_CONFIG_LOCATION=$OPTARG;;
     k  ) export KMS_KEY_ID=$OPTARG;;
 
-    Q  ) export PROVISIONING_STACK_NAME=$OPTARG;;
     C  ) export CUST_AUTH_STACK_NAME=$OPTARG;;
     S  ) export BULKCERTS_STACK_NAME=$OPTARG;;
 
@@ -74,9 +72,6 @@ if [ -n "$AWS_PROFILE" ]; then
 	AWS_ARGS="$AWS_ARGS--profile $AWS_PROFILE"
 fi
 
-if [ -z "$PROVISIONING_STACK_NAME" ]; then
-  PROVISIONING_STACK_NAME=cdf-provisioning-${ENVIRONMENT}
-fi
 if [ -z "$BULKCERTS_STACK_NAME" ]; then
   BULKCERTS_STACK_NAME=cdf-bulkcerts-${ENVIRONMENT}
 fi
@@ -88,7 +83,6 @@ echo "
 Running with:
   ENVIRONMENT:                      $ENVIRONMENT
   BULKCERTS_STACK_NAME:             $BULKCERTS_STACK_NAME
-  PROVISIONING_STACK_NAME:          $PROVISIONING_STACK_NAME
   BULKCERTS_CONFIG_LOCATION:        $BULKCERTS_CONFIG_LOCATION
   KMS_KEY_ID:                       $KMS_KEY_ID
   CUST_AUTH_STACK_NAME:             $CUST_AUTH_STACK_NAME
@@ -96,35 +90,6 @@ Running with:
   AWS_PROFILE:                      $AWS_PROFILE
 "
 cwd=$(dirname "$0")
-
-echo '
-**********************************************************
-*****  Bulk Certs Identifying deployed endpoints ******
-**********************************************************
-'
-stack_exports=$(aws cloudformation list-exports $AWS_ARGS)
-
-provisioning_invoke_url_export="$PROVISIONING_STACK_NAME-apigatewayurl"
-provisioning_invoke_url=$(echo $stack_exports \
-    | jq -r --arg provisioning_invoke_url_export "$provisioning_invoke_url_export" \
-    '.Exports[] | select(.Name==$provisioning_invoke_url_export) | .Value')
-
-
-echo '
-**********************************************************
-*****  Setting Bulk Certs configuration          ******
-**********************************************************
-'
-bulk_certs_request_topic_export="$PROVISIONING_STACK_NAME-BulkCertificatesRequestSnsTopic"
-bulk_certs_request_topic=$(echo $stack_exports \
-    | jq -r --arg bulk_certs_request_topic_export "$bulk_certs_request_topic_export" \
-    '.Exports[] | select(.Name==$bulk_certs_request_topic_export) | .Value')
-
-cat $BULKCERTS_CONFIG_LOCATION | \
-  jq --arg provisioning_invoke_url "$provisioning_invoke_url" --arg bulk_certs_request_topic "$bulk_certs_request_topic" \
-  '.provisioning.baseUrl=$provisioning_invoke_url | .events.request.topic=$bulk_certs_request_topic' \
-  > $BULKCERTS_CONFIG_LOCATION.tmp && mv $BULKCERTS_CONFIG_LOCATION.tmp $BULKCERTS_CONFIG_LOCATION
-
 
 
 echo '
