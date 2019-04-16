@@ -37,6 +37,31 @@ Along with the _cdf-core_ and _cdf-clients_ release packages, an _infrastructure
 > git clone https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-infrastructure-demo
 ```
 
+The _infrastructure_ project contains configuration which is used during the deploy. This configuration is separated into folders by service. The configuration file used is dependent on the environment parameter passed into the deploy command (see below). Some of the configuration values are automatically populated during the deployment. For instance AWS IoT Endpoint and endpoints of CDF services. However, the S3 bucket configuration is not auto populated and needs to be configured before the first deployment.
+
+Edit the S3 bucket values in the configuration files to match the S3 bucket in the AWS account used for the deploy. Below is an example of the bulkcertificates file however multiple configuration files need to be updated including:
+
+* bulkcerts
+* certificateactivator
+* certificatevendor
+* commands
+* provisioning
+
+`(cdf-infrastructure-demo/bulkcertificates/demo-config.json)`
+
+```json
+{
+  "aws": {
+    "s3": {
+      "certificates": {
+        "bucket": "UPDATE THIS TO MATCH THE DESIRED BUCKET IN THE DEPLOYMENT AWS ACCOUNT",
+        "prefix": "certificates/"
+      }
+    }
+  }
+}
+```
+
 To install, run the _deploy.bash_ script from the _infrastructure_ project:
 
 ```sh
