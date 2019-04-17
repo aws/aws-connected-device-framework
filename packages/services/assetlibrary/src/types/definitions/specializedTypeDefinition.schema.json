@@ -11,11 +11,10 @@
                     "type": "object",
                     "properties": {
                         "type": {
-                            "type": ["string", "array"],
                             "oneOf": [
                                 {
                                     "type": "string",
-                                    "enum": ["number", "integer", "boolean", "string", "null"]
+                                    "enum": ["number", "integer", "boolean", "string", "null", "array"]
                                 },
                                 {
                                     "type": "array",

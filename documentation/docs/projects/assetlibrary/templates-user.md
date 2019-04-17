@@ -172,10 +172,6 @@ Keyword | Description
 `minLength` | Minimum allowed length
 `pattern` | A regular experssion to validate the value
 `format` | A pre-defined format.  Supported formats are `date`, `date-time`, `uri`, `email`, `hostname`, `ipv4` and `ipv6`
-`formatMaximum` | The maximum allowed value as determined by the `format` keyword
-`exclusiveFormatMaximum` | True/false whether to exclude the value defined by `formatMaximum` as the maximum
-`formatMinimum` | The minimum allowed value as determined by the `format` keyword
-`exclusiveFormatMinimum` | True/false whether to exclude the value defined by `formatMinimum` as the minimum
 
 Examples:
 
@@ -193,9 +189,7 @@ Examples:
         },
         "installedDate": {
             "type": "string",
-            "format": "date",
-            "formatMinimum": "2018-01-01",
-            "formatExclusiveMinimum": true
+            "format": "date"
         }
     }
 }
@@ -274,7 +268,6 @@ Keyword | Description
 `oneOf` | The data is valid if it matches exactly one of the schemas as defined by this array
 `anyOf` | The data is valid if it matches one or more of the schemas as defined by this array
 `allOf` | The data is valid if it matches all of the schemas as defined by this array
-`if/then/else` | Allows for implementing conditional logic, both as part if defining properties and defining required fields.
 
 Examples:
 
@@ -303,22 +296,8 @@ Examples:
                 { "minimum": 1000 },
                 { "type": "integer" }
             ]
-        },
-        "delta": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 1000,
-            "if": { "minimum": 100 },
-            "then": { "multipleOf": 100 },
-            "else": {
-                "if": { "minimum": 10 },
-                "then": { "multipleOf": 10 }
-            }
         }
-    },
-    "if": { "properties": { "pcmAction": { "minimum": 9000 } } },
-    "then": { "required": [ "timeInterval" ] },
-    "else": { "required": [ "delta" ] }
+    }
 }
 ```
 
