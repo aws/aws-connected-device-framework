@@ -46,27 +46,17 @@ export class CertificatesService {
         ow(req.chunkId, ow.number.greaterThan(0));
         ow(req.quantity, ow.number.greaterThan(0));
         ow(req.certInfo, ow.object.nonEmpty);
+        ow(req.caAlias, ow.string.nonEmpty);
 
-        let rootCACertId:string;
-        if (req.caAlias === null || req.caAlias === undefined) {
-            rootCACertId = await this.getCACertificateId();
+        const rootCACertId:string = config.get(`supplierRootCa.${req.caAlias}`) as string;
+        logger.debug(`rootCACertId: ${rootCACertId}`);
+
+        let certsZip:JSZip;
+
+        if (rootCACertId === 'AwsIotDefault') {
+            certsZip = await this.createChunkWithAwsIotCa(req.quantity, req.certInfo);
         } else {
-            rootCACertId = config.get(`supplierRootCa.${req.caAlias}`) as string;
-        }
-
-        const [rootPem, rootKey] = await Promise.all([this.getRootCAPem(rootCACertId), this.getRootCAKey(rootCACertId)]);
-
-        const jszip = new JSZip();
-        const certsZip = jszip.folder('certs');
-
-        for (let i=0; i<req.quantity; ++i) {
-            const privateKey = await this.createPrivateKey();
-            const csr = await this.createCSR(privateKey, req.certInfo);
-            const certificate = await this.createCertificate(csr, rootKey, rootPem);
-            const certId = await this.getCertFingerprint(certificate);
-
-            certsZip.file(`${certId}_cert.pem`, certificate);
-            certsZip.file(`${certId}_key.pem`, privateKey);
+            certsZip = await this.createChunkWithCustomerCa(req.quantity, rootCACertId, req.certInfo);
         }
 
         const s3Prefix = `${req.taskId}/${req.chunkId}/`;
@@ -79,6 +69,47 @@ export class CertificatesService {
         await this.taskDao.updateTaskChunkLocation(req.taskId, req.chunkId, `s3://${this.certificatesBucket}/${this.certificatesPrefix}${s3Prefix}certs.zip`);
 
         logger.debug('certificates.service createChunk: exit:');
+    }
+
+    private async createChunkWithCustomerCa(quantity: number, caId:string, certInfo: CertificateInfo): Promise<JSZip> {
+        logger.debug(`certificates.service createChunkWithCustomerCa: in: quantity: ${quantity}, caId: ${caId}, certInfo: ${JSON.stringify(certInfo)}`);
+
+        const jszip = new JSZip();
+        const certsZip = jszip.folder('certs');
+
+        const [rootPem, rootKey] = await Promise.all([this.getRootCAPem(caId), this.getRootCAKey(caId)]);
+
+        for (let i=0; i<quantity; ++i) {
+            const privateKey = await this.createPrivateKey();
+            const csr = await this.createCSR(privateKey, certInfo);
+            const certificate = await this.createCertificate(csr, rootKey, rootPem);
+            const certId = await this.getCertFingerprint(certificate);
+
+            certsZip.file(`${certId}_cert.pem`, certificate);
+            certsZip.file(`${certId}_key.pem`, privateKey);
+        }
+        return certsZip;
+    }
+
+    private async createChunkWithAwsIotCa(quantity: number, certInfo: CertificateInfo): Promise<JSZip> {
+        logger.debug(`certificates.service createChunkWithAwsIotCa: in: quantity: ${quantity}, certInfo: ${JSON.stringify(certInfo)}`);
+
+        const jszip = new JSZip();
+        const certsZip = jszip.folder('certs');
+
+        for (let i=0; i<quantity; ++i) {
+            const privateKey = await this.createPrivateKey();
+            const csr = await this.createCSR(privateKey, certInfo);
+
+            const certificateResponse: AWS.Iot.CreateCertificateFromCsrResponse = await this.getAwsIotCertificate(csr);
+
+            const certificate = certificateResponse.certificatePem;
+            const certId = certificateResponse.certificateId;
+
+            certsZip.file(`${certId}_cert.pem`, certificate);
+            certsZip.file(`${certId}_key.pem`, privateKey);
+        }
+        return certsZip;
     }
 
     public async getCertificates(taskId:string) : Promise<string> {
@@ -228,24 +259,21 @@ export class CertificatesService {
         return data.Parameter.Value;
     }
 
-    private async getCACertificateId () : Promise<string> {
-        const params = {
-            ascendingOrder: true
-        };
-        const data = await this._iot.listCACertificates(params).promise();
-        if (data.certificates===undefined) {
-            logger.error('No CA certificate found!!!');
-            return undefined;
-        }
-        return data.certificates[0].certificateId;
-    }
-
     private async getRootCAPem (rootCACertId:string) : Promise<string> {
         const params = {
             certificateId: rootCACertId
         };
         const data = await this._iot.describeCACertificate(params).promise();
         return data.certificateDescription.certificatePem;
+    }
+
+    private async getAwsIotCertificate(csr: string) : Promise<AWS.Iot.CreateCertificateFromCsrResponse> {
+        const params: AWS.Iot.CreateCertificateFromCsrRequest = {
+            certificateSigningRequest: csr,
+            setAsActive: false
+        };
+        const data: AWS.Iot.CreateCertificateFromCsrResponse = await this._iot.createCertificateFromCsr(params).promise();
+        return data;
     }
 
     private uploadStreamToS3(bucket:string, key:string, body:NodeJS.ReadableStream) : Promise<string> {

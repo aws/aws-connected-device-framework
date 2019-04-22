@@ -9,7 +9,7 @@ export interface CertificateChunkRequest {
 	chunkId:number;
 	certInfo: CertificateInfo;
 	quantity:number;
-	caAlias?:string;
+	caAlias:string;
 }
 
 export interface CertificateChunkResponse {

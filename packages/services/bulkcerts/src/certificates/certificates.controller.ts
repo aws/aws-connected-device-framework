@@ -4,7 +4,7 @@
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
 import { Response } from 'express';
-import { interfaces, controller, response, httpPost, requestBody, requestParam, httpGet} from 'inversify-express-utils';
+import { interfaces, controller, response, requestParam, httpGet} from 'inversify-express-utils';
 import {logger} from '../utils/logger';
 
 import { inject } from 'inversify';
@@ -12,7 +12,7 @@ import { TYPES } from '../di/types';
 import { handleError } from '../utils/errors';
 import { CertificatesTaskService } from './certificatestask.service';
 import * as fs from 'fs';
-import { CertificateBatchRequest, TaskStatus, CertificateBatchTaskWithChunks, CertificateBatchTask } from './certificatestask.models';
+import { TaskStatus, CertificateBatchTaskWithChunks } from './certificatestask.models';
 import { CertificatesService } from './certificates.service';
 
 @controller('/certificates')
@@ -20,27 +20,6 @@ export class CertificatesController implements interfaces.Controller {
 
     constructor( @inject(TYPES.CertificatesTaskService) private certificatesTaskService: CertificatesTaskService,
         @inject(TYPES.CertificatesService) private certificatesService: CertificatesService) {}
-
-    @httpPost('')
-    public async createCertificates(@requestBody() request: CertificateBatchRequest, @response() res: Response): Promise<CertificateBatchTask> {
-        logger.debug(`certificates.controller createCertificates: in: request: ${JSON.stringify(request)}`);
-
-        try {
-            const taskId: string = await this.certificatesTaskService.createTask(request.quantity);
-            const taskResponse:CertificateBatchTask = {
-                taskId,
-                status: TaskStatus.IN_PROGRESS
-            };
-
-            res.location(`/certificates/${taskId}`);
-            res.status(202);
-
-            return taskResponse;
-        } catch (e) {
-            handleError(e, res);
-        }
-        return null;
-    }
 
     @httpGet('/:taskId')
     public async getCertificates(@requestParam('taskId') taskId: string, @response() res: Response): Promise<any> {

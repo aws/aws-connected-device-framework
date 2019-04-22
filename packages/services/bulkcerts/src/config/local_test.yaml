@@ -1,0 +1,39 @@
+aws:
+  accountId: 
+  region: 
+
+  dynamodb:
+    tasks:
+      tableName: 
+  s3:
+    certificates:
+      bucket: 
+      prefix:
+
+events:
+  request:
+    topic: 
+
+deviceCertificateInfo:
+  commonName:
+  organization:
+  organizationalUnit:
+  locality:
+  stateName:
+  country:
+  emailAddress:
+  distinguishedNameQualifier: '?'
+  serialNumber: '?'
+  id: '?'
+
+deviceCertificateExpiryDays: 365
+
+supplierRootCa:
+  test-iotca: 'AwsIotDefault'
+  test-customerca: '3d2ecfdb0eba2898626291e7e18a37cee791dbc81940a39e8ce922f9ff2feb32'
+
+cors:
+  origin:
+
+defaults:
+  chunkSize: 100

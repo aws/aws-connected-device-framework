@@ -327,6 +327,10 @@ Resources:
               - "iot:DescribeCACertificate"
             Effect: Allow
             Resource: "*"
+          - Action:
+              - "iot:CreateCertificateFromCsr"
+            Effect: Allow
+            Resource: "*"
 
   ApiLambdaFunction:
     Type: AWS::Serverless::Function
@@ -369,6 +373,7 @@ Resources:
       Role: !GetAtt SnsLambdaExecutionRole.Arn
       Runtime: nodejs8.10
       Timeout: 300
+      ReservedConcurrentExecutions: 3
       Environment:
         Variables:
           NODE_CONFIG_DIR: './config'

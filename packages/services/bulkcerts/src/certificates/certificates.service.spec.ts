@@ -38,30 +38,13 @@ describe('CertificatesService', () => {
         instance = new CertificatesService( mockedCertificatesTaskDao, mockIotFactory, mockS3Factory, mockSsmFactory, 'unit-test-bucket', 'certs/', 365);
     });
 
-    it('createBatch should create batch', async () => {
+    it('createBatch should create batch with customer CA', async () => {
 
         jest.setTimeout(10000);
 
         const mockUpload = mockS3.upload = <any>(jest.fn((_params, cb) => {
             cb(null, 'pass');
         }));
-
-        const listCaCertsResponse:AWS.Iot.ListCACertificatesResponse = {
-            certificates: [
-                {
-                    certificateArn:'arn:aws:iot:us-west-2:157731826412:cacert/3d2ecfdb0eba2898626291e7e18a37cee791dbc81940a39e8ce922f9ff2feb32',
-                    certificateId:'3d2ecfdb0eba2898626291e7e18a37cee791dbc81940a39e8ce922f9ff2feb32',
-                    status:'ACTIVE',
-                    creationDate: new Date('2018-06-19T20:20:08.947Z')
-                }
-            ],
-            nextMarker: null as any
-        };
-
-        const mockListCaCertsResponse = new MockListCaCertsResponse();
-        mockListCaCertsResponse.error = null;
-        mockListCaCertsResponse.response = listCaCertsResponse;
-        const mockListCaCerts = mockIot.listCACertificates = <any>(jest.fn((_params) => mockListCaCertsResponse));
 
         // fake CA PEM
         const describeCaCertResponse:AWS.Iot.Types.DescribeCACertificateResponse = {
@@ -110,6 +93,7 @@ describe('CertificatesService', () => {
                 emailAddress: 'info@unittest.org',
                 id: 'testid'
             },
+            caAlias: 'test-customerca',
             taskId: '123',
             chunkId: 456,
             quantity: 4
@@ -118,9 +102,50 @@ describe('CertificatesService', () => {
         await instance.createChunk(chunkRequest);
 
         expect(mockUpload).toBeCalled();
-        expect(mockListCaCerts).toBeCalledWith({ascendingOrder: true});
         expect(mockDescribeCaCert).toBeCalledWith({certificateId: '3d2ecfdb0eba2898626291e7e18a37cee791dbc81940a39e8ce922f9ff2feb32'});
         expect(mockGetParameter).toBeCalledWith({Name: `cdf-ca-key-3d2ecfdb0eba2898626291e7e18a37cee791dbc81940a39e8ce922f9ff2feb32`,WithDecryption: true});
+    });
+
+    it('createBatch should create batch with AWS IoT CA', async () => {
+
+        jest.setTimeout(10000);
+
+        const mockUpload = mockS3.upload = <any>(jest.fn((_params, cb) => {
+            cb(null, 'pass');
+        }));
+
+        const createCertFromCsrResponse:AWS.Iot.CreateCertificateFromCsrResponse = {
+            certificateArn:'arn:aws:iot:us-west-2:157731826412:cacert/3d2ecfdb0eba2898626291e7e18a37cee791dbc81940a39e8ce922f9ff2feb32',
+            certificateId:'3d2ecfdb0eba2898626291e7e18a37cee791dbc81940a39e8ce922f9ff2feb32',
+            certificatePem:'-----BEGIN CERTIFICATE-----\nMIIDizCCAnOgAwIBAgIJANoWbro62kdKMA0GCSqGSIb3DQEBCwUAMFwxCzAJBgNV\nBAYTAlVTMQswCQYDVQQIDAJXQTEQMA4GA1UEBwwHU2VhdHRsZTEPMA0GA1UECgwG\nQW1hem9uMQwwCgYDVQQLDANBV1MxDzANBgNVBAMMBm15bmFtZTAeFw0xNzAxMTky\nMTUzNThaFw0xOTExMDkyMTUzNThaMFwxCzAJBgNVBAYTAlVTMQswCQYDVQQIDAJX\nQTEQMA4GA1UEBwwHU2VhdHRsZTEPMA0GA1UECgwGQW1hem9uMQwwCgYDVQQLDANB\nV1MxDzANBgNVBAMMBm15bmFtZTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoC\nggEBAKLS/tGiQUHqkK4Xrgvg3jttnEL5127yBwiIwR2nrPzRGG8+rjDtlImgiOlJ\nHp4uTbxlpBZJw72yXB3gqMXG8jgsu2qDDElJxe1/xYalBOCBh+PPYA7PF+MluKsP\nvF+fGmwt8z9VeMXbkTPdACDHraht1APyznVzjaXpJgaDYLS3NNxniJ3pI7GKASyI\nEVHo5s1isUdwGQtV9Owb1BZJKMlTY4YXJ1LaAsKhCNutaQD4GkRWBnS5+B7NUMle\noKTtqsu53hggz0GeRw6HN2BhxLP98xGybuTTbH6ucE3Sj0a1+XLWcbqK2Iuf0sBT\nGSHDZQlEVCEXCNMAML3BBVXbRW0CAwEAAaNQME4wHQYDVR0OBBYEFHh2Q1NsjErZ\nv1QZ5B8H85gtlz/JMB8GA1UdIwQYMBaAFHh2Q1NsjErZv1QZ5B8H85gtlz/JMAwG\nA1UdEwQFMAMBAf8wDQYJKoZIhvcNAQELBQADggEBAIko//GzQdS7TCLuodDIHXVR\nVdFqasCMfnqx3RmbaO8RSeLCzhV9wUN41lC7E+9tKn1x0Biiv7nZakoeYTXJUEqy\nIhK83HCE0skiAahkcsIOX5dAhUGbwN1TT3tPHASPT/c57z8VIc0gplCc3WxS1xBa\nrmWjNQmmxZF3gIQp5md0mZQDSCCkf9Sh/mQfUesJscVvzS3SD+eJK5MCJxBhcD57\nC+e9XUo86KMvptL61ryQGRPZfCg5UHhvXW/1z2EnGA5X3SIiGKL8TqDxCCgZlXEi\nL9FefIllQr7B2dOSyJGUIKRF9F7toJ352KH6SdEFhn57tZ+EIgPP1IedaYJTRHI=\n-----END CERTIFICATE-----\n',
+        };
+
+        const mockCreateCertFromCsrResponse = new MockCreateCertFromCsrResponse();
+        mockCreateCertFromCsrResponse.error = null;
+        mockCreateCertFromCsrResponse.response = createCertFromCsrResponse;
+        const mockCreateCertFromCsr = mockIot.createCertificateFromCsr = <any>(jest.fn((_params) => mockCreateCertFromCsrResponse));
+
+        const chunkRequest:CertificateChunkRequest = {
+            certInfo:{
+                commonName: 'unittest.org',
+                organization: 'test',
+                organizationalUnit: 'QA',
+                locality: 'Testtown',
+                stateName: 'CA',
+                country: 'US',
+                emailAddress: 'info@unittest.org',
+                id: 'testid'
+            },
+            caAlias: 'test-iotca',
+            taskId: '123',
+            chunkId: 456,
+            quantity: 4
+        };
+
+        await instance.createChunk(chunkRequest);
+
+        expect(mockUpload).toBeCalled();
+        expect(mockCreateCertFromCsr).toBeCalledTimes(4);
     });
 
     it('createBatch should throw error for invalid parameter', async () => {
@@ -130,7 +155,8 @@ describe('CertificatesService', () => {
                 quantity: 0,
                 taskId: 'a',
                 chunkId: 1,
-                certInfo: {}
+                certInfo: {},
+                caAlias: 'alias'
             };
             const createResponse = await instance.createChunk(createBatchParameters);
             logger.debug(`createResponse: ${JSON.stringify(createResponse)}`);
@@ -251,11 +277,11 @@ class MockDeleteObjectsResponse {
 
 // IoT
 
-class MockListCaCertsResponse {
-    public response: AWS.Iot.Types.ListCACertificatesResponse;
+class MockCreateCertFromCsrResponse {
+    public response: AWS.Iot.Types.CreateCertificateFromCsrResponse;
     public error: AWSError;
 
-    promise(): Promise<AWS.Iot.Types.ListCACertificatesResponse> {
+    promise(): Promise<AWS.Iot.Types.CreateCertificateFromCsrResponse> {
         return new Promise((resolve, reject) => {
             if (this.error !== null) {
                 return reject(this.error);
