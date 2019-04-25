@@ -20,16 +20,20 @@ export const TYPES = {
     SubscriptionAssembler: Symbol.for('SubscriptionAssembler'),
 
     FilterService: Symbol.for('FilterService'),
-    FilterDao: Symbol.for('FilterDao'),
+
+    AlertDao: Symbol.for('AlertDao'),
 
     Controller: Symbol.for('Controller'),
-
-    Iot: Symbol.for('Iot'),
-    IotFactory: Symbol.for('Factory<Iot>'),
 
     DocumentClient:  Symbol.for('DocumentClient'),
     DocumentClientFactory:  Symbol.for('Factory<DocumentClient>'),
 
+    CachableDocumentClient:  Symbol.for('CachableDocumentClient'),
+    CachableDocumentClientFactory:  Symbol.for('Factory<CachableDocumentClient>'),
+
     DynamoDB:  Symbol.for('DynamoDB'),
-    DynamoDBFactory:  Symbol.for('Factory<DynamoDB>')
+    DynamoDBFactory:  Symbol.for('Factory<DynamoDB>'),
+
+    Lambda:  Symbol.for('Lambda'),
+    LambdaFactory:  Symbol.for('Factory<Lambda>')
 };

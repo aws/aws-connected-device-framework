@@ -33,7 +33,8 @@ describe('DDBStreamTransformer', () => {
         const expected:CommonEvent[] = [
             {
                 eventSourceId,
-                principal: 'A101',
+                principal: 'Device',
+                principalValue: 'A101',
                 attributes: {
                     Device: 'A101',
                     Message: 'New item!',
@@ -42,7 +43,8 @@ describe('DDBStreamTransformer', () => {
                 }
             }, {
                 eventSourceId,
-                principal: 'A102',
+                principal: 'Device',
+                principalValue: 'A102',
                 attributes: {
                     Device: 'A102',
                     Message: 'This item has changed',

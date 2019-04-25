@@ -14,13 +14,16 @@ import { createDelimitedAttribute, PkType, createDelimitedAttributePrefix, expan
 export class EventDao {
 
     private _dc: AWS.DynamoDB.DocumentClient;
+    private _cachedDc: AWS.DynamoDB.DocumentClient;
 
     public constructor(
         @inject('aws.dynamoDb.tables.eventConfig.name') private eventConfigTable:string,
         @inject('aws.dynamoDb.tables.eventConfig.gsi1') private eventConfigGSI1:string,
-	    @inject(TYPES.DocumentClientFactory) documentClientFactory: () => AWS.DynamoDB.DocumentClient
+	    @inject(TYPES.DocumentClientFactory) documentClientFactory: () => AWS.DynamoDB.DocumentClient,
+	    @inject(TYPES.CachableDocumentClientFactory) cachableDocumentClientFactory: () => AWS.DynamoDB.DocumentClient
     ) {
         this._dc = documentClientFactory();
+        this._cachedDc = cachableDocumentClientFactory();
     }
 
     /**
@@ -30,7 +33,7 @@ export class EventDao {
      * @param event
      */
     public async create(item:EventItem): Promise<void> {
-        logger.debug(`event.dao create: in: event:${JSON.stringify(event)}`);
+        logger.debug(`event.dao create: in: event:${JSON.stringify(item)}`);
 
         const params:DocumentClient.BatchWriteItemInput = {
             RequestItems: {
@@ -48,7 +51,7 @@ export class EventDao {
                     gsi1Sort: createDelimitedAttribute(PkType.Event, item.id, PkType.EventSource, item.eventSourceId),
                     name: item.name,
                     principal: item.principal,
-                    ruleDefinition: item.ruleDefinition,
+                    conditions: item.conditions,
                     ruleParameters: item.ruleParameters,
                     enabled: item.enabled
                 }
@@ -59,7 +62,7 @@ export class EventDao {
             PutRequest: {
                 Item: {
                     pk: eventDbId,
-                    sk: 'type',
+                    sk: createDelimitedAttribute(PkType.Type, PkType.Event),
                     gsi1Sort: createDelimitedAttribute(PkType.Event, item.enabled, item.id),
                 }
             }
@@ -92,7 +95,7 @@ export class EventDao {
 
         logger.debug(`event.dao get: QueryInput: ${JSON.stringify(params)}`);
 
-        const results = await this._dc.query(params).promise();
+        const results = await this._cachedDc.query(params).promise();
         if (results.Items===undefined || results.Items.length===0) {
             logger.debug('event.dao get: exit: undefined');
             return undefined;
@@ -106,7 +109,7 @@ export class EventDao {
             eventSourceId: expandDelimitedAttribute(i['pk'])[1],
             name: i['name'],
             principal: i['principal'],
-            ruleDefinition: i['ruleDefinition'],
+            conditions: i['conditions'],
             ruleParameters: i['ruleParameters'],
             enabled: i['enabled']
         } ;

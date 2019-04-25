@@ -15,6 +15,8 @@ const corsAllowedOrigin = config.get('cors.origin') as string;
 
 const PORT = 3008;
 
+logger.debug(`config: ${JSON.stringify(config.util.toObject(config))}`);
+
 // Start the server
 const server = new InversifyExpressServer(container);
 

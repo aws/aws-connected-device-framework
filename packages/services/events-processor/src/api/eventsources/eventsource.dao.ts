@@ -8,19 +8,22 @@ import {logger} from '../../utils/logger';
 import { TYPES } from '../../di/types';
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import { EventSourceItem } from './eventsource.models';
-import { delimitedAttributePrefix, PkType, createDelimitedAttribute, expandDelimitedAttribute } from '../../utils/pkUtils';
+import { PkType, createDelimitedAttribute, expandDelimitedAttribute } from '../../utils/pkUtils';
 
 @injectable()
 export class EventSourceDao {
 
     private _dc: AWS.DynamoDB.DocumentClient;
+    private _cachedDc: AWS.DynamoDB.DocumentClient;
 
     public constructor(
         @inject('aws.dynamoDb.tables.eventConfig.name') private eventConfigTable:string,
         @inject('aws.dynamoDb.tables.eventConfig.gsi1') private eventConfigGSI1:string,
-	    @inject(TYPES.DocumentClientFactory) documentClientFactory: () => AWS.DynamoDB.DocumentClient
+	    @inject(TYPES.DocumentClientFactory) documentClientFactory: () => AWS.DynamoDB.DocumentClient,
+	    @inject(TYPES.CachableDocumentClientFactory) cachableDocumentClientFactory: () => AWS.DynamoDB.DocumentClient
     ) {
         this._dc = documentClientFactory();
+        this._cachedDc = cachableDocumentClientFactory();
     }
 
     /**
@@ -54,7 +57,7 @@ export class EventSourceDao {
             PutRequest: {
                 Item: {
                     pk: eventSourceDbId,
-                    sk: 'type',
+                    sk: createDelimitedAttribute(PkType.Type, PkType.EventSource),
                     gsi1Sort: createDelimitedAttribute(PkType.EventSource, es.enabled, es.id),
                 }
             }
@@ -74,21 +77,19 @@ export class EventSourceDao {
         const params:DocumentClient.QueryInput = {
             TableName: this.eventConfigTable,
             IndexName: this.eventConfigGSI1,
-            KeyConditionExpression: `#sk = :sk AND begins_with( #gsi1Sort, :gsi1Sort )`,
+            KeyConditionExpression: `#sk = :sk`,
             ExpressionAttributeNames: {
-                '#sk': 'sk',
-                '#gsi1Sort': 'gsi1Sort'
+                '#sk': 'sk'
             },
             ExpressionAttributeValues: {
-                ':sk': 'type',
-                ':gsi1Sort': delimitedAttributePrefix(PkType.EventSource)
+                ':sk': createDelimitedAttribute(PkType.Type, PkType.EventSource)
             }
 
         };
 
         logger.debug(`eventsource.dao list: QueryInput: ${JSON.stringify(params)}`);
 
-        const results = await this._dc.query(params).promise();
+        const results = await this._cachedDc.query(params).promise();
         if (results.Items===undefined) {
             logger.debug('eventsource.dao list: exit: undefined');
             return undefined;
@@ -134,7 +135,7 @@ export class EventSourceDao {
 
         logger.debug(`eventsource.dao get: QueryInput: ${JSON.stringify(params)}`);
 
-        const results = await this._dc.query(params).promise();
+        const results = await this._cachedDc.query(params).promise();
         if (results.Items===undefined || results.Items.length===0) {
             logger.debug('eventsource.dao get: exit: undefined');
             return undefined;

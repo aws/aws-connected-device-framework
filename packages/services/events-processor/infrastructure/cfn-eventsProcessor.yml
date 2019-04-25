@@ -1,0 +1,557 @@
+AWSTemplateFormatVersion : '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Description: CDF Events Processor Service
+
+
+Parameters:
+  Environment:
+    Description:  Name of environment.  Used to name the created resources.
+    Type: String
+    MinLength: 1
+  ApplicationConfigurationOverride:
+    Description: This allows you to override any configuration application configuration. Must be a JSON formatted string. Any configurations contained in this will override the configurations found and merged from the config files.
+    Type: String
+    MinLength: 1
+  DAXInstanceType:
+    Type: String
+    Default: dax.t2.medium
+    AllowedValues: 
+      - dax.r3.large
+      - dax.r3.xlarge
+      - dax.r3.2xlarge
+      - dax.r3.4xlarge
+      - dax.r3.8xlarge
+      - dax.r4.large
+      - dax.r4.xlarge
+      - dax.r4.2xlarge
+      - dax.r4.4xlarge
+      - dax.r4.8xlarge
+      - dax.r4.16xlarge
+      - dax.t2.small
+      - dax.t2.medium
+    Description: The instance type for the DynamoDB DAX instance
+
+  CustAuthStackName:
+    Description: Name of custom authorizer Stack (if required).
+    Type: String
+
+Conditions:
+  DeployWithCustomAuth: !Not [ !Equals [ !Ref CustAuthStackName, "" ]]
+
+Resources:
+  ApiGatewayApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      EndpointConfiguration: REGIONAL
+      DefinitionBody:
+        swagger: 2.0
+        info:
+          title: !Sub 'CDF Events Processor (${Environment})'
+
+        basePath: "/"
+        schemes:
+        - https
+        paths:
+          /:
+            x-amazon-apigateway-any-method:
+              produces:
+              - application/vnd.aws-cdf-v1.0+json
+              responses:
+                '200':
+                  description: '200 response'
+                  schema:
+                    $ref: "#/definitions/Empty"
+              security:
+                Fn::If:
+                - DeployWithCustomAuth
+                - CustomAuthorizer: []
+                - Ref: AWS::NoValue
+              x-amazon-apigateway-integration:
+                responses:
+                  default:
+                    statusCode: '200'
+                uri:
+                  Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RESTLambdaFunction.Arn}/invocations"
+                passthroughBehavior: when_no_match
+                httpMethod: POST
+                type: aws_proxy
+
+            options:
+              consumes:
+              - application/vnd.aws-cdf-v1.0+json
+              produces:
+              - application/vnd.aws-cdf-v1.0+json
+              responses:
+                '200':
+                  description: '200 response'
+                  schema:
+                    $ref: "#/definitions/Empty"
+                  headers:
+                    Access-Control-Allow-Origin:
+                      type: string
+                    Access-Control-Allow-Methods:
+                      type: string
+                    Access-Control-Allow-Headers:
+                      type: string
+              x-amazon-apigateway-integration:
+                contentHandling: CONVERT_TO_TEXT
+                responses:
+                  default:
+                    statusCode: 200
+                    responseParameters:
+                      method.response.header.Access-Control-Allow-Methods: "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'"
+                      method.response.header.Access-Control-Allow-Headers: "'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token'"
+                      method.response.header.Access-Control-Allow-Origin: "'*'"
+                passthroughBehavior: when_no_match
+                requestTemplates:
+                  # a CORS options request will have no content type, API Gateway then defaults to application/json
+                  application/json: "{\"statusCode\": 200}"
+                  application/vnd.aws-cdf-v1.0+json: "{\"statusCode\": 200}"
+                type: mock
+
+          /{proxy+}:
+            x-amazon-apigateway-any-method:
+              produces:
+              - application/vnd.aws-cdf-v1.0+json
+              parameters:
+              - name: proxy
+                in: path
+                required: true
+                type: string
+              responses: {}
+              security:
+                Fn::If:
+                - DeployWithCustomAuth
+                - CustomAuthorizer: []
+                - Ref: AWS::NoValue
+              x-amazon-apigateway-integration:
+                uri: 
+                  Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RESTLambdaFunction.Arn}/invocations"
+                httpMethod: POST
+                type: aws_proxy
+
+            options:
+              consumes:
+              - application/vnd.aws-cdf-v1.0+json
+              produces:
+              - application/vnd.aws-cdf-v1.0+json
+              responses:
+                '200':
+                  description: '200 response'
+                  schema:
+                    $ref: "#/definitions/Empty"
+                  headers:
+                    Access-Control-Allow-Origin:
+                      type: string
+                    Access-Control-Allow-Methods:
+                      type: string
+                    Access-Control-Allow-Headers:
+                      type: string
+              x-amazon-apigateway-integration:
+                contentHandling: CONVERT_TO_TEXT
+                responses:
+                  default:
+                    statusCode: 200
+                    responseParameters:
+                      method.response.header.Access-Control-Allow-Methods: "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'"
+                      method.response.header.Access-Control-Allow-Headers: "'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token'"
+                      method.response.header.Access-Control-Allow-Origin: "'*'"
+                passthroughBehavior: when_no_match
+                requestTemplates:
+                  # a CORS options request will have no content type, API Gateway then defaults to application/json
+                  application/json: "{\"statusCode\": 200}"
+                  application/vnd.aws-cdf-v1.0+json: "{\"statusCode\": 200}"
+                type: mock
+        x-amazon-apigateway-binary-media-types:
+          - '*/*'
+        definitions:
+          Empty:
+            type: object
+            title: Empty Schema
+        securityDefinitions:
+          Fn::If:
+          - DeployWithCustomAuth
+          - CustomAuthorizer:
+              type: apiKey
+              name: Authorization
+              in: header
+              x-amazon-apigateway-authtype: custom
+              x-amazon-apigateway-authorizer:
+                type: token
+                authorizerUri: !Sub
+                - "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CustAuthLambdaArn}/invocations"
+                - CustAuthLambdaArn: 
+                    Fn::ImportValue: !Sub 
+                      '${CustAuthStackName}-CustAuthLambdaArn'
+                authorizerCredentials: !Sub '${ApiGatewayAuthorizerInvokeRole.Arn}'
+                authorizerResultTtlInSeconds: 60
+          - Ref: AWS::NoValue
+    DependsOn:
+      - RESTLambdaFunction
+
+  ApiGatewayAuthorizerInvokeRole:
+    Type: AWS::IAM::Role
+    Condition: DeployWithCustomAuth
+    Properties:
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement: 
+          - 
+            Effect: "Allow"
+            Principal: 
+              Service: 
+                - "apigateway.amazonaws.com"
+            Action: 
+              - sts:AssumeRole
+      Policies: 
+        - 
+          PolicyName: "InvokeAuthorizerFunction"
+          PolicyDocument: 
+            Version: "2012-10-17"
+            Statement: 
+              - 
+                Effect: "Allow"
+                Action:
+                  - lambda:InvokeAsync
+                  - lambda:InvokeFunction
+                Resource:
+                  Fn::ImportValue: !Sub
+                    "${CustAuthStackName}-CustAuthLambdaArn"  
+    DependsOn:
+    - RESTLambdaFunction
+
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: 
+              - lambda.amazonaws.com
+              - iot.amazonaws.com
+          Action: sts:AssumeRole
+      Path: "/"
+      ManagedPolicyArns:
+        - !Ref ApplicationPolicies
+        - arn:aws:iam::aws:policy/AWSLambdaExecute
+        - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
+    DependsOn:
+      - ApplicationPolicies
+
+  ApplicationPolicies:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      Description: 'cdf-events-processor application policies'
+      Path: "/"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:          
+          - Sid: "iampassrole"
+            Action:
+              - "iam:PassRole"
+            Effect: Allow
+            Resource: !Sub "arn:aws:iam::${AWS::AccountId}:role/cdf-eventsProcessor-*"
+          - Sid: "dynamodbStreams"
+            Action:
+              - dynamodb:DescribeStream
+              - dynamodb:DescribeTable
+              - dynamodb:GetRecords
+              - dynamodb:GetShardIterator
+              - dynamodb:ListStreams
+              - dynamodb:UpdateTable
+            Effect: Allow
+            # As the events-processor can enable streams from any table, we need to leave this open
+            Resource: '*'
+          - Sid: "dynamodb"
+            Action:
+              - dynamodb:BatchWriteItem
+              - dynamodb:Query
+            Effect: Allow
+            Resource: 
+              - !GetAtt EventConfigTable.Arn
+              - "Fn::Join":
+                  - "/"
+                  - - !GetAtt EventConfigTable.Arn
+                    - "index/*"
+              - !GetAtt EventNotificationsTable.Arn
+              - "Fn::Join":
+                  - "/"
+                  - - !GetAtt EventNotificationsTable.Arn
+                    - "index/*"
+          - Sid: "DAX"
+            Action:
+              - "dax:*"
+            Effect: Allow
+            Resource: !GetAtt DAXCluster.Arn
+          - Sid: "lambda"
+            Action:
+              - "lambda:CreateEventSourceMapping"
+              - "lambda:DeleteEventSourceMapping"
+            Effect: Allow
+            Resource: '*'
+
+  DynamoDBStreamLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../build/build.zip
+      Handler: lambda_proxy_ddbstream.handler
+      MemorySize: 512
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Runtime: nodejs8.10
+      Timeout: 30
+      Environment:
+        Variables:
+          NODE_CONFIG_DIR: './config'
+          NODE_CONFIG: !Ref ApplicationConfigurationOverride
+          EVENTSPROCESSOR_AWS_DYNAMODB_TABLES_EVENTCONFIG_NAME: !Ref EventConfigTable
+          EVENTSPROCESSOR_AWS_DYNAMODB_TABLES_EVENTNOTIFICATIONS_NAME: !Ref EventNotificationsTable
+          EVENTSPROCESSOR_AWS_DYNAMODB_DAX_ENDPOINTS: !GetAtt DAXCluster.ClusterDiscoveryEndpoint
+      Tracing: Active
+
+  RESTLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../build/build.zip
+      Handler: lambda_proxy_apigateway.handler
+
+      MemorySize: 256
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Runtime: nodejs8.10
+      Timeout: 30
+      Environment:
+        Variables:
+          NODE_CONFIG_DIR: './config'
+          NODE_CONFIG: !Ref ApplicationConfigurationOverride
+          EVENTSPROCESSOR_AWS_DYNAMODB_TABLES_EVENTCONFIG_NAME: !Ref EventConfigTable
+          EVENTSPROCESSOR_AWS_DYNAMODB_TABLES_EVENTNOTIFICATIONS_NAME: !Ref EventNotificationsTable
+          EVENTSPROCESSOR_AWS_DYNAMODB_DAX_ENDPOINTS: !GetAtt DAXCluster.ClusterDiscoveryEndpoint
+          EVENTSPROCESSOR_AWS_LAMBDA_DYNAMODBSTREAM_NAME: !Ref DynamoDBStreamLambdaFunction
+      Tracing: Active
+
+      Events:
+        ProxyApiRoot:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiGatewayApi
+            Path: /
+            Method: ANY
+        ProxyApiGreedy:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiGatewayApi
+            Path: /{proxy+}
+            Method: ANY
+
+  EventConfigTable:
+    Type: AWS::DynamoDB::Table
+    Properties: 
+      TableName: !Sub 'cdf-eventConfig-${Environment}'
+      KeySchema: 
+        - 
+          AttributeName: "pk"
+          KeyType: "HASH"
+        - 
+          AttributeName: "sk"
+          KeyType: "RANGE"
+      AttributeDefinitions: 
+        - 
+          AttributeName: "pk"
+          AttributeType: "S"
+        - 
+          AttributeName: "sk"
+          AttributeType: "S"
+        - 
+          AttributeName: "gsi1Sort"
+          AttributeType: "S"
+        - 
+          AttributeName: "gsi2Key"
+          AttributeType: "S"
+      ProvisionedThroughput: 
+        ReadCapacityUnits: "5"
+        WriteCapacityUnits: "5"
+      GlobalSecondaryIndexes:
+        -
+          IndexName: 'sk-gsi1Sort-index'
+          KeySchema: 
+            - 
+              AttributeName: "sk"
+              KeyType: "HASH"
+            - 
+              AttributeName: "gsi1Sort"
+              KeyType: "RANGE"
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: "5"
+            WriteCapacityUnits: "5"
+        -
+          IndexName: 'gsi2Key-sk-index'
+          KeySchema: 
+            - 
+              AttributeName: "gsi2Key"
+              KeyType: "HASH"
+            - 
+              AttributeName: "sk"
+              KeyType: "RANGE"
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: "5"
+            WriteCapacityUnits: "5"
+
+  EventNotificationsTable:
+    Type: AWS::DynamoDB::Table
+    Properties: 
+      TableName: !Sub 'cdf-eventNotifications-${Environment}'
+      KeySchema: 
+        - 
+          AttributeName: "pk"
+          KeyType: "HASH"
+        - 
+          AttributeName: "time"
+          KeyType: "RANGE"
+      AttributeDefinitions: 
+        - 
+          AttributeName: "pk"
+          AttributeType: "S"
+        - 
+          AttributeName: "time"
+          AttributeType: "S"
+        - 
+          AttributeName: "userId"
+          AttributeType: "S"
+        - 
+          AttributeName: "gsi2Sort"
+          AttributeType: "S"
+      ProvisionedThroughput: 
+        ReadCapacityUnits: "5"
+        WriteCapacityUnits: "5"
+      GlobalSecondaryIndexes:
+        -
+          IndexName: 'userId-gsi2Sort-index'
+          KeySchema: 
+            - 
+              AttributeName: "userId"
+              KeyType: "HASH"
+            - 
+              AttributeName: "gsi2Sort"
+              KeyType: "RANGE"
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: "5"
+            WriteCapacityUnits: "5"
+        -
+          IndexName: 'userId-time-index'
+          KeySchema: 
+            - 
+              AttributeName: "userId"
+              KeyType: "HASH"
+            - 
+              AttributeName: "time"
+              KeyType: "RANGE"
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: "5"
+            WriteCapacityUnits: "5"
+      StreamSpecifciation:
+        StreamViewType: NEW_IMAGE
+
+  DAXCluster:
+    Type: AWS::DAX::Cluster
+    Properties:
+      ClusterName: !Sub 'cdf-${Environment}'
+      Description: Event notifications cluster
+      IAMRoleARN: !GetAtt DAXServiceRole.Arn
+      NodeType: !Ref DAXInstanceType
+      ReplicationFactor: 1
+    DependsOn:
+      - DAXServiceRole
+
+  DAXServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: 
+              - dax.amazonaws.com
+          Action: sts:AssumeRole
+      Path: "/"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+    DependsOn:
+      - DAXPolicies
+
+  DAXPolicies:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      Description: 'cdf-events-processor DAX policies'
+      Path: "/"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: "dynamodb"
+            Effect: Allow
+            Action:
+              - dynamodb:Query
+              - dynamodb:Scan
+              - dynamodb:GetItem
+              - dynamodb:PutItem
+              - dynamodb:UpdateItem
+              - dynamodb:DescribeTable
+            Resource: 
+              - !GetAtt EventConfigTable.Arn
+              - "Fn::Join":
+                  - "/"
+                  - - !GetAtt EventConfigTable.Arn
+                    - "index/*"
+
+
+Outputs:
+  DynamoDBStreamLambdaArn:
+    Description: DynamoDB Stream Lambda Arn
+    Value: !Sub "${DynamoDBStreamLambdaFunction.Arn}"
+    Export: 
+      Name: !Sub "${AWS::StackName}-DynamoDBStreamLambdaArn"
+  RESTLambdaArn:
+    Description: REST Lambda Arn
+    Value: !Sub "${RESTLambdaFunction.Arn}"
+    Export: 
+      Name: !Sub "${AWS::StackName}-RESTLambdaArn"
+  DynamoDBStreamLambdaConsoleUrl:
+    Description: Console URL for the Lambda Function.
+    Value: !Sub "https://{AWS::Region}.console.aws.amazon.com/lambda/home?region={AWS::Region}#/functions/{DynamoDBStreamLambdaFunction}"
+  RESTLambdaFunctionConsoleUrl:
+    Description: Console URL for the Lambda Function.
+    Value: !Sub "https://{AWS::Region}.console.aws.amazon.com/lambda/home?region={AWS::Region}#/functions/{RESTLambdaFunction}"
+  EventConfigTable:
+    Description: Event Config database table
+    Value: !Ref EventConfigTable
+  EventNotificationsTable:
+    Description: Event Notifications database table
+    Value: !Ref EventNotificationsTable
+    Export:
+      Name: !Sub '${AWS::StackName}-EventNotificationsTable'
+  EventNotificationsStream:
+    Description: Event Notifications database table stream
+    Value: !GetAtt EventNotificationsTable.StreamArn
+    Export:
+      Name: !Sub '${AWS::StackName}-EventNotificationsStream'
+  ApiGatewayUrl:
+    Description: URL for application
+    Value: !Sub 'https://${ApiGatewayApi}.execute-api.${AWS::Region}.amazonaws.com/Prod'
+    Export:
+      Name: !Sub '${AWS::StackName}-ApiGatewayUrl'
+  DAXClusterEndpoint:
+    Description: DAX Clister EndpointConfiguration
+    Value: !GetAtt DAXCluster.ClusterDiscoveryEndpoint
+    Export:
+      Name: !Sub '${AWS::StackName}-DAXClusterEndpoint'

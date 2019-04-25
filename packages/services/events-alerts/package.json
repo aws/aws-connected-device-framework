@@ -1,7 +1,7 @@
 {
-  "name": "@cdf/events-processor",
+  "name": "@cdf/events-alerts",
   "version": "1.0.0",
-  "description": "CDF Events (Processor)",
+  "description": "CDF Events (Alerts)",
   "author": "Dean Hart <deanhart@amazon.com>",
   "config": {
     "environment": "development"
@@ -22,12 +22,9 @@
     "amazon-dax-client": "^1.2.1",
     "aws-sdk": "2.418.0",
     "aws-serverless-express": "3.3.5",
-    "body-parser": "1.18.3",
     "config": "3.0.1",
-    "express": "4.16.4",
     "inversify": "5.0.1",
     "inversify-binding-decorators": "4.0.0",
-    "inversify-express-utils": "6.3.2",
     "js-yaml": "3.12.2",
     "json-rules-engine": "^2.3.3",
     "ow": "0.12.0",
@@ -42,10 +39,7 @@
     "@semantic-release/git": "7.0.8",
     "@semantic-release/npm": "5.1.4",
     "@semantic-release/release-notes-generator": "7.1.4",
-    "@types/aws-serverless-express": "3.3.0",
-    "@types/body-parser": "1.17.0",
     "@types/config": "0.0.34",
-    "@types/express": "4.16.1",
     "@types/jest": "24.0.0",
     "@types/node": "8.10.43",
     "@types/uuid": "3.4.4",

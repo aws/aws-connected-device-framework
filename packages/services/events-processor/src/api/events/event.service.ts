@@ -23,13 +23,13 @@ export class EventService  {
         }
 
     public async create(resource:EventResource) : Promise<void> {
-        logger.debug(`event.full.service create: in: model:${JSON.stringify(resource)}`);
+        logger.debug(`event.service create: in: model:${JSON.stringify(resource)}`);
 
         // validate input
         ow(resource, ow.object.nonEmpty);
         ow(resource.eventSourceId, ow.string.nonEmpty);
         ow(resource.name, ow.string.nonEmpty);
-        ow(resource.ruleDefinition, ow.string.nonEmpty);
+        ow(resource.conditions, ow.object.nonEmpty);
 
         resource.eventId = uuid();
 
@@ -43,7 +43,7 @@ export class EventService  {
         // TODO: extract ruleParameters from ruleDefinition
 
         const eventSource = await this.eventSourceService.get(resource.eventSourceId);
-        logger.debug(`event.full.service create: eventSource: ${JSON.stringify(eventSource)}`);
+        logger.debug(`event.service create: eventSource: ${JSON.stringify(eventSource)}`);
         if (eventSource===undefined) {
             throw new Error('EVENT_SOURCE_NOT_FOUND');
         }
@@ -51,24 +51,24 @@ export class EventService  {
         const item = this.eventAssembler.toItem(resource, eventSource.principal);
         await this.eventDao.create(item);
 
-        logger.debug(`event.full.service create: exit:`);
+        logger.debug(`event.service create: exit:`);
 
     }
 
     public async get(eventId:string): Promise<EventResource> {
-        logger.debug(`event.full.service get: in: eventId:${eventId}`);
+        logger.debug(`event.service get: in: eventId:${eventId}`);
 
         ow(eventId, ow.string.nonEmpty);
 
         const result  = await this.eventDao.get(eventId);
-        logger.debug(`event.full.service get: eventSource:${JSON.stringify(result)}`);
+        logger.debug(`event.service get: eventSource:${JSON.stringify(result)}`);
 
         let model:EventResource;
         if (result!==undefined ) {
             model = this.eventAssembler.toResource(result);
         }
 
-        logger.debug(`event.full.service get: exit: model: ${JSON.stringify(model)}`);
+        logger.debug(`event.service get: exit: model: ${JSON.stringify(model)}`);
         return model;
     }
 

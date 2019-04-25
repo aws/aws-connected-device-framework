@@ -1,0 +1,14 @@
+aws:
+  region: AWS_REGION
+  iot:
+    endpoint: AWS_IOT_ENDPOINT
+
+  dynamoDb:
+    tables:
+      eventNotifications:
+        name: EVENTSALERTS_AWS_DYNAMODB_TABLES_EVENTNOTIFICATIONS_NAME
+        gsi1: EVENTSALERTS_AWS_DYNAMODB_TABLES_EVENTNOTIFICATIONS_GSI1
+
+  lambda:
+    dynamoDbStream:
+      name: EVENTSALERTS_AWS_LAMBDA_DYNAMODBSTREAM_NAME

@@ -6,34 +6,51 @@
 import { injectable } from 'inversify';
 import {logger} from '../../utils/logger';
 import { SubscriptionItem, SubscriptionResource } from './subscription.models';
+import { EventResource } from '../events/event.models';
 
 @injectable()
 export class SubscriptionAssembler {
 
-    public toItem(resource:SubscriptionResource, eventSourceId:string, principal:string, ruleDefinition:string): SubscriptionItem {
-        logger.debug(`subscription.assembler toItem: in: resource:${JSON.stringify(resource)}, eventSourceId:${eventSourceId}`);
+    public toItem(subscription:SubscriptionResource, event:EventResource): SubscriptionItem {
+        logger.debug(`subscription.assembler toItem: in: subscription:${JSON.stringify(subscription)}, event:${JSON.stringify(event)}`);
 
         const item:SubscriptionItem = {
-            id: resource.subscriptionId,
+            id: subscription.subscriptionId,
 
-            ruleParameterValues: resource.ruleParameterValues,
-            enabled: resource.enabled,
-            alerted: resource.alerted,
+            principalValue: subscription.principalValue,
+            ruleParameterValues: subscription.ruleParameterValues,
+            enabled: subscription.enabled,
+            alerted: subscription.alerted,
 
             event: {
-                id: resource.eventId,
-                ruleDefinition
+                id: subscription.eventId,
+                name: event.name,
+                conditions: event.conditions
             },
 
             eventSource: {
-                id: eventSourceId,
-                principal
+                id: event.eventSourceId,
+                principal: event.principal
             },
 
             user: {
-                id: resource.userId
+                id: subscription.userId
             }
         };
+
+        if (subscription.targets) {
+            item.targets= {};
+            if (subscription.targets.sns) {
+                item.targets.sns = {
+                    arn: subscription.targets.sns.arn
+                };
+            }
+            if (subscription.targets.iotCore) {
+                item.targets.iotCore = {
+                    topic: subscription.targets.iotCore.topic
+                };
+            }
+        }
 
         logger.debug(`subscription.assembler toItem: exit: ${JSON.stringify(item)}`);
         return item;
@@ -46,10 +63,24 @@ export class SubscriptionAssembler {
             subscriptionId: item.id,
             userId: item.user.id,
             eventId: item.event.id,
+            principalValue: item.principalValue,
             ruleParameterValues: item.ruleParameterValues,
             alerted: item.alerted,
             enabled: item.enabled
         };
+
+        if (item.targets) {
+            if (item.targets.sns) {
+                resource.targets.sns = {
+                    arn: item.targets.sns.arn
+                };
+            }
+            if (item.targets.iotCore) {
+                resource.targets.iotCore = {
+                    topic: item.targets.iotCore.topic
+                };
+            }
+        }
 
         logger.debug(`subscription.assembler toRe: exit: node: ${JSON.stringify(resource)}`);
         return resource;

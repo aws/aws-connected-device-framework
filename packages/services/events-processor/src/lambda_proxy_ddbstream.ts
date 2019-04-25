@@ -8,20 +8,28 @@ import { logger } from './utils/logger';
 import {container} from './di/inversify.config';
 import { TYPES } from './di/types';
 import { DDBStreamTransformer } from './transformers/ddbstream.transformer';
+import { FilterService } from './filter/filter.service';
 
 let transformer:DDBStreamTransformer;
+let filter:FilterService;
 
 exports.handler = async (event: any, _context: any) => {
   logger.debug(`handler: event: ${JSON.stringify(event)}`);
 
-  // transform the message
+  // init
   if (transformer===undefined) {
     transformer = container.get(TYPES.DDBStreamTransformer);
   }
-  const commonMessage = await transformer.transform(event);
+  if (filter===undefined) {
+    filter = container.get(TYPES.FilterService);
+  }
 
-  if (commonMessage!==undefined && commonMessage.length>0) {
-    // TODO: process the message
+  // transform the message
+  const commonEvents = await transformer.transform(event);
+
+  if (commonEvents!==undefined && commonEvents.length>0) {
+    // process the message
+    await filter.filter(commonEvents);
   }
 
 };

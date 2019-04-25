@@ -6,12 +6,16 @@ import { SubscriptionItem } from '../api/subscriptions/subscription.models';
 import { TYPES } from '../di/types';
 import { logger } from '../utils/logger';
 import { SubscriptionDao } from '../api/subscriptions/subscription.dao';
+import * as rulesEngine from 'json-rules-engine';
+import { AlertDao } from '../alerts/alert.dao';
+import { AlertItem } from '../alerts/alert.models';
 
 @injectable()
 export class FilterService {
 
     constructor(
-        @inject(TYPES.SubscriptionDao) private dao: SubscriptionDao) {
+        @inject(TYPES.SubscriptionDao) private subscriptionDao: SubscriptionDao,
+        @inject(TYPES.AlertDao) private alertDao: AlertDao) {
 
         }
 
@@ -20,29 +24,114 @@ export class FilterService {
 
         ow(events, ow.array.nonEmpty);
 
-        // cache for the duration of the method
+        // for performance, cache for the duration of the method call...
         const subscriptionMap: { [key:string]:SubscriptionItem[]} = {};
+        const ruleMap: { [key:string]:rulesEngine.Rule} = {};
 
+        const engine = new rulesEngine.Engine();
+
+        // TODO: refactor to retrieve subscriptions in batches for the events, then sort and loop through each different event type so abkel to resue the rules engine
+
+        const alerts:AlertItem[]=[];
         for(const ev of events) {
 
-            // perform lookup to see if any subscriptions are configured for the event source/principal
-            const mapKey = `${ev.eventSourceId}-${ev.principal}`;
-            let subscriptions = subscriptionMap[mapKey];
-            if (subscriptions===undefined) {
-                subscriptions = await this.dao.listSubscriptionsForEventSource(ev.eventSourceId, ev.principal);
-                if (subscriptions===undefined || subscriptions.length===0) {
-                    continue;
+            // perform lookup to see if any subscriptions are configured for the event source/principal/principalValue (cached for the duration of the method call)
+            const subscriptions = await this.listSubscriptionsForEvent(ev, subscriptionMap);
+
+            // if we have subscriptions, lets evaluate them against the datasource
+            if (subscriptions!==undefined) {
+
+                for(const sub of subscriptions) {
+
+                    // initialize the rule (cached for the duration of the method call)
+                    let rule = ruleMap[sub.event.id];
+                    if (rule===undefined) {
+                        rule = new rulesEngine.Rule({
+                            conditions: sub.event.conditions,
+                            event: {
+                                type: sub.event.name
+                            }
+                        });
+                        ruleMap[sub.event.id] = rule;
+                    }
+
+                    engine.addRule(rule);
+
+                    // add all the known facts
+                    Object.keys(ev.attributes).forEach(key=> engine.addFact(key, ev.attributes[key]));
+
+                    // evaluate the rules
+                    let results:rulesEngine.Rule[] = [];
+                    try {
+                        results = await engine.run();
+                    } catch (err) {
+                        // silently ignore, as an incoming message may not contain the facts we're interested in
+                    }
+                    if (results.length>0 && !sub.alerted) {
+                        // a new alert...
+                        alerts.push(this.buildAlert(sub));
+                    } else if (results.length===0 && sub.alerted) {
+                        // TODO: an alert that needs clearing...
+                    }
+
+                    // clear the engine state ready for the next run
+                    Object.keys(ev.attributes).forEach(key=> engine.removeFact(key));
+                    engine.removeRule(rule);
                 }
-                subscriptionMap[mapKey]=subscriptions;
             }
 
-            // TODO: if configured, execute the ruleset
+        }
 
-            // TODO: if rules pass, save the alert
+        logger.debug(`filter.service filter: alerts:${JSON.stringify(alerts)}`);
+        if (alerts.length>0) {
+            await this.alertDao.create(alerts);
         }
 
         logger.debug(`filter.service filter: exit:`);
 
+    }
+
+    private buildAlert(sub:SubscriptionItem):AlertItem {
+        logger.debug(`filter.service buildAlert: in: sub:${JSON.stringify(sub)}`);
+        const alert:AlertItem = {
+            time: new Date().toISOString(),
+            subscription: { id: sub.id},
+            event: {
+                id: sub.event.id,
+                name: sub.event.name
+            },
+            user: {
+                id: sub.user.id
+            }
+        };
+        if (sub.targets) {
+            alert.targets= {};
+            if (sub.targets.sns) {
+                alert.targets.sns= {arn: sub.targets.sns.arn};
+            }
+            if (sub.targets.iotCore) {
+                alert.targets.iotCore= {topic: sub.targets.iotCore.topic};
+            }
+        }
+        logger.debug(`filter.service buildAlert: exit: ${JSON.stringify(alert)}`);
+        return alert;
+    }
+
+    private async listSubscriptionsForEvent(ev:CommonEvent, subscriptionMap:{ [key:string]:SubscriptionItem[]} ) {
+        logger.debug(`filter.service listSubscriptionsForEvent: in: ev:${JSON.stringify(ev)}, subscriptionMap:${JSON.stringify(subscriptionMap)}`);
+
+        const mapKey = `${ev.eventSourceId}:${ev.principal}:${ev.principalValue}`;
+        let subscriptions = subscriptionMap[mapKey];
+        if (subscriptions===undefined) {
+            // TODO: increase performance by batching the reads before enumeration
+            subscriptions = await this.subscriptionDao.listSubscriptionsForEventMessage(ev.eventSourceId, ev.principal, ev.principalValue);
+            if (subscriptions!==undefined && subscriptions.length>0) {
+                subscriptionMap[mapKey]=subscriptions;
+            }
+        }
+
+        logger.debug(`filter.service listSubscriptionsForEvent: exit: subscriptions:${JSON.stringify(subscriptions)}`);
+        return subscriptions;
     }
 
 }

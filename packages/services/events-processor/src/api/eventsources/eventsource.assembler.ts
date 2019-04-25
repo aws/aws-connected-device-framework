@@ -14,7 +14,7 @@ export class EventSourceAssembler {
         logger.debug(`eventsource.assembler toItem: in: resource:${JSON.stringify(resource)}`);
 
         const item:EventSourceItem = {
-            eventSourceId: resource.eventSourceId,
+            id: resource.eventSourceId,
             sourceType: resource.sourceType,
             principal: resource.principal,
             enabled: resource.enabled,
@@ -29,7 +29,7 @@ export class EventSourceAssembler {
         logger.debug(`eventsource.assembler toResource: in: resource:${JSON.stringify(item)}`);
 
         const resource:EventSourceDetailResource = {
-            eventSourceId: item.eventSourceId,
+            eventSourceId: item.id,
             principal: item.principal,
             sourceType: item.sourceType,
             enabled: item.enabled,

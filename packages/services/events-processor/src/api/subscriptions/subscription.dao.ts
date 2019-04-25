@@ -8,26 +8,28 @@ import {logger} from '../../utils/logger';
 import { TYPES } from '../../di/types';
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import { SubscriptionItem } from './subscription.models';
-import { createDelimitedAttribute, PkType, createDelimitedAttributePrefix, expandDelimitedAttribute } from '../../utils/pkUtils';
+import { createDelimitedAttribute, PkType, expandDelimitedAttribute, isPkType } from '../../utils/pkUtils';
 
 @injectable()
 export class SubscriptionDao {
 
     private _dc: AWS.DynamoDB.DocumentClient;
+    private _cachedDc: AWS.DynamoDB.DocumentClient;
 
     public constructor(
         @inject('aws.dynamoDb.tables.eventConfig.name') private eventConfigTable:string,
-        @inject('aws.dynamoDb.tables.eventConfig.gsi3') private eventConfigGSI3:string,
-        @inject('aws.dynamoDb.tables.eventConfig.partitions') private eventConfigPartitions:number,
-	    @inject(TYPES.DocumentClientFactory) documentClientFactory: () => AWS.DynamoDB.DocumentClient
+        @inject('aws.dynamoDb.tables.eventConfig.gsi2') private eventConfigGSI2:string,
+	    @inject(TYPES.DocumentClientFactory) documentClientFactory: () => AWS.DynamoDB.DocumentClient,
+	    @inject(TYPES.CachableDocumentClientFactory) cachableDocumentClientFactory: () => AWS.DynamoDB.DocumentClient
     ) {
         this._dc = documentClientFactory();
+        this._cachedDc = cachableDocumentClientFactory();
     }
 
     /**
      * Creates the Subscription DynamoDB items:
      *   pk='S-{subscriptionId}, sk='S-{subscriptionId}'
-     *   pk='S-{subscriptionId}, sk='type').
+     *   pk='S-{subscriptionId}, sk='E-{eventId}'
      *   pk='S-{subscriptionId}, sk='U-{userId}').
      * @param subscription
      */
@@ -40,29 +42,21 @@ export class SubscriptionDao {
         };
 
         const subscriptionDbId = createDelimitedAttribute(PkType.Subscription, si.id);
-        const gsiBucket = `${Math.floor(Math.random() * this.eventConfigPartitions)}`;
+        const gsi1Sort = createDelimitedAttribute(PkType.Subscription, si.enabled, si.id);
+        const gsi2Key = createDelimitedAttribute(PkType.EventSource, si.eventSource.id, si.eventSource.principal, si.principalValue);
 
         const subscriptionCreate = {
             PutRequest: {
                 Item: {
                     pk: subscriptionDbId,
                     sk: subscriptionDbId,
+                    gsi1Sort,
+                    principalValue: si.principalValue,
                     ruleParameterValues: si.ruleParameterValues,
                     enabled: si.enabled,
                     alerted: si.alerted,
-                    gsiBucket,
-                    gsi2Sort: createDelimitedAttribute(PkType.Event, si.enabled, si.id),
-                    gsi3Sort: createDelimitedAttribute(PkType.EventSource, si.eventSource.id, si.eventSource.principal, si.id)
-                }
-            }
-        };
-
-        const typeCreate = {
-            PutRequest: {
-                Item: {
-                    pk: subscriptionDbId,
-                    sk: 'type',
-                    gsi1Sort: createDelimitedAttribute(PkType.Subscription, si.enabled, si.id),
+                    gsi2Key,
+                    gsi2Sort: createDelimitedAttribute(PkType.Subscription, si.id)
                 }
             }
         };
@@ -72,11 +66,12 @@ export class SubscriptionDao {
                 Item: {
                     pk: subscriptionDbId,
                     sk: createDelimitedAttribute(PkType.Event, si.event.id),
-                    ruleDefinition: si.event.ruleDefinition,
+                    name: si.event.name,
+                    conditions: si.event.conditions,
                     principal: si.eventSource.principal,
                     eventSourceId: si.eventSource.id,
-                    gsiBucket,
-                    gsi3Sort: createDelimitedAttribute(PkType.EventSource, si.eventSource.principal, si.id, si.event.id)
+                    gsi2Key,
+                    gsi2Sort: createDelimitedAttribute(PkType.Subscription, si.id, PkType.Event, si.event.id)
                 }
             }
         };
@@ -87,49 +82,91 @@ export class SubscriptionDao {
                     pk: subscriptionDbId,
                     sk: createDelimitedAttribute(PkType.User, si.user.id),
                     gsi1Sort: createDelimitedAttribute(PkType.Subscription, si.enabled, si.id),
+                    gsi2Key,
+                    gsi2Sort: createDelimitedAttribute(PkType.Subscription, si.id, PkType.User, si.user.id)
                 }
             }
         };
 
-        params.RequestItems[this.eventConfigTable]=[subscriptionCreate, typeCreate, eventCreate, userCreate];
+        params.RequestItems[this.eventConfigTable]=[subscriptionCreate, eventCreate, userCreate];
+
+        if (si.targets) {
+            if (si.targets.sns) {
+                params.RequestItems[this.eventConfigTable].push({
+                    PutRequest: {
+                        Item: {
+                            pk: subscriptionDbId,
+                            sk: createDelimitedAttribute(PkType.SubscriptionTarget, 'sns'),
+                            gsi2Key,
+                            gsi2Sort: createDelimitedAttribute(PkType.Subscription, si.id, PkType.SubscriptionTarget, 'sns'),
+                            arn: si.targets.sns.arn
+                        }
+                    }
+                });
+            }
+            if (si.targets.iotCore) {
+                params.RequestItems[this.eventConfigTable].push({
+                    PutRequest: {
+                        Item: {
+                            pk: subscriptionDbId,
+                            sk: createDelimitedAttribute(PkType.SubscriptionTarget, 'iotCore'),
+                            gsi2Key,
+                            gsi2Sort: createDelimitedAttribute(PkType.Subscription, si.id, PkType.SubscriptionTarget, 'iotCore'),
+                            topic: si.targets.iotCore.topic
+                        }
+                    }
+                });
+            }
+        }
 
         logger.debug(`subscription.dao create: params:${JSON.stringify(params)}`);
-        await this._dc.batchWrite(params).promise();
+        let response = await this._dc.batchWrite(params).promise();
+
+        if (response.UnprocessedItems!==undefined && Object.keys(response.UnprocessedItems).length>0) {
+            logger.warn(`subscription.dao create: the following items failed writing, attempting again:\n${JSON.stringify(response.UnprocessedItems)}`);
+
+            const retryParams: DocumentClient.BatchWriteItemInput = {
+                RequestItems: response.UnprocessedItems
+            };
+            response = await this._dc.batchWrite(retryParams).promise();
+
+            if (response.UnprocessedItems!==undefined && Object.keys(response.UnprocessedItems).length>0) {
+                logger.error(`subscription.dao create: the following items failed writing:\n${JSON.stringify(response.UnprocessedItems)}`);
+                throw new Error('FAILED_SAVING_SUBSCRIPTION');
+            }
+        }
 
         logger.debug(`subscriptions.dao create: exit:`);
     }
 
-    public async listSubscriptionsForEventSource(eventSourceId:string, principal:string): Promise<SubscriptionItem[]> {
-        logger.debug(`subscription.dao listSubscriptionsForEventSource: eventSourceId:${eventSourceId},principal:${principal}`);
+    public async listSubscriptionsForEventMessage(eventSourceId:string, principal:string, principalValue:string): Promise<SubscriptionItem[]> {
+        logger.debug(`subscription.dao listSubscriptionsForEventMessage: eventSourceId:${eventSourceId}, principal:${principal}, principalValue:${principalValue}`);
 
         const params:DocumentClient.QueryInput = {
             TableName: this.eventConfigTable,
-            IndexName: this.eventConfigGSI3,
-            KeyConditionExpression: `#gsiBucket BETWEEN :gsiBucketFrom AND :gsiBucketTo AND begins_with(#gsi3Sort, :gsi3Sort)`,
+            IndexName: this.eventConfigGSI2,
+            KeyConditionExpression: `#key = :value`,
             ExpressionAttributeNames: {
-                '#gsiBucket': 'gsiBucket',
-                '#gsi3Sort': 'gsi3Sort'
+                '#key': 'gsi2Key'
             },
             ExpressionAttributeValues: {
-                ':gsiBucketFrom': 0,
-                ':gsiBucketTo': this.eventConfigPartitions,
-                ':gsi3Sort': createDelimitedAttributePrefix(PkType.EventSource, eventSourceId, principal )
+                ':value': createDelimitedAttribute(PkType.EventSource, eventSourceId, principal, principalValue )
             }
-
         };
 
-        logger.debug(`subscription.dao listSubscriptionsForEventSource: QueryInput: ${JSON.stringify(params)}`);
+        // logger.debug(`subscription.dao listSubscriptionsForEventMessage: QueryInput: ${JSON.stringify(params)}`);
 
-        const results = await this._dc.query(params).promise();
+        const results = await this._cachedDc.query(params).promise();
         if (results.Items===undefined) {
-            logger.debug('subscription.dao listSubscriptionsForEventSource: exit: undefined');
+            logger.debug('subscription.dao listSubscriptionsForEventMessage: exit: undefined');
             return undefined;
         }
 
-        logger.debug(`subscription.dao listSubscriptionsForEventSource: query result: ${JSON.stringify(results)}`);
+        // logger.debug(`subscription.dao listSubscriptionsForEventMessage: query result: ${JSON.stringify(results)}`);
 
         const subscriptions:{[subscriptionId:string] : SubscriptionItem}= {};
         for(const i of results.Items) {
+
             const subscriptionId = expandDelimitedAttribute(i['pk'])[1];
             let s = subscriptions[subscriptionId];
             if (s===undefined) {
@@ -139,31 +176,47 @@ export class SubscriptionDao {
             }
 
             const sk = <string>i['sk'];
-            if (sk.startsWith(createDelimitedAttributePrefix(PkType.Subscription))) {
+
+            if (isPkType(sk,PkType.Subscription)) {
+                s.principalValue = i['principalValue'];
                 s.ruleParameterValues = i['ruleParameterValues'];
                 s.enabled = i['enabled'];
                 s.alerted = i['alerted'];
-            } else if (sk.startsWith(createDelimitedAttributePrefix(PkType.Event))) {
+            } else if (isPkType(sk,PkType.Event)) {
                 s.event = {
-                    id: expandDelimitedAttribute(i['sk'])[1],
-                    ruleDefinition: i['ruleDefinition']
+                    id: expandDelimitedAttribute(sk)[1],
+                    name: i['name'],
+                    conditions: i['conditions']
                 };
                 s.eventSource = {
                     id: i['eventSourceId'],
                     principal: i['principal']
                 };
-            } else if (sk.startsWith(createDelimitedAttributePrefix(PkType.User))) {
+            } else if (isPkType(sk, PkType.SubscriptionTarget)) {
+                if (s.targets===undefined) {
+                    s.targets= {};
+                }
+                if (sk===createDelimitedAttribute(PkType.SubscriptionTarget, 'sns')) {
+                    s.targets.sns = {
+                        arn: i['arn']
+                    };
+                } else if (sk===createDelimitedAttribute(PkType.SubscriptionTarget, 'iotCore')) {
+                    s.targets.iotCore = {
+                        topic: i['topic']
+                    };
+                }
+            } else if (isPkType(sk,PkType.User)) {
                 s.user = {
-                    id: expandDelimitedAttribute(i['sk'])[1]
+                    id: expandDelimitedAttribute(sk)[1]
                 };
             }
             subscriptions[subscriptionId] = s;
         }
 
+        logger.debug(`subscription.dao listSubscriptionsForEventMessage: subscriptions:${JSON.stringify(subscriptions)}`);
         const response:SubscriptionItem[] = Object.keys(subscriptions).map(k => subscriptions[k]);
 
-        logger.debug(`subscription.dao listSubscriptionsForEventSource: exit: subscriptions:${JSON.stringify(response)}`);
+        logger.debug(`subscription.dao listSubscriptionsForEventMessage: exit:${JSON.stringify(response)}`);
         return response;
     }
-
 }

@@ -29,6 +29,7 @@ export class SubscriptionService  {
         ow(resource, ow.object.nonEmpty);
         ow(resource.userId, ow.string.nonEmpty);
         ow(resource.eventId, ow.string.nonEmpty);
+        ow(resource.principalValue, ow.string.nonEmpty);
 
         // set defaults
         resource.subscriptionId = uuid();
@@ -46,7 +47,7 @@ export class SubscriptionService  {
 
         // TODO: extract ruleParameterValues against the event
 
-        const item = this.subscriptionAssembler.toItem(resource, event.eventSourceId, event.principal, event.ruleDefinition);
+        const item = this.subscriptionAssembler.toItem(resource, event);
         await this.subscriptionDao.create(item);
 
         logger.debug(`subscription.full.service create: exit:`);

@@ -8,6 +8,7 @@ import { TYPES } from './types';
 import config from 'config';
 import { CDFConfigInjector } from '@cdf/config-inject';
 import AWS = require('aws-sdk');
+import AmazonDaxClient = require('amazon-dax-client');
 import { EventSourceService } from '../api/eventsources/eventsource.service';
 import { EventSourceDao } from '../api/eventsources/eventsource.dao';
 import { EventSourceAssembler } from '../api/eventsources/eventsource.assembler';
@@ -22,6 +23,9 @@ import { SubscriptionAssembler } from '../api/subscriptions/subscription.assembl
 import '../api/eventsources/eventsource.controller';
 import '../api/events/event.controller';
 import '../api/subscriptions/subscription.controller';
+import { AlertDao } from '../alerts/alert.dao';
+import { DDBStreamTransformer } from '../transformers/ddbstream.transformer';
+import { FilterService } from '../filter/filter.service';
 
 // Load everything needed to the Container
 export const container = new Container();
@@ -41,6 +45,11 @@ container.bind<EventAssembler>(TYPES.EventAssembler).to(EventAssembler).inSingle
 container.bind<SubscriptionService>(TYPES.SubscriptionService).to(SubscriptionService).inSingletonScope();
 container.bind<SubscriptionDao>(TYPES.SubscriptionDao).to(SubscriptionDao).inSingletonScope();
 container.bind<SubscriptionAssembler>(TYPES.SubscriptionAssembler).to(SubscriptionAssembler).inSingletonScope();
+
+container.bind<FilterService>(TYPES.FilterService).to(FilterService).inSingletonScope();
+container.bind<AlertDao>(TYPES.AlertDao).to(AlertDao).inSingletonScope();
+
+container.bind<DDBStreamTransformer>(TYPES.DDBStreamTransformer).to(DDBStreamTransformer).inSingletonScope();
 
 // for 3rd party objects, we need to use factory injectors
 
@@ -67,5 +76,36 @@ container.bind<interfaces.Factory<AWS.DynamoDB.DocumentClient>>(TYPES.DocumentCl
             container.bind<AWS.DynamoDB.DocumentClient>(TYPES.DocumentClient).toConstantValue(dc);
         }
         return container.get<AWS.DynamoDB.DocumentClient>(TYPES.DocumentClient);
+    };
+});
+container.bind<interfaces.Factory<AWS.DynamoDB.DocumentClient>>(TYPES.CachableDocumentClientFactory)
+    .toFactory<AWS.DynamoDB.DocumentClient>(() => {
+    return () => {
+
+        if (!container.isBound(TYPES.CachableDocumentClient)) {
+            // if we have DAX configured, return a DAX enabled DocumentClient, but if not just return the normal one
+            let dc:AWS.DynamoDB.DocumentClient;
+            if (config.has('aws.dynamodb.dax.endpoints')) {
+                const dax = new AmazonDaxClient({endpoints: config.get('aws.dynamodb.dax.endpoints'), region: config.get('aws.region')});
+                dc = new AWS.DynamoDB.DocumentClient({service:dax});
+            } else {
+                dc = container.get<AWS.DynamoDB.DocumentClient>(TYPES.DocumentClient);
+            }
+            container.bind<AWS.DynamoDB.DocumentClient>(TYPES.CachableDocumentClient).toConstantValue(dc);
+        }
+        return container.get<AWS.DynamoDB.DocumentClient>(TYPES.CachableDocumentClient);
+    };
+});
+
+decorate(injectable(), AWS.Lambda);
+container.bind<interfaces.Factory<AWS.Lambda>>(TYPES.LambdaFactory)
+    .toFactory<AWS.Lambda>(() => {
+    return () => {
+
+        if (!container.isBound(TYPES.Lambda)) {
+            const l = new AWS.Lambda({region: config.get('aws.region')});
+            container.bind<AWS.Lambda>(TYPES.Lambda).toConstantValue(l);
+        }
+        return container.get<AWS.Lambda>(TYPES.Lambda);
     };
 });

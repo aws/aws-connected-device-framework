@@ -66,7 +66,8 @@ export class DDBStreamTransformer  {
 
             const transformedEvent:CommonEvent = {
                 eventSourceId,
-                principal:undefined,
+                principal:principalAttribute,
+                principalValue:undefined,
                 attributes:{}
             };
 
@@ -76,7 +77,7 @@ export class DDBStreamTransformer  {
             Object.keys(keys).forEach(prop=> {
                 const value = this.extractValue(keys[prop]);
                 if (prop===principalAttribute) {
-                    transformedEvent.principal = <string>value;
+                    transformedEvent.principalValue = <string>value;
                 }
                 transformedEvent.attributes[prop] = value;
             });
@@ -85,13 +86,13 @@ export class DDBStreamTransformer  {
                 Object.keys(newImage).forEach(prop=> {
                     const value = this.extractValue(newImage[prop]);
                     if (prop===principalAttribute) {
-                        transformedEvent.principal = <string>value;
+                        transformedEvent.principalValue = <string>value;
                     }
                     transformedEvent.attributes[prop] = value;
                 });
             }
 
-            if (transformedEvent.principal===undefined) {
+            if (transformedEvent.principalValue===undefined) {
                 logger.warn(`eventSource ${eventSourceId} missing value for principal therefore ignoring.  attributes: ${transformedEvent.attributes}`);
                 continue;
             }

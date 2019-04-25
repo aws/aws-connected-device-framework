@@ -8,7 +8,7 @@ export interface EventResource {
     eventId: string;
     eventSourceId: string;
     name: string;
-    ruleDefinition: string;
+    conditions: EventConditions;
     ruleParameters: string[];
     enabled: boolean;
 
@@ -22,7 +22,17 @@ export interface EventItem {
 
     name?: string;
     principal?: string;
-    ruleDefinition?: string;
+    conditions?: EventConditions;
     ruleParameters?: string[];
     enabled?: boolean;
+}
+export interface EventConditions {
+    all?:EventConditions|EventCondition[];
+    any?:EventConditions|EventCondition[];
+}
+
+export interface EventCondition {
+    fact:string;
+    operator:string;
+    value:number|string|boolean;
 }

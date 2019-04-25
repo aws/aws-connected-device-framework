@@ -8,7 +8,7 @@ export function createDelimitedAttribute(type:PkType, ...items:(string|number|bo
         return i;
        }
     });
-    return `${delimitedAttributePrefix(type)}${escapedItems.join(PK_DELIMITER)}`;
+    return  `${delimitedAttributePrefix(type)}${escapedItems.join(PK_DELIMITER)}`;
 }
 
 export function createDelimitedAttributePrefix(type:PkType, ...items:(string|number|boolean)[]) {
@@ -16,7 +16,7 @@ export function createDelimitedAttributePrefix(type:PkType, ...items:(string|num
 }
 
 export function expandDelimitedAttribute(value:string) {
-    if (value===undefined) {
+    if (value===null || value===undefined) {
         return undefined;
     }
     const expanded = value.split(PK_DELIMITER);
@@ -33,9 +33,15 @@ export function delimitedAttributePrefix(type:PkType) {
     return `${type}${PK_DELIMITER}`;
 }
 
+export function isPkType(value:string, type:PkType) {
+    return value.startsWith(delimitedAttributePrefix(type));
+}
+
 export enum PkType {
     EventSource='ES',
     Event='E',
     Subscription='S',
-    User='U'
+    User='U',
+    SubscriptionTarget='ST',
+    Type='type'
 }

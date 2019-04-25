@@ -1,3 +1,5 @@
+import { EventConditions } from '../events/event.models';
+
 /*-------------------------------------------------------------------------------
 # Copyright (c) 2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
@@ -8,7 +10,18 @@ export interface SubscriptionResource {
     subscriptionId: string;
     userId: string;
     eventId: string;
-    ruleParameterValues?: { [key: string] : string[]};
+    principalValue: string;
+    ruleParameterValues?: { [key: string] : string};
+
+    targets?: {
+        sns?: {
+            arn: string;
+        };
+        iotCore?: {
+            topic: string;
+        };
+    };
+
     alerted: boolean;
     enabled: boolean;
 }
@@ -16,26 +29,31 @@ export interface SubscriptionResource {
 export class SubscriptionItem {
     id: string;
 
-    ruleParameterValues?: { [key: string] : string[]};
+    principalValue?: string;
+    ruleParameterValues?: { [key: string] : string};
+    event?: {
+        id: string;
+        name: string;
+        conditions: EventConditions;
+    };
+    eventSource?: {
+        id: string;
+        principal: string;
+    };
+    user?: {
+        id: string;
+    };
+
+    targets?: {
+        sns?: {
+            arn: string;
+        };
+        iotCore?: {
+            topic: string;
+        };
+    };
+
     enabled?: boolean;
     alerted?: boolean;
 
-    event?: SubscriptionEventItem;
-    eventSource?: SubscriptionEventSourceItem;
-    user?: SubscriptionUserItem;
-
-}
-
-export class SubscriptionEventSourceItem {
-    id: string;
-    principal: string;
-}
-
-export class SubscriptionEventItem {
-    id: string;
-    ruleDefinition: string;
-}
-
-export class SubscriptionUserItem {
-    id: string;
 }

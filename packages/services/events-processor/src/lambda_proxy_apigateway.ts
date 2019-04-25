@@ -6,6 +6,13 @@
 import * as awsServerlessExpress from 'aws-serverless-express';
 import {serverInstance} from './app' ;
 
-const server = awsServerlessExpress.createServer(serverInstance);
+let server:any;
 
-exports.handler = (event: any, context: any) => awsServerlessExpress.proxy(server, event, context);
+exports.handler = (event: any, context: any) => {
+
+    // lazy init the server
+    if (server===undefined) {
+        server = awsServerlessExpress.createServer(serverInstance);
+    }
+    awsServerlessExpress.proxy(server, event, context);
+};

@@ -5,20 +5,10 @@ aws:
 
   dynamoDb:
     tables:
-      eventConfig:
-        name: MUST_SET!
-        gsi1: sk-gsi1Sort-index
-        gsi2: gsi2Key-sk-index
       eventNotifications:
         name: MUST_SET!
         gsi1: gsiBucket-gsi1Sort-index  
-
-    dax:
-      endpoints:
   
   lambda:
     dynamoDbStream:
       name: MUST_SET!
-
-cors:
-  origin:

@@ -14,11 +14,11 @@ export class EventAssembler {
         logger.debug(`event.assembler toItem: in: resource:${JSON.stringify(resource)}`);
 
         const item:EventItem = {
-            eventId: resource.eventId,
+            id: resource.eventId,
             eventSourceId: resource.eventSourceId,
             name: resource.name,
             principal,
-            ruleDefinition: resource.ruleDefinition,
+            conditions: resource.conditions,
             ruleParameters: resource.ruleParameters,
             enabled: resource.enabled
         };
@@ -30,10 +30,10 @@ export class EventAssembler {
         logger.debug(`event.assembler toRe: in: re:${JSON.stringify(item)}`);
 
         const resource:EventResource = {
-            eventId: item.eventId,
+            eventId: item.id,
             eventSourceId: item.eventSourceId,
             name: item.name,
-            ruleDefinition: item.ruleDefinition,
+            conditions: item.conditions,
             ruleParameters: item.ruleParameters,
             enabled: item.enabled,
             principal: item.principal
