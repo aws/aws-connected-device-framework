@@ -5,9 +5,15 @@ aws:
 
   dynamoDb:
     tables:
+      eventConfig:
+        name: MUST_SET!
+        gsi1: sk-gsi1Sort-index
       eventNotifications:
         name: MUST_SET!
-        gsi1: gsiBucket-gsi1Sort-index  
+        gsi1: gsiBucket-gsi1Sort-index
+
+    dax:
+      endpoints:
   
   lambda:
     dynamoDbStream:

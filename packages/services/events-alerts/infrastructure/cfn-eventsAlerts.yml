@@ -53,20 +53,37 @@ Resources:
               - "iam:PassRole"
             Effect: Allow
             Resource: !Sub "arn:aws:iam::${AWS::AccountId}:role/cdf-eventsAlerts-*"
+          - Sid: 'sns'
+            Action: sns:publish
+            Effect: Allow
+            Resource: !Sub "arn:aws:sns:${AWS::Region}:${AWS::AccountId}:cdf-events-*"
           - Sid: "dynamodbStreams"
             Action:
               - dynamodb:DescribeStream
-              - dynamodb:DescribeTable
               - dynamodb:GetRecords
               - dynamodb:GetShardIterator
               - dynamodb:ListStreams
-              - dynamodb:Query
             Effect: Allow
             Resource: 
-              - Fn::ImportValue: !Sub '${EventsProcessorStackName}-EventNotificationsTable'
               - "Fn::Join":
                   - "/"
-                  - - !Sub '${EventsProcessorStackName}-EventNotificationsTable'
+                  - - Fn::ImportValue: !Sub '${EventsProcessorStackName}-EventNotificationsTableArn'
+                    - "stream/*"
+          - Sid: "dynamodb"
+            Action:
+              - dynamodb:Query
+              - dynamodb:DescribeTable
+            Effect: Allow
+            Resource: 
+              - Fn::ImportValue: !Sub '${EventsProcessorStackName}-EventNotificationsTableArn'
+              - "Fn::Join":
+                  - "/"
+                  - - Fn::ImportValue: !Sub '${EventsProcessorStackName}-EventNotificationsTableArn'
+                    - "index/*"
+              - Fn::ImportValue: !Sub '${EventsProcessorStackName}-EventConfigTableArn'
+              - "Fn::Join":
+                  - "/"
+                  - - Fn::ImportValue: !Sub '${EventsProcessorStackName}-EventConfigTableArn'
                     - "index/*"
 
   DynamoDBStreamLambdaFunction:
@@ -82,8 +99,12 @@ Resources:
         Variables:
           NODE_CONFIG_DIR: './config'
           NODE_CONFIG: !Ref ApplicationConfigurationOverride
-          EVENTSALERTS_AWS_DYNAMODB_TABLES_EVENTCONFIG_NAME: !Ref EventConfigTable
-          EVENTSALERTS_AWS_DYNAMODB_TABLES_EVENTNOTIFICATIONS_NAME: !Ref EventNotificationsTable
+          EVENTSALERTS_AWS_DYNAMODB_TABLES_EVENTCONFIG_NAME: 
+            Fn::ImportValue: !Sub '${EventsProcessorStackName}-EventConfigTable'
+          EVENTSALERTS_AWS_DYNAMODB_TABLES_EVENTNOTIFICATIONS_NAME: 
+            Fn::ImportValue: !Sub '${EventsProcessorStackName}-EventNotificationsTable'
+          EVENTSALERTS_AWS_DYNAMODB_DAX_ENDPOINTS: 
+            Fn::ImportValue: !Sub '${EventsProcessorStackName}-DAXClusterEndpoint'
       Tracing: Active
 
   EventNotificationsSourceMapping:
@@ -99,7 +120,6 @@ Outputs:
   DynamoDBStreamLambdaArn:
     Description: DynamoDB Stream Lambda Arn
     Value: !Sub "${DynamoDBStreamLambdaFunction.Arn}"
-    Export: 
   DynamoDBStreamLambdaConsoleUrl:
     Description: Console URL for the Lambda Function.
     Value: !Sub "https://{AWS::Region}.console.aws.amazon.com/lambda/home?region={AWS::Region}#/functions/{DynamoDBStreamLambdaFunction}"

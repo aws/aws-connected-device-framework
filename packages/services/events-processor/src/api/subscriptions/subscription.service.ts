@@ -12,6 +12,7 @@ import { SubscriptionResource } from './subscription.models';
 import { SubscriptionAssembler } from './subscription.assembler';
 import { SubscriptionDao } from './subscription.dao';
 import { EventService } from '../events/event.service';
+import { TargetService } from './targets/target.service';
 
 @injectable()
 export class SubscriptionService  {
@@ -19,7 +20,8 @@ export class SubscriptionService  {
     constructor(
         @inject(TYPES.SubscriptionDao) private subscriptionDao: SubscriptionDao,
         @inject(TYPES.EventService) private eventService: EventService,
-        @inject(TYPES.SubscriptionAssembler) private subscriptionAssembler: SubscriptionAssembler) {
+        @inject(TYPES.SubscriptionAssembler) private subscriptionAssembler: SubscriptionAssembler,
+        @inject(TYPES.TargetService) private targetService: TargetService) {
         }
 
     public async create(resource:SubscriptionResource) : Promise<void> {
@@ -30,12 +32,23 @@ export class SubscriptionService  {
         ow(resource.userId, ow.string.nonEmpty);
         ow(resource.eventId, ow.string.nonEmpty);
         ow(resource.principalValue, ow.string.nonEmpty);
+        if (resource.targets!==undefined) {
+            if (resource.targets.email!==undefined) {
+                ow(resource.targets.email.address, ow.string.nonEmpty);
+            }
+            if (resource.targets.sms!==undefined) {
+                ow(resource.targets.sms.phoneNumber, ow.string.nonEmpty);
+            }
+            if (resource.targets.mqtt!==undefined) {
+                ow(resource.targets.mqtt.topic, ow.string.nonEmpty);
+            }
+        }
 
         // set defaults
         resource.subscriptionId = uuid();
         resource.alerted=false;
         if (resource.enabled===undefined) {
-            resource.enabled = true;
+            resource.enabled=true;
         }
 
         // verify the provided event
@@ -48,6 +61,11 @@ export class SubscriptionService  {
         // TODO: extract ruleParameterValues against the event
 
         const item = this.subscriptionAssembler.toItem(resource, event);
+
+        // create the targets
+        await this.targetService.processTargets(item);
+
+        // save the subscription info
         await this.subscriptionDao.create(item);
 
         logger.debug(`subscription.full.service create: exit:`);

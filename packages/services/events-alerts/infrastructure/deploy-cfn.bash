@@ -21,17 +21,21 @@ MANDATORY ARGUMENTS:
     -c (string)   Location of application configuration file containing configuration overrides.
 
 OPTIONAL ARGUMENTS
+    -p (string)   Name of events-processor CloudFormation stack name (will default to cdf-eventsProcessor-${enviornment} if not provided).
+
     -R (string)   AWS region.
     -P (string)   AWS profile.
     
 EOF
 }
 
-while getopts ":e:c:R:P:" opt; do
+while getopts ":e:c:p:R:P:" opt; do
   case $opt in
 
     e  ) export ENVIRONMENT=$OPTARG;;
     c  ) export CONFIG_LOCATION=$OPTARG;;
+
+    p  ) export EVENTS_PROCESSOR_STACK_NAME=$OPTARG;;
 
     R  ) export AWS_REGION=$OPTARG;;
     P  ) export AWS_PROFILE=$OPTARG;;
@@ -51,6 +55,11 @@ if [ -z "$CONFIG_LOCATION" ]; then
 	echo -c CONFIG_LOCATION is required; help_message; exit 1;
 fi
 
+if [ -z "$EVENTS_PROCESSOR_STACK_NAME" ]; then
+  EVENTS_PROCESSOR_STACK_NAME="cdf-eventsProcessor-$ENVIRONMENT"
+	echo -p EVENTS_PROCESSOR_STACK_NAME not provided, therefore defaults to $EVENTS_PROCESSOR_STACK_NAME
+fi
+
 
 AWS_ARGS=
 if [ -n "$AWS_REGION" ]; then
@@ -60,34 +69,20 @@ if [ -n "$AWS_PROFILE" ]; then
 	AWS_ARGS="$AWS_ARGS--profile $AWS_PROFILE"
 fi
 
-STACK_NAME=cdf-eventsProcessor-${ENVIRONMENT}
+STACK_NAME=cdf-eventsAlerts-${ENVIRONMENT}
 
 
 echo "
 Running with:
   ENVIRONMENT:                      $ENVIRONMENT
   CONFIG_LOCATION:                  $CONFIG_LOCATION
+  EVENTS_PROCESSOR_STACK_NAME:      $EVENTS_PROCESSOR_STACK_NAME
   AWS_REGION:                       $AWS_REGION
   AWS_PROFILE:                      $AWS_PROFILE
 "
 
 cwd=$(dirname "$0")
 
-
-echo '
-**********************************************************
-  Setting Event Alert configuration
-**********************************************************
-'
-aws_iot_endpoint=$(aws iot describe-endpoint $AWS_ARGS \
-    | jq -r '.endpointAddress')
-
-stack_exports=$(aws cloudformation list-exports $AWS_ARGS)
-
-cat $CONFIG_LOCATION | \
-  jq --arg aws_iot_endpoint "$aws_iot_endpoint" \
-  '.aws.iot.endpoint=$aws_iot_endpoint' \
-  > $CONFIG_LOCATION.tmp && mv $CONFIG_LOCATION.tmp $CONFIG_LOCATION
 
 application_configuration_override=$(cat $CONFIG_LOCATION)
 
@@ -103,6 +98,7 @@ aws cloudformation deploy \
   --parameter-overrides \
       Environment=$ENVIRONMENT \
       ApplicationConfigurationOverride="$application_configuration_override" \
+      EventsProcessorStackName=$EVENTS_PROCESSOR_STACK_NAME \
   --capabilities CAPABILITY_NAMED_IAM \
   --no-fail-on-empty-changeset \
   $AWS_ARGS

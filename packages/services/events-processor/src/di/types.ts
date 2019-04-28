@@ -19,6 +19,9 @@ export const TYPES = {
     SubscriptionDao: Symbol.for('SubscriptionDao'),
     SubscriptionAssembler: Symbol.for('SubscriptionAssembler'),
 
+    TargetService: Symbol.for('TargetService'),
+    EmailTarget: Symbol.for('EmailTarget'),
+
     FilterService: Symbol.for('FilterService'),
 
     AlertDao: Symbol.for('AlertDao'),
@@ -35,5 +38,8 @@ export const TYPES = {
     DynamoDBFactory:  Symbol.for('Factory<DynamoDB>'),
 
     Lambda:  Symbol.for('Lambda'),
-    LambdaFactory:  Symbol.for('Factory<Lambda>')
+    LambdaFactory:  Symbol.for('Factory<Lambda>'),
+
+    SNS:  Symbol.for('SNS'),
+    SNSFactory:  Symbol.for('Factory<SNS>')
 };

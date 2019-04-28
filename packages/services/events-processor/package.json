@@ -15,6 +15,11 @@
     "start": "npm run build && NODE_CONFIG=$(cat ${CONFIG_LOCATION}/events-processor/${npm_package_config_environment}-config.json) NODE_CONFIG_DIR='./src/config' concurrently \"npm run build -- -w\" \"nodemon dist/lambda_proxy_apigateway.js\"",
     "prebundle:prepare": "cpy src/config/* dist/config/ && make-dir build && make-dir dist/node_modules",
     "bundle:package": "cd dist && zip -rq ../build/build.zip * && zip -urq ../build/build.zip ../package.json && zip -urq ../build/build.zip ../node_modules",
+
+    "prebundle:quick": "pnpm i --force && pnpm run build && pnpm run prebundle:prepare",
+    "bundle:quick": "pnpm i --no-lock --prod --shamefully-flatten --force && pnpm run bundle:package",
+    "postbundle:quick": "echo '\n\n******   node_modules have been flattened and resolved in production mode.  If this is a dev environment, make sure you run `pnpm run reset` from the root to reset.'",
+
     "semantic-release": "npx semantic-release -e semantic-release-monorepo"
   },
   "dependencies": {

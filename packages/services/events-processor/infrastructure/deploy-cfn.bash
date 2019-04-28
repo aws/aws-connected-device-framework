@@ -63,6 +63,13 @@ if [ -n "$AWS_PROFILE" ]; then
 	AWS_ARGS="$AWS_ARGS--profile $AWS_PROFILE"
 fi
 
+
+
+if [ -z "$AWS_ACCOUNT_ID" ]; then
+	AWS_ACCOUNT_ID=$(aws sts get-caller-identity --output text --query 'Account' $AWS_ARGS)
+fi
+
+
 STACK_NAME=cdf-eventsProcessor-${ENVIRONMENT}
 
 
@@ -71,6 +78,7 @@ Running with:
   ENVIRONMENT:                      $ENVIRONMENT
   CONFIG_LOCATION:                  $CONFIG_LOCATION
   CUST_AUTH_STACK_NAME:             $CUST_AUTH_STACK_NAME
+  AWS_ACCOUNT_ID:                   $AWS_ACCOUNT_ID
   AWS_REGION:                       $AWS_REGION
   AWS_PROFILE:                      $AWS_PROFILE
 "
@@ -89,8 +97,8 @@ aws_iot_endpoint=$(aws iot describe-endpoint $AWS_ARGS \
 stack_exports=$(aws cloudformation list-exports $AWS_ARGS)
 
 cat $CONFIG_LOCATION | \
-  jq --arg aws_iot_endpoint "$aws_iot_endpoint" \
-  '.aws.iot.endpoint=$aws_iot_endpoint' \
+  jq --arg aws_iot_endpoint "$aws_iot_endpoint" --arg aws_account_id "$AWS_ACCOUNT_ID" \
+  '.aws.iot.endpoint=$aws_iot_endpoint | .aws.accountId=$aws_account_id' \
   > $CONFIG_LOCATION.tmp && mv $CONFIG_LOCATION.tmp $CONFIG_LOCATION
 
 application_configuration_override=$(cat $CONFIG_LOCATION)

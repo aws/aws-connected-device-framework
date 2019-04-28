@@ -12,6 +12,11 @@ export interface EventResource {
     ruleParameters: string[];
     enabled: boolean;
 
+    // a map of templates
+    templates: TemplateMap;
+    // the defined templates are then associated with a potential target
+    supportedTargets: TargetTemplateMap;
+
     // read only (denormalised from event source)
     principal: string;
 }
@@ -25,6 +30,9 @@ export interface EventItem {
     conditions?: EventConditions;
     ruleParameters?: string[];
     enabled?: boolean;
+
+    templates: TemplateMap;
+    supportedTargets: TargetTemplateMap;
 }
 export interface EventConditions {
     all?:EventConditions|EventCondition[];
@@ -36,3 +44,12 @@ export interface EventCondition {
     operator:string;
     value:number|string|boolean;
 }
+
+export enum EventTargetType {
+    EMAIL = 'email',
+    SMS = 'sms',
+    MQTT = 'mqtt'
+}
+
+export type TemplateMap = { [key: string] : string};
+export type TargetTemplateMap = { [key in EventTargetType] : string};

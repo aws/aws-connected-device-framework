@@ -55,6 +55,7 @@ export class SubscriptionDao {
                     ruleParameterValues: si.ruleParameterValues,
                     enabled: si.enabled,
                     alerted: si.alerted,
+                    snsTopicArn: si.sns.topicArn,
                     gsi2Key,
                     gsi2Sort: createDelimitedAttribute(PkType.Subscription, si.id)
                 }
@@ -91,35 +92,15 @@ export class SubscriptionDao {
         params.RequestItems[this.eventConfigTable]=[subscriptionCreate, eventCreate, userCreate];
 
         if (si.targets) {
-            if (si.targets.sns) {
-                params.RequestItems[this.eventConfigTable].push({
-                    PutRequest: {
-                        Item: {
-                            pk: subscriptionDbId,
-                            sk: createDelimitedAttribute(PkType.SubscriptionTarget, 'sns'),
-                            gsi2Key,
-                            gsi2Sort: createDelimitedAttribute(PkType.Subscription, si.id, PkType.SubscriptionTarget, 'sns'),
-                            arn: si.targets.sns.arn
-                        }
-                    }
-                });
-            }
-            if (si.targets.iotCore) {
-                params.RequestItems[this.eventConfigTable].push({
-                    PutRequest: {
-                        Item: {
-                            pk: subscriptionDbId,
-                            sk: createDelimitedAttribute(PkType.SubscriptionTarget, 'iotCore'),
-                            gsi2Key,
-                            gsi2Sort: createDelimitedAttribute(PkType.Subscription, si.id, PkType.SubscriptionTarget, 'iotCore'),
-                            topic: si.targets.iotCore.topic
-                        }
-                    }
-                });
+            for (const target of Object.keys(si.targets)) {
+                const req = this.buildCommonTargetItem(si.id, subscriptionDbId, target, gsi2Key);
+                for (const prop of Object.keys(si.targets[target])) {
+                    req.PutRequest.Item[prop]= si.targets[target][prop];
+                }
+                params.RequestItems[this.eventConfigTable].push(req);
             }
         }
 
-        logger.debug(`subscription.dao create: params:${JSON.stringify(params)}`);
         let response = await this._dc.batchWrite(params).promise();
 
         if (response.UnprocessedItems!==undefined && Object.keys(response.UnprocessedItems).length>0) {
@@ -137,6 +118,19 @@ export class SubscriptionDao {
         }
 
         logger.debug(`subscriptions.dao create: exit:`);
+    }
+
+    private buildCommonTargetItem(subscriptionId:string, subscriptionDbId:string, target:string, gsi2Key:string, ):DocumentClient.WriteRequest {
+        return {
+            PutRequest: {
+                Item: {
+                    pk: subscriptionDbId,
+                    sk: createDelimitedAttribute(PkType.SubscriptionTarget, target),
+                    gsi2Key,
+                    gsi2Sort: createDelimitedAttribute(PkType.Subscription, subscriptionId, PkType.SubscriptionTarget, target)
+                }
+            }
+        };
     }
 
     public async listSubscriptionsForEventMessage(eventSourceId:string, principal:string, principalValue:string): Promise<SubscriptionItem[]> {
@@ -167,6 +161,8 @@ export class SubscriptionDao {
         const subscriptions:{[subscriptionId:string] : SubscriptionItem}= {};
         for(const i of results.Items) {
 
+            logger.debug(`subscription.dao listSubscriptionsForEventMessage: i: ${JSON.stringify(i)}`);
+
             const subscriptionId = expandDelimitedAttribute(i['pk'])[1];
             let s = subscriptions[subscriptionId];
             if (s===undefined) {
@@ -181,7 +177,10 @@ export class SubscriptionDao {
                 s.principalValue = i['principalValue'];
                 s.ruleParameterValues = i['ruleParameterValues'];
                 s.enabled = i['enabled'];
-                s.alerted = i['alerted'];
+                if (i['snsTopicArn']!==undefined) {
+                    s.sns= {topicArn:i['snsTopicArn']};
+                }
+
             } else if (isPkType(sk,PkType.Event)) {
                 s.event = {
                     id: expandDelimitedAttribute(sk)[1],
@@ -192,23 +191,24 @@ export class SubscriptionDao {
                     id: i['eventSourceId'],
                     principal: i['principal']
                 };
+
             } else if (isPkType(sk, PkType.SubscriptionTarget)) {
                 if (s.targets===undefined) {
                     s.targets= {};
                 }
-                if (sk===createDelimitedAttribute(PkType.SubscriptionTarget, 'sns')) {
-                    s.targets.sns = {
-                        arn: i['arn']
-                    };
-                } else if (sk===createDelimitedAttribute(PkType.SubscriptionTarget, 'iotCore')) {
-                    s.targets.iotCore = {
-                        topic: i['topic']
-                    };
-                }
+                const targetType = expandDelimitedAttribute(sk)[1];
+                s.targets[targetType]= {};
+                Object.keys(i)
+                    .filter(k=> k!=='pk' && k!=='sk' && k!=='gsi2Key' && k!=='gsi2Sort')
+                    .forEach(k=> s.targets[targetType][k]=i[k]);
+
             } else if (isPkType(sk,PkType.User)) {
                 s.user = {
                     id: expandDelimitedAttribute(sk)[1]
                 };
+
+            } else if (sk==='alertStatus') {
+                s.alerted = i['alerted'];
             }
             subscriptions[subscriptionId] = s;
         }

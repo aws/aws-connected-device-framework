@@ -5,6 +5,17 @@
 #-------------------------------------------------------------------------------*/
 export const TYPES = {
 
-    Lambda:  Symbol.for('Lambda'),
-    LambdaFactory:  Symbol.for('Factory<Lambda>')
+    CachableDocumentClient:  Symbol.for('CachableDocumentClient'),
+    CachableDocumentClientFactory:  Symbol.for('Factory<CachableDocumentClient>'),
+
+    DocumentClient:  Symbol.for('DocumentClient'),
+    DocumentClientFactory:  Symbol.for('Factory<DocumentClient>'),
+
+    MessageCompilerService: Symbol.for('MessageCompilerService'),
+    MessageCompilerDao: Symbol.for('MessageCompilerDao'),
+
+    SNSTarget: Symbol.for('SNSTarget'),
+
+    SNS:  Symbol.for('SNS'),
+    SNSFactory:  Symbol.for('Factory<SNS>')
 };

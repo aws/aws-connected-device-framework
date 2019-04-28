@@ -1,3 +1,5 @@
+import { SubscriptionTargets } from "../api/subscriptions/subscription.models";
+
 /*-------------------------------------------------------------------------------
 # Copyright (c) 2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
@@ -9,15 +11,17 @@ export class AlertItem {
 
     subscription: {
         id: string;
+        principalValue: string;
     };
 
-    targets?: {
-        sns?: {
-            arn: string;
-        };
-        iotCore?: {
-            topic: string;
-        };
+    targets?: SubscriptionTargets;
+
+    sns?: {
+        topicArn:string;
+    };
+
+    eventSource: {
+        principal: string;
     };
 
     event: {

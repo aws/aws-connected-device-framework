@@ -291,8 +291,20 @@ Resources:
             Action:
               - "lambda:CreateEventSourceMapping"
               - "lambda:DeleteEventSourceMapping"
+              - "lambda:ListEventSourceMappings"
             Effect: Allow
             Resource: '*'
+          - Sid: "snsTopics"
+            Action:
+              - "sns:CreateTopic"
+              - "sns:DeleteTopic"
+              - "sns:GetTopicAttributes"
+              - "sns:ListSubscriptionsByTopic"
+              - "sns:Subscribe"
+              - "sns:Unsubscribe"
+            Effect: Allow
+            Resource: 
+            - !Sub "arn:aws:sns:${AWS::Region}:${AWS::AccountId}:cdf-events-*"
 
   DynamoDBStreamLambdaFunction:
     Type: AWS::Serverless::Function
@@ -459,7 +471,7 @@ Resources:
           ProvisionedThroughput:
             ReadCapacityUnits: "5"
             WriteCapacityUnits: "5"
-      StreamSpecifciation:
+      StreamSpecification:
         StreamViewType: NEW_IMAGE
 
   DAXCluster:
@@ -535,11 +547,23 @@ Outputs:
   EventConfigTable:
     Description: Event Config database table
     Value: !Ref EventConfigTable
+    Export:
+      Name: !Sub '${AWS::StackName}-EventConfigTable'
+  EventConfigTableArn:
+    Description: Event Config database table Arn
+    Value: !GetAtt EventConfigTable.Arn
+    Export:
+      Name: !Sub '${AWS::StackName}-EventConfigTableArn'
   EventNotificationsTable:
     Description: Event Notifications database table
     Value: !Ref EventNotificationsTable
     Export:
       Name: !Sub '${AWS::StackName}-EventNotificationsTable'
+  EventNotificationsTableArn:
+    Description: Event Notifications database table arn
+    Value: !GetAtt EventNotificationsTable.Arn
+    Export:
+      Name: !Sub '${AWS::StackName}-EventNotificationsTableArn'
   EventNotificationsStream:
     Description: Event Notifications database table stream
     Value: !GetAtt EventNotificationsTable.StreamArn

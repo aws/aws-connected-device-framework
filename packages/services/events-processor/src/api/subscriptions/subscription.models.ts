@@ -13,18 +13,29 @@ export interface SubscriptionResource {
     principalValue: string;
     ruleParameterValues?: { [key: string] : string};
 
-    targets?: {
-        sns?: {
-            arn: string;
-        };
-        iotCore?: {
-            topic: string;
-        };
-    };
+    targets?: SubscriptionTargets;
 
     alerted: boolean;
     enabled: boolean;
 }
+
+export type SubscriptionTargets = {
+    email?: EmailSubscriptionConfig;
+    sms?: SMSSubscriptionConfig;
+    mqtt?: MQTTSubscriptionConfig;
+};
+
+export type EmailSubscriptionConfig = {
+    address:string
+};
+
+export type SMSSubscriptionConfig = {
+    phoneNumber:string
+};
+
+export type MQTTSubscriptionConfig = {
+    topic:string
+};
 
 export class SubscriptionItem {
     id: string;
@@ -44,13 +55,14 @@ export class SubscriptionItem {
         id: string;
     };
 
+    sns?: {
+        topicArn:string;
+    }
+
     targets?: {
-        sns?: {
-            arn: string;
-        };
-        iotCore?: {
-            topic: string;
-        };
+        email?: EmailSubscriptionConfig;
+        sms?: SMSSubscriptionConfig;
+        mqtt?: MQTTSubscriptionConfig;
     };
 
     enabled?: boolean;

@@ -1,5 +1,6 @@
 aws:
-  region: 
+  region:
+  accountId:
   iot:
     endpoint:
 

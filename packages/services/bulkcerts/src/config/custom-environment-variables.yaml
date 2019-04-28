@@ -1,5 +1,5 @@
 aws:
-  accountId: AWS_ACCOUNTID
+  accountId: AWS_ACCOUNT_ID
   region: AWS_REGION
   s3:
     certificates:

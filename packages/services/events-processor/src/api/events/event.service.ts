@@ -23,22 +23,28 @@ export class EventService  {
         }
 
     public async create(resource:EventResource) : Promise<void> {
-        logger.debug(`event.service create: in: model:${JSON.stringify(resource)}`);
+        logger.debug(`event.service create: in: resource:${JSON.stringify(resource)}`);
 
         // validate input
         ow(resource, ow.object.nonEmpty);
         ow(resource.eventSourceId, ow.string.nonEmpty);
         ow(resource.name, ow.string.nonEmpty);
         ow(resource.conditions, ow.object.nonEmpty);
-
+        if (resource.supportedTargets!==undefined) {
+            for (const key of Object.keys(resource.supportedTargets)) {
+                ow(resource.supportedTargets[key], ow.string.nonEmpty);
+                ow(resource.templates, ow.object.hasKeys(resource.supportedTargets[key]));
+                ow(resource.templates[resource.supportedTargets[key]], ow.string.nonEmpty);
+            }
+        }
+        
+        // set defaults
         resource.eventId = uuid();
-
-        // enable by default
         if (resource.enabled===undefined) {
             resource.enabled = true;
         }
 
-        // TODO: validate the ruleDefinition format.  regex?
+        // TODO: validate the conditions format
 
         // TODO: extract ruleParameters from ruleDefinition
 

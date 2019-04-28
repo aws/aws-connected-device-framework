@@ -26,6 +26,8 @@ import '../api/subscriptions/subscription.controller';
 import { AlertDao } from '../alerts/alert.dao';
 import { DDBStreamTransformer } from '../transformers/ddbstream.transformer';
 import { FilterService } from '../filter/filter.service';
+import { TargetService } from '../api/subscriptions/targets/target.service';
+import { EmailTarget } from '../api/subscriptions/targets/email.target';
 
 // Load everything needed to the Container
 export const container = new Container();
@@ -50,6 +52,9 @@ container.bind<FilterService>(TYPES.FilterService).to(FilterService).inSingleton
 container.bind<AlertDao>(TYPES.AlertDao).to(AlertDao).inSingletonScope();
 
 container.bind<DDBStreamTransformer>(TYPES.DDBStreamTransformer).to(DDBStreamTransformer).inSingletonScope();
+
+container.bind<TargetService>(TYPES.TargetService).to(TargetService).inSingletonScope();
+container.bind<EmailTarget>(TYPES.EmailTarget).to(EmailTarget).inSingletonScope();
 
 // for 3rd party objects, we need to use factory injectors
 
@@ -89,7 +94,8 @@ container.bind<interfaces.Factory<AWS.DynamoDB.DocumentClient>>(TYPES.CachableDo
                 const dax = new AmazonDaxClient({endpoints: config.get('aws.dynamodb.dax.endpoints'), region: config.get('aws.region')});
                 dc = new AWS.DynamoDB.DocumentClient({service:dax});
             } else {
-                dc = container.get<AWS.DynamoDB.DocumentClient>(TYPES.DocumentClient);
+                const dcf = container.get<interfaces.Factory<AWS.DynamoDB.DocumentClient>>(TYPES.DocumentClientFactory);
+                dc = <AWS.DynamoDB.DocumentClient> dcf();
             }
             container.bind<AWS.DynamoDB.DocumentClient>(TYPES.CachableDocumentClient).toConstantValue(dc);
         }
@@ -107,5 +113,18 @@ container.bind<interfaces.Factory<AWS.Lambda>>(TYPES.LambdaFactory)
             container.bind<AWS.Lambda>(TYPES.Lambda).toConstantValue(l);
         }
         return container.get<AWS.Lambda>(TYPES.Lambda);
+    };
+});
+
+decorate(injectable(), AWS.SNS);
+container.bind<interfaces.Factory<AWS.SNS>>(TYPES.SNSFactory)
+    .toFactory<AWS.SNS>(() => {
+    return () => {
+
+        if (!container.isBound(TYPES.SNS)) {
+            const l = new AWS.SNS({region: config.get('aws.region')});
+            container.bind<AWS.SNS>(TYPES.SNS).toConstantValue(l);
+        }
+        return container.get<AWS.SNS>(TYPES.SNS);
     };
 });

@@ -20,7 +20,9 @@ export class EventAssembler {
             principal,
             conditions: resource.conditions,
             ruleParameters: resource.ruleParameters,
-            enabled: resource.enabled
+            enabled: resource.enabled,
+            templates: resource.templates,
+            supportedTargets: resource.supportedTargets
         };
         logger.debug(`event.assembler toItem: exit: ${JSON.stringify(item)}`);
         return item;
@@ -36,8 +38,9 @@ export class EventAssembler {
             conditions: item.conditions,
             ruleParameters: item.ruleParameters,
             enabled: item.enabled,
-            principal: item.principal
-
+            principal: item.principal,
+            templates: item.templates,
+            supportedTargets: item.supportedTargets
         };
 
         logger.debug(`event.assembler toRe: exit: node: ${JSON.stringify(resource)}`);

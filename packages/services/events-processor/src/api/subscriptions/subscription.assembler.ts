@@ -35,22 +35,10 @@ export class SubscriptionAssembler {
 
             user: {
                 id: subscription.userId
-            }
-        };
+            },
 
-        if (subscription.targets) {
-            item.targets= {};
-            if (subscription.targets.sns) {
-                item.targets.sns = {
-                    arn: subscription.targets.sns.arn
-                };
-            }
-            if (subscription.targets.iotCore) {
-                item.targets.iotCore = {
-                    topic: subscription.targets.iotCore.topic
-                };
-            }
-        }
+            targets: subscription.targets
+        };
 
         logger.debug(`subscription.assembler toItem: exit: ${JSON.stringify(item)}`);
         return item;
@@ -66,21 +54,9 @@ export class SubscriptionAssembler {
             principalValue: item.principalValue,
             ruleParameterValues: item.ruleParameterValues,
             alerted: item.alerted,
-            enabled: item.enabled
+            enabled: item.enabled,
+            targets: item.targets
         };
-
-        if (item.targets) {
-            if (item.targets.sns) {
-                resource.targets.sns = {
-                    arn: item.targets.sns.arn
-                };
-            }
-            if (item.targets.iotCore) {
-                resource.targets.iotCore = {
-                    topic: item.targets.iotCore.topic
-                };
-            }
-        }
 
         logger.debug(`subscription.assembler toRe: exit: node: ${JSON.stringify(resource)}`);
         return resource;

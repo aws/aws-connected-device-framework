@@ -5,9 +5,15 @@ aws:
 
   dynamoDb:
     tables:
+      eventConfig:
+        name: EVENTSALERTS_AWS_DYNAMODB_TABLES_EVENTCONFIG_NAME
+        gsi1: EVENTSALERTS_AWS_DYNAMODB_TABLES_EVENTCONFIG_GSI1
       eventNotifications:
         name: EVENTSALERTS_AWS_DYNAMODB_TABLES_EVENTNOTIFICATIONS_NAME
         gsi1: EVENTSALERTS_AWS_DYNAMODB_TABLES_EVENTNOTIFICATIONS_GSI1
+
+    dax:
+      endpoints: EVENTSALERTS_AWS_DYNAMODB_DAX_ENDPOINTS
 
   lambda:
     dynamoDbStream:

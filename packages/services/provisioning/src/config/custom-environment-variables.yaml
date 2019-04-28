@@ -1,6 +1,6 @@
 aws:
   region: AWS_REGION
-  accountId: AWS_ACCOUNTID
+  accountId: AWS_ACCOUNT_ID
   s3:
     roleArn: CDF_PROVISIONING_S3_ROLEARN
     templates:

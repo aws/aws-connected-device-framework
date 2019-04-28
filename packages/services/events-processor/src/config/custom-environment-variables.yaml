@@ -1,7 +1,8 @@
 aws:
   region: AWS_REGION
+  accountId: AWS_ACCOUNT_ID
   iot:
-    endpoint: AWS_IOT_ENDPOINT
+    endpoint: EVENTSPROCESSOR_AWS_IOT_ENDPOINT
 
   dynamoDb:
     tables:

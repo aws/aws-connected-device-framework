@@ -30,9 +30,11 @@ export class FilterService {
 
         const engine = new rulesEngine.Engine();
 
-        // TODO: refactor to retrieve subscriptions in batches for the events, then sort and loop through each different event type so abkel to resue the rules engine
+        // TODO: perfirmance improvement - refactor to retrieve subscriptions in batches for the events, then sort and loop through each different event type so able to reuse the rules engine
 
         const alerts:AlertItem[]=[];
+        const changedSubAlerts:{[key:string]:SubscriptionItem}= {};
+
         for(const ev of events) {
 
             // perform lookup to see if any subscriptions are configured for the event source/principal/principalValue (cached for the duration of the method call)
@@ -70,8 +72,28 @@ export class FilterService {
                     if (results.length>0 && !sub.alerted) {
                         // a new alert...
                         alerts.push(this.buildAlert(sub));
+                        sub.alerted=true;
+                        changedSubAlerts[sub.id]= {
+                            id: sub.id,
+                            eventSource: {
+                                id: sub.eventSource.id,
+                                principal: sub.eventSource.principal
+                            },
+                            principalValue: sub.principalValue,
+                            alerted: true
+                        };
                     } else if (results.length===0 && sub.alerted) {
-                        // TODO: an alert that needs clearing...
+                        // an alert that needs ewsetting...
+                        sub.alerted=false;
+                        changedSubAlerts[sub.id]= {
+                            id: sub.id,
+                            eventSource: {
+                                id: sub.eventSource.id,
+                                principal: sub.eventSource.principal
+                            },
+                            principalValue: sub.principalValue,
+                            alerted: false
+                        };
                     }
 
                     // clear the engine state ready for the next run
@@ -86,6 +108,9 @@ export class FilterService {
         if (alerts.length>0) {
             await this.alertDao.create(alerts);
         }
+        if (Object.keys(changedSubAlerts).length>0) {
+            await this.alertDao.updateChangedSubAlertStatus(changedSubAlerts);
+        }
 
         logger.debug(`filter.service filter: exit:`);
 
@@ -95,24 +120,23 @@ export class FilterService {
         logger.debug(`filter.service buildAlert: in: sub:${JSON.stringify(sub)}`);
         const alert:AlertItem = {
             time: new Date().toISOString(),
-            subscription: { id: sub.id},
+            subscription: { 
+                id: sub.id,
+                principalValue: sub.principalValue
+            },
             event: {
                 id: sub.event.id,
                 name: sub.event.name
             },
+            eventSource: {
+                principal: sub.eventSource.principal
+            },
             user: {
                 id: sub.user.id
-            }
+            },
+            targets: sub.targets,
+            sns: sub.sns
         };
-        if (sub.targets) {
-            alert.targets= {};
-            if (sub.targets.sns) {
-                alert.targets.sns= {arn: sub.targets.sns.arn};
-            }
-            if (sub.targets.iotCore) {
-                alert.targets.iotCore= {topic: sub.targets.iotCore.topic};
-            }
-        }
         logger.debug(`filter.service buildAlert: exit: ${JSON.stringify(alert)}`);
         return alert;
     }

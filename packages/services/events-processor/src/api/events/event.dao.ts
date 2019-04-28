@@ -53,7 +53,9 @@ export class EventDao {
                     principal: item.principal,
                     conditions: item.conditions,
                     ruleParameters: item.ruleParameters,
-                    enabled: item.enabled
+                    enabled: item.enabled,
+                    templates: item.templates,
+                    supportedTargets: item.supportedTargets
                 }
             }
         };
@@ -105,13 +107,15 @@ export class EventDao {
 
         const i = results.Items[0];
         const response:EventItem = {
-            id: expandDelimitedAttribute(i['sk'])[1],
-            eventSourceId: expandDelimitedAttribute(i['pk'])[1],
-            name: i['name'],
-            principal: i['principal'],
-            conditions: i['conditions'],
-            ruleParameters: i['ruleParameters'],
-            enabled: i['enabled']
+            id: expandDelimitedAttribute(i.sk)[1],
+            eventSourceId: expandDelimitedAttribute(i.pk)[1],
+            name: i.name,
+            principal: i.principal,
+            conditions: i.conditions,
+            ruleParameters: i.ruleParameters,
+            enabled: i.enabled,
+            templates: i.templates,
+            supportedTargets: i.supportedTargets
         } ;
 
         logger.debug(`event.dao get: exit: response:${JSON.stringify(response)}`);

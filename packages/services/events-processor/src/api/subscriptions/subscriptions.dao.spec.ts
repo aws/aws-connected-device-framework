@@ -40,11 +40,11 @@ describe('SubscriptionDao', () => {
             principal: 'deviceId'
         },
         targets: {
-            sns: {
-                arn: 'arn::sns'
+            email: {
+                address: 'someone@somewhere.com'
             },
-            iotCore: {
-                topic: 'topic1'
+            sms: {
+                phoneNumber: '555555555'
             }
         },
         user: {
@@ -96,10 +96,10 @@ describe('SubscriptionDao', () => {
                     PutRequest: {
                         Item: {
                             pk: `S:${stubbedGoodItem.id}`,
-                            sk: `ST:sns`,
-                            arn: 'arn::sns',
+                            sk: `ST:email`,
+                            address: 'someone@somewhere.com',
                             gsi2Key: `ES:${stubbedGoodItem.eventSource.id}:${stubbedGoodItem.eventSource.principal}:${stubbedGoodItem.principalValue}`,
-                            gsi2Sort: `S:${stubbedGoodItem.id}:ST:sns`
+                            gsi2Sort: `S:${stubbedGoodItem.id}:ST:email`
 
                         }
                     }
@@ -107,10 +107,10 @@ describe('SubscriptionDao', () => {
                     PutRequest: {
                         Item: {
                             pk: `S:${stubbedGoodItem.id}`,
-                            sk: `ST:iotCore`,
-                            topic: 'topic1',
+                            sk: `ST:sms`,
+                            phoneNumber: '555555555',
                             gsi2Key: `ES:${stubbedGoodItem.eventSource.id}:${stubbedGoodItem.eventSource.principal}:${stubbedGoodItem.principalValue}`,
-                            gsi2Sort: `S:${stubbedGoodItem.id}:ST:iotCore`
+                            gsi2Sort: `S:${stubbedGoodItem.id}:ST:sms`
 
                         }
                     }
@@ -165,10 +165,10 @@ describe('SubscriptionDao', () => {
                                 PutRequest: {
                                     Item: {
                                         pk: `S:${si.id}`,
-                                        sk: `ST:iotCore`,
-                                        topic: 'topic1',
+                                        sk: `ST:email`,
+                                        address: 'someone@somewhere.com',
                                         gsi2Key: `ES:${si.eventSource.id}:${si.eventSource.principal}:${si.principalValue}`,
-                                        gsi2Sort: `S:${si.id}:ST:iotCore`
+                                        gsi2Sort: `S:${si.id}:ST:email`
                                     }
                                 }
                             }
@@ -203,10 +203,10 @@ describe('SubscriptionDao', () => {
                         PutRequest: {
                             Item: {
                                 pk: `S:${si.id}`,
-                                sk: `ST:iotCore`,
-                                topic: 'topic1',
+                                sk: `ST:email`,
+                                address: 'someone@somewhere.com',
                                 gsi2Key: `ES:${si.eventSource.id}:${si.eventSource.principal}:${si.principalValue}`,
-                                gsi2Sort: `S:${si.id}:ST:iotCore`
+                                gsi2Sort: `S:${si.id}:ST:email`
                             }
                         }
                     }
@@ -233,10 +233,10 @@ describe('SubscriptionDao', () => {
                                 PutRequest: {
                                     Item: {
                                         pk: `S:${si.id}`,
-                                        sk: `ST:iotCore`,
-                                        topic: 'topic1',
+                                        sk: `ST:email`,
+                                        address: 'someone@somewhere.com',
                                         gsi2Key: `ES:${si.eventSource.id}:${si.eventSource.principal}:${si.principalValue}`,
-                                        gsi2Sort: `S:${si.id}:ST:iotCore`
+                                        gsi2Sort: `S:${si.id}:ST:email`
                                     }
                                 }
                             }
@@ -258,10 +258,10 @@ describe('SubscriptionDao', () => {
                             PutRequest: {
                                 Item: {
                                     pk: `S:${si.id}`,
-                                    sk: `ST:iotCore`,
-                                    topic: 'topic1',
+                                    sk: `ST:email`,
+                                    address: 'someone@somewhere.com',
                                     gsi2Key: `ES:${si.eventSource.id}:${si.eventSource.principal}:${si.principalValue}`,
-                                    gsi2Sort: `S:${si.id}:ST:iotCore`
+                                    gsi2Sort: `S:${si.id}:ST:email`
                                 }
                             }
                           }
@@ -293,10 +293,10 @@ describe('SubscriptionDao', () => {
                         PutRequest: {
                             Item: {
                                 pk: `S:${si.id}`,
-                                sk: `ST:iotCore`,
-                                topic: 'topic1',
+                                sk: `ST:email`,
+                                address: 'someone@somewhere.com',
                                 gsi2Key: `ES:${si.eventSource.id}:${si.eventSource.principal}:${si.principalValue}`,
-                                gsi2Sort: `S:${si.id}:ST:iotCore`
+                                gsi2Sort: `S:${si.id}:ST:email`
                             }
                         }
                     }
@@ -347,16 +347,16 @@ describe('SubscriptionDao', () => {
                             gsi2Sort: `S:${stubbedGoodItem.id}:U:${stubbedGoodItem.user.id}`
                         }, {
                             pk: `S:${stubbedGoodItem.id}`,
-                            sk: `ST:sns`,
-                            arn: 'arn::sns',
+                            sk: `ST:email`,
+                            address: 'someone@somewhere.com',
                             gsi2Key: `ES:${stubbedGoodItem.eventSource.id}:${stubbedGoodItem.eventSource.principal}:${stubbedGoodItem.principalValue}`,
-                            gsi2Sort: `S:${stubbedGoodItem.id}:ST:sns`
+                            gsi2Sort: `S:${stubbedGoodItem.id}:ST:email`
                         }, {
                             pk: `S:${stubbedGoodItem.id}`,
-                            sk: `ST:iotCore`,
-                            topic: 'topic1',
+                            sk: `ST:sms`,
+                            phoneNumber: '555555555',
                             gsi2Key: `ES:${stubbedGoodItem.eventSource.id}:${stubbedGoodItem.eventSource.principal}:${stubbedGoodItem.principalValue}`,
-                            gsi2Sort: `S:${stubbedGoodItem.id}:ST:iotCore`
+                            gsi2Sort: `S:${stubbedGoodItem.id}:ST:sms`
                         }
                     ]
                 };
