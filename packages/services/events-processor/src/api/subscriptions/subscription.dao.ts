@@ -10,6 +10,8 @@ import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import { SubscriptionItem } from './subscription.models';
 import { createDelimitedAttribute, PkType, expandDelimitedAttribute, isPkType } from '../../utils/pkUtils';
 
+type SubscriptionItemMap = {[subscriptionId:string] : SubscriptionItem};
+
 @injectable()
 export class SubscriptionDao {
 
@@ -18,6 +20,7 @@ export class SubscriptionDao {
 
     public constructor(
         @inject('aws.dynamoDb.tables.eventConfig.name') private eventConfigTable:string,
+        @inject('aws.dynamoDb.tables.eventConfig.gsi1') private eventConfigGSI1:string,
         @inject('aws.dynamoDb.tables.eventConfig.gsi2') private eventConfigGSI2:string,
 	    @inject(TYPES.DocumentClientFactory) documentClientFactory: () => AWS.DynamoDB.DocumentClient,
 	    @inject(TYPES.CachableDocumentClientFactory) cachableDocumentClientFactory: () => AWS.DynamoDB.DocumentClient
@@ -28,9 +31,10 @@ export class SubscriptionDao {
 
     /**
      * Creates the Subscription DynamoDB items:
-     *   pk='S-{subscriptionId}, sk='S-{subscriptionId}'
-     *   pk='S-{subscriptionId}, sk='E-{eventId}'
-     *   pk='S-{subscriptionId}, sk='U-{userId}').
+     *   Subscription:  pk='S-{subscriptionId}, sk='S-{subscriptionId}'
+     *   Event:         pk='S-{subscriptionId}, sk='E-{eventId}'
+     *   User:          pk='S-{subscriptionId}, sk='U-{userId}')
+     *   Target(s):     pk='S-{subscriptionId}, sk='ST-{target}'
      * @param subscription
      */
     public async create(si:SubscriptionItem): Promise<void> {
@@ -148,18 +152,120 @@ export class SubscriptionDao {
             }
         };
 
-        // logger.debug(`subscription.dao listSubscriptionsForEventMessage: QueryInput: ${JSON.stringify(params)}`);
-
         const results = await this._cachedDc.query(params).promise();
         if (results.Items===undefined) {
             logger.debug('subscription.dao listSubscriptionsForEventMessage: exit: undefined');
             return undefined;
         }
 
-        // logger.debug(`subscription.dao listSubscriptionsForEventMessage: query result: ${JSON.stringify(results)}`);
+        const subscriptions = this.assemble(results.Items);
+        const response:SubscriptionItem[] = Object.keys(subscriptions).map(k => subscriptions[k]);
 
-        const subscriptions:{[subscriptionId:string] : SubscriptionItem}= {};
+        logger.debug(`subscription.dao listSubscriptionsForEventMessage: exit:${JSON.stringify(response)}`);
+        return response;
+    }
+
+    public async listSubscriptionsForUser(userId:string): Promise<SubscriptionItem[]> {
+        logger.debug(`subscription.dao listSubscriptionsForUser: userId:${userId}`);
+
+        const params:DocumentClient.QueryInput = {
+            TableName: this.eventConfigTable,
+            IndexName: this.eventConfigGSI1,
+            KeyConditionExpression: `#key=:key`,
+            ExpressionAttributeNames: {
+                '#key': 'sk'
+            },
+            ExpressionAttributeValues: {
+                ':key': createDelimitedAttribute(PkType.User, userId )
+            }
+        };
+
+        const results = await this._cachedDc.query(params).promise();
+        if (results.Items===undefined) {
+            logger.debug('subscription.dao listSubscriptionsForUser: exit: undefined');
+            return undefined;
+        }
+
+        const subscriptions = this.assemble(results.Items);
+        const response:SubscriptionItem[] = Object.keys(subscriptions).map(k => subscriptions[k]);
+
+        logger.debug(`subscription.dao listSubscriptionsForUser: exit:${JSON.stringify(response)}`);
+        return response;
+    }
+
+    public async get(subscriptionId:string): Promise<SubscriptionItem> {
+        logger.debug(`subscription.dao get: subscriptionId:${subscriptionId}`);
+
+        const params:DocumentClient.QueryInput = {
+            TableName: this.eventConfigTable,
+            KeyConditionExpression: `#key = :value`,
+            ExpressionAttributeNames: {
+                '#key': 'pk'
+            },
+            ExpressionAttributeValues: {
+                ':value': createDelimitedAttribute(PkType.Subscription, subscriptionId )
+            }
+        };
+
+        const results = await this._cachedDc.query(params).promise();
+        if (results.Items===undefined) {
+            logger.debug('subscription.dao get: exit: undefined');
+            return undefined;
+        }
+
+        const subscriptions = this.assemble(results.Items);
+        const response:SubscriptionItem[] = Object.keys(subscriptions).map(k => subscriptions[k]);
+
+        logger.debug(`subscription.dao get: exit:${JSON.stringify(response[0])}`);
+        return response[0];
+    }
+
+    public async delete(subscriptionId:string): Promise<void> {
+        logger.debug(`subscription.dao delete: subscriptionId:${subscriptionId}`);
+
+        const queryParams:DocumentClient.QueryInput = {
+            TableName: this.eventConfigTable,
+            KeyConditionExpression: `#key = :value`,
+            ExpressionAttributeNames: {
+                '#key': 'pk'
+            },
+            ExpressionAttributeValues: {
+                ':value': createDelimitedAttribute(PkType.Subscription, subscriptionId )
+            }
+        };
+
+        const results = await this._cachedDc.query(queryParams).promise();
+        if (results.Items===undefined) {
+            logger.debug('subscription.dao delete: exit: undefined');
+            return undefined;
+        }
+
+        const deleteParams:DocumentClient.BatchWriteItemInput = {
+            RequestItems: {}
+        };
+        deleteParams.RequestItems[this.eventConfigTable]= [];
+
         for(const i of results.Items) {
+            deleteParams.RequestItems[this.eventConfigTable].push({
+                DeleteRequest: {
+                    Key: {
+                        pk: i.pk,
+                        sk: i.sk
+                    }
+                }
+            });
+        }
+
+        await this._dc.batchWrite(deleteParams).promise();
+
+        logger.debug(`subscription.dao delete: exit:`);
+    }
+
+    private assemble(results:AWS.DynamoDB.DocumentClient.ItemList) : SubscriptionItemMap {
+        logger.debug(`subscription.dao assemble: items: ${JSON.stringify(results)}`);
+
+        const subscriptions:SubscriptionItemMap= {};
+        for(const i of results) {
 
             logger.debug(`subscription.dao listSubscriptionsForEventMessage: i: ${JSON.stringify(i)}`);
 
@@ -213,10 +319,8 @@ export class SubscriptionDao {
             subscriptions[subscriptionId] = s;
         }
 
-        logger.debug(`subscription.dao listSubscriptionsForEventMessage: subscriptions:${JSON.stringify(subscriptions)}`);
-        const response:SubscriptionItem[] = Object.keys(subscriptions).map(k => subscriptions[k]);
+        logger.debug(`subscription.dao assemble: exit:${JSON.stringify(subscriptions)}`);
+        return subscriptions;
 
-        logger.debug(`subscription.dao listSubscriptionsForEventMessage: exit:${JSON.stringify(response)}`);
-        return response;
     }
 }

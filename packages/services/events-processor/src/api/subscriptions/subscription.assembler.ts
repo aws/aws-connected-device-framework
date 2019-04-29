@@ -5,7 +5,7 @@
 #-------------------------------------------------------------------------------*/
 import { injectable } from 'inversify';
 import {logger} from '../../utils/logger';
-import { SubscriptionItem, SubscriptionResource } from './subscription.models';
+import { SubscriptionItem, SubscriptionResource, SubscriptionResourceList } from './subscription.models';
 import { EventResource } from '../events/event.models';
 
 @injectable()
@@ -45,12 +45,10 @@ export class SubscriptionAssembler {
     }
 
     public toResource(item:SubscriptionItem): SubscriptionResource {
-        logger.debug(`subscription.assembler toRe: in: re:${JSON.stringify(item)}`);
+        logger.debug(`subscription.assembler toResource: in: re:${JSON.stringify(item)}`);
 
         const resource:SubscriptionResource = {
             subscriptionId: item.id,
-            userId: item.user.id,
-            eventId: item.event.id,
             principalValue: item.principalValue,
             ruleParameterValues: item.ruleParameterValues,
             alerted: item.alerted,
@@ -58,8 +56,31 @@ export class SubscriptionAssembler {
             targets: item.targets
         };
 
-        logger.debug(`subscription.assembler toRe: exit: node: ${JSON.stringify(resource)}`);
+        if (item.event) {
+            resource.eventId = item.event.id;
+        }
+
+        if (item.user) {
+            resource.userId = item.user.id;
+        }
+
+        logger.debug(`subscription.assembler toResource: exit: node: ${JSON.stringify(resource)}`);
         return resource;
 
     }
+
+    public toResourceList(items:SubscriptionItem[]): SubscriptionResourceList {
+        logger.debug(`subscription.assembler toResourceList: in: items:${JSON.stringify(items)}`);
+
+        const list:SubscriptionResourceList= {
+            results:[]
+        };
+
+        items.forEach(i=> list.results.push(this.toResource(i)));
+
+        logger.debug(`subscription.assembler toResourceList: exit: ${JSON.stringify(list)}`);
+        return list;
+
+    }
+
 }

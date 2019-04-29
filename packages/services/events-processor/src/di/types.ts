@@ -21,6 +21,8 @@ export const TYPES = {
 
     TargetService: Symbol.for('TargetService'),
     EmailTarget: Symbol.for('EmailTarget'),
+    SMSTarget: Symbol.for('SMSTarget'),
+    SNSTarget: Symbol.for('SNSTarget'),
 
     FilterService: Symbol.for('FilterService'),
 

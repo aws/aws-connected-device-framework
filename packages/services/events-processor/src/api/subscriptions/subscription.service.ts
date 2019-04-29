@@ -8,7 +8,7 @@ import { TYPES } from '../../di/types';
 import {logger} from '../../utils/logger';
 import ow from 'ow';
 import {v1 as uuid} from 'uuid';
-import { SubscriptionResource } from './subscription.models';
+import { SubscriptionResource, SubscriptionResourceList } from './subscription.models';
 import { SubscriptionAssembler } from './subscription.assembler';
 import { SubscriptionDao } from './subscription.dao';
 import { EventService } from '../events/event.service';
@@ -24,8 +24,53 @@ export class SubscriptionService  {
         @inject(TYPES.TargetService) private targetService: TargetService) {
         }
 
+    public async get(subscriptionId:string) : Promise<SubscriptionResource> {
+        logger.debug(`subscription.service get: in: subscriptionId:${subscriptionId}`);
+
+        ow(subscriptionId, ow.string.nonEmpty);
+
+        const result  = await this.subscriptionDao.get(subscriptionId);
+
+        let model:SubscriptionResource;
+        if (result!==undefined) {
+            model = this.subscriptionAssembler.toResource(result);
+        }
+
+        logger.debug(`subscription.service get: exit: model: ${JSON.stringify(model)}`);
+        return model;
+    }
+    public async delete(subscriptionId:string) : Promise<void> {
+        logger.debug(`subscription.service delete: in: subscriptionId:${subscriptionId}`);
+
+        ow(subscriptionId, ow.string.nonEmpty);
+
+        const current  = await this.subscriptionDao.get(subscriptionId);
+
+        await this.targetService.deleteTargets(current);
+
+        await this.subscriptionDao.delete(subscriptionId);
+
+        logger.debug(`subscription.service delete: exit:`);
+    }
+
+    public async listByUser(userId:string) : Promise<SubscriptionResourceList> {
+        logger.debug(`subscription.service listByUser: in: userId:${userId}`);
+
+        ow(userId, ow.string.nonEmpty);
+
+        const results  = await this.subscriptionDao.listSubscriptionsForUser(userId);
+
+        let model:SubscriptionResourceList;
+        if (results!==undefined) {
+            model = this.subscriptionAssembler.toResourceList(results);
+        }
+
+        logger.debug(`subscription.service listByUser: exit: model: ${JSON.stringify(model)}`);
+        return model;
+    }
+
     public async create(resource:SubscriptionResource) : Promise<void> {
-        logger.debug(`subscription.full.service create: in: model:${JSON.stringify(resource)}`);
+        logger.debug(`subscription.service create: in: model:${JSON.stringify(resource)}`);
 
         // validate input
         ow(resource, ow.object.nonEmpty);
@@ -51,14 +96,27 @@ export class SubscriptionService  {
             resource.enabled=true;
         }
 
-        // verify the provided event
+        // verify the provided event exists
         const event = await this.eventService.get(resource.eventId);
-        logger.debug(`subscription.full.service create: event: ${JSON.stringify(event)}`);
+        logger.debug(`subscription.service create: event: ${JSON.stringify(event)}`);
         if (event===undefined) {
             throw new Error('EVENT_NOT_FOUND');
         }
 
-        // TODO: extract ruleParameterValues against the event
+        // verify that the subscribed targets are supports for the event
+        if (resource.targets!==undefined) {
+            if (resource.targets.email!==undefined) {
+                ow(event.supportedTargets.email, ow.string.nonEmpty);
+            }
+            if (resource.targets.sms!==undefined) {
+                ow(event.supportedTargets.sms, ow.string.nonEmpty);
+            }
+            if (resource.targets.mqtt!==undefined) {
+                ow(event.supportedTargets.mqtt, ow.string.nonEmpty);
+            }
+        }
+
+        // TODO: validate that all requried ruleParameterValues have been provided
 
         const item = this.subscriptionAssembler.toItem(resource, event);
 
@@ -68,7 +126,7 @@ export class SubscriptionService  {
         // save the subscription info
         await this.subscriptionDao.create(item);
 
-        logger.debug(`subscription.full.service create: exit:`);
+        logger.debug(`subscription.service create: exit:`);
 
     }
 

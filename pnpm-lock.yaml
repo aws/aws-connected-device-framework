@@ -2544,16 +2544,16 @@ packages:
     dev: true
     resolution:
       integrity: sha512-EaObqwIvayI5a8dCzhFrjKzVwKLxjoG9T6Ppd5CEo07LRKfQ8Yokw54r5+Wq7FaBQ+yXRvQAYPrHwya1/UFt9g==
-  /@types/express-serve-static-core/4.16.3:
+  /@types/express-serve-static-core/4.16.4:
     dependencies:
       '@types/node': 8.10.43
       '@types/range-parser': 1.2.3
     resolution:
-      integrity: sha512-HFgBmRDTvdnrRFXqBr2NM2NUCu6fIpzJsUTlRVENF8lxvstof7cl9Fxfwq5S0kJbO/FsPVcjlxpOM3ZxIkn7Rw==
+      integrity: sha512-x/8h6FHm14rPWnW2HP5likD/rsqJ3t/77OWx2PLxym0hXbeBWQmcPyHmwX+CtCQpjIfgrUdEoDFcLPwPZWiqzQ==
   /@types/express/4.16.1:
     dependencies:
       '@types/body-parser': 1.17.0
-      '@types/express-serve-static-core': 4.16.3
+      '@types/express-serve-static-core': 4.16.4
       '@types/serve-static': 1.13.2
     resolution:
       integrity: sha512-V0clmJow23WeyblmACoxbHBu2JKlE5TiIme6Lem14FnPW9gsttyHtk6wq7njcdIWH1njAaFgR8gW09lgY98gQg==
@@ -2647,7 +2647,7 @@ packages:
       integrity: sha512-ZgEZ1TiD+KGA9LiAAPPJL68Id2UWfeSO62ijSXZjFJArVV+2pKcsVHmrcu+1oiE3q6eDGiFiSolRc4JHoerBBg==
   /@types/serve-static/1.13.2:
     dependencies:
-      '@types/express-serve-static-core': 4.16.3
+      '@types/express-serve-static-core': 4.16.4
       '@types/mime': 2.0.1
     resolution:
       integrity: sha512-/BZ4QRLpH/bNYgZgwhKEh+5AsboDBcUdlBYgzoLX0fpj3Y2gp6EApyOlM3bK53wQS/OE1SrdSYBAbux2D1528Q==
@@ -6195,6 +6195,7 @@ packages:
       chalk: 2.4.2
       jest-haste-map: 24.0.0
       jest-pnp-resolver: 1.2.1_jest-resolve@24.5.0
+      jest-resolve: 24.5.0_b2377ed855f581a50cdaeacf386d75ca
       realpath-native: 1.1.0
     dev: true
     engines:
@@ -6210,6 +6211,7 @@ packages:
       browser-resolve: 1.11.3
       chalk: 2.4.2
       jest-pnp-resolver: 1.2.1_jest-resolve@24.7.1
+      jest-resolve: 24.7.1_jest-resolve@24.7.1
       realpath-native: 1.1.0
     dev: true
     engines:
@@ -8630,6 +8632,7 @@ packages:
       p-reduce: 1.0.0
       read-pkg-up: 4.0.0
       resolve-from: 4.0.0
+      semantic-release: 15.13.3_semantic-release@15.13.3
       semver: 5.7.0
       signale: 1.4.0
       yargs: 12.0.5
@@ -9949,6 +9952,7 @@ packages:
       node: '>=6'
     name: env-ci
     resolution:
+      registry: 'https://registry.npmjs.org/'
       tarball: 'https://codeload.github.com/boardthatpowder/env-ci/tar.gz/45ee1f3169d13f1a2c3842f5f2458b6bd8cb6dd5'
     version: 0.0.0-development
   github.com/boardthatpowder/semantic-release-plugin-decorators/0f89322cb9231b2812e6e66bbc7215b88efd02b5:
@@ -9960,6 +9964,7 @@ packages:
     peerDependencies:
       semantic-release: '>=11'
     resolution:
+      registry: 'https://registry.npmjs.org/'
       tarball: 'https://codeload.github.com/boardthatpowder/semantic-release-plugin-decorators/tar.gz/0f89322cb9231b2812e6e66bbc7215b88efd02b5'
     version: 0.0.0-development
   github.com/boardthatpowder/semantic-release-plugin-decorators/0f89322cb9231b2812e6e66bbc7215b88efd02b5_semantic-release@15.13.3:
@@ -9973,5 +9978,6 @@ packages:
     peerDependencies:
       semantic-release: '>=11'
     resolution:
+      registry: 'https://registry.npmjs.org/'
       tarball: 'https://codeload.github.com/boardthatpowder/semantic-release-plugin-decorators/tar.gz/0f89322cb9231b2812e6e66bbc7215b88efd02b5'
     version: 0.0.0-development

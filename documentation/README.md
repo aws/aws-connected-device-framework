@@ -1,10 +1,12 @@
-# Installation
+# Documentation
+
+## Local Installation
 
 ```sh
 pip install mkdocs markdown-include pymdown-extensions mkdocs-material
 ```
 
-# To view the documentation locally:
+## To view the documentation locally:
 
 ```sh
 mkdocs serve
@@ -12,7 +14,7 @@ mkdocs serve
 
 The documentation will then be available at `http://127.0.0.1:8000`.
 
-# Syncing Swagger
+## Syncing Swagger
 
 First, ensure you have the swagger-markdown plugin installed:
 
@@ -29,7 +31,7 @@ swagger-markdown -i ../cdf-provisioning/infrastructure/swagger.yml -o docs/proje
 swagger-markdown -i ../cdf-bulkcerts/infrastructure/swagger-template.yml -o docs/projects/bulkcerts/bulkcerts-swagger.md
 ```
 
-# To publish the documentation
+## To publish the documentation to S3
 
 ```sh
 mkdocs build

@@ -15,11 +15,12 @@ export class SNSTarget {
         this._sns = snsFactory();
     }
 
-    public async send(topicArn:string, messages:SNSMessages) : Promise<void> {
-        logger.debug(`sns.target send: in: topicArn:${topicArn}, messages:${JSON.stringify(messages.toJson())}`);
+    public async send(topicArn:string, subject:string, messages:SNSMessages) : Promise<void> {
+        logger.debug(`sns.target send: in: topicArn:${topicArn}, subject:${subject}, messages:${JSON.stringify(messages.toJson())}`);
 
         const params:AWS.SNS.Types.PublishInput = {
             TopicArn: topicArn,
+            Subject: subject,
             Message: JSON.stringify(messages.toJson()),
             MessageStructure: 'json'
         };

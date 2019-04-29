@@ -19,7 +19,7 @@
 
     "prebundle:quick": "pnpm i --force && pnpm run build && pnpm run prebundle:prepare",
     "bundle:quick": "pnpm i --no-lock --prod --shamefully-flatten --force && pnpm run bundle:package",
-    "postbundle:quick": "echo '\n\n******   node_modules have been flattened and resolved in production mode.  If this is a dev environment, make sure you run `pnpm run reset` from the root to reset.'",
+    "postbundle:quick": "pnpm i --force",
 
     "semantic-release": "npx semantic-release -e semantic-release-monorepo"
   },

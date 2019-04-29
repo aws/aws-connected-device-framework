@@ -28,6 +28,8 @@ import { DDBStreamTransformer } from '../transformers/ddbstream.transformer';
 import { FilterService } from '../filter/filter.service';
 import { TargetService } from '../api/subscriptions/targets/target.service';
 import { EmailTarget } from '../api/subscriptions/targets/email.target';
+import { SMSTarget } from '../api/subscriptions/targets/sms.target';
+import { SNSTarget } from '../api/subscriptions/targets/sns.target';
 
 // Load everything needed to the Container
 export const container = new Container();
@@ -54,7 +56,9 @@ container.bind<AlertDao>(TYPES.AlertDao).to(AlertDao).inSingletonScope();
 container.bind<DDBStreamTransformer>(TYPES.DDBStreamTransformer).to(DDBStreamTransformer).inSingletonScope();
 
 container.bind<TargetService>(TYPES.TargetService).to(TargetService).inSingletonScope();
+container.bind<SNSTarget>(TYPES.SNSTarget).to(SNSTarget).inSingletonScope();
 container.bind<EmailTarget>(TYPES.EmailTarget).to(EmailTarget).inSingletonScope();
+container.bind<SMSTarget>(TYPES.SMSTarget).to(SMSTarget).inSingletonScope();
 
 // for 3rd party objects, we need to use factory injectors
 

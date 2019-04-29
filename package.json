@@ -10,7 +10,7 @@
 
     "prebundle": "pnpm run reset && pnpm m run build && pnpm m run prebundle:prepare",
     "bundle": "pnpm i --no-lock --prod --shamefully-flatten --force && pnpm m run bundle:package",
-    "postbundle": "echo '\n\n******   node_modules have been flattened and resolved in production mode.  If this is a dev environment, make sure you run `pnpm run reset` from the root to reset.'"
+    "postbundle": "pnpm install --force"
 
   },
   "devDependencies": {

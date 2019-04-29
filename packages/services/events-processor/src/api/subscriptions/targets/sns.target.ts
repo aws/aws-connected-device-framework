@@ -9,7 +9,7 @@ import {logger} from '../../../utils/logger';
 import ow from 'ow';
 
 @injectable()
-export abstract class SNSTarget  {
+export class SNSTarget  {
 
     readonly TOPIC_PREFIX = 'cdf-events-';
 
@@ -45,7 +45,7 @@ export abstract class SNSTarget  {
         return `${this.TOPIC_PREFIX}${escape(userId)}`;
     }
 
-    private topicArn(userId:string) {
+    protected topicArn(userId:string) {
         return `arn:aws:sns:${this.region}:${this.accountId}:${this.topicName(userId)}`;
     }
 
@@ -89,15 +89,50 @@ export abstract class SNSTarget  {
         logger.debug(`sns.target createTopic: exit:`);
     }
 
-    protected async createSubscription(protocol:string, topicArn:string, endpoint:string) : Promise<void> {
-        logger.debug(`sns.target createSubscription: in: protocol:${protocol}, topicArn:${topicArn}, endpoint:${endpoint}`);
+    public async deleteTopic(userId:string) {
+        logger.debug(`sns.target deleteTopic: in: userId:${userId}`);
+        const params:AWS.SNS.DeleteTopicInput = {
+            TopicArn: this.topicArn(userId)
+        };
+        await this._sns.deleteTopic(params).promise();
+        logger.debug(`sns.target deleteTopic: exit:`);
+    }
+
+    protected async subscribe(protocol:string, topicArn:string, endpoint:string) : Promise<void> {
+        logger.debug(`sns.target subscribe: in: protocol:${protocol}, topicArn:${topicArn}, endpoint:${endpoint}`);
+
+        const exists = await this.subscriptionExists(topicArn, protocol);
+        if (exists) {
+            logger.warn(`sns.target subscribe: ${protocol} target for ${topicArn} already exists!`);
+            return;
+        }
+
         const params:AWS.SNS.Types.SubscribeInput = {
             Protocol: protocol,
             TopicArn: topicArn,
             Endpoint: endpoint
         };
         await this._sns.subscribe(params).promise();
-        logger.debug(`sns.target createSubscription: exit:`);
+        logger.debug(`sns.target subscribe: exit:`);
+    }
+
+    protected async unsubscribe(protocol:string, topicArn:string) : Promise<void> {
+        logger.debug(`sns.target unsubscribe: in: protocol:${protocol}, topicArn:${topicArn}`);
+
+        const subscriptions = await this.subscriptions(topicArn);
+        const subscriptionArn:string[] = subscriptions.filter(s=> s.Protocol===protocol).map(s=> s.SubscriptionArn);
+
+        if (subscriptionArn===undefined || subscriptionArn.length===0) {
+            logger.warn(`sns.target unsubscribe: ${protocol} target for ${topicArn} does not exist!`);
+            return;
+        }
+
+        const params:AWS.SNS.Types.UnsubscribeInput = {
+            SubscriptionArn: subscriptionArn[0]
+        };
+        await this._sns.unsubscribe(params).promise();
+
+        logger.debug(`sns.target unsubscribe: exit:`);
     }
 
     protected async subscriptionExists(topicArn:string, protocol:string) : Promise<boolean> {

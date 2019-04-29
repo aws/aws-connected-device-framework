@@ -128,7 +128,7 @@ describe('SubscriptionDao', () => {
         const mockedCachedDocumentClientFactory = () => {
             return mockedCachedDocumentClient;
         };
-        instance = new SubscriptionDao('eventConfig','gsiBucket-gsi3Sort-index',mockedDocumentClientFactory,mockedCachedDocumentClientFactory);
+        instance = new SubscriptionDao('eventConfig','sk-gsi1Sort-index','gsi2Key-sk-index',mockedDocumentClientFactory,mockedCachedDocumentClientFactory);
     });
 
     it('create saves succesful', async() => {

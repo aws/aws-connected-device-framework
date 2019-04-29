@@ -57,10 +57,13 @@ exports.handler = async (event: any, _context: any) => {
     if (targets['email']!==undefined) {
       messages.email = await messageCompiler.compile(eventId, 'email', attributes);
     }
+    if (targets['sms']!==undefined) {
+      messages.default = await messageCompiler.compile(eventId, 'sms', attributes);
+    }
     // TODO: add rest of sns destination types
 
     if (messages.hasMessage) {
-      await sns.send(attributes['snsTopicArn'], messages);
+      await sns.send(attributes['snsTopicArn'], attributes['eventName'], messages);
     }
     
     // TODO: add rest of non-sns destination types

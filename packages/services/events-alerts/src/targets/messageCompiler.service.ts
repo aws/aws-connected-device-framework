@@ -26,8 +26,8 @@ export class MessageCompilerService {
 
             eventTemplateFns= {};
 
-            Object.keys(messageTemplates.templates).forEach(k=> {
-                eventTemplateFns[k] = dot.template(messageTemplates.templates[k]);
+            Object.keys(messageTemplates.supportedTargets).forEach(k=> {
+                eventTemplateFns[k] = dot.template(messageTemplates.templates[messageTemplates.supportedTargets[k]]);
             });
 
             this._templateMap[eventId]=eventTemplateFns;

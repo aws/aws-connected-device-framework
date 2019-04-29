@@ -4,20 +4,20 @@
 # This subscriptionSource code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
 import { Response } from 'express';
-import { interfaces, controller, response, requestBody, httpPost} from 'inversify-express-utils';
+import { interfaces, controller, response, requestBody, httpPost, httpGet, requestParam, httpDelete} from 'inversify-express-utils';
 import { inject } from 'inversify';
 import {TYPES} from '../../di/types';
 import {logger} from '../../utils/logger';
 import {handleError} from '../../utils/errors';
 import { SubscriptionService } from './subscription.service';
-import { SubscriptionResource } from './subscription.models';
+import { SubscriptionResource, SubscriptionResourceList } from './subscription.models';
 
-@controller('/subscriptions')
+@controller('')
 export class SubscriptionController implements interfaces.Controller {
 
     constructor( @inject(TYPES.SubscriptionService) private subscriptionService: SubscriptionService) {}
 
-    @httpPost('')
+    @httpPost('/subscriptions')
     public async createSubscription(@requestBody() subscription:SubscriptionResource, @response() res: Response) {
         logger.debug(`subscription.controller createSubscription: in: subscription:${JSON.stringify(subscription)}`);
 
@@ -27,6 +27,57 @@ export class SubscriptionController implements interfaces.Controller {
             handleError(e,res);
         }
         logger.debug(`subscription.controller createSubscription: exit:`);
+    }
+
+    @httpGet('/subscriptions/:subscriptionId')
+    public async getSubscription(@requestParam('subscriptionId') subscriptionId: string, @response() res: Response): Promise<SubscriptionResource> {
+        logger.debug(`subscription.controller getSubscription: in: subscriptionId:${subscriptionId}`);
+
+        let model;
+        try {
+            model = await this.subscriptionService.get(subscriptionId);
+
+            if (model===undefined) {
+                res.status(404).end();
+            }
+        } catch (e) {
+            handleError(e,res);
+        }
+
+        logger.debug(`subscription.controller getSubscription: exit: ${JSON.stringify(model)}`);
+        return model;
+    }
+
+    @httpDelete('/subscriptions/:subscriptionId')
+    public async deleteSubscription(@requestParam('subscriptionId') subscriptionId: string, @response() res: Response): Promise<void> {
+        logger.debug(`subscription.controller deleteSubscription: in: subscriptionId:${subscriptionId}`);
+
+        try {
+            await this.subscriptionService.delete(subscriptionId);
+        } catch (e) {
+            handleError(e,res);
+        }
+
+        logger.debug(`subscription.controller deleteSubscription: exit:`);
+    }
+
+    @httpGet('/users/:userId/subscriptions')
+    public async listSubscriptionsForUser(@requestParam('userId') userId: string, @response() res: Response): Promise<SubscriptionResourceList> {
+        logger.debug(`subscription.controller listSubscriptionsForUser: in: userId:${userId}`);
+
+        let model;
+        try {
+            model = await this.subscriptionService.listByUser(userId);
+
+            if (model===undefined) {
+                res.status(404).end();
+            }
+        } catch (e) {
+            handleError(e,res);
+        }
+
+        logger.debug(`subscription.controller listSubscriptionsForUser: exit: ${JSON.stringify(model)}`);
+        return model;
     }
 
 }

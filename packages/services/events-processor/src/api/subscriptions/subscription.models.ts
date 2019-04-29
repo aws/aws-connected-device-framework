@@ -8,15 +8,15 @@ import { EventConditions } from '../events/event.models';
 
 export interface SubscriptionResource {
     subscriptionId: string;
-    userId: string;
-    eventId: string;
-    principalValue: string;
+    userId?: string;
+    eventId?: string;
+    principalValue?: string;
     ruleParameterValues?: { [key: string] : string};
 
     targets?: SubscriptionTargets;
 
-    alerted: boolean;
-    enabled: boolean;
+    alerted?: boolean;
+    enabled?: boolean;
 }
 
 export type SubscriptionTargets = {
@@ -36,6 +36,10 @@ export type SMSSubscriptionConfig = {
 export type MQTTSubscriptionConfig = {
     topic:string
 };
+
+export interface SubscriptionResourceList {
+    results: SubscriptionResource[];
+}
 
 export class SubscriptionItem {
     id: string;
@@ -57,7 +61,7 @@ export class SubscriptionItem {
 
     sns?: {
         topicArn:string;
-    }
+    };
 
     targets?: {
         email?: EmailSubscriptionConfig;
