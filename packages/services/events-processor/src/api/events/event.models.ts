@@ -21,6 +21,16 @@ export interface EventResource {
     principal: string;
 }
 
+export interface EventResourceList {
+    results: EventResource[];
+    pagination?: {
+        offset: {
+            eventSourceId: string,
+            eventId: string
+        }
+    };
+}
+
 export interface EventItem {
     id: string;
     eventSourceId: string;

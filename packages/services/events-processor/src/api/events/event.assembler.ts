@@ -5,7 +5,8 @@
 #-------------------------------------------------------------------------------*/
 import { injectable } from 'inversify';
 import {logger} from '../../utils/logger';
-import { EventItem, EventResource } from './event.models';
+import { EventItem, EventResource, EventResourceList } from './event.models';
+import { PaginationKey } from '../subscriptions/subscription.dao';
 
 @injectable()
 export class EventAssembler {
@@ -47,4 +48,28 @@ export class EventAssembler {
         return resource;
 
     }
+
+    public toResourceList(items:EventItem[], paginationFrom?:PaginationKey): EventResourceList {
+        logger.debug(`subscription.assembler toResourceList: in: items:${JSON.stringify(items)}, paginationFrom:${JSON.stringify(paginationFrom)}`);
+
+        const list:EventResourceList= {
+            results:[]
+        };
+
+        if (paginationFrom!==undefined) {
+            list.pagination= {
+                offset: {
+                    eventSourceId: paginationFrom.eventSourceId,
+                    eventId: paginationFrom.eventId
+                }
+            };
+        }
+
+        items.forEach(i=> list.results.push(this.toResource(i)));
+
+        logger.debug(`subscription.assembler toResourceList: exit: ${JSON.stringify(list)}`);
+        return list;
+
+    }
+
 }

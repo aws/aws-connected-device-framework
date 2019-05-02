@@ -181,16 +181,17 @@ export class SubscriptionDao {
                 ':hash': createDelimitedAttribute(PkType.Event, eventId ),
                 ':range': createDelimitedAttributePrefix(PkType.Subscription)
             },
-            Select: 'ALL_ATTRIBUTES',
+            Select: 'SPECIFIC_ATTRIBUTES',
+            ProjectionExpression: 'pk,sk',
             ExclusiveStartKey: from
         };
 
-        logger.debug(`subscription.dao listSubscriptionsForEvent: params:${JSON.stringify(params)}`);
         const results = await this._cachedDc.query(params).promise();
-        if (results.Items===undefined) {
+        if (results.Items===undefined || results.Items.length===0) {
             logger.debug('subscription.dao listSubscriptionsForEvent: exit: undefined');
             return undefined;
         }
+        logger.debug(`subscription.dao listSubscriptionsForEvent: results: ${JSON.stringify(results)}`);
 
         const lastEvaluatedKey = results.LastEvaluatedKey;
         const subscriptions = this.assemble(results.Items);
@@ -296,13 +297,13 @@ export class SubscriptionDao {
         logger.debug(`subscription.dao delete: exit:`);
     }
 
-    private assemble(results:AWS.DynamoDB.DocumentClient.ItemList) : SubscriptionItemMap {
-        logger.debug(`subscription.dao assemble: items: ${JSON.stringify(results)}`);
+    private assemble(items:AWS.DynamoDB.DocumentClient.ItemList) : SubscriptionItemMap {
+        logger.debug(`subscription.dao assemble: in items: ${JSON.stringify(items)}`);
 
         const subscriptions:SubscriptionItemMap= {};
-        for(const i of results) {
+        for(const i of items) {
 
-            logger.debug(`subscription.dao listSubscriptionsForEventMessage: i: ${JSON.stringify(i)}`);
+            logger.debug(`subscription.dao assemble: i: ${JSON.stringify(i)}`);
 
             const subscriptionId = expandDelimitedAttribute(i['pk'])[1];
             let s = subscriptions[subscriptionId];

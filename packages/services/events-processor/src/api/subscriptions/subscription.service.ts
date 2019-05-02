@@ -134,7 +134,7 @@ export class SubscriptionService  {
             }
         }
 
-        // TODO: validate that all requried ruleParameterValues have been provided
+        // TODO: validate that all required ruleParameterValues have been provided
 
         const item = this.subscriptionAssembler.toItem(resource, event);
 

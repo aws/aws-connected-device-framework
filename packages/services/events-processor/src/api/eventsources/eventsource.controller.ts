@@ -4,7 +4,7 @@
 # This eventSource code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
 import { Response } from 'express';
-import { interfaces, controller, response, requestBody, httpPost, httpGet, requestParam, httpPatch} from 'inversify-express-utils';
+import { interfaces, controller, response, requestBody, httpPost, httpGet, requestParam, httpPatch, httpDelete} from 'inversify-express-utils';
 import { inject } from 'inversify';
 import {TYPES} from '../../di/types';
 import {logger} from '../../utils/logger';
@@ -77,16 +77,16 @@ export class EventSourceController implements interfaces.Controller {
         throw new Error ('NOT_IMPLEMENTED');
     }
 
-    // @httpDelete('/:eventSourceId')
-    // public async deleteEventSource(@requestParam('eventSourceId') eventSourceId:string, @response() res: Response) {
+    @httpDelete('/:eventSourceId')
+    public async deleteEventSource(@requestParam('eventSourceId') eventSourceId:string, @response() res: Response) {
 
-    //     logger.debug(`eventSource.controller deleteEventSource: eventSourceId:${eventSourceId}`);
+        logger.debug(`eventSource.controller deleteEventSource: eventSourceId:${eventSourceId}`);
 
-    //     try {
-    //         await this.eventSourceService.delete(eventSourceId);
-    //     } catch (e) {
-    //         handleError(e,res);
-    //     }
-    //     logger.debug(`eventSource.controller deleteEventSource: exit:`);
-    // }
+        try {
+            await this.eventSourceService.delete(eventSourceId);
+        } catch (e) {
+            handleError(e,res);
+        }
+        logger.debug(`eventSource.controller deleteEventSource: exit:`);
+    }
 }

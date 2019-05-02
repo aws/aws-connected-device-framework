@@ -149,19 +149,44 @@ export class EventSourceDao {
         return response;
     }
 
-    public async delete(es:EventSourceItem,): Promise<void> {
-        logger.debug(`eventsource.dao delete: in: es:${JSON.stringify(es)}`);
+    public async delete(eventSourceId:string): Promise<void> {
+        logger.debug(`eventsource.dao delete: in: eventSourceId:${eventSourceId}`);
 
-        const params:DocumentClient.DeleteItemInput = {
+        // start to build up delete requests
+        const deleteParams:DocumentClient.BatchWriteItemInput = {
+            RequestItems: {}
+        };
+        deleteParams.RequestItems[this.eventConfigTable]=[];
+
+        // find the event source record to be deleted
+        const queryParams:DocumentClient.QueryInput = {
             TableName: this.eventConfigTable,
-            Key: {
-                pk: es.id,
+            KeyConditionExpression: `#hash=:hash`,
+            ExpressionAttributeNames: {
+                '#hash': 'pk'
+            },
+            ExpressionAttributeValues: {
+                ':hash': createDelimitedAttribute(PkType.EventSource, eventSourceId)
             }
         };
 
-        logger.debug(`eventsource.dao delete: QueryInput: ${JSON.stringify(params)}`);
+        const results = await this._cachedDc.query(queryParams).promise();
 
-        await this._cachedDc.delete(params).promise();
+        // if found, add to the list to be deleted
+        if (results.Items!==undefined && results.Items.length>0) {
+            for (const item of results.Items) {
+                deleteParams.RequestItems[this.eventConfigTable].push({
+                    DeleteRequest: {
+                        Key: {
+                            pk: item.pk,
+                            sk: item.sk
+                        }
+                    }
+                });
+            }
+        }
+
+        await this._dc.batchWrite(deleteParams).promise();
 
         logger.debug(`eventsource.dao delete: exit:`);
     }

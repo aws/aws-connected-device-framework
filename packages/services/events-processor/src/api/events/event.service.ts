@@ -8,18 +8,19 @@ import { TYPES } from '../../di/types';
 import {logger} from '../../utils/logger';
 import ow from 'ow';
 import {v1 as uuid} from 'uuid';
-import { EventResource } from './event.models';
+import { EventResource, EventResourceList } from './event.models';
 import { EventAssembler } from './event.assembler';
-import { EventSourceService } from '../eventsources/eventsource.service';
 import { EventDao } from './event.dao';
 import { SubscriptionService } from '../subscriptions/subscription.service';
+import { PaginationKey } from '../subscriptions/subscription.dao';
+import { EventSourceDao } from '../eventsources/eventsource.dao';
 
 @injectable()
 export class EventService  {
 
     constructor(
         @inject(TYPES.EventDao) private eventDao: EventDao,
-        @inject(TYPES.EventSourceService) private eventSourceService: EventSourceService,
+        @inject(TYPES.EventSourceDao) private eventSourceDao: EventSourceDao,
         @inject(TYPES.SubscriptionService) private subscriptionService: SubscriptionService,
         @inject(TYPES.EventAssembler) private eventAssembler: EventAssembler) {
         }
@@ -50,7 +51,7 @@ export class EventService  {
 
         // TODO: extract ruleParameters from ruleDefinition
 
-        const eventSource = await this.eventSourceService.get(resource.eventSourceId);
+        const eventSource = await this.eventSourceDao.get(resource.eventSourceId);
         logger.debug(`event.service create: eventSource: ${JSON.stringify(eventSource)}`);
         if (eventSource===undefined) {
             throw new Error('EVENT_SOURCE_NOT_FOUND');
@@ -104,4 +105,19 @@ export class EventService  {
         logger.debug(`event.service get: exit:`);
     }
 
+    public async listByEventSource(eventSourceId:string, from?:PaginationKey) : Promise<EventResourceList> {
+        logger.debug(`event.service listByEventSource: in: eventSourceId:${eventSourceId}, from:${JSON.stringify(from)}`);
+
+        ow(eventSourceId, ow.string.nonEmpty);
+
+        const results = await this.eventDao.listEventsForEventSource(eventSourceId, from);
+
+        let model:EventResourceList;
+        if (results!==undefined) {
+            model = this.eventAssembler.toResourceList(results[0], results[1]);
+        }
+
+        logger.debug(`event.service listByEventSource: exit: model: ${JSON.stringify(model)}`);
+        return model;
+    }
 }

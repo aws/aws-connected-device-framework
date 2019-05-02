@@ -10,6 +10,7 @@ import ow from 'ow';
 import { EventSourceType, EventSourceResourceList, EventSourceDetailResource, EventSourceSummaryResource } from './eventSource.models';
 import { EventSourceDao } from './eventsource.dao';
 import { EventSourceAssembler } from './eventsource.assembler';
+import { EventService } from '../events/event.service';
 
 @injectable()
 export class EventSourceService  {
@@ -21,6 +22,7 @@ export class EventSourceService  {
         @inject('aws.lambda.dynamoDbStream.name') private dynamoDbStreamEntryLambda:string,
         @inject(TYPES.EventSourceDao) private eventSourceDao: EventSourceDao,
         @inject(TYPES.EventSourceAssembler) private eventSourceAssembler: EventSourceAssembler,
+        @inject(TYPES.EventService) private eventService: EventService,
 	    @inject(TYPES.DynamoDBFactory) dynamoDBFactory: () => AWS.DynamoDB,
         @inject(TYPES.LambdaFactory) lambdaFactory: () => AWS.Lambda) {
             this.ddb = dynamoDBFactory();
@@ -53,23 +55,6 @@ export class EventSourceService  {
         await this.eventSourceDao.create(item);
 
         logger.debug(`eventSource.service create: exit:`);
-    }
-
-    public async delete(resource:EventSourceDetailResource):Promise<void> {
-        logger.debug(`eventSource.service delete: in: model:${JSON.stringify(resource)}`);
-
-        // TODO: validate input
-        ow(resource, ow.object.nonEmpty);
-        ow(resource.eventSourceId, ow.string.nonEmpty);
-
-        // TODO: find and delete all affected events
-
-        // TODO: delete the event source data
-
-        const item = this.eventSourceAssembler.toItem(resource);
-        await this.eventSourceDao.delete(item);
-
-        logger.debug(`eventSource.service delete: exit:`);
     }
 
     private async createDDBStreamEventSource(model:EventSourceDetailResource) : Promise<void> {
@@ -117,6 +102,31 @@ export class EventSourceService  {
 
     }
 
+    public async delete(eventSourceId:string):Promise<void> {
+        logger.debug(`eventSource.service delete: in: eventSourceId:${eventSourceId}`);
+
+        // validate input
+        ow(eventSourceId, ow.string.nonEmpty);
+
+        // find and delete all affected events
+        let events = await this.eventService.listByEventSource(eventSourceId);
+        while (events.results.length>0) {
+            for(const ev of events.results) {
+                await this.eventService.delete(ev.eventId);
+            }
+            if (events.pagination!==undefined) {
+                events = await this.eventService.listByEventSource(eventSourceId, events.pagination.offset);
+            } else {
+                break;
+            }
+        }
+
+        // delete the event source data
+        await this.eventSourceDao.delete(eventSourceId);
+
+        logger.debug(`eventSource.service delete: exit:`);
+    }
+
     public async list(): Promise<EventSourceResourceList> {
         logger.debug(`eventSource.service list: in:`);
 
@@ -154,5 +164,4 @@ export class EventSourceService  {
         logger.debug(`eventSource.service get: exit: model: ${JSON.stringify(model)}`);
         return model;
     }
-
 }

@@ -9,7 +9,9 @@ import { TYPES } from '../../di/types';
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import { EventItem } from './event.models';
 import { createDelimitedAttribute, PkType, createDelimitedAttributePrefix, expandDelimitedAttribute } from '../../utils/pkUtils';
+import { PaginationKey } from '../subscriptions/subscription.dao';
 
+type EventItemMap = {[subscriptionId:string] : EventItem};
 @injectable()
 export class EventDao {
 
@@ -95,29 +97,43 @@ export class EventDao {
             }
         };
 
-        logger.debug(`event.dao get: QueryInput: ${JSON.stringify(params)}`);
-
         const results = await this._cachedDc.query(params).promise();
         if (results.Items===undefined || results.Items.length===0) {
             logger.debug('event.dao get: exit: undefined');
             return undefined;
         }
 
-        const i = results.Items[0];
-        const response:EventItem = {
-            id: expandDelimitedAttribute(i.sk)[1],
-            eventSourceId: expandDelimitedAttribute(i.pk)[1],
-            name: i.name,
-            principal: i.principal,
-            conditions: i.conditions,
-            ruleParameters: i.ruleParameters,
-            enabled: i.enabled,
-            templates: i.templates,
-            supportedTargets: i.supportedTargets
-        } ;
+        const events = this.assemble(results.Items);
 
-        logger.debug(`event.dao get: exit: response:${JSON.stringify(response)}`);
-        return response;
+        logger.debug(`event.dao get: exit: response:${JSON.stringify(events[eventId])}`);
+        return events[eventId];
+    }
+
+    private assemble(results:AWS.DynamoDB.DocumentClient.ItemList) : EventItemMap {
+        logger.debug(`event.dao assemble: items: ${JSON.stringify(results)}`);
+
+        const events:EventItemMap= {};
+        for(const i of results) {
+
+            const eventId=expandDelimitedAttribute(i.sk)[1];
+
+            const event:EventItem = {
+                id: eventId,
+                eventSourceId: expandDelimitedAttribute(i.pk)[1],
+                name: i.name,
+                principal: i.principal,
+                conditions: i.conditions,
+                ruleParameters: i.ruleParameters,
+                enabled: i.enabled,
+                templates: i.templates,
+                supportedTargets: i.supportedTargets
+            } ;
+
+            events[eventId] = event;
+        }
+
+        logger.debug(`event.dao assemble: exit: ${JSON.stringify(events)}`);
+        return events;
     }
 
     public async delete(eventId:string): Promise<void> {
@@ -172,6 +188,39 @@ export class EventDao {
         await this._dc.batchWrite(deleteParams).promise();
 
         logger.debug(`event.dao delete: exit:`);
+    }
+
+    public async listEventsForEventSource(eventSourceId:string, from?:PaginationKey): Promise<[EventItem[],PaginationKey]> {
+        logger.debug(`event.dao listEventsForEventSource: in: eventSourceId:${eventSourceId}, from:${JSON.stringify(from)}`);
+
+        const params:DocumentClient.QueryInput = {
+            TableName: this.eventConfigTable,
+            KeyConditionExpression: `#hash=:hash AND begins_with(#range, :range)`,
+            ExpressionAttributeNames: {
+                '#hash': 'pk',
+                '#range': 'sk'
+            },
+            ExpressionAttributeValues: {
+                ':hash': createDelimitedAttribute(PkType.EventSource, eventSourceId ),
+                ':range': createDelimitedAttributePrefix(PkType.Event)
+            },
+            Select: 'ALL_ATTRIBUTES',
+            ExclusiveStartKey: from
+        };
+
+        logger.debug(`event.dao listEventsForEventSource: params:${JSON.stringify(params)}`);
+        const results = await this._cachedDc.query(params).promise();
+        if (results.Items===undefined) {
+            logger.debug('event.dao listEventsForEventSource: exit: undefined');
+            return undefined;
+        }
+
+        const lastEvaluatedKey = results.LastEvaluatedKey;
+        const events = this.assemble(results.Items);
+        const response:EventItem[] = Object.keys(events).map(k => events[k]);
+
+        logger.debug(`event.dao listEventsForEventSource: exit: response${JSON.stringify(response)}, lastEvaluatedKey:${JSON.stringify(lastEvaluatedKey)}`);
+        return [response,lastEvaluatedKey];
     }
 
 }
