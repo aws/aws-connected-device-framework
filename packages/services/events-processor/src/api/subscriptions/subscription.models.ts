@@ -7,16 +7,27 @@ import { EventConditions } from '../events/event.models';
 #-------------------------------------------------------------------------------*/
 
 export interface SubscriptionResource {
-    subscriptionId: string;
-    userId?: string;
-    eventId?: string;
+    id: string;
+
     principalValue?: string;
     ruleParameterValues?: { [key: string] : string};
+    event?: {
+        id: string;
+        name?: string;
+        conditions?: EventConditions;
+    };
+    user?: {
+        id: string;
+    };
 
-    targets?: SubscriptionTargets;
+    targets?: {
+        email?: EmailSubscriptionConfig;
+        sms?: SMSSubscriptionConfig;
+        mqtt?: MQTTSubscriptionConfig;
+    };
 
-    alerted?: boolean;
     enabled?: boolean;
+    alerted?: boolean;
 }
 
 export type SubscriptionTargets = {
@@ -39,6 +50,12 @@ export type MQTTSubscriptionConfig = {
 
 export interface SubscriptionResourceList {
     results: SubscriptionResource[];
+    pagination?: {
+        offset: {
+            eventId: string,
+            subscriptionId: string
+        }
+    };
 }
 
 export class SubscriptionItem {

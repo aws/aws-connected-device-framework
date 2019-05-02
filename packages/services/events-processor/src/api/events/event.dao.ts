@@ -103,8 +103,6 @@ export class EventDao {
             return undefined;
         }
 
-        logger.debug(`query result: ${JSON.stringify(results)}`);
-
         const i = results.Items[0];
         const response:EventItem = {
             id: expandDelimitedAttribute(i.sk)[1],
@@ -120,6 +118,60 @@ export class EventDao {
 
         logger.debug(`event.dao get: exit: response:${JSON.stringify(response)}`);
         return response;
+    }
+
+    public async delete(eventId:string): Promise<void> {
+        logger.debug(`event.dao delete: in: eventId:${eventId}`);
+
+        // start to build up delete requests
+        const deleteParams:DocumentClient.BatchWriteItemInput = {
+            RequestItems: {}
+        };
+        deleteParams.RequestItems[this.eventConfigTable]=[];
+
+        // find the event source record to be deleted
+        const findByGSIParams:DocumentClient.QueryInput = {
+            TableName: this.eventConfigTable,
+            IndexName: this.eventConfigGSI1,
+            KeyConditionExpression: `#sk=:sk`,
+            ExpressionAttributeNames: {
+                '#sk': 'sk'
+            },
+            ExpressionAttributeValues: {
+                ':sk': createDelimitedAttribute(PkType.Event, eventId)
+            }
+        };
+
+        const results = await this._cachedDc.query(findByGSIParams).promise();
+
+        // if found, add to the list to be deleted
+        if (results.Items!==undefined && results.Items.length>0) {
+            for (const item of results.Items) {
+                deleteParams.RequestItems[this.eventConfigTable].push({
+                    DeleteRequest: {
+                        Key: {
+                            pk: item.pk,
+                            sk: item.sk
+                        }
+                    }
+                });
+            }
+        }
+
+        // add the remaining event items to be deleted
+        deleteParams.RequestItems[this.eventConfigTable].push({
+            DeleteRequest: {
+                Key: {
+                    pk: createDelimitedAttribute(PkType.Event, eventId),
+                    sk: createDelimitedAttribute(PkType.Type, PkType.Event)
+                }
+            }
+        });
+
+        // delete them
+        await this._dc.batchWrite(deleteParams).promise();
+
+        logger.debug(`event.dao delete: exit:`);
     }
 
 }

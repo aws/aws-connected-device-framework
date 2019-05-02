@@ -12,7 +12,7 @@ export function createDelimitedAttribute(type:PkType, ...items:(string|number|bo
 }
 
 export function createDelimitedAttributePrefix(type:PkType, ...items:(string|number|boolean)[]) {
-    return `${createDelimitedAttribute(type, ...items)}${PK_DELIMITER}`;
+    return `${createDelimitedAttribute(type, ...items)}`;
 }
 
 export function expandDelimitedAttribute(value:string) {

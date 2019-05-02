@@ -55,6 +55,23 @@ export class EventSourceService  {
         logger.debug(`eventSource.service create: exit:`);
     }
 
+    public async delete(resource:EventSourceDetailResource):Promise<void> {
+        logger.debug(`eventSource.service delete: in: model:${JSON.stringify(resource)}`);
+
+        // TODO: validate input
+        ow(resource, ow.object.nonEmpty);
+        ow(resource.eventSourceId, ow.string.nonEmpty);
+
+        // TODO: find and delete all affected events
+
+        // TODO: delete the event source data
+
+        const item = this.eventSourceAssembler.toItem(resource);
+        await this.eventSourceDao.delete(item);
+
+        logger.debug(`eventSource.service delete: exit:`);
+    }
+
     private async createDDBStreamEventSource(model:EventSourceDetailResource) : Promise<void> {
         logger.debug(`eventSource.service createDDBStreamEventSource: in: model:${JSON.stringify(model)}`);
 

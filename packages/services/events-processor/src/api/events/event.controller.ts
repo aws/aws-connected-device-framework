@@ -4,7 +4,7 @@
 # This event code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
 import { Response } from 'express';
-import { interfaces, controller, response, requestBody, httpPost, httpGet, requestParam} from 'inversify-express-utils';
+import { interfaces, controller, response, requestBody, httpPost, httpGet, requestParam, httpDelete} from 'inversify-express-utils';
 import { inject } from 'inversify';
 import {TYPES} from '../../di/types';
 import {logger} from '../../utils/logger';
@@ -45,6 +45,19 @@ export class EventController implements interfaces.Controller {
         }
         logger.debug(`event.controller getEvent: exit: ${JSON.stringify(model)}`);
         return model;
+    }
+
+    @httpDelete('/:eventId')
+    public async deleteEvent(@requestParam('eventId') eventId:string, @response() res: Response): Promise<void> {
+
+        logger.debug(`event.controller deleteEvent: eventId:${eventId}`);
+
+        try {
+            await this.eventService.delete(eventId);
+        } catch (e) {
+            handleError(e,res);
+        }
+        logger.debug(`event.controller deleteEvent: exit:`);
     }
 
 }

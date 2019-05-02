@@ -12,6 +12,7 @@ import { EventResource } from './event.models';
 import { EventAssembler } from './event.assembler';
 import { EventSourceService } from '../eventsources/eventsource.service';
 import { EventDao } from './event.dao';
+import { SubscriptionService } from '../subscriptions/subscription.service';
 
 @injectable()
 export class EventService  {
@@ -19,6 +20,7 @@ export class EventService  {
     constructor(
         @inject(TYPES.EventDao) private eventDao: EventDao,
         @inject(TYPES.EventSourceService) private eventSourceService: EventSourceService,
+        @inject(TYPES.SubscriptionService) private subscriptionService: SubscriptionService,
         @inject(TYPES.EventAssembler) private eventAssembler: EventAssembler) {
         }
 
@@ -37,7 +39,7 @@ export class EventService  {
                 ow(resource.templates[resource.supportedTargets[key]], ow.string.nonEmpty);
             }
         }
-        
+
         // set defaults
         resource.eventId = uuid();
         if (resource.enabled===undefined) {
@@ -76,6 +78,30 @@ export class EventService  {
 
         logger.debug(`event.service get: exit: model: ${JSON.stringify(model)}`);
         return model;
+    }
+
+    public async delete(eventId:string): Promise<void> {
+        logger.debug(`event.service get: in: eventId:${eventId}`);
+
+        ow(eventId, ow.string.nonEmpty);
+
+        // find and delete all affected subscriptions
+        let subscriptions = await this.subscriptionService.listByEvent(eventId);
+        while (subscriptions.results.length>0) {
+            for(const sub of subscriptions.results) {
+                await this.subscriptionService.delete(sub.id);
+            }
+            if (subscriptions.pagination!==undefined) {
+                subscriptions = await this.subscriptionService.listByEvent(eventId, subscriptions.pagination.offset);
+            } else {
+                break;
+            }
+        }
+
+        // delete the event
+        await this.eventDao.delete(eventId);
+
+        logger.debug(`event.service get: exit:`);
     }
 
 }

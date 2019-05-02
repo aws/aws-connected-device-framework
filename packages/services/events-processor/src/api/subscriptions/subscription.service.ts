@@ -10,16 +10,16 @@ import ow from 'ow';
 import {v1 as uuid} from 'uuid';
 import { SubscriptionResource, SubscriptionResourceList } from './subscription.models';
 import { SubscriptionAssembler } from './subscription.assembler';
-import { SubscriptionDao } from './subscription.dao';
-import { EventService } from '../events/event.service';
+import { SubscriptionDao, PaginationKey } from './subscription.dao';
 import { TargetService } from './targets/target.service';
+import { EventDao } from '../events/event.dao';
 
 @injectable()
 export class SubscriptionService  {
 
     constructor(
         @inject(TYPES.SubscriptionDao) private subscriptionDao: SubscriptionDao,
-        @inject(TYPES.EventService) private eventService: EventService,
+        @inject(TYPES.EventDao) private eventDao: EventDao,
         @inject(TYPES.SubscriptionAssembler) private subscriptionAssembler: SubscriptionAssembler,
         @inject(TYPES.TargetService) private targetService: TargetService) {
         }
@@ -69,13 +69,31 @@ export class SubscriptionService  {
         return model;
     }
 
+    public async listByEvent(eventId:string, from?:PaginationKey) : Promise<SubscriptionResourceList> {
+        logger.debug(`subscription.service listByEvent: in: eventId:${eventId}, from:${JSON.stringify(from)}`);
+
+        ow(eventId, ow.string.nonEmpty);
+
+        const results = await this.subscriptionDao.listSubscriptionsForEvent(eventId, from);
+
+        let model:SubscriptionResourceList;
+        if (results!==undefined) {
+            model = this.subscriptionAssembler.toResourceList(results[0], results[1]);
+        }
+
+        logger.debug(`subscription.service listByEvent: exit: model: ${JSON.stringify(model)}`);
+        return model;
+    }
+
     public async create(resource:SubscriptionResource) : Promise<void> {
         logger.debug(`subscription.service create: in: model:${JSON.stringify(resource)}`);
 
         // validate input
         ow(resource, ow.object.nonEmpty);
-        ow(resource.userId, ow.string.nonEmpty);
-        ow(resource.eventId, ow.string.nonEmpty);
+        ow(resource.user, ow.object.nonEmpty);
+        ow(resource.user.id, ow.string.nonEmpty);
+        ow(resource.event, ow.object.nonEmpty);
+        ow(resource.event.id, ow.string.nonEmpty);
         ow(resource.principalValue, ow.string.nonEmpty);
         if (resource.targets!==undefined) {
             if (resource.targets.email!==undefined) {
@@ -90,14 +108,14 @@ export class SubscriptionService  {
         }
 
         // set defaults
-        resource.subscriptionId = uuid();
+        resource.id = uuid();
         resource.alerted=false;
         if (resource.enabled===undefined) {
             resource.enabled=true;
         }
 
         // verify the provided event exists
-        const event = await this.eventService.get(resource.eventId);
+        const event = await this.eventDao.get(resource.event.id);
         logger.debug(`subscription.service create: event: ${JSON.stringify(event)}`);
         if (event===undefined) {
             throw new Error('EVENT_NOT_FOUND');

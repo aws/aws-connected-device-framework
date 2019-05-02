@@ -4,7 +4,7 @@
 # This eventSource code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
 import { Response } from 'express';
-import { interfaces, controller, response, requestBody, httpPost, httpGet, requestParam, httpPatch, httpDelete} from 'inversify-express-utils';
+import { interfaces, controller, response, requestBody, httpPost, httpGet, requestParam, httpPatch} from 'inversify-express-utils';
 import { inject } from 'inversify';
 import {TYPES} from '../../di/types';
 import {logger} from '../../utils/logger';
@@ -75,32 +75,18 @@ export class EventSourceController implements interfaces.Controller {
         logger.debug(`eventSource.controller updateEventSource: eventSource:${JSON.stringify(eventSource)}, eventSourceId:${eventSourceId}`);
 
         throw new Error ('NOT_IMPLEMENTED');
-
-        // try {
-        //     const r = await this.eventSourceService.update(eventSource);
-
-        //     if (r===undefined) {
-        //         res.status(404).end();
-        //     } else {
-        //         res.status(204).end();
-        //     }
-        // } catch (e) {
-        //     handleError(e,res);
-        // }
-        // logger.debug(`eventSource.controller updateEventSource: exit:`);
     }
 
-    @httpDelete('/:eventSourceId')
-    public async deleteEventSource(@requestParam('eventSourceId') eventSourceId:string, @response() _res: Response) {
+    // @httpDelete('/:eventSourceId')
+    // public async deleteEventSource(@requestParam('eventSourceId') eventSourceId:string, @response() res: Response) {
 
-        logger.debug(`eventSource.controller deleteEventSource: eventSourceId:${eventSourceId}`);
+    //     logger.debug(`eventSource.controller deleteEventSource: eventSourceId:${eventSourceId}`);
 
-        throw new Error ('NOT_IMPLEMENTED');
-        // try {
-        //     await this.eventSourceService.delete(eventSourceId);
-        // } catch (e) {
-        //     handleError(e,res);
-        // }
-        // logger.debug(`eventSource.controller deleteEventSource: exit:`);
-    }
+    //     try {
+    //         await this.eventSourceService.delete(eventSourceId);
+    //     } catch (e) {
+    //         handleError(e,res);
+    //     }
+    //     logger.debug(`eventSource.controller deleteEventSource: exit:`);
+    // }
 }

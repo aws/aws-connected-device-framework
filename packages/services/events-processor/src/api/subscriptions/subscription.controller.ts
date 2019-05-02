@@ -4,7 +4,7 @@
 # This subscriptionSource code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
 import { Response } from 'express';
-import { interfaces, controller, response, requestBody, httpPost, httpGet, requestParam, httpDelete} from 'inversify-express-utils';
+import { interfaces, controller, response, requestBody, httpPost, httpGet, requestParam, httpDelete, queryParam} from 'inversify-express-utils';
 import { inject } from 'inversify';
 import {TYPES} from '../../di/types';
 import {logger} from '../../utils/logger';
@@ -77,6 +77,35 @@ export class SubscriptionController implements interfaces.Controller {
         }
 
         logger.debug(`subscription.controller listSubscriptionsForUser: exit: ${JSON.stringify(model)}`);
+        return model;
+    }
+
+    @httpGet('/events/:eventId/subscriptions')
+    public async listSubscriptionsForEvent(@requestParam('eventId') eventId: string, @queryParam('fromSubscriptionId') fromSubscriptionId:string,
+        @response() res: Response): Promise<SubscriptionResourceList> {
+
+        logger.debug(`subscription.controller listSubscriptionsForEvent: in: eventId:${eventId}, fromSubscriptionId:${fromSubscriptionId}`);
+
+        let model;
+        try {
+            let from;
+            if (fromSubscriptionId!==undefined && fromSubscriptionId.length>0) {
+                from = {
+                    eventId,
+                    subscriptionId: fromSubscriptionId
+                };
+            }
+            model = await this.subscriptionService.listByEvent(eventId, from);
+
+            if (model===undefined) {
+                res.status(404).end();
+            }
+
+        } catch (e) {
+            handleError(e,res);
+        }
+
+        logger.debug(`subscription.controller listSubscriptionsForEvent: exit: ${JSON.stringify(model)}`);
         return model;
     }
 

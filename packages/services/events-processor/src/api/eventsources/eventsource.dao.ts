@@ -148,4 +148,21 @@ export class EventSourceDao {
         logger.debug(`eventsource.dao get: exit: response:${JSON.stringify(response)}`);
         return response;
     }
+
+    public async delete(es:EventSourceItem,): Promise<void> {
+        logger.debug(`eventsource.dao delete: in: es:${JSON.stringify(es)}`);
+
+        const params:DocumentClient.DeleteItemInput = {
+            TableName: this.eventConfigTable,
+            Key: {
+                pk: es.id,
+            }
+        };
+
+        logger.debug(`eventsource.dao delete: QueryInput: ${JSON.stringify(params)}`);
+
+        await this._cachedDc.delete(params).promise();
+
+        logger.debug(`eventsource.dao delete: exit:`);
+    }
 }
