@@ -289,6 +289,7 @@ Resources:
             Resource: !GetAtt DAXCluster.Arn
           - Sid: "lambda"
             Action:
+              - "lambda:AddPermission"
               - "lambda:CreateEventSourceMapping"
               - "lambda:DeleteEventSourceMapping"
               - "lambda:ListEventSourceMappings"
@@ -305,6 +306,13 @@ Resources:
             Effect: Allow
             Resource: 
             - !Sub "arn:aws:sns:${AWS::Region}:${AWS::AccountId}:cdf-events-*"
+          - Sid: "iot"
+            Action:
+              - "iot:CreateTopicRule"
+              - "iot:DeleteTopicRule"
+            Effect: Allow
+            Resource: 
+            - !Sub "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:rule/cdfEvents_*"
 
   DynamoDBStreamLambdaFunction:
     Type: AWS::Serverless::Function
@@ -324,11 +332,29 @@ Resources:
           EVENTSPROCESSOR_AWS_DYNAMODB_DAX_ENDPOINTS: !GetAtt DAXCluster.ClusterDiscoveryEndpoint
       Tracing: Active
 
+  LambdaInvokeLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../build/build.zip
+      Handler: lambda_proxy_invoke.handler
+      MemorySize: 512
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Runtime: nodejs8.10
+      Timeout: 30
+      Environment:
+        Variables:
+          NODE_CONFIG_DIR: './config'
+          NODE_CONFIG: !Ref ApplicationConfigurationOverride
+          EVENTSPROCESSOR_AWS_DYNAMODB_TABLES_EVENTCONFIG_NAME: !Ref EventConfigTable
+          EVENTSPROCESSOR_AWS_DYNAMODB_TABLES_EVENTNOTIFICATIONS_NAME: !Ref EventNotificationsTable
+          EVENTSPROCESSOR_AWS_DYNAMODB_DAX_ENDPOINTS: !GetAtt DAXCluster.ClusterDiscoveryEndpoint
+      Tracing: Active
+
   RESTLambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: ../build/build.zip
-      Handler: lambda_proxy_apigateway.handler
+      Handler: lambda_proxy_restapi.handler
 
       MemorySize: 256
       Role: !GetAtt LambdaExecutionRole.Arn
@@ -342,6 +368,7 @@ Resources:
           EVENTSPROCESSOR_AWS_DYNAMODB_TABLES_EVENTNOTIFICATIONS_NAME: !Ref EventNotificationsTable
           EVENTSPROCESSOR_AWS_DYNAMODB_DAX_ENDPOINTS: !GetAtt DAXCluster.ClusterDiscoveryEndpoint
           EVENTSPROCESSOR_AWS_LAMBDA_DYNAMODBSTREAM_NAME: !Ref DynamoDBStreamLambdaFunction
+          EVENTSPROCESSOR_AWS_LAMBDA_LAMBDAINVOKE_ARN: !GetAtt LambdaInvokeLambdaFunction.Arn
       Tracing: Active
 
       Events:
@@ -533,11 +560,19 @@ Outputs:
     Value: !Sub "${DynamoDBStreamLambdaFunction.Arn}"
     Export: 
       Name: !Sub "${AWS::StackName}-DynamoDBStreamLambdaArn"
+  LambdaInvokeLambdaFunctionArn:
+    Description: Lambda Invoke Lambda Arn
+    Value: !Sub "${LambdaInvokeLambdaFunction.Arn}"
+    Export: 
+      Name: !Sub "${AWS::StackName}-LambdaInvokeLambdaArn"
   RESTLambdaArn:
     Description: REST Lambda Arn
     Value: !Sub "${RESTLambdaFunction.Arn}"
     Export: 
       Name: !Sub "${AWS::StackName}-RESTLambdaArn"
+  LambdaInvokeLambdaConsoleUrl:
+    Description: Console URL for the Lambda Function.
+    Value: !Sub "https://{AWS::Region}.console.aws.amazon.com/lambda/home?region={AWS::Region}#/functions/{LambdaInvokeLambdaFunction}"
   DynamoDBStreamLambdaConsoleUrl:
     Description: Console URL for the Lambda Function.
     Value: !Sub "https://{AWS::Region}.console.aws.amazon.com/lambda/home?region={AWS::Region}#/functions/{DynamoDBStreamLambdaFunction}"

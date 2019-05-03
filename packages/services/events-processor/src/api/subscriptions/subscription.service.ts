@@ -85,7 +85,7 @@ export class SubscriptionService  {
         return model;
     }
 
-    public async create(resource:SubscriptionResource) : Promise<void> {
+    public async create(resource:SubscriptionResource) : Promise<string> {
         logger.debug(`subscription.service create: in: model:${JSON.stringify(resource)}`);
 
         // validate input
@@ -144,7 +144,8 @@ export class SubscriptionService  {
         // save the subscription info
         await this.subscriptionDao.create(item);
 
-        logger.debug(`subscription.service create: exit:`);
+        logger.debug(`subscription.service create: exit:${item.id}`);
+        return item.id;
 
     }
 

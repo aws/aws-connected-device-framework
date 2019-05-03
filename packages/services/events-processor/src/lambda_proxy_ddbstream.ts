@@ -14,7 +14,7 @@ let transformer:DDBStreamTransformer;
 let filter:FilterService;
 
 exports.handler = async (event: any, _context: any) => {
-  logger.debug(`handler: event: ${JSON.stringify(event)}`);
+  logger.debug(`lambda_proxy_ddbstream handler: event: ${JSON.stringify(event)}`);
 
   // init
   if (transformer===undefined) {
@@ -31,5 +31,7 @@ exports.handler = async (event: any, _context: any) => {
     // process the message
     await filter.filter(commonEvents);
   }
+
+  logger.debug(`lambda_proxy_ddbstream handler: exit:`);
 
 };

@@ -17,12 +17,15 @@ export class EventController implements interfaces.Controller {
 
     constructor( @inject(TYPES.EventService) private eventService: EventService) {}
 
-    @httpPost('/events')
-    public async createEvent(@requestBody() event:EventResource, @response() res: Response) {
-        logger.debug(`event.controller createEvent: in: event:${JSON.stringify(event)}`);
+    @httpPost('/eventsources/:eventSourceId/events')
+    public async createEvent(@requestParam('eventSourceId') eventSourceId:string, @requestBody() event:EventResource, @response() res: Response) {
+        logger.debug(`event.controller createEvent: in: eventSourceId:${eventSourceId}, event:${JSON.stringify(event)}`);
+
+        event.eventSourceId=eventSourceId;
 
         try {
-            await this.eventService.create(event);
+            const eventId = await this.eventService.create(event);
+            res.location(`/events/${eventId}`);
         } catch (e) {
             handleError(e,res);
         }

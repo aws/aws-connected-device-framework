@@ -11,29 +11,26 @@ import { EventSourceType, EventSourceResourceList, EventSourceDetailResource, Ev
 import { EventSourceDao } from './eventsource.dao';
 import { EventSourceAssembler } from './eventsource.assembler';
 import { EventService } from '../events/event.service';
+import { DynamoDbEventSource } from './sources/dynamodb.source';
+import { IotCoreEventSource } from './sources/iotcore.source';
 
 @injectable()
 export class EventSourceService  {
 
-    private ddb: AWS.DynamoDB;
-    private lambda: AWS.Lambda;
-
     constructor(
-        @inject('aws.lambda.dynamoDbStream.name') private dynamoDbStreamEntryLambda:string,
         @inject(TYPES.EventSourceDao) private eventSourceDao: EventSourceDao,
         @inject(TYPES.EventSourceAssembler) private eventSourceAssembler: EventSourceAssembler,
-        @inject(TYPES.EventService) private eventService: EventService,
-	    @inject(TYPES.DynamoDBFactory) dynamoDBFactory: () => AWS.DynamoDB,
-        @inject(TYPES.LambdaFactory) lambdaFactory: () => AWS.Lambda) {
-            this.ddb = dynamoDBFactory();
-            this.lambda = lambdaFactory();
+        @inject(TYPES.DynamoDbEventSource) private dynamoDbEventSource: DynamoDbEventSource,
+        @inject(TYPES.IotCoreEventSource) private iotCoreEventSource: IotCoreEventSource,
+        @inject(TYPES.EventService) private eventService: EventService) {
         }
 
-    public async create(resource:EventSourceDetailResource) : Promise<void> {
+    public async create(resource:EventSourceDetailResource) : Promise<string> {
         logger.debug(`eventSource.service create: in: model:${JSON.stringify(resource)}`);
 
         // TODO: validate input
         ow(resource, ow.object.nonEmpty);
+        ow(resource.name, ow.string.nonEmpty);
         ow(resource.sourceType, ow.string.nonEmpty);
         ow(resource.principal, ow.string.nonEmpty);
 
@@ -43,9 +40,11 @@ export class EventSourceService  {
         }
 
         switch (resource.sourceType) {
-            case EventSourceType.DynamoDBStream:
-                ow( resource.tableName, ow.string.nonEmpty);
-                await this.createDDBStreamEventSource(resource);
+            case EventSourceType.DynamoDB:
+                await this.dynamoDbEventSource.create(resource);
+                break;
+            case EventSourceType.IoTCore:
+                await this.iotCoreEventSource.create(resource);
                 break;
             default:
                 throw new Error('NOT_IMPLEMENTED');
@@ -54,52 +53,8 @@ export class EventSourceService  {
         const item = this.eventSourceAssembler.toItem(resource);
         await this.eventSourceDao.create(item);
 
-        logger.debug(`eventSource.service create: exit:`);
-    }
-
-    private async createDDBStreamEventSource(model:EventSourceDetailResource) : Promise<void> {
-        logger.debug(`eventSource.service createDDBStreamEventSource: in: model:${JSON.stringify(model)}`);
-
-        // check to see if stream already exists on table
-        let tableInfo: AWS.DynamoDB.Types.DescribeTableOutput;
-        try  {
-            tableInfo = await this.ddb.describeTable({TableName:model.tableName}).promise();
-            logger.debug(`describeTable result: ${JSON.stringify(tableInfo)}`);
-        } catch (err) {
-            logger.error(`describeTable err:${JSON.stringify(err)}`);
-            throw new Error(`INVALID_TABLE: Table ${model.tableName} not found.`);
-        }
-
-        // if streams are not enabled, configure it
-        if (tableInfo.Table.StreamSpecification === undefined || tableInfo.Table.StreamSpecification.StreamEnabled===false) {
-            logger.debug(`Stream not enabled for table ${model.tableName}, therefore enabling`);
-            const updateParams: AWS.DynamoDB.UpdateTableInput = {
-                TableName: model.tableName,
-                StreamSpecification: {
-                    StreamEnabled: true,
-                    StreamViewType: 'NEW_IMAGE'
-                }
-            };
-            await this.ddb.updateTable(updateParams).promise();
-            tableInfo = await this.ddb.describeTable({TableName:model.tableName}).promise();
-        }
-
-        // wire up the event source mapping
-        const listParams:AWS.Lambda.Types.ListEventSourceMappingsRequest = {
-            EventSourceArn: tableInfo.Table.LatestStreamArn,
-            FunctionName: this.dynamoDbStreamEntryLambda
-        };
-        const eventSources = await this.lambda.listEventSourceMappings(listParams).promise();
-        if (eventSources.EventSourceMappings.length===0) {
-            const createParams:AWS.Lambda.Types.CreateEventSourceMappingRequest = {
-                EventSourceArn: tableInfo.Table.LatestStreamArn,
-                FunctionName: this.dynamoDbStreamEntryLambda,
-                Enabled: true,
-                StartingPosition: 'LATEST'
-            };
-            await this.lambda.createEventSourceMapping(createParams).promise();
-        }
-
+        logger.debug(`eventSource.service create: exit:${item.id}`);
+        return item.id;
     }
 
     public async delete(eventSourceId:string):Promise<void> {
@@ -107,6 +62,13 @@ export class EventSourceService  {
 
         // validate input
         ow(eventSourceId, ow.string.nonEmpty);
+
+        // get the eventsource info
+        const eventSource = await this.get(eventSourceId);
+        if (eventSource===undefined) {
+            logger.warn(`eventSource.service delete: EventSourceId ${eventSourceId} does not exist.`);
+            return;
+        }
 
         // find and delete all affected events
         let events = await this.eventService.listByEventSource(eventSourceId);
@@ -121,6 +83,18 @@ export class EventSourceService  {
             }
         }
 
+        // delete the physical event source
+        switch (eventSource.sourceType) {
+            case EventSourceType.DynamoDB:
+                await this.dynamoDbEventSource.delete(eventSourceId);
+                break;
+            case EventSourceType.IoTCore:
+                await this.iotCoreEventSource.delete(eventSourceId);
+                break;
+            default:
+                throw new Error('NOT_IMPLEMENTED');
+        }
+
         // delete the event source data
         await this.eventSourceDao.delete(eventSourceId);
 
@@ -131,15 +105,14 @@ export class EventSourceService  {
         logger.debug(`eventSource.service list: in:`);
 
         const items = await this.eventSourceDao.list();
-        // const model = this.eventSourceAssembler.toModelList(nodes);
 
-        // TODO: refactor into assembler
         const r:EventSourceResourceList = {
             results:[]
         };
         items.forEach(i=> {
             const resource:EventSourceSummaryResource = {
-                eventSourceId: i.id
+                id: i.id,
+                name: i.name
             };
             r.results.push(resource);
         });

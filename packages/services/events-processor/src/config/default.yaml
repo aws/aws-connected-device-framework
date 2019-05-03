@@ -19,6 +19,8 @@ aws:
   lambda:
     dynamoDbStream:
       name: MUST_SET!
+    lambdaInvoke:
+      arn: MUST_SET!
 
 cors:
   origin:

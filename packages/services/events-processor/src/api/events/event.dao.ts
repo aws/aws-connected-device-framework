@@ -67,6 +67,7 @@ export class EventDao {
                 Item: {
                     pk: eventDbId,
                     sk: createDelimitedAttribute(PkType.Type, PkType.Event),
+                    name: item.name,
                     gsi1Sort: createDelimitedAttribute(PkType.Event, item.enabled, item.id),
                 }
             }

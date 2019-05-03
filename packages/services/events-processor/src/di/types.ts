@@ -11,6 +11,9 @@ export const TYPES = {
     EventSourceDao: Symbol.for('EventSourceDao'),
     EventSourceAssembler: Symbol.for('EventSourceAssembler'),
 
+    DynamoDbEventSource: Symbol.for('DynamoDbEventSource'),
+    IotCoreEventSource: Symbol.for('IotCoreEventSource'),
+
     EventService: Symbol.for('EventService'),
     EventDao: Symbol.for('EventDao'),
     EventAssembler: Symbol.for('EventAssembler'),
@@ -43,5 +46,8 @@ export const TYPES = {
     LambdaFactory:  Symbol.for('Factory<Lambda>'),
 
     SNS:  Symbol.for('SNS'),
-    SNSFactory:  Symbol.for('Factory<SNS>')
+    SNSFactory:  Symbol.for('Factory<SNS>'),
+
+    Iot:  Symbol.for('Iot'),
+    IotFactory:  Symbol.for('Factory<Iot>')
 };

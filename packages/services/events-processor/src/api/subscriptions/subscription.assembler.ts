@@ -12,19 +12,19 @@ import { PaginationKey } from './subscription.dao';
 @injectable()
 export class SubscriptionAssembler {
 
-    public toItem(subscription:SubscriptionResource, event:EventItem): SubscriptionItem {
-        logger.debug(`subscription.assembler toItem: in: subscription:${JSON.stringify(subscription)}, event:${JSON.stringify(event)}`);
+    public toItem(resource:SubscriptionResource, event:EventItem): SubscriptionItem {
+        logger.debug(`subscription.assembler toItem: in: resource:${JSON.stringify(resource)}, event:${JSON.stringify(event)}`);
 
         const item:SubscriptionItem = {
-            id: subscription.id,
+            id: resource.id,
 
-            principalValue: subscription.principalValue,
-            ruleParameterValues: subscription.ruleParameterValues,
-            enabled: subscription.enabled,
-            alerted: subscription.alerted,
+            principalValue: resource.principalValue,
+            ruleParameterValues: resource.ruleParameterValues,
+            enabled: resource.enabled,
+            alerted: resource.alerted,
 
             event: {
-                id: subscription.event.id,
+                id: resource.event.id,
                 name: event.name,
                 conditions: event.conditions
             },
@@ -35,10 +35,10 @@ export class SubscriptionAssembler {
             },
 
             user: {
-                id: subscription.user.id
+                id: resource.user.id
             },
 
-            targets: subscription.targets
+            targets: resource.targets
         };
 
         logger.debug(`subscription.assembler toItem: exit: ${JSON.stringify(item)}`);

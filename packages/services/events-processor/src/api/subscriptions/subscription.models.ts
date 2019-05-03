@@ -64,9 +64,9 @@ export class SubscriptionItem {
     principalValue?: string;
     ruleParameterValues?: { [key: string] : string};
     event?: {
-        id: string;
-        name: string;
-        conditions: EventConditions;
+        id?: string;
+        name?: string;
+        conditions?: EventConditions;
     };
     eventSource?: {
         id: string;

@@ -27,7 +27,7 @@ describe('DDBStreamTransformer', () => {
     it('only inserts and updates transformed', async() => {
         // stubs
         const eventSourceId = 'arn:aws:dynamodb:us-west-2:123456789012:table/ExampleTableWithStream';
-        const eventSource = stubbedEventSource(eventSourceId, 'Device', true);
+        const eventSource = stubbedEventSource(eventSourceId, 'My Source', 'Device', true);
         const event = JSON.parse(await readFileAsync(path.join(__dirname, 'testResources/ddbStream-event-valid.json'), {encoding: 'utf8'}));
 
         const expected:CommonEvent[] = [
@@ -117,10 +117,11 @@ describe('DDBStreamTransformer', () => {
         expect(actual).toEqual(expected);
     });
 
-    function stubbedEventSource(eventSourceId:string, principal:string, enabled:boolean) {
+    function stubbedEventSource(eventSourceId:string, name:string,  principal:string, enabled:boolean) {
         const eventSource:EventSourceItem = {
             id: eventSourceId,
-            sourceType: EventSourceType.DynamoDBStream,
+            name,
+            sourceType: EventSourceType.DynamoDB,
             principal,
             enabled
         };

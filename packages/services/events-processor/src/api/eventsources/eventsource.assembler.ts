@@ -14,11 +14,13 @@ export class EventSourceAssembler {
         logger.debug(`eventsource.assembler toItem: in: resource:${JSON.stringify(resource)}`);
 
         const item:EventSourceItem = {
-            id: resource.eventSourceId,
+            id: resource.id,
+            name: resource.name,
             sourceType: resource.sourceType,
             principal: resource.principal,
             enabled: resource.enabled,
-            tableName: resource.tableName
+            dynamoDb: resource.dynamoDb,
+            iotCore: resource.iotCore
         };
 
         logger.debug(`eventsource.assembler toItem: exit: ${JSON.stringify(item)}`);
@@ -29,11 +31,13 @@ export class EventSourceAssembler {
         logger.debug(`eventsource.assembler toResource: in: resource:${JSON.stringify(item)}`);
 
         const resource:EventSourceDetailResource = {
-            eventSourceId: item.id,
+            id: item.id,
+            name: item.name,
             principal: item.principal,
             sourceType: item.sourceType,
             enabled: item.enabled,
-            tableName: item.tableName
+            dynamoDb: item.dynamoDb,
+            iotCore: item.iotCore
         };
 
         logger.debug(`eventsource.assembler toResource: exit: node: ${JSON.stringify(resource)}`);

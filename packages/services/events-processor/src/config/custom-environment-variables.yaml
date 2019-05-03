@@ -19,6 +19,8 @@ aws:
   lambda:
     dynamoDbStream:
       name: EVENTSPROCESSOR_AWS_LAMBDA_DYNAMODBSTREAM_NAME
+    lambdaInvoke:
+      arn: EVENTSPROCESSOR_AWS_LAMBDA_LAMBDAINVOKE_ARN
 
 cors:
   origin: EVENTSPROCESSOR_CORS_ORIGIN

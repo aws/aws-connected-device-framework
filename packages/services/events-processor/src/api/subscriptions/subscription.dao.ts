@@ -58,7 +58,6 @@ export class SubscriptionDao {
                     principalValue: si.principalValue,
                     ruleParameterValues: si.ruleParameterValues,
                     enabled: si.enabled,
-                    alerted: si.alerted,
                     snsTopicArn: si.sns.topicArn,
                     gsi2Key,
                     gsi2Sort: createDelimitedAttribute(PkType.Subscription, si.id)
@@ -87,6 +86,7 @@ export class SubscriptionDao {
                 Item: {
                     pk: subscriptionDbId,
                     sk: createDelimitedAttribute(PkType.User, si.user.id),
+                    name: si.event.name,
                     gsi1Sort: createDelimitedAttribute(PkType.Subscription, si.enabled, si.id),
                     gsi2Key,
                     gsi2Sort: createDelimitedAttribute(PkType.Subscription, si.id, PkType.User, si.user.id)
@@ -175,14 +175,17 @@ export class SubscriptionDao {
             KeyConditionExpression: `#hash=:hash AND begins_with(#range, :range)`,
             ExpressionAttributeNames: {
                 '#hash': 'sk',
-                '#range': 'gsi1Sort'
+                '#range': 'gsi1Sort',
+                '#pk': 'pk',
+                '#sk': 'sk',
+                '#name': 'name'
             },
             ExpressionAttributeValues: {
                 ':hash': createDelimitedAttribute(PkType.Event, eventId ),
                 ':range': createDelimitedAttributePrefix(PkType.Subscription)
             },
             Select: 'SPECIFIC_ATTRIBUTES',
-            ProjectionExpression: 'pk,sk',
+            ProjectionExpression: '#pk,#sk,#name',
             ExclusiveStartKey: from
         };
 
@@ -207,13 +210,18 @@ export class SubscriptionDao {
         const params:DocumentClient.QueryInput = {
             TableName: this.eventConfigTable,
             IndexName: this.eventConfigGSI1,
-            KeyConditionExpression: `#key=:key`,
+            KeyConditionExpression: `#hash=:hash`,
             ExpressionAttributeNames: {
-                '#key': 'sk'
+                '#hash': 'sk',
+                '#pk': 'pk',
+                '#sk': 'sk',
+                '#name': 'name'
             },
             ExpressionAttributeValues: {
-                ':key': createDelimitedAttribute(PkType.User, userId )
-            }
+                ':hash': createDelimitedAttribute(PkType.User, userId )
+            },
+            Select: 'SPECIFIC_ATTRIBUTES',
+            ProjectionExpression: '#pk,#sk,#name',
         };
 
         const results = await this._cachedDc.query(params).promise();
@@ -348,6 +356,9 @@ export class SubscriptionDao {
                 s.user = {
                     id: expandDelimitedAttribute(sk)[1]
                 };
+                if (s.event===undefined) {
+                    s.event = { name: i['name']};
+                }
 
             } else if (sk==='alertStatus') {
                 s.alerted = i['alerted'];

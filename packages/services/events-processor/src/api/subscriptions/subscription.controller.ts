@@ -17,12 +17,14 @@ export class SubscriptionController implements interfaces.Controller {
 
     constructor( @inject(TYPES.SubscriptionService) private subscriptionService: SubscriptionService) {}
 
-    @httpPost('/subscriptions')
-    public async createSubscription(@requestBody() subscription:SubscriptionResource, @response() res: Response) {
-        logger.debug(`subscription.controller createSubscription: in: subscription:${JSON.stringify(subscription)}`);
+    @httpPost('/events/:eventId/subscriptions')
+    public async createSubscription(@requestParam('eventId') eventId: string, @requestBody() subscription:SubscriptionResource, @response() res: Response) {
+        logger.debug(`subscription.controller createSubscription: in: eventId:${eventId}, subscription:${JSON.stringify(subscription)}`);
 
+        subscription.event= {id:eventId};
         try {
-            await this.subscriptionService.create(subscription);
+            const id = await this.subscriptionService.create(subscription);
+            res.location(`/subscriptions/${id}`);
         } catch (e) {
             handleError(e,res);
         }

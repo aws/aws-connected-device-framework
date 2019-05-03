@@ -12,7 +12,7 @@ import {handleError} from '../../utils/errors';
 import { EventSourceDetailResource, EventSourceResourceList } from './eventSource.models';
 import { EventSourceService } from './eventsource.service';
 
-@controller('/eventSources')
+@controller('/eventsources')
 export class EventSourceController implements interfaces.Controller {
 
     constructor( @inject(TYPES.EventSourceService) private eventSourceService: EventSourceService) {}
@@ -22,7 +22,8 @@ export class EventSourceController implements interfaces.Controller {
         logger.debug(`eventSource.controller createEventSource: in: eventSource:${JSON.stringify(eventSource)}`);
 
         try {
-            await this.eventSourceService.create(eventSource);
+            const eventId = await this.eventSourceService.create(eventSource);
+            res.location(`/eventsources/${eventId}`);
         } catch (e) {
             handleError(e,res);
         }

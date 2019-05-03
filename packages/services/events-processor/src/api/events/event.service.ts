@@ -25,7 +25,7 @@ export class EventService  {
         @inject(TYPES.EventAssembler) private eventAssembler: EventAssembler) {
         }
 
-    public async create(resource:EventResource) : Promise<void> {
+    public async create(resource:EventResource) : Promise<string> {
         logger.debug(`event.service create: in: resource:${JSON.stringify(resource)}`);
 
         // validate input
@@ -60,7 +60,8 @@ export class EventService  {
         const item = this.eventAssembler.toItem(resource, eventSource.principal);
         await this.eventDao.create(item);
 
-        logger.debug(`event.service create: exit:`);
+        logger.debug(`event.service create: exit:${resource.eventId}`);
+        return resource.eventId;
 
     }
 

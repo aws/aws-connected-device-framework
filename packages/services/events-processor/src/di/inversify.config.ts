@@ -30,6 +30,8 @@ import { TargetService } from '../api/subscriptions/targets/target.service';
 import { EmailTarget } from '../api/subscriptions/targets/email.target';
 import { SMSTarget } from '../api/subscriptions/targets/sms.target';
 import { SNSTarget } from '../api/subscriptions/targets/sns.target';
+import { DynamoDbEventSource } from '../api/eventsources/sources/dynamodb.source';
+import { IotCoreEventSource } from '../api/eventsources/sources/iotcore.source';
 
 // Load everything needed to the Container
 export const container = new Container();
@@ -41,6 +43,9 @@ container.load(configInjector.getConfigModule());
 container.bind<EventSourceService>(TYPES.EventSourceService).to(EventSourceService).inSingletonScope();
 container.bind<EventSourceDao>(TYPES.EventSourceDao).to(EventSourceDao).inSingletonScope();
 container.bind<EventSourceAssembler>(TYPES.EventSourceAssembler).to(EventSourceAssembler).inSingletonScope();
+
+container.bind<DynamoDbEventSource>(TYPES.DynamoDbEventSource).to(DynamoDbEventSource).inSingletonScope();
+container.bind<IotCoreEventSource>(TYPES.IotCoreEventSource).to(IotCoreEventSource).inSingletonScope();
 
 container.bind<EventService>(TYPES.EventService).to(EventService).inSingletonScope();
 container.bind<EventDao>(TYPES.EventDao).to(EventDao).inSingletonScope();
@@ -130,5 +135,18 @@ container.bind<interfaces.Factory<AWS.SNS>>(TYPES.SNSFactory)
             container.bind<AWS.SNS>(TYPES.SNS).toConstantValue(l);
         }
         return container.get<AWS.SNS>(TYPES.SNS);
+    };
+});
+
+decorate(injectable(), AWS.Iot);
+container.bind<interfaces.Factory<AWS.Iot>>(TYPES.IotFactory)
+    .toFactory<AWS.Iot>(() => {
+    return () => {
+
+        if (!container.isBound(TYPES.Iot)) {
+            const l = new AWS.Iot({region: config.get('aws.region')});
+            container.bind<AWS.Iot>(TYPES.Iot).toConstantValue(l);
+        }
+        return container.get<AWS.Iot>(TYPES.Iot);
     };
 });

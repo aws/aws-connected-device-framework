@@ -38,32 +38,23 @@ export class EventSourceDao {
             }
         };
 
-        const eventSourceDbId = createDelimitedAttribute(PkType.EventSource, es.id);
-
         const eventSourceCreate = {
             PutRequest: {
                 Item: {
-                    pk: eventSourceDbId,
-                    sk: eventSourceDbId,
+                    pk: createDelimitedAttribute(PkType.EventSource, es.id),
+                    sk: createDelimitedAttribute(PkType.Type, PkType.EventSource),
+                    gsi1Sort: createDelimitedAttribute(PkType.EventSource, es.enabled, es.id),
+                    name: es.name,
                     sourceType: es.sourceType,
                     principal: es.principal,
                     enabled: es.enabled,
-                    tableName: es.tableName
+                    dynamoDb: es.dynamoDb,
+                    iotCore: es.iotCore
                 }
             }
         };
 
-        const typeCreate = {
-            PutRequest: {
-                Item: {
-                    pk: eventSourceDbId,
-                    sk: createDelimitedAttribute(PkType.Type, PkType.EventSource),
-                    gsi1Sort: createDelimitedAttribute(PkType.EventSource, es.enabled, es.id),
-                }
-            }
-        };
-
-        params.RequestItems[this.eventConfigTable]=[eventSourceCreate, typeCreate];
+        params.RequestItems[this.eventConfigTable]=[eventSourceCreate];
 
         logger.debug(`eventsource.dao create: params:${JSON.stringify(params)}`);
         await this._dc.batchWrite(params).promise();
@@ -108,11 +99,13 @@ export class EventSourceDao {
 
     private assembleItem(attrs:DocumentClient.AttributeMap) {
         const r:EventSourceItem = {
-            id: expandDelimitedAttribute(attrs['pk'])[1],
-            sourceType: attrs['sourceType'],
-            principal: attrs['principal'],
-            enabled: attrs['enabled'],
-            tableName: attrs['tableName']
+            id: expandDelimitedAttribute(attrs.pk)[1],
+            name: attrs.name,
+            sourceType: attrs.sourceType,
+            principal: attrs.principal,
+            enabled: attrs.enabled,
+            dynamoDb: attrs.dynamoDb,
+            iotCore: attrs.iotCore
         } ;
         return r;
     }
@@ -122,13 +115,14 @@ export class EventSourceDao {
 
         const params:DocumentClient.QueryInput = {
             TableName: this.eventConfigTable,
-            KeyConditionExpression: `#pk = :id AND #sk = :id`,
+            KeyConditionExpression: `#hash=:hash AND #range=:range`,
             ExpressionAttributeNames: {
-                '#pk': 'pk',
-                '#sk': 'sk'
+                '#hash': 'pk',
+                '#range': 'sk'
             },
             ExpressionAttributeValues: {
-                ':id': createDelimitedAttribute(PkType.EventSource, eventSourceId)
+                ':hash': createDelimitedAttribute(PkType.EventSource, eventSourceId),
+                ':range': createDelimitedAttribute(PkType.Type, PkType.EventSource)
             }
 
         };
