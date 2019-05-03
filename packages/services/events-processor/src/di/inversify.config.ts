@@ -32,6 +32,7 @@ import { SMSTarget } from '../api/subscriptions/targets/sms.target';
 import { SNSTarget } from '../api/subscriptions/targets/sns.target';
 import { DynamoDbEventSource } from '../api/eventsources/sources/dynamodb.source';
 import { IotCoreEventSource } from '../api/eventsources/sources/iotcore.source';
+import { DynamoDbUtils } from '../utils/dynamoDb';
 
 // Load everything needed to the Container
 export const container = new Container();
@@ -64,6 +65,8 @@ container.bind<TargetService>(TYPES.TargetService).to(TargetService).inSingleton
 container.bind<SNSTarget>(TYPES.SNSTarget).to(SNSTarget).inSingletonScope();
 container.bind<EmailTarget>(TYPES.EmailTarget).to(EmailTarget).inSingletonScope();
 container.bind<SMSTarget>(TYPES.SMSTarget).to(SMSTarget).inSingletonScope();
+
+container.bind<DynamoDbUtils>(TYPES.DynamoDbUtils).to(DynamoDbUtils).inSingletonScope();
 
 // for 3rd party objects, we need to use factory injectors
 

@@ -10,21 +10,20 @@ import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import { EventItem } from './event.models';
 import { createDelimitedAttribute, PkType, createDelimitedAttributePrefix, expandDelimitedAttribute } from '../../utils/pkUtils';
 import { PaginationKey } from '../subscriptions/subscription.dao';
+import { DynamoDbUtils } from '../../utils/dynamoDb';
 
 type EventItemMap = {[subscriptionId:string] : EventItem};
 @injectable()
 export class EventDao {
 
-    private _dc: AWS.DynamoDB.DocumentClient;
     private _cachedDc: AWS.DynamoDB.DocumentClient;
 
     public constructor(
         @inject('aws.dynamoDb.tables.eventConfig.name') private eventConfigTable:string,
         @inject('aws.dynamoDb.tables.eventConfig.gsi1') private eventConfigGSI1:string,
-	    @inject(TYPES.DocumentClientFactory) documentClientFactory: () => AWS.DynamoDB.DocumentClient,
+        @inject(TYPES.DynamoDbUtils) private dynamoDbUtils:DynamoDbUtils,
 	    @inject(TYPES.CachableDocumentClientFactory) cachableDocumentClientFactory: () => AWS.DynamoDB.DocumentClient
     ) {
-        this._dc = documentClientFactory();
         this._cachedDc = cachableDocumentClientFactory();
     }
 
@@ -75,8 +74,10 @@ export class EventDao {
 
         params.RequestItems[this.eventConfigTable]=[eventCreate, typeCreate];
 
-        logger.debug(`event.dao create: params:${JSON.stringify(params)}`);
-        await this._dc.batchWrite(params).promise();
+        const result = await this.dynamoDbUtils.batchWriteAll(params);
+        if (this.dynamoDbUtils.hasUnprocessedItems(result)) {
+            throw new Error('CREATE_EVENT_FAILED');
+        }
 
         logger.debug(`event.dao create: exit:`);
     }
@@ -186,7 +187,10 @@ export class EventDao {
         });
 
         // delete them
-        await this._dc.batchWrite(deleteParams).promise();
+        const result = await this.dynamoDbUtils.batchWriteAll(deleteParams);
+        if (this.dynamoDbUtils.hasUnprocessedItems(result)) {
+            throw new Error('DELETE_EVENT_FAILED');
+        }
 
         logger.debug(`event.dao delete: exit:`);
     }

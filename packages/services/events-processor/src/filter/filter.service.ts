@@ -120,7 +120,7 @@ export class FilterService {
         logger.debug(`filter.service buildAlert: in: sub:${JSON.stringify(sub)}`);
         const alert:AlertItem = {
             time: new Date().toISOString(),
-            subscription: { 
+            subscription: {
                 id: sub.id,
                 principalValue: sub.principalValue
             },

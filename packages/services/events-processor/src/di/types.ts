@@ -33,6 +33,8 @@ export const TYPES = {
 
     Controller: Symbol.for('Controller'),
 
+    DynamoDbUtils: Symbol.for('DynamoDbUtils'),
+
     DocumentClient:  Symbol.for('DocumentClient'),
     DocumentClientFactory:  Symbol.for('Factory<DocumentClient>'),
 

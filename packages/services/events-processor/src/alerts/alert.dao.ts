@@ -10,19 +10,15 @@ import { logger } from '../utils/logger';
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import { createDelimitedAttribute, PkType } from '../utils/pkUtils';
 import { SubscriptionItem } from '../api/subscriptions/subscription.models';
+import { DynamoDbUtils } from '../utils/dynamoDb';
 
 @injectable()
 export class AlertDao {
 
-    private _dc: AWS.DynamoDB.DocumentClient;
-
     public constructor(
         @inject('aws.dynamoDb.tables.eventConfig.name') private eventConfigTable:string,
         @inject('aws.dynamoDb.tables.eventNotifications.name') private eventNotificationsTable:string,
-	    @inject(TYPES.DocumentClientFactory) documentClientFactory: () => AWS.DynamoDB.DocumentClient
-    ) {
-        this._dc = documentClientFactory();
-    }
+        @inject(TYPES.DynamoDbUtils) private dynamoDbUtils:DynamoDbUtils) {}
 
     public async create(alerts:AlertItem[]): Promise<void> {
         logger.debug(`alert.dao create: in: alerts:${JSON.stringify(alerts)}`);
@@ -58,21 +54,9 @@ export class AlertDao {
 
         }
 
-        logger.debug(`alert.dao create: params:${JSON.stringify(params)}`);
-        let response = await this._dc.batchWrite(params).promise();
-
-        if (response.UnprocessedItems!==undefined && Object.keys(response.UnprocessedItems).length>0) {
-            logger.warn(`alert.dao create: the following items failed writing, attempting again:\n${JSON.stringify(response.UnprocessedItems)}`);
-
-            const retryParams: DocumentClient.BatchWriteItemInput = {
-                RequestItems: response.UnprocessedItems
-            };
-            response = await this._dc.batchWrite(retryParams).promise();
-
-            if (response.UnprocessedItems!==undefined && Object.keys(response.UnprocessedItems).length>0) {
-                logger.error(`alert.dao create: the following items failed writing:\n${JSON.stringify(response.UnprocessedItems)}`);
-                throw new Error('FAILED_SAVING_ALERTS');
-            }
+        const unprocessed = await this.dynamoDbUtils.batchWriteAll(params);
+        if (unprocessed!==undefined && unprocessed) {
+            throw new Error('CREATE_ALERTS_FAILED');
         }
 
         logger.debug('alert.dao create: exit:');
@@ -89,7 +73,7 @@ export class AlertDao {
 
         // TODO handle max batch size of 25 items (split into smaller chunks)
 
-        for(const subId of Object.keys(newSubAlertStatus)) {  
+        for(const subId of Object.keys(newSubAlertStatus)) {
             const si=newSubAlertStatus[subId];
             if (si.alerted===true)   {
                 params.RequestItems[this.eventConfigTable].push({
@@ -115,11 +99,10 @@ export class AlertDao {
             }
         }
 
-        logger.debug(`alert.dao updateChangedSubAlertStatus: params:${JSON.stringify(params)}`);
-        await this._dc.batchWrite(params).promise();
-
-        // TODO: handle unprocessed
-
+        const result = await this.dynamoDbUtils.batchWriteAll(params);
+        if (this.dynamoDbUtils.hasUnprocessedItems(result)) {
+            throw new Error('UPDATE_SUBSCRIPTIONS_FAILED');
+        }
 
         logger.debug('alert.dao updateChangedSubAlertStatus: exit:');
     }

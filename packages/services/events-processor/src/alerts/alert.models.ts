@@ -1,4 +1,4 @@
-import { SubscriptionTargets } from "../api/subscriptions/subscription.models";
+import { SubscriptionTargets } from '../api/subscriptions/subscription.models';
 
 /*-------------------------------------------------------------------------------
 # Copyright (c) 2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
@@ -17,7 +17,7 @@ export class AlertItem {
     targets?: SubscriptionTargets;
 
     sns?: {
-        topicArn:string;
+        topicArn: string;
     };
 
     eventSource: {

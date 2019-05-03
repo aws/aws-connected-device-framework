@@ -9,20 +9,19 @@ import { TYPES } from '../../di/types';
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import { EventSourceItem } from './eventsource.models';
 import { PkType, createDelimitedAttribute, expandDelimitedAttribute } from '../../utils/pkUtils';
+import { DynamoDbUtils } from '../../utils/dynamoDb';
 
 @injectable()
 export class EventSourceDao {
 
-    private _dc: AWS.DynamoDB.DocumentClient;
     private _cachedDc: AWS.DynamoDB.DocumentClient;
 
     public constructor(
         @inject('aws.dynamoDb.tables.eventConfig.name') private eventConfigTable:string,
         @inject('aws.dynamoDb.tables.eventConfig.gsi1') private eventConfigGSI1:string,
-	    @inject(TYPES.DocumentClientFactory) documentClientFactory: () => AWS.DynamoDB.DocumentClient,
+        @inject(TYPES.DynamoDbUtils) private dynamoDbUtils:DynamoDbUtils,
 	    @inject(TYPES.CachableDocumentClientFactory) cachableDocumentClientFactory: () => AWS.DynamoDB.DocumentClient
     ) {
-        this._dc = documentClientFactory();
         this._cachedDc = cachableDocumentClientFactory();
     }
 
@@ -56,8 +55,10 @@ export class EventSourceDao {
 
         params.RequestItems[this.eventConfigTable]=[eventSourceCreate];
 
-        logger.debug(`eventsource.dao create: params:${JSON.stringify(params)}`);
-        await this._dc.batchWrite(params).promise();
+		const result = await this.dynamoDbUtils.batchWriteAll(params);
+        if (this.dynamoDbUtils.hasUnprocessedItems(result)) {
+    		throw new Error('CREATE_EVENT_SOURCE_FAILED');
+		}
 
         logger.debug(`events.dao create: exit:`);
     }
@@ -180,7 +181,10 @@ export class EventSourceDao {
             }
         }
 
-        await this._dc.batchWrite(deleteParams).promise();
+		const result = await this.dynamoDbUtils.batchWriteAll(deleteParams);
+        if (this.dynamoDbUtils.hasUnprocessedItems(result)) {
+    		throw new Error('DELETE_EVENT_SOURCE_FAILED');
+		}
 
         logger.debug(`eventsource.dao delete: exit:`);
     }

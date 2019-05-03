@@ -9,6 +9,7 @@ import { TYPES } from '../../di/types';
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import { SubscriptionItem } from './subscription.models';
 import { createDelimitedAttribute, PkType, expandDelimitedAttribute, isPkType, createDelimitedAttributePrefix } from '../../utils/pkUtils';
+import { DynamoDbUtils } from '../../utils/dynamoDb';
 
 type SubscriptionItemMap = {[subscriptionId:string] : SubscriptionItem};
 export type PaginationKey = {[key:string]:string};
@@ -16,17 +17,15 @@ export type PaginationKey = {[key:string]:string};
 @injectable()
 export class SubscriptionDao {
 
-    private _dc: AWS.DynamoDB.DocumentClient;
     private _cachedDc: AWS.DynamoDB.DocumentClient;
 
     public constructor(
         @inject('aws.dynamoDb.tables.eventConfig.name') private eventConfigTable:string,
         @inject('aws.dynamoDb.tables.eventConfig.gsi1') private eventConfigGSI1:string,
         @inject('aws.dynamoDb.tables.eventConfig.gsi2') private eventConfigGSI2:string,
-	    @inject(TYPES.DocumentClientFactory) documentClientFactory: () => AWS.DynamoDB.DocumentClient,
+        @inject(TYPES.DynamoDbUtils) private dynamoDbUtils:DynamoDbUtils,
 	    @inject(TYPES.CachableDocumentClientFactory) cachableDocumentClientFactory: () => AWS.DynamoDB.DocumentClient
     ) {
-        this._dc = documentClientFactory();
         this._cachedDc = cachableDocumentClientFactory();
     }
 
@@ -106,20 +105,9 @@ export class SubscriptionDao {
             }
         }
 
-        let response = await this._dc.batchWrite(params).promise();
-
-        if (response.UnprocessedItems!==undefined && Object.keys(response.UnprocessedItems).length>0) {
-            logger.warn(`subscription.dao create: the following items failed writing, attempting again:\n${JSON.stringify(response.UnprocessedItems)}`);
-
-            const retryParams: DocumentClient.BatchWriteItemInput = {
-                RequestItems: response.UnprocessedItems
-            };
-            response = await this._dc.batchWrite(retryParams).promise();
-
-            if (response.UnprocessedItems!==undefined && Object.keys(response.UnprocessedItems).length>0) {
-                logger.error(`subscription.dao create: the following items failed writing:\n${JSON.stringify(response.UnprocessedItems)}`);
-                throw new Error('FAILED_SAVING_SUBSCRIPTION');
-            }
+        const result = await this.dynamoDbUtils.batchWriteAll(params);
+        if (this.dynamoDbUtils.hasUnprocessedItems(result)) {
+            throw new Error('CREATE_SUBSCRIPTION_FAILED');
         }
 
         logger.debug(`subscriptions.dao create: exit:`);
@@ -300,7 +288,10 @@ export class SubscriptionDao {
             });
         }
 
-        await this._dc.batchWrite(deleteParams).promise();
+		const result = await this.dynamoDbUtils.batchWriteAll(deleteParams);
+        if (this.dynamoDbUtils.hasUnprocessedItems(result)) {
+    		throw new Error('DELETE_SUBSCRIPTION_FAILED');
+		}
 
         logger.debug(`subscription.dao delete: exit:`);
     }
