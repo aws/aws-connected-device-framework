@@ -159,7 +159,7 @@ Devices:
 - `device003` associated with groups `/location/china/northern/beijing` and `/supplier/supplier1`
 - `device004` associated with groups `/location/china/northern/beijing` and `/supplier/supplier2`
 
-In the example above, retrieving the list of policies for `device001`, `device002` and `device003` would return `policy_permissive`, whereas retrieiving the policy list for `device003` will be the chain `policy_restrictive` then `policy_permissive`, with the consuming application containing the business logic for which policy to use.
+In the example above, retrieving the list of policies for `device001`, `device002` and `device003` would return `policy_permissive`, whereas retrieiving the policy list for `device004` will be the chain `policy_restrictive` then `policy_permissive`, with the consuming application containing the business logic for which policy to use.
 
 
 ## Limits

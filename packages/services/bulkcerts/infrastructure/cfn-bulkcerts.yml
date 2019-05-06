@@ -65,7 +65,7 @@ Resources:
                   default:
                     statusCode: '200'
                 uri:
-                  Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaFunction.Arn}/invocations"
+                  Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ApiLambdaFunction.Arn}/invocations"
                 passthroughBehavior: when_no_match
                 httpMethod: POST
                 type: aws_proxy
@@ -120,7 +120,7 @@ Resources:
                 - Ref: AWS::NoValue
               x-amazon-apigateway-integration:
                 uri: 
-                  Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaFunction.Arn}/invocations"
+                  Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ApiLambdaFunction.Arn}/invocations"
                 httpMethod: POST
                 type: aws_proxy
 
@@ -181,7 +181,7 @@ Resources:
                 authorizerResultTtlInSeconds: 60
           - Ref: AWS::NoValue
     DependsOn:
-      - LambdaFunction
+      - ApiLambdaFunction
 
   ApiGatewayAuthorizerInvokeRole:
     Type: AWS::IAM::Role
@@ -212,9 +212,34 @@ Resources:
                   Fn::ImportValue: !Sub
                     "${CustAuthStackName}-CustAuthLambdaArn"  
     DependsOn:
-    - LambdaFunction
+    - ApiLambdaFunction
 
-  LambdaExecutionRole:
+  ApiLambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: sts:AssumeRole
+      Path: "/"
+      ManagedPolicyArns:
+        - !Ref SNSPolicy
+        - !Ref DynamoDbPolicy
+        - !Ref IotCaPolicy
+        - !Ref SSMPolicy
+        - arn:aws:iam::aws:policy/AWSLambdaExecute
+        - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
+    DependsOn:
+      - DynamoDbPolicy
+      - SNSPolicy
+      - IotCaPolicy
+      - SSMPolicy
+
+  SnsLambdaExecutionRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
@@ -302,21 +327,25 @@ Resources:
               - "iot:DescribeCACertificate"
             Effect: Allow
             Resource: "*"
+          - Action:
+              - "iot:CreateCertificateFromCsr"
+            Effect: Allow
+            Resource: "*"
 
-  LambdaFunction:
+  ApiLambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: ../build/build.zip
       Handler: lambda_proxy.handler
       MemorySize: 128
-      Role: !GetAtt LambdaExecutionRole.Arn
+      Role: !GetAtt ApiLambdaExecutionRole.Arn
       Runtime: nodejs8.10
       Timeout: 300
       Environment:
         Variables:
           NODE_CONFIG_DIR: './config'
           NODE_CONFIG: !Ref ApplicationConfigurationOverride
-          BULKCERTS_TASKS_TABLE: !Ref BulkCertificatesTaskTable
+          BULKCERTS_AWS_DYNAMODB_TASKS_TABLE: !Ref BulkCertificatesTaskTable
           BULKCERTS_EVENTS_REQUEST_TOPIC: !Ref CertificatesRequestSnsTopic
       Tracing: Active
       Events:
@@ -333,9 +362,28 @@ Resources:
             Path: /{proxy+}
             Method: ANY
     DependsOn:
-      - LambdaExecutionRole
-      
-      
+      - ApiLambdaExecutionRole
+
+  SnsLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../build/build.zip
+      Handler: sns_handler.handler
+      MemorySize: 512
+      Role: !GetAtt SnsLambdaExecutionRole.Arn
+      Runtime: nodejs8.10
+      Timeout: 300
+      ReservedConcurrentExecutions: 3
+      Environment:
+        Variables:
+          NODE_CONFIG_DIR: './config'
+          NODE_CONFIG: !Ref ApplicationConfigurationOverride
+          BULKCERTS_AWS_DYNAMODB_TASKS_TABLE: !Ref BulkCertificatesTaskTable
+          BULKCERTS_EVENTS_REQUEST_TOPIC: !Ref CertificatesRequestSnsTopic
+      Tracing: Active
+    DependsOn:
+      - SnsLambdaExecutionRole
+
   CertificatesRequestSnsTopic:
     Type: AWS::SNS::Topic
 
@@ -343,15 +391,15 @@ Resources:
     Type: AWS::SNS::Subscription   
     Properties:
       TopicArn: !Ref CertificatesRequestSnsTopic
-      Endpoint: !GetAtt LambdaFunction.Arn
+      Endpoint: !GetAtt SnsLambdaFunction.Arn
       Protocol: "lambda"
     DependsOn:
-      - LambdaFunction
+      - SnsLambdaFunction
 
   SnsLambdaInvokePermission:
     Type: AWS::Lambda::Permission
     Properties:
-      FunctionName: !GetAtt LambdaFunction.Arn
+      FunctionName: !GetAtt SnsLambdaFunction.Arn
       Action: 'lambda:InvokeFunction'
       Principal: sns.amazonaws.com
       SourceArn: !Ref CertificatesRequestSnsTopic
@@ -395,14 +443,22 @@ Resources:
 
 
 Outputs:
-  LambdaFunctionConsoleUrl:
-    Description: Console URL for the Lambda Function.
-    Value: !Sub "https://{AWS::Region}.console.aws.amazon.com/lambda/home?region={AWS::Region}#/functions/{LambdaFunction}"
-  LambdaFunction:
-    Description: Facade lamda function
-    Value: !Sub '${LambdaFunction.Arn}'
+  ApiLambdaFunctionConsoleUrl:
+    Description: Console URL for the API Lambda Function.
+    Value: !Sub "https://{AWS::Region}.console.aws.amazon.com/lambda/home?region={AWS::Region}#/functions/{ApiLambdaFunction}"
+  ApiLambdaFunction:
+    Description: Bulk Certs API Lambda Function
+    Value: !Sub '${ApiLambdaFunction.Arn}'
     Export:
-        Name: !Sub '${AWS::StackName}-LambdaFunction'
+        Name: !Sub '${AWS::StackName}-ApiLambdaFunction'
+  SnsLambdaFunctionConsoleUrl:
+    Description: Console URL for the SNS Lambda Function.
+    Value: !Sub "https://{AWS::Region}.console.aws.amazon.com/lambda/home?region={AWS::Region}#/functions/{SnsLambdaFunction}"
+  SnsLambdaFunction:
+    Description: Bulk Certs SNS Lambda Function
+    Value: !Sub '${SnsLambdaFunction.Arn}'
+    Export:
+        Name: !Sub '${AWS::StackName}-SnsLambdaFunction'
   CertificatesRequestSnsTopic:
     Description: SNS topic
     Value: !Ref CertificatesRequestSnsTopic

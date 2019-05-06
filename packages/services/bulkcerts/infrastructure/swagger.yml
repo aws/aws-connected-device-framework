@@ -93,6 +93,37 @@ paths:
         404:
           $ref: '#/responses/NotFound'
 
+  /supplier/{supplierId}/certificates:
+    parameters:
+    - name: supplierId
+      in: path
+      description: Id supplier for which to create certificates
+      required: true
+      type: string
+
+    post:
+      tags:
+      - 'Bulk Certificate Creation for Specific Supplier'
+      summary: |
+        Creates a batch of certificates for a supplier, using a supplier's specific CA.
+      operationId: "supplierCreateCertificates"
+      parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/BulkCertificatesTaskRequest'
+      responses:
+        202: 
+          description: Created successfully
+          headers:
+            location:
+              type: string
+          schema:
+            $ref: '#/definitions/BulkCertificatesTaskResponse'
+        400:
+          $ref: '#/responses/BadRequest'
+
 definitions:
 
   BulkCertificatesTaskRequest:

@@ -37,10 +37,11 @@ export class CertificatesTaskService {
         this._sns  =  snsFactory();
     }
 
-    public async createTask(quantity:number, caAlias?:string) : Promise<string> {
+    public async createTask(quantity:number, caAlias:string) : Promise<string> {
         logger.debug(`certificatestask.service createTask: in: quantity: ${quantity}, caAlias: ${caAlias}`);
 
         ow(quantity, ow.number.greaterThan(0));
+        ow(caAlias, ow.string.nonEmpty);
 
         // determine number of chunks
         const remainder = quantity % this.defaultChunkSize;
@@ -71,7 +72,7 @@ export class CertificatesTaskService {
     /**
      * fire a SNS event to another instance of bulkcerts
      */
-    private async fireSNSevent(taskId:string, chunkId:number, quantity:number, caAlias?:string) : Promise<void> {
+    private async fireSNSevent(taskId:string, chunkId:number, quantity:number, caAlias:string) : Promise<void> {
         logger.debug(`certificatestask.service fireSNSevent: in: taskId:${taskId}, chunkId:${chunkId}, quantity:${quantity}`);
 
         ow(taskId, ow.string.nonEmpty);

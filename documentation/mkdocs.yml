@@ -50,7 +50,6 @@ nav:
     - 'Getting Started': development/quickstart.md 
     - 'Prerequisites': development/prerequisites.md
     - 'Tech Stack': development/tech-stack.md
-    - 'Local Development': development/local_development.md
     - 'Dependency Injection': development/dependency-injection.md
     - 'Asynchronous Programming': development/async.md
     - 'Config': development/config.md

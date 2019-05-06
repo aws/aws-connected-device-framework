@@ -2674,6 +2674,7 @@ packages:
       '@types/body-parser': 1.17.0
       '@types/express-serve-static-core': 4.16.4
       '@types/serve-static': 1.13.2
+    dev: true
     resolution:
       integrity: sha512-V0clmJow23WeyblmACoxbHBu2JKlE5TiIme6Lem14FnPW9gsttyHtk6wq7njcdIWH1njAaFgR8gW09lgY98gQg==
   /@types/form-data/2.2.1:
@@ -5598,7 +5599,7 @@ packages:
       integrity: sha512-r8au/oH3vS7ttHj0RivAznwElySeRohLfg8lvOSzbrX6abf/8ik8ptk49XbzdShgrnalvl7CM6MjcskfM7MMqQ==
   /inversify-express-utils/6.3.2:
     dependencies:
-      '@types/express': 4.16.1
+      '@types/express': 4.16.0
       express: 4.16.2
       http-status-codes: 1.3.2
       inversify: 5.0.1
@@ -6328,7 +6329,6 @@ packages:
       chalk: 2.4.2
       jest-haste-map: 24.0.0
       jest-pnp-resolver: 1.2.1_jest-resolve@24.5.0
-      jest-resolve: 24.5.0_b2377ed855f581a50cdaeacf386d75ca
       realpath-native: 1.1.0
     dev: true
     engines:

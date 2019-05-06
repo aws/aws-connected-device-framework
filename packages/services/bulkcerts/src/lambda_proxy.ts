@@ -13,8 +13,6 @@ const server = awsServerlessExpress.createServer(serverInstance, null, ['applica
 const eventTranslator:SnsToApiGatewayEvents = new SnsToApiGatewayEvents();
 
 exports.handler = (event: any, context: any) => {
-  console.log(`certificates.controller createCertificates: in: event: ${JSON.stringify(event)}`);
-
   // if SNS event, then transform it to look like API Gateway
   // TODO: for now this handles one event and assumes the topic
   //       this should be made more abstract to handle multiple message types / topics
