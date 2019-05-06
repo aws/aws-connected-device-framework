@@ -1,15 +1,15 @@
 /*-------------------------------------------------------------------------------
-# Copyright (c) 2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# Copyright (c) 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
 
-import { logger } from './utils/logger';
+import { logger } from './utils/logger.util';
 import { container } from './di/inversify.config';
 import { SNSTarget, SNSMessages } from './targets/sns.target';
 import { TYPES } from './di/types';
 import { MessageCompilerService } from './targets/messageCompiler.service';
-import { extractValue } from './utils/dynamoDbUtils';
+import { extractValue } from './utils/dynamoDb.util';
 
 let sns: SNSTarget;
 let messageCompiler: MessageCompilerService;
@@ -29,20 +29,12 @@ exports.handler = async (event: any, _context: any) => {
   for (const rec of event.Records) {
 
     // not interested in anything other than new images with target info
-    if (rec.dynamodb === undefined) {
+    if (shouldDiscard(rec)) {
       continue;
     }
+
     const img = rec.dynamodb.NewImage;
-    if (img === undefined) {
-      continue;
-    }
-    if (img.targets === undefined) {
-      continue;
-    }
     const targets: { [key: string]: string } = extractValue(img.targets);
-    if (Object.keys(targets).length === 0) {
-      continue;
-    }
 
     // grab all the attributes so we can use them to compile messages later
     const attributes: { [key: string]: string } = {};
@@ -52,7 +44,7 @@ exports.handler = async (event: any, _context: any) => {
 
     const eventId = attributes['eventId'];
 
-    // build the messages for each destination
+    // build the messages for each target type
     const messages = new SNSMessages();
     if (targets['email'] !== undefined) {
       messages.email = await messageCompiler.compile(eventId, 'email', attributes);
@@ -60,14 +52,30 @@ exports.handler = async (event: any, _context: any) => {
     if (targets['sms'] !== undefined) {
       messages.default = await messageCompiler.compile(eventId, 'sms', attributes);
     }
-    // TODO: add rest of sns destination types
+    // TODO: add rest of sns destination types when we support them
 
     if (messages.hasMessage) {
       await sns.send(attributes['snsTopicArn'], attributes['eventName'], messages);
     }
 
-    // TODO: add rest of non-sns destination types
+    // TODO: add rest of non-sns destination types when we support them
 
   }
-
 };
+
+function shouldDiscard(rec:any): boolean {
+  if (rec.dynamodb === undefined) {
+    return true;
+  }
+  if (rec.dynamodb.NewImage === undefined) {
+    return true;
+  }
+  if (rec.dynamodb.NewImage.targets === undefined) {
+    return true;
+  }
+  const targets: { [key: string]: string } = extractValue(rec.dynamodb.NewImage.targets);
+  if (Object.keys(targets).length === 0) {
+    return true;
+  }
+  return false;
+}

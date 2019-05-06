@@ -1,3 +1,9 @@
+/*-------------------------------------------------------------------------------
+# Copyright (c) 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+#
+# This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
+#-------------------------------------------------------------------------------*/
+
 import 'reflect-metadata';
 import { SubscriptionDao } from '../api/subscriptions/subscription.dao';
 import { FilterService } from './filter.service';
@@ -5,13 +11,7 @@ import { createMockInstance } from 'jest-create-mock-instance';
 import { CommonEvent } from '../transformers/transformers.model';
 import { SubscriptionItem } from '../api/subscriptions/subscription.models';
 import { AlertDao } from '../alerts/alert.dao';
-import { logger } from '../utils/logger';
-
-/*-------------------------------------------------------------------------------
-# Copyright (c) 2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
-#
-# This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
-#-------------------------------------------------------------------------------*/
+import { logger } from '../utils/logger.util';
 
 describe('FilterService', () => {
     let mockedSubscriptionDao: jest.Mocked<SubscriptionDao>;

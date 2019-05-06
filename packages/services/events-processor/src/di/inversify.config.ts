@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------------
-# Copyright (c) 2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# Copyright (c) 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
@@ -32,7 +32,7 @@ import { SMSTarget } from '../api/subscriptions/targets/sms.target';
 import { SNSTarget } from '../api/subscriptions/targets/sns.target';
 import { DynamoDbEventSource } from '../api/eventsources/sources/dynamodb.source';
 import { IotCoreEventSource } from '../api/eventsources/sources/iotcore.source';
-import { DynamoDbUtils } from '../utils/dynamoDb';
+import { DynamoDbUtils } from '../utils/dynamoDb.util';
 
 // Load everything needed to the Container
 export const container = new Container();
@@ -76,7 +76,7 @@ container.bind<interfaces.Factory<AWS.DynamoDB>>(TYPES.DynamoDBFactory)
     return () => {
 
         if (!container.isBound(TYPES.DynamoDB)) {
-            const dc = new AWS.DynamoDB({region: config.get('aws.region')});
+            const dc =  new AWS.DynamoDB({region: config.get('aws.region')});
             container.bind<AWS.DynamoDB>(TYPES.DynamoDB).toConstantValue(dc);
         }
         return container.get<AWS.DynamoDB>(TYPES.DynamoDB);

@@ -1,10 +1,10 @@
 /*-------------------------------------------------------------------------------
-# Copyright (c) 2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# Copyright (c) 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
 
-import { logger } from './utils/logger';
+import { logger } from './utils/logger.util';
 import {container} from './di/inversify.config';
 import { TYPES } from './di/types';
 import { DDBStreamTransformer } from './transformers/ddbstream.transformer';

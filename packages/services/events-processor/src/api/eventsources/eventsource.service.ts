@@ -1,11 +1,11 @@
 /*-------------------------------------------------------------------------------
-# Copyright (c) 2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# Copyright (c) 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
 # This eventSource code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../di/types';
-import {logger} from '../../utils/logger';
+import {logger} from '../../utils/logger.util';
 import ow from 'ow';
 import { EventSourceType, EventSourceResourceList, EventSourceDetailResource, EventSourceSummaryResource } from './eventSource.models';
 import { EventSourceDao } from './eventsource.dao';
@@ -28,7 +28,7 @@ export class EventSourceService  {
     public async create(resource:EventSourceDetailResource) : Promise<string> {
         logger.debug(`eventSource.service create: in: model:${JSON.stringify(resource)}`);
 
-        // TODO: validate input
+        // validate input
         ow(resource, ow.object.nonEmpty);
         ow(resource.name, ow.string.nonEmpty);
         ow(resource.sourceType, ow.string.nonEmpty);

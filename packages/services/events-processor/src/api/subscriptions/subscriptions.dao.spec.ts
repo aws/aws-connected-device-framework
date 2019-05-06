@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------------
-# Copyright (c) 2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# Copyright (c) 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
@@ -8,7 +8,7 @@ import { SubscriptionDao } from './subscription.dao';
 import AWS from 'aws-sdk';
 import { SubscriptionItem } from './subscription.models';
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
-import { DynamoDbUtils } from '../../utils/dynamoDb';
+import { DynamoDbUtils } from '../../utils/dynamoDb.util';
 import { createMockInstance } from 'jest-create-mock-instance';
 
 describe('SubscriptionDao', () => {

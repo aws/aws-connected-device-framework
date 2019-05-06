@@ -1,16 +1,16 @@
 /*-------------------------------------------------------------------------------
-# Copyright (c) 2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# Copyright (c) 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../di/types';
 import { AlertItem } from './alert.models';
-import { logger } from '../utils/logger';
+import { logger } from '../utils/logger.util';
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
-import { createDelimitedAttribute, PkType } from '../utils/pkUtils';
+import { createDelimitedAttribute, PkType } from '../utils/pkUtils.util';
 import { SubscriptionItem } from '../api/subscriptions/subscription.models';
-import { DynamoDbUtils } from '../utils/dynamoDb';
+import { DynamoDbUtils } from '../utils/dynamoDb.util';
 
 @injectable()
 export class AlertDao {
@@ -70,8 +70,6 @@ export class AlertDao {
             RequestItems: {}
         };
         params.RequestItems[this.eventConfigTable]= [];
-
-        // TODO handle max batch size of 25 items (split into smaller chunks)
 
         for(const subId of Object.keys(newSubAlertStatus)) {
             const si=newSubAlertStatus[subId];

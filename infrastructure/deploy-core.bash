@@ -237,6 +237,8 @@ COMMANDS_STACK_NAME=cdf-commands-${ENVIRONMENT}
 DEVICE_MONITORING_STACK_NAME=cdf-device-monitoring-${ENVIRONMENT}
 BULKCERTS_STACK_NAME=cdf-bulkcerts-${ENVIRONMENT}
 CERTIFICATEVENDOR_STACK_NAME=cdf-certificatevendor-${ENVIRONMENT}
+EVENTSPROCESSOR_STACK_NAME=cdf-eventsProcessor-${ENVIRONMENT}
+EVENTSALERTS_STACK_NAME=cdf-eventsAlerts-${ENVIRONMENT}
 
 
 if [ -z "$BYPASS_BUNDLE" ]; then
@@ -281,15 +283,15 @@ No KMS_KEY_ID provided, therefore creating one.
     echo "Created KMS Key Id: $KMS_KEY_ID"
 fi
 
-
-echo '
-**********************************************************
-*****   Deploying Networking                        ******
-**********************************************************
-'
-
 assetlibrary_config=$CONFIG_LOCATION/assetlibrary/$CONFIG_ENVIRONMENT-config.json
 if [[ -f $assetlibrary_config && "$ASSETLIBRARY_MODE" = "full" && -z "$USE_EXISTING_VPC" ]]; then
+
+
+    echo '
+    **********************************************************
+    *****   Deploying Networking                        ******
+    **********************************************************
+    '
 
     cd "$root_dir/infrastructure"
 
@@ -549,6 +551,25 @@ if [ -f "$certificatevendor_config" ]; then
 
 fi
 
+eventsprocessor_config=$CONFIG_LOCATION/events-processor/$CONFIG_ENVIRONMENT-config.json
+if [ -f "$eventsprocessor_config" ]; then
+
+    echo '
+    **********************************************************
+    *****  Deploying events processor                   ******
+    **********************************************************
+    '
+
+    cd "$root_dir/packages/services/events-processor"
+
+    infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
+    infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "$eventsprocessor_config" $AWS_SCRIPT_ARGS &
+
+    stacks+=("$EVENTSPROCESSOR_STACK_NAME")
+
+fi
+
+
 echo '
 **********************************************************
 *****  Waiting for deployments to finish            ******
@@ -625,6 +646,25 @@ if [ -f "$bulkcerts_config" ]; then
     $AWS_SCRIPT_ARGS &
 
     stacks+=("$BULKCERTS_STACK_NAME")
+
+fi
+
+
+eventsalerts_config=$CONFIG_LOCATION/events-alerts/$CONFIG_ENVIRONMENT-config.json
+if [ -f "$eventsalerts_config" ]; then
+
+    echo '
+    **********************************************************
+    *****  Deploying events alerts                   ******
+    **********************************************************
+    '
+
+    cd "$root_dir/packages/services/events-alerts"
+
+    infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
+    infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "$eventsalerts_config" $AWS_SCRIPT_ARGS &
+
+    stacks+=("$EVENTSALERTS_STACK_NAME")
 
 fi
 

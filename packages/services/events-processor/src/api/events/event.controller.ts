@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------------
-# Copyright (c) 2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# Copyright (c) 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
 # This event code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
@@ -7,8 +7,8 @@ import { Response } from 'express';
 import { interfaces, controller, response, requestBody, httpPost, httpGet, requestParam, httpDelete, queryParam} from 'inversify-express-utils';
 import { inject } from 'inversify';
 import {TYPES} from '../../di/types';
-import {logger} from '../../utils/logger';
-import {handleError} from '../../utils/errors';
+import {logger} from '../../utils/logger.util';
+import {handleError} from '../../utils/errors.util';
 import { EventService } from './event.service';
 import { EventResource, EventResourceList } from './event.models';
 

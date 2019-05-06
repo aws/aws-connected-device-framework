@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------------
-# Copyright (c) 2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# Copyright (c) 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
@@ -22,7 +22,6 @@ export const container = new Container();
 const configInjector = new CDFConfigInjector();
 container.load(configInjector.getConfigModule());
 
-
 container.bind<SNSTarget>(TYPES.SNSTarget).to(SNSTarget).inSingletonScope();
 container.bind<MessageCompilerService>(TYPES.MessageCompilerService).to(MessageCompilerService).inSingletonScope();
 container.bind<MessageCompilerDao>(TYPES.MessageCompilerDao).to(MessageCompilerDao).inSingletonScope();
@@ -41,7 +40,6 @@ container.bind<interfaces.Factory<AWS.SNS>>(TYPES.SNSFactory)
         return container.get<AWS.SNS>(TYPES.SNS);
     };
 });
-
 
 decorate(injectable(), AWS.DynamoDB.DocumentClient);
 container.bind<interfaces.Factory<AWS.DynamoDB.DocumentClient>>(TYPES.DocumentClientFactory)

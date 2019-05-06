@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------------
-# Copyright (c) 2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# Copyright (c) 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
@@ -7,7 +7,7 @@ import 'reflect-metadata';
 import { container } from './di/inversify.config';
 import { InversifyExpressServer } from 'inversify-express-utils';
 import * as bodyParser from 'body-parser';
-import {logger} from './utils/logger';
+import {logger} from './utils/logger.util';
 import config from 'config';
 
 const CDF_V1_TYPE = 'application/vnd.aws-cdf-v1.0+json';

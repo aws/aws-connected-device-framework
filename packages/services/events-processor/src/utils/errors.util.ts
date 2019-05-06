@@ -1,13 +1,13 @@
 /*-------------------------------------------------------------------------------
-# Copyright (c) 2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# Copyright (c) 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
 import { Response } from 'express';
-import { logger } from './logger';
+import { logger } from './logger.util';
 
 export function handleError(e:Error, res:Response): void {
-    logger.error(`handleError: ${e}`);
+    logger.error(`errors.util handleError: in: ${e}`);
 
     if (e.name === 'ArgumentError' ) {
         res.status(400).json({error: e.message}).end();
@@ -23,5 +23,5 @@ export function handleError(e:Error, res:Response): void {
         res.status(500).json({error: e.message}).end();
     }
 
-    logger.error(`handleError: res.status: ${res.status}`);
+    logger.error(`errors.util handleError: exit: ${res.status}`);
 }

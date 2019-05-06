@@ -1,10 +1,15 @@
+/*-------------------------------------------------------------------------------
+# Copyright (c) 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+#
+# This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
+#-------------------------------------------------------------------------------*/
 
 import { injectable, inject } from 'inversify';
 import ow from 'ow';
 import { CommonEvent } from '../transformers/transformers.model';
 import { SubscriptionItem } from '../api/subscriptions/subscription.models';
 import { TYPES } from '../di/types';
-import { logger } from '../utils/logger';
+import { logger } from '../utils/logger.util';
 import { SubscriptionDao } from '../api/subscriptions/subscription.dao';
 import * as rulesEngine from 'json-rules-engine';
 import { AlertDao } from '../alerts/alert.dao';
@@ -29,8 +34,6 @@ export class FilterService {
         const ruleMap: { [key:string]:rulesEngine.Rule} = {};
 
         const engine = new rulesEngine.Engine();
-
-        // TODO: perfirmance improvement - refactor to retrieve subscriptions in batches for the events, then sort and loop through each different event type so able to reuse the rules engine
 
         const alerts:AlertItem[]=[];
         const changedSubAlerts:{[key:string]:SubscriptionItem}= {};
@@ -147,7 +150,6 @@ export class FilterService {
         const mapKey = `${ev.eventSourceId}:${ev.principal}:${ev.principalValue}`;
         let subscriptions = subscriptionMap[mapKey];
         if (subscriptions===undefined) {
-            // TODO: increase performance by batching the reads before enumeration
             subscriptions = await this.subscriptionDao.listSubscriptionsForEventMessage(ev.eventSourceId, ev.principal, ev.principalValue);
             if (subscriptions!==undefined && subscriptions.length>0) {
                 subscriptionMap[mapKey]=subscriptions;

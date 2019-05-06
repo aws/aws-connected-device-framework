@@ -1,6 +1,11 @@
+/*-------------------------------------------------------------------------------
+# Copyright (c) 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+#
+# This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
+#-------------------------------------------------------------------------------*/
 
 import { injectable, inject } from 'inversify';
-import { logger } from '../utils/logger';
+import { logger } from '../utils/logger.util';
 import { TYPES } from '../di/types';
 import { EventSourceDao } from '../api/eventsources/eventsource.dao';
 import { CommonEvent } from './transformers.model';
@@ -14,7 +19,6 @@ export class DDBStreamTransformer  {
     public async transform(event: any): Promise<CommonEvent[]> {
         logger.debug(`ddbstream.transformer transform: in: event:${JSON.stringify(event)}`);
 
-        // TODO: performance improvement, move to class level, but then how do we reset if it changes?
         const principalAttributes:{[key: string]: string} = {};
 
         const transformedEvents:CommonEvent[]=[];

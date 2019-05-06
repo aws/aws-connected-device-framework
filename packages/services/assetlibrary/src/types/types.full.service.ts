@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------------
-# Copyright (c) 2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# Copyright (c) 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
@@ -17,13 +17,14 @@ import {EventEmitter, Type, Event} from '../events/eventEmitter.service';
 import * as NodeCache from 'node-cache';
 import ow from 'ow';
 import { TypesService } from './types.service';
+import * as config from 'config';
 
 @injectable()
 export class TypesServiceFull implements TypesService {
 
     private _readFileAsync = util.promisify(fs.readFile);
-    // private _schemaJsons: {[key: string]: any} = {};
-    private _typesCache = new NodeCache.default();
+
+    private _typesCache = new NodeCache.default({stdTTL:config.get('cache.types.ttl')});
 
     constructor( @inject(TYPES.TypesDao) private typesDao: TypesDaoFull,
         @inject(TYPES.SchemaValidatorService) private validator: SchemaValidatorService,

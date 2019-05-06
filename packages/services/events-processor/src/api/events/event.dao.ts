@@ -1,16 +1,16 @@
 /*-------------------------------------------------------------------------------
-# Copyright (c) 2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# Copyright (c) 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
-# This  code is subject to the terms found in the AWS Enterprise Customer Agreement.
+# This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
 import { injectable, inject } from 'inversify';
-import {logger} from '../../utils/logger';
+import {logger} from '../../utils/logger.util';
 import { TYPES } from '../../di/types';
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import { EventItem } from './event.models';
-import { createDelimitedAttribute, PkType, createDelimitedAttributePrefix, expandDelimitedAttribute } from '../../utils/pkUtils';
+import { createDelimitedAttribute, PkType, createDelimitedAttributePrefix, expandDelimitedAttribute } from '../../utils/pkUtils.util';
 import { PaginationKey } from '../subscriptions/subscription.dao';
-import { DynamoDbUtils } from '../../utils/dynamoDb';
+import { DynamoDbUtils } from '../../utils/dynamoDb.util';
 
 type EventItemMap = {[subscriptionId:string] : EventItem};
 @injectable()

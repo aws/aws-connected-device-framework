@@ -29,3 +29,7 @@ cors:
   origin: ASSETLIBRARY_CORS_ORIGIN
 
 mode: ASSETLIBRARY_MODE
+
+cache:
+  types:
+    ttl: ASSETLIBRARY_CACHE_TYPES_TTL

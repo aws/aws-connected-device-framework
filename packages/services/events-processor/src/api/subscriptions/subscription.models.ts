@@ -1,11 +1,10 @@
-import { EventConditions } from '../events/event.models';
-
 /*-------------------------------------------------------------------------------
-# Copyright (c) 2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# Copyright (c) 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
 
+import { EventConditions } from '../events/event.models';
 export interface SubscriptionResource {
     id: string;
 
