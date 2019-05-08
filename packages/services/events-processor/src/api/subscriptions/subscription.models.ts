@@ -19,11 +19,7 @@ export interface SubscriptionResource {
         id: string;
     };
 
-    targets?: {
-        email?: EmailSubscriptionConfig;
-        sms?: SMSSubscriptionConfig;
-        mqtt?: MQTTSubscriptionConfig;
-    };
+    targets?: SubscriptionTargets;
 
     enabled?: boolean;
     alerted?: boolean;
@@ -79,11 +75,7 @@ export class SubscriptionItem {
         topicArn:string;
     };
 
-    targets?: {
-        email?: EmailSubscriptionConfig;
-        sms?: SMSSubscriptionConfig;
-        mqtt?: MQTTSubscriptionConfig;
-    };
+    targets?: SubscriptionTargets;
 
     enabled?: boolean;
     alerted?: boolean;

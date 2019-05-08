@@ -1,1 +1,1 @@
-Refer to [documentation](../../../documentation/docs/projects/events-processor/overview.md).
+Refer to [documentation](../../../documentation/docs/projects/notifications/overview.md).

@@ -11,6 +11,7 @@ swagger-markdown -i ../packages/services/assetlibraryhistory/infrastructure/swag
 swagger-markdown -i ../packages/services/commands/infrastructure/swagger.yml -o docs/projects/commands/commands-swagger.md
 swagger-markdown -i ../packages/services/provisioning/infrastructure/swagger.yml -o docs/projects/provisioning/provisioning-swagger.md
 swagger-markdown -i ../packages/services/bulkcerts/infrastructure/swagger.yml -o docs/projects/bulkcerts/bulkcerts-swagger.md
+swagger-markdown -i ../packages/services/events-processor/infrastructure/swagger.yml -o docs/projects/notifications/events-processor-swagger.md
 
 # build it
 rm -rf site
