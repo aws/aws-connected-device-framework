@@ -2,4 +2,4 @@
 
 ## Getting started
 
-Review the [documentation](documentation/READEME.md).
+Review the [documentation](documentation/README.md).
