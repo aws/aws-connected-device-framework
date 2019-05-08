@@ -1,0 +1,642 @@
+openapi: '3.0.0'
+info:
+  title: "Connected Device Framework: Notifications"
+  description: |
+    The CDF Notifications umbrella of services receives input from a number of different sources (e.g. IoT Core, DynamoDB Streams, API Gateway), and filters based on a subscriber's notification settings.  Any filtered messages are then sent on to a number of pre-configured targets (e.g. AppSync, SNS, or republished to IoT Core).
+
+    The CDF Notifications is comprised of 2 micro-services:  the CDF Events Processor, and the CDF Notification Dispatcher.  
+    
+  version: 1.0.0
+
+
+tags:
+  - name: EventSources
+    description: |
+      An `EventSource` must be congifured per source of events to allow the event processor to consume events.  The following types of event sources are supported:
+      - DynamoDB
+      - IoT Core
+      
+      All incoming events must contain an `id` that can be used to match against a configured `EventSource` `eventSourceId`.  If a matching `EventSource` configuration cannot be found, the event is dropped.
+      
+      Events that are sourced via API Gateway or IoT Core are to be provided in the common message format, whereas events sourced from DynamoDB are converted to the common message format by the Event Processor.
+      
+  - name: Events
+    description: |
+      An `Event` represents a message consumed from an event source that has had a rule evaluated against it (its `conditions`). Each event also specifies the available subscription targets (its `supportedTargets`) such as email and/or sms, as well as custom message `templates` to notify of the alert.
+    
+  - name: Subscriptions
+    description: A 'Subscription' allows a user to subscribe to an event, optionally configuring which supported targets to retrieve the alert by.
+    
+    
+paths:
+
+  /eventsources:
+    post:
+      tags:
+      - EventSources
+      summary: Creates a new EventSource
+      operationId: "createEventSource"
+      requestBody:
+        required: true
+        content:
+          application/vnd.aws-cdf-v1.0+json:
+            schema:
+              $ref: '#/components/schemas/EventSourceDetail'
+            examples:
+              dynamoDb:
+                $ref: '#/components/examples/NewDynamoDBEventSource'
+              iotCore:
+                $ref: '#/components/examples/NewIoTCoreEventSource'
+      responses:
+        '201':
+          $ref: '#/components/responses/Created'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+      
+    get:
+      tags:
+      - EventSources
+      summary: Returns all configured event sources
+      operationId: "listEventSources"
+      responses:
+        '200':
+          $ref: '#/components/schemas/EventSourceList'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /eventsources/{eventSourceId}:
+    parameters:
+      - $ref: '#/components/parameters/eventSourceId'
+    get:
+      tags:
+        - EventSources
+      summary: Returns a single event source
+      operationId: getEventSource
+      responses:
+        '200':
+          $ref: '#/components/schemas/EventSourceDetail'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags:
+      - EventSources
+      summary: Deletes an event source
+      operationId: deleteEventSource
+      responses:
+        '204':
+          $ref: '#/components/responses/Deleted'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /eventsources/{eventSourceId}/events:
+    parameters:
+      - $ref: '#/components/parameters/eventSourceId'
+    post:
+      tags:
+      - Events
+      summary: Creates a new Event
+      operationId: createEvent
+      requestBody:
+        required: true
+        content:
+          application/vnd.aws-cdf-v1.0+json:
+            schema:
+              $ref: '#/components/schemas/Event'
+            examples:
+              lowBatteryAlert:
+                $ref: '#/components/examples/NewEvent'
+      responses:
+        '201':
+          $ref: '#/components/responses/Created'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+    get:
+      tags:
+        - Events
+      summary: Lists all events for a specific event source
+      operationId: listEventsForEventSource
+      responses:
+        '200':
+          $ref: '#/components/schemas/EventList'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+          
+  
+  /events/{eventId}:
+    parameters:
+      - $ref: '#/components/parameters/eventId'
+    get:
+      tags:
+        - Events
+      summary: Returns a single event
+      operationId: getEvent
+      responses:
+        '200':
+          $ref: '#/components/schemas/Event'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags:
+      - Events
+      summary: Deletes an event
+      operationId: deleteEvent
+      responses:
+        '204':
+          $ref: '#/components/responses/Deleted'
+        '404':
+          $ref: '#/components/responses/NotFound'
+     
+  /events/{eventId}/subscriptions:
+    parameters:
+      - $ref: '#/components/parameters/eventId'
+    post:
+      tags:
+      - Subscriptions
+      summary: Creates a new subscription of an event
+      operationId: createSubscription
+      requestBody:
+        required: true
+        content:
+          application/vnd.aws-cdf-v1.0+json:
+            schema:
+              $ref: '#/components/schemas/Subscription'
+            examples:
+              lowBatteryAlert:
+                $ref: '#/components/examples/NewSubscription'
+      responses:
+        '201':
+          $ref: '#/components/responses/Created'
+        '400':
+          $ref: '#/components/responses/BadRequest' 
+    get:  
+      parameters:
+        - $ref: '#/components/parameters/fromSubscriptionId'
+      tags:
+        - Subscriptions
+      summary: Lists all subscriptions for the provided event
+      operationId: listSubscriptionsForEvent
+      responses:
+        '200':
+          $ref: '#/components/schemas/SubscriptionList'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'    
+  
+  /subscriptions/{subscriptionId}:
+    parameters:
+      - $ref: '#/components/parameters/subscriptionId'
+    get:
+      tags:
+        - Subscriptions
+      summary: Returns a single subscription
+      operationId: getSubscription
+      responses:
+        '200':
+          $ref: '#/components/schemas/Subscription'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags:
+      - Subscriptions
+      summary: Deletes a subscription
+      operationId: deleteSubscription
+      responses:
+        '204':
+          $ref: '#/components/responses/Deleted'
+        '404':
+          $ref: '#/components/responses/NotFound'       
+  
+  /user/{userId}/subscriptions:
+    parameters:
+      - $ref: '#/components/parameters/userId'
+    get:
+      tags:
+        - Subscriptions
+      summary: Lists all subscriptions for the provided user
+      operationId: listSubscriptionsForUser
+      responses:
+        '200':
+          $ref: '#/components/schemas/SubscriptionList'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'          
+  
+          
+components:
+  schemas:
+    EventSourceSummary:
+      properties:
+        id:
+          description: |
+            For DynamoDB event sources, this must be provided and represents the DynamoDB table Arn.
+            
+            For IoTCore event sources, this is a automatically generated unique id, and will be added to all messages originating from this event source.
+          type: string
+        name:
+          description: Name of the event source.
+          type: string
+      required:
+        - name
+          
+    EventSourceDetail:
+      allOf:
+        - $ref: '#/components/schemas/EventSourceSummary'
+        - type: object
+          properties:
+            sourceType:
+              description: Event source type
+              type: string
+              enum: [DynamoDB, IoTCore]
+            principal:
+              description: |
+                The attribute within the event message that represents the principal (e.g. deviceId, thingName, or username).
+              type: string
+            dynamoDb:
+              description:  DynamoDB event source specific configuration.
+              type: object
+              properties:
+                tableName:
+                  description: Name of the DynamoDB table
+                  type: string
+              required:
+                - tableName
+            iotCore:
+              description:  IoTCore event source configuration.
+              type: object
+              properties:
+                mqttTopic:
+                  description: The MQTT topic that this event source subscribes to.  Supports wildcards.
+                  type: string
+                attributes:
+                  description: A map of source message attributes that will be transferred to the common message format for processing,
+                  type: object
+                  additionalProperties:
+                    type: string
+              required:
+                - mqttTopic
+                - attributes
+          required:
+            - sourceType
+            - principal
+  
+    EventSourceList:
+      properties:
+        results:
+          description: A list of event sources.
+          type: array
+          items:
+            $ref: '#/components/schemas/EventSourceSummary'
+      
+    Event:
+      properties:
+        name:
+          description: Name of event
+          type: string
+        conditions:
+          $ref: '#/components/schemas/EventConditions'
+        ruleParameters:
+          description: List of parameters that require values providing along with a subscription in order to evaluate the event conditions
+          type: array
+          items:
+            oneOf:
+              - type: string
+              - type: number
+              - type: boolean
+        enabled:
+          description: Enabled state of the event
+          type: boolean
+          default: true
+        templates:
+          description: A map of message templates (in VTL format) to be compiled for the different supported targets
+          type: object
+          additionalProperties:
+            type: string
+        supportedTargets:
+          description: A map of supported targets, along with the messaging template to use
+          type: object
+          properties:
+            email:
+              type: string
+            sms:
+              type: string
+        eventId:
+          description: Event ID
+          type: string
+          readOnly: true
+        eventSourceId:
+          description: Event source ID
+          type: string
+          readOnly: true
+        principle:
+          description: The name of the attribute that represents the principal in incoming messages from the event source
+          type: string
+          readOnly: true
+      required:
+        - name
+        - conditions
+        - templates
+    
+    EventConditions:
+      properties:
+        all:
+          description: All of these conditions must evalute to true for the alert to be triggered
+          oneOf:
+            - $ref: '#/components/schemas/EventConditions'
+            - type: array
+              items:
+                $ref: '#/components/schemas/EventCondition'
+        any:
+          description: Any of these conditions must evalute to true for the alert to be triggered
+          oneOf:
+            - $ref: '#/components/schemas/EventConditions'
+            - type: array
+              items:
+                $ref: '#/components/schemas/EventCondition'
+              
+    EventCondition:
+      properties:
+        fact:
+          description: The name of the attribute (in the common message format) to be evaluated
+          type: string
+        operator:
+          description: The type of operator to evaluate the fact with
+          type: string
+          enum: [equal,notEqual,lessThan,lessThanExclusive,greaterThan,greaterThanExclusive,in,notIn,contains,doesNotContain]
+        value:
+          description: The value of the fact to evaluate
+          oneOf:
+            - type: string
+            - type: number
+            - type: boolean
+     
+    EventList:
+      properties:
+        results:
+          description: A list of events.
+          type: array
+          items:
+            $ref: '#/components/schemas/Event'
+        pagination:
+          type: object
+          description: Pagination details
+          properties:
+            offset:
+              type: object
+              properties:
+                eventSourceId: 
+                  description: The event source ID to paginate from
+                  type: string
+                eventId:
+                  description: The event ID to paginate from
+                  type: string
+            count:
+              type: number
+    
+    Subscription:
+      properties:
+        id:
+          description: Subscription ID
+          type: string
+          readOnly: true
+        user:
+          type: object
+          properties:
+            id:
+              description: User ID
+              type: string
+          required:
+            - id
+        principalValue:
+          description: Value of the principal attribute of the event to susbcribe to
+          type: string
+        targets:
+          type: object
+          properties:
+            email:
+              type: object
+              properties:
+                address:
+                  description: Email address
+                  type: object
+              required:
+                - address
+            sms:
+              type: object
+              properties:
+                phoneNumber:
+                  description: SMS phone number
+                  type: object
+              required:
+                - phoneNumber
+        ruleParameterValues:
+          description: The values of any required rule parameters of the event
+          type: object
+          additionalProperties:
+            oneOf:
+              - type: string
+              - type: number
+              - type: boolean
+        event:
+          type: object
+          properties:
+            id:
+              description: Event ID
+              type: string
+            name:
+              description: Event name
+              type: string
+            conditions:
+              $ref: '#/components/schemas/EventConditions'
+          readOnly: true
+        enabled:
+          description: Enabled status
+          type: boolean
+          default: true
+        alerted:
+          description: Alerted status
+          type: boolean
+          readOnly: true
+          
+      required:
+        - user
+        - principalValue
+        
+    
+    SubscriptionList:
+      properties:
+        results:
+          description: A list of subscriptions.
+          type: array
+          items:
+            $ref: '#/components/schemas/Subscription'
+        pagination:
+          type: object
+          properties:
+            offset:
+              type: object
+              properties:
+                eventId: 
+                  description: The event ID to paginate from
+                  type: string
+                subscriptionId:
+                  description: The subscription ID to paginate from
+                  type: string
+            count:
+              type: number
+           
+    Error:
+      type: object
+      properties:
+        message:
+          description: Error message
+          type: string
+   
+  parameters:
+    eventSourceId:
+      name: eventSourceId
+      in: path
+      description: Event source ID
+      required: true
+      schema:
+        type: string
+        
+    eventId:
+      name: eventId
+      in: path
+      description: Event ID
+      required: true
+      schema:
+        type: string
+        
+    subscriptionId:
+      name: subscriptionId
+      in: path
+      description: Subscription ID
+      required: true
+      schema:
+        type: string
+        
+    userId:
+      name: userId
+      in: path
+      description: User ID
+      required: true
+      schema:
+        type: string
+        
+    fromSubscriptionId:
+      name: fromSubscriptionId
+      in: query
+      description: Subscription ID to use as the start of paginated results
+      schema:
+        type: string
+              
+  examples:
+    NewDynamoDBEventSource:
+      summary: An example of creating a new DynamoDB event source
+      value:
+        id: 'arn:aws:dynamodb:us-west-2:123456789012:table/myTable"'
+        name: Processed Events
+        sourceType: DynamoDB
+        principal: thingName
+        dynamoDb:
+          tableName: myTable
+    NewIoTCoreEventSource:
+      summary: An example of creating a new IoT Core event source
+      value:
+        name: Raw Events
+        sourceType: IoTCore
+        principal: thingName
+        iotCore:
+          mqttTopic: 'telemetry/+'
+          attribtues:
+            - batteryLevel: bl
+          
+    NewEvent:
+      summary: An example of creating an event to represent a low battery alert
+      value:
+        name: Low Battery Alert
+        conditions: 
+          all:
+            - fact: batteryLevel
+              operator: lessThanInclusive
+              value: 20
+        supportedTargets:
+          email: default
+          sms: small
+        templates:
+          default: 'The battery for bowl {{=it.principalValue}} is low.'
+          small: '{{=it.principalValue}} battery low'
+    
+    ExistingEvent:
+      summary: An example of an existing event
+      value:
+        eventId: 'af6b6890-6dde-11e9-addb-23bea6189627'
+        eventSourceId: 'a2f05ee0-6dde-11e9-addb-23bea6189627'
+        name: Low Battery Alert
+        conditions: 
+          all:
+            - fact: batteryLevel
+              operator: lessThanInclusive
+              value: 20
+        supportedTargets:
+          email: default
+          sms: small
+        templates:
+          default: 'The battery for bowl {{=it.principalValue}} is low.'
+          small: '{{=it.principalValue}} battery low'
+        enabled: true
+        principal: thingName
+          
+    NewSubscription:
+      summary: An example of a new subscription
+      value:
+        user:
+          id: user123
+        principalValue: device001
+        targets:
+          email:
+            address: someone@somewhere.com
+          sms:
+            phoneNumber: 15551231234
+        
+  responses:         
+    Created:
+      description: Created successfully
+      headers:
+        location:
+          description:  URI of the created resource
+          schema:
+            type: string        
+    Deleted:
+      description: Deleted successfully
+    BadRequest:
+      description: Invalid input
+      content:
+        application/vnd.aws-cdf-v1.0+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Not found
+      content:
+        application/vnd.aws-cdf-v1.0+json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/vnd.aws-cdf-v1.0+json:
+          schema:
+            $ref: '#/components/schemas/Error'

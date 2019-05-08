@@ -14,13 +14,15 @@ import { SubscriptionDao } from '../api/subscriptions/subscription.dao';
 import * as rulesEngine from 'json-rules-engine';
 import { AlertDao } from '../alerts/alert.dao';
 import { AlertItem } from '../alerts/alert.models';
+import { EventConditionsUtils } from '../api/events/event.models';
 
 @injectable()
 export class FilterService {
 
     constructor(
         @inject(TYPES.SubscriptionDao) private subscriptionDao: SubscriptionDao,
-        @inject(TYPES.AlertDao) private alertDao: AlertDao) {
+        @inject(TYPES.AlertDao) private alertDao: AlertDao,
+        @inject(TYPES.EventConditionsUtils) private eventConditionsUtils: EventConditionsUtils) {
 
         }
 
@@ -104,7 +106,6 @@ export class FilterService {
                     engine.removeRule(rule);
                 }
             }
-
         }
 
         logger.debug(`filter.service filter: alerts:${JSON.stringify(alerts)}`);
@@ -152,6 +153,9 @@ export class FilterService {
         if (subscriptions===undefined) {
             subscriptions = await this.subscriptionDao.listSubscriptionsForEventMessage(ev.eventSourceId, ev.principal, ev.principalValue);
             if (subscriptions!==undefined && subscriptions.length>0) {
+                for(const sub of subscriptions) {
+                    this.eventConditionsUtils.populateParameters(sub.event.conditions,sub.ruleParameterValues);
+                }
                 subscriptionMap[mapKey]=subscriptions;
             }
         }

@@ -64,10 +64,10 @@ export class EventController implements interfaces.Controller {
     }
 
     @httpGet('/eventsources/:eventSourceId/events')
-    public async listEventsForEventSource(@requestParam('eventSourceId') eventSourceId: string, @queryParam('fromEventId') fromEventId:string,
+    public async listEventsForEventSource(@requestParam('eventSourceId') eventSourceId: string, @queryParam('count') count:number, @queryParam('fromEventId') fromEventId:string,
         @response() res: Response): Promise<EventResourceList> {
 
-        logger.debug(`event.controller listEventsForEventSource: in: eventSourceId:${eventSourceId}, fromEventId:${fromEventId}`);
+        logger.debug(`event.controller listEventsForEventSource: in: eventSourceId:${eventSourceId}, count:${count}, fromEventId:${fromEventId}`);
 
         let model;
         try {
@@ -78,7 +78,7 @@ export class EventController implements interfaces.Controller {
                     eventId: fromEventId
                 };
             }
-            model = await this.eventService.listByEventSource(eventSourceId, from);
+            model = await this.eventService.listByEventSource(eventSourceId, count, from);
 
             if (model===undefined) {
                 res.status(404).end();

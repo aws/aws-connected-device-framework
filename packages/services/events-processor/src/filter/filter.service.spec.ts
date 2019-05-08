@@ -12,16 +12,19 @@ import { CommonEvent } from '../transformers/transformers.model';
 import { SubscriptionItem } from '../api/subscriptions/subscription.models';
 import { AlertDao } from '../alerts/alert.dao';
 import { logger } from '../utils/logger.util';
+import { EventConditionsUtils } from '../api/events/event.models';
 
 describe('FilterService', () => {
     let mockedSubscriptionDao: jest.Mocked<SubscriptionDao>;
     let mockedAlertDao: jest.Mocked<AlertDao>;
+    let mockedEventConditionsUtils: jest.Mocked<EventConditionsUtils>;
     let instance: FilterService;
 
     beforeEach(() => {
         mockedSubscriptionDao = createMockInstance(SubscriptionDao);
         mockedAlertDao = createMockInstance(AlertDao);
-        instance = new FilterService(mockedSubscriptionDao, mockedAlertDao);
+        mockedEventConditionsUtils = createMockInstance(EventConditionsUtils);
+        instance = new FilterService(mockedSubscriptionDao, mockedAlertDao, mockedEventConditionsUtils);
     });
 
     it('happy path', async() => {

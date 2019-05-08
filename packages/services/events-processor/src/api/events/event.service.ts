@@ -8,7 +8,7 @@ import { TYPES } from '../../di/types';
 import {logger} from '../../utils/logger.util';
 import ow from 'ow';
 import {v1 as uuid} from 'uuid';
-import { EventResource, EventResourceList } from './event.models';
+import { EventResource, EventResourceList} from './event.models';
 import { EventAssembler } from './event.assembler';
 import { EventDao } from './event.dao';
 import { SubscriptionService } from '../subscriptions/subscription.service';
@@ -49,8 +49,6 @@ export class EventService  {
 
         // TODO: validate the conditions format
 
-        // TODO: extract ruleParameters from ruleDefinition
-
         const eventSource = await this.eventSourceDao.get(resource.eventSourceId);
         logger.debug(`event.service create: eventSource: ${JSON.stringify(eventSource)}`);
         if (eventSource===undefined) {
@@ -83,13 +81,13 @@ export class EventService  {
     }
 
     public async delete(eventId:string): Promise<void> {
-        logger.debug(`event.service get: in: eventId:${eventId}`);
+        logger.debug(`event.service delete: in: eventId:${eventId}`);
 
         ow(eventId, ow.string.nonEmpty);
 
         // find and delete all affected subscriptions
         let subscriptions = await this.subscriptionService.listByEvent(eventId);
-        while (subscriptions.results.length>0) {
+        while (subscriptions!==undefined && subscriptions.results.length>0) {
             for(const sub of subscriptions.results) {
                 await this.subscriptionService.delete(sub.id);
             }
@@ -103,19 +101,19 @@ export class EventService  {
         // delete the event
         await this.eventDao.delete(eventId);
 
-        logger.debug(`event.service get: exit:`);
+        logger.debug(`event.service delete: exit:`);
     }
 
-    public async listByEventSource(eventSourceId:string, from?:PaginationKey) : Promise<EventResourceList> {
-        logger.debug(`event.service listByEventSource: in: eventSourceId:${eventSourceId}, from:${JSON.stringify(from)}`);
+    public async listByEventSource(eventSourceId:string, count?:number, from?:PaginationKey) : Promise<EventResourceList> {
+        logger.debug(`event.service listByEventSource: in: eventSourceId:${eventSourceId}, count:${count}, from:${JSON.stringify(from)}`);
 
         ow(eventSourceId, ow.string.nonEmpty);
 
-        const results = await this.eventDao.listEventsForEventSource(eventSourceId, from);
+        const results = await this.eventDao.listEventsForEventSource(eventSourceId, count, from);
 
         let model:EventResourceList;
         if (results!==undefined) {
-            model = this.eventAssembler.toResourceList(results[0], results[1]);
+            model = this.eventAssembler.toResourceList(results[0], count, results[1]);
         }
 
         logger.debug(`event.service listByEventSource: exit: model: ${JSON.stringify(model)}`);

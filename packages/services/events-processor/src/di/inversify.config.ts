@@ -33,6 +33,7 @@ import { SNSTarget } from '../api/subscriptions/targets/sns.target';
 import { DynamoDbEventSource } from '../api/eventsources/sources/dynamodb.source';
 import { IotCoreEventSource } from '../api/eventsources/sources/iotcore.source';
 import { DynamoDbUtils } from '../utils/dynamoDb.util';
+import { EventConditionsUtils } from '../api/events/event.models';
 
 // Load everything needed to the Container
 export const container = new Container();
@@ -51,6 +52,7 @@ container.bind<IotCoreEventSource>(TYPES.IotCoreEventSource).to(IotCoreEventSour
 container.bind<EventService>(TYPES.EventService).to(EventService).inSingletonScope();
 container.bind<EventDao>(TYPES.EventDao).to(EventDao).inSingletonScope();
 container.bind<EventAssembler>(TYPES.EventAssembler).to(EventAssembler).inSingletonScope();
+container.bind<EventConditionsUtils>(TYPES.EventConditionsUtils).to(EventConditionsUtils).inSingletonScope();
 
 container.bind<SubscriptionService>(TYPES.SubscriptionService).to(SubscriptionService).inSingletonScope();
 container.bind<SubscriptionDao>(TYPES.SubscriptionDao).to(SubscriptionDao).inSingletonScope();

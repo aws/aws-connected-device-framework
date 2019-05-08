@@ -3,13 +3,16 @@
 #
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
-import { injectable } from 'inversify';
+import { injectable, inject } from 'inversify';
 import {logger} from '../../utils/logger.util';
-import { EventItem, EventResource, EventResourceList } from './event.models';
+import { EventItem, EventResource, EventResourceList, EventConditionsUtils } from './event.models';
 import { PaginationKey } from '../subscriptions/subscription.dao';
+import { TYPES } from '../../di/types';
 
 @injectable()
 export class EventAssembler {
+
+    constructor( @inject(TYPES.EventConditionsUtils) private ecu: EventConditionsUtils) {}
 
     public toItem(resource:EventResource, principal:string): EventItem {
         logger.debug(`event.assembler toItem: in: resource:${JSON.stringify(resource)}`);
@@ -20,7 +23,7 @@ export class EventAssembler {
             name: resource.name,
             principal,
             conditions: resource.conditions,
-            ruleParameters: resource.ruleParameters,
+            ruleParameters: this.ecu.extractParameters(resource.conditions),
             enabled: resource.enabled,
             templates: resource.templates,
             supportedTargets: resource.supportedTargets
@@ -49,19 +52,20 @@ export class EventAssembler {
 
     }
 
-    public toResourceList(items:EventItem[], paginationFrom?:PaginationKey): EventResourceList {
-        logger.debug(`subscription.assembler toResourceList: in: items:${JSON.stringify(items)}, paginationFrom:${JSON.stringify(paginationFrom)}`);
+    public toResourceList(items:EventItem[], count?:number, paginateFrom?:PaginationKey): EventResourceList {
+        logger.debug(`subscription.assembler toResourceList: in: items:${JSON.stringify(items)}, count:${count}, paginateFrom:${JSON.stringify(paginateFrom)}`);
 
         const list:EventResourceList= {
             results:[]
         };
 
-        if (paginationFrom!==undefined) {
-            list.pagination= {
+        if (count!==undefined || paginateFrom!==undefined) {
+            list.pagination = {
                 offset: {
-                    eventSourceId: paginationFrom.eventSourceId,
-                    eventId: paginationFrom.eventId
-                }
+                    eventSourceId: paginateFrom.eventSourceId,
+                    eventId: paginateFrom.eventId
+                },
+                count
             };
         }
 

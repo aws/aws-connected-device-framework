@@ -18,6 +18,8 @@ export const TYPES = {
     EventDao: Symbol.for('EventDao'),
     EventAssembler: Symbol.for('EventAssembler'),
 
+    EventConditionsUtils: Symbol.for('EventConditionsUtils'),
+
     SubscriptionService: Symbol.for('SubscriptionService'),
     SubscriptionDao: Symbol.for('SubscriptionDao'),
     SubscriptionAssembler: Symbol.for('SubscriptionAssembler'),

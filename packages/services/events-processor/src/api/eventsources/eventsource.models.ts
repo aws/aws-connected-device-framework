@@ -27,10 +27,6 @@ export enum EventSourceType {
 
 export class EventSourceResourceList {
     results: EventSourceSummaryResource[]=[];
-    pagination?: {
-        offset:number;
-        count:number;
-    };
 }
 
 export interface EventSourceItem {

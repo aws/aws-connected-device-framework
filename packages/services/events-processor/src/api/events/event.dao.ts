@@ -195,8 +195,8 @@ export class EventDao {
         logger.debug(`event.dao delete: exit:`);
     }
 
-    public async listEventsForEventSource(eventSourceId:string, from?:PaginationKey): Promise<[EventItem[],PaginationKey]> {
-        logger.debug(`event.dao listEventsForEventSource: in: eventSourceId:${eventSourceId}, from:${JSON.stringify(from)}`);
+    public async listEventsForEventSource(eventSourceId:string, count?:number, from?:PaginationKey): Promise<[EventItem[],PaginationKey]> {
+        logger.debug(`event.dao listEventsForEventSource: in: eventSourceId:${eventSourceId}, count:${count}, from:${JSON.stringify(from)}`);
 
         const params:DocumentClient.QueryInput = {
             TableName: this.eventConfigTable,
@@ -210,7 +210,8 @@ export class EventDao {
                 ':range': createDelimitedAttributePrefix(PkType.Event)
             },
             Select: 'ALL_ATTRIBUTES',
-            ExclusiveStartKey: from
+            ExclusiveStartKey: from,
+            Limit: count
         };
 
         logger.debug(`event.dao listEventsForEventSource: params:${JSON.stringify(params)}`);

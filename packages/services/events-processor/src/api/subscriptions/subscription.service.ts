@@ -121,7 +121,7 @@ export class SubscriptionService  {
             throw new Error('EVENT_NOT_FOUND');
         }
 
-        // verify that the subscribed targets are supports for the event
+        // verify that the subscribed targets are supported for the event
         if (resource.targets!==undefined) {
             if (resource.targets.email!==undefined) {
                 ow(event.supportedTargets.email, ow.string.nonEmpty);
@@ -134,7 +134,11 @@ export class SubscriptionService  {
             }
         }
 
-        // TODO: validate that all required ruleParameterValues have been provided
+        // verify that all required ruleParameterValues have been provided
+        if (event.ruleParameters) {
+            ow(resource.ruleParameterValues, ow.object.nonEmpty);
+            ow(resource.ruleParameterValues, ow.object.hasKeys(...event.ruleParameters));
+        }
 
         const item = this.subscriptionAssembler.toItem(resource, event);
 

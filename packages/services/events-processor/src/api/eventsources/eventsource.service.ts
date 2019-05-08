@@ -72,12 +72,12 @@ export class EventSourceService  {
 
         // find and delete all affected events
         let events = await this.eventService.listByEventSource(eventSourceId);
-        while (events.results.length>0) {
+        while (events!==undefined && events.results.length>0) {
             for(const ev of events.results) {
                 await this.eventService.delete(ev.eventId);
             }
             if (events.pagination!==undefined) {
-                events = await this.eventService.listByEventSource(eventSourceId, events.pagination.offset);
+                events = await this.eventService.listByEventSource(eventSourceId, 25, events.pagination.offset);
             } else {
                 break;
             }
