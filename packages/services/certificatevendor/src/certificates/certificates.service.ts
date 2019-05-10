@@ -1,15 +1,16 @@
 /*-------------------------------------------------------------------------------
-# Copyright (c) 2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# Copyright (c) 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../di/types';
 import {logger} from '../utils/logger';
+import * as pem from 'pem';
 import ow from 'ow';
 import { Iot } from 'aws-sdk';
 import { CertificateResponseModel } from './certificates.models';
-import { UpdateCertificateRequest } from 'aws-sdk/clients/iot';
+import { UpdateCertificateRequest, DescribeCACertificateRequest, DescribeCACertificateResponse } from 'aws-sdk/clients/iot';
 import { RegistryManager } from '../registry/registry.interfaces';
 
 @injectable()
@@ -18,6 +19,7 @@ export class CertificateService {
     private iot: AWS.Iot;
     private iotData: AWS.IotData;
     private s3: AWS.S3;
+    private ssm: AWS.SSM;
 
     constructor(
         @inject('aws.s3.certificates.bucket') private s3Bucket: string,
@@ -29,13 +31,17 @@ export class CertificateService {
         @inject('mqtt.topics.ack.success') private mqttAckSuccessTopic: string,
         @inject('mqtt.topics.ack.failure') private mqttAckFailureTopic: string,
         @inject('aws.iot.thingGroup.rotateCertificates') private thingGroupName: string,
+        @inject('certificates.caCertificateId') private caCertificateId: string,
+        @inject('defaults.certificates.certificateExpiryDays') private certificateExpiryDays: number,
         @inject(TYPES.RegistryManager) private registry:RegistryManager,
         @inject(TYPES.IotFactory) iotFactory: () => AWS.Iot,
         @inject(TYPES.IotDataFactory) iotDataFactory: () => AWS.IotData,
-        @inject(TYPES.S3Factory) s3Factory: () => AWS.S3 ) {
+        @inject(TYPES.S3Factory) s3Factory: () => AWS.S3,
+        @inject(TYPES.SSMFactory) ssmFactory: () => AWS.SSM) {
             this.iot = iotFactory();
             this.iotData = iotDataFactory();
             this.s3 = s3Factory();
+            this.ssm = ssmFactory();
     }
 
     public async get(deviceId:string): Promise<void> {
@@ -77,6 +83,44 @@ export class CertificateService {
         }
 
         logger.debug(`certificates.service get exit: response:${JSON.stringify(response)}`);
+
+    }
+
+    public async getWithCsr(deviceId:string, csr:string): Promise<void> {
+        logger.debug(`certificates.service getWithCsr: in: deviceId:${deviceId}, csr: ${csr}`);
+
+        ow(deviceId, ow.string.nonEmpty);
+        ow(csr, ow.string.nonEmpty);
+
+        const response:CertificateResponseModel = {};
+
+        try {
+
+            // ensure device is whitelisted
+            if (await this.registry.isWhitelisted(deviceId)!==true) {
+                throw new Error('DEVICE_NOT_WHITELISTED');
+            }
+
+            const caPem:string = await this.getCaCertificate(this.caCertificateId);
+            const caKey:string = await this.getCAKey(this.caCertificateId);
+
+            const certificate:string = await this.createCertificateFromCsr(csr, caKey, caPem);
+
+            // update asset library status
+            await this.registry.updateAssetStatus(deviceId);
+
+            // send success to the device
+            response.certificate = certificate;
+            await this.publishResponse(this.mqttGetSuccessTopic, deviceId, response);
+
+        } catch (err) {
+            logger.error(`certificates.service getWithCsr error:${err}`);
+            response.message = err.message;
+            await this.publishResponse(this.mqttGetFailureTopic, deviceId, response);
+            throw err;
+        }
+
+        logger.debug(`certificates.service getWithCsr exit: response:${JSON.stringify(response)}`);
 
     }
 
@@ -203,5 +247,45 @@ export class CertificateService {
         }
         logger.debug('certificates.service publishResponse: exit:');
 
+    }
+
+    private async getCaCertificate(certificateId:string) : Promise<string> {
+        logger.debug(`certificates.service getCaCertificate: in: certificateId:${certificateId}`);
+        const params: DescribeCACertificateRequest = {
+            certificateId
+        };
+
+        let caCertificatePem:string;
+        try {
+            const response:DescribeCACertificateResponse = await this.iot.describeCACertificate(params).promise();
+            caCertificatePem = response.certificateDescription.certificatePem;
+        } catch (err) {
+            logger.debug(`certificates.service getCaCertificate: err:${err}`);
+            throw new Error('UNABLE_TO_GET_CA_CERTIFICATE');
+        }
+
+        logger.debug('certificates.service getCaCertificate: exit:');
+        return caCertificatePem;
+    }
+
+    private async getCAKey(rootCACertId:string) : Promise<string> {
+        const params = {
+            Name: `cdf-ca-key-${rootCACertId}`,
+            WithDecryption: true
+        };
+
+        const data = await this.ssm.getParameter(params).promise();
+        return data.Parameter.Value;
+    }
+
+    private createCertificateFromCsr(csr:string, rootKey:string, rootPem:string) : Promise<string> {
+        return new Promise((resolve:any,reject:any) =>  {
+            pem.createCertificate({csr, days:this.certificateExpiryDays, serviceKey:rootKey, serviceCertificate:rootPem}, (err:any, data:any) => {
+                if(err) {
+                    return reject(err);
+                }
+                return resolve(data.certificate);
+            });
+        });
     }
 }

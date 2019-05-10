@@ -20,10 +20,20 @@ Parameters:
     Description: The MQTT topic where certificate requests are published by a device.
     Default: cdf/certificates/+/get
     Type: String
+  MQTTGetWithCsrTopic:
+    Description: The MQTT topic where certificate requests with a CSR are published by a device.
+    Default: cdf/certificates/+/getwithcsr
+    Type: String
   MQTTAckTopic:
     Description: The MQTT topic where certificate acknowledgements are published by a device.
     Default: cdf/certificates/+/ack
     Type: String
+  KmsKeyId:
+    Description: The KMS key ID used to encrypt SSM parameters
+    Type: String
+
+Conditions:
+  KmsKeyProvided: !Not [ !Equals [ !Ref KmsKeyId, "" ]]
 
 Resources:
 
@@ -38,7 +48,20 @@ Resources:
         Description: "Certificate requests (CDF Certificate Vendor service)"
         AwsIotSqlVersion: "2016-03-23"
         RuleDisabled: "false" 
-        Sql: !Sub "SELECT topic(3) as deviceId, topic(4) as action, * FROM '${MQTTGetTopic}'" 
+        Sql: !Sub "SELECT topic(3) as deviceId, topic(4) as action, principal() as certId, * FROM '${MQTTGetTopic}'"
+
+  MQTTGetWithCsrRule:
+    Type: "AWS::IoT::TopicRule"
+    Properties:
+      TopicRulePayload: 
+        Actions:
+          -
+            Lambda:
+              FunctionArn: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${LambdaFunction}'
+        Description: "Certificate requests with a CSR (CDF Certificate Vendor service)"
+        AwsIotSqlVersion: "2016-03-23"
+        RuleDisabled: "false" 
+        Sql: !Sub "SELECT topic(3) as deviceId, topic(4) as action, principal() as certId, * FROM '${MQTTGetWithCsrTopic}'"
 
   MQTTAckRule:
     Type: "AWS::IoT::TopicRule"
@@ -51,7 +74,7 @@ Resources:
         Description: "Certificate acknowledgements (CDF Certificate Vendor service)"
         AwsIotSqlVersion: "2016-03-23"
         RuleDisabled: "false" 
-        Sql: !Sub "SELECT topic(3) as deviceId, topic(4) as action, * FROM '${MQTTAckTopic}'"   
+        Sql: !Sub "SELECT topic(3) as deviceId, topic(4) as action, principal() as certId, * FROM '${MQTTAckTopic}'"
 
   LambdaFunctionGetInvocationPermission:
     Type: AWS::Lambda::Permission
@@ -60,7 +83,16 @@ Resources:
       Action: lambda:InvokeFunction
       Principal: iot.amazonaws.com
       FunctionName: !GetAtt LambdaFunction.Arn
-      SourceAccount: !Ref AWS::AccountId   
+      SourceAccount: !Ref AWS::AccountId
+
+  LambdaFunctionGetWithCsrInvocationPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      SourceArn: !Sub 'arn:aws:iot:${AWS::Region}:${AWS::AccountId}:rule/${MQTTGetWithCsrRule}'
+      Action: lambda:InvokeFunction
+      Principal: iot.amazonaws.com
+      FunctionName: !GetAtt LambdaFunction.Arn
+      SourceAccount: !Ref AWS::AccountId
 
   LambdaFunctionAckInvocationPermission:
     Type: AWS::Lambda::Permission
@@ -137,6 +169,24 @@ Resources:
             Effect: Allow
             Resource:
               - !Sub 'arn:aws:iot:${AWS::Region}:${AWS::AccountId}:topic/cdf/certificates/*'
+          - Fn::If:
+          - KmsKeyProvided
+          -
+            - Sid: "ssm"
+              Action:
+                - 'ssm:GetParameter*'
+              Effect: Allow
+              Resource: !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/cdf-ca-key-*"
+          - Ref: AWS::NoValue
+          - Fn::If:
+          - KmsKeyProvided
+          -
+            - Sid: "kms"
+              Action:
+                - 'kms:Decrypt'
+              Effect: Allow
+              Resource: !Sub "arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/${KmsKeyId}"
+          - Ref: AWS::NoValue
 
   LambdaFunction:
     Type: AWS::Serverless::Function
@@ -160,6 +210,11 @@ Outputs:
     Value: !Sub "${MQTTGetRule}"
     Export: 
       Name: !Sub "${AWS::StackName}-MQTTGetRuleName"
+  MQTTGetWithCsrRuleName:
+    Description: Name of get rule
+    Value: !Sub "${MQTTGetWithCsrRule}"
+    Export: 
+      Name: !Sub "${AWS::StackName}-MQTTGetWithCsrRuleName"
   MQTTAckRuleName:
     Description: Name of ack rule
     Value: !Sub "${MQTTAckRule}"

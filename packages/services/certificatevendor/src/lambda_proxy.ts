@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------------
-# Copyright (c) 2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# Copyright (c) 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
@@ -25,6 +25,9 @@ exports.handler = async (event: any, _context: any) => {
 
   if (event.action===Action.get) {
     await service.get(event.deviceId);
+  } else if (event.action===Action.getWithCsr) {
+    ow(event.csr, ow.string.nonEmpty);
+    await service.getWithCsr(event.deviceId, event.csr);
   } else if (event.action===Action.ack) {
     await service.ack(event.deviceId);
   } else {

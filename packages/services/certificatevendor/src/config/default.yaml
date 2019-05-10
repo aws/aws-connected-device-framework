@@ -21,12 +21,17 @@ mqtt:
       success: cdf/certificates/{thingName}/ack/accepted
       failure: cdf/certificates/{thingName}/ack/rejected
 
+certificates:
+  caCertificateId:
+
 defaults:
   device:
     status:
       success: 
         key: status
         value: active
+  certificates:
+    certificateExpiryDays: 1095
 
 assetLibrary:
   baseUrl:

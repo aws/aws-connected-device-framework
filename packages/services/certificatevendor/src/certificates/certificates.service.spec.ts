@@ -13,6 +13,7 @@ let mockedRegistryManager: RegistryManager;
 let mockedIot: AWS.Iot;
 let mockedIotData: AWS.IotData;
 let mockedS3: AWS.S3;
+let mockedSSM: AWS.SSM;
 const s3Bucket = 'myBucket';
 const s3Prefix = 'certificates';
 const s3Suffix = '';
@@ -22,6 +23,8 @@ const mqttGetFailureTopic = 'cdf/certificates/device123/get/rejected';
 const mqttAckSuccessTopic = 'cdf/certificates/device123/ack/accepted';
 const mqttAckFailureTopic = 'cdf/certificates/device123/ack/rejected';
 const thingGroupName = 'myTestGroup';
+const caCertificateId = 'abcdef123456';
+const certificateExpiryDays = 100;
 let instance: CertificateService;
 
 const deviceId = 'device123';
@@ -37,6 +40,7 @@ describe('CertificatesService', () => {
         mockedS3 = new AWS.S3();
         mockedIot = new AWS.Iot();
         mockedIotData = new AWS.IotData({endpoint:'mocked'});
+        mockedSSM = new AWS.SSM();
 
         const mockedS3Factory = () => {
             return mockedS3;
@@ -47,10 +51,14 @@ describe('CertificatesService', () => {
         const mockedIotDataFactory = () => {
             return mockedIotData;
         };
+        const mockedSsmFactory = () => {
+            return mockedSSM;
+        };
 
         instance = new CertificateService(s3Bucket, s3Prefix, s3Suffix, presignedUrlExpiresInSeconds,
-            mqttGetSuccessTopic, mqttGetFailureTopic, mqttAckSuccessTopic, mqttAckFailureTopic, thingGroupName,
-            mockedRegistryManager, mockedIotFactory, mockedIotDataFactory, mockedS3Factory);
+            mqttGetSuccessTopic, mqttGetFailureTopic, mqttAckSuccessTopic, mqttAckFailureTopic,
+            thingGroupName, caCertificateId, certificateExpiryDays,
+            mockedRegistryManager, mockedIotFactory, mockedIotDataFactory, mockedS3Factory, mockedSsmFactory);
     });
 
     it('requesting certificate for non-whitelisted device returns error', async() => {
