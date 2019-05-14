@@ -17,7 +17,7 @@ import {EventEmitter, Type, Event} from '../events/eventEmitter.service';
 import * as NodeCache from 'node-cache';
 import ow from 'ow';
 import { TypesService } from './types.service';
-import * as config from 'config';
+import config from 'config';
 
 @injectable()
 export class TypesServiceFull implements TypesService {

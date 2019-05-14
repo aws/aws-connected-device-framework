@@ -49,3 +49,9 @@ begin; set -lx AWS_REGION 'us-west-2'; and set -lx CDF_CODECOMMIT_USERNAME 'dean
 ```fish
 begin; set -lx CODEBUILD_BUILD_SUCCEEDING 1; and set -lx ENVIRONMENT development; and set -lx ARTIFACT_PUBLISH_LOCATION 's3://cdf-157721836412-us-east-1/releases'; and set -lx DOCUMENTATION_PUBLISH_LOCATION 's3://cdf-157721836412-us-east-1/releases'; cicd/deployproject_postbuild.bash; end
 ```
+
+### integrationtestsproject_build.bash
+
+```fish
+begin; set -lx CODEBUILD_SRC_DIR_source_infrastructure '/Users/deanhart/git/cdf-ts/cdf-infrastructure-demo'; and set -lx CODEBUILD_BUILD_SUCCEEDING 1; and set -lx ENVIRONMENT development; and set -lx DEPLOY_ARTIFACTS_STORE_BUCKET 'cdf-157731826412-us-west-2'; and set -lx ASSETLIBRARY_MODE 'full'; cicd/integrationtestsproject_build.bash; end
+```
