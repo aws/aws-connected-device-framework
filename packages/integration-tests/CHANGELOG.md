@@ -1,3 +1,10 @@
+# [@cdf/integration-tests-v1.1.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/integration-tests-v1.0.0...@cdf/integration-tests-v1.1.0) (2019-05-14)
+
+
+### Features
+
+* 🎸 events ([dfbba67](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/dfbba67))
+
 # @cdf/integration-tests-v1.0.0 (2019-03-10)
 
 
