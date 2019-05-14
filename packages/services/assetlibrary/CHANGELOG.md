@@ -1,3 +1,11 @@
+# [@cdf/assetlibrary-v2.1.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v2.0.2...@cdf/assetlibrary-v2.1.0) (2019-05-14)
+
+
+### Features
+
+* **events:** added pagination, swagger, and event rule parameters ([ad655c7](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/ad655c7))
+* **events-processor:** initial commit ([1a1eb72](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/1a1eb72))
+
 # [@cdf/assetlibrary-v2.0.2](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v2.0.1...@cdf/assetlibrary-v2.0.2) (2019-04-17)
 
 
