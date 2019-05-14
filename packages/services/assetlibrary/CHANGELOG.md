@@ -1,3 +1,10 @@
+# [@cdf/assetlibrary-v2.1.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v2.1.0...@cdf/assetlibrary-v2.1.1) (2019-05-14)
+
+
+### Bug Fixes
+
+* **assetlibrary:** incorrect import statement for config ([7f385c1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/7f385c1))
+
 # [@cdf/assetlibrary-v2.1.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v2.0.2...@cdf/assetlibrary-v2.1.0) (2019-05-14)
 
 
