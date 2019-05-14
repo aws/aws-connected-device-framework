@@ -7,7 +7,7 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from '../../di/types';
 import {logger} from '../../utils/logger.util';
 import ow from 'ow';
-import { EventSourceType, EventSourceResourceList, EventSourceDetailResource, EventSourceSummaryResource } from './eventSource.models';
+import { EventSourceType, EventSourceResourceList, EventSourceDetailResource, EventSourceSummaryResource } from './eventsource.models';
 import { EventSourceDao } from './eventsource.dao';
 import { EventSourceAssembler } from './eventsource.assembler';
 import { EventService } from '../events/event.service';

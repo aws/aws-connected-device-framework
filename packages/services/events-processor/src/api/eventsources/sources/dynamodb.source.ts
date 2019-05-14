@@ -7,7 +7,7 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from '../../../di/types';
 import {logger} from '../../../utils/logger.util';
 import ow from 'ow';
-import { EventSourceDetailResource } from '../eventSource.models';
+import { EventSourceDetailResource } from '../eventsource.models';
 import { EventSource } from './source.interface';
 
 @injectable()

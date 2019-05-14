@@ -9,7 +9,7 @@ import { inject } from 'inversify';
 import {TYPES} from '../../di/types';
 import {logger} from '../../utils/logger.util';
 import {handleError} from '../../utils/errors.util';
-import { EventSourceDetailResource, EventSourceResourceList } from './eventSource.models';
+import { EventSourceDetailResource, EventSourceResourceList } from './eventsource.models';
 import { EventSourceService } from './eventsource.service';
 
 @controller('/eventsources')

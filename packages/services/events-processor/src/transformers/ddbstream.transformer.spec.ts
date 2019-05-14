@@ -10,7 +10,7 @@ import * as path from 'path';
 import { createMockInstance } from 'jest-create-mock-instance';
 import { EventSourceDao } from '../api/eventsources/eventsource.dao';
 import { DDBStreamTransformer } from './ddbstream.transformer';
-import { EventSourceItem, EventSourceType } from '../api/eventsources/eventSource.models';
+import { EventSourceItem, EventSourceType } from '../api/eventsources/eventsource.models';
 import { CommonEvent } from './transformers.model';
 
 const readFileAsync = util.promisify(fs.readFile);

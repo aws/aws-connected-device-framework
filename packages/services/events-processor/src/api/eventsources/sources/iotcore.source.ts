@@ -8,7 +8,7 @@ import { TYPES } from '../../../di/types';
 import {logger} from '../../../utils/logger.util';
 import ow from 'ow';
 import {v1 as uuid} from 'uuid';
-import { EventSourceDetailResource } from '../eventSource.models';
+import { EventSourceDetailResource } from '../eventsource.models';
 import { EventSource } from './source.interface';
 
 @injectable()

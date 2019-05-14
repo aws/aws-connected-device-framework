@@ -3,7 +3,7 @@
 #
 # This eventSource code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
-import { EventSourceDetailResource } from '../eventSource.models';
+import { EventSourceDetailResource } from '../eventsource.models';
 
 export interface EventSource  {
 
