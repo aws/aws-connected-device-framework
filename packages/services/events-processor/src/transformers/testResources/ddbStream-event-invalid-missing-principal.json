@@ -30,7 +30,7 @@
             "awsRegion": "us-west-2",
             "eventName": "INSERT",
             "eventSourceARN": "arn:aws:dynamodb:us-west-2:123456789012:table/ExampleTableWithStream/stream/2015-06-27T00:48:05.899",
-            "eventSource": "aws:somethingelse"
+            "eventSource": "aws:dynamodb"
         },
         {
             "eventID": "2",
@@ -70,7 +70,7 @@
             "awsRegion": "us-west-2",
             "eventName": "MODIFY",
             "eventSourceARN": "arn:aws:dynamodb:us-west-2:123456789012:table/ExampleTableWithStream/stream/2015-06-27T00:48:05.899",
-            "eventSource": "aws:somethingelse"
+            "eventSource": "aws:dynamodb"
         },
         {
             "eventID": "3",
@@ -96,7 +96,7 @@
             "awsRegion": "us-west-2",
             "eventName": "REMOVE",
             "eventSourceARN": "arn:aws:dynamodb:us-west-2:123456789012:table/ExampleTableWithStream/stream/2015-06-27T00:48:05.899",
-            "eventSource": "aws:somethingelse"
+            "eventSource": "aws:dynamodb"
         }
     ]
 }
