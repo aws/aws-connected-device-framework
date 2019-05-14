@@ -7,6 +7,7 @@ import 'reflect-metadata';
 import { createMockInstance } from 'jest-create-mock-instance';
 import { MessageCompilerService } from './messageCompiler.service';
 import { MessageCompilerDao } from './messageCompiler.dao';
+import { MessageTemplates } from './messageCompiler.model';
 
 describe('MessageCompiler', () => {
 
@@ -27,42 +28,23 @@ describe('MessageCompiler', () => {
         };
 
         // mocks
-        const mockedResponse= {
-            default: 'default {{=it.thingName}}',
-            sns: 'sns {{=it.thingName}}',
-            iotCore: 'iotCore {{=it.thingName}}'
+        const mockedResponse:MessageTemplates= {
+            supportedTargets: {
+                mail: 'default',
+                sms: 'small'
+            },
+            templates: {
+                default: 'default {{=it.thingName}}',
+                small: 'small {{=it.thingName}}'
+            }
         };
         const mockedQuery = mockedMessageCompilerDao.listTemplates = jest.fn().mockImplementationOnce(()=> mockedResponse);
 
         // execute
-        const actual = await instance.compile(eventId, 'sns', attributes);
+        const actual = await instance.compile(eventId, 'sms', attributes);
 
         // verification
-        expect(actual).toEqual('sns myDogBowl');
-        expect(mockedQuery).toBeCalledWith(eventId);
-
-    });
-
-    it('message compiles using default template when no specific template available', async() => {
-
-        const eventId = 'event001';
-        const attributes = {
-            notUsedAttribute: 'something',
-            thingName: 'myDogBowl'
-        };
-
-        // mocks
-        const mockedResponse= {
-            default: 'default {{=it.thingName}}',
-            iotCore: 'iotCore {{=it.thingName}}'
-        };
-        const mockedQuery = mockedMessageCompilerDao.listTemplates = jest.fn().mockImplementationOnce(()=> mockedResponse);
-
-        // execute
-        const actual = await instance.compile(eventId, 'sns', attributes);
-
-        // verification
-        expect(actual).toEqual('default myDogBowl');
+        expect(actual).toEqual('small myDogBowl');
         expect(mockedQuery).toBeCalledWith(eventId);
 
     });
