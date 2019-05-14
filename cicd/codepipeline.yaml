@@ -694,13 +694,27 @@ Resources:
               - 
                 Sid: iot
                 Action:
-                  - 'iot:CreateTopicRule'
                   - 'iot:CreatePolicy'
                   - 'iot:CreatePolicyVersion'
+                  - 'iot:CreateThingGroup'
+                  - 'iot:CreateTopicRule'
                   - 'iot:DeletePolicyVersion'
+                  - 'iot:DeleteThingGroup'
                   - 'iot:DescribeEndpoint'
+                  - 'iot:DescribeThingGroup'
                   - 'iot:ListPolicyVersions'
                   - 'iot:UpdateEventConfigurations'
+                Effect: Allow
+                Resource: 
+                  - "*"
+              -
+                Sid: dynamodb
+                Action:
+                - dynamodb:CreateTable
+                - dynamodb:DeleteTable
+                - dynamodb:DescribeStream
+                - dynamodb:DescribeTable
+                - dynamodb:ListStreams
                 Effect: Allow
                 Resource: 
                   - "*"

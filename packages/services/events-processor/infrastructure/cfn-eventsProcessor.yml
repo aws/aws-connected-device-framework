@@ -509,7 +509,6 @@ Resources:
   DAXCluster:
     Type: AWS::DAX::Cluster
     Properties:
-      ClusterName: !Sub 'cdf-${Environment}'
       Description: Event notifications cluster
       IAMRoleARN: !GetAtt DAXServiceRole.Arn
       NodeType: !Ref DAXInstanceType
