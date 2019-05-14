@@ -53,16 +53,6 @@ EOF
 }
 
 
-#######################################
-######  check for dependencies   ######
-#######################################
-for tool in aws jq zip git pnpm; do
-  if ! which -s $tool; then
-    echo Dependency Required: $tool; exit 1;
-  fi
-done
-
-
 ##########################################################
 ######  parse and validate the provided arguments   ######
 ##########################################################
