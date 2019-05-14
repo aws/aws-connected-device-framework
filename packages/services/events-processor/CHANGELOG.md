@@ -1,3 +1,10 @@
+# [@cdf/events-processor-v1.0.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/events-processor-v1.0.0...@cdf/events-processor-v1.0.1) (2019-05-14)
+
+
+### Bug Fixes
+
+* **events-processor:** dax cluster name length ([d2fc527](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/d2fc527))
+
 # @cdf/events-processor-v1.0.0 (2019-05-14)
 
 
