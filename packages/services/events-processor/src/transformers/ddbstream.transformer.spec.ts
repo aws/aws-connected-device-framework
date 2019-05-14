@@ -85,7 +85,7 @@ describe('DDBStreamTransformer', () => {
 
     it('unrecognized eventSource type', async() => {
         // stubs
-        const event = JSON.parse(await readFileAsync(path.join(__dirname, 'testResources/ddbStream-event-invalid-eventsource.json'), {encoding: 'utf8'}));
+        const event = JSON.parse(await readFileAsync(path.join(__dirname, 'testResources/ddbStream-event-invalid-eventSource.json'), {encoding: 'utf8'}));
 
         const expected:CommonEvent[] = [];
 
