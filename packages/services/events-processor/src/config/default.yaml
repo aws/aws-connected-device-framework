@@ -1,0 +1,31 @@
+#-------------------------------------------------------------------------------
+# Copyright (c) 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+#
+# This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
+#-------------------------------------------------------------------------------
+aws:
+  region:
+  accountId:
+  iot:
+    endpoint:
+
+  dynamoDb:
+    tables:
+      eventConfig:
+        name: MUST_SET!
+        gsi1: sk-gsi1Sort-index
+        gsi2: gsi2Key-sk-index
+      eventNotifications:
+        name: MUST_SET!
+
+    dax:
+      endpoints:
+  
+  lambda:
+    dynamoDbStream:
+      name: MUST_SET!
+    lambdaInvoke:
+      arn: MUST_SET!
+
+cors:
+  origin:

@@ -153,4 +153,4 @@ Reference device agents for consuming CDF services.
 
 ## Architecture
 
-![Architecture](CDF_Arch.png)
+![Architecture](images/CDF_Arch.png)

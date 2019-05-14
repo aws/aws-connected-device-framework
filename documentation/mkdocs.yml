@@ -36,6 +36,10 @@ nav:
       - 'Custom Device Authorizer Overview' : projects/auth-devicecert/overview.md
     - Device Monitoring:
       - 'Device Monitoring Overview' : projects/devicemonitoring/overview.md  
+    - Notifications:
+      - 'Notifications Overiew' : projects/notifications/overview.md
+      - 'Notifications Walkthrough' : projects/notifications/walkthrough.md
+      - 'Notifications Design' : projects/notifications/design.md
     - Provisioning:
       - 'Provisioning Overview': projects/provisioning/overview.md
       - 'Provisioning Templates': projects/provisioning/provisioning-templates.md
@@ -50,7 +54,6 @@ nav:
     - 'Getting Started': development/quickstart.md 
     - 'Prerequisites': development/prerequisites.md
     - 'Tech Stack': development/tech-stack.md
-    - 'Local Development': development/local_development.md
     - 'Dependency Injection': development/dependency-injection.md
     - 'Asynchronous Programming': development/async.md
     - 'Config': development/config.md

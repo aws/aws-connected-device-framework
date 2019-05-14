@@ -29,3 +29,7 @@ cors:
   origin:
 
 mode: lite
+
+cache:
+  types:
+    ttl: 30

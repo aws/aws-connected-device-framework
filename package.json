@@ -2,15 +2,16 @@
   "name": "cdf",
   "author": "Dean Hart <deanhart@amazon.com>",
   "scripts": {
-    "reset": "pnpm m exec -- rm -rf dist && pnpm m exec -- rm -rf build && pnpm m exec -- rm -rf node_modules && rm -f pnpm-lock.yaml && pnpm install --force",
+    "reset": "pnpm run clean && pnpm m exec -- rm -rf node_modules && rm -f pnpm-lock.yaml && pnpm install --force",
+    "clean": "pnpm m exec -- rm -rf dist && pnpm m exec -- rm -rf build",
 
     "commit": "npx git-cz",
 
     "build": "pnpm m run build",
 
-    "prebundle": "pnpm run reset && pnpm m run build && pnpm m run prebundle:prepare",
+    "prebundle": "pnpm i --force && pnpm run clean && pnpm run build && pnpm m run prebundle:prepare",
     "bundle": "pnpm i --no-lock --prod --shamefully-flatten --force && pnpm m run bundle:package",
-    "postbundle": "echo '\n\n******   node_modules have been flattened and resolved in production mode.  If this is a dev environment, make sure you run `pnpm run reset` from the root to reset.'"
+    "postbundle": "pnpm install --force"
 
   },
   "devDependencies": {

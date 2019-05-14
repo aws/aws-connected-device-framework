@@ -1,0 +1,31 @@
+#-------------------------------------------------------------------------------
+# Copyright (c) 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+#
+# This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
+#-------------------------------------------------------------------------------
+aws:
+  region: AWS_REGION
+  accountId: AWS_ACCOUNT_ID
+  iot:
+    endpoint: EVENTSPROCESSOR_AWS_IOT_ENDPOINT
+
+  dynamoDb:
+    tables:
+      eventConfig:
+        name: EVENTSPROCESSOR_AWS_DYNAMODB_TABLES_EVENTCONFIG_NAME
+        gsi1: EVENTSPROCESSOR_AWS_DYNAMODB_TABLES_EVENTCONFIG_GSI1
+        gsi2: EVENTSPROCESSOR_AWS_DYNAMODB_TABLES_EVENTCONFIG_GSI2
+      eventNotifications:
+        name: EVENTSPROCESSOR_AWS_DYNAMODB_TABLES_EVENTNOTIFICATIONS_NAME
+
+    dax:
+      endpoints: EVENTSPROCESSOR_AWS_DYNAMODB_DAX_ENDPOINTS
+  
+  lambda:
+    dynamoDbStream:
+      name: EVENTSPROCESSOR_AWS_LAMBDA_DYNAMODBSTREAM_NAME
+    lambdaInvoke:
+      arn: EVENTSPROCESSOR_AWS_LAMBDA_LAMBDAINVOKE_ARN
+
+cors:
+  origin: EVENTSPROCESSOR_CORS_ORIGIN

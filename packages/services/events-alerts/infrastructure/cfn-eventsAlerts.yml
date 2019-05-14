@@ -1,0 +1,130 @@
+#-------------------------------------------------------------------------------
+# Copyright (c) 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+#
+# This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
+#-------------------------------------------------------------------------------
+AWSTemplateFormatVersion : '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Description: CDF Events (Alerts) Service
+
+
+Parameters:
+  Environment:
+    Description:  Name of environment.  Used to name the created resources.
+    Type: String
+    MinLength: 1
+  ApplicationConfigurationOverride:
+    Description: This allows you to override any configuration application configuration. Must be a JSON formatted string. Any configurations contained in this will override the configurations found and merged from the config files.
+    Type: String
+    MinLength: 1
+  EventsProcessorStackName:
+    Description: Name of the events-processor CloudFormation stack
+    Type: String
+    MinLength: 1
+
+Resources:
+
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: 
+              - lambda.amazonaws.com
+              - iot.amazonaws.com
+          Action: sts:AssumeRole
+      Path: "/"
+      ManagedPolicyArns:
+        - !Ref ApplicationPolicies
+        - arn:aws:iam::aws:policy/AWSLambdaExecute
+        - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
+    DependsOn:
+      - ApplicationPolicies
+
+  ApplicationPolicies:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      Description: 'cdf-events-processor application policies'
+      Path: "/"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:          
+          - Sid: "iampassrole"
+            Action:
+              - "iam:PassRole"
+            Effect: Allow
+            Resource: !Sub "arn:aws:iam::${AWS::AccountId}:role/cdf-eventsAlerts-*"
+          - Sid: 'sns'
+            Action: sns:publish
+            Effect: Allow
+            Resource: !Sub "arn:aws:sns:${AWS::Region}:${AWS::AccountId}:cdf-events-*"
+          - Sid: "dynamodbStreams"
+            Action:
+              - dynamodb:DescribeStream
+              - dynamodb:GetRecords
+              - dynamodb:GetShardIterator
+              - dynamodb:ListStreams
+            Effect: Allow
+            Resource: 
+              - "Fn::Join":
+                  - "/"
+                  - - Fn::ImportValue: !Sub '${EventsProcessorStackName}-EventNotificationsTableArn'
+                    - "stream/*"
+          - Sid: "dynamodb"
+            Action:
+              - dynamodb:Query
+              - dynamodb:DescribeTable
+            Effect: Allow
+            Resource: 
+              - Fn::ImportValue: !Sub '${EventsProcessorStackName}-EventNotificationsTableArn'
+              - "Fn::Join":
+                  - "/"
+                  - - Fn::ImportValue: !Sub '${EventsProcessorStackName}-EventNotificationsTableArn'
+                    - "index/*"
+              - Fn::ImportValue: !Sub '${EventsProcessorStackName}-EventConfigTableArn'
+              - "Fn::Join":
+                  - "/"
+                  - - Fn::ImportValue: !Sub '${EventsProcessorStackName}-EventConfigTableArn'
+                    - "index/*"
+
+  DynamoDBStreamLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../build/build.zip
+      Handler: lambda_proxy_ddbstream.handler
+      MemorySize: 512
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Runtime: nodejs8.10
+      Timeout: 30
+      Environment:
+        Variables:
+          NODE_CONFIG_DIR: './config'
+          NODE_CONFIG: !Ref ApplicationConfigurationOverride
+          EVENTSALERTS_AWS_DYNAMODB_TABLES_EVENTCONFIG_NAME: 
+            Fn::ImportValue: !Sub '${EventsProcessorStackName}-EventConfigTable'
+          EVENTSALERTS_AWS_DYNAMODB_TABLES_EVENTNOTIFICATIONS_NAME: 
+            Fn::ImportValue: !Sub '${EventsProcessorStackName}-EventNotificationsTable'
+          EVENTSALERTS_AWS_DYNAMODB_DAX_ENDPOINTS: 
+            Fn::ImportValue: !Sub '${EventsProcessorStackName}-DAXClusterEndpoint'
+      Tracing: Active
+
+  EventNotificationsSourceMapping:
+    Type: AWS::Lambda::EventSourceMapping
+    Properties: 
+      EventSourceArn: 
+        Fn::ImportValue: !Sub '${EventsProcessorStackName}-EventNotificationsStream'
+      FunctionName: !Ref DynamoDBStreamLambdaFunction
+      StartingPosition: LATEST
+
+
+Outputs:
+  DynamoDBStreamLambdaArn:
+    Description: DynamoDB Stream Lambda Arn
+    Value: !Sub "${DynamoDBStreamLambdaFunction.Arn}"
+  DynamoDBStreamLambdaConsoleUrl:
+    Description: Console URL for the Lambda Function.
+    Value: !Sub "https://{AWS::Region}.console.aws.amazon.com/lambda/home?region={AWS::Region}#/functions/{DynamoDBStreamLambdaFunction}"

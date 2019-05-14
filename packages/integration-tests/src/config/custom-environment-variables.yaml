@@ -1,5 +1,5 @@
 aws:
-  accountid: AWS_ACCOUNTID
+  accountid: AWS_ACCOUNT_ID
   region: AWS_REGION
 assetLibrary:
   baseUrl: CDF_ASSETLIBRARY_BASEURL
