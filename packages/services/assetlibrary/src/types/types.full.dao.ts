@@ -126,6 +126,7 @@ export class TypesDaoFull {
 
         this.addCreateRelationStepsToTraversal(model.schema.relations, model.templateId, traverser);
 
+        logger.debug(`types.full.dao create: traverser: ${JSON.stringify(traverser.toString())}`);
         const query = await traverser.next();
 
         logger.debug(`types.full.dao create: query: ${JSON.stringify(query)}`);

@@ -125,20 +125,11 @@ tags:
                     "type": "string",
                     "format": "ipv4"
                 },
-                "colors": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                    "maxItems": 5,
-                    "uniqueItems": true
-                },
                 "level": {
                     "type": "string",
                     "enum": ["low", "medium", "high"]
                 }
             },
-            "additionalItems": false,
             "required": ["fleet", "firmware", "ipAddress"]
         }
         

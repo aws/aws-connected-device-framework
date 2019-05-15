@@ -53,6 +53,19 @@
             },
             "uniqueItems": true
         },
+        "devices": {
+            "description": "Other devices associated with the device",
+            "type": "object",
+            "patternProperties": {
+                "^.*$": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            },
+            "uniqueItems": true
+        },
         "attributes": {
             "$ref": "#/definitions/subType"
         },

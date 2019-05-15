@@ -88,14 +88,14 @@ export class DevicesDaoFull {
     }
 
     public async getLabels(deviceId: string): Promise<string[]> {
-        logger.debug(`devices.dao getLabels: in: deviceId: ${deviceId}`);
+        logger.debug(`devices.full.dao getLabels: in: deviceId: ${deviceId}`);
 
         const id = 'device___' + deviceId;
 
         const labelResults = await this._g.V(id).label().toList();
 
         if (labelResults===undefined || labelResults.length===0) {
-            logger.debug('devices.dao getLabels: exit: labels:undefined');
+            logger.debug('devices.full.dao getLabels: exit: labels:undefined');
             return undefined;
         } else {
             const labels:string[] = JSON.parse(JSON.stringify(labelResults)) as string[];
@@ -106,20 +106,20 @@ export class DevicesDaoFull {
                 // attempt to be compatable with this
                 const splitLabels:string[] = labels[0].split('::');
                 if (splitLabels.length < 2) {
-                    logger.error(`devices.dao getLabels: device ${deviceId} does not have correct labels`);
+                    logger.error(`devices.full.dao getLabels: device ${deviceId} does not have correct labels`);
                     throw new Error('INVALID_LABELS');
                 }
-                logger.debug(`devices.dao getLabels: exit: labels: ${labels}`);
+                logger.debug(`devices.full.dao getLabels: exit: labels: ${labels}`);
                 return labels;
             } else {
-                logger.debug(`devices.dao getLabels: exit: labels: ${labels}`);
+                logger.debug(`devices.full.dao getLabels: exit: labels: ${labels}`);
                 return labels;
             }
         }
     }
 
     private assembleNode(device:{ [key:string]: AttributeValue}):Node {
-        logger.debug(`devices.dao assembleNode: in: device: ${JSON.stringify(device)}`);
+        logger.debug(`devices.full.dao assembleNode: in: device: ${JSON.stringify(device)}`);
 
         const labels = (<string> device['label']).split('::');
         const node = new Node();
@@ -133,11 +133,12 @@ export class DevicesDaoFull {
             }
         });
 
-        logger.debug(`devices.dao assembleNode: exit: node: ${JSON.stringify(node)}`);
+        logger.debug(`devices.full.dao assembleNode: exit: node: ${JSON.stringify(node)}`);
         return node;
     }
 
     private assembleAssociations(node:Node, r:GetDeviceResult) {
+        logger.debug(`devices.full.dao assembleAssociations: in:`);
 
         // assemble all associated objects
         r.paths.forEach((value)=> {
@@ -147,7 +148,7 @@ export class DevicesDaoFull {
             const e = (r.Es!==undefined && r.Es!==null) ? r.Es.filter(edge=> edge.id===eId) : [];
             const v = (r.Vs!==undefined && r.Vs!==null) ? r.Vs.filter(vertex=> vertex.id===vId): [];
 
-            if (v[0]!==undefined) {
+            if (v[0]!==undefined && e[0]!==undefined) {
                 const l = (<string> v[0]['label']).split('::');
                 if (l.includes(TypeCategory.Group)) {
                     const other = new Node();
@@ -167,10 +168,11 @@ export class DevicesDaoFull {
                 }
             }
         });
+        logger.debug(`devices.full.dao assembleAssociations: exit:`);
     }
 
-    public async create(n:Node, groups:{[relation:string]:string[]}, components:Node[]): Promise<string> {
-        logger.debug(`devices.dao create: in: n:${JSON.stringify(n)}, groups:${groups}, components:${components}`);
+    public async create(n:Node, groups:{[relation:string]:string[]}, devices:{[relation:string]:string[]}, components:Node[]): Promise<string> {
+        logger.debug(`devices.full.dao create: in: n:${JSON.stringify(n)}, groups:${groups}, devices:${JSON.stringify(devices)}, components:${components}`);
 
         const id = `device___${n.attributes['deviceId']}`;
         const labels = n.types.join('::');
@@ -198,6 +200,18 @@ export class DevicesDaoFull {
             });
         }
 
+        /*  associate with the devices  */
+        if (devices) {
+            Object.keys(devices).forEach(rel=> {
+                devices[rel].forEach(v=> {
+                    const deviceId = `device___${v}`;
+                    traversal
+                        .V(deviceId)
+                        .addE(rel).from_('device');
+                });
+            });
+        }
+
         /*  create the components  */
         if (components) {
             components.forEach(c=> {
@@ -220,16 +234,16 @@ export class DevicesDaoFull {
             });
         }
 
-        logger.debug(`devices.dao create: traversal:${traversal}`);
+        logger.debug(`devices.full.dao create: traversal:${traversal}`);
         await traversal.iterate();
 
-        logger.debug(`devices.dao create: exit: id:${id}`);
+        logger.debug(`devices.full.dao create: exit: id:${id}`);
         return id;
 
     }
 
     public async createComponent(deviceId:string, n:Node): Promise<string> {
-        logger.debug(`devices.dao createComponent: in: deviceId:${deviceId}, n:${JSON.stringify(n)}`);
+        logger.debug(`devices.full.dao createComponent: in: deviceId:${deviceId}, n:${JSON.stringify(n)}`);
 
         const id = `device___${deviceId}`;
         const componentId = `${id}___${n.attributes['deviceId']}`;
@@ -250,16 +264,16 @@ export class DevicesDaoFull {
         traversal.V(id).as('device').
             addE('component_of').from_('component').to('device');
 
-        logger.debug(`devices.dao createComponent: traversal:${traversal}`);
+        logger.debug(`devices.full.dao createComponent: traversal:${traversal}`);
         await traversal.iterate();
 
-        logger.debug(`devices.dao createComponent: exit: componentId:${componentId}`);
+        logger.debug(`devices.full.dao createComponent: exit: componentId:${componentId}`);
         return componentId;
 
     }
 
     public async update(n: Node): Promise<void> {
-        logger.debug(`devices.dao update: in: n:${JSON.stringify(n)}`);
+        logger.debug(`devices.full.dao update: in: n:${JSON.stringify(n)}`);
 
         const id = `device___${n.attributes['deviceId']}`;
 
@@ -278,18 +292,18 @@ export class DevicesDaoFull {
 
         await traversal.iterate();
 
-        logger.debug(`devices.dao update: exit:`);
+        logger.debug(`devices.full.dao update: exit:`);
 
     }
 
     public async delete(deviceId: string): Promise<void> {
-        logger.debug(`devices.dao delete: in: deviceId:${deviceId}`);
+        logger.debug(`devices.full.dao delete: in: deviceId:${deviceId}`);
 
         const id = `device___${deviceId}`;
 
         await this._g.V(id).drop().iterate();
 
-        logger.debug(`devices.dao delete: exit`);
+        logger.debug(`devices.full.dao delete: exit`);
     }
 
     public async attachToGroup(deviceId:string, relationship:string, groupPath:string) : Promise<void> {
@@ -302,9 +316,9 @@ export class DevicesDaoFull {
             V(id).as('device').addE(relationship).to('group').
             iterate();
 
-        logger.debug(`devices.dao attachToGroup: result:${JSON.stringify(result)}`);
+        logger.debug(`devices.full.dao attachToGroup: result:${JSON.stringify(result)}`);
 
-        logger.debug(`devices.dao attachToGroup: exit:`);
+        logger.debug(`devices.full.dao attachToGroup: exit:`);
     }
 
     public async detachFromGroup(deviceId:string, relationship:string, groupPath:string) : Promise<void> {
@@ -319,9 +333,9 @@ export class DevicesDaoFull {
             select('edge').dedup().drop().
             iterate();
 
-        logger.debug(`devices.dao detachFromGroup: result:${JSON.stringify(result)}`);
+        logger.debug(`devices.full.dao detachFromGroup: result:${JSON.stringify(result)}`);
 
-        logger.debug(`devices.dao detachFromGroup: exit:`);
+        logger.debug(`devices.full.dao detachFromGroup: exit:`);
     }
 
     public async attachToDevice(deviceId:string, relationship:string, otherDeviceId:string) : Promise<void> {
@@ -334,9 +348,9 @@ export class DevicesDaoFull {
             V(id).addE(relationship).to('other').
             iterate();
 
-        logger.debug(`devices.dao attachToDevice: result:${JSON.stringify(result)}`);
+        logger.debug(`devices.full.dao attachToDevice: result:${JSON.stringify(result)}`);
 
-        logger.debug(`devices.dao attachToDevice: exit:`);
+        logger.debug(`devices.full.dao attachToDevice: exit:`);
     }
 
     public async detachFromDevice(deviceId:string, relationship:string, otherDeviceId:string) : Promise<void> {
@@ -351,9 +365,9 @@ export class DevicesDaoFull {
             select('e').dedup().drop().
             iterate();
 
-        logger.debug(`devices.dao detachFromDevice: result:${JSON.stringify(result)}`);
+        logger.debug(`devices.full.dao detachFromDevice: result:${JSON.stringify(result)}`);
 
-        logger.debug(`devices.dao detachFromDevice: exit:`);
+        logger.debug(`devices.full.dao detachFromDevice: exit:`);
     }
 
 }

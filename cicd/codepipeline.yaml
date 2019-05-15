@@ -674,6 +674,7 @@ Resources:
                   - 'ec2:DisassociateAddress'
                   - 'ec2:ReleaseAddress'
                   - 'ec2:RevokeSecurityGroupEgress'
+                  - 'ec2:RevokeSecurityGroupIngress'
                 Effect: Allow
                 Resource: 
                   - "*"
@@ -715,6 +716,21 @@ Resources:
                 - dynamodb:DescribeStream
                 - dynamodb:DescribeTable
                 - dynamodb:ListStreams
+                Effect: Allow
+                Resource: 
+                  - "*"
+              -
+                Sid: dax
+                Action:
+                - 'dax:*'
+                Effect: Allow
+                Resource: 
+                  - "*"
+              -
+                Sid: lambda
+                Action:
+                - 'lambda:CreateEventSourceMapping'
+                - 'lambda:GetEventSourceMapping'
                 Effect: Allow
                 Resource: 
                   - "*"

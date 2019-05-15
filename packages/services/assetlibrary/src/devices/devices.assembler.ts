@@ -58,7 +58,12 @@ export class DevicesAssembler {
         }
 
         const model = new DeviceModel();
-        model.category = TypeCategory.Device;
+
+        if (node.types.indexOf(TypeCategory.Component)>=0) {
+            model.category = TypeCategory.Component;
+        } else {
+            model.category = TypeCategory.Device;
+        }
         model.templateId = node.types.filter(t => t !== TypeCategory.Device && t !== TypeCategory.Component)[0];
         model.version = node.version;
 
@@ -122,6 +127,9 @@ export class DevicesAssembler {
                         }
                         model.devices[key].push((other.attributes['deviceId'] as string[])[0]);
                     } else if (other.category===TypeCategory.Component) {
+                        if (model.components===undefined) {
+                            model.components=[];
+                        }
                         model.components.push(this.toDeviceModel(other));
                     }
                 });

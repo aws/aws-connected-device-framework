@@ -17,11 +17,11 @@ export interface TypesService {
 
     list(category:TypeCategory, status:string, offset?:number, count?:number): Promise<TypeModel[]>;
 
-    create(templateId:string, category:TypeCategory, definition:TypeDefinitionModel): Promise<boolean|SchemaValidationResult>;
+    create(templateId:string, category:TypeCategory, definition:TypeDefinitionModel): Promise<SchemaValidationResult>;
 
     delete(templateId:string, category:TypeCategory): Promise<void> ;
 
-    update(templateId:string, category:TypeCategory, definition:TypeDefinitionModel): Promise<boolean|SchemaValidationResult>;
+    update(templateId:string, category:TypeCategory, definition:TypeDefinitionModel): Promise<SchemaValidationResult>;
 
     publish(templateId:string, category:TypeCategory): Promise<void>;
 

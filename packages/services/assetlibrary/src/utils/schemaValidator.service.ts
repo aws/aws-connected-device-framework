@@ -56,5 +56,5 @@ export class SchemaValidatorService {
 
 export class SchemaValidationResult {
     isValid: boolean;
-	errors: { [dataPath: string] : string} = {};
+	errors?: { [dataPath: string] : string} = {};
 }

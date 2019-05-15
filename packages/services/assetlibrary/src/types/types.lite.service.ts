@@ -55,7 +55,7 @@ export class TypesServiceLite implements TypesService {
         return r;
     }
 
-    public async create(templateId:string, category:TypeCategory, definition:TypeDefinitionModel): Promise<boolean|SchemaValidationResult> {
+    public async create(templateId:string, category:TypeCategory, definition:TypeDefinitionModel): Promise<SchemaValidationResult> {
         logger.debug(`types.lite.service create: in: templateId:${templateId}, category:${category}, definition:${JSON.stringify(definition)}`);
 
         // validation
@@ -100,8 +100,9 @@ export class TypesServiceLite implements TypesService {
             payload: JSON.stringify(model)
         });
 
-        logger.debug('types.lite.service create: exit:');
-        return true;
+        const r:SchemaValidationResult= {isValid:true};
+        logger.debug(`types.lite.service create: exit: ${JSON.stringify(r)}`);
+        return r;
     }
 
     public async delete(templateId:string, category:TypeCategory): Promise<void> {
@@ -124,7 +125,7 @@ export class TypesServiceLite implements TypesService {
         logger.debug('types.lite.service delete: exit:');
     }
 
-    public async update(templateId:string, category:TypeCategory, definition:TypeDefinitionModel): Promise<boolean|SchemaValidationResult> {
+    public async update(templateId:string, category:TypeCategory, definition:TypeDefinitionModel): Promise<SchemaValidationResult> {
         logger.debug(`types.lite.service update: in: templateId:${templateId}, category:${category}, definition:${JSON.stringify(definition)}`);
         throw new Error('NOT_SUPPORTED');
     }

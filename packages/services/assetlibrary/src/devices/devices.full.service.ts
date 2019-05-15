@@ -154,7 +154,7 @@ export class DevicesServiceFull implements DevicesService {
         this.setIdsToLowercase(model);
 
         // default initial association if none provided
-        if (model.groups===undefined && this.defaultDeviceParentRelation!==undefined && this.defaultDeviceParentGroup!==undefined) {
+        if (model.groups===undefined && model.devices===undefined && this.defaultDeviceParentRelation!==undefined && this.defaultDeviceParentGroup!==undefined) {
             model.groups= {};
             model.groups[this.defaultDeviceParentRelation] = [this.defaultDeviceParentGroup];
         }
@@ -195,7 +195,7 @@ export class DevicesServiceFull implements DevicesService {
         }
 
         // Save to datastore
-        const id = await this.devicesDao.create(node, model.groups, components);
+        const id = await this.devicesDao.create(node, model.groups, model.devices, components);
 
         // fire event
         await this.eventEmitter.fire({
@@ -211,6 +211,8 @@ export class DevicesServiceFull implements DevicesService {
     }
 
     private setIdsToLowercase(model:DeviceModel) {
+        logger.debug(`device.full.service setIdsToLowercase: in:`);
+
         model.deviceId = model.deviceId.toLowerCase();
         if (model.templateId!==undefined) {
             model.templateId = model.templateId.toLowerCase();
@@ -227,7 +229,7 @@ export class DevicesServiceFull implements DevicesService {
             });
         }
         if (model.devices) {
-            Object.keys(model.groups).forEach(k=> {
+            Object.keys(model.devices).forEach(k=> {
                 model.devices[k] = model.devices[k].map(d => {
                     if (d===undefined) {
                         return d;
@@ -245,6 +247,7 @@ export class DevicesServiceFull implements DevicesService {
                 return c;
             });
         }
+        logger.debug(`device.full.service setIdsToLowercase: exit:`);
     }
 
     public async updateBulk(request:BulkDevicesRequest, applyProfile?:string) : Promise<BulkDevicesResult> {

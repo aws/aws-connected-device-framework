@@ -14,14 +14,7 @@
                             "oneOf": [
                                 {
                                     "type": "string",
-                                    "enum": ["number", "integer", "boolean", "string", "null", "array"]
-                                },
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "string",
-                                        "enum": ["number", "integer", "boolean", "string", "null"]
-                                    }
+                                    "enum": ["number", "integer", "boolean", "string", "null"]
                                 }
                             ]
                         }

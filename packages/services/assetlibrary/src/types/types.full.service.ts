@@ -215,11 +215,13 @@ export class TypesServiceFull implements TypesService {
         return linkedTypesValid;
     }
 
-    public async create(templateId:string, category:TypeCategory, definition:TypeDefinitionModel): Promise<boolean|SchemaValidationResult> {
+    public async create(templateId:string, category:TypeCategory, definition:TypeDefinitionModel): Promise<SchemaValidationResult> {
         logger.debug(`types.full.service create: in: templateId:${templateId}, category:${category}, definition:${JSON.stringify(definition)}`);
 
         ow(templateId, ow.string.nonEmpty);
         ow(category, ow.string.nonEmpty);
+
+        let r:SchemaValidationResult;
 
         // any ids need to be lowercase
         templateId=templateId.toLowerCase();
@@ -240,8 +242,9 @@ export class TypesServiceFull implements TypesService {
 
         // validate that any types provided as part of the in/out relations exist
         if (!await this.validateRelations(definition)) {
-            logger.debug('types.full.service create: exit: linkedTypesValid:false');
-            return {isValid:false, errors:{relations:'Invalid relation types'}};
+            r= {isValid:false, errors:{relations:'Invalid relation types'}};
+            logger.debug(`types.full.service create: exit: ${JSON.stringify(r)}`);
+            return r;
         }
 
         // todo: move to an assembler function
@@ -267,8 +270,9 @@ export class TypesServiceFull implements TypesService {
             payload: JSON.stringify(model)
         });
 
-        logger.debug('types.full.service create: exit:');
-        return true;
+        r= {isValid:true};
+        logger.debug(`types.full.service create: exit:${JSON.stringify(r)}`);
+        return r;
 
     }
 
@@ -305,7 +309,7 @@ export class TypesServiceFull implements TypesService {
         logger.debug('types.full.service delete: exit:');
     }
 
-    public async update(templateId:string, category:TypeCategory, definition:TypeDefinitionModel): Promise<boolean|SchemaValidationResult> {
+    public async update(templateId:string, category:TypeCategory, definition:TypeDefinitionModel): Promise<SchemaValidationResult> {
         logger.debug(`types.full.service update: in: templateId:${templateId}, category:${category}, definition:${JSON.stringify(definition)}`);
 
         ow(templateId, ow.string.nonEmpty);
@@ -371,8 +375,9 @@ export class TypesServiceFull implements TypesService {
             }
         });
 
-        logger.debug('types.full.service update: exit:');
-        return true;
+        const r:SchemaValidationResult= {isValid:true};
+        logger.debug(`types.full.service update: exit:${JSON.stringify(r)}`);
+        return r;
 
     }
 

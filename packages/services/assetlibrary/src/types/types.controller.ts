@@ -10,7 +10,6 @@ import { TypesService } from './types.service';
 import {TYPES} from '../di/types';
 import {logger} from '../utils/logger';
 import {TypeDefinitionModel,TypeResource, TypeResourceList} from '../types/types.models';
-import { SchemaValidationResult } from '../utils/schemaValidator.service';
 import {handleError} from '../utils/errors';
 import { TypeCategory } from './constants';
 
@@ -54,7 +53,7 @@ export class TypesController implements interfaces.Controller {
         logger.info(`types.controller: createTemplate: in: category:${category}, templateId:${templateId}, definition:${JSON.stringify(definition)}`);
         try {
             const result = await this.typesService.create(templateId, category, definition);
-            if (result instanceof SchemaValidationResult) {
+            if (!result.isValid) {
                 res.status(400).json({error: result.errors}).end();
             } else {
                 res.status(201).end();
@@ -71,7 +70,7 @@ export class TypesController implements interfaces.Controller {
         logger.info(`types.controller: updateTemplate: in: category:${category}, templateId:${templateId}, definition:${JSON.stringify(definition)}`);
         try {
             const result = await this.typesService.update(templateId, category, definition);
-            if (result!==true) {
+            if (!result.isValid) {
                 res.status(404).json(result).end();
             } else {
                 res.status(204).end();

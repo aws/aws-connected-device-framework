@@ -41,7 +41,7 @@ export class SearchServiceFull implements SearchService {
         for(const r of results) {
             if (r.types.indexOf(TypeCategory.Group)>=0) {
                 models.push(this.groupsAssembler.toGroupModel(r));
-            } else if (r.types.indexOf(TypeCategory.Device)>=0) {
+            } else {
                 models.push(this.devicesAssembler.toDeviceModel(r));
             }
         }

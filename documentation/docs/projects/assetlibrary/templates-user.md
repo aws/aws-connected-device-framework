@@ -127,7 +127,7 @@ When viewing/creating/updating a device, any custom properties defined for the t
 
 Both device and group templates support defining `properties`, which represents a list of fields along with a type.  These properties are defined in the style of `JSON Schema draft-07`.
 
-Types may be defined as `integer`, `number`, `string`, `boolean` or `array`.
+Types may be defined as `integer`, `number`, `string` or `boolean`.
 
 The following represents the supported keywords for the different types:
 
@@ -190,48 +190,6 @@ Examples:
         "installedDate": {
             "type": "string",
             "format": "date"
-        }
-    }
-}
-```
-
-### array keywords
-
-When defining an array, the following additional keywords are supported:
-
-Keyword | Description
----|---
-`maxItems` | The array should not contain more than this number of items
-`minItems` | The array should not contain less than this number of items
-`uniqueItems` | True/false the array should contain unique items only
-`items` | The array should contain values of this item only (supported types are `number`, `integer` and `string`).  If a single type is provided, then each value of the array must confirm to this object.  If multiple types are provided, then arrays with the number of items less than the defined types must confirm to these types.
-`additionalItems` | If multiple types have been defined as part of `items`, `additionalItems` represents the type of data that any items beyond the number of items defined in `items` is allowed.  Alternatively, `true` can be provided instead of a specific type to allow any type.
-`contains` | The array is valid if it contains at least one item from this value.
-
-Examples:
-
-```json
-{
-    "properties": {
-        "levels": {
-            "type": "array",
-            "items": [
-                { "type": "integer" },
-                { "type": "integer" }
-            ],
-            "additionalItems": true
-        },
-        "pcmCodes": {
-            "type": "array",
-            "items": [
-                { "type": "integer" },
-                { "type": "integer" }
-            ],
-            "additionalItems": { "type": "string" }
-        },
-        "payloadFormat": {
-            "type": "array",
-            "contains": { "type": "integer" }
         }
     }
 }
