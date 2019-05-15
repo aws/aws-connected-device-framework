@@ -21,7 +21,7 @@ export class DevicesServiceLite implements DevicesService {
         @inject(TYPES.DevicesAssembler) private devicesAssembler: DevicesAssembler,
         @inject(TYPES.EventEmitter) private eventEmitter: EventEmitter) {}
 
-    public async get(deviceId:string, _includeComponents?:boolean, _attributes?:string[], _includeGroups?:boolean): Promise<DeviceModel> {
+    public async get(deviceId:string, _expandComponents?:boolean, _attributes?:string[], _includeGroups?:boolean): Promise<DeviceModel> {
         logger.debug(`devices.lite.service get: in: deviceId:${deviceId}`);
 
         ow(deviceId, ow.string.nonEmpty);
@@ -34,7 +34,7 @@ export class DevicesServiceLite implements DevicesService {
         return model;
     }
 
-    public async getBulk(deviceIds:string[], _includeComponents?:boolean, _attributes?:string[], _includeGroups?:boolean) : Promise<DeviceListResult> {
+    public async getBulk(deviceIds:string[], _expandComponents?:boolean, _attributes?:string[], _includeGroups?:boolean) : Promise<DeviceListResult> {
         logger.debug(`devices.lite.service getBulk: in: deviceIds:${deviceIds}`);
 
         ow(deviceIds, ow.array.nonEmpty);

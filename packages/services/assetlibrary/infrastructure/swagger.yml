@@ -443,7 +443,7 @@ paths:
       description: Returns a single device
       operationId: "getDeviceByID"
       parameters:
-      - name: includeComponents
+      - name: expandComponents
         in: query
         description: By default, components of a device are not returned. Passing `true` will return and expand a devices components.
         type: boolean

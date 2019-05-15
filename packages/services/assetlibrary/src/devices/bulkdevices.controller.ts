@@ -44,12 +44,12 @@ export class BulkDevicesController implements interfaces.Controller {
     }
 
     @httpGet('')
-    public async bulkGetDevices(@queryParam('deviceIds') deviceIds:string, @queryParam('includeComponents') components: string,
+    public async bulkGetDevices(@queryParam('deviceIds') deviceIds:string, @queryParam('expandComponents') components: string,
     @queryParam('attributes') attributes:string, @queryParam('includeGroups') groups: string, @response() res: Response) : Promise<DeviceListResult> {
         logger.info(`bulkdevices.controller  bulkGetDevices: in: deviceIds:${deviceIds}, components:${components}, attributes:${attributes}, groups:${groups}`);
         try {
             const deviceIdsAsArray = deviceIds.split(',');
-            const includeComponents = (components==='true');
+            const expandComponents = (components==='true');
             const includeGroups = (groups!=='false');
 
             let attributesArray:string[];
@@ -61,7 +61,7 @@ export class BulkDevicesController implements interfaces.Controller {
                 }
             }
 
-            const result = await this.devicesService.getBulk(deviceIdsAsArray, includeComponents, attributesArray, includeGroups);
+            const result = await this.devicesService.getBulk(deviceIdsAsArray, expandComponents, attributesArray, includeGroups);
             res.status(200);
             return result;
         } catch (e) {

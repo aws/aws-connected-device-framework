@@ -321,7 +321,7 @@ Once a component has been defined, the following endpoints may be used to manage
 Endpoint | Description
 ---|---
 `POST /devices` | When creating a new device, if the `components` attribute has been provided in the body (representing a list of devices), each of these components will be created and associated with the parent device
-`GET /devices/{deviceId}?includeComponents={true\|false}` | If `includeComponents` is true, all components associated with the device will be returned
+`GET /devices/{deviceId}?expandComponents={true\|false}` | If `expandComponents` is true, all components associated with the device will be returned
 `POST /devices/{deviceId}/components`| Adds a new component to an existing device
 `PATCH /devices/{deviceId}/components/{componentId}` | Updates an existing component of an existing device
 `DELETE /devices/{deviceId}/components/{componentId}` | Deletes an existing component of an existing device

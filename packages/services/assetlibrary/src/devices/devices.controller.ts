@@ -18,8 +18,8 @@ export class DevicesController implements interfaces.Controller {
     constructor( @inject(TYPES.DevicesService) private devicesService: DevicesService) {}
 
     @httpGet('/:deviceId')
-    public async getDevice(@requestParam('deviceId') deviceId: string, @queryParam('includeComponents') components: string,
-        @queryParam('attributes') attributes:string, @queryParam('includeGroups') groups: string, @response() res: Response): Promise<DeviceModel> {
+    public async getDevice(@requestParam('deviceId') deviceId:string, @queryParam('expandComponents') components:string, @queryParam('attributes') attributes:string,
+        @queryParam('includeGroups') groups: string, @response() res: Response): Promise<DeviceModel> {
 
         logger.info(`device.controller getDevice: in: deviceId:${deviceId}, components:${components}, attributes:${attributes}, groups:${groups}`);
 
@@ -33,9 +33,9 @@ export class DevicesController implements interfaces.Controller {
         }
 
         try {
-            const includeComponents = (components==='true');
             const includeGroups = (groups!=='false');
-            const model = await this.devicesService.get(deviceId, includeComponents, attributesArray, includeGroups);
+            const expandComponents = (components!=='false');
+            const model = await this.devicesService.get(deviceId, expandComponents, attributesArray, includeGroups);
             logger.debug(`controller exit: ${JSON.stringify(model)}`);
 
             if (model===undefined) {

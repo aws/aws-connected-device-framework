@@ -23,21 +23,21 @@ export class DevicesDaoFull {
         this._g = graphTraversalSourceFactory();
     }
 
-    public async get(deviceIds:string[], includeComponents:boolean, attributes:string[], includeGroups:boolean): Promise<Node[]> {
-        logger.debug(`device.full.dao get: in: deviceIds:${deviceIds}, includeComponents:${includeComponents}, attributes:${attributes}, includeGroups:${includeGroups}`);
+    public async get(deviceIds:string[], expandComponents:boolean, attributes:string[], includeGroups:boolean): Promise<Node[]> {
+        logger.debug(`device.full.dao get: in: deviceIds:${deviceIds}, expandComponents:${expandComponents}, attributes:${attributes}, includeGroups:${includeGroups}`);
 
         const ids:string[] = deviceIds.map(d=> `device___${d}`);
 
         // build the queries for returning the info we need to assmeble groups and/or component relationships
         let connectedEdges;
         let connectedVertices;
-        if (includeComponents===true && includeGroups===true) {
+        if (expandComponents===true && includeGroups===true) {
             connectedEdges = __.bothE().valueMap(true).fold();
             connectedVertices = __.both().dedup().valueMap(true).fold();
-        } else if (includeComponents===true && includeGroups===false) {
+        } else if (expandComponents===true && includeGroups===false) {
             connectedEdges = __.bothE().hasLabel('component_of').valueMap(true).fold();
             connectedVertices = __.both().hasLabel('component_of').dedup().valueMap(true).fold();
-        } else if (includeComponents===false && includeGroups===true) {
+        } else if (expandComponents===false && includeGroups===true) {
             connectedEdges = __.bothE().not(__.hasLabel('component_of')).valueMap(true).fold();
             connectedVertices = __.both().not(__.hasLabel('component_of')).dedup().valueMap(true).fold();
         }

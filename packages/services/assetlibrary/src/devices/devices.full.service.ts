@@ -32,13 +32,13 @@ export class DevicesServiceFull implements DevicesService {
         @inject('defaults.devices.parent.groupPath') public defaultDeviceParentGroup: string,
         @inject('defaults.devices.state') public defaultDeviceState: string) {}
 
-    public async get(deviceId:string, includeComponents?:boolean, attributes?:string[], includeGroups?:boolean): Promise<DeviceModel> {
-        logger.debug(`device.full.service get: in: deviceId:${deviceId}, includeComponents:${includeComponents}, attributes:${attributes}, includeGroups:${includeGroups}`);
+    public async get(deviceId:string, expandComponents?:boolean, attributes?:string[], includeGroups?:boolean): Promise<DeviceModel> {
+        logger.debug(`device.full.service get: in: deviceId:${deviceId}, expandComponents:${expandComponents}, attributes:${attributes}, includeGroups:${includeGroups}`);
 
         ow(deviceId, ow.string.nonEmpty);
 
-        if (includeComponents===undefined) {
-            includeComponents=false;
+        if (expandComponents===undefined) {
+            expandComponents=false;
         }
         if (includeGroups===undefined) {
             includeGroups = true;
@@ -47,7 +47,7 @@ export class DevicesServiceFull implements DevicesService {
         // any ids need to be lowercase
         deviceId=deviceId.toLowerCase();
 
-        const result  = await this.devicesDao.get([deviceId], includeComponents, attributes, includeGroups);
+        const result  = await this.devicesDao.get([deviceId], expandComponents, attributes, includeGroups);
 
         let model:DeviceModel;
         if (result!==undefined && result.length>0) {
@@ -58,14 +58,14 @@ export class DevicesServiceFull implements DevicesService {
         return model;
     }
 
-    public async getBulk(deviceIds:string[], includeComponents:boolean, attributes:string[], includeGroups:boolean) : Promise<DeviceListResult> {
-        logger.debug(`device.full.service getBulk: in: deviceIds:${deviceIds}, includeComponents:${includeComponents}, attributes:${attributes}, includeGroups:${includeGroups}`);
+    public async getBulk(deviceIds:string[], expandComponents:boolean, attributes:string[], includeGroups:boolean) : Promise<DeviceListResult> {
+        logger.debug(`device.full.service getBulk: in: deviceIds:${deviceIds}, expandComponents:${expandComponents}, attributes:${attributes}, includeGroups:${includeGroups}`);
 
         ow(deviceIds, ow.array.nonEmpty);
 
         deviceIds = deviceIds.map(d=> d.toLowerCase());
 
-        const result  = await this.devicesDao.get(deviceIds, includeComponents, attributes, includeGroups);
+        const result  = await this.devicesDao.get(deviceIds, expandComponents, attributes, includeGroups);
 
         const model = this.devicesAssembler.toDeviceModels(result);
         logger.debug(`device.full.service get: exit: model: ${JSON.stringify(model)}`);

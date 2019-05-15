@@ -204,16 +204,16 @@ export class DevicesService  {
      * Find device by ID
      * Returns a single device
      * @param deviceId ID of device to return
-     * @param includeComponents By default, components of a device are not returned. Passing &#x60;true&#x60; will return and expand a devices components.
+     * @param expandComponents By default, components of a device are not returned. Passing &#x60;true&#x60; will return and expand a devices components.
      */
-    public async getDeviceByID(deviceId: string, includeComponents?: boolean, attributes?:string[], groups?:string[]): Promise<Device> {
+    public async getDeviceByID(deviceId: string, expandComponents?: boolean, attributes?:string[], groups?:string[]): Promise<Device> {
         ow(deviceId, ow.string.nonEmpty);
 
         const attributes_qs = (attributes) ? attributes.join() : undefined;
         const groups_qs = (groups) ? groups.join() : undefined;
 
         let url = this.baseUrl + PathHelper.encodeUrl('devices', deviceId);
-        const queryString = QSHelper.getQueryString({includeComponents, attributes:attributes_qs, includeGroups:groups_qs});
+        const queryString = QSHelper.getQueryString({expandComponents, attributes:attributes_qs, includeGroups:groups_qs});
         if (queryString) {
             url += `?${queryString}`;
         }
@@ -267,16 +267,16 @@ export class DevicesService  {
      * Find devices by ID
      * Returns mulitple devices
      * @param deviceIds IDs of device to return
-     * @param includeComponents By default, components of a device are not returned. Passing &#x60;true&#x60; will return and expand a devices components.
+     * @param expandComponents By default, components of a device are not returned. Passing &#x60;true&#x60; will return and expand a devices components.
      */
-    public async getDevicesByID(deviceIds: string[], includeComponents?: boolean, attributes?:string[], groups?:string[]): Promise<DeviceList> {
+    public async getDevicesByID(deviceIds: string[], expandComponents?: boolean, attributes?:string[], groups?:string[]): Promise<DeviceList> {
         ow(deviceIds, ow.array.nonEmpty.minLength(1));
 
         const attributes_qs = (attributes) ? attributes.join() : undefined;
         const groups_qs = (groups) ? groups.join() : undefined;
 
         let url = '/bulkdevices';
-        const queryString = QSHelper.getQueryString({deviceIds, includeComponents, attributes:attributes_qs, includeGroups:groups_qs});
+        const queryString = QSHelper.getQueryString({deviceIds, expandComponents, attributes:attributes_qs, includeGroups:groups_qs});
         if (queryString) {
             url += `?${queryString}`;
         }

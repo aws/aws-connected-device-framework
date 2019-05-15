@@ -308,7 +308,7 @@ Returns a single device
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | deviceId | path | ID of device to return | Yes | string |
-| includeComponents | query | By default, components of a device are not returned. Passing `true` will return and expand a devices components. | No | boolean |
+| expandComponents | query | By default, components of a device are not returned. Passing `true` will return and expand a devices components. | No | boolean |
 | attributes | query | Optionally only return these specific attributes.  By default returns all attributes. | No | [ string ] |
 | includeGroups | query | Optionally only return these specific related groups.  By default returns all related groups. | No | [ string ] |
 

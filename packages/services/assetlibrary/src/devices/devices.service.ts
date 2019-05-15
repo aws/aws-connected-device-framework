@@ -7,9 +7,9 @@ import { DeviceModel, BulkDevicesResult, BulkDevicesRequest, DeviceListResult} f
 
 export interface DevicesService {
 
-    get(deviceId:string, includeComponents?:boolean, attributes?:string[], includeGroups?:boolean): Promise<DeviceModel> ;
+    get(deviceId:string, expandComponents?:boolean, attributes?:string[], includeGroups?:boolean): Promise<DeviceModel> ;
 
-    getBulk(deviceIds:string[], includeComponents:boolean, attributes:string[], includeGroups:boolean) : Promise<DeviceListResult> ;
+    getBulk(deviceIds:string[], expandComponents:boolean, attributes:string[], includeGroups:boolean) : Promise<DeviceListResult> ;
 
     createBulk(request:BulkDevicesRequest, applyProfile?:string) : Promise<BulkDevicesResult> ;
 
