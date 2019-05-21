@@ -24,6 +24,12 @@ mqtt:
 certificates:
   caCertificateId:
 
+policies:
+  rotatedCertificatePolicy:
+
+features:
+  deletePreviousCertificate:
+
 defaults:
   device:
     status:

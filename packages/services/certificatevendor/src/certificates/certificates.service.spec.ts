@@ -24,7 +24,10 @@ const mqttAckSuccessTopic = 'cdf/certificates/device123/ack/accepted';
 const mqttAckFailureTopic = 'cdf/certificates/device123/ack/rejected';
 const thingGroupName = 'myTestGroup';
 const caCertificateId = 'abcdef123456';
+const rotateCertPolicy = 'UnitTestDevicePolicy';
 const certificateExpiryDays = 100;
+const deletePreviousCertificate = false;
+const certId = 'cert123456';
 let instance: CertificateService;
 
 const deviceId = 'device123';
@@ -57,7 +60,7 @@ describe('CertificatesService', () => {
 
         instance = new CertificateService(s3Bucket, s3Prefix, s3Suffix, presignedUrlExpiresInSeconds,
             mqttGetSuccessTopic, mqttGetFailureTopic, mqttAckSuccessTopic, mqttAckFailureTopic,
-            thingGroupName, caCertificateId, certificateExpiryDays,
+            thingGroupName, caCertificateId, rotateCertPolicy, certificateExpiryDays, deletePreviousCertificate,
             mockedRegistryManager, mockedIotFactory, mockedIotDataFactory, mockedS3Factory, mockedSsmFactory);
     });
 
@@ -264,7 +267,7 @@ describe('CertificatesService', () => {
 
         // execute
         try {
-            await instance.ack(deviceId);
+            await instance.ack(deviceId, certId);
             fail('DEVICE_NOT_WHITELISTED error should be thrown');
         } catch (err) {
             expect(err.message).toEqual('DEVICE_NOT_WHITELISTED');
@@ -305,7 +308,7 @@ describe('CertificatesService', () => {
         });
 
         // execute
-        await instance.ack(deviceId);
+        await instance.ack(deviceId, certId);
 
         // verify mocks were called correctly
         expect(mockedIsWhitelisted).toBeCalledWith(deviceId);

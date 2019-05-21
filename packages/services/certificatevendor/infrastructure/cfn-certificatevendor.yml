@@ -20,10 +20,6 @@ Parameters:
     Description: The MQTT topic where certificate requests are published by a device.
     Default: cdf/certificates/+/get
     Type: String
-  MQTTGetWithCsrTopic:
-    Description: The MQTT topic where certificate requests with a CSR are published by a device.
-    Default: cdf/certificates/+/getwithcsr
-    Type: String
   MQTTAckTopic:
     Description: The MQTT topic where certificate acknowledgements are published by a device.
     Default: cdf/certificates/+/ack
@@ -34,6 +30,7 @@ Parameters:
 
 Conditions:
   KmsKeyProvided: !Not [ !Equals [ !Ref KmsKeyId, "" ]]
+  KmsKeyNotProvided: !Equals [ !Ref KmsKeyId, "" ]
 
 Resources:
 
@@ -49,19 +46,6 @@ Resources:
         AwsIotSqlVersion: "2016-03-23"
         RuleDisabled: "false" 
         Sql: !Sub "SELECT topic(3) as deviceId, topic(4) as action, principal() as certId, * FROM '${MQTTGetTopic}'"
-
-  MQTTGetWithCsrRule:
-    Type: "AWS::IoT::TopicRule"
-    Properties:
-      TopicRulePayload: 
-        Actions:
-          -
-            Lambda:
-              FunctionArn: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${LambdaFunction}'
-        Description: "Certificate requests with a CSR (CDF Certificate Vendor service)"
-        AwsIotSqlVersion: "2016-03-23"
-        RuleDisabled: "false" 
-        Sql: !Sub "SELECT topic(3) as deviceId, topic(4) as action, principal() as certId, * FROM '${MQTTGetWithCsrTopic}'"
 
   MQTTAckRule:
     Type: "AWS::IoT::TopicRule"
@@ -80,15 +64,6 @@ Resources:
     Type: AWS::Lambda::Permission
     Properties:
       SourceArn: !Sub 'arn:aws:iot:${AWS::Region}:${AWS::AccountId}:rule/${MQTTGetRule}'
-      Action: lambda:InvokeFunction
-      Principal: iot.amazonaws.com
-      FunctionName: !GetAtt LambdaFunction.Arn
-      SourceAccount: !Ref AWS::AccountId
-
-  LambdaFunctionGetWithCsrInvocationPermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      SourceArn: !Sub 'arn:aws:iot:${AWS::Region}:${AWS::AccountId}:rule/${MQTTGetWithCsrRule}'
       Action: lambda:InvokeFunction
       Principal: iot.amazonaws.com
       FunctionName: !GetAtt LambdaFunction.Arn
@@ -120,8 +95,32 @@ Resources:
         - !Ref ApplicationPolicies
         - arn:aws:iam::aws:policy/AWSLambdaExecute
         - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
+    Condition: KmsKeyNotProvided
     DependsOn:
       - ApplicationPolicies
+
+  LambdaExecutionRoleWithCsr:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: 
+              - lambda.amazonaws.com
+              - iot.amazonaws.com
+          Action: sts:AssumeRole
+      Path: "/"
+      ManagedPolicyArns:
+        - !Ref ApplicationPolicies
+        - !Ref ApplicationCsrPolicies
+        - arn:aws:iam::aws:policy/AWSLambdaExecute
+        - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
+    Condition: KmsKeyProvided
+    DependsOn:
+      - ApplicationPolicies
+      - ApplicationCsrPolicies
 
   ApplicationPolicies:
     Type: 'AWS::IAM::ManagedPolicy'
@@ -169,24 +168,49 @@ Resources:
             Effect: Allow
             Resource:
               - !Sub 'arn:aws:iot:${AWS::Region}:${AWS::AccountId}:topic/cdf/certificates/*'
-          - Fn::If:
-          - KmsKeyProvided
-          -
-            - Sid: "ssm"
-              Action:
-                - 'ssm:GetParameter*'
-              Effect: Allow
-              Resource: !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/cdf-ca-key-*"
-          - Ref: AWS::NoValue
-          - Fn::If:
-          - KmsKeyProvided
-          -
-            - Sid: "kms"
-              Action:
-                - 'kms:Decrypt'
-              Effect: Allow
-              Resource: !Sub "arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/${KmsKeyId}"
-          - Ref: AWS::NoValue
+
+  ApplicationCsrPolicies:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Condition: KmsKeyProvided
+    Properties:
+      Description: 'cdf-certificatvendor policies needed to generate certificates with a CSR'
+      Path: "/"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: "ssm"
+            Action:
+              - 'ssm:GetParameter*'
+            Effect: Allow
+            Resource: !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/cdf-ca-key-*"
+          - Sid: "kms"
+            Action:
+              - 'kms:Decrypt'
+            Effect: Allow
+            Resource: !Sub "arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/${KmsKeyId}"
+          - Sid: "iotca"
+            Action:
+              - 'iot:DescribeCaCertificate'
+            Effect: Allow
+            Resource: !Sub "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:cacert/*"
+          - Sid: "iot"
+            Action:
+              - 'iot:RegisterCertificate'
+              - 'iot:AttachThingPrincipal'
+              - 'iot:ListThingPrincipals'
+              - 'iot:DetachThingPrincipal'
+              - 'iot:ListPrincipalThings'
+              - 'iot:ListPrincipalPolicies'
+            Effect: Allow
+            Resource: !Sub "*"
+          - Sid: "iotcert"
+            Action:
+              - 'iot:AttachPrincipalPolicy'
+              - 'iot:DetachPrincipalPolicy'
+              - 'iot:UpdateCertificate'
+              - 'iot:DeleteCertificate'
+            Effect: Allow
+            Resource: !Sub "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:cert/*"
 
   LambdaFunction:
     Type: AWS::Serverless::Function
@@ -194,7 +218,7 @@ Resources:
       CodeUri: ../build/build.zip
       Handler: lambda_proxy.handler
       MemorySize: 128
-      Role: !GetAtt LambdaExecutionRole.Arn
+      Role: !If [KmsKeyProvided, !GetAtt LambdaExecutionRoleWithCsr.Arn, !GetAtt LambdaExecutionRole.Arn]
       Runtime: nodejs8.10
       Timeout: 30
       Environment:
@@ -210,11 +234,6 @@ Outputs:
     Value: !Sub "${MQTTGetRule}"
     Export: 
       Name: !Sub "${AWS::StackName}-MQTTGetRuleName"
-  MQTTGetWithCsrRuleName:
-    Description: Name of get rule
-    Value: !Sub "${MQTTGetWithCsrRule}"
-    Export: 
-      Name: !Sub "${AWS::StackName}-MQTTGetWithCsrRuleName"
   MQTTAckRuleName:
     Description: Name of ack rule
     Value: !Sub "${MQTTAckRule}"

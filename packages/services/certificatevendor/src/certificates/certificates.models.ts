@@ -16,6 +16,5 @@ export interface CertificateResponseModel {
 
 export enum Action {
 	get = 'get',
-	getWithCsr = 'getwithcsr',
 	ack = 'ack'
 }
