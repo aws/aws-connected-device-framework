@@ -367,13 +367,12 @@ export class CertificateService {
 
     private async removePrevousCertificate(deviceId: string, certId: string): Promise<void> {
         logger.debug(`certificates.service removePrevousCertificate: in: deviceId: ${deviceId}, certId:${certId}`);
-        
+
         const thingPrincipals: ListThingPrincipalsResponse = await this.iot.listThingPrincipals({thingName: deviceId}).promise();
-        
         for (const principal of thingPrincipals.principals) {
             if (principal.includes(certId)) {
                 // this is the currently connected certificate, do not remove
-                break;
+                continue;
             }
 
             await this.iot.detachThingPrincipal({thingName: deviceId, principal}).promise();
