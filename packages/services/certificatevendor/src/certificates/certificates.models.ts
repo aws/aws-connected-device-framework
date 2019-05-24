@@ -9,6 +9,7 @@ export interface CertificateRequestModel {
 }
 
 export interface CertificateResponseModel {
+	certificate?: string;
 	location?: string;
 	message?: string;
 }

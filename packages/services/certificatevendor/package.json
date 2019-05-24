@@ -29,6 +29,7 @@
     "inversify-binding-decorators": "4.0.0",
     "js-yaml": "3.12.2",
     "ow": "0.12.0",
+    "pem": "1.14.2",
     "reflect-metadata": "0.1.13",
     "winston": "2.4.4"
   },
@@ -42,6 +43,7 @@
     "@types/config": "0.0.34",
     "@types/jest": "24.0.0",
     "@types/node": "8.10.43",
+    "@types/pem": "1.9.5",
     "commitizen": "3.0.7",
     "concurrently": "4.1.0",
     "cpy-cli": "2.0.0",

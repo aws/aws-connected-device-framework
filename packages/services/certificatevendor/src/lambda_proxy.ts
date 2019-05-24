@@ -18,15 +18,21 @@ exports.handler = async (event: any, _context: any) => {
 
   ow(event.deviceId, ow.string.nonEmpty);
   ow(event.action, ow.string.nonEmpty);
+  ow(event.certId, ow.string.nonEmpty);
 
   if (service===undefined) {
     service = container.get(TYPES.CertificateService);
   }
 
   if (event.action===Action.get) {
-    await service.get(event.deviceId);
+    if (event.csr !== undefined) {
+      ow(event.csr, ow.string.nonEmpty);
+      await service.getWithCsr(event.deviceId, event.csr);
+    } else {
+      await service.get(event.deviceId);
+    }
   } else if (event.action===Action.ack) {
-    await service.ack(event.deviceId);
+    await service.ack(event.deviceId, event.certId);
   } else {
     logger.error(`Unrecognized action: ${event.action}`);
   }

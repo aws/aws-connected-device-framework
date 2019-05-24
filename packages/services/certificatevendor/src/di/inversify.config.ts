@@ -78,3 +78,17 @@ container.bind<interfaces.Factory<AWS.S3>>(TYPES.S3Factory)
         return container.get<AWS.S3>(TYPES.S3);
     };
 });
+
+// SSM
+decorate(injectable(), AWS.SSM);
+container.bind<interfaces.Factory<AWS.SSM>>(TYPES.SSMFactory)
+    .toFactory<AWS.SSM>(() => {
+    return () => {
+
+        if (!container.isBound(TYPES.SSM)) {
+            const ssm = new AWS.SSM({region: config.get('aws.region')});
+            container.bind<AWS.SSM>(TYPES.SSM).toConstantValue(ssm);
+        }
+        return container.get<AWS.SSM>(TYPES.SSM);
+    };
+});

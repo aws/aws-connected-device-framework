@@ -40,7 +40,7 @@ describe('CertificatesService', () => {
 
     it('createBatch should create batch with customer CA', async () => {
 
-        jest.setTimeout(10000);
+        jest.setTimeout(15000);
 
         const mockUpload = mockS3.upload = <any>(jest.fn((_params, cb) => {
             cb(null, 'pass');
@@ -108,7 +108,7 @@ describe('CertificatesService', () => {
 
     it('createBatch should create batch with AWS IoT CA', async () => {
 
-        jest.setTimeout(10000);
+        jest.setTimeout(15000);
 
         const mockUpload = mockS3.upload = <any>(jest.fn((_params, cb) => {
             cb(null, 'pass');

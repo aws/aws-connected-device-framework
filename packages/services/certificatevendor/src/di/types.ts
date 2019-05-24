@@ -16,6 +16,8 @@ export const TYPES = {
     IotDataFactory: Symbol.for('Factory<IotData>'),
 
     S3: Symbol.for('S3'),
-    S3Factory: Symbol.for('Factory<S3>')
+    S3Factory: Symbol.for('Factory<S3>'),
 
+    SSM: Symbol.for('SSM'),
+    SSMFactory: Symbol.for('Factory<SSM>')
 };
