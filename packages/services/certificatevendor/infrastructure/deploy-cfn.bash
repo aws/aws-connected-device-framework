@@ -26,7 +26,6 @@ MANDATORY ARGUMENTS:
 OPTIONAL ARGUMENTS
     -p (string)   Key prefixes of bucket where certificates are to be stored (defaults to none)
     -m (string)   MQTT topic for get certificates (defaults to cdf/certificates/+/get)
-    -o (string)   MQTT topic for get certificates with a CSR (defaults to cdf/certificates/+/getwithcsr)
     -n (string)   MQTT topic for ack certificates (defaults to cdf/certificates/+/ack)
     -k (string)   The KMS key ID used to encrypt SSM parameters.
 
@@ -42,7 +41,7 @@ EOF
 }
 
 
-while getopts ":e:c:b:p:k:m:n:o:r:g:GA:C:R:P:" opt; do
+while getopts ":e:c:b:p:k:m:n:r:g:GA:C:R:P:" opt; do
   case $opt in
 
     e  ) export ENVIRONMENT=$OPTARG;;
@@ -53,7 +52,6 @@ while getopts ":e:c:b:p:k:m:n:o:r:g:GA:C:R:P:" opt; do
     p  ) export PREFIX=$OPTARG;;
     m  ) export MQTT_GET_TOPIC=$OPTARG;;
     n  ) export MQTT_ACK_TOPIC=$OPTARG;;
-    o  ) export MQTT_GETWITHCSR_TOPIC=$OPTARG;;
     g  ) export THING_GROUP_NAME=$OPTARG;;
     k  ) export KMS_KEY_ID=$OPTARG;;
     G  ) export BYPASS_CREATE_THING_GROUP=true;;
@@ -89,11 +87,6 @@ fi
 if [ -z "$MQTT_GET_TOPIC" ]; then
   MQTT_GET_TOPIC=cdf/certificates/+/get
   echo -f MQTT_GET_TOPIC not provided, therefore defaulted to $MQTT_GET_TOPIC
-fi
-
-if [ -z "$MQTT_GETWITHCSR_TOPIC" ]; then
-  MQTT_GETWITHCSR_TOPIC=cdf/certificates/+/getwithcsr
-  echo -f MQTT_GETWITHCSR_TOPIC not provided, therefore defaulted to $MQTT_GETWITHCSR_TOPIC
 fi
 
 if [ -z "$MQTT_ACK_TOPIC" ]; then
@@ -134,7 +127,6 @@ Running with:
   PREFIX:                           $PREFIX
   REGISTRY:                         $REGISTRY
   MQTT_GET_TOPIC:                   $MQTT_GET_TOPIC
-  MQTT_GETWITHCSR_TOPIC:            $MQTT_GETWITHCSR_TOPIC
   MQTT_ACK_TOPIC:                   $MQTT_ACK_TOPIC
   THING_GROUP_NAME:                 $THING_GROUP_NAME
   BYPASS_CREATE_THING_GROUP:        $BYPASS_CREATE_THING_GROUP"
@@ -228,7 +220,6 @@ aws cloudformation deploy \
       BucketName=$BUCKET \
       BucketPrefix=$PREFIX \
       MQTTGetTopic=$MQTT_GET_TOPIC \
-      MQTTGetWithCsrTopic=$MQTT_GETWITHCSR_TOPIC \
       MQTTAckTopic=$MQTT_ACK_TOPIC \
       KmsKeyId=$KMS_KEY_ID \
       ApplicationConfigurationOverride="$application_configuration_override" \
@@ -238,73 +229,67 @@ aws cloudformation deploy \
 
 
 
-# echo '
-# **********************************************************
-# *****  Certificate Vendor Configuring RotateCertificates command ******
-# **********************************************************
-# '
-# http_code=$(curl -X GET --write-out "%{http_code}\n" --silent --output /dev/null "$commands_invoke_url/templates/RotateCertificates" \
-#   -H 'Accept: application/vnd.aws-cdf-v1.0+json' \
-#   -H 'Content-Type: application/vnd.aws-cdf-v1.0+json')
+echo '
+**********************************************************
+*****  Certificate Vendor Configuring RotateCertificates command ******
+**********************************************************
+'
+http_code=$(curl -X GET --write-out "%{http_code}\n" --silent --output /dev/null "$commands_invoke_url/templates/RotateCertificates" \
+  -H 'Accept: application/vnd.aws-cdf-v1.0+json' \
+  -H 'Content-Type: application/vnd.aws-cdf-v1.0+json')
 
-# if [ "$http_code" = "404" ]; then
+if [ "$http_code" = "404" ]; then
 
-#   curl -X POST "$commands_invoke_url/templates" \
-#     -H 'Accept: application/vnd.aws-cdf-v1.0+json' \
-#     -H 'Content-Type: application/vnd.aws-cdf-v1.0+json' \
-#     -d '{
-#       "templateId": "RotateCertificates",
-#       "description": "Rotate certificates",
-#       "operation" : "RotateCertificates",
-#       "document": "{\"get\":{\"subscribe\":\"${cdf:parameter:getSubscribeTopic}\",\"publish\":\"${cdf:parameter:getPublishTopic}\"},\"getWithCsr\":{\"subscribe\":\"${cdf:parameter:getWithCsrSubscribeTopic}\",\"publish\":\"${cdf:parameter:getWithCsrPublishTopic}\"},\"ack\":{\"subscribe\":\"${cdf:parameter:ackSubscribeTopic}\",\"publish\":\"${cdf:parameter:ackPublishTopic}\"}}",
-#       "requiredDocumentParameters": [
-#           "getSubscribeTopic",
-#           "getPublishTopic",
-#           "getWithCsrSubscribeTopic",
-#           "getWithCsrPublishTopic",
-#           "ackSubscribeTopic",
-#           "ackPublishTopic"
-#       ]
-#   }'
+  curl -X POST "$commands_invoke_url/templates" \
+    -H 'Accept: application/vnd.aws-cdf-v1.0+json' \
+    -H 'Content-Type: application/vnd.aws-cdf-v1.0+json' \
+    -d '{
+      "templateId": "RotateCertificates",
+      "description": "Rotate certificates",
+      "operation" : "RotateCertificates",
+      "document": "{\"get\":{\"subscribe\":\"${cdf:parameter:getSubscribeTopic}\",\"publish\":\"${cdf:parameter:getPublishTopic}\"},\"ack\":{\"subscribe\":\"${cdf:parameter:ackSubscribeTopic}\",\"publish\":\"${cdf:parameter:ackPublishTopic}\"}}",
+      "requiredDocumentParameters": [
+          "getSubscribeTopic",
+          "getPublishTopic",
+          "ackSubscribeTopic",
+          "ackPublishTopic"
+      ]
+  }'
 
-#   # we use the wildcard + parameter when setting permissions, but for the Job Document we want to provide
-#   # the token {thingName} to be explicit with devices on where they need to add their name.
-#   oldText="/+/"
-#   newText="/{thingName}/"
-#   getSubscribeTopic=${MQTT_GET_TOPIC/$oldText/$newText}/+
-#   getPublishTopic=${MQTT_GET_TOPIC/$oldText/$newText}
-#   getWithCsrSubscribeTopic=${MQTT_GETWITHCSR_TOPIC/$oldText/$newText}/+
-#   getWithCsrPublishTopic=${MQTT_GETWITHCSR_TOPIC/$oldText/$newText}
-#   ackSubscribeTopic=${MQTT_ACK_TOPIC/$oldText/$newText}/+
-#   ackPublishTopic=${MQTT_ACK_TOPIC/$oldText/$newText}
+  # we use the wildcard + parameter when setting permissions, but for the Job Document we want to provide
+  # the token {thingName} to be explicit with devices on where they need to add their name.
+  oldText="/+/"
+  newText="/{thingName}/"
+  getSubscribeTopic=${MQTT_GET_TOPIC/$oldText/$newText}/+
+  getPublishTopic=${MQTT_GET_TOPIC/$oldText/$newText}
+  ackSubscribeTopic=${MQTT_ACK_TOPIC/$oldText/$newText}/+
+  ackPublishTopic=${MQTT_ACK_TOPIC/$oldText/$newText}
 
-#   command_location=$(curl -X POST -si "$commands_invoke_url/commands" \
-#   -H 'Accept: application/vnd.aws-cdf-v1.0+json' \
-#   -H 'Content-Type: application/vnd.aws-cdf-v1.0+json' \
-#    -d '{
-#     "templateId": "RotateCertificates",
-#     "targets": ["'"$thingGroupArn"'"],
-#     "type": "CONTINUOUS",
-#     "rolloutMaximumPerMinute": 120,
-#     "documentParameters": {
-#         "getSubscribeTopic":"'"$getSubscribeTopic"'",
-#         "getPublishTopic":"'"$getPublishTopic"'",
-#         "getWithCsrSubscribeTopic":"'"$getWithCsrSubscribeTopic"'",
-#         "getWithCsrPublishTopic":"'"$getWithCsrPublishTopic"'",
-#         "ackSubscribeTopic":"'"$ackSubscribeTopic"'",
-#         "ackPublishTopic":"'"$ackPublishTopic"'"
-#     }
-#   }
-#   ' | tr -d '\r' | sed -En 's/^location: (.*)/\1/p')
+  command_location=$(curl -X POST -si "$commands_invoke_url/commands" \
+  -H 'Accept: application/vnd.aws-cdf-v1.0+json' \
+  -H 'Content-Type: application/vnd.aws-cdf-v1.0+json' \
+   -d '{
+    "templateId": "RotateCertificates",
+    "targets": ["'"$thingGroupArn"'"],
+    "type": "CONTINUOUS",
+    "rolloutMaximumPerMinute": 120,
+    "documentParameters": {
+        "getSubscribeTopic":"'"$getSubscribeTopic"'",
+        "getPublishTopic":"'"$getPublishTopic"'",
+        "ackSubscribeTopic":"'"$ackSubscribeTopic"'",
+        "ackPublishTopic":"'"$ackPublishTopic"'"
+    }
+  }
+  ' | tr -d '\r' | sed -En 's/^location: (.*)/\1/p')
 
-#   curl -X PATCH "$commands_invoke_url$command_location" \
-#   -H 'Accept: application/vnd.aws-cdf-v1.0+json' \
-#   -H 'Content-Type: application/vnd.aws-cdf-v1.0+json' \
-#   -d '{
-#     "commandStatus": "PUBLISHED"
-#   }'
+  curl -X PATCH "$commands_invoke_url$command_location" \
+  -H 'Accept: application/vnd.aws-cdf-v1.0+json' \
+  -H 'Content-Type: application/vnd.aws-cdf-v1.0+json' \
+  -d '{
+    "commandStatus": "PUBLISHED"
+  }'
 
-# fi
+fi
 
 
 echo '
