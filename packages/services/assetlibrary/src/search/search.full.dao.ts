@@ -8,7 +8,7 @@ import { injectable, inject } from 'inversify';
 import {logger} from '../utils/logger';
 import {Node} from '../data/node';
 import {TYPES} from '../di/types';
-import { SearchRequestModel } from './search.models';
+import { SearchRequestModel, SearchRequestFilterDirection, SearchRequestFilter, SearchRequestFacet, FacetResults } from './search.models';
 import {NodeAssembler} from '../data/assembler';
 
 const __ = process.statics;
@@ -25,7 +25,7 @@ export class SearchDaoFull {
         this._g = graphTraversalSourceFactory();
     }
 
-    private buildSearchTraverser(request: SearchRequestModel, offset:number, count:number) : process.GraphTraversal {
+    private buildSearchTraverser(request: SearchRequestModel, offset?:number, count?:number) : process.GraphTraversal {
 
         logger.debug(`search.full.dao buildSearchTraverser: in: request: ${JSON.stringify(request)}, offset:${offset}, count:${count}`);
 
@@ -46,42 +46,54 @@ export class SearchDaoFull {
             request.types.forEach(t=> filters.push(
                 __.as('a').hasLabel(t)) );
         }
+
         if (request.eq!==undefined) {
-            Object.keys(request.eq).forEach( key => {
-                filters.push(__.as('a').has(key, request.eq[key])) ;
+            request.eq.forEach(f=> {
+                const filter = this.buildSearchFilterBase(f);
+                filters.push(filter.has(f.field, f.value));
             });
         }
         if (request.neq!==undefined) {
-            Object.keys(request.neq).forEach( key => {
-                filters.push(__.as('a').not(__.has(key, request.neq[key]))) ;
+            request.neq.forEach(f=> {
+                const filter = this.buildSearchFilterBase(f);
+                filters.push(filter.not(__.has(f.field, f.value)));
             });
         }
         if (request.lt!==undefined) {
-            Object.keys(request.lt).forEach( key => filters.push(
-                __.as('a').values(key).is(process.P.lt(request.lt[key]))) );
+            request.lt.forEach(f=> {
+                const filter = this.buildSearchFilterBase(f);
+                filters.push(filter.is(process.P.lt(<number>f.value)));
+            });
         }
         if (request.lte!==undefined) {
-            Object.keys(request.lte).forEach( key => filters.push(
-                __.as('a').values(key).is(process.P.lte(request.lte[key]))) );
+            request.lte.forEach(f=> {
+                const filter = this.buildSearchFilterBase(f);
+                filters.push(filter.is(process.P.lte(<number>f.value)));
+            });
         }
         if (request.gt!==undefined) {
-            Object.keys(request.gt).forEach( key => filters.push(
-                __.as('a').values(key).is(process.P.gt(request.gt[key]))) );
+            request.gt.forEach(f=> {
+                const filter = this.buildSearchFilterBase(f);
+                filters.push(filter.is(process.P.gt(<number>f.value)));
+            });
         }
         if (request.gte!==undefined) {
-            Object.keys(request.gte).forEach( key => filters.push(
-                __.as('a').values(key).is(process.P.gte(request.gte[key]))) );
+            request.gte.forEach(f=> {
+                const filter = this.buildSearchFilterBase(f);
+                filters.push(filter.is(process.P.gte(<number>f.value)));
+            });
         }
         if (request.startsWith!==undefined) {
-            Object.keys(request.startsWith).forEach( key => {
-                const startValue = request.startsWith[key];
+            request.startsWith.forEach(f=> {
+                const startValue = <string> f.value;
                 const nextCharCode = String.fromCharCode( startValue.charCodeAt(startValue.length-1) + 1);
                 const endValue = this.setCharAt(startValue, startValue.length-1, nextCharCode);
 
-                filters.push(
-                    __.as('a').has(key, process.P.between(startValue, endValue)) );
-                });
+                const filter = this.buildSearchFilterBase(f);
+                filters.push(filter.has(f.field, process.P.between(startValue, endValue)));
+            });
         }
+
         if (request.endsWith!==undefined) {
             throw new Error('NOT_SUPPORTED');
         }
@@ -108,6 +120,20 @@ export class SearchDaoFull {
         return traverser;
     }
 
+    private buildSearchFilterBase(filter:SearchRequestFilter|SearchRequestFacet) : process.GraphTraversal {
+        const response:process.GraphTraversal = __.as('a');
+        if (filter.traversals) {
+            filter.traversals.forEach(t=> {
+                if (t.direction===SearchRequestFilterDirection.in) {
+                    response.in_(t.relation);
+                } else {
+                    response.out(t.relation);
+                }
+            });
+        }
+        return response;
+    }
+
     public async search(request: SearchRequestModel, offset:number, count:number): Promise<Node[]> {
         logger.debug(`search.full.dao search: in: request: ${JSON.stringify(request)}, offset:${offset}, count:${count}`);
 
@@ -128,6 +154,38 @@ export class SearchDaoFull {
 
         logger.debug(`search.full.dao search: exit: nodes: ${JSON.stringify(nodes)}`);
         return nodes;
+    }
+
+    public async facet(request: SearchRequestModel): Promise<FacetResults> {
+        logger.debug(`search.full.dao facet: in: request: ${JSON.stringify(request)}`);
+
+        const traverser = this.buildSearchTraverser(request);
+
+        if (request.facetField!==undefined) {
+            traverser.select('a');
+            request.facetField.traversals.forEach(t=> {
+                if (t.direction===SearchRequestFilterDirection.in) {
+                    traverser.in_(t.relation);
+                } else {
+                    traverser.out(t.relation);
+                }
+            });
+            traverser.values(request.facetField.field).groupCount();
+        }
+
+        logger.debug(`search.full.dao buildSearchTraverser: traverser: ${JSON.stringify(traverser.toString())}`);
+        const results = await traverser.next();
+        logger.debug(`search.full.dao facet: results: ${JSON.stringify(results)}`);
+
+        if (results===undefined || results.value===undefined) {
+            logger.debug(`search.full.dao facet: exit: node: undefined`);
+            return undefined;
+        }
+
+        const facets:FacetResults = results.value as FacetResults;
+
+        logger.debug(`search.full.dao facet: exit: nodes: ${JSON.stringify(facets)}`);
+        return facets;
     }
 
     public async summary(request: SearchRequestModel): Promise<number> {

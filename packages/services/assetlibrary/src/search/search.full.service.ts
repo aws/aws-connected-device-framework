@@ -4,7 +4,7 @@
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
 import { injectable, inject } from 'inversify';
-import { SearchRequestModel} from './search.models';
+import { SearchRequestModel, FacetResults} from './search.models';
 import { TYPES } from '../di/types';
 import { SearchDaoFull} from './search.full.dao';
 import {logger} from '../utils/logger';
@@ -25,7 +25,7 @@ export class SearchServiceFull implements SearchService {
     public async search(model: SearchRequestModel, offset?:number, count?:number): Promise<(GroupModel|DeviceModel)[]> {
         logger.debug(`search.full.service search: in: model: ${JSON.stringify(model)}, offset:${offset}, count:${count}`);
 
-        // TODO validation?
+        // TODO: validation
 
         // all ids must be lowercase
         this.setIdsToLowercase(model);
@@ -51,10 +51,24 @@ export class SearchServiceFull implements SearchService {
 
     }
 
+    public async facet(model: SearchRequestModel): Promise<FacetResults> {
+        logger.debug(`search.full.service facet: in: model: ${JSON.stringify(model)}`);
+
+        // TODO: validation?
+
+        // all ids must be lowercase
+        this.setIdsToLowercase(model);
+
+        const facets = await this.searchDao.facet(model);
+        logger.debug(`search.full.service facet: exit: models: ${facets}`);
+        return facets;
+
+    }
+
     public async summary(model: SearchRequestModel): Promise<number> {
         logger.debug(`search.full.service summary: in: model: ${JSON.stringify(model)}`);
 
-        // TODO validation?
+        // TODO: validation?
 
         // all ids must be lowercase
         this.setIdsToLowercase(model);

@@ -6,26 +6,48 @@
 import {GroupModel} from '../groups/groups.models';
 import {DeviceModel} from '../devices/devices.models';
 
+export enum SearchRequestFilterDirection {
+	in = 'in',
+	out = 'out'
+}
+export type SearchRequestFilterTraversal =  {
+	relation?: string;
+	direction?: SearchRequestFilterDirection;
+};
+export type SearchRequestFilter = {
+	traversals?: SearchRequestFilterTraversal[];
+	field: string;
+	value: string | number | boolean;
+};
+export type SearchRequestFacet = {
+	traversals?: SearchRequestFilterTraversal[];
+	field: string;
+};
+export type SearchRequestFilters = SearchRequestFilter[];
+
 export class SearchRequestModel {
 	types?: string[]=[];
 	ancestorPath?: string;
 
-	eq?: { [key: string] : string | number | boolean};
-	neq?: { [key: string] : string | number | boolean};
-	lt?: { [key: string] : number};
-	lte?: { [key: string] : number};
-	gt?: { [key: string] : number};
-	gte?: { [key: string] : number};
-	startsWith?: { [key: string] : string};
-	endsWith?: { [key: string] : string};
-	contains?: { [key: string] : string};
+	eq?: SearchRequestFilters;
+	neq?: SearchRequestFilters;
+	lt?: SearchRequestFilters;
+	lte?: SearchRequestFilters;
+	gt?: SearchRequestFilters;
+	gte?: SearchRequestFilters;
+	startsWith?: SearchRequestFilters;
+	endsWith?: SearchRequestFilters;
+	contains?: SearchRequestFilters;
+
+	facetField?: SearchRequestFacet;
 
 	summarize: boolean;
 
 }
 
+export type FacetResults = {[key:string]: number};
 export interface SearchResultsModel {
-	results: (GroupModel|DeviceModel)[];
+	results: (GroupModel|DeviceModel)[] | FacetResults;
 	pagination?: {
 		offset:number;
 		count: number;
