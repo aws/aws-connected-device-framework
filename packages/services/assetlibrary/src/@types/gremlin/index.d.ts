@@ -266,7 +266,7 @@ declare module 'gremlin' {
         export class Traversal {
             toList(): Promise<Traverser[]>;
             iterate(): Promise<Traverser[]>;
-            next(): Promise<{value:Traverser | TraverserValue, done:boolean}>;
+            next(): Promise<{value:Traverser | TraverserValue | TraverserMapValue, done:boolean}>;
             toString(): string;
         }
 
@@ -274,10 +274,11 @@ declare module 'gremlin' {
         }
 
         export type TraverserValue = string | string[] | number | number[] | boolean | boolean[];
+        export type TraverserMapValue = {[key:string]: TraverserValue};
 
         export class Traverser {
             constructor(object:object, bulk:number);
-            [key: string]: TraverserValue
+            [key: string]: TraverserValue;
         }
 
         export const barrier: {

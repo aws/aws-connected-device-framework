@@ -147,14 +147,17 @@ tags:
   description: |
     The search api allows you to search across both devices and groups applying a variety of different filters.
     
-    Filters are applied via query parameters.  For filters that require both an attribute and value specifying, those values are separated by a double colon '::'.  For example:
+    Filters are applied via query parameters.  To apply filters uisng an attribute from the item being returned specify in the format of `?filter=field:value`.  To filter based on an attribute of a linked item, specify in the format of `?filter=relation:direction:field:value`.  Multiple `relation:direction`'s may be specified to define paths between multiple linked items using the format `?filter=relation_1:direction_1:relation...:direction...:field:value`.
     
-        ?eq=deviceId::MOD123
-        ?lte=cycles::5
+    URL Parameter | Description
+    ---|---
+    `?eq=deviceId:MOD123` | 'deviceId' equals 'MOD123'
+    `?lte=cycles:5` | 'cycles' less than or equals to 5
+    `?gt=located_at:out:qty:10` | 'qty' of the item linked via the outgoing 'located_at' relation is greater than 10
 
     Multiple queries of the same type may be specified, for example if two equal filters are required:
   
-        ?eq=deviceId::MOD123&eq=state::active
+        ?eq=deviceId:MOD123&eq=state:active
 
 paths:
 
@@ -1137,67 +1140,71 @@ paths:
         type: string
       - name: eq
         in: query
-        description: "Filter an attribute based on an exact match. E.g. `?eq=attributes.firmwareVersion:ABC123`"
+        description: "Filter an attribute based on an exact match. E.g. `?eq=firmwareVersion:ABC123`"
         type: array
         collectionFormat: multi
         items:
           type: string
       - name: neq
         in: query
-        description: "Filter by an attribute based on not matching. E.g. `?neq=attributes.firmwareVersion:ABC123`"
+        description: "Filter by an attribute based on not matching. E.g. `?neq=firmwareVersion:ABC123`"
         type: array
         collectionFormat: multi
         items:
           type: string
       - name: lt
         in: query
-        description: "Filter an attribute based on having a value less than. E.g. `?lt=attributes.deploymentId:3`"
+        description: "Filter an attribute based on having a value less than. E.g. `?lt=deploymentId:3`"
         type: array
         collectionFormat: multi
         items:
           type: number
       - name: lte
         in: query
-        description: "Filter an attribute based on having a value less than or equal to. E.g. `?lte=attributes.deploymentId:3`"
+        description: "Filter an attribute based on having a value less than or equal to. E.g. `?lte=deploymentId:3`"
         type: array
         collectionFormat: multi
         items:
           type: number
       - name: gt
         in: query
-        description: "Filter an attribute based on having a value greater than. E.g. `?gt=attributes.deploymentId:3`"
+        description: "Filter an attribute based on having a value greater than. E.g. `?gt=deploymentId:3`"
         type: array
         collectionFormat: multi
         items:
           type: number
       - name: gte
         in: query
-        description: "Filter an attribute based on having a value greater than or equal to. E.g. `?gte=attributes.deploymentId:3`"
+        description: "Filter an attribute based on having a value greater than or equal to. E.g. `?gte=deploymentId:3`"
         type: array
         collectionFormat: multi
         items:
           type: number
       - name: startsWith
         in: query
-        description: "Filter by an attribute based on starting with specific text. E.g. `?startsWith=attributes.model:MOD123`"
+        description: "Filter by an attribute based on starting with specific text. E.g. `?startsWith=model:MOD123`"
         type: array
         collectionFormat: multi
         items:
           type: string
       - name: endsWith
         in: query
-        description: "NOT IMPLEMENTED!  Filter by an attribute based on ending with specific text. E.g. `?endsWith=attributes.model:MOD123`"
+        description: "NOT IMPLEMENTED!`"
         type: array
         collectionFormat: multi
         items:
           type: string
       - name: contains
         in: query
-        description: "NOT IMPLEMENTED!  Filter by an attribute based on containing specific text. E.g. `?contains=attributes.model:MOD123`"
+        description: "NOT IMPLEMENTED!"
         type: array
         collectionFormat: multi
         items:
           type: string
+      - name: facetField
+        in: query
+        description: "Perform a faceted query.  Specify in the forma of `?facetField=relation:direction:field".
+        type: string
       - name: summarize
         in: query
         description: "Summarize the search results by providing a total, instead of returning the results themselves."

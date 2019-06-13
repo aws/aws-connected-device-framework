@@ -4,7 +4,7 @@
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
 import { injectable, inject } from 'inversify';
-import { SearchRequestModel} from './search.models';
+import { SearchRequestModel, FacetResults} from './search.models';
 import {logger} from '../utils/logger';
 import { GroupModel } from '../groups/groups.models';
 import { DeviceModel } from '../devices/devices.models';
@@ -57,6 +57,12 @@ export class SearchServiceLite {
 
     public async summary(model: SearchRequestModel): Promise<number> {
         logger.debug(`search.lite.service summary: in: model: ${JSON.stringify(model)}`);
+
+        throw new Error('NOT_SUPPORTED');
+    }
+
+    public async facet(model: SearchRequestModel): Promise<FacetResults> {
+        logger.debug(`search.lite.service facet: in: model: ${JSON.stringify(model)}`);
 
         throw new Error('NOT_SUPPORTED');
     }
