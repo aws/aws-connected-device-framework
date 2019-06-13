@@ -10,16 +10,16 @@ Feature: Commands
     Given command template "testCommandsFeatureTemplateSimple" exists
     When I create a command with attributes
       | templateId | testCommandsFeatureTemplateSimple |
-      | targets | [ "%property:commands.thing.arn%" ] |
+      | targets | [ "%property:thing.arn%" ] |
     Then last command exists with attributes
       | templateId | testCommandsFeatureTemplateSimple |
-      | targets | [ "%property:commands.thing.arn%" ] |
+      | targets | [ "%property:thing.arn%" ] |
       | commandStatus | DRAFT |
     When I update last command with attributes
       | commandStatus | PUBLISHED |
     Then last command exists with attributes
       | templateId | testCommandsFeatureTemplateSimple |
-      | targets | [ "%property:commands.thing.arn%" ] |
+      | targets | [ "%property:thing.arn%" ] |
       | commandStatus | PUBLISHED |
     And job for last command exists
 
@@ -27,10 +27,10 @@ Feature: Commands
     Given command template "testCommandsFeatureTemplateParams" exists
     When I create a command with attributes
       | templateId | testCommandsFeatureTemplateParams |
-      | targets | [ "%property:commands.thing.arn%" ] |
+      | targets | [ "%property:thing.arn%" ] |
     Then last command exists with attributes
       | templateId | testCommandsFeatureTemplateParams |
-      | targets | [ "%property:commands.thing.arn%" ] |
+      | targets | [ "%property:thing.arn%" ] |
       | commandStatus | DRAFT |
     When I update last command with attributes
       | commandStatus | PUBLISHED |
@@ -40,11 +40,11 @@ Feature: Commands
     Given command template "testCommandsFeatureTemplateParams" exists
     When I create a command with attributes
       | templateId | testCommandsFeatureTemplateParams |
-      | targets | [ "%property:commands.thing.arn%" ] |
+      | targets | [ "%property:thing.arn%" ] |
       | documentParameters | {"paramA":"valueA","paramB":"valueB"} |
     Then last command exists with attributes
       | templateId | testCommandsFeatureTemplateParams |
-      | targets | [ "%property:commands.thing.arn%" ] |
+      | targets | [ "%property:thing.arn%" ] |
       | documentParameters | {"paramA":"valueA","paramB":"valueB"} |
       | commandStatus | DRAFT |
     When I update last command with attributes
@@ -52,7 +52,7 @@ Feature: Commands
     Then last command exists with attributes
       | templateId | testCommandsFeatureTemplateParams |
       | documentParameters | {"paramA":"valueA","paramB":"valueB"} |
-      | targets | [ "%property:commands.thing.arn%" ] |
+      | targets | [ "%property:thing.arn%" ] |
       | jobStatus | IN_PROGRESS |
       | commandStatus | PUBLISHED |
     And job for last command exists
@@ -61,10 +61,10 @@ Feature: Commands
     Given command template "testCommandsFeatureTemplateFiles" exists
     When I create a command with attributes
       | templateId | testCommandsFeatureTemplateFiles |
-      | targets | [ "%property:commands.thing.arn%" ] |
+      | targets | [ "%property:thing.arn%" ] |
     Then last command exists with attributes
       | templateId | testCommandsFeatureTemplateFiles |
-      | targets | [ "%property:commands.thing.arn%" ] |
+      | targets | [ "%property:thing.arn%" ] |
       | commandStatus | DRAFT |
     When I update last command with attributes
       | commandStatus | PUBLISHED |
@@ -74,12 +74,12 @@ Feature: Commands
     Given command template "testCommandsFeatureTemplateFiles" exists
     When I create a command with attributes
       | templateId | testCommandsFeatureTemplateFiles |
-      | targets | [ "%property:commands.thing.arn%" ] |
+      | targets | [ "%property:thing.arn%" ] |
     And I upload file "fileA.txt" to last command as file alias "fileA"
     And I upload file "fileB.txt" to last command as file alias "fileB"
     Then last command exists with attributes
       | templateId | testCommandsFeatureTemplateFiles |
-      | targets | [ "%property:commands.thing.arn%" ] |
+      | targets | [ "%property:thing.arn%" ] |
       | commandStatus | DRAFT |
     And last command has a file uploaded as file alias "fileA"
     And last command has a file uploaded as file alias "fileB"
@@ -87,7 +87,7 @@ Feature: Commands
       | commandStatus | PUBLISHED |
     Then last command exists with attributes
       | templateId | testCommandsFeatureTemplateFiles |
-      | targets | [ "%property:commands.thing.arn%" ] |
+      | targets | [ "%property:thing.arn%" ] |
       | jobStatus | IN_PROGRESS |
       | commandStatus | PUBLISHED |
     And job for last command exists

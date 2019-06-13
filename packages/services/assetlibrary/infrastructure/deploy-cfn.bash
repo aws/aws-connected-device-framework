@@ -167,7 +167,7 @@ echo '
   Setting Asset Library configuration
 **********************************************************
 '
-aws_iot_endpoint=$(aws iot describe-endpoint $AWS_ARGS \
+aws_iot_endpoint=$(aws iot describe-endpoint  --endpoint-type iot:Data-ATS $AWS_ARGS \
     | jq -r '.endpointAddress')
 
 cat $ASSETLIBRARY_CONFIG_LOCATION | \

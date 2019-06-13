@@ -119,7 +119,7 @@ echo '
   Setting Commands configuration
 **********************************************************
 '
-aws_iot_endpoint=$(aws iot describe-endpoint $AWS_ARGS \
+aws_iot_endpoint=$(aws iot describe-endpoint --endpoint-type iot:Data-ATS $AWS_ARGS \
     | jq -r '.endpointAddress')
 
 stack_exports=$(aws cloudformation list-exports $AWS_ARGS)
