@@ -1,3 +1,10 @@
+# [@cdf/assetlibrary-history-v2.1.2](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-history-v2.1.1...@cdf/assetlibrary-history-v2.1.2) (2019-06-13)
+
+
+### Bug Fixes
+
+* **assetlibraryhistory:** dynamodb table name ([3d3b5c3](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/3d3b5c3))
+
 # [@cdf/assetlibrary-history-v2.1.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-history-v2.1.0...@cdf/assetlibrary-history-v2.1.1) (2019-06-13)
 
 
