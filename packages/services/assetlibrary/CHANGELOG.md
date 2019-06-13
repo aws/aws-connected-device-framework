@@ -1,3 +1,11 @@
+# [@cdf/assetlibrary-v2.2.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v2.2.0...@cdf/assetlibrary-v2.2.1) (2019-06-13)
+
+
+### Bug Fixes
+
+* **assetlibrary:** fixed inability to define nullable types ([3b89207](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/3b89207))
+* **assetlibrary:** fixed lt,lte,gt,gte search functions ([9e1e049](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/9e1e049))
+
 # [@cdf/assetlibrary-v2.2.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v2.1.2...@cdf/assetlibrary-v2.2.0) (2019-06-13)
 
 
