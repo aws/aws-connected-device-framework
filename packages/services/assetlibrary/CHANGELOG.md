@@ -1,3 +1,10 @@
+# [@cdf/assetlibrary-v2.2.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v2.1.2...@cdf/assetlibrary-v2.2.0) (2019-06-13)
+
+
+### Features
+
+* **assetlibrary:** added new search options ([e3ce494](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/e3ce494))
+
 # [@cdf/assetlibrary-v2.1.2](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v2.1.1...@cdf/assetlibrary-v2.1.2) (2019-05-15)
 
 
