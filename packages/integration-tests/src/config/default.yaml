@@ -7,11 +7,12 @@ assetLibraryHistory:
   baseUrl:
 commands:
     baseUrl:
-    thing:
-      arn:
 provisioning:
   baseUrl:
   templates:
     bucket:
     prefix:
     suffix:
+thing:
+  name:
+  arn:

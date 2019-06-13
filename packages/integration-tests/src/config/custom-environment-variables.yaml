@@ -7,11 +7,12 @@ assetLibraryHistory:
   baseUrl: CDF_ASSETLIBRARYHISTORY_BASEURL
 commands:
   baseUrl: CDF_COMMANDS_BASEURL
-  thing:
-    arn: CDF_COMMANDS_THING_ARN
 provisioning:
   baseUrl: CDF_PROVISIONING_BASEURL
   templates:
     bucket: CDF_PROVISIONING_TEMPLATES_BUCKET
     prefix: CDF_PROVISIONING_TEMPLATES_PREFIX
     suffix: CDF_PROVISIONING_TEMPLATES_PREFIX
+thing:
+  name: CDF_THING_NAME 
+  arn: CDF_THING_ARN
