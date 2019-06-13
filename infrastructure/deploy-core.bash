@@ -233,6 +233,7 @@ root_dir=$(pwd)
 NETWORK_STACK_NAME=cdf-network-${ENVIRONMENT}
 NEPTUNE_STACK_NAME=cdf-assetlibrary-neptune-${ENVIRONMENT}
 ASSETLIBRARY_STACK_NAME=cdf-assetlibrary-${ENVIRONMENT}
+ASSETLIBRARY_HISTORY_STACK_NAME=cdf-assetlibraryhistory-${ENVIRONMENT}
 BASTION_STACK_NAME=cdf-bastion-${ENVIRONMENT}
 PROVISIONING_STACK_NAME=cdf-provisioning-${ENVIRONMENT}
 COMMANDS_STACK_NAME=cdf-commands-${ENVIRONMENT}
@@ -667,6 +668,26 @@ if [ -f "$eventsalerts_config" ]; then
     infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "$eventsalerts_config" $AWS_SCRIPT_ARGS &
 
     stacks+=("$EVENTSALERTS_STACK_NAME")
+
+fi
+
+
+
+assetlibraryhistory_config=$CONFIG_LOCATION/assetlibraryhistory/$CONFIG_ENVIRONMENT-config.json
+if [ -f "$assetlibraryhistory_config" ]; then
+
+    echo '
+    **********************************************************
+    *****  Deploying asset library history              ******
+    **********************************************************
+    '
+
+    cd "$root_dir/packages/services/assetlibraryhistory"
+
+    infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
+    infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "$assetlibraryhistory_config" $AWS_SCRIPT_ARGS &
+
+    stacks+=("$ASSETLIBRARY_HISTORY_STACK_NAME")
 
 fi
 
