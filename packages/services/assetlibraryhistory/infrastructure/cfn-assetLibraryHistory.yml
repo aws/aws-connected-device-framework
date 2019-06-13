@@ -314,6 +314,7 @@ Resources:
         Variables:
           NODE_CONFIG_DIR: './config'
           NODE_CONFIG: !Ref ApplicationConfigurationOverride
+          ASSETLIBRARYHISTORY_AWS_DYNAMODB_TABLES_EVENTS: !Ref HistoryTable
       Tracing: Active
 
   RESTLambdaFunction:
@@ -329,6 +330,7 @@ Resources:
         Variables:
           NODE_CONFIG_DIR: './config'
           NODE_CONFIG: !Ref ApplicationConfigurationOverride
+          ASSETLIBRARYHISTORY_AWS_DYNAMODB_TABLES_EVENTS: !Ref HistoryTable
       Tracing: Active
       Events:
         ProxyApiRoot:

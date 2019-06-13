@@ -1,2 +1,6 @@
 aws:
-  region: AWS_REGION
+  region: AWS_REGION 
+
+  dynamoDb:
+    tables: 
+      events: ASSETLIBRARYHISTORY_AWS_DYNAMODB_TABLES_EVENTS
