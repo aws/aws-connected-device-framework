@@ -60,6 +60,11 @@ if [ -z "$ASSETLIBRARYHISTORY_CONFIG_LOCATION" ]; then
 	echo -c ASSETLIBRARYHISTORY_CONFIG_LOCATION is required; help_message; exit 1;
 fi
 
+if [ -z "$ASSETLIBRARY_EVENT_TOPICS" ]; then
+  ASSETLIBRARY_EVENT_TOPICS='cdf/assetlibrary/events/#'
+	echo -t "ASSETLIBRARY_EVENT_TOPICS not provided, therefore defaulted to $ASSETLIBRARY_EVENT_TOPICS"
+fi
+
 
 AWS_ARGS=
 if [ -n "$AWS_REGION" ]; then

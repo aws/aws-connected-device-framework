@@ -3,12 +3,15 @@
   "version": "1.1.0",
   "description": "CDF Integration Tests",
   "author": "Dean Hart <deanhart@amazon.com>",
+  "config": {
+    "environment": "development"
+  },
   "scripts": {
     "reset": "npm run clean && del-cli node_modules",
     "clean": "del-cli .nyc_output coverage dist build features/step_definitions features/support",
     "lint": "tslint \"src/**/*.ts\"",
     "build": "tsc -b tsconfig.json && cpy dist/step_definitions/**/* features/step_definitions/ --parents && cpy src/testResources/**/* dist/testResources/ --parents && cpy dist/support/**/* features/support/ --parents",
-    "integration-test": "NODE_CONFIG=$(cat ${INTEGRATIONTESTS_CONFIG_LOCATION}) NODE_CONFIG_DIR='./src/config' cucumber-js",
+    "integration-test": "NODE_CONFIG=$(cat ${CONFIG_LOCATION}/integration-tests/${npm_package_config_environment}-config.json) NODE_CONFIG_DIR='./src/config' cucumber-js",
     "semantic-release": "npx semantic-release -e semantic-release-monorepo"
   },
   "dependencies": {

@@ -15,6 +15,13 @@
                                 {
                                     "type": "string",
                                     "enum": ["number", "integer", "boolean", "string", "null"]
+                                },
+                                {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string",
+                                        "enum": ["number", "integer", "boolean", "string", "null"]
+                                    }
                                 }
                             ]
                         }

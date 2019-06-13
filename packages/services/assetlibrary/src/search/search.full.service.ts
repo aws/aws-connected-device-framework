@@ -87,37 +87,37 @@ export class SearchServiceFull implements SearchService {
             model.ancestorPath = model.ancestorPath.toLowerCase();
         }
         if (model.eq) {
-            Object.keys(model.eq).forEach(k => {
-                if (this.isIdAttribute(k)) {
-                    model.eq[k] = (<string>model.eq[k]).toLowerCase();
+            model.eq.forEach(f=> {
+                if (this.isIdAttribute(f.field)) {
+                    f.value = (<string>f.value).toLowerCase();
                 }
             });
         }
         if (model.neq) {
-            Object.keys(model.neq).forEach(k => {
-                if (this.isIdAttribute(k)) {
-                    model.neq[k] = (<string>model.neq[k]).toLowerCase();
+            model.neq.forEach(f=> {
+                if (this.isIdAttribute(f.field)) {
+                    f.value = (<string>f.value).toLowerCase();
                 }
             });
         }
         if (model.startsWith) {
-            Object.keys(model.startsWith).forEach(k => {
-                if (this.isIdAttribute(k)) {
-                    model.startsWith[k] = (<string>model.startsWith[k]).toLowerCase();
+            model.startsWith.forEach(f=> {
+                if (this.isIdAttribute(f.field)) {
+                    f.value = (<string>f.value).toLowerCase();
                 }
             });
         }
         if (model.endsWith) {
-            Object.keys(model.endsWith).forEach(k => {
-                if (this.isIdAttribute(k)) {
-                    model.endsWith[k] = (<string>model.endsWith[k]).toLowerCase();
+            model.endsWith.forEach(f=> {
+                if (this.isIdAttribute(f.field)) {
+                    f.value = (<string>f.value).toLowerCase();
                 }
             });
         }
         if (model.contains) {
-            Object.keys(model.contains).forEach(k => {
-                if (this.isIdAttribute(k)) {
-                    model.contains[k] = (<string>model.contains[k]).toLowerCase();
+            model.contains.forEach(f=> {
+                if (this.isIdAttribute(f.field)) {
+                    f.value = (<string>f.value).toLowerCase();
                 }
             });
         }
