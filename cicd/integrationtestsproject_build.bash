@@ -48,11 +48,11 @@ bulkcerts_invoke_url=$(echo $stack_exports \
 echo setting integration test config...
 
 CONFIG_ENVIRONMENT=${ENVIRONMENT%-staging}
-export INTEGRATIONTESTS_CONFIG_LOCATION="$CODEBUILD_SRC_DIR_source_infrastructure/integration-tests/$CONFIG_ENVIRONMENT-config.json"
+export CONFIG_LOCATION="$CODEBUILD_SRC_DIR_source_infrastructure/integration-tests/$CONFIG_ENVIRONMENT-config.json"
 
-echo using configuration from $INTEGRATIONTESTS_CONFIG_LOCATION
+echo using configuration from $CONFIG_LOCATION
 
-cat $INTEGRATIONTESTS_CONFIG_LOCATION | \
+cat $CONFIG_LOCATION | \
   jq \
     --arg assetlibrary_invoke_url "$assetlibrary_invoke_url" \
     --arg assetlibraryhistory_invoke_url "$assetlibraryhistory_invoke_url" \
@@ -60,13 +60,16 @@ cat $INTEGRATIONTESTS_CONFIG_LOCATION | \
     --arg commands_invoke_url "$commands_invoke_url" \
     --arg bulkcerts_invoke_url "$bulkcerts_invoke_url" \
   '.assetLibrary.baseUrl=$assetlibrary_invoke_url | .assetLibraryHistory.baseUrl=$assetlibraryhistory_invoke_url | .commands.baseUrl=$commands_invoke_url | .provisioning.baseUrl=$provisioning_invoke_url | .bulkCerts.baseUrl=$bulkcerts_invoke_url' \
-  > $INTEGRATIONTESTS_CONFIG_LOCATION.tmp && mv $INTEGRATIONTESTS_CONFIG_LOCATION.tmp $INTEGRATIONTESTS_CONFIG_LOCATION
+  > $CONFIG_LOCATION.tmp && mv $CONFIG_LOCATION.tmp $CONFIG_LOCATION
 
-echo "\naugmented configuration:\n$(cat $INTEGRATIONTESTS_CONFIG_LOCATION)\n"
+echo "\naugmented configuration:\n$(cat $CONFIG_LOCATION)\n"
 
 
 echo running integration tests...
 
 cd packages/integration-tests
-pnpm i
-npm run integration-test -- "features/assetlibrary/$ASSETLIBRARY_MODE/*.feature"
+pnpm run integration-test -- "features/assetlibrary/$ASSETLIBRARY_MODE/*.feature"
+pnpm run integration-test -- "features/assetlibraryhistory/*.feature"
+pnpm run integration-test -- "features/bulkcerts/*.feature"
+pnpm run integration-test -- "features/commands/*.feature"
+pnpm run integration-test -- "features/provisioning/*.feature"
