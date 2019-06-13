@@ -104,15 +104,12 @@ Feature: Device search
     And search result contains device "test-devicesearch-002a"
     And search result contains device "test-devicesearch-002b"
 
-#  @teardown_deviceSearch_feature
-#  Scenario: Teardown
-#    Given device "TEST-deviceSearch-001A" does not exist
-#    And device "TEST-deviceSearch-001B" does not exist
-#    And device "TEST-deviceSearch-002A" does not exist
-#    And device "TEST-deviceSearch-002B" does not exist
-#    And group "/deviceSearch_feature" does not exist
-#    And draft assetlibrary device template "TEST-deviceSearch-device" does not exist
-#    And published assetlibrary device template "TEST-deviceSearch-device" does not exist
-
-
-
+ @teardown_deviceSearch_feature
+ Scenario: Teardown
+   Given device "TEST-deviceSearch-001A" does not exist
+   And device "TEST-deviceSearch-001B" does not exist
+   And device "TEST-deviceSearch-002A" does not exist
+   And device "TEST-deviceSearch-002B" does not exist
+   And group "/deviceSearch_feature" does not exist
+   And draft assetlibrary device template "TEST-deviceSearch-device" does not exist
+   And published assetlibrary device template "TEST-deviceSearch-device" does not exist

@@ -62,25 +62,25 @@ export class SearchDaoFull {
         if (request.lt!==undefined) {
             request.lt.forEach(f=> {
                 const filter = this.buildSearchFilterBase(f);
-                filters.push(filter.is(process.P.lt(<number>f.value)));
+                filters.push(filter.values(f.field).is(process.P.lt(Number(f.value))));
             });
         }
         if (request.lte!==undefined) {
             request.lte.forEach(f=> {
                 const filter = this.buildSearchFilterBase(f);
-                filters.push(filter.is(process.P.lte(<number>f.value)));
+                filters.push(filter.values(f.field).is(process.P.lte(Number(f.value))));
             });
         }
         if (request.gt!==undefined) {
             request.gt.forEach(f=> {
                 const filter = this.buildSearchFilterBase(f);
-                filters.push(filter.is(process.P.gt(<number>f.value)));
+                filters.push(filter.values(f.field).is(process.P.gt(Number(f.value))));
             });
         }
         if (request.gte!==undefined) {
             request.gte.forEach(f=> {
                 const filter = this.buildSearchFilterBase(f);
-                filters.push(filter.is(process.P.gte(<number>f.value)));
+                filters.push(filter.values(f.field).is(process.P.gte(Number(f.value))));
             });
         }
         if (request.startsWith!==undefined) {
