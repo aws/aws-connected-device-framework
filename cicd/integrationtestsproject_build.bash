@@ -49,10 +49,11 @@ echo setting integration test config...
 
 CONFIG_ENVIRONMENT=${ENVIRONMENT%-staging}
 export CONFIG_LOCATION="$CODEBUILD_SRC_DIR_source_infrastructure"
+export CONFIG_FILE="$CONFIG_LOCATION/integration-tests/$CONFIG_ENVIRONMENT-config.json"
 
-echo using configuration from $CONFIG_LOCATION
+echo using configuration from $CONFIG_FILE
 
-cat $CONFIG_LOCATION | \
+cat $CONFIG_FILE | \
   jq \
     --arg assetlibrary_invoke_url "$assetlibrary_invoke_url" \
     --arg assetlibraryhistory_invoke_url "$assetlibraryhistory_invoke_url" \
@@ -60,9 +61,9 @@ cat $CONFIG_LOCATION | \
     --arg commands_invoke_url "$commands_invoke_url" \
     --arg bulkcerts_invoke_url "$bulkcerts_invoke_url" \
   '.assetLibrary.baseUrl=$assetlibrary_invoke_url | .assetLibraryHistory.baseUrl=$assetlibraryhistory_invoke_url | .commands.baseUrl=$commands_invoke_url | .provisioning.baseUrl=$provisioning_invoke_url | .bulkCerts.baseUrl=$bulkcerts_invoke_url' \
-  > $CONFIG_LOCATION.tmp && mv $CONFIG_LOCATION.tmp $CONFIG_LOCATION
+  > $CONFIG_FILE.tmp && mv $CONFIG_FILE.tmp $CONFIG_FILE
 
-echo "\naugmented configuration:\n$(cat $CONFIG_LOCATION)\n"
+echo "\naugmented configuration:\n$(cat $CONFIG_FILE)\n"
 
 
 echo running integration tests...
