@@ -685,7 +685,7 @@ if [ -f "$assetlibraryhistory_config" ]; then
     cd "$root_dir/packages/services/assetlibraryhistory"
 
     infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
-    infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "$assetlibraryhistory_config" $AWS_SCRIPT_ARGS &
+    infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "$assetlibraryhistory_config" -t 'cdf/assetlibrary/events/#' $AWS_SCRIPT_ARGS &
 
     stacks+=("$ASSETLIBRARY_HISTORY_STACK_NAME")
 
