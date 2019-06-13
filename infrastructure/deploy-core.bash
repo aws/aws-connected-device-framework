@@ -230,18 +230,18 @@ root_dir=$(pwd)
 ######  stack names                                             ######
 ######################################################################
 
-NETWORK_STACK_NAME=cdf-network-${ENVIRONMENT}
-NEPTUNE_STACK_NAME=cdf-assetlibrary-neptune-${ENVIRONMENT}
-ASSETLIBRARY_STACK_NAME=cdf-assetlibrary-${ENVIRONMENT}
 ASSETLIBRARY_HISTORY_STACK_NAME=cdf-assetlibraryhistory-${ENVIRONMENT}
+ASSETLIBRARY_STACK_NAME=cdf-assetlibrary-${ENVIRONMENT}
 BASTION_STACK_NAME=cdf-bastion-${ENVIRONMENT}
-PROVISIONING_STACK_NAME=cdf-provisioning-${ENVIRONMENT}
-COMMANDS_STACK_NAME=cdf-commands-${ENVIRONMENT}
-DEVICE_MONITORING_STACK_NAME=cdf-device-monitoring-${ENVIRONMENT}
 BULKCERTS_STACK_NAME=cdf-bulkcerts-${ENVIRONMENT}
 CERTIFICATEVENDOR_STACK_NAME=cdf-certificatevendor-${ENVIRONMENT}
-EVENTSPROCESSOR_STACK_NAME=cdf-eventsProcessor-${ENVIRONMENT}
+COMMANDS_STACK_NAME=cdf-commands-${ENVIRONMENT}
+DEVICE_MONITORING_STACK_NAME=cdf-device-monitoring-${ENVIRONMENT}
 EVENTSALERTS_STACK_NAME=cdf-eventsAlerts-${ENVIRONMENT}
+EVENTSPROCESSOR_STACK_NAME=cdf-eventsProcessor-${ENVIRONMENT}
+NEPTUNE_STACK_NAME=cdf-assetlibrary-neptune-${ENVIRONMENT}
+NETWORK_STACK_NAME=cdf-network-${ENVIRONMENT}
+PROVISIONING_STACK_NAME=cdf-provisioning-${ENVIRONMENT}
 
 
 if [ -z "$BYPASS_BUNDLE" ]; then
