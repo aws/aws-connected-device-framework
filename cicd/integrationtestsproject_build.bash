@@ -73,4 +73,4 @@ pnpm run integration-test -- "features/assetlibrary/$ASSETLIBRARY_MODE/*.feature
 pnpm run integration-test -- "features/assetlibraryhistory/*.feature"
 pnpm run integration-test -- "features/bulkcerts/*.feature"
 pnpm run integration-test -- "features/commands/*.feature"
-pnpm run integration-test -- "features/provisioning/*.feature"
+#pnpm run integration-test -- "features/provisioning/*.feature"
