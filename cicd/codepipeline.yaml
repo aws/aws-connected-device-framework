@@ -546,194 +546,134 @@ Resources:
         - 
           PolicyName: "CodeBuildServicePolicies"
           PolicyDocument: 
-            Version: "2012-10-17"
-            Statement: 
 
-              -
-                Sid: kms
-                Effect: Allow
-                Action:
-                  - kms:CreateKey
-                Resource:
-                  - '*'
-              -
-                Sid: SSM
-                Effect: Allow
-                Action:
-                  - ssm:GetParameters
-                Resource:
-                  - !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/CDF_CODECOMMIT_USERNAME'
-                  - !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/CDF_CODECOMMIT_PASSWORD'
-                  - !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/CDF_CODECOMMIT_EMAIL'
-              - 
-                Sid: CloudWatchLogsPolicy
-                Effect: Allow
-                Action:
-                  - 'logs:*'
-                Resource:
-                  - "*"
-              - 
-                Sid: S3Policy
-                Effect: Allow
-                Action:
-                  - s3:GetObject
-                  - s3:GetObjectVersion
-                  - s3:PutObject
-                  - s3:PutBucketPolicy
-                  - s3:CreateBucket
-                  - s3:DeleteBucket
-                  - s3:DeleteBucketPolicy
-                  - s3:PutBucketVersioning
-                Resource:
-                  - "*"
-              - 
-                Sid: CloudFormationPolicy
-                Effect: Allow
-                Action:
-                  - cloudformation:DeleteStack
-                  - cloudformation:DescribeStacks
-                  - cloudformation:DescribeChangeSet
-                  - cloudformation:CreateChangeSet
-                  - cloudformation:ExecuteChangeSet
-                  - cloudformation:ListExports
-                  - cloudformation:GetTemplateSummary
-                  - cloudformation:SetStackPolicy
-                Resource:
-                  - "*"
-              - 
-                Sid: SNSPolicy
-                Effect: Allow
-                Action:
-                  - sns:CreateTopic
-                  - sns:DeleteTopic
-                  - sns:GetTopicAttributes
-                  - sns:SetTopicAttributes
-                  - sns:Subscribe
-                Resource:
-                  - "*"
-              - 
-                Sid: CognitoPolicy
-                Effect: Allow
-                Action:
-                  - cognito-idp:*
-                Resource:
-                  - "*"
-              - 
-                Sid: IamPolicy
-                Effect: Allow
-                Action:
-                  - iam:*
-                Resource:
-                  - !Sub 'arn:aws:iam::${AWS::AccountId}:policy/cdf*'
-                  - !Sub 'arn:aws:iam::${AWS::AccountId}:role/cdf*'
-                  - !Sub 'arn:aws:iam::${AWS::AccountId}:instance-profile/cdf*'
-              - 
-                Sid: LambdaPolicy
-                Effect: Allow
-                Action:
-                  - lambda:*
-                Resource:
-                  - !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:cdf-*'
-              - 
-                Sid: ApiGatewayPolicy
-                Effect: Allow
-                Action:
-                  - apigateway:POST
-                  - apigateway:PUT
-                  - apigateway:PATCH
-                  - apigateway:DELETE
-                  - apigateway:GET
-                Resource:
-                  - !Sub 'arn:aws:apigateway:${AWS::Region}::/*'
-              - 
-                Sid: DynamoDBPolicy
-                Action:
-                  - 'dynamodb:*'
-                Effect: Allow
-                Resource: 
-                  - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/cdf-commands-*-${Environment}*'
-                  - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/cdf-bulkcerts-*-${Environment}*'
-              - 
-                Sid: ec2
-                Action:
-                  - 'ec2:AllocateAddress'
-                  - 'ec2:AssociateAddress'
-                  - 'ec2:AuthorizeSecurityGroupEgress'
-                  - 'ec2:AuthorizeSecurityGroupIngress'
-                  - 'ec2:CreateSecurityGroup'
-                  - 'ec2:CreateVpcEndpoint'
-                  - 'ec2:DeleteSecurityGroup'
-                  - 'ec2:DescribeAddresses'
-                  - 'ec2:DescribeInstances'
-                  - 'ec2:DescribeKeyPairs'
-                  - 'ec2:DescribeNetworkInterfaces'
-                  - 'ec2:DescribeSecurityGroups'
-                  - 'ec2:DescribeSubnets'
-                  - 'ec2:DescribeVpcEndpoints'
-                  - 'ec2:DescribeVpcs'
-                  - 'ec2:DisassociateAddress'
-                  - 'ec2:ReleaseAddress'
-                  - 'ec2:RevokeSecurityGroupEgress'
-                  - 'ec2:RevokeSecurityGroupIngress'
-                Effect: Allow
-                Resource: 
-                  - "*"
-              -
-                Sid: autoscaling
-                Action:
-                  - 'autoscaling:*'
-                Effect: Allow
-                Resource: 
-                  - "*"
-              - 
-                Sid: rds
-                Action:
-                  - 'rds:*'
-                Effect: Allow
-                Resource: 
-                  - "*"
-              - 
-                Sid: iot
-                Action:
-                  - 'iot:CreatePolicy'
-                  - 'iot:CreatePolicyVersion'
-                  - 'iot:CreateThingGroup'
-                  - 'iot:CreateTopicRule'
-                  - 'iot:DeletePolicyVersion'
-                  - 'iot:DeleteThingGroup'
-                  - 'iot:DescribeEndpoint'
-                  - 'iot:DescribeThingGroup'
-                  - 'iot:ListPolicyVersions'
-                  - 'iot:UpdateEventConfigurations'
-                Effect: Allow
-                Resource: 
-                  - "*"
-              -
-                Sid: dynamodb
-                Action:
-                - dynamodb:CreateTable
-                - dynamodb:DeleteTable
-                - dynamodb:DescribeStream
-                - dynamodb:DescribeTable
-                - dynamodb:ListStreams
-                Effect: Allow
-                Resource: 
-                  - "*"
-              -
-                Sid: dax
-                Action:
-                - 'dax:*'
-                Effect: Allow
-                Resource: 
-                  - "*"
-              -
-                Sid: lambda
-                Action:
-                - 'lambda:CreateEventSourceMapping'
-                - 'lambda:GetEventSourceMapping'
-                Effect: Allow
-                Resource: 
-                  - "*"
+            Version: '2012-10-17'
+            Statement:
+            - Sid: any
+              Effect: Allow
+              Action:
+              - autoscaling:*
+              - cloudformation:CreateChangeSet
+              - cloudformation:DeleteStack
+              - cloudformation:DescribeChangeSet
+              - cloudformation:DescribeStacks
+              - cloudformation:ExecuteChangeSet
+              - cloudformation:GetTemplateSummary
+              - cloudformation:ListExports
+              - cloudformation:SetStackPolicy
+              - cognito-idp:*
+              - dax:CreateCluster
+              - dax:CreateParameterGroup
+              - dax:CreateSubnetGroup
+              - dax:DeleteCluster
+              - dax:DeleteParameterGroup
+              - dax:DeleteSubnetGroup
+              - dax:DescribeClusters
+              - dax:DescribeDefaultParameters
+              - dax:DescribeEvents
+              - dax:DescribeParameterGroups
+              - dax:DescribeParameters
+              - dax:DescribeSubnetGroups
+              - dax:UpdateCluster
+              - dax:UpdateParameterGroup
+              - dax:UpdateSubnetGroup
+              - dynamodb:CreateTable
+              - dynamodb:CreateTable
+              - dynamodb:DeleteTable
+              - dynamodb:DeleteTable
+              - dynamodb:DescribeStream
+              - dynamodb:DescribeStream
+              - dynamodb:DescribeTable
+              - dynamodb:DescribeTable
+              - dynamodb:ListStreams
+              - dynamodb:ListStreams
+              - dynamodb:ListTables
+              - dynamodb:UpdateTable
+              - ec2:AllocateAddress
+              - ec2:AssociateAddress
+              - ec2:AuthorizeSecurityGroupEgress
+              - ec2:AuthorizeSecurityGroupIngress
+              - ec2:CreateSecurityGroup
+              - ec2:CreateVpcEndpoint
+              - ec2:DeleteSecurityGroup
+              - ec2:DescribeAddresses
+              - ec2:DescribeInstances
+              - ec2:DescribeKeyPairs
+              - ec2:DescribeNetworkInterfaces
+              - ec2:DescribeSecurityGroups
+              - ec2:DescribeSubnets
+              - ec2:DescribeVpcEndpoints
+              - ec2:DescribeVpcs
+              - ec2:DisassociateAddress
+              - ec2:ReleaseAddress
+              - ec2:RevokeSecurityGroupEgress
+              - ec2:RevokeSecurityGroupIngress
+              - iot:CreatePolicy
+              - iot:CreatePolicyVersion
+              - iot:CreateThingGroup
+              - iot:CreateTopicRule
+              - iot:DeleteCertificate
+              - iot:DeletePolicy
+              - iot:DeletePolicyVersion
+              - iot:DeleteThing
+              - iot:DeleteThingGroup
+              - iot:DescribeCertificate
+              - iot:DescribeEndpoint
+              - iot:DescribeThing
+              - iot:DescribeThingGroup
+              - iot:DetachPrincipalPolicy
+              - iot:DetachThingPrincipal
+              - iot:GetPolicy
+              - iot:ListPolicyVersions
+              - iot:ListPrincipalPolicies
+              - iot:ListThingPrincipals
+              - iot:UpdateCertificate
+              - iot:UpdateEventConfigurations
+              - kms:CreateKey
+              - lambda:*
+              - logs:*
+              - rds:*
+              - sns:CreateTopic
+              - sns:DeleteTopic
+              - sns:GetTopicAttributes
+              - sns:SetTopicAttributes
+              - sns:Subscribe
+              Resource: "*"
+            - Sid: ssm
+              Effect: Allow
+              Action:
+              - ssm:GetParameters
+              Resource:
+              - arn:aws:ssm:us-west-2:157731826412:parameter/CDF_CODECOMMIT_USERNAME
+              - arn:aws:ssm:us-west-2:157731826412:parameter/CDF_CODECOMMIT_PASSWORD
+              - arn:aws:ssm:us-west-2:157731826412:parameter/CDF_CODECOMMIT_EMAIL
+            - Sid: apigateway
+              Effect: Allow
+              Action:
+              - apigateway:DELETE
+              - apigateway:PUT
+              - apigateway:PATCH
+              - apigateway:POST
+              - apigateway:GET
+              Resource:
+              - arn:aws:apigateway:us-west-2::/*
+            - Sid: s3bucket
+              Effect: Allow
+              Action:
+              - s3:PutObject
+              - s3:GetObject
+              - s3:GetObjectVersion
+              Resource:
+              - arn:aws:s3:::*/*
+            - Sid: s3
+              Effect: Allow
+              Action:
+              - s3:PutBucketPolicy
+              - s3:CreateBucket
+              - s3:DeleteBucketPolicy
+              - s3:DeleteBucket
+              - s3:PutBucketVersioning
+              Resource: arn:aws:s3:::*
                    
   CodePipelineRole:
     Type: 'AWS::IAM::Role'

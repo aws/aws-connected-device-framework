@@ -17,7 +17,33 @@ const templatePrefix = config.get('provisioning.templates.prefix') as string;
 const s3 = new AWS.S3({region: config.get('aws.region')});
 const iot = new AWS.Iot({region: config.get('aws.region')});
 
+async function teardown() {
+    // S3 cleanup - remove template from bucket
+    const deleteObjectRequest = {
+        Bucket: templateBucket,
+        Key: `${templatePrefix}IntegrationTestTemplate.json`
+    };
+    await s3.deleteObject(deleteObjectRequest).promise();
+
+    // IoT cleanup - delete cert, policy, thing
+    const thingName = 'IntegrationTestThing';
+    const policyName = 'IntegrationTestPolicy';
+
+    const thingPrincipals = await iot.listThingPrincipals({thingName}).promise();
+    const certArn = thingPrincipals.principals[0];
+    const certificateId = certArn.split('/')[1];
+
+    await iot.detachPrincipalPolicy({principal: certArn, policyName}).promise();
+    await iot.detachThingPrincipal({thingName, principal: certArn}).promise();
+    await iot.updateCertificate({certificateId, newStatus: 'INACTIVE'}).promise();
+    await iot.deleteCertificate({certificateId}).promise();
+    await iot.deletePolicy({policyName}).promise();
+    await iot.deleteThing({thingName}).promise();
+}
+
 Before({tags: '@setup_thing_provisioning'}, async function () {
+    await teardown();
+
     // create a provisioning template
     const integrationTestTemplate = {
         Parameters: {
@@ -74,25 +100,5 @@ Before({tags: '@setup_thing_provisioning'}, async function () {
 });
 
 Before({tags: '@teardown_thing_provisioning'}, async function () {
-    // S3 cleanup - remove template from bucket
-    const deleteObjectRequest = {
-        Bucket: templateBucket,
-        Key: `${templatePrefix}IntegrationTestTemplate.json`
-    };
-    await s3.deleteObject(deleteObjectRequest).promise();
-
-    // IoT cleanup - delete cert, policy, thing
-    const thingName = 'IntegrationTestThing';
-    const policyName = 'IntegrationTestPolicy';
-
-    const thingPrincipals = await iot.listThingPrincipals({thingName}).promise();
-    const certArn = thingPrincipals.principals[0];
-    const certificateId = certArn.split('/')[1];
-
-    await iot.detachPrincipalPolicy({principal: certArn, policyName}).promise();
-    await iot.detachThingPrincipal({thingName, principal: certArn}).promise();
-    await iot.updateCertificate({certificateId, newStatus: 'INACTIVE'}).promise();
-    await iot.deleteCertificate({certificateId}).promise();
-    await iot.deletePolicy({policyName}).promise();
-    await iot.deleteThing({thingName}).promise();
+    await teardown();
 });
