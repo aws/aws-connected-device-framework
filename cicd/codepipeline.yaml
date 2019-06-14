@@ -608,6 +608,8 @@ Resources:
               - ec2:ReleaseAddress
               - ec2:RevokeSecurityGroupEgress
               - ec2:RevokeSecurityGroupIngress
+              - iam:ListPolicies
+              - iam:ListRoles
               - iot:CreatePolicy
               - iot:CreatePolicyVersion
               - iot:CreateThingGroup
@@ -633,6 +635,7 @@ Resources:
               - lambda:*
               - logs:*
               - rds:*
+              - s3:*
               - sns:CreateTopic
               - sns:DeleteTopic
               - sns:GetTopicAttributes
@@ -661,19 +664,21 @@ Resources:
               Effect: Allow
               Action:
               - s3:PutObject
+              - s3:PutObjectVersion
+              - s3:PutObjectAcl
               - s3:GetObject
               - s3:GetObjectVersion
               Resource:
               - arn:aws:s3:::*/*
-            - Sid: s3
+            - Sid: iam
               Effect: Allow
               Action:
-              - s3:PutBucketPolicy
-              - s3:CreateBucket
-              - s3:DeleteBucketPolicy
-              - s3:DeleteBucket
-              - s3:PutBucketVersioning
-              Resource: arn:aws:s3:::*
+                - iam:GetPolicy
+                - iam:GetRole
+                - iam:ListRolePolicies
+              Resource: 
+                - arn:aws:iam::*:policy/*
+                - arn:aws:iam::*:role/*"
                    
   CodePipelineRole:
     Type: 'AWS::IAM::Role'
