@@ -608,8 +608,7 @@ Resources:
               - ec2:ReleaseAddress
               - ec2:RevokeSecurityGroupEgress
               - ec2:RevokeSecurityGroupIngress
-              - iam:ListPolicies
-              - iam:ListRoles
+              - iam:*
               - iot:CreatePolicy
               - iot:CreatePolicyVersion
               - iot:CreateThingGroup
@@ -670,15 +669,6 @@ Resources:
               - s3:GetObjectVersion
               Resource:
               - arn:aws:s3:::*/*
-            - Sid: iam
-              Effect: Allow
-              Action:
-                - iam:GetPolicy
-                - iam:GetRole
-                - iam:ListRolePolicies
-              Resource: 
-                - arn:aws:iam::*:policy/*
-                - arn:aws:iam::*:role/*"
                    
   CodePipelineRole:
     Type: 'AWS::IAM::Role'

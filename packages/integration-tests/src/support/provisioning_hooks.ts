@@ -29,16 +29,46 @@ async function teardown() {
     const thingName = 'IntegrationTestThing';
     const policyName = 'IntegrationTestPolicy';
 
-    const thingPrincipals = await iot.listThingPrincipals({thingName}).promise();
-    const certArn = thingPrincipals.principals[0];
-    const certificateId = certArn.split('/')[1];
+    let certificateId;
+    try {
+        const thingPrincipals = await iot.listThingPrincipals({thingName}).promise();
+        const certArn = thingPrincipals.principals[0];
+        certificateId = certArn.split('/')[1];
 
-    await iot.detachPrincipalPolicy({principal: certArn, policyName}).promise();
-    await iot.detachThingPrincipal({thingName, principal: certArn}).promise();
-    await iot.updateCertificate({certificateId, newStatus: 'INACTIVE'}).promise();
-    await iot.deleteCertificate({certificateId}).promise();
-    await iot.deletePolicy({policyName}).promise();
-    await iot.deleteThing({thingName}).promise();
+        await iot.detachPrincipalPolicy({principal: certArn, policyName}).promise();
+        await iot.detachThingPrincipal({thingName, principal: certArn}).promise();
+    } catch (err) {
+        if (err.code!=='ResourceNotFoundException') {
+            throw err;
+        }
+    }
+
+    try {
+        if (certificateId!==undefined) {
+            await iot.updateCertificate({certificateId, newStatus: 'INACTIVE'}).promise();
+            await iot.deleteCertificate({certificateId}).promise();
+        }
+    } catch (err) {
+        if (err.code!=='ResourceNotFoundException') {
+            throw err;
+        }
+    }
+
+    try {
+        await iot.deletePolicy({policyName}).promise();
+    } catch (err) {
+        if (err.code!=='ResourceNotFoundException') {
+            throw err;
+        }
+    }
+
+    try {
+        await iot.deleteThing({thingName}).promise();
+    } catch (err) {
+        if (err.code!=='ResourceNotFoundException') {
+            throw err;
+        }
+    }
 }
 
 Before({tags: '@setup_thing_provisioning'}, async function () {
