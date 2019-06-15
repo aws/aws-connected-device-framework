@@ -14,7 +14,7 @@ Feature: Device History
       | description | Description 1 |
       | attributes | {"firmwareVersion":"1"} |
       | groups | {"linked_to":["/TEST-deviceHistory-group"]} |
-    And pause for 200ms
+    And pause for 500ms
     Then 1 history records exist since the test started for device "TEST-deviceHistory-device001"
     And history record 1 contains attributes
       | objectId | test-devicehistory-device001 |
@@ -29,7 +29,7 @@ Feature: Device History
     And I store the time the test started
     When I update device "TEST-deviceHistory-device001" with attributes
       | attributes | {"firmwareVersion":"2"} |
-    And pause for 200ms
+    And pause for 500ms
     Then 1 history records exist since the test started for device "TEST-deviceHistory-device001"
     And history record 1 contains attributes
       | objectId | test-devicehistory-device001 |
@@ -43,7 +43,7 @@ Feature: Device History
     # We store the time the test started so that we can filter out history records that may have been saved for this device prior to the test:
     And I store the time the test started
     When I delete device "TEST-deviceHistory-device001"
-    And pause for 200ms
+    And pause for 500ms
     Then 1 history records exist since the test started for device "TEST-deviceHistory-device001"
     And history record 1 contains attributes
       | objectId | test-devicehistory-device001 |
