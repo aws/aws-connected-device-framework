@@ -20,8 +20,7 @@ export function replaceTokens(text:string) {
 }
 
 Given('I store the time the test started', function() {
-    // just in case theres a slight difference between clocks, minus a few secodns
-    this[TIME_SCENARIO_STARTED] = new Date(Date.now() - 2000).toISOString();
+    this[TIME_SCENARIO_STARTED] = new Date().toISOString();
 });
 
 Given('pause for {int}ms', async function (ms:number) {
