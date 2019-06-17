@@ -1,3 +1,10 @@
+# [@cdf/certificate-vendor-v2.2.2](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/certificate-vendor-v2.2.1...@cdf/certificate-vendor-v2.2.2) (2019-06-17)
+
+
+### Bug Fixes
+
+* **certvendor:** certvendor config bugfix ([cd0b583](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/cd0b583))
+
 # [@cdf/certificate-vendor-v2.2.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/certificate-vendor-v2.2.0...@cdf/certificate-vendor-v2.2.1) (2019-06-03)
 
 
