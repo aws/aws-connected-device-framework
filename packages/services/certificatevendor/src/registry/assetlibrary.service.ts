@@ -13,7 +13,8 @@ import { RegistryManager } from './registry.interfaces';
 export class AssetLibraryRegistryManager implements RegistryManager {
 
     constructor(
-        @inject('defaults.device.status.success') private successStatus: string,
+        @inject('defaults.device.status.success.key') private successStatusKey: string,
+        @inject('defaults.device.status.success.value') private successStatusValue: string,
         @inject(ASSTLIBRARY_CLIENT_TYPES.DevicesService) private devices:DevicesService) {}
 
     public async isWhitelisted(deviceId:string, _attributes?:{ [key: string] : string | number | boolean }) : Promise<boolean> {
@@ -46,16 +47,21 @@ export class AssetLibraryRegistryManager implements RegistryManager {
 
         ow(deviceId, ow.string.nonEmpty);
 
-        if (this.successStatus===undefined || this.successStatus === null) {
-            logger.warn('certificates.service updateAssetStatus: exit: successStatus not set, therefore not updating asset library');
+        if (this.successStatusKey===undefined || this.successStatusKey === null) {
+            logger.warn('certificates.service updateAssetStatus: exit: successStatusKey not set, therefore not updating asset library');
+            return;
+        }
+
+        if (this.successStatusValue===undefined || this.successStatusValue === null) {
+            logger.warn('certificates.service updateAssetStatus: exit: successStatusValue not set, therefore not updating asset library');
             return;
         }
 
         const device:Device = {
             attributes: {
-                status: this.successStatus
             }
         };
+        device.attributes[this.successStatusKey] = this.successStatusValue;
 
         try {
             await this.devices.updateDevice(deviceId, device);
