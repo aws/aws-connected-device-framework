@@ -9,27 +9,46 @@ import { InversifyExpressServer } from 'inversify-express-utils';
 import * as bodyParser from 'body-parser';
 import {logger} from './utils/logger';
 import config from 'config';
-
-const CDF_V1_TYPE = 'application/vnd.aws-cdf-v1.0+json';
-const corsAllowedOrigin = config.get('cors.origin') as string;
+import {Request, Response, NextFunction} from 'express';
+import {asArray, SupportedVersionConfig} from '@cdf/express-middleware';
 
 const PORT = 3002;
 
 // Start the server
 const server = new InversifyExpressServer(container);
 
-server.setConfig((app) => {
-  // only process requests with the correct versioned content type
-  app.use(bodyParser.json({ type: CDF_V1_TYPE }));
+// load in the supported versions
+const supportedVersionConfig:SupportedVersionConfig = config.get('supportedApiVersions');
+const supportedVersions:string[] = asArray(supportedVersionConfig);
 
-  // set the versioned content type for all responses
-  app.use( (__,res,next)=> {
-    res.setHeader('Content-Type', CDF_V1_TYPE);
-    if (corsAllowedOrigin !== null && corsAllowedOrigin !== '') {
-      res.setHeader('Access-Control-Allow-Origin', corsAllowedOrigin);
+server.setConfig((app) => {
+  // only process requests that we can support the requested accept header
+  app.use( (req:Request, res:Response, next:NextFunction)=> {
+    if (supportedVersions.includes(req.headers['accept'])) {
+      next();
+    } else {
+      res.status(415).send();
+    }
+  });
+  app.use(bodyParser.json({ type: supportedVersions }));
+
+  // default the response's headers
+  app.use( (req,res,next)=> {
+    const ct = res.getHeader('Content-Type');
+    if (ct===undefined || ct===null) {
+      res.setHeader('Content-Type', req.headers['accept']);
     }
     next();
   });
+
+  // enable cors
+  const corsAllowedOrigin = config.get('cors.origin') as string;
+  if (corsAllowedOrigin !== null && corsAllowedOrigin !== '') {
+    const cors = require('cors')({
+      origin: corsAllowedOrigin
+    });
+    app.use(cors);
+  }
 });
 
 export const serverInstance = server.build();

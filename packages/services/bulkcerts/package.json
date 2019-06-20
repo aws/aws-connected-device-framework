@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "@cdf/config-inject": "^2.0.0",
+    "@cdf/express-middleware": "^1.0.0",
     "aws-sdk": "2.418.0",
     "aws-serverless-express": "3.3.5",
     "body-parser": "1.18.3",

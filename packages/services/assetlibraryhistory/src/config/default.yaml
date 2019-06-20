@@ -4,3 +4,7 @@ aws:
   dynamoDb:
     tables: 
       events: cdf-assetlibraryhistory
+
+supportedApiVersions:
+  - json:
+      - '1.0'

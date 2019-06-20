@@ -16,6 +16,9 @@
     "references": [
         {
             "path": "../../libraries/config/config-inject"
+        },
+        {
+            "path": "../../libraries/core/express-middleware"
         }
     ],
     "include": [

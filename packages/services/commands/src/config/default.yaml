@@ -29,3 +29,8 @@ assetLibrary:
   baseUrl:
 provisioning:
   baseUrl:
+
+supportedApiVersions:
+  - json:
+      - '1.0'
+
