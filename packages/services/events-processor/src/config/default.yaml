@@ -29,3 +29,7 @@ aws:
 
 cors:
   origin:
+
+supportedApiVersions:
+  - json:
+      - '1.0'

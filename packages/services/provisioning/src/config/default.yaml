@@ -27,3 +27,8 @@ cors:
   origin:
 
 deviceCertificateExpiryDays: 365
+
+supportedApiVersions:
+  - json:
+      - '1.0'
+

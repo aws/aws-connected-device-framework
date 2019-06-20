@@ -36,3 +36,8 @@ cors:
 
 defaults:
   chunkSize: 100
+
+supportedApiVersions:
+  - json:
+      - '1.0'
+
