@@ -643,66 +643,6 @@ importers:
       tslint: 5.13.1
       typescript: 3.1.6
       winston: 2.4.4
-  packages/libraries/core/restapi-versioning:
-    dependencies:
-      '@cdf/config-inject': 'link:../../config/config-inject'
-      config: 3.0.1
-      express: 4.16.4
-    devDependencies:
-      '@commitlint/cli': 7.5.2
-      '@commitlint/config-conventional': 7.5.0
-      '@semantic-release/changelog': 3.0.2_semantic-release@15.13.3
-      '@semantic-release/git': 7.0.8_semantic-release@15.13.3
-      '@semantic-release/npm': 5.1.4_semantic-release@15.13.3
-      '@semantic-release/release-notes-generator': 7.1.4_semantic-release@15.13.3
-      '@types/express': 4.16.1
-      '@types/jest': 24.0.11
-      '@types/node': 8.10.43
-      commitizen: 3.0.7
-      concurrently: 4.1.0
-      del-cli: 1.1.0
-      husky: 1.3.1
-      jest: 24.1.0
-      jest-create-mock-instance: 1.1.0
-      jest-haste-map: 24.0.0
-      jest-mock: 24.0.0
-      jest-resolve: 24.5.0_b2377ed855f581a50cdaeacf386d75ca
-      nodemon: 1.18.10
-      nyc: 13.3.0
-      semantic-release: 15.13.3_semantic-release@15.13.3
-      semantic-release-monorepo: 6.1.1_semantic-release@15.13.3
-      ts-jest: 24.0.0_jest@24.1.0
-      tslint: 5.13.1_typescript@3.1.6
-      typescript: 3.1.6
-    specifiers:
-      '@cdf/config-inject': ^2.0.0
-      '@commitlint/cli': 7.5.2
-      '@commitlint/config-conventional': 7.5.0
-      '@semantic-release/changelog': 3.0.2
-      '@semantic-release/git': 7.0.8
-      '@semantic-release/npm': 5.1.4
-      '@semantic-release/release-notes-generator': 7.1.4
-      '@types/express': 4.16.1
-      '@types/jest': 24.0.11
-      '@types/node': 8.10.43
-      commitizen: 3.0.7
-      concurrently: 4.1.0
-      config: 3.0.1
-      del-cli: 1.1.0
-      express: 4.16.4
-      husky: 1.3.1
-      jest: 24.1.0
-      jest-create-mock-instance: 1.1.0
-      jest-haste-map: 24.0.0
-      jest-mock: 24.0.0
-      jest-resolve: 24.5.0
-      nodemon: 1.18.10
-      nyc: 13.3.0
-      semantic-release: 15.13.3
-      semantic-release-monorepo: 6.1.1
-      ts-jest: 24.0.0
-      tslint: 5.13.1
-      typescript: 3.1.6
   packages/services/assetlibrary:
     dependencies:
       '@cdf/config-inject': 'link:../../libraries/config/config-inject'
@@ -762,7 +702,7 @@ importers:
       typescript: 3.1.6
     specifiers:
       '@cdf/config-inject': ^2.0.0
-      '@cdf/express-middleware': ^1.0.0
+      '@cdf/express-middleware': ^0.0.1
       '@commitlint/cli': 7.5.2
       '@commitlint/config-conventional': 7.5.0
       '@semantic-release/changelog': 3.0.2
@@ -870,7 +810,7 @@ importers:
       typescript: 3.1.6
     specifiers:
       '@cdf/config-inject': ^2.0.0
-      '@cdf/express-middleware': ^1.0.0
+      '@cdf/express-middleware': ^0.0.1
       '@commitlint/cli': 7.5.2
       '@commitlint/config-conventional': 7.5.0
       '@semantic-release/changelog': 3.0.2
@@ -1059,7 +999,7 @@ importers:
       typescript: 3.1.6
     specifiers:
       '@cdf/config-inject': ^2.0.0
-      '@cdf/express-middleware': ^1.0.0
+      '@cdf/express-middleware': ^0.0.1
       '@commitlint/cli': 7.5.2
       '@commitlint/config-conventional': 7.5.0
       '@semantic-release/changelog': 3.0.2
@@ -1334,7 +1274,7 @@ importers:
     specifiers:
       '@cdf/assetlibrary-client': ^2.0.0
       '@cdf/config-inject': ^2.0.0
-      '@cdf/express-middleware': ^1.0.0
+      '@cdf/express-middleware': ^0.0.1
       '@cdf/provisioning-client': ^2.0.0
       '@commitlint/cli': 7.5.2
       '@commitlint/config-conventional': 7.5.0
@@ -1600,7 +1540,7 @@ importers:
       typescript: 3.1.6
     specifiers:
       '@cdf/config-inject': ^2.0.0
-      '@cdf/express-middleware': ^1.0.0
+      '@cdf/express-middleware': ^0.0.1
       '@commitlint/cli': 7.5.2
       '@commitlint/config-conventional': 7.5.0
       '@semantic-release/changelog': 3.0.2
@@ -1703,7 +1643,7 @@ importers:
       typescript: 3.1.6
     specifiers:
       '@cdf/config-inject': ^2.0.0
-      '@cdf/express-middleware': ^1.0.0
+      '@cdf/express-middleware': ^0.0.1
       '@commitlint/cli': 7.5.2
       '@commitlint/config-conventional': 7.5.0
       '@semantic-release/changelog': 3.0.2
@@ -2296,15 +2236,15 @@ packages:
       node: '>= 6'
     resolution:
       integrity: sha512-shAmDyaQC4H92APFoIaVDHCx5bStIocgvbwQyxPRrbUY20V1EYTbSDchWbuwlMG3V17cprZhA6+78JfB+3DTPw==
-  /@octokit/endpoint/5.1.7:
+  /@octokit/endpoint/5.1.8:
     dependencies:
-      deepmerge: 3.2.1
+      deepmerge: 3.3.0
       is-plain-object: 3.0.0
       universal-user-agent: 2.1.0
       url-template: 2.0.8
     dev: true
     resolution:
-      integrity: sha512-MfsXHx9z9EPxLYSf7PYuzWvVZTotx+/QTFk7UMp4Fv83k3QrvmovEjP0pl141g+Uq/w9CcDuuXhsiq4X3oxVsA==
+      integrity: sha512-BVVNVVeVGySIF6nvoaO6AaickboZr7A1O6z1wmnMRslewi6O+KILSp0ZsXbkgLnP8V8pa7WM9+wSYYczIUBm5w==
   /@octokit/request-error/1.0.4:
     dependencies:
       deprecation: 2.3.1
@@ -2314,7 +2254,7 @@ packages:
       integrity: sha512-L4JaJDXn8SGT+5G0uX79rZLv0MNJmfGa4vb4vy1NnpjSnWDLJRy6m90udGwvMmavwsStgbv2QNkPzzTCMmL+ig==
   /@octokit/request/4.1.1:
     dependencies:
-      '@octokit/endpoint': 5.1.7
+      '@octokit/endpoint': 5.1.8
       '@octokit/request-error': 1.0.4
       deprecation: 2.3.1
       is-plain-object: 3.0.0
@@ -4210,12 +4150,12 @@ packages:
     dev: true
     resolution:
       integrity: sha1-s2nW+128E+7PUk+RsHD+7cNXzzQ=
-  /deepmerge/3.2.1:
+  /deepmerge/3.3.0:
     dev: true
     engines:
       node: '>=0.10.0'
     resolution:
-      integrity: sha512-+hbDSzTqEW0fWgnlKksg7XAOtT+ddZS5lHZJ6f6MdixRs9wQy+50fm1uUCVb1IkvjLUYX/SfFO021ZNwriURTw==
+      integrity: sha512-GRQOafGHwMHpjPx9iCvTgpu9NojZ49q794EEL94JVEw6VaeA8XTUyBKvAkOOjBX9oJNiV6G3P+T+tihFjo2TqA==
   /define-properties/1.1.3:
     dependencies:
       object-keys: 1.1.1
@@ -8141,9 +8081,9 @@ packages:
     dev: true
     resolution:
       integrity: sha1-8FKijacOYYkX7wqKw0wa5aaChrM=
-  /psl/1.1.32:
+  /psl/1.1.33:
     resolution:
-      integrity: sha512-MHACAkHpihU/REGGPLj4sEfc/XKW2bheigvHO1dUqjaKigMp1C8+WLQYRGgeKFMsw5PMfegZcaN8IDXK/cD0+g==
+      integrity: sha512-LTDP2uSrsc7XCb5lO7A8BI1qYxRe/8EqlRvMeEl6rsnYAqDOl8xHR+8lSAIVfrNaSAlTPTNOCgNjWcoUL3AZsw==
   /pstree.remy/1.1.7:
     dev: true
     resolution:
@@ -9516,7 +9456,7 @@ packages:
       integrity: sha512-WBx8Uy5TLtOSRtIq+M03/sKDrXCLHxwDcquSP2c43Le03/9serjQBIztjRz6FkJez9D/hleyAXTBGLwwZUw9lA==
   /tough-cookie/2.4.3:
     dependencies:
-      psl: 1.1.32
+      psl: 1.1.33
       punycode: 1.4.1
     engines:
       node: '>=0.8'
@@ -9524,7 +9464,7 @@ packages:
       integrity: sha512-Q5srk/4vDM54WJsJio3XNn6K2sCG+CQ8G5Wz6bZhRZoAe/+TxjWB/GlFAnYEbkYVlON9FMk/fE3h2RLpPXo4lQ==
   /tough-cookie/2.5.0:
     dependencies:
-      psl: 1.1.32
+      psl: 1.1.33
       punycode: 2.1.1
     engines:
       node: '>=0.8'
