@@ -77,7 +77,20 @@ Note that integration tests are automatically run by the CI/CD pipeline upon eac
 
 ## Running a module
 
-Each service has its configuration properties stored in an external file.  We follow a convention of storing these property files within the customers _infrastructure_ project (e.g. _cdf-infrastructure-demo_), where the name of the property file is of the format "<environment\>-config.json".  When starting a service we need to set the variable _CONFIG_LOCATION_ to the root of the _infrastructure_ project.
+Each service has its configuration properties stored in an external file.  We follow a convention of storing these property files within the customers _cdf-infrastructure-*_ project (e.g. _cdf-infrastructure-demo_), where the name of the property file is of the pattern "<environment\>-config.json".
+
+When running locally, the first step is to define which configuration file to use.  As an example, to use the `development-config.json` configuration files located within each projects folder in the _cdf-infrastructure-*_ project we would set the environment locally (specific for each project) by running the following within the projects folder:
+
+```sh
+npm config set {package name}:environment development-local
+
+## e.g. for the asset library:
+npm config set @cdf/assetlibrary:environment development-local
+```
+
+For reference, the above command stores this configuration in `~./npmrc`.
+
+Next we need to set the variable _CONFIG_LOCATION_ to the root of the _cdf-infrastructure-*_ project.
 
 To start all the runnable services:
 
@@ -142,7 +155,11 @@ cdf-core> git push origin master
 # once pushed, delete your local branch
 cdf-core> git branch -d my-branch
 cdf-core> git push origin master
+
+# finally, delete the branch from codecommit
 ```
+
+
 
 ## Understanding the directory structure
 
