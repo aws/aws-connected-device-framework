@@ -1,3 +1,10 @@
+# [@cdf/certificate-vendor-v2.2.3](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/certificate-vendor-v2.2.2...@cdf/certificate-vendor-v2.2.3) (2019-06-20)
+
+
+### Bug Fixes
+
+* **versioning:** fixed supported versioning of rest apis ([a8659ad](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/a8659ad))
+
 # [@cdf/certificate-vendor-v2.2.2](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/certificate-vendor-v2.2.1...@cdf/certificate-vendor-v2.2.2) (2019-06-17)
 
 
