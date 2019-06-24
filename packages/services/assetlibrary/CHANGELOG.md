@@ -1,3 +1,10 @@
+# [@cdf/assetlibrary-v2.2.2](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v2.2.1...@cdf/assetlibrary-v2.2.2) (2019-06-20)
+
+
+### Bug Fixes
+
+* **versioning:** fixed supported versioning of rest apis ([a8659ad](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/a8659ad))
+
 # [@cdf/assetlibrary-v2.2.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v2.2.0...@cdf/assetlibrary-v2.2.1) (2019-06-13)
 
 
