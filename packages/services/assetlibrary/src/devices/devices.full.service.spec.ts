@@ -40,6 +40,7 @@ describe('DevicesService', () => {
         mockedDao = createMockInstance(DevicesDaoFull);
         mockedTypesService = createMockInstance(TypesServiceFull);
         mockedDeviceAssembler = createMockInstance(DevicesAssembler);
+        mockedGroupsAssembler = createMockInstance(GroupsAssembler);
         mockedGroupsService = createMockInstance(GroupsServiceFull);
         mockedProfilesService = createMockInstance(ProfilesServiceFull);
         mockedEventEmitter = createMockInstance(EventEmitter);
