@@ -3,8 +3,9 @@
 #
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
-import { GroupModel, BulkLoadGroupsRequest, BulkLoadGroupsResult, GroupsMembersModel} from './groups.models';
+import { GroupModel, BulkLoadGroupsRequest, BulkLoadGroupsResult, GroupsMembersModel, RelatedGroupListModel} from './groups.models';
 import {TypeCategory} from '../types/constants';
+import { RelatedDeviceListResult } from '../devices/devices.models';
 
 export interface GroupsService {
 
@@ -16,7 +17,7 @@ export interface GroupsService {
 
     update(model: GroupModel, applyProfile?:string) : Promise<void> ;
 
-    getMembers(groupPath:string, category:TypeCategory, type:string, state:string, offset?:number, count?:number): Promise<GroupsMembersModel> ;
+    getMembers(groupPath:string, category:TypeCategory, type:string, states:string, offset?:number, count?:number): Promise<GroupsMembersModel> ;
 
     getParentGroups(groupPath:string): Promise<GroupModel[]> ;
 
@@ -25,5 +26,9 @@ export interface GroupsService {
     attachToGroup(sourceGroupPath:string, relationship:string, targetGroupPath:string) : Promise<void> ;
 
     detachFromGroup(sourceGroupPath:string, relationship:string, targetGroupPath:string) : Promise<void> ;
+
+    listRelatedGroups(groupPath: string, relationship: string, direction:string, template:string, offset:number, count:number) : Promise<RelatedGroupListModel>;
+
+    listRelatedDevices(groupPath: string, relationship: string, direction:string, template:string, state:string, offset:number, count:number) : Promise<RelatedDeviceListResult>;
 
 }

@@ -4,7 +4,7 @@
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
 import { injectable, inject } from 'inversify';
-import { DeviceModel, BulkDevicesResult, BulkDevicesRequest, DeviceListResult} from './devices.models';
+import { DeviceModel, BulkDevicesResult, BulkDevicesRequest, DeviceListResult, RelatedDeviceListResult} from './devices.models';
 import { DevicesService } from './devices.service';
 import {logger} from '../utils/logger';
 import ow from 'ow';
@@ -13,6 +13,7 @@ import { DevicesDaoLite } from './devices.lite.dao';
 import { DevicesAssembler } from './devices.assembler';
 import { TypeCategory } from '../types/constants';
 import { EventEmitter, Type, Event } from '../events/eventEmitter.service';
+import { RelatedGroupListModel } from '../groups/groups.models';
 
 @injectable()
 export class DevicesServiceLite implements DevicesService {
@@ -20,6 +21,10 @@ export class DevicesServiceLite implements DevicesService {
     constructor( @inject(TYPES.DevicesDao) private devicesDao: DevicesDaoLite,
         @inject(TYPES.DevicesAssembler) private devicesAssembler: DevicesAssembler,
         @inject(TYPES.EventEmitter) private eventEmitter: EventEmitter) {}
+
+    public async listRelatedDevices(_deviceId: string, _relationship: string, _direction:string, _template:string, _state:string, _offset:number, _count:number) : Promise<RelatedDeviceListResult> {
+        throw new Error('NOT_SUPPORTED');
+    }
 
     public async get(deviceId:string, _expandComponents?:boolean, _attributes?:string[], _includeGroups?:boolean): Promise<DeviceModel> {
         logger.debug(`devices.lite.service get: in: deviceId:${deviceId}`);
@@ -213,6 +218,10 @@ export class DevicesServiceLite implements DevicesService {
     }
 
     public async createComponent(_parentDeviceId:string, _model:DeviceModel) : Promise<string> {
+        throw new Error('NOT_SUPPORTED');
+    }
+
+    public async listRelatedGroups(_deviceId: string, _relationship: string, _direction:string, _template:string, _offset:number, _count:number) : Promise<RelatedGroupListModel> {
         throw new Error('NOT_SUPPORTED');
     }
 

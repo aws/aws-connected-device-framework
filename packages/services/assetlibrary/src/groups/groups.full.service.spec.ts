@@ -17,11 +17,13 @@ import { GroupsDaoFull } from './groups.full.dao';
 import { GroupModel } from './groups.models';
 import { GroupsServiceFull } from './groups.full.service';
 import { ProfilesServiceFull } from '../profiles/profiles.full.service';
+import { DevicesAssembler } from '../devices/devices.assembler';
 
 describe('GroupsService', () => {
     let mockedDao: jest.Mocked<GroupsDaoFull>;
     let mockedTypesService: jest.Mocked<TypesService>;
-    let mockedAssembler: jest.Mocked<GroupsAssembler>;
+    let mockedGroupsAssembler: jest.Mocked<GroupsAssembler>;
+    let mockedDevicesAssembler: jest.Mocked<DevicesAssembler>;
     let mockedProfilesService: jest.Mocked<ProfilesService>;
     let mockedEventEmitter: jest.Mocked<EventEmitter>;
     let instance: GroupsService;
@@ -29,10 +31,11 @@ describe('GroupsService', () => {
     beforeEach(() => {
         mockedDao = createMockInstance(GroupsDaoFull);
         mockedTypesService = createMockInstance(TypesServiceFull);
-        mockedAssembler = createMockInstance(GroupsAssembler);
+        mockedGroupsAssembler = createMockInstance(GroupsAssembler);
+        mockedDevicesAssembler = createMockInstance(DevicesAssembler);
         mockedProfilesService = createMockInstance(ProfilesServiceFull);
         mockedEventEmitter = createMockInstance(EventEmitter);
-        instance = new GroupsServiceFull(mockedDao, mockedTypesService, mockedAssembler,
+        instance = new GroupsServiceFull(mockedDao, mockedTypesService, mockedGroupsAssembler, mockedDevicesAssembler,
             mockedProfilesService, mockedEventEmitter);
     });
 

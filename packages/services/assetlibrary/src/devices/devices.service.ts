@@ -3,7 +3,8 @@
 #
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
-import { DeviceModel, BulkDevicesResult, BulkDevicesRequest, DeviceListResult} from './devices.models';
+import { DeviceModel, BulkDevicesResult, BulkDevicesRequest, DeviceListResult, RelatedDeviceListResult} from './devices.models';
+import { RelatedGroupListModel } from '../groups/groups.models';
 
 export interface DevicesService {
 
@@ -34,5 +35,9 @@ export interface DevicesService {
     deleteComponent(deviceId:string, componentId:string) : Promise<void> ;
 
     createComponent(parentDeviceId:string, model:DeviceModel) : Promise<string> ;
+
+    listRelatedDevices(deviceId: string, relationship: string, direction:string, template:string, state:string, offset:number, count:number) : Promise<RelatedDeviceListResult>;
+
+    listRelatedGroups(deviceId: string, relationship: string, direction:string, template:string, offset:number, count:number) : Promise<RelatedGroupListModel>;
 
 }

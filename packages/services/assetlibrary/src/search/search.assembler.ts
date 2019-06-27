@@ -35,9 +35,12 @@ export class SearchAssembler {
             const v = facetField.split(':');
             if (v.length % 2 === 1) {
                 // optional traversals
-                const traversals: SearchRequestFilterTraversal[] = [];
-                for(let i=0; i<v.length-1; i+=2) {
-                    traversals.push({relation:v[i], direction: SearchRequestFilterDirection[v[i+1]]});
+                let traversals: SearchRequestFilterTraversal[];
+                if (v.length>1) {
+                    traversals = [];
+                    for(let i=0; i<v.length-1; i+=2) {
+                        traversals.push({relation:v[i], direction: SearchRequestFilterDirection[v[i+1]]});
+                    }
                 }
                 req.facetField = {
                     traversals,

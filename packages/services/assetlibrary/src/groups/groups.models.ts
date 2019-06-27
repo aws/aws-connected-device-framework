@@ -5,8 +5,8 @@
 #-------------------------------------------------------------------------------*/
 import {DeviceModel} from '../devices/devices.models';
 import { TypeCategory } from '../types/constants';
+import { ModelAttributeValue } from '../data/model';
 
-export type GroupModelAttributeValue = string | number | boolean;
 export class GroupModel {
 	name: string;
 	category?: TypeCategory;
@@ -16,17 +16,29 @@ export class GroupModel {
 	parentPath: string;
 
 	groups?: { [key: string] : string[]} = {};
-	attributes?: { [key: string] : GroupModelAttributeValue} = {};
+	attributes?: { [key: string] : ModelAttributeValue} = {};
 
 	// used for optimistic locking in 'lite' mode
 	version?: number;
 
 }
 
-export interface GroupsListModel {
+export class RelatedGroupModel extends GroupModel {
+	relation: string;
+	direction: string;
+}
+
+export interface GroupListModel {
     results: GroupModel[];
 	pagination?: {
 		offset:number|string;
+		count: number;
+	};
+}
+export interface RelatedGroupListModel {
+    results: RelatedGroupModel[];
+	pagination?: {
+		offset: number|string;
 		count: number;
 	};
 }

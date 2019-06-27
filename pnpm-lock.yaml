@@ -765,6 +765,7 @@ importers:
       body-parser: 1.18.3
       btoa: 1.2.1
       config: 3.0.1
+      cors: 2.8.5
       express: 4.16.4
       inversify: 5.0.1
       inversify-binding-decorators: 4.0.0
@@ -834,6 +835,7 @@ importers:
       btoa: 1.2.1
       concurrently: 4.1.0
       config: 3.0.1
+      cors: ^2.8.5
       cpy-cli: 2.0.0
       del-cli: 1.1.0
       express: 4.16.4
@@ -951,6 +953,7 @@ importers:
       aws-serverless-express: 3.3.5
       body-parser: 1.18.3
       config: 3.0.1
+      cors: 2.8.5
       express: 4.16.4
       inversify: 5.0.1
       inversify-binding-decorators: 4.0.0
@@ -1022,6 +1025,7 @@ importers:
       commitizen: 3.0.7
       concurrently: 4.1.0
       config: 3.0.1
+      cors: ^2.8.5
       cpy-cli: 2.0.0
       del-cli: 1.1.0
       express: 4.16.4
@@ -1227,6 +1231,7 @@ importers:
       body-parser: 1.18.3
       busboy: 0.2.14
       config: 3.0.1
+      cors: 2.8.5
       express: 4.16.4
       inversify: 5.0.1
       inversify-binding-decorators: 4.0.0
@@ -1299,6 +1304,7 @@ importers:
       commitizen: 3.0.7
       concurrently: 4.1.0
       config: 3.0.1
+      cors: ^2.8.5
       cpy-cli: 2.0.0
       del-cli: 1.1.0
       express: 4.16.4
@@ -1496,6 +1502,7 @@ importers:
       aws-serverless-express: 3.3.5
       body-parser: 1.18.3
       config: 3.0.1
+      cors: 2.8.5
       express: 4.16.4
       inversify: 5.0.1
       inversify-binding-decorators: 4.0.0
@@ -1561,6 +1568,7 @@ importers:
       commitizen: 3.0.7
       concurrently: 4.1.0
       config: 3.0.1
+      cors: ^2.8.5
       cpy-cli: 2.0.0
       del-cli: 1.1.0
       express: 4.16.4
@@ -1591,6 +1599,114 @@ importers:
     dependencies:
       '@cdf/config-inject': 'link:../../libraries/config/config-inject'
       '@cdf/express-middleware': 'link:../../libraries/core/express-middleware'
+      aws-sdk: 2.418.0
+      aws-serverless-express: 3.3.5
+      body-parser: 1.18.3
+      config: 3.0.1
+      cors: 2.8.5
+      express: 4.16.4
+      fs: 0.0.1-security
+      inversify: 5.0.1
+      inversify-binding-decorators: 4.0.0
+      inversify-express-utils: 6.3.2
+      js-yaml: 3.12.2
+      jszip: 3.2.0
+      ow: 0.12.0
+      pem: 1.14.2
+      reflect-metadata: 0.1.13
+      uuid: 3.3.2
+      winston: 2.4.4
+    devDependencies:
+      '@commitlint/cli': 7.5.2
+      '@commitlint/config-conventional': 7.5.0
+      '@semantic-release/changelog': 3.0.2_semantic-release@15.13.3
+      '@semantic-release/git': 7.0.8_semantic-release@15.13.3
+      '@semantic-release/npm': 5.1.4_semantic-release@15.13.3
+      '@semantic-release/release-notes-generator': 7.1.4_semantic-release@15.13.3
+      '@types/aws-serverless-express': 3.3.0
+      '@types/body-parser': 1.17.0
+      '@types/config': 0.0.34
+      '@types/express': 4.16.1
+      '@types/jest': 24.0.0
+      '@types/jszip': 3.1.5
+      '@types/node': 8.10.43
+      '@types/pem': 1.9.5
+      '@types/uuid': 3.4.4
+      commitizen: 3.0.7
+      concurrently: 4.1.0
+      cpy-cli: 2.0.0
+      del-cli: 1.1.0
+      husky: 1.3.1
+      jest: 24.1.0
+      jest-create-mock-instance: 1.1.0
+      jest-haste-map: 24.0.0
+      jest-mock: 24.0.0
+      jest-resolve: 24.5.0_b2377ed855f581a50cdaeacf386d75ca
+      make-dir-cli: 1.0.0
+      nodemon: 1.18.10
+      nyc: 13.3.0
+      semantic-release: 15.13.3_semantic-release@15.13.3
+      semantic-release-monorepo: 6.1.1_semantic-release@15.13.3
+      ts-jest: 24.0.0_jest@24.1.0
+      tslint: 5.13.1_typescript@3.1.6
+      typescript: 3.1.6
+    specifiers:
+      '@cdf/config-inject': ^2.0.0
+      '@cdf/express-middleware': ^1.0.0
+      '@commitlint/cli': 7.5.2
+      '@commitlint/config-conventional': 7.5.0
+      '@semantic-release/changelog': 3.0.2
+      '@semantic-release/git': 7.0.8
+      '@semantic-release/npm': 5.1.4
+      '@semantic-release/release-notes-generator': 7.1.4
+      '@types/aws-serverless-express': 3.3.0
+      '@types/body-parser': 1.17.0
+      '@types/config': 0.0.34
+      '@types/express': 4.16.1
+      '@types/jest': 24.0.0
+      '@types/jszip': 3.1.5
+      '@types/node': 8.10.43
+      '@types/pem': 1.9.5
+      '@types/uuid': 3.4.4
+      aws-sdk: 2.418.0
+      aws-serverless-express: 3.3.5
+      body-parser: 1.18.3
+      commitizen: 3.0.7
+      concurrently: 4.1.0
+      config: 3.0.1
+      cors: ^2.8.5
+      cpy-cli: 2.0.0
+      del-cli: 1.1.0
+      express: 4.16.4
+      fs: 0.0.1-security
+      husky: 1.3.1
+      inversify: 5.0.1
+      inversify-binding-decorators: 4.0.0
+      inversify-express-utils: 6.3.2
+      jest: 24.1.0
+      jest-create-mock-instance: 1.1.0
+      jest-haste-map: 24.0.0
+      jest-mock: 24.0.0
+      jest-resolve: 24.5.0
+      js-yaml: 3.12.2
+      jszip: 3.2.0
+      make-dir-cli: 1.0.0
+      nodemon: 1.18.10
+      nyc: 13.3.0
+      ow: 0.12.0
+      pem: 1.14.2
+      reflect-metadata: 0.1.13
+      semantic-release: 15.13.3
+      semantic-release-monorepo: 6.1.1
+      ts-jest: 24.0.0
+      tslint: 5.13.1
+      typescript: 3.1.6
+      uuid: 3.3.2
+      winston: 2.4.4
+  packages/services/provisioning/build/build:
+    dependencies:
+      '@cdf/config-inject': 'link:../../../../libraries/config/config-inject'
+      '@cdf/express-middleware': 'link:../../../../libraries/core/express-middleware'
       aws-sdk: 2.418.0
       aws-serverless-express: 3.3.5
       body-parser: 1.18.3
@@ -6224,6 +6340,9 @@ packages:
       node: '>=6'
     peerDependencies:
       jest-resolve: '*'
+    peerDependenciesMeta:
+      jest-resolve:
+        optional: true
     resolution:
       integrity: sha512-pgFw2tm54fzgYvc/OHrnysABEObZCUNFnhjoRjaVOCN8NYc032/gVjPaHD4Aq6ApkSieWtfKAFQtmDKAmhupnQ==
   /jest-pnp-resolver/1.2.1_jest-resolve@24.8.0:
@@ -6234,6 +6353,9 @@ packages:
       node: '>=6'
     peerDependencies:
       jest-resolve: '*'
+    peerDependenciesMeta:
+      jest-resolve:
+        optional: true
     resolution:
       integrity: sha512-pgFw2tm54fzgYvc/OHrnysABEObZCUNFnhjoRjaVOCN8NYc032/gVjPaHD4Aq6ApkSieWtfKAFQtmDKAmhupnQ==
   /jest-regex-util/24.3.0:

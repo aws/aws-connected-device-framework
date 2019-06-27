@@ -5,7 +5,7 @@
 #-------------------------------------------------------------------------------*/
 import 'reflect-metadata';
 import { Before, setDefaultTimeout, When, TableDefinition, Then} from 'cucumber';
-import { SearchService, SearchRequestModel, SearchResultsModel, Device, Group } from '@cdf/assetlibrary-client/dist';
+import { SearchService, SearchRequestModel, SearchResultsModel, Device, Group, SearchRequestFilter } from '@cdf/assetlibrary-client/dist';
 
 import chai_string = require('chai-string');
 import { expect, use} from 'chai';
@@ -43,10 +43,19 @@ function buildSearchRequest(data:TableDefinition):SearchRequestModel {
                     searchRequest['ancestorPath']=attrs[0];
                 } else {
                     if (searchRequest[param]===undefined) {
-                        const map: { [param: string]: string | number | boolean } = {[attrs[0]]: attrs[1]};
-                        searchRequest[param]= map;
+                        searchRequest[param]=[];
                     }
-                    searchRequest[param][attrs[0]]=attrs[1];
+
+                    const filter:SearchRequestFilter = {
+                        field: attrs[attrs.length-2],
+                        value: attrs[attrs.length-1]
+                    };
+                    // do we have traversals defined?
+                    if (attrs.length>2) {
+                        // TODO: process traversals
+                    }
+
+                    searchRequest[param].push(filter);
                 }
             });
         }

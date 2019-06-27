@@ -7,9 +7,9 @@ import { process } from 'gremlin';
 import { injectable, inject } from 'inversify';
 import {logger} from '../utils/logger';
 import {TYPES} from '../di/types';
-import {Node, AttributeValue} from '../data/node';
-import {NodeAssembler} from '../data/assembler';
-import { TypeCategory } from '../types/constants';
+import {Node} from '../data/node';
+import { FullAssembler, NodeDto } from '../data/full.assembler';
+import { ModelAttributeValue } from '../data/model';
 
 const __ = process.statics;
 
@@ -19,7 +19,7 @@ export class GroupsDaoFull {
     private _g: process.GraphTraversalSource;
 
     public constructor(
-        @inject(TYPES.NodeAssembler) private assembler: NodeAssembler,
+        @inject(TYPES.FullAssembler) private fullAssembler: FullAssembler,
 	    @inject(TYPES.GraphTraversalSourceFactory) graphTraversalSourceFactory: () => process.GraphTraversalSource
     ) {
         this._g = graphTraversalSourceFactory();
@@ -34,10 +34,11 @@ export class GroupsDaoFull {
          * return the group, but when retrieving linked entities we need to retrieve
          * all groups exluding linked via 'parent' and ignore linked devices
          */
-        const result = await this._g.V(id).as('group').
-            project('group','paths','Es','Vs').
+        const result = await this._g.V(id).as('object').
+            project('object','pathsIn','pathsOut','Es','Vs').
                 by(__.valueMap(true)).
-                by(__.bothE().not(__.hasLabel('parent')).otherV().hasLabel('group').path().by(process.t.id).fold()).
+                by(__.inE().not(__.hasLabel('parent')).otherV().hasLabel('group').path().by(process.t.id).fold()).
+                by(__.outE().not(__.hasLabel('parent')).otherV().hasLabel('group').path().by(process.t.id).fold()).
                 by(__.bothE().not(__.hasLabel('parent')).where(__.otherV().hasLabel('group')).valueMap(true).fold()).
                 by(__.bothE().not(__.hasLabel('parent')).otherV().hasLabel('group').dedup().valueMap(true).fold()).
             next();
@@ -50,62 +51,16 @@ export class GroupsDaoFull {
         }
 
         const value = result.value as process.Traverser;
-        const r = JSON.parse(JSON.stringify(value)) as GetGroupResult;
+        const r = JSON.parse(JSON.stringify(value)) as NodeDto;
         let node: Node;
         if (r) {
-            node = this.assembleNode(r.group);
-            this.assembleAssociations(node, r);
+            node = this.fullAssembler.assembleGroupNode(r.object);
+            this.fullAssembler.assembleAssociations(node, r);
         }
 
         logger.debug(`groups.full.dao get: exit: node: ${JSON.stringify(node)}`);
         return node;
 
-    }
-
-    private assembleNode(group:{ [key:string]: AttributeValue}):Node {
-        logger.debug(`groups.full.dao assembleNode: in: group: ${JSON.stringify(group)}`);
-
-        const labels = (<string> group['label']).split('::');
-        const node = new Node();
-        Object.keys(group).forEach( key => {
-            if (key==='id') {
-                node.id = <string> group[key];
-            } else if (key==='label') {
-                node.types = labels;
-            } else {
-                node.attributes[key] = group[key] ;
-            }
-        });
-
-        logger.debug(`groups.full.dao assembleNode: exit: node: ${JSON.stringify(node)}`);
-        return node;
-    }
-
-    private assembleAssociations(node:Node, r:GetGroupResult) {
-        logger.debug(`groups.full.dao assembleAssociations: in: node:${JSON.stringify(node)}, r:${JSON.stringify(r)}`);
-
-        // assemble all associated objects
-        r.paths.forEach((value)=> {
-            const eId = value.objects[1];
-            const direction = (value.objects[0]===r.group.id) ? 'out' : 'in';
-            const vId = (direction==='out') ? value.objects[2] : value.objects[0];
-            const e = (r.Es!==undefined && r.Es!==null) ? r.Es.filter(edge=> edge.id===eId) : [];
-            const v = (r.Vs!==undefined && r.Vs!==null) ? r.Vs.filter(vertex=> vertex.id===vId): [];
-
-            if (v[0]!==undefined) {
-                const l = (<string> v[0]['label']).split('::');
-                if (l.includes(TypeCategory.Group)) {
-                    const other = new Node();
-                    other.attributes['groupPath'] = v[0]['groupPath']as string;
-                    other.category = TypeCategory.Group;
-                    node.addLink(direction, e[0]['label'], other);
-                } else {
-                    logger.warn(`assembleAssociations does not yet support handling ${l}`);
-                }
-            }
-        });
-
-        logger.debug(`groups.full.dao assembleAssociations: exit: node: ${JSON.stringify(node)}`);
     }
 
     public async getLabels(groupPath: string): Promise<string[]> {
@@ -203,48 +158,126 @@ export class GroupsDaoFull {
 
     }
 
-    public async listMembers(groupPath:string, category:TypeCategory, type:string, state:string, offset:number, count:number): Promise<Node[]> {
-        logger.debug(`groups.full.dao getMembers: in: groupPath:${groupPath}, category:${category}, type:${type}, state:${state}, offset:${offset}, count:${count}`);
+    public async listRelated(groupPath: string, relationship: string, direction:string, template:string, filterRelatedBy:{[key:string]:ModelAttributeValue}, offset:number, count:number) : Promise<Node> {
+        logger.debug(`groups.full.dao listRelated: in: groupPath:${groupPath}, relationship:${relationship}, direction:${direction}, template:${template}, filterRelatedBy:${JSON.stringify(filterRelatedBy)}, offset:${offset}, count:${count}`);
 
-        const id = 'group___' + groupPath;
+        const id = `group___${groupPath}`;
 
-        const label = (type===undefined) ? category : type;
-
-        const traverser = await this._g.V(id).in_()
-            .hasLabel(label);
-
-        if (category===TypeCategory.Device && state!==undefined) {
-            traverser.has('state',state);
+        // build the queries for returning the info we need to assmeble related devices
+        let connectedEdges:process.GraphTraversal;
+        let connectedVertices:process.GraphTraversal;
+        if (direction==='in') {
+            connectedEdges = __.inE();
+            connectedVertices = __.in_();
+        } else if (direction==='out') {
+            connectedEdges = __.outE();
+            connectedVertices = __.out();
+        } else {
+            connectedEdges = __.bothE();
+            connectedVertices = __.both();
         }
+        if (relationship!=='*') {
+            connectedEdges.hasLabel(relationship);
+            connectedVertices.hasLabel(template);
+        }
+        connectedEdges.where(__.otherV().hasLabel(template)).valueMap(true).fold();
+
+        if (filterRelatedBy!==undefined) {
+            Object.keys(filterRelatedBy).forEach(k=> {
+                connectedVertices.has(k, filterRelatedBy[k]);
+            });
+        }
+        connectedVertices.dedup().valueMap(true).fold();
+
+        // assemble the main query
+        const traverser = this._g.V(id).as('object');
+
+        traverser.project('object','pathsIn','pathsOut','Es','Vs').
+            by(__.valueMap(true)).
+            by(__.inE().otherV().path().by(process.t.id).fold()).
+            by(__.outE().otherV().path().by(process.t.id).fold()).
+            by(connectedEdges).
+            by(connectedVertices);
 
         // apply pagination
         if (offset!==undefined && count!==undefined) {
-            // note: workaround for wierd typescript issue. even though offset/count are declared as numbers
+            // note: workaround for weird typescript issue. even though offset/count are declared as numbers
             // throughout, they are being interpreted as strings within gremlin, therefore need to force to int beforehand
             const offsetAsInt = parseInt(offset.toString(),0);
             const countAsInt = parseInt(count.toString(),0);
             traverser.range(offsetAsInt, offsetAsInt + countAsInt);
         }
 
-        const results = await traverser.valueMap(true).toList();
-
-        logger.debug(`groups.full.dao getMembers: results: ${JSON.stringify(results)}`);
+        // execute and retrieve the results
+        logger.debug(`groups.full.dao listRelatedDevices: traverser: ${traverser}`);
+        const results = await traverser.toList();
+        logger.debug(`devices.full.dao listRelatedDevices: results: ${JSON.stringify(results)}`);
 
         if (results===undefined || results.length===0) {
-            logger.debug(`groups.full.dao getMembers: exit: node: undefined`);
+            logger.debug(`groups.full.dao listRelatedDevices: exit: node: undefined`);
             return undefined;
         }
 
+        // there should be only one result as its by deviceId, but we still process as an array so we can reuse the existing assemble methods
         const nodes: Node[] = [];
         for(const result of results) {
-            const l = (<string> result.label).split('::');
-            nodes.push(this.assembler.toNode(result, l));
+            const r = JSON.parse(JSON.stringify(result)) as NodeDto;
+
+            // assemble the device
+            let node: Node;
+            if (r) {
+                node = this.fullAssembler.assembleDeviceNode(r.object);
+                this.fullAssembler.assembleAssociations(node, r);
+            }
+            nodes.push(node);
         }
 
-        logger.debug(`groups.full.dao getMembers: exit: node: ${JSON.stringify(nodes)}`);
-        return nodes;
+        logger.debug(`groups.full.dao listRelatedDevices: exit: node: ${JSON.stringify(nodes[0])}`);
+        return nodes[0];
 
     }
+
+    // public async listMembers(groupPath:string, category:TypeCategory, type:string, state:string, offset:number, count:number): Promise<Node[]> {
+    //     logger.debug(`groups.full.dao getMembers: in: groupPath:${groupPath}, category:${category}, type:${type}, state:${state}, offset:${offset}, count:${count}`);
+
+    //     const id = 'group___' + groupPath;
+
+    //     const label = (type===undefined) ? category : type;
+
+    //     const traverser = await this._g.V(id).in_()
+    //         .hasLabel(label);
+
+    //     if (category===TypeCategory.Device && state!==undefined) {
+    //         traverser.has('state',state);
+    //     }
+
+    //     // apply pagination
+    //     if (offset!==undefined && count!==undefined) {
+    //         // note: workaround for wierd typescript issue. even though offset/count are declared as numbers
+    //         // throughout, they are being interpreted as strings within gremlin, therefore need to force to int beforehand
+    //         const offsetAsInt = parseInt(offset.toString(),0);
+    //         const countAsInt = parseInt(count.toString(),0);
+    //         traverser.range(offsetAsInt, offsetAsInt + countAsInt);
+    //     }
+
+    //     const results = await traverser.valueMap(true).toList();
+
+    //     logger.debug(`groups.full.dao getMembers: results: ${JSON.stringify(results)}`);
+
+    //     if (results===undefined || results.length===0) {
+    //         logger.debug(`groups.full.dao getMembers: exit: node: undefined`);
+    //         return undefined;
+    //     }
+
+    //     const nodes: Node[] = [];
+    //     for(const result of results) {
+    //         nodes.push(this.fullAssembler.assembleGroupNode(result));
+    //     }
+
+    //     logger.debug(`groups.full.dao getMembers: exit: node: ${JSON.stringify(nodes)}`);
+    //     return nodes;
+
+    // }
 
     public async listParentGroups(groupPath:string): Promise<Node[]> {
         logger.debug(`groups.full.dao getParentGroups: in: groupPath:${groupPath}`);
@@ -269,8 +302,7 @@ export class GroupsDaoFull {
 
         const nodes: Node[] = [];
         for(const result of results) {
-            const labels = (<string> result.label).split('::');
-            nodes.push(this.assembler.toNode(result, labels));
+            nodes.push(this.fullAssembler.assembleGroupNode(result));
         }
 
         logger.debug(`groups.full.dao getParentGroups: exit: node: ${JSON.stringify(nodes)}`);
@@ -319,16 +351,4 @@ export class GroupsDaoFull {
 
         logger.debug(`groups.full.dao detachFromGroup: exit:`);
     }
-}
-
-export interface GetGroupResult {
-    group: { [key:string]: AttributeValue};
-    paths: {
-        objects:string[];
-    }[];
-    Es: {
-        label:string;
-        id:string;
-    }[];
-    Vs: { [key:string]: AttributeValue} [];
 }
