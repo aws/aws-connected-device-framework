@@ -1,3 +1,10 @@
+# [@cdf/bulkcerts-v3.1.2](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/bulkcerts-v3.1.1...@cdf/bulkcerts-v3.1.2) (2019-06-28)
+
+
+### Bug Fixes
+
+* **cors:** added missing dependency ([5e0f6b4](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/5e0f6b4))
+
 # [@cdf/bulkcerts-v3.1.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/bulkcerts-v3.1.0...@cdf/bulkcerts-v3.1.1) (2019-06-20)
 
 
