@@ -1,3 +1,10 @@
+# [@cdf/assetlibrary-history-v2.1.4](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-history-v2.1.3...@cdf/assetlibrary-history-v2.1.4) (2019-06-28)
+
+
+### Bug Fixes
+
+* **cors:** added missing dependency ([5e0f6b4](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/5e0f6b4))
+
 # [@cdf/assetlibrary-history-v2.1.3](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-history-v2.1.2...@cdf/assetlibrary-history-v2.1.3) (2019-06-20)
 
 
