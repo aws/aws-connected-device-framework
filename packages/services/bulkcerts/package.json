@@ -27,6 +27,7 @@
     "aws-serverless-express": "3.3.5",
     "body-parser": "1.18.3",
     "config": "3.0.1",
+    "cors": "^2.8.5",
     "express": "4.16.4",
     "inversify": "5.0.1",
     "inversify-binding-decorators": "4.0.0",
