@@ -1,3 +1,10 @@
+# [@cdf/integration-tests-v1.1.2](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/integration-tests-v1.1.1...@cdf/integration-tests-v1.1.2) (2019-06-28)
+
+
+### Bug Fixes
+
+* **assetlibrary:** fixed duplicate relations ([75e25fc](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/75e25fc))
+
 # [@cdf/integration-tests-v1.1.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/integration-tests-v1.1.0...@cdf/integration-tests-v1.1.1) (2019-06-13)
 
 
