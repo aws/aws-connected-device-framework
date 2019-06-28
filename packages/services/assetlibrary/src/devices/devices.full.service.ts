@@ -369,14 +369,28 @@ export class DevicesServiceFull implements DevicesService {
         relationship = relationship.toLowerCase();
         groupPath = groupPath.toLowerCase();
 
+        // fetch the existing device / group
         const deviceFuture = this.get(deviceId, false, [], false);
         const groupFuture = this.groupsService.get(groupPath);
         const results = await Promise.all([deviceFuture, groupFuture]);
+        const device = results[0];
+        const group = results[1];
 
+        // make sure they exist
+        if (device===undefined || group===undefined) {
+            throw new Error('NOT_FOUND');
+        }
+
+        // if the relation already exists, there's no need to continue
+        if (device.groups[relationship].includes(groupPath)) {
+            logger.debug(`device.full.service attachToGroup: relation already exits:`);
+            return;
+        }
+
+        // ensure that the group relation is allowed
         const out: {[key:string]:string[]} = {};
-        out[relationship] = [ results[1].templateId ];
-
-        const isValid = await this.typesService.validateRelationshipsByType(results[0].templateId, out);
+        out[relationship] = [ group.templateId ];
+        const isValid = await this.typesService.validateRelationshipsByType(device.templateId, out);
         if (!isValid) {
             throw new Error('FAILED_VALIDATION');
         }
@@ -441,16 +455,28 @@ export class DevicesServiceFull implements DevicesService {
         relationship = relationship.toLowerCase();
         otherDeviceId = otherDeviceId.toLowerCase();
 
-        const sourceDevice = await this.get(deviceId, false, [], false);
+        // fetch the existing device / group
+        const deviceFuture = this.get(deviceId, false, [], false);
+        const otherDeviceFuture = this.get(otherDeviceId, false, [], false);
+        const results = await Promise.all([deviceFuture, otherDeviceFuture]);
+        const device = results[0];
+        const otherDevice = results[1];
 
-        if (sourceDevice===undefined ) {
+        // make sure they exist
+        if (device===undefined || otherDevice===undefined) {
             throw new Error('NOT_FOUND');
         }
 
+        // if the relation already exists, there's no need to continue
+        if (device.devices[relationship].includes(otherDeviceId)) {
+            logger.debug(`device.full.service attachToDevice: relation already exits:`);
+            return;
+        }
+
+        // ensure that the relation is allowed
         const out: {[key:string]:string[]} = {};
         out[relationship] = [otherDeviceId];
-
-        const isValid = await this.typesService.validateRelationshipsByPath(sourceDevice.templateId, out);
+        const isValid = await this.typesService.validateRelationshipsByPath(device.templateId, out);
         if (!isValid) {
             throw new Error('FAILED_VALIDATION');
         }
