@@ -1604,6 +1604,7 @@ importers:
       body-parser: 1.18.3
       config: 3.0.1
       cors: 2.8.5
+<<<<<<< HEAD
       express: 4.16.4
       fs: 0.0.1-security
       inversify: 5.0.1
@@ -1711,6 +1712,8 @@ importers:
       aws-serverless-express: 3.3.5
       body-parser: 1.18.3
       config: 3.0.1
+=======
+>>>>>>> master
       express: 4.16.4
       fs: 0.0.1-security
       inversify: 5.0.1
@@ -1781,6 +1784,7 @@ importers:
       commitizen: 3.0.7
       concurrently: 4.1.0
       config: 3.0.1
+      cors: ^2.8.5
       cpy-cli: 2.0.0
       del-cli: 1.1.0
       express: 4.16.4

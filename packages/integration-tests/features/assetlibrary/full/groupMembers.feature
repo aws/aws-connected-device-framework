@@ -22,6 +22,13 @@ Feature: Group Members
     And device "TEST-groupMembers-device001" is "located_at" "/test-groupmembers-parent"
 
 
+  Scenario: A Device cannot have duplicated relations to the same group
+    Given device "TEST-groupMembers-device001" is "located_at" "/test-groupmembers-parent"
+    When I add device "TEST-groupMembers-device001" to group "/test-groupmembers-parent" related via "located_at"
+    Then device "TEST-groupMembers-device001" exists with attributes
+      | groups | {"located_at":["/test-groupmembers-parent"]} |
+
+
   Scenario: Multiple devices can be added to a group
     When I create device "TEST-groupMembers-device002" with attributes
       | templateId | TEST-groupMembers-deviceLinkableToGroupB |

@@ -1,6 +1,6 @@
 {
   "name": "@cdf/provisioning",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "CDF Provisioning",
   "author": "Dean Hart <deanhart@amazon.com>",
   "config": {
@@ -28,6 +28,7 @@
     "body-parser": "1.18.3",
     "cors": "^2.8.5",
     "config": "3.0.1",
+    "cors": "^2.8.5",
     "express": "4.16.4",
     "fs": "0.0.1-security",
     "inversify": "5.0.1",

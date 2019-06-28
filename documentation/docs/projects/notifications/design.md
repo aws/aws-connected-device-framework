@@ -24,7 +24,7 @@ Event definitions are defined which are comprised of the data sources to monitor
 
 The following REST API endpoints are exposed to configure events sources, events, and to allow user's to manage their subscriptions:
 
-For a full definition of the endpoint including a description of the parameters, request and response bodies, and examples, refer to the [swagger definition](events-processor-swagger.yml).
+For a full definition of the endpoint including a description of the parameters, request and response bodies, and examples, refer to the [swagger definition](events-processor-swagger.md).
 
 Endpoint | Description
 ---|---

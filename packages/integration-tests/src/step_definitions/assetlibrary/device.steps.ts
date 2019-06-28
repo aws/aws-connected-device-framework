@@ -128,6 +128,14 @@ When('I update device {string} applying profile {string}', async function (devic
     }
 });
 
+When('I add device {string} to group {string} related via {string}', async function (deviceId:string, groupPath:string, relationship:string) {
+    try {
+        await devices.attachToGroup(deviceId, relationship, groupPath);
+    } catch (err) {
+        this[RESPONSE_STATUS]=err.status;
+    }
+});
+
 When('I remove device {string} from group {string} related via {string}', async function (deviceId:string, groupPath:string, relationship:string) {
     try {
         await devices.detachFromGroup(deviceId, relationship, groupPath);
