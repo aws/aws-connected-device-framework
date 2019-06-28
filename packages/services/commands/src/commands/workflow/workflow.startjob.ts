@@ -11,7 +11,7 @@ import { CommandModel } from '../commands.models';
 import { logger } from '../../utils/logger';
 import AWS = require('aws-sdk');
 import ow from 'ow';
-import { DevicesService, GroupsService, ASSTLIBRARY_CLIENT_TYPES } from '@cdf/assetlibrary-client';
+import { DevicesService, GroupsService, ASSTLIBRARY_CLIENT_TYPES, SearchService, SearchRequestModel, Device, Group } from '@cdf/assetlibrary-client';
 import { PROVISIONING_CLIENT_TYPES, ThingsService, BulkProvisionThingsRequest } from '@cdf/provisioning-client';
 import config from 'config';
 import { CommandsDao } from '../commands.dao';
@@ -27,6 +27,7 @@ export class StartJobAction implements WorkflowAction {
         @inject(TYPES.CommandsDao) private commandsDao: CommandsDao,
         @inject(ASSTLIBRARY_CLIENT_TYPES.DevicesService) private assetLibraryDeviceClient: DevicesService,
         @inject(ASSTLIBRARY_CLIENT_TYPES.GroupsService) private assetLibraryGroupClient: GroupsService,
+        @inject(ASSTLIBRARY_CLIENT_TYPES.SearchService) private assetLibrarySearchClient: SearchService,
         @inject(PROVISIONING_CLIENT_TYPES.ThingsService) private thingsService: ThingsService,
         @inject('aws.s3.bucket') private s3Bucket: string,
         @inject('aws.s3.prefix') private s3Prefix: string,
@@ -94,7 +95,7 @@ export class StartJobAction implements WorkflowAction {
         logger.debug(`workflow.startjob execute: template.document: ${template.document}`);
 
         // build the target list
-        const jobTargets = await this.buildTargetList(merged.commandId, merged.targets);
+        const jobTargets = await this.buildTargetList(merged.commandId, merged.targets, merged.targetQuery);
 
         // create the AWS IoT job
         const jobId = `cdf-${merged.commandId}`;
@@ -128,38 +129,66 @@ export class StartJobAction implements WorkflowAction {
 
     }
 
-    public ___testonly___buildTargetList(commandId:string, targets:string[]) : Promise<string[]> {
-        return this.buildTargetList(commandId, targets);
+    public ___testonly___buildTargetList(commandId:string, targets:string[], targetQuery:SearchRequestModel) : Promise<string[]> {
+        return this.buildTargetList(commandId, targets, targetQuery);
     }
 
-    private async buildTargetList(commandId:string, targets:string[]) : Promise<string[]> {
-        logger.debug(`workflow.startjob buildTargetList: commandId:${commandId}, targets:${targets}`);
+    private async buildTargetList(commandId:string, targets:string[], targetQuery:SearchRequestModel) : Promise<string[]> {
+        logger.debug(`workflow.startjob buildTargetList: commandId:${commandId}, targets:${targets}, targetQuery:${JSON.stringify(targetQuery)}`);
 
         ow(commandId, ow.string.nonEmpty);
-        ow(targets, ow.array.nonEmpty.minLength(1));
+        // ow(targets, ow.array.nonEmpty.minLength(1));
 
         let awsThingTargets:string[]=[];
         const awsGroupTargets:string[]=[];
         const cdfDeviceTargets:string[]=[];
         const cdfGroupTargets:string[]=[];
 
-        // first we need to figure out the type of each target
-        for(const target of targets) {
-            const targetType = this.getTargetType(target);
-            switch (targetType) {
-                case TargetType.awsIotThing:
-                awsThingTargets.push(target);
-                    break;
-                case TargetType.awsIotGroup:
-                awsGroupTargets.push(target);
-                    break;
-                case TargetType.cdfDevice:
-                    cdfDeviceTargets.push(target);
-                    break;
-                case TargetType.cdfGroup:
-                    cdfGroupTargets.push(target);
-                    break;
-                default:
+        // if we have a target query specified, retrieve all the asset library groups/devices it relates to
+        if (targetQuery!==undefined) {
+            let searchResults = await this.assetLibrarySearchClient.search(targetQuery);
+            logger.verbose(`workflow.startjob buildTargetList: searchResults:${JSON.stringify(searchResults)}`);
+            while (searchResults.results.length>0) {
+                for(const r of searchResults.results) {
+                    if (this.isDevice(r)) {
+                        const awsIotThingArn = (r as Device).awsIotThingArn;
+                        if (awsIotThingArn!==undefined) {
+                            awsThingTargets.push(awsIotThingArn);
+                        }
+                    } else {
+                        cdfGroupTargets.push((r as Group).groupPath);
+                    }
+                }
+                // possibly paginated results?
+                if (searchResults.pagination!==undefined) {
+                    const offset = searchResults.pagination.offset;
+                    const count = searchResults.pagination.count;
+                    searchResults = await this.assetLibrarySearchClient.search(targetQuery, offset, count );
+                } else {
+                    searchResults.results=[];
+                }
+            }
+        }
+
+        // figure out the type of each target
+        if (targets!==undefined) {
+            for(const target of targets) {
+                const targetType = this.getTargetType(target);
+                switch (targetType) {
+                    case TargetType.awsIotThing:
+                    awsThingTargets.push(target);
+                        break;
+                    case TargetType.awsIotGroup:
+                    awsGroupTargets.push(target);
+                        break;
+                    case TargetType.cdfDevice:
+                        cdfDeviceTargets.push(target);
+                        break;
+                    case TargetType.cdfGroup:
+                        cdfGroupTargets.push(target);
+                        break;
+                    default:
+                }
             }
         }
 
@@ -268,6 +297,10 @@ export class StartJobAction implements WorkflowAction {
             }
         }
         return TargetType.cdfDevice;
+    }
+
+    private isDevice(arg: any): arg is Device {
+        return arg && arg.deviceId && typeof(arg.deviceId) === 'string';
     }
 
 }

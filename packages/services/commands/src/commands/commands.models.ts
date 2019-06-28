@@ -1,3 +1,5 @@
+import { SearchRequestModel } from '@cdf/assetlibrary-client/dist';
+
 /*-------------------------------------------------------------------------------
 # Copyright (c) 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
@@ -12,7 +14,8 @@ export interface CommandSummaryModel {
 }
 export interface CommandModel extends CommandSummaryModel {
 	jobStatus:JobStatus;
-	targets:string[];
+	targets?:string[];
+	targetQuery?:SearchRequestModel;
 	documentParameters?: {[key:string]:string};
 	jobParameters?: {[key:string]:string};
 	files?: {[key:string]:S3FileModel};
