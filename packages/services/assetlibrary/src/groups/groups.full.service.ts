@@ -4,7 +4,7 @@
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
 import { injectable, inject } from 'inversify';
-import { GroupModel, BulkLoadGroupsRequest, BulkLoadGroupsResult, GroupsMembersModel} from './groups.models';
+import { GroupModel, BulkLoadGroupsRequest, BulkLoadGroupsResult, GroupsMembersModel, RelatedGroupListModel} from './groups.models';
 import { GroupsAssembler} from './groups.assembler';
 import { TYPES } from '../di/types';
 import { GroupsDaoFull } from './groups.full.dao';
@@ -16,6 +16,8 @@ import ow from 'ow';
 import { GroupProfileModel } from '../profiles/profiles.models';
 import { ProfilesService } from '../profiles/profiles.service';
 import { GroupsService } from './groups.service';
+import { DevicesAssembler } from '../devices/devices.assembler';
+import { RelatedDeviceListResult } from '../devices/devices.models';
 
 @injectable()
 export class GroupsServiceFull implements GroupsService {
@@ -23,6 +25,7 @@ export class GroupsServiceFull implements GroupsService {
     constructor( @inject(TYPES.GroupsDao) private groupsDao: GroupsDaoFull ,
         @inject(TYPES.TypesService) private typesService: TypesService,
         @inject(TYPES.GroupsAssembler) private groupsAssembler: GroupsAssembler,
+        @inject(TYPES.DevicesAssembler) private devicesAssembler: DevicesAssembler,
         @inject(TYPES.ProfilesService) private profilesService: ProfilesService,
         @inject(TYPES.EventEmitter) private eventEmitter: EventEmitter) {}
 
@@ -242,21 +245,30 @@ export class GroupsServiceFull implements GroupsService {
         groupPath=groupPath.toLowerCase();
         if (type) {
             type=type.toLowerCase();
+        } else {
+            type=category;
         }
 
-        // state filter only applies to devices, and has a default of `active` is not provided
+        // state filter only applies to devices, and has a default of `active` if not provided
+        let filterRelatedBy;
         if (category===TypeCategory.Device) {
             state = (state===undefined || state===null)? 'active' : state;
-        } else {
-            state=null;
+            filterRelatedBy = {
+                state
+            };
         }
 
-        const result  = await this.groupsDao.listMembers(groupPath, category, type, state, offset, count);
+        const result  = await this.groupsDao.listRelated(groupPath, '*', 'in', type, filterRelatedBy, offset, count);
 
         if (offset!==undefined && count!==undefined) {
             offset+=count;
         }
-        const model = this.groupsAssembler.toGroupMembersList(result, offset, count);
+        let model:GroupsMembersModel;
+        if (category===TypeCategory.Group) {
+            model = this.groupsAssembler.toRelatedGroupModelsList(result);
+        } else {
+            model = this.devicesAssembler.toRelatedDeviceModelsList(result);
+        }
         logger.debug(`groups.full.service getMembers: exit: model: ${JSON.stringify(model)}`);
         return model;
     }
@@ -378,6 +390,76 @@ export class GroupsServiceFull implements GroupsService {
         });
 
         logger.debug(`groups.full.service detachFromGroup: exit:`);
+    }
+
+    public async listRelatedGroups(groupPath: string, relationship: string, direction:string, template:string, offset:number, count:number) : Promise<RelatedGroupListModel> {
+        logger.debug(`groups.full.service listRelatedGroups: in: groupPath:${groupPath}, relationship:${relationship}, direction:${direction}, template:${template}, offset:${offset}, count:${count}`);
+
+        ow(groupPath, ow.string.nonEmpty);
+        ow(relationship, ow.string.nonEmpty);
+
+        // defaults
+        if (direction===undefined || direction===null) {
+            direction = 'both';
+        }
+        if (template===undefined || template===null) {
+            template=TypeCategory.Group;
+        }
+
+        // any ids need to be lowercase
+        groupPath=groupPath.toLowerCase();
+        relationship=relationship.toLowerCase();
+        if (template) {
+            template=template.toLowerCase();
+        }
+        direction=direction.toLowerCase();
+
+        const result  = await this.groupsDao.listRelated(groupPath, relationship, direction, template, undefined, offset, count);
+
+        if (offset!==undefined && count!==undefined) {
+            offset+=count;
+        }
+        const model = this.groupsAssembler.toRelatedGroupModelsList(result);
+        logger.debug(`groups.full.service listRelatedGroups: exit: model: ${JSON.stringify(model)}`);
+        return model;
+    }
+
+    public async listRelatedDevices(groupPath: string, relationship: string, direction:string, template:string, state:string, offset:number, count:number) : Promise<RelatedDeviceListResult> {
+        logger.debug(`groups.full.service listRelatedDevices: in: groupPath:${groupPath}, relationship:${relationship}, direction:${direction}, template:${template}, state:${state}, offset:${offset}, count:${count}`);
+
+        ow(groupPath, ow.string.nonEmpty);
+        ow(relationship, ow.string.nonEmpty);
+
+        // defaults
+        if (direction===undefined || direction===null) {
+            direction = 'both';
+        }
+        if (state===undefined || state===null) {
+            state = 'active';
+        }
+        if (template===undefined || template===null) {
+            template=TypeCategory.Device;
+        }
+
+        // any ids need to be lowercase
+        groupPath=groupPath.toLowerCase();
+        relationship=relationship.toLowerCase();
+        if (template) {
+            template=template.toLowerCase();
+        }
+        if (state) {
+            state=state.toLowerCase();
+        }
+        direction=direction.toLowerCase();
+
+        const result  = await this.groupsDao.listRelated(groupPath, relationship, direction, template, {state}, offset, count);
+
+        if (offset!==undefined && count!==undefined) {
+            offset+=count;
+        }
+        const model = this.devicesAssembler.toRelatedDeviceModelsList(result);
+        logger.debug(`groups.full.service listRelatedDevices: exit: model: ${JSON.stringify(model)}`);
+        return model;
     }
 
 }

@@ -5,13 +5,13 @@ import { TypeCategory } from '../types/constants';
 #
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
-export type AttributeValue = string | string[] | number | number[] | boolean | boolean[];
+export type NodeAttributeValue = string | string[] | number | number[] | boolean | boolean[];
 export class Node {
     id?:string;
     types: string[];
     category:TypeCategory;
 
-    attributes?: { [key: string] : AttributeValue} = {};
+    attributes?: { [key: string] : NodeAttributeValue} = {};
 
     in: { [key: string] : Node[]} = {};
     out: { [key: string] : Node[]} = {};

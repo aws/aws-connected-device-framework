@@ -22,13 +22,15 @@ import { TypeCategory } from '../types/constants';
 import { DevicesService } from './devices.service';
 import { GroupsServiceFull } from '../groups/groups.full.service';
 import { ProfilesServiceFull } from '../profiles/profiles.full.service';
+import { GroupsAssembler } from '../groups/groups.assembler';
 
 const validDeviceId = 'ABC123';
 
 describe('DevicesService', () => {
     let mockedDao: jest.Mocked<DevicesDaoFull>;
     let mockedTypesService: jest.Mocked<TypesService>;
-    let mockedAssembler: jest.Mocked<DevicesAssembler>;
+    let mockedDeviceAssembler: jest.Mocked<DevicesAssembler>;
+    let mockedGroupsAssembler: jest.Mocked<GroupsAssembler>;
     let mockedGroupsService: jest.Mocked<GroupsService>;
     let mockedProfilesService: jest.Mocked<ProfilesService>;
     let mockedEventEmitter: jest.Mocked<EventEmitter>;
@@ -37,11 +39,12 @@ describe('DevicesService', () => {
     beforeEach(() => {
         mockedDao = createMockInstance(DevicesDaoFull);
         mockedTypesService = createMockInstance(TypesServiceFull);
-        mockedAssembler = createMockInstance(DevicesAssembler);
+        mockedDeviceAssembler = createMockInstance(DevicesAssembler);
+        mockedGroupsAssembler = createMockInstance(GroupsAssembler);
         mockedGroupsService = createMockInstance(GroupsServiceFull);
         mockedProfilesService = createMockInstance(ProfilesServiceFull);
         mockedEventEmitter = createMockInstance(EventEmitter);
-        instance = new DevicesServiceFull(mockedDao, mockedTypesService, mockedAssembler, mockedGroupsService, mockedEventEmitter,
+        instance = new DevicesServiceFull(mockedDao, mockedTypesService, mockedDeviceAssembler, mockedGroupsAssembler, mockedGroupsService, mockedEventEmitter,
             mockedProfilesService, 'parent', '/unprovisioned', 'active');
     });
 
@@ -175,7 +178,7 @@ describe('DevicesService', () => {
         // Set the mocks on the dependent classes
         mockedDao.get = jest.fn().mockImplementation(()=> [n]);
 
-        mockedAssembler.toDeviceModel = jest.fn().mockImplementation(()=> dm);
+        mockedDeviceAssembler.toDeviceModel = jest.fn().mockImplementation(()=> dm);
 
         // Make the call
         const device = await instance.get(validDeviceId, false, [], true);

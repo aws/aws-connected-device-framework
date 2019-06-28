@@ -1,4 +1,4 @@
-swagger: '2.0'
+swagger: "2.0"
 info:
   title: "Connected Device Framework: Asset Library"
   description: |
@@ -261,7 +261,6 @@ paths:
         404:
           $ref: '#/responses/NotFound'
           
-
   /templates/groups/{templateId}:
     parameters:
     - name: templateId
@@ -462,6 +461,23 @@ paths:
         type: array
         items:
           type: string
+      - name: expandRelatedDevices
+        in: query
+        description: By default, only related device id's are returned.  Passing `true` will return expanded related devices instead of just its device id.
+        type: boolean
+        default: false
+      - name: expandRelatedGroups
+        in: query
+        description: By default, only related group paths are returned.  Passing `true` will return expanded related groups instead of just its path.
+        type: boolean
+        default: false
+      - name: filterRelations
+        in: query
+        description: Return related devices/groups filtered by relation.  Specify the relation in the format of `{direction}:{relation}`, where `{direction}` may be `in`, `out` or `both`.
+        collectionFormat: multi
+        type: array
+        items:
+          type: string
       responses:
         200:
           description: successful operation
@@ -503,6 +519,59 @@ paths:
           description: successful operation
         400:
           $ref: '#/responses/BadRequest'
+        404:
+          $ref: '#/responses/NotFound'
+  
+  /devices/{deviceId}/{relationship}/groups:
+    parameters:
+    - name: deviceId
+      in: path
+      description: Id of device
+      required: true
+      type: string
+    - name: relationship
+      in: path
+      description: The relationship between the device and group as defined by the device template.
+      required: true
+      type: string
+      
+    get:
+      tags:
+      - Groups
+      summary: List a devices related groups.
+      operationId: "listDeviceRelatedGroups"
+      parameters:
+      - name: template
+        in: query
+        description: Optional filter to return a specific group template
+        type: string
+      - name: direction
+        in: query
+        description: Direction of relation
+        type: array
+        collectionFormat: multi
+        items:
+          type: string
+        enum:
+        - in
+        - out
+        - both
+        default: out
+      - name: offset
+        in: query
+        description: The index to start paginated results from
+        type: integer
+      - name: count
+        in: query
+        description: The maximum number of results to return
+        type: integer
+      responses:
+        200:
+          description: successful operation
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/RelatedGroupList'
         404:
           $ref: '#/responses/NotFound'
             
@@ -548,17 +617,82 @@ paths:
           $ref: '#/responses/BadRequest'
         404:
           $ref: '#/responses/NotFound'
-            
-  /devices/{deviceId}/{relationship}/devices/{otherDeviceId}:
+  
+  /devices/{deviceId}/{relationship}/devices:
     parameters:
     - name: deviceId
       in: path
-      description: Id of device to attach to the group
+      description: Id of device
       required: true
       type: string
     - name: relationship
       in: path
-      description: The relationship between the device and group. For example, this may reflect `locatedAt` or `manufacturedAt` relations.
+      description: The relationship between the device and the other device as defined in the device template.
+      required: true
+      type: string
+
+    get:
+      tags:
+      - Devices
+      summary: List a devices related devices.
+      operationId: "listDeviceRelatedDevices"
+      parameters:
+      - name: template
+        in: query
+        description: Optional filter to return a specific device template
+        type: string
+      - name: direction
+        in: query
+        description: Direction of relation
+        type: array
+        collectionFormat: multi
+        items:
+          type: string
+        enum:
+        - in
+        - out
+        - both
+        default: out
+      - name: state
+        in: query
+        description: Return devices of a specific state
+        type: array
+        items:
+          type: string
+        enum:
+        - unprovisioned
+        - active
+        - decommissioned
+        - retired
+        default: active
+      - name: offset
+        in: query
+        description: The index to start paginated results from
+        type: integer
+      - name: count
+        in: query
+        description: The maximum number of results to return
+        type: integer
+      responses:
+        200:
+          description: successful operation
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/RelatedDeviceList'
+        404:
+          $ref: '#/responses/NotFound'
+
+  /devices/{deviceId}/{relationship}/devices/{otherDeviceId}:
+    parameters:
+    - name: deviceId
+      in: path
+      description: Id of source device
+      required: true
+      type: string
+    - name: relationship
+      in: path
+      description: The relationship between the device and the other device as defined in the device template.
       required: true
       type: string
     - name: otherDeviceId
@@ -592,7 +726,6 @@ paths:
         404:
           $ref: '#/responses/NotFound'
           
-            
   /devices/{deviceId}/components:
     parameters:
     - name: deviceId
@@ -618,7 +751,6 @@ paths:
         400:
           $ref: '#/responses/BadRequest'
           
-            
   /devices/{deviceId}/components/{componentId}:
     parameters:
     - name: deviceId
@@ -761,7 +893,6 @@ paths:
         404:
           $ref: '#/responses/NotFound'
             
-            
   /groups/{groupPath}/members/devices:
     parameters:
     - name: groupPath
@@ -779,12 +910,19 @@ paths:
       parameters:
       - name: template
         in: query
-        description: Optional filter to return a specific device sub-type
+        description: Optional filter to return a specific device template
         type: string
       - name: state
         in: query
         description: Return devices of a specific state
-        type: string
+        type: array
+        items:
+          type: string
+        enum:
+        - unprovisioned
+        - active
+        - decommissioned
+        - retired
         default: active
       - name: offset
         in: query
@@ -800,12 +938,11 @@ paths:
           schema:
             type: object
             items:
-              $ref: '#/definitions/DeviceList'
+              $ref: '#/definitions/RelatedDeviceList'
         400:
           $ref: '#/responses/BadRequest'
         404:
           $ref: '#/responses/NotFound'
-            
             
   /groups/{groupPath}/members/groups:
     parameters:
@@ -840,12 +977,12 @@ paths:
           schema:
             type: object
             items:
-              $ref: '#/definitions/GroupList'
+              $ref: '#/definitions/RelatedGroupList'
         400:
           $ref: '#/responses/BadRequest'
         404:
           $ref: '#/responses/NotFound'
-          
+
   /groups/{groupPath}/memberships:
     parameters:
     - name: groupPath
@@ -875,12 +1012,129 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/Group'
+              $ref: '#/definitions/RelatedGroupList'
         400:
           $ref: '#/responses/BadRequest'
         404:
           $ref: '#/responses/NotFound'
-        
+  
+  /groups/{groupPath}/{relationship}/devices:
+    parameters:
+    - name: groupPath
+      in: path
+      description: Path of source group
+      required: true
+      type: string
+    - name: relationship
+      in: path
+      description: The relationship between the group and the devices as defined by the group/device templatea.  Use `%2A` (urlencoded `*`) to return all.
+      required: true
+      type: string
+      
+    get:
+      tags:
+      - Groups
+      summary: List a groups related devices.
+      operationId: "listGroupRelatedDevices"
+      parameters:
+      - name: template
+        in: query
+        description: Optional filter to return a specific device template
+        type: string
+      - name: direction
+        in: query
+        description: Direction of relation
+        type: array
+        collectionFormat: multi
+        items:
+          type: string
+        enum:
+        - in
+        - out
+        - both
+        default: out
+      - name: state
+        in: query
+        description: Return devices of a specific state
+        type: array
+        items:
+          type: string
+        enum:
+        - unprovisioned
+        - active
+        - decommissioned
+        - retired
+      - name: offset
+        in: query
+        description: The index to start paginated results from
+        type: integer
+      - name: count
+        in: query
+        description: The maximum number of results to return
+        type: integer
+      responses:
+        200:
+          description: successful operation
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/RelatedDeviceList'
+        404:
+          $ref: '#/responses/NotFound'
+  
+  /groups/{groupPath}/{relationship}/groups:
+    parameters:
+    - name: groupPath
+      in: path
+      description: Path of source group
+      required: true
+      type: string
+    - name: relationship
+      in: path
+      description: The relationship between the groups as defined by the group template.  Use `%2A` (urlencoded `*`) to return all.
+      required: true
+      type: string
+      
+    get:
+      tags:
+      - Groups
+      summary: List a groups related groups.
+      operationId: "listGroupRelatedGroups"
+      parameters:
+      - name: template
+        in: query
+        description: Optional filter to return a specific group template
+        type: string
+      - name: direction
+        in: query
+        description: Direction of relation
+        type: array
+        collectionFormat: multi
+        items:
+          type: string
+        enum:
+        - in
+        - out
+        - both
+        default: out
+      - name: offset
+        in: query
+        description: The index to start paginated results from
+        type: integer
+      - name: count
+        in: query
+        description: The maximum number of results to return
+        type: integer
+      responses:
+        200:
+          description: successful operation
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/RelatedGroupList'
+        404:
+          $ref: '#/responses/NotFound'
+
   /groups/{sourceGroupPath}/{relationship}/groups/{targetGroupPath}:
     parameters:
     - name: sourceGroupPath
@@ -923,7 +1177,6 @@ paths:
           $ref: '#/responses/BadRequest'
         404:
           $ref: '#/responses/NotFound'
-          
           
   /profiles/device/{templateId}:
     parameters:
@@ -1021,7 +1274,6 @@ paths:
         404:
           $ref: '#/responses/NotFound'
           
-          
   /profiles/group/{templateId}:
     parameters:
     - name: templateId
@@ -1118,7 +1370,6 @@ paths:
         404:
           $ref: '#/responses/NotFound'
           
-
   /search:
     get:
       tags:
@@ -1203,7 +1454,7 @@ paths:
           type: string
       - name: facetField
         in: query
-        description: "Perform a faceted query.  Specify in the form of `?facetField=relation:direction:field."
+        description: "Perform a faceted query.  Specify in the format of `?facetField=relation:direction:field`"
         type: string
       - name: summarize
         in: query
@@ -1271,7 +1522,6 @@ paths:
         404:
           $ref: '#/responses/NotFound'
             
-
   /policies/inherited:   
     get:
       tags:
@@ -1307,7 +1557,6 @@ paths:
         404:
           $ref: '#/responses/NotFound'
             
-
   /policies/{policyId}:
     parameters:
     - name: policyId
@@ -1365,8 +1614,6 @@ paths:
           $ref: '#/responses/BadRequest'
         404:
           $ref: '#/responses/NotFound'
-            
-    
           
 
 definitions:
@@ -1431,6 +1678,21 @@ definitions:
     - deviceId
     - templateId
     
+  RelatedDevice:
+    allOf:
+      - $ref: '#/definitions/Device'
+      - type: object
+        properties:
+          relation:
+            type: string
+            description: Name of relation to this device. 
+          direction:
+            type: string
+            description: Direction of relation.   
+            enum:
+            - in
+            - out
+  
   DeviceProfile:
     allOf:
       - $ref: '#/definitions/Device'
@@ -1476,7 +1738,22 @@ definitions:
     required:
     - groupPath
     - templateId
-    
+  
+  RelatedGroup:
+    allOf:
+      - $ref: '#/definitions/Group'
+      - type: object
+        properties:  
+          relation:
+            type: string
+            description: Name of relation to this group.
+          direction:
+            type: string
+            description: Direction of relation.   
+            enum:
+            - in
+            - out
+            
   GroupProfile:
     allOf:
       - $ref: '#/definitions/Group'
@@ -1489,7 +1766,6 @@ definitions:
     - profileId
     - templateId
       
-
   BulkDevices:
     type: object
     properties:
@@ -1523,6 +1799,24 @@ definitions:
       total:
         type: number
         description:  Total number of search results.  Only returned by the search API's when `summarize` is set to true.
+         
+  RelatedGroupList:
+    type: object
+    properties:
+      results:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedGroup'
+      pagination:
+        type: object
+        properties:
+          offset:
+            type: integer
+          count:
+            type: integer
+      total:
+        type: number
+        description:  Total number of search results.  Only returned by the search API's when `summarize` is set to true.
       
   DeviceList:
     type: object
@@ -1531,6 +1825,24 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/Device'
+      pagination:
+        type: object
+        properties:
+          offset:
+            type: integer
+          count:
+            type: integer
+      total:
+        type: number
+        description:  Total number of search results.  Only returned by the search API's when `summarize` is set to true.
+
+  RelatedDeviceList:
+    type: object
+    properties:
+      results:
+        type: array
+        items:
+          $ref: '#/definitions/RelatedDevice'
       pagination:
         type: object
         properties:
@@ -1571,7 +1883,6 @@ definitions:
             type: integer
           count:
             type: integer
-
 
   SearchResults:
     properties:
@@ -1717,4 +2028,3 @@ responses:
     description: Not found
     schema:
       $ref: '#/definitions/Error'
-        

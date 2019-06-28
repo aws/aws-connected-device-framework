@@ -163,13 +163,15 @@ export class SearchDaoFull {
 
         if (request.facetField!==undefined) {
             traverser.select('a');
-            request.facetField.traversals.forEach(t=> {
-                if (t.direction===SearchRequestFilterDirection.in) {
-                    traverser.in_(t.relation);
-                } else {
-                    traverser.out(t.relation);
-                }
-            });
+            if (request.facetField.traversals!==undefined) {
+                request.facetField.traversals.forEach(t=> {
+                    if (t.direction===SearchRequestFilterDirection.in) {
+                        traverser.in_(t.relation);
+                    } else {
+                        traverser.out(t.relation);
+                    }
+                });
+            }
             traverser.values(request.facetField.field).groupCount();
         }
 

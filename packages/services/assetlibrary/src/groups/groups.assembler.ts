@@ -4,17 +4,19 @@
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
 import { injectable, inject } from 'inversify';
-import { GroupModel, GroupModelAttributeValue, GroupsMembersModel} from './groups.models';
+import { GroupModel, GroupsMembersModel, RelatedGroupListModel, RelatedGroupModel} from './groups.models';
 import {logger} from '../utils/logger';
-import {Node, AttributeValue} from '../data/node';
+import {Node} from '../data/node';
 import { DevicesAssembler } from '../devices/devices.assembler';
 import { TYPES } from '../di/types';
 import {TypeCategory} from '../types/constants';
+import { FullAssembler } from '../data/full.assembler';
 
 @injectable()
 export class GroupsAssembler {
 
-    constructor( @inject(TYPES.DevicesAssembler) private devicesAssembler: DevicesAssembler ) {}
+    constructor( @inject(TYPES.DevicesAssembler) private devicesAssembler: DevicesAssembler,
+    @inject(TYPES.FullAssembler) private fullAssembler: FullAssembler  ) {}
 
     public toNode(model: GroupModel): Node {
         logger.debug(`groups.assembler toNode: in: model: ${JSON.stringify(model)}`);
@@ -59,19 +61,19 @@ export class GroupsAssembler {
         Object.keys(node.attributes).forEach( key => {
             switch(key) {
                 case 'name':
-                    model.name = <string> this.extractPropertyValue(node.attributes[key]);
+                    model.name = <string> this.fullAssembler.extractPropertyValue(node.attributes[key]);
                     break;
                 case 'groupPath':
-                    model.groupPath = <string> this.extractPropertyValue(node.attributes[key]);
+                    model.groupPath = <string> this.fullAssembler.extractPropertyValue(node.attributes[key]);
                     break;
                 case 'parentPath':
-                    model.parentPath = <string> this.extractPropertyValue(node.attributes[key]);
+                    model.parentPath = <string> this.fullAssembler.extractPropertyValue(node.attributes[key]);
                     break;
                 case 'description':
-                    model.description = <string> this.extractPropertyValue(node.attributes[key]);
+                    model.description = <string> this.fullAssembler.extractPropertyValue(node.attributes[key]);
                     break;
                 default:
-                    model.attributes[key] = this.extractPropertyValue(node.attributes[key]);
+                    model.attributes[key] = this.fullAssembler.extractPropertyValue(node.attributes[key]);
             }
         });
 
@@ -136,6 +138,54 @@ export class GroupsAssembler {
 
     }
 
+    public toRelatedGroupModelsList(node: Node, offset?:number|string, count?:number): RelatedGroupListModel {
+        logger.debug(`groups.assembler toRelatedGroupModelsList: in: node: ${JSON.stringify(node)}`);
+
+        const r:RelatedGroupListModel = {
+            results:[]
+        };
+
+        if (node===undefined) {
+            return r;
+        }
+
+        if (offset!==undefined || count!==undefined) {
+            r.pagination = {
+                offset,
+                count
+            };
+
+        }
+
+        Object.keys(node.in).forEach( relationship => {
+            const others = node.in[relationship];
+            if (others!==undefined) {
+                others.forEach(other=> {
+                    const group: RelatedGroupModel = this.toGroupModel(other) as RelatedGroupModel;
+                    group.relation = relationship;
+                    group.direction = 'in';
+                    r.results.push(group);
+                });
+            }
+        });
+
+        Object.keys(node.out).forEach( relationship => {
+            const others = node.out[relationship];
+            if (others!==undefined) {
+                others.forEach(other=> {
+                    const group: RelatedGroupModel = this.toGroupModel(other) as RelatedGroupModel;
+                    group.relation = relationship;
+                    group.direction = 'out';
+                    r.results.push(group);
+                });
+            }
+        });
+
+        logger.debug(`groups.assembler toRelatedGroupModelsList: exit: r: ${JSON.stringify(r)}`);
+        return r;
+
+    }
+
     public toGroupMembersList(nodes: Node[], offset?:number|string, count?:number): GroupsMembersModel {
         logger.debug(`groups.assembler toGroupMembersList: in: nodes: ${JSON.stringify(nodes)}`);
 
@@ -170,11 +220,4 @@ export class GroupsAssembler {
 
     }
 
-    private extractPropertyValue(v: AttributeValue): GroupModelAttributeValue {
-        if (Array.isArray(v)) {
-            return v[0]===null? undefined: v[0];
-        } else {
-            return v===null? undefined: v;
-        }
-    }
 }

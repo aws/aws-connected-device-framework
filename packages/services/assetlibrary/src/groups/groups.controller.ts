@@ -6,12 +6,13 @@
 import { Response } from 'express';
 import { interfaces, controller, httpGet, response, requestParam, httpPost, requestBody, queryParam , httpDelete, httpPatch, httpPut} from 'inversify-express-utils';
 import { inject } from 'inversify';
-import { GroupModel, GroupsListModel, GroupsMembersModel } from './groups.models';
+import { GroupModel, GroupListModel, GroupsMembersModel, RelatedGroupListModel } from './groups.models';
 import { GroupsService } from './groups.service';
 import {TYPES} from '../di/types';
 import {logger} from '../utils/logger';
 import {TypeCategory} from '../types/constants';
 import {handleError} from '../utils/errors';
+import { RelatedDeviceListResult } from '../devices/devices.models';
 
 @controller('/groups')
 export class GroupsController implements interfaces.Controller {
@@ -83,7 +84,7 @@ export class GroupsController implements interfaces.Controller {
     }
 
     @httpGet('/:groupPath/memberships')
-    public async listGroupMemberships(@requestParam('groupPath') groupPath:string, @response() res:Response): Promise<GroupsListModel> {
+    public async listGroupMemberships(@requestParam('groupPath') groupPath:string, @response() res:Response): Promise<GroupListModel> {
 
         logger.info(`groups.controller getGroupMemberships: in: groupPath:${groupPath}`);
         try {
@@ -134,6 +135,50 @@ export class GroupsController implements interfaces.Controller {
         } catch (e) {
             handleError(e,res);
         }
+    }
+
+    @httpGet('/:groupPath/:relationship/groups')
+    public async listGroupRelatedGroups(@requestParam('groupPath') groupPath: string, @requestParam('relationship') relationship: string,
+        @queryParam('template') template:string, @queryParam('direction') direction:string,
+        @queryParam('offset') offset:number, @queryParam('count') count:number,
+        @response() res: Response) : Promise<RelatedGroupListModel> {
+
+            logger.info(`groups.controller listGroupRelatedGroups: in: groupPath:${groupPath}, relationship:${relationship}, direction:${direction}, template:${template}, offset:${offset}, count:${count}`);
+
+            let r: RelatedGroupListModel = {results:[]};
+
+            try {
+                r = await this.groupsService.listRelatedGroups(groupPath, relationship, direction, template, offset, count);
+                if (r===undefined) {
+                    res.status(404);
+                }
+            } catch (e) {
+                handleError(e,res);
+            }
+            logger.debug(`groups.controller listGroupRelatedGroups: exit: ${JSON.stringify(r)}`);
+            return r;
+    }
+
+    @httpGet('/:groupPath/:relationship/devices')
+    public async listGroupRelatedDevices(@requestParam('groupPath') groupPath: string, @requestParam('relationship') relationship: string,
+        @queryParam('template') template:string, @queryParam('direction') direction:string, @queryParam('state') state:string,
+        @queryParam('offset') offset:number, @queryParam('count') count:number,
+        @response() res: Response) : Promise<RelatedDeviceListResult> {
+
+            logger.info(`groups.controller listGroupRelatedDevices: in: groupPath:${groupPath}, relationship:${relationship}, direction:${direction}, template:${template}, state:${state}, offset:${offset}, count:${count}`);
+
+            let r: RelatedDeviceListResult = {results:[]};
+
+            try {
+                r = await this.groupsService.listRelatedDevices(groupPath, relationship, direction, template, state, offset, count);
+                if (r===undefined) {
+                    res.status(404);
+                }
+            } catch (e) {
+                handleError(e,res);
+            }
+            logger.debug(`groups.controller listGroupRelatedDevices: exit: ${JSON.stringify(r)}`);
+            return r;
     }
 
 }

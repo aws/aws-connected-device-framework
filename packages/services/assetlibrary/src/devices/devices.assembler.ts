@@ -3,14 +3,18 @@
 #
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
-import { injectable } from 'inversify';
-import { DeviceModel, DeviceModelAttributeValue, DeviceState} from './devices.models';
+import { injectable, inject } from 'inversify';
+import { DeviceModel, DeviceState, RelatedDeviceListResult, RelatedDeviceModel} from './devices.models';
 import {logger} from '../utils/logger';
-import {Node, AttributeValue} from '../data/node';
+import {Node} from '../data/node';
 import {TypeCategory} from '../types/constants';
+import { TYPES } from '../di/types';
+import { FullAssembler } from '../data/full.assembler';
 
 @injectable()
 export class DevicesAssembler {
+
+    constructor( @inject(TYPES.FullAssembler) private fullAssembler: FullAssembler ) {}
 
     public toNode(model:DeviceModel): Node {
         logger.debug(`device.assembler toNode: in: model:${JSON.stringify(model)}`);
@@ -70,29 +74,50 @@ export class DevicesAssembler {
         Object.keys(node.attributes).forEach( key => {
             switch(key) {
                 case 'deviceId':
-                    model.deviceId = <string> this.extractPropertyValue(node.attributes[key]);
+                    model.deviceId = <string> this.fullAssembler.extractPropertyValue(node.attributes[key]);
                     break;
                 case 'awsIotThingArn':
-                    model.awsIotThingArn = <string> this.extractPropertyValue(node.attributes[key]);
+                    model.awsIotThingArn = <string> this.fullAssembler.extractPropertyValue(node.attributes[key]);
                     break;
                 case 'description':
-                    model.description = <string> this.extractPropertyValue(node.attributes[key]);
+                    model.description = <string> this.fullAssembler.extractPropertyValue(node.attributes[key]);
                     break;
                 case 'imageUrl':
-                    model.imageUrl = <string> this.extractPropertyValue(node.attributes[key]);
+                    model.imageUrl = <string> this.fullAssembler.extractPropertyValue(node.attributes[key]);
                     break;
                 case 'connected':
-                    model.connected = <boolean> this.extractPropertyValue(node.attributes[key]);
+                    model.connected = <boolean> this.fullAssembler.extractPropertyValue(node.attributes[key]);
                     break;
                 case 'state':
-                    model.state = <DeviceState> this.extractPropertyValue(node.attributes[key]);
+                    model.state = <DeviceState> this.fullAssembler.extractPropertyValue(node.attributes[key]);
                     break;
 
                 default:
-                    model.attributes[key] = this.extractPropertyValue(node.attributes[key]);
+                    model.attributes[key] = this.fullAssembler.extractPropertyValue(node.attributes[key]);
             }
         });
 
+        this.assembleRelatedIn(model, node);
+
+        this.assembleRelatedOut(model, node);
+
+        // remove any empty collection attributes
+        if (model.groups && Object.keys(model.groups).length===0) {
+            delete model.groups;
+        }
+        if (model.devices && Object.keys(model.devices).length===0) {
+            delete model.devices;
+        }
+        if (model.components &&model.components.length===0) {
+            delete model.components;
+        }
+
+        logger.debug(`device.assembler toDeviceModel: exit: model: ${JSON.stringify(model)}`);
+        return model;
+
+    }
+
+    private assembleRelatedIn(model:DeviceModel, node:Node) {
         Object.keys(node.in).forEach( key => {
             const others = node.in[key];
             if (others!==undefined) {
@@ -111,7 +136,9 @@ export class DevicesAssembler {
                 });
             }
         });
+    }
 
+    private assembleRelatedOut(model:DeviceModel, node:Node) {
         Object.keys(node.out).forEach( key => {
             const others = node.out[key];
             if (others!==undefined) {
@@ -136,28 +163,53 @@ export class DevicesAssembler {
 
             }
         });
-
-        // remove any empty collection attributes
-        if (model.groups && Object.keys(model.groups).length===0) {
-            delete model.groups;
-        }
-        if (model.devices && Object.keys(model.devices).length===0) {
-            delete model.devices;
-        }
-        if (model.components &&model.components.length===0) {
-            delete model.components;
-        }
-
-        logger.debug(`device.assembler toDeviceModel: exit: model: ${JSON.stringify(model)}`);
-        return model;
-
     }
 
-    private extractPropertyValue(v: AttributeValue): DeviceModelAttributeValue {
-        if (Array.isArray(v)) {
-            return v[0];
-        } else {
-            return v;
+    public toRelatedDeviceModelsList(node: Node, offset?:number|string, count?:number): RelatedDeviceListResult {
+        logger.debug(`devices.assembler toRelatedDeviceModelsList: in: node: ${JSON.stringify(node)}`);
+
+        const r:RelatedDeviceListResult = {
+            results:[]
+        };
+
+        if (node===undefined) {
+            return r;
         }
+
+        if (offset!==undefined || count!==undefined) {
+            r.pagination = {
+                offset,
+                count
+            };
+
+        }
+
+        Object.keys(node.in).forEach( relationship => {
+            const others = node.in[relationship];
+            if (others!==undefined) {
+                others.forEach(other=> {
+                    const device: RelatedDeviceModel = this.toDeviceModel(other) as RelatedDeviceModel;
+                    device.relation = relationship;
+                    device.direction = 'in';
+                    r.results.push(device);
+                });
+            }
+        });
+
+        Object.keys(node.out).forEach( relationship => {
+            const others = node.out[relationship];
+            if (others!==undefined) {
+                others.forEach(other=> {
+                    const device: RelatedDeviceModel = this.toDeviceModel(other) as RelatedDeviceModel;
+                    device.relation = relationship;
+                    device.direction = 'out';
+                    r.results.push(device);
+                });
+            }
+        });
+
+        logger.debug(`groups.assembler toGroupModelList: exit: r: ${JSON.stringify(r)}`);
+        return r;
+
     }
 }

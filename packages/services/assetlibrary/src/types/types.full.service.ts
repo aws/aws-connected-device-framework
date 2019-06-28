@@ -65,6 +65,9 @@ export class TypesServiceFull implements TypesService {
                 schema = JSON.parse(await this.loadSchema(category));
                 this._typesCache.set(category, schema);
             }
+            if (schema===undefined) {
+                throw new Error('TEMPLATE_NOT_FOUND');
+            }
             await this.initializeSubTypeSchema(templateId, category, schema);
             this._typesCache.set(templateId, schema, 10);
             subTypeSchema = schema;
@@ -101,10 +104,14 @@ export class TypesServiceFull implements TypesService {
     }
 
     private async initializeSubTypeSchema(templateId:string, category:TypeCategory, schema:any) {
-        logger.debug(`types.full.service initializeSubTypeSchema: category:${category}, templateId:${templateId}`);
+        logger.debug(`types.full.service initializeSubTypeSchema: in: category:${category}, templateId:${templateId}, schema:${JSON.stringify(schema)}`);
 
         const superTypeCategory = (category===TypeCategory.Component) ? TypeCategory.Device : category;
         const typeModel = await this.get(templateId, superTypeCategory, 'published');
+        if (typeModel===undefined) {
+            throw new Error ('TEMPLATE_NOT_FOUND');
+        }
+
         const typeDef =  typeModel.schema.definition;
         schema.definitions.subType.properties = typeDef.properties;
         schema.definitions.subType.required = typeDef.required;
@@ -141,7 +148,7 @@ export class TypesServiceFull implements TypesService {
 
         schema['$id'] = `http://aws.com/cdf/schemas/${templateId}.json`;
 
-        logger.debug(`types.full.service initializeSubTypeSchema: schema:${JSON.stringify(schema)}`);
+        logger.debug(`types.full.service initializeSubTypeSchema: exit: schema:${JSON.stringify(schema)}`);
     }
 
     public async validateType(category:TypeCategory, document:object, op:Operation): Promise<SchemaValidationResult> {
@@ -175,6 +182,8 @@ export class TypesServiceFull implements TypesService {
         if (result!==undefined) {
             result.schema.definition.relations = result.schema.relations;
         }
+
+        logger.debug(`types.full.service get: exit: ${JSON.stringify(result)}`);
         return result;
     }
 

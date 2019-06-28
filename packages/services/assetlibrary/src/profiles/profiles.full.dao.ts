@@ -8,7 +8,7 @@ import { injectable, inject } from 'inversify';
 import {logger} from '../utils/logger';
 import {TYPES} from '../di/types';
 import { ProfileNode } from './profiles.models';
-import { AttributeValue } from '../data/node';
+import { NodeAttributeValue } from '../data/node';
 import { TypeCategory } from '../types/constants';
 
 const __ = process.statics;
@@ -115,8 +115,8 @@ export class ProfilesDaoFull {
 
     }
 
-    private assembleNode(profile:{ [key:string]: AttributeValue}, template:{ [key:string]: AttributeValue},
-        category:{ [key:string]: AttributeValue}) : ProfileNode {
+    private assembleNode(profile:{ [key:string]: NodeAttributeValue}, template:{ [key:string]: NodeAttributeValue},
+        category:{ [key:string]: NodeAttributeValue}) : ProfileNode {
 
         logger.debug(`profiles.full.dao assembleNode: in: profile:${JSON.stringify(profile)}, template:${JSON.stringify(template)}, category:${JSON.stringify(category)}`);
 

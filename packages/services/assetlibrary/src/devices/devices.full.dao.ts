@@ -7,8 +7,9 @@ import { process } from 'gremlin';
 import { injectable, inject } from 'inversify';
 import {logger} from '../utils/logger';
 import {TYPES} from '../di/types';
-import {Node, AttributeValue} from '../data/node';
-import {TypeCategory} from '../types/constants';
+import {Node} from '../data/node';
+import { FullAssembler, NodeDto } from '../data/full.assembler';
+import { ModelAttributeValue } from '../data/model';
 
 const __ = process.statics;
 
@@ -18,17 +19,98 @@ export class DevicesDaoFull {
     private _g: process.GraphTraversalSource;
 
     public constructor(
+        @inject(TYPES.FullAssembler) private fullAssembler: FullAssembler,
 	    @inject(TYPES.GraphTraversalSourceFactory) graphTraversalSourceFactory: () => process.GraphTraversalSource
     ) {
         this._g = graphTraversalSourceFactory();
     }
 
+    public async listRelated(deviceId: string, relationship: string, direction:string, template:string, filter:{ [key: string] : ModelAttributeValue}, offset:number, count:number) : Promise<Node> {
+        logger.debug(`devices.full.dao listRelated: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, template:${template}, filter:${JSON.stringify(filter)}, offset:${offset}, count:${count}`);
+
+        const id = `device___${deviceId}`;
+
+        // build the queries for returning the info we need to assmeble related devices
+        let connectedEdges;
+        let connectedVertices;
+        if (direction==='in') {
+            connectedEdges = __.inE();
+            connectedVertices = __.in_();
+        } else if (direction==='out') {
+            connectedEdges = __.outE();
+            connectedVertices = __.out();
+        } else {
+            connectedEdges = __.bothE();
+            connectedVertices = __.both();
+        }
+        if (relationship!=='*') {
+            connectedEdges.hasLabel(relationship);
+            connectedVertices.hasLabel(template);
+        }
+        connectedEdges.where(__.otherV().hasLabel(template)).valueMap(true).fold();
+        connectedVertices.dedup().valueMap(true).fold();
+
+        // assemble the main query
+        const traverser = this._g.V(id).as('device');
+
+        if (filter!==undefined && filter!==null) {
+            Object.keys(filter).forEach(k=> {
+                traverser.has(k, filter[k]);
+            });
+        }
+
+        traverser.project('object','pathsIn','pathsOut','Es','Vs').
+            by(__.valueMap(true)).
+            by(__.inE().otherV().path().by(process.t.id).fold()).
+            by(__.outE().otherV().path().by(process.t.id).fold()).
+            by(connectedEdges).
+            by(connectedVertices);
+
+        // apply pagination
+        if (offset!==undefined && count!==undefined) {
+            // note: workaround for weird typescript issue. even though offset/count are declared as numbers
+            // throughout, they are being interpreted as strings within gremlin, therefore need to force to int beforehand
+            const offsetAsInt = parseInt(offset.toString(),0);
+            const countAsInt = parseInt(count.toString(),0);
+            traverser.range(offsetAsInt, offsetAsInt + countAsInt);
+        }
+
+        // execute and retrieve the results
+        logger.debug(`devices.full.dao listRelatedDevices: traverser: ${traverser}`);
+        const results = await traverser.toList();
+        logger.debug(`devices.full.dao listRelatedDevices: results: ${JSON.stringify(results)}`);
+
+        if (results===undefined || results.length===0) {
+            logger.debug(`devices.full.dao listRelatedDevices: exit: node: undefined`);
+            return undefined;
+        }
+
+        // there should be only one result as its by deviceId, but we still process as an array so we can reuse the existing assemble methods
+        const nodes: Node[] = [];
+        for(const result of results) {
+            const r = JSON.parse(JSON.stringify(result)) as NodeDto;
+
+            // assemble the device
+            let node: Node;
+            if (r) {
+                node = this.fullAssembler.assembleDeviceNode(r.object);
+                this.fullAssembler.assembleAssociations(node, r);
+            }
+            nodes.push(node);
+        }
+
+        logger.debug(`devices.full.dao listRelatedDevices: exit: node: ${JSON.stringify(nodes[0])}`);
+        return nodes[0];
+
+    }
+
     public async get(deviceIds:string[], expandComponents:boolean, attributes:string[], includeGroups:boolean): Promise<Node[]> {
+
         logger.debug(`device.full.dao get: in: deviceIds:${deviceIds}, expandComponents:${expandComponents}, attributes:${attributes}, includeGroups:${includeGroups}`);
 
         const ids:string[] = deviceIds.map(d=> `device___${d}`);
 
-        // build the queries for returning the info we need to assmeble groups and/or component relationships
+        // build the queries for returning the info we need to assemble groups and/or component relationships
         let connectedEdges;
         let connectedVertices;
         if (expandComponents===true && includeGroups===true) {
@@ -50,18 +132,19 @@ export class DevicesDaoFull {
         // assemble the main query
         const traverser = this._g.V(ids).as('device');
         if (connectedEdges!==undefined) {
-            traverser.project('device','paths','Es','Vs').
+            traverser.project('object','pathsIn','pathsOut','Es','Vs').
                 by(deviceValueMap).
-                by(__.bothE().otherV().path().by(process.t.id).fold()).
+                by(__.inE().otherV().path().by(process.t.id).fold()).
+                by(__.outE().otherV().path().by(process.t.id).fold()).
                 by(connectedEdges).
                 by(connectedVertices);
         } else {
-            traverser.project('device','paths').
+            traverser.project('object','paths').
                 by(deviceValueMap).
                 by(__.bothE().otherV().path().by(process.t.id).fold());
         }
 
-        // execute and retrieve the resutls
+        // execute and retrieve the results
         const results = await traverser.toList();
         // logger.debug(`device.full.dao get: query: ${JSON.stringify(query)}`);
 
@@ -72,13 +155,13 @@ export class DevicesDaoFull {
 
         const nodes: Node[] = [];
         for(const result of results) {
-            const r = JSON.parse(JSON.stringify(result)) as GetDeviceResult;
+            const r = JSON.parse(JSON.stringify(result)) as NodeDto;
 
             // assemble the device
             let node: Node;
             if (r) {
-                node = this.assembleNode(r.device);
-                this.assembleAssociations(node, r);
+                node = this.fullAssembler.assembleDeviceNode(r.object);
+                this.fullAssembler.assembleAssociations(node, r);
             }
             nodes.push(node);
         }
@@ -116,59 +199,6 @@ export class DevicesDaoFull {
                 return labels;
             }
         }
-    }
-
-    private assembleNode(device:{ [key:string]: AttributeValue}):Node {
-        logger.debug(`devices.full.dao assembleNode: in: device: ${JSON.stringify(device)}`);
-
-        const labels = (<string> device['label']).split('::');
-        const node = new Node();
-        Object.keys(device).forEach( key => {
-            if (key==='id') {
-                node.id = <string> device[key];
-            } else if (key==='label') {
-                node.types = labels;
-            } else {
-                node.attributes[key] = device[key] ;
-            }
-        });
-
-        logger.debug(`devices.full.dao assembleNode: exit: node: ${JSON.stringify(node)}`);
-        return node;
-    }
-
-    private assembleAssociations(node:Node, r:GetDeviceResult) {
-        logger.debug(`devices.full.dao assembleAssociations: in:`);
-
-        // assemble all associated objects
-        r.paths.forEach((value)=> {
-            const eId = value.objects[1];
-            const direction = (value.objects[0]===r.device.id) ? 'out' : 'in';
-            const vId = (direction==='out') ? value.objects[2] : value.objects[0];
-            const e = (r.Es!==undefined && r.Es!==null) ? r.Es.filter(edge=> edge.id===eId) : [];
-            const v = (r.Vs!==undefined && r.Vs!==null) ? r.Vs.filter(vertex=> vertex.id===vId): [];
-
-            if (v[0]!==undefined && e[0]!==undefined) {
-                const l = (<string> v[0]['label']).split('::');
-                if (l.includes(TypeCategory.Group)) {
-                    const other = new Node();
-                    other.attributes['groupPath'] = v[0]['groupPath']as string;
-                    other.category = TypeCategory.Group;
-                    node.addLink(direction, e[0]['label'], other);
-                } else if (l.includes(TypeCategory.Component)) {
-                    const other = this.assembleNode(v[0]);
-                    other.category = TypeCategory.Component;
-                    node.addLink(direction, e[0]['label'], other);
-                } else if (l.includes(TypeCategory.Device)) {
-                    const other = this.assembleNode(v[0]);
-                    other.category = TypeCategory.Device;
-                    node.addLink(direction, e[0]['label'], other);
-                } else {
-                    logger.warn(`assembleAssociations does not yet support handling ${l}`);
-                }
-            }
-        });
-        logger.debug(`devices.full.dao assembleAssociations: exit:`);
     }
 
     public async create(n:Node, groups:{[relation:string]:string[]}, devices:{[relation:string]:string[]}, components:Node[]): Promise<string> {
@@ -370,16 +400,4 @@ export class DevicesDaoFull {
         logger.debug(`devices.full.dao detachFromDevice: exit:`);
     }
 
-}
-
-export interface GetDeviceResult {
-    device: { [key:string]: AttributeValue};
-    paths: {
-        objects:string[];
-    }[];
-    Es: {
-        label:string;
-        id:string;
-    }[];
-    Vs: { [key:string]: AttributeValue} [];
 }

@@ -1,4 +1,5 @@
 import { TypeCategory } from '../types/constants';
+import { ModelAttributeValue } from '../data/model';
 
 /*-------------------------------------------------------------------------------
 # Copyright (c) 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
@@ -6,7 +7,6 @@ import { TypeCategory } from '../types/constants';
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
 
-export type DeviceModelAttributeValue = string | number | boolean;
 export class DeviceModel {
 	deviceId: string;
 	category: TypeCategory;
@@ -23,14 +23,32 @@ export class DeviceModel {
 	assemblyOf?: DeviceModel;
 	components?: DeviceModel[];
 
-	attributes?: { [key: string] : DeviceModelAttributeValue} = {};
+	attributes?: { [key: string] : ModelAttributeValue} = {};
 
 	// used for optimistic locking in 'lite' mode
 	version?: number;
 
 }
+
+export class RelatedDeviceModel extends DeviceModel {
+	relation: string;
+	direction: string;
+}
+
 export class DeviceListResult {
 	results: DeviceModel[];
+	pagination?: {
+		offset:number|string;
+		count: number;
+	};
+}
+
+export class RelatedDeviceListResult {
+	results: RelatedDeviceModel[];
+	pagination?: {
+		offset:number|string;
+		count: number;
+	};
 }
 
 export class BulkDevicesRequest {

@@ -27,6 +27,7 @@ import { ProfilesAssembler } from '../profiles/profiles.assembler';
 import { InitService } from '../init/init.service';
 import { InitDaoFull } from '../init/init.full.dao';
 import { InitServiceFull } from '../init/init.full.service';
+import { FullAssembler } from '../data/full.assembler';
 
 export const FullContainerModule = new ContainerModule (
     (
@@ -43,6 +44,8 @@ export const FullContainerModule = new ContainerModule (
 
         bind<GroupsService>(TYPES.GroupsService).to(GroupsServiceFull).inSingletonScope();
         bind<GroupsDaoFull>(TYPES.GroupsDao).to(GroupsDaoFull).inSingletonScope();
+
+        bind<FullAssembler>(TYPES.FullAssembler).to(FullAssembler).inSingletonScope();
 
         bind<ProfilesService>(TYPES.ProfilesService).to(ProfilesServiceFull).inSingletonScope();
         bind<ProfilesDaoFull>(TYPES.ProfilesDao).to(ProfilesDaoFull).inSingletonScope();

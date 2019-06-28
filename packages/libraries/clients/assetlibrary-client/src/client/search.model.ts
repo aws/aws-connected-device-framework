@@ -6,24 +6,67 @@
 import { Group } from './groups.model';
 import { Device } from './devices.model';
 
+export enum SearchRequestFilterDirection {
+	in = 'in',
+	out = 'out'
+}
+export type SearchRequestFilterTraversal =  {
+	relation?: string;
+	direction?: SearchRequestFilterDirection;
+};
+export type SearchRequestFilter = {
+	traversals?: SearchRequestFilterTraversal[];
+	field: string;
+	value: string | number | boolean;
+};
+export type SearchRequestFacet = {
+	traversals?: SearchRequestFilterTraversal[];
+	field: string;
+};
+
+export type SearchRequestFilters = SearchRequestFilter[];
+
 export class SearchRequestModel {
-	types: string[]=[];
+	types?: string[]=[];
 	ancestorPath?: string;
 
-	eq?: { [key: string] : string | number | boolean};
-	neq?: { [key: string] : string | number | boolean};
-	lt?: { [key: string] : number};
-	lte?: { [key: string] : number};
-	gt?: { [key: string] : number};
-	gte?: { [key: string] : number};
-	startsWith?: { [key: string] : string};
-	endsWith?: { [key: string] : string};
-	contains?: { [key: string] : string};
+	eq?: SearchRequestFilters;
+	neq?: SearchRequestFilters;
+	lt?: SearchRequestFilters;
+	lte?: SearchRequestFilters;
+	gt?: SearchRequestFilters;
+	gte?: SearchRequestFilters;
+	startsWith?: SearchRequestFilters;
+	endsWith?: SearchRequestFilters;
+	contains?: SearchRequestFilters;
 
- 	summarize: boolean = false;
+	facetField?: SearchRequestFacet;
+
+	summarize?: boolean;
+
+	private buildQSValues(qsParam:string, filters:SearchRequestFilters) : string[] {
+		const qs:string[]= [];
+
+		if (filters===undefined) {
+			return qs;
+		}
+
+		filters.forEach(f=> {
+			let v = `${qsParam}=`;
+			if (f.traversals!==undefined) {
+				f.traversals.forEach(t=> {
+					v+=`${t.relation}:${t.direction}:`;
+				});
+			}
+			v+=`${f.field}:${f.value}`;
+			qs.push(v);
+		});
+
+		return qs;
+	}
 
 	public toQueryString():string {
-		const qs:string[]= [];
+		let qs:string[]= [];
 
 		if (this.types) {
 			this.types.forEach(k=> qs.push(`type=${k}`));
@@ -34,42 +77,44 @@ export class SearchRequestModel {
 		}
 
 		if (this.eq) {
-			Object.keys(this.eq).forEach(k=> qs.push(`eq=${k}:${this.eq[k]}`));
+			qs = qs.concat(this.buildQSValues('eq', this.eq));
 		}
 
 		if (this.neq) {
-			Object.keys(this.neq).forEach(k=> qs.push(`neq=${k}:${this.neq[k]}`));
+			qs = qs.concat(this.buildQSValues('neq', this.neq));
 		}
 
 		if (this.lt) {
-			Object.keys(this.lt).forEach(k=> qs.push(`lt=${k}:${this.lt[k]}`));
+			qs = qs.concat(this.buildQSValues('lt', this.lt));
 		}
 
 		if (this.lte) {
-			Object.keys(this.lte).forEach(k=> qs.push(`lte=${k}:${this.lte[k]}`));
+			qs = qs.concat(this.buildQSValues('lte', this.lte));
 		}
 
 		if (this.gt) {
-			Object.keys(this.gt).forEach(k=> qs.push(`gt=${k}:${this.gt[k]}`));
+			qs = qs.concat(this.buildQSValues('gt', this.gt));
 		}
 
 		if (this.gte) {
-			Object.keys(this.gte).forEach(k=> qs.push(`gte=${k}:${this.gte[k]}`));
+			qs = qs.concat(this.buildQSValues('gte', this.gte));
 		}
 
 		if (this.startsWith) {
-			Object.keys(this.startsWith).forEach(k=> qs.push(`startsWith=${k}:${this.startsWith[k]}`));
+			qs = qs.concat(this.buildQSValues('startsWith', this.startsWith));
 		}
 
 		if (this.endsWith) {
-			Object.keys(this.endsWith).forEach(k=> qs.push(`endsWith=${k}:${this.endsWith[k]}`));
+			qs = qs.concat(this.buildQSValues('endsWith', this.endsWith));
 		}
 
 		if (this.contains) {
-			Object.keys(this.contains).forEach(k=> qs.push(`contains=${k}:${this.contains[k]}`));
+			qs = qs.concat(this.buildQSValues('contains', this.contains));
 		}
 
-		qs.push(`summarize=${this.summarize}`);
+		if (this.summarize) {
+			qs.push(`summarize=${this.summarize}`);
+		}
 
 		return qs.join('&');
 	}

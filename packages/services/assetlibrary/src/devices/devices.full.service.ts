@@ -4,7 +4,7 @@
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
 import { injectable, inject } from 'inversify';
-import { DeviceModel, BulkDevicesResult, BulkDevicesRequest, DeviceState, DeviceListResult} from './devices.models';
+import { DeviceModel, BulkDevicesResult, BulkDevicesRequest, DeviceState, DeviceListResult, RelatedDeviceListResult} from './devices.models';
 import { DevicesAssembler} from './devices.assembler';
 import { TYPES } from '../di/types';
 import { DevicesDaoFull} from './devices.full.dao';
@@ -18,6 +18,8 @@ import ow from 'ow';
 import { ProfilesService } from '../profiles/profiles.service';
 import { DeviceProfileModel } from '../profiles/profiles.models';
 import { DevicesService } from './devices.service';
+import { RelatedGroupListModel } from '../groups/groups.models';
+import { GroupsAssembler } from '../groups/groups.assembler';
 
 @injectable()
 export class DevicesServiceFull implements DevicesService {
@@ -25,12 +27,85 @@ export class DevicesServiceFull implements DevicesService {
     constructor( @inject(TYPES.DevicesDao) private devicesDao: DevicesDaoFull,
         @inject(TYPES.TypesService) private typesService: TypesService,
         @inject(TYPES.DevicesAssembler) private devicesAssembler: DevicesAssembler,
+        @inject(TYPES.GroupsAssembler) private groupsAssembler: GroupsAssembler,
         @inject(TYPES.GroupsService) private groupsService: GroupsService,
         @inject(TYPES.EventEmitter) private eventEmitter: EventEmitter,
         @inject(TYPES.ProfilesService) private profilesService: ProfilesService,
         @inject('defaults.devices.parent.relation') public defaultDeviceParentRelation: string,
         @inject('defaults.devices.parent.groupPath') public defaultDeviceParentGroup: string,
         @inject('defaults.devices.state') public defaultDeviceState: string) {}
+
+    public async listRelatedDevices(deviceId: string, relationship: string, direction:string, template:string, state:string, offset:number, count:number) : Promise<RelatedDeviceListResult> {
+        logger.debug(`device.full.service listRelatedDevices: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, template:${template}, state:${state}, offset:${offset}, count:${count}`);
+
+        ow(deviceId, ow.string.nonEmpty);
+        ow(relationship, ow.string.nonEmpty);
+
+        // defaults
+        if (direction===undefined || direction===null) {
+            direction = 'both';
+        }
+        if (state===undefined || state===null) {
+            state = 'active';
+        }
+        if (template===undefined || template===null) {
+            template=TypeCategory.Device;
+        }
+
+        // any ids need to be lowercase
+        deviceId=deviceId.toLowerCase();
+        relationship=relationship.toLowerCase();
+        if (template) {
+            template=template.toLowerCase();
+        }
+        if (state) {
+            state=state.toLowerCase();
+        }
+        if (direction) {
+            direction=direction.toLowerCase();
+        }
+
+        const result  = await this.devicesDao.listRelated(deviceId, relationship, direction, template, {state}, offset, count);
+
+        if (offset!==undefined && count!==undefined) {
+            offset+=count;
+        }
+        const model = this.devicesAssembler.toRelatedDeviceModelsList(result);
+        logger.debug(`devices.full.service listRelatedDevices: exit: model: ${JSON.stringify(model)}`);
+        return model;
+    }
+
+    public async listRelatedGroups(deviceId: string, relationship: string, direction:string, template:string, offset:number, count:number) : Promise<RelatedGroupListModel> {
+        logger.debug(`device.full.service listRelatedGroups: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, template:${template}, offset:${offset}, count:${count}`);
+
+        ow(deviceId, ow.string.nonEmpty);
+        ow(relationship, ow.string.nonEmpty);
+
+        // defaults
+        if (direction===undefined || direction===null) {
+            direction = 'both';
+        }
+        if (template===undefined || template===null) {
+            template=TypeCategory.Group;
+        }
+
+        // any ids need to be lowercase
+        deviceId=deviceId.toLowerCase();
+        relationship=relationship.toLowerCase();
+        if (template) {
+            template=template.toLowerCase();
+        }
+        direction=direction.toLowerCase();
+
+        const result  = await this.devicesDao.listRelated(deviceId, relationship, direction, template, {}, offset, count);
+
+        if (offset!==undefined && count!==undefined) {
+            offset+=count;
+        }
+        const model = this.groupsAssembler.toRelatedGroupModelsList(result);
+        logger.debug(`devices.full.service listRelatedGroups: exit: model: ${JSON.stringify(model)}`);
+        return model;
+    }
 
     public async get(deviceId:string, expandComponents?:boolean, attributes?:string[], includeGroups?:boolean): Promise<DeviceModel> {
         logger.debug(`device.full.service get: in: deviceId:${deviceId}, expandComponents:${expandComponents}, attributes:${attributes}, includeGroups:${includeGroups}`);
