@@ -1,3 +1,10 @@
+# [@cdf/assetlibrary-history-v2.1.5](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-history-v2.1.4...@cdf/assetlibrary-history-v2.1.5) (2019-06-28)
+
+
+### Bug Fixes
+
+* **assetlibraryhistory:** missing cors default config property ([016b69b](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/016b69b))
+
 # [@cdf/assetlibrary-history-v2.1.4](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-history-v2.1.3...@cdf/assetlibrary-history-v2.1.4) (2019-06-28)
 
 
