@@ -36,7 +36,10 @@ export class SearchController implements interfaces.Controller {
 
           const r: SearchResultsModel= {results:[]};
 
-          if (offset && count) {
+          if (offset || count) {
+              if (offset===undefined) {
+                offset=0;
+              }
               r.pagination = {
                   offset,
                   count
