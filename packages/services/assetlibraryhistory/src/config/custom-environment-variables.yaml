@@ -4,3 +4,6 @@ aws:
   dynamoDb:
     tables: 
       events: ASSETLIBRARYHISTORY_AWS_DYNAMODB_TABLES_EVENTS
+
+cors:
+  origin: ASSETLIBRARYHISTORY_CORS_ORIGIN

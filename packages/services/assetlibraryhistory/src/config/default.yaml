@@ -3,7 +3,10 @@ aws:
 
   dynamoDb:
     tables: 
-      events: cdf-assetlibraryhistory
+      events: cdf-assetlibraryhistory 
+
+cors:
+  origin:
 
 supportedApiVersions:
   - json:
