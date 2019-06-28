@@ -40,6 +40,7 @@ nav:
       - 'Notifications Overiew' : projects/notifications/overview.md
       - 'Notifications Walkthrough' : projects/notifications/walkthrough.md
       - 'Notifications Design' : projects/notifications/design.md
+      - 'Notifications Swagger': projects/notifications/events-processor-swagger.md
     - Provisioning:
       - 'Provisioning Overview': projects/provisioning/overview.md
       - 'Provisioning Templates': projects/provisioning/provisioning-templates.md

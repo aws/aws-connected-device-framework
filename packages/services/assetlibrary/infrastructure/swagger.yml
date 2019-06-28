@@ -1203,7 +1203,7 @@ paths:
           type: string
       - name: facetField
         in: query
-        description: "Perform a faceted query.  Specify in the forma of `?facetField=relation:direction:field".
+        description: "Perform a faceted query.  Specify in the form of `?facetField=relation:direction:field."
         type: string
       - name: summarize
         in: query
