@@ -44,6 +44,22 @@ export class SearchRequestModel {
 
 	summarize?: boolean;
 
+	public clone(other:SearchRequestModel) {
+		this.types = other.types;
+		this.ancestorPath = other.ancestorPath;
+		this.eq = other.eq;
+		this.neq = other.neq;
+		this.lt = other.lt;
+		this.lte = other.lte;
+		this.gt = other.gt;
+		this.gte = other.gte;
+		this.startsWith = other.startsWith;
+		this.endsWith = other.endsWith;
+		this.contains = other.contains;
+		this.facetField = other.facetField;
+		this.summarize = other.summarize;
+	}
+
 	private buildQSValues(qsParam:string, filters:SearchRequestFilters) : string[] {
 		const qs:string[]= [];
 

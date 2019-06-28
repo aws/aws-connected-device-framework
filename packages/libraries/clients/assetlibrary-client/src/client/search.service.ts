@@ -15,6 +15,7 @@ import ow from 'ow';
 import * as request from 'superagent';
 import config from 'config';
 import { SearchRequestModel, SearchResultsModel } from './search.model';
+import { QSHelper } from '../utils/qs.helper';
 
 @injectable()
 export class SearchService  {
@@ -31,10 +32,18 @@ export class SearchService  {
         this.baseUrl = config.get('assetLibrary.baseUrl') as string;
     }
 
-    public async search(searchRequest:SearchRequestModel) : Promise<SearchResultsModel> {
+    public async search(searchRequest:SearchRequestModel, offset?:number, count?:number) : Promise<SearchResultsModel> {
         ow(searchRequest, ow.object.nonEmpty);
 
-        const queryString = searchRequest.toQueryString();
+        const req = new SearchRequestModel();
+        req.clone(searchRequest);
+
+        let queryString = req.toQueryString();
+        const queryString2 = QSHelper.getQueryString({offset, count});
+        if (queryString2!==null) {
+            queryString+= queryString2;
+        }
+
         ow(queryString, ow.string.nonEmpty);
 
         const url = `${this.baseUrl}/search?${queryString}`;

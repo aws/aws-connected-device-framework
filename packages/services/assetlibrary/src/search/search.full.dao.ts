@@ -106,15 +106,6 @@ export class SearchDaoFull {
             traverser.match(...filters);
         }
 
-        // apply pagination
-        if (offset!==undefined && count!==undefined) {
-            // note: workaround for weird typescript issue. even though offset/count are declared as numbers
-            // througout, they are being interpreted as strings within gremlin, therefore need to force to int beforehand
-            const offsetAsInt = parseInt(offset.toString(),0);
-            const countAsInt = parseInt(count.toString(),0);
-            traverser.range(offsetAsInt, offsetAsInt + countAsInt);
-        }
-
         logger.debug(`search.full.dao buildSearchTraverser: traverser: ${JSON.stringify(traverser.toString())}`);
 
         return traverser;
@@ -138,6 +129,15 @@ export class SearchDaoFull {
         logger.debug(`search.full.dao search: in: request: ${JSON.stringify(request)}, offset:${offset}, count:${count}`);
 
         const traverser = this.buildSearchTraverser(request, offset, count);
+
+        // apply pagination
+        if (offset!==undefined && count!==undefined) {
+            // note: workaround for weird typescript issue. even though offset/count are declared as numbers
+            // througout, they are being interpreted as strings within gremlin, therefore need to force to int beforehand
+            const offsetAsInt = parseInt(offset.toString(),0);
+            const countAsInt = parseInt(count.toString(),0);
+            traverser.range(offsetAsInt, offsetAsInt + countAsInt);
+        }
 
         const results = await traverser.select('a').valueMap(true).toList();
 

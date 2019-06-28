@@ -397,6 +397,128 @@ definitions:
         type: array
         items:
           type: string
+      targetQuery:
+        type: object
+        properties:
+          types:
+            type: array
+            items:
+              type: string
+          ancestorPath:
+            type: string
+          eq:
+            type: array
+            items:
+              type: object
+              properties:
+                traversals:
+                  type: object
+                  properties:
+                    relation:
+                      type: string
+                    direction:
+                      type: string
+                field:
+                  type: string
+                value:
+                  type: string
+          neq:
+            type: array
+            items:
+              type: object
+              properties:
+                traversals:
+                  type: object
+                  properties:
+                    relation:
+                      type: string
+                    direction:
+                      type: string
+                field:
+                  type: string
+                value:
+                  type: string
+          lt:
+            type: array
+            items:
+              type: object
+              properties:
+                traversals:
+                  type: object
+                  properties:
+                    relation:
+                      type: string
+                    direction:
+                      type: string
+                field:
+                  type: string
+                value:
+                  type: string
+          lte:
+            type: array
+            items:
+              type: object
+              properties:
+                traversals:
+                  type: object
+                  properties:
+                    relation:
+                      type: string
+                    direction:
+                      type: string
+                field:
+                  type: string
+                value:
+                  type: string
+          gt:
+            type: array
+            items:
+              type: object
+              properties:
+                traversals:
+                  type: object
+                  properties:
+                    relation:
+                      type: string
+                    direction:
+                      type: string
+                field:
+                  type: string
+                value:
+                  type: string
+          gte:
+            type: array
+            items:
+              type: object
+              properties:
+                traversals:
+                  type: object
+                  properties:
+                    relation:
+                      type: string
+                    direction:
+                      type: string
+                field:
+                  type: string
+                value:
+                  type: string
+          startsWith:
+            type: array
+            items:
+              type: object
+              properties:
+                traversals:
+                  type: object
+                  properties:
+                    relation:
+                      type: string
+                    direction:
+                      type: string
+                field:
+                  type: string
+                value:
+                  type: string
+          
       documentParameters:
         type: object
         additionalProperties: 

@@ -30,6 +30,11 @@ export class SearchServiceFull implements SearchService {
         // all ids must be lowercase
         this.setIdsToLowercase(model);
 
+        // default pagination
+        if (count!==undefined && offset===undefined) {
+            offset=0;
+        }
+
         const models: (GroupModel|DeviceModel)[] = [];
         const results = await this.searchDao.search(model, offset, count);
 
