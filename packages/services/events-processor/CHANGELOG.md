@@ -1,3 +1,10 @@
+# [@cdf/events-processor-v1.1.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/events-processor-v1.0.3...@cdf/events-processor-v1.1.0) (2019-06-30)
+
+
+### Features
+
+* **assetlibrary:** new endpoints ([c936638](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/c936638))
+
 # [@cdf/events-processor-v1.0.3](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/events-processor-v1.0.2...@cdf/events-processor-v1.0.3) (2019-06-28)
 
 
