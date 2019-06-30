@@ -1,3 +1,10 @@
+# [@cdf/assetlibrary-history-v2.2.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-history-v2.1.5...@cdf/assetlibrary-history-v2.2.0) (2019-06-30)
+
+
+### Features
+
+* **assetlibrary:** new endpoints ([c936638](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/c936638))
+
 # [@cdf/assetlibrary-history-v2.1.5](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-history-v2.1.4...@cdf/assetlibrary-history-v2.1.5) (2019-06-28)
 
 
