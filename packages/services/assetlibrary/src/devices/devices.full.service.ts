@@ -241,8 +241,9 @@ export class DevicesServiceFull implements DevicesService {
 
         // perform validation of the device...
         const validateSubTypeFuture = this.typesService.validateSubType(model.templateId, TypeCategory.Device, model, Operation.CREATE);
-        const validateRelationshipsFuture = this.typesService.validateRelationshipsByPath(model.templateId, model.groups);
-        const results = await Promise.all([validateSubTypeFuture, validateRelationshipsFuture]);
+        const validateGroupRelationshipsFuture = this.typesService.validateRelationshipsByPath(model.templateId, model.groups);
+        const validateDeviceRelationshipsFuture = this.typesService.validateRelationshipsByPath(model.templateId, model.devices);
+        const results = await Promise.all([validateSubTypeFuture, validateGroupRelationshipsFuture, validateDeviceRelationshipsFuture]);
 
         // schema validation results
         const subTypeValidation = results[0];
@@ -251,8 +252,14 @@ export class DevicesServiceFull implements DevicesService {
         }
 
         // validate the path associations
-        const relationshipsValidation=results[1];
-        if (!relationshipsValidation)  {
+        const groupRelationshipsValidation=results[1];
+        if (!groupRelationshipsValidation)  {
+            throw new Error('INVALID_RELATION');
+        }
+
+        // validate the device associations
+        const deviceRelationshipsValidation=results[2];
+        if (!deviceRelationshipsValidation)  {
             throw new Error('INVALID_RELATION');
         }
 
