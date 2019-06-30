@@ -39,6 +39,10 @@ export interface Device {
      */
     groups?: { [key: string]: string[]; };
     /**
+     * Ids of the devices that this Device is associated with.
+     */
+    devices?: { [key: string]: string[]; };
+    /**
      * The device that this Device is a component of.
      */
     assemblyOf?: Device;
@@ -71,4 +75,11 @@ export enum DeviceState {
     Active = 'active',
     Decommisioned = 'decommisioned',
     Retired = 'retired'
+}
+
+export class BulkDevicesResult {
+    success: number;
+    failed: number;
+    total: number;
+    errors: {[key:string]:string};
 }

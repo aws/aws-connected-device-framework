@@ -46,6 +46,13 @@ export interface BulkLoadGroups {
     groups: Group[];
 }
 
+export class BulkLoadGroupsResponse {
+    success: number;
+    failed: number;
+    total: number;
+    errors: {[key:string]:string};
+}
+
 export interface GroupList {
     results?: Group[];
     pagination?: Pagination;

@@ -10,7 +10,7 @@
 
 import { injectable } from 'inversify';
 import { QSHelper } from '../utils/qs.helper';
-import { Group, GroupList, BulkLoadGroups } from './groups.model';
+import { Group, GroupList, BulkLoadGroups, BulkLoadGroupsResponse } from './groups.model';
 import { DeviceList, DeviceState } from './devices.model';
 import ow from 'ow';
 import { PathHelper } from '../utils/path.helper';
@@ -54,7 +54,7 @@ export class GroupsService {
      *
      * @param body Group to add to the asset library
      */
-    public async bulkCreateGroup(body: BulkLoadGroups, applyProfileId?:string): Promise<void> {
+    public async bulkCreateGroup(body: BulkLoadGroups, applyProfileId?:string): Promise<BulkLoadGroupsResponse> {
         ow(body, ow.object.nonEmpty);
 
         let url = this.baseUrl + '/bulkgroups';
@@ -62,10 +62,11 @@ export class GroupsService {
         if (queryString) {
             url += `?${queryString}`;
         }
-        await request.post(url)
+        const res = await request.post(url)
             .send(body)
             .set(this.headers);
 
+        return res.body;
     }
 
     /**

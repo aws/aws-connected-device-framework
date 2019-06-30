@@ -10,7 +10,7 @@
 
 /* tslint:disable:no-unused-variable member-ordering */
 
-import { Device, DeviceList, BulkDevices } from './devices.model';
+import { Device, DeviceList, BulkDevices, BulkDevicesResult } from './devices.model';
 import { injectable } from 'inversify';
 import ow from 'ow';
 import { PathHelper } from '../utils/path.helper';
@@ -106,7 +106,7 @@ export class DevicesService  {
      *
      * @param body Device to add to the asset library
      */
-    public async bulkCreateDevice(body: BulkDevices, applyProfileId?:string): Promise<void> {
+    public async bulkCreateDevice(body: BulkDevices, applyProfileId?:string): Promise<BulkDevicesResult> {
 
         ow(body, ow.object.nonEmpty);
 
@@ -115,9 +115,11 @@ export class DevicesService  {
         if (queryString) {
             url += `?${queryString}`;
         }
-        await request.post(url)
+        const res = await request.post(url)
             .send(body)
             .set(this.headers);
+
+        return res.body;
     }
 
     public async bulkUpdateDevice(body: BulkDevices, applyProfileId?:string): Promise<void> {
