@@ -1,3 +1,16 @@
+# [@cdf/assetlibrary-v2.3.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v2.2.3...@cdf/assetlibrary-v2.3.0) (2019-06-30)
+
+
+### Bug Fixes
+
+* **assetlibrary:** return search pagination values ([e1f0784](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/e1f0784))
+* **assetlibrary:** verify device relations on creation ([07c5849](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/07c5849))
+
+
+### Features
+
+* **assetlibrary:** new endpoints ([c936638](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/c936638))
+
 # [@cdf/assetlibrary-v2.2.3](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v2.2.2...@cdf/assetlibrary-v2.2.3) (2019-06-28)
 
 
