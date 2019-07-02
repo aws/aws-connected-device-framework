@@ -6,6 +6,9 @@
 
 export interface CertificateRequestModel {
 	action: Action;
+	deviceId: string;
+	certId: string;
+	csr?: string;
 }
 
 export interface CertificateResponseModel {
