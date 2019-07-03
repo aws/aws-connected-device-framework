@@ -30,6 +30,13 @@ export class CommandsService  {
 
     public constructor() {
         this.baseUrl = config.get('commands.baseUrl') as string;
+
+        if (config.has('commands.headers')) {
+            const additionalHeaders: {[key:string]:string} = config.get('commands.headers') as {[key:string]:string};
+            if (additionalHeaders !== null && additionalHeaders !== undefined) {
+                this.headers = {...this.headers, ...additionalHeaders};
+            }
+        }
     }
 
     public async createCommand(command:CommandModel): Promise<string> {

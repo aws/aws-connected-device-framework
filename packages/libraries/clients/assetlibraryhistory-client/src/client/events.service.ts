@@ -31,6 +31,13 @@ export class EventsService  {
 
     public constructor() {
         this.baseUrl = config.get('assetLibraryHistory.baseUrl') as string;
+
+        if (config.has('assetLibraryHistory.headers')) {
+            const additionalHeaders: {[key:string]:string} = config.get('assetLibraryHistory.headers') as {[key:string]:string};
+            if (additionalHeaders !== null && additionalHeaders !== undefined) {
+                this.headers = {...this.headers, ...additionalHeaders};
+            }
+        }
     }
 
     public async listObjectEvents(req:ObjectEventsRequest) : Promise<Events> {

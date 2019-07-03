@@ -30,6 +30,13 @@ export class ProfilesService  {
 
     public constructor() {
         this.baseUrl = config.get('assetLibrary.baseUrl') as string;
+
+        if (config.has('assetLibrary.headers')) {
+            const additionalHeaders: {[key:string]:string} = config.get('assetLibrary.headers') as {[key:string]:string};
+            if (additionalHeaders !== null && additionalHeaders !== undefined) {
+                this.headers = {...this.headers, ...additionalHeaders};
+            }
+        }
     }
 
     private async createProfile(category:string, body:DeviceProfile|GroupProfile): Promise<void> {
