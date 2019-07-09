@@ -464,7 +464,8 @@ export class DevicesServiceFull implements DevicesService {
         }
 
         // if the relation already exists, there's no need to continue
-        if (device.groups[relationship].includes(groupPath)) {
+        if (device.groups !== undefined && relationship in device.groups &&
+            device.groups[relationship].includes(groupPath)) {
             logger.debug(`device.full.service attachToGroup: relation already exits:`);
             return;
         }
