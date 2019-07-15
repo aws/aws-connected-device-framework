@@ -23,6 +23,7 @@ import { SubscriptionAssembler } from '../api/subscriptions/subscription.assembl
 import '../api/eventsources/eventsource.controller';
 import '../api/events/event.controller';
 import '../api/subscriptions/subscription.controller';
+import '../api/messages/messages.controller';
 import { AlertDao } from '../alerts/alert.dao';
 import { DDBStreamTransformer } from '../transformers/ddbstream.transformer';
 import { FilterService } from '../filter/filter.service';
