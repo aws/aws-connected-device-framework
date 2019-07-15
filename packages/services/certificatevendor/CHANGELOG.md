@@ -1,3 +1,10 @@
+# [@cdf/certificate-vendor-v2.2.4](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/certificate-vendor-v2.2.3...@cdf/certificate-vendor-v2.2.4) (2019-07-15)
+
+
+### Bug Fixes
+
+* **certificate vendor:** certificate vendor error handling ([78e3ee0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/78e3ee0))
+
 # [@cdf/certificate-vendor-v2.2.3](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/certificate-vendor-v2.2.2...@cdf/certificate-vendor-v2.2.3) (2019-06-20)
 
 
