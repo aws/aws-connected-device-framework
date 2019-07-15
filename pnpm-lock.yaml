@@ -1,5 +1,7 @@
 importers:
   .:
+    dependencies:
+      pnpm: 3.5.7
     devDependencies:
       '@commitlint/cli': 7.5.2
       '@commitlint/config-conventional': 7.5.0
@@ -24,6 +26,7 @@ importers:
       cz-conventional-changelog: 2.1.0
       del-cli: 1.1.0
       husky: 1.3.1
+      pnpm: ^3.5.3
       semantic-release: 15.13.3
       semantic-release-monorepo: 6.1.1
   packages/integration-tests:
@@ -2793,7 +2796,7 @@ packages:
     dependencies:
       '@types/events': 3.0.0
       '@types/minimatch': 3.0.3
-      '@types/node': 8.10.43
+      '@types/node': 12.6.3
     dev: true
     resolution:
       integrity: sha512-1Bh06cbWJUHMC97acuD6UMG29nMt0Aqz1vF3guLfG+kHHJhy3AyohZFFxYk2f7Q1SQIrNwvncxAE0N/9s70F2w==
@@ -2863,6 +2866,10 @@ packages:
     dev: true
     resolution:
       integrity: sha512-Lx4rNtGajRGtcVwJe1sKPAkAuBBWq8TOuimKJfOfK7ayY1Jc+18Lx00GjagLeIwaH2+OvFJvCv8tz+pvbt3OoA==
+  /@types/node/12.6.3:
+    dev: true
+    resolution:
+      integrity: sha512-7TEYTQT1/6PP53NftXXabIZDaZfaoBdeBm8Md/i7zsWRoBe0YwOXguyK8vhHs8ehgB/w9U4K/6EWuTyp0W6nIA==
   /@types/node/8.10.43:
     resolution:
       integrity: sha512-5m5W13HR2k3cu88mpzlnPBBv5+GyMHtj4F0P83RG4mqoC0AYVYHVMHfF3SgwKNtqEZiZQASMxU92QsLEekKcnw==
@@ -8644,6 +8651,13 @@ packages:
     dev: true
     resolution:
       integrity: sha512-2qHaIQr2VLRFoxe2nASzsV6ef4yOOH+Fi9FBOVH6cqeSgUnoyySPZkxzLuzd+RYOQTRpROA0ztTMqxROKSb/nA==
+  /pnpm/3.5.7:
+    dev: false
+    engines:
+      node: '>=8.15'
+    hasBin: true
+    resolution:
+      integrity: sha512-RmUJo7V8mSw9Tu8hRhi4tXagjO3+S/qHdDkAtYxZA/v9fvG3ux1aSiKcIeOmN4A1FCRHG7xy/sfFQC1lhSm5uQ==
   /posix-character-classes/0.1.1:
     dev: true
     engines:

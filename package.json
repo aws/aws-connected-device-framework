@@ -4,17 +4,12 @@
   "scripts": {
     "reset": "pnpm run clean && pnpm m exec -- rm -rf node_modules && rm -f pnpm-lock.yaml && pnpm install --force",
     "clean": "pnpm m exec -- rm -rf dist && pnpm m exec -- rm -rf build",
-
     "commit": "npx git-cz",
-
     "build": "pnpm m run build",
-
     "prebundle": "pnpm i --force && pnpm run clean && pnpm run build && pnpm m run prebundle:prepare",
     "bundle": "pnpm i --no-lock --prod --shamefully-flatten --force && pnpm m run bundle:package",
     "postbundle": "pnpm install --force"
-
   },
-  
   "devDependencies": {
     "@commitlint/cli": "7.5.2",
     "@commitlint/config-conventional": "7.5.0",
@@ -39,5 +34,8 @@
     "hooks": {
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
     }
+  },
+  "dependencies": {
+    "pnpm": "^3.5.3"
   }
 }

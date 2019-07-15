@@ -41,7 +41,13 @@ rm -rf .git
 Then run the script, first setting the environment variables that are set by CodePipeline:
 ```fish
 cd /tmp/src
-begin; set -lx AWS_REGION 'us-west-2'; and set -lx CDF_CODECOMMIT_USERNAME 'deanhart-at-157731826412';and set -lx CDF_CODECOMMIT_PASSWORD 'ZhrIAjpn8OYR0d9fSQVMBCM/eUtv2KQqdOvmjcHQs/o=';and set -lx CDF_CODECOMMIT_EMAIL 'deanhart@amazon.com'; and set -lx CODEBUILD_SRC_DIR '/tmp/src'; and set -lx REPO_NAME 'cdf-core'; cicd/filterproject_install.bash; end
+begin; set -lx AWS_REGION 'us-west-2'; and set -lx CDF_CODECOMMIT_USERNAME 'TODO';and set -lx CDF_CODECOMMIT_PASSWORD 'TODO';and set -lx CDF_CODECOMMIT_EMAIL 'deanhart@amazon.com'; and set -lx CODEBUILD_SRC_DIR '/tmp/src'; and set -lx REPO_NAME 'cdf-core'; cicd/filterproject_install.bash; end
+```
+
+### buildproject_postbuild.bash
+
+```fish
+begin; set -lx CODEBUILD_BUILD_SUCCEEDING 1; set -lx CDF_CODECOMMIT_USERNAME 'TODO'; set -lx CDF_CODECOMMIT_PASSWORD 'TODO'; cicd/buildproject_postbuild.bash; end
 ```
 
 ### deployproject_postbuild.bash
