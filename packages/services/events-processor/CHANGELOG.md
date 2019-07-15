@@ -1,3 +1,10 @@
+# [@cdf/events-processor-v1.1.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/events-processor-v1.1.0...@cdf/events-processor-v1.1.1) (2019-07-15)
+
+
+### Bug Fixes
+
+* **events-processor:** filter out incoming nulls ([93e52d8](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/93e52d8))
+
 # [@cdf/events-processor-v1.1.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/events-processor-v1.0.3...@cdf/events-processor-v1.1.0) (2019-06-30)
 
 
