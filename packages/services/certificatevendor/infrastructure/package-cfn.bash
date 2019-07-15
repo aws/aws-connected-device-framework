@@ -68,6 +68,6 @@ aws cloudformation package \
 
 echo '
 **********************************************************
-  ComCertificate Vendor Done!
+  Certificate Vendor Done!
 **********************************************************
 '
