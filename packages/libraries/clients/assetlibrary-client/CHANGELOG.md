@@ -1,3 +1,10 @@
+# [@cdf/assetlibrary-client-v2.2.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-client-v2.1.0...@cdf/assetlibrary-client-v2.2.0) (2019-07-15)
+
+
+### Features
+
+* **clients:** client HTTP headers ([941b79b](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/941b79b))
+
 # [@cdf/assetlibrary-client-v2.1.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-client-v2.0.0...@cdf/assetlibrary-client-v2.1.0) (2019-06-30)
 
 
