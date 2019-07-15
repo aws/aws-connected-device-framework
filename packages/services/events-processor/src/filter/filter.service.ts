@@ -65,7 +65,9 @@ export class FilterService {
                     engine.addRule(rule);
 
                     // add all the known facts
-                    Object.keys(ev.attributes).forEach(key=> engine.addFact(key, ev.attributes[key]));
+                    Object.keys(ev.attributes)
+                        .filter(key=> ev.attributes[key]!==undefined && ev.attributes[key]!==null)
+                        .forEach(key=> engine.addFact(key, ev.attributes[key]));
 
                     // evaluate the rules
                     let results:rulesEngine.Rule[] = [];
