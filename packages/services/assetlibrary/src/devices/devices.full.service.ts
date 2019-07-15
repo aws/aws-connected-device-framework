@@ -452,7 +452,7 @@ export class DevicesServiceFull implements DevicesService {
         groupPath = groupPath.toLowerCase();
 
         // fetch the existing device / group
-        const deviceFuture = this.get(deviceId, false, [], false);
+        const deviceFuture = this.get(deviceId, false, [], true);
         const groupFuture = this.groupsService.get(groupPath);
         const results = await Promise.all([deviceFuture, groupFuture]);
         const device = results[0];
@@ -464,7 +464,7 @@ export class DevicesServiceFull implements DevicesService {
         }
 
         // if the relation already exists, there's no need to continue
-        if (device.groups !== undefined && relationship in device.groups &&
+        if (device.groups !== undefined && device.groups[relationship] !== undefined &&
             device.groups[relationship].includes(groupPath)) {
             logger.debug(`device.full.service attachToGroup: relation already exits:`);
             return;
