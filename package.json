@@ -2,11 +2,11 @@
   "name": "cdf",
   "author": "Dean Hart <deanhart@amazon.com>",
   "scripts": {
-    "reset": "pnpm run clean && pnpm m exec -- rm -rf node_modules && rm -f pnpm-lock.yaml && pnpm install --force",
+    "reset": "pnpm run clean && pnpm m exec -- rm -rf node_modules && rm -rf node_modules pnpm-lock.yaml && pnpm install --force",
     "clean": "pnpm m exec -- rm -rf dist && pnpm m exec -- rm -rf build",
     "commit": "npx git-cz",
     "build": "pnpm m run build",
-    "prebundle": "pnpm i --force && pnpm run clean && pnpm run build && pnpm m run prebundle:prepare",
+    "prebundle": "pnpm run reset && pnpm run build && pnpm m run prebundle:prepare",
     "bundle": "pnpm i --no-lock --prod --shamefully-flatten --force && pnpm m run bundle:package",
     "postbundle": "pnpm install --force"
   },
@@ -34,8 +34,5 @@
     "hooks": {
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
     }
-  },
-  "dependencies": {
-    "pnpm": "^3.5.3"
   }
 }
