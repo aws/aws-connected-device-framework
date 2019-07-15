@@ -30,6 +30,13 @@ export class ThingsService {
 
     public constructor() {
         this.baseUrl = config.get('provisioning.baseUrl') as string;
+
+        if (config.has('provisioning.headers')) {
+            const additionalHeaders: {[key:string]:string} = config.get('provisioning.headers') as {[key:string]:string};
+            if (additionalHeaders !== null && additionalHeaders !== undefined) {
+                this.headers = {...this.headers, ...additionalHeaders};
+            }
+        }
     }
     /**
      * Provision Device
