@@ -14,6 +14,8 @@ import {asArray, SupportedVersionConfig} from '@cdf/express-middleware';
 
 const PORT = 3002;
 
+logger.debug(`config: ${JSON.stringify(config.util.toObject(config))}`);
+
 // Start the server
 const server = new InversifyExpressServer(container);
 

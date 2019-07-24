@@ -8,7 +8,9 @@
     "build": "pnpm m run build",
     "prebundle": "pnpm run reset && pnpm run build && pnpm m run prebundle:prepare",
     "bundle": "pnpm i --no-lock --prod --shamefully-flatten --force && pnpm m run bundle:package",
-    "postbundle": "pnpm install --force"
+    "postbundle": "pnpm install --force",
+    "prebundle:clients": "pnpm i force && pnpm m run build:clients",
+    "bundle:clients": "pnpm i --no-lock --prod --shamefully-flatten --force"
   },
   "devDependencies": {
     "@commitlint/cli": "7.5.2",
@@ -34,5 +36,8 @@
     "hooks": {
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
     }
+  },
+  "dependencies": {
+    "force": "^0.0.3"
   }
 }

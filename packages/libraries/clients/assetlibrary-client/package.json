@@ -11,6 +11,7 @@
     "lint": "tslint \"src/**/*.ts\"",
     "test": "npm run lint && nyc jest --passWithNoTests",
     "build": "tsc -b tsconfig.json",
+    "build:clients": "npm run build",
     "semantic-release": "npx semantic-release -e semantic-release-monorepo"
   },
   "dependencies": {
