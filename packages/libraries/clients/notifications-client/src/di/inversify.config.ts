@@ -4,7 +4,9 @@
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
 import { interfaces, ContainerModule } from 'inversify';
-import { NotificationsService } from '../client/notifications.service';
+import { EventsService } from '../client/events.service';
+import { EventSourcesService } from '../client/eventsources.service';
+import { SubscriptionsService } from '../client/subscriptions.service';
 import { NOTIFICATIONS_CLIENT_TYPES } from './types';
 
 export const notificationsContainerModule = new ContainerModule (
@@ -14,6 +16,8 @@ export const notificationsContainerModule = new ContainerModule (
         _isBound: interfaces.IsBound,
         _rebind: interfaces.Rebind
     ) => {
-        bind<NotificationsService>(NOTIFICATIONS_CLIENT_TYPES.NotificationsService).to(NotificationsService);
+        bind<EventsService>(NOTIFICATIONS_CLIENT_TYPES.EventsService).to(EventsService);
+        bind<EventSourcesService>(NOTIFICATIONS_CLIENT_TYPES.EventSourcesService).to(EventSourcesService);
+        bind<SubscriptionsService>(NOTIFICATIONS_CLIENT_TYPES.SubscriptionsService).to(SubscriptionsService);
     }
 );

@@ -7,7 +7,7 @@
 import { EventConditions } from './events.model';
 
 export interface SubscriptionResource {
-    id: string;
+    id?: string;
 
     principalValue?: string;
     ruleParameterValues?: { [key: string] : string};

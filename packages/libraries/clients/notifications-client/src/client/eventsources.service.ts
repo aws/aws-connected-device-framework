@@ -27,7 +27,7 @@ export class EventSourcesService {
     };
 
     public constructor() {
-        this.baseUrl = config.get('notifications.baseUrl') as string;
+        this.baseUrl = config.get('notifications.eventProcessor.baseUrl') as string;
 
         if (config.has('notifications.headers')) {
             const additionalHeaders: {[key:string]:string} = config.get('notifications.headers') as {[key:string]:string};
