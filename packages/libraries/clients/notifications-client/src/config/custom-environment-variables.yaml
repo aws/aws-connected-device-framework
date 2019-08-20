@@ -1,0 +1,3 @@
+notifications:
+  baseUrl: CDF_NOTIFICATIONS_BASEURL
+  headers: CDF_NOTIFICATIONS_HEADERS

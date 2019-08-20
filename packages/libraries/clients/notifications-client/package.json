@@ -1,8 +1,8 @@
 {
-  "name": "@cdf/assetlibrary-client",
-  "version": "2.2.0",
-  "description": "CDF Asset Library Client",
-  "author": "Dean Hart <deanhart@amazon.com>",
+  "name": "@cdf/notifications-client",
+  "version": "1.0.0",
+  "description": "Notifications Client",
+  "author": "Gopala Raju <goraju@amazon.com>",
   "main": "dist/index.js",
   "types": "dist/index.d.js",
   "scripts": {
@@ -36,7 +36,6 @@
     "@types/jest": "24.0.0",
     "@types/node": "8.10.43",
     "@types/superagent": "3.8.7",
-    "commitizen": "3.0.7",
     "concurrently": "4.1.0",
     "cpy-cli": "2.0.0",
     "del-cli": "1.1.0",
