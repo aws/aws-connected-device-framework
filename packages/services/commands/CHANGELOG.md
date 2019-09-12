@@ -1,3 +1,10 @@
+# [@cdf/commands-v2.3.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/commands-v2.2.0...@cdf/commands-v2.3.0) (2019-09-12)
+
+
+### Features
+
+* **notifications-client:** added remaining client api ([df7eade](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/df7eade))
+
 # [@cdf/commands-v2.2.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/commands-v2.1.2...@cdf/commands-v2.2.0) (2019-06-30)
 
 
