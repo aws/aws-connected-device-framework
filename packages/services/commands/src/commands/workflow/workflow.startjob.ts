@@ -99,19 +99,22 @@ export class StartJobAction implements WorkflowAction {
 
         // create the AWS IoT job
         const jobId = `cdf-${merged.commandId}`;
-        const params = {
+        const params: AWS.Iot.CreateJobRequest = {
             jobId,
             targets: jobTargets,
             document: template.document,
-            jobExecutionsRolloutConfig: {
-                maximumPerMinute: merged.rolloutMaximumPerMinute
-            },
             presignedUrlConfig: {
                 expiresInSec: template.presignedUrlExpiresInSeconds,
                 roleArn: this.s3RoleArn
             },
             targetSelection: merged.type
         };
+
+        if (merged.rolloutMaximumPerMinute!==undefined) {
+            params.jobExecutionsRolloutConfig = {
+                maximumPerMinute: merged.rolloutMaximumPerMinute
+            };
+        }
 
         try {
             await this._iot.createJob(params).promise();
@@ -252,7 +255,7 @@ export class StartJobAction implements WorkflowAction {
     private async buildEphemeralGroup(commandId:string, awsThingTargets:string[]): Promise<string> {
         logger.debug(`workflow.startjob buildEphemeralGroup: commandId:${commandId},  awsThingTargets:${awsThingTargets}`);
 
-        // TODO: create the new group
+        // create the new group
         const thingGroupName = `ephemeral-${commandId}`;
         const thingGroupResponse = await this._iot.createThingGroup({thingGroupName}).promise();
 

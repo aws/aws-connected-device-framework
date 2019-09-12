@@ -55,6 +55,8 @@ container.bind<StartJobAction>(TYPES.StartJobAction).to(StartJobAction);
 container.bind<SaveAction>(TYPES.SaveAction).to(SaveAction);
 container.bind<CreateAction>(TYPES.CreateAction).to(CreateAction);
 
+AWS.config.update({region: config.get('aws.region')});
+
 // for 3rd party objects, we need to use factory injectors
 decorate(injectable(), AWS.DynamoDB.DocumentClient);
 container.bind<interfaces.Factory<AWS.DynamoDB.DocumentClient>>(TYPES.DocumentClientFactory)
@@ -62,7 +64,7 @@ container.bind<interfaces.Factory<AWS.DynamoDB.DocumentClient>>(TYPES.DocumentCl
     return () => {
 
         if (!container.isBound(TYPES.DocumentClient)) {
-            const dc = new AWS.DynamoDB.DocumentClient({region: config.get('aws.region')});
+            const dc = new AWS.DynamoDB.DocumentClient();
             container.bind<AWS.DynamoDB.DocumentClient>(TYPES.DocumentClient).toConstantValue(dc);
         }
         return container.get<AWS.DynamoDB.DocumentClient>(TYPES.DocumentClient);
@@ -75,7 +77,7 @@ container.bind<interfaces.Factory<AWS.Iot>>(TYPES.IotFactory)
     return () => {
 
         if (!container.isBound(TYPES.Iot)) {
-            const iot = new AWS.Iot({region: config.get('aws.region')});
+            const iot = new AWS.Iot();
             container.bind<AWS.Iot>(TYPES.Iot).toConstantValue(iot);
         }
         return container.get<AWS.Iot>(TYPES.Iot);
@@ -89,7 +91,6 @@ container.bind<interfaces.Factory<AWS.IotData>>(TYPES.IotDataFactory)
 
         if (!container.isBound(TYPES.IotData)) {
             const iotData = new AWS.IotData({
-                region: config.get('aws.region'),
                 endpoint: config.get('aws.iot.endpoint'),
             });
             container.bind<AWS.IotData>(TYPES.IotData).toConstantValue(iotData);
@@ -105,7 +106,7 @@ container.bind<interfaces.Factory<AWS.S3>>(TYPES.S3Factory)
     return () => {
 
         if (!container.isBound(TYPES.S3)) {
-            const s3 = new AWS.S3({region: config.get('aws.region')});
+            const s3 = new AWS.S3();
             container.bind<AWS.S3>(TYPES.S3).toConstantValue(s3);
         }
         return container.get<AWS.S3>(TYPES.S3);

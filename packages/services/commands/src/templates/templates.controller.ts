@@ -11,6 +11,7 @@ import {logger} from '../utils/logger';
 import { TemplatesService } from './templates.service';
 import { TemplateModel, TemplateListModel } from './templates.models';
 import { PathHelper } from '../utils/path.helper';
+import {handleError} from '../utils/errors';
 
 @controller('/templates')
 export class TemplatesController implements interfaces.Controller {
@@ -25,7 +26,7 @@ export class TemplatesController implements interfaces.Controller {
             const location = PathHelper.encodeUrl('templates', template.templateId);
             res.status(201).location(location);
         } catch (e) {
-            this.handleError(e,res);
+            handleError(e,res);
         }
     }
 
@@ -43,7 +44,7 @@ export class TemplatesController implements interfaces.Controller {
                 return model;
             }
         } catch (e) {
-            this.handleError(e,res);
+            handleError(e,res);
         }
         return null;
     }
@@ -62,7 +63,7 @@ export class TemplatesController implements interfaces.Controller {
                 return model;
             }
         } catch (e) {
-            this.handleError(e,res);
+            handleError(e,res);
         }
         return null;
     }
@@ -75,32 +76,20 @@ export class TemplatesController implements interfaces.Controller {
             template.templateId = templateId;
             await this.templatesService.update(template);
         } catch (e) {
-            this.handleError(e,res);
+            handleError(e,res);
         }
     }
 
     @httpDelete('/:templateId')
-    public async deleteTemplate(@response() res:Response, @requestParam('templateId') templateId:string) {
+    public async deleteTemplate(@response() res:Response, @requestParam('templateId') templateId:string) : Promise<void> {
 
         logger.info(`templates.controller deleteTemplate: in: templateId: ${templateId}`);
         try {
             await this.templatesService.delete(templateId);
         } catch (e) {
-            this.handleError(e,res);
+            handleError(e,res);
         }
 
-    }
-
-    private handleError(e:Error, res:Response): void {
-        logger.error(`templates.controller handleError: ${e.name}`);
-
-        if (e.name === 'ArgumentError' ) {
-            res.status(400).json({error: e.message});
-        } else if (e.name === 'ConditionalCheckFailedException') {
-            res.status(409).json({error: 'Item already exists'});
-        } else {
-            res.status(500).json({error: e.message});
-        }
     }
 
 }

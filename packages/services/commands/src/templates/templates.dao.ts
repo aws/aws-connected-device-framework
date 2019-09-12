@@ -22,7 +22,7 @@ export class TemplatesDao {
     }
 
     public async create(model:TemplateModel): Promise<void> {
-        logger.debug(`templates.dao create: in: n:${JSON.stringify(model)}`);
+        logger.debug(`templates.dao create: in: model:${JSON.stringify(model)}`);
 
         const params = {
             TableName: this.templatesTable,
@@ -46,7 +46,7 @@ export class TemplatesDao {
     }
 
     public async update(model:TemplateModel): Promise<void> {
-        logger.debug(`templates.dao update: in: n:${JSON.stringify(model)}`);
+        logger.debug(`templates.dao update: in: model:${JSON.stringify(model)}`);
 
         const params = {
             TableName: this.templatesTable,

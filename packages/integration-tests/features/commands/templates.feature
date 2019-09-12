@@ -105,6 +105,6 @@ Feature: Command Templates
 
 
 
-  #@teardown_templates_feature
-  #Scenario: Teardown
-  #  Given command template "testCommandTemplate" does not exist
+  @teardown_templates_feature
+  Scenario: Teardown
+   Given command template "testCommandTemplate" does not exist

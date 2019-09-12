@@ -1,4 +1,5 @@
 aws:
+  accountId: AWS_ACCOUNT_ID
   region: AWS_REGION
   s3:
     bucket: COMMANDS_S3_BUCKET

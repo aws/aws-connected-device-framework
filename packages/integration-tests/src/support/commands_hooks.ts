@@ -20,7 +20,10 @@ Before(function () {
 
 async function deleteCommandTemplates(ids:string[]) {
     for(const id of ids) {
-        await templates.deleteTemplate(id);
+        await templates.deleteTemplate(id)
+        .catch(_err=> {
+            // ignore error in case it did not already exist
+        });
     }
 }
 
@@ -48,7 +51,7 @@ Before({tags: '@setup_commands_feature'}, async function () {
         templateId: 'testCommandsFeatureTemplateSimple',
         operation: 'simple',
         document: '{"xxx":"yyy"}'
-    } as TemplateModel;
+    } as TemplateModel; 
     await templates.createTemplate(simple);
 
     // create a simple template requiring files
@@ -68,6 +71,7 @@ Before({tags: '@setup_commands_feature'}, async function () {
         requiredFiles: ['fileA','fileB']
     } as TemplateModel;
     await templates.createTemplate(withFiles);
+
 });
 
 Before({tags: '@teardown_commands_feature'}, async function () {

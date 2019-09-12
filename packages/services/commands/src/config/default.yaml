@@ -1,4 +1,5 @@
 aws:
+  accountId:
   region: 
   s3:
     bucket:
