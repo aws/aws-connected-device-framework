@@ -14,7 +14,6 @@ import ow from 'ow';
 import * as request from 'superagent';
 import { EventSourceDetailResource, EventSourceResourceList } from './eventsources.model';
 
-
 @injectable()
 export class EventSourcesService {
 

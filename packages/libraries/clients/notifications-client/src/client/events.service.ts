@@ -15,7 +15,6 @@ import * as request from 'superagent';
 import { QSHelper } from '../utils/qs.helper';
 import { EventResource, EventResourceList } from './events.model';
 
-
 @injectable()
 export class EventsService {
 

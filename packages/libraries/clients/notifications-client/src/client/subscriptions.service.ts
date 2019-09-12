@@ -15,7 +15,6 @@ import * as request from 'superagent';
 import { QSHelper } from '../utils/qs.helper';
 import { SubscriptionResource, SubscriptionResourceList } from './subscriptions.model';
 
-
 @injectable()
 export class SubscriptionsService {
 
