@@ -1,6 +1,6 @@
 {
   "name": "@cdf/integration-tests",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "CDF Integration Tests",
   "author": "Dean Hart <deanhart@amazon.com>",
   "config": {
