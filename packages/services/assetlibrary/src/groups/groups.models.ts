@@ -3,11 +3,11 @@
 #
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
-import {DeviceModel} from '../devices/devices.models';
 import { TypeCategory } from '../types/constants';
-import { ModelAttributeValue } from '../data/model';
+import { ModelAttributeValue, StringToArrayMap, DirectionStringToArrayMap } from '../data/model';
+import { DeviceItem, DeviceBaseResource } from '../devices/devices.models';
 
-export class GroupModel {
+export class GroupBaseResource {
 	name: string;
 	category?: TypeCategory;
 	groupPath?: string;
@@ -15,49 +15,100 @@ export class GroupModel {
 	description?: string;
 	parentPath: string;
 
-	groups?: { [key: string] : string[]} = {};
 	attributes?: { [key: string] : ModelAttributeValue} = {};
 
 	// used for optimistic locking in 'lite' mode
 	version?: number;
 
+	// populated for related resources
+	relation?: string;
+	direction?: string;
+
 }
 
-export class RelatedGroupModel extends GroupModel {
-	relation: string;
-	direction: string;
+export class Group10Resource extends GroupBaseResource {
+	groups?: StringToArrayMap = {};
 }
 
-export interface GroupListModel {
-    results: GroupModel[];
-	pagination?: {
-		offset:number|string;
-		count: number;
-	};
-}
-export interface RelatedGroupListModel {
-    results: RelatedGroupModel[];
-	pagination?: {
-		offset: number|string;
-		count: number;
-	};
+export class Group20Resource extends GroupBaseResource {
+	groups?: DirectionStringToArrayMap = {};
 }
 
-export interface GroupsMembersModel {
-    results: (GroupModel|DeviceModel)[];
+export class GroupResourceList {
+	results: GroupBaseResource[];
 	pagination?: {
 		offset:number|string;
 		count: number;
 	};
 }
 
-export class BulkLoadGroupsRequest {
-    groups: GroupModel[];
+export class GroupItem {
+	name: string;
+	category?: TypeCategory;
+	groupPath?: string;
+	templateId: string;
+	description?: string;
+	parentPath: string;
+
+	groups?: DirectionStringToArrayMap = {};
+	attributes?: { [key: string] : ModelAttributeValue} = {};
+
+	// used for optimistic locking in 'lite' mode
+	version?: number;
+
+	// populated for related resources
+	relation?: string;
+	direction?: string;
+
 }
 
-export class BulkLoadGroupsResult {
+export interface GroupItemList {
+    results: GroupItem[];
+	pagination?: {
+		offset:number|string;
+		count: number;
+	};
+}
+
+export interface GroupMemberResourceList {
+    results: (GroupBaseResource|DeviceBaseResource)[];
+	pagination?: {
+		offset:number|string;
+		count: number;
+	};
+}
+
+export interface GroupMemberItemList {
+    results: (GroupItem|DeviceItem)[];
+	pagination?: {
+		offset:number|string;
+		count: number;
+	};
+}
+
+export class BulkGroupsResource {
+    groups: GroupBaseResource[];
+}
+
+export class BulkGroupsResult {
     success: number;
     failed: number;
     total: number;
     errors: {[key:string]:string};
+}
+
+export function determineIfGroup20Resource(toBeDetermined: GroupBaseResource): toBeDetermined is Group20Resource {
+	const asV2 = toBeDetermined as Group20Resource;
+	if(asV2.groups && (asV2.groups.in || asV2.groups.out)) {
+		return true;
+	}
+	return false;
+}
+
+export function determineIfGroupItem(toBeDetermined: any): toBeDetermined is GroupItem {
+	const asV2 = toBeDetermined as GroupItem;
+	if(asV2.groupPath) {
+		return true;
+	}
+	return false;
 }

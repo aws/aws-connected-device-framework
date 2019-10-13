@@ -4,7 +4,7 @@
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
 import { injectable, inject } from 'inversify';
-import { GroupModel, BulkLoadGroupsRequest, BulkLoadGroupsResult, GroupsMembersModel, RelatedGroupListModel} from './groups.models';
+import { GroupItem, BulkGroupsResult, GroupMemberItemList, GroupItemList} from './groups.models';
 import { GroupsAssembler} from './groups.assembler';
 import { TYPES } from '../di/types';
 import { GroupsDaoFull } from './groups.full.dao';
@@ -13,11 +13,12 @@ import {TypesService} from '../types/types.service';
 import {TypeCategory, Operation} from '../types/constants';
 import {EventEmitter, Type, Event} from '../events/eventEmitter.service';
 import ow from 'ow';
-import { GroupProfileModel } from '../profiles/profiles.models';
+import { GroupProfileItem } from '../profiles/profiles.models';
 import { ProfilesService } from '../profiles/profiles.service';
 import { GroupsService } from './groups.service';
 import { DevicesAssembler } from '../devices/devices.assembler';
-import { RelatedDeviceListResult } from '../devices/devices.models';
+import { DeviceItemList } from '../devices/devices.models';
+import { StringToArrayMap } from '../data/model';
 
 @injectable()
 export class GroupsServiceFull implements GroupsService {
@@ -29,7 +30,7 @@ export class GroupsServiceFull implements GroupsService {
         @inject(TYPES.ProfilesService) private profilesService: ProfilesService,
         @inject(TYPES.EventEmitter) private eventEmitter: EventEmitter) {}
 
-    public async get(groupPath: string): Promise<GroupModel> {
+    public async get(groupPath: string): Promise<GroupItem> {
         logger.debug(`groups.full.service get: in: groupPath: ${groupPath}`);
 
         ow(groupPath, ow.string.nonEmpty);
@@ -42,21 +43,20 @@ export class GroupsServiceFull implements GroupsService {
             throw new Error('NOT_FOUND');
         }
 
-        const model = this.groupsAssembler.toGroupModel(result);
+        const model = this.groupsAssembler.toGroupItem(result);
         logger.debug(`groups.full.service get: exit: model: ${JSON.stringify(model)}`);
         return model;
     }
 
-    public async createBulk(request:BulkLoadGroupsRequest, applyProfile?:string) : Promise<BulkLoadGroupsResult> {
-        logger.debug(`groups.full.service createBulk: in: request: ${JSON.stringify(request)}, applyProfile:${applyProfile}`);
+    public async createBulk(groups:GroupItem[], applyProfile?:string) : Promise<BulkGroupsResult> {
+        logger.debug(`groups.full.service createBulk: in: groups: ${JSON.stringify(groups)}, applyProfile:${applyProfile}`);
 
-        ow(request, ow.object.nonEmpty);
-        ow(request.groups, ow.array.nonEmpty);
+        ow(groups, ow.array.nonEmpty);
 
         let success=0;
         let failed=0;
         const errors: {[key:string]:string}= {};
-        for(const group of request.groups) {
+        for(const group of groups) {
             try {
                 await this.create(group, applyProfile);
                 success++;
@@ -77,7 +77,7 @@ export class GroupsServiceFull implements GroupsService {
         return response;
     }
 
-    private setIdsToLowercase(model:GroupModel) {
+    private setIdsToLowercase(model:GroupItem) {
         if (model.groupPath) {
             model.groupPath = model.groupPath.toLowerCase();
         }
@@ -89,15 +89,15 @@ export class GroupsServiceFull implements GroupsService {
         }
     }
 
-    public  async ___test___applyProfile(model: GroupModel, applyProfile?:string) : Promise<GroupModel> {
+    public  async ___test___applyProfile(model: GroupItem, applyProfile?:string) : Promise<GroupItem> {
         return this.applyProfile(model, applyProfile);
     }
 
-    private async applyProfile(model: GroupModel, applyProfile?:string) : Promise<GroupModel> {
+    private async applyProfile(model: GroupItem, applyProfile?:string) : Promise<GroupItem> {
         logger.debug(`groups.full.service applyProfile: in: model:${JSON.stringify(model)}, applyProfile:${applyProfile}`);
 
         // retrieve profile
-        const profile = await this.profilesService.get(model.templateId, applyProfile) as GroupProfileModel;
+        const profile = await this.profilesService.get(model.templateId, applyProfile) as GroupProfileItem;
         if (profile===undefined) {
             throw new Error('INVALID_PROFILE');
         }
@@ -109,12 +109,35 @@ export class GroupsServiceFull implements GroupsService {
         if (model.attributes===undefined) {
             model.attributes= {};
         }
+        if (profile.groups===undefined) {
+            profile.groups= {};
+        }
+        if (model.groups===undefined) {
+            model.groups= {};
+        }
         const {profileId, ...groupProfileAttributes} = profile;
         const mergedModel = {...groupProfileAttributes, ...model};
         const mergedAttributes = {...profile.attributes, ...model.attributes};
-        const mergedGroups = {...profile.groups, ...model.groups};
+        const mergedGroupsIn = {...profile.groups.in, ...model.groups.in};
+        const mergedGroupsOut = {...profile.groups.out, ...model.groups.out};
         mergedModel.attributes = mergedAttributes;
-        mergedModel.groups = mergedGroups;
+        mergedModel.groups = {
+            in: mergedGroupsIn,
+            out: mergedGroupsOut
+        };
+
+        if (Object.keys(mergedModel.groups.in).length===0) {
+            delete mergedModel.groups.in;
+        }
+        if (Object.keys(mergedModel.groups.out).length===0) {
+            delete mergedModel.groups.out;
+        }
+        if (Object.keys(mergedModel.groups).length===0) {
+            delete mergedModel.groups;
+        }
+        if (Object.keys(mergedModel.attributes).length===0) {
+            delete mergedModel.attributes;
+        }
 
         logger.debug(`groups.full.service applyProfile: exit:${JSON.stringify(mergedModel)}`);
 
@@ -122,7 +145,7 @@ export class GroupsServiceFull implements GroupsService {
 
     }
 
-    public async create(model:GroupModel, applyProfile?:string) : Promise<string> {
+    public async create(model:GroupItem, applyProfile?:string) : Promise<string> {
         logger.debug(`groups.full.service create: in: model:${JSON.stringify(model)}, applyProfile:${applyProfile}`);
 
         ow(model, ow.object.nonEmpty);
@@ -168,7 +191,7 @@ export class GroupsServiceFull implements GroupsService {
             '/' + model.name.toLowerCase() :
             `${model.parentPath}/${model.name.toLowerCase()}`;
 
-        // Assemble devicemodel into node
+        // Assemble item into node
         model.category = TypeCategory.Group;
         const node = this.groupsAssembler.toNode(model);
 
@@ -188,7 +211,7 @@ export class GroupsServiceFull implements GroupsService {
 
     }
 
-    public async update(model: GroupModel, applyProfile?:string) : Promise<void> {
+    public async update(model: GroupItem, applyProfile?:string) : Promise<void> {
         logger.debug(`groups.full.service update: in: model:${JSON.stringify(model)}, applyProfile:${applyProfile}`);
 
         ow(model, ow.object.nonEmpty);
@@ -235,7 +258,7 @@ export class GroupsServiceFull implements GroupsService {
 
     }
 
-    public async getMembers(groupPath:string, category:TypeCategory, type:string, state:string, offset?:number, count?:number): Promise<GroupsMembersModel> {
+    public async getMembers(groupPath:string, category:TypeCategory, type:string, state:string, offset?:number, count?:number): Promise<GroupMemberItemList> {
         logger.debug(`groups.full.service getMembers: in: groupPath:${groupPath}, category:${category}, type:${type}, state:${state}, offset:${offset}, count:${count}`);
 
         ow(groupPath, ow.string.nonEmpty);
@@ -263,9 +286,9 @@ export class GroupsServiceFull implements GroupsService {
         if (offset!==undefined && count!==undefined) {
             offset+=count;
         }
-        let model:GroupsMembersModel;
+        let model:GroupMemberItemList;
         if (category===TypeCategory.Group) {
-            model = this.groupsAssembler.toRelatedGroupModelsList(result);
+            model = this.groupsAssembler.toRelatedGroupItemList(result);
         } else {
             model = this.devicesAssembler.toRelatedDeviceModelsList(result);
         }
@@ -273,7 +296,7 @@ export class GroupsServiceFull implements GroupsService {
         return model;
     }
 
-    public async getParentGroups(groupPath:string): Promise<GroupModel[]> {
+    public async getParentGroups(groupPath:string): Promise<GroupItem[]> {
         logger.debug(`groups.full.service getParentGroups: in: groupPath:${groupPath}`);
 
         ow(groupPath, ow.string.nonEmpty);
@@ -283,7 +306,7 @@ export class GroupsServiceFull implements GroupsService {
 
         const result  = await this.groupsDao.listParentGroups(groupPath);
 
-        const model = this.groupsAssembler.toGroupModelList(result);
+        const model = this.groupsAssembler.toGroupItemList(result);
         logger.debug(`groups.full.service getParentGroups: exit: model: ${JSON.stringify(model)}`);
         return model;
     }
@@ -329,17 +352,12 @@ export class GroupsServiceFull implements GroupsService {
         relationship = relationship.toLowerCase();
         targetGroupPath = targetGroupPath.toLowerCase();
 
-        // const sourceGroupFuture = this.get(sourceGroupPath);
-        // const targetGroupFuture = this.get(targetGroupPath);
-        // const results = await Promise.all([sourceGroupFuture, targetGroupFuture]);
         const sourceGroup = await this.get(sourceGroupPath);
 
-        const out: {[key:string]:string[]} = {};
-        // out[relationship] = [ results[1].templateId ];
+        const out: StringToArrayMap = {};
         out[relationship] = [targetGroupPath];
 
-        // const isValid = await this.typesService.validateRelationshipsByPath(results[0].templateId, out);
-        const isValid = await this.typesService.validateRelationshipsByPath(sourceGroup.templateId, out);
+        const isValid = await this.typesService.validateRelationshipsByPath(sourceGroup.templateId, {out});
         if (!isValid) {
             throw new Error('FAILED_VALIDATION');
         }
@@ -392,7 +410,7 @@ export class GroupsServiceFull implements GroupsService {
         logger.debug(`groups.full.service detachFromGroup: exit:`);
     }
 
-    public async listRelatedGroups(groupPath: string, relationship: string, direction:string, template:string, offset:number, count:number) : Promise<RelatedGroupListModel> {
+    public async listRelatedGroups(groupPath: string, relationship: string, direction:string, template:string, offset:number, count:number) : Promise<GroupItemList> {
         logger.debug(`groups.full.service listRelatedGroups: in: groupPath:${groupPath}, relationship:${relationship}, direction:${direction}, template:${template}, offset:${offset}, count:${count}`);
 
         ow(groupPath, ow.string.nonEmpty);
@@ -419,12 +437,12 @@ export class GroupsServiceFull implements GroupsService {
         if (offset!==undefined && count!==undefined) {
             offset+=count;
         }
-        const model = this.groupsAssembler.toRelatedGroupModelsList(result);
+        const model = this.groupsAssembler.toRelatedGroupItemList(result);
         logger.debug(`groups.full.service listRelatedGroups: exit: model: ${JSON.stringify(model)}`);
         return model;
     }
 
-    public async listRelatedDevices(groupPath: string, relationship: string, direction:string, template:string, state:string, offset:number, count:number) : Promise<RelatedDeviceListResult> {
+    public async listRelatedDevices(groupPath: string, relationship: string, direction:string, template:string, state:string, offset:number, count:number) : Promise<DeviceItemList> {
         logger.debug(`groups.full.service listRelatedDevices: in: groupPath:${groupPath}, relationship:${relationship}, direction:${direction}, template:${template}, state:${state}, offset:${offset}, count:${count}`);
 
         ow(groupPath, ow.string.nonEmpty);

@@ -4,12 +4,12 @@
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
 import { SearchRequestModel, FacetResults} from './search.models';
-import { GroupModel } from '../groups/groups.models';
-import { DeviceModel } from '../devices/devices.models';
+import { GroupItem } from '../groups/groups.models';
+import { DeviceItem } from '../devices/devices.models';
 
 export interface SearchService {
 
-    search(model: SearchRequestModel, offset?:number|string, count?:number): Promise<(GroupModel|DeviceModel)[]> ;
+    search(model: SearchRequestModel, offset?:number|string, count?:number): Promise<(GroupItem|DeviceItem)[]> ;
 
     facet(request: SearchRequestModel): Promise<FacetResults>;
 

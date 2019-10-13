@@ -11,10 +11,10 @@ import { TypesServiceFull } from '../types/types.full.service';
 import { GroupsService } from './groups.service';
 import {EventEmitter} from '../events/eventEmitter.service';
 import { ProfilesService } from '../profiles/profiles.service';
-import { GroupProfileModel } from '../profiles/profiles.models';
+import { GroupProfileItem } from '../profiles/profiles.models';
 import { GroupsAssembler } from './groups.assembler';
 import { GroupsDaoFull } from './groups.full.dao';
-import { GroupModel } from './groups.models';
+import { GroupItem } from './groups.models';
 import { GroupsServiceFull } from './groups.full.service';
 import { ProfilesServiceFull } from '../profiles/profiles.full.service';
 import { DevicesAssembler } from '../devices/devices.assembler';
@@ -41,13 +41,13 @@ describe('GroupsService', () => {
 
     it('applying profile with attributes and groups to empty group', async() => {
         // stubs
-        const model:GroupModel = {
+        const model:GroupItem = {
             name: 'group001',
             templateId: 'testTemplate',
             parentPath: '/'
         };
         const profileId = 'testProfileId';
-        const profile:GroupProfileModel = {
+        const profile:GroupProfileItem = {
             profileId,
             name: null,
             parentPath: null,
@@ -58,11 +58,13 @@ describe('GroupsService', () => {
                 c: true
             },
             groups: {
-                linked_to: ['path1', 'path2']
+                out: {
+                    linked_to: ['path1', 'path2']
+                }
             }
         };
 
-        const expected:GroupModel = {
+        const expected:GroupItem = {
             name: 'group001',
             templateId: 'testTemplate',
             parentPath: '/',
@@ -72,7 +74,9 @@ describe('GroupsService', () => {
                 c: true
             },
             groups: {
-                linked_to: ['path1', 'path2']
+                out: {
+                    linked_to: ['path1', 'path2']
+                }
             }
         };
 
@@ -91,7 +95,7 @@ describe('GroupsService', () => {
     it('applying profile with attributes and groups to device with attributes and groups', async() => {
 
         // stubs
-        const model:GroupModel = {
+        const original:GroupItem = {
             name: 'group001',
             templateId: 'testTemplate',
             parentPath: '/',
@@ -100,28 +104,32 @@ describe('GroupsService', () => {
                 d: false
             },
             groups: {
-                linked_to_a: ['pathA1', 'pathA2'],
-                linked_to_b: ['pathA3']
+                out: {
+                    linked_to_a: ['pathA1', 'pathA2'],
+                    linked_to_b: ['pathA3']
+                }
             }
         };
         const profileId = 'testProfileId';
-        const profile:GroupProfileModel = {
+        const profile:GroupProfileItem = {
             profileId,
             name: null,
             parentPath: null,
-            templateId: model.templateId,
+            templateId: original.templateId,
             attributes: {
                 a: 1,
                 b: '2',
                 c: true
             },
             groups: {
-                linked_to_a: ['pathB1'],
-                linked_to_c: ['pathB2']
+                out: {
+                    linked_to_a: ['pathB1'],
+                    linked_to_c: ['pathB2']
+                }
             }
         };
 
-        const expected:GroupModel = {
+        const expected:GroupItem = {
             name: 'group001',
             templateId: 'testTemplate',
             parentPath: '/',
@@ -132,9 +140,11 @@ describe('GroupsService', () => {
                 d: false
             },
             groups: {
-                linked_to_a: ['pathA1', 'pathA2'],
-                linked_to_b: ['pathA3'],
-                linked_to_c: ['pathB2']
+                out: {
+                    linked_to_a: ['pathA1', 'pathA2'],
+                    linked_to_b: ['pathA3'],
+                    linked_to_c: ['pathB2']
+                }
             }
         };
 
@@ -142,7 +152,7 @@ describe('GroupsService', () => {
         mockedProfilesService.get = jest.fn().mockImplementation(()=> profile);
 
         // execute
-        const actual = await (<GroupsServiceFull>instance).___test___applyProfile(model, profileId);
+        const actual = await (<GroupsServiceFull>instance).___test___applyProfile(original, profileId);
 
         // verify
         expect(actual).toBeDefined();

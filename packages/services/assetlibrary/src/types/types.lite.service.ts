@@ -5,7 +5,7 @@
 #-------------------------------------------------------------------------------*/
 import { injectable, inject } from 'inversify';
 import {logger} from '../utils/logger';
-import { TypeModel, TypeDefinitionModel, TypeVersionModel} from './types.models';
+import { TypeModel, TypeDefinitionModel, TypeVersionModel, TypeDefinitionStatus} from './types.models';
 import { SchemaValidationResult } from '../utils/schemaValidator.service';
 import {TypeCategory, Operation} from './constants';
 import ow from 'ow';
@@ -30,7 +30,7 @@ export class TypesServiceLite implements TypesService {
         throw new Error('NOT_SUPPORTED');
     }
 
-    public async get(templateId: string, category: TypeCategory, status?: string): Promise<TypeModel> {
+    public async get(templateId: string, category: TypeCategory, status?: TypeDefinitionStatus): Promise<TypeModel> {
         logger.debug(`types.lite.service get: in: templateId: ${templateId}, category: ${category}, status: ${status}`);
 
         ow(templateId, ow.string.nonEmpty);
@@ -42,7 +42,7 @@ export class TypesServiceLite implements TypesService {
         return r;
     }
 
-    public async list(category:TypeCategory, status:string, offset?:number, count?:number): Promise<TypeModel[]> {
+    public async list(category:TypeCategory, status:TypeDefinitionStatus, offset?:number, count?:number): Promise<TypeModel[]> {
         logger.debug(`types.lite.service list: in: category:${category}, status:${status}, offset:${offset}, count:${count}`);
 
         // validation

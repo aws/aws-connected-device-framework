@@ -3,8 +3,8 @@
 #
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
-import {GroupModel} from '../groups/groups.models';
-import {DeviceModel} from '../devices/devices.models';
+import {GroupBaseResource} from '../groups/groups.models';
+import { DeviceBaseResource} from '../devices/devices.models';
 
 export enum SearchRequestFilterDirection {
 	in = 'in',
@@ -46,8 +46,8 @@ export class SearchRequestModel {
 }
 
 export type FacetResults = {[key:string]: number};
-export interface SearchResultsModel {
-	results: (GroupModel|DeviceModel)[] | FacetResults;
+export interface SearchResultsResource {
+	results: (GroupBaseResource|DeviceBaseResource)[] | FacetResults;
 	pagination?: {
 		offset:number;
 		count: number;

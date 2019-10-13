@@ -98,7 +98,7 @@ Feature: Device Profiles
     Then device "TEST-deviceProfiles-device003" exists with attributes
       | templateId | test-deviceprofiles-type |
       | groups | ___undefined___ |
-      | attributes | {"model": "abc456", "serialNumber": "S123"} |
+      | attributes | {"model": "abc123", "serialNumber": "S123"} |
 
 
   Scenario: Deleting a profile removes it

@@ -9,7 +9,7 @@ import {logger} from '../utils/logger';
 import {TYPES} from '../di/types';
 import {Node} from '../data/node';
 import { FullAssembler, NodeDto } from '../data/full.assembler';
-import { ModelAttributeValue } from '../data/model';
+import { ModelAttributeValue, DirectionStringToArrayMap } from '../data/model';
 
 const __ = process.statics;
 
@@ -94,7 +94,7 @@ export class GroupsDaoFull {
         }
     }
 
-    public async create(n: Node, groups:{[relation:string]:string[]}): Promise<string> {
+    public async create(n: Node, groups:DirectionStringToArrayMap): Promise<string> {
         logger.debug(`groups.full.dao create: in: n:${JSON.stringify(n)}, groups:${JSON.stringify(groups)}`);
 
         const id = `group___${n.attributes['groupPath']}`;
@@ -116,14 +116,22 @@ export class GroupsDaoFull {
 
             /*  associate with the groups  */
             if (groups) {
-                Object.keys(groups).forEach(rel=> {
-                    groups[rel].forEach(v=> {
-                        const groupId = `group___${v}`;
-                        traversal
-                            .V(groupId)
-                            .addE(rel).from_('group');
+                if (groups.in) {
+                    Object.keys(groups.in).forEach(rel=> {
+                        groups.in[rel].forEach(v=> {
+                            const groupId = `group___${v}`;
+                            traversal.V(groupId).addE(rel).to('group');
+                        });
                     });
-                });
+                }
+                if (groups.out) {
+                    Object.keys(groups.out).forEach(rel=> {
+                        groups.out[rel].forEach(v=> {
+                            const groupId = `group___${v}`;
+                            traversal.V(groupId).addE(rel).from_('group');
+                        });
+                    });
+                }
             }
 
         await traversal.next();

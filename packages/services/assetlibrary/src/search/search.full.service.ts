@@ -10,8 +10,8 @@ import { SearchDaoFull} from './search.full.dao';
 import {logger} from '../utils/logger';
 import {GroupsAssembler} from '../groups/groups.assembler';
 import {DevicesAssembler} from '../devices/devices.assembler';
-import { GroupModel } from '../groups/groups.models';
-import { DeviceModel } from '../devices/devices.models';
+import { GroupItem } from '../groups/groups.models';
+import { DeviceItem } from '../devices/devices.models';
 import {TypeCategory} from '../types/constants';
 import { SearchService } from './search.service';
 
@@ -22,7 +22,7 @@ export class SearchServiceFull implements SearchService {
         @inject(TYPES.GroupsAssembler) private groupsAssembler: GroupsAssembler,
         @inject(TYPES.DevicesAssembler) private devicesAssembler: DevicesAssembler) {}
 
-    public async search(model: SearchRequestModel, offset?:number, count?:number): Promise<(GroupModel|DeviceModel)[]> {
+    public async search(model: SearchRequestModel, offset?:number, count?:number): Promise<(GroupItem|DeviceItem)[]> {
         logger.debug(`search.full.service search: in: model: ${JSON.stringify(model)}, offset:${offset}, count:${count}`);
 
         // TODO: validation
@@ -35,7 +35,7 @@ export class SearchServiceFull implements SearchService {
             offset=0;
         }
 
-        const models: (GroupModel|DeviceModel)[] = [];
+        const models: (GroupItem|DeviceItem)[] = [];
         const results = await this.searchDao.search(model, offset, count);
 
         if (results===undefined) {
@@ -45,9 +45,9 @@ export class SearchServiceFull implements SearchService {
 
         for(const r of results) {
             if (r.types.indexOf(TypeCategory.Group)>=0) {
-                models.push(this.groupsAssembler.toGroupModel(r));
+                models.push(this.groupsAssembler.toGroupItem(r));
             } else {
-                models.push(this.devicesAssembler.toDeviceModel(r));
+                models.push(this.devicesAssembler.toDeviceItem(r));
             }
         }
 

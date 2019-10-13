@@ -6,8 +6,8 @@
 import { injectable, inject } from 'inversify';
 import { SearchRequestModel, FacetResults} from './search.models';
 import {logger} from '../utils/logger';
-import { GroupModel } from '../groups/groups.models';
-import { DeviceModel } from '../devices/devices.models';
+import { GroupItem } from '../groups/groups.models';
+import { DeviceItem } from '../devices/devices.models';
 import { TypeCategory } from '../types/constants';
 import { TYPES } from '../di/types';
 import { GroupsAssembler } from '../groups/groups.assembler';
@@ -22,7 +22,7 @@ export class SearchServiceLite {
         @inject(TYPES.GroupsAssembler) private groupsAssembler: GroupsAssembler,
         @inject(TYPES.DevicesAssembler) private devicesAssembler: DevicesAssembler) {}
 
-    public async search(model: SearchRequestModel, offset?:string, count?:number): Promise<(GroupModel|DeviceModel)[]> {
+    public async search(model: SearchRequestModel, offset?:string, count?:number): Promise<(GroupItem|DeviceItem)[]> {
         logger.debug(`search.lite.service search: in: model: ${JSON.stringify(model)}, offset:${offset}, count:${count}`);
 
         // validation
@@ -35,7 +35,7 @@ export class SearchServiceLite {
             model.endsWith!==undefined || model.contains!==undefined;
         ow(someFiltersDefined, ow.boolean.true);
 
-        const models: (GroupModel|DeviceModel)[] = [];
+        const models: (GroupItem|DeviceItem)[] = [];
         const results = await this.searchDao.search(model, offset, count);
 
         if (results===undefined) {
@@ -45,9 +45,9 @@ export class SearchServiceLite {
 
         for(const r of results) {
             if (r.types.indexOf(TypeCategory.Group)>=0) {
-                models.push(this.groupsAssembler.toGroupModel(r));
+                models.push(this.groupsAssembler.toGroupItem(r));
             } else if (r.types.indexOf(TypeCategory.Device)>=0) {
-                models.push(this.devicesAssembler.toDeviceModel(r));
+                models.push(this.devicesAssembler.toDeviceItem(r));
             }
         }
 

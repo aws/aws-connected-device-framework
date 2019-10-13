@@ -37,4 +37,5 @@ cache:
 supportedApiVersions:
   - json:
       - '1.0'
+      - '2.0'
 

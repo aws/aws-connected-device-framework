@@ -4,7 +4,7 @@
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
 import { injectable, inject } from 'inversify';
-import { DeviceModel, BulkDevicesResult, BulkDevicesRequest, DeviceListResult, RelatedDeviceListResult} from './devices.models';
+import { Device10Resource, BulkDevicesResult, DeviceItemList, DeviceItem} from './devices.models';
 import { DevicesService } from './devices.service';
 import {logger} from '../utils/logger';
 import ow from 'ow';
@@ -13,7 +13,7 @@ import { DevicesDaoLite } from './devices.lite.dao';
 import { DevicesAssembler } from './devices.assembler';
 import { TypeCategory } from '../types/constants';
 import { EventEmitter, Type, Event } from '../events/eventEmitter.service';
-import { RelatedGroupListModel } from '../groups/groups.models';
+import { GroupResourceList } from '../groups/groups.models';
 
 @injectable()
 export class DevicesServiceLite implements DevicesService {
@@ -22,29 +22,29 @@ export class DevicesServiceLite implements DevicesService {
         @inject(TYPES.DevicesAssembler) private devicesAssembler: DevicesAssembler,
         @inject(TYPES.EventEmitter) private eventEmitter: EventEmitter) {}
 
-    public async listRelatedDevices(_deviceId: string, _relationship: string, _direction:string, _template:string, _state:string, _offset:number, _count:number) : Promise<RelatedDeviceListResult> {
+    public async listRelatedDevices(_deviceId: string, _relationship: string, _direction:string, _template:string, _state:string, _offset:number, _count:number) : Promise<DeviceItemList> {
         throw new Error('NOT_SUPPORTED');
     }
 
-    public async get(deviceId:string, _expandComponents?:boolean, _attributes?:string[], _includeGroups?:boolean): Promise<DeviceModel> {
+    public async get(deviceId:string, _expandComponents?:boolean, _attributes?:string[], _includeGroups?:boolean): Promise<DeviceItem> {
         logger.debug(`devices.lite.service get: in: deviceId:${deviceId}`);
 
         ow(deviceId, ow.string.nonEmpty);
 
         const result  = await this.devicesDao.get(deviceId);
 
-        const model = this.devicesAssembler.toDeviceModel(result);
+        const model = this.devicesAssembler.toDeviceItem(result);
 
         logger.debug(`devices.lite.service get: exit: model: ${JSON.stringify(model)}`);
         return model;
     }
 
-    public async getBulk(deviceIds:string[], _expandComponents?:boolean, _attributes?:string[], _includeGroups?:boolean) : Promise<DeviceListResult> {
+    public async getBulk(deviceIds:string[], _expandComponents?:boolean, _attributes?:string[], _includeGroups?:boolean) : Promise<DeviceItemList> {
         logger.debug(`devices.lite.service getBulk: in: deviceIds:${deviceIds}`);
 
         ow(deviceIds, ow.array.nonEmpty);
 
-        const models: DeviceModel[]=[];
+        const models: DeviceItem[]=[];
         for(const deviceId of deviceIds) {
             models.push(await this.get(deviceId));
         }
@@ -53,11 +53,11 @@ export class DevicesServiceLite implements DevicesService {
         return r;
     }
 
-    public async createBulk(_request:BulkDevicesRequest, _applyProfile?:string) : Promise<BulkDevicesResult> {
+    public async createBulk(_devices:DeviceItem[], _applyProfile?:string) : Promise<BulkDevicesResult> {
         throw new Error('NOT_SUPPORTED');
     }
 
-    public async create(model: DeviceModel, applyProfile?:string) : Promise<string> {
+    public async create(model: DeviceItem, applyProfile?:string) : Promise<string> {
         logger.debug(`devices.lite.service create: in: model: ${JSON.stringify(model)}, applyProfile:${applyProfile}`);
 
         ow(model, ow.object.nonEmpty);
@@ -94,11 +94,11 @@ export class DevicesServiceLite implements DevicesService {
         return id;
     }
 
-    public async updateBulk(_request:BulkDevicesRequest, _applyProfile?:string) : Promise<BulkDevicesResult> {
+    public async updateBulk(_devices:DeviceItem[], _applyProfile?:string) : Promise<BulkDevicesResult> {
         throw new Error('NOT_SUPPORTED');
     }
 
-    public async update(model:DeviceModel, applyProfile?:string) : Promise<void> {
+    public async update(model:DeviceItem, applyProfile?:string) : Promise<void> {
         logger.debug(`devices.lite.service update: in: model: ${JSON.stringify(model)}, applyProfile:${applyProfile}`);
 
         ow(model, ow.object.nonEmpty);
@@ -209,7 +209,7 @@ export class DevicesServiceLite implements DevicesService {
         throw new Error('NOT_SUPPORTED');
     }
 
-    public async updateComponent(_deviceId:string, _componentId:string, _model:DeviceModel) : Promise<void> {
+    public async updateComponent(_deviceId:string, _componentId:string, _model:Device10Resource) : Promise<void> {
         throw new Error('NOT_SUPPORTED');
     }
 
@@ -217,11 +217,11 @@ export class DevicesServiceLite implements DevicesService {
         throw new Error('NOT_SUPPORTED');
     }
 
-    public async createComponent(_parentDeviceId:string, _model:DeviceModel) : Promise<string> {
+    public async createComponent(_parentDeviceId:string, _model:Device10Resource) : Promise<string> {
         throw new Error('NOT_SUPPORTED');
     }
 
-    public async listRelatedGroups(_deviceId: string, _relationship: string, _direction:string, _template:string, _offset:number, _count:number) : Promise<RelatedGroupListModel> {
+    public async listRelatedGroups(_deviceId: string, _relationship: string, _direction:string, _template:string, _offset:number, _count:number) : Promise<GroupResourceList> {
         throw new Error('NOT_SUPPORTED');
     }
 

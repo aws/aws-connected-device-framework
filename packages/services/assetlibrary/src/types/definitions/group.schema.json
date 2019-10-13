@@ -31,22 +31,42 @@
         "attributes": {
             "$ref": "#/definitions/subType"
         },
+
         "groups": {
-            "description": "Groups associated with the group",
+            "description": "Other groups associated with the group",
             "type": "object",
-            "patternProperties": {
-                "^.*$": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
+            "properties": {
+                "in": {
+                    "type": "object",
+                    "patternProperties": {
+                        "^.*$": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "uniqueItems": true
+                },
+                "out": {
+                    "type": "object",
+                    "patternProperties": {
+                        "^.*$": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "uniqueItems": true
                 }
+
             },
-            "uniqueItems": true
+            "additionalProperties": false
         }
     },
     "additionalProperties": false,
-    "required": ["name","parentPath","templateId","attributes"],
+    "required": ["name","parentPath","templateId"],
 
     "definitions": {
         "subType": {

@@ -3,35 +3,40 @@
 #
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
-import { Response } from 'express';
-import { interfaces, controller, httpGet, response, requestParam, httpPost, requestBody, queryParam , httpDelete, httpPatch, httpPut} from 'inversify-express-utils';
+import { Request, Response } from 'express';
+import { interfaces, controller, httpGet, response, request, requestParam, httpPost, requestBody, queryParam , httpDelete, httpPatch, httpPut} from 'inversify-express-utils';
 import { inject } from 'inversify';
-import { GroupModel, GroupListModel, GroupsMembersModel, RelatedGroupListModel } from './groups.models';
+import { GroupBaseResource, GroupResourceList, GroupMemberResourceList } from './groups.models';
 import { GroupsService } from './groups.service';
 import {TYPES} from '../di/types';
 import {logger} from '../utils/logger';
 import {TypeCategory} from '../types/constants';
 import {handleError} from '../utils/errors';
-import { RelatedDeviceListResult } from '../devices/devices.models';
+import { DeviceResourceList } from '../devices/devices.models';
+import { GroupsAssembler } from './groups.assembler';
+import { DevicesAssembler } from '../devices/devices.assembler';
 
 @controller('/groups')
 export class GroupsController implements interfaces.Controller {
 
-    constructor( @inject(TYPES.GroupsService) private groupsService: GroupsService) {}
+    constructor( @inject(TYPES.GroupsService) private groupsService: GroupsService,
+    @inject(TYPES.GroupsAssembler) private groupsAssembler: GroupsAssembler,
+    @inject(TYPES.DevicesAssembler) private devicesAssembler: DevicesAssembler) {}
 
     @httpGet('/:groupPath')
     public async getGroup(@requestParam('groupPath') groupPath: string,
-        @response() res: Response): Promise<GroupModel> {
+        @request() req: Request, @response() res: Response): Promise<GroupBaseResource> {
 
         logger.info(`groups.controller get: in: groupPath: ${groupPath}`);
         try {
             const model = await this.groupsService.get(groupPath);
-            logger.debug(`controller exit: ${JSON.stringify(model)}`);
+            const resource = this.groupsAssembler.toGroupResource(model, req['version']);
+            logger.debug(`controller exit: ${JSON.stringify(resource)}`);
 
-            if (model===undefined) {
+            if (resource===undefined) {
                 res.status(404);
             } else {
-                return model;
+                return resource;
             }
         } catch (e) {
             handleError(e,res);
@@ -40,22 +45,24 @@ export class GroupsController implements interfaces.Controller {
     }
 
     @httpPost('')
-    public async createGroup(@requestBody() group: GroupModel, @response() res: Response, @queryParam('applyProfile') applyProfile?:string) {
+    public async createGroup(@requestBody() group: GroupBaseResource, @response() res: Response, @queryParam('applyProfile') applyProfile?:string) {
         logger.info(`groups.controller  createGroup: in: group: ${JSON.stringify(group)}, applyProfile:${applyProfile}`);
         try {
-            await this.groupsService.create(group, applyProfile);
+            const item = this.groupsAssembler.fromGroupResource(group);
+            await this.groupsService.create(item, applyProfile);
         } catch (e) {
             handleError(e,res);
         }
     }
 
     @httpPatch('/:groupPath')
-    public async updateGroup(@requestBody() group: GroupModel, @response() res: Response, @requestParam('groupPath') groupPath: string, @queryParam('applyProfile') applyProfile?:string) {
+    public async updateGroup(@requestBody() group: GroupBaseResource, @response() res: Response, @requestParam('groupPath') groupPath: string, @queryParam('applyProfile') applyProfile?:string) {
 
         logger.info(`groups.controller update: in: groupPath: ${groupPath}, group: ${JSON.stringify(group)}, applyProfile:${applyProfile}`);
         try {
             group.groupPath = groupPath;
-            await this.groupsService.update(group, applyProfile);
+            const item = this.groupsAssembler.fromGroupResource(group);
+            await this.groupsService.update(item, applyProfile);
         } catch (e) {
             handleError(e,res);
         }
@@ -63,19 +70,22 @@ export class GroupsController implements interfaces.Controller {
 
     @httpGet('/:groupPath/members/:category')
     public async listGroupMembers(@requestParam('groupPath') groupPath:string, @requestParam('category') category:string,
-        @queryParam('template') template:string, @queryParam('state') state:string,
-        @queryParam('offset') offset:number, @queryParam('count') count:number, @response() res:Response): Promise<GroupsMembersModel> {
+        @queryParam('template') template:string, @queryParam('state') state:string, @queryParam('offset') offset:number,
+        @queryParam('count') count:number, @request() req:Request, @response() res:Response): Promise<GroupMemberResourceList> {
 
         logger.info(`groups.controller listGroupMembers: in: groupPath:${groupPath}, category:${category}, template:${template}, state:${state}, offset:${offset}, count:${count}`);
 
-        let r: GroupsMembersModel= {results:[]};
+        let r: GroupMemberResourceList = {results:[]};
 
         const categoryTemplate = (category.toLowerCase()==='groups') ? TypeCategory.Group : TypeCategory.Device;
         try {
-            r = await this.groupsService.getMembers(groupPath, categoryTemplate, template, state, offset, count);
-            if (r===undefined) {
+            const items = await this.groupsService.getMembers(groupPath, categoryTemplate, template, state, offset, count);
+            if (items===undefined) {
                 res.status(404);
             }
+
+            r = this.groupsAssembler.toGroupMemberResourceList(items, req['version']);
+
         } catch (e) {
             handleError(e,res);
         }
@@ -84,17 +94,20 @@ export class GroupsController implements interfaces.Controller {
     }
 
     @httpGet('/:groupPath/memberships')
-    public async listGroupMemberships(@requestParam('groupPath') groupPath:string, @response() res:Response): Promise<GroupListModel> {
+    public async listGroupMemberships(@requestParam('groupPath') groupPath:string,
+        @request() req:Request, @response() res:Response): Promise<GroupResourceList> {
 
         logger.info(`groups.controller getGroupMemberships: in: groupPath:${groupPath}`);
         try {
-            const model = await this.groupsService.getParentGroups(groupPath);
-            logger.debug(`controller exit: ${JSON.stringify(model)}`);
+            const items = await this.groupsService.getParentGroups(groupPath);
+            const resources = this.groupsAssembler.toGroupResourceList({results:items}, req['version']);
 
-            if (model===undefined) {
+            logger.debug(`controller exit: ${JSON.stringify(resources)}`);
+
+            if (resources===undefined) {
                 res.status(404);
             } else {
-                return  {results: model};
+                return resources;
             }
         } catch (e) {
             handleError(e,res);
@@ -141,14 +154,16 @@ export class GroupsController implements interfaces.Controller {
     public async listGroupRelatedGroups(@requestParam('groupPath') groupPath: string, @requestParam('relationship') relationship: string,
         @queryParam('template') template:string, @queryParam('direction') direction:string,
         @queryParam('offset') offset:number, @queryParam('count') count:number,
-        @response() res: Response) : Promise<RelatedGroupListModel> {
+        @request() req:Request, @response() res: Response) : Promise<GroupResourceList> {
 
             logger.info(`groups.controller listGroupRelatedGroups: in: groupPath:${groupPath}, relationship:${relationship}, direction:${direction}, template:${template}, offset:${offset}, count:${count}`);
 
-            let r: RelatedGroupListModel = {results:[]};
+            let r: GroupResourceList = {results:[]};
 
             try {
-                r = await this.groupsService.listRelatedGroups(groupPath, relationship, direction, template, offset, count);
+                const items = await this.groupsService.listRelatedGroups(groupPath, relationship, direction, template, offset, count);
+                r = this.groupsAssembler.toGroupResourceList(items, req['version']);
+
                 if (r===undefined) {
                     res.status(404);
                 }
@@ -163,14 +178,15 @@ export class GroupsController implements interfaces.Controller {
     public async listGroupRelatedDevices(@requestParam('groupPath') groupPath: string, @requestParam('relationship') relationship: string,
         @queryParam('template') template:string, @queryParam('direction') direction:string, @queryParam('state') state:string,
         @queryParam('offset') offset:number, @queryParam('count') count:number,
-        @response() res: Response) : Promise<RelatedDeviceListResult> {
+        @request() req:Request, @response() res: Response) : Promise<DeviceResourceList> {
 
             logger.info(`groups.controller listGroupRelatedDevices: in: groupPath:${groupPath}, relationship:${relationship}, direction:${direction}, template:${template}, state:${state}, offset:${offset}, count:${count}`);
 
-            let r: RelatedDeviceListResult = {results:[]};
+            let r: DeviceResourceList = {results:[]};
 
             try {
-                r = await this.groupsService.listRelatedDevices(groupPath, relationship, direction, template, state, offset, count);
+                const items = await this.groupsService.listRelatedDevices(groupPath, relationship, direction, template, state, offset, count);
+                r = this.devicesAssembler.toDeviceResourceList(items, req['version']);
                 if (r===undefined) {
                     res.status(404);
                 }
