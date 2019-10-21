@@ -19,7 +19,7 @@ Feature: Device History
     And history record 1 contains attributes
       | objectId | test-devicehistory-device001 |
       | event | create |
-      | state | {"attributes":{"firmwareVersion":"1"},"category":"device","description":"Description 1","deviceId":"test-devicehistory-device001","groups":{"linked_to":["/test-devicehistory-group"]},"state":"unprovisioned","templateId":"test-devicehistory-device-type"} |
+      | state | {"attributes":{"firmwareVersion":"1"},"category":"device","description":"Description 1","deviceId":"test-devicehistory-device001","groups":{"out":{"linked_to":["/test-devicehistory-group"]}},"state":"unprovisioned","templateId":"test-devicehistory-device-type"} |
       | type | devices |
 
 
@@ -34,7 +34,7 @@ Feature: Device History
     And history record 1 contains attributes
       | objectId | test-devicehistory-device001 |
       | event | modify |
-      | state | {"attributes":{"firmwareVersion":"2"},"category":"device","description":"Description 1","deviceId":"test-devicehistory-device001","groups":{"linked_to":["/test-devicehistory-group"]},"state":"unprovisioned","templateId":"test-devicehistory-device-type"} |
+      | state | {"attributes":{"firmwareVersion":"2"},"category":"device","description":"Description 1","deviceId":"test-devicehistory-device001","groups":{"out":{"linked_to":["/test-devicehistory-group"]}},"state":"unprovisioned","templateId":"test-devicehistory-device-type"} |
       | type | devices |
 
 
@@ -48,7 +48,7 @@ Feature: Device History
     And history record 1 contains attributes
       | objectId | test-devicehistory-device001 |
       | event | delete |
-      | state | {"attributes":{"firmwareVersion":"2"},"category":"device","description":"Description 1","deviceId":"test-devicehistory-device001","groups":{"linked_to":["/test-devicehistory-group"]},"state":"unprovisioned","templateId":"test-devicehistory-device-type"} |
+      | state | {"attributes":{"firmwareVersion":"2"},"category":"device","description":"Description 1","deviceId":"test-devicehistory-device001","groups":{"out":{"linked_to":["/test-devicehistory-group"]}},"state":"unprovisioned","templateId":"test-devicehistory-device-type"} |
       | type | devices |
 
 
@@ -57,17 +57,17 @@ Feature: Device History
     Then history record 1 contains attributes
       | objectId | test-devicehistory-device001 |
       | event | delete |
-      | state | {"attributes":{"firmwareVersion":"2"},"category":"device","description":"Description 1","deviceId":"test-devicehistory-device001","groups":{"linked_to":["/test-devicehistory-group"]},"state":"unprovisioned","templateId":"test-devicehistory-device-type"} |
+      | state | {"attributes":{"firmwareVersion":"2"},"category":"device","description":"Description 1","deviceId":"test-devicehistory-device001","groups":{"out":{"linked_to":["/test-devicehistory-group"]}},"state":"unprovisioned","templateId":"test-devicehistory-device-type"} |
       | type | devices |
     And history record 2 contains attributes
       | objectId | test-devicehistory-device001 |
       | event | modify |
-      | state | {"attributes":{"firmwareVersion":"2"},"category":"device","description":"Description 1","deviceId":"test-devicehistory-device001","groups":{"linked_to":["/test-devicehistory-group"]},"state":"unprovisioned","templateId":"test-devicehistory-device-type"} |
+      | state | {"attributes":{"firmwareVersion":"2"},"category":"device","description":"Description 1","deviceId":"test-devicehistory-device001","groups":{"out":{"linked_to":["/test-devicehistory-group"]}},"state":"unprovisioned","templateId":"test-devicehistory-device-type"} |
       | type | devices |
     And history record 3 contains attributes
       | objectId | test-devicehistory-device001 |
       | event | create |
-      | state | {"attributes":{"firmwareVersion":"1"},"category":"device","description":"Description 1","deviceId":"test-devicehistory-device001","groups":{"linked_to":["/test-devicehistory-group"]},"state":"unprovisioned","templateId":"test-devicehistory-device-type"} |
+      | state | {"attributes":{"firmwareVersion":"1"},"category":"device","description":"Description 1","deviceId":"test-devicehistory-device001","groups":{"out":{"linked_to":["/test-devicehistory-group"]}},"state":"unprovisioned","templateId":"test-devicehistory-device-type"} |
       | type | devices |
 
 
@@ -76,19 +76,19 @@ Feature: Device History
     Then history record 1 contains attributes
       | objectId | test-devicehistory-device001 |
       | event | delete |
-      | state | {"attributes":{"firmwareVersion":"2"},"category":"device","description":"Description 1","deviceId":"test-devicehistory-device001","groups":{"linked_to":["/test-devicehistory-group"]},"state":"unprovisioned","templateId":"test-devicehistory-device-type"} |
+      | state | {"attributes":{"firmwareVersion":"2"},"category":"device","description":"Description 1","deviceId":"test-devicehistory-device001","groups":{"out":{"linked_to":["/test-devicehistory-group"]}},"state":"unprovisioned","templateId":"test-devicehistory-device-type"} |
       | type | devices |
     When I retrieve next 1 history records for device "TEST-deviceHistory-device001"
     Then history record 1 contains attributes
       | objectId | test-devicehistory-device001 |
       | event | modify |
-      | state | {"attributes":{"firmwareVersion":"2"},"category":"device","description":"Description 1","deviceId":"test-devicehistory-device001","groups":{"linked_to":["/test-devicehistory-group"]},"state":"unprovisioned","templateId":"test-devicehistory-device-type"} |
+      | state | {"attributes":{"firmwareVersion":"2"},"category":"device","description":"Description 1","deviceId":"test-devicehistory-device001","groups":{"out":{"linked_to":["/test-devicehistory-group"]}},"state":"unprovisioned","templateId":"test-devicehistory-device-type"} |
       | type | devices |
     When I retrieve next 1 history records for device "TEST-deviceHistory-device001"
     And history record 1 contains attributes
       | objectId | test-devicehistory-device001 |
       | event | create |
-      | state | {"attributes":{"firmwareVersion":"1"},"category":"device","description":"Description 1","deviceId":"test-devicehistory-device001","groups":{"linked_to":["/test-devicehistory-group"]},"state":"unprovisioned","templateId":"test-devicehistory-device-type"} |
+      | state | {"attributes":{"firmwareVersion":"1"},"category":"device","description":"Description 1","deviceId":"test-devicehistory-device001","groups":{"out":{"linked_to":["/test-devicehistory-group"]}},"state":"unprovisioned","templateId":"test-devicehistory-device-type"} |
       | type | devices |
   
 
