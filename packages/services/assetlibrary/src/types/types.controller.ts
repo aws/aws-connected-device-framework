@@ -9,7 +9,7 @@ import { inject } from 'inversify';
 import { TypesService } from './types.service';
 import {TYPES} from '../di/types';
 import {logger} from '../utils/logger';
-import {TypeDefinitionModel,TypeResource, TypeResourceList} from '../types/types.models';
+import {TypeDefinitionModel,TypeResource, TypeResourceList, TypeDefinitionStatus} from '../types/types.models';
 import {handleError} from '../utils/errors';
 import { TypeCategory } from './constants';
 
@@ -24,7 +24,7 @@ export class TypesController implements interfaces.Controller {
 
         logger.info(`types.controller: getTemplate: in: category:${category}, templateId:${templateId}, status:${status}`);
         try {
-            const model = await this.typesService.get(templateId, category, status);
+            const model = await this.typesService.get(templateId, category, TypeDefinitionStatus[status]);
             logger.debug(`controller exit: ${JSON.stringify(model)}`);
 
             if (model===undefined) {
@@ -122,7 +122,7 @@ export class TypesController implements interfaces.Controller {
             };
         }
         try {
-            const results = await this.typesService.list(category, status, offset, count);
+            const results = await this.typesService.list(category, TypeDefinitionStatus[status], offset, count);
 
             if (results===undefined) {
                 res.status(404).end();

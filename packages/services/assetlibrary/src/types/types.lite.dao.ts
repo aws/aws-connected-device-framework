@@ -6,7 +6,7 @@
 import { injectable, inject } from 'inversify';
 import {logger} from '../utils/logger';
 
-import {TypeModel, TypeVersionModel, TypeDefinitionModel } from './types.models';
+import {TypeModel, TypeVersionModel, TypeDefinitionModel, TypeDefinitionStatus } from './types.models';
 import { TYPES } from '../di/types';
 import { Iot } from 'aws-sdk';
 import { ThingTypeDefinition } from 'aws-sdk/clients/iot';
@@ -94,7 +94,7 @@ export class TypesDaoLite {
         const version = new TypeVersionModel();
         version.definition = definition;
         if (result.thingTypeMetadata && result.thingTypeMetadata.deprecated===true) {
-            version.status='deprecated';
+            version.status=TypeDefinitionStatus.deprecated;
         }
 
         const model = new TypeModel();

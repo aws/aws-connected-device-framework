@@ -7,9 +7,10 @@ import { process } from 'gremlin';
 import { injectable, inject } from 'inversify';
 import {logger} from '../utils/logger';
 import { TYPES } from '../di/types';
-import {TypeModel, TypeVersionModel, TypeRelationsModel } from './types.models';
+import {TypeModel, TypeVersionModel, TypeRelationsModel, TypeDefinitionStatus } from './types.models';
 import * as jsonpatch from 'fast-json-patch';
 import { TypeCategory } from './constants';
+import { DirectionStringToArrayMap } from '../data/model';
 
 const __ = process.statics;
 
@@ -24,24 +25,35 @@ export class TypesDaoFull {
         this._g = graphTraversalSourceFactory();
     }
 
-    public async get(templateId: string, category: TypeCategory, status: string): Promise<TypeModel> {
+    public async get(templateId: string, category: TypeCategory, status: TypeDefinitionStatus): Promise<TypeModel> {
         logger.debug(`types.full.dao get: in: templateId: ${templateId}, category: ${category}, status: ${status}`);
 
         const dbId = `type___${templateId}`;
 
-        const traverser = this._g.V(dbId).as('a');
+        const traverser = this._g.V(dbId).as('type');
 
         if (category!==undefined) {
             const superId = `type___${category}`;
             traverser.out('super_type').has(process.t.id, superId);
         }
 
+        // only return published relations when we're looking at published definitions
+        let relationsTraversal: process.GraphTraversal;
+        if (status===TypeDefinitionStatus.draft) {
+            relationsTraversal=__.bothE('relationship').valueMap(true).fold();
+        } else {
+            relationsTraversal=__.as('definition').bothE('relationship').
+                match(
+                    __.as('relationship').otherV().inE('current_definition').has('status',TypeDefinitionStatus.published).as('other')
+                ).select('relationship').valueMap(true).fold();
+        }
+
         traverser.
-            select('a').outE('current_definition').has('status',status).inV().as('def').
+            select('type').outE('current_definition').has('status',status).inV().as('definition').
             project('type','definition','relations').
-                by(__.select('a').valueMap(true)).
-                by(__.select('def').valueMap(true).fold()).
-                by(__.bothE('relationship').valueMap(true).fold());
+                by(__.select('type').valueMap(true)).
+                by(__.valueMap(true).fold()).
+                by(relationsTraversal);
 
         const query = await traverser.toList();
 
@@ -59,10 +71,21 @@ export class TypesDaoFull {
 
     }
 
-    public async list(category:TypeCategory, status:string, offset:number, count:number): Promise<TypeModel[]> {
+    public async list(category:TypeCategory, status:TypeDefinitionStatus, offset:number, count:number): Promise<TypeModel[]> {
         logger.debug(`types.full.dao list: in: category:${category}, status:${status}, offset:${offset}, count:${count}`);
 
         const superId = `type___${category}`;
+
+        // only return published relations when we're looking at published definitions
+        let relationsTraversal: process.GraphTraversal;
+        if (status===TypeDefinitionStatus.draft) {
+            relationsTraversal=__.bothE('relationship').valueMap(true).fold();
+        } else {
+            relationsTraversal=__.as('definition').bothE('relationship').
+                match(
+                    __.as('relationship').otherV().inE('current_definition').has('status',TypeDefinitionStatus.published).as('other')
+                ).select('relationship').valueMap(true).fold();
+        }
 
         const traverser = this._g.V(superId).
             inE('super_type').outV().as('a').
@@ -70,7 +93,7 @@ export class TypesDaoFull {
             project('type','definition','relations').
                 by(__.select('a').valueMap(true)).
                 by(__.select('def').valueMap(true).fold()).
-                by(__.bothE('relationship').valueMap(true).fold());
+                by(relationsTraversal);
 
         // apply pagination
         if (offset!==undefined && count!==undefined) {
@@ -425,13 +448,13 @@ export class TypesDaoFull {
         const now = new Date().toISOString();
 
         // do we have an existing draft verison?
-        const draft = await this.get(templateId, category, 'draft');
+        const draft = await this.get(templateId, category, TypeDefinitionStatus.draft);
         if (draft===undefined) {
             throw new Error('NOT_FOUND');
         }
 
         // do we have an existing published verison?
-        const published = await this.get(templateId, category, 'published');
+        const published = await this.get(templateId, category, TypeDefinitionStatus.published);
 
         // if we don't have a published version (new type), we just need to change the current_definition status
         let query: {value:process.Traverser|process.TraverserValue, done:boolean};
@@ -440,7 +463,7 @@ export class TypesDaoFull {
                 // 1st get a handle on all the vertices/edges that we need to update
                 V(id).
                 // upgrade the draft edge to published
-                outE('current_definition').has('status','draft').
+                outE('current_definition').has('status',TypeDefinitionStatus.draft).
                     property('status','published').
                     property('from', now).
                 next();
@@ -450,9 +473,9 @@ export class TypesDaoFull {
             query = await this._g.
             // 1st get a handle on all the vertices/edges that we need to update
             V(id).as('type').
-            select('type').outE('current_definition').has('status','published').as('published_edge').
+            select('type').outE('current_definition').has('status',TypeDefinitionStatus.published).as('published_edge').
             inV().as('published').
-            select('type').outE('current_definition').has('status','draft').as('draft_edge').
+            select('type').outE('current_definition').has('status',TypeDefinitionStatus.draft).as('draft_edge').
             // create a expired_definition edge to identify the previously published definition as expired
             addE('expired_definition').
                 property('from', __.select('published_edge').values('from')).
@@ -460,7 +483,7 @@ export class TypesDaoFull {
                 from_('type').to('published').
             // upgrade the draft edge to published
             select('draft_edge').
-                property('status','published').
+                property('status',TypeDefinitionStatus.published).
                 property('from', now).
             // remove the old published edge
             select('published_edge').
@@ -490,22 +513,34 @@ export class TypesDaoFull {
         logger.debug(`types.full.dao delete: exit`);
     }
 
-    public async validateRelationshipsByType(templateId:string, out:{ [key: string] : string[]}): Promise<boolean> {
-        logger.debug(`types.full.dao validateRelationshipsByType: in: templateId:${templateId}, out:${out}`);
+    public async validateRelationshipsByType(templateId:string, relations:DirectionStringToArrayMap): Promise<boolean> {
+        logger.debug(`types.full.dao validateRelationshipsByType: in: templateId:${templateId}, relations:${JSON.stringify(relations)}`);
 
         const id = `type___${templateId}`;
 
         const traverser = this._g.V(id).
             outE('current_definition').has('status','published').inV().as('def');
 
-        Object.keys(out).forEach(key=> {
-            const values = out[key];
-            values.forEach(value=> {
-                traverser.select('def').outE('relationship').
-                    has('name',key).
-                    has('toTemplate',value);
+        if (relations && relations.in) {
+            Object.keys(relations.in).forEach(rel_name=> {
+                const values = relations.in[rel_name] as string[];
+                values.forEach(value=> {
+                    traverser.select('def').bothE('relationship').
+                        has('name',rel_name).
+                        has('fromTemplate',value);
+                });
             });
-        });
+        }
+        if (relations && relations.out) {
+            Object.keys(relations.out).forEach(rel_name=> {
+                const values = relations.out[rel_name] as string[];
+                values.forEach(value=> {
+                    traverser.select('def').bothE('relationship').
+                        has('name',rel_name).
+                        has('toTemplate',value);
+                });
+            });
+        }
 
         const query = await traverser.next();
 
@@ -515,8 +550,8 @@ export class TypesDaoFull {
 
     }
 
-    public async validateRelationshipsByPath(templateId:string, out:{ [key: string] : string[]}): Promise<RelationsByPath> {
-        logger.debug(`types.full.dao validateRelationshipsByPath: in: templateId:${templateId}, out:${JSON.stringify(out)}`);
+    public async validateRelationshipsByPath(templateId:string, relations:DirectionStringToArrayMap): Promise<RelationsByPath> {
+        logger.debug(`types.full.dao validateRelationshipsByPath: in: templateId:${templateId}, relations:${JSON.stringify(relations)}`);
 
         const id = `type___${templateId.toLowerCase()}`;
 
@@ -525,39 +560,51 @@ export class TypesDaoFull {
             outE('current_definition').has('status','published').inV().as('def');
 
         // get all known allowed relationships
-        traverser.select('def').outE('relationship').fold().as('rels');
+        traverser.select('def').bothE('relationship').fold().as('rels');
 
-        // get a handle to the groups that we're trying to associate with
+        // extrapolate the paths from the rels parameter to make our lives easier...
+        const rels_paths_in:string[]=[];
+        const rels_paths_out:string[]=[];
+        if (relations && relations.in) {
+            Object.keys(relations.in).forEach(rel=> {
+                relations.in[rel].forEach(path=> {
+                    rels_paths_in.push(path.toLowerCase());
+                });
+            });
+        }
+        if (relations && relations.out) {
+            Object.keys(relations.out).forEach(rel=> {
+                relations.out[rel].forEach(path=> {
+                    rels_paths_out.push(path.toLowerCase());
+                });
+            });
+        }
+
+        // get a handle to the groups that we're trying to associate with, and project them
         let index = 1;
-        Object.keys(out).forEach(rel=> {
-            out[rel].forEach(path=> {
-                const alias = `g_${index}`;
-                traverser.V(`group___${path.toLowerCase()}`).as(alias);
-                index++;
-            });
+        const groupAliases:string[]=[];
+        rels_paths_in.forEach(path=> {
+            const alias = `g_in_${index}`;
+            traverser.V(`group___${path.toLowerCase()}`).as(alias);
+            groupAliases.push(alias);
+            index++;
+        });
+        rels_paths_out.forEach(path=> {
+            const alias = `g_out_${index}`;
+            traverser.V(`group___${path.toLowerCase()}`).as(alias);
+            groupAliases.push(alias);
+            index++;
         });
 
-        // we need to project all known groups, plus details of the allowed relationships
+        // we need to project all the groups, as well as details of the allowed relationships
         const projections:string[]=[];
-        index = 1;
-        Object.keys(out).forEach(rel=> {
-            out[rel].forEach(_path=> {
-                projections.push(`g_${index}`);
-                index++;
-            });
-        });
+        projections.push(...groupAliases);
         projections.push('rels');
         projections.push('rels_props');
         traverser.project(...projections);
 
         // return the details of all the groups to match with the above projections
-        index = 1;
-        Object.keys(out).forEach(rel=> {
-            out[rel].forEach(_path=> {
-                traverser.by(__.select(`g_${index}`));
-                index++;
-            });
-        });
+        groupAliases.forEach(alias=> traverser.by(__.select(alias)));
 
         // also return details of the relations (the edge) along with the relations properties (its valuemap)
         traverser.by(__.select('rels'));
@@ -567,10 +614,12 @@ export class TypesDaoFull {
         const results = await traverser.next();
 
         // parse the results
-        const groupTypes:GroupType[]=[];
+        const groupTypes_in:GroupType[]=[];
+        const groupTypes_out:GroupType[]=[];
         const rels:any[]=[];
         const rels_props:any[]=[];
-        const validGroups:string[]=[];
+        const validGroups_in:string[]=[];
+        const validGroups_out:string[]=[];
         const allowed_rels:AllowedRelation[]=[];
         logger.debug(`types.full.dao validateRelationshipsByPath: results: ${JSON.stringify(results)}`);
 
@@ -578,12 +627,24 @@ export class TypesDaoFull {
             const values = JSON.parse(JSON.stringify(results.value));
             Object.keys(values).forEach(k=> {
                 if (k.startsWith('g_')) {
-                    // this is a group that we have found based on the provided `out` parameter
+                    // this is a group that we have found based on the provided relations data
                     const path = this.extractNameFromId( values[k].id);
-                    validGroups.push(path);
+                    const isIncoming = k.startsWith('g_in_');
+
+                    if (isIncoming) {
+                        validGroups_in.push(path);
+                    } else {
+                        validGroups_out.push(path);
+                    }
                     (values[k].label.split('::') as string[]).
                         filter(l=> l!=='group' && l!=='device').
-                        forEach(l=> groupTypes.push({path,template:l}));
+                        forEach(l=> {
+                            if (isIncoming) {
+                                groupTypes_in.push({path,template:l});
+                            } else {
+                                groupTypes_out.push({path,template:l});
+                            }
+                        });
                 } else if (k==='rels') {
                     // this is an allowed relationship for the provided templateId
                     for(const r of values[k]) {
@@ -610,16 +671,20 @@ export class TypesDaoFull {
 
         // validate that all requested group paths were found
         const invalidGroups:string[]=[];
-        Object.keys(out).forEach(rel=> {
-            out[rel].forEach(path=> {
-                if (!validGroups.includes(path.toLowerCase())) {
-                    invalidGroups.push(path.toLowerCase());
-                }
-            });
+        rels_paths_in.forEach(path=> {
+            if (!validGroups_in.includes(path)) {
+                invalidGroups.push(path);
+            }
+        });
+        rels_paths_out.forEach(path=> {
+            if (!validGroups_out.includes(path)) {
+                invalidGroups.push(path);
+            }
         });
 
-        const response = {
-            groupTypes,
+        const response:RelationsByPath = {
+            groupTypes_in,
+            groupTypes_out,
             rels: allowed_rels,
             invalidGroups
         };
@@ -665,7 +730,7 @@ export class TypesDaoFull {
 
     }
 
-    private toModel(result: process.Traverser, status:string, category:TypeCategory): TypeModel {
+    private toModel(result: process.Traverser, status:TypeDefinitionStatus, category:TypeCategory): TypeModel {
         logger.debug(`types.full.dao toModel: in: result: ${JSON.stringify(result)}`);
 
         const json = JSON.parse( JSON.stringify(result));
@@ -725,7 +790,8 @@ interface ChangedRelations {
 }
 
 interface RelationsByPath {
-    groupTypes:GroupType[];
+    groupTypes_in:GroupType[];
+    groupTypes_out:GroupType[];
     rels:AllowedRelation[];
     invalidGroups:string[];
 }

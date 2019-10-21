@@ -3,23 +3,23 @@
 #
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
-import { GroupModel, BulkLoadGroupsRequest, BulkLoadGroupsResult, GroupsMembersModel, RelatedGroupListModel} from './groups.models';
+import { GroupItem, BulkGroupsResult, GroupMemberItemList, GroupItemList} from './groups.models';
 import {TypeCategory} from '../types/constants';
-import { RelatedDeviceListResult } from '../devices/devices.models';
+import { DeviceItemList } from '../devices/devices.models';
 
 export interface GroupsService {
 
-    get(groupPath: string): Promise<GroupModel> ;
+    get(groupPath: string): Promise<GroupItem> ;
 
-    createBulk(request:BulkLoadGroupsRequest, applyProfile?:string) : Promise<BulkLoadGroupsResult> ;
+    createBulk(request:GroupItem[], applyProfile?:string) : Promise<BulkGroupsResult> ;
 
-    create(model:GroupModel, applyProfile?:string) : Promise<string> ;
+    create(model:GroupItem, applyProfile?:string) : Promise<string> ;
 
-    update(model: GroupModel, applyProfile?:string) : Promise<void> ;
+    update(model: GroupItem, applyProfile?:string) : Promise<void> ;
 
-    getMembers(groupPath:string, category:TypeCategory, type:string, states:string, offset?:number, count?:number): Promise<GroupsMembersModel> ;
+    getMembers(groupPath:string, category:TypeCategory, type:string, states:string, offset?:number, count?:number): Promise<GroupMemberItemList> ;
 
-    getParentGroups(groupPath:string): Promise<GroupModel[]> ;
+    getParentGroups(groupPath:string): Promise<GroupItem[]> ;
 
     delete(groupPath: string) : Promise<void> ;
 
@@ -27,8 +27,8 @@ export interface GroupsService {
 
     detachFromGroup(sourceGroupPath:string, relationship:string, targetGroupPath:string) : Promise<void> ;
 
-    listRelatedGroups(groupPath: string, relationship: string, direction:string, template:string, offset:number, count:number) : Promise<RelatedGroupListModel>;
+    listRelatedGroups(groupPath: string, relationship: string, direction:string, template:string, offset:number, count:number) : Promise<GroupItemList>;
 
-    listRelatedDevices(groupPath: string, relationship: string, direction:string, template:string, state:string, offset:number, count:number) : Promise<RelatedDeviceListResult>;
+    listRelatedDevices(groupPath: string, relationship: string, direction:string, template:string, state:string, offset:number, count:number) : Promise<DeviceItemList>;
 
 }

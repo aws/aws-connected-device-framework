@@ -3,9 +3,10 @@
 #
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
-import { TypeModel, TypeDefinitionModel} from './types.models';
+import { TypeModel, TypeDefinitionModel, TypeDefinitionStatus} from './types.models';
 import { SchemaValidationResult } from '../utils/schemaValidator.service';
 import {TypeCategory, Operation} from './constants';
+import { DirectionStringToArrayMap } from '../data/model';
 
 export interface TypesService {
 
@@ -13,9 +14,9 @@ export interface TypesService {
 
     validateType(category:TypeCategory, document:object, op:Operation): Promise<SchemaValidationResult>;
 
-    get(templateId: string, category: TypeCategory, status: string): Promise<TypeModel>;
+    get(templateId: string, category: TypeCategory, status: TypeDefinitionStatus): Promise<TypeModel>;
 
-    list(category:TypeCategory, status:string, offset?:number, count?:number): Promise<TypeModel[]>;
+    list(category:TypeCategory, status:TypeDefinitionStatus, offset?:number, count?:number): Promise<TypeModel[]>;
 
     create(templateId:string, category:TypeCategory, definition:TypeDefinitionModel): Promise<SchemaValidationResult>;
 
@@ -25,8 +26,8 @@ export interface TypesService {
 
     publish(templateId:string, category:TypeCategory): Promise<void>;
 
-    validateRelationshipsByType(templateId:string, out:{ [key: string] : string[]}): Promise<boolean>;
+    validateRelationshipsByType(templateId:string, rels:DirectionStringToArrayMap): Promise<boolean>;
 
-    validateRelationshipsByPath(templateId:string, out:{ [key: string] : string[]}): Promise<boolean>;
+    validateRelationshipsByPath(templateId:string, rels:DirectionStringToArrayMap): Promise<boolean>;
 
 }

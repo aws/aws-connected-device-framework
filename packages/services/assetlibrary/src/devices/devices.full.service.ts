@@ -4,7 +4,7 @@
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
 import { injectable, inject } from 'inversify';
-import { DeviceModel, BulkDevicesResult, BulkDevicesRequest, DeviceState, DeviceListResult, RelatedDeviceListResult} from './devices.models';
+import { DeviceItem, BulkDevicesResult, DeviceState, DeviceItemList} from './devices.models';
 import { DevicesAssembler} from './devices.assembler';
 import { TYPES } from '../di/types';
 import { DevicesDaoFull} from './devices.full.dao';
@@ -16,10 +16,11 @@ import {Node} from '../data/node';
 import {EventEmitter, Type, Event} from '../events/eventEmitter.service';
 import ow from 'ow';
 import { ProfilesService } from '../profiles/profiles.service';
-import { DeviceProfileModel } from '../profiles/profiles.models';
+import { DeviceProfileItem } from '../profiles/profiles.models';
 import { DevicesService } from './devices.service';
-import { RelatedGroupListModel } from '../groups/groups.models';
 import { GroupsAssembler } from '../groups/groups.assembler';
+import { GroupItemList } from '../groups/groups.models';
+import { StringToArrayMap } from '../data/model';
 
 @injectable()
 export class DevicesServiceFull implements DevicesService {
@@ -35,7 +36,7 @@ export class DevicesServiceFull implements DevicesService {
         @inject('defaults.devices.parent.groupPath') public defaultDeviceParentGroup: string,
         @inject('defaults.devices.state') public defaultDeviceState: string) {}
 
-    public async listRelatedDevices(deviceId: string, relationship: string, direction:string, template:string, state:string, offset:number, count:number) : Promise<RelatedDeviceListResult> {
+    public async listRelatedDevices(deviceId: string, relationship: string, direction:string, template:string, state:string, offset:number, count:number) : Promise<DeviceItemList> {
         logger.debug(`device.full.service listRelatedDevices: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, template:${template}, state:${state}, offset:${offset}, count:${count}`);
 
         ow(deviceId, ow.string.nonEmpty);
@@ -75,7 +76,7 @@ export class DevicesServiceFull implements DevicesService {
         return model;
     }
 
-    public async listRelatedGroups(deviceId: string, relationship: string, direction:string, template:string, offset:number, count:number) : Promise<RelatedGroupListModel> {
+    public async listRelatedGroups(deviceId: string, relationship: string, direction:string, template:string, offset:number, count:number) : Promise<GroupItemList> {
         logger.debug(`device.full.service listRelatedGroups: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, template:${template}, offset:${offset}, count:${count}`);
 
         ow(deviceId, ow.string.nonEmpty);
@@ -102,12 +103,12 @@ export class DevicesServiceFull implements DevicesService {
         if (offset!==undefined && count!==undefined) {
             offset+=count;
         }
-        const model = this.groupsAssembler.toRelatedGroupModelsList(result);
+        const model = this.groupsAssembler.toRelatedGroupItemList(result);
         logger.debug(`devices.full.service listRelatedGroups: exit: model: ${JSON.stringify(model)}`);
         return model;
     }
 
-    public async get(deviceId:string, expandComponents?:boolean, attributes?:string[], includeGroups?:boolean): Promise<DeviceModel> {
+    public async get(deviceId:string, expandComponents?:boolean, attributes?:string[], includeGroups?:boolean): Promise<DeviceItem> {
         logger.debug(`device.full.service get: in: deviceId:${deviceId}, expandComponents:${expandComponents}, attributes:${attributes}, includeGroups:${includeGroups}`);
 
         ow(deviceId, ow.string.nonEmpty);
@@ -124,16 +125,16 @@ export class DevicesServiceFull implements DevicesService {
 
         const result  = await this.devicesDao.get([deviceId], expandComponents, attributes, includeGroups);
 
-        let model:DeviceModel;
+        let model:DeviceItem;
         if (result!==undefined && result.length>0) {
-            model = this.devicesAssembler.toDeviceModel(result[0]);
+            model = this.devicesAssembler.toDeviceItem(result[0]);
         }
 
         logger.debug(`device.full.service get: exit: model: ${JSON.stringify(model)}`);
         return model;
     }
 
-    public async getBulk(deviceIds:string[], expandComponents:boolean, attributes:string[], includeGroups:boolean) : Promise<DeviceListResult> {
+    public async getBulk(deviceIds:string[], expandComponents:boolean, attributes:string[], includeGroups:boolean) : Promise<DeviceItemList> {
         logger.debug(`device.full.service getBulk: in: deviceIds:${deviceIds}, expandComponents:${expandComponents}, attributes:${attributes}, includeGroups:${includeGroups}`);
 
         ow(deviceIds, ow.array.nonEmpty);
@@ -142,21 +143,20 @@ export class DevicesServiceFull implements DevicesService {
 
         const result  = await this.devicesDao.get(deviceIds, expandComponents, attributes, includeGroups);
 
-        const model = this.devicesAssembler.toDeviceModels(result);
+        const model = this.devicesAssembler.toDeviceItems(result);
         logger.debug(`device.full.service get: exit: model: ${JSON.stringify(model)}`);
         return {results: model};
     }
 
-    public async createBulk(request:BulkDevicesRequest, applyProfile?:string) : Promise<BulkDevicesResult> {
-        logger.debug(`device.full.service createBulk: in: request: ${JSON.stringify(request)}, applyProfile:${applyProfile}`);
+    public async createBulk(devices:DeviceItem[], applyProfile?:string) : Promise<BulkDevicesResult> {
+        logger.debug(`device.full.service createBulk: in: devices: ${JSON.stringify(devices)}, applyProfile:${applyProfile}`);
 
-        ow(request, ow.object.nonEmpty);
-        ow(request.devices, ow.array.nonEmpty);
+        ow(devices, ow.array.nonEmpty);
 
         let success=0;
         let failed=0;
         const errors: {[key:string]:string}= {};
-        for(const device of request.devices) {
+        for(const device of devices) {
             try {
                 await this.create(device, applyProfile);
                 success++;
@@ -177,15 +177,15 @@ export class DevicesServiceFull implements DevicesService {
         return response;
     }
 
-    public  async ___test___applyProfile(model: DeviceModel, applyProfile?:string) : Promise<DeviceModel> {
+    public  async ___test___applyProfile(model: DeviceItem, applyProfile?:string) : Promise<DeviceItem> {
         return this.applyProfile(model, applyProfile);
     }
 
-    private async applyProfile(model: DeviceModel, applyProfile?:string) : Promise<DeviceModel> {
+    private async applyProfile(model: DeviceItem, applyProfile?:string) : Promise<DeviceItem> {
         logger.debug(`device.full.service applyProfile: in: model:${JSON.stringify(model)}, applyProfile:${applyProfile}`);
 
         // retrieve profile
-        const profile = await this.profilesService.get(model.templateId, applyProfile) as DeviceProfileModel;
+        const profile = await this.profilesService.get(model.templateId, applyProfile) as DeviceProfileItem;
         if (profile===undefined) {
             throw new Error('INVALID_PROFILE');
         }
@@ -197,12 +197,35 @@ export class DevicesServiceFull implements DevicesService {
         if (model.attributes===undefined) {
             model.attributes= {};
         }
+        if (profile.groups===undefined) {
+            profile.groups= {};
+        }
+        if (model.groups===undefined) {
+            model.groups= {};
+        }
         const {profileId, ...deviceProfileAttributes} = profile;
         const mergedModel = {...deviceProfileAttributes, ...model};
         const mergedAttributes = {...profile.attributes, ...model.attributes};
-        const mergedGroups = {...profile.groups, ...model.groups};
+        const mergedGroupsIn = {...profile.groups.in, ...model.groups.in};
+        const mergedGroupsOut = {...profile.groups.out, ...model.groups.out};
         mergedModel.attributes = mergedAttributes;
-        mergedModel.groups = mergedGroups;
+        mergedModel.groups = {
+            in: mergedGroupsIn,
+            out: mergedGroupsOut
+        };
+
+        if (Object.keys(mergedModel.groups.in).length===0) {
+            delete mergedModel.groups.in;
+        }
+        if (Object.keys(mergedModel.groups.out).length===0) {
+            delete mergedModel.groups.out;
+        }
+        if (Object.keys(mergedModel.groups).length===0) {
+            delete mergedModel.groups;
+        }
+        if (Object.keys(mergedModel.attributes).length===0) {
+            delete mergedModel.attributes;
+        }
 
         logger.debug(`device.full.service applyProfile: exit:${JSON.stringify(mergedModel)}`);
 
@@ -210,7 +233,7 @@ export class DevicesServiceFull implements DevicesService {
 
     }
 
-    public async create(model: DeviceModel, applyProfile?:string) : Promise<string> {
+    public async create(model: DeviceItem, applyProfile?:string) : Promise<string> {
         logger.debug(`device.full.service create: in: model: ${JSON.stringify(model)}, applyProfile:${applyProfile}`);
 
         ow(model, ow.object.nonEmpty);
@@ -229,9 +252,13 @@ export class DevicesServiceFull implements DevicesService {
         this.setIdsToLowercase(model);
 
         // default initial association if none provided
-        if (model.groups===undefined && model.devices===undefined && this.defaultDeviceParentRelation!==undefined && this.defaultDeviceParentGroup!==undefined) {
-            model.groups= {};
-            model.groups[this.defaultDeviceParentRelation] = [this.defaultDeviceParentGroup];
+        if ( (model.groups===undefined || (model.groups.in===undefined && model.groups.out===undefined)) &&
+             (model.devices===undefined || (model.devices.in===undefined && model.devices.out===undefined)) &&
+             this.defaultDeviceParentRelation!=='' && this.defaultDeviceParentGroup!=='') {
+            model.groups= {
+                out: {}
+            };
+            model.groups.out[this.defaultDeviceParentRelation] = [this.defaultDeviceParentGroup];
         }
 
         // default initial state if none provided
@@ -242,7 +269,7 @@ export class DevicesServiceFull implements DevicesService {
         // perform validation of the device...
         const validateSubTypeFuture = this.typesService.validateSubType(model.templateId, TypeCategory.Device, model, Operation.CREATE);
         const validateGroupRelationshipsFuture = this.typesService.validateRelationshipsByPath(model.templateId, model.groups);
-        const validateDeviceRelationshipsFuture = this.typesService.validateRelationshipsByPath(model.templateId, model.devices);
+        const validateDeviceRelationshipsFuture = this.typesService.validateRelationshipsByType(model.templateId, model.devices);
         const results = await Promise.all([validateSubTypeFuture, validateGroupRelationshipsFuture, validateDeviceRelationshipsFuture]);
 
         // schema validation results
@@ -292,7 +319,7 @@ export class DevicesServiceFull implements DevicesService {
 
     }
 
-    private setIdsToLowercase(model:DeviceModel) {
+    private setIdsToLowercase(model:DeviceItem) {
         logger.debug(`device.full.service setIdsToLowercase: in:`);
 
         model.deviceId = model.deviceId.toLowerCase();
@@ -300,26 +327,53 @@ export class DevicesServiceFull implements DevicesService {
             model.templateId = model.templateId.toLowerCase();
         }
         if (model.groups) {
-            Object.keys(model.groups).forEach(k=> {
-                model.groups[k] = model.groups[k].map(p => {
-                    if (p===undefined) {
-                        return p;
-                    } else {
-                        return p.toLowerCase();
-                    }
+            if (model.groups.in) {
+                Object.keys(model.groups.in).forEach(k=> {
+                    model.groups.in[k] = model.groups.in[k].map(p => {
+                        if (p===undefined) {
+                            return p;
+                        } else {
+                            return p.toLowerCase();
+                        }
+                    });
                 });
-            });
+            }
+            if (model.groups.out) {
+                Object.keys(model.groups.out).forEach(k=> {
+                    model.groups.out[k] = model.groups.out[k].map(p => {
+                        if (p===undefined) {
+                            return p;
+                        } else {
+                            return p.toLowerCase();
+                        }
+                    });
+                });
+            }
+
         }
         if (model.devices) {
-            Object.keys(model.devices).forEach(k=> {
-                model.devices[k] = model.devices[k].map(d => {
-                    if (d===undefined) {
-                        return d;
-                    } else {
-                        return d.toLowerCase();
-                    }
+            if (model.devices.in)  {
+                Object.keys(model.devices.in).forEach(k=> {
+                    model.devices.in[k] = model.devices.in[k].map(d => {
+                        if (d===undefined) {
+                            return d;
+                        } else {
+                            return d.toLowerCase();
+                        }
+                    });
                 });
-            });
+            }
+            if (model.devices.out)  {
+                Object.keys(model.devices.out).forEach(k=> {
+                    model.devices.out[k] = model.devices.out[k].map(d => {
+                        if (d===undefined) {
+                            return d;
+                        } else {
+                            return d.toLowerCase();
+                        }
+                    });
+                });
+            }
         }
         if (model.components) {
             model.components = model.components.map(c => {
@@ -332,16 +386,15 @@ export class DevicesServiceFull implements DevicesService {
         logger.debug(`device.full.service setIdsToLowercase: exit:`);
     }
 
-    public async updateBulk(request:BulkDevicesRequest, applyProfile?:string) : Promise<BulkDevicesResult> {
-        logger.debug(`device.full.service updateBulk: in: request: ${JSON.stringify(request)}, applyProfile:${applyProfile}`);
+    public async updateBulk(devices:DeviceItem[], applyProfile?:string) : Promise<BulkDevicesResult> {
+        logger.debug(`device.full.service updateBulk: in: devices: ${JSON.stringify(devices)}, applyProfile:${applyProfile}`);
 
-        ow(request, ow.object.nonEmpty);
-        ow(request.devices, ow.array.nonEmpty);
+        ow(devices, ow.array.nonEmpty);
 
         let success=0;
         let failed=0;
         const errors: {[key:string]:string}= {};
-        for(const device of request.devices) {
+        for(const device of devices) {
             try {
                 await this.update(device, applyProfile);
                 success++;
@@ -362,7 +415,7 @@ export class DevicesServiceFull implements DevicesService {
         return response;
     }
 
-    public async update(model:DeviceModel, applyProfile?:string) : Promise<void> {
+    public async update(model:DeviceItem, applyProfile?:string) : Promise<void> {
         logger.debug(`device.full.service update: in: model: ${JSON.stringify(model)}, applyProfile:${applyProfile}`);
 
         ow(model, ow.object.nonEmpty);
@@ -464,16 +517,16 @@ export class DevicesServiceFull implements DevicesService {
         }
 
         // if the relation already exists, there's no need to continue
-        if (device.groups !== undefined && device.groups[relationship] !== undefined &&
-            device.groups[relationship].includes(groupPath)) {
+        if (device.groups !== undefined && device.groups.out !== undefined && device.groups.out[relationship] !== undefined &&
+            device.groups.out[relationship].includes(groupPath)) {
             logger.debug(`device.full.service attachToGroup: relation already exits:`);
             return;
         }
 
         // ensure that the group relation is allowed
-        const out: {[key:string]:string[]} = {};
+        const out: StringToArrayMap = {};
         out[relationship] = [ group.templateId ];
-        const isValid = await this.typesService.validateRelationshipsByType(device.templateId, out);
+        const isValid = await this.typesService.validateRelationshipsByPath(device.templateId, {out});
         if (!isValid) {
             throw new Error('FAILED_VALIDATION');
         }
@@ -551,15 +604,15 @@ export class DevicesServiceFull implements DevicesService {
         }
 
         // if the relation already exists, there's no need to continue
-        if (device.devices[relationship].includes(otherDeviceId)) {
+        if (device.devices!==undefined && device.devices.out!==undefined && device.devices.out[relationship].includes(otherDeviceId)) {
             logger.debug(`device.full.service attachToDevice: relation already exits:`);
             return;
         }
 
         // ensure that the relation is allowed
-        const out: {[key:string]:string[]} = {};
+        const out: StringToArrayMap = {};
         out[relationship] = [otherDeviceId];
-        const isValid = await this.typesService.validateRelationshipsByPath(device.templateId, out);
+        const isValid = await this.typesService.validateRelationshipsByType(device.templateId, {out});
         if (!isValid) {
             throw new Error('FAILED_VALIDATION');
         }
@@ -612,7 +665,7 @@ export class DevicesServiceFull implements DevicesService {
         logger.debug(`device.full.service detachFromDevice: exit:`);
     }
 
-    public async updateComponent(deviceId:string, componentId:string, model:DeviceModel) : Promise<void> {
+    public async updateComponent(deviceId:string, componentId:string, model:DeviceItem) : Promise<void> {
         logger.debug(`device.full.service updateComponent: in: deviceId:${deviceId}, componentId:${componentId}, model:${JSON.stringify(model)}`);
 
         ow(deviceId, ow.string.nonEmpty);
@@ -678,7 +731,7 @@ export class DevicesServiceFull implements DevicesService {
 
     }
 
-    public async createComponent(parentDeviceId:string, model:DeviceModel) : Promise<string> {
+    public async createComponent(parentDeviceId:string, model:DeviceItem) : Promise<string> {
         logger.debug(`device.full.service createComponent: in: parentDeviceId:${parentDeviceId}, model:${JSON.stringify(model)}`);
 
         ow(parentDeviceId, ow.string.nonEmpty);

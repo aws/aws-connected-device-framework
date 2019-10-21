@@ -26,11 +26,12 @@ export class EventEmitter {
         event.time = new Date().toISOString();
 
         const topicTemplate = config.get(`events.${event.type}.topic`) as string;
-        const topic = topicTemplate.replace('{objectId}', encodeURIComponent(event.objectId)).replace('{event}', event.event);
 
-        if (topic===undefined || topic.length===0) {
+        if (topicTemplate===undefined || topicTemplate.length===0) {
             return;
         }
+
+        const topic = topicTemplate.replace('{objectId}', encodeURIComponent(event.objectId)).replace('{event}', event.event);
 
         const params = {
             topic,

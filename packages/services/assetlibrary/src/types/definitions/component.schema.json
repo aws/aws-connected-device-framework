@@ -40,7 +40,7 @@
         }
     },
     "additionalProperties": false,
-    "required": ["deviceId", "templateId","attributes"],
+    "required": ["deviceId", "templateId"],
 
     "definitions": {
         "subType": {

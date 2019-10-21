@@ -325,6 +325,7 @@ Cancels an execution for a specific thing
 | templateId | string |  | No |
 | status | string |  | No |
 | targets | [ string ] |  | No |
+| targetQuery | object |  | No |
 | documentParameters | object |  | No |
 | files | object |  | No |
 | type | string |  | No |

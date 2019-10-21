@@ -3,12 +3,12 @@
 #
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
-import { Response } from 'express';
-import { interfaces, controller, httpGet, response, queryParam } from 'inversify-express-utils';
+import { Request, Response } from 'express';
+import { interfaces, controller, httpGet, response, request, queryParam } from 'inversify-express-utils';
 import { inject } from 'inversify';
 import {TYPES} from '../di/types';
 import {logger} from '../utils/logger';
-import { SearchResultsModel } from '../search/search.models';
+import { SearchResultsResource } from '../search/search.models';
 import { SearchAssembler } from '../search/search.assembler';
 import { SearchService } from './search.service';
 import {handleError} from '../utils/errors';
@@ -30,11 +30,11 @@ export class SearchController implements interfaces.Controller {
         @queryParam('facetField') facetField:string,
         @queryParam('summarize') summarize:string,
         @queryParam('offset') offset:number, @queryParam('count') count:number,
-        @response() res: Response): Promise<SearchResultsModel> {
+        @request() req:Request, @response() res: Response): Promise<SearchResultsResource> {
 
         logger.debug(`search.controller search: in: types:${types}, ancestorPath:${ancestorPath}, eqs:${eqs}, neqs:${neqs}, lts:${lts}, ltes:${ltes}, gts:${gts}, gtes:${gtes}, startsWiths:${startsWiths}, facetField:${facetField}, summarize:${summarize}, offset:${offset}, count:${count}`);
 
-          const r: SearchResultsModel= {results:[]};
+          const r: SearchResultsResource= {results:[]};
 
           if (offset || count) {
               if (offset===undefined) {
@@ -46,21 +46,21 @@ export class SearchController implements interfaces.Controller {
               };
           }
 
-        const req = this.searchAssembler.toSearchRequestModel(types, ancestorPath, eqs, neqs, lts, ltes, gts, gtes, startsWiths, facetField);
+        const searchRequest = this.searchAssembler.toSearchRequestModel(types, ancestorPath, eqs, neqs, lts, ltes, gts, gtes, startsWiths, facetField);
 
         try {
             if (summarize==='true') {
-                const total = await this.searchService.summary(req);
+                const total = await this.searchService.summary(searchRequest);
                 r.total=total;
-            } else if (req.facetField!==undefined) {
-                const facets = await this.searchService.facet(req);
+            } else if (searchRequest.facetField!==undefined) {
+                const facets = await this.searchService.facet(searchRequest);
                 r.results = facets;
             } else {
-                const results = await this.searchService.search(req, offset, count);
-                if (results===undefined) {
+                const items = await this.searchService.search(searchRequest, offset, count);
+                if (items===undefined) {
                     r.results = [];
                 } else {
-                    r.results = results;
+                    r.results = this.searchAssembler.toSearchResultsResource(items, req['version']).results;
                 }
             }
         } catch (e) {

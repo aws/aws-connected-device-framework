@@ -10,7 +10,7 @@ import {TypesService} from '../types/types.service';
 import {Operation} from '../types/constants';
 import {EventEmitter, Type, Event} from '../events/eventEmitter.service';
 import ow from 'ow';
-import { DeviceProfileModel, GroupProfileModel, ProfileModelList } from './profiles.models';
+import { DeviceProfileItem, GroupProfileItem, ProfileItemList } from './profiles.models';
 import { ProfilesAssembler } from './profiles.assembler';
 import { ProfilesDaoFull } from './profiles.full.dao';
 import { ProfilesService } from './profiles.service';
@@ -24,7 +24,7 @@ export class ProfilesServiceFull implements ProfilesService {
         @inject(TYPES.TypesService) private typesService: TypesService,
         @inject(TYPES.EventEmitter) private eventEmitter: EventEmitter) {}
 
-    public async get(templateId:string, profileId:string): Promise<DeviceProfileModel|GroupProfileModel> {
+    public async get(templateId:string, profileId:string): Promise<DeviceProfileItem|GroupProfileItem> {
         logger.debug(`profiles.full.service get: in: templateId:${templateId}, profileId:${profileId}`);
 
         ow(templateId, ow.string.nonEmpty);
@@ -36,16 +36,16 @@ export class ProfilesServiceFull implements ProfilesService {
 
         const result  = await this.profilesDao.get(templateId, profileId);
 
-        let model:DeviceProfileModel|GroupProfileModel;
+        let model:DeviceProfileItem|GroupProfileItem;
         if (result!==undefined ) {
-            model = this.profilesAssembler.toModel(result);
+            model = this.profilesAssembler.toItem(result);
         }
 
         logger.debug(`profiles.full.service get: exit: model: ${JSON.stringify(model)}`);
         return model;
     }
 
-    private async validate(model:DeviceProfileModel|GroupProfileModel) : Promise<void> {
+    private async validate(model:DeviceProfileItem|GroupProfileItem) : Promise<void> {
         logger.debug(`profiles.full.service validate: in: model:${JSON.stringify(model)}`);
 
         // as a profile is just an instance of a group/device with a few extra fields, we
@@ -83,7 +83,7 @@ export class ProfilesServiceFull implements ProfilesService {
         logger.debug('profiles.full.service validate: exit:');
     }
 
-    public async create(model:DeviceProfileModel|GroupProfileModel) : Promise<string> {
+    public async create(model:DeviceProfileItem|GroupProfileItem) : Promise<string> {
         logger.debug(`profiles.full.service create: in: model:${JSON.stringify(model)}`);
 
         ow(model, ow.object.nonEmpty);
@@ -121,7 +121,7 @@ export class ProfilesServiceFull implements ProfilesService {
 
     }
 
-    public async update(model: DeviceProfileModel | GroupProfileModel) : Promise<string> {
+    public async update(model: DeviceProfileItem | GroupProfileItem) : Promise<string> {
         logger.debug(`profiles.full.service update: in: model: ${JSON.stringify(model)}`);
 
         ow(model, ow.object.nonEmpty);
@@ -187,19 +187,19 @@ export class ProfilesServiceFull implements ProfilesService {
 
     }
 
-    public async list(templateId:string): Promise<ProfileModelList> {
+    public async list(templateId:string): Promise<ProfileItemList> {
         logger.debug(`profiles.full.service list: in: templateId:${templateId}`);
 
         ow(templateId, ow.string.nonEmpty);
 
         const nodes  = await this.profilesDao.list(templateId);
-        const model = this.profilesAssembler.toModelList(nodes);
+        const model = this.profilesAssembler.toItemList(nodes);
 
         logger.debug(`profiles.full.service list: exit:${JSON.stringify(model)}`);
         return model;
     }
 
-    private setIdsToLowercase(model:DeviceProfileModel | GroupProfileModel) {
+    private setIdsToLowercase(model:DeviceProfileItem | GroupProfileItem) {
         model.profileId = model.profileId.toLowerCase();
         model.templateId = model.templateId.toLowerCase();
     }

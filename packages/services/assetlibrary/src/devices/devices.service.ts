@@ -3,22 +3,22 @@
 #
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
-import { DeviceModel, BulkDevicesResult, BulkDevicesRequest, DeviceListResult, RelatedDeviceListResult} from './devices.models';
-import { RelatedGroupListModel } from '../groups/groups.models';
+import { DeviceItem, BulkDevicesResult, DeviceItemList} from './devices.models';
+import { GroupItemList } from '../groups/groups.models';
 
 export interface DevicesService {
 
-    get(deviceId:string, expandComponents?:boolean, attributes?:string[], includeGroups?:boolean): Promise<DeviceModel> ;
+    get(deviceId:string, expandComponents?:boolean, attributes?:string[], includeGroups?:boolean): Promise<DeviceItem> ;
 
-    getBulk(deviceIds:string[], expandComponents:boolean, attributes:string[], includeGroups:boolean) : Promise<DeviceListResult> ;
+    getBulk(deviceIds:string[], expandComponents:boolean, attributes:string[], includeGroups:boolean) : Promise<DeviceItemList> ;
 
-    createBulk(request:BulkDevicesRequest, applyProfile?:string) : Promise<BulkDevicesResult> ;
+    createBulk(devices:DeviceItem[], applyProfile?:string) : Promise<BulkDevicesResult> ;
 
-    create(model: DeviceModel, applyProfile?:string) : Promise<string> ;
+    create(model: DeviceItem, applyProfile?:string) : Promise<string> ;
 
-    updateBulk(request:BulkDevicesRequest, applyProfile?:string) : Promise<BulkDevicesResult> ;
+    updateBulk(devices:DeviceItem[], applyProfile?:string) : Promise<BulkDevicesResult> ;
 
-    update(model:DeviceModel, applyProfile?:string) : Promise<void> ;
+    update(model:DeviceItem, applyProfile?:string) : Promise<void> ;
 
     delete(deviceId: string) : Promise<void> ;
 
@@ -30,14 +30,14 @@ export interface DevicesService {
 
     detachFromDevice(deviceId:string, relationship:string, otherDeviceId:string) : Promise<void> ;
 
-    updateComponent(deviceId:string, componentId:string, model:DeviceModel) : Promise<void> ;
+    updateComponent(deviceId:string, componentId:string, model:DeviceItem) : Promise<void> ;
 
     deleteComponent(deviceId:string, componentId:string) : Promise<void> ;
 
-    createComponent(parentDeviceId:string, model:DeviceModel) : Promise<string> ;
+    createComponent(parentDeviceId:string, model:DeviceItem) : Promise<string> ;
 
-    listRelatedDevices(deviceId: string, relationship: string, direction:string, template:string, state:string, offset:number, count:number) : Promise<RelatedDeviceListResult>;
+    listRelatedDevices(deviceId: string, relationship: string, direction:string, template:string, state:string, offset:number, count:number) : Promise<DeviceItemList>;
 
-    listRelatedGroups(deviceId: string, relationship: string, direction:string, template:string, offset:number, count:number) : Promise<RelatedGroupListModel>;
+    listRelatedGroups(deviceId: string, relationship: string, direction:string, template:string, offset:number, count:number) : Promise<GroupItemList>;
 
 }

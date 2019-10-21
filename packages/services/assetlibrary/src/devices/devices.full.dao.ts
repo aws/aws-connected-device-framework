@@ -9,7 +9,7 @@ import {logger} from '../utils/logger';
 import {TYPES} from '../di/types';
 import {Node} from '../data/node';
 import { FullAssembler, NodeDto } from '../data/full.assembler';
-import { ModelAttributeValue } from '../data/model';
+import { ModelAttributeValue, DirectionStringToArrayMap } from '../data/model';
 
 const __ = process.statics;
 
@@ -152,6 +152,7 @@ export class DevicesDaoFull {
             logger.debug(`device.full.dao get: exit: node: undefined`);
             return undefined;
         }
+        logger.debug(`device.full.dao get: results: ${JSON.stringify(results)}`);
 
         const nodes: Node[] = [];
         for(const result of results) {
@@ -201,7 +202,7 @@ export class DevicesDaoFull {
         }
     }
 
-    public async create(n:Node, groups:{[relation:string]:string[]}, devices:{[relation:string]:string[]}, components:Node[]): Promise<string> {
+    public async create(n:Node, groups:DirectionStringToArrayMap, devices:DirectionStringToArrayMap, components:Node[]): Promise<string> {
         logger.debug(`devices.full.dao create: in: n:${JSON.stringify(n)}, groups:${groups}, devices:${JSON.stringify(devices)}, components:${components}`);
 
         const id = `device___${n.attributes['deviceId']}`;
@@ -211,6 +212,7 @@ export class DevicesDaoFull {
         const traversal = this._g.addV(labels).
             property(process.t.id, id);
 
+        /*  set all the device properties  */
         for (const key of Object.keys(n.attributes)) {
             if (n.attributes[key]!==undefined) {
                 traversal.property(process.cardinality.single, key, n.attributes[key]);
@@ -220,26 +222,42 @@ export class DevicesDaoFull {
 
         /*  associate with the groups  */
         if (groups) {
-            Object.keys(groups).forEach(rel=> {
-                groups[rel].forEach(v=> {
-                    const groupId = `group___${v}`;
-                    traversal
-                        .V(groupId)
-                        .addE(rel).from_('device');
+            if (groups.in) {
+                Object.keys(groups.in).forEach(rel=> {
+                    groups.in[rel].forEach(v=> {
+                        const groupId = `group___${v}`;
+                        traversal.V(groupId).addE(rel).to('device');
+                    });
                 });
-            });
+            }
+            if (groups.out) {
+                Object.keys(groups.out).forEach(rel=> {
+                    groups.out[rel].forEach(v=> {
+                        const groupId = `group___${v}`;
+                        traversal.V(groupId).addE(rel).from_('device');
+                    });
+                });
+            }
         }
 
         /*  associate with the devices  */
         if (devices) {
-            Object.keys(devices).forEach(rel=> {
-                devices[rel].forEach(v=> {
-                    const deviceId = `device___${v}`;
-                    traversal
-                        .V(deviceId)
-                        .addE(rel).from_('device');
+            if (devices.in) {
+                Object.keys(devices.in).forEach(rel=> {
+                    devices.in[rel].forEach(v=> {
+                        const deviceId = `device___${v}`;
+                        traversal.V(deviceId).addE(rel).to('device');
+                    });
                 });
-            });
+            }
+            if (devices.out) {
+                Object.keys(devices.out).forEach(rel=> {
+                    devices.out[rel].forEach(v=> {
+                        const deviceId = `device___${v}`;
+                        traversal.V(deviceId).addE(rel).from_('device');
+                    });
+                });
+            }
         }
 
         /*  create the components  */

@@ -40,32 +40,74 @@
             "enum": ["unprovisioned", "active", "decommisioned", "retired"]
 
         },
+
+
         "groups": {
             "description": "Groups associated with the device",
             "type": "object",
-            "patternProperties": {
-                "^.*$": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
+            "properties": {
+                "in": {
+                    "type": "object",
+                    "patternProperties": {
+                        "^.*$": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "uniqueItems": true
+                },
+                "out": {
+                    "type": "object",
+                    "patternProperties": {
+                        "^.*$": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "uniqueItems": true
                 }
+
             },
-            "uniqueItems": true
+            "additionalProperties": false
         },
+
         "devices": {
             "description": "Other devices associated with the device",
             "type": "object",
-            "patternProperties": {
-                "^.*$": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
+            "properties": {
+                "in": {
+                    "type": "object",
+                    "patternProperties": {
+                        "^.*$": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "uniqueItems": true
+                },
+                "out": {
+                    "type": "object",
+                    "patternProperties": {
+                        "^.*$": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "uniqueItems": true
                 }
+
             },
-            "uniqueItems": true
+            "additionalProperties": false
         },
+
         "attributes": {
             "$ref": "#/definitions/subType"
         },
@@ -74,7 +116,7 @@
         }
     },
     "additionalProperties": false,
-    "required": ["deviceId", "templateId","attributes"],
+    "required": ["deviceId", "templateId"],
 
     "definitions": {
         "subType": {

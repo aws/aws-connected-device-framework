@@ -14,7 +14,7 @@ export class TypeModel {
 export class TypeVersionModel {
 	version: number;
     definition: TypeDefinitionModel;
-    status: string;
+    status: TypeDefinitionStatus;
     relations: TypeRelationsModel;
 }
 
@@ -57,4 +57,10 @@ export class MessagePayloadDefinition {
 	properties: { [key: string]: string|number|boolean };
     required?: string[];
     periodicFrequency: number;
+}
+
+export enum TypeDefinitionStatus {
+    draft='draft',
+    published='published',
+    deprecated='deprecated'
 }

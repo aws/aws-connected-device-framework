@@ -3,30 +3,39 @@
 #
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
-import { Response } from 'express';
-import { interfaces, controller, response, requestParam, requestBody, httpPost, httpGet, httpPatch, httpDelete } from 'inversify-express-utils';
+import { Request, Response } from 'express';
+import { interfaces, controller, request, response, requestParam, requestBody, httpPost, httpGet, httpPatch, httpDelete } from 'inversify-express-utils';
 import { inject } from 'inversify';
 import {TYPES} from '../di/types';
 import {logger} from '../utils/logger';
 import {handleError} from '../utils/errors';
 import { TypeCategory } from '../types/constants';
-import { DeviceProfileModel, GroupProfileModel, ProfileModelList } from './profiles.models';
+import { DeviceProfileItem, GroupProfileItem, DeviceProfileResource, GroupProfileResource, ProfileResourceList } from './profiles.models';
 import { ProfilesService } from './profiles.service';
+import { ProfilesAssembler } from './profiles.assembler';
 
 @controller('/profiles/:category/:templateId')
 export class ProfilesController implements interfaces.Controller {
 
-    constructor( @inject(TYPES.ProfilesService) private profilesService: ProfilesService) {}
+    constructor( @inject(TYPES.ProfilesService) private profilesService: ProfilesService,
+        @inject(TYPES.ProfilesAssembler) private assembler: ProfilesAssembler) {}
 
     @httpPost('')
     public async createProfile(@requestParam('category') category:TypeCategory, @requestParam('templateId') templateId:string,
-         @requestBody() profile:DeviceProfileModel|GroupProfileModel, @response() res: Response) {
+         @requestBody() profile:DeviceProfileResource|GroupProfileResource,
+         @response() res: Response) {
         logger.info(`profiles.controller  createProfile: in: category:${category}, template:${templateId}, profile:${JSON.stringify(profile)}`);
 
         profile.templateId = templateId;
         profile.category = category;
         try {
-            await this.profilesService.create(profile);
+            let item : DeviceProfileItem|GroupProfileItem;
+            if (category==='device')  {
+                item = this.assembler.fromDeviceProfileResource(profile as DeviceProfileResource);
+            } else {
+                item = this.assembler.fromGroupProfileResource(profile as GroupProfileResource);
+            }
+            await this.profilesService.create(item);
         } catch (e) {
             handleError(e,res);
         }
@@ -34,26 +43,31 @@ export class ProfilesController implements interfaces.Controller {
 
     @httpGet('/:profileId')
     public async getProfile(@requestParam('category') category:TypeCategory, @requestParam('templateId') templateId:string,
-        @requestParam('profileId') profileId:string, @response() res: Response): Promise<DeviceProfileModel|GroupProfileModel> {
+        @requestParam('profileId') profileId:string, @request() req: Request, @response() res: Response): Promise<DeviceProfileResource|GroupProfileResource> {
 
         logger.info(`profiles.controller getProfile: in: category:${category}, template:${templateId}, profileId:${profileId}`);
 
-        let model:DeviceProfileModel|GroupProfileModel;
+        let resource:DeviceProfileResource|GroupProfileResource;
         try {
-            model = await this.profilesService.get(templateId, profileId);
-            if (model===undefined) {
+            const item = await this.profilesService.get(templateId, profileId);
+            if (item===undefined) {
                 res.status(404).end();
+            }
+            if (category==='device')  {
+                resource = this.assembler.toDeviceProfileResource(item as DeviceProfileItem, req['version']);
+            } else {
+                resource = this.assembler.toGroupProfileResource(item as GroupProfileItem, req['version']);
             }
         } catch (e) {
             handleError(e,res);
         }
-        logger.debug(`profiles.controller  exit: ${JSON.stringify(model)}`);
-        return model;
+        logger.debug(`profiles.controller  exit: ${JSON.stringify(resource)}`);
+        return resource;
     }
 
     @httpPatch('/:profileId')
     public async updateProfile(@requestParam('category') category:TypeCategory, @requestParam('templateId') templateId:string,
-        @requestParam('profileId') profileId:string, @requestBody() profile: DeviceProfileModel|GroupProfileModel,
+        @requestParam('profileId') profileId:string, @requestBody() profile: DeviceProfileResource|GroupProfileResource,
         @response() res: Response) {
 
         logger.info(`profiles.controller updateProfile: in: category:${category}, template:${templateId}, profileId:${profileId}`);
@@ -61,7 +75,15 @@ export class ProfilesController implements interfaces.Controller {
             profile.profileId = profileId;
             profile.category = category;
             profile.templateId = templateId;
-            const r = await this.profilesService.update(profile);
+
+            let item : DeviceProfileItem|GroupProfileItem;
+            if (category==='device')  {
+                item = this.assembler.fromDeviceProfileResource(profile as DeviceProfileResource);
+            } else {
+                item = this.assembler.fromGroupProfileResource(profile as GroupProfileResource);
+            }
+
+            const r = await this.profilesService.update(item);
 
             if (r===undefined) {
                 res.status(404).end();
@@ -87,23 +109,25 @@ export class ProfilesController implements interfaces.Controller {
 
     @httpGet('')
     public async listProfiles(@requestParam('category') category:TypeCategory, @requestParam('templateId') templateId:string,
-        @response() res: Response): Promise<ProfileModelList> {
+        @request() req:Request, @response() res: Response): Promise<ProfileResourceList> {
 
         logger.info(`profiles.controller listProfiles: in: category:${category}, template:${templateId}`);
 
-        let model: ProfileModelList;
+        let resources: ProfileResourceList;
 
         try {
-            model = await this.profilesService.list(templateId);
+            const items = await this.profilesService.list(templateId);
 
-            if (model===undefined) {
+            if (items===undefined) {
                 res.status(404).end();
             }
+
+            resources = this.assembler.toResourceList(items, req['version']);
 
         } catch (e) {
             handleError(e,res);
         }
-        logger.debug(`profiles.controller listProfiles:  exit: ${JSON.stringify(model)}`);
-        return model;
+        logger.debug(`profiles.controller listProfiles:  exit: ${JSON.stringify(resources)}`);
+        return resources;
     }
 }

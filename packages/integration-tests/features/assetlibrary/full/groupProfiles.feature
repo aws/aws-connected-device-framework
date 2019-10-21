@@ -65,7 +65,7 @@ Feature: Groups Profiles
     When I update group "/TEST-groupProfiles-group002" applying profile "TEST-groupProfiles-profile"
     Then group "/TEST-groupProfiles-group002" exists with attributes
       | templateId | test-groupprofiles-type |
-      | attributes | {"site": "B", "area": "1"} |
+      | attributes | {"site": "A", "area": "1"} |
 
 
   Scenario: Deleting a profile removes it

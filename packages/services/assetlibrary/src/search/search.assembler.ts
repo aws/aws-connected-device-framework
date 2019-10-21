@@ -3,11 +3,19 @@
 #
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
-import { SearchRequestModel, SearchRequestFilters, SearchRequestFilterDirection, SearchRequestFilterTraversal } from './search.models';
-import { injectable } from 'inversify';
+import { SearchRequestModel, SearchRequestFilters, SearchRequestFilterDirection, SearchRequestFilterTraversal, SearchResultsResource } from './search.models';
+import { injectable, inject } from 'inversify';
+import { DeviceItem, determineIfDeviceItem, DeviceBaseResource } from '../devices/devices.models';
+import { GroupItem, determineIfGroupItem, GroupBaseResource } from '../groups/groups.models';
+import { TYPES } from '../di/types';
+import { DevicesAssembler } from '../devices/devices.assembler';
+import { GroupsAssembler } from '../groups/groups.assembler';
 
 @injectable()
 export class SearchAssembler {
+
+    constructor( @inject(TYPES.DevicesAssembler) private devicesAssembler: DevicesAssembler,
+        @inject(TYPES.GroupsAssembler) private groupsAssembler: GroupsAssembler  ) {}
 
     public toSearchRequestModel(types:string|string[], ancestorPath:string,
         eqs:string|string[], neqs:string|string[], lts:string|string[], ltes:string|string[],
@@ -85,6 +93,27 @@ export class SearchAssembler {
         }
 
         return response;
+    }
+
+    public toSearchResultsResource(items: (DeviceItem|GroupItem)[], version:string): SearchResultsResource {
+
+        if (items===undefined) {
+            return undefined;
+        }
+
+        const resources:SearchResultsResource = {
+            results:[]
+        };
+
+        items.forEach(item=> {
+            if (determineIfDeviceItem(item)) {
+                (<(GroupBaseResource|DeviceBaseResource)[]> resources.results).push(this.devicesAssembler.toDeviceResource(item, version));
+            } else if (determineIfGroupItem(item)) {
+                (<(GroupBaseResource|DeviceBaseResource)[]> resources.results).push(this.groupsAssembler.toGroupResource(item, version));
+            }
+        });
+
+        return resources;
     }
 
 }

@@ -4,7 +4,7 @@
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
 import { injectable, inject } from 'inversify';
-import { GroupModel, BulkLoadGroupsRequest, BulkLoadGroupsResult, GroupsMembersModel, RelatedGroupListModel} from './groups.models';
+import { GroupItem, BulkGroupsResult, GroupMemberItemList, GroupResourceList} from './groups.models';
 import {logger} from '../utils/logger';
 import {TypeCategory} from '../types/constants';
 import ow from 'ow';
@@ -13,7 +13,7 @@ import { TYPES } from '../di/types';
 import { EventEmitter, Type, Event } from '../events/eventEmitter.service';
 import { GroupsAssembler } from './groups.assembler';
 import { GroupsDaoLite, ListMembersResponse } from './groups.lite.dao';
-import { RelatedDeviceListResult } from '../devices/devices.models';
+import { DeviceItemList } from '../devices/devices.models';
 
 @injectable()
 export class GroupsServiceLite implements GroupsService {
@@ -22,7 +22,7 @@ export class GroupsServiceLite implements GroupsService {
         @inject(TYPES.GroupsAssembler) private groupsAssembler: GroupsAssembler,
         @inject(TYPES.EventEmitter) private eventEmitter: EventEmitter) {}
 
-    public async get(groupId: string): Promise<GroupModel> {
+    public async get(groupId: string): Promise<GroupItem> {
         logger.debug(`groups.lite.service get: in: groupId: ${groupId}`);
 
         ow(groupId, ow.string.nonEmpty);
@@ -32,21 +32,16 @@ export class GroupsServiceLite implements GroupsService {
             throw new Error('NOT_FOUND');
         }
 
-        const model = this.groupsAssembler.toGroupModel(result);
+        const model = this.groupsAssembler.toGroupItem(result);
         logger.debug(`groups.lite.service get: exit: model: ${JSON.stringify(model)}`);
         return model;
     }
 
-    public async createBulk(request:BulkLoadGroupsRequest, applyProfile?:string) : Promise<BulkLoadGroupsResult> {
-        logger.debug(`groups.lite.service createBulk: in: request: ${JSON.stringify(request)}, applyProfile:${applyProfile}`);
-
-        ow(request, ow.object.nonEmpty);
-        ow(request.groups, ow.array.nonEmpty);
-
+    public async createBulk(_groups:GroupItem[], _applyProfile?:string) : Promise<BulkGroupsResult> {
         throw new Error('NOT_SUPPORTED');
     }
 
-    public async create(model:GroupModel, applyProfile?:string) : Promise<string> {
+    public async create(model:GroupItem, applyProfile?:string) : Promise<string> {
         logger.debug(`groups.lite.service create: in: model:${JSON.stringify(model)}, applyProfile:${applyProfile}`);
 
         ow(model, ow.object.nonEmpty);
@@ -84,7 +79,7 @@ export class GroupsServiceLite implements GroupsService {
 
     }
 
-    public async update(model: GroupModel, applyProfile?:string) : Promise<void> {
+    public async update(model: GroupItem, applyProfile?:string) : Promise<void> {
         logger.debug(`groups.lite.service update: in: model:${JSON.stringify(model)}, applyProfile:${applyProfile}`);
 
         ow(model, ow.object.nonEmpty);
@@ -119,7 +114,7 @@ export class GroupsServiceLite implements GroupsService {
         logger.debug(`groups.lite.service update: exit:`);
     }
 
-    public async getMembers(groupPath:string, category:TypeCategory, type:string, state:string, offset?:number|string, maxResults?:number): Promise<GroupsMembersModel> {
+    public async getMembers(groupPath:string, category:TypeCategory, type:string, state:string, offset?:number|string, maxResults?:number): Promise<GroupMemberItemList> {
         logger.debug(`groups.lite.service getMembers: in: groupPath:${groupPath}, category:${category}, type:${type}, state:${state}, offset:${offset}, maxResults:${maxResults}`);
 
         ow(groupPath, ow.string.nonEmpty);
@@ -140,13 +135,13 @@ export class GroupsServiceLite implements GroupsService {
         return model;
     }
 
-    public async getParentGroups(groupPath:string): Promise<GroupModel[]> {
+    public async getParentGroups(groupPath:string): Promise<GroupItem[]> {
         logger.debug(`groups.lite.service getParentGroups: in: groupPath:${groupPath}`);
 
         ow(groupPath, ow.string.nonEmpty);
 
         // in 'lite' mode we have to recurse manually
-        const groups:GroupModel[]=[];
+        const groups:GroupItem[]=[];
         let group = await this.get(groupPath);
         groups.push(group);
         while (group.parentPath!==undefined) {
@@ -193,12 +188,12 @@ export class GroupsServiceLite implements GroupsService {
         throw new Error('NOT_SUPPORTED');
     }
 
-    public async listRelatedGroups(groupPath: string, relationship: string, direction:string, template:string, offset:number, count:number) : Promise<RelatedGroupListModel> {
+    public async listRelatedGroups(groupPath: string, relationship: string, direction:string, template:string, offset:number, count:number) : Promise<GroupResourceList> {
         logger.debug(`groups.full.service listRelatedGroups: in: groupPath:${groupPath}, relationship:${relationship}, direction:${direction}, template:${template}, offset:${offset}, count:${count}`);
         throw new Error('NOT_SUPPORTED');
     }
 
-    public async listRelatedDevices(groupPath: string, relationship: string, direction:string, template:string, state:string, offset:number, count:number) : Promise<RelatedDeviceListResult> {
+    public async listRelatedDevices(groupPath: string, relationship: string, direction:string, template:string, state:string, offset:number, count:number) : Promise<DeviceItemList> {
         logger.debug(`groups.full.service listRelatedDevices: in: groupPath:${groupPath}, relationship:${relationship}, direction:${direction}, template:${template}, state:${state}, offset:${offset}, count:${count}`);
         throw new Error('NOT_SUPPORTED');
     }

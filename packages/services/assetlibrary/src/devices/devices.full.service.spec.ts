@@ -14,10 +14,10 @@ import { TypesServiceFull } from '../types/types.full.service';
 import { GroupsService } from '../groups/groups.service';
 import { DevicesDaoFull } from './devices.full.dao';
 import { Node} from '../data/node';
-import { DeviceModel } from './devices.models';
+import { DeviceItem } from './devices.models';
 import {EventEmitter} from '../events/eventEmitter.service';
 import { ProfilesService } from '../profiles/profiles.service';
-import { DeviceProfileModel } from '../profiles/profiles.models';
+import { DeviceProfileItem } from '../profiles/profiles.models';
 import { TypeCategory } from '../types/constants';
 import { DevicesService } from './devices.service';
 import { GroupsServiceFull } from '../groups/groups.full.service';
@@ -50,13 +50,13 @@ describe('DevicesService', () => {
 
     it('applying profile with attributes and groups to empty device', async() => {
         // stubs
-        const model:DeviceModel = {
+        const model:DeviceItem = {
             deviceId: 'device001',
             category: TypeCategory.Device,
             templateId: 'testTemplate'
         };
         const profileId = 'testPofileId';
-        const profile:DeviceProfileModel = {
+        const profile:DeviceProfileItem = {
             deviceId: null,
             category: null,
             profileId,
@@ -67,11 +67,13 @@ describe('DevicesService', () => {
                 c: true
             },
             groups: {
-                linked_to: ['path1', 'path2']
+                out: {
+                    linked_to: ['path1', 'path2']
+                }
             }
         };
 
-        const expected:DeviceModel = {
+        const expected:DeviceItem = {
             deviceId: 'device001',
             category: TypeCategory.Device,
             templateId: 'testTemplate',
@@ -81,7 +83,9 @@ describe('DevicesService', () => {
                 c: true
             },
             groups: {
-                linked_to: ['path1', 'path2']
+                out: {
+                    linked_to: ['path1', 'path2']
+                }
             }
         };
 
@@ -99,7 +103,7 @@ describe('DevicesService', () => {
 
     it('applying profile with attributes and groups to device with attributes and groups', async() => {
         // stubs
-        const model:DeviceModel = {
+        const original:DeviceItem = {
             deviceId: 'device001',
             category: TypeCategory.Device,
             templateId: 'testTemplate',
@@ -108,28 +112,32 @@ describe('DevicesService', () => {
                 d: false
             },
             groups: {
-                linked_to_a: ['pathA1', 'pathA2'],
-                linked_to_b: ['pathA3']
+                out: {
+                    linked_to_a: ['pathA1', 'pathA2'],
+                    linked_to_b: ['pathA3']
+                }
             }
         };
         const profileId = 'testPofileId';
-        const profile:DeviceProfileModel = {
+        const profile:DeviceProfileItem = {
             deviceId: null,
             category: null,
             profileId,
-            templateId: model.templateId,
+            templateId: original.templateId,
             attributes: {
                 a: 1,
                 b: '2',
                 c: true
             },
             groups: {
-                linked_to_a: ['pathB1'],
-                linked_to_c: ['pathB2']
+                out: {
+                    linked_to_a: ['pathB1'],
+                    linked_to_c: ['pathB2']
+                }
             }
         };
 
-        const expected:DeviceModel = {
+        const expected:DeviceItem = {
             deviceId: 'device001',
             category: TypeCategory.Device,
             templateId: 'testTemplate',
@@ -140,9 +148,11 @@ describe('DevicesService', () => {
                 d: false
             },
             groups: {
-                linked_to_a: ['pathA1', 'pathA2'],
-                linked_to_b: ['pathA3'],
-                linked_to_c: ['pathB2']
+                out: {
+                    linked_to_a: ['pathA1', 'pathA2'],
+                    linked_to_b: ['pathA3'],
+                    linked_to_c: ['pathB2']
+                }
             }
         };
 
@@ -150,7 +160,7 @@ describe('DevicesService', () => {
         mockedProfilesService.get = jest.fn().mockImplementation(()=> profile);
 
         // execute
-        const actual = await (<DevicesServiceFull>instance).___test___applyProfile(model, profileId);
+        const actual = await (<DevicesServiceFull>instance).___test___applyProfile(original, profileId);
 
         // verify
         expect(actual).toBeDefined();
@@ -168,7 +178,7 @@ describe('DevicesService', () => {
         n.attributes['']= [123];
         n.attributes['booleanArrayAttribute']= [true];
 
-        const dm = new DeviceModel();
+        const dm = new DeviceItem();
         dm.templateId = 'mote';
         dm.deviceId = validDeviceId;
         dm.attributes['stringArrayAttribute'] = 'string';
@@ -178,7 +188,7 @@ describe('DevicesService', () => {
         // Set the mocks on the dependent classes
         mockedDao.get = jest.fn().mockImplementation(()=> [n]);
 
-        mockedDeviceAssembler.toDeviceModel = jest.fn().mockImplementation(()=> dm);
+        mockedDeviceAssembler.toDeviceItem = jest.fn().mockImplementation(()=> dm);
 
         // Make the call
         const device = await instance.get(validDeviceId, false, [], true);

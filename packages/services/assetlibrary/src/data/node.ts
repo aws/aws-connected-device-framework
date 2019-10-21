@@ -6,6 +6,7 @@ import { TypeCategory } from '../types/constants';
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
 export type NodeAttributeValue = string | string[] | number | number[] | boolean | boolean[];
+export type StringNodeMap = { [key: string] : Node[]} ;
 export class Node {
     id?:string;
     types: string[];
@@ -13,8 +14,8 @@ export class Node {
 
     attributes?: { [key: string] : NodeAttributeValue} = {};
 
-    in: { [key: string] : Node[]} = {};
-    out: { [key: string] : Node[]} = {};
+    in: StringNodeMap = {};
+    out: StringNodeMap = {};
 
     // used for optimistic locking in 'lite' mode
     version?: number;

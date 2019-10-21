@@ -16,7 +16,7 @@ Likewise, `Device Templates` can be created to represent the different types of 
 `Policies` represent a document that can be attached to one or more groups within a hierarchy, and are automatically inherited by the devices and groups.
 
 
-## Version: 1.0.0
+## Version: 2.0.0
 
 ### /templates/devices/{templateId}
 
@@ -31,7 +31,6 @@ Registers a new device template within the system, using the JSON Schema standar
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | templateId | path | ID of device template to publish | Yes | string |
-| body | body |  | Yes | [TemplateDefinition](#templatedefinition) |
 
 ##### Responses
 
@@ -58,11 +57,11 @@ Returns a single device template definition
 
 ##### Responses
 
-| Code | Description | Schema |
-| ---- | ----------- | ------ |
-| 200 | OK | [TemplateInfo](#templateinfo) |
-| 400 |  |  |
-| 404 |  |  |
+| Code | Description |
+| ---- | ----------- |
+| 200 | OK |
+| 400 |  |
+| 404 |  |
 
 #### PATCH
 ##### Summary:
@@ -74,7 +73,6 @@ Update an existing device template.
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | templateId | path | ID of device template to publish | Yes | string |
-| body | body |  | Yes | [TemplateDefinition](#templatedefinition) |
 
 ##### Responses
 
@@ -137,7 +135,6 @@ Registers a new group template within the system, using the JSON Schema standard
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | templateId | path | ID of group template to return | Yes | string |
-| body | body |  | Yes | [TemplateDefinition](#templatedefinition) |
 
 ##### Responses
 
@@ -164,11 +161,11 @@ Returns a single group template definition
 
 ##### Responses
 
-| Code | Description | Schema |
-| ---- | ----------- | ------ |
-| 200 | OK | [TemplateInfo](#templateinfo) |
-| 400 |  |  |
-| 404 |  |  |
+| Code | Description |
+| ---- | ----------- |
+| 200 | OK |
+| 400 |  |
+| 404 |  |
 
 #### PATCH
 ##### Summary:
@@ -180,7 +177,6 @@ Update an existing group template.
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | templateId | path | ID of group template to return | Yes | string |
-| body | body |  | Yes | [TemplateDefinition](#templatedefinition) |
 
 ##### Responses
 
@@ -241,7 +237,6 @@ Add a new device to the asset library, adding it to the `/unprovisioned` group i
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
-| body | body | Device to add to the asset library | Yes | [Device](#device) |
 | applyProfile | query | Optionally apply a profile to the device to update unset attributes with attributes from the profile. | No | string |
 
 ##### Responses
@@ -262,7 +257,6 @@ Adds a batch of devices in bulk to the asset library, adding them to the `/unpro
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
-| body | body | List of devices to add to the asset library | Yes | [BulkDevices](#bulkdevices) |
 | applyProfile | query | Optionally apply a profile to the device to update unset attributes with attributes from the profile. | No | string |
 
 ##### Responses
@@ -281,7 +275,6 @@ Update a batch of existing devices
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
-| body | body | List of devices and their attributes to update | Yes | [BulkDevices](#bulkdevices) |
 | applyProfile | query | Optionally apply a profile to the device to update unset attributes with attributes from the profile. | No | string |
 
 ##### Responses
@@ -311,14 +304,17 @@ Returns a single device
 | expandComponents | query | By default, components of a device are not returned. Passing `true` will return and expand a devices components. | No | boolean |
 | attributes | query | Optionally only return these specific attributes.  By default returns all attributes. | No | [ string ] |
 | includeGroups | query | Optionally only return these specific related groups.  By default returns all related groups. | No | [ string ] |
+| expandRelatedDevices | query | By default, only related device id's are returned.  Passing `true` will return expanded related devices instead of just its device id. | No | boolean |
+| expandRelatedGroups | query | By default, only related group paths are returned.  Passing `true` will return expanded related groups instead of just its path. | No | boolean |
+| filterRelations | query | Return related devices/groups filtered by relation.  Specify the relation in the format of `{direction}:{relation}`, where `{direction}` may be `in`, `out` or `both`. | No | [ string ] |
 
 ##### Responses
 
-| Code | Description | Schema |
-| ---- | ----------- | ------ |
-| 200 | successful operation | [Device](#device) |
-| 400 |  |  |
-| 404 |  |  |
+| Code | Description |
+| ---- | ----------- |
+| 200 | successful operation |
+| 400 |  |
+| 404 |  |
 
 #### DELETE
 ##### Summary:
@@ -352,7 +348,6 @@ Update an existing device attributes
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | deviceId | path | ID of device to return | Yes | string |
-| body | body | Device object that needs to be updated in device store | Yes | [Device](#device) |
 | applyProfile | query | Optionally apply a profile to the device to update unset attributes with attributes from the profile. | No | string |
 
 ##### Responses
@@ -361,6 +356,31 @@ Update an existing device attributes
 | ---- | ----------- |
 | 204 | successful operation |
 | 400 |  |
+| 404 |  |
+
+### /devices/{deviceId}/{relationship}/groups
+
+#### GET
+##### Summary:
+
+List a devices related groups.
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| deviceId | path | Id of device | Yes | string |
+| relationship | path | The relationship between the device and group as defined by the device template. | Yes | string |
+| template | query | Optional filter to return a specific group template | No | string |
+| direction | query | Direction of relation | No | [ string ] |
+| offset | query | The index to start paginated results from | No | integer |
+| count | query | The maximum number of results to return | No | integer |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | successful operation |
 | 404 |  |
 
 ### /devices/{deviceId}/{relationship}/groups/{groupPath}
@@ -407,6 +427,32 @@ Removes a device from an associated group
 | 400 |  |
 | 404 |  |
 
+### /devices/{deviceId}/{relationship}/devices
+
+#### GET
+##### Summary:
+
+List a devices related devices.
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| deviceId | path | Id of device | Yes | string |
+| relationship | path | The relationship between the device and the other device as defined in the device template. | Yes | string |
+| template | query | Optional filter to return a specific device template | No | string |
+| direction | query | Direction of relation | No | [ string ] |
+| state | query | Return devices of a specific state | No | [ string ] |
+| offset | query | The index to start paginated results from | No | integer |
+| count | query | The maximum number of results to return | No | integer |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | successful operation |
+| 404 |  |
+
 ### /devices/{deviceId}/{relationship}/devices/{otherDeviceId}
 
 #### PUT
@@ -418,8 +464,8 @@ Associates a device to another device, giving context to its relationship.
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
-| deviceId | path | Id of device to attach to the group | Yes | string |
-| relationship | path | The relationship between the device and group. For example, this may reflect `locatedAt` or `manufacturedAt` relations. | Yes | string |
+| deviceId | path | Id of source device | Yes | string |
+| relationship | path | The relationship between the device and the other device as defined in the device template. | Yes | string |
 | otherDeviceId | path | ID of device to create relationship to. | Yes | string |
 
 ##### Responses
@@ -439,8 +485,8 @@ Removes a device from an associated device
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
-| deviceId | path | Id of device to attach to the group | Yes | string |
-| relationship | path | The relationship between the device and group. For example, this may reflect `locatedAt` or `manufacturedAt` relations. | Yes | string |
+| deviceId | path | Id of source device | Yes | string |
+| relationship | path | The relationship between the device and the other device as defined in the device template. | Yes | string |
 | otherDeviceId | path | ID of device to create relationship to. | Yes | string |
 
 ##### Responses
@@ -463,7 +509,6 @@ Createa a new component and adds to the device.
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | deviceId | path | Id of parent device | Yes | string |
-| body | body | Device to add as a component | Yes | [Device](#device) |
 
 ##### Responses
 
@@ -525,7 +570,6 @@ Adds a new group to the device library as a child of the `parentPath` as specifi
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
-| body | body | Group to add to the asset library | Yes | [Group](#group) |
 | applyProfile | query | Optionally apply a profile to the device to update unset attributes with attributes from the profile. | No | string |
 
 ##### Responses
@@ -546,7 +590,6 @@ Adds a batch of new group to the asset library as a child of the `parentPath` as
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
-| body | body | Group to add to the asset library | Yes | [ [BulkGroups](#bulkgroups) ] |
 | applyProfile | query | Optionally apply a profile to the device to update unset attributes with attributes from the profile. | No | string |
 
 ##### Responses
@@ -575,10 +618,10 @@ Returns a single group
 
 ##### Responses
 
-| Code | Description | Schema |
-| ---- | ----------- | ------ |
-| 200 | successful operation | [Group](#group) |
-| 404 |  |  |
+| Code | Description |
+| ---- | ----------- |
+| 200 | successful operation |
+| 404 |  |
 
 #### DELETE
 ##### Summary:
@@ -612,7 +655,6 @@ Update an existing group attributes, including changing its parent group.
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | groupPath | path | Path of group to return | Yes | string |
-| body | body | Group object that needs to be updated | Yes | [Group](#group) |
 | applyProfile | query | Optionally apply a profile to the device to update unset attributes with attributes from the profile. | No | string |
 
 ##### Responses
@@ -639,18 +681,18 @@ Returns device members of group
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | groupPath | path | Path of group to return its device members. A path of '/' can be passed as id to return top level device members | Yes | string |
-| template | query | Optional filter to return a specific device sub-type | No | string |
-| state | query | Return devices of a specific state | No | string |
+| template | query | Optional filter to return a specific device template | No | string |
+| state | query | Return devices of a specific state | No | [ string ] |
 | offset | query | The index to start paginated results from | No | integer |
 | count | query | The maximum number of results to return | No | integer |
 
 ##### Responses
 
-| Code | Description | Schema |
-| ---- | ----------- | ------ |
-| 200 | successful operation | object |
-| 400 |  |  |
-| 404 |  |  |
+| Code | Description |
+| ---- | ----------- |
+| 200 | successful operation |
+| 400 |  |
+| 404 |  |
 
 ### /groups/{groupPath}/members/groups
 
@@ -674,11 +716,11 @@ Returns group members of group
 
 ##### Responses
 
-| Code | Description | Schema |
-| ---- | ----------- | ------ |
-| 200 | successful operation | object |
-| 400 |  |  |
-| 404 |  |  |
+| Code | Description |
+| ---- | ----------- |
+| 200 | successful operation |
+| 400 |  |
+| 404 |  |
 
 ### /groups/{groupPath}/memberships
 
@@ -701,11 +743,62 @@ List all ancestor groups of a specific group.
 
 ##### Responses
 
-| Code | Description | Schema |
-| ---- | ----------- | ------ |
-| 200 | successful operation | [ [Group](#group) ] |
-| 400 |  |  |
-| 404 |  |  |
+| Code | Description |
+| ---- | ----------- |
+| 200 | successful operation |
+| 400 |  |
+| 404 |  |
+
+### /groups/{groupPath}/{relationship}/devices
+
+#### GET
+##### Summary:
+
+List a groups related devices.
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| groupPath | path | Path of source group | Yes | string |
+| relationship | path | The relationship between the group and the devices as defined by the group/device templatea.  Use `%2A` (urlencoded `*`) to return all. | Yes | string |
+| template | query | Optional filter to return a specific device template | No | string |
+| direction | query | Direction of relation | No | [ string ] |
+| state | query | Return devices of a specific state | No | [ string ] |
+| offset | query | The index to start paginated results from | No | integer |
+| count | query | The maximum number of results to return | No | integer |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | successful operation |
+| 404 |  |
+
+### /groups/{groupPath}/{relationship}/groups
+
+#### GET
+##### Summary:
+
+List a groups related groups.
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| groupPath | path | Path of source group | Yes | string |
+| relationship | path | The relationship between the groups as defined by the group template.  Use `%2A` (urlencoded `*`) to return all. | Yes | string |
+| template | query | Optional filter to return a specific group template | No | string |
+| direction | query | Direction of relation | No | [ string ] |
+| offset | query | The index to start paginated results from | No | integer |
+| count | query | The maximum number of results to return | No | integer |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 200 | successful operation |
+| 404 |  |
 
 ### /groups/{sourceGroupPath}/{relationship}/groups/{targetGroupPath}
 
@@ -763,7 +856,6 @@ Adds a new device profile for a specific template.
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | templateId | path | ID of the device template | Yes | string |
-| body | body | Device Profile to add to the asset library | Yes | [DeviceProfile](#deviceprofile) |
 
 ##### Responses
 
@@ -789,10 +881,10 @@ ReturnsReturn all device profiles for a specific template
 
 ##### Responses
 
-| Code | Description | Schema |
-| ---- | ----------- | ------ |
-| 200 | successful operation | [DeviceProfileList](#deviceprofilelist) |
-| 404 |  |  |
+| Code | Description |
+| ---- | ----------- |
+| 200 | successful operation |
+| 404 |  |
 
 ### /profiles/device/{templateId}/{profileId}
 
@@ -814,10 +906,10 @@ Returns a single device profile
 
 ##### Responses
 
-| Code | Description | Schema |
-| ---- | ----------- | ------ |
-| 200 | successful operation | [DeviceProfile](#deviceprofile) |
-| 404 |  |  |
+| Code | Description |
+| ---- | ----------- |
+| 200 | successful operation |
+| 404 |  |
 
 #### DELETE
 ##### Summary:
@@ -853,7 +945,6 @@ Update an existing device profile.
 | ---- | ---------- | ----------- | -------- | ---- |
 | templateId | path | ID of the device template | Yes | string |
 | profileId | path | ID of the profile | Yes | string |
-| body | body | Profile that needs to be updated | Yes | [DeviceProfile](#deviceprofile) |
 
 ##### Responses
 
@@ -875,7 +966,6 @@ Adds a new group profile for a specific template.
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | templateId | path | ID of the group template | Yes | string |
-| body | body | Group Profile to add to the asset library | Yes | [GroupProfile](#groupprofile) |
 
 ##### Responses
 
@@ -901,10 +991,10 @@ Return all group profiles for a specific template
 
 ##### Responses
 
-| Code | Description | Schema |
-| ---- | ----------- | ------ |
-| 200 | successful operation | [GroupProfileList](#groupprofilelist) |
-| 404 |  |  |
+| Code | Description |
+| ---- | ----------- |
+| 200 | successful operation |
+| 404 |  |
 
 ### /profiles/group/{templateId}/{profileId}
 
@@ -926,10 +1016,10 @@ Returns a single group profile
 
 ##### Responses
 
-| Code | Description | Schema |
-| ---- | ----------- | ------ |
-| 200 | successful operation | [GroupProfile](#groupprofile) |
-| 404 |  |  |
+| Code | Description |
+| ---- | ----------- |
+| 200 | successful operation |
+| 404 |  |
 
 #### DELETE
 ##### Summary:
@@ -965,7 +1055,6 @@ Update an existing group profile.
 | ---- | ---------- | ----------- | -------- | ---- |
 | templateId | path | ID of the group template | Yes | string |
 | profileId | path | ID of the profile | Yes | string |
-| body | body | Profile that needs to be updated | Yes | [GroupProfile](#groupprofile) |
 
 ##### Responses
 
@@ -997,18 +1086,18 @@ Search for groups and devices.
 | startsWith | query | Filter by an attribute based on starting with specific text. E.g. `?startsWith=model:MOD123` | No | [ string ] |
 | endsWith | query | NOT IMPLEMENTED!` | No | [ string ] |
 | contains | query | NOT IMPLEMENTED! | No | [ string ] |
-| facetField | query | Perform a faceted query.  Specify in the form of `?facetField=relation:direction:field. | No | string |
+| facetField | query | Perform a faceted query.  Specify in the format of `?facetField=relation:direction:field` | No | string |
 | summarize | query | Summarize the search results by providing a total, instead of returning the results themselves. | No | boolean |
 | offset | query | The index to start paginated results from | No | integer |
 | count | query | The maximum number of results to return | No | integer |
 
 ##### Responses
 
-| Code | Description | Schema |
-| ---- | ----------- | ------ |
-| 200 | successful operation | [ [SearchResults](#searchresults) ] |
-| 400 |  |  |
-| 404 |  |  |
+| Code | Description |
+| ---- | ----------- |
+| 200 | successful operation |
+| 400 |  |
+| 404 |  |
 
 ### /policies
 
@@ -1016,12 +1105,6 @@ Search for groups and devices.
 ##### Summary:
 
 Creates a new `Policy`, and applies it to the provided `Groups`.
-
-##### Parameters
-
-| Name | Located in | Description | Required | Schema |
-| ---- | ---------- | ----------- | -------- | ---- |
-| body | body | Policy to create. | Yes | [Policy](#policy) |
 
 ##### Responses
 
@@ -1043,11 +1126,11 @@ List policies, optionally filtered by policy type.
 
 ##### Responses
 
-| Code | Description | Schema |
-| ---- | ----------- | ------ |
-| 200 | successful operation | [ [PolicyList](#policylist) ] |
-| 400 |  |  |
-| 404 |  |  |
+| Code | Description |
+| ---- | ----------- |
+| 200 | successful operation |
+| 400 |  |
+| 404 |  |
 
 ### /policies/inherited
 
@@ -1066,11 +1149,11 @@ Returns all inherited `Policies` for a `Device` or set of `Groups` where the `De
 
 ##### Responses
 
-| Code | Description | Schema |
-| ---- | ----------- | ------ |
-| 200 | successful operation | [ [PolicyList](#policylist) ] |
-| 400 |  |  |
-| 404 |  |  |
+| Code | Description |
+| ---- | ----------- |
+| 200 | successful operation |
+| 400 |  |
+| 404 |  |
 
 ### /policies/{policyId}
 
@@ -1084,7 +1167,6 @@ Update the attributes of an existing policy.
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | policyId | path | ID of policy | Yes | string |
-| body | body | Policy that needs to be updated | Yes | [Policy](#policy) |
 
 ##### Responses
 
@@ -1126,138 +1208,8 @@ Retrieve a specific policy.
 
 ##### Responses
 
-| Code | Description | Schema |
-| ---- | ----------- | ------ |
-| 200 | successful operation | [ [Policy](#policy) ] |
-| 400 |  |  |
-| 404 |  |  |
-
-### Models
-
-
-#### Entity
-
-| Name | Type | Description | Required |
-| ---- | ---- | ----------- | -------- |
-| category | string | Category of entity. | No |
-
-#### Device
-
-| Name | Type | Description | Required |
-| ---- | ---- | ----------- | -------- |
-| Device |  |  |  |
-
-#### DeviceProfile
-
-| Name | Type | Description | Required |
-| ---- | ---- | ----------- | -------- |
-| DeviceProfile |  |  |  |
-
-#### Group
-
-| Name | Type | Description | Required |
-| ---- | ---- | ----------- | -------- |
-| Group |  |  |  |
-
-#### GroupProfile
-
-| Name | Type | Description | Required |
-| ---- | ---- | ----------- | -------- |
-| GroupProfile |  |  |  |
-
-#### BulkDevices
-
-| Name | Type | Description | Required |
-| ---- | ---- | ----------- | -------- |
-| devices | [ [Device](#device) ] |  | No |
-
-#### BulkGroups
-
-| Name | Type | Description | Required |
-| ---- | ---- | ----------- | -------- |
-| groups | [ [Group](#group) ] |  | No |
-
-#### GroupList
-
-| Name | Type | Description | Required |
-| ---- | ---- | ----------- | -------- |
-| results | [ [Group](#group) ] |  | No |
-| pagination | object |  | No |
-| total | number | Total number of search results.  Only returned by the search API's when `summarize` is set to true. | No |
-
-#### DeviceList
-
-| Name | Type | Description | Required |
-| ---- | ---- | ----------- | -------- |
-| results | [ [Device](#device) ] |  | No |
-| pagination | object |  | No |
-| total | number | Total number of search results.  Only returned by the search API's when `summarize` is set to true. | No |
-
-#### DeviceProfileList
-
-| Name | Type | Description | Required |
-| ---- | ---- | ----------- | -------- |
-| results | [ [DeviceProfile](#deviceprofile) ] |  | No |
-| pagination | object |  | No |
-
-#### GroupProfileList
-
-| Name | Type | Description | Required |
-| ---- | ---- | ----------- | -------- |
-| results | [ [GroupProfile](#groupprofile) ] |  | No |
-| pagination | object |  | No |
-
-#### SearchResults
-
-| Name | Type | Description | Required |
-| ---- | ---- | ----------- | -------- |
-| results | [ [Entity](#entity) ] |  | No |
-
-#### TemplateInfo
-
-| Name | Type | Description | Required |
-| ---- | ---- | ----------- | -------- |
-| templateId | string | Unique ID of template | No |
-| category | string | Category of template | No |
-| schema | object |  | No |
-
-#### TemplateDefinition
-
-| Name | Type | Description | Required |
-| ---- | ---- | ----------- | -------- |
-| properties | object | Map of allowed properties (string, number, boolean and datetime types allowed only) | No |
-| required | [ string ] | List of required properties | No |
-| relations | object |  | No |
-| messagePayload | [MessagePayloadDefinition](#messagepayloaddefinition) | Message payload definition | No |
-
-#### Policy
-
-| Name | Type | Description | Required |
-| ---- | ---- | ----------- | -------- |
-| policyId | string | unique ID of policy | No |
-| type | string | type of policy | No |
-| description | string | description of policy | No |
-| appliesTo | [ string ] | the paths of the group that this policy applies to | No |
-| document | string | the policy document (e.g. a provisioning template) | No |
-
-#### PolicyList
-
-| Name | Type | Description | Required |
-| ---- | ---- | ----------- | -------- |
-| policies | [ [Policy](#policy) ] | a list of policies | No |
-| pagination | object |  | No |
-
-#### MessagePayloadDefinition
-
-| Name | Type | Description | Required |
-| ---- | ---- | ----------- | -------- |
-| timeStampAttributeName | string | Name of time stamp attribute in message payload | No |
-| properties | object | Map of defined message payload properties, where the key represents the attribtue name, and the value reprents the attribute display name and type. | No |
-| required | [ string ] | List of required properties | No |
-| periodicFrequency | number | No. seconds that a telemtry should be broadcast from the device | No |
-
-#### Error
-
-| Name | Type | Description | Required |
-| ---- | ---- | ----------- | -------- |
-| message | string |  | No |
+| Code | Description |
+| ---- | ----------- |
+| 200 | successful operation |
+| 400 |  |
+| 404 |  |
