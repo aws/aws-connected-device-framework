@@ -36,13 +36,16 @@ export class UpdateAction implements EventAction {
 
         if (event.attributes!==undefined) {
             if (event.attributes['attachedToGroup']!==undefined) {
+                if (mergedState['groups']['out']===undefined) {
+                    mergedState['groups']['out']= {};
+                }
                 mergedState['groups'].push(event.attributes['attachedToGroup']);
             } else if (event.attributes['detachedFromGroup']!==undefined) {
-                delete mergedState['groups'][event.attributes['attachedToGroup']];
+                delete mergedState['groups']['out'][event.attributes['attachedToGroup']];
             } else if (event.attributes['attachedToDevice']!==undefined) {
                 mergedState['devices'].push(event.attributes['attachedToDevice']);
             } else if (event.attributes['detachedFromDevice']!==undefined) {
-                delete mergedState['devices'][event.attributes['attachedToDevice']];
+                delete mergedState['devices']['out'][event.attributes['attachedToDevice']];
             }
         }
 
