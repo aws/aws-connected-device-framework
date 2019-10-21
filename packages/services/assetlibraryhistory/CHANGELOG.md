@@ -1,3 +1,10 @@
+# [@cdf/assetlibrary-history-v2.2.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-history-v2.2.0...@cdf/assetlibrary-history-v2.2.1) (2019-10-21)
+
+
+### Bug Fixes
+
+* **assetlibraryhistory:** updated to match v2 assetlibrary models ([e6254ee](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/e6254eee67adbe05d48a0c18467dd2d63550b981))
+
 # [@cdf/assetlibrary-history-v2.2.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-history-v2.1.5...@cdf/assetlibrary-history-v2.2.0) (2019-06-30)
 
 
