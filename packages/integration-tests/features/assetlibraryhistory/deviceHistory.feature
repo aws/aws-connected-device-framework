@@ -34,7 +34,7 @@ Feature: Device History
     And history record 1 contains attributes
       | objectId | test-devicehistory-device001 |
       | event | modify |
-      | state | {"attributes":{"firmwareVersion":"2"},"category":"device","description":"Description 1","deviceId":"test-devicehistory-device001","devices":{},"groups":{},"state":"unprovisioned","templateId":"test-devicehistory-device-type"} |
+      | state | {"attributes":{"firmwareVersion":"2"},"category":"device","description":"Description 1","deviceId":"test-devicehistory-device001","devices":{},"groups":{"out":{"linked_to":["/test-devicehistory-group"]}},"state":"unprovisioned","templateId":"test-devicehistory-device-type"} |
       | type | devices |
 
 
