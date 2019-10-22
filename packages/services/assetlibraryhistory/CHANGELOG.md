@@ -1,3 +1,10 @@
+# [@cdf/assetlibrary-history-v2.2.2](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-history-v2.2.1...@cdf/assetlibrary-history-v2.2.2) (2019-10-21)
+
+
+### Bug Fixes
+
+* **assetlibrary-history:** fixing broken tests ([f0ff307](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/f0ff307cea631cf90e041a92be820aeccb4bff95))
+
 # [@cdf/assetlibrary-history-v2.2.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-history-v2.2.0...@cdf/assetlibrary-history-v2.2.1) (2019-10-21)
 
 
