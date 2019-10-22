@@ -31,7 +31,10 @@ export class UpdateAction implements EventAction {
         }
 
         // augment with the change
-        const changedState = JSON.parse(event.payload);
+        let changedState;
+        if (event.payload) {
+            changedState = JSON.parse(event.payload);
+        }
         const mergedState = Object.assign(existingState, changedState);
 
         if (event.attributes!==undefined) {
