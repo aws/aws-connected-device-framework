@@ -26,6 +26,7 @@
     "cucumber": "4.2.1",
     "js-yaml": "3.12.2",
     "json-stable-stringify": "1.0.1",
+    "jsonwebtoken": "^8.5.1",
     "reflect-metadata": "0.1.13",
     "typed-rest-client": "1.1.2",
     "winston": "2.4.4"
@@ -42,6 +43,7 @@
     "@types/config": "0.0.34",
     "@types/cucumber": "4.0.5",
     "@types/json-stable-stringify": "1.0.32",
+    "@types/jsonwebtoken": "^8.3.5",
     "@types/node": "8.10.43",
     "commitizen": "3.0.7",
     "concurrently": "4.1.0",

@@ -23,6 +23,7 @@ import { DevicesService } from './devices.service';
 import { GroupsServiceFull } from '../groups/groups.full.service';
 import { ProfilesServiceFull } from '../profiles/profiles.full.service';
 import { GroupsAssembler } from '../groups/groups.assembler';
+import { AuthzServiceFull } from '../authz/authz.full.service';
 
 const validDeviceId = 'ABC123';
 
@@ -34,6 +35,7 @@ describe('DevicesService', () => {
     let mockedGroupsService: jest.Mocked<GroupsService>;
     let mockedProfilesService: jest.Mocked<ProfilesService>;
     let mockedEventEmitter: jest.Mocked<EventEmitter>;
+    let mockedAuthzServiceFull: jest.Mocked<AuthzServiceFull>;
     let instance: DevicesService;
 
     beforeEach(() => {
@@ -43,20 +45,21 @@ describe('DevicesService', () => {
         mockedGroupsAssembler = createMockInstance(GroupsAssembler);
         mockedGroupsService = createMockInstance(GroupsServiceFull);
         mockedProfilesService = createMockInstance(ProfilesServiceFull);
+        mockedAuthzServiceFull = createMockInstance(AuthzServiceFull);
         mockedEventEmitter = createMockInstance(EventEmitter);
         instance = new DevicesServiceFull(mockedDao, mockedTypesService, mockedDeviceAssembler, mockedGroupsAssembler, mockedGroupsService, mockedEventEmitter,
-            mockedProfilesService, 'parent', '/unprovisioned', 'active');
+            mockedProfilesService, mockedAuthzServiceFull, 'parent', '/unprovisioned', 'active');
     });
 
     it('applying profile with attributes and groups to empty device', async() => {
         // stubs
-        const model:DeviceItem = {
+        const model = new DeviceItem ({
             deviceId: 'device001',
             category: TypeCategory.Device,
             templateId: 'testTemplate'
-        };
+        });
         const profileId = 'testPofileId';
-        const profile:DeviceProfileItem = {
+        const profile:DeviceProfileItem = new DeviceProfileItem ({
             deviceId: null,
             category: null,
             profileId,
@@ -71,9 +74,9 @@ describe('DevicesService', () => {
                     linked_to: ['path1', 'path2']
                 }
             }
-        };
+        });
 
-        const expected:DeviceItem = {
+        const expected:DeviceItem = new DeviceItem({
             deviceId: 'device001',
             category: TypeCategory.Device,
             templateId: 'testTemplate',
@@ -87,7 +90,7 @@ describe('DevicesService', () => {
                     linked_to: ['path1', 'path2']
                 }
             }
-        };
+        });
 
         // mocks
         mockedProfilesService.get = jest.fn().mockImplementation(()=> profile);
@@ -103,7 +106,7 @@ describe('DevicesService', () => {
 
     it('applying profile with attributes and groups to device with attributes and groups', async() => {
         // stubs
-        const original:DeviceItem = {
+        const original:DeviceItem = new DeviceItem({
             deviceId: 'device001',
             category: TypeCategory.Device,
             templateId: 'testTemplate',
@@ -117,9 +120,9 @@ describe('DevicesService', () => {
                     linked_to_b: ['pathA3']
                 }
             }
-        };
+        });
         const profileId = 'testPofileId';
-        const profile:DeviceProfileItem = {
+        const profile:DeviceProfileItem = new DeviceProfileItem({
             deviceId: null,
             category: null,
             profileId,
@@ -135,9 +138,9 @@ describe('DevicesService', () => {
                     linked_to_c: ['pathB2']
                 }
             }
-        };
+        });
 
-        const expected:DeviceItem = {
+        const expected:DeviceItem = new DeviceItem({
             deviceId: 'device001',
             category: TypeCategory.Device,
             templateId: 'testTemplate',
@@ -154,7 +157,7 @@ describe('DevicesService', () => {
                     linked_to_c: ['pathB2']
                 }
             }
-        };
+        });
 
         // mocks
         mockedProfilesService.get = jest.fn().mockImplementation(()=> profile);

@@ -23,6 +23,12 @@ declare module 'gremlin' {
     }
     export namespace process {
 
+        export class AnonymousTraversalSource {
+            constructor();
+            static traversal(): AnonymousTraversalSource;
+            withRemote(conn: driver.RemoteConnection): AnonymousTraversalSource;
+        }
+
         export class GraphTraversalSource {
             withRemote(conn: driver.RemoteConnection): GraphTraversalSource;
             toString(): string;
@@ -37,6 +43,7 @@ declare module 'gremlin' {
             addE(...args: Object[]): GraphTraversal;
             addV(...args: Object[]): GraphTraversal;
             inject(...args: Object[]): GraphTraversal;
+            io(...args: Object[]): GraphTraversal;
         }
 
         export class GraphTraversal extends process.Traversal {
@@ -135,6 +142,8 @@ declare module 'gremlin' {
             valueMap(...args: Object[]): GraphTraversal;
             values(...args: Object[]): GraphTraversal;
             where(...args: Object[]): GraphTraversal;
+            with_(...args: Object[]): GraphTraversal;
+            write(...args: Object[]): GraphTraversal;
         }
 
         export const statics : {
@@ -232,10 +241,13 @@ declare module 'gremlin' {
         };
 
         export class TraversalStrategies {
+            addStrategy(stratey:TraversalStrategy): void;
+            applyStrategies(stratey:Traversal): Promise<void>;
+
         }
 
         export class TraversalStrategy {
-
+            apply(stratey:Traversal): void;
         }
 
         export class EnumValue {
@@ -263,8 +275,10 @@ declare module 'gremlin' {
             static within(...args: object[]): P;
             static without(...args: object[]): P;
         }
+
         export class Traversal {
             toList(): Promise<Traverser[]>;
+            hasNext(): Promise<boolean>;
             iterate(): Promise<Traverser[]>;
             next(): Promise<{value:Traverser | TraverserValue | TraverserMapValue, done:boolean}>;
             toString(): string;
@@ -272,6 +286,19 @@ declare module 'gremlin' {
 
         export class TraversalSideEffects {
         }
+
+        export const withOptions : {
+            tokens: '~tinkerpop.valueMap.tokens',
+            none: 0,
+            ids: 1,
+            labels: 2,
+            keys: 4,
+            values: 8,
+            all: 15,
+            indexer: '~tinkerpop.index.indexer',
+            list: 0,
+            map: 1
+        };
 
         export type TraverserValue = string | string[] | number | number[] | boolean | boolean[];
         export type TraverserMapValue = {[key:string]: TraverserValue};
@@ -363,7 +390,7 @@ declare module 'gremlin' {
 
     export namespace driver {
         export class RemoteConnection {
-            constructor(url: string);
+            constructor(url: string, xxx:any);
         }
 
         export class RemoteTraversal extends process.Traversal {

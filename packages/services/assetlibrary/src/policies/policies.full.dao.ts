@@ -29,7 +29,7 @@ export class PoliciesDaoFull {
 
         const query = await this._g.V(id).as('policy').
             project('policy', 'groups').
-                by( __.select('policy').valueMap(true)).
+                by( __.select('policy').valueMap().with_(process.withOptions.tokens)).
                 by( __.select('policy').out('appliesTo').hasLabel('group').fold()).
             next();
 
@@ -167,7 +167,7 @@ export class PoliciesDaoFull {
                 ).as('deviceGroups')
             .in_('appliesTo').hasLabel('policy').has('type',type).dedup().as('policies')
             .project('policy', 'groups', 'policyGroups')
-                .by( __.identity().valueMap(true))
+                .by( __.identity().valueMap().with_(process.withOptions.tokens))
                 .by( __.select('device').out().hasLabel('group').fold())
                 .by( __.local( __.out('appliesTo').fold())).
             toList();
@@ -200,7 +200,7 @@ export class PoliciesDaoFull {
 
         traverser.dedup().as('policies')
             .project('policy', 'groups', 'policyGroups')
-                .by( __.identity().valueMap(true))
+                .by( __.identity().valueMap().with_(process.withOptions.tokens))
                 .by( __.select('groups').fold())
                 .by( __.local( __.out('appliesTo').fold()));
 
@@ -224,7 +224,7 @@ export class PoliciesDaoFull {
         }
         traverser.as('policies').
             project('policy', 'groups').
-                by( __.valueMap(true)).
+                by( __.valueMap().with_(process.withOptions.tokens)).
                 by( __.out('appliesTo').hasLabel('group').fold());
 
         // apply pagination

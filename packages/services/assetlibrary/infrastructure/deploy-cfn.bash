@@ -99,9 +99,18 @@ if [ -n "$AWS_PROFILE" ]; then
 	AWS_ARGS="$AWS_ARGS--profile $AWS_PROFILE"
 fi
 
+AWS_SCRIPT_ARGS=
+if [ -n "$AWS_REGION" ]; then
+	AWS_SCRIPT_ARGS="-R $AWS_REGION "
+fi
+if [ -n "$AWS_PROFILE" ]; then
+	AWS_SCRIPT_ARGS="$AWS_SCRIPT_ARGS-P $AWS_PROFILE"
+fi
+
 
 NEPTUNE_STACK_NAME=cdf-assetlibrary-neptune-${ENVIRONMENT}
 ASSETLIBRARY_STACK_NAME=cdf-assetlibrary-${ENVIRONMENT}
+BASTION_STACK_NAME=cdf-bastion-${ENVIRONMENT}
 
 
 echo "
@@ -122,6 +131,51 @@ Running with:
 cwd=$(dirname "$0")
 
 if [ "$ASSETLIBRARY_MODE" = "full" ]; then
+
+  echo '
+  **********************************************************
+    Checking deployed Neptune version
+  **********************************************************
+  '
+
+  # The minimum Neptune DB engine that we support.
+  min_dbEngineVersion_required='1.0.1.0.200463.0'
+
+  # Let's see if we have previosuly deployed Neptune before.  If so, we need to check its version
+  stack_exports=$(aws cloudformation list-exports $AWS_ARGS)
+
+  neptune_url_export="$NEPTUNE_STACK_NAME-GremlinEndpoint"
+  neptune_url=$(echo $stack_exports \
+      | jq -r --arg neptune_url_export "$neptune_url_export" \
+      '.Exports[] | select(.Name==$neptune_url_export) | .Value')
+
+  if [ -n "$neptune_url" ]; then
+
+    # Neptune has been deployed.  Let's grab the name of the ssh key we need to log onto the Bastion
+    stack_parameters=$(aws cloudformation describe-stacks --stack-name $BASTION_STACK_NAME $AWS_ARGS)
+    key_pair_name=$(echo $stack_parameters \
+      | jq -r --arg stack_name "$BASTION_STACK_NAME" \
+      '.Stacks[] | select(.StackName==$stack_name) | .Parameters[] | select(.ParameterKey=="KeyPairName") | .ParameterValue')
+    key_pair_location="~/.ssh/${key_pair_name}.pem"
+    echo Attempting to use key pair: $key_pair_location
+
+    set +e
+    dbEngineVersionCheck=$(./neptune_dbEngineVersion.bash -n $NEPTUNE_STACK_NAME -b $BASTION_STACK_NAME -k $key_pair_location -v $min_dbEngineVersion_required $AWS_SCRIPT_ARGS)
+    set -e
+    dbEngineVersionStatus=$(echo $?)
+
+    if [ "$dbEngineVersionStatus" -ne 0 ]; then
+      echo "
+********    WARNING!!!   *********
+Cannot proceed with the deploy as Neptune minimum dbEngine version $min_dbEngineVersion_required is required.  You must upgrade your Neptune instances first!
+
+Refer to https://docs.aws.amazon.com/neptune/latest/userguide/engine-releases-${min_dbEngineVersion_required}.html for details of how to upgrade.
+
+"
+      exit 1
+    fi
+  fi
+
   echo '
   **********************************************************
     Determinig whether the VPC to deploy Neptune into has an S3 VPC endpoint

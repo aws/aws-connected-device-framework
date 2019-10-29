@@ -24,12 +24,11 @@ export class DevicesService  {
     private MIME_TYPE:string = 'application/vnd.aws-cdf-v1.0+json';
 
     private baseUrl:string;
-    private headers = {
-        'Accept': this.MIME_TYPE,
-        'Content-Type': this.MIME_TYPE
-    };
+    private headers:{[key:string]:string};
 
-    public constructor() {
+    private authToken:string;
+
+    public constructor(authToken?:string) {
         this.baseUrl = config.get('assetLibrary.baseUrl') as string;
 
         if (config.has('assetLibrary.headers')) {
@@ -38,6 +37,27 @@ export class DevicesService  {
                 this.headers = {...this.headers, ...additionalHeaders};
             }
         }
+
+        this.setAuthToken(authToken);
+    }
+
+    public setAuthToken(authToken?:string) {
+        this.authToken=authToken;
+        this.getHeaders();
+    }
+
+    private getHeaders(): {[key:string]:string} {
+        if (this.headers===undefined) {
+            const h = {
+                'Accept': this.MIME_TYPE,
+                'Content-Type': this.MIME_TYPE
+            };
+            if (this.authToken!==undefined) {
+                h['Authorization'] = `Bearer ${this.authToken}`;
+            }
+            this.headers=h;
+        }
+        return this.headers;
     }
 
     /**
@@ -54,7 +74,7 @@ export class DevicesService  {
 
         const url = this.baseUrl + PathHelper.encodeUrl('devices', deviceId, relationship, 'devices', otherDeviceId);
         await request.put(url)
-            .set(this.headers);
+            .set(this.getHeaders());
     }
 
     /**
@@ -71,7 +91,7 @@ export class DevicesService  {
 
         const url = this.baseUrl + PathHelper.encodeUrl('devices', deviceId, relationship, 'groups', groupPath);
         await request.put(url)
-            .set(this.headers);
+            .set(this.getHeaders());
       }
 
     /**
@@ -87,7 +107,7 @@ export class DevicesService  {
         const url = this.baseUrl + PathHelper.encodeUrl('devices', deviceId, 'components');
         await request.post(url)
             .send(body)
-            .set(this.headers);
+            .set(this.getHeaders());
     }
 
     /**
@@ -105,7 +125,7 @@ export class DevicesService  {
         }
         await request.post(url)
             .send(body)
-            .set(this.headers);
+            .set(this.getHeaders());
     }
 
     /**
@@ -124,7 +144,7 @@ export class DevicesService  {
         }
         const res = await request.post(url)
             .send(body)
-            .set(this.headers);
+            .set(this.getHeaders());
 
         return res.body;
     }
@@ -140,7 +160,7 @@ export class DevicesService  {
         }
         await request.patch(url)
             .send(body)
-            .set(this.headers);
+            .set(this.getHeaders());
     }
 
     /**
@@ -156,7 +176,7 @@ export class DevicesService  {
         const url = this.baseUrl + PathHelper.encodeUrl('devices', deviceId, 'components', componentId);
 
         await request.delete(url)
-            .set(this.headers);
+            .set(this.getHeaders());
     }
 
     /**
@@ -170,7 +190,7 @@ export class DevicesService  {
         const url = this.baseUrl + PathHelper.encodeUrl('devices', deviceId,);
 
        await request.delete(url)
-            .set(this.headers);
+            .set(this.getHeaders());
     }
 
     /**
@@ -188,7 +208,7 @@ export class DevicesService  {
         const url = this.baseUrl + PathHelper.encodeUrl('devices', deviceId, relationship, 'devices', otherDeviceId);
 
         await request.delete(url)
-            .set(this.headers);
+            .set(this.getHeaders());
     }
 
     /**
@@ -206,7 +226,7 @@ export class DevicesService  {
         const url = this.baseUrl + PathHelper.encodeUrl('devices', deviceId, relationship, 'groups', groupPath);
 
          await request.delete(url)
-            .set(this.headers);
+            .set(this.getHeaders());
     }
 
     /**
@@ -228,7 +248,7 @@ export class DevicesService  {
         }
 
         const res = await request.get(url)
-            .set(this.headers);
+            .set(this.getHeaders());
 
         return res.body;
     }
@@ -248,7 +268,7 @@ export class DevicesService  {
 
         await request.patch(url)
             .send(body)
-            .set(this.headers);
+            .set(this.getHeaders());
     }
 
     /**
@@ -269,7 +289,7 @@ export class DevicesService  {
 
         await request.patch(url)
             .send(body)
-            .set(this.headers);
+            .set(this.getHeaders());
     }
 
     /**
@@ -291,7 +311,7 @@ export class DevicesService  {
         }
 
         const res = await request.get(url)
-            .set(this.headers);
+            .set(this.getHeaders());
 
         return res.body;
     }

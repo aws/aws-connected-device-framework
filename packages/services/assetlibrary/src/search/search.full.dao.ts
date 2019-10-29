@@ -25,9 +25,9 @@ export class SearchDaoFull {
         this._g = graphTraversalSourceFactory();
     }
 
-    private buildSearchTraverser(request: SearchRequestModel, offset?:number, count?:number) : process.GraphTraversal {
+    private buildSearchTraverser(request: SearchRequestModel, authorizedPaths:string[], offset?:number, count?:number) : process.GraphTraversal {
 
-        logger.debug(`search.full.dao buildSearchTraverser: in: request: ${JSON.stringify(request)}, offset:${offset}, count:${count}`);
+        logger.debug(`search.full.dao buildSearchTraverser: in: request: ${JSON.stringify(request)}, authorizedPaths:${authorizedPaths}, offset:${offset}, count:${count}`);
 
         const filters: process.GraphTraversal[]= [];
 
@@ -39,6 +39,12 @@ export class SearchDaoFull {
                 repeat(__.in_()).emit().as('a');
         } else {
             traverser = this._g.V().as('a');
+        }
+
+        // if authz is enabled, only return results that the user is authorized to view
+        if (authorizedPaths!==undefined && authorizedPaths.length>0) {
+            const authorizedPathIds = authorizedPaths.map(p=> `group___${p}`);
+            filters.push(__.as('a').until(__.hasId(...authorizedPathIds)).repeat(__.out()));
         }
 
         // construct all the filters that we will eventually pass to match()
@@ -103,7 +109,7 @@ export class SearchDaoFull {
 
         // apply the match criteria
         if (filters.length>0) {
-            traverser.match(...filters);
+            traverser.match(...filters).dedup();
         }
 
         logger.debug(`search.full.dao buildSearchTraverser: traverser: ${JSON.stringify(traverser.toString())}`);
@@ -125,10 +131,10 @@ export class SearchDaoFull {
         return response;
     }
 
-    public async search(request: SearchRequestModel, offset:number, count:number): Promise<Node[]> {
-        logger.debug(`search.full.dao search: in: request: ${JSON.stringify(request)}, offset:${offset}, count:${count}`);
+    public async search(request: SearchRequestModel, authorizedPaths:string[], offset:number, count:number): Promise<Node[]> {
+        logger.debug(`search.full.dao search: in: request: ${JSON.stringify(request)}, authorizedPaths:${authorizedPaths}, offset:${offset}, count:${count}`);
 
-        const traverser = this.buildSearchTraverser(request, offset, count);
+        const traverser = this.buildSearchTraverser(request, authorizedPaths, offset, count);
 
         // apply pagination
         if (offset!==undefined && count!==undefined) {
@@ -139,7 +145,8 @@ export class SearchDaoFull {
             traverser.range(offsetAsInt, offsetAsInt + countAsInt);
         }
 
-        const results = await traverser.select('a').valueMap(true).toList();
+        const results = await traverser.select('a').valueMap().with_(process.withOptions.tokens).toList();
+        logger.debug(`search.full.dao search: results:${JSON.stringify(results)}`);
 
         if (results.length===0) {
             logger.debug(`search.full.dao search: exit: node: undefined`);
@@ -156,10 +163,10 @@ export class SearchDaoFull {
         return nodes;
     }
 
-    public async facet(request: SearchRequestModel): Promise<FacetResults> {
-        logger.debug(`search.full.dao facet: in: request: ${JSON.stringify(request)}`);
+    public async facet(request: SearchRequestModel, authorizedPaths:string[]): Promise<FacetResults> {
+        logger.debug(`search.full.dao facet: in: request: ${JSON.stringify(request)}, authorizedPaths:${authorizedPaths}`);
 
-        const traverser = this.buildSearchTraverser(request);
+        const traverser = this.buildSearchTraverser(request, authorizedPaths);
 
         if (request.facetField!==undefined) {
             traverser.select('a');
@@ -190,10 +197,10 @@ export class SearchDaoFull {
         return facets;
     }
 
-    public async summary(request: SearchRequestModel): Promise<number> {
-        logger.debug(`search.full.dao summarize: in: request: ${JSON.stringify(request)}`);
+    public async summary(request: SearchRequestModel, authorizedPaths:string[]): Promise<number> {
+        logger.debug(`search.full.dao summarize: in: request: ${JSON.stringify(request)}, authorizedPaths:${authorizedPaths}`);
 
-        const traverser = this.buildSearchTraverser(request, undefined, undefined);
+        const traverser = this.buildSearchTraverser(request, authorizedPaths);
 
         const result = await traverser.select('a').count().next();
         const total = result.value as number;

@@ -14,13 +14,15 @@ import { GroupItem } from '../groups/groups.models';
 import { DeviceItem } from '../devices/devices.models';
 import {TypeCategory} from '../types/constants';
 import { SearchService } from './search.service';
+import { Claims } from '../authz/claims';
 
 @injectable()
 export class SearchServiceFull implements SearchService {
 
     constructor( @inject(TYPES.SearchDao) private searchDao: SearchDaoFull,
         @inject(TYPES.GroupsAssembler) private groupsAssembler: GroupsAssembler,
-        @inject(TYPES.DevicesAssembler) private devicesAssembler: DevicesAssembler) {}
+        @inject(TYPES.DevicesAssembler) private devicesAssembler: DevicesAssembler,
+        @inject('authorization.enabled') private isAuthzEnabled: boolean) {}
 
     public async search(model: SearchRequestModel, offset?:number, count?:number): Promise<(GroupItem|DeviceItem)[]> {
         logger.debug(`search.full.service search: in: model: ${JSON.stringify(model)}, offset:${offset}, count:${count}`);
@@ -35,8 +37,10 @@ export class SearchServiceFull implements SearchService {
             offset=0;
         }
 
+        const authorizedPaths = this.getAuthorizedPaths();
+
         const models: (GroupItem|DeviceItem)[] = [];
-        const results = await this.searchDao.search(model, offset, count);
+        const results = await this.searchDao.search(model, authorizedPaths, offset, count);
 
         if (results===undefined) {
             logger.debug('search.full.service search: exit: models: undefined');
@@ -64,7 +68,9 @@ export class SearchServiceFull implements SearchService {
         // all ids must be lowercase
         this.setIdsToLowercase(model);
 
-        const facets = await this.searchDao.facet(model);
+        const authorizedPaths = this.getAuthorizedPaths();
+
+        const facets = await this.searchDao.facet(model, authorizedPaths);
         logger.debug(`search.full.service facet: exit: models: ${facets}`);
         return facets;
 
@@ -78,10 +84,20 @@ export class SearchServiceFull implements SearchService {
         // all ids must be lowercase
         this.setIdsToLowercase(model);
 
-        const total = await this.searchDao.summary(model);
+        const authorizedPaths = this.getAuthorizedPaths();
+
+        const total = await this.searchDao.summary(model, authorizedPaths);
         logger.debug(`search.full.service summary: exit: models: ${total}`);
         return total;
 
+    }
+
+    private getAuthorizedPaths() {
+        let authorizedPaths:string[];
+        if (this.isAuthzEnabled) {
+            authorizedPaths = Claims.getInstance().listPaths();
+        }
+        return authorizedPaths;
     }
 
     private setIdsToLowercase(model:SearchRequestModel) {

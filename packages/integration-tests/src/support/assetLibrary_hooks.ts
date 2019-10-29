@@ -205,6 +205,83 @@ Before({tags: '@teardown_devices_feature'}, async function () {
     await teardown_devices_feature();
 });
 
+async function teardown_devicesWithAuth_feature() {
+    // await deleteAssetLibraryDevices(DEVICES_FEATURE_DEVICE_IDS);
+    await deleteAssetLibraryGroups(['/1','/1/1','/1/2','/1/1/1','/1/1/2','/1/2/1','/1/2/2']);
+    await deleteAssetLibraryTemplates(CategoryEnum.device, ['TEST-devicesWithAuthDevice']);
+    await deleteAssetLibraryTemplates(CategoryEnum.group, ['TEST-devicesWithAuthGroup']);
+}
+
+Before({tags: '@setup_devicesWithAuth_feature'}, async function () {
+    await teardown_devicesWithAuth_feature();
+
+    // create linkable group template
+    const groupType:TypeResource = {
+        templateId: 'TEST-devicesWithAuthGroup',
+        category: 'group'
+    };
+    await templates.createTemplate(groupType);
+    await templates.publishTemplate(CategoryEnum.group, groupType.templateId);
+
+    // create group hierrarchy
+    const g1:Group = {
+        templateId: groupType.templateId,
+        parentPath: '/',
+        name: '1',
+        attributes: {}
+    };
+    const g1_1:Group = {
+        templateId: groupType.templateId,
+        parentPath: '/1',
+        name: '1',
+        attributes: {}
+    };
+    const g1_2:Group = {
+        templateId: groupType.templateId,
+        parentPath: '/1',
+        name: '2',
+        attributes: {}
+    };
+    const g1_1_1:Group = {
+        templateId: groupType.templateId,
+        parentPath: '/1/1',
+        name: '1',
+        attributes: {}
+    };
+    const g1_1_2:Group = {
+        templateId: groupType.templateId,
+        parentPath: '/1/1',
+        name: '2',
+        attributes: {}
+    };
+    const g1_2_1:Group = {
+        templateId: groupType.templateId,
+        parentPath: '/1/2',
+        name: '1',
+        attributes: {}
+    };
+    const g1_2_2:Group = {
+        templateId: groupType.templateId,
+        parentPath: '/1/2',
+        name: '2',
+        attributes: {}
+    };
+    await groups.bulkCreateGroup({groups:[g1, g1_1, g1_2, g1_1_1, g1_1_2, g1_2_1, g1_2_2]});
+
+    // create a device template
+    const deviceType:TypeResource = {
+        templateId: 'TEST-devicesWithAuthDevice',
+        category: 'device'
+    };
+    await templates.createTemplate(deviceType);
+    await templates.publishTemplate(CategoryEnum.device, deviceType.templateId);
+
+});
+
+Before({tags: '@teardown_devicesWithAuth_feature'}, async function () {
+    await teardown_devicesWithAuth_feature();
+});
+
 async function teardown_devices_feature_lite() {
 
     await deleteAssetLibraryDevices(DEVICES_FEATURE_LITE_DEVICE_IDS);

@@ -21,6 +21,8 @@ import { DevicesService } from './devices.service';
 import { GroupsAssembler } from '../groups/groups.assembler';
 import { GroupItemList } from '../groups/groups.models';
 import { StringToArrayMap } from '../data/model';
+import { ClaimAccess } from '../authz/claims';
+import { AuthzServiceFull } from '../authz/authz.full.service';
 
 @injectable()
 export class DevicesServiceFull implements DevicesService {
@@ -32,6 +34,7 @@ export class DevicesServiceFull implements DevicesService {
         @inject(TYPES.GroupsService) private groupsService: GroupsService,
         @inject(TYPES.EventEmitter) private eventEmitter: EventEmitter,
         @inject(TYPES.ProfilesService) private profilesService: ProfilesService,
+        @inject(TYPES.AuthzServiceFull) private authServiceFull: AuthzServiceFull,
         @inject('defaults.devices.parent.relation') public defaultDeviceParentRelation: string,
         @inject('defaults.devices.parent.groupPath') public defaultDeviceParentGroup: string,
         @inject('defaults.devices.state') public defaultDeviceState: string) {}
@@ -66,6 +69,8 @@ export class DevicesServiceFull implements DevicesService {
             direction=direction.toLowerCase();
         }
 
+        await this.authServiceFull.authorizationCheck([deviceId], [], ClaimAccess.R);
+
         const result  = await this.devicesDao.listRelated(deviceId, relationship, direction, template, {state}, offset, count);
 
         if (offset!==undefined && count!==undefined) {
@@ -98,6 +103,8 @@ export class DevicesServiceFull implements DevicesService {
         }
         direction=direction.toLowerCase();
 
+        await this.authServiceFull.authorizationCheck([deviceId], [], ClaimAccess.R);
+
         const result  = await this.devicesDao.listRelated(deviceId, relationship, direction, template, {}, offset, count);
 
         if (offset!==undefined && count!==undefined) {
@@ -123,6 +130,8 @@ export class DevicesServiceFull implements DevicesService {
         // any ids need to be lowercase
         deviceId=deviceId.toLowerCase();
 
+        await this.authServiceFull.authorizationCheck([deviceId], [], ClaimAccess.R);
+
         const result  = await this.devicesDao.get([deviceId], expandComponents, attributes, includeGroups);
 
         let model:DeviceItem;
@@ -140,6 +149,8 @@ export class DevicesServiceFull implements DevicesService {
         ow(deviceIds, ow.array.nonEmpty);
 
         deviceIds = deviceIds.map(d=> d.toLowerCase());
+
+        await this.authServiceFull.authorizationCheck(deviceIds, [], ClaimAccess.R);
 
         const result  = await this.devicesDao.get(deviceIds, expandComponents, attributes, includeGroups);
 
@@ -204,7 +215,7 @@ export class DevicesServiceFull implements DevicesService {
             model.groups= {};
         }
         const {profileId, ...deviceProfileAttributes} = profile;
-        const mergedModel = {...deviceProfileAttributes, ...model};
+        const mergedModel = Object.assign(new DeviceItem(), deviceProfileAttributes, model);
         const mergedAttributes = {...profile.attributes, ...model.attributes};
         const mergedGroupsIn = {...profile.groups.in, ...model.groups.in};
         const mergedGroupsOut = {...profile.groups.out, ...model.groups.out};
@@ -260,6 +271,9 @@ export class DevicesServiceFull implements DevicesService {
             };
             model.groups.out[this.defaultDeviceParentRelation] = [this.defaultDeviceParentGroup];
         }
+
+        // we cant check authz til here, as we need to understand any related devices and groups first
+        await this.authServiceFull.authorizationCheck(model.listRelatedDeviceIds(), model.listRelatedGroupPaths(), ClaimAccess.C);
 
         // default initial state if none provided
         if (model.state===undefined && this.defaultDeviceState!==undefined) {
@@ -427,12 +441,16 @@ export class DevicesServiceFull implements DevicesService {
             if (existing===undefined) {
                 throw new Error('NOT_FOUND');
             }
-            const merged = {...existing, ...model};
+            const merged = Object.assign(new DeviceItem(), existing, model);
             model = await this.applyProfile(merged, applyProfile);
         }
 
         // any ids need to be lowercase
         this.setIdsToLowercase(model);
+
+        const deviceIds=model.listRelatedDeviceIds();
+        deviceIds.push(model.deviceId);
+        await this.authServiceFull.authorizationCheck(deviceIds, model.listRelatedGroupPaths(), ClaimAccess.U);
 
         const labels = await this.devicesDao.getLabels(model.deviceId);
         if (labels===undefined) {
@@ -475,6 +493,8 @@ export class DevicesServiceFull implements DevicesService {
         // any ids need to be lowercase
         deviceId = deviceId.toLowerCase();
 
+        await this.authServiceFull.authorizationCheck([deviceId], [], ClaimAccess.U);
+
         const device = await this.get(deviceId, false, undefined, true);
 
         // Save to datastore
@@ -503,6 +523,8 @@ export class DevicesServiceFull implements DevicesService {
         deviceId = deviceId.toLowerCase();
         relationship = relationship.toLowerCase();
         groupPath = groupPath.toLowerCase();
+
+        await this.authServiceFull.authorizationCheck([deviceId], [groupPath], ClaimAccess.U);
 
         // fetch the existing device / group
         const deviceFuture = this.get(deviceId, false, [], true);
@@ -561,6 +583,8 @@ export class DevicesServiceFull implements DevicesService {
         relationship = relationship.toLowerCase();
         groupPath = groupPath.toLowerCase();
 
+        await this.authServiceFull.authorizationCheck([deviceId], [groupPath], ClaimAccess.U);
+
         // Save to datastore
         await this.devicesDao.detachFromGroup(deviceId, relationship, groupPath);
 
@@ -590,6 +614,8 @@ export class DevicesServiceFull implements DevicesService {
         deviceId = deviceId.toLowerCase();
         relationship = relationship.toLowerCase();
         otherDeviceId = otherDeviceId.toLowerCase();
+
+        await this.authServiceFull.authorizationCheck([deviceId, otherDeviceId], [], ClaimAccess.U);
 
         // fetch the existing device / group
         const deviceFuture = this.get(deviceId, false, [], false);
@@ -647,6 +673,8 @@ export class DevicesServiceFull implements DevicesService {
         relationship = relationship.toLowerCase();
         otherDeviceId = otherDeviceId.toLowerCase();
 
+        await this.authServiceFull.authorizationCheck([deviceId, otherDeviceId], [], ClaimAccess.U);
+
         // Save to datastore
         await this.devicesDao.detachFromDevice(deviceId, relationship, otherDeviceId);
 
@@ -676,6 +704,8 @@ export class DevicesServiceFull implements DevicesService {
         deviceId = deviceId.toLowerCase();
         componentId = componentId.toLowerCase();
         this.setIdsToLowercase(model);
+
+        await this.authServiceFull.authorizationCheck([deviceId], [], ClaimAccess.U);
 
         // Assemble devicemodel into node
         model.category = TypeCategory.Component;
@@ -710,6 +740,8 @@ export class DevicesServiceFull implements DevicesService {
         deviceId = deviceId.toLowerCase();
         componentId = componentId.toLowerCase();
 
+        await this.authServiceFull.authorizationCheck([deviceId], [], ClaimAccess.D);
+
         // Assemble devicemodel into node
         const dbId = `${deviceId}___${componentId}`;
 
@@ -742,6 +774,8 @@ export class DevicesServiceFull implements DevicesService {
         // any ids need to be lowercase
         parentDeviceId = parentDeviceId.toLowerCase();
         this.setIdsToLowercase(model);
+
+        await this.authServiceFull.authorizationCheck([parentDeviceId], [], ClaimAccess.C);
 
         // perform validation of the device...
         const validateSubTypeFuture = this.typesService.validateSubType(model.templateId, TypeCategory.Component, model, Operation.CREATE);

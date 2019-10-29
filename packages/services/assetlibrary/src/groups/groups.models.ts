@@ -60,6 +60,23 @@ export class GroupItem {
 	relation?: string;
 	direction?: string;
 
+	public constructor(init?:Partial<GroupItem>) {
+        Object.assign(this, init);
+    }
+
+	public listRelatedGroupPaths():string[] {
+		const relatedGroupPaths:string[]= [];
+		if (this.groups) {
+			if (this.groups.in) {
+				Object.keys(this.groups.in).forEach(k=> relatedGroupPaths.push(...this.groups.in[k]));
+			}
+			if (this.groups.out) {
+				Object.keys(this.groups.out).forEach(k=> relatedGroupPaths.push(...this.groups.out[k]));
+			}
+		}
+		return relatedGroupPaths;
+	}
+
 }
 
 export interface GroupItemList {

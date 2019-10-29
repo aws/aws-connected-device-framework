@@ -19,6 +19,8 @@ import { GroupsService } from './groups.service';
 import { DevicesAssembler } from '../devices/devices.assembler';
 import { DeviceItemList } from '../devices/devices.models';
 import { StringToArrayMap } from '../data/model';
+import { AuthzServiceFull } from '../authz/authz.full.service';
+import { ClaimAccess } from '../authz/claims';
 
 @injectable()
 export class GroupsServiceFull implements GroupsService {
@@ -28,6 +30,7 @@ export class GroupsServiceFull implements GroupsService {
         @inject(TYPES.GroupsAssembler) private groupsAssembler: GroupsAssembler,
         @inject(TYPES.DevicesAssembler) private devicesAssembler: DevicesAssembler,
         @inject(TYPES.ProfilesService) private profilesService: ProfilesService,
+        @inject(TYPES.AuthzServiceFull) private authServiceFull: AuthzServiceFull,
         @inject(TYPES.EventEmitter) private eventEmitter: EventEmitter) {}
 
     public async get(groupPath: string): Promise<GroupItem> {
@@ -37,6 +40,8 @@ export class GroupsServiceFull implements GroupsService {
 
         // any ids need to be lowercase
         groupPath = groupPath.toLowerCase();
+
+        await this.authServiceFull.authorizationCheck([], [groupPath], ClaimAccess.R);
 
         const result  = await this.groupsDao.get(groupPath);
         if (result===undefined) {
@@ -116,7 +121,7 @@ export class GroupsServiceFull implements GroupsService {
             model.groups= {};
         }
         const {profileId, ...groupProfileAttributes} = profile;
-        const mergedModel = {...groupProfileAttributes, ...model};
+        const mergedModel = Object.assign(new GroupItem(), groupProfileAttributes, model);
         const mergedAttributes = {...profile.attributes, ...model.attributes};
         const mergedGroupsIn = {...profile.groups.in, ...model.groups.in};
         const mergedGroupsOut = {...profile.groups.out, ...model.groups.out};
@@ -163,6 +168,8 @@ export class GroupsServiceFull implements GroupsService {
 
         // any ids need to be lowercase
         this.setIdsToLowercase(model);
+
+        await this.authServiceFull.authorizationCheck([], model.listRelatedGroupPaths(), ClaimAccess.C);
 
         // schema validation
         const validateSubTypeFuture = await this.typesService.validateSubType(model.templateId, TypeCategory.Group, model, Operation.CREATE);
@@ -223,12 +230,14 @@ export class GroupsServiceFull implements GroupsService {
             if (existing===undefined) {
                 throw new Error('NOT_FOUND');
             }
-            const merged = {...existing, ...model};
+            const merged = Object.assign(new GroupItem(), existing, model);
             model = await this.applyProfile(merged, applyProfile);
         }
 
         // any ids need to be lowercase
         this.setIdsToLowercase(model);
+
+        await this.authServiceFull.authorizationCheck([], [model.groupPath, ...model.listRelatedGroupPaths()], ClaimAccess.U);
 
         const labels = await this.groupsDao.getLabels(model.groupPath);
         const templateId = labels.filter(l=> l!=='group')[0];
@@ -272,6 +281,8 @@ export class GroupsServiceFull implements GroupsService {
             type=category;
         }
 
+        await this.authServiceFull.authorizationCheck([], [groupPath], ClaimAccess.R);
+
         // state filter only applies to devices, and has a default of `active` if not provided
         let filterRelatedBy;
         if (category===TypeCategory.Device) {
@@ -304,6 +315,8 @@ export class GroupsServiceFull implements GroupsService {
         // any ids need to be lowercase
         groupPath=groupPath.toLowerCase();
 
+        await this.authServiceFull.authorizationCheck([], [groupPath], ClaimAccess.R);
+
         const result  = await this.groupsDao.listParentGroups(groupPath);
 
         const model = this.groupsAssembler.toGroupItemList(result);
@@ -318,6 +331,8 @@ export class GroupsServiceFull implements GroupsService {
 
         // any ids need to be lowercase
         groupPath=groupPath.toLowerCase();
+
+        await this.authServiceFull.authorizationCheck([], [groupPath], ClaimAccess.D);
 
         const model = await this.get(groupPath);
         if (model===undefined) {
@@ -351,6 +366,8 @@ export class GroupsServiceFull implements GroupsService {
         sourceGroupPath = sourceGroupPath.toLowerCase();
         relationship = relationship.toLowerCase();
         targetGroupPath = targetGroupPath.toLowerCase();
+
+        await this.authServiceFull.authorizationCheck([], [sourceGroupPath, targetGroupPath], ClaimAccess.U);
 
         const sourceGroup = await this.get(sourceGroupPath);
 
@@ -392,6 +409,8 @@ export class GroupsServiceFull implements GroupsService {
         relationship = relationship.toLowerCase();
         targetGroupPath = targetGroupPath.toLowerCase();
 
+        await this.authServiceFull.authorizationCheck([], [sourceGroupPath, targetGroupPath], ClaimAccess.U);
+
         // Save to datastore
         await this.groupsDao.detachFromGroup(sourceGroupPath, relationship, targetGroupPath);
 
@@ -432,6 +451,8 @@ export class GroupsServiceFull implements GroupsService {
         }
         direction=direction.toLowerCase();
 
+        await this.authServiceFull.authorizationCheck([], [groupPath], ClaimAccess.R);
+
         const result  = await this.groupsDao.listRelated(groupPath, relationship, direction, template, undefined, offset, count);
 
         if (offset!==undefined && count!==undefined) {
@@ -469,6 +490,8 @@ export class GroupsServiceFull implements GroupsService {
             state=state.toLowerCase();
         }
         direction=direction.toLowerCase();
+
+        await this.authServiceFull.authorizationCheck([], [groupPath], ClaimAccess.R);
 
         const result  = await this.groupsDao.listRelated(groupPath, relationship, direction, template, {state}, offset, count);
 

@@ -18,6 +18,7 @@ import { GroupItem } from './groups.models';
 import { GroupsServiceFull } from './groups.full.service';
 import { ProfilesServiceFull } from '../profiles/profiles.full.service';
 import { DevicesAssembler } from '../devices/devices.assembler';
+import { AuthzServiceFull } from '../authz/authz.full.service';
 
 describe('GroupsService', () => {
     let mockedDao: jest.Mocked<GroupsDaoFull>;
@@ -26,6 +27,7 @@ describe('GroupsService', () => {
     let mockedDevicesAssembler: jest.Mocked<DevicesAssembler>;
     let mockedProfilesService: jest.Mocked<ProfilesService>;
     let mockedEventEmitter: jest.Mocked<EventEmitter>;
+    let mockedAuthzServiceFull: jest.Mocked<AuthzServiceFull>;
     let instance: GroupsService;
 
     beforeEach(() => {
@@ -35,19 +37,20 @@ describe('GroupsService', () => {
         mockedDevicesAssembler = createMockInstance(DevicesAssembler);
         mockedProfilesService = createMockInstance(ProfilesServiceFull);
         mockedEventEmitter = createMockInstance(EventEmitter);
+        mockedAuthzServiceFull = createMockInstance(AuthzServiceFull);
         instance = new GroupsServiceFull(mockedDao, mockedTypesService, mockedGroupsAssembler, mockedDevicesAssembler,
-            mockedProfilesService, mockedEventEmitter);
+            mockedProfilesService, mockedAuthzServiceFull, mockedEventEmitter);
     });
 
     it('applying profile with attributes and groups to empty group', async() => {
         // stubs
-        const model:GroupItem = {
+        const model:GroupItem = new GroupItem({
             name: 'group001',
             templateId: 'testTemplate',
             parentPath: '/'
-        };
+        });
         const profileId = 'testProfileId';
-        const profile:GroupProfileItem = {
+        const profile:GroupProfileItem = new GroupProfileItem({
             profileId,
             name: null,
             parentPath: null,
@@ -62,9 +65,9 @@ describe('GroupsService', () => {
                     linked_to: ['path1', 'path2']
                 }
             }
-        };
+        });
 
-        const expected:GroupItem = {
+        const expected:GroupItem = new GroupItem({
             name: 'group001',
             templateId: 'testTemplate',
             parentPath: '/',
@@ -78,7 +81,7 @@ describe('GroupsService', () => {
                     linked_to: ['path1', 'path2']
                 }
             }
-        };
+        });
 
         // mocks
         mockedProfilesService.get = jest.fn().mockImplementation(()=> profile);
@@ -95,7 +98,7 @@ describe('GroupsService', () => {
     it('applying profile with attributes and groups to device with attributes and groups', async() => {
 
         // stubs
-        const original:GroupItem = {
+        const original:GroupItem = new GroupItem({
             name: 'group001',
             templateId: 'testTemplate',
             parentPath: '/',
@@ -109,9 +112,9 @@ describe('GroupsService', () => {
                     linked_to_b: ['pathA3']
                 }
             }
-        };
+        });
         const profileId = 'testProfileId';
-        const profile:GroupProfileItem = {
+        const profile:GroupProfileItem = new GroupProfileItem({
             profileId,
             name: null,
             parentPath: null,
@@ -127,9 +130,9 @@ describe('GroupsService', () => {
                     linked_to_c: ['pathB2']
                 }
             }
-        };
+        });
 
-        const expected:GroupItem = {
+        const expected:GroupItem = new GroupItem({
             name: 'group001',
             templateId: 'testTemplate',
             parentPath: '/',
@@ -146,7 +149,7 @@ describe('GroupsService', () => {
                     linked_to_c: ['pathB2']
                 }
             }
-        };
+        });
 
         // mocks
         mockedProfilesService.get = jest.fn().mockImplementation(()=> profile);

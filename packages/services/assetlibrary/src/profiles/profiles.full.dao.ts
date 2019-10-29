@@ -71,9 +71,9 @@ export class ProfilesDaoFull {
             out('profiles').as('template').
             out('super_type').as('category').
             project('profile','template','category').
-                by(__.select('profile').valueMap(true)).
-                by(__.select('template').valueMap(true)).
-                by(__.select('category').valueMap(true));
+                by(__.select('profile').valueMap().with_(process.withOptions.tokens)).
+                by(__.select('template').valueMap().with_(process.withOptions.tokens)).
+                by(__.select('category').valueMap().with_(process.withOptions.tokens));
 
         // execute and retrieve the resutls
         const result = await traverser.next();
@@ -158,9 +158,9 @@ export class ProfilesDaoFull {
             out('super_type').as('category').
             select('template').in_('profiles').as('profiles').
             project('profiles','template','category').
-                by(__.select('profiles').valueMap(true).fold()).
-                by(__.select('template').valueMap(true)).
-                by(__.select('category').valueMap(true));
+                by(__.select('profiles').valueMap().with_(process.withOptions.tokens).fold()).
+                by(__.select('template').valueMap().with_(process.withOptions.tokens)).
+                by(__.select('category').valueMap().with_(process.withOptions.tokens));
 
         const result = await traverser.next();
 

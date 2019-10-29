@@ -14,6 +14,7 @@ import {logger} from './utils/logger';
 import config from 'config';
 import {asArray, SupportedVersionConfig} from '@cdf/express-middleware';
 import {setVersionByAcceptHeader} from 'express-version-request';
+import { setClaims } from './authz/authz.middleware';
 
 // Start the server
 const server = new InversifyExpressServer(container);
@@ -39,6 +40,11 @@ server.setConfig((app) => {
 
   // extrapolate the version from the header and place on the request to make to easier for the controllers to deal with
   app.use(setVersionByAcceptHeader());
+
+  // if authz is enabled, parse the claims
+  if (config.get('authorization.enabled')) {
+    app.use(setClaims()) ;
+  }
 
   // default the response's headers
   app.use( (req,res,next)=> {

@@ -13,7 +13,7 @@ import { ModelAttributeValue } from './model';
 export class FullAssembler {
 
     public assembleDeviceNode(device:{ [key:string]: NodeAttributeValue}):Node {
-        logger.debug(`full.asembler assembleDeviceNode: in: device: ${JSON.stringify(device)}`);
+        logger.debug(`full.assembler assembleDeviceNode: in: device: ${JSON.stringify(device)}`);
 
         const labels = (<string> device['label']).split('::');
         const node = new Node();
@@ -27,12 +27,12 @@ export class FullAssembler {
             }
         });
 
-        logger.debug(`full.asembler assembleDeviceNode: exit: node: ${JSON.stringify(node)}`);
+        logger.debug(`full.assembler assembleDeviceNode: exit: node: ${JSON.stringify(node)}`);
         return node;
     }
 
     public assembleGroupNode(group:{ [key:string]: NodeAttributeValue}):Node {
-        logger.debug(`full.asembler assembleGroupNode: in: group: ${JSON.stringify(group)}`);
+        logger.debug(`full.assembler assembleGroupNode: in: group: ${JSON.stringify(group)}`);
 
         const labels = (<string> group['label']).split('::');
         const node = new Node();
@@ -46,12 +46,12 @@ export class FullAssembler {
             }
         });
 
-        logger.debug(`full.asembler assembleGroupNode: exit: node: ${JSON.stringify(node)}`);
+        logger.debug(`full.assembler assembleGroupNode: exit: node: ${JSON.stringify(node)}`);
         return node;
     }
 
     public assembleAssociations(node:Node, r:NodeDto) {
-        logger.debug(`full.asembler assembleAssociations: in: r:${JSON.stringify(r)}`);
+        logger.debug(`full.assembler assembleAssociations: in: r:${JSON.stringify(r)}`);
 
         // assemble all associated objects
         if (r.pathsIn!==undefined) {
