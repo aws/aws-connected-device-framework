@@ -5,7 +5,7 @@
 #-------------------------------------------------------------------------------*/
 
 import { Before, setDefaultTimeout} from 'cucumber';
-import { GroupsService, DevicesService, TemplatesService, CategoryEnum, TypeResource, Group } from '@cdf/assetlibrary-client/dist';
+import { GroupsService, DevicesService, TemplatesService, CategoryEnum, TypeResource, Group10Resource } from '@cdf/assetlibrary-client/dist';
 
 setDefaultTimeout(30 * 1000);
 
@@ -67,7 +67,7 @@ Before({tags: '@setup_deviceHistory_feature'}, async function () {
     await templates.publishTemplate(CategoryEnum.group, DEVICEHISTORY_FEATURE_GROUP_TEMPLATE_ID);
 
     // create group
-    const group:Group = {
+    const group:Group10Resource = {
         templateId: DEVICEHISTORY_FEATURE_GROUP_TEMPLATE_ID,
         parentPath: '/',
         name: DEVICEHISTORY_FEATURE_GROUP_PATH.substring(1),

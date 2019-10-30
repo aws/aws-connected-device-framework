@@ -10,54 +10,19 @@
 
 /* tslint:disable:no-unused-variable member-ordering */
 
-import { Device, DeviceList, BulkDevices, BulkDevicesResult } from './devices.model';
+import { BulkDevicesResult, Device20Resource, Device10Resource, BulkDevicesResource } from './devices.model';
 import { injectable } from 'inversify';
 import ow from 'ow';
 import { PathHelper } from '../utils/path.helper';
 import * as request from 'superagent';
-import config from 'config';
 import { QSHelper } from '../utils/qs.helper';
+import { ClientService, ClientOptions} from './common.service';
 
 @injectable()
-export class DevicesService  {
+export class DevicesService extends ClientService {
 
-    private MIME_TYPE:string = 'application/vnd.aws-cdf-v1.0+json';
-
-    private baseUrl:string;
-    private headers:{[key:string]:string};
-
-    private authToken:string;
-
-    public constructor(authToken?:string) {
-        this.baseUrl = config.get('assetLibrary.baseUrl') as string;
-
-        if (config.has('assetLibrary.headers')) {
-            const additionalHeaders: {[key:string]:string} = config.get('assetLibrary.headers') as {[key:string]:string};
-            if (additionalHeaders !== null && additionalHeaders !== undefined) {
-                this.headers = {...this.headers, ...additionalHeaders};
-            }
-        }
-
-        this.setAuthToken(authToken);
-    }
-
-    public setAuthToken(authToken?:string) {
-        this.authToken=authToken;
-        this.getHeaders();
-    }
-
-    private getHeaders(): {[key:string]:string} {
-        if (this.headers===undefined) {
-            const h = {
-                'Accept': this.MIME_TYPE,
-                'Content-Type': this.MIME_TYPE
-            };
-            if (this.authToken!==undefined) {
-                h['Authorization'] = `Bearer ${this.authToken}`;
-            }
-            this.headers=h;
-        }
-        return this.headers;
+    public constructor(options?:ClientOptions) {
+        super(options);
     }
 
     /**
@@ -74,7 +39,7 @@ export class DevicesService  {
 
         const url = this.baseUrl + PathHelper.encodeUrl('devices', deviceId, relationship, 'devices', otherDeviceId);
         await request.put(url)
-            .set(this.getHeaders());
+            .set(super.getHeaders());
     }
 
     /**
@@ -91,7 +56,7 @@ export class DevicesService  {
 
         const url = this.baseUrl + PathHelper.encodeUrl('devices', deviceId, relationship, 'groups', groupPath);
         await request.put(url)
-            .set(this.getHeaders());
+            .set(super.getHeaders());
       }
 
     /**
@@ -100,14 +65,14 @@ export class DevicesService  {
      * @param deviceId Id of parent device
      * @param body Device to add as a component
      */
-    public async createComponent(deviceId: string, body: Device): Promise<void> {
+    public async createComponent(deviceId: string, body: Device10Resource|Device20Resource): Promise<void> {
         ow(deviceId, ow.string.nonEmpty);
         ow(body, ow.object.nonEmpty);
 
         const url = this.baseUrl + PathHelper.encodeUrl('devices', deviceId, 'components');
         await request.post(url)
             .send(body)
-            .set(this.getHeaders());
+            .set(super.getHeaders());
     }
 
     /**
@@ -115,7 +80,7 @@ export class DevicesService  {
      *
      * @param body Device to add to the asset library
      */
-    public async createDevice(body: Device, applyProfileId?:string): Promise<void> {
+    public async createDevice(body: Device10Resource|Device20Resource, applyProfileId?:string): Promise<void> {
         ow(body, ow.object.nonEmpty);
 
         let url = this.baseUrl + '/devices';
@@ -125,7 +90,7 @@ export class DevicesService  {
         }
         await request.post(url)
             .send(body)
-            .set(this.getHeaders());
+            .set(super.getHeaders());
     }
 
     /**
@@ -133,7 +98,7 @@ export class DevicesService  {
      *
      * @param body Device to add to the asset library
      */
-    public async bulkCreateDevice(body: BulkDevices, applyProfileId?:string): Promise<BulkDevicesResult> {
+    public async bulkCreateDevice(body: BulkDevicesResource, applyProfileId?:string): Promise<BulkDevicesResult> {
 
         ow(body, ow.object.nonEmpty);
 
@@ -144,12 +109,12 @@ export class DevicesService  {
         }
         const res = await request.post(url)
             .send(body)
-            .set(this.getHeaders());
+            .set(super.getHeaders());
 
         return res.body;
     }
 
-    public async bulkUpdateDevice(body: BulkDevices, applyProfileId?:string): Promise<void> {
+    public async bulkUpdateDevice(body: BulkDevicesResource, applyProfileId?:string): Promise<void> {
 
         ow(body, ow.object.nonEmpty);
 
@@ -160,7 +125,7 @@ export class DevicesService  {
         }
         await request.patch(url)
             .send(body)
-            .set(this.getHeaders());
+            .set(super.getHeaders());
     }
 
     /**
@@ -176,7 +141,7 @@ export class DevicesService  {
         const url = this.baseUrl + PathHelper.encodeUrl('devices', deviceId, 'components', componentId);
 
         await request.delete(url)
-            .set(this.getHeaders());
+            .set(super.getHeaders());
     }
 
     /**
@@ -190,7 +155,7 @@ export class DevicesService  {
         const url = this.baseUrl + PathHelper.encodeUrl('devices', deviceId,);
 
        await request.delete(url)
-            .set(this.getHeaders());
+            .set(super.getHeaders());
     }
 
     /**
@@ -208,7 +173,7 @@ export class DevicesService  {
         const url = this.baseUrl + PathHelper.encodeUrl('devices', deviceId, relationship, 'devices', otherDeviceId);
 
         await request.delete(url)
-            .set(this.getHeaders());
+            .set(super.getHeaders());
     }
 
     /**
@@ -226,7 +191,7 @@ export class DevicesService  {
         const url = this.baseUrl + PathHelper.encodeUrl('devices', deviceId, relationship, 'groups', groupPath);
 
          await request.delete(url)
-            .set(this.getHeaders());
+            .set(super.getHeaders());
     }
 
     /**
@@ -235,7 +200,7 @@ export class DevicesService  {
      * @param deviceId ID of device to return
      * @param expandComponents By default, components of a device are not returned. Passing &#x60;true&#x60; will return and expand a devices components.
      */
-    public async getDeviceByID(deviceId: string, expandComponents?: boolean, attributes?:string[], groups?:string[]): Promise<Device> {
+    public async getDeviceByID(deviceId: string, expandComponents?: boolean, attributes?:string[], groups?:string[]): Promise<Device10Resource|Device20Resource> {
         ow(deviceId, ow.string.nonEmpty);
 
         const attributes_qs = (attributes) ? attributes.join() : undefined;
@@ -248,7 +213,7 @@ export class DevicesService  {
         }
 
         const res = await request.get(url)
-            .set(this.getHeaders());
+            .set(super.getHeaders());
 
         return res.body;
     }
@@ -259,7 +224,7 @@ export class DevicesService  {
      * @param deviceId Id of parent device
      * @param componentId ID of child component
      */
-    public async updateComponent(deviceId: string, componentId: string, body: Device): Promise<void> {
+    public async updateComponent(deviceId: string, componentId: string, body: Device10Resource|Device20Resource): Promise<void> {
         ow(deviceId, ow.string.nonEmpty);
         ow(componentId, ow.string.nonEmpty);
         ow(body, ow.object.nonEmpty);
@@ -268,7 +233,7 @@ export class DevicesService  {
 
         await request.patch(url)
             .send(body)
-            .set(this.getHeaders());
+            .set(super.getHeaders());
     }
 
     /**
@@ -277,7 +242,7 @@ export class DevicesService  {
      * @param deviceId ID of device to return
      * @param body Device object that needs to be updated in device store
      */
-    public async updateDevice(deviceId: string, body: Device, applyProfileId?:string): Promise<void> {
+    public async updateDevice(deviceId: string, body: Device10Resource|Device20Resource, applyProfileId?:string): Promise<void> {
         ow(deviceId, ow.string.nonEmpty);
         ow(body, ow.object.nonEmpty);
 
@@ -289,7 +254,7 @@ export class DevicesService  {
 
         await request.patch(url)
             .send(body)
-            .set(this.getHeaders());
+            .set(super.getHeaders());
     }
 
     /**
@@ -298,7 +263,7 @@ export class DevicesService  {
      * @param deviceIds IDs of device to return
      * @param expandComponents By default, components of a device are not returned. Passing &#x60;true&#x60; will return and expand a devices components.
      */
-    public async getDevicesByID(deviceIds: string[], expandComponents?: boolean, attributes?:string[], groups?:string[]): Promise<DeviceList> {
+    public async getDevicesByID(deviceIds: string[], expandComponents?: boolean, attributes?:string[], groups?:string[]): Promise<Device10Resource|Device20Resource> {
         ow(deviceIds, ow.array.nonEmpty.minLength(1));
 
         const attributes_qs = (attributes) ? attributes.join() : undefined;
@@ -311,7 +276,7 @@ export class DevicesService  {
         }
 
         const res = await request.get(url)
-            .set(this.getHeaders());
+            .set(super.getHeaders());
 
         return res.body;
     }

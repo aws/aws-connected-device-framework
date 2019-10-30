@@ -169,7 +169,7 @@ export class GroupsServiceFull implements GroupsService {
         // any ids need to be lowercase
         this.setIdsToLowercase(model);
 
-        await this.authServiceFull.authorizationCheck([], model.listRelatedGroupPaths(), ClaimAccess.C);
+        await this.authServiceFull.authorizationCheck([], [model.parentPath, ...model.listRelatedGroupPaths()], ClaimAccess.C);
 
         // schema validation
         const validateSubTypeFuture = await this.typesService.validateSubType(model.templateId, TypeCategory.Group, model, Operation.CREATE);

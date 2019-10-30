@@ -10,40 +10,27 @@
 
 import { injectable } from 'inversify';
 import { QSHelper } from '../utils/qs.helper';
-import { Group, GroupList, BulkLoadGroups, BulkLoadGroupsResponse } from './groups.model';
-import { DeviceList, DeviceState } from './devices.model';
+import { BulkLoadGroups, BulkLoadGroupsResponse, Group10Resource, Group20Resource, GroupResourceList } from './groups.model';
+import { DeviceState, DeviceResourceList } from './devices.model';
 import ow from 'ow';
 import { PathHelper } from '../utils/path.helper';
 import * as request from 'superagent';
-import config from 'config';
+import { ClientService, ClientOptions } from './common.service';
 
 @injectable()
-export class GroupsService {
+export class GroupsService extends ClientService {
 
-    private MIME_TYPE:string = 'application/vnd.aws-cdf-v1.0+json';
-    private baseUrl:string;
-    private headers = {
-        'Accept': this.MIME_TYPE,
-        'Content-Type': this.MIME_TYPE
-    };
-
-    public constructor() {
-        this.baseUrl = config.get('assetLibrary.baseUrl') as string;
-
-        if (config.has('assetLibrary.headers')) {
-            const additionalHeaders: {[key:string]:string} = config.get('assetLibrary.headers') as {[key:string]:string};
-            if (additionalHeaders !== null && additionalHeaders !== undefined) {
-                this.headers = {...this.headers, ...additionalHeaders};
-            }
-        }
+    public constructor(options?:ClientOptions) {
+        super(options);
     }
+
 
     /**
      * Adds a new group to the device library as a child of the &#x60;parentPath&#x60; as specified in the request body.
      *
      * @param body Group to add to the asset library
      */
-    public async createGroup(body: Group, applyProfileId?:string): Promise<void> {
+    public async createGroup(body: Group10Resource|Group20Resource, applyProfileId?:string): Promise<void> {
         ow(body, ow.object.nonEmpty);
 
         let url = this.baseUrl + '/groups';
@@ -53,7 +40,7 @@ export class GroupsService {
         }
         await request.post(url)
             .send(body)
-            .set(this.headers);
+            .set(super.getHeaders());
     }
 
     /**
@@ -71,7 +58,7 @@ export class GroupsService {
         }
         const res = await request.post(url)
             .send(body)
-            .set(this.headers);
+            .set(super.getHeaders());
 
         return res.body;
     }
@@ -87,7 +74,7 @@ export class GroupsService {
         const url = this.baseUrl + PathHelper.encodeUrl('groups', groupPath);
 
         await request.delete(url)
-            .set(this.headers);
+            .set(super.getHeaders());
      }
 
     /**
@@ -95,13 +82,13 @@ export class GroupsService {
      * Returns a single group
      * @param groupPath Path of group to return
      */
-    public async getGroup(groupPath: string): Promise<Group> {
+    public async getGroup(groupPath: string): Promise<Group10Resource|Group20Resource> {
         ow(groupPath, ow.string.nonEmpty);
 
         const url = this.baseUrl + PathHelper.encodeUrl('groups', groupPath);
 
         const res = await request.get(url)
-            .set(this.headers);
+            .set(super.getHeaders());
 
         return res.body;
     }
@@ -114,7 +101,7 @@ export class GroupsService {
      * @param offset The index to start paginated results from
      * @param count The maximum number of results to return
      */
-    public async listGroupMembersDevices(groupPath: string, template?: string, state?: DeviceState, offset?: number, count?: number): Promise<DeviceList> {
+    public async listGroupMembersDevices(groupPath: string, template?: string, state?: DeviceState, offset?: number, count?: number): Promise<DeviceResourceList> {
         ow(groupPath, ow.string.nonEmpty);
 
         let url = this.baseUrl + PathHelper.encodeUrl('groups', groupPath, 'members', 'devices');
@@ -124,7 +111,7 @@ export class GroupsService {
         }
 
         const res = await request.get(url)
-        .set(this.headers);
+        .set(super.getHeaders());
 
         return res.body;
     }
@@ -137,7 +124,7 @@ export class GroupsService {
      * @param offset The index to start paginated results from
      * @param count The maximum number of results to return
      */
-    public async listGroupMembersGroups(groupPath: string, template?: string, offset?: number, count?: number): Promise<GroupList> {
+    public async listGroupMembersGroups(groupPath: string, template?: string, offset?: number, count?: number): Promise<GroupResourceList> {
         ow(groupPath, ow.string.nonEmpty);
 
         let url = this.baseUrl + PathHelper.encodeUrl('groups', groupPath, 'members', 'groups');
@@ -147,7 +134,7 @@ export class GroupsService {
         }
 
         const res = await request.get(url)
-            .set(this.headers);
+            .set(super.getHeaders());
 
         return  res.body;
     }
@@ -159,7 +146,7 @@ export class GroupsService {
      * @param offset The index to start paginated results from
      * @param count The maximum number of results to return
      */
-    public async listGroupMemberships(groupPath: string, offset?: number, count?: number): Promise<GroupList> {
+    public async listGroupMemberships(groupPath: string, offset?: number, count?: number): Promise<GroupResourceList> {
         ow(groupPath, ow.string.nonEmpty);
 
         let url = this.baseUrl + PathHelper.encodeUrl('groups', groupPath, 'memberships');
@@ -169,7 +156,7 @@ export class GroupsService {
         }
 
         const res = await request.get(url)
-        .set(this.headers);
+        .set(super.getHeaders());
 
         return res.body;
     }
@@ -180,7 +167,7 @@ export class GroupsService {
      * @param groupPath Path of group to return
      * @param body Group object that needs to be updated
      */
-    public async updateGroup(groupPath: string, body: Group, applyProfileId?:string): Promise<Group> {
+    public async updateGroup(groupPath: string, body: Group10Resource|Group20Resource, applyProfileId?:string): Promise<void> {
         ow(groupPath, ow.string.nonEmpty);
         ow(body, ow.object.nonEmpty);
 
@@ -190,11 +177,9 @@ export class GroupsService {
             url += `?${queryString}`;
         }
 
-        const res = await request.patch(url)
+        await request.patch(url)
             .send(body)
-            .set(this.headers);
-
-        return res.body;
+            .set(super.getHeaders());
     }
 
     public async attachToGroup(sourceGroupPath: string, relationship: string, targetGroupPath: string): Promise<void> {
@@ -204,7 +189,7 @@ export class GroupsService {
 
         const url = this.baseUrl + PathHelper.encodeUrl('groups', sourceGroupPath, relationship, 'groups', targetGroupPath);
         await request.put(url)
-            .set(this.headers);
+            .set(super.getHeaders());
       }
 
     public async detachFromGroup(sourceGroupPath: string, relationship: string, targetGroupPath: string): Promise<void> {
@@ -215,6 +200,6 @@ export class GroupsService {
         const url = this.baseUrl + PathHelper.encodeUrl('groups', sourceGroupPath, relationship, 'groups', targetGroupPath);
 
          await request.delete(url)
-            .set(this.headers);
+            .set(super.getHeaders());
     }
 }

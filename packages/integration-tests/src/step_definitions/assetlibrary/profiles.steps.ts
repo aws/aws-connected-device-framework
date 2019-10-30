@@ -4,23 +4,21 @@
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
 import 'reflect-metadata';
-import { Before, Given, setDefaultTimeout, When, TableDefinition, Then} from 'cucumber';
-import { ProfilesService, DeviceProfile, GroupProfile } from '@cdf/assetlibrary-client/dist';
+import { Given, setDefaultTimeout, When, TableDefinition, Then} from 'cucumber';
+import { ProfilesService, DeviceProfile10Resource, GroupProfile10Resource } from '@cdf/assetlibrary-client/dist';
 import stringify from 'json-stable-stringify';
 import { fail } from 'assert';
 
 import chai_string = require('chai-string');
 import {expect, use} from 'chai';
 use(chai_string);
-import { RESPONSE_STATUS } from '../common/common.steps';
+import { RESPONSE_STATUS, AUTHORIZATION_TOKEN } from '../common/common.steps';
 
 setDefaultTimeout(10 * 1000);
 
-let profiles: ProfilesService;
-
-Before(function () {
-    profiles = new ProfilesService();
-});
+function getProfilesService() {
+    return new ProfilesService({authToken: this[AUTHORIZATION_TOKEN]});
+}
 
 function isDevice(category:string) {
     return category==='device';
@@ -33,9 +31,9 @@ function isGroup(category:string) {
 Given('assetlibrary {word} profile {string} of {string} does not exist', async function (category:string, profileId:string, templateId:string) {
     try {
         if (isDevice(category)) {
-            await profiles.getDeviceProfile(templateId, profileId);
+            await getProfilesService().getDeviceProfile(templateId, profileId);
         } else if (isGroup(category)) {
-            await profiles.getGroupProfile(templateId, profileId);
+            await getProfilesService().getGroupProfile(templateId, profileId);
         }
         fail('A 404 should be thrown');
     } catch (err) {
@@ -46,9 +44,9 @@ Given('assetlibrary {word} profile {string} of {string} does not exist', async f
 Given('assetlibrary {word} profile {string} of {string} exists', async function (category:string, profileId:string, templateId:string) {
     let profile;
     if (isDevice(category)) {
-        profile = await profiles.getDeviceProfile(templateId, profileId);
+        profile = await getProfilesService().getDeviceProfile(templateId, profileId);
     } else if (isGroup(category)) {
-        profile = await profiles.getGroupProfile(templateId, profileId);
+        profile = await getProfilesService().getGroupProfile(templateId, profileId);
     }
     expect(profile.profileId).equalIgnoreCase(profileId);
 });
@@ -76,9 +74,9 @@ When('I create the assetlibrary {word} profile {string} of {string} with attribu
 
     try {
         if (isDevice(category)) {
-            await profiles.createDeviceProfile(profile);
+            await getProfilesService().createDeviceProfile(profile);
         } else if (isGroup(category)) {
-            await profiles.createGroupProfile(profile);
+            await getProfilesService().createGroupProfile(profile);
         }
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
@@ -88,9 +86,9 @@ When('I create the assetlibrary {word} profile {string} of {string} with attribu
 When('I delete assetlibrary {word} profile {string} of {string}', async function (category:string, profileId:string, templateId:string) {
     try {
         if (isDevice(category)) {
-            await profiles.deleteDeviceProfile(templateId, profileId);
+            await getProfilesService().deleteDeviceProfile(templateId, profileId);
         } else if (isGroup(category)) {
-            await profiles.deleteGroupProfile(templateId, profileId);
+            await getProfilesService().deleteGroupProfile(templateId, profileId);
         }
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
@@ -100,11 +98,11 @@ When('I delete assetlibrary {word} profile {string} of {string}', async function
 Then('assetlibrary {word} profile {string} of {string} exists with attributes', async function (category:string, profileId:string, templateId:string, data:TableDefinition) {
     const d = data.rowsHash();
 
-    let r:DeviceProfile|GroupProfile;
+    let r:DeviceProfile10Resource|GroupProfile10Resource;
     if (isDevice(category)) {
-        r = await profiles.getDeviceProfile(templateId, profileId);
+        r = await getProfilesService().getDeviceProfile(templateId, profileId);
     } else if (isGroup(category)) {
-        r = await profiles.getGroupProfile(templateId, profileId);
+        r = await getProfilesService().getGroupProfile(templateId, profileId);
     }
 
     Object.keys(d).forEach( key => {

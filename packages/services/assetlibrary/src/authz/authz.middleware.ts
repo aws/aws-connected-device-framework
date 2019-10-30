@@ -14,6 +14,8 @@ als.enable();
 export function setClaims() {
     return (req: Request, res: Response, next: NextFunction) => {
 
+        logger.debug(`authz.middleware setClaims in:${JSON.stringify(req.headers)}`);
+
         // decodes the JWT, extacts the claims, and serializes as an object in a ThreadLocal
         // to make it easier for the service/dao layers to obtain.
 
@@ -37,7 +39,7 @@ export function setClaims() {
             next();
 
         } else {
-            res.send(403);
+            res.sendStatus(403);
         }
     };
 }

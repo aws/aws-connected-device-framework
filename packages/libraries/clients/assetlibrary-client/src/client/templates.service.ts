@@ -10,29 +10,15 @@ import { PathHelper } from '../utils/path.helper';
 import { TypeResource, CategoryEnum, TypeResourceList, StatusEnum } from './templates.model';
 import { QSHelper } from '../utils/qs.helper';
 import * as request from 'superagent';
-import config from 'config';
+import { ClientService, ClientOptions } from './common.service';
 
 @injectable()
-export class TemplatesService  {
+export class TemplatesService extends ClientService {
 
-    private MIME_TYPE:string = 'application/vnd.aws-cdf-v1.0+json';
-
-    private baseUrl:string;
-    private headers = {
-        'Accept': this.MIME_TYPE,
-        'Content-Type': this.MIME_TYPE
-    };
-
-    public constructor() {
-        this.baseUrl = config.get('assetLibrary.baseUrl') as string;
-
-        if (config.has('assetLibrary.headers')) {
-            const additionalHeaders: {[key:string]:string} = config.get('assetLibrary.headers') as {[key:string]:string};
-            if (additionalHeaders !== null && additionalHeaders !== undefined) {
-                this.headers = {...this.headers, ...additionalHeaders};
-            }
-        }
+    public constructor(options?:ClientOptions) {
+        super(options);
     }
+
 
     public async getTemplate(category:CategoryEnum, templateId:string, status:StatusEnum): Promise<TypeResource> {
         ow(category, ow.string.nonEmpty);
@@ -43,7 +29,7 @@ export class TemplatesService  {
         url += `?${queryString}`;
 
         const res = await request.get(url)
-        .set(this.headers);
+        .set(super.getHeaders());
 
         return res.body;
 
@@ -61,7 +47,7 @@ export class TemplatesService  {
 
         await request.post(url)
             .send(resource)
-            .set(this.headers);
+            .set(super.getHeaders());
     }
 
     public async updateTemplate(resource:TypeResource): Promise<void> {
@@ -71,7 +57,7 @@ export class TemplatesService  {
 
         const url = this.baseUrl + PathHelper.encodeUrl('templates', resource.category, resource.templateId);
         await request.patch(url)
-        .set(this.headers);
+        .set(super.getHeaders());
     }
 
     public async publishTemplate(category:CategoryEnum, templateId:string): Promise<void> {
@@ -81,7 +67,7 @@ export class TemplatesService  {
         const url = this.baseUrl + PathHelper.encodeUrl('templates', category, templateId, 'publish');
 
         await request.put(url)
-        .set(this.headers);
+        .set(super.getHeaders());
     }
 
     public async deleteTemplate(category:CategoryEnum, templateId:string): Promise<void> {
@@ -90,7 +76,7 @@ export class TemplatesService  {
 
         const url = this.baseUrl + PathHelper.encodeUrl('templates', category, templateId);
         await request.delete(url)
-        .set(this.headers);
+        .set(super.getHeaders());
     }
 
     public async listTemplates(category:CategoryEnum, status?:string, offset?:number, count?:number): Promise<TypeResourceList> {
@@ -103,7 +89,7 @@ export class TemplatesService  {
         }
 
         const res = await request.get(url)
-        .set(this.headers);
+        .set(super.getHeaders());
         return res.body;
     }
 

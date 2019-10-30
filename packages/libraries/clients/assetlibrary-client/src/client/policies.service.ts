@@ -14,35 +14,22 @@ import ow from 'ow';
 import { PathHelper } from '../utils/path.helper';
 import { QSHelper } from '../utils/qs.helper';
 import * as request from 'superagent';
-import config from 'config';
+import { ClientService, ClientOptions } from './common.service';
 
 @injectable()
-export class PoliciesService  {
+export class PoliciesService extends ClientService {
 
-    private MIME_TYPE:string = 'application/vnd.aws-cdf-v1.0+json';
-    private baseUrl:string;
-    private headers = {
-        'Accept': this.MIME_TYPE,
-        'Content-Type': this.MIME_TYPE
-    };
-
-    public constructor() {
-        this.baseUrl = config.get('assetLibrary.baseUrl') as string;
-
-        if (config.has('assetLibrary.headers')) {
-            const additionalHeaders: {[key:string]:string} = config.get('assetLibrary.headers') as {[key:string]:string};
-            if (additionalHeaders !== null && additionalHeaders !== undefined) {
-                this.headers = {...this.headers, ...additionalHeaders};
-            }
-        }
+    public constructor(options?:ClientOptions) {
+        super(options);
     }
+
 
     public async createPolicy(body:Policy): Promise<void> {
         ow(body, ow.object.nonEmpty);
 
         await request.post(this.baseUrl + '/policies')
             .send(body)
-            .set(this.headers);
+            .set(super.getHeaders());
     }
 
     public async listInheritedPoliciesByDevice(deviceId:string, type:string ): Promise<PolicyList> {
@@ -51,7 +38,7 @@ export class PoliciesService  {
 
         const url = `${this.baseUrl}/policies/inherited?deviceId=${encodeURIComponent(deviceId)}&type=${encodeURIComponent(type)}`;
         const res = await request.get(url)
-        .set(this.headers);
+        .set(super.getHeaders());
 
         return res.body;
     }
@@ -63,7 +50,7 @@ export class PoliciesService  {
         const queryString = groupPaths.map(p=> `groupPath=${encodeURIComponent(p)}`).join('&');
         const url = `${this.baseUrl}/policies/inherited?${queryString}`;
         const res = await request.get(url)
-        .set(this.headers);
+        .set(super.getHeaders());
 
         return res.body;
     }
@@ -73,7 +60,7 @@ export class PoliciesService  {
 
         const url = `${this.baseUrl}/policies?${QSHelper.getQueryString({type, offset, count})}`;
         const res = await request.get(url)
-        .set(this.headers);
+        .set(super.getHeaders());
 
         return res.body;
     }
@@ -83,7 +70,7 @@ export class PoliciesService  {
 
         const url = this.baseUrl + PathHelper.encodeUrl('policies', policyId);
         const res = await request.get(url)
-            .set(this.headers);
+            .set(super.getHeaders());
 
         return res.body;
     }
@@ -95,7 +82,7 @@ export class PoliciesService  {
         const url = this.baseUrl + PathHelper.encodeUrl('policies', policyId);
         await request.patch(url)
             .send(body)
-            .set(this.headers);
+            .set(super.getHeaders());
     }
 
     public async deletePolicy(policyId:string): Promise<void> {
@@ -103,6 +90,6 @@ export class PoliciesService  {
 
         const url = this.baseUrl + PathHelper.encodeUrl('policies', policyId);
         await request.delete(url)
-            .set(this.headers);
+            .set(super.getHeaders());
     }
 }
