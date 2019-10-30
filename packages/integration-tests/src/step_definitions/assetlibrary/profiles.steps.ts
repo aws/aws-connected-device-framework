@@ -16,8 +16,14 @@ import { RESPONSE_STATUS, AUTHORIZATION_TOKEN } from '../common/common.steps';
 
 setDefaultTimeout(10 * 1000);
 
-function getProfilesService() {
-    return new ProfilesService({authToken: this[AUTHORIZATION_TOKEN]});
+let profiles: ProfilesService;
+
+function getProfilesService(world:any) {
+    if (profiles===undefined) {
+        profiles = new ProfilesService();
+    }
+    profiles.init({authToken: world[AUTHORIZATION_TOKEN]});
+    return profiles;
 }
 
 function isDevice(category:string) {
@@ -31,9 +37,9 @@ function isGroup(category:string) {
 Given('assetlibrary {word} profile {string} of {string} does not exist', async function (category:string, profileId:string, templateId:string) {
     try {
         if (isDevice(category)) {
-            await getProfilesService().getDeviceProfile(templateId, profileId);
+            await getProfilesService(this).getDeviceProfile(templateId, profileId);
         } else if (isGroup(category)) {
-            await getProfilesService().getGroupProfile(templateId, profileId);
+            await getProfilesService(this).getGroupProfile(templateId, profileId);
         }
         fail('A 404 should be thrown');
     } catch (err) {
@@ -44,9 +50,9 @@ Given('assetlibrary {word} profile {string} of {string} does not exist', async f
 Given('assetlibrary {word} profile {string} of {string} exists', async function (category:string, profileId:string, templateId:string) {
     let profile;
     if (isDevice(category)) {
-        profile = await getProfilesService().getDeviceProfile(templateId, profileId);
+        profile = await getProfilesService(this).getDeviceProfile(templateId, profileId);
     } else if (isGroup(category)) {
-        profile = await getProfilesService().getGroupProfile(templateId, profileId);
+        profile = await getProfilesService(this).getGroupProfile(templateId, profileId);
     }
     expect(profile.profileId).equalIgnoreCase(profileId);
 });
@@ -74,9 +80,9 @@ When('I create the assetlibrary {word} profile {string} of {string} with attribu
 
     try {
         if (isDevice(category)) {
-            await getProfilesService().createDeviceProfile(profile);
+            await getProfilesService(this).createDeviceProfile(profile);
         } else if (isGroup(category)) {
-            await getProfilesService().createGroupProfile(profile);
+            await getProfilesService(this).createGroupProfile(profile);
         }
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
@@ -86,9 +92,9 @@ When('I create the assetlibrary {word} profile {string} of {string} with attribu
 When('I delete assetlibrary {word} profile {string} of {string}', async function (category:string, profileId:string, templateId:string) {
     try {
         if (isDevice(category)) {
-            await getProfilesService().deleteDeviceProfile(templateId, profileId);
+            await getProfilesService(this).deleteDeviceProfile(templateId, profileId);
         } else if (isGroup(category)) {
-            await getProfilesService().deleteGroupProfile(templateId, profileId);
+            await getProfilesService(this).deleteGroupProfile(templateId, profileId);
         }
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
@@ -100,9 +106,9 @@ Then('assetlibrary {word} profile {string} of {string} exists with attributes', 
 
     let r:DeviceProfile10Resource|GroupProfile10Resource;
     if (isDevice(category)) {
-        r = await getProfilesService().getDeviceProfile(templateId, profileId);
+        r = await getProfilesService(this).getDeviceProfile(templateId, profileId);
     } else if (isGroup(category)) {
-        r = await getProfilesService().getGroupProfile(templateId, profileId);
+        r = await getProfilesService(this).getGroupProfile(templateId, profileId);
     }
 
     Object.keys(d).forEach( key => {

@@ -15,15 +15,14 @@ import ow from 'ow';
 import * as request from 'superagent';
 import { SearchRequestModel, SearchResultsModel } from './search.model';
 import { QSHelper } from '../utils/qs.helper';
-import { ClientService, ClientOptions } from './common.service';
+import { ClientService } from './common.service';
 
 @injectable()
 export class SearchService extends ClientService {
 
-    public constructor(options?:ClientOptions) {
-        super(options);
+    public constructor() {
+        super();
     }
-
 
     public async search(searchRequest:SearchRequestModel, offset?:number, count?:number) : Promise<SearchResultsModel> {
         ow(searchRequest, ow.object.nonEmpty);

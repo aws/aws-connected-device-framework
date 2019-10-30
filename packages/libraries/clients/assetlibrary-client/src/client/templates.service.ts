@@ -10,15 +10,14 @@ import { PathHelper } from '../utils/path.helper';
 import { TypeResource, CategoryEnum, TypeResourceList, StatusEnum } from './templates.model';
 import { QSHelper } from '../utils/qs.helper';
 import * as request from 'superagent';
-import { ClientService, ClientOptions } from './common.service';
+import { ClientService } from './common.service';
 
 @injectable()
 export class TemplatesService extends ClientService {
 
-    public constructor(options?:ClientOptions) {
-        super(options);
+    public constructor() {
+        super();
     }
-
 
     public async getTemplate(category:CategoryEnum, templateId:string, status:StatusEnum): Promise<TypeResource> {
         ow(category, ow.string.nonEmpty);

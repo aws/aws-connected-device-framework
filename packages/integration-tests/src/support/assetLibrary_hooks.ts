@@ -94,10 +94,24 @@ Before(function () {
     };
     const authToken = sign(adminClaims, 'shared-secret');
 
-    devices = new DevicesService({authToken});
-    groups = new GroupsService({authToken});
-    templates = new TemplatesService({authToken});
-    profiles = new ProfilesService({authToken});
+    if (devices===undefined) {
+        devices = new DevicesService();
+    }
+    if (groups===undefined) {
+        groups = new GroupsService();
+    }
+    if (templates===undefined) {
+        templates = new TemplatesService();
+    }
+    if (profiles===undefined) {
+        profiles = new ProfilesService();
+    }
+
+    devices.init({authToken});
+    groups.init({authToken});
+    templates.init({authToken});
+    profiles.init({authToken});
+ 
 });
 
 async function deleteAssetLibraryTemplates(category:CategoryEnum, ids:string[]) {

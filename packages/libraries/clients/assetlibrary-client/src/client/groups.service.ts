@@ -15,15 +15,14 @@ import { DeviceState, DeviceResourceList } from './devices.model';
 import ow from 'ow';
 import { PathHelper } from '../utils/path.helper';
 import * as request from 'superagent';
-import { ClientService, ClientOptions } from './common.service';
+import { ClientService } from './common.service';
 
 @injectable()
 export class GroupsService extends ClientService {
 
-    public constructor(options?:ClientOptions) {
-        super(options);
+    public constructor() {
+        super();
     }
-
 
     /**
      * Adds a new group to the device library as a child of the &#x60;parentPath&#x60; as specified in the request body.

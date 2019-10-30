@@ -16,13 +16,19 @@ use(chai_string);
 
 setDefaultTimeout(10 * 1000);
 
-function getDevicesService() {
-    return new DevicesService({authToken: this[AUTHORIZATION_TOKEN]});
+let devices: DevicesService;
+
+function getDevicesService(world:any) {
+    if (devices===undefined) {
+        devices = new DevicesService();
+    }
+    devices.init({authToken: world[AUTHORIZATION_TOKEN]});
+    return devices;
 }
 
 Given('device {string} does not exist', async function (deviceId:string) {
     try {
-        await getDevicesService().getDeviceByID(deviceId);
+        await getDevicesService(this).getDeviceByID(deviceId);
         fail('A 404 should be thrown');
     } catch (err) {
         expect(err.status).eq(404);
@@ -30,7 +36,7 @@ Given('device {string} does not exist', async function (deviceId:string) {
 });
 
 Given('device {string} exists', async function (deviceId:string) {
-    const device = await getDevicesService().getDeviceByID(deviceId);
+    const device = await getDevicesService(this).getDeviceByID(deviceId);
     expect(device.deviceId).equalIgnoreCase(deviceId);
 });
 
@@ -56,7 +62,7 @@ async function registerDevice (deviceId:string, data:TableDefinition, profileId?
         }
     });
 
-    await getDevicesService().createDevice(device, profileId);
+    await getDevicesService(this).createDevice(device, profileId);
 }
 
 When('I create device {string} with attributes', async function (deviceId:string, data:TableDefinition) {
@@ -107,7 +113,7 @@ When('I update device {string} with attributes', async function (deviceId:string
     });
 
     try {
-        await getDevicesService().updateDevice(deviceId, device);
+        await getDevicesService(this).updateDevice(deviceId, device);
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
     }
@@ -120,7 +126,7 @@ When('I update device {string} applying profile {string}', async function (devic
     };
 
     try {
-        await getDevicesService().updateDevice(deviceId, device, profileId);
+        await getDevicesService(this).updateDevice(deviceId, device, profileId);
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
     }
@@ -128,7 +134,7 @@ When('I update device {string} applying profile {string}', async function (devic
 
 When('I add device {string} to group {string} related via {string}', async function (deviceId:string, groupPath:string, relationship:string) {
     try {
-        await getDevicesService().attachToGroup(deviceId, relationship, groupPath);
+        await getDevicesService(this).attachToGroup(deviceId, relationship, groupPath);
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
     }
@@ -136,7 +142,7 @@ When('I add device {string} to group {string} related via {string}', async funct
 
 When('I remove device {string} from group {string} related via {string}', async function (deviceId:string, groupPath:string, relationship:string) {
     try {
-        await getDevicesService().detachFromGroup(deviceId, relationship, groupPath);
+        await getDevicesService(this).detachFromGroup(deviceId, relationship, groupPath);
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
     }
@@ -144,7 +150,7 @@ When('I remove device {string} from group {string} related via {string}', async 
 
 When('I delete device {string}', async function (deviceId:string) {
     try {
-        await getDevicesService().deleteDevice(deviceId);
+        await getDevicesService(this).deleteDevice(deviceId);
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
     }
@@ -152,7 +158,7 @@ When('I delete device {string}', async function (deviceId:string) {
 
 When('I get device {string}', async function (deviceId:string) {
     try {
-        await getDevicesService().getDeviceByID(deviceId);
+        await getDevicesService(this).getDeviceByID(deviceId);
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
     }
@@ -160,7 +166,7 @@ When('I get device {string}', async function (deviceId:string) {
 
 Then('device {string} exists with attributes', async function (deviceId:string, data:TableDefinition) {
     const d = data.rowsHash();
-    const r = await getDevicesService().getDeviceByID(deviceId);
+    const r = await getDevicesService(this).getDeviceByID(deviceId);
 
     Object.keys(d).forEach( key => {
         const val = replaceTokens(d[key]);
@@ -178,7 +184,7 @@ Then('device {string} exists with attributes', async function (deviceId:string, 
 
 Then('device {string} is {string} {string}', async function (deviceId, rel, groupPath) {
     try {
-        const device = await getDevicesService().getDeviceByID(deviceId);
+        const device = await getDevicesService(this).getDeviceByID(deviceId);
         expect(device.groups[rel]).include(groupPath);
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;

@@ -25,7 +25,7 @@ export abstract class ClientService  {
     private mimeType:string;
     private authToken:string;
 
-    protected constructor(options?:ClientOptions) {
+    protected constructor() {
 
         this.baseUrl = config.get('assetLibrary.baseUrl') as string;
         if (config.has('assetLibrary.headers')) {
@@ -33,12 +33,14 @@ export abstract class ClientService  {
         }
 
         this.mimeType=this.DEFAULT_MIME_TYPE;
-        if (options) {
-            if (options.mimeType) {
-                this.mimeType=options.mimeType;
-            }
-            this.setAuthToken(options.authToken);
+    }
+
+    public init(options:ClientOptions) {
+        if (options.mimeType) {
+            this.mimeType=options.mimeType;
         }
+        this.setAuthToken(options.authToken);
+        this.getHeaders();
     }
 
     public setAuthToken(authToken?:string) {
@@ -61,7 +63,8 @@ export abstract class ClientService  {
     }
 }
 
-export interface ClientOptions {
+@injectable()
+export class ClientOptions {
     mimeType?:string;
     authToken?:string;
 }

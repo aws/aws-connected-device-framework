@@ -184,7 +184,7 @@ export class DevicesServiceFull implements DevicesService {
             errors
         };
 
-        logger.debug(`device.full.service createBulk: exit: response: ${response}`);
+        logger.debug(`device.full.service createBulk: exit: response: ${JSON.stringify(response)}`);
         return response;
     }
 
@@ -547,7 +547,7 @@ export class DevicesServiceFull implements DevicesService {
 
         // ensure that the group relation is allowed
         const out: StringToArrayMap = {};
-        out[relationship] = [ group.templateId ];
+        out[relationship] = [ group.groupPath ];
         const isValid = await this.typesService.validateRelationshipsByPath(device.templateId, {out});
         if (!isValid) {
             throw new Error('FAILED_VALIDATION');

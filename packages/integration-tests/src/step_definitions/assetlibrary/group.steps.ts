@@ -16,9 +16,16 @@ use(chai_string);
 
 setDefaultTimeout(10 * 1000);
 
+let groups: GroupsService;
+
 function getGroupsService(world:any) {
-    return new GroupsService({authToken: world[AUTHORIZATION_TOKEN]});
+    if (groups===undefined) {
+        groups = new GroupsService();
+    }
+    groups.init({authToken: world[AUTHORIZATION_TOKEN]});
+    return groups;
 }
+
 
 Given('group {string} does not exist', async function (groupPath:string) {
     try {

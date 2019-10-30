@@ -17,8 +17,14 @@ setDefaultTimeout(10 * 1000);
 
 export const SEARCH_RESULTS = 'searchResults';
 
-function getSearchService() {
-    return new SearchService({authToken: this[AUTHORIZATION_TOKEN]});
+let search: SearchService;
+
+function getSearchService(world:any) {
+    if (search===undefined) {
+        search = new SearchService();
+    }
+    search.init({authToken: world[AUTHORIZATION_TOKEN]});
+    return search;
 }
 
 function buildSearchRequest(data:TableDefinition):SearchRequestModel {
@@ -68,7 +74,7 @@ When('I getSearchService() with following attributes:', async function (data:Tab
         delete this[SEARCH_RESULTS];
         delete this[RESPONSE_STATUS];
 
-        this[SEARCH_RESULTS] = await getSearchService().search(searchRequest);
+        this[SEARCH_RESULTS] = await getSearchService(this).search(searchRequest);
 
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
@@ -83,7 +89,7 @@ When('I getSearchService() with summary with following attributes:', async funct
         delete this[SEARCH_RESULTS];
         delete this[RESPONSE_STATUS];
 
-        this[SEARCH_RESULTS] = await getSearchService().search(searchRequest);
+        this[SEARCH_RESULTS] = await getSearchService(this).search(searchRequest);
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
     }

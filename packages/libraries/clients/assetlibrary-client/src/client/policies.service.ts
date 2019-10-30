@@ -14,15 +14,14 @@ import ow from 'ow';
 import { PathHelper } from '../utils/path.helper';
 import { QSHelper } from '../utils/qs.helper';
 import * as request from 'superagent';
-import { ClientService, ClientOptions } from './common.service';
+import { ClientService } from './common.service';
 
 @injectable()
 export class PoliciesService extends ClientService {
 
-    public constructor(options?:ClientOptions) {
-        super(options);
+    public constructor() {
+        super();
     }
-
 
     public async createPolicy(body:Policy): Promise<void> {
         ow(body, ow.object.nonEmpty);
