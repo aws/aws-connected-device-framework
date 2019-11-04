@@ -3,7 +3,6 @@
   "version": "2.1.1",
   "description": "API Gateway custom authorizer that authenticates based on a supplied device certificate",
   "author": "Rahul Sareen <rssareen@amazon.com>",
-  "main": "lib/index.js",
   "scripts": {
     "reset": "npm run clean && del-cli node_modules",
     "clean": "del-cli dist build",

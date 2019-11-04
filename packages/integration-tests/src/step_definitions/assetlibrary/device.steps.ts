@@ -16,8 +16,7 @@ use(chai_string);
 
 setDefaultTimeout(10 * 1000);
 
-let devices: DevicesService;
-
+let devices:DevicesService;
 function getDevicesService(world:any) {
     if (devices===undefined) {
         devices = new DevicesService();
@@ -40,7 +39,7 @@ Given('device {string} exists', async function (deviceId:string) {
     expect(device.deviceId).equalIgnoreCase(deviceId);
 });
 
-async function registerDevice (deviceId:string, data:TableDefinition, profileId?:string) {
+async function registerDevice (world:any, deviceId:string, data:TableDefinition, profileId?:string) {
 
     const d = data.rowsHash();
     
@@ -62,12 +61,12 @@ async function registerDevice (deviceId:string, data:TableDefinition, profileId?
         }
     });
 
-    await getDevicesService(this).createDevice(device, profileId);
+    await getDevicesService(world).createDevice(device, profileId);
 }
 
 When('I create device {string} with attributes', async function (deviceId:string, data:TableDefinition) {
     try {
-        await registerDevice(deviceId, data);
+        await registerDevice(this, deviceId, data);
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
     }
@@ -76,7 +75,7 @@ When('I create device {string} with attributes', async function (deviceId:string
 When('I create device {string} applying profile {string} with attributes', async function (deviceId:string, profileId:string, data:TableDefinition) {
 
     try {
-        await registerDevice(deviceId, data, profileId);
+        await registerDevice(this, deviceId, data, profileId);
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
     }
@@ -84,7 +83,7 @@ When('I create device {string} applying profile {string} with attributes', async
 
 When('I create device {string} with invalid attributes', async function (deviceId:string, data:TableDefinition) {
     try {
-        await registerDevice(deviceId, data);
+        await registerDevice(this, deviceId, data);
         fail('Expected 400');
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;

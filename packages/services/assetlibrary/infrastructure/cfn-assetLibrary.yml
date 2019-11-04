@@ -62,6 +62,7 @@ Resources:
             x-amazon-apigateway-any-method:
               produces:
               - application/vnd.aws-cdf-v1.0+json
+              - application/vnd.aws-cdf-v2.0+json
               responses:
                 '200':
                   description: '200 response'
@@ -70,7 +71,7 @@ Resources:
               security:
                 Fn::If:
                 - DeployWithCustomAuth
-                - CustomAuthorizer: []
+                - - CustomAuthorizer: []
                 - Ref: AWS::NoValue
               x-amazon-apigateway-integration:
                 responses:
@@ -84,8 +85,10 @@ Resources:
             options:
               consumes:
               - application/vnd.aws-cdf-v1.0+json
+              - application/vnd.aws-cdf-v120+json
               produces:
               - application/vnd.aws-cdf-v1.0+json
+              - application/vnd.aws-cdf-v120+json
               responses:
                 '200':
                   description: '200 response'
@@ -118,6 +121,7 @@ Resources:
             x-amazon-apigateway-any-method:
               produces:
               - application/vnd.aws-cdf-v1.0+json
+              - application/vnd.aws-cdf-v120+json
               parameters:
               - name: proxy
                 in: path
@@ -127,7 +131,7 @@ Resources:
               security:
                 Fn::If:
                 - DeployWithCustomAuth
-                - CustomAuthorizer: []
+                - - CustomAuthorizer: []
                 - Ref: AWS::NoValue
               x-amazon-apigateway-integration:
                 uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaFunction.Arn}/invocations"
@@ -137,8 +141,10 @@ Resources:
             options:
               consumes:
               - application/vnd.aws-cdf-v1.0+json
+              - application/vnd.aws-cdf-v120+json
               produces:
               - application/vnd.aws-cdf-v1.0+json
+              - application/vnd.aws-cdf-v120+json
               responses:
                 '200':
                   description: '200 response'

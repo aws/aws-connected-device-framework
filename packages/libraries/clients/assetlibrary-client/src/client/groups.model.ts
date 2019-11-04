@@ -59,7 +59,7 @@ export class BulkLoadGroupsResponse {
 export interface GroupResourceList {
 	results: GroupBaseResource[];
 	pagination?: {
-		offset:number|string;
+		offset:number;
 		count: number;
 	};
 }

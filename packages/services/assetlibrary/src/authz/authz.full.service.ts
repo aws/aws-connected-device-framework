@@ -36,6 +36,8 @@ export class AuthzServiceFull {
             return;
         }
 
+        logger.debug(`authz.full.service authorizationCheck: combinedIds:${JSON.stringify(combinedIds)}`);
+
         // retrieve the claims from the thread local
         const claims = Claims.getInstance();
         logger.debug(`authz.full.service authorizationCheck: claims: ${JSON.stringify(claims)}`);
@@ -43,31 +45,33 @@ export class AuthzServiceFull {
         // determine if the user has any access to provided ids via their allowed hierarchies
         const authorizations = await this.dao.listAuthorizedHierarchies(deviceIds, groupPaths, claims.listPaths());
 
-        if (authorizations===undefined) {
-            logger.debug(`authz.full.service authorizationCheck: not authorized to: ${combinedIds}`);
-            throw new Error('NOT_AUTHORIZED');
+        // if one if the requested items is missing, we refuse the whole request
+        if (authorizations.exists.length!==deviceIds.length+groupPaths.length) {
+            throw new Error('NOT_FOUND');
         }
 
         // if the user does not have access to all, then not authorized to any
-        const notAuthorized = Object.keys(authorizations).filter(k=> !combinedIds.includes(k));
+        const notAuthorized = Object.keys(authorizations.authorized).filter(k=> !combinedIds.includes(k));
         if (notAuthorized.length>0) {
             logger.debug(`authz.full.service authorizationCheck: not authorized to: ${notAuthorized}`);
             throw new Error('NOT_AUTHORIZED');
         }
 
         // even though the user has access to a hierarchy, need to ensure its the right level of access
-        for (const id of Object.keys(authorizations)) {
-            for (const path of authorizations[id]) {
+        const entitiesWithSufficientAccess:string[]= [];
+        for (const entityId of Object.keys(authorizations.authorized)) {
+            const paths = authorizations.authorized[entityId];
+            for (const path of paths) {
                 if (claims.hasAccessForPath(path, accessLevelRequired)) {
-                    authorizations[id]['authorized']=true;
+                    entitiesWithSufficientAccess.push(entityId);
                     break;
                 }
             }
         }
 
-        const authorized = Object.keys(authorizations).filter(k=> authorizations[k]['authorized']===true);
+        logger.debug(`authz.full.service authorizationCheck: entitiesWithSufficientAccess:${JSON.stringify(entitiesWithSufficientAccess)}`);
 
-        if (authorized.length!==combinedIds.length) {
+        if (entitiesWithSufficientAccess.length!==combinedIds.length) {
             logger.debug(`authz.full.service authorizationCheck: not authorized`);
             throw new Error('NOT_AUTHORIZED');
         }

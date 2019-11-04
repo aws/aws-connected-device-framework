@@ -226,8 +226,8 @@ Before({tags: '@teardown_devices_feature'}, async function () {
 });
 
 async function teardown_devicesWithAuth_feature() {
-    // await deleteAssetLibraryDevices(DEVICES_FEATURE_DEVICE_IDS);
-    await deleteAssetLibraryGroups(['/1','/1/1','/1/2','/1/1/1','/1/1/2','/1/2/1','/1/2/2']);
+    await deleteAssetLibraryDevices(['TEST-devicesWithAuth-device001','TEST-devicesWithAuth-device002']);
+    await deleteAssetLibraryGroups(['/1/2/2','/1/2/1','/1/1/2','/1/1/1','/1/2','/1/1','/1']);
     await deleteAssetLibraryTemplates(CategoryEnum.device, ['TEST-devicesWithAuthDevice']);
     await deleteAssetLibraryTemplates(CategoryEnum.group, ['TEST-devicesWithAuthGroup']);
 }
@@ -293,7 +293,15 @@ Before({tags: '@setup_devicesWithAuth_feature'}, async function () {
     const deviceTemplateId = 'TEST-devicesWithAuthDevice';
     const deviceType:TypeResource = {
         templateId: deviceTemplateId,
-        category: 'device'
+        category: 'device',
+        properties: {
+            model: { type:["string"] }
+        },
+        relations: {
+            out: {
+                linked_to: [groupTemplateId]
+            }
+        }
     };
     await templates.createTemplate(deviceType);
     await templates.publishTemplate(CategoryEnum.device, deviceTemplateId);

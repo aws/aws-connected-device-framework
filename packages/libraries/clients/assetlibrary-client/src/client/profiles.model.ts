@@ -33,4 +33,3 @@ export interface ProfileResourceList {
         count:number;
     };
 }
-

@@ -11,7 +11,7 @@ import { CommandModel } from '../commands.models';
 import { logger } from '../../utils/logger';
 import AWS = require('aws-sdk');
 import ow from 'ow';
-import { DevicesService, GroupsService, ASSTLIBRARY_CLIENT_TYPES, SearchService, SearchRequestModel, Device, Group } from '@cdf/assetlibrary-client';
+import { DevicesService, GroupsService, ASSTLIBRARY_CLIENT_TYPES, SearchService, SearchRequestModel, Device10Resource, Group10Resource } from '@cdf/assetlibrary-client';
 import { PROVISIONING_CLIENT_TYPES, ThingsService, BulkProvisionThingsRequest } from '@cdf/provisioning-client';
 import config from 'config';
 import { CommandsDao } from '../commands.dao';
@@ -154,12 +154,12 @@ export class StartJobAction implements WorkflowAction {
             while (searchResults.results.length>0) {
                 for(const r of searchResults.results) {
                     if (this.isDevice(r)) {
-                        const awsIotThingArn = (r as Device).awsIotThingArn;
+                        const awsIotThingArn = (r as Device10Resource).awsIotThingArn;
                         if (awsIotThingArn!==undefined) {
                             awsThingTargets.push(awsIotThingArn);
                         }
                     } else {
-                        cdfGroupTargets.push((r as Group).groupPath);
+                        cdfGroupTargets.push((r as Group10Resource).groupPath);
                     }
                 }
                 // possibly paginated results?
@@ -302,7 +302,7 @@ export class StartJobAction implements WorkflowAction {
         return TargetType.cdfDevice;
     }
 
-    private isDevice(arg: any): arg is Device {
+    private isDevice(arg: any): arg is Device10Resource {
         return arg && arg.deviceId && typeof(arg.deviceId) === 'string';
     }
 

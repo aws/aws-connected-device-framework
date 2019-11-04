@@ -10,7 +10,7 @@
 
 /* tslint:disable:no-unused-variable member-ordering */
 
-import { BulkDevicesResult, Device20Resource, Device10Resource, BulkDevicesResource } from './devices.model';
+import { BulkDevicesResult, Device20Resource, Device10Resource, BulkDevicesResource, DeviceResourceList } from './devices.model';
 import { injectable } from 'inversify';
 import ow from 'ow';
 import { PathHelper } from '../utils/path.helper';
@@ -263,7 +263,7 @@ export class DevicesService extends ClientService {
      * @param deviceIds IDs of device to return
      * @param expandComponents By default, components of a device are not returned. Passing &#x60;true&#x60; will return and expand a devices components.
      */
-    public async getDevicesByID(deviceIds: string[], expandComponents?: boolean, attributes?:string[], groups?:string[]): Promise<Device10Resource|Device20Resource> {
+    public async getDevicesByID(deviceIds: string[], expandComponents?: boolean, attributes?:string[], groups?:string[]): Promise<DeviceResourceList> {
         ow(deviceIds, ow.array.nonEmpty.minLength(1));
 
         const attributes_qs = (attributes) ? attributes.join() : undefined;

@@ -4,7 +4,7 @@
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
 
-import { setDefaultTimeout, Then, Given, When, TableDefinition} from 'cucumber';
+import { setDefaultTimeout, Then, Given, TableDefinition} from 'cucumber';
 import {expect} from 'chai';
 import config from 'config';
 import { sign } from 'jsonwebtoken';
@@ -30,7 +30,7 @@ Given('pause for {int}ms', async function (ms:number) {
     return new Promise(resolve => setTimeout(resolve, ms));
 });
 
-When('my authorization is', async function (data:TableDefinition) {
+Given('my authorization is', async function (data:TableDefinition) {
     const d = data.rowsHash();
 
     const token:any= {

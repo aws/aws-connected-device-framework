@@ -10,7 +10,7 @@ import { logger } from '../utils/logger';
 import ow from 'ow';
 import config from 'config';
 import { RegistrationEvent, CertificateRevocationList, CertificateStatus } from './activation.models';
-import { DevicesService, Device, PoliciesService ,ASSTLIBRARY_CLIENT_TYPES } from '@cdf/assetlibrary-client';
+import { DevicesService, Device10Resource, PoliciesService ,ASSTLIBRARY_CLIENT_TYPES } from '@cdf/assetlibrary-client';
 import { ThingsService, ProvisionThingRequest, ProvisionThingResponse, PROVISIONING_CLIENT_TYPES } from '@cdf/provisioning-client';
 
 @injectable()
@@ -129,7 +129,7 @@ export class ActivationService {
 
         const profileId: string = config.get(`assetLibrary.templateProfiles.${templateId}`);
 
-        const device:Device = {
+        const device:Device10Resource = {
             deviceId,
             templateId
         };
@@ -140,7 +140,7 @@ export class ActivationService {
 
     private async updateDeviceInAssetLibrary(deviceId: string, thingArn: string): Promise<void> {
         logger.debug(`activation.service updateDeviceInAssetLibrary: in: deviceId: ${deviceId}, thingArn: ${thingArn}`);
-        const updateRequest:Device = {
+        const updateRequest:Device10Resource = {
             attributes: {
                 status: 'active'
             },

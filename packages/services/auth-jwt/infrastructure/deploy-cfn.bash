@@ -14,11 +14,12 @@ NAME
     deploy-cfn.bash    
 
 DESCRIPTION
-    Deploys the AssetLibrary custom authorizer.
+    Deploys the auth-jwt custom authorizer.
 
 MANDATORY ARGUMENTS:
     -e (string)   Name of environment.
-    -k (string)   The KMS key ID used to encrypt SSM parameters.
+    -c (string)   Location of application configuration file containing configuration overrides.
+    -i (string)   The JWT issuer, e.g. https://cognito-idp.us-east-1.amazonaws.com/${cognitoPoolId}.
 
 OPTIONAL ARGUMENTS
     -R (string)   AWS region.
@@ -27,11 +28,13 @@ OPTIONAL ARGUMENTS
 EOF
 }
 
-while getopts ":e:k:R:P:" opt; do
+while getopts ":e:c:i:R:P:" opt; do
   case $opt in
 
     e  ) export ENVIRONMENT=$OPTARG;;
-    k  ) export KMS_KEY_ID=$OPTARG;;
+    c  ) export CONFIG_LOCATION=$OPTARG;;
+    i  ) export JWT_ISSUER=$OPTARG;;
+
     R  ) export AWS_REGION=$OPTARG;;
     P  ) export AWS_PROFILE=$OPTARG;;
 
@@ -46,8 +49,12 @@ if [ -z "$ENVIRONMENT" ]; then
 	echo -e ENVIRONMENT is required; help_message; exit 1;
 fi
 
-if [ -z "$KMS_KEY_ID" ]; then
-	echo -k KMS_KEY_ID is required; help_message; exit 1;
+if [ -z "$CONFIG_LOCATION" ]; then
+	echo -c CONFIG_LOCATION is required; help_message; exit 1;
+fi
+
+if [ -z "$JWT_ISSUER" ]; then
+	echo -i JWT_ISSUER is required; help_message; exit 1;
 fi
 
 
@@ -64,7 +71,8 @@ fi
 echo "
 Running with:
   ENVIRONMENT:                      $ENVIRONMENT
-  KMS_KEY_ID:                       $KMS_KEY_ID
+  CONFIG_LOCATION:                  $CONFIG_LOCATION
+  JWT_ISSUER:                       $JWT_ISSUER
   AWS_REGION:                       $AWS_REGION
   AWS_PROFILE:                      $AWS_PROFILE
 "
@@ -72,19 +80,31 @@ Running with:
 cwd=$(dirname "$0")
 
 
-ASSETLIBRARY_AUTH_STACK_NAME=cdf-assetlibrary-auth-${ENVIRONMENT}
+AUTH_JWT_STACK_NAME=cdf-auth-jwt-${ENVIRONMENT}
+
 
 echo '
 **********************************************************
-  Deploying the AssetLibrary Auth CloudFormation template 
+  Setting auth-jwt configuration
+**********************************************************
+'
+cat $CONFIG_LOCATION | \
+  jq --arg issuer "$JWT_ISSUER" \
+  '.token.issuer=$issuer' \
+  > $CONFIG_LOCATION.tmp && mv $CONFIG_LOCATION.tmp $CONFIG_LOCATION
+
+application_configuration_override=$(cat $CONFIG_LOCATION)
+
+echo '
+**********************************************************
+  Deploying the auth-jwt CloudFormation template 
 **********************************************************
 '
 aws cloudformation deploy \
-  --template-file $cwd/build/cfn-assetlibrary-auth-output.yaml \
-  --stack-name $ASSETLIBRARY_AUTH_STACK_NAME \
+  --template-file $cwd/build/cfn-auth-jwt-output.yaml \
+  --stack-name $AUTH_JWT_STACK_NAME \
   --parameter-overrides \
-      Environment=$ENVIRONMENT \
-      KmsKeyId=$KMS_KEY_ID \
+      ApplicationConfigurationOverride="$application_configuration_override" \
   --capabilities CAPABILITY_NAMED_IAM \
   --no-fail-on-empty-changeset \
   $AWS_ARGS
@@ -92,6 +112,6 @@ aws cloudformation deploy \
 
 echo '
 **********************************************************
-  AssetLibrary Auth Done!
+  auth-jwt Done!
 **********************************************************
 '

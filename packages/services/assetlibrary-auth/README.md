@@ -1,1 +1,0 @@
-Refer to [documentation](../../../documentation/docs/projects/assetlibrary-auth/overview.md).

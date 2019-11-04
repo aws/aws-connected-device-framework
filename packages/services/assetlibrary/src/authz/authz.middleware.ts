@@ -14,13 +14,12 @@ als.enable();
 export function setClaims() {
     return (req: Request, res: Response, next: NextFunction) => {
 
-        logger.debug(`authz.middleware setClaims in:${JSON.stringify(req.headers)}`);
+        logger.debug(`authz.middleware setClaims in:`);
 
         // decodes the JWT, extacts the claims, and serializes as an object in a ThreadLocal
         // to make it easier for the service/dao layers to obtain.
 
         // Note:  it is he responsibility of the custom authorizer to verify the incoming JWT
-        logger.debug(JSON.stringify(req.headers));
 
         if (req && req.headers && req.headers[JWT_HEADER]) {
             const header = req.headers[JWT_HEADER] as string;

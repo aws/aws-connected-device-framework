@@ -141,7 +141,7 @@ if [ "$ASSETLIBRARY_MODE" = "full" ]; then
   # The minimum Neptune DB engine that we support.
   min_dbEngineVersion_required='1.0.1.0.200463.0'
 
-  # Let's see if we have previosuly deployed Neptune before.  If so, we need to check its version
+  # Let's see if we have previously deployed Neptune before.  If so, we need to check its version
   stack_exports=$(aws cloudformation list-exports $AWS_ARGS)
 
   neptune_url_export="$NEPTUNE_STACK_NAME-GremlinEndpoint"
@@ -178,7 +178,7 @@ Refer to https://docs.aws.amazon.com/neptune/latest/userguide/engine-releases-${
 
   echo '
   **********************************************************
-    Determinig whether the VPC to deploy Neptune into has an S3 VPC endpoint
+    Determinng whether the VPC to deploy Neptune into has an S3 VPC endpoint
   **********************************************************
   '
   count=$(aws ec2 describe-vpc-endpoints \

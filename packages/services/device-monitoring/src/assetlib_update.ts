@@ -5,7 +5,7 @@
 #-------------------------------------------------------------------------------*/
 
 import 'reflect-metadata';
-import { DevicesService, Device } from '@cdf/assetlibrary-client';
+import { DevicesService, Device10Resource } from '@cdf/assetlibrary-client';
 import { logger } from './utils/logger';
 
 export class AssetLibUpdate {
@@ -25,7 +25,7 @@ export class AssetLibUpdate {
         const  updateRequest = {
             deviceId,
             connected
-        } as Device;
+        } as Device10Resource;
         await this.devices.updateDevice(deviceId, updateRequest);
 
         logger.debug('assetlib_update: updatedevice: exit:');

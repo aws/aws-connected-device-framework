@@ -14,7 +14,7 @@ NAME
     package-cfn.bash    
 
 DESCRIPTION
-    Packages the assetlibrary custom-auth library, ready for deployment.
+    Packages the auth-jwt library, ready for deployment.
 
 MANDATORY ARGUMENTS:
     -b (string)   The name of the S3 bucket to deploy CloudFormation templates into.
@@ -56,17 +56,17 @@ mkdir -p $cwd/build
 
 echo '
 **********************************************************
-  Packaging the AssetLibrary Auth CloudFormation template and uploading to S3
+  Packaging the auth-jwt CloudFormation template and uploading to S3
 **********************************************************
 '
 aws cloudformation package \
-  --template-file $cwd/cfn-assetlibrary-auth.yaml \
-  --output-template-file $cwd/build/cfn-assetlibrary-auth-output.yaml \
+  --template-file $cwd/cfn-auth-jwt.yaml \
+  --output-template-file $cwd/build/cfn-auth-jwt-output.yaml \
   --s3-bucket $DEPLOY_ARTIFACTS_STORE_BUCKET \
   $AWS_ARGS
 
 echo '
 **********************************************************
-  DeviceCert Auth Done!
+  auth-jwt Done!
 **********************************************************
 '

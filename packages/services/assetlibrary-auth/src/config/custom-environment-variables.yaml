@@ -1,8 +1,0 @@
-aws:
-  region: AWS_REGION
-  accountId: AWS_ACCOUNT_ID
-
-  ssm:
-    jwtSecret:
-        name: CDF_ASSETLIBRARY_AUTH_SSM_JWTSECRET_NAME
-

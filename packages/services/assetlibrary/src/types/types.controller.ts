@@ -3,8 +3,8 @@
 #
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
-import { Response } from 'express';
-import { interfaces, controller, httpGet, httpPost, httpPut, response, requestBody, requestParam, queryParam, httpDelete, httpPatch } from 'inversify-express-utils';
+import { Response, Request } from 'express';
+import { interfaces, controller, httpGet, httpPost, httpPut, response, request, requestBody, requestParam, queryParam, httpDelete, httpPatch } from 'inversify-express-utils';
 import { inject } from 'inversify';
 import { TypesService } from './types.service';
 import {TYPES} from '../di/types';
@@ -49,8 +49,10 @@ export class TypesController implements interfaces.Controller {
 
     @httpPost('/:category/:templateId')
     public async createTemplate(@requestParam('category') category: TypeCategory, @requestParam('templateId') templateId: string,
-          @requestBody() definition: TypeDefinitionModel, @response() res: Response) : Promise<void> {
+          @requestBody() definition: TypeDefinitionModel, @response() res: Response, @request() req: Request) : Promise<void> {
         logger.info(`types.controller: createTemplate: in: category:${category}, templateId:${templateId}, definition:${JSON.stringify(definition)}`);
+
+        logger.debug(`***** ${JSON.stringify(req.headers)}`)
         try {
             const result = await this.typesService.create(templateId, category, definition);
             if (!result.isValid) {
@@ -82,9 +84,9 @@ export class TypesController implements interfaces.Controller {
 
     @httpPut('/:category/:templateId/publish')
     public async publishTemplate(@requestParam('category') category: TypeCategory, @requestParam('templateId') templateId: string,
-        @requestBody() definition: TypeResource, @response() res: Response) : Promise<void>  {
+        @response() res: Response) : Promise<void>  {
 
-        logger.info(`types.controller: publishTemplate: in: category:${category}, templateId:${templateId}, definition:${JSON.stringify(definition)}`);
+        logger.info(`types.controller: publishTemplate: in: category:${category}, templateId:${templateId}`);
         try {
             await this.typesService.publish(templateId, category);
             res.status(204).json(null);

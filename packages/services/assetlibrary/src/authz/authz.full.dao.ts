@@ -7,6 +7,7 @@ import { process } from 'gremlin';
 import { injectable, inject } from 'inversify';
 import {logger} from '../utils/logger';
 import {TYPES} from '../di/types';
+import { Authorizations } from './authz.full.model';
 
 const __ = process.statics;
 
@@ -21,7 +22,7 @@ export class AuthzDaoFull {
         this._g = graphTraversalSourceFactory();
     }
 
-    public async listAuthorizedHierarchies(deviceIds:string[], groupPaths:string[], hierarchies:string[]) : Promise<{[entityd:string]:string[]}> {
+    public async listAuthorizedHierarchies(deviceIds:string[], groupPaths:string[], hierarchies:string[]) : Promise<Authorizations> {
         logger.debug(`authz.full.dao listAuthorizedHierarchies: in: deviceIds:${deviceIds}, groupPaths:${groupPaths}, hierarchies:${JSON.stringify(hierarchies)}`);
 
         if (deviceIds===undefined) {
@@ -33,32 +34,39 @@ export class AuthzDaoFull {
         const ids:string[] = deviceIds.map(d=> `device___${d}`);
         ids.push(...groupPaths.map(g=> `group___${g}`));
 
-        const traverser = this._g.V(ids).as('entity').
-            local(__.until(
-                    __.has('groupPath', process.P.within(hierarchies))
-                ).repeat(__.out()).as('authorizedPath')
-            ).dedup().project('entity','authorizedPath').
-                by(__.select('entity').coalesce(__.values('deviceId'),__.values('groupPath'))).
-                by(__.select('authorizedPath').values('groupPath'));
+        const traverser = this._g.V(ids).as('entity').union(
+                // return an item if the entity exists
+                __.project('entity','exists').
+                    by(__.select('entity').coalesce(__.values('deviceId'),__.values('groupPath'))).
+                    by(__.constant(true)) ,
+                // return an item if the entity is authorized
+                __.local(
+                    __.until(
+                        __.has('groupPath', process.P.within(hierarchies))
+                    ).repeat(__.out()).as('authorizedPath')
+                ).dedup().project('entity','authorizedPath').
+                    by(__.select('entity').coalesce(__.values('deviceId'),__.values('groupPath'))).
+                    by(__.select('authorizedPath').values('groupPath'))
+            );
 
         const results = await traverser.toList();
 
         logger.debug(`authz.full.dao listAuthorizedHierarchies: results:${JSON.stringify(results)}`);
 
-        if (results===undefined || results.length===0) {
-            logger.debug(`authz.full.dao listAuthorizedHierarchies: exit: undefined`);
-            return undefined;
-        }
-
-        const response:{[entityId:string]:string[]} = {};
-        for(const r of results) {
-            const entity=r['entity'] as string;
-            const path=r['authorizedPath'] as string;
-
-            if (response[entity]===undefined) {
-                response[entity]=[];
+        const response = new Authorizations();
+        if (results!==undefined) {
+            for(const r of results) {
+                const entityId=r['entity'] as string;
+                if (r['exists']) {
+                    response.exists.push(entityId);
+                } else {
+                    const path=r['authorizedPath'] as string;
+                    if (response.authorized[entityId]===undefined) {
+                        response.authorized[entityId]=[];
+                    }
+                    response.authorized[entityId].push(path);
+                }
             }
-            response[entity].push(path);
         }
 
         logger.debug(`authz.full.dao listAuthorizedHierarchies: exit:${JSON.stringify(response)}`);

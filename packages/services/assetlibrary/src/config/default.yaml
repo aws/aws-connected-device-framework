@@ -39,7 +39,6 @@ supportedApiVersions:
       - '1.0'
       - '2.0'
 
-# TODO: default this to false when finished development
 authorization:
   enabled: false
 

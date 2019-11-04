@@ -493,7 +493,7 @@ export class DevicesServiceFull implements DevicesService {
         // any ids need to be lowercase
         deviceId = deviceId.toLowerCase();
 
-        await this.authServiceFull.authorizationCheck([deviceId], [], ClaimAccess.U);
+        await this.authServiceFull.authorizationCheck([deviceId], [], ClaimAccess.D);
 
         const device = await this.get(deviceId, false, undefined, true);
 
@@ -705,7 +705,7 @@ export class DevicesServiceFull implements DevicesService {
         componentId = componentId.toLowerCase();
         this.setIdsToLowercase(model);
 
-        await this.authServiceFull.authorizationCheck([deviceId], [], ClaimAccess.U);
+        await this.authServiceFull.authorizationCheck([componentId], [], ClaimAccess.U);
 
         // Assemble devicemodel into node
         model.category = TypeCategory.Component;
@@ -740,7 +740,7 @@ export class DevicesServiceFull implements DevicesService {
         deviceId = deviceId.toLowerCase();
         componentId = componentId.toLowerCase();
 
-        await this.authServiceFull.authorizationCheck([deviceId], [], ClaimAccess.D);
+        await this.authServiceFull.authorizationCheck([componentId], [], ClaimAccess.D);
 
         // Assemble devicemodel into node
         const dbId = `${deviceId}___${componentId}`;

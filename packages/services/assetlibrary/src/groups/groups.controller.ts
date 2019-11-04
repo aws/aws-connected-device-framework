@@ -46,7 +46,7 @@ export class GroupsController implements interfaces.Controller {
 
     @httpPost('')
     public async createGroup(@requestBody() group: GroupBaseResource, @response() res: Response, @queryParam('applyProfile') applyProfile?:string) {
-        logger.info(`groups.controller  createGroup: in: group: ${JSON.stringify(group)}, applyProfile:${applyProfile}`);
+        logger.info(`groups.controller createGroup: in: group: ${JSON.stringify(group)}, applyProfile:${applyProfile}`);
         try {
             const item = this.groupsAssembler.fromGroupResource(group);
             await this.groupsService.create(item, applyProfile);

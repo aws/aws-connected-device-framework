@@ -45,8 +45,8 @@ export class TemplatesService extends ClientService {
         delete resource.category;
 
         await request.post(url)
-            .send(resource)
-            .set(super.getHeaders());
+            .set(super.getHeaders())
+            .send(resource);
     }
 
     public async updateTemplate(resource:TypeResource): Promise<void> {

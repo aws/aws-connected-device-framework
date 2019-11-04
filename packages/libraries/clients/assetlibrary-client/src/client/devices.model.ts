@@ -75,7 +75,7 @@ export interface BulkDevicesResource {
 export interface DeviceResourceList {
 	results: DeviceBaseResource[];
 	pagination?: {
-		offset:number|string;
+		offset:number;
 		count: number;
 	};
 }

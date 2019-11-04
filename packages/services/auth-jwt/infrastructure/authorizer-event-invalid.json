@@ -1,0 +1,5 @@
+{
+    "type": "TOKEN",
+    "authorizationToken": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE1NzI1MzE3NDQsImV4cCI6MTYwNDA2Nzc0NCwiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsIkdpdmVuTmFtZSI6IkpvaG5ueSIsIlN1cm5hbWUiOiJSb2NrZXQiLCJFbWFpbCI6Impyb2NrZXRAZXhhbXBsZS5jb20iLCJjZGZfYWwiOiIvOioifQ.GLV3-E9aFjKnxTnUwfeHn9eV0z1jDUjzbfr",
+    "methodArn": "arn:aws:execute-api:us-east-1:123456789012:/prod/POST/{proxy+}"
+  }

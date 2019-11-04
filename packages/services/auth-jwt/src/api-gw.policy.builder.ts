@@ -4,7 +4,7 @@
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
 
-// import * as Errors from '@cdf/errors';
+import { logger } from './utils/logger';
 
 /**
  * APIGWAuthPolicyBuilder receives a set of allowed and denied methods and generates a valid
@@ -178,6 +178,7 @@ export class APIGWAuthPolicyBuilder {
      * @method allowAllMethods
      */
     allowAllMethods() {
+        logger.debug(`api-gw.policy.builder: allowAllMethods: in:`);
         this.addMethod('allow', '*', '*', null);
     }
 
@@ -187,6 +188,7 @@ export class APIGWAuthPolicyBuilder {
      * @method denyAllMethods
      */
     denyAllMethods() {
+        logger.debug(`api-gw.policy.builder: denyAllMethods: in:`);
         this.addMethod('deny', '*', '*', null);
     }
 

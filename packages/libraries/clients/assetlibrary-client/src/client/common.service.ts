@@ -40,11 +40,11 @@ export abstract class ClientService  {
             this.mimeType=options.mimeType;
         }
         this.setAuthToken(options.authToken);
-        this.getHeaders();
     }
 
     public setAuthToken(authToken?:string) {
         this.authToken=authToken;
+        this.headers = undefined;
         this.getHeaders();
     }
 

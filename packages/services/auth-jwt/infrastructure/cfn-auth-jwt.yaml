@@ -2,29 +2,32 @@
 AWSTemplateFormatVersion : '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 
-Description: API Gateway Lambda Authorizer to support CDF Asset Library fine-grained access control.
+Description: API Gateway Lambda Authorizer to verify JWT tokens.
 
 Parameters:
- 
-  KmsKeyId:
-    Description: The KMS key ID used to encrypt SSM parameters
+
+  ApplicationConfigurationOverride:
+    Description: This allows you to override any configuration application configuration. Must be a JSON formatted string. Any configurations contained in this will override the configurations found and merged from the config files.
     Type: String
     MinLength: 1
+    Default: {"aws":{"region":"us-east-1"}}
 
 Resources:
   CustAuthLambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ../build/build.zip
+      #CodeUri: ../build/build.zip
+      CodeUri: ../build/build
       Handler: index.handler
 
-      MemorySize: 256
+      MemorySize: 512
       Role: !GetAtt LambdaExecutionRole.Arn
       Runtime: nodejs8.10
       Timeout: 30
       Environment:
         Variables:
           NODE_CONFIG_DIR: './config'
+          NODE_CONFIG: !Ref ApplicationConfigurationOverride
       Tracing: Active
 
   LambdaExecutionRole:
@@ -39,26 +42,8 @@ Resources:
           Action: sts:AssumeRole
       Path: "/"
       ManagedPolicyArns:
-        - !Ref SSMPolicy
         - arn:aws:iam::aws:policy/AWSLambdaExecute
         - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess   
-
-  SSMPolicy:
-    Type: AWS::IAM::ManagedPolicy
-    Properties:
-      Description: "@cdf/assetlibrary-auth policy for accessing SSM and KMS"
-      Path: "/"
-      PolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Action:
-              - 'ssm:GetParameter*'
-            Effect: Allow
-            Resource: !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/cdf-rootca-pem"
-          - Action:
-              - 'kms:Decrypt'
-            Effect: Allow
-            Resource: !Sub "arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/${KmsKeyId}"
   
   ApiGwAuthInvokeRole:
     Type: AWS::IAM::Role

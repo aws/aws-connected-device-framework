@@ -40,7 +40,7 @@ Given('group {string} exists', async function (groupPath:string) {
     await getGroupsService(this).getGroup(groupPath);
 });
 
-async function createGroup (name:string, parentPath:string, data:TableDefinition, profileId?:string) {
+async function createGroup (world:any, name:string, parentPath:string, data:TableDefinition, profileId?:string) {
 
     const d = data.rowsHash();
 
@@ -67,12 +67,12 @@ async function createGroup (name:string, parentPath:string, data:TableDefinition
         }
     });
 
-    await getGroupsService(this).createGroup(group, profileId);
+    await getGroupsService(world).createGroup(group, profileId);
 }
 
 When('I create group {string} of {string} with attributes', async function (name:string, parentPath:string, data:TableDefinition) {
     try {
-        await createGroup(name, parentPath, data);
+        await createGroup(this, name, parentPath, data);
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
     }
@@ -80,7 +80,7 @@ When('I create group {string} of {string} with attributes', async function (name
 
 When('I create group {string} of {string} applying profile {string} with attributes', async function (name:string, parentPath:string, profileId:string, data:TableDefinition) {
     try {
-        await createGroup(name, parentPath, data, profileId);
+        await createGroup(this, name, parentPath, data, profileId);
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
     }
@@ -88,7 +88,7 @@ When('I create group {string} of {string} applying profile {string} with attribu
 
 When('I create group {string} of {string} with invalid attributes', async function (name:string, parentPath:string, data:TableDefinition) {
     try {
-        await createGroup(name, parentPath, data);
+        await createGroup(this, name, parentPath, data);
         fail('Expected 400');
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
