@@ -1,6 +1,6 @@
 {
   "name": "@cdf/integration-tests",
-  "version": "1.2.0",
+  "version": "1.2.2",
   "description": "CDF Integration Tests",
   "author": "Dean Hart <deanhart@amazon.com>",
   "config": {
@@ -32,8 +32,8 @@
     "winston": "2.4.4"
   },
   "devDependencies": {
-    "@commitlint/cli": "7.5.2",
-    "@commitlint/config-conventional": "7.5.0",
+    "@commitlint/cli": "8.2.0",
+    "@commitlint/config-conventional": "8.2.0",
     "@semantic-release/changelog": "3.0.2",
     "@semantic-release/git": "7.0.8",
     "@semantic-release/npm": "5.1.4",
@@ -48,9 +48,9 @@
     "commitizen": "3.0.7",
     "concurrently": "4.1.0",
     "cpy-cli": "2.0.0",
-    "del-cli": "1.1.0",
+    "del-cli": "3.0.0",
     "husky": "1.3.1",
-    "make-dir-cli": "1.0.0",
+    "make-dir-cli": "2.0.0",
     "nodemon": "1.18.10",
     "semantic-release": "15.13.3",
     "semantic-release-monorepo": "6.1.1",

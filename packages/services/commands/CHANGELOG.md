@@ -1,3 +1,11 @@
+# [@cdf/commands-v2.3.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/commands-v2.3.0...@cdf/commands-v2.3.1) (2019-09-12)
+
+
+### Bug Fixes
+
+* **commands:** fixed broken integration tests ([1abf947](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/1abf947))
+* **commands:** tslint issues ([27a5f90](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/27a5f90))
+
 # [@cdf/commands-v2.3.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/commands-v2.2.0...@cdf/commands-v2.3.0) (2019-09-12)
 
 

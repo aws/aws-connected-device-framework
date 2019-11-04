@@ -92,7 +92,7 @@ export class DeviceItem {
 	groups?: DirectionStringToArrayMap = {};
 
 	devices?: DirectionStringToArrayMap = {};
-
+	
 	public constructor(init?:Partial<DeviceItem>) {
         Object.assign(this, init);
     }

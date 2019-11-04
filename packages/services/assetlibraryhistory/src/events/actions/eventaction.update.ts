@@ -31,18 +31,36 @@ export class UpdateAction implements EventAction {
         }
 
         // augment with the change
-        const changedState = JSON.parse(event.payload);
+        let changedState;
+        if (event.payload) {
+            changedState = JSON.parse(event.payload);
+        }
         const mergedState = Object.assign(existingState, changedState);
 
         if (event.attributes!==undefined) {
             if (event.attributes['attachedToGroup']!==undefined) {
+                if (mergedState['groups']===undefined) {
+                    mergedState['groups']= {};
+                }
+                if (mergedState['groups']['out']===undefined) {
+                    mergedState['groups']['out']= {};
+                }
                 mergedState['groups'].push(event.attributes['attachedToGroup']);
+
             } else if (event.attributes['detachedFromGroup']!==undefined) {
-                delete mergedState['groups'][event.attributes['attachedToGroup']];
+                delete mergedState['groups']['out'][event.attributes['attachedToGroup']];
+
             } else if (event.attributes['attachedToDevice']!==undefined) {
+                if (mergedState['devices']===undefined) {
+                    mergedState['devices']= {};
+                }
+                if (mergedState['devices']['out']===undefined) {
+                    mergedState['devices']['out']= {};
+                }
                 mergedState['devices'].push(event.attributes['attachedToDevice']);
+
             } else if (event.attributes['detachedFromDevice']!==undefined) {
-                delete mergedState['devices'][event.attributes['attachedToDevice']];
+                delete mergedState['devices']['out'][event.attributes['attachedToDevice']];
             }
         }
 
@@ -66,5 +84,4 @@ export class UpdateAction implements EventAction {
         return event;
 
     }
-
 }

@@ -1,3 +1,17 @@
+# [@cdf/integration-tests-v1.2.2](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/integration-tests-v1.2.1...@cdf/integration-tests-v1.2.2) (2019-10-21)
+
+
+### Bug Fixes
+
+* **assetlibrary-history:** fixing broken tests ([f0ff307](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/f0ff307cea631cf90e041a92be820aeccb4bff95))
+
+# [@cdf/integration-tests-v1.2.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/integration-tests-v1.2.0...@cdf/integration-tests-v1.2.1) (2019-09-12)
+
+
+### Bug Fixes
+
+* **commands:** fixed broken integration tests ([1abf947](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/1abf947))
+
 # [@cdf/integration-tests-v1.2.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/integration-tests-v1.1.2...@cdf/integration-tests-v1.2.0) (2019-06-30)
 
 
