@@ -1,3 +1,24 @@
+# [@cdf/integration-tests-v2.0.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/integration-tests-v1.2.2...@cdf/integration-tests-v2.0.0) (2019-11-08)
+
+
+### Bug Fixes
+
+* **assetlibrary:** fgac testing ([f13636e](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/f13636e72c1054f2380e7e09c127169e08ea2023))
+* **assetlibrary:** latest fine-grained-access-control. still wip ([fa3a7af](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/fa3a7af1d62ff6745e11e82409bd9b59273cbec4))
+* **assetlibrary:** merge master ([3ba06fa](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/3ba06fa9fc5b264ceaed0f97ccf45fab97d57a08))
+
+
+### Features
+
+* **assetlibrary:** commit before rebase for FGAC ([fefaece](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/fefaece09e388290bdda969eb92ab950a264bcdc))
+* **assetlibrary:** finished fine grained access control ([51a1d13](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/51a1d134ec48be2d62edc575998752ff866230bf))
+* **assetlibrary:** introduce API versioning ([0e45204](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/0e45204a95230914fd26ad175d80a86ebbdf79c4))
+
+
+### BREAKING CHANGES
+
+* **assetlibrary:** asset library device/groups versioned to v2
+
 # [@cdf/integration-tests-v1.2.2](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/integration-tests-v1.2.1...@cdf/integration-tests-v1.2.2) (2019-10-21)
 
 
