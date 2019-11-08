@@ -159,10 +159,20 @@ if [ "$ASSETLIBRARY_MODE" = "full" ]; then
     key_pair_location="~/.ssh/${key_pair_name}.pem"
     echo Attempting to use key pair: $key_pair_location
 
+    echo "Checking Neptune version using:
+    NEPTUNE_STACK_NAME: $NEPTUNE_STACK_NAME
+    BASTION_STACK_NAME: $BASTION_STACK_NAME
+    key_pair_location:  $key_pair_location
+    min_dbEngineVersion_required: $min_dbEngineVersion_required
+    AWS_SCRIPT_ARGS:  $AWS_SCRIPT_ARGS
+    "
+
     set +e
-    dbEngineVersionCheck=$(./neptune_dbEngineVersion.bash -n $NEPTUNE_STACK_NAME -b $BASTION_STACK_NAME -k $key_pair_location -v $min_dbEngineVersion_required $AWS_SCRIPT_ARGS)
+    dbEngineVersionCheck=$($cwd/neptune_dbEngineVersion.bash -n $NEPTUNE_STACK_NAME -b $BASTION_STACK_NAME -k $key_pair_location -v $min_dbEngineVersion_required $AWS_SCRIPT_ARGS)
     set -e
     dbEngineVersionStatus=$(echo $?)
+
+    echo dbEngineVersionStatus: $dbEngineVersionStatus
 
     if [ "$dbEngineVersionStatus" -ne 0 ]; then
       echo "
@@ -181,7 +191,7 @@ Refer to https://docs.aws.amazon.com/neptune/latest/userguide/engine-releases-${
     Determining whether the VPC to deploy Neptune into has an S3 VPC endpoint
   **********************************************************
   '
-  count=$(aws ec2 describe-vpc-endpoints \
+  count=$(aws ec2 describe-vpc-endpoints $AWS_ARGS \
     --filters Name=vpc-id,Values=$VPC_ID Name=service-name,Values=com.amazonaws.$AWS_REGION.s3 | jq  '.VpcEndpoints | length')
 
   if [ $count -eq 1 ]; then

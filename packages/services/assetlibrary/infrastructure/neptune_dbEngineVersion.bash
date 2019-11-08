@@ -32,7 +32,7 @@ function _get_dbEngineVersion {
             '.Exports[] | select(.Name==$dbClusterEndpoint_param) | .Value')
 
       if [ -z "$dbClusterEndpoint" ]; then
-        echo 'NOT_DEPLOYED'
+        echo 'INVALID_NOT_DEPLOYED'
         exit
       fi
 
@@ -104,27 +104,24 @@ while getopts ":n:b:k:v:R:P:" opt; do
 
         R  ) export AWS_REGION=$OPTARG;;
         P  ) export AWS_PROFILE=$OPTARG;;
-
-        \? ) echo "Unknown option: -$OPTARG" >&2; dbEngineVersion_isAtLeast_help_message; exit 1;;
-        :  ) echo "Missing option argument for -$OPTARG" >&2; dbEngineVersion_isAtLeast_help_message; exit 1;;
-        *  ) echo "Unimplemented option: -$OPTARG" >&2; dbEngineVersion_isAtLeast_help_message; exit 1;;
     esac
 done
 
 if [ -z "$NEPTUNE_STACK_NAME" ]; then
-    echo -n NEPTUNE_STACK_NAME is required; dbEngineVersion_isAtLeast_help_message; exit 1;
+    echo 'INVALID_NO_NEPTUNE_STACK_NAME'
+    exit
 fi
 
 if [ -z "$BASTION_STACK_NAME" ]; then
-    echo -b BASTION_STACK_NAME is required; dbEngineVersion_isAtLeast_help_message; exit 1;
+    echo 'INVALID_NO_BASTION_STACK_NAME'
 fi
 
 if [ -z "$SSH_KEY" ]; then
-    echo -k SSH_KEY is required; dbEngineVersion_isAtLeast_help_message; exit 1;
+    echo 'INVALID_NO_SSH_KEY'
 fi
 
 if [ -z "$MIN_REQUIRED_VERSION" ]; then
-    echo -v MIN_REQUIRED_VERSION is required; dbEngineVersion_isAtLeast_help_message; exit 1;
+    echo 'INVALID_NO_MIN_REQUIRED_VERSION'
 fi
 
 current_ver=$(_get_dbEngineVersion)
