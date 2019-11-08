@@ -1,3 +1,10 @@
+# [@cdf/assetlibrary-v3.0.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.0.0...@cdf/assetlibrary-v3.0.1) (2019-11-08)
+
+
+### Bug Fixes
+
+* **assetlibrary:** improved error handling for checking neptune version ([b2fa24d](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/b2fa24d9211c9c0610ccac57d1757244b49ab7bb))
+
 # [@cdf/assetlibrary-v3.0.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v2.3.1...@cdf/assetlibrary-v3.0.0) (2019-11-08)
 
 
