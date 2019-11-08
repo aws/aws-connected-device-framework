@@ -21,10 +21,10 @@
     "semantic-release": "npx semantic-release -e semantic-release-monorepo"
   },
   "dependencies": {
-    "@cdf/assetlibrary-client": "^2.0.0",
+    "@cdf/assetlibrary-client": "^3.0.0",
     "@cdf/express-middleware": "^1.0.0",
     "@cdf/config-inject": "^2.0.0",
-    "@cdf/provisioning-client": "^2.0.0",
+    "@cdf/provisioning-client": "^3.0.0",
     "ajv": "6.10.0",
     "aws-sdk": "2.418.0",
     "aws-serverless-express": "3.3.5",

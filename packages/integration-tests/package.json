@@ -15,10 +15,10 @@
     "semantic-release": "npx semantic-release -e semantic-release-monorepo"
   },
   "dependencies": {
-    "@cdf/assetlibrary-client": "^2.0.0",
+    "@cdf/assetlibrary-client": "^3.0.0",
     "@cdf/assetlibraryhistory-client": "^2.0.0",
     "@cdf/commands-client": "^2.0.0",
-    "@cdf/provisioning-client": "^2.0.0",
+    "@cdf/provisioning-client": "^3.0.0",
     "aws-sdk": "2.418.0",
     "chai": "4.2.0",
     "chai-string": "1.5.0",
