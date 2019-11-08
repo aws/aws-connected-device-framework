@@ -1,3 +1,10 @@
+# [@cdf/errors-v2.0.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/errors-v2.0.0...@cdf/errors-v2.0.1) (2019-11-08)
+
+
+### Bug Fixes
+
+* **assetlibrary:** merge master ([3ba06fa](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/3ba06fa9fc5b264ceaed0f97ccf45fab97d57a08))
+
 # @cdf/errors-v1.0.0 (2019-03-09)
 
 
