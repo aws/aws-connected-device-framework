@@ -1,3 +1,22 @@
+# [@cdf/events-processor-v2.0.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/events-processor-v1.1.1...@cdf/events-processor-v2.0.0) (2019-11-08)
+
+
+### Bug Fixes
+
+* **assetlibrary:** merge master ([3ba06fa](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/3ba06fa9fc5b264ceaed0f97ccf45fab97d57a08))
+* **events-processor:** accidental commit ([09855e9](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/09855e9b9a632aa83a37e1f60204e6ad8fa595ed))
+
+
+### Features
+
+* **assetlibrary:** commit before rebase for FGAC ([fefaece](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/fefaece09e388290bdda969eb92ab950a264bcdc))
+* **assetlibrary:** finished fine grained access control ([51a1d13](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/51a1d134ec48be2d62edc575998752ff866230bf))
+
+
+### BREAKING CHANGES
+
+* **assetlibrary:** asset library device/groups versioned to v2
+
 # [@cdf/events-processor-v1.1.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/events-processor-v1.1.0...@cdf/events-processor-v1.1.1) (2019-07-15)
 
 
