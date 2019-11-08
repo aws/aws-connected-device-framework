@@ -12,6 +12,8 @@ import config from 'config';
 import {Request, Response, NextFunction} from 'express';
 import {asArray, SupportedVersionConfig} from '@cdf/express-middleware';
 
+logger.info(`Running with config: ${JSON.stringify(config.util.toObject)}`);
+
 // Start the server
 const server = new InversifyExpressServer(container);
 
