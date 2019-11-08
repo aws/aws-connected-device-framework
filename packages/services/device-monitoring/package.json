@@ -1,6 +1,6 @@
 {
   "name": "@cdf/device-monitoring",
-  "version": "2.1.0",
+  "version": "3.0.0",
   "description": "CDF Device Monitoring",
   "author": "Rahul Sareen <rssareen@amazon.com>",
   "config": {
