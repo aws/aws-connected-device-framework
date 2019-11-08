@@ -12,6 +12,8 @@ export function handleError(e:Error, res:Response): void {
     if (e.name === 'ArgumentError' || e.message === 'FAILED_VALIDATION' || e.message === 'UNDEFINED_RELATIONS'
         || e.message === 'INVALID_RELATION' || e.message === 'INVALID_PROFILE' ) {
         res.status(400).json({error: e.message}).end();
+    } else if (e.message === 'NOT_AUTHORIZED') {
+        res.status(403).json({error: 'Not authorized'}).end();
     } else if (e.message === 'NOT_FOUND') {
         res.status(404).json({error: 'Item not found'}).end();
     } else if (e.name==='ResourceNotFoundException') {

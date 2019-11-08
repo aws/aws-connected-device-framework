@@ -47,8 +47,8 @@ export class DevicesDaoFull {
             connectedEdges.hasLabel(relationship);
             connectedVertices.hasLabel(template);
         }
-        connectedEdges.where(__.otherV().hasLabel(template)).valueMap(true).fold();
-        connectedVertices.dedup().valueMap(true).fold();
+        connectedEdges.where(__.otherV().hasLabel(template)).valueMap().with_(process.withOptions.tokens).fold();
+        connectedVertices.dedup().valueMap().with_(process.withOptions.tokens).fold();
 
         // assemble the main query
         const traverser = this._g.V(id).as('device');
@@ -60,7 +60,7 @@ export class DevicesDaoFull {
         }
 
         traverser.project('object','pathsIn','pathsOut','Es','Vs').
-            by(__.valueMap(true)).
+            by(__.valueMap().with_(process.withOptions.tokens)).
             by(__.inE().otherV().path().by(process.t.id).fold()).
             by(__.outE().otherV().path().by(process.t.id).fold()).
             by(connectedEdges).
@@ -114,20 +114,20 @@ export class DevicesDaoFull {
         let connectedEdges;
         let connectedVertices;
         if (expandComponents===true && includeGroups===true) {
-            connectedEdges = __.bothE().valueMap(true).fold();
-            connectedVertices = __.both().dedup().valueMap(true).fold();
+            connectedEdges = __.bothE().valueMap().with_(process.withOptions.tokens).fold();
+            connectedVertices = __.both().dedup().valueMap().with_(process.withOptions.tokens).fold();
         } else if (expandComponents===true && includeGroups===false) {
-            connectedEdges = __.bothE().hasLabel('component_of').valueMap(true).fold();
-            connectedVertices = __.both().hasLabel('component_of').dedup().valueMap(true).fold();
+            connectedEdges = __.bothE().hasLabel('component_of').valueMap().with_(process.withOptions.tokens).fold();
+            connectedVertices = __.both().hasLabel('component_of').dedup().valueMap().with_(process.withOptions.tokens).fold();
         } else if (expandComponents===false && includeGroups===true) {
-            connectedEdges = __.bothE().not(__.hasLabel('component_of')).valueMap(true).fold();
-            connectedVertices = __.both().not(__.hasLabel('component_of')).dedup().valueMap(true).fold();
+            connectedEdges = __.bothE().not(__.hasLabel('component_of')).valueMap().with_(process.withOptions.tokens).fold();
+            connectedVertices = __.both().not(__.hasLabel('component_of')).dedup().valueMap().with_(process.withOptions.tokens).fold();
         }
 
         // build the query for optionally filtering the returned attributes
         const deviceValueMap = (attributes===undefined) ?
-            __.valueMap(true) :
-            __.valueMap(true, 'state', 'deviceId', ...attributes);
+            __.valueMap().with_(process.withOptions.tokens):
+            __.valueMap('state', 'deviceId', ...attributes).with_(process.withOptions.tokens);
 
         // assemble the main query
         const traverser = this._g.V(ids).as('device');
@@ -146,7 +146,7 @@ export class DevicesDaoFull {
 
         // execute and retrieve the results
         const results = await traverser.toList();
-        // logger.debug(`device.full.dao get: query: ${JSON.stringify(query)}`);
+        logger.debug(`device.full.dao get: query: ${traverser.toString()}`);
 
         if (results===undefined || results.length===0) {
             logger.debug(`device.full.dao get: exit: node: undefined`);
@@ -170,6 +170,23 @@ export class DevicesDaoFull {
         logger.debug(`device.full.dao get: exit: nodes: ${JSON.stringify(nodes)}`);
         return nodes;
     }
+
+    // public async get(deviceIds:string[], expandComponents:boolean, attributes:string[], includeGroups:boolean): Promise<Node[]> {
+
+    //     logger.debug(`device.full.dao get: in: deviceIds:${deviceIds}, expandComponents:${expandComponents}, attributes:${attributes}, includeGroups:${includeGroups}`);
+
+    //     const ids:string[] = deviceIds.map(d=> `device___${d}`);
+
+    //     // assemble the main query
+    //     const traverser = this._g.V(ids).valueMap().with_(process.withOptions.tokens);
+
+    //     // execute and retrieve the results
+    //     const results = await traverser.toList();
+    //     logger.debug(`device.full.dao get: query: ${traverser.toString()}`);
+    //     logger.debug(`device.full.dao get: results: ${JSON.stringify(results)}`);
+
+    //     return undefined;
+    // }
 
     public async getLabels(deviceId: string): Promise<string[]> {
         logger.debug(`devices.full.dao getLabels: in: deviceId: ${deviceId}`);
@@ -354,14 +371,22 @@ export class DevicesDaoFull {
         logger.debug(`devices.full.dao delete: exit`);
     }
 
-    public async attachToGroup(deviceId:string, relationship:string, groupPath:string) : Promise<void> {
-        logger.debug(`device.full.dao attachToGroup: in: deviceId:${deviceId}, relationship:${relationship}, groupPath:${groupPath}`);
+    public async attachToGroup(deviceId:string, relationship:string, direction:string, groupPath:string) : Promise<void> {
+        logger.debug(`device.full.dao attachToGroup: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, groupPath:${groupPath}`);
 
-        const id = `device___${deviceId}`;
-        const groupId = `group___${groupPath}`;
+        let sourceId:string;
+        let targetId:string;
 
-        const result = await this._g.V(groupId).as('group').
-            V(id).as('device').addE(relationship).to('group').
+        if (direction==='out') {
+            sourceId = `device___${deviceId}`;
+            targetId = `group___${groupPath}`;
+        } else {
+            sourceId = `group___${groupPath}`;
+            targetId = `device___${deviceId}`;
+        }
+
+        const result = await this._g.V(targetId).as('target').
+            V(sourceId).as('source').addE(relationship).to('target').
             iterate();
 
         logger.debug(`devices.full.dao attachToGroup: result:${JSON.stringify(result)}`);
@@ -369,15 +394,23 @@ export class DevicesDaoFull {
         logger.debug(`devices.full.dao attachToGroup: exit:`);
     }
 
-    public async detachFromGroup(deviceId:string, relationship:string, groupPath:string) : Promise<void> {
-        logger.debug(`device.full.dao detachFromGroup: in: deviceId:${deviceId}, relationship:${relationship}, groupPath:${groupPath}`);
+    public async detachFromGroup(deviceId:string, relationship:string, direction:string, groupPath:string) : Promise<void> {
+        logger.debug(`device.full.dao detachFromGroup: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, groupPath:${groupPath}`);
 
-        const id = `device___${deviceId}`;
-        const groupId = `group___${groupPath}`;
+        let sourceId:string;
+        let targetId:string;
 
-        const result = await this._g.V(id).as('device').
+        if (direction==='out') {
+            sourceId = `device___${deviceId}`;
+            targetId = `group___${groupPath}`;
+        } else {
+            sourceId = `group___${groupPath}`;
+            targetId = `device___${deviceId}`;
+        }
+
+        const result = await this._g.V(sourceId).as('source').
             outE(relationship).as('edge').
-            inV().has(process.t.id, groupId).as('group').
+            inV().has(process.t.id, targetId).as('target').
             select('edge').dedup().drop().
             iterate();
 
@@ -386,14 +419,17 @@ export class DevicesDaoFull {
         logger.debug(`devices.full.dao detachFromGroup: exit:`);
     }
 
-    public async attachToDevice(deviceId:string, relationship:string, otherDeviceId:string) : Promise<void> {
-        logger.debug(`device.full.dao attachToDevice: in: deviceId:${deviceId}, relationship:${relationship}, otherDeviceId:${otherDeviceId}`);
+    public async attachToDevice(deviceId:string, relationship:string, direction:string, otherDeviceId:string) : Promise<void> {
+        logger.debug(`device.full.dao attachToDevice: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, otherDeviceId:${otherDeviceId}`);
 
-        const id = `device___${deviceId}`;
-        const otherId = `device___${otherDeviceId}`;
+        const source = (direction==='out') ? deviceId : otherDeviceId;
+        const target = (direction==='out') ? otherDeviceId : deviceId;
 
-         const result = await this._g.V(otherId).as('other').
-            V(id).addE(relationship).to('other').
+        const sourceId = `device___${source}`;
+        const targetId = `device___${target}`;
+
+        const result = this._g.V(targetId).as('other').
+            V(sourceId).addE(relationship).to('other').
             iterate();
 
         logger.debug(`devices.full.dao attachToDevice: result:${JSON.stringify(result)}`);
@@ -401,15 +437,18 @@ export class DevicesDaoFull {
         logger.debug(`devices.full.dao attachToDevice: exit:`);
     }
 
-    public async detachFromDevice(deviceId:string, relationship:string, otherDeviceId:string) : Promise<void> {
-        logger.debug(`device.full.dao detachFromDevice: in: deviceId:${deviceId}, relationship:${relationship}, otherDeviceId:${otherDeviceId}`);
+    public async detachFromDevice(deviceId:string, relationship:string, direction:string, otherDeviceId:string) : Promise<void> {
+        logger.debug(`device.full.dao detachFromDevice: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, otherDeviceId:${otherDeviceId}`);
 
-        const id = `device___${deviceId}`;
-        const otherId = `device___${otherDeviceId}`;
+        const source = (direction==='out') ? deviceId : otherDeviceId;
+        const target = (direction==='out') ? otherDeviceId : deviceId;
 
-        const result = await this._g.V(id).
+        const sourceId = `device___${source}`;
+        const targetId = `device___${target}`;
+
+        const result = await this._g.V(sourceId).
             outE(relationship).as('e').
-            inV().has(process.t.id, otherId).
+            inV().has(process.t.id, targetId).
             select('e').dedup().drop().
             iterate();
 

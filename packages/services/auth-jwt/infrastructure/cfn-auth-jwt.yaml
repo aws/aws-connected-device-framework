@@ -1,0 +1,74 @@
+---
+AWSTemplateFormatVersion : '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Description: API Gateway Lambda Authorizer to verify JWT tokens.
+
+Parameters:
+
+  ApplicationConfigurationOverride:
+    Description: This allows you to override any configuration application configuration. Must be a JSON formatted string. Any configurations contained in this will override the configurations found and merged from the config files.
+    Type: String
+    MinLength: 1
+    Default: {"aws":{"region":"us-east-1"}}
+
+Resources:
+  CustAuthLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      #CodeUri: ../build/build.zip
+      CodeUri: ../build/build
+      Handler: index.handler
+
+      MemorySize: 512
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Runtime: nodejs8.10
+      Timeout: 30
+      Environment:
+        Variables:
+          NODE_CONFIG_DIR: './config'
+          NODE_CONFIG: !Ref ApplicationConfigurationOverride
+      Tracing: Active
+
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: sts:AssumeRole
+      Path: "/"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AWSLambdaExecute
+        - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess   
+  
+  ApiGwAuthInvokeRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: 
+            - lambda.amazonaws.com
+            - apigateway.amazonaws.com
+          Action: sts:AssumeRole
+      Policies:
+      - PolicyName: apiGwLambdaInvoke
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action: lambda:invokeFunction
+            Resource: '*'
+
+Outputs:
+  CustomAuthLambdaArn:
+    Description: Custom Auth Lambda Arn
+    Value: !Sub "${CustAuthLambdaFunction.Arn}"
+    Export: 
+      Name: !Sub "${AWS::StackName}-CustAuthLambdaArn"

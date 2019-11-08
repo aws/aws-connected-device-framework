@@ -3,7 +3,7 @@ aws:
   region: 
   iot:
     endpoint:
-
+    
 events:
   groups:
     topic: cdf/assetlibrary/events/groups/{objectId}/{event}
@@ -39,3 +39,5 @@ supportedApiVersions:
       - '1.0'
       - '2.0'
 
+authorization:
+  enabled: false

@@ -58,7 +58,7 @@ Resources:
               security:
                 Fn::If:
                 - DeployWithCustomAuth
-                - CustomAuthorizer: []
+                - - CustomAuthorizer: []
                 - Ref: AWS::NoValue
               x-amazon-apigateway-integration:
                 responses:
@@ -116,7 +116,7 @@ Resources:
               security:
                 Fn::If:
                 - DeployWithCustomAuth
-                - CustomAuthorizer: []
+                - - CustomAuthorizer: []
                 - Ref: AWS::NoValue
               x-amazon-apigateway-integration:
                 uri: 

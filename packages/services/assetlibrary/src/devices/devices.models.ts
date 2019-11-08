@@ -93,6 +93,36 @@ export class DeviceItem {
 
 	devices?: DirectionStringToArrayMap = {};
 
+	public constructor(init?:Partial<DeviceItem>) {
+        Object.assign(this, init);
+    }
+
+	public listRelatedGroupPaths():string[] {
+		const relatedGroupPaths:string[]= [];
+		if (this.groups) {
+			if (this.groups.in) {
+				Object.keys(this.groups.in).forEach(k=> relatedGroupPaths.push(...this.groups.in[k]));
+			}
+			if (this.groups.out) {
+				Object.keys(this.groups.out).forEach(k=> relatedGroupPaths.push(...this.groups.out[k]));
+			}
+		}
+		return relatedGroupPaths;
+	}
+
+	public listRelatedDeviceIds():string[] {
+		const relatedDeviceIds:string[]= [];
+		if (this.devices) {
+			if (this.devices.in) {
+				Object.keys(this.devices.in).forEach(k=> relatedDeviceIds.push(...this.devices.in[k]));
+			}
+			if (this.devices.out) {
+				Object.keys(this.devices.out).forEach(k=> relatedDeviceIds.push(...this.devices.out[k]));
+			}
+		}
+		return relatedDeviceIds;
+	}
+
 }
 
 export class DeviceItemList {

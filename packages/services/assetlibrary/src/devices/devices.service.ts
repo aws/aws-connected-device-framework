@@ -22,13 +22,13 @@ export interface DevicesService {
 
     delete(deviceId: string) : Promise<void> ;
 
-    attachToGroup(deviceId:string, relationship:string, groupPath:string) : Promise<void> ;
+    attachToGroup(deviceId:string, relationship:string, direction:string, groupPath:string) : Promise<void> ;
 
-    detachFromGroup(deviceId:string, relationship:string, groupPath:string) : Promise<void> ;
+    detachFromGroup(deviceId:string, relationship:string, direction:string, groupPath:string) : Promise<void> ;
 
-    attachToDevice(deviceId:string, relationship:string, otherDeviceId:string) : Promise<void> ;
+    attachToDevice(deviceId:string, relationship:string, direction:string,  otherDeviceId:string) : Promise<void> ;
 
-    detachFromDevice(deviceId:string, relationship:string, otherDeviceId:string) : Promise<void> ;
+    detachFromDevice(deviceId:string, relationship:string, direction:string, otherDeviceId:string) : Promise<void> ;
 
     updateComponent(deviceId:string, componentId:string, model:DeviceItem) : Promise<void> ;
 

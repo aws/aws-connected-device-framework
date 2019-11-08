@@ -16,6 +16,7 @@ nav:
       - 'Asset Library Events': projects/assetlibrary/events.md
       - 'Asset Library Swagger': projects/assetlibrary/assetlibrary-swagger.md
       - 'Profiles': projects/assetlibrary/profiles.md
+      - 'Fine-Grained Access Control': projects/assetlibrary/fine-grained-access-control.md
     - Asset Library History:
       - 'Asset Library History Overview': projects/assetlibrary-history/overview.md
       - 'Asset Library History Swagger': projects/assetlibrary-history/assetlibraryhistory-swagger.md

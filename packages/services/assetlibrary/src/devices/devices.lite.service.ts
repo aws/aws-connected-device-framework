@@ -4,7 +4,7 @@
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
 import { injectable, inject } from 'inversify';
-import { Device10Resource, BulkDevicesResult, DeviceItemList, DeviceItem} from './devices.models';
+import { BulkDevicesResult, DeviceItemList, DeviceItem} from './devices.models';
 import { DevicesService } from './devices.service';
 import {logger} from '../utils/logger';
 import ow from 'ow';
@@ -13,7 +13,7 @@ import { DevicesDaoLite } from './devices.lite.dao';
 import { DevicesAssembler } from './devices.assembler';
 import { TypeCategory } from '../types/constants';
 import { EventEmitter, Type, Event } from '../events/eventEmitter.service';
-import { GroupResourceList } from '../groups/groups.models';
+import { GroupItemList } from '../groups/groups.models';
 
 @injectable()
 export class DevicesServiceLite implements DevicesService {
@@ -114,7 +114,7 @@ export class DevicesServiceLite implements DevicesService {
         if (existing===undefined) {
             throw new Error('NOT_FOUND');
         }
-        const merged = {...existing, ...model};
+        const merged = Object.assign(new DeviceItem(), existing, model);
         merged.attributes = {...existing.attributes, ...model.attributes};
 
         // Save to datastore
@@ -153,7 +153,7 @@ export class DevicesServiceLite implements DevicesService {
         logger.debug(`device.lite.service delete: exit:`);
     }
 
-    public async attachToGroup(deviceId:string, _relationship:string, groupPath:string) {
+    public async attachToGroup(deviceId:string, _relationship:string, _direction:string, groupPath:string) {
         logger.debug(`device.lite.service attachToGroup: in: deviceId:${deviceId}, groupPath:${groupPath}`);
 
         ow(deviceId, ow.string.nonEmpty);
@@ -177,7 +177,7 @@ export class DevicesServiceLite implements DevicesService {
         logger.debug(`device.lite.service attachToGroup: exit:`);
     }
 
-    public async detachFromGroup(deviceId:string, _relationship:string, groupPath:string) {
+    public async detachFromGroup(deviceId:string, _relationship:string, _direction:string, groupPath:string) {
         logger.debug(`device.lite.service detachFromGroup: in: deviceId:${deviceId}, groupPath:${groupPath}`);
 
         ow(deviceId, ow.string.nonEmpty);
@@ -201,15 +201,15 @@ export class DevicesServiceLite implements DevicesService {
         logger.debug(`device.lite.service attachToGroup: exit:`);
     }
 
-    public async attachToDevice(_deviceId:string, _relationship:string, _otherDeviceId:string) {
+    public async attachToDevice(_deviceId:string, _relationship:string, _direction:string, _otherDeviceId:string) {
         throw new Error('NOT_SUPPORTED');
     }
 
-    public async detachFromDevice(_deviceId:string, _relationship:string, _otherDeviceId:string) {
+    public async detachFromDevice(_deviceId:string, _relationship:string, _direction:string, _otherDeviceId:string) {
         throw new Error('NOT_SUPPORTED');
     }
 
-    public async updateComponent(_deviceId:string, _componentId:string, _model:Device10Resource) : Promise<void> {
+    public async updateComponent(_deviceId:string, _componentId:string, _model:DeviceItem) : Promise<void> {
         throw new Error('NOT_SUPPORTED');
     }
 
@@ -217,11 +217,11 @@ export class DevicesServiceLite implements DevicesService {
         throw new Error('NOT_SUPPORTED');
     }
 
-    public async createComponent(_parentDeviceId:string, _model:Device10Resource) : Promise<string> {
+    public async createComponent(_parentDeviceId:string, _model:DeviceItem) : Promise<string> {
         throw new Error('NOT_SUPPORTED');
     }
 
-    public async listRelatedGroups(_deviceId: string, _relationship: string, _direction:string, _template:string, _offset:number, _count:number) : Promise<GroupResourceList> {
+    public async listRelatedGroups(_deviceId: string, _relationship: string, _direction:string, _template:string, _offset:number, _count:number) : Promise<GroupItemList> {
         throw new Error('NOT_SUPPORTED');
     }
 

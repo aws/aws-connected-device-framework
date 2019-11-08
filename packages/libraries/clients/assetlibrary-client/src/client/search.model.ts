@@ -3,8 +3,8 @@
 #
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
-import { Group } from './groups.model';
-import { Device } from './devices.model';
+import { GroupBaseResource } from './groups.model';
+import { DeviceBaseResource } from './devices.model';
 
 export enum SearchRequestFilterDirection {
 	in = 'in',
@@ -138,7 +138,7 @@ export class SearchRequestModel {
 }
 
 export interface SearchResultsModel {
-	results: (Group|Device)[];
+	results: (GroupBaseResource|DeviceBaseResource)[];
 	pagination?: {
 		offset:number;
 		count: number;

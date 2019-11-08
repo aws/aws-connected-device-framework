@@ -13,30 +13,15 @@
 import { injectable } from 'inversify';
 import ow from 'ow';
 import * as request from 'superagent';
-import config from 'config';
 import { SearchRequestModel, SearchResultsModel } from './search.model';
 import { QSHelper } from '../utils/qs.helper';
+import { ClientService } from './common.service';
 
 @injectable()
-export class SearchService  {
-
-    private MIME_TYPE:string = 'application/vnd.aws-cdf-v1.0+json';
-
-    private baseUrl:string;
-    private headers = {
-        'Accept': this.MIME_TYPE,
-        'Content-Type': this.MIME_TYPE
-    };
+export class SearchService extends ClientService {
 
     public constructor() {
-        this.baseUrl = config.get('assetLibrary.baseUrl') as string;
-
-        if (config.has('assetLibrary.headers')) {
-            const additionalHeaders: {[key:string]:string} = config.get('assetLibrary.headers') as {[key:string]:string};
-            if (additionalHeaders !== null && additionalHeaders !== undefined) {
-                this.headers = {...this.headers, ...additionalHeaders};
-            }
-        }
+        super();
     }
 
     public async search(searchRequest:SearchRequestModel, offset?:number, count?:number) : Promise<SearchResultsModel> {
@@ -56,7 +41,7 @@ export class SearchService  {
         const url = `${this.baseUrl}/search?${queryString}`;
 
         const res = await request.get(url)
-        .set(this.headers);
+        .set(super.getHeaders());
 
         return res.body;
 

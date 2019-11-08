@@ -6,7 +6,7 @@
 import { injectable, inject } from 'inversify';
 import {logger} from '../utils/logger';
 import ow from 'ow';
-import { DevicesService, Device, ASSTLIBRARY_CLIENT_TYPES } from '@cdf/assetlibrary-client/dist';
+import { DevicesService, Device10Resource, ASSTLIBRARY_CLIENT_TYPES } from '@cdf/assetlibrary-client/dist';
 import { RegistryManager } from './registry.interfaces';
 
 @injectable()
@@ -57,7 +57,7 @@ export class AssetLibraryRegistryManager implements RegistryManager {
             return;
         }
 
-        const device:Device = {
+        const device:Device10Resource = {
             attributes: {
             }
         };

@@ -4,12 +4,12 @@
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
 import 'reflect-metadata';
-import { Before, setDefaultTimeout, When, TableDefinition, Then} from 'cucumber';
-import { SearchService, SearchRequestModel, SearchResultsModel, Device, Group, SearchRequestFilter } from '@cdf/assetlibrary-client/dist';
+import { setDefaultTimeout, When, TableDefinition, Then} from 'cucumber';
+import { SearchService, SearchRequestModel, SearchResultsModel, Device10Resource, Group10Resource, SearchRequestFilter } from '@cdf/assetlibrary-client/dist';
 
 import chai_string = require('chai-string');
 import { expect, use} from 'chai';
-import { RESPONSE_STATUS } from '../common/common.steps';
+import { RESPONSE_STATUS, AUTHORIZATION_TOKEN } from '../common/common.steps';
 
 use(chai_string);
 
@@ -19,9 +19,13 @@ export const SEARCH_RESULTS = 'searchResults';
 
 let search: SearchService;
 
-Before(function () {
-    search = new SearchService();
-});
+function getSearchService(world:any) {
+    if (search===undefined) {
+        search = new SearchService();
+    }
+    search.init({authToken: world[AUTHORIZATION_TOKEN]});
+    return search;
+}
 
 function buildSearchRequest(data:TableDefinition):SearchRequestModel {
     const d = data.rowsHash();
@@ -63,21 +67,21 @@ function buildSearchRequest(data:TableDefinition):SearchRequestModel {
     return searchRequest;
 }
 
-When('I search with following attributes:', async function (data:TableDefinition) {
+When('I getSearchService() with following attributes:', async function (data:TableDefinition) {
     const searchRequest = buildSearchRequest(data);
 
     try {
         delete this[SEARCH_RESULTS];
         delete this[RESPONSE_STATUS];
 
-        this[SEARCH_RESULTS] = await search.search(searchRequest);
+        this[SEARCH_RESULTS] = await getSearchService(this).search(searchRequest);
 
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
     }
 });
 
-When('I search with summary with following attributes:', async function (data:TableDefinition) {
+When('I getSearchService() with summary with following attributes:', async function (data:TableDefinition) {
     const searchRequest = buildSearchRequest(data);
     searchRequest.summarize=true;
 
@@ -85,20 +89,20 @@ When('I search with summary with following attributes:', async function (data:Ta
         delete this[SEARCH_RESULTS];
         delete this[RESPONSE_STATUS];
 
-        this[SEARCH_RESULTS] = await search.search(searchRequest);
+        this[SEARCH_RESULTS] = await getSearchService(this).search(searchRequest);
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
     }
 });
 
-Then('search result contains {int} results', function (total:number) {
+Then('getSearchService() result contains {int} results', function (total:number) {
     expect((<SearchResultsModel>this[SEARCH_RESULTS]).results.length).eq(total);
 });
 
-Then('search result contains device {string}', function (deviceId:string) {
+Then('getSearchService() result contains device {string}', function (deviceId:string) {
     let found:boolean=false;
     (<SearchResultsModel>this[SEARCH_RESULTS]).results.forEach(item=> {
-        if ( (<Device>item).deviceId===deviceId) {
+        if ( (<Device10Resource>item).deviceId===deviceId) {
             found=true;
         }
     });
@@ -106,10 +110,10 @@ Then('search result contains device {string}', function (deviceId:string) {
 
 });
 
-Then('search result contains group {string}', function (groupPath:string) {
+Then('getSearchService() result contains group {string}', function (groupPath:string) {
     let found:boolean=false;
     (<SearchResultsModel>this[SEARCH_RESULTS]).results.forEach(item=> {
-        if ( (<Group>item).groupPath===groupPath) {
+        if ( (<Group10Resource>item).groupPath===groupPath) {
             found=true;
         }
     });
@@ -117,7 +121,7 @@ Then('search result contains group {string}', function (groupPath:string) {
 
 });
 
-Then('search result contains {int} total', function (total:number) {
+Then('getSearchService() result contains {int} total', function (total:number) {
     const results = <SearchResultsModel>this[SEARCH_RESULTS];
     if (results.total) {
         expect(results.total).eq(total);

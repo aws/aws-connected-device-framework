@@ -99,11 +99,7 @@ export class DevicesController implements interfaces.Controller {
         @requestParam('groupPath') groupPath: string, @response() res: Response) : Promise<void> {
 
         logger.info(`devices.controller attachToGroup: in: deviceId:${deviceId}, relationship:${relationship}, groupPath:${groupPath}`);
-        try {
-            await this.devicesService.attachToGroup(deviceId, relationship, groupPath);
-        } catch (e) {
-            handleError(e,res);
-        }
+        await this.attachToGroupWithDirection(deviceId, relationship, 'out', groupPath, res);
     }
 
     @httpDelete('/:deviceId/:relationship/groups/:groupPath')
@@ -111,8 +107,28 @@ export class DevicesController implements interfaces.Controller {
         @requestParam('groupPath') groupPath: string, @response() res: Response) : Promise<void> {
 
         logger.info(`devices.controller detachFromGroup: in: deviceId:${deviceId}, relationship:${relationship}, groupPath:${groupPath}`);
+        await this.detachFromGroupWithDirection(deviceId, relationship, 'out', groupPath, res);
+    }
+
+    @httpPut('/:deviceId/:relationship/:direction/groups/:groupPath')
+    public async attachToGroupWithDirection(@requestParam('deviceId') deviceId: string, @requestParam('relationship') relationship: string,
+        @requestParam('direction') direction: string, @requestParam('groupPath') groupPath: string, @response() res: Response) : Promise<void> {
+
+        logger.info(`devices.controller attachToGroupWithDirection: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, groupPath:${groupPath}`);
         try {
-            await this.devicesService.detachFromGroup(deviceId, relationship, groupPath);
+            await this.devicesService.attachToGroup(deviceId, relationship, direction, groupPath);
+        } catch (e) {
+            handleError(e,res);
+        }
+    }
+
+    @httpDelete('/:deviceId/:relationship/:direction/groups/:groupPath')
+    public async detachFromGroupWithDirection(@requestParam('deviceId') deviceId: string, @requestParam('relationship') relationship: string,
+        @requestParam('direction') direction: string, @requestParam('groupPath') groupPath: string, @response() res: Response) : Promise<void> {
+
+        logger.info(`devices.controller detachFromGroupWithDirection: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, groupPath:${groupPath}`);
+        try {
+            await this.devicesService.detachFromGroup(deviceId, relationship, direction, groupPath);
         } catch (e) {
             handleError(e,res);
         }
@@ -147,11 +163,7 @@ export class DevicesController implements interfaces.Controller {
         @requestParam('otherDeviceId') otherDeviceId: string, @response() res: Response) : Promise<void> {
 
         logger.info(`devices.controller attachToDevice: in: deviceId:${deviceId}, relationship:${relationship}, otherDeviceId:${otherDeviceId}`);
-        try {
-            await this.devicesService.attachToDevice(deviceId, relationship, otherDeviceId);
-        } catch (e) {
-            handleError(e,res);
-        }
+        await this.attachToDeviceWithDirection(deviceId, relationship, 'out', otherDeviceId, res);
     }
 
     @httpDelete('/:deviceId/:relationship/devices/:otherDeviceId')
@@ -159,8 +171,28 @@ export class DevicesController implements interfaces.Controller {
         @requestParam('otherDeviceId') otherDeviceId: string, @response() res: Response) : Promise<void> {
 
         logger.info(`devices.controller detachFromDevice: in: deviceId:${deviceId}, relationship:${relationship}, otherDeviceId:${otherDeviceId}`);
+        await this.detachFromDeviceWithDirection(deviceId, relationship, 'out', otherDeviceId, res);
+    }
+
+    @httpPut('/:deviceId/:relationship/:direction/devices/:otherDeviceId')
+    public async attachToDeviceWithDirection(@requestParam('deviceId') deviceId: string, @requestParam('relationship') relationship: string,
+        @requestParam('direction') direction: string, @requestParam('otherDeviceId') otherDeviceId: string, @response() res: Response) : Promise<void> {
+
+        logger.info(`devices.controller attachToDeviceWithDirection: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, otherDeviceId:${otherDeviceId}`);
         try {
-            await this.devicesService.detachFromDevice(deviceId, relationship, otherDeviceId);
+            await this.devicesService.attachToDevice(deviceId, relationship, direction, otherDeviceId);
+        } catch (e) {
+            handleError(e,res);
+        }
+    }
+
+    @httpDelete('/:deviceId/:relationship/:direction/devices/:otherDeviceId')
+    public async detachFromDeviceWithDirection(@requestParam('deviceId') deviceId: string, @requestParam('relationship') relationship: string,
+        @requestParam('direction') direction: string, @requestParam('otherDeviceId') otherDeviceId: string, @response() res: Response) : Promise<void> {
+
+        logger.info(`devices.controller detachFromDeviceWithDirection: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, otherDeviceId:${otherDeviceId}`);
+        try {
+            await this.devicesService.detachFromDevice(deviceId, relationship, direction, otherDeviceId);
         } catch (e) {
             handleError(e,res);
         }

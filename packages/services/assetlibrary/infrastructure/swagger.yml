@@ -661,7 +661,7 @@ paths:
           type: string
       - name: relationship
         in: path
-        description: The relationship between the device and group. For example, this may
+        description: The outgoing relationship between the device and group. For example, this may
           reflect `locatedAt` or `manufacturedAt` relations.
         required: true
         schema:
@@ -696,6 +696,62 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "404":
           $ref: "#/components/responses/NotFound"
+          
+  
+  "/devices/{deviceId}/{relationship}/{direction}/groups/{groupPath}":
+    parameters:
+      - name: deviceId
+        in: path
+        description: Id of device to attach to the group
+        required: true
+        schema:
+          type: string
+      - name: relationship
+        in: path
+        description: The outgoing relationship between the device and group. For example, this may
+          reflect `locatedAt` or `manufacturedAt` relations.
+        required: true
+        schema:
+          type: string
+      - name: direction
+        in: path
+        description: The direction of the relationship `in` or `out`
+        required: true
+        schema:
+          type: string
+      - name: groupPath
+        in: path
+        description: Path of group.
+        required: true
+        schema:
+          type: string
+    put:
+      tags:
+        - Devices
+      summary: Associates a device to a group, giving context to its relationship.
+      operationId: attachToGroupWithDirection
+      responses:
+        "204":
+          description: successful operation
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      tags:
+        - Devices
+      summary: Removes a device from an associated group
+      operationId: detachFromGroupWithDirection
+      responses:
+        "204":
+          description: successful operation
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+          
+          
+          
   "/devices/{deviceId}/{relationship}/devices":
     parameters:
       - name: deviceId
@@ -770,6 +826,7 @@ paths:
                 $ref: "#/components/schemas/DeviceList"
         "404":
           $ref: "#/components/responses/NotFound"
+          
   "/devices/{deviceId}/{relationship}/devices/{otherDeviceId}":
     parameters:
       - name: deviceId
@@ -816,6 +873,62 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "404":
           $ref: "#/components/responses/NotFound"
+          
+  
+  "/devices/{deviceId}/{relationship}/{direction}/devices/{otherDeviceId}":
+    parameters:
+      - name: deviceId
+        in: path
+        description: Id of source device
+        required: true
+        schema:
+          type: string
+      - name: relationship
+        in: path
+        description: The relationship between the device and the other device as defined in
+          the device template.
+        required: true
+        schema:
+          type: string
+      - name: direction
+        in: path
+        description: Direction of the relationship - `in` or `out`.
+        required: true
+        schema:
+          type: string
+      - name: otherDeviceId
+        in: path
+        description: ID of device to create relationship to.
+        required: true
+        schema:
+          type: string
+    put:
+      tags:
+        - Devices
+      summary: Associates a device to another device, giving context to its
+        relationship.
+      operationId: attachToDeviceWithDirection
+      responses:
+        "204":
+          description: successful operation
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      tags:
+        - Devices
+      summary: Removes a device from an associated device
+      operationId: detachFromDeviceWithDirection
+      responses:
+        "204":
+          description: successful operation
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+          
+          
   "/devices/{deviceId}/components":
     parameters:
       - name: deviceId

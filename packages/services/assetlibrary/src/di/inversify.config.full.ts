@@ -28,6 +28,8 @@ import { InitService } from '../init/init.service';
 import { InitDaoFull } from '../init/init.full.dao';
 import { InitServiceFull } from '../init/init.full.service';
 import { FullAssembler } from '../data/full.assembler';
+import { AuthzDaoFull } from '../authz/authz.full.dao';
+import { AuthzServiceFull } from '../authz/authz.full.service';
 
 export const FullContainerModule = new ContainerModule (
     (
@@ -63,6 +65,9 @@ export const FullContainerModule = new ContainerModule (
 
         bind<SchemaValidatorService>(TYPES.SchemaValidatorService).to(SchemaValidatorService).inSingletonScope();
 
+        bind<AuthzDaoFull>(TYPES.AuthzDaoFull).to(AuthzDaoFull).inSingletonScope();
+        bind<AuthzServiceFull>(TYPES.AuthzServiceFull).to(AuthzServiceFull).inSingletonScope();
+
         decorate(injectable(), process.GraphTraversalSource);
         bind<interfaces.Factory<process.GraphTraversalSource>>(TYPES.GraphTraversalSourceFactory)
             .toFactory<process.GraphTraversalSource>((ctx: interfaces.Context) => {
@@ -71,9 +76,9 @@ export const FullContainerModule = new ContainerModule (
                 if (!isBound(TYPES.GraphTraversalSource)) {
                     const graph = new structure.Graph();
                     const g = graph.traversal()
-                        .withRemote(new driver.DriverRemoteConnection(config.get('neptuneUrl')));
+                        .withRemote(new driver.DriverRemoteConnection(config.get('neptuneUrl'), { mimeType: 'application/vnd.gremlin-v2.0+json' }));
                     bind<process.GraphTraversalSource>(TYPES.GraphTraversalSource).toConstantValue(g);
-                }
+               }
                 return ctx.container.get<process.GraphTraversalSource>(TYPES.GraphTraversalSource);
             };
         });

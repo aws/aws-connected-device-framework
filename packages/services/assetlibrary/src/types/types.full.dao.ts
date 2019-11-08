@@ -40,19 +40,19 @@ export class TypesDaoFull {
         // only return published relations when we're looking at published definitions
         let relationsTraversal: process.GraphTraversal;
         if (status===TypeDefinitionStatus.draft) {
-            relationsTraversal=__.bothE('relationship').valueMap(true).fold();
+            relationsTraversal=__.bothE('relationship').valueMap().with_(process.withOptions.tokens).fold();
         } else {
             relationsTraversal=__.as('definition').bothE('relationship').
                 match(
                     __.as('relationship').otherV().inE('current_definition').has('status',TypeDefinitionStatus.published).as('other')
-                ).select('relationship').valueMap(true).fold();
+                ).select('relationship').valueMap().with_(process.withOptions.tokens).fold();
         }
 
         traverser.
             select('type').outE('current_definition').has('status',status).inV().as('definition').
             project('type','definition','relations').
-                by(__.select('type').valueMap(true)).
-                by(__.valueMap(true).fold()).
+                by(__.select('type').valueMap().with_(process.withOptions.tokens)).
+                by(__.valueMap().with_(process.withOptions.tokens).fold()).
                 by(relationsTraversal);
 
         const query = await traverser.toList();
@@ -79,20 +79,20 @@ export class TypesDaoFull {
         // only return published relations when we're looking at published definitions
         let relationsTraversal: process.GraphTraversal;
         if (status===TypeDefinitionStatus.draft) {
-            relationsTraversal=__.bothE('relationship').valueMap(true).fold();
+            relationsTraversal=__.bothE('relationship').valueMap().with_(process.withOptions.tokens).fold();
         } else {
             relationsTraversal=__.as('definition').bothE('relationship').
                 match(
                     __.as('relationship').otherV().inE('current_definition').has('status',TypeDefinitionStatus.published).as('other')
-                ).select('relationship').valueMap(true).fold();
+                ).select('relationship').valueMap().with_(process.withOptions.tokens).fold();
         }
 
         const traverser = this._g.V(superId).
             inE('super_type').outV().as('a').
             outE('current_definition').has('status',status).inV().as('def').
             project('type','definition','relations').
-                by(__.select('a').valueMap(true)).
-                by(__.select('def').valueMap(true).fold()).
+                by(__.select('a').valueMap().with_(process.withOptions.tokens)).
+                by(__.select('def').valueMap().with_(process.withOptions.tokens).fold()).
                 by(relationsTraversal);
 
         // apply pagination
@@ -608,7 +608,7 @@ export class TypesDaoFull {
 
         // also return details of the relations (the edge) along with the relations properties (its valuemap)
         traverser.by(__.select('rels'));
-        traverser.by(__.select('rels').unfold().valueMap(true).fold());
+        traverser.by(__.select('rels').unfold().valueMap().with_(process.withOptions.tokens).fold());
 
         // execute the query
         const results = await traverser.next();

@@ -267,6 +267,7 @@ export class DevicesAssembler {
 
         const resources = new DeviceResourceList();
         resources.pagination = items.pagination;
+        resources.results = [];
 
         items.results.forEach(item=> resources.results.push(this.toDeviceResource(item, version)));
 

@@ -32,6 +32,9 @@ export const TYPES = {
     ProfilesDao: Symbol.for('ProfilesDao'),
     ProfilesAssembler: Symbol.for('ProfilesAssembler'),
 
+    AuthzServiceFull: Symbol.for('AuthzServiceFull'),
+    AuthzDaoFull: Symbol.for('AuthzDaoFull'),
+
     NodeAssembler: Symbol.for('NodeAssembler'),
 
     EventEmitter: Symbol.for('EventEmitter'),

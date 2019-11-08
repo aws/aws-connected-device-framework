@@ -51,6 +51,7 @@ export class TypesController implements interfaces.Controller {
     public async createTemplate(@requestParam('category') category: TypeCategory, @requestParam('templateId') templateId: string,
           @requestBody() definition: TypeDefinitionModel, @response() res: Response) : Promise<void> {
         logger.info(`types.controller: createTemplate: in: category:${category}, templateId:${templateId}, definition:${JSON.stringify(definition)}`);
+
         try {
             const result = await this.typesService.create(templateId, category, definition);
             if (!result.isValid) {
@@ -82,9 +83,9 @@ export class TypesController implements interfaces.Controller {
 
     @httpPut('/:category/:templateId/publish')
     public async publishTemplate(@requestParam('category') category: TypeCategory, @requestParam('templateId') templateId: string,
-        @requestBody() definition: TypeResource, @response() res: Response) : Promise<void>  {
+        @response() res: Response) : Promise<void>  {
 
-        logger.info(`types.controller: publishTemplate: in: category:${category}, templateId:${templateId}, definition:${JSON.stringify(definition)}`);
+        logger.info(`types.controller: publishTemplate: in: category:${category}, templateId:${templateId}`);
         try {
             await this.typesService.publish(templateId, category);
             res.status(204).json(null);

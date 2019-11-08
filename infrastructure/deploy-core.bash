@@ -21,17 +21,20 @@ MANDATORY ARGUMENTS:
 OPTIONAL ARGUMENTS
 
     -E (string)   Name of configuration environment.  If not provided, then '-e ENVIRONMENT' is used.
-    -p (string)   The name of the key pair to use to deploy the Bastion EC2 host.
-    -i (string)   The remote access CIDR to configure Bastion SSH access (e.g. 1.2.3.4/32).
     -b (string)   The name of the S3 bucket to deploy CloudFormation templates into.  If not provided, a new bucket named 'cdf-cfn-artifacts-$AWS_ACCOUNT_ID-$AWS_REGION' is created.
     -k (string)   The KMS Key id that the provisoning service will use to decrypt sensitive information.  If not provided, a new KMS key with the alias 'cdf' is created.
 
     -m (string)   Asset Library mode ('full' or 'lite').  Defaults to full if not provided.
+    -p (string)   The name of the key pair to use to deploy the Bastion EC2 host (only required for Asset Library (full) mode).
+    -i (string)   The remote access CIDR to configure Bastion SSH access (e.g. 1.2.3.4/32) (only required for Asset Library (full) mode).
 
-    -N (flag)     Use an existing VPC instead of creating a new one
+    -F (flag)     Enable fine-grained-access-control mode of Asset Library (only available for Asset Library (full) mode).
+    -f (string)   The JWT issuer, e.g. https://cognito-idp.us-east-1.amazonaws.com/${cognitoPoolId} (required if -F set).
+
+    -N (flag)     Use an existing VPC instead of creating a new one (only required for Asset Library (full) mode).
     -v (string)   ID of VPC to deploy into (required if -N set)
     -g (string)   ID of source security group to allow access to Asset Library (required if -N set)
-    -n (string)   ID of private subnets (comma delimited) to deploy the AssetLibrar into (required if -N set)
+    -n (string)   ID of private subnets (comma delimited) to deploy the AssetLibrary into (required if -N set)
     -o (string)   ID of public subnets (comma delimited) to deploy the Bastion into (required if -N set)
     -r (string)   ID of private route tables (comma delimited) to configure for Asset Library access
 
@@ -57,7 +60,7 @@ EOF
 ######  parse and validate the provided arguments   ######
 ##########################################################
 
-while getopts ":e:E:c:p:i:k:b:Nv:g:n:m:o:r:BYR:P:" opt; do
+while getopts ":e:E:c:p:i:k:b:Ff:Nv:g:n:m:o:r:BYR:P:" opt; do
   case $opt in
     e  ) ENVIRONMENT=$OPTARG;;
     E  ) CONFIG_ENVIRONMENT=$OPTARG;;
@@ -68,6 +71,9 @@ while getopts ":e:E:c:p:i:k:b:Nv:g:n:m:o:r:BYR:P:" opt; do
     k  ) KMS_KEY_ID=$OPTARG;;
     b  ) DEPLOY_ARTIFACTS_STORE_BUCKET=$OPTARG;;
     m  ) ASSETLIBRARY_MODE=$OPTARG;;
+
+    F  ) ASSETLIBRARY_FGAC=true;;
+    f  ) JWT_ISSUER=true;;
 
     N  ) USE_EXISTING_VPC=true;;
     v  ) VPC_ID=$OPTARG;;
@@ -135,6 +141,12 @@ if [[ "$ASSETLIBRARY_MODE" = "full" ]]; then
     fi
 fi
 
+if [ -n "$ASSETLIBRARY_FGAC" ]; then
+    if [ -z "$JWT_ISSUER" ]; then
+        echo -f JWT_ISSUER is required when Asset Library fine-grained access control is enabled; help_message; exit 1;
+    fi
+fi
+
 
 if [ -z "$AWS_REGION" ]; then
 	AWS_REGION=$(aws configure get region $AWS_ARGS)
@@ -171,6 +183,8 @@ The Connected Device Framework (CDF) will install using the following configurat
     -i (BASTION_REMOTE_ACCESS_CIDR)     : $BASTION_REMOTE_ACCESS_CIDR
     -k (KMS_KEY_ID)                     : $KMS_KEY_ID
     -m (ASSETLIBRARY_MODE)              : $ASSETLIBRARY_MODE
+    -F (ASSETLIBRARY_FGAC)              : $ASSETLIBRARY_FGAC
+    -f (JWT_ISSUER)                     : $JWT_ISSUER
     -N (USE_EXISTING_VPC)               : $USE_EXISTING_VPC"
 
 if [ -z "$USE_EXISTING_VPC" ]; then
@@ -232,6 +246,7 @@ root_dir=$(pwd)
 
 ASSETLIBRARY_HISTORY_STACK_NAME=cdf-assetlibraryhistory-${ENVIRONMENT}
 ASSETLIBRARY_STACK_NAME=cdf-assetlibrary-${ENVIRONMENT}
+AUTH_JWT_STACK_NAME=cdf-auth-jwt-${ENVIRONMENT}
 BASTION_STACK_NAME=cdf-bastion-${ENVIRONMENT}
 BULKCERTS_STACK_NAME=cdf-bulkcerts-${ENVIRONMENT}
 CERTIFICATEVENDOR_STACK_NAME=cdf-certificatevendor-${ENVIRONMENT}
@@ -357,6 +372,26 @@ stacks=()
 
 if [ -f "$assetlibrary_config" ]; then
 
+    if [[ "$ASSETLIBRARY_MODE" = "full" && "$ASSETLIBRARY_FGAC" = "true" ]]; then
+
+        echo '
+        ***************************************************
+        *****   Deploying Asset Library Authorizer   ******
+        ***************************************************
+        '
+
+        cd "$root_dir/packages/services/auth-jwt"
+
+        auth_jwt_config=$CONFIG_LOCATION/auth-jwt/$CONFIG_ENVIRONMENT-config.json
+
+        infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
+
+        infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "$auth_jwt_config" -i "$JWT_ISSUER" $AWS_SCRIPT_ARGS
+
+        assetlibrary_custom_auth_args="-C $AUTH_JWT_STACK_NAME"
+
+    fi
+
     echo '
     **********************************************************
     *****  Deploying  assetlibrary                      ******
@@ -371,6 +406,7 @@ if [ -f "$assetlibrary_config" ]; then
         infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "$assetlibrary_config" \
         -m "$ASSETLIBRARY_MODE" \
         -v "$VPC_ID" -g "$SOURCE_SECURITY_GROUP_ID" -n "$PRIVATE_SUBNET_IDS" -r "$PRIVATE_ROUTE_TABLE_IDS" \
+        $assetlibrary_custom_auth_args \
         $AWS_SCRIPT_ARGS &
     else
         infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "$assetlibrary_config" \

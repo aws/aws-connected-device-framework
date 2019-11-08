@@ -3,13 +3,13 @@
 #
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
-import { Pagination } from './pagination.model';
+import { DirectionStringToArrayMap, StringToArrayMap } from './common.model';
 
 /**
  * Connected Device Framework: Dashboard Facade Group
 */
 
-export interface Group {
+export interface GroupBaseResource {
     /**
      * Path of the group.
      */
@@ -35,15 +35,18 @@ export interface Group {
      */
     description?: string;
     attributes?: { [key: string]: string | number | boolean; };
+}
 
-    /**
-     * Paths of the groups that this group is associated with.
-     */
-    groups?: { [key: string]: string[]; };
+export interface Group10Resource extends GroupBaseResource {
+	groups?: StringToArrayMap;
+}
+
+export interface Group20Resource extends GroupBaseResource {
+	groups?: DirectionStringToArrayMap;
 }
 
 export interface BulkLoadGroups {
-    groups: Group[];
+    groups: GroupBaseResource[];
 }
 
 export class BulkLoadGroupsResponse {
@@ -53,7 +56,10 @@ export class BulkLoadGroupsResponse {
     errors: {[key:string]:string};
 }
 
-export interface GroupList {
-    results?: Group[];
-    pagination?: Pagination;
+export interface GroupResourceList {
+	results: GroupBaseResource[];
+	pagination?: {
+		offset:number;
+		count: number;
+	};
 }

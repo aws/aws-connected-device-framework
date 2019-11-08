@@ -252,6 +252,7 @@ export class GroupsAssembler {
 
         const resources = new GroupResourceList();
         resources.pagination = items.pagination;
+        resources.results = [];
 
         items.results.forEach(item=> resources.results.push(this.toGroupResource(item, version)));
 

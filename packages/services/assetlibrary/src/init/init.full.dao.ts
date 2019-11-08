@@ -41,8 +41,14 @@ export class InitDaoFull {
 
         await this._g.addV('type').property(process.t.id, 'type___device').
             addV('type').property(process.t.id, 'type___group').
-            addV('root').property(process.t.id, 'group___/').property('name','/').
+            addV('root').property(process.t.id, 'group___/').property('name','/').property('groupPath','/').
             iterate();
     }
 
+    public async applyFixes(): Promise<void> {
+        logger.debug('init.dao fixes: in:');
+
+        await this._g.V('group___/').property('groupPath','/').
+            iterate();
+    }
 }

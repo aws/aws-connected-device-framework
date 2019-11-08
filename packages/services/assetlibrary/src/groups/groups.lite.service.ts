@@ -4,7 +4,7 @@
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
 import { injectable, inject } from 'inversify';
-import { GroupItem, BulkGroupsResult, GroupMemberItemList, GroupResourceList} from './groups.models';
+import { GroupItem, BulkGroupsResult, GroupMemberItemList, GroupItemList} from './groups.models';
 import {logger} from '../utils/logger';
 import {TypeCategory} from '../types/constants';
 import ow from 'ow';
@@ -96,7 +96,7 @@ export class GroupsServiceLite implements GroupsService {
         if (existing===undefined) {
             throw new Error('NOT_FOUND');
         }
-        const merged = {...existing, ...model};
+        const merged = Object.assign(new GroupItem(), existing, model);
         merged.attributes = {...existing.attributes, ...model.attributes};
 
         // Save to datastore
@@ -188,13 +188,21 @@ export class GroupsServiceLite implements GroupsService {
         throw new Error('NOT_SUPPORTED');
     }
 
-    public async listRelatedGroups(groupPath: string, relationship: string, direction:string, template:string, offset:number, count:number) : Promise<GroupResourceList> {
+    public async listRelatedGroups(groupPath: string, relationship: string, direction:string, template:string, offset:number, count:number) : Promise<GroupItemList> {
         logger.debug(`groups.full.service listRelatedGroups: in: groupPath:${groupPath}, relationship:${relationship}, direction:${direction}, template:${template}, offset:${offset}, count:${count}`);
         throw new Error('NOT_SUPPORTED');
     }
 
     public async listRelatedDevices(groupPath: string, relationship: string, direction:string, template:string, state:string, offset:number, count:number) : Promise<DeviceItemList> {
         logger.debug(`groups.full.service listRelatedDevices: in: groupPath:${groupPath}, relationship:${relationship}, direction:${direction}, template:${template}, state:${state}, offset:${offset}, count:${count}`);
+        throw new Error('NOT_SUPPORTED');
+    }
+
+    public async attachToDevice(_groupPath:string, _relationship:string, _otherDeviceId:string) {
+        throw new Error('NOT_SUPPORTED');
+    }
+
+    public async detachFromDevice(_groupPath:string, _relationship:string, _otherDeviceId:string) {
         throw new Error('NOT_SUPPORTED');
     }
 }

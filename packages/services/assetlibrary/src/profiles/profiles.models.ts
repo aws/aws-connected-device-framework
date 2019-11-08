@@ -9,21 +9,39 @@ import { DirectionStringToArrayMap } from '../data/model';
 import { Device10Resource, Device20Resource, DeviceBaseResource, DeviceItem } from '../devices/devices.models';
 import { Group10Resource, Group20Resource, GroupBaseResource, GroupItem } from '../groups/groups.models';
 
-export class ProfileMixin {
-	profileId: string;
+export class DeviceProfileResource extends DeviceBaseResource {
+    profileId: string;
+}
+export class DeviceProfile10Resource extends Device10Resource {
+    profileId: string;
+}
+export class DeviceProfile20Resource extends Device20Resource {
+    profileId: string;
 }
 
-export interface DeviceProfileResource extends DeviceBaseResource, ProfileMixin {}
-export interface DeviceProfile10Resource extends Device10Resource, ProfileMixin {}
-export interface DeviceProfile20Resource extends Device20Resource, ProfileMixin {}
+export class DeviceProfileItem extends DeviceItem {
+    public constructor(init?:Partial<DeviceProfileItem>) {
+        super(init);
+    }
+    profileId: string;
+}
 
-export interface DeviceProfileItem extends DeviceItem, ProfileMixin {}
+export class GroupProfileResource extends GroupBaseResource {
+    profileId: string;
+}
+export class GroupProfile10Resource extends Group10Resource {
+    profileId: string;
+}
+export class GroupProfile20Resource extends Group20Resource {
+    profileId: string;
+}
 
-export interface GroupProfileResource extends GroupBaseResource, ProfileMixin {}
-export interface GroupProfile10Resource extends Group10Resource, ProfileMixin {}
-export interface GroupProfile20Resource extends Group20Resource, ProfileMixin {}
-
-export interface GroupProfileItem extends GroupItem, ProfileMixin {}
+export class GroupProfileItem extends GroupItem {
+    public constructor(init?:Partial<GroupProfileItem>) {
+        super(init);
+    }
+    profileId: string;
+}
 
 export class ProfileNode extends Node {
 	templateId?: string;

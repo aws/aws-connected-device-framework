@@ -3,13 +3,13 @@
 #
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
-import { Pagination } from './pagination.model';
+import { DirectionStringToArrayMap, StringToArrayMap } from './common.model';
 
 /**
  * Connected Device Framework: Dashboard Facade
  */
 
-export interface Device {
+export interface DeviceBaseResource {
     /**
      * Globally unique id of the Device.
      */
@@ -35,18 +35,6 @@ export interface Device {
      */
     imageUrl?: string;
     /**
-     * Paths of the groups that this Device is associated with.
-     */
-    groups?: { [key: string]: string[]; };
-    /**
-     * Ids of the devices that this Device is associated with.
-     */
-    devices?: { [key: string]: string[]; };
-    /**
-     * The device that this Device is a component of.
-     */
-    assemblyOf?: Device;
-    /**
      * Whether the device is reported as connected or not.
      */
     connected?: boolean;
@@ -55,19 +43,41 @@ export interface Device {
      */
     state?: DeviceState;
     /**
+     * Paths of the groups that this Device is associated with.
+     */
+    assemblyOf?: DeviceBaseResource;
+    /**
      * The device components that this Device is assembled of.
      */
-    components?: Device[];
+    components?: DeviceBaseResource[];
     attributes?: { [key: string]: string | number | boolean; };
+
+	// populated for related resources
+	relation?: string;
+	direction?: string;
 }
 
-export interface BulkDevices {
-    devices: Device[];
+export interface Device10Resource extends DeviceBaseResource {
+	groups?: StringToArrayMap;
+	devices?: StringToArrayMap;
 }
 
-export interface DeviceList {
-    results?: Device[];
-    pagination?: Pagination;
+export interface Device20Resource extends DeviceBaseResource {
+	groups?: DirectionStringToArrayMap;
+
+	devices?: DirectionStringToArrayMap;
+}
+
+export interface BulkDevicesResource {
+    devices: DeviceBaseResource[];
+}
+
+export interface DeviceResourceList {
+	results: DeviceBaseResource[];
+	pagination?: {
+		offset:number;
+		count: number;
+	};
 }
 
 export enum DeviceState {
@@ -77,7 +87,7 @@ export enum DeviceState {
     Retired = 'retired'
 }
 
-export class BulkDevicesResult {
+export interface BulkDevicesResult {
     success: number;
     failed: number;
     total: number;
