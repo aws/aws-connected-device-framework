@@ -67,7 +67,7 @@ function buildSearchRequest(data:TableDefinition):SearchRequestModel {
     return searchRequest;
 }
 
-When('I getSearchService() with following attributes:', async function (data:TableDefinition) {
+When('I search with following attributes:', async function (data:TableDefinition) {
     const searchRequest = buildSearchRequest(data);
 
     try {
@@ -81,7 +81,7 @@ When('I getSearchService() with following attributes:', async function (data:Tab
     }
 });
 
-When('I getSearchService() with summary with following attributes:', async function (data:TableDefinition) {
+When('I search with summary with following attributes:', async function (data:TableDefinition) {
     const searchRequest = buildSearchRequest(data);
     searchRequest.summarize=true;
 
@@ -95,11 +95,11 @@ When('I getSearchService() with summary with following attributes:', async funct
     }
 });
 
-Then('getSearchService() result contains {int} results', function (total:number) {
+Then('search result contains {int} results', function (total:number) {
     expect((<SearchResultsModel>this[SEARCH_RESULTS]).results.length).eq(total);
 });
 
-Then('getSearchService() result contains device {string}', function (deviceId:string) {
+Then('search result contains device {string}', function (deviceId:string) {
     let found:boolean=false;
     (<SearchResultsModel>this[SEARCH_RESULTS]).results.forEach(item=> {
         if ( (<Device10Resource>item).deviceId===deviceId) {
@@ -110,7 +110,7 @@ Then('getSearchService() result contains device {string}', function (deviceId:st
 
 });
 
-Then('getSearchService() result contains group {string}', function (groupPath:string) {
+Then('search result contains group {string}', function (groupPath:string) {
     let found:boolean=false;
     (<SearchResultsModel>this[SEARCH_RESULTS]).results.forEach(item=> {
         if ( (<Group10Resource>item).groupPath===groupPath) {
@@ -121,7 +121,7 @@ Then('getSearchService() result contains group {string}', function (groupPath:st
 
 });
 
-Then('getSearchService() result contains {int} total', function (total:number) {
+Then('search result contains {int} total', function (total:number) {
     const results = <SearchResultsModel>this[SEARCH_RESULTS];
     if (results.total) {
         expect(results.total).eq(total);

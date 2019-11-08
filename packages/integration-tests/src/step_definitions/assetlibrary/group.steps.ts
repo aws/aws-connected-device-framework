@@ -211,7 +211,7 @@ When('I retrieve {string} device members of {string}', async function (template:
     }
 });
 
-Then('group contains {int} getGroupsService()', async function (total:number) {
+Then('group contains {int} groups', async function (total:number) {
     expect((<GroupResourceList>this['members']).results.length).eq(total);
 });
 
