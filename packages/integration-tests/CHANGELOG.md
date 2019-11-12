@@ -1,3 +1,10 @@
+# [@cdf/integration-tests-v2.0.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/integration-tests-v2.0.0...@cdf/integration-tests-v2.0.1) (2019-11-12)
+
+
+### Bug Fixes
+
+* **assetlibrary:** previous fix had introduced neptune connection issues ([67b4ae7](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/67b4ae7a99557a63601185a4bf8aef889d54846a))
+
 # [@cdf/integration-tests-v2.0.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/integration-tests-v1.2.2...@cdf/integration-tests-v2.0.0) (2019-11-08)
 
 
