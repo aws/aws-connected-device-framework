@@ -3,25 +3,25 @@
 #
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
-import { process } from 'gremlin';
+import { process, structure } from 'gremlin';
 import { injectable, inject } from 'inversify';
 import {logger} from '../utils/logger';
 import {TYPES} from '../di/types';
 import { ProfileNode } from './profiles.models';
 import { NodeAttributeValue } from '../data/node';
 import { TypeCategory } from '../types/constants';
+import { BaseDaoFull } from '../data/base.full.dao';
 
 const __ = process.statics;
 
 @injectable()
-export class ProfilesDaoFull {
-
-    private _g: process.GraphTraversalSource;
+export class ProfilesDaoFull extends BaseDaoFull {
 
     public constructor(
-	    @inject(TYPES.GraphTraversalSourceFactory) graphTraversalSourceFactory: () => process.GraphTraversalSource
+        @inject('neptuneUrl') neptuneUrl: string,
+	    @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph
     ) {
-        this._g = graphTraversalSourceFactory();
+        super(neptuneUrl, graphSourceFactory);
     }
 
     public async create(n:ProfileNode): Promise<string> {
@@ -32,29 +32,33 @@ export class ProfilesDaoFull {
         const labels = n.types.join('::');
 
         /*  create the profile  */
-        const traversal = this._g.V(templateId).as('type').
-            addV(labels).
-                property(process.t.id, profileId);
+        try {
+            const traversal = super.getTraversalSource().V(templateId).as('type').
+                addV(labels).
+                    property(process.t.id, profileId);
 
-        /*  set the profiles attributes  */
-        for (const key of Object.keys(n.attributes)) {
-            if (n.attributes[key]!==undefined) {
-                traversal.property(process.cardinality.single, key, n.attributes[key]);
+            /*  set the profiles attributes  */
+            for (const key of Object.keys(n.attributes)) {
+                if (n.attributes[key]!==undefined) {
+                    traversal.property(process.cardinality.single, key, n.attributes[key]);
+                }
             }
+
+            /*  save any groups  */
+            if (n.groups) {
+                traversal.property(process.cardinality.single, 'groups', JSON.stringify(n.groups));
+            }
+
+            /*  link the profile to the type  */
+            traversal.as('profile').
+                addE('profiles').
+                    from_('profile').to('type');
+
+            // logger.debug(`profiles.full.dao create: traversal:${traversal}`);
+            await traversal.iterate();
+        } finally {
+            super.closeTraversalSource();
         }
-
-        /*  save any groups  */
-        if (n.groups) {
-            traversal.property(process.cardinality.single, 'groups', JSON.stringify(n.groups));
-        }
-
-        /*  link the profile to the type  */
-        traversal.as('profile').
-            addE('profiles').
-                from_('profile').to('type');
-
-        logger.debug(`profiles.full.dao create: traversal:${traversal}`);
-        await traversal.iterate();
 
         logger.debug(`profiles.full.dao create: exit: id:${profileId}`);
         return profileId;
@@ -67,16 +71,21 @@ export class ProfilesDaoFull {
         const id = `profile___${templateId}___${profileId}`;
 
         // assemble the main query
-        const traverser = this._g.V(id).as('profile').
-            out('profiles').as('template').
-            out('super_type').as('category').
-            project('profile','template','category').
-                by(__.select('profile').valueMap().with_(process.withOptions.tokens)).
-                by(__.select('template').valueMap().with_(process.withOptions.tokens)).
-                by(__.select('category').valueMap().with_(process.withOptions.tokens));
+        let result;
+        try {
+            const traverser = super.getTraversalSource().V(id).as('profile').
+                out('profiles').as('template').
+                out('super_type').as('category').
+                project('profile','template','category').
+                    by(__.select('profile').valueMap().with_(process.withOptions.tokens)).
+                    by(__.select('template').valueMap().with_(process.withOptions.tokens)).
+                    by(__.select('category').valueMap().with_(process.withOptions.tokens));
 
-        // execute and retrieve the resutls
-        const result = await traverser.next();
+            // execute and retrieve the resutls
+            result = await traverser.next();
+        } finally {
+            super.closeTraversalSource();
+        }
 
         if (result===undefined || result.value===undefined || result.value===null) {
             logger.debug(`profiles.full.dao get: exit: node: undefined`);
@@ -95,20 +104,24 @@ export class ProfilesDaoFull {
 
         const id = `profile___${n.templateId}___${n.attributes['profileId']}`;
 
-        const traversal = this._g.V(id);
+        try {
+            const traversal = super.getTraversalSource().V(id);
 
-        for (const key of Object.keys(n.attributes)) {
-            const val = n.attributes[key];
-            if (val!==undefined) {
-                if (val===null) {
-                    traversal.properties(key).drop();
-                } else {
-                    traversal.property(process.cardinality.single, key, val);
+            for (const key of Object.keys(n.attributes)) {
+                const val = n.attributes[key];
+                if (val!==undefined) {
+                    if (val===null) {
+                        traversal.properties(key).drop();
+                    } else {
+                        traversal.property(process.cardinality.single, key, val);
+                    }
                 }
             }
-        }
 
-        await traversal.iterate();
+            await traversal.iterate();
+        } finally {
+            super.closeTraversalSource();
+        }
 
         logger.debug(`profiles.full.dao update: exit: id:${id}`);
         return id;
@@ -144,7 +157,11 @@ export class ProfilesDaoFull {
 
         const id = `profile___${templateId}___${profileId}`;
 
-        await this._g.V(id).drop().iterate();
+        try {
+            await super.getTraversalSource().V(id).drop().iterate();
+        } finally {
+            super.closeTraversalSource();
+        }
 
         logger.debug(`profiles.full.dao delete: exit`);
     }
@@ -154,15 +171,20 @@ export class ProfilesDaoFull {
 
         const id = `type___${templateId}`;
 
-        const traverser = this._g.V(id).as('template').
-            out('super_type').as('category').
-            select('template').in_('profiles').as('profiles').
-            project('profiles','template','category').
-                by(__.select('profiles').valueMap().with_(process.withOptions.tokens).fold()).
-                by(__.select('template').valueMap().with_(process.withOptions.tokens)).
-                by(__.select('category').valueMap().with_(process.withOptions.tokens));
+        let result;
+        try {
+            const traverser = super.getTraversalSource().V(id).as('template').
+                out('super_type').as('category').
+                select('template').in_('profiles').as('profiles').
+                project('profiles','template','category').
+                    by(__.select('profiles').valueMap().with_(process.withOptions.tokens).fold()).
+                    by(__.select('template').valueMap().with_(process.withOptions.tokens)).
+                    by(__.select('category').valueMap().with_(process.withOptions.tokens));
 
-        const result = await traverser.next();
+            result = await traverser.next();
+        } finally {
+            super.closeTraversalSource();
+        }
 
         logger.debug(`profiles.full.dao get: results: ${JSON.stringify(result)}`);
 

@@ -389,8 +389,9 @@ declare module 'gremlin' {
     }
 
     export namespace driver {
+
         export class RemoteConnection {
-            constructor(url: string, xxx:any);
+            constructor(url: string, options:any);
         }
 
         export class RemoteTraversal extends process.Traversal {
@@ -402,7 +403,7 @@ declare module 'gremlin' {
         }
 
         export class DriverRemoteConnection extends RemoteConnection {
-
+            close():Promise<void>;
         }
     }
 }

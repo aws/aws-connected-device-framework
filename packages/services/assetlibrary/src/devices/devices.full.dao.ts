@@ -3,26 +3,26 @@
 #
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
-import { process } from 'gremlin';
+import { process, structure } from 'gremlin';
 import { injectable, inject } from 'inversify';
 import {logger} from '../utils/logger';
 import {TYPES} from '../di/types';
 import {Node} from '../data/node';
 import { FullAssembler, NodeDto } from '../data/full.assembler';
 import { ModelAttributeValue, DirectionStringToArrayMap } from '../data/model';
+import { BaseDaoFull } from '../data/base.full.dao';
 
 const __ = process.statics;
 
 @injectable()
-export class DevicesDaoFull {
-
-    private _g: process.GraphTraversalSource;
+export class DevicesDaoFull extends BaseDaoFull {
 
     public constructor(
+        @inject('neptuneUrl') neptuneUrl: string,
         @inject(TYPES.FullAssembler) private fullAssembler: FullAssembler,
-	    @inject(TYPES.GraphTraversalSourceFactory) graphTraversalSourceFactory: () => process.GraphTraversalSource
+	    @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph
     ) {
-        this._g = graphTraversalSourceFactory();
+        super(neptuneUrl, graphSourceFactory);
     }
 
     public async listRelated(deviceId: string, relationship: string, direction:string, template:string, filter:{ [key: string] : ModelAttributeValue}, offset:number, count:number) : Promise<Node> {
@@ -51,34 +51,39 @@ export class DevicesDaoFull {
         connectedVertices.dedup().valueMap().with_(process.withOptions.tokens).fold();
 
         // assemble the main query
-        const traverser = this._g.V(id).as('device');
+        let results;
+        try {
+            const traversal = super.getTraversalSource().V(id).as('device');
 
-        if (filter!==undefined && filter!==null) {
-            Object.keys(filter).forEach(k=> {
-                traverser.has(k, filter[k]);
-            });
+            if (filter!==undefined && filter!==null) {
+                Object.keys(filter).forEach(k=> {
+                    traversal.has(k, filter[k]);
+                });
+            }
+
+            traversal.project('object','pathsIn','pathsOut','Es','Vs').
+                by(__.valueMap().with_(process.withOptions.tokens)).
+                by(__.inE().otherV().path().by(process.t.id).fold()).
+                by(__.outE().otherV().path().by(process.t.id).fold()).
+                by(connectedEdges).
+                by(connectedVertices);
+
+            // apply pagination
+            if (offset!==undefined && count!==undefined) {
+                // note: workaround for weird typescript issue. even though offset/count are declared as numbers
+                // throughout, they are being interpreted as strings within gremlin, therefore need to force to int beforehand
+                const offsetAsInt = parseInt(offset.toString(),0);
+                const countAsInt = parseInt(count.toString(),0);
+                traversal.range(offsetAsInt, offsetAsInt + countAsInt);
+            }
+
+            // execute and retrieve the results
+            // logger.debug(`devices.full.dao listRelatedDevices: traverser: ${traversal}`);
+            results = await traversal.toList();
+            logger.debug(`devices.full.dao listRelatedDevices: results: ${JSON.stringify(results)}`);
+        } finally {
+            super.closeTraversalSource();
         }
-
-        traverser.project('object','pathsIn','pathsOut','Es','Vs').
-            by(__.valueMap().with_(process.withOptions.tokens)).
-            by(__.inE().otherV().path().by(process.t.id).fold()).
-            by(__.outE().otherV().path().by(process.t.id).fold()).
-            by(connectedEdges).
-            by(connectedVertices);
-
-        // apply pagination
-        if (offset!==undefined && count!==undefined) {
-            // note: workaround for weird typescript issue. even though offset/count are declared as numbers
-            // throughout, they are being interpreted as strings within gremlin, therefore need to force to int beforehand
-            const offsetAsInt = parseInt(offset.toString(),0);
-            const countAsInt = parseInt(count.toString(),0);
-            traverser.range(offsetAsInt, offsetAsInt + countAsInt);
-        }
-
-        // execute and retrieve the results
-        logger.debug(`devices.full.dao listRelatedDevices: traverser: ${traverser}`);
-        const results = await traverser.toList();
-        logger.debug(`devices.full.dao listRelatedDevices: results: ${JSON.stringify(results)}`);
 
         if (results===undefined || results.length===0) {
             logger.debug(`devices.full.dao listRelatedDevices: exit: node: undefined`);
@@ -130,23 +135,28 @@ export class DevicesDaoFull {
             __.valueMap('state', 'deviceId', ...attributes).with_(process.withOptions.tokens);
 
         // assemble the main query
-        const traverser = this._g.V(ids).as('device');
-        if (connectedEdges!==undefined) {
-            traverser.project('object','pathsIn','pathsOut','Es','Vs').
-                by(deviceValueMap).
-                by(__.inE().otherV().path().by(process.t.id).fold()).
-                by(__.outE().otherV().path().by(process.t.id).fold()).
-                by(connectedEdges).
-                by(connectedVertices);
-        } else {
-            traverser.project('object','paths').
-                by(deviceValueMap).
-                by(__.bothE().otherV().path().by(process.t.id).fold());
-        }
+        let results;
+        try {
+            const traverser = super.getTraversalSource().V(ids).as('device');
+            if (connectedEdges!==undefined) {
+                traverser.project('object','pathsIn','pathsOut','Es','Vs').
+                    by(deviceValueMap).
+                    by(__.inE().otherV().path().by(process.t.id).fold()).
+                    by(__.outE().otherV().path().by(process.t.id).fold()).
+                    by(connectedEdges).
+                    by(connectedVertices);
+            } else {
+                traverser.project('object','paths').
+                    by(deviceValueMap).
+                    by(__.bothE().otherV().path().by(process.t.id).fold());
+            }
 
-        // execute and retrieve the results
-        const results = await traverser.toList();
-        logger.debug(`device.full.dao get: query: ${traverser.toString()}`);
+            // execute and retrieve the results
+            results = await traverser.toList();
+            logger.debug(`device.full.dao get: query: ${traverser.toString()}`);
+        } finally {
+            super.closeTraversalSource();
+        }
 
         if (results===undefined || results.length===0) {
             logger.debug(`device.full.dao get: exit: node: undefined`);
@@ -171,29 +181,17 @@ export class DevicesDaoFull {
         return nodes;
     }
 
-    // public async get(deviceIds:string[], expandComponents:boolean, attributes:string[], includeGroups:boolean): Promise<Node[]> {
-
-    //     logger.debug(`device.full.dao get: in: deviceIds:${deviceIds}, expandComponents:${expandComponents}, attributes:${attributes}, includeGroups:${includeGroups}`);
-
-    //     const ids:string[] = deviceIds.map(d=> `device___${d}`);
-
-    //     // assemble the main query
-    //     const traverser = this._g.V(ids).valueMap().with_(process.withOptions.tokens);
-
-    //     // execute and retrieve the results
-    //     const results = await traverser.toList();
-    //     logger.debug(`device.full.dao get: query: ${traverser.toString()}`);
-    //     logger.debug(`device.full.dao get: results: ${JSON.stringify(results)}`);
-
-    //     return undefined;
-    // }
-
     public async getLabels(deviceId: string): Promise<string[]> {
         logger.debug(`devices.full.dao getLabels: in: deviceId: ${deviceId}`);
 
         const id = 'device___' + deviceId;
 
-        const labelResults = await this._g.V(id).label().toList();
+        let labelResults;
+        try {
+            labelResults = await super.getTraversalSource().V(id).label().toList();
+        } finally {
+            super.closeTraversalSource();
+        }
 
         if (labelResults===undefined || labelResults.length===0) {
             logger.debug('devices.full.dao getLabels: exit: labels:undefined');
@@ -226,81 +224,85 @@ export class DevicesDaoFull {
         const labels = n.types.join('::');
 
         /*  create the device  */
-        const traversal = this._g.addV(labels).
-            property(process.t.id, id);
+        try {
+            const traversal = super.getTraversalSource().addV(labels).
+                property(process.t.id, id);
 
-        /*  set all the device properties  */
-        for (const key of Object.keys(n.attributes)) {
-            if (n.attributes[key]!==undefined) {
-                traversal.property(process.cardinality.single, key, n.attributes[key]);
-            }
-        }
-        traversal.as('device');
-
-        /*  associate with the groups  */
-        if (groups) {
-            if (groups.in) {
-                Object.keys(groups.in).forEach(rel=> {
-                    groups.in[rel].forEach(v=> {
-                        const groupId = `group___${v}`;
-                        traversal.V(groupId).addE(rel).to('device');
-                    });
-                });
-            }
-            if (groups.out) {
-                Object.keys(groups.out).forEach(rel=> {
-                    groups.out[rel].forEach(v=> {
-                        const groupId = `group___${v}`;
-                        traversal.V(groupId).addE(rel).from_('device');
-                    });
-                });
-            }
-        }
-
-        /*  associate with the devices  */
-        if (devices) {
-            if (devices.in) {
-                Object.keys(devices.in).forEach(rel=> {
-                    devices.in[rel].forEach(v=> {
-                        const deviceId = `device___${v}`;
-                        traversal.V(deviceId).addE(rel).to('device');
-                    });
-                });
-            }
-            if (devices.out) {
-                Object.keys(devices.out).forEach(rel=> {
-                    devices.out[rel].forEach(v=> {
-                        const deviceId = `device___${v}`;
-                        traversal.V(deviceId).addE(rel).from_('device');
-                    });
-                });
-            }
-        }
-
-        /*  create the components  */
-        if (components) {
-            components.forEach(c=> {
-                const componentId = (c.attributes['deviceId'] as string);
-                const componentDbId = `${id}___${componentId}`;
-                const componentLabels = c.types.join('::');
-
-                traversal.addV(componentLabels).
-                    property(process.t.id, componentDbId);
-
-                for (const key of Object.keys(c.attributes)) {
-                    if (c.attributes[key]!==undefined) {
-                        traversal.property(process.cardinality.single, key, c.attributes[key]);
-                    }
+            /*  set all the device properties  */
+            for (const key of Object.keys(n.attributes)) {
+                if (n.attributes[key]!==undefined) {
+                    traversal.property(process.cardinality.single, key, n.attributes[key]);
                 }
+            }
+            traversal.as('device');
 
-                traversal.as(componentId).
-                    addE('component_of').from_(componentId).to('device');
+            /*  associate with the groups  */
+            if (groups) {
+                if (groups.in) {
+                    Object.keys(groups.in).forEach(rel=> {
+                        groups.in[rel].forEach(v=> {
+                            const groupId = `group___${v}`;
+                            traversal.V(groupId).addE(rel).to('device');
+                        });
+                    });
+                }
+                if (groups.out) {
+                    Object.keys(groups.out).forEach(rel=> {
+                        groups.out[rel].forEach(v=> {
+                            const groupId = `group___${v}`;
+                            traversal.V(groupId).addE(rel).from_('device');
+                        });
+                    });
+                }
+            }
 
-            });
+            /*  associate with the devices  */
+            if (devices) {
+                if (devices.in) {
+                    Object.keys(devices.in).forEach(rel=> {
+                        devices.in[rel].forEach(v=> {
+                            const deviceId = `device___${v}`;
+                            traversal.V(deviceId).addE(rel).to('device');
+                        });
+                    });
+                }
+                if (devices.out) {
+                    Object.keys(devices.out).forEach(rel=> {
+                        devices.out[rel].forEach(v=> {
+                            const deviceId = `device___${v}`;
+                            traversal.V(deviceId).addE(rel).from_('device');
+                        });
+                    });
+                }
+            }
+
+            /*  create the components  */
+            if (components) {
+                components.forEach(c=> {
+                    const componentId = (c.attributes['deviceId'] as string);
+                    const componentDbId = `${id}___${componentId}`;
+                    const componentLabels = c.types.join('::');
+
+                    traversal.addV(componentLabels).
+                        property(process.t.id, componentDbId);
+
+                    for (const key of Object.keys(c.attributes)) {
+                        if (c.attributes[key]!==undefined) {
+                            traversal.property(process.cardinality.single, key, c.attributes[key]);
+                        }
+                    }
+
+                    traversal.as(componentId).
+                        addE('component_of').from_(componentId).to('device');
+
+                });
+            }
+
+            logger.debug(`devices.full.dao create: traversal:${traversal}`);
+            await traversal.iterate();
+        } finally {
+            super.closeTraversalSource();
         }
-
-        logger.debug(`devices.full.dao create: traversal:${traversal}`);
-        await traversal.iterate();
 
         logger.debug(`devices.full.dao create: exit: id:${id}`);
         return id;
@@ -315,22 +317,26 @@ export class DevicesDaoFull {
         const labels = n.types.join('::');
 
         /*  create the component  */
-        const traversal = this._g.addV(labels).
-            property(process.t.id, componentId);
+        try {
+            const traversal = super.getTraversalSource().addV(labels).
+                property(process.t.id, componentId);
 
-        for (const key of Object.keys(n.attributes)) {
-            if (n.attributes[key]!==undefined) {
-                traversal.property(process.cardinality.single, key, n.attributes[key]);
+            for (const key of Object.keys(n.attributes)) {
+                if (n.attributes[key]!==undefined) {
+                    traversal.property(process.cardinality.single, key, n.attributes[key]);
+                }
             }
+            traversal.as('component');
+
+            /*  add to the parent device  */
+            traversal.V(id).as('device').
+                addE('component_of').from_('component').to('device');
+
+            logger.debug(`devices.full.dao createComponent: traversal:${traversal}`);
+            await traversal.iterate();
+        } finally {
+            super.closeTraversalSource();
         }
-        traversal.as('component');
-
-        /*  add to the parent device  */
-        traversal.V(id).as('device').
-            addE('component_of').from_('component').to('device');
-
-        logger.debug(`devices.full.dao createComponent: traversal:${traversal}`);
-        await traversal.iterate();
 
         logger.debug(`devices.full.dao createComponent: exit: componentId:${componentId}`);
         return componentId;
@@ -342,20 +348,24 @@ export class DevicesDaoFull {
 
         const id = `device___${n.attributes['deviceId']}`;
 
-        const traversal = this._g.V(id);
+        try {
+            const traversal = super.getTraversalSource().V(id);
 
-        for (const key of Object.keys(n.attributes)) {
-            const val = n.attributes[key];
-            if (val!==undefined) {
-                if (val===null) {
-                    traversal.properties(key).drop();
-                } else {
-                    traversal.property(process.cardinality.single, key, val);
+            for (const key of Object.keys(n.attributes)) {
+                const val = n.attributes[key];
+                if (val!==undefined) {
+                    if (val===null) {
+                        traversal.properties(key).drop();
+                    } else {
+                        traversal.property(process.cardinality.single, key, val);
+                    }
                 }
             }
-        }
 
-        await traversal.iterate();
+            await traversal.iterate();
+        } finally {
+            super.closeTraversalSource();
+        }
 
         logger.debug(`devices.full.dao update: exit:`);
 
@@ -366,7 +376,11 @@ export class DevicesDaoFull {
 
         const id = `device___${deviceId}`;
 
-        await this._g.V(id).drop().iterate();
+        try {
+            await super.getTraversalSource().V(id).drop().iterate();
+        } finally {
+            super.closeTraversalSource();
+        }
 
         logger.debug(`devices.full.dao delete: exit`);
     }
@@ -385,11 +399,15 @@ export class DevicesDaoFull {
             targetId = `device___${deviceId}`;
         }
 
-        const result = await this._g.V(targetId).as('target').
-            V(sourceId).as('source').addE(relationship).to('target').
-            iterate();
+        try {
+            const result = await super.getTraversalSource().V(targetId).as('target').
+                V(sourceId).as('source').addE(relationship).to('target').
+                iterate();
 
-        logger.debug(`devices.full.dao attachToGroup: result:${JSON.stringify(result)}`);
+            logger.debug(`devices.full.dao attachToGroup: result:${JSON.stringify(result)}`);
+        } finally {
+            super.closeTraversalSource();
+        }
 
         logger.debug(`devices.full.dao attachToGroup: exit:`);
     }
@@ -408,13 +426,17 @@ export class DevicesDaoFull {
             targetId = `device___${deviceId}`;
         }
 
-        const result = await this._g.V(sourceId).as('source').
-            outE(relationship).as('edge').
-            inV().has(process.t.id, targetId).as('target').
-            select('edge').dedup().drop().
-            iterate();
+        try {
+            const result = await super.getTraversalSource().V(sourceId).as('source').
+                outE(relationship).as('edge').
+                inV().has(process.t.id, targetId).as('target').
+                select('edge').dedup().drop().
+                iterate();
 
-        logger.debug(`devices.full.dao detachFromGroup: result:${JSON.stringify(result)}`);
+            logger.debug(`devices.full.dao detachFromGroup: result:${JSON.stringify(result)}`);
+        } finally {
+            super.closeTraversalSource();
+        }
 
         logger.debug(`devices.full.dao detachFromGroup: exit:`);
     }
@@ -428,11 +450,15 @@ export class DevicesDaoFull {
         const sourceId = `device___${source}`;
         const targetId = `device___${target}`;
 
-        const result = this._g.V(targetId).as('other').
-            V(sourceId).addE(relationship).to('other').
-            iterate();
+        try {
+            const result = await super.getTraversalSource().V(targetId).as('other').
+                V(sourceId).addE(relationship).to('other').
+                iterate();
 
-        logger.debug(`devices.full.dao attachToDevice: result:${JSON.stringify(result)}`);
+            logger.debug(`devices.full.dao attachToDevice: result:${JSON.stringify(result)}`);
+        } finally {
+            super.closeTraversalSource();
+        }
 
         logger.debug(`devices.full.dao attachToDevice: exit:`);
     }
@@ -446,13 +472,17 @@ export class DevicesDaoFull {
         const sourceId = `device___${source}`;
         const targetId = `device___${target}`;
 
-        const result = await this._g.V(sourceId).
-            outE(relationship).as('e').
-            inV().has(process.t.id, targetId).
-            select('e').dedup().drop().
-            iterate();
+        try {
+            const result = await super.getTraversalSource().V(sourceId).
+                outE(relationship).as('e').
+                inV().has(process.t.id, targetId).
+                select('e').dedup().drop().
+                iterate();
 
-        logger.debug(`devices.full.dao detachFromDevice: result:${JSON.stringify(result)}`);
+            logger.debug(`devices.full.dao detachFromDevice: result:${JSON.stringify(result)}`);
+        } finally {
+            super.closeTraversalSource();
+        }
 
         logger.debug(`devices.full.dao detachFromDevice: exit:`);
     }

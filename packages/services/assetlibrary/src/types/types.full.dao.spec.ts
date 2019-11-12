@@ -6,15 +6,15 @@
 import 'reflect-metadata';
 import {TypesDaoFull} from './types.full.dao';
 import { createMockInstance } from 'jest-create-mock-instance';
-import { process } from 'gremlin';
+import { structure } from 'gremlin';
 
 describe('TypesDao', () => {
-    let mockedGraphTraversalSource: jest.Mocked<process.GraphTraversalSource>;
+    let mockedGraph: jest.Mocked<structure.Graph>;
     let instance: TypesDaoFull;
 
     beforeEach(() => {
-        mockedGraphTraversalSource = createMockInstance(process.GraphTraversalSource);
-        instance = new TypesDaoFull(()=> mockedGraphTraversalSource);
+        mockedGraph = createMockInstance(structure.Graph);
+        instance = new TypesDaoFull('neptuneUrl', ()=> mockedGraph);
     });
 
     it('All incoming links removed', async () => {

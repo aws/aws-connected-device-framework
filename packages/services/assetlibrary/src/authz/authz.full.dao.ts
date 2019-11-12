@@ -3,23 +3,23 @@
 #
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
-import { process } from 'gremlin';
+import { process, structure } from 'gremlin';
 import { injectable, inject } from 'inversify';
 import {logger} from '../utils/logger';
 import {TYPES} from '../di/types';
 import { Authorizations } from './authz.full.model';
+import { BaseDaoFull } from '../data/base.full.dao';
 
 const __ = process.statics;
 
 @injectable()
-export class AuthzDaoFull {
-
-    private _g: process.GraphTraversalSource;
+export class AuthzDaoFull extends BaseDaoFull {
 
     public constructor(
-	    @inject(TYPES.GraphTraversalSourceFactory) graphTraversalSourceFactory: () => process.GraphTraversalSource
+        @inject('neptuneUrl') neptuneUrl: string,
+	    @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph
     ) {
-        this._g = graphTraversalSourceFactory();
+        super(neptuneUrl, graphSourceFactory);
     }
 
     public async listAuthorizedHierarchies(deviceIds:string[], groupPaths:string[], hierarchies:string[]) : Promise<Authorizations> {
@@ -34,22 +34,27 @@ export class AuthzDaoFull {
         const ids:string[] = deviceIds.map(d=> `device___${d}`);
         ids.push(...groupPaths.map(g=> `group___${g}`));
 
-        const traverser = this._g.V(ids).as('entity').union(
-                // return an item if the entity exists
-                __.project('entity','exists').
-                    by(__.select('entity').coalesce(__.values('deviceId'),__.values('groupPath'))).
-                    by(__.constant(true)) ,
-                // return an item if the entity is authorized
-                __.local(
-                    __.until(
-                        __.has('groupPath', process.P.within(hierarchies))
-                    ).repeat(__.out()).as('authorizedPath')
-                ).dedup().project('entity','authorizedPath').
-                    by(__.select('entity').coalesce(__.values('deviceId'),__.values('groupPath'))).
-                    by(__.select('authorizedPath').values('groupPath'))
-            );
+        let results;
+        try {
+            const traverser = super.getTraversalSource().V(ids).as('entity').union(
+                    // return an item if the entity exists
+                    __.project('entity','exists').
+                        by(__.select('entity').coalesce(__.values('deviceId'),__.values('groupPath'))).
+                        by(__.constant(true)) ,
+                    // return an item if the entity is authorized
+                    __.local(
+                        __.until(
+                            __.has('groupPath', process.P.within(hierarchies))
+                        ).repeat(__.out()).as('authorizedPath')
+                    ).dedup().project('entity','authorizedPath').
+                        by(__.select('entity').coalesce(__.values('deviceId'),__.values('groupPath'))).
+                        by(__.select('authorizedPath').values('groupPath'))
+                );
 
-        const results = await traverser.toList();
+            results = await traverser.toList();
+        } finally {
+            super.closeTraversalSource();
+        }
 
         logger.debug(`authz.full.dao listAuthorizedHierarchies: results:${JSON.stringify(results)}`);
 

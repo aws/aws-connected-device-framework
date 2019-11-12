@@ -3,26 +3,31 @@
 #
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
-import { process } from 'gremlin';
+import { process, structure } from 'gremlin';
 import { injectable, inject } from 'inversify';
 import {logger} from '../utils/logger';
 import {TYPES} from '../di/types';
+import { BaseDaoFull } from '../data/base.full.dao';
 
 @injectable()
-export class InitDaoFull {
-
-    private _g: process.GraphTraversalSource;
+export class InitDaoFull extends BaseDaoFull {
 
     public constructor(
-	    @inject(TYPES.GraphTraversalSourceFactory) graphTraversalSourceFactory: () => process.GraphTraversalSource
+        @inject('neptuneUrl') neptuneUrl: string,
+	    @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph
     ) {
-        this._g = graphTraversalSourceFactory();
+        super(neptuneUrl, graphSourceFactory);
     }
 
     public async isInitialized(): Promise<boolean> {
         logger.debug('init.dao isInitialized: in: ');
 
-        const query = await this._g.V('type___device').next();
+        let query;
+        try {
+            query = await super.getTraversalSource().V('type___device').next();
+        } finally {
+            super.closeTraversalSource();
+        }
 
         logger.debug(`init.dao isInitialized: query: ${JSON.stringify(query)}`);
 
@@ -39,16 +44,24 @@ export class InitDaoFull {
     public async initialize(): Promise<void> {
         logger.debug('init.dao initialize: in:');
 
-        await this._g.addV('type').property(process.t.id, 'type___device').
-            addV('type').property(process.t.id, 'type___group').
-            addV('root').property(process.t.id, 'group___/').property('name','/').property('groupPath','/').
-            iterate();
+        try {
+            await super.getTraversalSource().addV('type').property(process.t.id, 'type___device').
+                addV('type').property(process.t.id, 'type___group').
+                addV('root').property(process.t.id, 'group___/').property('name','/').property('groupPath','/').
+                iterate();
+        } finally {
+            super.closeTraversalSource();
+        }
     }
 
     public async applyFixes(): Promise<void> {
         logger.debug('init.dao fixes: in:');
 
-        await this._g.V('group___/').property('groupPath','/').
-            iterate();
+        try {
+            await super.getTraversalSource().V('group___/').property('groupPath','/').
+                iterate();
+        } finally {
+            super.closeTraversalSource();
+        }
     }
 }

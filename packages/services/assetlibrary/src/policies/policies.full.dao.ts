@@ -3,23 +3,23 @@
 #
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
-import { process } from 'gremlin';
+import { process, structure } from 'gremlin';
 import { injectable, inject } from 'inversify';
 import {logger} from '../utils/logger';
 import { PolicyModel, AttachedPolicy, Policy} from './policies.models';
 import { TYPES } from '../di/types';
+import { BaseDaoFull } from '../data/base.full.dao';
 
 const __ = process.statics;
 
 @injectable()
-export class PoliciesDaoFull {
-
-    private _g: process.GraphTraversalSource;
+export class PoliciesDaoFull extends BaseDaoFull {
 
     public constructor(
-	    @inject(TYPES.GraphTraversalSourceFactory) graphTraversalSourceFactory: () => process.GraphTraversalSource
+        @inject('neptuneUrl') neptuneUrl: string,
+	    @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph
     ) {
-        this._g = graphTraversalSourceFactory();
+        super(neptuneUrl, graphSourceFactory);
     }
 
     public async get(policyId: string): Promise<Policy> {
@@ -27,11 +27,16 @@ export class PoliciesDaoFull {
 
         const id = `policy___${policyId.toLowerCase()}`;
 
-        const query = await this._g.V(id).as('policy').
-            project('policy', 'groups').
-                by( __.select('policy').valueMap().with_(process.withOptions.tokens)).
-                by( __.select('policy').out('appliesTo').hasLabel('group').fold()).
-            next();
+        let query;
+        try {
+            query = await super.getTraversalSource().V(id).as('policy').
+                project('policy', 'groups').
+                    by( __.select('policy').valueMap().with_(process.withOptions.tokens)).
+                    by( __.select('policy').out('appliesTo').hasLabel('group').fold()).
+                next();
+        } finally {
+            super.closeTraversalSource();
+        }
 
         logger.debug(`policy.full.dao get: query: ${JSON.stringify(query)}`);
 
@@ -51,19 +56,23 @@ export class PoliciesDaoFull {
 
         const id = `policy___${model.policyId.toLowerCase()}`;
 
-        const traversal = this._g.addV('policy')
-            .property(process.t.id, id)
-            .property('policyId', model.policyId.toLowerCase())
-            .property('type', model.type)
-            .property('description', model.description)
-            .property('document', model.document)
-            .as('policy');
+        try {
+            const traversal = super.getTraversalSource().addV('policy')
+                .property(process.t.id, id)
+                .property('policyId', model.policyId.toLowerCase())
+                .property('type', model.type)
+                .property('description', model.description)
+                .property('document', model.document)
+                .as('policy');
 
-        model.appliesTo.forEach((path,index)=> {
-            this.addCreateAppliesToTraversal(path, index, traversal);
-        });
+            model.appliesTo.forEach((path,index)=> {
+                this.addCreateAppliesToTraversal(path, index, traversal);
+            });
 
-        await traversal.iterate();
+            await traversal.iterate();
+        } finally {
+            super.closeTraversalSource();
+        }
 
         logger.debug(`policies.dao create: exit: id: ${id}`);
         return id;
@@ -87,43 +96,46 @@ export class PoliciesDaoFull {
         const id = `policy___${existing.policyId}`;
 
         /*  update the main policy object  */
-        const traversal = this._g.V(id);
+        try {
+            const traversal = super.getTraversalSource().V(id);
 
-        if (updated.type) {
-            traversal.property(process.cardinality.single, 'type', updated.type.toLowerCase());
+            if (updated.type) {
+                traversal.property(process.cardinality.single, 'type', updated.type.toLowerCase());
+            }
+            if (updated.description) {
+                traversal.property(process.cardinality.single, 'description', updated.description);
+            }
+            if (updated.document) {
+                traversal.property(process.cardinality.single, 'document', updated.document);
+            }
+            traversal.as('policy');
+
+            /*  identfy any changes in the appliesTo relationship  */
+            const changedAppliesTo = this.identifyChangedAppliesTo(existing.appliesTo, updated.appliesTo);
+            logger.debug(`policies.dao update: changedAppliesTo: ${JSON.stringify(changedAppliesTo)}`);
+
+            /*  any new appliesTo we can simply add the step to the traversal  */
+            changedAppliesTo.add.forEach((path,index)=> {
+                this.addCreateAppliesToTraversal(path, index, traversal);
+            });
+
+            /*  as a drop() step terminates a traversal, we need to process all these as part of a single union step as the last step  */
+            const removedAppliesToSteps: process.GraphTraversal[]= [];
+            changedAppliesTo.remove.forEach((path)=> {
+                removedAppliesToSteps.push(this.addRemoveAppliesToTraversal(path));
+            });
+            if (removedAppliesToSteps.length>0) {
+                traversal.local(
+                        __.union(...removedAppliesToSteps)
+                    ).drop();
+            }
+
+            /*  lets execute it  */
+            const query = await traversal.iterate();
+            logger.debug(`policies.dao update: query: ${JSON.stringify(query)}`);
+        } finally {
+            super.closeTraversalSource();
         }
-        if (updated.description) {
-            traversal.property(process.cardinality.single, 'description', updated.description);
-        }
-        if (updated.document) {
-            traversal.property(process.cardinality.single, 'document', updated.document);
-        }
-        traversal.as('policy');
-
-        /*  identfy any changes in the appliesTo relationship  */
-        const changedAppliesTo = this.identifyChangedAppliesTo(existing.appliesTo, updated.appliesTo);
-        logger.debug(`policies.dao update: changedAppliesTo: ${JSON.stringify(changedAppliesTo)}`);
-
-        /*  any new appliesTo we can simply add the step to the traversal  */
-        changedAppliesTo.add.forEach((path,index)=> {
-            this.addCreateAppliesToTraversal(path, index, traversal);
-        });
-
-        /*  as a drop() step terminates a traversal, we need to process all these as part of a single union step as the last step  */
-        const removedAppliesToSteps: process.GraphTraversal[]= [];
-        changedAppliesTo.remove.forEach((path)=> {
-            removedAppliesToSteps.push(this.addRemoveAppliesToTraversal(path));
-        });
-        if (removedAppliesToSteps.length>0) {
-            traversal.local(
-                    __.union(...removedAppliesToSteps)
-                ).drop();
-        }
-
-        /*  lets execute it  */
-        const query = await traversal.iterate();
-
-        logger.debug(`policies.dao update: query: ${JSON.stringify(query)}`);
 
         logger.debug(`policies.dao update: exit: id: ${id}`);
         return id;
@@ -160,7 +172,9 @@ export class PoliciesDaoFull {
 
         const id = `device___${deviceId.toLowerCase()}`;
 
-        const results = await this._g.V(id).as('device')
+        let results;
+        try {
+            results = await super.getTraversalSource().V(id).as('device')
             .union(
                 __.out(),
                 __.out().repeat(__.out('parent').simplePath()).emit()
@@ -171,6 +185,9 @@ export class PoliciesDaoFull {
                 .by( __.select('device').out().hasLabel('group').fold())
                 .by( __.local( __.out('appliesTo').fold())).
             toList();
+        } finally {
+            super.closeTraversalSource();
+        }
 
         const policies: AttachedPolicy[]=[];
         for(const result of results) {
@@ -187,24 +204,29 @@ export class PoliciesDaoFull {
         const ids:string[]=[];
         groupPaths.forEach(v=> ids.push(`group___${v.toLowerCase()}`));
 
-        const traverser = this._g.V(ids).as('groups').
-            union(
-                __.identity(),
-                __.repeat(__.out('parent').simplePath()).emit()
-            ).as('parentGroups').
-            in_('appliesTo').hasLabel('policy');
+        let results;
+        try {
+            const traverser = super.getTraversalSource().V(ids).as('groups').
+                union(
+                    __.identity(),
+                    __.repeat(__.out('parent').simplePath()).emit()
+                ).as('parentGroups').
+                in_('appliesTo').hasLabel('policy');
 
-        if (type!==undefined) {
-            traverser.has('type',type);
+            if (type!==undefined) {
+                traverser.has('type',type);
+            }
+
+            traverser.dedup().as('policies')
+                .project('policy', 'groups', 'policyGroups')
+                    .by( __.identity().valueMap().with_(process.withOptions.tokens))
+                    .by( __.select('groups').fold())
+                    .by( __.local( __.out('appliesTo').fold()));
+
+            results = await traverser.toList();
+        } finally {
+            super.closeTraversalSource();
         }
-
-        traverser.dedup().as('policies')
-            .project('policy', 'groups', 'policyGroups')
-                .by( __.identity().valueMap().with_(process.withOptions.tokens))
-                .by( __.select('groups').fold())
-                .by( __.local( __.out('appliesTo').fold()));
-
-        const results = await traverser.toList();
 
         const policies: AttachedPolicy[]=[];
         for(const result of results) {
@@ -218,25 +240,30 @@ export class PoliciesDaoFull {
     public async listPolicies(type:string, offset:number, count:number): Promise<Policy[]> {
         logger.debug(`policies.dao listPolicies: type:${type}, offset:${offset}, count:${count}`);
 
-        const traverser = this._g.V().hasLabel('policy');
-        if (type!==undefined) {
-            traverser.has('type', type.toLowerCase());
-        }
-        traverser.as('policies').
-            project('policy', 'groups').
-                by( __.valueMap().with_(process.withOptions.tokens)).
-                by( __.out('appliesTo').hasLabel('group').fold());
+        let results;
+        try {
+            const traverser = super.getTraversalSource().V().hasLabel('policy');
+            if (type!==undefined) {
+                traverser.has('type', type.toLowerCase());
+            }
+            traverser.as('policies').
+                project('policy', 'groups').
+                    by( __.valueMap().with_(process.withOptions.tokens)).
+                    by( __.out('appliesTo').hasLabel('group').fold());
 
-        // apply pagination
-        if (offset!==undefined && count!==undefined) {
-            // note: workaround for wierd typescript issue. even though offset/count are declared as numbers
-            // througout, they are being interpreted as strings within gremlin, therefore need to force to int beforehand
-            const offsetAsInt = parseInt(offset.toString(),0);
-            const countAsInt = parseInt(count.toString(),0);
-            traverser.range(offsetAsInt, offsetAsInt + countAsInt);
-        }
+            // apply pagination
+            if (offset!==undefined && count!==undefined) {
+                // note: workaround for wierd typescript issue. even though offset/count are declared as numbers
+                // througout, they are being interpreted as strings within gremlin, therefore need to force to int beforehand
+                const offsetAsInt = parseInt(offset.toString(),0);
+                const countAsInt = parseInt(count.toString(),0);
+                traverser.range(offsetAsInt, offsetAsInt + countAsInt);
+            }
 
-        const results = await traverser.toList();
+            results = await traverser.toList();
+        } finally {
+            super.closeTraversalSource();
+        }
 
         logger.debug(`results: ${JSON.stringify(results)}`);
 
@@ -254,7 +281,11 @@ export class PoliciesDaoFull {
 
         const dbId = `policy___${policyId.toLowerCase()}`;
 
-        await this._g.V(dbId).drop().next();
+        try {
+            await super.getTraversalSource().V(dbId).drop().next();
+        } finally {
+            super.closeTraversalSource();
+        }
 
         logger.debug(`policies.dao delete: exit`);
     }

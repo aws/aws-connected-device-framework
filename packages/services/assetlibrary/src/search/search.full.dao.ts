@@ -3,26 +3,26 @@
 #
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
-import { process } from 'gremlin';
+import { process, structure } from 'gremlin';
 import { injectable, inject } from 'inversify';
 import {logger} from '../utils/logger';
 import {Node} from '../data/node';
 import {TYPES} from '../di/types';
 import { SearchRequestModel, SearchRequestFilterDirection, SearchRequestFilter, SearchRequestFacet, FacetResults } from './search.models';
 import {NodeAssembler} from '../data/assembler';
+import { BaseDaoFull } from '../data/base.full.dao';
 
 const __ = process.statics;
 
 @injectable()
-export class SearchDaoFull {
-
-    private _g: process.GraphTraversalSource;
+export class SearchDaoFull extends BaseDaoFull {
 
     public constructor(
+        @inject('neptuneUrl') neptuneUrl: string,
         @inject(TYPES.NodeAssembler) private assembler:NodeAssembler,
-	    @inject(TYPES.GraphTraversalSourceFactory) graphTraversalSourceFactory: () => process.GraphTraversalSource
+	    @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph
     ) {
-        this._g = graphTraversalSourceFactory();
+        super(neptuneUrl, graphSourceFactory);
     }
 
     private buildSearchTraverser(request: SearchRequestModel, authorizedPaths:string[], offset?:number, count?:number) : process.GraphTraversal {
@@ -32,89 +32,93 @@ export class SearchDaoFull {
         const filters: process.GraphTraversal[]= [];
 
         // if a path is provided, that becomes the starting point
-        let traverser: process.GraphTraversal;
-        if (request.ancestorPath!==undefined) {
-            const ancestorId = `group___${request.ancestorPath}`;
-            traverser = this._g.V(ancestorId).
-                repeat(__.in_()).emit().as('a');
-        } else {
-            traverser = this._g.V().as('a');
-        }
+        try {
+            let traverser: process.GraphTraversal;
+            if (request.ancestorPath!==undefined) {
+                const ancestorId = `group___${request.ancestorPath}`;
+                traverser = super.getTraversalSource().V(ancestorId).
+                    repeat(__.in_()).emit().as('a');
+            } else {
+                traverser = super.getTraversalSource().V().as('a');
+            }
 
-        // if authz is enabled, only return results that the user is authorized to view
-        if (authorizedPaths!==undefined && authorizedPaths.length>0) {
-            const authorizedPathIds = authorizedPaths.map(p=> `group___${p}`);
-            filters.push(__.as('a').until(__.hasId(...authorizedPathIds)).repeat(__.out()));
-        }
+            // if authz is enabled, only return results that the user is authorized to view
+            if (authorizedPaths!==undefined && authorizedPaths.length>0) {
+                const authorizedPathIds = authorizedPaths.map(p=> `group___${p}`);
+                filters.push(__.as('a').until(__.hasId(...authorizedPathIds)).repeat(__.out()));
+            }
 
-        // construct all the filters that we will eventually pass to match()
-        if (request.types!==undefined) {
-            request.types.forEach(t=> filters.push(
-                __.as('a').hasLabel(t)) );
-        }
+            // construct all the filters that we will eventually pass to match()
+            if (request.types!==undefined) {
+                request.types.forEach(t=> filters.push(
+                    __.as('a').hasLabel(t)) );
+            }
 
-        if (request.eq!==undefined) {
-            request.eq.forEach(f=> {
-                const filter = this.buildSearchFilterBase(f);
-                filters.push(filter.has(f.field, f.value));
-            });
-        }
-        if (request.neq!==undefined) {
-            request.neq.forEach(f=> {
-                const filter = this.buildSearchFilterBase(f);
-                filters.push(filter.not(__.has(f.field, f.value)));
-            });
-        }
-        if (request.lt!==undefined) {
-            request.lt.forEach(f=> {
-                const filter = this.buildSearchFilterBase(f);
-                filters.push(filter.values(f.field).is(process.P.lt(Number(f.value))));
-            });
-        }
-        if (request.lte!==undefined) {
-            request.lte.forEach(f=> {
-                const filter = this.buildSearchFilterBase(f);
-                filters.push(filter.values(f.field).is(process.P.lte(Number(f.value))));
-            });
-        }
-        if (request.gt!==undefined) {
-            request.gt.forEach(f=> {
-                const filter = this.buildSearchFilterBase(f);
-                filters.push(filter.values(f.field).is(process.P.gt(Number(f.value))));
-            });
-        }
-        if (request.gte!==undefined) {
-            request.gte.forEach(f=> {
-                const filter = this.buildSearchFilterBase(f);
-                filters.push(filter.values(f.field).is(process.P.gte(Number(f.value))));
-            });
-        }
-        if (request.startsWith!==undefined) {
-            request.startsWith.forEach(f=> {
-                const startValue = <string> f.value;
-                const nextCharCode = String.fromCharCode( startValue.charCodeAt(startValue.length-1) + 1);
-                const endValue = this.setCharAt(startValue, startValue.length-1, nextCharCode);
+            if (request.eq!==undefined) {
+                request.eq.forEach(f=> {
+                    const filter = this.buildSearchFilterBase(f);
+                    filters.push(filter.has(f.field, f.value));
+                });
+            }
+            if (request.neq!==undefined) {
+                request.neq.forEach(f=> {
+                    const filter = this.buildSearchFilterBase(f);
+                    filters.push(filter.not(__.has(f.field, f.value)));
+                });
+            }
+            if (request.lt!==undefined) {
+                request.lt.forEach(f=> {
+                    const filter = this.buildSearchFilterBase(f);
+                    filters.push(filter.values(f.field).is(process.P.lt(Number(f.value))));
+                });
+            }
+            if (request.lte!==undefined) {
+                request.lte.forEach(f=> {
+                    const filter = this.buildSearchFilterBase(f);
+                    filters.push(filter.values(f.field).is(process.P.lte(Number(f.value))));
+                });
+            }
+            if (request.gt!==undefined) {
+                request.gt.forEach(f=> {
+                    const filter = this.buildSearchFilterBase(f);
+                    filters.push(filter.values(f.field).is(process.P.gt(Number(f.value))));
+                });
+            }
+            if (request.gte!==undefined) {
+                request.gte.forEach(f=> {
+                    const filter = this.buildSearchFilterBase(f);
+                    filters.push(filter.values(f.field).is(process.P.gte(Number(f.value))));
+                });
+            }
+            if (request.startsWith!==undefined) {
+                request.startsWith.forEach(f=> {
+                    const startValue = <string> f.value;
+                    const nextCharCode = String.fromCharCode( startValue.charCodeAt(startValue.length-1) + 1);
+                    const endValue = this.setCharAt(startValue, startValue.length-1, nextCharCode);
 
-                const filter = this.buildSearchFilterBase(f);
-                filters.push(filter.has(f.field, process.P.between(startValue, endValue)));
-            });
-        }
+                    const filter = this.buildSearchFilterBase(f);
+                    filters.push(filter.has(f.field, process.P.between(startValue, endValue)));
+                });
+            }
 
-        if (request.endsWith!==undefined) {
-            throw new Error('NOT_SUPPORTED');
-        }
-        if (request.contains!==undefined) {
-            throw new Error('NOT_SUPPORTED');
-        }
+            if (request.endsWith!==undefined) {
+                throw new Error('NOT_SUPPORTED');
+            }
+            if (request.contains!==undefined) {
+                throw new Error('NOT_SUPPORTED');
+            }
 
-        // apply the match criteria
-        if (filters.length>0) {
-            traverser.match(...filters).dedup();
+            // apply the match criteria
+            if (filters.length>0) {
+                traverser.match(...filters).dedup();
+            }
+
+            // logger.debug(`search.full.dao buildSearchTraverser: traverser: ${JSON.stringify(traverser.toString())}`);
+
+            return traverser;
+        } finally {
+            super.closeTraversalSource();
         }
-
-        logger.debug(`search.full.dao buildSearchTraverser: traverser: ${JSON.stringify(traverser.toString())}`);
-
-        return traverser;
     }
 
     private buildSearchFilterBase(filter:SearchRequestFilter|SearchRequestFacet) : process.GraphTraversal {

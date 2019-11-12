@@ -3,26 +3,26 @@
 #
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
-import { process } from 'gremlin';
+import { process, structure } from 'gremlin';
 import { injectable, inject } from 'inversify';
 import {logger} from '../utils/logger';
 import {TYPES} from '../di/types';
 import {Node} from '../data/node';
 import { FullAssembler, NodeDto } from '../data/full.assembler';
 import { ModelAttributeValue, DirectionStringToArrayMap } from '../data/model';
+import { BaseDaoFull } from '../data/base.full.dao';
 
 const __ = process.statics;
 
 @injectable()
-export class GroupsDaoFull {
-
-    private _g: process.GraphTraversalSource;
+export class GroupsDaoFull extends BaseDaoFull {
 
     public constructor(
+        @inject('neptuneUrl') neptuneUrl: string,
         @inject(TYPES.FullAssembler) private fullAssembler: FullAssembler,
-	    @inject(TYPES.GraphTraversalSourceFactory) graphTraversalSourceFactory: () => process.GraphTraversalSource
+	    @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph
     ) {
-        this._g = graphTraversalSourceFactory();
+        super(neptuneUrl, graphSourceFactory);
     }
 
     public async get(groupPath: string): Promise<Node> {
@@ -34,14 +34,19 @@ export class GroupsDaoFull {
          * return the group, but when retrieving linked entities we need to retrieve
          * all groups exluding linked via 'parent' and ignore linked devices
          */
-        const result = await this._g.V(id).as('object').
-            project('object','pathsIn','pathsOut','Es','Vs').
-                by(__.valueMap().with_(process.withOptions.tokens)).
-                by(__.inE().otherV().hasLabel('group').path().by(process.t.id).fold()).
-                by(__.outE().not(__.hasLabel('parent')).otherV().hasLabel('group').path().by(process.t.id).fold()).
-                by(__.bothE().where(__.otherV().hasLabel('group')).valueMap().with_(process.withOptions.tokens).fold()).
-                by(__.bothE().otherV().hasLabel('group').dedup().valueMap().with_(process.withOptions.tokens).fold()).
-            next();
+        let result;
+        try {
+            result = await super.getTraversalSource().V(id).as('object').
+                project('object','pathsIn','pathsOut','Es','Vs').
+                    by(__.valueMap().with_(process.withOptions.tokens)).
+                    by(__.inE().otherV().hasLabel('group').path().by(process.t.id).fold()).
+                    by(__.outE().not(__.hasLabel('parent')).otherV().hasLabel('group').path().by(process.t.id).fold()).
+                    by(__.bothE().where(__.otherV().hasLabel('group')).valueMap().with_(process.withOptions.tokens).fold()).
+                    by(__.bothE().otherV().hasLabel('group').dedup().valueMap().with_(process.withOptions.tokens).fold()).
+                next();
+        } finally {
+            super.closeTraversalSource();
+        }
 
         logger.debug(`groups.full.dao get: query: ${JSON.stringify(result)}`);
 
@@ -68,7 +73,12 @@ export class GroupsDaoFull {
 
         const id = 'group___' + groupPath;
 
-        const labelResults = await this._g.V(id).label().toList();
+        let labelResults;
+        try {
+            labelResults = await super.getTraversalSource().V(id).label().toList();
+        } finally {
+            super.closeTraversalSource();
+        }
 
         if (labelResults===undefined || labelResults.length===0) {
             logger.debug('groups.dao getLabels: exit: labels:undefined');
@@ -101,40 +111,44 @@ export class GroupsDaoFull {
         const labels = n.types.join('::');
         const parentId = `group___${n.attributes['parentPath']}`;
 
-        const traversal = this._g.V(parentId).as('parent').
-          addV(labels).
-            property(process.t.id, id);
+        try {
+            const traversal = super.getTraversalSource().V(parentId).as('parent').
+            addV(labels).
+                property(process.t.id, id);
 
-        for (const key of Object.keys(n.attributes)) {
-            if (n.attributes[key]!==undefined) {
-                traversal.property(process.cardinality.single, key, n.attributes[key]);
+            for (const key of Object.keys(n.attributes)) {
+                if (n.attributes[key]!==undefined) {
+                    traversal.property(process.cardinality.single, key, n.attributes[key]);
+                }
             }
+
+            traversal.as('group')
+                .addE('parent').from_('group').to('parent');
+
+                /*  associate with the groups  */
+                if (groups) {
+                    if (groups.in) {
+                        Object.keys(groups.in).forEach(rel=> {
+                            groups.in[rel].forEach(v=> {
+                                const groupId = `group___${v}`;
+                                traversal.V(groupId).addE(rel).to('group');
+                            });
+                        });
+                    }
+                    if (groups.out) {
+                        Object.keys(groups.out).forEach(rel=> {
+                            groups.out[rel].forEach(v=> {
+                                const groupId = `group___${v}`;
+                                traversal.V(groupId).addE(rel).from_('group');
+                            });
+                        });
+                    }
+                }
+
+            await traversal.next();
+        } finally {
+            super.closeTraversalSource();
         }
-
-        traversal.as('group')
-            .addE('parent').from_('group').to('parent');
-
-            /*  associate with the groups  */
-            if (groups) {
-                if (groups.in) {
-                    Object.keys(groups.in).forEach(rel=> {
-                        groups.in[rel].forEach(v=> {
-                            const groupId = `group___${v}`;
-                            traversal.V(groupId).addE(rel).to('group');
-                        });
-                    });
-                }
-                if (groups.out) {
-                    Object.keys(groups.out).forEach(rel=> {
-                        groups.out[rel].forEach(v=> {
-                            const groupId = `group___${v}`;
-                            traversal.V(groupId).addE(rel).from_('group');
-                        });
-                    });
-                }
-            }
-
-        await traversal.next();
 
         logger.debug(`groups.full.dao create: exit: id:${id}`);
         return id;
@@ -146,20 +160,24 @@ export class GroupsDaoFull {
 
         const id = `group___${n.attributes['groupPath'].toString()}`;
 
-        const traversal = this._g.V(id);
+        try {
+            const traversal = super.getTraversalSource().V(id);
 
-        for (const key of Object.keys(n.attributes)) {
-            const val = n.attributes[key];
-            if (val!==undefined) {
-                if (val===null) {
-                    traversal.properties(key).drop();
-                } else {
-                    traversal.property(process.cardinality.single, key, val);
+            for (const key of Object.keys(n.attributes)) {
+                const val = n.attributes[key];
+                if (val!==undefined) {
+                    if (val===null) {
+                        traversal.properties(key).drop();
+                    } else {
+                        traversal.property(process.cardinality.single, key, val);
+                    }
                 }
             }
-        }
 
-        await traversal.next();
+            await traversal.next();
+        } finally {
+            super.closeTraversalSource();
+        }
 
         logger.debug(`groups.full.dao update: exit: id:${id}`);
         return id;
@@ -198,28 +216,33 @@ export class GroupsDaoFull {
         connectedVertices.dedup().valueMap().with_(process.withOptions.tokens).fold();
 
         // assemble the main query
-        const traverser = this._g.V(id).as('object');
+        let results;
+        try {
+            const traverser = super.getTraversalSource().V(id).as('object');
 
-        traverser.project('object','pathsIn','pathsOut','Es','Vs').
-            by(__.valueMap().with_(process.withOptions.tokens)).
-            by(__.inE().otherV().path().by(process.t.id).fold()).
-            by(__.outE().otherV().path().by(process.t.id).fold()).
-            by(connectedEdges).
-            by(connectedVertices);
+            traverser.project('object','pathsIn','pathsOut','Es','Vs').
+                by(__.valueMap().with_(process.withOptions.tokens)).
+                by(__.inE().otherV().path().by(process.t.id).fold()).
+                by(__.outE().otherV().path().by(process.t.id).fold()).
+                by(connectedEdges).
+                by(connectedVertices);
 
-        // apply pagination
-        if (offset!==undefined && count!==undefined) {
-            // note: workaround for weird typescript issue. even though offset/count are declared as numbers
-            // throughout, they are being interpreted as strings within gremlin, therefore need to force to int beforehand
-            const offsetAsInt = parseInt(offset.toString(),0);
-            const countAsInt = parseInt(count.toString(),0);
-            traverser.range(offsetAsInt, offsetAsInt + countAsInt);
+            // apply pagination
+            if (offset!==undefined && count!==undefined) {
+                // note: workaround for weird typescript issue. even though offset/count are declared as numbers
+                // throughout, they are being interpreted as strings within gremlin, therefore need to force to int beforehand
+                const offsetAsInt = parseInt(offset.toString(),0);
+                const countAsInt = parseInt(count.toString(),0);
+                traverser.range(offsetAsInt, offsetAsInt + countAsInt);
+            }
+
+            // execute and retrieve the results
+            // logger.debug(`groups.full.dao listRelatedDevices: traverser: ${traverser}`);
+            results = await traverser.toList();
+            logger.debug(`devices.full.dao listRelatedDevices: results: ${JSON.stringify(results)}`);
+        } finally {
+            super.closeTraversalSource();
         }
-
-        // execute and retrieve the results
-        logger.debug(`groups.full.dao listRelatedDevices: traverser: ${traverser}`);
-        const results = await traverser.toList();
-        logger.debug(`devices.full.dao listRelatedDevices: results: ${JSON.stringify(results)}`);
 
         if (results===undefined || results.length===0) {
             logger.debug(`groups.full.dao listRelatedDevices: exit: node: undefined`);
@@ -250,14 +273,19 @@ export class GroupsDaoFull {
 
         const id = 'group___' + groupPath;
 
-        const results = await this._g.V(id).
-            local(
-                __.union(
-                    __.identity().valueMap().with_(process.withOptions.tokens),
-                    __.repeat(__.out('parent')).
-                        emit().
-                        valueMap().with_(process.withOptions.tokens))).
-            toList();
+        let results;
+        try {
+            results = await super.getTraversalSource().V(id).
+                local(
+                    __.union(
+                        __.identity().valueMap().with_(process.withOptions.tokens),
+                        __.repeat(__.out('parent')).
+                            emit().
+                            valueMap().with_(process.withOptions.tokens))).
+                toList();
+        } finally {
+            super.closeTraversalSource();
+        }
 
         logger.debug(`groups.full.dao getParentGroups: results: ${JSON.stringify(results)}`);
 
@@ -281,7 +309,11 @@ export class GroupsDaoFull {
 
         const dbId = `group___${groupPath}`;
 
-        await this._g.V(dbId).drop().next();
+        try {
+            await super.getTraversalSource().V(dbId).drop().next();
+        } finally {
+            super.closeTraversalSource();
+        }
 
         logger.debug(`groups.full.dao delete: exit`);
     }
@@ -292,11 +324,15 @@ export class GroupsDaoFull {
         const sourceId = `group___${sourceGroupPath}`;
         const targetId = `group___${targetGroupPath}`;
 
-        const result = await this._g.V(targetId).as('target').
-            V(sourceId).as('source').addE(relationship).to('target').
-            iterate();
+        try {
+            const result = await super.getTraversalSource().V(targetId).as('target').
+                V(sourceId).as('source').addE(relationship).to('target').
+                iterate();
 
-        logger.verbose(`groups.full.dao attachToGroup: result:${JSON.stringify(result)}`);
+            logger.verbose(`groups.full.dao attachToGroup: result:${JSON.stringify(result)}`);
+        } finally {
+            super.closeTraversalSource();
+        }
 
         logger.debug(`groups.full.dao attachToGroup: exit:`);
     }
@@ -307,13 +343,17 @@ export class GroupsDaoFull {
         const sourceId = `group___${sourceGroupPath}`;
         const targetId = `group___${targetGroupPath}`;
 
-        const result = await this._g.V(sourceId).as('source').
-            outE(relationship).as('edge').
-            inV().has(process.t.id, targetId).as('target').
-            select('edge').dedup().drop().
-            iterate();
+        try {
+            const result = await super.getTraversalSource().V(sourceId).as('source').
+                outE(relationship).as('edge').
+                inV().has(process.t.id, targetId).as('target').
+                select('edge').dedup().drop().
+                iterate();
 
-        logger.verbose(`groups.full.dao detachFromGroup: result:${JSON.stringify(result)}`);
+            logger.verbose(`groups.full.dao detachFromGroup: result:${JSON.stringify(result)}`);
+        } finally {
+            super.closeTraversalSource();
+        }
 
         logger.debug(`groups.full.dao detachFromGroup: exit:`);
     }

@@ -46,8 +46,8 @@ export const TYPES = {
 
     HttpHeaderUtils: Symbol.for('HttpHeaderUtils'),
 
-    GraphTraversalSource: Symbol.for('GraphTraversalSource'),
-    GraphTraversalSourceFactory: Symbol.for('Factory<GraphTraversalSource>'),
+    GraphSource: Symbol.for('GraphSource'),
+    GraphSourceFactory: Symbol.for('Factory<GraphSource>'),
 
     IotData: Symbol.for('IotData'),
     IotDataFactory: Symbol.for('Factory<IotData>'),

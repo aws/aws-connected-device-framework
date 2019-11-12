@@ -3,7 +3,7 @@
 #
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
-import { process } from 'gremlin';
+import { process, structure } from 'gremlin';
 import { injectable, inject } from 'inversify';
 import {logger} from '../utils/logger';
 import { TYPES } from '../di/types';
@@ -11,18 +11,18 @@ import {TypeModel, TypeVersionModel, TypeRelationsModel, TypeDefinitionStatus } 
 import * as jsonpatch from 'fast-json-patch';
 import { TypeCategory } from './constants';
 import { DirectionStringToArrayMap } from '../data/model';
+import { BaseDaoFull } from '../data/base.full.dao';
 
 const __ = process.statics;
 
 @injectable()
-export class TypesDaoFull {
-
-    private _g: process.GraphTraversalSource;
+export class TypesDaoFull extends BaseDaoFull {
 
     public constructor(
-	    @inject(TYPES.GraphTraversalSourceFactory) graphTraversalSourceFactory: () => process.GraphTraversalSource
+        @inject('neptuneUrl') neptuneUrl: string,
+	    @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph
     ) {
-        this._g = graphTraversalSourceFactory();
+        super(neptuneUrl, graphSourceFactory);
     }
 
     public async get(templateId: string, category: TypeCategory, status: TypeDefinitionStatus): Promise<TypeModel> {
@@ -30,42 +30,48 @@ export class TypesDaoFull {
 
         const dbId = `type___${templateId}`;
 
-        const traverser = this._g.V(dbId).as('type');
+        let result;
+        try {
+            const traverser = super.getTraversalSource().V(dbId).as('type');
 
-        if (category!==undefined) {
-            const superId = `type___${category}`;
-            traverser.out('super_type').has(process.t.id, superId);
+            if (category!==undefined) {
+                const superId = `type___${category}`;
+                traverser.out('super_type').has(process.t.id, superId);
+            }
+
+            // only return published relations when we're looking at published definitions
+            let relationsTraversal: process.GraphTraversal;
+            if (status===TypeDefinitionStatus.draft) {
+                relationsTraversal=__.bothE('relationship').valueMap().with_(process.withOptions.tokens).fold();
+            } else {
+                relationsTraversal=__.as('definition').bothE('relationship').
+                    match(
+                        __.as('relationship').otherV().inE('current_definition').has('status',TypeDefinitionStatus.published).as('other')
+                    ).select('relationship').valueMap().with_(process.withOptions.tokens).fold();
+            }
+
+            traverser.
+                select('type').outE('current_definition').has('status',status).inV().as('definition').
+                project('type','definition','relations').
+                    by(__.select('type').valueMap().with_(process.withOptions.tokens)).
+                    by(__.valueMap().with_(process.withOptions.tokens).fold()).
+                    by(relationsTraversal);
+
+            result = await traverser.toList();
+
+        // logger.debug(`types.full.dao get: traverser: ${traverser.toString()}`);
+        } finally {
+            super.closeTraversalSource();
         }
 
-        // only return published relations when we're looking at published definitions
-        let relationsTraversal: process.GraphTraversal;
-        if (status===TypeDefinitionStatus.draft) {
-            relationsTraversal=__.bothE('relationship').valueMap().with_(process.withOptions.tokens).fold();
-        } else {
-            relationsTraversal=__.as('definition').bothE('relationship').
-                match(
-                    __.as('relationship').otherV().inE('current_definition').has('status',TypeDefinitionStatus.published).as('other')
-                ).select('relationship').valueMap().with_(process.withOptions.tokens).fold();
-        }
+        logger.debug(`types.full.dao get: query: ${JSON.stringify(result)}`);
 
-        traverser.
-            select('type').outE('current_definition').has('status',status).inV().as('definition').
-            project('type','definition','relations').
-                by(__.select('type').valueMap().with_(process.withOptions.tokens)).
-                by(__.valueMap().with_(process.withOptions.tokens).fold()).
-                by(relationsTraversal);
-
-        const query = await traverser.toList();
-
-        logger.debug(`types.full.dao get: traverser: ${traverser.toString()}`);
-        logger.debug(`types.full.dao get: query: ${JSON.stringify(query)}`);
-
-        if (query===undefined || query.length===0) {
+        if (result===undefined || result.length===0) {
             logger.debug(`types.full.dao get: exit: query: undefined`);
             return undefined;
         }
 
-        const model = this.toModel(query[0], status, category);
+        const model = this.toModel(result[0], status, category);
         logger.debug(`types.full.dao get: exit: model: ${JSON.stringify(model)}`);
         return model;
 
@@ -87,24 +93,29 @@ export class TypesDaoFull {
                 ).select('relationship').valueMap().with_(process.withOptions.tokens).fold();
         }
 
-        const traverser = this._g.V(superId).
-            inE('super_type').outV().as('a').
-            outE('current_definition').has('status',status).inV().as('def').
-            project('type','definition','relations').
-                by(__.select('a').valueMap().with_(process.withOptions.tokens)).
-                by(__.select('def').valueMap().with_(process.withOptions.tokens).fold()).
-                by(relationsTraversal);
+        let results;
+        try {
+            const traverser = super.getTraversalSource().V(superId).
+                inE('super_type').outV().as('a').
+                outE('current_definition').has('status',status).inV().as('def').
+                project('type','definition','relations').
+                    by(__.select('a').valueMap().with_(process.withOptions.tokens)).
+                    by(__.select('def').valueMap().with_(process.withOptions.tokens).fold()).
+                    by(relationsTraversal);
 
-        // apply pagination
-        if (offset!==undefined && count!==undefined) {
-            // note: workaround for wierd typescript issue. even though offset/count are declared as numbers
-            // througout, they are being interpreted as strings within gremlin, therefore need to force to int beforehand
-            const offsetAsInt = parseInt(offset.toString(),0);
-            const countAsInt = parseInt(count.toString(),0);
-            traverser.range(offsetAsInt, offsetAsInt + countAsInt);
+            // apply pagination
+            if (offset!==undefined && count!==undefined) {
+                // note: workaround for wierd typescript issue. even though offset/count are declared as numbers
+                // througout, they are being interpreted as strings within gremlin, therefore need to force to int beforehand
+                const offsetAsInt = parseInt(offset.toString(),0);
+                const countAsInt = parseInt(count.toString(),0);
+                traverser.range(offsetAsInt, offsetAsInt + countAsInt);
+            }
+
+            results = await traverser.toList();
+        } finally {
+            super.closeTraversalSource();
         }
-
-        const results = await traverser.toList();
 
         logger.debug(`types.full.dao get: results: ${JSON.stringify(results)}`);
 
@@ -130,31 +141,36 @@ export class TypesDaoFull {
         const id = `type___${model.templateId}`;
         const defId = `${id}___v${model.schema.version}`;
 
-        const traverser = this._g.V(superId).as('superType').
-            addV('type').
-                property(process.t.id, id).
-                property(process.cardinality.single, 'templateId', model.templateId).
-                as('type').
-            addV('typeDefinition').
-                property(process.t.id, defId).
-                property(process.cardinality.single, 'version', model.schema.version).
-                property(process.cardinality.single, 'definition', JSON.stringify(model.schema.definition)).
-                property(process.cardinality.single, 'lastUpdated', new Date().toISOString()).
-                as('definition').
-            addE('current_definition').
-                property('status','draft').
-                from_('type').to('definition').
-            addE('super_type').
-                from_('type').to('superType');
+        let result;
+        try {
+            const traverser = super.getTraversalSource().V(superId).as('superType').
+                addV('type').
+                    property(process.t.id, id).
+                    property(process.cardinality.single, 'templateId', model.templateId).
+                    as('type').
+                addV('typeDefinition').
+                    property(process.t.id, defId).
+                    property(process.cardinality.single, 'version', model.schema.version).
+                    property(process.cardinality.single, 'definition', JSON.stringify(model.schema.definition)).
+                    property(process.cardinality.single, 'lastUpdated', new Date().toISOString()).
+                    as('definition').
+                addE('current_definition').
+                    property('status','draft').
+                    from_('type').to('definition').
+                addE('super_type').
+                    from_('type').to('superType');
 
-        this.addCreateRelationStepsToTraversal(model.schema.relations, model.templateId, traverser);
+            this.addCreateRelationStepsToTraversal(model.schema.relations, model.templateId, traverser);
 
-        logger.debug(`types.full.dao create: traverser: ${JSON.stringify(traverser.toString())}`);
-        const query = await traverser.next();
+            // logger.debug(`types.full.dao create: traverser: ${JSON.stringify(traverser.toString())}`);
+            result = await traverser.next();
+        } finally {
+            super.closeTraversalSource();
+        }
 
-        logger.debug(`types.full.dao create: query: ${JSON.stringify(query)}`);
+        logger.debug(`types.full.dao create: query: ${JSON.stringify(result)}`);
 
-        if (query===undefined) {
+        if (result===undefined) {
             logger.debug(`types.full.dao create: exit: query: undefined`);
             return undefined;
         }
@@ -206,50 +222,55 @@ export class TypesDaoFull {
 
         const id = `type___${existing.templateId}`;
 
-        const traverser = this._g.V(id).
-            outE('current_definition').has('status','draft').inV().as('definition').
-                property(process.cardinality.single, 'definition', JSON.stringify(updated.schema.definition)).
-                property(process.cardinality.single, 'lastUpdated', new Date().toISOString());
+        let result;
+        try {
+            const traverser = super.getTraversalSource().V(id).
+                outE('current_definition').has('status','draft').inV().as('definition').
+                    property(process.cardinality.single, 'definition', JSON.stringify(updated.schema.definition)).
+                    property(process.cardinality.single, 'lastUpdated', new Date().toISOString());
 
-        if (updated.schema.relations) {
-            const changedRelations = this.identifyChangedRelations(existing.schema.relations, updated.schema.relations);
-            logger.debug(`changedRelations: ${JSON.stringify(changedRelations)}`);
+            if (updated.schema.relations) {
+                const changedRelations = this.identifyChangedRelations(existing.schema.relations, updated.schema.relations);
+                logger.debug(`changedRelations: ${JSON.stringify(changedRelations)}`);
 
-            Object.keys(changedRelations.add.in).forEach(key=> {
-                changedRelations.add.in[key].forEach(value=> {
-                    this.addCreateInboundRelationStepToTraversal(existing.templateId, value, key, traverser);
+                Object.keys(changedRelations.add.in).forEach(key=> {
+                    changedRelations.add.in[key].forEach(value=> {
+                        this.addCreateInboundRelationStepToTraversal(existing.templateId, value, key, traverser);
+                    });
                 });
-            });
 
-            Object.keys(changedRelations.add.out).forEach(key=> {
-                changedRelations.add.out[key].forEach(value=> {
-                    this.addCreateOutboundRelationStepToTraversal(existing.templateId, value, key, traverser);
+                Object.keys(changedRelations.add.out).forEach(key=> {
+                    changedRelations.add.out[key].forEach(value=> {
+                        this.addCreateOutboundRelationStepToTraversal(existing.templateId, value, key, traverser);
+                    });
                 });
-            });
 
-            const removedRelations: process.GraphTraversal[]= [];
+                const removedRelations: process.GraphTraversal[]= [];
 
-            Object.keys(changedRelations.remove.in).forEach(key=> {
-                changedRelations.remove.in[key].forEach(value=> {
-                    removedRelations.push(__.select('definition').inE('relationship').has('name',key).has('fromTemplate',value));
+                Object.keys(changedRelations.remove.in).forEach(key=> {
+                    changedRelations.remove.in[key].forEach(value=> {
+                        removedRelations.push(__.select('definition').inE('relationship').has('name',key).has('fromTemplate',value));
+                    });
                 });
-            });
 
-            Object.keys(changedRelations.remove.out).forEach(key=> {
-                changedRelations.remove.out[key].forEach(value=> {
-                    removedRelations.push(__.select('definition').outE('relationship').has('name',key).has('toTemplate',value));
+                Object.keys(changedRelations.remove.out).forEach(key=> {
+                    changedRelations.remove.out[key].forEach(value=> {
+                        removedRelations.push(__.select('definition').outE('relationship').has('name',key).has('toTemplate',value));
+                    });
                 });
-            });
 
-            if (removedRelations.length>0) {
-                traverser.select('definition').
-                    local(
-                        __.union(...removedRelations)
-                    ).drop();
+                if (removedRelations.length>0) {
+                    traverser.select('definition').
+                        local(
+                            __.union(...removedRelations)
+                        ).drop();
+                }
             }
-        }
 
-        const result = await traverser.next();
+            result = await traverser.next();
+        } finally {
+            super.closeTraversalSource();
+        }
 
         logger.debug(`types.full.dao updateDraft: result: ${JSON.stringify(result)}`);
 
@@ -416,20 +437,26 @@ export class TypesDaoFull {
         // create the new draft type
         const draftVersion = model.schema.version;
         const defId = `${id}___v${draftVersion}`;
-        const traverser = this._g.V(id).as('type').
-            addV('typeDefinition').
-                property(process.t.id, defId).
-                property(process.cardinality.single, 'version', draftVersion).
-                property(process.cardinality.single, 'definition', JSON.stringify(model.schema.definition)).
-                property(process.cardinality.single, 'lastUpdated', new Date().toISOString()).
-                as('definition').
-            addE('current_definition').
-                property('status','draft').
-                from_('type');
 
-        this.addCreateRelationStepsToTraversal(model.schema.relations, model.templateId, traverser);
+        let result;
+        try {
+            const traverser = super.getTraversalSource().V(id).as('type').
+                addV('typeDefinition').
+                    property(process.t.id, defId).
+                    property(process.cardinality.single, 'version', draftVersion).
+                    property(process.cardinality.single, 'definition', JSON.stringify(model.schema.definition)).
+                    property(process.cardinality.single, 'lastUpdated', new Date().toISOString()).
+                    as('definition').
+                addE('current_definition').
+                    property('status','draft').
+                    from_('type');
 
-        const result = await traverser.next();
+            this.addCreateRelationStepsToTraversal(model.schema.relations, model.templateId, traverser);
+
+            result = await traverser.next();
+        } finally {
+            super.closeTraversalSource();
+        }
 
         logger.debug(`types.full.dao createDraft: result: ${JSON.stringify(result)}`);
 
@@ -458,38 +485,41 @@ export class TypesDaoFull {
 
         // if we don't have a published version (new type), we just need to change the current_definition status
         let query: {value:process.Traverser|process.TraverserValue, done:boolean};
-        if (published===undefined) {
-            query = await this._g.
-                // 1st get a handle on all the vertices/edges that we need to update
-                V(id).
-                // upgrade the draft edge to published
-                outE('current_definition').has('status',TypeDefinitionStatus.draft).
-                    property('status','published').
-                    property('from', now).
-                next();
+        try {
+            if (published===undefined) {
+                query = await super.getTraversalSource().
+                    // 1st get a handle on all the vertices/edges that we need to update
+                    V(id).
+                    // upgrade the draft edge to published
+                    outE('current_definition').has('status',TypeDefinitionStatus.draft).
+                        property('status','published').
+                        property('from', now).
+                    next();
 
-        } else {
-
-            query = await this._g.
-            // 1st get a handle on all the vertices/edges that we need to update
-            V(id).as('type').
-            select('type').outE('current_definition').has('status',TypeDefinitionStatus.published).as('published_edge').
-            inV().as('published').
-            select('type').outE('current_definition').has('status',TypeDefinitionStatus.draft).as('draft_edge').
-            // create a expired_definition edge to identify the previously published definition as expired
-            addE('expired_definition').
-                property('from', __.select('published_edge').values('from')).
-                property('to', now).
-                from_('type').to('published').
-            // upgrade the draft edge to published
-            select('draft_edge').
-                property('status',TypeDefinitionStatus.published).
-                property('from', now).
-            // remove the old published edge
-            select('published_edge').
-                drop().
-            select('type','draft_edge').
-               next();
+            } else {
+                query = await super.getTraversalSource().
+                    // 1st get a handle on all the vertices/edges that we need to update
+                    V(id).as('type').
+                    select('type').outE('current_definition').has('status',TypeDefinitionStatus.published).as('published_edge').
+                    inV().as('published').
+                    select('type').outE('current_definition').has('status',TypeDefinitionStatus.draft).as('draft_edge').
+                    // create a expired_definition edge to identify the previously published definition as expired
+                    addE('expired_definition').
+                        property('from', __.select('published_edge').values('from')).
+                        property('to', now).
+                        from_('type').to('published').
+                    // upgrade the draft edge to published
+                    select('draft_edge').
+                        property('status',TypeDefinitionStatus.published).
+                        property('from', now).
+                    // remove the old published edge
+                    select('published_edge').
+                        drop().
+                    select('type','draft_edge').
+                    next();
+            }
+        } finally {
+            super.closeTraversalSource();
         }
 
         if (query===undefined) {
@@ -505,10 +535,16 @@ export class TypesDaoFull {
 
         const dbId = `type___${templateId}`;
 
-        await this._g.V(dbId).
-            out().hasLabel('typeDefinition').as('typeDefinitions').drop().iterate();
+        try {
+            const g = super.getTraversalSource();
 
-        await this._g.V(dbId).drop().iterate();
+            await g.V(dbId).
+                out().hasLabel('typeDefinition').as('typeDefinitions').drop().iterate();
+
+            await g.V(dbId).drop().iterate();
+        } finally {
+            super.closeTraversalSource();
+        }
 
         logger.debug(`types.full.dao delete: exit`);
     }
@@ -518,33 +554,38 @@ export class TypesDaoFull {
 
         const id = `type___${templateId}`;
 
-        const traverser = this._g.V(id).
-            outE('current_definition').has('status','published').inV().as('def');
+        let result;
+        try {
+            const traverser = super.getTraversalSource().V(id).
+                outE('current_definition').has('status','published').inV().as('def');
 
-        if (relations && relations.in) {
-            Object.keys(relations.in).forEach(rel_name=> {
-                const values = relations.in[rel_name] as string[];
-                values.forEach(value=> {
-                    traverser.select('def').bothE('relationship').
-                        has('name',rel_name).
-                        has('fromTemplate',value);
+            if (relations && relations.in) {
+                Object.keys(relations.in).forEach(rel_name=> {
+                    const values = relations.in[rel_name] as string[];
+                    values.forEach(value=> {
+                        traverser.select('def').bothE('relationship').
+                            has('name',rel_name).
+                            has('fromTemplate',value);
+                    });
                 });
-            });
-        }
-        if (relations && relations.out) {
-            Object.keys(relations.out).forEach(rel_name=> {
-                const values = relations.out[rel_name] as string[];
-                values.forEach(value=> {
-                    traverser.select('def').bothE('relationship').
-                        has('name',rel_name).
-                        has('toTemplate',value);
+            }
+            if (relations && relations.out) {
+                Object.keys(relations.out).forEach(rel_name=> {
+                    const values = relations.out[rel_name] as string[];
+                    values.forEach(value=> {
+                        traverser.select('def').bothE('relationship').
+                            has('name',rel_name).
+                            has('toTemplate',value);
+                    });
                 });
-            });
+            }
+
+            result = await traverser.next();
+        } finally {
+            super.closeTraversalSource();
         }
 
-        const query = await traverser.next();
-
-        const isValid = (query!==undefined && query.value!==undefined);
+        const isValid = (result!==undefined && result.value!==undefined);
         logger.debug(`types.full.dao validateRelationshipsByType: exit: ${isValid}`);
         return isValid;
 
@@ -555,63 +596,69 @@ export class TypesDaoFull {
 
         const id = `type___${templateId.toLowerCase()}`;
 
-        // get a handle on the type
-        const traverser = this._g.V(id).
-            outE('current_definition').has('status','published').inV().as('def');
-
-        // get all known allowed relationships
-        traverser.select('def').bothE('relationship').fold().as('rels');
-
-        // extrapolate the paths from the rels parameter to make our lives easier...
+        let results;
         const rels_paths_in:string[]=[];
         const rels_paths_out:string[]=[];
-        if (relations && relations.in) {
-            Object.keys(relations.in).forEach(rel=> {
-                relations.in[rel].forEach(path=> {
-                    rels_paths_in.push(path.toLowerCase());
+
+        try {
+            // get a handle on the type
+            const traverser = super.getTraversalSource().V(id).
+                outE('current_definition').has('status','published').inV().as('def');
+
+            // get all known allowed relationships
+            traverser.select('def').bothE('relationship').fold().as('rels');
+
+            // extrapolate the paths from the rels parameter to make our lives easier...
+            if (relations && relations.in) {
+                Object.keys(relations.in).forEach(rel=> {
+                    relations.in[rel].forEach(path=> {
+                        rels_paths_in.push(path.toLowerCase());
+                    });
                 });
-            });
-        }
-        if (relations && relations.out) {
-            Object.keys(relations.out).forEach(rel=> {
-                relations.out[rel].forEach(path=> {
-                    rels_paths_out.push(path.toLowerCase());
+            }
+            if (relations && relations.out) {
+                Object.keys(relations.out).forEach(rel=> {
+                    relations.out[rel].forEach(path=> {
+                        rels_paths_out.push(path.toLowerCase());
+                    });
                 });
+            }
+
+            // get a handle to the groups that we're trying to associate with, and project them
+            let index = 1;
+            const groupAliases:string[]=[];
+            rels_paths_in.forEach(path=> {
+                const alias = `g_in_${index}`;
+                traverser.V(`group___${path.toLowerCase()}`).as(alias);
+                groupAliases.push(alias);
+                index++;
             });
+            rels_paths_out.forEach(path=> {
+                const alias = `g_out_${index}`;
+                traverser.V(`group___${path.toLowerCase()}`).as(alias);
+                groupAliases.push(alias);
+                index++;
+            });
+
+            // we need to project all the groups, as well as details of the allowed relationships
+            const projections:string[]=[];
+            projections.push(...groupAliases);
+            projections.push('rels');
+            projections.push('rels_props');
+            traverser.project(...projections);
+
+            // return the details of all the groups to match with the above projections
+            groupAliases.forEach(alias=> traverser.by(__.select(alias)));
+
+            // also return details of the relations (the edge) along with the relations properties (its valuemap)
+            traverser.by(__.select('rels'));
+            traverser.by(__.select('rels').unfold().valueMap().with_(process.withOptions.tokens).fold());
+
+            // execute the query
+            results = await traverser.next();
+        } finally {
+            super.closeTraversalSource();
         }
-
-        // get a handle to the groups that we're trying to associate with, and project them
-        let index = 1;
-        const groupAliases:string[]=[];
-        rels_paths_in.forEach(path=> {
-            const alias = `g_in_${index}`;
-            traverser.V(`group___${path.toLowerCase()}`).as(alias);
-            groupAliases.push(alias);
-            index++;
-        });
-        rels_paths_out.forEach(path=> {
-            const alias = `g_out_${index}`;
-            traverser.V(`group___${path.toLowerCase()}`).as(alias);
-            groupAliases.push(alias);
-            index++;
-        });
-
-        // we need to project all the groups, as well as details of the allowed relationships
-        const projections:string[]=[];
-        projections.push(...groupAliases);
-        projections.push('rels');
-        projections.push('rels_props');
-        traverser.project(...projections);
-
-        // return the details of all the groups to match with the above projections
-        groupAliases.forEach(alias=> traverser.by(__.select(alias)));
-
-        // also return details of the relations (the edge) along with the relations properties (its valuemap)
-        traverser.by(__.select('rels'));
-        traverser.by(__.select('rels').unfold().valueMap().with_(process.withOptions.tokens).fold());
-
-        // execute the query
-        const results = await traverser.next();
 
         // parse the results
         const groupTypes_in:GroupType[]=[];
@@ -708,13 +755,14 @@ export class TypesDaoFull {
         const typesAsLower = types.map(t=> `type___${t.toLowerCase()}`);
 
         try {
-            const count = await this._g.V(...typesAsLower).count().next();
+            const count = await super.getTraversalSource().V(...typesAsLower).count().next();
 
             const isValid = (count.value===types.length);
             logger.debug(`types.full.dao validateLinkedTypesExist: exit: ${isValid}`);
             return isValid;
         } catch (err) {
             logger.error(JSON.stringify(err));
+            super.closeTraversalSource();
         }
 
         return true;
@@ -723,10 +771,20 @@ export class TypesDaoFull {
     public async countInUse(templateId:string): Promise<number> {
         logger.debug(`types.full.dao countInUse: in: templateId:${templateId}`);
 
-        const query = await this._g.V().hasLabel(templateId).count().next();
+        let result;
+        try {
+            result = await super.getTraversalSource().V().hasLabel(templateId).count().next();
+        } finally {
+            super.closeTraversalSource();
+        }
 
-        logger.debug(`types.full.dao countInUse: exit: ${query.value}`);
-        return query.value as number;
+        logger.debug(`types.full.dao countInUse: exit: ${result}`);
+
+        if (result===undefined || result.value===undefined) {
+            return 0;
+        }
+
+        return result.value as number;
 
     }
 
