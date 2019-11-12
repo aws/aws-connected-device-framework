@@ -52,8 +52,9 @@ export class DevicesDaoFull extends BaseDaoFull {
 
         // assemble the main query
         let results;
+        const conn = super.getConnection();
         try {
-            const traversal = super.getTraversalSource().V(id).as('device');
+            const traversal = conn.traversal.V(id).as('device');
 
             if (filter!==undefined && filter!==null) {
                 Object.keys(filter).forEach(k=> {
@@ -82,7 +83,7 @@ export class DevicesDaoFull extends BaseDaoFull {
             results = await traversal.toList();
             logger.debug(`devices.full.dao listRelatedDevices: results: ${JSON.stringify(results)}`);
         } finally {
-            super.closeTraversalSource();
+            conn.close();
         }
 
         if (results===undefined || results.length===0) {
@@ -136,8 +137,9 @@ export class DevicesDaoFull extends BaseDaoFull {
 
         // assemble the main query
         let results;
+        const conn = super.getConnection();
         try {
-            const traverser = super.getTraversalSource().V(ids).as('device');
+            const traverser = conn.traversal.V(ids).as('device');
             if (connectedEdges!==undefined) {
                 traverser.project('object','pathsIn','pathsOut','Es','Vs').
                     by(deviceValueMap).
@@ -155,7 +157,7 @@ export class DevicesDaoFull extends BaseDaoFull {
             results = await traverser.toList();
             logger.debug(`device.full.dao get: query: ${traverser.toString()}`);
         } finally {
-            super.closeTraversalSource();
+            conn.close();
         }
 
         if (results===undefined || results.length===0) {
@@ -187,10 +189,11 @@ export class DevicesDaoFull extends BaseDaoFull {
         const id = 'device___' + deviceId;
 
         let labelResults;
+        const conn = super.getConnection();
         try {
-            labelResults = await super.getTraversalSource().V(id).label().toList();
+            labelResults = await conn.traversal.V(id).label().toList();
         } finally {
-            super.closeTraversalSource();
+            conn.close();
         }
 
         if (labelResults===undefined || labelResults.length===0) {
@@ -224,8 +227,9 @@ export class DevicesDaoFull extends BaseDaoFull {
         const labels = n.types.join('::');
 
         /*  create the device  */
+        const conn = super.getConnection();
         try {
-            const traversal = super.getTraversalSource().addV(labels).
+            const traversal = conn.traversal.addV(labels).
                 property(process.t.id, id);
 
             /*  set all the device properties  */
@@ -301,7 +305,7 @@ export class DevicesDaoFull extends BaseDaoFull {
             logger.debug(`devices.full.dao create: traversal:${traversal}`);
             await traversal.iterate();
         } finally {
-            super.closeTraversalSource();
+            conn.close();
         }
 
         logger.debug(`devices.full.dao create: exit: id:${id}`);
@@ -317,8 +321,9 @@ export class DevicesDaoFull extends BaseDaoFull {
         const labels = n.types.join('::');
 
         /*  create the component  */
+        const conn = super.getConnection();
         try {
-            const traversal = super.getTraversalSource().addV(labels).
+            const traversal = conn.traversal.addV(labels).
                 property(process.t.id, componentId);
 
             for (const key of Object.keys(n.attributes)) {
@@ -335,7 +340,7 @@ export class DevicesDaoFull extends BaseDaoFull {
             logger.debug(`devices.full.dao createComponent: traversal:${traversal}`);
             await traversal.iterate();
         } finally {
-            super.closeTraversalSource();
+            conn.close();
         }
 
         logger.debug(`devices.full.dao createComponent: exit: componentId:${componentId}`);
@@ -348,8 +353,9 @@ export class DevicesDaoFull extends BaseDaoFull {
 
         const id = `device___${n.attributes['deviceId']}`;
 
+        const conn = super.getConnection();
         try {
-            const traversal = super.getTraversalSource().V(id);
+            const traversal = conn.traversal.V(id);
 
             for (const key of Object.keys(n.attributes)) {
                 const val = n.attributes[key];
@@ -364,7 +370,7 @@ export class DevicesDaoFull extends BaseDaoFull {
 
             await traversal.iterate();
         } finally {
-            super.closeTraversalSource();
+            conn.close();
         }
 
         logger.debug(`devices.full.dao update: exit:`);
@@ -376,10 +382,11 @@ export class DevicesDaoFull extends BaseDaoFull {
 
         const id = `device___${deviceId}`;
 
+        const conn = super.getConnection();
         try {
-            await super.getTraversalSource().V(id).drop().iterate();
+            await conn.traversal.V(id).drop().iterate();
         } finally {
-            super.closeTraversalSource();
+            conn.close();
         }
 
         logger.debug(`devices.full.dao delete: exit`);
@@ -399,14 +406,15 @@ export class DevicesDaoFull extends BaseDaoFull {
             targetId = `device___${deviceId}`;
         }
 
+        const conn = super.getConnection();
         try {
-            const result = await super.getTraversalSource().V(targetId).as('target').
+            const result = await conn.traversal.V(targetId).as('target').
                 V(sourceId).as('source').addE(relationship).to('target').
                 iterate();
 
             logger.debug(`devices.full.dao attachToGroup: result:${JSON.stringify(result)}`);
         } finally {
-            super.closeTraversalSource();
+            conn.close();
         }
 
         logger.debug(`devices.full.dao attachToGroup: exit:`);
@@ -426,8 +434,9 @@ export class DevicesDaoFull extends BaseDaoFull {
             targetId = `device___${deviceId}`;
         }
 
+        const conn = super.getConnection();
         try {
-            const result = await super.getTraversalSource().V(sourceId).as('source').
+            const result = await conn.traversal.V(sourceId).as('source').
                 outE(relationship).as('edge').
                 inV().has(process.t.id, targetId).as('target').
                 select('edge').dedup().drop().
@@ -435,7 +444,7 @@ export class DevicesDaoFull extends BaseDaoFull {
 
             logger.debug(`devices.full.dao detachFromGroup: result:${JSON.stringify(result)}`);
         } finally {
-            super.closeTraversalSource();
+            conn.close();
         }
 
         logger.debug(`devices.full.dao detachFromGroup: exit:`);
@@ -450,14 +459,15 @@ export class DevicesDaoFull extends BaseDaoFull {
         const sourceId = `device___${source}`;
         const targetId = `device___${target}`;
 
+        const conn = super.getConnection();
         try {
-            const result = await super.getTraversalSource().V(targetId).as('other').
+            const result = await conn.traversal.V(targetId).as('other').
                 V(sourceId).addE(relationship).to('other').
                 iterate();
 
             logger.debug(`devices.full.dao attachToDevice: result:${JSON.stringify(result)}`);
         } finally {
-            super.closeTraversalSource();
+            conn.close();
         }
 
         logger.debug(`devices.full.dao attachToDevice: exit:`);
@@ -472,8 +482,9 @@ export class DevicesDaoFull extends BaseDaoFull {
         const sourceId = `device___${source}`;
         const targetId = `device___${target}`;
 
+        const conn = super.getConnection();
         try {
-            const result = await super.getTraversalSource().V(sourceId).
+            const result = await conn.traversal.V(sourceId).
                 outE(relationship).as('e').
                 inV().has(process.t.id, targetId).
                 select('e').dedup().drop().
@@ -481,7 +492,7 @@ export class DevicesDaoFull extends BaseDaoFull {
 
             logger.debug(`devices.full.dao detachFromDevice: result:${JSON.stringify(result)}`);
         } finally {
-            super.closeTraversalSource();
+            conn.close();
         }
 
         logger.debug(`devices.full.dao detachFromDevice: exit:`);

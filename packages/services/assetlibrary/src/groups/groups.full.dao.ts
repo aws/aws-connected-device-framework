@@ -35,8 +35,9 @@ export class GroupsDaoFull extends BaseDaoFull {
          * all groups exluding linked via 'parent' and ignore linked devices
          */
         let result;
+        const conn = super.getConnection();
         try {
-            result = await super.getTraversalSource().V(id).as('object').
+            result = await conn.traversal.V(id).as('object').
                 project('object','pathsIn','pathsOut','Es','Vs').
                     by(__.valueMap().with_(process.withOptions.tokens)).
                     by(__.inE().otherV().hasLabel('group').path().by(process.t.id).fold()).
@@ -45,7 +46,7 @@ export class GroupsDaoFull extends BaseDaoFull {
                     by(__.bothE().otherV().hasLabel('group').dedup().valueMap().with_(process.withOptions.tokens).fold()).
                 next();
         } finally {
-            super.closeTraversalSource();
+            conn.close();
         }
 
         logger.debug(`groups.full.dao get: query: ${JSON.stringify(result)}`);
@@ -74,10 +75,11 @@ export class GroupsDaoFull extends BaseDaoFull {
         const id = 'group___' + groupPath;
 
         let labelResults;
+        const conn = super.getConnection();
         try {
-            labelResults = await super.getTraversalSource().V(id).label().toList();
+            labelResults = await conn.traversal.V(id).label().toList();
         } finally {
-            super.closeTraversalSource();
+            conn.close();
         }
 
         if (labelResults===undefined || labelResults.length===0) {
@@ -111,8 +113,9 @@ export class GroupsDaoFull extends BaseDaoFull {
         const labels = n.types.join('::');
         const parentId = `group___${n.attributes['parentPath']}`;
 
+        const conn = super.getConnection();
         try {
-            const traversal = super.getTraversalSource().V(parentId).as('parent').
+            const traversal = conn.traversal.V(parentId).as('parent').
             addV(labels).
                 property(process.t.id, id);
 
@@ -147,7 +150,7 @@ export class GroupsDaoFull extends BaseDaoFull {
 
             await traversal.next();
         } finally {
-            super.closeTraversalSource();
+            conn.close();
         }
 
         logger.debug(`groups.full.dao create: exit: id:${id}`);
@@ -160,8 +163,9 @@ export class GroupsDaoFull extends BaseDaoFull {
 
         const id = `group___${n.attributes['groupPath'].toString()}`;
 
+        const conn = super.getConnection();
         try {
-            const traversal = super.getTraversalSource().V(id);
+            const traversal = conn.traversal.V(id);
 
             for (const key of Object.keys(n.attributes)) {
                 const val = n.attributes[key];
@@ -176,7 +180,7 @@ export class GroupsDaoFull extends BaseDaoFull {
 
             await traversal.next();
         } finally {
-            super.closeTraversalSource();
+            conn.close();
         }
 
         logger.debug(`groups.full.dao update: exit: id:${id}`);
@@ -217,8 +221,9 @@ export class GroupsDaoFull extends BaseDaoFull {
 
         // assemble the main query
         let results;
+        const conn = super.getConnection();
         try {
-            const traverser = super.getTraversalSource().V(id).as('object');
+            const traverser = conn.traversal.V(id).as('object');
 
             traverser.project('object','pathsIn','pathsOut','Es','Vs').
                 by(__.valueMap().with_(process.withOptions.tokens)).
@@ -241,7 +246,7 @@ export class GroupsDaoFull extends BaseDaoFull {
             results = await traverser.toList();
             logger.debug(`devices.full.dao listRelatedDevices: results: ${JSON.stringify(results)}`);
         } finally {
-            super.closeTraversalSource();
+            conn.close();
         }
 
         if (results===undefined || results.length===0) {
@@ -274,8 +279,9 @@ export class GroupsDaoFull extends BaseDaoFull {
         const id = 'group___' + groupPath;
 
         let results;
+        const conn = super.getConnection();
         try {
-            results = await super.getTraversalSource().V(id).
+            results = await conn.traversal.V(id).
                 local(
                     __.union(
                         __.identity().valueMap().with_(process.withOptions.tokens),
@@ -284,7 +290,7 @@ export class GroupsDaoFull extends BaseDaoFull {
                             valueMap().with_(process.withOptions.tokens))).
                 toList();
         } finally {
-            super.closeTraversalSource();
+            conn.close();
         }
 
         logger.debug(`groups.full.dao getParentGroups: results: ${JSON.stringify(results)}`);
@@ -309,10 +315,11 @@ export class GroupsDaoFull extends BaseDaoFull {
 
         const dbId = `group___${groupPath}`;
 
+        const conn = super.getConnection();
         try {
-            await super.getTraversalSource().V(dbId).drop().next();
+            await conn.traversal.V(dbId).drop().next();
         } finally {
-            super.closeTraversalSource();
+            conn.close();
         }
 
         logger.debug(`groups.full.dao delete: exit`);
@@ -324,14 +331,15 @@ export class GroupsDaoFull extends BaseDaoFull {
         const sourceId = `group___${sourceGroupPath}`;
         const targetId = `group___${targetGroupPath}`;
 
+        const conn = super.getConnection();
         try {
-            const result = await super.getTraversalSource().V(targetId).as('target').
+            const result = await conn.traversal.V(targetId).as('target').
                 V(sourceId).as('source').addE(relationship).to('target').
                 iterate();
 
             logger.verbose(`groups.full.dao attachToGroup: result:${JSON.stringify(result)}`);
         } finally {
-            super.closeTraversalSource();
+            conn.close();
         }
 
         logger.debug(`groups.full.dao attachToGroup: exit:`);
@@ -343,8 +351,9 @@ export class GroupsDaoFull extends BaseDaoFull {
         const sourceId = `group___${sourceGroupPath}`;
         const targetId = `group___${targetGroupPath}`;
 
+        const conn = super.getConnection();
         try {
-            const result = await super.getTraversalSource().V(sourceId).as('source').
+            const result = await conn.traversal.V(sourceId).as('source').
                 outE(relationship).as('edge').
                 inV().has(process.t.id, targetId).as('target').
                 select('edge').dedup().drop().
@@ -352,7 +361,7 @@ export class GroupsDaoFull extends BaseDaoFull {
 
             logger.verbose(`groups.full.dao detachFromGroup: result:${JSON.stringify(result)}`);
         } finally {
-            super.closeTraversalSource();
+            conn.close();
         }
 
         logger.debug(`groups.full.dao detachFromGroup: exit:`);

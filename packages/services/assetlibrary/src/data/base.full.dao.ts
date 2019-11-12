@@ -11,7 +11,6 @@ import {TYPES} from '../di/types';
 export class BaseDaoFull {
 
     private _graph: structure.Graph;
-    private _conn: driver.DriverRemoteConnection;
 
     public constructor(
         @inject('neptuneUrl') private neptuneUrl: string,
@@ -20,15 +19,24 @@ export class BaseDaoFull {
         this._graph = graphSourceFactory();
     }
 
-    protected getTraversalSource(): process.GraphTraversalSource {
-        this._conn = new driver.DriverRemoteConnection(this.neptuneUrl, { mimeType: 'application/vnd.gremlin-v2.0+json' });
+    protected getConnection(): NeptuneConnection {
+        const conn = new driver.DriverRemoteConnection(this.neptuneUrl, { mimeType: 'application/vnd.gremlin-v2.0+json' });
 
-        return this._graph.traversal().withRemote(this._conn);
+        return new NeptuneConnection(
+            this._graph.traversal().withRemote(conn),
+            conn
+        );
+    }
+}
+
+export class NeptuneConnection {
+    constructor(private _traversal:process.GraphTraversalSource, private _connection:driver.DriverRemoteConnection) {}
+
+    public get traversal():process.GraphTraversalSource {
+        return this._traversal;
     }
 
-    protected closeTraversalSource() {
-        if (this._conn!==undefined) {
-            this._conn.close();
-        }
+    public close() {
+        this._connection.close();
     }
 }

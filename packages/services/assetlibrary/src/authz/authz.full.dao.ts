@@ -35,8 +35,9 @@ export class AuthzDaoFull extends BaseDaoFull {
         ids.push(...groupPaths.map(g=> `group___${g}`));
 
         let results;
+        const conn = super.getConnection();
         try {
-            const traverser = super.getTraversalSource().V(ids).as('entity').union(
+            const traverser = conn.traversal.V(ids).as('entity').union(
                     // return an item if the entity exists
                     __.project('entity','exists').
                         by(__.select('entity').coalesce(__.values('deviceId'),__.values('groupPath'))).
@@ -53,7 +54,7 @@ export class AuthzDaoFull extends BaseDaoFull {
 
             results = await traverser.toList();
         } finally {
-            super.closeTraversalSource();
+            conn.close();
         }
 
         logger.debug(`authz.full.dao listAuthorizedHierarchies: results:${JSON.stringify(results)}`);

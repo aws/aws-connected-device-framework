@@ -32,14 +32,15 @@ export class SearchDaoFull extends BaseDaoFull {
         const filters: process.GraphTraversal[]= [];
 
         // if a path is provided, that becomes the starting point
+        const conn = super.getConnection();
         try {
             let traverser: process.GraphTraversal;
             if (request.ancestorPath!==undefined) {
                 const ancestorId = `group___${request.ancestorPath}`;
-                traverser = super.getTraversalSource().V(ancestorId).
+                traverser = conn.traversal.V(ancestorId).
                     repeat(__.in_()).emit().as('a');
             } else {
-                traverser = super.getTraversalSource().V().as('a');
+                traverser = conn.traversal.V().as('a');
             }
 
             // if authz is enabled, only return results that the user is authorized to view
@@ -117,7 +118,7 @@ export class SearchDaoFull extends BaseDaoFull {
 
             return traverser;
         } finally {
-            super.closeTraversalSource();
+            conn.close();
         }
     }
 

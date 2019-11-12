@@ -32,8 +32,9 @@ export class ProfilesDaoFull extends BaseDaoFull {
         const labels = n.types.join('::');
 
         /*  create the profile  */
+        const conn = super.getConnection();
         try {
-            const traversal = super.getTraversalSource().V(templateId).as('type').
+            const traversal = conn.traversal.V(templateId).as('type').
                 addV(labels).
                     property(process.t.id, profileId);
 
@@ -57,7 +58,7 @@ export class ProfilesDaoFull extends BaseDaoFull {
             // logger.debug(`profiles.full.dao create: traversal:${traversal}`);
             await traversal.iterate();
         } finally {
-            super.closeTraversalSource();
+            conn.close();
         }
 
         logger.debug(`profiles.full.dao create: exit: id:${profileId}`);
@@ -71,9 +72,10 @@ export class ProfilesDaoFull extends BaseDaoFull {
         const id = `profile___${templateId}___${profileId}`;
 
         // assemble the main query
+        const conn = super.getConnection();
         let result;
         try {
-            const traverser = super.getTraversalSource().V(id).as('profile').
+            const traverser = conn.traversal.V(id).as('profile').
                 out('profiles').as('template').
                 out('super_type').as('category').
                 project('profile','template','category').
@@ -84,7 +86,7 @@ export class ProfilesDaoFull extends BaseDaoFull {
             // execute and retrieve the resutls
             result = await traverser.next();
         } finally {
-            super.closeTraversalSource();
+            conn.close();
         }
 
         if (result===undefined || result.value===undefined || result.value===null) {
@@ -104,8 +106,9 @@ export class ProfilesDaoFull extends BaseDaoFull {
 
         const id = `profile___${n.templateId}___${n.attributes['profileId']}`;
 
+        const conn = super.getConnection();
         try {
-            const traversal = super.getTraversalSource().V(id);
+            const traversal = conn.traversal.V(id);
 
             for (const key of Object.keys(n.attributes)) {
                 const val = n.attributes[key];
@@ -120,7 +123,7 @@ export class ProfilesDaoFull extends BaseDaoFull {
 
             await traversal.iterate();
         } finally {
-            super.closeTraversalSource();
+            conn.close();
         }
 
         logger.debug(`profiles.full.dao update: exit: id:${id}`);
@@ -157,10 +160,11 @@ export class ProfilesDaoFull extends BaseDaoFull {
 
         const id = `profile___${templateId}___${profileId}`;
 
+        const conn = super.getConnection();
         try {
-            await super.getTraversalSource().V(id).drop().iterate();
+            await conn.traversal.V(id).drop().iterate();
         } finally {
-            super.closeTraversalSource();
+            conn.close();
         }
 
         logger.debug(`profiles.full.dao delete: exit`);
@@ -171,9 +175,10 @@ export class ProfilesDaoFull extends BaseDaoFull {
 
         const id = `type___${templateId}`;
 
+        const conn = super.getConnection();
         let result;
         try {
-            const traverser = super.getTraversalSource().V(id).as('template').
+            const traverser = conn.traversal.V(id).as('template').
                 out('super_type').as('category').
                 select('template').in_('profiles').as('profiles').
                 project('profiles','template','category').
@@ -183,7 +188,7 @@ export class ProfilesDaoFull extends BaseDaoFull {
 
             result = await traverser.next();
         } finally {
-            super.closeTraversalSource();
+            conn.close();
         }
 
         logger.debug(`profiles.full.dao get: results: ${JSON.stringify(result)}`);

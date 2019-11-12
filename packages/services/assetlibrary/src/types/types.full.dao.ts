@@ -31,8 +31,9 @@ export class TypesDaoFull extends BaseDaoFull {
         const dbId = `type___${templateId}`;
 
         let result;
+        const conn = super.getConnection();
         try {
-            const traverser = super.getTraversalSource().V(dbId).as('type');
+            const traverser = conn.traversal.V(dbId).as('type');
 
             if (category!==undefined) {
                 const superId = `type___${category}`;
@@ -61,7 +62,7 @@ export class TypesDaoFull extends BaseDaoFull {
 
         // logger.debug(`types.full.dao get: traverser: ${traverser.toString()}`);
         } finally {
-            super.closeTraversalSource();
+            conn.close();
         }
 
         logger.debug(`types.full.dao get: query: ${JSON.stringify(result)}`);
@@ -94,8 +95,9 @@ export class TypesDaoFull extends BaseDaoFull {
         }
 
         let results;
+        const conn = super.getConnection();
         try {
-            const traverser = super.getTraversalSource().V(superId).
+            const traverser = conn.traversal.V(superId).
                 inE('super_type').outV().as('a').
                 outE('current_definition').has('status',status).inV().as('def').
                 project('type','definition','relations').
@@ -114,7 +116,7 @@ export class TypesDaoFull extends BaseDaoFull {
 
             results = await traverser.toList();
         } finally {
-            super.closeTraversalSource();
+            conn.close();
         }
 
         logger.debug(`types.full.dao get: results: ${JSON.stringify(results)}`);
@@ -142,8 +144,9 @@ export class TypesDaoFull extends BaseDaoFull {
         const defId = `${id}___v${model.schema.version}`;
 
         let result;
+        const conn = super.getConnection();
         try {
-            const traverser = super.getTraversalSource().V(superId).as('superType').
+            const traverser = conn.traversal.V(superId).as('superType').
                 addV('type').
                     property(process.t.id, id).
                     property(process.cardinality.single, 'templateId', model.templateId).
@@ -165,7 +168,7 @@ export class TypesDaoFull extends BaseDaoFull {
             // logger.debug(`types.full.dao create: traverser: ${JSON.stringify(traverser.toString())}`);
             result = await traverser.next();
         } finally {
-            super.closeTraversalSource();
+            conn.close();
         }
 
         logger.debug(`types.full.dao create: query: ${JSON.stringify(result)}`);
@@ -223,8 +226,9 @@ export class TypesDaoFull extends BaseDaoFull {
         const id = `type___${existing.templateId}`;
 
         let result;
+        const conn = super.getConnection();
         try {
-            const traverser = super.getTraversalSource().V(id).
+            const traverser = conn.traversal.V(id).
                 outE('current_definition').has('status','draft').inV().as('definition').
                     property(process.cardinality.single, 'definition', JSON.stringify(updated.schema.definition)).
                     property(process.cardinality.single, 'lastUpdated', new Date().toISOString());
@@ -269,7 +273,7 @@ export class TypesDaoFull extends BaseDaoFull {
 
             result = await traverser.next();
         } finally {
-            super.closeTraversalSource();
+            conn.close();
         }
 
         logger.debug(`types.full.dao updateDraft: result: ${JSON.stringify(result)}`);
@@ -439,8 +443,9 @@ export class TypesDaoFull extends BaseDaoFull {
         const defId = `${id}___v${draftVersion}`;
 
         let result;
+        const conn = super.getConnection();
         try {
-            const traverser = super.getTraversalSource().V(id).as('type').
+            const traverser = conn.traversal.V(id).as('type').
                 addV('typeDefinition').
                     property(process.t.id, defId).
                     property(process.cardinality.single, 'version', draftVersion).
@@ -455,7 +460,7 @@ export class TypesDaoFull extends BaseDaoFull {
 
             result = await traverser.next();
         } finally {
-            super.closeTraversalSource();
+            conn.close();
         }
 
         logger.debug(`types.full.dao createDraft: result: ${JSON.stringify(result)}`);
@@ -485,9 +490,10 @@ export class TypesDaoFull extends BaseDaoFull {
 
         // if we don't have a published version (new type), we just need to change the current_definition status
         let query: {value:process.Traverser|process.TraverserValue, done:boolean};
+        const conn = super.getConnection();
         try {
             if (published===undefined) {
-                query = await super.getTraversalSource().
+                query = await conn.traversal.
                     // 1st get a handle on all the vertices/edges that we need to update
                     V(id).
                     // upgrade the draft edge to published
@@ -497,7 +503,7 @@ export class TypesDaoFull extends BaseDaoFull {
                     next();
 
             } else {
-                query = await super.getTraversalSource().
+                query = await conn.traversal.
                     // 1st get a handle on all the vertices/edges that we need to update
                     V(id).as('type').
                     select('type').outE('current_definition').has('status',TypeDefinitionStatus.published).as('published_edge').
@@ -519,7 +525,7 @@ export class TypesDaoFull extends BaseDaoFull {
                     next();
             }
         } finally {
-            super.closeTraversalSource();
+            conn.close();
         }
 
         if (query===undefined) {
@@ -535,15 +541,16 @@ export class TypesDaoFull extends BaseDaoFull {
 
         const dbId = `type___${templateId}`;
 
+        const conn = super.getConnection();
         try {
-            const g = super.getTraversalSource();
+            const g = conn.traversal;
 
             await g.V(dbId).
                 out().hasLabel('typeDefinition').as('typeDefinitions').drop().iterate();
 
             await g.V(dbId).drop().iterate();
         } finally {
-            super.closeTraversalSource();
+            conn.close();
         }
 
         logger.debug(`types.full.dao delete: exit`);
@@ -554,9 +561,10 @@ export class TypesDaoFull extends BaseDaoFull {
 
         const id = `type___${templateId}`;
 
+        const conn = super.getConnection();
         let result;
         try {
-            const traverser = super.getTraversalSource().V(id).
+            const traverser = conn.traversal.V(id).
                 outE('current_definition').has('status','published').inV().as('def');
 
             if (relations && relations.in) {
@@ -582,7 +590,7 @@ export class TypesDaoFull extends BaseDaoFull {
 
             result = await traverser.next();
         } finally {
-            super.closeTraversalSource();
+            conn.close();
         }
 
         const isValid = (result!==undefined && result.value!==undefined);
@@ -600,9 +608,10 @@ export class TypesDaoFull extends BaseDaoFull {
         const rels_paths_in:string[]=[];
         const rels_paths_out:string[]=[];
 
+        const conn = super.getConnection();
         try {
             // get a handle on the type
-            const traverser = super.getTraversalSource().V(id).
+            const traverser = conn.traversal.V(id).
                 outE('current_definition').has('status','published').inV().as('def');
 
             // get all known allowed relationships
@@ -657,7 +666,7 @@ export class TypesDaoFull extends BaseDaoFull {
             // execute the query
             results = await traverser.next();
         } finally {
-            super.closeTraversalSource();
+            conn.close();
         }
 
         // parse the results
@@ -754,15 +763,16 @@ export class TypesDaoFull extends BaseDaoFull {
 
         const typesAsLower = types.map(t=> `type___${t.toLowerCase()}`);
 
+        const conn = super.getConnection();
         try {
-            const count = await super.getTraversalSource().V(...typesAsLower).count().next();
+            const count = await conn.traversal.V(...typesAsLower).count().next();
 
             const isValid = (count.value===types.length);
             logger.debug(`types.full.dao validateLinkedTypesExist: exit: ${isValid}`);
             return isValid;
         } catch (err) {
             logger.error(JSON.stringify(err));
-            super.closeTraversalSource();
+            conn.close();
         }
 
         return true;
@@ -772,10 +782,11 @@ export class TypesDaoFull extends BaseDaoFull {
         logger.debug(`types.full.dao countInUse: in: templateId:${templateId}`);
 
         let result;
+        const conn = super.getConnection();
         try {
-            result = await super.getTraversalSource().V().hasLabel(templateId).count().next();
+            result = await conn.traversal.V().hasLabel(templateId).count().next();
         } finally {
-            super.closeTraversalSource();
+            conn.close();
         }
 
         logger.debug(`types.full.dao countInUse: exit: ${result}`);

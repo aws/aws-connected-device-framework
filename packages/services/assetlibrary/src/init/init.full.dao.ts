@@ -23,10 +23,11 @@ export class InitDaoFull extends BaseDaoFull {
         logger.debug('init.dao isInitialized: in: ');
 
         let query;
+        const conn = super.getConnection();
         try {
-            query = await super.getTraversalSource().V('type___device').next();
+            query = await conn.traversal.V('type___device').next();
         } finally {
-            super.closeTraversalSource();
+            conn.close();
         }
 
         logger.debug(`init.dao isInitialized: query: ${JSON.stringify(query)}`);
@@ -44,24 +45,26 @@ export class InitDaoFull extends BaseDaoFull {
     public async initialize(): Promise<void> {
         logger.debug('init.dao initialize: in:');
 
+        const conn = super.getConnection();
         try {
-            await super.getTraversalSource().addV('type').property(process.t.id, 'type___device').
+            await conn.traversal.addV('type').property(process.t.id, 'type___device').
                 addV('type').property(process.t.id, 'type___group').
                 addV('root').property(process.t.id, 'group___/').property('name','/').property('groupPath','/').
                 iterate();
         } finally {
-            super.closeTraversalSource();
+            conn.close();
         }
     }
 
     public async applyFixes(): Promise<void> {
         logger.debug('init.dao fixes: in:');
 
+        const conn = super.getConnection();
         try {
-            await super.getTraversalSource().V('group___/').property('groupPath','/').
+            await conn.traversal.V('group___/').property('groupPath','/').
                 iterate();
         } finally {
-            super.closeTraversalSource();
+            conn.close();
         }
     }
 }

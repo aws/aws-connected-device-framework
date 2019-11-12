@@ -28,14 +28,15 @@ export class PoliciesDaoFull extends BaseDaoFull {
         const id = `policy___${policyId.toLowerCase()}`;
 
         let query;
+        const conn = super.getConnection();
         try {
-            query = await super.getTraversalSource().V(id).as('policy').
+            query = await conn.traversal.V(id).as('policy').
                 project('policy', 'groups').
                     by( __.select('policy').valueMap().with_(process.withOptions.tokens)).
                     by( __.select('policy').out('appliesTo').hasLabel('group').fold()).
                 next();
         } finally {
-            super.closeTraversalSource();
+            conn.close();
         }
 
         logger.debug(`policy.full.dao get: query: ${JSON.stringify(query)}`);
@@ -56,8 +57,9 @@ export class PoliciesDaoFull extends BaseDaoFull {
 
         const id = `policy___${model.policyId.toLowerCase()}`;
 
+        const conn = super.getConnection();
         try {
-            const traversal = super.getTraversalSource().addV('policy')
+            const traversal = conn.traversal.addV('policy')
                 .property(process.t.id, id)
                 .property('policyId', model.policyId.toLowerCase())
                 .property('type', model.type)
@@ -71,7 +73,7 @@ export class PoliciesDaoFull extends BaseDaoFull {
 
             await traversal.iterate();
         } finally {
-            super.closeTraversalSource();
+            conn.close();
         }
 
         logger.debug(`policies.dao create: exit: id: ${id}`);
@@ -96,8 +98,9 @@ export class PoliciesDaoFull extends BaseDaoFull {
         const id = `policy___${existing.policyId}`;
 
         /*  update the main policy object  */
+        const conn = super.getConnection();
         try {
-            const traversal = super.getTraversalSource().V(id);
+            const traversal = conn.traversal.V(id);
 
             if (updated.type) {
                 traversal.property(process.cardinality.single, 'type', updated.type.toLowerCase());
@@ -134,7 +137,7 @@ export class PoliciesDaoFull extends BaseDaoFull {
             const query = await traversal.iterate();
             logger.debug(`policies.dao update: query: ${JSON.stringify(query)}`);
         } finally {
-            super.closeTraversalSource();
+            conn.close();
         }
 
         logger.debug(`policies.dao update: exit: id: ${id}`);
@@ -173,8 +176,9 @@ export class PoliciesDaoFull extends BaseDaoFull {
         const id = `device___${deviceId.toLowerCase()}`;
 
         let results;
+        const conn = super.getConnection();
         try {
-            results = await super.getTraversalSource().V(id).as('device')
+            results = await conn.traversal.V(id).as('device')
             .union(
                 __.out(),
                 __.out().repeat(__.out('parent').simplePath()).emit()
@@ -186,7 +190,7 @@ export class PoliciesDaoFull extends BaseDaoFull {
                 .by( __.local( __.out('appliesTo').fold())).
             toList();
         } finally {
-            super.closeTraversalSource();
+            conn.close();
         }
 
         const policies: AttachedPolicy[]=[];
@@ -205,8 +209,9 @@ export class PoliciesDaoFull extends BaseDaoFull {
         groupPaths.forEach(v=> ids.push(`group___${v.toLowerCase()}`));
 
         let results;
+        const conn = super.getConnection();
         try {
-            const traverser = super.getTraversalSource().V(ids).as('groups').
+            const traverser = conn.traversal.V(ids).as('groups').
                 union(
                     __.identity(),
                     __.repeat(__.out('parent').simplePath()).emit()
@@ -225,7 +230,7 @@ export class PoliciesDaoFull extends BaseDaoFull {
 
             results = await traverser.toList();
         } finally {
-            super.closeTraversalSource();
+            conn.close();
         }
 
         const policies: AttachedPolicy[]=[];
@@ -241,8 +246,9 @@ export class PoliciesDaoFull extends BaseDaoFull {
         logger.debug(`policies.dao listPolicies: type:${type}, offset:${offset}, count:${count}`);
 
         let results;
+        const conn = super.getConnection();
         try {
-            const traverser = super.getTraversalSource().V().hasLabel('policy');
+            const traverser = conn.traversal.V().hasLabel('policy');
             if (type!==undefined) {
                 traverser.has('type', type.toLowerCase());
             }
@@ -262,7 +268,7 @@ export class PoliciesDaoFull extends BaseDaoFull {
 
             results = await traverser.toList();
         } finally {
-            super.closeTraversalSource();
+            conn.close();
         }
 
         logger.debug(`results: ${JSON.stringify(results)}`);
@@ -281,10 +287,11 @@ export class PoliciesDaoFull extends BaseDaoFull {
 
         const dbId = `policy___${policyId.toLowerCase()}`;
 
+        const conn = super.getConnection();
         try {
-            await super.getTraversalSource().V(dbId).drop().next();
+            await conn.traversal.V(dbId).drop().next();
         } finally {
-            super.closeTraversalSource();
+            conn.close();
         }
 
         logger.debug(`policies.dao delete: exit`);
