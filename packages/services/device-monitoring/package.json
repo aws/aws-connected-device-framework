@@ -37,7 +37,7 @@
     "@types/aws-serverless-express": "3.3.0",
     "@types/superagent": "3.8.7",
     "@types/config": "0.0.34",
-    "@types/jest": "24.0.11",
+    "@types/jest": "24.0.0",
     "@types/node": "8.10.43",
     "commitizen": "3.0.7",
     "concurrently": "4.1.0",

@@ -12,7 +12,7 @@ import { InversifyExpressServer } from 'inversify-express-utils';
 import * as bodyParser from 'body-parser';
 import {logger} from './utils/logger';
 import config from 'config';
-import {asArray, SupportedVersionConfig} from '@cdf/express-middleware';
+import {asArray, SupportedVersionConfig, DEFAULT_MIME_TYPE} from '@cdf/express-middleware';
 import {setVersionByAcceptHeader} from 'express-version-request';
 import { setClaims } from './authz/authz.middleware';
 
@@ -29,11 +29,15 @@ const supportedVersions:string[] = asArray(supportedVersionConfig);
 server.setConfig((app) => {
 
   // only process requests that we can support the requested accept header
-  app.use( (req:Request, res:Response, next:NextFunction)=> {
+  app.use( (req:Request, _res:Response, next:NextFunction)=> {
     if (supportedVersions.includes(req.headers['accept'])) {
       next();
     } else {
-      res.status(415).send();
+      // res.status(415).send();
+      // if not recognised, default to v1
+      req.headers['accept'] = DEFAULT_MIME_TYPE;
+      req.headers['content-type'] = DEFAULT_MIME_TYPE;
+      next();
     }
   });
   app.use(bodyParser.json({ type: supportedVersions }));

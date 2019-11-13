@@ -1,4 +1,3 @@
-
 export type SupportedVersionConfig = {[subType:string]:string[]}[];
 
 const MIME_TYPE_PREFIX = 'application/vnd.aws-cdf-v';
@@ -34,3 +33,5 @@ export enum CdfVersionType {
   json = '+json',
   hal = 'hal+json'
 }
+
+export const DEFAULT_MIME_TYPE=`${MIME_TYPE_PREFIX}1.0${CdfVersionType.json}`;

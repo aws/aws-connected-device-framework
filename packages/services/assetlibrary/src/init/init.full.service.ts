@@ -21,22 +21,25 @@ export class InitServiceFull implements InitService {
     public async init(): Promise<void> {
         logger.debug('init.service init: in:');
 
-        await this.initDao.applyFixes();
-
         const initialized  = await this.initDao.isInitialized();
         if (initialized) {
+
+            await this.initDao.applyFixes();
+
             logger.debug(`init.service exit: already initialized!`);
             throw new Error ('ALREADY_INITIALIZED');
+        } else {
+
+            // seed the database with the type categories
+            await this.initDao.initialize();
+
+            // create the root group type definition
+            const definition:TypeDefinitionModel = new TypeDefinitionModel();
+            definition.properties = {};
+            await this.typesService.create('root', TypeCategory.Group, definition);
+            await this.typesService.publish('root', TypeCategory.Group);
+
         }
-
-        // create the root group type definition
-        const definition:TypeDefinitionModel = new TypeDefinitionModel();
-        definition.properties = {};
-        await this.typesService.create('root', TypeCategory.Group, definition);
-        await this.typesService.publish('root', TypeCategory.Group);
-
-        // seed the database with the type categories
-        await this.initDao.initialize();
 
     }
 
