@@ -107,8 +107,12 @@ paths:
             schema:
               $ref: '#/components/schemas/Event'
             examples:
-              lowBatteryAlert:
-                $ref: '#/components/examples/NewEvent'
+              lowBatteryAlert1:
+                $ref: '#/components/examples/NewEvent1'
+              lowBatteryAlert2:
+                $ref: '#/components/examples/NewEvent2'
+              lowBatteryAlert3:
+                $ref: '#/components/examples/NewEvent3'
       responses:
         '201':
           $ref: '#/components/responses/Created'
@@ -564,7 +568,7 @@ components:
           attribtues:
             - batteryLevel: bl
           
-    NewEvent:
+    NewEvent1:
       summary: An example of creating an event to represent a low battery alert
       value:
         name: Low Battery Alert
@@ -573,6 +577,40 @@ components:
             - fact: batteryLevel
               operator: lessThanInclusive
               value: 20
+        supportedTargets:
+          email: default
+          sms: small
+        templates:
+          default: 'The battery for bowl {{=it.principalValue}} is low.'
+          small: '{{=it.principalValue}} battery low'
+          
+    NewEvent2:
+      summary: An example of creating an event to represent a low battery alert based on a parameter value to be provided at the time of creating a subscription
+      value:
+        name: Low Battery Alert
+        conditions: 
+          all:
+            - fact: batteryLevel
+              operator: lessThanInclusive
+              value: $batteryLevelThreshold
+        supportedTargets:
+          email: default
+          sms: small
+        templates:
+          default: 'The battery for bowl {{=it.principalValue}} is low.'
+          small: '{{=it.principalValue}} battery low'
+          
+    NewEvent3:
+      summary: An example of creating an event to represent a low battery alert based on a threshold value present in the same event
+      value:
+        name: Low Battery Alert
+        conditions: 
+          all:
+            - fact: batteryLevel
+              operator: lessThanInclusive
+              value: {
+                fact: batteryLevelThreshold
+              }
         supportedTargets:
           email: default
           sms: small

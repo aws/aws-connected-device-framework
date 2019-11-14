@@ -62,7 +62,11 @@ declare module 'json-rules-engine' {
     export interface RuleConditionOptions {
         fact:string;
         operator:string;
-        value:number|string|boolean;
+        value:number|string|boolean|RuleFactConditionOptions;
+    }
+
+    export interface RuleFactConditionOptions {
+        fact:string;
     }
 
     export class RuleResult {

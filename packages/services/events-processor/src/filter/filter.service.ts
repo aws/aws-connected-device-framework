@@ -90,7 +90,7 @@ export class FilterService {
                             alerted: true
                         };
                     } else if (results.length===0 && sub.alerted) {
-                        // an alert that needs ewsetting...
+                        // an alert that needs resetting...
                         sub.alerted=false;
                         changedSubAlerts[sub.id]= {
                             id: sub.id,

@@ -52,7 +52,10 @@ export interface EventConditions {
 export interface EventCondition {
     fact:string;
     operator:string;
-    value:number|string|boolean;
+    value:number|string|boolean|EventFactCondition;
+}
+export interface EventFactCondition {
+    fact:string;
 }
 
 @injectable()

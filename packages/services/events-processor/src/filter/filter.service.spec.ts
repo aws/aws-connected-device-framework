@@ -128,4 +128,119 @@ describe('FilterService', () => {
         expect(mockedCreateAlertsCall).toBeCalledTimes(1);
     });
 
+    it('rule checking fact against fact', async() => {
+
+        const eventSourceId = 'ES123';
+        const principal = 'deviceId';
+        const principalValue = 'device001';
+
+        // stubs
+        const commonMessageAttributes = {
+            eventSourceId,
+            principal,
+            principalValue,
+        };
+
+        // going from 25 > 22 > 18 (triggered) > 14 (ignored as no reset) > 23 > 12 (ignored as no reset) > 10 (ignored as no reset)
+        const events:CommonEvent[]= [
+            {
+                ... commonMessageAttributes,
+                attributes: {
+                    sequence: 1,
+                    batteryLevel: 25,
+                    batteryLevelThreshold: 22
+                }
+            }, {
+                ... commonMessageAttributes,
+                attributes: {
+                    sequence: 2,
+                    batteryLevel: 22,
+                    batteryLevelThreshold: 22
+                }
+            }, {
+                ... commonMessageAttributes,
+                attributes: {
+                    sequence: 3,
+                    batteryLevel: 18,
+                    batteryLevelThreshold: 22
+                }
+            }, {
+                ... commonMessageAttributes,
+                attributes: {
+                    sequence: 4,
+                    batteryLevel: 14,
+                    batteryLevelThreshold: 22
+                }
+            }, {
+                ... commonMessageAttributes,
+                attributes: {
+                    sequence: 4,
+                    batteryLevel: 23,
+                    batteryLevelThreshold: 22
+                }
+            }, {
+                ... commonMessageAttributes,
+                attributes: {
+                    sequence: 4,
+                    batteryLevel: 12,
+                    batteryLevelThreshold: 22
+                }
+            }, {
+                ... commonMessageAttributes,
+                attributes: {
+                    sequence: 4,
+                    batteryLevel: 10,
+                    batteryLevelThreshold: 22
+                }
+            }
+        ];
+
+        // mocks
+        const mockedListCall = mockedSubscriptionDao.listSubscriptionsForEventMessage = jest.fn().mockImplementationOnce(()=> {
+            logger.debug(`filter.service.spec: listSubscriptionsForEventMessage:`);
+            const r:SubscriptionItem[]= [
+                {
+                    id: 'sub001',
+                    event: {
+                        id: 'ev001',
+                        name: 'batteryAlertLevel',
+                        conditions: {
+                            all: [{
+                                fact: 'batteryLevel',
+                                operator: 'lessThan',
+                                value: {
+                                    fact: 'batteryLevelThreshold'
+                                }
+                            }]
+                        }
+                    },
+                    eventSource: {
+                        id: eventSourceId,
+                        principal
+                    },
+                    principalValue,
+                    ruleParameterValues:{},
+                    alerted:false,
+                    enabled:true,
+                    user: {
+                        id: 'u001'
+                    }
+                }
+            ];
+            return r;
+        });
+
+        const mockedCreateAlertsCall = mockedAlertDao.create = jest.fn().mockImplementationOnce((alerts)=> {
+            // do nothing, acting as a spy only
+            logger.debug(`filter.service.spec: alerts: ${JSON.stringify(alerts)}`);
+        });
+
+        // execute
+        await instance.filter(events);
+
+        // verify
+        expect(mockedListCall).toBeCalledTimes(1);
+        expect(mockedCreateAlertsCall).toBeCalledTimes(1);
+    });
+
 });
