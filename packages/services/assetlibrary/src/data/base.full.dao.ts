@@ -6,6 +6,7 @@
 import { process, structure, driver } from 'gremlin';
 import { injectable, inject } from 'inversify';
 import {TYPES} from '../di/types';
+import {logger} from '../utils/logger';
 
 @injectable()
 export class BaseDaoFull {
@@ -20,12 +21,17 @@ export class BaseDaoFull {
     }
 
     protected getConnection(): NeptuneConnection {
+        logger.debug(`base.full.dao getConnection: in:`);
         const conn = new driver.DriverRemoteConnection(this.neptuneUrl, { mimeType: 'application/vnd.gremlin-v2.0+json' });
 
-        return new NeptuneConnection(
+        logger.debug(`base.full.dao getConnection: withRemote:`);
+        const res = new NeptuneConnection(
             this._graph.traversal().withRemote(conn),
             conn
         );
+
+        logger.debug(`base.full.dao getConnection: exit:`);
+        return res;
     }
 }
 

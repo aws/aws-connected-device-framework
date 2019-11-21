@@ -395,7 +395,7 @@ Associates a device to a group, giving context to its relationship.
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | deviceId | path | Id of device to attach to the group | Yes | string |
-| relationship | path | The relationship between the device and group. For example, this may reflect `locatedAt` or `manufacturedAt` relations. | Yes | string |
+| relationship | path | The outgoing relationship between the device and group. For example, this may reflect `locatedAt` or `manufacturedAt` relations. | Yes | string |
 | groupPath | path | Path of group. | Yes | string |
 
 ##### Responses
@@ -416,7 +416,53 @@ Removes a device from an associated group
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | deviceId | path | Id of device to attach to the group | Yes | string |
-| relationship | path | The relationship between the device and group. For example, this may reflect `locatedAt` or `manufacturedAt` relations. | Yes | string |
+| relationship | path | The outgoing relationship between the device and group. For example, this may reflect `locatedAt` or `manufacturedAt` relations. | Yes | string |
+| groupPath | path | Path of group. | Yes | string |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 204 | successful operation |
+| 400 |  |
+| 404 |  |
+
+### /devices/{deviceId}/{relationship}/{direction}/groups/{groupPath}
+
+#### PUT
+##### Summary:
+
+Associates a device to a group, giving context to its relationship.
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| deviceId | path | Id of device to attach to the group | Yes | string |
+| relationship | path | The outgoing relationship between the device and group. For example, this may reflect `locatedAt` or `manufacturedAt` relations. | Yes | string |
+| direction | path | The direction of the relationship `in` or `out` | Yes | string |
+| groupPath | path | Path of group. | Yes | string |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 204 | successful operation |
+| 400 |  |
+| 404 |  |
+
+#### DELETE
+##### Summary:
+
+Removes a device from an associated group
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| deviceId | path | Id of device to attach to the group | Yes | string |
+| relationship | path | The outgoing relationship between the device and group. For example, this may reflect `locatedAt` or `manufacturedAt` relations. | Yes | string |
+| direction | path | The direction of the relationship `in` or `out` | Yes | string |
 | groupPath | path | Path of group. | Yes | string |
 
 ##### Responses
@@ -487,6 +533,52 @@ Removes a device from an associated device
 | ---- | ---------- | ----------- | -------- | ---- |
 | deviceId | path | Id of source device | Yes | string |
 | relationship | path | The relationship between the device and the other device as defined in the device template. | Yes | string |
+| otherDeviceId | path | ID of device to create relationship to. | Yes | string |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 204 | successful operation |
+| 400 |  |
+| 404 |  |
+
+### /devices/{deviceId}/{relationship}/{direction}/devices/{otherDeviceId}
+
+#### PUT
+##### Summary:
+
+Associates a device to another device, giving context to its relationship.
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| deviceId | path | Id of source device | Yes | string |
+| relationship | path | The relationship between the device and the other device as defined in the device template. | Yes | string |
+| direction | path | Direction of the relationship - `in` or `out`. | Yes | string |
+| otherDeviceId | path | ID of device to create relationship to. | Yes | string |
+
+##### Responses
+
+| Code | Description |
+| ---- | ----------- |
+| 204 | successful operation |
+| 400 |  |
+| 404 |  |
+
+#### DELETE
+##### Summary:
+
+Removes a device from an associated device
+
+##### Parameters
+
+| Name | Located in | Description | Required | Schema |
+| ---- | ---------- | ----------- | -------- | ---- |
+| deviceId | path | Id of source device | Yes | string |
+| relationship | path | The relationship between the device and the other device as defined in the device template. | Yes | string |
+| direction | path | Direction of the relationship - `in` or `out`. | Yes | string |
 | otherDeviceId | path | ID of device to create relationship to. | Yes | string |
 
 ##### Responses

@@ -40,10 +40,10 @@ export class GroupsDaoFull extends BaseDaoFull {
             result = await conn.traversal.V(id).as('object').
                 project('object','pathsIn','pathsOut','Es','Vs').
                     by(__.valueMap().with_(process.withOptions.tokens)).
-                    by(__.inE().otherV().hasLabel('group').path().by(process.t.id).fold()).
+                    by(__.inE().not(__.hasLabel('parent')).otherV().hasLabel('group').path().by(process.t.id).fold()).
                     by(__.outE().not(__.hasLabel('parent')).otherV().hasLabel('group').path().by(process.t.id).fold()).
-                    by(__.bothE().where(__.otherV().hasLabel('group')).valueMap().with_(process.withOptions.tokens).fold()).
-                    by(__.bothE().otherV().hasLabel('group').dedup().valueMap().with_(process.withOptions.tokens).fold()).
+                    by(__.bothE().not(__.hasLabel('parent')).where(__.otherV().hasLabel('group')).valueMap().with_(process.withOptions.tokens).fold()).
+                    by(__.bothE().not(__.hasLabel('parent')).otherV().hasLabel('group').dedup().valueMap().with_(process.withOptions.tokens).fold()).
                 next();
         } finally {
             conn.close();

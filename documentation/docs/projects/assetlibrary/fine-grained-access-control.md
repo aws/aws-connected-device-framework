@@ -204,9 +204,9 @@ The external IdP should allow for the configuring of claims by specifying a grou
 
 
 | Role | Description | Custom Claims |
-|===|===|===|
+|---|---|---|
 | Super Administrator | Full privileges to entire Asset Library	| "cdf_al": ["/:*"] |
-| Company Administrator | Full privileges to a specific tenant | "cdf_al": ["/acme solutions:*"] |
+| Company Administrator | Full privileges to a specific tenant | "cdf_al": ["/acme solutions/my llc/:*"] |
 | Super User | Able to manage tags, and manage a specific pool of printers | "cdf_al": ["/acme solutions/tags:*","/acme solutions/pools/public:*"] |
 | User | Able to use tags, and use printers from a specific pool | "cdf_al": ["/acme solutions/tags:R","/acme solutions/pools/public:R"] |
 
@@ -258,7 +258,7 @@ Example Gremlin query adding a match statement to the existing search query, ens
 g.V().as('a').
  match(
    .as('a').hasLabel('printer'),
-*   *.as('a').until(hasId('group___/acme systems/pools/public', 'group___/acme systems/pools/private')).repeat(__.out())
+   .as('a').until(hasId('group___/acme systems/pools/public', 'group___/acme systems/pools/private')).repeat(__.out())
  )
  ```
 

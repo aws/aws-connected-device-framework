@@ -71,7 +71,7 @@ export class ApiGwCustomAuthorizer {
             const header = JSON.parse(headerJSON) as TokenHeader;
             const key = this.publicKeys[header.kid];
             if (key === undefined) {
-            throw new Error('claim made for unknown kid');
+                throw new Error('claim made for unknown kid');
             }
 
             const claim = verify(token, key.pem) as Claim;
