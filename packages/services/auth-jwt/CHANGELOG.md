@@ -1,3 +1,10 @@
+# [@cdf/auth-jwt-v1.0.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/auth-jwt-v1.0.0...@cdf/auth-jwt-v1.0.1) (2019-11-21)
+
+
+### Bug Fixes
+
+* **assetlibrary:** dont return parent links ([d350472](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/d350472aafc0b61495ed7ed17ba05a8aa28adc06))
+
 # @cdf/auth-jwt-v1.0.0 (2019-11-08)
 
 
