@@ -1,3 +1,10 @@
+# [@cdf/assetlibrary-v3.0.4](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.0.3...@cdf/assetlibrary-v3.0.4) (2019-11-22)
+
+
+### Bug Fixes
+
+* **assetlibrary:** don't resuse graph ([0ab937f](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/0ab937fbf1d3480cbcc57ee5ec6e534481638c31))
+
 # [@cdf/assetlibrary-v3.0.3](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.0.2...@cdf/assetlibrary-v3.0.3) (2019-11-21)
 
 
