@@ -34,7 +34,7 @@ export const FullContainerModule = new ContainerModule (
     (
         bind: interfaces.Bind,
         _unbind: interfaces.Unbind,
-        isBound: interfaces.IsBound,
+        _isBound: interfaces.IsBound,
         _rebind: interfaces.Rebind
     ) => {
         bind<TypesService>(TYPES.TypesService).to(TypesServiceFull).inSingletonScope();
@@ -69,14 +69,11 @@ export const FullContainerModule = new ContainerModule (
 
         decorate(injectable(), structure.Graph);
         bind<interfaces.Factory<structure.Graph>>(TYPES.GraphSourceFactory)
-            .toFactory<structure.Graph>((ctx: interfaces.Context) => {
+            .toFactory<structure.Graph>((_ctx: interfaces.Context) => {
             return () => {
 
-                if (!isBound(TYPES.GraphSource)) {
-                    const graph = new structure.Graph();
-                    bind<structure.Graph>(TYPES.GraphSource).toConstantValue(graph);
-               }
-                return ctx.container.get<structure.Graph>(TYPES.GraphSource);
+                return new structure.Graph();
+
             };
         });
     }
