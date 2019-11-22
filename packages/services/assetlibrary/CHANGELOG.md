@@ -1,3 +1,10 @@
+# [@cdf/assetlibrary-v3.0.3](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.0.2...@cdf/assetlibrary-v3.0.3) (2019-11-21)
+
+
+### Bug Fixes
+
+* **assetlibrary:** dont return parent links ([d350472](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/d350472aafc0b61495ed7ed17ba05a8aa28adc06))
+
 # [@cdf/assetlibrary-v3.0.2](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.0.1...@cdf/assetlibrary-v3.0.2) (2019-11-12)
 
 
