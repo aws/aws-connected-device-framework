@@ -1,3 +1,10 @@
+# [@cdf/commands-v3.0.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/commands-v3.0.0...@cdf/commands-v3.0.1) (2019-12-10)
+
+
+### Bug Fixes
+
+* **assetlibrary:** cors exposed headers ([2283210](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/22832101b0e22468aa97249d06baa67f044571d0))
+
 # [@cdf/commands-v3.0.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/commands-v2.3.1...@cdf/commands-v3.0.0) (2019-11-08)
 
 
