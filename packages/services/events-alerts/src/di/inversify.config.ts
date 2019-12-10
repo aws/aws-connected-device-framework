@@ -12,6 +12,8 @@ import AmazonDaxClient = require('amazon-dax-client');
 import { SNSTarget } from '../targets/sns.target';
 import { MessageCompilerService } from '../targets/messageCompiler.service';
 import { MessageCompilerDao } from '../targets/messageCompiler.dao';
+import { DynamoDBTarget } from '../targets/dynamodb.target';
+import { DynamoDbTargetDao } from '../targets/dynamoDb.target.dao';
 
 // Note: importing @controller's carries out a one time inversify metadata generation...
 
@@ -23,8 +25,11 @@ const configInjector = new CDFConfigInjector();
 container.load(configInjector.getConfigModule());
 
 container.bind<SNSTarget>(TYPES.SNSTarget).to(SNSTarget).inSingletonScope();
+container.bind<DynamoDBTarget>(TYPES.DynamoDBTarget).to(DynamoDBTarget).inSingletonScope();
 container.bind<MessageCompilerService>(TYPES.MessageCompilerService).to(MessageCompilerService).inSingletonScope();
 container.bind<MessageCompilerDao>(TYPES.MessageCompilerDao).to(MessageCompilerDao).inSingletonScope();
+
+container.bind<DynamoDbTargetDao>(TYPES.DynamoDbTargetDao).to(DynamoDbTargetDao).inSingletonScope();
 
 // for 3rd party objects, we need to use factory injectors
 

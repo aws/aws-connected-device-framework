@@ -28,6 +28,7 @@ export const TYPES = {
     EmailTarget: Symbol.for('EmailTarget'),
     SMSTarget: Symbol.for('SMSTarget'),
     SNSTarget: Symbol.for('SNSTarget'),
+    DynamodDBTarget: Symbol.for('DynamodDBTarget'),
 
     FilterService: Symbol.for('FilterService'),
 

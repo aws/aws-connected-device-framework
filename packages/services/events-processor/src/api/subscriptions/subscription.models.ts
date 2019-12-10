@@ -29,6 +29,7 @@ export type SubscriptionTargets = {
     email?: EmailSubscriptionConfig;
     sms?: SMSSubscriptionConfig;
     mqtt?: MQTTSubscriptionConfig;
+    dynamodb?: DynamodDBSubscriptionConfig;
 };
 
 export type EmailSubscriptionConfig = {
@@ -41,6 +42,15 @@ export type SMSSubscriptionConfig = {
 
 export type MQTTSubscriptionConfig = {
     topic:string
+};
+
+export type AttributeMapping = { [key: string] : string};
+
+export type DynamodDBSubscriptionConfig = {
+    tableName:string
+
+    // Column mapping for dynamodb targets
+    attributeMapping: AttributeMapping;
 };
 
 export interface SubscriptionResourceList {
@@ -73,6 +83,11 @@ export class SubscriptionItem {
 
     sns?: {
         topicArn:string;
+    };
+
+    dynamodb?: {
+        tableName:string;
+        attributeMapping: { [key: string] : string};
     };
 
     targets?: SubscriptionTargets;

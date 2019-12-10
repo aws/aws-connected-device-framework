@@ -8,5 +8,6 @@ export class MessageTemplates {
     templates: Templates= {};
 }
 
+export type AttributeMapping = { [key: string] : string};
 export type SupportedTargets = {[key:string]:string};
 export type Templates = {[key:string]:string};

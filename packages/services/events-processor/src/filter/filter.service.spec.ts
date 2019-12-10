@@ -32,10 +32,12 @@ describe('FilterService', () => {
         const eventSourceId = 'ES123';
         const principal = 'deviceId';
         const principalValue = 'device001';
+        const sourceChangeType = 'INSERT';
 
         // stubs
         const commonMessageAttributes = {
             eventSourceId,
+            sourceChangeType,
             principal,
             principalValue,
         };

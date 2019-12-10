@@ -30,6 +30,11 @@ export type SubscriptionTargets = {
     email?: EmailSubscriptionConfig;
     sms?: SMSSubscriptionConfig;
     mqtt?: MQTTSubscriptionConfig;
+    dynamodb?: DynamoDBSubscriptionConfig;
+};
+
+export type DynamoDBSubscriptionConfig = {
+    tableName:string
 };
 
 export type EmailSubscriptionConfig = {

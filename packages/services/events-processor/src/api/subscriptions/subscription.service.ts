@@ -105,6 +105,10 @@ export class SubscriptionService  {
             if (resource.targets.mqtt!==undefined) {
                 ow(resource.targets.mqtt.topic, ow.string.nonEmpty);
             }
+            if (resource.targets.dynamodb!==undefined) {
+                ow(resource.targets.dynamodb.tableName, ow.string.nonEmpty);
+                ow(resource.targets.dynamodb.attributeMapping, ow.object.nonEmpty);
+            }
         }
 
         // set defaults
@@ -131,6 +135,9 @@ export class SubscriptionService  {
             }
             if (resource.targets.mqtt!==undefined) {
                 ow(event.supportedTargets.mqtt, ow.string.nonEmpty);
+            }
+            if (resource.targets.dynamodb!==undefined) {
+                ow(event.supportedTargets.dynamodb, ow.string.nonEmpty);
             }
         }
 

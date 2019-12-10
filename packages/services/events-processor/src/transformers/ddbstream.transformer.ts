@@ -40,7 +40,7 @@ export class DDBStreamTransformer  {
             /**
              *   only interested in certain event types
              */
-            if (rec.eventName!=='INSERT' && rec.eventName!=='MODIFY') {
+            if (rec.eventName!=='INSERT' && rec.eventName!=='MODIFY' && rec.eventName!=='REMOVE') {
                 continue;
             }
 
@@ -70,13 +70,15 @@ export class DDBStreamTransformer  {
 
             const transformedEvent:CommonEvent = {
                 eventSourceId,
-                principal:principalAttribute,
-                principalValue:undefined,
+                principal: principalAttribute,
+                principalValue: undefined,
+                sourceChangeType: <string>rec.eventName,
                 attributes:{}
             };
 
             const keys=rec.dynamodb.Keys;
             const newImage=rec.dynamodb.NewImage;
+            const oldImage=rec.dynamodb.OldImage;
 
             Object.keys(keys).forEach(prop=> {
                 const value = this.extractValue(keys[prop]);
@@ -89,6 +91,15 @@ export class DDBStreamTransformer  {
             if (newImage!==undefined) {
                 Object.keys(newImage).forEach(prop=> {
                     const value = this.extractValue(newImage[prop]);
+                    if (prop===principalAttribute) {
+                        transformedEvent.principalValue = <string>value;
+                    }
+                    transformedEvent.attributes[prop] = value;
+                });
+            } else if (oldImage!==undefined) {
+                // This is considered for REMOVE events only
+                Object.keys(oldImage).forEach(prop=> {
+                    const value = this.extractValue(oldImage[prop]);
                     if (prop===principalAttribute) {
                         transformedEvent.principalValue = <string>value;
                     }

@@ -31,6 +31,7 @@ import { TargetService } from '../api/subscriptions/targets/target.service';
 import { EmailTarget } from '../api/subscriptions/targets/email.target';
 import { SMSTarget } from '../api/subscriptions/targets/sms.target';
 import { SNSTarget } from '../api/subscriptions/targets/sns.target';
+import { DynamodDBTarget } from '../api/subscriptions/targets/dynamodb.target';
 import { DynamoDbEventSource } from '../api/eventsources/sources/dynamodb.source';
 import { IotCoreEventSource } from '../api/eventsources/sources/iotcore.source';
 import { DynamoDbUtils } from '../utils/dynamoDb.util';
@@ -66,6 +67,7 @@ container.bind<DDBStreamTransformer>(TYPES.DDBStreamTransformer).to(DDBStreamTra
 
 container.bind<TargetService>(TYPES.TargetService).to(TargetService).inSingletonScope();
 container.bind<SNSTarget>(TYPES.SNSTarget).to(SNSTarget).inSingletonScope();
+container.bind<DynamodDBTarget>(TYPES.DynamodDBTarget).to(DynamodDBTarget).inSingletonScope();
 container.bind<EmailTarget>(TYPES.EmailTarget).to(EmailTarget).inSingletonScope();
 container.bind<SMSTarget>(TYPES.SMSTarget).to(SMSTarget).inSingletonScope();
 

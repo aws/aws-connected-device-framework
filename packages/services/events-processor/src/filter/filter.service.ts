@@ -23,8 +23,7 @@ export class FilterService {
         @inject(TYPES.SubscriptionDao) private subscriptionDao: SubscriptionDao,
         @inject(TYPES.AlertDao) private alertDao: AlertDao,
         @inject(TYPES.EventConditionsUtils) private eventConditionsUtils: EventConditionsUtils) {
-
-        }
+    }
 
     public async filter(events:CommonEvent[]): Promise<void> {
         logger.debug(`filter.service filter: in: model:${JSON.stringify(events)}`);
@@ -64,12 +63,17 @@ export class FilterService {
 
                     engine.addRule(rule);
 
+                    // add all root elements with '__' prefix, except attributes
+                    Object.keys(ev)
+                        .filter(key=> ev[key]!=='attributes')
+                        .forEach(key=> engine.addFact( '__' + key, ev[key]));
+
                     // add all the known facts
                     Object.keys(ev.attributes)
                         .filter(key=> ev.attributes[key]!==undefined && ev.attributes[key]!==null)
                         .forEach(key=> engine.addFact(key, ev.attributes[key]));
 
-                    // evaluate the rules
+                        // evaluate the rules
                     let results:rulesEngine.Rule[] = [];
                     try {
                         results = await engine.run();

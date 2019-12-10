@@ -38,7 +38,7 @@ describe('MessageCompiler', () => {
                 small: 'small {{=it.thingName}}'
             }
         };
-        const mockedQuery = mockedMessageCompilerDao.listTemplates = jest.fn().mockImplementationOnce(()=> mockedResponse);
+        const mockedQuery = mockedMessageCompilerDao.getEventConfig = jest.fn().mockImplementationOnce(()=> mockedResponse);
 
         // execute
         const actual = await instance.compile(eventId, 'sms', attributes);

@@ -15,7 +15,10 @@ export const TYPES = {
     MessageCompilerDao: Symbol.for('MessageCompilerDao'),
 
     SNSTarget: Symbol.for('SNSTarget'),
+    DynamoDBTarget: Symbol.for('DynamoDBTarget'),
 
     SNS:  Symbol.for('SNS'),
-    SNSFactory:  Symbol.for('Factory<SNS>')
+    SNSFactory:  Symbol.for('Factory<SNS>'),
+
+    DynamoDbTargetDao: Symbol.for('DynamoDbTargetDao')
 };

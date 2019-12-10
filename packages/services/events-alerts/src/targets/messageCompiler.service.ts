@@ -6,8 +6,11 @@
 import { injectable, inject } from 'inversify';
 import { logger } from '../utils/logger.util';
 import { TYPES } from '../di/types';
+import { v1 as uuid } from 'uuid';
+import ow from 'ow';
 import * as dot from 'dot';
 import { MessageCompilerDao } from './messageCompiler.dao';
+import { AttributeMapping } from './messageCompiler.model';
 
 @injectable()
 export class MessageCompilerService {
@@ -27,12 +30,16 @@ export class MessageCompilerService {
         // if not, retrieve it from the db then compile and cache it
         if (eventTemplateFns===undefined) {
 
-            const messageTemplates = await this.messageCompilerDao.listTemplates(eventId);
+            // Retrieve event config from db
+            const eventConfig:any = await this.messageCompilerDao.getEventConfig(eventId);
+            if(eventConfig === undefined) {
+                logger.error(`messageCompiler.service compile: unknown eventId: ${eventId} ignoring...`);
+                return null;
+            }
 
             eventTemplateFns= {};
-
-            Object.keys(messageTemplates.supportedTargets).forEach(k=> {
-                eventTemplateFns[k] = dot.template(messageTemplates.templates[messageTemplates.supportedTargets[k]]);
+            Object.keys(eventConfig.supportedTargets).forEach(k=> {
+                eventTemplateFns[k] = dot.template(eventConfig.templates[eventConfig.supportedTargets[k]]);
             });
 
             this._templateMap[eventId]=eventTemplateFns;
@@ -47,5 +54,45 @@ export class MessageCompilerService {
         const message =  templateFn(attributes);
         logger.debug(`messageCompiler.service compile: exit:${message}`);
         return message;
+    }
+
+    public async compileDynamodbRecord(eventId: string, data: AttributeMapping, ddbAttrMapping: AttributeMapping): Promise<AttributeMapping> {
+        logger.info(`messageCompiler.service compileDynamodbRecord: in: eventId:${eventId}, data: ${JSON.stringify(data)}, ddbAttributeMapping: ${JSON.stringify(ddbAttrMapping)} `);
+
+        // Validate inputs
+        ow(eventId, ow.string.nonEmpty);
+        ow(data, ow.object.nonEmpty);
+        ow(ddbAttrMapping, ow.object.nonEmpty);
+
+        // Retrieve event config from db
+        const eventConfig:any = await this.messageCompilerDao.getEventConfig(eventId);
+
+        // do we already have the requested template compiled and cached for attribute mapping?
+        // if not, retrieve it from the db then compile and cache it
+        let eventTemplateFns = this._templateMap[eventConfig.eventId];
+        if (eventTemplateFns === undefined) {
+            eventTemplateFns= {};
+            Object.keys(ddbAttrMapping).forEach(key=> {
+                eventTemplateFns[key] = dot.template(key);
+            });
+
+            this._templateMap[eventConfig.eventId]=eventTemplateFns;
+        }
+
+        // Add additional supported values in templates
+        data['uuid'] = uuid();
+        data['datetime'] = new Date().toISOString();
+
+        const recordAttrMap:AttributeMapping = {};
+        Object.keys(ddbAttrMapping).forEach(key=> {
+            // const templateFn = dot.template(key);
+            const templateFn = eventTemplateFns[key];
+
+            // Set value as key to dynamodb record and evaluated string as value
+            recordAttrMap[ddbAttrMapping[key]] = templateFn(data);
+        });
+
+        logger.debug(`messageCompiler.service compileDynamodbRecord: exit:${JSON.stringify(recordAttrMap)}`);
+        return recordAttrMap;
     }
 }

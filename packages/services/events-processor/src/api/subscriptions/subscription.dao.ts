@@ -47,6 +47,9 @@ export class SubscriptionDao {
 
         const subscriptionDbId = createDelimitedAttribute(PkType.Subscription, si.id);
         const gsi2Key = createDelimitedAttribute(PkType.EventSource, si.eventSource.id, si.eventSource.principal, si.principalValue);
+        const snsTopicArn = (si.sns ? (si.sns.topicArn ? si.sns.topicArn: undefined): undefined);
+        const dynamoDbTableName = (si.dynamodb ? (si.dynamodb.tableName ? si.dynamodb.tableName: undefined): undefined);
+        const dynamoDbAttributeMapping = (si.dynamodb ? (si.dynamodb.attributeMapping ? si.dynamodb.attributeMapping: undefined): undefined);
 
         const subscriptionCreate = {
             PutRequest: {
@@ -57,7 +60,9 @@ export class SubscriptionDao {
                     principalValue: si.principalValue,
                     ruleParameterValues: si.ruleParameterValues,
                     enabled: si.enabled,
-                    snsTopicArn: si.sns.topicArn,
+                    snsTopicArn,
+                    dynamoDbTableName,
+                    dynamoDbAttributeMapping,
                     gsi2Key,
                     gsi2Sort: createDelimitedAttribute(PkType.Subscription, si.id)
                 }

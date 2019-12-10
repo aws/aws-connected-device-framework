@@ -23,8 +23,8 @@ export class MessageCompilerDao {
         this._cachedDc = cachableDocumentClientFactory();
     }
 
-    public async listTemplates(eventId:string): Promise<MessageTemplates> {
-        logger.debug(`messageCompiler.dao listTemplates: in: eventId:${eventId}`);
+    public async getEventConfig(eventId: string): Promise<MessageTemplates> {
+        logger.debug(`messageCompiler.dao getEventConfig: in: eventId:${eventId}`);
 
         const queryParams:DocumentClient.QueryInput = {
             TableName: this.eventConfigTable,
@@ -43,16 +43,15 @@ export class MessageCompilerDao {
         const results = await this._cachedDc.query(queryParams).promise();
 
         if (results.Items===undefined || results.Items.length===0) {
-            logger.error(`messageCompiler.dao listTemplates: unknown eventId: ${eventId}`);
+            logger.error(`messageCompiler.dao getEventConfig: unknown eventId: ${eventId}`);
             return undefined;
         }
-
         const templates = new MessageTemplates();
         const i=results.Items[0];
         templates.supportedTargets = i.supportedTargets;
         templates.templates = i.templates;
 
-        logger.debug(`messageCompiler.dao listTemplates: exit:${JSON.stringify(templates)}`);
+        logger.debug(`messageCompiler.dao getEventConfig: exit:${JSON.stringify(templates)}`);
         return templates;
     }
 }

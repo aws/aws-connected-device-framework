@@ -44,6 +44,7 @@ export interface EventItem {
 
     templates: TemplateMap;
     supportedTargets: TargetTemplateMap;
+
 }
 export interface EventConditions {
     all?:EventConditions|EventCondition[];
@@ -129,7 +130,8 @@ export class EventConditionsUtils {
 export enum EventTargetType {
     EMAIL = 'email',
     SMS = 'sms',
-    MQTT = 'mqtt'
+    MQTT = 'mqtt',
+    DYNAMODB = 'dynamodb'
 }
 
 export type TemplateMap = { [key: string] : string};

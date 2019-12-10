@@ -7,5 +7,6 @@ export interface CommonEvent {
     eventSourceId: string;
     principal: string;
     principalValue: string;
+    sourceChangeType?: string;
     attributes?: { [key: string] : string|boolean|number|string[]|number[] };
 }
