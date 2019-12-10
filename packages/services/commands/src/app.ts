@@ -45,9 +45,14 @@ server.setConfig((app) => {
 
   // enable cors
   const corsAllowedOrigin = config.get('cors.origin') as string;
+  let exposedHeaders = config.get('cors.exposedHeaders') as string;
+  if (exposedHeaders===null || exposedHeaders==='') {
+    exposedHeaders===undefined;
+  }
   if (corsAllowedOrigin !== null && corsAllowedOrigin !== '') {
     const cors = require('cors')({
-      origin: corsAllowedOrigin
+      origin: corsAllowedOrigin,
+      exposedHeaders
     });
     app.use(cors);
   }

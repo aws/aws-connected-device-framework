@@ -22,6 +22,7 @@ mqtt:
 
 cors:
   origin:
+  exposedHeaders:
 
 templates:
   addThingToGroup: add_thing_to_group
