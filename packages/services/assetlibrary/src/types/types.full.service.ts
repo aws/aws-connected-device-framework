@@ -411,6 +411,9 @@ export class TypesServiceFull implements TypesService {
             throw new Error('Invalid category');
         }
 
+        // save to datastore
+        await this.typesDao.publish(templateId, category);
+
         // fire event
         await this.eventEmitter.fire({
             objectId: templateId,
@@ -420,9 +423,6 @@ export class TypesServiceFull implements TypesService {
                 status: 'published'
             }
         });
-
-        // save to datastore
-        await this.typesDao.publish(templateId, category);
         logger.debug(`types.full.service publish: exit:`);
     }
 

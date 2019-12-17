@@ -202,7 +202,10 @@ export class TypesDaoFull extends BaseDaoFull {
 
     private addCreateOutboundRelationStepToTraversal(templateId:string, outTemplate:string, relation:string, traverser:process.GraphTraversal) {
         logger.debug(`types.full.dao addCreateOutboundRelationStepToTraversal: in: templateId:${templateId}, outTemplate:${outTemplate}, relation:${relation}`);
-        traverser.V(`type___${outTemplate}`).outE('current_definition').has('status','published').inV().as(`rel_out_${outTemplate}`).
+
+        const status = this.typeDefinitionStatusToLink(templateId, outTemplate);
+
+        traverser.V(`type___${outTemplate}`).outE('current_definition').has('status',status).inV().as(`rel_out_${outTemplate}`).
             addE('relationship').
                 property('name', relation).
                 property('fromTemplate', templateId).
@@ -212,12 +215,21 @@ export class TypesDaoFull extends BaseDaoFull {
 
     private addCreateInboundRelationStepToTraversal(templateId:string, inTemplate:string, relation:string, traverser:process.GraphTraversal) {
         logger.debug(`types.full.dao addCreateInboundRelationStepToTraversal: in: templateId:${templateId}, inTemplate:${inTemplate}, relation:${relation}`);
-        traverser.V(`type___${inTemplate}`).outE('current_definition').has('status','published').inV().as(`rel_in_${inTemplate}`).
+
+        const status = this.typeDefinitionStatusToLink(templateId, inTemplate);
+
+        traverser.V(`type___${inTemplate}`).outE('current_definition').has('status',status).inV().as(`rel_in_${inTemplate}`).
             addE('relationship').
                 property('name', relation).
                 property('fromTemplate', inTemplate).
                 property('toTemplate', templateId).
                 from_(`rel_in_${inTemplate}`).to('definition');
+    }
+
+    private typeDefinitionStatusToLink(fromTemplateId:string, toTemplateId:string): string {
+        // if attempting to link a type to itself, we have to use the draft version of it so
+        // that the correct linked version is referenced when published.
+        return (fromTemplateId===toTemplateId) ? 'draft' : 'published';
     }
 
     public async updateDraft(existing: TypeModel, updated: TypeModel): Promise<void> {
@@ -823,16 +835,20 @@ export class TypesDaoFull extends BaseDaoFull {
                     const relationship = entry['name'];
 
                     const direction = (templateId===outTemplate) ? 'out' : 'in';
-                    if (relations[direction]===undefined) {
-                        relations[direction] = {};
-                    }
-                    if (relations[direction][relationship]===undefined) {
-                        relations[direction][relationship]=[];
-                    }
-                    if (direction==='out') {
-                        relations.out[relationship].push(inTemplate);
+
+                    if (outTemplate===inTemplate) {
+                        // self link
+                        if ( relations.outgoingIncludes(relationship,inTemplate)) {
+                            relations.addIncoming(relationship, outTemplate);
+                        } else {
+                            relations.addOutgoing(relationship, inTemplate);
+                        }
+                    } else if (direction==='out') {
+                        // outgoing link
+                        relations.addOutgoing(relationship, inTemplate);
                     } else {
-                        relations.in[relationship].push(outTemplate);
+                        // incoming link
+                        relations.addIncoming(relationship, outTemplate);
                     }
                 }
                 definition.relations=relations;

@@ -26,10 +26,7 @@ export class TypeDefinitionModel {
     };
 	// properties?: { [key: string]: string|string[] };
     required?: string[];
-    relations?: {
-        out?: { [key: string]: string[] },
-        in?: { [key: string]: string[] }
-    };
+    relations?: TypeRelationsModel;
     components?: string[];
     messagePayload?: MessagePayloadDefinition;
 }
@@ -37,6 +34,46 @@ export class TypeDefinitionModel {
 export class TypeRelationsModel {
 	out?: { [key: string]: string[] };
     in?: { [key: string]: string[] };
+
+    public outgoingIncludes(rel:string,template:string ) : boolean {
+        if (this.out===undefined) {
+           return false;
+        }
+        if (this.out[rel]===undefined) {
+            return false;
+        }
+        return this.out[rel].includes(template);
+    }
+
+    public incomingIncludes(rel:string,template:string ) : boolean {
+        if (this.in===undefined) {
+           return false;
+        }
+        if (this.in[rel]===undefined) {
+            return false;
+        }
+        return this.in[rel].includes(template);
+    }
+
+    public addOutgoing(rel:string, template:string): void {
+        if (this.out===undefined) {
+            this.out= {};
+        }
+        if (this.out[rel]===undefined) {
+            this.out[rel]= [];
+        }
+        this.out[rel].push(template);
+    }
+
+    public addIncoming(rel:string, template:string): void {
+        if (this.in===undefined) {
+            this.in= {};
+        }
+        if (this.in[rel]===undefined) {
+            this.in[rel]= [];
+        }
+        this.in[rel].push(template);
+    }
 }
 
 export class TypeResource extends TypeDefinitionModel {

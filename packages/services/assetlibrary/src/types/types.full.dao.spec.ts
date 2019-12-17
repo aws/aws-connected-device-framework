@@ -7,6 +7,7 @@ import 'reflect-metadata';
 import {TypesDaoFull} from './types.full.dao';
 import { createMockInstance } from 'jest-create-mock-instance';
 import { structure } from 'gremlin';
+import { TypeRelationsModel } from './types.models';
 
 describe('TypesDao', () => {
     let mockedGraph: jest.Mocked<structure.Graph>;
@@ -18,12 +19,11 @@ describe('TypesDao', () => {
     });
 
     it('All incoming links removed', async () => {
-        const existing = {
-            in: {
-                located_at: ['site']
-            }
+        const existing = new TypeRelationsModel();
+        existing.in = {
+            located_at: ['site']
         };
-        const updated = {};
+        const updated = new TypeRelationsModel();
 
         const changes = instance.__private___identifyChangedRelations(existing, updated);
 
@@ -34,15 +34,13 @@ describe('TypesDao', () => {
     });
 
     it('Relations in.key removed', async () => {
-        const existing = {
-            in: {
-                located_at: ['site']
-            }
+        const existing = new TypeRelationsModel();
+        existing.in = {
+            located_at: ['site']
         };
-        const updated = {
-            in: {
-                installed_at: ['site']
-            }
+        const updated = new TypeRelationsModel();
+        updated.in = {
+            installed_at: ['site']
         };
 
         const changes = instance.__private___identifyChangedRelations(existing, updated);
@@ -54,15 +52,13 @@ describe('TypesDao', () => {
     });
 
     it('Relations in.key.type changed', async () => {
-        const existing = {
-            in: {
-                located_at: ['site']
-            }
+        const existing = new TypeRelationsModel();
+        existing.in = {
+            located_at: ['site']
         };
-        const updated = {
-            in: {
-                located_at: ['site','group']
-            }
+        const updated = new TypeRelationsModel();
+        updated.in = {
+            located_at: ['site','group']
         };
 
         const changes = instance.__private___identifyChangedRelations(existing, updated);
@@ -74,15 +70,13 @@ describe('TypesDao', () => {
     });
 
     it('Relations in.key.type removed', async () => {
-        const existing = {
-            in: {
-                located_at: ['site']
-            }
+        const existing = new TypeRelationsModel();
+        existing.in = {
+            located_at: ['site']
         };
-        const updated = {
-            in: {
-                located_at: ['group']
-            }
+        const updated = new TypeRelationsModel();
+        updated.in = {
+            located_at: ['group']
         };
 
         const changes = instance.__private___identifyChangedRelations(existing, updated);
@@ -94,15 +88,13 @@ describe('TypesDao', () => {
     });
 
     it('Relations out added', async () => {
-        const existing = {
-            in: {
-                located_at: ['site']
-            }
+        const existing = new TypeRelationsModel();
+        existing.in = {
+            located_at: ['site']
         };
-        const updated = {
-            out: {
-                located_at: ['location']
-            }
+        const updated = new TypeRelationsModel();
+        updated.out = {
+            located_at: ['location']
         };
 
         const changes = instance.__private___identifyChangedRelations(existing, updated);
@@ -114,15 +106,13 @@ describe('TypesDao', () => {
     });
 
     it('Relations out.key added', async () => {
-        const existing = {
-            out: {
-                installed_at: ['location']
-            }
+        const existing = new TypeRelationsModel();
+        existing.out = {
+            installed_at: ['location']
         };
-        const updated = {
-            out: {
-                located_at: ['location']
-            }
+        const updated = new TypeRelationsModel();
+        updated.out = {
+            located_at: ['location']
         };
 
         const changes = instance.__private___identifyChangedRelations(existing, updated);
@@ -134,15 +124,13 @@ describe('TypesDao', () => {
     });
 
     it('Relations out.key.type added', async () => {
-        const existing = {
-            out: {
-                installed_at: ['location']
-            }
+        const existing = new TypeRelationsModel();
+        existing.out = {
+            installed_at: ['location']
         };
-        const updated = {
-            out: {
-                installed_at: ['group']
-            }
+        const updated = new TypeRelationsModel();
+        updated.out = {
+            installed_at: ['group']
         };
 
         const changes = instance.__private___identifyChangedRelations(existing, updated);
@@ -154,17 +142,15 @@ describe('TypesDao', () => {
     });
 
     it('Relations out.keys changed order', async () => {
-        const existing = {
-            out: {
-                installed_at: ['location'],
-                located_at: ['site']
-            }
+        const existing = new TypeRelationsModel();
+        existing.out = {
+            installed_at: ['location'],
+            located_at: ['site']
         };
-        const updated = {
-            out: {
-                located_at: ['site'],
-                installed_at: ['location']
-            }
+        const updated = new TypeRelationsModel();
+        updated.out = {
+            located_at: ['site'],
+            installed_at: ['location']
         };
 
         const changes = instance.__private___identifyChangedRelations(existing, updated);
@@ -176,15 +162,13 @@ describe('TypesDao', () => {
     });
 
     it('Relations out.keys.types changed order', async () => {
-        const existing = {
-            out: {
-                installed_at: ['location','site']
-            }
+        const existing = new TypeRelationsModel();
+        existing.out = {
+            installed_at: ['location','site']
         };
-        const updated = {
-            out: {
-                installed_at: ['site','location']
-            }
+        const updated = new TypeRelationsModel();
+        updated.out = {
+            installed_at: ['site','location']
         };
 
         const changes = instance.__private___identifyChangedRelations(existing, updated);
@@ -196,15 +180,13 @@ describe('TypesDao', () => {
     });
 
     it('Relations out.keys.types 1 added', async () => {
-        const existing = {
-            out: {
-                installed_at: ['location']
-            }
+        const existing = new TypeRelationsModel();
+        existing.out = {
+            installed_at: ['location']
         };
-        const updated = {
-            out: {
-                installed_at: ['site','location']
-            }
+        const updated = new TypeRelationsModel();
+        updated.out = {
+            installed_at: ['site','location']
         };
 
         const changes = instance.__private___identifyChangedRelations(existing, updated);
@@ -216,15 +198,13 @@ describe('TypesDao', () => {
     });
 
     it('Relations out.keys.types 1 removed', async () => {
-        const existing = {
-            out: {
+        const existing = new TypeRelationsModel();
+        existing.out = {
                 installed_at: ['site','location']
-            }
         };
-        const updated = {
-            out: {
-                installed_at: ['location']
-            }
+        const updated = new TypeRelationsModel();
+        updated.out = {
+            installed_at: ['location']
         };
 
         const changes = instance.__private___identifyChangedRelations(existing, updated);
