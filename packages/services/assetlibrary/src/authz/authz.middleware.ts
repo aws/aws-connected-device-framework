@@ -25,7 +25,16 @@ export function setClaims() {
             const header = req.headers[JWT_HEADER] as string;
             const token = header.replace('Bearer ','');
             const decoded = decode(token);
-            const claims_header = decoded[JWT_CLAIMS];
+            let claims_header = decoded[JWT_CLAIMS];
+
+            // Check if the claims are passed as string and if so, parse the string as JSON
+            if(typeof claims_header === 'string') {
+                try {
+                    claims_header = JSON.parse(claims_header);
+                } catch (ex) {
+                    throw new Error('Failed to parse claims');
+                }
+            }
 
             logger.debug(JSON.stringify(decoded));
 
