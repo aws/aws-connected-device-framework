@@ -23,7 +23,6 @@
   -R us-west-2 
 ```
 
-
 ## Testing locally
 
 Run all from the main root...
