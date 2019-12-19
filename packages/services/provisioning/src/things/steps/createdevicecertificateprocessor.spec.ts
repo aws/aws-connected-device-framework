@@ -158,7 +158,7 @@ describe('CreateDeviceCertificateStepProcessor', () => {
             const output: ProvisioningStepOutput = await instance.process(unitTestStepInput);
             expect(output).toBeFalsy(); // fail
         } catch (e) {
-            expect(e.message).toEqual('Expected argument to be of type `string` but received type `undefined`');
+            expect(e.message).toEqual('Expected `stepInput.cdfProvisioningParameters.caId` to be of type `string` but received type `undefined`');
         }
     });
 

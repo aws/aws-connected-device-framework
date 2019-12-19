@@ -11,7 +11,7 @@ import { SubscriptionItem } from '../api/subscriptions/subscription.models';
 import { TYPES } from '../di/types';
 import { logger } from '../utils/logger.util';
 import { SubscriptionDao } from '../api/subscriptions/subscription.dao';
-import * as rulesEngine from 'json-rules-engine';
+import { Rule, Engine, TopLevelCondition, EngineResult} from 'json-rules-engine';
 import { AlertDao } from '../alerts/alert.dao';
 import { AlertItem } from '../alerts/alert.models';
 import { EventConditionsUtils } from '../api/events/event.models';
@@ -32,9 +32,9 @@ export class FilterService {
 
         // for performance, cache for the duration of the method call...
         const subscriptionMap: { [key:string]:SubscriptionItem[]} = {};
-        const ruleMap: { [key:string]:rulesEngine.Rule} = {};
+        const ruleMap: { [key:string]:Rule} = {};
 
-        const engine = new rulesEngine.Engine();
+        const engine = new Engine();
 
         const alerts:AlertItem[]=[];
         const changedSubAlerts:{[key:string]:SubscriptionItem}= {};
@@ -52,8 +52,8 @@ export class FilterService {
                     // initialize the rule (cached for the duration of the method call)
                     let rule = ruleMap[sub.event.id];
                     if (rule===undefined) {
-                        rule = new rulesEngine.Rule({
-                            conditions: sub.event.conditions,
+                        rule = new Rule({
+                            conditions: sub.event.conditions as TopLevelCondition,
                             event: {
                                 type: sub.event.name
                             }
@@ -65,7 +65,7 @@ export class FilterService {
 
                     // add all root elements with '__' prefix, except attributes
                     Object.keys(ev)
-                        .filter(key=> ev[key]!=='attributes')
+                        .filter(key=> key!=='attributes')
                         .forEach(key=> engine.addFact( '__' + key, ev[key]));
 
                     // add all the known facts
@@ -74,13 +74,14 @@ export class FilterService {
                         .forEach(key=> engine.addFact(key, ev.attributes[key]));
 
                         // evaluate the rules
-                    let results:rulesEngine.Rule[] = [];
+                    let results:EngineResult;
                     try {
                         results = await engine.run();
                     } catch (err) {
                         // silently ignore, as an incoming message may not contain the facts we're interested in
                     }
-                    if (results.length>0 && !sub.alerted) {
+                    logger.debug(`filter.service filter: results:${JSON.stringify(results)}`);
+                    if (results.events.length>0 && !sub.alerted) {
                         // a new alert...
                         alerts.push(this.buildAlert(sub));
                         sub.alerted=true;
@@ -93,7 +94,7 @@ export class FilterService {
                             principalValue: sub.principalValue,
                             alerted: true
                         };
-                    } else if (results.length===0 && sub.alerted) {
+                    } else if (results.events.length===0 && sub.alerted) {
                         // an alert that needs resetting...
                         sub.alerted=false;
                         changedSubAlerts[sub.id]= {
@@ -111,6 +112,10 @@ export class FilterService {
                     Object.keys(ev.attributes).forEach(key=> engine.removeFact(key));
                     engine.removeRule(rule);
                 }
+
+                // save the subscription in case its state changed
+                const mapKey = this.subscriptionMapKey(ev);
+                subscriptionMap[mapKey]=subscriptions;
             }
         }
 
@@ -151,10 +156,14 @@ export class FilterService {
         return alert;
     }
 
+    private subscriptionMapKey(ev:CommonEvent) : string {
+        return `${ev.eventSourceId}:${ev.principal}:${ev.principalValue}`;
+    }
+
     private async listSubscriptionsForEvent(ev:CommonEvent, subscriptionMap:{ [key:string]:SubscriptionItem[]} ) {
         logger.debug(`filter.service listSubscriptionsForEvent: in: ev:${JSON.stringify(ev)}, subscriptionMap:${JSON.stringify(subscriptionMap)}`);
 
-        const mapKey = `${ev.eventSourceId}:${ev.principal}:${ev.principalValue}`;
+        const mapKey = this.subscriptionMapKey(ev);
         let subscriptions = subscriptionMap[mapKey];
         if (subscriptions===undefined) {
             subscriptions = await this.subscriptionDao.listSubscriptionsForEventMessage(ev.eventSourceId, ev.principal, ev.principalValue);
