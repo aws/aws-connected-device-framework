@@ -106,7 +106,7 @@ Resources:
       Source: 
         Type: CODEPIPELINE
         BuildSpec: |
-        
+
           version: 0.2
           env:
             parameter-store:
@@ -120,8 +120,6 @@ Resources:
               commands:
                 - bash -c cicd/filterproject_install.bash
             pre_build:
-              runtime-versions:
-                nodejs: 12
               commands:
                 - bash -c cicd/filterproject_prebuild.bash
           artifacts:
@@ -167,20 +165,14 @@ Resources:
                 - bash -c cicd/buildproject_install.bash
 
             pre_build:
-              runtime-versions:
-                nodejs: 12
               commands:
                 - bash -c cicd/buildproject_prebuild.bash
 
             build:
-              runtime-versions:
-                nodejs: 12
               commands:
                 - bash -c cicd/buildproject_build.bash
 
             post_build:
-              runtime-versions:
-                nodejs: 12
               commands:
                 - bash -c cicd/buildproject_postbuild.bash
 
@@ -229,13 +221,9 @@ Resources:
               commands:
                 - bash -c cicd/integrationtestsproject_install.bash
             pre_build:
-              runtime-versions:
-                nodejs: 12
               commands:
                 - bash -c cicd/integrationtestsproject_prebuild.bash
             build:
-              runtime-versions:
-                nodejs: 12
               commands:
                 - bash -c cicd/integrationtestsproject_build.bash
 
@@ -319,13 +307,9 @@ Resources:
                 - bash -c cicd/deployproject_install.bash
             build:
               commands:
-              runtime-versions:
-                nodejs: 12
                 - bash -c cicd/deployproject_build.bash
             post_build:
               commands:
-              runtime-versions:
-                nodejs: 12
                 - bash -c cicd/deployproject_postbuild.bash
 
 
@@ -416,13 +400,9 @@ Resources:
               commands:
                 - bash -c cicd/deployproject_install.bash
             build:
-              runtime-versions:
-                nodejs: 12
               commands:
                 - bash -c cicd/deployproject_build.bash
             post_build:
-              runtime-versions:
-                nodejs: 12
               commands:
                 - bash -c cicd/deployproject_postbuild.bash
 
