@@ -1,3 +1,15 @@
+# [@cdf/commands-client-v3.1.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/commands-client-v3.0.0...@cdf/commands-client-v3.1.0) (2019-12-19)
+
+
+### Bug Fixes
+
+* cleaned up log messages ([d49403d](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/d49403d11f3f73ea8c5ce061bfa790ec40cd8c13))
+
+
+### Features
+
+* **cdf:** upgraded from node.js v8 to v12 ([e47299e](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/e47299ee399acf6554a0845048c4fed99251c2b1))
+
 # [@cdf/commands-client-v3.0.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/commands-client-v2.2.0...@cdf/commands-client-v3.0.0) (2019-11-08)
 
 
