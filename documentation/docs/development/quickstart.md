@@ -17,10 +17,10 @@ The following is a one-time setup to configure the CDF development environment:
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
 ```
 
-+ using nvm installed from the previous step, install Node.js v8.10:
++ using nvm installed from the previous step, install Node.js v12:
 
 ```sh
-> nvm use v8.10
+> nvm use v12
 ```
 
 + install [`pnpm`](https://pnpm.js.org) package manager:
@@ -186,9 +186,6 @@ cdf-core/packages/services/ | Deployable services, such as the Asset Library
     Alternatively, by performing the git merge manually using the `--no-ff` argument, it creates a commit message for the merge itself.  What this means is that when you view the history, even though you have merged your branch into your master, all your commit messages for your branch will be grouped together making it easy to see what commits were originally made to your branch.
 
     Performing a `no fast forard` type merge makes future troubleshooting so much easier.
-
-???+ question "Why are we using node.js v8 when there are more recent versions available?"
-    The latest node.js version that AWS Lambda supports is v8.10, and AWS Lambda is one of our supported deployment targets.
 
 ???+ question "What is the need for using ([`pnpm`](https://pnpm.js.org) package manager)?  What's wrong with `npm`?"
     The `cdf-core` git repo is what is known as a monorepo, a large single repository that contains many different projects.

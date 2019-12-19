@@ -86,10 +86,10 @@ The following is a one-time setup to configure an environment for development an
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
 ```
 
-+ using nvm installed from the previous step, install Node.js v8.10:
++ using nvm installed from the previous step, install Node.js v12.x:
 
 ```sh
-> nvm use v8.10
+> nvm use v12
 ```
 
 + install [`pnpm`](https://pnpm.js.org) package manager:

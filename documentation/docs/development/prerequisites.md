@@ -3,7 +3,7 @@
 Tool / Technology | Reason
 ---|---
 [nvm](https://github.com/creationix/nvm) | Simple way to manage multiple versions of Node.js
-Node.js v8.10 | Install using `nvm install 8.10`, and/or switch to it using `nvm use 8.10`
+Node.js v12.x | Install using `nvm install 12`, and/or switch to it using `nvm use 12`
 [Git](https://git-scm.com/downloads) | Version control
 [mkdocs](http://www.mkdocs.org/#installation) | Documentation tool
 

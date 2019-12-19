@@ -1,14 +1,16 @@
-**/node_modules
-**/*.log
-**/lib
+node_modules
+*.log
+lib
 .vscode
-**/dist
-**/build
-**/.DS_Store
-**/builds
-**/.nyc_output
+dist
+build
+.DS_Store
+builds
+.nyc_output
 .gitignore
 
 cicd/codepipeline-packaged.yaml
 
 .history
+
+tsconfig.tsbuildinfo

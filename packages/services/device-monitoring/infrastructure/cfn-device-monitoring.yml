@@ -91,7 +91,7 @@ Resources:
       Handler: iot_lifecycle_event.lambda_handler
       MemorySize: 512
       Role: !GetAtt IoTLifecycleLambdaRole.Arn
-      Runtime: nodejs8.10
+      Runtime: nodejs12.x
       Timeout: 30
       Environment:
         Variables:

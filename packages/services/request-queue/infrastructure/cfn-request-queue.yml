@@ -301,7 +301,7 @@ Resources:
       Handler: lambda_proxy.handler
       MemorySize: 512
       Role: !GetAtt RestLambdaExecutionRole.Arn
-      Runtime: nodejs8.10
+      Runtime: nodejs12.x
       Timeout: 30
       Environment:
         Variables:
@@ -332,7 +332,7 @@ Resources:
       Handler: replay.handler
       MemorySize: 512
       Role: !GetAtt ReplayLambdaExecutionRole.Arn
-      Runtime: nodejs8.10
+      Runtime: nodejs12.x
       Timeout: 300
       Environment:
         Variables:

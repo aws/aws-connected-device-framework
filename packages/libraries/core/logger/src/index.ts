@@ -1,4 +1,4 @@
-import {Logger, LoggerInstance, LoggerOptions, transports} from 'winston';
+import {createLogger, Logger, LoggerOptions, transports} from 'winston';
 
 /**
  * Class representing CDF Logging mechanism.
@@ -6,7 +6,7 @@ import {Logger, LoggerInstance, LoggerOptions, transports} from 'winston';
  * @module CDFLogger
  */
 export class CDFLogger {
-    private readonly _internalLogger: LoggerInstance;
+    private readonly _internalLogger: Logger;
 
     /**
      * Construct new instance of logger
@@ -20,7 +20,7 @@ export class CDFLogger {
                 new transports.Console()
             ]
         };
-        this._internalLogger = new Logger(defaultLoggingOptions);
+        this._internalLogger = createLogger(defaultLoggingOptions);
     }
 
     /**

@@ -1,3 +1,4 @@
+
 /*-------------------------------------------------------------------------------
 # Copyright (c) 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
@@ -9,9 +10,8 @@ import {TYPES} from '../di/types';
 import { StateHistoryModel, StateHistoryListModel } from './events.models';
 import AWS = require('aws-sdk');
 import { DocumentClient, AttributeValue } from 'aws-sdk/clients/dynamodb';
-// import * as btoa from 'btoa';
-import btoa = require('btoa');
-import * as atob from 'atob';
+import btoa from 'btoa';
+import atob from 'atob';
 
 @injectable()
 export class EventsDao {
@@ -130,7 +130,7 @@ export class EventsDao {
         // apply pagination if provided
         let exclusiveStartKey:{[key: string]: AttributeValue};
         if (args.token) {
-            const lastEvaluated:string[] = atob.default(args.token).split(':::');
+            const lastEvaluated:string[] = atob(args.token).split(':::');
             exclusiveStartKey= {};
             exclusiveStartKey['objectId'] = lastEvaluated[0] as AttributeValue;
             exclusiveStartKey['time'] = lastEvaluated[1] as AttributeValue;
@@ -188,7 +188,7 @@ export class EventsDao {
         // apply pagination if provided
         let exclusiveStartKey:{[key: string]: AttributeValue};
         if (args.token) {
-            const lastEvaluated:string[] = atob.default(args.token).split(':::');
+            const lastEvaluated:string[] = atob(args.token).split(':::');
             exclusiveStartKey= {};
             exclusiveStartKey['objectId'] = lastEvaluated[0] as AttributeValue;
             exclusiveStartKey['time'] = lastEvaluated[1] as AttributeValue;

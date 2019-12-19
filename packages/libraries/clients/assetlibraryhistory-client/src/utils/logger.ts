@@ -3,15 +3,20 @@
 #
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
-import {Logger, LoggerInstance, LoggerOptions, transports} from 'winston';
+import {createLogger, LoggerOptions, transports} from 'winston';
+import {format} from 'logform';
+const { combine, timestamp, printf } = format;
 
-export const logger: LoggerInstance = new Logger(<LoggerOptions> {
+export const logger = createLogger(<LoggerOptions> {
     level: 'debug',
     exitOnError: false,
     transports: [
-        new transports.Console({
-            timestamp: true,
-            showLevel: true,
-        }),
+        new transports.Console(),
     ],
+    format: combine(
+      timestamp(),
+      printf(nfo => {
+        return `${nfo.timestamp} [${nfo.label}] ${nfo.level}: ${nfo.message}`;
+      })
+    ),
 });

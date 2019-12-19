@@ -1,6 +1,6 @@
 # Tech Stack
 
-Each application is written in [TypeScript 3.1](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-8.html), and transpiled into [Node.js 8.10](https://nodejs.org/en/blog/release/v8.10.0/).
+Each application is written in [TypeScript 3.1](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-8.html), and transpiled into Node.js 12.x.
 
 The REST API's are hosted within the [Express web framework](https://expressjs.com), using [aws-serverless-express](https://github.com/awslabs/aws-serverless-express) to allow the Express application to run within AWS Lambda.
 

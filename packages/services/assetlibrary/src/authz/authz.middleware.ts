@@ -1,5 +1,5 @@
 
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction, RequestHandler } from 'express';
 import { Claims } from './claims';
 import * as als from 'async-local-storage';
 import {logger} from '../utils/logger';
@@ -11,7 +11,7 @@ const CLAIMS_REQUEST_ATTRIBUTE = 'claims';
 
 als.enable();
 
-export function setClaims() {
+export function setClaims() : RequestHandler {
     return (req: Request, res: Response, next: NextFunction) => {
 
         logger.debug(`authz.middleware setClaims in:`);
@@ -21,8 +21,8 @@ export function setClaims() {
 
         // Note:  it is he responsibility of the custom authorizer to verify the incoming JWT
 
-        if (req && req.headers && req.headers[JWT_HEADER]) {
-            const header = req.headers[JWT_HEADER] as string;
+        if (req && req['headers'] && req['headers'][JWT_HEADER]) {
+            const header = req['headers'][JWT_HEADER] as string;
             const token = header.replace('Bearer ','');
             const decoded = decode(token);
             let claims_header = decoded[JWT_CLAIMS];

@@ -1,6 +1,6 @@
 # Asynchronous Operations
 
-As CDF is based on Node.js v8.10, the `async, await` constructs are used to handle asynchronous operations as if they were synchronous, vastly simplifying their implementation when compared to Promises and callbacks.
+As CDF is based on Node.js v12.x, the `async, await` constructs are used to handle asynchronous operations as if they were synchronous, vastly simplifying their implementation when compared to Promises and callbacks.
 
 ## Pattern:  Alternative to Promise chaining
 

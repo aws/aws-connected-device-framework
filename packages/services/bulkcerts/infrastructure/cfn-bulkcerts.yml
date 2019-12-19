@@ -339,7 +339,7 @@ Resources:
       Handler: lambda_proxy.handler
       MemorySize: 128
       Role: !GetAtt ApiLambdaExecutionRole.Arn
-      Runtime: nodejs8.10
+      Runtime: nodejs12.x
       Timeout: 300
       Environment:
         Variables:
@@ -371,7 +371,7 @@ Resources:
       Handler: sns_handler.handler
       MemorySize: 512
       Role: !GetAtt SnsLambdaExecutionRole.Arn
-      Runtime: nodejs8.10
+      Runtime: nodejs12.x
       Timeout: 300
       ReservedConcurrentExecutions: 3
       Environment:

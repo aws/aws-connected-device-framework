@@ -219,7 +219,7 @@ Resources:
       Handler: lambda_proxy.handler
       MemorySize: 128
       Role: !If [KmsKeyProvided, !GetAtt LambdaExecutionRoleWithCsr.Arn, !GetAtt LambdaExecutionRole.Arn]
-      Runtime: nodejs8.10
+      Runtime: nodejs12.x
       Timeout: 30
       Environment:
         Variables:
