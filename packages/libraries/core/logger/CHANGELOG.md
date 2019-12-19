@@ -1,3 +1,10 @@
+# [@cdf/logger-v2.1.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/logger-v2.0.1...@cdf/logger-v2.1.0) (2019-12-19)
+
+
+### Features
+
+* **cdf:** upgraded from node.js v8 to v12 ([e47299e](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/e47299ee399acf6554a0845048c4fed99251c2b1))
+
 # [@cdf/logger-v2.0.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/logger-v2.0.0...@cdf/logger-v2.0.1) (2019-11-08)
 
 
