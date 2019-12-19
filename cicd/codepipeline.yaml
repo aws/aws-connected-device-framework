@@ -94,7 +94,7 @@ Resources:
         Name: !Sub '${CodePipelineName}-filterCommits'
       Environment:
         ComputeType: BUILD_GENERAL1_SMALL
-        Image: aws/codebuild/nodejs:8.11.0
+        Image: aws/codebuild/amazonlinux2-x86_64-standard:2.0
         Type: LINUX_CONTAINER
         EnvironmentVariables:
           - Name: REPO_NAME
@@ -106,6 +106,7 @@ Resources:
       Source: 
         Type: CODEPIPELINE
         BuildSpec: |
+        
           version: 0.2
           env:
             parameter-store:
@@ -114,9 +115,13 @@ Resources:
               CDF_CODECOMMIT_PASSWORD: "CDF_CODECOMMIT_PASSWORD"
           phases:
             install:
+              runtime-versions:
+                nodejs: 12
               commands:
                 - bash -c cicd/filterproject_install.bash
             pre_build:
+              runtime-versions:
+                nodejs: 12
               commands:
                 - bash -c cicd/filterproject_prebuild.bash
           artifacts:
@@ -138,7 +143,7 @@ Resources:
         Name: !Sub '${CodePipelineName}-build'
       Environment:
         ComputeType: BUILD_GENERAL1_MEDIUM
-        Image: aws/codebuild/nodejs:8.11.0
+        Image: aws/codebuild/amazonlinux2-x86_64-standard:2.0
         Type: LINUX_CONTAINER
         EnvironmentVariables:
           - Name: BRANCH
@@ -156,18 +161,26 @@ Resources:
               CDF_CODECOMMIT_PASSWORD: "CDF_CODECOMMIT_PASSWORD"
           phases:
             install:
+              runtime-versions:
+                nodejs: 12
               commands:
                 - bash -c cicd/buildproject_install.bash
 
             pre_build:
+              runtime-versions:
+                nodejs: 12
               commands:
                 - bash -c cicd/buildproject_prebuild.bash
 
             build:
+              runtime-versions:
+                nodejs: 12
               commands:
                 - bash -c cicd/buildproject_build.bash
 
             post_build:
+              runtime-versions:
+                nodejs: 12
               commands:
                 - bash -c cicd/buildproject_postbuild.bash
 
@@ -191,7 +204,7 @@ Resources:
       TimeoutInMinutes: 10
       Environment:
         ComputeType: BUILD_GENERAL1_MEDIUM
-        Image: aws/codebuild/nodejs:8.11.0
+        Image: aws/codebuild/amazonlinux2-x86_64-standard:2.0
         Type: LINUX_CONTAINER
         EnvironmentVariables:
           - Name: DEPLOY_ARTIFACTS_STORE_BUCKET
@@ -207,15 +220,22 @@ Resources:
       Source:
         Type: CODEPIPELINE
         BuildSpec: |
+
           version: 0.2
           phases:
             install:
+              runtime-versions:
+                nodejs: 12
               commands:
                 - bash -c cicd/integrationtestsproject_install.bash
             pre_build:
+              runtime-versions:
+                nodejs: 12
               commands:
                 - bash -c cicd/integrationtestsproject_prebuild.bash
             build:
+              runtime-versions:
+                nodejs: 12
               commands:
                 - bash -c cicd/integrationtestsproject_build.bash
 
@@ -236,7 +256,7 @@ Resources:
       TimeoutInMinutes: 30
       Environment:
         ComputeType: BUILD_GENERAL1_MEDIUM
-        Image: aws/codebuild/nodejs:8.11.0
+        Image: aws/codebuild/amazonlinux2-x86_64-standard:2.0
         Type: LINUX_CONTAINER
         EnvironmentVariables:
           - Name: DEPLOY_ARTIFACTS_STORE_BUCKET
@@ -284,6 +304,7 @@ Resources:
       Source:
         Type: CODEPIPELINE
         BuildSpec: |
+
           version: 0.2
           env:
             parameter-store:
@@ -292,13 +313,19 @@ Resources:
               CDF_CODECOMMIT_PASSWORD: "CDF_CODECOMMIT_PASSWORD"
           phases:
             install:
+              runtime-versions:
+                nodejs: 12
               commands:
                 - bash -c cicd/deployproject_install.bash
             build:
               commands:
+              runtime-versions:
+                nodejs: 12
                 - bash -c cicd/deployproject_build.bash
             post_build:
               commands:
+              runtime-versions:
+                nodejs: 12
                 - bash -c cicd/deployproject_postbuild.bash
 
 
@@ -318,7 +345,7 @@ Resources:
       TimeoutInMinutes: 30
       Environment:
         ComputeType: BUILD_GENERAL1_MEDIUM
-        Image: aws/codebuild/nodejs:8.11.0
+        Image: aws/codebuild/amazonlinux2-x86_64-standard:2.0
         Type: LINUX_CONTAINER
         EnvironmentVariables:
           - Name: DEPLOY_ARTIFACTS_STORE_BUCKET
@@ -375,6 +402,7 @@ Resources:
       Source:
         Type: CODEPIPELINE
         BuildSpec: |
+
           version: 0.2
           env:
             parameter-store:
@@ -383,12 +411,18 @@ Resources:
               CDF_CODECOMMIT_PASSWORD: "CDF_CODECOMMIT_PASSWORD"
           phases:
             install:
+              runtime-versions:
+                nodejs: 12
               commands:
                 - bash -c cicd/deployproject_install.bash
             build:
+              runtime-versions:
+                nodejs: 12
               commands:
                 - bash -c cicd/deployproject_build.bash
             post_build:
+              runtime-versions:
+                nodejs: 12
               commands:
                 - bash -c cicd/deployproject_postbuild.bash
 

@@ -6,6 +6,7 @@
     "reset": "pnpm m run reset && rm -rf node_modules package-lock.json",
     "commit": "npx git-cz",
     "build": "pnpm m run build",
+    "test": "pnpm m run test",
     "prebundle": "pnpm run clean && pnpm install --force && pnpm run build && pnpm m run prebundle:prepare",
     "bundle": "pnpm i --no-lock --prod --shamefully-flatten --force && pnpm m run bundle:package",
     "postbundle": "pnpm install --force",

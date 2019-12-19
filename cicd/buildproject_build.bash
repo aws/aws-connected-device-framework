@@ -6,7 +6,7 @@ echo buildproject_build started on `date`
 
 
 echo building...
-pnpm m run build
+npm run build
 
 echo testing...
-pnpm m run test
+npm run test
