@@ -16,7 +16,7 @@ export const logger = createLogger(<LoggerOptions> {
     format: combine(
       timestamp(),
       printf(nfo => {
-        return `${nfo.timestamp} [${nfo.label}] ${nfo.level}: ${nfo.message}`;
+        return `${nfo.timestamp} ${nfo.level}: ${nfo.message}`;
       })
     ),
 });
