@@ -1,6 +1,6 @@
 {
   "name": "@cdf/auth-jwt",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "API Gateway lambda authorizer that verifies JWT tokens.",
   "author": "Dean Hart <deanhart@amazon.com>",
   "main": "lib/index.js",
