@@ -1,3 +1,10 @@
+# [@cdf/auth-jwt-v1.1.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/auth-jwt-v1.1.0...@cdf/auth-jwt-v1.1.1) (2019-12-23)
+
+
+### Bug Fixes
+
+* **auth-jwt:** deploy precompiled bundle ([b530279](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/b530279b4bde288bd14b40736c6cb2f61756c319))
+
 # [@cdf/auth-jwt-v1.1.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/auth-jwt-v1.0.1...@cdf/auth-jwt-v1.1.0) (2019-12-19)
 
 
