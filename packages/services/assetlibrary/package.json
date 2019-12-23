@@ -38,7 +38,7 @@
     "json-stable-stringify": "1.0.1",
     "jsonwebtoken": "8.5.1",
     "logform": "2.1.2",
-    "mime": "2.4.4",
+    "mime": "1.6.0",
     "node-cache": "5.1.0",
     "ow": "0.15.0",
     "prettyjson": "1.2.1",
