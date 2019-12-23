@@ -1,3 +1,10 @@
+# [@cdf/assetlibrary-v3.1.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.1.0...@cdf/assetlibrary-v3.1.1) (2019-12-23)
+
+
+### Bug Fixes
+
+* **assetlibrary:** updated mime dependency incompatability ([ec36165](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/ec361651ab2c9206d095dff2c1f7999eee894e60))
+
 # [@cdf/assetlibrary-v3.1.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.0.4...@cdf/assetlibrary-v3.1.0) (2019-12-19)
 
 
