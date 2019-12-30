@@ -1,3 +1,10 @@
+# [@cdf/assetlibrary-v3.1.2](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.1.1...@cdf/assetlibrary-v3.1.2) (2019-12-30)
+
+
+### Bug Fixes
+
+* **assetlibrary:** fixed authz for sibling groups ([594908c](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/594908cd0026c3e53838fa57be769c76cfbabfed))
+
 # [@cdf/assetlibrary-v3.1.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.1.0...@cdf/assetlibrary-v3.1.1) (2019-12-23)
 
 
