@@ -46,7 +46,7 @@ export class AuthzDaoFull extends BaseDaoFull {
                     __.local(
                         __.until(
                             __.has('groupPath', process.P.within(hierarchies))
-                        ).repeat(__.out()).as('authorizedPath')
+                        ).repeat(__.out().simplePath()).as('authorizedPath')
                     ).project('entity','authorizedPath').
                         by(__.select('entity').coalesce(__.values('deviceId'),__.values('groupPath'))).
                         by(__.select('authorizedPath').values('groupPath'))
