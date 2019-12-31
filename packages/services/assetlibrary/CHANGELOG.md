@@ -1,3 +1,10 @@
+# [@cdf/assetlibrary-v3.1.3](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.1.2...@cdf/assetlibrary-v3.1.3) (2019-12-31)
+
+
+### Bug Fixes
+
+* **assetlibrary:** prevent authz recursive loop checks ([9af98be](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/9af98bee47c268ba06f3fb9d48d7a05f1a9820dd))
+
 # [@cdf/assetlibrary-v3.1.2](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.1.1...@cdf/assetlibrary-v3.1.2) (2019-12-30)
 
 
