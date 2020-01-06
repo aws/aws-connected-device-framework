@@ -556,6 +556,7 @@ Resources:
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AWSCodePipelineReadOnlyAccess
         - arn:aws:iam::aws:policy/AWSCodeCommitPowerUser
+        - arn:aws:iam::aws:policy/AWSCodeDeployFullAccess
       Policies: 
         - 
           PolicyName: "CodeBuildServicePolicies"

@@ -21,11 +21,11 @@ Parameters:
     Type: Number
     Default: 0.7
   LambdaArn:
-    Description:  
+    Description:  Lambda ARN to apply autoscaling.
     Type: String
     MinLength: 1
-  LambdaAlias:
-    Description:  
+  LambdaAlias:  
+    Description: Lambda alias to apply autoscaling.
     Type: String
     Default: live
     MinLength: 1
