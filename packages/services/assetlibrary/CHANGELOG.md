@@ -1,3 +1,10 @@
+# [@cdf/assetlibrary-v3.2.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.1.3...@cdf/assetlibrary-v3.2.0) (2020-01-06)
+
+
+### Features
+
+* **assetlibrary:** provisioned execution capacity and autoscaling ([b485f47](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/b485f477c0b1c36d63f74c70fa041c296148b980))
+
 # [@cdf/assetlibrary-v3.1.3](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.1.2...@cdf/assetlibrary-v3.1.3) (2019-12-31)
 
 
