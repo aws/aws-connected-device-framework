@@ -1,3 +1,10 @@
+# [@cdf/commands-client-v3.2.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/commands-client-v3.1.0...@cdf/commands-client-v3.2.0) (2020-01-06)
+
+
+### Features
+
+* **assetlibrary:** provisioned execution capacity and autoscaling ([b485f47](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/b485f477c0b1c36d63f74c70fa041c296148b980))
+
 # [@cdf/commands-client-v3.1.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/commands-client-v3.0.0...@cdf/commands-client-v3.1.0) (2019-12-19)
 
 
