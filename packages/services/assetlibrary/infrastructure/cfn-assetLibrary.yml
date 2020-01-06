@@ -38,9 +38,25 @@ Parameters:
     Description: Name of custom authorizer Stack (if required).
     Type: String
 
+  ProvisionedConcurrentExecutions:
+    Description: The no. of desired concurrent executions to  provision.  Set to 0 to disable.
+    Type: Number
+
+  ApplyAutoscaling:
+    Description: If true, will apply auto-scaling as defined in `./cfn-autoscaling.yml'
+    Type: String
+    Default: false
+    AllowedValues:
+      - true
+      - false
+    MinLength: 1
+  
+
 Conditions:
   DeployFullMode: !Equals [ !Ref Mode, 'full' ]
   DeployWithCustomAuth: !Not [ !Equals [ !Ref CustAuthStackName, "" ]]
+  DeployWithProvisionedCapacity: !Not [ !Equals [ !Ref ProvisionedConcurrentExecutions, "0" ]]
+  DeployWithScaling: !Not [ !Equals [ !Ref ApplyAutoscaling, "true" ]]
 
 Resources:
 
@@ -77,7 +93,7 @@ Resources:
                 responses:
                   default:
                     statusCode: '200'
-                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaFunction.Arn}/invocations"
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaFunction.Arn}:live/invocations"
                 passthroughBehavior: when_no_match
                 httpMethod: POST
                 type: aws_proxy
@@ -134,7 +150,7 @@ Resources:
                 - - CustomAuthorizer: []
                 - Ref: AWS::NoValue
               x-amazon-apigateway-integration:
-                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaFunction.Arn}/invocations"
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaFunction.Arn}:live/invocations"
                 httpMethod: POST
                 type: aws_proxy
 
@@ -328,6 +344,16 @@ Resources:
       MemorySize: 512
       Role: !GetAtt LambdaExecutionRole.Arn
       Runtime: nodejs12.x
+
+      AutoPublishAlias: live
+      DeploymentPreference:
+        Type: AllAtOnce
+      ProvisionedConcurrencyConfig: 
+        Fn::If:
+        - DeployWithProvisionedCapacity
+        - ProvisionedConcurrentExecutions: !Ref ProvisionedConcurrentExecutions
+        - Ref: AWS::NoValue
+
       Timeout: 30
       Environment:
         Variables:
@@ -358,6 +384,18 @@ Resources:
             Method: ANY
     DependsOn:
       - LambdaExecutionRole
+
+  # Optional auto-scaling configuration
+  AutoScalingNestedStack:
+    Type: AWS::CloudFormation::Stack
+    Condition: DeployWithScaling
+    Properties: 
+      TemplateURL: ./cfn-autoscaling.yml
+      Parameters: 
+        LambdaArn : !GetAtt LambdaFunction.Arn
+        LambdaAlias: live
+      TimeoutInMinutes: 5
+    DependsOn: LambdaFunction
 
 Outputs:
   LambdaFunctionConsoleUrl:

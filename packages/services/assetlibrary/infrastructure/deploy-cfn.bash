@@ -27,6 +27,9 @@ OPTIONAL ARGUMENTS
     -n (string)   ID of private subnets (comma delimited) to deploy into
     -r (string)   ID of private routetables (comma delimited) to configure for Neptune access
 
+    -x (number)   No. of concurrent executions to provision.
+    -s (flag)     Apply autoscaling as defined in ./cfn-autosclaing.yml  
+
     -C (string)   Name of customer authorizer stack.  Defaults to cdf-custom-auth-${ENVIRONMENT}.
     -R (string)   AWS region.
     -P (string)   AWS profile.
@@ -34,7 +37,7 @@ OPTIONAL ARGUMENTS
 EOF
 }
 
-while getopts ":e:c:v:g:n:m:r:C:R:P:" opt; do
+while getopts ":e:c:v:g:n:m:r:x:sC:R:P:" opt; do
   case $opt in
 
     e  ) export ENVIRONMENT=$OPTARG;;
@@ -44,6 +47,9 @@ while getopts ":e:c:v:g:n:m:r:C:R:P:" opt; do
     n  ) export PRIVATE_SUBNET_IDS=$OPTARG;;
     r  ) export PRIVATE_ROUTE_TABLE_IDS=$OPTARG;;
     m  ) export ASSETLIBRARY_MODE=$OPTARG;;
+
+    x  ) export CONCURRENT_EXECUTIONS=$OPTARG;;
+    s  ) export APPLY_AUTOSCALING=true;;
 
     C  ) export CUST_AUTH_STACK_NAME=$OPTARG;;
 
@@ -90,6 +96,14 @@ if [[ "$ASSETLIBRARY_MODE" = "full" ]]; then
   fi
 fi
 
+if [ -z "$CONCURRENT_EXECUTIONS" ]; then
+	export CONCURRENT_EXECUTIONS=0
+fi
+
+if [ -z "$APPLY_AUTOSCALING" ]; then
+	export APPLY_AUTOSCALING=false
+fi
+
 
 AWS_ARGS=
 if [ -n "$AWS_REGION" ]; then
@@ -122,6 +136,8 @@ Running with:
   SOURCE_SECURITY_GROUP_ID:         $SOURCE_SECURITY_GROUP_ID
   PRIVATE_SUBNET_IDS:               $PRIVATE_SUBNET_IDS
   PRIVATE_ROUTE_TABLE_IDS:          $PRIVATE_ROUTE_TABLE_IDS
+  CONCURRENT_EXECUTIONS:            $CONCURRENT_EXECUTIONS
+  APPLY_AUTOSCALING:                $APPLY_AUTOSCALING
   CUST_AUTH_STACK_NAME:             $CUST_AUTH_STACK_NAME
   AWS_REGION:                       $AWS_REGION
   AWS_PROFILE:                      $AWS_PROFILE
@@ -287,6 +303,8 @@ aws cloudformation deploy \
       SourceSecurityGroupId=$SOURCE_SECURITY_GROUP_ID \
       PrivateSubNetIds=$PRIVATE_SUBNET_IDS \
       CustAuthStackName=$CUST_AUTH_STACK_NAME \
+      ProvisionedConcurrentExecutions=$CONCURRENT_EXECUTIONS \
+      ApplyAutoscaling=$APPLY_AUTOSCALING \
       Mode=$ASSETLIBRARY_MODE \
   --capabilities CAPABILITY_NAMED_IAM \
   --no-fail-on-empty-changeset \

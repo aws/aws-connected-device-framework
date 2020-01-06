@@ -4,14 +4,16 @@
   "scripts": {
     "clean": "pnpm m run clean",
     "reset": "pnpm m run reset && rm -rf node_modules package-lock.json",
+    "reset:libraries": "pnpm m run clean --filter ./packages/libraries && pnpm m run reset --filter ./packages/libraries",
     "commit": "npx git-cz",
     "build": "pnpm m run build",
     "test": "pnpm m run test",
     "prebundle": "pnpm run clean && pnpm install --force && pnpm run build && pnpm m run prebundle:prepare",
     "bundle": "pnpm i --no-lock --prod --shamefully-flatten --force && pnpm m run bundle:package",
     "postbundle": "pnpm install --force",
-    "prebundle:clients": "pnpm i --force && pnpm m run build:clients",
-    "bundle:clients": "pnpm i --no-lock --prod --shamefully-flatten --force"
+    "prebundle:libraries": "pnpm run reset:libraries && pnpm i && pnpm m run build --filter ./packages/libraries",
+    "bundle:libraries": "pnpm i --no-lock --prod --shamefully-flatten --force --filter ./packages/libraries",
+    "bundle:clients": "npm run bundle:libraries"
   },
   "devDependencies": {
     "@commitlint/cli": "8.2.0",

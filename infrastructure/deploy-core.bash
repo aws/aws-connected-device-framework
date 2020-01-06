@@ -20,10 +20,14 @@ MANDATORY ARGUMENTS:
 
 OPTIONAL ARGUMENTS
 
+    COMMON OPTIONS::
+    -------
     -E (string)   Name of configuration environment.  If not provided, then '-e ENVIRONMENT' is used.
     -b (string)   The name of the S3 bucket to deploy CloudFormation templates into.  If not provided, a new bucket named 'cdf-cfn-artifacts-$AWS_ACCOUNT_ID-$AWS_REGION' is created.
     -k (string)   The KMS Key id that the provisoning service will use to decrypt sensitive information.  If not provided, a new KMS key with the alias 'cdf' is created.
 
+    ASSET LIBRARY OPTIONS::
+    ---------------
     -m (string)   Asset Library mode ('full' or 'lite').  Defaults to full if not provided.
     -p (string)   The name of the key pair to use to deploy the Bastion EC2 host (only required for Asset Library (full) mode).
     -i (string)   The remote access CIDR to configure Bastion SSH access (e.g. 1.2.3.4/32) (only required for Asset Library (full) mode).
@@ -38,9 +42,18 @@ OPTIONAL ARGUMENTS
     -o (string)   ID of public subnets (comma delimited) to deploy the Bastion into (required if -N set)
     -r (string)   ID of private route tables (comma delimited) to configure for Asset Library access
 
+    -x (number)   No. of concurrent executions to provision.
+    -s (flag)     Apply autoscaling as defined in ./cfn-autosclaing.yml  
+
+
+    COMPILING OPTIONS:
+    ------------------
     -B (flag)     Bypass bundling each module.  If deploying from a prebuilt tarfile rather than source code, setting this flag will speed up the deploy.
 
     -Y (flag)     Proceed with install bypassing the prompt requesting permission continue.
+
+    AWS OPTIONS:
+    ------------
     -R (string)   AWS region.
     -P (string)   AWS profile.
 
@@ -60,7 +73,7 @@ EOF
 ######  parse and validate the provided arguments   ######
 ##########################################################
 
-while getopts ":e:E:c:p:i:k:b:Ff:Nv:g:n:m:o:r:BYR:P:" opt; do
+while getopts ":e:E:c:p:i:k:b:Ff:Nv:g:n:m:o:r:x:sBYR:P:" opt; do
   case $opt in
     e  ) ENVIRONMENT=$OPTARG;;
     E  ) CONFIG_ENVIRONMENT=$OPTARG;;
@@ -71,6 +84,9 @@ while getopts ":e:E:c:p:i:k:b:Ff:Nv:g:n:m:o:r:BYR:P:" opt; do
     k  ) KMS_KEY_ID=$OPTARG;;
     b  ) DEPLOY_ARTIFACTS_STORE_BUCKET=$OPTARG;;
     m  ) ASSETLIBRARY_MODE=$OPTARG;;
+
+    x  ) CONCURRENT_EXECUTIONS=$OPTARG;;
+    s  ) APPLY_AUTOSCALING=true;;
 
     F  ) ASSETLIBRARY_FGAC=true;;
     f  ) JWT_ISSUER=true;;
@@ -185,7 +201,9 @@ The Connected Device Framework (CDF) will install using the following configurat
     -m (ASSETLIBRARY_MODE)              : $ASSETLIBRARY_MODE
     -F (ASSETLIBRARY_FGAC)              : $ASSETLIBRARY_FGAC
     -f (JWT_ISSUER)                     : $JWT_ISSUER
-    -N (USE_EXISTING_VPC)               : $USE_EXISTING_VPC"
+    -N (USE_EXISTING_VPC)               : $USE_EXISTING_VPC
+    -x (CONCURRENT_EXECUTIONS):         : $CONCURRENT_EXECUTIONS
+    -s (APPLY_AUTOSCALING):             : $APPLY_AUTOSCALING"
 
 if [ -z "$USE_EXISTING_VPC" ]; then
     config_message+='not provided, therefore a new vpc will be created'
@@ -402,15 +420,27 @@ if [ -f "$assetlibrary_config" ]; then
 
     infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
 
+    assetlibrary_concurrent_exewcutions_arg=
+    if [ -n "$CONCURRENT_EXECUTIONS" ]; then
+        assetlibrary_concurrent_exewcutions_arg="-x $CONCURRENT_EXECUTIONS"
+    fi
+
+    assetlibrary_autoscaling_arg=
+    if [ -n "$APPLY_AUTOSCALING" ]; then
+        assetlibrary_autoscaling_arg="-s"
+    fi
+
     if [ "$ASSETLIBRARY_MODE" = "full" ]; then
         infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "$assetlibrary_config" \
         -m "$ASSETLIBRARY_MODE" \
         -v "$VPC_ID" -g "$SOURCE_SECURITY_GROUP_ID" -n "$PRIVATE_SUBNET_IDS" -r "$PRIVATE_ROUTE_TABLE_IDS" \
         $assetlibrary_custom_auth_args \
+        $assetlibrary_concurrent_exewcutions_arg $assetlibrary_autoscaling_arg \
         $AWS_SCRIPT_ARGS &
     else
         infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "$assetlibrary_config" \
         -m "$ASSETLIBRARY_MODE" \
+        $assetlibrary_concurrent_exewcutions_arg $assetlibrary_autoscaling_arg \
         $AWS_SCRIPT_ARGS &
     fi
 
