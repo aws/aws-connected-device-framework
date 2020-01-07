@@ -306,7 +306,7 @@ aws cloudformation deploy \
       ProvisionedConcurrentExecutions=$CONCURRENT_EXECUTIONS \
       ApplyAutoscaling=$APPLY_AUTOSCALING \
       Mode=$ASSETLIBRARY_MODE \
-  --capabilities CAPABILITY_NAMED_IAM \
+  --capabilities CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND \
   --no-fail-on-empty-changeset \
   $AWS_ARGS
 
