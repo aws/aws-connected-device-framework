@@ -56,7 +56,7 @@ Conditions:
   DeployFullMode: !Equals [ !Ref Mode, 'full' ]
   DeployWithCustomAuth: !Not [ !Equals [ !Ref CustAuthStackName, "" ]]
   DeployWithProvisionedCapacity: !Not [ !Equals [ !Ref ProvisionedConcurrentExecutions, "0" ]]
-  DeployWithScaling: !Not [ !Equals [ !Ref ApplyAutoscaling, "true" ]]
+  DeployWithScaling: !Equals [ !Ref ApplyAutoscaling, "true" ]
 
 Resources:
 
@@ -392,7 +392,7 @@ Resources:
     Properties: 
       TemplateURL: ./cfn-autoscaling.yml
       Parameters: 
-        LambdaArn : !GetAtt LambdaFunction.Arn
+        LambdaName: !Ref LambdaFunction
         LambdaAlias: live
       TimeoutInMinutes: 5
     DependsOn: LambdaFunction

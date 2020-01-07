@@ -20,8 +20,8 @@ Parameters:
     Description: Target utilization (0.0 to 1.0).
     Type: Number
     Default: 0.7
-  LambdaArn:
-    Description:  Lambda ARN to apply autoscaling.
+  LambdaName:
+    Description:  Lambda Name to apply autoscaling.
     Type: String
     MinLength: 1
   LambdaAlias:  
@@ -38,7 +38,7 @@ Resources:
     Properties:
       MaxCapacity: !Ref MaxCapacity
       MinCapacity: !Ref MinCapacity
-      ResourceId: !Sub ${LambdaArn}:${LambdaAlias}
+      ResourceId: !Sub "function:${LambdaName}:${LambdaAlias}"
       RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/lambda.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_Lambda
       ScalableDimension: lambda:function:ProvisionedConcurrency
       ServiceNamespace: lambda
