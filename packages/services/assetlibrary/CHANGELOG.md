@@ -1,3 +1,10 @@
+# [@cdf/assetlibrary-v3.2.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.2.0...@cdf/assetlibrary-v3.2.1) (2020-01-07)
+
+
+### Bug Fixes
+
+* **assetlibrary:** cloudformation fix ([8ebc016](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/8ebc0166f7a1b93bf91efd2512a1b52472211b95))
+
 # [@cdf/assetlibrary-v3.2.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.1.3...@cdf/assetlibrary-v3.2.0) (2020-01-06)
 
 
