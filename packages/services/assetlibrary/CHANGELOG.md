@@ -1,3 +1,10 @@
+# [@cdf/assetlibrary-v3.2.4](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.2.3...@cdf/assetlibrary-v3.2.4) (2020-01-07)
+
+
+### Bug Fixes
+
+* **assetlibrary:** autoscaling example ([1c873b4](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/1c873b40d19b484595a12429ace1fa926cf000c8))
+
 # [@cdf/assetlibrary-v3.2.3](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.2.2...@cdf/assetlibrary-v3.2.3) (2020-01-07)
 
 
