@@ -1,3 +1,10 @@
+# [@cdf/assetlibrary-v3.2.2](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.2.1...@cdf/assetlibrary-v3.2.2) (2020-01-07)
+
+
+### Bug Fixes
+
+* **assetlibrary:** cAPABILITY_AUTO_EXPAND required for CFN processing ([4b06ea4](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/4b06ea46bdc517313c7c95c113cf3d6790b3e22e))
+
 # [@cdf/assetlibrary-v3.2.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.2.0...@cdf/assetlibrary-v3.2.1) (2020-01-07)
 
 
