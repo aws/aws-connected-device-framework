@@ -37,7 +37,7 @@ Resources:
     Type: AWS::ApplicationAutoScaling::ScalableTarget
     Properties:
       MaxCapacity: !Ref MaxCapacity
-      MinCapacity: !Rf MinCapacity
+      MinCapacity: !Ref MinCapacity
       ResourceId: !Sub ${LambdaArn}:${LambdaAlias}
       RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/lambda.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_Lambda
       ScalableDimension: lambda:function:ProvisionedConcurrency
@@ -50,6 +50,6 @@ Resources:
       PolicyType: TargetTrackingScaling
       ScalingTargetId: !Ref ScalableTarget
       TargetTrackingScalingPolicyConfiguration:
-        TargetValue: !Rf TargetUtilization
+        TargetValue: !Ref TargetUtilization
         PredefinedMetricSpecification:
           PredefinedMetricType: LambdaProvisionedConcurrencyUtilization
