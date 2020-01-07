@@ -1,3 +1,10 @@
+# [@cdf/assetlibrary-v3.2.3](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.2.2...@cdf/assetlibrary-v3.2.3) (2020-01-07)
+
+
+### Bug Fixes
+
+* **assetlibrary:** typo in autoscaling cloudformation ([b275df3](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/b275df33ac54336f72756f11c06d34c55201321a))
+
 # [@cdf/assetlibrary-v3.2.2](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.2.1...@cdf/assetlibrary-v3.2.2) (2020-01-07)
 
 
