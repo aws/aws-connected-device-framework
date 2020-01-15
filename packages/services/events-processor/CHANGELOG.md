@@ -1,3 +1,10 @@
+# [@cdf/events-processor-v2.2.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/events-processor-v2.2.0...@cdf/events-processor-v2.2.1) (2020-01-15)
+
+
+### Bug Fixes
+
+* **events:** ignore malformed events ([9b666f7](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/9b666f7e5cddc65890a83c71fcc360089ff36015))
+
 # [@cdf/events-processor-v2.2.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/events-processor-v2.1.1...@cdf/events-processor-v2.2.0) (2020-01-15)
 
 
