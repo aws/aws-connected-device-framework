@@ -36,7 +36,7 @@ export class SearchDaoFull extends BaseDaoFull {
         if (request.ancestorPath!==undefined) {
             const ancestorId = `group___${request.ancestorPath}`;
             traverser = conn.traversal.V(ancestorId).
-                repeat(__.in_()).emit().as('a');
+                repeat(__.in_().simplePath()).emit().as('a');
         } else {
             traverser = conn.traversal.V().as('a');
         }
@@ -44,7 +44,7 @@ export class SearchDaoFull extends BaseDaoFull {
         // if authz is enabled, only return results that the user is authorized to view
         if (authorizedPaths!==undefined && authorizedPaths.length>0) {
             const authorizedPathIds = authorizedPaths.map(p=> `group___${p}`);
-            filters.push(__.as('a').until(__.hasId(...authorizedPathIds)).repeat(__.out()));
+            filters.push(__.as('a').until(__.hasId(...authorizedPathIds)).repeat(__.out().simplePath()));
         }
 
         // construct all the filters that we will eventually pass to match()
