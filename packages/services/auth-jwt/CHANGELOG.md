@@ -1,3 +1,10 @@
+# [@cdf/auth-jwt-v1.1.2](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/auth-jwt-v1.1.1...@cdf/auth-jwt-v1.1.2) (2020-01-15)
+
+
+### Bug Fixes
+
+* **assetlibrary:** search query updated to support authz ([e5c31db](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/e5c31db609841406d98733e62e3ed93073ffbb1f))
+
 # [@cdf/auth-jwt-v1.1.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/auth-jwt-v1.1.0...@cdf/auth-jwt-v1.1.1) (2019-12-23)
 
 
