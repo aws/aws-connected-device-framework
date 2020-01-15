@@ -49,7 +49,7 @@ export function setClaims() : RequestHandler {
             }
 
         } else {
-            res.status(403).json({error: 'Not authorized'}).end();
+            res.sendStatus(403);
         }
     };
 }
