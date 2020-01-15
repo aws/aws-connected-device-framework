@@ -1,3 +1,11 @@
+# [@cdf/assetlibrary-v3.2.6](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.2.5...@cdf/assetlibrary-v3.2.6) (2020-01-15)
+
+
+### Bug Fixes
+
+* **assetlibrary:** search related fixes ([a01131c](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/a01131c57c08546491aa360008c5caa4136de084))
+* **assetlibrary:** search related fixes ([7476215](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/7476215c56e271bcd15dde27840e26f7b74c30f5))
+
 # [@cdf/assetlibrary-v3.2.5](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.2.4...@cdf/assetlibrary-v3.2.5) (2020-01-15)
 
 
