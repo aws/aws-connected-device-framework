@@ -1,3 +1,10 @@
+# [@cdf/events-processor-v2.2.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/events-processor-v2.1.1...@cdf/events-processor-v2.2.0) (2020-01-15)
+
+
+### Features
+
+* **events:** added patch event support ([0d0a96b](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/0d0a96bb38ef7aac101cb8ecc774d7c77e65b711))
+
 # [@cdf/events-processor-v2.1.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/events-processor-v2.1.0...@cdf/events-processor-v2.1.1) (2020-01-15)
 
 
