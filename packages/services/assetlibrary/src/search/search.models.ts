@@ -49,7 +49,7 @@ export type FacetResults = {[key:string]: number};
 export interface SearchResultsResource {
 	results: (GroupBaseResource|DeviceBaseResource)[] | FacetResults;
 	pagination?: {
-		offset:number;
+		offset: string|number;
 		count: number;
 	};
 	total?: number;

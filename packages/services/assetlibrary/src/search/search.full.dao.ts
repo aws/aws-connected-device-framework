@@ -41,12 +41,6 @@ export class SearchDaoFull extends BaseDaoFull {
             traverser = conn.traversal.V().as('a');
         }
 
-        // if authz is enabled, only return results that the user is authorized to view
-        if (authorizedPaths!==undefined && authorizedPaths.length>0) {
-            const authorizedPathIds = authorizedPaths.map(p=> `group___${p}`);
-            filters.push(__.as('a').until(__.hasId(...authorizedPathIds)).repeat(__.out().simplePath()));
-        }
-
         // construct all the filters that we will eventually pass to match()
         if (request.types!==undefined) {
             request.types.forEach(t=> filters.push(
@@ -112,6 +106,11 @@ export class SearchDaoFull extends BaseDaoFull {
             traverser.match(...filters).dedup();
         }
 
+        // if authz is enabled, only return results that the user is authorized to view
+        if (authorizedPaths!==undefined && authorizedPaths.length>0) {
+            traverser.local(__.until(__.has('groupPath', process.P.within(authorizedPaths))).repeat(__.out().simplePath()));
+        }
+
         // logger.debug(`search.full.dao buildSearchTraverser: traverser: ${JSON.stringify(traverser.toString())}`);
 
         return traverser;
@@ -140,27 +139,31 @@ export class SearchDaoFull extends BaseDaoFull {
         try {
             const traverser = this.buildSearchTraverser(conn, request, authorizedPaths, offset, count);
 
-            // apply pagination
-            if (offset!==undefined && count!==undefined) {
-                // note: workaround for weird typescript issue. even though offset/count are declared as numbers
-                // througout, they are being interpreted as strings within gremlin, therefore need to force to int beforehand
-                const offsetAsInt = parseInt(offset.toString(),0);
-                const countAsInt = parseInt(count.toString(),0);
-                traverser.range(offsetAsInt, offsetAsInt + countAsInt);
-            }
-            results = await traverser.select('a').valueMap().with_(process.withOptions.tokens).toList();
+            // note: workaround for weird typescript issue. even though offset/count are declared as numbers
+            // throughout, they are being interpreted as strings within gremlin, therefore need to force to int beforehand
+            const offsetAsInt = parseInt(offset.toString(),0);
+            const countAsInt = parseInt(count.toString(),0);
+
+            traverser.
+                select('a').range(offsetAsInt,offsetAsInt + countAsInt).valueMap().with_(process.withOptions.tokens);
+
+            logger.debug(`search.full.dao search: traverser:${JSON.stringify(traverser.toString())}`);
+
+            results = await traverser.toList();
+
         } finally {
             conn.close();
         }
 
         logger.debug(`search.full.dao search: results:${JSON.stringify(results)}`);
 
-        if (results.length===0) {
+        if (results===undefined ) {
             logger.debug(`search.full.dao search: exit: node: undefined`);
             return undefined;
         }
 
         const nodes: Node[] = [];
+
         for(const result of results) {
             const labels = (<string> result.label).split('::');
             nodes.push(this.assembler.toNode(result, labels));

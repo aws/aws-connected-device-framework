@@ -28,7 +28,7 @@ defaults:
 cors:
   origin:
 
-mode: lite
+mode: full
 
 cache:
   types:

@@ -18,11 +18,13 @@ import ow from 'ow';
 @injectable()
 export class SearchServiceLite {
 
+    private readonly DEFAULT_SEARCH_COUNT=200;
+
     constructor( @inject(TYPES.SearchDao) private searchDao: SearchDaoLite,
         @inject(TYPES.GroupsAssembler) private groupsAssembler: GroupsAssembler,
         @inject(TYPES.DevicesAssembler) private devicesAssembler: DevicesAssembler) {}
 
-    public async search(model: SearchRequestModel, offset?:string, count?:number): Promise<(GroupItem|DeviceItem)[]> {
+    public async search(model: SearchRequestModel, offset?:string, count?:number): Promise<[(GroupItem|DeviceItem)[],string,number]> {
         logger.debug(`search.lite.service search: in: model: ${JSON.stringify(model)}, offset:${offset}, count:${count}`);
 
         // validation
@@ -35,12 +37,21 @@ export class SearchServiceLite {
             model.endsWith!==undefined || model.contains!==undefined;
         ow(someFiltersDefined, ow.boolean.true);
 
+        // default pagination
+        if (count===undefined) {
+            count=this.DEFAULT_SEARCH_COUNT;
+        }
+        if (offset===undefined) {
+            offset='0';
+        }
+
         const models: (GroupItem|DeviceItem)[] = [];
         const results = await this.searchDao.search(model, offset, count);
 
         if (results===undefined) {
-            logger.debug('search.lite.service search: exit: models: undefined');
-            return undefined;
+            count=0;
+            logger.debug(`search.lite.service search: exit: models: undefined, offset:${offset}, count:${count}`);
+            return [undefined, offset, count];
         }
 
         for(const r of results) {
@@ -51,8 +62,12 @@ export class SearchServiceLite {
             }
         }
 
+        if (models.length<count) {
+            count=models.length;
+        }
+
         logger.debug(`search.lite.service search: exit: models: ${JSON.stringify(models)}`);
-        return models;
+        return [models,offset,count];
     }
 
     public async summary(model: SearchRequestModel): Promise<number> {

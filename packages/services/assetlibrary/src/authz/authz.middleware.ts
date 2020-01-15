@@ -23,31 +23,33 @@ export function setClaims() : RequestHandler {
 
         if (req && req['headers'] && req['headers'][JWT_HEADER]) {
             const header = req['headers'][JWT_HEADER] as string;
-            const token = header.replace('Bearer ','');
-            const decoded = decode(token);
-            let claims_header = decoded[JWT_CLAIMS];
 
-            // Check if the claims are passed as string and if so, parse the string as JSON
-            if(typeof claims_header === 'string') {
-                try {
+            try {
+                const token = header.replace('Bearer ','');
+                const decoded = decode(token);
+                let claims_header = decoded[JWT_CLAIMS];
+
+                // Check if the claims are passed as string and if so, parse the string as JSON
+                if(typeof claims_header === 'string') {
                     claims_header = JSON.parse(claims_header);
-                } catch (ex) {
-                    throw new Error('Failed to parse claims');
                 }
+
+                logger.debug(JSON.stringify(decoded));
+
+                const claims = new Claims(claims_header);
+
+                logger.debug(`authz.middleware setClaims claims:${JSON.stringify(claims)}`);
+
+                als.set(CLAIMS_REQUEST_ATTRIBUTE, claims);
+
+                next();
+            } catch (ex) {
+                logger.warn(`authz.middleware setClaims failed to parse claims:${JSON.stringify(header)}`);
+                res.status(403).json({error: 'Not authorized'}).end();
             }
 
-            logger.debug(JSON.stringify(decoded));
-
-            const claims = new Claims(claims_header);
-
-            logger.debug(`authz.middleware setClaims claims:${JSON.stringify(claims)}`);
-
-            als.set(CLAIMS_REQUEST_ATTRIBUTE, claims);
-
-            next();
-
         } else {
-            res.sendStatus(403);
+            res.status(403).json({error: 'Not authorized'}).end();
         }
     };
 }

@@ -34,17 +34,7 @@ export class SearchController implements interfaces.Controller {
 
         logger.debug(`search.controller search: in: types:${types}, ancestorPath:${ancestorPath}, eqs:${eqs}, neqs:${neqs}, lts:${lts}, ltes:${ltes}, gts:${gts}, gtes:${gtes}, startsWiths:${startsWiths}, facetField:${facetField}, summarize:${summarize}, offset:${offset}, count:${count}`);
 
-          const r: SearchResultsResource= {results:[]};
-
-          if (offset || count) {
-              if (offset===undefined) {
-                offset=0;
-              }
-              r.pagination = {
-                  offset,
-                  count
-              };
-          }
+        const r: SearchResultsResource= {results:[]};
 
         const searchRequest = this.searchAssembler.toSearchRequestModel(types, ancestorPath, eqs, neqs, lts, ltes, gts, gtes, startsWiths, facetField);
 
@@ -56,7 +46,11 @@ export class SearchController implements interfaces.Controller {
                 const facets = await this.searchService.facet(searchRequest);
                 r.results = facets;
             } else {
-                const items = await this.searchService.search(searchRequest, offset, count);
+                const [items,actualOffset,actualCount] = await this.searchService.search(searchRequest, offset, count);
+                r.pagination = {
+                    offset: actualOffset,
+                    count: actualCount
+                };
                 if (items===undefined) {
                     r.results = [];
                 } else {
