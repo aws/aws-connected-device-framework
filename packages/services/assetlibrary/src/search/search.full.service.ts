@@ -19,12 +19,14 @@ import { Claims } from '../authz/claims';
 @injectable()
 export class SearchServiceFull implements SearchService {
 
+    private readonly DEFAULT_SEARCH_COUNT=200;
+
     constructor( @inject(TYPES.SearchDao) private searchDao: SearchDaoFull,
         @inject(TYPES.GroupsAssembler) private groupsAssembler: GroupsAssembler,
         @inject(TYPES.DevicesAssembler) private devicesAssembler: DevicesAssembler,
         @inject('authorization.enabled') private isAuthzEnabled: boolean) {}
 
-    public async search(model: SearchRequestModel, offset?:number, count?:number): Promise<(GroupItem|DeviceItem)[]> {
+    public async search(model: SearchRequestModel, offset?:number, count?:number): Promise<[(GroupItem|DeviceItem)[],number,number]> {
         logger.debug(`search.full.service search: in: model: ${JSON.stringify(model)}, offset:${offset}, count:${count}`);
 
         // TODO: validation
@@ -33,7 +35,10 @@ export class SearchServiceFull implements SearchService {
         this.setIdsToLowercase(model);
 
         // default pagination
-        if (count!==undefined && offset===undefined) {
+        if (count===undefined) {
+            count=this.DEFAULT_SEARCH_COUNT;
+        }
+        if (offset===undefined) {
             offset=0;
         }
 
@@ -42,9 +47,10 @@ export class SearchServiceFull implements SearchService {
         const models: (GroupItem|DeviceItem)[] = [];
         const results = await this.searchDao.search(model, authorizedPaths, offset, count);
 
-        if (results===undefined) {
-            logger.debug('search.full.service search: exit: models: undefined');
-            return undefined;
+        if (results===undefined || results.length===0) {
+            count=0;
+            logger.debug(`search.full.service search: exit: models: undefined, offset:${offset}, count:${count}`);
+            return [undefined, offset, count];
         }
 
         for(const r of results) {
@@ -55,8 +61,12 @@ export class SearchServiceFull implements SearchService {
             }
         }
 
-        logger.debug(`search.full.service search: exit: models: ${JSON.stringify(models)}`);
-        return models;
+        if (models.length<count) {
+            count=models.length;
+        }
+
+        logger.debug(`search.full.service search: exit: models: ${JSON.stringify(models)}, offset:${offset}, count:${count}`);
+        return [models,offset,count];
 
     }
 
