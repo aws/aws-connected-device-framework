@@ -29,17 +29,7 @@ export class EventService  {
         logger.debug(`event.service create: in: resource:${JSON.stringify(resource)}`);
 
         // validate input
-        ow(resource, ow.object.nonEmpty);
-        ow(resource.eventSourceId, ow.string.nonEmpty);
-        ow(resource.name, ow.string.nonEmpty);
-        ow(resource.conditions, ow.object.nonEmpty);
-        if (resource.supportedTargets!==undefined) {
-            for (const key of Object.keys(resource.supportedTargets)) {
-                ow(resource.supportedTargets[key], ow.string.nonEmpty);
-                ow(resource.templates, ow.object.hasKeys(resource.supportedTargets[key]));
-                ow(resource.templates[resource.supportedTargets[key]], ow.string.nonEmpty);
-            }
-        }
+        this.validateEvent(resource);
 
         // set defaults
         resource.eventId = uuid();
@@ -56,10 +46,46 @@ export class EventService  {
         }
 
         const item = this.eventAssembler.toItem(resource, eventSource.principal);
-        await this.eventDao.create(item);
+        await this.eventDao.save(item);
 
         logger.debug(`event.service create: exit:${resource.eventId}`);
         return resource.eventId;
+
+    }
+
+    private validateEvent(resource:EventResource) {
+        ow(resource, ow.object.nonEmpty);
+        ow(resource.eventSourceId, ow.string.nonEmpty);
+        ow(resource.name, ow.string.nonEmpty);
+        ow(resource.conditions, ow.object.nonEmpty);
+        if (resource.supportedTargets!==undefined) {
+            for (const key of Object.keys(resource.supportedTargets)) {
+                ow(resource.supportedTargets[key], ow.string.nonEmpty);
+                ow(resource.templates, ow.object.hasKeys(resource.supportedTargets[key]));
+                ow(resource.templates[resource.supportedTargets[key]], ow.string.nonEmpty);
+            }
+        }
+    }
+
+    public async update(resource:EventResource) : Promise<void> {
+        logger.debug(`event.service update: in: resource:${JSON.stringify(resource)}`);
+
+        // validate input
+        this.validateEvent(resource);
+        ow(resource.eventId, ow.string.nonEmpty);
+
+        // TODO: validate the conditions format
+
+        const eventSource = await this.eventSourceDao.get(resource.eventSourceId);
+        logger.debug(`event.service update: eventSource: ${JSON.stringify(eventSource)}`);
+        if (eventSource===undefined) {
+            throw new Error('EVENT_SOURCE_NOT_FOUND');
+        }
+
+        const item = this.eventAssembler.toItem(resource, eventSource.principal);
+        await this.eventDao.save(item);
+
+        logger.debug(`event.service update: exit:${resource.eventId}`);
 
     }
 

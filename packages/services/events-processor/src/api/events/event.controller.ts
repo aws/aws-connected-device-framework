@@ -4,7 +4,7 @@
 # This event code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
 import { Response } from 'express';
-import { interfaces, controller, response, requestBody, httpPost, httpGet, requestParam, httpDelete, queryParam} from 'inversify-express-utils';
+import { interfaces, controller, response, requestBody, httpPost, httpGet, requestParam, httpDelete, queryParam, httpPatch} from 'inversify-express-utils';
 import { inject } from 'inversify';
 import {TYPES} from '../../di/types';
 import {logger} from '../../utils/logger.util';
@@ -90,6 +90,21 @@ export class EventController implements interfaces.Controller {
 
         logger.debug(`event.controller listEventsForEventSource: exit: ${JSON.stringify(model)}`);
         return model;
+    }
+
+    @httpPatch('/eventsources/:eventSourceId/events/:eventId')
+    public async updateEvent(@requestParam('eventSourceId') eventSourceId:string, @requestParam('eventId') eventId:string, @requestBody() event: EventResource, @response() res: Response) {
+
+        logger.debug(`event.controller updateEvent: event:${JSON.stringify(event)}, eventSourceId:${eventSourceId}, eventId:${eventId}`);
+
+        event.eventSourceId=eventSourceId;
+        event.eventId=eventId;
+        try {
+            await this.eventService.update(event);
+        } catch (e) {
+            handleError(e,res);
+        }
+        logger.debug(`event.controller updateEvent: exit:`);
     }
 
 }

@@ -33,8 +33,8 @@ export class EventDao {
      *   pk='E-$(eventId}, sk='type').
      * @param event
      */
-    public async create(item:EventItem): Promise<void> {
-        logger.debug(`event.dao create: in: event:${JSON.stringify(item)}`);
+    public async save(item:EventItem): Promise<void> {
+        logger.debug(`event.dao save: in: event:${JSON.stringify(item)}`);
 
         const params:DocumentClient.BatchWriteItemInput = {
             RequestItems: {
@@ -79,7 +79,7 @@ export class EventDao {
             throw new Error('CREATE_EVENT_FAILED');
         }
 
-        logger.debug(`event.dao create: exit:`);
+        logger.debug(`event.dao save: exit:`);
     }
 
     public async get(eventId:string): Promise<EventItem> {
