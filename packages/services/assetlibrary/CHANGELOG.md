@@ -1,3 +1,10 @@
+# [@cdf/assetlibrary-v3.2.7](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.2.6...@cdf/assetlibrary-v3.2.7) (2020-01-15)
+
+
+### Bug Fixes
+
+* **assetlibrary:** search query updated to support authz ([e5c31db](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/e5c31db609841406d98733e62e3ed93073ffbb1f))
+
 # [@cdf/assetlibrary-v3.2.6](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.2.5...@cdf/assetlibrary-v3.2.6) (2020-01-15)
 
 
