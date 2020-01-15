@@ -1,3 +1,10 @@
+# [@cdf/assetlibrary-v3.2.5](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.2.4...@cdf/assetlibrary-v3.2.5) (2020-01-15)
+
+
+### Bug Fixes
+
+* **assetlibrary:** fix search timeout ([20e33d7](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/20e33d7b9b1855b8a375a397e403c5ac9013c882))
+
 # [@cdf/assetlibrary-v3.2.4](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.2.3...@cdf/assetlibrary-v3.2.4) (2020-01-07)
 
 
