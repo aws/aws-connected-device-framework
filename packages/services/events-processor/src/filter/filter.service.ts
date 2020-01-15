@@ -73,7 +73,7 @@ export class FilterService {
                         .filter(key=> ev.attributes[key]!==undefined && ev.attributes[key]!==null)
                         .forEach(key=> engine.addFact(key, ev.attributes[key]));
 
-                        // evaluate the rules
+                    // evaluate the rules
                     let results:EngineResult;
                     try {
                         results = await engine.run();
@@ -81,31 +81,34 @@ export class FilterService {
                         // silently ignore, as an incoming message may not contain the facts we're interested in
                     }
                     logger.debug(`filter.service filter: results:${JSON.stringify(results)}`);
-                    if (results.events.length>0 && !sub.alerted) {
-                        // a new alert...
-                        alerts.push(this.buildAlert(sub));
-                        sub.alerted=true;
-                        changedSubAlerts[sub.id]= {
-                            id: sub.id,
-                            eventSource: {
-                                id: sub.eventSource.id,
-                                principal: sub.eventSource.principal
-                            },
-                            principalValue: sub.principalValue,
-                            alerted: true
-                        };
-                    } else if (results.events.length===0 && sub.alerted) {
-                        // an alert that needs resetting...
-                        sub.alerted=false;
-                        changedSubAlerts[sub.id]= {
-                            id: sub.id,
-                            eventSource: {
-                                id: sub.eventSource.id,
-                                principal: sub.eventSource.principal
-                            },
-                            principalValue: sub.principalValue,
-                            alerted: false
-                        };
+
+                    if (results!==undefined && results.events!==undefined) {
+                        if (results.events.length>0 && !sub.alerted) {
+                            // a new alert...
+                            alerts.push(this.buildAlert(sub));
+                            sub.alerted=true;
+                            changedSubAlerts[sub.id]= {
+                                id: sub.id,
+                                eventSource: {
+                                    id: sub.eventSource.id,
+                                    principal: sub.eventSource.principal
+                                },
+                                principalValue: sub.principalValue,
+                                alerted: true
+                            };
+                        } else if (results.events.length===0 && sub.alerted) {
+                            // an alert that needs resetting...
+                            sub.alerted=false;
+                            changedSubAlerts[sub.id]= {
+                                id: sub.id,
+                                eventSource: {
+                                    id: sub.eventSource.id,
+                                    principal: sub.eventSource.principal
+                                },
+                                principalValue: sub.principalValue,
+                                alerted: false
+                            };
+                        }
                     }
 
                     // clear the engine state ready for the next run
