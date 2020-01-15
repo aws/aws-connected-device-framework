@@ -45,7 +45,7 @@ export function setClaims() : RequestHandler {
                 next();
             } catch (ex) {
                 logger.warn(`authz.middleware setClaims failed to parse claims:${JSON.stringify(header)}`);
-                res.status(403).json({error: 'Not authorized'}).end();
+                res.sendStatus(403);
             }
 
         } else {
