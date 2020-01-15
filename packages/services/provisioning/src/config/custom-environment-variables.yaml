@@ -23,3 +23,8 @@ features:
 deviceCertificateExpiryDays: BULKCERTS_CERTEXPIRY
 cors:
   origin: CDF_PROVISIONING_CORS_ORIGIN
+
+logging:
+  level: CDF_PROVISIONING_LOGGING_LEVEL
+
+

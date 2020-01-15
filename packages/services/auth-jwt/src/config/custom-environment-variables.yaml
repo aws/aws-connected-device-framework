@@ -5,3 +5,6 @@ aws:
 token:
   issuer: CDF_AUTH_JWT_TOKEN_ISSUER
 
+logging:
+  level: debug
+

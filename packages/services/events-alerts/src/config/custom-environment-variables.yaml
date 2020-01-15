@@ -23,3 +23,7 @@ aws:
   lambda:
     dynamoDbStream:
       name: EVENTSALERTS_AWS_LAMBDA_DYNAMODBSTREAM_NAME
+
+logging:
+  level: EVENTSALERTS_LOGGING_LEVEL
+

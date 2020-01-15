@@ -12,3 +12,6 @@ assetLibrary:
 
 provisioning:
   baseUrl:
+
+logging:
+  level: debug

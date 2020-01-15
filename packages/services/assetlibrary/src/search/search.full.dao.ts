@@ -147,7 +147,7 @@ export class SearchDaoFull extends BaseDaoFull {
             traverser.
                 select('a').range(offsetAsInt,offsetAsInt + countAsInt).valueMap().with_(process.withOptions.tokens);
 
-            logger.debug(`search.full.dao search: traverser:${JSON.stringify(traverser.toString())}`);
+            // logger.debug(`search.full.dao search: traverser:${JSON.stringify(traverser.toString())}`);
 
             results = await traverser.toList();
 
@@ -165,7 +165,12 @@ export class SearchDaoFull extends BaseDaoFull {
         const nodes: Node[] = [];
 
         for(const result of results) {
-            const labels = (<string> result.label).split('::');
+            let labels:string[];
+            if(typeof result.label === 'string') {
+                labels = (<string> result.label).split('::');
+            } else {
+                labels = <string[]> result.label;
+            }
             nodes.push(this.assembler.toNode(result, labels));
         }
 

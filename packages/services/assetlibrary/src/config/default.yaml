@@ -41,3 +41,6 @@ supportedApiVersions:
 
 authorization:
   enabled: false
+
+logging:
+  level: debug

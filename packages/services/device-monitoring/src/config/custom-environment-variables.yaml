@@ -4,3 +4,8 @@ aws:
 
 assetLibrary:
   baseUrl: FACADE_ASSETLIBRARY_BASEURL
+
+logging:
+  level: FACADE_LOGGING_LEVEL
+
+

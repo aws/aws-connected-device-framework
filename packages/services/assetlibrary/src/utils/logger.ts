@@ -6,9 +6,10 @@
 import {createLogger, LoggerOptions, transports} from 'winston';
 import {format} from 'logform';
 const { combine, timestamp, printf } = format;
+import config from 'config';
 
 export const logger = createLogger(<LoggerOptions> {
-    level: 'debug',
+    level: config.get('logging.level'),
     exitOnError: false,
     transports: [
         new transports.Console(),

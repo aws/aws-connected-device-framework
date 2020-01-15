@@ -15,3 +15,8 @@ cdf:
   allowedMethods: REQUESTQUEUE_CDF_ALLOWED_METHODS
 cors:
   origin: REQUESTQUEUE_CORS_ORIGIN
+
+logging:
+  level: REQUESTQUEUE_LOGGING_LEVEL
+
+

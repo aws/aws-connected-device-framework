@@ -36,3 +36,8 @@ defaults:
 
 assetLibrary:
   baseUrl:  CERTIFICATEVENDOR_ASSETLIBRARY_BASEURL
+
+logging:
+  level: CERTIFICATEVENDOR_LOGGING_LEVEL
+
+

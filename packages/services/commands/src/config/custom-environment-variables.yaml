@@ -30,3 +30,9 @@ assetLibrary:
   baseUrl: COMMANDS_ASSETLIBRARY_BASEURL
 provisioning:
   baseUrl: COMMANDS_PROVISIONING_BASEURL
+
+logging:
+  level: COMMANDS_LOGGING_LEVEL
+
+
+

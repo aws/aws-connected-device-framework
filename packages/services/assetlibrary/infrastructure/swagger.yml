@@ -1684,7 +1684,7 @@ paths:
             type: array
             items:
               type: string
-        - name: ancestorGroupPath
+        - name: ancestorPath
           in: query
           description: The path of a common ancestor group to filter results by.
           schema:

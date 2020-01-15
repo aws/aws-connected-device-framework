@@ -35,3 +35,7 @@ deviceCertificateExpiryDays: BULKCERTS_CERTEXPIRY
 
 defaults:
   chunkSize: BULKCERTS_DEFAULTS_CHUNKSIZE
+
+logging:
+  level: BULKCERTS_LOGGING_LEVEL
+

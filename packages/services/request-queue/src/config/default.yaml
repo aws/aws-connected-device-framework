@@ -24,5 +24,8 @@ cdf:
 cors:
   origin:
 
+logging:
+  level: debug
+
 
   

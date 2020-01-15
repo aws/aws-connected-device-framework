@@ -45,3 +45,6 @@ assetLibrary:
 registry:
   # AssetLibrary | DeviceRegistry
   mode:
+
+logging:
+  level: debug

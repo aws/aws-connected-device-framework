@@ -1,3 +1,6 @@
 aws:
   region: AWS_REGION
   accountId: AWS_ACCOUNT_ID
+
+logging:
+  level: AUTHDEVICECERT_LOGGING_LEVEL

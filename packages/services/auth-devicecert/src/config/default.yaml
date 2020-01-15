@@ -1,3 +1,6 @@
 aws:
   region: 
   accountId: 
+
+logging:
+  level: debug

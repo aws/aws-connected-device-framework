@@ -4,3 +4,6 @@ aws:
 
 assetLibrary:
   baseUrl: 
+
+logging:
+  level: debug

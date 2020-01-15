@@ -29,3 +29,8 @@ aws:
 
 cors:
   origin: EVENTSPROCESSOR_CORS_ORIGIN
+
+logging:
+  level: EVENTSPROCESSOR_LOGGING_LEVEL
+
+

@@ -37,3 +37,5 @@ cache:
 authorization:
   enabled: ASSETLIBRARY_AUTHORIZAION_ENABLED
 
+logging:
+  level: ASSETLIBRARY_LOGGING_LEVEL

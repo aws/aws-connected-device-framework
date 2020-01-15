@@ -4,3 +4,6 @@ aws:
   
 token:
   issuer:
+
+logging:
+  level: debug

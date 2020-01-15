@@ -24,3 +24,6 @@ aws:
     dynamoDbStream:
       name: MUST_SET!
 
+logging:
+  level: debug
+

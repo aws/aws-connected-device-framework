@@ -7,3 +7,6 @@ aws:
 
 cors:
   origin: ASSETLIBRARYHISTORY_CORS_ORIGIN
+
+logging:
+  level: ASSETLIBRARYHISTORY_LOGGING_LEVEL

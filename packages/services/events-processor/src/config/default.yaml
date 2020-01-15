@@ -33,3 +33,6 @@ cors:
 supportedApiVersions:
   - json:
       - '1.0'
+
+logging:
+  level: debug
