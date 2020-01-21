@@ -64,7 +64,14 @@ nav:
   - Admin:
     - 'Deployment': advanced/deployment.md
     - 'CI/CD': advanced/cicd.md
-    
+
+plugins:
+  - search
+  - pdf-export:
+      enabled_if_env: ENABLE_PDF_EXPORT
+      combined: true
+      combined_output_path: pdf/cdf.pdf
+
 theme:
   name: 'material'
 

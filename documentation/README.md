@@ -2,8 +2,15 @@
 
 ## Local Installation
 
+Install `pango` library (a deoendency of WeasyPrint).
+
 ```sh
-pip install mkdocs markdown-include pymdown-extensions mkdocs-material
+# OSX:
+brew install pango
+```
+
+```sh
+pip install mkdocs markdown-include pymdown-extensions mkdocs-material mkdocs-pdf-export-plugin
 ```
 
 ## To view the documentation locally:
@@ -13,6 +20,14 @@ mkdocs serve
 ```
 
 The documentation will then be available at `http://127.0.0.1:8000`.
+
+## To export the documentationa as a PDF"
+
+```sh
+ENABLE_PDF_EXPORT=1 mkdocs build
+```
+
+The exported pdf will be found at `site/pdf/cdf.pdf`
 
 ## Syncing Swagger
 
