@@ -31,17 +31,17 @@ export class SearchDaoFull extends BaseDaoFull {
 
         const filters: process.GraphTraversal[]= [];
 
-        // if a path is provided, that becomes the starting point
         let traverser: process.GraphTraversal;
-        if (request.ancestorPath!==undefined) {
-            const ancestorId = `group___${request.ancestorPath}`;
-            traverser = conn.traversal.V(ancestorId).
-                repeat(__.in_().simplePath()).emit().as('a');
-        } else {
-            traverser = conn.traversal.V().as('a');
-        }
+        traverser = conn.traversal.V().as('a');
 
         // construct all the filters that we will eventually pass to match()
+        if (request.ancestorPath!==undefined) {
+            const ancestorId = `group___${request.ancestorPath}`;
+            filters.push(
+                __.as('a').until(__.hasId(ancestorId)).repeat(__.out('parent'))
+            );
+        }
+
         if (request.types!==undefined) {
             request.types.forEach(t=> filters.push(
                 __.as('a').hasLabel(t)) );
@@ -101,19 +101,22 @@ export class SearchDaoFull extends BaseDaoFull {
             throw new Error('NOT_SUPPORTED');
         }
 
+        if (authorizedPaths!==undefined && authorizedPaths.length>0) {
+            filters.push(
+                __.local(__.until(__.has('groupPath', process.P.within(authorizedPaths))).repeat(__.out()))
+            );
+        }
+
         // apply the match criteria
         if (filters.length>0) {
             traverser.match(...filters).dedup();
         }
 
         // if authz is enabled, only return results that the user is authorized to view
-        if (authorizedPaths!==undefined && authorizedPaths.length>0) {
-            traverser.local(__.until(__.has('groupPath', process.P.within(authorizedPaths))).repeat(__.out().simplePath()));
-        }
 
         // logger.debug(`search.full.dao buildSearchTraverser: traverser: ${JSON.stringify(traverser.toString())}`);
 
-        return traverser;
+        return traverser.select('a').dedup();
 
     }
 
