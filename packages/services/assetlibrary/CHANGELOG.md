@@ -1,3 +1,10 @@
+# [@cdf/assetlibrary-v3.2.8](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.2.7...@cdf/assetlibrary-v3.2.8) (2020-01-22)
+
+
+### Bug Fixes
+
+* **assetlibrary:** search ancestorPath with fgac ([311e689](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/311e689c476ed3f4fd275641b87acc8ba3ace40a))
+
 # [@cdf/assetlibrary-v3.2.7](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.2.6...@cdf/assetlibrary-v3.2.7) (2020-01-15)
 
 
