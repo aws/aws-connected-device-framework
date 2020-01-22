@@ -1,3 +1,10 @@
+# [@cdf/assetlibrary-v3.2.9](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.2.8...@cdf/assetlibrary-v3.2.9) (2020-01-22)
+
+
+### Bug Fixes
+
+* **assetlibrary:** improve search performance when filtering ancestors ([fc5f8d8](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/fc5f8d8d088f28d6abafe427541f2e45810afd5b))
+
 # [@cdf/assetlibrary-v3.2.8](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.2.7...@cdf/assetlibrary-v3.2.8) (2020-01-22)
 
 
