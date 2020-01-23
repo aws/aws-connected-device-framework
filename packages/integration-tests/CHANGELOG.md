@@ -1,3 +1,10 @@
+# [@cdf/integration-tests-v2.1.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/integration-tests-v2.1.0...@cdf/integration-tests-v2.1.1) (2020-01-23)
+
+
+### Bug Fixes
+
+* **assetlibrary:** fixed further issues with fgac and searching ([860741f](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/860741fd4376a7fdf5fefbd6d75cf44c550a0695))
+
 # [@cdf/integration-tests-v2.1.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/integration-tests-v2.0.1...@cdf/integration-tests-v2.1.0) (2019-12-19)
 
 
