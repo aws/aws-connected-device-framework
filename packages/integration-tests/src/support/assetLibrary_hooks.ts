@@ -575,6 +575,132 @@ Before({tags: '@teardown_deviceSearch_feature'}, async function () {
     await teardown_deviceSearch_feature();
 });
 
+async function teardown_deviceSearchWithAuth_feature() {
+    await deleteAssetLibraryDevices(['TEST-deviceSearchWithAuth-001A','TEST-deviceSearchWithAuth-001B','TEST-deviceSearchWithAuth-002A','TEST-deviceSearchWithAuth-002B']);
+    await deleteAssetLibraryGroups(['/1/2/2','/1/2/1','/1/1/2','/1/1/1','/1/2','/1/1','/1']);
+    await deleteAssetLibraryTemplates(CategoryEnum.device, ['TEST-deviceSearchWithAuthDevice']);
+    await deleteAssetLibraryTemplates(CategoryEnum.group, ['TEST-deviceSearchWithAuthGroup']);
+}
+
+Before({tags: '@setup_deviceSearchWithAuth_feature'}, async function () {
+
+    // teardown first just in case
+    await teardown_deviceSearchWithAuth_feature();
+
+    const groupTemplateId = 'TEST-deviceSearchWithAuthGroup';
+    const groupType:TypeResource = {
+        templateId: groupTemplateId,
+        category: 'group'
+    };
+    await templates.createTemplate(groupType);
+    await templates.publishTemplate(CategoryEnum.group, groupTemplateId);
+
+    // now go through the setup steps
+    const deviceTemplateId = 'TEST-deviceSearchWithAuthDevice';
+    const deviceType:TypeResource = {
+        templateId: deviceTemplateId,
+        category: 'device',
+        properties: {
+            pair: { type: ['string']},
+            position: { type: ['number']}
+        },
+        relations: {
+            out: {
+                'located_at': [groupTemplateId]
+            }
+        }
+    };
+    await templates.createTemplate(deviceType);
+    await templates.publishTemplate(CategoryEnum.device, deviceTemplateId);
+
+    // create group hierarchy
+    const g1:Group10Resource = {
+        templateId: groupTemplateId,
+        parentPath: '/',
+        name: '1',
+        attributes: {}
+    };
+    const g1_1:Group10Resource = {
+        templateId: groupTemplateId,
+        parentPath: '/1',
+        name: '1',
+        attributes: {}
+    };
+    const g1_2:Group10Resource = {
+        templateId: groupTemplateId,
+        parentPath: '/1',
+        name: '2',
+        attributes: {}
+    };
+    const g1_1_1:Group10Resource = {
+        templateId: groupTemplateId,
+        parentPath: '/1/1',
+        name: '1',
+        attributes: {}
+    };
+    const g1_1_2:Group10Resource = {
+        templateId: groupTemplateId,
+        parentPath: '/1/1',
+        name: '2',
+        attributes: {}
+    };
+    const g1_2_1:Group10Resource = {
+        templateId: groupTemplateId,
+        parentPath: '/1/2',
+        name: '1',
+        attributes: {}
+    };
+    const g1_2_2:Group10Resource = {
+        templateId: groupTemplateId,
+        parentPath: '/1/2',
+        name: '2',
+        attributes: {}
+    };
+    await groups.bulkCreateGroup({groups:[g1, g1_1, g1_2, g1_1_1, g1_1_2, g1_2_1, g1_2_2]});
+
+    const device:Device10Resource = {
+        templateId: deviceTemplateId,
+        deviceId: 'TEST-deviceSearchWithAuth-001A',
+        attributes: {
+            pair: 'black-black',
+            position: 1
+        },
+        groups: {
+            'located_at': ['/1/1/1']
+        }
+    };
+    await devices.createDevice(device);
+
+    device.deviceId = 'TEST-deviceSearchWithAuth-001B';
+    device.attributes.pair = 'black-white';
+    device.attributes.position = 2;
+    device.groups= {
+        'located_at': ['/1/1/2']
+    }
+    await devices.createDevice(device);
+
+    device.deviceId = 'TEST-deviceSearchWithAuth-002A';
+    device.attributes.pair = 'white-red';
+    device.attributes.position = 3;
+    device.groups= {
+        'located_at': ['/1/2/1']
+    }
+    await devices.createDevice(device);
+
+    device.deviceId = 'TEST-deviceSearchWithAuth-002B';
+    device.attributes.pair = 'red-white';
+    device.attributes.position = 4;
+    device.groups= {
+        'located_at': ['/1/2/2']
+    }
+    await devices.createDevice(device);
+
+});
+
+Before({tags: '@teardown_deviceSearchWithAuth_feature'}, async function () {
+    await teardown_deviceSearchWithAuth_feature();
+});
+
 async function teardown_deviceSearch_lite_feature() {
     await deleteAssetLibraryDevices(DEVICESEARCH_FEATURES_DEVICE_IDS);
     await deleteAssetLibraryGroups(DEVICESEARCH_LITE_FEATURES_GROUPS_PATHS);

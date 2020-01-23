@@ -41,18 +41,6 @@ export class SearchDaoFull extends BaseDaoFull {
             traverser = conn.traversal.V().as('a');
         }
 
-        // if authz is enabled, only return results that the user is authorized to view
-        if (authorizedPaths!==undefined && authorizedPaths.length>0) {
-            traverser.barrier().
-                local(
-                    __.until(
-                        __.has('groupPath', process.P.within(authorizedPaths))
-                    ).repeat(
-                        __.out().simplePath()
-                    )
-                ).barrier();
-        }
-
         // construct all the filters that we will eventually pass to match()
 
         if (request.types!==undefined) {
@@ -116,14 +104,27 @@ export class SearchDaoFull extends BaseDaoFull {
 
         // apply the match criteria
         if (filters.length>0) {
-            traverser.match(...filters).dedup();
+            traverser.match(...filters);
         }
 
+        // must reset all traversals so far as we may meed to use simplePath if FGAC is enabled to prevent cyclic checks
+        traverser.select('a').fold().unfold().as('matched');
+
         // if authz is enabled, only return results that the user is authorized to view
+        if (authorizedPaths!==undefined && authorizedPaths.length>0) {
+            traverser.
+                local(
+                    __.until(
+                        __.has('groupPath', process.P.within(authorizedPaths))
+                    ).repeat(
+                        __.out().simplePath()
+                    )
+                ).as('authorization');
+        }
 
         // logger.debug(`search.full.dao buildSearchTraverser: traverser: ${JSON.stringify(traverser.toString())}`);
 
-        return traverser.select('a').dedup();
+        return traverser.select('matched').dedup();
 
     }
 
@@ -154,10 +155,9 @@ export class SearchDaoFull extends BaseDaoFull {
             const offsetAsInt = parseInt(offset.toString(),0);
             const countAsInt = parseInt(count.toString(),0);
 
-            traverser.
-                select('a').range(offsetAsInt,offsetAsInt + countAsInt).valueMap().with_(process.withOptions.tokens);
+            traverser.range(offsetAsInt,offsetAsInt + countAsInt).valueMap().with_(process.withOptions.tokens);
 
-            // logger.debug(`search.full.dao search: traverser:${JSON.stringify(traverser.toString())}`);
+            logger.debug(`search.full.dao search: traverser:${JSON.stringify(traverser.toString())}`);
 
             results = await traverser.toList();
 
@@ -197,7 +197,6 @@ export class SearchDaoFull extends BaseDaoFull {
             const traverser = this.buildSearchTraverser(conn, request, authorizedPaths);
 
             if (request.facetField!==undefined) {
-                traverser.select('a');
                 if (request.facetField.traversals!==undefined) {
                     request.facetField.traversals.forEach(t=> {
                         if (t.direction===SearchRequestFilterDirection.in) {
@@ -235,7 +234,7 @@ export class SearchDaoFull extends BaseDaoFull {
         let result;
         try {
             const traverser = this.buildSearchTraverser(conn, request, authorizedPaths);
-            result = await traverser.select('a').count().next();
+            result = await traverser.count().next();
         } finally {
             conn.close();
         }
