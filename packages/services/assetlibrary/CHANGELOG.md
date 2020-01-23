@@ -1,3 +1,10 @@
+# [@cdf/assetlibrary-v3.2.10](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.2.9...@cdf/assetlibrary-v3.2.10) (2020-01-23)
+
+
+### Bug Fixes
+
+* **assetlibrary:** fixed further issues with fgac and searching ([860741f](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/860741fd4376a7fdf5fefbd6d75cf44c550a0695))
+
 # [@cdf/assetlibrary-v3.2.9](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.2.8...@cdf/assetlibrary-v3.2.9) (2020-01-22)
 
 
