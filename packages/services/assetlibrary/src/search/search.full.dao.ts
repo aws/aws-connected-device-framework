@@ -50,37 +50,37 @@ export class SearchDaoFull extends BaseDaoFull {
 
         if (request.eq!==undefined) {
             request.eq.forEach(f=> {
-                const filter = this.buildSearchFilterBase(f);
+                const filter = this.buildSearchFilterVBase(f);
                 filters.push(filter.has(f.field, f.value));
             });
         }
         if (request.neq!==undefined) {
             request.neq.forEach(f=> {
-                const filter = this.buildSearchFilterBase(f);
+                const filter = this.buildSearchFilterVBase(f);
                 filters.push(filter.not(__.has(f.field, f.value)));
             });
         }
         if (request.lt!==undefined) {
             request.lt.forEach(f=> {
-                const filter = this.buildSearchFilterBase(f);
+                const filter = this.buildSearchFilterVBase(f);
                 filters.push(filter.values(f.field).is(process.P.lt(Number(f.value))));
             });
         }
         if (request.lte!==undefined) {
             request.lte.forEach(f=> {
-                const filter = this.buildSearchFilterBase(f);
+                const filter = this.buildSearchFilterVBase(f);
                 filters.push(filter.values(f.field).is(process.P.lte(Number(f.value))));
             });
         }
         if (request.gt!==undefined) {
             request.gt.forEach(f=> {
-                const filter = this.buildSearchFilterBase(f);
+                const filter = this.buildSearchFilterVBase(f);
                 filters.push(filter.values(f.field).is(process.P.gt(Number(f.value))));
             });
         }
         if (request.gte!==undefined) {
             request.gte.forEach(f=> {
-                const filter = this.buildSearchFilterBase(f);
+                const filter = this.buildSearchFilterVBase(f);
                 filters.push(filter.values(f.field).is(process.P.gte(Number(f.value))));
             });
         }
@@ -90,8 +90,22 @@ export class SearchDaoFull extends BaseDaoFull {
                 const nextCharCode = String.fromCharCode( startValue.charCodeAt(startValue.length-1) + 1);
                 const endValue = this.setCharAt(startValue, startValue.length-1, nextCharCode);
 
-                const filter = this.buildSearchFilterBase(f);
+                const filter = this.buildSearchFilterVBase(f);
                 filters.push(filter.has(f.field, process.P.between(startValue, endValue)));
+            });
+        }
+
+        if (request.exists!==undefined) {
+            request.exists.forEach(f=> {
+                const filter = this.buildSearchFilterEBase(f);
+                filters.push(filter.has(f.field, f.value));
+            });
+        }
+
+        if (request.nexists!==undefined) {
+            request.nexists.forEach(f=> {
+                const filter = __.not(this.buildSearchFilterEBase(f).has(f.field, f.value));
+                filters.push(filter);
             });
         }
 
@@ -128,7 +142,7 @@ export class SearchDaoFull extends BaseDaoFull {
 
     }
 
-    private buildSearchFilterBase(filter:SearchRequestFilter|SearchRequestFacet) : process.GraphTraversal {
+    private buildSearchFilterVBase(filter:SearchRequestFilter|SearchRequestFacet) : process.GraphTraversal {
         const response:process.GraphTraversal = __.as('a');
         if (filter.traversals) {
             filter.traversals.forEach(t=> {
@@ -139,6 +153,22 @@ export class SearchDaoFull extends BaseDaoFull {
                 }
             });
         }
+        return response;
+    }
+
+    private buildSearchFilterEBase(filter:SearchRequestFilter|SearchRequestFacet) : process.GraphTraversal {
+        const response:process.GraphTraversal = __.as('a');
+        if (filter.traversals) {
+            filter.traversals.forEach(t=> {
+                if (t.direction===SearchRequestFilterDirection.in) {
+                    response.inE(t.relation);
+                } else {
+                    response.outE(t.relation);
+                }
+                response.otherV();
+            });
+        }
+
         return response;
     }
 

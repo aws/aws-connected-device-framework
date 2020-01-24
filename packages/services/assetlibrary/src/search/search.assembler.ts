@@ -19,7 +19,8 @@ export class SearchAssembler {
 
     public toSearchRequestModel(types:string|string[], ancestorPath:string,
         eqs:string|string[], neqs:string|string[], lts:string|string[], ltes:string|string[],
-        gts:string|string[], gtes:string|string[], startsWiths:string|string[], facetField:string): SearchRequestModel {
+        gts:string|string[], gtes:string|string[], startsWiths:string|string[],
+        exists:string|string[], nexists:string|string[], facetField:string): SearchRequestModel {
 
         const req = new SearchRequestModel();
         if (types!==undefined) {
@@ -38,6 +39,9 @@ export class SearchAssembler {
         req.gt = this.toSearchRequestFilters(gts);
         req.gte = this.toSearchRequestFilters(gtes);
         req.startsWith = this.toSearchRequestFilters(startsWiths);
+
+        req.exists = this.toSearchRequestFilters(exists);
+        req.nexists = this.toSearchRequestFilters(nexists);
 
         if (facetField!==undefined) {
             const v = facetField.split(':');

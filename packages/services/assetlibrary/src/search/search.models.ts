@@ -39,6 +39,9 @@ export class SearchRequestModel {
 	endsWith?: SearchRequestFilters;
 	contains?: SearchRequestFilters;
 
+	exists?: SearchRequestFilters;
+	nexists?: SearchRequestFilters;
+
 	facetField?: SearchRequestFacet;
 
 	summarize: boolean;
