@@ -42,6 +42,8 @@ export class MessageCompilerService {
                 eventTemplateFns[k] = dot.template(eventConfig.templates[eventConfig.supportedTargets[k]]);
             });
 
+            logger.debug(`eventTemplateFns: ${eventTemplateFns}`);
+
             this._templateMap[eventId]=eventTemplateFns;
         }
 
@@ -51,7 +53,13 @@ export class MessageCompilerService {
             templateFn = eventTemplateFns['default'];
         }
 
-        const message =  templateFn(attributes);
+        let message;
+        try {
+            message =  templateFn(attributes);
+        } catch (err) {
+            logger.error(err);
+        }
+
         logger.debug(`messageCompiler.service compile: exit:${message}`);
         return message;
     }
