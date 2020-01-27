@@ -1,3 +1,10 @@
+# [@cdf/assetlibrary-v3.2.11](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.2.10...@cdf/assetlibrary-v3.2.11) (2020-01-27)
+
+
+### Bug Fixes
+
+* **assetlibrary:** search with multiple exist/nexist ([7be308a](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/7be308ab9bb0bcdbcd222fd7abb55fb594bb5f27))
+
 # [@cdf/assetlibrary-v3.2.10](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.2.9...@cdf/assetlibrary-v3.2.10) (2020-01-23)
 
 
