@@ -27,7 +27,7 @@ export class SearchController implements interfaces.Controller {
         @queryParam('lt') lts:string|string[], @queryParam('lte') ltes:string|string[],
         @queryParam('gt') gts:string|string[], @queryParam('gte') gtes:string|string[],
         @queryParam('startsWith') startsWiths:string|string[],
-        @queryParam('exists') exists:string|string[], @queryParam('nexists') nexists:string|string[],
+        @queryParam('exist') exists:string|string[], @queryParam('nexist') nexists:string|string[],
         @queryParam('facetField') facetField:string,
         @queryParam('summarize') summarize:string,
         @queryParam('offset') offset:number, @queryParam('count') count:number,

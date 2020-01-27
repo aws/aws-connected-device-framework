@@ -1768,7 +1768,7 @@ paths:
             type: array
             items:
               type: string
-        - name: exists
+        - name: exist
           in: query
           description: Return a match if the device/group in context has a matching relation/atrribute. E.g.
             `?exists=installed_in:out:groupPath:/vehicle/001`
@@ -1777,7 +1777,7 @@ paths:
             type: array
             items:
               type: string
-        - name: nexists
+        - name: nexist
           in: query
           description: Return a match if the device/group in context does not have a matching relation/atrribute. E.g.
             `?nxists=installed_in:out:groupPath:/vehicle/001`
