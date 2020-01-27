@@ -1,3 +1,10 @@
+# [@cdf/events-alerts-v1.1.2](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/events-alerts-v1.1.1...@cdf/events-alerts-v1.1.2) (2020-01-27)
+
+
+### Bug Fixes
+
+* safe guard around template evaluation ([1fce777](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/1fce7779edfe49cdd97aac98d0a2a27f18340af8))
+
 # [@cdf/events-alerts-v1.1.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/events-alerts-v1.1.0...@cdf/events-alerts-v1.1.1) (2020-01-15)
 
 
