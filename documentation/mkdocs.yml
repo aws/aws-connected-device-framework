@@ -1,4 +1,5 @@
 site_name: Connected Device Framework (CDF)
+use_directory_urls: false
 
 nav:
   - Start: index.md
