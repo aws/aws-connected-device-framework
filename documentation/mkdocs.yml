@@ -36,7 +36,10 @@ nav:
     - Custom Device Authorizer:
       - 'Custom Device Authorizer Overview' : projects/auth-devicecert/overview.md
     - Device Monitoring:
-      - 'Device Monitoring Overview' : projects/devicemonitoring/overview.md  
+      - 'Device Monitoring Overview' : projects/devicemonitoring/overview.md
+    - Facade:
+        - 'Facade Over': projects/facade/overview.md
+        - 'CDF Auto Facade': projects/facade/facade-auto.md
     - Notifications:
       - 'Notifications Overiew' : projects/notifications/overview.md
       - 'Notifications Walkthrough' : projects/notifications/walkthrough.md

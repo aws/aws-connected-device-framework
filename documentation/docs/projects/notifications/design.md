@@ -75,7 +75,119 @@ The items primary key, sort key, and attributes, are extracted from the `NewImag
 
 Creating an IoT Core event source via the REST API creates an IoT Rule to forward the event message.  Deleting via the REST API will remove the IoT Rule.
 
-It is expected that the incoming event being forwarded from IoT Core (via an IoT Rule) is already in the common event format (defined as part of the IoT Rule SQL), therefore will not need transforming.
+It is expected that the incoming event being forwarded from IoT Core (via an IoT Rule) is already in the common event format (defined as part of the IoT Rule SQL), therefore will not need transforming.'
+
+
+## Events
+
+Once an event source is configured, the next step is to configure an Event trigger. The Event trigger evaluates the incoming event and conditionally resolves the event based on the configured Event rule.
+
+#### Event Trigger Format
+
+The following represents the type interface for an Event trigger. The minimum configuration required is to include name, conditions and templates. The additional properties can be configured to define a more granular trigger.
+
+```typescript
+interface EventResource {
+    eventId: string;
+    eventSourceId: string;
+    name: string;
+    conditions: EventConditions;
+    ruleParameters: string[];
+    enabled: boolean;
+
+    // a map of templates
+    templates: TemplateMap;
+
+    // the defined templates are then associated with a potential target
+    supportedTargets: TargetTemplateMap;
+}
+
+interface EventConditions {
+    all?:EventConditions|EventCondition[];
+    any?:EventConditions|EventCondition[];
+}
+
+interface EventCondition {
+    fact:string;
+    operator:string;
+    value:number|string|boolean|EventFactCondition;
+}
+
+interface EventFactCondition {
+    fact:string;
+}
+
+type TemplateMap = { [key: string] : string};
+
+type TargetTemplateMap = { [key in EventTargetType] : string};
+
+enum EventTargetType {
+    EMAIL = 'email',
+    SMS = 'sms',
+    MQTT = 'mqtt',
+    DYNAMODB = 'dynamodb'
+}
+```
+#### Sample Event Trigger Configuration API Request
+```
+{
+    "name": "Battery alert",
+    "conditions": {
+    	"all": [{
+    		"fact": "batteryLevel",
+    		"operator": "lessThanInclusive",
+    		"value": "$bl"
+    	}]
+    },
+    "supportedTargets": {
+        "email": "default",
+        "sms": "small"
+    },
+    "templates": {
+        "default": "The battery for bowl {{=it.principalValue}} is low.",
+    	"small": "{{=it.principalValue}} battery low"
+    }
+}
+```
+
+#### Supported Condition Operators
+
+**String and Numeric operators**
+
+- _equal_ - fact must equal value
+- _notEqual_ - fact must not equal value
+
+**Numeric operators**
+
+- _lessThan_ - fact must be less than value
+- _lessThanInclusive_ - fact must be less than or equal to value
+- _greaterThan_ - fact must be greater than value
+- _greaterThanInclusive_ - fact must be greater than or equal to value
+
+**Array operators**
+
+- _in_ - fact must be included in value (an array)
+- _notIn_ - fact must not be included in value (an array)
+- _contains_ - fact (an array) must include value
+- _doesNotContain_ - fact (an array) must not include value
+
+#### Common Event Format
+
+The `principal` represents the object that is the focus of the event message.  As an example, it could be the thing name or device id if the event message originated from a device, or a user id if it originated directly from a user.
+
+```typescript
+interface CommonEvent {
+    eventSourceId: string;
+    principal: string;
+    principalValue: string;
+    attributes?: { [key: string] : string|boolean|number|string[]|number[] };
+}
+```
+
+#### Referencing the values in Event Templates
+
+`it.` represents the incoming message.  Any attributes on that incoming message will be accessivle via `it.`.  The internal attributes that we use, that include eventSourceId, principal, and principalValue are also added to `it.` but prefixed with `__` to avoid clashes. lets say if the incoming dynamodb item had a field called `temperature` that would be accessible as `it.temperature`
+
 
 ## Event Filtering
 
@@ -134,6 +246,11 @@ Stream all notifications for a user | Use userId-time-index, PK="{userId}" | Mul
 Stream all notifications for a user for a specific date range | Use userId-time-index, PK="{userId}", SK BETWEEN "{dateFrom}" and "{dateTo}" | Multiple Alerts
 Stream notifications of a particular event for a user | Use userId-gsi2Sort-index, PK="{userId}", SK begins_with "E-{eventId1}-" | Multiple Alerts
 Stream notifications of a particular event for a user for a specific date range | Use userId-gsi2Sort-index, PK="{userId}", SK BETWEEN "E-{eventId1}-{dateFrom}" and "E-{eventId1}-{dateTo}" | Multiple Alerts
+
+
+
+
+
 
 ## Events Alerts
 

@@ -16,7 +16,7 @@ Within Asset Library, any attempted access to a device or group will be validate
 
 Let’s take an example of a graph that we will refer to in the following sections:
 
-![example](images/CDF&#32;Asset&#32;Library&#32;FGAC.png)
+![example](images/CDF Asset Library FGAC.png)
 
 This example has a concept of multi-tenancy (multiple companies at the top level represented as groups).  Printers are the modeled devices, with the printers being shared across the different companies.  Access to the printers is managed per company via company specific pools represented as groups.  Each company can also have its own tag groups.  Tags are used to group devices for searching, whereas pool groups are used as authorization to specific devices.  The naming and structure of these groups is irrelevant.
 
