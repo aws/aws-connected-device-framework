@@ -16,4 +16,4 @@ pip install --upgrade pip
 pip install mkdocs 
 pip install markdown-include 
 pip install pymdown-extensions 
-pip install mkdocs-material==2.9.4
+pip install mkdocs-material
