@@ -1,3 +1,10 @@
+# [@cdf/auth-jwt-v1.1.3](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/auth-jwt-v1.1.2...@cdf/auth-jwt-v1.1.3) (2020-01-30)
+
+
+### Bug Fixes
+
+* **openssl:** openssl now available via a lambda layer ([8399408](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/8399408649b2a8f3074500c1ae43844dd3f5147a))
+
 # [@cdf/auth-jwt-v1.1.2](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/auth-jwt-v1.1.1...@cdf/auth-jwt-v1.1.2) (2020-01-15)
 
 
