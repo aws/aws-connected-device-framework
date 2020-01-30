@@ -1,6 +1,6 @@
 {
   "name": "@cdf/certificate-activator",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "CDF Certificate Activator",
   "author": "Dean Hart <deanhart@amazon.com>",
   "config": {
