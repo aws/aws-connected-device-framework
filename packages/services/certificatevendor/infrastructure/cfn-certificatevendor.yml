@@ -27,6 +27,10 @@ Parameters:
   KmsKeyId:
     Description: The KMS key ID used to encrypt SSM parameters
     Type: String
+  OpenSslLambdaLayerStackName:
+    Description: Name of the OpenSSL lambda layer CloudFormation stack
+    Type: String
+    MinLength: 1
 
 Conditions:
   KmsKeyProvided: !Not [ !Equals [ !Ref KmsKeyId, "" ]]
@@ -217,6 +221,9 @@ Resources:
     Properties:
       CodeUri: ../build/build.zip
       Handler: lambda_proxy.handler
+      Layers:
+        - Fn::ImportValue: !Sub
+            "${OpenSslLambdaLayerStackName}-LayerVersionArn" 
       MemorySize: 128
       Role: !If [KmsKeyProvided, !GetAtt LambdaExecutionRoleWithCsr.Arn, !GetAtt LambdaExecutionRole.Arn]
       Runtime: nodejs12.x

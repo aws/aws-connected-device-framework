@@ -22,6 +22,7 @@ MANDATORY ARGUMENTS:
     -c (string)   Location of application configuration file containing configuration overrides.
     -b (string)   Name of bucket where certificates are to be stored.
     -r (string)   Registry mode (AssetLibrary or DeviceRegistry)
+    -o (string)   The OpenSSL lambda layer stack name.
 
 OPTIONAL ARGUMENTS
     -p (string)   Key prefixes of bucket where certificates are to be stored (defaults to none)
@@ -41,7 +42,7 @@ EOF
 }
 
 
-while getopts ":e:c:b:p:k:m:n:r:g:GA:C:R:P:" opt; do
+while getopts ":e:o:c:b:p:k:m:n:r:g:GA:C:R:P:" opt; do
   case $opt in
 
     e  ) export ENVIRONMENT=$OPTARG;;
@@ -57,6 +58,8 @@ while getopts ":e:c:b:p:k:m:n:r:g:GA:C:R:P:" opt; do
     G  ) export BYPASS_CREATE_THING_GROUP=true;;
     A  ) export ASSETLIBRARY_STACK_NAME=$OPTARG;;
     C  ) export COMMANDS_STACK_NAME=$OPTARG;;
+
+    o  ) export OPENSSL_STACK_NAME=$OPTARG;;
 
     R  ) export AWS_REGION=$OPTARG;;
     P  ) export AWS_PROFILE=$OPTARG;;
@@ -99,6 +102,11 @@ if [ -z "$THING_GROUP_NAME" ]; then
   THING_GROUP_NAME=cdfRotateCertificates
 fi
 
+if [ -z "$OPENSSL_STACK_NAME" ]; then
+  echo -o OPENSSL_STACK_NAME is required; help_message; exit 1;
+fi
+
+
 
 AWS_ARGS=
 if [ -n "$AWS_REGION" ]; then
@@ -139,6 +147,7 @@ echo "
   ASSETLIBRARY_STACK_NAME:          $ASSETLIBRARY_STACK_NAME
   KMS_KEY_ID:                       $KMS_KEY_ID
   COMMANDS_STACK_NAME:              $COMMANDS_STACK_NAME
+  OPENSSL_STACK_NAME:               $OPENSSL_STACK_NAME
   AWS_REGION:                       $AWS_REGION
   AWS_PROFILE:                      $AWS_PROFILE
 "
@@ -223,6 +232,7 @@ aws cloudformation deploy \
       MQTTAckTopic=$MQTT_ACK_TOPIC \
       KmsKeyId=$KMS_KEY_ID \
       ApplicationConfigurationOverride="$application_configuration_override" \
+      OpenSslLambdaLayerStackName=$OPENSSL_STACK_NAME \
   --capabilities CAPABILITY_NAMED_IAM \
   --no-fail-on-empty-changeset \
   $AWS_ARGS

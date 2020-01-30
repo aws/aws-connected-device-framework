@@ -20,6 +20,7 @@ MANDATORY ARGUMENTS:
     -e (string)   Name of environment.
     -c (string)   Location of application configuration file containing configuration overrides.
     -i (string)   The JWT issuer, e.g. https://cognito-idp.us-east-1.amazonaws.com/${cognitoPoolId}.
+    -o (string)   The OpenSSL lambda layer stack name.
 
 OPTIONAL ARGUMENTS
     -R (string)   AWS region.
@@ -28,12 +29,13 @@ OPTIONAL ARGUMENTS
 EOF
 }
 
-while getopts ":e:c:i:R:P:" opt; do
+while getopts ":e:o:c:i:R:P:" opt; do
   case $opt in
 
     e  ) export ENVIRONMENT=$OPTARG;;
     c  ) export CONFIG_LOCATION=$OPTARG;;
     i  ) export JWT_ISSUER=$OPTARG;;
+    o  ) export OPENSSL_STACK_NAME=$OPTARG;;
 
     R  ) export AWS_REGION=$OPTARG;;
     P  ) export AWS_PROFILE=$OPTARG;;
@@ -57,6 +59,10 @@ if [ -z "$JWT_ISSUER" ]; then
 	echo -i JWT_ISSUER is required; help_message; exit 1;
 fi
 
+if [ -z "$OPENSSL_STACK_NAME" ]; then
+  echo -o OPENSSL_STACK_NAME is required; help_message; exit 1;
+fi
+
 
 AWS_ARGS=
 if [ -n "$AWS_REGION" ]; then
@@ -73,6 +79,7 @@ Running with:
   ENVIRONMENT:                      $ENVIRONMENT
   CONFIG_LOCATION:                  $CONFIG_LOCATION
   JWT_ISSUER:                       $JWT_ISSUER
+  OPENSSL_STACK_NAME:               $OPENSSL_STACK_NAME
   AWS_REGION:                       $AWS_REGION
   AWS_PROFILE:                      $AWS_PROFILE
 "
@@ -105,6 +112,7 @@ aws cloudformation deploy \
   --stack-name $AUTH_JWT_STACK_NAME \
   --parameter-overrides \
       ApplicationConfigurationOverride="$application_configuration_override" \
+      OpenSslLambdaLayerStackName=$OPENSSL_STACK_NAME \
   --capabilities CAPABILITY_NAMED_IAM \
   --no-fail-on-empty-changeset \
   $AWS_ARGS

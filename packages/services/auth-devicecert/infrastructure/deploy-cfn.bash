@@ -19,6 +19,7 @@ DESCRIPTION
 MANDATORY ARGUMENTS:
     -e (string)   Name of environment.
     -k (string)   The KMS key ID used to encrypt SSM parameters.
+    -o (string)   The OpenSSL lambda layer stack name.
 
 OPTIONAL ARGUMENTS
     -R (string)   AWS region.
@@ -27,10 +28,11 @@ OPTIONAL ARGUMENTS
 EOF
 }
 
-while getopts ":e:k:R:P:" opt; do
+while getopts ":e:o:k:R:P:" opt; do
   case $opt in
 
     e  ) export ENVIRONMENT=$OPTARG;;
+    o  ) export OPENSSL_STACK_NAME=$OPTARG;;
     k  ) export KMS_KEY_ID=$OPTARG;;
     R  ) export AWS_REGION=$OPTARG;;
     P  ) export AWS_PROFILE=$OPTARG;;
@@ -50,6 +52,10 @@ if [ -z "$KMS_KEY_ID" ]; then
 	echo -k KMS_KEY_ID is required; help_message; exit 1;
 fi
 
+if [ -z "$OPENSSL_STACK_NAME" ]; then
+  echo -o OPENSSL_STACK_NAME is required; help_message; exit 1;
+fi
+
 
 AWS_ARGS=
 if [ -n "$AWS_REGION" ]; then
@@ -65,6 +71,7 @@ echo "
 Running with:
   ENVIRONMENT:                      $ENVIRONMENT
   KMS_KEY_ID:                       $KMS_KEY_ID
+  OPENSSL_STACK_NAME:               $OPENSSL_STACK_NAME
   AWS_REGION:                       $AWS_REGION
   AWS_PROFILE:                      $AWS_PROFILE
 "
@@ -82,6 +89,7 @@ aws cloudformation deploy \
   --parameter-overrides \
       Environment=$ENVIRONMENT \
       KmsKeyId=$KMS_KEY_ID \
+      OpenSslLambdaLayerStackName=$OPENSSL_STACK_NAME \
   --capabilities CAPABILITY_NAMED_IAM \
   --no-fail-on-empty-changeset \
   $AWS_ARGS

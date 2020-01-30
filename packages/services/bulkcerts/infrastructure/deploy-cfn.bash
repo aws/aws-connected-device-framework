@@ -20,6 +20,7 @@ MANDATORY ARGUMENTS:
     -e (string)   Name of environment.
     -c (string)   Location of application configuration file containing configuration overrides.
     -k (string)   The KMS key ID used to encrypt SSM parameters.
+    -o (string)   The OpenSSL lambda layer stack name.
 
 OPTIONAL ARGUMENTS
     -C (string)   Name of customer authorizer stack.  Defaults to cdf-custom-auth-${ENVIRONMENT}.
@@ -30,12 +31,13 @@ OPTIONAL ARGUMENTS
 EOF
 }
 
-while getopts ":e:c:k:N:C:S:R:P:" opt; do
+while getopts ":e:o:c:k:N:C:S:R:P:" opt; do
   case $opt in
 
     e  ) export ENVIRONMENT=$OPTARG;;
     c  ) export BULKCERTS_CONFIG_LOCATION=$OPTARG;;
     k  ) export KMS_KEY_ID=$OPTARG;;
+    o  ) export OPENSSL_STACK_NAME=$OPTARG;;
 
     C  ) export CUST_AUTH_STACK_NAME=$OPTARG;;
     S  ) export BULKCERTS_STACK_NAME=$OPTARG;;
@@ -62,6 +64,10 @@ if [ -z "$KMS_KEY_ID" ]; then
 	echo -k KMS_KEY_ID is required; help_message; exit 1;
 fi
 
+if [ -z "$OPENSSL_STACK_NAME" ]; then
+	echo -o OPENSSL_STACK_NAME is required; help_message; exit 1;
+fi
+
 
 
 AWS_ARGS=
@@ -86,6 +92,7 @@ Running with:
   BULKCERTS_CONFIG_LOCATION:        $BULKCERTS_CONFIG_LOCATION
   KMS_KEY_ID:                       $KMS_KEY_ID
   CUST_AUTH_STACK_NAME:             $CUST_AUTH_STACK_NAME
+  OPENSSL_STACK_NAME:               $OPENSSL_STACK_NAME
   AWS_REGION:                       $AWS_REGION
   AWS_PROFILE:                      $AWS_PROFILE
 "
@@ -107,6 +114,7 @@ aws cloudformation deploy \
       ApplicationConfigurationOverride="$application_configuration_override" \
       KmsKeyId=$KMS_KEY_ID \
       CustAuthStackName=$CUST_AUTH_STACK_NAME \
+      OpenSslLambdaLayerStackName=$OPENSSL_STACK_NAME \
   --capabilities CAPABILITY_NAMED_IAM \
   --no-fail-on-empty-changeset \
   $AWS_ARGS

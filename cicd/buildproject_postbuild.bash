@@ -15,6 +15,6 @@ if [ "$CODEBUILD_BUILD_SUCCEEDING" -eq 1 ]; then
     pnpm m run semantic-release --workspace-concurrency 1
 
     echo Bundling...
-    pnpm run bundle
+    infrastructure/bundle-core.bash
 
 fi

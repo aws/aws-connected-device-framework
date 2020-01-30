@@ -10,6 +10,10 @@ Parameters:
     Description: This allows you to override any configuration application configuration. Must be a JSON formatted string. Any configurations contained in this will override the configurations found and merged from the config files.
     Type: String
     MinLength: 1
+  OpenSslLambdaLayerStackName:
+    Description: Name of the OpenSSL lambda layer CloudFormation stack
+    Type: String
+    MinLength: 1
 
 Resources:
   CustAuthLambdaFunction:
@@ -17,6 +21,10 @@ Resources:
     Properties:
       CodeUri: ../build/build.zip
       Handler: index.handler
+
+      Layers:
+        - Fn::ImportValue: !Sub
+            "${OpenSslLambdaLayerStackName}-LayerVersionArn" 
 
       MemorySize: 512
       Role: !GetAtt LambdaExecutionRole.Arn

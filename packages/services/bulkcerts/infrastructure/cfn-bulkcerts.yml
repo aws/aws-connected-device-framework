@@ -23,6 +23,10 @@ Parameters:
     Description: The KMS key ID used to encrypt SSM parameters
     Type: String
     MinLength: 1
+  OpenSslLambdaLayerStackName:
+    Description: Name of the OpenSSL lambda layer CloudFormation stack
+    Type: String
+    MinLength: 1
 
   CustAuthStackName:
     Description: Name of custom authorizer Stack (if required).
@@ -337,6 +341,9 @@ Resources:
     Properties:
       CodeUri: ../build/build.zip
       Handler: lambda_proxy.handler
+      Layers:
+        - Fn::ImportValue: !Sub
+            "${OpenSslLambdaLayerStackName}-LayerVersionArn" 
       MemorySize: 128
       Role: !GetAtt ApiLambdaExecutionRole.Arn
       Runtime: nodejs12.x
@@ -368,6 +375,9 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: ../build/build.zip
+      Layers:
+        - Fn::ImportValue: !Sub
+            "${OpenSslLambdaLayerStackName}-LayerVersionArn" 
       Handler: sns_handler.handler
       MemorySize: 512
       Role: !GetAtt SnsLambdaExecutionRole.Arn

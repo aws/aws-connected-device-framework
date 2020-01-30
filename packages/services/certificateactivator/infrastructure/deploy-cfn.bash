@@ -21,6 +21,7 @@ MANDATORY ARGUMENTS:
     -e (string)   Name of environment.
     -c (string)   Location of application configuration file containing configuration overrides.
     -b (string)   Name of bucket where CRL is stored.
+    -o (string)   The OpenSSL lambda layer stack name.
 
 OPTIONAL ARGUMENTS
     -A (string)   Name of asset library stack (defaults to cdf-assetlibrary-${ENVIRONMENT})
@@ -32,7 +33,7 @@ EOF
 }
 
 
-while getopts ":e:c:b:A:O:R:P:" opt; do
+while getopts ":e:o:c:b:A:O:R:P:" opt; do
   case $opt in
 
     e  ) export ENVIRONMENT=$OPTARG;;
@@ -41,6 +42,7 @@ while getopts ":e:c:b:A:O:R:P:" opt; do
 
     A  ) export ASSETLIBRARY_STACK_NAME=$OPTARG;;
     O  ) export PROVISIONING_STACK_NAME=$OPTARG;;
+    o  ) export OPENSSL_STACK_NAME=$OPTARG;;
 
     R  ) export AWS_REGION=$OPTARG;;
     P  ) export AWS_PROFILE=$OPTARG;;
@@ -62,6 +64,10 @@ fi
 
 if [ -z "$CRL_BUCKET" ]; then
 	echo -f CRL_BUCKET is required; help_message; exit 1;
+fi
+
+if [ -z "$OPENSSL_STACK_NAME" ]; then
+  echo -o OPENSSL_STACK_NAME is required; help_message; exit 1;
 fi
 
 AWS_ARGS=
@@ -90,6 +96,7 @@ Running with:
   CRL_BUCKET:                           $CRL_BUCKET
   ASSETLIBRARY_STACK_NAME:              $ASSETLIBRARY_STACK_NAME
   PROVISIONING_STACK_NAME:              $PROVISIONING_STACK_NAME
+  OPENSSL_STACK_NAME:                   $OPENSSL_STACK_NAME
   AWS_REGION:                           $AWS_REGION
   AWS_PROFILE:                          $AWS_PROFILE
 "
@@ -133,6 +140,7 @@ aws cloudformation deploy \
   --parameter-overrides \
       BucketName=$CRL_BUCKET \
       ApplicationConfigurationOverride="$application_configuration_override" \
+      OpenSslLambdaLayerStackName=$OPENSSL_STACK_NAME \
   --capabilities CAPABILITY_NAMED_IAM \
   --no-fail-on-empty-changeset \
   $AWS_ARGS

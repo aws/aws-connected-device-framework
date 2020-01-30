@@ -1,0 +1,26 @@
+AWSTemplateFormatVersion : '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Description: CDF OpenSSL Lambda Layer
+
+
+Resources:
+
+  OpenSslLamdaLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: cdf-openssl
+      Description: "CDF: OpenSSL"
+      ContentUri: ../build/build.zip
+      CompatibleRuntimes:
+        - nodejs12.x
+        - python3.8
+        - java11
+      RetentionPolicy: Delete
+
+Outputs:
+  LayerVersionArn:
+    Description: Layer Version ARN
+    Value: !Ref OpenSslLamdaLayer
+    Export: 
+      Name: !Sub "${AWS::StackName}-LayerVersionArn"

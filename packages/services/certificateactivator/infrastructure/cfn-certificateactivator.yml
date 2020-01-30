@@ -13,6 +13,10 @@ Parameters:
     Description: Name of bucket of where the Certificate Revocation List (CRL) is stored.
     Type: String
     MinLength: 1
+  OpenSslLambdaLayerStackName:
+    Description: Name of the OpenSSL lambda layer CloudFormation stack
+    Type: String
+    MinLength: 1
 
 Resources:
 
@@ -86,6 +90,9 @@ Resources:
     Properties:
       CodeUri: ../build/build.zip
       Handler: certificateactivator.handler
+      Layers:
+        - Fn::ImportValue: !Sub
+            "${OpenSslLambdaLayerStackName}-LayerVersionArn" 
       MemorySize: 128
       Role: !GetAtt LambdaExecutionRole.Arn
       Runtime: nodejs12.x

@@ -275,6 +275,7 @@ EVENTSPROCESSOR_STACK_NAME=cdf-eventsProcessor-${ENVIRONMENT}
 NEPTUNE_STACK_NAME=cdf-assetlibrary-neptune-${ENVIRONMENT}
 NETWORK_STACK_NAME=cdf-network-${ENVIRONMENT}
 PROVISIONING_STACK_NAME=cdf-provisioning-${ENVIRONMENT}
+OPENSSL_LAYER_STACK_NAME=cdf-openssl-${ENVIRONMENT}
 
 
 if [ -z "$BYPASS_BUNDLE" ]; then
@@ -283,7 +284,7 @@ if [ -z "$BYPASS_BUNDLE" ]; then
 *****  Bundling applications                        ******
 **********************************************************
 '
-    pnpm run bundle
+    $root_dir/infrastructure/bundle-core.bash
 fi
 
 
@@ -386,6 +387,48 @@ if [[ -f $assetlibrary_config && "$ASSETLIBRARY_MODE" = "full" && -z "$USE_EXIST
 
 fi
 
+
+echo '
+***************************************************
+*****   Deploying lambda layers   ******
+***************************************************
+'
+stacks=()
+lambda_layers_root="$root_dir/infrastructure/lambdaLayers"
+for layer in $(ls $lambda_layers_root); do
+    cd "$lambda_layers_root/$layer"
+    infrastructure/package-cfn.bash -b $DEPLOY_ARTIFACTS_STORE_BUCKET $AWS_SCRIPT_ARGS
+    infrastructure/deploy-cfn.bash -e $ENVIRONMENT $AWS_SCRIPT_ARGS &
+    stacks+=(cdf-$layer-$ENVIRONMENT)
+done
+
+wait
+
+failed=false
+for stack in "${stacks[@]}"; do
+    deploy_status=$(aws cloudformation describe-stacks \
+        --stack-name "$stack" $AWS_ARGS\
+        | jq -r '.Stacks[0].StackStatus' \
+        || true)
+    echo "$stack: $deploy_status"
+    if [ "$deploy_status" != "CREATE_COMPLETE" ] && [ "$deploy_status" != "UPDATE_COMPLETE" ] && [ "$deploy_status" != "UPDATE_COMPLETE_CLEANUP_IN_PROGRESS" ]; then
+        echo "Deploy of $stack failed: $deploy_status.  Check CloudFormation for details."
+        failed=true
+        break
+    fi
+done
+
+if [ "$failed" = "true" ]; then
+    exit 1
+fi
+
+
+echo '
+***************************************************
+*****   Deploying services   ******
+***************************************************
+'
+
 stacks=()
 
 if [ -f "$assetlibrary_config" ]; then
@@ -404,7 +447,7 @@ if [ -f "$assetlibrary_config" ]; then
 
         infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
 
-        infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "$auth_jwt_config" -i "$JWT_ISSUER" $AWS_SCRIPT_ARGS
+        infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "$auth_jwt_config" -i "$JWT_ISSUER" -o $OPENSSL_LAYER_STACK_NAME $AWS_SCRIPT_ARGS
 
         assetlibrary_custom_auth_args="-C $AUTH_JWT_STACK_NAME"
 
@@ -488,7 +531,7 @@ if [ -f "$provisioning_config" ]; then
 
     infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
     infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "$provisioning_config" -k "$KMS_KEY_ID" \
-    $AWS_SCRIPT_ARGS &
+    -o $OPENSSL_LAYER_STACK_NAME $AWS_SCRIPT_ARGS &
 
     stacks+=("$PROVISIONING_STACK_NAME")
 
@@ -614,7 +657,7 @@ if [ -f "$certificatevendor_config" ]; then
     infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
     infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "$certificatevendor_config" -b "$certificatevendor_bucket" -p "$certificatevendor_prefix" \
     -r AssetLibrary \
-    $AWS_SCRIPT_ARGS &
+    -o $OPENSSL_LAYER_STACK_NAME $AWS_SCRIPT_ARGS &
 
     stacks+=("$CERTIFICATEVENDOR_STACK_NAME")
 
@@ -712,7 +755,7 @@ if [ -f "$bulkcerts_config" ]; then
 
     infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
     infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "$bulkcerts_config" -k "$KMS_KEY_ID" \
-    $AWS_SCRIPT_ARGS &
+    -o $OPENSSL_LAYER_STACK_NAME $AWS_SCRIPT_ARGS &
 
     stacks+=("$BULKCERTS_STACK_NAME")
 

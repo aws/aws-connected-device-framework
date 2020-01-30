@@ -21,6 +21,10 @@ Parameters:
   CustAuthStackName:
     Description: Name of custom authorizer Stack (if required).
     Type: String
+  OpenSslLambdaLayerStackName:
+    Description: Name of the OpenSSL lambda layer CloudFormation stack
+    Type: String
+    MinLength: 1
 
 Conditions:
   KmsKeyIdProvided: !Not [ !Equals [ !Ref KmsKeyId, "" ] ]
@@ -267,6 +271,9 @@ Resources:
     Properties:
       CodeUri: ../build/build.zip
       Handler: lambda_proxy.handler
+      Layers:
+        - Fn::ImportValue: !Sub
+            "${OpenSslLambdaLayerStackName}-LayerVersionArn" 
       MemorySize: 1024
       Role: !GetAtt LambdaExecutionRole.Arn
       Runtime: nodejs12.x
