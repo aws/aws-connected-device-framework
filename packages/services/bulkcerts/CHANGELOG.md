@@ -1,3 +1,10 @@
+# [@cdf/bulkcerts-v4.1.4](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/bulkcerts-v4.1.3...@cdf/bulkcerts-v4.1.4) (2020-01-31)
+
+
+### Bug Fixes
+
+* **bulkcerts:** openssl support ([c20943f](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/c20943ff8594b614fda6adf04c2d8a7388d997d9))
+
 # [@cdf/bulkcerts-v4.1.3](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/bulkcerts-v4.1.2...@cdf/bulkcerts-v4.1.3) (2020-01-31)
 
 
