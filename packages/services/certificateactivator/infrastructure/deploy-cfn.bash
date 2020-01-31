@@ -87,6 +87,7 @@ if [ -z "$PROVISIONING_STACK_NAME" ]; then
 fi
 
 CERTIFICATEACTIVATOR_STACK_NAME=cdf-certificateactivator-${ENVIRONMENT}
+OPENSSL_STACK_NAME=cdf-openssl-${ENVIRONMENT}
 
 
 echo "
@@ -101,6 +102,16 @@ Running with:
   AWS_PROFILE:                          $AWS_PROFILE
 "
 cwd=$(dirname "$0")
+
+echo '
+**********************************************************
+  Determining OpenSSL lambda layer version
+**********************************************************
+'
+stack_info=$(aws cloudformation describe-stacks --stack-name $OPENSSL_STACK_NAME $AWS_ARGS)
+openssl_arn=$(echo $stack_info \
+  | jq -r --arg stack_name "$OPENSSL_STACK_NAME" \
+  '.Stacks[] | select(.StackName==$stack_name) | .Outputs[] | select(.OutputKey=="LayerVersionArn") | .OutputValue')
 
 
 echo '
@@ -140,7 +151,7 @@ aws cloudformation deploy \
   --parameter-overrides \
       BucketName=$CRL_BUCKET \
       ApplicationConfigurationOverride="$application_configuration_override" \
-      OpenSslLambdaLayerStackName=$OPENSSL_STACK_NAME \
+      OpenSslLambdaLayerArn=$openssl_arn \
   --capabilities CAPABILITY_NAMED_IAM \
   --no-fail-on-empty-changeset \
   $AWS_ARGS

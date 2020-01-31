@@ -21,8 +21,8 @@ Parameters:
   CustAuthStackName:
     Description: Name of custom authorizer Stack (if required).
     Type: String
-  OpenSslLambdaLayerStackName:
-    Description: Name of the OpenSSL lambda layer CloudFormation stack
+  OpenSslLambdaLayerArn:
+    Description: OpenSSL lambda layer ARN
     Type: String
     MinLength: 1
 
@@ -272,8 +272,7 @@ Resources:
       CodeUri: ../build/build.zip
       Handler: lambda_proxy.handler
       Layers:
-        - Fn::ImportValue: !Sub
-            "${OpenSslLambdaLayerStackName}-LayerVersionArn" 
+        - !Ref OpenSslLambdaLayerArn
       MemorySize: 1024
       Role: !GetAtt LambdaExecutionRole.Arn
       Runtime: nodejs12.x

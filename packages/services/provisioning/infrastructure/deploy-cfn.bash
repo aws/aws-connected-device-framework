@@ -71,6 +71,7 @@ if [ -n "$AWS_PROFILE" ]; then
 fi
 
 PROVISIONING_STACK_NAME=cdf-provisioning-${ENVIRONMENT}
+OPENSSL_STACK_NAME=cdf-openssl-${ENVIRONMENT}
 
 
 echo "
@@ -88,6 +89,16 @@ cwd=$(dirname "$0")
 
 echo '
 **********************************************************
+  Determining OpenSSL lambda layer version
+**********************************************************
+'
+stack_info=$(aws cloudformation describe-stacks --stack-name $OPENSSL_STACK_NAME $AWS_ARGS)
+openssl_arn=$(echo $stack_info \
+  | jq -r --arg stack_name "$OPENSSL_STACK_NAME" \
+  '.Stacks[] | select(.StackName==$stack_name) | .Outputs[] | select(.OutputKey=="LayerVersionArn") | .OutputValue')
+
+echo '
+**********************************************************
   Deploying the Provisioning CloudFormation template 
 **********************************************************
 '
@@ -101,7 +112,7 @@ aws cloudformation deploy \
       ApplicationConfigurationOverride="$application_configuration_override" \
       KmsKeyId=$KMS_KEY_ID \
       CustAuthStackName=$CUST_AUTH_STACK_NAME \
-      OpenSslLambdaLayerStackName=$OPENSSL_STACK_NAME \
+      OpenSslLambdaLayerArn=$openssl_arn \
   --capabilities CAPABILITY_NAMED_IAM \
   --no-fail-on-empty-changeset \
   $AWS_ARGS

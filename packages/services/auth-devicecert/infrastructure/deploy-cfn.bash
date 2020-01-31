@@ -78,6 +78,18 @@ Running with:
 
 cwd=$(dirname "$0")
 
+OPENSSL_STACK_NAME=cdf-openssl-${ENVIRONMENT}
+
+echo '
+**********************************************************
+  Determining OpenSSL lambda layer version
+**********************************************************
+'
+stack_info=$(aws cloudformation describe-stacks --stack-name $OPENSSL_STACK_NAME $AWS_ARGS)
+openssl_arn=$(echo $stack_info \
+  | jq -r --arg stack_name "$OPENSSL_STACK_NAME" \
+  '.Stacks[] | select(.StackName==$stack_name) | .Outputs[] | select(.OutputKey=="LayerVersionArn") | .OutputValue')
+
 echo '
 **********************************************************
   Deploying the DeviceCert Auth CloudFormation template 
@@ -89,7 +101,7 @@ aws cloudformation deploy \
   --parameter-overrides \
       Environment=$ENVIRONMENT \
       KmsKeyId=$KMS_KEY_ID \
-      OpenSslLambdaLayerStackName=$OPENSSL_STACK_NAME \
+      OpenSslLambdaLayerArn=$openssl_arn \
   --capabilities CAPABILITY_NAMED_IAM \
   --no-fail-on-empty-changeset \
   $AWS_ARGS
