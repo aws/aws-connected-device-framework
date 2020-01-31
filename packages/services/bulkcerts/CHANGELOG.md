@@ -1,3 +1,10 @@
+# [@cdf/bulkcerts-v4.1.3](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/bulkcerts-v4.1.2...@cdf/bulkcerts-v4.1.3) (2020-01-31)
+
+
+### Bug Fixes
+
+* **openssl:** replace export values as they cannot be updated ([fabf047](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/fabf047016b3c57b3bf56108fc9a6ce9fbeb44e5))
+
 # [@cdf/bulkcerts-v4.1.2](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/bulkcerts-v4.1.1...@cdf/bulkcerts-v4.1.2) (2020-01-30)
 
 
