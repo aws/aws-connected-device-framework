@@ -1,3 +1,10 @@
+# [@cdf/assetlibrary-v3.2.12](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.2.11...@cdf/assetlibrary-v3.2.12) (2020-02-03)
+
+
+### Bug Fixes
+
+* **assetlibrary:** search issue with fgac enabled ([1ddb55d](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/1ddb55da002f486e58f4813b6494ee65f8bdba87))
+
 # [@cdf/assetlibrary-v3.2.11](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.2.10...@cdf/assetlibrary-v3.2.11) (2020-01-27)
 
 
