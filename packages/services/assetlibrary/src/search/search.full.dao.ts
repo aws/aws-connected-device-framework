@@ -122,14 +122,15 @@ export class SearchDaoFull extends BaseDaoFull {
         }
 
         // must reset all traversals so far as we may meed to use simplePath if FGAC is enabled to prevent cyclic checks
-        traverser.select('a').fold().unfold().as('matched');
+        traverser.select('a').dedup().fold().unfold().as('matched');
 
         // if authz is enabled, only return results that the user is authorized to view
         if (authorizedPaths!==undefined && authorizedPaths.length>0) {
+            const authorizedPathIds = authorizedPaths.map(path=>`group___${path}`);
             traverser.
                 local(
                     __.until(
-                        __.has('groupPath', process.P.within(authorizedPaths))
+                        __.hasId(process.P.within(authorizedPathIds))
                     ).repeat(
                         __.out().simplePath()
                     )
