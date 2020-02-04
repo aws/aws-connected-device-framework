@@ -1,3 +1,10 @@
+# [@cdf/events-processor-v2.2.2](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/events-processor-v2.2.1...@cdf/events-processor-v2.2.2) (2020-02-04)
+
+
+### Bug Fixes
+
+* wrong property reference on alert.dao ([19e2bb1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/19e2bb1ceed1372037794eb2c7adca4117e3b66b))
+
 # [@cdf/events-processor-v2.2.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/events-processor-v2.2.0...@cdf/events-processor-v2.2.1) (2020-01-15)
 
 
