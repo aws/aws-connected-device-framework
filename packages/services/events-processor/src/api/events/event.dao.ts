@@ -11,6 +11,7 @@ import { EventItem } from './event.models';
 import { createDelimitedAttribute, PkType, createDelimitedAttributePrefix, expandDelimitedAttribute } from '../../utils/pkUtils.util';
 import { PaginationKey } from '../subscriptions/subscription.dao';
 import { DynamoDbUtils } from '../../utils/dynamoDb.util';
+import { MessageTemplates} from '../messages/messageTemplates.model';
 
 type EventItemMap = {[subscriptionId:string] : EventItem};
 @injectable()
@@ -56,7 +57,8 @@ export class EventDao {
                     ruleParameters: item.ruleParameters,
                     enabled: item.enabled,
                     templates: item.templates,
-                    supportedTargets: item.supportedTargets
+                    supportedTargets: item.supportedTargets,
+                    templateProperties: item.templateProperties
                 }
             }
         };
@@ -128,7 +130,8 @@ export class EventDao {
                 ruleParameters: i.ruleParameters,
                 enabled: i.enabled,
                 templates: i.templates,
-                supportedTargets: i.supportedTargets
+                supportedTargets: i.supportedTargets,
+                templateProperties: i.templateProperties
             } ;
 
             events[eventId] = event;
@@ -227,6 +230,25 @@ export class EventDao {
 
         logger.debug(`event.dao listEventsForEventSource: exit: response${JSON.stringify(response)}, lastEvaluatedKey:${JSON.stringify(lastEvaluatedKey)}`);
         return [response,lastEvaluatedKey];
+    }
+
+    public async getEventConfig(eventId: string): Promise<MessageTemplates> {
+        logger.debug(`event.dao getEventConfig: in: eventId:${eventId}`);
+        const templates = new MessageTemplates();
+        const event:EventItem = await this.get(eventId);
+
+        if (event === undefined) {
+            return templates;
+        }
+
+        const i = event;
+        templates.supportedTargets = i.supportedTargets;
+        templates.templates = i.templates;
+        templates.templateProperties = i.templateProperties;
+
+        logger.debug(`event.dao getEventConfig: exit: templates${JSON.stringify(templates)}`);
+
+        return templates;
     }
 
 }

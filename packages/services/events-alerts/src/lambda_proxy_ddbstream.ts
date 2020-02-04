@@ -42,28 +42,35 @@ exports.handler = async (event: any, _context: any) => {
         const targets: { [key: string]: string } = extractValue(img.targets);
 
         // grab all the attributes so we can use them to compile messages later
-        const attributes: { [key: string]: string } = {};
+        const alertAttributes: { [key: string]: string } = {};
         Object.keys(img)
             .filter(key => key !== 'targets' && key !== 'gsi2Key' && key !== 'gsi2Sort')
-            .forEach(key => attributes[key] = extractValue(img[key]));
+            .forEach(key => alertAttributes[key] = extractValue(img[key]));
+
+        // Merge additional attributes on the alert object, if there are any
+        if (alertAttributes.templatePropertiesData) {
+            Object.keys(alertAttributes.templatePropertiesData).forEach(k => {
+                alertAttributes[k] = alertAttributes.templatePropertiesData[k];
+            });
+        }
 
         // Retrieve event config once and reuse
-        const eventId = attributes['eventId'];
+        const eventId = alertAttributes['eventId'];
 
         // build the messages for each target type
         const messages = new SNSMessages();
 
         if (targets['email'] !== undefined) {
-            messages.email = await messageCompiler.compile(eventId, 'email', attributes);
+            messages.email = await messageCompiler.compile(eventId, 'email', alertAttributes);
         }
         if (targets['sms'] !== undefined) {
-            messages.default = await messageCompiler.compile(eventId, 'sms', attributes);
+            messages.default = await messageCompiler.compile(eventId, 'sms', alertAttributes);
         }
         // TODO: add rest of sns destination types when we support them
 
         // send if topic is not sent to undefined explicitely
-        if (messages.hasMessage() && attributes['snsTopicArn'] !== 'undefined') {
-            await sns.send(attributes['snsTopicArn'], attributes['eventName'], messages);
+        if (messages.hasMessage() && alertAttributes['snsTopicArn'] !== 'undefined') {
+            await sns.send(alertAttributes['snsTopicArn'], alertAttributes['eventName'], messages);
         }
 
         // Process dynamodb target
@@ -90,7 +97,7 @@ exports.handler = async (event: any, _context: any) => {
             const ddbAttrMapping = ddbObj.attributeMapping;
 
             // Construct ddb record by using attribute mapping
-            const finalRecord = await messageCompiler.compileDynamodbRecord(eventId, attributes, ddbAttrMapping);
+            const finalRecord = await messageCompiler.compileDynamodbRecord(eventId, alertAttributes, ddbAttrMapping);
 
             // Write record to target table
             if (finalRecord) {

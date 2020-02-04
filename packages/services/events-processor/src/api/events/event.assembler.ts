@@ -3,11 +3,13 @@
 #
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
+
 import { injectable, inject } from 'inversify';
 import {logger} from '../../utils/logger.util';
 import { EventItem, EventResource, EventResourceList, EventConditionsUtils } from './event.models';
 import { PaginationKey } from '../subscriptions/subscription.dao';
 import { TYPES } from '../../di/types';
+import { ExpressionParser, ExpressionSanitizer } from '../../utils/expression.util';
 
 @injectable()
 export class EventAssembler {
@@ -26,7 +28,8 @@ export class EventAssembler {
             ruleParameters: this.ecu.extractParameters(resource.conditions),
             enabled: resource.enabled,
             templates: resource.templates,
-            supportedTargets: resource.supportedTargets
+            supportedTargets: resource.supportedTargets,
+            templateProperties: this.extractTemplateProperties(resource.templates)
         };
         logger.debug(`event.assembler toItem: exit: ${JSON.stringify(item)}`);
         return item;
@@ -44,7 +47,8 @@ export class EventAssembler {
             enabled: item.enabled,
             principal: item.principal,
             templates: item.templates,
-            supportedTargets: item.supportedTargets
+            supportedTargets: item.supportedTargets,
+            templateProperties: item.templateProperties
         };
 
         logger.debug(`event.assembler toRe: exit: node: ${JSON.stringify(resource)}`);
@@ -74,6 +78,34 @@ export class EventAssembler {
         logger.debug(`subscription.assembler toResourceList: exit: ${JSON.stringify(list)}`);
         return list;
 
+    }
+
+    private extractTemplateProperties(templateMap: {[key: string]: string}) : string[] {
+        logger.debug(`event.assembler extractTemplateProperties: in: templateMap:${JSON.stringify(templateMap)}`);
+
+        let templateProperties:string[] = [];
+
+        if(templateMap) {
+            // Iterate over all templates
+            Object.keys(templateMap).forEach(k => {
+                const template = templateMap[k];
+                // Sanitize each template
+                const expressionSanitizer = new ExpressionSanitizer(template);
+                const sanitizedExpression = expressionSanitizer.sanitize();
+
+                // parse and extract keys for each template
+                const expressionParser = new ExpressionParser(sanitizedExpression);
+
+                templateProperties = templateProperties.concat(expressionParser.extractKeys());
+
+            });
+        }
+        // clear duplicates
+        templateProperties = templateProperties.filter((v, i, a) => a.indexOf(v) === i);
+
+        logger.debug(`event.assembler extractTemplateProperties: out: templateProperties:${JSON.stringify(templateProperties)}`);
+        // Return list of all keys within all templates
+        return templateProperties;
     }
 
 }

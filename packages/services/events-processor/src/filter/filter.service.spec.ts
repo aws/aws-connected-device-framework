@@ -11,6 +11,7 @@ import { createMockInstance } from 'jest-create-mock-instance';
 import { CommonEvent } from '../transformers/transformers.model';
 import { SubscriptionItem } from '../api/subscriptions/subscription.models';
 import { AlertDao } from '../alerts/alert.dao';
+import { EventDao } from '../api/events/event.dao';
 import { logger } from '../utils/logger.util';
 import { EventConditionsUtils } from '../api/events/event.models';
 
@@ -18,13 +19,15 @@ describe('FilterService', () => {
     let mockedSubscriptionDao: jest.Mocked<SubscriptionDao>;
     let mockedAlertDao: jest.Mocked<AlertDao>;
     let mockedEventConditionsUtils: jest.Mocked<EventConditionsUtils>;
+    let mockedEventDao: jest.Mocked<EventDao>;
     let instance: FilterService;
 
     beforeEach(() => {
         mockedSubscriptionDao = createMockInstance(SubscriptionDao);
         mockedAlertDao = createMockInstance(AlertDao);
         mockedEventConditionsUtils = createMockInstance(EventConditionsUtils);
-        instance = new FilterService(mockedSubscriptionDao, mockedAlertDao, mockedEventConditionsUtils);
+        mockedEventDao = createMockInstance(EventDao);
+        instance = new FilterService(mockedSubscriptionDao, mockedAlertDao, mockedEventConditionsUtils, mockedEventDao);
     });
 
     it('happy path', async() => {
@@ -102,6 +105,21 @@ describe('FilterService', () => {
             return r;
         });
 
+        const mockedGetEventConfigCall = mockedEventDao.getEventConfig = jest.fn().mockImplementation(() => {
+            logger.debug(`filter.service.spec: getEventConfig`);
+            return {
+                supportedTargets: {
+                    'sms': 'default',
+                    'email': 'default2'
+                },
+                templates: {
+                    'default': 'The Battery level is {{=it.batterylevel}}',
+                    'default2': '{{=it[\'threshold\']}} and {{=it.sequence}}'
+                },
+                templateProperties: ['batteryLevel', 'threshold', 'sequence']
+            };
+        });
+
         // const expectedAlerts:AlertItem[] = [
         //     {
         //         'time':'2019-04-19T02:23:21.632Z',
@@ -128,6 +146,7 @@ describe('FilterService', () => {
         // verify
         expect(mockedListCall).toBeCalledTimes(1);
         expect(mockedCreateAlertsCall).toBeCalledTimes(1);
+        expect(mockedGetEventConfigCall).toBeCalled();
     });
 
     it('rule checking fact against fact', async() => {
@@ -232,6 +251,21 @@ describe('FilterService', () => {
             return r;
         });
 
+        const mockedGetEventConfigCall = mockedEventDao.getEventConfig = jest.fn().mockImplementation(() => {
+            logger.debug(`filter.service.spec: getEventConfig`);
+            return {
+                supportedTargets: {
+                    'sms': 'default',
+                    'email': 'default2'
+                },
+                templates: {
+                    'default': 'The Battery level is {{=it.batterylevel}}',
+                    'default2': '{{=it[\'threshold\']}} and {{=it.sequence}}'
+                },
+                templateProperties: ['batteryLevel', 'threshold', 'sequence']
+            };
+        });
+
         const mockedCreateAlertsCall = mockedAlertDao.create = jest.fn().mockImplementationOnce((alerts)=> {
             // do nothing, acting as a spy only
             logger.debug(`filter.service.spec: alerts: ${JSON.stringify(alerts)}`);
@@ -243,6 +277,143 @@ describe('FilterService', () => {
         // verify
         expect(mockedListCall).toBeCalledTimes(1);
         expect(mockedCreateAlertsCall).toBeCalledTimes(1);
+        expect(mockedGetEventConfigCall).toBeCalled();
+    });
+
+    it('should return a attributes for an event', async () => {
+        const eventSourceId = 'ES123';
+        const principal = 'deviceId';
+        const principalValue = 'device001';
+        const sourceChangeType = 'INSERT';
+
+        const mockedSubscriptionItem = {
+            id: 'sub001',
+            event: {
+                id: 'ev001',
+                name: 'batteryAlertLevel',
+                conditions: {
+                    all: [{
+                        fact: 'batteryLevel',
+                        operator: 'lessThanInclusive',
+                        value: 20
+                    }]
+                }
+            },
+            eventSource: {
+                id: eventSourceId,
+                principal
+            },
+            principalValue,
+            ruleParameterValues:{},
+            alerted:false,
+            enabled:true,
+            user: {
+                id: 'u001'
+            }
+        };
+
+        const mockedEvent = {
+            eventSourceId,
+            principal,
+            principalValue,
+            sourceChangeType,
+            attributes: {
+                sequence: 4,
+                batteryLevel: 21
+            }
+        };
+
+        const mockedTemplateCache = {};
+
+        const mockedGetEventConfigCall = mockedEventDao.getEventConfig = jest.fn().mockImplementation(() => {
+            logger.debug(`filter.service.spec: getEventConfig`);
+            return {
+                supportedTargets: {
+                    'sms': 'default',
+                    'email': 'default2'
+                },
+                templates: {
+                    'default': 'The Battery level is {{=it.batteryLevel}}',
+                    'default2': '{{=it[\'threshold\']}} and {{=it.sequence}}'
+                },
+                templateProperties: ['batteryLevel', 'threshold', 'sequence']
+            };
+        });
+
+        // @ts-ignore
+        const attributeMap = await instance.getTemplatePropertiesData(mockedSubscriptionItem, mockedEvent, mockedTemplateCache);
+        expect(attributeMap).toEqual({
+            batteryLevel: 21,
+            sequence: 4
+        });
+
+        expect(mockedGetEventConfigCall).toBeCalledTimes(1);
+    });
+
+    it('should handle undefined templateProperties gracefully ', async () => {
+        const eventSourceId = 'ES123';
+        const principal = 'deviceId';
+        const principalValue = 'device001';
+        const sourceChangeType = 'INSERT';
+
+        const mockedSubscriptionItem = {
+            id: 'sub001',
+            event: {
+                id: 'ev001',
+                name: 'batteryAlertLevel',
+                conditions: {
+                    all: [{
+                        fact: 'batteryLevel',
+                        operator: 'lessThanInclusive',
+                        value: 20
+                    }]
+                }
+            },
+            eventSource: {
+                id: eventSourceId,
+                principal
+            },
+            principalValue,
+            ruleParameterValues:{},
+            alerted:false,
+            enabled:true,
+            user: {
+                id: 'u001'
+            }
+        };
+
+        const mockedEvent = {
+            eventSourceId,
+            principal,
+            principalValue,
+            sourceChangeType,
+            attributes: {
+                sequence: 4,
+                batteryLevel: 21
+            }
+        };
+
+        const mockedTemplateCache = {};
+
+        const mockedGetEventConfigCall = mockedEventDao.getEventConfig = jest.fn().mockImplementation(() => {
+            logger.debug(`filter.service.spec: getEventConfig`);
+            return {
+                supportedTargets: {
+                    'sms': 'default',
+                    'email': 'default2'
+                },
+                templates: {
+                    'default': 'The Battery level is {{=it.batteryLevel}}',
+                    'default2': '{{=it[\'threshold\']}} and {{=it.sequence}}'
+                }
+            };
+        });
+
+        // @ts-ignore
+        const attributeMap = await instance.getTemplatePropertiesData(mockedSubscriptionItem, mockedEvent, mockedTemplateCache);
+        expect(attributeMap).toEqual({});
+
+        expect(mockedGetEventConfigCall).toBeCalledTimes(1);
     });
 
 });

@@ -14,7 +14,9 @@ import { SubscriptionDao } from '../api/subscriptions/subscription.dao';
 import { Rule, Engine, TopLevelCondition, EngineResult} from 'json-rules-engine';
 import { AlertDao } from '../alerts/alert.dao';
 import { AlertItem } from '../alerts/alert.models';
-import { EventConditionsUtils } from '../api/events/event.models';
+import { EventConditionsUtils, TemplatePropertiesData } from '../api/events/event.models';
+import { EventDao } from '../api/events/event.dao';
+import { MessageTemplates, TemplateCache } from '../api/messages/messageTemplates.model';
 
 @injectable()
 export class FilterService {
@@ -22,7 +24,8 @@ export class FilterService {
     constructor(
         @inject(TYPES.SubscriptionDao) private subscriptionDao: SubscriptionDao,
         @inject(TYPES.AlertDao) private alertDao: AlertDao,
-        @inject(TYPES.EventConditionsUtils) private eventConditionsUtils: EventConditionsUtils) {
+        @inject(TYPES.EventConditionsUtils) private eventConditionsUtils: EventConditionsUtils,
+        @inject(TYPES.EventDao) private eventDao: EventDao) {
     }
 
     public async filter(events:CommonEvent[]): Promise<void> {
@@ -48,6 +51,9 @@ export class FilterService {
             if (subscriptions!==undefined) {
 
                 for(const sub of subscriptions) {
+
+                    // initializing an empty cache
+                    const templateCache:TemplateCache = {};
 
                     // initialize the rule (cached for the duration of the method call)
                     let rule = ruleMap[sub.event.id];
@@ -84,8 +90,9 @@ export class FilterService {
 
                     if (results!==undefined && results.events!==undefined) {
                         if (results.events.length>0 && !sub.alerted) {
+                            const attributes = await this.getTemplatePropertiesData(sub, ev, templateCache);
                             // a new alert...
-                            alerts.push(this.buildAlert(sub));
+                            alerts.push(this.buildAlert(sub, attributes));
                             sub.alerted=true;
                             changedSubAlerts[sub.id]= {
                                 id: sub.id,
@@ -134,7 +141,7 @@ export class FilterService {
 
     }
 
-    private buildAlert(sub:SubscriptionItem):AlertItem {
+    private buildAlert(sub:SubscriptionItem, templatePropertiesData: TemplatePropertiesData):AlertItem {
         logger.debug(`filter.service buildAlert: in: sub:${JSON.stringify(sub)}`);
         const alert:AlertItem = {
             time: new Date().toISOString(),
@@ -153,7 +160,8 @@ export class FilterService {
                 id: sub.user.id
             },
             targets: sub.targets,
-            sns: sub.sns
+            sns: sub.sns,
+            templatePropertiesData
         };
         logger.debug(`filter.service buildAlert: exit: ${JSON.stringify(alert)}`);
         return alert;
@@ -182,4 +190,37 @@ export class FilterService {
         return subscriptions;
     }
 
+    private async getTemplatePropertiesData(sub: SubscriptionItem, event: CommonEvent, templateCache: TemplateCache) : Promise<TemplatePropertiesData> {
+        logger.debug(`filter.service getEventAttributes: in: ev:${JSON.stringify(sub)}, subscriptionMap:${JSON.stringify(event)}`);
+        const templatePropertiesData = {};
+
+        // check if there are any attributes and actually has an event to lookup
+        if (!sub.id) {
+            return templatePropertiesData;
+        }
+        const event_id = sub.event.id;
+
+        let eventConfig: MessageTemplates;
+
+        // check if the template exists in cache
+        if (!templateCache[event_id]) {
+            // cache the template
+            templateCache[event_id] = await this.eventDao.getEventConfig(event_id);
+        }
+        // get template from cache
+        eventConfig = templateCache[event_id];
+
+        // get all the template properties referenced in the templates
+        const templateProperties =  eventConfig.templateProperties;
+
+        if (templateProperties) {
+            templateProperties.forEach(k => {
+                templatePropertiesData[k] = event.attributes[k];
+            });
+        }
+
+        logger.debug(`filter.service getEventAttributes: exit: attributeMap:${JSON.stringify(templatePropertiesData)}`);
+        // Return an object of referenced template properties and their values
+        return templatePropertiesData;
+    }
 }

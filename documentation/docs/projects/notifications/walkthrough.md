@@ -4,11 +4,19 @@
 
 The following describes how to create an event source, define an event, then subcribe to receive alerts of processed events.
 
-Note:  review the [swagger definition](events-processor-swagger.md) for a full list of available endpoints.
+**Note**:  review the [swagger definition](events-processor-swagger.md) for a full list of available endpoints.
 
 ## Step 1:  Define an event source.
 
 There are 2 types of event source defined:  DynamoDB, and IoT Core:
+
+**Note**: When defining an event source, ensure no attributes or properties of the source's data attirbutes collides with the CDF internal
+properties. The following keywords should be considered as reserved keywords.
+
+**Reserved Keywords**:
+"eventSourceId", "principal", "principalValue", "sourceChangeType", "eventId", "eventName", "attributes", "pk", "time", "userId"
+
+If such properties needs to used, they can be prefixed to be differentiated from the reserved keywords list.
 
 ### A DynamoDB event source
 

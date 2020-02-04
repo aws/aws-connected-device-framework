@@ -31,4 +31,8 @@ export class AlertItem {
     user: {
         id: string;
     };
+
+    templatePropertiesData: {
+        [key: string]: string | number | boolean
+    };
 }

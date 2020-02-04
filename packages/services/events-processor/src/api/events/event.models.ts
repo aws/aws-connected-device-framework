@@ -19,6 +19,7 @@ export interface EventResource {
 
     // read only (denormalised from event source)
     principal: string;
+    templateProperties?: string[];
 }
 
 export interface EventResourceList {
@@ -44,6 +45,7 @@ export interface EventItem {
 
     templates: TemplateMap;
     supportedTargets: TargetTemplateMap;
+    templateProperties?: string[];
 
 }
 export interface EventConditions {
@@ -136,6 +138,7 @@ export enum EventTargetType {
 
 export type TemplateMap = { [key: string] : string};
 export type TargetTemplateMap = { [key in EventTargetType] : string};
+export type TemplatePropertiesData = {[key: string]: string | number | boolean};
 
 export function isEventConditions(conditions: EventConditions | EventCondition[]): conditions is EventConditions {
     return (<EventCondition[]>conditions).length === undefined;
