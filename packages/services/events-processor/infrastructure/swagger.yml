@@ -343,7 +343,7 @@ components:
           description: Event source ID
           type: string
           readOnly: true
-        principle:
+        principal:
           description: The name of the attribute that represents the principal in incoming messages from the event source
           type: string
           readOnly: true

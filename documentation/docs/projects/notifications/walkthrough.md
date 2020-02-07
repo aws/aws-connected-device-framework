@@ -23,7 +23,7 @@ If such properties needs to used, they can be prefixed to be differentiated from
 - `id`: the DynamoDB Table arn
 - `name`: a name to identfy the event source
 - `sourceType`: must set to `DynamoDB`
-- `principle`: the attribute witin the table that uniquely represents the item in context
+- `principal`: the attribute witin the table that uniquely represents the item in context
 - `dynamoDb.tableName`: the DynamoDB table name
 
 #### Request
@@ -49,7 +49,7 @@ Content-Type: application/vnd.aws-cdf-v1.0+json
 
 - `name`: a name to identfy the event source
 - `sourceType`: must set to `IoTCore`
-- `principle`: the attribute witin the table that uniquely represents the item in context
+- `principal`: the attribute witin the table that uniquely represents the item in context
 - `iotCore.mqttTopic`: the MQTT topic to subscribe to
 - `iotCore.attributes`: A mapping of attributes from the incoming event to transform to the common event format.  In the example below, the incoming attribue `bl` will be transformed to `attributes.batteryLevel`, and `sensor.1.value` will be transformed to `attributes.temperature`.
 
