@@ -281,6 +281,11 @@ export class GroupsServiceFull implements GroupsService {
             type=category;
         }
 
+        // note: workaround for weird typescript issue. even though offset/count are declared as numbers
+        // throughout, they are being interpreted as strings, therefore need to force to int beforehand
+        const offsetAsInt = (offset===undefined) ? undefined : parseInt(offset.toString(),0);
+        const countAsInt =  (count===undefined) ? undefined : parseInt(count.toString(),0);
+
         await this.authServiceFull.authorizationCheck([], [groupPath], ClaimAccess.R);
 
         // state filter only applies to devices, and has a default of `active` if not provided
@@ -292,16 +297,13 @@ export class GroupsServiceFull implements GroupsService {
             };
         }
 
-        const result  = await this.groupsDao.listRelated(groupPath, '*', 'in', type, filterRelatedBy, offset, count);
+        const result  = await this.groupsDao.listRelated(groupPath, '*', 'in', type, filterRelatedBy, offsetAsInt, countAsInt);
 
-        if (offset!==undefined && count!==undefined) {
-            offset+=count;
-        }
         let model:GroupMemberItemList;
         if (category===TypeCategory.Group) {
-            model = this.groupsAssembler.toRelatedGroupItemList(result);
+            model = this.groupsAssembler.toRelatedGroupItemList(result, offsetAsInt, countAsInt);
         } else {
-            model = this.devicesAssembler.toRelatedDeviceModelsList(result);
+            model = this.devicesAssembler.toRelatedDeviceModelsList(result, offsetAsInt, countAsInt);
         }
         logger.debug(`groups.full.service getMembers: exit: model: ${JSON.stringify(model)}`);
         return model;
@@ -451,14 +453,16 @@ export class GroupsServiceFull implements GroupsService {
         }
         direction=direction.toLowerCase();
 
+        // note: workaround for weird typescript issue. even though offset/count are declared as numbers
+        // throughout, they are being interpreted as strings, therefore need to force to int beforehand
+        const offsetAsInt = (offset===undefined) ? undefined : parseInt(offset.toString(),0);
+        const countAsInt =  (count===undefined) ? undefined : parseInt(count.toString(),0);
+
         await this.authServiceFull.authorizationCheck([], [groupPath], ClaimAccess.R);
 
-        const result  = await this.groupsDao.listRelated(groupPath, relationship, direction, template, undefined, offset, count);
+        const result  = await this.groupsDao.listRelated(groupPath, relationship, direction, template, undefined, offsetAsInt, countAsInt);
 
-        if (offset!==undefined && count!==undefined) {
-            offset+=count;
-        }
-        const model = this.groupsAssembler.toRelatedGroupItemList(result);
+        const model = this.groupsAssembler.toRelatedGroupItemList(result, offsetAsInt, countAsInt);
         logger.debug(`groups.full.service listRelatedGroups: exit: model: ${JSON.stringify(model)}`);
         return model;
     }
@@ -491,14 +495,16 @@ export class GroupsServiceFull implements GroupsService {
         }
         direction=direction.toLowerCase();
 
+        // note: workaround for weird typescript issue. even though offset/count are declared as numbers
+        // throughout, they are being interpreted as strings, therefore need to force to int beforehand
+        const offsetAsInt = (offset===undefined) ? undefined : parseInt(offset.toString(),0);
+        const countAsInt =  (count===undefined) ? undefined : parseInt(count.toString(),0);
+
         await this.authServiceFull.authorizationCheck([], [groupPath], ClaimAccess.R);
 
-        const result  = await this.groupsDao.listRelated(groupPath, relationship, direction, template, {state}, offset, count);
+        const result  = await this.groupsDao.listRelated(groupPath, relationship, direction, template, {state}, offsetAsInt, countAsInt);
 
-        if (offset!==undefined && count!==undefined) {
-            offset+=count;
-        }
-        const model = this.devicesAssembler.toRelatedDeviceModelsList(result);
+        const model = this.devicesAssembler.toRelatedDeviceModelsList(result, offsetAsInt, countAsInt);
         logger.debug(`groups.full.service listRelatedDevices: exit: model: ${JSON.stringify(model)}`);
         return model;
     }

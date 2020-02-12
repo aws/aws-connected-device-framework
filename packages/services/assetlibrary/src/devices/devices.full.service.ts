@@ -71,12 +71,14 @@ export class DevicesServiceFull implements DevicesService {
 
         await this.authServiceFull.authorizationCheck([deviceId], [], ClaimAccess.R);
 
-        const result  = await this.devicesDao.listRelated(deviceId, relationship, direction, template, {state}, offset, count);
+        // note: workaround for weird typescript issue. even though offset/count are declared as numbers
+        // throughout, they are being interpreted as strings, therefore need to force to int beforehand
+        const offsetAsInt = (offset===undefined) ? undefined : parseInt(offset.toString(),0);
+        const countAsInt =  (count===undefined) ? undefined : parseInt(count.toString(),0);
 
-        if (offset!==undefined && count!==undefined) {
-            offset+=count;
-        }
-        const model = this.devicesAssembler.toRelatedDeviceModelsList(result);
+        const result  = await this.devicesDao.listRelated(deviceId, relationship, direction, template, {state}, offsetAsInt, countAsInt);
+
+        const model = this.devicesAssembler.toRelatedDeviceModelsList(result, offsetAsInt, countAsInt);
         logger.debug(`devices.full.service listRelatedDevices: exit: model: ${JSON.stringify(model)}`);
         return model;
     }
@@ -103,14 +105,16 @@ export class DevicesServiceFull implements DevicesService {
         }
         direction=direction.toLowerCase();
 
+        // note: workaround for weird typescript issue. even though offset/count are declared as numbers
+        // throughout, they are being interpreted as strings, therefore need to force to int beforehand
+        const offsetAsInt = (offset===undefined) ? undefined : parseInt(offset.toString(),0);
+        const countAsInt =  (count===undefined) ? undefined : parseInt(count.toString(),0);
+
         await this.authServiceFull.authorizationCheck([deviceId], [], ClaimAccess.R);
 
-        const result  = await this.devicesDao.listRelated(deviceId, relationship, direction, template, {}, offset, count);
+        const result  = await this.devicesDao.listRelated(deviceId, relationship, direction, template, {}, offsetAsInt, countAsInt);
 
-        if (offset!==undefined && count!==undefined) {
-            offset+=count;
-        }
-        const model = this.groupsAssembler.toRelatedGroupItemList(result);
+        const model = this.groupsAssembler.toRelatedGroupItemList(result, offsetAsInt, countAsInt);
         logger.debug(`devices.full.service listRelatedGroups: exit: model: ${JSON.stringify(model)}`);
         return model;
     }

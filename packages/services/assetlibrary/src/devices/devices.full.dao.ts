@@ -11,6 +11,7 @@ import {Node} from '../data/node';
 import { FullAssembler, NodeDto } from '../data/full.assembler';
 import { ModelAttributeValue, DirectionStringToArrayMap } from '../data/model';
 import { BaseDaoFull } from '../data/base.full.dao';
+import { CommonDaoFull } from '../data/common.full.dao';
 
 const __ = process.statics;
 
@@ -19,94 +20,18 @@ export class DevicesDaoFull extends BaseDaoFull {
 
     public constructor(
         @inject('neptuneUrl') neptuneUrl: string,
+        @inject(TYPES.CommonDao) private commonDao: CommonDaoFull,
         @inject(TYPES.FullAssembler) private fullAssembler: FullAssembler,
 	    @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph
     ) {
         super(neptuneUrl, graphSourceFactory);
     }
 
-    public async listRelated(deviceId: string, relationship: string, direction:string, template:string, filter:{ [key: string] : ModelAttributeValue}, offset:number, count:number) : Promise<Node> {
-        logger.debug(`devices.full.dao listRelated: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, template:${template}, filter:${JSON.stringify(filter)}, offset:${offset}, count:${count}`);
+    public async listRelated(deviceId: string, relationship: string, direction:string, template:string, filterRelatedBy:{ [key: string] : ModelAttributeValue}, offset:number, count:number) : Promise<Node> {
+        logger.debug(`devices.full.dao listRelated: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, template:${template}, filterRelatedBy:${JSON.stringify(filterRelatedBy)}, offset:${offset}, count:${count}`);
 
         const id = `device___${deviceId}`;
-
-        // build the queries for returning the info we need to assmeble related devices
-        let connectedEdges;
-        let connectedVertices;
-        if (direction==='in') {
-            connectedEdges = __.inE();
-            connectedVertices = __.in_();
-        } else if (direction==='out') {
-            connectedEdges = __.outE();
-            connectedVertices = __.out();
-        } else {
-            connectedEdges = __.bothE();
-            connectedVertices = __.both();
-        }
-        if (relationship!=='*') {
-            connectedEdges.hasLabel(relationship);
-            connectedVertices.hasLabel(template);
-        }
-        connectedEdges.where(__.otherV().hasLabel(template)).valueMap().with_(process.withOptions.tokens).fold();
-        connectedVertices.dedup().valueMap().with_(process.withOptions.tokens).fold();
-
-        // assemble the main query
-        let results;
-        const conn = super.getConnection();
-        try {
-            const traversal = conn.traversal.V(id).as('device');
-
-            if (filter!==undefined && filter!==null) {
-                Object.keys(filter).forEach(k=> {
-                    traversal.has(k, filter[k]);
-                });
-            }
-
-            traversal.project('object','pathsIn','pathsOut','Es','Vs').
-                by(__.valueMap().with_(process.withOptions.tokens)).
-                by(__.inE().otherV().path().by(process.t.id).fold()).
-                by(__.outE().otherV().path().by(process.t.id).fold()).
-                by(connectedEdges).
-                by(connectedVertices);
-
-            // apply pagination
-            if (offset!==undefined && count!==undefined) {
-                // note: workaround for weird typescript issue. even though offset/count are declared as numbers
-                // throughout, they are being interpreted as strings within gremlin, therefore need to force to int beforehand
-                const offsetAsInt = parseInt(offset.toString(),0);
-                const countAsInt = parseInt(count.toString(),0);
-                traversal.range(offsetAsInt, offsetAsInt + countAsInt);
-            }
-
-            // execute and retrieve the results
-            // logger.debug(`devices.full.dao listRelatedDevices: traverser: ${traversal}`);
-            results = await traversal.toList();
-            logger.debug(`devices.full.dao listRelatedDevices: results: ${JSON.stringify(results)}`);
-        } finally {
-            conn.close();
-        }
-
-        if (results===undefined || results.length===0) {
-            logger.debug(`devices.full.dao listRelatedDevices: exit: node: undefined`);
-            return undefined;
-        }
-
-        // there should be only one result as its by deviceId, but we still process as an array so we can reuse the existing assemble methods
-        const nodes: Node[] = [];
-        for(const result of results) {
-            const r = JSON.parse(JSON.stringify(result)) as NodeDto;
-
-            // assemble the device
-            let node: Node;
-            if (r) {
-                node = this.fullAssembler.assembleDeviceNode(r.object);
-                this.fullAssembler.assembleAssociations(node, r);
-            }
-            nodes.push(node);
-        }
-
-        logger.debug(`devices.full.dao listRelatedDevices: exit: node: ${JSON.stringify(nodes[0])}`);
-        return nodes[0];
+        return await this.commonDao.listRelated(id, relationship, direction, template, filterRelatedBy, offset, count);
 
     }
 
@@ -173,7 +98,7 @@ export class DevicesDaoFull extends BaseDaoFull {
             // assemble the device
             let node: Node;
             if (r) {
-                node = this.fullAssembler.assembleDeviceNode(r.object);
+                node = this.fullAssembler.assembleNode(r.object);
                 this.fullAssembler.assembleAssociations(node, r);
             }
             nodes.push(node);
@@ -187,37 +112,7 @@ export class DevicesDaoFull extends BaseDaoFull {
         logger.debug(`devices.full.dao getLabels: in: deviceId: ${deviceId}`);
 
         const id = 'device___' + deviceId;
-
-        let labelResults;
-        const conn = super.getConnection();
-        try {
-            labelResults = await conn.traversal.V(id).label().toList();
-        } finally {
-            conn.close();
-        }
-
-        if (labelResults===undefined || labelResults.length===0) {
-            logger.debug('devices.full.dao getLabels: exit: labels:undefined');
-            return undefined;
-        } else {
-            const labels:string[] = JSON.parse(JSON.stringify(labelResults)) as string[];
-            if (labels.length===1) {
-                // all devices/groups should have 2 labels
-                // if only 1 is returned it is an older version of the Neptune engine
-                // which returns labels as a concatinated string (label1::label2)
-                // attempt to be compatable with this
-                const splitLabels:string[] = labels[0].split('::');
-                if (splitLabels.length < 2) {
-                    logger.error(`devices.full.dao getLabels: device ${deviceId} does not have correct labels`);
-                    throw new Error('INVALID_LABELS');
-                }
-                logger.debug(`devices.full.dao getLabels: exit: labels: ${labels}`);
-                return labels;
-            } else {
-                logger.debug(`devices.full.dao getLabels: exit: labels: ${labels}`);
-                return labels;
-            }
-        }
+        return await this.commonDao.getLabels(id);
     }
 
     public async create(n:Node, groups:DirectionStringToArrayMap, devices:DirectionStringToArrayMap, components:Node[]): Promise<string> {

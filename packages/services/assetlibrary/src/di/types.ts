@@ -18,6 +18,8 @@ export const TYPES = {
     DevicesDao: Symbol.for('DevicesDao'),
     DevicesAssembler: Symbol.for('DevicesAssembler'),
 
+    CommonDao: Symbol.for('CommonDao'),
+
     FullAssembler: Symbol.for('FullAssembler'),
 
     SearchService: Symbol.for('SearchService'),

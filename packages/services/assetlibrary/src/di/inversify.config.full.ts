@@ -29,6 +29,7 @@ import { InitServiceFull } from '../init/init.full.service';
 import { FullAssembler } from '../data/full.assembler';
 import { AuthzDaoFull } from '../authz/authz.full.dao';
 import { AuthzServiceFull } from '../authz/authz.full.service';
+import { CommonDaoFull } from '../data/common.full.dao';
 
 export const FullContainerModule = new ContainerModule (
     (
@@ -45,6 +46,8 @@ export const FullContainerModule = new ContainerModule (
 
         bind<GroupsService>(TYPES.GroupsService).to(GroupsServiceFull).inSingletonScope();
         bind<GroupsDaoFull>(TYPES.GroupsDao).to(GroupsDaoFull).inSingletonScope();
+
+        bind<CommonDaoFull>(TYPES.CommonDao).to(CommonDaoFull).inSingletonScope();
 
         bind<FullAssembler>(TYPES.FullAssembler).to(FullAssembler).inSingletonScope();
 
