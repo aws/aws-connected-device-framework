@@ -13,7 +13,7 @@ import { ModelAttributeValue } from './model';
 export class FullAssembler {
 
     public assembleNode(device:{ [key:string]: NodeAttributeValue}):Node {
-        logger.debug(`full.assembler assembleDeviceNode: in: device: ${JSON.stringify(device)}`);
+        logger.debug(`full.assembler assembleNode: in: device: ${JSON.stringify(device)}`);
 
         const labels = (<string> device['label']).split('::');
         const node = new Node();
@@ -27,7 +27,7 @@ export class FullAssembler {
             }
         });
 
-        logger.debug(`full.assembler assembleDeviceNode: exit: node: ${JSON.stringify(node)}`);
+        logger.debug(`full.assembler assembleNode: exit: node: ${JSON.stringify(node)}`);
         return node;
     }
 

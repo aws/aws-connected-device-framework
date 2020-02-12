@@ -45,15 +45,17 @@ export class DevicesDaoFull extends BaseDaoFull {
         let connectedEdges;
         let connectedVertices;
         if (expandComponents===true && includeGroups===true) {
-            connectedEdges = __.bothE().valueMap().with_(process.withOptions.tokens).fold();
-            connectedVertices = __.both().dedup().valueMap().with_(process.withOptions.tokens).fold();
+            connectedEdges = __.bothE();
+            connectedVertices = __.both();
         } else if (expandComponents===true && includeGroups===false) {
-            connectedEdges = __.bothE().hasLabel('component_of').valueMap().with_(process.withOptions.tokens).fold();
-            connectedVertices = __.both().hasLabel('component_of').dedup().valueMap().with_(process.withOptions.tokens).fold();
+            connectedEdges = __.bothE().hasLabel('component_of');
+            connectedVertices = __.both().hasLabel('component_of');
         } else if (expandComponents===false && includeGroups===true) {
-            connectedEdges = __.bothE().not(__.hasLabel('component_of')).valueMap().with_(process.withOptions.tokens).fold();
-            connectedVertices = __.both().not(__.hasLabel('component_of')).dedup().valueMap().with_(process.withOptions.tokens).fold();
+            connectedEdges = __.bothE().not(__.hasLabel('component_of'));
+            connectedVertices = __.both().not(__.hasLabel('component_of'));
         }
+        connectedEdges.valueMap().with_(process.withOptions.tokens).fold();
+        connectedVertices.dedup().valueMap().with_(process.withOptions.tokens).fold();
 
         // build the query for optionally filtering the returned attributes
         const deviceValueMap = (attributes===undefined) ?
@@ -66,16 +68,15 @@ export class DevicesDaoFull extends BaseDaoFull {
         try {
             const traverser = conn.traversal.V(ids).as('device');
             if (connectedEdges!==undefined) {
-                traverser.project('object','pathsIn','pathsOut','Es','Vs').
+                traverser.project('object','paths','Es','Vs').
                     by(deviceValueMap).
-                    by(__.inE().otherV().path().by(process.t.id).fold()).
-                    by(__.outE().otherV().path().by(process.t.id).fold()).
+                    by(__.bothE().otherV().path().fold()).
                     by(connectedEdges).
                     by(connectedVertices);
             } else {
                 traverser.project('object','paths').
                     by(deviceValueMap).
-                    by(__.bothE().otherV().path().by(process.t.id).fold());
+                    by(__.bothE().otherV().path().fold());
             }
 
             // execute and retrieve the results

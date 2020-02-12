@@ -36,17 +36,21 @@ export class CommonDaoFull extends BaseDaoFull {
             relationship=undefined;
         }
         if (direction==='in') {
-            connectedEdges = __.inE(relationship);
+            connectedEdges = __.inE();
             connectedVertices = __.in_();
-            connectedPaths = __.inE(relationship);
+            connectedPaths = __.inE();
         } else if (direction==='out') {
-            connectedEdges = __.outE(relationship);
+            connectedEdges = __.outE();
             connectedVertices = __.out();
-            connectedPaths = __.outE(relationship);
+            connectedPaths = __.outE();
         } else {
-            connectedEdges = __.bothE(relationship);
+            connectedEdges = __.bothE();
             connectedVertices = __.both();
-            connectedPaths = __.bothE(relationship);
+            connectedPaths = __.bothE();
+        }
+        if (relationship) {
+            connectedEdges.hasLabel(relationship);
+            connectedPaths.hasLabel(relationship);
         }
         connectedEdges.where(__.otherV().hasLabel(template)).valueMap().with_(process.withOptions.tokens);
         connectedVertices.hasLabel(template);
