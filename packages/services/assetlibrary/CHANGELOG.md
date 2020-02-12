@@ -1,3 +1,10 @@
+# [@cdf/assetlibrary-v3.2.13](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.2.12...@cdf/assetlibrary-v3.2.13) (2020-02-12)
+
+
+### Bug Fixes
+
+* **assetlibrary:** fixed pagination when listing related entities ([151a63a](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/151a63a1cbc2d4813f6844fdd65beb0e6c49903e))
+
 # [@cdf/assetlibrary-v3.2.12](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.2.11...@cdf/assetlibrary-v3.2.12) (2020-02-03)
 
 
