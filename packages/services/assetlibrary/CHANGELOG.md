@@ -1,3 +1,10 @@
+# [@cdf/assetlibrary-v3.2.14](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.2.13...@cdf/assetlibrary-v3.2.14) (2020-02-12)
+
+
+### Bug Fixes
+
+* (assetlibrary) should return 404 if patched item not found ([f1314b4](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/f1314b46dbe201439fd884990b86a97a4eb0f994))
+
 # [@cdf/assetlibrary-v3.2.13](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.2.12...@cdf/assetlibrary-v3.2.13) (2020-02-12)
 
 
