@@ -458,7 +458,7 @@ export class DevicesServiceFull implements DevicesService {
 
         const labels = await this.devicesDao.getLabels(model.deviceId);
         if (labels===undefined) {
-            return undefined;
+            throw new Error('NOT_FOUND');
         }
 
         const templateId = labels.filter(l=> l!=='device' && l!=='component')[0];

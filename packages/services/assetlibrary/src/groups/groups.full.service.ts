@@ -240,6 +240,9 @@ export class GroupsServiceFull implements GroupsService {
         await this.authServiceFull.authorizationCheck([], [model.groupPath, ...model.listRelatedGroupPaths()], ClaimAccess.U);
 
         const labels = await this.groupsDao.getLabels(model.groupPath);
+        if (labels===undefined) {
+            throw new Error('NOT_FOUND');
+        }
         const templateId = labels.filter(l=> l!=='group')[0];
 
         // schema validation
