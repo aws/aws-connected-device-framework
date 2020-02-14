@@ -40,9 +40,8 @@ export class GroupsDaoFull extends BaseDaoFull {
         const conn = super.getConnection();
         try {
             result = await conn.traversal.V(id).as('object').
-                project('object','paths','Es','Vs').
+                project('object','Es','Vs').
                     by(__.valueMap().with_(process.withOptions.tokens)).
-                    by(__.bothE().not(__.hasLabel('parent')).otherV().hasLabel('group').path().fold()).
                     by(__.bothE().not(__.hasLabel('parent')).where(__.otherV().hasLabel('group')).valueMap().with_(process.withOptions.tokens).fold()).
                     by(__.bothE().not(__.hasLabel('parent')).otherV().hasLabel('group').dedup().valueMap().with_(process.withOptions.tokens).fold()).
                 next();

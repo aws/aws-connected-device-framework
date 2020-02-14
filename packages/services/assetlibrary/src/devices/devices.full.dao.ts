@@ -68,15 +68,13 @@ export class DevicesDaoFull extends BaseDaoFull {
         try {
             const traverser = conn.traversal.V(ids).as('device');
             if (connectedEdges!==undefined) {
-                traverser.project('object','paths','Es','Vs').
+                traverser.project('object','Es','Vs').
                     by(deviceValueMap).
-                    by(__.bothE().otherV().path().fold()).
                     by(connectedEdges).
                     by(connectedVertices);
             } else {
-                traverser.project('object','paths').
-                    by(deviceValueMap).
-                    by(__.bothE().otherV().path().fold());
+                traverser.project('object').
+                    by(deviceValueMap);
             }
 
             // execute and retrieve the results

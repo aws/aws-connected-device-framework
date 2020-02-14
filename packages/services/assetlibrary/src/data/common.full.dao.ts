@@ -31,37 +31,32 @@ export class CommonDaoFull extends BaseDaoFull {
         // build the queries for returning the info we need to assmeble related groups/devices
         let connectedEdges:process.GraphTraversal;
         let connectedVertices:process.GraphTraversal;
-        let connectedPaths:process.GraphTraversal;
         if (relationship==='*') {
             relationship=undefined;
         }
         if (direction==='in') {
             connectedEdges = __.inE();
             connectedVertices = __.in_();
-            connectedPaths = __.inE();
         } else if (direction==='out') {
             connectedEdges = __.outE();
             connectedVertices = __.out();
-            connectedPaths = __.outE();
         } else {
             connectedEdges = __.bothE();
             connectedVertices = __.both();
-            connectedPaths = __.bothE();
         }
         if (relationship) {
             connectedEdges.hasLabel(relationship);
-            connectedPaths.hasLabel(relationship);
         }
-        connectedEdges.where(__.otherV().hasLabel(template)).valueMap().with_(process.withOptions.tokens);
-        connectedVertices.hasLabel(template);
-        connectedPaths.otherV().path();
 
+        const connectedEdgesFilter = __.otherV().hasLabel(template);
         if (filterRelatedBy!==undefined) {
             Object.keys(filterRelatedBy).forEach(k=> {
                 connectedVertices.has(k, filterRelatedBy[k]);
+                connectedEdgesFilter.has(k, filterRelatedBy[k]);
             });
         }
-        connectedVertices.dedup().valueMap().with_(process.withOptions.tokens);
+        connectedEdges.where(connectedEdgesFilter);
+        connectedVertices.hasLabel(template);
 
         // apply pagination
         if (offset!==undefined && count!==undefined) {
@@ -71,13 +66,11 @@ export class CommonDaoFull extends BaseDaoFull {
             const countAsInt = parseInt(count.toString(),0);
             connectedEdges.range(offsetAsInt, offsetAsInt + countAsInt);
             connectedVertices.range(offsetAsInt, offsetAsInt + countAsInt);
-            connectedPaths.range(offsetAsInt, offsetAsInt + countAsInt);
         }
 
         // fold the results into an array
         connectedEdges.fold();
-        connectedVertices.fold();
-        connectedPaths.fold();
+        connectedVertices.valueMap().with_(process.withOptions.tokens).fold();
 
         // assemble the main query
         let results;
@@ -85,9 +78,8 @@ export class CommonDaoFull extends BaseDaoFull {
         try {
             const traverser = conn.traversal.V(entityDbId);
 
-            traverser.project('object','paths','Es','Vs').
+            traverser.project('object','Es','Vs').
                 by(__.valueMap().with_(process.withOptions.tokens)).
-                by(connectedPaths).
                 by(connectedEdges).
                 by(connectedVertices);
 
