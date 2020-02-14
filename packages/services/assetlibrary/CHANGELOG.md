@@ -1,3 +1,11 @@
+# [@cdf/assetlibrary-v3.2.15](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.2.14...@cdf/assetlibrary-v3.2.15) (2020-02-14)
+
+
+### Bug Fixes
+
+* **assetlibrary:** fixed pagination for related items ([844ff65](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/844ff6574214578fbde4d048e872d168aaec804d))
+* **assetlibrary:** multiovaluedquery support ([35942cd](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/35942cd022e8dfa6cff64a932282fcef6edee4ef))
+
 # [@cdf/assetlibrary-v3.2.14](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.2.13...@cdf/assetlibrary-v3.2.14) (2020-02-12)
 
 
