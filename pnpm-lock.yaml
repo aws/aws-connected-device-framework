@@ -753,7 +753,6 @@ importers:
       ajv: 6.10.2
       async-local-storage: 2.3.1
       aws-sdk: 2.588.0
-      aws-serverless-express: 3.3.6
       body-parser: 1.19.0
       config: 3.2.4
       cors: 2.8.5
@@ -774,6 +773,7 @@ importers:
       prettyjson: 1.2.1
       readable-stream: 2.3.6
       reflect-metadata: 0.1.13
+      serverless-http: 2.3.1
       winston: 3.2.1
       winston-transport: 4.3.0
     devDependencies:
@@ -782,7 +782,6 @@ importers:
       '@semantic-release/changelog': 3.0.6_semantic-release@15.13.31
       '@semantic-release/git': 7.0.18_semantic-release@15.13.31
       '@semantic-release/release-notes-generator': 7.3.5_semantic-release@15.13.31
-      '@types/aws-serverless-express': 3.3.2
       '@types/body-parser': 1.17.1
       '@types/config': 0.0.36
       '@types/cors': 2.8.6
@@ -821,7 +820,6 @@ importers:
       '@semantic-release/changelog': 3.0.6
       '@semantic-release/git': 7.0.18
       '@semantic-release/release-notes-generator': 7.3.5
-      '@types/aws-serverless-express': 3.3.2
       '@types/body-parser': 1.17.1
       '@types/config': 0.0.36
       '@types/cors': 2.8.6
@@ -836,7 +834,6 @@ importers:
       ajv: 6.10.2
       async-local-storage: 2.3.1
       aws-sdk: 2.588.0
-      aws-serverless-express: 3.3.6
       body-parser: 1.19.0
       commitizen: 4.0.3
       concurrently: 5.0.1
@@ -873,6 +870,7 @@ importers:
       reflect-metadata: 0.1.13
       semantic-release: 15.13.31
       semantic-release-monorepo: 6.1.1
+      serverless-http: 2.3.1
       ts-jest: 24.2.0
       tslint: 5.20.1
       typescript: 3.7.3
@@ -2790,7 +2788,6 @@ packages:
     resolution:
       integrity: sha512-8GAYQ1jDRUQkSpHzJUqXwAkYFOxuWAOGLhIR4aPd/Y/yL12Q/9m7LsKpHKlfKdNE/362Hc9wPI1Yh6opDfxVJg==
   /@types/aws-lambda/8.10.40:
-    dev: true
     resolution:
       integrity: sha512-D0hOUw2y6in/cPWv0JMMCBnO3Hc/DNeLi8QQ1wymwk9Eixh6IFgVnCGJnUHefjxKEAVxL7z6LKBsFUrIjKygRg==
   /@types/aws-serverless-express/3.3.2:
@@ -6974,6 +6971,9 @@ packages:
       node: '>=6'
     peerDependencies:
       jest-resolve: '*'
+    peerDependenciesMeta:
+      jest-resolve:
+        optional: true
     resolution:
       integrity: sha512-pgFw2tm54fzgYvc/OHrnysABEObZCUNFnhjoRjaVOCN8NYc032/gVjPaHD4Aq6ApkSieWtfKAFQtmDKAmhupnQ==
   /jest-regex-util/24.9.0:
@@ -7728,12 +7728,13 @@ packages:
       node: '>=0.10.0'
     resolution:
       integrity: sha1-7Nyo8TFE5mDxtb1B8S80edmN+48=
-  /marked-terminal/3.3.0:
+  /marked-terminal/3.3.0_marked@0.7.0:
     dependencies:
       ansi-escapes: 3.2.0
       cardinal: 2.1.1
       chalk: 2.4.2
       cli-table: 0.3.1
+      marked: 0.7.0
       node-emoji: 1.10.0
       supports-hyperlinks: 1.0.1
     dev: true
@@ -9553,7 +9554,7 @@ packages:
       hosted-git-info: 3.0.2
       lodash: 4.17.15
       marked: 0.7.0
-      marked-terminal: 3.3.0
+      marked-terminal: 3.3.0_marked@0.7.0
       p-locate: 4.1.0
       p-reduce: 2.1.0
       read-pkg-up: 7.0.1
@@ -9665,6 +9666,14 @@ packages:
       node: '>= 0.8.0'
     resolution:
       integrity: sha512-JMrvUwE54emCYWlTI+hGrGv5I8dEwmco/00EvkzIIsR7MqrHonbD9pO2MOfFnpFntl7ecpZs+3mW+XbQZu9QCg==
+  /serverless-http/2.3.1:
+    dev: false
+    engines:
+      node: '>=8.0'
+    optionalDependencies:
+      '@types/aws-lambda': 8.10.40
+    resolution:
+      integrity: sha512-Yf0R6wj5wCsZvlbQYvgeebrdJKZ4WpLbS4nWEhdh/pBXvabjw4WwZk+3KhXe9g4VVKsG5vxfieXE7+PnktRKuA==
   /set-blocking/2.0.0:
     dev: true
     resolution:
@@ -11046,6 +11055,7 @@ packages:
       node: '>=6'
     name: env-ci
     resolution:
+      registry: 'https://registry.npmjs.org/'
       tarball: 'https://codeload.github.com/boardthatpowder/env-ci/tar.gz/45ee1f3169d13f1a2c3842f5f2458b6bd8cb6dd5'
     version: 0.0.0-development
   github.com/boardthatpowder/semantic-release-plugin-decorators/0f89322cb9231b2812e6e66bbc7215b88efd02b5_semantic-release@15.13.31:
@@ -11059,5 +11069,6 @@ packages:
     peerDependencies:
       semantic-release: '>=11'
     resolution:
+      registry: 'https://registry.npmjs.org/'
       tarball: 'https://codeload.github.com/boardthatpowder/semantic-release-plugin-decorators/tar.gz/0f89322cb9231b2812e6e66bbc7215b88efd02b5'
     version: 0.0.0-development

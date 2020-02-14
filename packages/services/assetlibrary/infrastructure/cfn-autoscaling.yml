@@ -11,7 +11,7 @@ Parameters:
   MinCapacity:
     Description:  The minimum value to scale to in response to a scale-in event.
     Type: Number
-    Default: 1
+    Default: 0
   MaxCapacity:
     Description:  The maximum value to scale to in response to a scale-out event.
     Type: Number

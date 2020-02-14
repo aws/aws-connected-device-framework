@@ -41,6 +41,7 @@ Parameters:
   ProvisionedConcurrentExecutions:
     Description: The no. of desired concurrent executions to  provision.  Set to 0 to disable.
     Type: Number
+    Default: 0
 
   ApplyAutoscaling:
     Description: If true, will apply auto-scaling as defined in `./cfn-autoscaling.yml'
@@ -56,7 +57,7 @@ Conditions:
   DeployFullMode: !Equals [ !Ref Mode, 'full' ]
   DeployWithCustomAuth: !Not [ !Equals [ !Ref CustAuthStackName, "" ]]
   DeployWithProvisionedCapacity: !Not [ !Equals [ !Ref ProvisionedConcurrentExecutions, "0" ]]
-  DeployWithScaling: !Equals [ !Ref ApplyAutoscaling, "true" ]
+  DeployWithScaling: !Equals [ !Ref ApplyAutoscaling, 'true' ]
 
 Resources:
 

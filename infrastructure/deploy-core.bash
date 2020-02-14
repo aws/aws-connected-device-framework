@@ -463,13 +463,13 @@ if [ -f "$assetlibrary_config" ]; then
 
     infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
 
-    assetlibrary_concurrent_exewcutions_arg=
+    assetlibrary_concurrent_executions_arg=
     if [ -n "$CONCURRENT_EXECUTIONS" ]; then
-        assetlibrary_concurrent_exewcutions_arg="-x $CONCURRENT_EXECUTIONS"
+        assetlibrary_concurrent_executions_arg="-x $CONCURRENT_EXECUTIONS"
     fi
 
     assetlibrary_autoscaling_arg=
-    if [ -n "$APPLY_AUTOSCALING" ]; then
+    if [ "$APPLY_AUTOSCALING" = "true" ]; then
         assetlibrary_autoscaling_arg="-s"
     fi
 
@@ -478,12 +478,12 @@ if [ -f "$assetlibrary_config" ]; then
         -m "$ASSETLIBRARY_MODE" \
         -v "$VPC_ID" -g "$SOURCE_SECURITY_GROUP_ID" -n "$PRIVATE_SUBNET_IDS" -r "$PRIVATE_ROUTE_TABLE_IDS" \
         $assetlibrary_custom_auth_args \
-        $assetlibrary_concurrent_exewcutions_arg $assetlibrary_autoscaling_arg \
+        $assetlibrary_concurrent_executions_arg $assetlibrary_autoscaling_arg \
         $AWS_SCRIPT_ARGS &
     else
         infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "$assetlibrary_config" \
         -m "$ASSETLIBRARY_MODE" \
-        $assetlibrary_concurrent_exewcutions_arg $assetlibrary_autoscaling_arg \
+        $assetlibrary_concurrent_executions_arg $assetlibrary_autoscaling_arg \
         $AWS_SCRIPT_ARGS &
     fi
 
