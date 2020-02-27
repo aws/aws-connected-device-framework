@@ -1,3 +1,10 @@
+# [@cdf/assetlibrary-v3.2.16](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.2.15...@cdf/assetlibrary-v3.2.16) (2020-02-27)
+
+
+### Bug Fixes
+
+* **assetlibrary:** seed when fine-grain access control is enabled ([3193e79](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/3193e7922e5ba923705b8f5dccb86873819b37fa))
+
 # [@cdf/assetlibrary-v3.2.15](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.2.14...@cdf/assetlibrary-v3.2.15) (2020-02-14)
 
 
