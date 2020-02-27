@@ -1,3 +1,10 @@
+# [@cdf/auth-jwt-v1.1.5](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/auth-jwt-v1.1.4...@cdf/auth-jwt-v1.1.5) (2020-02-27)
+
+
+### Bug Fixes
+
+* **assetlibrary:** seed when fine-grain access control is enabled ([3193e79](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/3193e7922e5ba923705b8f5dccb86873819b37fa))
+
 # [@cdf/auth-jwt-v1.1.4](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/auth-jwt-v1.1.3...@cdf/auth-jwt-v1.1.4) (2020-01-31)
 
 
