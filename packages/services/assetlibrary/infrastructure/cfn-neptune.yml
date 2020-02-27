@@ -295,7 +295,7 @@ Outputs:
     Description: Gremlin Endpoint for Neptune
     Value: !Join 
       - ''
-      - - 'ws://'
+      - - 'wss://'
         - !GetAtt 
           - NeptuneDBCluster
           - Endpoint

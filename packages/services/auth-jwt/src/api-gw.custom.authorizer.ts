@@ -28,8 +28,8 @@ export class ApiGwCustomAuthorizer {
     private publicKeys:MapOfKidToPublicKey;
 
     constructor() {
-        const cognitoIssuer = config.get('token.issuer') as string;
-        if (cognitoIssuer===undefined) {
+        this.cognitoIssuer = config.get('token.issuer') as string;
+        if (this.cognitoIssuer===undefined) {
             throw new Error('Token Issuer must be defined');
         }
     }
@@ -47,11 +47,13 @@ export class ApiGwCustomAuthorizer {
             agg[current.kid] = {instance: current, pem};
             return agg;
         }, {} as MapOfKidToPublicKey);
+
+        logger.debug(`api-gw.custom.authorizer: getPublicKeys: cacheKeys:${JSON.stringify(cacheKeys)}`);
         return cacheKeys;
     }
 
     public async verify(request: ClaimVerifyRequest): Promise<ClaimVerifyResult> {
-        logger.debug(`api-gw.custom.authorizer: verify: in: request:${request}`);
+        logger.debug(`api-gw.custom.authorizer: verify: in: request:${JSON.stringify(request)}`);
 
         let result:ClaimVerifyResult;
 
@@ -84,12 +86,13 @@ export class ApiGwCustomAuthorizer {
                 throw new Error('claim issuer is invalid');
             }
 
-            if (claim.token_use !== 'access') {
+            if (claim.token_use !== 'id') {
                 throw new Error('claim use is not access');
             }
 
             result = {userName: claim.username, clientId: claim.client_id, isValid: true};
         } catch (error) {
+          logger.error(`api-gw.custom.authorizer: verify: error:${error}`);
           result = {userName: '', clientId: '', error, isValid: false};
         }
 

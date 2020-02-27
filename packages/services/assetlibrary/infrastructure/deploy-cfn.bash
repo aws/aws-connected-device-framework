@@ -1,4 +1,5 @@
 #!/bin/bash
+
 set -e
 
 #-------------------------------------------------------------------------------
@@ -31,13 +32,15 @@ OPTIONAL ARGUMENTS
     -s (flag)     Apply autoscaling as defined in ./cfn-autosclaing.yml  
 
     -C (string)   Name of customer authorizer stack.  Defaults to cdf-custom-auth-${ENVIRONMENT}.
+    -a (string)   An authorization token.  Only required if fine-grained access control is enabled.
+
     -R (string)   AWS region.
     -P (string)   AWS profile.
     
 EOF
 }
 
-while getopts ":e:c:v:g:n:m:r:x:sC:R:P:" opt; do
+while getopts ":e:c:v:g:n:m:r:x:sa:C:R:P:" opt; do
   case $opt in
 
     e  ) export ENVIRONMENT=$OPTARG;;
@@ -51,6 +54,7 @@ while getopts ":e:c:v:g:n:m:r:x:sC:R:P:" opt; do
     x  ) export CONCURRENT_EXECUTIONS=$OPTARG;;
     s  ) export APPLY_AUTOSCALING=true;;
 
+    a  ) export AL_AUTH_TOKEN=$OPTARG;;
     C  ) export CUST_AUTH_STACK_NAME=$OPTARG;;
 
     R  ) export AWS_REGION=$OPTARG;;
@@ -139,6 +143,7 @@ Running with:
   CONCURRENT_EXECUTIONS:            $CONCURRENT_EXECUTIONS
   APPLY_AUTOSCALING:                $APPLY_AUTOSCALING
   CUST_AUTH_STACK_NAME:             $CUST_AUTH_STACK_NAME
+  AL_AUTH_TOKEN:                    $AL_AUTH_TOKEN
   AWS_REGION:                       $AWS_REGION
   AWS_PROFILE:                      $AWS_PROFILE
 "
@@ -353,7 +358,8 @@ if [ "$ASSETLIBRARY_MODE" = "full" ]; then
   curl -X POST \
     "$assetlibrary_invoke_url/48e876fe-8830-4996-baa0-9c0dd92bd6a2/init" \
     -H 'Accept: application/vnd.aws-cdf-v1.0+json' \
-    -H 'Content-Type: application/vnd.aws-cdf-v1.0+json'
+    -H 'Content-Type: application/vnd.aws-cdf-v1.0+json' \
+    -H 'Authorization: '"$AL_AUTH_TOKEN"''
 
 fi
 

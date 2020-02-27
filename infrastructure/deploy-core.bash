@@ -34,6 +34,7 @@ OPTIONAL ARGUMENTS
 
     -F (flag)     Enable fine-grained-access-control mode of Asset Library (only available for Asset Library (full) mode).
     -f (string)   The JWT issuer, e.g. https://cognito-idp.us-east-1.amazonaws.com/${cognitoPoolId} (required if -F set).
+    -a (string)   An authorization token (required if -F set).
 
     -N (flag)     Use an existing VPC instead of creating a new one (only required for Asset Library (full) mode).
     -v (string)   ID of VPC to deploy into (required if -N set)
@@ -73,7 +74,7 @@ EOF
 ######  parse and validate the provided arguments   ######
 ##########################################################
 
-while getopts ":e:E:c:p:i:k:b:Ff:Nv:g:n:m:o:r:x:sBYR:P:" opt; do
+while getopts ":e:E:c:p:i:k:b:Ff:a:Nv:g:n:m:o:r:x:sBYR:P:" opt; do
   case $opt in
     e  ) ENVIRONMENT=$OPTARG;;
     E  ) CONFIG_ENVIRONMENT=$OPTARG;;
@@ -89,7 +90,8 @@ while getopts ":e:E:c:p:i:k:b:Ff:Nv:g:n:m:o:r:x:sBYR:P:" opt; do
     s  ) APPLY_AUTOSCALING=true;;
 
     F  ) ASSETLIBRARY_FGAC=true;;
-    f  ) JWT_ISSUER=true;;
+    f  ) JWT_ISSUER=$OPTARG;;
+    a  ) AUTH_TOKEN=$OPTARG;;
 
     N  ) USE_EXISTING_VPC=true;;
     v  ) VPC_ID=$OPTARG;;
@@ -161,6 +163,9 @@ if [ -n "$ASSETLIBRARY_FGAC" ]; then
     if [ -z "$JWT_ISSUER" ]; then
         echo -f JWT_ISSUER is required when Asset Library fine-grained access control is enabled; help_message; exit 1;
     fi
+    if [ -z "$AUTH_TOKEN" ]; then
+        echo -a AUTH_TOKEN is required when Asset Library fine-grained access control is enabled; help_message; exit 1;
+    fi
 fi
 
 
@@ -201,6 +206,7 @@ The Connected Device Framework (CDF) will install using the following configurat
     -m (ASSETLIBRARY_MODE)              : $ASSETLIBRARY_MODE
     -F (ASSETLIBRARY_FGAC)              : $ASSETLIBRARY_FGAC
     -f (JWT_ISSUER)                     : $JWT_ISSUER
+    -a (AUTH_TOKEN)                     : $AUTH_TOKEN
     -N (USE_EXISTING_VPC)               : $USE_EXISTING_VPC
     -x (CONCURRENT_EXECUTIONS):         : $CONCURRENT_EXECUTIONS
     -s (APPLY_AUTOSCALING):             : $APPLY_AUTOSCALING"
@@ -449,7 +455,7 @@ if [ -f "$assetlibrary_config" ]; then
 
         infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "$auth_jwt_config" -i "$JWT_ISSUER" -o $OPENSSL_LAYER_STACK_NAME $AWS_SCRIPT_ARGS
 
-        assetlibrary_custom_auth_args="-C $AUTH_JWT_STACK_NAME"
+        assetlibrary_custom_auth_args="-C $AUTH_JWT_STACK_NAME -a $AUTH_TOKEN"
 
     fi
 
