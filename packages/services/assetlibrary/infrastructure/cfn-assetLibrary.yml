@@ -410,12 +410,11 @@ Outputs:
       Name: !Sub "${AWS::StackName}-AssetLibrarySecurityGroupID"
   ApiGatewayUrl:
     Description: URL for application
-    Value: !Join
-      - ''
-      - - 'https://'
-        - !Ref ApiGatewayApi
-        - '.execute-api.'
-        - !Ref 'AWS::Region'
-        - '.amazonaws.com/Prod'
+    Value: !Sub 'https://${ApiGatewayApi}.execute-api.${AWS::Region}.amazonaws.com/Prod'
     Export:
       Name: !Sub '${AWS::StackName}-apigatewayurl'
+  ApiGatewayHost:
+    Description: Host for application
+    Value: !Sub '${ApiGatewayApi}.execute-api.${AWS::Region}.amazonaws.com'
+    Export:
+      Name: !Sub '${AWS::StackName}-apigatewayhost'
