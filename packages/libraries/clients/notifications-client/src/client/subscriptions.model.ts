@@ -33,8 +33,11 @@ export type SubscriptionTargets = {
     dynamodb?: DynamoDBSubscriptionConfig;
 };
 
+export type AttributeMapping = { [key: string] : string};
+
 export type DynamoDBSubscriptionConfig = {
-    tableName:string
+    tableName:string;
+    attributeMapping: AttributeMapping;
 };
 
 export type EmailSubscriptionConfig = {
