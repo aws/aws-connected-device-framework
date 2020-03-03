@@ -28,4 +28,5 @@ for layer in $(ls $lambda_layers_root); do
     infrastructure/build.bash
 done
 
+cd $root_dir
 npm run bundle

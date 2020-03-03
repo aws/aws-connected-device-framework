@@ -1,3 +1,5 @@
+import { NodeAttributeValue } from './node';
+
 /*-------------------------------------------------------------------------------
 # Copyright (c) 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
@@ -18,4 +20,16 @@ export function applyMixins(derivedCtor: any, baseCtors: any[]) {
             Object.defineProperty(derivedCtor.prototype, name, Object.getOwnPropertyDescriptor(baseCtor.prototype, name));
         });
     });
+}
+
+export function safeExtractLabels(rawLabelAttribute:NodeAttributeValue) : string[] {
+    let labels: string[] = [];
+    if (Array.isArray(rawLabelAttribute) && rawLabelAttribute.length>=2) {
+        labels.push(... <string[]> rawLabelAttribute);
+    } else if (Array.isArray(rawLabelAttribute)) {
+        labels.push(...(<string>rawLabelAttribute[0]).split('::'));
+    } else {
+        labels = (<string> rawLabelAttribute).split('::');
+    }
+    return labels;
 }

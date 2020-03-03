@@ -11,6 +11,7 @@ import { ProfileNode } from './profiles.models';
 import { NodeAttributeValue } from '../data/node';
 import { TypeCategory } from '../types/constants';
 import { BaseDaoFull } from '../data/base.full.dao';
+import { safeExtractLabels } from '../data/model';
 
 const __ = process.statics;
 
@@ -136,7 +137,7 @@ export class ProfilesDaoFull extends BaseDaoFull {
 
         logger.debug(`profiles.full.dao assembleNode: in: profile:${JSON.stringify(profile)}, template:${JSON.stringify(template)}, category:${JSON.stringify(category)}`);
 
-        const labels = (<string> profile['label']).split('::');
+        const labels = safeExtractLabels(profile['label']);
         const node = new ProfileNode();
         Object.keys(profile).forEach( key => {
             if (key==='id') {

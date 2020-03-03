@@ -6,7 +6,7 @@
 import { injectable } from 'inversify';
 import {logger} from '../utils/logger';
 import {Node, NodeAttributeValue} from './node';
-import { ModelAttributeValue } from './model';
+import { ModelAttributeValue, safeExtractLabels } from './model';
 import { TypeCategory } from '../types/constants';
 
 @injectable()
@@ -15,7 +15,7 @@ export class FullAssembler {
     public assembleNode(entity:{ [key:string]: NodeAttributeValue}):Node {
         logger.debug(`full.assembler assembleNode: in: entity: ${JSON.stringify(entity)}`);
 
-        const labels = (<string> entity['label']).split('::');
+        const labels = safeExtractLabels(entity['label']);
         const node = new Node();
         Object.keys(entity).forEach( key => {
             if (key==='id') {
@@ -41,7 +41,7 @@ export class FullAssembler {
                 const otherV = r.Vs[i];
                 const direction = (e['inV']===node.id) ? 'in' : 'out';
 
-                const l = (<string> otherV['label']).split('::');
+                const l = safeExtractLabels(otherV['label']);
                 const other:Node= this.assembleNode(otherV);
                 if (l.includes(TypeCategory.Group)) {
                     other.category = TypeCategory.Group;
