@@ -1,3 +1,10 @@
+# [@cdf/assetlibrary-v3.2.17](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.2.16...@cdf/assetlibrary-v3.2.17) (2020-03-03)
+
+
+### Bug Fixes
+
+* **assetlibrary:** multi-valued vertex types different format ([b0026ec](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/b0026ec826621b8c9880d36d5d865badbacea868))
+
 # [@cdf/assetlibrary-v3.2.16](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.2.15...@cdf/assetlibrary-v3.2.16) (2020-02-27)
 
 
