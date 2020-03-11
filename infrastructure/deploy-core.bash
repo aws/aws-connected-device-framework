@@ -646,28 +646,6 @@ if [ -f "$devicemonitoring_config" ]; then
 fi
 
 
-certificatevendor_config=$CONFIG_LOCATION/certificatevendor/$CONFIG_ENVIRONMENT-config.json
-if [ -f "$certificatevendor_config" ]; then
-
-    echo '
-    **********************************************************
-    *****  Deploying certificate vendor                 ******
-    **********************************************************
-    '
-
-    cd "$root_dir/packages/services/certificatevendor"
-
-    certificatevendor_bucket=$(cat "$certificatevendor_config" | jq -r '.aws.s3.certificates.bucket')
-    certificatevendor_prefix=$(cat "$certificatevendor_config" | jq -r '.aws.s3.certificates.prefix')
-
-    infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
-    infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "$certificatevendor_config" -b "$certificatevendor_bucket" -p "$certificatevendor_prefix" \
-    -r AssetLibrary \
-    -o $OPENSSL_LAYER_STACK_NAME $AWS_SCRIPT_ARGS &
-
-    stacks+=("$CERTIFICATEVENDOR_STACK_NAME")
-
-fi
 
 eventsprocessor_config=$CONFIG_LOCATION/events-processor/$CONFIG_ENVIRONMENT-config.json
 if [ -f "$eventsprocessor_config" ]; then
@@ -718,6 +696,34 @@ done
 if [ "$failed" = "true" ]; then
     exit 1
 fi
+
+
+
+certificatevendor_config=$CONFIG_LOCATION/certificatevendor/$CONFIG_ENVIRONMENT-config.json
+if [ -f "$certificatevendor_config" ]; then
+
+    echo '
+    **********************************************************
+    *****  Deploying certificate vendor                 ******
+    **********************************************************
+    '
+
+    cd "$root_dir/packages/services/certificatevendor"
+
+    certificatevendor_bucket=$(cat "$certificatevendor_config" | jq -r '.aws.s3.certificates.bucket')
+    certificatevendor_prefix=$(cat "$certificatevendor_config" | jq -r '.aws.s3.certificates.prefix')
+
+    infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
+    infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "$certificatevendor_config" -b "$certificatevendor_bucket" -p "$certificatevendor_prefix" \
+    -r AssetLibrary \
+    -o $OPENSSL_LAYER_STACK_NAME $AWS_SCRIPT_ARGS &
+
+    stacks+=("$CERTIFICATEVENDOR_STACK_NAME")
+
+fi
+
+
+
 
 
 if [ "$ASSETLIBRARY_MODE" = "full" ]; then
