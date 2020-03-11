@@ -697,8 +697,6 @@ if [ "$failed" = "true" ]; then
     exit 1
 fi
 
-
-
 certificatevendor_config=$CONFIG_LOCATION/certificatevendor/$CONFIG_ENVIRONMENT-config.json
 if [ -f "$certificatevendor_config" ]; then
 
@@ -721,10 +719,6 @@ if [ -f "$certificatevendor_config" ]; then
     stacks+=("$CERTIFICATEVENDOR_STACK_NAME")
 
 fi
-
-
-
-
 
 if [ "$ASSETLIBRARY_MODE" = "full" ]; then
     echo '
