@@ -1,3 +1,10 @@
+# [@cdf/assetlibrary-v3.2.18](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.2.17...@cdf/assetlibrary-v3.2.18) (2020-03-18)
+
+
+### Bug Fixes
+
+* **assetlibrary:** device get failure during fgac lookup ([5377378](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/53773784901b4f1c3b4e1fc927b3d61f58c2a6ac))
+
 # [@cdf/assetlibrary-v3.2.17](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.2.16...@cdf/assetlibrary-v3.2.17) (2020-03-03)
 
 
