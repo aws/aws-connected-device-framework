@@ -46,13 +46,13 @@ export class DevicesDaoFull extends BaseDaoFull {
         let connectedVertices;
         if (expandComponents===true && includeGroups===true) {
             connectedEdges = __.bothE();
-            connectedVertices = __.both();
+            connectedVertices = __.bothE().otherV();
         } else if (expandComponents===true && includeGroups===false) {
             connectedEdges = __.bothE().hasLabel('component_of');
-            connectedVertices = __.both().hasLabel('component_of');
+            connectedVertices = __.bothE().otherV()().hasLabel('component_of');
         } else if (expandComponents===false && includeGroups===true) {
             connectedEdges = __.bothE().not(__.hasLabel('component_of'));
-            connectedVertices = __.both().not(__.hasLabel('component_of'));
+            connectedVertices = __.bothE().otherV()().not(__.hasLabel('component_of'));
         }
 
         if (connectedEdges!==undefined) {
@@ -61,9 +61,9 @@ export class DevicesDaoFull extends BaseDaoFull {
             connectedEdges = __.valueMap().with_(process.withOptions.tokens).fold();
         }
         if (connectedVertices!==undefined) {
-            connectedVertices.dedup().valueMap().with_(process.withOptions.tokens).fold();
+            connectedVertices.valueMap().with_(process.withOptions.tokens).fold();
         } else {
-            connectedVertices = __.dedup().valueMap().with_(process.withOptions.tokens).fold();
+            connectedVertices = __.valueMap().with_(process.withOptions.tokens).fold();
         }
 
         // build the query for optionally filtering the returned attributes

@@ -28,7 +28,7 @@ export class CommonDaoFull extends BaseDaoFull {
     public async listRelated(entityDbId: string, relationship: string, direction:string, template:string, filterRelatedBy:{ [key: string] : ModelAttributeValue}, offset:number, count:number) : Promise<Node> {
         logger.debug(`common.full.dao listRelated: in: entityDbId:${entityDbId}, relationship:${relationship}, direction:${direction}, template:${template}, filterRelatedBy:${JSON.stringify(filterRelatedBy)}, offset:${offset}, count:${count}`);
 
-        // build the queries for returning the info we need to assmeble related groups/devices
+        // build the queries for returning the info we need to assemble related groups/devices
         let connectedEdges:process.GraphTraversal;
         let connectedVertices:process.GraphTraversal;
         if (relationship==='*') {
@@ -36,13 +36,13 @@ export class CommonDaoFull extends BaseDaoFull {
         }
         if (direction==='in') {
             connectedEdges = __.inE();
-            connectedVertices = __.in_();
+            connectedVertices = __.inE().otherV();
         } else if (direction==='out') {
             connectedEdges = __.outE();
-            connectedVertices = __.out();
+            connectedVertices = __.outE().otherV();
         } else {
             connectedEdges = __.bothE();
-            connectedVertices = __.both();
+            connectedVertices = __.bothE().otherV();
         }
         if (relationship) {
             connectedEdges.hasLabel(relationship);

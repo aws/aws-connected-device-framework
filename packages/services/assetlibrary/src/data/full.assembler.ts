@@ -41,16 +41,21 @@ export class FullAssembler {
                 const otherV = r.Vs[i];
                 const direction = (e['inV']===node.id) ? 'in' : 'out';
 
-                const l = safeExtractLabels(otherV['label']);
-                const other:Node= this.assembleNode(otherV);
-                if (l.includes(TypeCategory.Group)) {
-                    other.category = TypeCategory.Group;
-                } else if (l.includes(TypeCategory.Component)) {
-                    other.category = TypeCategory.Component;
-                } if (l.includes(TypeCategory.Device)) {
-                    other.category = TypeCategory.Device;
+                if (e && otherV) {
+                    const l = safeExtractLabels(otherV['label']);
+                    const other: Node = this.assembleNode(otherV);
+                    if (l.includes(TypeCategory.Group)) {
+                        other.category = TypeCategory.Group;
+                    } else if (l.includes(TypeCategory.Component)) {
+                        other.category = TypeCategory.Component;
+                    }
+                    if (l.includes(TypeCategory.Device)) {
+                        other.category = TypeCategory.Device;
+                    }
+                    node.addLink(direction, <string>e['label'], other);
+                } else {
+                    logger.warn(`full.assembler assembleAssociations: either edge or vertex is missing: e::${JSON.stringify(e)}, otherV:${JSON.stringify(otherV)}`);
                 }
-                node.addLink(direction, <string>e['label'], other);
             }
         }
 
