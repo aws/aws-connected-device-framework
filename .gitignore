@@ -8,6 +8,7 @@ build
 builds
 .nyc_output
 .gitignore
+.idea
 
 cicd/codepipeline-packaged.yaml
 

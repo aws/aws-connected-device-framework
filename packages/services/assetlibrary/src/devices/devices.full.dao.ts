@@ -54,8 +54,17 @@ export class DevicesDaoFull extends BaseDaoFull {
             connectedEdges = __.bothE().not(__.hasLabel('component_of'));
             connectedVertices = __.both().not(__.hasLabel('component_of'));
         }
-        connectedEdges.valueMap().with_(process.withOptions.tokens).fold();
-        connectedVertices.dedup().valueMap().with_(process.withOptions.tokens).fold();
+
+        if (connectedEdges!==undefined) {
+            connectedEdges.valueMap().with_(process.withOptions.tokens).fold();
+        } else {
+            connectedEdges = __.valueMap().with_(process.withOptions.tokens).fold();
+        }
+        if (connectedVertices!==undefined) {
+            connectedVertices.dedup().valueMap().with_(process.withOptions.tokens).fold();
+        } else {
+            connectedVertices = __.dedup().valueMap().with_(process.withOptions.tokens).fold();
+        }
 
         // build the query for optionally filtering the returned attributes
         const deviceValueMap = (attributes===undefined) ?
