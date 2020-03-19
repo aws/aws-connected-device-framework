@@ -49,10 +49,10 @@ export class DevicesDaoFull extends BaseDaoFull {
             connectedVertices = __.bothE().otherV();
         } else if (expandComponents===true && includeGroups===false) {
             connectedEdges = __.bothE().hasLabel('component_of');
-            connectedVertices = __.bothE().otherV()().hasLabel('component_of');
+            connectedVertices = __.bothE().otherV().hasLabel('component_of');
         } else if (expandComponents===false && includeGroups===true) {
             connectedEdges = __.bothE().not(__.hasLabel('component_of'));
-            connectedVertices = __.bothE().otherV()().not(__.hasLabel('component_of'));
+            connectedVertices = __.bothE().otherV().not(__.hasLabel('component_of'));
         }
 
         if (connectedEdges!==undefined) {
