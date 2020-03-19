@@ -1,3 +1,10 @@
+# [@cdf/assetlibrary-v3.2.20](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.2.19...@cdf/assetlibrary-v3.2.20) (2020-03-19)
+
+
+### Bug Fixes
+
+* **assetlibrary:** duplicate relations issue ([bba6397](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/bba6397db0ab9d4a992c4e0162827a1bd2866912))
+
 # [@cdf/assetlibrary-v3.2.19](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.2.18...@cdf/assetlibrary-v3.2.19) (2020-03-18)
 
 
