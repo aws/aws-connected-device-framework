@@ -1,3 +1,10 @@
+# [@cdf/assetlibrary-v3.2.22](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.2.21...@cdf/assetlibrary-v3.2.22) (2020-03-24)
+
+
+### Bug Fixes
+
+* **assetlibrary:** fixed integration tests for fgac mode ([286ca52](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/286ca52008ed391207782cdb2639d9e577f7f99e))
+
 # [@cdf/assetlibrary-v3.2.21](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.2.20...@cdf/assetlibrary-v3.2.21) (2020-03-24)
 
 
