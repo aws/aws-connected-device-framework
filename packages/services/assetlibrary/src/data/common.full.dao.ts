@@ -29,34 +29,32 @@ export class CommonDaoFull extends BaseDaoFull {
         logger.debug(`common.full.dao listRelated: in: entityDbId:${entityDbId}, relationship:${relationship}, direction:${direction}, template:${template}, filterRelatedBy:${JSON.stringify(filterRelatedBy)}, offset:${offset}, count:${count}`);
 
         // build the queries for returning the info we need to assemble related groups/devices
-        let connectedEdges:process.GraphTraversal;
-        let connectedVertices:process.GraphTraversal;
+        const connectedEdgesIn = __.inE();
+        const connectedEdgesOut = __.outE();
+        const connectedVerticesIn = __.inE().otherV();
+        const connectedVerticesOut = __.outE().otherV();
+
         if (relationship==='*') {
             relationship=undefined;
         }
-        if (direction==='in') {
-            connectedEdges = __.inE();
-            connectedVertices = __.inE().otherV();
-        } else if (direction==='out') {
-            connectedEdges = __.outE();
-            connectedVertices = __.outE().otherV();
-        } else {
-            connectedEdges = __.bothE();
-            connectedVertices = __.bothE().otherV();
-        }
+
         if (relationship) {
-            connectedEdges.hasLabel(relationship);
+            connectedEdgesIn.hasLabel(relationship);
+            connectedEdgesOut.hasLabel(relationship);
         }
 
         const connectedEdgesFilter = __.otherV().hasLabel(template);
         if (filterRelatedBy!==undefined) {
             Object.keys(filterRelatedBy).forEach(k=> {
-                connectedVertices.has(k, filterRelatedBy[k]);
+                connectedVerticesIn.has(k, filterRelatedBy[k]);
+                connectedVerticesOut.has(k, filterRelatedBy[k]);
                 connectedEdgesFilter.has(k, filterRelatedBy[k]);
             });
         }
-        connectedEdges.where(connectedEdgesFilter);
-        connectedVertices.hasLabel(template);
+        connectedEdgesIn.where(connectedEdgesFilter).valueMap().with_(process.withOptions.tokens);
+        connectedEdgesOut.where(connectedEdgesFilter).valueMap().with_(process.withOptions.tokens);
+        connectedVerticesIn.hasLabel(template);
+        connectedVerticesOut.hasLabel(template);
 
         // apply pagination
         if (offset!==undefined && count!==undefined) {
@@ -64,13 +62,17 @@ export class CommonDaoFull extends BaseDaoFull {
             // throughout, they are being interpreted as strings within gremlin, therefore need to force to int beforehand
             const offsetAsInt = parseInt(offset.toString(),0);
             const countAsInt = parseInt(count.toString(),0);
-            connectedEdges.range(offsetAsInt, offsetAsInt + countAsInt);
-            connectedVertices.range(offsetAsInt, offsetAsInt + countAsInt);
+            connectedEdgesIn.range(offsetAsInt, offsetAsInt + countAsInt);
+            connectedEdgesOut.range(offsetAsInt, offsetAsInt + countAsInt);
+            connectedVerticesIn.range(offsetAsInt, offsetAsInt + countAsInt);
+            connectedVerticesOut.range(offsetAsInt, offsetAsInt + countAsInt);
         }
 
         // fold the results into an array
-        connectedEdges.fold();
-        connectedVertices.valueMap().with_(process.withOptions.tokens).fold();
+        connectedEdgesIn.fold();
+        connectedEdgesOut.fold();
+        connectedVerticesIn.valueMap().with_(process.withOptions.tokens).fold();
+        connectedVerticesOut.valueMap().with_(process.withOptions.tokens).fold();
 
         // assemble the main query
         let results;
@@ -78,10 +80,24 @@ export class CommonDaoFull extends BaseDaoFull {
         try {
             const traverser = conn.traversal.V(entityDbId);
 
-            traverser.project('object','Es','Vs').
+            if (direction==='in') {
+                traverser.project('object','EsIn','VsIn').
                 by(__.valueMap().with_(process.withOptions.tokens)).
-                by(connectedEdges).
-                by(connectedVertices);
+                by(connectedEdgesIn).
+                by(connectedVerticesIn);
+            } else if (direction==='out') {
+                traverser.project('object','EsOut','VsOut').
+                by(__.valueMap().with_(process.withOptions.tokens)).
+                by(connectedEdgesOut).
+                by(connectedVerticesOut);
+            } else {
+                traverser.project('object','EsIn','EsOut','VsIn','VsOut').
+                by(__.valueMap().with_(process.withOptions.tokens)).
+                by(connectedEdgesIn).
+                by(connectedEdgesOut).
+                by(connectedVerticesIn).
+                by(connectedVerticesOut);
+            }
 
             // execute and retrieve the results
             logger.debug(`common.full.dao listRelated: traverser: ${traverser}`);

@@ -42,29 +42,27 @@ export class DevicesDaoFull extends BaseDaoFull {
         const ids:string[] = deviceIds.map(d=> `device___${d}`);
 
         // build the queries for returning the info we need to assemble groups and/or component relationships
-        let connectedEdges;
-        let connectedVertices;
-        if (expandComponents===true && includeGroups===true) {
-            connectedEdges = __.bothE();
-            connectedVertices = __.bothE().otherV();
-        } else if (expandComponents===true && includeGroups===false) {
-            connectedEdges = __.bothE().hasLabel('component_of');
-            connectedVertices = __.bothE().otherV().hasLabel('component_of');
+        const connectedEdgesIn = __.inE();
+        const connectedEdgesOut = __.outE();
+        const connectedVerticesIn = __.inE().otherV();
+        const connectedVerticesOut = __.outE().otherV();
+
+        if (expandComponents===true && includeGroups===false) {
+            connectedEdgesIn.hasLabel('component_of');
+            connectedEdgesOut.hasLabel('component_of');
+            connectedVerticesIn.otherV().hasLabel('component_of');
+            connectedVerticesOut.otherV().hasLabel('component_of');
         } else if (expandComponents===false && includeGroups===true) {
-            connectedEdges = __.bothE().not(__.hasLabel('component_of'));
-            connectedVertices = __.bothE().otherV().not(__.hasLabel('component_of'));
+            connectedEdgesIn.not(__.hasLabel('component_of'));
+            connectedEdgesOut.not(__.hasLabel('component_of'));
+            connectedVerticesIn.otherV().not(__.hasLabel('component_of'));
+            connectedVerticesOut.otherV().not(__.hasLabel('component_of'));
         }
 
-        if (connectedEdges!==undefined) {
-            connectedEdges.valueMap().with_(process.withOptions.tokens).fold();
-        } else {
-            connectedEdges = __.valueMap().with_(process.withOptions.tokens).fold();
-        }
-        if (connectedVertices!==undefined) {
-            connectedVertices.valueMap().with_(process.withOptions.tokens).fold();
-        } else {
-            connectedVertices = __.valueMap().with_(process.withOptions.tokens).fold();
-        }
+        connectedEdgesIn.valueMap().with_(process.withOptions.tokens).fold();
+        connectedEdgesOut.valueMap().with_(process.withOptions.tokens).fold();
+        connectedVerticesIn.valueMap().with_(process.withOptions.tokens).fold();
+        connectedVerticesOut.valueMap().with_(process.withOptions.tokens).fold();
 
         // build the query for optionally filtering the returned attributes
         const deviceValueMap = (attributes===undefined) ?
@@ -76,15 +74,12 @@ export class DevicesDaoFull extends BaseDaoFull {
         const conn = super.getConnection();
         try {
             const traverser = conn.traversal.V(ids).as('device');
-            if (connectedEdges!==undefined) {
-                traverser.project('object','Es','Vs').
-                    by(deviceValueMap).
-                    by(connectedEdges).
-                    by(connectedVertices);
-            } else {
-                traverser.project('object').
-                    by(deviceValueMap);
-            }
+            traverser.project('object','EsIn','EsOut','VsIn','VsOut').
+                by(deviceValueMap).
+                by(connectedEdgesIn).
+                by(connectedEdgesOut).
+                by(connectedVerticesIn).
+                by(connectedVerticesOut);
 
             // execute and retrieve the results
             results = await traverser.toList();

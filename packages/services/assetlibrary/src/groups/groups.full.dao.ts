@@ -34,16 +34,18 @@ export class GroupsDaoFull extends BaseDaoFull {
 
         /**
          * return the group, but when retrieving linked entities we need to retrieve
-         * all groups exluding linked via 'parent' and ignore linked devices
+         * all groups excluding linked via 'parent' and ignore linked devices
          */
         let result;
         const conn = super.getConnection();
         try {
             result = await conn.traversal.V(id).as('object').
-                project('object','Es','Vs').
+                project('object','EsIn','EsOut','VsIn','VsOut').
                     by(__.valueMap().with_(process.withOptions.tokens)).
-                    by(__.bothE().not(__.hasLabel('parent')).where(__.otherV().hasLabel('group')).valueMap().with_(process.withOptions.tokens).fold()).
-                    by(__.bothE().not(__.hasLabel('parent')).otherV().hasLabel('group').dedup().valueMap().with_(process.withOptions.tokens).fold()).
+                    by(__.inE().not(__.hasLabel('parent')).where(__.otherV().hasLabel('group')).valueMap().with_(process.withOptions.tokens).fold()).
+                    by(__.outE().not(__.hasLabel('parent')).where(__.otherV().hasLabel('group')).valueMap().with_(process.withOptions.tokens).fold()).
+                    by(__.inE().not(__.hasLabel('parent')).otherV().hasLabel('group').dedup().valueMap().with_(process.withOptions.tokens).fold()).
+                    by(__.outE().not(__.hasLabel('parent')).otherV().hasLabel('group').dedup().valueMap().with_(process.withOptions.tokens).fold()).
                 next();
         } finally {
             conn.close();
