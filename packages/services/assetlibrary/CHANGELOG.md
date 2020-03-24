@@ -1,3 +1,10 @@
+# [@cdf/assetlibrary-v3.2.21](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.2.20...@cdf/assetlibrary-v3.2.21) (2020-03-24)
+
+
+### Bug Fixes
+
+* **assetlibray:** fix incorrect relation directions ([441d784](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/441d7843afaa43c360a19aca74577bfa950dd76f))
+
 # [@cdf/assetlibrary-v3.2.20](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.2.19...@cdf/assetlibrary-v3.2.20) (2020-03-19)
 
 
