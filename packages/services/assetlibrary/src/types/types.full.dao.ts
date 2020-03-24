@@ -801,7 +801,7 @@ export class TypesDaoFull extends BaseDaoFull {
             conn.close();
         }
 
-        logger.debug(`types.full.dao countInUse: exit: ${result}`);
+        logger.debug(`types.full.dao countInUse: exit: ${JSON.stringify(result)}`);
 
         if (result===undefined || result.value===undefined) {
             return 0;

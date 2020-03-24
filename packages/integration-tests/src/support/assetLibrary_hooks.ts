@@ -226,7 +226,7 @@ Before({tags: '@teardown_devices_feature'}, async function () {
 });
 
 async function teardown_devicesWithAuth_feature() {
-    await deleteAssetLibraryDevices(['TEST-devicesWithAuth-device001','TEST-devicesWithAuth-device002']);
+    await deleteAssetLibraryDevices(['TEST-devicesWithAuth-device001','TEST-devicesWithAuth-device002','TEST-devicesWithAuth-device003']);
     await deleteAssetLibraryGroups(['/1/2/2','/1/2/1','/1/1/2','/1/1/1','/1/2','/1/1','/1']);
     await deleteAssetLibraryTemplates(CategoryEnum.device, ['TEST-devicesWithAuthDevice']);
     await deleteAssetLibraryTemplates(CategoryEnum.group, ['TEST-devicesWithAuthGroup']);

@@ -50,13 +50,13 @@ export class DevicesDaoFull extends BaseDaoFull {
         if (expandComponents===true && includeGroups===false) {
             connectedEdgesIn.hasLabel('component_of');
             connectedEdgesOut.hasLabel('component_of');
-            connectedVerticesIn.otherV().hasLabel('component_of');
-            connectedVerticesOut.otherV().hasLabel('component_of');
+            connectedVerticesIn.hasLabel('component_of');
+            connectedVerticesOut.hasLabel('component_of');
         } else if (expandComponents===false && includeGroups===true) {
             connectedEdgesIn.not(__.hasLabel('component_of'));
             connectedEdgesOut.not(__.hasLabel('component_of'));
-            connectedVerticesIn.otherV().not(__.hasLabel('component_of'));
-            connectedVerticesOut.otherV().not(__.hasLabel('component_of'));
+            connectedVerticesIn.not(__.hasLabel('component_of'));
+            connectedVerticesOut.not(__.hasLabel('component_of'));
         }
 
         connectedEdgesIn.valueMap().with_(process.withOptions.tokens).fold();
