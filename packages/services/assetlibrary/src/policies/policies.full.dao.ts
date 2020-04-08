@@ -181,7 +181,7 @@ export class PoliciesDaoFull extends BaseDaoFull {
             results = await conn.traversal.V(id).as('device')
             .union(
                 __.out(),
-                __.out().repeat(__.out('parent').simplePath()).emit()
+                __.out().repeat(__.out('parent').simplePath().dedup()).emit()
                 ).as('deviceGroups')
             .in_('appliesTo').hasLabel('policy').has('type',type).dedup().as('policies')
             .project('policy', 'groups', 'policyGroups')
@@ -214,7 +214,7 @@ export class PoliciesDaoFull extends BaseDaoFull {
             const traverser = conn.traversal.V(ids).as('groups').
                 union(
                     __.identity(),
-                    __.repeat(__.out('parent').simplePath()).emit()
+                    __.repeat(__.out('parent').simplePath().dedup()).emit()
                 ).as('parentGroups').
                 in_('appliesTo').hasLabel('policy');
 

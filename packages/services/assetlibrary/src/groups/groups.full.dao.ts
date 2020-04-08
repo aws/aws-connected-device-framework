@@ -180,7 +180,7 @@ export class GroupsDaoFull extends BaseDaoFull {
                 local(
                     __.union(
                         __.identity().valueMap().with_(process.withOptions.tokens),
-                        __.repeat(__.out('parent').simplePath()).
+                        __.repeat(__.out('parent').simplePath().dedup()).
                             emit().
                             valueMap().with_(process.withOptions.tokens))).
                 toList();

@@ -36,7 +36,7 @@ export class SearchDaoFull extends BaseDaoFull {
         if (request.ancestorPath!==undefined) {
             const ancestorId = `group___${request.ancestorPath}`;
             traverser = conn.traversal.V(ancestorId).
-                repeat(__.in_().simplePath()).emit().as('a');
+                repeat(__.in_().simplePath().dedup()).emit().as('a');
         } else {
             traverser = conn.traversal.V().as('a');
         }
@@ -132,7 +132,7 @@ export class SearchDaoFull extends BaseDaoFull {
                     __.until(
                         __.hasId(process.P.within(authorizedPathIds))
                     ).repeat(
-                        __.out().simplePath()
+                        __.out().simplePath().dedup()
                     )
                 ).as('authorization');
         }
