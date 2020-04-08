@@ -1,3 +1,10 @@
+# [@cdf/assetlibrary-v3.2.23](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.2.22...@cdf/assetlibrary-v3.2.23) (2020-04-08)
+
+
+### Bug Fixes
+
+* **assetlibrary:** improved fgac performance ([7961cb5](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/7961cb5f8919fb6becb206561da9013ca9a30c13))
+
 # [@cdf/assetlibrary-v3.2.22](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.2.21...@cdf/assetlibrary-v3.2.22) (2020-03-24)
 
 
