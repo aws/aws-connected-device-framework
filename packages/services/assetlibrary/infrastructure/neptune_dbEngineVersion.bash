@@ -64,7 +64,7 @@ function _get_dbEngineVersion {
       fi
 
       # retrieve engine version of an instance via the bastion
-      dbEngineVersion=$(ssh -i $SSH_KEY  ec2-user@$bastion_ip curl -s https://$dbClusterEndpoint:8182/status | jq -r '.dbEngineVersion')
+      dbEngineVersion=$(ssh -i $SSH_KEY  ec2-user@$bastion_ip curl -s https://$dbClusterEndpoint:8182/status -o "StrictHostKeyChecking=no" | jq -r '.dbEngineVersion')
 
       if [ -n "$DEBUG_MODE" ]; then
         echo dbClusterEndpoint: $dbClusterEndpoint >&2

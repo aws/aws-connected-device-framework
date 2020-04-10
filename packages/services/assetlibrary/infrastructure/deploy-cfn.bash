@@ -355,11 +355,40 @@ if [ "$ASSETLIBRARY_MODE" = "full" ]; then
       | jq -r --arg assetlibrary_invoke_url_export "$assetlibrary_invoke_url_export" \
       '.Exports[] | select(.Name==$assetlibrary_invoke_url_export) | .Value')
 
-  curl -X POST \
+  status_code=$(curl -X POST \
     "$assetlibrary_invoke_url/48e876fe-8830-4996-baa0-9c0dd92bd6a2/init" \
     -H 'Accept: application/vnd.aws-cdf-v1.0+json' \
     -H 'Content-Type: application/vnd.aws-cdf-v1.0+json' \
-    -H 'Authorization: '"$AL_AUTH_TOKEN"''
+    -H 'Authorization: '"$AL_AUTH_TOKEN"'' \
+    -qSfsw '%{http_code}' 2>/dev/null) || true
+  # Implement retry for asset library initialization.
+  max_waiting_seconds=60
+  expired_time=$(date -d "+${max_waiting_seconds}Seconds" +"%Y-%m-%d %H:%M:%S" 2>/dev/null || \
+    date -v "+${max_waiting_seconds}S" +"%Y-%m-%d %H:%M:%S")
+
+  while [[ $(date +"%Y-%m-%d %H:%M:%S") < "$expired_time" ]]
+  do
+    if [[ $status_code -eq 204 ]] || [[ $status_code -eq 409 ]] ; then
+      break
+    fi
+    echo "Retry assetlibrary initialization : $(date +"%Y-%m-%d %H:%M:%S")"
+    status_code=$(curl -X POST \
+      "$assetlibrary_invoke_url/48e876fe-8830-4996-baa0-9c0dd92bd6a2/init" \
+      -H 'Accept: application/vnd.aws-cdf-v1.0+json' \
+      -H 'Content-Type: application/vnd.aws-cdf-v1.0+json' \
+      -H 'Authorization: '"$AL_AUTH_TOKEN"'' \
+      -qSfsw '%{http_code}' 2>/dev/null) || true
+    sleep 1.0
+  done
+
+  case $status_code in
+    204)
+        echo "Assetlibrary successfully initialized status code $status_code";;
+    409)
+      echo "Assetlibrary already initialized status code $status_code";;
+    *)
+      echo "Assetlibrary failed to initialize status code $status_code";;
+  esac
 
 fi
 
