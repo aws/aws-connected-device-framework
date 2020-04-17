@@ -521,6 +521,7 @@ if [ -f "$assetlibrary_config" ]; then
             KeyPairName="$KEY_PAIR_NAME" \
             RemoteAccessCIDR="$BASTION_REMOTE_ACCESS_CIDR" \
             EnableTCPForwarding=true \
+        --no-fail-on-empty-changeset \
         --capabilities CAPABILITY_IAM \
         $AWS_ARGS
 
