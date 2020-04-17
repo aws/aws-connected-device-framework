@@ -324,6 +324,11 @@ No KMS_KEY_ID provided, therefore creating one.
     keys=$(aws kms create-key --description 'CDF encryption key' $AWS_ARGS)
     KMS_KEY_ID=$(echo "$keys" | jq -r '.KeyMetadata.KeyId')
     echo "Created KMS Key Id: $KMS_KEY_ID"
+else
+    echo '
+Reusing existing KMS Key.
+'
+
 fi
 
 assetlibrary_config=$CONFIG_LOCATION/assetlibrary/$CONFIG_ENVIRONMENT-config.json
@@ -404,7 +409,7 @@ lambda_layers_root="$root_dir/infrastructure/lambdaLayers"
 for layer in $(ls $lambda_layers_root); do
     cd "$lambda_layers_root/$layer"
     infrastructure/package-cfn.bash -b $DEPLOY_ARTIFACTS_STORE_BUCKET $AWS_SCRIPT_ARGS
-    infrastructure/deploy-cfn.bash -e $ENVIRONMENT $AWS_SCRIPT_ARGS &
+    infrastructure/deploy-cfn.bash -e $ENVIRONMENT $AWS_SCRIPT_ARGS
     stacks+=(cdf-$layer-$ENVIRONMENT)
 done
 
@@ -485,13 +490,15 @@ if [ -f "$assetlibrary_config" ]; then
         -v "$VPC_ID" -g "$SOURCE_SECURITY_GROUP_ID" -n "$PRIVATE_SUBNET_IDS" -r "$PRIVATE_ROUTE_TABLE_IDS" \
         $assetlibrary_custom_auth_args \
         $assetlibrary_concurrent_executions_arg $assetlibrary_autoscaling_arg \
-        $AWS_SCRIPT_ARGS &
+        $AWS_SCRIPT_ARGS
     else
         infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "$assetlibrary_config" \
         -m "$ASSETLIBRARY_MODE" \
         $assetlibrary_concurrent_executions_arg $assetlibrary_autoscaling_arg \
-        $AWS_SCRIPT_ARGS &
+        $AWS_SCRIPT_ARGS
     fi
+
+    asset_library_deployed="true"
 
 
     if [ "$ASSETLIBRARY_MODE" = "full" ]; then
@@ -515,7 +522,7 @@ if [ -f "$assetlibrary_config" ]; then
             RemoteAccessCIDR="$BASTION_REMOTE_ACCESS_CIDR" \
             EnableTCPForwarding=true \
         --capabilities CAPABILITY_IAM \
-        $AWS_ARGS &
+        $AWS_ARGS
 
         stacks+=("$BASTION_STACK_NAME")
     fi
@@ -537,7 +544,7 @@ if [ -f "$provisioning_config" ]; then
 
     infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
     infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "$provisioning_config" -k "$KMS_KEY_ID" \
-    -o $OPENSSL_LAYER_STACK_NAME $AWS_SCRIPT_ARGS &
+    -o $OPENSSL_LAYER_STACK_NAME $AWS_SCRIPT_ARGS
 
     stacks+=("$PROVISIONING_STACK_NAME")
 
@@ -552,7 +559,7 @@ if [ -f "$provisioning_config" ]; then
 
     for template in $(ls "$CONFIG_LOCATION"/provisioning/templates/*); do
         key=s3://"$template_bucket"/"$template_prefix"$(basename "$template")
-        aws s3 cp "$template" "$key" $AWS_ARGS &
+        aws s3 cp "$template" "$key" $AWS_ARGS
     done
 
 
@@ -594,15 +601,17 @@ if [ -f "$provisioning_config" ]; then
             --policy-name "$policyName" \
             --policy-document "$policyDocument" \
             --set-as-default \
-            $AWS_ARGS &
+            $AWS_ARGS
         else
             aws iot create-policy \
                 --policy-name "$policyName" \
                 --policy-document "$policyDocument" \
-                $AWS_ARGS &
+                $AWS_ARGS
         fi 
 
     done
+else
+   echo 'NOT DEPLOYING: provisioning'
 fi
 
 commands_config=$CONFIG_LOCATION/commands/$CONFIG_ENVIRONMENT-config.json
@@ -620,10 +629,12 @@ if [ -f "$commands_config" ]; then
 
     infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
     infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "$commands_config" -f "$commands_bucket" \
-    $AWS_SCRIPT_ARGS &
+    $AWS_SCRIPT_ARGS
 
     stacks+=("$COMMANDS_STACK_NAME")
 
+else
+   echo 'NOT DEPLOYING: commands'
 fi
 
 devicemonitoring_config=$CONFIG_LOCATION/devicemonitoring/$CONFIG_ENVIRONMENT-config.json
@@ -639,10 +650,12 @@ if [ -f "$devicemonitoring_config" ]; then
 
     infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
     infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "$devicemonitoring_config" \
-    $AWS_SCRIPT_ARGS &
+    $AWS_SCRIPT_ARGS
 
     stacks+=("$DEVICE_MONITORING_STACK_NAME")
 
+else
+   echo 'NOT DEPLOYING: device monitoring'
 fi
 
 
@@ -659,19 +672,13 @@ if [ -f "$eventsprocessor_config" ]; then
     cd "$root_dir/packages/services/events-processor"
 
     infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
-    infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "$eventsprocessor_config" $AWS_SCRIPT_ARGS &
+    infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "$eventsprocessor_config" $AWS_SCRIPT_ARGS
 
     stacks+=("$EVENTSPROCESSOR_STACK_NAME")
 
+else
+   echo 'NOT DEPLOYING: events-processor'
 fi
-
-
-echo '
-**********************************************************
-*****  Waiting for deployments to finish            ******
-**********************************************************
-'
-wait
 
 
 echo '
@@ -698,6 +705,7 @@ if [ "$failed" = "true" ]; then
 fi
 
 certificatevendor_config=$CONFIG_LOCATION/certificatevendor/$CONFIG_ENVIRONMENT-config.json
+echo "certificatevendor_config: $certificatevendor_config"
 if [ -f "$certificatevendor_config" ]; then
 
     echo '
@@ -713,14 +721,16 @@ if [ -f "$certificatevendor_config" ]; then
 
     infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
     infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "$certificatevendor_config" -b "$certificatevendor_bucket" -p "$certificatevendor_prefix" \
-    -r AssetLibrary \
-    -o $OPENSSL_LAYER_STACK_NAME $AWS_SCRIPT_ARGS &
+    -r AssetLibrary -k "$KMS_KEY_ID" \
+    -o $OPENSSL_LAYER_STACK_NAME $AWS_SCRIPT_ARGS
 
     stacks+=("$CERTIFICATEVENDOR_STACK_NAME")
 
+else
+   echo 'NOT DEPLOYING: certificate vendor'
 fi
 
-if [ "$ASSETLIBRARY_MODE" = "full" ]; then
+if [ "$asset_library_deployed" = "true" ] && [ "$ASSETLIBRARY_MODE" = "full" ]; then
     echo '
     **********************************************************
     *****   Adding Bastion security group to the        ******
@@ -743,7 +753,7 @@ if [ "$ASSETLIBRARY_MODE" = "full" ]; then
     aws ec2 authorize-security-group-ingress \
     --group-id "$neptune_sg_id" \
     --protocol tcp --port 8182 --source-group "$bastion_sg_id" \
-    $AWS_ARGS &
+    $AWS_ARGS || true
 fi
 
 stacks=()
@@ -761,10 +771,12 @@ if [ -f "$bulkcerts_config" ]; then
 
     infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
     infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "$bulkcerts_config" -k "$KMS_KEY_ID" \
-    -o $OPENSSL_LAYER_STACK_NAME $AWS_SCRIPT_ARGS &
+    -o $OPENSSL_LAYER_STACK_NAME $AWS_SCRIPT_ARGS
 
     stacks+=("$BULKCERTS_STACK_NAME")
 
+else
+   echo 'NOT DEPLOYING: bulk certs'
 fi
 
 
@@ -780,10 +792,12 @@ if [ -f "$eventsalerts_config" ]; then
     cd "$root_dir/packages/services/events-alerts"
 
     infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
-    infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "$eventsalerts_config" $AWS_SCRIPT_ARGS &
+    infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "$eventsalerts_config" $AWS_SCRIPT_ARGS
 
     stacks+=("$EVENTSALERTS_STACK_NAME")
 
+else
+   echo 'NOT DEPLOYING: events alerts'
 fi
 
 
@@ -800,19 +814,13 @@ if [ -f "$assetlibraryhistory_config" ]; then
     cd "$root_dir/packages/services/assetlibraryhistory"
 
     infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
-    infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "$assetlibraryhistory_config" -t 'cdf/assetlibrary/events/#' $AWS_SCRIPT_ARGS &
+    infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "$assetlibraryhistory_config" -t 'cdf/assetlibrary/events/#' $AWS_SCRIPT_ARGS
 
     stacks+=("$ASSETLIBRARY_HISTORY_STACK_NAME")
 
+else
+   echo 'NOT DEPLOYING: asset library history'
 fi
-
-
-echo '
-**********************************************************
-*****  Waiting for deployments to finish            ******
-**********************************************************
-'
-wait
 
 
 echo '
