@@ -610,6 +610,32 @@ if [ -f "$provisioning_config" ]; then
         fi 
 
     done
+
+       echo '
+      **********************************************************
+      *****  Creating AWS IoT Types                       ******
+      **********************************************************
+      '
+      if [ -f "$CONFIG_LOCATION"/provisioning/iot-types/* ]; then
+
+        for type in $(ls "$CONFIG_LOCATION"/provisioning/iot-types/*); do
+          typeName="$(basename "$type" .json)"
+          typeDescription=$(cat $type | jq -r '.thingTypeDescription')
+          typeSearchableAttributes=$(cat $type | jq -r '.searchableAttributes | @csv' | tr -d '"')
+
+          typeProperties="thingTypeDescription=$typeDescription"
+
+          if [ -n "$typeSearchableAttributes" ]; then
+             typeProperties+=", searchableAttributes=$typeSearchableAttributes"
+          fi
+
+          aws iot create-thing-type \
+            --thing-type-name $typeName \
+            --thing-type-properties "$typeProperties" \
+            $AWS_ARGS || true
+        done
+      fi
+
 else
    echo 'NOT DEPLOYING: provisioning'
 fi
