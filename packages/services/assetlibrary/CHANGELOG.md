@@ -1,3 +1,10 @@
+# [@cdf/assetlibrary-v3.2.24](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.2.23...@cdf/assetlibrary-v3.2.24) (2020-04-19)
+
+
+### Bug Fixes
+
+* **bastion:** updated bastion to use latest aws-quickstart ([e497657](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/e4976570158ae42ce9a47bbe9ebdfa3499f750a9))
+
 # [@cdf/assetlibrary-v3.2.23](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.2.22...@cdf/assetlibrary-v3.2.23) (2020-04-08)
 
 
