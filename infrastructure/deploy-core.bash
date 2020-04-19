@@ -516,7 +516,7 @@ if [ -f "$assetlibrary_config" ]; then
         --stack-name "$BASTION_STACK_NAME" \
         --parameter-overrides \
             Environment="$ENVIRONMENT" \
-            VpcId="$VPC_ID" \
+            VPCID="$VPC_ID" \
             PublicSubNetIds="$PUBLIC_SUBNET_IDS" \
             KeyPairName="$KEY_PAIR_NAME" \
             RemoteAccessCIDR="$BASTION_REMOTE_ACCESS_CIDR" \
@@ -530,7 +530,6 @@ if [ -f "$assetlibrary_config" ]; then
 
     stacks+=("$ASSETLIBRARY_STACK_NAME")
 fi
-
 
 provisioning_config=$CONFIG_LOCATION/provisioning/$CONFIG_ENVIRONMENT-config.json
 if [ -f "$provisioning_config" ]; then

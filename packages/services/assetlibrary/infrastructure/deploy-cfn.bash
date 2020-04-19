@@ -173,38 +173,46 @@ if [ "$ASSETLIBRARY_MODE" = "full" ]; then
   if [ -n "$neptune_url" ]; then
 
     # Neptune has been deployed.  Let's grab the name of the ssh key we need to log onto the Bastion
-    stack_parameters=$(aws cloudformation describe-stacks --stack-name $BASTION_STACK_NAME $AWS_ARGS)
-    key_pair_name=$(echo $stack_parameters \
-      | jq -r --arg stack_name "$BASTION_STACK_NAME" \
-      '.Stacks[] | select(.StackName==$stack_name) | .Parameters[] | select(.ParameterKey=="KeyPairName") | .ParameterValue')
-    key_pair_location="~/.ssh/${key_pair_name}.pem"
-    echo Attempting to use key pair: $key_pair_location
+    stack_parameters=$(aws cloudformation describe-stacks --stack-name $BASTION_STACK_NAME $AWS_ARGS) || true
+    if [ -n "$stack_parameters" ]; then
+        key_pair_name=$(echo $stack_parameters \
+          | jq -r --arg stack_name "$BASTION_STACK_NAME" \
+          '.Stacks[] | select(.StackName==$stack_name) | .Parameters[] | select(.ParameterKey=="KeyPairName") | .ParameterValue')
+        key_pair_location="~/.ssh/${key_pair_name}.pem"
+        echo Attempting to use key pair: $key_pair_location
 
-    echo "Checking Neptune version using:
-    NEPTUNE_STACK_NAME: $NEPTUNE_STACK_NAME
-    BASTION_STACK_NAME: $BASTION_STACK_NAME
-    key_pair_location:  $key_pair_location
-    min_dbEngineVersion_required: $min_dbEngineVersion_required
-    AWS_SCRIPT_ARGS:  $AWS_SCRIPT_ARGS
+        echo "Checking Neptune version using:
+        NEPTUNE_STACK_NAME: $NEPTUNE_STACK_NAME
+        BASTION_STACK_NAME: $BASTION_STACK_NAME
+        key_pair_location:  $key_pair_location
+        min_dbEngineVersion_required: $min_dbEngineVersion_required
+        AWS_SCRIPT_ARGS:  $AWS_SCRIPT_ARGS
+        "
+
+        set +e
+        dbEngineVersionCheck=$($cwd/neptune_dbEngineVersion.bash -n $NEPTUNE_STACK_NAME -b $BASTION_STACK_NAME -k $key_pair_location -v $min_dbEngineVersion_required $AWS_SCRIPT_ARGS)
+        set -e
+        dbEngineVersionStatus=$(echo $?)
+
+        echo dbEngineVersionStatus: $dbEngineVersionStatus
+
+        if [ "$dbEngineVersionStatus" -ne 0 ]; then
+          echo "
+    ********    WARNING!!!   *********
+    Cannot proceed with the deploy as Neptune minimum dbEngine version $min_dbEngineVersion_required is required.  You must upgrade your Neptune instances first!
+
+    Refer to https://docs.aws.amazon.com/neptune/latest/userguide/engine-releases-${min_dbEngineVersion_required}.html for details of how to upgrade.
+
     "
+          exit 1
+        fi
+     else
+          echo "
+    ********    WARNING!!!   *********
+    No Bastion detected therefore cannot verify version of Neptune.
 
-    set +e
-    dbEngineVersionCheck=$($cwd/neptune_dbEngineVersion.bash -n $NEPTUNE_STACK_NAME -b $BASTION_STACK_NAME -k $key_pair_location -v $min_dbEngineVersion_required $AWS_SCRIPT_ARGS)
-    set -e
-    dbEngineVersionStatus=$(echo $?)
-
-    echo dbEngineVersionStatus: $dbEngineVersionStatus
-
-    if [ "$dbEngineVersionStatus" -ne 0 ]; then
-      echo "
-********    WARNING!!!   *********
-Cannot proceed with the deploy as Neptune minimum dbEngine version $min_dbEngineVersion_required is required.  You must upgrade your Neptune instances first!
-
-Refer to https://docs.aws.amazon.com/neptune/latest/userguide/engine-releases-${min_dbEngineVersion_required}.html for details of how to upgrade.
-
-"
-      exit 1
-    fi
+    "
+     fi
   fi
 
   echo '
