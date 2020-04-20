@@ -1,3 +1,10 @@
+# [@cdf/commands-v3.1.2](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/commands-v3.1.1...@cdf/commands-v3.1.2) (2020-04-20)
+
+
+### Bug Fixes
+
+* assetlibrary clients ([9bb27db](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/9bb27db533330fd8cd4d12e126bdeadf66495491))
+
 # [@cdf/commands-v3.1.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/commands-v3.1.0...@cdf/commands-v3.1.1) (2020-01-15)
 
 
