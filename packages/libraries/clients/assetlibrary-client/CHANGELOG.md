@@ -1,3 +1,10 @@
+# [@cdf/assetlibrary-client-v3.2.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-client-v3.2.0...@cdf/assetlibrary-client-v3.2.1) (2020-04-20)
+
+
+### Bug Fixes
+
+* assetlibrary clients ([9bb27db](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/9bb27db533330fd8cd4d12e126bdeadf66495491))
+
 # [@cdf/assetlibrary-client-v3.2.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-client-v3.1.0...@cdf/assetlibrary-client-v3.2.0) (2020-01-06)
 
 
