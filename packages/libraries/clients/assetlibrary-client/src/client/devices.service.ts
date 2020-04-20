@@ -269,7 +269,7 @@ export class DevicesService extends ClientService {
         const attributes_qs = (attributes) ? attributes.join() : undefined;
         const groups_qs = (groups) ? groups.join() : undefined;
 
-        let url = '/bulkdevices';
+        let url = this.baseUrl + '/bulkdevices';
         const queryString = QSHelper.getQueryString({deviceIds, expandComponents, attributes:attributes_qs, includeGroups:groups_qs});
         if (queryString) {
             url += `?${queryString}`;

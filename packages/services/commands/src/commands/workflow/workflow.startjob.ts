@@ -203,6 +203,7 @@ export class StartJobAction implements WorkflowAction {
 
         // for CDF groups, we need to get the thing arn of all devices related to the group
         if (cdfGroupTargets.length>0) {
+            logger.debug(`workflow.startjob buildTargetList: creating CDFGroupTargets cdfGroupTargets: ${JSON.stringify(cdfGroupTargets)}`);
             for(const groupPath of cdfGroupTargets) {
                 let result = await this.assetLibraryGroupClient.listGroupMembersDevices(groupPath);
                 while (true) {
@@ -225,6 +226,7 @@ export class StartJobAction implements WorkflowAction {
 
         // for CDF devices, we need to get its corresponding thing arn
         if (cdfDeviceTargets.length>0) {
+            logger.debug(`workflow.startjob buildTargetList: creating CDFDeviceTargets, cdfDeviceTargets: ${JSON.stringify(cdfDeviceTargets)}`);
             const result = await this.assetLibraryDeviceClient.getDevicesByID(cdfDeviceTargets, false, [], []);
             for(const device of result.results) {
                 if (device.awsIotThingArn) {
