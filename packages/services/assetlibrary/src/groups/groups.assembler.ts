@@ -85,7 +85,12 @@ export class GroupsAssembler {
         Object.keys(node.in).forEach( key => {
             const others = node.in[key];
             if (others!==undefined) {
-                model.groups= {in:{}};
+                if (model.groups===undefined) {
+                    model.groups= {};
+                }
+                if (model.groups.in===undefined) {
+                    model.groups.in= {};
+                }
                 others.forEach(other=> {
                     if (other.category===TypeCategory.Group) {
                         if (model.groups.in[key]===undefined) {
@@ -103,7 +108,9 @@ export class GroupsAssembler {
                 if (model.groups===undefined) {
                     model.groups= {};
                 }
-                model.groups.out= {};
+                if (model.groups.out===undefined) {
+                    model.groups.out= {};
+                }
                 others.forEach(other=> {
                     if (other.category===TypeCategory.Group) {
                         if (model.groups.out[key]===undefined) {
