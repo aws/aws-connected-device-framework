@@ -1,3 +1,10 @@
+# [@cdf/assetlibrary-v3.2.25](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.2.24...@cdf/assetlibrary-v3.2.25) (2020-04-28)
+
+
+### Bug Fixes
+
+* **assetlibrary:** missing related groups in get group call ([72697d5](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/72697d53e4ccc5e57c388e41802d3d6303092f4a))
+
 # [@cdf/assetlibrary-v3.2.24](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.2.23...@cdf/assetlibrary-v3.2.24) (2020-04-19)
 
 

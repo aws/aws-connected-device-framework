@@ -1,6 +1,6 @@
 {
   "name": "@cdf/assetlibrary",
-  "version": "3.2.24",
+  "version": "3.2.25",
   "description": "CDF Asset Library",
   "author": "Dean Hart <deanhart@amazon.com>",
   "config": {
