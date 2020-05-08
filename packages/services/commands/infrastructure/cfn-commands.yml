@@ -288,6 +288,7 @@ Resources:
           - Sid: "iotjobs"
             Action:
               - "iot:CreateJob"
+              - "iot:CreateThingGroup"
               - "iot:DescribeJob"
               - "iot:GetJobDocument"
               - "iot:ListJobExecutionsForJob"
