@@ -1,0 +1,12 @@
+Type: AWS::Serverless::Api
+Properties:
+  StageName: Prod
+  EndpointConfiguration: REGIONAL
+  Auth:
+    Authorizers:
+      CognitoAuth:
+        UserPoolArn:
+          Ref: CognitoUserPoolArn
+    DefaultAuthorizer: CognitoAuth
+    InvokeRole: CALLER_CREDENTIALS
+    AddDefaultAuthorizerToCorsPreflight: false

@@ -1,0 +1,9 @@
+Type: AWS::Serverless::Api
+Properties:
+  StageName: Prod
+  EndpointConfiguration: PRIVATE
+  Auth:
+    AddDefaultAuthorizerToCorsPreflight: false
+    ResourcePolicy:
+      SourceVpcWhitelist:
+        - Ref: PrivateApiGatewayVPCEndpoint

@@ -18,12 +18,15 @@ Parameters:
   VpcId:
     Description: ID of VPC to deploy the Asset Library into
     Type: String
-  SourceSecurityGroupId:
-    Description: ID of an existing security group to allow access to the Asset Library
+  CDFSecurityGroupId:
+    Description: ID of an existing CDF security group to deploy the Asset Library into (required if running full mode, or private API)
     Type: String
   PrivateSubNetIds:
     Description: Comma delimited list of private subnetIds to deploy the Asset Library into
     Type: CommaDelimitedList
+  PrivateApiGatewayVPCEndpoint:
+    Description: VPC endpoint required for private api gateway support
+    Type: String
 
   Mode:
     Description: Run in 'lite' mode which includes device registry only, or 'full' mode which augments the device registry with an additional datastore
@@ -34,35 +37,43 @@ Parameters:
       - lite
     MinLength: 1
 
-  ApiAuthorizerType:
-    Description: Type of custom authorizer.
+  TemplateSnippetS3UriBase:
+    Description: |
+      S3 uri of directory where template snippets are stored for the account.
+    Type: String
+    MinLength: 1
+
+  ApiGatewayDefinitionTemplate:
+    Description: |
+      Name of the API Gateway Cloudformation definition along with the authorization method to use.  Use one of the provided
+      templates to implement no auth, private, api key, lambda request, lamdba token, or Cognito auth, or modify one to meet your own
+      authentization requirements.  The template must exist within the provided TemplateSnippetS3UriBase location.
+    Type: String
+    MinLength: 1
+
+  AuthType:
+    Description: Authorization type to apply to the API gateway endpoints
     Type: String
     Default: None
     AllowedValues:
       - None
+      - Private
+      - Cognito
+      - LambdaRequest
+      - LambdaToken
       - ApiKey
       - IAM
-      - CognitoAuthorizer
-      - LambdaTokenAuthorizer
-      - LambdaRequestAuthorizer
     MinLength: 1
 
-  CognitoUserPool:
-    Description: TODO
+  CognitoUserPoolArn:
+    Description: Cognito user pool arn.  Only required if AuthType is set to 'Cognito'.
     Type: String
+    Default: 'N/A'
 
   AuthorizerFunctionArn:
-    Description: TODO
+    Description: Lambda authorizer function arn.  Only required if AuthType is set to 'LambdaRequest' or 'LambdaToken'.
     Type: String
-
-  ExposePublic:
-    Description: If true, will deploy API Gateway as a regional endpoint.  If not, as a private endpoint.
-    Type: String
-    Default: true
-    AllowedValues:
-      - true
-      - false
-    MinLength: 1
+    Default: 'N/A'
 
   ProvisionedConcurrentExecutions:
     Description: The no. of desired concurrent executions to  provision.  Set to 0 to disable.
@@ -81,134 +92,33 @@ Parameters:
 
 Conditions:
   DeployFullMode: !Equals [ !Ref Mode, 'full' ]
-  DeployWithCustomAuth: !Not [ !Equals [ !Ref CustAuthStackName, "" ]]
 
-  DeployWithApiAuthorizer: !Not [ !Equals [ !Ref ApiAuthorizerType, "None" ]]
-  DeployWithApiKey: !Equals [ !Ref ApiAuthorizerType, 'ApiKey' ]
-  DeployWithIAM: !Equals [ !Ref ApiAuthorizerType, 'IAM' ]
-  DeployWithCognitoAuthorizer: !Equals [ !Ref ApiAuthorizerType, "CognitoAuthorizer" ]
-  DeployWithLambdaTokenAuthorizer: !Equals [ !Ref ApiAuthorizerType, "LambdaTokenAuthorizer" ]
-  DeployWithLambdaRequestAuthorizer: !Equals [ !Ref ApiAuthorizerType, "LambdaRequestAuthorizer" ]
-  DeployAsPrivate: !Equals [ !Ref ExposePublic, 'false' ]
+  DeployInVPC: !Not [ !Equals [ !Ref VpcId, 'N/A' ] ]
 
   DeployWithProvisionedCapacity: !Not [ !Equals [ !Ref ProvisionedConcurrentExecutions, "0" ]]
   DeployWithScaling: !Equals [ !Ref ApplyAutoscaling, 'true' ]
 
+  DeployWithLambdaAuth: !Or [ !Equals [ !Ref AuthType, 'LambdaRequest' ], !Equals [ !Ref AuthType, 'LambdaToken' ] ]
+
+
 Resources:
 
   ApiGatewayApi:
-    Type: AWS::Serverless::Api
-    Properties:
-      Auth:
-        Fn::If:
-          - DeployWithApiAuthorizer
-          - -
-              Authorizers:
-                - Fn::If:
-                    - DeployWithCognitoAuthorizer
-                    - - CdfAuthorizer:
-                          UserPoolArn: !Ref CognitoUserPool
-                          AuthType: COGNITO_USER_POOLS
-                    - - Fn::If:
-                          - DeployWithLambdaRequestAuthorizer
-                          - - CdfAuthorizer:
-                                FunctionPayloadType: REQUEST
-                                FunctionArn: !Ref AuthorizerFunctionArn
-                                Identity:
-                                  QueryStrings:
-                                    - auth
-                          - - Fn::If:
-                                - DeployWithLambdaTokenAuthorizer
-                                - - CdfAuthorizer:
-                                      FunctionArn: !Ref AuthorizerFunctionArn
-                                - Ref: AWS::NoValue
-
-              DefaultAuthorizer:
-                - Fn::If:
-                    - DeployWithIAM
-                    - AWS_IAM
-                    - CdfAuthorizer
-
-              InvokeRole:
-                - Fn::If:
-                    - DeployWithCognitoAuthorizer
-                    - CALLER_CREDENTIALS
-                    - Ref: AWS::NoValue
-
-              AddDefaultAuthorizerToCorsPreflight: false
-
-              ApiKeyRequired:
-                - Fn::If:
-                    - DeployWithApiKey
-                    - true
-                    - false
-
-              ResourcePolicy:
-                - Fn::If:
-                    - DeployAsPrivate
-                    - - SourceVpcWhitelist:
-                          - <TODO>
-                    - Ref: AWS::NoValue
-
-          - Ref: AWS::NoValue
-
-      StageName: Prod
-      EndpointConfiguration:
-        Fn::If:
-          - DeployAsPrivate
-          - PRIVATE
-          - REGIONAL
-
+    'Fn::Transform':
+      Name: 'AWS::Include'
+      Parameters:
+        Location: !Sub "${TemplateSnippetS3UriBase}${ApiGatewayDefinitionTemplate}"
     DependsOn:
       - LambdaFunction
 
   ApiGatewayAuthorizerInvokeRole:
-    Type: AWS::IAM::Role
-    Condition: DeployWithCustomAuth
-    Properties:
-      AssumeRolePolicyDocument: 
-        Version: "2012-10-17"
-        Statement: 
-          - 
-            Effect: "Allow"
-            Principal: 
-              Service: 
-                - "apigateway.amazonaws.com"
-            Action: 
-              - sts:AssumeRole
-      Policies: 
-        - 
-          PolicyName: "InvokeAuthorizerFunction"
-          PolicyDocument: 
-            Version: "2012-10-17"
-            Statement: 
-              - 
-                Effect: "Allow"
-                Action:
-                  - lambda:InvokeAsync
-                  - lambda:InvokeFunction
-                Resource:
-                  Fn::ImportValue: !Sub
-                    "${CustAuthStackName}-CustAuthLambdaArn"  
+    Condition: DeployWithLambdaAuth
+    'Fn::Transform':
+      Name: 'AWS::Include'
+      Parameters:
+        Location: !Sub "${TemplateSnippetS3UriBase}cfn-role-lambdaRequestAuthInvokerRole.yaml"
     DependsOn:
-    - LambdaFunction
-
-  AssetLibrarySecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Condition: DeployFullMode
-    Properties:
-      GroupDescription: Asset library security group
-      VpcId: !Ref VpcId
-      SecurityGroupIngress:
-      - IpProtocol: tcp
-        FromPort: 0
-        ToPort: 65535
-        SourceSecurityGroupId: !Ref SourceSecurityGroupId
-      SecurityGroupEgress:
-      - IpProtocol: tcp
-        FromPort: 0
-        ToPort: 65535
-        CidrIp: 0.0.0.0/0
+      - LambdaFunction
 
   LambdaExecutionRole:
     Type: AWS::IAM::Role
@@ -292,9 +202,11 @@ Resources:
       Runtime: nodejs12.x
 
       AutoPublishAlias: live
+
       DeploymentPreference:
         Type: AllAtOnce
-      ProvisionedConcurrencyConfig: 
+
+      ProvisionedConcurrencyConfig:
         Fn::If:
         - DeployWithProvisionedCapacity
         - ProvisionedConcurrentExecutions: !Ref ProvisionedConcurrentExecutions
@@ -305,14 +217,16 @@ Resources:
         Variables:
           NODE_CONFIG_DIR: './config'
           NODE_CONFIG: !Ref ApplicationConfigurationOverride
+
       Tracing: Active
+
       # Difference between full and lite lambda is that lite is not deployed within a VPC
       VpcConfig:
         Fn::If:
-        - DeployFullMode
+        - DeployInVPC
         - SubnetIds: !Ref PrivateSubNetIds
           SecurityGroupIds: 
-          - !Ref AssetLibrarySecurityGroup
+          - !Ref CDFSecurityGroupId
         - Ref: AWS::NoValue
 
       Events:
@@ -328,31 +242,28 @@ Resources:
             RestApiId: !Ref ApiGatewayApi
             Path: /{proxy+}
             Method: ANY
+
     DependsOn:
       - LambdaExecutionRole
 
   # Optional auto-scaling configuration
-  AutoScalingNestedStack:
-    Type: AWS::CloudFormation::Stack
-    Condition: DeployWithScaling
-    Properties: 
-      TemplateURL: ./cfn-autoscaling.yml
-      Parameters: 
-        LambdaName: !Ref LambdaFunction
-        LambdaAlias: live
-      TimeoutInMinutes: 5
-    DependsOn: LambdaFunction
+#  AutoScalingNestedStack:
+#    Type: AWS::CloudFormation::Stack
+#    Condition: DeployWithScaling
+#    Properties:
+#      TemplateURL: ./cfn-autoscaling.yml
+#      Parameters:
+#        LambdaName: !Ref LambdaFunction
+#        LambdaAlias: live
+#      TimeoutInMinutes: 5
+#    DependsOn: LambdaFunction
 
 Outputs:
-  LambdaFunctionConsoleUrl:
-    Description: Console URL for the Lambda Function.
-    Value: !Sub "https://{AWS::Region}.console.aws.amazon.com/lambda/home?region={AWS::Region}#/functions/{LambdaFunction}"
-  AssetLibrarySecurityGroupID:
-    Condition: DeployFullMode
-    Description: Asset library security group
-    Value: !Ref AssetLibrarySecurityGroup
+  FunctionName:
+    Description: Asset library lambda function name
+    Value: !Ref LambdaFunction
     Export: 
-      Name: !Sub "${AWS::StackName}-AssetLibrarySecurityGroupID"
+      Name: !Sub "${AWS::StackName}-functionName"
   ApiGatewayUrl:
     Description: URL for application
     Value: !Sub 'https://${ApiGatewayApi}.execute-api.${AWS::Region}.amazonaws.com/Prod'

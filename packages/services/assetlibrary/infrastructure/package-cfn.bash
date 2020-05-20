@@ -37,35 +37,19 @@ while getopts ":b:R:P:" opt; do
   esac
 done
 
-if [ -z "$DEPLOY_ARTIFACTS_STORE_BUCKET" ]; then
-	echo -b DEPLOY_ARTIFACTS_STORE_BUCKET is required; help_message; exit 1;
-fi
+source ../../../infrastructure/common-deploy-functions.bash
+incorrect_args=$((incorrect_args+$(verifyMandatoryArgument DEPLOY_ARTIFACTS_STORE_BUCKET b $DEPLOY_ARTIFACTS_STORE_BUCKET)))
 
-
-AWS_ARGS=
-if [ -n "$AWS_REGION" ]; then
-	AWS_ARGS="--region $AWS_REGION "
-fi
-if [ -n "$AWS_PROFILE" ]; then
-	AWS_ARGS="$AWS_ARGS--profile $AWS_PROFILE"
-fi
+AWS_ARGS=$(buildAwsArgs "$AWS_REGION" "$AWS_PROFILE" )
 
 cwd=$(dirname "$0")
 mkdir -p $cwd/build
 
-echo '
-**********************************************************
-  Packaging the Asset Library CloudFormation template and uploading to S3
-**********************************************************
-'
+logTitle 'Packaging the Asset Library CloudFormation template and uploading to S3'
 aws cloudformation package \
   --template-file $cwd/cfn-assetLibrary.yml \
   --output-template-file $cwd/build/cfn-assetLibrary-output.yml \
   --s3-bucket $DEPLOY_ARTIFACTS_STORE_BUCKET \
   $AWS_ARGS
 
-echo '
-**********************************************************
-  Asset Library Done!
-**********************************************************
-'
+logTitle 'Asset Library packaging complete!'

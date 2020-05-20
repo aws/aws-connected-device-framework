@@ -18,6 +18,8 @@ DESCRIPTION
     Deploys the cdf-certificatevendor service.
 
 MANDATORY ARGUMENTS:
+====================
+
     -e (string)   Name of environment.
     -c (string)   Location of application configuration file containing configuration overrides.
     -b (string)   Name of bucket where certificates are to be stored.
@@ -25,6 +27,8 @@ MANDATORY ARGUMENTS:
     -o (string)   The OpenSSL lambda layer stack name.
 
 OPTIONAL ARGUMENTS
+===================
+
     -p (string)   Key prefixes of bucket where certificates are to be stored (defaults to none)
     -m (string)   MQTT topic for get certificates (defaults to cdf/certificates/+/get)
     -n (string)   MQTT topic for ack certificates (defaults to cdf/certificates/+/ack)
@@ -46,7 +50,7 @@ while getopts ":e:o:c:b:p:k:m:n:r:g:GA:C:R:P:" opt; do
   case $opt in
 
     e  ) export ENVIRONMENT=$OPTARG;;
-    c  ) export CERTIFICATEVENDOR_CONFIG_LOCATION=$OPTARG;;
+    c  ) export CONFIG_LOCATION=$OPTARG;;
     b  ) export BUCKET=$OPTARG;;
     r  ) export REGISTRY=$OPTARG;;
 
@@ -70,14 +74,15 @@ while getopts ":e:o:c:b:p:k:m:n:r:g:GA:C:R:P:" opt; do
   esac
 done
 
+source ../../../infrastructure/common-deploy-functions.bash
 
-if [ -z "$ENVIRONMENT" ]; then
-	echo -e ENVIRONMENT is required; help_message; exit 1;
-fi
+incorrect_args=0
 
-if [ -z "$CERTIFICATEVENDOR_CONFIG_LOCATION" ]; then
-	echo -c CERTIFICATEVENDOR_CONFIG_LOCATION is required; help_message; exit 1;
-fi
+incorrect_args=$((incorrect_args+$(verifyMandatoryArgument ENVIRONMENT e $ENVIRONMENT)))
+incorrect_args=$((incorrect_args+$(verifyMandatoryArgument CONFIG_LOCATION c "$CONFIG_LOCATION")))
+incorrect_args=$((incorrect_args+$(verifyMandatoryArgument BUCKET f "$BUCKET")))
+incorrect_args=$((incorrect_args+$(verifyMandatoryArgument REGISTRY r "$REGISTRY")))
+
 
 if [ -z "$BUCKET" ]; then
 	echo -f BUCKET is required; help_message; exit 1;
@@ -131,7 +136,7 @@ OPENSSL_STACK_NAME=cdf-openssl-${ENVIRONMENT}
 echo "
 Running with:
   ENVIRONMENT:                      $ENVIRONMENT
-  CERTIFICATEVENDOR_CONFIG_LOCATION:  $CERTIFICATEVENDOR_CONFIG_LOCATION
+  CONFIG_LOCATION:  $CONFIG_LOCATION
   BUCKET:                           $BUCKET
   PREFIX:                           $PREFIX
   REGISTRY:                         $REGISTRY
@@ -207,11 +212,11 @@ commands_invoke_url=$(echo $stack_exports \
     | jq -r --arg commands_invoke_url_export "$commands_invoke_url_export" \
     '.Exports[] | select(.Name==$commands_invoke_url_export) | .Value')
 
-cat $CERTIFICATEVENDOR_CONFIG_LOCATION | \
+cat $CONFIG_LOCATION | \
   jq --arg aws_iot_endpoint "$aws_iot_endpoint"  \
      --arg rotate_cert_thing_group_name "$THING_GROUP_NAME" \
   '.aws.iot.endpoint=$aws_iot_endpoint | .aws.iot.thingGroup.rotateCertificates=$rotate_cert_thing_group_name' \
-  > $CERTIFICATEVENDOR_CONFIG_LOCATION.tmp && mv $CERTIFICATEVENDOR_CONFIG_LOCATION.tmp $CERTIFICATEVENDOR_CONFIG_LOCATION
+  > $CONFIG_LOCATION.tmp && mv $CONFIG_LOCATION.tmp $CONFIG_LOCATION
 
 if [ "$REGISTRY" = "AssetLibrary" ]; then
   assetlibrary_invoke_url_export="$ASSETLIBRARY_STACK_NAME-apigatewayurl"
@@ -219,13 +224,13 @@ if [ "$REGISTRY" = "AssetLibrary" ]; then
       | jq -r --arg assetlibrary_invoke_url_export "$assetlibrary_invoke_url_export" \
       '.Exports[] | select(.Name==$assetlibrary_invoke_url_export) | .Value')
 
-  cat $CERTIFICATEVENDOR_CONFIG_LOCATION | \
+  cat $CONFIG_LOCATION | \
     jq --arg assetlibrary_invoke_url "$assetlibrary_invoke_url" \
     ' .assetLibrary.baseUrl=$assetlibrary_invoke_url' \
-    > $CERTIFICATEVENDOR_CONFIG_LOCATION.tmp && mv $CERTIFICATEVENDOR_CONFIG_LOCATION.tmp $CERTIFICATEVENDOR_CONFIG_LOCATION
+    > $CONFIG_LOCATION.tmp && mv $CONFIG_LOCATION.tmp $CONFIG_LOCATION
 fi
 
-application_configuration_override=$(cat $CERTIFICATEVENDOR_CONFIG_LOCATION)
+application_configuration_override=$(cat $CONFIG_LOCATION)
 
 
 echo '

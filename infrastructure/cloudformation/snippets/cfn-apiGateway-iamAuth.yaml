@@ -1,0 +1,6 @@
+Type: AWS::Serverless::Api
+Properties:
+  StageName: Prod
+  EndpointConfiguration: REGIONAL
+  Auth:
+    DefaultAuthorizer: AWS_IAM

@@ -91,6 +91,10 @@ Parameters:
   Environment:
     Description: Name of Environment
     Type: String
+  CDFSecurityGroupId:
+    Description: ID of CDF security group
+    Type: String
+    MinLength: 1
 
   BastionAMIOS:
     AllowedValues:
@@ -677,6 +681,7 @@ Resources:
               - 4BastionCondition
               - !Ref EIP4
               - 'Null'
+
   BastionSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
@@ -691,6 +696,38 @@ Resources:
           FromPort: -1
           ToPort: -1
           CidrIp: !Ref RemoteAccessCIDR
+      SecurityGroupEgress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          Description: CDF security group (http)
+          DestinationSecurityGroupId: !Ref CDFSecurityGroupId
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          Description: CDF security group (https)
+          DestinationSecurityGroupId: !Ref CDFSecurityGroupId
+
+  CDFSecurityGroupHttpIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref CDFSecurityGroupId
+      Description: CDF security group (http)
+      IpProtocol: tcp
+      FromPort: 80
+      ToPort: 80
+      SourceSecurityGroupId: !Ref BastionSecurityGroup
+
+  CDFSecurityGroupHttpsIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref CDFSecurityGroupId
+      Description: CDF security group (https)
+      IpProtocol: tcp
+      FromPort: 443
+      ToPort: 443
+      SourceSecurityGroupId: !Ref BastionSecurityGroup
+
 Outputs:
   BastionAutoScalingGroup:
     Description: Auto Scaling Group Reference ID

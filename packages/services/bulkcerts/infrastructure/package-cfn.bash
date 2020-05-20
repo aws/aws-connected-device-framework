@@ -26,7 +26,7 @@ OPTIONAL ARGUMENTS
 EOF
 }
 
-while getopts ":b:aR:P:" opt; do
+while getopts ":b:R:P:" opt; do
   case $opt in
     b  ) export DEPLOY_ARTIFACTS_STORE_BUCKET=$OPTARG;;
     R  ) export AWS_REGION=$OPTARG;;
@@ -37,35 +37,20 @@ while getopts ":b:aR:P:" opt; do
   esac
 done
 
-if [ -z "$DEPLOY_ARTIFACTS_STORE_BUCKET" ]; then
-	echo -b DEPLOY_ARTIFACTS_STORE_BUCKET is required; help_message; exit 1;
-fi
+source ../../../infrastructure/common-deploy-functions.bash
+incorrect_args=$((incorrect_args+$(verifyMandatoryArgument DEPLOY_ARTIFACTS_STORE_BUCKET b $DEPLOY_ARTIFACTS_STORE_BUCKET)))
 
-AWS_ARGS=
-if [ -n "$AWS_REGION" ]; then
-	AWS_ARGS="--region $AWS_REGION "
-fi
-if [ -n "$AWS_PROFILE" ]; then
-	AWS_ARGS="$AWS_ARGS--profile $AWS_PROFILE"
-fi
+AWS_ARGS=$(buildAwsArgs "$AWS_REGION" "$AWS_PROFILE" )
 
 cwd=$(dirname "$0")
 mkdir -p $cwd/build
 
 
-echo '
-**********************************************************
-  Packaging the Bulk Certs CloudFormation template and uploading to S3
-**********************************************************
-'
+logTitle 'Packaging the Bulk Certs CloudFormation template and uploading to S3'
 aws cloudformation package \
   --template-file $cwd/cfn-bulkcerts.yml \
   --output-template-file $cwd/build/cfn-bulkcerts-output.yml \
   --s3-bucket $DEPLOY_ARTIFACTS_STORE_BUCKET \
   $AWS_ARGS
 
-echo '
-**********************************************************
-  Bulk Certs Done!
-**********************************************************
-'
+logTitle 'Bulk Certs packaging complete!'

@@ -50,52 +50,43 @@ Resources:
     Properties:
       EnableDnsSupport: 'true'
       EnableDnsHostnames: 'true'
-      CidrBlock:
-        Ref: VPCCIDR
+      CidrBlock: !Ref VPCCIDR
 
   PrivateSubnetOne:
     Type: AWS::EC2::Subnet
     Properties:
-      VpcId:
-        Ref: VPC
+      VpcId: !Ref VPC
       AvailabilityZone: !Select 
         - 0
         - Fn::GetAZs: !Ref 'AWS::Region'
-      CidrBlock:
-        Ref: PrivateSubnetOneCIDR
+      CidrBlock: !Ref PrivateSubnetOneCIDR
 
   PrivateSubnetTwo:
     Type: AWS::EC2::Subnet
     Properties:
-      VpcId:
-        Ref: VPC
+      VpcId: !Ref VPC
       AvailabilityZone: !Select 
         - 1
         - Fn::GetAZs: !Ref 'AWS::Region'
-      CidrBlock:
-        Ref: PrivateSubnetTwoCIDR
+      CidrBlock: !Ref PrivateSubnetTwoCIDR
 
   PublicSubnetOne:
     Type: AWS::EC2::Subnet
     Properties:
-      VpcId:
-        Ref: VPC
+      VpcId: !Ref VPC
       AvailabilityZone: !Select 
         - 0
         - Fn::GetAZs: !Ref 'AWS::Region'
-      CidrBlock:
-        Ref: PublicSubnetOneCIDR
+      CidrBlock: !Ref PublicSubnetOneCIDR
           
   PublicSubnetTwo:
     Type: AWS::EC2::Subnet
     Properties:
-      VpcId:
-        Ref: VPC
+      VpcId: !Ref VPC
       AvailabilityZone: !Select 
         - 1
         - Fn::GetAZs: !Ref 'AWS::Region'
-      CidrBlock:
-        Ref: PublicSubnetTwoCIDR
+      CidrBlock: !Ref PublicSubnetTwoCIDR
 
   InternetGateway:
     Type: AWS::EC2::InternetGateway
@@ -103,10 +94,8 @@ Resources:
   GatewayToInternet:
     Type: AWS::EC2::VPCGatewayAttachment
     Properties:
-      VpcId:
-        Ref: VPC
-      InternetGatewayId:
-        Ref: InternetGateway
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref InternetGateway
 
   NATGatewayOne:
     DependsOn: GatewayToInternet
@@ -116,8 +105,7 @@ Resources:
         Fn::GetAtt:
         - ElasticIPOne
         - AllocationId
-      SubnetId:
-        Ref: PublicSubnetOne
+      SubnetId: !Ref PublicSubnetOne
 
   ElasticIPOne:
     Type: AWS::EC2::EIP
@@ -132,8 +120,7 @@ Resources:
         Fn::GetAtt:
         - ElasticIPTwo
         - AllocationId
-      SubnetId:
-        Ref: PublicSubnetTwo
+      SubnetId: !Ref PublicSubnetTwo
 
   ElasticIPTwo:
     Type: AWS::EC2::EIP
@@ -143,80 +130,86 @@ Resources:
   PublicRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
-      VpcId:
-        Ref: VPC
+      VpcId: !Ref VPC
 
   PublicRoute:
     Type: AWS::EC2::Route
     Properties:
-      RouteTableId:
-        Ref: PublicRouteTable
+      RouteTableId: !Ref PublicRouteTable
       DestinationCidrBlock: 0.0.0.0/0
-      GatewayId:
-        Ref: InternetGateway
+      GatewayId: !Ref InternetGateway
 
   PublicSubnetOneRouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      SubnetId:
-        Ref: PublicSubnetOne
-      RouteTableId:
-        Ref: PublicRouteTable
+      SubnetId: !Ref PublicSubnetOne
+      RouteTableId: !Ref PublicRouteTable
 
   PublicSubnetTwoRouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      SubnetId:
-        Ref: PublicSubnetTwo
-      RouteTableId:
-        Ref: PublicRouteTable
+      SubnetId: !Ref PublicSubnetTwo
+      RouteTableId: !Ref PublicRouteTable
 
   PrivateRouteTableOne:
     Type: AWS::EC2::RouteTable
     Properties:
-      VpcId:
-        Ref: VPC
+      VpcId: !Ref VPC
 
   PrivateRouteToInternetOne:
     Type: AWS::EC2::Route
     Properties:
-      RouteTableId:
-        Ref: PrivateRouteTableOne
+      RouteTableId: !Ref PrivateRouteTableOne
       DestinationCidrBlock: 0.0.0.0/0
-      NatGatewayId:
-        Ref: NATGatewayOne
+      NatGatewayId: !Ref NATGatewayOne
 
   PrivateSubnetOneRouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      SubnetId:
-        Ref: PrivateSubnetOne
-      RouteTableId:
-        Ref: PrivateRouteTableOne
+      SubnetId: !Ref PrivateSubnetOne
+      RouteTableId: !Ref PrivateRouteTableOne
 
   PrivateRouteTableTwo:
     Type: AWS::EC2::RouteTable
     Properties:
-      VpcId:
-        Ref: VPC
+      VpcId: !Ref VPC
 
   PrivateRouteToInternetTwo:
     Type: AWS::EC2::Route
     Properties:
-      RouteTableId:
-        Ref: PrivateRouteTableTwo
+      RouteTableId: !Ref PrivateRouteTableTwo
       DestinationCidrBlock: 0.0.0.0/0
-      NatGatewayId:
-        Ref: NATGatewayTwo
+      NatGatewayId: !Ref NATGatewayTwo
 
   PrivateSubnetTwoRouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      SubnetId:
-        Ref: PrivateSubnetTwo
-      RouteTableId:
-        Ref: PrivateRouteTableTwo
+      SubnetId: !Ref PrivateSubnetTwo
+      RouteTableId: !Ref PrivateRouteTableTwo
 
+  CDFSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: CDF security group
+      VpcId: !Ref VPC
+      SecurityGroupEgress:
+        - IpProtocol: tcp
+          FromPort: 0
+          ToPort: 65535
+          CidrIp: 0.0.0.0/0
+
+  PrivateApiGatewayVPCEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      PrivateDnsEnabled: true
+      ServiceName: !Sub com.amazonaws.${AWS::Region}.execute-api
+      VpcEndpointType: Interface
+      VpcId: !Ref VPC
+      SubnetIds:
+        - !Ref PrivateSubnetOne
+        - !Ref PrivateSubnetTwo
+      SecurityGroupIds:
+        - !Ref CDFSecurityGroup
 
 
 Outputs:
@@ -268,10 +261,14 @@ Outputs:
       Ref: PrivateRouteTableTwo
     Export: 
       Name: !Sub "${AWS::StackName}-PrivateRouteTableTwo"
-  DefaultSecurityGroup:
-    Description: Default security group
-    Value:
-      !GetAtt VPC.DefaultSecurityGroup
+  CDFSecurityGroup:
+    Description: CDF security group
+    Value: !Ref CDFSecurityGroup
     Export: 
-      Name: !Sub "${AWS::StackName}-DefaultSecurityGroup"
+      Name: !Sub "${AWS::StackName}-SecurityGroup"
+  PrivateApiGatewayVPCEndpoint:
+    Description: VPC endpoint for private api support
+    Value: !Ref PrivateApiGatewayVPCEndpoint
+    Export:
+      Name: !Sub "${AWS::StackName}-PrivateApiGatewayVPCEndpoint"
 

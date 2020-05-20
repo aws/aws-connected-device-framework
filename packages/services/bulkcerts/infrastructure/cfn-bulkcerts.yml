@@ -15,10 +15,64 @@ Parameters:
     Description:  Name of environment.  Used to name the created resources.
     Type: String
     MinLength: 1
+
   ApplicationConfigurationOverride:
     Description: This allows you to override any configuration application configuration. Must be a JSON formatted string. Any configurations contained in this will override the configurations found and merged from the config files.
     Type: String
     MinLength: 1
+
+
+  TemplateSnippetS3UriBase:
+    Description: |
+      S3 uri of directory where template snippets are stored for the account.
+    Type: String
+    MinLength: 1
+
+  AuthType:
+    Description: Authorization type to apply to the API gateway endpoints
+    Type: String
+    Default: None
+    AllowedValues:
+      - None
+      - Private
+      - Cognito
+      - LambdaRequest
+      - LambdaToken
+      - ApiKey
+      - IAM
+    MinLength: 1
+
+  ApiGatewayDefinitionTemplate:
+    Description: |
+      Name of the API Gateway Cloudformation definition along with the authorization method to use.  Use one of the provided
+      templates to implement no auth, private, api key, lambda request, lamdba token, or Cognito auth, or modify one to meet your own
+      authentization requirements.  The template must exist within the provided TemplateSnippetS3UriBase location.
+    Type: String
+    MinLength: 1
+
+  VpcId:
+    Description: ID of VPC to deploy the API into. Only required if AuthType = 'Private'.
+    Type: String
+  CDFSecurityGroupId:
+    Description: ID of an existing CDF security group to deploy the API into. Only required if AuthType = 'Private'.
+    Type: String
+  PrivateSubNetIds:
+    Description: Comma delimited list of private subnetIds to deploy the API into. Only required if AuthType = 'Private'.
+    Type: CommaDelimitedList
+  PrivateApiGatewayVPCEndpoint:
+    Description: VPC endpoint. Only required if AuthType = 'Private'.
+    Type: String
+
+  CognitoUserPoolArn:
+    Description: Cognito user pool arn.  Only required if AuthType is set to 'Cognito'.
+    Type: String
+    Default: 'N/A'
+
+  AuthorizerFunctionArn:
+    Description: Lambda authorizer function arn.  Only required if AuthType is set to 'LambdaRequest' or 'LambdaToken'.
+    Type: String
+    Default: 'N/A'
+
   KmsKeyId:
     Description: The KMS key ID used to encrypt SSM parameters
     Type: String
@@ -28,195 +82,29 @@ Parameters:
     Type: String
     MinLength: 1
 
-  CustAuthStackName:
-    Description: Name of custom authorizer Stack (if required).
-    Type: String
-
 Conditions:
-  DeployWithCustomAuth: !Not [ !Equals [ !Ref CustAuthStackName, "" ]]
+
+  DeployInVPC: !Not [ !Equals [ !Ref VpcId, 'N/A' ] ]
+  DeployWithLambdaAuth: !Or [ !Equals [ !Ref AuthType, 'LambdaRequest' ], !Equals [ !Ref AuthType, 'LambdaToken' ] ]
 
 Resources:
+
   ApiGatewayApi:
-    Type: AWS::Serverless::Api
-    Properties:
-      StageName: Prod
-      EndpointConfiguration: REGIONAL
-      DefinitionBody:
-        swagger: 2.0
-        info:
-          title: !Sub 'CDF Bulk Certs (${Environment})'
-
-        basePath: "/"
-        schemes:
-        - https
-        paths:
-          /:
-            x-amazon-apigateway-any-method:
-              produces:
-              - application/vnd.aws-cdf-v1.0+json
-              responses:
-                '200':
-                  description: '200 response'
-                  schema:
-                    $ref: "#/definitions/Empty"
-              security:
-                Fn::If:
-                - DeployWithCustomAuth
-                - - CustomAuthorizer: []
-                - Ref: AWS::NoValue
-              x-amazon-apigateway-integration:
-                responses:
-                  default:
-                    statusCode: '200'
-                uri:
-                  Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ApiLambdaFunction.Arn}/invocations"
-                passthroughBehavior: when_no_match
-                httpMethod: POST
-                type: aws_proxy
-
-            options:
-              consumes:
-              - application/vnd.aws-cdf-v1.0+json
-              produces:
-              - application/vnd.aws-cdf-v1.0+json
-              responses:
-                '200':
-                  description: '200 response'
-                  schema:
-                    $ref: "#/definitions/Empty"
-                  headers:
-                    Access-Control-Allow-Origin:
-                      type: string
-                    Access-Control-Allow-Methods:
-                      type: string
-                    Access-Control-Allow-Headers:
-                      type: string
-              x-amazon-apigateway-integration:
-                contentHandling: CONVERT_TO_TEXT
-                responses:
-                  default:
-                    statusCode: 200
-                    responseParameters:
-                      method.response.header.Access-Control-Allow-Methods: "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'"
-                      method.response.header.Access-Control-Allow-Headers: "'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token'"
-                      method.response.header.Access-Control-Allow-Origin: "'*'"
-                passthroughBehavior: when_no_match
-                requestTemplates:
-                  # a CORS options request will have no content type, API Gateway then defaults to application/json
-                  application/json: "{\"statusCode\": 200}"
-                  application/vnd.aws-cdf-v1.0+json: "{\"statusCode\": 200}"
-                type: mock
-
-          /{proxy+}:
-            x-amazon-apigateway-any-method:
-              produces:
-              - application/vnd.aws-cdf-v1.0+json
-              parameters:
-              - name: proxy
-                in: path
-                required: true
-                type: string
-              responses: {}
-              security:
-                Fn::If:
-                - DeployWithCustomAuth
-                - - CustomAuthorizer: []
-                - Ref: AWS::NoValue
-              x-amazon-apigateway-integration:
-                uri: 
-                  Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ApiLambdaFunction.Arn}/invocations"
-                httpMethod: POST
-                type: aws_proxy
-
-            options:
-              consumes:
-              - application/vnd.aws-cdf-v1.0+json
-              produces:
-              - application/vnd.aws-cdf-v1.0+json
-              responses:
-                '200':
-                  description: '200 response'
-                  schema:
-                    $ref: "#/definitions/Empty"
-                  headers:
-                    Access-Control-Allow-Origin:
-                      type: string
-                    Access-Control-Allow-Methods:
-                      type: string
-                    Access-Control-Allow-Headers:
-                      type: string
-              x-amazon-apigateway-integration:
-                contentHandling: CONVERT_TO_TEXT
-                responses:
-                  default:
-                    statusCode: 200
-                    responseParameters:
-                      method.response.header.Access-Control-Allow-Methods: "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'"
-                      method.response.header.Access-Control-Allow-Headers: "'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token'"
-                      method.response.header.Access-Control-Allow-Origin: "'*'"
-                passthroughBehavior: when_no_match
-                requestTemplates:
-                  # a CORS options request will have no content type, API Gateway then defaults to application/json
-                  application/json: "{\"statusCode\": 200}"
-                  application/vnd.aws-cdf-v1.0+json: "{\"statusCode\": 200}"
-                type: mock
-        x-amazon-apigateway-binary-media-types:
-          - '*/*'
-        definitions:
-          Empty:
-            type: object
-            title: Empty Schema
-        securityDefinitions:
-          Fn::If:
-          - DeployWithCustomAuth
-          - CustomAuthorizer:
-              type: apiKey
-              name: Authorization
-              in: header
-              x-amazon-apigateway-authtype: custom
-              x-amazon-apigateway-authorizer:
-                type: token
-                authorizerUri: !Sub
-                - "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CustAuthLambdaArn}/invocations"
-                - CustAuthLambdaArn: 
-                    Fn::ImportValue: !Sub 
-                      '${CustAuthStackName}-CustAuthLambdaArn'
-                authorizerCredentials: !Sub '${ApiGatewayAuthorizerInvokeRole.Arn}'
-                authorizerResultTtlInSeconds: 60
-          - Ref: AWS::NoValue
+    'Fn::Transform':
+      Name: 'AWS::Include'
+      Parameters:
+        Location: !Sub "${TemplateSnippetS3UriBase}${ApiGatewayDefinitionTemplate}"
     DependsOn:
       - ApiLambdaFunction
 
   ApiGatewayAuthorizerInvokeRole:
-    Type: AWS::IAM::Role
-    Condition: DeployWithCustomAuth
-    Properties:
-      AssumeRolePolicyDocument: 
-        Version: "2012-10-17"
-        Statement: 
-          - 
-            Effect: "Allow"
-            Principal: 
-              Service: 
-                - "apigateway.amazonaws.com"
-            Action: 
-              - sts:AssumeRole
-      Policies: 
-        - 
-          PolicyName: "InvokeAuthorizerFunction"
-          PolicyDocument: 
-            Version: "2012-10-17"
-            Statement: 
-              - 
-                Effect: "Allow"
-                Action:
-                  - lambda:InvokeAsync
-                  - lambda:InvokeFunction
-                Resource:
-                  Fn::ImportValue: !Sub
-                    "${CustAuthStackName}-CustAuthLambdaArn"  
+    Condition: DeployWithLambdaAuth
+    'Fn::Transform':
+      Name: 'AWS::Include'
+      Parameters:
+        Location: !Sub "${TemplateSnippetS3UriBase}cfn-role-lambdaRequestAuthInvokerRole.yaml"
     DependsOn:
-    - ApiLambdaFunction
+      - ApiLambdaFunction
 
   ApiLambdaExecutionRole:
     Type: AWS::IAM::Role
@@ -354,6 +242,15 @@ Resources:
           BULKCERTS_AWS_DYNAMODB_TASKS_TABLE: !Ref BulkCertificatesTaskTable
           BULKCERTS_EVENTS_REQUEST_TOPIC: !Ref CertificatesRequestSnsTopic
       Tracing: Active
+
+      VpcConfig:
+        Fn::If:
+          - DeployInVPC
+          - SubnetIds: !Ref PrivateSubNetIds
+            SecurityGroupIds:
+              - !Ref CDFSecurityGroupId
+          - Ref: AWS::NoValue
+
       Events:
         ProxyApiRoot:
           Type: Api
@@ -451,17 +348,11 @@ Resources:
 
 
 Outputs:
-  ApiLambdaFunctionConsoleUrl:
-    Description: Console URL for the API Lambda Function.
-    Value: !Sub "https://{AWS::Region}.console.aws.amazon.com/lambda/home?region={AWS::Region}#/functions/{ApiLambdaFunction}"
   ApiLambdaFunction:
     Description: Bulk Certs API Lambda Function
     Value: !Sub '${ApiLambdaFunction.Arn}'
     Export:
         Name: !Sub '${AWS::StackName}-ApiLambdaFunction'
-  SnsLambdaFunctionConsoleUrl:
-    Description: Console URL for the SNS Lambda Function.
-    Value: !Sub "https://{AWS::Region}.console.aws.amazon.com/lambda/home?region={AWS::Region}#/functions/{SnsLambdaFunction}"
   SnsLambdaFunction:
     Description: Bulk Certs SNS Lambda Function
     Value: !Sub '${SnsLambdaFunction.Arn}'
@@ -472,3 +363,13 @@ Outputs:
     Value: !Ref CertificatesRequestSnsTopic
     Export:
       Name: !Sub '${AWS::StackName}-CertificatesRequestSnsTopic'
+  ApiGatewayUrl:
+    Description: URL for application
+    Value: !Sub 'https://${ApiGatewayApi}.execute-api.${AWS::Region}.amazonaws.com/Prod'
+    Export:
+      Name: !Sub '${AWS::StackName}-apigatewayurl'
+  ApiGatewayHost:
+    Description: Host for application
+    Value: !Sub '${ApiGatewayApi}.execute-api.${AWS::Region}.amazonaws.com'
+    Export:
+      Name: !Sub '${AWS::StackName}-apigatewayhost'
