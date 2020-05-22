@@ -213,3 +213,33 @@ function getAwsRegion  {
     aws_args=$1
     echo $(aws configure get region $AWG_ARGS)
 }
+
+function asksure {
+    config_message=$1
+    bypass_prompt=$2
+
+    echo -n "$config_message"
+
+    if [ -z "$bypass_prompt" ]; then
+        echo '
+
+    Are you sure you want to proceed (Y/N)?
+    '
+        while read -r -n 1 -s answer; do
+            if [[ $answer = [YyNn] ]]; then
+                [[ $answer = [Yy] ]] && retval=0
+                [[ $answer = [Nn] ]] && retval=1
+                break
+            fi
+        done
+        if [[ "$retval" -eq 0 ]]; then
+            echo "Okay, will continue....
+            "
+        else
+            echo "Aborted"
+            exit 1
+        fi
+    else
+        echo -n "$config_message"
+    fi
+}

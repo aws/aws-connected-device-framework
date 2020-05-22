@@ -220,7 +220,7 @@ The Connected Device Framework (CDF) will install using the following configurat
 
     -N (USE_EXISTING_VPC)               : $USE_EXISTING_VPC"
 
-if [ -z "$USE_EXISTING_VPC" ]; then
+if [[ -z "$USE_EXISTING_VPC" ]]; then
     config_message+='not provided, therefore a new vpc will be created'
 else
     config_message+="
@@ -237,38 +237,11 @@ config_message+="
         AWS_ACCOUNT_ID                  : $AWS_ACCOUNT_ID
     -B (BYPASS_BUNDLE)                  : $BYPASS_BUNDLE"
 
-if [ -z "$BYPASS_BUNDLE" ]; then
+if [[ -z "$BYPASS_BUNDLE" ]]; then
     config_message+='not provided, therefore each TypeScript project will be bundled'
 fi
 
-asksure() {
-    echo -n "$config_message"
-
-    echo '
-
-Are you sure you want to proceed (Y/N)?
-'
-    while read -r -n 1 -s answer; do
-        if [[ $answer = [YyNn] ]]; then
-            [[ $answer = [Yy] ]] && retval=0
-            [[ $answer = [Nn] ]] && retval=1
-            break
-        fi
-    done
-    return $retval
-}
-
-if [ -z "$BYPASS_PROMPT" ]; then
-    if asksure; then
-        echo "Okay, installation of CDF will continue....
-        "
-    else
-        echo "Installation of CDF aborted"
-        exit 1
-    fi
-else
-    echo -n "$config_message"
-fi
+asksure "$config_message" $BYPASS_PROMPT
 
 
 root_dir=$(pwd)
