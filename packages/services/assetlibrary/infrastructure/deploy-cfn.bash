@@ -1,6 +1,10 @@
 #!/bin/bash
 
 set -e
+if [[ "$DEBUG" == "true" ]]; then
+    set -x
+fi
+source ../../../infrastructure/common-deploy-functions.bash
 
 #-------------------------------------------------------------------------------
 # Copyright (c) 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
@@ -105,10 +109,8 @@ while getopts ":e:c:v:g:n:m:y:z:C:A:i:r:x:sa:R:P:" opt; do
   esac
 done
 
-source ../../../infrastructure/common-deploy-functions.bash
 
 incorrect_args=0
-
 incorrect_args=$((incorrect_args+$(verifyMandatoryArgument ENVIRONMENT e $ENVIRONMENT)))
 incorrect_args=$((incorrect_args+$(verifyMandatoryArgument CONFIG_LOCATION c "$CONFIG_LOCATION")))
 
@@ -122,9 +124,6 @@ if [[ "$API_GATEWAY_AUTH" = "LambdaRequest" || "$API_GATEWAY_AUTH" = "LambdaToke
 fi
 
 incorrect_args=$((incorrect_args+$(verifyMandatoryArgument TEMPLATE_SNIPPET_S3_URI_BASE y "$TEMPLATE_SNIPPET_S3_URI_BASE")))
-API_GATEWAY_DEFINITION_TEMPLATE="$(defaultIfNotSet 'API_GATEWAY_DEFINITION_TEMPLATE' z ${API_GATEWAY_DEFINITION_TEMPLATE} 'cfn-apiGateway-noAuth.yaml')"
-
-ASSETLIBRARY_MODE="$(defaultIfNotSet 'ASSETLIBRARY_MODE' m ${ASSETLIBRARY_MODE} 'full')"
 valid_modes=( lite full )
 incorrect_args=$((incorrect_args+$(verifyListContainsArgument ASSETLIBRARY_MODE m "$ASSETLIBRARY_MODE" "${valid_modes[@]}")))
 
@@ -135,12 +134,14 @@ if [[ "$ASSETLIBRARY_MODE" = "full" ]]; then
     incorrect_args=$((incorrect_args+$(verifyMandatoryArgument PRIVATE_ROUTE_TABLE_IDS r "$PRIVATE_ROUTE_TABLE_IDS")))
 fi
 
-CONCURRENT_EXECUTIONS="$(defaultIfNotSet 'CONCURRENT_EXECUTIONS' x ${CONCURRENT_EXECUTIONS} 0)"
-APPLY_AUTOSCALING="$(defaultIfNotSet 'APPLY_AUTOSCALING' s ${APPLY_AUTOSCALING} false)"
-
 if [[ "$incorrect_args" -gt 0 ]]; then
     help_message; exit 1;
 fi
+
+API_GATEWAY_DEFINITION_TEMPLATE="$(defaultIfNotSet 'API_GATEWAY_DEFINITION_TEMPLATE' z ${API_GATEWAY_DEFINITION_TEMPLATE} 'cfn-apiGateway-noAuth.yaml')"
+ASSETLIBRARY_MODE="$(defaultIfNotSet 'ASSETLIBRARY_MODE' m ${ASSETLIBRARY_MODE} 'full')"
+CONCURRENT_EXECUTIONS="$(defaultIfNotSet 'CONCURRENT_EXECUTIONS' x ${CONCURRENT_EXECUTIONS} 0)"
+APPLY_AUTOSCALING="$(defaultIfNotSet 'APPLY_AUTOSCALING' s ${APPLY_AUTOSCALING} false)"
 
 AWS_ARGS=$(buildAwsArgs "$AWS_REGION" "$AWS_PROFILE" )
 AWS_SCRIPT_ARGS=$(buildAwsScriptArgs "$AWS_REGION" "$AWS_PROFILE" )
@@ -183,7 +184,7 @@ Running with:
 
 cwd=$(dirname "$0")
 
-if [ "$ASSETLIBRARY_MODE" = "full" ]; then
+if [[ "$ASSETLIBRARY_MODE" = "full" ]]; then
 
   logTitle 'Checking deployed Neptune version'
 
@@ -198,11 +199,11 @@ if [ "$ASSETLIBRARY_MODE" = "full" ]; then
       | jq -r --arg neptune_url_export "$neptune_url_export" \
       '.Exports[] | select(.Name==$neptune_url_export) | .Value')
 
-  if [ -n "$neptune_url" ]; then
+  if [[ -n "$neptune_url" ]]; then
 
     # Neptune has been deployed.  Let's grab the name of the ssh key we need to log onto the Bastion
     stack_parameters=$(aws cloudformation describe-stacks --stack-name $BASTION_STACK_NAME $AWS_ARGS) || true
-    if [ -n "$stack_parameters" ]; then
+    if [[ -n "$stack_parameters" ]]; then
         key_pair_name=$(echo $stack_parameters \
           | jq -r --arg stack_name "$BASTION_STACK_NAME" \
           '.Stacks[] | select(.StackName==$stack_name) | .Parameters[] | select(.ParameterKey=="KeyPairName") | .ParameterValue')
@@ -225,7 +226,7 @@ if [ "$ASSETLIBRARY_MODE" = "full" ]; then
 
         echo dbEngineVersionStatus: $dbEngineVersionStatus
 
-        if [ "$dbEngineVersionStatus" -ne 0 ]; then
+        if [[ "$dbEngineVersionStatus" -ne 0 ]]; then
           echo "
     ********    WARNING!!!   *********
     Cannot proceed with the deploy as Neptune minimum dbEngine version $min_dbEngineVersion_required is required.  You must upgrade your Neptune instances first!
@@ -249,7 +250,7 @@ if [ "$ASSETLIBRARY_MODE" = "full" ]; then
   count=$(aws ec2 describe-vpc-endpoints $AWS_ARGS \
     --filters Name=vpc-id,Values=$VPC_ID Name=service-name,Values=com.amazonaws.$AWS_REGION.s3 | jq  '.VpcEndpoints | length')
 
-  if [ $count -eq 1 ]; then
+  if [[ $count -eq 1 ]]; then
     CREATE_S3_VPC_ENDPOINT='false'
   else
     CREATE_S3_VPC_ENDPOINT='true'
@@ -284,7 +285,7 @@ cat $CONFIG_LOCATION | \
   '.mode=$mode | .aws.iot.endpoint=$aws_iot_endpoint' \
   > $CONFIG_LOCATION.tmp && mv $CONFIG_LOCATION.tmp $CONFIG_LOCATION
 
-if [ "$ASSETLIBRARY_MODE" = "full" ]; then
+if [[ "$ASSETLIBRARY_MODE" = "full" ]]; then
 
   stack_exports=$(aws cloudformation list-exports $AWS_ARGS)
 
@@ -307,7 +308,7 @@ $application_configuration_override
 "
 
 
-if [ "$ASSETLIBRARY_MODE" = "lite" ]; then
+if [[ "$ASSETLIBRARY_MODE" = "lite" ]]; then
 
   logTitle 'Enabling Fleet Indexing'
   aws iot update-indexing-configuration \
@@ -342,30 +343,11 @@ aws cloudformation deploy \
 
 
 
-if [ "$ASSETLIBRARY_MODE" = "full" ]; then
+if [[ "$ASSETLIBRARY_MODE" = "full" ]]; then
 
   logTitle 'Initializing the Asset Library data'
-
-  stack_exports=$(aws cloudformation list-exports $AWS_ARGS)
-
   # init asset library database using lambda invoke, as the api may require
   # authorization, or even be deployed as a private endpoint
-
-  assetlibrary_function_name_export="$ASSETLIBRARY_STACK_NAME-functionName"
-  assetlibrary_function_name=$(echo $stack_exports \
-      | jq -r --arg assetlibrary_function_name_export "$assetlibrary_function_name_export" \
-      '.Exports[] | select(.Name==$assetlibrary_function_name_export) | .Value')
-
-  event_payload='
-{
-    "resource": "/{proxy+}",
-    "path": "/48e876fe-8830-4996-baa0-9c0dd92bd6a2/init",
-    "httpMethod": "POST",
-    "headers": {
-        "accept": "application/vnd.aws-cdf-v2.0+json",
-        "content-type": "application/vnd.aws-cdf-v2.0+json"
-    }
-}'
 
   # if autoscaling is configured for the lambda, the lambda may not be ready when cloudformation
   # reports as completed, therefore keep retrying until it is.
@@ -373,21 +355,18 @@ if [ "$ASSETLIBRARY_MODE" = "full" ]; then
   max_retries=20
   retry_interval=3.0
   retry_count=0
-  response_file=lambda_response.json
   while [[ $retry_count < $max_retries ]]; do
 
-    aws lambda invoke --function-name ${assetlibrary_function_name} --payload "$event_payload" --cli-binary-format raw-in-base64-out \
-        $AWS_ARGS $response_file || true
+    response=$( lambaInvokeRestApi "$ASSETLIBRARY_STACK_NAME" 'POST' '/48e876fe-8830-4996-baa0-9c0dd92bd6a2/init' )
+    status_code=$(echo "$response" | jq -r '.statusCode')
 
-    if [ -f "$response_file" ]; then
-        status_code=$(cat "$response_file" | jq -r '.statusCode')
-        rm -f "$response_file"
-        if [[ ${status_code} -eq 204 ]] || [[ ${status_code} -eq 409 ]]; then
-          break
-        fi
+    if [[ ${status_code} -eq 204 ]] || [[ ${status_code} -eq 409 ]]; then
+      break
     fi
+
     echo "Retrying assetlibrary initialization : $retry_count"
     retry_count=$retry_count+1
+    retry_count=$((retry_count+1))
     sleep $retry_interval
   done
 

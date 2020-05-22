@@ -1,5 +1,10 @@
 #!/bin/bash
 set -e
+if [[ "$DEBUG" == "true" ]]; then
+    set -x
+fi
+source ../../../infrastructure/common-deploy-functions.bash
+
 
 #-------------------------------------------------------------------------------
 # Copyright (c) 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
@@ -41,9 +46,11 @@ if [ -z "$DEPLOY_ARTIFACTS_STORE_BUCKET" ]; then
 	echo -b DEPLOY_ARTIFACTS_STORE_BUCKET is required; help_message; exit 1;
 fi
 
-
-source ../../../infrastructure/common-deploy-functions.bash
 incorrect_args=$((incorrect_args+$(verifyMandatoryArgument DEPLOY_ARTIFACTS_STORE_BUCKET b $DEPLOY_ARTIFACTS_STORE_BUCKET)))
+
+if [[ "$incorrect_args" -gt 0 ]]; then
+    help_message; exit 1;
+fi
 
 AWS_ARGS=$(buildAwsArgs "$AWS_REGION" "$AWS_PROFILE" )
 

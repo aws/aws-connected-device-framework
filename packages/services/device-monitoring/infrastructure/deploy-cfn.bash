@@ -1,5 +1,10 @@
 #!/bin/bash
 set -e
+if [[ "$DEBUG" == "true" ]]; then
+    set -x
+fi
+source ../../../infrastructure/common-deploy-functions.bash
+
 
 #-------------------------------------------------------------------------------
 # Copyright (c) 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
@@ -17,10 +22,14 @@ DESCRIPTION
     Deploys the device monitoring library.
 
 MANDATORY ARGUMENTS:
+====================
+
     -e (string)   Name of environment.
     -c (string)   Location of application configuration file containing configuration overrides.
 
-OPTIONAL ARGUMENTS
+OPTIONAL ARGUMENTS:
+===================
+
     -R (string)   AWS region.
     -P (string)   AWS profile.
     
@@ -31,7 +40,7 @@ while getopts ":e:c:R:P:" opt; do
   case $opt in
 
     e  ) export ENVIRONMENT=$OPTARG;;
-    c  ) export DEVICEMONITORING_CONFIG_LOCATION=$OPTARG;;
+    c  ) export CONFIG_LOCATION=$OPTARG;;
 
     R  ) export AWS_REGION=$OPTARG;;
     P  ) export AWS_PROFILE=$OPTARG;;
@@ -42,42 +51,30 @@ while getopts ":e:c:R:P:" opt; do
   esac
 done
 
+incorrect_args=0
 
-if [ -z "$ENVIRONMENT" ]; then
-	echo -e ENVIRONMENT is required; help_message; exit 1;
+incorrect_args=$((incorrect_args+$(verifyMandatoryArgument ENVIRONMENT e $ENVIRONMENT)))
+incorrect_args=$((incorrect_args+$(verifyMandatoryArgument CONFIG_LOCATION c "$CONFIG_LOCATION")))
+
+if [[ "$incorrect_args" -gt 0 ]]; then
+    help_message; exit 1;
 fi
 
-if [ -z "$DEVICEMONITORING_CONFIG_LOCATION" ]; then
-	echo -c DEVICEMONITORING_CONFIG_LOCATION is required; help_message; exit 1;
-fi
-
-
-
-AWS_ARGS=
-if [ -n "$AWS_REGION" ]; then
-	AWS_ARGS="--region $AWS_REGION "
-fi
-if [ -n "$AWS_PROFILE" ]; then
-	AWS_ARGS="$AWS_ARGS--profile $AWS_PROFILE"
-fi
-
+AWS_ARGS=$(buildAwsArgs "$AWS_REGION" "$AWS_PROFILE" )
+AWS_SCRIPT_ARGS=$(buildAwsScriptArgs "$AWS_REGION" "$AWS_PROFILE" )
 
 
 echo "
 Running with:
   ENVIRONMENT:                      $ENVIRONMENT
-  DEVICEMONITORING_CONFIG_LOCATION: $DEVICEMONITORING_CONFIG_LOCATION
+  CONFIG_LOCATION:                  $CONFIG_LOCATION
   AWS_REGION:                       $AWS_REGION
   AWS_PROFILE:                      $AWS_PROFILE
 "
 
 cwd=$(dirname "$0")
 
-echo '
-**********************************************************
-*****  Device Monitoring Identifying deployed endpoints ******
-**********************************************************
-'
+logTitle 'Device Monitoring Identifying deployed endpoints'
 
 rest_apis=$(aws apigateway get-rest-apis $AWS_ARGS)
 
@@ -87,25 +84,17 @@ assetlibrary_rest_api_id=$(echo $rest_apis \
     '.items[] | select(.name==$rest_api_name) | .id')
 assetlibrary_invoke_url="https://$assetlibrary_rest_api_id.execute-api.$AWS_REGION.amazonaws.com/Prod"
 
-echo '
-**********************************************************
-*****  Setting Device Monitoring configuration      ******
-**********************************************************
-'
+logTitle 'Setting Device Monitoring configuration'
 
-cat $DEVICEMONITORING_CONFIG_LOCATION | \
+cat $CONFIG_LOCATION | \
   jq --arg assetlibrary_invoke_url "$assetlibrary_invoke_url" \
   '.assetLibrary.baseUrl=$assetlibrary_invoke_url' \
-  > $DEVICEMONITORING_CONFIG_LOCATION.tmp && mv $DEVICEMONITORING_CONFIG_LOCATION.tmp $DEVICEMONITORING_CONFIG_LOCATION
+  > $CONFIG_LOCATION.tmp && mv $CONFIG_LOCATION.tmp $CONFIG_LOCATION
 
 
+logTitle 'Deploying the Device Monitoring CloudFormation template'
 
-echo '
-**********************************************************
-  Deploying the Device Monitoring CloudFormation template 
-**********************************************************
-'
-application_configuration_override=$(cat $DEVICEMONITORING_CONFIG_LOCATION)
+application_configuration_override=$(cat $CONFIG_LOCATION)
 
 aws cloudformation deploy \
   --template-file $cwd/build/cfn-device-monitoring-output.yml \
@@ -118,8 +107,4 @@ aws cloudformation deploy \
   $AWS_ARGS
 
 
-echo '
-**********************************************************
-  Device Monitoring Done!
-**********************************************************
-'
+logTitle 'Device Monitoring deployment complete!'

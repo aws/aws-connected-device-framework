@@ -1,5 +1,11 @@
 #!/bin/bash
 set -e
+if [[ "$DEBUG" == "true" ]]; then
+    set -x
+fi
+source ../../../infrastructure/common-deploy-functions.bash
+
+
 
 #-------------------------------------------------------------------------------
 # Copyright (c) 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
@@ -55,8 +61,6 @@ while getopts ":e:o:c:b:A:O:R:P:" opt; do
   esac
 done
 
-
-source ../../../infrastructure/common-deploy-functions.bash
 
 incorrect_args=0
 

@@ -247,23 +247,23 @@ Resources:
       - LambdaExecutionRole
 
   # Optional auto-scaling configuration
-#  AutoScalingNestedStack:
-#    Type: AWS::CloudFormation::Stack
-#    Condition: DeployWithScaling
-#    Properties:
-#      TemplateURL: ./cfn-autoscaling.yml
-#      Parameters:
-#        LambdaName: !Ref LambdaFunction
-#        LambdaAlias: live
-#      TimeoutInMinutes: 5
-#    DependsOn: LambdaFunction
+  AutoScalingNestedStack:
+    Type: AWS::CloudFormation::Stack
+    Condition: DeployWithScaling
+    Properties:
+      TemplateURL: ./cfn-autoscaling.yml
+      Parameters:
+        LambdaName: !Ref LambdaFunction
+        LambdaAlias: live
+      TimeoutInMinutes: 5
+    DependsOn: LambdaFunction
 
 Outputs:
-  FunctionName:
+  RestApiFunctionName:
     Description: Asset library lambda function name
     Value: !Ref LambdaFunction
     Export: 
-      Name: !Sub "${AWS::StackName}-functionName"
+      Name: !Sub "${AWS::StackName}-restApiFunctionName"
   ApiGatewayUrl:
     Description: URL for application
     Value: !Sub 'https://${ApiGatewayApi}.execute-api.${AWS::Region}.amazonaws.com/Prod'

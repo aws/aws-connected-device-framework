@@ -1,5 +1,10 @@
 #!/bin/bash
 set -e
+if [[ "$DEBUG" == "true" ]]; then
+    set -x
+fi
+source ../../../infrastructure/common-deploy-functions.bash
+
 
 #-------------------------------------------------------------------------------
 # Copyright (c) 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
@@ -74,60 +79,26 @@ while getopts ":e:o:c:b:p:k:m:n:r:g:GA:C:R:P:" opt; do
   esac
 done
 
-source ../../../infrastructure/common-deploy-functions.bash
-
 incorrect_args=0
 
 incorrect_args=$((incorrect_args+$(verifyMandatoryArgument ENVIRONMENT e $ENVIRONMENT)))
 incorrect_args=$((incorrect_args+$(verifyMandatoryArgument CONFIG_LOCATION c "$CONFIG_LOCATION")))
 incorrect_args=$((incorrect_args+$(verifyMandatoryArgument BUCKET f "$BUCKET")))
 incorrect_args=$((incorrect_args+$(verifyMandatoryArgument REGISTRY r "$REGISTRY")))
+incorrect_args=$((incorrect_args+$(verifyMandatoryArgument OPENSSL_STACK_NAME o "$OPENSSL_STACK_NAME")))
 
-
-if [ -z "$BUCKET" ]; then
-	echo -f BUCKET is required; help_message; exit 1;
+if [[ "$incorrect_args" -gt 0 ]]; then
+    help_message; exit 1;
 fi
 
-if [ -z "$REGISTRY" ]; then
-	echo -r REGISTRY is required; help_message; exit 1;
-fi
+AWS_ARGS=$(buildAwsArgs "$AWS_REGION" "$AWS_PROFILE" )
+AWS_SCRIPT_ARGS=$(buildAwsScriptArgs "$AWS_REGION" "$AWS_PROFILE" )
 
-if [ -z "$MQTT_GET_TOPIC" ]; then
-  MQTT_GET_TOPIC=cdf/certificates/+/get
-  echo -f MQTT_GET_TOPIC not provided, therefore defaulted to $MQTT_GET_TOPIC
-fi
-
-if [ -z "$MQTT_ACK_TOPIC" ]; then
-  MQTT_ACK_TOPIC=cdf/certificates/+/ack
-  echo -f MQTT_ACK_TOPIC not provided, therefore defaulted to $MQTT_ACK_TOPIC
-fi
-
-if [ -z "$THING_GROUP_NAME" ]; then
-  echo -g THING_GROUP_NAME not provided, therefore defaulting to cdfRotateCertificates
-  THING_GROUP_NAME=cdfRotateCertificates
-fi
-
-if [ -z "$OPENSSL_STACK_NAME" ]; then
-  echo -o OPENSSL_STACK_NAME is required; help_message; exit 1;
-fi
-
-
-
-AWS_ARGS=
-if [ -n "$AWS_REGION" ]; then
-	AWS_ARGS="--region $AWS_REGION "
-fi
-if [ -n "$AWS_PROFILE" ]; then
-	AWS_ARGS="$AWS_ARGS--profile $AWS_PROFILE"
-fi
-
-
-if [ -z "$ASSETLIBRARY_STACK_NAME" ]; then
-  ASSETLIBRARY_STACK_NAME=cdf-assetlibrary-${ENVIRONMENT}
-fi
-if [ -z "$COMMANDS_STACK_NAME" ]; then
-  COMMANDS_STACK_NAME=cdf-commands-${ENVIRONMENT}
-fi
+MQTT_GET_TOPIC="$(defaultIfNotSet 'MQTT_GET_TOPIC' m ${MQTT_GET_TOPIC} 'cdf/certificates/+/get')"
+MQTT_ACK_TOPIC="$(defaultIfNotSet 'MQTT_ACK_TOPIC' n ${MQTT_ACK_TOPIC} 'cdf/certificates/+/ack')"
+THING_GROUP_NAME="$(defaultIfNotSet 'THING_GROUP_NAME' g ${THING_GROUP_NAME} 'cdfRotateCertificates')"
+ASSETLIBRARY_STACK_NAME="$(defaultIfNotSet 'ASSETLIBRARY_STACK_NAME' A ${ASSETLIBRARY_STACK_NAME} cdf-assetlibrary-${ENVIRONMENT})"
+COMMANDS_STACK_NAME="$(defaultIfNotSet 'COMMANDS_STACK_NAME' C ${COMMANDS_STACK_NAME} cdf-commands-${ENVIRONMENT})"
 
 CERTIFICATEVENDOR_STACK_NAME=cdf-certificatevendor-${ENVIRONMENT}
 OPENSSL_STACK_NAME=cdf-openssl-${ENVIRONMENT}
@@ -136,7 +107,7 @@ OPENSSL_STACK_NAME=cdf-openssl-${ENVIRONMENT}
 echo "
 Running with:
   ENVIRONMENT:                      $ENVIRONMENT
-  CONFIG_LOCATION:  $CONFIG_LOCATION
+  CONFIG_LOCATION:                  $CONFIG_LOCATION
   BUCKET:                           $BUCKET
   PREFIX:                           $PREFIX
   REGISTRY:                         $REGISTRY
@@ -160,11 +131,7 @@ echo "
 
 cwd=$(dirname "$0")
 
-echo '
-**********************************************************
-  Determining OpenSSL lambda layer version
-**********************************************************
-'
+logTitle 'Determining OpenSSL lambda layer version'
 stack_info=$(aws cloudformation describe-stacks --stack-name $OPENSSL_STACK_NAME $AWS_ARGS)
 openssl_arn=$(echo $stack_info \
   | jq -r --arg stack_name "$OPENSSL_STACK_NAME" \
@@ -172,11 +139,7 @@ openssl_arn=$(echo $stack_info \
 
 
 if [ -z "$BYPASS_CREATE_THING_GROUP" ]; then
-    echo '
-**********************************************************
-*****  Certificate Vendor Creating thing group      ******
-**********************************************************
-'
+    logTitle 'Certificate Vendor Creating thing group'
     aws iot create-thing-group \
       --thing-group-name $THING_GROUP_NAME \
       --thing-group-properties thingGroupDescription='CDF - Devices requiring certificate rotation' \
@@ -184,11 +147,7 @@ if [ -z "$BYPASS_CREATE_THING_GROUP" ]; then
 fi
 
 
-echo '
-**********************************************************
-*****  Certificate Vendor Retrieving thing group    ******
-**********************************************************
-'
+logTitle 'Certificate Vendor Retrieving thing group'
 groupInfo=$(aws iot describe-thing-group --thing-group-name $THING_GROUP_NAME $AWS_ARGS)
 thingGroupArn=$(echo $groupInfo | jq -r '.thingGroupArn')
 
@@ -197,11 +156,7 @@ if [ -z "$thingGroupArn" ]; then
 fi
 
 
-echo '
-**********************************************************
-*****  Certificate Vendor Identifying deployed endpoints ******
-**********************************************************
-'
+logTitle 'Certificate Vendor Identifying deployed endpoints'
 aws_iot_endpoint=$(aws iot describe-endpoint --endpoint-type iot:Data-ATS $AWS_ARGS \
     | jq -r '.endpointAddress')
 
@@ -233,11 +188,7 @@ fi
 application_configuration_override=$(cat $CONFIG_LOCATION)
 
 
-echo '
-**********************************************************
-  Deploying the Certificate Vendor CloudFormation template 
-**********************************************************
-'
+logTitle 'Deploying the Certificate Vendor CloudFormation template'
 aws cloudformation deploy \
   --template-file $cwd/build/cfn-certificatevendor-output.yml \
   --stack-name $CERTIFICATEVENDOR_STACK_NAME \
@@ -255,32 +206,31 @@ aws cloudformation deploy \
 
 
 
-echo '
-**********************************************************
-*****  Certificate Vendor Configuring RotateCertificates command ******
-**********************************************************
-'
-http_code=$(curl -X GET --write-out "%{http_code}\n" --silent --output /dev/null "$commands_invoke_url/templates/RotateCertificates" \
-  -H 'Accept: application/vnd.aws-cdf-v1.0+json' \
-  -H 'Content-Type: application/vnd.aws-cdf-v1.0+json')
+logTitle 'Certificate Vendor Configuring RotateCertificates command'
 
-if [ "$http_code" = "404" ]; then
+response=$( lambaInvokeRestApi "$COMMANDS_STACK_NAME" 'GET' '/templates/RotateCertificates' )
+status_code=$(echo "$response" | jq -r '.statusCode')
 
-  curl -X POST "$commands_invoke_url/templates" \
-    -H 'Accept: application/vnd.aws-cdf-v1.0+json' \
-    -H 'Content-Type: application/vnd.aws-cdf-v1.0+json' \
-    -d '{
-      "templateId": "RotateCertificates",
-      "description": "Rotate certificates",
-      "operation" : "RotateCertificates",
-      "document": "{\"get\":{\"subscribe\":\"${cdf:parameter:getSubscribeTopic}\",\"publish\":\"${cdf:parameter:getPublishTopic}\"},\"ack\":{\"subscribe\":\"${cdf:parameter:ackSubscribeTopic}\",\"publish\":\"${cdf:parameter:ackPublishTopic}\"}}",
-      "requiredDocumentParameters": [
-          "getSubscribeTopic",
-          "getPublishTopic",
-          "ackSubscribeTopic",
-          "ackPublishTopic"
-      ]
-  }'
+if [ "$status_code" = "404" ]; then
+
+    # template does not exist so lets go ahead and create the template, create
+    # a command, then publish the command.
+
+    body='{
+        "templateId": "RotateCertificates",
+        "description": "Rotate certificates",
+        "operation" : "RotateCertificates",
+        "document": "{\"get\":{\"subscribe\":\"${cdf:parameter:getSubscribeTopic}\",\"publish\":\"${cdf:parameter:getPublishTopic}\"},\"ack\":{\"subscribe\":\"${cdf:parameter:ackSubscribeTopic}\",\"publish\":\"${cdf:parameter:ackPublishTopic}\"}}",
+        "requiredDocumentParameters": [
+            "getSubscribeTopic",
+            "getPublishTopic",
+            "ackSubscribeTopic",
+            "ackPublishTopic"
+        ]
+    }'
+
+    response=$( lambaInvokeRestApi "$COMMANDS_STACK_NAME" 'POST' '/templates' "$body" )
+    status_code=$(echo "$response" | jq -r '.statusCode')
 
   # we use the wildcard + parameter when setting permissions, but for the Job Document we want to provide
   # the token {thingName} to be explicit with devices on where they need to add their name.
@@ -291,10 +241,7 @@ if [ "$http_code" = "404" ]; then
   ackSubscribeTopic=${MQTT_ACK_TOPIC/$oldText/$newText}/+
   ackPublishTopic=${MQTT_ACK_TOPIC/$oldText/$newText}
 
-  command_location=$(curl -X POST -si "$commands_invoke_url/commands" \
-  -H 'Accept: application/vnd.aws-cdf-v1.0+json' \
-  -H 'Content-Type: application/vnd.aws-cdf-v1.0+json' \
-   -d '{
+  body='{
     "templateId": "RotateCertificates",
     "targets": ["'"$thingGroupArn"'"],
     "type": "CONTINUOUS",
@@ -305,21 +252,17 @@ if [ "$http_code" = "404" ]; then
         "ackSubscribeTopic":"'"$ackSubscribeTopic"'",
         "ackPublishTopic":"'"$ackPublishTopic"'"
     }
-  }
-  ' | tr -d '\r' | sed -En 's/^location: (.*)/\1/p')
+  }'
 
-  curl -X PATCH "$commands_invoke_url$command_location" \
-  -H 'Accept: application/vnd.aws-cdf-v1.0+json' \
-  -H 'Content-Type: application/vnd.aws-cdf-v1.0+json' \
-  -d '{
+  response=$( lambaInvokeRestApi "$COMMANDS_STACK_NAME" 'POST' '/commands' "$body" )
+  command_location=$( echo $response | jq -r '.headers.location' )
+
+  body='{
     "commandStatus": "PUBLISHED"
   }'
+  response=$( lambaInvokeRestApi "$COMMANDS_STACK_NAME" 'PATCH' "$command_location" "$body" )
 
 fi
 
 
-echo '
-**********************************************************
-  Certificate Vendor Done!
-**********************************************************
-'
+logTitle 'Certificate Vendor deployment done!'

@@ -243,12 +243,17 @@ Resources:
             Method: ANY
             
 Outputs:
-  EventsLambdaFunction:
+  EventsLambdaFunctionConsoleUrl:
     Description: Console URL for the Event (IT Rule) Lambda Function.
     Value: !Sub "https://{AWS::Region}.console.aws.amazon.com/lambda/home?region={AWS::Region}#/functions/{EventsLambdaFunction}"
   RESTLambdaFunctionConsoleUrl:
     Description: Console URL for the REST Lambda Function.
     Value: !Sub "https://{AWS::Region}.console.aws.amazon.com/lambda/home?region={AWS::Region}#/functions/{RESTLambdaFunction}"
+  RestApiFunctionName:
+    Description: Lambda function name
+    Value: !Ref RESTLambdaFunction
+    Export:
+      Name: !Sub "${AWS::StackName}-restApiFunctionName"
   ApiGatewayUrl:
     Description: URL for application
     Value: !Sub 'https://${ApiGatewayApi}.execute-api.${AWS::Region}.amazonaws.com/Prod'

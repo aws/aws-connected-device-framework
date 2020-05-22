@@ -348,28 +348,33 @@ Resources:
 
 
 Outputs:
-  ApiLambdaFunction:
+  RestLambdaFunctionArn:
     Description: Bulk Certs API Lambda Function
     Value: !Sub '${ApiLambdaFunction.Arn}'
     Export:
-        Name: !Sub '${AWS::StackName}-ApiLambdaFunction'
-  SnsLambdaFunction:
+        Name: !Sub '${AWS::StackName}-restApiFunctionArn'
+  SnsLambdaFunctionArn:
     Description: Bulk Certs SNS Lambda Function
     Value: !Sub '${SnsLambdaFunction.Arn}'
     Export:
-        Name: !Sub '${AWS::StackName}-SnsLambdaFunction'
+        Name: !Sub '${AWS::StackName}-snsLambdaFunctionArn'
   CertificatesRequestSnsTopic:
     Description: SNS topic
     Value: !Ref CertificatesRequestSnsTopic
     Export:
-      Name: !Sub '${AWS::StackName}-CertificatesRequestSnsTopic'
+      Name: !Sub '${AWS::StackName}-certificatesRequestSnsTopic'
+  RestApiFunctionName:
+    Description: Asset library lambda function name
+    Value: !Ref ApiLambdaFunction
+    Export:
+      Name: !Sub "${AWS::StackName}-restApiFunctionName"
   ApiGatewayUrl:
     Description: URL for application
     Value: !Sub 'https://${ApiGatewayApi}.execute-api.${AWS::Region}.amazonaws.com/Prod'
     Export:
-      Name: !Sub '${AWS::StackName}-apigatewayurl'
+      Name: !Sub '${AWS::StackName}-apigatewayUrl'
   ApiGatewayHost:
     Description: Host for application
     Value: !Sub '${ApiGatewayApi}.execute-api.${AWS::Region}.amazonaws.com'
     Export:
-      Name: !Sub '${AWS::StackName}-apigatewayhost'
+      Name: !Sub '${AWS::StackName}-apigatewayHost'

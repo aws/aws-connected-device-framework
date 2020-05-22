@@ -1,5 +1,10 @@
 #!/bin/bash
 
+set -e
+if [[ "$DEBUG" == "true" ]]; then
+    set -x
+fi
+
 function dbEngineVersion_isAtLeast_help_message {
     cat << EOF
 
@@ -66,7 +71,7 @@ function _get_dbEngineVersion {
       # retrieve engine version of an instance via the bastion
       dbEngineVersion=$(ssh -i $SSH_KEY  ec2-user@$bastion_ip curl -s https://$dbClusterEndpoint:8182/status -o "StrictHostKeyChecking=no" | jq -r '.dbEngineVersion')
 
-      if [ -n "$DEBUG_MODE" ]; then
+      if [ -n "$DEBUG" ]; then
         echo dbClusterEndpoint: $dbClusterEndpoint >&2
         echo bastion_autoscaling_group: $bastion_autoscaling_group >&2
         echo bastion_instanceId: $bastion_instanceId >&2

@@ -1,7 +1,9 @@
 #!/bin/bash
 
 set -e
-set -x
+if [[ "$DEBUG" == "true" ]]; then
+    set -x
+fi
 
 function help_message {
     cat << EOF
@@ -69,9 +71,6 @@ OPTIONAL ARGUMENTS
     -p (string)   The name of the key pair to use to deploy the Bastion EC2 host (required for Asset Library (full) mode or Private auth mode).
     -i (string)   The remote access CIDR to configure Bastion SSH access (e.g. 1.2.3.4/32) (required for Asset Library (full) mode).
 
-    -F (flag)     Enable fine-grained-access-control mode of Asset Library (applies to Asset Library (full) mode only).
-    -f (string)   The JWT issuer, e.g. https://cognito-idp.us-east-1.amazonaws.com/${cognitoPoolId} (required if -F set).
-
     -x (number)   No. of concurrent executions to provision.
     -s (flag)     Apply autoscaling as defined in ./cfn-autosclaling.yml
 
@@ -102,7 +101,7 @@ EOF
 # by the service specific deployment script.
 #-------------------------------------------------------------------------------
 
-while getopts ":e:E:c:p:i:k:b:Ff:a:y:z:C:A:Nv:g:n:m:o:r:x:sBYR:P:" opt; do
+while getopts ":e:E:c:p:i:k:b:a:y:z:C:A:Nv:g:n:m:o:r:x:sBYR:P:" opt; do
   case $opt in
     e  ) ENVIRONMENT=$OPTARG;;
     E  ) CONFIG_ENVIRONMENT=$OPTARG;;
@@ -116,9 +115,6 @@ while getopts ":e:E:c:p:i:k:b:Ff:a:y:z:C:A:Nv:g:n:m:o:r:x:sBYR:P:" opt; do
 
     x  ) CONCURRENT_EXECUTIONS=$OPTARG;;
     s  ) APPLY_AUTOSCALING=true;;
-
-    F  ) ASSETLIBRARY_FGAC=true;;
-    f  ) JWT_ISSUER=$OPTARG;;
 
     a  ) API_GATEWAY_AUTH=$OPTARG;;
     y  ) TEMPLATE_SNIPPET_S3_URI_BASE=$OPTARG;;
@@ -219,8 +215,6 @@ The Connected Device Framework (CDF) will install using the following configurat
 
     -m (ASSETLIBRARY_MODE)              : $ASSETLIBRARY_MODE
     -i (BASTION_REMOTE_ACCESS_CIDR)     : $BASTION_REMOTE_ACCESS_CIDR
-    -F (ASSETLIBRARY_FGAC)              : $ASSETLIBRARY_FGAC
-    -f (JWT_ISSUER)                     : $JWT_ISSUER
     -x (CONCURRENT_EXECUTIONS):         : $CONCURRENT_EXECUTIONS
     -s (APPLY_AUTOSCALING):             : $APPLY_AUTOSCALING
 
@@ -285,7 +279,6 @@ root_dir=$(pwd)
 
 ASSETLIBRARY_HISTORY_STACK_NAME=cdf-assetlibraryhistory-${ENVIRONMENT}
 ASSETLIBRARY_STACK_NAME=cdf-assetlibrary-${ENVIRONMENT}
-AUTH_JWT_STACK_NAME=cdf-auth-jwt-${ENVIRONMENT}
 BASTION_STACK_NAME=cdf-bastion-${ENVIRONMENT}
 BULKCERTS_STACK_NAME=cdf-bulkcerts-${ENVIRONMENT}
 CERTIFICATEVENDOR_STACK_NAME=cdf-certificatevendor-${ENVIRONMENT}
@@ -409,35 +402,12 @@ fi
 
 
 logTitle 'Deploying lambda layers'
-stacks=()
 lambda_layers_root="$root_dir/infrastructure/lambdaLayers"
 for layer in $(ls $lambda_layers_root); do
     cd "$lambda_layers_root/$layer"
     infrastructure/package-cfn.bash -b $DEPLOY_ARTIFACTS_STORE_BUCKET $AWS_SCRIPT_ARGS
     infrastructure/deploy-cfn.bash -e $ENVIRONMENT $AWS_SCRIPT_ARGS
-    stacks+=(cdf-$layer-$ENVIRONMENT)
 done
-
-wait
-
-failed=false
-for stack in "${stacks[@]}"; do
-    deploy_status=$(aws cloudformation describe-stacks \
-        --stack-name "$stack" $AWS_ARGS\
-        | jq -r '.Stacks[0].StackStatus' \
-        || true)
-    echo "$stack: $deploy_status"
-    if [ "$deploy_status" != "CREATE_COMPLETE" ] && [ "$deploy_status" != "UPDATE_COMPLETE" ] && [ "$deploy_status" != "UPDATE_COMPLETE_CLEANUP_IN_PROGRESS" ]; then
-        echo "Deploy of $stack failed: $deploy_status.  Check CloudFormation for details."
-        failed=true
-        break
-    fi
-done
-
-if [ "$failed" = "true" ]; then
-    exit 1
-fi
-
 
 logTitle 'Deploying services'
 
@@ -451,27 +421,7 @@ if [[ "$API_GATEWAY_AUTH" = "LambdaRequest" || "$API_GATEWAY_AUTH" = "LambdaToke
     lambda_invoker_auth_arg="-A ${AUTHORIZER_FUNCTION_ARN}"
 fi
 
-stacks=()
-
 if [ -f "$assetlibrary_config" ]; then
-
-    if [[ "$ASSETLIBRARY_MODE" = "full" && "$ASSETLIBRARY_FGAC" = "true" ]]; then
-
-        ### TODO:  this needs moving out of core
-
-        logTitle 'Deploying Asset Library Authorizer'
-
-        cd "$root_dir/packages/services/auth-jwt"
-
-        auth_jwt_config=$CONFIG_LOCATION/auth-jwt/$CONFIG_ENVIRONMENT-config.json
-
-        infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
-
-        infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "$auth_jwt_config" -i "$JWT_ISSUER" -o $OPENSSL_LAYER_STACK_NAME $AWS_SCRIPT_ARGS
-
-        assetlibrary_custom_auth_args="-C $AUTH_JWT_STACK_NAME"
-
-    fi
 
     logTitle 'Deploying Asset Library'
 
@@ -522,10 +472,7 @@ if [ -f "$assetlibrary_config" ]; then
         --capabilities CAPABILITY_IAM \
         $AWS_ARGS
 
-        stacks+=("$BASTION_STACK_NAME")
     fi
-
-    stacks+=("$ASSETLIBRARY_STACK_NAME")
 fi
 
 provisioning_config=$CONFIG_LOCATION/provisioning/$CONFIG_ENVIRONMENT-config.json
@@ -542,7 +489,6 @@ if [ -f "$provisioning_config" ]; then
         -v "$VPC_ID" -g "$CDF_SECURITY_GROUP_ID" -n "$PRIVATE_SUBNET_IDS" -i "$VPCE_ID" \
         -o $OPENSSL_LAYER_STACK_NAME $AWS_SCRIPT_ARGS
 
-    stacks+=("$PROVISIONING_STACK_NAME")
 
     logTitle 'Uploading provisioning templates'
 
@@ -640,9 +586,6 @@ if [ -f "$commands_config" ]; then
         -a "$API_GATEWAY_AUTH" $cognito_auth_arg $lambda_invoker_auth_arg \
         -v "$VPC_ID" -g "$CDF_SECURITY_GROUP_ID" -n "$PRIVATE_SUBNET_IDS" -i "$VPCE_ID" \
         $AWS_SCRIPT_ARGS
-
-    stacks+=("$COMMANDS_STACK_NAME")
-
 else
    echo 'NOT DEPLOYING: commands'
 fi
@@ -656,13 +599,7 @@ if [ -f "$devicemonitoring_config" ]; then
 
     infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
     infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "$devicemonitoring_config" \
-        -y "$TEMPLATE_SNIPPET_S3_URI_BASE" -z "$API_GATEWAY_DEFINITION_TEMPLATE" \
-        -a "$API_GATEWAY_AUTH" $cognito_auth_arg $lambda_invoker_auth_arg \
-        -v "$VPC_ID" -g "$CDF_SECURITY_GROUP_ID" -n "$PRIVATE_SUBNET_IDS" -i "$VPCE_ID" \
         $AWS_SCRIPT_ARGS
-
-    stacks+=("$DEVICE_MONITORING_STACK_NAME")
-
 else
    echo 'NOT DEPLOYING: device monitoring'
 fi
@@ -681,33 +618,11 @@ if [ -f "$eventsprocessor_config" ]; then
         -a "$API_GATEWAY_AUTH" $cognito_auth_arg $lambda_invoker_auth_arg \
         -v "$VPC_ID" -g "$CDF_SECURITY_GROUP_ID" -n "$PRIVATE_SUBNET_IDS" -i "$VPCE_ID" \
         $AWS_SCRIPT_ARGS
-
-    stacks+=("$EVENTSPROCESSOR_STACK_NAME")
-
 else
    echo 'NOT DEPLOYING: events-processor'
 fi
 
 
-logTitle 'Checking status of deployments'
-
-failed=false
-for stack in "${stacks[@]}"; do
-    deploy_status=$(aws cloudformation describe-stacks \
-        --stack-name "$stack" $AWS_ARGS\
-        | jq -r '.Stacks[0].StackStatus' \
-        || true)
-    echo "$stack: $deploy_status"
-    if [ "$deploy_status" != "CREATE_COMPLETE" ] && [ "$deploy_status" != "UPDATE_COMPLETE" ] && [ "$deploy_status" != "UPDATE_COMPLETE_CLEANUP_IN_PROGRESS" ]; then
-        echo "Deploy of $stack failed: $deploy_status.  Check CloudFormation for details."
-        failed=true
-        break
-    fi
-done
-
-if [ "$failed" = "true" ]; then
-    exit 1
-fi
 
 certificatevendor_config=$CONFIG_LOCATION/certificatevendor/$CONFIG_ENVIRONMENT-config.json
 if [ -f "$certificatevendor_config" ]; then
@@ -722,18 +637,10 @@ if [ -f "$certificatevendor_config" ]; then
     infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
     infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "$certificatevendor_config" -b "$certificatevendor_bucket" -p "$certificatevendor_prefix" \
         -r AssetLibrary -k "$KMS_KEY_ID" \
-        -y "$TEMPLATE_SNIPPET_S3_URI_BASE" -z "$API_GATEWAY_DEFINITION_TEMPLATE" \
-        -a "$API_GATEWAY_AUTH" $cognito_auth_arg $lambda_invoker_auth_arg \
-        -v "$VPC_ID" -g "$CDF_SECURITY_GROUP_ID" -n "$PRIVATE_SUBNET_IDS" -i "$VPCE_ID" \
         -o $OPENSSL_LAYER_STACK_NAME $AWS_SCRIPT_ARGS
-
-    stacks+=("$CERTIFICATEVENDOR_STACK_NAME")
-
 else
    echo 'NOT DEPLOYING: certificate vendor'
 fi
-
-stacks=()
 
 bulkcerts_config=$CONFIG_LOCATION/bulkcerts/$CONFIG_ENVIRONMENT-config.json
 if [ -f "$bulkcerts_config" ]; then
@@ -748,9 +655,6 @@ if [ -f "$bulkcerts_config" ]; then
         -a "$API_GATEWAY_AUTH" $cognito_auth_arg $lambda_invoker_auth_arg \
         -v "$VPC_ID" -g "$CDF_SECURITY_GROUP_ID" -n "$PRIVATE_SUBNET_IDS" -i "$VPCE_ID" \
         -o $OPENSSL_LAYER_STACK_NAME $AWS_SCRIPT_ARGS
-
-    stacks+=("$BULKCERTS_STACK_NAME")
-
 else
    echo 'NOT DEPLOYING: bulk certs'
 fi
@@ -765,13 +669,7 @@ if [ -f "$eventsalerts_config" ]; then
 
     infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
     infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "$eventsalerts_config" \
-        -y "$TEMPLATE_SNIPPET_S3_URI_BASE" -z "$API_GATEWAY_DEFINITION_TEMPLATE" \
-        -a "$API_GATEWAY_AUTH" $cognito_auth_arg $lambda_invoker_auth_arg \
-        -v "$VPC_ID" -g "$CDF_SECURITY_GROUP_ID" -n "$PRIVATE_SUBNET_IDS" -i "$VPCE_ID" \
         $AWS_SCRIPT_ARGS
-
-    stacks+=("$EVENTSALERTS_STACK_NAME")
-
 else
    echo 'NOT DEPLOYING: events alerts'
 fi
@@ -791,32 +689,8 @@ if [ -f "$assetlibraryhistory_config" ]; then
         -a "$API_GATEWAY_AUTH" $cognito_auth_arg $lambda_invoker_auth_arg \
         -v "$VPC_ID" -g "$CDF_SECURITY_GROUP_ID" -n "$PRIVATE_SUBNET_IDS" -i "$VPCE_ID" \
         $AWS_SCRIPT_ARGS
-
-    stacks+=("$ASSETLIBRARY_HISTORY_STACK_NAME")
-
 else
    echo 'NOT DEPLOYING: asset library history'
 fi
-
-
-logTitle 'Checking status of deployments'
-failed=false
-for stack in "${stacks[@]}"; do
-    deploy_status=$(aws cloudformation describe-stacks \
-        --stack-name $stack $AWS_ARGS\
-        | jq -r '.Stacks[0].StackStatus' \
-        || true)
-    echo "$stack: $deploy_status"
-    if [ "$deploy_status" != "CREATE_COMPLETE" ] && [ "$deploy_status" != "UPDATE_COMPLETE" ] && [ "$deploy_status" != "UPDATE_COMPLETE_CLEANUP_IN_PROGRESS" ]; then
-        echo "Deploy of $stack failed $deploy_status.  Check CloudFormation for details."
-        failed=true
-        break
-    fi
-done
-
-if [ "$failed" = "true" ]; then
-    exit 1
-fi
-
 
 logTitle 'CDF deployment complete!'
