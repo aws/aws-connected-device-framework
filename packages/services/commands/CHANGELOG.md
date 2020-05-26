@@ -1,3 +1,10 @@
+# [@cdf/commands-v3.1.3](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/commands-v3.1.2...@cdf/commands-v3.1.3) (2020-05-26)
+
+
+### Bug Fixes
+
+* commands lambda permission ([5d3b1cf](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/5d3b1cfcd0f42cbeb22e4e1b8a9c7e4f3b423014))
+
 # [@cdf/commands-v3.1.2](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/commands-v3.1.1...@cdf/commands-v3.1.2) (2020-04-20)
 
 
