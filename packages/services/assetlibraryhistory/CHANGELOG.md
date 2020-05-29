@@ -1,3 +1,10 @@
+# [@cdf/assetlibrary-history-v3.2.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-history-v3.1.1...@cdf/assetlibrary-history-v3.2.0) (2020-05-29)
+
+
+### Features
+
+* **greengrass:** provisioning and deployment service ([5072214](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/5072214fb81a0d6a8f8641bf0f52fefb7f2ad950))
+
 # [@cdf/assetlibrary-history-v3.1.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-history-v3.1.0...@cdf/assetlibrary-history-v3.1.1) (2020-01-15)
 
 
