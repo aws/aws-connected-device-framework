@@ -5,25 +5,27 @@
 #-------------------------------------------------------------------------------*/
 
 import { expect } from 'chai';
-import { Before, setDefaultTimeout, When, TableDefinition, Then, Given} from 'cucumber';
-import { CommandsService, CommandModel } from '@cdf/commands-client/dist';
+import { setDefaultTimeout, When, TableDefinition, Then, Given} from 'cucumber';
+import {CommandsService, CommandModel, COMMANDS_CLIENT_TYPES} from '@cdf/commands-client';
 import stringify from 'json-stable-stringify';
-import { RESPONSE_STATUS, replaceTokens } from '../common/common.steps';
+import {RESPONSE_STATUS, replaceTokens, AUTHORIZATION_TOKEN} from '../common/common.steps';
 import AWS = require('aws-sdk');
 import config from 'config';
+import {container} from '../../di/inversify.config';
+import {Dictionary} from '../../../../libraries/core/lambda-invoke/src';
 
 export const COMMAND_ID = 'commandId';
 export const COMMAND_DETAILS = 'commandDetails';
 
 setDefaultTimeout(10 * 1000);
 
-let commands: CommandsService;
-let iot: AWS.Iot;
 
-Before(function () {
-    commands = new CommandsService();
-    iot = new AWS.Iot({region: config.get('aws.region')});
-});
+const commandsService:CommandsService = container.get(COMMANDS_CLIENT_TYPES.CommandsService);
+const additionalHeaders:Dictionary = {
+    Authorization: this[AUTHORIZATION_TOKEN]
+};
+
+const iot: AWS.Iot = new AWS.Iot({region: config.get('aws.region')});
 
 function buildCommandModel(data:TableDefinition) {
     const d = data.rowsHash();
@@ -48,7 +50,7 @@ function buildCommandModel(data:TableDefinition) {
 
 async function createCommand (data:TableDefinition) {
     const command = buildCommandModel(data);
-    return await commands.createCommand(command);
+    return await commandsService.createCommand(command, additionalHeaders);
 }
 
 async function updateCommand (commandId:string, data:TableDefinition) {

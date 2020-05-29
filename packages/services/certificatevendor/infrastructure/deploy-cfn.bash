@@ -162,11 +162,6 @@ aws_iot_endpoint=$(aws iot describe-endpoint --endpoint-type iot:Data-ATS $AWS_A
 
 stack_exports=$(aws cloudformation list-exports $AWS_ARGS)
 
-commands_invoke_url_export="$COMMANDS_STACK_NAME-apigatewayurl"
-commands_invoke_url=$(echo $stack_exports \
-    | jq -r --arg commands_invoke_url_export "$commands_invoke_url_export" \
-    '.Exports[] | select(.Name==$commands_invoke_url_export) | .Value')
-
 cat $CONFIG_LOCATION | \
   jq --arg aws_iot_endpoint "$aws_iot_endpoint"  \
      --arg rotate_cert_thing_group_name "$THING_GROUP_NAME" \
@@ -174,14 +169,14 @@ cat $CONFIG_LOCATION | \
   > $CONFIG_LOCATION.tmp && mv $CONFIG_LOCATION.tmp $CONFIG_LOCATION
 
 if [ "$REGISTRY" = "AssetLibrary" ]; then
-  assetlibrary_invoke_url_export="$ASSETLIBRARY_STACK_NAME-apigatewayurl"
-  assetlibrary_invoke_url=$(echo $stack_exports \
-      | jq -r --arg assetlibrary_invoke_url_export "$assetlibrary_invoke_url_export" \
-      '.Exports[] | select(.Name==$assetlibrary_invoke_url_export) | .Value')
+  assetlibrary_invoke_export="$ASSETLIBRARY_STACK_NAME-restApiFunctionName"
+  assetlibrary_invoke=$(echo $stack_exports \
+      | jq -r --arg assetlibrary_invoke_export "$assetlibrary_invoke_export" \
+      '.Exports[] | select(.Name==$assetlibrary_invoke_export) | .Value')
 
   cat $CONFIG_LOCATION | \
-    jq --arg assetlibrary_invoke_url "$assetlibrary_invoke_url" \
-    ' .assetLibrary.baseUrl=$assetlibrary_invoke_url' \
+    jq --arg assetlibrary_invoke "$assetlibrary_invoke" \
+    ' .assetLibrary.apiFunctionName=$assetlibrary_invoke' \
     > $CONFIG_LOCATION.tmp && mv $CONFIG_LOCATION.tmp $CONFIG_LOCATION
 fi
 

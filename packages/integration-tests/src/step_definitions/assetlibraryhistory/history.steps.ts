@@ -4,24 +4,32 @@
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
 import 'reflect-metadata';
-import { Before, setDefaultTimeout, TableDefinition, Then, When} from 'cucumber';
-import { EventsService, ObjectEventsRequest, Events } from '@cdf/assetlibraryhistory-client/dist';
+import { setDefaultTimeout, TableDefinition, Then, When} from 'cucumber';
+import {
+    EventsService,
+    ObjectEventsRequest,
+    Events,
+    ASSETLIBRARYHISTORY_CLIENT_TYPES,
+} from '@cdf/assetlibraryhistory-client/dist';
 import { fail } from 'assert';
 import stringify from 'json-stable-stringify';
 
 import chai_string = require('chai-string');
 import {expect, use} from 'chai';
-import { RESPONSE_STATUS, TIME_SCENARIO_STARTED } from '../common/common.steps';
+import {AUTHORIZATION_TOKEN, RESPONSE_STATUS, TIME_SCENARIO_STARTED} from '../common/common.steps';
+import {container} from '../../di/inversify.config';
+import {Dictionary} from '../../../../libraries/core/lambda-invoke/src';
 use(chai_string);
 
 setDefaultTimeout(10 * 1000);
 
 const RESULTS = 'results';
-let events: EventsService;
 
-Before(function () {
-    events = new EventsService();
-});
+
+const eventsService:EventsService = container.get(ASSETLIBRARYHISTORY_CLIENT_TYPES.EventsService);
+const additionalHeaders:Dictionary = {
+    Authorization: this[AUTHORIZATION_TOKEN]
+};
 
 When('I retrieve {int} history records for {word} {string}', async function ( qty:number, category:string, objectId:string) {
 
@@ -31,7 +39,7 @@ When('I retrieve {int} history records for {word} {string}', async function ( qt
             objectId,
             limit: qty
         };
-        const r = await events.listObjectEvents(params);
+        const r = await eventsService.listObjectEvents(params, additionalHeaders);
         this[RESULTS]=r;
         expect(r.events.length).eq(qty);
     } catch (err) {
@@ -51,7 +59,7 @@ When('I retrieve next {int} history records for {word} {string}', async function
             token,
             limit: qty
         };
-        const r = await events.listObjectEvents(params);
+        const r = await eventsService.listObjectEvents(params, additionalHeaders);
         this[RESULTS]=r;
         expect(r.events.length).eq(qty);
     } catch (err) {
@@ -68,7 +76,7 @@ Then('{int} history records exist since the test started for {word} {string}', a
             objectId,
             timeFrom: this[TIME_SCENARIO_STARTED]
         };
-        const r = await events.listObjectEvents(params);
+        const r = await eventsService.listObjectEvents(params, additionalHeaders);
         this[RESULTS]=r;
         expect(r.events.length).eq(qty);
     } catch (err) {

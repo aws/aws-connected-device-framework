@@ -28,9 +28,11 @@ templates:
   addThingToGroup: add_thing_to_group
 
 assetLibrary:
-  baseUrl:
+  mode: lambda
+  apiFunctionName:
 provisioning:
-  baseUrl:
+  mode: lambda
+  apiFunctionName:
 
 supportedApiVersions:
   - json:

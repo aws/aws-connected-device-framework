@@ -5,24 +5,32 @@
 #-------------------------------------------------------------------------------*/
 
 import { expect } from 'chai';
-import { Before, Given, setDefaultTimeout, When, TableDefinition, Then} from 'cucumber';
-import { TemplatesService, CategoryEnum, StatusEnum, TypeResource } from '@cdf/assetlibrary-client/dist';
+import { Given, setDefaultTimeout, When, TableDefinition, Then} from 'cucumber';
+import {
+    TemplatesService,
+    CategoryEnum,
+    StatusEnum,
+    TypeResource,
+    ASSTLIBRARY_CLIENT_TYPES,
+} from '@cdf/assetlibrary-client/dist';
 import { fail } from 'assert';
-import { RESPONSE_STATUS, replaceTokens } from '../common/common.steps';
+import {RESPONSE_STATUS, replaceTokens, AUTHORIZATION_TOKEN} from '../common/common.steps';
+import {container} from '../../di/inversify.config';
+import {Dictionary} from '../../../../libraries/core/lambda-invoke/src';
 
 setDefaultTimeout(10 * 1000);
 
-let templates: TemplatesService;
+const templatesService:TemplatesService = container.get(ASSTLIBRARY_CLIENT_TYPES.TemplatesService);
+const additionalHeaders:Dictionary = {
+    Authorization: this[AUTHORIZATION_TOKEN]
+};
 
-Before(function () {
-    templates = new TemplatesService();
-});
 
 Given('{word} assetlibrary {word} template {string} does not exist', async function (
     status:StatusEnum, category:CategoryEnum, templateId:string) {
 
     try {
-        await templates.getTemplate(category, templateId, status);
+        await templatesService.getTemplate(category, templateId, status, additionalHeaders);
         fail('A 404 should be thrown');
     } catch (err) {
         expect(err.status).eq(404);
@@ -33,7 +41,7 @@ Given('assetlibrary {word} template {string} does not exist', async function (
     category:CategoryEnum, templateId:string) {
 
     try {
-        await templates.getTemplate(category, templateId, undefined);
+        await templatesService.getTemplate(category, templateId, undefined, additionalHeaders);
         fail('A 404 should be thrown');
     } catch (err) {
         expect(err.status).eq(404);
@@ -43,7 +51,7 @@ Given('assetlibrary {word} template {string} does not exist', async function (
 Given('{word} assetlibrary {word} template {string} exists', async function (status:StatusEnum,
     category:CategoryEnum, templateId:string) {
     try {
-        const r = await templates.getTemplate(category, templateId, status );
+        const r = await templatesService.getTemplate(category, templateId, status , additionalHeaders);
         expect(r.templateId).equalIgnoreCase(templateId);
         expect(r.category).eq(category);
     } catch (err) {
@@ -54,7 +62,7 @@ Given('{word} assetlibrary {word} template {string} exists', async function (sta
 Given('assetlibrary {word} template {string} exists', async function (
     category:CategoryEnum, templateId:string) {
     try {
-        const r = await templates.getTemplate(category, templateId, undefined );
+        const r = await templatesService.getTemplate(category, templateId, undefined, additionalHeaders );
         expect(r.templateId).equalIgnoreCase(templateId);
         expect(r.category).eq(category);
     } catch (err) {
@@ -79,7 +87,7 @@ When('I create the assetlibrary {word} template {string} with attributes', async
     });
 
     try {
-        await templates.createTemplate(resource);
+        await templatesService.createTemplate(resource, additionalHeaders);
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
     }
@@ -87,7 +95,7 @@ When('I create the assetlibrary {word} template {string} with attributes', async
 
 When('publish assetlibrary {word} template {string}', async function (category:CategoryEnum, templateId:string) {
     try {
-        await templates.publishTemplate(category, templateId);
+        await templatesService.publishTemplate(category, templateId, additionalHeaders);
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
     }
@@ -95,7 +103,7 @@ When('publish assetlibrary {word} template {string}', async function (category:C
 
 When('I delete assetlibrary {word} template {string}', async function (category:CategoryEnum, templateId:string) {
     try {
-        await templates.deleteTemplate(category, templateId);
+        await templatesService.deleteTemplate(category, templateId, additionalHeaders);
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
     }
@@ -106,7 +114,7 @@ Then('{word} assetlibrary {word} template {string} exists with attributes', asyn
     const rowHash = data.rowsHash();
 
     try {
-        const r = await templates.getTemplate(category, templateId, status );
+        const r = await templatesService.getTemplate(category, templateId, status, additionalHeaders );
         expect(r.templateId).equalIgnoreCase(templateId);
         expect(r.category).eq(category);
         const properties = replaceTokens(rowHash['properties']);
@@ -122,7 +130,7 @@ Then('assetlibrary {word} template {string} exists with attributes', async funct
     const rowHash = data.rowsHash();
 
     try {
-        const r = await templates.getTemplate(category, templateId, undefined );
+        const r = await templatesService.getTemplate(category, templateId, undefined, additionalHeaders );
         expect(r.templateId).equalIgnoreCase(templateId);
         expect(r.category).eq(category);
         const properties = replaceTokens(rowHash['properties']);

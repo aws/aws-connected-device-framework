@@ -8,7 +8,6 @@ export * from './client/devices.model';
 export * from './client/devices.service';
 export * from './client/groups.model';
 export * from './client/groups.service';
-export * from './client/messagePayloadDefinition.model';
 export * from './client/pagination.model';
 export * from './client/templates.model';
 export * from './client/templates.service';

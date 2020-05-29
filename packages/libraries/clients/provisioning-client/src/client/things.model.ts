@@ -15,6 +15,8 @@ export interface ProvisionThingRequest {
 
 export interface CdfProvisioningParameters {
 	caId?: string;
+	certificatePem?: string;
+	certificateStatus?: string;
 	certInfo?: {
 		commonName?: string;
 		organization?: string;
@@ -88,4 +90,8 @@ export interface BulkProvisionThingsResponse {
 	failureCount?:number;
 	percentageProgress?:number;
 
+}
+
+export interface RequestHeaders {
+	[key:string] : string;
 }

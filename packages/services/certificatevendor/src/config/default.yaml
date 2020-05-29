@@ -40,7 +40,8 @@ defaults:
     certificateExpiryDays: 1095
 
 assetLibrary:
-  baseUrl:
+  mode: lambda
+  apiFunctionName:
 
 registry:
   # AssetLibrary | DeviceRegistry

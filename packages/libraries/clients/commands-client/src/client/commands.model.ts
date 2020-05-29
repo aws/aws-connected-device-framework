@@ -78,3 +78,6 @@ export enum ExecutionStatus {
 	REJECTED = 'REJECTED',
 	REMOVED = 'REMOVED'
 }
+export interface RequestHeaders {
+	[key:string] : string;
+}

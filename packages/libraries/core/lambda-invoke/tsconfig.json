@@ -1,0 +1,24 @@
+{
+  "extends": "../../tsconfig.libraries.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
+
+    "typeRoots": [
+      "./src/@types",
+      "./node_modules/@types",
+      "../../../../node_modules/@types"
+    ],
+    "types": [
+      "node", "reflect-metadata", "jest"
+    ]
+  },
+  "references": [
+    {
+      "path": "../../config/config-inject"
+    }
+  ],
+  "include": [
+    "src"
+  ]
+}

@@ -66,3 +66,7 @@ export enum SortDirection {
     asc = 'asc',
     desc = 'desc'
 }
+
+export interface RequestHeaders {
+    [key:string] : string;
+}

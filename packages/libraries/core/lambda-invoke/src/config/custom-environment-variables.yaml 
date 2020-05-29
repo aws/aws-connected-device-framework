@@ -1,0 +1,2 @@
+logging:
+   level: CDF_LAMBDA_INVOKE_LOGGING_LEVEL

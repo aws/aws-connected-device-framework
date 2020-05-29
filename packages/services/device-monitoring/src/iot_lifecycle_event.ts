@@ -6,17 +6,23 @@
 
 import { AssetLibUpdate } from './assetlib_update';
 import { logger } from './utils/logger';
-let connected:boolean;
-const assetLib = new AssetLibUpdate();
+import { container } from './di/inversify.config';
+import {TYPES} from './di/types';
 
-exports.lambda_handler = async (event: any, context: any) => {
+let assetLib:AssetLibUpdate;
+
+exports.lambda_handler = async (event: any, _context: any) => {
   logger.debug(`event: ${JSON.stringify(event)}`);
-  console.log(`context: ${JSON.stringify(context)}`);
+
+  if (assetLib===undefined) {
+    assetLib = container.get(TYPES.AssetLibUpdate);
+  }
 
   const clientId = event.clientId;
 
   // TODO: figure out how to extract a boolean `connected` from the eventType
   const status = event.eventType;
+  let connected:boolean;
   if (status === 'connected') {
     connected = true;
   } else {

@@ -1,90 +1,53 @@
-/*-------------------------------------------------------------------------------
-# Copyright (c) 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
-#
-# This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
-#-------------------------------------------------------------------------------*/
-/**
- * Connected Device Framework: Dashboard Facade
- * Asset Library implementation of DevicesService *
- */
-
-/* tslint:disable:no-unused-variable member-ordering */
-
-import { injectable } from 'inversify';
-import ow from 'ow';
-import { PathHelper } from '../utils/path.helper';
-import * as request from 'superagent';
+import {TemplateModel} from './templates.models';
+import {RequestHeaders} from './commands.model';
 import config from 'config';
-import { TemplateModel } from './templates.models';
+import {PathHelper} from '../utils/path.helper';
 
-@injectable()
-export class TemplatesService  {
+export interface TemplatesService {
+    createTemplate(template: TemplateModel, additionalHeaders?: RequestHeaders): Promise<void>;
 
-    private MIME_TYPE:string = 'application/vnd.aws-cdf-v1.0+json';
+    getTemplate(templateId: string, additionalHeaders?: RequestHeaders): Promise<TemplateModel>;
 
-    private baseUrl:string;
-    private headers = {
+    listTemplates(additionalHeaders?: RequestHeaders): Promise<TemplateModel>;
+
+    updateTemplate(template: TemplateModel, additionalHeaders?: RequestHeaders): Promise<void>;
+
+    deleteTemplate(templateId: string, additionalHeaders?: RequestHeaders): Promise<void>;
+}
+
+export class TemplatesServiceBase {
+
+    protected MIME_TYPE: string = 'application/vnd.aws-cdf-v1.0+json';
+
+    protected _headers: RequestHeaders = {
         'Accept': this.MIME_TYPE,
         'Content-Type': this.MIME_TYPE
     };
 
-    public constructor() {
-        this.baseUrl = config.get('commands.baseUrl') as string;
+    protected templatesRelativeUrl() : string {
+        return '/templates';
+    }
+
+    protected templateRelativeUrl(templateId: string) : string {
+        return PathHelper.encodeUrl('templates', templateId);
+    }
+
+    protected buildHeaders(additionalHeaders:RequestHeaders) {
+
+        let headers = this._headers;
 
         if (config.has('commands.headers')) {
-            const additionalHeaders: {[key:string]:string} = config.get('commands.headers') as {[key:string]:string};
-            if (additionalHeaders !== null && additionalHeaders !== undefined) {
-                this.headers = {...this.headers, ...additionalHeaders};
+            const headersFromConfig:RequestHeaders = config.get('commands.headers') as RequestHeaders;
+            if (headersFromConfig !== null && headersFromConfig !== undefined) {
+                headers = {...headers, ...headersFromConfig};
             }
         }
-    }
 
-    public async createTemplate(template:TemplateModel): Promise<void> {
-        ow(template, ow.object.nonEmpty);
+        if (additionalHeaders !== null && additionalHeaders !== undefined) {
+            headers = {...headers, ...additionalHeaders};
+        }
 
-        await request.post(this.baseUrl + '/templates')
-            .send(template)
-            .set(this.headers);
-    }
-
-    public async getTemplate(templateId:string): Promise<TemplateModel> {
-        ow(templateId, ow.string.nonEmpty);
-
-        const url = this.baseUrl + PathHelper.encodeUrl('templates', templateId);
-        const res = await request.get(url)
-            .set(this.headers);
-
-        return res.body;
-    }
-
-    public async listTemplates(): Promise<TemplateModel> {
-
-        const res = await request.get(this.baseUrl + '/templates')
-            .set(this.headers);
-
-        return res.body;
-    }
-
-    public async updateTemplate(template:TemplateModel): Promise<void> {
-        ow(template, ow.object.nonEmpty);
-        ow(template.templateId, ow.string.nonEmpty);
-
-        const url = this.baseUrl + PathHelper.encodeUrl('templates', template.templateId);
-
-        const res = await request.patch(url)
-            .send(template)
-            .set(this.headers);
-
-        return res.body;
-    }
-
-    public async deleteTemplate(templateId:string): Promise<void> {
-        ow(templateId, ow.string.nonEmpty);
-
-        const url = this.baseUrl + PathHelper.encodeUrl('templates', templateId);
-
-       await request.delete(url)
-            .set(this.headers);
+        return headers;
     }
 
 }

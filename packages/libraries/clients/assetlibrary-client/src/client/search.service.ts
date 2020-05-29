@@ -1,50 +1,18 @@
-/*-------------------------------------------------------------------------------
-# Copyright (c) 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
-#
-# This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
-#-------------------------------------------------------------------------------*/
-/**
- * Connected Device Framework: Dashboard Facade
- * Asset Library implementation of DevicesService *
- */
+import {ClientServiceBase} from './common.service';
+import {SearchRequestModel, SearchResultsModel} from './search.model';
+import {RequestHeaders} from './common.model';
 
-/* tslint:disable:no-unused-variable member-ordering */
+export interface SearchService {
+    search(searchRequest:SearchRequestModel, offset?:number, count?:number, additionalHeaders?:RequestHeaders) : Promise<SearchResultsModel>;
+}
 
-import { injectable } from 'inversify';
-import ow from 'ow';
-import * as request from 'superagent';
-import { SearchRequestModel, SearchResultsModel } from './search.model';
-import { QSHelper } from '../utils/qs.helper';
-import { ClientService } from './common.service';
+export class SearchServiceBase extends ClientServiceBase {
 
-@injectable()
-export class SearchService extends ClientService {
-
-    public constructor() {
+    constructor() {
         super();
     }
 
-    public async search(searchRequest:SearchRequestModel, offset?:number, count?:number) : Promise<SearchResultsModel> {
-        ow(searchRequest, ow.object.nonEmpty);
-
-        const req = new SearchRequestModel();
-        req.clone(searchRequest);
-
-        let queryString = req.toQueryString();
-        const queryString2 = QSHelper.getQueryString({offset, count});
-        if (queryString2!==null) {
-            queryString+= queryString2;
-        }
-
-        ow(queryString, ow.string.nonEmpty);
-
-        const url = `${this.baseUrl}/search?${queryString}`;
-
-        const res = await request.get(url)
-        .set(super.getHeaders());
-
-        return res.body;
-
+    protected searchRelativeUrl(): string {
+        return '/search';
     }
-
 }

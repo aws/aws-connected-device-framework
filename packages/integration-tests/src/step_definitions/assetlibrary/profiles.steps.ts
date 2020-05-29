@@ -5,7 +5,12 @@
 #-------------------------------------------------------------------------------*/
 import 'reflect-metadata';
 import { Given, setDefaultTimeout, When, TableDefinition, Then} from 'cucumber';
-import { ProfilesService, DeviceProfile10Resource, GroupProfile10Resource } from '@cdf/assetlibrary-client/dist';
+import {
+    ProfilesService,
+    DeviceProfile10Resource,
+    GroupProfile10Resource,
+    ASSTLIBRARY_CLIENT_TYPES,
+} from '@cdf/assetlibrary-client/dist';
 import stringify from 'json-stable-stringify';
 import { fail } from 'assert';
 
@@ -13,18 +18,16 @@ import chai_string = require('chai-string');
 import {expect, use} from 'chai';
 use(chai_string);
 import { RESPONSE_STATUS, AUTHORIZATION_TOKEN } from '../common/common.steps';
+import {container} from '../../di/inversify.config';
+import {Dictionary} from '../../../../libraries/core/lambda-invoke/src';
 
 setDefaultTimeout(10 * 1000);
 
-let profiles: ProfilesService;
 
-function getProfilesService(world:any) {
-    if (profiles===undefined) {
-        profiles = new ProfilesService();
-    }
-    profiles.init({authToken: world[AUTHORIZATION_TOKEN]});
-    return profiles;
-}
+const profileService:ProfilesService = container.get(ASSTLIBRARY_CLIENT_TYPES.ProfilesService);
+const additionalHeaders:Dictionary = {
+    Authorization: this[AUTHORIZATION_TOKEN]
+};
 
 function isDevice(category:string) {
     return category==='device';
@@ -37,9 +40,9 @@ function isGroup(category:string) {
 Given('assetlibrary {word} profile {string} of {string} does not exist', async function (category:string, profileId:string, templateId:string) {
     try {
         if (isDevice(category)) {
-            await getProfilesService(this).getDeviceProfile(templateId, profileId);
+            await profileService.getDeviceProfile(templateId, profileId, additionalHeaders);
         } else if (isGroup(category)) {
-            await getProfilesService(this).getGroupProfile(templateId, profileId);
+            await profileService.getGroupProfile(templateId, profileId, additionalHeaders);
         }
         fail('A 404 should be thrown');
     } catch (err) {
@@ -50,9 +53,9 @@ Given('assetlibrary {word} profile {string} of {string} does not exist', async f
 Given('assetlibrary {word} profile {string} of {string} exists', async function (category:string, profileId:string, templateId:string) {
     let profile;
     if (isDevice(category)) {
-        profile = await getProfilesService(this).getDeviceProfile(templateId, profileId);
+        profile = await profileService.getDeviceProfile(templateId, profileId, additionalHeaders);
     } else if (isGroup(category)) {
-        profile = await getProfilesService(this).getGroupProfile(templateId, profileId);
+        profile = await profileService.getGroupProfile(templateId, profileId, additionalHeaders);
     }
     expect(profile.profileId).equalIgnoreCase(profileId);
 });
@@ -80,9 +83,9 @@ When('I create the assetlibrary {word} profile {string} of {string} with attribu
 
     try {
         if (isDevice(category)) {
-            await getProfilesService(this).createDeviceProfile(profile);
+            await profileService.createDeviceProfile(profile, additionalHeaders);
         } else if (isGroup(category)) {
-            await getProfilesService(this).createGroupProfile(profile);
+            await profileService.createGroupProfile(profile, additionalHeaders);
         }
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
@@ -92,9 +95,9 @@ When('I create the assetlibrary {word} profile {string} of {string} with attribu
 When('I delete assetlibrary {word} profile {string} of {string}', async function (category:string, profileId:string, templateId:string) {
     try {
         if (isDevice(category)) {
-            await getProfilesService(this).deleteDeviceProfile(templateId, profileId);
+            await profileService.deleteDeviceProfile(templateId, profileId, additionalHeaders);
         } else if (isGroup(category)) {
-            await getProfilesService(this).deleteGroupProfile(templateId, profileId);
+            await profileService.deleteGroupProfile(templateId, profileId, additionalHeaders);
         }
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
@@ -106,9 +109,9 @@ Then('assetlibrary {word} profile {string} of {string} exists with attributes', 
 
     let r:DeviceProfile10Resource|GroupProfile10Resource;
     if (isDevice(category)) {
-        r = await getProfilesService(this).getDeviceProfile(templateId, profileId);
+        r = await profileService.getDeviceProfile(templateId, profileId, additionalHeaders);
     } else if (isGroup(category)) {
-        r = await getProfilesService(this).getGroupProfile(templateId, profileId);
+        r = await profileService.getGroupProfile(templateId, profileId, additionalHeaders);
     }
 
     Object.keys(d).forEach( key => {

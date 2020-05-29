@@ -28,7 +28,6 @@ export class TypeDefinitionModel {
     required?: string[];
     relations?: TypeRelationsModel;
     components?: string[];
-    messagePayload?: MessagePayloadDefinition;
 }
 
 export class TypeRelationsModel {
@@ -87,13 +86,6 @@ export class TypeResourceList {
         offset:number;
         count:number;
     };
-}
-
-export class MessagePayloadDefinition {
-    timeStampAttributeName: string;
-	properties: { [key: string]: string|number|boolean };
-    required?: string[];
-    periodicFrequency: number;
 }
 
 export enum TypeDefinitionStatus {

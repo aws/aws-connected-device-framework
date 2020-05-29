@@ -5,11 +5,21 @@
 #-------------------------------------------------------------------------------*/
 import 'reflect-metadata';
 import { setDefaultTimeout, When, TableDefinition, Then} from 'cucumber';
-import { SearchService, SearchRequestModel, SearchResultsModel, Device10Resource, Group10Resource, SearchRequestFilter } from '@cdf/assetlibrary-client/dist';
+import {
+    SearchService,
+    SearchRequestModel,
+    SearchResultsModel,
+    Device10Resource,
+    Group10Resource,
+    SearchRequestFilter,
+    ASSTLIBRARY_CLIENT_TYPES,
+} from '@cdf/assetlibrary-client/dist';
 
 import chai_string = require('chai-string');
 import { expect, use} from 'chai';
 import { RESPONSE_STATUS, AUTHORIZATION_TOKEN } from '../common/common.steps';
+import {container} from '../../di/inversify.config';
+import {Dictionary} from '../../../../libraries/core/lambda-invoke/src';
 
 use(chai_string);
 
@@ -17,15 +27,10 @@ setDefaultTimeout(10 * 1000);
 
 export const SEARCH_RESULTS = 'searchResults';
 
-let search: SearchService;
-
-function getSearchService(world:any) {
-    if (search===undefined) {
-        search = new SearchService();
-    }
-    search.init({authToken: world[AUTHORIZATION_TOKEN]});
-    return search;
-}
+const searchService:SearchService = container.get(ASSTLIBRARY_CLIENT_TYPES.SearchService);
+const additionalHeaders:Dictionary = {
+    Authorization: this[AUTHORIZATION_TOKEN]
+};
 
 function buildSearchRequest(data:TableDefinition):SearchRequestModel {
     const d = data.rowsHash();
@@ -74,7 +79,7 @@ When('I search with following attributes:', async function (data:TableDefinition
         delete this[SEARCH_RESULTS];
         delete this[RESPONSE_STATUS];
 
-        this[SEARCH_RESULTS] = await getSearchService(this).search(searchRequest);
+        this[SEARCH_RESULTS] = await searchService.search(searchRequest, undefined, undefined, additionalHeaders);
 
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
@@ -89,7 +94,7 @@ When('I search with summary with following attributes:', async function (data:Ta
         delete this[SEARCH_RESULTS];
         delete this[RESPONSE_STATUS];
 
-        this[SEARCH_RESULTS] = await getSearchService(this).search(searchRequest);
+        this[SEARCH_RESULTS] = await searchService.search(searchRequest, undefined, undefined, additionalHeaders);
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
     }

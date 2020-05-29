@@ -7,8 +7,6 @@
  * Connected Device Framework: Dashboard Facade
  */
 
-import { MessagePayloadDefinition } from './messagePayloadDefinition.model';
-
 export class TypeDefinitionModel {
 	properties?: { [key: string]: {type: string|string[] }};
     required?: string[];
@@ -17,7 +15,6 @@ export class TypeDefinitionModel {
         in?: { [key: string]: string[] }
     };
     components?: string[];
-    messagePayload?: MessagePayloadDefinition;
 }
 
 export class TypeResource extends TypeDefinitionModel {

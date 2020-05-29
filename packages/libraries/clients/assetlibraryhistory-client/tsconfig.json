@@ -13,6 +13,14 @@
             "node"
         ]
     },
+    "references": [
+        {
+            "path": "../../config/config-inject"
+        },
+        {
+            "path": "../../core/lambda-invoke"
+        }
+    ],
     "include": [
         "src"
     ],

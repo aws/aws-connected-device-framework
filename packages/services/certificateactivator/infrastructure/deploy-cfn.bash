@@ -106,20 +106,20 @@ openssl_arn=$(echo $stack_info \
 logTitle 'Certificate Activator Identifying deployed endpoints ******'
 stack_exports=$(aws cloudformation list-exports $AWS_ARGS)
 
-assetlibrary_invoke_url_export="$ASSETLIBRARY_STACK_NAME-apigatewayurl"
-assetlibrary_invoke_url=$(echo $stack_exports \
-  | jq -r --arg assetlibrary_invoke_url_export "$assetlibrary_invoke_url_export" \
-  '.Exports[] | select(.Name==$assetlibrary_invoke_url_export) | .Value')
+assetlibrary_invoke_export="$ASSETLIBRARY_STACK_NAME-restApiFunctionName"
+assetlibrary_invoke=$(echo $stack_exports \
+  | jq -r --arg assetlibrary_invoke_export "$assetlibrary_invoke_export" \
+  '.Exports[] | select(.Name==$assetlibrary_invoke_export) | .Value')
 
-provisioning_invoke_url_export="$PROVISIONING_STACK_NAME-apigatewayurl"
-provisioning_invoke_url=$(echo $stack_exports \
-    | jq -r --arg provisioning_invoke_url_export "$provisioning_invoke_url_export" \
+provisioning_invoke_export="$PROVISIONING_STACK_NAME-restApiFunctionName"
+provisioning_invoke=$(echo $stack_exports \
+    | jq -r --arg provisioning_invoke_export "$provisioning_invoke_export" \
     '.Exports[] | select(.Name==$provisioning_invoke_url_export) | .Value')
 
 cat $CONFIG_LOCATION | \
   jq --arg assetlibrary_invoke_url "$assetlibrary_invoke_url" \
      --arg provisioning_invoke_url "$provisioning_invoke_url" \
-  ' .assetLibrary.baseUrl=$assetlibrary_invoke_url | .provisioning.baseUrl=$provisioning_invoke_url' \
+  ' .assetLibrary.apiFunctionName=$assetlibrary_invoke_url | .provisioning.apiFunctionName=$provisioning_invoke_url' \
   > $CONFIG_LOCATION.tmp && mv $CONFIG_LOCATION.tmp $CONFIG_LOCATION
 
 application_configuration_override=$(cat $CONFIG_LOCATION)

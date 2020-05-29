@@ -1,97 +1,56 @@
-/*-------------------------------------------------------------------------------
-# Copyright (c) 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
-#
-# This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
-#-------------------------------------------------------------------------------*/
-/**
- * Connected Device Framework: Dashboard Facade
- * Asset Library implementation of DevicesService *
- */
-
-/* tslint:disable:no-unused-variable member-ordering */
-
-import { injectable } from 'inversify';
-import ow from 'ow';
-import { PathHelper } from '../utils/path.helper';
-import * as request from 'superagent';
+import {Category, CategoryEventsRequest, Events, ObjectEventsRequest, RequestHeaders} from './events.model';
 import config from 'config';
-import { CategoryEventsRequest, Events, Category, ObjectEventsRequest } from './events.model';
-import { QSHelper } from '../utils/qs.helper';
+import {PathHelper} from '../utils/path.helper';
 
-@injectable()
-export class EventsService  {
+export interface EventsService {
+    listObjectEvents(req: ObjectEventsRequest, additionalHeaders?: RequestHeaders): Promise<Events>;
 
-    private MIME_TYPE:string = 'application/vnd.aws-cdf-v1.0+json';
+    listDeviceEvents(req: CategoryEventsRequest, additionalHeaders?: RequestHeaders): Promise<Events>;
 
-    private baseUrl:string;
-    private headers = {
+    listGroupEvents(req: CategoryEventsRequest, additionalHeaders?: RequestHeaders): Promise<Events>;
+
+    listDeviceTemplateEvents(req: CategoryEventsRequest, additionalHeaders?: RequestHeaders): Promise<Events>;
+
+    listGroupTemplateEvents(req: CategoryEventsRequest, additionalHeaders?: RequestHeaders): Promise<Events>;
+
+    listPolicyEvents(req: CategoryEventsRequest, additionalHeaders?: RequestHeaders): Promise<Events>;
+
+    listCategoryEvents(category: Category, req: CategoryEventsRequest, additionalHeaders?: RequestHeaders): Promise<Events>;
+}
+
+export class EventsServiceBase {
+
+    protected MIME_TYPE: string = 'application/vnd.aws-cdf-v1.0+json';
+
+    protected _headers: RequestHeaders = {
         'Accept': this.MIME_TYPE,
         'Content-Type': this.MIME_TYPE
     };
 
-    public constructor() {
-        this.baseUrl = config.get('assetLibraryHistory.baseUrl') as string;
+    protected objectEventsRelativeUrl(category:string, objectId:string) : string {
+        return PathHelper.encodeUrl(category, objectId);
+    }
+
+    protected eventsRelativeUrl(category:string) : string {
+        return PathHelper.encodeUrl(category);
+    }
+
+    protected buildHeaders(additionalHeaders:RequestHeaders) {
+
+        let headers = this._headers;
 
         if (config.has('assetLibraryHistory.headers')) {
-            const additionalHeaders: {[key:string]:string} = config.get('assetLibraryHistory.headers') as {[key:string]:string};
-            if (additionalHeaders !== null && additionalHeaders !== undefined) {
-                this.headers = {...this.headers, ...additionalHeaders};
+            const headersFromConfig:RequestHeaders = config.get('assetLibraryHistory.headers') as RequestHeaders;
+            if (headersFromConfig !== null && headersFromConfig !== undefined) {
+                headers = {...headers, ...headersFromConfig};
             }
         }
-    }
 
-    public async listObjectEvents(req:ObjectEventsRequest) : Promise<Events> {
-        ow(req, ow.object.nonEmpty);
-        ow(req.category, ow.string.nonEmpty);
-        ow(req.objectId, ow.string.nonEmpty);
-
-        let url = this.baseUrl + PathHelper.encodeUrl(req.category, req.objectId);
-        const queryString = QSHelper.getQueryString(req);
-        if (queryString) {
-            url += `?${queryString}`;
+        if (additionalHeaders !== null && additionalHeaders !== undefined) {
+            headers = {...headers, ...additionalHeaders};
         }
 
-        const res = await request.get(url)
-        .set(this.headers);
-
-        return res.body;
-
-    }
-
-    public async listDeviceEvents(req:CategoryEventsRequest) : Promise<Events> {
-        return this.listCategoryEvents(Category.devices, req);
-    }
-
-    public async listGroupEvents(req:CategoryEventsRequest) : Promise<Events> {
-        return this.listCategoryEvents(Category.groups, req);
-    }
-
-    public async listDeviceTemplateEvents(req:CategoryEventsRequest) : Promise<Events> {
-        return this.listCategoryEvents(Category.deviceTemplates, req);
-    }
-
-    public async listGroupTemplateEvents(req:CategoryEventsRequest) : Promise<Events> {
-        return this.listCategoryEvents(Category.groupTemplates, req);
-    }
-
-    public async listPolicyEvents(req:CategoryEventsRequest) : Promise<Events> {
-        return this.listCategoryEvents(Category.policies, req);
-    }
-
-    private async listCategoryEvents(category:Category, req:CategoryEventsRequest) : Promise<Events> {
-        ow(category, ow.string.nonEmpty);
-
-        let url = `${this.baseUrl}/${category}`;
-        const queryString = QSHelper.getQueryString(req);
-        if (queryString) {
-            url += `?${queryString}`;
-        }
-
-        const res = await request.get(url)
-        .set(this.headers);
-
-        return res.body;
-
+        return headers;
     }
 
 }

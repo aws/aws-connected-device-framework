@@ -1,0 +1,85 @@
+{
+  "name": "@cdf/lambda-invoke",
+  "version": "0.0.1",
+  "description": "Lambda Invoker Service",
+  "author": "Hassan Khokhar <hkhokhar@amazon.com>",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "scripts": {
+    "clean": "rm -rf dist build tsconfig.tsbuildinfo",
+    "reset": "rm -rf cli node_modules package-lock.json",
+    "lint": "tslint \"src/**/*.ts\"",
+    "test": "npm run lint && NODE_ENV= NODE_CONFIG_DIR='./src/config' nyc jest --passWithNoTests",
+    "build": "tsc -b tsconfig.json",
+    "semantic-release": "npx semantic-release -e semantic-release-monorepo"
+  },
+  "dependencies": {
+    "@cdf/config-inject": "^2.0.1",
+    "config": "3.2.4",
+    "http-errors": "1.7.3",
+    "inversify": "5.0.1",
+    "inversify-binding-decorators": "4.0.0",
+    "inversify-express-utils": "6.3.2",
+    "js-yaml": "3.13.1",
+    "logform": "2.1.2",
+    "reflect-metadata": "0.1.13",
+    "superagent": "5.1.2",
+    "readable-stream": "2.3.6",
+    "winston": "3.2.1",
+    "winston-transport": "4.3.0"
+  },
+  "devDependencies": {
+    "aws-sdk": "2.675.0",
+    "@commitlint/cli": "8.2.0",
+    "@commitlint/config-conventional": "8.2.0",
+    "@semantic-release/changelog": "3.0.6",
+    "@semantic-release/git": "7.0.18",
+    "@semantic-release/release-notes-generator": "7.3.5",
+    "@types/config": "0.0.36",
+    "@types/http-errors": "1.6.3",
+    "@types/jest": "24.0.23",
+    "@types/node": "12.12.17",
+    "commitizen": "4.0.3",
+    "concurrently": "5.0.1",
+    "del-cli": "3.0.0",
+    "husky": "3.1.0",
+    "jest": "24.9.0",
+    "jest-create-mock-instance": "1.1.0",
+    "jest-haste-map": "24.9.0",
+    "jest-mock": "24.9.0",
+    "jest-resolve": "24.9.0",
+    "nodemon": "2.0.2",
+    "nyc": "14.1.1",
+    "semantic-release": "15.13.31",
+    "semantic-release-monorepo": "6.1.1",
+    "ts-jest": "24.2.0",
+    "tslint": "5.20.1",
+    "typescript": "3.7.3"
+  },
+  "jest": {
+    "globals": {
+      "NODE_CONFIG_STRICT_MODE": false,
+      "SUPPRESS_NO_CONFIG_WARNING": true
+    },
+    "roots": [
+      "<rootDir>/src"
+    ],
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testMatch": [
+      "<rootDir>/**/?(*.)+(spec|test).ts?(x)"
+    ],
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
+  },
+  "license": "ISC",
+  "private": true
+}

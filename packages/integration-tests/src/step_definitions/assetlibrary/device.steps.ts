@@ -5,29 +5,28 @@
 #-------------------------------------------------------------------------------*/
 import 'reflect-metadata';
 import { Given, setDefaultTimeout, When, TableDefinition, Then} from 'cucumber';
-import { Device10Resource, DevicesService } from '@cdf/assetlibrary-client/dist';
+import { Device10Resource, DevicesService } from '@cdf/assetlibrary-client';
 import { fail } from 'assert';
 import stringify from 'json-stable-stringify';
+import { container } from '../../di/inversify.config';
 
 import chai_string = require('chai-string');
 import {expect, use} from 'chai';
 import { RESPONSE_STATUS, replaceTokens, AUTHORIZATION_TOKEN} from '../common/common.steps';
+import {ASSTLIBRARY_CLIENT_TYPES} from '@cdf/assetlibrary-client/dist';
+import {Dictionary} from '../../../../libraries/core/lambda-invoke/src';
 use(chai_string);
 
 setDefaultTimeout(10 * 1000);
 
-let devices:DevicesService;
-function getDevicesService(world:any) {
-    if (devices===undefined) {
-        devices = new DevicesService();
-    }
-    devices.init({authToken: world[AUTHORIZATION_TOKEN]});
-    return devices;
-}
+const deviceService:DevicesService = container.get(ASSTLIBRARY_CLIENT_TYPES.DevicesService);
+const additionalHeaders:Dictionary = {
+    Authorization: this[AUTHORIZATION_TOKEN]
+};
 
 Given('device {string} does not exist', async function (deviceId:string) {
     try {
-        await getDevicesService(this).getDeviceByID(deviceId);
+        await deviceService.getDeviceByID(deviceId, undefined, undefined, undefined, additionalHeaders);
         fail('A 404 should be thrown');
     } catch (err) {
         expect(err.status).eq(404);
@@ -35,11 +34,11 @@ Given('device {string} does not exist', async function (deviceId:string) {
 });
 
 Given('device {string} exists', async function (deviceId:string) {
-    const device = await getDevicesService(this).getDeviceByID(deviceId);
+    const device = await deviceService.getDeviceByID(deviceId, undefined, undefined, undefined, additionalHeaders);
     expect(device.deviceId).equalIgnoreCase(deviceId);
 });
 
-async function registerDevice (world:any, deviceId:string, data:TableDefinition, profileId?:string) {
+async function registerDevice (deviceId:string, data:TableDefinition, profileId?:string) {
 
     const d = data.rowsHash();
     
@@ -61,12 +60,12 @@ async function registerDevice (world:any, deviceId:string, data:TableDefinition,
         }
     });
 
-    await getDevicesService(world).createDevice(device, profileId);
+    await deviceService.createDevice(device, profileId, additionalHeaders);
 }
 
 When('I create device {string} with attributes', async function (deviceId:string, data:TableDefinition) {
     try {
-        await registerDevice(this, deviceId, data);
+        await registerDevice(deviceId, data);
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
     }
@@ -75,7 +74,7 @@ When('I create device {string} with attributes', async function (deviceId:string
 When('I create device {string} applying profile {string} with attributes', async function (deviceId:string, profileId:string, data:TableDefinition) {
 
     try {
-        await registerDevice(this, deviceId, data, profileId);
+        await registerDevice(deviceId, data, profileId);
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
     }
@@ -83,7 +82,7 @@ When('I create device {string} applying profile {string} with attributes', async
 
 When('I create device {string} with invalid attributes', async function (deviceId:string, data:TableDefinition) {
     try {
-        await registerDevice(this, deviceId, data);
+        await registerDevice(deviceId, data);
         fail('Expected 400');
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
@@ -112,7 +111,7 @@ When('I update device {string} with attributes', async function (deviceId:string
     });
 
     try {
-        await getDevicesService(this).updateDevice(deviceId, device);
+        await deviceService.updateDevice(deviceId, device, undefined, additionalHeaders);
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
     }
@@ -125,7 +124,7 @@ When('I update device {string} applying profile {string}', async function (devic
     };
 
     try {
-        await getDevicesService(this).updateDevice(deviceId, device, profileId);
+        await deviceService.updateDevice(deviceId, device, profileId, additionalHeaders);
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
     }
@@ -133,7 +132,7 @@ When('I update device {string} applying profile {string}', async function (devic
 
 When('I add device {string} to group {string} related via {string}', async function (deviceId:string, groupPath:string, relationship:string) {
     try {
-        await getDevicesService(this).attachToGroup(deviceId, relationship, groupPath);
+        await deviceService.attachToGroup(deviceId, relationship, groupPath, additionalHeaders);
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
     }
@@ -141,7 +140,7 @@ When('I add device {string} to group {string} related via {string}', async funct
 
 When('I remove device {string} from group {string} related via {string}', async function (deviceId:string, groupPath:string, relationship:string) {
     try {
-        await getDevicesService(this).detachFromGroup(deviceId, relationship, groupPath);
+        await deviceService.detachFromGroup(deviceId, relationship, groupPath, additionalHeaders);
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
     }
@@ -149,7 +148,7 @@ When('I remove device {string} from group {string} related via {string}', async 
 
 When('I delete device {string}', async function (deviceId:string) {
     try {
-        await getDevicesService(this).deleteDevice(deviceId);
+        await deviceService.deleteDevice(deviceId, additionalHeaders);
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
     }
@@ -157,7 +156,7 @@ When('I delete device {string}', async function (deviceId:string) {
 
 When('I get device {string}', async function (deviceId:string) {
     try {
-        await getDevicesService(this).getDeviceByID(deviceId);
+        await deviceService.getDeviceByID(deviceId, undefined, undefined, undefined, additionalHeaders);
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
     }
@@ -165,7 +164,7 @@ When('I get device {string}', async function (deviceId:string) {
 
 Then('device {string} exists with attributes', async function (deviceId:string, data:TableDefinition) {
     const d = data.rowsHash();
-    const r = await getDevicesService(this).getDeviceByID(deviceId);
+    const r = await deviceService.getDeviceByID(deviceId, undefined, undefined, undefined, additionalHeaders);
 
     Object.keys(d).forEach( key => {
         const val = replaceTokens(d[key]);
@@ -183,7 +182,7 @@ Then('device {string} exists with attributes', async function (deviceId:string, 
 
 Then('device {string} is {string} {string}', async function (deviceId, rel, groupPath) {
     try {
-        const device = await getDevicesService(this).getDeviceByID(deviceId);
+        const device = await deviceService.getDeviceByID(deviceId, undefined, undefined, undefined, additionalHeaders);
         expect(device.groups[rel]).include(groupPath);
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;

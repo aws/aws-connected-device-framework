@@ -5,15 +5,14 @@
 #-------------------------------------------------------------------------------*/
 
 import 'reflect-metadata';
+import { inject } from 'inversify';
 import { DevicesService, Device10Resource } from '@cdf/assetlibrary-client';
 import { logger } from './utils/logger';
+import {TYPES} from './di/types';
 
 export class AssetLibUpdate {
 
-    private devices: DevicesService;
-
-    constructor(   ) {
-        this.devices = new DevicesService();
+    constructor(@inject(TYPES.AssetLibUpdate) private readonly _devices:DevicesService) {
     }
 
     public async updateDeviceConnected(deviceId: string, connected:boolean) : Promise<void> {
@@ -26,7 +25,7 @@ export class AssetLibUpdate {
             deviceId,
             connected
         } as Device10Resource;
-        await this.devices.updateDevice(deviceId, updateRequest);
+        await this._devices.updateDevice(deviceId, updateRequest);
 
         logger.debug('assetlib_update: updatedevice: exit:');
     }
