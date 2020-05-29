@@ -696,58 +696,6 @@ importers:
       ts-jest: 24.2.0
       tslint: 5.20.1
       typescript: 3.7.3
-  packages/libraries/core/lambda-apigw-event:
-    dependencies:
-      config: 3.2.4
-    devDependencies:
-      '@commitlint/cli': 8.2.0
-      '@commitlint/config-conventional': 8.2.0
-      '@semantic-release/changelog': 3.0.6_semantic-release@15.13.31
-      '@semantic-release/git': 7.0.18_semantic-release@15.13.31
-      '@semantic-release/release-notes-generator': 7.3.5_semantic-release@15.13.31
-      '@types/jest': 24.0.23
-      '@types/node': 12.12.17
-      commitizen: 4.0.3
-      concurrently: 5.0.1
-      del-cli: 3.0.0
-      husky: 3.1.0
-      jest: 24.9.0
-      jest-create-mock-instance: 1.1.0
-      jest-haste-map: 24.9.0
-      jest-mock: 24.9.0
-      jest-resolve: 24.9.0_jest-resolve@24.9.0
-      nodemon: 2.0.2
-      nyc: 14.1.1
-      semantic-release: 15.13.31_semantic-release@15.13.31
-      semantic-release-monorepo: 6.1.1_semantic-release@15.13.31
-      ts-jest: 24.2.0_jest@24.9.0
-      tslint: 5.20.1_typescript@3.7.3
-      typescript: 3.7.3
-    specifiers:
-      '@commitlint/cli': 8.2.0
-      '@commitlint/config-conventional': 8.2.0
-      '@semantic-release/changelog': 3.0.6
-      '@semantic-release/git': 7.0.18
-      '@semantic-release/release-notes-generator': 7.3.5
-      '@types/jest': 24.0.23
-      '@types/node': 12.12.17
-      commitizen: 4.0.3
-      concurrently: 5.0.1
-      config: 3.2.4
-      del-cli: 3.0.0
-      husky: 3.1.0
-      jest: 24.9.0
-      jest-create-mock-instance: 1.1.0
-      jest-haste-map: 24.9.0
-      jest-mock: 24.9.0
-      jest-resolve: 24.9.0
-      nodemon: 2.0.2
-      nyc: 14.1.1
-      semantic-release: 15.13.31
-      semantic-release-monorepo: 6.1.1
-      ts-jest: 24.2.0
-      tslint: 5.20.1
-      typescript: 3.7.3
   packages/libraries/core/lambda-invoke:
     dependencies:
       '@cdf/config-inject': 'link:../../config/config-inject'
@@ -2200,7 +2148,7 @@ importers:
       '@types/jest': 24.0.23
       '@types/jszip': 3.1.6
       '@types/node': 12.12.17
-      '@types/shortid': ^0.0.29
+      '@types/shortid': 0.0.29
       aws-sdk: 2.588.0
       aws-serverless-express: 3.3.6
       body-parser: 1.19.0
@@ -5925,7 +5873,7 @@ packages:
       integrity: sha512-SMIZoZdLh/fgofivvIkmknUXyPnvxRE3DhtZ5Me3Mrsk5gyPL42F0xr51TdRXskBxHfMp+07bcYzfsYEsSQA9Q==
   /faye-websocket/0.11.3:
     dependencies:
-      websocket-driver: 0.7.3
+      websocket-driver: 0.7.4
     dev: false
     engines:
       node: '>=0.8.0'
@@ -6652,10 +6600,10 @@ packages:
       node: '>= 0.6'
     resolution:
       integrity: sha512-ZTTX0MWrsQ2ZAhA1cejAwDLycFsd7I7nVtnkT3Ol0aqodaKW+0CTZDQ1uBv5whptCnc8e8HeRRJxRs0kmm/Qfw==
-  /http-parser-js/0.4.10:
+  /http-parser-js/0.5.2:
     dev: false
     resolution:
-      integrity: sha1-ksnBN0w1CF912zWexWzCV8u5P6Q=
+      integrity: sha512-opCO9ASqg5Wy2FNo7A0sxy71yGbbkJJXLdgMK04Tcypw9jr2MgWbyubb0+WdmDmGnFflO7fRbqbaihh/ENDlRQ==
   /http-proxy-agent/3.0.0:
     dependencies:
       agent-base: 5.1.1
@@ -11494,16 +11442,16 @@ packages:
     dev: true
     resolution:
       integrity: sha512-YQ+BmxuTgd6UXZW3+ICGfyqRyHXVlD5GtQr5+qjiNW7bF0cqrzX500HVXPBOvgXb5YnzDd+h0zqyv61KUD7+Sg==
-  /websocket-driver/0.7.3:
+  /websocket-driver/0.7.4:
     dependencies:
-      http-parser-js: 0.4.10
+      http-parser-js: 0.5.2
       safe-buffer: 5.2.1
       websocket-extensions: 0.1.3
     dev: false
     engines:
       node: '>=0.8.0'
     resolution:
-      integrity: sha512-bpxWlvbbB459Mlipc5GBzzZwhoZgGEZLuqPaR0INBGnPAY1vdBX6hPnoFXiw+3yWxDuHyQjO2oXTMyS8A5haFg==
+      integrity: sha512-b17KeDIQVjvb0ssuSDF2cYXSg2iztliJ4B9WdsuB6J952qCPKmnVq4DyW5motImXHDC1cBT/1UezrJVsKw5zjg==
   /websocket-extensions/0.1.3:
     dev: false
     engines:
@@ -11774,7 +11722,6 @@ packages:
       node: '>=6'
     name: env-ci
     resolution:
-      registry: 'https://registry.npmjs.org/'
       tarball: 'https://codeload.github.com/boardthatpowder/env-ci/tar.gz/45ee1f3169d13f1a2c3842f5f2458b6bd8cb6dd5'
     version: 0.0.0-development
   github.com/boardthatpowder/semantic-release-plugin-decorators/0f89322cb9231b2812e6e66bbc7215b88efd02b5_semantic-release@15.13.31:
@@ -11788,6 +11735,5 @@ packages:
     peerDependencies:
       semantic-release: '>=11'
     resolution:
-      registry: 'https://registry.npmjs.org/'
       tarball: 'https://codeload.github.com/boardthatpowder/semantic-release-plugin-decorators/tar.gz/0f89322cb9231b2812e6e66bbc7215b88efd02b5'
     version: 0.0.0-development
