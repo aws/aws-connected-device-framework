@@ -1,3 +1,10 @@
+# [@cdf/provisioning-client-v3.3.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/provisioning-client-v3.2.0...@cdf/provisioning-client-v3.3.0) (2020-05-29)
+
+
+### Features
+
+* **greengrass:** provisioning and deployment service ([5072214](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/5072214fb81a0d6a8f8641bf0f52fefb7f2ad950))
+
 # [@cdf/provisioning-client-v3.2.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/provisioning-client-v3.1.0...@cdf/provisioning-client-v3.2.0) (2020-01-06)
 
 
