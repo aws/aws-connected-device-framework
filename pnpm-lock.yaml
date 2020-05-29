@@ -8250,13 +8250,12 @@ packages:
       node: '>=0.10.0'
     resolution:
       integrity: sha1-7Nyo8TFE5mDxtb1B8S80edmN+48=
-  /marked-terminal/3.3.0_marked@0.7.0:
+  /marked-terminal/3.3.0:
     dependencies:
       ansi-escapes: 3.2.0
       cardinal: 2.1.1
       chalk: 2.4.2
       cli-table: 0.3.1
-      marked: 0.7.0
       node-emoji: 1.10.0
       supports-hyperlinks: 1.0.1
     dev: true
@@ -10170,7 +10169,7 @@ packages:
       hosted-git-info: 3.0.4
       lodash: 4.17.15
       marked: 0.7.0
-      marked-terminal: 3.3.0_marked@0.7.0
+      marked-terminal: 3.3.0
       p-locate: 4.1.0
       p-reduce: 2.1.0
       read-pkg-up: 7.0.1
@@ -11722,6 +11721,7 @@ packages:
       node: '>=6'
     name: env-ci
     resolution:
+      registry: 'https://registry.npmjs.org/'
       tarball: 'https://codeload.github.com/boardthatpowder/env-ci/tar.gz/45ee1f3169d13f1a2c3842f5f2458b6bd8cb6dd5'
     version: 0.0.0-development
   github.com/boardthatpowder/semantic-release-plugin-decorators/0f89322cb9231b2812e6e66bbc7215b88efd02b5_semantic-release@15.13.31:
@@ -11735,5 +11735,6 @@ packages:
     peerDependencies:
       semantic-release: '>=11'
     resolution:
+      registry: 'https://registry.npmjs.org/'
       tarball: 'https://codeload.github.com/boardthatpowder/semantic-release-plugin-decorators/tar.gz/0f89322cb9231b2812e6e66bbc7215b88efd02b5'
     version: 0.0.0-development
