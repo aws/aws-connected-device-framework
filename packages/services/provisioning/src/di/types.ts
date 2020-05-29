@@ -12,6 +12,7 @@ export const TYPES = {
 
     ClientIdEnforcementPolicyStepProcessor: Symbol.for('ClientIdEnforcementPolicyStepProcessor'),
     CreateDeviceCertificateStepProcessor: Symbol.for('CreateDeviceCertificateStepProcessor'),
+    RegisterDeviceCertificateWithoutCAStepProcessor: Symbol.for('RegisterDeviceCertificateWithoutCAStepProcessor'),
 
     Iot: Symbol.for('Iot'),
     IotFactory: Symbol.for('Factory<Iot>'),

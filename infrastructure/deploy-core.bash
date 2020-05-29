@@ -25,6 +25,7 @@ OPTIONAL ARGUMENTS
     -E (string)   Name of configuration environment.  If not provided, then '-e ENVIRONMENT' is used.
     -b (string)   The name of the S3 bucket to deploy CloudFormation templates into.  If not provided, a new bucket named 'cdf-cfn-artifacts-$AWS_ACCOUNT_ID-$AWS_REGION' is created.
     -k (string)   The KMS Key id that the provisoning service will use to decrypt sensitive information.  If not provided, a new KMS key with the alias 'cdf' is created.
+    -C (string)   The Custom Authorizer Stack name.
 
     ASSET LIBRARY OPTIONS::
     ---------------
@@ -74,7 +75,7 @@ EOF
 ######  parse and validate the provided arguments   ######
 ##########################################################
 
-while getopts ":e:E:c:p:i:k:b:Ff:a:Nv:g:n:m:o:r:x:sBYR:P:" opt; do
+while getopts ":e:E:c:p:i:k:b:Ff:a:Nv:g:n:m:o:r:x:sBYR:P:C:" opt; do
   case $opt in
     e  ) ENVIRONMENT=$OPTARG;;
     E  ) CONFIG_ENVIRONMENT=$OPTARG;;
@@ -88,6 +89,7 @@ while getopts ":e:E:c:p:i:k:b:Ff:a:Nv:g:n:m:o:r:x:sBYR:P:" opt; do
 
     x  ) CONCURRENT_EXECUTIONS=$OPTARG;;
     s  ) APPLY_AUTOSCALING=true;;
+    C  ) CUSTOM_AUTH_STACK=$OPTARG;;
 
     F  ) ASSETLIBRARY_FGAC=true;;
     f  ) JWT_ISSUER=$OPTARG;;
@@ -178,7 +180,7 @@ AWS_SCRIPT_ARGS="-R $AWS_REGION "
 
 if [ -n "$AWS_PROFILE" ]; then
 	AWS_ARGS="$AWS_ARGS--profile $AWS_PROFILE"
-	AWS_SCRIPT_ARGS="$AWS_SCRIPT_ARGS-P $AWS_PROFILE"
+	AWS_SCRIPT_ARGS="$AWS_SCRIPT_ARGS -P $AWS_PROFILE"
 fi
 
 AWS_ACCOUNT_ID=$(aws sts get-caller-identity --output text --query 'Account' $AWS_ARGS)
@@ -207,10 +209,10 @@ The Connected Device Framework (CDF) will install using the following configurat
     -F (ASSETLIBRARY_FGAC)              : $ASSETLIBRARY_FGAC
     -f (JWT_ISSUER)                     : $JWT_ISSUER
     -a (AUTH_TOKEN)                     : $AUTH_TOKEN
-    -N (USE_EXISTING_VPC)               : $USE_EXISTING_VPC
     -x (CONCURRENT_EXECUTIONS):         : $CONCURRENT_EXECUTIONS
-    -s (APPLY_AUTOSCALING):             : $APPLY_AUTOSCALING"
-
+    -s (APPLY_AUTOSCALING):             : $APPLY_AUTOSCALING
+    -C (CUSTOM_AUTH_STACK)              : $CUSTOM_AUTH_STACK
+    -N (USE_EXISTING_VPC)               : $USE_EXISTING_VPC"
 if [ -z "$USE_EXISTING_VPC" ]; then
     config_message+='not provided, therefore a new vpc will be created'
 else
@@ -231,6 +233,7 @@ config_message+="
 if [ -z "$BYPASS_BUNDLE" ]; then
     config_message+='not provided, therefore each TypeScript project will be bundled'
 fi
+
 
 asksure() {
     echo -n "$config_message"
@@ -270,7 +273,7 @@ root_dir=$(pwd)
 
 ASSETLIBRARY_HISTORY_STACK_NAME=cdf-assetlibraryhistory-${ENVIRONMENT}
 ASSETLIBRARY_STACK_NAME=cdf-assetlibrary-${ENVIRONMENT}
-AUTH_JWT_STACK_NAME=cdf-auth-jwt-${ENVIRONMENT}
+ASSETLIBRARY_FGAC_CUSTOM_AUTH_STACK=cdf-auth-jwt-${ENVIRONMENT}
 BASTION_STACK_NAME=cdf-bastion-${ENVIRONMENT}
 BULKCERTS_STACK_NAME=cdf-bulkcerts-${ENVIRONMENT}
 CERTIFICATEVENDOR_STACK_NAME=cdf-certificatevendor-${ENVIRONMENT}
@@ -282,6 +285,13 @@ NEPTUNE_STACK_NAME=cdf-assetlibrary-neptune-${ENVIRONMENT}
 NETWORK_STACK_NAME=cdf-network-${ENVIRONMENT}
 PROVISIONING_STACK_NAME=cdf-provisioning-${ENVIRONMENT}
 OPENSSL_LAYER_STACK_NAME=cdf-openssl-${ENVIRONMENT}
+GREENGRASS_PROVISIONING_STACK_NAME=cdf-greengrass-provisioning-${ENVIRONMENT}
+GREENGRASS_DEPLOYMENT_STACK_NAME=cdf-greengrass-deployment-${ENVIRONMENT}
+
+if [ -n "$CUSTOM_AUTH_STACK" ]; then
+  custom_auth_args="-C $CUSTOM_AUTH_STACK"
+  assetlibrary_custom_auth_args=$custom_auth_args
+fi
 
 
 if [ -z "$BYPASS_BUNDLE" ]; then
@@ -460,7 +470,7 @@ if [ -f "$assetlibrary_config" ]; then
 
         infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "$auth_jwt_config" -i "$JWT_ISSUER" -o $OPENSSL_LAYER_STACK_NAME $AWS_SCRIPT_ARGS
 
-        assetlibrary_custom_auth_args="-C $AUTH_JWT_STACK_NAME -a $AUTH_TOKEN"
+        assetlibrary_custom_auth_args="-C $ASSETLIBRARY_FGAC_CUSTOM_AUTH_STACK -a $AUTH_TOKEN"
 
     fi
 
@@ -529,6 +539,7 @@ if [ -f "$assetlibrary_config" ]; then
     fi
 
     stacks+=("$ASSETLIBRARY_STACK_NAME")
+
 fi
 
 provisioning_config=$CONFIG_LOCATION/provisioning/$CONFIG_ENVIRONMENT-config.json
@@ -544,7 +555,9 @@ if [ -f "$provisioning_config" ]; then
 
     infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
     infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "$provisioning_config" -k "$KMS_KEY_ID" \
+    $custom_auth_args \
     -o $OPENSSL_LAYER_STACK_NAME $AWS_SCRIPT_ARGS
+
 
     stacks+=("$PROVISIONING_STACK_NAME")
 
@@ -584,7 +597,7 @@ if [ -f "$provisioning_config" ]; then
         fi
 
         # if we have hit the limit, we need to remove one before creating a new version
-        if [ $existing_version_count -ge 5 ]; then        
+        if [ $existing_version_count -ge 5 ]; then
             earliest_existing_version_id=$(aws iot list-policy-versions \
                 --policy-name "$policyName" $AWS_ARGS \
                     | jq -r '.policyVersions[4].versionId' \
@@ -596,7 +609,7 @@ if [ -f "$provisioning_config" ]; then
         fi
 
         # if we have an existing version, create a new version, if not create a new policy
-        if [ $existing_version_count -gt 0 ]; then     
+        if [ $existing_version_count -gt 0 ]; then
             aws iot create-policy-version \
             --policy-name "$policyName" \
             --policy-document "$policyDocument" \
@@ -639,6 +652,27 @@ if [ -f "$provisioning_config" ]; then
 else
    echo 'NOT DEPLOYING: provisioning'
 fi
+
+
+greengrass_provisioning_config=$CONFIG_LOCATION/greengrass-provisioning/$CONFIG_ENVIRONMENT-config.json
+if [ -f "$greengrass_provisioning_config" ]; then
+
+   echo '
+    **********************************************************
+    *****  Deploying Greengrass provisioning            ******
+    **********************************************************
+    '
+
+    cd "$root_dir/packages/services/greengrass-provisioning"
+
+    infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
+    infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "$greengrass_provisioning_config" \
+    $custom_auth_args \
+    $AWS_SCRIPT_ARGS
+
+    stacks+=("$GREENGRASS_PROVISIONING_STACK_NAME")
+fi
+
 
 commands_config=$CONFIG_LOCATION/commands/$CONFIG_ENVIRONMENT-config.json
 if [ -f "$commands_config" ]; then
@@ -684,8 +718,6 @@ else
    echo 'NOT DEPLOYING: device monitoring'
 fi
 
-
-
 eventsprocessor_config=$CONFIG_LOCATION/events-processor/$CONFIG_ENVIRONMENT-config.json
 if [ -f "$eventsprocessor_config" ]; then
 
@@ -705,6 +737,13 @@ if [ -f "$eventsprocessor_config" ]; then
 else
    echo 'NOT DEPLOYING: events-processor'
 fi
+
+echo '
+**********************************************************
+*****  Waiting for deployments to finish            ******
+**********************************************************
+'
+wait
 
 
 echo '
@@ -731,7 +770,6 @@ if [ "$failed" = "true" ]; then
 fi
 
 certificatevendor_config=$CONFIG_LOCATION/certificatevendor/$CONFIG_ENVIRONMENT-config.json
-echo "certificatevendor_config: $certificatevendor_config"
 if [ -f "$certificatevendor_config" ]; then
 
     echo '
@@ -797,7 +835,8 @@ if [ -f "$bulkcerts_config" ]; then
 
     infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
     infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "$bulkcerts_config" -k "$KMS_KEY_ID" \
-    -o $OPENSSL_LAYER_STACK_NAME $AWS_SCRIPT_ARGS
+    -o $OPENSSL_LAYER_STACK_NAME $AWS_SCRIPT_ARGS \
+    $custom_auth_args
 
     stacks+=("$BULKCERTS_STACK_NAME")
 
@@ -818,8 +857,8 @@ if [ -f "$eventsalerts_config" ]; then
     cd "$root_dir/packages/services/events-alerts"
 
     infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
-    infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "$eventsalerts_config" $AWS_SCRIPT_ARGS
-
+    infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "$eventsalerts_config" \
+    $AWS_SCRIPT_ARGS
     stacks+=("$EVENTSALERTS_STACK_NAME")
 
 else
@@ -840,13 +879,43 @@ if [ -f "$assetlibraryhistory_config" ]; then
     cd "$root_dir/packages/services/assetlibraryhistory"
 
     infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
-    infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "$assetlibraryhistory_config" -t 'cdf/assetlibrary/events/#' $AWS_SCRIPT_ARGS
+    infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "$assetlibraryhistory_config" -t 'cdf/assetlibrary/events/#' \
+    $custom_auth_args \
+    $AWS_SCRIPT_ARGS
 
     stacks+=("$ASSETLIBRARY_HISTORY_STACK_NAME")
 
 else
    echo 'NOT DEPLOYING: asset library history'
 fi
+
+greengrass_deployment_config=$CONFIG_LOCATION/greengrass-deployment/$CONFIG_ENVIRONMENT-config.json
+if [ -f "$greengrass_deployment_config" ]; then
+
+   echo '
+    **********************************************************
+    *****  Deploying Greengrass deployment              ******
+    **********************************************************
+    '
+
+    cd "$root_dir/packages/services/greengrass-deployment"
+
+    infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
+    infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "$greengrass_deployment_config" \
+    $custom_auth_args \
+    $AWS_SCRIPT_ARGS
+
+    stacks+=("$GREENGRASS_DEPLOYMENT_STACK_NAME")
+fi
+
+
+
+echo '
+**********************************************************
+*****  Waiting for deployments to finish            ******
+**********************************************************
+'
+wait
 
 
 echo '

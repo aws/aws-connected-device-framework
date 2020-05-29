@@ -257,7 +257,7 @@ echo '
 '
 http_code=$(curl -X GET --write-out "%{http_code}\n" --silent --output /dev/null "$commands_invoke_url/templates/RotateCertificates" \
   -H 'Accept: application/vnd.aws-cdf-v1.0+json' \
-  -H 'Content-Type: application/vnd.aws-cdf-v1.0+json')
+  -H 'Content-Type: application/vnd.aws-cdf-v1.0+json') || true
 
 if [ "$http_code" = "404" ]; then
 
@@ -275,7 +275,7 @@ if [ "$http_code" = "404" ]; then
           "ackSubscribeTopic",
           "ackPublishTopic"
       ]
-  }'
+  }' || true
 
   # we use the wildcard + parameter when setting permissions, but for the Job Document we want to provide
   # the token {thingName} to be explicit with devices on where they need to add their name.
@@ -301,14 +301,14 @@ if [ "$http_code" = "404" ]; then
         "ackPublishTopic":"'"$ackPublishTopic"'"
     }
   }
-  ' | tr -d '\r' | sed -En 's/^location: (.*)/\1/p')
+  ' | tr -d '\r' | sed -En 's/^location: (.*)/\1/p') || true
 
   curl -X PATCH "$commands_invoke_url$command_location" \
   -H 'Accept: application/vnd.aws-cdf-v1.0+json' \
   -H 'Content-Type: application/vnd.aws-cdf-v1.0+json' \
   -d '{
     "commandStatus": "PUBLISHED"
-  }'
+  }' || true
 
 fi
 

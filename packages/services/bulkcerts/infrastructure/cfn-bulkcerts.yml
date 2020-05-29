@@ -7,6 +7,7 @@ Globals:
     BinaryMediaTypes:
       # This is equivalent to application/zip when deployed.
       - application~1zip
+    OpenApiVersion: 3.0.1
 
 Description: CDF Bulk Certs Service
 

@@ -9,7 +9,7 @@ import { InversifyExpressServer } from 'inversify-express-utils';
 import * as bodyParser from 'body-parser';
 import {logger} from './utils/logger.util';
 import config from 'config';
-import {Request, Response, NextFunction} from 'express';
+import {Request, Response, NextFunction, Application} from 'express';
 import {asArray, SupportedVersionConfig} from '@cdf/express-middleware';
 
 const PORT = 3008;
@@ -53,7 +53,7 @@ server.setConfig((app) => {
   }
 });
 
-export const serverInstance = server.build();
+export const serverInstance:Application = server.build();
 serverInstance.listen(PORT);
 
 logger.info(`Server started on port ${PORT} :)`);

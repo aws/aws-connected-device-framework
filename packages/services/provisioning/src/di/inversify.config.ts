@@ -13,6 +13,7 @@ import { ThingsService } from '../things/things.service';
 import { EventEmitter } from '../events/eventEmitter.service';
 import { ClientIdEnforcementPolicyStepProcessor } from '../things/steps/clientidenforcementpolicystepprocessor';
 import { CreateDeviceCertificateStepProcessor } from '../things/steps/createdevicecertificateprocessor';
+import { RegisterDeviceCertificateWithoutCAStepProcessor } from '../things/steps/registerdevicecertificatewithoutcaprocessor';
 import AWS = require('aws-sdk');
 
 // Note: importing @controller's carries out a one time inversify metadata generation...
@@ -31,6 +32,8 @@ container.bind<ThingsService>(TYPES.ThingsService).to(ThingsService).inSingleton
 container.bind<EventEmitter>(TYPES.EventEmitter).to(EventEmitter).inSingletonScope();
 container.bind<ClientIdEnforcementPolicyStepProcessor>(TYPES.ClientIdEnforcementPolicyStepProcessor).to(ClientIdEnforcementPolicyStepProcessor).inSingletonScope();
 container.bind<CreateDeviceCertificateStepProcessor>(TYPES.CreateDeviceCertificateStepProcessor).to(CreateDeviceCertificateStepProcessor).inSingletonScope();
+container.bind<RegisterDeviceCertificateWithoutCAStepProcessor>(TYPES.RegisterDeviceCertificateWithoutCAStepProcessor)
+    .to(RegisterDeviceCertificateWithoutCAStepProcessor).inSingletonScope();
 
 // for 3rd party objects, we need to use factory injectors
 // IoT

@@ -33,7 +33,7 @@ export class ReplayService {
       @inject('sqs.requestQueue.replayBatchSize') private replayBatchSize: number,
       @inject('lambda.stopLambdaAtRemainingMillis') private stopLambdaAtRemainingMillis: number
   ) {
-    const primaryRegion: string = primaryApiLambdaArn.split(':')[3];
+      const primaryRegion: string = primaryApiLambdaArn.split(':')[3];
       this._sqs = sqsFactory();
       this._lambda = lambdaFactory(primaryRegion);
   }

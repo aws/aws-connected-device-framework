@@ -10,6 +10,7 @@ import { ActivationService } from './activation.service';
 import { DevicesService, PoliciesService } from '@cdf/assetlibrary-client';
 import { ThingsService } from '@cdf/provisioning-client';
 import { createMockInstance } from 'jest-create-mock-instance';
+import { mock } from 'jest-mock-extended';
 
 let mockedIot: AWS.Iot;
 let mockedS3: AWS.S3;
@@ -29,7 +30,7 @@ describe('ActivationService', () => {
 
         mockedDevicesService = createMockInstance(DevicesService);
         mockedPoliciesService = createMockInstance(PoliciesService);
-        mockedThingsService = createMockInstance(ThingsService);
+        mockedThingsService = mock<ThingsService>();
 
         const mockedS3Factory = () => {
             return mockedS3;

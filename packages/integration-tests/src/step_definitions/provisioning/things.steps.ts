@@ -5,13 +5,14 @@
 #-------------------------------------------------------------------------------*/
 import 'reflect-metadata';
 import { Before, Given, When, Then, setDefaultTimeout } from 'cucumber';
-import { ThingsService, ProvisionThingRequest, ProvisionThingResponse } from '@cdf/provisioning-client';
+import { ThingsService, ThingsServiceApiGateway, ProvisionThingRequest, ProvisionThingResponse } from '@cdf/provisioning-client';
 import AWS = require('aws-sdk');
 import chai_string = require('chai-string');
 import { expect, use } from 'chai';
 import { fail } from 'assert';
 import config from 'config';
 import { replaceTokens } from '../common/common.steps';
+
 use(chai_string);
 
 setDefaultTimeout(10 * 1000);
@@ -20,7 +21,7 @@ let thingService: ThingsService;
 let iot: AWS.Iot;
 
 Before(function () {
-    thingService = new ThingsService();
+    thingService = new ThingsServiceApiGateway();
     iot = new AWS.Iot({region: config.get('aws.region')});
 });
 

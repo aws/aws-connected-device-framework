@@ -16,3 +16,5 @@ provisioning:
 thing:
   name:
   arn:
+logging:
+  level: 'debug'

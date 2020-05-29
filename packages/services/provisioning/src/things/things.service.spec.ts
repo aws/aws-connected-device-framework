@@ -9,6 +9,7 @@ import { ThingsService } from './things.service';
 import AWS from 'aws-sdk';
 import { ClientIdEnforcementPolicyStepProcessor } from './steps/clientidenforcementpolicystepprocessor';
 import { CreateDeviceCertificateStepProcessor } from './steps/createdevicecertificateprocessor';
+import { RegisterDeviceCertificateWithoutCAStepProcessor } from './steps/registerdevicecertificatewithoutcaprocessor';
 
 let mockIot: AWS.Iot;
 let mockS3: AWS.S3;
@@ -30,8 +31,9 @@ describe('ThingsService', () => {
 
         const mockClientIdEnforcementPolicyStepProcessor = new ClientIdEnforcementPolicyStepProcessor(() => mockIot, 'region', 'accountId');
         const mockCreateDeviceCertificateStepProcessor = new CreateDeviceCertificateStepProcessor(() => mockIot, () => mockSSM, 365);
+        const mockRegisterDeviceCertificateWithoutCAStepProcessor = new RegisterDeviceCertificateWithoutCAStepProcessor(() => mockIot);
 
-        instance = new ThingsService(() => mockIot, () => mockS3, mockClientIdEnforcementPolicyStepProcessor, mockCreateDeviceCertificateStepProcessor,
+        instance = new ThingsService(() => mockIot, () => mockS3, mockClientIdEnforcementPolicyStepProcessor, mockCreateDeviceCertificateStepProcessor, mockRegisterDeviceCertificateWithoutCAStepProcessor,
         's3rolearn', 'templateBucket',  'teplatePrefix', 'templateSuffix', 'bulkRequestBukcet', 'bulkRequestPrefix',
         false, false);
     });

@@ -109,7 +109,16 @@ aws cloudformation deploy \
   --no-fail-on-empty-changeset \
   $AWS_ARGS
 
-
+if [ -n "$CUST_AUTH_STACK_NAME" ]; then
+  echo '
+  **********************************************************
+    Updating the Asset Library History APIGateway Deployment
+  **********************************************************
+  '
+  apigatewayResource=$(aws cloudformation describe-stack-resource --stack-name $ASSETLIBRARYHISTORY_STACK_NAME --logical-resource-id ApiGatewayApi $AWS_ARGS)
+  restApiId=$(echo $apigatewayResource | jq -r '.StackResourceDetail.PhysicalResourceId')
+  aws apigateway create-deployment --rest-api-id $restApiId --stage-name Prod $AWS_ARGS
+fi
 
 echo '
 **********************************************************

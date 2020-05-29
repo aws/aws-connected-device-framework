@@ -13,6 +13,7 @@ import { StartJobAction, TargetType } from './workflow.startjob';
 
 import AWS from 'aws-sdk';
 import { CommandsDao } from '../commands.dao';
+import { mock } from 'jest-mock-extended';
 
 let mockedTemplatesService: jest.Mocked<TemplatesService>;
 let mockedCommandsDao: jest.Mocked<CommandsDao>;
@@ -32,7 +33,7 @@ describe('StartJobAction', () => {
         mockedAssetLibraryDevicesService = createMockInstance(DevicesService);
         mockedAssetLibraryGroupsService = createMockInstance(GroupsService);
         mockedAssetLibrarySearchService = createMockInstance(SearchService);
-        mockedProvisioningThingsService = createMockInstance(ThingsService);
+        mockedProvisioningThingsService =  mock<ThingsService>();
         mockedS3 = new AWS.S3();
         mockedIot = new AWS.Iot();
 

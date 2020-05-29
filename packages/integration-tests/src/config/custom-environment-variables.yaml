@@ -16,3 +16,6 @@ provisioning:
 thing:
   name: CDF_THING_NAME 
   arn: CDF_THING_ARN
+
+logging:
+  level: CDF_LOGGING_LEVEL

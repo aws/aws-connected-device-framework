@@ -9,7 +9,7 @@ import { InversifyExpressServer } from 'inversify-express-utils';
 import * as bodyParser from 'body-parser';
 import {logger} from './utils/logger';
 import config from 'config';
-import {Request, Response, NextFunction} from 'express';
+import {Request, Response, NextFunction, Application} from 'express';
 import {asArray, SupportedVersionConfig} from '@cdf/express-middleware';
 
 logger.info(`Running with config: ${JSON.stringify(config.util.toObject)}`);
@@ -51,7 +51,7 @@ server.setConfig((app) => {
   }
 });
 
-export const serverInstance = server.build();
+export const serverInstance:Application = server.build();
 serverInstance.listen(3004);
 
 logger.info('Server started on port 3004 :)');

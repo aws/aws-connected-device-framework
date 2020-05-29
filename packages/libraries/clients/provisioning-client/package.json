@@ -9,11 +9,13 @@
     "clean": "rm -rf dist build tsconfig.tsbuildinfo",
     "reset": "rm -rf cli node_modules package-lock.json",
     "lint": "tslint \"src/**/*.ts\"",
-    "test": "npm run lint && nyc jest --passWithNoTests",
+    "test": "npm run lint && NODE_ENV= NODE_CONFIG_DIR='./src/config' nyc jest --passWithNoTests",
     "build": "tsc -b tsconfig.json",
     "semantic-release": "npx semantic-release -e semantic-release-monorepo"
   },
   "dependencies": {
+    "@cdf/config-inject": "^2.0.1",
+    "@cdf/lambda-invoke": "^1.0.0",
     "config": "3.2.4",
     "inversify": "5.0.1",
     "inversify-binding-decorators": "4.0.0",
@@ -28,6 +30,7 @@
     "winston-transport": "4.3.0"
   },
   "devDependencies": {
+    "aws-sdk": "2.674.0",
     "@commitlint/cli": "8.2.0",
     "@commitlint/config-conventional": "8.2.0",
     "@semantic-release/changelog": "3.0.6",
@@ -58,7 +61,10 @@
   "jest": {
     "globals": {
       "NODE_CONFIG_STRICT_MODE": false,
-      "SUPPRESS_NO_CONFIG_WARNING": true
+      "SUPPRESS_NO_CONFIG_WARNING": true,
+      "ts-jest": {
+        "packageJson": "package.json"
+      }
     },
     "roots": [
       "<rootDir>/src"

@@ -12,6 +12,7 @@ export class CDFProvisioningTemplate extends AWSProvisioningTemplate {
     CDF?: {
         clientIdMustMatchThingName?: boolean;
         createDeviceCertificate?: boolean;
+        registerDeviceCertificateWithoutCA?: boolean;
     };
 }
 

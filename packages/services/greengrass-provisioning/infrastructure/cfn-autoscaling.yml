@@ -1,0 +1,55 @@
+AWSTemplateFormatVersion : '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Description: |
+  CDF Greengrass Provisioning Service Scaling
+  =================================
+  This template provides an example of how to apply auto-scaling to the Greengrass Provisioning lambdas.
+
+
+Parameters:
+  MinCapacity:
+    Description:  The minimum value to scale to in response to a scale-in event.
+    Type: Number
+    Default: 1
+  MaxCapacity:
+    Description:  The maximum value to scale to in response to a scale-out event.
+    Type: Number
+    Default: 100
+  TargetUtilization:
+    Description: Target utilization (0.0 to 1.0).
+    Type: Number
+    Default: 0.7
+  LambdaName:
+    Description:  Lambda Name to apply autoscaling.
+    Type: String
+    MinLength: 1
+  LambdaAlias:  
+    Description: Lambda alias to apply autoscaling.
+    Type: String
+    Default: live
+    MinLength: 1
+
+
+Resources:
+
+  ScalableTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      MaxCapacity: !Ref MaxCapacity
+      MinCapacity: !Ref MinCapacity
+      ResourceId: !Sub "function:${LambdaName}:${LambdaAlias}"
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/lambda.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_Lambda
+      ScalableDimension: lambda:function:ProvisionedConcurrency
+      ServiceNamespace: lambda
+
+  TargetTrackingScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: utilization
+      PolicyType: TargetTrackingScaling
+      ScalingTargetId: !Ref ScalableTarget
+      TargetTrackingScalingPolicyConfiguration:
+        TargetValue: !Ref TargetUtilization
+        PredefinedMetricSpecification:
+          PredefinedMetricType: LambdaProvisionedConcurrencyUtilization

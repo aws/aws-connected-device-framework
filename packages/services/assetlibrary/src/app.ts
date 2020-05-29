@@ -5,7 +5,7 @@
 #-------------------------------------------------------------------------------*/
 import 'reflect-metadata';
 
-import {Request, Response, NextFunction} from 'express';
+import {Request, Response, NextFunction, Application} from 'express';
 
 import { container } from './di/inversify.config';
 import { InversifyExpressServer } from 'inversify-express-utils';
@@ -69,7 +69,7 @@ server.setConfig((app) => {
   }
 });
 
-export const serverInstance = server.build();
+export const serverInstance: Application = server.build();
 serverInstance.listen(3000);
 
 logger.info('Server started on port 3000 :)');

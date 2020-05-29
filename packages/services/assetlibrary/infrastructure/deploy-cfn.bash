@@ -349,6 +349,17 @@ if [ "$ASSETLIBRARY_MODE" = "full" ]; then
     --protocol tcp --port 8182 --source-group $assetlibrary_sg_id \
     $AWS_ARGS || true
 
+  if [ -n "$CUST_AUTH_STACK_NAME" ]; then
+    echo '
+    **********************************************************
+      Updating Asset Library APIGateway Deployment
+    **********************************************************
+    '
+    apigatewayResource=$(aws cloudformation describe-stack-resource --stack-name $ASSETLIBRARY_STACK_NAME --logical-resource-id ApiGatewayApi $AWS_ARGS)
+    restApiId=$(echo $apigatewayResource | jq -r '.StackResourceDetail.PhysicalResourceId')
+    aws apigateway create-deployment --rest-api-id $restApiId --stage-name Prod $AWS_ARGS
+  fi
+
 
   echo '
   **********************************************************
@@ -394,6 +405,8 @@ if [ "$ASSETLIBRARY_MODE" = "full" ]; then
         echo "Assetlibrary successfully initialized status code $status_code";;
     409)
       echo "Assetlibrary already initialized status code $status_code";;
+    401)
+      echo "Assetlibrary unathorized code $status_code";;
     *)
       echo "Assetlibrary failed to initialize status code $status_code";;
   esac

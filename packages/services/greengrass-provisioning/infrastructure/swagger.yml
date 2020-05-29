@@ -1,0 +1,379 @@
+openapi: 3.0.0
+info:
+  title: "Connected Device Framework: Greengrass Provisioning"
+  description: >
+    TODO
+  version: 1.0.0
+  
+tags:
+  - name: Templates
+    description: >
+      TODO
+
+  - name: Groups
+    description: >
+      TODO
+      
+  - name: Devices
+    description: >
+     TODO
+     
+  - name: Deployments
+    description: >
+      TODO
+
+
+      
+paths:
+  "/templates":
+    get:
+      tags:
+        - Templates
+      summary: List all available templates.
+      operationId: listTemplates
+      parameters:
+        - name: status
+          in: query
+          description: Template status (note not yet implemented)
+          deprecated: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: "#/components/schemas/TemplateList"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  "/templates/{templateName}":
+    parameters:
+      - $ref: '#/components/parameters/templateName'
+    put:
+      tags:
+        - Templates
+      summary: Create a new template.
+      description: >
+        Defines a new template by marking a pre-existing Greengrass group (iddentified by its group id) as a template.
+      operationId: saveTemplate
+      responses:
+        "201":
+          description: Created
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: "#/components/schemas/Template"
+              examples:
+                NewTemplate:
+                  value:
+                    groupId: c71bf09a-e0d7-4bb9-8a45-cdb9933e8d87
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "409":
+            $ref: "#/components/responses/Conflict"
+    get:
+      tags:
+        - Templates
+      summary: Find a specific template
+      description: >
+        Returns a specific template by template name.
+      operationId: getTemplate
+      responses:
+        "200":
+          description: OK
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: "#/components/schemas/Template"
+        "404":
+          $ref: "#/components/responses/NotFound"
+ 
+  "/groups":
+    post:
+      tags:
+        - Groups
+      summary: Create new Greengrass groups.
+      description: >
+        Create 1 or more new Greengrass groups based on a pre-defined template.
+
+
+      operationId: createGroups
+      responses:
+        "200":
+          description: OK
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: "#/components/schemas/GroupList"
+
+  "/groups/{name}":
+    parameters:
+      - name: name
+        in: path
+        description: Name of Greengrass group
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - Groups
+      summary: Find a specific Greengrass group
+      description: TODO
+      operationId: getGroupByName
+      responses:
+        "200":
+          description: OK
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: "#/components/schemas/Group"
+        "404":
+          $ref: "#/components/responses/NotFound"
+          
+ 
+  "/groups/{name}/deviceTasks":
+    parameters:
+      - name: name
+        in: path
+        description: Name of Greengrass group
+        required: true
+        schema:
+          type: string
+    post:
+      tags:
+        - Devices
+      summary: Associate devices with existing Greengrass groups
+      description: TODO
+      operationId: associateDevicesWithGroup
+      responses:
+        "200":
+          description: OK
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: "#/components/schemas/DeviceTaskSumary"
+
+  "/groups/{name}/deviceTasks/{taskId}":
+    parameters:
+      - name: name
+        in: path
+        description: Name of Greengrass group
+        required: true
+        schema:
+          type: string
+      - name: taskId
+        in: path
+        description: Device task Id
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - Devices
+      summary: Find a device task summary
+      description: TODO
+      operationId: getDeviceAssociationTask
+      responses:
+        "200":
+          description: OK
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: "#/components/schemas/DeviceTaskSumary"
+        "404":
+          $ref: "#/components/responses/NotFound"
+          
+          
+  "/deploymentTasks":
+    post:
+      tags:
+        - Deployments
+      summary: Deploy a set of groups (and associated devices)
+      description: TODO
+      operationId: deployGroups
+      responses:
+        "202":
+          description: OK
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: "#/components/schemas/DeploymentTaskSummary"
+          
+components:
+
+  parameters:
+
+    templateName:
+      name: templateName
+      in: path
+      description: Name of template
+      required: true
+      schema:
+        type: string
+  
+    offset:
+      name: offset
+      in: query
+      schema:
+        type: integer
+        minimum: 0
+        
+    count:
+      name: offset
+      in: query
+      schema:
+        type: integer
+        minimum: 0
+        
+  responses:
+  
+    Created:
+      description: Created successfully
+      headers:
+        location:
+          schema:
+            type: string
+            
+    BadRequest:
+      description: Invalid input
+      content:
+        application/vnd.aws-cdf-v1.0+json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+    NotFound:
+      description: Not found
+      content:
+        application/vnd.aws-cdf-v1.0+json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+    Conflict:
+      description: Conflict
+      content:
+        application/vnd.aws-cdf-v1.0+json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+            
+  requestBodies:
+  
+    TemplateDefinition:
+      content:
+        application/vnd.aws-cdf-v1.0+json:
+          schema:
+            $ref: "#/components/schemas/TemplateDefinition"
+      required: true
+      
+  schemas:
+  
+    Template:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of template.
+        versionNo:
+          type: number
+          description: Template version number.
+          readOnly: true
+        groupId:
+          type: string
+          description: The ID of the Greengrass Group being used as a template.
+        groupVersionId:
+          type: string
+          description: The version ID of the Greengrass Group being used as a template.
+          readOnly: true
+        createdAt:
+          type: string
+          format: 'date-time'
+          description: Date/time the template was created.
+          readOnly: true
+        updatedAt:
+          type: string
+          format: 'date-time'
+          description: Date/time the template was updated.
+          readOnly: true
+        enabled:
+          type: boolean
+          description: Whether the template is enabled for use.
+
+    TemplateList:
+      properties:
+        templates:
+          type: array
+          description: A list of templates
+          items:
+            $ref: "#/components/schemas/Template"
+        pagination:
+          type: object
+          properties:
+            offset:
+              type: integer
+            count:
+              type: integer
+
+    Group:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of Greengrass group.
+        templateName:
+          type: string
+          description: Name of template used to create the Greengrass group.
+        templateVersionNo:
+          type: number
+          description: Version no. of template used to create the Greengrass group.
+          readOnly: true
+        id:
+          type: string
+          description: Greengrass group Id.
+          readOnly: true
+        versionId:
+          type: string
+          description: Greengrass group version Id.
+          readOnly: true
+        arn:
+          type: string
+          description: Greengrass group Arn.
+          readOnly: true
+        versionNo:
+          type: string
+          description: Internal tracked version no. of the greengrass group.
+          readOnly: true
+        deployed:
+          type: boolean
+          description: Whether the Greengrass group has been deployed or not.
+          readOnly: true
+        createdAt:
+          type: string
+          format: 'date-time'
+          description: Date/time the group was created.
+          readOnly: true
+        updatedAt:
+          type: string
+          format: 'date-time'
+          description: Date/time the group was updated.
+          readOnly: true
+
+    GroupList:
+      properties:
+        groups:
+          type: array
+          description: A list of groups
+          items:
+            $ref: "#/components/schemas/Group"
+        pagination:
+          type: object
+          properties:
+            offset:
+              type: integer
+            count:
+              type: integer
+           
+    Error:
+      type: object
+      properties:
+        message:
+          type: string

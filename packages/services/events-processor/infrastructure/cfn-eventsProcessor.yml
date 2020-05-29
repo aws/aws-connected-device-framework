@@ -8,6 +8,9 @@ Transform: AWS::Serverless-2016-10-31
 
 Description: CDF Events Processor Service
 
+Globals:
+  Api:
+    OpenApiVersion: 3.0.1
 
 Parameters:
   Environment:
