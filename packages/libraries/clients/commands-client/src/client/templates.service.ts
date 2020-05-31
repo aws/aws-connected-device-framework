@@ -2,6 +2,7 @@ import {TemplateModel} from './templates.models';
 import {RequestHeaders} from './commands.model';
 import config from 'config';
 import {PathHelper} from '../utils/path.helper';
+import {injectable} from 'inversify';
 
 export interface TemplatesService {
     createTemplate(template: TemplateModel, additionalHeaders?: RequestHeaders): Promise<void>;
@@ -15,6 +16,7 @@ export interface TemplatesService {
     deleteTemplate(templateId: string, additionalHeaders?: RequestHeaders): Promise<void>;
 }
 
+@injectable()
 export class TemplatesServiceBase {
 
     protected MIME_TYPE: string = 'application/vnd.aws-cdf-v1.0+json';
@@ -34,7 +36,7 @@ export class TemplatesServiceBase {
 
     protected buildHeaders(additionalHeaders:RequestHeaders) {
 
-        let headers = this._headers;
+        let headers = Object.assign({}, this._headers);
 
         if (config.has('commands.headers')) {
             const headersFromConfig:RequestHeaders = config.get('commands.headers') as RequestHeaders;
@@ -46,6 +48,13 @@ export class TemplatesServiceBase {
         if (additionalHeaders !== null && additionalHeaders !== undefined) {
             headers = {...headers, ...additionalHeaders};
         }
+
+        const keys = Object.keys(headers);
+        keys.forEach(k=> {
+            if (headers[k]===undefined || headers[k]===null) {
+                delete headers[k];
+            }
+        });
 
         return headers;
     }

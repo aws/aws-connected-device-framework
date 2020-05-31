@@ -5,6 +5,7 @@
 #-------------------------------------------------------------------------------*/
 
 import {injectable} from 'inversify';
+import config from 'config';
 import ow from 'ow';
 import {CategoryEnum, StatusEnum, TypeResource, TypeResourceList} from './templates.model';
 import {QSHelper} from '../utils/qs.helper';
@@ -15,8 +16,11 @@ import {TemplatesService, TemplatesServiceBase} from './templates.service';
 @injectable()
 export class TemplatesApigwService extends TemplatesServiceBase implements TemplatesService {
 
+    private readonly baseUrl:string;
+
     public constructor() {
         super();
+        this.baseUrl = config.get('assetLibrary.baseUrl') as string;
     }
 
     async getTemplate(category: CategoryEnum, templateId: string, status: StatusEnum, additionalHeaders?: RequestHeaders): Promise<TypeResource> {
@@ -63,7 +67,7 @@ export class TemplatesApigwService extends TemplatesServiceBase implements Templ
         ow(category, ow.string.nonEmpty);
         ow(templateId, ow.string.nonEmpty);
 
-        const url = `${this.baseUrl}${super.templateRelativeUrl(category, templateId)}`;
+        const url = `${this.baseUrl}${super.publishTemplateRelativeUrl(category, templateId)}`;
 
         await request.put(url)
             .set(this.buildHeaders(additionalHeaders));

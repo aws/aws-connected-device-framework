@@ -16,14 +16,22 @@ import {Dictionary} from '../../../../libraries/core/lambda-invoke/src';
 
 export const COMMAND_ID = 'commandId';
 export const COMMAND_DETAILS = 'commandDetails';
+/*
+    Cucumber describes current scenario context as “World”. It can be used to store the state of the scenario
+    context (you can also define helper methods in it). World can be access by using the this keyword inside
+    step functions (that’s why it’s not recommended to use arrow functions).
+ */
+// tslint:disable:no-invalid-this
+// tslint:disable:only-arrow-functions
 
 setDefaultTimeout(10 * 1000);
 
-
 const commandsService:CommandsService = container.get(COMMANDS_CLIENT_TYPES.CommandsService);
-const additionalHeaders:Dictionary = {
-    Authorization: this[AUTHORIZATION_TOKEN]
-};
+function getAdditionalHeaders(world:any) : Dictionary {
+    return  {
+        Authorization: world[AUTHORIZATION_TOKEN]
+    };
+}
 
 const iot: AWS.Iot = new AWS.Iot({region: config.get('aws.region')});
 
@@ -50,13 +58,13 @@ function buildCommandModel(data:TableDefinition) {
 
 async function createCommand (data:TableDefinition) {
     const command = buildCommandModel(data);
-    return await commandsService.createCommand(command, additionalHeaders);
+    return await commandsService.createCommand(command, getAdditionalHeaders(this));
 }
 
 async function updateCommand (commandId:string, data:TableDefinition) {
     const command = buildCommandModel(data);
     command.commandId = commandId;
-    return await commands.updateCommand(command);
+    return await commandsService.updateCommand(command, getAdditionalHeaders(this));
 }
 
 Given('last command exists', async function () {
@@ -67,7 +75,7 @@ Given('last command exists', async function () {
     expect(commandId).exist.and.length(36);
 
     try {
-        const r = await commands.getCommand(commandId);
+        const r = await commandsService.getCommand(commandId, getAdditionalHeaders(this));
         expect(commandId).equals(r.commandId);
         this[COMMAND_DETAILS]=r;
     } catch (err) {
@@ -104,7 +112,7 @@ When('I upload file {string} to last command as file alias {string}', async func
 
     const fileLocation = `${__dirname}/../../../../../src/testResources/${testResource}`;
 
-    await commands.uploadCommandFile(commandId, alias, fileLocation);
+    await commandsService.uploadCommandFile(commandId, alias, fileLocation, getAdditionalHeaders(this));
 
 });
 
@@ -116,7 +124,7 @@ Then('last command exists with attributes', async function (data:TableDefinition
     const d = data.rowsHash();
     let r:CommandModel;
     try {
-        r = await commands.getCommand(commandId);
+        r = await commandsService.getCommand(commandId, getAdditionalHeaders(this));
         expect(commandId).equals(r.commandId);
         this[COMMAND_DETAILS]=r;
     } catch (err) {
@@ -155,7 +163,7 @@ Then('job for last command exists', async function () {
 
     let command:CommandModel;
     try {
-        command = await commands.getCommand(commandId);
+        command = await commandsService.getCommand(commandId, getAdditionalHeaders(this));
         expect(commandId).equals(command.commandId);
         this[COMMAND_DETAILS]=command;
 

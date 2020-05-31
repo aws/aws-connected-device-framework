@@ -9,6 +9,7 @@
 */
 
 import {injectable} from 'inversify';
+import config from 'config';
 import {QSHelper} from '../utils/qs.helper';
 import {
     BulkLoadGroups,
@@ -26,8 +27,11 @@ import {RequestHeaders} from './common.model';
 @injectable()
 export class GroupsApigwService extends GroupsServiceBase implements GroupsService {
 
+    private readonly baseUrl:string;
+
     public constructor() {
         super();
+        this.baseUrl = config.get('assetLibrary.baseUrl') as string;
     }
 
     /**

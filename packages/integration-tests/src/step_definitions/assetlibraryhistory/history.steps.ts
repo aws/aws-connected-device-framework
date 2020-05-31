@@ -25,11 +25,20 @@ setDefaultTimeout(10 * 1000);
 
 const RESULTS = 'results';
 
+/*
+    Cucumber describes current scenario context as “World”. It can be used to store the state of the scenario
+    context (you can also define helper methods in it). World can be access by using the this keyword inside
+    step functions (that’s why it’s not recommended to use arrow functions).
+ */
+// tslint:disable:no-invalid-this
+// tslint:disable:only-arrow-functions
 
 const eventsService:EventsService = container.get(ASSETLIBRARYHISTORY_CLIENT_TYPES.EventsService);
-const additionalHeaders:Dictionary = {
-    Authorization: this[AUTHORIZATION_TOKEN]
-};
+function getAdditionalHeaders(world:any) : Dictionary {
+    return  {
+        Authorization: world[AUTHORIZATION_TOKEN]
+    };
+}
 
 When('I retrieve {int} history records for {word} {string}', async function ( qty:number, category:string, objectId:string) {
 
@@ -39,7 +48,7 @@ When('I retrieve {int} history records for {word} {string}', async function ( qt
             objectId,
             limit: qty
         };
-        const r = await eventsService.listObjectEvents(params, additionalHeaders);
+        const r = await eventsService.listObjectEvents(params, getAdditionalHeaders(this));
         this[RESULTS]=r;
         expect(r.events.length).eq(qty);
     } catch (err) {
@@ -59,7 +68,7 @@ When('I retrieve next {int} history records for {word} {string}', async function
             token,
             limit: qty
         };
-        const r = await eventsService.listObjectEvents(params, additionalHeaders);
+        const r = await eventsService.listObjectEvents(params, getAdditionalHeaders(this));
         this[RESULTS]=r;
         expect(r.events.length).eq(qty);
     } catch (err) {
@@ -76,7 +85,7 @@ Then('{int} history records exist since the test started for {word} {string}', a
             objectId,
             timeFrom: this[TIME_SCENARIO_STARTED]
         };
-        const r = await eventsService.listObjectEvents(params, additionalHeaders);
+        const r = await eventsService.listObjectEvents(params, getAdditionalHeaders(this));
         this[RESULTS]=r;
         expect(r.events.length).eq(qty);
     } catch (err) {

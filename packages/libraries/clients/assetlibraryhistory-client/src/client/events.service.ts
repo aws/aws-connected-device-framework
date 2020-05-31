@@ -1,6 +1,7 @@
 import {Category, CategoryEventsRequest, Events, ObjectEventsRequest, RequestHeaders} from './events.model';
 import config from 'config';
 import {PathHelper} from '../utils/path.helper';
+import {injectable} from 'inversify';
 
 export interface EventsService {
     listObjectEvents(req: ObjectEventsRequest, additionalHeaders?: RequestHeaders): Promise<Events>;
@@ -18,6 +19,7 @@ export interface EventsService {
     listCategoryEvents(category: Category, req: CategoryEventsRequest, additionalHeaders?: RequestHeaders): Promise<Events>;
 }
 
+@injectable()
 export class EventsServiceBase {
 
     protected MIME_TYPE: string = 'application/vnd.aws-cdf-v1.0+json';
@@ -37,7 +39,7 @@ export class EventsServiceBase {
 
     protected buildHeaders(additionalHeaders:RequestHeaders) {
 
-        let headers = this._headers;
+        let headers = Object.assign({}, this._headers);
 
         if (config.has('assetLibraryHistory.headers')) {
             const headersFromConfig:RequestHeaders = config.get('assetLibraryHistory.headers') as RequestHeaders;
@@ -49,6 +51,13 @@ export class EventsServiceBase {
         if (additionalHeaders !== null && additionalHeaders !== undefined) {
             headers = {...headers, ...additionalHeaders};
         }
+
+        const keys = Object.keys(headers);
+        keys.forEach(k=> {
+            if (headers[k]===undefined || headers[k]===null) {
+                delete headers[k];
+            }
+        });
 
         return headers;
     }

@@ -9,6 +9,7 @@
  */
 
 import {injectable} from 'inversify';
+import config from 'config';
 import ow from 'ow';
 import * as request from 'superagent';
 import {DeviceProfileResource, GroupProfileResource, ProfileResourceList} from './profiles.model';
@@ -18,8 +19,11 @@ import {RequestHeaders} from './common.model';
 @injectable()
 export class ProfilesApigwService extends ProfilesServiceBase implements ProfilesService {
 
+    private readonly baseUrl:string;
+
     public constructor() {
         super();
+        this.baseUrl = config.get('assetLibrary.baseUrl') as string;
     }
 
     async createProfile(category: string, body: DeviceProfileResource | GroupProfileResource, additionalHeaders?:RequestHeaders): Promise<void> {

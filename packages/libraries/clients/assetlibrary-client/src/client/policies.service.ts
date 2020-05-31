@@ -2,6 +2,7 @@ import {Policy, PolicyList} from './policies.model';
 import {RequestHeaders} from './common.model';
 import {ClientServiceBase} from './common.service';
 import {PathHelper} from '../utils/path.helper';
+import {injectable} from 'inversify';
 
 export interface PoliciesService {
     createPolicy(body: Policy, additionalHeaders?:RequestHeaders): Promise<void>;
@@ -19,6 +20,7 @@ export interface PoliciesService {
     deletePolicy(policyId: string, additionalHeaders?:RequestHeaders): Promise<void>;
 }
 
+@injectable()
 export class PoliciesServiceBase extends ClientServiceBase {
 
     constructor() {

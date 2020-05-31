@@ -7,6 +7,7 @@ import {
 } from './commands.model';
 import config from 'config';
 import {PathHelper} from '../utils/path.helper';
+import {injectable} from 'inversify';
 
 export interface CommandsService {
     createCommand(command: CommandModel, additionalHeaders?: RequestHeaders): Promise<string>;
@@ -28,6 +29,7 @@ export interface CommandsService {
     cancelExecution(commandId: string, thingName: string, additionalHeaders?: RequestHeaders): Promise<ExecutionModel>;
 }
 
+@injectable()
 export class CommandsServiceBase {
 
     protected MIME_TYPE: string = 'application/vnd.aws-cdf-v1.0+json';
@@ -59,7 +61,7 @@ export class CommandsServiceBase {
 
     protected buildHeaders(additionalHeaders:RequestHeaders) {
 
-        let headers = this._headers;
+        let headers = Object.assign({}, this._headers);
 
         if (config.has('commands.headers')) {
             const headersFromConfig:RequestHeaders = config.get('commands.headers') as RequestHeaders;
@@ -71,6 +73,13 @@ export class CommandsServiceBase {
         if (additionalHeaders !== null && additionalHeaders !== undefined) {
             headers = {...headers, ...additionalHeaders};
         }
+
+        const keys = Object.keys(headers);
+        keys.forEach(k=> {
+            if (headers[k]===undefined || headers[k]===null) {
+                delete headers[k];
+            }
+        });
 
         return headers;
     }

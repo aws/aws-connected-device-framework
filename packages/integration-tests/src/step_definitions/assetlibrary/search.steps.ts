@@ -22,15 +22,24 @@ import {container} from '../../di/inversify.config';
 import {Dictionary} from '../../../../libraries/core/lambda-invoke/src';
 
 use(chai_string);
+/*
+    Cucumber describes current scenario context as “World”. It can be used to store the state of the scenario
+    context (you can also define helper methods in it). World can be access by using the this keyword inside
+    step functions (that’s why it’s not recommended to use arrow functions).
+ */
+// tslint:disable:no-invalid-this
+// tslint:disable:only-arrow-functions
 
 setDefaultTimeout(10 * 1000);
 
 export const SEARCH_RESULTS = 'searchResults';
 
 const searchService:SearchService = container.get(ASSTLIBRARY_CLIENT_TYPES.SearchService);
-const additionalHeaders:Dictionary = {
-    Authorization: this[AUTHORIZATION_TOKEN]
-};
+function getAdditionalHeaders(world:any) : Dictionary {
+    return  {
+        Authorization: world[AUTHORIZATION_TOKEN]
+    };
+}
 
 function buildSearchRequest(data:TableDefinition):SearchRequestModel {
     const d = data.rowsHash();
@@ -79,7 +88,7 @@ When('I search with following attributes:', async function (data:TableDefinition
         delete this[SEARCH_RESULTS];
         delete this[RESPONSE_STATUS];
 
-        this[SEARCH_RESULTS] = await searchService.search(searchRequest, undefined, undefined, additionalHeaders);
+        this[SEARCH_RESULTS] = await searchService.search(searchRequest, undefined, undefined, getAdditionalHeaders(this));
 
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
@@ -94,7 +103,7 @@ When('I search with summary with following attributes:', async function (data:Ta
         delete this[SEARCH_RESULTS];
         delete this[RESPONSE_STATUS];
 
-        this[SEARCH_RESULTS] = await searchService.search(searchRequest, undefined, undefined, additionalHeaders);
+        this[SEARCH_RESULTS] = await searchService.search(searchRequest, undefined, undefined, getAdditionalHeaders(this));
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
     }

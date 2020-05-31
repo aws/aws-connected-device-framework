@@ -7,22 +7,24 @@ import {
 } from './things.model';
 import {PathHelper} from '../utils/path.helper';
 import config from 'config';
+import {injectable} from 'inversify';
 
 export interface ThingsService {
 
-    provisionThing(provisioningRequest: ProvisionThingRequest): Promise<ProvisionThingResponse>;
+    provisionThing(provisioningRequest: ProvisionThingRequest, additionalHeaders?:RequestHeaders): Promise<ProvisionThingResponse>;
 
-    getThing(thingName: string): Promise<Thing>;
+    getThing(thingName: string, additionalHeaders?:RequestHeaders): Promise<Thing>;
 
-    deleteThing(thingName: string): Promise<void>;
+    deleteThing(thingName: string, additionalHeaders?:RequestHeaders): Promise<void>;
 
-    bulkProvisionThings(req: BulkProvisionThingsRequest): Promise<BulkProvisionThingsResponse>;
+    bulkProvisionThings(req: BulkProvisionThingsRequest, additionalHeaders?:RequestHeaders): Promise<BulkProvisionThingsResponse>;
 
-    getBulkProvisionTask(taskId: string): Promise<BulkProvisionThingsResponse>;
+    getBulkProvisionTask(taskId: string, additionalHeaders?:RequestHeaders): Promise<BulkProvisionThingsResponse>;
 
-    updateThingCertificates(thingName: string, certificateStatus: CertificateStatus): Promise<void>;
+    updateThingCertificates(thingName: string, certificateStatus: CertificateStatus, additionalHeaders?:RequestHeaders): Promise<void>;
 }
 
+@injectable()
 export class ThingsServiceBase {
 
     protected MIME_TYPE:string = 'application/vnd.aws-cdf-v1.0+json';
@@ -54,7 +56,7 @@ export class ThingsServiceBase {
 
     protected buildHeaders(additionalHeaders:RequestHeaders) {
 
-        let headers = this._headers;
+        let headers = Object.assign({}, this._headers);
 
         if (config.has('provisioning.headers')) {
             const headersFromConfig:RequestHeaders = config.get('provisioning.headers') as RequestHeaders;
@@ -66,6 +68,13 @@ export class ThingsServiceBase {
         if (additionalHeaders !== null && additionalHeaders !== undefined) {
             headers = {...headers, ...additionalHeaders};
         }
+
+        const keys = Object.keys(headers);
+        keys.forEach(k=> {
+            if (headers[k]===undefined || headers[k]===null) {
+                delete headers[k];
+            }
+        });
 
         return headers;
     }

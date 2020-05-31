@@ -379,6 +379,8 @@ importers:
       winston-transport: 4.3.0
   packages/libraries/clients/notifications-client:
     dependencies:
+      '@cdf/lambda-invoke': 'link:../../core/lambda-invoke'
+      aws-sdk: 2.588.0
       config: 3.2.4
       inversify: 5.0.1
       inversify-binding-decorators: 4.0.0
@@ -419,6 +421,7 @@ importers:
       tslint: 5.20.1_typescript@3.7.3
       typescript: 3.7.3
     specifiers:
+      '@cdf/lambda-invoke': ^0.0.1
       '@commitlint/cli': 8.2.0
       '@commitlint/config-conventional': 8.2.0
       '@semantic-release/changelog': 3.0.6
@@ -428,6 +431,7 @@ importers:
       '@types/jest': 24.0.23
       '@types/node': 12.12.17
       '@types/superagent': 4.1.4
+      aws-sdk: 2.588.0
       concurrently: 5.0.1
       config: 3.2.4
       cpy-cli: 3.0.0
@@ -1600,6 +1604,7 @@ importers:
       jest-create-mock-instance: 1.1.0
       jest-haste-map: 24.9.0
       jest-mock: 24.9.0
+      jest-mock-extended: 1.0.8_jest@24.9.0+typescript@3.7.3
       jest-resolve: 24.9.0_jest-resolve@24.9.0
       make-dir-cli: 2.0.0
       nodemon: 2.0.2
@@ -1648,6 +1653,7 @@ importers:
       jest-create-mock-instance: 1.1.0
       jest-haste-map: 24.9.0
       jest-mock: 24.9.0
+      jest-mock-extended: 1.0.8
       jest-resolve: 24.9.0
       js-yaml: 3.13.1
       logform: 2.1.2
@@ -7052,7 +7058,6 @@ packages:
     dependencies:
       jest: 24.9.0
       ts-essentials: 4.0.0_typescript@3.7.3
-    dev: false
     peerDependencies:
       jest: ^24.0.0
       typescript: '*'
@@ -10696,7 +10701,6 @@ packages:
   /ts-essentials/4.0.0_typescript@3.7.3:
     dependencies:
       typescript: 3.7.3
-    dev: false
     peerDependencies:
       typescript: '>=3.7.0'
     resolution:

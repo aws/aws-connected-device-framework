@@ -1,93 +1,32 @@
-/*-------------------------------------------------------------------------------
-# Copyright (c) 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
-#
-# This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
-#-------------------------------------------------------------------------------*/
-/**
- * Connected Device Framework: Dashboard Facade
- * Provisioning implementation of CertificatesService *
- */
+import {SubscriptionResource, SubscriptionResourceList} from './subscriptions.model';
+import {RequestHeaders} from './common.model';
+import {injectable} from 'inversify';
+import {CommonServiceBase} from './common.service';
 
-import { injectable } from 'inversify';
-import config from 'config';
-import ow from 'ow';
-import * as request from 'superagent';
-import { QSHelper } from '../utils/qs.helper';
-import { SubscriptionResource, SubscriptionResourceList } from './subscriptions.model';
+export interface SubscriptionsService {
+    createSubscription(eventId: string, subscription: SubscriptionResource, additionalHeaders?: RequestHeaders): Promise<void>;
+
+    getSubscription(subscriptionId: string, additionalHeaders?: RequestHeaders): Promise<SubscriptionResource>;
+
+    deleteSubscription(subscriptionId: string, additionalHeaders?: RequestHeaders): Promise<void>;
+
+    listSubscriptionsForUser(userId: string, additionalHeaders?: RequestHeaders): Promise<SubscriptionResourceList>;
+
+    listSubscriptionsForEvent(eventId: string, fromSubscriptionId?: string, additionalHeaders?: RequestHeaders): Promise<SubscriptionResourceList>;
+}
 
 @injectable()
-export class SubscriptionsService {
+export class SubscriptionsServiceBase extends CommonServiceBase  {
 
-    private MIME_TYPE:string = 'application/vnd.aws-cdf-v1.0+json';
-
-    private baseUrl:string;
-    private headers = {
-        'Accept': this.MIME_TYPE,
-        'Content-Type': this.MIME_TYPE
-    };
-
-    public constructor() {
-        this.baseUrl = config.get('notifications.eventProcessor.baseUrl') as string;
-
-        if (config.has('notifications.eventProcessor.headers')) {
-            const additionalHeaders: {[key:string]:string} = config.get('notifications.eventProcessor.headers') as {[key:string]:string};
-            if (additionalHeaders !== null && additionalHeaders !== undefined) {
-                this.headers = {...this.headers, ...additionalHeaders};
-            }
-        }
+    protected eventSubscriptionsRelativeUrl(eventId: string): string {
+        return `/events/${eventId}/subscriptions`;
     }
 
-    public async createSubscription(eventId: string, subscription:SubscriptionResource): Promise<void> {
-        ow(eventId, ow.string.nonEmpty);
-        ow(subscription, ow.object.nonEmpty);
-
-        const url = `${this.baseUrl}/events/${eventId}/subscriptions`;
-        await request.post(url)
-            .set(this.headers)
-            .send(subscription);
+    protected subscriptionRelativeUrl(subscriptionId: string): string {
+        return `/subscriptions/${subscriptionId}`;
     }
 
-    public async getSubscription(subscriptionId: string): Promise<SubscriptionResource> {
-        ow(subscriptionId, ow.string.nonEmpty);
-
-        const url = `${this.baseUrl}/subscriptions/${subscriptionId}`;
-        const res = await request.get(url)
-            .set(this.headers);
-
-        return res.body;
+    protected userSubscriptionsRelativeUrl(userId: string): string {
+        return `/users/${userId}/subscriptions`;
     }
-
-    public async deleteSubscription(subscriptionId: string,): Promise<void> {
-        ow(subscriptionId, ow.string.nonEmpty);
-
-        const url = `${this.baseUrl}/subscriptions/${subscriptionId}`;
-        await request.delete(url)
-            .set(this.headers);
-    }
-
-    public async listSubscriptionsForUser(userId: string): Promise<SubscriptionResourceList> {
-        ow(userId, ow.string.nonEmpty);
-
-        const url = `${this.baseUrl}/users/${userId}/subscriptions`;
-        const res = await request.get(url)
-            .set(this.headers);
-
-        return res.body;
-    }
-
-    public async listSubscriptionsForEvent(eventId: string, fromSubscriptionId?:string): Promise<SubscriptionResourceList> {
-        ow(eventId, ow.string.nonEmpty);
-
-        let url = `${this.baseUrl}/events/${eventId}/subscriptions`;
-        const queryString = QSHelper.getQueryString({fromSubscriptionId});
-        if (queryString) {
-            url += `?${queryString}`;
-        }
-
-        const res = await request.get(url)
-            .set(this.headers);
-
-        return res.body;
-    }
-
 }

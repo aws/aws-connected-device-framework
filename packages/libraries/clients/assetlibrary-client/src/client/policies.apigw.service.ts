@@ -10,6 +10,7 @@
 
 import {Policy, PolicyList} from './policies.model';
 import {injectable} from 'inversify';
+import config from 'config';
 import ow from 'ow';
 import {QSHelper} from '../utils/qs.helper';
 import * as request from 'superagent';
@@ -19,14 +20,17 @@ import {RequestHeaders} from './common.model';
 @injectable()
 export class PoliciesApigwService extends PoliciesServiceBase implements PoliciesService {
 
+    private readonly baseUrl:string;
+
     public constructor() {
         super();
+        this.baseUrl = config.get('assetLibrary.baseUrl') as string;
     }
 
     async createPolicy(body: Policy, additionalHeaders?:RequestHeaders): Promise<void> {
         ow(body, ow.object.nonEmpty);
 
-        const url = `${super.baseUrl}${super.policiesRelativeUrl()}}`;
+        const url = `${this.baseUrl}${super.policiesRelativeUrl()}}`;
         await request.post(url)
             .send(body)
             .set(this.buildHeaders(additionalHeaders));
@@ -36,7 +40,7 @@ export class PoliciesApigwService extends PoliciesServiceBase implements Policie
         ow(deviceId, ow.string.nonEmpty);
         ow(type, ow.string.nonEmpty);
 
-        const url = `${super.baseUrl}${super.inheritedPoliciesRelativeUrl()}?deviceId=${encodeURIComponent(deviceId)}&type=${encodeURIComponent(type)}`;
+        const url = `${this.baseUrl}${super.inheritedPoliciesRelativeUrl()}?deviceId=${encodeURIComponent(deviceId)}&type=${encodeURIComponent(type)}`;
         const res = await request.get(url)
             .set(this.buildHeaders(additionalHeaders));
 
@@ -48,7 +52,7 @@ export class PoliciesApigwService extends PoliciesServiceBase implements Policie
         ow(groupPaths, ow.array.minLength(1));
 
         const queryString = groupPaths.map(p => `groupPath=${encodeURIComponent(p)}`).join('&');
-        const url = `${super.baseUrl}${super.inheritedPoliciesRelativeUrl()}?${queryString}`;
+        const url = `${this.baseUrl}${super.inheritedPoliciesRelativeUrl()}?${queryString}`;
         const res = await request.get(url)
             .set(this.buildHeaders(additionalHeaders));
 
@@ -58,7 +62,7 @@ export class PoliciesApigwService extends PoliciesServiceBase implements Policie
     async listPolicies(type: string, offset?: number, count?: number, additionalHeaders?:RequestHeaders): Promise<PolicyList> {
         ow(type, ow.string.nonEmpty);
 
-        const url = `${super.baseUrl}${super.policiesRelativeUrl()}?${QSHelper.getQueryString({type, offset, count})}`;
+        const url = `${this.baseUrl}${super.policiesRelativeUrl()}?${QSHelper.getQueryString({type, offset, count})}`;
         const res = await request.get(url)
             .set(this.buildHeaders(additionalHeaders));
 
@@ -68,7 +72,7 @@ export class PoliciesApigwService extends PoliciesServiceBase implements Policie
     async getPolicy(policyId: string, additionalHeaders?:RequestHeaders): Promise<Policy> {
         ow(policyId, ow.string.nonEmpty);
 
-        const url = `${super.baseUrl}${super.policyRelativeUrl(policyId)}`;
+        const url = `${this.baseUrl}${super.policyRelativeUrl(policyId)}`;
         const res = await request.get(url)
             .set(this.buildHeaders(additionalHeaders));
 
@@ -79,7 +83,7 @@ export class PoliciesApigwService extends PoliciesServiceBase implements Policie
         ow(policyId, ow.string.nonEmpty);
         ow(body, ow.object.nonEmpty);
 
-        const url = `${super.baseUrl}${super.policyRelativeUrl(policyId)}`;
+        const url = `${this.baseUrl}${super.policyRelativeUrl(policyId)}`;
         await request.patch(url)
             .send(body)
             .set(this.buildHeaders(additionalHeaders));
@@ -88,7 +92,7 @@ export class PoliciesApigwService extends PoliciesServiceBase implements Policie
     async deletePolicy(policyId: string, additionalHeaders?:RequestHeaders): Promise<void> {
         ow(policyId, ow.string.nonEmpty);
 
-        const url = `${super.baseUrl}${super.policyRelativeUrl(policyId)}`;
+        const url = `${this.baseUrl}${super.policyRelativeUrl(policyId)}`;
         await request.delete(url)
             .set(this.buildHeaders(additionalHeaders));
     }

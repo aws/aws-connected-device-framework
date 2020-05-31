@@ -1,21 +1,11 @@
-/*-------------------------------------------------------------------------------
-# Copyright (c) 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
-#
-# This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
-#-------------------------------------------------------------------------------*/
-/**
- * Connected Device Framework: Dashboard Facade
- * Asset Library implementation of DevicesService *
- */
-
-import { injectable } from 'inversify';
+import {injectable} from 'inversify';
 import config from 'config';
 import {RequestHeaders} from './common.model';
 
 @injectable()
-export abstract class ClientServiceBase  {
+export class CommonServiceBase  {
 
-    protected MIME_TYPE:string = 'application/vnd.aws-cdf-v1.0+json';
+    private MIME_TYPE:string = 'application/vnd.aws-cdf-v1.0+json';
 
     private readonly _headers:RequestHeaders = {
         'Accept': this.MIME_TYPE,
@@ -26,8 +16,8 @@ export abstract class ClientServiceBase  {
 
         let headers = Object.assign({}, this._headers);
 
-        if (config.has('assetLibrary.headers')) {
-            const headersFromConfig:RequestHeaders = config.get('assetLibrary.headers') as RequestHeaders;
+        if (config.has('notifications.headers')) {
+            const headersFromConfig:RequestHeaders = config.get('notifications.headers') as RequestHeaders;
             if (headersFromConfig !== null && headersFromConfig !== undefined) {
                 headers = {...headers, ...headersFromConfig};
             }
@@ -46,5 +36,4 @@ export abstract class ClientServiceBase  {
 
         return headers;
     }
-
 }

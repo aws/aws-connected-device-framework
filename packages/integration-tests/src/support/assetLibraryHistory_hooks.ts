@@ -5,7 +5,18 @@
 #-------------------------------------------------------------------------------*/
 
 import { Before, setDefaultTimeout} from 'cucumber';
-import { GroupsService, DevicesService, TemplatesService, CategoryEnum, TypeResource, Group10Resource } from '@cdf/assetlibrary-client/dist';
+import {
+    GroupsService,
+    DevicesService,
+    TemplatesService,
+    CategoryEnum,
+    TypeResource,
+    Group10Resource,
+    ASSTLIBRARY_CLIENT_TYPES,
+} from '@cdf/assetlibrary-client/dist';
+import {container} from '../di/inversify.config';
+import {sign} from 'jsonwebtoken';
+import {Dictionary} from '../../../libraries/core/lambda-invoke/src';
 
 setDefaultTimeout(30 * 1000);
 
@@ -14,25 +25,35 @@ const DEVICEHISTORY_FEATURE_GROUP_TEMPLATE_ID:string = 'test-devicehistory-group
 const DEVICEHISTORY_FEATURE_GROUP_PATH:string = '/test-devicehistory-group';
 const DEVICEHISTORY_FEATURE_DEVICE_IDS:string[] = ['test-devicehistory-device001'];
 
-let devices: DevicesService;
-let groups: GroupsService;
-let templates: TemplatesService;
+/*
+    Cucumber describes current scenario context as “World”. It can be used to store the state of the scenario
+    context (you can also define helper methods in it). World can be access by using the this keyword inside
+    step functions (that’s why it’s not recommended to use arrow functions).
+ */
+// tslint:disable:no-invalid-this
+// tslint:disable:only-arrow-functions
 
-Before(function () {
-    devices = new DevicesService();
-    groups = new GroupsService();
-    templates = new TemplatesService();
-});
+const devicesService:DevicesService = container.get(ASSTLIBRARY_CLIENT_TYPES.DevicesService);
+const groupsService:GroupsService = container.get(ASSTLIBRARY_CLIENT_TYPES.GroupsService);
+const templatesService:TemplatesService = container.get(ASSTLIBRARY_CLIENT_TYPES.TemplatesService);
+
+const adminClaims:any= {
+    cdf_al: ['/:*']
+};
+const authToken = sign(adminClaims, 'shared-secret');
+const additionalHeaders: Dictionary = {
+    Authorization: authToken
+};
 
 async function deleteAssetLibraryTemplates(category:CategoryEnum, ids:string[]) {
     for(const id of ids) {
-        await templates.deleteTemplate(category, id);
+        await templatesService.deleteTemplate(category, id, additionalHeaders);
     }
 }
 
 async function deleteAssetLibraryDevices(ids:string[]) {
     for(const id of ids) {
-        await devices.deleteDevice(id)
+        await devicesService.deleteDevice(id, additionalHeaders)
             .catch(_err=> {
                 // ignore error in case it did not already exist
             });
@@ -41,7 +62,7 @@ async function deleteAssetLibraryDevices(ids:string[]) {
 
 async function deleteAssetLibraryGroups(paths:string[]) {
     for(const path of paths) {
-        await groups.deleteGroup(path)
+        await groupsService.deleteGroup(path, additionalHeaders)
             .catch(_err=> {
                 // ignore error in case it did not already exist
             });
@@ -63,8 +84,8 @@ Before({tags: '@setup_deviceHistory_feature'}, async function () {
         templateId: DEVICEHISTORY_FEATURE_GROUP_TEMPLATE_ID,
         category: 'group'
     };
-    await templates.createTemplate(groupType);
-    await templates.publishTemplate(CategoryEnum.group, DEVICEHISTORY_FEATURE_GROUP_TEMPLATE_ID);
+    await templatesService.createTemplate(groupType, additionalHeaders);
+    await templatesService.publishTemplate(CategoryEnum.group, DEVICEHISTORY_FEATURE_GROUP_TEMPLATE_ID, additionalHeaders);
 
     // create group
     const group:Group10Resource = {
@@ -73,7 +94,7 @@ Before({tags: '@setup_deviceHistory_feature'}, async function () {
         name: DEVICEHISTORY_FEATURE_GROUP_PATH.substring(1),
         attributes: {}
     };
-    await groups.createGroup(group);
+    await groupsService.createGroup(group, undefined, additionalHeaders);
 
     // create device type
     const deviceType:TypeResource = {
@@ -88,8 +109,8 @@ Before({tags: '@setup_deviceHistory_feature'}, async function () {
             }
         }
     };
-    await templates.createTemplate(deviceType);
-    await templates.publishTemplate(CategoryEnum.device, DEVICEHISTORY_FEATURE_DEVICE_TEMPLATE_ID);
+    await templatesService.createTemplate(deviceType, additionalHeaders);
+    await templatesService.publishTemplate(CategoryEnum.device, DEVICEHISTORY_FEATURE_DEVICE_TEMPLATE_ID, additionalHeaders);
 
 });
 

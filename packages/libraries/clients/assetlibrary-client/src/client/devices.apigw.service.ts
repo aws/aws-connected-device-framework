@@ -18,6 +18,7 @@ import {
     DeviceResourceList,
 } from './devices.model';
 import {injectable} from 'inversify';
+import config from 'config';
 import ow from 'ow';
 import * as request from 'superagent';
 import {QSHelper} from '../utils/qs.helper';
@@ -27,8 +28,11 @@ import {RequestHeaders} from './common.model';
 @injectable()
 export class DevicesApigwService extends DevicesServiceBase implements DevicesService {
 
+    private readonly baseUrl:string;
+
     public constructor() {
         super();
+        this.baseUrl = config.get('assetLibrary.baseUrl') as string;
     }
 
     /**
@@ -89,14 +93,16 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
     async createDevice(body: Device10Resource | Device20Resource, applyProfileId?: string, additionalHeaders?:RequestHeaders): Promise<void> {
         ow(body, ow.object.nonEmpty);
 
-        let url = `${this.baseUrl}${super.devicesRelativeUrl()}}`;
+        let url = `${this.baseUrl}${super.devicesRelativeUrl()}`;
         const queryString = QSHelper.getQueryString({applyProfile: applyProfileId});
         if (queryString) {
             url += `?${queryString}`;
         }
+
+        const headers=this.buildHeaders(additionalHeaders);
         await request.post(url)
             .send(body)
-            .set(this.buildHeaders(additionalHeaders));
+            .set(headers);
     }
 
     /**

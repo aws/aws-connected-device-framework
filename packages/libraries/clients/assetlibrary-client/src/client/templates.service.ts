@@ -2,6 +2,7 @@ import {CategoryEnum, StatusEnum, TypeResource, TypeResourceList} from './templa
 import {RequestHeaders} from './common.model';
 import {ClientServiceBase} from './common.service';
 import {PathHelper} from '../utils/path.helper';
+import {injectable} from 'inversify';
 
 export interface TemplatesService {
     getTemplate(category: CategoryEnum, templateId: string, status: StatusEnum, additionalHeaders?: RequestHeaders): Promise<TypeResource>;
@@ -17,6 +18,7 @@ export interface TemplatesService {
     listTemplates(category: CategoryEnum, status?: string, offset?: number, count?: number, additionalHeaders?: RequestHeaders): Promise<TypeResourceList>;
 }
 
+@injectable()
 export class TemplatesServiceBase extends ClientServiceBase {
 
     constructor() {

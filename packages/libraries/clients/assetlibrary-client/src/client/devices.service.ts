@@ -8,6 +8,7 @@ import {
 import {RequestHeaders} from './common.model';
 import {PathHelper} from '../utils/path.helper';
 import {ClientServiceBase} from './common.service';
+import {injectable} from 'inversify';
 
 export interface DevicesService {
     /**
@@ -118,6 +119,7 @@ export interface DevicesService {
     getDevicesByID(deviceIds: string[], expandComponents?: boolean, attributes?: string[], groups?: string[], additionalHeaders?:RequestHeaders): Promise<DeviceResourceList>;
 }
 
+@injectable()
 export class DevicesServiceBase extends ClientServiceBase {
 
     constructor() {

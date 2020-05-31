@@ -25,7 +25,7 @@ import {
 import {ThingsService, ThingsServiceBase} from './things.service';
 
 @injectable()
-export class ThingsServiceLambda extends ThingsServiceBase implements ThingsService {
+export class ThingsLambdaService extends ThingsServiceBase implements ThingsService {
 
     constructor(
         @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService) private lambdaInvoker: LambdaInvokerService,

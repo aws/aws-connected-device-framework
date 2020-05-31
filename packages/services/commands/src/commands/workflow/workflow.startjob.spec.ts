@@ -7,12 +7,13 @@ import 'reflect-metadata';
 import { createMockInstance } from 'jest-create-mock-instance';
 
 import { TemplatesService } from '../../templates/templates.service';
-import { DevicesService, GroupsService, SearchService, SearchRequestModel, SearchResultsModel } from '@cdf/assetlibrary-client/dist';
-import { ThingsService } from '@cdf/provisioning-client/dist';
+import { DevicesService, GroupsService, SearchService, SearchRequestModel, SearchResultsModel } from '@cdf/assetlibrary-client';
+import { ThingsService } from '@cdf/provisioning-client';
 import { StartJobAction, TargetType } from './workflow.startjob';
 
 import AWS from 'aws-sdk';
 import { CommandsDao } from '../commands.dao';
+import { mock } from 'jest-mock-extended';
 
 let mockedTemplatesService: jest.Mocked<TemplatesService>;
 let mockedCommandsDao: jest.Mocked<CommandsDao>;
@@ -29,10 +30,10 @@ describe('StartJobAction', () => {
     beforeEach(() => {
         mockedTemplatesService = createMockInstance(TemplatesService);
         mockedCommandsDao = createMockInstance(CommandsDao);
-        mockedAssetLibraryDevicesService = createMockInstance(DevicesService);
-        mockedAssetLibraryGroupsService = createMockInstance(GroupsService);
-        mockedAssetLibrarySearchService = createMockInstance(SearchService);
-        mockedProvisioningThingsService = createMockInstance(ThingsService);
+        mockedAssetLibraryDevicesService = mock<DevicesService>();
+        mockedAssetLibraryGroupsService = mock<GroupsService>();
+        mockedAssetLibrarySearchService = mock<SearchService>();
+        mockedProvisioningThingsService = mock<ThingsService>();
         mockedS3 = new AWS.S3();
         mockedIot = new AWS.Iot();
 

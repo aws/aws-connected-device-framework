@@ -3,6 +3,8 @@
 #
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
+import 'reflect-metadata';
+
 import { Container } from 'inversify';
 
 import {assetLibraryContainerModule} from '@cdf/assetlibrary-client';

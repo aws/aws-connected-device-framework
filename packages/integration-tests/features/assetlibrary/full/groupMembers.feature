@@ -44,7 +44,7 @@ Feature: Group Members
     And device "TEST-groupMembers-device003" exists
     And device "TEST-groupMembers-device003" is "located_at" "/test-groupmembers-parent"
 
-  
+
   Scenario: Child groups can be added to the parent
     When I create group "child1" of "/TEST-groupMembers-parent" with attributes
       | templateId | TEST-groupMembers-group |

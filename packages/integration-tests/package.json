@@ -7,10 +7,10 @@
     "environment": "development"
   },
   "scripts": {
-    "clean": "rm -rf dist build tsconfig.tsbuildinfo .nyc_output coverage dist build features/step_definitions features/support",
+    "clean": "rm -rf dist build tsconfig.tsbuildinfo .nyc_output coverage dist build features/dist",
     "reset": "rm -rf cli node_modules package-lock.json",
     "lint": "tslint \"src/**/*.ts\"",
-    "build": "tsc -b tsconfig.json && cpy dist/step_definitions/**/* features/step_definitions/ --parents && cpy src/testResources/**/* dist/testResources/ --parents && cpy dist/support/**/* features/support/ --parents",
+    "build": "tsc -b tsconfig.json && cpy dist/step_definitions/**/* features --parents && cpy src/testResources/**/* dist --parents && cpy dist/support/**/* features --parents && cpy dist/di/**/* features --parents",
     "integration-test": "NODE_CONFIG=$(cat ${CONFIG_LOCATION}/integration-tests/${npm_package_config_environment}-config.json) NODE_CONFIG_DIR='./src/config' cucumber-js",
     "semantic-release": "npx semantic-release -e semantic-release-monorepo"
   },
@@ -32,6 +32,7 @@
     "reflect-metadata": "0.1.13",
     "typed-rest-client": "1.5.0",
     "readable-stream": "2.3.6",
+    "reflect-metadata": "0.1.13",
     "winston": "3.2.1",
     "winston-transport": "4.3.0"
   },

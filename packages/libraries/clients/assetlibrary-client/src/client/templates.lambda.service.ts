@@ -75,7 +75,7 @@ export class TemplatesLambdaService extends TemplatesServiceBase implements Temp
         ow(templateId, ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
-            .setPath(super.templateRelativeUrl(category, templateId))
+            .setPath(super.publishTemplateRelativeUrl(category, templateId))
             .setMethod('PUT')
             .setHeaders(super.buildHeaders(additionalHeaders));
 

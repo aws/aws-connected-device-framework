@@ -2,6 +2,7 @@ import {DeviceProfileResource, GroupProfileResource, ProfileResourceList} from '
 import {RequestHeaders} from './common.model';
 import {ClientServiceBase} from './common.service';
 import {PathHelper} from '../utils/path.helper';
+import {injectable} from 'inversify';
 
 export interface ProfilesService {
     createProfile(category: string, body: DeviceProfileResource | GroupProfileResource, additionalHeaders?:RequestHeaders): Promise<void>;
@@ -35,6 +36,7 @@ export interface ProfilesService {
     listGroupProfiles(templateId: string, additionalHeaders?:RequestHeaders): Promise<ProfileResourceList>;
 }
 
+@injectable()
 export class ProfilesServiceBase extends ClientServiceBase {
 
     constructor() {

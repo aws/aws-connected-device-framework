@@ -3,7 +3,7 @@ aws:
   region: AWS_REGION
 
 assetLibrary:
-  baseUrl: FACADE_ASSETLIBRARY_BASEURL
+  apiFunctionName:  FACADE_ASSETLIBRARY_APIFUNCTIONNAME
 
 logging:
   level: FACADE_LOGGING_LEVEL

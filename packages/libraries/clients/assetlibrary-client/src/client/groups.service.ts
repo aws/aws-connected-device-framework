@@ -9,6 +9,7 @@ import {DeviceResourceList, DeviceState} from './devices.model';
 import {RequestHeaders} from './common.model';
 import {ClientServiceBase} from './common.service';
 import {PathHelper} from '../utils/path.helper';
+import {injectable} from 'inversify';
 
 export interface GroupsService {
     /**
@@ -81,6 +82,7 @@ export interface GroupsService {
     detachFromGroup(sourceGroupPath: string, relationship: string, targetGroupPath: string, additionalHeaders?:RequestHeaders): Promise<void>;
 }
 
+@injectable()
 export class GroupsServiceBase extends ClientServiceBase {
 
     constructor() {

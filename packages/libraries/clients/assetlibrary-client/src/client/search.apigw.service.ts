@@ -9,6 +9,7 @@
  */
 
 import {injectable} from 'inversify';
+import config from 'config';
 import ow from 'ow';
 import * as request from 'superagent';
 import {SearchRequestModel, SearchResultsModel} from './search.model';
@@ -19,8 +20,11 @@ import {SearchService, SearchServiceBase} from './search.service';
 @injectable()
 export class SearchApigwService extends SearchServiceBase implements SearchService {
 
+    private readonly baseUrl:string;
+
     public constructor() {
         super();
+        this.baseUrl = config.get('assetLibrary.baseUrl') as string;
     }
 
     public async search(searchRequest:SearchRequestModel, offset?:number, count?:number, additionalHeaders?:RequestHeaders) : Promise<SearchResultsModel> {

@@ -5,23 +5,33 @@
 #-------------------------------------------------------------------------------*/
 
 import { expect } from 'chai';
-import { Before, Given, setDefaultTimeout, Then, TableDefinition, When} from 'cucumber';
-import { TemplatesService, TemplateModel } from '@cdf/commands-client/dist';
+import { Given, setDefaultTimeout, Then, TableDefinition, When} from 'cucumber';
+import {TemplatesService, TemplateModel, COMMANDS_CLIENT_TYPES} from '@cdf/commands-client/dist';
 import { fail } from 'assert';
 import stringify from 'json-stable-stringify';
-import { RESPONSE_STATUS } from '../common/common.steps';
+import {AUTHORIZATION_TOKEN, RESPONSE_STATUS} from '../common/common.steps';
+import {container} from '../../di/inversify.config';
+import {Dictionary} from '../../../../libraries/core/lambda-invoke/src';
+/*
+    Cucumber describes current scenario context as “World”. It can be used to store the state of the scenario
+    context (you can also define helper methods in it). World can be access by using the this keyword inside
+    step functions (that’s why it’s not recommended to use arrow functions).
+ */
+// tslint:disable:no-invalid-this
+// tslint:disable:only-arrow-functions
 
 setDefaultTimeout(10 * 1000);
 
-let templates: TemplatesService;
-
-Before(function () {
-    templates = new TemplatesService();
-});
+const templatesService:TemplatesService = container.get(COMMANDS_CLIENT_TYPES.TemplatesService);
+function getAdditionalHeaders(world:any) : Dictionary {
+    return  {
+        Authorization: world[AUTHORIZATION_TOKEN]
+    };
+}
 
 Given('command template {string} does not exist', async function (templateId:string) {
     try {
-        await templates.getTemplate(templateId);
+        await templatesService.getTemplate(templateId, getAdditionalHeaders(this));
         fail('A 404 should be thrown');
     } catch (err) {
         expect(err.status).eq(404);
@@ -29,7 +39,7 @@ Given('command template {string} does not exist', async function (templateId:str
 });
 
 Given('command template {string} exists', async function (templateId:string) {
-    const template = await templates.getTemplate(templateId);
+    const template = await templatesService.getTemplate(templateId, getAdditionalHeaders(this));
     expect(template.templateId).eq(templateId);
 });
 
@@ -54,7 +64,7 @@ async function createTemplate (templateId:string, data:TableDefinition) {
         }
     });
 
-    await templates.createTemplate(template);
+    await templatesService.createTemplate(template, getAdditionalHeaders(this));
 }
 
 When('I create the command template {string} with attributes', async function (templateId:string, data:TableDefinition) {
@@ -86,7 +96,7 @@ When('I update command template {string} with attributes', async function (templ
     });
 
     try {
-        await templates.updateTemplate(template);
+        await templatesService.updateTemplate(template, getAdditionalHeaders(this));
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
     }
@@ -94,7 +104,7 @@ When('I update command template {string} with attributes', async function (templ
 
 When('I get command template {string}', async function (templateId:string) {
     try {
-        await templates.getTemplate(templateId);
+        await templatesService.getTemplate(templateId, getAdditionalHeaders(this));
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
     }
@@ -102,7 +112,7 @@ When('I get command template {string}', async function (templateId:string) {
 
 When('I delete command template {string}', async function (templateId:string) {
     try {
-        await templates.deleteTemplate(templateId);
+        await templatesService.deleteTemplate(templateId, getAdditionalHeaders(this));
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
     }
@@ -110,7 +120,7 @@ When('I delete command template {string}', async function (templateId:string) {
 
 Then('command template {string} exists with attributes', async function (templateId:string, data:TableDefinition) {
     const d = data.rowsHash();
-    const r = await templates.getTemplate(templateId);
+    const r = await templatesService.getTemplate(templateId, getAdditionalHeaders(this));
 
     Object.keys(d).forEach( key => {
         const val = d[key];

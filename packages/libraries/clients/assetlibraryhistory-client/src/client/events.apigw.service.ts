@@ -11,9 +11,9 @@
 /* tslint:disable:no-unused-variable member-ordering */
 
 import {injectable} from 'inversify';
+import config from 'config';
 import ow from 'ow';
 import * as request from 'superagent';
-import config from 'config';
 import {Category, CategoryEventsRequest, Events, ObjectEventsRequest, RequestHeaders} from './events.model';
 import {QSHelper} from '../utils/qs.helper';
 import {EventsService, EventsServiceBase} from './events.service';

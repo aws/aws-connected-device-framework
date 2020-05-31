@@ -67,6 +67,7 @@
     "jest-create-mock-instance": "1.1.0",
     "jest-haste-map": "24.9.0",
     "jest-mock": "24.9.0",
+    "jest-mock-extended": "1.0.8",
     "jest-resolve": "24.9.0",
     "make-dir-cli": "2.0.0",
     "nodemon": "2.0.2",
