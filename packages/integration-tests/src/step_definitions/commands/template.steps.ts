@@ -43,7 +43,7 @@ Given('command template {string} exists', async function (templateId:string) {
     expect(template.templateId).eq(templateId);
 });
 
-async function createTemplate (templateId:string, data:TableDefinition) {
+async function createTemplate (world:any, templateId:string, data:TableDefinition) {
 
     const d = data.rowsHash();
 
@@ -64,12 +64,12 @@ async function createTemplate (templateId:string, data:TableDefinition) {
         }
     });
 
-    await templatesService.createTemplate(template, getAdditionalHeaders(this));
+    await templatesService.createTemplate(template, getAdditionalHeaders(world));
 }
 
 When('I create the command template {string} with attributes', async function (templateId:string, data:TableDefinition) {
     try {
-        await createTemplate(templateId, data);
+        await createTemplate(this, templateId, data);
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
     }

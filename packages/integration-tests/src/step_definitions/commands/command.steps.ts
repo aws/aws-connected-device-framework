@@ -56,15 +56,15 @@ function buildCommandModel(data:TableDefinition) {
     return command;
 }
 
-async function createCommand (data:TableDefinition) {
+async function createCommand (world:any, data:TableDefinition) {
     const command = buildCommandModel(data);
-    return await commandsService.createCommand(command, getAdditionalHeaders(this));
+    return await commandsService.createCommand(command, getAdditionalHeaders(world));
 }
 
-async function updateCommand (commandId:string, data:TableDefinition) {
+async function updateCommand (world:any, commandId:string, data:TableDefinition) {
     const command = buildCommandModel(data);
     command.commandId = commandId;
-    return await commandsService.updateCommand(command, getAdditionalHeaders(this));
+    return await commandsService.updateCommand(command, getAdditionalHeaders(world));
 }
 
 Given('last command exists', async function () {
@@ -88,7 +88,7 @@ When('I create a command with attributes', async function (data:TableDefinition)
     this[COMMAND_ID]=null;
     this[RESPONSE_STATUS]=null;
     try {
-        this[COMMAND_ID]=await createCommand(data);
+        this[COMMAND_ID]=await createCommand(this, data);
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
     }
@@ -100,7 +100,7 @@ When('I update last command with attributes', async function (data:TableDefiniti
     const commandId = this[COMMAND_ID];
 
     try {
-        await updateCommand(commandId, data);
+        await updateCommand(this, commandId, data);
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
     }
@@ -110,7 +110,7 @@ When('I upload file {string} to last command as file alias {string}', async func
     this[RESPONSE_STATUS]=null;
     const commandId = this[COMMAND_ID];
 
-    const fileLocation = `${__dirname}/../../../../../src/testResources/${testResource}`;
+    const fileLocation = `${__dirname}/../../../../src/testResources/${testResource}`;
 
     await commandsService.uploadCommandFile(commandId, alias, fileLocation, getAdditionalHeaders(this));
 
