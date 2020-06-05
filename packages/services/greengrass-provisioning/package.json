@@ -1,0 +1,108 @@
+{
+  "name": "@cdf/greengrass-provisioning",
+  "version": "3.2.12",
+  "description": "CDF Greengrass Provisioning",
+  "author": "Dean Hart <deanhart@amazon.com>",
+  "config": {
+    "environment": "development"
+  },
+  "scripts": {
+    "clean": "rm -rf dist build tsconfig.tsbuildinfo",
+    "reset": "rm -rf cli node_modules package-lock.json",
+    "lint": "tslint \"src/**/*.ts\"",
+    "build": "tsc -b tsconfig.json",
+    "test": "npm run lint && NODE_ENV= NODE_CONFIG_DIR='./src/config' nyc jest",
+    "start": "npm run build && NODE_CONFIG=$(cat ${CONFIG_LOCATION}/greengrass-provisioning/${npm_package_config_environment}-config.json) NODE_CONFIG_DIR='./src/config' concurrently \"npm run build -- -w\" \"nodemon dist/lambda_apigw_proxy.js\"",
+    "start:norebuild": "npm run build && NODE_CONFIG=$(cat ${CONFIG_LOCATION}/assetlibrary/${npm_package_config_environment}-config.json) NODE_CONFIG_DIR='./src/config' node dist/lambda_apigw_proxy.js",
+    "prebundle:prepare": "cpy src/config/* dist/config/ && make-dir build && make-dir dist/node_modules",
+    "bundle:package": "cd dist && zip -rq ../build/build.zip * && zip -urq ../build/build.zip ../package.json && zip -urq ../build/build.zip ../node_modules",
+    "semantic-release": "npx semantic-release -e semantic-release-monorepo",
+    "prebundle:quick": "pnpm run clean && pnpm install --force && pnpm run build && npm run prebundle:prepare",
+    "bundle:quick": "pnpm i --no-lock --prod --shamefully-flatten --force && npm run bundle:package",
+    "postbundle:quick": "pnpm install --force"
+  },
+  "dependencies": {
+    "@cdf/config-inject": "^2.0.1",
+    "@cdf/express-middleware": "^1.0.1",
+    "@cdf/provisioning-client": "^3.0.0",
+    "aws-sdk": "2.588.0",
+    "aws-serverless-express": "3.3.6",
+    "body-parser": "1.19.0",
+    "config": "3.2.4",
+    "cors": "2.8.5",
+    "express": "4.17.1",
+    "express-version-request": "1.7.0",
+    "inversify": "5.0.1",
+    "inversify-binding-decorators": "4.0.0",
+    "inversify-express-utils": "6.3.2",
+    "js-yaml": "3.13.1",
+    "jszip": "3.2.2",
+    "logform": "2.1.2",
+    "mime": "1.6.0",
+    "ow": "0.15.0",
+    "prettyjson": "1.2.1",
+    "readable-stream": "2.3.6",
+    "reflect-metadata": "0.1.13",
+    "shortid": "2.2.15",
+    "winston": "3.2.1",
+    "winston-transport": "4.3.0"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "8.2.0",
+    "@commitlint/config-conventional": "8.2.0",
+    "@semantic-release/changelog": "3.0.6",
+    "@semantic-release/git": "7.0.18",
+    "@semantic-release/release-notes-generator": "7.3.5",
+    "@types/aws-serverless-express": "3.3.2",
+    "@types/body-parser": "1.17.1",
+    "@types/config": "0.0.36",
+    "@types/cors": "2.8.6",
+    "@types/express": "4.17.2",
+    "@types/express-serve-static-core": "4.17.0",
+    "@types/express-version-request": "1.7.1",
+    "@types/jest": "24.0.23",
+    "@types/jszip": "3.1.6",
+    "@types/node": "12.12.17",
+    "@types/shortid": "0.0.29",
+    "commitizen": "4.0.3",
+    "concurrently": "5.0.1",
+    "cpy-cli": "3.0.0",
+    "del-cli": "3.0.0",
+    "husky": "3.1.0",
+    "jest": "24.9.0",
+    "jest-create-mock-instance": "1.1.0",
+    "jest-mock-extended": "1.0.8",
+    "jest-express": "1.10.1",
+    "jest-haste-map": "24.9.0",
+    "jest-mock": "24.9.0",
+    "jest-resolve": "24.9.0",
+    "make-dir-cli": "2.0.0",
+    "nodemon": "2.0.2",
+    "nyc": "14.1.1",
+    "semantic-release": "15.13.31",
+    "semantic-release-monorepo": "6.1.1",
+    "ts-jest": "24.2.0",
+    "tslint": "5.20.1",
+    "typescript": "3.7.3"
+  },
+  "jest": {
+    "roots": [
+      "<rootDir>/src"
+    ],
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testMatch": [
+      "<rootDir>/**/?(*.)+(spec|test).ts?(x)"
+    ],
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
+  },
+  "private": true
+}

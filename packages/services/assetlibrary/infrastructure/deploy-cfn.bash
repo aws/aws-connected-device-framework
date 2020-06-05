@@ -269,7 +269,7 @@ if [[ "$ASSETLIBRARY_MODE" = "full" ]]; then
     --capabilities CAPABILITY_NAMED_IAM \
     --no-fail-on-empty-changeset \
     $AWS_ARGS
-    
+
   aws cloudformation set-stack-policy \
     --stack-name $NEPTUNE_STACK_NAME \
     --stack-policy-body "$(cat $cwd/cfn-neptune-stack-policy.json)" \
@@ -374,7 +374,9 @@ if [[ "$ASSETLIBRARY_MODE" = "full" ]]; then
     204)
         echo "Assetlibrary successfully initialized status code ${status_code}";;
     409)
-      echo "Assetlibrary already initialized status code ${status_code}";;
+      echo "Assetlibrary already initialized status code $status_code";;
+    401)
+      echo "Assetlibrary unauthorized code $status_code";;
     *)
       echo "Assetlibrary failed to initialize status code ${status_code}";;
   esac

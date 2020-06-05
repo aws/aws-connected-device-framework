@@ -3,7 +3,11 @@ Transform: AWS::Serverless-2016-10-31
 
 Description: CDF Request Queue Service
 
-Parameters:  
+Globals:
+  Api:
+    OpenApiVersion: 3.0.1
+
+Parameters:
   Environment:
     Description:  Name of environment.  Used to name the created resources.
     Type: String

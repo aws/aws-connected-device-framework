@@ -18,6 +18,7 @@ import { PromiseResult } from 'aws-sdk/lib/request';
 import { ProvisioningStepInput, ProvisioningStepOutput } from './steps/provisioningstep.model';
 import { ClientIdEnforcementPolicyStepProcessor } from './steps/clientidenforcementpolicystepprocessor';
 import { CreateDeviceCertificateStepProcessor } from './steps/createdevicecertificateprocessor';
+import { RegisterDeviceCertificateWithoutCAStepProcessor } from './steps/registerdevicecertificatewithoutcaprocessor';
 
 @injectable()
 export class ThingsService {
@@ -30,6 +31,7 @@ export class ThingsService {
         @inject(TYPES.S3Factory) s3Factory: () => AWS.S3,
         @inject(TYPES.ClientIdEnforcementPolicyStepProcessor) private clientIdEnforcementPolicyStepProcessor: ClientIdEnforcementPolicyStepProcessor,
         @inject(TYPES.CreateDeviceCertificateStepProcessor) private createDeviceCertificateStepProcessor: CreateDeviceCertificateStepProcessor,
+        @inject(TYPES.RegisterDeviceCertificateWithoutCAStepProcessor) private registerDeviceCertificateWithoutCAStepProcessor: RegisterDeviceCertificateWithoutCAStepProcessor,
         @inject('aws.s3.roleArn') private s3RoleArn: string,
         @inject('aws.s3.templates.bucket') private templateBucketName: string,
         @inject('aws.s3.templates.prefix') private templatePrefix: string,
@@ -153,6 +155,12 @@ export class ThingsService {
             logger.debug(`things.service preProcessSteps: processing createDeviceCertificate`);
 
             preProcessOutput = await this.createDeviceCertificateStepProcessor.process(preProcessInput);
+        }
+
+        if (preProcessInput.template.CDF.registerDeviceCertificateWithoutCA === true) {
+            logger.debug(`things.service preProcessSteps: processing registerDeviceCertificateWithoutCA`);
+
+            preProcessOutput = await this.registerDeviceCertificateWithoutCAStepProcessor.process(preProcessInput);
         }
 
         logger.debug(`things.service preProcessSteps: exit:`);

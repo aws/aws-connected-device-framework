@@ -2,7 +2,7 @@
 
 set -e
 # path is from cdf-core root
-source ./infrastructure/common-deploy-functions.bash
+source ./common-deploy-functions.bash
 
 function help_message {
     cat << EOF

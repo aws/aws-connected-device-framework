@@ -1,0 +1,244 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "autoscaling",
+            "Effect": "Allow",
+            "Action": [
+                "autoscaling:DescribeAccountLimits",
+                "autoscaling:DescribeAdjustmentTypes",
+                "autoscaling:DescribeAutoScalingGroups",
+                "autoscaling:DescribeAutoScalingInstances",
+                "autoscaling:DescribeAutoScalingNotificationTypes",
+                "autoscaling:DescribeLaunchConfigurations",
+                "autoscaling:DescribeLifecycleHooks",
+                "autoscaling:DescribeLifecycleHookTypes",
+                "autoscaling:DescribeLoadBalancers",
+                "autoscaling:DescribeLoadBalancerTargetGroups",
+                "autoscaling:DescribeMetricCollectionTypes",
+                "autoscaling:DescribeNotificationConfigurations",
+                "autoscaling:DescribePolicies",
+                "autoscaling:DescribeScalingActivities",
+                "autoscaling:DescribeScalingProcessTypes",
+                "autoscaling:DescribeScheduledActions",
+                "autoscaling:DescribeTags",
+                "autoscaling:DescribeTerminationPolicyTypes"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "cloudformation",
+            "Effect": "Allow",
+            "Action": [
+                "cloudformation:*"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "codedeploy",
+            "Effect": "Allow",
+            "Action": [
+                "codedeploy:*"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "dynamodb",
+            "Effect": "Allow",
+            "Action": [
+                "dynamodb:DescribeLimits",
+                "dynamodb:DescribeReservedCapacity",
+                "dynamodb:DescribeReservedCapacityOfferings",
+                "dynamodb:ListBackups",
+                "dynamodb:ListContributorInsights",
+                "dynamodb:ListGlobalTables",
+                "dynamodb:ListStreams",
+                "dynamodb:ListTables",
+                "dynamodb:PurchaseReservedCapacityOfferings"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "events",
+            "Effect": "Allow",
+            "Action": [
+                "events:PutEvents",
+                "events:PutPartnerEvents",
+                "events:PutPermission",
+                "events:RemovePermission",
+                "events:TestEventPattern"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "iot",
+            "Effect": "Allow",
+            "Action": [
+                "iot:*"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "kms",
+            "Effect": "Allow",
+            "Action": [
+                "kms:CreateKey"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "lambda",
+            "Effect": "Allow",
+            "Action": [
+                "lambda:CreateEventSourceMapping",
+                "lambda:GetAccountSettings",
+                "lambda:ListEventSourceMappings",
+                "lambda:ListFunctions",
+                "lambda:ListLayers",
+                "lambda:ListLayerVersions"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "logs",
+            "Effect": "Allow",
+            "Action": [
+                "logs:CancelExportTask",
+                "logs:CreateLogDelivery",
+                "logs:CreateLogGroup",
+                "logs:DeleteDestination",
+                "logs:DeleteLogDelivery",
+                "logs:DeleteResourcePolicy",
+                "logs:DescribeDestinations",
+                "logs:DescribeExportTasks",
+                "logs:DescribeQueries",
+                "logs:DescribeResourcePolicies",
+                "logs:GetLogDelivery",
+                "logs:GetLogRecord",
+                "logs:GetQueryResults",
+                "logs:ListLogDeliveries",
+                "logs:PutDestination",
+                "logs:PutDestinationPolicy",
+                "logs:PutResourcePolicy",
+                "logs:StopQuery",
+                "logs:TestMetricFilter",
+                "logs:UpdateLogDelivery"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "rds",
+            "Effect": "Allow",
+            "Action": [
+                "rds:*"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "sns",
+            "Effect": "Allow",
+            "Action": [
+                "sns:CheckIfPhoneNumberIsOptedOut",
+                "sns:CreatePlatformApplication",
+                "sns:CreatePlatformEndpoint",
+                "sns:DeleteEndpoint",
+                "sns:DeletePlatformApplication",
+                "sns:GetEndpointAttributes",
+                "sns:GetPlatformApplicationAttributes",
+                "sns:GetSMSAttributes",
+                "sns:GetSubscriptionAttributes",
+                "sns:ListEndpointsByPlatformApplication",
+                "sns:ListPhoneNumbersOptedOut",
+                "sns:ListPlatformApplications",
+                "sns:ListSubscriptions",
+                "sns:ListTopics",
+                "sns:OptInPhoneNumber",
+                "sns:SetEndpointAttributes",
+                "sns:SetPlatformApplicationAttributes",
+                "sns:SetSMSAttributes",
+                "sns:SetSubscriptionAttributes",
+                "sns:Unsubscribe"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "sqs",
+            "Effect": "Allow",
+            "Action": [
+                "sqs:ListQueues"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "apigateway",
+            "Effect": "Allow",
+            "Action": "apigateway:*",
+            "Resource": "arn:aws:apigateway:*::*"
+        },
+        {
+            "Sid": "dynamodb2",
+            "Effect": "Allow",
+            "Action": "dynamodb:*",
+            "Resource": [
+                "arn:aws:dynamodb::157731826412:global-table/cdf-*",
+                "arn:aws:dynamodb:*:157731826412:table/cdf-*/backup/*",
+                "arn:aws:dynamodb:*:157731826412:table/cdf-*/index/*",
+                "arn:aws:dynamodb:*:157731826412:table/cdf-*/stream/*",
+                "arn:aws:dynamodb:*:157731826412:table/cdf-*"
+            ]
+        },
+        {
+            "Sid": "logs2",
+            "Effect": "Allow",
+            "Action": "logs:*",
+            "Resource": [
+                "arn:aws:logs:*:157731826412:log-group:cdf-*",
+                "arn:aws:logs:*:157731826412:log-group:cdf-*:log-stream:*"
+            ]
+        },
+        {
+            "Sid": "autoscaling2",
+            "Effect": "Allow",
+            "Action": "autoscaling:*",
+            "Resource": [
+                "arn:aws:autoscaling:*:*:autoScalingGroup:*:autoScalingGroupName/*",
+                "arn:aws:autoscaling:*:*:launchConfiguration:*:launchConfigurationName/*"
+            ]
+        },
+        {
+            "Sid": "lambda2",
+            "Effect": "Allow",
+            "Action": "lambda:*",
+            "Resource": [
+                "arn:aws:lambda:*:157731826412:layer:cdf-*",
+                "arn:aws:lambda:*:157731826412:function:cdf-*",
+                "arn:aws:lambda:*:157731826412:function:cdf-*:*",
+                "arn:aws:lambda:*:157731826412:event-source-mapping:*",
+                "arn:aws:lambda:*:157731826412:layer:cdf-*:*",
+                "arn:aws:lambda:*:157731826412:function:cdf-*:*"
+            ]
+        },
+        {
+            "Sid": "sqs2",
+            "Effect": "Allow",
+            "Action": "sqs:*",
+            "Resource": "arn:aws:sqs:*:157731826412:cdf-*"
+        },
+        {
+            "Sid": "sns2",
+            "Effect": "Allow",
+            "Action": "sns:*",
+            "Resource": "arn:aws:sns:*:157731826412:cdf-*"
+        },
+        {
+            "Sid": "events2",
+            "Effect": "Allow",
+            "Action": "events:*",
+            "Resource": [
+                "arn:aws:events:*::event-source/cdf-*",
+                "arn:aws:events:*:157731826412:event-bus/cdf-*",
+                "arn:aws:events:*:*:rule/*"
+            ]
+        }
+    ]
+}

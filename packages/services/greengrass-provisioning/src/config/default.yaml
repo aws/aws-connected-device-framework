@@ -1,0 +1,42 @@
+aws:
+  accountId:
+  region:
+
+  dynamoDb:
+    table:
+
+  greengrass:
+    bulkdeployments:
+      roleArn:
+      
+  iot:
+    endpoint:
+
+  s3:
+    artifacts:
+      bucket: 
+      prefix:
+
+    bulkdeployments:
+      bucket: 
+      prefix:
+
+  sqs:
+    deviceAssociations:
+    deployments:
+    bulkDeploymentsStatus:
+    deploymentStatus:
+
+cors:
+  origin:
+
+provisioning:
+  apiFunctionName:
+  mode: 'lambda'
+
+supportedApiVersions:
+  - json:
+      - '1.0'
+
+logging:
+  level: debug

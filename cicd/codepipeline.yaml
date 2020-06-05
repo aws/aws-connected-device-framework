@@ -651,6 +651,8 @@ Resources:
               - logs:*
               - rds:*
               - s3:*
+              - sqs:*
+              - events:*
               - sns:CreateTopic
               - sns:DeleteTopic
               - sns:GetTopicAttributes

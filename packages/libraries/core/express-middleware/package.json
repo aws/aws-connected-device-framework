@@ -14,12 +14,16 @@
     "build": "tsc -b tsconfig.json",
     "semantic-release": "npx semantic-release -e semantic-release-monorepo"
   },
-  "dependencies": {
+  "peerDependencies": {
     "@cdf/config-inject": "^2.0.0",
     "config": "3.2.4",
     "express": "4.17.1"
   },
   "devDependencies": {
+    "@cdf/config-inject": "^2.0.0",
+    "config": "3.2.4",
+    "express": "4.17.1",
+
     "@commitlint/cli": "8.2.0",
     "@commitlint/config-conventional": "8.2.0",
     "@semantic-release/changelog": "3.0.6",

@@ -23,6 +23,8 @@ export interface CdfProvisioningParameters {
 		country?: string;
 		emailAddress?: string;
 	};
+	certificatePem?: string;
+	certificateStatus?: CertificateStatus;
 	privateKey?: string;
 	registered?:RegisterThingResponse;
 }

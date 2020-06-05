@@ -56,8 +56,8 @@ OPTIONAL ARGUMENTS:
 
     Required for LambdaRequest / LambdaToken auth:
     ---------------------------------------------
-    -A (string)   Lambda authorizer function arn. 
-    
+    -A (string)   Lambda authorizer function arn.
+
     Misc:
     -----
     -S (string)   What to name this stack.  Defaults to cdf-request-queue-${ENVIRONMENT}.
@@ -68,7 +68,7 @@ OPTIONAL ARGUMENTS:
     -R (string)   AWS region.
     -P (string)   AWS profile.
 
-    
+
 EOF
 }
 

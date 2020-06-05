@@ -28,7 +28,7 @@ MANDATORY ARGUMENTS:
     -c (string)   Location of application configuration file containing configuration overrides.
     -y (string)   S3 uri base directory where Cloudformation template snippets are stored.
     -z (string)   Name of API Gateway cloudformation template snippet. If none provided, all API Gateway instances are configured without authentication.
-    
+
     -f (string)   Name of bucket where command files are to be stored.
 
 
@@ -57,7 +57,7 @@ OPTIONAL ARGUMENTS:
 
     Required for LambdaRequest / LambdaToken auth:
     ---------------------------------------------
-    -A (string)   Lambda authorizer function arn. 
+    -A (string)   Lambda authorizer function arn.
 
     AWS options:
     ------------
@@ -84,7 +84,6 @@ while getopts ":e:c:f:v:g:n:i:a:y:z:C:A:R:P:" opt; do
     z  ) export API_GATEWAY_DEFINITION_TEMPLATE=$OPTARG;;
     C  ) export COGNTIO_USER_POOL_ARN=$OPTARG;;
     A  ) export AUTHORIZER_FUNCTION_ARN=$OPTARG;;
-
 
     R  ) export AWS_REGION=$OPTARG;;
     P  ) export AWS_PROFILE=$OPTARG;;

@@ -1,0 +1,523 @@
+AWSTemplateFormatVersion : '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Description: CDF Greengrass Provisioning Service
+
+Globals:
+  Api:
+    OpenApiVersion: 3.0.1
+
+Parameters:
+  Environment:
+    Description:  Name of environment.  Used to name the created resources.
+    Type: String
+    MinLength: 1
+
+  ApplicationConfigurationOverride:
+    Description: This allows you to override any configuration application configuration. Must be a JSON formatted string. Any configurations contained in this will override the configurations found and merged from the config files.
+    Type: String
+    MinLength: 1
+
+  TemplateSnippetS3UriBase:
+    Description: |
+      S3 uri of directory where template snippets are stored for the account.
+    Type: String
+    MinLength: 1
+
+  AuthType:
+    Description: Authorization type to apply to the API gateway endpoints
+    Type: String
+    Default: None
+    AllowedValues:
+      - None
+      - Private
+      - Cognito
+      - LambdaRequest
+      - LambdaToken
+      - ApiKey
+      - IAM
+    MinLength: 1
+
+  ApiGatewayDefinitionTemplate:
+    Description: |
+      Name of the API Gateway Cloudformation definition along with the authorization method to use.  Use one of the provided
+      templates to implement no auth, private, api key, lambda request, lamdba token, or Cognito auth, or modify one to meet your own
+      authentization requirements.  The template must exist within the provided TemplateSnippetS3UriBase location.
+    Type: String
+    MinLength: 1
+
+  VpcId:
+    Description: ID of VPC to deploy the API into. Only required if AuthType = 'Private'.
+    Type: String
+  CDFSecurityGroupId:
+    Description: ID of an existing CDF security group to deploy the API into. Only required if AuthType = 'Private'.
+    Type: String
+  PrivateSubNetIds:
+    Description: Comma delimited list of private subnetIds to deploy the API into. Only required if AuthType = 'Private'.
+    Type: CommaDelimitedList
+  PrivateApiGatewayVPCEndpoint:
+    Description: VPC endpoint. Only required if AuthType = 'Private'.
+    Type: String
+
+  CognitoUserPoolArn:
+    Description: Cognito user pool arn.  Only required if AuthType is set to 'Cognito'.
+    Type: String
+    Default: 'N/A'
+
+  AuthorizerFunctionArn:
+    Description: Lambda authorizer function arn.  Only required if AuthType is set to 'LambdaRequest' or 'LambdaToken'.
+    Type: String
+    Default: 'N/A'
+
+  ProvisionedConcurrentExecutions:
+    Description: The no. of desired concurrent executions to  provision.  Set to 0 to disable.
+    Type: Number
+    Default: 0
+
+  ApplyAutoscaling:
+    Description: If true, will apply auto-scaling as defined in `./cfn-autoscaling.yml'
+    Type: String
+    Default: false
+    AllowedValues:
+      - true
+      - false
+    MinLength: 1
+
+Conditions:
+
+  DeployInVPC: !Not [ !Equals [ !Ref VpcId, 'N/A' ] ]
+  DeployWithLambdaAuth: !Or [ !Equals [ !Ref AuthType, 'LambdaRequest' ], !Equals [ !Ref AuthType, 'LambdaToken' ] ]
+  DeployWithProvisionedCapacity: !Not [ !Equals [ !Ref ProvisionedConcurrentExecutions, "0" ]]
+  DeployWithScaling: !Equals [ !Ref ApplyAutoscaling, "true" ]
+
+Resources:
+
+  ApiGatewayApi:
+    'Fn::Transform':
+      Name: 'AWS::Include'
+      Parameters:
+        Location: !Sub "${TemplateSnippetS3UriBase}${ApiGatewayDefinitionTemplate}"
+    DependsOn:
+      - RESTLambdaFunction
+
+  ApiGatewayAuthorizerInvokeRole:
+    Condition: DeployWithLambdaAuth
+    'Fn::Transform':
+      Name: 'AWS::Include'
+      Parameters:
+        Location: !Sub "${TemplateSnippetS3UriBase}cfn-role-lambdaRequestAuthInvokerRole.yaml"
+    DependsOn:
+      - RESTLambdaFunction
+
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: sts:AssumeRole
+      Path: "/cdf/greengrass/"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AWSLambdaExecute
+        - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
+      Policies:
+        - PolicyName: app_policies
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: sqs
+                Action:
+                  - 'sqs:*'
+                Effect: Allow
+                Resource:
+                  - !GetAtt DeviceAssociationQueue.Arn
+                  - !GetAtt DlqQueue.Arn
+                  - !GetAtt DeploymentStatusQueue.Arn
+                  - !GetAtt DeploymentsQueue.Arn
+                  - !GetAtt BulkDeploymentsStatusQueue.Arn
+              - Sid: lambda
+                Effect: Allow
+                Action:
+                  - lambda:InvokeFunction
+                  - lambda:Invoke
+                Resource:
+                  - !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:cdf-provisioning-*'
+              - Sid: iot
+                Effect: Allow
+                Action:
+                - iot:ListThingPrincipals
+                - iot:DescribeThing
+                Resource:
+                - '*'
+
+              - Sid: dynamodb1
+                Effect: Allow
+                Action:
+                - dynamodb:GetShardIterator
+                - dynamodb:Scan
+                - dynamodb:Query
+                - dynamodb:GetRecords
+                Resource:
+                - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${Table}/index/*'
+                - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${Table}/stream/*'
+              - Sid: dynamodb2
+                Effect: Allow
+                Action:
+                - dynamodb:BatchGetItem
+                - dynamodb:BatchWriteItem
+                - dynamodb:PutItem
+                - dynamodb:DeleteItem
+                - dynamodb:GetItem
+                - dynamodb:Scan
+                - dynamodb:Query
+                - dynamodb:UpdateItem
+                Resource:
+                  - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${Table}'
+
+              - Sid: greengrass
+                Action:
+                  - 'greengrass:*'
+                Effect: Allow
+                Resource:
+                  - !Sub 'arn:aws:greengrass:${AWS::Region}:${AWS::AccountId}:*'
+
+              - Sid: iam
+                Action:
+                  - iam:PassRole
+                Effect: Allow
+                Resource:
+                  - !GetAtt BulkDeploymentsExecutionRole.Arn
+    DependsOn:
+      - BulkDeploymentsExecutionRole
+
+  BulkDeploymentsExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: greengrass.amazonaws.com
+          Action: sts:AssumeRole
+      Path: "/cdf/greengrass/"
+      Policies:
+        - PolicyName: greengrass
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              -
+                Sid: GreengrassBulkDeployments
+                Effect: Allow
+                Action: 'greengrass:*'
+                Resource:
+                  - '*'
+
+  RESTLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../build/build.zip
+      Handler: lambda_apigw_proxy.handler
+
+      MemorySize: 128
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Runtime: nodejs12.x
+
+      AutoPublishAlias: live
+      DeploymentPreference:
+        Type: AllAtOnce
+      ProvisionedConcurrencyConfig:
+        Fn::If:
+        - DeployWithProvisionedCapacity
+        - ProvisionedConcurrentExecutions: !Ref ProvisionedConcurrentExecutions
+        - Ref: AWS::NoValue
+
+      Timeout: 900
+      DeadLetterQueue:
+        Type: SQS
+        TargetArn: !GetAtt DlqQueue.Arn
+      Environment:
+        Variables:
+          NODE_CONFIG_DIR: './config'
+          NODE_CONFIG: !Ref ApplicationConfigurationOverride
+          GREENGRASS_PROVISIONING_AWS_DYNAMODB_TABLE: !Ref Table
+          GREENGRASS_PROVISIONING_AWS_SQS_DEVICEASSOCIATIONS: !Ref DeviceAssociationQueue
+          GREENGRASS_PROVISIONING_AWS_SQS_DEPLOYMENTS: !Ref DeploymentsQueue
+          GREENGRASS_PROVISIONING_AWS_GREENGRASS_BULKDEPLOYMENTS_ROLEARN: !GetAtt BulkDeploymentsExecutionRole.Arn
+
+      Tracing: Active
+
+      VpcConfig:
+        Fn::If:
+          - DeployInVPC
+          - SubnetIds: !Ref PrivateSubNetIds
+            SecurityGroupIds:
+              - !Ref CDFSecurityGroupId
+          - Ref: AWS::NoValue
+
+      Events:
+        ProxyApiRoot:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiGatewayApi
+            Path: /
+            Method: ANY
+        ProxyApiGreedy:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiGatewayApi
+            Path: /{proxy+}
+            Method: ANY
+    DependsOn:
+      - LambdaExecutionRole
+
+  SQSLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../build/build.zip
+      Handler: lambda_sqs_proxy.handler
+
+      MemorySize: 128
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Runtime: nodejs12.x
+
+      AutoPublishAlias: live
+      DeploymentPreference:
+        Type: AllAtOnce
+      ProvisionedConcurrencyConfig:
+        Fn::If:
+        - DeployWithProvisionedCapacity
+        - ProvisionedConcurrentExecutions: !Ref ProvisionedConcurrentExecutions
+        - Ref: AWS::NoValue
+
+      Timeout: 900
+      DeadLetterQueue:
+        Type: SQS
+        TargetArn: !GetAtt DlqQueue.Arn
+      Environment:
+        Variables:
+          NODE_CONFIG_DIR: './config'
+          NODE_CONFIG: !Ref ApplicationConfigurationOverride
+          GREENGRASS_PROVISIONING_AWS_DYNAMODB_TABLE: !Ref Table
+          GREENGRASS_PROVISIONING_AWS_SQS_DEVICEASSOCIATIONS: !Ref DeviceAssociationQueue
+          GREENGRASS_PROVISIONING_AWS_SQS_DEPLOYMENTS: !Ref DeploymentsQueue
+          GREENGRASS_PROVISIONING_AWS_SQS_BULKDEPLOYMENTSSTATUS: !Ref BulkDeploymentsStatusQueue
+          GREENGRASS_PROVISIONING_AWS_SQS_DEPLOYMENTSTATUS: !Ref DeploymentStatusQueue
+          GREENGRASS_PROVISIONING_AWS_GREENGRASS_BULKDEPLOYMENTS_ROLEARN: !GetAtt BulkDeploymentsExecutionRole.Arn
+
+      Tracing: Active
+
+      Events:
+        DeviceAssociationQueue:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt DeviceAssociationQueue.Arn
+            BatchSize: 5
+        DeploymentsQueue:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt DeploymentsQueue.Arn
+            BatchSize: 1
+        DeploymentStatusQueue:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt DeploymentStatusQueue.Arn
+            BatchSize: 5
+        BulkDeploymentsStatusQueue:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt BulkDeploymentsStatusQueue.Arn
+            BatchSize: 1
+
+    DependsOn:
+      - LambdaExecutionRole
+      - DeploymentsQueue
+      - DeploymentStatusQueue
+      - DeviceAssociationQueue
+      - BulkDeploymentsStatusQueue
+
+  # Optional auto-scaling configuration
+  RESTAutoScalingNestedStack:
+    Type: AWS::CloudFormation::Stack
+    Condition: DeployWithScaling
+    Properties:
+      TemplateURL: ./cfn-autoscaling.yml
+      Parameters:
+        LambdaName: !Ref RESTLambdaFunction
+        LambdaAlias: live
+      TimeoutInMinutes: 5
+    DependsOn: RESTLambdaFunction
+
+  SQSAutoScalingNestedStack:
+    Type: AWS::CloudFormation::Stack
+    Condition: DeployWithScaling
+    Properties:
+      TemplateURL: ./cfn-autoscaling.yml
+      Parameters:
+        LambdaName: !Ref SQSLambdaFunction
+        LambdaAlias: live
+      TimeoutInMinutes: 5
+    DependsOn: SQSLambdaFunction
+
+  Table:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub 'cdf-greengrass-provisioning-${Environment}'
+      KeySchema:
+        -
+          AttributeName: "pk"
+          KeyType: "HASH"
+        -
+          AttributeName: "sk"
+          KeyType: "RANGE"
+      AttributeDefinitions:
+        -
+          AttributeName: "pk"
+          AttributeType: "S"
+        -
+          AttributeName: "sk"
+          AttributeType: "S"
+        -
+          AttributeName: "si1Sort"
+          AttributeType: "S"
+        -
+          AttributeName: "si2Hash"
+          AttributeType: "S"
+      ProvisionedThroughput:
+        ReadCapacityUnits: "5"
+        WriteCapacityUnits: "5"
+      GlobalSecondaryIndexes:
+        -
+          IndexName: 'sk-si1Sort-index'
+          KeySchema:
+            -
+              AttributeName: "sk"
+              KeyType: "HASH"
+            -
+              AttributeName: "si1Sort"
+              KeyType: "RANGE"
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: "5"
+            WriteCapacityUnits: "5"
+        -
+          IndexName: 'si2Hash-sk-index'
+          KeySchema:
+            -
+              AttributeName: "si2Hash"
+              KeyType: "HASH"
+            -
+              AttributeName: "sk"
+              KeyType: "RANGE"
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: "5"
+            WriteCapacityUnits: "5"
+
+  DeviceAssociationQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      MessageRetentionPeriod: 604800
+      VisibilityTimeout: 960
+
+  DeploymentsQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      MessageRetentionPeriod: 604800
+      VisibilityTimeout: 960
+
+  DeploymentStatusQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      MessageRetentionPeriod: 604800
+      VisibilityTimeout: 960
+
+  BulkDeploymentsStatusQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      MessageRetentionPeriod: 604800
+      VisibilityTimeout: 960
+
+  DlqQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      MessageRetentionPeriod: 1209600
+
+  EventBus:
+    Type: AWS::Events::EventBus
+    Properties:
+      Name: !Sub 'cdf-greengrass-provisioning-${Environment}'
+
+  GreengrassEventBusPolicy:
+    Type: AWS::Events::EventBusPolicy
+    Properties:
+      Action: 'events:PutEvents'
+      EventBusName: !Ref EventBus
+      Principal: !Ref 'AWS::AccountId'
+      StatementId: !Sub 'cdf-greengrass-provisioning-${Environment}'
+
+  GreengrassDeploymentStateChangeRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Description: 'Captures all Greengrass group deployment state changes.'
+      EventBusName: !Ref EventBus
+      EventPattern:
+        source:
+          - 'aws.greengrass'
+        detail-type:
+          - 'Greengrass Deployment Status Change'
+      Name: !Sub 'cdf-gg-deployment-state-${Environment}'
+      State: ENABLED
+      Targets:
+        - Arn: !GetAtt DeploymentStatusQueue.Arn
+          Id: sqs
+
+Outputs:
+  BulkDeploymentsExecutionRoleArn:
+    Description: BulkDeploymentsExecutionRole Arn
+    Value: !GetAtt BulkDeploymentsExecutionRole.Arn
+  RESTLambdaFunctionConsoleUrl:
+    Description: Console URL for the Lambda Function.
+    Value: !Sub "https://${AWS::Region}.console.aws.amazon.com/lambda/home?region=${AWS::Region}#/functions/${RESTLambdaFunction}"
+  SQSLambdaFunctionConsoleUrl:
+    Description: Console URL for the Lambda Function.
+    Value: !Sub "https://${AWS::Region}.console.aws.amazon.com/lambda/home?region=${AWS::Region}#/functions/${SQSLambdaFunction}"
+  ApiGatewayUrl:
+    Description: URL for application
+    Value: !Join
+      - ''
+      - - 'https://'
+        - !Ref ApiGatewayApi
+        - '.execute-api.'
+        - !Ref 'AWS::Region'
+        - '.amazonaws.com/Prod'
+    Export:
+      Name: !Sub '${AWS::StackName}-apigatewayurl'
+  ProvisioningTable:
+    Description: greengrass provisioning dynamodb table
+    Value: !Sub '${Table}'
+    Export:
+      Name: !Sub '${AWS::StackName}-table'
+  GreengrassEventbus:
+    Description: greengrass provisioning event bus
+    Value: !Sub '${EventBus}'
+    Export:
+      Name: !Sub '${AWS::StackName}-EventBus'
+
+  RestApiFunctionName:
+    Description: REST API Lambda function name
+    Value: !Ref RESTLambdaFunction
+    Export:
+      Name: !Sub "${AWS::StackName}-restApiFunctionName"
+  RESTLambdaArn:
+    Description: REST API Lambda Arn
+    Value: !Sub "${RESTLambdaFunction.Arn}"
+    Export:
+      Name: !Sub "${AWS::StackName}-RESTLambdaArn"
+

@@ -56,7 +56,7 @@ OPTIONAL ARGUMENTS:
 
     Required for LambdaRequest / LambdaToken auth:
     ---------------------------------------------
-    -A (string)   Lambda authorizer function arn. 
+    -A (string)   Lambda authorizer function arn.
 
     AWS options:
     ------------

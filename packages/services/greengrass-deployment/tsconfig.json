@@ -1,0 +1,35 @@
+{
+    "extends": "../../tsconfig.base.json",
+    "compilerOptions": {
+        "outDir": "dist",
+        "rootDir": "src",
+
+        "typeRoots": [
+            "./src/@types",
+            "./node_modules/@types",
+            "../../../node_modules/@types"
+        ],
+        "types": [
+            "jest", "express", "reflect-metadata", "node"
+        ]
+    },
+    "references": [
+        {
+            "path": "../../libraries/config/config-inject"
+        },
+        {
+            "path": "../../libraries/core/express-middleware"
+        }
+    ],
+    "include": [
+        "src"
+    ],
+    "exclude": [
+        "node_modules",
+        "../../../node_modules",
+        "dist",
+        ".vscode",
+        ".git",
+        "./**/__mocks__/*.ts"
+    ]
+}

@@ -666,4 +666,42 @@ else
    echo 'NOT DEPLOYING: asset library history'
 fi
 
+
+
+greengrassProvisioning_config=$CONFIG_LOCATION/greengrass-provisioning/$CONFIG_ENVIRONMENT-config.json
+if [ -f "greengrassProvisioning_config" ]; then
+
+    logTitle 'Deploying Greengrass Provisioning'
+
+    cd "$root_dir/packages/services/greengrass-provisioning"
+
+    infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
+    infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "greengrassProvisioning_config"  \
+        -y "$TEMPLATE_SNIPPET_S3_URI_BASE" -z "$API_GATEWAY_DEFINITION_TEMPLATE" \
+        -a "$API_GATEWAY_AUTH" $cognito_auth_arg $lambda_invoker_auth_arg \
+        -v "$VPC_ID" -g "$CDF_SECURITY_GROUP_ID" -n "$PRIVATE_SUBNET_IDS" -i "$VPCE_ID" \
+        $AWS_SCRIPT_ARGS
+else
+   echo 'NOT DEPLOYING: Greengrass Provisioning'
+fi
+
+
+
+greengrassDeployment_config=$CONFIG_LOCATION/greengrass-deployment/$CONFIG_ENVIRONMENT-config.json
+if [ -f "greengrassDeployment_config" ]; then
+
+    logTitle 'Deploying Greengrass Deployment'
+
+    cd "$root_dir/packages/services/greengrass-deployment"
+
+    infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
+    infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "greengrassDeployment_config" -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" \
+        -y "$TEMPLATE_SNIPPET_S3_URI_BASE" -z "$API_GATEWAY_DEFINITION_TEMPLATE" \
+        -a "$API_GATEWAY_AUTH" $cognito_auth_arg $lambda_invoker_auth_arg \
+        -v "$VPC_ID" -g "$CDF_SECURITY_GROUP_ID" -n "$PRIVATE_SUBNET_IDS" -i "$VPCE_ID" \
+        $AWS_SCRIPT_ARGS
+else
+   echo 'NOT DEPLOYING: Greengrass Deployment'
+fi
+
 logTitle 'CDF deployment complete!'

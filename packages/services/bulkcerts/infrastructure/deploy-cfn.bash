@@ -27,7 +27,7 @@ MANDATORY ARGUMENTS:
     -c (string)   Location of application configuration file containing configuration overrides.
     -y (string)   S3 uri base directory where Cloudformation template snippets are stored.
     -z (string)   Name of API Gateway cloudformation template snippet. If none provided, all API Gateway instances are configured without authentication.
-    
+
     -k (string)   The KMS key ID used to encrypt SSM parameters.
     -o (string)   The OpenSSL lambda layer stack name.
 
@@ -56,7 +56,7 @@ OPTIONAL ARGUMENTS:
 
     Required for LambdaRequest / LambdaToken auth:
     ---------------------------------------------
-    -A (string)   Lambda authorizer function arn. 
+    -A (string)   Lambda authorizer function arn.
 
     AWS options:
     ------------

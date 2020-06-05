@@ -89,7 +89,6 @@ export interface BulkProvisionThingsResponse {
 	successCount?:number;
 	failureCount?:number;
 	percentageProgress?:number;
-
 }
 
 export interface RequestHeaders {

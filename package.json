@@ -15,6 +15,10 @@
     "bundle:libraries": "pnpm i --no-lock --prod --shamefully-flatten --force --filter ./packages/libraries",
     "bundle:clients": "npm run bundle:libraries"
   },
+  "engines": {
+    "node": "=12",
+    "pnpm": "=5"
+  },
   "devDependencies": {
     "@commitlint/cli": "8.2.0",
     "@commitlint/config-conventional": "8.2.0",

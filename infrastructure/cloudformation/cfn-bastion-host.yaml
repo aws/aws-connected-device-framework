@@ -696,17 +696,17 @@ Resources:
           FromPort: -1
           ToPort: -1
           CidrIp: !Ref RemoteAccessCIDR
-      SecurityGroupEgress:
-        - IpProtocol: tcp
-          FromPort: 80
-          ToPort: 80
-          Description: CDF security group (http)
-          DestinationSecurityGroupId: !Ref CDFSecurityGroupId
-        - IpProtocol: tcp
-          FromPort: 443
-          ToPort: 443
-          Description: CDF security group (https)
-          DestinationSecurityGroupId: !Ref CDFSecurityGroupId
+#      SecurityGroupEgress:
+#        - IpProtocol: tcp
+#          FromPort: 80
+#          ToPort: 80
+#          Description: CDF security group (http)
+#          DestinationSecurityGroupId: !Ref CDFSecurityGroupId
+#        - IpProtocol: tcp
+#          FromPort: 443
+#          ToPort: 443
+#          Description: CDF security group (https)
+#          DestinationSecurityGroupId: !Ref CDFSecurityGroupId
 
   CDFSecurityGroupHttpIngress:
     Type: AWS::EC2::SecurityGroupIngress
@@ -717,6 +717,7 @@ Resources:
       FromPort: 80
       ToPort: 80
       SourceSecurityGroupId: !Ref BastionSecurityGroup
+    DependsOn: BastionSecurityGroup
 
   CDFSecurityGroupHttpsIngress:
     Type: AWS::EC2::SecurityGroupIngress
@@ -727,6 +728,7 @@ Resources:
       FromPort: 443
       ToPort: 443
       SourceSecurityGroupId: !Ref BastionSecurityGroup
+    DependsOn: BastionSecurityGroup
 
 Outputs:
   BastionAutoScalingGroup:
