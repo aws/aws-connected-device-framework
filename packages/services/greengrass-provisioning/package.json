@@ -15,13 +15,15 @@
     "start": "npm run build && NODE_CONFIG=$(cat ${CONFIG_LOCATION}/greengrass-provisioning/${npm_package_config_environment}-config.json) NODE_CONFIG_DIR='./src/config' concurrently \"npm run build -- -w\" \"nodemon dist/lambda_apigw_proxy.js\"",
     "start:norebuild": "npm run build && NODE_CONFIG=$(cat ${CONFIG_LOCATION}/assetlibrary/${npm_package_config_environment}-config.json) NODE_CONFIG_DIR='./src/config' node dist/lambda_apigw_proxy.js",
     "prebundle:prepare": "cpy src/config/* dist/config/ && make-dir build && make-dir dist/node_modules",
-    "bundle:package": "cd dist && zip -rq ../build/build.zip * && zip -urq ../build/build.zip ../package.json && zip -urq ../build/build.zip ../node_modules",
+    "bundle:package": "cd dist/node_modules && cp -RL ../../node_modules/ . && cd .. && zip -rq ../build/build.zip * && zip -urq ../build/build.zip ../package.json",
     "semantic-release": "npx semantic-release -e semantic-release-monorepo",
     "prebundle:quick": "pnpm run clean && pnpm install --force && pnpm run build && npm run prebundle:prepare",
-    "bundle:quick": "pnpm i --no-lock --prod --shamefully-flatten --force && npm run bundle:package",
     "postbundle:quick": "pnpm install --force"
   },
   "dependencies": {
+    "@cdf/errors": "^2.0.0",
+    "@cdf/logger": "^2.0.0",
+    "@cdf/lambda-invoke": "^1.0.0",
     "@cdf/config-inject": "^2.0.1",
     "@cdf/express-middleware": "^1.0.1",
     "@cdf/provisioning-client": "^3.0.0",
@@ -44,6 +46,7 @@
     "readable-stream": "2.3.6",
     "reflect-metadata": "0.1.13",
     "shortid": "2.2.15",
+    "superagent": "5.1.2",
     "winston": "3.2.1",
     "winston-transport": "4.3.0"
   },

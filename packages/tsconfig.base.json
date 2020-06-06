@@ -21,6 +21,6 @@
 		"noUnusedParameters": true,
 		"pretty": true,
 
-		"suppressImplicitAnyIndexErrors": true,
+		"suppressImplicitAnyIndexErrors": true
 	}
 }

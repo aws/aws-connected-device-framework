@@ -14,12 +14,14 @@
     "test": "npm run lint &&  NODE_CONFIG_DIR='./src/config' nyc jest",
     "start": "npm run build && NODE_CONFIG=$(cat ${CONFIG_LOCATION}/greengrass-deployment/${npm_package_config_environment}-config.json) NODE_CONFIG_DIR='./src/config' concurrently \"npm run build -- -w\" \"nodemon dist/lambda_apigw_proxy.js\"",
     "prebundle:prepare": "cpy src/config/* dist/config/ && make-dir build && make-dir dist/node_modules",
-    "bundle:package": "cd dist && zip -rq ../build/build.zip * && zip -urq ../build/build.zip ../package.json && zip -urq ../build/build.zip ../node_modules",
+    "bundle:package": "cd dist/node_modules && cp -RL ../../node_modules/ . && cd .. && zip -rq ../build/build.zip * && zip -urq ../build/build.zip ../package.json",
     "bundle:quick": "pnpm i --no-lock --prod --shamefully-flatten --force && npm run bundle:package",
     "postbundle:quick": "pnpm install --force",
     "semantic-release": "npx semantic-release -e semantic-release-monorepo"
   },
   "dependencies": {
+    "@cdf/errors": "^2.0.0",
+    "@cdf/logger": "^2.0.0",
     "@cdf/config-inject": "^2.0.1",
     "@cdf/express-middleware": "^1.0.1",
     "ajv": "6.10.2",

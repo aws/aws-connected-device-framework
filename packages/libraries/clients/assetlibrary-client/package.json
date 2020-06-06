@@ -23,9 +23,9 @@
     "js-yaml": "3.13.1",
     "logform": "2.1.2",
     "ow": "0.15.0",
+    "readable-stream": "2.3.6",
     "reflect-metadata": "0.1.13",
     "superagent": "5.1.2",
-    "readable-stream": "2.3.6",
     "winston": "3.2.1",
     "winston-transport": "4.3.0"
   },
