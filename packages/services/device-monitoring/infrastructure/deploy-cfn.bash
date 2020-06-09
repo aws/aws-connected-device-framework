@@ -81,7 +81,7 @@ echo '
 
 rest_apis=$(aws apigateway get-rest-apis $AWS_ARGS)
 
-rest_api_name="cdf-assetlibrary-$ENVIRONMENT"
+rest_api_name="CDF Asset Library ($ENVIRONMENT)"
 assetlibrary_rest_api_id=$(echo $rest_apis \
     | jq -r --arg rest_api_name "$rest_api_name" \
     '.items[] | select(.name==$rest_api_name) | .id')

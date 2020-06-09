@@ -15,60 +15,53 @@ Parameters:
 
 Resources:
   IoTLifecycleConnectRule:
-    Type: "AWS::IoT::TopicRule"
+    Type: AWS::IoT::TopicRule
+    DependsOn: IoTLifecycleEventLambda
     Properties:
       TopicRulePayload: 
         Actions:
           -
             Lambda:
-              FunctionArn: !Join ['' , ["arn:aws:lambda:", !Ref "AWS::Region", ":" ,   !Ref "AWS::AccountId" , ":function:" , !Ref IoTLifecycleEventLambda]]
+              FunctionArn: !GetAtt IoTLifecycleEventLambda.Arn
         Description: "Send IoT Lifecycle Event data to Lambda for connection status"
         AwsIotSqlVersion: "2016-03-23"
-        RuleDisabled: "false" 
+        RuleDisabled: false
         Sql: >-
           SELECT * FROM '$aws/events/presence/connected/+'
-  
-  IoTLifecycleDisconnectRule:
-    Type: "AWS::IoT::TopicRule"
+
+  IoTLifecycleConnectInvocationPermission:
+    Type: AWS::Lambda::Permission
     Properties:
-      TopicRulePayload: 
+      SourceArn: !GetAtt IoTLifecycleConnectRule.Arn
+      Action: lambda:InvokeFunction
+      Principal: iot.amazonaws.com
+      FunctionName: !GetAtt IoTLifecycleEventLambda.Arn
+      SourceAccount: !Ref AWS::AccountId
+
+  IoTLifecycleDisconnectRule:
+    Type: AWS::IoT::TopicRule
+    DependsOn: IoTLifecycleEventLambda
+    Properties:
+      TopicRulePayload:
         Actions:
           -
             Lambda:
-              FunctionArn: !Join ['' , ["arn:aws:lambda:", !Ref "AWS::Region", ":" ,   !Ref "AWS::AccountId" , ":function:" , !Ref IoTLifecycleEventLambda]]
+              FunctionArn: !GetAtt IoTLifecycleEventLambda.Arn
         Description: "Send IoT Lifecycle Event data to Lambda for disconnect status"
         AwsIotSqlVersion: "2016-03-23"
-        RuleDisabled: "false" 
+        RuleDisabled: false
         Sql: >-
-          SELECT * FROM '$aws/events/presence/disconnected/+'        
+          SELECT * FROM '$aws/events/presence/disconnected/+'
   
-  IoTLifecycleRulesEngineRole:
-    Type: "AWS::IAM::Role"
-    DependsOn: "IoTLifecycleEventLambda"
+  IoTLifecycleInvocationPermission:
+    Type: AWS::Lambda::Permission
     Properties:
-      AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          -
-            Effect: "Allow"
-            Principal:
-              Service:
-                - "iot.amazonaws.com"
-            Action:
-              - "sts:AssumeRole"
-      Path: "/cdf/devicemonitoring/"
-      Policies:
-        -
-          PolicyName: "IoTLifecycleRulesEnginePolicy"
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              Action:
-                - "lambda:GetFunction"
-                - "lambda:InvokeFunction"
-              Effect: "Allow"
-              Resource: !Join ['' , ["arn:aws:lambda:", !Ref "AWS::Region", ":" ,   !Ref "AWS::AccountId" , ":function:" , !Ref IoTLifecycleEventLambda]]
-  
+      SourceArn: !GetAtt IoTLifecycleDisconnectRule.Arn
+      Action: lambda:InvokeFunction
+      Principal: iot.amazonaws.com
+      FunctionName: !GetAtt IoTLifecycleEventLambda.Arn
+      SourceAccount: !Ref AWS::AccountId
+
   IoTLifecycleLambdaRole:
     Type: AWS::IAM::Role
     Properties:
