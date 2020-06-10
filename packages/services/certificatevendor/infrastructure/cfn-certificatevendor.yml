@@ -250,6 +250,11 @@ Outputs:
     Value: !Sub "${LambdaFunction.Arn}"
     Export: 
       Name: !Sub "${AWS::StackName}-LambdaArn"
+  LambdaFunction:
+    Description: Lambda Arn
+    Value: !Ref LambdaFunction
+    Export:
+      Name: !Sub "${AWS::StackName}-FunctionName"
   LambdaFunctionConsoleUrl:
     Description: Console URL for the Lambda Function.
     Value: !Sub "https://{AWS::Region}.console.aws.amazon.com/lambda/home?region={AWS::Region}#/functions/{LambdaFunction}"

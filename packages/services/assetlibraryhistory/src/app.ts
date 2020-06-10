@@ -49,7 +49,7 @@ server.setConfig((app) => {
   }
 });
 
-export const serverInstance: Application = server.build();
+export const serverInstance:Application = server.build();
 serverInstance.listen(3003);
 
 logger.info('Server started on port 3003 :)');

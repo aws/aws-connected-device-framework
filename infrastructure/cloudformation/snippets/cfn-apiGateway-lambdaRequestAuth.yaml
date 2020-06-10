@@ -1,0 +1,15 @@
+Type: AWS::Serverless::Api
+Properties:
+  StageName: Prod
+  EndpointConfiguration: REGIONAL
+  Auth:
+    Authorizers:
+      LambdaRequestAuth:
+        FunctionPayloadType: REQUEST
+        FunctionArn:
+          Ref: AuthorizerFunctionArn
+        FunctionInvokeRole:
+          Fn::GetAtt:
+            - ApiGatewayAuthorizerInvokeRole
+            - Arn
+    DefaultAuthorizer: LambdaRequestAuth

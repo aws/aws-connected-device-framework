@@ -5,31 +5,43 @@
 #-------------------------------------------------------------------------------*/
 
 import { Given, setDefaultTimeout, When, TableDefinition, Then} from 'cucumber';
-import { GroupsService, Group10Resource, GroupResourceList, DeviceResourceList } from '@cdf/assetlibrary-client/dist';
+import {
+    GroupsService,
+    Group10Resource,
+    GroupResourceList,
+    DeviceResourceList,
+    ASSTLIBRARY_CLIENT_TYPES,
+} from '@cdf/assetlibrary-client/dist';
 import { fail } from 'assert';
 import stringify from 'json-stable-stringify';
 
 import chai_string = require('chai-string');
 import {expect, use} from 'chai';
 import { RESPONSE_STATUS, AUTHORIZATION_TOKEN } from '../common/common.steps';
+import {container} from '../../di/inversify.config';
+import {Dictionary} from '../../../../libraries/core/lambda-invoke/src';
 use(chai_string);
+
+/*
+    Cucumber describes current scenario context as “World”. It can be used to store the state of the scenario
+    context (you can also define helper methods in it). World can be access by using the this keyword inside
+    step functions (that’s why it’s not recommended to use arrow functions).
+ */
+// tslint:disable:no-invalid-this
+// tslint:disable:only-arrow-functions
 
 setDefaultTimeout(10 * 1000);
 
-let groups: GroupsService;
-
-function getGroupsService(world:any) {
-    if (groups===undefined) {
-        groups = new GroupsService();
-    }
-    groups.init({authToken: world[AUTHORIZATION_TOKEN]});
-    return groups;
+const groupService:GroupsService = container.get(ASSTLIBRARY_CLIENT_TYPES.GroupsService);
+function getAdditionalHeaders(world:any) : Dictionary {
+    return  {
+        Authorization: world[AUTHORIZATION_TOKEN]
+    };
 }
-
 
 Given('group {string} does not exist', async function (groupPath:string) {
     try {
-        await getGroupsService(this).getGroup(groupPath);
+        await groupService.getGroup(groupPath, getAdditionalHeaders(this));
         fail('A 404 should be thrown');
     } catch (err) {
         expect(err.status).eq(404);
@@ -37,7 +49,7 @@ Given('group {string} does not exist', async function (groupPath:string) {
 });
 
 Given('group {string} exists', async function (groupPath:string) {
-    await getGroupsService(this).getGroup(groupPath);
+    await groupService.getGroup(groupPath, getAdditionalHeaders(this));
 });
 
 async function createGroup (world:any, name:string, parentPath:string, data:TableDefinition, profileId?:string) {
@@ -67,7 +79,7 @@ async function createGroup (world:any, name:string, parentPath:string, data:Tabl
         }
     });
 
-    await getGroupsService(world).createGroup(group, profileId);
+    await groupService.createGroup(group, profileId, getAdditionalHeaders(world));
 }
 
 When('I create group {string} of {string} with attributes', async function (name:string, parentPath:string, data:TableDefinition) {
@@ -118,7 +130,7 @@ When('I update group {string} with attributes', async function (groupPath:string
     });
 
     try {
-        await getGroupsService(this).updateGroup(groupPath, group);
+        await groupService.updateGroup(groupPath, group, undefined, getAdditionalHeaders(this));
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
     }
@@ -131,7 +143,7 @@ When('I update group {string} applying profile {string}', async function (groupP
     };
 
     try {
-        await getGroupsService(this).updateGroup(groupPath, group, profileId);
+        await groupService.updateGroup(groupPath, group, profileId, getAdditionalHeaders(this));
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
     }
@@ -139,7 +151,7 @@ When('I update group {string} applying profile {string}', async function (groupP
 
 When('I delete group {string}', async function (groupPath:string) {
     try {
-        await getGroupsService(this).deleteGroup(groupPath);
+        await groupService.deleteGroup(groupPath, getAdditionalHeaders(this));
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
     }
@@ -147,7 +159,7 @@ When('I delete group {string}', async function (groupPath:string) {
 
 When('I get group {string}', async function (groupPath:string) {
     try {
-        await getGroupsService(this).getGroup(groupPath);
+        await groupService.getGroup(groupPath, getAdditionalHeaders(this));
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
     }
@@ -155,7 +167,7 @@ When('I get group {string}', async function (groupPath:string) {
 
 When('I detatch group {string} from group {string} via {string}', async function (thisGroup:string, otherGroup:string, relation:string) {
     try {
-        await getGroupsService(this).detachFromGroup(thisGroup, relation, otherGroup);
+        await groupService.detachFromGroup(thisGroup, relation, otherGroup, getAdditionalHeaders(this));
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
     }
@@ -163,7 +175,7 @@ When('I detatch group {string} from group {string} via {string}', async function
 
 When('I attach group {string} to group {string} via {string}', async function (thisGroup:string, otherGroup:string, relation:string) {
     try {
-        await getGroupsService(this).attachToGroup(thisGroup, relation, otherGroup);
+        await groupService.attachToGroup(thisGroup, relation, otherGroup, getAdditionalHeaders(this));
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
     }
@@ -172,7 +184,7 @@ When('I attach group {string} to group {string} via {string}', async function (t
 Then('group {string} exists with attributes', async function (groupPath:string, data:TableDefinition) {
 
     const d = data.rowsHash();
-    const r = await getGroupsService(this).getGroup(groupPath);
+    const r = await groupService.getGroup(groupPath, getAdditionalHeaders(this));
 
     Object.keys(d).forEach( key => {
         const val = d[key];
@@ -194,7 +206,7 @@ When('I retrieve {string} group members of {string}', async function (template:s
         template = undefined;
     }
     try {
-        this['members'] = await getGroupsService(this).listGroupMembersGroups(groupPath, template);
+        this['members'] = await groupService.listGroupMembersGroups(groupPath, template, undefined, undefined, getAdditionalHeaders(this));
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
     }
@@ -205,7 +217,7 @@ When('I retrieve {string} device members of {string}', async function (template:
         template = undefined;
     }
     try {
-        this['members'] = await getGroupsService(this).listGroupMembersDevices(groupPath, template);
+        this['members'] = await groupService.listGroupMembersDevices(groupPath, template, undefined, undefined, undefined, getAdditionalHeaders(this));
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
     }

@@ -69,7 +69,7 @@ server.setConfig((app) => {
   }
 });
 
-export const serverInstance: Application = server.build();
+export const serverInstance:Application = server.build();
 serverInstance.listen(3000);
 
 logger.info('Server started on port 3000 :)');

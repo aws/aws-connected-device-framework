@@ -1,30 +1,16 @@
-/*-------------------------------------------------------------------------------
-# Copyright (c) 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
-#
-# This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
-#-------------------------------------------------------------------------------*/
-/**
- * Connected Device Framework: Dashboard Facade
- * Asset Library implementation of DevicesService *
- */
+import {
+    BulkDevicesResource,
+    BulkDevicesResult,
+    Device10Resource,
+    Device20Resource,
+    DeviceResourceList,
+} from './devices.model';
+import {RequestHeaders} from './common.model';
+import {PathHelper} from '../utils/path.helper';
+import {ClientServiceBase} from './common.service';
+import {injectable} from 'inversify';
 
-/* tslint:disable:no-unused-variable member-ordering */
-
-import { BulkDevicesResult, Device20Resource, Device10Resource, BulkDevicesResource, DeviceResourceList } from './devices.model';
-import { injectable } from 'inversify';
-import ow from 'ow';
-import { PathHelper } from '../utils/path.helper';
-import * as request from 'superagent';
-import { QSHelper } from '../utils/qs.helper';
-import { ClientService} from './common.service';
-
-@injectable()
-export class DevicesService extends ClientService {
-
-    public constructor() {
-        super();
-    }
-
+export interface DevicesService {
     /**
      * Associates a device to another device, giving context to its relationship.
      *
@@ -32,15 +18,7 @@ export class DevicesService extends ClientService {
      * @param relationship The relationship between the device and group. For example, this may reflect &#x60;locatedAt&#x60; or &#x60;manufacturedAt&#x60; relations.
      * @param otherDeviceId ID of device to create relationship to.
      */
-    public async attachToDevice(deviceId: string, relationship: string, otherDeviceId: string): Promise<void> {
-        ow(deviceId, ow.string.nonEmpty);
-        ow(relationship, ow.string.nonEmpty);
-        ow(otherDeviceId, ow.string.nonEmpty);
-
-        const url = this.baseUrl + PathHelper.encodeUrl('devices', deviceId, relationship, 'devices', otherDeviceId);
-        await request.put(url)
-            .set(super.getHeaders());
-    }
+    attachToDevice(deviceId: string, relationship: string, otherDeviceId: string, additionalHeaders?:RequestHeaders): Promise<void>;
 
     /**
      * Associates a device to a group, giving context to its relationship.
@@ -49,15 +27,7 @@ export class DevicesService extends ClientService {
      * @param relationship The relationship between the device and group. For example, this may reflect &#x60;locatedAt&#x60; or &#x60;manufacturedAt&#x60; relations.
      * @param groupPath Path of group.
      */
-    public async attachToGroup(deviceId: string, relationship: string, groupPath: string): Promise<void> {
-        ow(deviceId, ow.string.nonEmpty);
-        ow(relationship, ow.string.nonEmpty);
-        ow(groupPath, ow.string.nonEmpty);
-
-        const url = this.baseUrl + PathHelper.encodeUrl('devices', deviceId, relationship, 'groups', groupPath);
-        await request.put(url)
-            .set(super.getHeaders());
-      }
+    attachToGroup(deviceId: string, relationship: string, groupPath: string, additionalHeaders?:RequestHeaders): Promise<void>;
 
     /**
      * Createa a new component and adds to the device.
@@ -65,68 +35,23 @@ export class DevicesService extends ClientService {
      * @param deviceId Id of parent device
      * @param body Device to add as a component
      */
-    public async createComponent(deviceId: string, body: Device10Resource|Device20Resource): Promise<void> {
-        ow(deviceId, ow.string.nonEmpty);
-        ow(body, ow.object.nonEmpty);
-
-        const url = this.baseUrl + PathHelper.encodeUrl('devices', deviceId, 'components');
-        await request.post(url)
-            .send(body)
-            .set(super.getHeaders());
-    }
+    createComponent(deviceId: string, body: Device10Resource | Device20Resource, additionalHeaders?:RequestHeaders): Promise<void>;
 
     /**
      * Add a new device to the asset library, adding it to the &#x60;/unprovisioned&#x60; group if no group is specified.
      *
      * @param body Device to add to the asset library
      */
-    public async createDevice(body: Device10Resource|Device20Resource, applyProfileId?:string): Promise<void> {
-        ow(body, ow.object.nonEmpty);
-
-        let url = this.baseUrl + '/devices';
-        const queryString = QSHelper.getQueryString({applyProfile:applyProfileId});
-        if (queryString) {
-            url += `?${queryString}`;
-        }
-        await request.post(url)
-            .send(body)
-            .set(super.getHeaders());
-    }
+    createDevice(body: Device10Resource | Device20Resource, applyProfileId?: string, additionalHeaders?:RequestHeaders): Promise<void>;
 
     /**
      * Adds a batch of devices in bulk to the asset library, adding them to the &#x60;/unprovisioned&#x60; group if no groups are specified.
      *
      * @param body Device to add to the asset library
      */
-    public async bulkCreateDevice(body: BulkDevicesResource, applyProfileId?:string): Promise<BulkDevicesResult> {
+    bulkCreateDevice(body: BulkDevicesResource, applyProfileId?: string, additionalHeaders?:RequestHeaders): Promise<BulkDevicesResult>;
 
-        ow(body, ow.object.nonEmpty);
-
-        let url = this.baseUrl + '/bulkdevices';
-        const queryString = QSHelper.getQueryString({applyProfile:applyProfileId});
-        if (queryString) {
-            url += `?${queryString}`;
-        }
-        const res = await request.post(url)
-            .send(body)
-            .set(super.getHeaders());
-
-        return res.body;
-    }
-
-    public async bulkUpdateDevice(body: BulkDevicesResource, applyProfileId?:string): Promise<void> {
-
-        ow(body, ow.object.nonEmpty);
-
-        let url = this.baseUrl + '/bulkdevices';
-        const queryString = QSHelper.getQueryString({applyProfile:applyProfileId});
-        if (queryString) {
-            url += `?${queryString}`;
-        }
-        await request.patch(url)
-            .send(body)
-            .set(super.getHeaders());
-    }
+    bulkUpdateDevice(body: BulkDevicesResource, applyProfileId?: string, additionalHeaders?:RequestHeaders): Promise<void>;
 
     /**
      * Deletes a component of a devoce.
@@ -134,29 +59,14 @@ export class DevicesService extends ClientService {
      * @param deviceId Id of parent device
      * @param componentId ID of child component
      */
-    public async deleteComponent(deviceId: string, componentId: string): Promise<void> {
-        ow(deviceId, ow.string.nonEmpty);
-        ow(componentId, ow.string.nonEmpty);
-
-        const url = this.baseUrl + PathHelper.encodeUrl('devices', deviceId, 'components', componentId);
-
-        await request.delete(url)
-            .set(super.getHeaders());
-    }
+    deleteComponent(deviceId: string, componentId: string, additionalHeaders?:RequestHeaders): Promise<void>;
 
     /**
      * Delete device of specified ID
      * Deletes a single device
      * @param deviceId ID of device to return
      */
-    public async deleteDevice(deviceId: string): Promise<void> {
-        ow(deviceId, ow.string.nonEmpty);
-
-        const url = this.baseUrl + PathHelper.encodeUrl('devices', deviceId,);
-
-       await request.delete(url)
-            .set(super.getHeaders());
-    }
+    deleteDevice(deviceId: string, additionalHeaders?:RequestHeaders): Promise<void>;
 
     /**
      * Removes a device from an associated device
@@ -165,16 +75,7 @@ export class DevicesService extends ClientService {
      * @param relationship The relationship between the device and group. For example, this may reflect &#x60;locatedAt&#x60; or &#x60;manufacturedAt&#x60; relations.
      * @param otherDeviceId ID of device to create relationship to.
      */
-    public async detachFromDevice(deviceId: string, relationship: string, otherDeviceId: string): Promise<void> {
-        ow(deviceId, ow.string.nonEmpty);
-        ow(relationship, ow.string.nonEmpty);
-        ow(otherDeviceId, ow.string.nonEmpty);
-
-        const url = this.baseUrl + PathHelper.encodeUrl('devices', deviceId, relationship, 'devices', otherDeviceId);
-
-        await request.delete(url)
-            .set(super.getHeaders());
-    }
+    detachFromDevice(deviceId: string, relationship: string, otherDeviceId: string, additionalHeaders?:RequestHeaders): Promise<void>;
 
     /**
      * Removes a device from an associated group
@@ -183,16 +84,7 @@ export class DevicesService extends ClientService {
      * @param relationship The relationship between the device and group. For example, this may reflect &#x60;locatedAt&#x60; or &#x60;manufacturedAt&#x60; relations.
      * @param groupPath Path of group.
      */
-    public async detachFromGroup(deviceId: string, relationship: string, groupPath: string): Promise<void> {
-        ow(deviceId, ow.string.nonEmpty);
-        ow(relationship, ow.string.nonEmpty);
-        ow(groupPath, ow.string.nonEmpty);
-
-        const url = this.baseUrl + PathHelper.encodeUrl('devices', deviceId, relationship, 'groups', groupPath);
-
-         await request.delete(url)
-            .set(super.getHeaders());
-    }
+    detachFromGroup(deviceId: string, relationship: string, groupPath: string, additionalHeaders?:RequestHeaders): Promise<void>;
 
     /**
      * Find device by ID
@@ -200,23 +92,7 @@ export class DevicesService extends ClientService {
      * @param deviceId ID of device to return
      * @param expandComponents By default, components of a device are not returned. Passing &#x60;true&#x60; will return and expand a devices components.
      */
-    public async getDeviceByID(deviceId: string, expandComponents?: boolean, attributes?:string[], groups?:string[]): Promise<Device10Resource|Device20Resource> {
-        ow(deviceId, ow.string.nonEmpty);
-
-        const attributes_qs = (attributes) ? attributes.join() : undefined;
-        const groups_qs = (groups) ? groups.join() : undefined;
-
-        let url = this.baseUrl + PathHelper.encodeUrl('devices', deviceId);
-        const queryString = QSHelper.getQueryString({expandComponents, attributes:attributes_qs, includeGroups:groups_qs});
-        if (queryString) {
-            url += `?${queryString}`;
-        }
-
-        const res = await request.get(url)
-            .set(super.getHeaders());
-
-        return res.body;
-    }
+    getDeviceByID(deviceId: string, expandComponents?: boolean, attributes?: string[], groups?: string[], additionalHeaders?:RequestHeaders): Promise<Device10Resource | Device20Resource>;
 
     /**
      * Updates the component of a device.
@@ -224,17 +100,7 @@ export class DevicesService extends ClientService {
      * @param deviceId Id of parent device
      * @param componentId ID of child component
      */
-    public async updateComponent(deviceId: string, componentId: string, body: Device10Resource|Device20Resource): Promise<void> {
-        ow(deviceId, ow.string.nonEmpty);
-        ow(componentId, ow.string.nonEmpty);
-        ow(body, ow.object.nonEmpty);
-
-        const url = this.baseUrl + PathHelper.encodeUrl('devices', deviceId, 'components', componentId);
-
-        await request.patch(url)
-            .send(body)
-            .set(super.getHeaders());
-    }
+    updateComponent(deviceId: string, componentId: string, body: Device10Resource | Device20Resource, additionalHeaders?:RequestHeaders): Promise<void>;
 
     /**
      * Update an existing device attributes
@@ -242,20 +108,7 @@ export class DevicesService extends ClientService {
      * @param deviceId ID of device to return
      * @param body Device object that needs to be updated in device store
      */
-    public async updateDevice(deviceId: string, body: Device10Resource|Device20Resource, applyProfileId?:string): Promise<void> {
-        ow(deviceId, ow.string.nonEmpty);
-        ow(body, ow.object.nonEmpty);
-
-        let url = this.baseUrl + PathHelper.encodeUrl('devices', deviceId);
-        const queryString = QSHelper.getQueryString({applyProfile:applyProfileId});
-        if (queryString) {
-            url += `?${queryString}`;
-        }
-
-        await request.patch(url)
-            .send(body)
-            .set(super.getHeaders());
-    }
+    updateDevice(deviceId: string, body: Device10Resource | Device20Resource, applyProfileId?: string, additionalHeaders?:RequestHeaders): Promise<void>;
 
     /**
      * Find devices by ID
@@ -263,22 +116,42 @@ export class DevicesService extends ClientService {
      * @param deviceIds IDs of device to return
      * @param expandComponents By default, components of a device are not returned. Passing &#x60;true&#x60; will return and expand a devices components.
      */
-    public async getDevicesByID(deviceIds: string[], expandComponents?: boolean, attributes?:string[], groups?:string[]): Promise<DeviceResourceList> {
-        ow(deviceIds, ow.array.nonEmpty.minLength(1));
+    getDevicesByID(deviceIds: string[], expandComponents?: boolean, attributes?: string[], groups?: string[], additionalHeaders?:RequestHeaders): Promise<DeviceResourceList>;
+}
 
-        const attributes_qs = (attributes) ? attributes.join() : undefined;
-        const groups_qs = (groups) ? groups.join() : undefined;
+@injectable()
+export class DevicesServiceBase extends ClientServiceBase {
 
-        let url = this.baseUrl + '/bulkdevices';
-        const queryString = QSHelper.getQueryString({deviceIds, expandComponents, attributes:attributes_qs, includeGroups:groups_qs});
-        if (queryString) {
-            url += `?${queryString}`;
-        }
+    constructor() {
+        super();
+    }
 
-        const res = await request.get(url)
-            .set(super.getHeaders());
+    protected devicesRelativeUrl() : string {
+        return '/devices';
+    }
 
-        return res.body;
+    protected deviceRelativeUrl(deviceId: string) : string {
+        return PathHelper.encodeUrl('devices', deviceId);
+    }
+
+    protected deviceAttachedDeviceRelativeUrl(deviceId: string, relationship: string, otherDeviceId: string) : string {
+        return PathHelper.encodeUrl('devices', deviceId, relationship, 'devices', otherDeviceId);
+    }
+
+    protected deviceAttachedGroupRelativeUrl(deviceId: string, relationship: string, groupPath: string) : string {
+        return PathHelper.encodeUrl('devices', deviceId, relationship, 'groups', groupPath);
+    }
+
+    protected deviceAttachedComponentsRelativeUrl(deviceId: string) : string {
+        return PathHelper.encodeUrl('devices', deviceId, 'components');
+    }
+
+    protected deviceAttachedComponentRelativeUrl(deviceId: string, componentId: string) : string {
+        return PathHelper.encodeUrl('devices', deviceId, 'components', componentId);
+    }
+
+    protected bulkDevicesRelativeUrl() : string {
+        return '/bulkdevices';
     }
 
 }

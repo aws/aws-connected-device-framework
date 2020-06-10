@@ -10,97 +10,93 @@
 
 /* tslint:disable:no-unused-variable member-ordering */
 
-import { ProvisionThingResponse, ProvisionThingRequest, Thing, BulkProvisionThingsRequest, BulkProvisionThingsResponse, CertificateStatus } from './things.model';
-import { injectable } from 'inversify';
+import {
+    BulkProvisionThingsRequest,
+    BulkProvisionThingsResponse,
+    CertificateStatus,
+    ProvisionThingRequest,
+    ProvisionThingResponse, RequestHeaders,
+    Thing,
+} from './things.model';
+
+import {injectable} from 'inversify';
 import config from 'config';
 import ow from 'ow';
 import * as request from 'superagent';
-import { PathHelper } from '../utils/path.helper';
-import { ThingsService } from './things.service';
+import {ThingsService, ThingsServiceBase} from './things.service';
 
 @injectable()
-export class ThingsServiceApiGateway implements ThingsService {
+export class ThingsApigwService extends ThingsServiceBase implements ThingsService {
 
-    private MIME_TYPE:string = 'application/vnd.aws-cdf-v1.0+json';
-
-    private baseUrl:string;
-    private headers = {
-        'Accept': this.MIME_TYPE,
-        'Content-Type': this.MIME_TYPE
-    };
+    private readonly baseUrl:string;
 
     public constructor() {
+        super();
         this.baseUrl = config.get('provisioning.baseUrl') as string;
-
-        if (config.has('provisioning.headers')) {
-            const additionalHeaders: {[key:string]:string} = config.get('provisioning.headers') as {[key:string]:string};
-            if (additionalHeaders !== null && additionalHeaders !== undefined) {
-                this.headers = {...this.headers, ...additionalHeaders};
-            }
-        }
     }
+
     /**
      * Provision Device
      *
      * @param provisioningTemplateId Provisioning Template
      */
-    public async provisionThing(provisioningRequest: ProvisionThingRequest ): Promise<ProvisionThingResponse> {
+    async provisionThing(provisioningRequest: ProvisionThingRequest, additionalHeaders?:RequestHeaders): Promise<ProvisionThingResponse> {
         ow(provisioningRequest.provisioningTemplateId, ow.string.nonEmpty);
 
-        const res = await request.post(this.baseUrl + '/things')
-            .set(this.headers)
+        const res = await request.post(`${this.baseUrl}${super.thingsRelativeUrl()}`)
+            .set(super.buildHeaders(additionalHeaders))
             .send(provisioningRequest);
 
         return res.body;
     }
 
-    public async getThing(thingName: string ): Promise<Thing> {
+    async getThing(thingName: string, additionalHeaders?:RequestHeaders): Promise<Thing> {
         ow(thingName, ow.string.nonEmpty);
 
-        const url = `${this.baseUrl}/things/${PathHelper.encodeUrl(thingName)}`;
-        const res = await request.get(url).set(this.headers);
+        const url = `${this.baseUrl}${super.thingRelativeUrl(thingName)}`;
+        const res = await request.get(url).set(super.buildHeaders(additionalHeaders));
 
         return res.body;
     }
 
-    public async deleteThing(thingName: string ): Promise<void> {
+    async deleteThing(thingName: string, additionalHeaders?:RequestHeaders): Promise<void> {
         ow(thingName, ow.string.nonEmpty);
 
-        const url = `${this.baseUrl}/things/${PathHelper.encodeUrl(thingName)}`;
-        await request.delete(url).set(this.headers);
+        const url = `${this.baseUrl}${super.thingRelativeUrl(thingName)}`;
+        await request.delete(url).set(super.buildHeaders(additionalHeaders));
     }
 
-    public async bulkProvisionThings(req: BulkProvisionThingsRequest ): Promise<BulkProvisionThingsResponse> {
+    async bulkProvisionThings(req: BulkProvisionThingsRequest, additionalHeaders?:RequestHeaders): Promise<BulkProvisionThingsResponse> {
         ow(req, ow.object.nonEmpty);
         ow(req.provisioningTemplateId, ow.string.nonEmpty);
         ow(req.parameters, ow.array.nonEmpty.minLength(1));
 
-        const res = await request.post(`${this.baseUrl}/bulkthings`)
-            .set(this.headers)
+        const res = await request.post(`${this.baseUrl}${super.bulkThingsRelativeUrl()}`)
+            .set(super.buildHeaders(additionalHeaders))
             .send(req);
 
         return res.body;
     }
 
-    public async getBulkProvisionTask(taskId: string ): Promise<BulkProvisionThingsResponse> {
+    async getBulkProvisionTask(taskId: string, additionalHeaders?:RequestHeaders): Promise<BulkProvisionThingsResponse> {
         ow(taskId, ow.string.nonEmpty);
 
-        const url = `${this.baseUrl}/bulkthings/${PathHelper.encodeUrl(taskId)}`;
-        const res = await request.get(url).set(this.headers);
+        const url = `${this.baseUrl}${super.bulkThingsTaskRelativeUrl(taskId)}`;
+        const res = await request.get(url).set(super.buildHeaders(additionalHeaders));
 
         return res.body;
     }
 
-    public async updateThingCertificates(thingName:string, certificateStatus:CertificateStatus): Promise<void> {
+    async updateThingCertificates(thingName: string, certificateStatus: CertificateStatus, additionalHeaders?:RequestHeaders): Promise<void> {
         ow(thingName, ow.string.nonEmpty);
         ow(certificateStatus, ow.string.nonEmpty);
 
-        const url = `${this.baseUrl}/things/${PathHelper.encodeUrl(thingName)}/certificates`;
+        const url = `${this.baseUrl}${super.thingCertificateRelativeUrl(thingName)}`;
         const body = {
-            certificateStatus
+            certificateStatus,
         };
         await request.patch(url)
-            .set(this.headers)
+            .set(super.buildHeaders(additionalHeaders))
             .send(body);
     }
 }

@@ -6,7 +6,7 @@
 import 'reflect-metadata';
 import { createMockInstance } from 'jest-create-mock-instance';
 
-import { ThingsServiceLambda } from './things.lambda.service';
+import { ThingsLambdaService } from './things.lambda.service';
 import { LambdaApiGatewayEvent, LambdaInvokerService } from '@cdf/lambda-invoke';
 import {
     BulkProvisionThingsRequest,
@@ -18,7 +18,7 @@ import {
 
 describe('ThingsServiceLambda', () => {
 
-    let instance: ThingsServiceLambda;
+    let instance: ThingsLambdaService;
     let mockedInvokerService: LambdaInvokerService;
     let mockedFunctionName: string;
 
@@ -26,7 +26,7 @@ describe('ThingsServiceLambda', () => {
     beforeEach(() => {
         mockedFunctionName = 'provisioning_api_lambda_function_name';
         mockedInvokerService = createMockInstance(LambdaInvokerService);
-        instance = new ThingsServiceLambda(mockedInvokerService, mockedFunctionName);
+        instance = new ThingsLambdaService(mockedInvokerService, mockedFunctionName);
     });
 
     it('should provision a thing', async() => {
@@ -76,6 +76,7 @@ describe('ThingsServiceLambda', () => {
                 'path': '/things'
             },
             httpMethod: 'POST',
+            multiValueQueryStringParameters: null,
             body: JSON.stringify(mockedProvisionThingRequest),
             queryStringParameters: null,
         };
@@ -130,6 +131,7 @@ describe('ThingsServiceLambda', () => {
                 'path': `/things/${mockedThingName}`
             },
             httpMethod: 'GET',
+            multiValueQueryStringParameters: null,
             queryStringParameters: null,
             body: null,
         };
@@ -157,6 +159,7 @@ describe('ThingsServiceLambda', () => {
                 'path': `/things/${mockedThingName}`
             },
             httpMethod: 'DELETE',
+            multiValueQueryStringParameters: null,
             queryStringParameters: null,
             body: null
         };
@@ -214,6 +217,7 @@ describe('ThingsServiceLambda', () => {
                 'path': '/bulkthings'
             },
             httpMethod: 'POST',
+            multiValueQueryStringParameters: null,
             queryStringParameters: null,
             body: JSON.stringify(mockedBulkProvisionThingRequest)
         };
@@ -268,6 +272,7 @@ describe('ThingsServiceLambda', () => {
                 'path': `/bulkthings/${mockedTaskId}`
             },
             httpMethod: 'GET',
+            multiValueQueryStringParameters: null,
             queryStringParameters: null,
             body: null
         };
@@ -313,6 +318,7 @@ describe('ThingsServiceLambda', () => {
                 'path':`/things/${mockedThingName}/certificates`
             },
             httpMethod: 'PATCH',
+            multiValueQueryStringParameters: null,
             queryStringParameters: null,
             body: '{"certificateStatus":"ACTIVE"}'
         };

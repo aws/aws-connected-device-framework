@@ -152,7 +152,7 @@ Feature: Device lifecycle
     And device "TEST-devices-device003" does not exist
     When I delete assetlibrary device template "TEST-devices-type"
     Then published assetlibrary device template "TEST-devices-type" does not exist
-  
+
 
   @teardown_devices_feature
   Scenario: Teardown

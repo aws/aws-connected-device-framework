@@ -1,4 +1,4 @@
-import { SearchRequestModel } from '@cdf/assetlibrary-client/dist';
+import { SearchRequestModel } from '@cdf/assetlibrary-client';
 
 /*-------------------------------------------------------------------------------
 # Copyright (c) 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.

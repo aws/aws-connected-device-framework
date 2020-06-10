@@ -5,23 +5,37 @@
 #-------------------------------------------------------------------------------*/
 import 'reflect-metadata';
 import { Before, Given, When, Then, setDefaultTimeout } from 'cucumber';
-import { ThingsService, ThingsServiceApiGateway, ProvisionThingRequest, ProvisionThingResponse } from '@cdf/provisioning-client';
+import { ThingsService, ProvisionThingRequest, ProvisionThingResponse } from '@cdf/provisioning-client';
 import AWS = require('aws-sdk');
 import chai_string = require('chai-string');
 import { expect, use } from 'chai';
 import { fail } from 'assert';
 import config from 'config';
-import { replaceTokens } from '../common/common.steps';
-
+import {AUTHORIZATION_TOKEN, replaceTokens} from '../common/common.steps';
+import {Dictionary} from '../../../../libraries/core/lambda-invoke/src';
+import {container} from '../../di/inversify.config';
+import {PROVISIONING_CLIENT_TYPES} from '@cdf/provisioning-client';
 use(chai_string);
+/*
+    Cucumber describes current scenario context as “World”. It can be used to store the state of the scenario
+    context (you can also define helper methods in it). World can be access by using the this keyword inside
+    step functions (that’s why it’s not recommended to use arrow functions).
+ */
+// tslint:disable:no-invalid-this
+// tslint:disable:only-arrow-functions
 
 setDefaultTimeout(10 * 1000);
 
-let thingService: ThingsService;
+const thingService: ThingsService = container.get(PROVISIONING_CLIENT_TYPES.ThingsService);
 let iot: AWS.Iot;
 
+function getAdditionalHeaders(world:any) : Dictionary {
+    return  {
+        Authorization: world[AUTHORIZATION_TOKEN]
+    };
+}
+
 Before(function () {
-    thingService = new ThingsServiceApiGateway();
     iot = new AWS.Iot({region: config.get('aws.region')});
 });
 
@@ -51,7 +65,7 @@ When('I provision a thing {string}', async function (thingName:string) {
         }
     };
 
-    const provisionThingResponse:ProvisionThingResponse = await thingService.provisionThing(provisionThingRequest);
+    const provisionThingResponse:ProvisionThingResponse = await thingService.provisionThing(provisionThingRequest, getAdditionalHeaders(this));
 
     expect(provisionThingResponse.resourceArns['thing']).startsWith('arn:aws:iot:');
     expect(provisionThingResponse.resourceArns['thing']).endsWith(`thing/${thingName}`);

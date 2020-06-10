@@ -13,6 +13,11 @@
             "node"
         ]
     },
+    "references": [
+        {
+            "path": "../../core/lambda-invoke"
+        }
+    ],
     "include": [
         "src"
     ],

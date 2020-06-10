@@ -81,7 +81,7 @@ export class SearchRequestModel {
 		return qs;
 	}
 
-	public toQueryString():string {
+	public toHttpQueryString():string {
 		let qs:string[]= [];
 
 		if (this.types) {
@@ -133,6 +133,69 @@ export class SearchRequestModel {
 		}
 
 		return qs.join('&');
+	}
+
+	public toLambdaMultiValueQueryString(): {[key:string]:string[]} {
+		const qs:{[key:string]:string[]}= {};
+
+		if (this.types) {
+			qs['type']= this.types.map(v=> v);
+		}
+
+		if (this.ancestorPath) {
+			qs['ancestorPath']=[this.ancestorPath];
+		}
+
+		if (this.eq) {
+			const values=this.buildQSValues('eq', this.eq);
+			qs['eq'] = values.map(v=> v.split('=')[1]);
+		}
+
+		if (this.neq) {
+			const values=this.buildQSValues('neq', this.neq);
+			qs['neq'] = values.map(v=> v.split('=')[1]);
+		}
+
+		if (this.lt) {
+			const values=this.buildQSValues('lt', this.lt);
+			qs['lt'] = values.map(v=> v.split('=')[1]);
+		}
+
+		if (this.lte) {
+			const values=this.buildQSValues('lte', this.lte);
+			qs['lte'] = values.map(v=> v.split('=')[1]);
+		}
+
+		if (this.gt) {
+			const values=this.buildQSValues('gt', this.gt);
+			qs['gt'] = values.map(v=> v.split('=')[1]);
+		}
+
+		if (this.gte) {
+			const values=this.buildQSValues('gte', this.gte);
+			qs['gte'] = values.map(v=> v.split('=')[1]);
+		}
+
+		if (this.startsWith) {
+			const values=this.buildQSValues('startsWith', this.startsWith);
+			qs['startsWith'] = values.map(v=> v.split('=')[1]);
+		}
+
+		if (this.endsWith) {
+			const values=this.buildQSValues('endsWith', this.endsWith);
+			qs['endsWith'] = values.map(v=> v.split('=')[1]);
+		}
+
+		if (this.contains) {
+			const values=this.buildQSValues('contains', this.contains);
+			qs['contains'] = values.map(v=> v.split('=')[1]);
+		}
+
+		if (this.summarize) {
+			qs['summarize']=[`${this.summarize}`];
+		}
+
+		return qs;
 	}
 
 }

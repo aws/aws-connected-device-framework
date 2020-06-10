@@ -14,15 +14,22 @@ setDefaultTimeout(10 * 1000);
 export const RESPONSE_STATUS = 'responseStatus';
 export const TIME_SCENARIO_STARTED = 'scenarioTestStartedAt';
 export const AUTHORIZATION_TOKEN = 'jwt';
+/*
+    Cucumber describes current scenario context as “World”. It can be used to store the state of the scenario
+    context (you can also define helper methods in it). World can be access by using the this keyword inside
+    step functions (that’s why it’s not recommended to use arrow functions).
+ */
+// tslint:disable:no-invalid-this
+// tslint:disable:only-arrow-functions
 
 export function replaceTokens(text:string) {
-    return text.replace(/%property:(.*?)%/g, function(_a,property) {
+    return text.replace(/%property:(.*?)%/g, (_a,property)=> {
         return config.get(property);
     });
 }
 
 Given('I store the time the test started', function() {
-    // just in case theres a slight difference between clocks, minus a few secodns
+    // just in case theres a slight difference between clocks, minus a few seconds
     this[TIME_SCENARIO_STARTED] = new Date(Date.now() - 200).toISOString();
 });
 
@@ -48,5 +55,3 @@ Given('my authorization is', async function (data:TableDefinition) {
 Then('it fails with a {int}', function (status:number) {
     expect(this[RESPONSE_STATUS]).eq(status);
 });
-
-

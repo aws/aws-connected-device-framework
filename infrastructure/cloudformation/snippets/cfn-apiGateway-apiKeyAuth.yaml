@@ -1,0 +1,16 @@
+Type: AWS::Serverless::Api
+Properties:
+  StageName: Prod
+  EndpointConfiguration: REGIONAL
+  Auth:
+    ApiKeyRequired: true
+    UsagePlan:
+      CreateUsagePlan: PER_API
+      Description: Sample usage plan for this API
+      Quota:
+        Limit: 500
+        Period: MONTH
+      Throttle:
+        BurstLimit: 100
+        RateLimit: 50
+

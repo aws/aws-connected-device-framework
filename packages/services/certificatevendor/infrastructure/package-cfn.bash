@@ -1,5 +1,10 @@
 #!/bin/bash
 set -e
+if [[ "$DEBUG" == "true" ]]; then
+    set -x
+fi
+source ../../../infrastructure/common-deploy-functions.bash
+
 
 #-------------------------------------------------------------------------------
 # Copyright (c) 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
@@ -41,24 +46,19 @@ if [ -z "$DEPLOY_ARTIFACTS_STORE_BUCKET" ]; then
 	echo -b DEPLOY_ARTIFACTS_STORE_BUCKET is required; help_message; exit 1;
 fi
 
+incorrect_args=$((incorrect_args+$(verifyMandatoryArgument DEPLOY_ARTIFACTS_STORE_BUCKET b $DEPLOY_ARTIFACTS_STORE_BUCKET)))
 
-AWS_ARGS=
-if [ -n "$AWS_REGION" ]; then
-	AWS_ARGS="--region $AWS_REGION "
+if [[ "$incorrect_args" -gt 0 ]]; then
+    help_message; exit 1;
 fi
-if [ -n "$AWS_PROFILE" ]; then
-	AWS_ARGS="$AWS_ARGS--profile $AWS_PROFILE"
-fi
+
+AWS_ARGS=$(buildAwsArgs "$AWS_REGION" "$AWS_PROFILE" )
 
 cwd=$(dirname "$0")
 mkdir -p $cwd/build
 
 
-echo '
-**********************************************************
-  Packaging the Certificate Vendor CloudFormation template and uploading to S3
-**********************************************************
-'
+logTitle 'Packaging the Certificate Vendor CloudFormation template and uploading to S3'
 
 aws cloudformation package \
   --template-file $cwd/cfn-certificatevendor.yml \
@@ -66,8 +66,4 @@ aws cloudformation package \
   --s3-bucket $DEPLOY_ARTIFACTS_STORE_BUCKET \
   $AWS_ARGS
 
-echo '
-**********************************************************
-  Certificate Vendor Done!
-**********************************************************
-'
+logTitle 'Certificate Vendor packaging complete!'

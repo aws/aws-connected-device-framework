@@ -1,3 +1,8 @@
 assetLibrary:
   baseUrl: CDF_ASSETLIBRARY_BASEURL
   headers: CDF_ASSETLIBRARY_HEADERS
+  mode: CDF_ASSETLIBRARY_MODE
+  apiFunctionName: CDF_ASSETLIBRARY_APIFUNCTIONNAME
+
+logging:
+  level: debug

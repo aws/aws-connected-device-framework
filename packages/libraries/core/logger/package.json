@@ -13,13 +13,18 @@
     "build": "tsc -b tsconfig.json",
     "semantic-release": "npx semantic-release -e semantic-release-monorepo"
   },
-  "dependencies": {
+  "peerDependencies": {
     "logform": "2.1.2",
     "readable-stream": "2.3.6",
     "winston": "3.2.1",
     "winston-transport": "4.3.0"
   },
   "devDependencies": {
+    "logform": "2.1.2",
+    "readable-stream": "2.3.6",
+    "winston": "3.2.1",
+    "winston-transport": "4.3.0",
+
     "@commitlint/cli": "8.2.0",
     "@commitlint/config-conventional": "8.2.0",
     "@semantic-release/changelog": "3.0.6",

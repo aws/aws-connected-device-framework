@@ -9,6 +9,13 @@ import AWS = require('aws-sdk');
 import config from 'config';
 
 setDefaultTimeout(30 * 1000);
+/*
+    Cucumber describes current scenario context as “World”. It can be used to store the state of the scenario
+    context (you can also define helper methods in it). World can be access by using the this keyword inside
+    step functions (that’s why it’s not recommended to use arrow functions).
+ */
+// tslint:disable:no-invalid-this
+// tslint:disable:only-arrow-functions
 
 const templateBucket = config.get('provisioning.templates.bucket') as string;
 const templatePrefix = config.get('provisioning.templates.prefix') as string;

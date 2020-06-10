@@ -5,26 +5,40 @@
 #-------------------------------------------------------------------------------*/
 import 'reflect-metadata';
 import { setDefaultTimeout, When, TableDefinition, Then} from 'cucumber';
-import { SearchService, SearchRequestModel, SearchResultsModel, Device10Resource, Group10Resource, SearchRequestFilter } from '@cdf/assetlibrary-client/dist';
+import {
+    SearchService,
+    SearchRequestModel,
+    SearchResultsModel,
+    Device10Resource,
+    Group10Resource,
+    SearchRequestFilter,
+    ASSTLIBRARY_CLIENT_TYPES,
+} from '@cdf/assetlibrary-client/dist';
 
 import chai_string = require('chai-string');
 import { expect, use} from 'chai';
 import { RESPONSE_STATUS, AUTHORIZATION_TOKEN } from '../common/common.steps';
+import {container} from '../../di/inversify.config';
+import {Dictionary} from '../../../../libraries/core/lambda-invoke/src';
 
 use(chai_string);
+/*
+    Cucumber describes current scenario context as “World”. It can be used to store the state of the scenario
+    context (you can also define helper methods in it). World can be access by using the this keyword inside
+    step functions (that’s why it’s not recommended to use arrow functions).
+ */
+// tslint:disable:no-invalid-this
+// tslint:disable:only-arrow-functions
 
 setDefaultTimeout(10 * 1000);
 
 export const SEARCH_RESULTS = 'searchResults';
 
-let search: SearchService;
-
-function getSearchService(world:any) {
-    if (search===undefined) {
-        search = new SearchService();
-    }
-    search.init({authToken: world[AUTHORIZATION_TOKEN]});
-    return search;
+const searchService:SearchService = container.get(ASSTLIBRARY_CLIENT_TYPES.SearchService);
+function getAdditionalHeaders(world:any) : Dictionary {
+    return  {
+        Authorization: world[AUTHORIZATION_TOKEN]
+    };
 }
 
 function buildSearchRequest(data:TableDefinition):SearchRequestModel {
@@ -74,7 +88,7 @@ When('I search with following attributes:', async function (data:TableDefinition
         delete this[SEARCH_RESULTS];
         delete this[RESPONSE_STATUS];
 
-        this[SEARCH_RESULTS] = await getSearchService(this).search(searchRequest);
+        this[SEARCH_RESULTS] = await searchService.search(searchRequest, undefined, undefined, getAdditionalHeaders(this));
 
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
@@ -89,7 +103,7 @@ When('I search with summary with following attributes:', async function (data:Ta
         delete this[SEARCH_RESULTS];
         delete this[RESPONSE_STATUS];
 
-        this[SEARCH_RESULTS] = await getSearchService(this).search(searchRequest);
+        this[SEARCH_RESULTS] = await searchService.search(searchRequest, undefined, undefined, getAdditionalHeaders(this));
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
     }

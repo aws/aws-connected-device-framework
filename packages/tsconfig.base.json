@@ -7,6 +7,7 @@
 		"declarationMap": true,
 		"sourceMap": true,
 		"esModuleInterop": true,
+		"skipLibCheck": true,
 
 		"allowSyntheticDefaultImports": true,
 		"allowUnreachableCode": false,
@@ -20,6 +21,6 @@
 		"noUnusedParameters": true,
 		"pretty": true,
 
-		"suppressImplicitAnyIndexErrors": true,
+		"suppressImplicitAnyIndexErrors": true
 	}
 }

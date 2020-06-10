@@ -15,9 +15,9 @@ export const logger = createLogger(<LoggerOptions> {
         new transports.Console(),
     ],
     format: combine(
-      timestamp(),
-      printf(nfo => {
-        return `${nfo.timestamp} ${nfo.level}: ${nfo.message}`;
-      })
+        timestamp(),
+        printf(nfo => {
+            return `${nfo.timestamp} ${nfo.level}: ${nfo.message}`;
+        })
     ),
 });

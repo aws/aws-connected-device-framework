@@ -3,7 +3,7 @@ aws:
   region: 
 
 assetLibrary:
-  baseUrl: 
+  apiFunctionName:
 
 logging:
   level: debug

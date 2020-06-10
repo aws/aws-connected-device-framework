@@ -8,30 +8,30 @@
  * Provisioning implementation of CertificatesService *
  */
 
-/* tslint:disable:no-unused-variable member-ordering */
 import ow from 'ow';
 import { injectable, inject } from 'inversify';
-import { LambdaInvokerService, LAMBDAINVOKE_TYPES, LambdaApiGatewayEventBuilder, LambdaApiGatewayEventMethodTypes } from '@cdf/lambda-invoke';
+import { LambdaInvokerService, LAMBDAINVOKE_TYPES, LambdaApiGatewayEventBuilder } from '@cdf/lambda-invoke';
 
-import { ProvisionThingResponse, ProvisionThingRequest, Thing, BulkProvisionThingsRequest, BulkProvisionThingsResponse, CertificateStatus } from './things.model';
+import {
+    ProvisionThingResponse,
+    ProvisionThingRequest,
+    Thing,
+    BulkProvisionThingsRequest,
+    BulkProvisionThingsResponse,
+    CertificateStatus,
+    RequestHeaders,
+} from './things.model';
 
-import { PathHelper } from '../utils/path.helper';
-import { ThingsService } from './things.service';
+import {ThingsService, ThingsServiceBase} from './things.service';
 
 @injectable()
-export class ThingsServiceLambda implements ThingsService {
-
-    private MIME_TYPE:string = 'application/vnd.aws-cdf-v1.0+json';
-
-    private headers = {
-        'Accept': this.MIME_TYPE,
-        'Content-Type': this.MIME_TYPE
-    };
+export class ThingsLambdaService extends ThingsServiceBase implements ThingsService {
 
     constructor(
         @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService) private lambdaInvoker: LambdaInvokerService,
-        @inject('provisioning.apifunctionname') private functionName : string
+        @inject('provisioning.apiFunctionName') private functionName : string
     ) {
+        super();
         this.lambdaInvoker = lambdaInvoker;
     }
 
@@ -40,69 +40,69 @@ export class ThingsServiceLambda implements ThingsService {
      *
      * @param provisioningRequest
      */
-    public async provisionThing(provisioningRequest: ProvisionThingRequest): Promise<ProvisionThingResponse> {
+    public async provisionThing(provisioningRequest: ProvisionThingRequest, additionalHeaders?:RequestHeaders): Promise<ProvisionThingResponse> {
         ow(provisioningRequest.provisioningTemplateId, ow.string.nonEmpty);
         const event = new LambdaApiGatewayEventBuilder()
-                .setPath('/things')
-                .setMethod(LambdaApiGatewayEventMethodTypes.POST)
-                .setHeaders(this.headers)
-                .setBody(provisioningRequest);
+            .setPath(super.thingsRelativeUrl())
+            .setMethod('POST')
+            .setHeaders(super.buildHeaders(additionalHeaders))
+            .setBody(provisioningRequest);
 
         const res = await this.lambdaInvoker.invoke(this.functionName, event);
         return res.body;
     }
 
-    public async getThing(thingName: string ): Promise<Thing> {
+    public async getThing(thingName: string, additionalHeaders?:RequestHeaders ): Promise<Thing> {
         ow(thingName, ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
-            .setPath(`/things/${PathHelper.encodeUrl(thingName)}`)
-            .setMethod(LambdaApiGatewayEventMethodTypes.GET)
-            .setHeaders(this.headers);
+            .setPath(super.thingRelativeUrl(thingName))
+            .setMethod('GET')
+            .setHeaders(super.buildHeaders(additionalHeaders));
 
         const res = await this.lambdaInvoker.invoke(this.functionName, event);
         return res.body;
     }
 
-    public async deleteThing(thingName: string ): Promise<void> {
+    public async deleteThing(thingName: string, additionalHeaders?:RequestHeaders ): Promise<void> {
         ow(thingName, ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
-            .setPath(`/things/${PathHelper.encodeUrl(thingName)}`)
-            .setMethod(LambdaApiGatewayEventMethodTypes.DELETE)
-            .setHeaders(this.headers);
+            .setPath(super.thingRelativeUrl(thingName))
+            .setMethod('DELETE')
+            .setHeaders(super.buildHeaders(additionalHeaders));
 
         await this.lambdaInvoker.invoke(this.functionName, event);
     }
 
-    public async bulkProvisionThings(req: BulkProvisionThingsRequest): Promise<BulkProvisionThingsResponse> {
+    public async bulkProvisionThings(req: BulkProvisionThingsRequest, additionalHeaders?:RequestHeaders): Promise<BulkProvisionThingsResponse> {
         ow(req, ow.object.nonEmpty);
         ow(req.provisioningTemplateId, ow.string.nonEmpty);
         ow(req.parameters, ow.array.nonEmpty.minLength(1));
 
         const event = new LambdaApiGatewayEventBuilder()
-            .setPath(`/bulkthings`)
-            .setMethod(LambdaApiGatewayEventMethodTypes.POST)
-            .setHeaders(this.headers)
+            .setPath(super.bulkThingsRelativeUrl())
+            .setMethod('POST')
+            .setHeaders(super.buildHeaders(additionalHeaders))
             .setBody(req);
 
         const res = await this.lambdaInvoker.invoke(this.functionName, event);
         return res.body;
     }
 
-    public async getBulkProvisionTask(taskId: string ): Promise<BulkProvisionThingsResponse> {
+    public async getBulkProvisionTask(taskId: string, additionalHeaders?:RequestHeaders ): Promise<BulkProvisionThingsResponse> {
         ow(taskId, ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
-            .setPath(`/bulkthings/${PathHelper.encodeUrl(taskId)}`)
-            .setMethod(LambdaApiGatewayEventMethodTypes.GET)
-            .setHeaders(this.headers);
+            .setPath(super.bulkThingsTaskRelativeUrl(taskId))
+            .setMethod('GET')
+            .setHeaders(super.buildHeaders(additionalHeaders));
 
         const res = await this.lambdaInvoker.invoke(this.functionName, event);
         return res.body;
     }
 
-    public async updateThingCertificates(thingName:string, certificateStatus:CertificateStatus): Promise<void> {
+    public async updateThingCertificates(thingName:string, certificateStatus:CertificateStatus, additionalHeaders?:RequestHeaders): Promise<void> {
         ow(thingName, ow.string.nonEmpty);
         ow(certificateStatus, ow.string.nonEmpty);
 
@@ -111,9 +111,9 @@ export class ThingsServiceLambda implements ThingsService {
         };
 
         const event = new LambdaApiGatewayEventBuilder()
-            .setPath(`/things/${PathHelper.encodeUrl(thingName)}/certificates`)
-            .setMethod(LambdaApiGatewayEventMethodTypes.PATCH)
-            .setHeaders(this.headers)
+            .setPath(super.thingCertificateRelativeUrl(thingName))
+            .setMethod('PATCH')
+            .setHeaders(super.buildHeaders(additionalHeaders))
             .setBody(body);
 
         await this.lambdaInvoker.invoke(this.functionName, event);

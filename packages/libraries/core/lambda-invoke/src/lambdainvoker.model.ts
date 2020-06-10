@@ -2,30 +2,38 @@ export class LambdaApiGatewayEventBuilder implements LambdaApiGatewayEvent {
 
     public resource: string;
     public path: string;
-    public httpMethod: string;
-    public headers: {[key:string]: string};
-    public multiValueHeaders: {[key:string]: string[]};
-    public queryStringParameters: {[key:string]: string};
-    public multiValueQueryStringParameters: {[key:string]: string[]};
-    public pathParameters: {[key:string]: string};
-    public stageVariables: {[key:string]: string};
+    public httpMethod: LambdaApiGatewayEventMethodTypes;
+    public headers: Dictionary;
+    public multiValueHeaders: DictionaryArray;
+    public queryStringParameters: Dictionary;
+    public multiValueQueryStringParameters: DictionaryArray;
+    public pathParameters: Dictionary;
+    public stageVariables: Dictionary;
     public requestContext: any;
     public body: string;
     public isBase64Encoded: boolean;
 
-    constructor(headers?: {[key:string]: string}) {
-        this.headers = headers;
+    constructor() {
+        this.headers = null;
         this.resource = '/{proxy+}';
-        // this.stageVariables = null;
-        // this.multiValueQueryStringParameters = null;
         this.queryStringParameters = null;
+        this.multiValueQueryStringParameters = null;
         this.body = null;
-        // this.requestContext = {};
         return this;
     }
 
-    public setHeaders(headers: any) {
+    public setHeaders(headers: Dictionary) {
         this.headers = headers;
+        return this;
+    }
+
+    public setQueryStringParameters(value: Dictionary) {
+        this.queryStringParameters = value;
+        return this;
+    }
+
+    public setMultiValueQueryStringParameters(value: DictionaryArray) {
+        this.multiValueQueryStringParameters = value;
         return this;
     }
 
@@ -34,8 +42,8 @@ export class LambdaApiGatewayEventBuilder implements LambdaApiGatewayEvent {
         return this;
     }
 
-    public setMethod(method: string) {
-        this.httpMethod = LambdaApiGatewayEventMethodTypes[method];
+    public setMethod(method: LambdaApiGatewayEventMethodTypes) {
+        this.httpMethod = method;
         return this;
     }
 
@@ -49,24 +57,23 @@ export class LambdaApiGatewayEventBuilder implements LambdaApiGatewayEvent {
 
 }
 
-export enum LambdaApiGatewayEventMethodTypes {
-    GET='GET',
-    PUT='PUT',
-    POST='POST',
-    DELETE='DELETE',
-    PATCH='PATCH'
-}
+export type LambdaApiGatewayEventMethodTypes =
+    | 'GET'
+    | 'PUT'
+    | 'POST'
+    | 'DELETE'
+    | 'PATCH';
 
 export interface LambdaApiGatewayEvent {
     resource: string;
     path: string;
-    httpMethod: string;
-    headers: {[key:string]: string};
+    httpMethod: LambdaApiGatewayEventMethodTypes;
+    headers: Dictionary;
     multiValueHeaders?: {[key:string]: string[]};
-    queryStringParameters: {[key:string]: string} | null;
+    queryStringParameters: Dictionary | null;
     multiValueQueryStringParameters?: {[key:string]: string[]} | null;
-    pathParameters: {[key:string]: string};
-    stageVariables?: {[key:string]: string} | null;
+    pathParameters: Dictionary;
+    stageVariables?: Dictionary | null;
     requestContext?: any;
     body?: string | null;
     isBase64Encoded?: boolean;
@@ -75,14 +82,14 @@ export interface LambdaApiGatewayEvent {
 export interface ApiGatewayInvokeResponsePayload {
     status: number;
     body: any;
-    header: {[key:string]: string};
+    header: Dictionary;
 }
 
 export class LambdaApiGatewayEventResponse implements ApiGatewayInvokeResponsePayload {
     public status: number;
     public body: any;
     private payload: any;
-    public header: {[key:string]: string};
+    public header: Dictionary;
 
     constructor(payload: any) {
         this.payload = JSON.parse(payload.toString());
@@ -90,4 +97,11 @@ export class LambdaApiGatewayEventResponse implements ApiGatewayInvokeResponsePa
         this.body = JSON.parse(this.payload.body);
         this.header = this.payload.headers;
     }
+}
+
+export class Dictionary {
+    [key:string]: string;
+}
+export class DictionaryArray {
+    [key:string]: string[];
 }

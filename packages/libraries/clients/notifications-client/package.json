@@ -13,7 +13,9 @@
     "build": "tsc -b tsconfig.json",
     "semantic-release": "npx semantic-release -e semantic-release-monorepo"
   },
-  "dependencies": {
+  "peerDependencies": {
+    "@cdf/lambda-invoke": "^1.0.0",
+    "aws-sdk": "2.588.0",
     "config": "3.2.4",
     "inversify": "5.0.1",
     "inversify-binding-decorators": "4.0.0",
@@ -28,6 +30,21 @@
     "winston-transport": "4.3.0"
   },
   "devDependencies": {
+    "@cdf/lambda-invoke": "^1.0.0",
+    "aws-sdk": "2.588.0",
+    "config": "3.2.4",
+    "inversify": "5.0.1",
+    "inversify-binding-decorators": "4.0.0",
+    "inversify-express-utils": "6.3.2",
+    "js-yaml": "3.13.1",
+    "logform": "2.1.2",
+    "ow": "0.15.0",
+    "reflect-metadata": "0.1.13",
+    "superagent": "5.1.2",
+    "readable-stream": "2.3.6",
+    "winston": "3.2.1",
+    "winston-transport": "4.3.0",
+
     "@commitlint/cli": "8.2.0",
     "@commitlint/config-conventional": "8.2.0",
     "@semantic-release/changelog": "3.0.6",

@@ -6,12 +6,14 @@ aws:
       key:
 
 assetLibrary:
-  baseUrl:
+  mode: lambda
+  apiFunctionName:
   templateProfiles:
     edge:
 
 provisioning:
-  baseUrl:
+  mode: lambda
+  apiFunctionName:
 
 logging:
   level: debug

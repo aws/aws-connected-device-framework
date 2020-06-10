@@ -216,7 +216,6 @@ Resources:
     Properties:
       DBSubnetGroupName: !Ref NeptuneDBSubnetGroup
       VpcSecurityGroupIds:
-        - !Ref SecurityGroupId
         - !Ref NeptuneSG
       DBClusterParameterGroupName: !Ref NeptuneDBClusterParameterGroup
       IamAuthEnabled: !Ref IamAuthEnabled

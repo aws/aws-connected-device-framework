@@ -1,8 +1,10 @@
 provisioning:
   baseUrl:
   headers:
-  apifunctionname:
   mode:
+  apiFunctionName:
+
 
 logging:
-  level: 'debug'
+  level: debug
+

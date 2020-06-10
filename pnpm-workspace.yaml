@@ -1,3 +1,5 @@
 ### Instruct pnpm where to find our packages
 packages:
   - 'packages/**'
+  - '!**/build/**'
+  - '!**/dist/**'

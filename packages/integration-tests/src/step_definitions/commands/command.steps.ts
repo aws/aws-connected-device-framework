@@ -5,25 +5,35 @@
 #-------------------------------------------------------------------------------*/
 
 import { expect } from 'chai';
-import { Before, setDefaultTimeout, When, TableDefinition, Then, Given} from 'cucumber';
-import { CommandsService, CommandModel } from '@cdf/commands-client/dist';
+import { setDefaultTimeout, When, TableDefinition, Then, Given} from 'cucumber';
+import {CommandsService, CommandModel, COMMANDS_CLIENT_TYPES} from '@cdf/commands-client';
 import stringify from 'json-stable-stringify';
-import { RESPONSE_STATUS, replaceTokens } from '../common/common.steps';
+import {RESPONSE_STATUS, replaceTokens, AUTHORIZATION_TOKEN} from '../common/common.steps';
 import AWS = require('aws-sdk');
 import config from 'config';
+import {container} from '../../di/inversify.config';
+import {Dictionary} from '../../../../libraries/core/lambda-invoke/src';
 
 export const COMMAND_ID = 'commandId';
 export const COMMAND_DETAILS = 'commandDetails';
+/*
+    Cucumber describes current scenario context as “World”. It can be used to store the state of the scenario
+    context (you can also define helper methods in it). World can be access by using the this keyword inside
+    step functions (that’s why it’s not recommended to use arrow functions).
+ */
+// tslint:disable:no-invalid-this
+// tslint:disable:only-arrow-functions
 
 setDefaultTimeout(10 * 1000);
 
-let commands: CommandsService;
-let iot: AWS.Iot;
+const commandsService:CommandsService = container.get(COMMANDS_CLIENT_TYPES.CommandsService);
+function getAdditionalHeaders(world:any) : Dictionary {
+    return  {
+        Authorization: world[AUTHORIZATION_TOKEN]
+    };
+}
 
-Before(function () {
-    commands = new CommandsService();
-    iot = new AWS.Iot({region: config.get('aws.region')});
-});
+const iot: AWS.Iot = new AWS.Iot({region: config.get('aws.region')});
 
 function buildCommandModel(data:TableDefinition) {
     const d = data.rowsHash();
@@ -46,15 +56,15 @@ function buildCommandModel(data:TableDefinition) {
     return command;
 }
 
-async function createCommand (data:TableDefinition) {
+async function createCommand (world:any, data:TableDefinition) {
     const command = buildCommandModel(data);
-    return await commands.createCommand(command);
+    return await commandsService.createCommand(command, getAdditionalHeaders(world));
 }
 
-async function updateCommand (commandId:string, data:TableDefinition) {
+async function updateCommand (world:any, commandId:string, data:TableDefinition) {
     const command = buildCommandModel(data);
     command.commandId = commandId;
-    return await commands.updateCommand(command);
+    return await commandsService.updateCommand(command, getAdditionalHeaders(world));
 }
 
 Given('last command exists', async function () {
@@ -65,7 +75,7 @@ Given('last command exists', async function () {
     expect(commandId).exist.and.length(36);
 
     try {
-        const r = await commands.getCommand(commandId);
+        const r = await commandsService.getCommand(commandId, getAdditionalHeaders(this));
         expect(commandId).equals(r.commandId);
         this[COMMAND_DETAILS]=r;
     } catch (err) {
@@ -78,7 +88,7 @@ When('I create a command with attributes', async function (data:TableDefinition)
     this[COMMAND_ID]=null;
     this[RESPONSE_STATUS]=null;
     try {
-        this[COMMAND_ID]=await createCommand(data);
+        this[COMMAND_ID]=await createCommand(this, data);
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
     }
@@ -90,7 +100,7 @@ When('I update last command with attributes', async function (data:TableDefiniti
     const commandId = this[COMMAND_ID];
 
     try {
-        await updateCommand(commandId, data);
+        await updateCommand(this, commandId, data);
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
     }
@@ -100,9 +110,9 @@ When('I upload file {string} to last command as file alias {string}', async func
     this[RESPONSE_STATUS]=null;
     const commandId = this[COMMAND_ID];
 
-    const fileLocation = `${__dirname}/../../../../../src/testResources/${testResource}`;
+    const fileLocation = `${__dirname}/../../../../src/testResources/${testResource}`;
 
-    await commands.uploadCommandFile(commandId, alias, fileLocation);
+    await commandsService.uploadCommandFile(commandId, alias, fileLocation, getAdditionalHeaders(this));
 
 });
 
@@ -114,7 +124,7 @@ Then('last command exists with attributes', async function (data:TableDefinition
     const d = data.rowsHash();
     let r:CommandModel;
     try {
-        r = await commands.getCommand(commandId);
+        r = await commandsService.getCommand(commandId, getAdditionalHeaders(this));
         expect(commandId).equals(r.commandId);
         this[COMMAND_DETAILS]=r;
     } catch (err) {
@@ -153,7 +163,7 @@ Then('job for last command exists', async function () {
 
     let command:CommandModel;
     try {
-        command = await commands.getCommand(commandId);
+        command = await commandsService.getCommand(commandId, getAdditionalHeaders(this));
         expect(commandId).equals(command.commandId);
         this[COMMAND_DETAILS]=command;
 

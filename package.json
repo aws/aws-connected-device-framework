@@ -11,9 +11,12 @@
     "prebundle": "pnpm run clean && pnpm install --force && pnpm run build && pnpm m run prebundle:prepare",
     "bundle": "pnpm i --no-lock --prod --shamefully-flatten --force && pnpm m run bundle:package",
     "postbundle": "pnpm install --force",
-    "prebundle:libraries": "pnpm run reset:libraries && pnpm i && pnpm m run build --filter ./packages/libraries",
-    "bundle:libraries": "pnpm i --no-lock --prod --shamefully-flatten --force --filter ./packages/libraries",
-    "bundle:clients": "npm run bundle:libraries"
+    "build:libraries": "pnpm run reset:libraries && pnpm i && pnpm m run build --filter ./packages/libraries",
+    "bundle:libraries": "pnpm i --no-lock --prod --shamefully-flatten --force --filter ./packages/libraries"
+  },
+  "engines": {
+    "node": "=12",
+    "pnpm": "=5"
   },
   "devDependencies": {
     "@commitlint/cli": "8.2.0",
@@ -38,13 +41,6 @@
   "husky": {
     "hooks": {
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
-    },
-    "dependencies": {
-      "force": "^0.0.3",
-      "pnpm": "3.5.3"
     }
-  },
-  "dependencies": {
-    "force": "^0.0.3"
   }
 }
