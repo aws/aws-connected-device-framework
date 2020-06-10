@@ -644,6 +644,7 @@ Resources:
               - iot:ListPolicyVersions
               - iot:ListPrincipalPolicies
               - iot:ListThingPrincipals
+              - iot:ReplaceTopicRule
               - iot:UpdateCertificate
               - iot:UpdateEventConfigurations
               - kms:CreateKey
