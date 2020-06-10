@@ -1,3 +1,12 @@
+# [@cdf/assetlibrary-v3.4.2](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.4.1...@cdf/assetlibrary-v3.4.2) (2020-06-10)
+
+
+### Bug Fixes
+
+* **assetlibrary:** allow updating neptune cloudformation resources ([c6bde14](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/c6bde14466286504539dd348032195ed67c15b8f))
+* **assetlibrary:** fine tuning neptune deletion policies ([c0cc8ee](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/c0cc8ee56034d1c6132feac09318f7eb5c1009ed))
+* **cicd:** updated cicd to be compatible with recent apigq auth updates ([6ee15f1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/6ee15f12bd3eed54b03f4166f8adaf2dfa3b5db0))
+
 # [@cdf/assetlibrary-v3.4.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.4.0...@cdf/assetlibrary-v3.4.1) (2020-06-10)
 
 
