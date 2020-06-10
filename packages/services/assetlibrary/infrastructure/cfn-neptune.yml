@@ -68,7 +68,7 @@ Parameters:
 Conditions:
   CreateDBReplicaInstance: !Equals [ !Ref CreateDBReplicaInstance, 'true' ]
   CreateVPCS3Endpoint: !Equals [ !Ref CreateVPCS3Endpoint, 'true' ]
-  SnapshotIdentifierProvided: !Note [ !Equals [ !Ref SnapshotIdentifier, '' ]]
+  SnapshotIdentifierProvided: !Not [ !Equals [ !Ref SnapshotIdentifier, '' ]]
 
 Resources:
 
