@@ -11,7 +11,7 @@ function check_type_exists {
     response=$( lambaInvokeRestApi "$assetlibrary_stack_name" 'GET' "$url" "$body" "$function_name" )
     status_code=$(echo "$response" | jq -r '.statusCode')
 
-    echo "GET $url : $status_code" > /dev/tty
+    echo "GET $url : $status_code" >&2
 
     if [[ "$status_code" -eq 404 ]] ; then
         echo 'false'
@@ -29,7 +29,7 @@ function create_type {
     echo -e "\nCreating $template $category type...\n"
     response=$( lambaInvokeRestApi "$assetlibrary_stack_name" 'POST' "$url" "$body" "$function_name" )
 
-    echo "POST $url : $response" > /dev/tty
+    echo "POST $url : $response" >&2
 }
 
 function update_type {
@@ -41,7 +41,7 @@ function update_type {
     echo -e "\nUpdating $template $category type...\n"
     response=$( lambaInvokeRestApi "$assetlibrary_stack_name" 'PATCH' "$url" "$body" "$function_name" )
 
-    echo "PATCH $url : $response" > /dev/tty
+    echo "PATCH $url : $response" >&2
 }
 
 function publish_type {
@@ -53,7 +53,7 @@ function publish_type {
     echo -e "\nPublishing $template $category type...\n"
     response=$( lambaInvokeRestApi "$assetlibrary_stack_name" 'PUT' "$url" "$body" "$function_name" )
 
-    echo "PUT $url : $response" > /dev/tty
+    echo "PUT $url : $response" >&2
 }
 
 function create_or_update_type {
@@ -77,7 +77,7 @@ function create_bulkgroup_data {
     echo -e "\nBulk creating groups from $jsonFile.json...\n"
     response=$( lambaInvokeRestApi "$assetlibrary_stack_name" 'POST' "$url" "$body" "$function_name" )
 
-    echo "POST $url : $response" > /dev/tty
+    echo "POST $url : $response" >&2
 }
 
 function create_or_update_bulkgroup_data {
@@ -98,7 +98,7 @@ function check_group_exists {
     response=$( lambaInvokeRestApi "$assetlibrary_stack_name" 'GET' "$url" "$body" "$function_name" )
     status_code=$(echo "$response" | jq -r '.statusCode')
 
-    echo "GET $url : $status_code" > /dev/tty
+    echo "GET $url : $status_code" >&2
 
     if [[ "$status_code" -eq 404 ]] ; then
         echo 'false'
@@ -115,7 +115,7 @@ function create_provisioning_template {
     echo -e "\nCreating $template provisioning policy...\n"
     response=$( lambaInvokeRestApi "$assetlibrary_stack_name" 'POST' "$url" "$body" "$function_name" )
 
-    echo "POST $url : $response" > /dev/tty
+    echo "POST $url : $response" >&2
 }
 
 function create_or_update_provisioning_template {
@@ -135,7 +135,7 @@ function check_provisioning_template_exists {
     response=$( lambaInvokeRestApi "$assetlibrary_stack_name" 'GET' "$url" "$body" "$function_name" )
     status_code=$(echo "$response" | jq -r '.statusCode')
 
-    echo "GET $url : $status_code" > /dev/tty
+    echo "GET $url : $status_code" >&2
 
     if [[ "$status_code" -eq 204 ]] ; then
         echo 'false'

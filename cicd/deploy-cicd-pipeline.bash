@@ -21,7 +21,7 @@ MANDATORY ARGUMENTS:
   -b (string)   The name of the S3 bucket to deploy CloudFormation templates to.
   -d (string)   The name of the S3 bucket to deploy cdf core documentation to.
   -I (string)   Name of repo of cdf-infrastructure-* project
-	-e (string)	  Name of environment.
+  -e (string)	  Name of environment.
 
 OPTIONAL ARGUMENTS
   -r (string)   Name of CodeCommit repo (defaults to cdf-core).
@@ -40,7 +40,11 @@ OPTIONAL ARGUMENTS
   -i (string)   The remote access CIDR to configure Bastion SSH access (e.g. 1.2.3.4/32).
   -k (string)   The KMS Key id that the provisoning service will use to decrypt sensitive information.  If not provided, a new KMS key with the alias 'cdf' is created.
 
-  -a (string)   Name of custom auth cloudformation stack (if running with custom auth enabled)
+  -y (string)   S3 uri base directory where Cloudformation template snippets are stored.
+  -z (string)   Name of API Gateway cloudformation template snippet. If none provided, all API Gateway instances are configured without authentication.
+  -a (string)   API Gateway authorization type.
+  -c (string)   Cognito user pool arn
+  -A (string)   Lambda authorizer function arn.
 
   -R (string)   AWS region.
   -P (string)   AWS profile.
@@ -49,7 +53,7 @@ EOF
 }
 
 
-while getopts ":b:d:e:r:g:h:I:Nm:v:s:n:o:t:p:i:k:a:R:P:" opt; do
+while getopts ":b:d:e:r:g:h:I:Nm:v:s:n:o:t:p:i:k:y:z:a:c:A:R:P:" opt; do
   case $opt in
 	  b  ) export DEPLOY_ARTIFACTS_STORE_BUCKET=$OPTARG;;
 	  d  ) export DOCUMENTATION_STORE_BUCKET=$OPTARG;;
@@ -71,7 +75,11 @@ while getopts ":b:d:e:r:g:h:I:Nm:v:s:n:o:t:p:i:k:a:R:P:" opt; do
     i  ) export BASTION_REMOTE_ACCESS_CIDR=$OPTARG;;
     k  ) export KMS_KEY_ID=$OPTARG;;
 
-    a  ) export CUSTOM_AUTH_STACK_NAME=$OPTARG;;
+    a  ) export API_GATEWAY_AUTH=$OPTARG;;
+    y  ) export TEMPLATE_SNIPPET_S3_URI_BASE=$OPTARG;;
+    z  ) export API_GATEWAY_DEFINITION_TEMPLATE=$OPTARG;;
+    c  ) export COGNTIO_USER_POOL_ARN=$OPTARG;;
+    A  ) export AUTHORIZER_FUNCTION_ARN=$OPTARG;;
 
     R  ) export AWS_REGION=$OPTARG;;
     P  ) export AWS_PROFILE=$OPTARG;;
@@ -198,7 +206,11 @@ aws cloudformation deploy \
       BastionPublicSubnetIds=$BASTION_PUBLIC_SUBNET_IDS \
       BastionRemoteAccessCIDR=$BASTION_REMOTE_ACCESS_CIDR \
       KmsKeyId=$KMS_KEY_ID \
-      CustomAuthStackName=  \
+      ApiGatewayAuth=$API_GATEWAY_AUTH  \
+      TemplateSnippetS3UriBase=$TEMPLATE_SNIPPET_S3_URI_BASE \
+      APiGatewayDefinitionTemplate=$API_GATEWAY_DEFINITION_TEMPLATE \
+      CognitoUserPoolArn=$COGNTIO_USER_POOL_ARN \
+      AuthorizerFunctionArn=$AUTHORIZER_FUNCTION_ARN \
   --capabilities CAPABILITY_NAMED_IAM \
   $AWS_ARGS
 

@@ -76,6 +76,24 @@ Parameters:
     Description:  The KMS Key id that the provisoning service will use to decrypt sensitive information.  If not provided, a new KMS key with the alias 'cdf' is created
     Type: String
 
+  ApiGatewayAuth:
+    Description: API Gateway authorization type. Must be from the following list.
+    Type: String
+  TemplateSnippetS3UriBase:
+    Description: S3 uri base directory where Cloudformation template snippets are stored.
+    Type: String
+    MinLength: 1
+  APiGatewayDefinitionTemplate:
+    Description: Name of API Gateway cloudformation template snippet. If none provided, all API Gateway instances are configured without authentication.
+    Type: String
+    MinLength: 1
+  CognitoUserPoolArn:
+    Description: Cognito user pool arn
+    Type: String
+  AuthorizerFunctionArn:
+    Description: Lambda authorizer function arn.
+    Type: String
+
 Conditions:
   CodePipelineNameProvided:  !Not [ !Equals [ !Ref CodePipelineName, "" ] ]
 
@@ -287,9 +305,23 @@ Resources:
           - Name: USE_EXISTING_VPC
             Type: PLAINTEXT
             Value: !Ref AssetLibraryUseExistingVpc   
-          # - Name: CUST_AUTH_STACK_NAME
-          #   Type: PLAINTEXT
-          #   Value: !Ref CustAuthStackName
+
+          - Name: API_GATEWAY_AUTH
+            Type: PLAINTEXT
+            Value: !Ref ApiGatewayAuth
+          - Name: TEMPLATE_SNIPPET_S3_URI_BASE
+            Type: PLAINTEXT
+            Value: !Ref TemplateSnippetS3UriBase
+          - Name: API_GATEWAY_DEFINITION_TEMPLATE
+            Type: PLAINTEXT
+            Value: !Ref APiGatewayDefinitionTemplate
+          - Name: COGNTIO_USER_POOL_ARN
+            Type: PLAINTEXT
+            Value: !Ref CognitoUserPoolArn
+          - Name: AUTHORIZER_FUNCTION_ARN
+            Type: PLAINTEXT
+            Value: !Ref AuthorizerFunctionArn
+
       Source:
         Type: CODEPIPELINE
         BuildSpec: |
@@ -380,10 +412,22 @@ Resources:
             Type: PLAINTEXT
             Value: !Sub 's3://${DocumentationBucketName}'
 
-            
-          # - Name: CUST_AUTH_STACK_NAME
-          #   Type: PLAINTEXT
-          #   Value: !Ref CustAuthStackName
+          - Name: API_GATEWAY_AUTH
+            Type: PLAINTEXT
+            Value: !Ref ApiGatewayAuth
+          - Name: TEMPLATE_SNIPPET_S3_URI_BASE
+            Type: PLAINTEXT
+            Value: !Ref TemplateSnippetS3UriBase
+          - Name: API_GATEWAY_DEFINITION_TEMPLATE
+            Type: PLAINTEXT
+            Value: !Ref APiGatewayDefinitionTemplate
+          - Name: COGNTIO_USER_POOL_ARN
+            Type: PLAINTEXT
+            Value: !Ref CognitoUserPoolArn
+          - Name: AUTHORIZER_FUNCTION_ARN
+            Type: PLAINTEXT
+            Value: !Ref AuthorizerFunctionArn
+
       Source:
         Type: CODEPIPELINE
         BuildSpec: |
