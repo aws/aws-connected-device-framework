@@ -1168,7 +1168,7 @@ Search for groups and devices.
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
 | type | query | Type of group/device to filter.  This can be the high level `group` or `device`, as well as any custom group or device template that may have been registered. | No | [ string ] |
-| ancestorGroupPath | query | The path of a common ancestor group to filter results by. | No | string |
+| ancestorPath | query | The path of a common ancestor group to filter results by. | No | string |
 | eq | query | Filter an attribute based on an exact match. E.g. `?eq=firmwareVersion:ABC123` | No | [ string ] |
 | neq | query | Filter by an attribute based on not matching. E.g. `?neq=firmwareVersion:ABC123` | No | [ string ] |
 | lt | query | Filter an attribute based on having a value less than. E.g. `?lt=deploymentId:3` | No | [ number ] |
@@ -1178,6 +1178,8 @@ Search for groups and devices.
 | startsWith | query | Filter by an attribute based on starting with specific text. E.g. `?startsWith=model:MOD123` | No | [ string ] |
 | endsWith | query | NOT IMPLEMENTED!` | No | [ string ] |
 | contains | query | NOT IMPLEMENTED! | No | [ string ] |
+| exist | query | Return a match if the device/group in context has a matching relation/atrribute. E.g. `?exists=installed_in:out:groupPath:/vehicle/001` | No | [ string ] |
+| nexist | query | Return a match if the device/group in context does not have a matching relation/atrribute. E.g. `?nxists=installed_in:out:groupPath:/vehicle/001` | No | [ string ] |
 | facetField | query | Perform a faceted query.  Specify in the format of `?facetField=relation:direction:field` | No | string |
 | summarize | query | Summarize the search results by providing a total, instead of returning the results themselves. | No | boolean |
 | offset | query | The index to start paginated results from | No | integer |

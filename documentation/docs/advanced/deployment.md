@@ -1,6 +1,9 @@
 # Deployment
 
 ## TL;DR - Deployments Steps
+
+Before attempting an upgrade, read [releases](../releases/releases.md) which details any major release information such as backwards incompatible changes.  
+
 1. Download pre-bundled platform dependencies (_cdf-core_, _cdf-clients_)
 1. Clone and include customer specific _cdf-facade-*_ and _cdf-infrastructure-*_ projects
     1. CDF Auto Facade and Infrastructure (the new preferred demo)
