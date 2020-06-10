@@ -1,3 +1,15 @@
+# [@cdf/lambda-invoke-v1.1.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/lambda-invoke-v1.0.1...@cdf/lambda-invoke-v1.1.0) (2020-06-10)
+
+
+### Bug Fixes
+
+* committing latest ([335c842](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/335c84223ab2a860c52766559b220170a64c7c17))
+
+
+### Features
+
+* **auth:** certain services tested ([4253b65](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/4253b65750e52dd962a3a42dde05626044bb79cc))
+
 # [@cdf/lambda-invoke-v1.0.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/lambda-invoke-v1.0.0...@cdf/lambda-invoke-v1.0.1) (2020-05-29)
 
 

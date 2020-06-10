@@ -1,6 +1,6 @@
 {
   "name": "@cdf/lambda-invoke",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Lambda Invoker Service",
   "author": "Hassan Khokhar <hkhokhar@amazon.com>",
   "main": "dist/index.js",
@@ -43,7 +43,6 @@
     "readable-stream": "2.3.6",
     "winston": "3.2.1",
     "winston-transport": "4.3.0",
-
     "aws-sdk": "2.675.0",
     "@commitlint/cli": "8.2.0",
     "@commitlint/config-conventional": "8.2.0",
