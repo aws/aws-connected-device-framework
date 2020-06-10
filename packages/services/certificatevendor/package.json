@@ -1,6 +1,6 @@
 {
   "name": "@cdf/certificate-vendor",
-  "version": "3.3.0",
+  "version": "3.3.1",
   "description": "CDF Certificate Vendor",
   "author": "Dean Hart <deanhart@amazon.com>",
   "config": {
