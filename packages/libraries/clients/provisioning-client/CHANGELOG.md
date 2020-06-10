@@ -1,3 +1,15 @@
+# [@cdf/provisioning-client-v3.4.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/provisioning-client-v3.3.0...@cdf/provisioning-client-v3.4.0) (2020-06-10)
+
+
+### Bug Fixes
+
+* committing latest ([335c842](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/335c84223ab2a860c52766559b220170a64c7c17))
+
+
+### Features
+
+* **auth:** certain services tested ([4253b65](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/4253b65750e52dd962a3a42dde05626044bb79cc))
+
 # [@cdf/provisioning-client-v3.3.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/provisioning-client-v3.2.0...@cdf/provisioning-client-v3.3.0) (2020-05-29)
 
 

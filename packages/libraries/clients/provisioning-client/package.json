@@ -1,6 +1,6 @@
 {
   "name": "@cdf/provisioning-client",
-  "version": "3.3.0",
+  "version": "3.4.0",
   "description": "Provisioning Library Client",
   "author": "Rahul Sareen <rssareen@amazon.com>",
   "main": "dist/index.js",
@@ -44,7 +44,6 @@
     "readable-stream": "2.3.6",
     "winston": "3.2.1",
     "winston-transport": "4.3.0",
-
     "@commitlint/cli": "8.2.0",
     "@commitlint/config-conventional": "8.2.0",
     "@semantic-release/changelog": "3.0.6",
