@@ -1,3 +1,11 @@
+# [@cdf/assetlibrary-v3.4.3](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.4.2...@cdf/assetlibrary-v3.4.3) (2020-06-10)
+
+
+### Bug Fixes
+
+* **assetlibrary:** fix neptune cloudformation template ([a748792](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/a74879237a32bd1393f64e46966324d719a7e58b))
+* **cicd:** cicd building extra node_modules layer ([b019111](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/b019111adadea7bac04ed3aaa35254c3137615e0))
+
 # [@cdf/assetlibrary-v3.4.2](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.4.1...@cdf/assetlibrary-v3.4.2) (2020-06-10)
 
 
