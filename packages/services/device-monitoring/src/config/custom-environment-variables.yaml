@@ -3,9 +3,8 @@ aws:
   region: AWS_REGION
 
 assetLibrary:
-  apiFunctionName:  FACADE_ASSETLIBRARY_APIFUNCTIONNAME
+  mode: lambda
+  apiFunctionName:  DEVICE_MONITORING_ASSETLIBRARY_APIFUNCTIONNAME
 
 logging:
-  level: FACADE_LOGGING_LEVEL
-
-
+  level: DEVICE_MONITORING_LOGGING_LEVEL

@@ -16,4 +16,3 @@ cicd/codepipeline-packaged.yaml
 
 tsconfig.tsbuildinfo
 .idea
-.yarn

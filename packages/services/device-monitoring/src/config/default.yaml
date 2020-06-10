@@ -3,6 +3,7 @@ aws:
   region: 
 
 assetLibrary:
+  mode: lambda
   apiFunctionName:
 
 logging:
