@@ -1,3 +1,10 @@
+# [@cdf/bulkcerts-v4.3.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/bulkcerts-v4.3.0...@cdf/bulkcerts-v4.3.1) (2020-06-10)
+
+
+### Bug Fixes
+
+* **cicd:** cicd building extra node_modules layer ([b019111](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/b019111adadea7bac04ed3aaa35254c3137615e0))
+
 # [@cdf/bulkcerts-v4.3.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/bulkcerts-v4.2.0...@cdf/bulkcerts-v4.3.0) (2020-06-10)
 
 
