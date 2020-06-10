@@ -617,6 +617,7 @@ Resources:
               - cloudformation:DeleteStack
               - cloudformation:DescribeChangeSet
               - cloudformation:DescribeStacks
+              - cloudformation:DescribeStackResources
               - cloudformation:ExecuteChangeSet
               - cloudformation:GetTemplateSummary
               - cloudformation:ListExports

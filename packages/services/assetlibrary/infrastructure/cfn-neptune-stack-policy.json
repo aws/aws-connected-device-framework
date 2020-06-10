@@ -1,7 +1,7 @@
 {
     "Statement": [
         {
-            "Effect": "Deny",
+            "Effect": "Allow",
             "NotAction": ["Update:Delete","Update:Replace"],
             "Principal": "*",
             "Resource": ["LogicalResourceId/NeptuneDB*"]
