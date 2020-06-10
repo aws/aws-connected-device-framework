@@ -1,3 +1,10 @@
+# [@cdf/auth-jwt-v1.2.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/auth-jwt-v1.2.0...@cdf/auth-jwt-v1.2.1) (2020-06-10)
+
+
+### Bug Fixes
+
+* **cicd:** cicd building extra node_modules layer ([b019111](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/b019111adadea7bac04ed3aaa35254c3137615e0))
+
 # [@cdf/auth-jwt-v1.2.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/auth-jwt-v1.1.5...@cdf/auth-jwt-v1.2.0) (2020-06-10)
 
 
