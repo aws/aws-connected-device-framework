@@ -59,12 +59,16 @@ Parameters:
       - 'true'
       - 'false'
     Description: Enable IAM Auth for Neptune.
+  SnapshotIdentifier:
+    Type: String
+    Default: ''
+    Description: Specifies the identifier for an existing DB cluster snapshot to restore. Refer to Neptune documentation on its use.
 
 
 Conditions:
   CreateDBReplicaInstance: !Equals [ !Ref CreateDBReplicaInstance, 'true' ]
   CreateVPCS3Endpoint: !Equals [ !Ref CreateVPCS3Endpoint, 'true' ]
-
+  SnapshotIdentifierProvided: !Note [ !Equals [ !Ref SnapshotIdentifier, '' ]]
 
 Resources:
 
@@ -213,12 +217,18 @@ Resources:
 
   NeptuneDBCluster:
     Type: 'AWS::Neptune::DBCluster'
+    DeletionPolicy: Snapshot
     Properties:
       DBSubnetGroupName: !Ref NeptuneDBSubnetGroup
       VpcSecurityGroupIds:
         - !Ref NeptuneSG
       DBClusterParameterGroupName: !Ref NeptuneDBClusterParameterGroup
       IamAuthEnabled: !Ref IamAuthEnabled
+      SnapshotIdentifier:
+        Fn::If:
+          - SnapshotIdentifierProvided
+          - !Ref SnapshotIdentifier
+          - Ref: AWS::NoValue
     DependsOn:
       - NeptuneDBSubnetGroup
       - NeptuneDBClusterParameterGroup

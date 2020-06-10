@@ -427,7 +427,7 @@ Resources:
           - Name: AUTHORIZER_FUNCTION_ARN
             Type: PLAINTEXT
             Value: !Ref AuthorizerFunctionArn
-
+            
       Source:
         Type: CODEPIPELINE
         BuildSpec: |
@@ -617,6 +617,7 @@ Resources:
               - cloudformation:DeleteStack
               - cloudformation:DescribeChangeSet
               - cloudformation:DescribeStacks
+              - cloudformation:DescribeStackResources
               - cloudformation:ExecuteChangeSet
               - cloudformation:GetTemplateSummary
               - cloudformation:ListExports
