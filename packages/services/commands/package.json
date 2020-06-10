@@ -1,6 +1,6 @@
 {
   "name": "@cdf/commands",
-  "version": "3.2.0",
+  "version": "3.3.0",
   "description": "CDF Commands",
   "author": "Dean Hart <deanhart@amazon.com>",
   "config": {
@@ -25,9 +25,8 @@
     "@cdf/express-middleware": "^1.0.0",
     "@cdf/config-inject": "^2.0.0",
     "@cdf/provisioning-client": "^3.0.0",
-    "aws-sdk": "2.598.0",
-    "ajv": "6.10.2",
     "aws-sdk": "2.588.0",
+    "ajv": "6.10.2",
     "aws-serverless-express": "3.3.6",
     "body-parser": "1.19.0",
     "busboy": "0.3.1",
@@ -73,7 +72,6 @@
     "jest-mock-extended": "1.0.8",
     "jest-haste-map": "24.9.0",
     "jest-mock": "24.9.0",
-    "jest-mock-extended": "1.0.8",
     "jest-resolve": "24.9.0",
     "make-dir-cli": "2.0.0",
     "nodemon": "2.0.2",

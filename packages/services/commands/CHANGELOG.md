@@ -1,3 +1,17 @@
+# [@cdf/commands-v3.3.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/commands-v3.2.0...@cdf/commands-v3.3.0) (2020-06-10)
+
+
+### Bug Fixes
+
+* **cdf:** reduced lambda bundle size ([1ce9877](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/1ce9877878831dac78b00ddbc5589cadead19d53))
+* committing latest ([335c842](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/335c84223ab2a860c52766559b220170a64c7c17))
+
+
+### Features
+
+* **auth:** certain services tested ([4253b65](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/4253b65750e52dd962a3a42dde05626044bb79cc))
+* **auth:** complete private api and api key auth modes ([46d0183](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/46d0183e779e21a7ad39e879481b369bec2d060f))
+
 # [@cdf/commands-v3.2.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/commands-v3.1.3...@cdf/commands-v3.2.0) (2020-05-29)
 
 
