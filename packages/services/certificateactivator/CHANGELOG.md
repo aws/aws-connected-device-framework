@@ -1,3 +1,11 @@
+# [@cdf/certificate-activator-v2.3.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/certificate-activator-v2.3.0...@cdf/certificate-activator-v2.3.1) (2020-06-10)
+
+
+### Bug Fixes
+
+* **cicd:** cicd building extra node_modules layer ([b019111](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/b019111adadea7bac04ed3aaa35254c3137615e0))
+* **cicd:** duplciated bundke, missing build,s cript ([6ecd8ca](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/6ecd8ca1294f3bda2c5e55d8726656a28f4b3954))
+
 # [@cdf/certificate-activator-v2.3.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/certificate-activator-v2.2.0...@cdf/certificate-activator-v2.3.0) (2020-06-10)
 
 

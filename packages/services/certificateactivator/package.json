@@ -1,6 +1,6 @@
 {
   "name": "@cdf/certificate-activator",
-  "version": "2.2.0",
+  "version": "2.3.1",
   "description": "CDF Certificate Activator",
   "author": "Dean Hart <deanhart@amazon.com>",
   "config": {
@@ -59,7 +59,6 @@
     "jest-mock-extended": "1.0.8",
     "jest-haste-map": "24.9.0",
     "jest-mock": "24.9.0",
-    "jest-mock-extended": "1.0.8",
     "jest-resolve": "24.9.0",
     "make-dir-cli": "2.0.0",
     "nodemon": "2.0.2",
