@@ -257,6 +257,13 @@ if [[ "$ASSETLIBRARY_MODE" = "full" ]]; then
   fi
 
   logTitle 'Deploying the Neptune CloudFormation template'
+
+  # if first time deploying this will silently fail...
+  aws cloudformation set-stack-policy \
+    --stack-name $NEPTUNE_STACK_NAME \
+    --stack-policy-body "$(cat $cwd/cfn-neptune-stack-policy.json)" \
+    $AWS_ARGS | true
+
   aws cloudformation deploy \
     --template-file $cwd/cfn-neptune.yml \
     --stack-name $NEPTUNE_STACK_NAME \
