@@ -1,3 +1,15 @@
+# [@cdf/auth-jwt-v1.2.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/auth-jwt-v1.1.5...@cdf/auth-jwt-v1.2.0) (2020-06-10)
+
+
+### Bug Fixes
+
+* **cdf:** reduced lambda bundle size ([1ce9877](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/1ce9877878831dac78b00ddbc5589cadead19d53))
+
+
+### Features
+
+* **auth:** complete private api and api key auth modes ([46d0183](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/46d0183e779e21a7ad39e879481b369bec2d060f))
+
 # [@cdf/auth-jwt-v1.1.5](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/auth-jwt-v1.1.4...@cdf/auth-jwt-v1.1.5) (2020-02-27)
 
 
