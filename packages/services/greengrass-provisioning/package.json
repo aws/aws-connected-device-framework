@@ -15,7 +15,7 @@
     "start": "npm run build && NODE_CONFIG=$(cat ${CONFIG_LOCATION}/greengrass-provisioning/${npm_package_config_environment}-config.json) NODE_CONFIG_DIR='./src/config' concurrently \"npm run build -- -w\" \"nodemon dist/lambda_apigw_proxy.js\"",
     "start:norebuild": "npm run build && NODE_CONFIG=$(cat ${CONFIG_LOCATION}/assetlibrary/${npm_package_config_environment}-config.json) NODE_CONFIG_DIR='./src/config' node dist/lambda_apigw_proxy.js",
     "prebundle:prepare": "cpy src/config/* dist/config/ && make-dir build && make-dir dist/node_modules",
-    "bundle:package": "cd dist/node_modules && cp -RL ../../node_modules/ . && cd .. && zip -rq ../build/build.zip * && zip -urq ../build/build.zip ../package.json",
+    "bundle:package": "cd dist && cp -RL ../node_modules . && zip -rq ../build/build.zip * && zip -urq ../build/build.zip ../package.json",
     "semantic-release": "npx semantic-release -e semantic-release-monorepo",
     "prebundle:quick": "pnpm run clean && pnpm install --force && pnpm run build && npm run prebundle:prepare",
     "postbundle:quick": "pnpm install --force"

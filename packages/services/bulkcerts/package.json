@@ -14,7 +14,7 @@
     "test": "npm run lint && NODE_ENV=local_test NODE_CONFIG_DIR='./src/config' nyc jest",
     "start": "npm run build && NODE_CONFIG=$(cat ${CONFIG_LOCATION}/commands/${npm_package_config_environment}-config.json) NODE_CONFIG_DIR='./src/config' concurrently \"npm run build -- -w\" \"nodemon dist/lambda_proxy.js\"",
     "prebundle:prepare": "cpy src/config/* dist/config/ && make-dir build && make-dir dist/node_modules",
-    "bundle:package": "cd dist/node_modules && cp -RL ../../node_modules/ . && cd .. && zip -rq ../build/build.zip * && zip -urq ../build/build.zip ../package.json",
+    "bundle:package": "cd dist && cp -RL ../node_modules . && zip -rq ../build/build.zip * && zip -urq ../build/build.zip ../package.json",
     "semantic-release": "npx semantic-release -e semantic-release-monorepo"
   },
   "dependencies": {

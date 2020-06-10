@@ -260,7 +260,7 @@ Resources:
         Packaging: NONE
         Type: CODEPIPELINE
         Name: !If [CodePipelineNameProvided, !Sub '${CodePipelineName}-deployStaging', !Sub '${RepoName}-cicd-${Environment}-deployStaging' ]
-      TimeoutInMinutes: 30
+      TimeoutInMinutes: 60
       Environment:
         ComputeType: BUILD_GENERAL1_MEDIUM
         Image: aws/codebuild/amazonlinux2-x86_64-standard:2.0
@@ -359,7 +359,7 @@ Resources:
         Packaging: NONE
         Type: CODEPIPELINE
         Name: !If [CodePipelineNameProvided, !Sub '${CodePipelineName}-deployLive', !Sub '${RepoName}-cicd-${Environment}-deployLive' ]
-      TimeoutInMinutes: 30
+      TimeoutInMinutes: 60
       Environment:
         ComputeType: BUILD_GENERAL1_MEDIUM
         Image: aws/codebuild/amazonlinux2-x86_64-standard:2.0
@@ -427,7 +427,7 @@ Resources:
           - Name: AUTHORIZER_FUNCTION_ARN
             Type: PLAINTEXT
             Value: !Ref AuthorizerFunctionArn
-            
+
       Source:
         Type: CODEPIPELINE
         BuildSpec: |
@@ -686,6 +686,7 @@ Resources:
               - iot:DetachPrincipalPolicy
               - iot:DetachThingPrincipal
               - iot:GetPolicy
+              - iot:GetTopicRule
               - iot:ListPolicyVersions
               - iot:ListPrincipalPolicies
               - iot:ListThingPrincipals
