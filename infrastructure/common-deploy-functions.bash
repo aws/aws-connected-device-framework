@@ -10,7 +10,7 @@ function verifyMandatoryFile {
     service_name=$2
 
     if [[ ! -f ${file_location} ]]; then
-        echo "$service_name config ($file_location) must exist" > /dev/tty
+        echo "$service_name config ($file_location) must exist" >&2
         exit 1
     fi
 }
@@ -19,7 +19,7 @@ function verifyMandatoryDirectory {
     dir=$1
 
     if [[ ! -d ${dir} ]]; then
-        echo "$dir must exist" > /dev/tty
+        echo "$dir must exist" >&2
         exit 1
     fi
 }
@@ -29,13 +29,13 @@ function verifyMandatoryArgument {
     arg_character=$2
     arg_value=$3
 
-#    echo "verifyMandatoryArgument:" > /dev/tty
-#    echo "    arg_name: $arg_name" > /dev/tty
-#    echo "    arg_character: $arg_character" > /dev/tty
-#    echo "    arg_value: $arg_value" > /dev/tty
+#    echo "verifyMandatoryArgument:" >&2
+#    echo "    arg_name: $arg_name" >&2
+#    echo "    arg_character: $arg_character" >&2
+#    echo "    arg_value: $arg_value" >&2
 
     if [[ -z "$arg_value" ]]; then
-        echo "(-$arg_character) $arg_name is required" > /dev/tty
+        echo "(-$arg_character) $arg_name is required" >&2
         echo 1
     else
         echo 0
@@ -48,14 +48,14 @@ function defaultIfNotSet {
     arg_value=$3
     default_value=$4
 
-#    echo "defaultIfNotSet:" > /dev/tty
-#    echo "    arg_name: $arg_name" > /dev/tty
-#    echo "    arg_character: $arg_character" > /dev/tty
-#    echo "    arg_value: $arg_value" > /dev/tty
-#    echo "    default_value: $default_value" > /dev/tty
+#    echo "defaultIfNotSet:" >&2
+#    echo "    arg_name: $arg_name" >&2
+#    echo "    arg_character: $arg_character" >&2
+#    echo "    arg_value: $arg_value" >&2
+#    echo "    default_value: $default_value" >&2
 
     if [[ -z "$arg_value" ]]; then
-        echo "(-$arg_character) $arg_name not provided, therefore set to $default_value" > /dev/tty
+        echo "(-$arg_character) $arg_name not provided, therefore set to $default_value" >&2
         echo $default_value
     else
         echo $arg_value
@@ -71,11 +71,11 @@ function verifyListContainsArgument {
     shift
     allowed_values=("$@")
 
-#    echo "verifyListContainsArgument:" > /dev/tty
-#    echo "    arg_name: $arg_name" > /dev/tty
-#    echo "    arg_character: $arg_character" > /dev/tty
-#    echo "    arg_value: $arg_value" > /dev/tty
-#    echo "    allowed_values: $allowed_values" > /dev/tty
+#    echo "verifyListContainsArgument:" >&2
+#    echo "    arg_name: $arg_name" >&2
+#    echo "    arg_character: $arg_character" >&2
+#    echo "    arg_value: $arg_value" >&2
+#    echo "    allowed_values: $allowed_values" >&2
 
     match=0
     for value in "${allowed_values[@]}"; do
@@ -85,7 +85,7 @@ function verifyListContainsArgument {
         fi
     done
     if [[ $match = 0 ]]; then
-        echo "(-$arg_character) $arg_name is invalid" > /dev/tty
+        echo "(-$arg_character) $arg_name is invalid" >&2
         echo 1
     else
         echo 0
@@ -95,8 +95,8 @@ function verifyListContainsArgument {
 function verifyApiGatewayAuthType {
     auth=$1
 
-#    echo "verifyApiGatewayAuthType:" > /dev/tty
-#    echo "    auth: $auth" > /dev/tty
+#    echo "verifyApiGatewayAuthType:" >&2
+#    echo "    auth: $auth" >&2
 
     valid_auth_types=(
       None
@@ -110,7 +110,7 @@ function verifyApiGatewayAuthType {
 
     invalid=$( verifyListContainsArgument API_GATEWAY_AUTH a "$auth" "${valid_auth_types[@]}" )
     if [[ ${invalid} = 1 ]]; then
-        echo '(-a) API_GATEWAY_AUTH is invalid' > /dev/tty
+        echo '(-a) API_GATEWAY_AUTH is invalid' >&2
         echo 1
     else
         echo 0
@@ -121,9 +121,9 @@ function buildAwsArgs {
     region=$1
     profile=$2
 
-#    echo "buildAwsArgs:" > /dev/tty
-#    echo "    region: $region" > /dev/tty
-#    echo "    profile: $profile" > /dev/tty
+#    echo "buildAwsArgs:" >&2
+#    echo "    region: $region" >&2
+#    echo "    profile: $profile" >&2
 
     args=
     if [[ -n "$region" ]]; then
@@ -139,9 +139,9 @@ function buildAwsScriptArgs {
     region=$1
     profile=$2
 
-#    echo "buildAwsScriptArgs:" > /dev/tty
-#    echo "    region: $region" > /dev/tty
-#    echo "    profile: $profile" > /dev/tty
+#    echo "buildAwsScriptArgs:" >&2
+#    echo "    region: $region" >&2
+#    echo "    profile: $profile" >&2
 
     args=
     if [[ -n "$region" ]]; then
@@ -195,7 +195,7 @@ function lambaInvokeRestApi {
     }'
 
     aws lambda invoke --function-name ${function_name} --payload "$event_payload" --cli-binary-format raw-in-base64-out \
-        --log-type None $AWS_ARGS ${response_file} > /dev/tty
+        --log-type None $AWS_ARGS ${response_file} >&2
 
     if [[ -f "$response_file" ]]; then
         response=$(cat "$response_file")

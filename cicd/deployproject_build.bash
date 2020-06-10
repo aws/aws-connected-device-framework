@@ -30,6 +30,27 @@ if [ -n "$KMS_KEY_ID" ]; then
     cmd+=" -k $KMS_KEY_ID"
 fi
 
+if [ -n "$API_GATEWAY_AUTH" ]; then
+    cmd+=" -a $API_GATEWAY_AUTH"
+fi
+
+if [ -n "$TEMPLATE_SNIPPET_S3_URI_BASE" ]; then
+    cmd+=" -y $TEMPLATE_SNIPPET_S3_URI_BASE"
+fi
+
+if [ -n "$API_GATEWAY_DEFINITION_TEMPLATE" ]; then
+    cmd+=" -z $API_GATEWAY_DEFINITION_TEMPLATE"
+fi
+
+if [ -n "$COGNTIO_USER_POOL_ARN" ]; then
+    cmd+=" -c $COGNTIO_USER_POOL_ARN"
+fi
+
+if [ -n "$AUTHORIZER_FUNCTION_ARN" ]; then
+    cmd+=" -A $AUTHORIZER_FUNCTION_ARN"
+fi
+
+
 if [ -n "$ASSETLIBRARY_MODE" ]; then
     cmd+=" -m $ASSETLIBRARY_MODE"
 fi

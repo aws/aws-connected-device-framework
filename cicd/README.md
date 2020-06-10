@@ -19,6 +19,9 @@
   -o subnet-0d819cf4a71c37aff,subnet-0975de9740ea67251 \
   -i 205.251.233.178/32 \
   -k dc00f56e-fc96-4c4e-8a78-ce033b7d5c8f \
+  -y s3://cdf-157731826412-us-west-2/cfn/ \
+  -z cfn-apiGateway-noAuth.yaml \
+  -a None \
   -P deanhart-1577 \
   -R us-west-2 
 ```
