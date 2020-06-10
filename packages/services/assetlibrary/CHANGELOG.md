@@ -1,3 +1,10 @@
+# [@cdf/assetlibrary-v3.4.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.4.0...@cdf/assetlibrary-v3.4.1) (2020-06-10)
+
+
+### Bug Fixes
+
+* **assetlibrary:** allow updating neptune cloudformation resources ([de5c76a](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/de5c76a1be1c92b4eb9b40d2c89b812e7a3b7a06))
+
 # [@cdf/assetlibrary-v3.4.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.3.0...@cdf/assetlibrary-v3.4.0) (2020-06-10)
 
 
