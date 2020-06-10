@@ -1,6 +1,6 @@
 {
   "name": "@cdf/certificate-activator",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "CDF Certificate Activator",
   "author": "Dean Hart <deanhart@amazon.com>",
   "config": {
@@ -14,7 +14,6 @@
     "test": "npm run lint && NODE_ENV=local_test NODE_CONFIG_DIR='./src/config' nyc jest",
     "start": "npm run build && NODE_CONFIG=$(cat ${CONFIG_LOCATION}/certificatevendor/${npm_package_config_environment}-config.json) NODE_CONFIG_DIR='./src/config' concurrently \"npm run build -- -w\" \"nodemon dist/lambda_proxy.js\"",
     "prebundle:prepare": "cpy src/config/* dist/config/ && make-dir build && make-dir dist/node_modules",
-    "bundle:package": "cd dist/node_modules && cp -RL ../../node_modules/ . && cd .. && zip -rq ../build/build.zip * && zip -urq ../build/build.zip ../package.json",
     "semantic-release": "npx semantic-release -e semantic-release-monorepo"
   },
   "dependencies": {
@@ -59,7 +58,6 @@
     "jest-mock-extended": "1.0.8",
     "jest-haste-map": "24.9.0",
     "jest-mock": "24.9.0",
-    "jest-mock-extended": "1.0.8",
     "jest-resolve": "24.9.0",
     "make-dir-cli": "2.0.0",
     "nodemon": "2.0.2",
