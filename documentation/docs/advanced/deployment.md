@@ -115,6 +115,7 @@ The provided authentication options are as follows:
 The template snippets are located at `{cdf-core}/infrastructure/cloudformation/snippets/`, which are uploaded to an S3 bucket as part of the CDF core deployment script.  
 
 The name of the specific Cloudformation template snippet to define which authentication mechanism to use, including the _no authentication (cfn-apiGateway-noAuth.yaml)_ template snippet if none is required, must be provided to the deployment script by means of the following 2 parameters:
+
 ```shell script
 MANDATORY ARGUMENTS:
 ====================
