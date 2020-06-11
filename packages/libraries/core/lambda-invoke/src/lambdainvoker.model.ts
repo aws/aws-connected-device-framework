@@ -94,7 +94,15 @@ export class LambdaApiGatewayEventResponse implements ApiGatewayInvokeResponsePa
     constructor(payload: any) {
         this.payload = JSON.parse(payload.toString());
         this.status = this.payload.statusCode;
-        this.body = JSON.parse(this.payload.body);
+        try {
+            this.body = JSON.parse(this.payload.body);
+        } catch (error) {
+            if (error instanceof SyntaxError) {
+                // silently ignore as not all successful requests, such as a 204, return a json body
+            } else {
+                throw error;
+            }
+        }
         this.header = this.payload.headers;
     }
 }
