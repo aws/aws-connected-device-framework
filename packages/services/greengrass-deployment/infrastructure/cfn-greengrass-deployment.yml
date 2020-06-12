@@ -100,7 +100,6 @@ Resources:
     DependsOn:
       - RESTLambdaFunction
 
-#  TODO: reference the table correctly from the gg-provisioning service
   LambdaExecutionRole:
     Type: AWS::IAM::Role
     Properties:
@@ -363,6 +362,24 @@ Resources:
     Properties:
       MessageRetentionPeriod: 604800
       VisibilityTimeout: 960
+
+  SSMStateChangeEventsQueuePolicy:
+    Type: AWS::SQS::QueuePolicy
+    Properties:
+      Queues:
+        - !Sub '${SSMStateChangeEventsQueue}'
+      PolicyDocument:
+        Statement:
+          - Action:
+              - "SQS:SendMessage"
+            Effect: "Allow"
+            Resource: !GetAtt SSMStateChangeEventsQueue.Arn
+            Principal:
+              Service:
+                - "events.amazonaws.com"
+            Condition:
+              ArnEquals:
+                aws:SourceArn: !GetAtt SSMAssociationStateChangeRule.Arn
 
 Outputs:
   RestApiFunctionName:
