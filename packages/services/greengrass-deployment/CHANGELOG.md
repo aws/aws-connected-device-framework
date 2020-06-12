@@ -1,3 +1,10 @@
+# [@cdf/greengrass-deployment-v3.0.3](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/greengrass-deployment-v3.0.2...@cdf/greengrass-deployment-v3.0.3) (2020-06-12)
+
+
+### Bug Fixes
+
+* greengrass sqs queue policy ([67c3553](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/67c3553efaf322a052244958720fc5918d25bc56))
+
 # [@cdf/greengrass-deployment-v3.0.2](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/greengrass-deployment-v3.0.1...@cdf/greengrass-deployment-v3.0.2) (2020-06-10)
 
 
