@@ -10,50 +10,54 @@ nav:
     - Advanced: advanced/index.md
   - Projects:
     - Asset Library:
-      - 'Asset Library Overview': projects/assetlibrary/overview.md
-      - 'Asset Library Modes': projects/assetlibrary/modes.md
+      - 'Overview': projects/assetlibrary/overview.md
+      - 'Modes': projects/assetlibrary/modes.md
       - 'Templates (User)': projects/assetlibrary/templates-user.md
       - 'Templates (Developer)': projects/assetlibrary/templates-developer.md
-      - 'Asset Library Events': projects/assetlibrary/events.md
-      - 'Asset Library Swagger': projects/assetlibrary/assetlibrary-swagger.md
+      - 'Events': projects/assetlibrary/events.md
+      - 'Swagger': projects/assetlibrary/assetlibrary-swagger.md
       - 'Profiles': projects/assetlibrary/profiles.md
       - 'Fine-Grained Access Control': projects/assetlibrary/fine-grained-access-control.md
     - Asset Library History:
-      - 'Asset Library History Overview': projects/assetlibrary-history/overview.md
-      - 'Asset Library History Swagger': projects/assetlibrary-history/assetlibraryhistory-swagger.md
+      - 'Overview': projects/assetlibrary-history/overview.md
+      - 'Swagger': projects/assetlibrary-history/assetlibraryhistory-swagger.md
     - Bulk Certs:
-      - 'Bulk Certs Overview' : projects/bulkcerts/overview.md 
-      - 'Bulk Certs Swagger': projects/bulkcerts/bulkcerts-swagger.md
+      - 'Overview' : projects/bulkcerts/overview.md
+      - 'Swagger': projects/bulkcerts/bulkcerts-swagger.md
     - Certificate Activator:
-      - 'Certificate Activator Overview' : projects/certificateactivator/overview.md
+      - 'Overview' : projects/certificateactivator/overview.md
     - Certificate Vendor:
-      - 'Certificate Vendor Overview' : projects/certificatevendor/overview.md
+      - 'Overview' : projects/certificatevendor/overview.md
     - Commands:
-      - 'Commands Overview' : projects/commands/overview.md  
-      - 'Commands Pre-signed Urls (User)' : projects/commands/presigned-urls-user.md  
-      - 'Commands Pre-signed Urls (Developer)' : projects/commands/presigned-urls-developer.md  
-      - 'Commands Ephemeral Groups' : projects/commands/ephemeral-groups.md
-      - 'Commands Swagger': projects/commands/commands-swagger.md
+      - 'Overview' : projects/commands/overview.md
+      - 'Pre-signed Urls (User)' : projects/commands/presigned-urls-user.md
+      - 'Pre-signed Urls (Developer)' : projects/commands/presigned-urls-developer.md
+      - 'Ephemeral Groups' : projects/commands/ephemeral-groups.md
+      - 'Swagger': projects/commands/commands-swagger.md
     - Custom Device Authorizer:
-      - 'Custom Device Authorizer Overview' : projects/auth-devicecert/overview.md
+      - 'Overview' : projects/auth-devicecert/overview.md
     - Device Monitoring:
-      - 'Device Monitoring Overview' : projects/devicemonitoring/overview.md
+      - 'Overview' : projects/devicemonitoring/overview.md
     - Facade:
-        - 'Facade Over': projects/facade/overview.md
-        - 'CDF Auto Facade': projects/facade/facade-auto.md
+        - 'CDF Demo Overview': projects/facade/overview.md
+        - 'CDF Auto Facade (CMS) Overview': projects/facade/facade-auto.md
     - Notifications:
-      - 'Notifications Overiew' : projects/notifications/overview.md
-      - 'Notifications Walkthrough' : projects/notifications/walkthrough.md
-      - 'Notifications Design' : projects/notifications/design.md
-      - 'Notifications Swagger': projects/notifications/events-processor-swagger.md
+      - 'Overiew' : projects/notifications/overview.md
+      - 'Walkthrough' : projects/notifications/walkthrough.md
+      - 'Design' : projects/notifications/design.md
+      - 'Swagger': projects/notifications/events-processor-swagger.md
     - Provisioning:
-      - 'Provisioning Overview': projects/provisioning/overview.md
-      - 'Provisioning Templates': projects/provisioning/provisioning-templates.md
-      - 'Provisioning Swagger': projects/provisioning/provisioning-swagger.md
+      - Overview: projects/provisioning/overview.md
+      - Templates: projects/provisioning/provisioning-templates.md
+      - Swagger: projects/provisioning/provisioning-swagger.md
+    - Greengrass Provisioning:
+      - Overview: projects/greengrass-provisioning/overview.md
+      - Design: projects/greengrass-provisioning/design.md
+      - Swagger: projects/greengrass-provisioning/greengrass-provisioning-swagger.md
     - Request Queue:
-      - 'Request Queue Overview' : projects/request-queue/overview.md
+      - Overview : projects/request-queue/overview.md
     - Reusable Libraries:
-      - 'Libraries Overview' : projects/libraries/README.md
+      - Overview : projects/libraries/README.md
   - User:
     - Postman: postman/index.md
   - Development:

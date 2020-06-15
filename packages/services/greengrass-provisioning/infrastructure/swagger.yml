@@ -2,28 +2,28 @@ openapi: 3.0.0
 info:
   title: "Connected Device Framework: Greengrass Provisioning"
   description: >
-    TODO
+    Allows for  bulk provisioning of Greengrass Group's and their related resource definitions, and bulk updating of Greengrass Group's.
+
   version: 1.0.0
-  
+
 tags:
   - name: Templates
     description: >
-      TODO
+      An existing Greengrass group may be marked as a template. The template may then be used to create new Greengrass group instances. The template's connector, lambda, logger, resource and non-device specific resource definitions are linked to the new Greengrass groups.  Templates are referenced by a human readable name.
 
   - name: Groups
     description: >
-      TODO
-      
+      Greengrass groups are created for a pre-defined template.  Greengrass groups are identified by their human readable name.
+
   - name: Devices
     description: >
-     TODO
-     
+      Devices, along with device specific subscriptions, may be added to Greengrass groups managed by this service.  As these are added in bulk, an asynchronous task is created which will create the requested devices.
+
   - name: Deployments
     description: >
-      TODO
+      Once a Greengrass group has been configured, a deployment may be executed.
 
 
-      
 paths:
   "/templates":
     get:
@@ -31,11 +31,6 @@ paths:
         - Templates
       summary: List all available templates.
       operationId: listTemplates
-      parameters:
-        - name: status
-          in: query
-          description: Template status (note not yet implemented)
-          deprecated: true
       responses:
         "200":
           description: OK
@@ -52,10 +47,26 @@ paths:
     put:
       tags:
         - Templates
-      summary: Create a new template.
+      summary: Create a new template, or update an existing template.
       description: >
-        Defines a new template by marking a pre-existing Greengrass group (iddentified by its group id) as a template.
+        Defines a new template by marking a pre-existing Greengrass group (identified by its group id) as a template.  For existing templates, updates the specific Greengrass group version ID.
+
+        If no Greengrass group version ID is provided when creating a template, the latest version of ID of the Greengrass group is automatically assigned.
+
       operationId: saveTemplate
+      requestBody:
+        content:
+          application/vnd.aws-cdf-v1.0+json:
+            schema:
+              $ref: '#/components/schemas/Template'
+            examples:
+              NewGroupUsingLatestVersion:
+                value:
+                  groupId: c71bf09a-e0d7-4bb9-8a45-cdb9933e8d87
+              UpdatingExistingGroupToSpecificVersion:
+                value:
+                  groupId: c71bf09a-e0d7-4bb9-8a45-cdb9933e8d87
+                  groupVersionId: 6d9e817d-050e-4ded-8301-e63fdbe02f78
       responses:
         "201":
           description: Created
@@ -63,14 +74,10 @@ paths:
             application/vnd.aws-cdf-v1.0+json:
               schema:
                 $ref: "#/components/schemas/Template"
-              examples:
-                NewTemplate:
-                  value:
-                    groupId: c71bf09a-e0d7-4bb9-8a45-cdb9933e8d87
         "400":
           $ref: "#/components/responses/BadRequest"
         "409":
-            $ref: "#/components/responses/Conflict"
+          $ref: "#/components/responses/Conflict"
     get:
       tags:
         - Templates
@@ -87,17 +94,31 @@ paths:
                 $ref: "#/components/schemas/Template"
         "404":
           $ref: "#/components/responses/NotFound"
- 
+
   "/groups":
     post:
       tags:
         - Groups
-      summary: Create new Greengrass groups.
+      summary: Create new Greengrass groups from a template.
       description: >
         Create 1 or more new Greengrass groups based on a pre-defined template.
 
-
       operationId: createGroups
+      requestBody:
+        content:
+          application/vnd.aws-cdf-v1.0+json:
+            schema:
+              $ref: '#/components/schemas/GroupList'
+            examples:
+              NewGroups:
+                value:
+                  groups:
+                    - name: my-group-one
+                      templateName: my-template
+                    - name: my-group-two
+                      templateName: my-template
+                    - name: my-group-three
+                      templateName: my-other-template
       responses:
         "200":
           description: OK
@@ -106,19 +127,13 @@ paths:
               schema:
                 $ref: "#/components/schemas/GroupList"
 
-  "/groups/{name}":
+  "/groups/{groupName}":
     parameters:
-      - name: name
-        in: path
-        description: Name of Greengrass group
-        required: true
-        schema:
-          type: string
+      - $ref: '#/components/parameters/groupName'
     get:
       tags:
         - Groups
-      summary: Find a specific Greengrass group
-      description: TODO
+      summary: Find a specific Greengrass group by its name.
       operationId: getGroupByName
       responses:
         "200":
@@ -129,49 +144,33 @@ paths:
                 $ref: "#/components/schemas/Group"
         "404":
           $ref: "#/components/responses/NotFound"
-          
- 
-  "/groups/{name}/deviceTasks":
+
+
+  "/groups/{groupName}/deviceTasks":
     parameters:
-      - name: name
-        in: path
-        description: Name of Greengrass group
-        required: true
-        schema:
-          type: string
+      - $ref: '#/components/parameters/groupName'
     post:
       tags:
         - Devices
-      summary: Associate devices with existing Greengrass groups
-      description: TODO
+      summary: Associate devices with existing Greengrass groups.
+      description: Creates an asynchyonous task to create (if not already existing) and associate devices with existing Greengrass groups.  Optionally, any new device subscriptions may be passed with this call too.  The returned `taskid` may be used to look up the task status.
       operationId: associateDevicesWithGroup
       responses:
-        "200":
-          description: OK
+        "202":
+          description: Accepted
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/DeviceTaskSumary"
+                $ref: "#/components/schemas/DeviceTaskSummary"
 
-  "/groups/{name}/deviceTasks/{taskId}":
+  "/groups/{groupName}/deviceTasks/{deviceTaskId}":
     parameters:
-      - name: name
-        in: path
-        description: Name of Greengrass group
-        required: true
-        schema:
-          type: string
-      - name: taskId
-        in: path
-        description: Device task Id
-        required: true
-        schema:
-          type: string
+      - $ref: '#/components/parameters/groupName'
+      - $ref: '#/components/parameters/deviceTaskId'
     get:
       tags:
         - Devices
-      summary: Find a device task summary
-      description: TODO
+      summary: Retrieve a device task summary.
       operationId: getDeviceAssociationTask
       responses:
         "200":
@@ -179,17 +178,35 @@ paths:
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/DeviceTaskSumary"
+                $ref: "#/components/schemas/DeviceTaskSummary"
         "404":
           $ref: "#/components/responses/NotFound"
-          
-          
+
+  "/devices/{deviceId}":
+    parameters:
+      - $ref: '#/components/parameters/deviceId'
+    get:
+      tags:
+        - Devices
+      summary: Retrieves details about of specific device, including any associated artifacts.
+      operationId: getDevice
+      responses:
+        "200":
+          description: OK
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: "#/components/schemas/DeviceItem"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+
   "/deploymentTasks":
     post:
       tags:
         - Deployments
-      summary: Deploy a set of groups (and associated devices)
-      description: TODO
+      summary: Deploy a set of pre-configured Greengrass groups.
+      description: Create an asynchronous deployment task which is responsible for deploying provided Greengrass groups.
       operationId: deployGroups
       responses:
         "202":
@@ -198,7 +215,25 @@ paths:
             application/vnd.aws-cdf-v1.0+json:
               schema:
                 $ref: "#/components/schemas/DeploymentTaskSummary"
-          
+
+  "/deploymentTasks/{deploymentTaskId}":
+    parameters:
+      - $ref: '#/components/parameters/deploymentTaskId'
+    get:
+      tags:
+        - Deployments
+      summary: Retrieves details of a specific deployment task.
+      operationId: getDeplymentTask
+      responses:
+        "200":
+          description: OK
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: "#/components/schemas/DeploymentTaskSummary"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
 components:
 
   parameters:
@@ -210,30 +245,63 @@ components:
       required: true
       schema:
         type: string
-  
+
+    groupName:
+      name: groupName
+      in: path
+      description: Name of Greengrass group
+      required: true
+      schema:
+        type: string
+
+    deviceTaskId:
+      name: deviceTaskId
+      in: path
+      description: Device task Id
+      required: true
+      schema:
+        type: string
+
+    deviceId:
+      name: deviceId
+      in: path
+      description: Device ID
+      required: true
+      schema:
+        type: string
+
+    deploymentTaskId:
+      name: deploymentTaskId
+      in: path
+      description: Deployment task ID
+      required: true
+      schema:
+        type: string
+
     offset:
       name: offset
       in: query
       schema:
         type: integer
         minimum: 0
-        
+
     count:
       name: offset
       in: query
       schema:
         type: integer
         minimum: 0
-        
+
+
   responses:
-  
+
     Created:
       description: Created successfully
       headers:
         location:
           schema:
             type: string
-            
+
     BadRequest:
       description: Invalid input
       content:
@@ -255,18 +323,8 @@ components:
           schema:
             $ref: "#/components/schemas/Error"
 
-            
-  requestBodies:
-  
-    TemplateDefinition:
-      content:
-        application/vnd.aws-cdf-v1.0+json:
-          schema:
-            $ref: "#/components/schemas/TemplateDefinition"
-      required: true
-      
   schemas:
-  
+
     Template:
       type: object
       properties:
@@ -275,7 +333,7 @@ components:
           description: Name of template.
         versionNo:
           type: number
-          description: Template version number.
+          description: Auto-incrementing template version number.
           readOnly: true
         groupId:
           type: string
@@ -283,7 +341,6 @@ components:
         groupVersionId:
           type: string
           description: The version ID of the Greengrass Group being used as a template.
-          readOnly: true
         createdAt:
           type: string
           format: 'date-time'
@@ -297,6 +354,14 @@ components:
         enabled:
           type: boolean
           description: Whether the template is enabled for use.
+      example:
+        name: MyTemplate
+        versionNo: 1
+        groupId: c71bf09a-e0d7-4bb9-8a45-cdb9933e8d87
+        groupVersionId: 6d9e817d-050e-4ded-8301-e63fdbe02f78
+        createdAt: 2020-03-16T21:42:53.594Z
+        updatedAt: 2020-03-16T21:42:53.594Z
+        enabled: true
 
     TemplateList:
       properties:
@@ -356,6 +421,253 @@ components:
           format: 'date-time'
           description: Date/time the group was updated.
           readOnly: true
+      example:
+        name: my-greengrass-group
+        templateName: my-greengrass-template
+        id: 64de8dbc-1335-4638-bb8a-3ac99a03ca99
+        versionId: 39efd05b-8709-4e1f-ba42-dcb6b40d4163
+        arn: arn:aws:greengrass:us-west-2:123456789012:/greengrass/groups/64de8dbc-1335-4638-bb8a-3ac99a03ca99
+        templateVersionNo: 1
+        versionNo: 1
+        createdAt: '2020-06-08T19:35:54.327Z'
+        updatedAt: '2020-06-08T19:35:54.327Z'
+        deployed: false
+
+    GreengrassSubscriptionItem:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique ID
+        source:
+          type: string
+          description: The source of the subscription. Can be a thing ARN, the ARN of a Lambda function alias (recommended) or version, a connector ARN, 'cloud' (which represents AWS IoT), or 'GGShadowService'. If you specify a Lambda function, this ARN should match the ARN used to add the function to the Greengrass group.
+        subject:
+          type: string
+          description: The MQTT topic used to route the message.
+        target:
+          type: string
+          description: Where the message is sent. Can be a thing ARN, the ARN of a Lambda function alias (recommended) or version, a connector ARN, 'cloud' (which represents AWS IoT), or 'GGShadowService'. If you specify a Lambda function, this ARN should match the ARN used to add the function to the Greengrass group.
+
+    DeviceItem:
+      type: object
+      properties:
+        thingName:
+          type: string
+          description: Thing name.
+        type:
+          type: string
+          enum: [core, device]
+          description: Greengrass device type.
+        provisioningTemplate:
+          type: string
+          description: Name of provisioning template to use to create the device.
+        provisioningParameters:
+          type: object
+          additionalProperties:
+            type: string
+          description: Key value map of parameters required by the provisioning template.
+        cdfProvisioningParameters:
+          type: object
+          description: Key value map of parameters required by the provisioning template.
+          properties:
+            caId:
+              type: string
+              description: CA ID to use (if a certificate has been requested to be created by CDF on behalf of the device)
+            certInfo:
+              type: object
+              description: Certificate attributes (if a certificate has been requested to be created by CDF on behalf of the device)
+              properties:
+                commonName:
+                  type: string
+                organization:
+                  type: string
+                organizationalUnit:
+                  type: string
+                locality:
+                  type: string
+                stateName:
+                  type: string
+                country:
+                  type: string
+                emailAddress:
+                  type: string
+        syncShadow:
+          type: boolean
+          description: If true, the core's local shadow is synced with the cloud automatically.
+        artifacts:
+          type: object
+          description: Any artifacts, such as certificates and keys, that may hae been created by the device provisioning process.
+          additionalProperties:
+            type: object
+            properties:
+              bucket:
+                type: string
+                description: Bucket where artifact is stored.
+                readOnly: true
+              key:
+                type: string
+                description: Key where artifact is stored.
+                readOnly: true
+              createdAt:
+                type: string
+                format: 'date-time'
+                description: Date/time the artifact was created.
+                readOnly: true
+        subscriptions:
+          type: array
+          items:
+            $ref: '#/components/schemas/GreengrassSubscriptionItem'
+          description: Any subscriptions for this device created by this service.
+        deployed:
+          type: boolean
+          description: Whether the device has been deployed or not.
+          readOnly: true
+        createdAt:
+          type: string
+          format: 'date-time'
+          description: Date/time the device was created.
+          readOnly: true
+        updatedAt:
+          type: string
+          format: 'date-time'
+          description: Date/time the device was updated.
+          readOnly: true
+      example:
+        thingName: my-device
+        type: device
+        provisioningTemplate: my-template
+        provisioningParameters:
+          ThingName: my-device
+        cdfProvisioningParameters:
+          caId: 3d2ecfdb0eba2898626291e7e18a37cee791dbc81940a39e8ce922f9ff2feb32
+          certInfo:
+            country: US
+        syncShadow: true
+        artifacts:
+          certificate:
+            bucket: my-bucket
+            key: certs/c123
+            createdAt: '2020-06-08T19:35:54.327Z'
+        subscriptions:
+          - id: sub-1
+            source: cloud
+            subject: dt/us/my-device/#
+            target: arn:aws:iot:us-west-2:123456789012:thing/my-device
+            deployed: true
+            createdAt: '2020-06-08T19:35:54.327Z'
+            updatedAt: '2020-06-08T19:35:54.327Z'
+        deployed: true
+        createdAt: '2020-06-08T19:35:54.327Z'
+        updatedAt: '2020-06-08T19:35:54.327Z'
+
+    DeviceTaskItem:
+      allOf:
+        - $ref: "#/components/schemas/DeviceItem"
+        - type: object
+          properties:
+            status:
+              type: string
+              enum: [Waiting, InProgress, Success, Failure]
+              description: Task status.
+              readOnly: true
+            statusMessage:
+              type: string
+              description: Descriptive message regarding the status, such as an error message.
+              readOnly: true
+      example:
+        thingName: my-device
+        type: device
+        provisioningTemplate: my-template
+        provisioningParameters:
+          ThingName: my-device
+        cdfProvisioningParameters:
+          caId: 3d2ecfdb0eba2898626291e7e18a37cee791dbc81940a39e8ce922f9ff2feb32
+          certInfo:
+            country: US
+        syncShadow: true
+        artifacts:
+          certificate:
+            bucket: my-bucket
+            key: certs/c123
+            createdAt: '2020-06-08T19:35:54.327Z'
+        subscriptions:
+          - id: sub-1
+            source: cloud
+            subject: dt/us/my-device/#
+            target: arn:aws:iot:us-west-2:123456789012:thing/my-device
+            deployed: true
+            createdAt: '2020-06-08T19:35:54.327Z'
+            updatedAt: '2020-06-08T19:35:54.327Z'
+        deployed: true
+        createdAt: '2020-06-08T19:35:54.327Z'
+        updatedAt: '2020-06-08T19:35:54.327Z'
+        status: Success
+
+    DeviceTaskSummary:
+      type: object
+      properties:
+        taskId:
+          type: string
+          description: Unique ID of the task.
+        groupName:
+          type: string
+          description: Name of Greengrass group the task was created for.
+        status:
+          type: string
+          enum: [Waiting, InProgress, Success, Failure]
+          description: Task status.
+          readOnly: true
+        statusMessage:
+          type: string
+          description: Descriptive message regarding the status, such as an error message.
+          readOnly: true
+        devices:
+          type: array
+          items:
+            $ref: '#/components/schemas/DeviceTaskItem'
+          description: Devices managed via this task.
+          readOnly: true
+        createdAt:
+          type: string
+          format: 'date-time'
+          description: Date/time the group was created.
+          readOnly: true
+        updatedAt:
+          type: string
+          format: 'date-time'
+          description: Date/time the group was updated.
+          readOnly: true
+      example:
+        taskId: hshjd7huhu3jid
+        groupName: my-greengrass-group
+        status: InProgress
+        devices:
+          - thingName: my-device
+            type: device
+            provisioningTemplate: my-template
+            provisioningParameters:
+              ThingName: my-device
+            cdfProvisioningParameters:
+              caId: 3d2ecfdb0eba2898626291e7e18a37cee791dbc81940a39e8ce922f9ff2feb32
+              certInfo:
+                country: US
+            syncShadow: true
+            artifacts:
+              certificate:
+                bucket: my-bucket
+                key: certs/c123
+                createdAt: '2020-06-08T19:35:54.327Z'
+            subscriptions:
+              - id: sub-1
+                source: cloud
+                subject: dt/us/my-device/#
+                target: arn:aws:iot:us-west-2:123456789012:thing/my-device
+                deployed: true
+                createdAt: '2020-06-08T19:35:54.327Z'
+                updatedAt: '2020-06-08T19:35:54.327Z'
+            createdAt: '2020-06-08T19:35:54.327Z'
+            updatedAt: '2020-06-08T19:35:54.327Z'
 
     GroupList:
       properties:
@@ -371,7 +683,170 @@ components:
               type: integer
             count:
               type: integer
-           
+      example:
+        groups:
+          - name: my-greengrass-group-1
+            templateName: my-greengrass-template
+            id: 64de8dbc-1335-4638-bb8a-3ac99a03ca99
+            versionId: 39efd05b-8709-4e1f-ba42-dcb6b40d4163
+            arn: arn:aws:greengrass:us-west-2:123456789012:/greengrass/groups/64de8dbc-1335-4638-bb8a-3ac99a03ca99
+            templateVersionNo: 1
+            versionNo: 1
+            createdAt: '2020-06-08T19:35:54.327Z'
+            updatedAt: '2020-06-08T19:35:54.327Z'
+            deployed: false
+          - name: my-greengrass-group-2
+            templateName: my-greengrass-template
+            id: 81506352-79cc-4cd4-8145-3802217815d7
+            versionId: 6b63a996-ceef-4b4d-99b7-197d05172673
+            arn: arn:aws:greengrass:us-west-2:123456789012:/greengrass/groups/81506352-79cc-4cd4-8145-3802217815d7
+            templateVersionNo: 1
+            versionNo: 1
+            createdAt: '2020-06-08T19:35:54.327Z'
+            updatedAt: '2020-06-08T19:35:54.327Z'
+            deployed: false
+
+
+    DeviceDeploymentItem:
+      type: object
+      properties:
+        thingName:
+          type: string
+          description: Thing name.
+        deploymentStatus:
+          type: string
+          description: Statius of device deployment. Note this is managed by this service's sibling Greegrass Device provisioning service.
+        statusMessage:
+          type: string
+          description: Descriptive message regarding the status, such as an error message.
+          readOnly: true
+        createdAt:
+          type: string
+          format: 'date-time'
+          description: Date/time the device was created.
+          readOnly: true
+        updatedAt:
+          type: string
+          format: 'date-time'
+          description: Date/time the device was updated.
+          readOnly: true
+
+    DeploymentItem:
+      type: object
+      properties:
+        groupName:
+          type: string
+          description: Greengrass group name.
+        groupId:
+          type: string
+          description: Greengrass group ID.
+        groupVersionId:
+          type: string
+          description: Greengrass group version ID.
+        bulkDeploymentId:
+          type: string
+          description: Associated Greengrass bulk deployment ID.
+          readOnly: true
+        deploymentId:
+          type: string
+          description: Associated individual Greengrass group deployment ID.
+          readOnly: true
+        deploymentType:
+          type: string
+          enum: [NewDeployment,Redeployment,ResetDeployment,ForceResetDeployment]
+          description: Type of Greengrass deployment to perform.
+        devices:
+          type: array
+          items:
+            $ref: '#/components/schemas/DeviceDeploymentItem'
+          description: Devices deployed as part of this deployment.
+        deploymentStatus:
+          type: string
+          enum: [Waiting,Created,Building,InProgress,Success,Failure]
+          description: The deployment task status.
+          readOnly: true
+        statusMessage:
+          type: string
+          description: Descriptive message regarding the status, such as an error message.
+          readOnly: true
+        createdAt:
+          type: string
+          format: 'date-time'
+          description: Date/time the deployment was created.
+          readOnly: true
+        updatedAt:
+          type: string
+          format: 'date-time'
+          description: Date/time the deployment was updated.
+          readOnly: true
+      example:
+        groupName: my-greengrass-group
+        groupId: f4571cb4-5865-4c2f-b58e-402525197a85
+        groupVersionId: 6a0a194f-1c8e-418e-9b00-48031e1a7fe2
+        bulkDeploymentId: ea66d48d-ab11-4330-9624-99797e5dfc6f
+        deploymentId: ebc83cfc-922f-4ac9-af01-269629d4e8f8
+        deploymentType: NewDeployment
+        deploymentStatus: Success
+        createdAt: '2020-06-08T19:35:54.327Z'
+        updatedAt: '2020-06-08T19:35:54.327Z'
+
+    DeploymentTaskSummary:
+      type: object
+      properties:
+        taskId:
+          type: string
+          description: Unique ID of the task.
+        bulkDeploymentId:
+          type: string
+          description: The associated Greengrass bulk deployment ID.
+        bulkDeploymentStatus:
+          type: string
+          enum: [Waiting,Created,Initializing,Running,Completed,Stopping,Stopped,Failed]
+          description: The associated Greengrass bulk deployment task status.
+          readOnly: true
+        taskStatus:
+          type: string
+          enum: [Waiting, InProgress, Success, Failure]
+          description: The deployment task status.
+          readOnly: true
+        statusMessage:
+          type: string
+          description: Descriptive message regarding the status, such as an error message.
+          readOnly: true
+        deployments:
+          type: array
+          items:
+            $ref: '#/components/schemas/DeploymentItem'
+          description: Deployments managed via this task.
+          readOnly: true
+        createdAt:
+          type: string
+          format: 'date-time'
+          description: Date/time the group was created.
+          readOnly: true
+        updatedAt:
+          type: string
+          format: 'date-time'
+          description: Date/time the group was updated.
+          readOnly: true
+      example:
+        taskId: hshjd7huhu3jid
+        bulkDeploymentId: 9910c988-9d9a-4b45-b950-23c877dddb11
+        bulkDeploymentStatus: Completed
+        taskStatus: Success
+        deployments:
+          - groupName: my-greengrass-group
+            groupId: f4571cb4-5865-4c2f-b58e-402525197a85
+            groupVersionId: 6a0a194f-1c8e-418e-9b00-48031e1a7fe2
+            bulkDeploymentId: ea66d48d-ab11-4330-9624-99797e5dfc6f
+            deploymentId: ebc83cfc-922f-4ac9-af01-269629d4e8f8
+            deploymentType: NewDeployment
+            deploymentStatus: Success
+            createdAt: '2020-06-08T19:35:54.327Z'
+            updatedAt: '2020-06-08T19:35:54.327Z'
+        createdAt: '2020-06-08T19:35:54.327Z'
+        updatedAt: '2020-06-08T19:35:54.327Z'
+
     Error:
       type: object
       properties:

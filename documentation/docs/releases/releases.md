@@ -24,7 +24,10 @@ package | version
 @cdf/provisioning | 3.3.1
 @cdf/request-queue | 3.3.1
 
-Notes of interest:
+*Notes of interest:*
+
+As this release includes quite a few changes that need will need merging into your own installation, unless you need some of this new functionality right now, the recommendation is for you to not migrate to this version.  The reason being, there is an upcoming release with major changes to the deployment system, therefore hold off if you can.
+
 Includes breaking changes to the deploy process:
 - Prior to this version, security ingress/egress rules between Neptune and Asset Library were created via the AWS CLI. From this version on they are managed via CloudFormation.  Before starting an update you must delete these previously created ingress/egress rules manually (and potentially any associated network interfaces) using the following steps:
     - Load the `cdf-assetlibrary-${ENVIRONMENT}` Cloudformation stack, and within the _Resources_ tab click on the _Physical ID_ of _Logical ID_ `AssetLibrarySecurityGroup`
@@ -34,3 +37,4 @@ Includes breaking changes to the deploy process:
 - Due to final lambda bundle size constraints, dependency declaration for CDF libraries have changed to use peer dependencies.  This means that all declared dependencies at the CDF library level now must be explicitly declared by the consuming service, such as a facade service.  
     - Refer to the differences in `cdf-facade-demo/package.json` for details of how to update your own facade dependencies
     - Refer to the differences in `cdf-infrastructure-demo/deploy.bash` for details of how to update your own deploy script with the updated build process
+- This release introduced APIGW authentication which resulted in almost all deploy scripts changing.

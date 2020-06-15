@@ -1,0 +1,47 @@
+title Create Greengrass Groups
+
+participant "User" as u
+participant "<<CDF>>\nGreengrass\nProvisioning" as cdfgp
+participant "<<AWS>>\nGreengrass" as gg
+participant "<<AWS>>\nDynamoDB" as ddb
+
+
+u -> cdfgp : POST /groups\n{group-name,template-id}[]
+activate cdfgp
+
+loop for each template
+
+    note right of cdfgp : check template exists
+    cdfgp -> ddb : get
+    activate ddb
+    ddb --> cdfgp : template
+    deactivate ddb
+end
+
+alt all templates exist
+
+    loop for each template
+        note right of cdfgp
+            new group version to be associated
+            with the definition versions from the template
+        end note
+        cdfgp -> gg : get-group-version
+        gg --> cdfgp : group-version
+    end
+
+    loop for each group
+
+        cdfgp -> gg : create-group-version
+        activate gg
+        gg --> cdfgp : group-version-id
+        deactivate gg
+
+        cdfgp -> ddb : save group
+
+    end
+
+else all templates do not exist
+   cdfgp --> u : Bad Request
+end
+
+deactivate cdfgp

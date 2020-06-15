@@ -1,0 +1,90 @@
+title Create New Cores/Aware-Devices for a Greengrass Group
+
+participant "User" as u
+participant "<<CDF>>\nGreengrass Provisioning" as cdfgd
+participant "<<AWS>>\nGreengrass" as gg
+participant "<<AWS>>\nDynamoDB" as ddb
+participant "<<AWS>>\nSQS:Devices" as sqs1
+participant "<<CDF>>\nProvisioning" as cdfp
+participant "<<AWS>>\nS3" as s3
+
+
+note right of u:
+    Step 1:
+    Submit request to register devices.
+    Returns asynchronouosly.
+end note
+
+u -> cdfgd : POST /groups/<group-name>/deviceTasks\n{deviceId,core/device,provisioning-template,\nparameters,subscriptions}[]
+activate cdfgd
+
+cdfgd->gg: get-group
+gg-->cdfgd: group
+
+cdfgd->ddb: save task info
+
+cdfgd -> sqs1 : [async] send-message
+activate sqs1
+cdfgd --> u : Accepted (deployment-id)
+deactivate cdfgd
+
+note right of sqs1:
+    Step 2:
+    Deployment requests processed async from
+    a queue to allow throttling of concurrent
+    operations (for downstream API TPS limits),
+    and extended execution times above APIGW.
+end note
+
+
+
+sqs1 -> cdfgd : invoked
+activate cdfgd
+
+
+
+cdfgd -> cdfgd : associateDevicesWithGroup
+activate cdfgd
+
+cdfgd -> gg : get-group
+gg --> cdfgd : group
+
+cdfgd -> gg : get-group-version
+gg --> cdfgd : group-version
+
+cdfgd -> gg : get-core-definition
+gg --> cdfgd : core-definition
+
+cdfgd -> gg : get-device-definition
+gg --> cdfgd : device-definition
+
+
+loop devices to register
+    cdfgd -> cdfp : GET /things\deviceId
+    cdfp --> cdfgd : device
+
+    opt device exists
+        alt device not already associated
+            cdfgd->cdfgd: associate
+        end
+    else device not exists
+        cdfgd -> cdfp : POST /things\n{deviceId,provisioning-template,parameters}
+        cdfp  --> cdfgd : thing arn, certs
+        cdfgd -> s3 : put certs
+
+        cdfgd->cdfgd: associate
+    end
+end
+
+opt new device(s) included a core
+    cdfgd -> gg : create-core-definition-version
+end
+
+opt new device(s) included gg-aware devices
+    cdfgd -> gg : create-device-definition-version
+end
+
+cdfgd -> gg : create-group-version
+
+
+cdfgd -> ddb : update status
