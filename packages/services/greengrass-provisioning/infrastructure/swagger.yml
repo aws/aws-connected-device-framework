@@ -19,6 +19,10 @@ tags:
     description: >
       Devices, along with device specific subscriptions, may be added to Greengrass groups managed by this service.  As these are added in bulk, an asynchronous task is created which will create the requested devices.
 
+  - name: Subscriptions
+    description: >
+      Subscriptions may be added/removed from Greengrass groups independant of device creation.
+
   - name: Deployments
     description: >
       Once a Greengrass group has been configured, a deployment may be executed.
@@ -155,6 +159,25 @@ paths:
       summary: Associate devices with existing Greengrass groups.
       description: Creates an asynchyonous task to create (if not already existing) and associate devices with existing Greengrass groups.  Optionally, any new device subscriptions may be passed with this call too.  The returned `taskid` may be used to look up the task status.
       operationId: associateDevicesWithGroup
+      requestBody:
+        content:
+          application/vnd.aws-cdf-v1.0+json:
+            schema:
+              $ref: '#/components/schemas/NewDeviceList'
+            examples:
+              NewDevices:
+                value:
+                  devices:
+                    - thingName: my-group-one-core
+                      type: core
+                      provisioningTemplate: greengrass_core
+                      provisioningParameters:
+                        ThingName: my-group-one-core
+                    - thingName: my-group-one-device
+                      type: device
+                      provisioningTemplate: greengrass_aware
+                      provisioningParameters:
+                        ThingName: my-group-one-device
       responses:
         "202":
           description: Accepted
@@ -196,10 +219,53 @@ paths:
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/DeviceItem"
+                $ref: "#/components/schemas/Device"
         "404":
           $ref: "#/components/responses/NotFound"
 
+
+  "/groups/{groupName}/subscriptions":
+    parameters:
+      - $ref: '#/components/parameters/groupName'
+    post:
+      tags:
+        - Subscriptions
+      summary: Create new Greengrass subscriptions.
+      operationId: addSubscriptions
+      requestBody:
+        content:
+          application/vnd.aws-cdf-v1.0+json:
+            schema:
+              $ref: '#/components/schemas/NewGreengrassSubscriptionList'
+            examples:
+              NewSubscriptions:
+                value:
+                  subscriptions:
+                    - id: sub-1
+                      source: cloud
+                      subject: dt/us/my-device-1/#
+                      target: arn:aws:iot:us-west-2:123456789012:thing/my-device-1
+                    - id: sub-2
+                      source: cloud
+                      subject: dt/us/my-device-2/#
+                      target: arn:aws:iot:us-west-2:123456789012:thing/my-device-2
+      responses:
+        "201":
+          $ref: "#/components/responses/Created"
+
+
+  "/groups/{groupName}/subscriptions/{subscriptionId}":
+    parameters:
+      - $ref: '#/components/parameters/groupName'
+      - $ref: '#/components/parameters/subscriptionId'
+    delete:
+      tags:
+        - Subscriptions
+      summary: Removes an existing Greengrass subscription.
+      operationId: deleteSubscription
+      responses:
+        "204":
+          $ref: "#/components/responses/NoContent"
 
   "/deploymentTasks":
     post:
@@ -208,6 +274,19 @@ paths:
       summary: Deploy a set of pre-configured Greengrass groups.
       description: Create an asynchronous deployment task which is responsible for deploying provided Greengrass groups.
       operationId: deployGroups
+      requestBody:
+        content:
+          application/vnd.aws-cdf-v1.0+json:
+            schema:
+              $ref: '#/components/schemas/NewDeploymentList'
+            examples:
+              NewDeployments:
+                value:
+                  deployments:
+                    - groupName: my-group-one
+                      deploymentType: NewDeployment
+                    - groupName: my-group-two
+                      deploymentType: NewDeployment
       responses:
         "202":
           description: OK
@@ -270,6 +349,14 @@ components:
       schema:
         type: string
 
+    subscriptionId:
+      name: subscriptionId
+      in: path
+      description: Subscription ID
+      required: true
+      schema:
+        type: string
+
     deploymentTaskId:
       name: deploymentTaskId
       in: path
@@ -302,6 +389,9 @@ components:
           schema:
             type: string
 
+    NoContent:
+      description: No content
+
     BadRequest:
       description: Invalid input
       content:
@@ -322,6 +412,7 @@ components:
         application/vnd.aws-cdf-v1.0+json:
           schema:
             $ref: "#/components/schemas/Error"
+
 
   schemas:
 
@@ -433,7 +524,7 @@ components:
         updatedAt: '2020-06-08T19:35:54.327Z'
         deployed: false
 
-    GreengrassSubscriptionItem:
+    GreengrassSubscription:
       type: object
       properties:
         id:
@@ -448,8 +539,33 @@ components:
         target:
           type: string
           description: Where the message is sent. Can be a thing ARN, the ARN of a Lambda function alias (recommended) or version, a connector ARN, 'cloud' (which represents AWS IoT), or 'GGShadowService'. If you specify a Lambda function, this ARN should match the ARN used to add the function to the Greengrass group.
+      example:
+        id: sub-1
+        source: cloud
+        subject: dt/us/my-device/#
+        target: arn:aws:iot:us-west-2:123456789012:thing/my-device
+        deployed: true
+        createdAt: '2020-06-08T19:35:54.327Z'
+        updatedAt: '2020-06-08T19:35:54.327Z'
 
-    DeviceItem:
+    NewGreengrassSubscriptionList:
+      properties:
+        subscriptions:
+          type: array
+          description: A list of subscriptions
+          items:
+            $ref: "#/components/schemas/GreengrassSubscription"
+      example:
+        subscriptions:
+          - id: sub-1
+            source: cloud
+            subject: dt/us/my-device/#
+            target: arn:aws:iot:us-west-2:123456789012:thing/my-device
+            deployed: true
+            createdAt: '2020-06-08T19:35:54.327Z'
+            updatedAt: '2020-06-08T19:35:54.327Z'
+
+    Device:
       type: object
       properties:
         thingName:
@@ -517,7 +633,7 @@ components:
         subscriptions:
           type: array
           items:
-            $ref: '#/components/schemas/GreengrassSubscriptionItem'
+            $ref: '#/components/schemas/GreengrassSubscription'
           description: Any subscriptions for this device created by this service.
         deployed:
           type: boolean
@@ -561,9 +677,45 @@ components:
         createdAt: '2020-06-08T19:35:54.327Z'
         updatedAt: '2020-06-08T19:35:54.327Z'
 
-    DeviceTaskItem:
+    NewDeviceList:
+      properties:
+        devices:
+          type: array
+          description: A list of devices
+          items:
+            $ref: "#/components/schemas/Device"
+      example:
+        devices:
+          - thingName: my-device
+            type: device
+            provisioningTemplate: my-template
+            provisioningParameters:
+              ThingName: my-device
+            cdfProvisioningParameters:
+              caId: 3d2ecfdb0eba2898626291e7e18a37cee791dbc81940a39e8ce922f9ff2feb32
+              certInfo:
+                country: US
+            syncShadow: true
+            artifacts:
+              certificate:
+                bucket: my-bucket
+                key: certs/c123
+                createdAt: '2020-06-08T19:35:54.327Z'
+            subscriptions:
+              - id: sub-1
+                source: cloud
+                subject: dt/us/my-device/#
+                target: arn:aws:iot:us-west-2:123456789012:thing/my-device
+                deployed: true
+                createdAt: '2020-06-08T19:35:54.327Z'
+                updatedAt: '2020-06-08T19:35:54.327Z'
+            deployed: true
+            createdAt: '2020-06-08T19:35:54.327Z'
+            updatedAt: '2020-06-08T19:35:54.327Z'
+
+    DeviceTask:
       allOf:
-        - $ref: "#/components/schemas/DeviceItem"
+        - $ref: "#/components/schemas/Device"
         - type: object
           properties:
             status:
@@ -625,7 +777,7 @@ components:
         devices:
           type: array
           items:
-            $ref: '#/components/schemas/DeviceTaskItem'
+            $ref: '#/components/schemas/DeviceTask'
           description: Devices managed via this task.
           readOnly: true
         createdAt:
@@ -669,6 +821,7 @@ components:
             createdAt: '2020-06-08T19:35:54.327Z'
             updatedAt: '2020-06-08T19:35:54.327Z'
 
+
     GroupList:
       properties:
         groups:
@@ -707,7 +860,7 @@ components:
             deployed: false
 
 
-    DeviceDeploymentItem:
+    DeviceDeployment:
       type: object
       properties:
         thingName:
@@ -731,7 +884,7 @@ components:
           description: Date/time the device was updated.
           readOnly: true
 
-    DeploymentItem:
+    Deployment:
       type: object
       properties:
         groupName:
@@ -758,7 +911,7 @@ components:
         devices:
           type: array
           items:
-            $ref: '#/components/schemas/DeviceDeploymentItem'
+            $ref: '#/components/schemas/DeviceDeployment'
           description: Devices deployed as part of this deployment.
         deploymentStatus:
           type: string
@@ -790,6 +943,18 @@ components:
         createdAt: '2020-06-08T19:35:54.327Z'
         updatedAt: '2020-06-08T19:35:54.327Z'
 
+    NewDeploymentList:
+      properties:
+        deployments:
+          type: array
+          description: A list of deployments
+          items:
+            $ref: "#/components/schemas/Deployment"
+      example:
+        deployments:
+          - groupName: my-greengrass-group
+            deploymentType: NewDeployment
+
     DeploymentTaskSummary:
       type: object
       properties:
@@ -816,7 +981,7 @@ components:
         deployments:
           type: array
           items:
-            $ref: '#/components/schemas/DeploymentItem'
+            $ref: '#/components/schemas/Deployment'
           description: Deployments managed via this task.
           readOnly: true
         createdAt:

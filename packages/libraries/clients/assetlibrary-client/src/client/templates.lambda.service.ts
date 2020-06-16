@@ -65,6 +65,7 @@ export class TemplatesLambdaService extends TemplatesServiceBase implements Temp
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.templateRelativeUrl(resource.category, resource.templateId))
             .setMethod('PATCH')
+            .setBody(resource)
             .setHeaders(super.buildHeaders(additionalHeaders));
 
         await this.lambdaInvoker.invoke(this.functionName, event);

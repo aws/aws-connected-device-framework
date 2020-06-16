@@ -33,6 +33,7 @@ export class ProfilesLambdaService extends ProfilesServiceBase implements Profil
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.profilesOfTemplateRelativeUrl(category, body.templateId))
             .setMethod('POST')
+            .setBody(body)
             .setHeaders(super.buildHeaders(additionalHeaders));
 
         await this.lambdaInvoker.invoke(this.functionName, event);

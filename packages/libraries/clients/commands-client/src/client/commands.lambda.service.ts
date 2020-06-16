@@ -39,6 +39,7 @@ export class CommandsLambdaService extends CommandsServiceBase implements Comman
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.commandsRelativeUrl())
             .setMethod('GET')
+            .setBody(command)
             .setHeaders(super.buildHeaders(additionalHeaders));
 
         const res = await this.lambdaInvoker.invoke(this.functionName, event);
@@ -53,6 +54,7 @@ export class CommandsLambdaService extends CommandsServiceBase implements Comman
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.commandRelativeUrl(command.commandId))
             .setMethod('PATCH')
+            .setBody(command)
             .setHeaders(super.buildHeaders(additionalHeaders))
             .setBody(command);
 
