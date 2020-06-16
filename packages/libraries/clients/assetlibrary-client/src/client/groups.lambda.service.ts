@@ -47,6 +47,7 @@ export class GroupsLambdaService extends GroupsServiceBase implements GroupsServ
             .setQueryStringParameters({
                 applyProfile: applyProfileId
             })
+            .setBody(body)
             .setHeaders(super.buildHeaders(additionalHeaders));
 
         await this.lambdaInvoker.invoke(this.functionName, event);
@@ -66,6 +67,7 @@ export class GroupsLambdaService extends GroupsServiceBase implements GroupsServ
             .setQueryStringParameters({
                 applyProfile: applyProfileId
             })
+            .setBody(body)
             .setHeaders(super.buildHeaders(additionalHeaders));
 
         const res = await this.lambdaInvoker.invoke(this.functionName, event);
@@ -195,6 +197,7 @@ export class GroupsLambdaService extends GroupsServiceBase implements GroupsServ
             .setQueryStringParameters({
                 applyProfile: applyProfileId
             })
+            .setBody(body)
             .setHeaders(super.buildHeaders(additionalHeaders));
 
         await this.lambdaInvoker.invoke(this.functionName, event);

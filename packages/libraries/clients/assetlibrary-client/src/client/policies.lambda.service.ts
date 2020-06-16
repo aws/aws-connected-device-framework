@@ -32,6 +32,7 @@ export class PoliciesLambdaService extends PoliciesServiceBase implements Polici
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.policiesRelativeUrl())
             .setMethod('POST')
+            .setBody(body)
             .setHeaders(super.buildHeaders(additionalHeaders));
 
         await this.lambdaInvoker.invoke(this.functionName, event);
@@ -106,6 +107,7 @@ export class PoliciesLambdaService extends PoliciesServiceBase implements Polici
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.policyRelativeUrl(policyId))
             .setMethod('PATCH')
+            .setBody(body)
             .setHeaders(super.buildHeaders(additionalHeaders));
 
         await this.lambdaInvoker.invoke(this.functionName, event);

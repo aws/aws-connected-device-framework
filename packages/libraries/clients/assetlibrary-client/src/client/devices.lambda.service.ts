@@ -259,6 +259,7 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.deviceAttachedComponentRelativeUrl(deviceId, componentId))
             .setMethod('PATCH')
+            .setBody(body)
             .setHeaders(super.buildHeaders(additionalHeaders));
 
         await this.lambdaInvoker.invoke(this.functionName, event);
@@ -280,6 +281,7 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
             .setQueryStringParameters({
                 applyProfile: applyProfileId
             })
+            .setBody(body)
             .setHeaders(super.buildHeaders(additionalHeaders));
 
         await this.lambdaInvoker.invoke(this.functionName, event);
