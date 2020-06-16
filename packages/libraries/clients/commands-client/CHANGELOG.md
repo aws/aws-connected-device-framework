@@ -1,3 +1,10 @@
+# [@cdf/commands-client-v3.3.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/commands-client-v3.3.0...@cdf/commands-client-v3.3.1) (2020-06-16)
+
+
+### Bug Fixes
+
+* **clients:** missing bodies in lambda requests ([f33d90d](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/f33d90de6350002fcddb240fcbea7ae39ab37fba))
+
 # [@cdf/commands-client-v3.3.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/commands-client-v3.2.0...@cdf/commands-client-v3.3.0) (2020-06-10)
 
 
