@@ -1,3 +1,10 @@
+# [@cdf/greengrass-provisioning-v3.0.5](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/greengrass-provisioning-v3.0.4...@cdf/greengrass-provisioning-v3.0.5) (2020-06-24)
+
+
+### Bug Fixes
+
+* **greengrass-provsioning:** swagger doc update ([d5368f9](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/d5368f96c1f6a23960ab4aba755bcd82441a0521))
+
 # [@cdf/greengrass-provisioning-v3.0.4](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/greengrass-provisioning-v3.0.3...@cdf/greengrass-provisioning-v3.0.4) (2020-06-16)
 
 
