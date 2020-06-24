@@ -1,3 +1,10 @@
+# [@cdf/assetlibrary-client-v3.3.2](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-client-v3.3.1...@cdf/assetlibrary-client-v3.3.2) (2020-06-24)
+
+
+### Bug Fixes
+
+* **clients:** region missing from lambda ([49c8309](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/49c8309e87fd315267a15a888dcd20d2fc3e209b))
+
 # [@cdf/assetlibrary-client-v3.3.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-client-v3.3.0...@cdf/assetlibrary-client-v3.3.1) (2020-06-16)
 
 
