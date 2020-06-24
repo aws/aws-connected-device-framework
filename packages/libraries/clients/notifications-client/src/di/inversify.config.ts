@@ -40,7 +40,7 @@ export const notificationsContainerModule = new ContainerModule (
                         return () => {
 
                             if (!isBound(LAMBDAINVOKE_TYPES.Lambda)) {
-                                const lambda = new AWS.Lambda();
+                                const lambda = new AWS.Lambda({region:config.get('aws.region')});
                                 bind<AWS.Lambda>(LAMBDAINVOKE_TYPES.Lambda).toConstantValue(lambda);
                             }
                             return ctx.container.get<AWS.Lambda>(LAMBDAINVOKE_TYPES.Lambda);
