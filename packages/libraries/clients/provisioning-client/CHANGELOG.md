@@ -1,3 +1,10 @@
+# [@cdf/provisioning-client-v3.4.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/provisioning-client-v3.4.0...@cdf/provisioning-client-v3.4.1) (2020-06-24)
+
+
+### Bug Fixes
+
+* **clients:** region missing from lambda ([49c8309](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/49c8309e87fd315267a15a888dcd20d2fc3e209b))
+
 # [@cdf/provisioning-client-v3.4.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/provisioning-client-v3.3.0...@cdf/provisioning-client-v3.4.0) (2020-06-10)
 
 
