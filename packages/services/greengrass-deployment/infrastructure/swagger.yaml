@@ -1,1 +1,431 @@
-TODO
+openapi: 3.0.0
+info:
+  title: "Connected Device Framework: Greengrass Code Deployment"
+  description: >
+    Allows for remote deployment of Greengrass Core software using Ansible on physical devices.
+
+  version: 1.0.0
+
+tags:
+  - name: Deployment Templates
+    description: >
+      A Template that provides specifies the configuration of a deployment
+
+  - name: Activation
+    description: >
+      Activation represent SSM acitvation of greengrass core devices as hybrid instances
+
+  - name: Deployment
+    description: >
+      Deployment represent SSM State Manager association against devices managed as hybrid instances.
+
+
+paths:
+  "/deploymentTemplates":
+    get:
+      tags:
+        - Deployment Templates
+      summary: List all available templates.
+      operationId: listTemplates
+      responses:
+        "200":
+          description: OK
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: "#/components/schemas/DeploymentTemplatesList"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  "/deploymentTemplates/{templateName}":
+    parameters:
+      - $ref: '#/components/parameters/templateName'
+    put:
+      tags:
+        - Deployment Templates
+      summary: Creates a new template or updates an exisitng template.
+      description: >
+        Defines a new template by specifying the type of the deployment "agentless" or "agentbased" and a source of the ansible playbook.
+
+      operationId: saveTemplate
+      requestBody:
+        content:
+          application/vnd.aws-cdf-v1.0+json:
+            schema:
+              $ref: '#/components/schemas/DeploymentTemplate'
+      responses:
+        "201":
+          description: Created
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: "#/components/schemas/DeploymentTemplate"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "409":
+          $ref: "#/components/responses/Conflict"
+
+    get:
+      tags:
+        - Deployment Templates
+      summary: Find a specific deployment template
+      description: >
+        Returns a specific deployment template by template name.
+      operationId: getTemplate
+      responses:
+        "200":
+          description: OK
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: "#/components/schemas/DeploymentTemplate"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  "/devices/{deviceId}/activiations":
+    parameters:
+      - $ref: '#/components/parameters/deviceId'
+    "post":
+      tags:
+        - Activation
+      summary: Creates a device activation
+      description: >
+        Creates an SSM activation for a greengrass core device
+
+      operationId: createActivation
+      requestBody:
+        content:
+          application/vnd.aws-cdf-v1.0+json:
+            schema:
+              $ref: '#/components/schemas/Activation'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: "#/components/schemas/Activation"
+
+  "/devices/{deviceId}/activations/{activationId}":
+    parameters:
+      - $ref: '#/components/parameters/deviceId'
+      - $ref: '#/components/parameters/activationId'
+    get:
+      tags:
+        - Activation
+      summary: Find a specific activation for a device by id
+      operationId: getActivationById
+      responses:
+        "200":
+          description: OK
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: "#/components/schemas/Activation"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+    delete:
+      tags:
+        - Activation
+      summary: Deletes a specific activation for a device by id
+      operationId: deleteActivationById
+      responses:
+        "204":
+          description: OK
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+
+  "/devices/{deviceId}/deployemnts":
+    parameters:
+      - $ref: '#/components/parameters/deviceId'
+    "post":
+      tags:
+        - Deployment
+      summary: Creates a device deployment
+      description: >
+        Creates an SSM state manager association for a greengrass core device
+
+      operationId: createDeployment
+      requestBody:
+        content:
+          application/vnd.aws-cdf-v1.0+json:
+            schema:
+              $ref: '#/components/schemas/Deployment'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: "#/components/schemas/Deployment"
+
+    get:
+      tags:
+        - Deployment
+      summary: List all deployments by device
+      operationId: getDeploymentsById
+      responses:
+        "200":
+          description: OK
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: "#/components/schemas/DeploymentList"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+
+  "/devices/{deviceId}/deployments/{deploymentId}":
+    parameters:
+      - $ref: '#/components/parameters/deviceId'
+      - $ref: '#/components/parameters/deploymentId'
+    get:
+      tags:
+        - Deployment
+      summary: Find a specific activation for a device by id
+      operationId: getDeploymentById
+      responses:
+        "200":
+          description: OK
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: "#/components/schemas/Deployment"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+    delete:
+      tags:
+        - Deployment
+      summary: Deletes a specific deployment for a device by id
+      operationId: deleteDeploymentById
+      responses:
+        "204":
+          description: OK
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+components:
+
+  parameters:
+
+    templateName:
+      name: templateName
+      in: path
+      description: Name of template
+      required: true
+      schema:
+        type: string
+
+    activationId:
+      name: activationId
+      in: path
+      description: Device task Id
+      required: true
+      schema:
+        type: string
+
+    deviceId:
+      name: deviceId
+      in: path
+      description: Device ID
+      required: true
+      schema:
+        type: string
+
+    deploymentId:
+      name: deploymentId
+      in: path
+      description: Deployment ID
+      required: true
+      schema:
+        type: string
+
+    offset:
+      name: offset
+      in: query
+      schema:
+        type: integer
+        minimum: 0
+
+    count:
+      name: offset
+      in: query
+      schema:
+        type: integer
+        minimum: 0
+
+
+  responses:
+
+    Created:
+      description: Created successfully
+      headers:
+        location:
+          schema:
+            type: string
+
+    BadRequest:
+      description: Invalid input
+      content:
+        application/vnd.aws-cdf-v1.0+json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+    NotFound:
+      description: Not found
+      content:
+        application/vnd.aws-cdf-v1.0+json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+    Conflict:
+      description: Conflict
+      content:
+        application/vnd.aws-cdf-v1.0+json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+  schemas:
+
+    DeploymentTemplate:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of template.
+        type:
+          type: string
+          description: type
+          enum: [agentless, agentbased]
+        source:
+          type: object
+          properties:
+            type:
+              type: string
+              description: Type of source
+              enum: [S3]
+            bucket:
+              type: string
+              description: Bucket Name of the playbook source
+            prefix:
+              type: string
+              description: Bucket key prefix of the playbook source
+        versionNo:
+          type: number
+          description: Auto-incrementing template version number.
+          readOnly: true
+        createdAt:
+          type: string
+          format: 'date-time'
+          description: Date/time the template was created.
+          readOnly: true
+        updatedAt:
+          type: string
+          format: 'date-time'
+          description: Date/time the template was updated.
+          readOnly: true
+        enabled:
+          type: boolean
+          description: Whether the template is enabled for use.
+      example:
+        name: MyTemplate
+        versionNo: 1
+        createdAt: 2020-03-16T21:42:53.594Z
+        updatedAt: 2020-03-16T21:42:53.594Z
+        enabled: true
+
+
+    DeploymentTemplatesList:
+      properties:
+        tempaltes:
+          type: array
+          description: A list of templates
+          items:
+            $ref: "#/components/schemas/DeploymentTemplate"
+        pagination:
+          type: object
+          properties:
+            offset:
+              type: integer
+            count:
+              type: integer
+
+    Activation:
+      type: object
+      properties:
+        deviceId:
+          type: string
+          description: The id of target device
+        activationId:
+          type: string
+          description: The id of the activaiton
+        activationRegion:
+          type: string
+          description: The region where device activation has been created
+      example:
+        activationId: "a1102421-922f-46d5-9a85-bdbad8d90d6c"
+        activationCode: "nxj3IC1HBquDVxM14Oqo"
+        activationRegion: "us-east-1"
+
+
+    Deployment:
+      type: object
+      properties:
+        deviceId:
+          type: string
+          description: The Id of the Device
+        deploymentId:
+          type: string
+          description: The Id of the deployment
+        createdAt:
+          type: string
+          format: 'date-time'
+          description: Date/time the group was created.
+          readOnly: true
+        updatedAt:
+          type: string
+          format: 'date-time'
+          description: Date/time the group was updated.
+          readOnly: true
+        deploymentTemplateName:
+          type: string
+          description: Deployment Template Name
+        deploymentStatus:
+          type: string
+          description: The status of the deployment
+          enum: [pending, success, failed]
+        deploymentType:
+          type: string
+          description: The type of deployment
+          enum: [agentless, agentbased]
+
+      example:
+        deviceId: "rpi-test-01-core"
+        deploymentId: "a1b83c20-ab84-11ea-9634-37cb5e1c09aa"
+        createdAt: "2020-06-11T01:41:12.546Z"
+        updatedAt: "2020-06-11T01:41:12.546Z"
+        deploymentTemplateName: "budderfly-fc-deployment1"
+        deploymentStatus: "failed"
+        deploymentType: "agentbased"
+
+    DeploymentList:
+      type: object
+      properties:
+        tempaltes:
+          type: array
+          description: A list of templates
+          items:
+            $ref: "#/components/schemas/Deployment"
+
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+
+
+
+

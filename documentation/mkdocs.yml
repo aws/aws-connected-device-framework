@@ -54,6 +54,10 @@ nav:
       - Overview: projects/greengrass-provisioning/overview.md
       - Design: projects/greengrass-provisioning/design.md
       - Swagger: projects/greengrass-provisioning/greengrass-provisioning-swagger.md
+    - Greengrass Deployment:
+      - Overview: projects/greengrass-deployment/overview.md
+      - Design: projects/greengrass-deployment/design.md
+      - Swagger: projects/greengrass-deployment/greengrass-deployment-swagger.md
     - Request Queue:
       - Overview : projects/request-queue/overview.md
     - Reusable Libraries:

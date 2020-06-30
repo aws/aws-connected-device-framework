@@ -13,6 +13,7 @@ widdershins --language_tabs 'shell:Shell:curl' 'node:Node:request' 'python:Pytho
 widdershins --language_tabs 'shell:Shell:curl' 'node:Node:request' 'python:Python:python3' --summary true  ../packages/services/bulkcerts/infrastructure/swagger.yml -o docs/projects/bulkcerts/bulkcerts-swagger.md
 widdershins --language_tabs 'shell:Shell:curl' 'node:Node:request' 'python:Python:python3' --summary true  ../packages/services/events-processor/infrastructure/swagger.yml -o docs/projects/notifications/events-processor-swagger.md
 widdershins --language_tabs 'shell:Shell:curl' 'node:Node:request' 'python:Python:python3' --summary true  ../packages/services/greengrass-provisioning/infrastructure/swagger.yml -o docs/projects/greengrass-provisioning/greengrass-provisioning-swagger.md
+widdershins --language_tabs 'shell:Shell:curl' 'node:Node:request' 'python:Python:python3' --summary true  ../packages/services/greengrass-deployment/infrastructure/swagger.yaml -o docs/projects/greengrass-deployment/greengrass-deployment-swagger.md
 
 # build it
 rm -rf site
