@@ -4,15 +4,15 @@
   "scripts": {
     "clean": "pnpm m run clean",
     "reset": "pnpm m run reset && rm -rf node_modules package-lock.json",
-    "reset:libraries": "pnpm m run clean --filter ./packages/libraries && pnpm m run reset --filter ./packages/libraries",
+    "reset:libraries": "pnpm m run clean && pnpm m run reset",
     "commit": "npx git-cz",
     "build": "pnpm m run build",
     "test": "pnpm m run test",
     "prebundle": "pnpm run clean && pnpm install --force && pnpm run build && pnpm m run prebundle:prepare",
     "bundle": "pnpm i --no-lock --prod --shamefully-flatten --force && pnpm m run bundle:package",
     "postbundle": "pnpm install --force",
-    "build:libraries": "pnpm run reset:libraries && pnpm i && pnpm m run build --filter ./packages/libraries",
-    "bundle:libraries": "pnpm i --no-lock --prod --shamefully-flatten --force --filter ./packages/libraries"
+    "build:libraries": "pnpm run reset:libraries && pnpm i && pnpm m run build",
+    "bundle:libraries": "pnpm i --no-lock --prod --shamefully-flatten --force"
   },
   "engines": {
     "node": "=12",
