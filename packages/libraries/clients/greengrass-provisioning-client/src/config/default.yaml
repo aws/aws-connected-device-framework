@@ -1,0 +1,9 @@
+greengrassProvisioning:
+  baseUrl:
+  headers:
+  mode:
+  apiFunctionName:
+
+
+logging:
+  level: debug
