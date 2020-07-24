@@ -18,14 +18,16 @@ import { ProfilesService } from '../profiles/profiles.service';
 import { GroupsService } from './groups.service';
 import { DevicesAssembler } from '../devices/devices.assembler';
 import { DeviceItemList } from '../devices/devices.models';
-import { StringToArrayMap } from '../data/model';
+import { StringToArrayMap, DirectionStringToArrayMap } from '../data/model';
 import { AuthzServiceFull } from '../authz/authz.full.service';
 import { ClaimAccess } from '../authz/claims';
 
 @injectable()
 export class GroupsServiceFull implements GroupsService {
 
-    constructor( @inject(TYPES.GroupsDao) private groupsDao: GroupsDaoFull ,
+    constructor(
+        @inject('defaults.groups.validateAllowedParentPaths') private validateAllowedParentPaths: boolean,
+        @inject(TYPES.GroupsDao) private groupsDao: GroupsDaoFull ,
         @inject(TYPES.TypesService) private typesService: TypesService,
         @inject(TYPES.GroupsAssembler) private groupsAssembler: GroupsAssembler,
         @inject(TYPES.DevicesAssembler) private devicesAssembler: DevicesAssembler,
@@ -163,7 +165,6 @@ export class GroupsServiceFull implements GroupsService {
         }
 
         // remove any non printable characters from the id
-        model.parentPath = model.parentPath.replace(/[^\x20-\x7E]+/g, '');
         model.name = model.name.replace(/[^\x20-\x7E]+/g, '');
 
         // any ids need to be lowercase
@@ -172,8 +173,16 @@ export class GroupsServiceFull implements GroupsService {
         await this.authServiceFull.authorizationCheck([], [model.parentPath, ...model.listRelatedGroupPaths()], ClaimAccess.C);
 
         // schema validation
-        const validateSubTypeFuture = await this.typesService.validateSubType(model.templateId, TypeCategory.Group, model, Operation.CREATE);
-        const validateRelationshipsFuture = this.typesService.validateRelationshipsByPath(model.templateId, model.groups);
+        const validateSubTypeFuture = this.typesService.validateSubType(model.templateId, TypeCategory.Group, model, Operation.CREATE);
+        // if configured so, validate the parent path relations too (default is allow any parent path relationship)
+        const relsToValidate:DirectionStringToArrayMap = Object.assign({}, model.groups);
+        if (this.validateAllowedParentPaths) {
+            if (relsToValidate.out===undefined) {
+                relsToValidate.out= {};
+            }
+            relsToValidate.out.parent = [model.parentPath];
+        }
+        const validateRelationshipsFuture = this.typesService.validateRelationshipsByPath(model.templateId, relsToValidate);
         const results = await Promise.all([validateSubTypeFuture, validateRelationshipsFuture]);
 
         // schema validation results

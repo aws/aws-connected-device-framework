@@ -18,6 +18,7 @@ nav:
       - 'Swagger': projects/assetlibrary/assetlibrary-swagger.md
       - 'Profiles': projects/assetlibrary/profiles.md
       - 'Fine-Grained Access Control': projects/assetlibrary/fine-grained-access-control.md
+      - 'Configuration': projects/assetlibrary/configuration.md
     - Asset Library History:
       - 'Overview': projects/assetlibrary-history/overview.md
       - 'Swagger': projects/assetlibrary-history/assetlibraryhistory-swagger.md

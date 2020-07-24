@@ -23,7 +23,9 @@ defaults:
     parent:
       relation: parent
       groupPath: /unprovisioned
-    state: unprovisioned    
+    state: unprovisioned
+  groups:
+    validateAllowedParentPaths: false
 
 cors:
   origin:

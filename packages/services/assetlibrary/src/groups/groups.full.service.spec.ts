@@ -19,6 +19,8 @@ import { GroupsServiceFull } from './groups.full.service';
 import { ProfilesServiceFull } from '../profiles/profiles.full.service';
 import { DevicesAssembler } from '../devices/devices.assembler';
 import { AuthzServiceFull } from '../authz/authz.full.service';
+import { DirectionStringToArrayMap } from '../data/model';
+import { Node } from '../data/node';
 
 describe('GroupsService', () => {
     let mockedDao: jest.Mocked<GroupsDaoFull>;
@@ -38,7 +40,7 @@ describe('GroupsService', () => {
         mockedProfilesService = createMockInstance(ProfilesServiceFull);
         mockedEventEmitter = createMockInstance(EventEmitter);
         mockedAuthzServiceFull = createMockInstance(AuthzServiceFull);
-        instance = new GroupsServiceFull(mockedDao, mockedTypesService, mockedGroupsAssembler, mockedDevicesAssembler,
+        instance = new GroupsServiceFull(false, mockedDao, mockedTypesService, mockedGroupsAssembler, mockedDevicesAssembler,
             mockedProfilesService, mockedAuthzServiceFull, mockedEventEmitter);
     });
 
@@ -160,6 +162,102 @@ describe('GroupsService', () => {
         // verify
         expect(actual).toBeDefined();
         expect(actual).toEqual(expected);
+
+    });
+
+    it('by default, parent paths rel types not validated', async() => {
+
+        // stubs
+        const toSave = new GroupItem({
+            name: 'group001',
+            templateId: 'testTemplate',
+            parentPath: '/aParent',
+            attributes: {
+                a: 5,
+                d: false
+            },
+            groups: {
+                out: {
+                    linked_to_a: ['pathA1', 'pathA2'],
+                    linked_to_b: ['pathA3']
+                }
+            }
+        });
+
+        const parentGroupItem = new GroupItem({
+            name: 'aParent',
+            templateId: 'root',
+            parentPath: '/'
+        });
+
+        const expectedValidateRelationshipsByPathArg:DirectionStringToArrayMap = {
+            out: {
+                linked_to_a: ['pathA1', 'pathA2'],
+                linked_to_b: ['pathA3']
+            }
+        };
+
+        // mocks
+        mockedTypesService.validateSubType = jest.fn().mockReturnValueOnce({isValid:true});
+        const spied = mockedTypesService.validateRelationshipsByPath = jest.fn().mockReturnValueOnce(true);
+        mockedDao.get = jest.fn().mockReturnValueOnce(new Node());
+        mockedGroupsAssembler.toGroupItem = jest.fn().mockReturnValueOnce(parentGroupItem);
+
+        // execute
+        await instance.create(toSave);
+
+        // verify
+        expect(spied.mock.calls[0][1]).toEqual(expectedValidateRelationshipsByPathArg);
+
+    });
+
+    it('validate parent paths rel types if configured so', async() => {
+
+        instance = new GroupsServiceFull(true, mockedDao, mockedTypesService, mockedGroupsAssembler, mockedDevicesAssembler,
+            mockedProfilesService, mockedAuthzServiceFull, mockedEventEmitter);
+
+        // stubs
+        const toSave = new GroupItem({
+            name: 'group001',
+            templateId: 'testTemplate',
+            parentPath: '/aParent',
+            attributes: {
+                a: 5,
+                d: false
+            },
+            groups: {
+                out: {
+                    linked_to_a: ['pathA1', 'pathA2'],
+                    linked_to_b: ['pathA3']
+                }
+            }
+        });
+
+        const parentGroupItem = new GroupItem({
+            name: 'aParent',
+            templateId: 'root',
+            parentPath: '/'
+        });
+
+        const expectedValidateRelationshipsByPathArg:DirectionStringToArrayMap = {
+            out: {
+                linked_to_a: ['pathA1', 'pathA2'],
+                linked_to_b: ['pathA3'],
+                parent: ['/aparent']
+            }
+        };
+
+        // mocks
+        mockedTypesService.validateSubType = jest.fn().mockReturnValueOnce({isValid:true});
+        const spied = mockedTypesService.validateRelationshipsByPath = jest.fn().mockReturnValueOnce(true);
+        mockedDao.get = jest.fn().mockReturnValueOnce(new Node());
+        mockedGroupsAssembler.toGroupItem = jest.fn().mockReturnValueOnce(parentGroupItem);
+
+        // execute
+        await instance.create(toSave);
+
+        // verify
+        expect(spied.mock.calls[0][1]).toEqual(expectedValidateRelationshipsByPathArg);
 
     });
 });
