@@ -1,3 +1,10 @@
+# [@cdf/greengrass-provisioning-v3.0.6](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/greengrass-provisioning-v3.0.5...@cdf/greengrass-provisioning-v3.0.6) (2020-07-25)
+
+
+### Bug Fixes
+
+* resolve apifunctionname ([d4ac766](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/d4ac766d7512a778b2fbae8880e975b83209fb77))
+
 # [@cdf/greengrass-provisioning-v3.0.5](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/greengrass-provisioning-v3.0.4...@cdf/greengrass-provisioning-v3.0.5) (2020-06-24)
 
 
