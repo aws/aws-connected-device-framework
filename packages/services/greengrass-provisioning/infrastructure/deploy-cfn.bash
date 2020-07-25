@@ -171,7 +171,7 @@ aws_iot_endpoint=$(aws iot describe-endpoint  --endpoint-type iot:Data-ATS $AWS_
 
 stack_exports=$(aws cloudformation list-exports $AWS_ARGS)
 
-provisioning_invoke_apifunctionname_export="$PROVISIONING_STACK_NAME-apifunctionname"
+provisioning_invoke_apifunctionname_export="$PROVISIONING_STACK_NAME-restApiFunctionName"
 provisioning_invoke_apifunctionname=$(echo $stack_exports \
     | jq -r --arg provisioning_invoke_apifunctionname_export "$provisioning_invoke_apifunctionname_export" \
     '.Exports[] | select(.Name==$provisioning_invoke_apifunctionname_export) | .Value')
@@ -180,7 +180,7 @@ cat $CONFIG_LOCATION | \
   jq --arg aws_iot_endpoint "$aws_iot_endpoint" \
   --arg provisioning_invoke_apifunctionname "$provisioning_invoke_apifunctionname" \
   --arg aws_account_id "$AWS_ACCOUNT_ID" \
-  '.aws.iot.endpoint=$aws_iot_endpoint | .provisioning.apifunctionname=$provisioning_invoke_apifunctionname | .aws.accountId=$aws_account_id' \
+  '.aws.iot.endpoint=$aws_iot_endpoint | .provisioning.apiFunctionName=$provisioning_invoke_apifunctionname | .aws.accountId=$aws_account_id' \
   > $CONFIG_LOCATION.tmp && mv $CONFIG_LOCATION.tmp $CONFIG_LOCATION
 
 application_configuration_override=$(cat $CONFIG_LOCATION)
