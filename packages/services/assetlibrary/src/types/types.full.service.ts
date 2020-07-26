@@ -472,7 +472,7 @@ export class TypesServiceFull implements TypesService {
         }
 
         // ensure the provided relations are valid
-        for (const in_out of Object.keys(rels)) {  
+        for (const in_out of Object.keys(rels)) {
             for (const rel_name of Object.keys(rels[in_out])) {
 
                 // is the relation type allowed?
