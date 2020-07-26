@@ -23,8 +23,14 @@ function check_type_exists {
 function create_type {
     category=$1
     template=$2
+    file=$3
+
+    if [ -z "$file" ]; then
+        file=$template
+    fi
+
     url="/templates/$category/$template"
-    body="$(cat templates/${template}.json)"
+    body="$(cat templates/${file}.json)"
 
     echo -e "\nCreating $template $category type...\n"
     response=$( lambaInvokeRestApi "$assetlibrary_stack_name" 'POST' "$url" "$body" "$function_name" )
@@ -35,8 +41,14 @@ function create_type {
 function update_type {
     category=$1
     template=$2
+    file=$3
+
+    if [ -z "$file" ]; then
+        file=$template
+    fi
+
     url="/templates/$category/$template"
-    body="$(cat templates/${template}.json)"
+    body="$(cat templates/${file}.json)"
 
     echo -e "\nUpdating $template $category type...\n"
     response=$( lambaInvokeRestApi "$assetlibrary_stack_name" 'PATCH' "$url" "$body" "$function_name" )
@@ -59,12 +71,17 @@ function publish_type {
 function create_or_update_type {
     category=$1
     template=$2
+    file=$3
+
+    if [ -z "$file" ]; then
+        file=$template
+     fi
 
     exists="$(check_type_exists ${category} ${template})"
     if [[ "$exists" == 'false' ]]; then
-        create_type ${category} ${template}
+        create_type ${category} ${template} $file
     else
-        update_type ${category} ${template}
+        update_type ${category} ${template} $file
     fi
     publish_type ${category} ${template}
 }
@@ -93,6 +110,44 @@ function create_or_update_bulkgroup_data {
 function check_group_exists {
     group=$1
     url="/groups/$group"
+    body='{}'
+
+    response=$( lambaInvokeRestApi "$assetlibrary_stack_name" 'GET' "$url" "$body" "$function_name" )
+    status_code=$(echo "$response" | jq -r '.statusCode')
+
+    echo "GET $url : $status_code" >&2
+
+    if [[ "$status_code" -eq 404 ]] ; then
+        echo 'false'
+    else
+        echo 'true'
+    fi
+}
+
+function create_bulkdevice_data {
+    jsonFile=$1
+    url="/bulkdevices"
+    body="$(cat data/${jsonFile}.json)"
+
+    echo -e "\nBulk creating device from $jsonFile.json...\n"
+    response=$( lambaInvokeRestApi "$assetlibrary_stack_name" 'POST' "$url" "$body" "$function_name" )
+
+    echo "POST $url : $response" >&2
+}
+
+function create_or_update_bulkdevice_data {
+    device=$1
+    jsonFile=$2
+
+    exists="$(check_device_exists ${device})"
+    if [[ "$exists" == 'false' ]]; then
+        create_bulkdevice_data ${jsonFile}
+    fi
+}
+
+function check_device_exists {
+    device=$1
+    url="/devices/$device"
     body='{}'
 
     response=$( lambaInvokeRestApi "$assetlibrary_stack_name" 'GET' "$url" "$body" "$function_name" )

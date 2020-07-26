@@ -472,8 +472,9 @@ export class TypesServiceFull implements TypesService {
         }
 
         // ensure the provided relations are valid
-        for (const in_out of Object.keys(rels)) {
+        for (const in_out of Object.keys(rels)) {  
             for (const rel_name of Object.keys(rels[in_out])) {
+
                 // is the relation type allowed?
                 const allowed_rel = groupInfo.rels.filter(r=> r.name===rel_name.toLowerCase());
                 if (allowed_rel===undefined || allowed_rel===null || allowed_rel.length===0) {
@@ -482,15 +483,16 @@ export class TypesServiceFull implements TypesService {
                 }
 
                 for (const rel_path of rels[in_out][rel_name]) {
+
                     // is the type of target groups allowed for this relation?
-                    let group;
+                    let group:any;
                     let valid=false;
                     if (in_out==='in') {
                         group = groupInfo.groupTypes_in.filter(gt=> gt.path===rel_path.toLowerCase())[0];
-                        valid = group.template===allowed_rel[0].outType;
+                        valid = allowed_rel.filter(r=> r.outType===group.template).length>0;
                     } else {
                         group = groupInfo.groupTypes_out.filter(gt=> gt.path===rel_path.toLowerCase())[0];
-                        valid = group.template===allowed_rel[0].inType;
+                        valid = allowed_rel.filter(r=> r.inType===group.template).length>0;
                     }
                     if (!valid) {
                         logger.debug(`types.full.service validateRelationshipsByPath: exit: false (invalid group ${rel_path} for relation: ${rel_name})`);
