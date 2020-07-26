@@ -1,3 +1,11 @@
+# [@cdf/assetlibrary-v3.4.4](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.4.3...@cdf/assetlibrary-v3.4.4) (2020-07-26)
+
+
+### Bug Fixes
+
+* **assetlibrary:** fixed broken test due to tslint issue ([8c8f5b8](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/8c8f5b80c50f8100d9522828171b4d81c4e5de9f))
+* **assetlibrary:** fixed validating relations with multiple templates ([71aee10](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/71aee10445c2e5a19843a4a60ca309d375d9f957))
+
 # [@cdf/assetlibrary-v3.4.3](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.4.2...@cdf/assetlibrary-v3.4.3) (2020-06-10)
 
 
