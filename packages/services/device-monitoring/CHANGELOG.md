@@ -1,3 +1,10 @@
+# [@cdf/device-monitoring-v3.2.2](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/device-monitoring-v3.2.1...@cdf/device-monitoring-v3.2.2) (2020-07-28)
+
+
+### Bug Fixes
+
+* added missing peer dependency ([7023ef7](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/7023ef7b2813cecf590003feb9c829deb04217b2))
+
 # [@cdf/device-monitoring-v3.2.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/device-monitoring-v3.2.0...@cdf/device-monitoring-v3.2.1) (2020-06-10)
 
 
