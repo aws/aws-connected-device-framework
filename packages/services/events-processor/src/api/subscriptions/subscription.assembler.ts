@@ -26,7 +26,8 @@ export class SubscriptionAssembler {
             event: {
                 id: resource.event.id,
                 name: event.name,
-                conditions: event.conditions
+                conditions: event.conditions,
+                disableAlertThreshold: event.disableAlertThreshold
             },
 
             eventSource: {

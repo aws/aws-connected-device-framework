@@ -335,6 +335,8 @@ components:
               type: string
             sms:
               type: string
+            push_gcm:
+              type: string
         eventId:
           description: Event ID
           type: string
@@ -347,6 +349,10 @@ components:
           description: The name of the attribute that represents the principal in incoming messages from the event source
           type: string
           readOnly: true
+        disableAlertThreshold:
+          description: If set to true, alerts will be sent every time rather than just the first time after a threshold being passed.
+          type: boolean
+          default: false
       required:
         - name
         - conditions
@@ -444,6 +450,18 @@ components:
                   type: object
               required:
                 - phoneNumber
+            push_gcm:
+              type: object
+              properties:
+                platformApplicationArn:
+                  description: Platform Application Arn
+                  type: object
+                token:
+                  description: Application Token
+                  type: object
+              required:
+                - platformApplicationArn
+                - token
         ruleParameterValues:
           description: The values of any required rule parameters of the event
           type: object
@@ -463,6 +481,9 @@ components:
               type: string
             conditions:
               $ref: '#/components/schemas/EventConditions'
+            disableAlertThreshold:
+              description: If set to true, alerts will be sent every time rather than just the first time after a threshold being passed.
+              type: boolean
           readOnly: true
         enabled:
           description: Enabled status
@@ -580,6 +601,7 @@ components:
         supportedTargets:
           email: default
           sms: small
+          push_gcm: small
         templates:
           default: 'The battery for bowl {{=it.principalValue}} is low.'
           small: '{{=it.principalValue}} battery low'
@@ -596,6 +618,7 @@ components:
         supportedTargets:
           email: default
           sms: small
+          push_gcm: small
         templates:
           default: 'The battery for bowl {{=it.principalValue}} is low.'
           small: '{{=it.principalValue}} battery low'
@@ -614,6 +637,7 @@ components:
         supportedTargets:
           email: default
           sms: small
+          push_gcm: small
         templates:
           default: 'The battery for bowl {{=it.principalValue}} is low.'
           small: '{{=it.principalValue}} battery low'
@@ -632,6 +656,7 @@ components:
         supportedTargets:
           email: default
           sms: small
+          push_gcm: small
         templates:
           default: 'The battery for bowl {{=it.principalValue}} is low.'
           small: '{{=it.principalValue}} battery low'
@@ -649,7 +674,11 @@ components:
             address: someone@somewhere.com
           sms:
             phoneNumber: 15551231234
-        
+          push_gcm:
+            platformApplicationArn: arn:aws:sns:us-west-2:123456789012:app/GCM/MyApplication
+            token: EXAMPLE12345
+
+
   responses:         
     Created:
       description: Created successfully

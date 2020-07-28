@@ -58,7 +58,8 @@ export class EventDao {
                     enabled: item.enabled,
                     templates: item.templates,
                     supportedTargets: item.supportedTargets,
-                    templateProperties: item.templateProperties
+                    templateProperties: item.templateProperties,
+                    disableAlertThreshold: item.disableAlertThreshold
                 }
             }
         };
@@ -131,7 +132,8 @@ export class EventDao {
                 enabled: i.enabled,
                 templates: i.templates,
                 supportedTargets: i.supportedTargets,
-                templateProperties: i.templateProperties
+                templateProperties: i.templateProperties,
+                disableAlertThreshold: i.disableAlertThreshold
             } ;
 
             events[eventId] = event;

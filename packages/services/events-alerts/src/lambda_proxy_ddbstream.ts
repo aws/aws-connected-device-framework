@@ -53,7 +53,7 @@ exports.handler = async (event: any, _context: any) => {
                 alertAttributes[k] = alertAttributes.templatePropertiesData[k];
             });
         }
-
+        logger.debug(`alert Attributes - ${JSON.stringify(alertAttributes)}`);
         // Retrieve event config once and reuse
         const eventId = alertAttributes['eventId'];
 
@@ -65,6 +65,9 @@ exports.handler = async (event: any, _context: any) => {
         }
         if (targets['sms'] !== undefined) {
             messages.default = await messageCompiler.compile(eventId, 'sms', alertAttributes);
+        }
+        if (targets['push_gcm'] !== undefined) {
+            messages.GCM = await messageCompiler.compile(eventId, 'push_gcm', alertAttributes);
         }
         // TODO: add rest of sns destination types when we support them
 

@@ -48,6 +48,7 @@ export class SNSMessages {
     http?: string;
     https?: string;
     sqs?: string;
+    GCM: string;
 
     public toJson():any {
         return {
@@ -56,7 +57,8 @@ export class SNSMessages {
             'email - json': this.emailJson,
             http: this.http,
             https: this.https,
-            sqs: this.sqs
+            sqs: this.sqs,
+            GCM: this.GCM
         };
     }
 
@@ -66,7 +68,8 @@ export class SNSMessages {
             (this.emailJson!==undefined) ||
             (this.http!==undefined) ||
             (this.https!==undefined) ||
-            (this.sqs!==undefined) ;
+            (this.sqs!==undefined) ||
+            (this.GCM!==undefined);
     }
 
 }

@@ -36,6 +36,7 @@ import { DynamoDbEventSource } from '../api/eventsources/sources/dynamodb.source
 import { IotCoreEventSource } from '../api/eventsources/sources/iotcore.source';
 import { DynamoDbUtils } from '../utils/dynamoDb.util';
 import { EventConditionsUtils } from '../api/events/event.models';
+import { PushTarget } from '../api/subscriptions/targets/push.target';
 
 // Load everything needed to the Container
 export const container = new Container();
@@ -70,6 +71,7 @@ container.bind<SNSTarget>(TYPES.SNSTarget).to(SNSTarget).inSingletonScope();
 container.bind<DynamodDBTarget>(TYPES.DynamodDBTarget).to(DynamodDBTarget).inSingletonScope();
 container.bind<EmailTarget>(TYPES.EmailTarget).to(EmailTarget).inSingletonScope();
 container.bind<SMSTarget>(TYPES.SMSTarget).to(SMSTarget).inSingletonScope();
+container.bind<PushTarget>(TYPES.PushTarget).to(PushTarget).inSingletonScope();
 
 container.bind<DynamoDbUtils>(TYPES.DynamoDbUtils).to(DynamoDbUtils).inSingletonScope();
 

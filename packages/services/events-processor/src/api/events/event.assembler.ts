@@ -29,7 +29,8 @@ export class EventAssembler {
             enabled: resource.enabled,
             templates: resource.templates,
             supportedTargets: resource.supportedTargets,
-            templateProperties: this.extractTemplateProperties(resource.templates)
+            templateProperties: this.extractTemplateProperties(resource.templates),
+            disableAlertThreshold: resource.disableAlertThreshold
         };
         logger.debug(`event.assembler toItem: exit: ${JSON.stringify(item)}`);
         return item;
@@ -48,7 +49,8 @@ export class EventAssembler {
             principal: item.principal,
             templates: item.templates,
             supportedTargets: item.supportedTargets,
-            templateProperties: item.templateProperties
+            templateProperties: item.templateProperties,
+            disableAlertThreshold: item.disableAlertThreshold
         };
 
         logger.debug(`event.assembler toRe: exit: node: ${JSON.stringify(resource)}`);

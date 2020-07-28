@@ -198,10 +198,16 @@ Resources:
               - "sns:GetTopicAttributes"
               - "sns:ListSubscriptionsByTopic"
               - "sns:Subscribe"
-              - "sns:Unsubscribe"
             Effect: Allow
             Resource: 
             - !Sub "arn:aws:sns:${AWS::Region}:${AWS::AccountId}:cdf-events-*"
+          - Sid: "snsAll"
+            Action:
+              - "sns:Unsubscribe"
+              - "sns:CreatePlatformEndpoint"
+              - "sns:GetEndpointAttributes"
+            Effect: Allow
+            Resource: '*'
           - Sid: "iot"
             Action:
               - "iot:CreateTopicRule"

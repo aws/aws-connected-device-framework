@@ -32,8 +32,7 @@ export class SMSTarget extends SNSTarget  {
 
         // create the topic if it does not already exist
         const topicArn = await super.initTopic(userId);
-
-       await super.subscribe(this.PROTOCOL, topicArn, config.phoneNumber);
+        await super.subscribe(this.PROTOCOL, topicArn, config.phoneNumber);
 
         logger.debug(`sms.target create: exit:${topicArn}`);
         return topicArn;

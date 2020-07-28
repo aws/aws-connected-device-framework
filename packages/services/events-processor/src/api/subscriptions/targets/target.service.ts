@@ -12,6 +12,7 @@ import { SubscriptionItem } from '../subscription.models';
 import { SMSTarget } from './sms.target';
 import { SNSTarget } from './sns.target';
 import { DynamodDBTarget } from './dynamodb.target';
+import {PushTarget} from './push.target';
 
 @injectable()
 export class TargetService  {
@@ -20,7 +21,8 @@ export class TargetService  {
         @inject(TYPES.SNSTarget) private snsTarget: SNSTarget,
         @inject(TYPES.EmailTarget) private emailTarget: EmailTarget,
         @inject(TYPES.DynamodDBTarget) private dynamodbTarget: DynamodDBTarget,
-        @inject(TYPES.SMSTarget) private smsTarget: SMSTarget) {}
+        @inject(TYPES.SMSTarget) private smsTarget: SMSTarget,
+        @inject(TYPES.PushTarget) private pushTarget: PushTarget) { }
 
     public async processTargets(sub:SubscriptionItem) : Promise<void> {
         logger.debug(`target.service processTargets: in: sub:${JSON.stringify(sub)}`);
@@ -41,6 +43,9 @@ export class TargetService  {
         if (sub.targets.sms!==undefined) {
             snsTopicArn = await this.smsTarget.create(sub.user.id, sub.targets.sms);
         }
+        if(sub.targets.push_gcm!==undefined) {
+            snsTopicArn =  await this.pushTarget.create(sub.user.id, sub.targets.push_gcm);
+        }
         if (sub.targets.dynamodb!== undefined) {
             dynamodbTableName = await this.dynamodbTarget.validateTarget(sub.targets.dynamodb.tableName);
             dynamodbAttributeMapping = sub.targets.dynamodb.attributeMapping;
@@ -53,7 +58,6 @@ export class TargetService  {
         if (dynamodbTableName!==undefined) {
             sub.dynamodb = {tableName: dynamodbTableName, attributeMapping: dynamodbAttributeMapping};
         }
-
         // TODO: add other supported targets
 
         logger.debug(`target.service processTargets: exit:`);

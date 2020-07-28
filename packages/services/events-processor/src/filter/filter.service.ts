@@ -88,34 +88,36 @@ export class FilterService {
                     }
                     logger.debug(`filter.service filter: results:${JSON.stringify(results)}`);
 
-                    if (results!==undefined && results.events!==undefined) {
-                        if (results.events.length>0 && !sub.alerted) {
-                            const attributes = await this.getTemplatePropertiesData(sub, ev, templateCache);
+                    if (results?.events?.length>0 ) {
+                        if (!sub.alerted || sub.event.disableAlertThreshold) {
                             // a new alert...
+                            const attributes = await this.getTemplatePropertiesData(sub, ev, templateCache);
                             alerts.push(this.buildAlert(sub, attributes));
+                            if (!sub.alerted) {
+                                changedSubAlerts[sub.id]= {
+                                    id: sub.id,
+                                    eventSource: {
+                                        id: sub.eventSource.id,
+                                        principal: sub.eventSource.principal
+                                    },
+                                    principalValue: sub.principalValue,
+                                    alerted: true
+                                };
+                            }
                             sub.alerted=true;
-                            changedSubAlerts[sub.id]= {
-                                id: sub.id,
-                                eventSource: {
-                                    id: sub.eventSource.id,
-                                    principal: sub.eventSource.principal
-                                },
-                                principalValue: sub.principalValue,
-                                alerted: true
-                            };
-                        } else if (results.events.length===0 && sub.alerted) {
-                            // an alert that needs resetting...
-                            sub.alerted=false;
-                            changedSubAlerts[sub.id]= {
-                                id: sub.id,
-                                eventSource: {
-                                    id: sub.eventSource.id,
-                                    principal: sub.eventSource.principal
-                                },
-                                principalValue: sub.principalValue,
-                                alerted: false
-                            };
                         }
+                    } else if (results?.events?.length===0 && sub.alerted) {
+                        // an alert that needs resetting...
+                        sub.alerted=false;
+                        changedSubAlerts[sub.id]= {
+                            id: sub.id,
+                            eventSource: {
+                                id: sub.eventSource.id,
+                                principal: sub.eventSource.principal
+                            },
+                            principalValue: sub.principalValue,
+                            alerted: false
+                        };
                     }
 
                     // clear the engine state ready for the next run

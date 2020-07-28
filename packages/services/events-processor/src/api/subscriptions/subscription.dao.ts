@@ -47,10 +47,9 @@ export class SubscriptionDao {
 
         const subscriptionDbId = createDelimitedAttribute(PkType.Subscription, si.id);
         const gsi2Key = createDelimitedAttribute(PkType.EventSource, si.eventSource.id, si.eventSource.principal, si.principalValue);
-        const snsTopicArn = (si.sns ? (si.sns.topicArn ? si.sns.topicArn: undefined): undefined);
-        const dynamoDbTableName = (si.dynamodb ? (si.dynamodb.tableName ? si.dynamodb.tableName: undefined): undefined);
-        const dynamoDbAttributeMapping = (si.dynamodb ? (si.dynamodb.attributeMapping ? si.dynamodb.attributeMapping: undefined): undefined);
-
+        const snsTopicArn = si?.sns?.topicArn;
+        const dynamoDbTableName = si?.dynamodb?.tableName;
+        const dynamoDbAttributeMapping = si?.dynamodb?.attributeMapping;
         const subscriptionCreate = {
             PutRequest: {
                 Item: {
@@ -76,6 +75,7 @@ export class SubscriptionDao {
                     sk: createDelimitedAttribute(PkType.Event, si.event.id),
                     name: si.event.name,
                     conditions: si.event.conditions,
+                    disableAlertThreshold: si.event.disableAlertThreshold ?? false,
                     principal: si.eventSource.principal,
                     eventSourceId: si.eventSource.id,
                     gsi1Sort: createDelimitedAttribute(PkType.Subscription, si.id),
@@ -331,7 +331,8 @@ export class SubscriptionDao {
                 s.event = {
                     id: expandDelimitedAttribute(sk)[1],
                     name: i['name'],
-                    conditions: i['conditions']
+                    conditions: i['conditions'],
+                    disableAlertThreshold: i['disableAlertThreshold']
                 };
                 s.eventSource = {
                     id: i['eventSourceId'],

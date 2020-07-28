@@ -20,6 +20,9 @@ export interface EventResource {
     // read only (denormalised from event source)
     principal: string;
     templateProperties?: string[];
+
+    // if set, disables the alert threshold which means every alert will be dispatched rather than just the first.
+    disableAlertThreshold: boolean;
 }
 
 export interface EventResourceList {
@@ -46,6 +49,8 @@ export interface EventItem {
     templates: TemplateMap;
     supportedTargets: TargetTemplateMap;
     templateProperties?: string[];
+
+    disableAlertThreshold?: boolean;
 
 }
 export interface EventConditions {
@@ -133,7 +138,8 @@ export enum EventTargetType {
     EMAIL = 'email',
     SMS = 'sms',
     MQTT = 'mqtt',
-    DYNAMODB = 'dynamodb'
+    DYNAMODB = 'dynamodb',
+    PUSH = 'push_gcm'
 }
 
 export type TemplateMap = { [key: string] : string};

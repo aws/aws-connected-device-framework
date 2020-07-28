@@ -1,4 +1,4 @@
-/*-------------------------------------------------------------------------------
+ /*-------------------------------------------------------------------------------
 # Copyright (c) 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
@@ -34,7 +34,8 @@ describe('SubscriptionDao', () => {
                     operator: 'lessThanInclusive',
                     value: 20
                 }]
-            }
+            },
+            disableAlertThreshold: false
         },
         eventSource: {
             id: 'eventsource001',
@@ -46,6 +47,10 @@ describe('SubscriptionDao', () => {
             },
             sms: {
                 phoneNumber: '555555555'
+            },
+            push_gcm: {
+                platformApplicationArn: 'arn:aws:sns:us-west-2:123456789012:app/GCM/MyApplication',
+                token: 'EXAMPLE12345'
             }
         },
         user: {
@@ -84,7 +89,8 @@ describe('SubscriptionDao', () => {
                             conditions: stubbedGoodItem.event.conditions,
                             gsi2Key: `ES:${stubbedGoodItem.eventSource.id}:${stubbedGoodItem.eventSource.principal}:${stubbedGoodItem.principalValue}`,
                             gsi2Sort: `S:${stubbedGoodItem.id}:E:${stubbedGoodItem.event.id}`,
-                            eventSourceId: stubbedGoodItem.eventSource.id
+                            eventSourceId: stubbedGoodItem.eventSource.id,
+                            disableAlertThreshold: false
                         }
                     }
                 }, {
@@ -118,6 +124,17 @@ describe('SubscriptionDao', () => {
                             gsi2Sort: `S:${stubbedGoodItem.id}:ST:sms`,
                             phoneNumber: '555555555',
 
+                        }
+                    }
+                }, {
+                    PutRequest: {
+                        Item: {
+                            pk: `S:${stubbedGoodItem.id}`,
+                            sk: `ST:push_gcm`,
+                            gsi2Key: `ES:${stubbedGoodItem.eventSource.id}:${stubbedGoodItem.eventSource.principal}:${stubbedGoodItem.principalValue}`,
+                            gsi2Sort: `S:${stubbedGoodItem.id}:ST:push_gcm`,
+                            platformApplicationArn: 'arn:aws:sns:us-west-2:123456789012:app/GCM/MyApplication',
+                            token: 'EXAMPLE12345'
                         }
                     }
                 }
@@ -226,6 +243,7 @@ describe('SubscriptionDao', () => {
                             gsi2Key: `ES:${stubbedGoodItem.eventSource.id}:${stubbedGoodItem.eventSource.principal}:${stubbedGoodItem.principalValue}`,
                             gsi2Sort: `S:${stubbedGoodItem.id}:E:${stubbedGoodItem.event.id}`,
                             eventSourceId: stubbedGoodItem.eventSource.id,
+                            disableAlertThreshold: false
                         }, {
                             pk: `S:${stubbedGoodItem.id}`,
                             sk: `U:${stubbedGoodItem.user.id}`,
@@ -245,6 +263,13 @@ describe('SubscriptionDao', () => {
                             phoneNumber: '555555555',
                             gsi2Key: `ES:${stubbedGoodItem.eventSource.id}:${stubbedGoodItem.eventSource.principal}:${stubbedGoodItem.principalValue}`,
                             gsi2Sort: `S:${stubbedGoodItem.id}:ST:sms`
+                        }, {
+                            pk: `S:${stubbedGoodItem.id}`,
+                            sk: `ST:push_gcm`,
+                            platformApplicationArn: 'arn:aws:sns:us-west-2:123456789012:app/GCM/MyApplication',
+                            token: 'EXAMPLE12345',
+                            gsi2Key: `ES:${stubbedGoodItem.eventSource.id}:${stubbedGoodItem.eventSource.principal}:${stubbedGoodItem.principalValue}`,
+                            gsi2Sort: `S:${stubbedGoodItem.id}:ST:push_gcm`
                         }
                     ]
                 };

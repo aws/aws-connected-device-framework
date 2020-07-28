@@ -109,6 +109,10 @@ export class SubscriptionService  {
                 ow(resource.targets.dynamodb.tableName, ow.string.nonEmpty);
                 ow(resource.targets.dynamodb.attributeMapping, ow.object.nonEmpty);
             }
+            if(resource.targets.push_gcm!==undefined) {
+                ow(resource.targets.push_gcm.platformApplicationArn, ow.string.nonEmpty);
+                ow(resource.targets.push_gcm.token, ow.string.nonEmpty);
+            }
         }
 
         // set defaults
@@ -138,6 +142,9 @@ export class SubscriptionService  {
             }
             if (resource.targets.dynamodb!==undefined) {
                 ow(event.supportedTargets.dynamodb, ow.string.nonEmpty);
+            }
+            if (resource.targets.push_gcm!==undefined) {
+                ow(event.supportedTargets.push_gcm, ow.string.nonEmpty);
             }
         }
 

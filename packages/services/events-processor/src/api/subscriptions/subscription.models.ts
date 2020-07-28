@@ -30,6 +30,7 @@ export type SubscriptionTargets = {
     sms?: SMSSubscriptionConfig;
     mqtt?: MQTTSubscriptionConfig;
     dynamodb?: DynamodDBSubscriptionConfig;
+    push_gcm?: PushSubscriptionConfig;
 };
 
 export type EmailSubscriptionConfig = {
@@ -53,6 +54,11 @@ export type DynamodDBSubscriptionConfig = {
     attributeMapping: AttributeMapping;
 };
 
+export type PushSubscriptionConfig = {
+    platformApplicationArn:string;
+    token:string;
+};
+
 export interface SubscriptionResourceList {
     results: SubscriptionResource[];
     pagination?: {
@@ -72,6 +78,7 @@ export class SubscriptionItem {
         id?: string;
         name?: string;
         conditions?: EventConditions;
+        disableAlertThreshold?: boolean;
     };
     eventSource?: {
         id: string;
@@ -94,5 +101,4 @@ export class SubscriptionItem {
 
     enabled?: boolean;
     alerted?: boolean;
-
 }
