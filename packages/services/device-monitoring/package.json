@@ -28,6 +28,7 @@
     "inversify": "5.0.1",
     "inversify-binding-decorators": "4.0.0",
     "inversify-express-utils": "6.3.2",
+    "ow": "0.15.0",
     "readable-stream": "2.3.6",
     "reflect-metadata": "0.1.13",
     "superagent": "5.1.2",
