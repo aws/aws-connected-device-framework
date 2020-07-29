@@ -10,7 +10,7 @@ import { DevicesService, Device10Resource } from '@cdf/assetlibrary-client';
 import { logger } from './utils/logger';
 import {TYPES} from './di/types';
 
-@injectable
+@injectable()
 export class AssetLibUpdate {
 
     constructor(
