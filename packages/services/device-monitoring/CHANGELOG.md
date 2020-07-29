@@ -1,3 +1,10 @@
+# [@cdf/device-monitoring-v3.2.3](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/device-monitoring-v3.2.2...@cdf/device-monitoring-v3.2.3) (2020-07-29)
+
+
+### Bug Fixes
+
+* **device-monitoring:** type annotation ([75d346b](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/75d346b6561d2f57b4a141f33c4d0ca16a16712d))
+
 # [@cdf/device-monitoring-v3.2.2](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/device-monitoring-v3.2.1...@cdf/device-monitoring-v3.2.2) (2020-07-28)
 
 
