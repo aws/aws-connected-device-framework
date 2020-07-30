@@ -1,3 +1,10 @@
+# [@cdf/assetlibrary-v3.4.5](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.4.4...@cdf/assetlibrary-v3.4.5) (2020-07-30)
+
+
+### Bug Fixes
+
+* **asset-library:** encode assert library search params ([7a27c52](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/7a27c5237c0fc11f13c0a14b88ee6257701428ce))
+
 # [@cdf/assetlibrary-v3.4.4](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.4.3...@cdf/assetlibrary-v3.4.4) (2020-07-26)
 
 
