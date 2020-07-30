@@ -27,7 +27,11 @@ export class AssetLibUpdate {
             connected
         } as Device10Resource;
 
-        await this.devices.updateDevice(deviceId, updateRequest);
+        try {
+            await this.devices.updateDevice(deviceId, updateRequest);
+        } catch (err) {
+            logger.error(err);
+        }
 
         logger.debug('assetlib_update: updatedevice: exit:');
     }

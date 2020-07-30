@@ -76,6 +76,18 @@ Resources:
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AWSLambdaExecute
         - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
+      Policies:
+        - PolicyName: app_policies
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: lambda
+                Effect: Allow
+                Action:
+                  - lambda:InvokeFunction
+                  - lambda:Invoke
+                Resource:
+                  - !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:cdf-assetlibrary-*'
   
   IoTLifecycleEventLambda:
     Type: AWS::Serverless::Function
