@@ -63,6 +63,7 @@ fi
 AWS_ARGS=$(buildAwsArgs "$AWS_REGION" "$AWS_PROFILE" )
 AWS_SCRIPT_ARGS=$(buildAwsScriptArgs "$AWS_REGION" "$AWS_PROFILE" )
 
+ASSETLIBRARY_STACK_NAME="$(defaultIfNotSet 'ASSETLIBRARY_STACK_NAME' A ${ASSETLIBRARY_STACK_NAME} cdf-assetlibrary-${ENVIRONMENT})"
 
 echo "
 Running with:
@@ -74,23 +75,19 @@ Running with:
 
 cwd=$(dirname "$0")
 
-logTitle 'Device Monitoring Identifying deployed endpoints'
-
-rest_apis=$(aws apigateway get-rest-apis $AWS_ARGS)
-
-rest_api_name="CDF Asset Library ($ENVIRONMENT)"
-assetlibrary_rest_api_id=$(echo $rest_apis \
-    | jq -r --arg rest_api_name "$rest_api_name" \
-    '.items[] | select(.name==$rest_api_name) | .id')
-assetlibrary_invoke_url="https://$assetlibrary_rest_api_id.execute-api.$AWS_REGION.amazonaws.com/Prod"
-
 logTitle 'Setting Device Monitoring configuration'
 
-cat $CONFIG_LOCATION | \
-  jq --arg assetlibrary_invoke_url "$assetlibrary_invoke_url" \
-  '.assetLibrary.baseUrl=$assetlibrary_invoke_url' \
-  > $CONFIG_LOCATION.tmp && mv $CONFIG_LOCATION.tmp $CONFIG_LOCATION
+stack_exports=$(aws cloudformation list-exports $AWS_ARGS)
 
+assetlibrary_invoke_export="$ASSETLIBRARY_STACK_NAME-restApiFunctionName"
+assetlibrary_invoke_apifunctionname=$(echo $stack_exports \
+  | jq -r --arg assetlibrary_invoke_export "$assetlibrary_invoke_export" \
+  '.Exports[] | select(.Name==$assetlibrary_invoke_export) | .Value')
+
+cat $CONFIG_LOCATION | \
+  jq --arg assetlibrary_invoke_apifunctionname "$assetlibrary_invoke_apifunctionname" \
+  ' .assetLibrary.apiFunctionName=$assetlibrary_invoke_apifunctionname' \
+  > $CONFIG_LOCATION.tmp && mv $CONFIG_LOCATION.tmp $CONFIG_LOCATION
 
 logTitle 'Deploying the Device Monitoring CloudFormation template'
 
