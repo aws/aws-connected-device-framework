@@ -9,7 +9,7 @@
     "clean": "rm -rf dist build tsconfig.tsbuildinfo",
     "reset": "rm -rf cli node_modules package-lock.json",
     "lint": "tslint \"src/**/*.ts\"",
-    "test": "npm run lint && nyc jest --passWithNoTests",
+    "test": "npm run lint && NODE_ENV= NODE_CONFIG_DIR='./src/config' nyc jest --passWithNoTests",
     "build": "tsc -b tsconfig.json",
     "semantic-release": "npx semantic-release -e semantic-release-monorepo"
   },
@@ -75,7 +75,10 @@
   "jest": {
     "globals": {
       "NODE_CONFIG_STRICT_MODE": false,
-      "SUPPRESS_NO_CONFIG_WARNING": true
+      "SUPPRESS_NO_CONFIG_WARNING": true,
+      "ts-jest": {
+        "packageJson": "package.json"
+      }
     },
     "roots": [
       "<rootDir>/src"

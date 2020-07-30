@@ -14,13 +14,25 @@ import { GroupsAssembler } from '../groups/groups.assembler';
 @injectable()
 export class SearchAssembler {
 
-    constructor( @inject(TYPES.DevicesAssembler) private devicesAssembler: DevicesAssembler,
-        @inject(TYPES.GroupsAssembler) private groupsAssembler: GroupsAssembler  ) {}
+    constructor(
+        @inject(TYPES.DevicesAssembler) private devicesAssembler: DevicesAssembler,
+        @inject(TYPES.GroupsAssembler) private groupsAssembler: GroupsAssembler
+    ) {}
 
-    public toSearchRequestModel(types:string|string[], ancestorPath:string,
-        eqs:string|string[], neqs:string|string[], lts:string|string[], ltes:string|string[],
-        gts:string|string[], gtes:string|string[], startsWiths:string|string[],
-        exists:string|string[], nexists:string|string[], facetField:string): SearchRequestModel {
+    public toSearchRequestModel(
+        types:string|string[],
+        ancestorPath:string,
+        eqs:string|string[],
+        neqs:string|string[],
+        lts:string|string[],
+        ltes:string|string[],
+        gts:string|string[],
+        gtes:string|string[],
+        startsWiths:string|string[],
+        exists:string|string[],
+        nexists:string|string[],
+        facetField:string
+    ): SearchRequestModel {
 
         const req = new SearchRequestModel();
         if (types!==undefined) {
@@ -79,7 +91,7 @@ export class SearchAssembler {
                     // no traversals
                     response.push({
                         field:v[0],
-                        value:v[1]
+                        value: decodeURIComponent(v[1])
                     });
                 } else if (v.length>2 && v.length % 2 === 0) {
                     // traversals
@@ -90,7 +102,7 @@ export class SearchAssembler {
                     response.push({
                         traversals,
                         field:v[v.length-2],
-                        value:v[v.length-1]
+                        value: decodeURIComponent(v[v.length-1])
                     });
                 }
             });

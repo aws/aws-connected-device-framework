@@ -13,7 +13,7 @@ import { TypesService } from '../types/types.service';
 import { TypesServiceFull } from '../types/types.full.service';
 import { PoliciesDaoFull } from './policies.full.dao';
 import { AttachedPolicy, PolicyModel } from './policies.models';
-import {EventEmitter} from '../events/eventEmitter.service';
+import { EventEmitter } from '../events/eventEmitter.service';
 import { PoliciesService } from './policies.service';
 
 describe('PoliciesService', () => {

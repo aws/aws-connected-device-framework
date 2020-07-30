@@ -3340,13 +3340,13 @@ packages:
       aggregate-error: 3.0.1
       execa: 3.4.0
       fs-extra: 8.1.0
-      lodash: 4.17.19
+      lodash: 4.17.15
       nerf-dart: 1.0.0
       normalize-url: 4.5.0
-      npm: 6.14.7
+      npm: 6.13.7
       rc: 1.2.8
       read-pkg: 5.2.0
-      registry-auth-token: 4.2.0
+      registry-auth-token: 4.1.1
       semantic-release: 15.13.31_semantic-release@15.13.31
       tempy: 0.3.0
     dev: true
@@ -5645,7 +5645,7 @@ packages:
     engines:
       node: '>= 10'
     optionalDependencies:
-      '@commitlint/load': 9.1.1
+      '@commitlint/load': 8.3.5
     resolution:
       integrity: sha512-MPxERbtQyVp0nnpCBiwzKGKmMBSswmCV3Jpef3Axqd5f3c/SOc6VFiSUlclOyZXBn3Xtf4snzt4O15hBTRb2gA==
   /d/1.0.1:
@@ -9581,6 +9581,135 @@ packages:
       node: '>=8'
     resolution:
       integrity: sha512-S48WzZW777zhNIrn7gxOlISNAqi9ZC/uQFnRdbeIHhZhCA6UqpkOT8T1G7BvfdgP4Er8gF4sUbaS0i7QvIfCWw==
+  /npm/6.13.7:
+    bundledDependencies:
+      - abbrev
+      - ansicolors
+      - ansistyles
+      - aproba
+      - archy
+      - bin-links
+      - bluebird
+      - byte-size
+      - cacache
+      - call-limit
+      - chownr
+      - ci-info
+      - cli-columns
+      - cli-table3
+      - cmd-shim
+      - columnify
+      - config-chain
+      - debuglog
+      - detect-indent
+      - detect-newline
+      - dezalgo
+      - editor
+      - figgy-pudding
+      - find-npm-prefix
+      - fs-vacuum
+      - fs-write-stream-atomic
+      - gentle-fs
+      - glob
+      - graceful-fs
+      - has-unicode
+      - hosted-git-info
+      - iferr
+      - imurmurhash
+      - infer-owner
+      - inflight
+      - inherits
+      - ini
+      - init-package-json
+      - is-cidr
+      - json-parse-better-errors
+      - JSONStream
+      - lazy-property
+      - libcipm
+      - libnpm
+      - libnpmaccess
+      - libnpmhook
+      - libnpmorg
+      - libnpmsearch
+      - libnpmteam
+      - libnpx
+      - lock-verify
+      - lockfile
+      - lodash._baseindexof
+      - lodash._baseuniq
+      - lodash._bindcallback
+      - lodash._cacheindexof
+      - lodash._createcache
+      - lodash._getnative
+      - lodash.clonedeep
+      - lodash.restparam
+      - lodash.union
+      - lodash.uniq
+      - lodash.without
+      - lru-cache
+      - meant
+      - mississippi
+      - mkdirp
+      - move-concurrently
+      - node-gyp
+      - nopt
+      - normalize-package-data
+      - npm-audit-report
+      - npm-cache-filename
+      - npm-install-checks
+      - npm-lifecycle
+      - npm-package-arg
+      - npm-packlist
+      - npm-pick-manifest
+      - npm-profile
+      - npm-registry-fetch
+      - npm-user-validate
+      - npmlog
+      - once
+      - opener
+      - osenv
+      - pacote
+      - path-is-inside
+      - promise-inflight
+      - qrcode-terminal
+      - query-string
+      - qw
+      - read-cmd-shim
+      - read-installed
+      - read-package-json
+      - read-package-tree
+      - read
+      - readable-stream
+      - readdir-scoped-modules
+      - request
+      - retry
+      - rimraf
+      - safe-buffer
+      - semver
+      - sha
+      - slide
+      - sorted-object
+      - sorted-union-stream
+      - ssri
+      - stringify-package
+      - tar
+      - text-table
+      - tiny-relative-date
+      - uid-number
+      - umask
+      - unique-filename
+      - unpipe
+      - update-notifier
+      - uuid
+      - validate-npm-package-license
+      - validate-npm-package-name
+      - which
+      - worker-farm
+      - write-file-atomic
+    dev: true
+    hasBin: true
+    resolution:
+      integrity: sha512-X967EKTT407CvgrWFjXusnPh0VLERcmR9hZFSVgkEquOomZkvpwLJ5zrQ3qrG9SpPLKJE4bPLUu76exKQ4a3Cg==
   /npm/6.14.7:
     bundledDependencies:
       - abbrev
@@ -10771,6 +10900,14 @@ packages:
     dev: true
     resolution:
       integrity: sha512-4LM6Fw8eBQdwMYcES4yTnn2TqIasbXuwDx3um+QRs7S55aMKCBKBxvPXl2RiUjHwuJLTyYfxSpmfSAjQpcuP+A==
+  /registry-auth-token/4.1.1:
+    dependencies:
+      rc: 1.2.8
+    dev: true
+    engines:
+      node: '>=6.0.0'
+    resolution:
+      integrity: sha512-9bKS7nTl9+/A1s7tnPeGrUpRcVY+LUh7bfFgzpndALdPfXQBfQV77rQVtqgUV3ti4vc/Ik81Ex8UJDWDQ12zQA==
   /registry-auth-token/4.2.0:
     dependencies:
       rc: 1.2.8
@@ -12926,6 +13063,7 @@ packages:
       node: '>=6'
     name: env-ci
     resolution:
+      registry: 'https://registry.npmjs.org/'
       tarball: 'https://codeload.github.com/boardthatpowder/env-ci/tar.gz/45ee1f3169d13f1a2c3842f5f2458b6bd8cb6dd5'
     version: 0.0.0-development
   github.com/boardthatpowder/semantic-release-plugin-decorators/0f89322cb9231b2812e6e66bbc7215b88efd02b5_semantic-release@15.13.31:
@@ -12939,5 +13077,6 @@ packages:
     peerDependencies:
       semantic-release: '>=11'
     resolution:
+      registry: 'https://registry.npmjs.org/'
       tarball: 'https://codeload.github.com/boardthatpowder/semantic-release-plugin-decorators/tar.gz/0f89322cb9231b2812e6e66bbc7215b88efd02b5'
     version: 0.0.0-development

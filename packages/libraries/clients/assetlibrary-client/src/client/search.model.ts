@@ -60,22 +60,25 @@ export class SearchRequestModel {
 		this.summarize = other.summarize;
 	}
 
-	private buildQSValues(qsParam:string, filters:SearchRequestFilters) : string[] {
+	private buildQSValues(qsParam:string, filters:SearchRequestFilters, encodeKey?: boolean) : string[] {
 		const qs:string[]= [];
 
 		if (filters===undefined) {
 			return qs;
 		}
 
+		let key = `${qsParam}=`;
 		filters.forEach(f=> {
-			let v = `${qsParam}=`;
+			let v = '';
 			if (f.traversals!==undefined) {
 				f.traversals.forEach(t=> {
 					v+=`${t.relation}:${t.direction}:`;
 				});
 			}
-			v+=`${f.field}:${f.value}`;
-			qs.push(v);
+			v+=`${f.field}:${encodeURIComponent(f.value)}`;
+			key = encodeKey ? `${key}${encodeURIComponent(v)}` : `${key}${v}`;
+
+			qs.push(key);
 		});
 
 		return qs;
@@ -93,39 +96,39 @@ export class SearchRequestModel {
 		}
 
 		if (this.eq) {
-			qs = qs.concat(this.buildQSValues('eq', this.eq));
+			qs = qs.concat(this.buildQSValues('eq', this.eq, true));
 		}
 
 		if (this.neq) {
-			qs = qs.concat(this.buildQSValues('neq', this.neq));
+			qs = qs.concat(this.buildQSValues('neq', this.neq, true));
 		}
 
 		if (this.lt) {
-			qs = qs.concat(this.buildQSValues('lt', this.lt));
+			qs = qs.concat(this.buildQSValues('lt', this.lt, true));
 		}
 
 		if (this.lte) {
-			qs = qs.concat(this.buildQSValues('lte', this.lte));
+			qs = qs.concat(this.buildQSValues('lte', this.lte, true));
 		}
 
 		if (this.gt) {
-			qs = qs.concat(this.buildQSValues('gt', this.gt));
+			qs = qs.concat(this.buildQSValues('gt', this.gt, true));
 		}
 
 		if (this.gte) {
-			qs = qs.concat(this.buildQSValues('gte', this.gte));
+			qs = qs.concat(this.buildQSValues('gte', this.gte, true));
 		}
 
 		if (this.startsWith) {
-			qs = qs.concat(this.buildQSValues('startsWith', this.startsWith));
+			qs = qs.concat(this.buildQSValues('startsWith', this.startsWith, true));
 		}
 
 		if (this.endsWith) {
-			qs = qs.concat(this.buildQSValues('endsWith', this.endsWith));
+			qs = qs.concat(this.buildQSValues('endsWith', this.endsWith, true));
 		}
 
 		if (this.contains) {
-			qs = qs.concat(this.buildQSValues('contains', this.contains));
+			qs = qs.concat(this.buildQSValues('contains', this.contains, true));
 		}
 
 		if (this.summarize) {
