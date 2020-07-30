@@ -1,3 +1,10 @@
+# [@cdf/device-monitoring-v3.2.4](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/device-monitoring-v3.2.3...@cdf/device-monitoring-v3.2.4) (2020-07-30)
+
+
+### Bug Fixes
+
+* **device-monitoring:** inject correct client service ([d9b699e](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/d9b699e5a320736fb7d2a694e2cb73155fbe53c6))
+
 # [@cdf/device-monitoring-v3.2.3](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/device-monitoring-v3.2.2...@cdf/device-monitoring-v3.2.3) (2020-07-29)
 
 
