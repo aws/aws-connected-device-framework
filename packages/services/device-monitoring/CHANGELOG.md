@@ -1,3 +1,10 @@
+# [@cdf/device-monitoring-v3.2.5](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/device-monitoring-v3.2.4...@cdf/device-monitoring-v3.2.5) (2020-07-30)
+
+
+### Bug Fixes
+
+* **device-monitoring:** lambda permission and minor fixes ([3579dbb](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/3579dbbe06d227b003d04229fe53091e867eeb13))
+
 # [@cdf/device-monitoring-v3.2.4](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/device-monitoring-v3.2.3...@cdf/device-monitoring-v3.2.4) (2020-07-30)
 
 
