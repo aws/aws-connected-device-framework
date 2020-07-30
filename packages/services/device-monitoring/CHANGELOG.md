@@ -1,3 +1,10 @@
+# [@cdf/device-monitoring-v3.2.6](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/device-monitoring-v3.2.5...@cdf/device-monitoring-v3.2.6) (2020-07-30)
+
+
+### Bug Fixes
+
+* **device-monitoring:** deploy script ([eb5cf51](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/eb5cf51923577f5f874de965988e890804d77ae9))
+
 # [@cdf/device-monitoring-v3.2.5](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/device-monitoring-v3.2.4...@cdf/device-monitoring-v3.2.5) (2020-07-30)
 
 
