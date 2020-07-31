@@ -1,3 +1,10 @@
+# [@cdf/greengrass-provisioning-v3.0.7](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/greengrass-provisioning-v3.0.6...@cdf/greengrass-provisioning-v3.0.7) (2020-07-31)
+
+
+### Bug Fixes
+
+* **greengrass-provisioning:** deployment script ([9b932a0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/9b932a0a78375186389b0470b7a3591bbd28801c))
+
 # [@cdf/greengrass-provisioning-v3.0.6](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/greengrass-provisioning-v3.0.5...@cdf/greengrass-provisioning-v3.0.6) (2020-07-25)
 
 
