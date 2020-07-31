@@ -115,7 +115,6 @@ if [[ "$API_GATEWAY_AUTH" = "LambdaRequest" || "$API_GATEWAY_AUTH" = "LambdaToke
 fi
 
 incorrect_args=$((incorrect_args+$(verifyMandatoryArgument TEMPLATE_SNIPPET_S3_URI_BASE y "$TEMPLATE_SNIPPET_S3_URI_BASE")))
-incorrect_args=$((incorrect_args+$(verifyMandatoryArgument BUCKET f "$BUCKET")))
 
 if [[ "$incorrect_args" -gt 0 ]]; then
     help_message; exit 1;
@@ -154,7 +153,7 @@ Running with:
   PRIVATE_ENDPOINT_ID:              $PRIVATE_ENDPOINT_ID
 
   CONCURRENT_EXECUTIONS:            $CONCURRENT_EXECUTIONS
-  APPLY_AUTOSCALING:                $APPLY_AUTOSCALING\
+  APPLY_AUTOSCALING:                $APPLY_AUTOSCALING
 
   AWS_ACCOUNT_ID:                   $AWS_ACCOUNT_ID
   AWS_REGION:                       $AWS_REGION
@@ -184,7 +183,6 @@ cat $CONFIG_LOCATION | \
   > $CONFIG_LOCATION.tmp && mv $CONFIG_LOCATION.tmp $CONFIG_LOCATION
 
 application_configuration_override=$(cat $CONFIG_LOCATION)
-
 
 logTitle 'Deploying the Greengrass Provisioning CloudFormation template '
 aws cloudformation deploy \
@@ -221,11 +219,13 @@ bulk_deployments_role_arn=$(echo "$stack_info" \
 
 # 2: retrieve the current policy.  default to a blank one if none set
 bulk_deployments_bucket=$(cat "$CONFIG_LOCATION" | jq -r '.aws.s3.bulkdeployments.bucket' )
+
 bucket_policy_response=$(aws s3api get-bucket-policy --bucket $bulk_deployments_bucket $AWS_ARGS || true)
 if [ -z "$bucket_policy_response" ]; then
   bucket_policy_response='{"Policy": "{\"Version\": \"2012-10-17\",\"Statement\": []}"}'
 fi
 bucket_policies=$(echo "$bucket_policy_response" | jq -r '.Policy | fromjson')
+
 
 bucket_policy=$(echo "$bucket_policies" \
   | jq --arg arn "$bulk_deployments_role_arn" \

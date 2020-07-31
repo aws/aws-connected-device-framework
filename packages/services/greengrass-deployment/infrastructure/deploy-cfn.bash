@@ -71,7 +71,7 @@ while getopts ":e:c:b:v:g:n:i:a:y:z:C:A:R:P:" opt; do
 
     e  ) export ENVIRONMENT=$OPTARG;;
     c  ) export CONFIG_LOCATION=$OPTARG;;
-    b  ) export DEPLOYMENT_LOGS_BUCKET=$OPTARG
+    b  ) export DEPLOYMENT_LOGS_BUCKET=$OPTARG;;
 
     v  ) export VPC_ID=$OPTARG;;
     g  ) export CDF_SECURITY_GROUP_ID=$OPTARG;;
@@ -114,7 +114,6 @@ if [[ "$API_GATEWAY_AUTH" = "LambdaRequest" || "$API_GATEWAY_AUTH" = "LambdaToke
 fi
 
 incorrect_args=$((incorrect_args+$(verifyMandatoryArgument TEMPLATE_SNIPPET_S3_URI_BASE y "$TEMPLATE_SNIPPET_S3_URI_BASE")))
-incorrect_args=$((incorrect_args+$(verifyMandatoryArgument BUCKET f "$BUCKET")))
 
 if [[ "$incorrect_args" -gt 0 ]]; then
     help_message; exit 1;

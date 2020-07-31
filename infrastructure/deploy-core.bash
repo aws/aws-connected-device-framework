@@ -491,7 +491,7 @@ if [ -f "$provisioning_config" ]; then
         fi
 
         # if we have hit the limit, we need to remove one before creating a new version
-        if [ $existing_version_count -ge 5 ]; then        
+        if [ $existing_version_count -ge 5 ]; then
             earliest_existing_version_id=$(aws iot list-policy-versions \
                 --policy-name "$policyName" $AWS_ARGS \
                     | jq -r '.policyVersions[4].versionId' \
@@ -503,7 +503,7 @@ if [ -f "$provisioning_config" ]; then
         fi
 
         # if we have an existing version, create a new version, if not create a new policy
-        if [ $existing_version_count -gt 0 ]; then     
+        if [ $existing_version_count -gt 0 ]; then
             aws iot create-policy-version \
             --policy-name "$policyName" \
             --policy-document "$policyDocument" \
@@ -514,7 +514,7 @@ if [ -f "$provisioning_config" ]; then
                 --policy-name "$policyName" \
                 --policy-document "$policyDocument" \
                 $AWS_ARGS
-        fi 
+        fi
 
     done
 
@@ -669,14 +669,14 @@ fi
 
 
 greengrassProvisioning_config=$CONFIG_LOCATION/greengrass-provisioning/$CONFIG_ENVIRONMENT-config.json
-if [ -f "greengrassProvisioning_config" ]; then
+if [ -f "$greengrassProvisioning_config" ]; then
 
     logTitle 'Deploying Greengrass Provisioning'
 
     cd "$root_dir/packages/services/greengrass-provisioning"
 
     infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
-    infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "greengrassProvisioning_config"  \
+    infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "$greengrassProvisioning_config"  \
         -y "$TEMPLATE_SNIPPET_S3_URI_BASE" -z "$API_GATEWAY_DEFINITION_TEMPLATE" \
         -a "$API_GATEWAY_AUTH" $cognito_auth_arg $lambda_invoker_auth_arg \
         -v "$VPC_ID" -g "$CDF_SECURITY_GROUP_ID" -n "$PRIVATE_SUBNET_IDS" -i "$VPCE_ID" \
@@ -688,14 +688,13 @@ fi
 
 
 greengrassDeployment_config=$CONFIG_LOCATION/greengrass-deployment/$CONFIG_ENVIRONMENT-config.json
-if [ -f "greengrassDeployment_config" ]; then
-
+if [ -f "$greengrassDeployment_config" ]; then
     logTitle 'Deploying Greengrass Deployment'
 
     cd "$root_dir/packages/services/greengrass-deployment"
 
     infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
-    infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "greengrassDeployment_config" -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" \
+    infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "$greengrassDeployment_config" -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" \
         -y "$TEMPLATE_SNIPPET_S3_URI_BASE" -z "$API_GATEWAY_DEFINITION_TEMPLATE" \
         -a "$API_GATEWAY_AUTH" $cognito_auth_arg $lambda_invoker_auth_arg \
         -v "$VPC_ID" -g "$CDF_SECURITY_GROUP_ID" -n "$PRIVATE_SUBNET_IDS" -i "$VPCE_ID" \
