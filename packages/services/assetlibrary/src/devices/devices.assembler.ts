@@ -151,12 +151,17 @@ export class DevicesAssembler {
             // v2.0 supports both incoming and outgoing links
             const res_2_0 = res as Device20Resource;
             item.groups=res_2_0.groups;
+            item.devices=res_2_0.devices;
         } else {
-            // as v1.0 only supported outtgoing links, we default all to outgoing
+            // as v1.0 only supported outgoing links, we default all to outgoing
             const res_1_0 = res as Device10Resource;
             if (res_1_0.groups) {
                 item.groups= {out:{}};
                 Object.keys(res_1_0.groups).forEach(rel=>  item.groups.out[rel]=res_1_0.groups[rel]);
+            }
+            if (res_1_0.devices) {
+                item.devices= {out:{}};
+                Object.keys(res_1_0.devices).forEach(rel=>  item.devices.out[rel]=res_1_0.devices[rel]);
             }
         }
 

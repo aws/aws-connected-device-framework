@@ -135,7 +135,7 @@ export class DeviceItemList {
 
 export function determineIfDevice20Resource(toBeDetermined: DeviceBaseResource): toBeDetermined is Device20Resource {
 	const asV2 = toBeDetermined as Device20Resource;
-	if(asV2.groups && (asV2.groups.in || asV2.groups.out)) {
+	if (asV2.groups?.in || asV2.groups?.out || asV2.devices?.in || asV2.devices?.out) {
 		return true;
 	}
 	return false;
@@ -143,7 +143,7 @@ export function determineIfDevice20Resource(toBeDetermined: DeviceBaseResource):
 
 export function determineIfDeviceItem(toBeDetermined: any): toBeDetermined is DeviceItem {
 	const asV2 = toBeDetermined as DeviceItem;
-	if(asV2.deviceId) {
+	if (asV2.deviceId) {
 		return true;
 	}
 	return false;
