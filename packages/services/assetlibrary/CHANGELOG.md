@@ -1,3 +1,10 @@
+# [@cdf/assetlibrary-v3.4.6](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.4.5...@cdf/assetlibrary-v3.4.6) (2020-08-04)
+
+
+### Bug Fixes
+
+* **assetlibrary:** persist device relations to other devices at creation ([dd1aca6](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/dd1aca66625c22b8a15e7b2ffc33682309a63d36))
+
 # [@cdf/assetlibrary-v3.4.5](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.4.4...@cdf/assetlibrary-v3.4.5) (2020-07-30)
 
 
