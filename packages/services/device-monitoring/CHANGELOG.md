@@ -1,3 +1,10 @@
+# [@cdf/device-monitoring-v3.2.7](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/device-monitoring-v3.2.6...@cdf/device-monitoring-v3.2.7) (2020-08-05)
+
+
+### Bug Fixes
+
+* **assetlibraryclient:** added directional attach/detach methods ([4f71b1c](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/4f71b1cc404118d18bd45914af9d0f403e61352c))
+
 # [@cdf/device-monitoring-v3.2.6](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/device-monitoring-v3.2.5...@cdf/device-monitoring-v3.2.6) (2020-07-30)
 
 
