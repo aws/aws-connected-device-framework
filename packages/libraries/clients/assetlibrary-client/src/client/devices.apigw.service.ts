@@ -53,6 +53,25 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
     }
 
     /**
+     * Associates a device to another device, giving context and direction to its relationship.
+     *
+     * @param deviceId Id of device to attach to the group
+     * @param relationship The relationship between the device and group. For example, this may reflect &#x60;locatedAt&#x60; or &#x60;manufacturedAt&#x60; relations.
+     * @param direction The direction (in|out) of the relation.
+     * @param otherDeviceId ID of device to create relationship to.
+     */
+    async attachToDeviceWithDirection(deviceId: string, relationship: string, direction:string, otherDeviceId: string, additionalHeaders?:RequestHeaders): Promise<void> {
+        ow(deviceId, ow.string.nonEmpty);
+        ow(relationship, ow.string.nonEmpty);
+        ow(direction, ow.string.nonEmpty);
+        ow(otherDeviceId, ow.string.nonEmpty);
+
+        const url = `${this.baseUrl}${super.deviceAttachedDirectionalDeviceRelativeUrl(deviceId, relationship, direction, otherDeviceId)}`;
+        await request.put(url)
+            .set(this.buildHeaders(additionalHeaders));
+    }
+
+    /**
      * Associates a device to a group, giving context to its relationship.
      *
      * @param deviceId Id of device to attach to the group
@@ -65,6 +84,25 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
         ow(groupPath, ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.deviceAttachedGroupRelativeUrl(deviceId, relationship, groupPath)}`;
+        await request.put(url)
+            .set(this.buildHeaders(additionalHeaders));
+    }
+
+    /**
+     * Associates a device to a group, giving direction and context to its relationship.
+     *
+     * @param deviceId Id of device to attach to the group
+     * @param relationship The relationship between the device and group. For example, this may reflect &#x60;locatedAt&#x60; or &#x60;manufacturedAt&#x60; relations.
+     * @param direction The direction (in|out) of the relation.
+     * @param groupPath Path of group.
+     */
+    async attachToGroupWithDirection(deviceId: string, relationship: string, direction:string, groupPath: string, additionalHeaders?:RequestHeaders): Promise<void> {
+        ow(deviceId, ow.string.nonEmpty);
+        ow(relationship, ow.string.nonEmpty);
+        ow(direction, ow.string.nonEmpty);
+        ow(groupPath, ow.string.nonEmpty);
+
+        const url = `${this.baseUrl}${super.deviceAttachedDirectionalGroupRelativeUrl(deviceId, relationship, direction, groupPath)}`;
         await request.put(url)
             .set(this.buildHeaders(additionalHeaders));
     }
@@ -189,6 +227,26 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
     }
 
     /**
+     * Removes a device from an associated device
+     *
+     * @param deviceId Id of device to attach to the group
+     * @param relationship The relationship between the device and group. For example, this may reflect &#x60;locatedAt&#x60; or &#x60;manufacturedAt&#x60; relations.
+     * * @param direction Direction (in|out) of relation.
+     * @param otherDeviceId ID of device to create relationship to.
+     */
+    async detachFromDeviceWithDirection(deviceId: string, relationship: string, direction:string, otherDeviceId: string, additionalHeaders?:RequestHeaders): Promise<void> {
+        ow(deviceId, ow.string.nonEmpty);
+        ow(relationship, ow.string.nonEmpty);
+        ow(direction, ow.string.nonEmpty);
+        ow(otherDeviceId, ow.string.nonEmpty);
+
+        const url = `${this.baseUrl}${super.deviceAttachedDirectionalDeviceRelativeUrl(deviceId, relationship, direction, otherDeviceId)}`;
+
+        await request.delete(url)
+            .set(this.buildHeaders(additionalHeaders));
+    }
+
+    /**
      * Removes a device from an associated group
      *
      * @param deviceId Id of device to attach to the group
@@ -201,6 +259,26 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
         ow(groupPath, ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.deviceAttachedGroupRelativeUrl(deviceId, relationship, groupPath)}`;
+
+        await request.delete(url)
+            .set(this.buildHeaders(additionalHeaders));
+    }
+
+    /**
+     * Removes a device from an associated group
+     *
+     * @param deviceId Id of device to attach to the group
+     * @param relationship The relationship between the device and group. For example, this may reflect &#x60;locatedAt&#x60; or &#x60;manufacturedAt&#x60; relations.
+     * * @param direction Direction (in|out) of relation.
+     * @param groupPath Path of group.
+     */
+    async detachFromGroupWithDirection(deviceId: string, relationship: string, direction:string, groupPath: string, additionalHeaders?:RequestHeaders): Promise<void> {
+        ow(deviceId, ow.string.nonEmpty);
+        ow(relationship, ow.string.nonEmpty);
+        ow(direction, ow.string.nonEmpty);
+        ow(groupPath, ow.string.nonEmpty);
+
+        const url = `${this.baseUrl}${super.deviceAttachedDirectionalGroupRelativeUrl(deviceId, relationship, direction, groupPath)}`;
 
         await request.delete(url)
             .set(this.buildHeaders(additionalHeaders));

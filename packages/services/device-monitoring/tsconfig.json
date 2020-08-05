@@ -19,6 +19,9 @@
     "references": [
         {
             "path": "../../libraries/clients/assetlibrary-client"
+        },
+        {
+            "path": "../../libraries/config/config-inject"
         }
     ],
     "include": [

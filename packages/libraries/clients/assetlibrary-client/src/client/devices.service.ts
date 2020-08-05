@@ -138,8 +138,16 @@ export class DevicesServiceBase extends ClientServiceBase {
         return PathHelper.encodeUrl('devices', deviceId, relationship, 'devices', otherDeviceId);
     }
 
+    protected deviceAttachedDirectionalDeviceRelativeUrl(deviceId: string, relationship: string, direction:string, otherDeviceId: string) : string {
+        return PathHelper.encodeUrl('devices', deviceId, relationship, direction, 'devices', otherDeviceId);
+    }
+
     protected deviceAttachedGroupRelativeUrl(deviceId: string, relationship: string, groupPath: string) : string {
         return PathHelper.encodeUrl('devices', deviceId, relationship, 'groups', groupPath);
+    }
+
+    protected deviceAttachedDirectionalGroupRelativeUrl(deviceId: string, relationship: string, direction:string, groupPath: string) : string {
+        return PathHelper.encodeUrl('devices', deviceId, relationship, direction, 'groups', groupPath);
     }
 
     protected deviceAttachedComponentsRelativeUrl(deviceId: string) : string {

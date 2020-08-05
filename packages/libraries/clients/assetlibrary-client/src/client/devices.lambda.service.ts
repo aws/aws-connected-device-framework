@@ -53,6 +53,28 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
     }
 
     /**
+     * Associates a device to another device, giving direction and context to its relationship.
+     *
+     * @param deviceId Id of device to attach to the group
+     * @param relationship The relationship between the device and group. For example, this may reflect &#x60;locatedAt&#x60; or &#x60;manufacturedAt&#x60; relations.
+     * @param direction Direction (in|out) of the relation,
+     * @param otherDeviceId ID of device to create relationship to.
+     */
+    async attachToDeviceWithDirection(deviceId: string, relationship: string, direction:string, otherDeviceId: string, additionalHeaders?:RequestHeaders): Promise<void> {
+        ow(deviceId, ow.string.nonEmpty);
+        ow(relationship, ow.string.nonEmpty);
+        ow(direction, ow.string.nonEmpty);
+        ow(otherDeviceId, ow.string.nonEmpty);
+
+        const event = new LambdaApiGatewayEventBuilder()
+            .setPath(super.deviceAttachedDirectionalDeviceRelativeUrl(deviceId, relationship, direction, otherDeviceId))
+            .setMethod('PUT')
+            .setHeaders(super.buildHeaders(additionalHeaders));
+
+        await this.lambdaInvoker.invoke(this.functionName, event);
+    }
+
+    /**
      * Associates a device to a group, giving context to its relationship.
      *
      * @param deviceId Id of device to attach to the group
@@ -66,6 +88,28 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
 
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.deviceAttachedGroupRelativeUrl(deviceId, relationship, groupPath))
+            .setMethod('PUT')
+            .setHeaders(super.buildHeaders(additionalHeaders));
+
+        await this.lambdaInvoker.invoke(this.functionName, event);
+    }
+
+    /**
+     * Associates a device to a group, giving direction and context to its relationship.
+     *
+     * @param deviceId Id of device to attach to the group
+     * @param relationship The relationship between the device and group. For example, this may reflect &#x60;locatedAt&#x60; or &#x60;manufacturedAt&#x60; relations.
+     * @param direction Direction (in|out) of the relation.
+     * @param groupPath Path of group.
+     */
+    async attachToGroupWithDirection(deviceId: string, relationship: string, direction:string, groupPath: string, additionalHeaders?:RequestHeaders): Promise<void> {
+        ow(deviceId, ow.string.nonEmpty);
+        ow(relationship, ow.string.nonEmpty);
+        ow(direction, ow.string.nonEmpty);
+        ow(groupPath, ow.string.nonEmpty);
+
+        const event = new LambdaApiGatewayEventBuilder()
+            .setPath(super.deviceAttachedDirectionalGroupRelativeUrl(deviceId, relationship, direction, groupPath))
             .setMethod('PUT')
             .setHeaders(super.buildHeaders(additionalHeaders));
 
@@ -200,6 +244,28 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
     }
 
     /**
+     * Removes a device from an associated device
+     *
+     * @param deviceId Id of device to attach to the group
+     * @param relationship The relationship between the device and group. For example, this may reflect &#x60;locatedAt&#x60; or &#x60;manufacturedAt&#x60; relations.
+     * @param direction Direction (in|out) of relation.
+     * @param otherDeviceId ID of device to create relationship to.
+     */
+    async detachFromDeviceWithDirection(deviceId: string, relationship: string, direction:string, otherDeviceId: string, additionalHeaders?:RequestHeaders): Promise<void> {
+        ow(deviceId, ow.string.nonEmpty);
+        ow(relationship, ow.string.nonEmpty);
+        ow(direction, ow.string.nonEmpty);
+        ow(otherDeviceId, ow.string.nonEmpty);
+
+       const event = new LambdaApiGatewayEventBuilder()
+            .setPath(super.deviceAttachedDirectionalDeviceRelativeUrl(deviceId, relationship, direction, otherDeviceId))
+            .setMethod('DELETE')
+            .setHeaders(super.buildHeaders(additionalHeaders));
+
+        await this.lambdaInvoker.invoke(this.functionName, event);
+    }
+
+    /**
      * Removes a device from an associated group
      *
      * @param deviceId Id of device to attach to the group
@@ -213,6 +279,28 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
 
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.deviceAttachedGroupRelativeUrl(deviceId, relationship, groupPath))
+            .setMethod('DELETE')
+            .setHeaders(super.buildHeaders(additionalHeaders));
+
+        await this.lambdaInvoker.invoke(this.functionName, event);
+    }
+
+    /**
+     * Removes a device from an associated group
+     *
+     * @param deviceId Id of device to attach to the group
+     * @param relationship The relationship between the device and group. For example, this may reflect &#x60;locatedAt&#x60; or &#x60;manufacturedAt&#x60; relations.
+     * @param direction Direction (in|out) of relation.
+     * @param groupPath Path of group.
+     */
+    async detachFromGroupWithDirection(deviceId: string, relationship: string, direction:string, groupPath: string, additionalHeaders?:RequestHeaders): Promise<void> {
+        ow(deviceId, ow.string.nonEmpty);
+        ow(relationship, ow.string.nonEmpty);
+        ow(direction, ow.string.nonEmpty);
+        ow(groupPath, ow.string.nonEmpty);
+
+        const event = new LambdaApiGatewayEventBuilder()
+            .setPath(super.deviceAttachedDirectionalGroupRelativeUrl(deviceId, relationship, direction, groupPath))
             .setMethod('DELETE')
             .setHeaders(super.buildHeaders(additionalHeaders));
 
