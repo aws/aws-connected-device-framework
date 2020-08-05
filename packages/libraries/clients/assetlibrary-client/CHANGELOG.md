@@ -1,3 +1,10 @@
+# [@cdf/assetlibrary-client-v3.3.4](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-client-v3.3.3...@cdf/assetlibrary-client-v3.3.4) (2020-08-05)
+
+
+### Bug Fixes
+
+* **assetlibraryclient:** added directional attach/detach methods ([4f71b1c](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/4f71b1cc404118d18bd45914af9d0f403e61352c))
+
 # [@cdf/assetlibrary-client-v3.3.3](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-client-v3.3.2...@cdf/assetlibrary-client-v3.3.3) (2020-07-30)
 
 
