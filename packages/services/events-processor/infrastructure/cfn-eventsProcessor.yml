@@ -417,9 +417,18 @@ Resources:
       Description: Event notifications cluster
       IAMRoleARN: !GetAtt DAXServiceRole.Arn
       NodeType: !Ref DAXInstanceType
+      SubnetGroupName: !Sub 'cdf-eventNotifications-${Environment}'
       ReplicationFactor: 1
     DependsOn:
       - DAXServiceRole
+      - DAXSubnetGroup
+
+  DAXSubnetGroup:
+    Type: AWS::DAX::SubnetGroup
+    Properties:
+      Description: cdf-events-processor DAX subnet group
+      SubnetGroupName: !Sub 'cdf-eventNotifications-${Environment}'
+      SubnetIds: !Ref PrivateSubNetIds
 
   DAXServiceRole:
     Type: AWS::IAM::Role
