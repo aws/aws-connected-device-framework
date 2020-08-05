@@ -1,3 +1,10 @@
+# [@cdf/events-processor-v2.4.2](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/events-processor-v2.4.1...@cdf/events-processor-v2.4.2) (2020-08-05)
+
+
+### Bug Fixes
+
+* 🐛 DAX subnet group was not created if no default VPC ([7bd9c89](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/7bd9c89348e6c142e8fba5b58cdb1604b1eda8b7))
+
 # [@cdf/events-processor-v2.4.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/events-processor-v2.4.0...@cdf/events-processor-v2.4.1) (2020-06-10)
 
 
