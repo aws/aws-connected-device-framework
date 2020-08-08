@@ -81,7 +81,6 @@ export class SearchRequestModel {
 			qs.push(key);
 		});
 
-		logger.info(`>>>>> qs:${JSON.stringify(qs)}`);
 		return qs;
 	}
 
