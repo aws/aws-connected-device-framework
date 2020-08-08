@@ -1,3 +1,11 @@
+# [@cdf/assetlibrary-client-v3.3.5](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-client-v3.3.4...@cdf/assetlibrary-client-v3.3.5) (2020-08-08)
+
+
+### Bug Fixes
+
+* **assetlibraryclient:** fixed issue with multi valued search queries ([9d06aed](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/9d06aed4e365fe019aa855dc5ee53f0e1bcc5a6b))
+* **assetlibraryclient:** fixed issue with multi valued search queries ([af5561f](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/af5561f5ab31047620d8fad3728822a741236e27))
+
 # [@cdf/assetlibrary-client-v3.3.4](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-client-v3.3.3...@cdf/assetlibrary-client-v3.3.4) (2020-08-05)
 
 
