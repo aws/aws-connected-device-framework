@@ -67,8 +67,8 @@ export class SearchRequestModel {
 			return qs;
 		}
 
-		let key = `${qsParam}=`;
 		filters.forEach(f=> {
+			let key = `${qsParam}=`;
 			let v = '';
 			if (f.traversals!==undefined) {
 				f.traversals.forEach(t=> {
@@ -81,6 +81,7 @@ export class SearchRequestModel {
 			qs.push(key);
 		});
 
+		logger.info(`>>>>> qs:${JSON.stringify(qs)}`);
 		return qs;
 	}
 
