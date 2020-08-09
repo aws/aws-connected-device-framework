@@ -32,6 +32,9 @@ MANDATORY ARGUMENTS:
 OPTIONAL ARGUMENTS:
 ===================
 
+    -S (flag)     If provided, the DAX cluster will be deployed into a dedicated subnet group based on the provided private subnet ids within a VPC. 
+                  If not provided (default), the DAX cluster will be deployed into the default subnets.
+
     -a (string)   API Gateway authorization type. Must be from the following list (default is None):
                   - None
                   - Private
@@ -64,7 +67,7 @@ OPTIONAL ARGUMENTS:
 EOF
 }
 
-while getopts ":e:c:v:g:n:i:a:y:z:C:A:R:P:" opt; do
+while getopts ":e:c:v:g:n:i:Sa:y:z:C:A:R:P:" opt; do
   case $opt in
 
     e  ) export ENVIRONMENT=$OPTARG;;
@@ -74,6 +77,8 @@ while getopts ":e:c:v:g:n:i:a:y:z:C:A:R:P:" opt; do
     g  ) export CDF_SECURITY_GROUP_ID=$OPTARG;;
     n  ) export PRIVATE_SUBNET_IDS=$OPTARG;;
     i  ) export PRIVATE_ENDPOINT_ID=$OPTARG;;
+
+    S  ) export DEFAULT_SUBNETS=false;;
 
     a  ) export API_GATEWAY_AUTH=$OPTARG;;
     y  ) export TEMPLATE_SNIPPET_S3_URI_BASE=$OPTARG;;
@@ -94,6 +99,8 @@ incorrect_args=0
 
 incorrect_args=$((incorrect_args+$(verifyMandatoryArgument ENVIRONMENT e $ENVIRONMENT)))
 incorrect_args=$((incorrect_args+$(verifyMandatoryArgument CONFIG_LOCATION c "$CONFIG_LOCATION")))
+
+DEFAULT_SUBNETS="$(defaultIfNotSet 'DEFAULT_SUBNETS' S ${DEFAULT_SUBNETS} 'true')"
 
 API_GATEWAY_AUTH="$(defaultIfNotSet 'API_GATEWAY_AUTH' a ${API_GATEWAY_AUTH} 'None')"
 incorrect_args=$((incorrect_args+$(verifyApiGatewayAuthType $API_GATEWAY_AUTH)))
@@ -134,6 +141,8 @@ Running with:
   API_GATEWAY_AUTH:                 $API_GATEWAY_AUTH
   COGNTIO_USER_POOL_ARN:            $COGNTIO_USER_POOL_ARN
   AUTHORIZER_FUNCTION_ARN:          $AUTHORIZER_FUNCTION_ARN
+
+  DEFAULT_SUBNETS:                  $DEFAULT_SUBNETS
 
   VPC_ID:                           $VPC_ID
   CDF_SECURITY_GROUP_ID:            $CDF_SECURITY_GROUP_ID
@@ -178,6 +187,7 @@ aws cloudformation deploy \
       CognitoUserPoolArn=$COGNTIO_USER_POOL_ARN \
       AuthorizerFunctionArn=$AUTHORIZER_FUNCTION_ARN \
       AuthType=$API_GATEWAY_AUTH \
+      UseDAXDefaultSubnet=$DEFAULT_SUBNETS \
   --capabilities CAPABILITY_NAMED_IAM \
   --no-fail-on-empty-changeset \
   $AWS_ARGS

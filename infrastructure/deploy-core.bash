@@ -65,7 +65,7 @@ OPTIONAL ARGUMENTS
     ---------------------------------------------
     -A (string)   Lambda authorizer function arn.
 
-    ASSET LIBRARY OPTIONS::
+    ASSET LIBRARY OPTIONS:
     -----------------------
     -m (string)   Asset Library mode ('full' or 'lite').  Defaults to full if not provided.
     -p (string)   The name of the key pair to use to deploy the Bastion EC2 host (required for Asset Library (full) mode or Private auth mode).
@@ -73,6 +73,12 @@ OPTIONAL ARGUMENTS
 
     -x (number)   No. of concurrent executions to provision.
     -s (flag)     Apply autoscaling as defined in ./cfn-autosclaling.yml
+
+
+    NOTIFICATION OPTIONS:
+    ---------------------
+    -S (flag)     If provided, the DAX cluster will be deployed into a dedicated subnet group based on the provided private subnet ids within a VPC. 
+                  If not provided (default), the DAX cluster will be deployed into the default subnets.
 
     COMPILING OPTIONS:
     ------------------
@@ -101,7 +107,7 @@ EOF
 # by the service specific deployment script.
 #-------------------------------------------------------------------------------
 
-while getopts ":e:E:c:p:i:k:b:a:y:z:C:A:Nv:g:n:m:o:r:x:sBYR:P:" opt; do
+while getopts ":e:E:c:p:i:k:b:a:y:z:C:A:Nv:g:n:m:o:r:x:sSBYR:P:" opt; do
   case $opt in
     e  ) ENVIRONMENT=$OPTARG;;
     E  ) CONFIG_ENVIRONMENT=$OPTARG;;
@@ -115,6 +121,8 @@ while getopts ":e:E:c:p:i:k:b:a:y:z:C:A:Nv:g:n:m:o:r:x:sBYR:P:" opt; do
 
     x  ) CONCURRENT_EXECUTIONS=$OPTARG;;
     s  ) APPLY_AUTOSCALING=true;;
+
+    S  ) NOTIFICATIONS_CUSTOM_SUBNETS=true;;
 
     a  ) API_GATEWAY_AUTH=$OPTARG;;
     y  ) TEMPLATE_SNIPPET_S3_URI_BASE=$OPTARG;;
@@ -217,6 +225,8 @@ The Connected Device Framework (CDF) will install using the following configurat
     -i (BASTION_REMOTE_ACCESS_CIDR)     : $BASTION_REMOTE_ACCESS_CIDR
     -x (CONCURRENT_EXECUTIONS):         : $CONCURRENT_EXECUTIONS
     -s (APPLY_AUTOSCALING):             : $APPLY_AUTOSCALING
+
+    -S (NOTIFICATIONS_CUSTOM_SUBNETS)   : $NOTIFICATIONS_CUSTOM_SUBNETS
 
     -N (USE_EXISTING_VPC)               : $USE_EXISTING_VPC"
 
@@ -585,11 +595,17 @@ if [ -f "$eventsprocessor_config" ]; then
 
     cd "$root_dir/packages/services/events-processor"
 
+    deployCustomSubnetsArg=
+    if [ "$NOTIFICATIONS_CUSTOM_SUBNETS" = 'true' ]; then
+        deployCustomSubnetsArg='-S'
+    fi
+
     infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
     infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "$eventsprocessor_config" \
         -y "$TEMPLATE_SNIPPET_S3_URI_BASE" -z "$API_GATEWAY_DEFINITION_TEMPLATE" \
         -a "$API_GATEWAY_AUTH" $cognito_auth_arg $lambda_invoker_auth_arg \
         -v "$VPC_ID" -g "$CDF_SECURITY_GROUP_ID" -n "$PRIVATE_SUBNET_IDS" -i "$VPCE_ID" \
+        "$deployCustomSubnetsArg" \
         $AWS_SCRIPT_ARGS
 else
    echo 'NOT DEPLOYING: events-processor'
