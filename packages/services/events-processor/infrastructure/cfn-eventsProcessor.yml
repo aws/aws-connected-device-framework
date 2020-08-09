@@ -430,7 +430,6 @@ Resources:
       ReplicationFactor: 1
     DependsOn:
       - DAXServiceRole
-      - DAXSubnetGroup
 
   DAXSubnetGroup:
     Type: AWS::DAX::SubnetGroup
