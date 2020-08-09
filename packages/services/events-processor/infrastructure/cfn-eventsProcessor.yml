@@ -426,7 +426,7 @@ Resources:
       Description: Event notifications cluster
       IAMRoleARN: !GetAtt DAXServiceRole.Arn
       NodeType: !Ref DAXInstanceType
-      SubnetGroupName: !If [ DeployDAXCustomSubnet, !Sub 'cdf-eventNotifications-${Environment}', !Ref 'AWS::NoValue' ]
+      SubnetGroupName: !If [ DeployDAXCustomSubnet, !Ref DAXSubnetGroup, !Ref 'AWS::NoValue' ]
       ReplicationFactor: 1
     DependsOn:
       - DAXServiceRole
