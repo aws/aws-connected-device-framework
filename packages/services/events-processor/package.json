@@ -1,6 +1,6 @@
 {
   "name": "@cdf/events-processor",
-  "version": "2.4.7",
+  "version": "2.4.8",
   "description": "CDF Events (Processor)",
   "author": "Dean Hart <deanhart@amazon.com>",
   "config": {
