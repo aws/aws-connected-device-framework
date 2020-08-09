@@ -93,10 +93,19 @@ Parameters:
       - dax.t2.medium
     Description: The instance type for the DynamoDB DAX instance
 
+  UseDAXDefaultSubnet:
+    Type: String
+    Default: 'true'
+    AllowedValues: 
+      - 'true'
+      - 'false'
+    Description: If true (default), DAX wll be deployed into the default subnet. If false, a new subnet group will be defined based on the provided 'PrivateSubNetIds'. Note this is a non-backwards compatible configuration change and would require any existing events-alerts stack deleting bforehand before changing.
+
 Conditions:
 
   DeployInVPC: !Not [ !Equals [ !Ref VpcId, 'N/A' ] ]
   DeployWithLambdaAuth: !Or [ !Equals [ !Ref AuthType, 'LambdaRequest' ], !Equals [ !Ref AuthType, 'LambdaToken' ] ]
+  DeployDAXCustomSubnet: !Not [ !Equals [ !Ref UseDAXDefaultSubnet, 'true' ] ]
 
 Resources:
 
@@ -417,7 +426,7 @@ Resources:
       Description: Event notifications cluster
       IAMRoleARN: !GetAtt DAXServiceRole.Arn
       NodeType: !Ref DAXInstanceType
-      SubnetGroupName: !Sub 'cdf-eventNotifications-${Environment}'
+      SubnetGroupName: !If [ DeployDAXCustomSubnet, !Ref DAXSubnetGroup, !Ref 'AWS::NoValue' ]
       ReplicationFactor: 1
     DependsOn:
       - DAXServiceRole
@@ -425,6 +434,7 @@ Resources:
 
   DAXSubnetGroup:
     Type: AWS::DAX::SubnetGroup
+    Condition: DeployDAXCustomSubnet
     Properties:
       Description: cdf-events-processor DAX subnet group
       SubnetGroupName: !Sub 'cdf-eventNotifications-${Environment}'
