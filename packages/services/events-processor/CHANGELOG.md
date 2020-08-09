@@ -1,3 +1,10 @@
+# [@cdf/events-processor-v2.4.5](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/events-processor-v2.4.4...@cdf/events-processor-v2.4.5) (2020-08-09)
+
+
+### Bug Fixes
+
+* **events:** dAX subnet group ([5b51f03](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/5b51f03e895a46e62540e56ec407d44d5cb28c2f))
+
 # [@cdf/events-processor-v2.4.4](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/events-processor-v2.4.3...@cdf/events-processor-v2.4.4) (2020-08-09)
 
 
