@@ -10,7 +10,12 @@ export class DeviceResource {
 	thingName: string;
 	type: GreengrassDeviceType;
 	provisioningTemplate: string;
-	provisoningParameters: {[key : string] : string};
+
+	// this was originally released with a spelling error. both versions supported for backwards compatability
+	// for device creation. the assembler will translate to correct spelling.
+	provisoningParameters?: {[key : string] : string};
+	provisioningParameters?: {[key : string] : string};
+
 	cdfProvisioningParameters?: CdfProvisioningParameters;
 	syncShadow: boolean = true;
 	artifacts?:  {[key : string] : string};

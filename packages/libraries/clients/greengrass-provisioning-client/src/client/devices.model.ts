@@ -9,7 +9,7 @@ export class Device {
 	thingName: string;
 	type: GreengrassDeviceType;
 	provisioningTemplate: string;
-	provisoningParameters: {[key : string] : string};
+	provisioningParameters: {[key : string] : string};
 	cdfProvisioningParameters?: CdfProvisioningParameters;
 	syncShadow: boolean = true;
 	artifacts?:  {[key : string] : string};

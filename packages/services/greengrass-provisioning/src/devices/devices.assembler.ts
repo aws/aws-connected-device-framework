@@ -25,6 +25,9 @@ export class DevicesAssembler {
             item[key] = res[key];
         });
 
+        // special hanlding aroung provisoningParameters/provisioningParameters
+        item.provisioningParameters = res.provisoningParameters ?? res.provisioningParameters;
+
         logger.debug(`devices.assembler fromResource: exit: item: ${JSON.stringify(item)}`);
         return item;
 
