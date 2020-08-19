@@ -1,3 +1,10 @@
+# [@cdf/lambda-invoke-v1.1.2](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/lambda-invoke-v1.1.1...@cdf/lambda-invoke-v1.1.2) (2020-08-19)
+
+
+### Bug Fixes
+
+* **lambda-invoke:** duplicate file ([a08fd5f](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/a08fd5f54ddebccc47363fdbf7c5763b152c27b4))
+
 # [@cdf/lambda-invoke-v1.1.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/lambda-invoke-v1.1.0...@cdf/lambda-invoke-v1.1.1) (2020-06-12)
 
 
