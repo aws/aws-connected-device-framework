@@ -530,7 +530,7 @@ if [ -f "$provisioning_config" ]; then
 
       logTitle 'Creating AWS IoT Types'
 
-      if [ -f "$CONFIG_LOCATION"/provisioning/iot-types/* ]; then
+      if [ -d $CONFIG_LOCATION/provisioning/iot-types ]; then
 
         for type in $(ls "$CONFIG_LOCATION"/provisioning/iot-types/*); do
           typeName="$(basename "$type" .json)"
