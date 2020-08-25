@@ -31,6 +31,7 @@ export type SubscriptionTargets = {
     sms?: SMSSubscriptionConfig;
     mqtt?: MQTTSubscriptionConfig;
     dynamodb?: DynamoDBSubscriptionConfig;
+    push_gcm?: PushGCMSubscriptionConfig;
 };
 
 export type AttributeMapping = { [key: string] : string};
@@ -51,6 +52,11 @@ export type SMSSubscriptionConfig = {
 export type MQTTSubscriptionConfig = {
     topic:string
 };
+
+export type PushGCMSubscriptionConfig = {
+    platformApplicationArn: string
+    token: string
+}
 
 export interface SubscriptionResourceList {
     results: SubscriptionResource[];
