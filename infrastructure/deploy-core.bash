@@ -50,12 +50,8 @@ OPTIONAL ARGUMENTS
     -g (string)   ID of CDF security group (required if -N set)
     -n (string)   ID of private subnets (comma delimited) (required if -N set)
     -o (string)   ID of public subnets (comma delimited) (required if -N set)
-    -i (string)   ID of VPC endpoint (required if -N set)
     -r (string)   ID of private route tables (comma delimited) (required if -N set)
-
-    COMMON PRIVATE API AUTH OPTIONS:
-    ------------------------------
-    -i (string)   ID of VPC execute-api endpoint
+    -I (string)   ID of VPC endpoint (required if -N set)
 
     COMMON COGNITO AUTH OPTIONS:
     --------------------------
@@ -107,7 +103,7 @@ EOF
 # by the service specific deployment script.
 #-------------------------------------------------------------------------------
 
-while getopts ":e:E:c:p:i:k:b:a:y:z:C:A:Nv:g:n:m:o:r:x:sSBYR:P:" opt; do
+while getopts ":e:E:c:p:i:k:b:a:y:z:C:A:Nv:g:n:m:o:r:I:x:sSBYR:P:" opt; do
   case $opt in
     e  ) ENVIRONMENT=$OPTARG;;
     E  ) CONFIG_ENVIRONMENT=$OPTARG;;
@@ -136,6 +132,7 @@ while getopts ":e:E:c:p:i:k:b:a:y:z:C:A:Nv:g:n:m:o:r:x:sSBYR:P:" opt; do
     n  ) PRIVATE_SUBNET_IDS=$OPTARG;;
     o  ) PUBLIC_SUBNET_IDS=$OPTARG;;
     r  ) PRIVATE_ROUTE_TABLE_IDS=$OPTARG;;
+    I  ) VPCE_ID=$OPTARG;;
 
     B  ) BYPASS_BUNDLE=true;;
     Y  ) BYPASS_PROMPT=true;;
@@ -178,6 +175,7 @@ if [ -z "$USE_EXISTING_VPC" ]; then
     CDF_SECURITY_GROUP_ID='N/A'
     PRIVATE_SUBNET_IDS='N/A'
     PRIVATE_ENDPOINT_ID='N/A'
+    VPCE_ID='N/A'
 fi
 
 if [[ "incorrect_args" -gt 0 ]]; then
@@ -238,7 +236,8 @@ else
     -g (CDF_SECURITY_GROUP_ID)       : $CDF_SECURITY_GROUP_ID
     -n (PRIVATE_SUBNET_IDS)             : $PRIVATE_SUBNET_IDS
     -o (PUBLIC_SUBNET_IDS)              : $PUBLIC_SUBNET_IDS
-    -r (PRIVATE_ROUTE_TABLE_IDS)        : $PRIVATE_ROUTE_TABLE_IDS"
+    -r (PRIVATE_ROUTE_TABLE_IDS)        : $PRIVATE_ROUTE_TABLE_IDS
+    -I (VPCE_ID)                        : $VPCE_ID"
 fi
 
 config_message+="
@@ -317,7 +316,7 @@ Reusing existing KMS Key.
 fi
 
 assetlibrary_config=$CONFIG_LOCATION/assetlibrary/$CONFIG_ENVIRONMENT-config.json
-if [[ -f $assetlibrary_config && "$ASSETLIBRARY_MODE" = "full" && -z "$USE_EXISTING_VPC" ]] || [[ "$API_GATEWAY_AUTH" == "Private"  ]]; then
+if [[ -f $assetlibrary_config && "$ASSETLIBRARY_MODE" = "full" && -z "$USE_EXISTING_VPC" ]] || [[ "$API_GATEWAY_AUTH" == "Private" && -z "$USE_EXISTING_VPC" ]]; then
 
     logTitle 'Deploying Networking'
 
