@@ -56,7 +56,7 @@ export type MQTTSubscriptionConfig = {
 export type PushGCMSubscriptionConfig = {
     platformApplicationArn: string
     token: string
-}
+};
 
 export interface SubscriptionResourceList {
     results: SubscriptionResource[];
