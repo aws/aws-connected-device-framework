@@ -1,3 +1,10 @@
+# [@cdf/notifications-client-v2.3.2](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/notifications-client-v2.3.1...@cdf/notifications-client-v2.3.2) (2020-08-26)
+
+
+### Bug Fixes
+
+* **notifications:** lint issues  ([8b7259e](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/8b7259e7c6f685bab26f398667fdf5b0106f8c70))
+
 # [@cdf/notifications-client-v2.3.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/notifications-client-v2.3.0...@cdf/notifications-client-v2.3.1) (2020-06-24)
 
 
