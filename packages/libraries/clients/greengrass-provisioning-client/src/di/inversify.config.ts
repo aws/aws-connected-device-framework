@@ -39,20 +39,22 @@ export const greengrassProvisioningContainerModule = new ContainerModule (
             bind<SubscriptionsService>(GREENGRASS_PROVISIONING_CLIENT_TYPES.SubscriptionsService).to(SubscriptionsLambdaService);
             bind<TemplatesService>(GREENGRASS_PROVISIONING_CLIENT_TYPES.TemplatesService).to(TemplatesLambdaService);
 
-            bind<LambdaInvokerService>(LAMBDAINVOKE_TYPES.LambdaInvokerService).to(LambdaInvokerService);
-            decorate(injectable(), AWS.Lambda);
-            bind<interfaces.Factory<AWS.Lambda>>(LAMBDAINVOKE_TYPES.LambdaFactory)
-                .toFactory<AWS.Lambda>((ctx: interfaces.Context) => {
-                    return () => {
+            if (!isBound(LAMBDAINVOKE_TYPES.LambdaInvokerService)) {
+                // always check to see if bound first incase it was bound by another client
+                bind<LambdaInvokerService>(LAMBDAINVOKE_TYPES.LambdaInvokerService).to(LambdaInvokerService);
+                decorate(injectable(), AWS.Lambda);
+                bind<interfaces.Factory<AWS.Lambda>>(LAMBDAINVOKE_TYPES.LambdaFactory)
+                    .toFactory<AWS.Lambda>((ctx: interfaces.Context) => {
+                        return () => {
 
-                        if (!isBound(LAMBDAINVOKE_TYPES.Lambda)) {
-                            const lambda = new AWS.Lambda({region:config.get('aws.region')});
-                            bind<AWS.Lambda>(LAMBDAINVOKE_TYPES.Lambda).toConstantValue(lambda);
-                        }
-                        return ctx.container.get<AWS.Lambda>(LAMBDAINVOKE_TYPES.Lambda);
-                    };
-                });
-
+                            if (!isBound(LAMBDAINVOKE_TYPES.Lambda)) {
+                                const lambda = new AWS.Lambda({region:config.get('aws.region')});
+                                bind<AWS.Lambda>(LAMBDAINVOKE_TYPES.Lambda).toConstantValue(lambda);
+                            }
+                            return ctx.container.get<AWS.Lambda>(LAMBDAINVOKE_TYPES.Lambda);
+                        };
+                    });
+            }
         } else {
             bind<DeploymentsService>(GREENGRASS_PROVISIONING_CLIENT_TYPES.DeploymentsService).to(DeploymentsApigwService);
             bind<DevicesService>(GREENGRASS_PROVISIONING_CLIENT_TYPES.DevicesService).to(DevicesApigwService);
