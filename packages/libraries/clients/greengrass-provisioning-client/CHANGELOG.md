@@ -1,3 +1,10 @@
+# [@cdf/greengrass-provisioning-client-v1.0.2](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/greengrass-provisioning-client-v1.0.1...@cdf/greengrass-provisioning-client-v1.0.2) (2020-09-30)
+
+
+### Bug Fixes
+
+* 🐛 gg prov lambda invoke di was broken ([2e433be](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/2e433bef457347936d6f4faca7fe9db4ccfcf9ee))
+
 # [@cdf/greengrass-provisioning-client-v1.0.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/greengrass-provisioning-client-v1.0.0...@cdf/greengrass-provisioning-client-v1.0.1) (2020-08-10)
 
 
