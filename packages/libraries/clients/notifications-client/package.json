@@ -1,6 +1,6 @@
 {
   "name": "@cdf/notifications-client",
-  "version": "2.3.2",
+  "version": "2.4.0",
   "description": "Notifications Client",
   "author": "Gopala Raju <goraju@amazon.com>",
   "main": "dist/index.js",

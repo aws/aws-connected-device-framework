@@ -1,3 +1,10 @@
+# [@cdf/notifications-client-v2.4.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/notifications-client-v2.3.2...@cdf/notifications-client-v2.4.0) (2020-10-02)
+
+
+### Features
+
+* **events-processor:** multiple target support ([85fed19](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/85fed19faa95066b57b74f9f297ca920bd90c15a))
+
 # [@cdf/notifications-client-v2.3.2](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/notifications-client-v2.3.1...@cdf/notifications-client-v2.3.2) (2020-08-26)
 
 
