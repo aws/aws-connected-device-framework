@@ -1,3 +1,10 @@
+# [@cdf/integration-tests-v2.4.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/integration-tests-v2.3.0...@cdf/integration-tests-v2.4.0) (2020-10-02)
+
+
+### Features
+
+* **events-processor:** multiple target support ([85fed19](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/85fed19faa95066b57b74f9f297ca920bd90c15a))
+
 # [@cdf/integration-tests-v2.3.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/integration-tests-v2.2.0...@cdf/integration-tests-v2.3.0) (2020-06-10)
 
 
