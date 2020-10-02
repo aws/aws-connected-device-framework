@@ -1,3 +1,15 @@
+# [@cdf/events-processor-v2.5.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/events-processor-v2.4.8...@cdf/events-processor-v2.5.0) (2020-10-02)
+
+
+### Bug Fixes
+
+* **events:** broken unit test ([f15401f](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/f15401f7d4f6384ec2812ce4b6eb1db3adfb91b9))
+
+
+### Features
+
+* **events-processor:** multiple target support ([85fed19](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/85fed19faa95066b57b74f9f297ca920bd90c15a))
+
 # [@cdf/events-processor-v2.4.8](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/events-processor-v2.4.7...@cdf/events-processor-v2.4.8) (2020-08-09)
 
 
