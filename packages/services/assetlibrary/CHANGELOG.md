@@ -1,3 +1,10 @@
+# [@cdf/assetlibrary-v3.5.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.4.6...@cdf/assetlibrary-v3.5.0) (2020-10-02)
+
+
+### Features
+
+* **events-processor:** multiple target support ([85fed19](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/85fed19faa95066b57b74f9f297ca920bd90c15a))
+
 # [@cdf/assetlibrary-v3.4.6](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.4.5...@cdf/assetlibrary-v3.4.6) (2020-08-04)
 
 
