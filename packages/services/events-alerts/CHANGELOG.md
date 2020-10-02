@@ -1,3 +1,10 @@
+# [@cdf/events-alerts-v1.3.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/events-alerts-v1.2.1...@cdf/events-alerts-v1.3.0) (2020-10-02)
+
+
+### Features
+
+* **events-processor:** multiple target support ([85fed19](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/85fed19faa95066b57b74f9f297ca920bd90c15a))
+
 # [@cdf/events-alerts-v1.2.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/events-alerts-v1.2.0...@cdf/events-alerts-v1.2.1) (2020-06-10)
 
 
