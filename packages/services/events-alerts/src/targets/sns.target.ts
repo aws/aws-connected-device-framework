@@ -48,7 +48,9 @@ export class SNSMessages {
     http?: string;
     https?: string;
     sqs?: string;
-    GCM: string;
+    GCM?: string;
+    ADM?: string;
+    APNS?: string;
 
     public toJson():any {
         return {
@@ -58,7 +60,9 @@ export class SNSMessages {
             http: this.http,
             https: this.https,
             sqs: this.sqs,
-            GCM: this.GCM
+            GCM: this.GCM,
+            ADM: this.ADM,
+            APNS: this.APNS
         };
     }
 
@@ -69,7 +73,9 @@ export class SNSMessages {
             (this.http!==undefined) ||
             (this.https!==undefined) ||
             (this.sqs!==undefined) ||
-            (this.GCM!==undefined);
+            (this.GCM!==undefined) ||
+            (this.ADM!==undefined) ||
+            (this.APNS!==undefined);
     }
 
 }

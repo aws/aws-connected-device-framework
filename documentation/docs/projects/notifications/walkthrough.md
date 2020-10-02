@@ -29,8 +29,8 @@ If such properties needs to used, they can be prefixed to be differentiated from
 #### Request
 ```
 POST /eventsources
-Accept: application/vnd.aws-cdf-v1.0+json
-Content-Type: application/vnd.aws-cdf-v1.0+json
+Accept: application/vnd.aws-cdf-v2.0+json
+Content-Type: application/vnd.aws-cdf-v2.0+json
 {
 	"id": "arn:aws:dynamodb:us-west-2:123456789012:table/Telemetry",
 	"name": "Processed Events",
@@ -57,8 +57,8 @@ Content-Type: application/vnd.aws-cdf-v1.0+json
 #### Request
 ```
 POST /eventsources
-Accept: application/vnd.aws-cdf-v1.0+json
-Content-Type: application/vnd.aws-cdf-v1.0+json
+Accept: application/vnd.aws-cdf-v2.0+json
+Content-Type: application/vnd.aws-cdf-v2.0+json
 {
 	"name": "Raw Events",
     "sourceType": "IoTCore",
@@ -81,8 +81,8 @@ Content-Type: application/vnd.aws-cdf-v1.0+json
 #### Request
 ```
 GET /eventsources
-Accept: application/vnd.aws-cdf-v1.0+json
-Content-Type: application/vnd.aws-cdf-v1.0+json
+Accept: application/vnd.aws-cdf-v2.0+json
+Content-Type: application/vnd.aws-cdf-v2.0+json
 ```
 
 #### Response
@@ -108,8 +108,8 @@ Content-Type: application/vnd.aws-cdf-v1.0+json
 #### Request
 ```
 POST /eventsources/arn%3Aaws%3Adynamodb%3Aus-west-2%3A157731826412%3Atable%2FTelemetry/events
-Accept: application/vnd.aws-cdf-v1.0+json
-Content-Type: application/vnd.aws-cdf-v1.0+json
+Accept: application/vnd.aws-cdf-v2.0+json
+Content-Type: application/vnd.aws-cdf-v2.0+json
 {
     "name": "Battery alert",
     "conditions": {
@@ -138,8 +138,8 @@ Content-Type: application/vnd.aws-cdf-v1.0+json
 #### Request
 ```
 GET /eventsources/arn%3Aaws%3Adynamodb%3Aus-west-2%3A157731826412%3Atable%2FdeansTest/events
-Accept: application/vnd.aws-cdf-v1.0+json
-Content-Type: application/vnd.aws-cdf-v1.0+json
+Accept: application/vnd.aws-cdf-v2.0+json
+Content-Type: application/vnd.aws-cdf-v2.0+json
 ```
 
 #### Response
@@ -187,20 +187,20 @@ Content-Type: application/vnd.aws-cdf-v1.0+json
 #### Request
 ```
 POST /events/5fb570e0-71b0-11e9-b534-5d33aa3bde97/subscriptions
-Accept: application/vnd.aws-cdf-v1.0+json
-Content-Type: application/vnd.aws-cdf-v1.0+json
+Accept: application/vnd.aws-cdf-v2.0+json
+Content-Type: application/vnd.aws-cdf-v2.0+json
 {
 	"user": {
 		"id": "user123"
 	},
 	"principalValue": "device001",
     "targets": {
-    	"email": {
+    	"email": [{
     		"address": "someone@asomewhere.com"
-		},
-		"sms": {
+		}],
+		"sms": [{
 			"phoneNumber": "15551231234"
-		}
+		}]
 	},
 	"ruleParameterValues": {
 		"bl": 15

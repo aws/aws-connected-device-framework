@@ -14,7 +14,8 @@ aws:
       eventConfig:
         name: MUST_SET!
         gsi1: sk-gsi1Sort-index
-        gsi2: gsi2Key-sk-index
+        gsi2KeySk: gsi2Key-sk-index
+        gsi2KeyGsi2Sort: gsi2Key-gsi2Sort-index
       eventNotifications:
         name: MUST_SET!
 
@@ -33,6 +34,7 @@ cors:
 supportedApiVersions:
   - json:
       - '1.0'
+      - '2.0'
 
 logging:
   level: debug

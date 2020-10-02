@@ -4,7 +4,7 @@ import {injectable} from 'inversify';
 import {CommonServiceBase} from './common.service';
 
 export interface EventsourcesService {
-    createEventSource(eventSource: EventSourceDetailResource, additionalHeaders?: RequestHeaders): Promise<void>;
+    createEventSource(eventSource: EventSourceDetailResource, additionalHeaders?: RequestHeaders): Promise<string>;
 
     listEventSources(additionalHeaders?: RequestHeaders): Promise<EventSourceResourceList>;
 

@@ -14,6 +14,8 @@ export const TYPES = {
     MessageCompilerService: Symbol.for('MessageCompilerService'),
     MessageCompilerDao: Symbol.for('MessageCompilerDao'),
 
+    AlertAssembler: Symbol.for('AlertAssembler'),
+
     SNSTarget: Symbol.for('SNSTarget'),
     DynamoDBTarget: Symbol.for('DynamoDBTarget'),
 

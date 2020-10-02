@@ -59,7 +59,7 @@ describe('DynamoDbUtils', () => {
         ];
 
         // execute
-        const actual = instance.test___splitBatchIntoChunks(batch, 3);
+        const actual = instance.test___splitBatchWriteIntoChunks(batch, 3);
 
         // verify
         expect(actual).toBeDefined();
@@ -124,7 +124,7 @@ describe('DynamoDbUtils', () => {
         };
 
         // execute
-        const actual = instance.test___joinChunksIntoOutputBatch(unprocessed, remaining);
+        const actual = instance.test___joinChunksIntoOutputBatchWrite(unprocessed, remaining);
 
         // verify
         expect(actual).toBeDefined();

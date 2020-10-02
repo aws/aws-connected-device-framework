@@ -22,7 +22,7 @@ export class BaseDaoFull {
 
     protected getConnection(): NeptuneConnection {
         logger.debug(`base.full.dao getConnection: in:`);
-        const conn = new driver.DriverRemoteConnection(this.neptuneUrl, { mimeType: 'application/vnd.gremlin-v2.0+json' });
+        const conn = new driver.DriverRemoteConnection(this.neptuneUrl, { mimeType: 'application/vnd.gremlin-v2.0+json', pingEnabled: false });
 
         logger.debug(`base.full.dao getConnection: withRemote:`);
         const res = new NeptuneConnection(

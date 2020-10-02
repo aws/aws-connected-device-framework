@@ -24,19 +24,22 @@ import '../api/eventsources/eventsource.controller';
 import '../api/events/event.controller';
 import '../api/subscriptions/subscription.controller';
 import '../api/messages/messages.controller';
+import '../api/targets/target.controller';
 import { AlertDao } from '../alerts/alert.dao';
 import { DDBStreamTransformer } from '../transformers/ddbstream.transformer';
 import { FilterService } from '../filter/filter.service';
-import { TargetService } from '../api/subscriptions/targets/target.service';
-import { EmailTarget } from '../api/subscriptions/targets/email.target';
-import { SMSTarget } from '../api/subscriptions/targets/sms.target';
-import { SNSTarget } from '../api/subscriptions/targets/sns.target';
-import { DynamodDBTarget } from '../api/subscriptions/targets/dynamodb.target';
+import { EmailTarget } from '../api/targets/processors/email.target';
+import { SMSTarget } from '../api/targets/processors/sms.target';
+import { SNSTarget } from '../api/targets/processors/sns.target';
+import { DynamodDBTarget } from '../api/targets/processors/dynamodb.target';
 import { DynamoDbEventSource } from '../api/eventsources/sources/dynamodb.source';
 import { IotCoreEventSource } from '../api/eventsources/sources/iotcore.source';
 import { DynamoDbUtils } from '../utils/dynamoDb.util';
 import { EventConditionsUtils } from '../api/events/event.models';
-import { PushTarget } from '../api/subscriptions/targets/push.target';
+import { PushTarget } from '../api/targets/processors/push.target';
+import { TargetService } from '../api/targets/target.service';
+import { TargetDao } from '../api/targets/target.dao';
+import { TargetAssembler } from '../api/targets/target.assembler';
 
 // Load everything needed to the Container
 export const container = new Container();
@@ -67,6 +70,9 @@ container.bind<AlertDao>(TYPES.AlertDao).to(AlertDao).inSingletonScope();
 container.bind<DDBStreamTransformer>(TYPES.DDBStreamTransformer).to(DDBStreamTransformer).inSingletonScope();
 
 container.bind<TargetService>(TYPES.TargetService).to(TargetService).inSingletonScope();
+container.bind<TargetDao>(TYPES.TargetDao).to(TargetDao).inSingletonScope();
+container.bind<TargetAssembler>(TYPES.TargetAssembler).to(TargetAssembler).inSingletonScope();
+
 container.bind<SNSTarget>(TYPES.SNSTarget).to(SNSTarget).inSingletonScope();
 container.bind<DynamodDBTarget>(TYPES.DynamodDBTarget).to(DynamodDBTarget).inSingletonScope();
 container.bind<EmailTarget>(TYPES.EmailTarget).to(EmailTarget).inSingletonScope();
@@ -158,5 +164,21 @@ container.bind<interfaces.Factory<AWS.Iot>>(TYPES.IotFactory)
             container.bind<AWS.Iot>(TYPES.Iot).toConstantValue(l);
         }
         return container.get<AWS.Iot>(TYPES.Iot);
+    };
+});
+
+decorate(injectable(), AWS.IotData);
+container.bind<interfaces.Factory<AWS.IotData>>(TYPES.IotDataFactory)
+    .toFactory<AWS.IotData>(() => {
+    return () => {
+
+        if (!container.isBound(TYPES.IotData)) {
+            const iotData = new AWS.IotData({
+                region: config.get('aws.region'),
+                endpoint: `https://${config.get('aws.iot.endpoint')}`
+            });
+            container.bind<AWS.IotData>(TYPES.IotData).toConstantValue(iotData);
+        }
+        return container.get<AWS.IotData>(TYPES.IotData);
     };
 });

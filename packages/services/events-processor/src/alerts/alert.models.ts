@@ -4,8 +4,12 @@
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
 
-import { SubscriptionTargets } from '../api/subscriptions/subscription.models';
+import { TargetsItem } from '../api/subscriptions/subscription.models';
+
 export class AlertItem {
+
+    readonly version: 2.0;
+
     time: string;
 
     subscription: {
@@ -13,7 +17,7 @@ export class AlertItem {
         principalValue: string;
     };
 
-    targets?: SubscriptionTargets;
+    targets?: TargetsItem;
 
     sns?: {
         topicArn: string;

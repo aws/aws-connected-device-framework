@@ -13,17 +13,22 @@ import { FilterService } from '../../filter/filter.service';
 @controller('')
 export class MessagesController implements interfaces.Controller {
 
+    private _iotData: AWS.IotData;
+
     constructor( @inject(TYPES.DDBStreamTransformer) private transformer: DDBStreamTransformer,
-    @inject(TYPES.FilterService) private filter: FilterService) {}
+    @inject(TYPES.FilterService) private filter: FilterService,
+    @inject(TYPES.IotDataFactory) iotDataFactory: () => AWS.IotData) {
+        this._iotData = iotDataFactory();
+    }
 
     /**
      * Note: these are not public endpoints, instead used for debugging purposes
-     * by simulating the dynamodb stream > lambda invocation
+     * by simulating the direct lambda invocation (such as from a dynamodb stream)
      * @param message : lambda event
      */
-    @httpPost('/messages/ddbstream')
-    public async createDdbStreamMessage(@requestBody() message:any) {
-        logger.debug(`messages.controller createDdbStreamMessage: in: message:${JSON.stringify(message)}`);
+    @httpPost('/messages/invoke')
+    public async simulateMessage(@requestBody() message:any) {
+        logger.debug(`messages.controller simulateMessage: in: message:${JSON.stringify(message)}`);
 
         // transform the message
         const commonEvents = await this.transformer.transform(message);
@@ -33,7 +38,28 @@ export class MessagesController implements interfaces.Controller {
             await this.filter.filter(commonEvents);
         }
 
-        logger.debug(`messages.controller createDdbStreamMessage: exit:`);
+        logger.debug(`messages.controller simulateMessage: exit:`);
     }
 
+    /**
+     * Note: these are not public endpoints, instead used for debugging purposes
+     * by simulating an iotcore message
+     * @param message : lambda event
+     */
+    @httpPost('/messages/iotcore')
+    public async simulateIoTCoreMessage(@requestBody() message:SimulateIoTCoreMessageRequest) {
+        logger.debug(`messages.controller simulateIoTCoreMessage: in: message:${JSON.stringify(message)}`);
+        const params = {
+            topic: message.topic,
+            payload: JSON.stringify(message.payload),
+            qos: 1
+        };
+        await this._iotData.publish(params).promise();
+        logger.debug(`messages.controller simulateMessage: exit:`);
+    }
+}
+
+export interface SimulateIoTCoreMessageRequest {
+    topic:string;
+    payload:string;
 }

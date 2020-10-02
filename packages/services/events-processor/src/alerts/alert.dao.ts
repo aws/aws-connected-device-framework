@@ -42,7 +42,8 @@ export class AlertDao {
                         gsi2Sort: createDelimitedAttribute(PkType.Event, alert.event.id, alert.time),
                         principal: alert.eventSource.principal,
                         principalValue: alert.subscription.principalValue,
-                        templatePropertiesData: alert.templatePropertiesData
+                        templatePropertiesData: alert.templatePropertiesData,
+                        version: alert.version
                     }
                 }
             };

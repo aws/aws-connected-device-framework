@@ -43,19 +43,21 @@ export const assetLibraryContainerModule = new ContainerModule (
             bind<TemplatesService>(ASSTLIBRARY_CLIENT_TYPES.TemplatesService).to(TemplatesLambdaService);
             bind<ProfilesService>(ASSTLIBRARY_CLIENT_TYPES.ProfilesService).to(ProfilesLambdaService);
 
-            bind<LambdaInvokerService>(LAMBDAINVOKE_TYPES.LambdaInvokerService).to(LambdaInvokerService);
-            decorate(injectable(), AWS.Lambda);
-            bind<interfaces.Factory<AWS.Lambda>>(LAMBDAINVOKE_TYPES.LambdaFactory)
-                .toFactory<AWS.Lambda>((ctx: interfaces.Context) => {
-                    return () => {
+            if (!isBound(LAMBDAINVOKE_TYPES.LambdaInvokerService)) {
+                bind<LambdaInvokerService>(LAMBDAINVOKE_TYPES.LambdaInvokerService).to(LambdaInvokerService);
+                decorate(injectable(), AWS.Lambda);
+                bind<interfaces.Factory<AWS.Lambda>>(LAMBDAINVOKE_TYPES.LambdaFactory)
+                    .toFactory<AWS.Lambda>((ctx: interfaces.Context) => {
+                        return () => {
 
-                        if (!isBound(LAMBDAINVOKE_TYPES.Lambda)) {
-                            const lambda = new AWS.Lambda({region:config.get('aws.region')});
-                            bind<AWS.Lambda>(LAMBDAINVOKE_TYPES.Lambda).toConstantValue(lambda);
-                        }
-                        return ctx.container.get<AWS.Lambda>(LAMBDAINVOKE_TYPES.Lambda);
-                    };
-                });
+                            if (!isBound(LAMBDAINVOKE_TYPES.Lambda)) {
+                                const lambda = new AWS.Lambda({region:config.get('aws.region')});
+                                bind<AWS.Lambda>(LAMBDAINVOKE_TYPES.Lambda).toConstantValue(lambda);
+                            }
+                            return ctx.container.get<AWS.Lambda>(LAMBDAINVOKE_TYPES.Lambda);
+                        };
+                    });
+            }
 
         } else {
             bind<DevicesService>(ASSTLIBRARY_CLIENT_TYPES.DevicesService).to(DevicesApigwService);

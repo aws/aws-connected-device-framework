@@ -6,7 +6,11 @@ info:
 
     The CDF Notifications is comprised of 2 micro-services:  the CDF Events Processor, and the CDF Notification Dispatcher.  
     
-  version: 1.0.0
+    **Releases**
+    - Version 1 (`application/vnd.aws-cdf-v1.0+json`) supported a single target per target type per subscription, e.g. a single email and/or single mobile push device per subscription.
+    - Version 2 (`application/vnd.aws-cdf-v2.0+json`) was enhanced to allow multiple targets per target type per subscription, e.g. multiple emails and/or multiple mobile push devices per subscription. A new set of endpoints to allow for adding and deleting of individual targets was added too.
+    
+  version: 2.0.0
 
 
 tags:
@@ -39,6 +43,14 @@ paths:
       requestBody:
         required: true
         content:
+          application/vnd.aws-cdf-v2.0+json:
+            schema:
+              $ref: '#/components/schemas/EventSourceDetail'
+            examples:
+              dynamoDb:
+                $ref: '#/components/examples/NewDynamoDBEventSource'
+              iotCore:
+                $ref: '#/components/examples/NewIoTCoreEventSource'
           application/vnd.aws-cdf-v1.0+json:
             schema:
               $ref: '#/components/schemas/EventSourceDetail'
@@ -103,6 +115,16 @@ paths:
       requestBody:
         required: true
         content:
+          application/vnd.aws-cdf-v2.0+json:
+            schema:
+              $ref: '#/components/schemas/Event'
+            examples:
+              lowBatteryAlert1:
+                $ref: '#/components/examples/NewEvent1'
+              lowBatteryAlert2:
+                $ref: '#/components/examples/NewEvent2'
+              lowBatteryAlert3:
+                $ref: '#/components/examples/NewEvent3'
           application/vnd.aws-cdf-v1.0+json:
             schema:
               $ref: '#/components/schemas/Event'
@@ -130,7 +152,6 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
-          
   
   /events/{eventId}:
     parameters:
@@ -147,6 +168,18 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
+    patch:
+      tags:
+        - Events
+      summary: Updates an existing event.
+      operationId: updateEvent
+      responses:
+        '201':
+          $ref: '#/components/responses/Created'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags:
       - Events
@@ -154,7 +187,7 @@ paths:
       operationId: deleteEvent
       responses:
         '204':
-          $ref: '#/components/responses/Deleted'
+          $ref: '#/components/responses/NoBody'
         '404':
           $ref: '#/components/responses/NotFound'
      
@@ -169,12 +202,18 @@ paths:
       requestBody:
         required: true
         content:
-          application/vnd.aws-cdf-v1.0+json:
+          application/vnd.aws-cdf-v2.0+json:
             schema:
-              $ref: '#/components/schemas/Subscription'
+              $ref: '#/components/schemas/SubscriptionV2'
             examples:
               lowBatteryAlert:
-                $ref: '#/components/examples/NewSubscription'
+                $ref: '#/components/examples/NewSubscriptionV2'
+          application/vnd.aws-cdf-v1.0+json:
+            schema:
+              $ref: '#/components/schemas/SubscriptionV1'
+            examples:
+              lowBatteryAlert:
+                $ref: '#/components/examples/NewSubscriptionV1'
       responses:
         '201':
           $ref: '#/components/responses/Created'
@@ -205,7 +244,14 @@ paths:
       operationId: getSubscription
       responses:
         '200':
-          $ref: '#/components/schemas/Subscription'
+          description: Requested subscription.
+          content:
+            application/vnd.aws-cdf-v2.0+json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionV2'
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionV1'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -236,6 +282,58 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'          
+          
+  /subscriptions/{subscriptionId}/targets/{targetType}:
+    parameters:
+      - $ref: '#/components/parameters/subscriptionId'
+      - $ref: '#/components/parameters/targetType'
+    post:
+      tags:
+      - Targets
+      summary: Adds a new target to an existing subscription
+      operationId: createTarget
+      requestBody:
+        required: true
+        content:
+          application/vnd.aws-cdf-v2.0+json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/EmailTargetV2'
+                - $ref: '#/components/schemas/SMSTargetV2'
+                - $ref: '#/components/schemas/PushTargetV2'
+                - $ref: '#/components/schemas/DynamoDbTargetV2'
+            examples:
+              email:
+                $ref: '#/components/examples/NewEmailTarget'
+              sms:
+                $ref: '#/components/examples/NewSMSTarget'
+              push_gcm:
+                $ref: '#/components/examples/NewPushTarget'
+              dynamoDb:
+                $ref: '#/components/examples/NewDynamoDbTarget'
+      responses:
+        '201':
+          $ref: '#/components/responses/Created'
+        '400':
+          $ref: '#/components/responses/BadRequest' 
+          
+  /subscriptions/{subscriptionId}/targets/{targetType}/{targetId}:
+    parameters:
+      - $ref: '#/components/parameters/subscriptionId'
+      - $ref: '#/components/parameters/targetType'
+      - $ref: '#/components/parameters/targetId'
+    delete:  
+      tags:
+        - Targets
+      summary: Delete a specific target from an existing subscription
+      operationId: deleteTarget
+      responses:
+        '204':
+          $ref: '#/components/responses/Deleted'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'   
   
           
 components:
@@ -414,7 +512,7 @@ components:
             count:
               type: number
     
-    Subscription:
+    SubscriptionBase:
       properties:
         id:
           description: Subscription ID
@@ -431,37 +529,6 @@ components:
         principalValue:
           description: Value of the principal attribute of the event to susbcribe to
           type: string
-        targets:
-          type: object
-          properties:
-            email:
-              type: object
-              properties:
-                address:
-                  description: Email address
-                  type: object
-              required:
-                - address
-            sms:
-              type: object
-              properties:
-                phoneNumber:
-                  description: SMS phone number
-                  type: object
-              required:
-                - phoneNumber
-            push_gcm:
-              type: object
-              properties:
-                platformApplicationArn:
-                  description: Platform Application Arn
-                  type: object
-                token:
-                  description: Application Token
-                  type: object
-              required:
-                - platformApplicationArn
-                - token
         ruleParameterValues:
           description: The values of any required rule parameters of the event
           type: object
@@ -493,19 +560,141 @@ components:
           description: Alerted status
           type: boolean
           readOnly: true
-          
       required:
         - user
         - principalValue
         
+    EmailTargetV1:
+      type: object
+      properties:
+        address:
+          description: Email address
+          type: string
+      required:
+        - address
+        
+    EmailTargetV2:
+      allOf:
+        - $ref: "#/components/schemas/EmailTargetV1"
+        - type: object
+          properties:
+            subscriptionArn:
+              description: SNS subscription ARN
+              type: string
+        
+    SMSTargetV1:
+      type: object
+      properties:
+        phoneNumber:
+          description: SMS phone number
+          type: string
+      required:
+        - phoneNumber
+        
+    SMSTargetV2:
+      allOf:
+        - $ref: "#/components/schemas/SMSTargetV1"
+        - type: object
+          properties:
+            subscriptionArn:
+              description: SNS subscription ARN
+              type: string
+        
+    PushTargetV1:
+      type: object
+      properties:
+        platformApplicationArn:
+          description: Platform Application Arn
+          type: string
+        token:
+          description: Application Token
+          type: string
+      required:
+        - platformApplicationArn
+        - token
+        
+    PushTargetV2:
+      allOf:
+        - $ref: "#/components/schemas/PushTargetV1"
+        - type: object
+          properties:
+            platformEndpointArn:
+              description: ARN representing a specific app of a specific mobile device. Created after subscribing using the `platformApplicationArn` and `token`.
+            subscriptionArn:
+              description: SNS subscription ARN
+              type: string
+        
+    DynamoDbTargetV1:
+      type: object
+      properties:
+        tableName:
+          description: Name of an existing DynamoDB table
+          type: string
+        attributeMapping:
+          description: Mapping of source to destination attributes of the DynamoDB table to copy from/to
+          type: object
+          additionalProperties:
+            type: string
+      required:
+        - tableName
+        - attributeMapping
+        
+    DynamoDbTargetV2:
+      allOf:
+        - $ref: "#/components/schemas/DynamoDbTargetV1"
+        
+    SubscriptionV1:
+      allOf:
+        - $ref: "#/components/schemas/SubscriptionBase"
+        - type: object
+          properties:
+            targets:
+              type: object
+              properties:
+                email:
+                  $ref: '#/components/schemas/EmailTargetV1'
+                sms:
+                  $ref: '#/components/schemas/SMSTargetV1'
+                push_gcm:
+                  $ref: '#/components/schemas/PushTargetV1'
+                dynamoDb:
+                  $ref: '#/components/schemas/DynamoDbTargetV1'
+        
+    SubscriptionV2:
+      allOf:
+        - $ref: "#/components/schemas/SubscriptionBase"
+        - type: object
+          properties:
+            targets:
+              type: object
+              properties:
+                email:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/EmailTargetV1'
+                sms:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/SMSTargetV1'
+                push_gcm:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/PushTargetV1'
+                dynamoDb:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/DynamoDbTargetV1'
     
     SubscriptionList:
+      type: object
       properties:
         results:
-          description: A list of subscriptions.
           type: array
+          description: A list of subscriptions.
           items:
-            $ref: '#/components/schemas/Subscription'
+            oneOf:
+              - $ref: '#/components/schemas/SubscriptionV1'
+              - $ref: '#/components/schemas/SubscriptionV2'
         pagination:
           type: object
           properties:
@@ -567,10 +756,32 @@ components:
       description: Subscription ID to use as the start of paginated results
       schema:
         type: string
+        
+    targetType:
+      name: targetType
+      in: path
+      description: Target type
+      required: true
+      schema:
+        type: string
+        enum:
+         - email
+         - sms
+         - dynamodb
+         - push_gcm
+        
+    targetId:
+      name: targetId
+      in: path
+      description: Unique ID of the target, which depends on the `targetType`. May be `email.address`, `sms.phoneNumber`, `dynamodb.tablename` or `push_gcm.appplicationEndpointArn`.
+      required: true
+      schema:
+        type: string
               
   examples:
+  
     NewDynamoDBEventSource:
-      summary: An example of creating a new DynamoDB event source
+      summary: Creating a new DynamoDB event source
       value:
         id: 'arn:aws:dynamodb:us-west-2:123456789012:table/myTable"'
         name: Processed Events
@@ -578,8 +789,9 @@ components:
         principal: thingName
         dynamoDb:
           tableName: myTable
+          
     NewIoTCoreEventSource:
-      summary: An example of creating a new IoT Core event source
+      summary: Creating a new IoT Core event source
       value:
         name: Raw Events
         sourceType: IoTCore
@@ -590,7 +802,7 @@ components:
             - batteryLevel: bl
           
     NewEvent1:
-      summary: An example of creating an event to represent a low battery alert
+      summary: Creating an event to represent a low battery alert
       value:
         name: Low Battery Alert
         conditions: 
@@ -607,7 +819,7 @@ components:
           small: '{{=it.principalValue}} battery low'
           
     NewEvent2:
-      summary: An example of creating an event to represent a low battery alert based on a parameter value to be provided at the time of creating a subscription
+      summary: Creating an event to represent a low battery alert based on a parameter value to be provided at the time of creating a subscription
       value:
         name: Low Battery Alert
         conditions: 
@@ -624,7 +836,7 @@ components:
           small: '{{=it.principalValue}} battery low'
           
     NewEvent3:
-      summary: An example of creating an event to represent a low battery alert based on a threshold value present in the same event
+      summary: Creating an event to represent a low battery alert based on a threshold value present in the same event
       value:
         name: Low Battery Alert
         conditions: 
@@ -643,7 +855,7 @@ components:
           small: '{{=it.principalValue}} battery low'
     
     ExistingEvent:
-      summary: An example of an existing event
+      summary: An existing event
       value:
         eventId: 'af6b6890-6dde-11e9-addb-23bea6189627'
         eventSourceId: 'a2f05ee0-6dde-11e9-addb-23bea6189627'
@@ -663,8 +875,8 @@ components:
         enabled: true
         principal: thingName
           
-    NewSubscription:
-      summary: An example of a new subscription
+    NewSubscriptionV1:
+      summary: A new subscription
       value:
         user:
           id: user123
@@ -677,33 +889,90 @@ components:
           push_gcm:
             platformApplicationArn: arn:aws:sns:us-west-2:123456789012:app/GCM/MyApplication
             token: EXAMPLE12345
+          
+    NewSubscriptionV2:
+      summary: A new subscription
+      value:
+        user:
+          id: user123
+        principalValue: device001
+        targets:
+          email:
+            - address: someone@somewhere.com
+            - address: someone@somewhereelse.com
+          sms:
+            - phoneNumber: 15551231234
+          push_gcm:
+            - platformApplicationArn: arn:aws:sns:us-west-2:123456789012:app/GCM/MyApplication
+              token: EXAMPLE12345
+              
+    NewEmailTarget:
+      summary: A new email target
+      value:
+        address: someone@somewhere.com
+              
+    NewSMSTarget:
+      summary: A new SMS target
+      value:
+        phoneNumber: 5551231234
+              
+    NewPushTarget:
+      summary: A new mobile push target
+      value:
+        platformApplicationArn: 5551231234
+        token: AH866S755AAS5
+              
+    NewDynamoDbTarget:
+      summary: A new DynamoDB target
+      value:
+        tableName: telemetry
+        attributeMapping:
+          id: thingName
+          bl: batteryLevel
 
 
-  responses:         
+  responses:    
+  
     Created:
       description: Created successfully
       headers:
         location:
           description:  URI of the created resource
           schema:
-            type: string        
+            type: string 
+            
     Deleted:
-      description: Deleted successfully
+      description: Deleted successfully 
+            
+    NoBody:
+      description: Success.
+      
     BadRequest:
       description: Invalid input
       content:
+        application/vnd.aws-cdf-v2.0+json:
+          schema:
+            $ref: '#/components/schemas/Error'
         application/vnd.aws-cdf-v1.0+json:
           schema:
             $ref: '#/components/schemas/Error'
+            
     NotFound:
       description: Not found
       content:
+        application/vnd.aws-cdf-v2.0+json:
+          schema:
+            $ref: '#/components/schemas/Error'
         application/vnd.aws-cdf-v1.0+json:
           schema:
             $ref: '#/components/schemas/Error'
+            
     Unauthorized:
       description: Unauthorized
       content:
+        application/vnd.aws-cdf-v2.0+json:
+          schema:
+            $ref: '#/components/schemas/Error'
         application/vnd.aws-cdf-v1.0+json:
           schema:
             $ref: '#/components/schemas/Error'

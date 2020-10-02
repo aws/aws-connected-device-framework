@@ -1,5 +1,5 @@
 ---
-title: "Connected Device Framework: Greengrass Core Deployment v1.0.0"
+title: "Connected Device Framework: Greengrass Code Deployment v1.0.0"
 language_tabs:
   - shell: Shell
   - node: Node
@@ -24,7 +24,9 @@ headingLevel: 2
 
 Allows for remote deployment of Greengrass Core software using Ansible on physical devices.
 
-<h1 id="connected-device-framework-greengrass-code-deployment-templates">Templates</h1>
+<h1 id="connected-device-framework-greengrass-code-deployment-deployment-templates">Deployment Templates</h1>
+
+A Template that provides specifies the configuration of a deployment
 
 ## List all available templates.
 
@@ -162,8 +164,6 @@ Defines a new template by specifying the type of the deployment "agentless" or "
 This operation does not require authentication
 </aside>
 
-<h1 id="connected-device-framework-greengrass-code-deployment-deploymenttemplates">DeploymentTemplates</h1>
-
 ## Find a specific deployment template
 
 <a id="opIdgetTemplate"></a>
@@ -224,7 +224,9 @@ Returns a specific deployment template by template name.
 This operation does not require authentication
 </aside>
 
-<h1 id="connected-device-framework-greengrass-code-deployment-activations">Activations</h1>
+<h1 id="connected-device-framework-greengrass-code-deployment-activation">Activation</h1>
+
+Activation represent SSM acitvation of greengrass core devices as hybrid instances
 
 ## Creates a device activation
 
@@ -408,7 +410,9 @@ print(r.json())
 This operation does not require authentication
 </aside>
 
-<h1 id="connected-device-framework-greengrass-code-deployment-deployments">Deployments</h1>
+<h1 id="connected-device-framework-greengrass-code-deployment-deployment">Deployment</h1>
+
+Deployment represent SSM State Manager association against devices managed as hybrid instances.
 
 ## Creates a device deployment
 

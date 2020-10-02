@@ -1,5 +1,5 @@
 ---
-title: "Connected Device Framework: Notifications v1.0.0"
+title: "Connected Device Framework: Notifications v2.0.0"
 language_tabs:
   - shell: Shell
   - node: Node
@@ -18,13 +18,17 @@ headingLevel: 2
 
 <!-- Generator: Widdershins v4.0.1 -->
 
-<h1 id="connected-device-framework-notifications">Connected Device Framework: Notifications v1.0.0</h1>
+<h1 id="connected-device-framework-notifications">Connected Device Framework: Notifications v2.0.0</h1>
 
 > Scroll down for code samples, example requests and responses. Select a language for code samples from the tabs above or the mobile navigation menu.
 
 The CDF Notifications umbrella of services receives input from a number of different sources (e.g. IoT Core, DynamoDB Streams, API Gateway), and filters based on a subscriber's notification settings.  Any filtered messages are then sent on to a number of pre-configured targets (e.g. AppSync, SNS, or republished to IoT Core).
 
 The CDF Notifications is comprised of 2 micro-services:  the CDF Events Processor, and the CDF Notification Dispatcher.  
+
+**Releases**
+- Version 1 (`application/vnd.aws-cdf-v1.0+json`) supported a single target per target type per subscription, e.g. a single email and/or single mobile push device per subscription.
+- Version 2 (`application/vnd.aws-cdf-v2.0+json`) was enhanced to allow multiple targets per target type per subscription, e.g. multiple emails and/or multiple mobile push devices per subscription. A new set of endpoints to allow for adding and deleting of individual targets was added too.
 
 <h1 id="connected-device-framework-notifications-eventsources">EventSources</h1>
 
@@ -45,16 +49,16 @@ Events that are sourced via API Gateway or IoT Core are to be provided in the co
 ```shell
 # You can also use wget
 curl -X POST /eventsources \
-  -H 'Content-Type: application/vnd.aws-cdf-v1.0+json' \
-  -H 'Accept: application/vnd.aws-cdf-v1.0+json'
+  -H 'Content-Type: application/vnd.aws-cdf-v2.0+json' \
+  -H 'Accept: application/vnd.aws-cdf-v2.0+json'
 
 ```
 
 ```python
 import requests
 headers = {
-  'Content-Type': 'application/vnd.aws-cdf-v1.0+json',
-  'Accept': 'application/vnd.aws-cdf-v1.0+json'
+  'Content-Type': 'application/vnd.aws-cdf-v2.0+json',
+  'Accept': 'application/vnd.aws-cdf-v2.0+json'
 }
 
 r = requests.post('/eventsources', headers = headers)
@@ -121,14 +125,14 @@ This operation does not require authentication
 ```shell
 # You can also use wget
 curl -X GET /eventsources \
-  -H 'Accept: application/vnd.aws-cdf-v1.0+json'
+  -H 'Accept: application/vnd.aws-cdf-v2.0+json'
 
 ```
 
 ```python
 import requests
 headers = {
-  'Accept': 'application/vnd.aws-cdf-v1.0+json'
+  'Accept': 'application/vnd.aws-cdf-v2.0+json'
 }
 
 r = requests.get('/eventsources', headers = headers)
@@ -170,14 +174,14 @@ This operation does not require authentication
 ```shell
 # You can also use wget
 curl -X GET /eventsources/{eventSourceId} \
-  -H 'Accept: application/vnd.aws-cdf-v1.0+json'
+  -H 'Accept: application/vnd.aws-cdf-v2.0+json'
 
 ```
 
 ```python
 import requests
 headers = {
-  'Accept': 'application/vnd.aws-cdf-v1.0+json'
+  'Accept': 'application/vnd.aws-cdf-v2.0+json'
 }
 
 r = requests.get('/eventsources/{eventSourceId}', headers = headers)
@@ -225,14 +229,14 @@ This operation does not require authentication
 ```shell
 # You can also use wget
 curl -X DELETE /eventsources/{eventSourceId} \
-  -H 'Accept: application/vnd.aws-cdf-v1.0+json'
+  -H 'Accept: application/vnd.aws-cdf-v2.0+json'
 
 ```
 
 ```python
 import requests
 headers = {
-  'Accept': 'application/vnd.aws-cdf-v1.0+json'
+  'Accept': 'application/vnd.aws-cdf-v2.0+json'
 }
 
 r = requests.delete('/eventsources/{eventSourceId}', headers = headers)
@@ -283,16 +287,16 @@ An `Event` represents a message consumed from an event source that has had a rul
 ```shell
 # You can also use wget
 curl -X POST /eventsources/{eventSourceId}/events \
-  -H 'Content-Type: application/vnd.aws-cdf-v1.0+json' \
-  -H 'Accept: application/vnd.aws-cdf-v1.0+json'
+  -H 'Content-Type: application/vnd.aws-cdf-v2.0+json' \
+  -H 'Accept: application/vnd.aws-cdf-v2.0+json'
 
 ```
 
 ```python
 import requests
 headers = {
-  'Content-Type': 'application/vnd.aws-cdf-v1.0+json',
-  'Accept': 'application/vnd.aws-cdf-v1.0+json'
+  'Content-Type': 'application/vnd.aws-cdf-v2.0+json',
+  'Accept': 'application/vnd.aws-cdf-v2.0+json'
 }
 
 r = requests.post('/eventsources/{eventSourceId}/events', headers = headers)
@@ -319,7 +323,8 @@ print(r.json())
   },
   "supportedTargets": {
     "email": "default",
-    "sms": "small"
+    "sms": "small",
+    "push_gcm": "small"
   },
   "templates": {
     "default": "The battery for bowl {{=it.principalValue}} is low.",
@@ -371,14 +376,14 @@ This operation does not require authentication
 ```shell
 # You can also use wget
 curl -X GET /eventsources/{eventSourceId}/events \
-  -H 'Accept: application/vnd.aws-cdf-v1.0+json'
+  -H 'Accept: application/vnd.aws-cdf-v2.0+json'
 
 ```
 
 ```python
 import requests
 headers = {
-  'Accept': 'application/vnd.aws-cdf-v1.0+json'
+  'Accept': 'application/vnd.aws-cdf-v2.0+json'
 }
 
 r = requests.get('/eventsources/{eventSourceId}/events', headers = headers)
@@ -426,14 +431,14 @@ This operation does not require authentication
 ```shell
 # You can also use wget
 curl -X GET /events/{eventId} \
-  -H 'Accept: application/vnd.aws-cdf-v1.0+json'
+  -H 'Accept: application/vnd.aws-cdf-v2.0+json'
 
 ```
 
 ```python
 import requests
 headers = {
-  'Accept': 'application/vnd.aws-cdf-v1.0+json'
+  'Accept': 'application/vnd.aws-cdf-v2.0+json'
 }
 
 r = requests.get('/events/{eventId}', headers = headers)
@@ -481,14 +486,14 @@ This operation does not require authentication
 ```shell
 # You can also use wget
 curl -X DELETE /events/{eventId} \
-  -H 'Accept: application/vnd.aws-cdf-v1.0+json'
+  -H 'Accept: application/vnd.aws-cdf-v2.0+json'
 
 ```
 
 ```python
 import requests
 headers = {
-  'Accept': 'application/vnd.aws-cdf-v1.0+json'
+  'Accept': 'application/vnd.aws-cdf-v2.0+json'
 }
 
 r = requests.delete('/events/{eventId}', headers = headers)
@@ -539,16 +544,16 @@ A 'Subscription' allows a user to subscribe to an event, optionally configuring 
 ```shell
 # You can also use wget
 curl -X POST /events/{eventId}/subscriptions \
-  -H 'Content-Type: application/vnd.aws-cdf-v1.0+json' \
-  -H 'Accept: application/vnd.aws-cdf-v1.0+json'
+  -H 'Content-Type: application/vnd.aws-cdf-v2.0+json' \
+  -H 'Accept: application/vnd.aws-cdf-v2.0+json'
 
 ```
 
 ```python
 import requests
 headers = {
-  'Content-Type': 'application/vnd.aws-cdf-v1.0+json',
-  'Accept': 'application/vnd.aws-cdf-v1.0+json'
+  'Content-Type': 'application/vnd.aws-cdf-v2.0+json',
+  'Accept': 'application/vnd.aws-cdf-v2.0+json'
 }
 
 r = requests.post('/events/{eventId}/subscriptions', headers = headers)
@@ -568,12 +573,25 @@ print(r.json())
   },
   "principalValue": "device001",
   "targets": {
-    "email": {
-      "address": "someone@somewhere.com"
-    },
-    "sms": {
-      "phoneNumber": 15551231234
-    }
+    "email": [
+      {
+        "address": "someone@somewhere.com"
+      },
+      {
+        "address": "someone@somewhereelse.com"
+      }
+    ],
+    "sms": [
+      {
+        "phoneNumber": 15551231234
+      }
+    ],
+    "push_gcm": [
+      {
+        "platformApplicationArn": "arn:aws:sns:us-west-2:123456789012:app/GCM/MyApplication",
+        "token": "EXAMPLE12345"
+      }
+    ]
   }
 }
 ```
@@ -582,7 +600,7 @@ print(r.json())
 
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
-|body|body|[Subscription](#schemasubscription)|true|none|
+|body|body|[SubscriptionV2](#schemasubscriptionv2)|true|none|
 |eventId|path|string|true|Event ID|
 
 > Example responses
@@ -621,14 +639,14 @@ This operation does not require authentication
 ```shell
 # You can also use wget
 curl -X GET /events/{eventId}/subscriptions \
-  -H 'Accept: application/vnd.aws-cdf-v1.0+json'
+  -H 'Accept: application/vnd.aws-cdf-v2.0+json'
 
 ```
 
 ```python
 import requests
 headers = {
-  'Accept': 'application/vnd.aws-cdf-v1.0+json'
+  'Accept': 'application/vnd.aws-cdf-v2.0+json'
 }
 
 r = requests.get('/events/{eventId}/subscriptions', headers = headers)
@@ -677,14 +695,14 @@ This operation does not require authentication
 ```shell
 # You can also use wget
 curl -X GET /subscriptions/{subscriptionId} \
-  -H 'Accept: application/vnd.aws-cdf-v1.0+json'
+  -H 'Accept: application/vnd.aws-cdf-v2.0+json'
 
 ```
 
 ```python
 import requests
 headers = {
-  'Accept': 'application/vnd.aws-cdf-v1.0+json'
+  'Accept': 'application/vnd.aws-cdf-v2.0+json'
 }
 
 r = requests.get('/subscriptions/{subscriptionId}', headers = headers)
@@ -703,11 +721,37 @@ print(r.json())
 
 > Example responses
 
-> 400 Response
+> 200 Response
 
 ```json
 {
-  "message": "string"
+  "targets": {
+    "email": [
+      {
+        "address": "string"
+      }
+    ],
+    "sms": [
+      {
+        "phoneNumber": "string"
+      }
+    ],
+    "push_gcm": [
+      {
+        "platformApplicationArn": "string",
+        "token": "string"
+      }
+    ],
+    "dynamoDb": [
+      {
+        "tableName": "string",
+        "attributeMapping": {
+          "property1": "string",
+          "property2": "string"
+        }
+      }
+    ]
+  }
 }
 ```
 
@@ -715,7 +759,7 @@ print(r.json())
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|none|None|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Requested subscription.|[SubscriptionV1](#schemasubscriptionv1)|
 |400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Invalid input|[Error](#schemaerror)|
 |404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|Not found|[Error](#schemaerror)|
 
@@ -732,14 +776,14 @@ This operation does not require authentication
 ```shell
 # You can also use wget
 curl -X DELETE /subscriptions/{subscriptionId} \
-  -H 'Accept: application/vnd.aws-cdf-v1.0+json'
+  -H 'Accept: application/vnd.aws-cdf-v2.0+json'
 
 ```
 
 ```python
 import requests
 headers = {
-  'Accept': 'application/vnd.aws-cdf-v1.0+json'
+  'Accept': 'application/vnd.aws-cdf-v2.0+json'
 }
 
 r = requests.delete('/subscriptions/{subscriptionId}', headers = headers)
@@ -786,14 +830,14 @@ This operation does not require authentication
 ```shell
 # You can also use wget
 curl -X GET /user/{userId}/subscriptions \
-  -H 'Accept: application/vnd.aws-cdf-v1.0+json'
+  -H 'Accept: application/vnd.aws-cdf-v2.0+json'
 
 ```
 
 ```python
 import requests
 headers = {
-  'Accept': 'application/vnd.aws-cdf-v1.0+json'
+  'Accept': 'application/vnd.aws-cdf-v2.0+json'
 }
 
 r = requests.get('/user/{userId}/subscriptions', headers = headers)
@@ -825,6 +869,155 @@ print(r.json())
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
 |200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|none|None|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Invalid input|[Error](#schemaerror)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|Not found|[Error](#schemaerror)|
+
+<aside class="success">
+This operation does not require authentication
+</aside>
+
+<h1 id="connected-device-framework-notifications-targets">Targets</h1>
+
+## Adds a new target to an existing subscription
+
+<a id="opIdcreateTarget"></a>
+
+> Code samples
+
+```shell
+# You can also use wget
+curl -X POST /subscriptions/{subscriptionId}/targets/{targetType} \
+  -H 'Content-Type: application/vnd.aws-cdf-v2.0+json' \
+  -H 'Accept: application/vnd.aws-cdf-v2.0+json'
+
+```
+
+```python
+import requests
+headers = {
+  'Content-Type': 'application/vnd.aws-cdf-v2.0+json',
+  'Accept': 'application/vnd.aws-cdf-v2.0+json'
+}
+
+r = requests.post('/subscriptions/{subscriptionId}/targets/{targetType}', headers = headers)
+
+print(r.json())
+
+```
+
+`POST /subscriptions/{subscriptionId}/targets/{targetType}`
+
+> Body parameter
+
+```json
+{
+  "address": "someone@somewhere.com"
+}
+```
+
+<h3 id="adds-a-new-target-to-an-existing-subscription-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|body|body|any|true|none|
+|subscriptionId|path|string|true|Subscription ID|
+|targetType|path|string|true|Target type|
+
+#### Enumerated Values
+
+|Parameter|Value|
+|---|---|
+|targetType|email|
+|targetType|sms|
+|targetType|dynamodb|
+|targetType|push_gcm|
+
+> Example responses
+
+> 400 Response
+
+```json
+{
+  "message": "string"
+}
+```
+
+<h3 id="adds-a-new-target-to-an-existing-subscription-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|201|[Created](https://tools.ietf.org/html/rfc7231#section-6.3.2)|Created successfully|None|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Invalid input|[Error](#schemaerror)|
+
+### Response Headers
+
+|Status|Header|Type|Format|Description|
+|---|---|---|---|---|
+|201|location|string||URI of the created resource|
+
+<aside class="success">
+This operation does not require authentication
+</aside>
+
+## Delete a specific target from an existing subscription
+
+<a id="opIddeleteTarget"></a>
+
+> Code samples
+
+```shell
+# You can also use wget
+curl -X DELETE /subscriptions/{subscriptionId}/targets/{targetType}/{targetId} \
+  -H 'Accept: application/vnd.aws-cdf-v2.0+json'
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/vnd.aws-cdf-v2.0+json'
+}
+
+r = requests.delete('/subscriptions/{subscriptionId}/targets/{targetType}/{targetId}', headers = headers)
+
+print(r.json())
+
+```
+
+`DELETE /subscriptions/{subscriptionId}/targets/{targetType}/{targetId}`
+
+<h3 id="delete-a-specific-target-from-an-existing-subscription-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|subscriptionId|path|string|true|Subscription ID|
+|targetType|path|string|true|Target type|
+|targetId|path|string|true|Unique ID of the target, which depends on the `targetType`. May be `email.address`, `sms.phoneNumber`, `dynamodb.tablename` or `push_gcm.appplicationEndpointArn`.|
+
+#### Enumerated Values
+
+|Parameter|Value|
+|---|---|
+|targetType|email|
+|targetType|sms|
+|targetType|dynamodb|
+|targetType|push_gcm|
+
+> Example responses
+
+> 400 Response
+
+```json
+{
+  "message": "string"
+}
+```
+
+<h3 id="delete-a-specific-target-from-an-existing-subscription-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|Deleted successfully|None|
 |400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Invalid input|[Error](#schemaerror)|
 |404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|Not found|[Error](#schemaerror)|
 
@@ -865,8 +1058,6 @@ This operation does not require authentication
 
 ```json
 {
-  "id": "string",
-  "name": "string",
   "sourceType": "DynamoDB",
   "principal": "string",
   "dynamoDb": {
@@ -961,11 +1152,13 @@ and
   },
   "supportedTargets": {
     "email": "string",
-    "sms": "string"
+    "sms": "string",
+    "push_gcm": "string"
   },
   "eventId": "string",
   "eventSourceId": "string",
-  "principal": "string"
+  "principal": "string",
+  "disableAlertThreshold": false
 }
 
 ```
@@ -1006,9 +1199,11 @@ continued
 |supportedTargets|object|false|none|A map of supported targets, along with the messaging template to use|
 |» email|string|false|none|none|
 |» sms|string|false|none|none|
+|» push_gcm|string|false|none|none|
 |eventId|string|false|read-only|Event ID|
 |eventSourceId|string|false|read-only|Event source ID|
 |principal|string|false|read-only|The name of the attribute that represents the principal in incoming messages from the event source|
+|disableAlertThreshold|boolean|false|none|If set to true, alerts will be sent every time rather than just the first time after a threshold being passed.|
 
 <h2 id="tocS_EventConditions">EventConditions</h2>
 <!-- backwards compatibility -->
@@ -1144,11 +1339,13 @@ xor
       },
       "supportedTargets": {
         "email": "string",
-        "sms": "string"
+        "sms": "string",
+        "push_gcm": "string"
       },
       "eventId": "string",
       "eventSourceId": "string",
-      "principal": "string"
+      "principal": "string",
+      "disableAlertThreshold": false
     }
   ],
   "pagination": {
@@ -1173,12 +1370,12 @@ xor
 |»» eventId|string|false|none|The event ID to paginate from|
 |» count|number|false|none|none|
 
-<h2 id="tocS_Subscription">Subscription</h2>
+<h2 id="tocS_SubscriptionBase">SubscriptionBase</h2>
 <!-- backwards compatibility -->
-<a id="schemasubscription"></a>
-<a id="schema_Subscription"></a>
-<a id="tocSsubscription"></a>
-<a id="tocssubscription"></a>
+<a id="schemasubscriptionbase"></a>
+<a id="schema_SubscriptionBase"></a>
+<a id="tocSsubscriptionbase"></a>
+<a id="tocssubscriptionbase"></a>
 
 ```json
 {
@@ -1187,14 +1384,6 @@ xor
     "id": "string"
   },
   "principalValue": "string",
-  "targets": {
-    "email": {
-      "address": {}
-    },
-    "sms": {
-      "phoneNumber": {}
-    }
-  },
   "ruleParameterValues": {
     "property1": "string",
     "property2": "string"
@@ -1205,7 +1394,8 @@ xor
     "conditions": {
       "all": null,
       "any": null
-    }
+    },
+    "disableAlertThreshold": true
   },
   "enabled": true,
   "alerted": true
@@ -1221,11 +1411,6 @@ xor
 |user|object|true|none|none|
 |» id|string|true|none|User ID|
 |principalValue|string|true|none|Value of the principal attribute of the event to susbcribe to|
-|targets|object|false|none|none|
-|» email|object|false|none|none|
-|»» address|object|true|none|Email address|
-|» sms|object|false|none|none|
-|»» phoneNumber|object|true|none|SMS phone number|
 |ruleParameterValues|object|false|none|The values of any required rule parameters of the event|
 |» **additionalProperties**|any|false|none|none|
 
@@ -1255,8 +1440,322 @@ continued
 |» id|string|false|none|Event ID|
 |» name|string|false|none|Event name|
 |» conditions|[EventConditions](#schemaeventconditions)|false|none|none|
+|» disableAlertThreshold|boolean|false|none|If set to true, alerts will be sent every time rather than just the first time after a threshold being passed.|
 |enabled|boolean|false|none|Enabled status|
 |alerted|boolean|false|read-only|Alerted status|
+
+<h2 id="tocS_EmailTargetV1">EmailTargetV1</h2>
+<!-- backwards compatibility -->
+<a id="schemaemailtargetv1"></a>
+<a id="schema_EmailTargetV1"></a>
+<a id="tocSemailtargetv1"></a>
+<a id="tocsemailtargetv1"></a>
+
+```json
+{
+  "address": "string"
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|address|string|true|none|Email address|
+
+<h2 id="tocS_EmailTargetV2">EmailTargetV2</h2>
+<!-- backwards compatibility -->
+<a id="schemaemailtargetv2"></a>
+<a id="schema_EmailTargetV2"></a>
+<a id="tocSemailtargetv2"></a>
+<a id="tocsemailtargetv2"></a>
+
+```json
+{
+  "address": "string",
+  "subscriptionArn": "string"
+}
+
+```
+
+### Properties
+
+allOf
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|[EmailTargetV1](#schemaemailtargetv1)|false|none|none|
+
+and
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|object|false|none|none|
+|» subscriptionArn|string|false|none|SNS subscription ARN|
+
+<h2 id="tocS_SMSTargetV1">SMSTargetV1</h2>
+<!-- backwards compatibility -->
+<a id="schemasmstargetv1"></a>
+<a id="schema_SMSTargetV1"></a>
+<a id="tocSsmstargetv1"></a>
+<a id="tocssmstargetv1"></a>
+
+```json
+{
+  "phoneNumber": "string"
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|phoneNumber|string|true|none|SMS phone number|
+
+<h2 id="tocS_SMSTargetV2">SMSTargetV2</h2>
+<!-- backwards compatibility -->
+<a id="schemasmstargetv2"></a>
+<a id="schema_SMSTargetV2"></a>
+<a id="tocSsmstargetv2"></a>
+<a id="tocssmstargetv2"></a>
+
+```json
+{
+  "phoneNumber": "string",
+  "subscriptionArn": "string"
+}
+
+```
+
+### Properties
+
+allOf
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|[SMSTargetV1](#schemasmstargetv1)|false|none|none|
+
+and
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|object|false|none|none|
+|» subscriptionArn|string|false|none|SNS subscription ARN|
+
+<h2 id="tocS_PushTargetV1">PushTargetV1</h2>
+<!-- backwards compatibility -->
+<a id="schemapushtargetv1"></a>
+<a id="schema_PushTargetV1"></a>
+<a id="tocSpushtargetv1"></a>
+<a id="tocspushtargetv1"></a>
+
+```json
+{
+  "platformApplicationArn": "string",
+  "token": "string"
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|platformApplicationArn|string|true|none|Platform Application Arn|
+|token|string|true|none|Application Token|
+
+<h2 id="tocS_PushTargetV2">PushTargetV2</h2>
+<!-- backwards compatibility -->
+<a id="schemapushtargetv2"></a>
+<a id="schema_PushTargetV2"></a>
+<a id="tocSpushtargetv2"></a>
+<a id="tocspushtargetv2"></a>
+
+```json
+{
+  "platformApplicationArn": "string",
+  "token": "string",
+  "platformEndpointArn": null,
+  "subscriptionArn": "string"
+}
+
+```
+
+### Properties
+
+allOf
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|[PushTargetV1](#schemapushtargetv1)|false|none|none|
+
+and
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|object|false|none|none|
+|» platformEndpointArn|any|false|none|ARN representing a specific app of a specific mobile device. Created after subscribing using the `platformApplicationArn` and `token`.|
+|» subscriptionArn|string|false|none|SNS subscription ARN|
+
+<h2 id="tocS_DynamoDbTargetV1">DynamoDbTargetV1</h2>
+<!-- backwards compatibility -->
+<a id="schemadynamodbtargetv1"></a>
+<a id="schema_DynamoDbTargetV1"></a>
+<a id="tocSdynamodbtargetv1"></a>
+<a id="tocsdynamodbtargetv1"></a>
+
+```json
+{
+  "tableName": "string",
+  "attributeMapping": {
+    "property1": "string",
+    "property2": "string"
+  }
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|tableName|string|true|none|Name of an existing DynamoDB table|
+|attributeMapping|object|true|none|Mapping of source to destination attributes of the DynamoDB table to copy from/to|
+|» **additionalProperties**|string|false|none|none|
+
+<h2 id="tocS_DynamoDbTargetV2">DynamoDbTargetV2</h2>
+<!-- backwards compatibility -->
+<a id="schemadynamodbtargetv2"></a>
+<a id="schema_DynamoDbTargetV2"></a>
+<a id="tocSdynamodbtargetv2"></a>
+<a id="tocsdynamodbtargetv2"></a>
+
+```json
+{
+  "tableName": "string",
+  "attributeMapping": {
+    "property1": "string",
+    "property2": "string"
+  }
+}
+
+```
+
+### Properties
+
+*None*
+
+<h2 id="tocS_SubscriptionV1">SubscriptionV1</h2>
+<!-- backwards compatibility -->
+<a id="schemasubscriptionv1"></a>
+<a id="schema_SubscriptionV1"></a>
+<a id="tocSsubscriptionv1"></a>
+<a id="tocssubscriptionv1"></a>
+
+```json
+{
+  "targets": {
+    "email": {
+      "address": "string"
+    },
+    "sms": {
+      "phoneNumber": "string"
+    },
+    "push_gcm": {
+      "platformApplicationArn": "string",
+      "token": "string"
+    },
+    "dynamoDb": {
+      "tableName": "string",
+      "attributeMapping": {
+        "property1": "string",
+        "property2": "string"
+      }
+    }
+  }
+}
+
+```
+
+### Properties
+
+allOf
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|[SubscriptionBase](#schemasubscriptionbase)|false|none|none|
+
+and
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|object|false|none|none|
+|» targets|object|false|none|none|
+|»» email|[EmailTargetV1](#schemaemailtargetv1)|false|none|none|
+|»» sms|[SMSTargetV1](#schemasmstargetv1)|false|none|none|
+|»» push_gcm|[PushTargetV1](#schemapushtargetv1)|false|none|none|
+|»» dynamoDb|[DynamoDbTargetV1](#schemadynamodbtargetv1)|false|none|none|
+
+<h2 id="tocS_SubscriptionV2">SubscriptionV2</h2>
+<!-- backwards compatibility -->
+<a id="schemasubscriptionv2"></a>
+<a id="schema_SubscriptionV2"></a>
+<a id="tocSsubscriptionv2"></a>
+<a id="tocssubscriptionv2"></a>
+
+```json
+{
+  "targets": {
+    "email": [
+      {
+        "address": "string"
+      }
+    ],
+    "sms": [
+      {
+        "phoneNumber": "string"
+      }
+    ],
+    "push_gcm": [
+      {
+        "platformApplicationArn": "string",
+        "token": "string"
+      }
+    ],
+    "dynamoDb": [
+      {
+        "tableName": "string",
+        "attributeMapping": {
+          "property1": "string",
+          "property2": "string"
+        }
+      }
+    ]
+  }
+}
+
+```
+
+### Properties
+
+allOf
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|[SubscriptionBase](#schemasubscriptionbase)|false|none|none|
+
+and
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|object|false|none|none|
+|» targets|object|false|none|none|
+|»» email|[[EmailTargetV1](#schemaemailtargetv1)]|false|none|none|
+|»» sms|[[SMSTargetV1](#schemasmstargetv1)]|false|none|none|
+|»» push_gcm|[[PushTargetV1](#schemapushtargetv1)]|false|none|none|
+|»» dynamoDb|[[DynamoDbTargetV1](#schemadynamodbtargetv1)]|false|none|none|
 
 <h2 id="tocS_SubscriptionList">SubscriptionList</h2>
 <!-- backwards compatibility -->
@@ -1269,33 +1768,25 @@ continued
 {
   "results": [
     {
-      "id": "string",
-      "user": {
-        "id": "string"
-      },
-      "principalValue": "string",
       "targets": {
         "email": {
-          "address": {}
+          "address": "string"
         },
         "sms": {
-          "phoneNumber": {}
+          "phoneNumber": "string"
+        },
+        "push_gcm": {
+          "platformApplicationArn": "string",
+          "token": "string"
+        },
+        "dynamoDb": {
+          "tableName": "string",
+          "attributeMapping": {
+            "property1": "string",
+            "property2": "string"
+          }
         }
-      },
-      "ruleParameterValues": {
-        "property1": "string",
-        "property2": "string"
-      },
-      "event": {
-        "id": "string",
-        "name": "string",
-        "conditions": {
-          "all": null,
-          "any": null
-        }
-      },
-      "enabled": true,
-      "alerted": true
+      }
     }
   ],
   "pagination": {
@@ -1313,7 +1804,24 @@ continued
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
-|results|[[Subscription](#schemasubscription)]|false|none|A list of subscriptions.|
+|results|[oneOf]|false|none|A list of subscriptions.|
+
+oneOf
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|» *anonymous*|[SubscriptionV1](#schemasubscriptionv1)|false|none|none|
+
+xor
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|» *anonymous*|[SubscriptionV2](#schemasubscriptionv2)|false|none|none|
+
+continued
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
 |pagination|object|false|none|none|
 |» offset|object|false|none|none|
 |»» eventId|string|false|none|The event ID to paginate from|

@@ -173,7 +173,9 @@ Resources:
             Resource: '*'
           - Sid: "dynamodb"
             Action:
+              - dynamodb:BatchGetItem
               - dynamodb:BatchWriteItem
+              - dynamodb:PutItem
               - dynamodb:Query
             Effect: Allow
             Resource: 
@@ -310,43 +312,52 @@ Resources:
       TableName: !Sub 'cdf-eventConfig-${Environment}'
       KeySchema: 
         - 
-          AttributeName: "pk"
-          KeyType: "HASH"
+          AttributeName: pk
+          KeyType: HASH
         - 
-          AttributeName: "sk"
-          KeyType: "RANGE"
+          AttributeName: sk
+          KeyType: RANGE
+          
       AttributeDefinitions: 
         - 
-          AttributeName: "pk"
-          AttributeType: "S"
+          AttributeName: pk
+          AttributeType: S
         - 
-          AttributeName: "sk"
-          AttributeType: "S"
+          AttributeName: sk
+          AttributeType: S
         - 
-          AttributeName: "gsi1Sort"
-          AttributeType: "S"
+          AttributeName: gsi1Sort
+          AttributeType: S
         - 
-          AttributeName: "gsi2Key"
-          AttributeType: "S"
+          AttributeName: gsi2Key
+          AttributeType: S
+        - 
+          AttributeName: gsi2Sort
+          AttributeType: S
+
       ProvisionedThroughput: 
         ReadCapacityUnits: "5"
         WriteCapacityUnits: "5"
+
       GlobalSecondaryIndexes:
         -
           IndexName: 'sk-gsi1Sort-index'
           KeySchema: 
             - 
-              AttributeName: "sk"
-              KeyType: "HASH"
+              AttributeName: sk
+              KeyType: HASH
             - 
-              AttributeName: "gsi1Sort"
-              KeyType: "RANGE"
+              AttributeName: gsi1Sort
+              KeyType: RANGE
           Projection:
             ProjectionType: ALL
           ProvisionedThroughput:
-            ReadCapacityUnits: "5"
-            WriteCapacityUnits: "5"
+            ReadCapacityUnits: 5
+            WriteCapacityUnits: 5
         -
+          ### NOTE: this GSI is longer used, replaced by 'gsi2Key-gsi2Sort-index', but has to remain for backwards compatibility
+          ### as a cloudformation update may only contain 1 GSI add/delete/change per cloudformation update (cannot handle the deletion
+          ### of this one at the same time as the creation of the other. )
           IndexName: 'gsi2Key-sk-index'
           KeySchema: 
             - 
@@ -360,6 +371,20 @@ Resources:
           ProvisionedThroughput:
             ReadCapacityUnits: "5"
             WriteCapacityUnits: "5"
+        -
+          IndexName: 'gsi2Key-gsi2Sort-index'
+          KeySchema: 
+            - 
+              AttributeName: gsi2Key
+              KeyType: HASH
+            - 
+              AttributeName: gsi2Sort
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 5
+            WriteCapacityUnits: 5
 
   EventNotificationsTable:
     Type: AWS::DynamoDB::Table
@@ -367,56 +392,56 @@ Resources:
       TableName: !Sub 'cdf-eventNotifications-${Environment}'
       KeySchema: 
         - 
-          AttributeName: "pk"
-          KeyType: "HASH"
+          AttributeName: pk
+          KeyType: HASH
         - 
-          AttributeName: "time"
-          KeyType: "RANGE"
+          AttributeName: time
+          KeyType: RANGE
       AttributeDefinitions: 
         - 
-          AttributeName: "pk"
-          AttributeType: "S"
+          AttributeName: pk
+          AttributeType: S
         - 
-          AttributeName: "time"
-          AttributeType: "S"
+          AttributeName: time
+          AttributeType: S
         - 
-          AttributeName: "userId"
-          AttributeType: "S"
+          AttributeName: userId
+          AttributeType: S
         - 
-          AttributeName: "gsi2Sort"
-          AttributeType: "S"
+          AttributeName: gsi2Sort
+          AttributeType: S
       ProvisionedThroughput: 
-        ReadCapacityUnits: "5"
-        WriteCapacityUnits: "5"
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
       GlobalSecondaryIndexes:
         -
           IndexName: 'userId-gsi2Sort-index'
           KeySchema: 
             - 
-              AttributeName: "userId"
-              KeyType: "HASH"
+              AttributeName: userId
+              KeyType: HASH
             - 
-              AttributeName: "gsi2Sort"
-              KeyType: "RANGE"
+              AttributeName: gsi2Sort
+              KeyType: RANGE
           Projection:
             ProjectionType: ALL
           ProvisionedThroughput:
-            ReadCapacityUnits: "5"
-            WriteCapacityUnits: "5"
+            ReadCapacityUnits: 5
+            WriteCapacityUnits: 5
         -
           IndexName: 'userId-time-index'
           KeySchema: 
             - 
-              AttributeName: "userId"
-              KeyType: "HASH"
+              AttributeName: userId
+              KeyType: HASH
             - 
-              AttributeName: "time"
-              KeyType: "RANGE"
+              AttributeName: time
+              KeyType: RANGE
           Projection:
             ProjectionType: ALL
           ProvisionedThroughput:
-            ReadCapacityUnits: "5"
-            WriteCapacityUnits: "5"
+            ReadCapacityUnits: 5
+            WriteCapacityUnits: 5
       StreamSpecification:
         StreamViewType: NEW_IMAGE
 
@@ -464,7 +489,7 @@ Resources:
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
-          - Sid: "dynamodb"
+          - Sid: dynamodb
             Effect: Allow
             Action:
               - dynamodb:Query

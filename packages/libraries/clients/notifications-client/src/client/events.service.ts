@@ -4,11 +4,13 @@ import {injectable} from 'inversify';
 import {CommonServiceBase} from './common.service';
 
 export interface EventsService {
-    createEvent(eventSourceId: string, event: EventResource, additionalHeaders?: RequestHeaders): Promise<void>;
+    createEvent(eventSourceId: string, event: EventResource, additionalHeaders?: RequestHeaders): Promise<string>;
 
     getEvent(eventId: string, additionalHeaders?: RequestHeaders): Promise<EventResource>;
 
     deleteEvent(eventId: string, additionalHeaders?: RequestHeaders): Promise<void>;
+
+    updateEvent(event: EventResource, additionalHeaders?: RequestHeaders): Promise<void>;
 
     listEventsForEventSource(eventSourceId: string, count?: number, fromEventId?: string, additionalHeaders?: RequestHeaders): Promise<EventResourceList>;
 }

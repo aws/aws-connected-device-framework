@@ -10,9 +10,12 @@ import { SubscriptionItem } from './subscription.models';
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import { DynamoDbUtils } from '../../utils/dynamoDb.util';
 import { createMockInstance } from 'jest-create-mock-instance';
+import { EmailTargetItem, SMSTargetItem, PushTargetItem } from '../targets/targets.models';
+import { TargetDao } from '../targets/target.dao';
 
 describe('SubscriptionDao', () => {
 
+    let mockedTargetDao: jest.Mocked<TargetDao>;
     let mockedDynamoDbUtils: jest.Mocked<DynamoDbUtils>;
     let mockedCachedDocumentClient: AWS.DynamoDB.DocumentClient;
     let instance: SubscriptionDao;
@@ -37,21 +40,14 @@ describe('SubscriptionDao', () => {
             },
             disableAlertThreshold: false
         },
+        targets: {
+            email:[],
+            sms:[],
+            push_gcm:[]
+        },
         eventSource: {
             id: 'eventsource001',
             principal: 'deviceId'
-        },
-        targets: {
-            email: {
-                address: 'someone@somewhere.com'
-            },
-            sms: {
-                phoneNumber: '555555555'
-            },
-            push_gcm: {
-                platformApplicationArn: 'arn:aws:sns:us-west-2:123456789012:app/GCM/MyApplication',
-                token: 'EXAMPLE12345'
-            }
         },
         user: {
             id: 'user001'
@@ -60,6 +56,24 @@ describe('SubscriptionDao', () => {
             topicArn: 'sns:topic:arn'
         }
     };
+
+    const email1 = new EmailTargetItem();
+    email1.address = 'someone@somewhere.com';
+    email1.subscriptionId = 'sub1';
+
+    const sms1 = new SMSTargetItem();
+    sms1.phoneNumber = '5555555555';
+    sms1.subscriptionId = 'sub1';
+
+    const pushGcm = new PushTargetItem();
+    pushGcm.platformApplicationArn = 'arn:aws:sns:us-west-2:123456789012:app/GCM/MyApplication';
+    pushGcm.token = 'EXAMPLE12345';
+    pushGcm.platformEndpointArn = 'arn:aws:sns:us-west-2:123456789012:endpoint/GCM/MyApplication/12345678-abcd-9012-efgh-345678901234';
+    pushGcm.subscriptionId = 'sub1';
+
+    stubbedGoodItem.targets.email.push(email1);
+    stubbedGoodItem.targets.sms.push(sms1);
+    stubbedGoodItem.targets.push_gcm.push(pushGcm);
 
     const expectedFullBatchWriteFirstCall:DocumentClient.BatchWriteItemInput = {
         RequestItems: {
@@ -108,9 +122,9 @@ describe('SubscriptionDao', () => {
                     PutRequest: {
                         Item: {
                             pk: `S:${stubbedGoodItem.id}`,
-                            sk: `ST:email`,
+                            sk: `ST:email:someone@somewhere.com`,
                             gsi2Key: `ES:${stubbedGoodItem.eventSource.id}:${stubbedGoodItem.eventSource.principal}:${stubbedGoodItem.principalValue}`,
-                            gsi2Sort: `S:${stubbedGoodItem.id}:ST:email`,
+                            gsi2Sort: `S:${stubbedGoodItem.id}:ST:email:someone@somewhere.com`,
                             address: 'someone@somewhere.com',
 
                         }
@@ -119,10 +133,10 @@ describe('SubscriptionDao', () => {
                     PutRequest: {
                         Item: {
                             pk: `S:${stubbedGoodItem.id}`,
-                            sk: `ST:sms`,
+                            sk: `ST:sms:5555555555`,
                             gsi2Key: `ES:${stubbedGoodItem.eventSource.id}:${stubbedGoodItem.eventSource.principal}:${stubbedGoodItem.principalValue}`,
-                            gsi2Sort: `S:${stubbedGoodItem.id}:ST:sms`,
-                            phoneNumber: '555555555',
+                            gsi2Sort: `S:${stubbedGoodItem.id}:ST:sms:5555555555`,
+                            phoneNumber: '5555555555',
 
                         }
                     }
@@ -130,10 +144,11 @@ describe('SubscriptionDao', () => {
                     PutRequest: {
                         Item: {
                             pk: `S:${stubbedGoodItem.id}`,
-                            sk: `ST:push_gcm`,
+                            sk: `ST:push_gcm:arn%3Aaws%3Asns%3Aus-west-2%3A123456789012%3Aendpoint/GCM/MyApplication/12345678-abcd-9012-efgh-345678901234`,
                             gsi2Key: `ES:${stubbedGoodItem.eventSource.id}:${stubbedGoodItem.eventSource.principal}:${stubbedGoodItem.principalValue}`,
-                            gsi2Sort: `S:${stubbedGoodItem.id}:ST:push_gcm`,
+                            gsi2Sort: `S:${stubbedGoodItem.id}:ST:push_gcm:arn%3Aaws%3Asns%3Aus-west-2%3A123456789012%3Aendpoint/GCM/MyApplication/12345678-abcd-9012-efgh-345678901234`,
                             platformApplicationArn: 'arn:aws:sns:us-west-2:123456789012:app/GCM/MyApplication',
+                            platformEndpointArn: 'arn:aws:sns:us-west-2:123456789012:endpoint/GCM/MyApplication/12345678-abcd-9012-efgh-345678901234',
                             token: 'EXAMPLE12345'
                         }
                     }
@@ -143,18 +158,21 @@ describe('SubscriptionDao', () => {
     };
 
     beforeEach(() => {
+        mockedTargetDao = createMockInstance(TargetDao);
         mockedDynamoDbUtils = createMockInstance(DynamoDbUtils);
         mockedCachedDocumentClient = new AWS.DynamoDB.DocumentClient();
         const mockedCachedDocumentClientFactory = () => {
             return mockedCachedDocumentClient;
         };
-        instance = new SubscriptionDao('eventConfig','sk-gsi1Sort-index','gsi2Key-sk-index',
-            mockedDynamoDbUtils,mockedCachedDocumentClientFactory);
+        instance = new SubscriptionDao('eventConfig','sk-gsi1Sort-index','gsi2Key-sk-index','gsi2Key-gsi2Sort-index',
+        mockedTargetDao, mockedDynamoDbUtils, mockedCachedDocumentClientFactory);
     });
 
-    it('create saves succesful', async() => {
+    it('create subscription saves succesful', async() => {
 
         // mocks
+        mockBuildPutItemAttributeMap(mockedTargetDao, stubbedGoodItem);
+
         const mockedBatchWrite = mockedDynamoDbUtils.batchWriteAll = jest.fn().mockImplementationOnce(()=> undefined );
         mockedDynamoDbUtils.hasUnprocessedItems = jest.fn().mockImplementationOnce(()=> false);
 
@@ -172,6 +190,8 @@ describe('SubscriptionDao', () => {
         const si = stubbedGoodItem;
 
         // mocks
+        mockBuildPutItemAttributeMap(mockedTargetDao, stubbedGoodItem);
+
         // the mock call to batchWrite returns with an unprocessed item
         const mockedBatchWrite = mockedDynamoDbUtils.batchWriteAll = jest.fn().mockImplementationOnce(()=> {
             const r:DocumentClient.BatchWriteItemOutput = {
@@ -181,10 +201,10 @@ describe('SubscriptionDao', () => {
                             PutRequest: {
                                 Item: {
                                     pk: `S:${si.id}`,
-                                    sk: `ST:email`,
+                                    sk: `ST:email:someone@somewhere.com`,
                                     address: 'someone@somewhere.com',
                                     gsi2Key: `ES:${si.eventSource.id}:${si.eventSource.principal}:${si.principalValue}`,
-                                    gsi2Sort: `S:${si.id}:ST:email`
+                                    gsi2Sort: `S:${si.id}:ST:email:someone@somewhere.com`
                                 }
                             }
                         }
@@ -253,23 +273,30 @@ describe('SubscriptionDao', () => {
                             gsi2Sort: `S:${stubbedGoodItem.id}:U:${stubbedGoodItem.user.id}`
                         }, {
                             pk: `S:${stubbedGoodItem.id}`,
-                            sk: `ST:email`,
+                            sk: `ST:email:someone@somewhere.com`,
                             address: 'someone@somewhere.com',
                             gsi2Key: `ES:${stubbedGoodItem.eventSource.id}:${stubbedGoodItem.eventSource.principal}:${stubbedGoodItem.principalValue}`,
-                            gsi2Sort: `S:${stubbedGoodItem.id}:ST:email`
+                            gsi2Sort: `S:${stubbedGoodItem.id}:ST:email:someone@somewhere.com`,
+                            subscriptionId: 'sub1',
+                            targetType: 'email'
                         }, {
                             pk: `S:${stubbedGoodItem.id}`,
-                            sk: `ST:sms`,
-                            phoneNumber: '555555555',
+                            sk: `ST:sms:5555555555`,
+                            phoneNumber: '5555555555',
                             gsi2Key: `ES:${stubbedGoodItem.eventSource.id}:${stubbedGoodItem.eventSource.principal}:${stubbedGoodItem.principalValue}`,
-                            gsi2Sort: `S:${stubbedGoodItem.id}:ST:sms`
+                            gsi2Sort: `S:${stubbedGoodItem.id}:ST:sms:5555555555`,
+                            subscriptionId: 'sub1',
+                            targetType: 'sms'
                         }, {
                             pk: `S:${stubbedGoodItem.id}`,
-                            sk: `ST:push_gcm`,
+                            sk: `ST:push_gcm:arn%3Aaws%3Asns%3Aus-west-2%3A123456789012%3Aendpoint%2FGCM%2FMyApplication%2F12345678-abcd-9012-efgh-345678901234`,
                             platformApplicationArn: 'arn:aws:sns:us-west-2:123456789012:app/GCM/MyApplication',
+                            platformEndpointArn: 'arn:aws:sns:us-west-2:123456789012:endpoint/GCM/MyApplication/12345678-abcd-9012-efgh-345678901234',
                             token: 'EXAMPLE12345',
                             gsi2Key: `ES:${stubbedGoodItem.eventSource.id}:${stubbedGoodItem.eventSource.principal}:${stubbedGoodItem.principalValue}`,
-                            gsi2Sort: `S:${stubbedGoodItem.id}:ST:push_gcm`
+                            gsi2Sort: `S:${stubbedGoodItem.id}:ST:push_gcm:arn%3Aaws%3Asns%3Aus-west-2%3A123456789012%3Aendpoint%2FGCM%2FMyApplication%2F12345678-abcd-9012-efgh-345678901234`,
+                            subscriptionId: 'sub1',
+                            targetType: 'push_gcm'
                         }
                     ]
                 };
@@ -277,6 +304,11 @@ describe('SubscriptionDao', () => {
               }
             };
         });
+
+        mockedTargetDao.assemble = jest.fn()
+            .mockReturnValueOnce(email1)
+            .mockReturnValueOnce(sms1)
+            .mockReturnValueOnce(pushGcm);
 
         // execute
         const actual = await instance.listSubscriptionsForEventMessage(eventSourceId, principal, principalValue);
@@ -288,7 +320,7 @@ describe('SubscriptionDao', () => {
                 ExpressionAttributeValues: {
                     ':value': gsi2Key
                 },
-                IndexName: 'gsi2Key-sk-index',
+                IndexName: 'gsi2Key-gsi2Sort-index',
                 KeyConditionExpression: '#key = :value',
                 TableName: 'eventConfig'
             }
@@ -296,3 +328,35 @@ describe('SubscriptionDao', () => {
         expect(actual).toEqual([stubbedGoodItem]);
     });
 });
+
+function mockBuildPutItemAttributeMap(mockedTargetDao:jest.Mocked<TargetDao>, item:SubscriptionItem) {
+    // mocks
+    const response1 = {
+        pk: `S:${item.id}`,
+        sk: `ST:email:someone@somewhere.com`,
+        gsi2Key: `ES:${item.eventSource.id}:${item.eventSource.principal}:${item.principalValue}`,
+        gsi2Sort: `S:${item.id}:ST:email:someone@somewhere.com`,
+        address: 'someone@somewhere.com',
+
+    };
+    const response2 = {
+        pk: `S:${item.id}`,
+        sk: `ST:sms:5555555555`,
+        gsi2Key: `ES:${item.eventSource.id}:${item.eventSource.principal}:${item.principalValue}`,
+        gsi2Sort: `S:${item.id}:ST:sms:5555555555`,
+        phoneNumber: '5555555555',
+
+    };
+    const response3 = {
+        pk: `S:${item.id}`,
+        sk: `ST:push_gcm:arn%3Aaws%3Asns%3Aus-west-2%3A123456789012%3Aendpoint/GCM/MyApplication/12345678-abcd-9012-efgh-345678901234`,
+        gsi2Key: `ES:${item.eventSource.id}:${item.eventSource.principal}:${item.principalValue}`,
+        gsi2Sort: `S:${item.id}:ST:push_gcm:arn%3Aaws%3Asns%3Aus-west-2%3A123456789012%3Aendpoint/GCM/MyApplication/12345678-abcd-9012-efgh-345678901234`,
+        platformApplicationArn: 'arn:aws:sns:us-west-2:123456789012:app/GCM/MyApplication',
+        platformEndpointArn: 'arn:aws:sns:us-west-2:123456789012:endpoint/GCM/MyApplication/12345678-abcd-9012-efgh-345678901234',
+        token: 'EXAMPLE12345'
+    };
+    mockedTargetDao.buildPutItemAttributeMap = jest.fn().mockReturnValueOnce(response1)
+        .mockReturnValueOnce(response2)
+        .mockReturnValueOnce(response3);
+}

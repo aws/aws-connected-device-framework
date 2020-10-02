@@ -10,6 +10,7 @@ import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import { SubscriptionItem } from './subscription.models';
 import { createDelimitedAttribute, PkType, expandDelimitedAttribute, isPkType, createDelimitedAttributePrefix } from '../../utils/pkUtils.util';
 import { DynamoDbUtils } from '../../utils/dynamoDb.util';
+import { TargetDao } from '../targets/target.dao';
 
 type SubscriptionItemMap = {[subscriptionId:string] : SubscriptionItem};
 export type PaginationKey = {[key:string]:string};
@@ -22,7 +23,9 @@ export class SubscriptionDao {
     public constructor(
         @inject('aws.dynamoDb.tables.eventConfig.name') private eventConfigTable:string,
         @inject('aws.dynamoDb.tables.eventConfig.gsi1') private eventConfigGSI1:string,
-        @inject('aws.dynamoDb.tables.eventConfig.gsi2') private eventConfigGSI2:string,
+        @inject('aws.dynamoDb.tables.eventConfig.gsi2KeySk') private eventConfigGsi2KeyGsi2Sk:string,
+        @inject('aws.dynamoDb.tables.eventConfig.gsi2KeyGsi2Sort') private eventConfigGsi2KeyGsi2Sort:string,
+        @inject(TYPES.TargetDao) private targetDao:TargetDao,
         @inject(TYPES.DynamoDbUtils) private dynamoDbUtils:DynamoDbUtils,
 	    @inject(TYPES.CachableDocumentClientFactory) cachableDocumentClientFactory: () => AWS.DynamoDB.DocumentClient
     ) {
@@ -34,7 +37,7 @@ export class SubscriptionDao {
      *   Subscription:  pk='S-{subscriptionId}, sk='S-{subscriptionId}'
      *   Event:         pk='S-{subscriptionId}, sk='E-{eventId}'
      *   User:          pk='S-{subscriptionId}, sk='U-{userId}')
-     *   Target(s):     pk='S-{subscriptionId}, sk='ST-{target}'
+     *   Target(s):     pk='S-{subscriptionId}, sk='ST-{target}-{targetId}'
      * @param subscription
      */
     public async create(si:SubscriptionItem): Promise<void> {
@@ -48,8 +51,7 @@ export class SubscriptionDao {
         const subscriptionDbId = createDelimitedAttribute(PkType.Subscription, si.id);
         const gsi2Key = createDelimitedAttribute(PkType.EventSource, si.eventSource.id, si.eventSource.principal, si.principalValue);
         const snsTopicArn = si?.sns?.topicArn;
-        const dynamoDbTableName = si?.dynamodb?.tableName;
-        const dynamoDbAttributeMapping = si?.dynamodb?.attributeMapping;
+
         const subscriptionCreate = {
             PutRequest: {
                 Item: {
@@ -60,8 +62,6 @@ export class SubscriptionDao {
                     ruleParameterValues: si.ruleParameterValues,
                     enabled: si.enabled,
                     snsTopicArn,
-                    dynamoDbTableName,
-                    dynamoDbAttributeMapping,
                     gsi2Key,
                     gsi2Sort: createDelimitedAttribute(PkType.Subscription, si.id)
                 }
@@ -101,12 +101,19 @@ export class SubscriptionDao {
         params.RequestItems[this.eventConfigTable]=[subscriptionCreate, eventCreate, userCreate];
 
         if (si.targets) {
-            for (const target of Object.keys(si.targets)) {
-                const req = this.buildCommonTargetItem(si.id, subscriptionDbId, target, gsi2Key);
-                for (const prop of Object.keys(si.targets[target])) {
-                    req.PutRequest.Item[prop]= si.targets[target][prop];
+            for (const targetType of Object.keys(si.targets)) {
+                const targets =  si.targets[targetType];
+                if (targets===undefined) {
+                    continue;
                 }
-                params.RequestItems[this.eventConfigTable].push(req);
+                for (const target of targets) {
+                    const putItem = this.targetDao.buildPutItemAttributeMap(target, si.eventSource.id, si.eventSource.principal, si.principalValue);
+                    params.RequestItems[this.eventConfigTable].push({
+                        PutRequest: {
+                            Item: putItem
+                        }
+                    });
+                }
             }
         }
 
@@ -118,17 +125,24 @@ export class SubscriptionDao {
         logger.debug(`subscriptions.dao create: exit:`);
     }
 
-    private buildCommonTargetItem(subscriptionId:string, subscriptionDbId:string, target:string, gsi2Key:string, ):DocumentClient.WriteRequest {
-        return {
-            PutRequest: {
-                Item: {
-                    pk: subscriptionDbId,
-                    sk: createDelimitedAttribute(PkType.SubscriptionTarget, target),
-                    gsi2Key,
-                    gsi2Sort: createDelimitedAttribute(PkType.Subscription, subscriptionId, PkType.SubscriptionTarget, target)
-                }
+    public async update(si:SubscriptionItem): Promise<void> {
+        logger.debug(`subscription.dao update: in: si:${JSON.stringify(si)}`);
+
+        const params = {
+            TableName: this.eventConfigTable,
+            Key: {
+                pk: createDelimitedAttribute(PkType.Subscription, si.id),
+                sk: createDelimitedAttribute(PkType.Subscription, si.id)
+            },
+            UpdateExpression: 'set ruleParameterValues=:rp',
+            ExpressionAttributeValues: {
+                ':rp': si.ruleParameterValues
             }
         };
+
+        await this._cachedDc.update(params).promise();
+
+        logger.debug(`subscriptions.dao update: exit:`);
     }
 
     public async listSubscriptionsForEventMessage(eventSourceId:string, principal:string, principalValue:string): Promise<SubscriptionItem[]> {
@@ -136,7 +150,7 @@ export class SubscriptionDao {
 
         const params:DocumentClient.QueryInput = {
             TableName: this.eventConfigTable,
-            IndexName: this.eventConfigGSI2,
+            IndexName: this.eventConfigGsi2KeyGsi2Sort,
             KeyConditionExpression: `#key = :value`,
             ExpressionAttributeNames: {
                 '#key': 'gsi2Key'
@@ -185,7 +199,7 @@ export class SubscriptionDao {
         const results = await this._cachedDc.query(params).promise();
         if (results.Items===undefined || results.Items.length===0) {
             logger.debug('subscription.dao listSubscriptionsForEvent: exit: undefined');
-            return undefined;
+            return [undefined,undefined];
         }
         logger.debug(`subscription.dao listSubscriptionsForEvent: results: ${JSON.stringify(results)}`);
 
@@ -197,8 +211,8 @@ export class SubscriptionDao {
         return [response,lastEvaluatedKey];
     }
 
-    public async listSubscriptionsForUser(userId:string): Promise<SubscriptionItem[]> {
-        logger.debug(`subscription.dao listSubscriptionsForUser: userId:${userId}`);
+    public async listSubscriptionIdsForUser(userId:string): Promise<string[]> {
+        logger.debug(`subscription.dao listSubscriptionIdsForUser: userId:${userId}`);
 
         const params:DocumentClient.QueryInput = {
             TableName: this.eventConfigTable,
@@ -207,26 +221,97 @@ export class SubscriptionDao {
             ExpressionAttributeNames: {
                 '#hash': 'sk',
                 '#pk': 'pk',
-                '#sk': 'sk',
-                '#name': 'name'
+                '#sk': 'sk'
             },
             ExpressionAttributeValues: {
+                // will return pk: S:{subscriptionId}, sk: U:{userId}
                 ':hash': createDelimitedAttribute(PkType.User, userId )
             },
             Select: 'SPECIFIC_ATTRIBUTES',
-            ProjectionExpression: '#pk,#sk,#name',
+            ProjectionExpression: '#pk,#sk',
         };
 
-        const results = await this._cachedDc.query(params).promise();
-        if (results.Items===undefined) {
-            logger.debug('subscription.dao listSubscriptionsForUser: exit: undefined');
+        const subscriptionIds:string[]= [];
+        let r = await this._cachedDc.query(params).promise();
+        while(r.Items?.length>0) {
+            subscriptionIds.push(...r.Items?.map(i=> (i['pk'] as string).split(':')[1]));
+            if (r.LastEvaluatedKey===undefined) {
+                break;
+            }
+            params.ExclusiveStartKey = r.LastEvaluatedKey;
+            r = await this._cachedDc.query(params).promise();
+        }
+
+        logger.debug(`subscription.dao listSubscriptionsForUser: exit:${JSON.stringify(subscriptionIds)}`);
+        return subscriptionIds;
+    }
+
+    public async listSubscriptionIdsForEventUserPrincipal(eventSourceId:string, eventId:string, principal:string, principalValue:string, userId:string): Promise<string[]> {
+        logger.debug(`subscription.dao listSubscriptionsForEventUserPrincipal: eventSourceId:${eventSourceId}, eventId:${eventId}, principal:${principal}, principalValue:${principalValue}, userId:${userId}`);
+
+        // first return all subscription ids for the event source / event / principal combination
+        const paramsA:DocumentClient.QueryInput = {
+            TableName: this.eventConfigTable,
+            IndexName: this.eventConfigGsi2KeyGsi2Sk,
+            KeyConditionExpression: '#hash=:hash AND begins_with(#range, :range)',
+            FilterExpression: '#gsi1Sort=:gsi1Sort',
+            ExpressionAttributeNames: {
+                '#hash': 'gsi2Key',
+                '#range': 'sk',
+                '#pk': 'pk',
+                '#sk': 'sk',
+                '#gsi1Sort': 'gsi1Sort'
+            },
+            ExpressionAttributeValues: {
+                // this hash/range combo will return underlying pk/sk of S:{subscriptionId}/S:{subscriptionId}
+                ':hash': createDelimitedAttribute(PkType.EventSource, eventSourceId, principal, principalValue ),
+                ':range': createDelimitedAttributePrefix(PkType.Subscription),
+                ':gsi1Sort': createDelimitedAttribute(PkType.Event, eventId )
+            },
+            Select: 'SPECIFIC_ATTRIBUTES',
+            ProjectionExpression: '#pk,#sk',
+        };
+
+        const subscriptionsA:SubscriptionItemMap= {};
+        let rA = await this._cachedDc.query(paramsA).promise();
+        while(rA.Items?.length>0) {
+            Object.assign(subscriptionsA, this.assemble(rA.Items));
+            if (rA.LastEvaluatedKey===undefined) {
+                break;
+            }
+            paramsA.ExclusiveStartKey = rA.LastEvaluatedKey;
+            rA = await this._cachedDc.query(paramsA).promise();
+        }
+        if (Object.keys(subscriptionsA).length===0) {
+            logger.debug('subscription.dao listSubscriptionsForEventUserPrincipal: exit: undefined');
             return undefined;
         }
 
-        const subscriptions = this.assemble(results.Items);
-        const response:SubscriptionItem[] = Object.keys(subscriptions).map(k => subscriptions[k]);
+        // next we need to perform another query to filter those returned subscriptionIds by user
+        // (due to backwards compatability, we have to use the existing indexes/data available to us)
+        let found:SubscriptionItemMap;
+        if (subscriptionsA!==undefined && Object.keys(subscriptionsA).length>0) {
+            const paramsB:DocumentClient.BatchGetItemInput = {
+                RequestItems: {}
+            };
+            paramsB.RequestItems[this.eventConfigTable]= {Keys: []};
+            Object.keys(subscriptionsA).forEach(subId=> {
+                paramsB.RequestItems[this.eventConfigTable].Keys.push({
+                    pk: createDelimitedAttribute(PkType.Subscription, subId),
+                    sk: createDelimitedAttribute(PkType.User, userId)
+                });
+            });
+            const rB = await this.dynamoDbUtils.batchGetAll(paramsB);
+            found = this.assemble(rB.Responses[this.eventConfigTable]);
+        }
 
-        logger.debug(`subscription.dao listSubscriptionsForUser: exit:${JSON.stringify(response)}`);
+        // finally we return the subscription ids
+        let response:string[];
+        if (found) {
+            response = Object.keys(found).map(k => found[k].id);
+        }
+
+        logger.debug(`subscription.dao listSubscriptionsForUserPrincipal: exit:${JSON.stringify(response)}`);
         return response;
     }
 
@@ -344,10 +429,11 @@ export class SubscriptionDao {
                     s.targets= {};
                 }
                 const targetType = expandDelimitedAttribute(sk)[1];
-                s.targets[targetType]= {};
-                Object.keys(i)
-                    .filter(k=> k!=='pk' && k!=='sk' && k!=='gsi2Key' && k!=='gsi2Sort')
-                    .forEach(k=> s.targets[targetType][k]=i[k]);
+                if (s.targets[targetType]===undefined) {
+                    s.targets[targetType]= [];
+                }
+                const ti = this.targetDao.assemble({Item:i});
+                s.targets[targetType].push(ti);
 
             } else if (isPkType(sk,PkType.User)) {
                 s.user = {

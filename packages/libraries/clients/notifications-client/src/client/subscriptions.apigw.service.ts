@@ -27,14 +27,17 @@ export class SubscriptionsApigwService extends SubscriptionsServiceBase implemen
         this.baseUrl = config.get('notifications.baseUrl') as string;
     }
 
-    async createSubscription(eventId: string, subscription: SubscriptionResource, additionalHeaders?: RequestHeaders): Promise<void> {
+    async createSubscription(eventId: string, subscription: SubscriptionResource, additionalHeaders?: RequestHeaders): Promise<string> {
         ow(eventId, ow.string.nonEmpty);
         ow(subscription, ow.object.nonEmpty);
 
         const url = `${this.baseUrl}${super.eventSubscriptionsRelativeUrl(eventId)}`;
-        await request.post(url)
+        const res = await request.post(url)
             .set(this.buildHeaders(additionalHeaders))
             .send(subscription);
+
+        const location = res.get('location');
+        return location?.split('/')[2];
     }
 
     async getSubscription(subscriptionId: string, additionalHeaders?: RequestHeaders): Promise<SubscriptionResource> {
@@ -47,7 +50,18 @@ export class SubscriptionsApigwService extends SubscriptionsServiceBase implemen
         return res.body;
     }
 
-    async deleteSubscription(subscriptionId: string, additionalHeaders?: RequestHeaders): Promise<void> {
+    async updateSubscription(subscription: SubscriptionResource, additionalHeaders?: RequestHeaders): Promise<void> {
+        ow(subscription, ow.object.nonEmpty);
+
+        const url = `${this.baseUrl}${super.subscriptionRelativeUrl(subscription.id)}`;
+        const res = await request.patch(url)
+        .set(this.buildHeaders(additionalHeaders))
+        .send(subscription);
+
+        return res.body;
+    }
+
+    async deleteSubscription(subscriptionId:string , additionalHeaders?: RequestHeaders): Promise<void> {
         ow(subscriptionId, ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.subscriptionRelativeUrl(subscriptionId)}`;

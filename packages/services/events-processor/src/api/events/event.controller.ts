@@ -92,12 +92,11 @@ export class EventController implements interfaces.Controller {
         return model;
     }
 
-    @httpPatch('/eventsources/:eventSourceId/events/:eventId')
-    public async updateEvent(@requestParam('eventSourceId') eventSourceId:string, @requestParam('eventId') eventId:string, @requestBody() event: EventResource, @response() res: Response) {
+    @httpPatch('/events/:eventId')
+    public async updateEvent(@requestParam('eventId') eventId:string, @requestBody() event: EventResource, @response() res: Response) {
 
-        logger.debug(`event.controller updateEvent: event:${JSON.stringify(event)}, eventSourceId:${eventSourceId}, eventId:${eventId}`);
+        logger.debug(`event.controller updateEvent: event:${JSON.stringify(event)}, eventId:${eventId}`);
 
-        event.eventSourceId=eventSourceId;
         event.eventId=eventId;
         try {
             await this.eventService.update(event);

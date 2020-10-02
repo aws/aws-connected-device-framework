@@ -14,6 +14,7 @@ import { MessageCompilerService } from '../targets/messageCompiler.service';
 import { MessageCompilerDao } from '../targets/messageCompiler.dao';
 import { DynamoDBTarget } from '../targets/dynamodb.target';
 import { DynamoDbTargetDao } from '../targets/dynamoDb.target.dao';
+import { AlertAssembler } from '../alerts/assembler';
 
 // Note: importing @controller's carries out a one time inversify metadata generation...
 
@@ -30,6 +31,8 @@ container.bind<MessageCompilerService>(TYPES.MessageCompilerService).to(MessageC
 container.bind<MessageCompilerDao>(TYPES.MessageCompilerDao).to(MessageCompilerDao).inSingletonScope();
 
 container.bind<DynamoDbTargetDao>(TYPES.DynamoDbTargetDao).to(DynamoDbTargetDao).inSingletonScope();
+
+container.bind<AlertAssembler>(TYPES.AlertAssembler).to(AlertAssembler).inSingletonScope();
 
 // for 3rd party objects, we need to use factory injectors
 

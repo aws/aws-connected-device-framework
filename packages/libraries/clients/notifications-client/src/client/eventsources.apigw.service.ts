@@ -26,13 +26,15 @@ export class EventsourcesApigwService extends EventsourcesServiceBase implements
         this.baseUrl = config.get('notifications.baseUrl') as string;
     }
 
-    async createEventSource(eventSource: EventSourceDetailResource, additionalHeaders?: RequestHeaders): Promise<void> {
+    async createEventSource(eventSource: EventSourceDetailResource, additionalHeaders?: RequestHeaders): Promise<string> {
         ow(eventSource, ow.object.nonEmpty);
 
         const url = `${this.baseUrl}${super.eventSourcesRelativeUrl()}`;
-        await request.post(url)
+        const res = await request.post(url)
             .set(this.buildHeaders(additionalHeaders))
             .send(eventSource);
+        const location = res.get('location');
+        return location?.split('/')[2];
     }
 
     async listEventSources(additionalHeaders?: RequestHeaders): Promise<EventSourceResourceList> {

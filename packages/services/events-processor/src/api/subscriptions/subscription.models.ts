@@ -5,7 +5,9 @@
 #-------------------------------------------------------------------------------*/
 
 import { EventConditions } from '../events/event.models';
-export interface SubscriptionResource {
+import { EmailTargetResource, SMSTargetResource, MQTTTargetResource, DynamodDBTargetResource, PushTargetResource, EmailTargetItem, SMSTargetItem, MQTTTargetItem, DynamodDBTargetItem, PushTargetItem } from '../targets/targets.models';
+
+export abstract class SubscriptionBaseResource {
     id: string;
 
     principalValue?: string;
@@ -19,48 +21,50 @@ export interface SubscriptionResource {
         id: string;
     };
 
-    targets?: SubscriptionTargets;
-
     enabled?: boolean;
     alerted?: boolean;
 }
 
-export type SubscriptionTargets = {
-    email?: EmailSubscriptionConfig;
-    sms?: SMSSubscriptionConfig;
-    mqtt?: MQTTSubscriptionConfig;
-    dynamodb?: DynamodDBSubscriptionConfig;
-    push_gcm?: PushSubscriptionConfig;
+export class SubscriptionV1Resource extends SubscriptionBaseResource {
+    targets?: TargetsV1Resource;
+}
+
+export class SubscriptionV2Resource extends SubscriptionBaseResource {
+    targets?: TargetsV2Resource;
+}
+
+export type TargetsV1Resource = {
+    email?: EmailTargetResource;
+    sms?: SMSTargetResource;
+    mqtt?: MQTTTargetResource;
+    dynamodb?: DynamodDBTargetResource;
+    push_gcm?: PushTargetResource;
+    push_adm?: PushTargetResource;
+    push_apns?: PushTargetResource;
 };
 
-export type EmailSubscriptionConfig = {
-    address:string
+export type TargetsV2Resource = {
+    email?: EmailTargetResource[];
+    sms?: SMSTargetResource[];
+    mqtt?: MQTTTargetResource[];
+    dynamodb?: DynamodDBTargetResource[];
+    push_gcm?: PushTargetResource[];
+    push_adm?: PushTargetResource[];
+    push_apns?: PushTargetResource[];
 };
 
-export type SMSSubscriptionConfig = {
-    phoneNumber:string
-};
-
-export type MQTTSubscriptionConfig = {
-    topic:string
-};
-
-export type AttributeMapping = { [key: string] : string};
-
-export type DynamodDBSubscriptionConfig = {
-    tableName:string
-
-    // Column mapping for dynamodb targets
-    attributeMapping: AttributeMapping;
-};
-
-export type PushSubscriptionConfig = {
-    platformApplicationArn:string;
-    token:string;
+export type TargetsItem = {
+    email?: EmailTargetItem[];
+    sms?: SMSTargetItem[];
+    mqtt?: MQTTTargetItem[];
+    dynamodb?: DynamodDBTargetItem[];
+    push_gcm?: PushTargetItem[];
+    push_adm?: PushTargetItem[];
+    push_apns?: PushTargetItem[];
 };
 
 export interface SubscriptionResourceList {
-    results: SubscriptionResource[];
+    results: SubscriptionV1Resource[] | SubscriptionV2Resource[];
     pagination?: {
         offset: {
             eventId: string,
@@ -92,12 +96,7 @@ export class SubscriptionItem {
         topicArn:string;
     };
 
-    dynamodb?: {
-        tableName:string;
-        attributeMapping: { [key: string] : string};
-    };
-
-    targets?: SubscriptionTargets;
+    targets?: TargetsItem;
 
     enabled?: boolean;
     alerted?: boolean;

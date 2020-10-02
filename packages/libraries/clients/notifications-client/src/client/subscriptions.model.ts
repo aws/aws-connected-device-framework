@@ -5,8 +5,9 @@
 #-------------------------------------------------------------------------------*/
 
 import { EventConditions } from './events.model';
+import { DynamodDBTargetResource, EmailTargetResource, MQTTTargetResource, PushTargetResource, SMSTargetResource } from './targets.model';
 
-export interface SubscriptionResource {
+export interface SubscriptionBaseResource {
     id?: string;
 
     principalValue?: string;
@@ -20,46 +21,42 @@ export interface SubscriptionResource {
         id: string;
     };
 
-    targets?: SubscriptionTargets;
-
     enabled?: boolean;
     alerted?: boolean;
 }
 
-export type SubscriptionTargets = {
-    email?: EmailSubscriptionConfig;
-    sms?: SMSSubscriptionConfig;
-    mqtt?: MQTTSubscriptionConfig;
-    dynamodb?: DynamoDBSubscriptionConfig;
-    push_gcm?: PushGCMSubscriptionConfig;
+export interface SubscriptionV1Resource extends SubscriptionBaseResource {
+    targets?: TargetsV1Resource;
+}
+
+export interface SubscriptionV2Resource extends SubscriptionBaseResource {
+    targets?: TargetsV2Resource;
+}
+
+export type SubscriptionResource = SubscriptionV1Resource | SubscriptionV2Resource;
+
+export type TargetsV1Resource = {
+    email?: EmailTargetResource;
+    sms?: SMSTargetResource;
+    mqtt?: MQTTTargetResource;
+    dynamodb?: DynamodDBTargetResource;
+    push_gcm?: PushTargetResource;
+    push_adm?: PushTargetResource;
+    push_apns?: PushTargetResource;
 };
 
-export type AttributeMapping = { [key: string] : string};
-
-export type DynamoDBSubscriptionConfig = {
-    tableName:string;
-    attributeMapping: AttributeMapping;
-};
-
-export type EmailSubscriptionConfig = {
-    address:string
-};
-
-export type SMSSubscriptionConfig = {
-    phoneNumber:string
-};
-
-export type MQTTSubscriptionConfig = {
-    topic:string
-};
-
-export type PushGCMSubscriptionConfig = {
-    platformApplicationArn: string
-    token: string
+export type TargetsV2Resource = {
+    email?: EmailTargetResource[];
+    sms?: SMSTargetResource[];
+    mqtt?: MQTTTargetResource[];
+    dynamodb?: DynamodDBTargetResource[];
+    push_gcm?: PushTargetResource[];
+    push_adm?: PushTargetResource[];
+    push_apns?: PushTargetResource[];
 };
 
 export interface SubscriptionResourceList {
-    results: SubscriptionResource[];
+    results: SubscriptionV1Resource[] | SubscriptionV2Resource[];
     pagination?: {
         offset: {
             eventId: string,

@@ -12,6 +12,7 @@ import { createDelimitedAttribute, PkType, createDelimitedAttributePrefix, expan
 import { PaginationKey } from '../subscriptions/subscription.dao';
 import { DynamoDbUtils } from '../../utils/dynamoDb.util';
 import { MessageTemplates} from '../messages/messageTemplates.model';
+import ow from 'ow';
 
 type EventItemMap = {[subscriptionId:string] : EventItem};
 @injectable()
@@ -36,6 +37,10 @@ export class EventDao {
      */
     public async save(item:EventItem): Promise<void> {
         logger.debug(`event.dao save: in: event:${JSON.stringify(item)}`);
+
+        ow(item, ow.object.nonEmpty);
+        ow(item.eventSourceId, ow.string.nonEmpty);
+        ow(item.id, ow.string.nonEmpty);
 
         const params:DocumentClient.BatchWriteItemInput = {
             RequestItems: {
@@ -87,6 +92,8 @@ export class EventDao {
 
     public async get(eventId:string): Promise<EventItem> {
         logger.debug(`event.dao get: in: eventId:${eventId}`);
+
+        ow(eventId, ow.string.nonEmpty);
 
         const params:DocumentClient.QueryInput = {
             TableName: this.eventConfigTable,
@@ -145,6 +152,8 @@ export class EventDao {
 
     public async delete(eventId:string): Promise<void> {
         logger.debug(`event.dao delete: in: eventId:${eventId}`);
+
+        ow(eventId, ow.string.nonEmpty);
 
         // start to build up delete requests
         const deleteParams:DocumentClient.BatchWriteItemInput = {

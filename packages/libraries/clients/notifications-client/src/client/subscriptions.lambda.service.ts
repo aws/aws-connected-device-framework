@@ -26,7 +26,7 @@ export class SubscriptionsLambdaService extends SubscriptionsServiceBase impleme
         this.lambdaInvoker = lambdaInvoker;
     }
 
-    async createSubscription(eventId: string, subscription: SubscriptionResource, additionalHeaders?: RequestHeaders): Promise<void> {
+    async createSubscription(eventId: string, subscription: SubscriptionResource, additionalHeaders?: RequestHeaders): Promise<string> {
         ow(eventId, ow.string.nonEmpty);
         ow(subscription, ow.object.nonEmpty);
 
@@ -36,7 +36,10 @@ export class SubscriptionsLambdaService extends SubscriptionsServiceBase impleme
             .setHeaders(super.buildHeaders(additionalHeaders))
             .setBody(subscription);
 
-        await this.lambdaInvoker.invoke(this.functionName, ev);
+        const res = await this.lambdaInvoker.invoke(this.functionName, ev);
+
+        const location = res.header['location'];
+        return location?.split('/')[2];
     }
 
     async getSubscription(subscriptionId: string, additionalHeaders?: RequestHeaders): Promise<SubscriptionResource> {
@@ -49,6 +52,18 @@ export class SubscriptionsLambdaService extends SubscriptionsServiceBase impleme
 
         const res = await this.lambdaInvoker.invoke(this.functionName, ev);
         return res.body;
+    }
+
+    async updateSubscription(subscription: SubscriptionResource, additionalHeaders?: RequestHeaders): Promise<void> {
+        ow(subscription, ow.object.nonEmpty);
+
+        const ev = new LambdaApiGatewayEventBuilder()
+        .setPath(super.subscriptionRelativeUrl(subscription.id))
+            .setMethod('PATCH')
+            .setHeaders(super.buildHeaders(additionalHeaders))
+            .setBody(subscription);
+
+        await this.lambdaInvoker.invoke(this.functionName, ev);
     }
 
     async deleteSubscription(subscriptionId: string, additionalHeaders?: RequestHeaders): Promise<void> {

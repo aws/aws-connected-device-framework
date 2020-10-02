@@ -410,6 +410,7 @@ Devices, along with device specific subscriptions, may be added to Greengrass gr
 ```shell
 # You can also use wget
 curl -X POST /groups/{groupName}/deviceTasks \
+  -H 'Content-Type: application/vnd.aws-cdf-v1.0+json' \
   -H 'Accept: application/vnd.aws-cdf-v1.0+json'
 
 ```
@@ -417,6 +418,7 @@ curl -X POST /groups/{groupName}/deviceTasks \
 ```python
 import requests
 headers = {
+  'Content-Type': 'application/vnd.aws-cdf-v1.0+json',
   'Accept': 'application/vnd.aws-cdf-v1.0+json'
 }
 
@@ -430,10 +432,36 @@ print(r.json())
 
 Creates an asynchyonous task to create (if not already existing) and associate devices with existing Greengrass groups.  Optionally, any new device subscriptions may be passed with this call too.  The returned `taskid` may be used to look up the task status.
 
+> Body parameter
+
+```json
+{
+  "devices": [
+    {
+      "thingName": "my-group-one-core",
+      "type": "core",
+      "provisioningTemplate": "greengrass_core",
+      "provisioningParameters": {
+        "ThingName": "my-group-one-core"
+      }
+    },
+    {
+      "thingName": "my-group-one-device",
+      "type": "device",
+      "provisioningTemplate": "greengrass_aware",
+      "provisioningParameters": {
+        "ThingName": "my-group-one-device"
+      }
+    }
+  ]
+}
+```
+
 <h3 id="associate-devices-with-existing-greengrass-groups.-parameters">Parameters</h3>
 
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
+|body|body|[NewDeviceList](#schemanewdevicelist)|false|none|
 |groupName|path|string|true|Name of Greengrass group|
 
 > Example responses
@@ -669,8 +697,123 @@ print(r.json())
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|OK|[DeviceItem](#schemadeviceitem)|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|OK|[Device](#schemadevice)|
 |404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|Not found|[Error](#schemaerror)|
+
+<aside class="success">
+This operation does not require authentication
+</aside>
+
+<h1 id="connected-device-framework-greengrass-provisioning-subscriptions">Subscriptions</h1>
+
+Subscriptions may be added/removed from Greengrass groups independant of device creation.
+
+## Create new Greengrass subscriptions.
+
+<a id="opIdaddSubscriptions"></a>
+
+> Code samples
+
+```shell
+# You can also use wget
+curl -X POST /groups/{groupName}/subscriptions \
+  -H 'Content-Type: application/vnd.aws-cdf-v1.0+json'
+
+```
+
+```python
+import requests
+headers = {
+  'Content-Type': 'application/vnd.aws-cdf-v1.0+json'
+}
+
+r = requests.post('/groups/{groupName}/subscriptions', headers = headers)
+
+print(r.json())
+
+```
+
+`POST /groups/{groupName}/subscriptions`
+
+> Body parameter
+
+```json
+{
+  "subscriptions": [
+    {
+      "id": "sub-1",
+      "source": "cloud",
+      "subject": "dt/us/my-device-1/#",
+      "target": "arn:aws:iot:us-west-2:123456789012:thing/my-device-1"
+    },
+    {
+      "id": "sub-2",
+      "source": "cloud",
+      "subject": "dt/us/my-device-2/#",
+      "target": "arn:aws:iot:us-west-2:123456789012:thing/my-device-2"
+    }
+  ]
+}
+```
+
+<h3 id="create-new-greengrass-subscriptions.-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|body|body|[NewGreengrassSubscriptionList](#schemanewgreengrasssubscriptionlist)|false|none|
+|groupName|path|string|true|Name of Greengrass group|
+
+<h3 id="create-new-greengrass-subscriptions.-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|201|[Created](https://tools.ietf.org/html/rfc7231#section-6.3.2)|Created successfully|None|
+
+### Response Headers
+
+|Status|Header|Type|Format|Description|
+|---|---|---|---|---|
+|201|location|string||none|
+
+<aside class="success">
+This operation does not require authentication
+</aside>
+
+## Removes an existing Greengrass subscription.
+
+<a id="opIddeleteSubscription"></a>
+
+> Code samples
+
+```shell
+# You can also use wget
+curl -X DELETE /groups/{groupName}/subscriptions/{subscriptionId}
+
+```
+
+```python
+import requests
+
+r = requests.delete('/groups/{groupName}/subscriptions/{subscriptionId}')
+
+print(r.json())
+
+```
+
+`DELETE /groups/{groupName}/subscriptions/{subscriptionId}`
+
+<h3 id="removes-an-existing-greengrass-subscription.-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|groupName|path|string|true|Name of Greengrass group|
+|subscriptionId|path|string|true|Subscription ID|
+
+<h3 id="removes-an-existing-greengrass-subscription.-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|No content|None|
 
 <aside class="success">
 This operation does not require authentication
@@ -689,6 +832,7 @@ Once a Greengrass group has been configured, a deployment may be executed.
 ```shell
 # You can also use wget
 curl -X POST /deploymentTasks \
+  -H 'Content-Type: application/vnd.aws-cdf-v1.0+json' \
   -H 'Accept: application/vnd.aws-cdf-v1.0+json'
 
 ```
@@ -696,6 +840,7 @@ curl -X POST /deploymentTasks \
 ```python
 import requests
 headers = {
+  'Content-Type': 'application/vnd.aws-cdf-v1.0+json',
   'Accept': 'application/vnd.aws-cdf-v1.0+json'
 }
 
@@ -708,6 +853,29 @@ print(r.json())
 `POST /deploymentTasks`
 
 Create an asynchronous deployment task which is responsible for deploying provided Greengrass groups.
+
+> Body parameter
+
+```json
+{
+  "deployments": [
+    {
+      "groupName": "my-group-one",
+      "deploymentType": "NewDeployment"
+    },
+    {
+      "groupName": "my-group-two",
+      "deploymentType": "NewDeployment"
+    }
+  ]
+}
+```
+
+<h3 id="deploy-a-set-of-pre-configured-greengrass-groups.-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|body|body|[NewDeploymentList](#schemanewdeploymentlist)|false|none|
 
 > Example responses
 
@@ -928,19 +1096,22 @@ This operation does not require authentication
 |createdAt|string(date-time)|false|read-only|Date/time the group was created.|
 |updatedAt|string(date-time)|false|read-only|Date/time the group was updated.|
 
-<h2 id="tocS_GreengrassSubscriptionItem">GreengrassSubscriptionItem</h2>
+<h2 id="tocS_GreengrassSubscription">GreengrassSubscription</h2>
 <!-- backwards compatibility -->
-<a id="schemagreengrasssubscriptionitem"></a>
-<a id="schema_GreengrassSubscriptionItem"></a>
-<a id="tocSgreengrasssubscriptionitem"></a>
-<a id="tocsgreengrasssubscriptionitem"></a>
+<a id="schemagreengrasssubscription"></a>
+<a id="schema_GreengrassSubscription"></a>
+<a id="tocSgreengrasssubscription"></a>
+<a id="tocsgreengrasssubscription"></a>
 
 ```json
 {
-  "id": "string",
-  "source": "string",
-  "subject": "string",
-  "target": "string"
+  "id": "sub-1",
+  "source": "cloud",
+  "subject": "dt/us/my-device/#",
+  "target": "arn:aws:iot:us-west-2:123456789012:thing/my-device",
+  "deployed": true,
+  "createdAt": "2020-06-08T19:35:54.327Z",
+  "updatedAt": "2020-06-08T19:35:54.327Z"
 }
 
 ```
@@ -954,12 +1125,42 @@ This operation does not require authentication
 |subject|string|false|none|The MQTT topic used to route the message.|
 |target|string|false|none|Where the message is sent. Can be a thing ARN, the ARN of a Lambda function alias (recommended) or version, a connector ARN, 'cloud' (which represents AWS IoT), or 'GGShadowService'. If you specify a Lambda function, this ARN should match the ARN used to add the function to the Greengrass group.|
 
-<h2 id="tocS_DeviceItem">DeviceItem</h2>
+<h2 id="tocS_NewGreengrassSubscriptionList">NewGreengrassSubscriptionList</h2>
 <!-- backwards compatibility -->
-<a id="schemadeviceitem"></a>
-<a id="schema_DeviceItem"></a>
-<a id="tocSdeviceitem"></a>
-<a id="tocsdeviceitem"></a>
+<a id="schemanewgreengrasssubscriptionlist"></a>
+<a id="schema_NewGreengrassSubscriptionList"></a>
+<a id="tocSnewgreengrasssubscriptionlist"></a>
+<a id="tocsnewgreengrasssubscriptionlist"></a>
+
+```json
+{
+  "subscriptions": [
+    {
+      "id": "sub-1",
+      "source": "cloud",
+      "subject": "dt/us/my-device/#",
+      "target": "arn:aws:iot:us-west-2:123456789012:thing/my-device",
+      "deployed": true,
+      "createdAt": "2020-06-08T19:35:54.327Z",
+      "updatedAt": "2020-06-08T19:35:54.327Z"
+    }
+  ]
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|subscriptions|[[GreengrassSubscription](#schemagreengrasssubscription)]|false|none|A list of subscriptions|
+
+<h2 id="tocS_Device">Device</h2>
+<!-- backwards compatibility -->
+<a id="schemadevice"></a>
+<a id="schema_Device"></a>
+<a id="tocSdevice"></a>
+<a id="tocsdevice"></a>
 
 ```json
 {
@@ -1026,7 +1227,7 @@ This operation does not require authentication
 |»» bucket|string|false|read-only|Bucket where artifact is stored.|
 |»» key|string|false|read-only|Key where artifact is stored.|
 |»» createdAt|string(date-time)|false|read-only|Date/time the artifact was created.|
-|subscriptions|[[GreengrassSubscriptionItem](#schemagreengrasssubscriptionitem)]|false|none|Any subscriptions for this device created by this service.|
+|subscriptions|[[GreengrassSubscription](#schemagreengrasssubscription)]|false|none|Any subscriptions for this device created by this service.|
 |deployed|boolean|false|read-only|Whether the device has been deployed or not.|
 |createdAt|string(date-time)|false|read-only|Date/time the device was created.|
 |updatedAt|string(date-time)|false|read-only|Date/time the device was updated.|
@@ -1038,12 +1239,69 @@ This operation does not require authentication
 |type|core|
 |type|device|
 
-<h2 id="tocS_DeviceTaskItem">DeviceTaskItem</h2>
+<h2 id="tocS_NewDeviceList">NewDeviceList</h2>
 <!-- backwards compatibility -->
-<a id="schemadevicetaskitem"></a>
-<a id="schema_DeviceTaskItem"></a>
-<a id="tocSdevicetaskitem"></a>
-<a id="tocsdevicetaskitem"></a>
+<a id="schemanewdevicelist"></a>
+<a id="schema_NewDeviceList"></a>
+<a id="tocSnewdevicelist"></a>
+<a id="tocsnewdevicelist"></a>
+
+```json
+{
+  "devices": [
+    {
+      "thingName": "my-device",
+      "type": "device",
+      "provisioningTemplate": "my-template",
+      "provisioningParameters": {
+        "ThingName": "my-device"
+      },
+      "cdfProvisioningParameters": {
+        "caId": "3d2ecfdb0eba2898626291e7e18a37cee791dbc81940a39e8ce922f9ff2feb32",
+        "certInfo": {
+          "country": "US"
+        }
+      },
+      "syncShadow": true,
+      "artifacts": {
+        "certificate": {
+          "bucket": "my-bucket",
+          "key": "certs/c123",
+          "createdAt": "2020-06-08T19:35:54.327Z"
+        }
+      },
+      "subscriptions": [
+        {
+          "id": "sub-1",
+          "source": "cloud",
+          "subject": "dt/us/my-device/#",
+          "target": "arn:aws:iot:us-west-2:123456789012:thing/my-device",
+          "deployed": true,
+          "createdAt": "2020-06-08T19:35:54.327Z",
+          "updatedAt": "2020-06-08T19:35:54.327Z"
+        }
+      ],
+      "deployed": true,
+      "createdAt": "2020-06-08T19:35:54.327Z",
+      "updatedAt": "2020-06-08T19:35:54.327Z"
+    }
+  ]
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|devices|[[Device](#schemadevice)]|false|none|A list of devices|
+
+<h2 id="tocS_DeviceTask">DeviceTask</h2>
+<!-- backwards compatibility -->
+<a id="schemadevicetask"></a>
+<a id="schema_DeviceTask"></a>
+<a id="tocSdevicetask"></a>
+<a id="tocsdevicetask"></a>
 
 ```json
 {
@@ -1092,7 +1350,7 @@ allOf
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
-|*anonymous*|[DeviceItem](#schemadeviceitem)|false|none|none|
+|*anonymous*|[Device](#schemadevice)|false|none|none|
 
 and
 
@@ -1172,7 +1430,7 @@ and
 |groupName|string|false|none|Name of Greengrass group the task was created for.|
 |status|string|false|read-only|Task status.|
 |statusMessage|string|false|read-only|Descriptive message regarding the status, such as an error message.|
-|devices|[[DeviceTaskItem](#schemadevicetaskitem)]|false|read-only|Devices managed via this task.|
+|devices|[[DeviceTask](#schemadevicetask)]|false|read-only|Devices managed via this task.|
 |createdAt|string(date-time)|false|read-only|Date/time the group was created.|
 |updatedAt|string(date-time)|false|read-only|Date/time the group was updated.|
 
@@ -1233,20 +1491,20 @@ and
 |» offset|integer|false|none|none|
 |» count|integer|false|none|none|
 
-<h2 id="tocS_DeviceDeploymentItem">DeviceDeploymentItem</h2>
+<h2 id="tocS_DeviceDeployment">DeviceDeployment</h2>
 <!-- backwards compatibility -->
-<a id="schemadevicedeploymentitem"></a>
-<a id="schema_DeviceDeploymentItem"></a>
-<a id="tocSdevicedeploymentitem"></a>
-<a id="tocsdevicedeploymentitem"></a>
+<a id="schemadevicedeployment"></a>
+<a id="schema_DeviceDeployment"></a>
+<a id="tocSdevicedeployment"></a>
+<a id="tocsdevicedeployment"></a>
 
 ```json
 {
   "thingName": "string",
   "deploymentStatus": "string",
   "statusMessage": "string",
-  "createdAt": "2020-06-12T19:03:13Z",
-  "updatedAt": "2020-06-12T19:03:13Z"
+  "createdAt": "2019-08-24T14:15:22Z",
+  "updatedAt": "2019-08-24T14:15:22Z"
 }
 
 ```
@@ -1261,12 +1519,12 @@ and
 |createdAt|string(date-time)|false|read-only|Date/time the device was created.|
 |updatedAt|string(date-time)|false|read-only|Date/time the device was updated.|
 
-<h2 id="tocS_DeploymentItem">DeploymentItem</h2>
+<h2 id="tocS_Deployment">Deployment</h2>
 <!-- backwards compatibility -->
-<a id="schemadeploymentitem"></a>
-<a id="schema_DeploymentItem"></a>
-<a id="tocSdeploymentitem"></a>
-<a id="tocsdeploymentitem"></a>
+<a id="schemadeployment"></a>
+<a id="schema_Deployment"></a>
+<a id="tocSdeployment"></a>
+<a id="tocsdeployment"></a>
 
 ```json
 {
@@ -1293,7 +1551,7 @@ and
 |bulkDeploymentId|string|false|read-only|Associated Greengrass bulk deployment ID.|
 |deploymentId|string|false|read-only|Associated individual Greengrass group deployment ID.|
 |deploymentType|string|false|none|Type of Greengrass deployment to perform.|
-|devices|[[DeviceDeploymentItem](#schemadevicedeploymentitem)]|false|none|Devices deployed as part of this deployment.|
+|devices|[[DeviceDeployment](#schemadevicedeployment)]|false|none|Devices deployed as part of this deployment.|
 |deploymentStatus|string|false|read-only|The deployment task status.|
 |statusMessage|string|false|read-only|Descriptive message regarding the status, such as an error message.|
 |createdAt|string(date-time)|false|read-only|Date/time the deployment was created.|
@@ -1313,6 +1571,31 @@ and
 |deploymentStatus|InProgress|
 |deploymentStatus|Success|
 |deploymentStatus|Failure|
+
+<h2 id="tocS_NewDeploymentList">NewDeploymentList</h2>
+<!-- backwards compatibility -->
+<a id="schemanewdeploymentlist"></a>
+<a id="schema_NewDeploymentList"></a>
+<a id="tocSnewdeploymentlist"></a>
+<a id="tocsnewdeploymentlist"></a>
+
+```json
+{
+  "deployments": [
+    {
+      "groupName": "my-greengrass-group",
+      "deploymentType": "NewDeployment"
+    }
+  ]
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|deployments|[[Deployment](#schemadeployment)]|false|none|A list of deployments|
 
 <h2 id="tocS_DeploymentTaskSummary">DeploymentTaskSummary</h2>
 <!-- backwards compatibility -->
@@ -1355,7 +1638,7 @@ and
 |bulkDeploymentStatus|string|false|read-only|The associated Greengrass bulk deployment task status.|
 |taskStatus|string|false|read-only|The deployment task status.|
 |statusMessage|string|false|read-only|Descriptive message regarding the status, such as an error message.|
-|deployments|[[DeploymentItem](#schemadeploymentitem)]|false|read-only|Deployments managed via this task.|
+|deployments|[[Deployment](#schemadeployment)]|false|read-only|Deployments managed via this task.|
 |createdAt|string(date-time)|false|read-only|Date/time the group was created.|
 |updatedAt|string(date-time)|false|read-only|Date/time the group was updated.|
 

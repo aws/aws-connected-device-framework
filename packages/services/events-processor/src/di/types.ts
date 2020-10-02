@@ -25,6 +25,9 @@ export const TYPES = {
     SubscriptionAssembler: Symbol.for('SubscriptionAssembler'),
 
     TargetService: Symbol.for('TargetService'),
+    TargetDao: Symbol.for('TargetDao'),
+    TargetAssembler: Symbol.for('TargetAssembler'),
+
     EmailTarget: Symbol.for('EmailTarget'),
     SMSTarget: Symbol.for('SMSTarget'),
     SNSTarget: Symbol.for('SNSTarget'),
@@ -52,6 +55,9 @@ export const TYPES = {
 
     SNS:  Symbol.for('SNS'),
     SNSFactory:  Symbol.for('Factory<SNS>'),
+
+    IotData: Symbol.for('IotData'),
+    IotDataFactory: Symbol.for('Factory<IotData>'),
 
     Iot:  Symbol.for('Iot'),
     IotFactory:  Symbol.for('Factory<Iot>')

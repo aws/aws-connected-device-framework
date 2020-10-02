@@ -146,6 +146,7 @@ export class FilterService {
     private buildAlert(sub:SubscriptionItem, templatePropertiesData: TemplatePropertiesData):AlertItem {
         logger.debug(`filter.service buildAlert: in: sub:${JSON.stringify(sub)}`);
         const alert:AlertItem = {
+            version: 2.0,
             time: new Date().toISOString(),
             subscription: {
                 id: sub.id,

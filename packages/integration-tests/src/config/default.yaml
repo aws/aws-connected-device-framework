@@ -1,6 +1,9 @@
 aws:
   accountid:
   region:
+  sns:
+    push_gcm:
+      platformApplicationArn:
 assetLibrary:
   baseUrl:
 assetLibraryHistory:
@@ -17,4 +20,4 @@ thing:
   name:
   arn:
 logging:
-  level: 'debug'
+  level: debug

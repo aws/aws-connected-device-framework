@@ -90,11 +90,17 @@ export class IotCoreEventSource implements EventSource  {
 
         ow(eventSourceId, ow.string.nonEmpty);
 
+        // clean up the rule
         const params:AWS.Iot.Types.DeleteTopicRuleRequest = {
             ruleName: this.ruleName(eventSourceId)
         };
-
         await this.iot.deleteTopicRule(params).promise();
+
+        // clean up the lambda permissions
+        await this.lambda.removePermission({
+            FunctionName: this.lambdaInvokeEntryLambda,
+            StatementId: this.ruleName(eventSourceId)
+        }).promise();
 
         logger.debug(`iotcore.source delete: exit:`);
     }

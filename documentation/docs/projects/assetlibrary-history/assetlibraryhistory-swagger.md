@@ -93,7 +93,7 @@ List all events of a given category
     {
       "objectId": "string",
       "type": "devices",
-      "time": "2020-06-12T19:03:11Z",
+      "time": "2019-08-24T14:15:22Z",
       "event": "create",
       "user": "string",
       "state": {}
@@ -187,7 +187,7 @@ List all events of a specific Asset Library object
     {
       "objectId": "string",
       "type": "devices",
-      "time": "2020-06-12T19:03:11Z",
+      "time": "2019-08-24T14:15:22Z",
       "event": "create",
       "user": "string",
       "state": {}
@@ -225,7 +225,7 @@ This operation does not require authentication
 {
   "objectId": "string",
   "type": "devices",
-  "time": "2020-06-12T19:03:11Z",
+  "time": "2019-08-24T14:15:22Z",
   "event": "create",
   "user": "string",
   "state": {}
@@ -270,7 +270,7 @@ This operation does not require authentication
     {
       "objectId": "string",
       "type": "devices",
-      "time": "2020-06-12T19:03:11Z",
+      "time": "2019-08-24T14:15:22Z",
       "event": "create",
       "user": "string",
       "state": {}

@@ -22,8 +22,8 @@ export class EventSourceController implements interfaces.Controller {
         logger.debug(`eventSource.controller createEventSource: in: eventSource:${JSON.stringify(eventSource)}`);
 
         try {
-            const eventId = await this.eventSourceService.create(eventSource);
-            res.location(`/eventsources/${eventId}`);
+            const eventSourceId = await this.eventSourceService.create(eventSource);
+            res.location(`/eventsources/${eventSourceId}`);
         } catch (e) {
             handleError(e,res);
         }

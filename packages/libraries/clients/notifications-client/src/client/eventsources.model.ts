@@ -4,14 +4,14 @@
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
 export interface EventSourceSummaryResource {
-    id: string;
+    id?: string;
     name:string;
 }
 
 export interface EventSourceDetailResource extends EventSourceSummaryResource {
     principal: string;
     sourceType: EventSourceType;
-    enabled: boolean;
+    enabled?: boolean;
 
     dynamoDb?: DynamoDbConfig;
     iotCore?: IotCoreConfig;

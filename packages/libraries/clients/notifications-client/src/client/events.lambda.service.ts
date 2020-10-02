@@ -16,7 +16,7 @@ import {RequestHeaders} from './common.model';
 import {
     LambdaApiGatewayEventBuilder,
     LAMBDAINVOKE_TYPES,
-    LambdaInvokerService,
+    LambdaInvokerService
 } from '@cdf/lambda-invoke';
 
 @injectable()
@@ -30,7 +30,7 @@ export class EventsLambdaService extends EventsServiceBase implements EventsServ
         this.lambdaInvoker = lambdaInvoker;
     }
 
-    async createEvent(eventSourceId: string, event: EventResource, additionalHeaders?: RequestHeaders): Promise<void> {
+    async createEvent(eventSourceId: string, event: EventResource, additionalHeaders?: RequestHeaders): Promise<string> {
         ow(event, ow.object.nonEmpty);
         ow(eventSourceId, ow.string.nonEmpty);
 
@@ -40,7 +40,10 @@ export class EventsLambdaService extends EventsServiceBase implements EventsServ
             .setHeaders(super.buildHeaders(additionalHeaders))
             .setBody(event);
 
-        await this.lambdaInvoker.invoke(this.functionName, ev);
+        const res = await this.lambdaInvoker.invoke(this.functionName, ev);
+
+        const location = res.header['location'];
+        return location?.split('/')[2];
     }
 
     async getEvent(eventId: string, additionalHeaders?: RequestHeaders): Promise<EventResource> {
@@ -66,20 +69,35 @@ export class EventsLambdaService extends EventsServiceBase implements EventsServ
         await this.lambdaInvoker.invoke(this.functionName, ev);
     }
 
+    async updateEvent(event: EventResource, additionalHeaders?: RequestHeaders): Promise<void> {
+        ow(event, ow.object.nonEmpty);
+        ow(event.eventId, ow.string.nonEmpty);
+
+        const ev = new LambdaApiGatewayEventBuilder()
+            .setPath(super.eventRelativeUrl(event.eventId))
+            .setMethod('PATCH')
+            .setHeaders(super.buildHeaders(additionalHeaders))
+            .setBody(event);
+
+        await this.lambdaInvoker.invoke(this.functionName, ev);
+    }
+
     async listEventsForEventSource(eventSourceId: string, count?: number, fromEventId?: string, additionalHeaders?: RequestHeaders): Promise<EventResourceList> {
         ow(eventSourceId, ow.string.nonEmpty);
 
         const ev = new LambdaApiGatewayEventBuilder()
             .setPath(super.eventSourceEventsRelativeUrl(eventSourceId))
-            .setQueryStringParameters({
-                count: `${count}`,
-                fromEventId
-            })
             .setMethod('GET')
             .setHeaders(super.buildHeaders(additionalHeaders));
+
+        if (count && fromEventId) {
+            ev.setQueryStringParameters({
+                count: `${count}`,
+                fromEventId
+            });
+        }
 
         const res = await this.lambdaInvoker.invoke(this.functionName, ev);
         return res.body;
     }
-
 }

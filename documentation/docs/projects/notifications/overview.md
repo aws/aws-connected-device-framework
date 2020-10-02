@@ -16,8 +16,10 @@ The current version of the Events Processor / Events Alerts supports the followi
 - Subscription Targets:
     - Email
     - SMS
+    - Mobile Push
+    - DynamoDB
 
-The following are work-in-progress, awaiting prioritiztion by customer demand:
+The following are work-in-progress, awaiting prioritization by customer demand:
 
 - Event Sources:
     - API Gateway

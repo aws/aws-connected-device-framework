@@ -26,7 +26,7 @@ export class EventsourcesLambdaService extends EventsourcesServiceBase implement
         this.lambdaInvoker = lambdaInvoker;
     }
 
-    async createEventSource(eventSource: EventSourceDetailResource, additionalHeaders?: RequestHeaders): Promise<void> {
+    async createEventSource(eventSource: EventSourceDetailResource, additionalHeaders?: RequestHeaders): Promise<string> {
         ow(eventSource, ow.object.nonEmpty);
 
         const ev = new LambdaApiGatewayEventBuilder()
@@ -35,7 +35,10 @@ export class EventsourcesLambdaService extends EventsourcesServiceBase implement
             .setHeaders(super.buildHeaders(additionalHeaders))
             .setBody(eventSource);
 
-        await this.lambdaInvoker.invoke(this.functionName, ev);
+        const res = await this.lambdaInvoker.invoke(this.functionName, ev);
+
+        const location = res.header.location;
+        return location?.split('/')[2];
     }
 
     async listEventSources(additionalHeaders?: RequestHeaders): Promise<EventSourceResourceList> {

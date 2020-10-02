@@ -4,12 +4,12 @@
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
 export interface EventResource {
-    eventId: string;
-    eventSourceId: string;
+    eventId?: string;
+    eventSourceId?: string;
     name: string;
     conditions: EventConditions;
-    ruleParameters: string[];
-    enabled: boolean;
+    ruleParameters?: string[];
+    enabled?: boolean;
 
     // a map of templates
     templates: TemplateMap;
@@ -17,7 +17,7 @@ export interface EventResource {
     supportedTargets: TargetTemplateMap;
 
     // read only (denormalised from event source)
-    principal: string;
+    readonly principal?: string;
 }
 
 export interface EventResourceList {
@@ -48,4 +48,4 @@ export enum EventTargetType {
 }
 
 export type TemplateMap = { [key: string] : string};
-export type TargetTemplateMap = { [key in EventTargetType] : string};
+export type TargetTemplateMap = { [key in EventTargetType]? : string};

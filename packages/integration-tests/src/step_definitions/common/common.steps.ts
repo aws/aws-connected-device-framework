@@ -53,5 +53,5 @@ Given('my authorization is', async function (data:TableDefinition) {
 });
 
 Then('it fails with a {int}', function (status:number) {
-    expect(this[RESPONSE_STATUS]).eq(status);
+    expect(this[RESPONSE_STATUS], 'response').eq(status);
 });

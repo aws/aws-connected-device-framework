@@ -17,6 +17,12 @@ import {SubscriptionsLambdaService} from '../client/subscriptions.lambda.service
 import {EventsApigwService} from '../client/events.apigw.service';
 import {EventsourcesApigwService} from '../client/eventsources.apigw.service';
 import {SubscriptionsApigwService} from '../client/subscriptions.apigw.service';
+import { TargetsService } from '../client/targets.service';
+import { TargetsLambdaService } from '../client/targets.lambda.service';
+import { TargetsApigwService } from '../client/targets.apigw.service';
+import { MessagesDebugService } from '../client/messages.service';
+import { MessagesDebugLambdaService } from '../client/messages.lambda.service';
+import { MessagesDebugApigwService } from '../client/messgaes.apigw.service';
 
 export const notificationsContainerModule = new ContainerModule (
     (
@@ -30,6 +36,8 @@ export const notificationsContainerModule = new ContainerModule (
             bind<EventsService>(NOTIFICATIONS_CLIENT_TYPES.EventsService).to(EventsLambdaService);
             bind<EventsourcesService>(NOTIFICATIONS_CLIENT_TYPES.EventSourcesService).to(EventsourcesLambdaService);
             bind<SubscriptionsService>(NOTIFICATIONS_CLIENT_TYPES.SubscriptionsService).to(SubscriptionsLambdaService);
+            bind<TargetsService>(NOTIFICATIONS_CLIENT_TYPES.TargetsService).to(TargetsLambdaService);
+            bind<MessagesDebugService>(NOTIFICATIONS_CLIENT_TYPES.MessageDebugService).to(MessagesDebugLambdaService);
 
             if (!isBound(LAMBDAINVOKE_TYPES.LambdaInvokerService)) {
                 // always check to see if bound first incase it was bound by another client
@@ -52,6 +60,8 @@ export const notificationsContainerModule = new ContainerModule (
             bind<EventsService>(NOTIFICATIONS_CLIENT_TYPES.EventsService).to(EventsApigwService);
             bind<EventsourcesService>(NOTIFICATIONS_CLIENT_TYPES.EventSourcesService).to(EventsourcesApigwService);
             bind<SubscriptionsService>(NOTIFICATIONS_CLIENT_TYPES.SubscriptionsService).to(SubscriptionsApigwService);
+            bind<TargetsService>(NOTIFICATIONS_CLIENT_TYPES.TargetsService).to(TargetsApigwService);
+            bind<MessagesDebugService>(NOTIFICATIONS_CLIENT_TYPES.MessageDebugService).to(MessagesDebugApigwService);
         }
     }
 );

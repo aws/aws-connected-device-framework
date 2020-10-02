@@ -69,7 +69,7 @@ export function extractValue(json:any): any {
         }
         return arr;
     } else if (json.M!==undefined) {
-        const obj:{[key:string]: string|number|boolean}= {};
+        const obj:{[key:string]: string|string[]|number|number[]|boolean}= {};
         for(const key of Object.keys(json.M)) {
           obj[key]= extractValue(json.M[key]);
         }

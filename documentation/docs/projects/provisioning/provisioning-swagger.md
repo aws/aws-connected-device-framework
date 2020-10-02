@@ -359,8 +359,8 @@ print(r.json())
   "percentageProgress": 0,
   "successCount": 0,
   "failureCount": 0,
-  "creationDate": "2020-06-12T19:03:12Z",
-  "lastModifiedDate": "2020-06-12T19:03:12Z"
+  "creationDate": "2019-08-24T14:15:22Z",
+  "lastModifiedDate": "2019-08-24T14:15:22Z"
 }
 ```
 
@@ -436,8 +436,8 @@ print(r.json())
   "percentageProgress": 0,
   "successCount": 0,
   "failureCount": 0,
-  "creationDate": "2020-06-12T19:03:12Z",
-  "lastModifiedDate": "2020-06-12T19:03:12Z"
+  "creationDate": "2019-08-24T14:15:22Z",
+  "lastModifiedDate": "2019-08-24T14:15:22Z"
 }
 ```
 
@@ -666,8 +666,8 @@ Provisiong a new thing request
   "percentageProgress": 0,
   "successCount": 0,
   "failureCount": 0,
-  "creationDate": "2020-06-12T19:03:12Z",
-  "lastModifiedDate": "2020-06-12T19:03:12Z"
+  "creationDate": "2019-08-24T14:15:22Z",
+  "lastModifiedDate": "2019-08-24T14:15:22Z"
 }
 
 ```
@@ -702,8 +702,8 @@ Thing bulk registration task
       "percentageProgress": 0,
       "successCount": 0,
       "failureCount": 0,
-      "creationDate": "2020-06-12T19:03:12Z",
-      "lastModifiedDate": "2020-06-12T19:03:12Z"
+      "creationDate": "2019-08-24T14:15:22Z",
+      "lastModifiedDate": "2019-08-24T14:15:22Z"
     }
   ]
 }

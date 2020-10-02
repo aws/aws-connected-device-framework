@@ -16,7 +16,7 @@ export class EventAssembler {
 
     constructor( @inject(TYPES.EventConditionsUtils) private ecu: EventConditionsUtils) {}
 
-    public toItem(resource:EventResource, principal:string): EventItem {
+    public toItem(resource:EventResource, principal?:string): EventItem {
         logger.debug(`event.assembler toItem: in: resource:${JSON.stringify(resource)}`);
 
         const item:EventItem = {
@@ -84,6 +84,10 @@ export class EventAssembler {
 
     private extractTemplateProperties(templateMap: {[key: string]: string}) : string[] {
         logger.debug(`event.assembler extractTemplateProperties: in: templateMap:${JSON.stringify(templateMap)}`);
+
+        if (templateMap===undefined || Object.keys(templateMap).length===0) {
+            return undefined;
+        }
 
         let templateProperties:string[] = [];
 

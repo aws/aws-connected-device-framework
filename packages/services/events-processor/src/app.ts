@@ -11,6 +11,7 @@ import {logger} from './utils/logger.util';
 import config from 'config';
 import {Request, Response, NextFunction, Application} from 'express';
 import {asArray, SupportedVersionConfig} from '@cdf/express-middleware';
+import {setVersionByAcceptHeader} from 'express-version-request';
 
 const PORT = 3008;
 
@@ -33,6 +34,9 @@ server.setConfig((app) => {
     }
   });
   app.use(bodyParser.json({ type: supportedVersions }));
+
+  // extrapolate the version from the header and place on the request to make to easier for the controllers to deal with
+  app.use(setVersionByAcceptHeader());
 
   // default the response's headers
   app.use( (req,res,next)=> {

@@ -27,14 +27,16 @@ export class EventsApigwService extends EventsServiceBase implements EventsServi
         this.baseUrl = config.get('notifications.baseUrl') as string;
     }
 
-    async createEvent(eventSourceId: string, event: EventResource, additionalHeaders?: RequestHeaders): Promise<void> {
+    async createEvent(eventSourceId: string, event: EventResource, additionalHeaders?: RequestHeaders): Promise<string> {
         ow(event, ow.object.nonEmpty);
         ow(eventSourceId, ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.eventSourceEventsRelativeUrl(eventSourceId)}`;
-        await request.post(url)
+        const res = await request.post(url)
             .set(this.buildHeaders(additionalHeaders))
             .send(event);
+        const location = res.get('location');
+        return location?.split('/')[2];
     }
 
     async getEvent(eventId: string, additionalHeaders?: RequestHeaders): Promise<EventResource> {
@@ -53,6 +55,16 @@ export class EventsApigwService extends EventsServiceBase implements EventsServi
         const url = `${this.baseUrl}${super.eventRelativeUrl(eventId)}`;
         await request.delete(url)
             .set(this.buildHeaders(additionalHeaders));
+    }
+
+    async updateEvent(event: EventResource, additionalHeaders?: RequestHeaders): Promise<void> {
+        ow(event, ow.object.nonEmpty);
+        ow(event.eventId, ow.string.nonEmpty);
+
+        const url = `${this.baseUrl}${super.eventRelativeUrl(event.eventId)}`;
+        await request.patch(url)
+            .set(this.buildHeaders(additionalHeaders))
+            .send(event);
     }
 
     async listEventsForEventSource(eventSourceId: string, count?: number, fromEventId?: string, additionalHeaders?: RequestHeaders): Promise<EventResourceList> {

@@ -71,21 +71,32 @@ export class EventService  {
         logger.debug(`event.service update: in: resource:${JSON.stringify(resource)}`);
 
         // validate input
-        this.validateEvent(resource);
         ow(resource.eventId, ow.string.nonEmpty);
 
-        // TODO: validate the conditions format
+        // not allowing change...
+        ow(resource.eventSourceId, ow.undefined);
 
-        const eventSource = await this.eventSourceDao.get(resource.eventSourceId);
-        logger.debug(`event.service update: eventSource: ${JSON.stringify(eventSource)}`);
-        if (eventSource===undefined) {
-            throw new Error('EVENT_SOURCE_NOT_FOUND');
+        // get existing
+        const existing = await this.eventDao.get(resource.eventId);
+        if (existing===undefined) {
+            logger.debug(`event.service update: exit: undefined`);
+            return undefined;
         }
 
-        const item = this.eventAssembler.toItem(resource, eventSource.principal);
-        await this.eventDao.save(item);
+        // merge changes
+        logger.debug(`>>>>> existing:${JSON.stringify(existing)}`);
 
-        logger.debug(`event.service update: exit:${resource.eventId}`);
+        const updated = this.eventAssembler.toItem(resource);
+        logger.debug(`>>>>> updated:${JSON.stringify(updated)}`);
+
+        const merged = Object.assign(existing, Object.fromEntries(
+            Object.entries(updated).filter(([_k, v]) => v !== undefined)
+        ));
+        logger.debug(`>>>>> merged:${JSON.stringify(merged)}`);
+
+        await this.eventDao.save(merged);
+
+        logger.debug(`event.service update: exit:`);
 
     }
 
@@ -112,13 +123,13 @@ export class EventService  {
         ow(eventId, ow.string.nonEmpty);
 
         // find and delete all affected subscriptions
-        let subscriptions = await this.subscriptionService.listByEvent(eventId);
-        while (subscriptions!==undefined && subscriptions.results.length>0) {
-            for(const sub of subscriptions.results) {
+        let [subscriptions, paginationKey] = await this.subscriptionService.listByEvent(eventId);
+        while (subscriptions?.length>0) {
+            for(const sub of subscriptions) {
                 await this.subscriptionService.delete(sub.id);
             }
-            if (subscriptions.pagination!==undefined) {
-                subscriptions = await this.subscriptionService.listByEvent(eventId, subscriptions.pagination.offset);
+            if (paginationKey!==undefined) {
+                [subscriptions, paginationKey] = await this.subscriptionService.listByEvent(eventId, paginationKey);
             } else {
                 break;
             }

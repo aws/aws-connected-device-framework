@@ -69,9 +69,13 @@ export interface EventFactCondition {
 @injectable()
 export class EventConditionsUtils {
     public extractParameters(ec:EventConditions) : string[] {
+        if (ec===undefined) {
+            return undefined;
+        }
+
         const parameters:string[]= [];
 
-        if (ec.all) {
+        if (ec?.all) {
             if (isEventConditions(ec.all)) {
                 parameters.push(...this.extractParameters(ec.all));
             } else {
@@ -81,7 +85,7 @@ export class EventConditionsUtils {
             }
         }
 
-        if (ec.any) {
+        if (ec?.any) {
             if (isEventConditions(ec.any)) {
                 parameters.push(...this.extractParameters(ec.any));
             } else {
@@ -93,7 +97,7 @@ export class EventConditionsUtils {
         return parameters;
     }
     public extractParameter(ec:EventCondition) : string {
-        if (typeof ec.value === 'string') {
+        if (typeof ec?.value === 'string') {
             if (ec.value.indexOf('$')===0) {
                 return ec.value.replace('$', '');
             }
@@ -102,7 +106,7 @@ export class EventConditionsUtils {
     }
 
     public populateParameters(ec:EventConditions, valueMap:{[key:string]:string|boolean|number}) {
-        if (ec.all) {
+        if (ec?.all) {
             if (isEventConditions(ec.all)) {
                 this.populateParameters(ec.all,valueMap);
             } else {
@@ -112,7 +116,7 @@ export class EventConditionsUtils {
             }
         }
 
-        if (ec.any) {
+        if (ec?.any) {
             if (isEventConditions(ec.any)) {
                 this.populateParameters(ec.any,valueMap);
             } else {
@@ -134,16 +138,11 @@ export class EventConditionsUtils {
     }
 }
 
-export enum EventTargetType {
-    EMAIL = 'email',
-    SMS = 'sms',
-    MQTT = 'mqtt',
-    DYNAMODB = 'dynamodb',
-    PUSH = 'push_gcm'
-}
+export enum EventTargetType {'email','sms','mqtt','dynamodb','push_gcm','push_adm','push_apns'}
+export type EventTargetTypeStrings = keyof typeof EventTargetType;
 
 export type TemplateMap = { [key: string] : string};
-export type TargetTemplateMap = { [key in EventTargetType] : string};
+export type TargetTemplateMap = { [key in EventTargetTypeStrings] : string};
 export type TemplatePropertiesData = {[key: string]: string | number | boolean};
 
 export function isEventConditions(conditions: EventConditions | EventCondition[]): conditions is EventConditions {

@@ -8,6 +8,8 @@ export const NOTIFICATIONS_CLIENT_TYPES = {
     EventsService: Symbol.for('NotificationsClient_EventsService'),
     EventSourcesService: Symbol.for('NotificationsClient_EventSourcesService'),
     SubscriptionsService: Symbol.for('NotificationsClient_SubscriptionsService'),
+    TargetsService: Symbol.for('NotificationsClient_TargetsService'),
+    MessageDebugService: Symbol.for('NotificationsClient_MessageDebugService'),
 
     RestClient: Symbol.for('NotificationsClient_RestClient'),
     RestClientFactory: Symbol.for('Factory<Notifications_RestClient>')

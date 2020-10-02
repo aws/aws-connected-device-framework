@@ -4,9 +4,11 @@ import {injectable} from 'inversify';
 import {CommonServiceBase} from './common.service';
 
 export interface SubscriptionsService {
-    createSubscription(eventId: string, subscription: SubscriptionResource, additionalHeaders?: RequestHeaders): Promise<void>;
+    createSubscription(eventId: string, subscription: SubscriptionResource, additionalHeaders?: RequestHeaders): Promise<string>;
 
     getSubscription(subscriptionId: string, additionalHeaders?: RequestHeaders): Promise<SubscriptionResource>;
+
+    updateSubscription(subscription: SubscriptionResource, additionalHeaders?: RequestHeaders): Promise<void>;
 
     deleteSubscription(subscriptionId: string, additionalHeaders?: RequestHeaders): Promise<void>;
 
