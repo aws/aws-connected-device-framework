@@ -86,7 +86,8 @@ export class EventAssembler {
         logger.debug(`event.assembler extractTemplateProperties: in: templateMap:${JSON.stringify(templateMap)}`);
 
         if (templateMap===undefined || Object.keys(templateMap).length===0) {
-            return undefined;
+            logger.debug(`event.assembler extractTemplateProperties: out: templateProperties:[]`);
+            return [];
         }
 
         let templateProperties:string[] = [];
