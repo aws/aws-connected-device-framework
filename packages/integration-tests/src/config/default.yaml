@@ -16,6 +16,8 @@ provisioning:
     bucket:
     prefix:
     suffix:
+notifications:
+  baseUrl:
 thing:
   name:
   arn:

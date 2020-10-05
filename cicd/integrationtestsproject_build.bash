@@ -13,6 +13,7 @@ ASSETLIBRARYHISTORY_STACK_NAME="cdf-assetlibraryhistory-$ENVIRONMENT"
 PROVISIONING_STACK_NAME="cdf-provisioning-$ENVIRONMENT"
 COMMANDS_STACK_NAME="cdf-commands-$ENVIRONMENT"
 BULKCERTS_STACK_NAME="cdf-bulkcerts-$ENVIRONMENT"
+NOTIFICATIONS_STACK_NAME="cdf-notifications-$ENVIRONMENT"
 
 
 
@@ -44,6 +45,11 @@ bulkcerts_invoke_url=$(echo $stack_exports \
     | jq -r --arg bulkcerts_invoke_url_export "$bulkcerts_invoke_url_export" \
     '.Exports[] | select(.Name==$bulkcerts_invoke_url_export) | .Value')
 
+notifications_invoke_url_export="$NOTIFICATIONS_STACK_NAME-apigatewayurl"
+notifications_invoke_url=$(echo $stack_exports \
+    | jq -r --arg notifications_invoke_url_export "$notifications_invoke_url_export" \
+    '.Exports[] | select(.Name==$notifications_invoke_url_export) | .Value')
+
 
 echo setting integration test config...
 
@@ -60,7 +66,8 @@ cat $CONFIG_FILE | \
     --arg provisioning_invoke_url "$provisioning_invoke_url" \
     --arg commands_invoke_url "$commands_invoke_url" \
     --arg bulkcerts_invoke_url "$bulkcerts_invoke_url" \
-  '.assetLibrary.baseUrl=$assetlibrary_invoke_url | .assetLibraryHistory.baseUrl=$assetlibraryhistory_invoke_url | .commands.baseUrl=$commands_invoke_url | .provisioning.baseUrl=$provisioning_invoke_url | .bulkCerts.baseUrl=$bulkcerts_invoke_url' \
+    --arg notifications_invoke_url "$notifications_invoke_url" \
+  '.assetLibrary.baseUrl=$assetlibrary_invoke_url | .assetLibraryHistory.baseUrl=$assetlibraryhistory_invoke_url | .commands.baseUrl=$commands_invoke_url | .provisioning.baseUrl=$provisioning_invoke_url | .bulkCerts.baseUrl=$bulkcerts_invoke_url | .notifications.baseUrl=$notifications_invoke_url' \
   > $CONFIG_FILE.tmp && mv $CONFIG_FILE.tmp $CONFIG_FILE
 
 echo "\naugmented configuration:\n$(cat $CONFIG_FILE)\n"
