@@ -177,6 +177,7 @@ Resources:
               - dynamodb:BatchWriteItem
               - dynamodb:PutItem
               - dynamodb:Query
+              - dynamodb:GetItem
             Effect: Allow
             Resource: 
               - !GetAtt EventConfigTable.Arn
