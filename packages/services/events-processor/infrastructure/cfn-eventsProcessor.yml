@@ -178,6 +178,7 @@ Resources:
               - dynamodb:PutItem
               - dynamodb:Query
               - dynamodb:GetItem
+              - dynamodb:DeleteItem
             Effect: Allow
             Resource: 
               - !GetAtt EventConfigTable.Arn
