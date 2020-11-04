@@ -1,3 +1,10 @@
+# [@cdf/events-processor-v2.5.2](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/events-processor-v2.5.1...@cdf/events-processor-v2.5.2) (2020-11-04)
+
+
+### Bug Fixes
+
+* delete subscription needs dynamodb DeleteItem on cdf-eventConfig ([9155e57](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/9155e57f624e97aad46acf3fc4eb9c03d1d33193))
+
 # [@cdf/events-processor-v2.5.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/events-processor-v2.5.0...@cdf/events-processor-v2.5.1) (2020-10-29)
 
 
