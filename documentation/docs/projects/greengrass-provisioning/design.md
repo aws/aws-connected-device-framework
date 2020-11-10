@@ -6,7 +6,7 @@
 
 ## REST API
 
-Refer to [swagger](greengrass-provisioning-swagger.md) document.
+Refer to [swagger](./greengrass-provisioning-swagger.md) document.
 
 ## Creating/Updating Greengrass Templates
 

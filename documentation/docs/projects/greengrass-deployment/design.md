@@ -6,7 +6,7 @@
 
 ## REST API
 
-Refer to [swagger](greengrass-deployment-swagger.md) document.
+Refer to [swagger](./greengrass-deployment-swagger.md) document.
 
 ## Activating Greengrass Core (SSM Hybrid Activation)
 

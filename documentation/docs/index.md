@@ -10,10 +10,10 @@ If you are a developer who is interested in making changes and contributing back
 
 ## Where to from here?
 
-First, read the [CDF overview](projects/overview.md), then follow one of the tracks described below:
+First, read the [CDF overview](./projects/overview.md), then follow one of the tracks described below:
 
 Track | Topic
 --- | ---
-==Beginner== | [Start here](beginner/index.md)  |
-==Intermediate== | [Start here](intermediate/index.md)  |
-==Advanced== | [Start here](advanced/index.md)  |
+==Beginner== | [Start here](./beginner/index.md)  |
+==Intermediate== | [Start here](./intermediate/index.md)  |
+==Advanced== | [Start here](./advanced/index.md)  |

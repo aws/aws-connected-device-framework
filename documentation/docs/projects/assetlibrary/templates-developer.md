@@ -2,7 +2,7 @@
 
 ## Introduction
 
-The following describes the implementation of the asset library templating.  Review the [Templates (User)](/projects/assetlibrary/templates-user.md) page for details of how to use the templating features from a users point of view.
+The following describes the implementation of the asset library templating.  Review the [Templates (User)](./templates-user.md) page for details of how to use the templating features from a users point of view.
 
 ## Schema Validation
 

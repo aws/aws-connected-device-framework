@@ -9,6 +9,7 @@ nav:
     - Intermediate: intermediate/index.md
     - Advanced: advanced/index.md
   - Projects:
+    - 'Private API Gateway''s': projects/private_api_gateways.md
     - Asset Library:
       - 'Overview': projects/assetlibrary/overview.md
       - 'Modes': projects/assetlibrary/modes.md
@@ -73,7 +74,6 @@ nav:
     - 'Asynchronous Programming': development/async.md
     - 'Config': development/config.md
     - 'Unit Testing': development/unit-testing.md
-    - 'Integration Testing': development/integration-testing.md
   - Admin:
     - 'Deployment': advanced/deployment.md
     - 'Releases': releases/releases.md

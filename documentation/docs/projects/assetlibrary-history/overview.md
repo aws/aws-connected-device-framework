@@ -6,7 +6,7 @@ The Asset Library History service is an optional service that stores all changes
 
 ## Subscribing to Events
 
-The Asset Library broadcasts [events](/projects/assetlibrary/events.md) which the Asset Library subcribes to.  Upon receiving, the event is stored in its datastore for later retrieval.
+The Asset Library broadcasts [events](../assetlibrary/events.md) which the Asset Library subcribes to.  Upon receiving, the event is stored in its datastore for later retrieval.
 
 ## REST API
 
@@ -223,7 +223,7 @@ The above partition/sort keys allow for the following queries to be made:
 
 ## Taking Action on Events
 
-The Asset Library History service subcribes to the Asset Library published [events](/projects/assetlibrary/events.md) via an AWS Iot Rule.  The action taken for each event is as follows:
+The Asset Library History service subcribes to the Asset Library published [events](../assetlibrary/events.md) via an AWS Iot Rule.  The action taken for each event is as follows:
 
 Note: the `saved` action below involves writing both a new event item with timestamp set appropriately, along with replicating the item to the `latest` item.
 

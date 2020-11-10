@@ -4,7 +4,7 @@
 
 The following describes how to create an event source, define an event, then subcribe to receive alerts of processed events.
 
-**Note**:  review the [swagger definition](events-processor-swagger.md) for a full list of available endpoints.
+**Note**:  review the [swagger definition](./events-processor-swagger.md) for a full list of available endpoints.
 
 ## Step 1:  Define an event source.
 

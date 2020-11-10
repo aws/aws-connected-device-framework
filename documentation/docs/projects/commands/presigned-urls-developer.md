@@ -2,7 +2,7 @@
 
 ## Introduction
 
-As part of defining a command template within the commands service, pre-signed urls can be configured to provide a secure way to download files.  In addition, command templates can be configured to allow for devices to request pre-signed urls to upload content relevant to the command.  Refer to the [Presigned Urls (User)](/projects/commands/presigned-urls-user.md) page for a description of the functionality offered by pre-signed urls.  This page focuses on its design and implementation.
+As part of defining a command template within the commands service, pre-signed urls can be configured to provide a secure way to download files.  In addition, command templates can be configured to allow for devices to request pre-signed urls to upload content relevant to the command.  Refer to the [Presigned Urls (User)](./presigned-urls-user.md) page for a description of the functionality offered by pre-signed urls.  This page focuses on its design and implementation.
 
 ## MQTT Listener
 

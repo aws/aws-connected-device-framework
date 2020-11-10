@@ -20,7 +20,7 @@ Groups can be related to other groups via their `relations` attribute, which inc
 
 Different Group Templates can be created to align with ones business, with each Group Template augmenting the above list of fixed attributes with its own attributes, as well as specifiying which group to group and group to device relations are allowed.  An example Group Template could be a `Site`, with its `address` being an attribute, and a `located_at` relationship to a Group Template representing a physical location as follows:
 
-For more information regardng configuring templates, refer to [Templates](/projects/assetlibrary/templates-user).
+For more information regardng configuring templates, refer to [Templates](./templates-user.md).
 
 ??? info "Sample Group Template"
     The following sample represents the template for the group `MyCustomGroup`, which comprises of 2 attribute:  `color` (required) and `size` (optional), and an allowed relation to the `MyOtherGroup` group.
@@ -73,7 +73,7 @@ A Device Template has the same format as a Group Template with the addition of a
 
 Each Device has the following fixed attributes:  `deviceId`, `templateId`, `description`, `awsIotThingArn`, `imageUrl`, `connected` and `state`.
 
-For more information regardng configuring templates, refer to [Templates](/projects/assetlibrary/templates-user).
+For more information regardng configuring templates, refer to [Templates](./templates-user.md).
 
 ??? info "Sample Device Template"
     The following sample represents the template for the device `Sensor`, which comprises of 2 attribute:  `firmware` (required) and `version` (number), with an allowed relation to the `MyCustomGroup` group.

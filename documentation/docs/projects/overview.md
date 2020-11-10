@@ -48,7 +48,7 @@ Legend:  Green:  Implemented, Orange: Outstanding
 
 The certificate vendor manages the rotation of certificates involving a number of moving parts across CDF and AWS IoT.  The creation and registration of certificates is handled outside this service (refer to cdf-provisioning), with this service focused on securely delivering certificates to devices.  
 
-See [overview](/projects/certificatevendor/overview).
+See [overview](./certificatevendor/overview.md).
 
 ### Provisioning
 
@@ -56,7 +56,7 @@ The provisioning service utilizes [AWS IoT Device Provisioning](https://docs.aws
 
 In addition, the CDF Provisioning Service allows for extending the capabilities of the AWS IoT Device Provisioning templating functionality.  To provide an example, the AWS IoT Device Provisioning allows for creating certificate resources by providing a certificate signing request (CSR), a certificate ID of an existing device certificate, or a device certificate created with a CA certificate registered with AWS IoT.  This service extends these capabilities by also providing the ability to automatically create (and return) new keys and certificates for a device.
 
-See [overview](/projects/provisioning/overview).
+See [overview](./provisioning/overview.md).
 
 
 ### Pairing
@@ -75,7 +75,7 @@ Allows devices to auto-discover the available CDF services, along with identifyi
 
 The commands service utilizes [AWS IoT Jobs](https://docs.aws.amazon.com/iot/latest/developerguide/iot-jobs.html) to issue commands to a device or set of devices, and optionally inspect their execution status.  It augments AWS IoT jobs by providing the ability to create Job templates, and enforcing that each requested command adheres to a template before executing.
 
-See [overview](/projects/commands/overview).
+See [overview](./commands/overview.md).
 
 ### Blob Uploader
 
@@ -93,13 +93,13 @@ Allows devices to directly stream data and adds rules for data flowing through I
 
 A feature of Asset Library rather than a stand-alone service.  Allows for multiple profiles of default data and relations to be configured and applied to Asset Library devices and groups.
 
-See [overview](/projects/assetlibrary/overview).
+See [overview](./assetlibrary/overview.md).
 
 ### Asset Library History
 
 Tracks and stores all changes made to the Asset Library (devices, groups, policies and/or templates).
 
-See [overview](/projects/assetlibrary-history/overview).
+See [overview](./assetlibrary-history/overview.md).
 
 ### Analytics
 
@@ -121,7 +121,7 @@ All services have automated deployment capabilities via CloudFormation.
 
 Allows for capturing CDF actions when an AWS region is not available, and replaying once available again.
 
-See [overview](/projects/request-queue/overview).
+See [overview](./request-queue/overview.md).
 
 ### Logging
 
@@ -131,13 +131,13 @@ CloudWatch based logging.
 
 Reference implementations using Cognito, and device certificate custom authorizers.
 
-See [overview](/projects/auth-devicecert/overview).
+See [overview](./auth-devicecert/overview.md).
 
 ### Asset Library
 
 The Asset Library service is a device registry that allows one to manage their fleet of devices placed within multiple hierarchical groups.  Each group within a hierarchy can represent something meaningful to your business such as location device types, firmware versions, etc.
 
-See [overview](/projects/assetlibrary/overview).
+See [overview](./assetlibrary/overview.md).
 
 ### Modern UI/UX
 
