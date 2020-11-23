@@ -966,7 +966,7 @@ importers:
       express: 4.17.1
       express-version-request: 1.7.0
       fast-json-patch: 3.0.0-1
-      gremlin: 3.4.1
+      gremlin: 3.4.8
       inversify: 5.0.1
       inversify-binding-decorators: 4.0.0
       inversify-express-utils: 6.3.2
@@ -1056,7 +1056,7 @@ importers:
       express: 4.17.1
       express-version-request: 1.7.0
       fast-json-patch: 3.0.0-1
-      gremlin: 3.4.1
+      gremlin: 3.4.8
       husky: 3.1.0
       inversify: 5.0.1
       inversify-binding-decorators: 4.0.0
@@ -7232,6 +7232,14 @@ packages:
       node: '>=6'
     resolution:
       integrity: sha512-0OKSP8IktpSVtDi2RLEJQpjWcTDxkOcSyB47u/Y8nbFzU8iw+tKH+F/4PXW4Bci7hFOS4P3uSSXu8WmfyvrvtA==
+  /gremlin/3.4.8:
+    dependencies:
+      ws: 6.2.1
+    dev: false
+    engines:
+      node: '>=6'
+    resolution:
+      integrity: sha512-NZqayjvwYG5Hya7Pt4sDWt7uXom7RaqvFg9Jlge+5v37taxvCbj1DVR9vpMZXRedhIQfVbQH3QjNk24hipn+pQ==
   /growly/1.3.0:
     dev: true
     resolution:
@@ -13233,6 +13241,12 @@ packages:
     dev: true
     resolution:
       integrity: sha512-jaHFD6PFv6UgoIVda6qZllptQsMlDEJkTQcybzzXDYM1XO9Y8em691FGMPmM46WGyLU4z9KMgQN+qrux/nhlHA==
+  /ws/6.2.1:
+    dependencies:
+      async-limiter: 1.0.1
+    dev: false
+    resolution:
+      integrity: sha512-GIyAXC2cB7LjvpgMt9EKS2ldqr0MTrORaleiOno6TweZ6r3TKtoFQWay/2PceJ3RuBasOHzXNn5Lrw1X0bEjqA==
   /xdg-basedir/3.0.0:
     dev: true
     engines:

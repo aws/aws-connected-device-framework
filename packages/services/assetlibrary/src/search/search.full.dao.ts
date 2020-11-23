@@ -25,9 +25,9 @@ export class SearchDaoFull extends BaseDaoFull {
         super(neptuneUrl, graphSourceFactory);
     }
 
-    private buildSearchTraverser(conn: NeptuneConnection,request: SearchRequestModel, authorizedPaths:string[], offset?:number, count?:number) : process.GraphTraversal {
+    private buildSearchTraverser(conn: NeptuneConnection,request: SearchRequestModel, authorizedPaths:string[]) : process.GraphTraversal {
 
-        logger.debug(`search.full.dao buildSearchTraverser: in: request: ${JSON.stringify(request)}, authorizedPaths:${authorizedPaths}, offset:${offset}, count:${count}`);
+        logger.debug(`search.full.dao buildSearchTraverser: in: request: ${JSON.stringify(request)}, authorizedPaths:${authorizedPaths}`);
 
         const filters: process.GraphTraversal[]= [];
 
@@ -173,19 +173,26 @@ export class SearchDaoFull extends BaseDaoFull {
         return response;
     }
 
-    public async search(request: SearchRequestModel, authorizedPaths:string[], offset:number, count:number): Promise<Node[]> {
-        logger.debug(`search.full.dao search: in: request: ${JSON.stringify(request)}, authorizedPaths:${authorizedPaths}, offset:${offset}, count:${count}`);
+    public async search(request: SearchRequestModel, authorizedPaths:string[]): Promise<Node[]> {
+        logger.debug(`search.full.dao search: in: request: ${JSON.stringify(request)}, authorizedPaths:${authorizedPaths}`);
 
         let results;
         const conn = super.getConnection();
         try {
-            const traverser = this.buildSearchTraverser(conn, request, authorizedPaths, offset, count);
+            const traverser = this.buildSearchTraverser(conn, request, authorizedPaths);
+
+            if (request.sort?.length>0) {
+                traverser.order();
+                request.sort.forEach(s=> {
+                    const order = (s.direction==='ASC') ? process.order.asc : process.order.desc;
+                    traverser.by(__.coalesce(__.values(s.field),__.constant('')), order);
+                });
+            }
 
             // note: workaround for weird typescript issue. even though offset/count are declared as numbers
             // throughout, they are being interpreted as strings within gremlin, therefore need to force to int beforehand
-            const offsetAsInt = parseInt(offset.toString(),0);
-            const countAsInt = parseInt(count.toString(),0);
-
+            const offsetAsInt = parseInt(request.offset.toString(),0);
+            const countAsInt = parseInt(request.count.toString(),0);
             traverser.range(offsetAsInt,offsetAsInt + countAsInt).valueMap().with_(process.withOptions.tokens);
 
             logger.debug(`search.full.dao search: traverser:${JSON.stringify(traverser.toString())}`);

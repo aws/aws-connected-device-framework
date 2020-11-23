@@ -6,7 +6,6 @@ Feature: Group lifecycle
     And draft assetlibrary group template "TEST-groups-groupTemplate001" does not exist
     And published assetlibrary group template "TEST-groups-groupTemplate001" does not exist
 
-
   Scenario: Create a new group Template
     Given draft assetlibrary group template "TEST-groups-groupTemplate001" does not exist
     And published assetlibrary group template "TEST-groups-groupTemplate001" does not exist
@@ -17,7 +16,6 @@ Feature: Group lifecycle
     Then published assetlibrary group template "TEST-groups-groupTemplate001" exists with attributes
       | properties |{"color":{"type":["string","null"]},"size":{"type":"string"}} |
       | required | ["size"] |
-
   
   Scenario: Create another new group Template
     Given draft assetlibrary group template "TEST-groups-groupTemplate002" does not exist
@@ -27,7 +25,6 @@ Feature: Group lifecycle
     And publish assetlibrary group template "TEST-groups-groupTemplate002"
     Then published assetlibrary group template "TEST-groups-groupTemplate002" exists with attributes
       | relations | {"out": {"belongs_to": ["TEST-groups-groupTemplate001"]}} |
-
 
   Scenario: Create a group with valid attributes
     Given published assetlibrary group template "TEST-groups-groupTemplate001" exists
@@ -109,7 +106,6 @@ Feature: Group lifecycle
     When I attach group "/TEST-groups-group002" to group "/TEST-groups-group001" via "linked_to"
     Then it fails with a 400
 
-
   Scenario: Create a group with missing required attributes fails
     Given published assetlibrary group template "TEST-groups-groupTemplate001" exists
     And group "/TEST-groups-group003" does not exist
@@ -118,7 +114,6 @@ Feature: Group lifecycle
       | attributes | {"color":"black"} |
     Then it fails with a 400
     And group "/TEST-groups-group003" does not exist
-
 
   Scenario: Update existing groups attributes
     Given group "/TEST-groups-group001" exists
@@ -132,7 +127,6 @@ Feature: Group lifecycle
       | parentPath | / |
       | attributes | {"color":"black","size":"M"} |
 
-
   Scenario: Clear existing custom group attributes
     Given group "/TEST-groups-group001" exists
     When I update group "/TEST-groups-group001" with attributes
@@ -145,7 +139,6 @@ Feature: Group lifecycle
       | parentPath | / |
       | attributes |  {"size":"M"} |
 
-
   Scenario: Clear existing top level group attribute
     Given group "/TEST-groups-group001" exists
     When I update group "/TEST-groups-group001" with attributes
@@ -157,7 +150,6 @@ Feature: Group lifecycle
       | description | ___undefined___ |
       | parentPath | / |
       | attributes |  {"size":"M"} |
-
 
   Scenario: Group paths are unique
     Given group "/TEST-groups-group001" exists
@@ -172,14 +164,12 @@ Feature: Group lifecycle
     When I get group "/TEST-groups-groupXXX"
     Then it fails with a 404
 
-
   Scenario: Should not be able to clear existing groups required attributes
     Given group "/TEST-groups-group001" exists
     When I update group "/TEST-groups-group001" with attributes
       | templateId | test-groups-grouptemplate001 |
       | attributes | {"size":null} |
     Then it fails with a 400
-
 
   Scenario: Should not be able to delete a template when groups still exist
     Given published assetlibrary group template "TEST-groups-groupTemplate001" exists
@@ -188,23 +178,19 @@ Feature: Group lifecycle
     Then it fails with a 409
     And published assetlibrary group template "TEST-groups-groupTemplate001" exists
 
-
   Scenario: Delete the group
     Given group "/TEST-groups-group001" exists
     When I delete group "/TEST-groups-group001"
     Then group "/TEST-groups-group001" does not exist
-
 
   Scenario: Should be able to delete a template when no groups exist
     Given published assetlibrary group template "TEST-groups-groupTemplate001" exists
     And group "/TEST-groups-group001" does not exist
     When I delete assetlibrary group template "TEST-groups-groupTemplate001"
     Then published assetlibrary group template "TEST-groups-groupTemplate001" does not exist
-  
 
   @teardown_groups_feature
   Scenario: Teardown
     Given group "/TEST-groups-group001" does not exist
     And draft assetlibrary group template "TEST-groups-groupTemplate001" does not exist
     And published assetlibrary group template "TEST-groups-groupTemplate001" does not exist
-

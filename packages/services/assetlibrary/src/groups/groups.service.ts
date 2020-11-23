@@ -6,6 +6,7 @@
 import { GroupItem, BulkGroupsResult, GroupMemberItemList, GroupItemList} from './groups.models';
 import {TypeCategory} from '../types/constants';
 import { DeviceItemList } from '../devices/devices.models';
+import { SortKeys } from '../data/model';
 
 export interface GroupsService {
 
@@ -17,7 +18,7 @@ export interface GroupsService {
 
     update(model: GroupItem, applyProfile?:string) : Promise<void> ;
 
-    getMembers(groupPath:string, category:TypeCategory, type:string, states:string, offset?:number, count?:number): Promise<GroupMemberItemList> ;
+    getMembers(groupPath:string, category:TypeCategory, type:string, states:string, offset?:number, count?:number, sort?:SortKeys): Promise<GroupMemberItemList> ;
 
     getParentGroups(groupPath:string): Promise<GroupItem[]> ;
 
@@ -27,8 +28,8 @@ export interface GroupsService {
 
     detachFromGroup(sourceGroupPath:string, relationship:string, targetGroupPath:string) : Promise<void> ;
 
-    listRelatedGroups(groupPath: string, relationship: string, direction:string, template:string, offset:number, count:number) : Promise<GroupItemList>;
+    listRelatedGroups(groupPath: string, relationship: string, direction:string, template:string, offset:number, count:number, sort:SortKeys) : Promise<GroupItemList>;
 
-    listRelatedDevices(groupPath: string, relationship: string, direction:string, template:string, state:string, offset:number, count:number) : Promise<DeviceItemList>;
+    listRelatedDevices(groupPath: string, relationship: string, direction:string, template:string, state:string, offset:number, count:number, sort:SortKeys) : Promise<DeviceItemList>;
 
 }

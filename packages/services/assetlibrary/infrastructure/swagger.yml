@@ -192,14 +192,33 @@ tags:
 
           ?eq=deviceId:MOD123&eq=state:active
 paths:
+  "/templates/devices":
+    get:
+      tags:
+        - Templates
+      summary: List device templates
+      description: Lists all device templates for a given status.
+      operationId: listDeviceTemplates
+      parameters:
+        - $ref: '#/components/parameters/templateStatusQuery'
+        - $ref: '#/components/parameters/offsetQuery'
+        - $ref: '#/components/parameters/countQuery'
+        - $ref: '#/components/parameters/sortQuery'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: "#/components/schemas/TemplateInfoList"
+            application/vnd.aws-cdf-v2.0+json:
+              schema:
+                $ref: "#/components/schemas/TemplateInfoList"
+        "400":
+          $ref: "#/components/responses/BadRequest"
   "/templates/devices/{templateId}":
     parameters:
-      - name: templateId
-        in: path
-        description: ID of device template to publish
-        required: true
-        schema:
-          type: string
+      - $ref: '#/components/parameters/templateIdPath'
     post:
       tags:
         - Templates
@@ -221,15 +240,7 @@ paths:
       description: Returns a single device template definition
       operationId: getDeviceTemplate
       parameters:
-        - name: status
-          in: query
-          description: Status of device template to return
-          required: true
-          schema:
-            type: string
-            enum:
-              - draft
-              - published
+        - $ref: '#/components/parameters/templateStatusQuery'
       responses:
         "200":
           description: OK
@@ -272,12 +283,7 @@ paths:
           $ref: "#/components/responses/NotFound"
   "/templates/devices/{templateId}/publish":
     parameters:
-      - name: templateId
-        in: path
-        description: ID of device template to publish
-        required: true
-        schema:
-          type: string
+      - $ref: '#/components/parameters/templateIdPath'
     put:
       tags:
         - Templates
@@ -290,14 +296,33 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "404":
           $ref: "#/components/responses/NotFound"
+  "/templates/groups":
+    get:
+      tags:
+        - Templates
+      summary: List group templates
+      description: Lists all group templates for a given status.
+      operationId: listGroupTemplates
+      parameters:
+        - $ref: '#/components/parameters/templateStatusQuery'
+        - $ref: '#/components/parameters/offsetQuery'
+        - $ref: '#/components/parameters/countQuery'
+        - $ref: '#/components/parameters/sortQuery'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: "#/components/schemas/TemplateInfoList"
+            application/vnd.aws-cdf-v2.0+json:
+              schema:
+                $ref: "#/components/schemas/TemplateInfoList"
+        "400":
+          $ref: "#/components/responses/BadRequest"
   "/templates/groups/{templateId}":
     parameters:
-      - name: templateId
-        in: path
-        description: ID of group template to return
-        required: true
-        schema:
-          type: string
+      - $ref: '#/components/parameters/templateIdPath'
     post:
       tags:
         - Templates
@@ -370,12 +395,7 @@ paths:
           $ref: "#/components/responses/NotFound"
   "/templates/groups/{templateId}/publish":
     parameters:
-      - name: templateId
-        in: path
-        description: ID of group template to publish
-        required: true
-        schema:
-          type: string
+      - $ref: '#/components/parameters/templateIdPath'
     put:
       tags:
         - Templates
@@ -396,12 +416,7 @@ paths:
         group if no group is specified.
       operationId: createDevice
       parameters:
-        - name: applyProfile
-          in: query
-          description: Optionally apply a profile to the device to update unset attributes
-            with attributes from the profile.
-          schema:
-            type: string
+        - $ref: '#/components/parameters/applyProfileQuery'
       requestBody:
         content:
           application/vnd.aws-cdf-v1.0+json:
@@ -425,12 +440,7 @@ paths:
         `/unprovisioned` group if no groups are specified.
       operationId: createDeviceBatch
       parameters:
-        - name: applyProfile
-          in: query
-          description: Optionally apply a profile to the device to update unset attributes
-            with attributes from the profile.
-          schema:
-            type: string
+        - $ref: '#/components/parameters/applyProfileQuery'
       requestBody:
         content:
           application/vnd.aws-cdf-v1.0+json:
@@ -452,12 +462,7 @@ paths:
       summary: Update a batch of existing devices
       operationId: updateDeviceBatch
       parameters:
-        - name: applyProfile
-          in: query
-          description: Optionally apply a profile to the device to update unset attributes
-            with attributes from the profile.
-          schema:
-            type: string
+        - $ref: '#/components/parameters/applyProfileQuery'
       requestBody:
         content:
           application/vnd.aws-cdf-v1.0+json:
@@ -475,14 +480,35 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "404":
           $ref: "#/components/responses/NotFound"
+    get:
+      tags:
+        - Devices
+      summary: Find devices by ID
+      description: Returns a batch of devices.
+      operationId: bulkGetDevices
+      parameters:
+        - $ref: '#/components/parameters/deviceIdsQuery'
+        - $ref: '#/components/parameters/expandComponentsQuery'
+        - $ref: '#/components/parameters/attributesQuery'
+        - $ref: '#/components/parameters/includeGroupsQuery'
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: "#/components/schemas/DeviceList"
+            application/vnd.aws-cdf-v2.0+json:
+              schema:
+                $ref: "#/components/schemas/DeviceList"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
   "/devices/{deviceId}":
     parameters:
-      - name: deviceId
-        in: path
-        description: ID of device to return
-        required: true
-        schema:
-          type: string
+      - $ref: '#/components/parameters/deviceIdPath'
     get:
       tags:
         - Devices
@@ -490,52 +516,12 @@ paths:
       description: Returns a single device
       operationId: getDeviceByID
       parameters:
-        - name: expandComponents
-          in: query
-          description: By default, components of a device are not returned. Passing `true`
-            will return and expand a devices components.
-          schema:
-            type: boolean
-        - name: attributes
-          in: query
-          description: Optionally only return these specific attributes.  By default
-            returns all attributes.
-          schema:
-            type: array
-            items:
-              type: string
-        - name: includeGroups
-          in: query
-          description: Optionally only return these specific related groups.  By default
-            returns all related groups.
-          schema:
-            type: array
-            items:
-              type: string
-        - name: expandRelatedDevices
-          in: query
-          description: By default, only related device id's are returned.  Passing `true`
-            will return expanded related devices instead of just its device id.
-          schema:
-            type: boolean
-            default: false
-        - name: expandRelatedGroups
-          in: query
-          description: By default, only related group paths are returned.  Passing `true`
-            will return expanded related groups instead of just its path.
-          schema:
-            type: boolean
-            default: false
-        - name: filterRelations
-          in: query
-          description: Return related devices/groups filtered by relation.  Specify the
-            relation in the format of `{direction}:{relation}`, where
-            `{direction}` may be `in`, `out` or `both`.
-          explode: true
-          schema:
-            type: array
-            items:
-              type: string
+        - $ref: '#/components/parameters/expandComponentsQuery'
+        - $ref: '#/components/parameters/attributesQuery'
+        - $ref: '#/components/parameters/includeGroupsQuery'
+        - $ref: '#/components/parameters/expandRelatedDevicesQuery'
+        - $ref: '#/components/parameters/expandRelatedGroupsQuery'
+        - $ref: '#/components/parameters/filterRelationsQuery'
       responses:
         "200":
           description: successful operation
@@ -592,53 +578,19 @@ paths:
           $ref: "#/components/responses/NotFound"
   "/devices/{deviceId}/{relationship}/groups":
     parameters:
-      - name: deviceId
-        in: path
-        description: Id of device
-        required: true
-        schema:
-          type: string
-      - name: relationship
-        in: path
-        description: The relationship between the device and group as defined by the device
-          template.
-        required: true
-        schema:
-          type: string
+      - $ref: '#/components/parameters/deviceIdPath'
+      - $ref: '#/components/parameters/relationshipPath'
     get:
       tags:
         - Groups
       summary: List a devices related groups.
       operationId: listDeviceRelatedGroups
       parameters:
-        - name: template
-          in: query
-          description: Optional filter to return a specific group template
-          schema:
-            type: string
-        - name: direction
-          in: query
-          description: Direction of relation
-          explode: true
-          schema:
-            type: array
-            items:
-              type: string
-            enum:
-              - in
-              - out
-              - both
-            default: out
-        - name: offset
-          in: query
-          description: The index to start paginated results from
-          schema:
-            type: integer
-        - name: count
-          in: query
-          description: The maximum number of results to return
-          schema:
-            type: integer
+        - $ref: '#/components/parameters/templateQuery'
+        - $ref: '#/components/parameters/directionQuery'
+        - $ref: '#/components/parameters/offsetQuery'
+        - $ref: '#/components/parameters/countQuery'
+        - $ref: '#/components/parameters/sortQuery'
       responses:
         "200":
           description: successful operation
@@ -653,25 +605,9 @@ paths:
           $ref: "#/components/responses/NotFound"
   "/devices/{deviceId}/{relationship}/groups/{groupPath}":
     parameters:
-      - name: deviceId
-        in: path
-        description: Id of device to attach to the group
-        required: true
-        schema:
-          type: string
-      - name: relationship
-        in: path
-        description: The outgoing relationship between the device and group. For example, this may
-          reflect `locatedAt` or `manufacturedAt` relations.
-        required: true
-        schema:
-          type: string
-      - name: groupPath
-        in: path
-        description: Path of group.
-        required: true
-        schema:
-          type: string
+      - $ref: '#/components/parameters/deviceIdPath'
+      - $ref: '#/components/parameters/relationshipPath'
+      - $ref: '#/components/parameters/groupPathPath'
     put:
       tags:
         - Devices
@@ -700,31 +636,10 @@ paths:
   
   "/devices/{deviceId}/{relationship}/{direction}/groups/{groupPath}":
     parameters:
-      - name: deviceId
-        in: path
-        description: Id of device to attach to the group
-        required: true
-        schema:
-          type: string
-      - name: relationship
-        in: path
-        description: The outgoing relationship between the device and group. For example, this may
-          reflect `locatedAt` or `manufacturedAt` relations.
-        required: true
-        schema:
-          type: string
-      - name: direction
-        in: path
-        description: The direction of the relationship `in` or `out`
-        required: true
-        schema:
-          type: string
-      - name: groupPath
-        in: path
-        description: Path of group.
-        required: true
-        schema:
-          type: string
+      - $ref: '#/components/parameters/deviceIdPath'
+      - $ref: '#/components/parameters/relationshipPath'
+      - $ref: '#/components/parameters/directionPath'
+      - $ref: '#/components/parameters/groupPathPath'
     put:
       tags:
         - Devices
@@ -754,66 +669,20 @@ paths:
           
   "/devices/{deviceId}/{relationship}/devices":
     parameters:
-      - name: deviceId
-        in: path
-        description: Id of device
-        required: true
-        schema:
-          type: string
-      - name: relationship
-        in: path
-        description: The relationship between the device and the other device as defined in
-          the device template.
-        required: true
-        schema:
-          type: string
+      - $ref: '#/components/parameters/deviceIdPath'
+      - $ref: '#/components/parameters/relationshipPath'
     get:
       tags:
         - Devices
       summary: List a devices related devices.
       operationId: listDeviceRelatedDevices
       parameters:
-        - name: template
-          in: query
-          description: Optional filter to return a specific device template
-          schema:
-            type: string
-        - name: direction
-          in: query
-          description: Direction of relation
-          explode: true
-          schema:
-            type: array
-            items:
-              type: string
-            enum:
-              - in
-              - out
-              - both
-            default: out
-        - name: state
-          in: query
-          description: Return devices of a specific state
-          schema:
-            type: array
-            items:
-              type: string
-            enum:
-              - unprovisioned
-              - active
-              - decommissioned
-              - retired
-            default: active
-        - name: offset
-          in: query
-          description: The index to start paginated results from
-          schema:
-            type: integer
-        - name: count
-          in: query
-          description: The maximum number of results to return
-          schema:
-            type: integer
+        - $ref: '#/components/parameters/templateQuery'
+        - $ref: '#/components/parameters/directionQuery'
+        - $ref: '#/components/parameters/stateQuery'
+        - $ref: '#/components/parameters/offsetQuery'
+        - $ref: '#/components/parameters/countQuery'
+        - $ref: '#/components/parameters/sortQuery'
       responses:
         "200":
           description: successful operation
@@ -829,19 +698,8 @@ paths:
           
   "/devices/{deviceId}/{relationship}/devices/{otherDeviceId}":
     parameters:
-      - name: deviceId
-        in: path
-        description: Id of source device
-        required: true
-        schema:
-          type: string
-      - name: relationship
-        in: path
-        description: The relationship between the device and the other device as defined in
-          the device template.
-        required: true
-        schema:
-          type: string
+      - $ref: '#/components/parameters/deviceIdPath'
+      - $ref: '#/components/parameters/relationshipPath'
       - name: otherDeviceId
         in: path
         description: ID of device to create relationship to.
@@ -877,25 +735,9 @@ paths:
   
   "/devices/{deviceId}/{relationship}/{direction}/devices/{otherDeviceId}":
     parameters:
-      - name: deviceId
-        in: path
-        description: Id of source device
-        required: true
-        schema:
-          type: string
-      - name: relationship
-        in: path
-        description: The relationship between the device and the other device as defined in
-          the device template.
-        required: true
-        schema:
-          type: string
-      - name: direction
-        in: path
-        description: Direction of the relationship - `in` or `out`.
-        required: true
-        schema:
-          type: string
+      - $ref: '#/components/parameters/deviceIdPath'
+      - $ref: '#/components/parameters/relationshipPath'
+      - $ref: '#/components/parameters/directionPath'
       - name: otherDeviceId
         in: path
         description: ID of device to create relationship to.
@@ -931,12 +773,7 @@ paths:
           
   "/devices/{deviceId}/components":
     parameters:
-      - name: deviceId
-        in: path
-        description: Id of parent device
-        required: true
-        schema:
-          type: string
+      - $ref: '#/components/parameters/deviceIdPath'
     post:
       tags:
         - Devices
@@ -959,18 +796,8 @@ paths:
           $ref: "#/components/responses/BadRequest"
   "/devices/{deviceId}/components/{componentId}":
     parameters:
-      - name: deviceId
-        in: path
-        description: Id of parent device
-        required: true
-        schema:
-          type: string
-      - name: componentId
-        in: path
-        description: ID of child component
-        required: true
-        schema:
-          type: string
+      - $ref: '#/components/parameters/deviceIdPath'
+      - $ref: '#/components/parameters/componentIdPath'
     patch:
       tags:
         - Devices
@@ -1003,12 +830,7 @@ paths:
         specified in the request body.
       operationId: createGroup
       parameters:
-        - name: applyProfile
-          in: query
-          description: Optionally apply a profile to the device to update unset attributes
-            with attributes from the profile.
-          schema:
-            type: string
+        - $ref: '#/components/parameters/applyProfileQuery'
       requestBody:
         content:
           application/vnd.aws-cdf-v1.0+json:
@@ -1032,12 +854,7 @@ paths:
         `parentPath` as specified in the request body.
       operationId: createGroupBatch
       parameters:
-        - name: applyProfile
-          in: query
-          description: Optionally apply a profile to the device to update unset attributes
-            with attributes from the profile.
-          schema:
-            type: string
+        - $ref: '#/components/parameters/applyProfileQuery'
       requestBody:
         content:
           application/vnd.aws-cdf-v1.0+json:
@@ -1059,12 +876,7 @@ paths:
           $ref: "#/components/responses/BadRequest"
   "/groups/{groupPath}":
     parameters:
-      - name: groupPath
-        in: path
-        description: Path of group to return
-        required: true
-        schema:
-          type: string
+      - $ref: '#/components/parameters/groupPathPath'
     get:
       tags:
         - Groups
@@ -1100,12 +912,7 @@ paths:
       summary: Update an existing group attributes, including changing its parent group.
       operationId: updateGroup
       parameters:
-        - name: applyProfile
-          in: query
-          description: Optionally apply a profile to the device to update unset attributes
-            with attributes from the profile.
-          schema:
-            type: string
+        - $ref: '#/components/parameters/applyProfileQuery'
       requestBody:
         content:
           application/vnd.aws-cdf-v1.0+json:
@@ -1125,13 +932,7 @@ paths:
           $ref: "#/components/responses/NotFound"
   "/groups/{groupPath}/members/devices":
     parameters:
-      - name: groupPath
-        in: path
-        description: Path of group to return its device members. A path of '/' can be
-          passed as id to return top level device members
-        required: true
-        schema:
-          type: string
+      - $ref: '#/components/parameters/groupPathPath'
     get:
       tags:
         - Groups
@@ -1139,34 +940,11 @@ paths:
       description: Returns device members of group
       operationId: listGroupMembersDevices
       parameters:
-        - name: template
-          in: query
-          description: Optional filter to return a specific device template
-          schema:
-            type: string
-        - name: state
-          in: query
-          description: Return devices of a specific state
-          schema:
-            type: array
-            items:
-              type: string
-            enum:
-              - unprovisioned
-              - active
-              - decommissioned
-              - retired
-            default: active
-        - name: offset
-          in: query
-          description: The index to start paginated results from
-          schema:
-            type: integer
-        - name: count
-          in: query
-          description: The maximum number of results to return
-          schema:
-            type: integer
+        - $ref: '#/components/parameters/templateQuery'
+        - $ref: '#/components/parameters/stateQuery'
+        - $ref: '#/components/parameters/offsetQuery'
+        - $ref: '#/components/parameters/countQuery'
+        - $ref: '#/components/parameters/sortQuery'
       responses:
         "200":
           description: successful operation
@@ -1183,13 +961,7 @@ paths:
           $ref: "#/components/responses/NotFound"
   "/groups/{groupPath}/members/groups":
     parameters:
-      - name: groupPath
-        in: path
-        description: Path of group to return its group members. A path of '/' can be passed
-          as id to return top level group members
-        required: true
-        schema:
-          type: string
+      - $ref: '#/components/parameters/groupPathPath'
     get:
       tags:
         - Groups
@@ -1197,21 +969,10 @@ paths:
       description: Returns group members of group
       operationId: listGroupMembersGroups
       parameters:
-        - name: template
-          in: query
-          description: Optional filter to return a specific group sub-type
-          schema:
-            type: string
-        - name: offset
-          in: query
-          description: The index to start paginated results from
-          schema:
-            type: integer
-        - name: count
-          in: query
-          description: The maximum number of results to return
-          schema:
-            type: integer
+        - $ref: '#/components/parameters/templateQuery'
+        - $ref: '#/components/parameters/offsetQuery'
+        - $ref: '#/components/parameters/countQuery'
+        - $ref: '#/components/parameters/sortQuery'
       responses:
         "200":
           description: successful operation
@@ -1228,12 +989,7 @@ paths:
           $ref: "#/components/responses/NotFound"
   "/groups/{groupPath}/memberships":
     parameters:
-      - name: groupPath
-        in: path
-        description: Path of group for fetching the membership
-        required: true
-        schema:
-          type: string
+      - $ref: '#/components/parameters/groupPathPath'
     get:
       tags:
         - Groups
@@ -1241,16 +997,8 @@ paths:
       description: List all ancestor groups of a specific group.
       operationId: listGroupMemberships
       parameters:
-        - name: offset
-          in: query
-          description: The index to start paginated results from
-          schema:
-            type: integer
-        - name: count
-          in: query
-          description: The maximum number of results to return
-          schema:
-            type: integer
+        - $ref: '#/components/parameters/offsetQuery'
+        - $ref: '#/components/parameters/countQuery'
       responses:
         "200":
           description: successful operation
@@ -1267,65 +1015,20 @@ paths:
           $ref: "#/components/responses/NotFound"
   "/groups/{groupPath}/{relationship}/devices":
     parameters:
-      - name: groupPath
-        in: path
-        description: Path of source group
-        required: true
-        schema:
-          type: string
-      - name: relationship
-        in: path
-        description: The relationship between the group and the devices as defined by the
-          group/device templatea.  Use `%2A` (urlencoded `*`) to return all.
-        required: true
-        schema:
-          type: string
+      - $ref: '#/components/parameters/groupPathPath'
+      - $ref: '#/components/parameters/relationshipPath'
     get:
       tags:
         - Groups
       summary: List a groups related devices.
       operationId: listGroupRelatedDevices
       parameters:
-        - name: template
-          in: query
-          description: Optional filter to return a specific device template
-          schema:
-            type: string
-        - name: direction
-          in: query
-          description: Direction of relation
-          explode: true
-          schema:
-            type: array
-            items:
-              type: string
-            enum:
-              - in
-              - out
-              - both
-            default: out
-        - name: state
-          in: query
-          description: Return devices of a specific state
-          schema:
-            type: array
-            items:
-              type: string
-            enum:
-              - unprovisioned
-              - active
-              - decommissioned
-              - retired
-        - name: offset
-          in: query
-          description: The index to start paginated results from
-          schema:
-            type: integer
-        - name: count
-          in: query
-          description: The maximum number of results to return
-          schema:
-            type: integer
+        - $ref: '#/components/parameters/templateQuery'
+        - $ref: '#/components/parameters/directionQuery'
+        - $ref: '#/components/parameters/stateQuery'
+        - $ref: '#/components/parameters/offsetQuery'
+        - $ref: '#/components/parameters/countQuery'
+        - $ref: '#/components/parameters/sortQuery'
       responses:
         "200":
           description: successful operation
@@ -1340,53 +1043,19 @@ paths:
           $ref: "#/components/responses/NotFound"
   "/groups/{groupPath}/{relationship}/groups":
     parameters:
-      - name: groupPath
-        in: path
-        description: Path of source group
-        required: true
-        schema:
-          type: string
-      - name: relationship
-        in: path
-        description: The relationship between the groups as defined by the group
-          template.  Use `%2A` (urlencoded `*`) to return all.
-        required: true
-        schema:
-          type: string
+      - $ref: '#/components/parameters/groupPathPath'
+      - $ref: '#/components/parameters/relationshipPath'
     get:
       tags:
         - Groups
       summary: List a groups related groups.
       operationId: listGroupRelatedGroups
       parameters:
-        - name: template
-          in: query
-          description: Optional filter to return a specific group template
-          schema:
-            type: string
-        - name: direction
-          in: query
-          description: Direction of relation
-          explode: true
-          schema:
-            type: array
-            items:
-              type: string
-            enum:
-              - in
-              - out
-              - both
-            default: out
-        - name: offset
-          in: query
-          description: The index to start paginated results from
-          schema:
-            type: integer
-        - name: count
-          in: query
-          description: The maximum number of results to return
-          schema:
-            type: integer
+        - $ref: '#/components/parameters/templateQuery'
+        - $ref: '#/components/parameters/directionQuery'
+        - $ref: '#/components/parameters/offsetQuery'
+        - $ref: '#/components/parameters/countQuery'
+        - $ref: '#/components/parameters/sortQuery'
       responses:
         "200":
           description: successful operation
@@ -1407,13 +1076,7 @@ paths:
         required: true
         schema:
           type: string
-      - name: relationship
-        in: path
-        description: The relationship between the groups. For example, this may reflect
-          `locatedAt` or `manufacturedAt` relations.
-        required: true
-        schema:
-          type: string
+      - $ref: '#/components/parameters/relationshipPath'
       - name: targetGroupPath
         in: path
         description: Path of target group
@@ -1447,12 +1110,7 @@ paths:
           $ref: "#/components/responses/NotFound"
   "/profiles/device/{templateId}":
     parameters:
-      - name: templateId
-        in: path
-        description: ID of the device template
-        required: true
-        schema:
-          type: string
+      - $ref: '#/components/parameters/templateIdPath'
     post:
       tags:
         - Profiles
@@ -1493,18 +1151,8 @@ paths:
           $ref: "#/components/responses/NotFound"
   "/profiles/device/{templateId}/{profileId}":
     parameters:
-      - name: templateId
-        in: path
-        description: ID of the device template
-        required: true
-        schema:
-          type: string
-      - name: profileId
-        in: path
-        description: ID of the profile
-        required: true
-        schema:
-          type: string
+      - $ref: '#/components/parameters/templateIdPath'
+      - $ref: '#/components/parameters/profileIdPath'
     get:
       tags:
         - Profiles
@@ -1558,12 +1206,7 @@ paths:
           $ref: "#/components/responses/NotFound"
   "/profiles/group/{templateId}":
     parameters:
-      - name: templateId
-        in: path
-        description: ID of the group template
-        required: true
-        schema:
-          type: string
+      - $ref: '#/components/parameters/templateIdPath'
     post:
       tags:
         - Profiles
@@ -1604,18 +1247,8 @@ paths:
           $ref: "#/components/responses/NotFound"
   "/profiles/group/{templateId}/{profileId}":
     parameters:
-      - name: templateId
-        in: path
-        description: ID of the group template
-        required: true
-        schema:
-          type: string
-      - name: profileId
-        in: path
-        description: ID of the profile
-        required: true
-        schema:
-          type: string
+      - $ref: '#/components/parameters/templateIdPath'
+      - $ref: '#/components/parameters/profileIdPath'
     get:
       tags:
         - Profiles
@@ -1798,16 +1431,9 @@ paths:
             returning the results themselves.
           schema:
             type: boolean
-        - name: offset
-          in: query
-          description: The index to start paginated results from
-          schema:
-            type: integer
-        - name: count
-          in: query
-          description: The maximum number of results to return
-          schema:
-            type: integer
+        - $ref: '#/components/parameters/offsetQuery'
+        - $ref: '#/components/parameters/countQuery'
+        - $ref: '#/components/parameters/sortQuery'
       responses:
         "200":
           description: successful operation
@@ -1992,18 +1618,189 @@ paths:
 components:
 
   parameters:
-    offset:
+    templateIdPath:
+      in: path
+      name: templateId
+      description: ID of device template to publish
+      required: true
+      schema:
+        type: string
+    templateStatusQuery:
+      name: status
+      in: query
+      description: Status of device template to return
+      required: true
+      schema:
+        type: string
+        enum:
+          - draft
+          - published
+    deviceIdPath:
+      in: path
+      name: deviceId
+      description: ID of device to return
+      required: true
+      schema:
+        type: string
+    profileIdPath:
+      in: path
+      name: profileId
+      description: ID of profile
+      required: true
+      schema:
+        type: string
+    componentIdPath:
+      in: path
+      name: componentId
+      description: ID of component
+      required: true
+      schema:
+        type: string
+    relationshipPath:
+      in: path
+      name: relationship
+      description: The relationship between the device and group as defined by the device/group template. Where applicable, `%2A` (urlencoded `*`) may be used to return all.
+      required: true
+      schema:
+        type: string
+    groupPathPath:
+      name: groupPath
+      in: path
+      description: Path of group.
+      required: true
+      schema:
+        type: string
+    applyProfileQuery:
+      name: applyProfile
+      in: query
+      description: Optionally apply a profile to the device to update unset attributes
+        with attributes from the profile.
+      schema:
+        type: string
+    directionPath:
+      in: query
+      description: Direction of relation
+      explode: true
+      schema:
+        type: array
+        items:
+          type: string
+        enum:
+          - in
+          - out
+          - both
+        default: out
+
+    expandComponentsQuery:
+      name: expandComponents
+      in: query
+      description: By default, components of a device are not returned. Passing `true`
+        will return and expand a devices components.
+      schema:
+        type: boolean
+    attributesQuery:
+      name: attributes
+      in: query
+      description: Optionally only return these specific attributes.  By default
+        returns all attributes.
+      schema:
+        type: array
+        items:
+          type: string
+    includeGroupsQuery:
+      name: includeGroups
+      in: query
+      description: Optionally only return these specific related groups.  By default
+        returns all related groups.
+      schema:
+        type: array
+        items:
+          type: string
+    expandRelatedDevicesQuery:
+      name: expandRelatedDevices
+      in: query
+      description: By default, only related device id's are returned.  Passing `true`
+        will return expanded related devices instead of just its device id.
+      schema:
+        type: boolean
+        default: false
+    expandRelatedGroupsQuery:
+      name: expandRelatedGroups
+      in: query
+      description: By default, only related group paths are returned.  Passing `true`
+        will return expanded related groups instead of just its path.
+      schema:
+        type: boolean
+        default: false
+    filterRelationsQuery:
+      name: filterRelations
+      in: query
+      description: Return related devices/groups filtered by relation.  Specify the
+        relation in the format of `{direction}:{relation}`, where
+        `{direction}` may be `in`, `out` or `both`.
+      explode: true
+      schema:
+        type: array
+        items:
+          type: string
+    templateQuery:
+      in: query
+      name: template
+      description: Optional filter to return a specific group template
+      schema:
+        type: string
+    directionQuery:
+      in: query
+      description: Direction of relation
+      explode: true
+      schema:
+        type: array
+        items:
+          type: string
+        enum:
+          - in
+          - out
+          - both
+        default: out
+    stateQuery:
+      name: state
+      in: query
+      description: Return devices of a specific state
+      schema:
+        type: array
+        items:
+          type: string
+        enum:
+          - unprovisioned
+          - active
+          - decommissioned
+          - retired
+        default: active
+    offsetQuery:
       in: query
       name: offset
       schema:
         type: integer
         minimum: 0
-    count:
+    countQuery:
       in: query
       name: offset
       schema:
         type: integer
         minimum: 0
+    sortQuery:
+      in: query
+      name: sort
+      description: A comma delimited list of attributes to sort by, with an optional direction (`asc`/`desc') provided per attribute separated by a colon. Id not provided, `asc` is applied.
+      schema:
+        type: string
+      examples:
+        single_default_sort:
+          value: deviceId
+          summary: A single sort attribute, defaulting to ascending sort
+        multiple_with_sort:
+          value: state:asc,manufacturedAt:desc
+          summary: Multiple attributes with direction specified.
         
   responses:
     Created:
@@ -2428,6 +2225,21 @@ components:
               enum:
                 - draft
                 - published
+              
+    TemplateInfoList:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            - $ref: "#/components/schemas/TemplateInfo"
+        pagination:
+          type: object
+          properties:
+            offset:
+              type: integer
+            count:
+              type: integer
                 
     TemplateDefinition:
       properties:

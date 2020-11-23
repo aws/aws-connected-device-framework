@@ -14,7 +14,7 @@ import { injectable } from 'inversify';
 export class NodeAssembler {
 
     public toNode(result: process.Traverser, labels: string[]): Node {
-        logger.debug(`assembler toNode: in: result: ${result}, labels: ${labels}`);
+        logger.debug(`assembler toNode: in: result: ${JSON.stringify(result)}, labels: ${labels}`);
 
         const node = new Node();
         Object.keys(result).forEach( key => {
@@ -27,7 +27,7 @@ export class NodeAssembler {
             }
         });
 
-        logger.debug(`assembler toNode: exit: node: ${node}`);
+        logger.debug(`assembler toNode: exit: node: ${JSON.stringify(node)}`);
         return node;
     }
 

@@ -30,14 +30,14 @@ export class SearchController implements interfaces.Controller {
         @queryParam('exist') exists:string|string[], @queryParam('nexist') nexists:string|string[],
         @queryParam('facetField') facetField:string,
         @queryParam('summarize') summarize:string,
-        @queryParam('offset') offset:number, @queryParam('count') count:number,
+        @queryParam('offset') offset:number, @queryParam('count') count:number, @queryParam('sort') sort:string,
         @request() req:Request, @response() res: Response): Promise<SearchResultsResource> {
 
-        logger.debug(`search.controller search: in: types:${types}, ancestorPath:${ancestorPath}, eqs:${eqs}, neqs:${neqs}, lts:${lts}, ltes:${ltes}, gts:${gts}, gtes:${gtes}, startsWiths:${startsWiths}, exists:${exists}, nexists:${nexists}, facetField:${facetField}, summarize:${summarize}, offset:${offset}, count:${count}`);
+        logger.debug(`search.controller search: in: types:${types}, ancestorPath:${ancestorPath}, eqs:${eqs}, neqs:${neqs}, lts:${lts}, ltes:${ltes}, gts:${gts}, gtes:${gtes}, startsWiths:${startsWiths}, exists:${exists}, nexists:${nexists}, facetField:${facetField}, summarize:${summarize}, offset:${offset}, count:${count}, sort:${sort}`);
 
         const r: SearchResultsResource= {results:[]};
 
-        const searchRequest = this.searchAssembler.toSearchRequestModel(types, ancestorPath, eqs, neqs, lts, ltes, gts, gtes, startsWiths, exists, nexists, facetField);
+        const searchRequest = this.searchAssembler.toSearchRequestModel(types, ancestorPath, eqs, neqs, lts, ltes, gts, gtes, startsWiths, exists, nexists, facetField, offset, count, sort);
 
         try {
             if (summarize==='true') {
@@ -47,7 +47,7 @@ export class SearchController implements interfaces.Controller {
                 const facets = await this.searchService.facet(searchRequest);
                 r.results = facets;
             } else {
-                const [items,actualOffset,actualCount] = await this.searchService.search(searchRequest, offset, count);
+                const [items,actualOffset,actualCount] = await this.searchService.search(searchRequest);
                 r.pagination = {
                     offset: actualOffset,
                     count: actualCount

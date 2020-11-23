@@ -8,10 +8,11 @@ import { injectable, inject } from 'inversify';
 import {logger} from '../utils/logger';
 import {TYPES} from '../di/types';
 import {Node} from '../data/node';
-import { FullAssembler, NodeDto } from '../data/full.assembler';
-import { ModelAttributeValue, DirectionStringToArrayMap } from '../data/model';
+import { FullAssembler } from '../data/full.assembler';
+import { ModelAttributeValue, DirectionStringToArrayMap, SortKeys } from '../data/model';
 import { BaseDaoFull } from '../data/base.full.dao';
 import { CommonDaoFull } from '../data/common.full.dao';
+import { isRelatedEntityDto, isVertexDto, RelatedEntityDto, VertexDto } from '../data/full.model';
 
 const __ = process.statics;
 
@@ -36,39 +37,46 @@ export class GroupsDaoFull extends BaseDaoFull {
          * return the group, but when retrieving linked entities we need to retrieve
          * all groups excluding linked via 'parent' and ignore linked devices
          */
-        let result;
+        let result:process.Traverser[];
         const conn = super.getConnection();
         try {
-            result = await conn.traversal.V(id).as('object').
-                project('object','EsIn','EsOut','VsIn','VsOut').
-                    by(__.valueMap().with_(process.withOptions.tokens)).
-                    by(__.inE().not(__.hasLabel('parent')).where(__.otherV().hasLabel('group')).valueMap().with_(process.withOptions.tokens).fold()).
-                    by(__.outE().not(__.hasLabel('parent')).where(__.otherV().hasLabel('group')).valueMap().with_(process.withOptions.tokens).fold()).
-                    by(__.inE().not(__.hasLabel('parent')).otherV().hasLabel('group').dedup().valueMap().with_(process.withOptions.tokens).fold()).
-                    by(__.outE().not(__.hasLabel('parent')).otherV().hasLabel('group').dedup().valueMap().with_(process.withOptions.tokens).fold()).
-                next();
+            const traverser = await conn.traversal.V(id).as('main')
+                .union(
+                    __.inE().as('e')
+                        .not(__.hasLabel('parent'))
+                        .otherV().hasLabel('group').as('v')
+                        .valueMap().with_(process.withOptions.tokens).as('vProps')
+                        .constant('in').as('dir')
+                        .select('dir','e','vProps'),
+                    __.outE().as('e')
+                        .not(__.hasLabel('parent'))
+                        .otherV().hasLabel('group').as('v')
+                        .valueMap().with_(process.withOptions.tokens).as('vProps')
+                        .constant('out').as('dir')
+                        .select('dir','e','vProps'),
+                    __.select('main').valueMap().with_(process.withOptions.tokens)
+                );
+
+            logger.debug(`groups.full.dao get: traverser: ${JSON.stringify(traverser.toString())}`);
+            result = await traverser.toList();
+            logger.debug(`groups.full.dao get: result: ${JSON.stringify(result)}`);
         } finally {
             conn.close();
         }
 
-        logger.debug(`groups.full.dao get: query: ${JSON.stringify(result)}`);
-
-        if (result.value===null) {
+        if (result===undefined || result.length===0) {
             logger.debug(`groups.full.dao get: exit: node: undefined`);
             return undefined;
         }
 
-        const value = result.value as process.Traverser;
-        const r = JSON.parse(JSON.stringify(value)) as NodeDto;
-        let node: Node;
-        if (r) {
-            node = this.fullAssembler.assembleNode(r.object);
-            this.fullAssembler.assembleAssociations(node, r);
-        }
+        const group = result.filter(r=> isVertexDto(r))[0] as VertexDto;
+        const node = this.fullAssembler.assembleNode(group);
+
+        const relatedEntities = result.filter(r=> isRelatedEntityDto(r)).map(r=> r as unknown as RelatedEntityDto);
+        relatedEntities.forEach(r=> this.fullAssembler.assembleAssociation(node,r));
 
         logger.debug(`groups.full.dao get: exit: node: ${JSON.stringify(node)}`);
         return node;
-
     }
 
     public async getLabels(groupPath: string): Promise<string[]> {
@@ -160,11 +168,11 @@ export class GroupsDaoFull extends BaseDaoFull {
 
     }
 
-    public async listRelated(groupPath: string, relationship: string, direction:string, template:string, filterRelatedBy:{[key:string]:ModelAttributeValue}, offset:number, count:number) : Promise<Node> {
-        logger.debug(`groups.full.dao listRelated: in: groupPath:${groupPath}, relationship:${relationship}, direction:${direction}, template:${template}, filterRelatedBy:${JSON.stringify(filterRelatedBy)}, offset:${offset}, count:${count}`);
+    public async listRelated(groupPath: string, relationship: string, direction:string, template:string, filterRelatedBy:{[key:string]:ModelAttributeValue}, offset:number, count:number, sort:SortKeys) : Promise<Node> {
+        logger.debug(`groups.full.dao listRelated: in: groupPath:${groupPath}, relationship:${relationship}, direction:${direction}, template:${template}, filterRelatedBy:${JSON.stringify(filterRelatedBy)}, offset:${offset}, count:${count}, sort:${sort}`);
 
         const id = `group___${groupPath}`;
-        return await this.commonDao.listRelated(id, relationship, direction, template, filterRelatedBy, offset, count);
+        return await this.commonDao.listRelated(id, relationship, direction, template, filterRelatedBy, offset, count, sort);
 
     }
 
@@ -197,7 +205,7 @@ export class GroupsDaoFull extends BaseDaoFull {
 
         const nodes: Node[] = [];
         for(const result of results) {
-            nodes.push(this.fullAssembler.assembleNode(result));
+            nodes.push(this.fullAssembler.assembleNode(result as VertexDto));
         }
 
         logger.debug(`groups.full.dao listParentGroups: exit: node: ${JSON.stringify(nodes)}`);

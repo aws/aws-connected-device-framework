@@ -8,9 +8,10 @@ import { injectable, inject } from 'inversify';
 import {logger} from '../utils/logger';
 import {TYPES} from '../di/types';
 import {Node} from './node';
-import { FullAssembler, NodeDto } from './full.assembler';
-import { ModelAttributeValue } from './model';
+import { FullAssembler } from './full.assembler';
+import { ModelAttributeValue, SortKeys } from './model';
 import { BaseDaoFull } from './base.full.dao';
+import { isRelatedEntityDto, isVertexDto, RelatedEntityDto, VertexDto } from './full.model';
 
 const __ = process.statics;
 
@@ -25,82 +26,78 @@ export class CommonDaoFull extends BaseDaoFull {
         super(neptuneUrl, graphSourceFactory);
     }
 
-    public async listRelated(entityDbId: string, relationship: string, direction:string, template:string, filterRelatedBy:{ [key: string] : ModelAttributeValue}, offset:number, count:number) : Promise<Node> {
-        logger.debug(`common.full.dao listRelated: in: entityDbId:${entityDbId}, relationship:${relationship}, direction:${direction}, template:${template}, filterRelatedBy:${JSON.stringify(filterRelatedBy)}, offset:${offset}, count:${count}`);
+    public async listRelated(entityDbId: string, relationship: string, direction:string, template:string, filterRelatedBy:{ [key: string] : ModelAttributeValue}, offset:number, count:number, sort:SortKeys) : Promise<Node> {
+        logger.debug(`common.full.dao listRelated: in: entityDbId:${entityDbId}, relationship:${relationship}, direction:${direction}, template:${template}, filterRelatedBy:${JSON.stringify(filterRelatedBy)}, offset:${offset}, count:${count}, ${JSON.stringify(sort)}`);
 
-        // build the queries for returning the info we need to assemble related groups/devices
-        const connectedEdgesIn = __.inE();
-        const connectedEdgesOut = __.outE();
-        const connectedVerticesIn = __.inE().otherV();
-        const connectedVerticesOut = __.outE().otherV();
+        // define the traversers that handle finding associated edges/vertices
+        const relatedIn = __.inE();
+        const relatedOut = __.outE();
 
+        // filter the edges based on the relationship type (if requiested)
         if (relationship==='*') {
             relationship=undefined;
         }
-
         if (relationship) {
-            connectedEdgesIn.hasLabel(relationship);
-            connectedEdgesOut.hasLabel(relationship);
+            [relatedIn, relatedOut].forEach(t=> t.hasLabel(relationship).as('e'));
         }
 
-        const connectedEdgesFilter = __.otherV().hasLabel(template);
+        // navigate to the linked vertex for each relation, filtering the type
+        [relatedIn, relatedOut].forEach(t=> t.as('e').otherV().hasLabel(template).as('v'));
+
+        // apply filtering to the linked vertex (if required)
         if (filterRelatedBy!==undefined) {
             Object.keys(filterRelatedBy).forEach(k=> {
-                connectedVerticesIn.has(k, filterRelatedBy[k]);
-                connectedVerticesOut.has(k, filterRelatedBy[k]);
-                connectedEdgesFilter.has(k, filterRelatedBy[k]);
+                [relatedIn, relatedOut].forEach(t=> t.has(k, filterRelatedBy[k]));
             });
         }
-        connectedEdgesIn.where(connectedEdgesFilter).valueMap().with_(process.withOptions.tokens);
-        connectedEdgesOut.where(connectedEdgesFilter).valueMap().with_(process.withOptions.tokens);
-        connectedVerticesIn.hasLabel(template);
-        connectedVerticesOut.hasLabel(template);
 
-        // apply pagination
+        // return the info we need to understand about each relation
+        [relatedIn, relatedOut].forEach(t=> t.valueMap().with_(process.withOptions.tokens).as('vProps'));
+        relatedIn.constant('in').as('dir');
+        relatedOut.constant('out').as('dir');
+        [relatedIn, relatedOut].forEach(t=> t.select('dir','e','vProps'));
+
+        // build the union traversal that combines the incoming and outgoing relations (depending on what was requested)
+        let relatedUnion : process.GraphTraversal;
+        if (direction==='in') {
+            relatedUnion = relatedIn;
+        } else if (direction==='out') {
+            relatedUnion = relatedOut;
+        } else {
+           relatedUnion = __.union(relatedIn, relatedOut);
+        }
+
+        // apply sorting to the related (if requested)
+        if (sort?.length>0) {
+            relatedUnion.order();
+            sort.forEach(s=> {
+                const order = (s.direction==='ASC') ? process.order.asc : process.order.desc;
+                // sort using an attribute from the connected vertices, with a failsafe incase the attribute is undefined
+                relatedUnion.by(__.coalesce(__.select('v').values(s.field),__.constant('')), order);
+            });
+        }
+
+        // apply pagination to the related (if requested)
         if (offset!==undefined && count!==undefined) {
             // note: workaround for weird typescript issue. even though offset/count are declared as numbers
             // throughout, they are being interpreted as strings within gremlin, therefore need to force to int beforehand
             const offsetAsInt = parseInt(offset.toString(),0);
             const countAsInt = parseInt(count.toString(),0);
-            connectedEdgesIn.range(offsetAsInt, offsetAsInt + countAsInt);
-            connectedEdgesOut.range(offsetAsInt, offsetAsInt + countAsInt);
-            connectedVerticesIn.range(offsetAsInt, offsetAsInt + countAsInt);
-            connectedVerticesOut.range(offsetAsInt, offsetAsInt + countAsInt);
+            relatedUnion.range(offsetAsInt, offsetAsInt + countAsInt);
         }
 
-        // fold the results into an array
-        connectedEdgesIn.fold();
-        connectedEdgesOut.fold();
-        connectedVerticesIn.valueMap().with_(process.withOptions.tokens).fold();
-        connectedVerticesOut.valueMap().with_(process.withOptions.tokens).fold();
-
-        // assemble the main query
+        // build the main part of the query, unioning the related traversers with the main entity we want to return
         let results;
         const conn = super.getConnection();
         try {
-            const traverser = conn.traversal.V(entityDbId);
-
-            if (direction==='in') {
-                traverser.project('object','EsIn','VsIn').
-                by(__.valueMap().with_(process.withOptions.tokens)).
-                by(connectedEdgesIn).
-                by(connectedVerticesIn);
-            } else if (direction==='out') {
-                traverser.project('object','EsOut','VsOut').
-                by(__.valueMap().with_(process.withOptions.tokens)).
-                by(connectedEdgesOut).
-                by(connectedVerticesOut);
-            } else {
-                traverser.project('object','EsIn','EsOut','VsIn','VsOut').
-                by(__.valueMap().with_(process.withOptions.tokens)).
-                by(connectedEdgesIn).
-                by(connectedEdgesOut).
-                by(connectedVerticesIn).
-                by(connectedVerticesOut);
-            }
+            const traverser = conn.traversal.V(entityDbId).as('main')
+                .union(
+                    relatedUnion,
+                    __.select('main').valueMap().with_(process.withOptions.tokens)
+                );
 
             // execute and retrieve the results
-            logger.debug(`common.full.dao listRelated: traverser: ${traverser}`);
+            logger.debug(`common.full.dao listRelated: traverser: ${JSON.stringify(traverser.toString())}`);
             results = await traverser.toList();
             logger.debug(`common.full.dao listRelated: results: ${JSON.stringify(results)}`);
         } finally {
@@ -112,22 +109,16 @@ export class CommonDaoFull extends BaseDaoFull {
             return undefined;
         }
 
-        // there should be only one result as its by entity id, but we still process as an array so we can reuse the existing assemble methods
-        const nodes: Node[] = [];
-        for(const result of results) {
-            const r = JSON.parse(JSON.stringify(result)) as NodeDto;
+        // the result should contain a vertex representing the entity requested as 1 row, then all requested relations as other rows
+        // find the main entity first
+        const mainEntity = results.filter(r=> isVertexDto(r))[0] as VertexDto;
+        const node = this.fullAssembler.assembleNode(mainEntity);
 
-            // assemble the device
-            let node: Node;
-            if (r) {
-                node = this.fullAssembler.assembleNode(r.object);
-                this.fullAssembler.assembleAssociations(node, r);
-            }
-            nodes.push(node);
-        }
+        const relatedEntities = results.filter(r=> isRelatedEntityDto(r)).map(r=> r as unknown as RelatedEntityDto);
+        relatedEntities.forEach(r=> this.fullAssembler.assembleAssociation(node,r));
 
-        logger.debug(`common.full.dao listRelated: exit: node: ${JSON.stringify(nodes[0])}`);
-        return nodes[0];
+        logger.debug(`common.full.dao listRelated: exit: node: ${JSON.stringify(node)}`);
+        return node;
 
     }
 

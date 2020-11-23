@@ -20,7 +20,7 @@ import { DeviceProfileItem } from '../profiles/profiles.models';
 import { DevicesService } from './devices.service';
 import { GroupsAssembler } from '../groups/groups.assembler';
 import { GroupItemList } from '../groups/groups.models';
-import { DirectionStringToArrayMap } from '../data/model';
+import { DirectionStringToArrayMap, SortKeys } from '../data/model';
 import { ClaimAccess } from '../authz/claims';
 import { AuthzServiceFull } from '../authz/authz.full.service';
 
@@ -39,8 +39,8 @@ export class DevicesServiceFull implements DevicesService {
         @inject('defaults.devices.parent.groupPath') public defaultDeviceParentGroup: string,
         @inject('defaults.devices.state') public defaultDeviceState: string) {}
 
-    public async listRelatedDevices(deviceId: string, relationship: string, direction:string, template:string, state:string, offset:number, count:number) : Promise<DeviceItemList> {
-        logger.debug(`device.full.service listRelatedDevices: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, template:${template}, state:${state}, offset:${offset}, count:${count}`);
+    public async listRelatedDevices(deviceId: string, relationship: string, direction:string, template:string, state:string, offset:number, count:number, sort:SortKeys) : Promise<DeviceItemList> {
+        logger.debug(`device.full.service listRelatedDevices: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, template:${template}, state:${state}, offset:${offset}, count:${count}, sort:${JSON.stringify(sort)}`);
 
         ow(deviceId, ow.string.nonEmpty);
         ow(relationship, ow.string.nonEmpty);
@@ -76,15 +76,15 @@ export class DevicesServiceFull implements DevicesService {
         const offsetAsInt = (offset===undefined) ? undefined : parseInt(offset.toString(),0);
         const countAsInt =  (count===undefined) ? undefined : parseInt(count.toString(),0);
 
-        const result  = await this.devicesDao.listRelated(deviceId, relationship, direction, template, {state}, offsetAsInt, countAsInt);
+        const result  = await this.devicesDao.listRelated(deviceId, relationship, direction, template, {state}, offsetAsInt, countAsInt, sort);
 
         const model = this.devicesAssembler.toRelatedDeviceModelsList(result, offsetAsInt, countAsInt);
         logger.debug(`devices.full.service listRelatedDevices: exit: model: ${JSON.stringify(model)}`);
         return model;
     }
 
-    public async listRelatedGroups(deviceId: string, relationship: string, direction:string, template:string, offset:number, count:number) : Promise<GroupItemList> {
-        logger.debug(`device.full.service listRelatedGroups: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, template:${template}, offset:${offset}, count:${count}`);
+    public async listRelatedGroups(deviceId: string, relationship: string, direction:string, template:string, offset:number, count:number, sort:SortKeys) : Promise<GroupItemList> {
+        logger.debug(`device.full.service listRelatedGroups: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, template:${template}, offset:${offset}, count:${count}, sort:${JSON.stringify(sort)}`);
 
         ow(deviceId, ow.string.nonEmpty);
         ow(relationship, ow.string.nonEmpty);
@@ -112,7 +112,7 @@ export class DevicesServiceFull implements DevicesService {
 
         await this.authServiceFull.authorizationCheck([deviceId], [], ClaimAccess.R);
 
-        const result  = await this.devicesDao.listRelated(deviceId, relationship, direction, template, {}, offsetAsInt, countAsInt);
+        const result  = await this.devicesDao.listRelated(deviceId, relationship, direction, template, {}, offsetAsInt, countAsInt, sort);
 
         const model = this.groupsAssembler.toRelatedGroupItemList(result, offsetAsInt, countAsInt);
         logger.debug(`devices.full.service listRelatedGroups: exit: model: ${JSON.stringify(model)}`);
@@ -148,7 +148,7 @@ export class DevicesServiceFull implements DevicesService {
     }
 
     public async getBulk(deviceIds:string[], expandComponents:boolean, attributes:string[], includeGroups:boolean) : Promise<DeviceItemList> {
-        logger.debug(`device.full.service getBulk: in: deviceIds:${deviceIds}, expandComponents:${expandComponents}, attributes:${attributes}, includeGroups:${includeGroups}`);
+        logger.debug(`device.full.service getBulk: in: deviceIds:${deviceIds}, expandComponents:${expandComponents}, attributes:${attributes}, includeGroups:${includeGroups}}`);
 
         ow(deviceIds, ow.array.nonEmpty);
 

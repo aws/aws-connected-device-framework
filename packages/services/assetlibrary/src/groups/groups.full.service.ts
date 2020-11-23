@@ -18,7 +18,7 @@ import { ProfilesService } from '../profiles/profiles.service';
 import { GroupsService } from './groups.service';
 import { DevicesAssembler } from '../devices/devices.assembler';
 import { DeviceItemList } from '../devices/devices.models';
-import { StringToArrayMap, DirectionStringToArrayMap } from '../data/model';
+import { StringToArrayMap, DirectionStringToArrayMap, SortKeys } from '../data/model';
 import { AuthzServiceFull } from '../authz/authz.full.service';
 import { ClaimAccess } from '../authz/claims';
 
@@ -279,8 +279,8 @@ export class GroupsServiceFull implements GroupsService {
 
     }
 
-    public async getMembers(groupPath:string, category:TypeCategory, type:string, state:string, offset?:number, count?:number): Promise<GroupMemberItemList> {
-        logger.debug(`groups.full.service getMembers: in: groupPath:${groupPath}, category:${category}, type:${type}, state:${state}, offset:${offset}, count:${count}`);
+    public async getMembers(groupPath:string, category:TypeCategory, type:string, state:string, offset?:number, count?:number, sort?:SortKeys): Promise<GroupMemberItemList> {
+        logger.debug(`groups.full.service getMembers: in: groupPath:${groupPath}, category:${category}, type:${type}, state:${state}, offset:${offset}, count:${count}, sort:${JSON.stringify(sort)}`);
 
         ow(groupPath, ow.string.nonEmpty);
         ow(category, ow.string.nonEmpty);
@@ -309,7 +309,7 @@ export class GroupsServiceFull implements GroupsService {
             };
         }
 
-        const result  = await this.groupsDao.listRelated(groupPath, '*', 'in', type, filterRelatedBy, offsetAsInt, countAsInt);
+        const result  = await this.groupsDao.listRelated(groupPath, '*', 'in', type, filterRelatedBy, offsetAsInt, countAsInt, sort);
 
         let model:GroupMemberItemList;
         if (category===TypeCategory.Group) {
@@ -443,8 +443,8 @@ export class GroupsServiceFull implements GroupsService {
         logger.debug(`groups.full.service detachFromGroup: exit:`);
     }
 
-    public async listRelatedGroups(groupPath: string, relationship: string, direction:string, template:string, offset:number, count:number) : Promise<GroupItemList> {
-        logger.debug(`groups.full.service listRelatedGroups: in: groupPath:${groupPath}, relationship:${relationship}, direction:${direction}, template:${template}, offset:${offset}, count:${count}`);
+    public async listRelatedGroups(groupPath: string, relationship: string, direction:string, template:string, offset:number, count:number, sort:SortKeys) : Promise<GroupItemList> {
+        logger.debug(`groups.full.service listRelatedGroups: in: groupPath:${groupPath}, relationship:${relationship}, direction:${direction}, template:${template}, offset:${offset}, count:${count}, sort:${JSON.stringify(sort)}`);
 
         ow(groupPath, ow.string.nonEmpty);
         ow(relationship, ow.string.nonEmpty);
@@ -472,15 +472,15 @@ export class GroupsServiceFull implements GroupsService {
 
         await this.authServiceFull.authorizationCheck([], [groupPath], ClaimAccess.R);
 
-        const result  = await this.groupsDao.listRelated(groupPath, relationship, direction, template, undefined, offsetAsInt, countAsInt);
+        const result  = await this.groupsDao.listRelated(groupPath, relationship, direction, template, undefined, offsetAsInt, countAsInt, sort);
 
         const model = this.groupsAssembler.toRelatedGroupItemList(result, offsetAsInt, countAsInt);
         logger.debug(`groups.full.service listRelatedGroups: exit: model: ${JSON.stringify(model)}`);
         return model;
     }
 
-    public async listRelatedDevices(groupPath: string, relationship: string, direction:string, template:string, state:string, offset:number, count:number) : Promise<DeviceItemList> {
-        logger.debug(`groups.full.service listRelatedDevices: in: groupPath:${groupPath}, relationship:${relationship}, direction:${direction}, template:${template}, state:${state}, offset:${offset}, count:${count}`);
+    public async listRelatedDevices(groupPath: string, relationship: string, direction:string, template:string, state:string, offset:number, count:number, sort:SortKeys) : Promise<DeviceItemList> {
+        logger.debug(`groups.full.service listRelatedDevices: in: groupPath:${groupPath}, relationship:${relationship}, direction:${direction}, template:${template}, state:${state}, offset:${offset}, count:${count}, sort:${JSON.stringify(sort)}`);
 
         ow(groupPath, ow.string.nonEmpty);
         ow(relationship, ow.string.nonEmpty);
@@ -514,7 +514,7 @@ export class GroupsServiceFull implements GroupsService {
 
         await this.authServiceFull.authorizationCheck([], [groupPath], ClaimAccess.R);
 
-        const result  = await this.groupsDao.listRelated(groupPath, relationship, direction, template, {state}, offsetAsInt, countAsInt);
+        const result  = await this.groupsDao.listRelated(groupPath, relationship, direction, template, {state}, offsetAsInt, countAsInt, sort);
 
         const model = this.devicesAssembler.toRelatedDeviceModelsList(result, offsetAsInt, countAsInt);
         logger.debug(`groups.full.service listRelatedDevices: exit: model: ${JSON.stringify(model)}`);

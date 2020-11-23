@@ -9,7 +9,7 @@ import { DeviceItem } from '../devices/devices.models';
 
 export interface SearchService {
 
-    search(model: SearchRequestModel, offset?:number|string, count?:number): Promise<[(GroupItem|DeviceItem)[],number|string,number]> ;
+    search(model: SearchRequestModel): Promise<[(GroupItem|DeviceItem)[],number|string,number]> ;
 
     facet(request: SearchRequestModel): Promise<FacetResults>;
 

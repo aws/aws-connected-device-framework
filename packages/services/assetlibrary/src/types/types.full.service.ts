@@ -18,7 +18,7 @@ import * as NodeCache from 'node-cache';
 import ow from 'ow';
 import { TypesService } from './types.service';
 import config from 'config';
-import { DirectionStringToArrayMap } from '../data/model';
+import { DirectionStringToArrayMap, SortKeys } from '../data/model';
 
 @injectable()
 export class TypesServiceFull implements TypesService {
@@ -191,8 +191,8 @@ export class TypesServiceFull implements TypesService {
         return result;
     }
 
-    public async list(category:TypeCategory, status:TypeDefinitionStatus, offset?:number, count?:number): Promise<TypeModel[]> {
-        logger.debug(`types.full.service list: in: category:${category}, status:${status}, offset:${offset}, count:${count}`);
+    public async list(category:TypeCategory, status:TypeDefinitionStatus, offset?:number, count?:number, sort?:SortKeys): Promise<TypeModel[]> {
+        logger.debug(`types.full.service list: in: category:${category}, status:${status}, offset:${offset}, count:${count}, sort:${JSON.stringify(sort)}`);
 
         ow(category, ow.string.nonEmpty);
 
@@ -200,7 +200,7 @@ export class TypesServiceFull implements TypesService {
             status=TypeDefinitionStatus.published;
         }
 
-        const results  = await this.typesDao.list(category, status, offset, count);
+        const results  = await this.typesDao.list(category, status, offset, count, sort);
         if (results!==undefined && results.length>=0) {
             for(const r of results) {
                 r.schema.definition.relations = r.schema.relations;

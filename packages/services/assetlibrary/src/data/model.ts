@@ -14,6 +14,30 @@ export type DirectionStringToArrayMap = {
 	out?: StringToArrayMap
 };
 
+export type SortDirection = 'ASC' | 'DESC';
+export type SortKey = {
+    field:string,
+    direction: SortDirection;
+};
+export type SortKeys = SortKey[];
+export function assembleSortKeys(sort?:string) : SortKeys {
+    if (sort===undefined) {
+        return undefined;
+    }
+    const sk:SortKeys = [];
+    const items = sort.split(',');
+    items.forEach(i=> {
+        const j = i.split(':');
+        const field = j[0];
+        let direction:SortDirection = (j.length===2) ? (j[1].toUpperCase() as SortDirection) : undefined;
+        if (direction!=='ASC' && direction!=='DESC') {
+            direction='ASC';
+        }
+        sk.push({field, direction});
+    });
+    return sk;
+}
+
 export function applyMixins(derivedCtor: any, baseCtors: any[]) {
     baseCtors.forEach(baseCtor => {
         Object.getOwnPropertyNames(baseCtor.prototype).forEach(name => {

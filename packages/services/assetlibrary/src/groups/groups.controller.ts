@@ -15,6 +15,7 @@ import {handleError} from '../utils/errors';
 import { DeviceResourceList } from '../devices/devices.models';
 import { GroupsAssembler } from './groups.assembler';
 import { DevicesAssembler } from '../devices/devices.assembler';
+import { assembleSortKeys } from '../data/model';
 
 @controller('/groups')
 export class GroupsController implements interfaces.Controller {
@@ -71,15 +72,16 @@ export class GroupsController implements interfaces.Controller {
     @httpGet('/:groupPath/members/:category')
     public async listGroupMembers(@requestParam('groupPath') groupPath:string, @requestParam('category') category:string,
         @queryParam('template') template:string, @queryParam('state') state:string, @queryParam('offset') offset:number,
-        @queryParam('count') count:number, @request() req:Request, @response() res:Response): Promise<GroupMemberResourceList> {
+        @queryParam('count') count:number, @queryParam('sort') sort:string, @request() req:Request, @response() res:Response): Promise<GroupMemberResourceList> {
 
-        logger.info(`groups.controller listGroupMembers: in: groupPath:${groupPath}, category:${category}, template:${template}, state:${state}, offset:${offset}, count:${count}`);
+        logger.info(`groups.controller listGroupMembers: in: groupPath:${groupPath}, category:${category}, template:${template}, state:${state}, offset:${offset}, count:${count}, sort:${sort}`);
 
         let r: GroupMemberResourceList = {results:[]};
 
         const categoryTemplate = (category.toLowerCase()==='groups') ? TypeCategory.Group : TypeCategory.Device;
         try {
-            const items = await this.groupsService.getMembers(groupPath, categoryTemplate, template, state, offset, count);
+            const sortKeys = assembleSortKeys(sort);
+            const items = await this.groupsService.getMembers(groupPath, categoryTemplate, template, state, offset, count, sortKeys);
             if (items===undefined) {
                 res.status(404);
             }
@@ -153,15 +155,16 @@ export class GroupsController implements interfaces.Controller {
     @httpGet('/:groupPath/:relationship/groups')
     public async listGroupRelatedGroups(@requestParam('groupPath') groupPath: string, @requestParam('relationship') relationship: string,
         @queryParam('template') template:string, @queryParam('direction') direction:string,
-        @queryParam('offset') offset:number, @queryParam('count') count:number,
+        @queryParam('offset') offset:number, @queryParam('count') count:number, @queryParam('sort') sort:string,
         @request() req:Request, @response() res: Response) : Promise<GroupResourceList> {
 
-            logger.info(`groups.controller listGroupRelatedGroups: in: groupPath:${groupPath}, relationship:${relationship}, direction:${direction}, template:${template}, offset:${offset}, count:${count}`);
+            logger.info(`groups.controller listGroupRelatedGroups: in: groupPath:${groupPath}, relationship:${relationship}, direction:${direction}, template:${template}, offset:${offset}, count:${count}, sort:${sort}`);
 
             let r: GroupResourceList = {results:[]};
 
             try {
-                const items = await this.groupsService.listRelatedGroups(groupPath, relationship, direction, template, offset, count);
+                const sortKeys = assembleSortKeys(sort);
+                const items = await this.groupsService.listRelatedGroups(groupPath, relationship, direction, template, offset, count, sortKeys);
                 r = this.groupsAssembler.toGroupResourceList(items, req['version']);
 
                 if (r===undefined) {
@@ -177,15 +180,16 @@ export class GroupsController implements interfaces.Controller {
     @httpGet('/:groupPath/:relationship/devices')
     public async listGroupRelatedDevices(@requestParam('groupPath') groupPath: string, @requestParam('relationship') relationship: string,
         @queryParam('template') template:string, @queryParam('direction') direction:string, @queryParam('state') state:string,
-        @queryParam('offset') offset:number, @queryParam('count') count:number,
+        @queryParam('offset') offset:number, @queryParam('count') count:number, @queryParam('sort') sort:string,
         @request() req:Request, @response() res: Response) : Promise<DeviceResourceList> {
 
-            logger.info(`groups.controller listGroupRelatedDevices: in: groupPath:${groupPath}, relationship:${relationship}, direction:${direction}, template:${template}, state:${state}, offset:${offset}, count:${count}`);
+            logger.info(`groups.controller listGroupRelatedDevices: in: groupPath:${groupPath}, relationship:${relationship}, direction:${direction}, template:${template}, state:${state}, offset:${offset}, count:${count}, sort:${sort}`);
 
             let r: DeviceResourceList = {results:[]};
 
             try {
-                const items = await this.groupsService.listRelatedDevices(groupPath, relationship, direction, template, state, offset, count);
+                const sortKeys = assembleSortKeys(sort);
+                const items = await this.groupsService.listRelatedDevices(groupPath, relationship, direction, template, state, offset, count, sortKeys);
                 r = this.devicesAssembler.toDeviceResourceList(items, req['version']);
                 if (r===undefined) {
                     res.status(404);

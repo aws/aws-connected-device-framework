@@ -13,6 +13,7 @@ import { TypesService } from './types.service';
 import { TYPES } from '../di/types';
 import { TypesDaoLite } from './types.lite.dao';
 import { EventEmitter, Type, Event } from '../events/eventEmitter.service';
+import { SortKeys } from '../data/model';
 
 @injectable()
 export class TypesServiceLite implements TypesService {
@@ -42,8 +43,8 @@ export class TypesServiceLite implements TypesService {
         return r;
     }
 
-    public async list(category:TypeCategory, status:TypeDefinitionStatus, offset?:number, count?:number): Promise<TypeModel[]> {
-        logger.debug(`types.lite.service list: in: category:${category}, status:${status}, offset:${offset}, count:${count}`);
+    public async list(category:TypeCategory, status:TypeDefinitionStatus, offset?:number, count?:number, sort?:SortKeys): Promise<TypeModel[]> {
+        logger.debug(`types.lite.service list: in: category:${category}, status:${status}, offset:${offset}, count:${count}, sort:${JSON.stringify(sort)}`);
 
         // validation
         ow(category, ow.string.nonEmpty.includes(TypeCategory.Device));

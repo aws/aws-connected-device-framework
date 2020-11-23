@@ -8,10 +8,11 @@ import { injectable, inject } from 'inversify';
 import {logger} from '../utils/logger';
 import {TYPES} from '../di/types';
 import {Node} from '../data/node';
-import { FullAssembler, NodeDto } from '../data/full.assembler';
-import { ModelAttributeValue, DirectionStringToArrayMap } from '../data/model';
+import { FullAssembler } from '../data/full.assembler';
+import { ModelAttributeValue, DirectionStringToArrayMap, SortKeys } from '../data/model';
 import { BaseDaoFull } from '../data/base.full.dao';
 import { CommonDaoFull } from '../data/common.full.dao';
+import { isRelatedEntityDto, isVertexDto, RelatedEntityDto, VertexDto } from '../data/full.model';
 
 const __ = process.statics;
 
@@ -27,11 +28,11 @@ export class DevicesDaoFull extends BaseDaoFull {
         super(neptuneUrl, graphSourceFactory);
     }
 
-    public async listRelated(deviceId: string, relationship: string, direction:string, template:string, filterRelatedBy:{ [key: string] : ModelAttributeValue}, offset:number, count:number) : Promise<Node> {
-        logger.debug(`devices.full.dao listRelated: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, template:${template}, filterRelatedBy:${JSON.stringify(filterRelatedBy)}, offset:${offset}, count:${count}`);
+    public async listRelated(deviceId: string, relationship: string, direction:string, template:string, filterRelatedBy:{ [key: string] : ModelAttributeValue}, offset:number, count:number, sort:SortKeys) : Promise<Node> {
+        logger.debug(`devices.full.dao listRelated: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, template:${template}, filterRelatedBy:${JSON.stringify(filterRelatedBy)}, offset:${offset}, count:${count}, sort:${sort}`);
 
         const id = `device___${deviceId}`;
-        return await this.commonDao.listRelated(id, relationship, direction, template, filterRelatedBy, offset, count);
+        return await this.commonDao.listRelated(id, relationship, direction, template, filterRelatedBy, offset, count, sort);
 
     }
 
@@ -39,51 +40,51 @@ export class DevicesDaoFull extends BaseDaoFull {
 
         logger.debug(`device.full.dao get: in: deviceIds:${deviceIds}, expandComponents:${expandComponents}, attributes:${attributes}, includeGroups:${includeGroups}`);
 
-        const ids:string[] = deviceIds.map(d=> `device___${d}`);
+        const dbIds:string[] = deviceIds.map(d=> `device___${d}`);
 
-        // build the queries for returning the info we need to assemble groups and/or component relationships
-        const connectedEdgesIn = __.inE();
-        const connectedEdgesOut = __.outE();
-        const connectedVerticesIn = __.inE().otherV();
-        const connectedVerticesOut = __.outE().otherV();
+        // define the traversers that handle finding associated groups/components
+        const relatedIn = __.inE();
+        const relatedOut = __.outE();
 
-        if (expandComponents===true && includeGroups===false) {
-            connectedEdgesIn.hasLabel('component_of');
-            connectedEdgesOut.hasLabel('component_of');
-            connectedVerticesIn.hasLabel('component_of');
-            connectedVerticesOut.hasLabel('component_of');
-        } else if (expandComponents===false && includeGroups===true) {
-            connectedEdgesIn.not(__.hasLabel('component_of'));
-            connectedEdgesOut.not(__.hasLabel('component_of'));
-            connectedVerticesIn.not(__.hasLabel('component_of'));
-            connectedVerticesOut.not(__.hasLabel('component_of'));
-        }
+        [relatedIn, relatedOut].forEach(t=> {
+            if (expandComponents && !includeGroups) {
+                t.hasLabel('component_of');
+            } else if (!expandComponents && includeGroups) {
+                t.not(__.hasLabel('component_of'));
+            }
+        });
 
-        connectedEdgesIn.valueMap().with_(process.withOptions.tokens).fold();
-        connectedEdgesOut.valueMap().with_(process.withOptions.tokens).fold();
-        connectedVerticesIn.valueMap().with_(process.withOptions.tokens).fold();
-        connectedVerticesOut.valueMap().with_(process.withOptions.tokens).fold();
+        relatedIn.as('e')
+            .outV().as('v')
+            .valueMap().with_(process.withOptions.tokens).as('vProps')
+            .constant('in').as('dir')
+            .select('entityId','dir','e','vProps');
 
-        // build the query for optionally filtering the returned attributes
-        const deviceValueMap = (attributes===undefined) ?
-            __.valueMap().with_(process.withOptions.tokens):
-            __.valueMap('state', 'deviceId', ...attributes).with_(process.withOptions.tokens);
+        relatedOut.as('e')
+            .inV().as('v')
+            .valueMap().with_(process.withOptions.tokens).as('vProps')
+            .constant('out').as('dir')
+            .select('entityId','dir','e','vProps');
 
-        // assemble the main query
-        let results;
+        // build the traverser for returning the devices, optionally filtering the returned attributes
+        const deviceProps = (attributes===undefined) ?
+            __.select('devices').valueMap().with_(process.withOptions.tokens):
+            __.select('devices').valueMap('state', 'deviceId', ...attributes).with_(process.withOptions.tokens);
+
+        // build the main part of the query, unioning the related traversers with the main entity we want to return
+        let results: process.Traverser[];
         const conn = super.getConnection();
         try {
-            const traverser = conn.traversal.V(ids).as('device');
-            traverser.project('object','EsIn','EsOut','VsIn','VsOut').
-                by(deviceValueMap).
-                by(connectedEdgesIn).
-                by(connectedEdgesOut).
-                by(connectedVerticesIn).
-                by(connectedVerticesOut);
+            const traverser = conn.traversal.V(dbIds).as('devices')
+                .values('deviceId').as('entityId')
+                .select('devices').union(
+                    relatedIn, relatedOut, deviceProps
+                );
 
             // execute and retrieve the results
+            logger.debug(`common.full.dao listRelated: traverser: ${JSON.stringify(traverser.toString())}`);
             results = await traverser.toList();
-            logger.debug(`device.full.dao get: query: ${traverser.toString()}`);
+            logger.debug(`common.full.dao listRelated: results: ${JSON.stringify(results)}`);
         } finally {
             conn.close();
         }
@@ -94,18 +95,19 @@ export class DevicesDaoFull extends BaseDaoFull {
         }
         logger.debug(`device.full.dao get: results: ${JSON.stringify(results)}`);
 
+        // the result should contain verticesx representing the entities requested as individual rows, then all requested relations as other rows
+        // find the main entities first
         const nodes: Node[] = [];
-        for(const result of results) {
-            const r = JSON.parse(JSON.stringify(result)) as NodeDto;
-
-            // assemble the device
-            let node: Node;
-            if (r) {
-                node = this.fullAssembler.assembleNode(r.object);
-                this.fullAssembler.assembleAssociations(node, r);
-            }
+        const devices = results.filter(r=> isVertexDto(r)) as VertexDto[];
+        devices.forEach(d=> {
+            // construct the node
+            const node = this.fullAssembler.assembleNode(d);
+            // find any reltions for the device
+            const relatedEntities = results.filter(r=> isRelatedEntityDto(r) && r.entityId===d['deviceId'][0])
+                .map(r=> r as unknown as RelatedEntityDto);
+            relatedEntities.forEach(r=> this.fullAssembler.assembleAssociation(node,r));
             nodes.push(node);
-        }
+        });
 
         logger.debug(`device.full.dao get: exit: nodes: ${JSON.stringify(nodes)}`);
         return nodes;

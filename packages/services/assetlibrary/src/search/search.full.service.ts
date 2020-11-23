@@ -26,8 +26,8 @@ export class SearchServiceFull implements SearchService {
         @inject(TYPES.DevicesAssembler) private devicesAssembler: DevicesAssembler,
         @inject('authorization.enabled') private isAuthzEnabled: boolean) {}
 
-    public async search(model: SearchRequestModel, offset?:number, count?:number): Promise<[(GroupItem|DeviceItem)[],number,number]> {
-        logger.debug(`search.full.service search: in: model: ${JSON.stringify(model)}, offset:${offset}, count:${count}`);
+    public async search(model: SearchRequestModel): Promise<[(GroupItem|DeviceItem)[],number,number]> {
+        logger.debug(`search.full.service search: in: model: ${JSON.stringify(model)}`);
 
         // TODO: validation
 
@@ -35,22 +35,22 @@ export class SearchServiceFull implements SearchService {
         this.setIdsToLowercase(model);
 
         // default pagination
-        if (count===undefined) {
-            count=this.DEFAULT_SEARCH_COUNT;
+        if (model.count===undefined) {
+            model.count=this.DEFAULT_SEARCH_COUNT;
         }
-        if (offset===undefined) {
-            offset=0;
+        if (model.offset===undefined) {
+            model.offset=0;
         }
 
         const authorizedPaths = this.getAuthorizedPaths();
 
         const models: (GroupItem|DeviceItem)[] = [];
-        const results = await this.searchDao.search(model, authorizedPaths, offset, count);
+        const results = await this.searchDao.search(model, authorizedPaths);
 
         if (results===undefined || results.length===0) {
-            count=0;
-            logger.debug(`search.full.service search: exit: models: undefined, offset:${offset}, count:${count}`);
-            return [undefined, offset, count];
+            model.count=0;
+            logger.debug(`search.full.service search: exit: models: undefined, offset:${model.offset}, count:${model.count}`);
+            return [undefined, model.offset, model.count];
         }
 
         for(const r of results) {
@@ -61,12 +61,12 @@ export class SearchServiceFull implements SearchService {
             }
         }
 
-        if (models.length<count) {
-            count=models.length;
+        if (models.length<model.count) {
+            model.count=models.length;
         }
 
-        logger.debug(`search.full.service search: exit: models: ${JSON.stringify(models)}, offset:${offset}, count:${count}`);
-        return [models,offset,count];
+        logger.debug(`search.full.service search: exit: models: ${JSON.stringify(models)}, offset:${model.offset}, count:${model.count}`);
+        return [models,model.offset,model.count];
 
     }
 

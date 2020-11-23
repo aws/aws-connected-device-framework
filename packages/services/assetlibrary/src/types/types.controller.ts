@@ -12,6 +12,7 @@ import {logger} from '../utils/logger';
 import {TypeDefinitionModel,TypeResource, TypeResourceList, TypeDefinitionStatus} from '../types/types.models';
 import {handleError} from '../utils/errors';
 import { TypeCategory } from './constants';
+import { assembleSortKeys } from '../data/model';
 
 @controller('/templates')
 export class TypesController implements interfaces.Controller {
@@ -110,10 +111,10 @@ export class TypesController implements interfaces.Controller {
 
     @httpGet('/:category')
     public async listTemplates(@requestParam('category') category: TypeCategory, @queryParam('status') status: string,
-        @queryParam('offset') offset:number, @queryParam('count') count:number,
+    @queryParam('offset') offset:number, @queryParam('count') count:number, @queryParam('sort') sort:string,
         @response() res: Response): Promise<TypeResourceList> {
 
-        logger.info(`types.controller: listTemplates: in: category:${category}, status:${status}, offset:${offset}, count:${count}`);
+        logger.info(`types.controller: listTemplates: in: category:${category}, status:${status}, offset:${offset}, count:${count}, sort:${sort}`);
 
         const r: TypeResourceList= {results:[]};
         if (offset && count) {
@@ -123,7 +124,8 @@ export class TypesController implements interfaces.Controller {
             };
         }
         try {
-            const results = await this.typesService.list(category, TypeDefinitionStatus[status], offset, count);
+            const sortKeys = assembleSortKeys(sort);
+            const results = await this.typesService.list(category, TypeDefinitionStatus[status], offset, count, sortKeys);
 
             if (results===undefined) {
                 res.status(404).end();

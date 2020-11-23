@@ -10,7 +10,7 @@ import { TYPES } from '../di/types';
 import {TypeModel, TypeVersionModel, TypeRelationsModel, TypeDefinitionStatus } from './types.models';
 import * as jsonpatch from 'fast-json-patch';
 import { TypeCategory } from './constants';
-import { DirectionStringToArrayMap } from '../data/model';
+import { DirectionStringToArrayMap, SortKeys } from '../data/model';
 import { BaseDaoFull } from '../data/base.full.dao';
 
 const __ = process.statics;
@@ -78,7 +78,7 @@ export class TypesDaoFull extends BaseDaoFull {
 
     }
 
-    public async list(category:TypeCategory, status:TypeDefinitionStatus, offset:number, count:number): Promise<TypeModel[]> {
+    public async list(category:TypeCategory, status:TypeDefinitionStatus, offset:number, count:number, sort?:SortKeys): Promise<TypeModel[]> {
         logger.debug(`types.full.dao list: in: category:${category}, status:${status}, offset:${offset}, count:${count}`);
 
         const superId = `type___${category}`;
@@ -98,8 +98,19 @@ export class TypesDaoFull extends BaseDaoFull {
         const conn = super.getConnection();
         try {
             const traverser = conn.traversal.V(superId).
-                inE('super_type').outV().as('a').
-                outE('current_definition').has('status',status).inV().as('def').
+                inE('super_type').outV().as('a');
+
+            // apply sorting
+            if (sort?.length>0) {
+                traverser.order();
+                sort.forEach(s=> {
+                    const order = (s.direction==='ASC') ? process.order.asc : process.order.desc;
+                    traverser.by(__.coalesce(__.values(s.field),__.constant('')), order);
+                });
+                traverser.as('a');
+            }
+
+            traverser.outE('current_definition').has('status',status).inV().as('def').
                 project('type','definition','relations').
                     by(__.select('a').valueMap().with_(process.withOptions.tokens)).
                     by(__.select('def').valueMap().with_(process.withOptions.tokens).fold()).
@@ -676,6 +687,7 @@ export class TypesDaoFull extends BaseDaoFull {
             traverser.by(__.select('rels').unfold().valueMap().with_(process.withOptions.tokens).fold());
 
             // execute the query
+            logger.debug(`types.full.dao validateRelationshipsByPath: traverser: ${JSON.stringify(traverser.toString())}`);
             results = await traverser.next();
         } finally {
             conn.close();
@@ -732,8 +744,8 @@ export class TypesDaoFull extends BaseDaoFull {
             const rel_props = rels_props.filter(rp=> rp.id===r.id)[0];
             allowed_rels.push({
                name:rel_props.name,
-               outType:this.extractNameFromId(r.outV),
-               inType:this.extractNameFromId(r.inV)
+               outType:this.extractNameFromId(r.outV.id),
+               inType:this.extractNameFromId(r.inV.id)
             });
         }
 

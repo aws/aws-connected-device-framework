@@ -5,6 +5,7 @@
 #-------------------------------------------------------------------------------*/
 import {GroupBaseResource} from '../groups/groups.models';
 import { DeviceBaseResource} from '../devices/devices.models';
+import { SortKeys } from '../data/model';
 
 export enum SearchRequestFilterDirection {
 	in = 'in',
@@ -45,6 +46,10 @@ export class SearchRequestModel {
 	facetField?: SearchRequestFacet;
 
 	summarize: boolean;
+
+	offset?:number;
+	count?:number;
+	sort?:SortKeys;
 
 }
 

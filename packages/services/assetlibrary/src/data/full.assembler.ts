@@ -8,11 +8,12 @@ import {logger} from '../utils/logger';
 import {Node, NodeAttributeValue} from './node';
 import { ModelAttributeValue, safeExtractLabels } from './model';
 import { TypeCategory } from '../types/constants';
+import { RelatedEntityDto, VertexDto } from './full.model';
 
 @injectable()
 export class FullAssembler {
 
-    public assembleNode(entity:{ [key:string]: NodeAttributeValue}):Node {
+    public assembleNode(entity:VertexDto):Node {
         logger.debug(`full.assembler assembleNode: in: entity: ${JSON.stringify(entity)}`);
 
         const labels = safeExtractLabels(entity['label']);
@@ -31,53 +32,20 @@ export class FullAssembler {
         return node;
     }
 
-    public assembleAssociations(node:Node, r:NodeDto) {
-        logger.debug(`full.assembler assembleAssociations: in: r:${JSON.stringify(r)}`);
+    public assembleAssociation(node:Node, r:RelatedEntityDto) {
+        logger.debug(`full.assembler assembleAssociation: in: r:${JSON.stringify(r)}`);
 
-        const rels:{
-            e: { [key:string]: NodeAttributeValue},
-            otherV: { [key:string]: NodeAttributeValue},
-            direction: string
-        }[] = [];
-
-        // assemble all associated objects
-        if (r.EsIn!==undefined) {
-            for (let i=0; i<r.EsIn.length; i++) {
-                const e = r.EsIn[i];
-                const otherV = r.VsIn[i];
-                const direction = 'in';
-                rels.push({e, otherV, direction});
-            }
+        const l = safeExtractLabels(r.vProps.label);
+        const other: Node = this.assembleNode(r.vProps);
+        if (l.includes(TypeCategory.Group)) {
+            other.category = TypeCategory.Group;
+        } else if (l.includes(TypeCategory.Component)) {
+            other.category = TypeCategory.Component;
+        } else if (l.includes(TypeCategory.Device)) {
+            other.category = TypeCategory.Device;
         }
-
-        if (r.EsOut!==undefined) {
-            for (let i=0; i<r.EsOut.length; i++) {
-                const e = r.EsOut[i];
-                const otherV = r.VsOut[i];
-                const direction = 'out';
-                rels.push({e, otherV, direction});
-            }
-        }
-
-        for(const rel of rels) {
-            if (rel.e && rel.otherV) {
-                const l = safeExtractLabels(rel.otherV['label']);
-                const other: Node = this.assembleNode(rel.otherV);
-                if (l.includes(TypeCategory.Group)) {
-                    other.category = TypeCategory.Group;
-                } else if (l.includes(TypeCategory.Component)) {
-                    other.category = TypeCategory.Component;
-                }
-                if (l.includes(TypeCategory.Device)) {
-                    other.category = TypeCategory.Device;
-                }
-                node.addLink(rel.direction, <string>rel.e['label'], other);
-            } else {
-                logger.warn(`full.assembler assembleAssociations: either edge or vertex is missing: e::${JSON.stringify(rel.e)}, otherV:${JSON.stringify(rel.otherV)}`);
-            }
-        }
-
-        logger.debug(`full.assembler assembleAssociations: exit: ${JSON.stringify(node)}`);
+        node.addLink(r.dir, r.e.label, other);
+        logger.debug(`full.assembler assembleAssociation: exit: ${JSON.stringify(node)}`);
     }
 
     public extractPropertyValue(v: NodeAttributeValue): ModelAttributeValue {

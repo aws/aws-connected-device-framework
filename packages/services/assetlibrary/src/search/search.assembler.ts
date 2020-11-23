@@ -10,6 +10,7 @@ import { GroupItem, determineIfGroupItem, GroupBaseResource } from '../groups/gr
 import { TYPES } from '../di/types';
 import { DevicesAssembler } from '../devices/devices.assembler';
 import { GroupsAssembler } from '../groups/groups.assembler';
+import { assembleSortKeys } from '../data/model';
 
 @injectable()
 export class SearchAssembler {
@@ -31,7 +32,10 @@ export class SearchAssembler {
         startsWiths:string|string[],
         exists:string|string[],
         nexists:string|string[],
-        facetField:string
+        facetField:string,
+        offset?:number,
+        count?:number,
+        sort?:string
     ): SearchRequestModel {
 
         const req = new SearchRequestModel();
@@ -72,6 +76,10 @@ export class SearchAssembler {
                 };
             }
         }
+
+        req.offset=offset;
+        req.count=count;
+        req.sort = assembleSortKeys(sort);
 
         return req;
     }

@@ -5,6 +5,7 @@
 #-------------------------------------------------------------------------------*/
 import { DeviceItem, BulkDevicesResult, DeviceItemList} from './devices.models';
 import { GroupItemList } from '../groups/groups.models';
+import { SortKeys } from '../data/model';
 
 export interface DevicesService {
 
@@ -36,8 +37,8 @@ export interface DevicesService {
 
     createComponent(parentDeviceId:string, model:DeviceItem) : Promise<string> ;
 
-    listRelatedDevices(deviceId: string, relationship: string, direction:string, template:string, state:string, offset:number, count:number) : Promise<DeviceItemList>;
+    listRelatedDevices(deviceId: string, relationship: string, direction:string, template:string, state:string, offset:number, count:number, sort:SortKeys) : Promise<DeviceItemList>;
 
-    listRelatedGroups(deviceId: string, relationship: string, direction:string, template:string, offset:number, count:number) : Promise<GroupItemList>;
+    listRelatedGroups(deviceId: string, relationship: string, direction:string, template:string, offset:number, count:number, sort:SortKeys) : Promise<GroupItemList>;
 
 }

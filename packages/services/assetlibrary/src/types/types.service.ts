@@ -6,7 +6,7 @@
 import { TypeModel, TypeDefinitionModel, TypeDefinitionStatus} from './types.models';
 import { SchemaValidationResult } from '../utils/schemaValidator.service';
 import {TypeCategory, Operation} from './constants';
-import { DirectionStringToArrayMap } from '../data/model';
+import { DirectionStringToArrayMap, SortKeys } from '../data/model';
 
 export interface TypesService {
 
@@ -16,7 +16,7 @@ export interface TypesService {
 
     get(templateId: string, category: TypeCategory, status: TypeDefinitionStatus): Promise<TypeModel>;
 
-    list(category:TypeCategory, status:TypeDefinitionStatus, offset?:number, count?:number): Promise<TypeModel[]>;
+    list(category:TypeCategory, status:TypeDefinitionStatus, offset?:number, count?:number, sort?:SortKeys): Promise<TypeModel[]>;
 
     create(templateId:string, category:TypeCategory, definition:TypeDefinitionModel): Promise<SchemaValidationResult>;
 
