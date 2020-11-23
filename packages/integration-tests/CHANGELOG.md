@@ -1,3 +1,10 @@
+# [@cdf/integration-tests-v2.5.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/integration-tests-v2.4.0...@cdf/integration-tests-v2.5.0) (2020-11-23)
+
+
+### Features
+
+* **assetlibrary:** list apis now support sorting ([17c2617](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/17c261778dd1c873ef0cb0bb3e24d62e94969f79))
+
 # [@cdf/integration-tests-v2.4.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/integration-tests-v2.3.0...@cdf/integration-tests-v2.4.0) (2020-10-02)
 
 
