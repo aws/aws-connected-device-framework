@@ -17,7 +17,7 @@
     "@cdf/errors": "^2.0.0",
     "@cdf/logger": "^2.0.0",
     "config": "3.2.4",
-    "inversify": "5.0.1",
+    "inversify": "5.0.5",
     "js-yaml": "3.13.1",
     "reflect-metadata": "0.1.13"
   },
@@ -25,7 +25,7 @@
     "@cdf/errors": "^2.0.0",
     "@cdf/logger": "^2.0.0",
     "config": "3.2.4",
-    "inversify": "5.0.1",
+    "inversify": "5.0.5",
     "js-yaml": "3.13.1",
     "reflect-metadata": "0.1.13",
 

@@ -14,7 +14,7 @@ import { SubscriptionDao, PaginationKey } from './subscription.dao';
 import { EventDao } from '../events/event.dao';
 import { SNSTarget } from '../targets/processors/sns.target';
 import { TargetService } from '../targets/target.service';
-import { TargetItem, TargetTypeStrings } from '../targets/targets.models';
+import { TargetItem, TargetTypeStrings, TargetItemBase } from '../targets/targets.models';
 import { ListSubscriptionsByTopicResponse } from 'aws-sdk/clients/sns';
 
 @injectable()
@@ -34,6 +34,9 @@ export class SubscriptionService  {
         ow(subscriptionId, ow.string.nonEmpty);
 
         const subscription  = await this.subscriptionDao.get(subscriptionId);
+        if (subscription===undefined) {
+            throw new Error('NOT_FOUND');
+        }
 
         // some types of sns subscriptions (such as email) require confirmation by the end point owner
         // within 72 hrs. If we know of any being in a pending state, double-check its status to see if
@@ -72,35 +75,104 @@ export class SubscriptionService  {
         return subscription;
     }
 
+    /**
+     * List all target subscriptionArn's (SNS subscription Arn's) used across all subscriptions
+     * for a given user, optionally excluding a specific subscription.
+     * @param userId
+     * @param excludeSubscriptionId
+     */
+    public async listSnsTargetArns(userId:string, excludeSubscriptionId?:string) : Promise<Set<string>> {
+        logger.debug(`subscription.service listTargetArns: in: userId:${userId}, excludeSubscriptionId:${excludeSubscriptionId}`);
+
+        let subscriptions = await this.listByUser(userId);
+        if (excludeSubscriptionId!==undefined) {
+            subscriptions = subscriptions.filter(s=> s.id!==excludeSubscriptionId);
+        }
+        const targetArns = new Set( subscriptions
+            .map( s=> Object.keys(s.targets)
+                        .map(tt=> s.targets[tt])
+                        .flat())
+            .flat()
+            .map(t=> t['subscriptionArn'])
+            .filter(arn=> arn!==undefined));
+
+        logger.debug(`subscription.service listTargetArns: exit:${JSON.stringify(targetArns)}`);
+        return targetArns;
+    }
+
     public async delete(subscriptionId:string) : Promise<void> {
         logger.debug(`subscription.service delete: in: subscriptionId:${subscriptionId}`);
 
         ow(subscriptionId, ow.string.nonEmpty);
 
-        const current  = await this.subscriptionDao.get(subscriptionId);
+        const current = await this.subscriptionDao.get(subscriptionId);
+        if (current===undefined) {
+            throw new Error('NOT_FOUND');
+        }
 
-        // unsubscribe the targets
-        if(current.targets) {
+        // safe delete targets
+        if(current?.targets) {
             for(const targetType of Object.keys(current.targets)) {
                 const targets = current.targets[targetType];
                 if (targets) {
-                    for(const target of targets) {
-                        await this.targetService.delete(subscriptionId, targetType as TargetTypeStrings, target.getId());
+                    for(const t of targets) {
+                        await this.safeDeleteTarget(subscriptionId, targetType as TargetTypeStrings, (t as TargetItemBase).getId());
                     }
                 }
             }
         }
 
-        // delete the config
+        // delete the subscription config
         await this.subscriptionDao.delete(subscriptionId);
 
         // delete the sns topic if there are no remaining subscriptions for the user
-        const others = await this.subscriptionDao.listSubscriptionIdsForUser(current.user.id);
-        if (others===undefined || others.length===0) {
+        const subscriptions = await this.listByUser(current.user.id);
+        if (subscriptions===undefined || subscriptions.filter(s=> s.id!==subscriptionId).length===0) {
             await this.snsTarget.deleteTopic(current.user.id);
         }
 
         logger.debug(`subscription.service delete: exit:`);
+    }
+
+    /**
+     * Targets may be reused across multiple subscriptions. This `safeDeleteTarget()` method verifies first whether the
+     * target is reused across another subscription for the user associated with the susbcription in context. the deletion
+     * of the target itself is delegated to the `TargetService`.
+     * @param subscriptionId
+     * @param targetType
+     * @param targetId
+     */
+    public async safeDeleteTarget(subscriptionId:string, targetType:TargetTypeStrings, targetId:string) : Promise<void> {
+        logger.debug(`subscription.service safeDeleteTarget: in: subscriptionId:${subscriptionId}, targetType:${targetType}, targetId:${targetId}`);
+
+        ow(subscriptionId, ow.string.nonEmpty);
+        ow(targetType, ow.string.nonEmpty);
+        ow(targetId, ow.string.nonEmpty);
+
+        const subscription = await this.get(subscriptionId);
+        if (subscription===undefined) {
+            throw new Error('SUBSCRIPTION_NOT_FOUND');
+        }
+
+        const target = subscription.targets?.[targetType]?.flat().filter(t=> t.getId()===targetId)?.[0];
+        if (target===undefined) {
+            throw new Error('TARGET_NOT_FOUND');
+        }
+
+        // some targets (such as mobile push targets) may be used across multiple
+        // subscriptions. These ones we can delete the target data but must not clean
+        // up SNS as their target subscriptionArns may be reused.
+        // 1st figure out what sns targets are being used on other subscriptions
+        const otherTargetArns = await this.listSnsTargetArns(subscription.user.id, subscriptionId);
+
+        // 2nd now that we know which targets are used across other subscriptions, we can exclude cleaning them up
+        const reused = (target['subscriptionArn']!==undefined && otherTargetArns.has(target['subscriptionArn']));
+
+        // 3rd we can now go ahead and safely delegate the deletion of the target
+        this.targetService.delete(subscriptionId, targetType, targetId, !reused);
+
+        logger.debug(`subscription.service safeDeleteTarget: exit:`);
+
     }
 
     public async listByUser(userId:string) : Promise<SubscriptionItem[]> {

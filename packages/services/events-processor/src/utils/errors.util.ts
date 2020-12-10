@@ -11,7 +11,7 @@ export function handleError(e:Error, res:Response): void {
 
     if (e.name === 'ArgumentError' || e.message === 'UNSUPPORTED_TARGET_TYPE') {
         res.status(400).json({error: e.message}).end();
-    } else if (e.message === 'NOT_FOUND') {
+    } else if (e.message?.endsWith('NOT_FOUND')) {
         res.status(404).json({error: 'Item not found'}).end();
     } else if (e.name==='ResourceNotFoundException') {
         res.status(404).json({error: e.message}).end();

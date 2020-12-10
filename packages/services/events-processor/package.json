@@ -35,7 +35,7 @@
     "cors": "2.8.5",
     "express": "4.17.1",
     "express-version-request": "1.7.0",
-    "inversify": "5.0.1",
+    "inversify": "5.0.5",
     "inversify-binding-decorators": "4.0.0",
     "inversify-express-utils": "6.3.2",
     "js-yaml": "3.13.1",

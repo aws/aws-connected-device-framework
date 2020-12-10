@@ -206,12 +206,12 @@ function lambaInvokeRestApi {
 
 function getAwsAccountId {
     aws_args=$1
-    echo $(aws sts get-caller-identity --output text --query 'Account' $AWG_ARGS)
+    echo $(aws sts get-caller-identity --output text --query 'Account' $AWS_ARGS)
 }
 
 function getAwsRegion  {
     aws_args=$1
-    echo $(aws configure get region $AWG_ARGS)
+    echo $(aws configure get region $AWS_ARGS)
 }
 
 function asksure {

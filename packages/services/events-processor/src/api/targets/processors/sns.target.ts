@@ -7,7 +7,7 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from '../../../di/types';
 import {logger} from '../../../utils/logger.util';
 import ow from 'ow';
-import { TargetItem } from '../targets.models';
+import { TargetItem, TargetTypeStrings } from '../targets.models';
 import { ListSubscriptionsByTopicInput } from 'aws-sdk/clients/sns';
 
 export interface SNSTargetCreation {
@@ -28,6 +28,24 @@ export class SNSTarget  {
 	    @inject(TYPES.SNSFactory) snsFactory: () => AWS.SNS
     ) {
         this._sns = snsFactory();
+    }
+
+    public isSnsTarget(targetType:TargetTypeStrings) : boolean {
+        logger.debug(`sns.target isSnsTarget: in: targetType:${targetType}`);
+        let result:boolean;
+        switch(targetType) {
+            case 'sms':
+            case 'email':
+            case 'push_adm':
+            case 'push_apns':
+            case 'push_gcm':
+                result = true;
+                break;
+            default:
+                result=false;
+        }
+        logger.debug(`sns.target isSnsTarget: exit:${result}`);
+        return result;
     }
 
     public async delete(subscriptionArn:string) : Promise<void> {

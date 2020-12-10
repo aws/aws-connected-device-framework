@@ -39,8 +39,8 @@ export class TargetService  {
         throw new Error ('TODO!');
 
     }
-    public async delete(subscriptionId:string, targetType:TargetTypeStrings, targetId:string) : Promise<void> {
-        logger.debug(`target.service delete: in: subscriptionId:${subscriptionId}, targetType:${targetType}, targetId:${targetId}`);
+    public async delete(subscriptionId:string, targetType:TargetTypeStrings, targetId:string, unsubscribe:boolean) : Promise<void> {
+        logger.debug(`target.service delete: in: subscriptionId:${subscriptionId}, targetType:${targetType}, targetId:${targetId}, unsubscribe:${unsubscribe}`);
 
         ow(subscriptionId, ow.string.nonEmpty);
         ow(targetType, ow.string.nonEmpty);
@@ -53,25 +53,27 @@ export class TargetService  {
         }
 
         // 1st handle unsubscribing the specific target
-        switch(targetType) {
-            case 'email':
-                await this.emailTarget.delete( (existing as EmailTargetItem).subscriptionArn);
-                break;
-            case 'push_gcm':
-            case 'push_adm':
-            case 'push_apns':
-                await this.pushTarget.delete((existing as PushTargetItem).subscriptionArn);
-                break;
-            case 'sms':
-                await this.smsTarget.delete((existing as SMSTargetItem).subscriptionArn);
-                break;
-            case 'dynamodb':
-                // nothing to unsubscribe from
-                break;
-            case 'mqtt':
-                throw new Error ('NOT_IMPLEMENTED');
-            default:
-                throw new Error ('UNSUPPORTED_TARGET_TYPE');
+        if (unsubscribe) {
+            switch(targetType) {
+                case 'email':
+                    await this.emailTarget.delete( (existing as EmailTargetItem).subscriptionArn);
+                    break;
+                case 'push_gcm':
+                case 'push_adm':
+                case 'push_apns':
+                    await this.pushTarget.delete((existing as PushTargetItem).subscriptionArn);
+                    break;
+                case 'sms':
+                    await this.smsTarget.delete((existing as SMSTargetItem).subscriptionArn);
+                    break;
+                case 'dynamodb':
+                    // nothing to unsubscribe from
+                    break;
+                case 'mqtt':
+                    throw new Error ('NOT_IMPLEMENTED');
+                default:
+                    throw new Error ('UNSUPPORTED_TARGET_TYPE');
+            }
         }
 
         // 2nd remove it from the database

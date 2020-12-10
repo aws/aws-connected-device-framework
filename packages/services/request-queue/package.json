@@ -24,7 +24,7 @@
     "aws-sdk": "2.588.0",
     "busboy": "0.3.1",
     "config": "3.2.4",
-    "inversify": "5.0.1",
+    "inversify": "5.0.5",
     "inversify-binding-decorators": "4.0.0",
     "js-yaml": "3.13.1",
     "logform": "2.1.2",

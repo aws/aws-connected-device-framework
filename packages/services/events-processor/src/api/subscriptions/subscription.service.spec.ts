@@ -12,7 +12,7 @@ import { SubscriptionAssembler } from './subscription.assembler';
 import { SNSTarget } from '../targets/processors/sns.target';
 import { TargetService } from '../targets/target.service';
 import { SubscriptionService } from './subscription.service';
-import { EmailTargetItem } from '../targets/targets.models';
+import { DynamodDBTargetItem, EmailTargetItem, PushTargetItem, TargetTypeStrings } from '../targets/targets.models';
 import { ListSubscriptionsResponse } from 'aws-sdk/clients/sns';
 
 describe('SubscriptionService', () => {
@@ -105,6 +105,7 @@ describe('SubscriptionService', () => {
         expect(actual).toEqual(stubbedItem);
 
     });
+
     it('get with PendingConfirmation is confirmed', async() => {
 
         // stubs
@@ -154,6 +155,7 @@ describe('SubscriptionService', () => {
         expect(actual).toEqual(expected);
 
     });
+
     it('get with PendingConfirmation has expired', async() => {
 
         // stubs
@@ -194,4 +196,166 @@ describe('SubscriptionService', () => {
         expect(actual).toEqual(expected);
 
     });
+
+    it('list target arns happy path', async() => {
+
+        // input
+        const userId = 'user001';
+        const excludeSubscriptionId = 'sub001';
+
+        // stubs
+        const stubbedSubscriptionItems = [stubSubscriptionItem1(),stubSubscriptionItem2(),stubSubscriptionItem3()];
+
+        // mocks
+        instance.listByUser = jest.fn().mockReturnValue(stubbedSubscriptionItems);
+
+        // execute
+        const actual = await instance.listSnsTargetArns(userId, excludeSubscriptionId);
+
+        // verification
+        expect(instance.listByUser).toBeCalledWith(userId);
+        expect(actual.size).toEqual(3);
+        expect(actual.has('email-arn-2')).toEqual(true);
+        expect(actual.has('push-arn-2')).toEqual(true);
+        expect(actual.has('push-arn-3')).toEqual(true);
+
+    });
+
+    it('safe delete target with non-reused target cleans up target', async() => {
+
+        // input
+        const subscriptionId = 'sub002';
+        const targetType:TargetTypeStrings = 'email';
+        const targetId = 'email2@somewhere.com';
+
+        // stubs
+        const stubbedSubscriptionItem2 = stubSubscriptionItem2();   // SubscriptionItem for sub002
+        const targetArns = new Set(['PendingConfirmation','push-arn-1','push-arn-2','push-arn-3']);  // targets of sub001 & sub003
+
+        // mocks
+        instance.get = jest.fn().mockReturnValueOnce(stubbedSubscriptionItem2);
+        instance.listSnsTargetArns = jest.fn().mockReturnValueOnce(targetArns);
+        mockedTargetService.delete = jest.fn().mockReturnValue(undefined);
+
+        // execute
+        await instance.safeDeleteTarget(subscriptionId, targetType, targetId);
+
+        // verification
+        expect(instance.get).toBeCalledWith(subscriptionId);
+        expect(instance.listSnsTargetArns).toBeCalledWith(stubbedSubscriptionItem2.user.id, subscriptionId);
+        expect(mockedTargetService.delete).toBeCalledTimes(1);
+        expect(mockedTargetService.delete).toBeCalledWith(subscriptionId, targetType, targetId, true);
+
+    });
+
+    it('safe delete target with reused target does not clean up target', async() => {
+
+        // input
+        const subscriptionId = 'sub002';
+        const targetType:TargetTypeStrings = 'push_adm';
+        const targetId = 'platform-arn-2';
+
+        // stubs
+        const stubbedSubscriptionItem2 = stubSubscriptionItem2();   // SubscriptionItem for sub002
+        const targetArns = new Set(['PendingConfirmation','push-arn-1','push-arn-2','push-arn-3']);  // targets of sub001 & sub003
+
+        // mocks
+        instance.get = jest.fn().mockReturnValueOnce(stubbedSubscriptionItem2);
+        instance.listSnsTargetArns = jest.fn().mockReturnValueOnce(targetArns);
+        mockedTargetService.delete = jest.fn().mockReturnValue(undefined);
+
+        // execute
+        await instance.safeDeleteTarget(subscriptionId, targetType, targetId);
+
+        // verification
+        expect(instance.get).toBeCalledWith(subscriptionId);
+        expect(instance.listSnsTargetArns).toBeCalledWith(stubbedSubscriptionItem2.user.id, subscriptionId);
+        expect(mockedTargetService.delete).toBeCalledTimes(1);
+        expect(mockedTargetService.delete).toBeCalledWith(subscriptionId, targetType, targetId, false);
+
+    });
 });
+
+function stubSubscriptionItem1() : SubscriptionItem {
+    const email1 = new EmailTargetItem();
+    email1.address = 'email1@somewhere.com';
+    email1.subscriptionArn = 'PendingConfirmation';
+
+    const pushAdm1 = new PushTargetItem();
+    pushAdm1.targetType = 'push_adm';
+    pushAdm1.subscriptionArn = 'push-arn-1';
+    pushAdm1.platformEndpointArn = 'platform-arn-1';
+
+    const stubbedSubscriptionItem1:SubscriptionItem = {
+        id: 'sub001',
+        user: {
+            id: 'user001'
+        },
+        targets: {
+            email: [email1],
+            push_adm: [pushAdm1]
+        },
+        sns: {
+            topicArn: 'topic-arn'
+        }
+    };
+
+    return stubbedSubscriptionItem1;
+}
+
+function stubSubscriptionItem2() : SubscriptionItem {
+    const email2 = new EmailTargetItem();
+    email2.address = 'email2@somewhere.com';
+    email2.subscriptionArn = 'email-arn-2';
+
+    const pushAdm2 = new PushTargetItem();
+    pushAdm2.targetType = 'push_adm';
+    pushAdm2.subscriptionArn = 'push-arn-2';
+    pushAdm2.platformEndpointArn = 'platform-arn-2';
+
+    const ddb1 = new DynamodDBTargetItem();
+    ddb1.tableName = 'table-1';
+
+    const stubbedSubscriptionItem:SubscriptionItem = {
+        id: 'sub002',
+        user: {
+            id: 'user001'
+        },
+        targets: {
+            email: [email2],
+            push_adm: [pushAdm2],
+            dynamodb: [ddb1]
+        },
+        sns: {
+            topicArn: 'topic-arn'
+        }
+    };
+
+    return stubbedSubscriptionItem;
+}
+
+function stubSubscriptionItem3() : SubscriptionItem {
+    const pushAdm2 = new PushTargetItem();
+    pushAdm2.targetType = 'push_adm';
+    pushAdm2.subscriptionArn = 'push-arn-2';
+    pushAdm2.platformEndpointArn = 'platform-arn-2';
+
+    const pushAdm3 = new PushTargetItem();
+    pushAdm3.targetType = 'push_adm';
+    pushAdm3.subscriptionArn = 'push-arn-3';
+    pushAdm3.platformEndpointArn = 'platform-arn-3';
+
+    const stubbedSubscriptionItem:SubscriptionItem = {
+        id: 'sub003',
+        user: {
+            id: 'user001'
+        },
+        targets: {
+            push_adm: [pushAdm2, pushAdm3]
+        },
+        sns: {
+            topicArn: 'topic-arn'
+        }
+    };
+    return stubbedSubscriptionItem;
+}

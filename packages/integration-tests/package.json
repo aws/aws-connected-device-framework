@@ -30,7 +30,7 @@
     "chai-uuid": "^1.0.6",
     "config": "3.2.4",
     "cucumber": "6.0.5",
-    "inversify": "5.0.1",
+    "inversify": "5.0.5",
     "inversify-binding-decorators": "4.0.0",
     "inversify-express-utils": "6.3.2",
     "js-yaml": "3.13.1",

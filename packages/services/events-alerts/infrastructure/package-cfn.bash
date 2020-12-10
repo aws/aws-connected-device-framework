@@ -60,6 +60,6 @@ aws cloudformation package \
   --template-file "$cwd/cfn-eventsAlerts.yml" \
   --output-template-file $cwd/build/cfn-eventsAlerts-output.yml \
   --s3-bucket ${DEPLOY_ARTIFACTS_STORE_BUCKET} \
-  $AWG_ARGS
+  $AWS_ARGS
 
 logTitle 'Events Alerts packaging complete'

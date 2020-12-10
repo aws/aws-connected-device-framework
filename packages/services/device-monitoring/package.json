@@ -27,7 +27,7 @@
     "http-errors": "1.7.3",
     "js-yaml": "3.13.1",
     "logform": "2.1.2",
-    "inversify": "5.0.1",
+    "inversify": "5.0.5",
     "inversify-binding-decorators": "4.0.0",
     "inversify-express-utils": "6.3.2",
     "ow": "0.15.0",

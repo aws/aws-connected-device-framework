@@ -12,12 +12,15 @@ import {handleError} from '../../utils/errors.util';
 import { TargetAssembler } from './target.assembler';
 import { TargetResource, TargetTypeStrings } from './targets.models';
 import { TargetService } from './target.service';
+import { SubscriptionService } from '../subscriptions/subscription.service';
 
 @controller('/subscriptions/:subscriptionId/targets/:targetType')
 export class TargetController implements interfaces.Controller {
 
-    constructor( @inject(TYPES.TargetService) private targetService: TargetService,
-    @inject(TYPES.TargetAssembler) private targetAssembler: TargetAssembler) {}
+    constructor(
+        @inject(TYPES.SubscriptionService) private subscriptionService: SubscriptionService,
+        @inject(TYPES.TargetService) private targetService: TargetService,
+        @inject(TYPES.TargetAssembler) private targetAssembler: TargetAssembler) {}
 
     @httpPost('')
     public async createTarget(@requestParam('subscriptionId') subscriptionId: string, @requestParam('targetType') targetType: TargetTypeStrings,
@@ -44,7 +47,10 @@ export class TargetController implements interfaces.Controller {
         try {
             this.verifyIsV2(req);
 
-            await this.targetService.delete(subscriptionId, targetType as TargetTypeStrings, targetId);
+            // note: this call may seem like a code smell by using the subscription service to delete a target. But its
+            // implementation is intentional, as safely deleting a target requires querying subscription level data that
+            // is not available at the target service.
+            await this.subscriptionService.safeDeleteTarget(subscriptionId, targetType as TargetTypeStrings, targetId);
         } catch (e) {
             handleError(e,res);
         }

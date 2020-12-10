@@ -35,7 +35,7 @@
     "express-version-request": "1.7.0",
     "fast-json-patch": "3.0.0-1",
     "gremlin": "3.4.8",
-    "inversify": "5.0.1",
+    "inversify": "5.0.5",
     "inversify-binding-decorators": "4.0.0",
     "inversify-express-utils": "6.3.2",
     "js-yaml": "3.13.1",

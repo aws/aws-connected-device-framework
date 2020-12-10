@@ -97,7 +97,7 @@ aws cloudformation deploy \
       EventsProcessorStackName=${EVENTS_PROCESSOR_STACK_NAME} \
   --capabilities CAPABILITY_NAMED_IAM \
   --no-fail-on-empty-changeset \
-  $AWG_ARGS
+  $AWS_ARGS
 
 
 logTitle 'Event Alerts deployment complete'
