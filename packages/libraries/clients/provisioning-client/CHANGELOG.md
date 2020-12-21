@@ -1,3 +1,10 @@
+# [@cdf/provisioning-client-v3.4.2](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/provisioning-client-v3.4.1...@cdf/provisioning-client-v3.4.2) (2020-12-21)
+
+
+### Bug Fixes
+
+* **events-processor:** safe target deletion ([23c268d](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/23c268d1ca40e1b53c8d371f8fb22d0bf34c885f))
+
 # [@cdf/provisioning-client-v3.4.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/provisioning-client-v3.4.0...@cdf/provisioning-client-v3.4.1) (2020-06-24)
 
 

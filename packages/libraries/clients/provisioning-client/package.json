@@ -1,6 +1,6 @@
 {
   "name": "@cdf/provisioning-client",
-  "version": "3.4.1",
+  "version": "3.4.2",
   "description": "Provisioning Library Client",
   "author": "Rahul Sareen <rssareen@amazon.com>",
   "main": "dist/index.js",
