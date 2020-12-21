@@ -1,3 +1,10 @@
+# [@cdf/assetlibrary-v3.6.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.6.0...@cdf/assetlibrary-v3.6.1) (2020-12-21)
+
+
+### Bug Fixes
+
+* **events-processor:** safe target deletion ([23c268d](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/23c268d1ca40e1b53c8d371f8fb22d0bf34c885f))
+
 # [@cdf/assetlibrary-v3.6.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/assetlibrary-v3.5.0...@cdf/assetlibrary-v3.6.0) (2020-11-23)
 
 
