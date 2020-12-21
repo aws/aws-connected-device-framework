@@ -1,3 +1,10 @@
+# [@cdf/device-monitoring-v3.2.8](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/device-monitoring-v3.2.7...@cdf/device-monitoring-v3.2.8) (2020-12-21)
+
+
+### Bug Fixes
+
+* **events-processor:** safe target deletion ([23c268d](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/23c268d1ca40e1b53c8d371f8fb22d0bf34c885f))
+
 # [@cdf/device-monitoring-v3.2.7](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/device-monitoring-v3.2.6...@cdf/device-monitoring-v3.2.7) (2020-08-05)
 
 
