@@ -1,3 +1,10 @@
+# [@cdf/notifications-client-v2.4.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/notifications-client-v2.4.0...@cdf/notifications-client-v2.4.1) (2020-12-21)
+
+
+### Bug Fixes
+
+* **events-processor:** safe target deletion ([23c268d](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/23c268d1ca40e1b53c8d371f8fb22d0bf34c885f))
+
 # [@cdf/notifications-client-v2.4.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/notifications-client-v2.3.2...@cdf/notifications-client-v2.4.0) (2020-10-02)
 
 
