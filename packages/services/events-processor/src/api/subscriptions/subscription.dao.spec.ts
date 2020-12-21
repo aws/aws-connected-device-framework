@@ -235,75 +235,90 @@ describe('SubscriptionDao', () => {
         const eventSourceId = 'arn:aws:dynamodb:us-west-2:157731826412:table/deansTest';
         const principal = 'thingName';
         const principalValue = 'device001';
-        const gsi2Key = `ES:${escape(eventSourceId)}:${principal}:${principalValue}`;
 
         // mocks
-        const mockedQuery = mockedCachedDocumentClient.query = jest.fn().mockImplementationOnce(()=> {
-            return {
-              promise: () => {
-                  const r:DocumentClient.QueryOutput = {
-                    Items: [
-                        {
-                            pk: `S:${stubbedGoodItem.id}`,
-                            sk: `S:${stubbedGoodItem.id}`,
-                            gsi1Sort: `S:${stubbedGoodItem.id}`,
-                            enabled: stubbedGoodItem.enabled,
-                            gsi2Key: `ES:${stubbedGoodItem.eventSource.id}:${stubbedGoodItem.eventSource.principal}:${stubbedGoodItem.principalValue}`,
-                            gsi2Sort: `S:${stubbedGoodItem.id}`,
-                            principalValue: stubbedGoodItem.principalValue,
-                            ruleParameterValues: stubbedGoodItem.ruleParameterValues,
-                            snsTopicArn: 'sns:topic:arn',
-                        }, {
-                            pk: `S:${stubbedGoodItem.id}`,
-                            sk: `E:${stubbedGoodItem.event.id}`,
-                            gsi1Sort: `S:${stubbedGoodItem.id}`,
-                            name: stubbedGoodItem.event.name,
-                            principal: stubbedGoodItem.eventSource.principal,
-                            conditions: stubbedGoodItem.event.conditions,
-                            gsi2Key: `ES:${stubbedGoodItem.eventSource.id}:${stubbedGoodItem.eventSource.principal}:${stubbedGoodItem.principalValue}`,
-                            gsi2Sort: `S:${stubbedGoodItem.id}:E:${stubbedGoodItem.event.id}`,
-                            eventSourceId: stubbedGoodItem.eventSource.id,
-                            disableAlertThreshold: false
-                        }, {
-                            pk: `S:${stubbedGoodItem.id}`,
-                            sk: `U:${stubbedGoodItem.user.id}`,
-                            gsi1Sort: `S:${stubbedGoodItem.enabled}:${stubbedGoodItem.id}`,
-                            name: stubbedGoodItem.event.name,
-                            gsi2Key: `ES:${stubbedGoodItem.eventSource.id}:${stubbedGoodItem.eventSource.principal}:${stubbedGoodItem.principalValue}`,
-                            gsi2Sort: `S:${stubbedGoodItem.id}:U:${stubbedGoodItem.user.id}`
-                        }, {
-                            pk: `S:${stubbedGoodItem.id}`,
-                            sk: `ST:email:someone@somewhere.com`,
-                            address: 'someone@somewhere.com',
-                            gsi2Key: `ES:${stubbedGoodItem.eventSource.id}:${stubbedGoodItem.eventSource.principal}:${stubbedGoodItem.principalValue}`,
-                            gsi2Sort: `S:${stubbedGoodItem.id}:ST:email:someone@somewhere.com`,
-                            subscriptionId: 'sub1',
-                            targetType: 'email'
-                        }, {
-                            pk: `S:${stubbedGoodItem.id}`,
-                            sk: `ST:sms:5555555555`,
-                            phoneNumber: '5555555555',
-                            gsi2Key: `ES:${stubbedGoodItem.eventSource.id}:${stubbedGoodItem.eventSource.principal}:${stubbedGoodItem.principalValue}`,
-                            gsi2Sort: `S:${stubbedGoodItem.id}:ST:sms:5555555555`,
-                            subscriptionId: 'sub1',
-                            targetType: 'sms'
-                        }, {
-                            pk: `S:${stubbedGoodItem.id}`,
-                            sk: `ST:push_gcm:arn%3Aaws%3Asns%3Aus-west-2%3A123456789012%3Aendpoint%2FGCM%2FMyApplication%2F12345678-abcd-9012-efgh-345678901234`,
-                            platformApplicationArn: 'arn:aws:sns:us-west-2:123456789012:app/GCM/MyApplication',
-                            platformEndpointArn: 'arn:aws:sns:us-west-2:123456789012:endpoint/GCM/MyApplication/12345678-abcd-9012-efgh-345678901234',
-                            token: 'EXAMPLE12345',
-                            gsi2Key: `ES:${stubbedGoodItem.eventSource.id}:${stubbedGoodItem.eventSource.principal}:${stubbedGoodItem.principalValue}`,
-                            gsi2Sort: `S:${stubbedGoodItem.id}:ST:push_gcm:arn%3Aaws%3Asns%3Aus-west-2%3A123456789012%3Aendpoint%2FGCM%2FMyApplication%2F12345678-abcd-9012-efgh-345678901234`,
-                            subscriptionId: 'sub1',
-                            targetType: 'push_gcm'
-                        }
-                    ]
+        const mockedQuery = mockedCachedDocumentClient.query = jest.fn()
+            .mockImplementationOnce(()=> {
+                return {
+                    promise: () => {
+                        const r:DocumentClient.QueryOutput = {
+                            Items: [
+                                {
+                                    pk: `S:${stubbedGoodItem.id}`,
+                                    sk: `S:${stubbedGoodItem.id}`,
+                                    gsi1Sort: `S:${stubbedGoodItem.id}`,
+                                    enabled: stubbedGoodItem.enabled,
+                                    gsi2Key: `ES:${stubbedGoodItem.eventSource.id}:${stubbedGoodItem.eventSource.principal}:${stubbedGoodItem.principalValue}`,
+                                    gsi2Sort: `S:${stubbedGoodItem.id}`,
+                                    principalValue: stubbedGoodItem.principalValue,
+                                    ruleParameterValues: stubbedGoodItem.ruleParameterValues,
+                                    snsTopicArn: 'sns:topic:arn',
+                                }, {
+                                    pk: `S:${stubbedGoodItem.id}`,
+                                    sk: `E:${stubbedGoodItem.event.id}`,
+                                    gsi1Sort: `S:${stubbedGoodItem.id}`,
+                                    name: stubbedGoodItem.event.name,
+                                    principal: stubbedGoodItem.eventSource.principal,
+                                    conditions: stubbedGoodItem.event.conditions,
+                                    gsi2Key: `ES:${stubbedGoodItem.eventSource.id}:${stubbedGoodItem.eventSource.principal}:${stubbedGoodItem.principalValue}`,
+                                    gsi2Sort: `S:${stubbedGoodItem.id}:E:${stubbedGoodItem.event.id}`,
+                                    eventSourceId: stubbedGoodItem.eventSource.id,
+                                    disableAlertThreshold: false
+                                }, {
+                                    pk: `S:${stubbedGoodItem.id}`,
+                                    sk: `U:${stubbedGoodItem.user.id}`,
+                                    gsi1Sort: `S:${stubbedGoodItem.enabled}:${stubbedGoodItem.id}`,
+                                    name: stubbedGoodItem.event.name,
+                                    gsi2Key: `ES:${stubbedGoodItem.eventSource.id}:${stubbedGoodItem.eventSource.principal}:${stubbedGoodItem.principalValue}`,
+                                    gsi2Sort: `S:${stubbedGoodItem.id}:U:${stubbedGoodItem.user.id}`
+                                }
+                            ],
+                            LastEvaluatedKey: {
+                                pk: `S:${stubbedGoodItem.id}`,
+                                sk: `U:${stubbedGoodItem.user.id}`
+                            }
+                        };
+                        return Promise.resolve(r);
+                    }
                 };
-                return Promise.resolve(r);
-              }
-            };
-        });
+            })
+            .mockImplementationOnce(()=> {
+                return {
+                    promise: () => {
+                        const r:DocumentClient.QueryOutput = {
+                            Items: [{
+                                    pk: `S:${stubbedGoodItem.id}`,
+                                    sk: `ST:email:someone@somewhere.com`,
+                                    address: 'someone@somewhere.com',
+                                    gsi2Key: `ES:${stubbedGoodItem.eventSource.id}:${stubbedGoodItem.eventSource.principal}:${stubbedGoodItem.principalValue}`,
+                                    gsi2Sort: `S:${stubbedGoodItem.id}:ST:email:someone@somewhere.com`,
+                                    subscriptionId: 'sub1',
+                                    targetType: 'email'
+                                }, {
+                                    pk: `S:${stubbedGoodItem.id}`,
+                                    sk: `ST:sms:5555555555`,
+                                    phoneNumber: '5555555555',
+                                    gsi2Key: `ES:${stubbedGoodItem.eventSource.id}:${stubbedGoodItem.eventSource.principal}:${stubbedGoodItem.principalValue}`,
+                                    gsi2Sort: `S:${stubbedGoodItem.id}:ST:sms:5555555555`,
+                                    subscriptionId: 'sub1',
+                                    targetType: 'sms'
+                                }, {
+                                    pk: `S:${stubbedGoodItem.id}`,
+                                    sk: `ST:push_gcm:arn%3Aaws%3Asns%3Aus-west-2%3A123456789012%3Aendpoint%2FGCM%2FMyApplication%2F12345678-abcd-9012-efgh-345678901234`,
+                                    platformApplicationArn: 'arn:aws:sns:us-west-2:123456789012:app/GCM/MyApplication',
+                                    platformEndpointArn: 'arn:aws:sns:us-west-2:123456789012:endpoint/GCM/MyApplication/12345678-abcd-9012-efgh-345678901234',
+                                    token: 'EXAMPLE12345',
+                                    gsi2Key: `ES:${stubbedGoodItem.eventSource.id}:${stubbedGoodItem.eventSource.principal}:${stubbedGoodItem.principalValue}`,
+                                    gsi2Sort: `S:${stubbedGoodItem.id}:ST:push_gcm:arn%3Aaws%3Asns%3Aus-west-2%3A123456789012%3Aendpoint%2FGCM%2FMyApplication%2F12345678-abcd-9012-efgh-345678901234`,
+                                    subscriptionId: 'sub1',
+                                    targetType: 'push_gcm'
+                                }
+                            ]
+                        };
+                        return Promise.resolve(r);
+                    }
+                };
+            });
 
         mockedTargetDao.assemble = jest.fn()
             .mockReturnValueOnce(email1)
@@ -314,17 +329,7 @@ describe('SubscriptionDao', () => {
         const actual = await instance.listSubscriptionsForEventMessage(eventSourceId, principal, principalValue);
 
         // verify
-        expect(mockedQuery).toBeCalledWith({
-            ExpressionAttributeNames: {
-                '#key': 'gsi2Key'},
-                ExpressionAttributeValues: {
-                    ':value': gsi2Key
-                },
-                IndexName: 'gsi2Key-gsi2Sort-index',
-                KeyConditionExpression: '#key = :value',
-                TableName: 'eventConfig'
-            }
-        );
+        expect(mockedQuery).toBeCalledTimes(2);
         expect(actual).toEqual([stubbedGoodItem]);
     });
 });

@@ -6,7 +6,7 @@
 import { injectable, inject } from 'inversify';
 import {logger} from '../../utils/logger.util';
 import { TYPES } from '../../di/types';
-import { DocumentClient } from 'aws-sdk/clients/dynamodb';
+import DynamoDB, { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import { SubscriptionItem } from './subscription.models';
 import { createDelimitedAttribute, PkType, expandDelimitedAttribute, isPkType, createDelimitedAttributePrefix } from '../../utils/pkUtils.util';
 import { DynamoDbUtils } from '../../utils/dynamoDb.util';
@@ -153,20 +153,33 @@ export class SubscriptionDao {
             IndexName: this.eventConfigGsi2KeyGsi2Sort,
             KeyConditionExpression: `#key = :value`,
             ExpressionAttributeNames: {
-                '#key': 'gsi2Key'
+                '#key': 'gsi2Key',
+                '#name': 'name',
+                '#token': 'token'
             },
             ExpressionAttributeValues: {
                 ':value': createDelimitedAttribute(PkType.EventSource, eventSourceId, principal, principalValue )
-            }
+            },
+            Select: 'SPECIFIC_ATTRIBUTES',
+            ProjectionExpression: 'address,attributeMapping,conditions,disableAlertThreshold,eventSourceId,#name,phoneNumber,pk,platformApplicationArn,platformEndpointArn,principal,principalValue,ruleParameterValues,sk,snsTopicArn,subscriptionArn,subscriptionId,tableName,targetType,#token,topic'
         };
 
-        const results = await this._cachedDc.query(params).promise();
-        if (results.Items===undefined) {
+        const items:DynamoDB.ItemList= [];
+        let r = await this._cachedDc.query(params).promise();
+        while(r.Items?.length>0) {
+            items.push(...r.Items);
+            if (r.LastEvaluatedKey===undefined) {
+                break;
+            }
+            params.ExclusiveStartKey = r.LastEvaluatedKey;
+            r = await this._cachedDc.query(params).promise();
+        }
+        if (items.length===0) {
             logger.debug('subscription.dao listSubscriptionsForEventMessage: exit: undefined');
             return undefined;
         }
 
-        const subscriptions = this.assemble(results.Items);
+        const subscriptions = this.assemble(items);
         const response:SubscriptionItem[] = Object.keys(subscriptions).map(k => subscriptions[k]);
 
         logger.debug(`subscription.dao listSubscriptionsForEventMessage: exit:${JSON.stringify(response)}`);
@@ -272,20 +285,21 @@ export class SubscriptionDao {
             ProjectionExpression: '#pk,#sk',
         };
 
-        const subscriptionsA:SubscriptionItemMap= {};
+        const items:DynamoDB.ItemList= [];
         let rA = await this._cachedDc.query(paramsA).promise();
         while(rA.Items?.length>0) {
-            Object.assign(subscriptionsA, this.assemble(rA.Items));
+            items.push(...rA.Items);
             if (rA.LastEvaluatedKey===undefined) {
                 break;
             }
             paramsA.ExclusiveStartKey = rA.LastEvaluatedKey;
             rA = await this._cachedDc.query(paramsA).promise();
         }
-        if (Object.keys(subscriptionsA).length===0) {
+        if (items.length===0) {
             logger.debug('subscription.dao listSubscriptionsForEventUserPrincipal: exit: undefined');
             return undefined;
         }
+        const subscriptionsA= this.assemble(items);
 
         // next we need to perform another query to filter those returned subscriptionIds by user
         // (due to backwards compatability, we have to use the existing indexes/data available to us)
