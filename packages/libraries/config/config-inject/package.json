@@ -1,6 +1,6 @@
 {
   "name": "@cdf/config-inject",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "node-config variables are injected into inversify IoC container. If you are using inversify with node-config this library will be useful. Loosly based on inversify-config-injection library.",
   "author": "Atul Bargaje <atulbar@amazon.com>",
   "main": "dist/index.js",
@@ -28,7 +28,6 @@
     "inversify": "5.0.5",
     "js-yaml": "3.13.1",
     "reflect-metadata": "0.1.13",
-
     "@commitlint/cli": "8.2.0",
     "@commitlint/config-conventional": "8.2.0",
     "@semantic-release/changelog": "3.0.6",
