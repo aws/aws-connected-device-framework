@@ -1,6 +1,6 @@
 {
   "name": "@cdf/greengrass-provisioning-client",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "CDF Greengrass Provisioning Client",
   "author": "Dean Hart <deanhart@amazon.com>",
   "main": "dist/index.js",

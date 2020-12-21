@@ -1,3 +1,10 @@
+# [@cdf/greengrass-provisioning-client-v1.0.3](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/greengrass-provisioning-client-v1.0.2...@cdf/greengrass-provisioning-client-v1.0.3) (2020-12-21)
+
+
+### Bug Fixes
+
+* **events-processor:** safe target deletion ([23c268d](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/23c268d1ca40e1b53c8d371f8fb22d0bf34c885f))
+
 # [@cdf/greengrass-provisioning-client-v1.0.2](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/greengrass-provisioning-client-v1.0.1...@cdf/greengrass-provisioning-client-v1.0.2) (2020-09-30)
 
 
