@@ -1,3 +1,11 @@
+# [@cdf/events-processor-v2.5.3](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/events-processor-v2.5.2...@cdf/events-processor-v2.5.3) (2020-12-21)
+
+
+### Bug Fixes
+
+* **events-processor:** improve handling of large responses ([8d43c60](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/8d43c60e4cad0dbfaef7bebb102453f2b9c1de8e))
+* **events-processor:** safe target deletion ([23c268d](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/23c268d1ca40e1b53c8d371f8fb22d0bf34c885f))
+
 # [@cdf/events-processor-v2.5.2](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/events-processor-v2.5.1...@cdf/events-processor-v2.5.2) (2020-11-04)
 
 
