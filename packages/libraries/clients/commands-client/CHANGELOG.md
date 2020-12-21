@@ -1,3 +1,10 @@
+# [@cdf/commands-client-v3.3.3](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/commands-client-v3.3.2...@cdf/commands-client-v3.3.3) (2020-12-21)
+
+
+### Bug Fixes
+
+* **events-processor:** safe target deletion ([23c268d](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/23c268d1ca40e1b53c8d371f8fb22d0bf34c885f))
+
 # [@cdf/commands-client-v3.3.2](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/commands-client-v3.3.1...@cdf/commands-client-v3.3.2) (2020-06-24)
 
 
