@@ -1,3 +1,10 @@
+# [@cdf/integration-tests-v2.5.1](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/integration-tests-v2.5.0...@cdf/integration-tests-v2.5.1) (2020-12-21)
+
+
+### Bug Fixes
+
+* **events-processor:** safe target deletion ([23c268d](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/23c268d1ca40e1b53c8d371f8fb22d0bf34c885f))
+
 # [@cdf/integration-tests-v2.5.0](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/integration-tests-v2.4.0...@cdf/integration-tests-v2.5.0) (2020-11-23)
 
 
