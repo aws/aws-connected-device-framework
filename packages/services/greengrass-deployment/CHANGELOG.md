@@ -1,3 +1,10 @@
+# [@cdf/greengrass-deployment-v3.0.5](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/greengrass-deployment-v3.0.4...@cdf/greengrass-deployment-v3.0.5) (2020-12-21)
+
+
+### Bug Fixes
+
+* **events-processor:** safe target deletion ([23c268d](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/23c268d1ca40e1b53c8d371f8fb22d0bf34c885f))
+
 # [@cdf/greengrass-deployment-v3.0.4](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/greengrass-deployment-v3.0.3...@cdf/greengrass-deployment-v3.0.4) (2020-07-31)
 
 
