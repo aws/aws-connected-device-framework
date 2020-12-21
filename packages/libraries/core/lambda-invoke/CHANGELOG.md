@@ -1,3 +1,10 @@
+# [@cdf/lambda-invoke-v1.1.3](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/lambda-invoke-v1.1.2...@cdf/lambda-invoke-v1.1.3) (2020-12-21)
+
+
+### Bug Fixes
+
+* **events-processor:** safe target deletion ([23c268d](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/commit/23c268d1ca40e1b53c8d371f8fb22d0bf34c885f))
+
 # [@cdf/lambda-invoke-v1.1.2](https://git-codecommit.us-west-2.amazonaws.com/v1/repos/cdf-core/compare/@cdf/lambda-invoke-v1.1.1...@cdf/lambda-invoke-v1.1.2) (2020-08-19)
 
 
