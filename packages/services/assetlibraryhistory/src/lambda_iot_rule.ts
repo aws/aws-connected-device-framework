@@ -13,7 +13,7 @@ import { EventModel } from './events/events.models';
 
 const eventsService:EventsService = container.get(TYPES.EventsService);
 
-exports.iot_rule_handler = async (event: EventModel, _context: any) => {
+exports.iot_rule_handler = async (event: EventModel, _context: unknown) => {
   logger.debug(`events.service create: in: event: ${JSON.stringify(event)}`);
 
   // TODO validation

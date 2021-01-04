@@ -3,16 +3,17 @@
 #
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
-import {logger} from './utils/logger';
+import { logger } from './utils/logger';
 
-import {TYPES} from './di/types';
-import {container} from './di/inversify.config';
+import { TYPES } from './di/types';
+import { container } from './di/inversify.config';
 
-import {DeploymentService} from './deployment/deployment.service';
-import {DeploymentModel} from './deployment/deployment.model';
+import { DeploymentService } from './deployment/deployment.service';
+import { DeploymentModel } from './deployment/deployment.model';
 
 const deploymentService: DeploymentService = container.get<DeploymentService>(TYPES.DeploymentService);
 
+// eslint-disable-next-line  @typescript-eslint/no-explicit-any
 exports.handler = async(event: any, _context: any, callback: any) => {
 
     logger.debug(`event: ${JSON.stringify(event)}`);

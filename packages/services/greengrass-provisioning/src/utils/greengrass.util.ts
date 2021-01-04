@@ -274,7 +274,7 @@ export class GreengrassUtils {
 
         ow(arn, ow.string.nonEmpty);
         const resource = arn.substring( arn.lastIndexOf(':'));
-        ow(resource, ow.string.nonEmpty);
+        ow(resource,'resource', ow.string.nonEmpty);
         const components = resource.split('/');
         ow(components, ow.array.minLength(5));
 

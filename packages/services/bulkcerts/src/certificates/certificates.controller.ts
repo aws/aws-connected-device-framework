@@ -22,7 +22,7 @@ export class CertificatesController implements interfaces.Controller {
         @inject(TYPES.CertificatesService) private certificatesService: CertificatesService) {}
 
     @httpGet('/:taskId')
-    public async getCertificates(@requestParam('taskId') taskId: string, @response() res: Response): Promise<any> {
+    public async getCertificates(@requestParam('taskId') taskId: string, @response() res: Response): Promise<void> {
 
         logger.debug(`certificates.controller getCertificates: in: taskId:${taskId}`);
 

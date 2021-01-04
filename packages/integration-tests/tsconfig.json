@@ -1,19 +1,10 @@
 {
-    "extends": "../tsconfig.base.json",
+    "extends": "../../tsconfig.base.json",
     "compilerOptions": {
         "outDir": "dist",
         "rootDir": "src",
 
-		"suppressImplicitAnyIndexErrors": true,
-        
-        "typeRoots": [
-            "./src/@types",
-            "./node_modules/@types",
-            "../../node_modules/@types"
-        ],
-        "types": [
-            "node", "config", "winston"
-        ]
+		"suppressImplicitAnyIndexErrors": true
     },
     "references": [
         {

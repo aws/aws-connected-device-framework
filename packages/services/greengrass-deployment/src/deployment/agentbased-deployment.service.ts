@@ -34,7 +34,7 @@ export class AgentbasedDeploymentService {
         this.s3 = s3Factory();
     }
 
-    public async create(deployment: DeploymentModel) {
+    public async create(deployment: DeploymentModel): Promise<void> {
         logger.debug(`agentbasedDeployment.service: create: in: deployment: ${deployment}`);
 
         const queueUrl:string = config.get('aws.sqs.agentbasedDeploymentQueue');
@@ -44,20 +44,18 @@ export class AgentbasedDeploymentService {
             MessageBody: JSON.stringify(deployment)
         };
 
-        let result;
         try {
-            result = await this.sqs.sendMessage(sqsRequest).promise();
+            await this.sqs.sendMessage(sqsRequest).promise();
         } catch (err) {
             logger.error(`agentbasedDeployment.service sqs.sendMessage: in: ${sqsRequest} : error: ${JSON.stringify(err)}`);
             throw new Error(err);
         }
 
-        logger.debug(`agentbasedDeployment.service: create: out: result: ${result}`);
+        logger.debug(`agentbasedDeployment.service: create: exit`);
 
-        return result;
     }
 
-    public async deploy(deployment: DeploymentModel) {
+    public async deploy(deployment: DeploymentModel): Promise<void> {
         logger.debug(`agentbasedDeploymentService: deploy: in: deployment: ${JSON.stringify(deployment)}`);
 
         const activation = await this.activationDao.getByDeviceId(deployment.deviceId);
@@ -111,7 +109,7 @@ export class AgentbasedDeploymentService {
             throw new Error(err);
         }
 
-        const deploymentAssociation = {
+        const deploymentAssociation:AssociationModel = {
             deploymentId: deployment.deploymentId,
             associationId: association.AssociationDescription.AssociationId
         };
@@ -119,8 +117,6 @@ export class AgentbasedDeploymentService {
         await this.agentbasedDeploymentDao.save(deploymentAssociation);
 
         logger.debug(`agentbasedDeploymentService: deploy: out: result: ${JSON.stringify(association)}`);
-
-        return association;
     }
 
     public async delete(deployment: DeploymentModel): Promise<void> {

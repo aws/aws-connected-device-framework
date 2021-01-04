@@ -54,7 +54,7 @@ export class EventService  {
     }
 
     private validateEvent(resource:EventResource) {
-        ow(resource, ow.object.nonEmpty);
+        ow(resource,'resource', ow.object.nonEmpty);
         ow(resource.eventSourceId, ow.string.nonEmpty);
         ow(resource.name, ow.string.nonEmpty);
         ow(resource.conditions, ow.object.nonEmpty);

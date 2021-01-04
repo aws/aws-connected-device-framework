@@ -11,7 +11,8 @@ import {TYPES} from './di/types';
 
 let assetLib:AssetLibUpdate;
 
-exports.lambda_handler = async (event: any, _context: any) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+exports.lambda_handler = async (event: any, _context: unknown) => {
   logger.debug(`event: ${JSON.stringify(event)}`);
 
   if (assetLib===undefined) {

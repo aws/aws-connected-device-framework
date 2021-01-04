@@ -36,7 +36,7 @@ export class PoliciesServiceFull implements PoliciesService {
     public async get(policyId:string): Promise<PolicyModel> {
         logger.debug(`policies.full.service get: in: policyId:${policyId}`);
 
-        ow(policyId, ow.string.nonEmpty);
+        ow(policyId,'policyId', ow.string.nonEmpty);
 
         // any ids need to be lowercase
         policyId=policyId.toString();
@@ -116,8 +116,8 @@ export class PoliciesServiceFull implements PoliciesService {
     public async listInheritedByDevice(deviceId:string, type:string): Promise<PolicyModel[]> {
         logger.debug(`policies.full.service listInheritedByDevice: in: deviceId:${deviceId}, type:${type}`);
 
-        ow(deviceId, ow.string.nonEmpty);
-        ow(type, ow.string.nonEmpty);
+        ow(deviceId, 'deviceId', ow.string.nonEmpty);
+        ow(type,'type', ow.string.nonEmpty);
 
         // any ids need to be lowercase
         deviceId=deviceId.toLowerCase();
@@ -131,7 +131,7 @@ export class PoliciesServiceFull implements PoliciesService {
     public async listInheritedByGroup(groupPaths:string[], type?:string): Promise<PolicyModel[]> {
         logger.debug(`policies.full.service listInheritedByGroup: in: groupPaths:${groupPaths}, type:${type}`);
 
-        ow(groupPaths, ow.array.nonEmpty.minLength(1));
+        ow(groupPaths, 'groupPaths',ow.array.nonEmpty.minLength(1));
 
         // any ids need to be lowercase
         groupPaths=groupPaths.map(v => v.toLowerCase());
@@ -212,7 +212,7 @@ export class PoliciesServiceFull implements PoliciesService {
     public async delete(policyId: string) : Promise<void> {
         logger.debug(`policies.full.service delete: in: policyId: ${policyId}`);
 
-        ow(policyId, ow.string.nonEmpty);
+        ow(policyId,'policyId', ow.string.nonEmpty);
 
         // any ids need to be lowercase
         policyId=policyId.toLowerCase();

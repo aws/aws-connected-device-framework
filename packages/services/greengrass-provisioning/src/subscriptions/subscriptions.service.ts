@@ -18,7 +18,7 @@ export class SubscriptionsService {
         @inject(TYPES.GroupsDao) private groupsDao: GroupsDao,
         @inject(TYPES.GreengrassUtils) private ggUtils: GreengrassUtils) {}
 
-    public async updateSubscriptionDefinition(groupName:string, add:GreengrassSubscriptionItem[], remove:string[]) {
+    public async updateSubscriptionDefinition(groupName:string, add:GreengrassSubscriptionItem[], remove:string[]) : Promise<void> {
         logger.debug(`subscriptions.service updateSubscriptionDefinition: in: groupName:${groupName}, add:${JSON.stringify(add)}, remove:${JSON.stringify(remove)}`);
 
         ow(groupName, ow.string.nonEmpty);
@@ -69,7 +69,7 @@ export class SubscriptionsService {
 
         const subscriptionsInfo = await this.ggUtils.getSubscriptionInfo(subscriptionDefinitionVersionArn);
 
-        let subscriptionInfoChanged:boolean=false;
+        let subscriptionInfoChanged=false;
 
         // remove any requested
         if (remove!==undefined) {

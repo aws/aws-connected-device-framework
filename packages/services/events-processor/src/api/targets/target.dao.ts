@@ -112,7 +112,7 @@ export class TargetDao {
         };
 
         Object.keys(item).forEach(k=> {
-            if (item.hasOwnProperty(k) ) {
+            if (Object.prototype.hasOwnProperty.call(item, k)) {
                 if (params.UpdateExpression==='') {
                     params.UpdateExpression+='set ';
                 } else {

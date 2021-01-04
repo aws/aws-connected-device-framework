@@ -18,7 +18,7 @@ export class DynamoDBTarget {
         @inject(TYPES.DynamoDbTargetDao) private ddbTargetDao: DynamoDbTargetDao) {
     }
 
-    public async writeAlert(item: any, targetTableName: string) {
+    public async writeAlert(item: unknown, targetTableName: string) : Promise<void>{
         logger.debug(`Dynamodb.target writeAlert: in: targetTableName:${targetTableName}, item:${JSON.stringify(item)}`);
 
         // validate input

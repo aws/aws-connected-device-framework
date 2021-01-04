@@ -42,7 +42,7 @@ export class TemplatesLambdaService extends TemplatesServiceBase implements Temp
     }
 
     async getTemplate(templateId: string, additionalHeaders?: RequestHeaders): Promise<TemplateModel> {
-        ow(templateId, ow.string.nonEmpty);
+        ow(templateId,'templateId', ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.templateRelativeUrl(templateId))
@@ -80,7 +80,7 @@ export class TemplatesLambdaService extends TemplatesServiceBase implements Temp
     }
 
     async deleteTemplate(templateId: string, additionalHeaders?: RequestHeaders): Promise<void> {
-        ow(templateId, ow.string.nonEmpty);
+        ow(templateId,'templateId', ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.templateRelativeUrl(templateId))

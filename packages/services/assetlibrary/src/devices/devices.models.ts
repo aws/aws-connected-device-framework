@@ -141,7 +141,7 @@ export function determineIfDevice20Resource(toBeDetermined: DeviceBaseResource):
 	return false;
 }
 
-export function determineIfDeviceItem(toBeDetermined: any): toBeDetermined is DeviceItem {
+export function determineIfDeviceItem(toBeDetermined: unknown) : toBeDetermined is DeviceItem {
 	const asV2 = toBeDetermined as DeviceItem;
 	if (asV2.deviceId) {
 		return true;

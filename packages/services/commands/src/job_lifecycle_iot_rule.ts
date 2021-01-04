@@ -13,7 +13,7 @@ import { DeleteThingGroupRequest } from 'aws-sdk/clients/iot';
 let commandService:CommandsService;
 let iot:AWS.Iot;
 
-exports.job_lifecycle_rule_handler = async (event: any, _context: any) => {
+exports.job_lifecycle_rule_handler = async (event: Event, _context: unknown) : Promise<HandlerResponse> => {
   logger.debug(`job_lifecycle_rule_handler: event: ${JSON.stringify(event)}`);
 
   if (commandService===undefined) {
@@ -57,7 +57,7 @@ exports.job_lifecycle_rule_handler = async (event: any, _context: any) => {
     }
   }
 
-  const response = {
+  const response:HandlerResponse = {
     commandId: command.commandId,
     jobId: event.jobId,
     deleted
@@ -66,4 +66,16 @@ exports.job_lifecycle_rule_handler = async (event: any, _context: any) => {
   logger.debug(`job_lifecycle_rule_handler: exit: ${JSON.stringify(response)}`);
   return response;
 
-};
+}
+
+interface HandlerResponse {
+  commandId?: string,
+  jobId?: string,
+  deleted?: string[],
+  message?:string
+}
+
+interface Event {
+  jobId:string,
+  jobEvent:string
+}

@@ -78,7 +78,7 @@ export class ClientIdEnforcementPolicyStepProcessor implements ProvisioningStepP
         policyName
     };
 
-    let policyExists:boolean = false;
+    let policyExists = false;
 
     try {
         await this._iot.getPolicy(getPolicyParams).promise();

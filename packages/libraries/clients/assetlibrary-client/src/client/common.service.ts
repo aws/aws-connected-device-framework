@@ -15,14 +15,14 @@ import {RequestHeaders} from './common.model';
 @injectable()
 export abstract class ClientServiceBase  {
 
-    protected MIME_TYPE:string = 'application/vnd.aws-cdf-v1.0+json';
+    protected MIME_TYPE = 'application/vnd.aws-cdf-v1.0+json';
 
     private readonly _headers:RequestHeaders = {
         'Accept': this.MIME_TYPE,
         'Content-Type': this.MIME_TYPE
     };
 
-    protected buildHeaders(additionalHeaders:RequestHeaders) {
+    protected buildHeaders(additionalHeaders:RequestHeaders) : RequestHeaders {
 
         let headers = Object.assign({}, this._headers);
 

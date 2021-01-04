@@ -14,7 +14,7 @@ import ow from 'ow';
 
 let service:CertificateService;
 
-exports.handler = async (event: CertificateRequestModel, _context: any) => {
+exports.handler = async (event: CertificateRequestModel, _context: unknown) => {
   logger.debug(`handler: event: ${JSON.stringify(event)}`);
 
   try {

@@ -7,10 +7,11 @@
 import { logger } from './utils/logger';
 import config from 'config';
 import AWS = require('aws-sdk');
-import { QueuedApiEvent, ApiGatewayEvent, LambdaContext, ApiGatewayInvokeResponsePayload } from './api_gateway_event';
+import { QueuedApiEvent, ApiGatewayEvent, ApiGatewayInvokeResponsePayload } from './api_gateway_event';
 import * as request from 'superagent';
 import { TYPES } from './di/types';
 import { injectable, inject } from 'inversify';
+import {Context} from 'aws-lambda';
 
 enum ReplayResult {
 	SUCCESS = 'SUCCESS',
@@ -42,7 +43,7 @@ export class ReplayService {
   //   do API call
   //     if success: delete message from queue
   //     if fail: delete message from queue and add to DLQ
-  public async fetchFromQueueAndReplay(context: any): Promise<void> {
+  public async fetchFromQueueAndReplay(context: Context): Promise<void> {
 
     let healthy = await this.healthCheck();
     if (!healthy) {
@@ -97,7 +98,7 @@ export class ReplayService {
       };
       const response = await this._sqs.receiveMessage(sqsRequest).promise();
 
-      if (response.hasOwnProperty('Messages')) {
+      if (Object.prototype.hasOwnProperty.call(response,'Messages')) {
         logger.debug(`fetched ${response.Messages.length} from the queue`);
         return response.Messages;
       } else {
@@ -110,7 +111,7 @@ export class ReplayService {
     logger.debug(`replayEvent: queuedEvent: ${JSON.stringify(queuedEvent)}`);
 
     const apiEvent: ApiGatewayEvent = queuedEvent.event;
-    const apiEventContext: LambdaContext = queuedEvent.context;
+    const apiEventContext: Context = queuedEvent.context;
 
     logger.debug(`API CALL: ${apiEvent.httpMethod} : ${apiEvent.path}`);
     logger.debug(`Invoke Lambda: ${apiEventContext.invokedFunctionArn}`);
@@ -147,7 +148,7 @@ export class ReplayService {
     logger.debug(`deleteMessage response: ${JSON.stringify(response)}`);
   }
 
-  private async queueEvent(queueUrl: string, event: any): Promise<void> {
+  private async queueEvent(queueUrl: string, event: unknown): Promise<void> {
     logger.debug(`queueEvent: queueUrl: ${queueUrl}, event: ${JSON.stringify(event)}`);
 
     const sqsRequest: AWS.SQS.SendMessageRequest = {

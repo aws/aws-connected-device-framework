@@ -11,7 +11,8 @@ import { FilterService } from './filter/filter.service';
 
 let filter: FilterService;
 
-exports.handler = async (event: any, _context: any) => {
+// eslint-disable-next-line  @typescript-eslint/no-explicit-any
+exports.handler = async (event: any, _context: unknown) => {
     logger.debug(`lambda_proxy_invoke handler: event: ${JSON.stringify(event)}`);
 
     // init

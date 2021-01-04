@@ -1,24 +1,11 @@
 {
-    "extends": "../../tsconfig.base.json",
+    "extends": "../../../tsconfig.base.json",
     "compilerOptions": {
         "outDir": "dist",
-        "rootDir": "src",
-        
-        "typeRoots": [
-            "./src/@types",
-            "./node_modules/@types",
-            "../../../node_modules/@types"
-        ],
-        "types": [
-            "node",
-			"config",
-			"jest",
-			"aws-serverless-express",
-			"express",
-			"winston",
-			"uuid",
-			"busboy"
-        ]
+        "rootDir": "src"
+    },
+    "paths": {
+      "~/*": ["./*"]
     },
     "references": [
         {
@@ -39,7 +26,6 @@
     ],
     "exclude": [
         "node_modules",
-        "../../../node_modules",
         "dist",
         ".vscode",
         ".git",

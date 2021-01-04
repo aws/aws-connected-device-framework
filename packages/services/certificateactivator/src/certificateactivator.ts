@@ -12,7 +12,7 @@ import { RegistrationEvent } from './activation/activation.models';
 import ow from 'ow';
 
 let service:ActivationService;
-
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 exports.handler = async (event: any, _context: any) => {
   logger.debug(`handler: event: ${JSON.stringify(event)}`);
 

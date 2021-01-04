@@ -27,7 +27,7 @@ export interface ThingsService {
 @injectable()
 export class ThingsServiceBase {
 
-    protected MIME_TYPE:string = 'application/vnd.aws-cdf-v1.0+json';
+    protected MIME_TYPE = 'application/vnd.aws-cdf-v1.0+json';
 
     protected _headers:RequestHeaders = {
         'Accept': this.MIME_TYPE,
@@ -54,7 +54,7 @@ export class ThingsServiceBase {
         return `/things/${PathHelper.encodeUrl(thingName)}/certificates`;
     }
 
-    protected buildHeaders(additionalHeaders:RequestHeaders) {
+    protected buildHeaders(additionalHeaders:RequestHeaders) : RequestHeaders {
 
         let headers = Object.assign({}, this._headers);
 

@@ -163,7 +163,7 @@ export class DevicesService  {
     public async getDevice(deviceId:string) : Promise<DeviceItem> {
         logger.debug(`devices.service getDevice: in: deviceId:${deviceId}`);
 
-        ow(deviceId, ow.string.nonEmpty);
+        ow(deviceId, 'deviceId', ow.string.nonEmpty);
 
         const device = await this.devicesDao.getDevice(deviceId);
 

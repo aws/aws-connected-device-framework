@@ -42,7 +42,7 @@ export class NeptuneConnection {
         return this._traversal;
     }
 
-    public close() {
+    public close() : void {
         this._connection.close();
     }
 }

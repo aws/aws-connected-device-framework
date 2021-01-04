@@ -40,7 +40,7 @@ export class GroupsApigwService extends GroupsServiceBase implements GroupsServi
      * @param body Group to add to the asset library
      */
     async createGroup(body: Group10Resource | Group20Resource, applyProfileId?: string, additionalHeaders?:RequestHeaders): Promise<void> {
-        ow(body, ow.object.nonEmpty);
+        ow(body, 'body', ow.object.nonEmpty);
 
         let url = `${this.baseUrl}${super.groupsRelativeUrl()}`;
         const queryString = QSHelper.getQueryString({applyProfile: applyProfileId});
@@ -58,7 +58,7 @@ export class GroupsApigwService extends GroupsServiceBase implements GroupsServi
      * @param body Group to add to the asset library
      */
     async bulkCreateGroup(body: BulkLoadGroups, applyProfileId?: string, additionalHeaders?:RequestHeaders): Promise<BulkLoadGroupsResponse> {
-        ow(body, ow.object.nonEmpty);
+        ow(body, 'body', ow.object.nonEmpty);
 
         let url = `${this.baseUrl}${super.bulkGroupsRelativeUrl()}`;
         const queryString = QSHelper.getQueryString({applyProfile: applyProfileId});
@@ -78,7 +78,7 @@ export class GroupsApigwService extends GroupsServiceBase implements GroupsServi
      * @param groupPath Path of group to return
      */
     async deleteGroup(groupPath: string, additionalHeaders?:RequestHeaders): Promise<void> {
-        ow(groupPath, ow.string.nonEmpty);
+        ow(groupPath,'groupPath', ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.groupRelativeUrl(groupPath)}`;
 
@@ -92,7 +92,7 @@ export class GroupsApigwService extends GroupsServiceBase implements GroupsServi
      * @param groupPath Path of group to return
      */
     async getGroup(groupPath: string, additionalHeaders?:RequestHeaders): Promise<Group10Resource | Group20Resource> {
-        ow(groupPath, ow.string.nonEmpty);
+        ow(groupPath,'groupPath', ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.groupRelativeUrl(groupPath)}`;
 
@@ -111,7 +111,7 @@ export class GroupsApigwService extends GroupsServiceBase implements GroupsServi
      * @param count The maximum number of results to return
      */
     async listGroupMembersDevices(groupPath: string, template?: string, state?: DeviceState, offset?: number, count?: number, additionalHeaders?:RequestHeaders): Promise<DeviceResourceList> {
-        ow(groupPath, ow.string.nonEmpty);
+        ow(groupPath,'groupPath', ow.string.nonEmpty);
 
         let url = `${this.baseUrl}${super.groupDeviceMembersRelativeUrl(groupPath)}`;
         const queryString = QSHelper.getQueryString({template, state, offset, count});
@@ -134,7 +134,7 @@ export class GroupsApigwService extends GroupsServiceBase implements GroupsServi
      * @param count The maximum number of results to return
      */
     async listGroupMembersGroups(groupPath: string, template?: string, offset?: number, count?: number, additionalHeaders?:RequestHeaders): Promise<GroupResourceList> {
-        ow(groupPath, ow.string.nonEmpty);
+        ow(groupPath,'groupPath', ow.string.nonEmpty);
 
         let url = `${this.baseUrl}${super.groupGroupMembersRelativeUrl(groupPath)}`;
         const queryString = QSHelper.getQueryString({template, offset, count});
@@ -156,7 +156,7 @@ export class GroupsApigwService extends GroupsServiceBase implements GroupsServi
      * @param count The maximum number of results to return
      */
     async listGroupMemberships(groupPath: string, offset?: number, count?: number, additionalHeaders?:RequestHeaders): Promise<GroupResourceList> {
-        ow(groupPath, ow.string.nonEmpty);
+        ow(groupPath,'groupPath', ow.string.nonEmpty);
 
         let url = `${this.baseUrl}${super.groupMembershipsRelativeUrl(groupPath)}`;
         const queryString = QSHelper.getQueryString({offset, count});
@@ -177,8 +177,8 @@ export class GroupsApigwService extends GroupsServiceBase implements GroupsServi
      * @param body Group object that needs to be updated
      */
     async updateGroup(groupPath: string, body: Group10Resource | Group20Resource, applyProfileId?: string, additionalHeaders?:RequestHeaders): Promise<void> {
-        ow(groupPath, ow.string.nonEmpty);
-        ow(body, ow.object.nonEmpty);
+        ow(groupPath,'groupPath', ow.string.nonEmpty);
+        ow(body, 'body', ow.object.nonEmpty);
 
         let url = `${this.baseUrl}${super.groupRelativeUrl(groupPath)}`;
         const queryString = QSHelper.getQueryString({applyProfile: applyProfileId});
@@ -192,9 +192,9 @@ export class GroupsApigwService extends GroupsServiceBase implements GroupsServi
     }
 
     async attachToGroup(sourceGroupPath: string, relationship: string, targetGroupPath: string, additionalHeaders?:RequestHeaders): Promise<void> {
-        ow(sourceGroupPath, ow.string.nonEmpty);
-        ow(relationship, ow.string.nonEmpty);
-        ow(targetGroupPath, ow.string.nonEmpty);
+        ow(sourceGroupPath, 'sourceGroupPath',ow.string.nonEmpty);
+        ow(relationship,'relationship', ow.string.nonEmpty);
+        ow(targetGroupPath, 'targetGroupPath',ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.groupAttachedGroupRelativeUrl(sourceGroupPath, relationship, targetGroupPath)}`;
         await request.put(url)
@@ -202,9 +202,9 @@ export class GroupsApigwService extends GroupsServiceBase implements GroupsServi
     }
 
     async detachFromGroup(sourceGroupPath: string, relationship: string, targetGroupPath: string, additionalHeaders?:RequestHeaders): Promise<void> {
-        ow(sourceGroupPath, ow.string.nonEmpty);
-        ow(relationship, ow.string.nonEmpty);
-        ow(targetGroupPath, ow.string.nonEmpty);
+        ow(sourceGroupPath, 'sourceGroupPath',ow.string.nonEmpty);
+        ow(relationship,'relationship', ow.string.nonEmpty);
+        ow(targetGroupPath, 'targetGroupPath',ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.groupAttachedGroupRelativeUrl(sourceGroupPath, relationship, targetGroupPath)}`;
 

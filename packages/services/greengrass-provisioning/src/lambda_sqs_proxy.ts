@@ -20,7 +20,8 @@ let deploymentSvc:DeploymentsService;
 let sqs:AWS.SQS;
 let deploymentStatusQueue:string;
 
-exports.handler = async (event: any, _context: any) => {
+// eslint-disable-next-line  @typescript-eslint/no-explicit-any
+exports.handler = async (event: any, _context: unknown) => {
   logger.debug(`lambda_sqs_proxy handler: event: ${JSON.stringify(event)}`);
 
   // init

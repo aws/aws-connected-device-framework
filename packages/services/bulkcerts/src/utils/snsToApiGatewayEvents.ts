@@ -5,10 +5,11 @@
 #-------------------------------------------------------------------------------*/
 
 import ow from 'ow';
+import { logger } from './logger';
 export class SnsToApiGatewayEvents {
 
-    public buildApiGatewayEventFromSnsEvent(subject:string, snsMessage:any): any {
-        console.log(`snsToApiGatewayEvents buildApiGatewayEventFromSnsEvent: in: subject:${subject}, snsMessage:${JSON.stringify(snsMessage)}`);
+    public buildApiGatewayEventFromSnsEvent(subject:string, snsMessage:Message): string {
+        logger.debug(`snsToApiGatewayEvents buildApiGatewayEventFromSnsEvent: in: subject:${subject}, snsMessage:${JSON.stringify(snsMessage)}`);
 
         let event:string;
         switch(subject) {
@@ -18,12 +19,12 @@ export class SnsToApiGatewayEvents {
             default:
         }
 
-        console.log(`snsToApiGatewayEvents buildApiGatewayEventFromSnsEvent: exit: event:${JSON.stringify(event)}`);
+        logger.debug(`snsToApiGatewayEvents buildApiGatewayEventFromSnsEvent: exit: event:${JSON.stringify(event)}`);
         return event;
 
     }
 
-    private processCreateChunk(msg:any) {
+    private processCreateChunk(msg:Message) {
         const taskId = msg.taskId;
         const chunkId:number = msg.chunkId;
 
@@ -32,6 +33,7 @@ export class SnsToApiGatewayEvents {
 
         const path = `/certificates/${taskId}/chunks/${chunkId}`;
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const apiGatewayEvent:any = {
             resource: '/{proxy+}',
             path,
@@ -51,4 +53,9 @@ export class SnsToApiGatewayEvents {
 
         return apiGatewayEvent;
     }
+}
+
+export interface Message {
+    taskId: string,
+    chunkId: number
 }

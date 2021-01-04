@@ -20,10 +20,11 @@ export class ExpressionParser {
 
     private parseExpression(expression: string): string[] {
         const ast = Reflect.parse(expression);
-        const expTree = ast.body[0].expression;
+        const expTree = ast['body']?.[0]?.expression;
         const keys: string[] = [];
 
         // Traverse through the tree and find all member expression nodes
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const _traverse = (node: any) => {
             // If the node type is member Expression add the name or value of the property
             if(node.type === 'MemberExpression') {
@@ -60,6 +61,7 @@ export class ExpressionSanitizer {
         const sanitizedExpression: string[] = [];
         const regex = new RegExp(this.pattern);
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         let match:any;
 
         do {

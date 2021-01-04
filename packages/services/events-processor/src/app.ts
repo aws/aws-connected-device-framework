@@ -11,7 +11,9 @@ import {logger} from './utils/logger.util';
 import config from 'config';
 import {Request, Response, NextFunction, Application} from 'express';
 import {asArray, SupportedVersionConfig} from '@cdf/express-middleware';
+import cors = require('cors');
 import {setVersionByAcceptHeader} from 'express-version-request';
+
 
 const PORT = 3008;
 
@@ -50,10 +52,10 @@ server.setConfig((app) => {
   // enable cors
   const corsAllowedOrigin = config.get('cors.origin') as string;
   if (corsAllowedOrigin !== null && corsAllowedOrigin !== '') {
-    const cors = require('cors')({
+    const c = cors({
       origin: corsAllowedOrigin
     });
-    app.use(cors);
+    app.use(c);
   }
 });
 

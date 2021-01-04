@@ -1,45 +1,16 @@
 {
   "name": "cdf",
   "author": "Dean Hart <deanhart@amazon.com>",
-  "scripts": {
-    "clean": "pnpm m run clean",
-    "reset": "pnpm m run reset && rm -rf node_modules package-lock.json",
-    "reset:libraries": "pnpm m run clean && pnpm m run reset",
-    "commit": "npx git-cz",
-    "build": "pnpm m run build",
-    "test": "pnpm m run test",
-    "prebundle": "pnpm run clean && pnpm install --force && pnpm run build && pnpm m run prebundle:prepare",
-    "bundle": "pnpm i --no-lock --prod --shamefully-flatten --force && pnpm m run bundle:package",
-    "postbundle": "pnpm install --force",
-    "build:libraries": "pnpm run reset:libraries && pnpm i && pnpm m run build",
-    "bundle:libraries": "pnpm i --no-lock --prod --shamefully-flatten --force"
-  },
+  "scripts": {},
   "engines": {
     "node": "=12",
     "pnpm": "=5"
   },
-  "devDependencies": {
-    "@commitlint/cli": "8.2.0",
-    "@commitlint/config-conventional": "8.2.0",
-    "@semantic-release/changelog": "3.0.6",
-    "@semantic-release/git": "7.0.18",
-    "@semantic-release/npm": "5.3.4",
-    "@semantic-release/release-notes-generator": "7.3.5",
-    "commitizen": "4.0.3",
-    "cz-conventional-changelog": "3.0.2",
-    "del-cli": "3.0.0",
-    "husky": "3.1.0",
-    "semantic-release": "15.13.31",
-    "semantic-release-monorepo": "6.1.1"
-  },
   "private": true,
-  "config": {
-    "commitizen": {
-      "path": "./node_modules/cz-conventional-changelog"
-    }
-  },
   "husky": {
     "hooks": {
+      "pre-commit": "rush lint",
+      "prepare-commit-msg": "exec < /dev/tty && git cz --hook || true",
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
     }
   }

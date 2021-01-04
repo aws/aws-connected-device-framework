@@ -197,8 +197,8 @@ Resources:
   LambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ../build/build.zip
-      Handler: lambda_proxy.handler
+      CodeUri: ../bundle.zip
+      Handler: packages/services/assetlibrary/dist/lambda_proxy.handler
 
       MemorySize: 512
       Role: !GetAtt LambdaExecutionRole.Arn
@@ -218,7 +218,7 @@ Resources:
       Timeout: 30
       Environment:
         Variables:
-          NODE_CONFIG_DIR: './config'
+          NODE_CONFIG_DIR: 'packages/services/assetlibrary/dist/config'
           NODE_CONFIG: !Ref ApplicationConfigurationOverride
 
       Tracing: Active

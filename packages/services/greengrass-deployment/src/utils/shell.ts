@@ -8,7 +8,7 @@ import { exec } from 'child_process';
 
 export class Shell {
 
-    public async exec(command: string) {
+    public async exec(command: string): Promise<string> {
         const _exec = promisify(exec);
         const { stdout, stderr } = await _exec(command);
 
@@ -33,8 +33,8 @@ export class ShellCommand {
     }
 
     // TODO: fix this
-    get opts_cli() {
-        let optsString: string = '';
+    get opts_cli(): string {
+        let optsString = '';
         this.opts.forEach((opt: string) => {
             optsString = optsString.concat(` --${opt}`);
         });
@@ -43,14 +43,14 @@ export class ShellCommand {
 
     // TODO: fix this
     get cli_params(): string {
-        let paramsString: string = '';
+        let paramsString = '';
         this.params.forEach((opt: string) => {
             paramsString = paramsString.concat(` ${opt}`);
         });
         return paramsString;
     }
 
-    toString() {
+    toString(): string {
         return `${this.module}${this.opts_cli}${this.cli_params}`;
     }
 

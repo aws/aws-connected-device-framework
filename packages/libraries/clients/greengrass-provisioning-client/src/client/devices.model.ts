@@ -11,7 +11,7 @@ export class Device {
 	provisioningTemplate: string;
 	provisioningParameters: {[key : string] : string};
 	cdfProvisioningParameters?: CdfProvisioningParameters;
-	syncShadow: boolean = true;
+	syncShadow= true;
 	artifacts?:  {[key : string] : string};
 	subscriptions?: GreengrassSubscription[];
 	createdAt?: Date;

@@ -12,7 +12,7 @@ import { logger } from '../utils/logger';
 
 import { TYPES } from '../di/types';
 import { ActivationService } from './activation.service';
-import { ActivationRequest, ActivationModel } from './activation.model';
+import { ActivationRequest, ActivationModel, ActivationResource } from './activation.model';
 
 @controller('/devices')
 export class ActivationController implements interfaces.Controller {
@@ -24,7 +24,7 @@ export class ActivationController implements interfaces.Controller {
     public async createActivation(
         @requestBody() req: ActivationRequest,
         @response() res: Response
-    ) {
+    ) : Promise<ActivationResource> {
 
         logger.info(`Activation.controller createActivation: in: item:${JSON.stringify(req)}`);
 
@@ -45,14 +45,15 @@ export class ActivationController implements interfaces.Controller {
     @httpGet('/:deviceId/activations/:activationId')
     public async getActivation(
         @response() res: Response,
-        @requestParam() params: any,
-    ): Promise<any> {
-        logger.debug(`Deployment.controller getDeployment: in: deviceId: ${params.deviceId}`);
+        @requestParam('deviceId') deviceId: string,
+        @requestParam('activationId') activationId: string
+    ): Promise<ActivationModel> {
+        logger.debug(`Deployment.controller getDeployment: in: deviceId: ${deviceId}`);
 
         let activation: ActivationModel;
 
         try {
-            activation = await this._service.getActivation(params.activationId, params.deviceId);
+            activation = await this._service.getActivation(activationId, deviceId);
         } catch (err) {
             handleError(err, res);
         }
@@ -65,12 +66,13 @@ export class ActivationController implements interfaces.Controller {
     @httpDelete('/:deviceId/activations/:activationId')
     public async deleteActivation(
         @response() res: Response,
-        @requestParam() params: any,
+        @requestParam('deviceId') deviceId: string,
+        @requestParam('activationId') activationId: string
     ): Promise<void> {
-        logger.debug(`Deployment.controller getDeployment: in: deviceId: ${params.deviceId}`);
+        logger.debug(`Deployment.controller getDeployment: in: deviceId: ${deviceId}`);
 
         try {
-            await this._service.deleteActivation(params.activationId, params.deviceId);
+            await this._service.deleteActivation(activationId, deviceId);
         } catch (err) {
             handleError(err, res);
         }

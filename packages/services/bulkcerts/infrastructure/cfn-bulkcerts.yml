@@ -228,8 +228,8 @@ Resources:
   ApiLambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ../build/build.zip
-      Handler: lambda_proxy.handler
+      CodeUri: ../bundle.zip
+      Handler: packages/services/bulkcerts/dist/lambda_proxy.handler
       Layers:
         - !Ref OpenSslLambdaLayerArn
       MemorySize: 128
@@ -238,7 +238,7 @@ Resources:
       Timeout: 300
       Environment:
         Variables:
-          NODE_CONFIG_DIR: './config'
+          NODE_CONFIG_DIR: 'packages/services/bulkcerts/dist/config'
           NODE_CONFIG: !Ref ApplicationConfigurationOverride
           BULKCERTS_AWS_DYNAMODB_TASKS_TABLE: !Ref BulkCertificatesTaskTable
           BULKCERTS_EVENTS_REQUEST_TOPIC: !Ref CertificatesRequestSnsTopic
@@ -271,10 +271,10 @@ Resources:
   SnsLambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ../build/build.zip
+      CodeUri: ../bundle.zip
       Layers:
         - !Ref OpenSslLambdaLayerArn
-      Handler: sns_handler.handler
+      Handler: packages/services/bulkcerts/dist/sns_handler.handler
       MemorySize: 512
       Role: !GetAtt SnsLambdaExecutionRole.Arn
       Runtime: nodejs12.x
@@ -282,7 +282,7 @@ Resources:
       ReservedConcurrentExecutions: 3
       Environment:
         Variables:
-          NODE_CONFIG_DIR: './config'
+          NODE_CONFIG_DIR: 'packages/services/bulkcerts/dist/config'
           NODE_CONFIG: !Ref ApplicationConfigurationOverride
           BULKCERTS_AWS_DYNAMODB_TASKS_TABLE: !Ref BulkCertificatesTaskTable
           BULKCERTS_EVENTS_REQUEST_TOPIC: !Ref CertificatesRequestSnsTopic

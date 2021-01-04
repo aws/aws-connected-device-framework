@@ -38,7 +38,7 @@ export class EventsLambdaService extends EventsServiceBase implements EventsServ
         // lambda querystring needs everything as strings...
         const qs:Dictionary = {};
         for(const property in req) {
-            if (req.hasOwnProperty(property)) {
+            if (Object.prototype.hasOwnProperty.call(req,property)) {
                 qs[property] = `${req[property]}`;
             }
         }
@@ -75,12 +75,12 @@ export class EventsLambdaService extends EventsServiceBase implements EventsServ
     }
 
     async listCategoryEvents(category: Category, req: CategoryEventsRequest, additionalHeaders?: RequestHeaders): Promise<Events> {
-        ow(category, ow.string.nonEmpty);
+        ow(category,'category', ow.string.nonEmpty);
 
         // lambda querystring needs everything as strings...
         const qs:Dictionary = {};
         for(const property in req) {
-            if (req.hasOwnProperty(property)) {
+            if (Object.prototype.hasOwnProperty.call(req,property)) {
                 qs[property] = `${req[property]}`;
             }
         }

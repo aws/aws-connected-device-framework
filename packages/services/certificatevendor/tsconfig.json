@@ -1,17 +1,8 @@
 {
-    "extends": "../../tsconfig.base.json",
+    "extends": "../../../tsconfig.base.json",
     "compilerOptions": {
         "outDir": "dist",
-        "rootDir": "src",
-        
-        "typeRoots": [
-            "./src/@types",
-            "./node_modules/@types",
-            "../../../node_modules/@types"
-        ],
-        "types": [
-            "jest", "config", "reflect-metadata", "node"
-        ]
+        "rootDir": "src"
     },
     "references": [
         {
@@ -26,7 +17,6 @@
     ],
     "exclude": [
         "node_modules",
-        "../../../node_modules",
         "dist",
         ".vscode",
         ".git",

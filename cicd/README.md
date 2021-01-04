@@ -23,7 +23,27 @@
   -z cfn-apiGateway-noAuth.yaml \
   -a None \
   -P deanhart-1577 \
-  -R us-west-2 
+  -R us-west-2 \
+```
+
+### Specific branch, into an existing VPC
+```sh
+./deploy-cicd-pipeline.bash \
+  -b cdf-157731826412-us-east-1 \
+  -d cdf-157731826412-us-east-1 \
+  -I cdf-infrastructure-demo \
+  -e 1577-us-east-1-dev \
+  -g rush \
+  -h rush \
+  -m full \
+  -p 157731826412 \
+  -i 205.251.233.178/32 \
+  -k dc00f56e-fc96-4c4e-8a78-ce033b7d5c8f \
+  -y s3://cdf-157731826412-us-west-2/cfn/ \
+  -z cfn-apiGateway-noAuth.yaml \
+  -a None \
+  -P deanhart-1577 \
+  -R us-east-1
 ```
 
 ## Testing locally
@@ -61,6 +81,11 @@ begin; set -lx CODEBUILD_BUILD_SUCCEEDING 1; and set -lx ENVIRONMENT development
 
 ### integrationtestsproject_build.bash
 
-```fish
-begin; set -lx CODEBUILD_SRC_DIR_source_infrastructure '/Users/deanhart/git/cdf-ts/cdf-infrastructure-demo'; and set -lx CODEBUILD_BUILD_SUCCEEDING 1; and set -lx ENVIRONMENT 'development-staging'; and set -lx DEPLOY_ARTIFACTS_STORE_BUCKET 'cdf-157731826412-us-west-2'; and set -lx ASSETLIBRARY_MODE 'full'; cicd/integrationtestsproject_build.bash; end
+```sh
+export CODEBUILD_SRC_DIR_source_infrastructure='/Users/deanhart/git/cdf-ts/cdf-infrastructure-demo'
+export CODEBUILD_BUILD_SUCCEEDING=1
+export ENVIRONMENT='development-staging'
+export DEPLOY_ARTIFACTS_STORE_BUCKET='cdf-157731826412-us-west-2'
+export ASSETLIBRARY_MODE='full'
+cicd/integrationtestsproject_build.bash
 ```

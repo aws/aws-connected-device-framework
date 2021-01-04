@@ -89,7 +89,7 @@ export class AgentbasedDeploymentDao {
         return deploymentAssociation;
     }
 
-    public async getByDeploymentId(deploymentId: string) {
+    public async getByDeploymentId(deploymentId: string): Promise<AssociationModel> {
         logger.debug(`agentbasedDeployment.dao: get: deviceId: ${deploymentId}`);
 
         const params = {

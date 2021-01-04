@@ -7,7 +7,8 @@
 import { logger } from './utils/logger';
 import config from 'config';
 import AWS = require('aws-sdk');
-import { QueuedApiEvent } from './api_gateway_event';
+import { QueuedApiEvent, ApiGatewayEvent } from './api_gateway_event';
+import {Context} from 'aws-lambda';
 
 const sqs = new AWS.SQS();
 const sqsRequestQueue = config.get('sqs.requestQueue.queueUrl') as string;
@@ -21,11 +22,11 @@ const headers: {[key: string]: string} = {
   'Content-Type': CDF_V1_TYPE
 };
 
-exports.handler = async (event: any, context: any, callback: any) => {
+exports.handler = async (event: ApiGatewayEvent, context: Context) : Promise<unknown> => {
 
   logger.debug(`event: ${JSON.stringify(event)}`);
-  logger.debug(`context: ${JSON.stringify(context)}`);
 
+  let response;
   if (corsAllowedOrigin !== null && corsAllowedOrigin !== '') {
     headers['Access-Control-Allow-Origin'] = corsAllowedOrigin;
   }
@@ -41,31 +42,29 @@ exports.handler = async (event: any, context: any, callback: any) => {
 
     try {
       await queueEvent(sqsRequestQueue, apiEventToQueue);
-      const response = {
+      response = {
         statusCode: 202,
         headers
       };
-      callback(null, response);
     } catch (err) {
-      const response = {
+      response = {
         statusCode: 500,
         headers,
         body: JSON.stringify({error: 'error adding request to queue'})
       };
-      callback(null, response);
     }
   } else {
     // GETs do not make sense in failover region
-    const response = {
+    response = {
       statusCode: 503,
       headers,
       body: JSON.stringify({error: `${method} service currently unavailable`})
     };
-    callback(null, response);
   }
+  return response;
 };
 
-async function queueEvent(queueUrl: string, event: any): Promise<void> {
+async function queueEvent(queueUrl: string, event: unknown): Promise<void> {
   logger.debug(`queueEvent: queueUrl: ${queueUrl}, event: ${JSON.stringify(event)}`);
 
   const sqsRequest: AWS.SQS.SendMessageRequest = {

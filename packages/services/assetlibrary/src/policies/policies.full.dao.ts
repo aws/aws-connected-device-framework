@@ -170,7 +170,7 @@ export class PoliciesDaoFull extends BaseDaoFull {
 
     }
 
-    public async listDeviceAttachedPolicies(deviceId:string, type:String): Promise<AttachedPolicy[]> {
+    public async listDeviceAttachedPolicies(deviceId:string, type:string): Promise<AttachedPolicy[]> {
         logger.debug(`policies.dao listDeviceAttachedPolicies: in: deviceId:${deviceId}, type:${type}`);
 
         const id = `device___${deviceId.toLowerCase()}`;
@@ -202,7 +202,7 @@ export class PoliciesDaoFull extends BaseDaoFull {
         return policies;
     }
 
-    public async listGroupAttachedPolicies(groupPaths:string[], type:String): Promise<AttachedPolicy[]> {
+    public async listGroupAttachedPolicies(groupPaths:string[], type:string): Promise<AttachedPolicy[]> {
         logger.debug(`policies.dao listGroupAttachedPolicies: in: groupPaths:${groupPaths}, type:${type}`);
 
         const ids:string[]=[];

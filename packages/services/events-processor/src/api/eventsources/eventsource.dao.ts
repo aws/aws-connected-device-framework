@@ -57,7 +57,7 @@ export class EventSourceDao {
 
 		const result = await this.dynamoDbUtils.batchWriteAll(params);
         if (this.dynamoDbUtils.hasUnprocessedItems(result)) {
-    		throw new Error('CREATE_EVENT_SOURCE_FAILED');
+            throw new Error('CREATE_EVENT_SOURCE_FAILED');
 		}
 
         logger.debug(`events.dao create: exit:`);
@@ -183,7 +183,7 @@ export class EventSourceDao {
 
 		const result = await this.dynamoDbUtils.batchWriteAll(deleteParams);
         if (this.dynamoDbUtils.hasUnprocessedItems(result)) {
-    		throw new Error('DELETE_EVENT_SOURCE_FAILED');
+            throw new Error('DELETE_EVENT_SOURCE_FAILED');
 		}
 
         logger.debug(`eventsource.dao delete: exit:`);

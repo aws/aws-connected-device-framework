@@ -18,7 +18,7 @@ export class EventController implements interfaces.Controller {
     constructor( @inject(TYPES.EventService) private eventService: EventService) {}
 
     @httpPost('/eventsources/:eventSourceId/events')
-    public async createEvent(@requestParam('eventSourceId') eventSourceId:string, @requestBody() event:EventResource, @response() res: Response) {
+    public async createEvent(@requestParam('eventSourceId') eventSourceId:string, @requestBody() event:EventResource, @response() res: Response) : Promise<void> {
         logger.debug(`event.controller createEvent: in: eventSourceId:${eventSourceId}, event:${JSON.stringify(event)}`);
 
         event.eventSourceId=eventSourceId;
@@ -93,7 +93,8 @@ export class EventController implements interfaces.Controller {
     }
 
     @httpPatch('/events/:eventId')
-    public async updateEvent(@requestParam('eventId') eventId:string, @requestBody() event: EventResource, @response() res: Response) {
+    public async updateEvent(@requestParam('eventId') eventId:string, @requestBody() event: EventResource, @response() res: Response) : Promise<void> {
+
 
         logger.debug(`event.controller updateEvent: event:${JSON.stringify(event)}, eventId:${eventId}`);
 

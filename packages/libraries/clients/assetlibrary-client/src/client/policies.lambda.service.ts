@@ -27,7 +27,7 @@ export class PoliciesLambdaService extends PoliciesServiceBase implements Polici
     }
 
     async createPolicy(body: Policy, additionalHeaders?:RequestHeaders): Promise<void> {
-        ow(body, ow.object.nonEmpty);
+        ow(body, 'body', ow.object.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.policiesRelativeUrl())
@@ -39,8 +39,8 @@ export class PoliciesLambdaService extends PoliciesServiceBase implements Polici
     }
 
     async listInheritedPoliciesByDevice(deviceId: string, type: string, additionalHeaders?:RequestHeaders): Promise<PolicyList> {
-        ow(deviceId, ow.string.nonEmpty);
-        ow(type, ow.string.nonEmpty);
+        ow(deviceId, 'deviceId', ow.string.nonEmpty);
+        ow(type,'type', ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.inheritedPoliciesRelativeUrl())
@@ -55,8 +55,8 @@ export class PoliciesLambdaService extends PoliciesServiceBase implements Polici
     }
 
     async listInheritedPoliciesByGroups(additionalHeaders?:RequestHeaders, ...groupPaths: string[]): Promise<PolicyList> {
-        ow(groupPaths, ow.array.nonEmpty);
-        ow(groupPaths, ow.array.minLength(1));
+        ow(groupPaths, 'groupPaths',ow.array.nonEmpty);
+        ow(groupPaths, 'groupPaths',ow.array.minLength(1));
 
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.inheritedPoliciesRelativeUrl())
@@ -72,7 +72,7 @@ export class PoliciesLambdaService extends PoliciesServiceBase implements Polici
     }
 
     async listPolicies(type: string, offset?: number, count?: number, additionalHeaders?:RequestHeaders): Promise<PolicyList> {
-        ow(type, ow.string.nonEmpty);
+        ow(type,'type', ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.policiesRelativeUrl())
@@ -89,7 +89,7 @@ export class PoliciesLambdaService extends PoliciesServiceBase implements Polici
     }
 
     async getPolicy(policyId: string, additionalHeaders?:RequestHeaders): Promise<Policy> {
-        ow(policyId, ow.string.nonEmpty);
+        ow(policyId,'policyId', ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.policiesRelativeUrl())
@@ -101,8 +101,8 @@ export class PoliciesLambdaService extends PoliciesServiceBase implements Polici
     }
 
     async patchPolicy(policyId: string, body: Policy, additionalHeaders?:RequestHeaders): Promise<void> {
-        ow(policyId, ow.string.nonEmpty);
-        ow(body, ow.object.nonEmpty);
+        ow(policyId,'policyId', ow.string.nonEmpty);
+        ow(body, 'body', ow.object.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.policyRelativeUrl(policyId))
@@ -114,7 +114,7 @@ export class PoliciesLambdaService extends PoliciesServiceBase implements Polici
     }
 
     async deletePolicy(policyId: string, additionalHeaders?:RequestHeaders): Promise<void> {
-        ow(policyId, ow.string.nonEmpty);
+        ow(policyId,'policyId', ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.policyRelativeUrl(policyId))

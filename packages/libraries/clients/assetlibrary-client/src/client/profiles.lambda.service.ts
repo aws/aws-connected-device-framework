@@ -27,8 +27,8 @@ export class ProfilesLambdaService extends ProfilesServiceBase implements Profil
     }
 
     async createProfile(category: string, body: DeviceProfileResource | GroupProfileResource, additionalHeaders?:RequestHeaders): Promise<void> {
-        ow(body, ow.object.nonEmpty);
-        ow(body.templateId, ow.string.nonEmpty);
+        ow(body, 'body', ow.object.nonEmpty);
+        ow(body.templateId, 'templateId',ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.profilesOfTemplateRelativeUrl(category, body.templateId))
@@ -48,9 +48,9 @@ export class ProfilesLambdaService extends ProfilesServiceBase implements Profil
     }
 
     async getProfile(category: string, templateId: string, profileId: string, additionalHeaders?:RequestHeaders): Promise<DeviceProfileResource | GroupProfileResource> {
-        ow(category, ow.string.nonEmpty);
-        ow(templateId, ow.string.nonEmpty);
-        ow(profileId, ow.string.nonEmpty);
+        ow(category,'category', ow.string.nonEmpty);
+        ow(templateId,'templateId', ow.string.nonEmpty);
+        ow(profileId,'profileId', ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.profileRelativeUrl(category, templateId, profileId))
@@ -70,9 +70,9 @@ export class ProfilesLambdaService extends ProfilesServiceBase implements Profil
     }
 
     async updateProfile(category: string, templateId: string, profileId: string, body: DeviceProfileResource | GroupProfileResource, additionalHeaders?:RequestHeaders): Promise<void> {
-        ow(category, ow.string.nonEmpty);
-        ow(templateId, ow.string.nonEmpty);
-        ow(profileId, ow.string.nonEmpty);
+        ow(category,'category', ow.string.nonEmpty);
+        ow(templateId,'templateId', ow.string.nonEmpty);
+        ow(profileId,'profileId', ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.profileRelativeUrl(category, templateId, profileId))
@@ -93,9 +93,9 @@ export class ProfilesLambdaService extends ProfilesServiceBase implements Profil
     }
 
     async deleteProfile(category: string, templateId: string, profileId: string, additionalHeaders?:RequestHeaders): Promise<void> {
-        ow(category, ow.string.nonEmpty);
-        ow(templateId, ow.string.nonEmpty);
-        ow(profileId, ow.string.nonEmpty);
+        ow(category,'category', ow.string.nonEmpty);
+        ow(templateId,'templateId', ow.string.nonEmpty);
+        ow(profileId,'profileId', ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.profileRelativeUrl(category, templateId, profileId))
@@ -115,8 +115,8 @@ export class ProfilesLambdaService extends ProfilesServiceBase implements Profil
     }
 
     async listProfiles(category: string, templateId: string, additionalHeaders?:RequestHeaders): Promise<ProfileResourceList> {
-        ow(category, ow.string.nonEmpty);
-        ow(templateId, ow.string.nonEmpty);
+        ow(category,'category', ow.string.nonEmpty);
+        ow(templateId,'templateId', ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.profilesOfTemplateRelativeUrl(category, templateId))

@@ -25,7 +25,7 @@ export class DeviceRegistryManager implements RegistryManager {
     public async isWhitelisted(deviceId:string) : Promise<boolean> {
         logger.debug(`deviceregistry.service isWhitelisted: in: deviceId:${deviceId}`);
 
-        ow(deviceId, ow.string.nonEmpty);
+        ow(deviceId, 'deviceId', ow.string.nonEmpty);
 
         let whitelisted=true;
 
@@ -46,7 +46,7 @@ export class DeviceRegistryManager implements RegistryManager {
     public async updateAssetStatus(deviceId:string) : Promise<void> {
         logger.debug(`deviceregistry.service updateAssetStatus: in: deviceId:${deviceId}`);
 
-        ow(deviceId, ow.string.nonEmpty);
+        ow(deviceId, 'deviceId', ow.string.nonEmpty);
 
         if (this.successKey===undefined || this.successKey === null) {
             logger.warn('deviceregistry.service updateAssetStatus: exit: successKey not set, therefore not updating device registry');

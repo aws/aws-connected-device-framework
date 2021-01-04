@@ -29,29 +29,16 @@ export class TemplatesService  {
         ow(item.name, ow.string.nonEmpty);
         ow(item.groupId, ow.string.nonEmpty);
 
-        let groupInfo;
-        try {
-            groupInfo = await this.gg.getGroup({GroupId:item.groupId}).promise();
-        } catch (err) {
-            // TODO: handle
-            // if (err.code==='IdNotFoundException') {
-            throw err;
-        }
-
+        const groupInfo = await this.gg.getGroup({GroupId:item.groupId}).promise();
+        
         // default version to latest if not provided
         if (!item.groupVersionId) {
             item.groupVersionId = groupInfo.LatestVersion;
         } else {
-            // verify the version exists
-            try {
-                await this.gg.getGroupVersion({
+            // verify the version exists (error will be thrown if not)
+            await this.gg.getGroupVersion({
                     GroupId: item.groupId,
                     GroupVersionId: item.groupVersionId}).promise();
-                } catch (err) {
-                    // TODO: handle
-                    // if (err.code==='IdNotFoundException') {
-                    throw err;
-                }
         }
 
         // retrieve existing

@@ -28,7 +28,7 @@ export class AnsibleService {
         return command;
     }
 
-    public async executePlaybook(params: AnsibleExecutionParams) {
+    public async executePlaybook(params: AnsibleExecutionParams): Promise<string> {
         logger.info(`AnsibleService.executePlaybook: in: params: ${JSON.stringify(params)}`);
 
         // Verify if ansible is available

@@ -39,7 +39,7 @@ export class GroupsLambdaService extends GroupsServiceBase implements GroupsServ
      * @param body Group to add to the asset library
      */
     async createGroup(body: Group10Resource | Group20Resource, applyProfileId?: string, additionalHeaders?:RequestHeaders): Promise<void> {
-        ow(body, ow.object.nonEmpty);
+        ow(body, 'body', ow.object.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
             .setMethod('POST')
@@ -59,7 +59,7 @@ export class GroupsLambdaService extends GroupsServiceBase implements GroupsServ
      * @param body Group to add to the asset library
      */
     async bulkCreateGroup(body: BulkLoadGroups, applyProfileId?: string, additionalHeaders?:RequestHeaders): Promise<BulkLoadGroupsResponse> {
-        ow(body, ow.object.nonEmpty);
+        ow(body, 'body', ow.object.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
             .setMethod('POST')
@@ -80,7 +80,7 @@ export class GroupsLambdaService extends GroupsServiceBase implements GroupsServ
      * @param groupPath Path of group to return
      */
     async deleteGroup(groupPath: string, additionalHeaders?:RequestHeaders): Promise<void> {
-        ow(groupPath, ow.string.nonEmpty);
+        ow(groupPath,'groupPath', ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
             .setMethod('DELETE')
@@ -96,7 +96,7 @@ export class GroupsLambdaService extends GroupsServiceBase implements GroupsServ
      * @param groupPath Path of group to return
      */
     async getGroup(groupPath: string, additionalHeaders?:RequestHeaders): Promise<Group10Resource | Group20Resource> {
-        ow(groupPath, ow.string.nonEmpty);
+        ow(groupPath,'groupPath', ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
             .setMethod('GET')
@@ -116,7 +116,7 @@ export class GroupsLambdaService extends GroupsServiceBase implements GroupsServ
      * @param count The maximum number of results to return
      */
     async listGroupMembersDevices(groupPath: string, template?: string, state?: DeviceState, offset?: number, count?: number, additionalHeaders?:RequestHeaders): Promise<DeviceResourceList> {
-        ow(groupPath, ow.string.nonEmpty);
+        ow(groupPath,'groupPath', ow.string.nonEmpty);
 
        const event = new LambdaApiGatewayEventBuilder()
             .setMethod('GET')
@@ -142,7 +142,7 @@ export class GroupsLambdaService extends GroupsServiceBase implements GroupsServ
      * @param count The maximum number of results to return
      */
     async listGroupMembersGroups(groupPath: string, template?: string, offset?: number, count?: number, additionalHeaders?:RequestHeaders): Promise<GroupResourceList> {
-        ow(groupPath, ow.string.nonEmpty);
+        ow(groupPath,'groupPath', ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
             .setMethod('GET')
@@ -166,7 +166,7 @@ export class GroupsLambdaService extends GroupsServiceBase implements GroupsServ
      * @param count The maximum number of results to return
      */
     async listGroupMemberships(groupPath: string, offset?: number, count?: number, additionalHeaders?:RequestHeaders): Promise<GroupResourceList> {
-        ow(groupPath, ow.string.nonEmpty);
+        ow(groupPath,'groupPath', ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
             .setMethod('GET')
@@ -188,8 +188,8 @@ export class GroupsLambdaService extends GroupsServiceBase implements GroupsServ
      * @param body Group object that needs to be updated
      */
     async updateGroup(groupPath: string, body: Group10Resource | Group20Resource, applyProfileId?: string, additionalHeaders?:RequestHeaders): Promise<void> {
-        ow(groupPath, ow.string.nonEmpty);
-        ow(body, ow.object.nonEmpty);
+        ow(groupPath,'groupPath', ow.string.nonEmpty);
+        ow(body, 'body', ow.object.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
             .setMethod('PATCH')
@@ -204,9 +204,9 @@ export class GroupsLambdaService extends GroupsServiceBase implements GroupsServ
     }
 
     async attachToGroup(sourceGroupPath: string, relationship: string, targetGroupPath: string, additionalHeaders?:RequestHeaders): Promise<void> {
-        ow(sourceGroupPath, ow.string.nonEmpty);
-        ow(relationship, ow.string.nonEmpty);
-        ow(targetGroupPath, ow.string.nonEmpty);
+        ow(sourceGroupPath, 'sourceGroupPath',ow.string.nonEmpty);
+        ow(relationship,'relationship', ow.string.nonEmpty);
+        ow(targetGroupPath, 'targetGroupPath',ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
             .setMethod('PUT')
@@ -217,9 +217,9 @@ export class GroupsLambdaService extends GroupsServiceBase implements GroupsServ
     }
 
     async detachFromGroup(sourceGroupPath: string, relationship: string, targetGroupPath: string, additionalHeaders?:RequestHeaders): Promise<void> {
-        ow(sourceGroupPath, ow.string.nonEmpty);
-        ow(relationship, ow.string.nonEmpty);
-        ow(targetGroupPath, ow.string.nonEmpty);
+        ow(sourceGroupPath, 'sourceGroupPath',ow.string.nonEmpty);
+        ow(relationship,'relationship', ow.string.nonEmpty);
+        ow(targetGroupPath, 'targetGroupPath',ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
             .setMethod('DELETE')

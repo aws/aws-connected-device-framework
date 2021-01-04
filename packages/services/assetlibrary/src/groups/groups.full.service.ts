@@ -38,7 +38,7 @@ export class GroupsServiceFull implements GroupsService {
     public async get(groupPath: string): Promise<GroupItem> {
         logger.debug(`groups.full.service get: in: groupPath: ${groupPath}`);
 
-        ow(groupPath, ow.string.nonEmpty);
+        ow(groupPath,'groupPath', ow.string.nonEmpty);
 
         // any ids need to be lowercase
         groupPath = groupPath.toLowerCase();
@@ -282,8 +282,8 @@ export class GroupsServiceFull implements GroupsService {
     public async getMembers(groupPath:string, category:TypeCategory, type:string, state:string, offset?:number, count?:number, sort?:SortKeys): Promise<GroupMemberItemList> {
         logger.debug(`groups.full.service getMembers: in: groupPath:${groupPath}, category:${category}, type:${type}, state:${state}, offset:${offset}, count:${count}, sort:${JSON.stringify(sort)}`);
 
-        ow(groupPath, ow.string.nonEmpty);
-        ow(category, ow.string.nonEmpty);
+        ow(groupPath,'groupPath', ow.string.nonEmpty);
+        ow(category,'category', ow.string.nonEmpty);
 
         // any ids need to be lowercase
         groupPath=groupPath.toLowerCase();
@@ -324,7 +324,7 @@ export class GroupsServiceFull implements GroupsService {
     public async getParentGroups(groupPath:string): Promise<GroupItem[]> {
         logger.debug(`groups.full.service getParentGroups: in: groupPath:${groupPath}`);
 
-        ow(groupPath, ow.string.nonEmpty);
+        ow(groupPath,'groupPath', ow.string.nonEmpty);
 
         // any ids need to be lowercase
         groupPath=groupPath.toLowerCase();
@@ -341,7 +341,7 @@ export class GroupsServiceFull implements GroupsService {
     public async delete(groupPath: string) : Promise<void> {
         logger.debug(`groups.full.service delete: in: groupPath: ${groupPath}`);
 
-        ow(groupPath, ow.string.nonEmpty);
+        ow(groupPath,'groupPath', ow.string.nonEmpty);
 
         // any ids need to be lowercase
         groupPath=groupPath.toLowerCase();
@@ -372,9 +372,9 @@ export class GroupsServiceFull implements GroupsService {
     public async attachToGroup(sourceGroupPath:string, relationship:string, targetGroupPath:string) : Promise<void> {
         logger.debug(`groups.full.service attachToGroup: in: sourceGroupPath:${sourceGroupPath}, relationship:${relationship}, targetGroupPath:${targetGroupPath}`);
 
-        ow(sourceGroupPath, ow.string.nonEmpty);
-        ow(relationship, ow.string.nonEmpty);
-        ow(targetGroupPath, ow.string.nonEmpty);
+        ow(sourceGroupPath, 'sourceGroupPath',ow.string.nonEmpty);
+        ow(relationship,'relationship', ow.string.nonEmpty);
+        ow(targetGroupPath, 'targetGroupPath',ow.string.nonEmpty);
 
         // any ids need to be lowercase
         sourceGroupPath = sourceGroupPath.toLowerCase();
@@ -414,9 +414,9 @@ export class GroupsServiceFull implements GroupsService {
     public async detachFromGroup(sourceGroupPath:string, relationship:string, targetGroupPath:string) : Promise<void> {
         logger.debug(`groups.full.service detachFromGroup: in: sourceGroupPath:${sourceGroupPath}, relationship:${relationship}, targetGroupPath:${targetGroupPath}`);
 
-        ow(sourceGroupPath, ow.string.nonEmpty);
-        ow(relationship, ow.string.nonEmpty);
-        ow(targetGroupPath, ow.string.nonEmpty);
+        ow(sourceGroupPath, 'sourceGroupPath',ow.string.nonEmpty);
+        ow(relationship,'relationship', ow.string.nonEmpty);
+        ow(targetGroupPath, 'targetGroupPath',ow.string.nonEmpty);
 
         // any ids need to be lowercase
         sourceGroupPath = sourceGroupPath.toLowerCase();
@@ -446,8 +446,8 @@ export class GroupsServiceFull implements GroupsService {
     public async listRelatedGroups(groupPath: string, relationship: string, direction:string, template:string, offset:number, count:number, sort:SortKeys) : Promise<GroupItemList> {
         logger.debug(`groups.full.service listRelatedGroups: in: groupPath:${groupPath}, relationship:${relationship}, direction:${direction}, template:${template}, offset:${offset}, count:${count}, sort:${JSON.stringify(sort)}`);
 
-        ow(groupPath, ow.string.nonEmpty);
-        ow(relationship, ow.string.nonEmpty);
+        ow(groupPath,'groupPath', ow.string.nonEmpty);
+        ow(relationship,'relationship', ow.string.nonEmpty);
 
         // defaults
         if (direction===undefined || direction===null) {
@@ -482,8 +482,8 @@ export class GroupsServiceFull implements GroupsService {
     public async listRelatedDevices(groupPath: string, relationship: string, direction:string, template:string, state:string, offset:number, count:number, sort:SortKeys) : Promise<DeviceItemList> {
         logger.debug(`groups.full.service listRelatedDevices: in: groupPath:${groupPath}, relationship:${relationship}, direction:${direction}, template:${template}, state:${state}, offset:${offset}, count:${count}, sort:${JSON.stringify(sort)}`);
 
-        ow(groupPath, ow.string.nonEmpty);
-        ow(relationship, ow.string.nonEmpty);
+        ow(groupPath,'groupPath', ow.string.nonEmpty);
+        ow(relationship,'relationship', ow.string.nonEmpty);
 
         // defaults
         if (direction===undefined || direction===null) {

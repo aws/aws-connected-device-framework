@@ -29,7 +29,7 @@ export class EventSourceService  {
         logger.debug(`eventSource.service create: in: model:${JSON.stringify(resource)}`);
 
         // validate input
-        ow(resource, ow.object.nonEmpty);
+        ow(resource,'resource', ow.object.nonEmpty);
         ow(resource.name, ow.string.nonEmpty);
         ow(resource.sourceType, ow.string.nonEmpty);
         ow(resource.principal, ow.string.nonEmpty);

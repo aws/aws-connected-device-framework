@@ -51,7 +51,7 @@ export class CertificateService {
     public async get(deviceId:string): Promise<void> {
         logger.debug(`certificates.service get: in: deviceId:${deviceId}`);
 
-        ow(deviceId, ow.string.nonEmpty);
+        ow(deviceId, 'deviceId', ow.string.nonEmpty);
 
         const response:CertificateResponseModel = {};
 
@@ -93,7 +93,7 @@ export class CertificateService {
     public async getWithCsr(deviceId:string, csr:string): Promise<void> {
         logger.debug(`certificates.service getWithCsr: in: deviceId:${deviceId}, csr: ${csr}`);
 
-        ow(deviceId, ow.string.nonEmpty);
+        ow(deviceId, 'deviceId', ow.string.nonEmpty);
         ow(csr, ow.string.nonEmpty);
 
         const response:CertificateResponseModel = {};
@@ -136,7 +136,7 @@ export class CertificateService {
     public async ack(deviceId:string, certId: string): Promise<void> {
         logger.debug(`certificates.service ack: in: deviceId:${deviceId}, certId: ${certId}`);
 
-        ow(deviceId, ow.string.nonEmpty);
+        ow(deviceId, 'deviceId', ow.string.nonEmpty);
         ow(certId, ow.string.nonEmpty);
 
         const response:CertificateResponseModel = {};
@@ -300,6 +300,7 @@ export class CertificateService {
     }
 
     private createCertificateFromCsr(csr:string, rootKey:string, rootPem:string) : Promise<string> {
+        /* eslint-disable @typescript-eslint/no-explicit-any */
         return new Promise((resolve:any,reject:any) =>  {
             pem.createCertificate({csr, days:this.certificateExpiryDays, serviceKey:rootKey, serviceCertificate:rootPem}, (err:any, data:any) => {
                 if(err) {

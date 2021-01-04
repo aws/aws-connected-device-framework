@@ -5,7 +5,7 @@
 #-------------------------------------------------------------------------------*/
 const PK_DELIMITER = ':';
 
-export function createDelimitedAttribute(type:PkType, ...items:(string|number|boolean)[]) {
+export function createDelimitedAttribute(type:PkType, ...items:(string|number|boolean)[]) : string {
     const escapedItems = items.map(i=> {
        if (typeof i === 'string') {
             return escape(i);
@@ -16,11 +16,11 @@ export function createDelimitedAttribute(type:PkType, ...items:(string|number|bo
     return  `${delimitedAttributePrefix(type)}${escapedItems.join(PK_DELIMITER)}`;
 }
 
-export function createDelimitedAttributePrefix(type:PkType, ...items:(string|number|boolean)[]) {
+export function createDelimitedAttributePrefix(type:PkType, ...items:(string|number|boolean)[]) : string {
     return `${createDelimitedAttribute(type, ...items)}${PK_DELIMITER}`;
 }
 
-export function expandDelimitedAttribute(value:string) {
+export function expandDelimitedAttribute(value:string) : string[] {
     if (value===null || value===undefined) {
         return undefined;
     }
@@ -34,11 +34,11 @@ export function expandDelimitedAttribute(value:string) {
      });
 }
 
-export function delimitedAttributePrefix(type:PkType) {
+export function delimitedAttributePrefix(type:PkType) : string {
     return `${type}${PK_DELIMITER}`;
 }
 
-export function isPkType(value:string, type:PkType) {
+export function isPkType(value:string, type:PkType) : boolean {
     return value.startsWith(delimitedAttributePrefix(type));
 }
 
@@ -51,6 +51,7 @@ export enum PkType {
     Type='type'
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
 export function extractValue(json:any): any {
     if (json.S!==undefined) {
         return json.S;

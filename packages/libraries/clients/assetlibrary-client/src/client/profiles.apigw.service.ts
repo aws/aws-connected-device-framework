@@ -27,8 +27,8 @@ export class ProfilesApigwService extends ProfilesServiceBase implements Profile
     }
 
     async createProfile(category: string, body: DeviceProfileResource | GroupProfileResource, additionalHeaders?:RequestHeaders): Promise<void> {
-        ow(body, ow.object.nonEmpty);
-        ow(body.templateId, ow.string.nonEmpty);
+        ow(body, 'body', ow.object.nonEmpty);
+        ow(body.templateId, 'templateId',ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.profilesOfTemplateRelativeUrl(category, body.templateId)}`;
         await request.post(url)
@@ -45,9 +45,9 @@ export class ProfilesApigwService extends ProfilesServiceBase implements Profile
     }
 
     async getProfile(category: string, templateId: string, profileId: string, additionalHeaders?:RequestHeaders): Promise<DeviceProfileResource | GroupProfileResource> {
-        ow(category, ow.string.nonEmpty);
-        ow(templateId, ow.string.nonEmpty);
-        ow(profileId, ow.string.nonEmpty);
+        ow(category,'category', ow.string.nonEmpty);
+        ow(templateId,'templateId', ow.string.nonEmpty);
+        ow(profileId,'profileId', ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.profileRelativeUrl(category, templateId, profileId)}`;
         const res = await request.get(url)
@@ -65,9 +65,9 @@ export class ProfilesApigwService extends ProfilesServiceBase implements Profile
     }
 
     async updateProfile(category: string, templateId: string, profileId: string, body: DeviceProfileResource | GroupProfileResource, additionalHeaders?:RequestHeaders): Promise<void> {
-        ow(category, ow.string.nonEmpty);
-        ow(templateId, ow.string.nonEmpty);
-        ow(profileId, ow.string.nonEmpty);
+        ow(category,'category', ow.string.nonEmpty);
+        ow(templateId,'templateId', ow.string.nonEmpty);
+        ow(profileId,'profileId', ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.profileRelativeUrl(category, templateId, profileId)}`;
 
@@ -87,9 +87,9 @@ export class ProfilesApigwService extends ProfilesServiceBase implements Profile
     }
 
     async deleteProfile(category: string, templateId: string, profileId: string, additionalHeaders?:RequestHeaders): Promise<void> {
-        ow(category, ow.string.nonEmpty);
-        ow(templateId, ow.string.nonEmpty);
-        ow(profileId, ow.string.nonEmpty);
+        ow(category,'category', ow.string.nonEmpty);
+        ow(templateId,'templateId', ow.string.nonEmpty);
+        ow(profileId,'profileId', ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.profileRelativeUrl(category, templateId, profileId)}`;
         const res = await request.delete(url)
@@ -107,8 +107,8 @@ export class ProfilesApigwService extends ProfilesServiceBase implements Profile
     }
 
     async listProfiles(category: string, templateId: string, additionalHeaders?:RequestHeaders): Promise<ProfileResourceList> {
-        ow(category, ow.string.nonEmpty);
-        ow(templateId, ow.string.nonEmpty);
+        ow(category,'category', ow.string.nonEmpty);
+        ow(templateId,'templateId', ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.profilesOfTemplateRelativeUrl(category, templateId)}`;
         const res = await request.get(url)

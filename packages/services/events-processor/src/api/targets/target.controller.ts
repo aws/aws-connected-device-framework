@@ -24,7 +24,7 @@ export class TargetController implements interfaces.Controller {
 
     @httpPost('')
     public async createTarget(@requestParam('subscriptionId') subscriptionId: string, @requestParam('targetType') targetType: TargetTypeStrings,
-        @requestBody() resource:TargetResource, @request() req:Request, @response() res: Response) {
+        @requestBody() resource:TargetResource, @request() req:Request, @response() res: Response) : Promise<void> {
         logger.debug(`target.controller createTarget: in: subscriptionId:${subscriptionId}, targetType:${targetType}, resource:${JSON.stringify(resource)}`);
 
         try {

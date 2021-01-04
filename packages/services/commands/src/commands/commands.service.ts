@@ -71,7 +71,7 @@ export class CommandsService {
             if (uploadedFiles.Contents && uploadedFiles.Contents.length>0) {
                 command.files= {};
                 uploadedFiles.Contents.forEach(s3Obj => {
-                    const fileId = s3Obj.Key.split(/.*[\/|\\]/).pop();
+                    const fileId = s3Obj.Key.split(/.*[/|\\]/).pop();
                     command.files[fileId] = {bucketName:this.s3Bucket, key:s3Obj.Key};
                 });
             }
@@ -110,7 +110,7 @@ export class CommandsService {
 
         command.commandId = uuid();
         // if the command was created without specifying status then set it to DRAFT
-        if (!command.hasOwnProperty('commandStatus')) {
+        if (!Object.prototype.hasOwnProperty.call(command,'commandStatus')) {
             command.commandStatus = CommandStatus.DRAFT;
         }
 
@@ -219,7 +219,7 @@ export class CommandsService {
             const result = await this._iot.listJobExecutionsForJob(params).promise();
             const executions = result.executionSummaries.map(es=> {
                 return {
-                    thingName: es.thingArn.split(/.*[\/|\\]/).pop(),
+                    thingName: es.thingArn.split(/.*[/|\\]/).pop(),
                     executionNumber: es.jobExecutionSummary.executionNumber,
                     status: ExecutionStatus[es.jobExecutionSummary.status],
                 };
@@ -293,15 +293,8 @@ export class CommandsService {
     /**
      * As AWS IoT has multiple overloaded definitions of cancelJobExecution, we cannot use async/await with it .promise()
      */
-    private cancelJobExecutionWrapper(jobId:string, thingName:string) : Promise<void> {
-        return new Promise((resolve:any,reject:any) =>  {
-            this._iot.cancelJobExecution({jobId, thingName}, (err:any, ___:any) => {
-                if(err) {
-                    return reject(err);
-                }
-                return resolve();
-            });
-        });
+    private async cancelJobExecutionWrapper(jobId:string, thingName:string) : Promise<void> {
+        await this._iot.cancelJobExecution({jobId, thingName}).promise()
     }
 }
 

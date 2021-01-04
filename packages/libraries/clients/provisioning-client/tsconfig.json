@@ -2,16 +2,7 @@
     "extends": "../../tsconfig.libraries.json",
     "compilerOptions": {
         "outDir": "dist",
-        "rootDir": "src",
-
-        "typeRoots": [
-            "./src/@types",
-            "./node_modules/@types",
-            "../../../../node_modules/@types"
-        ],
-        "types": [
-            "jest", "reflect-metadata", "node"
-        ]
+        "rootDir": "src"
     },
     "references": [
         {
@@ -26,7 +17,6 @@
     ],
     "exclude": [
         "node_modules",
-        "../../node_modules",
         "dist"
     ]
 }

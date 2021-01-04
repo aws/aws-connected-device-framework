@@ -199,15 +199,15 @@ Resources:
   RESTLambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ../build/build.zip
-      Handler: lambda_apigw_proxy.handler
+      CodeUri: ../bundle.zip
+      Handler: packages/services/device-monitoring/greengrass-deployment/dist/lambda_apigw_proxy.handler
       MemorySize: 256
       Role: !GetAtt LambdaExecutionRole.Arn
       Runtime: nodejs12.x
       Timeout: 30
       Environment:
         Variables:
-          NODE_CONFIG_DIR: './config'
+          NODE_CONFIG_DIR: 'packages/services/device-monitoring/greengrass-deployment/dist/config'
           NODE_CONFIG: !Ref ApplicationConfigurationOverride
           GREENGRASS_SSM_MANAGED_INSTANCE_ROLE: !Ref SSMManagedInstanceRole
           GREENGRASS_PROVISIONING_AWS_DYNAMODB_TABLE:
@@ -242,8 +242,8 @@ Resources:
   SQSLambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ../build/build.zip
-      Handler: lambda_sqs_proxy.handler
+      CodeUri: ../bundle.zip
+      Handler: packages/services/device-monitoring/greengrass-deployment/dist/lambda_sqs_proxy.handler
       MemorySize: 128
       Role: !GetAtt LambdaExecutionRole.Arn
       Runtime: nodejs12.x
@@ -253,7 +253,7 @@ Resources:
       Timeout: 900
       Environment:
         Variables:
-          NODE_CONFIG_DIR: './config'
+          NODE_CONFIG_DIR: 'packages/services/device-monitoring/greengrass-deployment/dist/config'
           NODE_CONFIG: !Ref ApplicationConfigurationOverride
           GREENGRASS_SSM_MANAGED_INSTANCE_ROLE: !Ref SSMManagedInstanceRole
           GREENGRASS_PROVISIONING_AWS_DYNAMODB_TABLE:
@@ -273,8 +273,8 @@ Resources:
   SSMEventsLambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ../build/build.zip
-      Handler: lambda_sqs_ssm_proxy.handler
+      CodeUri: ../bundle.zip
+      Handler: packages/services/device-monitoring/greengrass-deployment/dist/lambda_sqs_ssm_proxy.handler
       MemorySize: 128
       Role: !GetAtt LambdaExecutionRole.Arn
       Runtime: nodejs12.x
@@ -284,7 +284,7 @@ Resources:
       Timeout: 900
       Environment:
         Variables:
-          NODE_CONFIG_DIR: './config'
+          NODE_CONFIG_DIR: 'packages/services/device-monitoring/greengrass-deployment/dist/config'
           NODE_CONFIG: !Ref ApplicationConfigurationOverride
           GREENGRASS_SSM_MANAGED_INSTANCE_ROLE: !Ref SSMManagedInstanceRole
           GREENGRASS_PROVISIONING_AWS_DYNAMODB_TABLE:

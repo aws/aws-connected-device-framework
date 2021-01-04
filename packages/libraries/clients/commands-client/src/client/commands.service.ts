@@ -32,7 +32,7 @@ export interface CommandsService {
 @injectable()
 export class CommandsServiceBase {
 
-    protected MIME_TYPE: string = 'application/vnd.aws-cdf-v1.0+json';
+    protected MIME_TYPE = 'application/vnd.aws-cdf-v1.0+json';
 
     protected _headers: RequestHeaders = {
         'Accept': this.MIME_TYPE,
@@ -59,7 +59,7 @@ export class CommandsServiceBase {
         return  PathHelper.encodeUrl('commands', commandId, 'executions', thingName);
     }
 
-    protected buildHeaders(additionalHeaders:RequestHeaders) {
+    protected buildHeaders(additionalHeaders:RequestHeaders) : RequestHeaders {
 
         let headers = Object.assign({}, this._headers);
 

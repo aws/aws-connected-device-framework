@@ -6,7 +6,6 @@
 import 'reflect-metadata';
 import { createMockInstance } from 'jest-create-mock-instance';
 
-import { logger} from '../utils/logger';
 import { PoliciesServiceFull } from './policies.full.service';
 import { PoliciesAssembler } from './policies.assembler';
 import { TypesService } from '../types/types.service';
@@ -50,7 +49,6 @@ describe('PoliciesService', () => {
 
         // Make the call
         const inheritedPolicies = await instance.listInheritedByDevice('device001', 'provisioningtemplate');
-        logger.debug(`TEST inheritedPolicies: ${JSON.stringify(inheritedPolicies)}`);
 
         // Finally, verify the results
         expect(mockedAssembler.toModelFromPolicies.mock.calls[0][0]).toEqual(matchedPolicies);
@@ -80,7 +78,6 @@ describe('PoliciesService', () => {
 
         // Make the call
         const inheritedPolicies = await instance.listInheritedByDevice('device001', 'provisioningtemplate');
-        logger.debug(`TEST inheritedPolicies: ${JSON.stringify(inheritedPolicies)}`);
 
         // Finally, verify the results
         expect(mockedAssembler.toModelFromPolicies.mock.calls[0][0]).toEqual(matchedPolicies);

@@ -52,7 +52,7 @@ describe('ActivationService', () => {
             ], 'lastUpdate': 1551796535
         };
 
-        const s3BodyBuffer = new Buffer(JSON.stringify(crl));
+        const s3BodyBuffer = Buffer.from(JSON.stringify(crl));
 
         const s3GetObjectResponse = {
             Body: s3BodyBuffer,
@@ -102,7 +102,7 @@ describe('ActivationService', () => {
             ], 'lastUpdate': 1551796535
         };
 
-        const s3BodyBuffer = new Buffer(JSON.stringify(crl));
+        const s3BodyBuffer = Buffer.from(JSON.stringify(crl));
 
         const s3GetObjectResponse = {
             Body: s3BodyBuffer,
@@ -183,7 +183,7 @@ describe('ActivationService', () => {
             ], 'lastUpdate': 1551796535
         };
 
-        const s3BodyBuffer = new Buffer(JSON.stringify(crl));
+        const s3BodyBuffer = Buffer.from(JSON.stringify(crl));
 
         const s3GetObjectResponse = {
             Body: s3BodyBuffer,
@@ -260,7 +260,7 @@ describe('ActivationService', () => {
             ], 'lastUpdate': 1551796535
         };
 
-        const s3BodyBuffer = new Buffer(JSON.stringify(crl));
+        const s3BodyBuffer = Buffer.from(JSON.stringify(crl));
 
         const s3GetObjectResponse = {
             Body: s3BodyBuffer,

@@ -316,6 +316,7 @@ export class DeploymentsService  {
             // first get the detailed report.  may be paginated...
             const awsDetails:AWS.Greengrass.BulkDeploymentResult[]= [];
             let nextToken:string;
+            // eslint-disable-next-line no-constant-condition
             while (true) {
                 const detailedReport = await this.gg.listBulkDeploymentDetailedReports({
                     BulkDeploymentId: task.bulkDeploymentId,

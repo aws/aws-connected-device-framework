@@ -53,7 +53,7 @@ export class StartJobAction implements WorkflowAction {
             template.requiredDocumentParameters.forEach(key=> {
 
                 // validation: check we have all document parameters required by the template defined for the command
-                if (merged.documentParameters===undefined || !merged.documentParameters.hasOwnProperty(key)) {
+                if (merged.documentParameters===undefined || !Object.prototype.hasOwnProperty.call(merged.documentParameters,key)) {
                     throw new Error(`MISSING_REQUIRED_DOCUMENT_PARAMETER: ${key}`);
                 }
 
@@ -206,10 +206,7 @@ export class StartJobAction implements WorkflowAction {
             logger.debug(`workflow.startjob buildTargetList: creating CDFGroupTargets cdfGroupTargets: ${JSON.stringify(cdfGroupTargets)}`);
             for(const groupPath of cdfGroupTargets) {
                 let result = await this.assetLibraryGroupClient.listGroupMembersDevices(groupPath);
-                while (true) {
-                    if (result.results===undefined) {
-                        break;
-                    }
+                while (result.results!==undefined) {
                     for(const device of result.results) {
                         if (device.awsIotThingArn) {
                             awsThingTargets.push(device.awsIotThingArn);
@@ -266,17 +263,16 @@ export class StartJobAction implements WorkflowAction {
             provisioningTemplateId: config.get('templates.addThingToGroup') as string,
             parameters: awsThingTargets.map(thing=> ({ThingName:thing, ThingGroupName:thingGroupName}))
         };
-        let task = await this.thingsService.bulkProvisionThings(params);
-
+        
         // wait until the task is complete
-        while (true) {
-            task = await this.thingsService.getBulkProvisionTask(task.taskId);
-            if (task.status==='Completed') {
-                break;
-            } else if (task.status==='Failed' || task.status==='Cancelled' || task.status==='Cancelling') {
+        let task = await this.thingsService.bulkProvisionThings(params);
+        task = await this.thingsService.getBulkProvisionTask(task.taskId);
+        while (task.status!=='Completed') {
+            if (task.status==='Failed' || task.status==='Cancelled' || task.status==='Cancelling') {
                 throw new Error ('EPHEMERAL_GROUP_CREATION_FAILURE');
             }
             await new Promise((resolve) => setTimeout(resolve,2500));
+            task = await this.thingsService.getBulkProvisionTask(task.taskId);
         }
 
         logger.debug(`workflow.startjob buildEphemeralGroup: exit:${thingGroupResponse.thingGroupArn}`);
@@ -304,8 +300,8 @@ export class StartJobAction implements WorkflowAction {
         return TargetType.cdfDevice;
     }
 
-    private isDevice(arg: any): arg is Device10Resource {
-        return arg && arg.deviceId && typeof(arg.deviceId) === 'string';
+    private isDevice(arg: unknown): arg is Device10Resource {
+        return arg && arg['deviceId'] && typeof(arg['deviceId']) === 'string';
     }
 
 }

@@ -14,6 +14,7 @@ import {logger} from './utils/logger.util';
 import config from 'config';
 import {asArray, SupportedVersionConfig, DEFAULT_MIME_TYPE} from '@cdf/express-middleware';
 import {setVersionByAcceptHeader} from 'express-version-request';
+import cors = require('cors');
 
 // Start the server
 const server = new InversifyExpressServer(container);
@@ -56,10 +57,10 @@ server.setConfig((app) => {
   // enable cors
   const corsAllowedOrigin = config.get('cors.origin') as string;
   if (corsAllowedOrigin !== null && corsAllowedOrigin !== '') {
-    const cors = require('cors')({
+    const c = cors({
       origin: corsAllowedOrigin
     });
-    app.use(cors);
+    app.use(c);
   }
 });
 

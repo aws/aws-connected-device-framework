@@ -22,7 +22,7 @@ export class SubscriptionController implements interfaces.Controller {
     @httpPost('/events/:eventId/subscriptions')
     public async createSubscription(@requestParam('eventId') eventId: string,
         @requestBody() resource:SubscriptionBaseResource,
-        @request() req:Request, @response() res: Response) {
+        @request() req:Request, @response() res: Response) : Promise<void> {
         logger.debug(`subscription.controller createSubscription: in: eventId:${eventId}, resource:${JSON.stringify(resource)}`);
 
         resource.event= {id:eventId};

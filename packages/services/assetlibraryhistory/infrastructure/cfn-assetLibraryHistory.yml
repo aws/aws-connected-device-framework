@@ -194,15 +194,15 @@ Resources:
   EventsLambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ../build/build.zip
-      Handler: lambda_iot_rule.iot_rule_handler
+      CodeUri: ../bundle.zip
+      Handler: packages/services/assetlibraryhistory/dist/lambda_iot_rule.iot_rule_handler
       MemorySize: 128
       Role: !GetAtt LambdaExecutionRole.Arn
       Runtime: nodejs12.x
       Timeout: 30
       Environment:
         Variables:
-          NODE_CONFIG_DIR: './config'
+          NODE_CONFIG_DIR: 'packages/services/assetlibraryhistory/dist/config'
           NODE_CONFIG: !Ref ApplicationConfigurationOverride
           ASSETLIBRARYHISTORY_AWS_DYNAMODB_TABLES_EVENTS: !Ref HistoryTable
       Tracing: Active
@@ -210,15 +210,15 @@ Resources:
   RESTLambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ../build/build.zip
-      Handler: lambda_proxy.rest_handler
+      CodeUri: ../bundle.zip
+      Handler: packages/services/assetlibraryhistory/dist/lambda_proxy.rest_handler
       MemorySize: 256
       Role: !GetAtt LambdaExecutionRole.Arn
       Runtime: nodejs12.x
       Timeout: 30
       Environment:
         Variables:
-          NODE_CONFIG_DIR: './config'
+          NODE_CONFIG_DIR: 'packages/services/assetlibraryhistory/dist/config'
           NODE_CONFIG: !Ref ApplicationConfigurationOverride
           ASSETLIBRARYHISTORY_AWS_DYNAMODB_TABLES_EVENTS: !Ref HistoryTable
       Tracing: Active

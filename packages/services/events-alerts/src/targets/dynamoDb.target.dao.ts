@@ -28,7 +28,7 @@ export class DynamoDbTargetDao {
         return has;
     }
 
-    public async batchWriteAll(params:AWS.DynamoDB.DocumentClient.BatchWriteItemInput, attempt:number=1) : Promise<AWS.DynamoDB.DocumentClient.BatchWriteItemOutput> {
+    public async batchWriteAll(params:AWS.DynamoDB.DocumentClient.BatchWriteItemInput, attempt=1) : Promise<AWS.DynamoDB.DocumentClient.BatchWriteItemOutput> {
         logger.debug(`dynamoDb.util batchWriteAll: in: params:${JSON.stringify(params)}, attempt=${attempt}`);
 
         if (attempt>this.MAX_RETRIES) {

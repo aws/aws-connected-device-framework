@@ -42,7 +42,7 @@ export class SNSTarget {
 }
 
 export class SNSMessages {
-    default:string='';
+    default='';
     email?:string;
     emailJson?: string;
     http?: string;
@@ -52,7 +52,7 @@ export class SNSMessages {
     ADM?: string;
     APNS?: string;
 
-    public toJson():any {
+    public toJson():unknown {
         return {
             default: this.default,
             email: this.email,
@@ -66,7 +66,7 @@ export class SNSMessages {
         };
     }
 
-    public hasMessage() {
+    public hasMessage() : boolean {
         return (this.default!==undefined) ||
             (this.email!==undefined) ||
             (this.emailJson!==undefined) ||

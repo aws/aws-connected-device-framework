@@ -8,7 +8,7 @@ import { interfaces, controller, response, httpPost, requestBody} from 'inversif
 import { inject } from 'inversify';
 import {TYPES} from '../di/types';
 import {logger} from '../utils/logger';
-import { PresignedUploadRequestModel, PresignedDownloadRequestModel } from './presignedurls.models';
+import { PresignedUploadRequestModel, PresignedDownloadRequestModel, PresignedResponseModel } from './presignedurls.models';
 import {handleError} from '../utils/errors';
 import { PresignedUrlsService } from './presignedurls.service';
 
@@ -18,7 +18,7 @@ export class PresignedUrlsController implements interfaces.Controller {
     constructor( @inject(TYPES.PresignedUrlsService) private presignedUrlService: PresignedUrlsService) {}
 
     @httpPost('/uploads')
-    public async generateForUpload(@requestBody() model: PresignedUploadRequestModel, @response() res: Response) {
+    public async generateForUpload(@requestBody() model: PresignedUploadRequestModel, @response() res: Response) : Promise<PresignedResponseModel> {
         logger.info(`presignedurls.controller  generateForUpload: in: model: ${JSON.stringify(model)}`);
 
         try {
@@ -33,7 +33,7 @@ export class PresignedUrlsController implements interfaces.Controller {
     }
 
     @httpPost('/downloads')
-    public async generateForDownloads(@requestBody() model: PresignedDownloadRequestModel, @response() res: Response) {
+    public async generateForDownloads(@requestBody() model: PresignedDownloadRequestModel, @response() res: Response) : Promise<PresignedResponseModel>  {
         logger.info(`presignedurls.controller  generateForDownloads: in: model: ${JSON.stringify(model)}`);
 
         try {

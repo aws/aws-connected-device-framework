@@ -33,7 +33,7 @@ export class CreateDeviceCertificateStepProcessor implements ProvisioningStepPro
             throw new Error('REGISTRATION_FAILED: template called for creation of certificate but certificate information was not not supplied');
         }
 
-        ow(stepInput.cdfProvisioningParameters.caId, ow.string.nonEmpty);
+        ow(stepInput.cdfProvisioningParameters.caId, 'caId', ow.string.nonEmpty);
 
         const output: ProvisioningStepOutput = {
             parameters: stepInput.parameters,
@@ -86,6 +86,7 @@ export class CreateDeviceCertificateStepProcessor implements ProvisioningStepPro
 
     private createPrivateKey() : Promise<string> {
         logger.debug(`CreateDeviceCertificateStepProcessor: createPrivateKey: in:`);
+        /* eslint-disable @typescript-eslint/no-explicit-any */
         return new Promise((resolve:any,reject:any) =>  {
             pem.createPrivateKey(2048, (err:any, data:any) => {
                 if(err) {
@@ -101,6 +102,7 @@ export class CreateDeviceCertificateStepProcessor implements ProvisioningStepPro
     // generate certificate signing request
     private createCSR(privateKey:string, certInfo: {[key:string]:string}) : Promise<string> {
         logger.debug(`CreateDeviceCertificateStepProcessor: createCSR: in: privateKey: REDACTED, certInfo:${JSON.stringify(certInfo)}`);
+        /* eslint-disable @typescript-eslint/no-explicit-any */
         return new Promise((resolve:any,reject:any) =>  {
             const csrOptions: pem.CSRCreationOptions = {
                 commonName: certInfo.commonName,
@@ -112,7 +114,7 @@ export class CreateDeviceCertificateStepProcessor implements ProvisioningStepPro
                 emailAddress: certInfo.emailAddress,
                 clientKey:privateKey
             };
-            pem.createCSR(csrOptions, (err:Object, data:any) => {
+            pem.createCSR(csrOptions, (err:any, data:any) => {
                 if(err) {
                     logger.debug(`CreateDeviceCertificateStepProcessor: createCSR: err:${JSON.stringify(err)}`);
                     return reject(err);
@@ -125,6 +127,7 @@ export class CreateDeviceCertificateStepProcessor implements ProvisioningStepPro
 
     private createCertificate(csr:string, rootKey:string, rootPem:string) : Promise<string> {
         logger.debug(`CreateDeviceCertificateStepProcessor: createCertificate: in: csr:${csr}, rootKey:${rootKey}, rootPem:${rootPem}`);
+        /* eslint-disable @typescript-eslint/no-explicit-any */
         return new Promise((resolve:any,reject:any) =>  {
             pem.createCertificate({csr, days: this.certificateExpiryDays, serviceKey:rootKey, serviceCertificate:rootPem}, (err:any, data:any) => {
                 if(err) {

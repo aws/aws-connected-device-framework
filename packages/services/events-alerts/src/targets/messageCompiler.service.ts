@@ -10,7 +10,7 @@ import { v1 as uuid } from 'uuid';
 import ow from 'ow';
 import * as dot from 'dot';
 import { MessageCompilerDao } from './messageCompiler.dao';
-import { AttributeMapping } from './messageCompiler.model';
+import { AttributeMapping, MessageTemplates } from './messageCompiler.model';
 
 @injectable()
 export class MessageCompilerService {
@@ -31,7 +31,7 @@ export class MessageCompilerService {
         if (eventTemplateFns===undefined) {
 
             // Retrieve event config from db
-            const eventConfig:any = await this.messageCompilerDao.getEventConfig(eventId);
+            const eventConfig:MessageTemplates = await this.messageCompilerDao.getEventConfig(eventId);
             if(eventConfig === undefined) {
                 logger.error(`messageCompiler.service compile: unknown eventId: ${eventId} ignoring...`);
                 return null;
@@ -73,7 +73,7 @@ export class MessageCompilerService {
         ow(ddbAttrMapping, ow.object.nonEmpty);
 
         // Retrieve event config from db
-        const eventConfig:any = await this.messageCompilerDao.getEventConfig(eventId);
+        const eventConfig:MessageTemplates = await this.messageCompilerDao.getEventConfig(eventId);
 
         // do we already have the requested template compiled and cached for attribute mapping?
         // if not, retrieve it from the db then compile and cache it

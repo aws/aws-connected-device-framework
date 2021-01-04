@@ -7,13 +7,14 @@ import { injectable } from 'inversify';
 import {logger} from '../utils/logger';
 import Ajv from 'ajv';
 import { Operation } from '../types/constants';
+import { TemplateDefinitionJson } from '../types/types.models';
 
 @injectable()
 export class SchemaValidatorService {
 
     private _validator = new Ajv({allErrors: true});
 
-    public async validate(schemaId:string, jsonSchema: object, document: object, op:Operation  ): Promise<SchemaValidationResult> {
+    public async validate(schemaId:string, jsonSchema: TemplateDefinitionJson, document: unknown, op:Operation  ): Promise<SchemaValidationResult> {
         logger.debug(`schemaValidator.service validate: in: schemaId:${schemaId}, jsonSchema:${JSON.stringify(jsonSchema)}, document:${JSON.stringify(document)}, op:${op}`);
 
         // remove any undefined properties from the input document

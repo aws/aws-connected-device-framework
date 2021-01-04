@@ -18,7 +18,8 @@ const ddbTarget: DynamoDBTarget = container.get(TYPES.DynamoDBTarget);
 const messageCompiler: MessageCompilerService = container.get(TYPES.MessageCompilerService);
 const assembler: AlertAssembler = container.get(TYPES.AlertAssembler);
 
-exports.handler = async (event: any, _context: any) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+exports.handler = async (event: any, _context: unknown) => {
     logger.debug(`handler: event: ${JSON.stringify(event)}`);
 
     // review all the incoming records

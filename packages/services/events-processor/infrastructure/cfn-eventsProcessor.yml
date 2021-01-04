@@ -232,15 +232,15 @@ Resources:
   DynamoDBStreamLambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ../build/build.zip
-      Handler: lambda_proxy_ddbstream.handler
+      CodeUri: ../bundle.zip
+      Handler: packages/services/device-monitoring/events-processor/dist/lambda_proxy_ddbstream.handler
       MemorySize: 512
       Role: !GetAtt LambdaExecutionRole.Arn
       Runtime: nodejs12.x
       Timeout: 30
       Environment:
         Variables:
-          NODE_CONFIG_DIR: './config'
+          NODE_CONFIG_DIR: 'packages/services/device-monitoring/events-processor/dist/config'
           NODE_CONFIG: !Ref ApplicationConfigurationOverride
           EVENTSPROCESSOR_AWS_DYNAMODB_TABLES_EVENTCONFIG_NAME: !Ref EventConfigTable
           EVENTSPROCESSOR_AWS_DYNAMODB_TABLES_EVENTNOTIFICATIONS_NAME: !Ref EventNotificationsTable
@@ -250,15 +250,15 @@ Resources:
   LambdaInvokeLambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ../build/build.zip
-      Handler: lambda_proxy_invoke.handler
+      CodeUri: ../bundle.zip
+      Handler: packages/services/device-monitoring/events-processor/dist/lambda_proxy_invoke.handler
       MemorySize: 512
       Role: !GetAtt LambdaExecutionRole.Arn
       Runtime: nodejs12.x
       Timeout: 30
       Environment:
         Variables:
-          NODE_CONFIG_DIR: './config'
+          NODE_CONFIG_DIR: 'packages/services/device-monitoring/events-processor/dist/config'
           NODE_CONFIG: !Ref ApplicationConfigurationOverride
           EVENTSPROCESSOR_AWS_DYNAMODB_TABLES_EVENTCONFIG_NAME: !Ref EventConfigTable
           EVENTSPROCESSOR_AWS_DYNAMODB_TABLES_EVENTNOTIFICATIONS_NAME: !Ref EventNotificationsTable
@@ -268,8 +268,8 @@ Resources:
   RESTLambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ../build/build.zip
-      Handler: lambda_proxy_restapi.handler
+      CodeUri: ../bundle.zip
+      Handler: packages/services/device-monitoring/events-processor/dist/lambda_proxy_restapi.handler
 
       MemorySize: 256
       Role: !GetAtt LambdaExecutionRole.Arn
@@ -277,7 +277,7 @@ Resources:
       Timeout: 30
       Environment:
         Variables:
-          NODE_CONFIG_DIR: './config'
+          NODE_CONFIG_DIR: 'packages/services/device-monitoring/events-processor/dist/config'
           NODE_CONFIG: !Ref ApplicationConfigurationOverride
           EVENTSPROCESSOR_AWS_DYNAMODB_TABLES_EVENTCONFIG_NAME: !Ref EventConfigTable
           EVENTSPROCESSOR_AWS_DYNAMODB_TABLES_EVENTNOTIFICATIONS_NAME: !Ref EventNotificationsTable

@@ -23,14 +23,14 @@ export class DeploymentTemplateController implements interfaces.Controller {
     @httpPut('/:name')
     public async saveTemplate(
         @response() res: Response,
-        @requestParam() params: any,
+        @requestParam('name') name: string,
         @requestBody() req: DeploymentTemplateRequest,
     ): Promise<void> {
 
         logger.info(`DeploymentTemplate.controller saveTemplate: in: item:${JSON.stringify(req)}`);
 
         const template: DeploymentTemplateModel = req;
-        template.name = params.name;
+        template.name = name;
 
         try {
             await this.deploymentTemplatesService.save(template);
@@ -45,13 +45,13 @@ export class DeploymentTemplateController implements interfaces.Controller {
     @httpGet('/:name')
     public async getTemplate(
         @response() res:Response,
-        @requestParam() params: any
+        @requestParam('name') name: string
     ): Promise<DeploymentTemplateModel> {
-        logger.info(`DeploymentTemplate.controller getTemplate: in: templateId:${params.name}`);
+        logger.info(`DeploymentTemplate.controller getTemplate: in: templateId:${name}`);
 
         let template:DeploymentTemplateModel;
         try {
-            template = await this.deploymentTemplatesService.get(params.name);
+            template = await this.deploymentTemplatesService.get(name);
         } catch (err) {
             logger.error(`DeploymentTemplate.controller : err: ${err}`);
             handleError(err, res);

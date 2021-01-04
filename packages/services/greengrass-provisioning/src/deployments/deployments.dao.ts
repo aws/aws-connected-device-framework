@@ -136,7 +136,7 @@ export class DeploymentsDao {
         logger.debug(`deployments.dao saveDeploymentTask: exit:`);
     }
 
-    public async getDeploymentTask(taskId:string, summary:boolean=false, groupName?:string) : Promise<DeploymentTaskSummary> {
+    public async getDeploymentTask(taskId:string, summary=false, groupName?:string) : Promise<DeploymentTaskSummary> {
         logger.debug(`deployments.dao getDeploymentTask: in: taskId:${taskId}, summary:${summary}, groupName:${groupName}`);
 
         const params:AWS.DynamoDB.DocumentClient.QueryInput = {

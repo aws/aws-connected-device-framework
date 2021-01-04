@@ -6,7 +6,7 @@ echo buildproject_build started on `date`
 
 
 echo building...
-npm run build
+rush build
 
 echo testing...
-npm run test
+rush test

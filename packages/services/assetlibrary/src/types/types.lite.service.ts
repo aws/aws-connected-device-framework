@@ -5,7 +5,7 @@
 #-------------------------------------------------------------------------------*/
 import { injectable, inject } from 'inversify';
 import {logger} from '../utils/logger';
-import { TypeModel, TypeDefinitionModel, TypeVersionModel, TypeDefinitionStatus} from './types.models';
+import { TypeModel, TypeDefinitionModel, TypeDefinitionStatus} from './types.models';
 import { SchemaValidationResult } from '../utils/schemaValidator.service';
 import {TypeCategory, Operation} from './constants';
 import ow from 'ow';
@@ -21,12 +21,12 @@ export class TypesServiceLite implements TypesService {
     constructor( @inject(TYPES.TypesDao) private typesDao:TypesDaoLite,
         @inject(TYPES.EventEmitter) private eventEmitter: EventEmitter) {}
 
-    public async validateSubType(templateId:string, category:TypeCategory, document:object, op:Operation): Promise<SchemaValidationResult> {
+    public async validateSubType(templateId:string, category:TypeCategory, document:unknown, op:Operation): Promise<SchemaValidationResult> {
         logger.debug(`types.lite.service validateSubType: in: templateId: ${templateId}, category: ${category}, document: ${JSON.stringify(document)}, op:${op}`);
         throw new Error('NOT_SUPPORTED');
     }
 
-    public async validateType(category:TypeCategory, document:object, _op:Operation): Promise<SchemaValidationResult> {
+    public async validateType(category:TypeCategory, document:unknown, _op:Operation): Promise<SchemaValidationResult> {
         logger.debug(`types.lite.service validateType: in: category: ${category}, document: ${JSON.stringify(document)}`);
         throw new Error('NOT_SUPPORTED');
     }
@@ -34,8 +34,8 @@ export class TypesServiceLite implements TypesService {
     public async get(templateId: string, category: TypeCategory, status?: TypeDefinitionStatus): Promise<TypeModel> {
         logger.debug(`types.lite.service get: in: templateId: ${templateId}, category: ${category}, status: ${status}`);
 
-        ow(templateId, ow.string.nonEmpty);
-        ow(category, ow.string.nonEmpty.includes(TypeCategory.Device));
+        ow(templateId,'templateId', ow.string.nonEmpty);
+        ow(category,'category', ow.string.nonEmpty.includes(TypeCategory.Device));
         ow(status, ow.undefined);
 
         const r  = await this.typesDao.get(templateId);
@@ -47,7 +47,7 @@ export class TypesServiceLite implements TypesService {
         logger.debug(`types.lite.service list: in: category:${category}, status:${status}, offset:${offset}, count:${count}, sort:${JSON.stringify(sort)}`);
 
         // validation
-        ow(category, ow.string.nonEmpty.includes(TypeCategory.Device));
+        ow(category,'category', ow.string.nonEmpty.includes(TypeCategory.Device));
         ow(status, ow.undefined);
 
         const r = this.typesDao.list();
@@ -60,9 +60,9 @@ export class TypesServiceLite implements TypesService {
         logger.debug(`types.lite.service create: in: templateId:${templateId}, category:${category}, definition:${JSON.stringify(definition)}`);
 
         // validation
-        ow(templateId, ow.string.nonEmpty);
+        ow(templateId,'templateId', ow.string.nonEmpty);
         // only device types supported under AWS IoT
-        ow(category, ow.string.nonEmpty.includes(TypeCategory.Device));
+        ow(category,'category', ow.string.nonEmpty.includes(TypeCategory.Device));
         if (definition) {
             if (definition.properties) {
                 // only maximum of 3 attributes allowed per type
@@ -71,7 +71,7 @@ export class TypesServiceLite implements TypesService {
                 // only string types supported
                 for (const key of Object.keys(definition.properties)) {
                     for (const type of definition.properties[key].type) {
-                        ow(type, ow.string.equals('string'));
+                        ow(type,'type', ow.string.equals('string'));
                     }
                 }
             }
@@ -83,12 +83,13 @@ export class TypesServiceLite implements TypesService {
         }
 
         // TODO: move to an assembler function
-        const model = new TypeModel();
-        model.templateId = templateId;
-        model.category = category;
-        const schema = new TypeVersionModel();
-        schema.definition = definition;
-        model.schema = schema;
+        const model:TypeModel = {
+            templateId,
+            category,
+            schema: {
+                definition
+            }
+        };
 
         // save to datastore
         await this.typesDao.create(model);
@@ -109,8 +110,8 @@ export class TypesServiceLite implements TypesService {
     public async delete(templateId:string, category:TypeCategory): Promise<void> {
         logger.debug(`types.lite.service delete: in: templateId:${templateId}, category:${category}`);
 
-        ow(templateId, ow.string.nonEmpty);
-        ow(category, ow.string.nonEmpty);
+        ow(templateId,'templateId', ow.string.nonEmpty);
+        ow(category,'category', ow.string.nonEmpty);
 
         const model = await this.get(templateId, category);
         await this.typesDao.deprecate(templateId);

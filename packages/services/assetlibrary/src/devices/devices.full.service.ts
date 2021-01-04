@@ -42,8 +42,8 @@ export class DevicesServiceFull implements DevicesService {
     public async listRelatedDevices(deviceId: string, relationship: string, direction:string, template:string, state:string, offset:number, count:number, sort:SortKeys) : Promise<DeviceItemList> {
         logger.debug(`device.full.service listRelatedDevices: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, template:${template}, state:${state}, offset:${offset}, count:${count}, sort:${JSON.stringify(sort)}`);
 
-        ow(deviceId, ow.string.nonEmpty);
-        ow(relationship, ow.string.nonEmpty);
+        ow(deviceId, 'deviceId', ow.string.nonEmpty);
+        ow(relationship,'relationship', ow.string.nonEmpty);
 
         // defaults
         if (direction===undefined || direction===null) {
@@ -86,8 +86,8 @@ export class DevicesServiceFull implements DevicesService {
     public async listRelatedGroups(deviceId: string, relationship: string, direction:string, template:string, offset:number, count:number, sort:SortKeys) : Promise<GroupItemList> {
         logger.debug(`device.full.service listRelatedGroups: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, template:${template}, offset:${offset}, count:${count}, sort:${JSON.stringify(sort)}`);
 
-        ow(deviceId, ow.string.nonEmpty);
-        ow(relationship, ow.string.nonEmpty);
+        ow(deviceId, 'deviceId', ow.string.nonEmpty);
+        ow(relationship,'relationship', ow.string.nonEmpty);
 
         // defaults
         if (direction===undefined || direction===null) {
@@ -122,7 +122,7 @@ export class DevicesServiceFull implements DevicesService {
     public async get(deviceId:string, expandComponents?:boolean, attributes?:string[], includeGroups?:boolean): Promise<DeviceItem> {
         logger.debug(`device.full.service get: in: deviceId:${deviceId}, expandComponents:${expandComponents}, attributes:${attributes}, includeGroups:${includeGroups}`);
 
-        ow(deviceId, ow.string.nonEmpty);
+        ow(deviceId, 'deviceId', ow.string.nonEmpty);
 
         if (expandComponents===undefined) {
             expandComponents=false;
@@ -150,7 +150,7 @@ export class DevicesServiceFull implements DevicesService {
     public async getBulk(deviceIds:string[], expandComponents:boolean, attributes:string[], includeGroups:boolean) : Promise<DeviceItemList> {
         logger.debug(`device.full.service getBulk: in: deviceIds:${deviceIds}, expandComponents:${expandComponents}, attributes:${attributes}, includeGroups:${includeGroups}}`);
 
-        ow(deviceIds, ow.array.nonEmpty);
+        ow(deviceIds, 'deviceIds',ow.array.nonEmpty);
 
         deviceIds = deviceIds.map(d=> d.toLowerCase());
 
@@ -218,7 +218,7 @@ export class DevicesServiceFull implements DevicesService {
         if (model.groups===undefined) {
             model.groups= {};
         }
-        const {profileId, ...deviceProfileAttributes} = profile;
+        const {profileId, ...deviceProfileAttributes} = profile;        // eslint-disable-line @typescript-eslint/no-unused-vars
         const mergedModel = Object.assign(new DeviceItem(), deviceProfileAttributes, model);
         const mergedAttributes = {...profile.attributes, ...model.attributes};
         const mergedGroupsIn = {...profile.groups.in, ...model.groups.in};
@@ -489,10 +489,10 @@ export class DevicesServiceFull implements DevicesService {
 
     }
 
-    public async delete(deviceId: string) {
+    public async delete(deviceId: string) : Promise<void> {
         logger.debug(`device.full.service delete: in: deviceId: ${deviceId}`);
 
-        ow(deviceId, ow.string.nonEmpty);
+        ow(deviceId, 'deviceId', ow.string.nonEmpty);
 
         // any ids need to be lowercase
         deviceId = deviceId.toLowerCase();
@@ -516,13 +516,13 @@ export class DevicesServiceFull implements DevicesService {
 
     }
 
-    public async attachToGroup(deviceId:string, relationship:string, direction:string, groupPath:string) {
+    public async attachToGroup(deviceId:string, relationship:string, direction:string, groupPath:string) : Promise<void>{
         logger.debug(`device.full.service attachToGroup: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, groupPath:${groupPath}`);
 
-        ow(deviceId, ow.string.nonEmpty);
-        ow(relationship, ow.string.nonEmpty);
-        ow(direction, ow.string.nonEmpty);
-        ow(groupPath, ow.string.nonEmpty);
+        ow(deviceId, 'deviceId', ow.string.nonEmpty);
+        ow(relationship,'relationship', ow.string.nonEmpty);
+        ow(direction,'direction', ow.string.nonEmpty);
+        ow(groupPath,'groupPath', ow.string.nonEmpty);
 
         // any ids need to be lowercase
         deviceId = deviceId.toLowerCase();
@@ -578,13 +578,13 @@ export class DevicesServiceFull implements DevicesService {
         logger.debug(`device.full.service attachToGroup: exit:`);
     }
 
-    public async detachFromGroup(deviceId:string, relationship:string, direction:string, groupPath:string) {
+    public async detachFromGroup(deviceId:string, relationship:string, direction:string, groupPath:string) : Promise<void>{
         logger.debug(`device.full.service detachFromGroup: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, groupPath:${groupPath}`);
 
-        ow(deviceId, ow.string.nonEmpty);
-        ow(relationship, ow.string.nonEmpty);
-        ow(direction, ow.string.nonEmpty);
-        ow(groupPath, ow.string.nonEmpty);
+        ow(deviceId, 'deviceId', ow.string.nonEmpty);
+        ow(relationship,'relationship', ow.string.nonEmpty);
+        ow(direction,'direction', ow.string.nonEmpty);
+        ow(groupPath,'groupPath', ow.string.nonEmpty);
 
         // any ids need to be lowercase
         deviceId = deviceId.toLowerCase();
@@ -611,13 +611,13 @@ export class DevicesServiceFull implements DevicesService {
         logger.debug(`device.full.service detachFromGroup: exit:`);
     }
 
-    public async attachToDevice(deviceId:string, relationship:string, direction:string, otherDeviceId:string) {
+    public async attachToDevice(deviceId:string, relationship:string, direction:string, otherDeviceId:string): Promise<void> {
         logger.debug(`device.full.service attachToDevice: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, otherDeviceId:${otherDeviceId}`);
 
-        ow(deviceId, ow.string.nonEmpty);
-        ow(relationship, ow.string.nonEmpty);
-        ow(direction, ow.string.nonEmpty);
-        ow(otherDeviceId, ow.string.nonEmpty);
+        ow(deviceId, 'deviceId', ow.string.nonEmpty);
+        ow(relationship,'relationship', ow.string.nonEmpty);
+        ow(direction,'direction', ow.string.nonEmpty);
+        ow(otherDeviceId,'otherDeviceId', ow.string.nonEmpty);
 
         // any ids need to be lowercase
         deviceId = deviceId.toLowerCase();
@@ -671,13 +671,13 @@ export class DevicesServiceFull implements DevicesService {
         logger.debug(`device.full.service attachToDevice: exit:`);
     }
 
-    public async detachFromDevice(deviceId:string, relationship:string, direction:string, otherDeviceId:string) {
+    public async detachFromDevice(deviceId:string, relationship:string, direction:string, otherDeviceId:string) : Promise<void>{
         logger.debug(`device.full.service detachFromDevice: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, otherDeviceId:${otherDeviceId}`);
 
-        ow(deviceId, ow.string.nonEmpty);
-        ow(relationship, ow.string.nonEmpty);
-        ow(direction, ow.string.nonEmpty);
-        ow(otherDeviceId, ow.string.nonEmpty);
+        ow(deviceId, 'deviceId', ow.string.nonEmpty);
+        ow(relationship,'relationship', ow.string.nonEmpty);
+        ow(direction,'direction', ow.string.nonEmpty);
+        ow(otherDeviceId,'otherDeviceId', ow.string.nonEmpty);
 
         // any ids need to be lowercase
         deviceId = deviceId.toLowerCase();
@@ -707,8 +707,8 @@ export class DevicesServiceFull implements DevicesService {
     public async updateComponent(deviceId:string, componentId:string, model:DeviceItem) : Promise<void> {
         logger.debug(`device.full.service updateComponent: in: deviceId:${deviceId}, componentId:${componentId}, model:${JSON.stringify(model)}`);
 
-        ow(deviceId, ow.string.nonEmpty);
-        ow(componentId, ow.string.nonEmpty);
+        ow(deviceId, 'deviceId', ow.string.nonEmpty);
+        ow(componentId, 'componentId',ow.string.nonEmpty);
         ow(model, ow.object.nonEmpty);
 
         // any ids need to be lowercase
@@ -744,8 +744,8 @@ export class DevicesServiceFull implements DevicesService {
     public async deleteComponent(deviceId:string, componentId:string) : Promise<void> {
         logger.debug(`device.full.service deleteComponent: in: deviceId:${deviceId}, componentId:${componentId}`);
 
-        ow(deviceId, ow.string.nonEmpty);
-        ow(componentId, ow.string.nonEmpty);
+        ow(deviceId, 'deviceId', ow.string.nonEmpty);
+        ow(componentId, 'componentId',ow.string.nonEmpty);
 
         // any ids need to be lowercase
         deviceId = deviceId.toLowerCase();

@@ -19,7 +19,7 @@ export class EmailTargetResource {
     subscriptionArn?:string;
 }
 
-export function determineIfEmailTargetResource(toBeDetermined: any): toBeDetermined is EmailTargetResource {
+export function determineIfEmailTargetResource(toBeDetermined: unknown): toBeDetermined is EmailTargetResource {
     const as = toBeDetermined as EmailTargetResource;
     return as.address!==undefined;
 }
@@ -29,7 +29,7 @@ export class SMSTargetResource {
     subscriptionArn?:string;
 }
 
-export function determineIfSMSTargetResource(toBeDetermined: any): toBeDetermined is SMSTargetResource {
+export function determineIfSMSTargetResource(toBeDetermined: unknown): toBeDetermined is SMSTargetResource {
     const as = toBeDetermined as SMSTargetResource;
     return as.phoneNumber!==undefined;
 }
@@ -38,7 +38,7 @@ export class MQTTTargetResource {
     topic:string;
 }
 
-export function determineIfMQTTTargetResource(toBeDetermined: any): toBeDetermined is MQTTTargetResource {
+export function determineIfMQTTTargetResource(toBeDetermined: unknown): toBeDetermined is MQTTTargetResource {
     const as = toBeDetermined as MQTTTargetResource;
     return as.topic!==undefined;
 }
@@ -50,7 +50,7 @@ export class DynamodDBTargetResource {
     attributeMapping: AttributeMapping;
 }
 
-export function determineIfDynamodDBTargetResource(toBeDetermined: any): toBeDetermined is DynamodDBTargetResource {
+export function determineIfDynamodDBTargetResource(toBeDetermined: unknown): toBeDetermined is DynamodDBTargetResource {
     const as = toBeDetermined as DynamodDBTargetResource;
     return as.tableName!==undefined;
 }
@@ -62,7 +62,7 @@ export class PushTargetResource {
     platformEndpointArn? : string;
 }
 
-export function determineIfPushTargetResource(toBeDetermined: any): toBeDetermined is PushTargetResource {
+export function determineIfPushTargetResource(toBeDetermined: unknown): toBeDetermined is PushTargetResource {
     const as = toBeDetermined as PushTargetResource;
     return as.platformApplicationArn!==undefined;
 }
@@ -138,10 +138,11 @@ export abstract class TargetItemFactory {
                 return new MQTTTargetItem();
             case 'push_gcm':
             case 'push_adm':
-            case 'push_apns':
+            case 'push_apns': {
                 const pti = new PushTargetItem();
                 pti.targetType = type;
                 return pti;
+            }
             case 'sms':
                 return new SMSTargetItem();
             default:

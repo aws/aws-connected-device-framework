@@ -22,7 +22,7 @@ export class AgentlessDeploymentService {
         this._sqs = sqsFactory();
     }
 
-    public async create(deployment: DeploymentModel) {
+    public async create(deployment: DeploymentModel): Promise<void> {
         logger.debug(`agentlessDeploymentService: create: in: deployment: ${deployment}`);
 
         const queueUrl:string = config.get('aws.sqs.agentlessDeploymentQueue');
@@ -43,14 +43,13 @@ export class AgentlessDeploymentService {
 
         logger.debug(`agentlessDeploymentService: create: out: result: ${result}`);
 
-        return result;
     }
 
-    public async deploy(deployment: DeploymentModel) {
+    public async deploy(deployment: DeploymentModel): Promise<void> {
         // TODO: implement Ansible agentless deployment
         // figure out if target needs to be tunneled
         // start a portforwarding session using ssm if needs to be tunneled
         // exectue ansible playbook,
-        console.log(deployment);
+        logger.warn(JSON.stringify(deployment));
     }
 }

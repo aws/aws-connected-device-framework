@@ -1,7 +1,10 @@
 
+
+import {Context} from 'aws-lambda';
+
 export interface QueuedApiEvent {
   event: ApiGatewayEvent;
-  context: LambdaContext;
+  context: Context;
 }
 
 export interface ApiGatewayEvent {
@@ -14,21 +17,9 @@ export interface ApiGatewayEvent {
   multiValueQueryStringParameters: {[key:string]: string[]};
   pathParameters: {[key:string]: string};
   stageVariables: {[key:string]: string};
-  requestContext: any;
+  requestContext: unknown;
   body: string;
   isBase64Encoded: boolean;
-}
-
-export interface LambdaContext {
-    callbackWaitsForEmptyEventLoop: boolean;
-    logGroupName: string;
-    logStreamName: string;
-    functionName: string;
-    memoryLimitInMB: string;
-    functionVersion: string;
-    invokeid: string;
-    awsRequestId: string;
-    invokedFunctionArn: string;
 }
 
 export interface ApiGatewayInvokeResponsePayload {

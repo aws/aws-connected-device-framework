@@ -3,15 +3,6 @@
     "compilerOptions": {
         "outDir": "dist",
         "rootDir": "src",
-
-        "typeRoots": [
-            "./src/@types",
-            "./node_modules/@types",
-            "../../../../node_modules/@types"
-        ],
-        "types": [
-            "node"
-        ]
     },
     "references": [
         {
@@ -26,7 +17,6 @@
     ],
     "exclude": [
         "node_modules",
-        "../../node_modules",
         "dist"
     ]
 }

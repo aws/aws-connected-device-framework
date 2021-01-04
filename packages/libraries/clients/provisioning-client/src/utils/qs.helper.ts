@@ -6,8 +6,8 @@
 import * as qs from 'querystring';
 
 export class QSHelper {
-    public static getQueryString(queryObject:any): string {
-        let qsObj: any = null;
+    public static getQueryString(queryObject:unknown): string {
+        let qsObj: {[key:string]:string} = {};
         for(const key of Object.keys(queryObject)) {
             if(queryObject[key]) {
                 if(typeof(queryObject[key]) === 'string') {
@@ -21,7 +21,7 @@ export class QSHelper {
                 }
             }
         }
-        if(qsObj) {
+        if(Object.keys(qsObj).length>0) {
             return qs.stringify(qsObj);
         }
         return null;

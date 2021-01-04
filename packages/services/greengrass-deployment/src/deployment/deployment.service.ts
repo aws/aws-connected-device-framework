@@ -12,7 +12,7 @@ import { logger } from '../utils/logger';
 
 import { DeploymentDao } from './deployment.dao';
 import { DeploymentManager } from './deployment.manager';
-import { DeploymentModel, DeploymentRequest, DeploymentStatus } from './deployment.model';
+import {DeploymentList, DeploymentModel, DeploymentRequest, DeploymentStatus} from './deployment.model';
 
 import { DeploymentTemplatesDao } from '../templates/template.dao';
 import { DeploymentTemplateModel } from '../templates/template.model';
@@ -76,7 +76,7 @@ export class DeploymentService {
         return deployment.deploymentId;
     }
 
-    public async deploy(deployment: DeploymentModel) {
+    public async deploy(deployment: DeploymentModel): Promise<void> {
         logger.debug(`DeploymentService.deploy: in: deployment: ${JSON.stringify(deployment)}`);
 
         deployment.deploymentStatus = DeploymentStatus.PENDING;
@@ -97,9 +97,8 @@ export class DeploymentService {
         // inject the template into the deployment model
         deployment.deploymentTemplate = template;
 
-        let result;
         try {
-            result = await this.deploymentManager.deploy(deployment);
+            await this.deploymentManager.deploy(deployment);
         } catch (err) {
             logger.error(`deployment.service deploymentManager.deploy: err: ${err}`);
             deployment.deploymentStatus = DeploymentStatus.FAILED;
@@ -107,22 +106,19 @@ export class DeploymentService {
 
         await this.deploymentDao.update(deployment);
 
-        logger.debug(`DeploymentService.deploy out: result: ${JSON.stringify(result)}`);
-
-        return result;
+        logger.debug(`DeploymentService.deploy exit:`);
     }
 
-    public async get(deploymentId:string, deviceId: string): Promise<any> {
+    public async get(deploymentId:string, deviceId: string): Promise<DeploymentModel> {
         logger.debug(`DeploymentService getDeploymentByDeviceId: in: deviceId: ${deviceId}`);
 
         const deployment = await this.deploymentDao.get(deploymentId, deviceId);
 
         logger.debug(`deployment.service getDeploymentByDeviceId: exit: deployment: ${JSON.stringify(deployment)}`);
         return deployment;
-
     }
 
-    public async listDeploymentsByDeviceId(deviceId: string, status?: string): Promise<any> {
+    public async listDeploymentsByDeviceId(deviceId: string, status?: string): Promise<DeploymentList> {
         logger.debug(`DeploymentService getDeploymentByDeviceId: in: deviceId: ${deviceId}`);
 
         let deployments;

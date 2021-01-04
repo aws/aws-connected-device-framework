@@ -19,8 +19,8 @@ Resources:
   CustAuthLambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ../build/build.zip
-      Handler: index.handler
+      CodeUri: ../bundle.zip
+      Handler: packages/services/auth-devicecert/dist/index.handler
 
       Layers:
         - !Ref OpenSslLambdaLayerArn
@@ -30,7 +30,7 @@ Resources:
       Timeout: 30
       Environment:
         Variables:
-          NODE_CONFIG_DIR: './config'
+          NODE_CONFIG_DIR: 'packages/services/auth-devicecert/src/config'
       Tracing: Active
 
   LambdaExecutionRole:

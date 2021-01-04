@@ -24,7 +24,7 @@ export class DynamoDbUtils {
         this._dc = documentClientFactory();
     }
 
-    public putAttributeIfDefined(writeRequest:AWS.DynamoDB.DocumentClient.WriteRequest, key:string, value:any) {
+    public putAttributeIfDefined(writeRequest:AWS.DynamoDB.DocumentClient.WriteRequest, key:string, value:unknown) : void {
         if (value!==undefined) {
             writeRequest.PutRequest.Item[key] = value;
         }
@@ -40,7 +40,7 @@ export class DynamoDbUtils {
         return has;
     }
 
-    public async batchWriteAll(params:AWS.DynamoDB.DocumentClient.BatchWriteItemInput, attempt:number=1) : Promise<AWS.DynamoDB.DocumentClient.BatchWriteItemOutput> {
+    public async batchWriteAll(params:AWS.DynamoDB.DocumentClient.BatchWriteItemInput, attempt=1) : Promise<AWS.DynamoDB.DocumentClient.BatchWriteItemOutput> {
         logger.debug(`dynamoDb.util batchWriteAll: in: params:${JSON.stringify(params)}, attempt=${attempt}`);
 
         if (attempt>this.MAX_RETRIES) {
@@ -72,7 +72,7 @@ export class DynamoDbUtils {
 
     }
 
-    public async batchGetAll(params:AWS.DynamoDB.DocumentClient.BatchGetItemInput, attempt:number=1) : Promise<AWS.DynamoDB.DocumentClient.BatchGetItemOutput> {
+    public async batchGetAll(params:AWS.DynamoDB.DocumentClient.BatchGetItemInput, attempt=1) : Promise<AWS.DynamoDB.DocumentClient.BatchGetItemOutput> {
         logger.debug(`dynamoDb.util batchGetAll: in: params:${JSON.stringify(params)}, attempt=${attempt}`);
 
         if (attempt>this.MAX_RETRIES) {

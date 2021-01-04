@@ -23,7 +23,7 @@ export class ProfilesController implements interfaces.Controller {
     @httpPost('')
     public async createProfile(@requestParam('category') category:TypeCategory, @requestParam('templateId') templateId:string,
          @requestBody() profile:DeviceProfileResource|GroupProfileResource,
-         @response() res: Response) {
+         @response() res: Response) : Promise<void> {
         logger.info(`profiles.controller  createProfile: in: category:${category}, template:${templateId}, profile:${JSON.stringify(profile)}`);
 
         profile.templateId = templateId;
@@ -68,7 +68,7 @@ export class ProfilesController implements interfaces.Controller {
     @httpPatch('/:profileId')
     public async updateProfile(@requestParam('category') category:TypeCategory, @requestParam('templateId') templateId:string,
         @requestParam('profileId') profileId:string, @requestBody() profile: DeviceProfileResource|GroupProfileResource,
-        @response() res: Response) {
+        @response() res: Response) : Promise<void> {
 
         logger.info(`profiles.controller updateProfile: in: category:${category}, template:${templateId}, profileId:${profileId}`);
         try {
@@ -97,7 +97,7 @@ export class ProfilesController implements interfaces.Controller {
 
     @httpDelete('/:profileId')
     public async deleteProfile(@requestParam('category') category:TypeCategory, @requestParam('templateId') templateId:string,
-    @requestParam('profileId') profileId:string, @response() res: Response) {
+    @requestParam('profileId') profileId:string, @response() res: Response) : Promise<void> {
 
         logger.info(`profiles.controller deleteProfile: in: category:${category}, template:${templateId}, profileId:${profileId}`);
         try {

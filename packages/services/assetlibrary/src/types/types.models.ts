@@ -5,20 +5,20 @@ import { TypeCategory } from './constants';
 #
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
-export class TypeModel {
+export interface TypeModel {
     templateId: string;
     category: TypeCategory;
 	schema: TypeVersionModel;
 }
 
-export class TypeVersionModel {
-	version: number;
+export interface TypeVersionModel {
+	version?: number;
     definition: TypeDefinitionModel;
-    status: TypeDefinitionStatus;
-    relations: TypeRelationsModel;
+    status?: TypeDefinitionStatus;
+    relations?: TypeRelationsModel;
 }
 
-export class TypeDefinitionModel {
+export interface TypeDefinitionModel {
 	properties?: {
         [key: string]: {
             type: string[]
@@ -75,13 +75,13 @@ export class TypeRelationsModel {
     }
 }
 
-export class TypeResource extends TypeDefinitionModel {
+export interface TypeResource extends TypeDefinitionModel {
     templateId: string;
     category: TypeCategory;
 }
 
-export class TypeResourceList {
-    results: TypeResource[]=[];
+export interface TypeResourceList {
+    results: TypeResource[];
     pagination?: {
         offset:number;
         count:number;
@@ -92,4 +92,31 @@ export enum TypeDefinitionStatus {
     draft='draft',
     published='published',
     deprecated='deprecated'
+}
+
+export interface TemplateDefinitionJson {
+    properties?: {
+        [key: string]: {
+            type: string | string[]
+        }
+    },
+    required:string[],
+    definitions: {
+        subType: {
+            type: string,
+            properties?: {
+                [key: string]: {
+                    type: string | string[]
+                }
+            },
+            required?: string[],
+            additionalProperties: boolean
+        },
+        componentTypes: {
+            type: string,
+            items: {
+                anyOf: TemplateDefinitionJson[]
+            }
+        }
+    }
 }

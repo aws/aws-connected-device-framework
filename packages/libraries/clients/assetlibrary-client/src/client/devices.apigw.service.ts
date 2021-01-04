@@ -43,9 +43,9 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
      * @param otherDeviceId ID of device to create relationship to.
      */
     async attachToDevice(deviceId: string, relationship: string, otherDeviceId: string, additionalHeaders?:RequestHeaders): Promise<void> {
-        ow(deviceId, ow.string.nonEmpty);
-        ow(relationship, ow.string.nonEmpty);
-        ow(otherDeviceId, ow.string.nonEmpty);
+        ow(deviceId, 'deviceId', ow.string.nonEmpty);
+        ow(relationship,'relationship', ow.string.nonEmpty);
+        ow(otherDeviceId,'otherDeviceId', ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.deviceAttachedDeviceRelativeUrl(deviceId, relationship, otherDeviceId)}`;
         await request.put(url)
@@ -61,10 +61,10 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
      * @param otherDeviceId ID of device to create relationship to.
      */
     async attachToDeviceWithDirection(deviceId: string, relationship: string, direction:string, otherDeviceId: string, additionalHeaders?:RequestHeaders): Promise<void> {
-        ow(deviceId, ow.string.nonEmpty);
-        ow(relationship, ow.string.nonEmpty);
-        ow(direction, ow.string.nonEmpty);
-        ow(otherDeviceId, ow.string.nonEmpty);
+        ow(deviceId, 'deviceId', ow.string.nonEmpty);
+        ow(relationship,'relationship', ow.string.nonEmpty);
+        ow(direction,'direction', ow.string.nonEmpty);
+        ow(otherDeviceId,'otherDeviceId', ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.deviceAttachedDirectionalDeviceRelativeUrl(deviceId, relationship, direction, otherDeviceId)}`;
         await request.put(url)
@@ -79,9 +79,9 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
      * @param groupPath Path of group.
      */
     async attachToGroup(deviceId: string, relationship: string, groupPath: string, additionalHeaders?:RequestHeaders): Promise<void> {
-        ow(deviceId, ow.string.nonEmpty);
-        ow(relationship, ow.string.nonEmpty);
-        ow(groupPath, ow.string.nonEmpty);
+        ow(deviceId, 'deviceId', ow.string.nonEmpty);
+        ow(relationship,'relationship', ow.string.nonEmpty);
+        ow(groupPath,'groupPath', ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.deviceAttachedGroupRelativeUrl(deviceId, relationship, groupPath)}`;
         await request.put(url)
@@ -97,10 +97,10 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
      * @param groupPath Path of group.
      */
     async attachToGroupWithDirection(deviceId: string, relationship: string, direction:string, groupPath: string, additionalHeaders?:RequestHeaders): Promise<void> {
-        ow(deviceId, ow.string.nonEmpty);
-        ow(relationship, ow.string.nonEmpty);
-        ow(direction, ow.string.nonEmpty);
-        ow(groupPath, ow.string.nonEmpty);
+        ow(deviceId, 'deviceId', ow.string.nonEmpty);
+        ow(relationship,'relationship', ow.string.nonEmpty);
+        ow(direction,'direction', ow.string.nonEmpty);
+        ow(groupPath,'groupPath', ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.deviceAttachedDirectionalGroupRelativeUrl(deviceId, relationship, direction, groupPath)}`;
         await request.put(url)
@@ -114,8 +114,8 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
      * @param body Device to add as a component
      */
     async createComponent(deviceId: string, body: Device10Resource | Device20Resource, additionalHeaders?:RequestHeaders): Promise<void> {
-        ow(deviceId, ow.string.nonEmpty);
-        ow(body, ow.object.nonEmpty);
+        ow(deviceId, 'deviceId', ow.string.nonEmpty);
+        ow(body, 'body', ow.object.nonEmpty);
 
         const url = `${this.baseUrl}${super.deviceAttachedComponentsRelativeUrl(deviceId)}`;
         await request.post(url)
@@ -129,7 +129,7 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
      * @param body Device to add to the asset library
      */
     async createDevice(body: Device10Resource | Device20Resource, applyProfileId?: string, additionalHeaders?:RequestHeaders): Promise<void> {
-        ow(body, ow.object.nonEmpty);
+        ow(body, 'body', ow.object.nonEmpty);
 
         let url = `${this.baseUrl}${super.devicesRelativeUrl()}`;
         const queryString = QSHelper.getQueryString({applyProfile: applyProfileId});
@@ -150,7 +150,7 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
      */
     async bulkCreateDevice(body: BulkDevicesResource, applyProfileId?: string, additionalHeaders?:RequestHeaders): Promise<BulkDevicesResult> {
 
-        ow(body, ow.object.nonEmpty);
+        ow(body, 'body', ow.object.nonEmpty);
 
         let url = `${this.baseUrl}${super.bulkDevicesRelativeUrl()}`;
         const queryString = QSHelper.getQueryString({applyProfile: applyProfileId});
@@ -166,7 +166,7 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
 
     async bulkUpdateDevice(body: BulkDevicesResource, applyProfileId?: string, additionalHeaders?:RequestHeaders): Promise<void> {
 
-        ow(body, ow.object.nonEmpty);
+        ow(body, 'body', ow.object.nonEmpty);
 
         let url = `${this.baseUrl}${super.bulkDevicesRelativeUrl()}`;
         const queryString = QSHelper.getQueryString({applyProfile: applyProfileId});
@@ -185,8 +185,8 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
      * @param componentId ID of child component
      */
     async deleteComponent(deviceId: string, componentId: string, additionalHeaders?:RequestHeaders): Promise<void> {
-        ow(deviceId, ow.string.nonEmpty);
-        ow(componentId, ow.string.nonEmpty);
+        ow(deviceId, 'deviceId', ow.string.nonEmpty);
+        ow(componentId, 'componentId',ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.deviceAttachedComponentRelativeUrl(deviceId,componentId)}`;
 
@@ -200,7 +200,7 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
      * @param deviceId ID of device to return
      */
     async deleteDevice(deviceId: string, additionalHeaders?:RequestHeaders): Promise<void> {
-        ow(deviceId, ow.string.nonEmpty);
+        ow(deviceId, 'deviceId', ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.deviceRelativeUrl(deviceId)}`;
 
@@ -216,9 +216,9 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
      * @param otherDeviceId ID of device to create relationship to.
      */
     async detachFromDevice(deviceId: string, relationship: string, otherDeviceId: string, additionalHeaders?:RequestHeaders): Promise<void> {
-        ow(deviceId, ow.string.nonEmpty);
-        ow(relationship, ow.string.nonEmpty);
-        ow(otherDeviceId, ow.string.nonEmpty);
+        ow(deviceId, 'deviceId', ow.string.nonEmpty);
+        ow(relationship,'relationship', ow.string.nonEmpty);
+        ow(otherDeviceId,'otherDeviceId', ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.deviceAttachedDeviceRelativeUrl(deviceId, relationship, otherDeviceId)}`;
 
@@ -235,10 +235,10 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
      * @param otherDeviceId ID of device to create relationship to.
      */
     async detachFromDeviceWithDirection(deviceId: string, relationship: string, direction:string, otherDeviceId: string, additionalHeaders?:RequestHeaders): Promise<void> {
-        ow(deviceId, ow.string.nonEmpty);
-        ow(relationship, ow.string.nonEmpty);
-        ow(direction, ow.string.nonEmpty);
-        ow(otherDeviceId, ow.string.nonEmpty);
+        ow(deviceId, 'deviceId', ow.string.nonEmpty);
+        ow(relationship,'relationship', ow.string.nonEmpty);
+        ow(direction,'direction', ow.string.nonEmpty);
+        ow(otherDeviceId,'otherDeviceId', ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.deviceAttachedDirectionalDeviceRelativeUrl(deviceId, relationship, direction, otherDeviceId)}`;
 
@@ -254,9 +254,9 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
      * @param groupPath Path of group.
      */
     async detachFromGroup(deviceId: string, relationship: string, groupPath: string, additionalHeaders?:RequestHeaders): Promise<void> {
-        ow(deviceId, ow.string.nonEmpty);
-        ow(relationship, ow.string.nonEmpty);
-        ow(groupPath, ow.string.nonEmpty);
+        ow(deviceId, 'deviceId', ow.string.nonEmpty);
+        ow(relationship,'relationship', ow.string.nonEmpty);
+        ow(groupPath,'groupPath', ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.deviceAttachedGroupRelativeUrl(deviceId, relationship, groupPath)}`;
 
@@ -273,10 +273,10 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
      * @param groupPath Path of group.
      */
     async detachFromGroupWithDirection(deviceId: string, relationship: string, direction:string, groupPath: string, additionalHeaders?:RequestHeaders): Promise<void> {
-        ow(deviceId, ow.string.nonEmpty);
-        ow(relationship, ow.string.nonEmpty);
-        ow(direction, ow.string.nonEmpty);
-        ow(groupPath, ow.string.nonEmpty);
+        ow(deviceId, 'deviceId', ow.string.nonEmpty);
+        ow(relationship,'relationship', ow.string.nonEmpty);
+        ow(direction,'direction', ow.string.nonEmpty);
+        ow(groupPath,'groupPath', ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.deviceAttachedDirectionalGroupRelativeUrl(deviceId, relationship, direction, groupPath)}`;
 
@@ -291,7 +291,7 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
      * @param expandComponents By default, components of a device are not returned. Passing &#x60;true&#x60; will return and expand a devices components.
      */
     async getDeviceByID(deviceId: string, expandComponents?: boolean, attributes?: string[], groups?: string[], additionalHeaders?:RequestHeaders): Promise<Device10Resource | Device20Resource> {
-        ow(deviceId, ow.string.nonEmpty);
+        ow(deviceId, 'deviceId', ow.string.nonEmpty);
 
         const attributes_qs = (attributes) ? attributes.join() : undefined;
         const groups_qs = (groups) ? groups.join() : undefined;
@@ -319,9 +319,9 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
      * @param componentId ID of child component
      */
     async updateComponent(deviceId: string, componentId: string, body: Device10Resource | Device20Resource, additionalHeaders?:RequestHeaders): Promise<void> {
-        ow(deviceId, ow.string.nonEmpty);
-        ow(componentId, ow.string.nonEmpty);
-        ow(body, ow.object.nonEmpty);
+        ow(deviceId, 'deviceId', ow.string.nonEmpty);
+        ow(componentId, 'componentId',ow.string.nonEmpty);
+        ow(body, 'body', ow.object.nonEmpty);
 
         const url = `${this.baseUrl}${super.deviceAttachedComponentRelativeUrl(deviceId, componentId)}`;
 
@@ -337,8 +337,8 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
      * @param body Device object that needs to be updated in device store
      */
     async updateDevice(deviceId: string, body: Device10Resource | Device20Resource, applyProfileId?: string, additionalHeaders?:RequestHeaders): Promise<void> {
-        ow(deviceId, ow.string.nonEmpty);
-        ow(body, ow.object.nonEmpty);
+        ow(deviceId, 'deviceId', ow.string.nonEmpty);
+        ow(body, 'body', ow.object.nonEmpty);
 
         let url = `${this.baseUrl}${super.deviceRelativeUrl(deviceId)}`;
         const queryString = QSHelper.getQueryString({applyProfile: applyProfileId});
@@ -358,7 +358,7 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
      * @param expandComponents By default, components of a device are not returned. Passing &#x60;true&#x60; will return and expand a devices components.
      */
     async getDevicesByID(deviceIds: string[], expandComponents?: boolean, attributes?: string[], groups?: string[], additionalHeaders?:RequestHeaders): Promise<DeviceResourceList> {
-        ow(deviceIds, ow.array.nonEmpty.minLength(1));
+        ow(deviceIds, 'deviceIds',ow.array.nonEmpty.minLength(1));
 
         const attributes_qs = (attributes) ? attributes.join() : undefined;
         const groups_qs = (groups) ? groups.join() : undefined;

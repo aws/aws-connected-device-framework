@@ -27,8 +27,8 @@ export class ProfilesServiceFull implements ProfilesService {
     public async get(templateId:string, profileId:string): Promise<DeviceProfileItem|GroupProfileItem> {
         logger.debug(`profiles.full.service get: in: templateId:${templateId}, profileId:${profileId}`);
 
-        ow(templateId, ow.string.nonEmpty);
-        ow(profileId, ow.string.nonEmpty);
+        ow(templateId,'templateId', ow.string.nonEmpty);
+        ow(profileId,'profileId', ow.string.nonEmpty);
 
         // any ids need to be lowercase
         templateId=templateId.toLowerCase();
@@ -158,8 +158,8 @@ export class ProfilesServiceFull implements ProfilesService {
     public async delete(templateId:string, profileId:string) : Promise<void> {
         logger.debug(`profiles.full.service delete: in: templateId:${templateId}, profileId:${profileId}`);
 
-        ow(templateId, ow.string.nonEmpty);
-        ow(profileId, ow.string.nonEmpty);
+        ow(templateId,'templateId', ow.string.nonEmpty);
+        ow(profileId,'profileId', ow.string.nonEmpty);
 
         // any ids need to be lowercase
         templateId = templateId.toLowerCase();
@@ -190,7 +190,7 @@ export class ProfilesServiceFull implements ProfilesService {
     public async list(templateId:string): Promise<ProfileItemList> {
         logger.debug(`profiles.full.service list: in: templateId:${templateId}`);
 
-        ow(templateId, ow.string.nonEmpty);
+        ow(templateId,'templateId', ow.string.nonEmpty);
 
         const nodes  = await this.profilesDao.list(templateId);
         const model = this.profilesAssembler.toItemList(nodes);

@@ -1,3 +1,3 @@
 declare module 'reflect' {
-    export function parse(expression: string): any;
+    export function parse(expression: string): unknown;
 }

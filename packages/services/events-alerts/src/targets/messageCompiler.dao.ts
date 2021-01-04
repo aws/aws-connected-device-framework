@@ -50,6 +50,7 @@ export class MessageCompilerDao {
         const i=results.Items[0];
         templates.supportedTargets = i.supportedTargets;
         templates.templates = i.templates;
+        templates.eventId=eventId;
 
         logger.debug(`messageCompiler.dao getEventConfig: exit:${JSON.stringify(templates)}`);
         return templates;

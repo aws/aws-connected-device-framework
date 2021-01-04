@@ -53,7 +53,7 @@ export class TemplatesService {
         logger.debug(`templates.service get: in: templateId:${templateId}`);
 
         // validation
-        ow(templateId, ow.string.nonEmpty);
+        ow(templateId,'templateId', ow.string.nonEmpty);
 
         const template = await this.templatesDao.get(templateId);
 
@@ -76,7 +76,7 @@ export class TemplatesService {
         logger.debug(`templates.service delete: in: templateId: ${templateId}`);
 
         // validation
-        ow(templateId, ow.string.nonEmpty);
+        ow(templateId,'templateId', ow.string.nonEmpty);
 
         // Save to datastore
         await this.templatesDao.delete(templateId);

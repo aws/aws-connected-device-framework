@@ -24,8 +24,8 @@ export class TemplatesApigwService extends TemplatesServiceBase implements Templ
     }
 
     async getTemplate(category: CategoryEnum, templateId: string, status: StatusEnum, additionalHeaders?: RequestHeaders): Promise<TypeResource> {
-        ow(category, ow.string.nonEmpty);
-        ow(templateId, ow.string.nonEmpty);
+        ow(category,'category', ow.string.nonEmpty);
+        ow(templateId,'templateId', ow.string.nonEmpty);
 
         let url = `${this.baseUrl}${super.templateRelativeUrl(category, templateId)}`;
         const queryString = QSHelper.getQueryString({status});
@@ -39,9 +39,9 @@ export class TemplatesApigwService extends TemplatesServiceBase implements Templ
     }
 
     async createTemplate(resource: TypeResource, additionalHeaders?: RequestHeaders): Promise<void> {
-        ow(resource, ow.object.nonEmpty);
-        ow(resource.templateId, ow.string.nonEmpty);
-        ow(resource.category, ow.string.nonEmpty);
+        ow(resource,'resource', ow.object.nonEmpty);
+        ow(resource.templateId,'templateId', ow.string.nonEmpty);
+        ow(resource.category,'category', ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.templateRelativeUrl(resource.category, resource.templateId)}`;
 
@@ -54,9 +54,9 @@ export class TemplatesApigwService extends TemplatesServiceBase implements Templ
     }
 
     async updateTemplate(resource: TypeResource, additionalHeaders?: RequestHeaders): Promise<void> {
-        ow(resource, ow.object.nonEmpty);
-        ow(resource.templateId, ow.string.nonEmpty);
-        ow(resource.category, ow.string.nonEmpty);
+        ow(resource,'resource', ow.object.nonEmpty);
+        ow(resource.templateId,'templateId', ow.string.nonEmpty);
+        ow(resource.category,'category', ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.templateRelativeUrl(resource.category, resource.templateId)}`;
         await request.patch(url)
@@ -64,8 +64,8 @@ export class TemplatesApigwService extends TemplatesServiceBase implements Templ
     }
 
     async publishTemplate(category: CategoryEnum, templateId: string, additionalHeaders?: RequestHeaders): Promise<void> {
-        ow(category, ow.string.nonEmpty);
-        ow(templateId, ow.string.nonEmpty);
+        ow(category,'category', ow.string.nonEmpty);
+        ow(templateId,'templateId', ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.publishTemplateRelativeUrl(category, templateId)}`;
 
@@ -74,8 +74,8 @@ export class TemplatesApigwService extends TemplatesServiceBase implements Templ
     }
 
     async deleteTemplate(category: CategoryEnum, templateId: string, additionalHeaders?: RequestHeaders): Promise<void> {
-        ow(category, ow.string.nonEmpty);
-        ow(templateId, ow.string.nonEmpty);
+        ow(category,'category', ow.string.nonEmpty);
+        ow(templateId,'templateId', ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.templateRelativeUrl(category, templateId)}`;
         await request.delete(url)
@@ -83,7 +83,7 @@ export class TemplatesApigwService extends TemplatesServiceBase implements Templ
     }
 
     async listTemplates(category: CategoryEnum, status?: string, offset?: number, count?: number, additionalHeaders?: RequestHeaders): Promise<TypeResourceList> {
-        ow(category, ow.string.nonEmpty);
+        ow(category,'category', ow.string.nonEmpty);
 
         let url = `${this.baseUrl}${super.templatesRelativeUrl(category)}`;
         const queryString = QSHelper.getQueryString({status, offset, count});

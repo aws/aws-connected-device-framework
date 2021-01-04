@@ -696,8 +696,8 @@ export class TypesDaoFull extends BaseDaoFull {
         // parse the results
         const groupTypes_in:GroupType[]=[];
         const groupTypes_out:GroupType[]=[];
-        const rels:any[]=[];
-        const rels_props:any[]=[];
+        const rels:unknown[]=[];
+        const rels_props:unknown[]=[];
         const validGroups_in:string[]=[];
         const validGroups_out:string[]=[];
         const allowed_rels:AllowedRelation[]=[];
@@ -741,11 +741,11 @@ export class TypesDaoFull extends BaseDaoFull {
 
         // format the allowed relations to make it easier to work with
         for(const r of rels) {
-            const rel_props = rels_props.filter(rp=> rp.id===r.id)[0];
+            const rel_props = rels_props.filter(rp=> rp['id']===r['id'])[0];
             allowed_rels.push({
-               name:rel_props.name,
-               outType:this.extractNameFromId(r.outV.id),
-               inType:this.extractNameFromId(r.inV.id)
+               name:rel_props['name'],
+               outType:this.extractNameFromId(r['outV']['id']),
+               inType:this.extractNameFromId(r['inV']['id'])
             });
         }
 
@@ -829,14 +829,15 @@ export class TypesDaoFull extends BaseDaoFull {
         const json = JSON.parse( JSON.stringify(result));
 
         const definitionJson = json['definition'];
-        if (definitionJson!==undefined && (<object[]>definitionJson).length>0) {
+        if (definitionJson!==undefined && (<unknown[]>definitionJson).length>0) {
 
             const templateId = json['type']['templateId'][0];
 
-            const definition = new TypeVersionModel();
-            definition.status = status;
-            definition.version = definitionJson[0]['version'][0];
-            definition.definition = JSON.parse(definitionJson[0]['definition'][0]);
+            const definition:TypeVersionModel = {
+                status,
+                version: definitionJson[0]['version'][0],
+                definition: JSON.parse(definitionJson[0]['definition'][0])
+            }
 
             const relationsJson = json['relations'];
             if (relationsJson!==undefined) {
@@ -866,10 +867,11 @@ export class TypesDaoFull extends BaseDaoFull {
                 definition.relations=relations;
             }
 
-            const model = new TypeModel();
-            model.templateId = templateId;
-            model.category = category;
-            model.schema = definition;
+            const model:TypeModel= {
+                templateId,
+                category,
+                schema: definition
+            }
 
             logger.debug(`types.full.dao toModel: exit: model: ${JSON.stringify(model)}`);
             return model;
@@ -899,7 +901,7 @@ interface AllowedRelation {
     inType:string;
 }
 
-interface GroupType {
+export interface GroupType {
     path:string;
     template:string;
 }

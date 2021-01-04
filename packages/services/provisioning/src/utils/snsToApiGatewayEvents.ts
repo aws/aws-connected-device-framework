@@ -6,8 +6,8 @@
 
 export class SnsToApiGatewayEvents {
 
-    public buildApiGatewayEventFromSnsEvent(snsMessage:any): any {
-        const apiGatewayEvent:any = {
+    public buildApiGatewayEventFromSnsEvent(snsMessage:unknown): unknown {
+        const apiGatewayEvent:unknown = {
             'resource': '/{proxy+}',
             'path': '/bulkcertificates',
             'httpMethod': 'POST',

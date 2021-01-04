@@ -5,7 +5,6 @@
 #-------------------------------------------------------------------------------*/
 import 'reflect-metadata';
 import { createMockInstance } from 'jest-create-mock-instance';
-import { logger } from '../utils/logger';
 import { CertificatesTaskService } from './certificatestask.service';
 import AWS, { AWSError } from 'aws-sdk';
 import { CertificatesTaskDao } from './certificatestask.dao';
@@ -50,9 +49,9 @@ describe('CertificatesService', () => {
 
         // call createTask
         const taskId = await instance.createTask(1000, 'unit-test-ca');
-        logger.debug(`taskId: ${taskId}`);
 
         // validation
+        expect(taskId).toBeDefined();
         const expectedChunks = 1000/testChunkSize;
         expect(mockPublish).toBeCalledTimes(expectedChunks);
         expect(publishParameters.length).toEqual(expectedChunks);
@@ -84,9 +83,9 @@ describe('CertificatesService', () => {
 
         // call createTask
         const taskId = await instance.createTask(1015, 'unit-test-ca');
-        logger.debug(`taskId: ${taskId}`);
 
         // validation
+        expect(taskId).toBeDefined();
         const expectedChunks = Math.floor(1015/testChunkSize)+1;
         expect(mockPublish).toBeCalledTimes(expectedChunks);
         expect(publishParameters.length).toEqual(expectedChunks);

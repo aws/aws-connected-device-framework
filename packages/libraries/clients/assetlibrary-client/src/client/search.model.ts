@@ -44,7 +44,7 @@ export class SearchRequestModel {
 
 	summarize?: boolean;
 
-	public clone(other:SearchRequestModel) {
+	public clone(other:SearchRequestModel) : void {
 		this.types = other.types;
 		this.ancestorPath = other.ancestorPath;
 		this.eq = other.eq;

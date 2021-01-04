@@ -24,7 +24,7 @@ export class Node {
         this.types = [];
     }
 
-    public addLink(direction:string, name:string, other:Node) {
+    public addLink(direction:string, name:string, other:Node) : void {
         if (direction==='in') {
             if (this['in'][name]===undefined) {
                 this['in'][name] = [];

@@ -29,14 +29,12 @@ export class TargetAssembler {
     public toItem<R extends TargetResource, I extends TargetItem>(subscriptionId:string, resource:R, targetType: TargetTypeStrings) : I {
         logger.debug(`target.assembler toItem: in: subscriptionId:${subscriptionId}, resource:${JSON.stringify(resource)}, targetType:${targetType}`);
 
-        let item : TargetItem;
-
         if (resource===undefined) {
             // nothing to do
-            return item as I;
+            return undefined;
         }
 
-        item = TargetItemFactory.getTargetItem(targetType);
+        const item = TargetItemFactory.getTargetItem(targetType);
         item.subscriptionId=subscriptionId;
 
         Object.assign(item, resource);

@@ -117,9 +117,9 @@ export class GroupsServiceLite implements GroupsService {
     public async getMembers(groupPath:string, category:TypeCategory, type:string, state:string, offset?:number|string, maxResults?:number): Promise<GroupMemberItemList> {
         logger.debug(`groups.lite.service getMembers: in: groupPath:${groupPath}, category:${category}, type:${type}, state:${state}, offset:${offset}, maxResults:${maxResults}`);
 
-        ow(groupPath, ow.string.nonEmpty);
-        ow(category, ow.string.nonEmpty);
-        ow(type, ow.undefined);
+        ow(groupPath,'groupPath', ow.string.nonEmpty);
+        ow(category,'category', ow.string.nonEmpty);
+        ow(type,'type', ow.undefined);
         ow(state, ow.undefined);
 
         let result:ListMembersResponse;
@@ -138,7 +138,7 @@ export class GroupsServiceLite implements GroupsService {
     public async getParentGroups(groupPath:string): Promise<GroupItem[]> {
         logger.debug(`groups.lite.service getParentGroups: in: groupPath:${groupPath}`);
 
-        ow(groupPath, ow.string.nonEmpty);
+        ow(groupPath,'groupPath', ow.string.nonEmpty);
 
         // in 'lite' mode we have to recurse manually
         const groups:GroupItem[]=[];
@@ -156,7 +156,7 @@ export class GroupsServiceLite implements GroupsService {
     public async delete(groupPath: string) : Promise<void> {
         logger.debug(`groups.lite.service delete: in: groupPath: ${groupPath}`);
 
-        ow(groupPath, ow.string.nonEmpty);
+        ow(groupPath,'groupPath', ow.string.nonEmpty);
 
         const model = await this.get(groupPath);
         if (model===undefined) {
@@ -198,11 +198,11 @@ export class GroupsServiceLite implements GroupsService {
         throw new Error('NOT_SUPPORTED');
     }
 
-    public async attachToDevice(_groupPath:string, _relationship:string, _otherDeviceId:string) {
+    public async attachToDevice(_groupPath:string, _relationship:string, _otherDeviceId:string) : Promise<void> {
         throw new Error('NOT_SUPPORTED');
     }
 
-    public async detachFromDevice(_groupPath:string, _relationship:string, _otherDeviceId:string) {
+    public async detachFromDevice(_groupPath:string, _relationship:string, _otherDeviceId:string) : Promise<void> {
         throw new Error('NOT_SUPPORTED');
     }
 }

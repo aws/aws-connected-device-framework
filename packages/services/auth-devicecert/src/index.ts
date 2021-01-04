@@ -8,7 +8,7 @@ import { logger } from './utils/logger';
 import * as Errors from '@cdf/errors';
 import { ApiGwCustomAuthorizer } from './api-gw.custom.authorizer';
 import config from 'config';
-import {APIGWAuthPolicyBuilder} from './api-gw.policy.builder';
+import {APIGWAuthPolicyBuilder, ApiOptions, Policy} from './api-gw.policy.builder';
 
 /**
  * overridable for unit testing
@@ -16,17 +16,18 @@ import {APIGWAuthPolicyBuilder} from './api-gw.policy.builder';
 let _apiGwCustomAuth : ApiGwCustomAuthorizer;
 let _awsRegion:string;
 
-export function setAwsRegion(awsRegion:string) {
+export function setAwsRegion(awsRegion:string) : void {
     _awsRegion=awsRegion;
 }
-export function setApiGwCustomAuthorizer(apiGwCustomAuth:ApiGwCustomAuthorizer) {
+export function setApiGwCustomAuthorizer(apiGwCustomAuth:ApiGwCustomAuthorizer) : void {
     _apiGwCustomAuth=apiGwCustomAuth;
 }
 
 /**
  * Lambda entry point for Custom Authorizer.
  */
-export async function handler(event: any, context: any, callback: any) {
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
+export async function handler(event: any, context: any, callback: any) : Promise<Policy>{
     logger.info(`handler input : ${JSON.stringify({ Context: context, Event: event })}`);
 
     if (_awsRegion===undefined) {
@@ -41,7 +42,7 @@ export async function handler(event: any, context: any, callback: any) {
         const awsAccountId = getAccountId(context);
         if (!awsAccountId) {
             callback(new Error('Could not derive account id from context.'));
-            return;
+            return undefined;
         }
         // Get API ARN
         let apiId = event.requestContext.apiId;
@@ -50,37 +51,36 @@ export async function handler(event: any, context: any, callback: any) {
 
             if (!match) {
                 callback(new Errors.InvalidArgumentError('appId', 'could not be derived'));
-                return;
+                return undefined;
             }
             apiId = match[1];
 
             if (!apiId) {
                 callback(new Errors.InvalidArgumentError('apiId', 'could not be extracted'));
-                return;
+                return undefined;
             }
         }
-        const apiOptions = {
+        const apiOptions:ApiOptions = {
             region: _awsRegion,
             apiId
         };
         const devicecert = event.headers.devicecert;
         const deviceid = event.headers.deviceid;
         const authorizeApiResponse = await _apiGwCustomAuth.authorizeApiRequestForCert(devicecert);
-        let apigwPolicy:object;
         const policy = new APIGWAuthPolicyBuilder(deviceid, awsAccountId, apiOptions);
         if (authorizeApiResponse === false) {
             policy.denyAllMethods();
         } else {
             policy.allowAllMethods();
         }
-        apigwPolicy = policy.build();
-        return callback(null, apigwPolicy);
+        return  policy.build();
     } catch (err) {
         logger.info(`$$$$$ Authorizer ERR: ${JSON.stringify(err)}`);
-        return callback(err);
+       throw err;
     }
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
 function getAccountId(context: any) {
     // extract account number from invoked arn
     const invokedFnArn = context.invokedFunctionArn;

@@ -16,7 +16,7 @@ import { ThingsService, ProvisionThingRequest, ProvisionThingResponse, PROVISION
 @injectable()
 export class ActivationService {
 
-    private PROVISIONING_POLICY_TYPE:string = 'ProvisioningTemplate';
+    private PROVISIONING_POLICY_TYPE = 'ProvisioningTemplate';
 
     private iot: AWS.Iot;
     private s3: AWS.S3;
@@ -166,6 +166,7 @@ export class ActivationService {
     }
 
     private getCertificateCommonName(certificatePem:string) : Promise<string> {
+        /* eslint-disable @typescript-eslint/no-explicit-any */
         return new Promise((resolve:any,reject:any) =>  {
             pem.readCertificateInfo(certificatePem, (err:any, data:pem.CertificateSubjectReadResult) => {
                 if(err) {
@@ -180,7 +181,7 @@ export class ActivationService {
         logger.debug(`activation.service provisionThing: in: deviceId:${deviceId}, certificateId:${certificateId}`);
 
         const provisioningTemplate = await this.policies.listInheritedPoliciesByDevice(deviceId, this.PROVISIONING_POLICY_TYPE);
-        if (!provisioningTemplate.hasOwnProperty('results') || provisioningTemplate.results.length === 0) {
+        if (!Object.prototype.hasOwnProperty.call(provisioningTemplate,'results') || provisioningTemplate.results.length === 0) {
             throw new Error('PROVISIONING_TEMPLATE_NOT_FOUND');
         }
         const provisioningTemplateDocument = JSON.parse(provisioningTemplate.results[0].document);

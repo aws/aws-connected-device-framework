@@ -225,15 +225,15 @@ Resources:
   PresignedUrlLambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ../build/build.zip
-      Handler: presignedurl_iot_rule.presignedurl_rule_handler
+      CodeUri: ../bundle.zip
+      Handler: packages/services/commands/dist/presignedurl_iot_rule.presignedurl_rule_handler
       MemorySize: 128
       Role: !GetAtt LambdaExecutionRole.Arn
       Runtime: nodejs12.x
       Timeout: 30
       Environment:
         Variables:
-          NODE_CONFIG_DIR: './config'
+          NODE_CONFIG_DIR: 'packages/services/commands/dist/config'
           NODE_CONFIG: !Ref ApplicationConfigurationOverride
           COMMANDS_S3_ROLE_ARN: !Sub '${LambdaExecutionRole.Arn}'
           COMMANDS_TABLES_TEMPLATES: !Ref TemplatesTable
@@ -243,15 +243,15 @@ Resources:
   JobLifecycleLambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ../build/build.zip
-      Handler: job_lifecycle_iot_rule.job_lifecycle_rule_handler
+      CodeUri: ../bundle.zip
+      Handler: packages/services/commands/dist/job_lifecycle_iot_rule.job_lifecycle_rule_handler
       MemorySize: 128
       Role: !GetAtt LambdaExecutionRole.Arn
       Runtime: nodejs12.x
       Timeout: 30
       Environment:
         Variables:
-          NODE_CONFIG_DIR: './config'
+          NODE_CONFIG_DIR: 'packages/services/commands/dist/config'
           NODE_CONFIG: !Ref ApplicationConfigurationOverride
           COMMANDS_S3_ROLE_ARN: !Sub '${LambdaExecutionRole.Arn}'
           COMMANDS_TABLES_TEMPLATES: !Ref TemplatesTable
@@ -261,8 +261,8 @@ Resources:
   RESTLambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ../build/build.zip
-      Handler: lambda_proxy.rest_handler
+      CodeUri: ../bundle.zip
+      Handler: packages/services/commands/dist/lambda_proxy.handler
 
       MemorySize: 256
       Role: !GetAtt LambdaExecutionRole.Arn
@@ -270,7 +270,7 @@ Resources:
       Timeout: 30
       Environment:
         Variables:
-          NODE_CONFIG_DIR: './config'
+          NODE_CONFIG_DIR: 'packages/services/commands/dist/config'
           NODE_CONFIG: !Ref ApplicationConfigurationOverride
           COMMANDS_S3_ROLE_ARN: !Sub '${LambdaExecutionRole.Arn}'
           COMMANDS_TABLES_TEMPLATES: !Ref TemplatesTable

@@ -105,7 +105,7 @@ export class EventConditionsUtils {
         return undefined;
     }
 
-    public populateParameters(ec:EventConditions, valueMap:{[key:string]:string|boolean|number}) {
+    public populateParameters(ec:EventConditions, valueMap:{[key:string]:string|boolean|number}) : void {
         if (ec?.all) {
             if (isEventConditions(ec.all)) {
                 this.populateParameters(ec.all,valueMap);
@@ -126,10 +126,10 @@ export class EventConditionsUtils {
             }
         }
     }
-    public populateParameter(ec:EventCondition, valueMap:{[key:string]:string|boolean|number}) {
+    public populateParameter(ec:EventCondition, valueMap:{[key:string]:string|boolean|number}) : void {
         if (valueMap!==undefined) {
             for(const key of Object.keys(valueMap)) {
-                if (ec.value===`\$${key}`) {
+                if (ec.value===`$${key}`) {
                     ec.value=valueMap[key];
                     return;
                 }

@@ -16,7 +16,7 @@ import { AlertDao } from '../alerts/alert.dao';
 import { AlertItem } from '../alerts/alert.models';
 import { EventConditionsUtils, TemplatePropertiesData } from '../api/events/event.models';
 import { EventDao } from '../api/events/event.dao';
-import { MessageTemplates, TemplateCache } from '../api/messages/messageTemplates.model';
+import { TemplateCache } from '../api/messages/messageTemplates.model';
 
 @injectable()
 export class FilterService {
@@ -203,15 +203,13 @@ export class FilterService {
         }
         const event_id = sub.event.id;
 
-        let eventConfig: MessageTemplates;
-
         // check if the template exists in cache
         if (!templateCache[event_id]) {
             // cache the template
             templateCache[event_id] = await this.eventDao.getEventConfig(event_id);
         }
         // get template from cache
-        eventConfig = templateCache[event_id];
+        const eventConfig = templateCache[event_id];
 
         // get all the template properties referenced in the templates
         const templateProperties =  eventConfig.templateProperties;

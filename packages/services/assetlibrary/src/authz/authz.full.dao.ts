@@ -10,7 +10,7 @@ import {TYPES} from '../di/types';
 import { Authorizations } from './authz.full.model';
 import { BaseDaoFull } from '../data/base.full.dao';
 
-const __ = process.statics;
+const __ = process.statics;     // eslint-disable-line no-underscore-dangle
 
 @injectable()
 export class AuthzDaoFull extends BaseDaoFull {

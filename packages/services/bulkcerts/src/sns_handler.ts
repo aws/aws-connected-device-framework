@@ -9,10 +9,11 @@ import { TYPES } from './di/types';
 import ow from 'ow';
 import { CertificatesService } from './certificates/certificates.service';
 import { CertificateChunkRequest } from './certificates/certificates.models';
+import {SNSEvent, Context} from 'aws-lambda';
 
 let service:CertificatesService;
 
-exports.handler = async (event: any, _context: any) => {
+exports.handler = async (event: SNSEvent, _context: Context) => {
   logger.debug(`handler: event: ${JSON.stringify(event)}`);
 
   ow(event.Records, ow.array.nonEmpty);
@@ -28,3 +29,4 @@ exports.handler = async (event: any, _context: any) => {
 
   logger.debug('handler: exit:');
 };
+

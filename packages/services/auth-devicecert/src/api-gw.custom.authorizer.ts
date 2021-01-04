@@ -8,6 +8,7 @@ import * as Errors from '@cdf/errors';
 import * as pem from 'pem';
 import AWS = require('aws-sdk');
 import { logger } from './utils/logger';
+import {promisify} from 'util';
 
 /**
  * Class implementing custom authorization needed by CDF APIs.
@@ -20,6 +21,8 @@ export class ApiGwCustomAuthorizer {
     private _ssm:AWS.SSM;
     private caCert:string;
 
+    private _verifySigningChain = promisify(pem.verifySigningChain);
+
     constructor(region:string, ssm?:AWS.SSM) {
         if (ssm!==undefined) {
             this._ssm = ssm;
@@ -29,33 +32,17 @@ export class ApiGwCustomAuthorizer {
 
     }
 
-    private validateCert(certificate:string, caCertificate:string[]) : Promise<boolean> {
-        return new Promise((resolve:any,reject:any) =>  {
-            pem.verifySigningChain(certificate, caCertificate, (err:any, data:any) => {
-                if(err) {
-                    return reject(err);
-                }
-                return resolve(data);
-            });
-        });
+    private async validateCert(certificate:string, caCertificate:string[]) : Promise<boolean> {
+        return await this._verifySigningChain(certificate, caCertificate);
     }
 
-    private getCACertificateId () : Promise<string> {
-        return new Promise((resolve:any,reject:any) =>  {
-            const params = {
-                Name: 'cdf-rootca-pem',
-                WithDecryption: true
-            };
-            this. _ssm.getParameter(params, (err:any, data:any) => {
-                if (err) {
-                    return reject(err);
-                }
-                // TODO: handle case with multiple registered CAs
-                //       possibly will need to pass in desired CA id
-                const caKey = data.Parameter.Value;
-                return resolve(caKey);
-            });
-        });
+    private async getCACertificateId () : Promise<string> {
+        const params = {
+            Name: 'cdf-rootca-pem',
+            WithDecryption: true
+        };
+        const res = await this._ssm.getParameter(params).promise();
+        return res.Parameter?.Value;
     }
 
     /**

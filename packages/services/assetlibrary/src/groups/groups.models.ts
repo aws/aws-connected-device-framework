@@ -121,7 +121,7 @@ export function determineIfGroup20Resource(toBeDetermined: GroupBaseResource): t
 	return false;
 }
 
-export function determineIfGroupItem(toBeDetermined: any): toBeDetermined is GroupItem {
+export function determineIfGroupItem(toBeDetermined: unknown): toBeDetermined is GroupItem {
 	const asV2 = toBeDetermined as GroupItem;
 	if(asV2.groupPath) {
 		return true;

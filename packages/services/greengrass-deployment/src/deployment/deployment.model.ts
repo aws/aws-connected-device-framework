@@ -31,10 +31,10 @@ export interface DeploymentItem {
 }
 
 export interface DeploymentTemplateModel {
-    source: DeploymentSource;
-    type: DeploymentType;
-    name: string;
-    versionNo: number;
+    source?: DeploymentSource;
+    type?: DeploymentType;
+    name?: string;
+    versionNo?: number;
     envVars?: string[];
     options?: string[];
 }

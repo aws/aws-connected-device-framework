@@ -100,10 +100,10 @@ export class ActivationService {
         return activation;
     }
 
-    public async deleteActivationByDeviceId(deviceId: string) {
+    public async deleteActivationByDeviceId(deviceId: string): Promise<void> {
         logger.info(`ActivationService: deleteActivationByDeviceId: in: deviceId: ${deviceId}`);
 
-        let activation:any;
+        let activation:ActivationModel;
         try {
             activation = await this.activationDao.getByDeviceId(deviceId);
         } catch (err) {
@@ -116,10 +116,10 @@ export class ActivationService {
         }
 
         logger.debug(`ActivationService: deleteActivationByDeviceId: exit`);
-        return await this.deleteActivation(activation.activationId, activation.deviceId);
+        await this.deleteActivation(activation.activationId, activation.deviceId);
     }
 
-    public async deleteActivation(activationId: string, deviceId: string) {
+    public async deleteActivation(activationId: string, deviceId: string): Promise<void> {
         logger.info(`ActivationService: deleteActivation: in: activationId: ${activationId}`);
 
         await this.activationDao.delete(activationId, deviceId);
@@ -128,16 +128,14 @@ export class ActivationService {
             ActivationId: activationId
         };
 
-        let result;
         try {
-            result = this.ssm.deleteActivation(params).promise();
+            await this.ssm.deleteActivation(params).promise();
         } catch (err) {
             logger.error(`activation.service ssm.deleteActivation`, {err});
             throw new Error(err);
         }
         logger.debug(`ActivationService: deleteActivation: exit`);
 
-        return result;
     }
 
     public async updateActivation(activation: ActivationModel): Promise<void> {

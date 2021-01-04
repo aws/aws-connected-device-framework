@@ -6,20 +6,22 @@
 import * as qs from 'querystring';
 
 export class QSHelper {
-    public static getQueryString(queryObject:any): string {
-        const qsObj: {[key: string]: any} = {};
+    public static getQueryString(queryObject:unknown): string {
+        let qsObj: {[key:string]:string} = {};
         for(const key of Object.keys(queryObject)) {
             if(queryObject[key]) {
                 if(typeof(queryObject[key]) === 'string') {
                     if(queryObject[key].length > 0) {
+                        qsObj = {};
                         qsObj[key] = queryObject[key];
                     }
                 } else {
+                    qsObj = {};
                     qsObj[key] = queryObject[key];
                 }
             }
         }
-        if(qsObj !== {}) {
+        if(Object.keys(qsObj).length>0) {
             return qs.stringify(qsObj);
         }
         return null;

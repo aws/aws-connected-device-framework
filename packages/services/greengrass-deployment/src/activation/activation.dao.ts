@@ -52,7 +52,7 @@ export class ActivationDao {
         return true;
     }
 
-    public async save(activation: ActivationModel) {
+    public async save(activation: ActivationModel): Promise<void> {
         logger.debug(`activation.dao: save: in: activation: ${JSON.stringify(activation)}`);
 
         const params = {
@@ -71,7 +71,7 @@ export class ActivationDao {
         logger.debug(`activation.dao: save: exit: `);
     }
 
-    public async update(activation: ActivationModel) {
+    public async update(activation: ActivationModel): Promise<void> {
         logger.debug(`activation.dao: save: in: activation: ${JSON.stringify(activation)}`);
 
         const params = {
@@ -90,7 +90,7 @@ export class ActivationDao {
         logger.debug(`activation.dao: save: exit: `);
     }
 
-    public async delete(activationId: string, deviceId: string) {
+    public async delete(activationId: string, deviceId: string): Promise<void> {
         logger.debug(`activation.dao delete: in: activationId:${activationId}`);
 
         const params = {

@@ -4,6 +4,7 @@
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
 export class MessageTemplates {
+    eventId?: string;
     supportedTargets: SupportedTargets= {};
     templates: Templates= {};
 }
@@ -11,3 +12,7 @@ export class MessageTemplates {
 export type AttributeMapping = { [key: string] : string};
 export type SupportedTargets = {[key:string]:string};
 export type Templates = {[key:string]:string};
+
+export interface EventConfig {
+    eventId:string
+}

@@ -30,7 +30,7 @@ export class SearchServiceLite {
         // validation
         ow(model, ow.object.nonEmpty);
         const type = model.types===undefined || model.types.length===0? undefined: model.types.filter(t=> t===TypeCategory.Device || t===TypeCategory.Group);
-        ow(type, ow.object.nonEmpty);
+        ow(type,'type', ow.object.nonEmpty);
         const someFiltersDefined:boolean = model.ancestorPath!==undefined || model.eq!==undefined ||
             model.neq!==undefined || model.lt!==undefined || model.lte!==undefined ||
             model.gt!==undefined || model.gte!==undefined || model.startsWith!==undefined ||

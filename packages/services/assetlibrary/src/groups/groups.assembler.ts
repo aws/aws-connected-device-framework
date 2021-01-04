@@ -32,7 +32,7 @@ export class GroupsAssembler {
         node.version = model.version;
 
         for(const p in model.attributes) {
-            if (model.attributes.hasOwnProperty(p)) {
+            if (Object.prototype.hasOwnProperty.call(model.attributes, p)) {
                 node.attributes[p] = model.attributes[p];
             }
         }

@@ -92,7 +92,7 @@ export class EventsDao {
         };
 
         Object.keys(model).forEach(k=> {
-            if (model.hasOwnProperty(k) && k !== 'objectId' && k !== 'time' && model[k] !== undefined ) {
+            if (Object.prototype.hasOwnProperty.call(model, k) && k !== 'objectId' && k !== 'time' && model[k] !== undefined ) {
                 if (params.UpdateExpression==='') {
                     params.UpdateExpression+='set ';
                 } else {

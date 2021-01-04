@@ -3,6 +3,9 @@
 #
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
+
+/* eslint @typescript-eslint/no-explicit-any: 0 */
+/* eslint @typescript-eslint/explicit-module-boundary-types: 0 */
 declare module 'gremlin' {
 
     export namespace structure {
@@ -32,118 +35,118 @@ declare module 'gremlin' {
         export class GraphTraversalSource {
             withRemote(conn: driver.RemoteConnection): GraphTraversalSource;
             toString(): string;
-            withBulk(...args: Object[]): GraphTraversalSource;
-            withPath(...args: Object[]): GraphTraversalSource;
-            withSack(...args: Object[]): GraphTraversalSource;
-            withSideEffect(...args: Object[]): GraphTraversalSource;
-            withStrategies(...args: Object[]): GraphTraversalSource;
-            withoutStrategies(...args: Object[]): GraphTraversalSource;
-            E(...args: Object[]): GraphTraversal;
-            V(...args: Object[]): GraphTraversal;
-            addE(...args: Object[]): GraphTraversal;
-            addV(...args: Object[]): GraphTraversal;
-            inject(...args: Object[]): GraphTraversal;
-            io(...args: Object[]): GraphTraversal;
+            withBulk(...args: unknown[]): GraphTraversalSource;
+            withPath(...args: unknown[]): GraphTraversalSource;
+            withSack(...args: unknown[]): GraphTraversalSource;
+            withSideEffect(...args: unknown[]): GraphTraversalSource;
+            withStrategies(...args: unknown[]): GraphTraversalSource;
+            withoutStrategies(...args: unknown[]): GraphTraversalSource;
+            E(...args: unknown[]): GraphTraversal;
+            V(...args: unknown[]): GraphTraversal;
+            addE(...args: unknown[]): GraphTraversal;
+            addV(...args: unknown[]): GraphTraversal;
+            inject(...args: unknown[]): GraphTraversal;
+            io(...args: unknown[]): GraphTraversal;
         }
 
         export class GraphTraversal extends process.Traversal {
-            V(...args: Object[]): GraphTraversal;
-            addE(...args: Object[]): GraphTraversal;
-            addV(...args: Object[]): GraphTraversal;
-            aggregate(...args: Object[]): GraphTraversal;
-            and(...args: Object[]): GraphTraversal;
-            as(...args: Object[]): GraphTraversal;
-            barrier(...args: Object[]): GraphTraversal;
-            both(...args: Object[]): GraphTraversal;
-            bothE(...args: Object[]): GraphTraversal;
-            bothV(...args: Object[]): GraphTraversal;
-            branch(...args: Object[]): GraphTraversal;
-            by(...args: Object[]): GraphTraversal;
-            cap(...args: Object[]): GraphTraversal;
-            choose(...args: Object[]): GraphTraversal;
-            coalesce(...args: Object[]): GraphTraversal;
-            coin(...args: Object[]): GraphTraversal;
-            constant(...args: Object[]): GraphTraversal;
-            count(...args: Object[]): GraphTraversal;
-            cyclicPath(...args: Object[]): GraphTraversal;
-            dedup(...args: Object[]): GraphTraversal;
-            drop(...args: Object[]): GraphTraversal;
-            emit(...args: Object[]): GraphTraversal;
-            filter(...args: Object[]): GraphTraversal;
-            flatMap(...args: Object[]): GraphTraversal;
-            fold(...args: Object[]): GraphTraversal;
-            from_(...args: Object[]): GraphTraversal;
-            group(...args: Object[]): GraphTraversal;
-            groupCount(...args: Object[]): GraphTraversal;
-            has(...args: Object[]): GraphTraversal;
-            hasId(...args: Object[]): GraphTraversal;
-            hasKey(...args: Object[]): GraphTraversal;
-            hasLabel(...args: Object[]): GraphTraversal;
-            hasNot(...args: Object[]): GraphTraversal;
-            hasValue(...args: Object[]): GraphTraversal;
-            id(...args: Object[]): GraphTraversal;
-            identity(...args: Object[]): GraphTraversal;
-            in_(...args: Object[]): GraphTraversal;
-            inE(...args: Object[]): GraphTraversal;
-            inV(...args: Object[]): GraphTraversal;
-            inject(...args: Object[]): GraphTraversal;
-            is(...args: Object[]): GraphTraversal;
-            key(...args: Object[]): GraphTraversal;
-            label(...args: Object[]): GraphTraversal;
-            limit(...args: Object[]): GraphTraversal;
-            local(...args: Object[]): GraphTraversal;
-            loops(...args: Object[]): GraphTraversal;
-            map(...args: Object[]): GraphTraversal;
-            match(...args: Object[]): GraphTraversal;
-            math(...args: Object[]): GraphTraversal;
-            max(...args: Object[]): GraphTraversal;
-            mean(...args: Object[]): GraphTraversal;
-            min(...args: Object[]): GraphTraversal;
-            not(...args: Object[]): GraphTraversal;
-            option(...args: Object[]): GraphTraversal;
-            optional(...args: Object[]): GraphTraversal;
-            or(...args: Object[]): GraphTraversal;
-            order(...args: Object[]): GraphTraversal;
-            otherV(...args: Object[]): GraphTraversal;
-            out(...args: Object[]): GraphTraversal;
-            outE(...args: Object[]): GraphTraversal;
-            outV(...args: Object[]): GraphTraversal;
-            pageRank(...args: Object[]): GraphTraversal;
-            path(...args: Object[]): GraphTraversal;
-            peerPressure(...args: Object[]): GraphTraversal;
-            profile(...args: Object[]): GraphTraversal;
-            program(...args: Object[]): GraphTraversal;
-            project(...args: Object[]): GraphTraversal;
-            properties(...args: Object[]): GraphTraversal;
-            property(...args: Object[]): GraphTraversal;
-            propertyMap(...args: Object[]): GraphTraversal;
-            range(...args: Object[]): GraphTraversal;
-            repeat(...args: Object[]): GraphTraversal;
-            sack(...args: Object[]): GraphTraversal;
-            sample(...args: Object[]): GraphTraversal;
-            select(...args: Object[]): GraphTraversal;
-            sideEffect(...args: Object[]): GraphTraversal;
-            simplePath(...args: Object[]): GraphTraversal;
-            skip(...args: Object[]): GraphTraversal;
-            store(...args: Object[]): GraphTraversal;
-            subgraph(...args: Object[]): GraphTraversal;
-            sum(...args: Object[]): GraphTraversal;
-            tail(...args: Object[]): GraphTraversal;
-            timeLimit(...args: Object[]): GraphTraversal;
-            times(...args: Object[]): GraphTraversal;
-            to(...args: Object[]): GraphTraversal;
-            toE(...args: Object[]): GraphTraversal;
-            toV(...args: Object[]): GraphTraversal;
-            tree(...args: Object[]): GraphTraversal;
-            unfold(...args: Object[]): GraphTraversal;
-            union(...args: Object[]): GraphTraversal;
-            until(...args: Object[]): GraphTraversal;
-            value(...args: Object[]): GraphTraversal;
-            valueMap(...args: Object[]): GraphTraversal;
-            values(...args: Object[]): GraphTraversal;
-            where(...args: Object[]): GraphTraversal;
-            with_(...args: Object[]): GraphTraversal;
-            write(...args: Object[]): GraphTraversal;
+            V(...args: unknown[]): GraphTraversal;
+            addE(...args: unknown[]): GraphTraversal;
+            addV(...args: unknown[]): GraphTraversal;
+            aggregate(...args: unknown[]): GraphTraversal;
+            and(...args: unknown[]): GraphTraversal;
+            as(...args: unknown[]): GraphTraversal;
+            barrier(...args: unknown[]): GraphTraversal;
+            both(...args: unknown[]): GraphTraversal;
+            bothE(...args: unknown[]): GraphTraversal;
+            bothV(...args: unknown[]): GraphTraversal;
+            branch(...args: unknown[]): GraphTraversal;
+            by(...args: unknown[]): GraphTraversal;
+            cap(...args: unknown[]): GraphTraversal;
+            choose(...args: unknown[]): GraphTraversal;
+            coalesce(...args: unknown[]): GraphTraversal;
+            coin(...args: unknown[]): GraphTraversal;
+            constant(...args: unknown[]): GraphTraversal;
+            count(...args: unknown[]): GraphTraversal;
+            cyclicPath(...args: unknown[]): GraphTraversal;
+            dedup(...args: unknown[]): GraphTraversal;
+            drop(...args: unknown[]): GraphTraversal;
+            emit(...args: unknown[]): GraphTraversal;
+            filter(...args: unknown[]): GraphTraversal;
+            flatMap(...args: unknown[]): GraphTraversal;
+            fold(...args: unknown[]): GraphTraversal;
+            from_(...args: unknown[]): GraphTraversal;
+            group(...args: unknown[]): GraphTraversal;
+            groupCount(...args: unknown[]): GraphTraversal;
+            has(...args: unknown[]): GraphTraversal;
+            hasId(...args: unknown[]): GraphTraversal;
+            hasKey(...args: unknown[]): GraphTraversal;
+            hasLabel(...args: unknown[]): GraphTraversal;
+            hasNot(...args: unknown[]): GraphTraversal;
+            hasValue(...args: unknown[]): GraphTraversal;
+            id(...args: unknown[]): GraphTraversal;
+            identity(...args: unknown[]): GraphTraversal;
+            in_(...args: unknown[]): GraphTraversal;
+            inE(...args: unknown[]): GraphTraversal;
+            inV(...args: unknown[]): GraphTraversal;
+            inject(...args: unknown[]): GraphTraversal;
+            is(...args: unknown[]): GraphTraversal;
+            key(...args: unknown[]): GraphTraversal;
+            label(...args: unknown[]): GraphTraversal;
+            limit(...args: unknown[]): GraphTraversal;
+            local(...args: unknown[]): GraphTraversal;
+            loops(...args: unknown[]): GraphTraversal;
+            map(...args: unknown[]): GraphTraversal;
+            match(...args: unknown[]): GraphTraversal;
+            math(...args: unknown[]): GraphTraversal;
+            max(...args: unknown[]): GraphTraversal;
+            mean(...args: unknown[]): GraphTraversal;
+            min(...args: unknown[]): GraphTraversal;
+            not(...args: unknown[]): GraphTraversal;
+            option(...args: unknown[]): GraphTraversal;
+            optional(...args: unknown[]): GraphTraversal;
+            or(...args: unknown[]): GraphTraversal;
+            order(...args: unknown[]): GraphTraversal;
+            otherV(...args: unknown[]): GraphTraversal;
+            out(...args: unknown[]): GraphTraversal;
+            outE(...args: unknown[]): GraphTraversal;
+            outV(...args: unknown[]): GraphTraversal;
+            pageRank(...args: unknown[]): GraphTraversal;
+            path(...args: unknown[]): GraphTraversal;
+            peerPressure(...args: unknown[]): GraphTraversal;
+            profile(...args: unknown[]): GraphTraversal;
+            program(...args: unknown[]): GraphTraversal;
+            project(...args: unknown[]): GraphTraversal;
+            properties(...args: unknown[]): GraphTraversal;
+            property(...args: unknown[]): GraphTraversal;
+            propertyMap(...args: unknown[]): GraphTraversal;
+            range(...args: unknown[]): GraphTraversal;
+            repeat(...args: unknown[]): GraphTraversal;
+            sack(...args: unknown[]): GraphTraversal;
+            sample(...args: unknown[]): GraphTraversal;
+            select(...args: unknown[]): GraphTraversal;
+            sideEffect(...args: unknown[]): GraphTraversal;
+            simplePath(...args: unknown[]): GraphTraversal;
+            skip(...args: unknown[]): GraphTraversal;
+            store(...args: unknown[]): GraphTraversal;
+            subgraph(...args: unknown[]): GraphTraversal;
+            sum(...args: unknown[]): GraphTraversal;
+            tail(...args: unknown[]): GraphTraversal;
+            timeLimit(...args: unknown[]): GraphTraversal;
+            times(...args: unknown[]): GraphTraversal;
+            to(...args: unknown[]): GraphTraversal;
+            toE(...args: unknown[]): GraphTraversal;
+            toV(...args: unknown[]): GraphTraversal;
+            tree(...args: unknown[]): GraphTraversal;
+            unfold(...args: unknown[]): GraphTraversal;
+            union(...args: unknown[]): GraphTraversal;
+            until(...args: unknown[]): GraphTraversal;
+            value(...args: unknown[]): GraphTraversal;
+            valueMap(...args: unknown[]): GraphTraversal;
+            values(...args: unknown[]): GraphTraversal;
+            where(...args: unknown[]): GraphTraversal;
+            with_(...args: unknown[]): GraphTraversal;
+            write(...args: unknown[]): GraphTraversal;
         }
 
         export const statics : {
@@ -268,12 +271,12 @@ declare module 'gremlin' {
             static inside(first:number, second:number): P;
             static lt(args: number): P;
             static lte(args: number): P;
-            static neq(args: object): P;
-            static not(...args: object[]): P;
+            static neq(args: unknown): P;
+            static not(...args: unknown[]): P;
             static outside(first:number, second:number): P;
-            static test(...args: object[]): P;
-            static within(...args: object[]): P;
-            static without(...args: object[]): P;
+            static test(...args: unknown[]): P;
+            static within(...args: unknown[]): P;
+            static without(...args: unknown[]): P;
         }
 
         export class Traversal {
@@ -304,7 +307,7 @@ declare module 'gremlin' {
         export type TraverserMapValue = {[key:string]: TraverserValue};
 
         export class Traverser {
-            constructor(object:object, bulk:number);
+            constructor(unknown:unknown, bulk:number);
             [key: string]: TraverserValue;
         }
 

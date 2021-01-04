@@ -5,14 +5,14 @@ import {RequestHeaders} from './common.model';
 @injectable()
 export class CommonServiceBase  {
 
-    private DEFAULT_MIME_TYPE:string = 'application/vnd.aws-cdf-v2.0+json';
+    private DEFAULT_MIME_TYPE = 'application/vnd.aws-cdf-v2.0+json';
 
     private readonly _headers:RequestHeaders = {
         'Accept': this.DEFAULT_MIME_TYPE,
         'Content-Type': this.DEFAULT_MIME_TYPE
     };
 
-    protected buildHeaders(additionalHeaders:RequestHeaders) {
+    protected buildHeaders(additionalHeaders:RequestHeaders) : RequestHeaders {
 
         let headers = Object.assign({}, this._headers);
 

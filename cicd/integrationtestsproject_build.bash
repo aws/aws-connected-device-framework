@@ -6,7 +6,7 @@ echo integrationtestsproject_build started on `date`
 
 
 
-echo determining deployed urls...
+echo determining deployed staging urls...
 
 ASSETLIBRARY_STACK_NAME="cdf-assetlibrary-$ENVIRONMENT"
 ASSETLIBRARYHISTORY_STACK_NAME="cdf-assetlibraryhistory-$ENVIRONMENT"
@@ -51,15 +51,17 @@ notifications_invoke_url=$(echo $stack_exports \
     '.Exports[] | select(.Name==$notifications_invoke_url_export) | .Value')
 
 
-echo setting integration test config...
+echo creating staging integration test config...
 
-CONFIG_ENVIRONMENT=${ENVIRONMENT%-staging}
+LIVE_CONFIG_ENVIRONMENT=${ENVIRONMENT%-staging}
+STAGING_CONFIG_ENVIRONMENT=$ENVIRONMENT
 export CONFIG_LOCATION="$CODEBUILD_SRC_DIR_source_infrastructure"
-export CONFIG_FILE="$CONFIG_LOCATION/integration-tests/$CONFIG_ENVIRONMENT-config.json"
+STAGING_CONFIG_FILE="${CONFIG_LOCATION}/integration-tests/${STAGING_CONFIG_ENVIRONMENT}-config.json"
+LIVE_CONFIG_FILE="${CONFIG_LOCATION}/integration-tests/${LIVE_CONFIG_ENVIRONMENT}-config.json"
 
-echo using configuration from $CONFIG_FILE
+echo creating staging config $STAGING_CONFIG_FILE based on $LIVE_CONFIG_FILE
 
-cat $CONFIG_FILE | \
+cat $LIVE_CONFIG_FILE | \
   jq \
     --arg assetlibrary_invoke_url "$assetlibrary_invoke_url" \
     --arg assetlibraryhistory_invoke_url "$assetlibraryhistory_invoke_url" \
@@ -68,19 +70,23 @@ cat $CONFIG_FILE | \
     --arg bulkcerts_invoke_url "$bulkcerts_invoke_url" \
     --arg notifications_invoke_url "$notifications_invoke_url" \
   '.assetLibrary.baseUrl=$assetlibrary_invoke_url | .assetLibraryHistory.baseUrl=$assetlibraryhistory_invoke_url | .commands.baseUrl=$commands_invoke_url | .provisioning.baseUrl=$provisioning_invoke_url | .bulkCerts.baseUrl=$bulkcerts_invoke_url | .notifications.baseUrl=$notifications_invoke_url' \
-  > $CONFIG_FILE.tmp && mv $CONFIG_FILE.tmp $CONFIG_FILE
+  > $STAGING_CONFIG_FILE
 
-echo "\naugmented configuration:\n$(cat $CONFIG_FILE)\n"
+echo "\naugmented configuration:\n$(cat $STAGING_CONFIG_FILE)\n"
 
 
 echo running integration tests...
 
 cd packages/integration-tests
-pnpm run integration-test -- "features/provisioning/*.feature"
-pnpm run integration-test -- "features/assetlibrary/$ASSETLIBRARY_MODE/*.feature"
+npm config set @cdf/integration-tests:environment $STAGING_CONFIG_ENVIRONMENT
+npm run clean
+npm run build
+npm run integration-test -- "features/provisioning/*.feature"
+npm run integration-test -- "features/assetlibrary/$ASSETLIBRARY_MODE/*.feature"
 
 # TODO: fix asset library history tests
-#pnpm run integration-test -- "features/assetlibraryhistory/*.feature"
+#npm run integration-test -- "features/assetlibraryhistory/*.feature"
 
-pnpm run integration-test -- "features/bulkcerts/*.feature"
-pnpm run integration-test -- "features/commands/*.feature"
+npm run integration-test -- "features/bulkcerts/*.feature"
+npm run integration-test -- "features/commands/*.feature"
+npm run integration-test -- "features/notifications/*.feature"

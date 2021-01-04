@@ -394,7 +394,7 @@ export class SubscriptionDao {
 
 		const result = await this.dynamoDbUtils.batchWriteAll(deleteParams);
         if (this.dynamoDbUtils.hasUnprocessedItems(result)) {
-    		throw new Error('DELETE_SUBSCRIPTION_FAILED');
+            throw new Error('DELETE_SUBSCRIPTION_FAILED');
 		}
 
         logger.debug(`subscription.dao delete: exit:`);

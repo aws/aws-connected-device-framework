@@ -23,8 +23,8 @@ export class TemplatesLambdaService extends TemplatesServiceBase implements Temp
     }
 
     async getTemplate(category: CategoryEnum, templateId: string, status: StatusEnum, additionalHeaders?: RequestHeaders): Promise<TypeResource> {
-        ow(category, ow.string.nonEmpty);
-        ow(templateId, ow.string.nonEmpty);
+        ow(category,'category', ow.string.nonEmpty);
+        ow(templateId,'templateId', ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.templateRelativeUrl(category, templateId))
@@ -38,9 +38,9 @@ export class TemplatesLambdaService extends TemplatesServiceBase implements Temp
     }
 
     async createTemplate(resource: TypeResource, additionalHeaders?: RequestHeaders): Promise<void> {
-        ow(resource, ow.object.nonEmpty);
-        ow(resource.templateId, ow.string.nonEmpty);
-        ow(resource.category, ow.string.nonEmpty);
+        ow(resource,'resource', ow.object.nonEmpty);
+        ow(resource.templateId,'templateId', ow.string.nonEmpty);
+        ow(resource.category,'category', ow.string.nonEmpty);
 
         const templateId = resource.templateId;
         const category = resource.category;
@@ -58,9 +58,9 @@ export class TemplatesLambdaService extends TemplatesServiceBase implements Temp
     }
 
     async updateTemplate(resource: TypeResource, additionalHeaders?: RequestHeaders): Promise<void> {
-        ow(resource, ow.object.nonEmpty);
-        ow(resource.templateId, ow.string.nonEmpty);
-        ow(resource.category, ow.string.nonEmpty);
+        ow(resource,'resource', ow.object.nonEmpty);
+        ow(resource.templateId,'templateId', ow.string.nonEmpty);
+        ow(resource.category,'category', ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.templateRelativeUrl(resource.category, resource.templateId))
@@ -72,8 +72,8 @@ export class TemplatesLambdaService extends TemplatesServiceBase implements Temp
     }
 
     async publishTemplate(category: CategoryEnum, templateId: string, additionalHeaders?: RequestHeaders): Promise<void> {
-        ow(category, ow.string.nonEmpty);
-        ow(templateId, ow.string.nonEmpty);
+        ow(category,'category', ow.string.nonEmpty);
+        ow(templateId,'templateId', ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.publishTemplateRelativeUrl(category, templateId))
@@ -84,8 +84,8 @@ export class TemplatesLambdaService extends TemplatesServiceBase implements Temp
     }
 
     async deleteTemplate(category: CategoryEnum, templateId: string, additionalHeaders?: RequestHeaders): Promise<void> {
-        ow(category, ow.string.nonEmpty);
-        ow(templateId, ow.string.nonEmpty);
+        ow(category,'category', ow.string.nonEmpty);
+        ow(templateId,'templateId', ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.templateRelativeUrl(category, templateId))
@@ -96,7 +96,7 @@ export class TemplatesLambdaService extends TemplatesServiceBase implements Temp
     }
 
     async listTemplates(category: CategoryEnum, status?: string, offset?: number, count?: number, additionalHeaders?: RequestHeaders): Promise<TypeResourceList> {
-        ow(category, ow.string.nonEmpty);
+        ow(category,'category', ow.string.nonEmpty);
 
        const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.templatesRelativeUrl(category))

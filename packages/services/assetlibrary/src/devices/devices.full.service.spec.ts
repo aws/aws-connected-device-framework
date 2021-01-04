@@ -6,7 +6,6 @@
 import 'reflect-metadata';
 import { createMockInstance } from 'jest-create-mock-instance';
 
-import { logger} from '../utils/logger';
 import { DevicesServiceFull } from './devices.full.service';
 import { DevicesAssembler } from './devices.assembler';
 import { TypesService } from '../types/types.service';
@@ -195,7 +194,6 @@ describe('DevicesService', () => {
 
         // Make the call
         const device = await instance.get(validDeviceId, false, [], true);
-        logger.debug(`TEST device: ${JSON.stringify(device)}`);
 
         // Finally, verify the results
         expect(device).toBeDefined();

@@ -32,7 +32,7 @@ export class InitDaoFull extends BaseDaoFull {
 
         logger.debug(`init.dao isInitialized: query: ${JSON.stringify(query)}`);
 
-        let initialized:boolean=true;
+        let initialized=true;
 
         if (query===undefined || query.value===null) {
             initialized=false;

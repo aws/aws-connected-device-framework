@@ -165,8 +165,8 @@ Resources:
   LambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ../build/build.zip
-      Handler: lambda_proxy.handler
+      CodeUri: ../bundle.zip
+      Handler: packages/services/provisioning/dist/lambda_proxy.handler
       Layers:
         - !Ref OpenSslLambdaLayerArn
       MemorySize: 512
@@ -175,7 +175,7 @@ Resources:
       Timeout: 60
       Environment:
         Variables:
-          NODE_CONFIG_DIR: './config'
+          NODE_CONFIG_DIR: 'packages/services/provisioning/dist/config'
           NODE_CONFIG: !Ref ApplicationConfigurationOverride
           CDF_PROVISIONING_S3_ROLEARN: !GetAtt LambdaExecutionRole.Arn
       Tracing: Active

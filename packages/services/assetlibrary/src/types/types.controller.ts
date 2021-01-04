@@ -32,13 +32,14 @@ export class TypesController implements interfaces.Controller {
                 res.status(404).end();
             } else {
 
-                const tr = new TypeResource();
-                tr.templateId = model.templateId;
-                tr.category = model.category;
-                tr.properties = model.schema.definition.properties;
-                tr.relations = model.schema.definition.relations;
-                tr.required = model.schema.definition.required;
-                tr.components = model.schema.definition.components;
+                const tr: TypeResource= {
+                    templateId: model.templateId,
+                    category: model.category,
+                    properties: model.schema.definition.properties,
+                    relations: model.schema.definition.relations,
+                    required: model.schema.definition.required,
+                    components: model.schema.definition.components
+                }
 
                 res.status(200).json(tr).end();
             }
@@ -68,7 +69,7 @@ export class TypesController implements interfaces.Controller {
 
     @httpPatch('/:category/:templateId')
     public async updateTemplate(@requestParam('category') category: TypeCategory, @requestParam('templateId') templateId: string,
-          @requestBody() definition: TypeDefinitionModel, @response() res: Response) {
+          @requestBody() definition: TypeDefinitionModel, @response() res: Response) : Promise<void> {
         logger.info(`types.controller: updateTemplate: in: category:${category}, templateId:${templateId}, definition:${JSON.stringify(definition)}`);
         try {
             const result = await this.typesService.update(templateId, category, definition);
@@ -98,7 +99,7 @@ export class TypesController implements interfaces.Controller {
     }
 
     @httpDelete('/:category/:templateId')
-    public async deleteTemplate(@requestParam('category') category: TypeCategory, @requestParam('templateId') templateId: string, @response() res: Response)  {
+    public async deleteTemplate(@requestParam('category') category: TypeCategory, @requestParam('templateId') templateId: string, @response() res: Response) : Promise<void>  {
 
         logger.info(`types.controller deleteTemplate: in: category:${category}, templateId:${templateId}`);
         try {
@@ -131,12 +132,13 @@ export class TypesController implements interfaces.Controller {
                 res.status(404).end();
             } else {
                 results.forEach(m=> {
-                    const tr = new TypeResource();
-                    tr.templateId = m.templateId;
-                    tr.category = m.category;
-                    tr.properties = m.schema.definition.properties;
-                    tr.relations = m.schema.definition.relations;
-                    tr.required = m.schema.definition.required;
+                    const tr: TypeResource= {
+                        templateId: m.templateId,
+                        category: m.category,
+                        properties: m.schema.definition.properties,
+                        relations: m.schema.definition.relations,
+                        required: m.schema.definition.required
+                    }
                     r.results.push(tr);
                 });
                 res.status(200).json(r).end();

@@ -17,7 +17,8 @@ let _apiGwCustomAuth : ApiGwCustomAuthorizer;
 /**
  * Lambda entry point for Custom Authorizer.
  */
-export async function handler(event: any, context: any) {
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
+export async function handler(event: any, context: any) : Promise<void> {
     logger.debug(`index: handler: in: event:${JSON.stringify(event)}, context:${JSON.stringify(context)}`);
 
     ow(event, ow.object.nonEmpty);
@@ -58,6 +59,7 @@ export async function handler(event: any, context: any) {
     }
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
 function getAccountId(context: any) {
     // extract account number from invoked arn
     const invokedFnArn = context.invokedFunctionArn;
@@ -71,6 +73,7 @@ function getAccountId(context: any) {
     return invokedFnArnParsed[4];
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
 function getApiId(event:any) {
     let apiId;
     if (event.requestContext) {

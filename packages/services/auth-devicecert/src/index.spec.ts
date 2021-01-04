@@ -4,7 +4,6 @@
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
 
-import { logger } from './utils/logger';
 import * as Lambda from './index';
 
 import AWS from 'aws-sdk';
@@ -79,7 +78,6 @@ describe('Cust Auth lambda', () => {
       };
       Lambda.handler(event, context, (policy: any) => {
         expect(policy).toBeDefined();
-        logger.debug('returned resp ', policy);
         done();
       });
     });

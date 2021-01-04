@@ -27,7 +27,7 @@ export class MessagesController implements interfaces.Controller {
      * @param message : lambda event
      */
     @httpPost('/messages/invoke')
-    public async simulateMessage(@requestBody() message:any) {
+    public async simulateMessage(@requestBody() message:unknown)  : Promise<void> {
         logger.debug(`messages.controller simulateMessage: in: message:${JSON.stringify(message)}`);
 
         // transform the message
@@ -47,7 +47,7 @@ export class MessagesController implements interfaces.Controller {
      * @param message : lambda event
      */
     @httpPost('/messages/iotcore')
-    public async simulateIoTCoreMessage(@requestBody() message:SimulateIoTCoreMessageRequest) {
+    public async simulateIoTCoreMessage(@requestBody() message:SimulateIoTCoreMessageRequest) : Promise<void> {
         logger.debug(`messages.controller simulateIoTCoreMessage: in: message:${JSON.stringify(message)}`);
         const params = {
             topic: message.topic,

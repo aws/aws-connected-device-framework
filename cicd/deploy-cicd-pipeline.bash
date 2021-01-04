@@ -52,6 +52,7 @@ OPTIONAL ARGUMENTS
 EOF
 }
 
+ASSET_LIBRARY_USE_EXISTING_VPC=false
 
 while getopts ":b:d:e:r:g:h:I:Nm:v:s:n:o:t:p:i:k:y:z:a:c:A:R:P:" opt; do
   case $opt in
@@ -142,7 +143,7 @@ if [[ "$ASSET_LIBRARY_MODE" = "full" ]]; then
     fi
 fi
 
-if [ -n "$ASSET_LIBRARY_USE_EXISTING_VPC" ]; then
+if [ "$ASSET_LIBRARY_USE_EXISTING_VPC" = "true" ]; then
     if [ -z "$ASSET_LIBRARY_VPC_ID" ]; then
         echo -v ASSET_LIBRARY_VPC_ID is required when choosing to use an existing VPC; help_message; exit 1;
     fi
@@ -167,6 +168,38 @@ fi
 if [ -n "$AWS_PROFILE" ]; then
 	AWS_ARGS="$AWS_ARGS--profile $AWS_PROFILE"
 fi
+
+echo '
+**********************************************************
+  Checking custom build image
+**********************************************************
+'
+ecr_repos=$(aws ecr describe-repositories $AWS_ARGS)
+ecr_repo_uri=$(echo $ecr_repos | jq -r '.repositories[] | select(.repositoryName=="cdf-codebuild") | .repositoryUri')
+
+if [ -z "$ecr_repo_uri" ]; then
+
+  echo '
+  **********************************************************
+    Building and uploading the custom build image
+     (can take quite a while if the first time!)
+  **********************************************************
+  '
+  ecr_repo=$(aws ecr create-repository --repository-name "cdf-codebuild" $AWS_ARGS)
+  ecr_repo_uri=$(echo $ecr_repo | jq -r '. | .repository.repositoryUri')
+  ecr_hub=$(echo $ecr_repo_uri | cut -f1 -d"/")
+
+  pushd cdf-codebuild-docker-image
+  docker build -t $ecr_repo_uri .
+
+  docker_login_pwd=$(aws ecr get-login-password $AWS_ARGS)
+  eval "echo $docker_login_pwd | docker login --username AWS --password-stdin $ecr_hub"
+  docker push $ecr_repo_uri
+  popd
+
+fi
+
+
 
 echo '
 **********************************************************

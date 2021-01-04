@@ -18,25 +18,23 @@ export class DeploymentManager {
     private readonly deploymentStrategies = {};
 
     constructor(
-        // @ts-ignore
-        @inject(TYPES.AgentlessDeploymentService) private _agentlessDeploymentService: AgentlessDeploymentService,
-        // @ts-ignore
-        @inject(TYPES.AgentbasedDeploymentService) private _agentbasedDeploymentService: AgentbasedDeploymentService
+        @inject(TYPES.AgentlessDeploymentService) protected agentlessDeploymentService: AgentlessDeploymentService,
+        @inject(TYPES.AgentbasedDeploymentService) protected agentbasedDeploymentService: AgentbasedDeploymentService
     ) {
-        this.deploymentStrategies[DeploymentType.AGENTBASED] = _agentbasedDeploymentService;
-        this.deploymentStrategies[DeploymentType.AGENTLESS] = _agentlessDeploymentService;
+        this.deploymentStrategies[DeploymentType.AGENTBASED] = agentbasedDeploymentService;
+        this.deploymentStrategies[DeploymentType.AGENTLESS] = agentlessDeploymentService;
     }
 
-    public async create(deployment: DeploymentModel) {
-       return await this.deploymentStrategies[deployment.deploymentTemplate.type].create(deployment);
+    public async create(deployment: DeploymentModel): Promise<void> {
+        await this.deploymentStrategies[deployment.deploymentTemplate.type].create(deployment);
     }
 
-    public async deploy(deployment: DeploymentModel) {
-        return await this.deploymentStrategies[deployment.deploymentTemplate.type].deploy(deployment);
+    public async deploy(deployment: DeploymentModel): Promise<void> {
+        await this.deploymentStrategies[deployment.deploymentTemplate.type].deploy(deployment);
     }
 
-    public async delete(deployment: DeploymentModel) {
-        return await this.deploymentStrategies[deployment.deploymentTemplate.type].delete(deployment);
+    public async delete(deployment: DeploymentModel): Promise<void> {
+        await this.deploymentStrategies[deployment.deploymentTemplate.type].delete(deployment);
     }
 
 }

@@ -2,6 +2,7 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from '../di/types';
 import { logger } from '../utils/logger';
 import { EventsDao, ListCategoryEventsArgs, ListObjectEventsArgs, SortDirection } from '../events/events.dao';
+import { StateHistoryListModel } from '../events/events.models';
 
 @injectable()
 export class QueryService {
@@ -9,7 +10,7 @@ export class QueryService {
     constructor(
         @inject(TYPES.EventsDao) private eventsDao:EventsDao) {}
 
-    public async listCategoryEvents(args:ListCategoryEventsArgs) {
+    public async listCategoryEvents(args:ListCategoryEventsArgs) : Promise<StateHistoryListModel> {
         logger.debug(`query.service listCategoryEvents: in: args:${JSON.stringify(args)}`);
 
         // TODO validation
@@ -32,7 +33,7 @@ export class QueryService {
 
     }
 
-    public async listObjectEvents(args:ListObjectEventsArgs) {
+    public async listObjectEvents(args:ListObjectEventsArgs) : Promise<StateHistoryListModel> {
         logger.debug(`query.service listObjectEvents: in: args:${JSON.stringify(args)}`);
 
         // TODO validation

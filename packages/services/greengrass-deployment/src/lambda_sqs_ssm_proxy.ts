@@ -21,6 +21,7 @@ const activationService: ActivationService = container.get<ActivationService>(TY
 
 const agentbasedDeploymentService: AgentbasedDeploymentService = container.get<AgentbasedDeploymentService>(TYPES.AgentbasedDeploymentService);
 
+// eslint-disable-next-line  @typescript-eslint/no-explicit-any
 exports.handler = async(event: any, context: any, callback: any) => {
 
     logger.debug(`event: ${JSON.stringify(event)}`);

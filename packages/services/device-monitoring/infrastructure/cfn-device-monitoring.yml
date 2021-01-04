@@ -92,15 +92,15 @@ Resources:
   IoTLifecycleEventLambda:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ../build/build.zip
-      Handler: iot_lifecycle_event.lambda_handler
+      CodeUri: ../bundle.zip
+      Handler: packages/services/device-monitoring/dist/iot_lifecycle_event.lambda_handler
       MemorySize: 512
       Role: !GetAtt IoTLifecycleLambdaRole.Arn
       Runtime: nodejs12.x
       Timeout: 30
       Environment:
         Variables:
-          NODE_CONFIG_DIR: './config'
+          NODE_CONFIG_DIR: 'packages/services/device-monitoring/dist/config'
           NODE_CONFIG: !Ref ApplicationConfigurationOverride
       Tracing: Active
     DependsOn:

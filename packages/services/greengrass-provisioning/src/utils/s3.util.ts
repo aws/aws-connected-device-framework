@@ -22,6 +22,7 @@ export class S3Utils {
     public uploadStreamToS3(bucket:string, key:string, body:NodeJS.ReadableStream) : Promise<string> {
         logger.debug(`s3.util uploadStreamToS3: in: bucket:${bucket}, key:${key}`);
 
+        /* eslint-disable @typescript-eslint/no-explicit-any */
         return new Promise((resolve:any,reject:any) =>  {
             const params = {
                 Bucket: bucket,

@@ -12,7 +12,7 @@ import { logger } from '../utils/logger';
 
 import { TYPES } from '../di/types';
 import { DeploymentService } from './deployment.service';
-import { DeploymentRequest, DeploymentModel } from './deployment.model';
+import { DeploymentRequest, DeploymentModel, DeploymentList } from './deployment.model';
 
 @controller('/devices')
 export class DeploymentController implements interfaces.Controller {
@@ -43,14 +43,15 @@ export class DeploymentController implements interfaces.Controller {
     @httpGet('/:deviceId/deployments/:deploymentId')
     public async getDeployment(
         @response() res: Response,
-        @requestParam() params: any,
-    ): Promise<any> {
-        logger.debug(`Deployment.controller getDeployment: in: deviceId: ${params.deviceId}`);
+        @requestParam('deviceId') deviceId: string,
+        @requestParam('deploymentId') deploymentId: string,
+    ): Promise<DeploymentModel> {
+        logger.debug(`Deployment.controller getDeployment: in: deviceId: ${deviceId}`);
 
         let deploymentResource: DeploymentModel;
 
         try {
-           deploymentResource = await this.deploymentService.get(params.deploymentId, params.deviceId);
+           deploymentResource = await this.deploymentService.get(deploymentId, deviceId);
         } catch (err) {
             handleError(err, res);
         }
@@ -64,15 +65,15 @@ export class DeploymentController implements interfaces.Controller {
     @httpGet('/:deviceId/deployments')
     public async listDeployments(
         @response() res: Response,
-        @requestParam() params: any,
-        @queryParam() queryParmas: any,
-    ): Promise<any> {
-        logger.debug(`Deployment.controller getDeployment: in: deviceId: ${params.deviceId}`);
+        @requestParam('deviceId') deviceId: string,
+        @queryParam('deploymentStatus') deploymentStatus: string,
+    ): Promise<DeploymentList> {
+        logger.debug(`Deployment.controller getDeployment: in: deviceId: ${deviceId}`);
 
-        let deploymentResource: DeploymentModel;
+        let deploymentResource: DeploymentList;
 
         try {
-            deploymentResource = await this.deploymentService.listDeploymentsByDeviceId(params.deviceId, queryParmas.deploymentStatus);
+            deploymentResource = await this.deploymentService.listDeploymentsByDeviceId(deviceId, deploymentStatus);
         } catch (err) {
             handleError(err, res);
         }
@@ -85,13 +86,14 @@ export class DeploymentController implements interfaces.Controller {
     @httpPut('/:deviceId/deployments/:deploymentId')
     public async updateDeployments(
         @requestBody() req: DeploymentRequest,
-        @requestParam() params: any,
+        @requestParam('deviceId') deviceId: string,
+        @requestParam('deploymentId') deploymentId: string,
         @response() res: Response
     ): Promise<void> {
 
         const deploymentResource: DeploymentModel = {
-            deploymentId: params.deploymentId,
-            deviceId: params.deviceId,
+            deploymentId,
+            deviceId,
             deploymentStatus: req.deploymentStatus
         };
 
@@ -106,14 +108,15 @@ export class DeploymentController implements interfaces.Controller {
 
     @httpDelete('/:deviceId/deployments/:deploymentId')
     public async deleteDeployment(
-        @requestParam() params: any,
+        @requestParam('deviceId') deviceId: string,
+        @requestParam('deploymentId') deploymentId: string,
         @response() res: Response
     ): Promise<void> {
 
-        logger.debug(`Deployment.controller deleteDeployment: in: deviceId: ${params.deviceId}`);
+        logger.debug(`Deployment.controller deleteDeployment: in: deviceId: ${deviceId}`);
 
         try {
-            await this.deploymentService.delete(params.deploymentId, params.deviceId);
+            await this.deploymentService.delete(deploymentId, deviceId);
         } catch (err) {
             handleError(err, res);
         }

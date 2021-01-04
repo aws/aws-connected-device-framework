@@ -9,7 +9,7 @@ import { inject } from 'inversify';
 import {TYPES} from '../di/types';
 import {logger} from '../utils/logger';
 import { CommandsService } from './commands.service';
-import { CommandModel, CommandListModel, ExecutionStatus } from './commands.models';
+import { CommandModel, CommandListModel, ExecutionStatus, ExecutionSummaryListModel, ExecutionModel } from './commands.models';
 import * as Busboy from 'busboy';
 import * as path from 'path';
 import * as fs from 'fs';
@@ -22,7 +22,7 @@ export class CommandsController implements interfaces.Controller {
             @inject('tmpdir') private tmpDir: string) {}
 
     @httpPost('')
-    public async createCommand(@requestBody() model: CommandModel, @response() res: Response) {
+    public async createCommand(@requestBody() model: CommandModel, @response() res: Response) : Promise<void> {
         logger.info(`commands.controller  createCommand: in: model: ${JSON.stringify(model)}`);
         try {
             const commandId = await this.commandsService.create(model);
@@ -35,7 +35,7 @@ export class CommandsController implements interfaces.Controller {
     }
 
     @httpPatch('/:commandId')
-    public async updateCommand(@requestBody() command:CommandModel, @response() res:Response, @requestParam('commandId') commandId:string) {
+    public async updateCommand(@requestBody() command:CommandModel, @response() res:Response, @requestParam('commandId') commandId:string) : Promise<void> {
 
         logger.info(`commands.controller updateCommand: in: commandId: ${commandId}, command: ${JSON.stringify(command)}`);
         try {
@@ -85,7 +85,7 @@ export class CommandsController implements interfaces.Controller {
 
     @httpPut('/:commandId/files/:fileId')
     public async uploadCommandFile(@requestParam('commandId') commandId:string, @requestParam('fileId') fileId:string,
-        @request() req: Request, @response() res: Response) {
+        @request() req: Request, @response() res: Response) : Promise<void> {
 
         logger.info(`commands.controller uploadCommandFile: in: commandId:${commandId}, fileId:${fileId}`);
 
@@ -115,7 +115,7 @@ export class CommandsController implements interfaces.Controller {
                 } else {
                     await this.commandsService.uploadFile(commandId, fileId, saveTo);
                     res.status(204);
-                    resolve();
+                    resolve(undefined);
                 }
             });
             // Pipe things into busboy for processing
@@ -125,7 +125,7 @@ export class CommandsController implements interfaces.Controller {
 
     @httpDelete('/:commandId/files/:fileId')
     public async deleteCommandFile(@requestParam('commandId') commandId:string, @requestParam('fileId') fileId:string,
-        @response() res:Response) {
+        @response() res:Response) : Promise<void> {
 
         logger.info(`commands.controller deleteCommandFile: in: commandId:${commandId}, fileId:${fileId}`);
         res.status(500).json({error: 'NOT_IMPLEMENTED'});
@@ -134,7 +134,7 @@ export class CommandsController implements interfaces.Controller {
 
     @httpGet('/:commandId/executions')
     public async listExecutions(@requestParam('commandId') commandId:string, @queryParam('status') status:string,
-        @queryParam('maxResults') maxResults:number, @queryParam('nextToken') nextToken:string, @response() res:Response) {
+        @queryParam('maxResults') maxResults:number, @queryParam('nextToken') nextToken:string, @response() res:Response) : Promise<ExecutionSummaryListModel> {
 
         logger.info(`commands.controller listExecutions: in: commandId:${commandId}, status:${status}, maxResults:${maxResults}, nextToken:${nextToken}`);
 
@@ -161,7 +161,7 @@ export class CommandsController implements interfaces.Controller {
 
     @httpGet('/:commandId/executions/:thingName')
     public async getExecution(@requestParam('commandId') commandId:string, @requestParam('thingName') thingName:string,
-        @response() res:Response) {
+        @response() res:Response) : Promise<ExecutionModel> {
         logger.info(`commands.controller getExecution: in: commandId:${commandId}, thingName:${thingName}`);
 
         try {

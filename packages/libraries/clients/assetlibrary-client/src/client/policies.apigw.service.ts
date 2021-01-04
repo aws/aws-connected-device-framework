@@ -28,7 +28,7 @@ export class PoliciesApigwService extends PoliciesServiceBase implements Policie
     }
 
     async createPolicy(body: Policy, additionalHeaders?:RequestHeaders): Promise<void> {
-        ow(body, ow.object.nonEmpty);
+        ow(body, 'body', ow.object.nonEmpty);
 
         const url = `${this.baseUrl}${super.policiesRelativeUrl()}}`;
         await request.post(url)
@@ -37,8 +37,8 @@ export class PoliciesApigwService extends PoliciesServiceBase implements Policie
     }
 
     async listInheritedPoliciesByDevice(deviceId: string, type: string, additionalHeaders?:RequestHeaders): Promise<PolicyList> {
-        ow(deviceId, ow.string.nonEmpty);
-        ow(type, ow.string.nonEmpty);
+        ow(deviceId, 'deviceId', ow.string.nonEmpty);
+        ow(type,'type', ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.inheritedPoliciesRelativeUrl()}?deviceId=${encodeURIComponent(deviceId)}&type=${encodeURIComponent(type)}`;
         const res = await request.get(url)
@@ -48,8 +48,7 @@ export class PoliciesApigwService extends PoliciesServiceBase implements Policie
     }
 
     async listInheritedPoliciesByGroups(additionalHeaders?:RequestHeaders, ...groupPaths: string[]): Promise<PolicyList> {
-        ow(groupPaths, ow.array.nonEmpty);
-        ow(groupPaths, ow.array.minLength(1));
+        ow(groupPaths, 'groupPaths',ow.array.nonEmpty.minLength(1));
 
         const queryString = groupPaths.map(p => `groupPath=${encodeURIComponent(p)}`).join('&');
         const url = `${this.baseUrl}${super.inheritedPoliciesRelativeUrl()}?${queryString}`;
@@ -60,7 +59,7 @@ export class PoliciesApigwService extends PoliciesServiceBase implements Policie
     }
 
     async listPolicies(type: string, offset?: number, count?: number, additionalHeaders?:RequestHeaders): Promise<PolicyList> {
-        ow(type, ow.string.nonEmpty);
+        ow(type,'type', ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.policiesRelativeUrl()}?${QSHelper.getQueryString({type, offset, count})}`;
         const res = await request.get(url)
@@ -70,7 +69,7 @@ export class PoliciesApigwService extends PoliciesServiceBase implements Policie
     }
 
     async getPolicy(policyId: string, additionalHeaders?:RequestHeaders): Promise<Policy> {
-        ow(policyId, ow.string.nonEmpty);
+        ow(policyId,'policyId', ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.policyRelativeUrl(policyId)}`;
         const res = await request.get(url)
@@ -80,8 +79,8 @@ export class PoliciesApigwService extends PoliciesServiceBase implements Policie
     }
 
     async patchPolicy(policyId: string, body: Policy, additionalHeaders?:RequestHeaders): Promise<void> {
-        ow(policyId, ow.string.nonEmpty);
-        ow(body, ow.object.nonEmpty);
+        ow(policyId,'policyId', ow.string.nonEmpty);
+        ow(body, 'body', ow.object.nonEmpty);
 
         const url = `${this.baseUrl}${super.policyRelativeUrl(policyId)}`;
         await request.patch(url)
@@ -90,7 +89,7 @@ export class PoliciesApigwService extends PoliciesServiceBase implements Policie
     }
 
     async deletePolicy(policyId: string, additionalHeaders?:RequestHeaders): Promise<void> {
-        ow(policyId, ow.string.nonEmpty);
+        ow(policyId,'policyId', ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.policyRelativeUrl(policyId)}`;
         await request.delete(url)

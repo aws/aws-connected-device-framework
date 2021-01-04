@@ -262,7 +262,7 @@ if [[ "$ASSETLIBRARY_MODE" = "full" ]]; then
   aws cloudformation set-stack-policy \
     --stack-name $NEPTUNE_STACK_NAME \
     --stack-policy-body "$(cat $cwd/cfn-neptune-stack-policy.json)" \
-    $AWS_ARGS | true
+    $AWS_ARGS || true
 
   aws cloudformation deploy \
     --template-file $cwd/cfn-neptune.yml \

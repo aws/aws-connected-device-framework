@@ -4,7 +4,6 @@
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
 import 'reflect-metadata';
-import { logger } from '../../utils/logger';
 import AWS from 'aws-sdk';
 import { CreateDeviceCertificateStepProcessor } from './createdevicecertificateprocessor';
 import { ProvisioningStepInput, ProvisioningStepOutput } from './provisioningstep.model';
@@ -80,7 +79,6 @@ describe('CreateDeviceCertificateStepProcessor', () => {
 
         // now do the service call
         const output: ProvisioningStepOutput = await instance.process(unitTestStepInput);
-        logger.debug(`output: ${JSON.stringify(output)}`);
 
         expect(output).toBeDefined();
         expect(output.parameters.test).toEqual(unitTestStepInput.parameters.test);
@@ -158,7 +156,7 @@ describe('CreateDeviceCertificateStepProcessor', () => {
             const output: ProvisioningStepOutput = await instance.process(unitTestStepInput);
             expect(output).toBeFalsy(); // fail
         } catch (e) {
-            expect(e.message).toEqual('Expected `stepInput.cdfProvisioningParameters.caId` to be of type `string` but received type `undefined`');
+            expect(e.message).toEqual('Expected `caId` to be of type `string` but received type `undefined`');
         }
     });
 

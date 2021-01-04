@@ -3,16 +3,16 @@
 #
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
-import { TypeModel, TypeDefinitionModel, TypeDefinitionStatus} from './types.models';
+import { TypeModel, TypeDefinitionModel, TypeDefinitionStatus,} from './types.models';
 import { SchemaValidationResult } from '../utils/schemaValidator.service';
 import {TypeCategory, Operation} from './constants';
 import { DirectionStringToArrayMap, SortKeys } from '../data/model';
 
 export interface TypesService {
 
-    validateSubType(templateId:string, category:TypeCategory, document:object, op:Operation): Promise<SchemaValidationResult>;
+    validateSubType(templateId:string, category:TypeCategory, document:unknown, op:Operation): Promise<SchemaValidationResult>;
 
-    validateType(category:TypeCategory, document:object, op:Operation): Promise<SchemaValidationResult>;
+    validateType(category:TypeCategory, document:unknown, op:Operation): Promise<SchemaValidationResult>;
 
     get(templateId: string, category: TypeCategory, status: TypeDefinitionStatus): Promise<TypeModel>;
 

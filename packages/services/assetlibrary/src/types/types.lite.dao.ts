@@ -82,7 +82,7 @@ export class TypesDaoLite {
     private toModel(result: ThingTypeDefinition, category:TypeCategory): TypeModel {
         logger.debug(`types.lite.dao toModel: in: result: ${JSON.stringify(result)}`);
 
-        const definition = new TypeDefinitionModel();
+        const definition:TypeDefinitionModel= {};
         const searchableAttributes = result.thingTypeProperties.searchableAttributes;
         if (searchableAttributes) {
             definition.properties= {};
@@ -91,16 +91,18 @@ export class TypesDaoLite {
             }
         }
 
-        const version = new TypeVersionModel();
-        version.definition = definition;
+        const version:TypeVersionModel= {
+            definition
+        };
         if (result.thingTypeMetadata && result.thingTypeMetadata.deprecated===true) {
             version.status=TypeDefinitionStatus.deprecated;
         }
 
-        const model = new TypeModel();
-        model.templateId = result.thingTypeName;
-        model.category = category;
-        model.schema = version;
+        const model:TypeModel= {
+            templateId: result.thingTypeName,
+            category,
+            schema: version
+        };
 
         logger.debug(`types.lite.dao toModel: exit: ${JSON.stringify(model)}`);
         return model;

@@ -18,7 +18,7 @@ export class PoliciesController implements interfaces.Controller {
     constructor( @inject(TYPES.PoliciesService) private policiesService: PoliciesService) {}
 
     @httpPost('')
-    public async create(@requestBody() policy: PolicyModel, @response() res: Response) {
+    public async create(@requestBody() policy: PolicyModel, @response() res: Response) : Promise<void> {
         logger.info(`policies.controller  create: in: policy: ${JSON.stringify(policy)}`);
         try {
             await this.policiesService.create(policy);
@@ -93,7 +93,7 @@ export class PoliciesController implements interfaces.Controller {
     }
 
     @httpPatch('/:policyId')
-    public async updatePolicy(@requestParam('policyId') policyId:string, @requestBody() policy:PolicyModel, @response() res:Response) {
+    public async updatePolicy(@requestParam('policyId') policyId:string, @requestBody() policy:PolicyModel, @response() res:Response) : Promise<void> {
 
         logger.info(`policy.controller updatePolicy: in: policyId:${policyId}, policy:${JSON.stringify(policy)}`);
         try {
@@ -105,7 +105,7 @@ export class PoliciesController implements interfaces.Controller {
     }
 
     @httpDelete('/:policyId')
-    public async deletePolicy(@response() res: Response, @requestParam('policyId') policyId: string) {
+    public async deletePolicy(@response() res: Response, @requestParam('policyId') policyId: string) : Promise<void> {
 
         logger.info(`policy.controller deletePolicy: in: policyId: ${policyId}`);
         try {

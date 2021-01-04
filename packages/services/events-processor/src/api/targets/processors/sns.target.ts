@@ -8,7 +8,7 @@ import { TYPES } from '../../../di/types';
 import {logger} from '../../../utils/logger.util';
 import ow from 'ow';
 import { TargetItem, TargetTypeStrings } from '../targets.models';
-import { ListSubscriptionsByTopicInput } from 'aws-sdk/clients/sns';
+import { ListSubscriptionsByTopicInput, ListSubscriptionsByTopicResponse } from 'aws-sdk/clients/sns';
 
 export interface SNSTargetCreation {
     create(config:TargetItem, topicArn:string) : Promise<string>;
@@ -91,14 +91,14 @@ export class SNSTarget  {
         return `${this.TOPIC_PREFIX}${escape(userId)}`;
     }
 
-    protected topicArn(userId:string) {
+    protected topicArn(userId:string) : string {
         return `arn:aws:sns:${this.region}:${this.accountId}:${this.topicName(userId)}`;
     }
 
     private async topicExists(topicArn:string) : Promise<boolean> {
         logger.debug(`sns.target topicExists: in: topicArn:${topicArn}`);
         const params:AWS.SNS.Types.GetTopicAttributesInput = {
-             TopicArn:topicArn
+            TopicArn:topicArn
         };
         let exists = false;
         try {
@@ -114,7 +114,7 @@ export class SNSTarget  {
     protected async subscriptions(topicArn:string):Promise<AWS.SNS.SubscriptionsList> {
         logger.debug(`sns.target subscriptions: in: topicArn:${topicArn}`);
         const params:AWS.SNS.Types.ListSubscriptionsByTopicInput = {
-             TopicArn:topicArn
+            TopicArn:topicArn
         };
         let subscriptions:AWS.SNS.SubscriptionsList= [];
         try {
@@ -135,7 +135,7 @@ export class SNSTarget  {
         logger.debug(`sns.target createTopic: exit:`);
     }
 
-    public async deleteTopic(userId:string) {
+    public async deleteTopic(userId:string): Promise<void> {
         logger.debug(`sns.target deleteTopic: in: userId:${userId}`);
         const params:AWS.SNS.DeleteTopicInput = {
             TopicArn: this.topicArn(userId)
@@ -144,7 +144,7 @@ export class SNSTarget  {
         logger.debug(`sns.target deleteTopic: exit:`);
     }
 
-    public async listSubscriptions(topicArn:string) {
+    public async listSubscriptions(topicArn:string) : Promise<ListSubscriptionsByTopicResponse> {
         logger.debug(`sns.target listSubscriptions: in: topicArn:${topicArn}`);
         const params: ListSubscriptionsByTopicInput = {
             TopicArn: topicArn

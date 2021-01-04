@@ -29,7 +29,7 @@ export class DevicesServiceLite implements DevicesService {
     public async get(deviceId:string, _expandComponents?:boolean, _attributes?:string[], _includeGroups?:boolean): Promise<DeviceItem> {
         logger.debug(`devices.lite.service get: in: deviceId:${deviceId}`);
 
-        ow(deviceId, ow.string.nonEmpty);
+        ow(deviceId, 'deviceId', ow.string.nonEmpty);
 
         const result  = await this.devicesDao.get(deviceId);
 
@@ -42,7 +42,7 @@ export class DevicesServiceLite implements DevicesService {
     public async getBulk(deviceIds:string[], _expandComponents?:boolean, _attributes?:string[], _includeGroups?:boolean) : Promise<DeviceItemList> {
         logger.debug(`devices.lite.service getBulk: in: deviceIds:${deviceIds}`);
 
-        ow(deviceIds, ow.array.nonEmpty);
+        ow(deviceIds, 'deviceIds',ow.array.nonEmpty);
 
         const models: DeviceItem[]=[];
         for(const deviceId of deviceIds) {
@@ -132,10 +132,10 @@ export class DevicesServiceLite implements DevicesService {
         logger.debug(`devices.lite.full.service update: exit:`);
     }
 
-    public async delete(deviceId: string) {
+    public async delete(deviceId: string) : Promise<void> {
         logger.debug(`device.lite.service delete: in: deviceId: ${deviceId}`);
 
-        ow(deviceId, ow.string.nonEmpty);
+        ow(deviceId, 'deviceId', ow.string.nonEmpty);
 
         const device = await this.get(deviceId);
 
@@ -153,11 +153,11 @@ export class DevicesServiceLite implements DevicesService {
         logger.debug(`device.lite.service delete: exit:`);
     }
 
-    public async attachToGroup(deviceId:string, _relationship:string, _direction:string, groupPath:string) {
+    public async attachToGroup(deviceId:string, _relationship:string, _direction:string, groupPath:string) : Promise<void> {
         logger.debug(`device.lite.service attachToGroup: in: deviceId:${deviceId}, groupPath:${groupPath}`);
 
-        ow(deviceId, ow.string.nonEmpty);
-        ow(groupPath, ow.string.nonEmpty);
+        ow(deviceId, 'deviceId', ow.string.nonEmpty);
+        ow(groupPath,'groupPath', ow.string.nonEmpty);
 
         // Save to datastore
         await this.devicesDao.attachToGroup(deviceId, groupPath);
@@ -177,11 +177,11 @@ export class DevicesServiceLite implements DevicesService {
         logger.debug(`device.lite.service attachToGroup: exit:`);
     }
 
-    public async detachFromGroup(deviceId:string, _relationship:string, _direction:string, groupPath:string) {
+    public async detachFromGroup(deviceId:string, _relationship:string, _direction:string, groupPath:string) : Promise<void> {
         logger.debug(`device.lite.service detachFromGroup: in: deviceId:${deviceId}, groupPath:${groupPath}`);
 
-        ow(deviceId, ow.string.nonEmpty);
-        ow(groupPath, ow.string.nonEmpty);
+        ow(deviceId, 'deviceId', ow.string.nonEmpty);
+        ow(groupPath,'groupPath', ow.string.nonEmpty);
 
         // Save to datastore
         await this.devicesDao.detachFromGroup(deviceId, groupPath);
@@ -201,11 +201,11 @@ export class DevicesServiceLite implements DevicesService {
         logger.debug(`device.lite.service attachToGroup: exit:`);
     }
 
-    public async attachToDevice(_deviceId:string, _relationship:string, _direction:string, _otherDeviceId:string) {
+    public async attachToDevice(_deviceId:string, _relationship:string, _direction:string, _otherDeviceId:string) : Promise<void> {
         throw new Error('NOT_SUPPORTED');
     }
 
-    public async detachFromDevice(_deviceId:string, _relationship:string, _direction:string, _otherDeviceId:string) {
+    public async detachFromDevice(_deviceId:string, _relationship:string, _direction:string, _otherDeviceId:string) : Promise<void> {
         throw new Error('NOT_SUPPORTED');
     }
 

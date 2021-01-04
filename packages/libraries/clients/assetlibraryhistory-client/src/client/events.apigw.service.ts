@@ -67,7 +67,7 @@ export class EventsApigwService extends EventsServiceBase implements EventsServi
     }
 
     async listCategoryEvents(category: Category, req: CategoryEventsRequest, additionalHeaders?: RequestHeaders): Promise<Events> {
-        ow(category, ow.string.nonEmpty);
+        ow(category,'category', ow.string.nonEmpty);
 
         let url = `${this.baseUrl}${super.eventsRelativeUrl(category)}`;
         const queryString = QSHelper.getQueryString(req);

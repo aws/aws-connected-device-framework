@@ -5,7 +5,6 @@
 #-------------------------------------------------------------------------------*/
 import 'reflect-metadata';
 import { createMockInstance } from 'jest-create-mock-instance';
-import { logger } from '../utils/logger';
 import { CertificatesService } from './certificates.service';
 import AWS, { AWSError } from 'aws-sdk';
 import { CertificatesTaskDao } from './certificatestask.dao';
@@ -158,8 +157,7 @@ describe('CertificatesService', () => {
                 certInfo: {},
                 caAlias: 'alias'
             };
-            const createResponse = await instance.createChunk(createBatchParameters);
-            logger.debug(`createResponse: ${JSON.stringify(createResponse)}`);
+            await instance.createChunk(createBatchParameters);
             fail(); // expecting error
         } catch (e) {
             expect(e.name).toEqual('ArgumentError');
@@ -234,8 +232,7 @@ describe('CertificatesService', () => {
         const mockListObjectsV2 = mockS3.listObjectsV2 = <any>(jest.fn((_params) => mockListObjectsV2Response));
 
         try {
-            const s3Manifest = await instance.deleteBatch('testBatchId');
-            logger.debug(`s3Manifest: ${JSON.stringify(s3Manifest)}`);
+            await instance.deleteBatch('testBatchId');
             fail(); // expecting error
         } catch (e) {
             expect(e.message).toEqual('Object does not exist');

@@ -16,6 +16,7 @@ export class DDBStreamTransformer  {
     constructor(
         @inject(TYPES.EventSourceDao) private eventSourceDao: EventSourceDao) {}
 
+    // eslint-disable-next-line  @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
     public async transform(event: any): Promise<CommonEvent[]> {
         logger.debug(`ddbstream.transformer transform: in: event:${JSON.stringify(event)}`);
 
@@ -120,6 +121,7 @@ export class DDBStreamTransformer  {
 
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private extractValue(json:any): string|boolean|number|string[]|number[] {
         if (json.S!==undefined) {
             return json.S;

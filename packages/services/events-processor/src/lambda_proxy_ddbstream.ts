@@ -13,7 +13,7 @@ import { FilterService } from './filter/filter.service';
 let transformer:DDBStreamTransformer;
 let filter:FilterService;
 
-exports.handler = async (event: any, _context: any) => {
+exports.handler = async (event: unknown, _context: unknown) => {
   logger.debug(`lambda_proxy_ddbstream handler: event: ${JSON.stringify(event)}`);
 
   // init

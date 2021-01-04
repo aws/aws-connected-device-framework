@@ -4,7 +4,6 @@
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
 import 'reflect-metadata';
-import { logger } from '../utils/logger';
 import { ThingsService } from './things.service';
 import AWS from 'aws-sdk';
 import { ClientIdEnforcementPolicyStepProcessor } from './steps/clientidenforcementpolicystepprocessor';
@@ -58,7 +57,7 @@ describe('ThingsService', () => {
             }
         };
 
-        const s3BodyBuffer = new Buffer(JSON.stringify(testProvisioningTemplate));
+        const s3BodyBuffer = Buffer.from(JSON.stringify(testProvisioningTemplate));
 
         const s3GetObjectResponse = {
             Body: s3BodyBuffer,
@@ -98,7 +97,6 @@ describe('ThingsService', () => {
 
         // now do the service call
         const provisionResponse = await instance.provision('test_template_id', {ThingName: 'UnitTestThingName'}, {});
-        logger.debug(`provisionResponse: ${JSON.stringify(provisionResponse)}`);
 
         expect(provisionResponse).toBeDefined();
         expect(provisionResponse.certificatePem).toEqual(certPem);
@@ -136,8 +134,7 @@ describe('ThingsService', () => {
         });
 
         // now do the service call
-        const testDeleteThingResponse = await instance.deleteThing('unitTestThing');
-        logger.debug(`testDeleteThingResponse: ${JSON.stringify(testDeleteThingResponse)}`);
+        await instance.deleteThing('unitTestThing');
 
         expect(deleteThingResponseCalls).toEqual(1);
 

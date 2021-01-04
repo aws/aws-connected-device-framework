@@ -214,7 +214,7 @@ export class ThingsService {
         });
         const bulkrequestKey = `${this.bulkrequestsPrefix}${uuid()}`;
         const s3ThingsParam:PutObjectRequest = {
-            Body: new Buffer(data.join('\n'), 'binary'),
+            Body: Buffer.from(data.join('\n'), 'binary'),
             Bucket: this.bulkrequestsBucketName,
             Key: bulkrequestKey
         };
@@ -354,8 +354,8 @@ export class ThingsService {
 
         for (const describeThingGroupResult of describeThingGroupResults) {
             let groupAttributes:{[key:string]:string} = {};
-            if (describeThingGroupResult.hasOwnProperty('thingGroupProperties')) {
-                if (describeThingGroupResult.thingGroupProperties.hasOwnProperty('attributePayload')) {
+            if (Object.prototype.hasOwnProperty.call( describeThingGroupResult, 'thingGroupProperties')) {
+                if (Object.prototype.hasOwnProperty.call( describeThingGroupResult,'attributePayload')) {
                     groupAttributes = describeThingGroupResult.thingGroupProperties.attributePayload.attributes;
                 }
             }

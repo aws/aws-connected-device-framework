@@ -37,7 +37,7 @@ export class TemplatesApigwService extends TemplatesServiceBase implements Templ
     }
 
     async getTemplate(templateId: string, additionalHeaders?: RequestHeaders): Promise<TemplateModel> {
-        ow(templateId, ow.string.nonEmpty);
+        ow(templateId,'templateId', ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.templateRelativeUrl(templateId)}`;
         const res = await request.get(url)
@@ -68,7 +68,7 @@ export class TemplatesApigwService extends TemplatesServiceBase implements Templ
     }
 
     async deleteTemplate(templateId: string, additionalHeaders?: RequestHeaders): Promise<void> {
-        ow(templateId, ow.string.nonEmpty);
+        ow(templateId,'templateId', ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.templateRelativeUrl(templateId)}`;
 

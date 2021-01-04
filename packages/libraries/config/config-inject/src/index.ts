@@ -4,6 +4,8 @@ import { CDFLogger } from '@cdf/logger';
 import { ContainerModule, interfaces} from 'inversify';
 import * as config from 'config';
 
+/* eslint-disable */ 
+
 /**
  * Injector for injecting node-config variables into inversify IOC container.
  *

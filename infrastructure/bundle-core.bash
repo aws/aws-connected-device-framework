@@ -28,8 +28,16 @@ root_dir=$(pwd)
 lambda_layers_root="$root_dir/infrastructure/lambdaLayers"
 for layer in $(ls $lambda_layers_root); do
     cd "$lambda_layers_root/$layer"
+    # infrastructure/build.bash &
     infrastructure/build.bash
 done
 
 cd $root_dir
-npm run bundle
+rush purge                      # delete all rush temp files
+rush update                     # as temp files deleted, need to refresh dependencies
+rush clean                      # deep clean of compiled files
+rush update                     # refresh dependencies again
+rush build                      # compile
+npx pnpm recursive run bundle   # create the deployment packages
+
+# wait

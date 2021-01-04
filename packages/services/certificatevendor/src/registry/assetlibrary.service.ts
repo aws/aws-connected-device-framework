@@ -20,7 +20,7 @@ export class AssetLibraryRegistryManager implements RegistryManager {
     public async isWhitelisted(deviceId:string, _attributes?:{ [key: string] : string | number | boolean }) : Promise<boolean> {
         logger.debug(`certificates.service isWhitelisted: in: deviceId:${deviceId}`);
 
-        ow(deviceId, ow.string.nonEmpty);
+        ow(deviceId, 'deviceId', ow.string.nonEmpty);
 
         let whitelisted = false;
 
@@ -45,7 +45,7 @@ export class AssetLibraryRegistryManager implements RegistryManager {
     public async updateAssetStatus(deviceId:string) : Promise<void> {
         logger.debug(`certificates.service updateAssetStatus: in: deviceId:${deviceId}`);
 
-        ow(deviceId, ow.string.nonEmpty);
+        ow(deviceId, 'deviceId', ow.string.nonEmpty);
 
         if (this.successStatusKey===undefined || this.successStatusKey === null) {
             logger.warn('certificates.service updateAssetStatus: exit: successStatusKey not set, therefore not updating asset library');

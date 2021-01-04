@@ -46,7 +46,7 @@ export class GroupsController implements interfaces.Controller {
     }
 
     @httpPost('')
-    public async createGroup(@requestBody() group: GroupBaseResource, @response() res: Response, @queryParam('applyProfile') applyProfile?:string) {
+    public async createGroup(@requestBody() group: GroupBaseResource, @response() res: Response, @queryParam('applyProfile') applyProfile?:string) : Promise<void> {
         logger.info(`groups.controller createGroup: in: group: ${JSON.stringify(group)}, applyProfile:${applyProfile}`);
         try {
             const item = this.groupsAssembler.fromGroupResource(group);
@@ -57,7 +57,7 @@ export class GroupsController implements interfaces.Controller {
     }
 
     @httpPatch('/:groupPath')
-    public async updateGroup(@requestBody() group: GroupBaseResource, @response() res: Response, @requestParam('groupPath') groupPath: string, @queryParam('applyProfile') applyProfile?:string) {
+    public async updateGroup(@requestBody() group: GroupBaseResource, @response() res: Response, @requestParam('groupPath') groupPath: string, @queryParam('applyProfile') applyProfile?:string) : Promise<void> {
 
         logger.info(`groups.controller update: in: groupPath: ${groupPath}, group: ${JSON.stringify(group)}, applyProfile:${applyProfile}`);
         try {
@@ -118,7 +118,7 @@ export class GroupsController implements interfaces.Controller {
     }
 
     @httpDelete('/:groupPath')
-    public async deleteGroup(@response() res: Response, @requestParam('groupPath') groupPath: string) {
+    public async deleteGroup(@response() res: Response, @requestParam('groupPath') groupPath: string) : Promise<void> {
 
         logger.info(`groups.controller delete: in: groupPath: ${groupPath}`);
         try {
@@ -130,7 +130,7 @@ export class GroupsController implements interfaces.Controller {
 
     @httpPut('/:sourceGroupPath/:relationship/groups/:targetGroupPath')
     public async attachToGroup(@requestParam('sourceGroupPath') sourceGroupPath: string, @requestParam('relationship') relationship: string,
-        @requestParam('targetGroupPath') targetGroupPath: string, @response() res: Response) {
+        @requestParam('targetGroupPath') targetGroupPath: string, @response() res: Response) : Promise<void> {
 
         logger.info(`groups.controller attachToGroup: in: sourceGroupPath:${sourceGroupPath}, relationship:${relationship}, targetGroupPath:${targetGroupPath}`);
         try {
@@ -142,7 +142,7 @@ export class GroupsController implements interfaces.Controller {
 
     @httpDelete('/:sourceGroupPath/:relationship/groups/:targetGroupPath')
     public async detachFromGroup(@requestParam('sourceGroupPath') sourceGroupPath: string, @requestParam('relationship') relationship: string,
-        @requestParam('targetGroupPath') targetGroupPath: string, @response() res: Response) {
+        @requestParam('targetGroupPath') targetGroupPath: string, @response() res: Response) : Promise<void> {
 
         logger.info(`groups.controller detachFromGroup: in: sourceGroupPath:${sourceGroupPath}, relationship:${relationship}, targetGroupPath:${targetGroupPath}`);
         try {

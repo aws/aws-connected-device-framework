@@ -52,7 +52,7 @@ export class DeploymentDao {
         return true;
     }
 
-    public async save(deployment: DeploymentModel) {
+    public async save(deployment: DeploymentModel): Promise<void> {
         logger.debug(`deployment.dao: save: in: deployment: ${JSON.stringify(deployment)}`);
 
         const params = {
@@ -75,11 +75,11 @@ export class DeploymentDao {
         logger.debug(`deployment.dao: save: exit: `);
     }
 
-    public async getByDeviceId(deviceId: string) {
+    public async getByDeviceId(deviceId: string): Promise<void> {
         logger.debug(`deployment.dao: get: in: deploymentId: ${deviceId}`);
     }
 
-    public async get(deploymentId:string, deviceId: string) {
+    public async get(deploymentId:string, deviceId: string): Promise<DeploymentModel> {
         logger.debug(`deployment.dao: list: in: deploymentId: ${deviceId}, deviceId: ${deploymentId}`);
 
         const params = {

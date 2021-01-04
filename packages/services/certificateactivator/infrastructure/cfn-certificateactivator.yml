@@ -88,8 +88,8 @@ Resources:
   LambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ../build/build.zip
-      Handler: certificateactivator.handler
+      CodeUri: ../bundle.zip
+      Handler: packages/services/certificateactivator/dist/certificateactivator.handler
       Layers:
         - !Ref OpenSslLambdaLayerArn
       MemorySize: 128
@@ -98,7 +98,7 @@ Resources:
       Timeout: 30
       Environment:
         Variables:
-          NODE_CONFIG_DIR: './config'
+          NODE_CONFIG_DIR: 'packages/services/certificateactivator/dist/config'
           NODE_CONFIG: !Ref ApplicationConfigurationOverride
       Tracing: Active
 

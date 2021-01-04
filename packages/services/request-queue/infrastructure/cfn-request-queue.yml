@@ -188,15 +188,15 @@ Resources:
   ProxyLambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ../build/build.zip
-      Handler: lambda_proxy.handler
+      CodeUri: ../bundle.zip
+      Handler: packages/services/device-monitoring/request-queue/dist/lambda_proxy.handler
       MemorySize: 512
       Role: !GetAtt RestLambdaExecutionRole.Arn
       Runtime: nodejs12.x
       Timeout: 30
       Environment:
         Variables:
-          NODE_CONFIG_DIR: './config'
+          NODE_CONFIG_DIR: 'packages/services/device-monitoring/request-queue/dist/config'
           NODE_CONFIG: !Ref ApplicationConfigurationOverride
           REQUESTQUEUE_REQUEST_QUEUE_URL: !Ref RequestQueue
       Tracing: Active
@@ -228,15 +228,15 @@ Resources:
   ReplayLambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ../build/build.zip
-      Handler: replay.handler
+      CodeUri: ../bundle.zip
+      Handler: packages/services/device-monitoring/request-queue/dist/replay.handler
       MemorySize: 512
       Role: !GetAtt ReplayLambdaExecutionRole.Arn
       Runtime: nodejs12.x
       Timeout: 300
       Environment:
         Variables:
-          NODE_CONFIG_DIR: './config'
+          NODE_CONFIG_DIR: 'packages/services/device-monitoring/request-queue/dist/config'
           NODE_CONFIG: !Ref ApplicationConfigurationOverride
           REQUESTQUEUE_REQUEST_QUEUE_URL: !Ref RequestQueue
           REQUESTQUEUE_DLQ_QUEUE_URL: !Ref DlqQueue

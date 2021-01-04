@@ -33,20 +33,20 @@ export class APIGWAuthPolicyBuilder {
     // The policy version used for the evaluation. This should always be '2012-10-17'
     private readonly version = '2012-10-17';
 
-    private readonly restApiId = '*';
-    private readonly region = '*';
-    private readonly stage = '*';
+    private readonly restApiId:string = '*';
+    private readonly region:string = '*';
+    private readonly stage:string = '*';
 
     // The regular expression used to validate resource paths for the policy
-    private readonly pathRegex = new RegExp('^[/.a-zA-Z0-9-\*]+$');
+    private readonly pathRegex = new RegExp('^[/.a-zA-Z0-9-*]+$');
 
     // these are the internal lists of allowed and denied methods. These are lists
     // of objects and each object has 2 properties: A resource ARN and a nullable
     // conditions statement.
     // the build method processes these lists and generates the approriate
     // statements for the final policy
-    private allowMethods: any[] = [];
-    private denyMethods: any[] = [];
+    private allowMethods: Method[] = [];
+    private denyMethods: Method[] = [];
 
     /**
      * Constructor
@@ -54,7 +54,7 @@ export class APIGWAuthPolicyBuilder {
      * @param awsAccountId The AWS account id the policy will be generated for.
      * @param apiOptions
      */
-    constructor(principal: string, awsAccountId: string, apiOptions: any) {
+    constructor(principal: string, awsAccountId: string, apiOptions: ApiOptions) {
         if (!principal) {
             throw new Error('principal is required');
         }
@@ -63,8 +63,8 @@ export class APIGWAuthPolicyBuilder {
         }
         this.principalId = principal;
         this.awsAccountId = awsAccountId;
-        if (apiOptions && apiOptions.restApiId) {
-            this.restApiId = apiOptions.restApiId;
+        if (apiOptions && apiOptions.apiId) {
+            this.restApiId = apiOptions.apiId;
         }
         if (apiOptions && apiOptions.region) {
             this.region = apiOptions.region;
@@ -87,7 +87,7 @@ export class APIGWAuthPolicyBuilder {
      * @param {Object} conditions The conditions object in the format specified by the AWS docs.
      * @return {void}
      */
-    private addMethod(effect: PolicyStatementEffect, verb: HttpVerb, resource: string, conditions: any) {
+    private addMethod(effect: PolicyStatementEffect, verb: HttpVerb, resource: string, condition?: Condition) {
         if (!this.pathRegex.test(resource)) {
             throw new Error('Invalid resource path: ' + resource + '. Path should match ' + this.pathRegex);
         }
@@ -107,12 +107,12 @@ export class APIGWAuthPolicyBuilder {
         if (effect.toLowerCase() === 'allow') {
             this.allowMethods.push({
                 resourceArn,
-                conditions
+                condition
             });
         } else if (effect.toLowerCase() === 'deny') {
             this.denyMethods.push({
                 resourceArn,
-                conditions
+                condition
             });
         }
     }
@@ -126,12 +126,12 @@ export class APIGWAuthPolicyBuilder {
      * @return {Object} An empty statement object with the Action, Effect, and Resource
      *                  properties prepopulated.
      */
-    private getEmptyStatement(effect: PolicyStatementEffect): any {
+    private getEmptyStatement(effect: PolicyStatementEffect): Statement {
         const statementEffect = effect.substring(0, 1).toUpperCase() + effect.substring(1, effect.length).toLowerCase();
-        const statement = {
+        const statement:Statement = {
             Action: 'execute-api:Invoke',
             Effect: statementEffect,
-            Resource: <object[]>[]
+            Resource:[]
         };
 
         return statement;
@@ -147,19 +147,19 @@ export class APIGWAuthPolicyBuilder {
      *                and the conditions for the policy
      * @return {Array} an array of formatted statements for the policy.
      */
-    private getStatementsForEffect(effect: PolicyStatementEffect, methods: any[]): object[] {
+    private getStatementsForEffect(effect: PolicyStatementEffect, methods: Method[]): Statement[] {
         const statements = [];
 
         if (methods.length > 0) {
             const statement = this.getEmptyStatement(effect);
 
             for (const curMethod of methods) {
-                if (curMethod.conditions === null || curMethod.conditions.length === 0) {
+                if (curMethod.condition === undefined ) {
                     statement.Resource.push(curMethod.resourceArn);
                 } else {
                     const conditionalStatement = this.getEmptyStatement(effect);
                     conditionalStatement.Resource.push(curMethod.resourceArn);
-                    conditionalStatement.Condition = curMethod.conditions;
+                    conditionalStatement.Condition = curMethod.condition;
                     statements.push(conditionalStatement);
                 }
             }
@@ -177,8 +177,8 @@ export class APIGWAuthPolicyBuilder {
      *
      * @method allowAllMethods
      */
-    allowAllMethods() {
-        this.addMethod('allow', '*', '*', null);
+    allowAllMethods() : void {
+        this.addMethod('allow', '*', '*');
     }
 
     /**
@@ -186,8 +186,8 @@ export class APIGWAuthPolicyBuilder {
      *
      * @method denyAllMethods
      */
-    denyAllMethods() {
-        this.addMethod('deny', '*', '*', null);
+    denyAllMethods() : void {
+        this.addMethod('deny', '*', '*');
     }
 
     /**
@@ -200,8 +200,8 @@ export class APIGWAuthPolicyBuilder {
      * @param {string} The resource path. For example '/pets'
      * @return {void}
      */
-    allowMethod(verb: HttpVerb, resource: string) {
-        this.addMethod('allow', verb, resource, null);
+    allowMethod(verb: HttpVerb, resource: string) : void {
+        this.addMethod('allow', verb, resource);
     }
 
     /**
@@ -214,8 +214,8 @@ export class APIGWAuthPolicyBuilder {
      * @param {string} The resource path. For example '/pets'
      * @return {void}
      */
-    denyMethod(verb: HttpVerb, resource: string) {
-        this.addMethod('deny', verb, resource, null);
+    denyMethod(verb: HttpVerb, resource: string) : void {
+        this.addMethod('deny', verb, resource);
     }
 
     /**
@@ -230,7 +230,7 @@ export class APIGWAuthPolicyBuilder {
      * @param {Object} The conditions object in the format specified by the AWS docs
      * @return {void}
      */
-    allowMethodWithConditions(verb: HttpVerb, resource: string, conditions: any) {
+    allowMethodWithConditions(verb: HttpVerb, resource: string, conditions: Condition) : void {
         this.addMethod('allow', verb, resource, conditions);
     }
 
@@ -246,7 +246,7 @@ export class APIGWAuthPolicyBuilder {
      * @param {Object} The conditions object in the format specified by the AWS docs
      * @return {void}
      */
-    denyMethodWithConditions(verb: HttpVerb, resource: string, conditions: any) {
+    denyMethodWithConditions(verb: HttpVerb, resource: string, conditions: Condition) : void {
         this.addMethod('deny', verb, resource, conditions);
     }
 
@@ -259,17 +259,17 @@ export class APIGWAuthPolicyBuilder {
      * @method build
      * @return {Object} The policy object that can be serialized to JSON.
      */
-    build(): object {
+    build(): Policy {
         if ((!this.allowMethods || this.allowMethods.length === 0) &&
             (!this.denyMethods || this.denyMethods.length === 0)) {
             throw new Error('No statements defined for the policy');
         }
 
-        const policy = {
+        const policy:Policy = {
             principalId: this.principalId,
             policyDocument: {
                 Version: this.version,
-                Statement: <object[]>[]
+                Statement: []
             }
         };
         if (this.allowMethods && this.allowMethods.length > 0) {
@@ -294,3 +294,35 @@ export class APIGWAuthPolicyBuilder {
  */
 export type HttpVerb = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'HEAD' | 'DELETE' | 'OPTIONS' | '*';
 export type PolicyStatementEffect = 'allow' | 'deny';
+
+export interface Method {
+    resourceArn: string,
+    condition: Condition
+}
+
+export interface Condition {
+    [key:string] : {
+        [key:string]:string
+    } 
+}
+
+export interface ApiOptions {
+    region: string,
+    apiId: string,
+    stage?:string
+}
+
+export interface Statement {
+    Action: string,
+    Effect: string,
+    Resource: string[],
+    Condition?: Condition
+}
+
+export interface Policy {
+    principalId: string,
+    policyDocument: {
+        Version: string,
+        Statement: Statement[]
+    }
+}

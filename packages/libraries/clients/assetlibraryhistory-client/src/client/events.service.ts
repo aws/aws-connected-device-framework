@@ -22,7 +22,7 @@ export interface EventsService {
 @injectable()
 export class EventsServiceBase {
 
-    protected MIME_TYPE: string = 'application/vnd.aws-cdf-v1.0+json';
+    protected MIME_TYPE = 'application/vnd.aws-cdf-v1.0+json';
 
     protected _headers: RequestHeaders = {
         'Accept': this.MIME_TYPE,
@@ -37,7 +37,7 @@ export class EventsServiceBase {
         return PathHelper.encodeUrl(category);
     }
 
-    protected buildHeaders(additionalHeaders:RequestHeaders) {
+    protected buildHeaders(additionalHeaders:RequestHeaders)  : RequestHeaders {
 
         let headers = Object.assign({}, this._headers);
 

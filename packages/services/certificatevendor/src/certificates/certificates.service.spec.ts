@@ -212,7 +212,7 @@ describe('CertificatesService', () => {
         });
 
         const presignedUrl = 'testUrl';
-        const mockGetSignedUrl = mockedS3.getSignedUrl = jest.fn((_params) => presignedUrl);
+        const mockGetSignedUrl = mockedS3.getSignedUrl = jest.fn((_method:string, _params:unknown) => presignedUrl);
         const mockedPublish = mockedIotData.publish = jest.fn().mockImplementationOnce(()=> {
             return {
               promise: () => new MockPublishResponse()

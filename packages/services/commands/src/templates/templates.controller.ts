@@ -19,7 +19,7 @@ export class TemplatesController implements interfaces.Controller {
     constructor( @inject(TYPES.TemplatesService) private templatesService: TemplatesService) {}
 
     @httpPost('')
-    public async createTemplate(@requestBody() template: TemplateModel, @response() res: Response) {
+    public async createTemplate(@requestBody() template: TemplateModel, @response() res: Response) : Promise<void> {
         logger.info(`templates.controller  createTemplate: in: template: ${JSON.stringify(template)}`);
         try {
             await this.templatesService.create(template);
@@ -69,7 +69,7 @@ export class TemplatesController implements interfaces.Controller {
     }
 
     @httpPatch('/:templateId')
-    public async updateTemplate(@requestBody() template:TemplateModel, @response() res:Response, @requestParam('templateId') templateId:string) {
+    public async updateTemplate(@requestBody() template:TemplateModel, @response() res:Response, @requestParam('templateId') templateId:string) : Promise<void> {
 
         logger.info(`templates.controller updateTemplate: in: templateId: ${templateId}, template: ${JSON.stringify(template)}`);
         try {

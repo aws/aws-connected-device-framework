@@ -94,15 +94,15 @@ Resources:
   DynamoDBStreamLambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ../build/build.zip
-      Handler: lambda_proxy_ddbstream.handler
+      CodeUri: ../bundle.zip
+      Handler: packages/services/device-monitoring/events-alerts/dist/lambda_proxy_ddbstream.handler
       MemorySize: 512
       Role: !GetAtt LambdaExecutionRole.Arn
       Runtime: nodejs12.x
       Timeout: 30
       Environment:
         Variables:
-          NODE_CONFIG_DIR: './config'
+          NODE_CONFIG_DIR: 'packages/services/device-monitoring/events-alerts/dist/config'
           NODE_CONFIG: !Ref ApplicationConfigurationOverride
           EVENTSALERTS_AWS_DYNAMODB_TABLES_EVENTCONFIG_NAME: 
             Fn::ImportValue: !Sub '${EventsProcessorStackName}-EventConfigTable'

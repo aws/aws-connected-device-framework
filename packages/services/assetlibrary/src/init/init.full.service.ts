@@ -34,8 +34,9 @@ export class InitServiceFull implements InitService {
             await this.initDao.initialize();
 
             // create the root group type definition
-            const definition:TypeDefinitionModel = new TypeDefinitionModel();
-            definition.properties = {};
+            const definition:TypeDefinitionModel= {
+                properties: {}
+            }
             await this.typesService.create('root', TypeCategory.Group, definition);
             await this.typesService.publish('root', TypeCategory.Group);
 

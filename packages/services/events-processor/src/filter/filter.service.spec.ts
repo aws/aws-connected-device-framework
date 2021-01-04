@@ -12,7 +12,6 @@ import { CommonEvent } from '../transformers/transformers.model';
 import { SubscriptionItem } from '../api/subscriptions/subscription.models';
 import { AlertDao } from '../alerts/alert.dao';
 import { EventDao } from '../api/events/event.dao';
-import { logger } from '../utils/logger.util';
 import { EventConditionsUtils } from '../api/events/event.models';
 import { AlertItem } from '../alerts/alert.models';
 
@@ -75,7 +74,6 @@ describe('FilterService', () => {
 
         // mocks
         const mockedListCall = mockedSubscriptionDao.listSubscriptionsForEventMessage = jest.fn().mockImplementationOnce(()=> {
-            logger.debug(`filter.service.spec: listSubscriptionsForEventMessage:`);
             const r:SubscriptionItem[]= [
                 {
                     id: 'sub001',
@@ -107,7 +105,6 @@ describe('FilterService', () => {
         });
 
         const mockedGetEventConfigCall = mockedEventDao.getEventConfig = jest.fn().mockImplementation(() => {
-            logger.debug(`filter.service.spec: getEventConfig`);
             return {
                 supportedTargets: {
                     'sms': 'default',
@@ -136,9 +133,8 @@ describe('FilterService', () => {
         //         }
         //     }
         // ];
-        const mockedCreateAlertsCall = mockedAlertDao.create = jest.fn().mockImplementationOnce((alerts)=> {
+        const mockedCreateAlertsCall = mockedAlertDao.create = jest.fn().mockImplementationOnce((_alerts)=> {
             // do nothing, acting as a spy only
-            logger.debug(`filter.service.spec: alerts: ${JSON.stringify(alerts)}`);
         });
 
         // execute
@@ -219,7 +215,6 @@ describe('FilterService', () => {
 
         // mocks
         const mockedListCall = mockedSubscriptionDao.listSubscriptionsForEventMessage = jest.fn().mockImplementationOnce(()=> {
-            logger.debug(`filter.service.spec: listSubscriptionsForEventMessage:`);
             const r:SubscriptionItem[]= [
                 {
                     id: 'sub001',
@@ -253,7 +248,6 @@ describe('FilterService', () => {
         });
 
         const mockedGetEventConfigCall = mockedEventDao.getEventConfig = jest.fn().mockImplementation(() => {
-            logger.debug(`filter.service.spec: getEventConfig`);
             return {
                 supportedTargets: {
                     'sms': 'default',
@@ -267,9 +261,8 @@ describe('FilterService', () => {
             };
         });
 
-        const mockedCreateAlertsCall = mockedAlertDao.create = jest.fn().mockImplementationOnce((alerts)=> {
+        const mockedCreateAlertsCall = mockedAlertDao.create = jest.fn().mockImplementationOnce((_alerts)=> {
             // do nothing, acting as a spy only
-            logger.debug(`filter.service.spec: alerts: ${JSON.stringify(alerts)}`);
         });
 
         // execute
@@ -352,7 +345,6 @@ describe('FilterService', () => {
 
         // mocks
         const mockedListCall = mockedSubscriptionDao.listSubscriptionsForEventMessage = jest.fn().mockImplementationOnce(()=> {
-            logger.debug(`filter.service.spec: listSubscriptionsForEventMessage:`);
             const r:SubscriptionItem[]= [
                 {
                     id: 'sub001',
@@ -387,7 +379,6 @@ describe('FilterService', () => {
         });
 
         const mockedGetEventConfigCall = mockedEventDao.getEventConfig = jest.fn().mockImplementation(() => {
-            logger.debug(`filter.service.spec: getEventConfig`);
             return {
                 supportedTargets: {
                     'sms': 'default',
@@ -401,9 +392,8 @@ describe('FilterService', () => {
             };
         });
 
-        const mockedCreateAlertsCall = mockedAlertDao.create = jest.fn().mockImplementationOnce((alerts)=> {
+        const mockedCreateAlertsCall = mockedAlertDao.create = jest.fn().mockImplementationOnce((_alerts)=> {
             // do nothing, acting as a spy only
-            logger.debug(`filter.service.spec: alerts: ${JSON.stringify(alerts)}`);
         });
 
         // execute
@@ -464,7 +454,6 @@ describe('FilterService', () => {
         const mockedTemplateCache = {};
 
         const mockedGetEventConfigCall = mockedEventDao.getEventConfig = jest.fn().mockImplementation(() => {
-            logger.debug(`filter.service.spec: getEventConfig`);
             return {
                 supportedTargets: {
                     'sms': 'default',
@@ -534,7 +523,6 @@ describe('FilterService', () => {
         const mockedTemplateCache = {};
 
         const mockedGetEventConfigCall = mockedEventDao.getEventConfig = jest.fn().mockImplementation(() => {
-            logger.debug(`filter.service.spec: getEventConfig`);
             return {
                 supportedTargets: {
                     'sms': 'default',

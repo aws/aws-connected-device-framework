@@ -197,12 +197,13 @@ export class CertificatesService {
 
     // generate device public/private keys
     private createPrivateKey() : Promise<string> {
+        /* eslint-disable @typescript-eslint/no-explicit-any */
         return new Promise((resolve:any,reject:any) =>  {
             pem.createPrivateKey(2048, (err:any, data:any) => {
                 if(err) {
                     return reject(err);
                 }
-                return resolve(data.key);
+                return resolve(data['key']);
             });
         });
     }
@@ -218,7 +219,7 @@ export class CertificatesService {
                 commonName: certInfo.commonName,
                 clientKey:privateKey
             };
-            pem.createCSR(csrOptions, (err:Object, data:any) => {
+            pem.createCSR(csrOptions, (err:any, data:any) => {
                 if(err) {
                     return reject(err);
                 }

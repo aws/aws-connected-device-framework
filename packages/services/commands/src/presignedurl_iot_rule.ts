@@ -8,13 +8,14 @@ import { logger } from './utils/logger';
 import {container} from './di/inversify.config';
 import { PresignedUrlsService } from './presignedurls/presignedurls.service';
 import { TYPES } from './di/types';
-import { PresignedUploadRequestModel } from './presignedurls/presignedurls.models';
+import { PresignedResponseModel, PresignedUploadRequestModel } from './presignedurls/presignedurls.models';
 import { CommandsService } from './commands/commands.service';
 
 let presignedUrlService:PresignedUrlsService;
 let commandService:CommandsService;
 
-exports.presignedurl_rule_handler = async (event: any, _context: any) => {
+
+exports.presignedurl_rule_handler = async (event: Event, _context: unknown) : Promise<PresignedResponseModel> => {
   logger.debug(`presignedurl_rule_handler: event: ${JSON.stringify(event)}`);
 
   if (presignedUrlService===undefined) {
@@ -39,3 +40,9 @@ exports.presignedurl_rule_handler = async (event: any, _context: any) => {
   return r;
 
 };
+
+interface Event {
+  commandId:string,
+  thingName:string,
+  requestedObjectKeys: string[]
+}
