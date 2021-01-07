@@ -45,7 +45,7 @@ bulkcerts_invoke_url=$(echo $stack_exports \
     | jq -r --arg bulkcerts_invoke_url_export "$bulkcerts_invoke_url_export" \
     '.Exports[] | select(.Name==$bulkcerts_invoke_url_export) | .Value')
 
-notifications_invoke_url_export="$NOTIFICATIONS_STACK_NAME-apigatewayurl"
+notifications_invoke_url_export="$NOTIFICATIONS_STACK_NAME-ApiGatewayUrl"
 notifications_invoke_url=$(echo $stack_exports \
     | jq -r --arg notifications_invoke_url_export "$notifications_invoke_url_export" \
     '.Exports[] | select(.Name==$notifications_invoke_url_export) | .Value')
