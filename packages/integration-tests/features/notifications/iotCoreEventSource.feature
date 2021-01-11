@@ -95,94 +95,95 @@ Feature: Subscriptions against an IoTCore event source
       | payload | { "thingName": "not_my_device", "bl": 1  } |
     Then last subscription has not been alerted
 
-  # Scenario: Receiving an event for principal above threshold does not alert
-  #   Given I am using eventsource "TEST-IoTCore"
-  #   And I am using event "TEST-IoTCore-event"
-  #   And I am using subscription for principal "vin001" user "U001"
-  #   When I send the following iotcore message
-  #     | topic | test/iotcore |
-  #     | payload | { "thingName": "vin001", "bl": 50  } |
-  #   Then last subscription has not been alerted
+  Scenario: Receiving an event for principal above threshold does not alert
+    Given I am using eventsource "TEST-IoTCore"
+    And I am using event "TEST-IoTCore-event"
+    And I am using subscription for principal "vin001" user "U001"
+    When I send the following iotcore message
+      | topic | test/iotcore |
+      | payload | { "thingName": "vin001", "bl": 50  } |
+    Then last subscription has not been alerted
 
-  # Scenario: Receiving an event for principal below threshold does alert
-  #   Given I am using eventsource "TEST-IoTCore"
-  #   And I am using event "TEST-IoTCore-event"
-  #   And I am using subscription for principal "vin001" user "U001"
-  #   When I send the following iotcore message
-  #     | topic | test/iotcore |
-  #     | payload | { "thingName": "vin001", "bl": 5  } |
-  #   Then last subscription has been alerted
+  Scenario: Receiving an event for principal below threshold does alert
+    Given I am using eventsource "TEST-IoTCore"
+    And I am using event "TEST-IoTCore-event"
+    And I am using subscription for principal "vin001" user "U001"
+    When I send the following iotcore message
+      | topic | test/iotcore |
+      | payload | { "thingName": "vin001", "bl": 5  } |
+    Then last subscription has been alerted
 
-  # Scenario: Adding another email target to existing subscription cannot be done via a subscription update
-  #   Given I am using eventsource "TEST-IoTCore"
-  #   And I am using event "TEST-IoTCore-event"
-  #   And I am using subscription for principal "vin001" user "U001"
-  #   When I update subscription with attributes
-  #     | targets | {"email": [{"address": "someone@somewhere.com"}, {"address": "someoneelse@somewhere.com"}]} |
-  #   Then it fails with a 400
+  Scenario: Adding another email target to existing subscription cannot be done via a subscription update
+    Given I am using eventsource "TEST-IoTCore"
+    And I am using event "TEST-IoTCore-event"
+    And I am using subscription for principal "vin001" user "U001"
+    When I update subscription with attributes
+      | targets | {"email": [{"address": "someone@somewhere.com"}, {"address": "someoneelse@somewhere.com"}]} |
+    Then it fails with a 400
 
-  # Scenario: Add a second email target
-  #   Given I am using eventsource "TEST-IoTCore"
-  #   And I am using event "TEST-IoTCore-event"
-  #   And I am using subscription for principal "vin001" user "U001"
-  #   When I add "email" target with attributes
-  #     | address | someoneelse@somewhere.com |
-  #   Then last subscription exists with attributes
-  #     | targets.email[0].address | someone@somewhere.com |
-  #     | targets.email[0].subscriptionArn | Pending confirmation |
-  #     | targets.email[1].address | someoneelse@somewhere.com |
-  #     | targets.email[1].subscriptionArn | Pending confirmation |
-  #     | id | ___uuid___ |
-  #     | user.id | U001 |
-  #     | principalValue | vin001 |
-	#     | ruleParameterValues.batteryLevel | 15 |
-  #     | enabled | true |
+  Scenario: Add a second email target
+    Given I am using eventsource "TEST-IoTCore"
+    And I am using event "TEST-IoTCore-event"
+    And I am using subscription for principal "vin001" user "U001"
+    When I add "email" target with attributes
+      | address | someoneelse@somewhere.com |
+    Then last subscription exists with attributes
+      | targets.email[0].address | someone@somewhere.com |
+      | targets.email[0].subscriptionArn | Pending confirmation |
+      | targets.email[1].address | someoneelse@somewhere.com |
+      | targets.email[1].subscriptionArn | Pending confirmation |
+      | id | ___uuid___ |
+      | user.id | U001 |
+      | principalValue | vin001 |
+	    | ruleParameterValues.batteryLevel | 15 |
+      | enabled | true |
 
-  # Scenario: Remove email target
-  #   Given I am using eventsource "TEST-IoTCore"
-  #   And I am using event "TEST-IoTCore-event"
-  #   And I am using subscription for principal "vin001" user "U001"
-  #   When I remove "email" target with endpoint "someoneelse@somewhere.com"
-  #   Then last subscription exists with attributes
-  #     | targets.email[0].address | someone@somewhere.com |
-  #     | targets.email[0].subscriptionArn | Pending confirmation |
-  #     | id | ___uuid___ |
-  #     | user.id | U001 |
-  #     | principalValue | vin001 |
-	#     | ruleParameterValues.batteryLevel | 15 |
-  #     | enabled | true |
+  Scenario: Remove email target
+    Given I am using eventsource "TEST-IoTCore"
+    And I am using event "TEST-IoTCore-event"
+    And I am using subscription for principal "vin001" user "U001"
+    When I remove "email" target with endpoint "someoneelse@somewhere.com"
+    Then last subscription exists with attributes
+      | targets.email[0].address | someone@somewhere.com |
+      | targets.email[0].subscriptionArn | Pending confirmation |
+      | id | ___uuid___ |
+      | user.id | U001 |
+      | principalValue | vin001 |
+	    | ruleParameterValues.batteryLevel | 15 |
+      | enabled | true |
 
-  # Scenario: Add a sms target
-  #   Given I am using eventsource "TEST-IoTCore"
-  #   And I am using event "TEST-IoTCore-event"
-  #   And I am using subscription for principal "vin001" user "U001"
-  #   When I add "sms" target with attributes
-  #     | phoneNumber | 5555555555 |
-  #   Then last subscription exists with attributes
-  #     | targets.email[0].address | someone@somewhere.com |
-  #     | targets.email[0].subscriptionArn | Pending confirmation |
-  #     | targets.sms[0].phoneNumber | 5555555555 |
-  #     | targets.sms[0].subscriptionArn | ___arn___ |
-  #     | id | ___uuid___ |
-  #     | user.id | U001 |
-  #     | principalValue | vin001 |
-	#     | ruleParameterValues.batteryLevel | 15 |
-  #     | enabled | true |
+  Scenario: Add a sms target
+    Given I am using eventsource "TEST-IoTCore"
+    And I am using event "TEST-IoTCore-event"
+    And I am using subscription for principal "vin001" user "U001"
+    When I add "sms" target with attributes
+      | phoneNumber | 5555555555 |
+    Then last subscription exists with attributes
+      | targets.email[0].address | someone@somewhere.com |
+      | targets.email[0].subscriptionArn | Pending confirmation |
+      | targets.sms[0].phoneNumber | 5555555555 |
+      | targets.sms[0].subscriptionArn | ___arn___ |
+      | id | ___uuid___ |
+      | user.id | U001 |
+      | principalValue | vin001 |
+	    | ruleParameterValues.batteryLevel | 15 |
+      | enabled | true |
 
-  # Scenario: Remove sms target
-  #   Given I am using eventsource "TEST-IoTCore"
-  #   And I am using event "TEST-IoTCore-event"
-  #   And I am using subscription for principal "vin001" user "U001"
-  #   When I remove "sms" target with endpoint "5555555555"
-  #   Then last subscription exists with attributes
-  #     | targets.email[0].address | someone@somewhere.com |
-  #     | targets.email[0].subscriptionArn | Pending confirmation |
-  #     | id | ___uuid___ |
-  #     | user.id | U001 |
-  #     | principalValue | vin001 |
-	#     | ruleParameterValues.batteryLevel | 15 |
-  #     | enabled | true |
+  Scenario: Remove sms target
+    Given I am using eventsource "TEST-IoTCore"
+    And I am using event "TEST-IoTCore-event"
+    And I am using subscription for principal "vin001" user "U001"
+    When I remove "sms" target with endpoint "5555555555"
+    Then last subscription exists with attributes
+      | targets.email[0].address | someone@somewhere.com |
+      | targets.email[0].subscriptionArn | Pending confirmation |
+      | id | ___uuid___ |
+      | user.id | U001 |
+      | principalValue | vin001 |
+	    | ruleParameterValues.batteryLevel | 15 |
+      | enabled | true |
 
+  ##### Note: following commented out as the environment needs a real GCM platformApplicationArn to test with:
   # Scenario: Add second push (gcm) target
   #   Given I am using eventsource "TEST-IoTCore"
   #   And I am using event "TEST-IoTCore-event"
@@ -207,6 +208,7 @@ Feature: Subscriptions against an IoTCore event source
 	#     | ruleParameterValues.batteryLevel | 15 |
   #     | enabled | true |
 
+  ##### Note: following commented out as the environment needs a real GCM platformApplicationArn to test with:
   # Scenario: Remove push (gcm) target
   #   Given I am using eventsource "TEST-IoTCore"
   #   And I am using event "TEST-IoTCore-event"
@@ -225,6 +227,7 @@ Feature: Subscriptions against an IoTCore event source
 	#     | ruleParameterValues.batteryLevel | 15 |
   #     | enabled | true |
 
+  ##### Note: following commented out as the environment needs a real GCM platformApplicationArn to test with:
   # Scenario: Update event to disallow a specific target type (push_ads)
   #   Given I am using eventsource "TEST-IoTCore"
   #   And I am using event "TEST-IoTCore-event"
@@ -248,27 +251,27 @@ Feature: Subscriptions against an IoTCore event source
   #     | templateProperties[0] | principalValue |
   #     | templateProperties[1] | batteryLevel |
 
-  # Scenario: Adding an unsupported target type for the event should fail
-  #   Given I am using eventsource "TEST-IoTCore"
-  #   And I am using event "TEST-IoTCore-event"
-  #   And I am using subscription for principal "vin001" user "U001"
-  #   When I add "push_ads" target with attributes
-  #     | platformApplicationArn | 6666666666 |
-  #     | token | 6666666666 |
-  #   Then it fails with a 400
+  Scenario: Adding an unsupported target type for the event should fail
+    Given I am using eventsource "TEST-IoTCore"
+    And I am using event "TEST-IoTCore-event"
+    And I am using subscription for principal "vin001" user "U001"
+    When I add "push_ads" target with attributes
+      | platformApplicationArn | 6666666666 |
+      | token | 6666666666 |
+    Then it fails with a 400
 
-  # Scenario: Delete the event
-  #   Given I am using eventsource "TEST-IoTCore"
-  #   And I am using event "TEST-IoTCore-event"
-  #   And event "TEST-IoTCore-event" exists
-  #   When I delete event
-  #   Then event "TEST-IoTCore-event" does not exist
-  #   And no subscriptions exist for event "TEST-IoTCore-event"
+  Scenario: Delete the event
+    Given I am using eventsource "TEST-IoTCore"
+    And I am using event "TEST-IoTCore-event"
+    And event "TEST-IoTCore-event" exists
+    When I delete event
+    Then event "TEST-IoTCore-event" does not exist
+    And no subscriptions exist for event "TEST-IoTCore-event"
 
-  # Scenario: Delete the event source
-  #   Given I am using eventsource "TEST-IoTCore"
-  #   When I delete eventsource
-  #   Then eventsource "TEST-IoTCore" does not exist
+  Scenario: Delete the event source
+    Given I am using eventsource "TEST-IoTCore"
+    When I delete eventsource
+    Then eventsource "TEST-IoTCore" does not exist
 
   @teardown_iotCoreEventSourceFeature
   Scenario: Teardown
