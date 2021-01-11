@@ -179,6 +179,7 @@ Resources:
               - dynamodb:Query
               - dynamodb:GetItem
               - dynamodb:DeleteItem
+              - dynamodb:UpdateItem
             Effect: Allow
             Resource: 
               - !GetAtt EventConfigTable.Arn
