@@ -11,7 +11,7 @@
     "lint": "npx eslint . --ext '.ts'",
     "build": "npx tsc -b && npx shx cp -R 'src/config' 'dist/config'",
     "test": "rushx lint && NODE_ENV= NODE_CONFIG_DIR='./src/config' jest --silent",
-    "start": "rushx build && NODE_CONFIG=$(cat ${CONFIG_LOCATION}/events-processor/${npm_package_config_environment}-config.json) NODE_CONFIG_DIR='./src/config' nodemon dist/lambda_proxy.js",
+    "start": "rushx build && NODE_CONFIG=$(cat ${CONFIG_LOCATION}/events-processor/${npm_package_config_environment}-config.json) NODE_CONFIG_DIR='./src/config' nodemon dist/lambda_proxy_restapi.js",
     
     "prebundle": "npx shx rm -rf deploy bundle.zip && npx shx mkdir deploy",
     "bundle": "rush deploy --overwrite --project ${npm_package_name} --target-folder deploy",

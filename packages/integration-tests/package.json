@@ -9,7 +9,7 @@
   "scripts": {
     "clean": "npx shx rm -rf dist build tsconfig.tsbuildinfo .nyc_output coverage dist build features/dist",
     "lint": "npx eslint . --ext '.ts'",
-    "build": "npx tsc -b && npx shx mkdir -p features/dist && npx shx cp -R 'dist/step_definitions' 'features/dist/step_definitions' && npx shx cp -R 'src/testResources' 'dist/testResources' && npx shx cp -R 'dist/support' 'features/dist/support' && npx shx cp -R 'dist/di' 'features/dist/di'",
+    "build": "npx tsc && npx shx mkdir -p features/dist && npx shx cp -R 'dist/step_definitions' 'features/dist/step_definitions' && npx shx cp -R 'src/testResources' 'dist/testResources' && npx shx cp -R 'dist/support' 'features/dist/support' && npx shx cp -R 'dist/di' 'features/dist/di'",
     "integration-test": "NODE_CONFIG=$(cat ${CONFIG_LOCATION}/integration-tests/${npm_package_config_environment}-config.json) NODE_CONFIG_DIR='./src/config' cucumber-js"
   },
   "dependencies": {

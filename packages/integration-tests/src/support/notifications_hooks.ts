@@ -32,11 +32,15 @@ async function teardown_all(world:any, eventSourceName:string, eventName?:string
         if (eventName) {
             const eventId = await getEventIdFromName(eventsourceService, eventService, world, eventSourceName, eventName);
             if (eventId) {
-                const subscriptions = await subscriptionsService.listSubscriptionsForEvent(eventId, undefined, getAdditionalHeaders(world));
-                if (subscriptions?.results?.length>0) {
-                    for(const s of subscriptions.results) {
-                        await subscriptionsService.deleteSubscription(s.id, getAdditionalHeaders(world));
+                try {
+                    const subscriptions = await subscriptionsService.listSubscriptionsForEvent(eventId, undefined, getAdditionalHeaders(world));
+                    if (subscriptions?.results?.length>0) {
+                        for(const s of subscriptions.results) {
+                            await subscriptionsService.deleteSubscription(s.id, getAdditionalHeaders(world));
+                        }
                     }
+                } catch (e) {
+                    // ignore
                 }
                 await eventService.deleteEvent(eventId, getAdditionalHeaders(world));
             }
