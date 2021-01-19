@@ -1,21 +1,23 @@
 # Deployment
 
+Note: These instructions reflect the _rush_ based build system which was introduced from version _cdf-core-20210119*.tar_. If you need to use the older _pnpm_ based build system for prior versions, refer to the releases accompanying versioned documentation.
+
 ## TL;DR - Deployments Steps
 
 Before attempting an upgrade, read [releases](../releases/releases.md) which details any major release information such as backwards incompatible changes.  
 
-1. Download pre-bundled platform dependencies (_cdf-core_, _cdf-clients_)
-1. Clone and include customer specific _cdf-facade-*_ and _cdf-infrastructure-*_ projects
+1. Download pre-bundled platform dependencies (_cdf-core_)
+2. Clone and include customer specific _cdf-facade-*_ and _cdf-infrastructure-*_ projects
     1. CDF Auto Facade and Infrastructure (the new preferred demo)
-    1. CDF Demo Facade and Infrastructure (the old original demo)
-1. Optionally configure REST API authentication
-1. Deploying the project
+    2. CDF Demo Facade and Infrastructure (the original demo)
+3. Optionally configure REST API authentication
+4. Deploying the project
     
-## Downloading pre-bundled platform dependencies (cdf-core, cdf-clients)
+## Downloading pre-bundled platform dependencies (cdf-core)
 
 Ensure you have installed the necessary [pre-reqs](#installing-prerequisites) to configure your environment.
 
-After a fix/feature is tested, releases are automatically bundled and available at _s3://cdf-157731826412-us-west-2/releases_ for download and installation.  The core services (cdf-core) and clients/libraries (cdf-clients) are pre-bundled and released as two separate packages to reduce the download size for those only interested in consuming the clients, yet they exist as a single codebase in CodeCommit. 
+After a fix/feature is tested, releases are automatically bundled and available at _s3://cdf-157731826412-us-west-2/releases_ for download and installation.
 
 To start, retrieve a list of the available releases as follows:
 
@@ -23,27 +25,17 @@ To start, retrieve a list of the available releases as follows:
 > aws s3 ls s3://cdf-157731826412-us-west-2/releases/core/
 
 2019-03-16 16:27:33  343978991 cdf-core-##############.tar
-
-
-> aws s3 ls s3://cdf-157731826412-us-west-2/releases/clients/
-
-2019-03-16 16:27:33  343978991 cdf-clients-##############.tar
 ```
 
-Download and extract the _cdf-core-*_ and _cdf-clients-*_ releases using the name of the files from the previous step:
+Download and extract the _cdf-core-*_ release using the name of the files from the previous step:
 
 ```sh
 > aws s3 cp s3://cdf-157731826412-us-west-2/releases/core/cdf-core-##############.tar .
 > mkdir cdf-core
 > tar -xf cdf-core-##############.tar -C cdf-core
-
-> aws s3 cp s3://cdf-157731826412-us-west-2/releases/clients/cdf-clients-##############.tar .
-> mkdir cdf-clients
-> tar -xf cdf-clients-##############.tar -C cdf-clients
-
 ```
 
-Along with the _cdf-core_ and _cdf-clients_ release packages, a _cdf-infrastructure-*_ and _cdf-facade-*_ project need cloning to the same parent directory as described in the next step.  
+Along with the _cdf-core_ release package, a _cdf-infrastructure-*_ and _cdf-facade-*_ project need cloning to the same parent directory as described in the next step.  
 
 ## Clone and include _cdf-facade-\*_ and _cdf-infrastructure-\*_ projects
 
@@ -198,10 +190,10 @@ curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
 > nvm use v12
 ```
 
-+ install [`pnpm`](https://pnpm.js.org) package manager (must use v3.5.3):
++ install [rush](https://rushjs.io) monorepo manager:
 
 ```sh
-> npm install -g pnpm@3.5.3
+> npm i -g @microsoft/rush
 ```
 
 ## FAQ

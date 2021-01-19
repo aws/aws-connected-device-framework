@@ -2,6 +2,33 @@
 
 This document outlines major releases, such as backward incompatible features.  Refer to the CDF changelogs for specific details of each release.
 
+## cdf-core-20210119*-BREAKING-CHANGE.tar
+
+Affects individual package versions:
+
+package | version
+--- | ---
+@cdf/assetlibrary | 4.0.0
+@cdf/assetlibrary-history | 4.0.0
+@cdf/auth-devicecert | 4.0.0
+@cdf/auth-jwt | 2.0.0
+@cdf/bulkcerts | 5.0.0
+@cdf/certificate-activator | 3.0.0
+@cdf/certificate-vendor | 4.0.0
+@cdf/commands | 4.0.0
+@cdf/device-monitoring | 4.0.0
+@cdf/events-alerts | 2.0.0
+@cdf/events-processor | 3.0.0
+@cdf/greengrass-deployment | 4.0.0
+@cdf/greengrass-provisioning | 4.0.0
+@cdf/provisioning | 4.0.0
+@cdf/request-queue | 4.0.0
+
+*Notes of interest:*
+
+This version replaces the PNPM v3 based build system with Rush and PNPM v5. The instigator of this is the upcoming open sourcing of the CDF where pinning to old dependency versions (PNPM v3) is not allowed. Refer to the updated _advanced/deployment_ and _development/quick start_ documention for further details. Also note that an updated _cdf-infrastructure-demo_ and _cdf-facade-demo_ project accompanies this change.
+
+
 ## cdf-core-20200610211924-BREAKING-CHANGE.tar
 
 Affects individual package versions:

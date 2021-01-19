@@ -9,7 +9,6 @@ function publish_artifacts() {
     basedir=$(pwd)
 
     coreBundleName="cdf-core-$1.tar"
-    clientsBundleName="cdf-clients-$1.tar"
     changeLogsBundleName="cdf-changeLogs-$1.tar"
     docsBundleName="cdf-documentation-$1.tar"
     docsReleaseDir="$basedir/documentation/site"
@@ -20,11 +19,6 @@ function publish_artifacts() {
     tar -cvf ../$coreBundleName --exclude=./documentation --exclude=node_modules --exclude=.git .
     echo Uploading "$coreBundleName" to "$ARTIFACT_PUBLISH_LOCATION/$coreBundleName"
     aws s3 cp "../$coreBundleName" "$ARTIFACT_PUBLISH_LOCATION/core/$coreBundleName" &
-
-    echo Tarring clients to "$clientsBundleName"
-    tar -cvf ../$clientsBundleName --exclude=./documentation --exclude=./cicd --exclude=./infrastructure --exclude=node_modules --exclude=.git --exclude=./packages/services --exclude=./packages/integration-tests .
-    echo Uploading "$clientsBundleName" to "$ARTIFACT_PUBLISH_LOCATION/$clientsBundleName"
-    aws s3 cp "../$clientsBundleName" "$ARTIFACT_PUBLISH_LOCATION/clients/$clientsBundleName" &
 
     echo Tarring changeLogs to "$changeLogsBundleName"
     find . -name CHANGELOG.md -path "./packages/*" | tar -cvf ../$changeLogsBundleName -T -
