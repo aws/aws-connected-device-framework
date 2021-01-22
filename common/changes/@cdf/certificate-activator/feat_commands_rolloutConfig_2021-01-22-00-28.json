@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/certificate-activator",
+      "comment": "Increased 'ow' version.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/certificate-activator",
+  "email": "deanhart@amazon.com"
+}

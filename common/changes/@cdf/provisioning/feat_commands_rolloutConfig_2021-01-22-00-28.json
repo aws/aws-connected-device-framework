@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/provisioning",
+      "comment": "Increased 'ow' version.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/provisioning",
+  "email": "deanhart@amazon.com"
+}

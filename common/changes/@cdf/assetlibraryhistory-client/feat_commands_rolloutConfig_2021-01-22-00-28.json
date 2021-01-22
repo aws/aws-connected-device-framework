@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/assetlibraryhistory-client",
+      "comment": "Increased 'ow' version.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/assetlibraryhistory-client",
+  "email": "deanhart@amazon.com"
+}

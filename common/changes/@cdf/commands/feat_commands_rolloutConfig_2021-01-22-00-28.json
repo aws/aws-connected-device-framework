@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/commands",
+      "comment": "Added support for exponential rollout and aborting of AWS IoT Jobs.",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@cdf/commands",
+  "email": "deanhart@amazon.com"
+}
