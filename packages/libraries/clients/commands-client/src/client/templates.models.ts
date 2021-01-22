@@ -4,6 +4,8 @@
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
 
+import { AbortConfig, JobExecutionsRolloutConfig, TimeoutConfig } from "./commands.model";
+
 export interface TemplateSummaryModel {
 	templateId:string;
 	operation:string;
@@ -14,7 +16,12 @@ export interface TemplateModel extends TemplateSummaryModel {
 	requiredDocumentParameters?:string[];
 	requiredFiles?:string[];
 	allowFileUploads?: boolean;
+	
 	presignedUrlExpiresInSeconds?:number;
+	rolloutMaximumPerMinute?:number;
+	jobExecutionsRolloutConfig?: JobExecutionsRolloutConfig;
+	abortConfig?: AbortConfig;
+	timeoutConfig?: TimeoutConfig;
 }
 
 export interface TemplateListModel {
