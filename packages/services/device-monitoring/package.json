@@ -1,6 +1,6 @@
 {
   "name": "@cdf/device-monitoring",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "CDF Device Monitoring",
   "author": "Rahul Sareen <rssareen@amazon.com>",
   "config": {
@@ -21,7 +21,7 @@
     "@cdf/errors": "^3.0.0",
     "@cdf/logger": "^3.0.0",
     "@cdf/lambda-invoke": "^2.0.0",
-    "@cdf/assetlibrary-client": "^4.0.0",
+    "@cdf/assetlibrary-client": "^4.0.1",
     "@cdf/config-inject": "^3.0.0",
    "config": "3.2.4",
     "http-errors": "1.8.0",

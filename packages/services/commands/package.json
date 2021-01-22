@@ -1,6 +1,6 @@
 {
   "name": "@cdf/commands",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "description": "CDF Commands",
   "author": "Dean Hart <deanhart@amazon.com>",
   "config": {
@@ -20,10 +20,10 @@
     "@cdf/errors": "^3.0.0",
     "@cdf/logger": "^3.0.0",
     "@cdf/lambda-invoke": "^2.0.0",
-    "@cdf/assetlibrary-client": "^4.0.0",
+    "@cdf/assetlibrary-client": "^4.0.1",
     "@cdf/express-middleware": "^2.0.0",
     "@cdf/config-inject": "^3.0.0",
-    "@cdf/provisioning-client": "^4.0.0",
+    "@cdf/provisioning-client": "^4.0.1",
     "ajv": "6.10.2",
     "aws-sdk": "2.777.0",
     "body-parser": "1.19.0",
