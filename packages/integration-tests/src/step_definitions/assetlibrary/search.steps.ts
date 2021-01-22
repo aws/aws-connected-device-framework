@@ -35,7 +35,7 @@ setDefaultTimeout(10 * 1000);
 export const SEARCH_RESULTS = 'searchResults';
 
 const searchService:SearchService = container.get(ASSTLIBRARY_CLIENT_TYPES.SearchService);
-function getAdditionalHeaders(world:any) : Dictionary {
+function getAdditionalHeaders(world:unknown) : Dictionary {
     return  {
         Authorization: world[AUTHORIZATION_TOKEN]
     };
@@ -114,7 +114,7 @@ Then('search result contains {int} results', function (total:number) {
 });
 
 Then('search result contains device {string}', function (deviceId:string) {
-    let found:boolean=false;
+    let found=false;
     (<SearchResultsModel>this[SEARCH_RESULTS]).results.forEach(item=> {
         if ( (<Device10Resource>item).deviceId===deviceId) {
             found=true;
@@ -125,7 +125,7 @@ Then('search result contains device {string}', function (deviceId:string) {
 });
 
 Then('search result contains group {string}', function (groupPath:string) {
-    let found:boolean=false;
+    let found=false;
     (<SearchResultsModel>this[SEARCH_RESULTS]).results.forEach(item=> {
         if ( (<Group10Resource>item).groupPath===groupPath) {
             found=true;

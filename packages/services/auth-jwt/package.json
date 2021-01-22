@@ -35,6 +35,7 @@
     "winston-transport": "4.3.0"
   },
   "devDependencies": {
+    "@types/aws-lambda": "8.10.65",
     "@types/config": "0.0.37",
     "@types/jsonwebtoken": "8.5.0",
     "@types/jwk-to-pem": "2.0.0",

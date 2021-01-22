@@ -33,7 +33,7 @@ use(chai_string);
 setDefaultTimeout(10 * 1000);
 
 const groupService:GroupsService = container.get(ASSTLIBRARY_CLIENT_TYPES.GroupsService);
-function getAdditionalHeaders(world:any) : Dictionary {
+function getAdditionalHeaders(world:unknown) : Dictionary {
     return  {
         Authorization: world[AUTHORIZATION_TOKEN]
     };
@@ -52,7 +52,7 @@ Given('group {string} exists', async function (groupPath:string) {
     await groupService.getGroup(groupPath, getAdditionalHeaders(this));
 });
 
-async function createGroup (world:any, name:string, parentPath:string, data:TableDefinition, profileId?:string) {
+async function createGroup (world:unknown, name:string, parentPath:string, data:TableDefinition, profileId?:string) {
 
     const d = data.rowsHash();
 

@@ -26,7 +26,7 @@ const eventsourceService:EventsourcesService = container.get(NOTIFICATIONS_CLIEN
 const eventService:EventsService = container.get(NOTIFICATIONS_CLIENT_TYPES.EventsService);
 const subscriptionsService:SubscriptionsService = container.get(NOTIFICATIONS_CLIENT_TYPES.SubscriptionsService);
 
-async function teardown_all(world:any, eventSourceName:string, eventName?:string) {
+async function teardown_all(world:unknown, eventSourceName:string, eventName?:string) {
     const eventSourceId = await getEventSourceIdFromName(eventsourceService, world,eventSourceName);
     if (eventSourceId) {
         if (eventName) {
@@ -49,7 +49,7 @@ async function teardown_all(world:any, eventSourceName:string, eventName?:string
     }
 }
 
-async function teardown_event_sources(world:any) {
+async function teardown_event_sources(world:unknown) {
     /// teardown
     await teardown_all(world,'TEST-iotcore');
 }
@@ -62,7 +62,7 @@ Before({tags: '@teardown_event_sources'}, async function () {
     await teardown_event_sources(this);
 });
 
-async function teardown_iotCoreEventSourceFeature(world:any) {
+async function teardown_iotCoreEventSourceFeature(world:unknown) {
     await teardown_all(world, 'TEST-IoTCore', 'TEST-IoTCore-event');
 }
 
@@ -74,7 +74,7 @@ Before({tags: '@teardown_iotCoreEventSourceFeature'}, async function () {
     await teardown_iotCoreEventSourceFeature(this);
 });
 
-async function teardown_events(world:any) {
+async function teardown_events(world:unknown) {
     /// teardown
     const eventSourceId = await getEventSourceIdFromName(eventsourceService, world,'TEST-events');
     if (eventSourceId) {
@@ -107,7 +107,7 @@ Before({tags: '@teardown_events'}, async function () {
     await teardown_events(this);
 });
 
-async function teardown_subscriptions(world:any) {
+async function teardown_subscriptions(world:unknown) {
     /// teardown
     const eventSourceId = await getEventSourceIdFromName(eventsourceService, world,'TEST-subscriptions');
     if (eventSourceId) {

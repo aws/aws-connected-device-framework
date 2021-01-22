@@ -21,13 +21,13 @@ export const PRINCIPAL_VALUE = 'principalValue';
 export const USER_ID = 'userId';
 export const TARGET_ID = 'targetId';
 
-export function getAdditionalHeaders(world:any) : Dictionary {
+export function getAdditionalHeaders(world:unknown) : Dictionary {
     return  {
         Authorization: world[AUTHORIZATION_TOKEN]
     };
 }
 
-export async function getEventSourceIdFromName(eventsourcesService:EventsourcesService, world:any, name:string) : Promise<string> {
+export async function getEventSourceIdFromName(eventsourcesService:EventsourcesService, world:unknown, name:string) : Promise<string> {
     logger.debug(`getEventSourceIdFromName: name:${name}`);
     let eventSourceId = world[`EVENTSOURCEID___${name}`];
     if (eventSourceId===undefined) {
@@ -39,7 +39,7 @@ export async function getEventSourceIdFromName(eventsourcesService:EventsourcesS
     return eventSourceId;
 }
 
-export async function getEventIdFromName(eventsourcesService:EventsourcesService, eventsService:EventsService, world:any, eventSourceName:string,eventName:string) : Promise<string> {
+export async function getEventIdFromName(eventsourcesService:EventsourcesService, eventsService:EventsService, world:unknown, eventSourceName:string,eventName:string) : Promise<string> {
     logger.debug(`getEventIdFromName: eventSourceName:${eventSourceName}, eventName:${eventName}`);
     let eventId = world[`EVENTID___${eventName}`];
     if (eventId===undefined) {
@@ -54,7 +54,7 @@ export async function getEventIdFromName(eventsourcesService:EventsourcesService
     return eventId;
 }
 
-export async function getSubscriptionIdFromPrincipal(eventsourcesService:EventsourcesService, eventsService:EventsService, service:SubscriptionsService, world:any,userId:string,eventSourceName:string,eventName:string,principalValue:string) : Promise<string> {
+export async function getSubscriptionIdFromPrincipal(eventsourcesService:EventsourcesService, eventsService:EventsService, service:SubscriptionsService, world:unknown,userId:string,eventSourceName:string,eventName:string,principalValue:string) : Promise<string> {
     logger.debug(`getSubscriptionIdFromPrincipal: userId:${userId}, eventSourceName:${eventSourceName}, eventName:${eventName}, principalValue:${principalValue}`);
     let subscriptionId;
     const eventId = await getEventIdFromName(eventsourcesService, eventsService, world, eventSourceName, eventName);
@@ -75,38 +75,38 @@ export async function getSubscriptionIdFromPrincipal(eventsourcesService:Eventso
     return subscriptionId;
 }
 
-export async function createEventSource (eventsourcesService:EventsourcesService, world:any, data:TableDefinition) {
+export async function createEventSource (eventsourcesService:EventsourcesService, world:unknown, data:TableDefinition) : Promise<string> {
     const model:EventSourceDetailResource = buildModel(data);
     return await eventsourcesService.createEventSource(model, getAdditionalHeaders(world));
 }
 
-export async function createEvent (eventsService:EventsService, world:any, eventSourceId:string, data:TableDefinition) : Promise<string> {
+export async function createEvent (eventsService:EventsService, world:unknown, eventSourceId:string, data:TableDefinition) : Promise<string> {
     const model:EventResource = buildModel(data);
     return await eventsService.createEvent(eventSourceId, model, getAdditionalHeaders(world));
 }
 
-export async function updateEvent (eventsService:EventsService, world:any, eventId:string, data:TableDefinition) : Promise<void> {
+export async function updateEvent (eventsService:EventsService, world:unknown, eventId:string, data:TableDefinition) : Promise<void> {
     const model:EventResource = buildModel(data);
     model.eventId = eventId;
     logger.debug(`model: ${JSON.stringify(model)}`);
     await eventsService.updateEvent(model, getAdditionalHeaders(world));
 }
 
-export async function createSubscription (service:SubscriptionsService, world:any, eventId:string, data:TableDefinition) : Promise<string> {
+export async function createSubscription (service:SubscriptionsService, world:unknown, eventId:string, data:TableDefinition) : Promise<string> {
     const model:SubscriptionResource = buildModel(data);
-    return await service.createSubscription( eventId, model, getAdditionalHeaders(world));
+    return await service.createSubscription(eventId, model, getAdditionalHeaders(world));
 }
 
-export async function createTarget(service:TargetsService, world:any, subscriptionId:string, targetType:string, data:TableDefinition) : Promise<void> {
+export async function createTarget(service:TargetsService, world:unknown, subscriptionId:string, targetType:string, data:TableDefinition) : Promise<void> {
     const model:TargetResource = buildModel(data);
     await service.createTarget(subscriptionId, targetType, model, getAdditionalHeaders(world));
 }
 
-export async function deleteTarget(service:TargetsService, world:any, subscriptionId:string, targetType:string, endpoint:string) : Promise<void> {
+export async function deleteTarget(service:TargetsService, world:unknown, subscriptionId:string, targetType:string, endpoint:string) : Promise<void> {
     await service.deleteTarget(subscriptionId, targetType, endpoint, getAdditionalHeaders(world));
 }
 
-export async function updateSubscription (service:SubscriptionsService, world:any, data:TableDefinition) : Promise<void> {
+export async function updateSubscription (service:SubscriptionsService, world:unknown, data:TableDefinition) : Promise<void> {
     const model:SubscriptionResource = buildModel(data);
     model.id = world[SUBSCRIPTION_ID];
     await service.updateSubscription(model, getAdditionalHeaders(world));
@@ -133,7 +133,7 @@ export function buildModel<T>(data:TableDefinition) : T {
     return resource;
 }
 
-export function validateExpectedAttributes<T>(model:T, data:TableDefinition) {
+export function validateExpectedAttributes<T>(model:T, data:TableDefinition) : void {
     const d = data.rowsHash();
     Object.keys(d).forEach( key => {
         const expected = replaceTokens(d[key]);

@@ -24,7 +24,7 @@ const COMMANDTEMPLATES_COMMAND_FEATURE_TEMPLATE_IDS:string[] = ['testCommandsFea
 // tslint:disable:no-invalid-this
 // tslint:disable:only-arrow-functions
 
-function getAdditionalHeaders(world:any) : Dictionary {
+function getAdditionalHeaders(world:unknown) : Dictionary {
     return  {
         Authorization: world[AUTHORIZATION_TOKEN]
     };
@@ -32,7 +32,7 @@ function getAdditionalHeaders(world:any) : Dictionary {
 
 const templates:TemplatesService = container.get(COMMANDS_CLIENT_TYPES.TemplatesService);
 
-async function deleteCommandTemplates(world:any, ids:string[]) {
+async function deleteCommandTemplates(world:unknown, ids:string[]) {
     for(const id of ids) {
         await templates.deleteTemplate(id, getAdditionalHeaders(world))
         .catch(_err=> {
@@ -41,7 +41,7 @@ async function deleteCommandTemplates(world:any, ids:string[]) {
     }
 }
 
-async function teardown_templates_feature(world:any) {
+async function teardown_templates_feature(world:unknown) {
     await deleteCommandTemplates(world,COMMANDTEMPLATES_TEMPLATE_FEATURE_TEMPLATE_IDS);
 }
 
@@ -53,7 +53,7 @@ Before({tags: '@teardown_templates_feature'}, async function () {
     await teardown_templates_feature(this);
 });
 
-async function teardown_commands_feature(world:any) {
+async function teardown_commands_feature(world:unknown) {
     await deleteCommandTemplates(world, COMMANDTEMPLATES_COMMAND_FEATURE_TEMPLATE_IDS);
 }
 

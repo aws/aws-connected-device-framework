@@ -29,7 +29,7 @@ setDefaultTimeout(10 * 1000);
 const thingService: ThingsService = container.get(PROVISIONING_CLIENT_TYPES.ThingsService);
 let iot: AWS.Iot;
 
-function getAdditionalHeaders(world:any) : Dictionary {
+function getAdditionalHeaders(world:unknown) : Dictionary {
     return  {
         Authorization: world[AUTHORIZATION_TOKEN]
     };

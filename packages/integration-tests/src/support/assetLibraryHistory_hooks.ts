@@ -20,10 +20,10 @@ import {Dictionary} from '../../../libraries/core/lambda-invoke/src';
 
 setDefaultTimeout(30 * 1000);
 
-const DEVICEHISTORY_FEATURE_DEVICE_TEMPLATE_ID:string = 'test-devicehistory-device-type';
-const DEVICEHISTORY_FEATURE_GROUP_TEMPLATE_ID:string = 'test-devicehistory-group-type';
-const DEVICEHISTORY_FEATURE_GROUP_PATH:string = '/test-devicehistory-group';
-const DEVICEHISTORY_FEATURE_DEVICE_IDS:string[] = ['test-devicehistory-device001'];
+const DEVICEHISTORY_FEATURE_DEVICE_TEMPLATE_ID = 'test-devicehistory-device-type';
+const DEVICEHISTORY_FEATURE_GROUP_TEMPLATE_ID = 'test-devicehistory-group-type';
+const DEVICEHISTORY_FEATURE_GROUP_PATH = '/test-devicehistory-group';
+const DEVICEHISTORY_FEATURE_DEVICE_IDS = ['test-devicehistory-device001'];
 
 /*
     Cucumber describes current scenario context as “World”. It can be used to store the state of the scenario

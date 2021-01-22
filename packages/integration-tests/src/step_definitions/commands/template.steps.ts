@@ -23,7 +23,7 @@ import {Dictionary} from '../../../../libraries/core/lambda-invoke/src';
 setDefaultTimeout(10 * 1000);
 
 const templatesService:TemplatesService = container.get(COMMANDS_CLIENT_TYPES.TemplatesService);
-function getAdditionalHeaders(world:any) : Dictionary {
+function getAdditionalHeaders(world:unknown) : Dictionary {
     return  {
         Authorization: world[AUTHORIZATION_TOKEN]
     };
@@ -43,7 +43,7 @@ Given('command template {string} exists', async function (templateId:string) {
     expect(template.templateId).eq(templateId);
 });
 
-async function createTemplate (world:any, templateId:string, data:TableDefinition) {
+async function createTemplate (world:unknown, templateId:string, data:TableDefinition) {
 
     const d = data.rowsHash();
 

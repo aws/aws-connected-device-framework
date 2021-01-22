@@ -34,7 +34,7 @@ const RESULTS = 'results';
 // tslint:disable:only-arrow-functions
 
 const eventsService:EventsService = container.get(ASSETLIBRARYHISTORY_CLIENT_TYPES.EventsService);
-function getAdditionalHeaders(world:any) : Dictionary {
+function getAdditionalHeaders(world:unknown) : Dictionary {
     return  {
         Authorization: world[AUTHORIZATION_TOKEN]
     };

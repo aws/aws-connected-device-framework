@@ -28,7 +28,7 @@ import {Dictionary} from '../../../../libraries/core/lambda-invoke/src';
 setDefaultTimeout(10 * 1000);
 
 const templatesService:TemplatesService = container.get(ASSTLIBRARY_CLIENT_TYPES.TemplatesService);
-function getAdditionalHeaders(world:any) : Dictionary {
+function getAdditionalHeaders(world:unknown) : Dictionary {
     return  {
         Authorization: world[AUTHORIZATION_TOKEN]
     };

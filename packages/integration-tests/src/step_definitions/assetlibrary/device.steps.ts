@@ -28,7 +28,7 @@ setDefaultTimeout(10 * 1000);
 
 const deviceService:DevicesService = container.get(ASSTLIBRARY_CLIENT_TYPES.DevicesService);
 
-function getAdditionalHeaders(world:any) : Dictionary {
+function getAdditionalHeaders(world:unknown) : Dictionary {
     const authCode= world[AUTHORIZATION_TOKEN];
     const headers =  {
         Authorization: authCode
@@ -50,7 +50,7 @@ Given('device {string} exists', async function (deviceId:string) {
     expect(device.deviceId).equalIgnoreCase(deviceId);
 });
 
-async function registerDevice (world:any, deviceId:string, data:TableDefinition, profileId?:string) {
+async function registerDevice (world:unknown, deviceId:string, data:TableDefinition, profileId?:string) {
 
     const d = data.rowsHash();
 

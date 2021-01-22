@@ -22,7 +22,7 @@ export const AUTHORIZATION_TOKEN = 'jwt';
 // tslint:disable:no-invalid-this
 // tslint:disable:only-arrow-functions
 
-export function replaceTokens(text:string) {
+export function replaceTokens(text:string) : string {
     return text.replace(/%property:(.*?)%/g, (_a,property)=> {
         return config.get(property);
     });
@@ -40,8 +40,8 @@ Given('pause for {int}ms', async function (ms:number) {
 Given('my authorization is', async function (data:TableDefinition) {
     const d = data.rowsHash();
 
-    const token:any= {
-        cdf_al: []
+    const token =  {
+        cdf_al: [] as string[]
     };
 
     Object.keys(d).forEach( key => {

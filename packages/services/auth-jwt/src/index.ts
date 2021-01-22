@@ -10,28 +10,21 @@ import config from 'config';
 import ow from 'ow';
 import {APIGWAuthPolicyBuilder} from './api-gw.policy.builder';
 import { ApiGwCustomAuthorizer } from './api-gw.custom.authorizer';
-
-let _awsRegion:string;
-let _apiGwCustomAuth : ApiGwCustomAuthorizer;
+import {CustomAuthorizerEvent, Context} from 'aws-lambda';
+ 
+const _awsRegion =config.get('aws.region') as string;
+const _apiGwCustomAuth = new ApiGwCustomAuthorizer();
 
 /**
  * Lambda entry point for Custom Authorizer.
  */
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
-export async function handler(event: any, context: any) : Promise<void> {
+export async function handler(event: CustomAuthorizerEvent, context: Context) : Promise<void> {
     logger.debug(`index: handler: in: event:${JSON.stringify(event)}, context:${JSON.stringify(context)}`);
 
     ow(event, ow.object.nonEmpty);
     ow(event.authorizationToken, ow.string.nonEmpty);
 
     try {
-        if (_awsRegion===undefined) {
-            _awsRegion = config.get('aws.region') as string;
-        }
-        if (_apiGwCustomAuth===undefined) {
-            _apiGwCustomAuth = new ApiGwCustomAuthorizer();
-        }
-
         const token = event.authorizationToken;
         const awsAccountId = getAccountId(context);
         const apiId = getApiId(event);
@@ -59,8 +52,7 @@ export async function handler(event: any, context: any) : Promise<void> {
     }
 }
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
-function getAccountId(context: any) {
+function getAccountId(context: Context) {
     // extract account number from invoked arn
     const invokedFnArn = context.invokedFunctionArn;
     const invokedFnArnParsed = invokedFnArn ? invokedFnArn.split(':') : null;
@@ -73,8 +65,7 @@ function getAccountId(context: any) {
     return invokedFnArnParsed[4];
 }
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
-function getApiId(event:any) {
+function getApiId(event:CustomAuthorizerEvent) {
     let apiId;
     if (event.requestContext) {
         apiId = event.requestContext.apiId;

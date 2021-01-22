@@ -27,7 +27,7 @@ export const COMMAND_DETAILS = 'commandDetails';
 setDefaultTimeout(10 * 1000);
 
 const commandsService:CommandsService = container.get(COMMANDS_CLIENT_TYPES.CommandsService);
-function getAdditionalHeaders(world:any) : Dictionary {
+function getAdditionalHeaders(world:unknown) : Dictionary {
     return  {
         Authorization: world[AUTHORIZATION_TOKEN]
     };
@@ -56,12 +56,12 @@ function buildCommandModel(data:TableDefinition) {
     return command;
 }
 
-async function createCommand (world:any, data:TableDefinition) {
+async function createCommand (world:unknown, data:TableDefinition) {
     const command = buildCommandModel(data);
     return await commandsService.createCommand(command, getAdditionalHeaders(world));
 }
 
-async function updateCommand (world:any, commandId:string, data:TableDefinition) {
+async function updateCommand (world:unknown, commandId:string, data:TableDefinition) {
     const command = buildCommandModel(data);
     command.commandId = commandId;
     return await commandsService.updateCommand(command, getAdditionalHeaders(world));

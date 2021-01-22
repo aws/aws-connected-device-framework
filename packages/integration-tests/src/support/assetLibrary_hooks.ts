@@ -23,53 +23,53 @@ import {RequestHeaders} from '@cdf/assetlibrary-client/dist/client/common.model'
 
 setDefaultTimeout(30 * 1000);
 
-const DEVICES_FEATURE_DEVICE_IDS:string[] = ['TEST-devices-device001','TEST-devices-device002','TEST-devices-device003','TEST-devices-device004'];
-const DEVICES_FEATURE_LINKABLE_GROUP_PATH:string = '/TEST-devices-linkableGroup001';
-const DEVICES_FEATURE_UNLINKABLE_GROUP_PATH:string = '/TEST-devices-unlinkableGroup001';
-const DEVICES_FEATURE_UNPROVISIONED_GROUP_PATH:string = '/unprovisioned';
-const DEVICES_FEATURE_GROUP_PATHS:string[] = [DEVICES_FEATURE_LINKABLE_GROUP_PATH, DEVICES_FEATURE_UNLINKABLE_GROUP_PATH, '/unprovisioned'];
-const DEVICES_FEATURE_DEVICE_TEMPLATE_IDS:string[] = ['TEST-devices-type'];
-const DEVICES_FEATURE_LINKABLE_GROUP_TEMPLATE_ID:string = 'TEST-devices-linkableGroup';
-const DEVICES_FEATURE_UNLINKABLE_GROUP_TEMPLATE_ID:string = 'TEST-devices-unlinkableGroup';
-const DEVICES_FEATURE_GROUP_TEMPLATE_IDS:string[] = [DEVICES_FEATURE_LINKABLE_GROUP_TEMPLATE_ID,DEVICES_FEATURE_UNLINKABLE_GROUP_TEMPLATE_ID];
+const DEVICES_FEATURE_DEVICE_IDS = ['TEST-devices-device001','TEST-devices-device002','TEST-devices-device003','TEST-devices-device004'];
+const DEVICES_FEATURE_LINKABLE_GROUP_PATH = '/TEST-devices-linkableGroup001';
+const DEVICES_FEATURE_UNLINKABLE_GROUP_PATH = '/TEST-devices-unlinkableGroup001';
+const DEVICES_FEATURE_UNPROVISIONED_GROUP_PATH = '/unprovisioned';
+const DEVICES_FEATURE_GROUP_PATHS = [DEVICES_FEATURE_LINKABLE_GROUP_PATH, DEVICES_FEATURE_UNLINKABLE_GROUP_PATH, '/unprovisioned'];
+const DEVICES_FEATURE_DEVICE_TEMPLATE_IDS = ['TEST-devices-type'];
+const DEVICES_FEATURE_LINKABLE_GROUP_TEMPLATE_ID = 'TEST-devices-linkableGroup';
+const DEVICES_FEATURE_UNLINKABLE_GROUP_TEMPLATE_ID = 'TEST-devices-unlinkableGroup';
+const DEVICES_FEATURE_GROUP_TEMPLATE_IDS = [DEVICES_FEATURE_LINKABLE_GROUP_TEMPLATE_ID,DEVICES_FEATURE_UNLINKABLE_GROUP_TEMPLATE_ID];
 
-const DEVICES_FEATURE_LITE_DEVICE_IDS:string[] = ['TEST-devices-device001','TEST-devices-device002'];
-const DEVICES_FEATURE_LITE_GROUP_PATH:string = 'TEST-devices-group001';
-const DEVICES_FEATURE_LITE_UNPROVISIONED_GROUP_PATH:string = 'unprovisioned';
-const DEVICES_FEATURE_LITE_GROUP_PATHS:string[] = [DEVICES_FEATURE_LITE_GROUP_PATH, DEVICES_FEATURE_LITE_UNPROVISIONED_GROUP_PATH];
-const DEVICES_FEATURE_LITE_DEVICE_TEMPLATE_IDS:string[] = ['TEST-devices-type'];
+const DEVICES_FEATURE_LITE_DEVICE_IDS = ['TEST-devices-device001','TEST-devices-device002'];
+const DEVICES_FEATURE_LITE_GROUP_PATH = 'TEST-devices-group001';
+const DEVICES_FEATURE_LITE_UNPROVISIONED_GROUP_PATH = 'unprovisioned';
+const DEVICES_FEATURE_LITE_GROUP_PATHS = [DEVICES_FEATURE_LITE_GROUP_PATH, DEVICES_FEATURE_LITE_UNPROVISIONED_GROUP_PATH];
+const DEVICES_FEATURE_LITE_DEVICE_TEMPLATE_IDS = ['TEST-devices-type'];
 
-const DEVICEPROFILES_FEATURE_DEVICE_IDS:string[] = ['TEST-deviceProfiles-device001','TEST-deviceProfiles-device002','TEST-deviceProfiles-device003','TEST-deviceProfiles-device004'];
-const DEVICEPROFILES_FEATURE_LINKABLE_GROUP_1_PATH:string = '/TEST-deviceProfiles-linkableGroup001';
-const DEVICEPROFILES_FEATURE_LINKABLE_GROUP_2_PATH:string = '/TEST-deviceProfiles-linkableGroup002';
-const DEVICEPROFILES_FEATURE_GROUP_PATHS:string[] = [DEVICEPROFILES_FEATURE_LINKABLE_GROUP_1_PATH, DEVICEPROFILES_FEATURE_LINKABLE_GROUP_2_PATH];
-const DEVICEPROFILES_FEATURE_DEVICE_TEMPLATE_IDS:string[] = ['TEST-deviceProfiles-type'];
-const DEVICEPROFILES_FEATURE_LINKABLE_GROUP_TEMPLATE_ID:string = 'TEST-deviceProfiles-linkableGroup';
-const DEVICEPROFILES_FEATURE_UNLINKABLE_GROUP_TEMPLATE_ID:string = 'TEST-deviceProfiles-unlinkableGroup';
-const DEVICEPROFILES_FEATURE_GROUP_TEMPLATE_IDS:string[] = [DEVICEPROFILES_FEATURE_LINKABLE_GROUP_TEMPLATE_ID,DEVICEPROFILES_FEATURE_UNLINKABLE_GROUP_TEMPLATE_ID];
-const DEVICEPROFILES_FEATURE_DEVICE_PROFILE_IDS:string[] = ['TEST-deviceProfiles-type___TEST-deviceProfiles-profile', 'TEST-deviceProfiles-type___TEST-deviceProfiles-profile-invalid'];
+const DEVICEPROFILES_FEATURE_DEVICE_IDS = ['TEST-deviceProfiles-device001','TEST-deviceProfiles-device002','TEST-deviceProfiles-device003','TEST-deviceProfiles-device004'];
+const DEVICEPROFILES_FEATURE_LINKABLE_GROUP_1_PATH = '/TEST-deviceProfiles-linkableGroup001';
+const DEVICEPROFILES_FEATURE_LINKABLE_GROUP_2_PATH = '/TEST-deviceProfiles-linkableGroup002';
+const DEVICEPROFILES_FEATURE_GROUP_PATHS = [DEVICEPROFILES_FEATURE_LINKABLE_GROUP_1_PATH, DEVICEPROFILES_FEATURE_LINKABLE_GROUP_2_PATH];
+const DEVICEPROFILES_FEATURE_DEVICE_TEMPLATE_IDS = ['TEST-deviceProfiles-type'];
+const DEVICEPROFILES_FEATURE_LINKABLE_GROUP_TEMPLATE_ID = 'TEST-deviceProfiles-linkableGroup';
+const DEVICEPROFILES_FEATURE_UNLINKABLE_GROUP_TEMPLATE_ID = 'TEST-deviceProfiles-unlinkableGroup';
+const DEVICEPROFILES_FEATURE_GROUP_TEMPLATE_IDS = [DEVICEPROFILES_FEATURE_LINKABLE_GROUP_TEMPLATE_ID,DEVICEPROFILES_FEATURE_UNLINKABLE_GROUP_TEMPLATE_ID];
+const DEVICEPROFILES_FEATURE_DEVICE_PROFILE_IDS = ['TEST-deviceProfiles-type___TEST-deviceProfiles-profile', 'TEST-deviceProfiles-type___TEST-deviceProfiles-profile-invalid'];
 
-const GROUPPROFILES_FEATURE_GROUP_PATHS:string[] = ['/test-groupprofiles-group001','/test-groupprofiles-group002','/test-groupprofiles-group003','/test-groupprofiles-group004','/test-groupprofiles-group005'];
-const GROUPPROFILES_FEATURE_GROUP_TEMPLATE_IDS:string[] = ['TEST-groupProfiles-type'];
-const GROUPPROFILES_FEATURE_GROUP_PROFILE_IDS:string[] = ['TEST-groupProfiles-type___TEST-groupProfiles-profile', 'TEST-groupProfiles-type___TEST-groupProfiles-profile-invalid'];
+const GROUPPROFILES_FEATURE_GROUP_PATHS = ['/test-groupprofiles-group001','/test-groupprofiles-group002','/test-groupprofiles-group003','/test-groupprofiles-group004','/test-groupprofiles-group005'];
+const GROUPPROFILES_FEATURE_GROUP_TEMPLATE_IDS = ['TEST-groupProfiles-type'];
+const GROUPPROFILES_FEATURE_GROUP_PROFILE_IDS = ['TEST-groupProfiles-type___TEST-groupProfiles-profile', 'TEST-groupProfiles-type___TEST-groupProfiles-profile-invalid'];
 
-const GROUPS_FEATURES_GROUP_PATHS:string[] = ['/TEST-groups-group001','/TEST-groups-group002','/TEST-groups-group003','/TEST-groups-group004'];
-const GROUP_FEATURES_GROUP_TEMPLATE_IDS:string[] = ['TEST-groups-groupTemplate001','TEST-groups-groupTemplate002'];
+const GROUPS_FEATURES_GROUP_PATHS = ['/TEST-groups-group001','/TEST-groups-group002','/TEST-groups-group003','/TEST-groups-group004'];
+const GROUP_FEATURES_GROUP_TEMPLATE_IDS = ['TEST-groups-groupTemplate001','TEST-groups-groupTemplate002'];
 
-const GROUPS_LITE_FEATURES_GROUP_PATHS:string[] = ['TEST-groups-group001'];
+const GROUPS_LITE_FEATURES_GROUP_PATHS = ['TEST-groups-group001'];
 
-const GROUPMEMBERS_FEATURE_GROUP_TEMPLATE_IDS:string[] = ['TEST-groupMembers-group'];
+const GROUPMEMBERS_FEATURE_GROUP_TEMPLATE_IDS = ['TEST-groupMembers-group'];
 const GROUPMEMBERS_FEATURE_LINKABLE_DEVICE_TEMPLATE_ID_A = 'TEST-groupMembers-deviceLinkableToGroupA';
 const GROUPMEMBERS_FEATURE_LINKABLE_DEVICE_TEMPLATE_ID_B = 'TEST-groupMembers-deviceLinkableToGroupB';
 const GROUPMEMBERS_FEATURE_NOTLINKABLE_DEVICE_TEMPLATE_ID = 'TEST-groupMembers-deviceNotLinkableToGroup';
-const GROUPMEMBERS_FEATURE_DEVICE_TEMPLATE_IDS:string[] = [GROUPMEMBERS_FEATURE_LINKABLE_DEVICE_TEMPLATE_ID_A, GROUPMEMBERS_FEATURE_LINKABLE_DEVICE_TEMPLATE_ID_B, GROUPMEMBERS_FEATURE_NOTLINKABLE_DEVICE_TEMPLATE_ID];
-const GROUPMEMBERS_FEATURE_GROUP_PATHS:string[] = ['/test-groupmembers-parent/child1','/test-groupmembers-parent/child2','/test-groupmembers-parent'];
-const GROUPMEMBERS_FEATURE_DEVICE_IDS:string[] = ['TEST-groupMembers-device001','TEST-groupMembers-device002','TEST-groupMembers-device003'];
+const GROUPMEMBERS_FEATURE_DEVICE_TEMPLATE_IDS = [GROUPMEMBERS_FEATURE_LINKABLE_DEVICE_TEMPLATE_ID_A, GROUPMEMBERS_FEATURE_LINKABLE_DEVICE_TEMPLATE_ID_B, GROUPMEMBERS_FEATURE_NOTLINKABLE_DEVICE_TEMPLATE_ID];
+const GROUPMEMBERS_FEATURE_GROUP_PATHS = ['/test-groupmembers-parent/child1','/test-groupmembers-parent/child2','/test-groupmembers-parent'];
+const GROUPMEMBERS_FEATURE_DEVICE_IDS = ['TEST-groupMembers-device001','TEST-groupMembers-device002','TEST-groupMembers-device003'];
 
 const GROUPMEMBERS_LITE_FEATURE_DEVICE_TEMPLATE_ID_A = 'TEST-groupMembers-deviceTypeA-012';
 const GROUPMEMBERS_LITE_FEATURE_DEVICE_TEMPLATE_ID_B = 'TEST-groupMembers-deviceTypeB-012';
-const GROUPMEMBERS_LITE_FEATURE_DEVICE_TEMPLATE_IDS:string[] = [GROUPMEMBERS_LITE_FEATURE_DEVICE_TEMPLATE_ID_A,GROUPMEMBERS_LITE_FEATURE_DEVICE_TEMPLATE_ID_B];
-const GROUPMEMBERS_LITE_FEATURE_GROUP_PATHS:string[] = ['child1','child2','TEST-groupMembers-parent'];
+const GROUPMEMBERS_LITE_FEATURE_DEVICE_TEMPLATE_IDS = [GROUPMEMBERS_LITE_FEATURE_DEVICE_TEMPLATE_ID_A,GROUPMEMBERS_LITE_FEATURE_DEVICE_TEMPLATE_ID_B];
+const GROUPMEMBERS_LITE_FEATURE_GROUP_PATHS = ['child1','child2','TEST-groupMembers-parent'];
 
 const DEVICESEARCH_FEATURES_DEVICE_ID_1A = 'TEST-deviceSearch-001A';
 const DEVICESEARCH_FEATURES_DEVICE_ID_1B = 'TEST-deviceSearch-001B';
