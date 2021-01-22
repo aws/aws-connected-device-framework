@@ -15,6 +15,8 @@ import { DevicesService, GroupsService, ASSTLIBRARY_CLIENT_TYPES, SearchService,
 import { PROVISIONING_CLIENT_TYPES, ThingsService, BulkProvisionThingsRequest } from '@cdf/provisioning-client';
 import config from 'config';
 import { CommandsDao } from '../commands.dao';
+import { CommandsValidator } from '../commands.validator';
+import { TemplateModel } from '../../templates/templates.models';
 
 @injectable()
 export class StartJobAction implements WorkflowAction {
@@ -23,6 +25,7 @@ export class StartJobAction implements WorkflowAction {
     private _s3: AWS.S3;
 
     constructor(
+        @inject(TYPES.CommandsValidator) private commandsValidator: CommandsValidator,
         @inject(TYPES.TemplatesService) private templatesService: TemplatesService,
         @inject(TYPES.CommandsDao) private commandsDao: CommandsDao,
         @inject(ASSTLIBRARY_CLIENT_TYPES.DevicesService) private assetLibraryDeviceClient: DevicesService,
@@ -42,30 +45,25 @@ export class StartJobAction implements WorkflowAction {
     async execute(existing:CommandModel, updated:CommandModel): Promise<boolean> {
         logger.debug(`workflow.startjob execute: existing:${JSON.stringify(existing)}, updated:${JSON.stringify(updated)}`);
 
-        // merge the existing with the updated
-        const merged = {...existing, ...updated};
-        logger.debug(`workflow.startjob execute: merged: ${JSON.stringify(merged)}`);
+        const [merged,template] = await this.buildCommand(existing, updated);
 
-        // retrieve the template for the command
-        const template = await this.templatesService.get(merged.templateId);
+        // validate the merged document
+        this.commandsValidator.validate(merged);
 
         if (template.requiredDocumentParameters !== undefined ) {
-            template.requiredDocumentParameters.forEach(key=> {
-
+            for(const key of template.requiredDocumentParameters) {
                 // validation: check we have all document parameters required by the template defined for the command
                 if (merged.documentParameters===undefined || !Object.prototype.hasOwnProperty.call(merged.documentParameters,key)) {
                     throw new Error(`MISSING_REQUIRED_DOCUMENT_PARAMETER: ${key}`);
                 }
-
                 // replace any required document parameters in the job document with the command files
                 const token = `\${cdf:parameter:${key}}`;
                 template.document = template.document.replace(token, merged.documentParameters[key]);
-            });
+            }
         }
 
         // validation: check we have all files required by the template defined for the command
         if (template.requiredFiles !== undefined && template.requiredFiles.length>0 ) {
-
             for (const key of template.requiredFiles ) {
                 const s3Key = `${this.s3Prefix}${merged.commandId}/files/${key}`;
                 const s3Params = {
@@ -92,29 +90,11 @@ export class StartJobAction implements WorkflowAction {
         jsonDoc.operation = template.operation;
         template.document = JSON.stringify(jsonDoc);
 
-        logger.debug(`workflow.startjob execute: template.document: ${template.document}`);
-
         // build the target list
         const jobTargets = await this.buildTargetList(merged.commandId, merged.targets, merged.targetQuery);
 
         // create the AWS IoT job
-        const jobId = `cdf-${merged.commandId}`;
-        const params: AWS.Iot.CreateJobRequest = {
-            jobId,
-            targets: jobTargets,
-            document: template.document,
-            presignedUrlConfig: {
-                expiresInSec: template.presignedUrlExpiresInSeconds,
-                roleArn: this.s3RoleArn
-            },
-            targetSelection: merged.type
-        };
-
-        if (merged.rolloutMaximumPerMinute!==undefined) {
-            params.jobExecutionsRolloutConfig = {
-                maximumPerMinute: merged.rolloutMaximumPerMinute
-            };
-        }
+        const params = this.assembleCreateJobRequest(jobTargets, template, merged);
 
         try {
             await this._iot.createJob(params).promise();
@@ -122,7 +102,7 @@ export class StartJobAction implements WorkflowAction {
             throw new Error(`AWS IoT job creation failed: ${(<AWS.AWSError>err).message}`);
         }
 
-        updated.jobId=jobId;
+        updated.jobId=params.jobId;
 
         // save the updated job info
         await this.commandsDao.update(updated);
@@ -166,7 +146,7 @@ export class StartJobAction implements WorkflowAction {
                 if (searchResults.pagination!==undefined) {
                     const offset = searchResults.pagination.offset;
                     const count = searchResults.pagination.count;
-                    searchResults = await this.assetLibrarySearchClient.search(targetQuery, offset, count );
+                    searchResults = await this.assetLibrarySearchClient.search(targetQuery, offset+count );
                 } else {
                     searchResults.results=[];
                 }
@@ -302,6 +282,66 @@ export class StartJobAction implements WorkflowAction {
 
     private isDevice(arg: unknown): arg is Device10Resource {
         return arg && arg['deviceId'] && typeof(arg['deviceId']) === 'string';
+    }
+
+
+    private async buildCommand(existing:CommandModel, updated:CommandModel) : Promise<[CommandModel, TemplateModel]> {
+        logger.debug(`workflow.startjob buildCommand: existing:${JSON.stringify(existing)}, updated:${JSON.stringify(updated)}`);
+
+        // merge the existing command with the updated
+        const merged:CommandModel = {...existing, ...updated};
+
+        // retrieve the template for the command
+        const template = await this.templatesService.get(merged.templateId);
+        
+        // merge template config (command config overrides template config)
+        if (merged.abortConfig) {
+            merged.abortConfig = {...template.abortConfig, ...merged.abortConfig};
+        } else {
+            merged.abortConfig = template.abortConfig;
+        }
+        if (merged.jobExecutionsRolloutConfig) {
+            merged.jobExecutionsRolloutConfig = {...template.jobExecutionsRolloutConfig, ...merged.jobExecutionsRolloutConfig};
+        } else {
+            merged.jobExecutionsRolloutConfig = template.jobExecutionsRolloutConfig;
+        }
+        if (merged.timeoutConfig) {
+            merged.timeoutConfig = {...template.timeoutConfig, ...merged.timeoutConfig};
+        } else {
+            merged.timeoutConfig = template.timeoutConfig;
+        }
+        logger.debug(`workflow.startjob buildCommand: exit: ${JSON.stringify([merged, template])}`);
+        return [merged,template];
+    }
+
+    private assembleCreateJobRequest(jobTargets:string[], template:TemplateModel, command:CommandModel) : AWS.Iot.CreateJobRequest {
+        logger.debug(`workflow.startjob assembleCreateJobRequest: in: jobTargets:${JSON.stringify(jobTargets)}, template:${JSON.stringify(template)}, command:${JSON.stringify(jobTargets)}`);
+        const params: AWS.Iot.CreateJobRequest = {
+            jobId: `cdf-${command.commandId}`,
+            targets: jobTargets,
+            document: template.document,
+            targetSelection: command.type
+        };
+
+        if (template.presignedUrlExpiresInSeconds) {
+            params.presignedUrlConfig = {
+                expiresInSec: template.presignedUrlExpiresInSeconds,
+                roleArn: this.s3RoleArn
+            }
+        }
+
+        if (command.abortConfig) {
+            params.abortConfig = command.abortConfig;
+        }
+        if (command.jobExecutionsRolloutConfig) {
+            params.jobExecutionsRolloutConfig = command.jobExecutionsRolloutConfig;
+        }
+        if (command.timeoutConfig) {
+            params.timeoutConfig = command.timeoutConfig;
+        }
+
+        logger.debug(`workflow.startjob assembleCreateJobRequest: exit: ${JSON.stringify(params)}`);
+        return params;
     }
 
 }

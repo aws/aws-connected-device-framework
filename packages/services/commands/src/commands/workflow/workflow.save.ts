@@ -9,17 +9,19 @@ import { CommandModel } from '../commands.models';
 import { CommandsDao } from '../commands.dao';
 import { logger } from '../../utils/logger';
 import { injectable, inject } from 'inversify';
+import { CommandsValidator } from '../commands.validator';
 
 @injectable()
 export class SaveAction implements WorkflowAction {
 
     constructor(
+        @inject(TYPES.CommandsValidator) private commandsValidator: CommandsValidator,
         @inject(TYPES.CommandsDao) private commandsDao: CommandsDao) {}
 
     async execute(existing:CommandModel, updated:CommandModel): Promise<boolean> {
         logger.debug(`workflow.save execute: existing:${JSON.stringify(existing)}, updated:${JSON.stringify(updated)}`);
 
-        // TODO: validation
+        this.commandsValidator.validate(updated);
 
         // save the updated job info
         await this.commandsDao.update(updated);

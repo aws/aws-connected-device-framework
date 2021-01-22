@@ -367,6 +367,15 @@ definitions:
           type: string
       presignedUrlExpiresInSeconds:
         type: integer
+      abortConfig:
+        schema:
+          $ref: '#/definitions/AbortConfig'
+      jobExecutionsRolloutConfig:
+        schema:
+          $ref: '#/definitions/JobExecutionsRolloutConfig'
+      timeoutConfig:
+        schema:
+          $ref: '#/definitions/TimeoutConfig'
 
   TemplateList:
     type: object
@@ -530,10 +539,17 @@ definitions:
       type:
         type: string
         enum: [SNAPSHOT, CONTINUOUS]
-      rolloutMaximumPerMinute:
-        format: integer
       jobId:
         type: string
+      abortConfig:
+        schema:
+          $ref: '#/definitions/AbortConfig'
+      jobExecutionsRolloutConfig:
+        schema:
+          $ref: '#/definitions/JobExecutionsRolloutConfig'
+      timeoutConfig:
+        schema:
+          $ref: '#/definitions/TimeoutConfig'
 
   File:
     type: object
@@ -600,10 +616,52 @@ definitions:
         items:
           $ref: '#/definitions/ExecutionSummary'
         
-      
-        
-        
-      
+  JobExecutionsRolloutConfig:
+    type: object
+    properties:
+      maximumPerMinute:
+        type: integer
+      exponentialRate:
+        type: object
+        properties:
+          baseRatePerMinute:
+            type: integer
+          incrementFactor:
+            type: integer
+          rateIncreaseCriteria:
+            type: object
+            properties:
+              numberOfNotifiedThings:
+                type: integer
+              numberOfSucceededThings:
+                type: integer
+
+  AbortConfig:
+    type: object
+    properties:
+      criteriaList:
+        type: array
+        items:
+          $ref: '#/definitions/AbortConfigCriteria'
+
+  AbortConfigCriteria:
+    type: object
+    properties:
+      failureType:
+        type: string
+      action:
+        type: string
+      thresholdPercentage:
+        type: number
+      minNumberOfExecutedThings:
+        type: integer
+
+  TimeoutConfig:
+    type: object
+    properties:
+      inProgressTimeoutInMinutes:
+        type: integer
+
   Error:
     type: object
     properties:

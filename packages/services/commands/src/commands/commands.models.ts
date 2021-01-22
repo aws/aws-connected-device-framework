@@ -20,8 +20,40 @@ export interface CommandModel extends CommandSummaryModel {
 	jobParameters?: {[key:string]:string};
 	files?: {[key:string]:S3FileModel};
 	type:CommandType;
-	rolloutMaximumPerMinute?:number;
 	jobId?:string;
+	
+	rolloutMaximumPerMinute?:number;
+	jobExecutionsRolloutConfig?: JobExecutionsRolloutConfig;
+	abortConfig?: AbortConfig;
+	timeoutConfig?: TimeoutConfig;
+}
+
+export interface JobExecutionsRolloutConfig {
+	maximumPerMinute: number;
+	exponentialRate: {
+		baseRatePerMinute: number;
+		incrementFactor: number;
+		rateIncreaseCriteria: {
+			numberOfNotifiedThings: number;
+			numberOfSucceededThings: number;
+		}
+
+	}
+}
+
+export interface AbortConfigCriteria {
+	failureType: 'FAILED'|'REJECTED'|'TIMED_OUT'|'ALL';
+	action: 'CANCEL';
+	thresholdPercentage: number;
+	minNumberOfExecutedThings: number;
+}
+
+export interface AbortConfig {
+	criteriaList: AbortConfigCriteria[];
+}
+
+export interface TimeoutConfig {
+	inProgressTimeoutInMinutes: number;
 }
 
 export interface S3FileModel {

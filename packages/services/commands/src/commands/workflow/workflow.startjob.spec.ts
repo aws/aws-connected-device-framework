@@ -14,6 +14,7 @@ import { StartJobAction, TargetType } from './workflow.startjob';
 import AWS from 'aws-sdk';
 import { CommandsDao } from '../commands.dao';
 import { mock } from 'jest-mock-extended';
+import { CommandsValidator } from '../commands.validator';
 
 let mockedTemplatesService: jest.Mocked<TemplatesService>;
 let mockedCommandsDao: jest.Mocked<CommandsDao>;
@@ -21,6 +22,7 @@ let mockedAssetLibraryDevicesService: jest.Mocked<DevicesService>;
 let mockedAssetLibraryGroupsService: jest.Mocked<GroupsService>;
 let mockedAssetLibrarySearchService: jest.Mocked<SearchService>;
 let mockedProvisioningThingsService: jest.Mocked<ThingsService>;
+let mockedValidator: jest.Mocked<CommandsValidator>;
 let instance: StartJobAction;
 let mockedIot: AWS.Iot;
 let mockedS3: AWS.S3;
@@ -28,6 +30,7 @@ let mockedS3: AWS.S3;
 describe('StartJobAction', () => {
 
     beforeEach(() => {
+        mockedValidator = createMockInstance(CommandsValidator);
         mockedTemplatesService = createMockInstance(TemplatesService);
         mockedCommandsDao = createMockInstance(CommandsDao);
         mockedAssetLibraryDevicesService = mock<DevicesService>();
@@ -49,7 +52,7 @@ describe('StartJobAction', () => {
         const s3RoleArn='';
         const maxTargets=128;
 
-        instance = new StartJobAction(mockedTemplatesService, mockedCommandsDao, mockedAssetLibraryDevicesService,
+        instance = new StartJobAction(mockedValidator, mockedTemplatesService, mockedCommandsDao, mockedAssetLibraryDevicesService,
             mockedAssetLibraryGroupsService, mockedAssetLibrarySearchService, mockedProvisioningThingsService, s3Bucket, s3Prefix, s3RoleArn, maxTargets,
             mockedS3Factory, mockedIotFactory);
     });

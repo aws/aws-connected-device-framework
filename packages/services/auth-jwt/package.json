@@ -27,7 +27,7 @@
     "jsonwebtoken": "8.5.1",
     "jwk-to-pem": "2.0.4",
     "logform": "2.1.2",
-    "ow": "0.15.0",
+    "ow": "0.23.0",
     "reflect-metadata": "0.1.13",
     "uuid": "8.3.2",
     "readable-stream": "2.3.6",

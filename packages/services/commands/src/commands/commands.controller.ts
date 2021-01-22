@@ -27,7 +27,9 @@ export class CommandsController implements interfaces.Controller {
         try {
             const commandId = await this.commandsService.create(model);
 
-            res.status(201).location(`/commands/${commandId}`);
+            res.status(201)
+                .location(`/commands/${commandId}`)
+                .setHeader('x-commandId', commandId);
 
         } catch (e) {
             handleError(e,res);

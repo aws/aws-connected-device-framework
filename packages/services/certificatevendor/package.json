@@ -29,7 +29,7 @@
     "inversify-binding-decorators": "4.0.0",
     "js-yaml": "3.13.1",
     "logform": "2.1.2",
-    "ow": "0.15.0",
+    "ow": "0.23.0",
     "pem": "1.14.4",
     "reflect-metadata": "0.1.13",
     "readable-stream": "2.3.6",

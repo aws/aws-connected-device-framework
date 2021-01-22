@@ -111,7 +111,7 @@ dependencies:
   node-cache: 5.1.2
   nodemon: 2.0.6
   nyc: 15.1.0_supports-color@8.0.0
-  ow: 0.15.0
+  ow: 0.23.0
   pem: 1.14.4
   prettyjson: 1.2.1
   readable-stream: 2.3.6
@@ -761,6 +761,12 @@ packages:
       node: '>=6'
     resolution:
       integrity: sha512-9NET910DNaIPngYnLLPeg+Ogzqsi9uM4mSboU5y6p8S5DzMTVEsJZrawi+BoDNUVBa2DhJqQYUFvMDfgU062LQ==
+  /@sindresorhus/is/4.0.0:
+    dev: false
+    engines:
+      node: '>=10'
+    resolution:
+      integrity: sha512-FyD2meJpDPjyNQejSjvnhpgI/azsQkA4lGbuu5BQZfjvJ9cbRZXzeWL2HceCekW4lixO9JPesIIQkSoLjeJHNQ==
   /@sinonjs/commons/1.8.1:
     dependencies:
       type-detect: 4.0.8
@@ -937,12 +943,29 @@ packages:
     dev: false
     resolution:
       integrity: sha512-hGGiDMatRhcRF2F0EsxSX93iKQJom6No2RwwCm/dvVtNt6FMuq+A/Y4qUZZGqIjqe0LE/jN0wzW86yDFSJwn7A==
+  /@types/express-serve-static-core/4.17.18:
+    dependencies:
+      '@types/node': 14.14.14
+      '@types/qs': 6.9.5
+      '@types/range-parser': 1.2.3
+    dev: false
+    resolution:
+      integrity: sha512-m4JTwx5RUBNZvky/JJ8swEJPKFd8si08pPF2PfizYjGZOKr/svUWPcoUmLow6MmPzhasphB7gSTINY67xn3JNA==
   /@types/express-version-request/1.7.1:
     dependencies:
       '@types/express': 4.17.9
     dev: false
     resolution:
       integrity: sha512-PtcUl+R6IjcZxYV/esmBKtyQO15zl06eBAdOaz9I6zFClp7aitDm/dlcbWaRkwtnwK6oZPapmahWw3z8KkxoBA==
+  /@types/express/4.17.11:
+    dependencies:
+      '@types/body-parser': 1.19.0
+      '@types/express-serve-static-core': 4.17.18
+      '@types/qs': 6.9.5
+      '@types/serve-static': 1.13.8
+    dev: false
+    resolution:
+      integrity: sha512-no+R6rW60JEc59977wIxreQVsIEOAYwgCqldrA/vkpCnbD7MqTefO97lmoBe4WE0F156bC4uLSP1XHDOySnChg==
   /@types/express/4.17.9:
     dependencies:
       '@types/body-parser': 1.19.0
@@ -2819,6 +2842,14 @@ packages:
       node: '>=8'
     resolution:
       integrity: sha512-QM8q3zDe58hqUqjraQOmzZ1LIH9SWQJTlEKCH4kJ2oQvLZk7RbQXvtDM2XEq3fwkV9CCvvH4LA0AV+ogFsBM2Q==
+  /dot-prop/6.0.1:
+    dependencies:
+      is-obj: 2.0.0
+    dev: false
+    engines:
+      node: '>=10'
+    resolution:
+      integrity: sha512-tE7ztYzXHIeyvc7N+hR3oi7FIbf/NIjVP9hmAt3yMXzrQ072/fpjGLx2GxNxGxUl5V73MEqYzioOMoVhGMJ5cA==
   /dot/1.1.3:
     dev: false
     engines:
@@ -4279,7 +4310,7 @@ packages:
       integrity: sha512-r8au/oH3vS7ttHj0RivAznwElySeRohLfg8lvOSzbrX6abf/8ik8ptk49XbzdShgrnalvl7CM6MjcskfM7MMqQ==
   /inversify-express-utils/6.3.2:
     dependencies:
-      '@types/express': 4.17.9
+      '@types/express': 4.17.11
       express: 4.16.2
       http-status-codes: 1.4.0
       inversify: 5.0.5
@@ -5517,6 +5548,10 @@ packages:
     dev: false
     resolution:
       integrity: sha1-bC4XHbKiV82WgC/UOwGyDV9YcPY=
+  /lodash.isequal/4.5.0:
+    dev: false
+    resolution:
+      integrity: sha1-QVxEePK8wwEgwizhDtMib30+GOA=
   /lodash.isinteger/4.0.4:
     dev: false
     resolution:
@@ -6269,14 +6304,19 @@ packages:
       node: '>=0.10.0'
     resolution:
       integrity: sha1-u+Z0BseaqFxc/sdm/lc0VV36EnQ=
-  /ow/0.15.0:
+  /ow/0.23.0:
     dependencies:
-      type-fest: 0.8.1
+      '@sindresorhus/is': 4.0.0
+      callsites: 3.1.0
+      dot-prop: 6.0.1
+      lodash.isequal: 4.5.0
+      type-fest: 0.20.2
+      vali-date: 1.0.0
     dev: false
     engines:
-      node: '>=8'
+      node: '>=10'
     resolution:
-      integrity: sha512-iHHqr8OXsZzBjUkOVxfSR8opBhEhdQUGE4mxZEWehQawHxhCcnnGXrfu6+HhLG3XTK+oHRD/dlfGwNdY9HTHxQ==
+      integrity: sha512-aAM7+00uoPXPIE1cmyh/3WJpzu2vihxymGYjpZl/MZ0OsCgVizJbCD4B5gm+/iMHvOmbdDCEIqtvSMqS9DLYcQ==
   /p-cancelable/1.1.0:
     dev: false
     engines:
@@ -8040,6 +8080,12 @@ packages:
       node: '>=8'
     resolution:
       integrity: sha512-OdjXJxnCN1AvyLSzeKIgXTXxV+99ZuXl3Hpo9XpJAv9MBcHrrJOQ5kV7ypXOuQie+AmWG25hLbiKdwYTifzcfQ==
+  /type-fest/0.20.2:
+    dev: false
+    engines:
+      node: '>=10'
+    resolution:
+      integrity: sha512-Ne+eE4r0/iWnpAxD852z3A+N0Bt5RN//NjJwRd2VFHEmrywxf5vsZlh4R6lixl6B+wz/8d+maTSAkN1FIkI3LQ==
   /type-fest/0.3.1:
     dev: false
     engines:
@@ -8272,6 +8318,12 @@ packages:
       node: '>=10.10.0'
     resolution:
       integrity: sha512-fLL2rFuQpMtm9r8hrAV2apXX/WqHJ6+IC4/eQVdMDGBUgH/YMV4Gv3duk3kjmyg6uiQWBAA9nJwue4iJUOkHeA==
+  /vali-date/1.0.0:
+    dev: false
+    engines:
+      node: '>=0.10.0'
+    resolution:
+      integrity: sha1-G5BKWWCfsyjvB4E4Qgk09rhnCaY=
   /validate-npm-package-license/3.0.4:
     dependencies:
       spdx-correct: 3.1.1
@@ -8575,7 +8627,7 @@ packages:
       logform: 2.1.2
       nodemon: 2.0.6
       nyc: 15.1.0_supports-color@8.0.0
-      ow: 0.15.0
+      ow: 0.23.0
       readable-stream: 2.3.6
       reflect-metadata: 0.1.13
       shx: 0.3.3
@@ -8590,7 +8642,7 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-Ubnd2wO6WwYktm9kR/Xzak+Tz8ONUZC/xNDwCCKR7ZNSbhLXDprzPO6Vytjezr43N9AKYrHVcrgAqZHp8DgWVQ==
+      integrity: sha512-w4SKgH0WJZGydT3CHuyrn02IaoFzCnxSK0qTCbp3l6I4T1WPSNFo/vcV+f0kuYUjoDfS+w6KVk6b0Jtr/E7B8Q==
       tarball: 'file:projects/assetlibrary-client.tgz'
     version: 0.0.0
   'file:projects/assetlibrary-history.tgz_supports-color@8.0.0':
@@ -8629,7 +8681,7 @@ packages:
       morgan: 1.10.0
       nodemon: 2.0.6
       nyc: 15.1.0_supports-color@8.0.0
-      ow: 0.15.0
+      ow: 0.23.0
       readable-stream: 2.3.6
       reflect-metadata: 0.1.13
       serverless-http: 2.6.0
@@ -8644,7 +8696,7 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-NwXKJ9jZJPpu6pGk4g/wDeUZ3sBeOC6phHeO0/bCg/pS+HcIB3hkjHzWOHUClUa80eTo4jkFORVJ0/UYKCp4TQ==
+      integrity: sha512-RQ/c9CCl4Rvj5ppXZEXlk/5+hlzikLgHy7rFtSxGqFb8paSLZ5/ZyYNJv1Bjo03OCrHaQEfWfYUrjm4oaW03Vw==
       tarball: 'file:projects/assetlibrary-history.tgz'
     version: 0.0.0
   'file:projects/assetlibrary.tgz_supports-color@8.0.0':
@@ -8691,7 +8743,7 @@ packages:
       node-cache: 5.1.2
       nodemon: 2.0.6
       nyc: 15.1.0_supports-color@8.0.0
-      ow: 0.15.0
+      ow: 0.23.0
       prettyjson: 1.2.1
       readable-stream: 2.3.6
       reflect-metadata: 0.1.13
@@ -8707,7 +8759,7 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-hd1eAhNTdRLNzq46gMgyvN/kQewZCX3/pGvcULLcZmPiaJOXtmHlD4VFRB+6qDrde+5thgKFFs1Ox0jHT9nuLw==
+      integrity: sha512-CVs/lJSgo4QecX6UYCaEENem5S8zDPguqjDPzvQAnmxeQFbI8oYXsw8vMxek3kZlbpFVToxRlR2vW57qZwiZBA==
       tarball: 'file:projects/assetlibrary.tgz'
     version: 0.0.0
   'file:projects/assetlibraryhistory-client.tgz_supports-color@8.0.0':
@@ -8734,7 +8786,7 @@ packages:
       logform: 2.1.2
       nodemon: 2.0.6
       nyc: 15.1.0_supports-color@8.0.0
-      ow: 0.15.0
+      ow: 0.23.0
       readable-stream: 2.3.6
       reflect-metadata: 0.1.13
       shx: 0.3.3
@@ -8749,7 +8801,7 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-clNfncYH+wKVGpcKIJ2Ne3+Q74KrxPYThBIQKqBl3XglZw8Y0LgEx9SiwtoBiXgVOr1svjbuWYWOubrBzaFmpQ==
+      integrity: sha512-p6+WQl/KJzD6DVx/b1pzuM3HZGwEuXt43aPVxOiS7ULLCXPHnP8TzdPlRqeRjPP/WUUyBYc7+F24HtjNqp0XIw==
       tarball: 'file:projects/assetlibraryhistory-client.tgz'
     version: 0.0.0
   'file:projects/auth-devicecert.tgz_supports-color@8.0.0':
@@ -8813,7 +8865,7 @@ packages:
       logform: 2.1.2
       nodemon: 2.0.6
       nyc: 15.1.0_supports-color@8.0.0
-      ow: 0.15.0
+      ow: 0.23.0
       readable-stream: 2.3.6
       reflect-metadata: 0.1.13
       shx: 0.3.3
@@ -8828,7 +8880,7 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-Slsqm9w24Unq1dT3iw7CKsAYaEh1Zfm5mCU0/HPnIYpRuke4Ix2Y2/1KMM3p1NtmhPm2HqHPJHgbRnZVZMxVfg==
+      integrity: sha512-Ws1UOUUM9UR6qlDk6vnN9sbwXFTyVq98D7pXXZ22jbiIkXjFRyFYjv/rgmELvAK9B7++Eyc5/4fxlGLTyiLt3Q==
       tarball: 'file:projects/auth-jwt.tgz'
     version: 0.0.0
   'file:projects/bulkcerts.tgz_supports-color@8.0.0':
@@ -8868,7 +8920,7 @@ packages:
       logform: 2.1.2
       nodemon: 2.0.6
       nyc: 15.1.0_supports-color@8.0.0
-      ow: 0.15.0
+      ow: 0.23.0
       pem: 1.14.4
       readable-stream: 2.3.6
       reflect-metadata: 0.1.13
@@ -8884,7 +8936,7 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-vVoXSIZXH+E0bSSfFVbm+NMkMcADBr14hZpFVgEx0PfSKkTiCLr+9BXbtrc82+X9k3UaQnFSvHiMwEmkp+rLZg==
+      integrity: sha512-MpfoCYIelQXXV1dY88bikAD115/Ij9he4p7RoT+YyeU4UYe+j6EJusG4YiddjoxaQcaKs1qUVlW99cI/mQ6H5g==
       tarball: 'file:projects/bulkcerts.tgz'
     version: 0.0.0
   'file:projects/certificate-activator.tgz_supports-color@8.0.0':
@@ -8911,7 +8963,7 @@ packages:
       logform: 2.1.2
       nodemon: 2.0.6
       nyc: 15.1.0_supports-color@8.0.0
-      ow: 0.15.0
+      ow: 0.23.0
       pem: 1.14.4
       readable-stream: 2.3.6
       reflect-metadata: 0.1.13
@@ -8927,7 +8979,7 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-6QS5nmt+i8sgMIZoSCORD+QOxMrG17ZSGGfNRzfGtE9pzhyHjhUZX4GkbEXvhS1vsZpInAbAndWabFoAf7e9SA==
+      integrity: sha512-8MJWP7+P3YPK6BH0cCD+abneOsY1yro/TDxYt/3Q+lbwkvBod0M/gIEAMCrbAHGxVLlgNEp7l+1ySjxwMX4Zvg==
       tarball: 'file:projects/certificate-activator.tgz'
     version: 0.0.0
   'file:projects/certificate-vendor.tgz_supports-color@8.0.0':
@@ -8953,7 +9005,7 @@ packages:
       logform: 2.1.2
       nodemon: 2.0.6
       nyc: 15.1.0_supports-color@8.0.0
-      ow: 0.15.0
+      ow: 0.23.0
       pem: 1.14.4
       readable-stream: 2.3.6
       reflect-metadata: 0.1.13
@@ -8969,7 +9021,7 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-c0HuJAEQ69ZBnMt1zyzLu+DYwiTHYbJYRxmiJSUNgtAgVyA4Nzznd4fDbAJXMYzXzSupWVrz2zl/zPiBasDRbw==
+      integrity: sha512-nAfnD+vHeclTw9HokfLxvwn9EIgfjlwWWjY3l320V9Q5Klr9v7seJ+SdB9BasIPE4Lmel/ulZGptlOyayxF+Dw==
       tarball: 'file:projects/certificate-vendor.tgz'
     version: 0.0.0
   'file:projects/commands-client.tgz_supports-color@8.0.0':
@@ -8997,7 +9049,7 @@ packages:
       logform: 2.1.2
       nodemon: 2.0.6
       nyc: 15.1.0_supports-color@8.0.0
-      ow: 0.15.0
+      ow: 0.23.0
       readable-stream: 2.3.6
       reflect-metadata: 0.1.13
       shx: 0.3.3
@@ -9012,7 +9064,7 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-ub5rkVMUmX3bHIRHQu09drnG0qgzD14taITgkXG0weudmS2suxVS+1uQig3SPYQ5S2Yn7P6KDZJPxB+ZWXi99A==
+      integrity: sha512-PX9/5RdXdInUKfCZjCGfKyLDFRke0B9Dp4sVRh2KroUPe8+XedSGGpBkEx9TP8HewwR6drmJtOnwQICYncU9cw==
       tarball: 'file:projects/commands-client.tgz'
     version: 0.0.0
   'file:projects/commands.tgz':
@@ -9048,7 +9100,7 @@ packages:
       js-yaml: 3.13.1
       logform: 2.1.2
       nodemon: 2.0.6
-      ow: 0.15.0
+      ow: 0.23.0
       readable-stream: 2.3.6
       reflect-metadata: 0.1.13
       serverless-http: 2.6.0
@@ -9064,7 +9116,7 @@ packages:
     dev: false
     name: '@rush-temp/commands'
     resolution:
-      integrity: sha512-ksa03XgPNPwBYXaVV8o8CzU9ShS/qSw31KB8q87CXuoCeIY6DyqFeSXlMpFSSYdSV5ZvZWHWLv+w8VB5bhK5Iw==
+      integrity: sha512-NnQcafLOwZkV3aidv5nThSaje3O8aZDAD/kYXWsf/aj7M6qtzyNTepOmv65RAv0AIOnpTKo7eDsJm8xqz1LNxg==
       tarball: 'file:projects/commands.tgz'
     version: 0.0.0
   'file:projects/config-inject.tgz_supports-color@8.0.0':
@@ -9124,7 +9176,7 @@ packages:
       logform: 2.1.2
       nodemon: 2.0.6
       nyc: 15.1.0_supports-color@8.0.0
-      ow: 0.15.0
+      ow: 0.23.0
       readable-stream: 2.3.6
       reflect-metadata: 0.1.13
       shx: 0.3.3
@@ -9139,7 +9191,7 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-JcPyLvAlPsuWB30g7IuDfYBO0D12SKLO2a9mHqjftT8cOBH/24bSTcnaSm2CKxG5vS+aUaD+SjvG3vmP+A092g==
+      integrity: sha512-fnAbrLDEcM29ielunydr1MUmm+g+afCOrfqdlGliYBzpvLzpxve8ZHk+zmZPchYLSCr414EfESUIoaOL9O6CDg==
       tarball: 'file:projects/device-monitoring.tgz'
     version: 0.0.0
   'file:projects/errors.tgz_supports-color@8.0.0':
@@ -9197,7 +9249,7 @@ packages:
       logform: 2.1.2
       nodemon: 2.0.6
       nyc: 15.1.0_supports-color@8.0.0
-      ow: 0.15.0
+      ow: 0.23.0
       readable-stream: 2.3.6
       reflect-metadata: 0.1.13
       shx: 0.3.3
@@ -9212,7 +9264,7 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-yr6yqBDNCOK2IsJATTyvNCjTBtuyxbtpyDjfVrM2XNde2YrwG+3U1TalOaMpGi785VxNYKff+TUsov2KgKcS5w==
+      integrity: sha512-B8EFdSd55uvZ5P+bZQ2+P+m+Hl9D2ajR403QpZ+Oi0CVUFaQuRVdc2oWiqXyVgEWhruoqF48WmwoBvm+XGIgfA==
       tarball: 'file:projects/events-alerts.tgz'
     version: 0.0.0
   'file:projects/events-processor.tgz_supports-color@8.0.0':
@@ -9249,7 +9301,7 @@ packages:
       logform: 2.1.2
       nodemon: 2.0.6
       nyc: 15.1.0_supports-color@8.0.0
-      ow: 0.15.0
+      ow: 0.23.0
       readable-stream: 2.3.6
       reflect: 0.1.3
       reflect-metadata: 0.1.13
@@ -9267,7 +9319,7 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-quDeHyx46nAz6WaoWd/8+QO8VaLk1HoRMEtjYt1kPR4azOaY6w2G7yt3CQVbVirqzsu540xj9QD8aJZpYQKgQQ==
+      integrity: sha512-Rv56ZKONb5e3iT2bXavgvcyiiP0zo8owJ0Ov51Gg7s72fQXwQImOn0gu8uXBUNHZG2zbvQpeEGB4OxLX1PXwzQ==
       tarball: 'file:projects/events-processor.tgz'
     version: 0.0.0
   'file:projects/express-middleware.tgz_supports-color@8.0.0':
@@ -9344,7 +9396,7 @@ packages:
       node-cache: 5.1.2
       nodemon: 2.0.6
       nyc: 15.1.0_supports-color@8.0.0
-      ow: 0.15.0
+      ow: 0.23.0
       prettyjson: 1.2.1
       readable-stream: 2.3.6
       reflect-metadata: 0.1.13
@@ -9361,7 +9413,7 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-DTuUYNcEzO+pU8b/Bja835fXPV2ZyFh+6qMI0OIB4ayCEe3mvGJUtUPXMkIgzEp8AwDFX4xPO/Dhvrln5cG6nA==
+      integrity: sha512-MXfj3CUDpssiYOKteyZjIPlkXelkQuP8Uoov4npE4zx9+dAh7Sw+NyGquks90TaZ5x6m3t9ZHrb2/oCh9TGZUg==
       tarball: 'file:projects/greengrass-deployment.tgz'
     version: 0.0.0
   'file:projects/greengrass-provisioning-client.tgz_supports-color@8.0.0':
@@ -9389,7 +9441,7 @@ packages:
       logform: 2.1.2
       nodemon: 2.0.6
       nyc: 15.1.0_supports-color@8.0.0
-      ow: 0.15.0
+      ow: 0.23.0
       readable-stream: 2.3.6
       reflect-metadata: 0.1.13
       shx: 0.3.3
@@ -9404,7 +9456,7 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-hcomMbY7Gw2AaldGg5XxHJwmtEdLOmkhxxF7/w4tqkFAC2em4wus5DOBSxubSBjHn3AK9I15DCt+bzDmjK3DTQ==
+      integrity: sha512-2eoF50jaizAxeBPRNPMhpv96ALcoUAdnIX91d0tkoY6s3PiIlUe3oSBKGbmiYdC5rulzqGzP5Bi9yfiyRpkoRA==
       tarball: 'file:projects/greengrass-provisioning-client.tgz'
     version: 0.0.0
   'file:projects/greengrass-provisioning.tgz_supports-color@8.0.0':
@@ -9443,7 +9495,7 @@ packages:
       mime: 2.4.6
       nodemon: 2.0.6
       nyc: 15.1.0_supports-color@8.0.0
-      ow: 0.15.0
+      ow: 0.23.0
       prettyjson: 1.2.1
       readable-stream: 2.3.6
       reflect-metadata: 0.1.13
@@ -9461,7 +9513,7 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-qKqMaKgvf+dsN0WxtgDHcYvjbMa88ebwkqXRwQsMaOAxeVUgXZH8U9CzWe92Pd3cxCEIzmydkFG0a0I6srRwJw==
+      integrity: sha512-vCH3EAXxyhwsnoEfce3iZFqC/8n2YGadBZlhit4F+ZDqHZ9LAKQAzwd8WdE8DiQ0s5jBSyJuyCwFxlteQSTjUQ==
       tarball: 'file:projects/greengrass-provisioning.tgz'
     version: 0.0.0
   'file:projects/integration-tests.tgz_supports-color@8.0.0':
@@ -9606,7 +9658,7 @@ packages:
       logform: 2.1.2
       nodemon: 2.0.6
       nyc: 15.1.0_supports-color@8.0.0
-      ow: 0.15.0
+      ow: 0.23.0
       readable-stream: 2.3.6
       reflect-metadata: 0.1.13
       shx: 0.3.3
@@ -9621,7 +9673,7 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-7/3pxJbgz7ZX7aku454DnZAiqtwbR3qMjQOCuIhqFzlGx+im3AAWcQZ/xQOIZOtQ89osyVrFVq/uy8+es8Bcvw==
+      integrity: sha512-pX4GsE6VOFLNQK7oEFo50tekT8zwugdnWyXFTj1/P4nYd/HQG80slJeywG8KeE3ltvw9BnvZHsSSlpFSTPbKHA==
       tarball: 'file:projects/notifications-client.tgz'
     version: 0.0.0
   'file:projects/provisioning-client.tgz_supports-color@8.0.0':
@@ -9648,7 +9700,7 @@ packages:
       logform: 2.1.2
       nodemon: 2.0.6
       nyc: 15.1.0_supports-color@8.0.0
-      ow: 0.15.0
+      ow: 0.23.0
       readable-stream: 2.3.6
       reflect-metadata: 0.1.13
       shx: 0.3.3
@@ -9663,7 +9715,7 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-CUTHFG2VYsLaZQ0RGCXshhrUs9neTqaBc2ocN9854fkO6GFJt7Yzdfc/bJOHHviUyXvUHR6jePhDk1tWji2twQ==
+      integrity: sha512-Cyg/5MobwtdiEFvG94HB2/RkKKPKolA/84kHjBirRQDj/oWCr76UsQHo5KbnU1zB7USL+ICxEkV22Tl/9crpww==
       tarball: 'file:projects/provisioning-client.tgz'
     version: 0.0.0
   'file:projects/provisioning.tgz_supports-color@8.0.0':
@@ -9701,7 +9753,7 @@ packages:
       logform: 2.1.2
       nodemon: 2.0.6
       nyc: 15.1.0_supports-color@8.0.0
-      ow: 0.15.0
+      ow: 0.23.0
       pem: 1.14.4
       readable-stream: 2.3.6
       reflect-metadata: 0.1.13
@@ -9718,7 +9770,7 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-M31/py/YNslZOseHo4gGG2KoJZZX7dZNEC/8Gx49NozX27W+muwBkVnRzGg4M5IASn+UywvTZ0qja06yoOVfmg==
+      integrity: sha512-sxXSrhCiOu2hWuGuQYJmhT5pS9bCIOPjIgsyMaUeX/3Xlece8N3x5Ec7PZI6JwYf41+1AW7vbd1CbW4oNWX93g==
       tarball: 'file:projects/provisioning.tgz'
     version: 0.0.0
   'file:projects/request-queue.tgz_supports-color@8.0.0':
@@ -9881,7 +9933,7 @@ specifiers:
   node-cache: 5.1.2
   nodemon: 2.0.6
   nyc: 15.1.0
-  ow: 0.15.0
+  ow: 0.23.0
   pem: 1.14.4
   prettyjson: 1.2.1
   readable-stream: 2.3.6

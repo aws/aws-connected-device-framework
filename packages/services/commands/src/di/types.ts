@@ -10,9 +10,12 @@ export const TYPES = {
 
     TemplatesDao: Symbol.for('TemplatesDao'),
     TemplatesService: Symbol.for('TemplatesService'),
+    TemplatesValidator: Symbol.for('TemplatesValidator'),
 
     CommandsDao: Symbol.for('CommandsDao'),
     CommandsService: Symbol.for('CommandsService'),
+    CommandsValidator: Symbol.for('CommandsValidator'),
+    RolloutsValidator: Symbol.for('RolloutsValidator'),
 
     PresignedUrlsService: Symbol.for('PresignedUrlsService'),
 

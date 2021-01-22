@@ -27,6 +27,9 @@ import { StartJobAction } from '../commands/workflow/workflow.startjob';
 import { SaveAction } from '../commands/workflow/workflow.save';
 import { CreateAction } from '../commands/workflow/workflow.create';
 import { PresignedUrlsService } from '../presignedurls/presignedurls.service';
+import { CommandsValidator } from '../commands/commands.validator';
+import { TemplatesValidator } from '../templates/templates.validator';
+import { RolloutsValidator } from '../rollouts/rollouts.validator';
 
 // Load everything needed to the Container
 export const container = new Container();
@@ -43,9 +46,13 @@ container.bind<HttpHeaderUtils>(TYPES.HttpHeaderUtils).to(HttpHeaderUtils);
 
 container.bind<TemplatesDao>(TYPES.TemplatesDao).to(TemplatesDao);
 container.bind<TemplatesService>(TYPES.TemplatesService).to(TemplatesService);
+container.bind<TemplatesValidator>(TYPES.TemplatesValidator).to(TemplatesValidator);
 
 container.bind<CommandsDao>(TYPES.CommandsDao).to(CommandsDao);
 container.bind<CommandsService>(TYPES.CommandsService).to(CommandsService);
+container.bind<CommandsValidator>(TYPES.CommandsValidator).to(CommandsValidator);
+
+container.bind<RolloutsValidator>(TYPES.RolloutsValidator).to(RolloutsValidator);
 
 container.bind<PresignedUrlsService>(TYPES.PresignedUrlsService).to(PresignedUrlsService);
 

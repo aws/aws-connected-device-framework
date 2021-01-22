@@ -24,7 +24,9 @@ export class TemplatesController implements interfaces.Controller {
         try {
             await this.templatesService.create(template);
             const location = PathHelper.encodeUrl('templates', template.templateId);
-            res.status(201).location(location);
+            res.status(201)
+                .location(location)
+                .setHeader('x-templateId', template.templateId);
         } catch (e) {
             handleError(e,res);
         }

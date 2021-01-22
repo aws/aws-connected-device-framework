@@ -20,7 +20,7 @@
     "inversify-express-utils": "6.3.2",
     "js-yaml": "3.13.1",
     "logform": "2.1.2",
-    "ow": "0.15.0",
+    "ow": "0.23.0",
     "reflect-metadata": "0.1.13",
     "superagent": "6.1.0",
     "readable-stream": "2.3.6",

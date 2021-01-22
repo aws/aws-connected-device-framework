@@ -35,7 +35,7 @@
     "js-yaml": "3.13.1",
     "logform": "2.1.2",
     "morgan": "1.10.0",
-    "ow": "0.15.0",
+    "ow": "0.23.0",
     "reflect-metadata": "0.1.13",
     "readable-stream": "2.3.6",
     "serverless-http": "2.6.0",

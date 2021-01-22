@@ -67,7 +67,7 @@ export class CommandsDao {
     }
 
     private buildCommandModel(i: AWS.DynamoDB.DocumentClient.AttributeMap) : CommandModel {
-        const command = {
+        const command: CommandModel = {
             commandId: i['commandId'],
             description: i['description'],
             templateId: i['templateId'],
@@ -80,7 +80,10 @@ export class CommandsDao {
             jobParameters: i['jobParameters'],
             files: i['files'],
             type: i['type'],
-            rolloutMaximumPerMinute: i['rolloutMaximumPerMinute']
+            rolloutMaximumPerMinute: i['rolloutMaximumPerMinute'],
+            jobExecutionsRolloutConfig: i['jobExecutionsRolloutConfig'],
+            abortConfig: i['abortConfig'],
+            timeoutConfig: i['timeoutConfig']
         };
         return command;
     }
@@ -101,10 +104,22 @@ export class CommandsDao {
                 documentParameters:model.documentParameters,
                 jobParameters:model.jobParameters,
                 files:model.files,
-                type:model.type,
-                rolloutMaximumPerMinute:model.rolloutMaximumPerMinute
+                type:model.type
             }
         };
+
+        if (model.rolloutMaximumPerMinute) {
+            params.Item['rolloutMaximumPerMinute'] = model.rolloutMaximumPerMinute;
+        }
+        if (model.jobExecutionsRolloutConfig) {
+            params.Item['jobExecutionsRolloutConfig'] = model.jobExecutionsRolloutConfig;
+        }
+        if (model.abortConfig) {
+            params.Item['abortConfig'] = model.abortConfig;
+        }
+        if (model.timeoutConfig) {
+            params.Item['timeoutConfig'] = model.timeoutConfig;
+        }
 
         await this._dc.put(params).promise();
 

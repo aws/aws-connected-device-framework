@@ -15,6 +15,8 @@ import {v1 as uuid} from 'uuid';
 import * as fs from 'fs';
 import * as stream from 'stream';
 import * as util from 'util';
+import ow from 'ow';
+import { CommandsValidator } from './commands.validator';
 
 @injectable()
 export class CommandsService {
@@ -24,6 +26,7 @@ export class CommandsService {
     private _unlinkAsync = util.promisify(fs.unlink);
 
     constructor(
+        @inject(TYPES.CommandsValidator) private commandsValidator: CommandsValidator,
         @inject(TYPES.CommandsDao) private commandsDao: CommandsDao,
         @inject(TYPES.WorkflowFactory) private workflowFactory: WorkflowFactory,
         @inject('aws.s3.bucket') private s3Bucket: string,
@@ -106,13 +109,13 @@ export class CommandsService {
     public async create(command: CommandModel) : Promise<string> {
         logger.debug(`commands.service create: in: command: ${JSON.stringify(command)}`);
 
-        // TODO validation
-
         command.commandId = uuid();
         // if the command was created without specifying status then set it to DRAFT
         if (!Object.prototype.hasOwnProperty.call(command,'commandStatus')) {
             command.commandStatus = CommandStatus.DRAFT;
         }
+
+        this.commandsValidator.validate(command);
 
         // determine the action to take based on the status
         const actions:WorkflowAction[] = this.workflowFactory.getAction(null, command.commandStatus);
@@ -138,6 +141,11 @@ export class CommandsService {
 
     public async update(updated: CommandModel) : Promise<void> {
         logger.debug(`commands.service update: in: command: ${JSON.stringify(updated)}`);
+
+        ow(updated, ow.object.nonEmpty);
+        ow(updated.commandId, ow.string.nonEmpty);
+        ow(updated.commandStatus, ow.string.nonEmpty);
+
 
         // retrieve the existing command definition
         const existing = await this.commandsDao.get(updated.commandId);

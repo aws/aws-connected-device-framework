@@ -37,7 +37,7 @@
     "jszip": "3.5.0",
     "logform": "2.1.2",
     "mime": "2.4.6",
-    "ow": "0.15.0",
+    "ow": "0.23.0",
     "prettyjson": "1.2.1",
     "readable-stream": "2.3.6",
     "reflect-metadata": "0.1.13",

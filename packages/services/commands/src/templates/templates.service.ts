@@ -9,20 +9,20 @@ import {logger} from '../utils/logger';
 import { TemplateModel, TemplateListModel } from './templates.models';
 import { TemplatesDao } from './templates.dao';
 import ow from 'ow';
+import { TemplatesValidator } from './templates.validator';
 
 @injectable()
 export class TemplatesService {
 
-    constructor( @inject(TYPES.TemplatesDao) private templatesDao: TemplatesDao ) {}
+    constructor( 
+        @inject(TYPES.TemplatesValidator) private validator:TemplatesValidator,
+        @inject(TYPES.TemplatesDao) private templatesDao: TemplatesDao ) {}
 
     public async create(model: TemplateModel) : Promise<void> {
         logger.debug(`templates.service create: in: model: ${JSON.stringify(model)}`);
 
         // validation
-        ow(model, ow.object.nonEmpty);
-        ow(model.templateId, ow.string.nonEmpty);
-        ow(model.operation, ow.string.nonEmpty);
-        ow(model.document, ow.string.nonEmpty);
+        this.validator.validate(model);
 
         // Save to datastore
         await this.templatesDao.create(model);

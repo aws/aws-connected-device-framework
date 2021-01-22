@@ -39,6 +39,19 @@ export class TemplatesDao {
             ConditionExpression: 'attribute_not_exists(templateId)'
         };
 
+        if (model.rolloutMaximumPerMinute) {
+            params.Item['rolloutMaximumPerMinute'] = model.rolloutMaximumPerMinute;
+        }
+        if (model.jobExecutionsRolloutConfig) {
+            params.Item['jobExecutionsRolloutConfig'] = model.jobExecutionsRolloutConfig;
+        }
+        if (model.abortConfig) {
+            params.Item['abortConfig'] = model.abortConfig;
+        }
+        if (model.timeoutConfig) {
+            params.Item['timeoutConfig'] = model.timeoutConfig;
+        }
+
         await this._dc.put(params).promise();
 
         logger.debug(`templates.dao create: exit:`);
@@ -91,7 +104,7 @@ export class TemplatesDao {
             logger.debug('templates.dao get: exit: template:undefined');
             return undefined;
         }
-        const template = {
+        const template:TemplateModel = {
             templateId: response.Item['templateId'],
             operation: response.Item['operation'],
             description: response.Item['description'],
@@ -101,6 +114,15 @@ export class TemplatesDao {
             allowFileUploads: response.Item['allowFileUploads'],
             presignedUrlExpiresInSeconds: response.Item['presignedUrlExpiresInSeconds']
         };
+        if (response.Item['jobExecutionsRolloutConfig']) {
+            template.jobExecutionsRolloutConfig = JSON.parse(response.Item['jobExecutionsRolloutConfig']);
+        }
+        if (response.Item['abortConfig']) {
+            template.abortConfig = JSON.parse(response.Item['abortConfig']);
+        }
+        if (response.Item['timeoutConfig']) {
+            template.timeoutConfig = JSON.parse(response.Item['timeoutConfig']);
+        }
 
         logger.debug(`templates.dao get: exit: template:${JSON.stringify(template)}`);
         return template;
@@ -126,7 +148,7 @@ export class TemplatesDao {
         };
 
         for(const item of results.Items) {
-            const template = {
+            const template: TemplateSummaryModel = {
                 templateId: item['templateId'],
                 operation: item['operation'],
                 description: item['description']

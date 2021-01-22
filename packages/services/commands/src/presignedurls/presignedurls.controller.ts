@@ -21,29 +21,28 @@ export class PresignedUrlsController implements interfaces.Controller {
     public async generateForUpload(@requestBody() model: PresignedUploadRequestModel, @response() res: Response) : Promise<PresignedResponseModel> {
         logger.info(`presignedurls.controller  generateForUpload: in: model: ${JSON.stringify(model)}`);
 
+        let r:PresignedResponseModel;
         try {
-            const r = await this.presignedUrlService.generateForUpload(model);
+            r = await this.presignedUrlService.generateForUpload(model);
             res.status(201);
-            return r;
 
         } catch (e) {
             handleError(e,res);
         }
-        return null;
+        return r;
     }
 
     @httpPost('/downloads')
     public async generateForDownloads(@requestBody() model: PresignedDownloadRequestModel, @response() res: Response) : Promise<PresignedResponseModel>  {
         logger.info(`presignedurls.controller  generateForDownloads: in: model: ${JSON.stringify(model)}`);
 
+        let r:PresignedResponseModel;
         try {
-            const r = await this.presignedUrlService.generateForDownload(model);
+            r = await this.presignedUrlService.generateForDownload(model);
             res.status(201);
-            return r;
-
         } catch (e) {
             handleError(e,res);
         }
-        return null;
+        return r;
     }
 }
