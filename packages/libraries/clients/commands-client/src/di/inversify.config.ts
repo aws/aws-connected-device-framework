@@ -22,7 +22,7 @@ export const commandsContainerModule = new ContainerModule (
         isBound: interfaces.IsBound,
         _rebind: interfaces.Rebind
     ) => {
-        if (config.has('commaands.mode') && config.get('commaands.mode') === 'lambda') {
+        if (config.has('commands.mode') && config.get('commands.mode') === 'lambda') {
             bind<CommandsService>(COMMANDS_CLIENT_TYPES.CommandsService).to(CommandsLambdaService);
             bind<TemplatesService>(COMMANDS_CLIENT_TYPES.TemplatesService).to(TemplatesLambdaService);
 

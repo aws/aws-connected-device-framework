@@ -1,3 +1,5 @@
 commands:
   baseUrl:
   headers:
+  mode:
+  apiFunctionName:

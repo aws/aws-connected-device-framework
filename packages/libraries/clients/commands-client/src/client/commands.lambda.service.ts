@@ -38,7 +38,7 @@ export class CommandsLambdaService extends CommandsServiceBase implements Comman
 
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.commandsRelativeUrl())
-            .setMethod('GET')
+            .setMethod('POST')
             .setBody(command)
             .setHeaders(super.buildHeaders(additionalHeaders));
 
@@ -54,7 +54,6 @@ export class CommandsLambdaService extends CommandsServiceBase implements Comman
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.commandRelativeUrl(command.commandId))
             .setMethod('PATCH')
-            .setBody(command)
             .setHeaders(super.buildHeaders(additionalHeaders))
             .setBody(command);
 

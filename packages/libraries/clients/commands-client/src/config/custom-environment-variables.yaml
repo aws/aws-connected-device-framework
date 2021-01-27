@@ -1,3 +1,5 @@
 commands:
   baseUrl: CDF_COMMANDS_BASEURL
   headers: CDF_COMMANDS_HEADERS
+  mode: COMMANDS_MODE
+  apiFunctionName: COMMANDS_APIFUNCTIONNAME
