@@ -26,6 +26,12 @@ exports.lambda_handler = async (event: any, _context: unknown) => {
   let connected:boolean;
   if (status === 'connected') {
     connected = true;
+  } else if (status === 'disconnected') {
+    if (event.disconnectReason === 'DUPLICATE_CLIENTID') {
+      return;
+    } else {
+      connected = false;
+    }
   } else {
     connected = false;
   }
