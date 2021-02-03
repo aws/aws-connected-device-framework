@@ -15,7 +15,7 @@ import { promisify } from 'util';
 import config from 'config';
 import ow from 'ow';
 import { CertificatesTaskDao } from './certificatestask.dao';
-import { CertificateChunkRequest, CertificateInfo } from './certificates.models';
+import { CertificateChunkRequest, CertificateInfo, CommonName } from './certificates.models';
 
 @injectable()
 export class CertificatesService {
@@ -78,16 +78,21 @@ export class CertificatesService {
         const certsZip = jszip.folder('certs');
 
         const [rootPem, rootKey] = await Promise.all([this.getRootCAPem(caId), this.getRootCAKey(caId)]);
-
+        const certificateMappings = {};
         for (let i=0; i<quantity; ++i) {
+            const deviceCertInfo:CertificateInfo = Object.assign({},certInfo);
             const privateKey = await this.createPrivateKey();
-            const csr = await this.createCSR(privateKey, certInfo);
+            const commonName = await this.createCommonName(deviceCertInfo.commonName,i);
+            deviceCertInfo.commonName = commonName;
+            const csr = await this.createCSR(privateKey, deviceCertInfo);
             const certificate = await this.createCertificate(csr, rootKey, rootPem);
             const certId = await this.getCertFingerprint(certificate);
 
             certsZip.file(`${certId}_cert.pem`, certificate);
             certsZip.file(`${certId}_key.pem`, privateKey);
+            certificateMappings[commonName] = certId;
         }
+        certsZip.file(`Certificates_Mapping.json`, JSON.stringify(certificateMappings));
         return certsZip;
     }
 
@@ -99,6 +104,7 @@ export class CertificatesService {
 
         for (let i=0; i<quantity; ++i) {
             const privateKey = await this.createPrivateKey();
+            certInfo.commonName = await this.createCommonName(certInfo.commonName,i);
             const csr = await this.createCSR(privateKey, certInfo);
 
             const certificateResponse: AWS.Iot.CreateCertificateFromCsrResponse = await this.getAwsIotCertificate(csr);
@@ -112,7 +118,7 @@ export class CertificatesService {
         return certsZip;
     }
 
-    public async getCertificates(taskId:string) : Promise<string> {
+    public async getCertificates(taskId:string, downloadType:string) : Promise<string|string[]> {
         logger.debug(`certificates.service getCertificates: in: taskId: ${taskId}`);
 
         ow(taskId, ow.string.nonEmpty);
@@ -124,10 +130,16 @@ export class CertificatesService {
             throw new Error('NOT_FOUND');
         }
 
-        // combine smaller zips into one zip file to be returned
-        const finalZipLocation:string = await this.createZipFromZips(locations);
-        logger.debug(`bulkcertificates.service getBulkCertificates: finalZipLocation: ${finalZipLocation}`);
-        return finalZipLocation;
+        if (typeof downloadType !== 'undefined' && downloadType === 'signedUrl'){
+            const signedURLs: string[] = await this.getS3SignedUrl(locations);
+            logger.debug(`bulkcertificates.service getBulkCertificates: signedURLs: ${signedURLs}`);
+            return signedURLs;
+        }else{
+            // combine smaller zips into one zip file to be returned
+            const finalZipLocation:string = await this.createZipFromZips(locations);
+            logger.debug(`bulkcertificates.service getBulkCertificates: finalZipLocation: ${finalZipLocation}`);
+            return finalZipLocation;
+        }
     }
 
     private async createZipFromZips(locations:string[]) : Promise<string> {
@@ -163,6 +175,35 @@ export class CertificatesService {
         try {
             const data = await this._s3.getObject(params).promise();
             return data.Body as Buffer;
+        } catch (err) {
+            if (err.code === 'NoSuchKey') {
+                return undefined;
+            } else {
+                throw err;
+            }
+        }
+    }
+    
+    private async getS3SignedUrl(locations:string[]) : Promise<string[]> {
+        logger.debug(`certificates.service getS3File: in: locations:${locations}`);
+        ow(locations, ow.array.nonEmpty);
+
+        try {
+            const signedUrls:string[] = [];
+            // s3://cdf-157731826412-us-west-2-dev-certificate-ems/8bc077a0-83a1-11e8-95b9-3d40d65219a2/certs.zip
+             for (const location of locations) {
+                const bucket:string = location.split('/')[2];
+                const key:string = location.substring(bucket.length + 's3://'.length + '/'.length);
+
+                const params = {
+                    Bucket: bucket,
+                    Key: key,
+                    Expires: 3600
+                };
+            const url = await this._s3.getSignedUrl('getObject',params);
+            signedUrls.push(url);
+         }
+            return signedUrls;
         } catch (err) {
             if (err.code === 'NoSuchKey') {
                 return undefined;
@@ -211,12 +252,15 @@ export class CertificatesService {
     // generate certificate signing request
     private createCSR(privateKey:string, certInfo: CertificateInfo) : Promise<string> {
         return new Promise((resolve:any,reject:any) =>  {
+            // Coverting commonName to base64
+            const commonName = Buffer.from(certInfo.commonName.toString()).toString('base64');
+            logger.debug(`certificate.service createCSR commonName: ${commonName}`);
             const csrOptions= {
                 country: certInfo.country,
                 organization: certInfo.organization,
                 organizationUnit: certInfo.organizationalUnit,
                 state: certInfo.stateName,
-                commonName: certInfo.commonName,
+                commonName,
                 clientKey:privateKey
             };
             pem.createCSR(csrOptions, (err:any, data:any) => {
@@ -317,5 +361,29 @@ export class CertificatesService {
         };
 
         await this._s3.deleteObjects(deleteParams).promise();
+    }
+    
+    private async createCommonName(commonName: CommonName | string, count: number) : Promise<string> {
+        logger.debug(`certificates.service createCommonName: commonName ${JSON.stringify(commonName)} count ${count}`);
+        let commonNameValue:string;
+        if ( typeof commonName === 'object') {
+            if (typeof commonName.prefix === 'undefined') {
+                commonName.prefix = '';
+            }
+            if (commonName.generator === 'increment') {
+                logger.debug(`certificates.service createCommonName: increment` );
+                commonNameValue = commonName.prefix+(parseInt(commonName.commonNameStart,16) + count).toString(16).toUpperCase();
+            } else if (commonName.generator === 'list') {
+                logger.debug(`certificates.service createCommonName: list` );
+                commonNameValue = commonName.prefix+commonName.commonNameList[count].toUpperCase();
+            } else if (commonName.generator === 'static') {
+                logger.debug(`certificates.service createCommonName: static` );
+                commonNameValue = commonName.prefix + commonName.commonNameStatic.toUpperCase();
+            }
+        } else {
+            commonNameValue = commonName;
+        }
+        logger.debug(`certificates.service createCommonName: commonNameValue ${commonNameValue}`);
+        return commonNameValue;
     }
 }

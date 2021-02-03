@@ -23,8 +23,6 @@ deviceCertificateInfo:
   country:
   emailAddress:
   distinguishedNameQualifier: '?'
-  serialNumber: '?'
-  id: '?'
 
 deviceCertificateExpiryDays: 365
 

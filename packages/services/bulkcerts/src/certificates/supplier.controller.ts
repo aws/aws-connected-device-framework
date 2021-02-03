@@ -23,7 +23,11 @@ export class SupplierCertificatesController implements interfaces.Controller {
         logger.debug(`certificates.controller createCertificates: in: request: ${JSON.stringify(request)}`);
 
         try {
-            const taskId: string = await this.certificatesTaskService.createTask(request.quantity, supplierId);
+            let certInfo = {};
+            if (typeof request.certInfo !== 'undefined') {
+                certInfo = request.certInfo;
+            }
+            const taskId: string = await this.certificatesTaskService.createTask(request.quantity, supplierId,certInfo);
             const taskResponse:CertificateBatchTask = {
                 taskId,
                 status: TaskStatus.IN_PROGRESS

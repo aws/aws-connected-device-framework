@@ -1,0 +1,102 @@
+{
+  "name": "@cdf/bulkcerts-client",
+  "version": "1.0.0",
+  "description": "Bulkcerts Client",
+  "author": "Pouya Bahavar",
+  "main": "dist/index.js",
+  "types": "dist/index.d.js",
+  "scripts": {
+    "clean": "npx shx rm -rf dist deploy tsconfig.tsbuildinfo bundle.zip .rush .nyc_output *.log",
+    "lint": "npx eslint . --ext '.ts'",
+    "build": "npx tsc -b",
+    "test": "rushx lint && NODE_ENV= NODE_CONFIG_DIR='./src/config' jest --silent --passWithNoTests"
+  },
+   "dependencies": {
+    "@cdf/config-inject": "^3.0.0",
+    "@cdf/lambda-invoke": "^2.0.0",
+    "config": "3.2.4",
+    "inversify": "5.0.5",
+    "inversify-binding-decorators": "4.0.0",
+    "inversify-express-utils": "6.3.2",
+    "js-yaml": "3.13.1",
+    "logform": "2.1.2",
+    "ow": "0.15.0",
+    "reflect-metadata": "0.1.13",
+    "superagent": "6.1.0",
+    "readable-stream": "2.3.6",
+    "winston": "3.2.1",
+    "winston-transport": "4.3.0"
+  },
+  "peerDependencies": {
+    "aws-sdk": "2.777.0"
+  },
+  "devDependencies": {
+    "@cdf/lambda-invoke": "^1.0.0",
+    "aws-sdk": "2.588.0",
+    "config": "3.2.4",
+    "inversify": "5.0.1",
+    "inversify-binding-decorators": "4.0.0",
+    "inversify-express-utils": "6.3.2",
+    "js-yaml": "3.13.1",
+    "logform": "2.1.2",
+    "ow": "0.15.0",
+    "reflect-metadata": "0.1.13",
+    "superagent": "5.1.2",
+    "readable-stream": "2.3.6",
+    "winston": "3.2.1",
+    "winston-transport": "4.3.0",
+    "@commitlint/cli": "8.2.0",
+    "@commitlint/config-conventional": "8.2.0",
+    "@semantic-release/changelog": "3.0.6",
+    "@semantic-release/git": "7.0.18",
+    "@semantic-release/release-notes-generator": "7.3.5",
+    "@types/config": "0.0.36",
+    "@types/node": "12.12.17",
+    "@types/superagent": "4.1.4",
+
+    "@rushstack/eslint-config": "2.3.1",
+    "eslint": "7.15.0",
+
+    "nodemon": "2.0.6",
+    "nyc": "15.1.0",
+    "shx": "0.3.3",
+
+    "@types/jest": "26.0.18",
+    "@typescript-eslint/eslint-plugin": "4.9.1",
+    "@typescript-eslint/parser": "4.9.1",
+    "jest-create-mock-instance": "1.1.0",
+    "jest-haste-map": "26.6.2",
+    "jest-mock-extended": "1.0.10",
+    "jest-mock": "26.6.2",
+    "jest-resolve": "26.6.2",
+    "jest": "26.6.3",
+    "ts-jest": "26.4.4",
+    "typescript": "4.1.2"
+
+  },
+  "jest": {
+    "globals": {
+      "NODE_CONFIG_STRICT_MODE": false,
+      "SUPPRESS_NO_CONFIG_WARNING": true
+    },
+    "roots": [
+      "<rootDir>/src"
+    ],
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testMatch": [
+      "<rootDir>/**/?(*.)+(spec|test).ts?(x)"
+    ],
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
+  },
+  "license": "ISC",
+  "private": true
+}

@@ -4,7 +4,7 @@
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
 import { Response } from 'express';
-import { interfaces, controller, response, requestParam, httpGet} from 'inversify-express-utils';
+import { interfaces, controller, response, requestParam, httpGet, queryParam} from 'inversify-express-utils';
 import {logger} from '../utils/logger';
 
 import { inject } from 'inversify';
@@ -22,7 +22,7 @@ export class CertificatesController implements interfaces.Controller {
         @inject(TYPES.CertificatesService) private certificatesService: CertificatesService) {}
 
     @httpGet('/:taskId')
-    public async getCertificates(@requestParam('taskId') taskId: string, @response() res: Response): Promise<void> {
+    public async getCertificates(@requestParam('taskId') taskId: string,@queryParam('downloadType') downloadType: string , @response() res: Response): Promise<void> {
 
         logger.debug(`certificates.controller getCertificates: in: taskId:${taskId}`);
 
@@ -31,12 +31,20 @@ export class CertificatesController implements interfaces.Controller {
             const batchCertsTask: CertificateBatchTaskWithChunks = await this.certificatesTaskService.getTask(taskId);
 
             if (batchCertsTask.status===TaskStatus.COMPLETE) {
-                // if its complete, download it
-                const zipFilePath:string = await this.certificatesService.getCertificates(taskId);
-                const fileData:Buffer = fs.readFileSync(zipFilePath);
-                res.type('application/zip');    // content-type
-                res.status(200);
-                res.send(fileData);
+                // if its complete
+                if (typeof downloadType !== 'undefined' && downloadType === 'signedUrl') {
+                    // provide a list of signed urls
+                    const signedUrls:string|string[] = await this.certificatesService.getCertificates(taskId, 'signedUrl');
+                    res.status(200);
+                    res.send(signedUrls);
+                } else {
+                    // download it
+                    const zipFilePath:string|string[] = await this.certificatesService.getCertificates(taskId, 'zip');
+                    const fileData:Buffer = fs.readFileSync(zipFilePath.toString());
+                    res.type('application/zip');    // content-type
+                    res.status(200);
+                    res.send(fileData);
+                }
             } else {
                 // but if its not complete, redirect the client to the task
                 const redirectTo = `/certificates/${taskId}/task`;

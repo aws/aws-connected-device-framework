@@ -42,7 +42,6 @@ export interface CertificateBatchChunkCompleteRequest {
 
 export interface CertificateInfo {
 	commonName?:CommonName|string;
-	commonNameList?:string[];
 	organization?:string;
 	organizationalUnit?:string;
 	locality?:string;
@@ -58,16 +57,19 @@ export interface CommonName {
 	commonNameStart?:string;
 	commonNameList?:string[];
 	commonNameStatic?:string;
-	quantity?:number;
 }
 
 export enum CommonNameGenerator {
-    increment = 'increment',
-    list = 'list',
-    static = 'static'
+    Sequential = 'sequential',
+    List = 'list',
+    Static = 'static'
 }
 
 export class CertInfoValidationResult {
     isValid: boolean;
 	errors?: { [dataPath: string] : string} = {};
+}
+
+export interface RequestHeaders {
+	[key:string] : string;
 }

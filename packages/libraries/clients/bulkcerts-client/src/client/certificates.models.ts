@@ -5,9 +5,9 @@
 #-------------------------------------------------------------------------------*/
 
 export enum CommonNameGenerator {
-    increment = 'increment',
-    list = 'list',
-    static = 'static'
+    Sequential = 'sequential',
+    List = 'list',
+    Static = 'static'
 }
 export interface CertificateChunkRequest {
 	taskId:string;
@@ -24,7 +24,6 @@ export interface CertificateChunkResponse {
 
 export interface CertificateInfo {
 	commonName?:CommonName|string;
-	commonNameList?:string[];
 	organization?:string;
 	organizationalUnit?:string;
 	locality?:string;
@@ -42,3 +41,25 @@ export interface CommonName {
 	commonNameList?:string[];
 	commonNameStatic?:string;
 }
+
+export interface RequestHeaders {
+	[key:string] : string;
+}
+
+export interface CertificateBatchTaskWithChunks extends CertificateBatchTaskWithDate {
+	chunksPending: number;
+	chunksTotal: number;
+}
+export interface CertificateBatchTask {
+	taskId:string;
+	status:TaskStatus;
+}
+export interface CertificateBatchTaskWithDate extends CertificateBatchTask {
+	batchDate:number;
+}
+
+ export enum TaskStatus {
+	  PENDING = 'pending',
+	  IN_PROGRESS = 'in_progress',
+	  COMPLETE = 'complete'
+  }

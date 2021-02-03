@@ -5,7 +5,9 @@
 #-------------------------------------------------------------------------------*/
 import 'reflect-metadata';
 import { createMockInstance } from 'jest-create-mock-instance';
+import { logger } from '../utils/logger';
 import { CertificatesTaskService } from './certificatestask.service';
+import {CertificateInfo} from './certificatestask.models';
 import AWS, { AWSError } from 'aws-sdk';
 import { CertificatesTaskDao } from './certificatestask.dao';
 
@@ -27,9 +29,44 @@ describe('CertificatesService', () => {
 
         instance = new CertificatesTaskService('unit-test-topic', 'UnitTestCN', 'UnitTestOrg',
                                                'UnitTestOU', 'UnitTestLand', 'Testorado', 'Testville',
-                                               'info@unit.test', 'cdf.unit.test', '1234', 'testid', testChunkSize,
+                                               'xxxxxxxxx', 'cdf.unit.test', testChunkSize,
                                                mockedCertificatesTaskDao, mockSNSFactory);
     });
+
+    
+    const certInfoSequential:CertificateInfo = {
+        'commonName': '`unit-test::`AB1CD79EF1${increment(115)}',
+        'organization': 'UnitTestOrg2',
+        'organizationalUnit': 'UnitTestOU2',
+        'locality': 'UnitTestLand2',
+        'stateName': 'Testorado2',
+        'country': 'Testville2',
+        'emailAddress': 'cdf-test@amazon.com',
+        'distinguishedNameQualifier': 'cdf.unit.test'
+    };
+
+    const certInfoList = {
+        'commonName': '`unit-test::`AB1CD79EF1${list}',
+        'commonNameList': ['AB1CD79EF1','AB1CD79EF2','AB1CD79EF3'],
+        'organization': 'UnitTestOrg2',
+        'organizationalUnit': 'UnitTestOU2',
+        'locality': 'UnitTestLand2',
+        'stateName': 'Testorado2',
+        'country': 'Testville2',
+        'emailAddress': 'cdf-test@amazon.com',
+        'distinguishedNameQualifier': 'cdf.unit.test'
+    };
+
+    const certInfoStatic = {
+        'commonName': '`unit-test::`AB1CD79EF1${static}',
+        'organization': 'UnitTestOrg2',
+        'organizationalUnit': 'UnitTestOU2',
+        'locality': 'UnitTestLand2',
+        'stateName': 'Testorado2',
+        'country': 'Testville2',
+        'emailAddress': 'cdf-test@amazon.com',
+        'distinguishedNameQualifier': 'cdf.unit.test'
+    };
 
     it('createTask with requested certs equally divisible into chunks', async () => {
 
@@ -47,11 +84,13 @@ describe('CertificatesService', () => {
             return mockPublishResponse;
         });
 
+        const certInfo = {};
+
         // call createTask
-        const taskId = await instance.createTask(1000, 'unit-test-ca');
+        const taskId = await instance.createTask(1000, 'unit-test-ca',certInfo);
+        logger.debug(`taskId: ${taskId}`);
 
         // validation
-        expect(taskId).toBeDefined();
         const expectedChunks = 1000/testChunkSize;
         expect(mockPublish).toBeCalledTimes(expectedChunks);
         expect(publishParameters.length).toEqual(expectedChunks);
@@ -81,11 +120,13 @@ describe('CertificatesService', () => {
             return mockPublishResponse;
         });
 
+        const certInfo = {};
+
         // call createTask
-        const taskId = await instance.createTask(1015, 'unit-test-ca');
+        const taskId = await instance.createTask(1015, 'unit-test-ca',certInfo);
+        logger.debug(`taskId: ${taskId}`);
 
         // validation
-        expect(taskId).toBeDefined();
         const expectedChunks = Math.floor(1015/testChunkSize)+1;
         expect(mockPublish).toBeCalledTimes(expectedChunks);
         expect(publishParameters.length).toEqual(expectedChunks);
@@ -94,6 +135,118 @@ describe('CertificatesService', () => {
             expect(publish.Subject).toEqual('CreateChunk');
             expect(publish.TopicArn).toEqual('unit-test-topic');
             const message = JSON.parse(publish.Message);
+            expect(message.chunkId).toEqual(i);
+            expect(message.quantity).toEqual(i === expectedChunks ? 15 : 50);
+        }
+    });
+
+    it('createTask with sequentially generated CommonNames', async () => {
+
+        const mockSnsPublishResponse:AWS.SNS.PublishResponse = {
+            MessageId: 'unit-test-publish-id'
+        };
+
+        const mockPublishResponse = new MockPublishResponse();
+        mockPublishResponse.response = mockSnsPublishResponse;
+        mockPublishResponse.error = null;
+        const publishParameters:AWS.SNS.Types.PublishInput[] = [];
+
+        const mockPublish = mockSNS.publish = <any> jest.fn((params) => {
+            publishParameters.push(params);
+            return mockPublishResponse;
+        });
+
+        // call createTask
+        const taskId = await instance.createTask(115, 'unit-test-ca', certInfoSequential);
+        logger.debug(`taskId: ${taskId}`);
+
+        // validation
+        const expectedChunks = Math.floor(115/testChunkSize)+1;
+        expect(mockPublish).toBeCalledTimes(expectedChunks);
+        expect(publishParameters.length).toEqual(expectedChunks);
+        for (let i=1; i<=expectedChunks; ++i) {
+            const publish = publishParameters[i-1];
+            expect(publish.Subject).toEqual('CreateChunk');
+            expect(publish.TopicArn).toEqual('unit-test-topic');
+            const message = JSON.parse(publish.Message);
+            logger.debug(`message: ${JSON.stringify(message)}`);
+            expect(message.certInfo.commonName.generator).toEqual('increment');
+            expect(message.certInfo.commonName.commonNameStart).toEqual('AB1CD79EF1');
+            expect(message.certInfo.commonName.prefix).toEqual('unit-test::');
+            expect(message.chunkId).toEqual(i);
+            expect(message.quantity).toEqual(i === expectedChunks ? 15 : 50);
+        }
+    });
+
+    it('createTask with List generated CommonNames', async () => {
+
+        const mockSnsPublishResponse:AWS.SNS.PublishResponse = {
+            MessageId: 'unit-test-publish-id'
+        };
+
+        const mockPublishResponse = new MockPublishResponse();
+        mockPublishResponse.response = mockSnsPublishResponse;
+        mockPublishResponse.error = null;
+        const publishParameters:AWS.SNS.Types.PublishInput[] = [];
+
+        const mockPublish = mockSNS.publish = <any> jest.fn((params) => {
+            publishParameters.push(params);
+            return mockPublishResponse;
+        });
+
+        // call createTask
+        const taskId = await instance.createTask(3, 'unit-test-ca', certInfoList);
+        logger.debug(`taskId: ${taskId}`);
+
+        // validation
+        const expectedChunks = Math.floor(3/testChunkSize)+1;
+        expect(mockPublish).toBeCalledTimes(expectedChunks);
+        expect(publishParameters.length).toEqual(expectedChunks);
+        for (let i=1; i<=expectedChunks; ++i) {
+            const publish = publishParameters[i-1];
+            expect(publish.Subject).toEqual('CreateChunk');
+            expect(publish.TopicArn).toEqual('unit-test-topic');
+            const message = JSON.parse(publish.Message);
+            expect(message.certInfo.commonName.generator).toEqual('list');
+            expect(message.certInfo.commonNameList).toEqual(['AB1CD79EF1','AB1CD79EF2','AB1CD79EF3']);
+            expect(message.certInfo.commonName.prefix).toEqual('unit-test::');
+            expect(message.chunkId).toEqual(i);
+            expect(message.quantity).toEqual(i === expectedChunks ? 3 : 50);
+        }
+    });
+
+    it('createTask with Static generated CommonNames', async () => {
+
+        const mockSnsPublishResponse:AWS.SNS.PublishResponse = {
+            MessageId: 'unit-test-publish-id'
+        };
+
+        const mockPublishResponse = new MockPublishResponse();
+        mockPublishResponse.response = mockSnsPublishResponse;
+        mockPublishResponse.error = null;
+        const publishParameters:AWS.SNS.Types.PublishInput[] = [];
+
+        const mockPublish = mockSNS.publish = <any> jest.fn((params) => {
+            publishParameters.push(params);
+            return mockPublishResponse;
+        });
+
+        // call createTask
+        const taskId = await instance.createTask(115, 'unit-test-ca', certInfoStatic);
+        logger.debug(`taskId: ${taskId}`);
+
+        // validation
+        const expectedChunks = Math.floor(115/testChunkSize)+1;
+        expect(mockPublish).toBeCalledTimes(expectedChunks);
+        expect(publishParameters.length).toEqual(expectedChunks);
+        for (let i=1; i<=expectedChunks; ++i) {
+            const publish = publishParameters[i-1];
+            expect(publish.Subject).toEqual('CreateChunk');
+            expect(publish.TopicArn).toEqual('unit-test-topic');
+            const message = JSON.parse(publish.Message);
+            expect(message.certInfo.commonName.generator).toEqual('static');
+            expect(message.certInfo.commonName.commonNameStatic).toEqual('AB1CD79EF1');
+            expect(message.certInfo.commonName.prefix).toEqual('unit-test::');
             expect(message.chunkId).toEqual(i);
             expect(message.quantity).toEqual(i === expectedChunks ? 15 : 50);
         }
