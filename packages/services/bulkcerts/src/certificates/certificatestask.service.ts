@@ -123,6 +123,9 @@ export class CertificatesTaskService {
         if (typeof certInfo.distinguishedNameQualifier === 'undefined') {
             certInfo.distinguishedNameQualifier = this.distinguishedNameQualifier;
         }
+        if (typeof certInfo.includeCA === 'undefined') {
+            certInfo.includeCA = false;
+        }
 
         const msg:CertificateChunkRequest = {
             certInfo:{
@@ -135,6 +138,7 @@ export class CertificatesTaskService {
                 country: certInfo.country,
                 emailAddress: certInfo.emailAddress,
                 distinguishedNameQualifier: certInfo.distinguishedNameQualifier,
+                includeCA: certInfo.includeCA
             },
             taskId,
             chunkId,
@@ -167,6 +171,7 @@ export class CertificatesTaskService {
 
  private async validateCertInfo(certInfo: CertificateInfo): Promise<CertInfoValidationResult> {
         logger.debug(`certificatestask.service validateCertInfo: in: certInfo:${JSON.stringify(certInfo)}`);
+        
         const commonNameRE = /[0-9A-Fa-f]{6}/g;
         // remove any undefined properties from the input document
         const docAsJson = JSON.parse(JSON.stringify(certInfo));

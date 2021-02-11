@@ -50,6 +50,7 @@ export interface CertificateInfo {
 	country?:string;
 	emailAddress?:string;
 	distinguishedNameQualifier?:string;
+	includeCA?:boolean;
 }
 
 export interface CommonName {

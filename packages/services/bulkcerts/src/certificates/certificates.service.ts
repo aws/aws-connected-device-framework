@@ -79,6 +79,7 @@ export class CertificatesService {
 
         const [rootPem, rootKey] = await Promise.all([this.getRootCAPem(caId), this.getRootCAKey(caId)]);
         const certificateMappings = {};
+
         for (let i=0; i<quantity; ++i) {
             const deviceCertInfo:CertificateInfo = Object.assign({},certInfo);
             const privateKey = await this.createPrivateKey();
@@ -88,11 +89,16 @@ export class CertificatesService {
             const certificate = await this.createCertificate(csr, rootKey, rootPem);
             const certId = await this.getCertFingerprint(certificate);
 
-            certsZip.file(`${certId}_cert.pem`, certificate);
+            if (certInfo.includeCA) { // include rootCA in device certificate
+                certsZip.file(`${certId}_cert.pem`, `${certificate}\n${rootPem}`);
+            } else {
+                certsZip.file(`${certId}_cert.pem`, certificate);
+            }
+
             certsZip.file(`${certId}_key.pem`, privateKey);
             certificateMappings[commonName] = certId;
         }
-        certsZip.file(`Certificates_Mapping.json`, JSON.stringify(certificateMappings));
+        certsZip.file(`certificate_manifest.json`, JSON.stringify(certificateMappings));
         return certsZip;
     }
 
