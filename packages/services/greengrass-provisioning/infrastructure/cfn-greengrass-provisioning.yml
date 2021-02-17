@@ -221,7 +221,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: ../bundle.zip
-      Handler: packages/services/device-monitoring/greengrass-provisioning/dist/lambda_apigw_proxy.handler
+      Handler: packages/services/greengrass-provisioning/dist/lambda_apigw_proxy.handler
 
       MemorySize: 128
       Role: !GetAtt LambdaExecutionRole.Arn
@@ -242,7 +242,7 @@ Resources:
         TargetArn: !GetAtt DlqQueue.Arn
       Environment:
         Variables:
-          NODE_CONFIG_DIR: 'packages/services/device-monitoring/greengrass-provisioning/dist/config'
+          NODE_CONFIG_DIR: 'packages/services/greengrass-provisioning/dist/config'
           NODE_CONFIG: !Ref ApplicationConfigurationOverride
           GREENGRASS_PROVISIONING_AWS_DYNAMODB_TABLE: !Ref Table
           GREENGRASS_PROVISIONING_AWS_SQS_DEVICEASSOCIATIONS: !Ref DeviceAssociationQueue
@@ -279,7 +279,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: ../bundle.zip
-      Handler: packages/services/device-monitoring/greengrass-provisioning/dist/lambda_sqs_proxy.handler
+      Handler: packages/services/greengrass-provisioning/dist/lambda_sqs_proxy.handler
 
       MemorySize: 128
       Role: !GetAtt LambdaExecutionRole.Arn
@@ -300,7 +300,7 @@ Resources:
         TargetArn: !GetAtt DlqQueue.Arn
       Environment:
         Variables:
-          NODE_CONFIG_DIR: 'packages/services/device-monitoring/greengrass-provisioning/dist/config'
+          NODE_CONFIG_DIR: 'packages/services/greengrass-provisioning/dist/config'
           NODE_CONFIG: !Ref ApplicationConfigurationOverride
           GREENGRASS_PROVISIONING_AWS_DYNAMODB_TABLE: !Ref Table
           GREENGRASS_PROVISIONING_AWS_SQS_DEVICEASSOCIATIONS: !Ref DeviceAssociationQueue
