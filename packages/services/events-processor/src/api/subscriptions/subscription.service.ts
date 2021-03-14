@@ -180,13 +180,15 @@ export class SubscriptionService  {
 
         ow(userId, ow.string.nonEmpty);
 
-        let results:SubscriptionItem[];
+        let results:SubscriptionItem[] = [];
         const subscriptionIds  = await this.subscriptionDao.listSubscriptionIdsForUser(userId);
         if (subscriptionIds?.length>0) {
-            results= [];
-            for(const id of subscriptionIds) {
-                results.push(await this.get(id));
-            }
+
+            const subscriptionItemPromises: Promise<SubscriptionItem>[] = subscriptionIds.map((id: string) => {
+                return this.get(id);
+            });
+
+            results = await Promise.all(subscriptionItemPromises);
         }
         logger.debug(`subscription.service listByUser: exit: model: ${JSON.stringify(results)}`);
         return results;
