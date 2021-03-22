@@ -1,6 +1,6 @@
 {
   "name": "@cdf/greengrass-provisioning",
-  "version": "4.0.3",
+  "version": "4.0.4",
   "description": "CDF Greengrass Provisioning",
   "author": "Dean Hart <deanhart@amazon.com>",
   "config": {
