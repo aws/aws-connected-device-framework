@@ -74,12 +74,11 @@ exports.handler = async (event: any, _context: unknown) => {
           try {
             await deploymentSvc.deploymentStatusChange(statusEvent);
           } catch (err) {
-            // resubmit rather than waiting for the visibility timeout to expire
-            await sqs.sendMessage({
+            // change the messages visibility timeout so thats its picked up sooner than the default queue visbility for reprocessing
+            await sqs.changeMessageVisibility({
               QueueUrl: deploymentStatusQueue,
-              MessageBody: JSON.stringify(body),
-              MessageAttributes: r.attributes,
-              DelaySeconds: 5
+              ReceiptHandle: r.receiptHandle,
+              VisibilityTimeout: 30
             }).promise();
           }
 

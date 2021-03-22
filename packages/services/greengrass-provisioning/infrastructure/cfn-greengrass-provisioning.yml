@@ -425,6 +425,9 @@ Resources:
     Properties:
       MessageRetentionPeriod: 604800
       VisibilityTimeout: 960
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt DlqQueue.Arn
+        maxReceiveCount: 10
 
   DeploymentsQueue:
     Type: AWS::SQS::Queue
@@ -437,6 +440,9 @@ Resources:
     Properties:
       MessageRetentionPeriod: 604800
       VisibilityTimeout: 960
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt DlqQueue.Arn
+        maxReceiveCount: 10
 
   BulkDeploymentsStatusQueue:
     Type: AWS::SQS::Queue
@@ -448,6 +454,23 @@ Resources:
     Type: AWS::SQS::Queue
     Properties:
       MessageRetentionPeriod: 1209600
+
+  DeploymentStatusQueuePolicy:
+    Type: AWS::SQS::QueuePolicy
+    Properties: 
+      PolicyDocument: 
+        Statement: 
+          - 
+            Effect: "Allow"
+            Principal:  
+              Service: events.amazonaws.com
+            Action: SQS:SendMessage
+            Resource: !GetAtt DeploymentStatusQueue.Arn
+            Condition:
+              ArnEquals:
+                aws:SourceArn: !GetAtt GreengrassDeploymentStateChangeRule.Arn
+      Queues: 
+        - !Ref DeploymentStatusQueue
 
   GreengrassDeploymentStateChangeRule:
     Type: AWS::Events::Rule

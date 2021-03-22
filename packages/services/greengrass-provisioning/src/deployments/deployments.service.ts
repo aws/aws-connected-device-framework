@@ -367,7 +367,7 @@ export class DeploymentsService  {
 
         // if its not available, requeue it
         if (task?.deployments?.length!==1) {
-            logger.debug(`deployments.service deploymentStatusChange: rejected as no deploymennt map available yet:`);
+            logger.debug(`deployments.service deploymentStatusChange: rejected as no deployment map available yet:`);
             throw new Error('NO_DEPLOYMENT_MAP');
         }
 
