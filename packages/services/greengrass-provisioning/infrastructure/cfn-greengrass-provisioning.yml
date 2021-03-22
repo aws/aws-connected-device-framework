@@ -449,24 +449,10 @@ Resources:
     Properties:
       MessageRetentionPeriod: 1209600
 
-  EventBus:
-    Type: AWS::Events::EventBus
-    Properties:
-      Name: !Sub 'cdf-greengrass-provisioning-${Environment}'
-
-  GreengrassEventBusPolicy:
-    Type: AWS::Events::EventBusPolicy
-    Properties:
-      Action: 'events:PutEvents'
-      EventBusName: !Ref EventBus
-      Principal: !Ref 'AWS::AccountId'
-      StatementId: !Sub 'cdf-greengrass-provisioning-${Environment}'
-
   GreengrassDeploymentStateChangeRule:
     Type: AWS::Events::Rule
     Properties:
       Description: 'Captures all Greengrass group deployment state changes.'
-      EventBusName: !Ref EventBus
       EventPattern:
         source:
           - 'aws.greengrass'
@@ -504,12 +490,6 @@ Outputs:
     Value: !Sub '${Table}'
     Export:
       Name: !Sub '${AWS::StackName}-table'
-  GreengrassEventbus:
-    Description: greengrass provisioning event bus
-    Value: !Sub '${EventBus}'
-    Export:
-      Name: !Sub '${AWS::StackName}-EventBus'
-
   RestApiFunctionName:
     Description: REST API Lambda function name
     Value: !Ref RESTLambdaFunction

@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/greengrass-provisioning",
+      "comment": "Removed the use of the EventBridge custom event bus and replaced with the default event bus so that events from AWS Services can be captured.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/greengrass-provisioning",
+  "email": "deanhart@amazon.com"
+}
