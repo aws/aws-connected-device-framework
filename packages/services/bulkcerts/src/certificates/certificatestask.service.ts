@@ -52,7 +52,9 @@ export class CertificatesTaskService {
         certInfo = await this.constructCommonName(certInfo);
         if (typeof (certInfo['commonName']['quantity']) && certInfo['commonName']['quantity'] >0 ) {
             quantity = certInfo['commonName']['quantity'];
-        } 
+        }
+        
+        await this.validateCommonName(certInfo);
 
         ow(quantity, ow.number.greaterThan(0));
         // determine number of chunks
@@ -130,7 +132,6 @@ export class CertificatesTaskService {
         const msg:CertificateChunkRequest = {
             certInfo:{
                 commonName: certInfo.commonName,
-                commonNameList: certInfo.commonNameList,
                 organization: certInfo.organization,
                 organizationalUnit: certInfo.organizationalUnit,
                 locality: certInfo.locality,
@@ -172,9 +173,10 @@ export class CertificatesTaskService {
  private async validateCertInfo(certInfo: CertificateInfo): Promise<CertInfoValidationResult> {
         logger.debug(`certificatestask.service validateCertInfo: in: certInfo:${JSON.stringify(certInfo)}`);
         
-        const commonNameRE = /[0-9A-Fa-f]{6}/g;
+        const commonNameRE = /^[0-9A-Fa-f]+$/g;
         // remove any undefined properties from the input document
         const docAsJson = JSON.parse(JSON.stringify(certInfo));
+        
         Object.keys(docAsJson).forEach(k => {
             if (docAsJson[k] === undefined) {
                 delete docAsJson[k];
@@ -186,6 +188,8 @@ export class CertificatesTaskService {
                     }
                 }
                 );
+            } else if(k === 'country'){
+                ow(docAsJson[k],'country',ow.string.length(2));
             }
 
         });
@@ -210,7 +214,6 @@ export class CertificatesTaskService {
                         result.isValid = false;
                         result.errors['ArgumentError'] = 'certInfo/commonName increment section missing value';
                     }
-
                 } else if (generator === 'list') {
 
                     if (typeof certInfo['commonNameList'] !== 'undefined') {
@@ -229,7 +232,7 @@ export class CertificatesTaskService {
                         result.errors['ArgumentError'] = 'certinfo/commonName property missing';
                     } else if (!commonNameRE.test(commonName['commonNameStatic'])) {
                         result.isValid = false;
-                        result.errors['ArgumentError'] = 'certInfo/commonName string should contain a hexadecimal value';
+                        result.errors['ArgumentError'] = 'certInfo/commonName string should only contain hexadecimal value';
                     }
                 }
             } else {
@@ -242,6 +245,7 @@ export class CertificatesTaskService {
         return await result;
     }
     
+
     private async constructCommonName(certInfo:CertificateInfo): Promise<CertificateInfo> {
         let prefix:string;
         let generator:string;
@@ -283,6 +287,7 @@ export class CertificatesTaskService {
                 certInfoRes['commonName']['commonNameStatic'] = commonName.replace(generatorRE,'');
             } else if (generator === 'list') {
                 certInfoRes['commonName']['quantity'] = certInfoRes.commonNameList.length;
+                certInfoRes['commonName']['commonNameList'] = certInfoRes.commonNameList;
             }
 
         } else {
@@ -292,4 +297,32 @@ export class CertificatesTaskService {
         return certInfoRes;
     }
 
+        // Use the last value generated for commonName to validate its max length
+        private async validateCommonName(certInfo:CertificateInfo): Promise<void>{
+        logger.debug(`certificatesTask.service ValidateCommonName: certInfo ${JSON.stringify(certInfo)}`);
+        const commonName = certInfo.commonName;
+        let commonNameValue:string;
+        if ( typeof commonName === 'object') {
+            if (typeof commonName.prefix === 'undefined') {
+                commonName.prefix = '';
+            }
+            if (commonName.generator === 'increment') {
+                logger.debug(`certificates.service createCommonName: increment` );
+                commonNameValue = commonName.prefix+(parseInt(commonName.commonNameStart,16) + commonName.quantity).toString(16).toUpperCase();
+            } else if (commonName.generator === 'list') {
+                logger.debug(`certificates.service createCommonName: list` );
+                commonNameValue = commonName.prefix+certInfo.commonNameList[commonName.quantity-1].toUpperCase();
+            } else if (commonName.generator === 'static') {
+                logger.debug(`certificates.service createCommonName: static` );
+                commonNameValue = commonName.prefix + commonName.commonNameStatic.toUpperCase();
+            }
+        } else {
+            commonNameValue = commonName;
+        }
+        //convert string to base64
+        commonNameValue = Buffer.from(commonNameValue.toString()).toString('base64');
+        logger.debug(`certificates.service createCommonName: commonNameValue ${commonNameValue} lenght:${commonNameValue.length}`);
+        ow(commonNameValue,`base64 encoded commonName` ,ow.string.maxLength(64));
+        
+    }
 }

@@ -33,6 +33,7 @@ export class CertificatesService {
             @inject(TYPES.SSMFactory) ssmFactory: () => AWS.SSM,
             @inject('aws.s3.certificates.bucket') private certificatesBucket: string,
             @inject('aws.s3.certificates.prefix') private certificatesPrefix: string,
+            @inject('defaults.chunkSize') private defaultChunkSize: number,
             @inject('deviceCertificateExpiryDays') private certificateExpiryDays: number) {
         this._iot = iotFactory();
         this._s3  =  s3Factory();
@@ -56,7 +57,7 @@ export class CertificatesService {
         if (rootCACertId === 'AwsIotDefault') {
             certsZip = await this.createChunkWithAwsIotCa(req.quantity, req.certInfo);
         } else {
-            certsZip = await this.createChunkWithCustomerCa(req.quantity, rootCACertId, req.certInfo);
+            certsZip = await this.createChunkWithCustomerCa(req.quantity, rootCACertId, req.certInfo,req.chunkId);
         }
 
         const s3Prefix = `${req.taskId}/${req.chunkId}/`;
@@ -71,16 +72,18 @@ export class CertificatesService {
         logger.debug('certificates.service createChunk: exit:');
     }
 
-    private async createChunkWithCustomerCa(quantity: number, caId:string, certInfo: CertificateInfo): Promise<JSZip> {
-        logger.debug(`certificates.service createChunkWithCustomerCa: in: quantity: ${quantity}, caId: ${caId}, certInfo: ${JSON.stringify(certInfo)}`);
+    private async createChunkWithCustomerCa(quantity: number, caId:string, certInfo: CertificateInfo, chunkId: number): Promise<JSZip> {
+        logger.debug(`certificates.service createChunkWithCustomerCa: in: quantity: ${quantity}, caId: ${caId}, certInfo: ${JSON.stringify(certInfo)}, chunkId: ${chunkId}`);
 
         const jszip = new JSZip();
         const certsZip = jszip.folder('certs');
 
         const [rootPem, rootKey] = await Promise.all([this.getRootCAPem(caId), this.getRootCAKey(caId)]);
         const certificateMappings = {};
+        const chunkStart = (chunkId-1) * this.defaultChunkSize;
+        const chunkEnd = ((chunkId-1) * this.defaultChunkSize) + quantity;
 
-        for (let i=0; i<quantity; ++i) {
+        for (let i=chunkStart; i<chunkEnd; ++i) {
             const deviceCertInfo:CertificateInfo = Object.assign({},certInfo);
             const privateKey = await this.createPrivateKey();
             const commonName = await this.createCommonName(deviceCertInfo.commonName,i);
@@ -260,7 +263,6 @@ export class CertificatesService {
         return new Promise((resolve:any,reject:any) =>  {
             // Coverting commonName to base64
             const commonName = Buffer.from(certInfo.commonName.toString()).toString('base64');
-            logger.debug(`certificate.service createCSR commonName: ${commonName}`);
             const csrOptions= {
                 country: certInfo.country,
                 organization: certInfo.organization,
@@ -370,26 +372,21 @@ export class CertificatesService {
     }
     
     private async createCommonName(commonName: CommonName | string, count: number) : Promise<string> {
-        logger.debug(`certificates.service createCommonName: commonName ${JSON.stringify(commonName)} count ${count}`);
         let commonNameValue:string;
         if ( typeof commonName === 'object') {
             if (typeof commonName.prefix === 'undefined') {
                 commonName.prefix = '';
             }
             if (commonName.generator === 'increment') {
-                logger.debug(`certificates.service createCommonName: increment` );
                 commonNameValue = commonName.prefix+(parseInt(commonName.commonNameStart,16) + count).toString(16).toUpperCase();
             } else if (commonName.generator === 'list') {
-                logger.debug(`certificates.service createCommonName: list` );
                 commonNameValue = commonName.prefix+commonName.commonNameList[count].toUpperCase();
             } else if (commonName.generator === 'static') {
-                logger.debug(`certificates.service createCommonName: static` );
                 commonNameValue = commonName.prefix + commonName.commonNameStatic.toUpperCase();
             }
         } else {
             commonNameValue = commonName;
         }
-        logger.debug(`certificates.service createCommonName: commonNameValue ${commonNameValue}`);
         return commonNameValue;
     }
 }

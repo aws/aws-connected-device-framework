@@ -40,7 +40,7 @@ describe('CertificatesService', () => {
         'organizationalUnit': 'UnitTestOU2',
         'locality': 'UnitTestLand2',
         'stateName': 'Testorado2',
-        'country': 'Testville2',
+        'country': 'US',
         'emailAddress': 'cdf-test@amazon.com',
         'distinguishedNameQualifier': 'cdf.unit.test'
     };
@@ -52,7 +52,7 @@ describe('CertificatesService', () => {
         'organizationalUnit': 'UnitTestOU2',
         'locality': 'UnitTestLand2',
         'stateName': 'Testorado2',
-        'country': 'Testville2',
+        'country': 'US',
         'emailAddress': 'cdf-test@amazon.com',
         'distinguishedNameQualifier': 'cdf.unit.test'
     };
@@ -63,7 +63,7 @@ describe('CertificatesService', () => {
         'organizationalUnit': 'UnitTestOU2',
         'locality': 'UnitTestLand2',
         'stateName': 'Testorado2',
-        'country': 'Testville2',
+        'country': 'US',
         'emailAddress': 'cdf-test@amazon.com',
         'distinguishedNameQualifier': 'cdf.unit.test'
     };
@@ -208,7 +208,7 @@ describe('CertificatesService', () => {
             expect(publish.TopicArn).toEqual('unit-test-topic');
             const message = JSON.parse(publish.Message);
             expect(message.certInfo.commonName.generator).toEqual('list');
-            expect(message.certInfo.commonNameList).toEqual(['AB1CD79EF1','AB1CD79EF2','AB1CD79EF3']);
+            expect(message.certInfo.commonName.commonNameList).toEqual(['AB1CD79EF1','AB1CD79EF2','AB1CD79EF3']);
             expect(message.certInfo.commonName.prefix).toEqual('unit-test::');
             expect(message.chunkId).toEqual(i);
             expect(message.quantity).toEqual(i === expectedChunks ? 3 : 50);
@@ -251,7 +251,52 @@ describe('CertificatesService', () => {
             expect(message.quantity).toEqual(i === expectedChunks ? 15 : 50);
         }
     });
+    
+    it('Create Task with invalid country Code', async () => {
+        const certInfo = Object.assign({},certInfoSequential);
+        certInfo.country = 'fail'
+        // call createTask
+        try {
+            await instance.createTask(115, 'unit-test-ca', certInfo);
+            fail(); //expecting error
+        } catch (e) {
+            expect(e.name).toEqual('ArgumentError');
+        }
+
+    });
+    
+    it('Create Task with invalid commonName, base64 commonname exceeds 64 charchters ', async () => {
+        const certInfo = Object.assign({},certInfoSequential);
+        certInfo.commonName = '`unit-test::`AB1CD79EFAB1CD79EFABCDEFABCDEFABCDEFABCDEF${static}'
+        // call createTask
+        try {
+            await instance.createTask(115, 'unit-test-ca', certInfo);
+            fail(); //expecting error
+        } catch (e) {
+            expect(e.name).toEqual('ArgumentError');
+        }
+
+
+    });
+    
+    it('Create Task with invalid commonName, commonname must be a hex value', async () => {
+        const certInfo = Object.assign({},certInfoSequential);
+        certInfo.commonName = '`unit-test::`AB1CD79EF@${static}'
+        // call createTask
+        try {
+            await instance.createTask(115, 'unit-test-ca', certInfo);
+            fail(); //expecting error
+        } catch (e) {
+            expect(e.name).toEqual('ArgumentError');
+        }
+    });
 });
+
+
+    
+
+
+
 
 class MockPublishResponse {
     public response: AWS.SNS.Types.PublishResponse;
