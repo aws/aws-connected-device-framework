@@ -55,7 +55,7 @@ if [ -n "$ASSETLIBRARY_MODE" ]; then
     cmd+=" -m $ASSETLIBRARY_MODE"
 fi
 
-if [ -n "$USE_EXISTING_VPC" ]; then
+if [[ -n "$USE_EXISTING_VPC" && "$USE_EXISTING_VPC" = "true" ]]; then
     cmd+=" -N"
 fi
 

@@ -13,7 +13,7 @@ Resources:
       Description: "CDF: OpenSSL"
       ContentUri: ../build/build.zip
       CompatibleRuntimes:
-        - nodejs12.x
+        - nodejs14.x
         - python3.8
         - java11
       RetentionPolicy: Delete

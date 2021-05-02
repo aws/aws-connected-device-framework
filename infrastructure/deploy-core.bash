@@ -169,7 +169,7 @@ API_GATEWAY_DEFINITION_TEMPLATE="$(defaultIfNotSet 'API_GATEWAY_DEFINITION_TEMPL
 
 ASSETLIBRARY_MODE="$(defaultIfNotSet 'ASSETLIBRARY_MODE' m ${ASSETLIBRARY_MODE} 'full')"
 
-if [ -z "$USE_EXISTING_VPC" ]; then
+if [[ -z "$USE_EXISTING_VPC" ||  "$USE_EXISTING_VPC" = "false" ]]; then
     # if private api auth, or asset library full mode, is configured then these will get overwritten
     VPC_ID='N/A'
     CDF_SECURITY_GROUP_ID='N/A'
@@ -228,7 +228,7 @@ The Connected Device Framework (CDF) will install using the following configurat
 
     -N (USE_EXISTING_VPC)               : $USE_EXISTING_VPC"
 
-if [[ -z "$USE_EXISTING_VPC" ]]; then
+if [[ -z "$USE_EXISTING_VPC"  ||  "$USE_EXISTING_VPC" = "false" ]]; then
     config_message+='not provided, therefore a new vpc will be created'
 else
     config_message+="
@@ -314,9 +314,8 @@ Reusing existing KMS Key.
 '
 
 fi
-
 assetlibrary_config=$CONFIG_LOCATION/assetlibrary/$CONFIG_ENVIRONMENT-config.json
-if [[ -f $assetlibrary_config && "$ASSETLIBRARY_MODE" = "full" && -z "$USE_EXISTING_VPC" ]] || [[ "$API_GATEWAY_AUTH" == "Private" && -z "$USE_EXISTING_VPC" ]]; then
+if [[ -f $assetlibrary_config && "$ASSETLIBRARY_MODE" = "full" &&  ( -z "$USE_EXISTING_VPC" || "$USE_EXISTING_VPC" = "false" ) ]] || [[ "$API_GATEWAY_AUTH" == "Private" && ( -z "$USE_EXISTING_VPC" || "$USE_EXISTING_VPC" = "false" ) ]]; then
 
     logTitle 'Deploying Networking'
 
@@ -422,17 +421,6 @@ if [ -f "$assetlibrary_config" ]; then
         assetlibrary_autoscaling_arg="-s"
     fi
 
-    infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "$assetlibrary_config" \
-        -y "$TEMPLATE_SNIPPET_S3_URI_BASE" -z "$API_GATEWAY_DEFINITION_TEMPLATE" \
-        -a "$API_GATEWAY_AUTH" $cognito_auth_arg $lambda_invoker_auth_arg \
-        -v "$VPC_ID" -g "$CDF_SECURITY_GROUP_ID" -n "$PRIVATE_SUBNET_IDS" -i "$VPCE_ID" -r "$PRIVATE_ROUTE_TABLE_IDS" \
-        -m "$ASSETLIBRARY_MODE" \
-        $assetlibrary_concurrent_executions_arg $assetlibrary_autoscaling_arg \
-        $AWS_SCRIPT_ARGS
-
-    asset_library_deployed="true"
-
-
     if [ "$ASSETLIBRARY_MODE" = "full" ]; then
 
         logTitle 'Deploying Bastion'
@@ -455,6 +443,19 @@ if [ -f "$assetlibrary_config" ]; then
         $AWS_ARGS
 
     fi
+
+    cd "$root_dir/packages/services/assetlibrary"
+    infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "$assetlibrary_config" \
+        -y "$TEMPLATE_SNIPPET_S3_URI_BASE" -z "$API_GATEWAY_DEFINITION_TEMPLATE" \
+        -a "$API_GATEWAY_AUTH" $cognito_auth_arg $lambda_invoker_auth_arg \
+        -v "$VPC_ID" -g "$CDF_SECURITY_GROUP_ID" -n "$PRIVATE_SUBNET_IDS" -i "$VPCE_ID" -r "$PRIVATE_ROUTE_TABLE_IDS" \
+        -m "$ASSETLIBRARY_MODE" \
+        $assetlibrary_concurrent_executions_arg $assetlibrary_autoscaling_arg \
+        $AWS_SCRIPT_ARGS
+
+    asset_library_deployed="true"
+    
+
 fi
 
 provisioning_config=$CONFIG_LOCATION/provisioning/$CONFIG_ENVIRONMENT-config.json

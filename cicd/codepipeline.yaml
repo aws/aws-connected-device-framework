@@ -136,6 +136,10 @@ Resources:
               runtime-versions:
                 nodejs: 12
               commands:
+                - n 14
+                - npm install -g pnpm@5.16
+                - node --version
+                - pnpm --version
                 - bash -c cicd/filterproject_install.bash
             pre_build:
               commands:
@@ -181,6 +185,10 @@ Resources:
               runtime-versions:
                 nodejs: 12
               commands:
+                - n 14
+                - npm install -g pnpm@5.16
+                - node --version
+                - pnpm --version
                 - bash -c cicd/buildproject_install.bash
 
             pre_build:
@@ -238,6 +246,10 @@ Resources:
               runtime-versions:
                 nodejs: 12
               commands:
+                - n 14
+                - npm install -g pnpm@5.16
+                - node --version
+                - pnpm --version
                 - bash -c cicd/integrationtestsproject_install.bash
             pre_build:
               commands:
@@ -337,6 +349,10 @@ Resources:
               runtime-versions:
                 nodejs: 12
               commands:
+                - n 14
+                - npm install -g pnpm@5.16
+                - node --version
+                - pnpm --version
                 - bash -c cicd/deployproject_install.bash
             build:
               commands:
@@ -443,6 +459,10 @@ Resources:
               runtime-versions:
                 nodejs: 12
               commands:
+                - n 14
+                - npm install -g pnpm@5.16
+                - node --version
+                - pnpm --version
                 - bash -c cicd/deployproject_install.bash
             build:
               commands:
@@ -669,6 +689,25 @@ Resources:
               - ec2:ReleaseAddress
               - ec2:RevokeSecurityGroupEgress
               - ec2:RevokeSecurityGroupIngress
+              - ec2:CreateVpc
+              - ec2:ModifyVpcAttribute
+              - ec2:DeleteVpc
+              - ec2:DescribeInternetGateways
+              - ec2:CreateInternetGateway
+              - ec2:DeleteInternetGateway
+              - ec2:DescribeAvailabilityZones
+              - ec2:AttachInternetGateway
+              - ec2:CreateRouteTable
+              - ec2:DescribeAccountAttributes
+              - ec2:DeleteRouteTable
+              - ec2:DetachInternetGateway
+              - ec2:CreateSubnet
+              - ec2:DescribeRouteTables
+              - ec2:CreateRoute
+              - ec2:DeleteSubnet
+              - ec2:DeleteRoute
+              - ec2:DeleteVpcEndpoints
+              - ec2:AssociateRouteTable
               - iam:*
               - iot:CreatePolicy
               - iot:CreatePolicyVersion
@@ -711,9 +750,9 @@ Resources:
               Action:
               - ssm:GetParameters
               Resource:
-              - arn:aws:ssm:us-west-2:157731826412:parameter/CDF_CODECOMMIT_USERNAME
-              - arn:aws:ssm:us-west-2:157731826412:parameter/CDF_CODECOMMIT_PASSWORD
-              - arn:aws:ssm:us-west-2:157731826412:parameter/CDF_CODECOMMIT_EMAIL
+              - !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/CDF_CODECOMMIT_USERNAME'
+              - !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/CDF_CODECOMMIT_PASSWORD'
+              - !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/CDF_CODECOMMIT_EMAIL'
             - Sid: apigateway
               Effect: Allow
               Action:
@@ -723,7 +762,7 @@ Resources:
               - apigateway:POST
               - apigateway:GET
               Resource:
-              - arn:aws:apigateway:us-west-2::/*
+              - !Sub 'arn:aws:apigateway:${AWS::Region}::/*'
             - Sid: s3bucket
               Effect: Allow
               Action:

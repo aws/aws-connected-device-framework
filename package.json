@@ -3,7 +3,7 @@
   "author": "Dean Hart <deanhart@amazon.com>",
   "scripts": {},
   "engines": {
-    "node": "=12",
+    "node": "=14",
     "pnpm": "=5"
   },
   "private": true,

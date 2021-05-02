@@ -192,7 +192,7 @@ Resources:
       Handler: packages/services/device-monitoring/request-queue/dist/lambda_proxy.handler
       MemorySize: 512
       Role: !GetAtt RestLambdaExecutionRole.Arn
-      Runtime: nodejs12.x
+      Runtime: nodejs14.x
       Timeout: 30
       Environment:
         Variables:
@@ -232,7 +232,7 @@ Resources:
       Handler: packages/services/device-monitoring/request-queue/dist/replay.handler
       MemorySize: 512
       Role: !GetAtt ReplayLambdaExecutionRole.Arn
-      Runtime: nodejs12.x
+      Runtime: nodejs14.x
       Timeout: 300
       Environment:
         Variables:

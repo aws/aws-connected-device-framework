@@ -237,7 +237,7 @@ Resources:
       Handler: packages/services/events-processor/dist/lambda_proxy_ddbstream.handler
       MemorySize: 512
       Role: !GetAtt LambdaExecutionRole.Arn
-      Runtime: nodejs12.x
+      Runtime: nodejs14.x
       Timeout: 30
       Environment:
         Variables:
@@ -255,7 +255,7 @@ Resources:
       Handler: packages/services/events-processor/dist/lambda_proxy_invoke.handler
       MemorySize: 512
       Role: !GetAtt LambdaExecutionRole.Arn
-      Runtime: nodejs12.x
+      Runtime: nodejs14.x
       Timeout: 30
       Environment:
         Variables:
@@ -274,7 +274,7 @@ Resources:
 
       MemorySize: 256
       Role: !GetAtt LambdaExecutionRole.Arn
-      Runtime: nodejs12.x
+      Runtime: nodejs14.x
       Timeout: 30
       Environment:
         Variables:

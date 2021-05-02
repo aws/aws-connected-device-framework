@@ -203,7 +203,7 @@ Resources:
       Handler: packages/services/greengrass-deployment/dist/lambda_apigw_proxy.handler
       MemorySize: 256
       Role: !GetAtt LambdaExecutionRole.Arn
-      Runtime: nodejs12.x
+      Runtime: nodejs14.x
       Timeout: 30
       Environment:
         Variables:
@@ -246,7 +246,7 @@ Resources:
       Handler: packages/services/greengrass-deployment/dist/lambda_sqs_proxy.handler
       MemorySize: 128
       Role: !GetAtt LambdaExecutionRole.Arn
-      Runtime: nodejs12.x
+      Runtime: nodejs14.x
       AutoPublishAlias: live
       DeploymentPreference:
         Type: AllAtOnce
@@ -277,7 +277,7 @@ Resources:
       Handler: packages/services/greengrass-deployment/dist/lambda_sqs_ssm_proxy.handler
       MemorySize: 128
       Role: !GetAtt LambdaExecutionRole.Arn
-      Runtime: nodejs12.x
+      Runtime: nodejs14.x
       AutoPublishAlias: live
       DeploymentPreference:
         Type: AllAtOnce
