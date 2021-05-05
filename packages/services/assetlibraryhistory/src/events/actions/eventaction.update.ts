@@ -51,7 +51,7 @@ export class UpdateAction implements EventAction {
                 mergedState['groups']['out'][event.attributes['relationship']].push(event.attributes['attachedToGroup']);
 
             } else if (event.attributes['detachedFromGroup']!==undefined) {
-                let newRelationship = mergedState['groups']['out'][event.attributes['relationship']].filter((value: string) => {
+                const newRelationship = mergedState['groups']['out'][event.attributes['relationship']].filter((value: string) => {
                     return value !== event.attributes['detachedFromGroup'];
                 });
 
@@ -70,7 +70,7 @@ export class UpdateAction implements EventAction {
                 mergedState['devices']['out'][event.attributes['relationship']].push(event.attributes['attachedToDevice']);
 
             } else if (event.attributes['detachedFromDevice']!==undefined) {
-                let newRelationship = mergedState['devices']['out'][event.attributes['relationship']].filter((value: string) => {
+                const newRelationship = mergedState['devices']['out'][event.attributes['relationship']].filter((value: string) => {
                     return value !== event.attributes['detachedFromDevice'];
                 });
 
