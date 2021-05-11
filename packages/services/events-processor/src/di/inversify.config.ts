@@ -182,3 +182,16 @@ container.bind<interfaces.Factory<AWS.IotData>>(TYPES.IotDataFactory)
         return container.get<AWS.IotData>(TYPES.IotData);
     };
 });
+
+decorate(injectable(), AWS.SQS);
+container.bind<interfaces.Factory<AWS.SQS>>(TYPES.SQSFactory)
+    .toFactory<AWS.SQS>(() => {
+    return () => {
+
+        if (!container.isBound(TYPES.SQS)) {
+            const sqs = new AWS.SQS({region: config.get('aws.region')});
+            container.bind<AWS.SQS>(TYPES.SQS).toConstantValue(sqs);
+        }
+        return container.get<AWS.SQS>(TYPES.SQS);
+    };
+});

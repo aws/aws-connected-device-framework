@@ -270,6 +270,8 @@ paths:
   /user/{userId}/subscriptions:
     parameters:
       - $ref: '#/components/parameters/userId'
+      - $ref: '#/components/parameters/principalFilter'
+      - $ref: '#/components/parameters/principalValueFilter'
     get:
       tags:
         - Subscriptions
@@ -278,6 +280,18 @@ paths:
       responses:
         '200':
           $ref: '#/components/schemas/SubscriptionList'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'           
+    delete:  
+      tags:
+        - Subscriptions
+      summary: Delete subscriptions for a given user
+      operationId: deleteSubscriptionsForUser
+      responses:
+        '204':
+          $ref: '#/components/responses/Deleted'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -777,7 +791,21 @@ components:
       required: true
       schema:
         type: string
-              
+
+    principalFilter:
+      name: principal
+      in: query
+      description: A principal to filter by.
+      schema:
+        type: string
+        
+    principalValueFilter:
+      name: principalValue
+      in: query
+      description: The value of the principal to filter by.
+      schema:
+        type: string
+	                        
   examples:
   
     NewDynamoDBEventSource:

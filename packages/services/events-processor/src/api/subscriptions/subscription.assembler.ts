@@ -100,13 +100,13 @@ export class SubscriptionAssembler {
             resource = new SubscriptionV1Resource();
             const asV1 = resource as SubscriptionV1Resource;
             asV1.targets = {
-                dynamodb: this.targetAssembler.toResource(item.targets?.dynamodb[0]),
-                email: this.targetAssembler.toResource(item.targets?.email[0]),
-                mqtt: this.targetAssembler.toResource(item.targets?.mqtt[0]),
-                push_gcm: this.targetAssembler.toResource(item.targets?.push_gcm[0]),
-                push_adm: this.targetAssembler.toResource(item.targets?.push_adm[0]),
-                push_apns: this.targetAssembler.toResource(item.targets?.push_apns[0]),
-                sms: this.targetAssembler.toResource(item.targets?.sms[0]),
+                dynamodb: this.targetAssembler.toResource(item.targets?.dynamodb?.[0]),
+                email: this.targetAssembler.toResource(item.targets?.email?.[0]),
+                mqtt: this.targetAssembler.toResource(item.targets?.mqtt?.[0]),
+                push_gcm: this.targetAssembler.toResource(item.targets?.push_gcm?.[0]),
+                push_adm: this.targetAssembler.toResource(item.targets?.push_adm?.[0]),
+                push_apns: this.targetAssembler.toResource(item.targets?.push_apns?.[0]),
+                sms: this.targetAssembler.toResource(item.targets?.sms?.[0]),
             };
 
             if (asV1.targets?.email) {

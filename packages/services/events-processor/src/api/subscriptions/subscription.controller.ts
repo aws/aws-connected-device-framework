@@ -89,20 +89,36 @@ export class SubscriptionController implements interfaces.Controller {
 
         logger.debug(`subscription.controller updateSubscription: exit:`);
     }
+  
+    @httpDelete('/users/:userId/subscriptions')
+    public async deleteSubscriptionsForUser(@requestParam('userId') userId: string,
+        @queryParam('principal') principal: string,
+        @queryParam('principalValue') principalValue: string,
+        @response() res: Response): Promise<void> {
+        logger.debug(`subscription.controller deleteSubscriptionsForUser: in: userId:${userId}, principal:${principal}, principalValue:${principalValue}`);
+
+        try {
+            await this.subscriptionService.deleteByUser(userId, principal, principalValue);
+        } catch (e) {
+            handleError(e,res);
+        }
+
+        logger.debug(`subscription.controller deleteSubscriptionsForUser: exit:`);
+    }
 
     @httpGet('/users/:userId/subscriptions')
     public async listSubscriptionsForUser(@requestParam('userId') userId: string,
-        @request() req:Request, @response() res: Response): Promise<SubscriptionResourceList> {
-        logger.debug(`subscription.controller listSubscriptionsForUser: in: userId:${userId}`);
-
+        @queryParam('principal') principal: string,
+        @queryParam('principalValue') principalValue: string,
+        @request() req:Request, @response() res: Response): Promise<SubscriptionResourceList> {            
+        logger.debug(`subscription.controller listSubscriptionsForUser: in: userId:${userId}, principal:${principal}, principalValue:${principalValue}`);
+  
         let resources: SubscriptionResourceList;
         try {
-            const items = await this.subscriptionService.listByUser(userId);
-
+            const items = await this.subscriptionService.listByUser(userId, false, principal, principalValue);
             if (items===undefined) {
                 res.status(404).end();
             }
-
             resources = this.subscriptionAssembler.toResourceList(items, req['version']);
         } catch (e) {
             handleError(e,res);

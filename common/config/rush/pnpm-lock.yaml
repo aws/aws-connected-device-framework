@@ -112,6 +112,7 @@ dependencies:
   nodemon: 2.0.6
   nyc: 15.1.0_supports-color@8.0.0
   ow: 0.23.0
+  p-limit: 3.1.0
   pem: 1.14.4
   prettyjson: 1.2.1
   readable-stream: 2.3.6
@@ -4313,7 +4314,7 @@ packages:
       '@types/express': 4.17.11
       express: 4.16.2
       http-status-codes: 1.4.0
-      inversify: 5.0.5
+      inversify: 5.1.1
     dev: false
     resolution:
       integrity: sha512-zIFMJVPTcXzxZBmwtWV2b26MGwPzbZ/XM5SPnrE0SqNQ3QqgI8LMV3nbCLhaPrSji5KToo77UXK5yFpPdVgWJQ==
@@ -4321,6 +4322,10 @@ packages:
     dev: false
     resolution:
       integrity: sha512-60QsfPz8NAU/GZqXu8hJ+BhNf/C/c+Hp0eDc6XMIJTxBiP36AQyyQKpBkOVTLWBFDQWYVHpbbEuIsHu9dLuJDA==
+  /inversify/5.1.1:
+    dev: false
+    resolution:
+      integrity: sha512-j8grHGDzv1v+8T1sAQ+3boTCntFPfvxLCkNcxB1J8qA0lUN+fAlSyYd+RXKvaPRL4AGyPxViutBEJHNXOyUdFQ==
   /ip-regex/2.1.0:
     dev: false
     engines:
@@ -6343,6 +6348,14 @@ packages:
       node: '>=6'
     resolution:
       integrity: sha512-//88mFWSJx8lxCzwdAABTJL2MyWB12+eIY7MDL2SqLmAkeKU9qxRvWuSyTjm3FUmpBEMuFfckAIqEaVGUDxb6w==
+  /p-limit/3.1.0:
+    dependencies:
+      yocto-queue: 0.1.0
+    dev: false
+    engines:
+      node: '>=10'
+    resolution:
+      integrity: sha512-TYOanM3wGwNGsZN2cVTYPArw454xnXj5qmWF1bEoAc4+cU/ol7GVh7odevjp1FNHduHc3KZMcFduxU5Xc6uJRQ==
   /p-locate/4.1.0:
     dependencies:
       p-limit: 2.3.0
@@ -8601,6 +8614,12 @@ packages:
       node: '>=8'
     resolution:
       integrity: sha512-aePbxDmcYW++PaqBsJ+HYUFwCdv4LVvdnhBy78E57PIor8/OVvhMrADFFEDh8DHDFRv/O9i3lPhsENjO7QX0+A==
+  /yocto-queue/0.1.0:
+    dev: false
+    engines:
+      node: '>=10'
+    resolution:
+      integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==
   'file:projects/assetlibrary-client.tgz_supports-color@8.0.0':
     dependencies:
       '@rushstack/eslint-config': 2.3.1_25db0d18da36491395bd3263e8d7e681
@@ -8844,6 +8863,7 @@ packages:
   'file:projects/auth-jwt.tgz_supports-color@8.0.0':
     dependencies:
       '@rushstack/eslint-config': 2.3.1_25db0d18da36491395bd3263e8d7e681
+      '@types/aws-lambda': 8.10.65
       '@types/config': 0.0.37
       '@types/jest': 26.0.18
       '@types/jsonwebtoken': 8.5.0
@@ -8880,7 +8900,7 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-Ws1UOUUM9UR6qlDk6vnN9sbwXFTyVq98D7pXXZ22jbiIkXjFRyFYjv/rgmELvAK9B7++Eyc5/4fxlGLTyiLt3Q==
+      integrity: sha512-ajsKzZIfxSOdsolUpKdYJzXGWBbDKd6+tXXptNpd3lbB7JcyNqyb5bVifw5vArj7isch9Rcg4neSZM4icmQtUw==
       tarball: 'file:projects/auth-jwt.tgz'
     version: 0.0.0
   'file:projects/bulkcerts.tgz_supports-color@8.0.0':
@@ -8979,7 +8999,7 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-8MJWP7+P3YPK6BH0cCD+abneOsY1yro/TDxYt/3Q+lbwkvBod0M/gIEAMCrbAHGxVLlgNEp7l+1ySjxwMX4Zvg==
+      integrity: sha512-tAjU88nnnzgnAO5OnOwzoFkZAsczDP88nYCIRWWP4NiRqIftuMPt0E21TIOn5ljDAe5oQVk/pqA8l6u3VPhX0Q==
       tarball: 'file:projects/certificate-activator.tgz'
     version: 0.0.0
   'file:projects/certificate-vendor.tgz_supports-color@8.0.0':
@@ -9021,7 +9041,7 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-nAfnD+vHeclTw9HokfLxvwn9EIgfjlwWWjY3l320V9Q5Klr9v7seJ+SdB9BasIPE4Lmel/ulZGptlOyayxF+Dw==
+      integrity: sha512-fUZhuHLqDTxczCNdHF2Fpvb9nNpP/3HkKJ5RqwukVBGpqTcPtmWAbQZrKPRTBquxgosywm77tQ15CC0TdG4AqA==
       tarball: 'file:projects/certificate-vendor.tgz'
     version: 0.0.0
   'file:projects/commands-client.tgz_supports-color@8.0.0':
@@ -9116,7 +9136,7 @@ packages:
     dev: false
     name: '@rush-temp/commands'
     resolution:
-      integrity: sha512-NnQcafLOwZkV3aidv5nThSaje3O8aZDAD/kYXWsf/aj7M6qtzyNTepOmv65RAv0AIOnpTKo7eDsJm8xqz1LNxg==
+      integrity: sha512-5lRxr/BV2JK//xOqsrlHGLTJxZHSfBr3ajVCXdWSfnsUlD2XcWZcDxXcORbOU2MxWTonRMatOVZ1c6zaUckXhQ==
       tarball: 'file:projects/commands.tgz'
     version: 0.0.0
   'file:projects/config-inject.tgz_supports-color@8.0.0':
@@ -9191,7 +9211,7 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-fnAbrLDEcM29ielunydr1MUmm+g+afCOrfqdlGliYBzpvLzpxve8ZHk+zmZPchYLSCr414EfESUIoaOL9O6CDg==
+      integrity: sha512-kdfVgZ+soK+rKSva942aZeDeKpeo9U8SRgS2RLk8J8tDe0Nq1BtVD6zGjSeZpbRyzLY8ULtek0dqGJCBrRfwiQ==
       tarball: 'file:projects/device-monitoring.tgz'
     version: 0.0.0
   'file:projects/errors.tgz_supports-color@8.0.0':
@@ -9302,6 +9322,7 @@ packages:
       nodemon: 2.0.6
       nyc: 15.1.0_supports-color@8.0.0
       ow: 0.23.0
+      p-limit: 3.1.0
       readable-stream: 2.3.6
       reflect: 0.1.3
       reflect-metadata: 0.1.13
@@ -9319,7 +9340,7 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-Rv56ZKONb5e3iT2bXavgvcyiiP0zo8owJ0Ov51Gg7s72fQXwQImOn0gu8uXBUNHZG2zbvQpeEGB4OxLX1PXwzQ==
+      integrity: sha512-hRqh6MjspQvAwXx7mdDhLlfjCdwVi2hl4atR9Uasm/1uwjOSaotuzRUqjZ7sdGTh366cG8/xjEx70WYjfUNtcg==
       tarball: 'file:projects/events-processor.tgz'
     version: 0.0.0
   'file:projects/express-middleware.tgz_supports-color@8.0.0':
@@ -9513,7 +9534,7 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-vCH3EAXxyhwsnoEfce3iZFqC/8n2YGadBZlhit4F+ZDqHZ9LAKQAzwd8WdE8DiQ0s5jBSyJuyCwFxlteQSTjUQ==
+      integrity: sha512-66h/z0VINTIPPl0xBS8BB2/Nv/9QF/LlDx+Pt0Qu/rSmHawpPJZVX/b0aZnlUGUBvKPavBLFAf7POR9T8mr9yQ==
       tarball: 'file:projects/greengrass-provisioning.tgz'
     version: 0.0.0
   'file:projects/integration-tests.tgz_supports-color@8.0.0':
@@ -9557,7 +9578,7 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-Y2cgtN+FRxkrC6VGcePmBTXTa73B0adetXy+FgU2x4+tNxgPRb5CpPu/Je1VHxWQFWTpFOmZPa4QsjD8982peQ==
+      integrity: sha512-p84kz+FI3gr3G1VwZPwn2p8pb8dTrv1JxLj319bTMmCGJtIJlQgX9UhrpJ6Cjn4qZv8yF52DGYfc4qDtDopIwg==
       tarball: 'file:projects/integration-tests.tgz'
     version: 0.0.0
   'file:projects/lambda-invoke.tgz_supports-color@8.0.0':
@@ -9934,6 +9955,7 @@ specifiers:
   nodemon: 2.0.6
   nyc: 15.1.0
   ow: 0.23.0
+  p-limit: 3.1.0
   pem: 1.14.4
   prettyjson: 1.2.1
   readable-stream: 2.3.6

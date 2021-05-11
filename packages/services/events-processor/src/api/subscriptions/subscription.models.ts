@@ -100,4 +100,8 @@ export class SubscriptionItem {
 
     enabled?: boolean;
     alerted?: boolean;
+ 
+    constructor(id?:string) {
+        this.id=id;
+    }
 }

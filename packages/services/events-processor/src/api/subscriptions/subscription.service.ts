@@ -6,6 +6,7 @@
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../di/types';
 import {logger} from '../../utils/logger.util';
+import pLimit from 'p-limit';
 import ow from 'ow';
 import {v1 as uuid} from 'uuid';
 import { SubscriptionItem } from './subscription.models';
@@ -20,12 +21,19 @@ import { ListSubscriptionsByTopicResponse } from 'aws-sdk/clients/sns';
 @injectable()
 export class SubscriptionService  {
 
+    private readonly PROMISE_CONCURRENCY_LIMIT = 5;
+ 
+    private sqs: AWS.SQS;
+
     constructor(
         @inject(TYPES.SubscriptionDao) private subscriptionDao: SubscriptionDao,
         @inject(TYPES.EventDao) private eventDao: EventDao,
         @inject(TYPES.SubscriptionAssembler) private subscriptionAssembler: SubscriptionAssembler,
         @inject(TYPES.TargetService) private targetService: TargetService,
-        @inject(TYPES.SNSTarget) private snsTarget: SNSTarget) {
+         @inject(TYPES.SNSTarget) private snsTarget: SNSTarget,
+         @inject('aws.sqs.asyncProcessing') private asyncProcessingQueue:string,
+         @inject(TYPES.SQSFactory) sqsFactory: () => AWS.SQS) {
+             this.sqs = sqsFactory();
     }
 
     public async get(subscriptionId:string) : Promise<SubscriptionItem> {
@@ -175,24 +183,59 @@ export class SubscriptionService  {
 
     }
 
-    public async listByUser(userId:string) : Promise<SubscriptionItem[]> {
-        logger.debug(`subscription.service listByUser: in: userId:${userId}`);
+    public async deleteByUser(userId:string, principal?:string, principalValue?:string) : Promise<void> {
+        logger.debug(`subscription.service deleteByUser: in: userId:${userId}, principal:${principal}, principalValue:${principalValue}`);
+
+        ow(userId, ow.string.nonEmpty);
+
+        const subscriptions = await this.listByUser(userId, true, principal, principalValue);
+
+        for(const sub of subscriptions) {
+            await this.sqs.sendMessage({
+                QueueUrl: this.asyncProcessingQueue,
+                MessageBody: JSON.stringify({subscriptionId: sub.id}),
+                MessageAttributes: {
+                    messageType: {
+                        DataType: 'String',
+                        StringValue: 'DeleteSubscription'
+                    }
+                }
+            }).promise();
+        }
+
+            logger.debug(`subscription.service deleteByUser: exit:`);
+    }
+
+    public async listByUser(userId:string, returnIdsOnly=false, principal?:string, principalValue?:string) : Promise<SubscriptionItem[]> {
+        logger.debug(`subscription.service listByUser: in: userId:${userId}, returnIdsOnly:${returnIdsOnly}, principal:${principal}, principalValue:${principalValue}`);
 
         ow(userId, ow.string.nonEmpty);
 
         let results:SubscriptionItem[] = [];
-        const subscriptionIds  = await this.subscriptionDao.listSubscriptionIdsForUser(userId);
+        let subscriptionIds:string[];
+        if (principal!==undefined && principalValue!==undefined) {
+            subscriptionIds = await this.subscriptionDao.listSubscriptionIdsForUserPrincipal(userId, principal, principalValue);
+        } else {
+            subscriptionIds = await this.subscriptionDao.listSubscriptionIdsForUser(userId);
+        }
+
         if (subscriptionIds?.length>0) {
+            if (returnIdsOnly) {
+                results = subscriptionIds.map(id=> new SubscriptionItem(id));
+            } else {
 
-            const subscriptionItemPromises: Promise<SubscriptionItem>[] = subscriptionIds.map((id: string) => {
-                return this.get(id);
-            });
-
-            results = await Promise.all(subscriptionItemPromises);
+                const limit = pLimit(this.PROMISE_CONCURRENCY_LIMIT);
+                const gets:Promise<SubscriptionItem>[]= [];
+                for(const id of subscriptionIds) {
+                    gets.push( limit(()=> this.get(id)));
+                }
+                results = await Promise.all(gets);
+            }
         }
         logger.debug(`subscription.service listByUser: exit: model: ${JSON.stringify(results)}`);
         return results;
     }
+
 
     public async listByEvent(eventId:string, from?:PaginationKey) : Promise<[SubscriptionItem[], PaginationKey]> {
         logger.debug(`subscription.service listByEvent: in: eventId:${eventId}, from:${JSON.stringify(from)}`);

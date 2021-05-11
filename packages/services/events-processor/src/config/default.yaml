@@ -27,6 +27,9 @@ aws:
       name: MUST_SET!
     lambdaInvoke:
       arn: MUST_SET!
+      
+  sqs:
+    asyncProcessing: MUST_SET!
 
 cors:
   origin:

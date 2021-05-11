@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/events-processor",
+      "comment": "Added new `DELETE /user/{userId}/subscriptions` endpoint to allow deleting subscriptions for a user, optionally filtering by the principal and principal value. Refer to the updated swagger.yml.",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@cdf/events-processor",
+  "email": "deanhart@amazon.com"
+}

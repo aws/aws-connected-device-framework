@@ -224,6 +224,45 @@ export class SubscriptionDao {
         return [response,lastEvaluatedKey];
     }
 
+    public async listSubscriptionIdsForUserPrincipal(userId:string, principal:string, principalValue:string): Promise<string[]> {
+        logger.debug(`subscription.dao listSubscriptionIdsForUser: userId:${userId}`);
+
+        const params:DocumentClient.QueryInput = {
+            TableName: this.eventConfigTable,
+            IndexName: this.eventConfigGSI1,
+            KeyConditionExpression: `#hash=:hash`,
+            ExpressionAttributeNames: {
+                '#hash': 'sk',
+                '#gsi2Key': 'gsi2Key',
+                '#pk': 'pk',
+            },
+            ExpressionAttributeValues: {
+                ':hash': createDelimitedAttribute(PkType.User, userId),
+                ':gsi2Key': principal.concat(':', principalValue)
+            },
+            // will return pk: S:{subscriptionId}
+            FilterExpression: 'contains(#gsi2Key, :gsi2Key)',
+            Select: 'SPECIFIC_ATTRIBUTES',
+            ProjectionExpression: '#pk',
+        };
+
+        const subscriptionIds:string[]= [];
+
+        let r = await this._cachedDc.query(params).promise();
+
+        while(r.Items?.length>0) {
+            subscriptionIds.push(...r.Items?.map(i=> (i['pk'] as string).split(':')[1]));
+            if (r.LastEvaluatedKey===undefined) {
+                break;
+            }
+            params.ExclusiveStartKey = r.LastEvaluatedKey;
+            r = await this._cachedDc.query(params).promise();
+        }
+
+        logger.debug(`subscription.dao listSubscriptionsForUser: exit:${JSON.stringify(subscriptionIds)}`);
+        return subscriptionIds;
+    }
+    
     public async listSubscriptionIdsForUser(userId:string): Promise<string[]> {
         logger.debug(`subscription.dao listSubscriptionIdsForUser: userId:${userId}`);
 

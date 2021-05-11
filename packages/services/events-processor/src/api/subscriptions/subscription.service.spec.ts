@@ -14,14 +14,17 @@ import { TargetService } from '../targets/target.service';
 import { SubscriptionService } from './subscription.service';
 import { DynamodDBTargetItem, EmailTargetItem, PushTargetItem, TargetTypeStrings } from '../targets/targets.models';
 import { ListSubscriptionsResponse } from 'aws-sdk/clients/sns';
+import AWS from 'aws-sdk';
 
 describe('SubscriptionService', () => {
 
+    const asyncProcessingQueue='';
     let mockedSubscriptionDao: jest.Mocked<SubscriptionDao>;
     let mockedEventDao: jest.Mocked<EventDao>;
     let mockedSubscriptionAssembler: jest.Mocked<SubscriptionAssembler>;
     let mockedTargetService: jest.Mocked<TargetService>;
     let mockedSNSTarget: jest.Mocked<SNSTarget>;
+    let mockedSQS: AWS.SQS;
     let instance: SubscriptionService;
 
     beforeEach(() => {
@@ -30,8 +33,13 @@ describe('SubscriptionService', () => {
         mockedSubscriptionAssembler = createMockInstance(SubscriptionAssembler);
         mockedTargetService = createMockInstance(TargetService);
         mockedSNSTarget = createMockInstance(SNSTarget);
+        mockedSQS = new AWS.SQS();
+        const mockedSQSFactory = () => {
+            return mockedSQS;
+        };
 
-        instance = new SubscriptionService(mockedSubscriptionDao, mockedEventDao, mockedSubscriptionAssembler, mockedTargetService, mockedSNSTarget);
+        instance = new SubscriptionService(mockedSubscriptionDao, mockedEventDao, mockedSubscriptionAssembler, mockedTargetService, mockedSNSTarget, asyncProcessingQueue, mockedSQSFactory);
+     
     });
 
     it('get happy path', async() => {

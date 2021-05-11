@@ -144,6 +144,23 @@ Resources:
         - arn:aws:iam::aws:policy/AWSLambdaExecute
         - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
         - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
+      Policies:
+        - PolicyName: app_policies
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: sqs
+                Action:
+                  - sqs:ChangeMessageVisibility
+                  - sqs:DeleteMessage
+                  - sqs:GetQueueAttributes
+                  - sqs:GetQueueUrl
+                  - sqs:ReceiveMessage
+                  - sqs:SendMessage
+                Effect: Allow
+                Resource:
+                  - !GetAtt AsyncProcessingQueue.Arn
+                  - !GetAtt DlqQueue.Arn
     DependsOn:
       - ApplicationPolicies
 
@@ -285,6 +302,7 @@ Resources:
           EVENTSPROCESSOR_AWS_DYNAMODB_DAX_ENDPOINTS: !GetAtt DAXCluster.ClusterDiscoveryEndpoint
           EVENTSPROCESSOR_AWS_LAMBDA_DYNAMODBSTREAM_NAME: !Ref DynamoDBStreamLambdaFunction
           EVENTSPROCESSOR_AWS_LAMBDA_LAMBDAINVOKE_ARN: !GetAtt LambdaInvokeLambdaFunction.Arn
+          EVENTSPROCESSOR_AWS_SQS_ASYNCPROCESSING: !Ref AsyncProcessingQueue
       Tracing: Active
 
       VpcConfig:
@@ -309,6 +327,43 @@ Resources:
             Path: /{proxy+}
             Method: ANY
 
+  AsyncProcessingLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../build/build.zip
+      Handler: lambda_proxy_sqs.handler
+
+      MemorySize: 256
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Runtime: nodejs12.x
+      Timeout: 30
+      Environment:
+        Variables:
+          NODE_CONFIG_DIR: './config'
+          NODE_CONFIG: !Ref ApplicationConfigurationOverride
+          EVENTSPROCESSOR_AWS_DYNAMODB_TABLES_EVENTCONFIG_NAME: !Ref EventConfigTable
+          EVENTSPROCESSOR_AWS_DYNAMODB_TABLES_EVENTNOTIFICATIONS_NAME: !Ref EventNotificationsTable
+          EVENTSPROCESSOR_AWS_DYNAMODB_DAX_ENDPOINTS: !GetAtt DAXCluster.ClusterDiscoveryEndpoint
+          EVENTSPROCESSOR_AWS_LAMBDA_DYNAMODBSTREAM_NAME: !Ref DynamoDBStreamLambdaFunction
+          EVENTSPROCESSOR_AWS_LAMBDA_LAMBDAINVOKE_ARN: !GetAtt LambdaInvokeLambdaFunction.Arn
+          EVENTSPROCESSOR_AWS_SQS_ASYNCPROCESSING: !Ref AsyncProcessingQueue
+      Tracing: Active
+
+      VpcConfig:
+        Fn::If:
+          - DeployInVPC
+          - SubnetIds: !Ref PrivateSubNetIds
+            SecurityGroupIds:
+              - !Ref CDFSecurityGroupId
+          - Ref: AWS::NoValue
+
+      Events:
+        AsyncProcessingQueue:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt AsyncProcessingQueue.Arn
+            BatchSize: 5
+ 
   EventConfigTable:
     Type: AWS::DynamoDB::Table
     Properties: 
@@ -508,6 +563,19 @@ Resources:
                   - - !GetAtt EventConfigTable.Arn
                     - "index/*"
 
+  AsyncProcessingQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      MessageRetentionPeriod: 604800
+      VisibilityTimeout: 960
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt DlqQueue.Arn
+        maxReceiveCount: 10
+
+  DlqQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      MessageRetentionPeriod: 1209600
 
 Outputs:
   DynamoDBStreamLambdaArn:
