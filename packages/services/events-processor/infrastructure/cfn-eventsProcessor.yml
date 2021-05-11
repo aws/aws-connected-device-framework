@@ -330,16 +330,16 @@ Resources:
   AsyncProcessingLambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ../build/build.zip
-      Handler: lambda_proxy_sqs.handler
+      CodeUri: ../bundle.zip
+      Handler: packages/services/events-processor/dist/lambda_proxy_sqs.handler
 
-      MemorySize: 256
+      MemorySize: 512
       Role: !GetAtt LambdaExecutionRole.Arn
-      Runtime: nodejs12.x
-      Timeout: 30
+      Runtime: nodejs14.x
+      Timeout: 900
       Environment:
         Variables:
-          NODE_CONFIG_DIR: './config'
+          NODE_CONFIG_DIR: 'packages/services/events-processor/dist/config'
           NODE_CONFIG: !Ref ApplicationConfigurationOverride
           EVENTSPROCESSOR_AWS_DYNAMODB_TABLES_EVENTCONFIG_NAME: !Ref EventConfigTable
           EVENTSPROCESSOR_AWS_DYNAMODB_TABLES_EVENTNOTIFICATIONS_NAME: !Ref EventNotificationsTable
