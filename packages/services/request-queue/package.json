@@ -40,7 +40,7 @@
     "@rushstack/eslint-config": "2.3.1",
     "@types/aws-lambda": "8.10.65",
     "@types/config": "0.0.37",
-    "@types/jest": "26.0.18",
+    "@types/jest": "26.0.23",
     "@types/superagent": "4.1.10",
     "@types/uuid": "8.3.0",
     "@typescript-eslint/eslint-plugin": "4.9.1",
@@ -50,13 +50,13 @@
     "jest-create-mock-instance": "1.1.0",
     "jest-haste-map": "26.6.2",
     "jest-mock": "26.6.2",
-    "jest-mock-extended": "1.0.10",
+    "jest-mock-extended": "1.0.14",
     "jest-resolve": "26.6.2",
-    "nodemon": "2.0.6",
+    "nodemon": "2.0.7",
     "nyc": "15.1.0",
     "shx": "0.3.3",
-    "ts-jest": "26.4.4",
-    "typescript": "4.1.2"
+    "ts-jest": "26.5.6",
+    "typescript": "4.2.4"
   },
   "jest": {
     "globals": {

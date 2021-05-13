@@ -27,7 +27,7 @@ dependencies:
   '@rush-temp/provisioning': 'file:projects/provisioning.tgz_supports-color@8.0.0'
   '@rush-temp/provisioning-client': 'file:projects/provisioning-client.tgz_supports-color@8.0.0'
   '@rush-temp/request-queue': 'file:projects/request-queue.tgz_supports-color@8.0.0'
-  '@rushstack/eslint-config': 2.3.1_25db0d18da36491395bd3263e8d7e681
+  '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
   '@types/atob': 2.1.2
   '@types/aws-iot-device-sdk': 2.2.2
   '@types/aws-lambda': 8.10.65
@@ -46,7 +46,7 @@ dependencies:
   '@types/express-serve-static-core': 4.17.16
   '@types/express-version-request': 1.7.1
   '@types/http-errors': 1.8.0
-  '@types/jest': 26.0.18
+  '@types/jest': 26.0.23
   '@types/json-stable-stringify': 1.0.32
   '@types/jsonpath-plus': 5.0.1
   '@types/jsonwebtoken': 8.5.0
@@ -61,8 +61,8 @@ dependencies:
   '@types/sinon': 9.0.9
   '@types/superagent': 4.1.10
   '@types/uuid': 8.3.0
-  '@typescript-eslint/eslint-plugin': 4.9.1_fd07bbd6431e6d2022fb6fa2f2b698f2
-  '@typescript-eslint/parser': 4.9.1_25db0d18da36491395bd3263e8d7e681
+  '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
+  '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
   ajv: 6.10.2
   amazon-dax-client: 1.2.5
   async-local-storage: 2.3.1
@@ -100,7 +100,7 @@ dependencies:
   jest-haste-map: 26.6.2
   jest-mock: 26.6.2
   jest-mock-console: 1.0.1_jest@26.6.3
-  jest-mock-extended: 1.0.10_jest@26.6.3+typescript@4.1.2
+  jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
   jest-resolve: 26.6.2
   js-yaml: 3.13.1
   json-rules-engine: 5.3.0
@@ -115,7 +115,7 @@ dependencies:
   morgan: 1.10.0
   multer: 1.4.2
   node-cache: 5.1.2
-  nodemon: 2.0.6
+  nodemon: 2.0.7
   nyc: 15.1.0_supports-color@8.0.0
   ow: 0.23.0
   p-limit: 3.1.0
@@ -130,9 +130,9 @@ dependencies:
   sinon: 9.2.1
   superagent: 6.1.0_supports-color@8.0.0
   supports-color: 8.0.0
-  ts-jest: 26.4.4_jest@26.6.3+typescript@4.1.2
+  ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
   typed-rest-client: 1.8.0
-  typescript: 4.1.2
+  typescript: 4.2.4
   uuid: 8.3.2
   winston: 3.2.1
   winston-transport: 4.3.0
@@ -705,21 +705,21 @@ packages:
       node: '>= 8'
     resolution:
       integrity: sha512-1V9XOY4rDW0rehzbrcqAmHnz8e7SKvX27gh8Gt2WgB0+pdzdiLV83p72kZPU+jvMbS1qU5mauP2iOvO8rhmurQ==
-  /@rushstack/eslint-config/2.3.1_25db0d18da36491395bd3263e8d7e681:
+  /@rushstack/eslint-config/2.3.1_51195f635633a2a0dbf07e99f11cf25c:
     dependencies:
       '@rushstack/eslint-patch': 1.0.6
       '@rushstack/eslint-plugin': 0.7.2_eslint@7.15.0
       '@rushstack/eslint-plugin-packlets': 0.2.0_eslint@7.15.0
       '@rushstack/eslint-plugin-security': 0.1.3_eslint@7.15.0
-      '@typescript-eslint/eslint-plugin': 3.4.0_8153fd369282c175a08741f5a4c63629
-      '@typescript-eslint/experimental-utils': 3.4.0_25db0d18da36491395bd3263e8d7e681
-      '@typescript-eslint/parser': 3.4.0_25db0d18da36491395bd3263e8d7e681
-      '@typescript-eslint/typescript-estree': 3.4.0_6711345f7f3d6dc9e10054ee1e31b810
+      '@typescript-eslint/eslint-plugin': 3.4.0_0c83b75280be6bf17c7891f9e8984067
+      '@typescript-eslint/experimental-utils': 3.4.0_51195f635633a2a0dbf07e99f11cf25c
+      '@typescript-eslint/parser': 3.4.0_51195f635633a2a0dbf07e99f11cf25c
+      '@typescript-eslint/typescript-estree': 3.4.0_66ea5096ca1dafead3408ab1d88908fb
       eslint: 7.15.0_supports-color@8.0.0
       eslint-plugin-promise: 4.2.1
       eslint-plugin-react: 7.20.6_eslint@7.15.0
       eslint-plugin-tsdoc: 0.2.10
-      typescript: 4.1.2
+      typescript: 4.2.4
     dev: false
     peerDependencies:
       eslint: ^6.0.0 || ^7.0.0
@@ -1004,13 +1004,13 @@ packages:
     dev: false
     resolution:
       integrity: sha512-nwKNbvnwJ2/mndE9ItP/zc2TCzw6uuodnF4EHYWD+gCQDVBuRQL5UzbZD0/ezy1iKsFU2ZQiDqg4M9dN4+wZgA==
-  /@types/jest/26.0.18:
+  /@types/jest/26.0.23:
     dependencies:
       jest-diff: 26.6.2
       pretty-format: 26.6.2
     dev: false
     resolution:
-      integrity: sha512-scDPs+mELZgsFetTgBSsIxKGrlitn9t/d2ecP+S1QSIGD+31fkMBEftLfOAX5k3tU06/0PjreJIQ+gWEbbHqpw==
+      integrity: sha512-ZHLmWMJ9jJ9PTiT58juykZpL7KjwJywFN3Rr2pTSkyQfydf/rk22yS7W8p5DaVUMQ2BQC7oYiU3FjbTM/mYrOA==
   /@types/json-schema/7.0.6:
     dev: false
     resolution:
@@ -1145,17 +1145,17 @@ packages:
     dev: false
     resolution:
       integrity: sha512-f+fD/fQAo3BCbCDlrUpznF1A5Zp9rB0noS5vnoormHSIPFKL0Z2DcUJ3Gxp5ytH4uLRNxy7AwYUC9exZzqGMAw==
-  /@typescript-eslint/eslint-plugin/3.4.0_8153fd369282c175a08741f5a4c63629:
+  /@typescript-eslint/eslint-plugin/3.4.0_0c83b75280be6bf17c7891f9e8984067:
     dependencies:
-      '@typescript-eslint/experimental-utils': 3.4.0_25db0d18da36491395bd3263e8d7e681
-      '@typescript-eslint/parser': 3.4.0_25db0d18da36491395bd3263e8d7e681
+      '@typescript-eslint/experimental-utils': 3.4.0_51195f635633a2a0dbf07e99f11cf25c
+      '@typescript-eslint/parser': 3.4.0_51195f635633a2a0dbf07e99f11cf25c
       debug: 4.3.1_supports-color@8.0.0
       eslint: 7.15.0_supports-color@8.0.0
       functional-red-black-tree: 1.0.1
       regexpp: 3.1.0
       semver: 7.3.4
-      tsutils: 3.17.1_typescript@4.1.2
-      typescript: 4.1.2
+      tsutils: 3.17.1_typescript@4.2.4
+      typescript: 4.2.4
     dev: false
     engines:
       node: ^10.12.0 || >=12.0.0
@@ -1169,18 +1169,18 @@ packages:
         optional: true
     resolution:
       integrity: sha512-wfkpiqaEVhZIuQRmudDszc01jC/YR7gMSxa6ulhggAe/Hs0KVIuo9wzvFiDbG3JD5pRFQoqnf4m7REDsUvBnMQ==
-  /@typescript-eslint/eslint-plugin/4.9.1_fd07bbd6431e6d2022fb6fa2f2b698f2:
+  /@typescript-eslint/eslint-plugin/4.9.1_087883c207d729bb61559db98c6bb357:
     dependencies:
-      '@typescript-eslint/experimental-utils': 4.9.1_25db0d18da36491395bd3263e8d7e681
-      '@typescript-eslint/parser': 4.9.1_25db0d18da36491395bd3263e8d7e681
+      '@typescript-eslint/experimental-utils': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
+      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
       '@typescript-eslint/scope-manager': 4.9.1
       debug: 4.3.1_supports-color@8.0.0
       eslint: 7.15.0_supports-color@8.0.0
       functional-red-black-tree: 1.0.1
       regexpp: 3.1.0
       semver: 7.3.4
-      tsutils: 3.17.1_typescript@4.1.2
-      typescript: 4.1.2
+      tsutils: 3.17.1_typescript@4.2.4
+      typescript: 4.2.4
     dev: false
     engines:
       node: ^10.12.0 || >=12.0.0
@@ -1194,10 +1194,10 @@ packages:
         optional: true
     resolution:
       integrity: sha512-QRLDSvIPeI1pz5tVuurD+cStNR4sle4avtHhxA+2uyixWGFjKzJ+EaFVRW6dA/jOgjV5DTAjOxboQkRDE8cRlQ==
-  /@typescript-eslint/experimental-utils/3.4.0_25db0d18da36491395bd3263e8d7e681:
+  /@typescript-eslint/experimental-utils/3.4.0_51195f635633a2a0dbf07e99f11cf25c:
     dependencies:
       '@types/json-schema': 7.0.6
-      '@typescript-eslint/typescript-estree': 3.4.0_6711345f7f3d6dc9e10054ee1e31b810
+      '@typescript-eslint/typescript-estree': 3.4.0_66ea5096ca1dafead3408ab1d88908fb
       eslint: 7.15.0_supports-color@8.0.0
       eslint-scope: 5.1.1
       eslint-utils: 2.1.0
@@ -1210,12 +1210,12 @@ packages:
       typescript: '*'
     resolution:
       integrity: sha512-rHPOjL43lOH1Opte4+dhC0a/+ks+8gOBwxXnyrZ/K4OTAChpSjP76fbI8Cglj7V5GouwVAGaK+xVwzqTyE/TPw==
-  /@typescript-eslint/experimental-utils/4.9.1_25db0d18da36491395bd3263e8d7e681:
+  /@typescript-eslint/experimental-utils/4.9.1_51195f635633a2a0dbf07e99f11cf25c:
     dependencies:
       '@types/json-schema': 7.0.6
       '@typescript-eslint/scope-manager': 4.9.1
       '@typescript-eslint/types': 4.9.1
-      '@typescript-eslint/typescript-estree': 4.9.1_6711345f7f3d6dc9e10054ee1e31b810
+      '@typescript-eslint/typescript-estree': 4.9.1_66ea5096ca1dafead3408ab1d88908fb
       eslint: 7.15.0_supports-color@8.0.0
       eslint-scope: 5.1.1
       eslint-utils: 2.1.0
@@ -1228,14 +1228,14 @@ packages:
       typescript: '*'
     resolution:
       integrity: sha512-c3k/xJqk0exLFs+cWSJxIjqLYwdHCuLWhnpnikmPQD2+NGAx9KjLYlBDcSI81EArh9FDYSL6dslAUSwILeWOxg==
-  /@typescript-eslint/parser/3.4.0_25db0d18da36491395bd3263e8d7e681:
+  /@typescript-eslint/parser/3.4.0_51195f635633a2a0dbf07e99f11cf25c:
     dependencies:
       '@types/eslint-visitor-keys': 1.0.0
-      '@typescript-eslint/experimental-utils': 3.4.0_25db0d18da36491395bd3263e8d7e681
-      '@typescript-eslint/typescript-estree': 3.4.0_6711345f7f3d6dc9e10054ee1e31b810
+      '@typescript-eslint/experimental-utils': 3.4.0_51195f635633a2a0dbf07e99f11cf25c
+      '@typescript-eslint/typescript-estree': 3.4.0_66ea5096ca1dafead3408ab1d88908fb
       eslint: 7.15.0_supports-color@8.0.0
       eslint-visitor-keys: 1.3.0
-      typescript: 4.1.2
+      typescript: 4.2.4
     dev: false
     engines:
       node: ^10.12.0 || >=12.0.0
@@ -1248,14 +1248,14 @@ packages:
         optional: true
     resolution:
       integrity: sha512-ZUGI/de44L5x87uX5zM14UYcbn79HSXUR+kzcqU42gH0AgpdB/TjuJy3m4ezI7Q/jk3wTQd755mxSDLhQP79KA==
-  /@typescript-eslint/parser/4.9.1_25db0d18da36491395bd3263e8d7e681:
+  /@typescript-eslint/parser/4.9.1_51195f635633a2a0dbf07e99f11cf25c:
     dependencies:
       '@typescript-eslint/scope-manager': 4.9.1
       '@typescript-eslint/types': 4.9.1
-      '@typescript-eslint/typescript-estree': 4.9.1_6711345f7f3d6dc9e10054ee1e31b810
+      '@typescript-eslint/typescript-estree': 4.9.1_66ea5096ca1dafead3408ab1d88908fb
       debug: 4.3.1_supports-color@8.0.0
       eslint: 7.15.0_supports-color@8.0.0
-      typescript: 4.1.2
+      typescript: 4.2.4
     dev: false
     engines:
       node: ^10.12.0 || >=12.0.0
@@ -1283,7 +1283,7 @@ packages:
       node: ^8.10.0 || ^10.13.0 || >=11.10.1
     resolution:
       integrity: sha512-fjkT+tXR13ks6Le7JiEdagnwEFc49IkOyys7ueWQ4O8k4quKPwPJudrwlVOJCUQhXo45PrfIvIarcrEjFTNwUA==
-  /@typescript-eslint/typescript-estree/3.4.0_6711345f7f3d6dc9e10054ee1e31b810:
+  /@typescript-eslint/typescript-estree/3.4.0_66ea5096ca1dafead3408ab1d88908fb:
     dependencies:
       debug: 4.3.1_supports-color@8.0.0
       eslint-visitor-keys: 1.3.0
@@ -1291,8 +1291,8 @@ packages:
       is-glob: 4.0.1
       lodash: 4.17.20
       semver: 7.3.4
-      tsutils: 3.17.1_typescript@4.1.2
-      typescript: 4.1.2
+      tsutils: 3.17.1_typescript@4.2.4
+      typescript: 4.2.4
     dev: false
     engines:
       node: ^10.12.0 || >=12.0.0
@@ -1304,7 +1304,7 @@ packages:
         optional: true
     resolution:
       integrity: sha512-zKwLiybtt4uJb4mkG5q2t6+W7BuYx2IISiDNV+IY68VfoGwErDx/RfVI7SWL4gnZ2t1A1ytQQwZ+YOJbHHJ2rw==
-  /@typescript-eslint/typescript-estree/4.9.1_6711345f7f3d6dc9e10054ee1e31b810:
+  /@typescript-eslint/typescript-estree/4.9.1_66ea5096ca1dafead3408ab1d88908fb:
     dependencies:
       '@typescript-eslint/types': 4.9.1
       '@typescript-eslint/visitor-keys': 4.9.1
@@ -1313,8 +1313,8 @@ packages:
       is-glob: 4.0.1
       lodash: 4.17.20
       semver: 7.3.4
-      tsutils: 3.17.1_typescript@4.1.2
-      typescript: 4.1.2
+      tsutils: 3.17.1_typescript@4.2.4
+      typescript: 4.2.4
     dev: false
     engines:
       node: ^10.12.0 || >=12.0.0
@@ -3762,7 +3762,7 @@ packages:
     resolution:
       integrity: sha1-invTcYa23d84E/I4WLV+yq9eQdQ=
   /fsevents/2.1.3:
-    deprecated: Please update to v 2.2.x
+    deprecated: '"Please update to latest v2.3 or v2.2"'
     dev: false
     engines:
       node: ^8.16.0 || ^10.6.0 || >=11.0.0
@@ -4983,16 +4983,17 @@ packages:
       jest: '>= 22.4.2'
     resolution:
       integrity: sha512-Bn+Of/cvz9LOEEeEg5IX5Lsf8D2BscXa3Zl5+vSVJl37yiT8gMAPPKfE09jJOwwu1zbagL11QTrH+L/Gn8udOg==
-  /jest-mock-extended/1.0.10_jest@26.6.3+typescript@4.1.2:
+  /jest-mock-extended/1.0.14_jest@26.6.3+typescript@4.2.4:
     dependencies:
       jest: 26.6.3_supports-color@8.0.0
-      ts-essentials: 4.0.0_typescript@4.1.2
+      ts-essentials: 4.0.0_typescript@4.2.4
+      typescript: 4.2.4
     dev: false
     peerDependencies:
       jest: ^24.0.0 || ^25.0.0 || ^26.0.0
-      typescript: '*'
+      typescript: ^3.0.0 || ^4.0.0
     resolution:
-      integrity: sha512-R2wKiOgEUPoHZ2kLsAQeQP2IfVEgo3oQqWLSXKdMXK06t3UHkQirA2Xnsdqg/pX6KPWTsdnrzE2ig6nqNjdgVw==
+      integrity: sha512-qZx93sSita+c9Qes7+FDCUN6yN9dGJa9gULN5oql5N9phThm5/4wYoxQgCDB6PXyDb07NuaTsAplk3T0nCl5tg==
   /jest-mock/26.6.2:
     dependencies:
       '@jest/types': 26.6.2
@@ -5585,10 +5586,6 @@ packages:
     dev: false
     resolution:
       integrity: sha1-1SfftUVuynzJu5XV2ur4i6VKVFE=
-  /lodash.memoize/4.1.2:
-    dev: false
-    resolution:
-      integrity: sha1-vMbEmkKihA7Zl/Mj6tpezRguC/4=
   /lodash.once/4.1.1:
     dev: false
     resolution:
@@ -6050,6 +6047,25 @@ packages:
     requiresBuild: true
     resolution:
       integrity: sha512-4I3YDSKXg6ltYpcnZeHompqac4E6JeAMpGm8tJnB9Y3T0ehasLa4139dJOcCrB93HHrUMsCrKtoAlXTqT5n4AQ==
+  /nodemon/2.0.7:
+    dependencies:
+      chokidar: 3.4.3
+      debug: 3.2.7
+      ignore-by-default: 1.0.1
+      minimatch: 3.0.4
+      pstree.remy: 1.1.8
+      semver: 5.7.1
+      supports-color: 5.5.0
+      touch: 3.1.0
+      undefsafe: 2.0.3
+      update-notifier: 4.1.3
+    dev: false
+    engines:
+      node: '>=8.10.0'
+    hasBin: true
+    requiresBuild: true
+    resolution:
+      integrity: sha512-XHzK69Awgnec9UzHr1kc8EomQh4sjTQ8oRf8TsGrSmHDx9/UmiGG9E/mM3BuTfNeFwdNBvrqQq/RHL0xIeyFOA==
   /nopt/1.0.10:
     dependencies:
       abbrev: 1.1.1
@@ -8010,28 +8026,27 @@ packages:
     dev: false
     resolution:
       integrity: sha512-XrHUvV5HpdLmIj4uVMxHggLbFSZYIn7HEWsqePZcI50pco+MPqJ50wMGY794X7AOOhxOBAjbkqfAbEe/QMp2Lw==
-  /ts-essentials/4.0.0_typescript@4.1.2:
+  /ts-essentials/4.0.0_typescript@4.2.4:
     dependencies:
-      typescript: 4.1.2
+      typescript: 4.2.4
     dev: false
     peerDependencies:
       typescript: '>=3.7.0'
     resolution:
       integrity: sha512-uQJX+SRY9mtbKU+g9kl5Fi7AEMofPCvHfJkQlaygpPmHPZrtgaBqbWFOYyiA47RhnSwwnXdepUJrgqUYxoUyhQ==
-  /ts-jest/26.4.4_jest@26.6.3+typescript@4.1.2:
+  /ts-jest/26.5.6_jest@26.6.3+typescript@4.2.4:
     dependencies:
-      '@types/jest': 26.0.18
       bs-logger: 0.2.6
       buffer-from: 1.1.1
       fast-json-stable-stringify: 2.1.0
       jest: 26.6.3_supports-color@8.0.0
       jest-util: 26.6.2
       json5: 2.1.3
-      lodash.memoize: 4.1.2
+      lodash: 4.17.20
       make-error: 1.3.6
       mkdirp: 1.0.4
       semver: 7.3.4
-      typescript: 4.1.2
+      typescript: 4.2.4
       yargs-parser: 20.2.4
     dev: false
     engines:
@@ -8041,15 +8056,15 @@ packages:
       jest: '>=26 <27'
       typescript: '>=3.8 <5.0'
     resolution:
-      integrity: sha512-3lFWKbLxJm34QxyVNNCgXX1u4o/RV0myvA2y2Bxm46iGIjKlaY0own9gIckbjZJPn+WaJEnfPPJ20HHGpoq4yg==
+      integrity: sha512-rua+rCP8DxpA8b4DQD/6X2HQS8Zy/xzViVYfEs2OQu68tkCuKLV0Md8pmX55+W24uRIyAsf/BajRfxOs+R2MKA==
   /tslib/1.14.1:
     dev: false
     resolution:
       integrity: sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==
-  /tsutils/3.17.1_typescript@4.1.2:
+  /tsutils/3.17.1_typescript@4.2.4:
     dependencies:
       tslib: 1.14.1
-      typescript: 4.1.2
+      typescript: 4.2.4
     dev: false
     engines:
       node: '>= 6'
@@ -8160,13 +8175,13 @@ packages:
     dev: false
     resolution:
       integrity: sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
-  /typescript/4.1.2:
+  /typescript/4.2.4:
     dev: false
     engines:
       node: '>=4.2.0'
     hasBin: true
     resolution:
-      integrity: sha512-thGloWsGH3SOxv1SoY7QojKi0tc+8FnOmiarEGMbd/lar7QOEd3hvlx3Fp5y6FlDUGl9L+pd4n2e+oToGMmhRQ==
+      integrity: sha512-V+evlYHZnQkaz8TRBuxTA92yZBPotr5H+WhQ7bD3hZUndx5tGOa1fuCgeSjxAzM1RiN5IzvadIXTVefuuwZCRg==
   /ultron/1.1.1:
     dev: false
     resolution:
@@ -8630,13 +8645,13 @@ packages:
       integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==
   'file:projects/assetlibrary-client.tgz_supports-color@8.0.0':
     dependencies:
-      '@rushstack/eslint-config': 2.3.1_25db0d18da36491395bd3263e8d7e681
+      '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
       '@types/config': 0.0.37
-      '@types/jest': 26.0.18
+      '@types/jest': 26.0.23
       '@types/node': 14.6.1
       '@types/superagent': 4.1.10
-      '@typescript-eslint/eslint-plugin': 4.9.1_fd07bbd6431e6d2022fb6fa2f2b698f2
-      '@typescript-eslint/parser': 4.9.1_25db0d18da36491395bd3263e8d7e681
+      '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
+      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
       aws-sdk: 2.777.0
       check-outdated: 2.7.0
       config: 3.2.4
@@ -8649,7 +8664,7 @@ packages:
       jest-create-mock-instance: 1.1.0
       jest-haste-map: 26.6.2
       jest-mock: 26.6.2
-      jest-mock-extended: 1.0.10_jest@26.6.3+typescript@4.1.2
+      jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
       js-yaml: 3.13.1
       logform: 2.1.2
@@ -8660,8 +8675,8 @@ packages:
       reflect-metadata: 0.1.13
       shx: 0.3.3
       superagent: 6.1.0_supports-color@8.0.0
-      ts-jest: 26.4.4_jest@26.6.3+typescript@4.1.2
-      typescript: 4.1.2
+      ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
+      typescript: 4.2.4
       winston: 3.2.1
       winston-transport: 4.3.0
     dev: false
@@ -8670,23 +8685,23 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-bjVGamOopgBqF8qAhFYTzCgf899NDdboNuuafepsJmp5ouxh/2ptiXjOskl0DfsinJM1aQE6myNU3yHH8/Oe/Q==
+      integrity: sha512-oyKcweKxYbE87VtCPT9ttbDZuOQevNsl517H9yByLOK/YaqOHWhgiu2rC+tLO1bxXtjwWg8oJj7SD2nsYhLxQA==
       tarball: 'file:projects/assetlibrary-client.tgz'
     version: 0.0.0
   'file:projects/assetlibrary-history.tgz_supports-color@8.0.0':
     dependencies:
-      '@rushstack/eslint-config': 2.3.1_25db0d18da36491395bd3263e8d7e681
+      '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
       '@types/atob': 2.1.2
       '@types/body-parser': 1.19.0
       '@types/btoa': 1.2.3
       '@types/config': 0.0.37
       '@types/cors': 2.8.8
       '@types/express': 4.17.9
-      '@types/jest': 26.0.18
+      '@types/jest': 26.0.23
       '@types/json-stable-stringify': 1.0.32
       '@types/morgan': 1.9.2
-      '@typescript-eslint/eslint-plugin': 4.9.1_fd07bbd6431e6d2022fb6fa2f2b698f2
-      '@typescript-eslint/parser': 4.9.1_25db0d18da36491395bd3263e8d7e681
+      '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
+      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
       atob: 2.1.2
       aws-sdk: 2.777.0
       body-parser: 1.19.0
@@ -8702,20 +8717,20 @@ packages:
       jest-create-mock-instance: 1.1.0
       jest-haste-map: 26.6.2
       jest-mock: 26.6.2
-      jest-mock-extended: 1.0.10_jest@26.6.3+typescript@4.1.2
+      jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
       js-yaml: 3.13.1
       logform: 2.1.2
       morgan: 1.10.0
-      nodemon: 2.0.6
+      nodemon: 2.0.7
       nyc: 15.1.0_supports-color@8.0.0
       ow: 0.23.0
       readable-stream: 2.3.6
       reflect-metadata: 0.1.13
       serverless-http: 2.6.0
       shx: 0.3.3
-      ts-jest: 26.4.4_jest@26.6.3+typescript@4.1.2
-      typescript: 4.1.2
+      ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
+      typescript: 4.2.4
       winston: 3.2.1
       winston-transport: 4.3.0
     dev: false
@@ -8724,24 +8739,24 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-RQ/c9CCl4Rvj5ppXZEXlk/5+hlzikLgHy7rFtSxGqFb8paSLZ5/ZyYNJv1Bjo03OCrHaQEfWfYUrjm4oaW03Vw==
+      integrity: sha512-V2JIrP6UIIk4J3Il60W8tB+XTl6RihfgWIpBOOEkZO7wdwqh4AYYIQNjVS/6aUyZ6lSYDcc0h3HWzcODkVkHDQ==
       tarball: 'file:projects/assetlibrary-history.tgz'
     version: 0.0.0
   'file:projects/assetlibrary.tgz_supports-color@8.0.0':
     dependencies:
-      '@rushstack/eslint-config': 2.3.1_25db0d18da36491395bd3263e8d7e681
+      '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
       '@types/body-parser': 1.19.0
       '@types/config': 0.0.37
       '@types/cors': 2.8.8
       '@types/express': 4.17.9
       '@types/express-serve-static-core': 4.17.16
       '@types/express-version-request': 1.7.1
-      '@types/jest': 26.0.18
+      '@types/jest': 26.0.23
       '@types/json-stable-stringify': 1.0.32
       '@types/jsonwebtoken': 8.5.0
       '@types/prettyjson': 0.0.29
-      '@typescript-eslint/eslint-plugin': 4.9.1_fd07bbd6431e6d2022fb6fa2f2b698f2
-      '@typescript-eslint/parser': 4.9.1_25db0d18da36491395bd3263e8d7e681
+      '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
+      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
       ajv: 6.10.2
       async-local-storage: 2.3.1
       aws-sdk: 2.777.0
@@ -8761,7 +8776,7 @@ packages:
       jest-express: 1.12.0
       jest-haste-map: 26.6.2
       jest-mock: 26.6.2
-      jest-mock-extended: 1.0.10_jest@26.6.3+typescript@4.1.2
+      jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
       js-yaml: 3.13.1
       json-stable-stringify: 1.0.1
@@ -8769,7 +8784,7 @@ packages:
       logform: 2.1.2
       mime: 2.4.6
       node-cache: 5.1.2
-      nodemon: 2.0.6
+      nodemon: 2.0.7
       nyc: 15.1.0_supports-color@8.0.0
       ow: 0.23.0
       prettyjson: 1.2.1
@@ -8777,8 +8792,8 @@ packages:
       reflect-metadata: 0.1.13
       serverless-http: 2.6.0
       shx: 0.3.3
-      ts-jest: 26.4.4_jest@26.6.3+typescript@4.1.2
-      typescript: 4.1.2
+      ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
+      typescript: 4.2.4
       winston: 3.2.1
       winston-transport: 4.3.0
     dev: false
@@ -8787,17 +8802,17 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-CVs/lJSgo4QecX6UYCaEENem5S8zDPguqjDPzvQAnmxeQFbI8oYXsw8vMxek3kZlbpFVToxRlR2vW57qZwiZBA==
+      integrity: sha512-7l7bpSB2odDgpd8XwQxDQnwA2zH1m/CPGN1CjbyOFE2YxBOnYPj2dW4NUad5g4F9DHRoOauB55SPyYbUlAe7yQ==
       tarball: 'file:projects/assetlibrary.tgz'
     version: 0.0.0
   'file:projects/assetlibraryhistory-client.tgz_supports-color@8.0.0':
     dependencies:
-      '@rushstack/eslint-config': 2.3.1_25db0d18da36491395bd3263e8d7e681
+      '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
       '@types/config': 0.0.37
-      '@types/jest': 26.0.18
+      '@types/jest': 26.0.23
       '@types/superagent': 4.1.10
-      '@typescript-eslint/eslint-plugin': 4.9.1_fd07bbd6431e6d2022fb6fa2f2b698f2
-      '@typescript-eslint/parser': 4.9.1_25db0d18da36491395bd3263e8d7e681
+      '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
+      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
       aws-sdk: 2.777.0
       config: 3.2.4
       eslint: 7.15.0_supports-color@8.0.0
@@ -8808,7 +8823,7 @@ packages:
       jest-create-mock-instance: 1.1.0
       jest-haste-map: 26.6.2
       jest-mock: 26.6.2
-      jest-mock-extended: 1.0.10_jest@26.6.3+typescript@4.1.2
+      jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
       js-yaml: 3.13.1
       logform: 2.1.2
@@ -8819,8 +8834,8 @@ packages:
       reflect-metadata: 0.1.13
       shx: 0.3.3
       superagent: 6.1.0_supports-color@8.0.0
-      ts-jest: 26.4.4_jest@26.6.3+typescript@4.1.2
-      typescript: 4.1.2
+      ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
+      typescript: 4.2.4
       winston: 3.2.1
       winston-transport: 4.3.0
     dev: false
@@ -8829,17 +8844,17 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-p6+WQl/KJzD6DVx/b1pzuM3HZGwEuXt43aPVxOiS7ULLCXPHnP8TzdPlRqeRjPP/WUUyBYc7+F24HtjNqp0XIw==
+      integrity: sha512-CuEyGqkCJVO72OUjvg/ajGLkDIofjrDmEAB6BjU+rzAE8TCEnKg64xAiNyR/yHKejgSh48X7wuFdh3z6TpIksA==
       tarball: 'file:projects/assetlibraryhistory-client.tgz'
     version: 0.0.0
   'file:projects/auth-devicecert.tgz_supports-color@8.0.0':
     dependencies:
-      '@rushstack/eslint-config': 2.3.1_25db0d18da36491395bd3263e8d7e681
+      '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
       '@types/config': 0.0.37
-      '@types/jest': 26.0.18
+      '@types/jest': 26.0.23
       '@types/pem': 1.9.5
-      '@typescript-eslint/eslint-plugin': 4.9.1_fd07bbd6431e6d2022fb6fa2f2b698f2
-      '@typescript-eslint/parser': 4.9.1_25db0d18da36491395bd3263e8d7e681
+      '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
+      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
       aws-sdk: 2.777.0
       config: 3.2.4
       eslint: 7.15.0_supports-color@8.0.0
@@ -8847,17 +8862,17 @@ packages:
       jest-create-mock-instance: 1.1.0
       jest-haste-map: 26.6.2
       jest-mock: 26.6.2
-      jest-mock-extended: 1.0.10_jest@26.6.3+typescript@4.1.2
+      jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
       js-yaml: 3.13.1
       logform: 2.1.2
-      nodemon: 2.0.6
+      nodemon: 2.0.7
       nyc: 15.1.0_supports-color@8.0.0
       pem: 1.14.4
       reflect-metadata: 0.1.13
       shx: 0.3.3
-      ts-jest: 26.4.4_jest@26.6.3+typescript@4.1.2
-      typescript: 4.1.2
+      ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
+      typescript: 4.2.4
       winston: 3.2.1
       winston-transport: 4.3.0
     dev: false
@@ -8866,19 +8881,19 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-sTCyv2elSifDYDStyjjNtIByXMEFBHHo5LfYJ4kI7X8RvaQsH2gN+wSEJvvS9ynEKjIv7I95dFlkZ5eND12f2g==
+      integrity: sha512-2t/RysAjMknz7jDkp3/fY0fhhCKXDSqMDedB2SspWipGWpqSdwXJvx/Q1lTsZZHRmXvpv4YrfoRWSJ0QRZWRCQ==
       tarball: 'file:projects/auth-devicecert.tgz'
     version: 0.0.0
   'file:projects/auth-jwt.tgz_supports-color@8.0.0':
     dependencies:
-      '@rushstack/eslint-config': 2.3.1_25db0d18da36491395bd3263e8d7e681
+      '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
       '@types/aws-lambda': 8.10.65
       '@types/config': 0.0.37
-      '@types/jest': 26.0.18
+      '@types/jest': 26.0.23
       '@types/jsonwebtoken': 8.5.0
       '@types/jwk-to-pem': 2.0.0
-      '@typescript-eslint/eslint-plugin': 4.9.1_fd07bbd6431e6d2022fb6fa2f2b698f2
-      '@typescript-eslint/parser': 4.9.1_25db0d18da36491395bd3263e8d7e681
+      '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
+      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
       axios: 0.21.0
       config: 3.2.4
       eslint: 7.15.0_supports-color@8.0.0
@@ -8886,20 +8901,20 @@ packages:
       jest-create-mock-instance: 1.1.0
       jest-haste-map: 26.6.2
       jest-mock: 26.6.2
-      jest-mock-extended: 1.0.10_jest@26.6.3+typescript@4.1.2
+      jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
       js-yaml: 3.13.1
       jsonwebtoken: 8.5.1
       jwk-to-pem: 2.0.4
       logform: 2.1.2
-      nodemon: 2.0.6
+      nodemon: 2.0.7
       nyc: 15.1.0_supports-color@8.0.0
       ow: 0.23.0
       readable-stream: 2.3.6
       reflect-metadata: 0.1.13
       shx: 0.3.3
-      ts-jest: 26.4.4_jest@26.6.3+typescript@4.1.2
-      typescript: 4.1.2
+      ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
+      typescript: 4.2.4
       uuid: 8.3.2
       winston: 3.2.1
       winston-transport: 4.3.0
@@ -8909,18 +8924,18 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-ajsKzZIfxSOdsolUpKdYJzXGWBbDKd6+tXXptNpd3lbB7JcyNqyb5bVifw5vArj7isch9Rcg4neSZM4icmQtUw==
+      integrity: sha512-wx4nU87QhI4y4hcILOe+ORD+9XIjrxRyGrNTsJDmkfwdj+7vJ5CCKP3+2exUqc9KJsUHxZqj7fLSGe2xKwK0PA==
       tarball: 'file:projects/auth-jwt.tgz'
     version: 0.0.0
   'file:projects/bulkcerts-client.tgz_supports-color@8.0.0':
     dependencies:
-      '@rushstack/eslint-config': 2.3.1_25db0d18da36491395bd3263e8d7e681
+      '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
       '@types/config': 0.0.37
-      '@types/jest': 26.0.18
+      '@types/jest': 26.0.23
       '@types/node': 14.6.1
       '@types/superagent': 4.1.10
-      '@typescript-eslint/eslint-plugin': 4.9.1_fd07bbd6431e6d2022fb6fa2f2b698f2
-      '@typescript-eslint/parser': 4.9.1_25db0d18da36491395bd3263e8d7e681
+      '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
+      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
       aws-sdk: 2.777.0
       config: 3.2.4
       eslint: 7.15.0_supports-color@8.0.0
@@ -8931,7 +8946,7 @@ packages:
       jest-create-mock-instance: 1.1.0
       jest-haste-map: 26.6.2
       jest-mock: 26.6.2
-      jest-mock-extended: 1.0.10_jest@26.6.3+typescript@4.1.2
+      jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
       js-yaml: 3.13.1
       logform: 2.1.2
@@ -8942,8 +8957,8 @@ packages:
       reflect-metadata: 0.1.13
       shx: 0.3.3
       superagent: 6.1.0_supports-color@8.0.0
-      ts-jest: 26.4.4_jest@26.6.3+typescript@4.1.2
-      typescript: 4.1.2
+      ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
+      typescript: 4.2.4
       winston: 3.2.1
       winston-transport: 4.3.0
     dev: false
@@ -8952,25 +8967,25 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-uVyQngWYIIniE3SQpKavlh9a/295D+pgIRSF6ZWMeoQOPu1G3iElra2D7L1EDRpnnurwGoOsi00VNGR6oiPn7Q==
+      integrity: sha512-BhWi4jszqRJQBhnJ0O20Yzm+gI4ITujXrW6R274LGL/7jrAbsFhds/cbi4jGfEAqGeF0dC3XbQ6K1lCmwb8dmA==
       tarball: 'file:projects/bulkcerts-client.tgz'
     version: 0.0.0
   'file:projects/bulkcerts.tgz_supports-color@8.0.0':
     dependencies:
-      '@rushstack/eslint-config': 2.3.1_25db0d18da36491395bd3263e8d7e681
+      '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
       '@types/aws-lambda': 8.10.65
       '@types/aws-serverless-express': 3.3.3
       '@types/body-parser': 1.19.0
       '@types/config': 0.0.37
       '@types/cors': 2.8.8
       '@types/express': 4.17.9
-      '@types/jest': 26.0.18
+      '@types/jest': 26.0.23
       '@types/jszip': 3.4.0
       '@types/multer': 1.4.5
       '@types/pem': 1.9.5
       '@types/uuid': 8.3.0
-      '@typescript-eslint/eslint-plugin': 4.9.1_fd07bbd6431e6d2022fb6fa2f2b698f2
-      '@typescript-eslint/parser': 4.9.1_25db0d18da36491395bd3263e8d7e681
+      '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
+      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
       aws-sdk: 2.777.0
       aws-serverless-express: 3.4.0
       body-parser: 1.19.0
@@ -8985,20 +9000,20 @@ packages:
       jest-create-mock-instance: 1.1.0
       jest-haste-map: 26.6.2
       jest-mock: 26.6.2
-      jest-mock-extended: 1.0.10_jest@26.6.3+typescript@4.1.2
+      jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
       js-yaml: 3.13.1
       jszip: 3.5.0
       logform: 2.1.2
-      nodemon: 2.0.6
+      nodemon: 2.0.7
       nyc: 15.1.0_supports-color@8.0.0
       ow: 0.23.0
       pem: 1.14.4
       readable-stream: 2.3.6
       reflect-metadata: 0.1.13
       shx: 0.3.3
-      ts-jest: 26.4.4_jest@26.6.3+typescript@4.1.2
-      typescript: 4.1.2
+      ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
+      typescript: 4.2.4
       uuid: 8.3.2
       winston: 3.2.1
       winston-transport: 4.3.0
@@ -9008,17 +9023,17 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-MpfoCYIelQXXV1dY88bikAD115/Ij9he4p7RoT+YyeU4UYe+j6EJusG4YiddjoxaQcaKs1qUVlW99cI/mQ6H5g==
+      integrity: sha512-BV939/vzDzJd9v8yDHa3XAys4joTOCeGgn4hK4E+93gmajfvMBkVxi5H9jKcGACAXce/JOP+STjRm8L4V35q6g==
       tarball: 'file:projects/bulkcerts.tgz'
     version: 0.0.0
   'file:projects/certificate-activator.tgz_supports-color@8.0.0':
     dependencies:
-      '@rushstack/eslint-config': 2.3.1_25db0d18da36491395bd3263e8d7e681
+      '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
       '@types/config': 0.0.37
-      '@types/jest': 26.0.18
+      '@types/jest': 26.0.23
       '@types/pem': 1.9.5
-      '@typescript-eslint/eslint-plugin': 4.9.1_fd07bbd6431e6d2022fb6fa2f2b698f2
-      '@typescript-eslint/parser': 4.9.1_25db0d18da36491395bd3263e8d7e681
+      '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
+      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
       aws-sdk: 2.777.0
       config: 3.2.4
       eslint: 7.15.0_supports-color@8.0.0
@@ -9029,11 +9044,11 @@ packages:
       jest-create-mock-instance: 1.1.0
       jest-haste-map: 26.6.2
       jest-mock: 26.6.2
-      jest-mock-extended: 1.0.10_jest@26.6.3+typescript@4.1.2
+      jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
       js-yaml: 3.13.1
       logform: 2.1.2
-      nodemon: 2.0.6
+      nodemon: 2.0.7
       nyc: 15.1.0_supports-color@8.0.0
       ow: 0.23.0
       pem: 1.14.4
@@ -9041,8 +9056,8 @@ packages:
       reflect-metadata: 0.1.13
       shx: 0.3.3
       superagent: 6.1.0_supports-color@8.0.0
-      ts-jest: 26.4.4_jest@26.6.3+typescript@4.1.2
-      typescript: 4.1.2
+      ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
+      typescript: 4.2.4
       winston: 3.2.1
       winston-transport: 4.3.0
     dev: false
@@ -9051,17 +9066,17 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-tAjU88nnnzgnAO5OnOwzoFkZAsczDP88nYCIRWWP4NiRqIftuMPt0E21TIOn5ljDAe5oQVk/pqA8l6u3VPhX0Q==
+      integrity: sha512-4Xxs1qz/1VJrqy+M2Pxe9jzXXYUwG0ZwVN5Zv8x6jiUIkivxhIAkIaDl48dFdHzb6QbAv+uFZbulakD2mQkevA==
       tarball: 'file:projects/certificate-activator.tgz'
     version: 0.0.0
   'file:projects/certificate-vendor.tgz_supports-color@8.0.0':
     dependencies:
-      '@rushstack/eslint-config': 2.3.1_25db0d18da36491395bd3263e8d7e681
+      '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
       '@types/config': 0.0.37
-      '@types/jest': 26.0.18
+      '@types/jest': 26.0.23
       '@types/pem': 1.9.5
-      '@typescript-eslint/eslint-plugin': 4.9.1_fd07bbd6431e6d2022fb6fa2f2b698f2
-      '@typescript-eslint/parser': 4.9.1_25db0d18da36491395bd3263e8d7e681
+      '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
+      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
       aws-sdk: 2.777.0
       config: 3.2.4
       eslint: 7.15.0_supports-color@8.0.0
@@ -9071,11 +9086,11 @@ packages:
       jest-create-mock-instance: 1.1.0
       jest-haste-map: 26.6.2
       jest-mock: 26.6.2
-      jest-mock-extended: 1.0.10_jest@26.6.3+typescript@4.1.2
+      jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
       js-yaml: 3.13.1
       logform: 2.1.2
-      nodemon: 2.0.6
+      nodemon: 2.0.7
       nyc: 15.1.0_supports-color@8.0.0
       ow: 0.23.0
       pem: 1.14.4
@@ -9083,8 +9098,8 @@ packages:
       reflect-metadata: 0.1.13
       shx: 0.3.3
       superagent: 6.1.0_supports-color@8.0.0
-      ts-jest: 26.4.4_jest@26.6.3+typescript@4.1.2
-      typescript: 4.1.2
+      ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
+      typescript: 4.2.4
       winston: 3.2.1
       winston-transport: 4.3.0
     dev: false
@@ -9093,18 +9108,18 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-fUZhuHLqDTxczCNdHF2Fpvb9nNpP/3HkKJ5RqwukVBGpqTcPtmWAbQZrKPRTBquxgosywm77tQ15CC0TdG4AqA==
+      integrity: sha512-Y6+ZNarx6sgVuXhLilSAZBcdCRk61WXRH0IxcxnzsN91FBY6zin9Cua7m0z0bSdDYDbFDObI6d49JBujak+rqw==
       tarball: 'file:projects/certificate-vendor.tgz'
     version: 0.0.0
   'file:projects/commands-client.tgz_supports-color@8.0.0':
     dependencies:
-      '@rushstack/eslint-config': 2.3.1_25db0d18da36491395bd3263e8d7e681
+      '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
       '@types/config': 0.0.37
-      '@types/jest': 26.0.18
+      '@types/jest': 26.0.23
       '@types/node': 14.6.1
       '@types/superagent': 4.1.10
-      '@typescript-eslint/eslint-plugin': 4.9.1_fd07bbd6431e6d2022fb6fa2f2b698f2
-      '@typescript-eslint/parser': 4.9.1_25db0d18da36491395bd3263e8d7e681
+      '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
+      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
       aws-sdk: 2.777.0
       config: 3.2.4
       eslint: 7.15.0_supports-color@8.0.0
@@ -9115,7 +9130,7 @@ packages:
       jest-create-mock-instance: 1.1.0
       jest-haste-map: 26.6.2
       jest-mock: 26.6.2
-      jest-mock-extended: 1.0.10_jest@26.6.3+typescript@4.1.2
+      jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
       js-yaml: 3.13.1
       logform: 2.1.2
@@ -9126,8 +9141,8 @@ packages:
       reflect-metadata: 0.1.13
       shx: 0.3.3
       superagent: 6.1.0_supports-color@8.0.0
-      ts-jest: 26.4.4_jest@26.6.3+typescript@4.1.2
-      typescript: 4.1.2
+      ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
+      typescript: 4.2.4
       winston: 3.2.1
       winston-transport: 4.3.0
     dev: false
@@ -9136,22 +9151,22 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-knN8Q0mnnlflpFoRds24u2LhykqVY2ohw0byN9uRk6cE6zi3hFG9svaQ3R3Mdsm05dL9V/P3WWzgHLJ1kqTHgA==
+      integrity: sha512-P8osjrhSIkxd+qhQSlB7LWTZwhOx7vhsnLhw4LYl2ltDJ2PGb1gPBC9kz42KeyvJIDqSOFkG/OdnD5aIPah4fg==
       tarball: 'file:projects/commands-client.tgz'
     version: 0.0.0
   'file:projects/commands.tgz':
     dependencies:
-      '@rushstack/eslint-config': 2.3.1_25db0d18da36491395bd3263e8d7e681
+      '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
       '@types/body-parser': 1.19.0
       '@types/busboy': 0.2.3
       '@types/config': 0.0.37
       '@types/cors': 2.8.8
       '@types/express': 4.17.9
-      '@types/jest': 26.0.18
+      '@types/jest': 26.0.23
       '@types/sinon': 9.0.9
       '@types/uuid': 8.3.0
-      '@typescript-eslint/eslint-plugin': 4.9.1_fd07bbd6431e6d2022fb6fa2f2b698f2
-      '@typescript-eslint/parser': 4.9.1_25db0d18da36491395bd3263e8d7e681
+      '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
+      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
       ajv: 6.10.2
       aws-sdk: 2.777.0
       body-parser: 1.19.0
@@ -9167,11 +9182,11 @@ packages:
       jest-create-mock-instance: 1.1.0
       jest-haste-map: 26.6.2
       jest-mock: 26.6.2
-      jest-mock-extended: 1.0.10_jest@26.6.3+typescript@4.1.2
+      jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
       js-yaml: 3.13.1
       logform: 2.1.2
-      nodemon: 2.0.6
+      nodemon: 2.0.7
       ow: 0.23.0
       readable-stream: 2.3.6
       reflect-metadata: 0.1.13
@@ -9180,25 +9195,25 @@ packages:
       sinon: 9.2.1
       superagent: 6.1.0_supports-color@8.0.0
       supports-color: 8.0.0
-      ts-jest: 26.4.4_jest@26.6.3+typescript@4.1.2
-      typescript: 4.1.2
+      ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
+      typescript: 4.2.4
       uuid: 8.3.2
       winston: 3.2.1
       winston-transport: 4.3.0
     dev: false
     name: '@rush-temp/commands'
     resolution:
-      integrity: sha512-5lRxr/BV2JK//xOqsrlHGLTJxZHSfBr3ajVCXdWSfnsUlD2XcWZcDxXcORbOU2MxWTonRMatOVZ1c6zaUckXhQ==
+      integrity: sha512-Qth7HSJBvLv+CnbzdSJyxgj2uu8H/7k/1IjamyRr4TPi1DPG/up7KbqFokZeCNkk1N6tFTigH7Bus0WAhxi1RQ==
       tarball: 'file:projects/commands.tgz'
     version: 0.0.0
   'file:projects/config-inject.tgz_supports-color@8.0.0':
     dependencies:
-      '@rushstack/eslint-config': 2.3.1_25db0d18da36491395bd3263e8d7e681
+      '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
       '@types/config': 0.0.37
-      '@types/jest': 26.0.18
+      '@types/jest': 26.0.23
       '@types/node': 14.6.1
-      '@typescript-eslint/eslint-plugin': 4.9.1_fd07bbd6431e6d2022fb6fa2f2b698f2
-      '@typescript-eslint/parser': 4.9.1_25db0d18da36491395bd3263e8d7e681
+      '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
+      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
       config: 3.2.4
       eslint: 7.15.0_supports-color@8.0.0
       inversify: 5.0.5
@@ -9206,32 +9221,32 @@ packages:
       jest-create-mock-instance: 1.1.0
       jest-haste-map: 26.6.2
       jest-mock: 26.6.2
-      jest-mock-extended: 1.0.10_jest@26.6.3+typescript@4.1.2
+      jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
       js-yaml: 3.13.1
       nodemon: 2.0.6
       nyc: 15.1.0_supports-color@8.0.0
       reflect-metadata: 0.1.13
       shx: 0.3.3
-      ts-jest: 26.4.4_jest@26.6.3+typescript@4.1.2
-      typescript: 4.1.2
+      ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
+      typescript: 4.2.4
     dev: false
     id: 'file:projects/config-inject.tgz'
     name: '@rush-temp/config-inject'
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-HYBPsiKMdL4qfqwHNuPXu2lgv8z+tU938Rsxsya5HL9SBZzyl8xnUQLlHNc5ygSFcAjTQXB71Fp67SVqJsTj3Q==
+      integrity: sha512-JUCMEf0nLphcMwIrn1+2ob24kf0j3pVSpv57+LmgfxMWk5c9OG9IL+QBeIB1xgc4Ln/91zI77qgubeARwxLbvQ==
       tarball: 'file:projects/config-inject.tgz'
     version: 0.0.0
   'file:projects/device-monitoring.tgz_supports-color@8.0.0':
     dependencies:
-      '@rushstack/eslint-config': 2.3.1_25db0d18da36491395bd3263e8d7e681
+      '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
       '@types/config': 0.0.37
-      '@types/jest': 26.0.18
+      '@types/jest': 26.0.23
       '@types/superagent': 4.1.10
-      '@typescript-eslint/eslint-plugin': 4.9.1_fd07bbd6431e6d2022fb6fa2f2b698f2
-      '@typescript-eslint/parser': 4.9.1_25db0d18da36491395bd3263e8d7e681
+      '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
+      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
       config: 3.2.4
       eslint: 7.15.0_supports-color@8.0.0
       http-errors: 1.8.0
@@ -9242,19 +9257,19 @@ packages:
       jest-create-mock-instance: 1.1.0
       jest-haste-map: 26.6.2
       jest-mock: 26.6.2
-      jest-mock-extended: 1.0.10_jest@26.6.3+typescript@4.1.2
+      jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
       js-yaml: 3.13.1
       logform: 2.1.2
-      nodemon: 2.0.6
+      nodemon: 2.0.7
       nyc: 15.1.0_supports-color@8.0.0
       ow: 0.23.0
       readable-stream: 2.3.6
       reflect-metadata: 0.1.13
       shx: 0.3.3
       superagent: 6.1.0_supports-color@8.0.0
-      ts-jest: 26.4.4_jest@26.6.3+typescript@4.1.2
-      typescript: 4.1.2
+      ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
+      typescript: 4.2.4
       winston: 3.2.1
       winston-transport: 4.3.0
     dev: false
@@ -9263,46 +9278,46 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-kdfVgZ+soK+rKSva942aZeDeKpeo9U8SRgS2RLk8J8tDe0Nq1BtVD6zGjSeZpbRyzLY8ULtek0dqGJCBrRfwiQ==
+      integrity: sha512-eUPu+kMFxs+RmaLGHE+z6eyrGnkVal5xRCRolbyfA/dHlC3m8+wFsjvS4RCOW2Xv1BMIPPWJsrfIf2ryME5B7g==
       tarball: 'file:projects/device-monitoring.tgz'
     version: 0.0.0
   'file:projects/errors.tgz_supports-color@8.0.0':
     dependencies:
-      '@rushstack/eslint-config': 2.3.1_25db0d18da36491395bd3263e8d7e681
-      '@types/jest': 26.0.18
-      '@typescript-eslint/eslint-plugin': 4.9.1_fd07bbd6431e6d2022fb6fa2f2b698f2
-      '@typescript-eslint/parser': 4.9.1_25db0d18da36491395bd3263e8d7e681
+      '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
+      '@types/jest': 26.0.23
+      '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
+      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
       eslint: 7.15.0_supports-color@8.0.0
       jest: 26.6.3_supports-color@8.0.0
       jest-create-mock-instance: 1.1.0
       jest-haste-map: 26.6.2
       jest-mock: 26.6.2
-      jest-mock-extended: 1.0.10_jest@26.6.3+typescript@4.1.2
+      jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
       nodemon: 2.0.6
       nyc: 15.1.0_supports-color@8.0.0
       shx: 0.3.3
-      ts-jest: 26.4.4_jest@26.6.3+typescript@4.1.2
-      typescript: 4.1.2
+      ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
+      typescript: 4.2.4
     dev: false
     id: 'file:projects/errors.tgz'
     name: '@rush-temp/errors'
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-ekIwOsmMKFo8sov9egWCBFuJo/kOGuvYfRD0T834BCehKWQ6hXNZ2NjvwzOhdNAgE/8DCxKn3ct67L28lHoXVw==
+      integrity: sha512-MRwgPiietrVdcCoM88VZ8af4TLLtQ00w4xJndArmjIGygrF9+/y07TvRF6guWbZo5E1zXtemDmwNsehXdmoe5A==
       tarball: 'file:projects/errors.tgz'
     version: 0.0.0
   'file:projects/events-alerts.tgz_supports-color@8.0.0':
     dependencies:
-      '@rushstack/eslint-config': 2.3.1_25db0d18da36491395bd3263e8d7e681
+      '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
       '@types/config': 0.0.37
       '@types/cors': 2.8.8
       '@types/dot': 1.1.4
-      '@types/jest': 26.0.18
+      '@types/jest': 26.0.23
       '@types/uuid': 8.3.0
-      '@typescript-eslint/eslint-plugin': 4.9.1_fd07bbd6431e6d2022fb6fa2f2b698f2
-      '@typescript-eslint/parser': 4.9.1_25db0d18da36491395bd3263e8d7e681
+      '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
+      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
       amazon-dax-client: 1.2.5
       aws-sdk: 2.777.0
       config: 3.2.4
@@ -9314,19 +9329,19 @@ packages:
       jest-create-mock-instance: 1.1.0
       jest-haste-map: 26.6.2
       jest-mock: 26.6.2
-      jest-mock-extended: 1.0.10_jest@26.6.3+typescript@4.1.2
+      jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
       js-yaml: 3.13.1
       json-rules-engine: 5.3.0
       logform: 2.1.2
-      nodemon: 2.0.6
+      nodemon: 2.0.7
       nyc: 15.1.0_supports-color@8.0.0
       ow: 0.23.0
       readable-stream: 2.3.6
       reflect-metadata: 0.1.13
       shx: 0.3.3
-      ts-jest: 26.4.4_jest@26.6.3+typescript@4.1.2
-      typescript: 4.1.2
+      ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
+      typescript: 4.2.4
       uuid: 8.3.2
       winston: 3.2.1
       winston-transport: 4.3.0
@@ -9336,22 +9351,22 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-B8EFdSd55uvZ5P+bZQ2+P+m+Hl9D2ajR403QpZ+Oi0CVUFaQuRVdc2oWiqXyVgEWhruoqF48WmwoBvm+XGIgfA==
+      integrity: sha512-gKYpeXnQjijMg5rffyLR9RfvQxd3Bs/A8lsHbBs5IZ2AMt7WxKlQLLnOvlbrJvfCdP1jodyYMuEJl/XY0vDHQg==
       tarball: 'file:projects/events-alerts.tgz'
     version: 0.0.0
   'file:projects/events-processor.tgz_supports-color@8.0.0':
     dependencies:
-      '@rushstack/eslint-config': 2.3.1_25db0d18da36491395bd3263e8d7e681
+      '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
       '@types/aws-lambda': 8.10.65
       '@types/body-parser': 1.19.0
       '@types/config': 0.0.37
       '@types/cors': 2.8.8
       '@types/express': 4.17.9
       '@types/express-version-request': 1.7.1
-      '@types/jest': 26.0.18
+      '@types/jest': 26.0.23
       '@types/uuid': 8.3.0
-      '@typescript-eslint/eslint-plugin': 4.9.1_fd07bbd6431e6d2022fb6fa2f2b698f2
-      '@typescript-eslint/parser': 4.9.1_25db0d18da36491395bd3263e8d7e681
+      '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
+      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
       amazon-dax-client: 1.2.5
       aws-sdk: 2.777.0
       body-parser: 1.19.0
@@ -9367,12 +9382,12 @@ packages:
       jest-create-mock-instance: 1.1.0
       jest-haste-map: 26.6.2
       jest-mock: 26.6.2
-      jest-mock-extended: 1.0.10_jest@26.6.3+typescript@4.1.2
+      jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
       js-yaml: 3.13.1
       json-rules-engine: 5.3.0
       logform: 2.1.2
-      nodemon: 2.0.6
+      nodemon: 2.0.7
       nyc: 15.1.0_supports-color@8.0.0
       ow: 0.23.0
       p-limit: 3.1.0
@@ -9382,8 +9397,8 @@ packages:
       serverless-http: 2.6.0
       shx: 0.3.3
       superagent: 6.1.0_supports-color@8.0.0
-      ts-jest: 26.4.4_jest@26.6.3+typescript@4.1.2
-      typescript: 4.1.2
+      ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
+      typescript: 4.2.4
       uuid: 8.3.2
       winston: 3.2.1
       winston-transport: 4.3.0
@@ -9393,16 +9408,16 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-ciREj+jZFvKk1QsCKwBp5FVrix5WNAxsSJMHA2BuXiYGshD3/7FmwYMAQt+YflK6V0PjbRCw9a546Fspnq8kJg==
+      integrity: sha512-FT7CuELmmspYcVgzTTkBb6cKWMsqkhQT+mRivCMh62/2F39g088vwVtX3wLiLXPnf5snLx8e16ORwoFMfjz4nA==
       tarball: 'file:projects/events-processor.tgz'
     version: 0.0.0
   'file:projects/express-middleware.tgz_supports-color@8.0.0':
     dependencies:
-      '@rushstack/eslint-config': 2.3.1_25db0d18da36491395bd3263e8d7e681
+      '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
       '@types/express': 4.17.9
-      '@types/jest': 26.0.18
-      '@typescript-eslint/eslint-plugin': 4.9.1_fd07bbd6431e6d2022fb6fa2f2b698f2
-      '@typescript-eslint/parser': 4.9.1_25db0d18da36491395bd3263e8d7e681
+      '@types/jest': 26.0.23
+      '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
+      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
       config: 3.2.4
       eslint: 7.15.0_supports-color@8.0.0
       express: 4.17.1
@@ -9410,38 +9425,38 @@ packages:
       jest-create-mock-instance: 1.1.0
       jest-haste-map: 26.6.2
       jest-mock: 26.6.2
-      jest-mock-extended: 1.0.10_jest@26.6.3+typescript@4.1.2
+      jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
       nodemon: 2.0.6
       nyc: 15.1.0_supports-color@8.0.0
       shx: 0.3.3
-      ts-jest: 26.4.4_jest@26.6.3+typescript@4.1.2
-      typescript: 4.1.2
+      ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
+      typescript: 4.2.4
     dev: false
     id: 'file:projects/express-middleware.tgz'
     name: '@rush-temp/express-middleware'
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-iWQlvUUPX46FtoGuS+fFgtWZ2WougVlBmsWfdC9JzX2rysIs0gK6eFtEIQaeU69eYCGz2y7TftrBVefCCU6bDw==
+      integrity: sha512-WrJbBOvk99R7Uvz8iKrSg79M7v+cLmFRkuPGnugANbWPMNYedif70xefLAx3EhLHGP/GjJMyQVxsTV5epsKbIA==
       tarball: 'file:projects/express-middleware.tgz'
     version: 0.0.0
   'file:projects/greengrass-deployment.tgz_supports-color@8.0.0':
     dependencies:
-      '@rushstack/eslint-config': 2.3.1_25db0d18da36491395bd3263e8d7e681
+      '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
       '@types/body-parser': 1.19.0
       '@types/config': 0.0.37
       '@types/cors': 2.8.8
       '@types/express': 4.17.9
       '@types/express-serve-static-core': 4.17.16
       '@types/express-version-request': 1.7.1
-      '@types/jest': 26.0.18
+      '@types/jest': 26.0.23
       '@types/json-stable-stringify': 1.0.32
       '@types/jsonwebtoken': 8.5.0
       '@types/prettyjson': 0.0.29
       '@types/uuid': 8.3.0
-      '@typescript-eslint/eslint-plugin': 4.9.1_fd07bbd6431e6d2022fb6fa2f2b698f2
-      '@typescript-eslint/parser': 4.9.1_25db0d18da36491395bd3263e8d7e681
+      '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
+      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
       ajv: 6.10.2
       async-local-storage: 2.3.1
       aws-sdk: 2.777.0
@@ -9460,7 +9475,7 @@ packages:
       jest-create-mock-instance: 1.1.0
       jest-haste-map: 26.6.2
       jest-mock: 26.6.2
-      jest-mock-extended: 1.0.10_jest@26.6.3+typescript@4.1.2
+      jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
       js-yaml: 3.13.1
       json-stable-stringify: 1.0.1
@@ -9468,7 +9483,7 @@ packages:
       logform: 2.1.2
       mime: 2.4.6
       node-cache: 5.1.2
-      nodemon: 2.0.6
+      nodemon: 2.0.7
       nyc: 15.1.0_supports-color@8.0.0
       ow: 0.23.0
       prettyjson: 1.2.1
@@ -9476,8 +9491,8 @@ packages:
       reflect-metadata: 0.1.13
       serverless-http: 2.6.0
       shx: 0.3.3
-      ts-jest: 26.4.4_jest@26.6.3+typescript@4.1.2
-      typescript: 4.1.2
+      ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
+      typescript: 4.2.4
       uuid: 8.3.2
       winston: 3.2.1
       winston-transport: 4.3.0
@@ -9487,18 +9502,18 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-MXfj3CUDpssiYOKteyZjIPlkXelkQuP8Uoov4npE4zx9+dAh7Sw+NyGquks90TaZ5x6m3t9ZHrb2/oCh9TGZUg==
+      integrity: sha512-o1JFBVya0i9Pvu0cLka09YiiaVoKOQdOnb9LZfGDRmfcrXA4JKnMqBWQYZJpsJmo8rPVJ9ZXesfdam+fl6zguQ==
       tarball: 'file:projects/greengrass-deployment.tgz'
     version: 0.0.0
   'file:projects/greengrass-provisioning-client.tgz_supports-color@8.0.0':
     dependencies:
-      '@rushstack/eslint-config': 2.3.1_25db0d18da36491395bd3263e8d7e681
+      '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
       '@types/config': 0.0.37
-      '@types/jest': 26.0.18
+      '@types/jest': 26.0.23
       '@types/node': 14.6.1
       '@types/superagent': 4.1.10
-      '@typescript-eslint/eslint-plugin': 4.9.1_fd07bbd6431e6d2022fb6fa2f2b698f2
-      '@typescript-eslint/parser': 4.9.1_25db0d18da36491395bd3263e8d7e681
+      '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
+      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
       aws-sdk: 2.777.0
       config: 3.2.4
       eslint: 7.15.0_supports-color@8.0.0
@@ -9509,7 +9524,7 @@ packages:
       jest-create-mock-instance: 1.1.0
       jest-haste-map: 26.6.2
       jest-mock: 26.6.2
-      jest-mock-extended: 1.0.10_jest@26.6.3+typescript@4.1.2
+      jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
       js-yaml: 3.13.1
       logform: 2.1.2
@@ -9520,8 +9535,8 @@ packages:
       reflect-metadata: 0.1.13
       shx: 0.3.3
       superagent: 6.1.0_supports-color@8.0.0
-      ts-jest: 26.4.4_jest@26.6.3+typescript@4.1.2
-      typescript: 4.1.2
+      ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
+      typescript: 4.2.4
       winston: 3.2.1
       winston-transport: 4.3.0
     dev: false
@@ -9530,12 +9545,12 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-UzkGtrBdgdCZmR7clYTUxuYwAh46asG+LbG19is6wrg/WGwiv7debX6S7/zE7sfhgsjdPtd+vQBB/ofJAiy19g==
+      integrity: sha512-tEcygpNYtpo2108hFTf0xqvYC6RjZuC7GdRjorle8AXEsMB3ZGhKvjJV6pvK6u0NwuL4Hp0Ym/479NDRpuYIJg==
       tarball: 'file:projects/greengrass-provisioning-client.tgz'
     version: 0.0.0
   'file:projects/greengrass-provisioning.tgz_supports-color@8.0.0':
     dependencies:
-      '@rushstack/eslint-config': 2.3.1_25db0d18da36491395bd3263e8d7e681
+      '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
       '@types/atob': 2.1.2
       '@types/body-parser': 1.19.0
       '@types/btoa': 1.2.3
@@ -9544,12 +9559,12 @@ packages:
       '@types/express': 4.17.9
       '@types/express-serve-static-core': 4.17.16
       '@types/express-version-request': 1.7.1
-      '@types/jest': 26.0.18
+      '@types/jest': 26.0.23
       '@types/jsonpath-plus': 5.0.1
       '@types/jszip': 3.4.0
       '@types/shortid': 0.0.29
-      '@typescript-eslint/eslint-plugin': 4.9.1_fd07bbd6431e6d2022fb6fa2f2b698f2
-      '@typescript-eslint/parser': 4.9.1_25db0d18da36491395bd3263e8d7e681
+      '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
+      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
       atob: 2.1.2
       aws-sdk: 2.777.0
       body-parser: 1.19.0
@@ -9568,14 +9583,14 @@ packages:
       jest-create-mock-instance: 1.1.0
       jest-haste-map: 26.6.2
       jest-mock: 26.6.2
-      jest-mock-extended: 1.0.10_jest@26.6.3+typescript@4.1.2
+      jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
       js-yaml: 3.13.1
       jsonpath-plus: 5.0.7
       jszip: 3.5.0
       logform: 2.1.2
       mime: 2.4.6
-      nodemon: 2.0.6
+      nodemon: 2.0.7
       nyc: 15.1.0_supports-color@8.0.0
       ow: 0.23.0
       p-limit: 3.1.0
@@ -9586,8 +9601,8 @@ packages:
       shortid: 2.2.16
       shx: 0.3.3
       superagent: 6.1.0_supports-color@8.0.0
-      ts-jest: 26.4.4_jest@26.6.3+typescript@4.1.2
-      typescript: 4.1.2
+      ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
+      typescript: 4.2.4
       winston: 3.2.1
       winston-transport: 4.3.0
     dev: false
@@ -9596,7 +9611,7 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-S/8+guslJJ7WJcISfBVPZGdfceyHLDpWZBGauuqdK89jVS2UHstCvoKoeHRD/si83e0tZaKPCYZPMnbkjtco+Q==
+      integrity: sha512-vFChh5c+aKMaEER1HVujFdoXR2GjAlSUTNqt41G2jZ5VtMd0lX8bjGGZzHT4oSm1ZqF+C74tKCz7mvphiRe4iA==
       tarball: 'file:projects/greengrass-provisioning.tgz'
     version: 0.0.0
   'file:projects/integration-tests.tgz_supports-color@8.0.0':
@@ -9633,7 +9648,7 @@ packages:
       shx: 0.3.3
       superagent: 6.1.0_supports-color@8.0.0
       typed-rest-client: 1.8.0
-      typescript: 4.1.2
+      typescript: 4.2.4
       winston: 3.2.1
       winston-transport: 4.3.0
     dev: false
@@ -9642,17 +9657,17 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-QzLljOMuK2KjTtmbpN5ehYZ00Ey3T15fi23vmeIULhV1k/5idaMmXdMQS9flPdfd9M/EW639h6WZ6dLmmKLngQ==
+      integrity: sha512-K52Bscj8cQHwk/rWUCZ7MdCVA6xAlvD8lGl9Q1RYZaDz9J9/BBwuNx+BV0X6JxbDiKM0luj4EHHFDxC8g1T7iA==
       tarball: 'file:projects/integration-tests.tgz'
     version: 0.0.0
   'file:projects/lambda-invoke.tgz_supports-color@8.0.0':
     dependencies:
-      '@rushstack/eslint-config': 2.3.1_25db0d18da36491395bd3263e8d7e681
+      '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
       '@types/config': 0.0.37
       '@types/http-errors': 1.8.0
-      '@types/jest': 26.0.18
-      '@typescript-eslint/eslint-plugin': 4.9.1_fd07bbd6431e6d2022fb6fa2f2b698f2
-      '@typescript-eslint/parser': 4.9.1_25db0d18da36491395bd3263e8d7e681
+      '@types/jest': 26.0.23
+      '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
+      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
       aws-sdk: 2.777.0
       config: 3.2.4
       eslint: 7.15.0_supports-color@8.0.0
@@ -9664,7 +9679,7 @@ packages:
       jest-create-mock-instance: 1.1.0
       jest-haste-map: 26.6.2
       jest-mock: 26.6.2
-      jest-mock-extended: 1.0.10_jest@26.6.3+typescript@4.1.2
+      jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
       js-yaml: 3.13.1
       logform: 2.1.2
@@ -9674,8 +9689,8 @@ packages:
       reflect-metadata: 0.1.13
       shx: 0.3.3
       superagent: 6.1.0_supports-color@8.0.0
-      ts-jest: 26.4.4_jest@26.6.3+typescript@4.1.2
-      typescript: 4.1.2
+      ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
+      typescript: 4.2.4
       winston: 3.2.1
       winston-transport: 4.3.0
     dev: false
@@ -9684,29 +9699,29 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-JxIZk3Cp5sf9JnwIovLwAivmhIutsmq8Lyyzj9A3YNOso5NOiI4SqXT8qvhxEyDfuzAUsy0j7YnuQ7XnGmmjmA==
+      integrity: sha512-DABxADvi3GRAE0ZDbviL7N9rXVVSzKxoDVxOFwPJfzuVlzNhG27Du5O36o2E1QVg+2c0oRlYvAoxUY7GlXbwNw==
       tarball: 'file:projects/lambda-invoke.tgz'
     version: 0.0.0
   'file:projects/logger.tgz_supports-color@8.0.0':
     dependencies:
-      '@rushstack/eslint-config': 2.3.1_25db0d18da36491395bd3263e8d7e681
-      '@types/jest': 26.0.18
-      '@typescript-eslint/eslint-plugin': 4.9.1_fd07bbd6431e6d2022fb6fa2f2b698f2
-      '@typescript-eslint/parser': 4.9.1_25db0d18da36491395bd3263e8d7e681
+      '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
+      '@types/jest': 26.0.23
+      '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
+      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
       eslint: 7.15.0_supports-color@8.0.0
       jest: 26.6.3_supports-color@8.0.0
       jest-create-mock-instance: 1.1.0
       jest-haste-map: 26.6.2
       jest-mock: 26.6.2
-      jest-mock-extended: 1.0.10_jest@26.6.3+typescript@4.1.2
+      jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
       logform: 2.1.2
       nodemon: 2.0.6
       nyc: 15.1.0_supports-color@8.0.0
       readable-stream: 2.3.6
       shx: 0.3.3
-      ts-jest: 26.4.4_jest@26.6.3+typescript@4.1.2
-      typescript: 4.1.2
+      ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
+      typescript: 4.2.4
       winston: 3.2.1
       winston-transport: 4.3.0
     dev: false
@@ -9715,18 +9730,18 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-BJQHLXgJQvnxCNutC6BwENDDQj1Uyq0/RjdNKI8BFtWQ30mAw9/+ueoqHHtXPCGAsFvAZs/8Yw29PDwaWxlylQ==
+      integrity: sha512-dlLsvuwxlnI7IJrf9Teen1G9onAX5XAqJ8hsGc1G5cawSJGkwn3CAaYwi0q1tWKjSxdsru7BTyTqDPfwA4T99A==
       tarball: 'file:projects/logger.tgz'
     version: 0.0.0
   'file:projects/notifications-client.tgz_supports-color@8.0.0':
     dependencies:
-      '@rushstack/eslint-config': 2.3.1_25db0d18da36491395bd3263e8d7e681
+      '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
       '@types/config': 0.0.37
-      '@types/jest': 26.0.18
+      '@types/jest': 26.0.23
       '@types/node': 14.6.1
       '@types/superagent': 4.1.10
-      '@typescript-eslint/eslint-plugin': 4.9.1_fd07bbd6431e6d2022fb6fa2f2b698f2
-      '@typescript-eslint/parser': 4.9.1_25db0d18da36491395bd3263e8d7e681
+      '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
+      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
       aws-sdk: 2.777.0
       config: 3.2.4
       eslint: 7.15.0_supports-color@8.0.0
@@ -9737,7 +9752,7 @@ packages:
       jest-create-mock-instance: 1.1.0
       jest-haste-map: 26.6.2
       jest-mock: 26.6.2
-      jest-mock-extended: 1.0.10_jest@26.6.3+typescript@4.1.2
+      jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
       js-yaml: 3.13.1
       logform: 2.1.2
@@ -9748,8 +9763,8 @@ packages:
       reflect-metadata: 0.1.13
       shx: 0.3.3
       superagent: 6.1.0_supports-color@8.0.0
-      ts-jest: 26.4.4_jest@26.6.3+typescript@4.1.2
-      typescript: 4.1.2
+      ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
+      typescript: 4.2.4
       winston: 3.2.1
       winston-transport: 4.3.0
     dev: false
@@ -9758,17 +9773,17 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-n9MQumsGe1a+gpmOL6pxpKV0mcJ6RW9H7VutgwnbT+Ry2Be3wiQqjw1BZzLwrjzvP/96G/OpgjEvUOpwLvAEVA==
+      integrity: sha512-03hkFPhfpooV/6Iv+fdrHWDGN8cbWEaFmEqeT72lxoU1iwUb4iEN8tKmliP+rqzfnlfrQOWCpVgGzQMkjziciQ==
       tarball: 'file:projects/notifications-client.tgz'
     version: 0.0.0
   'file:projects/provisioning-client.tgz_supports-color@8.0.0':
     dependencies:
-      '@rushstack/eslint-config': 2.3.1_25db0d18da36491395bd3263e8d7e681
+      '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
       '@types/config': 0.0.37
-      '@types/jest': 26.0.18
+      '@types/jest': 26.0.23
       '@types/superagent': 4.1.10
-      '@typescript-eslint/eslint-plugin': 4.9.1_fd07bbd6431e6d2022fb6fa2f2b698f2
-      '@typescript-eslint/parser': 4.9.1_25db0d18da36491395bd3263e8d7e681
+      '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
+      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
       aws-sdk: 2.777.0
       config: 3.2.4
       eslint: 7.15.0_supports-color@8.0.0
@@ -9779,7 +9794,7 @@ packages:
       jest-create-mock-instance: 1.1.0
       jest-haste-map: 26.6.2
       jest-mock: 26.6.2
-      jest-mock-extended: 1.0.10_jest@26.6.3+typescript@4.1.2
+      jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
       js-yaml: 3.13.1
       logform: 2.1.2
@@ -9790,8 +9805,8 @@ packages:
       reflect-metadata: 0.1.13
       shx: 0.3.3
       superagent: 6.1.0_supports-color@8.0.0
-      ts-jest: 26.4.4_jest@26.6.3+typescript@4.1.2
-      typescript: 4.1.2
+      ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
+      typescript: 4.2.4
       winston: 3.2.1
       winston-transport: 4.3.0
     dev: false
@@ -9800,22 +9815,22 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-Cyg/5MobwtdiEFvG94HB2/RkKKPKolA/84kHjBirRQDj/oWCr76UsQHo5KbnU1zB7USL+ICxEkV22Tl/9crpww==
+      integrity: sha512-/AkSgQ0X2yyM755gg3jw6MVFKubyxfOeJtov27RBz8WrYcn/RzjCW1iHUHSbam1FNbK8tP8gEtJAxdCw26xi0A==
       tarball: 'file:projects/provisioning-client.tgz'
     version: 0.0.0
   'file:projects/provisioning.tgz_supports-color@8.0.0':
     dependencies:
-      '@rushstack/eslint-config': 2.3.1_25db0d18da36491395bd3263e8d7e681
+      '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
       '@types/body-parser': 1.19.0
       '@types/config': 0.0.37
       '@types/cors': 2.8.8
       '@types/express': 4.17.9
-      '@types/jest': 26.0.18
+      '@types/jest': 26.0.23
       '@types/jszip': 3.4.0
       '@types/pem': 1.9.5
       '@types/uuid': 8.3.0
-      '@typescript-eslint/eslint-plugin': 4.9.1_fd07bbd6431e6d2022fb6fa2f2b698f2
-      '@typescript-eslint/parser': 4.9.1_25db0d18da36491395bd3263e8d7e681
+      '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
+      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
       aws-sdk: 2.777.0
       body-parser: 1.19.0
       config: 3.2.4
@@ -9831,12 +9846,12 @@ packages:
       jest-haste-map: 26.6.2
       jest-mock: 26.6.2
       jest-mock-console: 1.0.1_jest@26.6.3
-      jest-mock-extended: 1.0.10_jest@26.6.3+typescript@4.1.2
+      jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
       js-yaml: 3.13.1
       jszip: 3.5.0
       logform: 2.1.2
-      nodemon: 2.0.6
+      nodemon: 2.0.7
       nyc: 15.1.0_supports-color@8.0.0
       ow: 0.23.0
       pem: 1.14.4
@@ -9844,8 +9859,8 @@ packages:
       reflect-metadata: 0.1.13
       serverless-http: 2.6.0
       shx: 0.3.3
-      ts-jest: 26.4.4_jest@26.6.3+typescript@4.1.2
-      typescript: 4.1.2
+      ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
+      typescript: 4.2.4
       uuid: 8.3.2
       winston: 3.2.1
       winston-transport: 4.3.0
@@ -9855,19 +9870,19 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-sxXSrhCiOu2hWuGuQYJmhT5pS9bCIOPjIgsyMaUeX/3Xlece8N3x5Ec7PZI6JwYf41+1AW7vbd1CbW4oNWX93g==
+      integrity: sha512-0XdxjvLrn0YVILcL9dW78hFRKI0ckp6i00jJJfo2oq3OnJfCTsXEr+OJWkKi6Yq9mYkmczTFWJUVOHDMXkXDJA==
       tarball: 'file:projects/provisioning.tgz'
     version: 0.0.0
   'file:projects/request-queue.tgz_supports-color@8.0.0':
     dependencies:
-      '@rushstack/eslint-config': 2.3.1_25db0d18da36491395bd3263e8d7e681
+      '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
       '@types/aws-lambda': 8.10.65
       '@types/config': 0.0.37
-      '@types/jest': 26.0.18
+      '@types/jest': 26.0.23
       '@types/superagent': 4.1.10
       '@types/uuid': 8.3.0
-      '@typescript-eslint/eslint-plugin': 4.9.1_fd07bbd6431e6d2022fb6fa2f2b698f2
-      '@typescript-eslint/parser': 4.9.1_25db0d18da36491395bd3263e8d7e681
+      '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
+      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
       aws-sdk: 2.777.0
       busboy: 0.3.1
       config: 3.2.4
@@ -9878,20 +9893,20 @@ packages:
       jest-create-mock-instance: 1.1.0
       jest-haste-map: 26.6.2
       jest-mock: 26.6.2
-      jest-mock-extended: 1.0.10_jest@26.6.3+typescript@4.1.2
+      jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
       js-yaml: 3.13.1
       logform: 2.1.2
       math: 0.0.3
       multer: 1.4.2
-      nodemon: 2.0.6
+      nodemon: 2.0.7
       nyc: 15.1.0_supports-color@8.0.0
       readable-stream: 2.3.6
       reflect-metadata: 0.1.13
       shx: 0.3.3
       superagent: 6.1.0_supports-color@8.0.0
-      ts-jest: 26.4.4_jest@26.6.3+typescript@4.1.2
-      typescript: 4.1.2
+      ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
+      typescript: 4.2.4
       uuid: 8.3.2
       winston: 3.2.1
       winston-transport: 4.3.0
@@ -9901,7 +9916,7 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-E5n9wG23vaWfcKG5J1TMjz5KaKgt4y0HOnc4RuiNebUkm6Rq6pzoqUgfb+m+4nv/3+/pGW0ZTslM9NlVpKhAZA==
+      integrity: sha512-N68DAaGnSCWoMvweQdscFpmsEaSJB9KJ9J0c50QcCsw+oqa1ChM1Z4eCxs9EO35oJNCM0SEwAzBPOQEdsHMoeg==
       tarball: 'file:projects/request-queue.tgz'
     version: 0.0.0
 registry: ''
@@ -9953,7 +9968,7 @@ specifiers:
   '@types/express-serve-static-core': 4.17.16
   '@types/express-version-request': 1.7.1
   '@types/http-errors': 1.8.0
-  '@types/jest': 26.0.18
+  '@types/jest': 26.0.23
   '@types/json-stable-stringify': 1.0.32
   '@types/jsonpath-plus': ~5.0.1
   '@types/jsonwebtoken': 8.5.0
@@ -9988,12 +10003,12 @@ specifiers:
   cors: 2.8.5
   cucumber: 6.0.5
   cz-customizable: ~6.3.0
-  deepmerge: ^4.2.2
+  deepmerge: 4.2.2
   dot: 1.1.3
   eslint: 7.15.0
   express: 4.17.1
   express-version-request: 1.7.0
-  fast-deep-equal: ^3.1.3
+  fast-deep-equal: 3.1.3
   fast-json-patch: 3.0.0-1
   fs: 0.0.1-security
   gremlin: 3.4.8
@@ -10007,7 +10022,7 @@ specifiers:
   jest-haste-map: 26.6.2
   jest-mock: 26.6.2
   jest-mock-console: ^1.0.1
-  jest-mock-extended: 1.0.10
+  jest-mock-extended: 1.0.14
   jest-resolve: 26.6.2
   js-yaml: 3.13.1
   json-rules-engine: 5.3.0
@@ -10022,7 +10037,7 @@ specifiers:
   morgan: 1.10.0
   multer: 1.4.2
   node-cache: 5.1.2
-  nodemon: 2.0.6
+  nodemon: 2.0.7
   nyc: 15.1.0
   ow: 0.23.0
   p-limit: 3.1.0
@@ -10037,9 +10052,9 @@ specifiers:
   sinon: 9.2.1
   superagent: 6.1.0
   supports-color: ~8.0.0
-  ts-jest: 26.4.4
+  ts-jest: 26.5.6
   typed-rest-client: 1.8.0
-  typescript: 4.1.2
+  typescript: 4.2.4
   uuid: 8.3.2
   winston: 3.2.1
   winston-transport: 4.3.0
