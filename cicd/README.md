@@ -23,7 +23,7 @@
   -z cfn-apiGateway-noAuth.yaml \
   -a None \
   -P deanhart-1577 \
-  -R us-west-2 \
+  -R us-west-2
 ```
 
 ### Specific branch, into an existing VPC

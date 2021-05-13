@@ -136,7 +136,7 @@ Resources:
               runtime-versions:
                 nodejs: 12
               commands:
-                - n 14
+                - n 14.16.1
                 - npm install -g pnpm@5.16
                 - node --version
                 - pnpm --version
@@ -185,7 +185,7 @@ Resources:
               runtime-versions:
                 nodejs: 12
               commands:
-                - n 14
+                - n 14.16.1
                 - npm install -g pnpm@5.16
                 - node --version
                 - pnpm --version
@@ -246,7 +246,7 @@ Resources:
               runtime-versions:
                 nodejs: 12
               commands:
-                - n 14
+                - n 14.16.1
                 - npm install -g pnpm@5.16
                 - node --version
                 - pnpm --version
@@ -349,7 +349,7 @@ Resources:
               runtime-versions:
                 nodejs: 12
               commands:
-                - n 14
+                - n 14.16.1
                 - npm install -g pnpm@5.16
                 - node --version
                 - pnpm --version
@@ -459,7 +459,7 @@ Resources:
               runtime-versions:
                 nodejs: 12
               commands:
-                - n 14
+                - n 14.16.1
                 - npm install -g pnpm@5.16
                 - node --version
                 - pnpm --version
