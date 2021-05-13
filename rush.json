@@ -78,6 +78,12 @@
       "shouldPublish": true
     },
     {
+      "packageName": "@cdf/bulkcerts-client",
+      "projectFolder": "packages/libraries/clients/bulkcerts-client",
+      "reviewCategory": "library",
+      "shouldPublish": true
+    },
+    {
       "packageName": "@cdf/commands-client",
       "projectFolder": "packages/libraries/clients/commands-client",
       "reviewCategory": "library",
