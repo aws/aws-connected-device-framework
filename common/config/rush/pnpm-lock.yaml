@@ -68,7 +68,7 @@ dependencies:
   async-local-storage: 2.3.1
   atob: 2.1.2
   aws-iot-device-sdk: 2.2.6
-  aws-sdk: 2.777.0
+  aws-sdk: 2.804.0
   aws-serverless-express: 3.4.0
   axios: 0.21.0
   body-parser: 1.19.0
@@ -1718,6 +1718,22 @@ packages:
       node: '>= 0.8.0'
     resolution:
       integrity: sha512-eUUphwNARaex2uBCCWp/UGT5LabqbCgIZDXhJp5n2kGBuNlzkZMrLe5AiSo8OnaaP2ZnfaonxZKT87Ny56EKyA==
+  /aws-sdk/2.804.0:
+    dependencies:
+      buffer: 4.9.2
+      events: 1.1.1
+      ieee754: 1.1.13
+      jmespath: 0.15.0
+      querystring: 0.2.0
+      sax: 1.2.1
+      url: 0.10.3
+      uuid: 3.3.2
+      xml2js: 0.4.19
+    dev: false
+    engines:
+      node: '>= 0.8.0'
+    resolution:
+      integrity: sha512-a02pZdjL06MunElAZPPEjpghOp/ZA+16f+t4imh1k9FCDpsNVQrT23HRq/PMvRADA5uZZRkYwX8r9o6oH/1RlA==
   /aws-serverless-express/3.4.0:
     dependencies:
       '@vendia/serverless-express': 3.4.0
@@ -8697,7 +8713,7 @@ packages:
       '@types/superagent': 4.1.10
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
-      aws-sdk: 2.777.0
+      aws-sdk: 2.804.0
       check-outdated: 2.7.0
       config: 3.3.6
       cz-customizable: 6.3.0
@@ -8730,7 +8746,7 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-2G9jz4jENulkMvsInjRgPT+UU1RXpMommwSKOU85dnzXlRdKROyvweiHbhFjEAvLOzs3UX56EcMuSZoT9Utf+Q==
+      integrity: sha512-sNgAqAxnIpMNwnjrdqked/lCdoZViXfV0bvTO9EcqT0XWh1Tzo/U6hHrcqcBiSJLmKiyQlU+b8DF/G/Iys3OWA==
       tarball: 'file:projects/assetlibrary-client.tgz'
     version: 0.0.0
   'file:projects/assetlibrary-history.tgz_supports-color@8.0.0':
@@ -8748,7 +8764,7 @@ packages:
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
       atob: 2.1.2
-      aws-sdk: 2.777.0
+      aws-sdk: 2.804.0
       body-parser: 1.19.0
       btoa: 1.2.1
       config: 3.3.6
@@ -8784,7 +8800,7 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-afQVx0Z2g3rvo+p4kgJPTPCkh4kdZCPT/ljrwyVoLjQv5/fMhmH5nSs2AToG4X0IX9tMnqbgHOgSPs/n0nMqnw==
+      integrity: sha512-t0zXmQjPGcAQFFpJVohJR0P53lbrdLVCBuriWOiq93BIObx603+yWla9fDkx7kWRuK8C+rmDAGH90su3YZrsaw==
       tarball: 'file:projects/assetlibrary-history.tgz'
     version: 0.0.0
   'file:projects/assetlibrary.tgz_supports-color@8.0.0':
@@ -8804,7 +8820,7 @@ packages:
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
       ajv: 6.10.2
       async-local-storage: 2.3.1
-      aws-sdk: 2.777.0
+      aws-sdk: 2.804.0
       body-parser: 1.19.0
       config: 3.3.6
       cors: 2.8.5
@@ -8847,7 +8863,7 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-8efJeqhN2as0UiB0ttM2RNr2IkkQpMzY3iAaoCVKFbw3ZAj9B4ZWCQfMITec7dQCX6AJyFpVCL4QNUeNl6TDPg==
+      integrity: sha512-XonBqlbmuJtPyNFsRl09jUZcl+zSs7oDvUXk1HaGGMcTMvbnjAWZqlZ6tRRnj8uVnYLfuKv8Q20c3uYg9iTP4g==
       tarball: 'file:projects/assetlibrary.tgz'
     version: 0.0.0
   'file:projects/assetlibraryhistory-client.tgz_supports-color@8.0.0':
@@ -8858,7 +8874,7 @@ packages:
       '@types/superagent': 4.1.10
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
-      aws-sdk: 2.777.0
+      aws-sdk: 2.804.0
       config: 3.3.6
       eslint: 7.26.0_supports-color@8.0.0
       inversify: 5.1.1
@@ -8889,7 +8905,7 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-Cv+2e4OKXCicaLLNGH5vu+P4vb40J30837CIbZ/sbFCNH6KjY7gKuSbTY/FYSnLBKxQT5nxqi2R+UY5WVmi7Wg==
+      integrity: sha512-UscZOevK7Q7XcymGNSyc9zWxyOfTVBZV3jz/b1IhUTRxFCP4bzm1rg0WOWuT4R6H4/szIpdac9891P3T2AXhHQ==
       tarball: 'file:projects/assetlibraryhistory-client.tgz'
     version: 0.0.0
   'file:projects/auth-devicecert.tgz_supports-color@8.0.0':
@@ -8900,7 +8916,7 @@ packages:
       '@types/pem': 1.9.5
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
-      aws-sdk: 2.777.0
+      aws-sdk: 2.804.0
       config: 3.3.6
       eslint: 7.26.0_supports-color@8.0.0
       jest: 26.6.3_supports-color@8.0.0
@@ -8926,7 +8942,7 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-iCIN4YAsUBhJ/moooKJzudFfS5AGCixbf/Yll5ls7BVD3HPRlPUDnmztOFrHMZPdw7HwGnu9E23ROAJpfR0Yng==
+      integrity: sha512-HfxQIl9+fye1ShNbRFdtTcBSg3gGT7Wlsx8t71z1NXvtYgtaBCcGuVbi/QCQwCXG8dk+evOlRmK7D61tncKR+g==
       tarball: 'file:projects/auth-devicecert.tgz'
     version: 0.0.0
   'file:projects/auth-jwt.tgz_supports-color@8.0.0':
@@ -8981,7 +8997,7 @@ packages:
       '@types/superagent': 4.1.10
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
-      aws-sdk: 2.777.0
+      aws-sdk: 2.804.0
       config: 3.3.6
       eslint: 7.26.0_supports-color@8.0.0
       inversify: 5.1.1
@@ -9012,7 +9028,7 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-ng+djWmjyCm5JU6dgepCAI485qOtA4gZfgmKyEv5QrU/u/HJo7W/IW0IP62lALfiFhNQIR88LPwbS9BuDGKBkA==
+      integrity: sha512-FegH4vueO2ziHYlJAh5GIUxWqNhHRdkYa4T+9Aiif19JnuCCaEiBxtlbYGma7Uo7ymZzHoM6Aoe8WjEqPfyCvw==
       tarball: 'file:projects/bulkcerts-client.tgz'
     version: 0.0.0
   'file:projects/bulkcerts.tgz_supports-color@8.0.0':
@@ -9031,7 +9047,7 @@ packages:
       '@types/uuid': 8.3.0
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
-      aws-sdk: 2.777.0
+      aws-sdk: 2.804.0
       aws-serverless-express: 3.4.0
       body-parser: 1.19.0
       config: 3.3.6
@@ -9068,7 +9084,7 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-5pnAeV2Unk2cDwCL+oqnmOlMWLQyhysdhoApiPS4LTmCRB+3uSaDBuu3rq/Z6lyhxeiiN6jumyfiVL9TvBxJqg==
+      integrity: sha512-D7EeAQx5N5NPEJKYS+HHhPunx/v01ebsjNAN3y+7A5+C/TxuWFURKYnWlq+KoCGDcTg44YRTVLPOXKAAskeygA==
       tarball: 'file:projects/bulkcerts.tgz'
     version: 0.0.0
   'file:projects/certificate-activator.tgz_supports-color@8.0.0':
@@ -9079,7 +9095,7 @@ packages:
       '@types/pem': 1.9.5
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
-      aws-sdk: 2.777.0
+      aws-sdk: 2.804.0
       config: 3.3.6
       eslint: 7.26.0_supports-color@8.0.0
       inversify: 5.1.1
@@ -9111,7 +9127,7 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-e4wL74bpOCIIKYV1VcF95JWEsF+Io+rE25cXeLDG7WvQ7Y0wy3Q8BZZeh955CbNoGSvNZOLCKmSwCYEEy5ktyA==
+      integrity: sha512-gm7ONQbHfQbyixhcRBIRYs6pPWXBxHYbJQXJxNC+LDTIR9NEKZTm1fnnUpquIqZ+i32UOjRJLJe2/j062pSbmg==
       tarball: 'file:projects/certificate-activator.tgz'
     version: 0.0.0
   'file:projects/certificate-vendor.tgz_supports-color@8.0.0':
@@ -9122,7 +9138,7 @@ packages:
       '@types/pem': 1.9.5
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
-      aws-sdk: 2.777.0
+      aws-sdk: 2.804.0
       config: 3.3.6
       eslint: 7.26.0_supports-color@8.0.0
       inversify: 5.1.1
@@ -9153,7 +9169,7 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-whhP85xcQOc5pNx79YXDwi/bJ4jpgtXNx0ureH2iVTwSEq61WbraPlnXhmcjUVj0JbJuxrwATZz5SA3M3ZJH0w==
+      integrity: sha512-ku5v0FPAc6laOlf+p/FItkgQXlwn09N7FhBqRrIMT9JZ1TtQ3nD6gX17Focb/gkJHyRMHW17XCJGLCsHdZeI1w==
       tarball: 'file:projects/certificate-vendor.tgz'
     version: 0.0.0
   'file:projects/commands-client.tgz_supports-color@8.0.0':
@@ -9165,7 +9181,7 @@ packages:
       '@types/superagent': 4.1.10
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
-      aws-sdk: 2.777.0
+      aws-sdk: 2.804.0
       config: 3.3.6
       eslint: 7.26.0_supports-color@8.0.0
       inversify: 5.1.1
@@ -9196,7 +9212,7 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-AvQuz8HpVavUFKV1VOMrxsje425hE/iztQcKsV0iSoDqawAjXDKDI9IXYtVWixWA5WUnSmsCZ/AWu/Xv/JGwvQ==
+      integrity: sha512-BCAeEWk0jaOv9LU5wGGBqFiH0+IG8dYthImEX56f2MY2sBuEj0ru/ZUa+2c2x8uTii6kj2qBPFxcsRClm12Msg==
       tarball: 'file:projects/commands-client.tgz'
     version: 0.0.0
   'file:projects/commands.tgz':
@@ -9213,7 +9229,7 @@ packages:
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
       ajv: 6.10.2
-      aws-sdk: 2.777.0
+      aws-sdk: 2.804.0
       body-parser: 1.19.0
       busboy: 0.3.1
       config: 3.3.6
@@ -9248,7 +9264,7 @@ packages:
     dev: false
     name: '@rush-temp/commands'
     resolution:
-      integrity: sha512-G/jCI1JlUlRTiwSuUdp28DN3O+pzplTnqesna8aAEYVqGoGEzZTa/KDUGfbfQ+c9q7uybpQ6E++R0c9xem2+8A==
+      integrity: sha512-YBJDAs9xOzIERInfZDYXZRWYjpqtAcjtEOXJAXamOP4YKo32N49T9zwi4LNRN0RD64RqOgCA0vIZDJQlLNKOKQ==
       tarball: 'file:projects/commands.tgz'
     version: 0.0.0
   'file:projects/config-inject.tgz_supports-color@8.0.0':
@@ -9364,7 +9380,7 @@ packages:
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
       amazon-dax-client: 1.2.5
-      aws-sdk: 2.777.0
+      aws-sdk: 2.804.0
       config: 3.3.6
       dot: 1.1.3
       eslint: 7.26.0_supports-color@8.0.0
@@ -9396,7 +9412,7 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-xx8uIPnr4nMwIGfGoV76wQanUu3pkULvChWpBRxPI2oPNX0xV0Bf9On6VR0w4kC75jPEalSQ2VcEH0EkEGeKAA==
+      integrity: sha512-Q7L8ySeIdNUugF5NUKLnmau/EV900Alskjcblg4gq3+1l+KubAyq3azGkwudFo4gsJ2UUz+3tqscAao31npAjA==
       tarball: 'file:projects/events-alerts.tgz'
     version: 0.0.0
   'file:projects/events-processor.tgz_supports-color@8.0.0':
@@ -9413,7 +9429,7 @@ packages:
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
       amazon-dax-client: 1.2.5
-      aws-sdk: 2.777.0
+      aws-sdk: 2.804.0
       body-parser: 1.19.0
       config: 3.3.6
       cors: 2.8.5
@@ -9453,7 +9469,7 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-fanZE/5+HXTAUoOcvaLw13LzOrHSOTZjqLvtid8R201IAxWo+apiEL0Ik3f6r6JPF9wb3/E2PM6KoUX+HRd/eQ==
+      integrity: sha512-2MSM2LVZTfAjG8sA86KgUgnOj1N5SNmmozIeX9n2txUNRpUjvNs99q3ER/yi6JVuy+TDFQ2OxEEGEKpVQKo8bg==
       tarball: 'file:projects/events-processor.tgz'
     version: 0.0.0
   'file:projects/express-middleware.tgz_supports-color@8.0.0':
@@ -9504,7 +9520,7 @@ packages:
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
       ajv: 6.10.2
       async-local-storage: 2.3.1
-      aws-sdk: 2.777.0
+      aws-sdk: 2.804.0
       body-parser: 1.19.0
       config: 3.3.6
       cors: 2.8.5
@@ -9547,7 +9563,7 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-xJFVhlPmIkh8bmZIEGrO2YouL24tAMVbIPlBehojaip7MbktFWh/StC39ufJUtn7Tz1R7nZlE8CXtQBVi2eV5g==
+      integrity: sha512-oGPcXqBEook7s1gB5X5Ls75i6Sw/3/xy7rrwEQb7Pe79lw8dvBpYBOOVCHvlTFuTZS6meAQYc5E4HGdAv+raxg==
       tarball: 'file:projects/greengrass-deployment.tgz'
     version: 0.0.0
   'file:projects/greengrass-provisioning-client.tgz_supports-color@8.0.0':
@@ -9559,7 +9575,7 @@ packages:
       '@types/superagent': 4.1.10
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
-      aws-sdk: 2.777.0
+      aws-sdk: 2.804.0
       config: 3.3.6
       eslint: 7.26.0_supports-color@8.0.0
       inversify: 5.1.1
@@ -9590,7 +9606,7 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-gvyH20MDoWBa2XPfUiGzH5aRLzWOVL3yP7zS/DydYmkS7JV0iOLaTblyqYdbaYGykDcWa/xXyPdfEJRVz8if1g==
+      integrity: sha512-tLLKe1BifaycbGtbh5z7xk1H6WoUn//vOS1Xy4y55s1nUqnjFGHlfjgm6j4+cIKKxpHwVJvfc3MV58U7n89XlA==
       tarball: 'file:projects/greengrass-provisioning-client.tgz'
     version: 0.0.0
   'file:projects/greengrass-provisioning.tgz_supports-color@8.0.0':
@@ -9611,7 +9627,7 @@ packages:
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
       atob: 2.1.2
-      aws-sdk: 2.777.0
+      aws-sdk: 2.804.0
       body-parser: 1.19.0
       btoa: 1.2.1
       config: 3.3.6
@@ -9656,7 +9672,7 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-ykkYpmGP3MAWrT05OuiUZJ0M057iP/tU28l9oxyxoFGn1CZCBXgu2UFNekY7IW09tVd0yRPCBHG9hEiaYmmhQg==
+      integrity: sha512-bVlFgd84fj2O41Vx5nWoRG8OyfpIEo27tZvton/nrh6wJ/LQNBuqjtAu+aXAFvay1hGq4AfmzQYVB5Kc6spo5w==
       tarball: 'file:projects/greengrass-provisioning.tgz'
     version: 0.0.0
   'file:projects/integration-tests.tgz_supports-color@8.0.0':
@@ -9673,7 +9689,7 @@ packages:
       '@types/jsonwebtoken': 8.5.0
       '@types/node': 14.6.1
       aws-iot-device-sdk: 2.2.6
-      aws-sdk: 2.777.0
+      aws-sdk: 2.804.0
       chai: 4.2.0
       chai-string: 1.5.0_chai@4.2.0
       chai-uuid: 1.0.6
@@ -9702,7 +9718,7 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-m6coy4jLwLYm1IDLLBfEwXYpXvz7jbNsp9MuBIFnqcsqji/BDkL4liWkHKSXJ7R+GW9iaKXe5yznvuOvK+J33Q==
+      integrity: sha512-iOrM+dSxuV9/KxjpLkkRdhToxWnVdh6a37ow2qm5usVIrjlz7xQV+9T0hsonUpVnkgiBRbJUf++K10gBewcXhA==
       tarball: 'file:projects/integration-tests.tgz'
     version: 0.0.0
   'file:projects/lambda-invoke.tgz_supports-color@8.0.0':
@@ -9713,7 +9729,7 @@ packages:
       '@types/jest': 26.0.23
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
-      aws-sdk: 2.777.0
+      aws-sdk: 2.804.0
       config: 3.3.6
       eslint: 7.26.0_supports-color@8.0.0
       http-errors: 1.8.0
@@ -9744,7 +9760,7 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-2xWxKhM3ty0AaCLdb71H4Kl1yhgd1mWryIPUp1R8fsILgsGV3b+y8ajaWxhGlU+YgfYdfzQdFgs1NYjoL8asBw==
+      integrity: sha512-FyFp7jBY8T0EBw5A4SbLPWet3eCX9rgdy3Kv97ssrE41oAs2E6McdJwfNrm5+QLOKVJBeb6pzLYbVadFuJ2jxQ==
       tarball: 'file:projects/lambda-invoke.tgz'
     version: 0.0.0
   'file:projects/logger.tgz_supports-color@8.0.0':
@@ -9787,7 +9803,7 @@ packages:
       '@types/superagent': 4.1.10
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
-      aws-sdk: 2.777.0
+      aws-sdk: 2.804.0
       config: 3.3.6
       eslint: 7.26.0_supports-color@8.0.0
       inversify: 5.1.1
@@ -9818,7 +9834,7 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-Ebvgp4sEpPvQebnSZt+LtIOczTNjB2Y7e+GzpUzBlRnGivUzSEGUL7m1qTEqFjbkihd+4eANPEOe1F+QtG4srA==
+      integrity: sha512-e7qBuq/5Irahd2CjB4lBgi7sJvjYDnGIQNIow7qaHVjEMGx49rAuf3O1L5mN62QJ9GD1KaJbluK1fEyZSR2Mew==
       tarball: 'file:projects/notifications-client.tgz'
     version: 0.0.0
   'file:projects/provisioning-client.tgz_supports-color@8.0.0':
@@ -9829,7 +9845,7 @@ packages:
       '@types/superagent': 4.1.10
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
-      aws-sdk: 2.777.0
+      aws-sdk: 2.804.0
       config: 3.3.6
       eslint: 7.26.0_supports-color@8.0.0
       inversify: 5.1.1
@@ -9860,7 +9876,7 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-9vA6110WEF5+EEPwRC1e1XnAihsWHhL/BjhOaaIXxs8r9Gz6BLmys5vXfODoOwOI40634XJpQquunrQulTrU1A==
+      integrity: sha512-DMtFOj4plo66bv45K8Or7D3P7jiuLkq00DAWSHeP6LVsGLv0bOASi7GcU2BHxtqdJcUw8dLnZw5CKqo33xm7wA==
       tarball: 'file:projects/provisioning-client.tgz'
     version: 0.0.0
   'file:projects/provisioning.tgz_supports-color@8.0.0':
@@ -9876,7 +9892,7 @@ packages:
       '@types/uuid': 8.3.0
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
-      aws-sdk: 2.777.0
+      aws-sdk: 2.804.0
       body-parser: 1.19.0
       config: 3.3.6
       cors: 2.8.5
@@ -9915,7 +9931,7 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-+fJ2lK4gED/bL7w4DWkI+9RMxMtAY+dQsGN4NzwAIuF8/Vf6x0TJF4kaJWsaWaOgp+7jVhm//HbvEzVfF7bROA==
+      integrity: sha512-9UL6xtvTUFBDouVVIa1DuTl/Pw80ejj+pLjjtmSPpCwV6poJt25o9mO+Fm6XyiKVA0IMcEF8z6PoJDc0Nu5A6w==
       tarball: 'file:projects/provisioning.tgz'
     version: 0.0.0
   'file:projects/request-queue.tgz_supports-color@8.0.0':
@@ -9928,7 +9944,7 @@ packages:
       '@types/uuid': 8.3.0
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
-      aws-sdk: 2.777.0
+      aws-sdk: 2.804.0
       busboy: 0.3.1
       config: 3.3.6
       eslint: 7.26.0_supports-color@8.0.0
@@ -9961,7 +9977,7 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-eJwXp03EBDm430JUNt3h8n5xvKBRiR+ShaEUAAYJiL32lhL1j2HMaEpqBfzScPrtw/DjNoXmEattc7pd3Yh/Rw==
+      integrity: sha512-XxfKYez5eFme4Tg7BfuiI/7tKJO8Afr71e5Tfg3t9xXYcMDrC+Ey154eru5m0l4+WXFiYAt4sjccuY7za5Aq8g==
       tarball: 'file:projects/request-queue.tgz'
     version: 0.0.0
 registry: ''
@@ -10035,7 +10051,7 @@ specifiers:
   async-local-storage: 2.3.1
   atob: 2.1.2
   aws-iot-device-sdk: 2.2.6
-  aws-sdk: 2.777.0
+  aws-sdk: 2.804.0
   aws-serverless-express: 3.4.0
   axios: 0.21.0
   body-parser: 1.19.0
