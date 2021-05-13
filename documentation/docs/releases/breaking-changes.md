@@ -1,4 +1,4 @@
-# RELEASE INFO
+# BREAKING CHANGES
 
 This document outlines major releases, such as backward incompatible features.  Refer to the CDF changelogs for specific details of each release.
 
@@ -56,6 +56,7 @@ package | version
 As this release includes quite a few changes that need will need merging into your own installation, unless you need some of this new functionality right now, the recommendation is for you to not migrate to this version.  The reason being, there is an upcoming release with major changes to the deployment system, therefore hold off if you can.
 
 Includes breaking changes to the deploy process:
+
 - Prior to this version, security ingress/egress rules between Neptune and Asset Library were created via the AWS CLI. From this version on they are managed via CloudFormation.  Before starting an update you must delete these previously created ingress/egress rules manually (and potentially any associated network interfaces) using the following steps:
     - Load the `cdf-assetlibrary-${ENVIRONMENT}` Cloudformation stack, and within the _Resources_ tab click on the _Physical ID_ of _Logical ID_ `AssetLibrarySecurityGroup`
     - Select said security group, then click the *Actions > Delete Security Group* button

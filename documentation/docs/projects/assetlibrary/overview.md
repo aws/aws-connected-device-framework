@@ -4,6 +4,13 @@
 
 The Asset Library service is a device registry that allows one to manage their fleet of devices placed within multiple hierarchical groups.  Each group within a hierarchy can represent something meaningful to your business such as location, device types, firmware versions, etc.
 
+## Architecture
+
+The following represents the architecture of the Asset Library, along with its optional sibling service the [Asset Library History](../assetlibrary-history/overview.md) service.
+
+![Architecture](<./images/cdf-core-hla-Asset Library.png>)
+
+
 ## Groups
 
 The hierarchies within Asset Library are represented as Groups.  Each Group has a single parent, but can comprise of many groups and/or devices as its children.
@@ -161,23 +168,3 @@ Devices:
 
 In the example above, retrieving the list of policies for `device001`, `device002` and `device003` would return `policy_permissive`, whereas retrieiving the policy list for `device004` will be the chain `policy_restrictive` then `policy_permissive`, with the consuming application containing the business logic for which policy to use.
 
-
-## Limits
-
-The following are the *default* limits for the Asset Library (per region):
-
-Resource or Operation  |  Limit
----|---
-No. Group/Device types  |  30
-No. attributes per Group/Device type  |  1000
-No. required attributes per Group.Device  |  30
-No. unique indexes per Group/Device  |  3
-No. non-unique indexes per Group/Device  |  unlimited
-No. Group levels deep | 15
-
-Perform the following steps to increase your limit for a region:
-
-- Go to the [AWS Support Center](https://console.aws.amazon.com/support/home#/) page, sign in, if necessary, and click Open a new case.
-- Under Regarding, select Service Limit Increase.
-- Under Limit Type, select AWS Directory Service.
-- Fill in all of the necessary fields in the form and click the button at the bottom of the page for your desired method of contact.

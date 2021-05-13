@@ -17,10 +17,10 @@ The following is a one-time setup to configure the CDF development environment:
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.37.2/install.sh | bash
 ```
 
-+ using nvm installed from the previous step, install Node.js v12:
++ using nvm installed from the previous step, install Node.js v14:
 
 ```sh
-> nvm use v12
+> nvm use v14
 ```
 
 + install [`rush`](https://rushjs.io) monorepo manager:

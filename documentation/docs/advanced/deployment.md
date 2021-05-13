@@ -4,7 +4,7 @@ Note: These instructions reflect the _rush_ based build system which was introdu
 
 ## TL;DR - Deployments Steps
 
-Before attempting an upgrade, read [releases](../releases/releases.md) which details any major release information such as backwards incompatible changes.  
+Before attempting an upgrade, read [breaking changes](../releases/breaking-changes.md) which details any major release information such as backwards incompatible changes.  
 
 1. Download pre-bundled platform dependencies (_cdf-core_)
 2. Clone and include customer specific _cdf-facade-*_ and _cdf-infrastructure-*_ projects
@@ -184,10 +184,10 @@ The following is a one-time setup to configure an environment for development an
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
 ```
 
-+ using nvm installed from the previous step, install Node.js v12.x:
++ using nvm installed from the previous step, install Node.js v14.x:
 
 ```sh
-> nvm use v12
+> nvm use v14
 ```
 
 + install [rush](https://rushjs.io) monorepo manager:

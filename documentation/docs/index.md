@@ -1,19 +1,160 @@
-# CONNECTED DEVICE FRAMEWORK (CDF)
+# Connected Device Framework
 
-This documentation is split into multiple tracks... ==Beginner==, ==Intermediate==, and ==Advanced==.
+## Introduction
 
-If you are a user wanting to use or review the CDF platform, follow the ==Beginner== topics.
+Managing connected devices involves multiple phases of a device's lifecycle.  The phases a typical connected device goes through are : manufacturing, onboarding, operations, support and analytics.  In each of these phases, a unique set of capabilities are required.  The Connected Device Framework (CDF) encompasses a set of modular micro-services to cater to connected devices in each of their lifecycle phases.
 
-If you are a developer who wishes to dive a little deeper into how CDF is built, follow the ==Intermediate== topics.
+The framework is particularly well suited for enterprise use cases which require product definition, onboarding and managing a diverse ecosystem of connected devices. The included components facilitate:
 
-If you are a developer who is interested in making changes and contributing back to the CDF platform, follow the ==Advanced== topics.
+* Product template definition
+* Provisioning
+* Configuration and software updates
+* Organizing devices into hierarchies
+* Maintaining and updating device configuration
+* Device command and control
+* Offloading device data to blob repository
+* Analytics of device data
 
-## Where to from here?
+## FAQ
 
-First, read the [CDF overview](./projects/overview.md), then follow one of the tracks described below:
+TLDR: Read the [FAQ](faq.md).
 
-Track | Topic
---- | ---
-==Beginner== | [Start here](./beginner/index.md)  |
-==Intermediate== | [Start here](./intermediate/index.md)  |
-==Advanced== | [Start here](./advanced/index.md)  |
+## Challenges
+
+Implementing, deploying and maintaining IoT services can be significantly more complex than traditional software services due to a number of challenges faced:
+
+**Significant undifferentiated heavy lifting:**  It can take months, if not years, to build out an IoT platform.
+
+**Skills gap:**  Finding product and IoT specialists is one problem, but then needing to find those same people who possess AWS knowledge is significantly harder.
+
+**Bridging historically air-gapped systems:**  Traditionally different areas within a business, such as manufacturing, operations, and support, have been isolated from one another.  Implementing a new IoT service is a once in a generation opportunity to look at the efficiencies of bridging these systems and future proof for growth.
+
+**Limitations with turn-key solutions:**  Off-the-shelf solutions may be opinionated in their implementation such that incompatible limitations are introduced, as well as potential scalability issues.
+
+**Legacy devices:**  There may be an existing population of devices deployed in the wild that need to be transitioned into a new IoT service.
+
+**Complex security requirements:**  Constrained, intermittently connected devices, as well as regional governance, introduce complexity.
+
+**Long term maintainability of software:**  If a software's architecture and implementation does not take into consideration its longevity that comes with unforeseen emerging requirements, its maintainability, scalability and reliability can be significantly impacted as well as a business losing its agility to bring new products and services to market.
+
+The ***Connected Device Framework (CDF)*** is a platform comprising of a number of production ready micro-services, all architected and implemented using software and AWS best practices, which builds upon the AWS IoT building blocks to address these challenges.
+
+
+## Device Lifecycle View
+
+The CDF modules span the following life cycle phases, with their descriptions following:
+
+![Life Cycle Phases](projects/images/cdf-core-hla-lifecycle.png)
+
+### Bulk Certificate Creation
+
+With this service a user can request large batches (thing 1000's) of device certificates and public/private keys which can later be loaded onto a device. This is useful where customers have a hardware vendor who may not have the ability to create their own device certificates, and the customer does not want to share their CA, so instead can provide access to this service to create the device certificates as required.
+
+See [overview](projects/bulkcerts/overview.md).
+### Provisioning
+
+The provisioning service utilizes [AWS IoT Device Provisioning](https://docs.aws.amazon.com/iot/latest/developerguide/iot-provision.html) to provide both programmatic and bulk device provisioning capabilities.  The provisioning service simplifies the use of AWS IoT Device Provisioning by managing a set of provisioning templates to use with both provisioning approaches.
+
+In addition, it allows for extending the capabilities of the AWS IoT Device Provisioning templating functionality.  To provide an example, an AWS IoT Device Provisioning template allows for creating certificate resources by providing a certificate signing request (CSR), a certificate ID of an existing device certificate, or a device certificate created with a CA certificate registered with AWS IoT.  This service extends these capabilities by also providing the ability to automatically create (and return) new keys and certificates for a device, or to create a device certificate without the CA being registered in the account.
+
+See [overview](projects/provisioning/overview.md).
+### Greengrass Provisioning
+
+Takes care of everything cloud side when it come to Greengrass. Allows you to mark a fully configured Greengrass group as a template, then replicate it to as many new instances as you need, as well as configuring any group instance specific details such as the core, devices and subscriptions. Then at a later stage updates to the template can be rolled out too at scale.
+
+### Greengrass Deployment
+
+Takes care of everything device side when it come to Greengrass. Allows for remotely installing and configuring the physical Greengrass devices.
+
+See [overview](projects/greengrass-deployment/overview.md).
+
+### Certificate Renewer
+
+Identifies soon to expire certificates, and if the device is still active/authorized, will create and register new certificates, then inform the device of the new certificate being available.
+
+See [overview](projects/certificaterenewer/overview.md).
+
+### Certificate Vendor
+
+Manages the secure delivery of certificates, whether delivered over mqtt or to be downloaded from S3, to a device that can be used for elevating and/or rotating certificates.
+
+See [overview](projects/certificatevendor/overview.md).
+
+### Certificate Activator
+
+Provides a reference implementation of how to combines JITR (Just In Time Registration) functionality with the rest of CDF:  verifies certificates against a whitelist / certificate revocation list, provisions devices, and uses Asset Library Profiles to initialize a device’s data.
+
+See [overview](projects/certificateactivator/overview.md).
+
+### Asset Library
+
+An enhanced device registry that augments (not replces) the AWS IoT Device Registry, allowing one to manage their fleet of devices placed within multiple hierarchical groups.  Each group within a hierarchy can represent something meaningful to the business such as location, manufacturer, device types, firmware versions, etc.
+
+Witht the Asset Library one can define complex models, such as modelling a vehicle bill of material.
+
+See [overview](projects/assetlibrary/overview.md).
+### Notifications
+
+Allows one to configure types of events (such as a low battery alert) from multiple different event sources (AWS IoT Core, DynamoDB Stream, Kinesis Data Stream, API Gateway), which interested parties (user, service) can subscribe to receive alerts on events via SNS, MQTT republish, mobile push, or stored in another DynamoDB table.
+
+See [overview](projects/assetlibrary-history/overview.md).
+
+### Device Monitoring
+
+Detects the connected status of a device (replaced by Fleet Indexing capabilties, but still useful if a customer is not using Fleet Indexing).
+
+See [overview](projects/devicemonitoring/overview.md).
+
+### Commands
+
+Utilizes AWS IoT Jobs to issue commands to a device or set of devices, and optionally inspect their execution status.  It augments AWS IoT jobs by providing the ability to create Job templates (job document, parameters, and files), and enforcing that each requested command adheres to a template before executing.
+
+Also allows for sending jobs to thousands of devices, by automatically managing temporary groups to overcome any limitations with the no. of allowed targets.  Can optionally use Asset Library devices, groups, and search queries as Job targets.
+
+See [overview](projects/commands/overview.md).
+
+### Asset Library History
+
+Tracks and stores all changes made to the Asset Library (devices, groups, policies and/or templates) for auditing purposes.
+
+See [overview](projects/assetlibrary-history/overview.md).
+
+### Reference implementations
+
+A simple demo implementation, as well as a dull featured implementation (Connected Mobility Solution) are available for reference.
+
+### CI/CD
+
+Fully automated Continuous Delivery pipeline, managing the building, testing, and deployment of services.
+
+### 1-Click Deployment
+
+Soon to be opensourced via the AWS Solution Builders, providing a 1-click method of deploying to an account
+
+### Logging
+
+CloudWatch based logging.  X-Ray support.
+
+### Authn / Authz
+
+Supports multiple authentication options:  lambda (request and token) authorizers, IAM, Cognito, api keys, and private api gateway.  
+
+The Asset library supports a fine-grained access control mode, suitable for multi-tenancy scenarios.
+
+### Device simulator
+
+A pattern that can be followed to implement a device simulator. Includes a reference implementation of a smart Kettle, as well as a more advanced reference implementation of a vehicle simulator. 
+
+### Platform load tester
+
+Scales out device simulators for load testing your platform, as well as executing test plans to test other areas of your platform.
+
+## Architecture
+
+The CDF micro-services can be mostly deployed independently. The following shows dependencies between the services (dotted line is an optional dependency).
+
+![Dependencies](projects/images/cdf-core-hla-HLA.png)
+
+The CDF micro-services form a layer above the AWS building blocks as shown in the following architetcure diagram. A typical customer deployment will involve the development of facade layer (can be a single application, or numerous micro-services) that contains the customer's unique business logic and orchestrates the underlying CDF micro-services.
+
+![Dependencies](projects/images/cdf-core-hla-hla-aws.png)

@@ -1,31 +1,132 @@
 # ASSET LIBRARY CONFIGURATION
 
-The following are the allowed configuration properties for the Asset Library service.
+## Optional Configuration
 
-Note:  Any marked as `Deployment script` for _Source_ are automatically set by the deployment script. But if running a service locally, you must manually set these configuration properties.
+The following represents optional configuration that can be provided at time of deployment via the Asset Library's `{env}-config.json` file. If a value is listed, this is the value that is bundled into the application as a default. You only need to specify a configuration value from the following if you need to change it:
 
-Any properties that have a default are defaulted within the service itself.  These default values will not be present in the configuration file, nor do the default values needs adding to the configuration file.  For defaults that are not mandatory, these may be disabled by overriding (setting in your configuration file) with an empty string.
+```json
+{
+    /*
+      Events may be published to an MQTT topic for any additions, updates
+      or deletions to groups, devices, policies, group templates, device 
+      templates and/or profiles. The following represents the default 
+      topics that are built into the application. To disable, override 
+      with an empty string.
+    */
+    "events": {
+        "groups": {
+            "topic": "cdf/assetlibrary/events/groups/{objectId}/{event}"
+        },
+        "devices": {
+            "topic": "cdf/assetlibrary/events/devices/{objectId}/{event}"
+        },
+        "policies": {
+            "topic": "cdf/assetlibrary/events/policies/{objectId}/{event}"
+        },
+        "groupTemplates": {
+            "topic": "cdf/assetlibrary/events/groupTemplates/{objectId}/{event}"
+        },
+        "deviceTemplates": {
+            "topic": "cdf/assetlibrary/events/deviceTemplates/{objectId}/{event}"
+        },
+        "profiles": {
+            "topic": "cdf/assetlibrary/events/profiles/{objectId}/{event}"
+        }
+    },
 
-Property Json Path | Default | Mandatory | Source | Description
---- | --- | --- | --- | ---
-.authorization.enabled | false | No | | If true, fine-grained access control will be enabled. Refer to documentation for additional steps required to setup.
-.aws.iot.endpoint |  | Yes | Deployment script | AWS IoT endpoint
-.aws.region |  | Yes | Deployment script | AWS region
-.cors.origin |  | No | | CORS origin header to apply.
-.defaults.devices.parent.groupPath | /unprovisioned | No | | If set, and a device is created with no relations provided, this path is used as the default.
-.defaults.devices.parent.relation | parent | No | | If set, and a device is created with no relations provided, this relation is used as the default.
-.defaults.devices.state | unprovisioned | No | | If set, and a device is created with no status provided, this is used as the default.
-.defaults.groups.validateAllowedParentPaths | false | No | | If true, group parent paths/types will be validated as according to the groups allowed relation types as defined in its template. Default is false for backwards compatability.
-.events.devices.topic | cdf/assetlibrary/events/devices/{objectId}/{event} | No |  | If set, any device related events are published to this topic.
-.events.deviceTemplates.topic | cdf/assetlibrary/events/deviceTemplates/{objectId}/{event} | No |  | If set, any device template related events are published to this topic.
-.events.groups.topic | cdf/assetlibrary/events/groups/{objectId}/{event} | No |  | If set, any group related events are published to this topic.
-.events.groupTemplates.topic | cdf/assetlibrary/events/groupTemplates/{objectId}/{event} | No |  | If set, any group templates related events are published to this topic.
-.events.policies.topic | cdf/assetlibrary/events/policies/{objectId}/{event} | No |  | If set, any policy related events are published to this topic.
-.events.profiles.topic | cdf/assetlibrary/events/profiles/{objectId}/{event} | No |  | If set, any profile related events are published to this topic.
-.logging.level | debug | No | | Logging level:  error, warn, info, debug.
-.mode | full | No | | `full`=graph mode (uses Neptune). `lite`=limited mode (uses AWS IoT Device Registry only).
-.neptuneUrl |  | Yes | Deployment script | Neptune cluster endpoint
+    "defaults": {
+        /*
+          When a device is created, if certain attributes are not provided then
+          these defaults are used. These only need to be set if they need to be 
+          changed:
+        */
+        "devices": {
+            /*
+              If no intial group to be associated with is provided when the device
+              is first created, the following `relation` is created to the 
+              specified  `groupPath`:                 
+            */
+            "parent": {
+                "relation": "parent",
+                "groupPath": "/unprovisioned"
+            },
+            /*
+              If no initial state is provided when the device is first created,
+              the state is set to the following:
+            */
+            "state": "unprovisioned"
+        },
+        "groups": {
+            /*
+              Early versions of the Asset Library allowed devices and groups to be
+              added to any device/group type as its parent. Later this was changed 
+              so that the  allowed parent types may be defined in the device/group 
+              template, but to be backwards compatible this feature is disable by 
+              default. Set to `true`  to enable.
+            */
+            "validateAllowedParentPaths": false
+        }
+    },
 
+    /*
+      Optional CORS settings.
+    */
+    "cors": {
+        /*
+            The allowed CORS origin to validate requests against.
+        */
+        "origin": null
+    },
 
+    /*
+      The Asset Library mode. `full` (default) will enable the full feature set and
+      use Neptune as its datastore, whereas `lite` will offer a reduced feature set 
+      (see documentation) and use the AWS IoT Device Registry as its datastore.
+    */
+    "mode": "full",
 
+    /*
+      If true, fine-grained access control will be enabled. Refer to documentation 
+      for additional steps required (custom IdP claims).
+    */
+    "authorization": {
+        "enabled": false
+    },
 
+    /*
+      Application logging level. Set to (in order) error, warn, info, verbose, debug 
+      or silly.
+    */
+    "logging": {
+        "level": "debug"
+    }
+}
+```
+
+## Required Configuration For Running Locally
+
+As part of the deployment flow there is some configuration that is auto-discovered and set. If running the Asset Library locally, the following configuration will need defining manually via the Asset Library's `{env}-config.json` file.
+
+```json
+{
+    /*
+      AWS Neptune URL of the Asset Library database (if running in full mode)
+    */
+    "neptuneUrl": "?",
+    
+    "aws": {
+        /*
+          The AWS region code 
+        */        
+        "region": "?",
+
+        /* 
+          The AWS IoT endpoint
+        */
+        "iot": {
+            "endpoint": "?"
+        }
+    }
+}
+
+```

@@ -2,14 +2,9 @@ site_name: Connected Device Framework (CDF)
 use_directory_urls: false
 
 nav:
-  - Start: index.md
-  - Overview: projects/overview.md
-  - Tracks:
-    - Beginner: beginner/index.md
-    - Intermediate: intermediate/index.md
-    - Advanced: advanced/index.md
+  - Overview: index.md
+  - FAQ: faq.md
   - Projects:
-    - 'Private API Gateway''s': projects/private_api_gateways.md
     - Asset Library:
       - 'Overview': projects/assetlibrary/overview.md
       - 'Modes': projects/assetlibrary/modes.md
@@ -64,6 +59,7 @@ nav:
       - Overview : projects/request-queue/overview.md
     - Reusable Libraries:
       - Overview : projects/libraries/README.md
+    - 'Private API Gateway''s': projects/private_api_gateways.md
   - User:
     - Postman: postman/index.md
   - Development:
@@ -71,12 +67,10 @@ nav:
     - 'Prerequisites': development/prerequisites.md
     - 'Tech Stack': development/tech-stack.md
     - 'Dependency Injection': development/dependency-injection.md
-    - 'Asynchronous Programming': development/async.md
-    - 'Config': development/config.md
     - 'Unit Testing': development/unit-testing.md
   - Admin:
     - 'Deployment': advanced/deployment.md
-    - 'Releases': releases/releases.md
+    - 'Breaking Changes': releases/breaking-changes.md
     - 'CI/CD': advanced/cicd.md
 
 plugins:
@@ -87,7 +81,7 @@ plugins:
 #      combined_output_path: pdf/cdf.pdf
 
 theme:
-  name: 'material'
+  name: material
 
 markdown_extensions:
   - markdown.extensions.admonition:

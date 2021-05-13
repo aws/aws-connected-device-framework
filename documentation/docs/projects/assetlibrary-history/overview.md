@@ -4,6 +4,12 @@
 
 The Asset Library History service is an optional service that stores all changes made to Asset Library resources (devices, groups, policies and/or templates).
 
+## Architecture
+
+The following represents the architecture of the Asset Library History, along with required the [Asset Library](../assetlibrary/overview.md) service.
+
+![Architecture](<./images/cdf-core-hla-Asset Library.png>)
+
 ## Subscribing to Events
 
 The Asset Library broadcasts [events](../assetlibrary/events.md) which the Asset Library subcribes to.  Upon receiving, the event is stored in its datastore for later retrieval.
