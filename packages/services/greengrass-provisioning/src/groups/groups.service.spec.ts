@@ -72,7 +72,7 @@ describe('GroupsService', () => {
 
         // execute
         const actual = await instance.createGroups(input);
-
+        
         // verify everything was called the expected no. of times
         expect(mockedTemplatesDao.get.mock.calls.length).toBe(1);
         expect(mockGetGroupVersion.mock.calls.length).toBe(1);
@@ -207,7 +207,13 @@ describe('GroupsService', () => {
         const mockGetGroupVersionResponse = stubGetGroupVersionResponse(template1.groupId,template1.groupVersionId, 1);
         const mockGetGroupVersion = mockedGreengrass.getGroupVersion = jest.fn()
             .mockReturnValueOnce(mockGetGroupVersionResponse)
-            .mockRejectedValueOnce(undefined);
+            .mockImplementationOnce(()=> {
+                return {
+                  promise: () : AWS.Greengrass.GetGroupVersionResponse => {
+                      throw new Error();
+                  }
+                };
+            });
 
         // mock - create group 1 (no create for group 2)
         const mockCreateGroupResponse1 = stubCreateGroupResponse1();
@@ -215,7 +221,7 @@ describe('GroupsService', () => {
             .mockReturnValueOnce(mockCreateGroupResponse1);
 
         // mock - save
-        mockedGroupsDao.saveGroups = jest.fn();
+        mockedGroupsDao.saveGroups = jest.fn().mockResolvedValueOnce(undefined);
 
         // execute
         const actual = await instance.createGroups(input);

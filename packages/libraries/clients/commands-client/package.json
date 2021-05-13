@@ -14,36 +14,36 @@
   "dependencies": {
     "@cdf/config-inject": "^3.0.0",
     "@cdf/lambda-invoke": "^2.0.0",
-    "config": "3.2.4",
-    "inversify": "5.0.5",
+    "config": "3.3.6",
+    "inversify": "5.1.1",
     "inversify-binding-decorators": "4.0.0",
     "inversify-express-utils": "6.3.2",
-    "js-yaml": "3.13.1",
-    "logform": "2.1.2",
+    "js-yaml": "4.1.0",
+    "logform": "2.2.0",
     "ow": "0.23.0",
     "reflect-metadata": "0.1.13",
     "superagent": "6.1.0",
-    "readable-stream": "2.3.6",
-    "winston": "3.2.1",
-    "winston-transport": "4.3.0"
+    "readable-stream": "3.6.0",
+    "winston": "3.3.3",
+    "winston-transport": "4.4.0"
   },
   "peerDependencies": {
-    "aws-sdk": "2.777.0"
+    "aws-sdk": "2.804.0"
   },
   "devDependencies": {
-    "@types/config": "0.0.37",
+    "@types/config": "0.0.38",
     "@types/node": "14.6.1",
     "@types/superagent": "4.1.10",
 
-    "@rushstack/eslint-config": "2.3.1",
-    "eslint": "7.15.0",
+    "@rushstack/eslint-config": "2.3.4",
+    "eslint": "7.26.0",
 
     "nyc": "15.1.0",
     "shx": "0.3.3",
 
     "@types/jest": "26.0.23",
-    "@typescript-eslint/eslint-plugin": "4.9.1",
-    "@typescript-eslint/parser": "4.9.1",
+    "@typescript-eslint/eslint-plugin": "4.23.0",
+    "@typescript-eslint/parser": "4.23.0",
     "jest-create-mock-instance": "1.1.0",
     "jest-haste-map": "26.6.2",
     "jest-mock-extended": "1.0.14",

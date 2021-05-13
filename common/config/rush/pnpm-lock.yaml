@@ -27,7 +27,7 @@ dependencies:
   '@rush-temp/provisioning': 'file:projects/provisioning.tgz_supports-color@8.0.0'
   '@rush-temp/provisioning-client': 'file:projects/provisioning-client.tgz_supports-color@8.0.0'
   '@rush-temp/request-queue': 'file:projects/request-queue.tgz_supports-color@8.0.0'
-  '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
+  '@rushstack/eslint-config': 2.3.4_3318d341e08b60846a0ca54ab3432060
   '@types/atob': 2.1.2
   '@types/aws-iot-device-sdk': 2.2.2
   '@types/aws-lambda': 8.10.65
@@ -38,19 +38,19 @@ dependencies:
   '@types/chai': 4.2.14
   '@types/chai-string': 1.4.2
   '@types/chai-uuid': 1.0.2
-  '@types/config': 0.0.37
-  '@types/cors': 2.8.8
+  '@types/config': 0.0.38
+  '@types/cors': 2.8.10
   '@types/cucumber': 6.0.1
   '@types/dot': 1.1.4
-  '@types/express': 4.17.9
-  '@types/express-serve-static-core': 4.17.16
+  '@types/express': 4.17.11
+  '@types/express-serve-static-core': 4.17.19
   '@types/express-version-request': 1.7.1
   '@types/http-errors': 1.8.0
   '@types/jest': 26.0.23
   '@types/json-stable-stringify': 1.0.32
   '@types/jsonpath-plus': 5.0.1
   '@types/jsonwebtoken': 8.5.0
-  '@types/jszip': 3.4.0
+  '@types/jszip': 3.4.1
   '@types/jwk-to-pem': 2.0.0
   '@types/morgan': 1.9.2
   '@types/multer': 1.4.5
@@ -61,8 +61,8 @@ dependencies:
   '@types/sinon': 9.0.9
   '@types/superagent': 4.1.10
   '@types/uuid': 8.3.0
-  '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
-  '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
+  '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
+  '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
   ajv: 6.10.2
   amazon-dax-client: 1.2.5
   async-local-storage: 2.3.1
@@ -77,13 +77,13 @@ dependencies:
   chai: 4.2.0
   chai-string: 1.5.0_chai@4.2.0
   chai-uuid: 1.0.6
-  config: 3.2.4
+  config: 3.3.6
   cors: 2.8.5
   cucumber: 6.0.5
   cz-customizable: 6.3.0
   deepmerge: 4.2.2
   dot: 1.1.3
-  eslint: 7.15.0_supports-color@8.0.0
+  eslint: 7.26.0_supports-color@8.0.0
   express: 4.17.1
   express-version-request: 1.7.0
   fast-deep-equal: 3.1.3
@@ -91,7 +91,7 @@ dependencies:
   fs: 0.0.1-security
   gremlin: 3.4.8
   http-errors: 1.8.0
-  inversify: 5.0.5
+  inversify: 5.1.1
   inversify-binding-decorators: 4.0.0
   inversify-express-utils: 6.3.2
   jest: 26.6.3_supports-color@8.0.0
@@ -102,16 +102,16 @@ dependencies:
   jest-mock-console: 1.0.1_jest@26.6.3
   jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
   jest-resolve: 26.6.2
-  js-yaml: 3.13.1
+  js-yaml: 4.1.0
   json-rules-engine: 5.3.0
   json-stable-stringify: 1.0.1
   jsonpath-plus: 5.0.7
   jsonwebtoken: 8.5.1
-  jszip: 3.5.0
+  jszip: 3.6.0
   jwk-to-pem: 2.0.4
-  logform: 2.1.2
+  logform: 2.2.0
   math: 0.0.3
-  mime: 2.4.6
+  mime: 2.5.2
   morgan: 1.10.0
   multer: 1.4.2
   node-cache: 5.1.2
@@ -121,10 +121,10 @@ dependencies:
   p-limit: 3.1.0
   pem: 1.14.4
   prettyjson: 1.2.1
-  readable-stream: 2.3.6
+  readable-stream: 3.6.0
   reflect: 0.1.3
   reflect-metadata: 0.1.13
-  serverless-http: 2.6.0
+  serverless-http: 2.7.0
   shortid: 2.2.16
   shx: 0.3.3
   sinon: 9.2.1
@@ -134,8 +134,8 @@ dependencies:
   typed-rest-client: 1.8.0
   typescript: 4.2.4
   uuid: 8.3.2
-  winston: 3.2.1
-  winston-transport: 4.3.0
+  winston: 3.3.3
+  winston-transport: 4.4.0
 lockfileVersion: 5.2
 packages:
   /@babel/code-frame/7.12.11:
@@ -441,7 +441,15 @@ packages:
     hasBin: true
     resolution:
       integrity: sha512-v9kIhKwjeZThiWrLmj0y17CWoyddASLj9O2yvbZkbvw/N3rWOYy9zkV66ursAoVr0mV15bL8g0c4QZUE6cdDoQ==
-  /@eslint/eslintrc/0.2.2_supports-color@8.0.0:
+  /@dabh/diagnostics/2.0.2:
+    dependencies:
+      colorspace: 1.1.2
+      enabled: 2.0.0
+      kuler: 2.0.0
+    dev: false
+    resolution:
+      integrity: sha512-+A1YivoVDNNVCdfozHSR8v/jyuuLTMXwjWuxPFlFlUapXoGc+Gj9mDlTDDfrwl7rXCl2tNZ0kE8sIBO6YOn96Q==
+  /@eslint/eslintrc/0.4.1_supports-color@8.0.0:
     dependencies:
       ajv: 6.12.6
       debug: 4.3.1_supports-color@8.0.0
@@ -450,7 +458,6 @@ packages:
       ignore: 4.0.6
       import-fresh: 3.2.2
       js-yaml: 3.13.1
-      lodash: 4.17.20
       minimatch: 3.0.4
       strip-json-comments: 3.1.1
     dev: false
@@ -459,7 +466,7 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-EfB5OHNYp1F4px/LI/FEnGylop7nOqkQ1LRzCM0KccA2U8tvV8w01KBv37LbO7nW4H+YhKyo2LcJhRwjjV17QQ==
+      integrity: sha512-5v7TDE9plVhvxQeWLXDTvFvJBdH6pEsdnl2g/dAptmuFEPedQ4Erq5rsDsX+mvAM610IhNaO2W5V1dOOnDKxkQ==
   /@istanbuljs/load-nyc-config/1.1.0:
     dependencies:
       camelcase: 5.3.1
@@ -705,19 +712,19 @@ packages:
       node: '>= 8'
     resolution:
       integrity: sha512-1V9XOY4rDW0rehzbrcqAmHnz8e7SKvX27gh8Gt2WgB0+pdzdiLV83p72kZPU+jvMbS1qU5mauP2iOvO8rhmurQ==
-  /@rushstack/eslint-config/2.3.1_51195f635633a2a0dbf07e99f11cf25c:
+  /@rushstack/eslint-config/2.3.4_3318d341e08b60846a0ca54ab3432060:
     dependencies:
       '@rushstack/eslint-patch': 1.0.6
-      '@rushstack/eslint-plugin': 0.7.2_eslint@7.15.0
-      '@rushstack/eslint-plugin-packlets': 0.2.0_eslint@7.15.0
-      '@rushstack/eslint-plugin-security': 0.1.3_eslint@7.15.0
-      '@typescript-eslint/eslint-plugin': 3.4.0_0c83b75280be6bf17c7891f9e8984067
-      '@typescript-eslint/experimental-utils': 3.4.0_51195f635633a2a0dbf07e99f11cf25c
-      '@typescript-eslint/parser': 3.4.0_51195f635633a2a0dbf07e99f11cf25c
+      '@rushstack/eslint-plugin': 0.7.3_3318d341e08b60846a0ca54ab3432060
+      '@rushstack/eslint-plugin-packlets': 0.2.2_3318d341e08b60846a0ca54ab3432060
+      '@rushstack/eslint-plugin-security': 0.1.4_3318d341e08b60846a0ca54ab3432060
+      '@typescript-eslint/eslint-plugin': 3.4.0_a658cf4b2b0d18d88d52c79d0f272d94
+      '@typescript-eslint/experimental-utils': 3.4.0_3318d341e08b60846a0ca54ab3432060
+      '@typescript-eslint/parser': 3.4.0_3318d341e08b60846a0ca54ab3432060
       '@typescript-eslint/typescript-estree': 3.4.0_66ea5096ca1dafead3408ab1d88908fb
-      eslint: 7.15.0_supports-color@8.0.0
+      eslint: 7.26.0_supports-color@8.0.0
       eslint-plugin-promise: 4.2.1
-      eslint-plugin-react: 7.20.6_eslint@7.15.0
+      eslint-plugin-react: 7.20.6_eslint@7.26.0
       eslint-plugin-tsdoc: 0.2.10
       typescript: 4.2.4
     dev: false
@@ -726,38 +733,47 @@ packages:
       supports-color: '*'
       typescript: '>=3.0.0'
     resolution:
-      integrity: sha512-kWFYse8uZ2unO+fvItHJh06H1Tn1Y8SZr4wZ4uhqui5ewHJfm9RWiDZixIbIfqgBiYrz4iGauaJoTPaaGUBIJQ==
+      integrity: sha512-mwEfj3e260slxM57A2eMtkNpVM9J2iMGoqzWfD4hHtO+dcZT6rEeYG4djwj61ZriNJdAY8QIMMhfuID/xV+cyw==
   /@rushstack/eslint-patch/1.0.6:
     dev: false
     resolution:
       integrity: sha512-Myxw//kzromB9yWgS8qYGuGVf91oBUUJpNvy5eM50sqvmKLbKjwLxohJnkWGTeeI9v9IBMtPLxz5Gc60FIfvCA==
-  /@rushstack/eslint-plugin-packlets/0.2.0_eslint@7.15.0:
+  /@rushstack/eslint-plugin-packlets/0.2.2_3318d341e08b60846a0ca54ab3432060:
     dependencies:
       '@rushstack/tree-pattern': 0.2.1
-      eslint: 7.15.0_supports-color@8.0.0
+      '@typescript-eslint/experimental-utils': 3.4.0_3318d341e08b60846a0ca54ab3432060
+      eslint: 7.26.0_supports-color@8.0.0
     dev: false
     peerDependencies:
       eslint: ^6.0.0 || ^7.0.0
+      supports-color: '*'
+      typescript: '*'
     resolution:
-      integrity: sha512-Xu86pNDrItfoF1W0bxTb7QakZzDuzinKDWL2Tzh836M8R9JZUfqTXR3Wav9Dzo1ZA8GNz9qPirfDo7EhlKVVhQ==
-  /@rushstack/eslint-plugin-security/0.1.3_eslint@7.15.0:
+      integrity: sha512-8kKs5fq9Mm9sP4W7ETbp48eH6iECfXDKP1mdg2iBPl8CaZZHMzVYC2vQSSSOOMv+OV23LreRFWV0LlllEDuD3Q==
+  /@rushstack/eslint-plugin-security/0.1.4_3318d341e08b60846a0ca54ab3432060:
     dependencies:
       '@rushstack/tree-pattern': 0.2.1
-      eslint: 7.15.0_supports-color@8.0.0
+      '@typescript-eslint/experimental-utils': 3.4.0_3318d341e08b60846a0ca54ab3432060
+      eslint: 7.26.0_supports-color@8.0.0
     dev: false
     peerDependencies:
       eslint: ^6.0.0 || ^7.0.0
+      supports-color: '*'
+      typescript: '*'
     resolution:
-      integrity: sha512-hwyrR1S1d6peH8Hc/oULxHaDkh2jVDaXY65hx13ybkw396vFypx+JT+wWqzS8TzLCy0uLyS/s+pLT+m/e4kw7g==
-  /@rushstack/eslint-plugin/0.7.2_eslint@7.15.0:
+      integrity: sha512-AiNUS5H4/RvyNI9FDKdd4ya3PovjpPVU9Pr7He1JPvqLHOCT8P9n5YpRHjxx0ftD77mDLT5HrcOKjxTW7BZQHg==
+  /@rushstack/eslint-plugin/0.7.3_3318d341e08b60846a0ca54ab3432060:
     dependencies:
       '@rushstack/tree-pattern': 0.2.1
-      eslint: 7.15.0_supports-color@8.0.0
+      '@typescript-eslint/experimental-utils': 3.4.0_3318d341e08b60846a0ca54ab3432060
+      eslint: 7.26.0_supports-color@8.0.0
     dev: false
     peerDependencies:
       eslint: ^6.0.0 || ^7.0.0
+      supports-color: '*'
+      typescript: '*'
     resolution:
-      integrity: sha512-gLvv4Yysv/VSqoa97x8b1dJvQS8v3qUYRU2NgKOPQjesE6La/AF/FCUenq5VcXiCbvkiW3hQQKHCnO0BXEyolw==
+      integrity: sha512-8+AqxybpcJJuxn0+fsWwMIMj2g2tLfPrbOyhEi+Rozh36eTmgGXF45qh8bHE1gicsX4yGDj2ob1P62oQV6hs3g==
   /@rushstack/tree-pattern/0.2.1:
     dev: false
     resolution:
@@ -906,10 +922,10 @@ packages:
     dev: false
     resolution:
       integrity: sha512-G+ITQPXkwTrslfG5L/BksmbLUA0M1iybEsmCWPqzSxsRRhJZimBKJkoMi8fr/CPygPTj4zO5pJH7I2/cm9M7SQ==
-  /@types/config/0.0.37:
+  /@types/config/0.0.38:
     dev: false
     resolution:
-      integrity: sha512-mi2uI9O09hc2J1AoyGz92Apm5N4UkGlNTvjaRgUYHy/G/rCKbwR0fd0b51k5E/PKHIUBCuTAZJgeluh+hHqu/Q==
+      integrity: sha512-z2WizAfIFgSv8SQfQ8c0LlbDAcK47D/o93XW6bxZ9t3bs4fmmfAPjk1nhAIBTG84PBBCHfSPM+8g7vhLdbFokg==
   /@types/connect/3.4.34:
     dependencies:
       '@types/node': 14.14.14
@@ -920,12 +936,10 @@ packages:
     dev: false
     resolution:
       integrity: sha512-t73xJJrvdTjXrn4jLS9VSGRbz0nUY3cl2DMGDU48lKl+HR9dbbjW2A9r3g40VA++mQpy6uuHg33gy7du2BKpog==
-  /@types/cors/2.8.8:
-    dependencies:
-      '@types/express': 4.17.9
+  /@types/cors/2.8.10:
     dev: false
     resolution:
-      integrity: sha512-fO3gf3DxU2Trcbr75O7obVndW/X5k8rJNZkLXlQWStTHhP71PkRqjwPIEI0yMnJdg9R9OasjU+Bsr+Hr1xy/0w==
+      integrity: sha512-C7srjHiVG3Ey1nR6d511dtDkCEjxuN9W1HWAEjGq8kpcwmNM6JJkpC0xvabM7BXTG2wDq8Eu33iH9aQKa7IvLQ==
   /@types/cucumber/6.0.1:
     dev: false
     resolution:
@@ -946,14 +960,14 @@ packages:
     dev: false
     resolution:
       integrity: sha512-hGGiDMatRhcRF2F0EsxSX93iKQJom6No2RwwCm/dvVtNt6FMuq+A/Y4qUZZGqIjqe0LE/jN0wzW86yDFSJwn7A==
-  /@types/express-serve-static-core/4.17.18:
+  /@types/express-serve-static-core/4.17.19:
     dependencies:
       '@types/node': 14.14.14
       '@types/qs': 6.9.5
       '@types/range-parser': 1.2.3
     dev: false
     resolution:
-      integrity: sha512-m4JTwx5RUBNZvky/JJ8swEJPKFd8si08pPF2PfizYjGZOKr/svUWPcoUmLow6MmPzhasphB7gSTINY67xn3JNA==
+      integrity: sha512-DJOSHzX7pCiSElWaGR8kCprwibCB/3yW6vcT8VG3P0SJjnv19gnWG/AZMfM60Xj/YJIp/YCaDHyvzsFVeniARA==
   /@types/express-version-request/1.7.1:
     dependencies:
       '@types/express': 4.17.9
@@ -963,7 +977,7 @@ packages:
   /@types/express/4.17.11:
     dependencies:
       '@types/body-parser': 1.19.0
-      '@types/express-serve-static-core': 4.17.18
+      '@types/express-serve-static-core': 4.17.19
       '@types/qs': 6.9.5
       '@types/serve-static': 1.13.8
     dev: false
@@ -1033,12 +1047,13 @@ packages:
     dev: false
     resolution:
       integrity: sha512-9bVao7LvyorRGZCw0VmH/dr7Og+NdjYSsKAxB43OQoComFbBgsEpoR9JW6+qSq/ogwVBg8GI2MfAlk4SYI4OLg==
-  /@types/jszip/3.4.0:
+  /@types/jszip/3.4.1:
     dependencies:
-      jszip: 3.5.0
+      jszip: 3.6.0
+    deprecated: 'This is a stub types definition. jszip provides its own type definitions, so you do not need this installed.'
     dev: false
     resolution:
-      integrity: sha512-GFHqtQQP3R4NNuvZH3hNCYD0NbyBZ42bkN7kO3NDrU/SnvIZWMS8Bp38XCsRKBT5BXvgm0y1zqpZWp/ZkRzBzg==
+      integrity: sha512-TezXjmf3lj+zQ651r6hPqvSScqBLvyPI9FxdXBqpEwBijNGQ2NXpaFW/7joGzveYkKQUil7iiDHLo6LV71Pc0A==
   /@types/jwk-to-pem/2.0.0:
     dev: false
     resolution:
@@ -1145,12 +1160,12 @@ packages:
     dev: false
     resolution:
       integrity: sha512-f+fD/fQAo3BCbCDlrUpznF1A5Zp9rB0noS5vnoormHSIPFKL0Z2DcUJ3Gxp5ytH4uLRNxy7AwYUC9exZzqGMAw==
-  /@typescript-eslint/eslint-plugin/3.4.0_0c83b75280be6bf17c7891f9e8984067:
+  /@typescript-eslint/eslint-plugin/3.4.0_a658cf4b2b0d18d88d52c79d0f272d94:
     dependencies:
-      '@typescript-eslint/experimental-utils': 3.4.0_51195f635633a2a0dbf07e99f11cf25c
-      '@typescript-eslint/parser': 3.4.0_51195f635633a2a0dbf07e99f11cf25c
+      '@typescript-eslint/experimental-utils': 3.4.0_3318d341e08b60846a0ca54ab3432060
+      '@typescript-eslint/parser': 3.4.0_3318d341e08b60846a0ca54ab3432060
       debug: 4.3.1_supports-color@8.0.0
-      eslint: 7.15.0_supports-color@8.0.0
+      eslint: 7.26.0_supports-color@8.0.0
       functional-red-black-tree: 1.0.1
       regexpp: 3.1.0
       semver: 7.3.4
@@ -1169,14 +1184,15 @@ packages:
         optional: true
     resolution:
       integrity: sha512-wfkpiqaEVhZIuQRmudDszc01jC/YR7gMSxa6ulhggAe/Hs0KVIuo9wzvFiDbG3JD5pRFQoqnf4m7REDsUvBnMQ==
-  /@typescript-eslint/eslint-plugin/4.9.1_087883c207d729bb61559db98c6bb357:
+  /@typescript-eslint/eslint-plugin/4.23.0_8cafe19e88c048d291c7ede5acbc6ea5:
     dependencies:
-      '@typescript-eslint/experimental-utils': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
-      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
-      '@typescript-eslint/scope-manager': 4.9.1
+      '@typescript-eslint/experimental-utils': 4.23.0_3318d341e08b60846a0ca54ab3432060
+      '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
+      '@typescript-eslint/scope-manager': 4.23.0
       debug: 4.3.1_supports-color@8.0.0
-      eslint: 7.15.0_supports-color@8.0.0
+      eslint: 7.26.0_supports-color@8.0.0
       functional-red-black-tree: 1.0.1
+      lodash: 4.17.21
       regexpp: 3.1.0
       semver: 7.3.4
       tsutils: 3.17.1_typescript@4.2.4
@@ -1193,12 +1209,12 @@ packages:
       typescript:
         optional: true
     resolution:
-      integrity: sha512-QRLDSvIPeI1pz5tVuurD+cStNR4sle4avtHhxA+2uyixWGFjKzJ+EaFVRW6dA/jOgjV5DTAjOxboQkRDE8cRlQ==
-  /@typescript-eslint/experimental-utils/3.4.0_51195f635633a2a0dbf07e99f11cf25c:
+      integrity: sha512-tGK1y3KIvdsQEEgq6xNn1DjiFJtl+wn8JJQiETtCbdQxw1vzjXyAaIkEmO2l6Nq24iy3uZBMFQjZ6ECf1QdgGw==
+  /@typescript-eslint/experimental-utils/3.4.0_3318d341e08b60846a0ca54ab3432060:
     dependencies:
       '@types/json-schema': 7.0.6
       '@typescript-eslint/typescript-estree': 3.4.0_66ea5096ca1dafead3408ab1d88908fb
-      eslint: 7.15.0_supports-color@8.0.0
+      eslint: 7.26.0_supports-color@8.0.0
       eslint-scope: 5.1.1
       eslint-utils: 2.1.0
     dev: false
@@ -1210,13 +1226,13 @@ packages:
       typescript: '*'
     resolution:
       integrity: sha512-rHPOjL43lOH1Opte4+dhC0a/+ks+8gOBwxXnyrZ/K4OTAChpSjP76fbI8Cglj7V5GouwVAGaK+xVwzqTyE/TPw==
-  /@typescript-eslint/experimental-utils/4.9.1_51195f635633a2a0dbf07e99f11cf25c:
+  /@typescript-eslint/experimental-utils/4.23.0_3318d341e08b60846a0ca54ab3432060:
     dependencies:
       '@types/json-schema': 7.0.6
-      '@typescript-eslint/scope-manager': 4.9.1
-      '@typescript-eslint/types': 4.9.1
-      '@typescript-eslint/typescript-estree': 4.9.1_66ea5096ca1dafead3408ab1d88908fb
-      eslint: 7.15.0_supports-color@8.0.0
+      '@typescript-eslint/scope-manager': 4.23.0
+      '@typescript-eslint/types': 4.23.0
+      '@typescript-eslint/typescript-estree': 4.23.0_66ea5096ca1dafead3408ab1d88908fb
+      eslint: 7.26.0_supports-color@8.0.0
       eslint-scope: 5.1.1
       eslint-utils: 2.1.0
     dev: false
@@ -1227,13 +1243,13 @@ packages:
       supports-color: '*'
       typescript: '*'
     resolution:
-      integrity: sha512-c3k/xJqk0exLFs+cWSJxIjqLYwdHCuLWhnpnikmPQD2+NGAx9KjLYlBDcSI81EArh9FDYSL6dslAUSwILeWOxg==
-  /@typescript-eslint/parser/3.4.0_51195f635633a2a0dbf07e99f11cf25c:
+      integrity: sha512-WAFNiTDnQfrF3Z2fQ05nmCgPsO5o790vOhmWKXbbYQTO9erE1/YsFot5/LnOUizLzU2eeuz6+U/81KV5/hFTGA==
+  /@typescript-eslint/parser/3.4.0_3318d341e08b60846a0ca54ab3432060:
     dependencies:
       '@types/eslint-visitor-keys': 1.0.0
-      '@typescript-eslint/experimental-utils': 3.4.0_51195f635633a2a0dbf07e99f11cf25c
+      '@typescript-eslint/experimental-utils': 3.4.0_3318d341e08b60846a0ca54ab3432060
       '@typescript-eslint/typescript-estree': 3.4.0_66ea5096ca1dafead3408ab1d88908fb
-      eslint: 7.15.0_supports-color@8.0.0
+      eslint: 7.26.0_supports-color@8.0.0
       eslint-visitor-keys: 1.3.0
       typescript: 4.2.4
     dev: false
@@ -1248,13 +1264,13 @@ packages:
         optional: true
     resolution:
       integrity: sha512-ZUGI/de44L5x87uX5zM14UYcbn79HSXUR+kzcqU42gH0AgpdB/TjuJy3m4ezI7Q/jk3wTQd755mxSDLhQP79KA==
-  /@typescript-eslint/parser/4.9.1_51195f635633a2a0dbf07e99f11cf25c:
+  /@typescript-eslint/parser/4.23.0_3318d341e08b60846a0ca54ab3432060:
     dependencies:
-      '@typescript-eslint/scope-manager': 4.9.1
-      '@typescript-eslint/types': 4.9.1
-      '@typescript-eslint/typescript-estree': 4.9.1_66ea5096ca1dafead3408ab1d88908fb
+      '@typescript-eslint/scope-manager': 4.23.0
+      '@typescript-eslint/types': 4.23.0
+      '@typescript-eslint/typescript-estree': 4.23.0_66ea5096ca1dafead3408ab1d88908fb
       debug: 4.3.1_supports-color@8.0.0
-      eslint: 7.15.0_supports-color@8.0.0
+      eslint: 7.26.0_supports-color@8.0.0
       typescript: 4.2.4
     dev: false
     engines:
@@ -1267,29 +1283,29 @@ packages:
       typescript:
         optional: true
     resolution:
-      integrity: sha512-Gv2VpqiomvQ2v4UL+dXlQcZ8zCX4eTkoIW+1aGVWT6yTO+6jbxsw7yQl2z2pPl/4B9qa5JXeIbhJpONKjXIy3g==
-  /@typescript-eslint/scope-manager/4.9.1:
+      integrity: sha512-wsvjksHBMOqySy/Pi2Q6UuIuHYbgAMwLczRl4YanEPKW5KVxI9ZzDYh3B5DtcZPQTGRWFJrfcbJ6L01Leybwug==
+  /@typescript-eslint/scope-manager/4.23.0:
     dependencies:
-      '@typescript-eslint/types': 4.9.1
-      '@typescript-eslint/visitor-keys': 4.9.1
+      '@typescript-eslint/types': 4.23.0
+      '@typescript-eslint/visitor-keys': 4.23.0
     dev: false
     engines:
       node: ^8.10.0 || ^10.13.0 || >=11.10.1
     resolution:
-      integrity: sha512-sa4L9yUfD/1sg9Kl8OxPxvpUcqxKXRjBeZxBuZSSV1v13hjfEJkn84n0An2hN8oLQ1PmEl2uA6FkI07idXeFgQ==
-  /@typescript-eslint/types/4.9.1:
+      integrity: sha512-ZZ21PCFxPhI3n0wuqEJK9omkw51wi2bmeKJvlRZPH5YFkcawKOuRMQMnI8mH6Vo0/DoHSeZJnHiIx84LmVQY+w==
+  /@typescript-eslint/types/4.23.0:
     dev: false
     engines:
       node: ^8.10.0 || ^10.13.0 || >=11.10.1
     resolution:
-      integrity: sha512-fjkT+tXR13ks6Le7JiEdagnwEFc49IkOyys7ueWQ4O8k4quKPwPJudrwlVOJCUQhXo45PrfIvIarcrEjFTNwUA==
+      integrity: sha512-oqkNWyG2SLS7uTWLZf6Sr7Dm02gA5yxiz1RP87tvsmDsguVATdpVguHr4HoGOcFOpCvx9vtCSCyQUGfzq28YCw==
   /@typescript-eslint/typescript-estree/3.4.0_66ea5096ca1dafead3408ab1d88908fb:
     dependencies:
       debug: 4.3.1_supports-color@8.0.0
       eslint-visitor-keys: 1.3.0
       glob: 7.1.6
       is-glob: 4.0.1
-      lodash: 4.17.20
+      lodash: 4.17.21
       semver: 7.3.4
       tsutils: 3.17.1_typescript@4.2.4
       typescript: 4.2.4
@@ -1304,14 +1320,13 @@ packages:
         optional: true
     resolution:
       integrity: sha512-zKwLiybtt4uJb4mkG5q2t6+W7BuYx2IISiDNV+IY68VfoGwErDx/RfVI7SWL4gnZ2t1A1ytQQwZ+YOJbHHJ2rw==
-  /@typescript-eslint/typescript-estree/4.9.1_66ea5096ca1dafead3408ab1d88908fb:
+  /@typescript-eslint/typescript-estree/4.23.0_66ea5096ca1dafead3408ab1d88908fb:
     dependencies:
-      '@typescript-eslint/types': 4.9.1
-      '@typescript-eslint/visitor-keys': 4.9.1
+      '@typescript-eslint/types': 4.23.0
+      '@typescript-eslint/visitor-keys': 4.23.0
       debug: 4.3.1_supports-color@8.0.0
       globby: 11.0.1
       is-glob: 4.0.1
-      lodash: 4.17.20
       semver: 7.3.4
       tsutils: 3.17.1_typescript@4.2.4
       typescript: 4.2.4
@@ -1325,16 +1340,16 @@ packages:
       typescript:
         optional: true
     resolution:
-      integrity: sha512-bzP8vqwX6Vgmvs81bPtCkLtM/Skh36NE6unu6tsDeU/ZFoYthlTXbBmpIrvosgiDKlWTfb2ZpPELHH89aQjeQw==
-  /@typescript-eslint/visitor-keys/4.9.1:
+      integrity: sha512-5Sty6zPEVZF5fbvrZczfmLCOcby3sfrSPu30qKoY1U3mca5/jvU5cwsPb/CO6Q3ByRjixTMIVsDkqwIxCf/dMw==
+  /@typescript-eslint/visitor-keys/4.23.0:
     dependencies:
-      '@typescript-eslint/types': 4.9.1
+      '@typescript-eslint/types': 4.23.0
       eslint-visitor-keys: 2.0.0
     dev: false
     engines:
       node: ^8.10.0 || ^10.13.0 || >=11.10.1
     resolution:
-      integrity: sha512-9gspzc6UqLQHd7lXQS7oWs+hrYggspv/rk6zzEMhCbYwPE/sF7oxo7GAjkS35Tdlt7wguIG+ViWCPtVZHz/ybQ==
+      integrity: sha512-5PNe5cmX9pSifit0H+nPoQBXdbNzi5tOEec+3riK+ku4e3er37pKxMKDH5Ct5Y4fhWxcD4spnlYjxi9vXbSpwg==
   /@vendia/serverless-express/3.4.0:
     dependencies:
       binary-case: 1.1.4
@@ -1416,6 +1431,15 @@ packages:
     dev: false
     resolution:
       integrity: sha512-j3fVLgvTo527anyYyJOGTYJbG+vnnQYvE0m5mmkc1TK+nxAppkCLMIL0aZ4dblVCNoGShhm+kzE4ZUykBoMg4g==
+  /ajv/8.3.0:
+    dependencies:
+      fast-deep-equal: 3.1.3
+      json-schema-traverse: 1.0.0
+      require-from-string: 2.0.2
+      uri-js: 4.4.0
+    dev: false
+    resolution:
+      integrity: sha512-RYE7B5An83d7eWnDR8kbdaIFqmKCNsP16ay1hDbJEU+sa0e3H9SebskCt0Uufem6cfAVu7Col6ubcn/W+Sm8/Q==
   /amazon-dax-client/1.2.5:
     dependencies:
       antlr4: 4.8.0
@@ -1534,6 +1558,10 @@ packages:
     dev: false
     resolution:
       integrity: sha512-o5Roy6tNG4SL/FOkCAN6RzjiakZS25RLYFrcMttJqbdd8BWrnA+fGz57iN5Pb06pvBGvl5gQ0B48dJlslXvoTg==
+  /argparse/2.0.1:
+    dev: false
+    resolution:
+      integrity: sha512-8+9WqebbFzpX9OR+Wa6O29asIogeRMzcGtAINdpMHHyAg10f05aSFVBbcEqGf/PXw1EjAZ+q2/bEBg3DvurK3Q==
   /arr-diff/4.0.0:
     dev: false
     engines:
@@ -1630,12 +1658,12 @@ packages:
       node: '>=0.10.0'
     resolution:
       integrity: sha1-WWZ/QfrdTyDMvCu5a41Pf3jsA2c=
-  /astral-regex/1.0.0:
+  /astral-regex/2.0.0:
     dev: false
     engines:
-      node: '>=4'
+      node: '>=8'
     resolution:
-      integrity: sha512-+Ryf6g3BKoRc7jfp7ad8tM4TtMiaWvbF/1/sQcZPkkS7ag3D5nMBCe2UfOTONtAkaG0tO0ij3C5Lwmf1EiyjHg==
+      integrity: sha512-Z7tMw1ytTXt5jqMcOP+OQteU1VuNK9Y02uuJtKQ1Sv69jXQKKg5cibLwGJow8yzZP+eAc18EmLGPal0bp36rvQ==
   /async-limiter/1.0.1:
     dev: false
     resolution:
@@ -1648,12 +1676,10 @@ packages:
       node: '>=8.0.0'
     resolution:
       integrity: sha512-TXWjmTmshTBY7TN5vgJLiAdYojYmjPo4moO+fAmWGDoc7Lfi/+J7msRvB9T5jmbvUGETMMvO3hIQ6svf+K9/rw==
-  /async/2.6.3:
-    dependencies:
-      lodash: 4.17.20
+  /async/3.2.0:
     dev: false
     resolution:
-      integrity: sha512-zflvls11DCy+dQWzTW2dzuilv8Z5X/pjfmZOWba6TNIVDm+2UDaJmXSOXlasHKfNBs8oo3M0aT50fDEWfKZjXg==
+      integrity: sha512-TR2mEZFVOj2pLStYxLht7TyfuRzaydfpxr3k9RpHIzMgw7A64dzsdqCxH1WJyQdoe8T10nDXd9wnEigmiuHIZw==
   /asynckit/0.4.0:
     dev: false
     resolution:
@@ -2325,10 +2351,6 @@ packages:
     dev: false
     resolution:
       integrity: sha512-jCpd5+s0s0t7p3pHQKpnJ0TpQKKdleP71LWcA0aqiljpiuAkOSUFN/dyH8ZwF0hRmFlrIuRhufds1QyEP9EB+w==
-  /colornames/1.1.1:
-    dev: false
-    resolution:
-      integrity: sha1-+IiQMGhcfE/54qVZ9Qd+t2qBb5Y=
   /colors/1.4.0:
     dev: false
     engines:
@@ -2384,14 +2406,14 @@ packages:
       '0': node >= 0.8
     resolution:
       integrity: sha512-27HBghJxjiZtIk3Ycvn/4kbJk/1uZuJFfuPEns6LaEvpvG1f0hTea8lilrouyo9mVc2GWdcEZ8OLoGmSADlrCw==
-  /config/3.2.4:
+  /config/3.3.6:
     dependencies:
-      json5: 1.0.1
+      json5: 2.1.3
     dev: false
     engines:
-      node: '>= 6.0.0'
+      node: '>= 10.0.0'
     resolution:
-      integrity: sha512-H1XIGfnU1EAkfjSLn9ZvYDRx9lOezDViuzLDgiJ/lMeqjYe3q6iQfpcLt2NInckJgpAeekbNhQkmnnbdEDs9rw==
+      integrity: sha512-Hj5916C5HFawjYJat1epbyY2PlAgLpBtDUlr0MxGLgo3p5+7kylyvnRY18PqJHgnNWXcdd0eWDemT7eYWuFgwg==
   /configstore/5.0.1:
     dependencies:
       dot-prop: 5.3.0
@@ -2768,14 +2790,6 @@ packages:
       node: '>=8'
     resolution:
       integrity: sha512-TLz+x/vEXm/Y7P7wn1EJFNLxYpUD4TgMosxY6fAVJUnJMbupHBOncxyWUG9OpTaH9EBD7uFI5LfEgmMOc54DsA==
-  /diagnostics/1.1.1:
-    dependencies:
-      colorspace: 1.1.2
-      enabled: 1.0.2
-      kuler: 1.0.1
-    dev: false
-    resolution:
-      integrity: sha512-8wn1PmdunLJ9Tqbx+Fx/ZEuHfJf4NKSN2ZBj7SJC/OWRWha843+WsTjqMe1B5E3p28jqBlp+mJ2fPVxPyNgYKQ==
   /dicer/0.2.5:
     dependencies:
       readable-stream: 1.1.14
@@ -2927,12 +2941,10 @@ packages:
     dev: false
     resolution:
       integrity: sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A==
-  /enabled/1.0.2:
-    dependencies:
-      env-variable: 0.0.6
+  /enabled/2.0.0:
     dev: false
     resolution:
-      integrity: sha1-ll9lE9LC0cX0ZStkouM5ZGf8L5M=
+      integrity: sha512-AKrN98kuwOzMIdAizXGI86UFBoo26CL21UM763y1h/GMSJ4/OHU9k2YlsmBpyScFo/wbLzWQJBMCW4+IO3/+OQ==
   /encodeurl/1.0.2:
     dev: false
     engines:
@@ -2953,10 +2965,6 @@ packages:
       node: '>=8.6'
     resolution:
       integrity: sha512-yjNnPr315/FjS4zIsUxYguYUPP2e1NK4d7E7ZOLiyYCcbFBiTMyID+2wvm2w6+pZ/odMA7cRkjhsPbltwBOrLg==
-  /env-variable/0.0.6:
-    dev: false
-    resolution:
-      integrity: sha512-bHz59NlBbtS0NhftmR8+ExBEekE7br0e01jw+kk0NDro7TtZzBYZ5ScGPs3OmwnpyfHTHOtr1Y6uedCdrIldtg==
   /error-ex/1.3.2:
     dependencies:
       is-arrayish: 0.2.1
@@ -3117,12 +3125,12 @@ packages:
       node: '>=6'
     resolution:
       integrity: sha512-VoM09vT7bfA7D+upt+FjeBO5eHIJQBUWki1aPvB+vbNiHS3+oGIJGIeyBtKQTME6UPXXy3vV07OL1tHd3ANuDw==
-  /eslint-plugin-react/7.20.6_eslint@7.15.0:
+  /eslint-plugin-react/7.20.6_eslint@7.26.0:
     dependencies:
       array-includes: 3.1.2
       array.prototype.flatmap: 1.2.4
       doctrine: 2.1.0
-      eslint: 7.15.0_supports-color@8.0.0
+      eslint: 7.26.0_supports-color@8.0.0
       has: 1.0.3
       jsx-ast-utils: 2.4.1
       object.entries: 1.1.3
@@ -3174,11 +3182,11 @@ packages:
       node: '>=10'
     resolution:
       integrity: sha512-QudtT6av5WXels9WjIM7qz1XD1cWGvX4gGXvp/zBn9nXG02D0utdU3Em2m/QjTnrsk6bBjmCygl3rmj118msQQ==
-  /eslint/7.15.0_supports-color@8.0.0:
+  /eslint/7.26.0_supports-color@8.0.0:
     dependencies:
       '@babel/code-frame': 7.12.11
-      '@eslint/eslintrc': 0.2.2_supports-color@8.0.0
-      ajv: 6.10.2
+      '@eslint/eslintrc': 0.4.1_supports-color@8.0.0
+      ajv: 6.12.6
       chalk: 4.1.0
       cross-spawn: 7.0.3
       debug: 4.3.1_supports-color@8.0.0
@@ -3188,12 +3196,12 @@ packages:
       eslint-utils: 2.1.0
       eslint-visitor-keys: 2.0.0
       espree: 7.3.1
-      esquery: 1.3.1
+      esquery: 1.4.0
       esutils: 2.0.3
-      file-entry-cache: 6.0.0
+      file-entry-cache: 6.0.1
       functional-red-black-tree: 1.0.1
       glob-parent: 5.1.1
-      globals: 12.4.0
+      globals: 13.8.0
       ignore: 4.0.6
       import-fresh: 3.2.2
       imurmurhash: 0.1.4
@@ -3201,7 +3209,7 @@ packages:
       js-yaml: 3.13.1
       json-stable-stringify-without-jsonify: 1.0.1
       levn: 0.4.1
-      lodash: 4.17.20
+      lodash: 4.17.21
       minimatch: 3.0.4
       natural-compare: 1.4.0
       optionator: 0.9.1
@@ -3210,7 +3218,7 @@ packages:
       semver: 7.3.4
       strip-ansi: 6.0.0
       strip-json-comments: 3.1.1
-      table: 5.4.6
+      table: 6.7.0
       text-table: 0.2.0
       v8-compile-cache: 2.2.0
     dev: false
@@ -3220,7 +3228,7 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-Vr64xFDT8w30wFll643e7cGrIkPEU50yIiI36OdSIDoSGguIeaLzBo0vpGvzo9RECUqq7htURfwEtKqwytkqzA==
+      integrity: sha512-4R1ieRf52/izcZE7AlLy56uIHHDLT74Yzz2Iv2l6kDaYvEu9x+wMB5dZArVL8SYGXSYV2YAg70FcW5Y5nGGNIg==
   /espree/7.3.1:
     dependencies:
       acorn: 7.4.1
@@ -3245,14 +3253,14 @@ packages:
     hasBin: true
     resolution:
       integrity: sha512-eGuFFw7Upda+g4p+QHvnW0RyTX/SVeJBDM/gCtMARO0cLuT2HcEKnTPvhjV6aGeqrCB/sbNop0Kszm0jsaWU4A==
-  /esquery/1.3.1:
+  /esquery/1.4.0:
     dependencies:
       estraverse: 5.2.0
     dev: false
     engines:
       node: '>=0.10'
     resolution:
-      integrity: sha512-olpvt9QG0vniUBZspVRN6lwB7hOZoTRtT+jzR+tS4ffYx2mzbw+z0XCOk44aaLYKApNX5nMm+E+P6o25ip/DHQ==
+      integrity: sha512-cCDispWt5vHHtwMY2YrAQ4ibFkAL8RbH5YGBnZBc90MolvvfkkQcJro/aZiAQUlQ3qgrYS6D6v8Gc5G5CQsc9w==
   /esrecurse/4.3.0:
     dependencies:
       estraverse: 5.2.0
@@ -3556,10 +3564,6 @@ packages:
     dev: false
     resolution:
       integrity: sha512-DkPJKQeY6kKwmuMretBhr7G6Vodr7bFwDYTXIkfG1gjvNpaxBTQV3PbXg6bR1c1UP4jPOX0jHUbbHANL9vRjVg==
-  /fecha/2.3.3:
-    dev: false
-    resolution:
-      integrity: sha512-lUGBnIamTAwk4znq5BcqsDaxSmZ9nDVJaij6NvRt/Tg4R69gERA+otPKbS86ROw9nxVMw2/mp1fnaiWqbs6Sdg==
   /fecha/4.2.0:
     dev: false
     resolution:
@@ -3580,14 +3584,14 @@ packages:
       node: '>=8'
     resolution:
       integrity: sha512-yaduQFRKLXYOGgEn6AZau90j3ggSOyiqXU0F9JZfeXYhNa+Jk4X+s45A2zg5jns87GAFa34BBm2kXw4XpNcbdg==
-  /file-entry-cache/6.0.0:
+  /file-entry-cache/6.0.1:
     dependencies:
       flat-cache: 3.0.4
     dev: false
     engines:
       node: ^10.12.0 || >=12.0.0
     resolution:
-      integrity: sha512-fqoO76jZ3ZnYrXLDRxBR1YvOvc0k844kcOg40bgsPrE25LAb/PDqTY+ho64Xh2c8ZXgIKldchCFHczG2UVRcWA==
+      integrity: sha512-7Gps/XWymbLk2QLYK4NzpMOrYjMhdIxXuIvy2QBsLE6ljuodKvdkWs/cpyJJ3CVIVpH0Oi1Hvg1ovbMzLdFBBg==
   /fill-range/4.0.0:
     dependencies:
       extend-shallow: 2.0.1
@@ -3675,6 +3679,10 @@ packages:
     dev: false
     resolution:
       integrity: sha512-tW+UkmtNg/jv9CSofAKvgVcO7c2URjhTdW1ZTkcAritblu8tajiYy7YisnIflEwtKssCtOxpnBRoCB7iap0/TA==
+  /fn.name/1.1.0:
+    dev: false
+    resolution:
+      integrity: sha512-GRnmB5gPyJpAhTQdSZTSp9uaPSvl09KoYcMQtsB9rQoOmzs9dH6ffeccH+Z+cv6P68Hu5bC6JjRh4Ah/mHSNRw==
   /follow-redirects/1.13.1:
     dev: false
     engines:
@@ -3916,6 +3924,14 @@ packages:
       node: '>=8'
     resolution:
       integrity: sha512-BWICuzzDvDoH54NHKCseDanAhE3CeDorgDL5MT6LMXXj2WCnd9UC2szdk4AWLfjdgNBCXLUanXYcpBBKOSWGwg==
+  /globals/13.8.0:
+    dependencies:
+      type-fest: 0.20.2
+    dev: false
+    engines:
+      node: '>=8'
+    resolution:
+      integrity: sha512-rHtdA6+PDBIjeEvA91rpqzEvk/k3/i7EeNQiryiWuJH0Hw9cpyJMAt2jtbAwUaRdhD+573X4vWw6IcjKPasi9Q==
   /globby/11.0.1:
     dependencies:
       array-union: 2.1.0
@@ -4320,10 +4336,6 @@ packages:
     dev: false
     resolution:
       integrity: sha512-zIFMJVPTcXzxZBmwtWV2b26MGwPzbZ/XM5SPnrE0SqNQ3QqgI8LMV3nbCLhaPrSji5KToo77UXK5yFpPdVgWJQ==
-  /inversify/5.0.5:
-    dev: false
-    resolution:
-      integrity: sha512-60QsfPz8NAU/GZqXu8hJ+BhNf/C/c+Hp0eDc6XMIJTxBiP36AQyyQKpBkOVTLWBFDQWYVHpbbEuIsHu9dLuJDA==
   /inversify/5.1.1:
     dev: false
     resolution:
@@ -5234,6 +5246,13 @@ packages:
     hasBin: true
     resolution:
       integrity: sha512-YfbcO7jXDdyj0DGxYVSlSeQNHbD7XPWvrVWeVUujrQEoZzWJIRrCPoyk6kL6IAjAG2IolMK4T0hNUe0HOUs5Jw==
+  /js-yaml/4.1.0:
+    dependencies:
+      argparse: 2.0.1
+    dev: false
+    hasBin: true
+    resolution:
+      integrity: sha512-wpxZs9NoxZaJESJGIZTyDEaYpl0FKSA+FB9aJiyemKhMwkxQg63h4T1KJgUGHpTqPDNRcmmYLugrRjJlBtWvRA==
   /jsbn/0.1.1:
     dev: false
     resolution:
@@ -5305,6 +5324,10 @@ packages:
     dev: false
     resolution:
       integrity: sha512-xbbCH5dCYU5T8LcEhhuh7HJ88HXuW3qsI3Y0zOZFKfZEHcpWiHU/Jxzk629Brsab/mMiHQti9wMP+845RPe3Vg==
+  /json-schema-traverse/1.0.0:
+    dev: false
+    resolution:
+      integrity: sha512-NM8/P9n3XjXhIZn1lLhkFaACTOURQXjWhV4BA/RnOv8xvgqtqpAX9IO4mRQxSx1Rlo4tqzeqb0sOlruaOy3dug==
   /json-schema/0.2.3:
     dev: false
     resolution:
@@ -5323,13 +5346,6 @@ packages:
     dev: false
     resolution:
       integrity: sha1-Epai1Y/UXxmg9s4B1lcB4sc1tus=
-  /json5/1.0.1:
-    dependencies:
-      minimist: 1.2.5
-    dev: false
-    hasBin: true
-    resolution:
-      integrity: sha512-aKS4WQjPenRxiQsC93MNfjx+nbF4PAdYzmd/1JIj8HYzqfbu86beTuNgXDzPknWk0n0uARlyewZo4s++ES36Ow==
   /json5/2.1.3:
     dependencies:
       minimist: 1.2.5
@@ -5402,7 +5418,7 @@ packages:
       node: '>=4.0'
     resolution:
       integrity: sha512-z1xSldJ6imESSzOjd3NNkieVJKRlKYSOtMG8SFyCj2FIrvSaSuli/WjpBkEzCBoR9bYYYFgqJw61Xhu7Lcgk+w==
-  /jszip/3.5.0:
+  /jszip/3.6.0:
     dependencies:
       lie: 3.3.0
       pako: 1.0.11
@@ -5410,7 +5426,7 @@ packages:
       set-immediate-shim: 1.0.1
     dev: false
     resolution:
-      integrity: sha512-WRtu7TPCmYePR1nazfrtuF216cIVon/3GWOvHS9QR5bIwSbnxtdpma6un3jyGGNhHsKCSzn5Ypk+EkDRvTGiFA==
+      integrity: sha512-jgnQoG9LKnWO3mnVNBnfhkh0QknICd1FGSrXcgrl67zioyJ4wgx25o9ZqwNtrROSflGBCGYnJfjrIyRIby1OoQ==
   /just-extend/4.1.1:
     dev: false
     resolution:
@@ -5484,12 +5500,10 @@ packages:
     dev: false
     resolution:
       integrity: sha1-AfG2VzOqdUDuCNiwF0Fk0iCB5OE=
-  /kuler/1.0.1:
-    dependencies:
-      colornames: 1.1.1
+  /kuler/2.0.0:
     dev: false
     resolution:
-      integrity: sha512-J9nVUucG1p/skKul6DU3PUZrhs0LPulNaeUOox0IyXDi8S4CztTHs1gQphhuZmzXG7VOQSf6NJfKuzteQLv9gQ==
+      integrity: sha512-Xq9nH7KlWZmXAtodXDDRE7vs6DU1gTU8zYDHDiWLSip45Egwq3plLHzPn27NgvzL2r1LMPC1vdqh98sQxtqj4A==
   /latest-version/5.1.0:
     dependencies:
       package-json: 6.5.0
@@ -5546,6 +5560,10 @@ packages:
       node: '>=8'
     resolution:
       integrity: sha512-t7hw9pI+WvuwNJXwk5zVHpyhIqzg2qTlklJOf0mVxGSbe3Fp2VieZcduNYjaLDoy6p9uGpQEGWG87WpMKlNq8g==
+  /lodash.clonedeep/4.5.0:
+    dev: false
+    resolution:
+      integrity: sha1-4j8/nE+Pvd6HJSnBBxhXoIblzO8=
   /lodash.flattendeep/4.4.0:
     dev: false
     resolution:
@@ -5594,20 +5612,18 @@ packages:
     dev: false
     resolution:
       integrity: sha1-7dFMgk4sycHgsKG0K7UhBRakJDg=
+  /lodash.truncate/4.4.2:
+    dev: false
+    resolution:
+      integrity: sha1-WjUNoLERO4N+z//VgSy+WNbq4ZM=
   /lodash/4.17.20:
     dev: false
     resolution:
       integrity: sha512-PlhdFcillOINfeV7Ni6oF1TAEayyZBoZ8bcshTHqOYJYlrqzRK5hagpagky5o4HfCzzd1TRkXPMFq6cKk9rGmA==
-  /logform/2.1.2:
-    dependencies:
-      colors: 1.4.0
-      fast-safe-stringify: 2.0.7
-      fecha: 2.3.3
-      ms: 2.1.3
-      triple-beam: 1.3.0
+  /lodash/4.17.21:
     dev: false
     resolution:
-      integrity: sha512-+lZh4OpERDBLqjiwDLpAWNQu6KMjnlXH2ByZwCuSqVPJletw0kTWJf5CgSNAUKn1KUkv3m2cUz/LK8zyEy7wzQ==
+      integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
   /logform/2.2.0:
     dependencies:
       colors: 1.4.0
@@ -5783,6 +5799,13 @@ packages:
     hasBin: true
     resolution:
       integrity: sha512-RZKhC3EmpBchfTGBVb8fb+RL2cWyw/32lshnsETttkBAyAUXSGHxbEJWWRXc751DrIxG1q04b8QwMbAwkRPpUA==
+  /mime/2.5.2:
+    dev: false
+    engines:
+      node: '>=4.0.0'
+    hasBin: true
+    resolution:
+      integrity: sha512-tqkh47FzKeCPD2PUiPB6pkbMzsCasjxAfC62/Wap5qrUWcb+sFasXUC5I3gYM5iBM8v/Qpn4UK0x+j0iHyFPDg==
   /mimic-fn/1.2.0:
     dev: false
     engines:
@@ -6269,10 +6292,12 @@ packages:
     dev: false
     resolution:
       integrity: sha1-WDsap3WWHUsROsF9nFC6753Xa9E=
-  /one-time/0.0.4:
+  /one-time/1.0.0:
+    dependencies:
+      fn.name: 1.1.0
     dev: false
     resolution:
-      integrity: sha1-+M33eISCb+Tf+T46nMN7HkSAdC4=
+      integrity: sha512-5DXOiRKwuSEcQ/l0kGCF6Q3jcADFv5tSmRaJck/OqkVFcOzutB134KRSfF0xDrL39MNnqxbHBbUUcjZIhTgb2g==
   /onetime/2.0.1:
     dependencies:
       mimic-fn: 1.2.0
@@ -6813,6 +6838,18 @@ packages:
     dev: false
     resolution:
       integrity: sha512-tQtKA9WIAhBF3+VLAseyMqZeBjW0AHJoxOtYqSUZNJxauErmLbVm2FW1y+J/YA9dUrAC39ITejlZWhVIwawkKw==
+  /readable-stream/2.3.7:
+    dependencies:
+      core-util-is: 1.0.2
+      inherits: 2.0.4
+      isarray: 1.0.0
+      process-nextick-args: 2.0.1
+      safe-buffer: 5.1.2
+      string_decoder: 1.1.1
+      util-deprecate: 1.0.2
+    dev: false
+    resolution:
+      integrity: sha512-Ebho8K4jIbHAxnuxi7o42OrZgF/ZTNcsZj6nRKyUmkhLFq8CHItp/fy6hQZuZmP/n3yZ9VBUbp4zz/mX8hmYPw==
   /readable-stream/3.6.0:
     dependencies:
       inherits: 2.0.4
@@ -6980,6 +7017,12 @@ packages:
       node: '>=0.10.0'
     resolution:
       integrity: sha1-jGStX9MNqxyXbiNE/+f3kqam30I=
+  /require-from-string/2.0.2:
+    dev: false
+    engines:
+      node: '>=0.10.0'
+    resolution:
+      integrity: sha512-Xf0nWe6RseziFMu+Ap9biiUbmplq6S9/p+7w7YXP/JBHhrUDDUhwa+vANyubuqfZWTveU//DYVGsDG7RKL/vEw==
   /require-main-filename/2.0.0:
     dev: false
     resolution:
@@ -7234,14 +7277,14 @@ packages:
       node: '>= 0.8.0'
     resolution:
       integrity: sha512-JMrvUwE54emCYWlTI+hGrGv5I8dEwmco/00EvkzIIsR7MqrHonbD9pO2MOfFnpFntl7ecpZs+3mW+XbQZu9QCg==
-  /serverless-http/2.6.0:
+  /serverless-http/2.7.0:
     dev: false
     engines:
       node: '>=8.0'
     optionalDependencies:
       '@types/aws-lambda': 8.10.66
     resolution:
-      integrity: sha512-2mBz+MO+JXgC8PDHIZi/Ytsa65v78fc+7cFeXqcYM5laGQS/GEX9Cq+72WOaIGqPJia5JLADqjhdTBI5/iLcHQ==
+      integrity: sha512-iWq0z1X2Xkuvz6wL305uCux/SypbojHlYsB5bzmF5TqoLYsdvMNIoCsgtWjwqWoo3AR2cjw3zAmHN2+U6mF99Q==
   /set-blocking/2.0.0:
     dev: false
     resolution:
@@ -7378,16 +7421,16 @@ packages:
       node: '>=8'
     resolution:
       integrity: sha512-g9Q1haeby36OSStwb4ntCGGGaKsaVSjQ68fBxoQcutl5fS1vuY18H3wSt3jFyFtrkx+Kz0V1G85A4MyAdDMi2Q==
-  /slice-ansi/2.1.0:
+  /slice-ansi/4.0.0:
     dependencies:
-      ansi-styles: 3.2.1
-      astral-regex: 1.0.0
-      is-fullwidth-code-point: 2.0.0
+      ansi-styles: 4.3.0
+      astral-regex: 2.0.0
+      is-fullwidth-code-point: 3.0.0
     dev: false
     engines:
-      node: '>=6'
+      node: '>=10'
     resolution:
-      integrity: sha512-Qu+VC3EwYLldKa1fCxuuvULvSJOKEgk9pi8dZeCVK7TqBfUNTH4sFkk4joj8afVSfAYgJoSOetjx9QWOJ5mYoQ==
+      integrity: sha512-qMCMfhY040cVHT43K9BFygqYbUPFZKHOg7K73mtTWJRb8pyP3fzf4Ixd5SzdEJQ6MRUg/WBnOLxghZtKKurENQ==
   /snapdragon-node/2.1.1:
     dependencies:
       define-property: 1.0.0
@@ -7817,17 +7860,19 @@ packages:
     dev: false
     resolution:
       integrity: sha512-9QNk5KwDF+Bvz+PyObkmSYjI5ksVUYtjW7AU22r2NKcfLJcXp96hkDWU3+XndOsUb+AQ9QhfzfCT2O+CNWT5Tw==
-  /table/5.4.6:
+  /table/6.7.0:
     dependencies:
-      ajv: 6.12.6
-      lodash: 4.17.20
-      slice-ansi: 2.1.0
-      string-width: 3.1.0
+      ajv: 8.3.0
+      lodash.clonedeep: 4.5.0
+      lodash.truncate: 4.4.2
+      slice-ansi: 4.0.0
+      string-width: 4.2.0
+      strip-ansi: 6.0.0
     dev: false
     engines:
-      node: '>=6.0.0'
+      node: '>=10.0.0'
     resolution:
-      integrity: sha512-wmEc8m4fjnob4gt5riFRtTu/6+4rSe12TpAELNSqHMfF3IqnA+CH37USM6/YR3qRZv7e56kAEAtd6nKZaxe0Ug==
+      integrity: sha512-SAM+5p6V99gYiiy2gT5ArdzgM1dLDed0nkrWmG6Fry/bUS/m9x83BwpJUOf1Qj/x2qJd+thL6IkIx7qPGRxqBw==
   /temp/0.9.4:
     dependencies:
       mkdirp: 0.5.5
@@ -8474,32 +8519,32 @@ packages:
       node: '>=8'
     resolution:
       integrity: sha512-NsmoXalsWVDMGupxZ5R08ka9flZjjiLvHVAWYOKtiKM8ujtZWr9cRffak+uSE48+Ob8ObalXpwyeUiyDD6QFgg==
-  /winston-transport/4.3.0:
+  /winston-transport/4.4.0:
     dependencies:
       logform: 2.2.0
-      readable-stream: 2.3.6
+      readable-stream: 2.3.7
       triple-beam: 1.3.0
     dev: false
     engines:
       node: '>= 6.4.0'
     resolution:
-      integrity: sha512-B2wPuwUi3vhzn/51Uukcao4dIduEiPOcOt9HJ3QeaXgkJ5Z7UwpBzxS4ZGNHtrxrUvTwemsQiSys0ihOf8Mp1A==
-  /winston/3.2.1:
+      integrity: sha512-Lc7/p3GtqtqPBYYtS6KCN3c77/2QCev51DvcJKbkFPQNoj1sinkGwLGFDxkXY9J6p9+EPnYs+D90uwbnaiURTw==
+  /winston/3.3.3:
     dependencies:
-      async: 2.6.3
-      diagnostics: 1.1.1
-      is-stream: 1.1.0
-      logform: 2.1.2
-      one-time: 0.0.4
+      '@dabh/diagnostics': 2.0.2
+      async: 3.2.0
+      is-stream: 2.0.0
+      logform: 2.2.0
+      one-time: 1.0.0
       readable-stream: 3.6.0
       stack-trace: 0.0.10
       triple-beam: 1.3.0
-      winston-transport: 4.3.0
+      winston-transport: 4.4.0
     dev: false
     engines:
       node: '>= 6.4.0'
     resolution:
-      integrity: sha512-zU6vgnS9dAWCEKg/QYigd6cgMVVNwyTzKs81XZtTFuRwJOcDdBg7AU0mXVyNbs7O5RH2zdv+BdNZUlx7mXPuOw==
+      integrity: sha512-oEXTISQnC8VlSAKf1KYSSd7J6IWuRPQqDdo8eoRNaYKLvwSb5+79Z3Yi1lrl6KDpU6/VWaxpakDAtb1oQ4n9aw==
   /word-wrap/1.2.3:
     dev: false
     engines:
@@ -8645,19 +8690,19 @@ packages:
       integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==
   'file:projects/assetlibrary-client.tgz_supports-color@8.0.0':
     dependencies:
-      '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
-      '@types/config': 0.0.37
+      '@rushstack/eslint-config': 2.3.4_3318d341e08b60846a0ca54ab3432060
+      '@types/config': 0.0.38
       '@types/jest': 26.0.23
       '@types/node': 14.6.1
       '@types/superagent': 4.1.10
-      '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
-      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
+      '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
+      '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
       aws-sdk: 2.777.0
       check-outdated: 2.7.0
-      config: 3.2.4
+      config: 3.3.6
       cz-customizable: 6.3.0
-      eslint: 7.15.0_supports-color@8.0.0
-      inversify: 5.0.5
+      eslint: 7.26.0_supports-color@8.0.0
+      inversify: 5.1.1
       inversify-binding-decorators: 4.0.0
       inversify-express-utils: 6.3.2
       jest: 26.6.3_supports-color@8.0.0
@@ -8666,51 +8711,51 @@ packages:
       jest-mock: 26.6.2
       jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
-      js-yaml: 3.13.1
-      logform: 2.1.2
+      js-yaml: 4.1.0
+      logform: 2.2.0
       nodemon: 2.0.6
       nyc: 15.1.0_supports-color@8.0.0
       ow: 0.23.0
-      readable-stream: 2.3.6
+      readable-stream: 3.6.0
       reflect-metadata: 0.1.13
       shx: 0.3.3
       superagent: 6.1.0_supports-color@8.0.0
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       typescript: 4.2.4
-      winston: 3.2.1
-      winston-transport: 4.3.0
+      winston: 3.3.3
+      winston-transport: 4.4.0
     dev: false
     id: 'file:projects/assetlibrary-client.tgz'
     name: '@rush-temp/assetlibrary-client'
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-oyKcweKxYbE87VtCPT9ttbDZuOQevNsl517H9yByLOK/YaqOHWhgiu2rC+tLO1bxXtjwWg8oJj7SD2nsYhLxQA==
+      integrity: sha512-2G9jz4jENulkMvsInjRgPT+UU1RXpMommwSKOU85dnzXlRdKROyvweiHbhFjEAvLOzs3UX56EcMuSZoT9Utf+Q==
       tarball: 'file:projects/assetlibrary-client.tgz'
     version: 0.0.0
   'file:projects/assetlibrary-history.tgz_supports-color@8.0.0':
     dependencies:
-      '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
+      '@rushstack/eslint-config': 2.3.4_3318d341e08b60846a0ca54ab3432060
       '@types/atob': 2.1.2
       '@types/body-parser': 1.19.0
       '@types/btoa': 1.2.3
-      '@types/config': 0.0.37
-      '@types/cors': 2.8.8
-      '@types/express': 4.17.9
+      '@types/config': 0.0.38
+      '@types/cors': 2.8.10
+      '@types/express': 4.17.11
       '@types/jest': 26.0.23
       '@types/json-stable-stringify': 1.0.32
       '@types/morgan': 1.9.2
-      '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
-      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
+      '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
+      '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
       atob: 2.1.2
       aws-sdk: 2.777.0
       body-parser: 1.19.0
       btoa: 1.2.1
-      config: 3.2.4
+      config: 3.3.6
       cors: 2.8.5
-      eslint: 7.15.0_supports-color@8.0.0
+      eslint: 7.26.0_supports-color@8.0.0
       express: 4.17.1
-      inversify: 5.0.5
+      inversify: 5.1.1
       inversify-binding-decorators: 4.0.0
       inversify-express-utils: 6.3.2
       jest: 26.6.3_supports-color@8.0.0
@@ -8719,56 +8764,56 @@ packages:
       jest-mock: 26.6.2
       jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
-      js-yaml: 3.13.1
-      logform: 2.1.2
+      js-yaml: 4.1.0
+      logform: 2.2.0
       morgan: 1.10.0
       nodemon: 2.0.7
       nyc: 15.1.0_supports-color@8.0.0
       ow: 0.23.0
-      readable-stream: 2.3.6
+      readable-stream: 3.6.0
       reflect-metadata: 0.1.13
-      serverless-http: 2.6.0
+      serverless-http: 2.7.0
       shx: 0.3.3
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       typescript: 4.2.4
-      winston: 3.2.1
-      winston-transport: 4.3.0
+      winston: 3.3.3
+      winston-transport: 4.4.0
     dev: false
     id: 'file:projects/assetlibrary-history.tgz'
     name: '@rush-temp/assetlibrary-history'
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-V2JIrP6UIIk4J3Il60W8tB+XTl6RihfgWIpBOOEkZO7wdwqh4AYYIQNjVS/6aUyZ6lSYDcc0h3HWzcODkVkHDQ==
+      integrity: sha512-afQVx0Z2g3rvo+p4kgJPTPCkh4kdZCPT/ljrwyVoLjQv5/fMhmH5nSs2AToG4X0IX9tMnqbgHOgSPs/n0nMqnw==
       tarball: 'file:projects/assetlibrary-history.tgz'
     version: 0.0.0
   'file:projects/assetlibrary.tgz_supports-color@8.0.0':
     dependencies:
-      '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
+      '@rushstack/eslint-config': 2.3.4_3318d341e08b60846a0ca54ab3432060
       '@types/body-parser': 1.19.0
-      '@types/config': 0.0.37
-      '@types/cors': 2.8.8
-      '@types/express': 4.17.9
-      '@types/express-serve-static-core': 4.17.16
+      '@types/config': 0.0.38
+      '@types/cors': 2.8.10
+      '@types/express': 4.17.11
+      '@types/express-serve-static-core': 4.17.19
       '@types/express-version-request': 1.7.1
       '@types/jest': 26.0.23
       '@types/json-stable-stringify': 1.0.32
       '@types/jsonwebtoken': 8.5.0
       '@types/prettyjson': 0.0.29
-      '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
-      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
+      '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
+      '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
       ajv: 6.10.2
       async-local-storage: 2.3.1
       aws-sdk: 2.777.0
       body-parser: 1.19.0
-      config: 3.2.4
+      config: 3.3.6
       cors: 2.8.5
-      eslint: 7.15.0_supports-color@8.0.0
+      eslint: 7.26.0_supports-color@8.0.0
       express: 4.17.1
       express-version-request: 1.7.0
       fast-json-patch: 3.0.0-1
       gremlin: 3.4.8
-      inversify: 5.0.5
+      inversify: 5.1.1
       inversify-binding-decorators: 4.0.0
       inversify-express-utils: 6.3.2
       jest: 26.6.3_supports-color@8.0.0
@@ -8778,45 +8823,45 @@ packages:
       jest-mock: 26.6.2
       jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
-      js-yaml: 3.13.1
+      js-yaml: 4.1.0
       json-stable-stringify: 1.0.1
       jsonwebtoken: 8.5.1
-      logform: 2.1.2
-      mime: 2.4.6
+      logform: 2.2.0
+      mime: 2.5.2
       node-cache: 5.1.2
       nodemon: 2.0.7
       nyc: 15.1.0_supports-color@8.0.0
       ow: 0.23.0
       prettyjson: 1.2.1
-      readable-stream: 2.3.6
+      readable-stream: 3.6.0
       reflect-metadata: 0.1.13
-      serverless-http: 2.6.0
+      serverless-http: 2.7.0
       shx: 0.3.3
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       typescript: 4.2.4
-      winston: 3.2.1
-      winston-transport: 4.3.0
+      winston: 3.3.3
+      winston-transport: 4.4.0
     dev: false
     id: 'file:projects/assetlibrary.tgz'
     name: '@rush-temp/assetlibrary'
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-7l7bpSB2odDgpd8XwQxDQnwA2zH1m/CPGN1CjbyOFE2YxBOnYPj2dW4NUad5g4F9DHRoOauB55SPyYbUlAe7yQ==
+      integrity: sha512-8efJeqhN2as0UiB0ttM2RNr2IkkQpMzY3iAaoCVKFbw3ZAj9B4ZWCQfMITec7dQCX6AJyFpVCL4QNUeNl6TDPg==
       tarball: 'file:projects/assetlibrary.tgz'
     version: 0.0.0
   'file:projects/assetlibraryhistory-client.tgz_supports-color@8.0.0':
     dependencies:
-      '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
-      '@types/config': 0.0.37
+      '@rushstack/eslint-config': 2.3.4_3318d341e08b60846a0ca54ab3432060
+      '@types/config': 0.0.38
       '@types/jest': 26.0.23
       '@types/superagent': 4.1.10
-      '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
-      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
+      '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
+      '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
       aws-sdk: 2.777.0
-      config: 3.2.4
-      eslint: 7.15.0_supports-color@8.0.0
-      inversify: 5.0.5
+      config: 3.3.6
+      eslint: 7.26.0_supports-color@8.0.0
+      inversify: 5.1.1
       inversify-binding-decorators: 4.0.0
       inversify-express-utils: 6.3.2
       jest: 26.6.3_supports-color@8.0.0
@@ -8825,47 +8870,47 @@ packages:
       jest-mock: 26.6.2
       jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
-      js-yaml: 3.13.1
-      logform: 2.1.2
+      js-yaml: 4.1.0
+      logform: 2.2.0
       nodemon: 2.0.6
       nyc: 15.1.0_supports-color@8.0.0
       ow: 0.23.0
-      readable-stream: 2.3.6
+      readable-stream: 3.6.0
       reflect-metadata: 0.1.13
       shx: 0.3.3
       superagent: 6.1.0_supports-color@8.0.0
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       typescript: 4.2.4
-      winston: 3.2.1
-      winston-transport: 4.3.0
+      winston: 3.3.3
+      winston-transport: 4.4.0
     dev: false
     id: 'file:projects/assetlibraryhistory-client.tgz'
     name: '@rush-temp/assetlibraryhistory-client'
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-CuEyGqkCJVO72OUjvg/ajGLkDIofjrDmEAB6BjU+rzAE8TCEnKg64xAiNyR/yHKejgSh48X7wuFdh3z6TpIksA==
+      integrity: sha512-Cv+2e4OKXCicaLLNGH5vu+P4vb40J30837CIbZ/sbFCNH6KjY7gKuSbTY/FYSnLBKxQT5nxqi2R+UY5WVmi7Wg==
       tarball: 'file:projects/assetlibraryhistory-client.tgz'
     version: 0.0.0
   'file:projects/auth-devicecert.tgz_supports-color@8.0.0':
     dependencies:
-      '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
-      '@types/config': 0.0.37
+      '@rushstack/eslint-config': 2.3.4_3318d341e08b60846a0ca54ab3432060
+      '@types/config': 0.0.38
       '@types/jest': 26.0.23
       '@types/pem': 1.9.5
-      '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
-      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
+      '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
+      '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
       aws-sdk: 2.777.0
-      config: 3.2.4
-      eslint: 7.15.0_supports-color@8.0.0
+      config: 3.3.6
+      eslint: 7.26.0_supports-color@8.0.0
       jest: 26.6.3_supports-color@8.0.0
       jest-create-mock-instance: 1.1.0
       jest-haste-map: 26.6.2
       jest-mock: 26.6.2
       jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
-      js-yaml: 3.13.1
-      logform: 2.1.2
+      js-yaml: 4.1.0
+      logform: 2.2.0
       nodemon: 2.0.7
       nyc: 15.1.0_supports-color@8.0.0
       pem: 1.14.4
@@ -8873,73 +8918,73 @@ packages:
       shx: 0.3.3
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       typescript: 4.2.4
-      winston: 3.2.1
-      winston-transport: 4.3.0
+      winston: 3.3.3
+      winston-transport: 4.4.0
     dev: false
     id: 'file:projects/auth-devicecert.tgz'
     name: '@rush-temp/auth-devicecert'
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-2t/RysAjMknz7jDkp3/fY0fhhCKXDSqMDedB2SspWipGWpqSdwXJvx/Q1lTsZZHRmXvpv4YrfoRWSJ0QRZWRCQ==
+      integrity: sha512-iCIN4YAsUBhJ/moooKJzudFfS5AGCixbf/Yll5ls7BVD3HPRlPUDnmztOFrHMZPdw7HwGnu9E23ROAJpfR0Yng==
       tarball: 'file:projects/auth-devicecert.tgz'
     version: 0.0.0
   'file:projects/auth-jwt.tgz_supports-color@8.0.0':
     dependencies:
-      '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
+      '@rushstack/eslint-config': 2.3.4_3318d341e08b60846a0ca54ab3432060
       '@types/aws-lambda': 8.10.65
-      '@types/config': 0.0.37
+      '@types/config': 0.0.38
       '@types/jest': 26.0.23
       '@types/jsonwebtoken': 8.5.0
       '@types/jwk-to-pem': 2.0.0
-      '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
-      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
+      '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
+      '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
       axios: 0.21.0
-      config: 3.2.4
-      eslint: 7.15.0_supports-color@8.0.0
+      config: 3.3.6
+      eslint: 7.26.0_supports-color@8.0.0
       jest: 26.6.3_supports-color@8.0.0
       jest-create-mock-instance: 1.1.0
       jest-haste-map: 26.6.2
       jest-mock: 26.6.2
       jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
-      js-yaml: 3.13.1
+      js-yaml: 4.1.0
       jsonwebtoken: 8.5.1
       jwk-to-pem: 2.0.4
-      logform: 2.1.2
+      logform: 2.2.0
       nodemon: 2.0.7
       nyc: 15.1.0_supports-color@8.0.0
       ow: 0.23.0
-      readable-stream: 2.3.6
+      readable-stream: 3.6.0
       reflect-metadata: 0.1.13
       shx: 0.3.3
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       typescript: 4.2.4
       uuid: 8.3.2
-      winston: 3.2.1
-      winston-transport: 4.3.0
+      winston: 3.3.3
+      winston-transport: 4.4.0
     dev: false
     id: 'file:projects/auth-jwt.tgz'
     name: '@rush-temp/auth-jwt'
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-wx4nU87QhI4y4hcILOe+ORD+9XIjrxRyGrNTsJDmkfwdj+7vJ5CCKP3+2exUqc9KJsUHxZqj7fLSGe2xKwK0PA==
+      integrity: sha512-UrTwaVHJyLabFWBgtO0J/juM4fzEsG+ewChZswk0UJg3yONLcuNXaV1lSOT3C1U0J/CXgShbo8X1RTJCjR0vRA==
       tarball: 'file:projects/auth-jwt.tgz'
     version: 0.0.0
   'file:projects/bulkcerts-client.tgz_supports-color@8.0.0':
     dependencies:
-      '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
-      '@types/config': 0.0.37
+      '@rushstack/eslint-config': 2.3.4_3318d341e08b60846a0ca54ab3432060
+      '@types/config': 0.0.38
       '@types/jest': 26.0.23
       '@types/node': 14.6.1
       '@types/superagent': 4.1.10
-      '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
-      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
+      '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
+      '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
       aws-sdk: 2.777.0
-      config: 3.2.4
-      eslint: 7.15.0_supports-color@8.0.0
-      inversify: 5.0.5
+      config: 3.3.6
+      eslint: 7.26.0_supports-color@8.0.0
+      inversify: 5.1.1
       inversify-binding-decorators: 4.0.0
       inversify-express-utils: 6.3.2
       jest: 26.6.3_supports-color@8.0.0
@@ -8948,52 +8993,52 @@ packages:
       jest-mock: 26.6.2
       jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
-      js-yaml: 3.13.1
-      logform: 2.1.2
+      js-yaml: 4.1.0
+      logform: 2.2.0
       nodemon: 2.0.6
       nyc: 15.1.0_supports-color@8.0.0
       ow: 0.23.0
-      readable-stream: 2.3.6
+      readable-stream: 3.6.0
       reflect-metadata: 0.1.13
       shx: 0.3.3
       superagent: 6.1.0_supports-color@8.0.0
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       typescript: 4.2.4
-      winston: 3.2.1
-      winston-transport: 4.3.0
+      winston: 3.3.3
+      winston-transport: 4.4.0
     dev: false
     id: 'file:projects/bulkcerts-client.tgz'
     name: '@rush-temp/bulkcerts-client'
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-BhWi4jszqRJQBhnJ0O20Yzm+gI4ITujXrW6R274LGL/7jrAbsFhds/cbi4jGfEAqGeF0dC3XbQ6K1lCmwb8dmA==
+      integrity: sha512-ng+djWmjyCm5JU6dgepCAI485qOtA4gZfgmKyEv5QrU/u/HJo7W/IW0IP62lALfiFhNQIR88LPwbS9BuDGKBkA==
       tarball: 'file:projects/bulkcerts-client.tgz'
     version: 0.0.0
   'file:projects/bulkcerts.tgz_supports-color@8.0.0':
     dependencies:
-      '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
+      '@rushstack/eslint-config': 2.3.4_3318d341e08b60846a0ca54ab3432060
       '@types/aws-lambda': 8.10.65
       '@types/aws-serverless-express': 3.3.3
       '@types/body-parser': 1.19.0
-      '@types/config': 0.0.37
-      '@types/cors': 2.8.8
-      '@types/express': 4.17.9
+      '@types/config': 0.0.38
+      '@types/cors': 2.8.10
+      '@types/express': 4.17.11
       '@types/jest': 26.0.23
-      '@types/jszip': 3.4.0
+      '@types/jszip': 3.4.1
       '@types/multer': 1.4.5
       '@types/pem': 1.9.5
       '@types/uuid': 8.3.0
-      '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
-      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
+      '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
+      '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
       aws-sdk: 2.777.0
       aws-serverless-express: 3.4.0
       body-parser: 1.19.0
-      config: 3.2.4
+      config: 3.3.6
       cors: 2.8.5
-      eslint: 7.15.0_supports-color@8.0.0
+      eslint: 7.26.0_supports-color@8.0.0
       express: 4.17.1
-      inversify: 5.0.5
+      inversify: 5.1.1
       inversify-binding-decorators: 4.0.0
       inversify-express-utils: 6.3.2
       jest: 26.6.3_supports-color@8.0.0
@@ -9002,42 +9047,42 @@ packages:
       jest-mock: 26.6.2
       jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
-      js-yaml: 3.13.1
-      jszip: 3.5.0
-      logform: 2.1.2
+      js-yaml: 4.1.0
+      jszip: 3.6.0
+      logform: 2.2.0
       nodemon: 2.0.7
       nyc: 15.1.0_supports-color@8.0.0
       ow: 0.23.0
       pem: 1.14.4
-      readable-stream: 2.3.6
+      readable-stream: 3.6.0
       reflect-metadata: 0.1.13
       shx: 0.3.3
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       typescript: 4.2.4
       uuid: 8.3.2
-      winston: 3.2.1
-      winston-transport: 4.3.0
+      winston: 3.3.3
+      winston-transport: 4.4.0
     dev: false
     id: 'file:projects/bulkcerts.tgz'
     name: '@rush-temp/bulkcerts'
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-BV939/vzDzJd9v8yDHa3XAys4joTOCeGgn4hK4E+93gmajfvMBkVxi5H9jKcGACAXce/JOP+STjRm8L4V35q6g==
+      integrity: sha512-5pnAeV2Unk2cDwCL+oqnmOlMWLQyhysdhoApiPS4LTmCRB+3uSaDBuu3rq/Z6lyhxeiiN6jumyfiVL9TvBxJqg==
       tarball: 'file:projects/bulkcerts.tgz'
     version: 0.0.0
   'file:projects/certificate-activator.tgz_supports-color@8.0.0':
     dependencies:
-      '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
-      '@types/config': 0.0.37
+      '@rushstack/eslint-config': 2.3.4_3318d341e08b60846a0ca54ab3432060
+      '@types/config': 0.0.38
       '@types/jest': 26.0.23
       '@types/pem': 1.9.5
-      '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
-      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
+      '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
+      '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
       aws-sdk: 2.777.0
-      config: 3.2.4
-      eslint: 7.15.0_supports-color@8.0.0
-      inversify: 5.0.5
+      config: 3.3.6
+      eslint: 7.26.0_supports-color@8.0.0
+      inversify: 5.1.1
       inversify-binding-decorators: 4.0.0
       inversify-express-utils: 6.3.2
       jest: 26.6.3_supports-color@8.0.0
@@ -9046,41 +9091,41 @@ packages:
       jest-mock: 26.6.2
       jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
-      js-yaml: 3.13.1
-      logform: 2.1.2
+      js-yaml: 4.1.0
+      logform: 2.2.0
       nodemon: 2.0.7
       nyc: 15.1.0_supports-color@8.0.0
       ow: 0.23.0
       pem: 1.14.4
-      readable-stream: 2.3.6
+      readable-stream: 3.6.0
       reflect-metadata: 0.1.13
       shx: 0.3.3
       superagent: 6.1.0_supports-color@8.0.0
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       typescript: 4.2.4
-      winston: 3.2.1
-      winston-transport: 4.3.0
+      winston: 3.3.3
+      winston-transport: 4.4.0
     dev: false
     id: 'file:projects/certificate-activator.tgz'
     name: '@rush-temp/certificate-activator'
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-4Xxs1qz/1VJrqy+M2Pxe9jzXXYUwG0ZwVN5Zv8x6jiUIkivxhIAkIaDl48dFdHzb6QbAv+uFZbulakD2mQkevA==
+      integrity: sha512-e4wL74bpOCIIKYV1VcF95JWEsF+Io+rE25cXeLDG7WvQ7Y0wy3Q8BZZeh955CbNoGSvNZOLCKmSwCYEEy5ktyA==
       tarball: 'file:projects/certificate-activator.tgz'
     version: 0.0.0
   'file:projects/certificate-vendor.tgz_supports-color@8.0.0':
     dependencies:
-      '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
-      '@types/config': 0.0.37
+      '@rushstack/eslint-config': 2.3.4_3318d341e08b60846a0ca54ab3432060
+      '@types/config': 0.0.38
       '@types/jest': 26.0.23
       '@types/pem': 1.9.5
-      '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
-      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
+      '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
+      '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
       aws-sdk: 2.777.0
-      config: 3.2.4
-      eslint: 7.15.0_supports-color@8.0.0
-      inversify: 5.0.5
+      config: 3.3.6
+      eslint: 7.26.0_supports-color@8.0.0
+      inversify: 5.1.1
       inversify-binding-decorators: 4.0.0
       jest: 26.6.3_supports-color@8.0.0
       jest-create-mock-instance: 1.1.0
@@ -9088,42 +9133,42 @@ packages:
       jest-mock: 26.6.2
       jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
-      js-yaml: 3.13.1
-      logform: 2.1.2
+      js-yaml: 4.1.0
+      logform: 2.2.0
       nodemon: 2.0.7
       nyc: 15.1.0_supports-color@8.0.0
       ow: 0.23.0
       pem: 1.14.4
-      readable-stream: 2.3.6
+      readable-stream: 3.6.0
       reflect-metadata: 0.1.13
       shx: 0.3.3
       superagent: 6.1.0_supports-color@8.0.0
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       typescript: 4.2.4
-      winston: 3.2.1
-      winston-transport: 4.3.0
+      winston: 3.3.3
+      winston-transport: 4.4.0
     dev: false
     id: 'file:projects/certificate-vendor.tgz'
     name: '@rush-temp/certificate-vendor'
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-Y6+ZNarx6sgVuXhLilSAZBcdCRk61WXRH0IxcxnzsN91FBY6zin9Cua7m0z0bSdDYDbFDObI6d49JBujak+rqw==
+      integrity: sha512-whhP85xcQOc5pNx79YXDwi/bJ4jpgtXNx0ureH2iVTwSEq61WbraPlnXhmcjUVj0JbJuxrwATZz5SA3M3ZJH0w==
       tarball: 'file:projects/certificate-vendor.tgz'
     version: 0.0.0
   'file:projects/commands-client.tgz_supports-color@8.0.0':
     dependencies:
-      '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
-      '@types/config': 0.0.37
+      '@rushstack/eslint-config': 2.3.4_3318d341e08b60846a0ca54ab3432060
+      '@types/config': 0.0.38
       '@types/jest': 26.0.23
       '@types/node': 14.6.1
       '@types/superagent': 4.1.10
-      '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
-      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
+      '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
+      '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
       aws-sdk: 2.777.0
-      config: 3.2.4
-      eslint: 7.15.0_supports-color@8.0.0
-      inversify: 5.0.5
+      config: 3.3.6
+      eslint: 7.26.0_supports-color@8.0.0
+      inversify: 5.1.1
       inversify-binding-decorators: 4.0.0
       inversify-express-utils: 6.3.2
       jest: 26.6.3_supports-color@8.0.0
@@ -9132,50 +9177,50 @@ packages:
       jest-mock: 26.6.2
       jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
-      js-yaml: 3.13.1
-      logform: 2.1.2
+      js-yaml: 4.1.0
+      logform: 2.2.0
       nodemon: 2.0.6
       nyc: 15.1.0_supports-color@8.0.0
       ow: 0.23.0
-      readable-stream: 2.3.6
+      readable-stream: 3.6.0
       reflect-metadata: 0.1.13
       shx: 0.3.3
       superagent: 6.1.0_supports-color@8.0.0
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       typescript: 4.2.4
-      winston: 3.2.1
-      winston-transport: 4.3.0
+      winston: 3.3.3
+      winston-transport: 4.4.0
     dev: false
     id: 'file:projects/commands-client.tgz'
     name: '@rush-temp/commands-client'
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-P8osjrhSIkxd+qhQSlB7LWTZwhOx7vhsnLhw4LYl2ltDJ2PGb1gPBC9kz42KeyvJIDqSOFkG/OdnD5aIPah4fg==
+      integrity: sha512-AvQuz8HpVavUFKV1VOMrxsje425hE/iztQcKsV0iSoDqawAjXDKDI9IXYtVWixWA5WUnSmsCZ/AWu/Xv/JGwvQ==
       tarball: 'file:projects/commands-client.tgz'
     version: 0.0.0
   'file:projects/commands.tgz':
     dependencies:
-      '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
+      '@rushstack/eslint-config': 2.3.4_3318d341e08b60846a0ca54ab3432060
       '@types/body-parser': 1.19.0
       '@types/busboy': 0.2.3
-      '@types/config': 0.0.37
-      '@types/cors': 2.8.8
-      '@types/express': 4.17.9
+      '@types/config': 0.0.38
+      '@types/cors': 2.8.10
+      '@types/express': 4.17.11
       '@types/jest': 26.0.23
       '@types/sinon': 9.0.9
       '@types/uuid': 8.3.0
-      '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
-      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
+      '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
+      '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
       ajv: 6.10.2
       aws-sdk: 2.777.0
       body-parser: 1.19.0
       busboy: 0.3.1
-      config: 3.2.4
+      config: 3.3.6
       cors: 2.8.5
-      eslint: 7.15.0_supports-color@8.0.0
+      eslint: 7.26.0_supports-color@8.0.0
       express: 4.17.1
-      inversify: 5.0.5
+      inversify: 5.1.1
       inversify-binding-decorators: 4.0.0
       inversify-express-utils: 6.3.2
       jest: 26.6.3_supports-color@8.0.0
@@ -9184,13 +9229,13 @@ packages:
       jest-mock: 26.6.2
       jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
-      js-yaml: 3.13.1
-      logform: 2.1.2
+      js-yaml: 4.1.0
+      logform: 2.2.0
       nodemon: 2.0.7
       ow: 0.23.0
-      readable-stream: 2.3.6
+      readable-stream: 3.6.0
       reflect-metadata: 0.1.13
-      serverless-http: 2.6.0
+      serverless-http: 2.7.0
       shx: 0.3.3
       sinon: 9.2.1
       superagent: 6.1.0_supports-color@8.0.0
@@ -9198,32 +9243,32 @@ packages:
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       typescript: 4.2.4
       uuid: 8.3.2
-      winston: 3.2.1
-      winston-transport: 4.3.0
+      winston: 3.3.3
+      winston-transport: 4.4.0
     dev: false
     name: '@rush-temp/commands'
     resolution:
-      integrity: sha512-Qth7HSJBvLv+CnbzdSJyxgj2uu8H/7k/1IjamyRr4TPi1DPG/up7KbqFokZeCNkk1N6tFTigH7Bus0WAhxi1RQ==
+      integrity: sha512-G/jCI1JlUlRTiwSuUdp28DN3O+pzplTnqesna8aAEYVqGoGEzZTa/KDUGfbfQ+c9q7uybpQ6E++R0c9xem2+8A==
       tarball: 'file:projects/commands.tgz'
     version: 0.0.0
   'file:projects/config-inject.tgz_supports-color@8.0.0':
     dependencies:
-      '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
-      '@types/config': 0.0.37
+      '@rushstack/eslint-config': 2.3.4_3318d341e08b60846a0ca54ab3432060
+      '@types/config': 0.0.38
       '@types/jest': 26.0.23
       '@types/node': 14.6.1
-      '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
-      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
-      config: 3.2.4
-      eslint: 7.15.0_supports-color@8.0.0
-      inversify: 5.0.5
+      '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
+      '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
+      config: 3.3.6
+      eslint: 7.26.0_supports-color@8.0.0
+      inversify: 5.1.1
       jest: 26.6.3_supports-color@8.0.0
       jest-create-mock-instance: 1.1.0
       jest-haste-map: 26.6.2
       jest-mock: 26.6.2
       jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
-      js-yaml: 3.13.1
+      js-yaml: 4.1.0
       nodemon: 2.0.6
       nyc: 15.1.0_supports-color@8.0.0
       reflect-metadata: 0.1.13
@@ -9236,21 +9281,21 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-JUCMEf0nLphcMwIrn1+2ob24kf0j3pVSpv57+LmgfxMWk5c9OG9IL+QBeIB1xgc4Ln/91zI77qgubeARwxLbvQ==
+      integrity: sha512-pOq90I8N7FPvqqVM2k9WP25EcgBJq2Y1a0+TLS9GN1CiEQIGD3HhwkCHdbYa3HkvgFKBsMjGd403R2pWtqKh4A==
       tarball: 'file:projects/config-inject.tgz'
     version: 0.0.0
   'file:projects/device-monitoring.tgz_supports-color@8.0.0':
     dependencies:
-      '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
-      '@types/config': 0.0.37
+      '@rushstack/eslint-config': 2.3.4_3318d341e08b60846a0ca54ab3432060
+      '@types/config': 0.0.38
       '@types/jest': 26.0.23
       '@types/superagent': 4.1.10
-      '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
-      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
-      config: 3.2.4
-      eslint: 7.15.0_supports-color@8.0.0
+      '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
+      '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
+      config: 3.3.6
+      eslint: 7.26.0_supports-color@8.0.0
       http-errors: 1.8.0
-      inversify: 5.0.5
+      inversify: 5.1.1
       inversify-binding-decorators: 4.0.0
       inversify-express-utils: 6.3.2
       jest: 26.6.3_supports-color@8.0.0
@@ -9259,35 +9304,35 @@ packages:
       jest-mock: 26.6.2
       jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
-      js-yaml: 3.13.1
-      logform: 2.1.2
+      js-yaml: 4.1.0
+      logform: 2.2.0
       nodemon: 2.0.7
       nyc: 15.1.0_supports-color@8.0.0
       ow: 0.23.0
-      readable-stream: 2.3.6
+      readable-stream: 3.6.0
       reflect-metadata: 0.1.13
       shx: 0.3.3
       superagent: 6.1.0_supports-color@8.0.0
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       typescript: 4.2.4
-      winston: 3.2.1
-      winston-transport: 4.3.0
+      winston: 3.3.3
+      winston-transport: 4.4.0
     dev: false
     id: 'file:projects/device-monitoring.tgz'
     name: '@rush-temp/device-monitoring'
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-eUPu+kMFxs+RmaLGHE+z6eyrGnkVal5xRCRolbyfA/dHlC3m8+wFsjvS4RCOW2Xv1BMIPPWJsrfIf2ryME5B7g==
+      integrity: sha512-dnk77pFbQpQezfOuxsnP1YdYwEjamCjy17TkzqxolSGV+Q5BGMpaENJ682+y7W1gRattkGG5F9zPPNlYMTeRUQ==
       tarball: 'file:projects/device-monitoring.tgz'
     version: 0.0.0
   'file:projects/errors.tgz_supports-color@8.0.0':
     dependencies:
-      '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
+      '@rushstack/eslint-config': 2.3.4_3318d341e08b60846a0ca54ab3432060
       '@types/jest': 26.0.23
-      '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
-      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
-      eslint: 7.15.0_supports-color@8.0.0
+      '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
+      '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
+      eslint: 7.26.0_supports-color@8.0.0
       jest: 26.6.3_supports-color@8.0.0
       jest-create-mock-instance: 1.1.0
       jest-haste-map: 26.6.2
@@ -9305,25 +9350,25 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-MRwgPiietrVdcCoM88VZ8af4TLLtQ00w4xJndArmjIGygrF9+/y07TvRF6guWbZo5E1zXtemDmwNsehXdmoe5A==
+      integrity: sha512-GiDhH5DY0n5iAEdT0wRZPGWh2CloPhPiGY0aSiPdhx2+N05cK8qAXOcROfQhn2HOaR6kqhmTPyjkBcjrDH4Ssw==
       tarball: 'file:projects/errors.tgz'
     version: 0.0.0
   'file:projects/events-alerts.tgz_supports-color@8.0.0':
     dependencies:
-      '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
-      '@types/config': 0.0.37
-      '@types/cors': 2.8.8
+      '@rushstack/eslint-config': 2.3.4_3318d341e08b60846a0ca54ab3432060
+      '@types/config': 0.0.38
+      '@types/cors': 2.8.10
       '@types/dot': 1.1.4
       '@types/jest': 26.0.23
       '@types/uuid': 8.3.0
-      '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
-      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
+      '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
+      '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
       amazon-dax-client: 1.2.5
       aws-sdk: 2.777.0
-      config: 3.2.4
+      config: 3.3.6
       dot: 1.1.3
-      eslint: 7.15.0_supports-color@8.0.0
-      inversify: 5.0.5
+      eslint: 7.26.0_supports-color@8.0.0
+      inversify: 5.1.1
       inversify-binding-decorators: 4.0.0
       jest: 26.6.3_supports-color@8.0.0
       jest-create-mock-instance: 1.1.0
@@ -9331,51 +9376,51 @@ packages:
       jest-mock: 26.6.2
       jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
-      js-yaml: 3.13.1
+      js-yaml: 4.1.0
       json-rules-engine: 5.3.0
-      logform: 2.1.2
+      logform: 2.2.0
       nodemon: 2.0.7
       nyc: 15.1.0_supports-color@8.0.0
       ow: 0.23.0
-      readable-stream: 2.3.6
+      readable-stream: 3.6.0
       reflect-metadata: 0.1.13
       shx: 0.3.3
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       typescript: 4.2.4
       uuid: 8.3.2
-      winston: 3.2.1
-      winston-transport: 4.3.0
+      winston: 3.3.3
+      winston-transport: 4.4.0
     dev: false
     id: 'file:projects/events-alerts.tgz'
     name: '@rush-temp/events-alerts'
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-gKYpeXnQjijMg5rffyLR9RfvQxd3Bs/A8lsHbBs5IZ2AMt7WxKlQLLnOvlbrJvfCdP1jodyYMuEJl/XY0vDHQg==
+      integrity: sha512-xx8uIPnr4nMwIGfGoV76wQanUu3pkULvChWpBRxPI2oPNX0xV0Bf9On6VR0w4kC75jPEalSQ2VcEH0EkEGeKAA==
       tarball: 'file:projects/events-alerts.tgz'
     version: 0.0.0
   'file:projects/events-processor.tgz_supports-color@8.0.0':
     dependencies:
-      '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
+      '@rushstack/eslint-config': 2.3.4_3318d341e08b60846a0ca54ab3432060
       '@types/aws-lambda': 8.10.65
       '@types/body-parser': 1.19.0
-      '@types/config': 0.0.37
-      '@types/cors': 2.8.8
-      '@types/express': 4.17.9
+      '@types/config': 0.0.38
+      '@types/cors': 2.8.10
+      '@types/express': 4.17.11
       '@types/express-version-request': 1.7.1
       '@types/jest': 26.0.23
       '@types/uuid': 8.3.0
-      '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
-      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
+      '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
+      '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
       amazon-dax-client: 1.2.5
       aws-sdk: 2.777.0
       body-parser: 1.19.0
-      config: 3.2.4
+      config: 3.3.6
       cors: 2.8.5
-      eslint: 7.15.0_supports-color@8.0.0
+      eslint: 7.26.0_supports-color@8.0.0
       express: 4.17.1
       express-version-request: 1.7.0
-      inversify: 5.0.5
+      inversify: 5.1.1
       inversify-binding-decorators: 4.0.0
       inversify-express-utils: 6.3.2
       jest: 26.6.3_supports-color@8.0.0
@@ -9384,42 +9429,42 @@ packages:
       jest-mock: 26.6.2
       jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
-      js-yaml: 3.13.1
+      js-yaml: 4.1.0
       json-rules-engine: 5.3.0
-      logform: 2.1.2
+      logform: 2.2.0
       nodemon: 2.0.7
       nyc: 15.1.0_supports-color@8.0.0
       ow: 0.23.0
       p-limit: 3.1.0
-      readable-stream: 2.3.6
+      readable-stream: 3.6.0
       reflect: 0.1.3
       reflect-metadata: 0.1.13
-      serverless-http: 2.6.0
+      serverless-http: 2.7.0
       shx: 0.3.3
       superagent: 6.1.0_supports-color@8.0.0
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       typescript: 4.2.4
       uuid: 8.3.2
-      winston: 3.2.1
-      winston-transport: 4.3.0
+      winston: 3.3.3
+      winston-transport: 4.4.0
     dev: false
     id: 'file:projects/events-processor.tgz'
     name: '@rush-temp/events-processor'
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-FT7CuELmmspYcVgzTTkBb6cKWMsqkhQT+mRivCMh62/2F39g088vwVtX3wLiLXPnf5snLx8e16ORwoFMfjz4nA==
+      integrity: sha512-fanZE/5+HXTAUoOcvaLw13LzOrHSOTZjqLvtid8R201IAxWo+apiEL0Ik3f6r6JPF9wb3/E2PM6KoUX+HRd/eQ==
       tarball: 'file:projects/events-processor.tgz'
     version: 0.0.0
   'file:projects/express-middleware.tgz_supports-color@8.0.0':
     dependencies:
-      '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
-      '@types/express': 4.17.9
+      '@rushstack/eslint-config': 2.3.4_3318d341e08b60846a0ca54ab3432060
+      '@types/express': 4.17.11
       '@types/jest': 26.0.23
-      '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
-      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
-      config: 3.2.4
-      eslint: 7.15.0_supports-color@8.0.0
+      '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
+      '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
+      config: 3.3.6
+      eslint: 7.26.0_supports-color@8.0.0
       express: 4.17.1
       jest: 26.6.3_supports-color@8.0.0
       jest-create-mock-instance: 1.1.0
@@ -9438,37 +9483,37 @@ packages:
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-WrJbBOvk99R7Uvz8iKrSg79M7v+cLmFRkuPGnugANbWPMNYedif70xefLAx3EhLHGP/GjJMyQVxsTV5epsKbIA==
+      integrity: sha512-QbnlfMW6YKkn9v3exhCl1ZukSvqtab3DKLxKSzQ7JXFtWpYUzsypSdKuYNhUBVpXCEhFlYDyUg2PYidbXgCGsQ==
       tarball: 'file:projects/express-middleware.tgz'
     version: 0.0.0
   'file:projects/greengrass-deployment.tgz_supports-color@8.0.0':
     dependencies:
-      '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
+      '@rushstack/eslint-config': 2.3.4_3318d341e08b60846a0ca54ab3432060
       '@types/body-parser': 1.19.0
-      '@types/config': 0.0.37
-      '@types/cors': 2.8.8
-      '@types/express': 4.17.9
-      '@types/express-serve-static-core': 4.17.16
+      '@types/config': 0.0.38
+      '@types/cors': 2.8.10
+      '@types/express': 4.17.11
+      '@types/express-serve-static-core': 4.17.19
       '@types/express-version-request': 1.7.1
       '@types/jest': 26.0.23
       '@types/json-stable-stringify': 1.0.32
       '@types/jsonwebtoken': 8.5.0
       '@types/prettyjson': 0.0.29
       '@types/uuid': 8.3.0
-      '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
-      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
+      '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
+      '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
       ajv: 6.10.2
       async-local-storage: 2.3.1
       aws-sdk: 2.777.0
       body-parser: 1.19.0
-      config: 3.2.4
+      config: 3.3.6
       cors: 2.8.5
-      eslint: 7.15.0_supports-color@8.0.0
+      eslint: 7.26.0_supports-color@8.0.0
       express: 4.17.1
       express-version-request: 1.7.0
       fast-json-patch: 3.0.0-1
       gremlin: 3.4.8
-      inversify: 5.0.5
+      inversify: 5.1.1
       inversify-binding-decorators: 4.0.0
       inversify-express-utils: 6.3.2
       jest: 26.6.3_supports-color@8.0.0
@@ -9477,47 +9522,47 @@ packages:
       jest-mock: 26.6.2
       jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
-      js-yaml: 3.13.1
+      js-yaml: 4.1.0
       json-stable-stringify: 1.0.1
       jsonwebtoken: 8.5.1
-      logform: 2.1.2
-      mime: 2.4.6
+      logform: 2.2.0
+      mime: 2.5.2
       node-cache: 5.1.2
       nodemon: 2.0.7
       nyc: 15.1.0_supports-color@8.0.0
       ow: 0.23.0
       prettyjson: 1.2.1
-      readable-stream: 2.3.6
+      readable-stream: 3.6.0
       reflect-metadata: 0.1.13
-      serverless-http: 2.6.0
+      serverless-http: 2.7.0
       shx: 0.3.3
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       typescript: 4.2.4
       uuid: 8.3.2
-      winston: 3.2.1
-      winston-transport: 4.3.0
+      winston: 3.3.3
+      winston-transport: 4.4.0
     dev: false
     id: 'file:projects/greengrass-deployment.tgz'
     name: '@rush-temp/greengrass-deployment'
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-o1JFBVya0i9Pvu0cLka09YiiaVoKOQdOnb9LZfGDRmfcrXA4JKnMqBWQYZJpsJmo8rPVJ9ZXesfdam+fl6zguQ==
+      integrity: sha512-xJFVhlPmIkh8bmZIEGrO2YouL24tAMVbIPlBehojaip7MbktFWh/StC39ufJUtn7Tz1R7nZlE8CXtQBVi2eV5g==
       tarball: 'file:projects/greengrass-deployment.tgz'
     version: 0.0.0
   'file:projects/greengrass-provisioning-client.tgz_supports-color@8.0.0':
     dependencies:
-      '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
-      '@types/config': 0.0.37
+      '@rushstack/eslint-config': 2.3.4_3318d341e08b60846a0ca54ab3432060
+      '@types/config': 0.0.38
       '@types/jest': 26.0.23
       '@types/node': 14.6.1
       '@types/superagent': 4.1.10
-      '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
-      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
+      '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
+      '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
       aws-sdk: 2.777.0
-      config: 3.2.4
-      eslint: 7.15.0_supports-color@8.0.0
-      inversify: 5.0.5
+      config: 3.3.6
+      eslint: 7.26.0_supports-color@8.0.0
+      inversify: 5.1.1
       inversify-binding-decorators: 4.0.0
       inversify-express-utils: 6.3.2
       jest: 26.6.3_supports-color@8.0.0
@@ -9526,57 +9571,57 @@ packages:
       jest-mock: 26.6.2
       jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
-      js-yaml: 3.13.1
-      logform: 2.1.2
+      js-yaml: 4.1.0
+      logform: 2.2.0
       nodemon: 2.0.6
       nyc: 15.1.0_supports-color@8.0.0
       ow: 0.23.0
-      readable-stream: 2.3.6
+      readable-stream: 3.6.0
       reflect-metadata: 0.1.13
       shx: 0.3.3
       superagent: 6.1.0_supports-color@8.0.0
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       typescript: 4.2.4
-      winston: 3.2.1
-      winston-transport: 4.3.0
+      winston: 3.3.3
+      winston-transport: 4.4.0
     dev: false
     id: 'file:projects/greengrass-provisioning-client.tgz'
     name: '@rush-temp/greengrass-provisioning-client'
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-tEcygpNYtpo2108hFTf0xqvYC6RjZuC7GdRjorle8AXEsMB3ZGhKvjJV6pvK6u0NwuL4Hp0Ym/479NDRpuYIJg==
+      integrity: sha512-gvyH20MDoWBa2XPfUiGzH5aRLzWOVL3yP7zS/DydYmkS7JV0iOLaTblyqYdbaYGykDcWa/xXyPdfEJRVz8if1g==
       tarball: 'file:projects/greengrass-provisioning-client.tgz'
     version: 0.0.0
   'file:projects/greengrass-provisioning.tgz_supports-color@8.0.0':
     dependencies:
-      '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
+      '@rushstack/eslint-config': 2.3.4_3318d341e08b60846a0ca54ab3432060
       '@types/atob': 2.1.2
       '@types/body-parser': 1.19.0
       '@types/btoa': 1.2.3
-      '@types/config': 0.0.37
-      '@types/cors': 2.8.8
-      '@types/express': 4.17.9
-      '@types/express-serve-static-core': 4.17.16
+      '@types/config': 0.0.38
+      '@types/cors': 2.8.10
+      '@types/express': 4.17.11
+      '@types/express-serve-static-core': 4.17.19
       '@types/express-version-request': 1.7.1
       '@types/jest': 26.0.23
       '@types/jsonpath-plus': 5.0.1
-      '@types/jszip': 3.4.0
+      '@types/jszip': 3.4.1
       '@types/shortid': 0.0.29
-      '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
-      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
+      '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
+      '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
       atob: 2.1.2
       aws-sdk: 2.777.0
       body-parser: 1.19.0
       btoa: 1.2.1
-      config: 3.2.4
+      config: 3.3.6
       cors: 2.8.5
       deepmerge: 4.2.2
-      eslint: 7.15.0_supports-color@8.0.0
+      eslint: 7.26.0_supports-color@8.0.0
       express: 4.17.1
       express-version-request: 1.7.0
       fast-deep-equal: 3.1.3
-      inversify: 5.0.5
+      inversify: 5.1.1
       inversify-binding-decorators: 4.0.0
       inversify-express-utils: 6.3.2
       jest: 26.6.3_supports-color@8.0.0
@@ -9585,33 +9630,33 @@ packages:
       jest-mock: 26.6.2
       jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
-      js-yaml: 3.13.1
+      js-yaml: 4.1.0
       jsonpath-plus: 5.0.7
-      jszip: 3.5.0
-      logform: 2.1.2
-      mime: 2.4.6
+      jszip: 3.6.0
+      logform: 2.2.0
+      mime: 2.5.2
       nodemon: 2.0.7
       nyc: 15.1.0_supports-color@8.0.0
       ow: 0.23.0
       p-limit: 3.1.0
       prettyjson: 1.2.1
-      readable-stream: 2.3.6
+      readable-stream: 3.6.0
       reflect-metadata: 0.1.13
-      serverless-http: 2.6.0
+      serverless-http: 2.7.0
       shortid: 2.2.16
       shx: 0.3.3
       superagent: 6.1.0_supports-color@8.0.0
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       typescript: 4.2.4
-      winston: 3.2.1
-      winston-transport: 4.3.0
+      winston: 3.3.3
+      winston-transport: 4.4.0
     dev: false
     id: 'file:projects/greengrass-provisioning.tgz'
     name: '@rush-temp/greengrass-provisioning'
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-vFChh5c+aKMaEER1HVujFdoXR2GjAlSUTNqt41G2jZ5VtMd0lX8bjGGZzHT4oSm1ZqF+C74tKCz7mvphiRe4iA==
+      integrity: sha512-ykkYpmGP3MAWrT05OuiUZJ0M057iP/tU28l9oxyxoFGn1CZCBXgu2UFNekY7IW09tVd0yRPCBHG9hEiaYmmhQg==
       tarball: 'file:projects/greengrass-provisioning.tgz'
     version: 0.0.0
   'file:projects/integration-tests.tgz_supports-color@8.0.0':
@@ -9620,7 +9665,7 @@ packages:
       '@types/chai': 4.2.14
       '@types/chai-string': 1.4.2
       '@types/chai-uuid': 1.0.2
-      '@types/config': 0.0.37
+      '@types/config': 0.0.38
       '@types/cucumber': 6.0.1
       '@types/json-stable-stringify': 1.0.32
       '@types/jsonpath': 0.2.0
@@ -9632,47 +9677,47 @@ packages:
       chai: 4.2.0
       chai-string: 1.5.0_chai@4.2.0
       chai-uuid: 1.0.6
-      config: 3.2.4
+      config: 3.3.6
       cucumber: 6.0.5
-      inversify: 5.0.5
+      inversify: 5.1.1
       inversify-binding-decorators: 4.0.0
       inversify-express-utils: 6.3.2
-      js-yaml: 3.13.1
+      js-yaml: 4.1.0
       json-stable-stringify: 1.0.1
       jsonpath: 1.0.2
       jsonpath-plus: 5.0.7
       jsonwebtoken: 8.5.1
-      logform: 2.1.2
-      readable-stream: 2.3.6
+      logform: 2.2.0
+      readable-stream: 3.6.0
       reflect-metadata: 0.1.13
       shx: 0.3.3
       superagent: 6.1.0_supports-color@8.0.0
       typed-rest-client: 1.8.0
       typescript: 4.2.4
-      winston: 3.2.1
-      winston-transport: 4.3.0
+      winston: 3.3.3
+      winston-transport: 4.4.0
     dev: false
     id: 'file:projects/integration-tests.tgz'
     name: '@rush-temp/integration-tests'
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-K52Bscj8cQHwk/rWUCZ7MdCVA6xAlvD8lGl9Q1RYZaDz9J9/BBwuNx+BV0X6JxbDiKM0luj4EHHFDxC8g1T7iA==
+      integrity: sha512-m6coy4jLwLYm1IDLLBfEwXYpXvz7jbNsp9MuBIFnqcsqji/BDkL4liWkHKSXJ7R+GW9iaKXe5yznvuOvK+J33Q==
       tarball: 'file:projects/integration-tests.tgz'
     version: 0.0.0
   'file:projects/lambda-invoke.tgz_supports-color@8.0.0':
     dependencies:
-      '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
-      '@types/config': 0.0.37
+      '@rushstack/eslint-config': 2.3.4_3318d341e08b60846a0ca54ab3432060
+      '@types/config': 0.0.38
       '@types/http-errors': 1.8.0
       '@types/jest': 26.0.23
-      '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
-      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
+      '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
+      '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
       aws-sdk: 2.777.0
-      config: 3.2.4
-      eslint: 7.15.0_supports-color@8.0.0
+      config: 3.3.6
+      eslint: 7.26.0_supports-color@8.0.0
       http-errors: 1.8.0
-      inversify: 5.0.5
+      inversify: 5.1.1
       inversify-binding-decorators: 4.0.0
       inversify-express-utils: 6.3.2
       jest: 26.6.3_supports-color@8.0.0
@@ -9681,71 +9726,71 @@ packages:
       jest-mock: 26.6.2
       jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
-      js-yaml: 3.13.1
-      logform: 2.1.2
+      js-yaml: 4.1.0
+      logform: 2.2.0
       nodemon: 2.0.6
       nyc: 15.1.0_supports-color@8.0.0
-      readable-stream: 2.3.6
+      readable-stream: 3.6.0
       reflect-metadata: 0.1.13
       shx: 0.3.3
       superagent: 6.1.0_supports-color@8.0.0
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       typescript: 4.2.4
-      winston: 3.2.1
-      winston-transport: 4.3.0
+      winston: 3.3.3
+      winston-transport: 4.4.0
     dev: false
     id: 'file:projects/lambda-invoke.tgz'
     name: '@rush-temp/lambda-invoke'
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-DABxADvi3GRAE0ZDbviL7N9rXVVSzKxoDVxOFwPJfzuVlzNhG27Du5O36o2E1QVg+2c0oRlYvAoxUY7GlXbwNw==
+      integrity: sha512-2xWxKhM3ty0AaCLdb71H4Kl1yhgd1mWryIPUp1R8fsILgsGV3b+y8ajaWxhGlU+YgfYdfzQdFgs1NYjoL8asBw==
       tarball: 'file:projects/lambda-invoke.tgz'
     version: 0.0.0
   'file:projects/logger.tgz_supports-color@8.0.0':
     dependencies:
-      '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
+      '@rushstack/eslint-config': 2.3.4_3318d341e08b60846a0ca54ab3432060
       '@types/jest': 26.0.23
-      '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
-      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
-      eslint: 7.15.0_supports-color@8.0.0
+      '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
+      '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
+      eslint: 7.26.0_supports-color@8.0.0
       jest: 26.6.3_supports-color@8.0.0
       jest-create-mock-instance: 1.1.0
       jest-haste-map: 26.6.2
       jest-mock: 26.6.2
       jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
-      logform: 2.1.2
+      logform: 2.2.0
       nodemon: 2.0.6
       nyc: 15.1.0_supports-color@8.0.0
-      readable-stream: 2.3.6
+      readable-stream: 3.6.0
       shx: 0.3.3
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       typescript: 4.2.4
-      winston: 3.2.1
-      winston-transport: 4.3.0
+      winston: 3.3.3
+      winston-transport: 4.4.0
     dev: false
     id: 'file:projects/logger.tgz'
     name: '@rush-temp/logger'
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-dlLsvuwxlnI7IJrf9Teen1G9onAX5XAqJ8hsGc1G5cawSJGkwn3CAaYwi0q1tWKjSxdsru7BTyTqDPfwA4T99A==
+      integrity: sha512-BKAq9/GEa1o36ycmJCJa3iNDyVDltMBNX7P6XVZVyHjUg+Wzq62VU2gXWGbbFYmsJHitHR7bjkgLI1vcN3q5TA==
       tarball: 'file:projects/logger.tgz'
     version: 0.0.0
   'file:projects/notifications-client.tgz_supports-color@8.0.0':
     dependencies:
-      '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
-      '@types/config': 0.0.37
+      '@rushstack/eslint-config': 2.3.4_3318d341e08b60846a0ca54ab3432060
+      '@types/config': 0.0.38
       '@types/jest': 26.0.23
       '@types/node': 14.6.1
       '@types/superagent': 4.1.10
-      '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
-      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
+      '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
+      '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
       aws-sdk: 2.777.0
-      config: 3.2.4
-      eslint: 7.15.0_supports-color@8.0.0
-      inversify: 5.0.5
+      config: 3.3.6
+      eslint: 7.26.0_supports-color@8.0.0
+      inversify: 5.1.1
       inversify-binding-decorators: 4.0.0
       inversify-express-utils: 6.3.2
       jest: 26.6.3_supports-color@8.0.0
@@ -9754,40 +9799,40 @@ packages:
       jest-mock: 26.6.2
       jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
-      js-yaml: 3.13.1
-      logform: 2.1.2
+      js-yaml: 4.1.0
+      logform: 2.2.0
       nodemon: 2.0.6
       nyc: 15.1.0_supports-color@8.0.0
       ow: 0.23.0
-      readable-stream: 2.3.6
+      readable-stream: 3.6.0
       reflect-metadata: 0.1.13
       shx: 0.3.3
       superagent: 6.1.0_supports-color@8.0.0
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       typescript: 4.2.4
-      winston: 3.2.1
-      winston-transport: 4.3.0
+      winston: 3.3.3
+      winston-transport: 4.4.0
     dev: false
     id: 'file:projects/notifications-client.tgz'
     name: '@rush-temp/notifications-client'
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-03hkFPhfpooV/6Iv+fdrHWDGN8cbWEaFmEqeT72lxoU1iwUb4iEN8tKmliP+rqzfnlfrQOWCpVgGzQMkjziciQ==
+      integrity: sha512-Ebvgp4sEpPvQebnSZt+LtIOczTNjB2Y7e+GzpUzBlRnGivUzSEGUL7m1qTEqFjbkihd+4eANPEOe1F+QtG4srA==
       tarball: 'file:projects/notifications-client.tgz'
     version: 0.0.0
   'file:projects/provisioning-client.tgz_supports-color@8.0.0':
     dependencies:
-      '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
-      '@types/config': 0.0.37
+      '@rushstack/eslint-config': 2.3.4_3318d341e08b60846a0ca54ab3432060
+      '@types/config': 0.0.38
       '@types/jest': 26.0.23
       '@types/superagent': 4.1.10
-      '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
-      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
+      '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
+      '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
       aws-sdk: 2.777.0
-      config: 3.2.4
-      eslint: 7.15.0_supports-color@8.0.0
-      inversify: 5.0.5
+      config: 3.3.6
+      eslint: 7.26.0_supports-color@8.0.0
+      inversify: 5.1.1
       inversify-binding-decorators: 4.0.0
       inversify-express-utils: 6.3.2
       jest: 26.6.3_supports-color@8.0.0
@@ -9796,49 +9841,49 @@ packages:
       jest-mock: 26.6.2
       jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
-      js-yaml: 3.13.1
-      logform: 2.1.2
+      js-yaml: 4.1.0
+      logform: 2.2.0
       nodemon: 2.0.6
       nyc: 15.1.0_supports-color@8.0.0
       ow: 0.23.0
-      readable-stream: 2.3.6
+      readable-stream: 3.6.0
       reflect-metadata: 0.1.13
       shx: 0.3.3
       superagent: 6.1.0_supports-color@8.0.0
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       typescript: 4.2.4
-      winston: 3.2.1
-      winston-transport: 4.3.0
+      winston: 3.3.3
+      winston-transport: 4.4.0
     dev: false
     id: 'file:projects/provisioning-client.tgz'
     name: '@rush-temp/provisioning-client'
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-/AkSgQ0X2yyM755gg3jw6MVFKubyxfOeJtov27RBz8WrYcn/RzjCW1iHUHSbam1FNbK8tP8gEtJAxdCw26xi0A==
+      integrity: sha512-9vA6110WEF5+EEPwRC1e1XnAihsWHhL/BjhOaaIXxs8r9Gz6BLmys5vXfODoOwOI40634XJpQquunrQulTrU1A==
       tarball: 'file:projects/provisioning-client.tgz'
     version: 0.0.0
   'file:projects/provisioning.tgz_supports-color@8.0.0':
     dependencies:
-      '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
+      '@rushstack/eslint-config': 2.3.4_3318d341e08b60846a0ca54ab3432060
       '@types/body-parser': 1.19.0
-      '@types/config': 0.0.37
-      '@types/cors': 2.8.8
-      '@types/express': 4.17.9
+      '@types/config': 0.0.38
+      '@types/cors': 2.8.10
+      '@types/express': 4.17.11
       '@types/jest': 26.0.23
-      '@types/jszip': 3.4.0
+      '@types/jszip': 3.4.1
       '@types/pem': 1.9.5
       '@types/uuid': 8.3.0
-      '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
-      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
+      '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
+      '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
       aws-sdk: 2.777.0
       body-parser: 1.19.0
-      config: 3.2.4
+      config: 3.3.6
       cors: 2.8.5
-      eslint: 7.15.0_supports-color@8.0.0
+      eslint: 7.26.0_supports-color@8.0.0
       express: 4.17.1
       fs: 0.0.1-security
-      inversify: 5.0.5
+      inversify: 5.1.1
       inversify-binding-decorators: 4.0.0
       inversify-express-utils: 6.3.2
       jest: 26.6.3_supports-color@8.0.0
@@ -9848,46 +9893,46 @@ packages:
       jest-mock-console: 1.0.1_jest@26.6.3
       jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
-      js-yaml: 3.13.1
-      jszip: 3.5.0
-      logform: 2.1.2
+      js-yaml: 4.1.0
+      jszip: 3.6.0
+      logform: 2.2.0
       nodemon: 2.0.7
       nyc: 15.1.0_supports-color@8.0.0
       ow: 0.23.0
       pem: 1.14.4
-      readable-stream: 2.3.6
+      readable-stream: 3.6.0
       reflect-metadata: 0.1.13
-      serverless-http: 2.6.0
+      serverless-http: 2.7.0
       shx: 0.3.3
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       typescript: 4.2.4
       uuid: 8.3.2
-      winston: 3.2.1
-      winston-transport: 4.3.0
+      winston: 3.3.3
+      winston-transport: 4.4.0
     dev: false
     id: 'file:projects/provisioning.tgz'
     name: '@rush-temp/provisioning'
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-0XdxjvLrn0YVILcL9dW78hFRKI0ckp6i00jJJfo2oq3OnJfCTsXEr+OJWkKi6Yq9mYkmczTFWJUVOHDMXkXDJA==
+      integrity: sha512-+fJ2lK4gED/bL7w4DWkI+9RMxMtAY+dQsGN4NzwAIuF8/Vf6x0TJF4kaJWsaWaOgp+7jVhm//HbvEzVfF7bROA==
       tarball: 'file:projects/provisioning.tgz'
     version: 0.0.0
   'file:projects/request-queue.tgz_supports-color@8.0.0':
     dependencies:
-      '@rushstack/eslint-config': 2.3.1_51195f635633a2a0dbf07e99f11cf25c
+      '@rushstack/eslint-config': 2.3.4_3318d341e08b60846a0ca54ab3432060
       '@types/aws-lambda': 8.10.65
-      '@types/config': 0.0.37
+      '@types/config': 0.0.38
       '@types/jest': 26.0.23
       '@types/superagent': 4.1.10
       '@types/uuid': 8.3.0
-      '@typescript-eslint/eslint-plugin': 4.9.1_087883c207d729bb61559db98c6bb357
-      '@typescript-eslint/parser': 4.9.1_51195f635633a2a0dbf07e99f11cf25c
+      '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
+      '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
       aws-sdk: 2.777.0
       busboy: 0.3.1
-      config: 3.2.4
-      eslint: 7.15.0_supports-color@8.0.0
-      inversify: 5.0.5
+      config: 3.3.6
+      eslint: 7.26.0_supports-color@8.0.0
+      inversify: 5.1.1
       inversify-binding-decorators: 4.0.0
       jest: 26.6.3_supports-color@8.0.0
       jest-create-mock-instance: 1.1.0
@@ -9895,28 +9940,28 @@ packages:
       jest-mock: 26.6.2
       jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
-      js-yaml: 3.13.1
-      logform: 2.1.2
+      js-yaml: 4.1.0
+      logform: 2.2.0
       math: 0.0.3
       multer: 1.4.2
       nodemon: 2.0.7
       nyc: 15.1.0_supports-color@8.0.0
-      readable-stream: 2.3.6
+      readable-stream: 3.6.0
       reflect-metadata: 0.1.13
       shx: 0.3.3
       superagent: 6.1.0_supports-color@8.0.0
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       typescript: 4.2.4
       uuid: 8.3.2
-      winston: 3.2.1
-      winston-transport: 4.3.0
+      winston: 3.3.3
+      winston-transport: 4.4.0
     dev: false
     id: 'file:projects/request-queue.tgz'
     name: '@rush-temp/request-queue'
     peerDependencies:
       supports-color: '*'
     resolution:
-      integrity: sha512-N68DAaGnSCWoMvweQdscFpmsEaSJB9KJ9J0c50QcCsw+oqa1ChM1Z4eCxs9EO35oJNCM0SEwAzBPOQEdsHMoeg==
+      integrity: sha512-eJwXp03EBDm430JUNt3h8n5xvKBRiR+ShaEUAAYJiL32lhL1j2HMaEpqBfzScPrtw/DjNoXmEattc7pd3Yh/Rw==
       tarball: 'file:projects/request-queue.tgz'
     version: 0.0.0
 registry: ''
@@ -9949,7 +9994,7 @@ specifiers:
   '@rush-temp/provisioning': 'file:./projects/provisioning.tgz'
   '@rush-temp/provisioning-client': 'file:./projects/provisioning-client.tgz'
   '@rush-temp/request-queue': 'file:./projects/request-queue.tgz'
-  '@rushstack/eslint-config': 2.3.1
+  '@rushstack/eslint-config': 2.3.4
   '@types/atob': 2.1.2
   '@types/aws-iot-device-sdk': 2.2.2
   '@types/aws-lambda': 8.10.65
@@ -9960,19 +10005,19 @@ specifiers:
   '@types/chai': 4.2.14
   '@types/chai-string': 1.4.2
   '@types/chai-uuid': ^1.0.2
-  '@types/config': 0.0.37
-  '@types/cors': 2.8.8
+  '@types/config': 0.0.38
+  '@types/cors': 2.8.10
   '@types/cucumber': 6.0.1
   '@types/dot': 1.1.4
-  '@types/express': 4.17.9
-  '@types/express-serve-static-core': 4.17.16
+  '@types/express': 4.17.11
+  '@types/express-serve-static-core': 4.17.19
   '@types/express-version-request': 1.7.1
   '@types/http-errors': 1.8.0
   '@types/jest': 26.0.23
   '@types/json-stable-stringify': 1.0.32
   '@types/jsonpath-plus': ~5.0.1
   '@types/jsonwebtoken': 8.5.0
-  '@types/jszip': 3.4.0
+  '@types/jszip': 3.4.1
   '@types/jwk-to-pem': 2.0.0
   '@types/morgan': 1.9.2
   '@types/multer': 1.4.5
@@ -9983,8 +10028,8 @@ specifiers:
   '@types/sinon': 9.0.9
   '@types/superagent': 4.1.10
   '@types/uuid': 8.3.0
-  '@typescript-eslint/eslint-plugin': 4.9.1
-  '@typescript-eslint/parser': 4.9.1
+  '@typescript-eslint/eslint-plugin': 4.23.0
+  '@typescript-eslint/parser': 4.23.0
   ajv: 6.10.2
   amazon-dax-client: 1.2.5
   async-local-storage: 2.3.1
@@ -9999,13 +10044,13 @@ specifiers:
   chai: 4.2.0
   chai-string: 1.5.0
   chai-uuid: 1.0.6
-  config: 3.2.4
+  config: 3.3.6
   cors: 2.8.5
   cucumber: 6.0.5
   cz-customizable: ~6.3.0
   deepmerge: 4.2.2
   dot: 1.1.3
-  eslint: 7.15.0
+  eslint: 7.26.0
   express: 4.17.1
   express-version-request: 1.7.0
   fast-deep-equal: 3.1.3
@@ -10013,7 +10058,7 @@ specifiers:
   fs: 0.0.1-security
   gremlin: 3.4.8
   http-errors: 1.8.0
-  inversify: 5.0.5
+  inversify: 5.1.1
   inversify-binding-decorators: 4.0.0
   inversify-express-utils: 6.3.2
   jest: 26.6.3
@@ -10024,16 +10069,16 @@ specifiers:
   jest-mock-console: ^1.0.1
   jest-mock-extended: 1.0.14
   jest-resolve: 26.6.2
-  js-yaml: 3.13.1
+  js-yaml: 4.1.0
   json-rules-engine: 5.3.0
   json-stable-stringify: 1.0.1
   jsonpath-plus: ~5.0.7
   jsonwebtoken: 8.5.1
-  jszip: 3.5.0
+  jszip: 3.6.0
   jwk-to-pem: 2.0.4
-  logform: 2.1.2
+  logform: 2.2.0
   math: 0.0.3
-  mime: 2.4.6
+  mime: 2.5.2
   morgan: 1.10.0
   multer: 1.4.2
   node-cache: 5.1.2
@@ -10043,10 +10088,10 @@ specifiers:
   p-limit: 3.1.0
   pem: 1.14.4
   prettyjson: 1.2.1
-  readable-stream: 2.3.6
+  readable-stream: 3.6.0
   reflect: 0.1.3
   reflect-metadata: 0.1.13
-  serverless-http: 2.6.0
+  serverless-http: 2.7.0
   shortid: 2.2.16
   shx: 0.3.3
   sinon: 9.2.1
@@ -10056,5 +10101,5 @@ specifiers:
   typed-rest-client: 1.8.0
   typescript: 4.2.4
   uuid: 8.3.2
-  winston: 3.2.1
-  winston-transport: 4.3.0
+  winston: 3.3.3
+  winston-transport: 4.4.0

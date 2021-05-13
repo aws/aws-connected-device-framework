@@ -693,7 +693,7 @@ export class GroupsService  {
                 reverseLookup[template.groupId][template.groupVersionId].push({name, versionNo});
             }
         }
-
+        
         const groupVersionResults = await Promise.allSettled( groupVersionFutures);
 
         const groupVersions:TemplateGroupVersionMap= {};
