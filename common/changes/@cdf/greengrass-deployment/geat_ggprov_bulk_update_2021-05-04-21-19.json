@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/greengrass-deployment",
+      "comment": "",
+      "type": "none"
+    }
+  ],
+  "packageName": "@cdf/greengrass-deployment",
+  "email": "deanhart@amazon.com"
+}

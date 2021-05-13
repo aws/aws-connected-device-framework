@@ -55,6 +55,7 @@ export class DevicesDao {
                         sk:  createDelimitedAttribute(PkType.GreengrassDeviceTask, task.taskId, PkType.GreengrassDevice, device.thingName),
                         si2Hash: createDelimitedAttribute(PkType.GreengrassDevice, device.thingName),
                         status: device.status,
+                        type: device.type,
                         statusMessage: device.statusMessage,
                         createdAt: device.createdAt?.toISOString(),
                         updatedAt: device.updatedAt?.toISOString()
@@ -69,6 +70,7 @@ export class DevicesDao {
                         pk: createDelimitedAttribute(PkType.GreengrassGroup, task.groupName),
                         sk:  createDelimitedAttribute(PkType.GreengrassDevice, device.thingName),
                         si2Hash: createDelimitedAttribute(PkType.GreengrassDevice, device.thingName),
+                        type: device.type,
                         deployed: device.deployed,
                         createdAt: device.createdAt?.toISOString(),
                         updatedAt: device.updatedAt?.toISOString()
@@ -205,6 +207,7 @@ export class DevicesDao {
                 device.thingName = skElements[1];
                 device.createdAt = new Date(i.createdAt);
                 device.updatedAt = new Date(i.updatedAt);
+                device.type = i.type;
                 device.deployed = i.deployed;
                 devices.push(device);
             } else {
@@ -232,6 +235,7 @@ export class DevicesDao {
                 device.createdAt = new Date(i.createdAt);
                 device.updatedAt = new Date(i.updatedAt);
                 device.deployed = i.deployed;
+                device.type = i.type;
             } else if (skElements.length===4 && skElements[0]===PkType.GreengrassDeviceTask && skElements[2]===PkType.GreengrassDevice) {
                 // device task item
                 const task = {
@@ -287,11 +291,7 @@ export class DevicesDao {
                 const device = this.getOrCreateAssembledDeviceTask(task, thingName, i.createdAt, i.updatedAt);
                 device.status = i.status;
                 device.statusMessage = i.statusMessage;
-            } else if (skElements.length===2 && skElements[0]===PkType.GreengrassDevice) {
-                // device item
-                const thingName = skElements[1];
-                const device = this.getOrCreateAssembledDeviceTask(task, thingName, i.createdAt, i.updatedAt);
-                device.deployed = i.deployed;
+                device.type = i.type;
             } else if (skElements.length===6 && skElements[2]===PkType.GreengrassDevice && skElements[4]===PkType.Artifact) {
                 // device artifact item
                 const thingName = skElements[3];

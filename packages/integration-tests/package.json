@@ -21,6 +21,7 @@
     "@cdf/logger": "^3.0.0",
     "@cdf/notifications-client": "^3.0.1",
     "@cdf/provisioning-client": "^4.0.1",
+    "@cdf/greengrass-provisioning-client": "^2.0.1",
     "aws-sdk": "2.777.0",
     "aws-iot-device-sdk": "2.2.6",
     "chai": "4.2.0",
@@ -33,7 +34,6 @@
     "inversify-express-utils": "6.3.2",
     "js-yaml": "3.13.1",
     "json-stable-stringify": "1.0.1",
-    "jsonpath": "^1.0.2",
     "jsonwebtoken": "8.5.1",
     "logform": "2.1.2",
     "readable-stream": "2.3.6",
@@ -41,7 +41,8 @@
     "superagent": "6.1.0",
     "typed-rest-client": "1.8.0",
     "winston": "3.2.1",
-    "winston-transport": "4.3.0"
+    "winston-transport": "4.3.0",
+    "jsonpath-plus": "~5.0.7"
   },
   "devDependencies": {
     "@types/aws-iot-device-sdk": "2.2.2",
@@ -52,12 +53,12 @@
     "@types/config": "0.0.37",
     "@types/cucumber": "6.0.1",
     "@types/json-stable-stringify": "1.0.32",
-    "@types/jsonpath": "^0.2.0",
     "@types/jsonwebtoken": "8.5.0",
     "@types/node": "12.19.8",
     
     "shx": "0.3.3",
-    "typescript": "4.1.2"
+    "typescript": "4.1.2",
+    "@types/jsonpath-plus": "~5.0.1"
   },
   "private": true
 }

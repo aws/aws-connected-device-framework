@@ -21,10 +21,6 @@ export class SaveGroupHandler extends AbstractDeviceAssociationHandler {
 
         ow(request?.taskInfo?.status, ow.string.nonEmpty);
 
-        if (request.taskInfo.status==='Failure') {
-            return super.handle(request);
-        }
-
         // determine the overall task status if we have not already determined it so far
         if (request.taskInfo.status==='InProgress') {
             if (request.taskInfo.devices.filter(d=> d.status==='Failure').length>0) {

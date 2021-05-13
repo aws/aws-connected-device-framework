@@ -42,4 +42,33 @@ export class GroupsApigwService extends GroupsServiceBase implements GroupsServi
 
         return res.body;
     }
+
+    async deleteGroupByName(groupName:string, additionalHeaders?:RequestHeaders) : Promise<void> {
+        ow(groupName, ow.string.nonEmpty);
+
+        const url = `${this.baseUrl}${super.groupRelativeUrl(groupName)}`;
+        await request.delete(url)
+            .set(this.buildHeaders(additionalHeaders));
+    }
+
+    async listByTemplate(templateName:string, additionalHeaders?:RequestHeaders) : Promise<GroupList> {
+        ow(templateName, ow.string.nonEmpty);
+
+        const url = `${this.baseUrl}${super.groupsByTemplateRelativeUrl(templateName)}`;
+        const res = await request.get(url)
+            .set(this.buildHeaders(additionalHeaders));
+
+        return res.body;
+    }
+
+    async listByTemplateVersion(templateName:string, versionNo:number, additionalHeaders?:RequestHeaders) : Promise<GroupList> {
+        ow(templateName, ow.string.nonEmpty);
+        ow(versionNo, ow.number.greaterThan(0));
+
+        const url = `${this.baseUrl}${super.groupsByTemplateVersionRelativeUrl(templateName, versionNo)}`;
+        const res = await request.get(url)
+            .set(this.buildHeaders(additionalHeaders));
+
+        return res.body;
+    }
 }

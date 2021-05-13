@@ -8,6 +8,7 @@ export const GREENGRASS_PROVISIONING_CLIENT_TYPES = {
     DeploymentsService: Symbol.for('GreengrassProvisioningClient_DeploymentsService'),
     DevicesService: Symbol.for('GreengrassProvisioningClient_DevicesService'),
     GroupsService: Symbol.for('GreengrassProvisioningClient_GroupsService'),
+    GroupTasksService: Symbol.for('GreengrassProvisioningClient_GroupTasksService'),
     SubscriptionsService: Symbol.for('GreengrassProvisioningClient_SubscriptionsService'),
     TemplatesService: Symbol.for('GreengrassProvisioningClient_TemplatesService'),
 

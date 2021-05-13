@@ -4,38 +4,45 @@
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
 
-export class TemplateResource {
+import { Pagination } from "@cdf/provisioning-client/src";
+import { GreengrassSubscriptionItem, GreengrassSubscriptionResource } from "../subscriptions/subscriptions.models";
+
+export interface TemplateResource {
 	name: string;
 	versionNo: number;
 	groupId?: string;
 	groupVersionId?: string;
+	subscriptions?: GreengrassSubscriptionResourceMap;
 	createdAt?: Date;
 	updatedAt?: Date;
 	enabled: boolean;
 }
 
-export class TemplateResourceList {
-	templates: TemplateResource[] = [];
-	pagination?: {
-		offset:number|string;
-		count: number;
-	};
+export interface TemplateResourceList {
+	templates: TemplateResource[];
+	pagination?: Pagination;
 }
 
-export class TemplateItem {
+export interface TemplateItem {
 	name: string;
 	versionNo: number;
 	groupId?: string;
 	groupVersionId?: string;
+	subscriptions?: GreengrassSubscriptionItemMap;
 	createdAt?: Date;
 	updatedAt?: Date;
-	enabled: boolean;
+	enabled?: boolean;
 }
 
-export class TemplateItemList {
-	templates: TemplateItem[] = [];
-	pagination?: {
-		offset:number|string;
-		count: number;
-	};
+export interface TemplateItemList {
+	templates: TemplateItem[];
+	pagination?: Pagination;
 }
+
+export interface GreengrassSubscriptionItemMap {
+	[thingType: string] : GreengrassSubscriptionItem[];
+} 
+
+export interface GreengrassSubscriptionResourceMap {
+	[thingType: string] : GreengrassSubscriptionResource[];
+} 

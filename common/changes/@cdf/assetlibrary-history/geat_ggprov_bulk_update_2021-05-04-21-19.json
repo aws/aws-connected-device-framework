@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/assetlibrary-history",
+      "comment": "",
+      "type": "none"
+    }
+  ],
+  "packageName": "@cdf/assetlibrary-history",
+  "email": "deanhart@amazon.com"
+}

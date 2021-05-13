@@ -55,10 +55,10 @@ export class GroupsAssembler {
 
         const list:GroupResourceList= {
             groups:[],
-            pagination: items.pagination
+            pagination: items?.pagination
         };
 
-        items.groups.forEach(i=> list.groups.push(this.toResource(i)));
+        items?.groups.forEach(i=> list.groups.push(this.toResource(i)));
 
         logger.debug(`groups.assembler toResourceList: exit: ${JSON.stringify(list)}`);
         return list;
@@ -70,10 +70,10 @@ export class GroupsAssembler {
 
         const items:GroupItemList= {
             groups:[],
-            pagination: list.pagination
+            pagination: list?.pagination
         };
 
-        list.groups.forEach(i=> items.groups.push(this.fromResource(i)));
+        list?.groups.forEach(i=> items.groups.push(this.fromResource(i)));
 
         logger.debug(`groups.assembler fromResourceList: exit: ${JSON.stringify(items)}`);
         return items;

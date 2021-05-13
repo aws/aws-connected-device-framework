@@ -139,6 +139,7 @@ Resources:
                   - !GetAtt DeploymentStatusQueue.Arn
                   - !GetAtt DeploymentsQueue.Arn
                   - !GetAtt BulkDeploymentsStatusQueue.Arn
+                  - !GetAtt GroupTasksQueue.Arn
               - Sid: lambda
                 Effect: Allow
                 Action:
@@ -223,7 +224,7 @@ Resources:
       CodeUri: ../bundle.zip
       Handler: packages/services/greengrass-provisioning/dist/lambda_apigw_proxy.handler
 
-      MemorySize: 128
+      MemorySize: 256
       Role: !GetAtt LambdaExecutionRole.Arn
       Runtime: nodejs14.x
 
@@ -236,10 +237,7 @@ Resources:
         - ProvisionedConcurrentExecutions: !Ref ProvisionedConcurrentExecutions
         - Ref: AWS::NoValue
 
-      Timeout: 900
-      DeadLetterQueue:
-        Type: SQS
-        TargetArn: !GetAtt DlqQueue.Arn
+      Timeout: 30
       Environment:
         Variables:
           NODE_CONFIG_DIR: 'packages/services/greengrass-provisioning/dist/config'
@@ -247,6 +245,7 @@ Resources:
           GREENGRASS_PROVISIONING_AWS_DYNAMODB_TABLE: !Ref Table
           GREENGRASS_PROVISIONING_AWS_SQS_DEVICEASSOCIATIONS: !Ref DeviceAssociationQueue
           GREENGRASS_PROVISIONING_AWS_SQS_DEPLOYMENTS: !Ref DeploymentsQueue
+          GREENGRASS_PROVISIONING_AWS_SQS_GROUPTASKS: !Ref GroupTasksQueue
           GREENGRASS_PROVISIONING_AWS_GREENGRASS_BULKDEPLOYMENTS_ROLEARN: !GetAtt BulkDeploymentsExecutionRole.Arn
 
       Tracing: Active
@@ -281,7 +280,7 @@ Resources:
       CodeUri: ../bundle.zip
       Handler: packages/services/greengrass-provisioning/dist/lambda_sqs_proxy.handler
 
-      MemorySize: 128
+      MemorySize: 512
       Role: !GetAtt LambdaExecutionRole.Arn
       Runtime: nodejs14.x
 
@@ -295,9 +294,6 @@ Resources:
         - Ref: AWS::NoValue
 
       Timeout: 900
-      DeadLetterQueue:
-        Type: SQS
-        TargetArn: !GetAtt DlqQueue.Arn
       Environment:
         Variables:
           NODE_CONFIG_DIR: 'packages/services/greengrass-provisioning/dist/config'
@@ -307,6 +303,7 @@ Resources:
           GREENGRASS_PROVISIONING_AWS_SQS_DEPLOYMENTS: !Ref DeploymentsQueue
           GREENGRASS_PROVISIONING_AWS_SQS_BULKDEPLOYMENTSSTATUS: !Ref BulkDeploymentsStatusQueue
           GREENGRASS_PROVISIONING_AWS_SQS_DEPLOYMENTSTATUS: !Ref DeploymentStatusQueue
+          GREENGRASS_PROVISIONING_AWS_SQS_GROUPTASKS: !Ref GroupTasksQueue
           GREENGRASS_PROVISIONING_AWS_GREENGRASS_BULKDEPLOYMENTS_ROLEARN: !GetAtt BulkDeploymentsExecutionRole.Arn
 
       Tracing: Active
@@ -332,6 +329,11 @@ Resources:
           Properties:
             Queue: !GetAtt BulkDeploymentsStatusQueue.Arn
             BatchSize: 1
+        GroupTasksQueue:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt GroupTasksQueue.Arn
+            BatchSize: 1
 
     DependsOn:
       - LambdaExecutionRole
@@ -339,29 +341,7 @@ Resources:
       - DeploymentStatusQueue
       - DeviceAssociationQueue
       - BulkDeploymentsStatusQueue
-
-  # Optional auto-scaling configuration
-  RESTAutoScalingNestedStack:
-    Type: AWS::CloudFormation::Stack
-    Condition: DeployWithScaling
-    Properties:
-      TemplateURL: ./cfn-autoscaling.yml
-      Parameters:
-        LambdaName: !Ref RESTLambdaFunction
-        LambdaAlias: live
-      TimeoutInMinutes: 5
-    DependsOn: RESTLambdaFunction
-
-  SQSAutoScalingNestedStack:
-    Type: AWS::CloudFormation::Stack
-    Condition: DeployWithScaling
-    Properties:
-      TemplateURL: ./cfn-autoscaling.yml
-      Parameters:
-        LambdaName: !Ref SQSLambdaFunction
-        LambdaAlias: live
-      TimeoutInMinutes: 5
-    DependsOn: SQSLambdaFunction
+      - GroupTasksQueue
 
   Table:
     Type: AWS::DynamoDB::Table
@@ -386,6 +366,9 @@ Resources:
           AttributeType: "S"
         -
           AttributeName: "si2Hash"
+          AttributeType: "S"
+        -
+          AttributeName: "templateName"
           AttributeType: "S"
       ProvisionedThroughput:
         ReadCapacityUnits: "5"
@@ -419,6 +402,26 @@ Resources:
           ProvisionedThroughput:
             ReadCapacityUnits: "5"
             WriteCapacityUnits: "5"
+        -
+          IndexName: 'templateName-si1Sort-index'
+          KeySchema:
+            -
+              AttributeName: "templateName"
+              KeyType: "HASH"
+            -
+              AttributeName: "si1Sort"
+              KeyType: "RANGE"
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: "5"
+            WriteCapacityUnits: "5"
+
+  GroupTasksQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      MessageRetentionPeriod: 604800
+      VisibilityTimeout: 960
 
   DeviceAssociationQueue:
     Type: AWS::SQS::Queue
@@ -486,6 +489,22 @@ Resources:
       Targets:
         - Arn: !GetAtt DeploymentStatusQueue.Arn
           Id: sqs
+
+  # Optional auto-scaling configuration
+  AutoScalingNestedStack:
+    Type: AWS::CloudFormation::Stack
+    Condition: DeployWithScaling
+    Properties:
+      TemplateURL: ./cfn-autoscaling.yml
+      Parameters:
+        RESTLambdaFunction: !Ref RESTLambdaFunction
+        SQSLambdaFunction: !Ref SQSLambdaFunction
+        DynamoDbTableName: !Ref Table
+      TimeoutInMinutes: 5
+    DependsOn: 
+    - RESTLambdaFunction
+    - SQSLambdaFunction
+    - Table
 
 Outputs:
   BulkDeploymentsExecutionRoleArn:

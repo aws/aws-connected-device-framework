@@ -49,6 +49,10 @@ describe('ProvisionThingHandler', () => {
                     status: 'InProgress'
                 }]
             },
+            template: {
+                name: 'template-001',
+                versionNo: 2
+            },
             group: {
                 name: 'group-1',
                 templateName: 'group-template-1',
@@ -117,6 +121,10 @@ describe('ProvisionThingHandler', () => {
                     status: 'InProgress'
                 }]
             },
+            template: {
+                name: 'template-001',
+                versionNo: 2
+            },
             group: {
                 name: 'group-1',
                 templateName: 'group-template-1',
@@ -173,6 +181,10 @@ describe('ProvisionThingHandler', () => {
                     provisioningTemplate: 'core-template',
                     status: 'InProgress'
                 }]
+            },
+            template: {
+                name: 'template-001',
+                versionNo: 2
             },
             group: {
                 name: 'group-1',
@@ -240,6 +252,10 @@ describe('ProvisionThingHandler', () => {
                     provisioningTemplate: 'device-template',
                     status: 'InProgress'
                 }]
+            },
+            template: {
+                name: 'template-001',
+                versionNo: 2
             },
             group: {
                 name: 'group-1',
@@ -335,6 +351,10 @@ describe('ProvisionThingHandler', () => {
                 groupName: 'group-1',
                 status: 'Failure',
                 devices: []
+            },
+            template: {
+                name: 'template-001',
+                versionNo: 2
             },
             group: {
                 name: 'group-1',

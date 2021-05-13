@@ -108,24 +108,6 @@ export class DeploymentsDao {
             this.dynamoDbUtils.putAttributeIfDefined(groupRecord, 'bulkDeploymentId', deployment.bulkDeploymentId);
             params.RequestItems[this.tableName].push(groupRecord);
 
-            // TODO: do we still need this?
-            // if (deployment.devices) {
-            //     for(const device of deployment.devices) {
-            //         const deviceRecord : AWS.DynamoDB.DocumentClient.WriteRequest = {
-            //             PutRequest: {
-            //                 Item: {
-            //                     pk: createDelimitedAttribute(PkType.DeploymentGroup, task.taskId),
-            //                     sk:  createDelimitedAttribute(PkType.GreengrassGroup, deployment.groupName, PkType.GreengrassDevice, device.thingName),
-            //                     deploymentStatus: device.deploymentStatus,
-            //                     statusMessage: device.statusMessage,
-            //                     createdAt: device.createdAt?.toISOString(),
-            //                     updatedAt: device.updatedAt?.toISOString()
-            //                 }
-            //             }
-            //         };
-            //         params.RequestItems[this.tableName].push(deviceRecord);
-            //     }
-            // }
         }
 
         const result = await this.dynamoDbUtils.batchWriteAll(params);

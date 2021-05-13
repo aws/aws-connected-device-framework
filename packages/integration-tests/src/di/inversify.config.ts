@@ -12,6 +12,7 @@ import {assetLibraryHistoryContainerModule} from '@cdf/assetlibraryhistory-clien
 import {commandsContainerModule} from '@cdf/commands-client';
 import {provisioningContainerModule} from '@cdf/provisioning-client';
 import {notificationsContainerModule} from '@cdf/notifications-client';
+import {greengrassProvisioningContainerModule} from '@cdf/greengrass-provisioning-client';
 
 // Load everything needed to the Container
 export const container = new Container();
@@ -22,3 +23,4 @@ container.load(assetLibraryHistoryContainerModule);
 container.load(commandsContainerModule);
 container.load(provisioningContainerModule);
 container.load(notificationsContainerModule);
+container.load(greengrassProvisioningContainerModule);

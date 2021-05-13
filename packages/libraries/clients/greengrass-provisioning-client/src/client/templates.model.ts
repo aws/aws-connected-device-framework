@@ -1,3 +1,5 @@
+import { GreengrassSubscription } from "./subscriptions.model";
+
 /*-------------------------------------------------------------------------------
 # Copyright (c) 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
@@ -5,13 +7,18 @@
 #-------------------------------------------------------------------------------*/
 export class Template {
 	name: string;
-	versionNo: number;
+	versionNo?: number;
 	groupId?: string;
 	groupVersionId?: string;
+	subscriptions?: GreengrassSubscriptionMap;
 	createdAt?: Date;
 	updatedAt?: Date;
-	enabled: boolean;
+	enabled?: boolean;
 }
+
+export interface GreengrassSubscriptionMap {
+	[thingType: string] : GreengrassSubscription[];
+} 
 
 export class TemplateList {
 	templates: Template[] = [];

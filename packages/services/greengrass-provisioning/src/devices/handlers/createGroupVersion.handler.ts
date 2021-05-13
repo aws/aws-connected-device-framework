@@ -60,7 +60,18 @@ export class CreateGroupVersionHandler extends AbstractDeviceAssociationHandler 
                 deviceInfoChanged=true;
             }
 
-            // any subscriptions to process?
+            // any subscription templates to process?
+            const subTemplates = request.template.subscriptions;
+            if (subTemplates!==undefined) {
+                for(const thingType of Object.keys(subTemplates)) {
+                    if (thingType==='__all' || thingType===thing.thingTypeName) {
+                        // expand the template and add it as a subscription
+                        subscriptions.push(... subTemplates[thingType].map(s=> this.subscriptionsService.expandSubscriptionTemplate(s, thing.thingName, thing.thingTypeName, thing.thingArn)));
+                    }
+                }
+            }
+
+            // any explicit subscriptions to process too?
             if (device.subscriptions?.length>0) {
                 subscriptions.push(... device.subscriptions);
             }

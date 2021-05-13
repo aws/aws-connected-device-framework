@@ -43,8 +43,6 @@ export class ProvisionThingHandler extends AbstractDeviceAssociationHandler {
 
                 ow(device.provisioningTemplate, ow.string.nonEmpty);
 
-                device.createdAt = new Date();
-
                 logger.debug(`provisionThing.handler handle: thing:${device.thingName} does not exist`);
                 let res: ProvisionThingResponse;
                 try {
@@ -55,6 +53,7 @@ export class ProvisionThingHandler extends AbstractDeviceAssociationHandler {
                     };
                     logger.debug(`provisionThing.handler handle: provisioning:  req:${JSON.stringify(req)}`);
                     res = await this.thingsService.provisionThing(req);
+                    device.createdAt = new Date();
                     logger.debug(`provisionThing.handler handle: provisioning:  res:${JSON.stringify(res)}`);
                 } catch (err) {
                     logger.error(`provisionThing.handler handle: provisioning:  err:${err}`);

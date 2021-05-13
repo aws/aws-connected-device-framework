@@ -23,6 +23,9 @@ import { DevicesApigwService } from '../client/devices.apigw.service';
 import { GroupsApigwService } from '../client/groups.apigw.service';
 import { SubscriptionsApigwService } from '../client/subscriptions.apigw.service';
 import { TemplatesApigwService } from '../client/templates.apigw.service';
+import { GroupTasksService } from '../client/groupTasks.service';
+import { GroupTasksLambdaService } from '../client/groupTasks.lambda.service';
+import { GroupTasksApigwService } from '../client/groupTasks.apigw.service';
 
 export const greengrassProvisioningContainerModule = new ContainerModule (
     (
@@ -36,6 +39,7 @@ export const greengrassProvisioningContainerModule = new ContainerModule (
             bind<DeploymentsService>(GREENGRASS_PROVISIONING_CLIENT_TYPES.DeploymentsService).to(DeploymentsLambdaService);
             bind<DevicesService>(GREENGRASS_PROVISIONING_CLIENT_TYPES.DevicesService).to(DevicesLambdaService);
             bind<GroupsService>(GREENGRASS_PROVISIONING_CLIENT_TYPES.GroupsService).to(GroupsLambdaService);
+            bind<GroupTasksService>(GREENGRASS_PROVISIONING_CLIENT_TYPES.GroupTasksService).to(GroupTasksLambdaService);
             bind<SubscriptionsService>(GREENGRASS_PROVISIONING_CLIENT_TYPES.SubscriptionsService).to(SubscriptionsLambdaService);
             bind<TemplatesService>(GREENGRASS_PROVISIONING_CLIENT_TYPES.TemplatesService).to(TemplatesLambdaService);
 
@@ -59,6 +63,7 @@ export const greengrassProvisioningContainerModule = new ContainerModule (
             bind<DeploymentsService>(GREENGRASS_PROVISIONING_CLIENT_TYPES.DeploymentsService).to(DeploymentsApigwService);
             bind<DevicesService>(GREENGRASS_PROVISIONING_CLIENT_TYPES.DevicesService).to(DevicesApigwService);
             bind<GroupsService>(GREENGRASS_PROVISIONING_CLIENT_TYPES.GroupsService).to(GroupsApigwService);
+            bind<GroupTasksService>(GREENGRASS_PROVISIONING_CLIENT_TYPES.GroupTasksService).to(GroupTasksApigwService);
             bind<SubscriptionsService>(GREENGRASS_PROVISIONING_CLIENT_TYPES.SubscriptionsService).to(SubscriptionsApigwService);
             bind<TemplatesService>(GREENGRASS_PROVISIONING_CLIENT_TYPES.TemplatesService).to(TemplatesApigwService);
         }

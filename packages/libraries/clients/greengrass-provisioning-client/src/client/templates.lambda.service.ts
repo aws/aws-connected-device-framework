@@ -51,6 +51,18 @@ export class TemplatesLambdaService extends TemplatesServiceBase implements Temp
         return res.body;
     }
 
+    async deleteTemplate(name: string, additionalHeaders?:RequestHeaders) : Promise<void> {
+
+        ow(name, ow.string.nonEmpty);
+
+        const event = new LambdaApiGatewayEventBuilder()
+            .setPath(super.templateRelativeUrl(name))
+            .setMethod('DELETE')
+            .setHeaders(super.buildHeaders(additionalHeaders));
+
+        await this.lambdaInvoker.invoke(this.functionName, event);
+    }
+
     async listTemplates(additionalHeaders?:RequestHeaders) : Promise<TemplateList> {
 
         const event = new LambdaApiGatewayEventBuilder()

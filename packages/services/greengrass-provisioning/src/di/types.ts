@@ -13,6 +13,10 @@ export const TYPES = {
     GroupsAssembler: Symbol.for('GroupsAssembler'),
     GroupsDao: Symbol.for('GroupsDao'),
 
+    GroupTasksService: Symbol.for('GroupTasksService'),
+    GroupTasksAssembler: Symbol.for('GroupTasksAssembler'),
+    GroupTasksDao: Symbol.for('GroupTasksDao'),
+
     DevicesService: Symbol.for('DevicesService'),
     DevicesAssembler: Symbol.for('DevicesAssembler'),
     DevicesDao: Symbol.for('DevicesDao'),

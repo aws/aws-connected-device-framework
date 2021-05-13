@@ -47,6 +47,17 @@ export class TemplatesApigwService extends TemplatesServiceBase implements Templ
 
     }
 
+    async deleteTemplate(name: string, additionalHeaders?:RequestHeaders) : Promise<void> {
+
+        ow(name, ow.string.nonEmpty);
+
+        const url = `${this.baseUrl}${super.templateRelativeUrl(name)}`;
+
+        await request.delete(url)
+            .set(this.buildHeaders(additionalHeaders));
+
+    }
+
     async listTemplates(additionalHeaders?:RequestHeaders) : Promise<TemplateList> {
 
         const url = `${this.baseUrl}${super.templatesRelativeUrl()}`;

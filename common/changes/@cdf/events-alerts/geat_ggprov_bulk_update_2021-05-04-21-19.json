@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/events-alerts",
+      "comment": "",
+      "type": "none"
+    }
+  ],
+  "packageName": "@cdf/events-alerts",
+  "email": "deanhart@amazon.com"
+}

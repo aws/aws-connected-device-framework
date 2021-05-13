@@ -10,12 +10,12 @@ To run:
 
 ```sh
 cd packages/integration-tests
-CONFIG_LOCATION="../../../{cdf-infrastructure-*}" pnpm run integration-test
+CONFIG_LOCATION="../../../{cdf-infrastructure-*}" npm run integration-test
 ```
 
 - To run tests for a specific feature:
 
 ```sh
 cd packages/integration-tests
-CONFIG_LOCATION="../../../{cdf-infrastructure-*}" pnpm run integration-test -- features/commands/*.feature
+CONFIG_LOCATION="../../../{cdf-infrastructure-*}" npm run integration-test -- features/commands/*.feature
 ```

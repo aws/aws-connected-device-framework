@@ -51,15 +51,6 @@
 
     {
       "commandKind": "global",
-      "name": "bundle-quick",
-      "summary": "Bundle projects assuming they are already built.",
-      "description": "Bundles deployable projects as tar files inclusive of all dependencies ready for deployment.",
-      "safeForSimultaneousRushProcesses": false,
-      "shellCommand": "npx pnpm recursive run bundle"
-    },
-
-    {
-      "commandKind": "global",
       "name": "commit",
       "summary": "Git commit.",
       "description": "Commits all staged files to the git repo.",

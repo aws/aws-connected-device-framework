@@ -25,12 +25,14 @@ EOF
 
 root_dir=$(pwd)
 
-lambda_layers_root="$root_dir/infrastructure/lambdaLayers"
-for layer in $(ls $lambda_layers_root); do
-    cd "$lambda_layers_root/$layer"
-    # infrastructure/build.bash &
-    infrastructure/build.bash
-done
+if [ -z "$BYPASS_CDF_DOCKER_BUILD" ]; then
+    lambda_layers_root="$root_dir/infrastructure/lambdaLayers"
+    for layer in $(ls $lambda_layers_root); do
+        cd "$lambda_layers_root/$layer"
+        # infrastructure/build.bash &
+        infrastructure/build.bash
+    done
+fi
 
 cd $root_dir
 rush purge                      # delete all rush temp files

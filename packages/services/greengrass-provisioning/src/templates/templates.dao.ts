@@ -46,6 +46,7 @@ export class TemplatesDao {
                 }
             }
         };
+        this.dynamoDbUtils.putAttributeIfDefined(currentRecord, 'subscriptions', item.subscriptions);
 
         // create the version record
         const versionRecord : AWS.DynamoDB.DocumentClient.WriteRequest = {
@@ -61,6 +62,7 @@ export class TemplatesDao {
                 }
             }
         };
+        this.dynamoDbUtils.putAttributeIfDefined(versionRecord, 'subscriptions', item.subscriptions);
 
         // build the request and write to DynamoDB
         const params: AWS.DynamoDB.DocumentClient.BatchWriteItemInput = {
@@ -76,8 +78,8 @@ export class TemplatesDao {
         logger.debug(`templates.dao save: exit:`);
     }
 
-    public async get(name:string) : Promise<TemplateItem> {
-        logger.debug(`templates.dao get: in: name: ${name}`);
+    public async get(name:string, versionNo?:number) : Promise<TemplateItem> {
+        logger.debug(`templates.dao get: in: name: ${name}, versionNo: ${versionNo}`);
 
         const params:AWS.DynamoDB.DocumentClient.QueryInput = {
             TableName: this.table,
@@ -85,12 +87,22 @@ export class TemplatesDao {
             ExpressionAttributeNames: {
                 '#hash': 'pk',
                 '#range': 'sk'
-            },
-            ExpressionAttributeValues: {
+            }
+        };
+
+        if (versionNo!==undefined) {
+            // return a specific version
+            params.ExpressionAttributeValues= {
+                ':hash': createDelimitedAttribute(PkType.GroupTemplate, name),
+                ':range': createDelimitedAttribute(PkType.GroupTemplateVersion, versionNo)
+            }
+        } else {
+            // return the latest version
+            params.ExpressionAttributeValues= {
                 ':hash': createDelimitedAttribute(PkType.GroupTemplate, name),
                 ':range': PkType.GroupTemplate
             }
-        };
+        }
 
         const results = await this.dc.query(params).promise();
         if (results.Items===undefined || results.Items.length===0) {
@@ -130,10 +142,50 @@ export class TemplatesDao {
         return templates;
     }
 
+    public async delete(name:string) : Promise<void> {
+        logger.debug(`templates.dao delete: in: name: ${name}`);
+
+        // retrieve all records associated with the template
+        const queryParams:AWS.DynamoDB.DocumentClient.QueryInput = {
+            TableName: this.table,
+            KeyConditionExpression: `#hash = :hash`,
+            ExpressionAttributeNames: {'#hash': 'pk'},
+            ExpressionAttributeValues: {':hash': createDelimitedAttribute(PkType.GroupTemplate, name)}
+        };
+
+        const queryResults = await this.dc.query(queryParams).promise();
+        if (queryResults.Items===undefined || queryResults.Items.length===0) {
+            logger.debug('templates.dao delete: exit: nothing to delete');
+            return ;
+        }
+
+        // batch delete
+        const batchParams: AWS.DynamoDB.DocumentClient.BatchWriteItemInput = {RequestItems: {}};
+        batchParams.RequestItems[this.table]=[];
+        queryResults.Items.forEach(i=> {
+            const req : AWS.DynamoDB.DocumentClient.WriteRequest = {
+                DeleteRequest: {
+                    Key: {
+                        'pk': i.pk,
+                        'sk': i.sk
+                    }
+                }
+            }
+            batchParams.RequestItems[this.table].push(req);
+        })
+
+        const result = await this.dynamoDbUtils.batchWriteAll(batchParams);
+        if (this.dynamoDbUtils.hasUnprocessedItems(result)) {
+            throw new Error('DELETE_FAILED');
+        }
+
+        logger.debug(`templates.dao delete: exit:`);
+    }
+
     private assembleTemplateList(results:AWS.DynamoDB.DocumentClient.ItemList) : TemplateItemList {
         logger.debug(`templates.dao assembleTemplate: items: ${JSON.stringify(results)}`);
 
-        const templates = new TemplateItemList();
+        const templates:TemplateItemList= {templates:[]};
         for(const i of results) {
 
             const name = expandDelimitedAttribute(i.pk)[1];
@@ -143,6 +195,7 @@ export class TemplatesDao {
                 versionNo: i.versionNo,
                 groupId: i.groupId,
                 groupVersionId: i.groupVersionId,
+                subscriptions: i.subscriptions,
                 createdAt: new Date(i.createdAt),
                 updatedAt: new Date(i.updatedAt),
                 enabled: i.enabled

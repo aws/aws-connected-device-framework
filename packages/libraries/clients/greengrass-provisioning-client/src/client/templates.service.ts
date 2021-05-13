@@ -9,6 +9,8 @@ export interface TemplatesService {
 
     getTemplate(name: string, additionalHeaders?:RequestHeaders) : Promise<Template>;
 
+    deleteTemplate(name: string, additionalHeaders?:RequestHeaders) : Promise<void>;
+
     listTemplates(additionalHeaders?:RequestHeaders) : Promise<TemplateList>;
 
 }

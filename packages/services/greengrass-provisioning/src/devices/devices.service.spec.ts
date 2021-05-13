@@ -20,12 +20,15 @@ import {GetThingHandler} from './handlers/getThing.handler';
 import {ProvisionThingHandler} from './handlers/provisonThing.handler';
 import {SaveGroupHandler} from './handlers/saveGroup.handler';
 import {CoreConfigHandler} from './handlers/coreConfig.handler';
+import { TemplatesDao } from '../templates/templates.dao';
+import { TemplateItem } from '../templates/templates.models';
 
 describe('DevicesService', () => {
     const deviceAssociationQueue = 'device_association_queue';
 
     let mockedDevicesDao: jest.Mocked<DevicesDao>;
     let mockedGroupsDao: jest.Mocked<GroupsDao>;
+    let mockedTemplatesDao: jest.Mocked<TemplatesDao>;
     let mockedGreengrassUtils: jest.Mocked<GreengrassUtils>;
 
     let mockedCreateGroupVersionHandler: CreateGroupVersionHandler;
@@ -44,6 +47,7 @@ describe('DevicesService', () => {
     beforeEach(() => {
         mockedDevicesDao = createMockInstance(DevicesDao);
         mockedGroupsDao = createMockInstance(GroupsDao);
+        mockedTemplatesDao = createMockInstance(TemplatesDao);
         mockedGreengrassUtils = createMockInstance(GreengrassUtils);
 
         // testing the chains handlers is tricky.  we want the chain to use its implemented logic, yet
@@ -63,7 +67,7 @@ describe('DevicesService', () => {
             return mockedSQS;
         };
 
-        instance = new DevicesService(deviceAssociationQueue,mockedDevicesDao, mockedGroupsDao, mockedGreengrassUtils,
+        instance = new DevicesService(deviceAssociationQueue,mockedDevicesDao, mockedGroupsDao, mockedTemplatesDao, mockedGreengrassUtils,
             mockedCreateGroupVersionHandler, mockedExistingAssociationHandler, mockedGetPrincipalHandler, mockedGetThingHandler1,
             mockedGetThingHandler2, mockedCoreConfigHandler, mockedProvisionThingHandler, mockedSaveGroupHandler, mockedSQSFactory);
     });
@@ -88,12 +92,19 @@ describe('DevicesService', () => {
             templateName: 'template-1',
         };
 
+        const template:TemplateItem = {
+            name: 'template-1',
+            versionNo: 2
+        };
+
         // mocks
         mockedGroupsDao.get = jest.fn().mockReturnValueOnce(group);
 
         const mockGetGroupResponse = new MockAWSPromise<AWS.Greengrass.GetGroupResponse>();
         mockGetGroupResponse.response = {};
         const mockGetGroup = mockedGreengrassUtils.getGroupInfo = <any> jest.fn((_params) => mockGetGroupResponse);
+
+        mockedTemplatesDao.get = jest.fn().mockReturnValueOnce(template);
 
         mockedDevicesDao.saveDeviceAssociationTask= jest.fn();
 
@@ -191,6 +202,10 @@ describe('DevicesService', () => {
             name: input.groupName,
             id: 'group-id-1',
             templateName: 'template-1',
+        });
+        mockedTemplatesDao.get = jest.fn().mockReturnValueOnce(<TemplateItem>{
+            name: 'template-1',
+            versionNo: 2
         });
         mockedGreengrassUtils.getGroupInfo = jest.fn().mockReturnValueOnce(<AWS.Greengrass.GetGroupResponse>{
             Id: 'group-id-1',

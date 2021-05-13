@@ -26,6 +26,7 @@ aws:
     deployments:
     bulkDeploymentsStatus:
     deploymentStatus:
+    groupTasks:
 
 cors:
   origin:
@@ -40,3 +41,8 @@ supportedApiVersions:
 
 logging:
   level: debug
+
+defaults:
+  promisesConcurrency: 10
+  groupBatchSize: 20
+

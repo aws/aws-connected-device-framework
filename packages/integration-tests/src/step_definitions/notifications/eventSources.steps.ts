@@ -6,11 +6,11 @@
 
 import { expect } from 'chai';
 import { setDefaultTimeout, Given, When, TableDefinition, Then} from 'cucumber';
-import { RESPONSE_STATUS} from '../common/common.steps';
+import { AUTHORIZATION_TOKEN, RESPONSE_STATUS, validateExpectedAttributes} from '../common/common.steps';
 import {container} from '../../di/inversify.config';
 import { EventsourcesService, NOTIFICATIONS_CLIENT_TYPES } from '@cdf/notifications-client/dist';
 import { EventSourceDetailResource } from '@cdf/notifications-client/dist/client/eventsources.model';
-import { createEventSource, getAdditionalHeaders, EVENTSOURCE_NAME, EVENTSOURCE_DETAILS, EVENTSOURCE_ID, validateExpectedAttributes, getEventSourceIdFromName } from './notifications.utils';
+import { createEventSource, getAdditionalHeaders, EVENTSOURCE_NAME, EVENTSOURCE_DETAILS, EVENTSOURCE_ID, getEventSourceIdFromName } from './notifications.utils';
 import { logger } from '../utils/logger';
 
 /*
@@ -32,13 +32,13 @@ Given('I am using eventsource {string}', async function (name:string) {
 
 Given('eventsource {string} does not exist', async function (name:string) {
     logger.debug(`eventsource '${name}' does not exist`);
-    const existing = await eventsourcesService.listEventSources(getAdditionalHeaders(this));
+    const existing = await eventsourcesService.listEventSources(getAdditionalHeaders(this[AUTHORIZATION_TOKEN]));
     const matches = existing?.results?.filter(r=> r.name===name).length>0 ?? false;
     expect(matches).to.be.false;
 });
 
 Given('eventsource {string} exists', async function (name:string) {
-    const existing = await eventsourcesService.listEventSources(getAdditionalHeaders(this));
+    const existing = await eventsourcesService.listEventSources(getAdditionalHeaders(this[AUTHORIZATION_TOKEN]));
     const matches = existing?.results?.filter(r=> r.name===name).length>0 ?? false;
     expect(matches).to.be.true;
 });
@@ -62,7 +62,7 @@ When('I delete eventsource', async function () {
     logger.debug(`\t id: ${id}`);
     expect(id, 'id').to.not.be.undefined;
 
-    await eventsourcesService.deleteEventSource(id, getAdditionalHeaders(this));
+    await eventsourcesService.deleteEventSource(id, getAdditionalHeaders(this[AUTHORIZATION_TOKEN]));
 });
 
 Then('last eventsource exists with attributes', async function (data:TableDefinition) {
@@ -72,7 +72,7 @@ Then('last eventsource exists with attributes', async function (data:TableDefini
 
     let r:EventSourceDetailResource;
     try {
-        r = await eventsourcesService.getEventSource(id, getAdditionalHeaders(this));
+        r = await eventsourcesService.getEventSource(id, getAdditionalHeaders(this[AUTHORIZATION_TOKEN]));
         expect(id).equals(r.id);
         this[EVENTSOURCE_DETAILS]=r;
     } catch (err) {

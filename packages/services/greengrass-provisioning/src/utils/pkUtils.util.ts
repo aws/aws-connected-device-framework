@@ -46,6 +46,7 @@ export enum PkType {
     GroupTemplate='GT',
     GroupTemplateVersion='GTV',
     GreengrassGroup='G',
+    GreengrassGroupTask='GGT',
     GreengrassGroupId='GID',
     GreengrassGroupVersion='GV',
     GreengrassDevice='GD',

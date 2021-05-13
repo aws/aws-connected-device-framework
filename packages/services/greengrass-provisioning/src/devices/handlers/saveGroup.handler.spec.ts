@@ -45,6 +45,10 @@ describe('SaveGroupHandler', () => {
                     status: 'Success'
                 }]
             },
+            template: {
+                name: 'template-001',
+                versionNo: 2
+            },
             group: {
                 name: 'group-1',
                 id: 'group-id-1',
@@ -111,7 +115,7 @@ describe('SaveGroupHandler', () => {
 
     });
 
-    it('handle: don\'t process failed task', async() => {
+    it('handle: a failed task is still saved', async() => {
 
         // *****    stubs   *****
         const input:DeviceAssociationModel = {
@@ -120,6 +124,10 @@ describe('SaveGroupHandler', () => {
                 groupName: 'group-1',
                 status: 'Failure',
                 devices: []
+            },
+            template: {
+                name: 'template-001',
+                versionNo: 2
             },
             group: {
                 name: 'group-1',
@@ -149,7 +157,7 @@ describe('SaveGroupHandler', () => {
         expect(response).toEqual(input);
 
         // verify nothing was called
-        expect(mockedDevicesDao.saveDeviceAssociationTask .mock.calls.length).toBe(0);
+        expect(mockedDevicesDao.saveDeviceAssociationTask .mock.calls.length).toBe(1);
         expect(mockedGroupsDao.saveGroup.mock.calls.length).toBe(0);
 
     });

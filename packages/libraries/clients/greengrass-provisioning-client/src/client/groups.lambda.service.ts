@@ -48,4 +48,40 @@ export class GroupsLambdaService extends GroupsServiceBase implements GroupsServ
         return res.body;
     }
 
+    async deleteGroupByName(groupName:string, additionalHeaders?:RequestHeaders) : Promise<void> {
+        ow(groupName, ow.string.nonEmpty);
+
+        const event = new LambdaApiGatewayEventBuilder()
+            .setPath(super.groupRelativeUrl(groupName))
+            .setMethod('DELETE')
+            .setHeaders(super.buildHeaders(additionalHeaders));
+
+        await this.lambdaInvoker.invoke(this.functionName, event);
+    }
+
+    async listByTemplate(templateName:string, additionalHeaders?:RequestHeaders) : Promise<GroupList> {
+        ow(templateName, ow.string.nonEmpty);
+
+        const event = new LambdaApiGatewayEventBuilder()
+            .setPath(super.groupsByTemplateRelativeUrl(templateName))
+            .setMethod('GET')
+            .setHeaders(super.buildHeaders(additionalHeaders));
+
+        const res = await this.lambdaInvoker.invoke(this.functionName, event);
+        return res.body;
+    }
+
+    async listByTemplateVersion(templateName:string, versionNo:number, additionalHeaders?:RequestHeaders) : Promise<GroupList> {
+        ow(templateName, ow.string.nonEmpty);
+        ow(versionNo, ow.number.greaterThan(0));
+
+        const event = new LambdaApiGatewayEventBuilder()
+            .setPath(super.groupsByTemplateVersionRelativeUrl(templateName, versionNo))
+            .setMethod('GET')
+            .setHeaders(super.buildHeaders(additionalHeaders));
+
+        const res = await this.lambdaInvoker.invoke(this.functionName, event);
+        return res.body;
+    }
+
 }

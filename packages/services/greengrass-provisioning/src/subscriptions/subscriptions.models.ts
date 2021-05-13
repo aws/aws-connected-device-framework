@@ -1,19 +1,19 @@
-export class GreengrassSubscriptionResourceList {
+export interface GreengrassSubscriptionResourceList {
     subscriptions: GreengrassSubscriptionResource[];
 }
 
-export class GreengrassSubscriptionDeleteResourceList {
+export interface GreengrassSubscriptionDeleteResourceList {
     ids: string[];
 }
 
-export class GreengrassSubscriptionResource {
+export interface GreengrassSubscriptionResource {
 	id:string;
 	source:string;
 	subject:string;
 	target:string;
 }
 
-export class GreengrassSubscriptionItem {
+export interface GreengrassSubscriptionItem {
 	id:string;
 	source:string;
 	subject:string;

@@ -10,6 +10,8 @@ assetLibraryHistory:
   baseUrl:
 commands:
     baseUrl:
+greengrassProvisioning:
+  baseUrl:
 provisioning:
   baseUrl:
   templates:

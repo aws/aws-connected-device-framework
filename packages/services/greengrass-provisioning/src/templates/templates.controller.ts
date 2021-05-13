@@ -4,7 +4,7 @@
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
 import { Response } from 'express';
-import { interfaces, controller, response, requestBody, requestParam, httpPut, httpGet } from 'inversify-express-utils';
+import { interfaces, controller, response, requestBody, requestParam, httpPut, httpGet, httpDelete } from 'inversify-express-utils';
 import { inject } from 'inversify';
 import {logger} from '../utils/logger.util';
 import {handleError} from '../utils/errors';
@@ -35,6 +35,7 @@ export class TemplatesController implements interfaces.Controller {
             handleError(e,res);
         }
 
+        logger.info(`templates.controller saveTemplate: savedResource:${JSON.stringify(savedResource)}`);
         return savedResource;
     }
 
@@ -42,15 +43,27 @@ export class TemplatesController implements interfaces.Controller {
     public async getTemplate(@requestParam('name') name:string, @response() res:Response) : Promise<TemplateResource> {
         logger.info(`templates.controller getTemplate: in: name:${name}`);
 
-        let template:TemplateResource;
         try {
             const item = await this.templatesService.get(name);
-            template = this.templatesAssembler.toResource(item);
+            const template = this.templatesAssembler.toResource(item);
+            logger.info(`templates.controller getTemplate: exit: template:${JSON.stringify(template)}`);
+            return template;
         } catch (e) {
             handleError(e,res);
         }
-        logger.info(`templates.controller getTemplate: exit: template:${JSON.stringify(template)}`);
-        return template;
+        return undefined;
+    }
+
+    @httpDelete('/:name')
+    public async deleteTemplate(@requestParam('name') name:string, @response() res:Response) : Promise<void> {
+        logger.info(`templates.controller deleteTemplate: in: name:${name}`);
+
+        try {
+            await this.templatesService.delete(name);
+        } catch (e) {
+            handleError(e,res);
+        }
+        logger.info(`templates.controller deleteTemplate: exit: `);
     }
 
     @httpGet('')

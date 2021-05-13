@@ -4,6 +4,8 @@
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
 
+import { Pagination } from "../common/common.models";
+
 export class DeploymentTaskSummary {
 	taskId:string;
 	bulkDeploymentId?: string;
@@ -39,18 +41,12 @@ export class DeviceDeploymentItem {
 
 export class DeploymentItemList {
 	deployments: DeploymentItem[] = [];
-	pagination?: {
-		offset:number|string;
-		count: number;
-	};
+	pagination?: Pagination;
 }
 
 export class DeploymentTaskSummaryList {
 	deploymentTasks: DeploymentTaskSummary[] = [];
-	pagination?: {
-		offset:number|string;
-		count: number;
-	};
+	pagination?: Pagination;
 }
 
 export type DeploymentTaskStatus = 'Waiting'|'InProgress'|'Success'|'Failure';

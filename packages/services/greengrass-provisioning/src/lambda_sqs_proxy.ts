@@ -11,12 +11,16 @@ import { DevicesService } from './devices/devices.service';
 import { DeviceTaskSummary } from './devices/devices.models';
 import { DeploymentsService, GreengrassDeploymentChangeEvent } from './deployments/deployments.service';
 import config from 'config';
+import { GroupsService } from './groups/groups.service';
+import { GroupTasksService } from './groupTasks/groupTasks.service';
 
 // log detected config
 logger.info(`\nDetected config:\n${JSON.stringify(config.util.toObject())}\n`);
 
 let devicesSvc:DevicesService;
 let deploymentSvc:DeploymentsService;
+let groupsSvc: GroupsService;
+let groupTasksSvc: GroupTasksService;
 let sqs:AWS.SQS;
 let deploymentStatusQueue:string;
 
@@ -24,9 +28,15 @@ let deploymentStatusQueue:string;
 exports.handler = async (event: any, _context: unknown) => {
   logger.debug(`lambda_sqs_proxy handler: event: ${JSON.stringify(event)}`);
 
-  // init
+  // lazy init
   if (devicesSvc===undefined) {
     devicesSvc = container.get(TYPES.DevicesService);
+  }
+  if (groupsSvc===undefined) {
+    groupsSvc = container.get(TYPES.GroupsService);
+  }
+  if (groupTasksSvc===undefined) {
+    groupTasksSvc = container.get(TYPES.GroupTasksService);
   }
   if (deploymentSvc===undefined) {
     deploymentSvc = container.get(TYPES.DeploymentsService);
@@ -61,6 +71,12 @@ exports.handler = async (event: any, _context: unknown) => {
 
         } else if (messageType==='BulkDeploymentStatus') {
           await deploymentSvc.updateBulkDeploymentStatus( body.taskId);
+
+        } else if (messageType==='GroupTask:Create') {
+          await groupTasksSvc.processCreateGroupsTaskBatch(body.taskId,body.groups);
+
+        } else if (messageType==='GroupTask:Update') {
+          await groupTasksSvc.processUpdateGroupsTaskBatch(body.taskId,body.groups);
 
         } else if (body['source']==='aws.greengrass' && body['detail-type']==='Greengrass Deployment Status Change') {
           const d = body['detail'];

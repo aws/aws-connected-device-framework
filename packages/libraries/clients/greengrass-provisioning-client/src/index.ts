@@ -10,6 +10,8 @@ export * from './client/devices.model';
 export * from './client/devices.service';
 export * from './client/groups.model';
 export * from './client/groups.service';
+export * from './client/groupTasks.model';
+export * from './client/groupTasks.service';
 export * from './client/subscriptions.model';
 export * from './client/subscriptions.service';
 export * from './client/templates.model';

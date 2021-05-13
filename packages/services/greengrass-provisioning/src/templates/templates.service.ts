@@ -10,14 +10,16 @@ import {logger} from '../utils/logger.util';
 import ow from 'ow';
 import { TemplatesDao } from './templates.dao';
 import AWS = require('aws-sdk');
+import { GroupsDao } from '../groups/groups.dao';
 
 @injectable()
 export class TemplatesService  {
 
     private gg: AWS.Greengrass;
 
-    constructor( @inject(TYPES.TemplatesDao) private templatesDao: TemplatesDao,
-        // @inject(TYPES.TemplatesAssembler) private templatesAssembler: TemplatesAssembler,
+    constructor( 
+        @inject(TYPES.GroupsDao) private groupsDao: GroupsDao,
+        @inject(TYPES.TemplatesDao) private templatesDao: TemplatesDao,
         @inject(TYPES.GreengrassFactory) greengrassFactory: () => AWS.Greengrass) {
             this.gg = greengrassFactory();
         }
@@ -74,17 +76,36 @@ export class TemplatesService  {
 
     }
 
-    public async get(name:string) : Promise<TemplateItem> {
-        logger.debug(`templates.service get: in: name:${name}`);
+    public async get(name:string, versionNo?:number) : Promise<TemplateItem> {
+        logger.debug(`templates.service get: in: name:${name}, versionNo:${versionNo}`);
 
         ow(name, ow.string.nonEmpty);
 
         // retrieve
-        const item = await this.templatesDao.get(name);
+        const item = await this.templatesDao.get(name, versionNo);
+        if (item===undefined) {
+            throw new Error('TEMPLATE_NOT_FOUND');
+        }
 
         logger.debug(`templates.service get: exit: item: ${JSON.stringify(item)}`);
         return item;
 
+    }
+
+    public async delete(name:string) : Promise<void> {
+        logger.debug(`templates.service delete: in: name:${name}`);
+
+        ow(name, ow.string.nonEmpty);
+
+        // ensure not in use
+        const groupInUse = await this.groupsDao.listByTemplate(name, undefined, {limit:1} );
+        if (groupInUse?.groups?.length>0) {
+            throw new Error("TEMPLATE_IN_USE");
+        }
+
+        await this.templatesDao.delete(name);
+
+        logger.debug(`templates.service get: delete:`);
     }
 
     public async list() : Promise<TemplateItemList> {

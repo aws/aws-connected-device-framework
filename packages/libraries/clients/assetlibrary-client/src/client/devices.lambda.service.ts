@@ -203,8 +203,7 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
             .setMethod('DELETE')
             .setHeaders(super.buildHeaders(additionalHeaders));
 
-        const res = await this.lambdaInvoker.invoke(this.functionName, event);
-        return res.body;
+        await this.lambdaInvoker.invoke(this.functionName, event);
     }
 
     /**

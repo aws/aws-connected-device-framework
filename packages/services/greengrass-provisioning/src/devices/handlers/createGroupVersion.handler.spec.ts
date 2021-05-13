@@ -51,6 +51,10 @@ describe('CreateGroupVersionHandler', () => {
                 id: 'group-id-1',
                 templateName: 'group-template-1',
             },
+            template: {
+                name: 'template-001',
+                versionNo: 2
+            },
             ggGroup: {
                 Id: 'group-id-1',
                 LatestVersion: 'arn:aws:greengrass:us-west-0:123456789012:/greengrass/groups/group-id-1/versions/group-version-id-1',
@@ -160,6 +164,10 @@ describe('CreateGroupVersionHandler', () => {
                 groupName: 'group-1',
                 status: 'Failure',
                 devices: []
+            },
+            template: {
+                name: 'template-001',
+                versionNo: 2
             },
             group: {
                 name: 'group-1',

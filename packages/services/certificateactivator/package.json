@@ -10,7 +10,7 @@
 
     "clean": "npx shx rm -rf dist deploy tsconfig.tsbuildinfo bundle.zip .rush .nyc_output *.log",
     "lint": "npx eslint . --ext '.ts'",
-    "build": "npx tsc -b && npx shx cp -R 'src/config' 'dist/config'",
+    "build": "npx tsc -b && npx shx cp -R 'src/config' 'dist/'",
     "test": "rushx lint && NODE_ENV=local_test NODE_CONFIG_DIR='./src/config' jest --silent",
     "start": "rushx build && NODE_CONFIG=$(cat ${CONFIG_LOCATION}/certificateactivator/${npm_package_config_environment}-config.json) NODE_CONFIG_DIR='./src/config' nodemon dist/lambda_proxy.js",
     

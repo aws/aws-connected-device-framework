@@ -37,6 +37,12 @@ export class CoreConfigHandler extends AbstractDeviceAssociationHandler {
 
             const thing = request.things[device.thingName];
 
+            if (thing===undefined) {
+                device.status = 'Failure';
+                device.statusMessage = `Thing not provisioned.`;
+                continue;
+            }
+
             const config:GreengrassConfig = {
                 coreThing: {
                     caPath: 'root.ca.pem',

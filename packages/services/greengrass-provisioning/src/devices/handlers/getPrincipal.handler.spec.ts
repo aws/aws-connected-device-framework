@@ -43,6 +43,10 @@ describe('GetPrincipalHandler', () => {
                     status: 'InProgress'
                 }]
             },
+            template: {
+                name: 'template-001',
+                versionNo: 2
+            },
             group: {
                 name: 'group-1',
                 id: 'group-id-1',
@@ -56,7 +60,14 @@ describe('GetPrincipalHandler', () => {
             ggDeviceVersion: {
                 Devices: []
             },
-            things: {},
+            things: {
+                core: {
+
+                },
+                'device-1': {
+
+                }
+            },
             certificateArns: {}
         };
 
@@ -105,6 +116,10 @@ describe('GetPrincipalHandler', () => {
                 groupName: 'group-1',
                 status: 'Failure',
                 devices: []
+            },
+            template: {
+                name: 'template-001',
+                versionNo: 2
             },
             group: {
                 name: 'group-1',

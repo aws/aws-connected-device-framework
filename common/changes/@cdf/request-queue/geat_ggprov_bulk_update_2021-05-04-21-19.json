@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/request-queue",
+      "comment": "",
+      "type": "none"
+    }
+  ],
+  "packageName": "@cdf/request-queue",
+  "email": "deanhart@amazon.com"
+}

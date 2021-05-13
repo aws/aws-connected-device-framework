@@ -22,6 +22,8 @@ import {GetThingHandler} from './handlers/getThing.handler';
 import {ProvisionThingHandler} from './handlers/provisonThing.handler';
 import {SaveGroupHandler} from './handlers/saveGroup.handler';
 import {CoreConfigHandler} from './handlers/coreConfig.handler';
+import { TemplateItem } from '../templates/templates.models';
+import { TemplatesDao } from '../templates/templates.dao';
 
 @injectable()
 export class DevicesService  {
@@ -32,6 +34,7 @@ export class DevicesService  {
         @inject('aws.sqs.deviceAssociations') private deviceAssociationQueue:string,
         @inject(TYPES.DevicesDao) private devicesDao: DevicesDao,
         @inject(TYPES.GroupsDao) private groupsDao: GroupsDao,
+        @inject(TYPES.TemplatesDao) private templatesDao: TemplatesDao,
         @inject(TYPES.GreengrassUtils) private ggUtils: GreengrassUtils,
         @inject(TYPES.CreateGroupVersionDeviceAssociationHandler) private createGroupVersionHandler: CreateGroupVersionHandler,
         @inject(TYPES.ExistingAssociationDeviceAssociationHandler) private existingAssociationHandler: ExistingAssociationHandler,
@@ -46,7 +49,7 @@ export class DevicesService  {
 
             // define the chain
             // note: this class turned out to be complex, therefore its functionality was
-            // broken down into a chain of responsibility too improve testability
+            // broken down into a chain of responsibility to improve testability
             this.getThingHandler1
                 .setNext(this.existingAssociationHandler)
                 .setNext(this.provisionThingHandler)
@@ -115,8 +118,10 @@ export class DevicesService  {
         const group = await this.getGroupItem(taskInfo.groupName);
         const ggGroup = await this.ggUtils.getGroupInfo(group.id);
         const ggGroupVersion = await this.ggUtils.getGroupVersionInfo(ggGroup.Id, ggGroup.LatestVersion);
-        const ggCoreVersion = await this.ggUtils.getCoreInfo(ggGroupVersion.CoreDefinitionVersionArn);
-        const ggDeviceVersion = await this.ggUtils.getDeviceInfo(ggGroupVersion.DeviceDefinitionVersionArn);
+        const [ggCoreVersion, ggDeviceVersion, template] = await Promise.all([
+            this.ggUtils.getCoreInfo(ggGroupVersion.CoreDefinitionVersionArn),
+            this.ggUtils.getDeviceInfo(ggGroupVersion.DeviceDefinitionVersionArn),
+            this.getTemplateItem(group.templateName, group.templateVersionNo)]);
 
         // mark as in progress
         taskInfo.status = 'InProgress';
@@ -124,9 +129,20 @@ export class DevicesService  {
 
         // execute the chain
         const request:DeviceAssociationModel = {
-            taskInfo, group, ggGroup, ggCoreVersion, ggDeviceVersion, ggGroupVersion
+            taskInfo, group, ggGroup, ggCoreVersion, ggDeviceVersion, ggGroupVersion, template
         };
-        await this.getThingHandler1.handle(request);
+
+        try {
+            await this.getThingHandler1.handle(request);
+        } catch (err) {
+            // something unexpected went wrong with the pipeline
+            if (request.group.taskStatus!=='Failure') {
+                request.group.taskStatus='Failure';
+                request.group.statusMessage=err.message;
+            }
+            this.saveGroupHandler.handle(request);
+        }
+
 
         logger.debug(`devices.service associateDevicesWithGroup: exit:`);
 
@@ -141,12 +157,27 @@ export class DevicesService  {
                 throw new Error('NOT_FOUND');
             }
         } catch (err) {
-            // TODO handle
             logger.error(`devices.service getGroupItem: err:${err}`);
             throw err;
         }
         logger.debug(`devices.service getGroupItem: exit: ${JSON.stringify(group)}`);
         return group;
+    }
+
+    private async getTemplateItem(name: string, versionNo:number) : Promise<TemplateItem> {
+        logger.debug(`devices.service getTemplateItem: in: name:${name}, versionNo:${versionNo}`);
+        let item: TemplateItem;
+        try {
+            item = await this.templatesDao.get(name, versionNo);
+            if (item===undefined) {
+                throw new Error('NOT_FOUND');
+            }
+        } catch (err) {
+            logger.error(`devices.service getTemplateItem: err:${err}`);
+            throw err;
+        }
+        logger.debug(`devices.service getTemplateItem: exit: ${JSON.stringify(item)}`);
+        return item;
     }
 
     public async getDeviceAssociationTask(groupId:string, taskId:string) : Promise<DeviceTaskSummary> {

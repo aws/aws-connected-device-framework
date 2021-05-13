@@ -12,7 +12,7 @@ export function handleError(e:Error, res:Response): void {
     if (e.name === 'ArgumentError' || e.message.startsWith('MISSING_REQUIRED')
      || e.message === 'FAILED_VALIDATION' || e.message === 'UNSUPPORTED_TRANSITION' ) {
         res.status(400).json({error: e.message}).end();
-    } else if (e.message === 'NOT_FOUND') {
+    } else if (e.message.endsWith('NOT_FOUND')) {
         res.status(404).json({error: 'Item not found'}).end();
     } else if (e.name==='ResourceNotFoundException') {
         res.status(404).json({error: e.message}).end();

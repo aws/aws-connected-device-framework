@@ -18,7 +18,7 @@ export class TemplatesAssembler {
             return undefined;
         }
 
-        const item = new TemplateItem();
+        const item= {};
 
         // common properties
         Object.keys(res).forEach(key=> {
@@ -26,7 +26,7 @@ export class TemplatesAssembler {
         });
 
         logger.debug(`templates.assembler fromResource: exit: item: ${JSON.stringify(item)}`);
-        return item;
+        return item as TemplateItem;
 
     }
 
@@ -38,15 +38,14 @@ export class TemplatesAssembler {
             return undefined;
         }
 
-        const resource = new TemplateResource();
-
+        const resource = {};
         // common properties
         Object.keys(item).forEach(key=> {
             resource[key] = item[key];
         });
 
         logger.debug(`templates.assembler toResource: exit: resource: ${JSON.stringify(resource)}`);
-        return resource;
+        return resource as TemplateResource;
 
     }
 

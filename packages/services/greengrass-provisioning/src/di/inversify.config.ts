@@ -9,35 +9,39 @@ import config from 'config';
 import { CDFConfigInjector } from '@cdf/config-inject';
 import { provisioningContainerModule } from '@cdf/provisioning-client';
 import AWS = require('aws-sdk');
-import { TemplatesService } from '../templates/templates.service';
-import { TemplatesAssembler } from '../templates/templates.assembler';
-import { TemplatesDao } from '../templates/templates.dao';
-import { DynamoDbUtils } from '../utils/dynamoDb.util';
-import { GroupsService } from '../groups/groups.service';
-import { GroupsAssembler } from '../groups/groups.assembler';
-import { GroupsDao } from '../groups/groups.dao';
-import { DevicesService } from '../devices/devices.service';
+import { CoreConfigHandler} from '../devices/handlers/coreConfig.handler';
+import { CreateGroupVersionHandler} from '../devices/handlers/createGroupVersion.handler';
+import { DeploymentsDao } from '../deployments/deployments.dao';
+import { DeploymentsService } from '../deployments/deployments.service';
 import { DevicesAssembler } from '../devices/devices.assembler';
 import { DevicesDao } from '../devices/devices.dao';
-import { DeploymentsService } from '../deployments/deployments.service';
-import { DeploymentsDao } from '../deployments/deployments.dao';
-import { S3Utils } from '../utils/s3.util';
+import { DevicesService } from '../devices/devices.service';
+import { DynamoDbUtils } from '../utils/dynamoDb.util';
+import { ExistingAssociationHandler} from '../devices/handlers/existingAssociation.handler';
+import { GetPrincipalHandler} from '../devices/handlers/getPrincipal.handler';
+import { GetThingHandler} from '../devices/handlers/getThing.handler';
 import { GreengrassUtils } from '../utils/greengrass.util';
+import { GroupsAssembler } from '../groups/groups.assembler';
+import { GroupsDao } from '../groups/groups.dao';
+import { GroupsService } from '../groups/groups.service';
+import { GroupTasksAssembler } from '../groupTasks/groupTasks.assembler';
+import { GroupTasksDao } from '../groupTasks/groupTasks.dao';
+import { GroupTasksService } from '../groupTasks/groupTasks.service';
+import { ProvisionThingHandler} from '../devices/handlers/provisonThing.handler';
+import { S3Utils } from '../utils/s3.util';
+import { SaveGroupHandler} from '../devices/handlers/saveGroup.handler';
 import { SubscriptionsService } from '../subscriptions/subscriptions.service';
+import { TemplatesAssembler } from '../templates/templates.assembler';
+import { TemplatesDao } from '../templates/templates.dao';
+import { TemplatesService } from '../templates/templates.service';
 
 // Note: importing @controller's carries out a one time inversify metadata generation...
-import '../templates/templates.controller';
-import '../groups/groups.controller';
-import '../devices/devices.controller';
 import '../deployments/deployments.controller';
+import '../devices/devices.controller';
+import '../groups/groups.controller';
+import '../groupTasks/groupTasks.controller';
 import '../subscriptions/subscriptions.controller';
-import {CreateGroupVersionHandler} from '../devices/handlers/createGroupVersion.handler';
-import {ExistingAssociationHandler} from '../devices/handlers/existingAssociation.handler';
-import {GetPrincipalHandler} from '../devices/handlers/getPrincipal.handler';
-import {GetThingHandler} from '../devices/handlers/getThing.handler';
-import {ProvisionThingHandler} from '../devices/handlers/provisonThing.handler';
-import {SaveGroupHandler} from '../devices/handlers/saveGroup.handler';
-import {CoreConfigHandler} from '../devices/handlers/coreConfig.handler';
+import '../templates/templates.controller';
 
 // Load everything needed to the Container
 export const container = new Container();
@@ -56,6 +60,10 @@ container.bind<TemplatesDao>(TYPES.TemplatesDao).to(TemplatesDao).inSingletonSco
 container.bind<GroupsService>(TYPES.GroupsService).to(GroupsService).inSingletonScope();
 container.bind<GroupsAssembler>(TYPES.GroupsAssembler).to(GroupsAssembler).inSingletonScope();
 container.bind<GroupsDao>(TYPES.GroupsDao).to(GroupsDao).inSingletonScope();
+
+container.bind<GroupTasksAssembler>(TYPES.GroupTasksAssembler).to(GroupTasksAssembler).inSingletonScope();
+container.bind<GroupTasksService>(TYPES.GroupTasksService).to(GroupTasksService).inSingletonScope();
+container.bind<GroupTasksDao>(TYPES.GroupTasksDao).to(GroupTasksDao).inSingletonScope();
 
 container.bind<DevicesService>(TYPES.DevicesService).to(DevicesService).inSingletonScope();
 container.bind<DevicesAssembler>(TYPES.DevicesAssembler).to(DevicesAssembler).inSingletonScope();

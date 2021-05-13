@@ -39,6 +39,10 @@ describe('ExistingAssociationHandler', () => {
                     status: 'Waiting'
                 }]
             },
+            template: {
+                name: 'template-001',
+                versionNo: 2
+            },
             group: {
                 name: 'group-1',
                 id: 'group-id-1',
@@ -96,6 +100,10 @@ describe('ExistingAssociationHandler', () => {
                     provisioningTemplate: 'device-template',
                     status: 'Waiting'
                 }]
+            },
+            template: {
+                name: 'template-001',
+                versionNo: 2
             },
             group: {
                 name: 'group-1',
@@ -180,6 +188,10 @@ describe('ExistingAssociationHandler', () => {
                     status: 'Waiting'
                 }]
             },
+            template: {
+                name: 'template-001',
+                versionNo: 2
+            },
             group: {
                 name: 'group-1',
                 id: 'group-id-1',
@@ -262,6 +274,10 @@ describe('ExistingAssociationHandler', () => {
                     provisioningTemplate: 'core-template',
                     status: 'Waiting'
                 }]
+            },
+            template: {
+                name: 'template-001',
+                versionNo: 2
             },
             group: {
                 name: 'group-1',

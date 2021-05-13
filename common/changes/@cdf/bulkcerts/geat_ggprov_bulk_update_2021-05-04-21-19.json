@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/bulkcerts",
+      "comment": "",
+      "type": "none"
+    }
+  ],
+  "packageName": "@cdf/bulkcerts",
+  "email": "deanhart@amazon.com"
+}

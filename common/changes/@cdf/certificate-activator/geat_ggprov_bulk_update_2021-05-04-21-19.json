@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/certificate-activator",
+      "comment": "",
+      "type": "none"
+    }
+  ],
+  "packageName": "@cdf/certificate-activator",
+  "email": "deanhart@amazon.com"
+}

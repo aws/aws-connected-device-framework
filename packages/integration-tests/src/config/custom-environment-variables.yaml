@@ -7,6 +7,8 @@ assetLibraryHistory:
   baseUrl: CDF_ASSETLIBRARYHISTORY_BASEURL
 commands:
   baseUrl: CDF_COMMANDS_BASEURL
+greengrassProvisioning:
+  baseUrl: CDF_GREENGRASSPROVISIONING_BASEURL
 provisioning:
   baseUrl: CDF_PROVISIONING_BASEURL
   templates:

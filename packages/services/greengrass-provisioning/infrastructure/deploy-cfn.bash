@@ -70,7 +70,7 @@ OPTIONAL ARGUMENTS
 EOF
 }
 
-while getopts ":e:c:v:g:n:i:a:y:z:C:A:x:s:R:P:" opt; do
+while getopts ":e:c:v:g:n:i:a:y:z:C:A:x:sR:P:" opt; do
   case $opt in
 
     e  ) export ENVIRONMENT=$OPTARG;;

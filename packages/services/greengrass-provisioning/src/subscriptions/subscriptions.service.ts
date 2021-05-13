@@ -15,6 +15,8 @@ import { GroupsDao } from '../groups/groups.dao';
 export class SubscriptionsService {
 
     constructor(
+        @inject('aws.accountId') private accountId: string,
+        @inject('aws.region') private region: string,
         @inject(TYPES.GroupsDao) private groupsDao: GroupsDao,
         @inject(TYPES.GreengrassUtils) private ggUtils: GreengrassUtils) {}
 
@@ -97,6 +99,21 @@ export class SubscriptionsService {
 
         logger.debug(`subscriptions.service createSubscriptionDefinitionVersion: exit: ${updatedSubscriptionsVersionArn}`);
         return updatedSubscriptionsVersionArn;
+    }
+
+    public expandSubscriptionTemplate(item: GreengrassSubscriptionItem, thingName:string, thingType:string, thingArn:string):GreengrassSubscriptionItem {
+        logger.debug(`subscriptions.service expandSubscriptionTemplate: in: item:${JSON.stringify(item)}, thingName"${thingName}, thingType:${thingType}, thingArn:${thingArn}`);
+        const updated = Object.assign({}, item);
+        Object.keys(updated).forEach(k=> {
+            updated[k] = updated[k]
+                .replace(/\${thingName}/g,thingName)
+                .replace(/\${thingType}/g, thingType)
+                .replace(/\${thingArn}/g, thingArn)
+                .replace(/\${region}/g, this.region)
+                .replace(/\${accountId}/g, this.accountId);
+        });
+        logger.debug(`subscriptions.service expandSubscriptionTemplate: exit: ${JSON.stringify(updated)}`);
+        return updated;
     }
 
 }

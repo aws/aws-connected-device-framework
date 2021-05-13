@@ -1,6 +1,7 @@
 import {DeviceTaskSummary} from '../devices.models';
 import {GroupItem} from '../../groups/groups.models';
 import AWS = require('aws-sdk');
+import { TemplateItem } from '../../templates/templates.models';
 
 export class DeviceAssociationModel {
 
@@ -13,6 +14,9 @@ export class DeviceAssociationModel {
     ggCoreVersion: AWS.Greengrass.CoreDefinitionVersion;
     ggDeviceVersion: AWS.Greengrass.DeviceDefinitionVersion;
     ggGroupVersion: AWS.Greengrass.GroupVersion;
+
+    // template info
+    template: TemplateItem;
 
     // thing info
     things?: {[thingName: string] : AWS.Iot.DescribeThingResponse}= {};

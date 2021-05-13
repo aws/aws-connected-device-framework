@@ -10,10 +10,10 @@ import chaiUuid = require('chai-uuid');
 use(chaiUuid);
 
 import { setDefaultTimeout, When, TableDefinition, Then, Given} from 'cucumber';
-import { RESPONSE_STATUS} from '../common/common.steps';
+import { AUTHORIZATION_TOKEN, RESPONSE_STATUS, validateExpectedAttributes} from '../common/common.steps';
 import {container} from '../../di/inversify.config';
 import { EventsourcesService, EventsService, MessagesDebugService, NOTIFICATIONS_CLIENT_TYPES, SubscriptionsService } from '@cdf/notifications-client/dist';
-import { EVENTSOURCE_NAME, SUBSCRIPTION_ID, EVENT_NAME, getEventIdFromName, createSubscription, SUBSCRIPTION_DETAILS, getAdditionalHeaders, validateExpectedAttributes, getSubscriptionIdFromPrincipal, PRINCIPAL_VALUE, USER_ID, updateSubscription } from './notifications.utils';
+import { EVENTSOURCE_NAME, SUBSCRIPTION_ID, EVENT_NAME, getEventIdFromName, createSubscription, SUBSCRIPTION_DETAILS, getAdditionalHeaders, getSubscriptionIdFromPrincipal, PRINCIPAL_VALUE, USER_ID, updateSubscription } from './notifications.utils';
 import { SubscriptionResource } from '@cdf/notifications-client/dist/client/subscriptions.model';
 import { SimulateIoTCoreMessageRequest } from '@cdf/notifications-client/dist/client/messages.model';
 import { logger } from '../utils/logger';
@@ -104,7 +104,7 @@ Then('last subscription exists with attributes', async function (data:TableDefin
 
     let r:SubscriptionResource;
     try {
-        r = await subscriptionsService.getSubscription(id, getAdditionalHeaders(this));
+        r = await subscriptionsService.getSubscription(id, getAdditionalHeaders(this[AUTHORIZATION_TOKEN]));
         expect(r, 'subscription').to.not.be.undefined;
         expect(r.id, 'id').equals(id);
         this[SUBSCRIPTION_DETAILS]=r;
@@ -124,7 +124,7 @@ Then('last subscription has not been alerted', async function () {
 
     let r:SubscriptionResource;
     try {
-        r = await subscriptionsService.getSubscription(id, getAdditionalHeaders(this));
+        r = await subscriptionsService.getSubscription(id, getAdditionalHeaders(this[AUTHORIZATION_TOKEN]));
         expect(r, 'subscription').to.not.be.undefined;
         expect(r.id, 'id').equals(id);
         expect(r.alerted, 'alerted').equals(false);
@@ -141,7 +141,7 @@ Then('last subscription has been alerted', async function () {
 
     let r:SubscriptionResource;
     try {
-        r = await subscriptionsService.getSubscription(id, getAdditionalHeaders(this));
+        r = await subscriptionsService.getSubscription(id, getAdditionalHeaders(this[AUTHORIZATION_TOKEN]));
         expect(r, 'subscription').to.not.be.undefined;
         expect(r.id, 'id').equals(id);
         expect(r.alerted, 'alerted').equals(true);
@@ -158,7 +158,7 @@ Then('no subscriptions exist for event {string}', async function (eventName:stri
     expect(eventId, 'eventId').to.not.be.undefined;
 
     try {
-        await subscriptionsService.listSubscriptionsForEvent(eventId, undefined, getAdditionalHeaders(this));
+        await subscriptionsService.listSubscriptionsForEvent(eventId, undefined, getAdditionalHeaders(this[AUTHORIZATION_TOKEN]));
         fail('A 404 should be thrown');
     } catch (err) {
         expect(err.status).eq(404);

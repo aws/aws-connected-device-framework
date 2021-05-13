@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/auth-devicecert",
+      "comment": "",
+      "type": "none"
+    }
+  ],
+  "packageName": "@cdf/auth-devicecert",
+  "email": "deanhart@amazon.com"
+}

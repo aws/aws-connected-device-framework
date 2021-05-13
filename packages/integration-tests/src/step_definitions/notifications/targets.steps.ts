@@ -9,7 +9,7 @@ import chaiUuid = require('chai-uuid');
 use(chaiUuid);
 
 import { setDefaultTimeout, When, TableDefinition} from 'cucumber';
-import { RESPONSE_STATUS} from '../common/common.steps';
+import { AUTHORIZATION_TOKEN, RESPONSE_STATUS} from '../common/common.steps';
 import {container} from '../../di/inversify.config';
 import { NOTIFICATIONS_CLIENT_TYPES, SubscriptionsService, TargetsService } from '@cdf/notifications-client/dist';
 import { SUBSCRIPTION_ID, createTarget, deleteTarget, getAdditionalHeaders } from './notifications.utils';
@@ -51,7 +51,7 @@ When('I remove {string} target with {string} {string}', async function (targetTy
     logger.debug(`I remove '${targetType}' target with '${key}' '${value}'`);
     this[RESPONSE_STATUS]=null;
     try {
-        const subscription = await subscriptionsService.getSubscription(this[SUBSCRIPTION_ID], getAdditionalHeaders(this));
+        const subscription = await subscriptionsService.getSubscription(this[SUBSCRIPTION_ID], getAdditionalHeaders(this[AUTHORIZATION_TOKEN]));
         logger.debug(`\t subscription: ${JSON.stringify(subscription)}`);
         expect(subscription, 'subscription').to.not.be.undefined;
         const target = subscription?.targets?.[targetType]?.filter( (t:TargetResource) => t[key]===value)?.[0];

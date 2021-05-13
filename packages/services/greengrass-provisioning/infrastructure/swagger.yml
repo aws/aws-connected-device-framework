@@ -107,6 +107,8 @@ paths:
       description: >
         Create 1 or more new Greengrass groups based on a pre-defined template.
 
+        This is a synchronous call, meaning that the number of Greengrass Groups requested are created within the API Gateeway execution limit of 30s. It is recommended instead that the asynchronous `POST /groupTasks` call be used which is much more scalable.
+
       operationId: createGroups
       requestBody:
         content:
@@ -149,6 +151,95 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
 
+
+  "/groupTasks":
+    post:
+      tags:
+        - Groups
+      summary: Create new Greengrass groups from a template.
+      description: >
+        Create 1 or more new Greengrass groups based on a pre-defined template.
+
+        This is an asynchronous call. This call will create a task which will return quickly with a `taskId`. The task will asynchronously create the requested Greengrass groups in the background. Use the `GET /groupTasks/:taskId` to retrieve the status of the task.
+
+      operationId: createGroupTask
+      requestBody:
+        content:
+          application/vnd.aws-cdf-v1.0+json:
+            schema:
+              $ref: '#/components/schemas/GroupList'
+            examples:
+              NewGroups:
+                value:
+                  groups:
+                    - name: my-group-one
+                      templateName: my-template
+                    - name: my-group-two
+                      templateName: my-template
+                      templateVersionNo: 2
+      responses:
+        "202":
+          description: Accepted
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: "#/components/schemas/GroupTaskSummary"
+
+    put:
+      tags:
+        - Groups
+      summary: Update existing Greengrass groups from a template.
+      description: >
+        Update 1 or more new Greengrass groups based on a pre-defined template.
+
+        This is an asynchronous call. This call will create a task which will return quickly with a `taskId`. The task will asynchronously update the requested Greengrass groups in the background. Use the `GET /groupTasks/:taskId` to retrieve the status of the task.
+
+        If `templateName` is not provided, the existing `templateName` frm the Greengrass group will be used. 
+        
+        If `templateVersionNo` is not provided, the latest version of the identified template will be used.
+
+      operationId: updateGroupTask
+      requestBody:
+        content:
+          application/vnd.aws-cdf-v1.0+json:
+            schema:
+              $ref: '#/components/schemas/GroupList'
+            examples:
+              NewGroups:
+                value:
+                  groups:
+                    - name: my-group-one
+                    - name: my-group-two
+                      templateName: my-template
+                    - name: my-group-three
+                      templateName: my-template
+                      templateVersionNo: 2
+      responses:
+        "202":
+          description: Accepted
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: "#/components/schemas/GroupTaskSummary"
+
+  
+  "/groupTasks/{groupTaskId}":
+    parameters:
+      - $ref: '#/components/parameters/groupTaskId'
+    get:
+      tags:
+        - Groups
+      summary: Retrieves details about a specific group task.
+      operationId: getGroupTask
+      responses:
+        "200":
+          description: OK
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: "#/components/schemas/GroupTaskSummary"
+        "404":
+          $ref: "#/components/responses/NotFound"
 
   "/groups/{groupName}/deviceTasks":
     parameters:
@@ -333,6 +424,14 @@ components:
       schema:
         type: string
 
+    groupTaskId:
+      name: groupTaskId
+      in: path
+      description: Group task Id
+      required: true
+      schema:
+        type: string
+
     deviceTaskId:
       name: deviceTaskId
       in: path
@@ -389,6 +488,13 @@ components:
           schema:
             type: string
 
+    Accepted:
+      description: Accepted for processing
+      headers:
+        location:
+          schema:
+            type: string
+
     NoContent:
       description: No content
 
@@ -432,6 +538,11 @@ components:
         groupVersionId:
           type: string
           description: The version ID of the Greengrass Group being used as a template.
+        subscriptions:
+          type: array
+          description: A list of subscription templates to be applied to devices that are added to the group.
+          items:
+            $ref: "#/components/schemas/SubscriptionTemplateMap"
         createdAt:
           type: string
           format: 'date-time'
@@ -453,6 +564,40 @@ components:
         createdAt: 2020-03-16T21:42:53.594Z
         updatedAt: 2020-03-16T21:42:53.594Z
         enabled: true
+
+    SubscriptionTemplateMap:
+      type: object
+      properties:
+        __all:
+          description: Array of subscriptions to apply to all thing.
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              $ref: "#/components/schemas/SubscriptionTemplate"
+        thingType:
+          description: Array of subscriptions to apply to a thing of a specific thingType.
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              $ref: "#/components/schemas/SubscriptionTemplate"
+
+    SubscriptionTemplate:
+      type: object
+      properties:
+        id:
+          type: string
+          description: A descriptive or arbitrary ID for the subscription. This value must be unique within the Greengrass group once any tokens have been expanded. May include `${thingName}`, `${thingType}`, `${thingArn}`, `${region}` and `${account}` tokens.
+        source:
+          type: string
+          description: The source of the subscription. Can be a thing ARN, a Lambda function ARN, a connector ARN, 'cloud' (which represents the AWS IoT cloud), or 'GGShadowService'. May include `${thingName}`, `${thingType}`, `${thingArn}`, `${region}` and `${account}` tokens.
+        subject:
+          type: string
+          description: The MQTT topic used to route the message. May include `${thingName}`, `${thingType}`, `${thingArn}`, `${region}` and `${account}` tokens.
+        target:
+          type: string
+          description: Where the message is sent to. Can be a thing ARN, a Lambda function ARN, a connector ARN, 'cloud' (which represents the AWS IoT cloud), or 'GGShadowService'. May include `${thingName}`, `${thingType}`, `${thingArn}`, `${region}` and `${account}` tokens.
 
     TemplateList:
       properties:
@@ -821,7 +966,6 @@ components:
             createdAt: '2020-06-08T19:35:54.327Z'
             updatedAt: '2020-06-08T19:35:54.327Z'
 
-
     GroupList:
       properties:
         groups:
@@ -858,7 +1002,6 @@ components:
             createdAt: '2020-06-08T19:35:54.327Z'
             updatedAt: '2020-06-08T19:35:54.327Z'
             deployed: false
-
 
     DeviceDeployment:
       type: object
@@ -1007,6 +1150,60 @@ components:
             deploymentId: ebc83cfc-922f-4ac9-af01-269629d4e8f8
             deploymentType: NewDeployment
             deploymentStatus: Success
+            createdAt: '2020-06-08T19:35:54.327Z'
+            updatedAt: '2020-06-08T19:35:54.327Z'
+        createdAt: '2020-06-08T19:35:54.327Z'
+        updatedAt: '2020-06-08T19:35:54.327Z'
+
+    GroupTaskSummary:    
+      type: object
+      properties:
+        taskId:
+          type: string
+          description: Unique ID of the task.
+        taskStatus:
+          type: string
+          enum: [Waiting, InProgress, Success, Failure]
+          description: The group task status.
+          readOnly: true
+        statusMessage:
+          type: string
+          description: Descriptive message regarding the status, such as an error message.
+          readOnly: true
+        type:
+          type: string
+          enum: [create, Update]
+          description: The group task type.
+          readOnly: true
+        groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/Group'
+          description: Groups managed via this task.
+          readOnly: true
+        createdAt:
+          type: string
+          format: 'date-time'
+          description: Date/time the group was created.
+          readOnly: true
+        updatedAt:
+          type: string
+          format: 'date-time'
+          description: Date/time the group was updated.
+          readOnly: true
+      example:
+        taskId: hshjd7huhu3jid
+        taskStatus: Success
+        type: Create
+        groups:
+          - name: my-greengrass-group
+            idd: f4571cb4-5865-4c2f-b58e-402525197a85
+            versionId: 6a0a194f-1c8e-418e-9b00-48031e1a7fe2
+            versinNo: 1
+            templateName: my-template
+            templateVersionNo: 2
+            deployed: false
+            taskStatus: Success
             createdAt: '2020-06-08T19:35:54.327Z'
             updatedAt: '2020-06-08T19:35:54.327Z'
         createdAt: '2020-06-08T19:35:54.327Z'

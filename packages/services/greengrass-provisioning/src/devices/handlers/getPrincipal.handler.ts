@@ -35,14 +35,24 @@ export class GetPrincipalHandler extends AbstractDeviceAssociationHandler {
 
             ow(device.thingName, ow.string.nonEmpty);
 
+            if (request.things[device.thingName]===undefined) {
+                // no thing
+                continue;
+            }
+
             // Retrieve the certificate associated with the device
-            const certInfo = await this.iot.listThingPrincipals({thingName: device.thingName}).promise();
+            let certInfo:AWS.Iot.ListThingPrincipalsResponse;
+            try {
+                certInfo = await this.iot.listThingPrincipals({thingName: device.thingName}).promise();
+            } catch (err) {
+                // swallow
+            }
 
             // Make sure a cert is attached
             if (certInfo?.principals===undefined || certInfo.principals.length===0) {
                 logger.warn(`devices.service associateDevicesWithGroup: device:${device.thingName} has no associated cert`);
                 device.status = 'Failure';
-                device.statusMessage = 'Registered Thing has no associated certificate';
+                device.statusMessage = 'Thing has no associated certificate';
                 continue;
             }
 

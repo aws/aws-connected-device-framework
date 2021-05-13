@@ -11,6 +11,7 @@ import { getEventIdFromName, getAdditionalHeaders, getEventSourceIdFromName } fr
 import { Before, setDefaultTimeout} from 'cucumber';
 import { container } from '../di/inversify.config';
 import { EventSourceType } from '@cdf/notifications-client/dist/client/eventsources.model';
+import { AUTHORIZATION_TOKEN } from '../step_definitions/common/common.steps';
 
 setDefaultTimeout(30 * 1000);
 
@@ -33,19 +34,19 @@ async function teardown_all(world:unknown, eventSourceName:string, eventName?:st
             const eventId = await getEventIdFromName(eventsourceService, eventService, world, eventSourceName, eventName);
             if (eventId) {
                 try {
-                    const subscriptions = await subscriptionsService.listSubscriptionsForEvent(eventId, undefined, getAdditionalHeaders(world));
+                    const subscriptions = await subscriptionsService.listSubscriptionsForEvent(eventId, undefined, getAdditionalHeaders(world[AUTHORIZATION_TOKEN]));
                     if (subscriptions?.results?.length>0) {
                         for(const s of subscriptions.results) {
-                            await subscriptionsService.deleteSubscription(s.id, getAdditionalHeaders(world));
+                            await subscriptionsService.deleteSubscription(s.id, getAdditionalHeaders(world[AUTHORIZATION_TOKEN]));
                         }
                     }
                 } catch (e) {
                     // ignore
                 }
-                await eventService.deleteEvent(eventId, getAdditionalHeaders(world));
+                await eventService.deleteEvent(eventId, getAdditionalHeaders(world[AUTHORIZATION_TOKEN]));
             }
         }
-        await eventsourceService.deleteEventSource(eventSourceId, getAdditionalHeaders(world));
+        await eventsourceService.deleteEventSource(eventSourceId, getAdditionalHeaders(world[AUTHORIZATION_TOKEN]));
     }
 }
 
@@ -80,9 +81,9 @@ async function teardown_events(world:unknown) {
     if (eventSourceId) {
         const eventId = await getEventIdFromName(eventsourceService, eventService, world, eventSourceId, 'TEST-events-event');
         if (eventId) {
-            await eventService.deleteEvent(eventId, getAdditionalHeaders(world))
+            await eventService.deleteEvent(eventId, getAdditionalHeaders(world[AUTHORIZATION_TOKEN]))
         }
-        await eventsourceService.deleteEventSource(eventSourceId, getAdditionalHeaders(world));
+        await eventsourceService.deleteEventSource(eventSourceId, getAdditionalHeaders(world[AUTHORIZATION_TOKEN]));
     }
 }
 
@@ -100,7 +101,7 @@ Before({tags: '@setup_events'}, async function () {
                 batteryLevel: 'bl'
             }
         }
-    }, getAdditionalHeaders(this));
+    }, getAdditionalHeaders(this[AUTHORIZATION_TOKEN]));
 });
 
 Before({tags: '@teardown_events'}, async function () {
@@ -113,15 +114,15 @@ async function teardown_subscriptions(world:unknown) {
     if (eventSourceId) {
         const eventId = await getEventIdFromName(eventsourceService, eventService, world, 'TEST-subscriptions', 'TEST-subscriptions-event');
         if (eventId) {
-            const subscriptions = await subscriptionsService.listSubscriptionsForEvent(eventId, undefined, getAdditionalHeaders(world));
+            const subscriptions = await subscriptionsService.listSubscriptionsForEvent(eventId, undefined, getAdditionalHeaders(world[AUTHORIZATION_TOKEN]));
             if (subscriptions?.results?.length>0) {
                 for(const s of subscriptions.results) {
-                    await subscriptionsService.deleteSubscription(s.id, getAdditionalHeaders(world));
+                    await subscriptionsService.deleteSubscription(s.id, getAdditionalHeaders(world[AUTHORIZATION_TOKEN]));
                 }
             }
-            await eventService.deleteEvent(eventId, getAdditionalHeaders(world))
+            await eventService.deleteEvent(eventId, getAdditionalHeaders(world[AUTHORIZATION_TOKEN]))
         }
-        await eventsourceService.deleteEventSource(eventSourceId, getAdditionalHeaders(world));
+        await eventsourceService.deleteEventSource(eventSourceId, getAdditionalHeaders(world[AUTHORIZATION_TOKEN]));
     }
 }
 
@@ -139,7 +140,7 @@ Before({tags: '@setup_subscriptions'}, async function () {
                 batteryLevel: 'bl'
             }
         }
-    }, getAdditionalHeaders(this));
+    }, getAdditionalHeaders(this[AUTHORIZATION_TOKEN]));
 
     // create the `TEST-subscriptions-event` event
     await eventService.createEvent(eventSourceId, {
@@ -159,7 +160,7 @@ Before({tags: '@setup_subscriptions'}, async function () {
             default: 'The battery for bowl {{=it.principalValue}} is low.',
             small: '{{=it.principalValue}} battery low'
         }
-    }, getAdditionalHeaders(this));
+    }, getAdditionalHeaders(this[AUTHORIZATION_TOKEN]));
 });
 
 Before({tags: '@teardown_subscriptions'}, async function () {
