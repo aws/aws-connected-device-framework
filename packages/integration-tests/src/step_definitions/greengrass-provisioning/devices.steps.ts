@@ -37,7 +37,8 @@ When('I add devices to greengrass-provisioning group {string} with attributes:',
         world.lastGroupName = groupName;
     } catch (err) {
         world.errStatus=err.status;
-        fail(`associateDevicesWithGroup failed, err: ${JSON.stringify(err)}`);
+        // fail(`associateDevicesWithGroup failed, err: ${JSON.stringify(err}`);
+        fail(`associateDevicesWithGroup failed, err: ${err.message}`);
     }
 });
 

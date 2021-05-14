@@ -773,6 +773,12 @@ Resources:
               - s3:GetObjectVersion
               Resource:
               - arn:aws:s3:::*/*
+            - Sid: greengrass
+              Action:
+                - 'greengrass:*'
+              Effect: Allow
+              Resource:
+                - !Sub 'arn:aws:greengrass:${AWS::Region}:${AWS::AccountId}:*'
                    
   CodePipelineRole:
     Type: 'AWS::IAM::Role'
