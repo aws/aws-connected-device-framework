@@ -51,7 +51,7 @@ notifications_invoke_url=$(echo $stack_exports \
     | jq -r --arg notifications_invoke_url_export "$notifications_invoke_url_export" \
     '.Exports[] | select(.Name==$notifications_invoke_url_export) | .Value')
 
-greengrass_provisioning_invoke_url_export="$GREENGRASS_PROVISIONING_STACK_NAME-ApiGatewayUrl"
+greengrass_provisioning_invoke_url_export="$GREENGRASS_PROVISIONING_STACK_NAME-apigatewayurl"
 greengrass_provisioning_invoke_url=$(echo $stack_exports \
     | jq -r --arg greengrass_provisioning_invoke_url_export "$greengrass_provisioning_invoke_url_export" \
     '.Exports[] | select(.Name==$greengrass_provisioning_invoke_url_export) | .Value')
