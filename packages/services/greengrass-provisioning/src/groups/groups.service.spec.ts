@@ -21,7 +21,7 @@ describe('GroupsService', () => {
     let mockedGroupsDao: jest.Mocked<GroupsDao>;
     let mockedGreengrassUtils: jest.Mocked<GreengrassUtils>;
     let mockedGreengrass: AWS.Greengrass;
-    let mockedIot: AWS.Iot;
+    // let mockedIot: AWS.Iot;
 
     let instance: GroupsService;
 
@@ -32,11 +32,11 @@ describe('GroupsService', () => {
         mockedGreengrassUtils = createMockInstance(GreengrassUtils);
         const mockedGreengrassFactory = () => mockedGreengrass;
         mockedGreengrass = new AWS.Greengrass();
-        const mockedIotFactory = () => mockedIot;
-        mockedIot = new AWS.Iot;
+        // const mockedIotFactory = () => mockedIot;
+        // mockedIot = new AWS.Iot;
 
         instance = new GroupsService(
-            mockedSubscriptionsService, mockedTemplatesDao, mockedGroupsDao, promisesConcurrency, mockedGreengrassUtils, mockedGreengrassFactory, mockedIotFactory);
+            mockedSubscriptionsService, mockedTemplatesDao, mockedGroupsDao, promisesConcurrency, mockedGreengrassUtils, mockedGreengrassFactory);
     });
     it('createGroups: happy path', async(): Promise<void> => {
 
@@ -457,6 +457,89 @@ describe('GroupsService', () => {
 
     });
 
+    it('updateGroups: expand function env vars', async() => {
+
+        // stubs
+        const input:GroupItemList = {
+            groups:[{
+                name: 'name-1',
+                templateName: 'template-1',
+                templateVersionNo: 2
+            }]
+        };
+
+        const group1:GroupItem = stubGroupItem1()
+
+        const template1_v1 = stubTemplate1();
+        const template1_v2 = stubTemplate1();
+        template1_v2.versionNo= 2;
+        template1_v2.groupVersionId = 'template-group-id-1-v2';
+
+        // mock - get group items
+        mockedGroupsDao.get = jest.fn()
+            .mockReturnValueOnce(group1);
+
+        // mock - get templates for both template version
+        mockedTemplatesDao.get = jest.fn()
+            .mockReturnValueOnce(template1_v1)
+            .mockReturnValueOnce(template1_v2);
+
+        // mock - get gg group's for both
+        const mockGetGgGroupResponse1 = stubGetGroupResponse1();
+        const mockGetGgGroup = mockedGreengrass.getGroup = jest.fn()
+            .mockReturnValueOnce(mockGetGgGroupResponse1);
+
+        // mock - get gg version's for both groups, followed by gg versions of both templates
+        const mockGetGroupVersionResponse1 = stubGetGroupVersionResponse('group-id-1','group-id-1-v1',1);
+        const mockGetGroupVersionResponse2 = stubGetGroupVersionResponse(template1_v1.groupId,template1_v1.groupVersionId,2);
+        const mockGetGroupVersionResponse3 = stubGetGroupVersionResponse(template1_v2.groupId,template1_v2.groupVersionId,3);
+        const mockGetGroupVersion = mockedGreengrass.getGroupVersion = jest.fn()
+            .mockReturnValueOnce(mockGetGroupVersionResponse1)
+            .mockReturnValueOnce(mockGetGroupVersionResponse2)
+            .mockReturnValueOnce(mockGetGroupVersionResponse3);
+
+        // mock the env var processing
+        mockedGreengrassUtils.processFunctionEnvVarTokens = jest.fn()
+            .mockReturnValueOnce('updated-function-version-arn');
+
+        // mock - update groups
+        const mockCreateGroupVersionResponse1 = stubCreateGroupVersionResponse1();
+        const mockCreateGroupVersion = mockedGreengrass.createGroupVersion = jest.fn()
+            .mockReturnValueOnce(mockCreateGroupVersionResponse1);
+
+        // mock - save
+        mockedGroupsDao.saveGroups = jest.fn();
+
+        // execute
+        const actual = await instance.updateGroups(input);
+
+        // verify everything was called the expected no. of times
+        expect(mockedGroupsDao.get.mock.calls.length).toBe(1);
+        expect(mockedTemplatesDao.get.mock.calls.length).toBe(2);
+        expect(mockGetGgGroup.mock.calls.length).toBe(1);
+        expect(mockGetGroupVersion.mock.calls.length).toBe(3);
+        expect(mockedGreengrassUtils.processFunctionEnvVarTokens.mock.calls.length).toBe(1);
+        expect(mockCreateGroupVersion.mock.calls.length).toBe(1);
+        expect(mockedGroupsDao.saveGroups.mock.calls.length).toBe(1);
+
+        // verify the response
+        expect(actual).toBeDefined();
+        expect(actual.groups.length).toBe(input.groups.length);
+
+        const g1 = actual.groups[0];
+        expect(g1.name).toBe('name-1');
+        expect(g1.id).toBe('group-id-1');
+        expect(g1.versionNo).toBe(2);
+        expect(g1.versionId).toBe('group-id-1-v2');
+        expect(g1.arn).toBe('group-arn-1');
+        expect(g1.templateName).toBe('template-1');
+        expect(g1.templateVersionNo).toBe(2);
+        expect(g1.createdAt).toBeDefined();
+        expect(g1.updatedAt).toBeDefined();
+        expect(g1.deployed).toBe(false);
+        expect(g1.taskStatus).toBe('Success');
+
+    });
 
     it('updateGroups: process updated subscriptions', async() => {
 
@@ -624,28 +707,26 @@ describe('GroupsService', () => {
             .mockReturnValueOnce(mockUpdatedTemplateGetSubscriptionInfoResponse);
 
         // mock get things
-        const mockDescribeThingResponseResponse1 = new MockAWSPromise<AWS.Iot.DescribeThingResponse>();
-        mockDescribeThingResponseResponse1.response = {
-            thingName: 'thing1',
-            thingArn: 'arn:aws:iot:us-west-2:123456789012:thing/thing1',
-            thingTypeName: 'type1'
-        };
-        const mockDescribeThingResponseResponse2 = new MockAWSPromise<AWS.Iot.DescribeThingResponse>();
-        mockDescribeThingResponseResponse2.response = {
-            thingName: 'thing2',
-            thingArn: 'arn:aws:iot:us-west-2:123456789012:thing/thing2',
-            thingTypeName: 'type2'
-        };
-        const mockDescribeThingResponseResponse3 = new MockAWSPromise<AWS.Iot.DescribeThingResponse>();
-        mockDescribeThingResponseResponse3.response = {
-            thingName: 'core1',
-            thingArn: 'arn:aws:iot:us-west-2:123456789012:thing/core1',
-            thingTypeName: 'type3'
-        };
-        const mockDescribeThingSpy = mockedIot.describeThing = jest.fn()
-            .mockReturnValueOnce(mockDescribeThingResponseResponse1)
-            .mockReturnValueOnce(mockDescribeThingResponseResponse2)
-            .mockReturnValueOnce(mockDescribeThingResponseResponse3);
+        const mockGetThingsSpy = mockedGreengrassUtils.getThings = jest.fn()
+            .mockReturnValueOnce({
+                core1: {
+                    thingName: 'core1',
+                    thingArn: 'arn:aws:iot:us-west-2:123456789012:thing/core1',
+                    thingTypeName: 'type3'
+                }
+            })
+            .mockReturnValueOnce({
+                thing1: {
+                    thingName: 'thing1',
+                    thingArn: 'arn:aws:iot:us-west-2:123456789012:thing/thing1',
+                    thingTypeName: 'type1'
+                },
+                thing2: {
+                    thingName: 'thing2',
+                    thingArn: 'arn:aws:iot:us-west-2:123456789012:thing/thing2',
+                    thingTypeName: 'type2'
+                }
+            })
 
         // mock subscription expansion
         mockedSubscriptionsService.expandSubscriptionTemplate = jest.fn()
@@ -687,7 +768,7 @@ describe('GroupsService', () => {
         expect(mockGetSubscriptionInfoSpy.mock.calls.length).toBe(3);
         expect(mockGetDeviceInfoSpy.mock.calls.length).toBe(1);
         expect(mockGetCoreInfoSpy.mock.calls.length).toBe(1);
-        expect(mockDescribeThingSpy.mock.calls.length).toBe(3);
+        expect(mockGetThingsSpy.mock.calls.length).toBe(2);
         expect(mockedSubscriptionsService.expandSubscriptionTemplate.mock.calls.length).toBe(8);
         expect(mockCreateSubscriptionDefinitionVersionSpy.mock.calls.length).toBe(1);
         expect(mockCreateSubscriptionDefinitionVersionSpy.mock.calls[0][0]).toEqual('arn:aws:greengrass:us-west-2:123456789012:/greengrass/definition/subscriptions/11111111-1111-1111-1111-111111111123/versions/11111111-1111-1111-1111-111111111124');

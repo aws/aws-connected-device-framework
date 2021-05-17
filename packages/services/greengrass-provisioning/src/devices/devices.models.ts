@@ -62,6 +62,7 @@ export interface CdfProvisioningParameters {
 		stateName?: string;
 		country?: string;
 		emailAddress?: string;
+		daysExpiry?:number;
 	};
 }
 

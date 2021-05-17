@@ -753,6 +753,8 @@ components:
                   type: string
                 emailAddress:
                   type: string
+                daysExpiry:
+                  type: number
         syncShadow:
           type: boolean
           description: If true, the core's local shadow is synced with the cloud automatically.

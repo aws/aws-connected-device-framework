@@ -149,9 +149,10 @@ describe('CreateGroupVersionHandler', () => {
         // verify a new greengrass group version was created as expected
         expect(mockedGreengrassUtils.createGroupVersion.mock.calls[0][0]).toEqual(input.ggGroup.Id);
         expect(mockedGreengrassUtils.createGroupVersion.mock.calls[0][1]).toEqual(input.ggGroupVersion);
-        expect(mockedGreengrassUtils.createGroupVersion.mock.calls[0][2]).toEqual('arn:aws:greengrass:us-west-0:123456789012:/greengrass/definition/cores/core-def-1/versions/core-def-version-2');
-        expect(mockedGreengrassUtils.createGroupVersion.mock.calls[0][3]).toEqual('arn:aws:greengrass:us-west-0:123456789012:/greengrass/definition/devices/device-def-1/versions/device-def-version-2');
-        expect(mockedGreengrassUtils.createGroupVersion.mock.calls[0][4]).toEqual(undefined);
+        expect(mockedGreengrassUtils.createGroupVersion.mock.calls[0][2]).toEqual(undefined);
+        expect(mockedGreengrassUtils.createGroupVersion.mock.calls[0][3]).toEqual('arn:aws:greengrass:us-west-0:123456789012:/greengrass/definition/cores/core-def-1/versions/core-def-version-2');
+        expect(mockedGreengrassUtils.createGroupVersion.mock.calls[0][4]).toEqual('arn:aws:greengrass:us-west-0:123456789012:/greengrass/definition/devices/device-def-1/versions/device-def-version-2');
+        expect(mockedGreengrassUtils.createGroupVersion.mock.calls[0][5]).toEqual(undefined);
 
     });
 

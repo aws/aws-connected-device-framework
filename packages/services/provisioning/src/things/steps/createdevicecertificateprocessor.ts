@@ -6,6 +6,7 @@ import { TYPES } from '../../di/types';
 import AWS = require('aws-sdk');
 import * as pem from 'pem';
 import ow from 'ow';
+import { CertInfo } from '../things.models';
 
 @injectable()
 export class CreateDeviceCertificateStepProcessor implements ProvisioningStepProcessor {
@@ -16,7 +17,7 @@ export class CreateDeviceCertificateStepProcessor implements ProvisioningStepPro
   public constructor(
     @inject(TYPES.IotFactory) iotFactory: () => AWS.Iot,
     @inject(TYPES.SSMFactory) ssmFactory: () => AWS.SSM,
-    @inject('deviceCertificateExpiryDays') private certificateExpiryDays: number) {
+    @inject('deviceCertificateExpiryDays') private defaultExpiryDays: number) {
 
       this._iot = iotFactory();
       this._ssm = ssmFactory();
@@ -28,8 +29,9 @@ export class CreateDeviceCertificateStepProcessor implements ProvisioningStepPro
         if (stepInput.cdfProvisioningParameters === null || stepInput.cdfProvisioningParameters === undefined) {
             throw new Error('REGISTRATION_FAILED: template called for creation of certificate but cdfProvisioningParameters were not supplied');
         }
-
-        if (stepInput.cdfProvisioningParameters.certInfo === null || stepInput.cdfProvisioningParameters.certInfo === undefined) {
+        
+        const certInfo = stepInput?.cdfProvisioningParameters?.certInfo;
+        if (certInfo === undefined) {
             throw new Error('REGISTRATION_FAILED: template called for creation of certificate but certificate information was not not supplied');
         }
 
@@ -51,8 +53,8 @@ export class CreateDeviceCertificateStepProcessor implements ProvisioningStepPro
         const caKey = results[1];
         const privateKey = results[2];
 
-        const csr = await this.createCSR(privateKey, stepInput.cdfProvisioningParameters.certInfo);
-        const certificate = await this.createCertificate(csr, caKey, caPem);
+        const csr = await this.createCSR(privateKey,certInfo);
+        const certificate = await this.createCertificate(csr, certInfo.daysExpiry ?? this.defaultExpiryDays,  caKey, caPem);
 
         output.parameters.CaCertificatePem = caPem;
         output.parameters.CertificatePem = certificate;
@@ -100,7 +102,7 @@ export class CreateDeviceCertificateStepProcessor implements ProvisioningStepPro
     }
 
     // generate certificate signing request
-    private createCSR(privateKey:string, certInfo: {[key:string]:string}) : Promise<string> {
+    private createCSR(privateKey:string, certInfo: CertInfo) : Promise<string> {
         logger.debug(`CreateDeviceCertificateStepProcessor: createCSR: in: privateKey: REDACTED, certInfo:${JSON.stringify(certInfo)}`);
         /* eslint-disable @typescript-eslint/no-explicit-any */
         return new Promise((resolve:any,reject:any) =>  {
@@ -125,11 +127,11 @@ export class CreateDeviceCertificateStepProcessor implements ProvisioningStepPro
         });
     }
 
-    private createCertificate(csr:string, rootKey:string, rootPem:string) : Promise<string> {
-        logger.debug(`CreateDeviceCertificateStepProcessor: createCertificate: in: csr:${csr}, rootKey:${rootKey}, rootPem:${rootPem}`);
+    private createCertificate(csr:string, days:number, rootKey:string, rootPem:string) : Promise<string> {
+        logger.debug(`CreateDeviceCertificateStepProcessor: createCertificate: in: csr:${csr}, days:${days}, rootKey:${rootKey}, rootPem:${rootPem}`);
         /* eslint-disable @typescript-eslint/no-explicit-any */
         return new Promise((resolve:any,reject:any) =>  {
-            pem.createCertificate({csr, days: this.certificateExpiryDays, serviceKey:rootKey, serviceCertificate:rootPem}, (err:any, data:any) => {
+            pem.createCertificate({csr, days, serviceKey:rootKey, serviceCertificate:rootPem}, (err:any, data:any) => {
                 if(err) {
                     logger.debug(`CreateDeviceCertificateStepProcessor: createCertificate: err:${JSON.stringify(err)}`);
                     return reject(err);

@@ -30,6 +30,7 @@ export class CertificatesTaskService {
                         @inject('deviceCertificateInfo.emailAddress') private emailAddress: string,
                         @inject('deviceCertificateInfo.distinguishedNameQualifier') private distinguishedNameQualifier: string,
                         @inject('defaults.chunkSize') private defaultChunkSize: number,
+                        @inject('deviceCertificateExpiryDays') private defaultDaysExpiry: number,
                         @inject(TYPES.CertificatesTaskDao) private dao: CertificatesTaskDao,
                         @inject(TYPES.SNSFactory) snsFactory: () => AWS.SNS) {
         this._sns  =  snsFactory();
@@ -40,6 +41,15 @@ export class CertificatesTaskService {
 
         
         ow(caAlias, ow.string.nonEmpty);
+        if (certInfo?.daysExpiry) {
+            /* 
+                SSL Certificate Max validity period
+                The maximum validity period of TLS/SSL certificates is currently at 825 days (2 years, 3 month, and 5 days). 
+                The validity period was sheared from 10 years down to 5 years, and finally to 2 years, owing to the security 
+                concerns associated with protracted validity periods.
+            */
+            ow(certInfo.daysExpiry, ow.number.greaterThan(0).lessThanOrEqual(825));
+        }
 
         // validate CertInfo
         const validationResult = await this.validateCertInfo(certInfo);
@@ -94,39 +104,42 @@ export class CertificatesTaskService {
         ow(quantity, ow.number.greaterThan(0));
 
         // Populate certInfo from config file if no arguments have been supplied
-        if (typeof certInfo.commonName === 'undefined') {
+        if (certInfo.commonName === undefined) {
             certInfo.commonName = {
                 generator: CommonNameGenerator.static,
                 commonNameStatic: this.commonName
             };
         }
-        if (typeof certInfo.commonNameList === 'undefined') {
+        if (certInfo.commonNameList === undefined) {
             certInfo.commonNameList = [];
         }
         
-        if (typeof certInfo.organization === 'undefined') {
+        if (certInfo.organization === undefined) {
             certInfo.organization = this.organization;
         }
-        if (typeof certInfo.organizationalUnit === 'undefined') {
+        if (certInfo.organizationalUnit === undefined) {
             certInfo.organizationalUnit = this.organizationalUnit;
         }
-        if (typeof certInfo.locality === 'undefined') {
+        if (certInfo.locality === undefined) {
             certInfo.locality = this.locality;
         }
-        if (typeof certInfo.stateName === 'undefined') {
+        if (certInfo.stateName === undefined) {
             certInfo.stateName = this.stateName;
         }
-        if (typeof certInfo.country === 'undefined') {
+        if (certInfo.country === undefined) {
             certInfo.country = this.country;
         }
-        if (typeof certInfo.emailAddress === 'undefined') {
+        if (certInfo.emailAddress === undefined) {
             certInfo.emailAddress = this.emailAddress;
         }
-        if (typeof certInfo.distinguishedNameQualifier === 'undefined') {
+        if (certInfo.distinguishedNameQualifier === undefined) {
             certInfo.distinguishedNameQualifier = this.distinguishedNameQualifier;
         }
-        if (typeof certInfo.includeCA === 'undefined') {
+        if (certInfo.includeCA === undefined) {
             certInfo.includeCA = false;
+        }
+        if (certInfo.daysExpiry === undefined) {
+            certInfo.daysExpiry = this.defaultDaysExpiry;
         }
 
         const msg:CertificateChunkRequest = {

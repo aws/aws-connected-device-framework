@@ -14,19 +14,22 @@ export interface ProvisionThingRequest {
 
 export interface CdfProvisioningParameters {
 	caId?: string;
-	certInfo?: {
-		commonName?: string;
-		organization?: string;
-		organizationalUnit?: string;
-		locality?: string;
-		stateName?: string;
-		country?: string;
-		emailAddress?: string;
-	};
+	certInfo?: CertInfo;
 	certificatePem?: string;
 	certificateStatus?: CertificateStatus;
 	privateKey?: string;
 	registered?:RegisterThingResponse;
+}
+
+export interface CertInfo {
+	commonName?: string;
+	organization?: string;
+	organizationalUnit?: string;
+	locality?: string;
+	stateName?: string;
+	country?: string;
+	emailAddress?: string;
+	daysExpiry?:number;	
 }
 
 export interface ProvisionThingResponse {

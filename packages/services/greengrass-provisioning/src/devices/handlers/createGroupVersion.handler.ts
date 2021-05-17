@@ -81,9 +81,9 @@ export class CreateGroupVersionHandler extends AbstractDeviceAssociationHandler 
 
         // commit any Greengrass device/core updates
         try {
-            let updatedCoresVersionArn;
+            let updatedCoreVersionArn;
             if (coreInfoChanged) {
-                updatedCoresVersionArn = await this.ggUtils.createCoreDefinitionVersion(
+                updatedCoreVersionArn = await this.ggUtils.createCoreDefinitionVersion(
                     request.ggGroupVersion.CoreDefinitionVersionArn, request.ggCoreVersion);
             }
             let updatedDevicesVersionArn;
@@ -96,10 +96,16 @@ export class CreateGroupVersionHandler extends AbstractDeviceAssociationHandler 
                 updatedSubscriptionsVersionArn = await this.subscriptionsService.createSubscriptionDefinitionVersion(
                     request.ggGroupVersion.SubscriptionDefinitionVersionArn, subscriptions, []);
             }
+            
+            let updatedFunctionVersionArn;
+            if (coreInfoChanged) {
+                updatedFunctionVersionArn = await this.ggUtils.processFunctionEnvVarTokens(
+                    {}, request.ggGroupVersion.FunctionDefinitionVersionArn, updatedCoreVersionArn ?? request.ggGroupVersion.CoreDefinitionVersionArn);
+            }
 
-            if (coreInfoChanged || deviceInfoChanged || updatedSubscriptionsVersionArn!==undefined) {
+            if (coreInfoChanged || deviceInfoChanged || updatedFunctionVersionArn!==undefined || updatedSubscriptionsVersionArn!==undefined) {
                 request.updatedGroupVersionId = await this.ggUtils.createGroupVersion(request.ggGroup.Id, request.ggGroupVersion,
-                    updatedCoresVersionArn, updatedDevicesVersionArn, updatedSubscriptionsVersionArn);
+                    updatedFunctionVersionArn, updatedCoreVersionArn, updatedDevicesVersionArn, updatedSubscriptionsVersionArn);
             }
         } catch (err) {
             logger.error(`createGroupVersion.handler handle: failed updating greengrass definitions:  err:${err}`);

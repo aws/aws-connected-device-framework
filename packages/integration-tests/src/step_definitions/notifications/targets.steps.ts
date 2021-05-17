@@ -14,7 +14,6 @@ import {container} from '../../di/inversify.config';
 import { NOTIFICATIONS_CLIENT_TYPES, SubscriptionsService, TargetsService } from '@cdf/notifications-client/dist';
 import { SUBSCRIPTION_ID, createTarget, deleteTarget, getAdditionalHeaders } from './notifications.utils';
 import { TargetResource } from '@cdf/notifications-client/dist/client/targets.model';
-import { logger } from '../utils/logger';
 
 /*
     Cucumber describes current scenario context as “World”. It can be used to store the state of the scenario
@@ -48,14 +47,14 @@ When('I remove {string} target with endpoint {string}', async function (targetTy
 });
 
 When('I remove {string} target with {string} {string}', async function (targetType:string, key:string, value:string) {
-    logger.debug(`I remove '${targetType}' target with '${key}' '${value}'`);
+    // logger.debug(`I remove '${targetType}' target with '${key}' '${value}'`);
     this[RESPONSE_STATUS]=null;
     try {
         const subscription = await subscriptionsService.getSubscription(this[SUBSCRIPTION_ID], getAdditionalHeaders(this[AUTHORIZATION_TOKEN]));
-        logger.debug(`\t subscription: ${JSON.stringify(subscription)}`);
+        // logger.debug(`\t subscription: ${JSON.stringify(subscription)}`);
         expect(subscription, 'subscription').to.not.be.undefined;
         const target = subscription?.targets?.[targetType]?.filter( (t:TargetResource) => t[key]===value)?.[0];
-        logger.debug(`\t target: ${JSON.stringify(target)}`);
+        // logger.debug(`\t target: ${JSON.stringify(target)}`);
         expect(target, 'target').to.not.be.undefined;
         let endpoint:string;
         switch (targetType) {
@@ -77,7 +76,7 @@ When('I remove {string} target with {string} {string}', async function (targetTy
                 throw new Error('unknown target type');
         }
 
-        logger.debug(`\t endpoint: ${endpoint}, value: ${target[endpoint]}`);
+        // logger.debug(`\t endpoint: ${endpoint}, value: ${target[endpoint]}`);
         await deleteTarget(targetsService, this, this[SUBSCRIPTION_ID], targetType, target[endpoint]);
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;

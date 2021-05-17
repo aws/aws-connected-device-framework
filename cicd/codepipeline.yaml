@@ -632,12 +632,13 @@ Resources:
             - Sid: any
               Effect: Allow
               Action:
+              - application-autoscaling:*
               - autoscaling:*
               - cloudformation:CreateChangeSet
               - cloudformation:DeleteStack
               - cloudformation:DescribeChangeSet
-              - cloudformation:DescribeStacks
               - cloudformation:DescribeStackResources
+              - cloudformation:DescribeStacks
               - cloudformation:ExecuteChangeSet
               - cloudformation:GetTemplateSummary
               - cloudformation:ListExports
@@ -659,55 +660,51 @@ Resources:
               - dax:UpdateParameterGroup
               - dax:UpdateSubnetGroup
               - dynamodb:CreateTable
-              - dynamodb:CreateTable
-              - dynamodb:DeleteTable
               - dynamodb:DeleteTable
               - dynamodb:DescribeStream
-              - dynamodb:DescribeStream
               - dynamodb:DescribeTable
-              - dynamodb:DescribeTable
-              - dynamodb:ListStreams
               - dynamodb:ListStreams
               - dynamodb:ListTables
               - dynamodb:UpdateTable
               - ec2:AllocateAddress
               - ec2:AssociateAddress
+              - ec2:AssociateRouteTable
+              - ec2:AttachInternetGateway
               - ec2:AuthorizeSecurityGroupEgress
               - ec2:AuthorizeSecurityGroupIngress
+              - ec2:CreateInternetGateway
+              - ec2:CreateRoute
+              - ec2:CreateRouteTable
               - ec2:CreateSecurityGroup
+              - ec2:CreateSubnet
+              - ec2:CreateVpc
               - ec2:CreateVpcEndpoint
+              - ec2:DeleteInternetGateway
+              - ec2:DeleteRoute
+              - ec2:DeleteRouteTable
               - ec2:DeleteSecurityGroup
+              - ec2:DeleteSubnet
+              - ec2:DeleteVpc
+              - ec2:DeleteVpcEndpoints
+              - ec2:DescribeAccountAttributes
               - ec2:DescribeAddresses
+              - ec2:DescribeAvailabilityZones
               - ec2:DescribeInstances
+              - ec2:DescribeInternetGateways
               - ec2:DescribeKeyPairs
               - ec2:DescribeNetworkInterfaces
+              - ec2:DescribeRouteTables
               - ec2:DescribeSecurityGroups
               - ec2:DescribeSubnets
               - ec2:DescribeVpcEndpoints
               - ec2:DescribeVpcs
+              - ec2:DetachInternetGateway
               - ec2:DisassociateAddress
+              - ec2:ModifyVpcAttribute
               - ec2:ReleaseAddress
               - ec2:RevokeSecurityGroupEgress
               - ec2:RevokeSecurityGroupIngress
-              - ec2:CreateVpc
-              - ec2:ModifyVpcAttribute
-              - ec2:DeleteVpc
-              - ec2:DescribeInternetGateways
-              - ec2:CreateInternetGateway
-              - ec2:DeleteInternetGateway
-              - ec2:DescribeAvailabilityZones
-              - ec2:AttachInternetGateway
-              - ec2:CreateRouteTable
-              - ec2:DescribeAccountAttributes
-              - ec2:DeleteRouteTable
-              - ec2:DetachInternetGateway
-              - ec2:CreateSubnet
-              - ec2:DescribeRouteTables
-              - ec2:CreateRoute
-              - ec2:DeleteSubnet
-              - ec2:DeleteRoute
-              - ec2:DeleteVpcEndpoints
-              - ec2:AssociateRouteTable
+              - events:*
               - iam:*
               - iot:CreatePolicy
               - iot:CreatePolicyVersion
@@ -737,13 +734,12 @@ Resources:
               - logs:*
               - rds:*
               - s3:*
-              - sqs:*
-              - events:*
               - sns:CreateTopic
               - sns:DeleteTopic
               - sns:GetTopicAttributes
               - sns:SetTopicAttributes
               - sns:Subscribe
+              - sqs:*
               Resource: "*"
             - Sid: ssm
               Effect: Allow

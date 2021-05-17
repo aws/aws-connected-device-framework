@@ -16,7 +16,6 @@ import { EventsourcesService, EventsService, MessagesDebugService, NOTIFICATIONS
 import { EVENTSOURCE_NAME, SUBSCRIPTION_ID, EVENT_NAME, getEventIdFromName, createSubscription, SUBSCRIPTION_DETAILS, getAdditionalHeaders, getSubscriptionIdFromPrincipal, PRINCIPAL_VALUE, USER_ID, updateSubscription } from './notifications.utils';
 import { SubscriptionResource } from '@cdf/notifications-client/dist/client/subscriptions.model';
 import { SimulateIoTCoreMessageRequest } from '@cdf/notifications-client/dist/client/messages.model';
-import { logger } from '../utils/logger';
 
 /*
     Cucumber describes current scenario context as “World”. It can be used to store the state of the scenario
@@ -34,20 +33,20 @@ const subscriptionsService:SubscriptionsService = container.get(NOTIFICATIONS_CL
 const messagesService:MessagesDebugService = container.get(NOTIFICATIONS_CLIENT_TYPES.MessageDebugService)
 
 Given('subscription for principal {string} user {string} does not exist', async function(principalValue:string, userId:string) {
-    logger.debug(`subscription for principal '${principalValue}' user '${userId}' does not exist`);
-    logger.debug(`\t EVENTSOURCE_NAME: ${this[EVENTSOURCE_NAME]}`);
-    logger.debug(`\t EVENT_NAME: ${this[EVENT_NAME]}`);
+    // logger.debug(`subscription for principal '${principalValue}' user '${userId}' does not exist`);
+    // logger.debug(`\t EVENTSOURCE_NAME: ${this[EVENTSOURCE_NAME]}`);
+    // logger.debug(`\t EVENT_NAME: ${this[EVENT_NAME]}`);
     expect(this[EVENTSOURCE_NAME], 'EVENTSOURCE_NAME').to.not.be.undefined;
     expect(this[EVENT_NAME], 'EVENT_NAME').to.not.be.undefined;
     const subId = await getSubscriptionIdFromPrincipal(eventsourcesService, eventsService, subscriptionsService, this, userId, this[EVENTSOURCE_NAME], this[EVENT_NAME], principalValue);
-    logger.debug(`\t subId: ${subId}`);
+    // logger.debug(`\t subId: ${subId}`);
     expect(subId).to.be.undefined;
 });
 
 Given('I am using subscription for principal {string} user {string}', async function (principalValue:string, userId:string) {
-    logger.debug(`'I am using subscription for principal '${principalValue}' user '${userId}'`);
-    logger.debug(`\t EVENTSOURCE_NAME: ${this[EVENTSOURCE_NAME]}`);
-    logger.debug(`\t EVENT_NAME: ${this[EVENT_NAME]}`);
+    // logger.debug(`'I am using subscription for principal '${principalValue}' user '${userId}'`);
+    // logger.debug(`\t EVENTSOURCE_NAME: ${this[EVENTSOURCE_NAME]}`);
+    // logger.debug(`\t EVENT_NAME: ${this[EVENT_NAME]}`);
     expect(this[EVENTSOURCE_NAME], 'EVENTSOURCE_NAME').to.not.be.undefined;
     expect(this[EVENT_NAME], 'EVENT_NAME').to.not.be.undefined;
 
@@ -57,7 +56,7 @@ Given('I am using subscription for principal {string} user {string}', async func
     this[PRINCIPAL_VALUE]=principalValue;
     this[USER_ID]=userId;
     this[SUBSCRIPTION_ID] = await getSubscriptionIdFromPrincipal(eventsourcesService, eventsService, subscriptionsService, this, userId, this[EVENTSOURCE_NAME], this[EVENT_NAME], principalValue);
-    logger.debug(`\t SUBSCRIPTION_ID: ${this[SUBSCRIPTION_ID]}`);
+    // logger.debug(`\t SUBSCRIPTION_ID: ${this[SUBSCRIPTION_ID]}`);
     expect(this[SUBSCRIPTION_ID], 'SUBSCRIPTION_ID').to.not.be.undefined;
 });
 
@@ -154,7 +153,7 @@ Then('no subscriptions exist for event {string}', async function (eventName:stri
     this[RESPONSE_STATUS]=null;
 
     const eventId = this[`EVENTID___${eventName}`];
-    logger.debug(`\t eventId: ${eventId}`);
+    // logger.debug(`\t eventId: ${eventId}`);
     expect(eventId, 'eventId').to.not.be.undefined;
 
     try {

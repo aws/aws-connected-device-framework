@@ -17,6 +17,7 @@ describe('CertificatesService', () => {
     let mockSNS: AWS.SNS;
 
     const testChunkSize = 50;
+    const testDaysExpiry = 10;
 
     beforeEach(() => {
         mockSNS = new AWS.SNS();
@@ -29,7 +30,7 @@ describe('CertificatesService', () => {
 
         instance = new CertificatesTaskService('unit-test-topic', 'UnitTestCN', 'UnitTestOrg',
                                                'UnitTestOU', 'UnitTestLand', 'Testorado', 'Testville',
-                                               'xxxxxxxxx', 'cdf.unit.test', testChunkSize,
+                                               'xxxxxxxxx', 'cdf.unit.test', testChunkSize, testDaysExpiry,
                                                mockedCertificatesTaskDao, mockSNSFactory);
     });
 

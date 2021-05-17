@@ -13,7 +13,7 @@ Feature: Provisioning Greengrass Groups
     Given greengrass-provisioning group "IntegrationTestTemplateGroup" does not exist
     And greengrass-provisioning template "IntegrationTestTemplate" does not exist
     When I create greengrass group "IntegrationTestTemplateGroup" with attributes:
-      | functions | [{"Id": "func_1", "FunctionArn": "arn:aws:lambda:%property:aws.region%:%property:aws.accountId%:function:deans-gg-hello-world:1","FunctionConfiguration": {"Environment": {"Variables": {}},"MemorySize": 16384,"Pinned": false,"Timeout": 3}}] |
+      | functions | [{"Id": "func_1", "FunctionArn": "arn:aws:lambda:%property:aws.region%:%property:aws.accountId%:function:deans-gg-hello-world:1","FunctionConfiguration": {"Environment": {"Variables": { "VAR_1": "${coreThingName}_${coreThingType}_${coreThingArn}" }},"MemorySize": 16384,"Pinned": false,"Timeout": 3}}] |
       | subscriptions | [{"Id": "sub_1","Source": "arn:aws:lambda:%property:aws.region%:%property:aws.accountId%:function:deans-gg-hello-world:1","Subject": "incoming/v1","Target": "cloud"}, {"Id": "sub_2","Source": "cloud","Subject": "outgoing/v1","Target": "arn:aws:lambda:%property:aws.region%:%property:aws.accountId%:function:deans-gg-hello-world:1"}] |
     And I create greengrass template "IntegrationTestTemplate" from group "IntegrationTestTemplateGroup" with attributes:
       | subscriptions | {"__all":[{"id":"sub_${thingName}_outgoing","source":"${thingArn}","subject":"dt/${thingName}/v1","target":"cloud"},{"id":"sub_${thingName}_incoming","source":"cloud","subject":"cmd/${thingName}/v1","target":"${thingArn}"}],"IntegrationTestCore":[{"id":"sub_${thingName}_core","source":"${thingArn}","subject":"dt/${thingName}/core/v1","target":"cloud"}]} |
@@ -151,6 +151,11 @@ Feature: Provisioning Greengrass Groups
       | $.Definition.Subscriptions[?(@.Id=="sub_IntegrationTestGroup1-Device1_incoming")].Source | cloud |
       | $.Definition.Subscriptions[?(@.Id=="sub_IntegrationTestGroup1-Device1_incoming")].Subject | cmd/IntegrationTestGroup1-Device1/v1 |
       | $.Definition.Subscriptions[?(@.Id=="sub_IntegrationTestGroup1-Device1_incoming")].Target | arn:aws:iot:%property:aws.region%:%property:aws.accountId%:thing/IntegrationTestGroup1-Device1 |
+    And greengrass group "IntegrationTestGroup1" function definition exists with attributes:
+      | $.Definition.Functions.length | 1 |
+      | $.Definition.Functions[?(@.Id=="func_1")].Id | func_1 |
+      | $.Definition.Functions[?(@.Id=="func_1")].FunctionArn | arn:aws:lambda:%property:aws.region%:%property:aws.accountId%:function:deans-gg-hello-world:1 |
+      | $.Definition.Functions[?(@.Id=="func_1")].FunctionConfiguration.Environment.Variables.VAR_1 | ___regex___:^IntegrationTestGroup1-Core_IntegrationTestCore_arn:aws:iot:%property:aws.region%:%property:aws.accountId%:thing\/.*$ |
 
   Scenario: Update the template by modifying the device subscription templates
     Given greengrass-provisioning template "IntegrationTestTemplate" exists
@@ -240,7 +245,7 @@ Feature: Provisioning Greengrass Groups
   Scenario: Update the template by modifying the underlying greengrass group
     Given greengrass-provisioning template "IntegrationTestTemplate" exists
     When I update greengrass group "IntegrationTestTemplateGroup" with attributes:
-      | functions | [{"Id": "func_2", "FunctionArn": "arn:aws:lambda:%property:aws.region%:%property:aws.accountId%:function:deans-gg-hello-world:1","FunctionConfiguration": {"Environment": {"Variables": {}},"MemorySize": 16384,"Pinned": false,"Timeout": 10}}] |
+      | functions | [{"Id": "func_2", "FunctionArn": "arn:aws:lambda:%property:aws.region%:%property:aws.accountId%:function:deans-gg-hello-world:1","FunctionConfiguration": {"Environment": {"Variables": { "VAR_2": "${coreThingName}_${coreThingType}_${coreThingArn}" }},"MemorySize": 16384,"Pinned": false,"Timeout": 10}}] |
       | subscriptions | [{"Id":"sub_1","Source":"arn:aws:lambda:%property:aws.region%:%property:aws.accountId%:function:deans-gg-hello-world:1","Subject":"incoming/v1","Target":"cloud"},{"Id":"sub_2","Source":"cloud","Subject":"outgoing/v2","Target":"arn:aws:lambda:%property:aws.region%:%property:aws.accountId%:function:deans-gg-hello-world:1"},{"Id":"sub_3","Source":"cloud","Subject":"outgoing/v3","Target":"arn:aws:lambda:%property:aws.region%:%property:aws.accountId%:function:deans-gg-hello-world:1"}] |
     And I update greengrass-provisioning template "IntegrationTestTemplate" with attributes:
       | subscriptions | {"__all":[{"id":"sub_${thingName}_incoming","source":"cloud","subject":"cmd/${thingName}/v1","target":"${thingArn}"}],"IntegrationTestCore":[{"id":"sub_${thingName}_core","source":"${thingArn}","subject":"dt/${thingName}/core/v2","target":"cloud"},{"id":"sub_${thingName}_outgoing","source":"${thingArn}","subject":"dt/${thingName}/v2","target":"cloud"}]} |
@@ -291,6 +296,7 @@ Feature: Provisioning Greengrass Groups
     And greengrass group "IntegrationTestGroup1" function definition exists with attributes:
       | $.Definition.Functions.length | 1 |
       | $.Definition.Functions[?(@.Id=="func_2")].FunctionArn | arn:aws:lambda:%property:aws.region%:%property:aws.accountId%:function:deans-gg-hello-world:1 |
+      | $.Definition.Functions[?(@.Id=="func_2")].FunctionConfiguration.Environment.Variables.VAR_2 | ___regex___:^IntegrationTestGroup1-Core_IntegrationTestCore_arn:aws:iot:%property:aws.region%:%property:aws.accountId%:thing\/.*$ |
     And greengrass group "IntegrationTestGroup1" core definition exists with attributes:
       | $.Definition.Cores.length | 1 |
       | $.Definition.Cores[?(@.ThingArn=="arn:aws:iot:%property:aws.region%:%property:aws.accountId%:thing/IntegrationTestGroup1-Core")].ThingArn | arn:aws:iot:%property:aws.region%:%property:aws.accountId%:thing/IntegrationTestGroup1-Core |

@@ -46,7 +46,7 @@ export class SubscriptionsService {
 
         // save the group details, ready for deployment
         if (updatedSubscriptionsVersionArn!==undefined) {
-            const updatedGroupVersionId = await this.ggUtils.createGroupVersion(groupInfo.Id, versionInfo, undefined, undefined, updatedSubscriptionsVersionArn);
+            const updatedGroupVersionId = await this.ggUtils.createGroupVersion(groupInfo.Id, versionInfo, undefined, undefined, undefined, updatedSubscriptionsVersionArn);
             group.deployed = false;
             group.versionId = updatedGroupVersionId;
             group.versionNo = group.versionNo + 1;

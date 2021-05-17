@@ -51,6 +51,7 @@ export interface CertificateInfo {
 	emailAddress?:string;
 	distinguishedNameQualifier?:string;
 	includeCA?:boolean;
+	daysExpiry?:number;
 }
 
 export interface CommonName {

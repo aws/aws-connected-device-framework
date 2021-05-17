@@ -6,7 +6,6 @@ import { EventSourceDetailResource } from '@cdf/notifications-client/dist/client
 import { SubscriptionResource, SubscriptionV2Resource } from '@cdf/notifications-client/dist/client/subscriptions.model';
 import { TableDefinition } from 'cucumber';
 import { AUTHORIZATION_TOKEN, buildModel } from '../common/common.steps';
-import { logger } from '../utils/logger';
 import { TargetResource } from '@cdf/notifications-client/dist/client/targets.model';
 
 export const EVENTSOURCE_ID = 'eventSourceId';
@@ -27,19 +26,19 @@ export function getAdditionalHeaders(authToken?:string) : Dictionary {
 }
 
 export async function getEventSourceIdFromName(eventsourcesService:EventsourcesService, world:unknown, name:string) : Promise<string> {
-    logger.debug(`getEventSourceIdFromName: name:${name}`);
+    // logger.debug(`getEventSourceIdFromName: name:${name}`);
     let eventSourceId = world[`EVENTSOURCEID___${name}`];
     if (eventSourceId===undefined) {
         const existingEventSource = await eventsourcesService.listEventSources(getAdditionalHeaders(world[AUTHORIZATION_TOKEN]));
         eventSourceId = existingEventSource?.results?.filter(r=> r.name===name)?.[0]?.id;
         world[`EVENTSOURCEID___${name}`] = eventSourceId;
     }
-    logger.debug(`getEventSourceIdFromName: eventSourceId:${eventSourceId}`);
+    // logger.debug(`getEventSourceIdFromName: eventSourceId:${eventSourceId}`);
     return eventSourceId;
 }
 
 export async function getEventIdFromName(eventsourcesService:EventsourcesService, eventsService:EventsService, world:unknown, eventSourceName:string,eventName:string) : Promise<string> {
-    logger.debug(`getEventIdFromName: eventSourceName:${eventSourceName}, eventName:${eventName}`);
+    // logger.debug(`getEventIdFromName: eventSourceName:${eventSourceName}, eventName:${eventName}`);
     let eventId = world[`EVENTID___${eventName}`];
     if (eventId===undefined) {
         const eventSourceId = await getEventSourceIdFromName(eventsourcesService, world, eventSourceName);
@@ -49,26 +48,26 @@ export async function getEventIdFromName(eventsourcesService:EventsourcesService
             world[`EVENTID___${eventName}`] = eventId;
         }
     }
-    logger.debug(`getEventIdFromName: eventId:${eventId}`);
+    // logger.debug(`getEventIdFromName: eventId:${eventId}`);
     return eventId;
 }
 
 export async function getSubscriptionIdFromPrincipal(eventsourcesService:EventsourcesService, eventsService:EventsService, service:SubscriptionsService, world:unknown,userId:string,eventSourceName:string,eventName:string,principalValue:string) : Promise<string> {
-    logger.debug(`getSubscriptionIdFromPrincipal: userId:${userId}, eventSourceName:${eventSourceName}, eventName:${eventName}, principalValue:${principalValue}`);
+    // logger.debug(`getSubscriptionIdFromPrincipal: userId:${userId}, eventSourceName:${eventSourceName}, eventName:${eventName}, principalValue:${principalValue}`);
     let subscriptionId;
     const eventId = await getEventIdFromName(eventsourcesService, eventsService, world, eventSourceName, eventName);
-    logger.debug(`\t eventId:${eventId}`);
+    // logger.debug(`\t eventId:${eventId}`);
     if (eventId) {
         const key = `SUBSCRIPTIONID___${userId}___${eventName}___${principalValue}`;
         subscriptionId = world[key];
-        logger.debug(`\t existing subscriptionId:${subscriptionId}`);
+        // logger.debug(`\t existing subscriptionId:${subscriptionId}`);
         if (subscriptionId===undefined) {
             const existing = await service.listSubscriptionsForUser(userId,getAdditionalHeaders(world[AUTHORIZATION_TOKEN]));
-            logger.debug(`\t existing:${JSON.stringify(existing)}`);
+            // logger.debug(`\t existing:${JSON.stringify(existing)}`);
             const results:SubscriptionV2Resource[] = existing?.results as SubscriptionV2Resource[];
             subscriptionId = results?.filter(r=> r.user.id===userId && r.event.id===eventId && r.principalValue===principalValue)?.[0]?.id;
             world[key] = subscriptionId;
-            logger.debug(`\t subscriptionId:${subscriptionId}`);
+            // logger.debug(`\t subscriptionId:${subscriptionId}`);
         }
     }
     return subscriptionId;
@@ -87,7 +86,7 @@ export async function createEvent (eventsService:EventsService, world:unknown, e
 export async function updateEvent (eventsService:EventsService, world:unknown, eventId:string, data:TableDefinition) : Promise<void> {
     const model:EventResource = buildModel(data);
     model.eventId = eventId;
-    logger.debug(`model: ${JSON.stringify(model)}`);
+    // logger.debug(`model: ${JSON.stringify(model)}`);
     await eventsService.updateEvent(model, getAdditionalHeaders(world[AUTHORIZATION_TOKEN]));
 }
 

@@ -17,16 +17,16 @@ import { GroupsDao } from './groups.dao';
 import { GreengrassSubscriptionItemMap, TemplateItem } from '../templates/templates.models';
 import { GreengrassSubscriptionItem } from '../subscriptions/subscriptions.models';
 import { SubscriptionsService } from '../subscriptions/subscriptions.service';
-import { GreengrassUtils } from '../utils/greengrass.util';
+import { GreengrassUtils, FunctionDefEnvVarExpansionMap } from '../utils/greengrass.util';
 import { Pagination } from '../common/common.models';
 import { TemplatesDao } from '../templates/templates.dao';
+import { __listOfCore, __listOfDevice } from 'aws-sdk/clients/greengrass';
 
 @injectable()
 export class GroupsService  {
 
     private readonly DEFAULT_PAGINATION_LIMIT = 25;
 
-    private iot: AWS.Iot;
     private gg: AWS.Greengrass;
 
     constructor (
@@ -35,10 +35,8 @@ export class GroupsService  {
         @inject(TYPES.GroupsDao) private groupsDao: GroupsDao,
         @inject('defaults.promisesConcurrency') private promisesConcurrency:number,
         @inject(TYPES.GreengrassUtils) private ggUtils: GreengrassUtils,
-        @inject(TYPES.GreengrassFactory) greengrassFactory: () => AWS.Greengrass,
-        @inject(TYPES.IotFactory) iotFactory: () => AWS.Iot) {
+        @inject(TYPES.GreengrassFactory) greengrassFactory: () => AWS.Greengrass) {
             this.gg = greengrassFactory();
-            this.iot = iotFactory();
         }
         
     public async createGroups(items: GroupItemList) : Promise<GroupItemList> {
@@ -266,28 +264,6 @@ export class GroupsService  {
         return existingTemplateIds;
     }
 
-    private async getThingsOfGreengrassGroup(existingCoreVersionDef:AWS.Greengrass.CoreDefinitionVersion, existingDevicesVersionDef:AWS.Greengrass.DeviceDefinitionVersion) : Promise<ThingsMap> {
-        logger.debug(`groups.service getThingsOfGreengrassGroup: existingCoreVersionDef: ${JSON.stringify(existingCoreVersionDef)}, existingDevicesVersionDef: ${JSON.stringify(existingDevicesVersionDef)}`);
-
-        const limit = pLimit(this.promisesConcurrency);
-        const extractThingNameFromArn = (arn:string)=> arn.split('/')[1];
-        
-        const thingsFuture:Promise<AWS.Iot.DescribeThingResponse>[]= [];
-        existingCoreVersionDef?.Cores?.forEach(c=> thingsFuture.push( limit(()=>this.iot.describeThing({thingName: extractThingNameFromArn(c.ThingArn)}).promise())));
-        existingDevicesVersionDef?.Devices?.forEach(d=> thingsFuture.push( limit(()=>this.iot.describeThing({thingName: extractThingNameFromArn(d.ThingArn)}).promise())));
-        const thingsResults = await Promise.allSettled(thingsFuture);
-        const thingsMap:ThingsMap = thingsResults
-            .filter(r=> r.status==='fulfilled' && (<PromiseFulfilledResult<AWS.Iot.DescribeThingResponse>> r)?.value!==undefined)
-            .map(r=> (<PromiseFulfilledResult<AWS.Iot.DescribeThingResponse>> r).value)
-            .reduce((a,c)=> {
-                a[c.thingName]=c;
-                return a;
-             } ,{} as ThingsMap);
-
-        logger.debug(`groups.service getThingsOfGreengrassGroup: exit: ${JSON.stringify(thingsMap)}`);
-        return thingsMap;
-    }
-
     public async updateGroups(items: GroupItemList) : Promise<GroupItemList> {
         logger.debug(`groups.service updateGroups: in: items: ${JSON.stringify(items)}`);
 
@@ -338,6 +314,8 @@ export class GroupsService  {
         // with the templates. As there most likely will be multiple groups being updated from and to the same 
         // template versionwe will cache these. The key is 'fromGreengrassVersionId-toGreengrassVersionIid'.
         const ggSubscriptionModsMap:GgSubscriptionModsMap = {};
+
+        const functionCache:FunctionDefEnvVarExpansionMap = {};
 
         // update the groups
         const ggCreateGroupVersionFutures:Promise<AWS.Greengrass.CreateGroupVersionResponse>[]= [];
@@ -403,12 +381,17 @@ export class GroupsService  {
                 subscriptionDefinitionVersionArn = await this.ggUtils.createSubscriptionDefinitionVersion(existingGgVersion.Definition.SubscriptionDefinitionVersionArn, newSubscriptionVersionDef);
             }
 
-            // create the new greengrass group version  
             const updatedDef = updatedTemplateGroupVersion.Definition;
+
+            // lambda env vars may contain tokens to be expanded. if they do, they need to be unique to the 
+            // greengrass group instead of associating the exact same version as defined in the template
+            const functionArn = await this.ggUtils.processFunctionEnvVarTokens(functionCache, updatedDef.FunctionDefinitionVersionArn, existingGgVersion.Definition.CoreDefinitionVersionArn);
+
+            // create the new greengrass group version  
             ggCreateGroupVersionFutures[i] = limit(()=> this.gg.createGroupVersion({
                 GroupId: existingGroup.id,
                 ConnectorDefinitionVersionArn: updatedDef.ConnectorDefinitionVersionArn,
-                FunctionDefinitionVersionArn: updatedDef.FunctionDefinitionVersionArn,
+                FunctionDefinitionVersionArn: functionArn,
                 LoggerDefinitionVersionArn: updatedDef.LoggerDefinitionVersionArn,
                 ResourceDefinitionVersionArn: updatedDef.ResourceDefinitionVersionArn,
                 CoreDefinitionVersionArn: existingGgVersion.Definition.CoreDefinitionVersionArn,
@@ -510,7 +493,9 @@ export class GroupsService  {
             const existingCoreVersionDef = await this.ggUtils.getCoreInfo(coreDefinitionVersionArn);
 
             // as subscription templates may be configured per thing type, and the subscription attributes may be built from thing attributes, we need the things info
-            const things = await this.getThingsOfGreengrassGroup(existingCoreVersionDef, existingDevicesVersionDef);
+            const core = await this.ggUtils.getThings(existingCoreVersionDef?.Cores)
+            const devices = await this.ggUtils.getThings(existingDevicesVersionDef?.Devices);
+            const things = Object.assign({}, core, devices);
 
             // remove device subscriptions no longer required
             Object.keys(toRemove).forEach(thingType => {
@@ -799,9 +784,6 @@ interface TemplateId {
     name: string,
     versionNo: string
 }
-
-type ThingsMap = {[name:string]:AWS.Iot.DescribeThingResponse};
-
 interface SubscriptionTemplateModsMap {
     [key : string] : {
         toAdd: GreengrassSubscriptionItemMap,

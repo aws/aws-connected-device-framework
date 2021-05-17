@@ -34,7 +34,7 @@ export class CertificatesService {
             @inject('aws.s3.certificates.bucket') private certificatesBucket: string,
             @inject('aws.s3.certificates.prefix') private certificatesPrefix: string,
             @inject('defaults.chunkSize') private defaultChunkSize: number,
-            @inject('deviceCertificateExpiryDays') private certificateExpiryDays: number) {
+            @inject('deviceCertificateExpiryDays') private defaultDaysExpiry: number) {
         this._iot = iotFactory();
         this._s3  =  s3Factory();
         this._ssm = ssmFactory();
@@ -89,7 +89,7 @@ export class CertificatesService {
             const commonName = await this.createCommonName(deviceCertInfo.commonName,i);
             deviceCertInfo.commonName = commonName;
             const csr = await this.createCSR(privateKey, deviceCertInfo);
-            const certificate = await this.createCertificate(csr, rootKey, rootPem);
+            const certificate = await this.createCertificate(csr, deviceCertInfo.daysExpiry ?? this.defaultDaysExpiry, rootKey, rootPem);
             const certId = await this.getCertFingerprint(certificate);
 
             if (certInfo.includeCA) { // include rootCA in device certificate
@@ -280,9 +280,9 @@ export class CertificatesService {
         });
     }
 
-    private createCertificate(csr:string, rootKey:string, rootPem:string) : Promise<string> {
+    private createCertificate(csr:string, days:number, rootKey:string, rootPem:string) : Promise<string> {
         return new Promise((resolve:any,reject:any) =>  {
-            pem.createCertificate({csr, days:this.certificateExpiryDays, serviceKey:rootKey, serviceCertificate:rootPem}, (err:any, data:any) => {
+            pem.createCertificate({csr, days, serviceKey:rootKey, serviceCertificate:rootPem}, (err:any, data:any) => {
                 if(err) {
                     return reject(err);
                 }

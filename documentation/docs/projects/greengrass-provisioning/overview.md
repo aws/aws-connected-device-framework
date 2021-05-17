@@ -536,3 +536,23 @@ Content-Type: application/vnd.aws-cdf-v1.0+json
     ]
 }
 ``` 
+
+
+## Token Expansion
+
+When configuring device subscription templates the following variables may be defined which will be automatically expanded when applied to a matching device/core:
+
+- `${thingName}`
+- `${thingType}`
+- `${thingArn}`
+- `${accountId}`
+- `${region}`
+
+When configuring a lambda's environment variables within a Greengrass Group, the following tokens may be defined which will be automatically expanded when the core is configured:
+
+- `${coreThingName}`
+- `${coreThingType}`
+- `${coreThingArn}`
+- `${accountId}`
+- `${region}`
+
