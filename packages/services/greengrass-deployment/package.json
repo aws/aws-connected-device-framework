@@ -1,6 +1,6 @@
 {
   "name": "@cdf/greengrass-deployment",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "description": "Greengrass Deployment Service",
   "author": "Hassan Khokhar <hkhokhar@amazon.com>",
   "config": {
