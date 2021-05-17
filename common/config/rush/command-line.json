@@ -56,6 +56,15 @@
       "description": "Commits all staged files to the git repo.",
       "safeForSimultaneousRushProcesses": false,
       "shellCommand": "common/temp/node_modules/cz-customizable/standalone.js"
+    },
+
+    {
+      "commandKind": "global",
+      "name": "pack",
+      "summary": "Pack all.",
+      "description": "Pack all projects as a tarball so can be imported into others.",
+      "safeForSimultaneousRushProcesses": true,
+      "shellCommand": "rush publish --publish --pack --include-all"
     }
 
     // {

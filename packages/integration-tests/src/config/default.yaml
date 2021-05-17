@@ -9,7 +9,7 @@ assetLibrary:
 assetLibraryHistory:
   baseUrl:
 commands:
-    baseUrl:
+  baseUrl:
 greengrassProvisioning:
   baseUrl:
 provisioning:
