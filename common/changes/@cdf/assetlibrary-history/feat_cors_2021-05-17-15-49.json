@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/assetlibrary-history",
+      "comment": "added cors exposedHeaders config",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/assetlibrary-history",
+  "email": "deanhart@amazon.com"
+}

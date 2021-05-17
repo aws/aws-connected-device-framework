@@ -16,6 +16,9 @@ import cors = require('cors');
 // Start the server
 const server = new InversifyExpressServer(container);
 
+// log detected config
+logger.info(`\nDetected config:\n${JSON.stringify(config.util.toObject())}\n`);
+
 // load in the supported versions
 const supportedVersionConfig:SupportedVersionConfig = config.get('supportedApiVersions');
 const supportedVersions:string[] = asArray(supportedVersionConfig);
@@ -23,7 +26,7 @@ const supportedVersions:string[] = asArray(supportedVersionConfig);
 server.setConfig((app) => {
   // only process requests that we can support the requested accept header
   app.use( (req:Request, res:Response, next:NextFunction)=> {
-    if (supportedVersions.includes(req.headers['accept'])) {
+    if (supportedVersions.includes(req.headers['accept']) || req.method==='OPTIONS') {
       next();
     } else {
       res.status(415).send();

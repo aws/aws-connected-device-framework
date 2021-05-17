@@ -27,7 +27,7 @@ const supportedVersions:string[] = asArray(supportedVersionConfig);
 server.setConfig((app) => {
   // only process requests that we can support the requested accept header
   app.use( (req:Request, res:Response, next:NextFunction)=> {
-    if (supportedVersions.includes(req.headers['accept'])) {
+    if (supportedVersions.includes(req.headers['accept']) || req.method==='OPTIONS') {
       next();
     } else {
       res.status(415).send();
