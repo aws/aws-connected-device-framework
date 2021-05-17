@@ -25,6 +25,7 @@ features:
 
 cors:
   origin:
+  exposedHeaders: 
 
 deviceCertificateExpiryDays: 365
 

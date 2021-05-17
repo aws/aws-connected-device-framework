@@ -30,6 +30,7 @@ aws:
 
 cors:
   origin:
+  exposedHeaders: content-type,location
 
 provisioning:
   apiFunctionName:

@@ -29,6 +29,7 @@ defaults:
 
 cors:
   origin: ASSETLIBRARY_CORS_ORIGIN
+  exposedHeaders: ASSETLIBRARY_CORS_EXPOSEDHEADERS
 
 mode: ASSETLIBRARY_MODE
 

@@ -15,6 +15,7 @@ events:
 
 cors:
   origin: BULKCERTS_CORS_ORIGIN
+  exposedHeaders: BULKCERTS_CORS_EXPOSEDHEADERS
 
 deviceCertificateInfo:
   commonName: BULKCERTS_DEVICECERTIFICATEINFO_COMMONNAME

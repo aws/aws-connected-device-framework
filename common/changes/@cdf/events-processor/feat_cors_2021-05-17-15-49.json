@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/events-processor",
+      "comment": "added cors exposedHeaders config",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/events-processor",
+  "email": "deanhart@amazon.com"
+}

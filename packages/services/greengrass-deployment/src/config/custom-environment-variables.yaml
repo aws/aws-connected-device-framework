@@ -19,6 +19,7 @@ aws:
 
 cors:
   origin: GREENGRASS_DEPLOYMENT_CORS_ORIGIN
+  exposedHeaders: GREENGRASS_DEPLOYMENT_CORS_EXPOSEDHEADERS
 
 logging:
   level: debug

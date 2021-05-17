@@ -52,7 +52,8 @@ server.setConfig((app) => {
   }
   if (corsAllowedOrigin !== null && corsAllowedOrigin !== '') {
     const c = cors({
-      origin: corsAllowedOrigin
+      origin: corsAllowedOrigin,
+      exposedHeaders
     });
     app.use(c);
   }

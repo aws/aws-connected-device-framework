@@ -29,6 +29,7 @@ defaults:
 
 cors:
   origin:
+  exposedHeaders:
 
 mode: full
 

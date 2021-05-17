@@ -22,6 +22,7 @@ mqtt:
 
 cors:
   origin: COMMANDS_CORS_ORIGIN
+  exposedHeaders: COMMANDS_CORS_EXPOSEDHEADERS
 
 templates:
   addThingToGroup: COMMANDS_TEMPLATES_ADDTHINGTOGROUP

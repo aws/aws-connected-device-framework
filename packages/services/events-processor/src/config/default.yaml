@@ -33,6 +33,7 @@ aws:
 
 cors:
   origin:
+  exposedHeaders: content-type,location
 
 supportedApiVersions:
   - json:

@@ -19,6 +19,7 @@ aws:
 
 cors:
   origin: GREENGRASS_DEPLOYMENT_CORS_ORIGIN
+  exposedHeaders: content-type,location
 
 supportedApiVersions:
   - json:
