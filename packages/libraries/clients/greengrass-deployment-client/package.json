@@ -1,6 +1,6 @@
 {
   "name": "@cdf/greengrass-deployment-client",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "CDF Greengrass Deployment Client",
   "author": "Hassan khokhar <hkhokhar@amazon.com>",
   "main": "dist/index.js",

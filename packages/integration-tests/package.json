@@ -1,6 +1,6 @@
 {
   "name": "@cdf/integration-tests",
-  "version": "2.7.0",
+  "version": "2.8.0",
   "description": "CDF Integration Tests",
   "author": "Dean Hart <deanhart@amazon.com>",
   "config": {
@@ -22,7 +22,7 @@
     "@cdf/logger": "^3.0.0",
     "@cdf/notifications-client": "^3.0.1",
     "@cdf/provisioning-client": "^4.0.1",
-    "@cdf/greengrass-deployment-client": "^1.0.0",
+    "@cdf/greengrass-deployment-client": "^1.1.0",
     "@cdf/greengrass-provisioning-client": "^2.1.0",
     "aws-sdk": "2.804.0",
     "aws-iot-device-sdk": "2.2.6",
