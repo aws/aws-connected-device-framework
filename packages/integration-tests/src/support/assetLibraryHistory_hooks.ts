@@ -37,7 +37,7 @@ const devicesService:DevicesService = container.get(ASSTLIBRARY_CLIENT_TYPES.Dev
 const groupsService:GroupsService = container.get(ASSTLIBRARY_CLIENT_TYPES.GroupsService);
 const templatesService:TemplatesService = container.get(ASSTLIBRARY_CLIENT_TYPES.TemplatesService);
 
-const adminClaims:any= {
+const adminClaims:{[key:string]: string[]}= {
     cdf_al: ['/:*']
 };
 const authToken = sign(adminClaims, 'shared-secret');

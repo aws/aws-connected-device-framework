@@ -101,6 +101,12 @@
       "reviewCategory": "library",
       "shouldPublish": true
     },
+     {
+       "packageName": "@cdf/greengrass-deployment-client",
+       "projectFolder": "packages/libraries/clients/greengrass-deployment-client",
+       "reviewCategory": "library",
+       "shouldPublish": true
+     },
     {
       "packageName": "@cdf/provisioning-client",
       "projectFolder": "packages/libraries/clients/provisioning-client",

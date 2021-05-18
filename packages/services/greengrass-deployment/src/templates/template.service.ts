@@ -55,6 +55,10 @@ export class DeploymentTemplatesService {
 
         const template = await this.deploymentTemplatesDao.get(name);
 
+        if(!template) {
+            throw new Error('NOT_FOUND');
+        }
+
         logger.debug(`templates.service get: exit: item: ${JSON.stringify(template)}`);
         return template;
     }
@@ -68,5 +72,15 @@ export class DeploymentTemplatesService {
         logger.debug(`templates.service get: exit: items: ${JSON.stringify(templates)}`);
         return templates;
 
+    }
+
+    public async delete(name:string) : Promise<void> {
+        logger.debug(`templates.service delete: in: name:${name}`);
+
+        ow(name, ow.string.nonEmpty);
+
+        await this.deploymentTemplatesDao.delete(name);
+
+        logger.debug(`templates.service get: delete:`);
     }
 }

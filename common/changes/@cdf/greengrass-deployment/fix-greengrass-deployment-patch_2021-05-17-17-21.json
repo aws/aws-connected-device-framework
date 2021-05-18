@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/greengrass-deployment",
+      "comment": "API to support patching/re-run of existing deployments(ssm associations)",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@cdf/greengrass-deployment",
+  "email": "hkhokhar@amazon.com"
+}

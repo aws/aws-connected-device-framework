@@ -140,6 +140,46 @@ export class DeploymentTemplatesDao {
         return templates;
     }
 
+    public async delete(name:string) : Promise<void> {
+        logger.debug(`templates.dao delete: in: name: ${name}`);
+
+        // retrieve all records associated with the template
+        const queryParams:AWS.DynamoDB.DocumentClient.QueryInput = {
+            TableName: this.provisioningTable,
+            KeyConditionExpression: `#hash = :hash`,
+            ExpressionAttributeNames: {'#hash': 'pk'},
+            ExpressionAttributeValues: {':hash': createDelimitedAttribute(PkType.DeploymentTemplate, name)}
+        };
+
+        const queryResults = await this.dc.query(queryParams).promise();
+        if (queryResults.Items===undefined || queryResults.Items.length===0) {
+            logger.debug('templates.dao delete: exit: nothing to delete');
+            return ;
+        }
+
+        // batch delete
+        const batchParams: AWS.DynamoDB.DocumentClient.BatchWriteItemInput = {RequestItems: {}};
+        batchParams.RequestItems[this.provisioningTable]=[];
+        queryResults.Items.forEach(i=> {
+            const req : AWS.DynamoDB.DocumentClient.WriteRequest = {
+                DeleteRequest: {
+                    Key: {
+                        'pk': i.pk,
+                        'sk': i.sk
+                    }
+                }
+            }
+            batchParams.RequestItems[this.provisioningTable].push(req);
+        })
+
+        const result = await this.dynamoDbUtils.batchWriteAll(batchParams);
+        if (this.dynamoDbUtils.hasUnprocessedItems(result)) {
+            throw new Error('DELETE_FAILED');
+        }
+
+        logger.debug(`templates.dao delete: exit:`);
+    }
+
     private assembleTemplateList(results:AWS.DynamoDB.DocumentClient.ItemList) : DeploymentTemplatesList {
         logger.debug(`templates.dao assembleTemplate: items: ${JSON.stringify(results)}`);
 

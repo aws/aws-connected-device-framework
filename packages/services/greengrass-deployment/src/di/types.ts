@@ -5,6 +5,7 @@
 #-------------------------------------------------------------------------------*/
 export const TYPES = {
 
+    ActivationAssembler: Symbol.for('ActivationAssembler'),
     ActivationService: Symbol.for('ActivationService'),
     ActivationDao: Symbol.for('ActivationDao'),
 
@@ -29,6 +30,10 @@ export const TYPES = {
     DeploymentTemplateDao: Symbol.for('DeploymentTemplateDao'),
 
     DynamoDbUtils: Symbol.for('DynamoDbUtils'),
+    IotUtil: Symbol.for('IotUtil'),
+
+    IOT: Symbol.for('IOT'),
+    IOTFactory: Symbol.for('Factory<IOT>'),
 
     SNS: Symbol.for('SNS'),
     SNSFactory: Symbol.for('Factory<SNS>'),

@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/integration-tests",
+      "comment": "added greengrass deployment integration tests",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@cdf/integration-tests",
+  "email": "hkhokhar@amazon.com"
+}

@@ -51,6 +51,7 @@ export enum DeploymentType {
 }
 
 export enum DeploymentStatus {
+    RETRY='retry',
     CREATED='created',
     PENDING='pending',
     SUCCEESS='success',

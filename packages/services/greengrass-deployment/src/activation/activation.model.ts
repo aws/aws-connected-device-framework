@@ -4,33 +4,35 @@
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
 
-export interface SSMActivationRequest {
-    deviceId: string;
-}
+// export interface SSMActivationRequest {
+//     deviceId: string;
+// }
 
-export interface ActivationRequest {
-    deviceId: string;
-}
 
-export interface ActivationModel {
+export class ActivationResource {
     deviceId?: string;
-    activationId: string;
+    activationId?: string;
+    activationCode?: string;
+    activationRegion?: string;
     createdAt?: Date;
     updatedAt?: Date;
     instanceId?: string;
 }
 
-export interface ActivationResource {
-    activationId: string;
-    activationCode: string;
-    activationRegion: string;
+export class ActivationItem {
+    deviceId?: string;
+    activationId?: string;
+    activationCode?: string;
+    activationRegion?: string;
+    createdAt?: Date;
+    updatedAt?: Date;
+    instanceId?: string;
 }
 
-export enum DeploymentType {
-    AGENTLESS='agentless',
-    AGENTBASED='agentbased',
-}
-
-export class ActivationList {
-    activations: ActivationModel[] = [];
+export class ActivationItemList {
+    activations: ActivationItem[] = [];
+    pagination?: {
+        offset:number|string;
+        count: number;
+    };
 }

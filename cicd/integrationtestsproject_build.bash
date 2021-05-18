@@ -14,9 +14,8 @@ PROVISIONING_STACK_NAME="cdf-provisioning-$ENVIRONMENT"
 COMMANDS_STACK_NAME="cdf-commands-$ENVIRONMENT"
 BULKCERTS_STACK_NAME="cdf-bulkcerts-$ENVIRONMENT"
 NOTIFICATIONS_STACK_NAME="cdf-eventsProcessor-$ENVIRONMENT"
+GREENGRASS_DEPLOYMENT_STACK_NAME="cdf-greengrass-deployment-$ENVIRONMENT"
 GREENGRASS_PROVISIONING_STACK_NAME="cdf-greengrass-provisioning-$ENVIRONMENT"
-
-
 
 
 stack_exports=$(aws cloudformation list-exports $AWS_ARGS)
@@ -51,11 +50,15 @@ notifications_invoke_url=$(echo $stack_exports \
     | jq -r --arg notifications_invoke_url_export "$notifications_invoke_url_export" \
     '.Exports[] | select(.Name==$notifications_invoke_url_export) | .Value')
 
+greengrass_deployment_invoke_url_export="$GREENGRASS_DEPLOYMENT_STACK_NAME-apigatewayurl"
+greengrass_deployment_invoke_url=$(echo $stack_exports \
+    | jq -r --arg greengrass_deployment_invoke_url_export "$greengrass_deployment_invoke_url_export" \
+    '.Exports[] | select(.Name==$greengrass_deployment_invoke_url_export) | .Value')
+
 greengrass_provisioning_invoke_url_export="$GREENGRASS_PROVISIONING_STACK_NAME-apigatewayurl"
 greengrass_provisioning_invoke_url=$(echo $stack_exports \
     | jq -r --arg greengrass_provisioning_invoke_url_export "$greengrass_provisioning_invoke_url_export" \
     '.Exports[] | select(.Name==$greengrass_provisioning_invoke_url_export) | .Value')
-
 
 echo creating staging integration test config...
 
@@ -75,8 +78,9 @@ cat $LIVE_CONFIG_FILE | \
     --arg commands_invoke_url "$commands_invoke_url" \
     --arg bulkcerts_invoke_url "$bulkcerts_invoke_url" \
     --arg notifications_invoke_url "$notifications_invoke_url" \
+    --arg greengrass_deployment_invoke_url "$greengrass_deployment_invoke_url" \
     --arg greengrass_provisioning_invoke_url "$greengrass_provisioning_invoke_url" \
-  '.assetLibrary.baseUrl=$assetlibrary_invoke_url | .assetLibraryHistory.baseUrl=$assetlibraryhistory_invoke_url | .commands.baseUrl=$commands_invoke_url | .provisioning.baseUrl=$provisioning_invoke_url | .greengrassProvisioning.baseUrl=$greengrass_provisioning_invoke_url | .bulkCerts.baseUrl=$bulkcerts_invoke_url | .notifications.baseUrl=$notifications_invoke_url' \
+  '.assetLibrary.baseUrl=$assetlibrary_invoke_url | .assetLibraryHistory.baseUrl=$assetlibraryhistory_invoke_url | .commands.baseUrl=$commands_invoke_url | .provisioning.baseUrl=$provisioning_invoke_url | .greengrassDeployment.baseUrl=$greengrass_deployment_invoke_url | .greengrassProvisioning.baseUrl=$greengrass_provisioning_invoke_url | .bulkCerts.baseUrl=$bulkcerts_invoke_url | .notifications.baseUrl=$notifications_invoke_url' \
   > $STAGING_CONFIG_FILE
 
 echo "\naugmented configuration:\n$(cat $STAGING_CONFIG_FILE)\n"
@@ -97,4 +101,5 @@ npm run integration-test -- "features/assetlibrary/$ASSETLIBRARY_MODE/*.feature"
 npm run integration-test -- "features/bulkcerts/*.feature"
 npm run integration-test -- "features/commands/*.feature"
 npm run integration-test -- "features/notifications/*.feature"
+npm run integration-test -- "features/greengrass-deployment/*.feature"
 npm run integration-test -- "features/greengrass-provisioning/*.feature"

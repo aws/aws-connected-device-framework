@@ -145,15 +145,19 @@ export class DeploymentDao {
     public async update(deployment: DeploymentModel): Promise<void> {
         logger.debug(`deployment.dao: update: in: deployment: ${JSON.stringify(deployment)}`);
 
+        const date = new Date().toISOString();
+
         const params = {
             TableName: this.provisioningTable,
             Key: {
                 pk: createDelimitedAttribute(PkType.DeviceDeployment, deployment.deploymentId),
                 sk: createDelimitedAttribute(PkType.GreengrassDevice, deployment.deviceId),
             },
-            UpdateExpression: 'set deploymentStatus = :s, si1Sort = :si1Sort',
+            UpdateExpression: 'set deploymentStatus = :s, updatedAt = :u, deploymentTemplateName = :t, si1Sort = :si1Sort',
             ExpressionAttributeValues: {
                 ':s' : deployment.deploymentStatus,
+                ':u' : date,
+                ':t' : deployment.deploymentTemplateName,
                 ':si1Sort': createDelimitedAttribute(PkType.GreengrassDevice, deployment.deploymentStatus, deployment.deviceId),
             }
         };

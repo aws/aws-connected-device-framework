@@ -22,6 +22,7 @@
     "@cdf/logger": "^3.0.0",
     "@cdf/notifications-client": "^3.0.1",
     "@cdf/provisioning-client": "^4.0.1",
+    "@cdf/greengrass-deployment-client": "^1.0.0",
     "@cdf/greengrass-provisioning-client": "^2.1.0",
     "aws-sdk": "2.804.0",
     "aws-iot-device-sdk": "2.2.6",

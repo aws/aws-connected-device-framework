@@ -12,34 +12,38 @@ import { logger } from '../utils/logger';
 
 import { TYPES } from '../di/types';
 import { ActivationService } from './activation.service';
-import { ActivationRequest, ActivationModel, ActivationResource } from './activation.model';
+import { ActivationAssembler } from './activation.assember';
+import { ActivationItem, ActivationResource } from './activation.model';
 
 @controller('/devices')
 export class ActivationController implements interfaces.Controller {
 
     public constructor(
-        @inject(TYPES.ActivationService) private _service: ActivationService) {}
+        @inject(TYPES.ActivationService) private activationService: ActivationService,
+        @inject(TYPES.ActivationAssembler) private activationAssembler: ActivationAssembler
+    ) {}
 
     @httpPost('/:deviceId/activations')
     public async createActivation(
-        @requestBody() req: ActivationRequest,
+        @requestBody() activation: ActivationResource,
         @response() res: Response
     ) : Promise<ActivationResource> {
 
-        logger.info(`Activation.controller createActivation: in: item:${JSON.stringify(req)}`);
+        logger.info(`Activation.controller createActivation: in: item:${JSON.stringify(activation)}`);
 
-        const activation = req;
+        let resource: ActivationResource
 
-        let result;
         try {
-            result = await this._service.createActivation(activation);
+            let item = this.activationAssembler.fromResource(activation);
+            item = await this.activationService.createActivation(item);
+            resource = this.activationAssembler.toResource(item)
         } catch (err) {
             handleError(err, res);
         }
 
         logger.debug(`Activation.controller createActivation: exit:`);
 
-        return result;
+        return resource;
     }
 
     @httpGet('/:deviceId/activations/:activationId')
@@ -47,13 +51,13 @@ export class ActivationController implements interfaces.Controller {
         @response() res: Response,
         @requestParam('deviceId') deviceId: string,
         @requestParam('activationId') activationId: string
-    ): Promise<ActivationModel> {
+    ): Promise<ActivationItem> {
         logger.debug(`Deployment.controller getDeployment: in: deviceId: ${deviceId}`);
 
-        let activation: ActivationModel;
+        let activation: ActivationItem;
 
         try {
-            activation = await this._service.getActivation(activationId, deviceId);
+            activation = await this.activationService.getActivation(activationId, deviceId);
         } catch (err) {
             handleError(err, res);
         }
@@ -72,7 +76,7 @@ export class ActivationController implements interfaces.Controller {
         logger.debug(`Deployment.controller getDeployment: in: deviceId: ${deviceId}`);
 
         try {
-            await this._service.deleteActivation(activationId, deviceId);
+            await this.activationService.deleteActivation(activationId, deviceId);
         } catch (err) {
             handleError(err, res);
         }

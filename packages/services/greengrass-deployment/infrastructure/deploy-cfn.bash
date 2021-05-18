@@ -103,6 +103,7 @@ incorrect_args=0
 incorrect_args=$((incorrect_args+$(verifyMandatoryArgument ENVIRONMENT e $ENVIRONMENT)))
 incorrect_args=$((incorrect_args+$(verifyMandatoryArgument CONFIG_LOCATION c "$CONFIG_LOCATION")))
 incorrect_args=$((incorrect_args+$(verifyMandatoryArgument DEPLOYMENT_LOGS_BUCKET b "$DEPLOYMENT_LOGS_BUCKET")))
+incorrect_args=$((incorrect_args+$(verifyMandatoryArgument API_GATEWAY_DEFINITION_TEMPLATE z "$API_GATEWAY_DEFINITION_TEMPLATE")))
 
 API_GATEWAY_AUTH="$(defaultIfNotSet 'API_GATEWAY_AUTH' a ${API_GATEWAY_AUTH} 'None')"
 incorrect_args=$((incorrect_args+$(verifyApiGatewayAuthType $API_GATEWAY_AUTH)))
@@ -150,6 +151,7 @@ Running with:
 cwd=$(dirname "$0")
 
 DEPLOYMENT_LOGS_BUCKET=$(cat $CONFIG_LOCATION | jq -r '.aws.s3.deploymentLogs.bucket')
+DEPLOYMENT_RESOURCES_BUCKET=$(cat $CONFIG_LOCATION | jq -r '.aws.s3.deploymentResources.bucket')
 
 logTitle 'Deploying Greengrass Deployment template'
 application_configuration_override=$(cat $CONFIG_LOCATION)
@@ -171,6 +173,7 @@ aws cloudformation deploy \
       AuthType=$API_GATEWAY_AUTH \
       GreengrassProvisioningStackName=$GREENGRASS_PROVISIONING_STACK_NAME \
       DeploymentLogsBucketName=$DEPLOYMENT_LOGS_BUCKET \
+      DeploymentResourcesBucketName=$DEPLOYMENT_RESOURCES_BUCKET \
   --capabilities CAPABILITY_NAMED_IAM \
   --no-fail-on-empty-changeset \
   $AWS_ARGS

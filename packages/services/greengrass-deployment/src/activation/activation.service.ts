@@ -10,8 +10,9 @@ import config from 'config';
 import { TYPES } from '../di/types';
 import { logger } from '../utils/logger';
 
-import { ActivationModel, ActivationResource, ActivationRequest } from './activation.model';
+import { ActivationItem, ActivationResource } from './activation.model';
 import { ActivationDao } from './activation.dao';
+import {IotUtil} from '../utils/iot.util';
 
 @injectable()
 export class ActivationService {
@@ -21,20 +22,20 @@ export class ActivationService {
 
     constructor(
         @inject(TYPES.SSMFactory) ssmFactory: () => AWS.SSM,
+        @inject(TYPES.IotUtil) private iotUtil: IotUtil,
         @inject(TYPES.ActivationDao) private activationDao: ActivationDao
     ) {
         this.ssm = ssmFactory();
         this.hybridInstancerole =  config.get('aws.ssm.managedInstanceRole');
     }
 
-    public async createActivation(activation: ActivationRequest): Promise<ActivationResource> {
+    public async createActivation(activation: ActivationItem): Promise<ActivationItem> {
         logger.debug(`ActivationService: createActivation: request:${JSON.stringify(activation)}`);
 
         ow(activation.deviceId, ow.string.nonEmpty);
 
-        // Check if the device is whitelisted
-        if(await this.activationDao.isDeviceWhitelisted(activation.deviceId) !== true) {
-            throw new Error('DEVICE_NOT_WHITELISTED');
+        if (await this.iotUtil.deviceExistsInRegistry(activation.deviceId) !== true) {
+            throw new Error('DEVICE_NOT_FOUND');
         }
 
         // check if the device already has an activation
@@ -55,10 +56,10 @@ export class ActivationService {
             result = await this.ssm.createActivation(activationParams).promise();
         } catch (err) {
             logger.error(`activation.service ssm.createActivation`, {err});
-            throw new Error(err);
+            throw err;
         }
 
-        const activationModel: ActivationModel = {
+        const activationModel: ActivationItem = {
             deviceId: activation.deviceId,
             activationId: result.ActivationId,
             createdAt: new Date(),
@@ -78,7 +79,7 @@ export class ActivationService {
         return activationResource;
     }
 
-    public async getActivation(_activationId: string, deviceId: string): Promise<ActivationModel> {
+    public async getActivation(_activationId: string, deviceId: string): Promise<ActivationItem> {
         logger.info(`ActivationService: getActivation: in: deviceId: ${deviceId}`);
 
         // Get activation by passing a filter for default instance Name (deviceId)
@@ -88,7 +89,7 @@ export class ActivationService {
             activation = await this.activationDao.getByDeviceId(deviceId);
         } catch (err) {
             logger.error(`activation.service activationDao.getByDeviceId`, {err});
-            throw new Error(err);
+            throw err;
         }
 
         if(!activation) {
@@ -103,12 +104,12 @@ export class ActivationService {
     public async deleteActivationByDeviceId(deviceId: string): Promise<void> {
         logger.info(`ActivationService: deleteActivationByDeviceId: in: deviceId: ${deviceId}`);
 
-        let activation:ActivationModel;
+        let activation:ActivationItem;
         try {
             activation = await this.activationDao.getByDeviceId(deviceId);
         } catch (err) {
             logger.error(`activation.service activationDao.getByDeviceId`, {err});
-            throw new Error(err);
+            throw err;
         }
 
         if(!activation) {
@@ -132,16 +133,16 @@ export class ActivationService {
             await this.ssm.deleteActivation(params).promise();
         } catch (err) {
             logger.error(`activation.service ssm.deleteActivation`, {err});
-            throw new Error(err);
+            throw err;
         }
         logger.debug(`ActivationService: deleteActivation: exit`);
 
     }
 
-    public async updateActivation(activation: ActivationModel): Promise<void> {
+    public async updateActivation(activation: ActivationItem): Promise<void> {
         logger.debug(`ActivationService: updateActivation: request:${JSON.stringify(activation)}`);
 
-        const activationModel: ActivationModel = {
+        const activationModel: ActivationItem = {
             deviceId: activation.deviceId,
             activationId: activation.activationId,
             createdAt: activation.createdAt,

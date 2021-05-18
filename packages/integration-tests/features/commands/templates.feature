@@ -4,7 +4,6 @@ Feature: Command Templates
   Scenario: Setup
     Given command template "testCommandTemplate" does not exist
 
-
   Scenario: Create a new Command Template
     Given command template "testCommandTemplate" does not exist
     When I create the command template "testCommandTemplate" with attributes

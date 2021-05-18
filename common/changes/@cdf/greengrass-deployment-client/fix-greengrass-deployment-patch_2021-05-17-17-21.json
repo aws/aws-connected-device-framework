@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/greengrass-deployment-client",
+      "comment": "added greengrass deployment client",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@cdf/greengrass-deployment-client",
+  "email": "hkhokhar@amazon.com"
+}

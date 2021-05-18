@@ -1,24 +1,24 @@
 aws:
-  accountId: AWS_ACCOUNTID
-  region: AWS_REGION
+  accountId:
+  region:
 
   ssm:
-    managedInstanceRole: GREENGRASS_SSM_MANAGED_INSTANCE_ROLE
+    managedInstanceRole:
 
   sqs:
-    agentlessDeploymentQueue: GREENGRASS_DEPLOYMENT_AGENTLESS_DEPLOYMENT_QUEUE
-    agentbasedDeploymentQueue: GREENGRASS_DEPLOYMENT_AGENTBASED_DEPLOYMENT_QUEUE
+    agentlessDeploymentQueue:
+    agentbasedDeploymentQueue:
 
   dynamoDB:
-    ggProvisioningTable: GREENGRASS_PROVISIONING_AWS_DYNAMODB_TABLE
+    ggProvisioningTable:
 
   s3:
     deploymentLogs:
-      bucket: GREENGRASS_DEPLOYMENTS_AWS_S3_DEPLOYMENTS_BUCKET
-      prefix: GREENGRASS_DEPLOYMENTS_AWS_S3_DEPLOYMENTS_PREFIX
+      bucket:
+      prefix:
 
 cors:
-  origin: GREENGRASS_DEPLOYMENT_CORS_ORIGIN
+  origin:
   exposedHeaders: content-type,location
 
 supportedApiVersions:

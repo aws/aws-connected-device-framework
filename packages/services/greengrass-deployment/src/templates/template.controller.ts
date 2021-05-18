@@ -5,7 +5,7 @@
 #-------------------------------------------------------------------------------*/
 import { Response } from 'express';
 import { inject } from 'inversify';
-import { interfaces, controller, response, requestBody, requestParam, httpGet, httpPut } from 'inversify-express-utils';
+import { interfaces, controller, response, requestBody, requestParam, httpGet, httpPut, httpDelete } from 'inversify-express-utils';
 
 import { handleError } from '../utils/errors';
 import { logger } from '../utils/logger';
@@ -79,5 +79,18 @@ export class DeploymentTemplateController implements interfaces.Controller {
         return templates;
 
     }
+
+    @httpDelete('/:name')
+    public async deleteTemplate(@requestParam('name') name:string, @response() res:Response) : Promise<void> {
+        logger.info(`templates.controller deleteTemplate: in: name:${name}`);
+
+        try {
+            await this.deploymentTemplatesService.delete(name);
+        } catch (e) {
+            handleError(e,res);
+        }
+        logger.info(`templates.controller deleteTemplate: exit: `);
+    }
+
 
 }

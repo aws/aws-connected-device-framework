@@ -3,16 +3,28 @@
 #
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
-import { Response } from 'express';
-import { inject } from 'inversify';
-import { interfaces, controller, response, requestBody, requestParam, queryParam, httpPost, httpGet, httpPut, httpDelete } from 'inversify-express-utils';
+import {Response} from 'express';
+import {inject} from 'inversify';
+import {
+    controller,
+    httpDelete,
+    httpGet,
+    httpPatch,
+    httpPost,
+    interfaces,
+    queryParam,
+    requestBody,
+    requestParam,
+    response
+} from 'inversify-express-utils';
 
-import { handleError } from '../utils/errors';
-import { logger } from '../utils/logger';
+import {handleError} from '../utils/errors';
+import {logger} from '../utils/logger';
 
-import { TYPES } from '../di/types';
-import { DeploymentService } from './deployment.service';
-import { DeploymentRequest, DeploymentModel, DeploymentList } from './deployment.model';
+import {TYPES} from '../di/types';
+import {DeploymentService} from './deployment.service';
+import {DeploymentList, DeploymentModel, DeploymentRequest} from './deployment.model';
+
 
 @controller('/devices')
 export class DeploymentController implements interfaces.Controller {
@@ -31,11 +43,10 @@ export class DeploymentController implements interfaces.Controller {
         let deploymentId;
         try {
             deploymentId = await this.deploymentService.create(req);
+            res.status(201).location(`/deployments/${deploymentId}`);
         } catch (err) {
             handleError(err, res);
         }
-
-        res.status(201).location(`/deployments/${deploymentId}`);
 
         logger.debug(`Deployment.controller createRun: exit:`);
     }
@@ -83,29 +94,6 @@ export class DeploymentController implements interfaces.Controller {
         return deploymentResource;
     }
 
-    @httpPut('/:deviceId/deployments/:deploymentId')
-    public async updateDeployments(
-        @requestBody() req: DeploymentRequest,
-        @requestParam('deviceId') deviceId: string,
-        @requestParam('deploymentId') deploymentId: string,
-        @response() res: Response
-    ): Promise<void> {
-
-        const deploymentResource: DeploymentModel = {
-            deploymentId,
-            deviceId,
-            deploymentStatus: req.deploymentStatus
-        };
-
-        try {
-            await this.deploymentService.update(deploymentResource);
-        } catch (err) {
-            handleError(err, res);
-        }
-
-        logger.debug(`Deployment.controller getDeployment: exit: ${JSON.stringify(deploymentResource)}`);
-    }
-
     @httpDelete('/:deviceId/deployments/:deploymentId')
     public async deleteDeployment(
         @requestParam('deviceId') deviceId: string,
@@ -122,6 +110,30 @@ export class DeploymentController implements interfaces.Controller {
         }
 
         logger.debug(`Deployment.controller delete: exit:}`);
+    }
+
+    @httpPatch('/:deviceId/deployments/:deploymentId')
+    public async patchDeployment(
+        @requestParam('deviceId') deviceId: string,
+        @requestParam('deploymentId') deploymentId: string,
+        @requestBody() req: DeploymentRequest,
+        @response() res: Response
+    ): Promise<void> {
+        logger.debug(`Deployment.controller patchDeployment: in: deviceId: ${deviceId}, deploymentId: ${deploymentId}`);
+
+        const deployment:DeploymentModel = {
+            deviceId,
+            deploymentId,
+            ...req
+        }
+
+        try {
+            await this.deploymentService.retry(deployment);
+        } catch (err) {
+            handleError(err, res);
+        }
+
+        logger.debug(`Deployment.controller patch: exit:}`);
     }
 
 }

@@ -146,3 +146,22 @@ Accept: application/vnd.aws-cdf-v1.0+json
     "deploymentType": "agentbased"
 }
 ```
+
+### OPTIONAL Step 6: Re-run a specific deployment
+
+#### REQUEST
+
+```bash
+PATCH /devices/my-test-core-id/deployments/a1b83c20-ab84-11ea-9634-37cb5e1c09aa HTTP/1.1
+Content-Type: application/vnd.aws-cdf-v1.0+json
+Accept: application/vnd.aws-cdf-v1.0+json
+
+{
+	"deploymentStatus": "retry"
+}
+```
+
+#### RESPONSE
+```bash
+HTTP: 200 OK
+```

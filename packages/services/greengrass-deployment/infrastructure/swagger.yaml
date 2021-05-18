@@ -184,7 +184,7 @@ paths:
     get:
       tags:
         - Deployment
-      summary: Find a specific activation for a device by id
+      summary: Find a specific deployment by deviceId and deploymentId
       operationId: getDeploymentById
       responses:
         "200":
@@ -195,6 +195,28 @@ paths:
                 $ref: "#/components/schemas/Deployment"
         "404":
           $ref: "#/components/responses/NotFound"
+
+    patch:
+      tags:
+        - Deployment
+      summary: Retry a specific deployment by deviceId and deploymentId
+      operationId: patchDeploymentById
+      description: >
+        Retries an SSM state manager association for a greengrass core device
+
+      requestBody:
+        content:
+          application/vnd.aws-cdf-v1.0+json:
+            schema:
+              $ref: '#/components/schemas/RetryDeployment'
+      responses:
+        "200":
+          description: OK
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
 
     delete:
       tags:
@@ -411,6 +433,15 @@ components:
         deploymentStatus: "failed"
         deploymentType: "agentbased"
 
+    RetryDeployment:
+      type: object
+      properties:
+        deploymentStatus:
+          type: string
+          description: retry is the only supported patching operation supported for Retry Deployments
+      example:
+        deploymentStatus: "retry"
+
     DeploymentList:
       type: object
       properties:
@@ -425,7 +456,3 @@ components:
       properties:
         message:
           type: string
-
-
-
-

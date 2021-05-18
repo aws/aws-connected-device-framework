@@ -40,6 +40,7 @@ async function teardown(world:unknown) {
     const ggGroupNames = ['IntegrationTestGroup1', 'IntegrationTestGroup2', 'IntegrationTestTemplateGroup'];
     const ggGroupIds:string[] = [];
     let res: AWS.Greengrass.ListGroupsResponse;
+    /*eslint no-constant-condition: ["error", { "checkLoops": false }]*/
     while (true) {
         res = await gg.listGroups().promise();
         const filtered = res.Groups?.filter(g=> ggGroupNames.includes(g.Name)).map(g=> g.Id);

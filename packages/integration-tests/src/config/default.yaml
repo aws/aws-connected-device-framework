@@ -18,6 +18,9 @@ provisioning:
     bucket:
     prefix:
     suffix:
+greengrassDeployment:
+  baseUrl:
+
 notifications:
   baseUrl:
 thing:

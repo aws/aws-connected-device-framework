@@ -71,8 +71,14 @@ Parameters:
   GreengrassProvisioningStackName:
     Description: Name of the CDF Greengrass Provisioning stack
     Type: String
+
   DeploymentLogsBucketName:
-    Description: Name of bucket to store command information.
+    Description: Name of bucket to store deployment logs information.
+    Type: String
+    MinLength: 1
+
+  DeploymentResourcesBucketName:
+    Description: Name of bucket to store deployment resources.
     Type: String
     MinLength: 1
 
@@ -125,7 +131,10 @@ Resources:
             Statement:
               - Sid: sqs
                 Action:
-                  - 'sqs:*'
+                  - 'sqs:SendMessage'
+                  - 'sqs:ReceiveMessage'
+                  - 'sqs:DeleteMessage'
+                  - 'sqs:GetQueueAttributes'
                 Effect: Allow
                 Resource:
                   - !GetAtt AgentbasedDeploymentQueue.Arn
@@ -155,20 +164,35 @@ Resources:
                   - !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/cdf-greengrass-provisioning-${Environment}'
               - Sid: 'ssm'
                 Action:
-                  - 'ssm:*'
+                  - 'ssm:CreateAssociation'
+                  - 'ssm:DeleteAssociation'
+                  - 'ssm:UpdateAssociation'
+                  - 'ssm:DescribeInstanceInformation'
+                  - 'ssm:CreateActivation'
+                  - 'ssm:DeleteActivation'
+                  - 'ssm:StartAssociationsOnce'
+                  - 'ssm:DescribeAssociation'
                 Effect: Allow
                 Resource:
                   - !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:*'
                   - !Sub 'arn:aws:iam::${AWS::AccountId}:role/*'
                   - !Sub 'arn:aws:ssm:${AWS::Region}::document/*'
+                  - !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:association/*'
+                  - !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:managed-instance/*'
               - Sid: 's3'
                 Action:
-                  - 's3:*'
+                  - 's3:List*'
+                  - 's3:Get*'
                 Effect: Allow
                 Resource:
-                  - !Sub 'arn:aws:s3:::cdf-${AWS::AccountId}-${AWS::Region}'
-
-
+                  - !Sub 'arn:aws:s3:::${DeploymentResourcesBucketName}/*'
+                  - !Sub 'arn:aws:s3:::${DeploymentLogsBucketName}/*'
+              - Sid: 'iot'
+                Action:
+                  - 'iot:DescribeThing'
+                Effect: Allow
+                Resource:
+                  - Fn::Sub: arn:aws:iot:${AWS::Region}:${AWS::AccountId}:thing/*
     DependsOn:
       - ApplicationPolicies
 

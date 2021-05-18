@@ -10,6 +10,7 @@ import config from 'config';
 import { sign } from 'jsonwebtoken';
 import {JSONPath} from 'jsonpath-plus';
 
+
 setDefaultTimeout(10 * 1000);
 
 export const RESPONSE_STATUS = 'responseStatus';
@@ -22,6 +23,12 @@ export const AUTHORIZATION_TOKEN = 'jwt';
  */
 // tslint:disable:no-invalid-this
 // tslint:disable:only-arrow-functions
+
+export function getAdditionalHeaders(authToken?:string) : Dictionary {
+    return  {
+        Authorization: authToken
+    };
+}
 
 export function replaceTokens(text:string) : string {
     return text.replace(/%property:(.*?)%/g, (_a,property)=> {
@@ -63,7 +70,7 @@ Then('it fails with a {int}', function (status:number) {
 
 export function validateExpectedAttributes<T>(model:T, data:TableDefinition) : void {
     const d = data.rowsHash();
-    const json = model as unknown as object;
+    const json = model as unknown as Record<string, unknown>;
     Object.keys(d).forEach( key => {
         const expected = replaceTokens(d[key]);
         const expandedKey = replaceTokens(key);
@@ -109,4 +116,8 @@ export function buildModel<T>(data:TableDefinition) : T {
     });
 
     return resource;
+}
+
+export class Dictionary {
+    [key:string]: string;
 }

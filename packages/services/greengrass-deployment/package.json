@@ -12,7 +12,7 @@
     "lint": "npx eslint . --ext '.ts'",
     "build": "npx tsc -b && npx shx cp -R 'src/config' 'dist/'",
     "test": "rushx lint && NODE_ENV= NODE_CONFIG_DIR='./src/config' jest --silent",
-    "start": "rushx build && NODE_CONFIG=$(cat ${CONFIG_LOCATION}/greengrass-deployment/${npm_package_config_environment}-config.json) NODE_CONFIG_DIR='./src/config' nodemon dist/lambda_proxy.js",
+    "start": "rushx build && NODE_CONFIG=$(cat ${CONFIG_LOCATION}/greengrass-deployment/${npm_package_config_environment}-config.json) NODE_CONFIG_DIR='./src/config' node dist/lambda_apigw_proxy.js",
     
     "prebundle": "npx shx rm -rf deploy bundle.zip && npx shx mkdir deploy",
     "bundle": "rush deploy --overwrite --project ${npm_package_name} --target-folder deploy",
@@ -66,7 +66,6 @@
     "@rushstack/eslint-config": "2.3.4",
     "eslint": "7.26.0",
 
-    "nodemon": "2.0.7",
     "nyc": "15.1.0",
     "shx": "0.3.3",
 

@@ -12,6 +12,7 @@ import { CDFConfigInjector } from '@cdf/config-inject';
 import { TYPES } from './types';
 import { HttpHeaderUtils } from '../utils/httpHeaders';
 
+import { ActivationAssembler } from '../activation/activation.assember';
 import { ActivationService } from '../activation/activation.service';
 import { ActivationDao } from '../activation/activation.dao';
 
@@ -27,6 +28,7 @@ import { DeploymentTemplatesDao} from '../templates/template.dao';
 import { DeploymentTemplatesService } from '../templates/template.service';
 
 import { DynamoDbUtils } from '../utils/dynamoDb.util';
+import { IotUtil } from '../utils/iot.util';
 
 // Load everything needed to the Container
 export const container = new Container();
@@ -49,11 +51,14 @@ container.bind<DeploymentTemplatesService>(TYPES.DeploymentTemplatesService).to(
 container.bind<DeploymentTemplatesDao>(TYPES.DeploymentTemplateDao).to(DeploymentTemplatesDao).inSingletonScope();
 import '../templates/template.controller';
 
+container.bind<ActivationAssembler>(TYPES.ActivationAssembler).to(ActivationAssembler).inSingletonScope();
 container.bind<ActivationService>(TYPES.ActivationService).to(ActivationService).inSingletonScope();
 container.bind<ActivationDao>(TYPES.ActivationDao).to(ActivationDao).inSingletonScope();
 import '../activation/activation.controller';
 
+
 container.bind<DynamoDbUtils>(TYPES.DynamoDbUtils).to(DynamoDbUtils).inSingletonScope();
+container.bind<IotUtil>(TYPES.IotUtil).to(IotUtil).inSingletonScope();
 
 // for 3rd party objects, we need to use factory injectors
 // DynamoDB
@@ -123,5 +128,18 @@ container.bind<interfaces.Factory<AWS.SQS>>(TYPES.SQSFactory)
                 container.bind<AWS.SQS>(TYPES.SQS).toConstantValue(sqs);
             }
             return container.get<AWS.SQS>(TYPES.SQS);
+        };
+    });
+
+// IOT
+decorate(injectable(), AWS.Iot);
+container.bind<interfaces.Factory<AWS.Iot>>(TYPES.IOTFactory)
+    .toFactory<AWS.Iot>(() => {
+        return () => {
+            if (!container.isBound(TYPES.IOT)) {
+                const iot = new AWS.Iot({region: config.get('aws.region')});
+                container.bind<AWS.Iot>(TYPES.IOT).toConstantValue(iot);
+            }
+            return container.get<AWS.Iot>(TYPES.IOT);
         };
     });

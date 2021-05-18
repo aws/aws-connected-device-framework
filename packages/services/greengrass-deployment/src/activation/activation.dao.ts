@@ -10,7 +10,7 @@ import {logger} from '../utils/logger';
 import {TYPES} from '../di/types';
 import {createDelimitedAttribute, PkType} from '../utils/pKUtils.util';
 
-import {ActivationList, ActivationModel} from './activation.model';
+import {ActivationItemList, ActivationItem } from './activation.model';
 
 @injectable()
 export class ActivationDao {
@@ -52,7 +52,7 @@ export class ActivationDao {
         return true;
     }
 
-    public async save(activation: ActivationModel): Promise<void> {
+    public async save(activation: ActivationItem): Promise<void> {
         logger.debug(`activation.dao: save: in: activation: ${JSON.stringify(activation)}`);
 
         const params = {
@@ -71,7 +71,7 @@ export class ActivationDao {
         logger.debug(`activation.dao: save: exit: `);
     }
 
-    public async update(activation: ActivationModel): Promise<void> {
+    public async update(activation: ActivationItem): Promise<void> {
         logger.debug(`activation.dao: save: in: activation: ${JSON.stringify(activation)}`);
 
         const params = {
@@ -106,7 +106,7 @@ export class ActivationDao {
         logger.debug(`activation.dao delete: exit:`);
     }
 
-    public async get(activationId: string, deviceId: string): Promise<ActivationModel> {
+    public async get(activationId: string, deviceId: string): Promise<ActivationItem> {
         logger.debug(`activation.dao: get: in: deviceId: ${deviceId}, activationId: ${activationId}`);
 
         const params = {
@@ -135,7 +135,7 @@ export class ActivationDao {
         return activationList.activations[0];
     }
 
-    public async getByDeviceId(deviceId: string): Promise<ActivationModel> {
+    public async getByDeviceId(deviceId: string): Promise<ActivationItem> {
         logger.debug(`activation.dao: getByDeviceId: in: deviceId: ${deviceId}`);
 
         const params = {
@@ -165,15 +165,15 @@ export class ActivationDao {
         return activationList.activations[0];
     }
 
-    private assemble(items: AWS.DynamoDB.DocumentClient.ItemList): ActivationList {
-        const list = new ActivationList();
+    private assemble(items: AWS.DynamoDB.DocumentClient.ItemList): ActivationItemList {
+        const list = new ActivationItemList();
 
         for(const i of items) {
 
             const pkElements = i.pk.split(':');
             const skElements = i.sk.split(':');
 
-            const activation: ActivationModel = {
+            const activation: ActivationItem = {
                 deviceId: skElements[1],
                 activationId: pkElements[1],
                 createdAt: new Date(i.createdAt),

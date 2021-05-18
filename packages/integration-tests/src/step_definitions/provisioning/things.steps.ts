@@ -39,6 +39,19 @@ Before(function () {
     iot = new AWS.Iot({region: config.get('aws.region')});
 });
 
+Given('thing {string} exists', async function(deviceId: string) {
+    try {
+        deviceId = replaceTokens(deviceId);
+
+        const describeThingRequest = {thingName: deviceId};
+        const describeThingResponse = await iot.describeThing(describeThingRequest).promise();
+        expect(describeThingResponse.thingName).exist;
+    } catch (e) {
+        expect(e.code).eq('ResourceNotFoundException');
+        fail(`device ${deviceId} does not exist: ${JSON.stringify(e)}`);
+    }
+});
+
 Given('thing {string} does not exist', async function (thingName:string) {
     try {
         thingName = replaceTokens(thingName);

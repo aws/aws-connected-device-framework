@@ -9,7 +9,7 @@ import { TYPES } from './di/types';
 import { container } from './di/inversify.config';
 
 import { ActivationService } from './activation/activation.service';
-import { ActivationModel } from './activation/activation.model';
+import { ActivationItem } from './activation/activation.model';
 
 import { DeploymentService } from './deployment/deployment.service';
 import { DeploymentModel } from './deployment/deployment.model';
@@ -40,7 +40,7 @@ exports.handler = async(event: any, context: any, callback: any) => {
                         eventBody.detail['eventName'] === 'UpdateInstanceAssociationStatus'
                     ) {
 
-                        const activation: ActivationModel = {
+                        const activation: ActivationItem = {
                             activationId: eventBody.detail.requestParameters.associationId,
                             instanceId: eventBody.detail.requestParameters.associationId
                         };

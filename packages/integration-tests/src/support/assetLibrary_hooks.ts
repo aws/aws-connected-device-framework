@@ -109,7 +109,7 @@ const profilesService:ProfilesService = container.get(ASSTLIBRARY_CLIENT_TYPES.P
 // tslint:disable:no-invalid-this
 // tslint:disable:only-arrow-functions
 
-const adminClaims:any= {
+const adminClaims:{[key:string]: string[]}= {
     cdf_al: ['/:*']
 };
 const authToken = sign(adminClaims, 'shared-secret');

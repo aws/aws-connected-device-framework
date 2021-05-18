@@ -3,7 +3,7 @@
     "compilerOptions": {
         "outDir": "dist",
         "rootDir": "src",
-
+        "moduleResolution": "node",
 		"suppressImplicitAnyIndexErrors": true
     },
     "references": [
@@ -21,6 +21,9 @@
         },
         {
             "path": "../libraries/clients/notifications-client"
+        },
+        {
+            "path": "../libraries/clients/greengrass-deployment-client"
         }
     ],
     "include": [

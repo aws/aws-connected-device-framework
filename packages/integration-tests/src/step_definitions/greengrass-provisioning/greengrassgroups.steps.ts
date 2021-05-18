@@ -15,7 +15,6 @@ import { GREENGRASS_PROVISIONING_CLIENT_TYPES, GroupsService } from '@cdf/greeng
 import {container} from '../../di/inversify.config';
 import { getAdditionalHeaders } from '../notifications/notifications.utils';
 import { world } from './greengrass.world';
-import { String } from 'aws-sdk/clients/apigateway';
 
 use(chai_string);
 /*
@@ -232,7 +231,7 @@ Then('greengrass group {string} core definition exists with attributes:', async 
     const ggCoreVersionDef = await gg.getCoreDefinitionVersion({
         CoreDefinitionId: defId,
         CoreDefinitionVersionId: versionId
-    }).promise();;
+    }).promise();
 
     validateExpectedAttributes(ggCoreVersionDef, data);
 });
@@ -252,7 +251,7 @@ Then('greengrass group {string} device definition exists with attributes:', asyn
     validateExpectedAttributes(ggDeviceVersionDef, data);
 });
 
-async function getGgDef(name:String) : Promise<AWS.Greengrass.GetGroupResponse> {
+async function getGgDef(name:string) : Promise<AWS.Greengrass.GetGroupResponse> {
 
     let groupId:string;
 

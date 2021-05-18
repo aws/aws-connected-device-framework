@@ -21,7 +21,6 @@ export interface DeploymentTemplateModel {
     type: DeploymentType;
     updatedAt?: Date;
     versionNo: number;
-
 }
 
 export interface DeploymentTemplateRequest {
