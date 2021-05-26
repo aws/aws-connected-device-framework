@@ -1,6 +1,6 @@
 {
   "name": "@cdf/provisioning",
-  "version": "4.1.2",
+  "version": "4.1.3",
   "description": "CDF Provisioning",
   "author": "Dean Hart <deanhart@amazon.com>",
   "config": {

@@ -20,6 +20,7 @@ specifiers:
   '@rush-temp/events-processor': file:./projects/events-processor.tgz
   '@rush-temp/express-middleware': file:./projects/express-middleware.tgz
   '@rush-temp/greengrass-deployment': file:./projects/greengrass-deployment.tgz
+  '@rush-temp/greengrass-deployment-client': file:./projects/greengrass-deployment-client.tgz
   '@rush-temp/greengrass-provisioning': file:./projects/greengrass-provisioning.tgz
   '@rush-temp/greengrass-provisioning-client': file:./projects/greengrass-provisioning-client.tgz
   '@rush-temp/integration-tests': file:./projects/integration-tests.tgz
@@ -68,6 +69,7 @@ specifiers:
   ajv: 6.10.2
   amazon-dax-client: 1.2.5
   async-local-storage: 2.3.1
+  atob: 2.1.2
   aws-iot-device-sdk: 2.2.6
   aws-sdk: 2.804.0
   aws-serverless-express: 3.4.0
@@ -116,7 +118,6 @@ specifiers:
   morgan: 1.10.0
   multer: 1.4.2
   node-cache: 5.1.2
-  nodemon: 2.0.7
   nyc: 15.1.0
   ow: 0.23.0
   p-limit: 3.1.0
@@ -158,6 +159,7 @@ dependencies:
   '@rush-temp/events-processor': file:projects/events-processor.tgz_supports-color@8.0.0
   '@rush-temp/express-middleware': file:projects/express-middleware.tgz_supports-color@8.0.0
   '@rush-temp/greengrass-deployment': file:projects/greengrass-deployment.tgz_supports-color@8.0.0
+  '@rush-temp/greengrass-deployment-client': file:projects/greengrass-deployment-client.tgz_supports-color@8.0.0
   '@rush-temp/greengrass-provisioning': file:projects/greengrass-provisioning.tgz_supports-color@8.0.0
   '@rush-temp/greengrass-provisioning-client': file:projects/greengrass-provisioning-client.tgz_supports-color@8.0.0
   '@rush-temp/integration-tests': file:projects/integration-tests.tgz_supports-color@8.0.0
@@ -206,6 +208,7 @@ dependencies:
   ajv: 6.10.2
   amazon-dax-client: 1.2.5
   async-local-storage: 2.3.1
+  atob: 2.1.2
   aws-iot-device-sdk: 2.2.6
   aws-sdk: 2.804.0
   aws-serverless-express: 3.4.0
@@ -254,7 +257,6 @@ dependencies:
   morgan: 1.10.0
   multer: 1.4.2
   node-cache: 5.1.2
-  nodemon: 2.0.7
   nyc: 15.1.0_supports-color@8.0.0
   ow: 0.23.0
   p-limit: 3.1.0
@@ -8698,7 +8700,7 @@ packages:
     dev: false
 
   file:projects/certificate-activator.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-h4GwohcEVjhq4ScLd4ZkzwgsyKgbm1/TZegZsvjORkqvKB8m9setDtnrpsuTeF/AQ4q7Myu9yaYRSnSktpUWfw==, tarball: file:projects/certificate-activator.tgz}
+    resolution: {integrity: sha512-ifpsu5KhSGgZhT/sBL2S+7d9itZaFkPuxDAJsOwoDtRuwnelSto7CESKsQy2ad6UrDSMG1vPXaO3vIdfZQY4jg==, tarball: file:projects/certificate-activator.tgz}
     id: file:projects/certificate-activator.tgz
     name: '@rush-temp/certificate-activator'
     version: 0.0.0
@@ -9145,8 +9147,54 @@ packages:
       - utf-8-validate
     dev: false
 
+  file:projects/greengrass-deployment-client.tgz_supports-color@8.0.0:
+    resolution: {integrity: sha512-JG4dc3tF5tXvENsO2mEyboPbETJ3bkfP3jVaS2JoHbg8C4OHov47VHRRSQIYiLgC6sSppc9EWLBUSut9th+uBg==, tarball: file:projects/greengrass-deployment-client.tgz}
+    id: file:projects/greengrass-deployment-client.tgz
+    name: '@rush-temp/greengrass-deployment-client'
+    version: 0.0.0
+    dependencies:
+      '@rushstack/eslint-config': 2.3.4_3318d341e08b60846a0ca54ab3432060
+      '@types/config': 0.0.38
+      '@types/jest': 26.0.23
+      '@types/node': 14.6.1
+      '@types/superagent': 4.1.10
+      '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
+      '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
+      aws-sdk: 2.804.0
+      config: 3.3.6
+      eslint: 7.26.0_supports-color@8.0.0
+      inversify: 5.1.1
+      inversify-binding-decorators: 4.0.0
+      inversify-express-utils: 6.3.2
+      jest: 26.6.3_supports-color@8.0.0
+      jest-create-mock-instance: 1.1.0
+      jest-haste-map: 26.6.2
+      jest-mock: 26.6.2
+      jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
+      jest-resolve: 26.6.2
+      js-yaml: 4.1.0
+      logform: 2.2.0
+      nodemon: 2.0.6
+      nyc: 15.1.0_supports-color@8.0.0
+      ow: 0.23.0
+      readable-stream: 3.6.0
+      reflect-metadata: 0.1.13
+      shx: 0.3.3
+      superagent: 6.1.0_supports-color@8.0.0
+      ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
+      typescript: 4.2.4
+      winston: 3.3.3
+      winston-transport: 4.4.0
+    transitivePeerDependencies:
+      - bufferutil
+      - canvas
+      - supports-color
+      - ts-node
+      - utf-8-validate
+    dev: false
+
   file:projects/greengrass-deployment.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-oGPcXqBEook7s1gB5X5Ls75i6Sw/3/xy7rrwEQb7Pe79lw8dvBpYBOOVCHvlTFuTZS6meAQYc5E4HGdAv+raxg==, tarball: file:projects/greengrass-deployment.tgz}
+    resolution: {integrity: sha512-tAL04c44f5dU+uW6vjH2jNMv+yuX0givMTVGHvdINTPjIK1tSSyr23RETcnoMORUh7wfvt/sa/ZAvwktmWDZgQ==, tarball: file:projects/greengrass-deployment.tgz}
     id: file:projects/greengrass-deployment.tgz
     name: '@rush-temp/greengrass-deployment'
     version: 0.0.0
@@ -9328,7 +9376,7 @@ packages:
     dev: false
 
   file:projects/integration-tests.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-ldydFTJnxjbl1LqeHT54lJBUU4yTZt8qdS48xxHpywjlUNzfCTponl1Ghb2IC9OMuNDJ7qFMzh4v3dUrOe1veA==, tarball: file:projects/integration-tests.tgz}
+    resolution: {integrity: sha512-GxV52rLxFRn9q66zIewT94qCvPX1jnZqABRU4G3QvhCdsp5OtRfImHN7VSW+l4q4vh4xjiFWbDiguBegR5mDxA==, tarball: file:projects/integration-tests.tgz}
     id: file:projects/integration-tests.tgz
     name: '@rush-temp/integration-tests'
     version: 0.0.0

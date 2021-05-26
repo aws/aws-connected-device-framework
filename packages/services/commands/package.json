@@ -1,6 +1,6 @@
 {
   "name": "@cdf/commands",
-  "version": "4.1.2",
+  "version": "4.1.3",
   "description": "CDF Commands",
   "author": "Dean Hart <deanhart@amazon.com>",
   "config": {
