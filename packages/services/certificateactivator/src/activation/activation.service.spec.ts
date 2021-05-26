@@ -171,7 +171,6 @@ describe('ActivationService', () => {
 
         expect(mockedGetObject).toBeCalledWith({Bucket: crlBucket, Key: crlKey});
         expect(mockDescribeCert).toBeCalledWith({certificateId: 'test-cert-1'});
-        // TODO: change the cert CN 
         expect(mockedGetDevice).toBeCalledWith('KETTLE002');
         expect(mockUpdateCert).toBeCalledWith({certificateId: 'test-cert-1', newStatus:'REVOKED'});
     });
@@ -255,7 +254,7 @@ describe('ActivationService', () => {
             return Promise.resolve({
                 certificatePem: '-----BEGIN CERTIFICATE-----\nMIIC+zCCAeMCCQDheAy2sKa7HTANBgkqhkiG9w0BAQsFADAbMQswCQYDVQQGEwJV\nUzEMMAoGA1UECgwDQ0RGMB4XDTIxMDUyMTIzNDkzMloXDTIyMDUyMTIzNDkzMlow\nZDELMAkGA1UEBhMCVVMxCzAJBgNVBAgMAkNPMSMwIQYDVQQKDBpDb25uZWN0ZWQg\nRGV2aWNlIEZyYW1ld29yazEMMAoGA1UECwwDQ0RGMRUwEwYDVQQDDAxTMFZVVkV4\nRk1EQXkwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDiyY+B4miyEeuF\nmaDWAbsmGukmcSZmI3ZToGXCrS6/InHiEoNZNfh/8s9usUizWsh+L5WEvueaQHw3\nQ697O8N03CTESsEu9sd6OmopiBTJ60m8Bes7fOM2Zwrgd+UO6WjUT0tFg9B3aNUD\nSJSXfVeiGB4CIDN0kHcdrDkPnEAVpTDIpakgN83PQjW2zlN3ucwoYjevkpZZihof\ncbgUQ2EAqi04Gfz9X00tKLQ3i6G95xJySwyEBXZdUjYfbYs0pzpLJWbB1qddhkM+\nr5cosYEWTVud2gRU6GAEz5lr+BjiYCaT1FDHtwZUfpdXNhA/jUPlAN1/Tt1YcDk6\nD8w/QQZVAgMBAAEwDQYJKoZIhvcNAQELBQADggEBADDGDpzhjpmoWUICwR6wgtcd\nnaHn78T4f8lLNY5KR3hmTggqvQl2c2PwiENdZ6gqRqhTimmb0AwNPmvDNfFIwYUJ\nAz1jKfuli6EjffzFXy2gcxOUKnSuxGgOMEabGqz99JyBW/32hXssRbLQKsLmuM3f\naqFwC5jKOhz/15sKHo85M7/Z81yOWJbfCoDYmsNTjoDr7PkLZhe6J9CVUqoPUSta\nKS6HVIM+D1Luys0NArKQUzMP82rHf1c7KuWUg46jBznwffE6zeHMCi03ZlYznxq6\n3l8Rk5YRg2xUKs7z8MRslQgo9f0NmJclij4ZoJXEQhL7mHB1ShgNQS9OAIIAm0g=\n-----END CERTIFICATE-----\n',
                 resourceArns: {
-                    thing: 'arn:aws:iot:us-west-2:157731826412:thing/KETTLE002'
+                    thing: 'arn:aws:iot:us-west-2:157731826412:thing/kettle002'
                 }
             });
         });
@@ -279,12 +278,12 @@ describe('ActivationService', () => {
         expect(mockedGetObject).toBeCalledWith({Bucket: crlBucket, Key: crlKey});
         expect(mockDescribeCert).toBeCalledWith({certificateId: 'test-cert-1'});
         expect(mockedGetDevice).toBeCalledTimes(1);
-        expect(mockedListPolicies).toBeCalledWith('KETTLE002', 'ProvisioningTemplate');
+        expect(mockedListPolicies).toBeCalledWith('kettle002', 'ProvisioningTemplate');
         expect(mockedProvisionThing).toBeCalledWith({
             provisioningTemplateId: 'cdf_unit_test',
-            parameters: { ThingName: 'KETTLE002', CertificateId: 'test-cert-1' }
+            parameters: { ThingName: 'kettle002', CertificateId: 'test-cert-1' }
         });
-        expect(mockedUpdateDevice).toBeCalledWith('KETTLE002', {attributes: {status: 'active'}, awsIotThingArn: 'arn:aws:iot:us-west-2:157731826412:thing/KETTLE002'
+        expect(mockedUpdateDevice).toBeCalledWith('KETTLE002', {attributes: {status: 'active'}, awsIotThingArn: 'arn:aws:iot:us-west-2:157731826412:thing/kettle002'
         });
     });
 });
