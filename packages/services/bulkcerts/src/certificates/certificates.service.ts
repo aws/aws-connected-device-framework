@@ -293,7 +293,7 @@ export class CertificatesService {
 
     private getCertFingerprint(certificate:string) : Promise<string> {
         return new Promise((resolve:any,reject:any) =>  {
-            pem.getFingerprint(certificate, (err:any, data:any) => {
+            pem.getFingerprint(certificate, 'sha256', (err:any, data:any) => {
                 if(err) {
                     return reject(err);
                 }

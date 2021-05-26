@@ -19,7 +19,6 @@ export interface RegistrationEvent {
 	timestamp: number;
 	certificateStatus: string;
 	awsAccountId: string;
-	certificateRegistrationTimestamp: string;
 }
 
 export interface CertificateRevocationList {

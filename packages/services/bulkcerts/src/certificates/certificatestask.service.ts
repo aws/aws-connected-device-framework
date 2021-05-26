@@ -37,7 +37,7 @@ export class CertificatesTaskService {
     }
 
     public async createTask(quantity:number, caAlias:string,certInfo:CertificateInfo) : Promise<string> {
-        logger.debug(`certificatestask.service createTask: in: quantity: ${quantity}, caAlias: ${caAlias}`);
+        logger.debug(`certificatestask.service createTask: in: quantity: ${quantity}, caAlias: ${caAlias}, certInfo:${JSON.stringify(certInfo)}`);
 
         
         ow(caAlias, ow.string.nonEmpty);
@@ -52,26 +52,25 @@ export class CertificatesTaskService {
         }
 
         // validate CertInfo
-        const validationResult = await this.validateCertInfo(certInfo);
+        const validationResult = this.validateCertInfo(certInfo);
         if (!validationResult.isValid) {
-            logger.debug(`certificatestask.service createTask:: exit: validationResult:${JSON.stringify(certInfo)}`)
             const e = new Error(Object.values(validationResult.errors)[0]);
             e.name = Object.keys(validationResult.errors)[0];
             throw e;
         }
-        certInfo = await this.constructCommonName(certInfo);
+        certInfo = this.constructCommonName(certInfo);
         if (typeof (certInfo['commonName']['quantity']) && certInfo['commonName']['quantity'] >0 ) {
             quantity = certInfo['commonName']['quantity'];
         }
         
-        await this.validateCommonName(certInfo);
+        this.validateCommonName(certInfo);
 
         ow(quantity, ow.number.greaterThan(0));
         // determine number of chunks
         const remainder = quantity % this.defaultChunkSize;
         const quotient = Math.floor(quantity/this.defaultChunkSize);
         const numberOfChunks = remainder > 0 ? quotient + 1 : quotient;
-        logger.debug(`numberOfChunks: ${numberOfChunks}`);
+        logger.silly(`certificatestask.service createTask: numberOfChunks: ${numberOfChunks}`);
 
         // generate task ID
         const taskID:string = uuid();
@@ -164,7 +163,7 @@ export class CertificatesTaskService {
             Message: JSON.stringify(msg),
             TopicArn: this.requestTopic
         };
-        logger.debug(`certificatestask.service fireSNSevent: publishing:${JSON.stringify(params)}`);
+        logger.silly(`certificatestask.service fireSNSevent: publishing:${JSON.stringify(params)}`);
         await this._sns.publish(params).promise();
         logger.debug('certificatestask.service fireSNSevent: exit:');
     }
@@ -183,7 +182,7 @@ export class CertificatesTaskService {
         return task;
     }
 
- private async validateCertInfo(certInfo: CertificateInfo): Promise<CertInfoValidationResult> {
+    private validateCertInfo(certInfo: CertificateInfo): CertInfoValidationResult {
         logger.debug(`certificatestask.service validateCertInfo: in: certInfo:${JSON.stringify(certInfo)}`);
         
         const commonNameRE = /^[0-9A-Fa-f]+$/g;
@@ -213,7 +212,7 @@ export class CertificatesTaskService {
         // Generator exists and value is valid
         // RangeStart
         if (typeof certInfo['commonName'] !== 'undefined') {
-            certInfo = await this.constructCommonName(certInfo);
+            certInfo = this.constructCommonName(certInfo);
             const commonName = certInfo['commonName'];
             if (typeof commonName['generator'] !== 'undefined' &&  ['list', 'increment', 'static'].includes(commonName['generator'])) {
                 const generator = commonName['generator'];
@@ -243,10 +242,7 @@ export class CertificatesTaskService {
                     if (typeof commonName['commonNameStatic'] === 'undefined') {
                         result.isValid = false;
                         result.errors['ArgumentError'] = 'certinfo/commonName property missing';
-                    } else if (!commonNameRE.test(commonName['commonNameStatic'])) {
-                        result.isValid = false;
-                        result.errors['ArgumentError'] = 'certInfo/commonName string should only contain hexadecimal value';
-                    }
+                    } 
                 }
             } else {
                 result.isValid = false;
@@ -255,11 +251,14 @@ export class CertificatesTaskService {
 
         }
 
-        return await result;
+        logger.debug(`certificatestask.service validateCertInfo: exit:${JSON.stringify(result)}`);
+        return result;
     }
     
 
-    private async constructCommonName(certInfo:CertificateInfo): Promise<CertificateInfo> {
+    private constructCommonName(certInfo:CertificateInfo): CertificateInfo {
+        logger.debug(`certificatestask.service constructCommonName: in:${JSON.stringify(certInfo)}`);
+
         let prefix:string;
         let generator:string;
 
@@ -307,12 +306,13 @@ export class CertificatesTaskService {
             certInfoRes['commonName']['generator'] = CommonNameGenerator.static;
             certInfoRes['commonName']['commonNameStatic'] = commonName;
         }
+        logger.debug(`certificatestask.service constructCommonName: exit:${JSON.stringify(certInfoRes)}`);
         return certInfoRes;
     }
 
-        // Use the last value generated for commonName to validate its max length
-        private async validateCommonName(certInfo:CertificateInfo): Promise<void>{
-        logger.debug(`certificatesTask.service ValidateCommonName: certInfo ${JSON.stringify(certInfo)}`);
+    // Use the last value generated for commonName to validate its max length
+    private validateCommonName(certInfo:CertificateInfo): void {
+        logger.debug(`certificatesTask.service validateCommonName: in: certInfo: ${JSON.stringify(certInfo)}`);
         const commonName = certInfo.commonName;
         let commonNameValue:string;
         if ( typeof commonName === 'object') {
@@ -320,13 +320,13 @@ export class CertificatesTaskService {
                 commonName.prefix = '';
             }
             if (commonName.generator === 'increment') {
-                logger.debug(`certificates.service createCommonName: increment` );
+                logger.silly(`certificates.service validateCommonName: increment` );
                 commonNameValue = commonName.prefix+(parseInt(commonName.commonNameStart,16) + commonName.quantity).toString(16).toUpperCase();
             } else if (commonName.generator === 'list') {
-                logger.debug(`certificates.service createCommonName: list` );
+                logger.silly(`certificates.service validateCommonName: list` );
                 commonNameValue = commonName.prefix+certInfo.commonNameList[commonName.quantity-1].toUpperCase();
             } else if (commonName.generator === 'static') {
-                logger.debug(`certificates.service createCommonName: static` );
+                logger.silly(`certificates.service validateCommonName: static` );
                 commonNameValue = commonName.prefix + commonName.commonNameStatic.toUpperCase();
             }
         } else {
@@ -334,7 +334,7 @@ export class CertificatesTaskService {
         }
         //convert string to base64
         commonNameValue = Buffer.from(commonNameValue.toString()).toString('base64');
-        logger.debug(`certificates.service createCommonName: commonNameValue ${commonNameValue} lenght:${commonNameValue.length}`);
+        logger.silly(`certificates.service createCommonName: commonNameValue:${commonNameValue} length:${commonNameValue?.length}`);
         ow(commonNameValue,`base64 encoded commonName` ,ow.string.maxLength(64));
         
     }

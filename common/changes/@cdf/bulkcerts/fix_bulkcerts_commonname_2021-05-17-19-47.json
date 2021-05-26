@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/bulkcerts",
+      "comment": "Provided certinfo.commonname should be string, but validation rules were enforcing base64. The app converts the commonname string to base64 when required.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/bulkcerts",
+  "email": "deanhart@amazon.com"
+}

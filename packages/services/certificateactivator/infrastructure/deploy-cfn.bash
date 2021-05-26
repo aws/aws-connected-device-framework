@@ -114,12 +114,12 @@ assetlibrary_invoke=$(echo $stack_exports \
 provisioning_invoke_export="$PROVISIONING_STACK_NAME-restApiFunctionName"
 provisioning_invoke=$(echo $stack_exports \
     | jq -r --arg provisioning_invoke_export "$provisioning_invoke_export" \
-    '.Exports[] | select(.Name==$provisioning_invoke_url_export) | .Value')
+    '.Exports[] | select(.Name==$provisioning_invoke_export) | .Value')
 
 cat $CONFIG_LOCATION | \
-  jq --arg assetlibrary_invoke_url "$assetlibrary_invoke_url" \
-     --arg provisioning_invoke_url "$provisioning_invoke_url" \
-  ' .assetLibrary.apiFunctionName=$assetlibrary_invoke_url | .provisioning.apiFunctionName=$provisioning_invoke_url' \
+  jq --arg assetlibrary_invoke "$assetlibrary_invoke" \
+     --arg provisioning_invoke "$provisioning_invoke" \
+  ' .assetLibrary.apiFunctionName=$assetlibrary_invoke | .provisioning.apiFunctionName=$provisioning_invoke' \
   > $CONFIG_LOCATION.tmp && mv $CONFIG_LOCATION.tmp $CONFIG_LOCATION
 
 application_configuration_override=$(cat $CONFIG_LOCATION)

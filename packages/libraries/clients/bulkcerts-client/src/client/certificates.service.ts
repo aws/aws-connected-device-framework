@@ -9,7 +9,7 @@ import {PathHelper} from '../utils/path.helper';
 import {injectable} from 'inversify';
 
 export interface CertificatesService {
-    getCertificates(taskId:string, downloadType:string, additionalHeaders?: RequestHeaders): Promise<string>;
+    getCertificates(taskId:string, downloadType:string, additionalHeaders?: RequestHeaders): Promise<string[]|Buffer>;
     getCertificatesTask(taskId:string, additionalHeaders?: RequestHeaders): Promise<CertificateBatchTaskWithChunks>;
 
 }

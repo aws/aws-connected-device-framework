@@ -12,7 +12,7 @@
 
 import {injectable, inject} from 'inversify';
 import ow from 'ow';
-import { CertificateBatchRequest, RequestHeaders } from './certificatestask.models';
+import { CertificateBatchRequest, CertificateBatchTask, RequestHeaders } from './certificatestask.models';
 import {CertificatesTaskService, CertificatesTaskServiceBase} from './certificatestask.service';
 import {LAMBDAINVOKE_TYPES, LambdaInvokerService, LambdaApiGatewayEventBuilder} from '@cdf/lambda-invoke';
 
@@ -27,7 +27,7 @@ export class CertificatesTaskLambdaService extends CertificatesTaskServiceBase i
         this.lambdaInvoker = lambdaInvoker;
     }
 
-    async createCertificateTask(batchRequest:CertificateBatchRequest,caAlias:string, additionalHeaders?: RequestHeaders): Promise<string> {
+    async createCertificateTask(batchRequest:CertificateBatchRequest,caAlias:string, additionalHeaders?: RequestHeaders): Promise<CertificateBatchTask> {
         ow(caAlias, ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()

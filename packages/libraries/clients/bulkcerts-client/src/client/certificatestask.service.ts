@@ -3,13 +3,13 @@
 #
 # This source code is subject to the terms found in the AWS Enterprise Customer Agreement.
 #-------------------------------------------------------------------------------*/
-import { CertificateBatchRequest, RequestHeaders } from './certificatestask.models';
+import { CertificateBatchRequest, CertificateBatchTask, RequestHeaders } from './certificatestask.models';
 import config from 'config';
 import {PathHelper} from '../utils/path.helper';
 import {injectable} from 'inversify';
 
 export interface CertificatesTaskService {
-    createCertificateTask(request:CertificateBatchRequest, caAlias:string, additionalHeaders?: RequestHeaders): Promise<string>;
+    createCertificateTask(request:CertificateBatchRequest, caAlias:string, additionalHeaders?: RequestHeaders): Promise<CertificateBatchTask>;
 
 }
 

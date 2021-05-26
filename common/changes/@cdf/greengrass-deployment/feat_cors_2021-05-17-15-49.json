@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/greengrass-deployment",
+      "comment": "added cors exposedHeaders config",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/greengrass-deployment",
+  "email": "deanhart@amazon.com"
+}

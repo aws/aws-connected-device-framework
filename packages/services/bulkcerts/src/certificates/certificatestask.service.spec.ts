@@ -279,18 +279,7 @@ describe('CertificatesService', () => {
 
 
     });
-    
-    it('Create Task with invalid commonName, commonname must be a hex value', async () => {
-        const certInfo = Object.assign({},certInfoSequential);
-        certInfo.commonName = '`unit-test::`AB1CD79EF@${static}'
-        // call createTask
-        try {
-            await instance.createTask(115, 'unit-test-ca', certInfo);
-            fail(); //expecting error
-        } catch (e) {
-            expect(e.name).toEqual('ArgumentError');
-        }
-    });
+
 });
 
 

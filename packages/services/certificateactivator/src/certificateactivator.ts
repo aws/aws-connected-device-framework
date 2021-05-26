@@ -21,7 +21,7 @@ exports.handler = async (event: any, _context: any) => {
     ow(event.caCertificateId, ow.string.nonEmpty);
     ow(event.timestamp, ow.number.integer);
     ow(event.awsAccountId, ow.string.nonEmpty);
-    ow(event.certificateRegistrationTimestamp, ow.string.nonEmpty);
+    
   } catch (e) {
     // validation errors shoudn't be retried by Lambda, so
     // log an error and then return something instead of passing the error up

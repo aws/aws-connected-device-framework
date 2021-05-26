@@ -14,7 +14,7 @@ import {injectable} from 'inversify';
 import ow from 'ow';
 import * as request from 'superagent';
 import config from 'config';
-import { CertificateBatchRequest, RequestHeaders } from './certificatestask.models';
+import { CertificateBatchRequest, CertificateBatchTask, RequestHeaders } from './certificatestask.models';
 import {CertificatesTaskService, CertificatesTaskServiceBase} from './certificatestask.service';
 
 @injectable()
@@ -27,7 +27,7 @@ export class CertificatesTaskApigwService extends CertificatesTaskServiceBase im
         this.baseUrl = config.get('bulkcerts.baseUrl') as string;
     }
 
-    async createCertificateTask(batchRequest:CertificateBatchRequest, caAlias:string, additionalHeaders?: RequestHeaders): Promise<string> {
+    async createCertificateTask(batchRequest:CertificateBatchRequest, caAlias:string, additionalHeaders?: RequestHeaders): Promise<CertificateBatchTask> {
         ow(caAlias, ow.string.nonEmpty);
 
             const url = `${this.baseUrl}${super.certificateTaskCreateRelativeUrl(caAlias)}`;

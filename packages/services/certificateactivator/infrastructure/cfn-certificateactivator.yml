@@ -84,6 +84,13 @@ Resources:
             Effect: Allow
             Resource:
               - !Sub 'arn:aws:s3:::${BucketName}/crl/*'
+          - Sid: lambda
+            Action:
+              - lambda:InvokeFunction
+              - lambda:Invoke
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:cdf-*'
 
   LambdaFunction:
     Type: AWS::Serverless::Function
@@ -95,6 +102,9 @@ Resources:
       MemorySize: 128
       Role: !GetAtt LambdaExecutionRole.Arn
       Runtime: nodejs14.x
+      AutoPublishAlias: live
+      DeploymentPreference:
+        Type: AllAtOnce
       Timeout: 30
       Environment:
         Variables:
@@ -102,18 +112,3 @@ Resources:
           NODE_CONFIG: !Ref ApplicationConfigurationOverride
       Tracing: Active
 
-
-Outputs:
-  JITRRuleName:
-    Description: Name of JITR rule
-    Value: !Sub "${JITRRule}"
-    Export: 
-      Name: !Sub "${AWS::StackName}-JITRRuleName"
-  LambdaArn:
-    Description: Lambda Arn
-    Value: !Sub "${LambdaFunction.Arn}"
-    Export: 
-      Name: !Sub "${AWS::StackName}-LambdaArn"
-  LambdaFunctionConsoleUrl:
-    Description: Console URL for the Lambda Function.
-    Value: !Sub "https://{AWS::Region}.console.aws.amazon.com/lambda/home?region={AWS::Region}#/functions/{LambdaFunction}"

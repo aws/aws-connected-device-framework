@@ -1,4 +1,8 @@
-// DO NOT MODIFY THIS FILE. It is generated and used by Rush.
+// DO NOT MODIFY THIS FILE MANUALLY BUT DO COMMIT IT. It is generated and used by Rush.
 {
+<<<<<<< HEAD
+  "pnpmShrinkwrapHash": "81f77392a221142184714ad14339b31691cc825d"
+=======
   "pnpmShrinkwrapHash": "236ff0963a268d4c76738c273bd662fd9a40ed12"
+>>>>>>> origin/master
 }

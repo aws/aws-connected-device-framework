@@ -7,7 +7,7 @@ import 'reflect-metadata';
 
 import AWS, { AWSError } from 'aws-sdk';
 import { ActivationService } from './activation.service';
-import { DevicesService, PoliciesService } from '@cdf/assetlibrary-client';
+import { DevicesService, PoliciesService, Device20Resource } from '@cdf/assetlibrary-client';
 import { ThingsService } from '@cdf/provisioning-client';
 import { mock } from 'jest-mock-extended';
 
@@ -92,7 +92,7 @@ describe('ActivationService', () => {
         expect(mockUpdateCert).toBeCalledWith({certificateId: 'revoked-cert-2', newStatus:'REVOKED'});
     });
 
-    it('activation service does not activate if device already in AssetLibrary', async() => {
+    it('activation service does not activate if device not whitelisted', async() => {
 
         // Mocks ------------------------------------------------------
 
@@ -125,7 +125,7 @@ describe('ActivationService', () => {
               certificateArn: 'arn:aws:iot:us-west-2:157731826412:cert/test-cert-1',
               certificateId: 'test-cert-1',
               status: 'PENDING_ACTIVATION',
-              certificatePem: '-----BEGIN CERTIFICATE-----\nMIID5zCCAs8CCQCjfu9BRlYl1TANBgkqhkiG9w0BAQsFADCBsjELMAkGA1UEBhMC\nVVMxCzAJBgNVBAgTAldBMRAwDgYDVQQHEwdTZWF0dGxlMR0wGwYDVQQKExRBV1Mg\nUHJvU2VydmUgSW9UIEdTUDEMMAoGA1UECxMDQ0RGMSUwIwYDVQQDExxjb25uZWN0\nZWRkZXZpY2VmcmFtZXdvcmsuY29tMTAwLgYJKoZIhvcNAQkBFiFpbmZvQGNvbm5l\nY3RlZGRldmljZWZyYW1ld29yay5jb20wHhcNMTkwMzE5MTcxMzI2WhcNMjAwNzMx\nMTcxMzI2WjCBtzELMAkGA1UEBhMCVVMxCzAJBgNVBAgMAldBMRAwDgYDVQQHDAdT\nZWF0dGxlMREwDwYDVQQKDAhQcm9TZXJ2ZTEjMCEGA1UECwwaQ29ubmVjdGVkIERl\ndmljZSBGcmFtZXdvcmsxHzAdBgNVBAMMFmVkZ2U6OlRlc3RDZGZEZXZpY2UwMDEx\nMDAuBgkqhkiG9w0BCQEWIWluZm9AY29ubmVjdGVkZGV2aWNlZnJhbWV3b3JrLmNv\nbTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKUN/Xmk4oWfWU2ArWnZ\nh1vW/DDw13y59VL7pD7zfN4V/hhxAm6XvCthavtQJPK5e2EA0d6GFGvqVYPkhqDc\nry2haFHWzUfMAlJrUSfqRJCsqg5J0QZvk3n8IHEi+bvh7olQvTo3Z4PMNWMr/SDn\nTczKhQRorN8VDhvq2SHJcSQKRjGmoREcfRQqWobBiHzOY06aLG+5HKcOI3HvSc3D\nP+r8Rx8HGzxiXcgx4kYxFhw+xlQ3W/4ZsOop7Fy1rhJS3A3yv0P08upRpkjfn25e\nU5frK++z5TBhCmwjgQQv7t0S16Qhcke7OFVaULxi4EibxzPUvzeXQf9+taVNHGGq\nSdkCAwEAATANBgkqhkiG9w0BAQsFAAOCAQEAYr5XXhrS4yw5Mlhh0ChytVGiZu1B\nOrA9caZdRAFp5tMLEQ4p1WS3ZKp75mbgP37ZVAiu+3jcoVYYVhifHkEFMqAyX+Wr\neBhODIqixskVxe9R9g7nAMvbC3na1cbzPVS8NEsAzL4kYwKJ4FpyfXyzhTdFSt55\nfanX9eRMJxOsP3dmlkJ3czpEvKFmhRCYMCQsQDkOHpkoLW1j99WJ+E/n5BoOUUNH\ngflocDMIAx+JNK9clPwSELdZJ1CnaRk0d4755nZUNXjfcbx1lVNpNo6qiGgtZpn3\nmmj0tlX0RKYX4b7x/Hn58n73ObmsxUNBVxVDzQxzFciq4encZjSpMck5bA==\n-----END CERTIFICATE-----\n',
+              certificatePem: '-----BEGIN CERTIFICATE-----\nMIIC+zCCAeMCCQDheAy2sKa7HTANBgkqhkiG9w0BAQsFADAbMQswCQYDVQQGEwJV\nUzEMMAoGA1UECgwDQ0RGMB4XDTIxMDUyMTIzNDkzMloXDTIyMDUyMTIzNDkzMlow\nZDELMAkGA1UEBhMCVVMxCzAJBgNVBAgMAkNPMSMwIQYDVQQKDBpDb25uZWN0ZWQg\nRGV2aWNlIEZyYW1ld29yazEMMAoGA1UECwwDQ0RGMRUwEwYDVQQDDAxTMFZVVkV4\nRk1EQXkwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDiyY+B4miyEeuF\nmaDWAbsmGukmcSZmI3ZToGXCrS6/InHiEoNZNfh/8s9usUizWsh+L5WEvueaQHw3\nQ697O8N03CTESsEu9sd6OmopiBTJ60m8Bes7fOM2Zwrgd+UO6WjUT0tFg9B3aNUD\nSJSXfVeiGB4CIDN0kHcdrDkPnEAVpTDIpakgN83PQjW2zlN3ucwoYjevkpZZihof\ncbgUQ2EAqi04Gfz9X00tKLQ3i6G95xJySwyEBXZdUjYfbYs0pzpLJWbB1qddhkM+\nr5cosYEWTVud2gRU6GAEz5lr+BjiYCaT1FDHtwZUfpdXNhA/jUPlAN1/Tt1YcDk6\nD8w/QQZVAgMBAAEwDQYJKoZIhvcNAQELBQADggEBADDGDpzhjpmoWUICwR6wgtcd\nnaHn78T4f8lLNY5KR3hmTggqvQl2c2PwiENdZ6gqRqhTimmb0AwNPmvDNfFIwYUJ\nAz1jKfuli6EjffzFXy2gcxOUKnSuxGgOMEabGqz99JyBW/32hXssRbLQKsLmuM3f\naqFwC5jKOhz/15sKHo85M7/Z81yOWJbfCoDYmsNTjoDr7PkLZhe6J9CVUqoPUSta\nKS6HVIM+D1Luys0NArKQUzMP82rHf1c7KuWUg46jBznwffE6zeHMCi03ZlYznxq6\n3l8Rk5YRg2xUKs7z8MRslQgo9f0NmJclij4ZoJXEQhL7mHB1ShgNQS9OAIIAm0g=\n-----END CERTIFICATE-----\n',
               ownedBy: '157731826412',
               creationDate: new Date('2018-08-07T16:22:39.000Z'),
               lastModifiedDate: new Date('2018-08-07T16:22:39.000Z'),
@@ -144,86 +144,11 @@ describe('ActivationService', () => {
         mockDescribeCertResponse.error = null;
         const mockDescribeCert = mockedIot.describeCertificate = <any>(jest.fn((_params) => mockDescribeCertResponse));
 
-        const createDeviceMock = jest.fn((_params) => {
-            return Promise.reject({'status':409, 'error':'CONFLICT', 'msg':'Device already exists'});
-        });
-        const mockedCreateDevice = mockedDevicesService.createDevice = <any>createDeviceMock;
+        const mockedGetDevice = mockedDevicesService.getDeviceByID = jest.fn().mockReturnValueOnce(undefined);
 
-        const provisionThingMock = jest.fn((_params) => Promise.reject());
-        const mockedProvisionThing = mockedThingsService.provisionThing = <any>provisionThingMock;
-
-        // Test -------------------------------------------------------
-
-        const testJitrEvent = {
-            'certificateId': 'test-cert-1',
-            'caCertificateId': '3f8837752188827',
-            'timestamp': 1552061705285,
-            'certificateStatus': 'PENDING_ACTIVATION',
-            'awsAccountId': '157731826412',
-            'certificateRegistrationTimestamp': '1552061705277'
-        };
-
-        await instance.activate(testJitrEvent);
-
-        // Validation -------------------------------------------------
-
-        expect(mockedGetObject).toBeCalledWith({Bucket: crlBucket, Key: crlKey});
-        expect(mockDescribeCert).toBeCalledWith({certificateId: 'test-cert-1'});
-        expect(mockedCreateDevice).toBeCalledWith({deviceId:'TestCdfDevice001',templateId:'edge'}, 'unittestprofile');
-        expect(mockedProvisionThing).not.toBeCalled();
-    });
-
-    it('activation service does not activate if certificate CN does not match templateid::deviceid', async() => {
-
-        // Mocks ------------------------------------------------------
-
-        const crl = { 'revokedCertificates': [
-                { 'certificateId': 'revoked-cert-1', 'revokedOn': 1551796535, 'revokedReason': 1 },
-                { 'certificateId': 'revoked-cert-2', 'revokedOn': 1551796535, 'revokedReason': 1 }
-            ], 'lastUpdate': 1551796535
-        };
-
-        const s3BodyBuffer = Buffer.from(JSON.stringify(crl));
-
-        const s3GetObjectResponse = {
-            Body: s3BodyBuffer,
-            AcceptRanges: 'bytes',
-            LastModified: new Date('2018-08-07T16:22:39.000Z'),
-            ContentLength: 100,
-            ETag: 'e0e8d74cd1095fae4cd91153eb882a48',
-            ContentType: 'application/octet-stream',
-            Metadata: {}
-        };
-
-        const mockGetObjectResponse = new MockGetObjectOutput();
-        mockGetObjectResponse.response = s3GetObjectResponse;
-        mockGetObjectResponse.error = null;
-        const mockedGetObject = mockedS3.getObject = <any>(jest.fn((_params) => mockGetObjectResponse));
-
-        // cert pem only has device ID in CN field: TestCdfDevice001
-        const certResponse:AWS.Iot.DescribeCertificateResponse = {
-            certificateDescription: {
-              certificateArn: 'arn:aws:iot:us-west-2:157731826412:cert/test-cert-1',
-              certificateId: 'test-cert-1',
-              status: 'PENDING_ACTIVATION',
-              certificatePem: '-----BEGIN CERTIFICATE-----\nMIID2zCCAsMCCQCjfu9BRlYl1DANBgkqhkiG9w0BAQsFADCBsjELMAkGA1UEBhMC\nVVMxCzAJBgNVBAgTAldBMRAwDgYDVQQHEwdTZWF0dGxlMR0wGwYDVQQKExRBV1Mg\nUHJvU2VydmUgSW9UIEdTUDEMMAoGA1UECxMDQ0RGMSUwIwYDVQQDExxjb25uZWN0\nZWRkZXZpY2VmcmFtZXdvcmsuY29tMTAwLgYJKoZIhvcNAQkBFiFpbmZvQGNvbm5l\nY3RlZGRldmljZWZyYW1ld29yay5jb20wHhcNMTkwMzA3MjIwMjE0WhcNMjAwNzE5\nMjIwMjE0WjCBqzELMAkGA1UEBhMCVVMxCzAJBgNVBAgMAkNPMQ8wDQYDVQQHDAZE\nZW52ZXIxIzAhBgNVBAoMGkNvbm5lY3RlZCBEZXZpY2UgRnJhbWV3b3JrMQwwCgYD\nVQQLDANDREYxGTAXBgNVBAMMEFRlc3RDZGZEZXZpY2UwMDExMDAuBgkqhkiG9w0B\nCQEWIWluZm9AY29ubmVjdGVkZGV2aWNlZnJhbWV3b3JrLmNvbTCCASIwDQYJKoZI\nhvcNAQEBBQADggEPADCCAQoCggEBAMvWMU8f/FjSWWR4PkAnbSBNNHC5KMExCXvT\ncQ1aERmkRIrloXUQf7CMyOQQloJlsr1Ps+97NFDkh7XB5IbUdT6D/Bw0wVq1z/v1\n7JAupNGnwPPagxM/xlv7PojMntmQtlM5g8ASoGk0KvTuGBJZsCf4jQUts3obk15z\n5Yg7gwHfjXaHUhJRWEjUtCvmrUtdsI7MbONitGr6heRDfbG1rzCjj+y1cJBWFWQL\naOHnzQW1mU0NJoicNZNI0ou3h/O8vezY+q4GsNrfI02/0/+8hL6x8Iex+KMnXhee\n9Me0tnBwbyxUdV6e5PLuC/2SePblC/Wewg+7UZtPFUMr71qkNYECAwEAATANBgkq\nhkiG9w0BAQsFAAOCAQEAsr1cw2cSKJjK49Q0SHu1s8/2Ro5m210zZasp+AfeOdiQ\njD0uUwKo6tRwM/uMuzFWlC8pGXxhV/6yQEtDEWS/NdnSZJuEa59TPCOURn2hEhJT\ntSHO9IXcDr+YeauwWEwRyqyVweYFRZSQbN4Um+59bSIHKIBMwpMokF6LIBtVtchG\n0Rkvhq6Q+a0gO/HGoJeZgV1Y/8cP2fFP3OugP4FlnRX9UHkUmo2y783ZqNqL5UXr\nFmYkHFw0Y3nV8byN8lYYiaIKT5KrQOQ0N1FvALiB1Ibf4C/W41/pQProa5hD/qR8\nCKL1gNANkVwP3RwsxhluNCLbX9+vyVebCMsJXym4Xg==\n-----END CERTIFICATE-----\n',
-              ownedBy: '157731826412',
-              creationDate: new Date('2018-08-07T16:22:39.000Z'),
-              lastModifiedDate: new Date('2018-08-07T16:22:39.000Z'),
-              customerVersion: 1,
-              transferData: {},
-              generationId: '0d1c2c1e-9f52-4f2f-a59e-d797310a6c44',
-              validity: {
-                notBefore: new Date('2018-08-07T16:22:39.000Z'),
-                notAfter: new Date('2058-08-07T16:22:39.000Z')
-              }
-            }
-          };
-
-        const mockDescribeCertResponse = new DescribeCertificateResponse();
-        mockDescribeCertResponse.response = certResponse;
-        mockDescribeCertResponse.error = null;
-        const mockDescribeCert = mockedIot.describeCertificate = <any>(jest.fn((_params) => mockDescribeCertResponse));
+        const mockUpdateCertResponse = new UpdateCertificateResponse();
+        mockUpdateCertResponse.error = null;
+        const mockUpdateCert = mockedIot.updateCertificate = <any>(jest.fn((_params) => mockUpdateCertResponse));
 
         // Test -------------------------------------------------------
 
@@ -238,16 +163,17 @@ describe('ActivationService', () => {
 
         try {
             await instance.activate(testJitrEvent);
-            // should error, fail if not
-            fail('Expected instance.activate to throw a validation error but it did not.');
         } catch (e) {
-           expect(e.name).toEqual('ArgumentError');
+            expect(e.message).toBe('DEVICE_NOT_WHITELISTED');
         }
 
         // Validation -------------------------------------------------
 
         expect(mockedGetObject).toBeCalledWith({Bucket: crlBucket, Key: crlKey});
         expect(mockDescribeCert).toBeCalledWith({certificateId: 'test-cert-1'});
+        // TODO: change the cert CN 
+        expect(mockedGetDevice).toBeCalledWith('KETTLE002');
+        expect(mockUpdateCert).toBeCalledWith({certificateId: 'test-cert-1', newStatus:'REVOKED'});
     });
 
     it('activation service activates', async() => {
@@ -283,7 +209,7 @@ describe('ActivationService', () => {
               certificateArn: 'arn:aws:iot:us-west-2:157731826412:cert/test-cert-1',
               certificateId: 'test-cert-1',
               status: 'PENDING_ACTIVATION',
-              certificatePem: '-----BEGIN CERTIFICATE-----\nMIID5zCCAs8CCQCjfu9BRlYl1TANBgkqhkiG9w0BAQsFADCBsjELMAkGA1UEBhMC\nVVMxCzAJBgNVBAgTAldBMRAwDgYDVQQHEwdTZWF0dGxlMR0wGwYDVQQKExRBV1Mg\nUHJvU2VydmUgSW9UIEdTUDEMMAoGA1UECxMDQ0RGMSUwIwYDVQQDExxjb25uZWN0\nZWRkZXZpY2VmcmFtZXdvcmsuY29tMTAwLgYJKoZIhvcNAQkBFiFpbmZvQGNvbm5l\nY3RlZGRldmljZWZyYW1ld29yay5jb20wHhcNMTkwMzE5MTcxMzI2WhcNMjAwNzMx\nMTcxMzI2WjCBtzELMAkGA1UEBhMCVVMxCzAJBgNVBAgMAldBMRAwDgYDVQQHDAdT\nZWF0dGxlMREwDwYDVQQKDAhQcm9TZXJ2ZTEjMCEGA1UECwwaQ29ubmVjdGVkIERl\ndmljZSBGcmFtZXdvcmsxHzAdBgNVBAMMFmVkZ2U6OlRlc3RDZGZEZXZpY2UwMDEx\nMDAuBgkqhkiG9w0BCQEWIWluZm9AY29ubmVjdGVkZGV2aWNlZnJhbWV3b3JrLmNv\nbTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKUN/Xmk4oWfWU2ArWnZ\nh1vW/DDw13y59VL7pD7zfN4V/hhxAm6XvCthavtQJPK5e2EA0d6GFGvqVYPkhqDc\nry2haFHWzUfMAlJrUSfqRJCsqg5J0QZvk3n8IHEi+bvh7olQvTo3Z4PMNWMr/SDn\nTczKhQRorN8VDhvq2SHJcSQKRjGmoREcfRQqWobBiHzOY06aLG+5HKcOI3HvSc3D\nP+r8Rx8HGzxiXcgx4kYxFhw+xlQ3W/4ZsOop7Fy1rhJS3A3yv0P08upRpkjfn25e\nU5frK++z5TBhCmwjgQQv7t0S16Qhcke7OFVaULxi4EibxzPUvzeXQf9+taVNHGGq\nSdkCAwEAATANBgkqhkiG9w0BAQsFAAOCAQEAYr5XXhrS4yw5Mlhh0ChytVGiZu1B\nOrA9caZdRAFp5tMLEQ4p1WS3ZKp75mbgP37ZVAiu+3jcoVYYVhifHkEFMqAyX+Wr\neBhODIqixskVxe9R9g7nAMvbC3na1cbzPVS8NEsAzL4kYwKJ4FpyfXyzhTdFSt55\nfanX9eRMJxOsP3dmlkJ3czpEvKFmhRCYMCQsQDkOHpkoLW1j99WJ+E/n5BoOUUNH\ngflocDMIAx+JNK9clPwSELdZJ1CnaRk0d4755nZUNXjfcbx1lVNpNo6qiGgtZpn3\nmmj0tlX0RKYX4b7x/Hn58n73ObmsxUNBVxVDzQxzFciq4encZjSpMck5bA==\n-----END CERTIFICATE-----\n',
+              certificatePem: '-----BEGIN CERTIFICATE-----\nMIIC+zCCAeMCCQDheAy2sKa7HTANBgkqhkiG9w0BAQsFADAbMQswCQYDVQQGEwJV\nUzEMMAoGA1UECgwDQ0RGMB4XDTIxMDUyMTIzNDkzMloXDTIyMDUyMTIzNDkzMlow\nZDELMAkGA1UEBhMCVVMxCzAJBgNVBAgMAkNPMSMwIQYDVQQKDBpDb25uZWN0ZWQg\nRGV2aWNlIEZyYW1ld29yazEMMAoGA1UECwwDQ0RGMRUwEwYDVQQDDAxTMFZVVkV4\nRk1EQXkwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDiyY+B4miyEeuF\nmaDWAbsmGukmcSZmI3ZToGXCrS6/InHiEoNZNfh/8s9usUizWsh+L5WEvueaQHw3\nQ697O8N03CTESsEu9sd6OmopiBTJ60m8Bes7fOM2Zwrgd+UO6WjUT0tFg9B3aNUD\nSJSXfVeiGB4CIDN0kHcdrDkPnEAVpTDIpakgN83PQjW2zlN3ucwoYjevkpZZihof\ncbgUQ2EAqi04Gfz9X00tKLQ3i6G95xJySwyEBXZdUjYfbYs0pzpLJWbB1qddhkM+\nr5cosYEWTVud2gRU6GAEz5lr+BjiYCaT1FDHtwZUfpdXNhA/jUPlAN1/Tt1YcDk6\nD8w/QQZVAgMBAAEwDQYJKoZIhvcNAQELBQADggEBADDGDpzhjpmoWUICwR6wgtcd\nnaHn78T4f8lLNY5KR3hmTggqvQl2c2PwiENdZ6gqRqhTimmb0AwNPmvDNfFIwYUJ\nAz1jKfuli6EjffzFXy2gcxOUKnSuxGgOMEabGqz99JyBW/32hXssRbLQKsLmuM3f\naqFwC5jKOhz/15sKHo85M7/Z81yOWJbfCoDYmsNTjoDr7PkLZhe6J9CVUqoPUSta\nKS6HVIM+D1Luys0NArKQUzMP82rHf1c7KuWUg46jBznwffE6zeHMCi03ZlYznxq6\n3l8Rk5YRg2xUKs7z8MRslQgo9f0NmJclij4ZoJXEQhL7mHB1ShgNQS9OAIIAm0g=\n-----END CERTIFICATE-----\n',
               ownedBy: '157731826412',
               creationDate: new Date('2018-08-07T16:22:39.000Z'),
               lastModifiedDate: new Date('2018-08-07T16:22:39.000Z'),
@@ -302,11 +228,8 @@ describe('ActivationService', () => {
         mockDescribeCertResponse.error = null;
         const mockDescribeCert = mockedIot.describeCertificate = <any>(jest.fn((_params) => mockDescribeCertResponse));
 
-        const mockedCreateDevice = mockedDevicesService.createDevice = jest.fn().mockImplementationOnce(()=> {
-            return {
-              promise: () => Promise.resolve({'status':201})
-            };
-        });
+        const device:Device20Resource = {};
+        const mockedGetDevice = mockedDevicesService.getDeviceByID = jest.fn().mockReturnValueOnce(device);
 
         const listPoliciesMock = jest.fn((_params) => {
             return Promise.resolve({
@@ -330,9 +253,9 @@ describe('ActivationService', () => {
 
         const provisionThingMock = jest.fn((_params) => {
             return Promise.resolve({
-                certificatePem: '-----BEGIN CERTIFICATE-----\nMIID5zCCAs8CCQCjfu9BRlYl1TANBgkqhkiG9w0BAQsFADCBsjELMAkGA1UEBhMC\nVVMxCzAJBgNVBAgTAldBMRAwDgYDVQQHEwdTZWF0dGxlMR0wGwYDVQQKExRBV1Mg\nUHJvU2VydmUgSW9UIEdTUDEMMAoGA1UECxMDQ0RGMSUwIwYDVQQDExxjb25uZWN0\nZWRkZXZpY2VmcmFtZXdvcmsuY29tMTAwLgYJKoZIhvcNAQkBFiFpbmZvQGNvbm5l\nY3RlZGRldmljZWZyYW1ld29yay5jb20wHhcNMTkwMzE5MTcxMzI2WhcNMjAwNzMx\nMTcxMzI2WjCBtzELMAkGA1UEBhMCVVMxCzAJBgNVBAgMAldBMRAwDgYDVQQHDAdT\nZWF0dGxlMREwDwYDVQQKDAhQcm9TZXJ2ZTEjMCEGA1UECwwaQ29ubmVjdGVkIERl\ndmljZSBGcmFtZXdvcmsxHzAdBgNVBAMMFmVkZ2U6OlRlc3RDZGZEZXZpY2UwMDEx\nMDAuBgkqhkiG9w0BCQEWIWluZm9AY29ubmVjdGVkZGV2aWNlZnJhbWV3b3JrLmNv\nbTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKUN/Xmk4oWfWU2ArWnZ\nh1vW/DDw13y59VL7pD7zfN4V/hhxAm6XvCthavtQJPK5e2EA0d6GFGvqVYPkhqDc\nry2haFHWzUfMAlJrUSfqRJCsqg5J0QZvk3n8IHEi+bvh7olQvTo3Z4PMNWMr/SDn\nTczKhQRorN8VDhvq2SHJcSQKRjGmoREcfRQqWobBiHzOY06aLG+5HKcOI3HvSc3D\nP+r8Rx8HGzxiXcgx4kYxFhw+xlQ3W/4ZsOop7Fy1rhJS3A3yv0P08upRpkjfn25e\nU5frK++z5TBhCmwjgQQv7t0S16Qhcke7OFVaULxi4EibxzPUvzeXQf9+taVNHGGq\nSdkCAwEAATANBgkqhkiG9w0BAQsFAAOCAQEAYr5XXhrS4yw5Mlhh0ChytVGiZu1B\nOrA9caZdRAFp5tMLEQ4p1WS3ZKp75mbgP37ZVAiu+3jcoVYYVhifHkEFMqAyX+Wr\neBhODIqixskVxe9R9g7nAMvbC3na1cbzPVS8NEsAzL4kYwKJ4FpyfXyzhTdFSt55\nfanX9eRMJxOsP3dmlkJ3czpEvKFmhRCYMCQsQDkOHpkoLW1j99WJ+E/n5BoOUUNH\ngflocDMIAx+JNK9clPwSELdZJ1CnaRk0d4755nZUNXjfcbx1lVNpNo6qiGgtZpn3\nmmj0tlX0RKYX4b7x/Hn58n73ObmsxUNBVxVDzQxzFciq4encZjSpMck5bA==\n-----END CERTIFICATE-----\n',
+                certificatePem: '-----BEGIN CERTIFICATE-----\nMIIC+zCCAeMCCQDheAy2sKa7HTANBgkqhkiG9w0BAQsFADAbMQswCQYDVQQGEwJV\nUzEMMAoGA1UECgwDQ0RGMB4XDTIxMDUyMTIzNDkzMloXDTIyMDUyMTIzNDkzMlow\nZDELMAkGA1UEBhMCVVMxCzAJBgNVBAgMAkNPMSMwIQYDVQQKDBpDb25uZWN0ZWQg\nRGV2aWNlIEZyYW1ld29yazEMMAoGA1UECwwDQ0RGMRUwEwYDVQQDDAxTMFZVVkV4\nRk1EQXkwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDiyY+B4miyEeuF\nmaDWAbsmGukmcSZmI3ZToGXCrS6/InHiEoNZNfh/8s9usUizWsh+L5WEvueaQHw3\nQ697O8N03CTESsEu9sd6OmopiBTJ60m8Bes7fOM2Zwrgd+UO6WjUT0tFg9B3aNUD\nSJSXfVeiGB4CIDN0kHcdrDkPnEAVpTDIpakgN83PQjW2zlN3ucwoYjevkpZZihof\ncbgUQ2EAqi04Gfz9X00tKLQ3i6G95xJySwyEBXZdUjYfbYs0pzpLJWbB1qddhkM+\nr5cosYEWTVud2gRU6GAEz5lr+BjiYCaT1FDHtwZUfpdXNhA/jUPlAN1/Tt1YcDk6\nD8w/QQZVAgMBAAEwDQYJKoZIhvcNAQELBQADggEBADDGDpzhjpmoWUICwR6wgtcd\nnaHn78T4f8lLNY5KR3hmTggqvQl2c2PwiENdZ6gqRqhTimmb0AwNPmvDNfFIwYUJ\nAz1jKfuli6EjffzFXy2gcxOUKnSuxGgOMEabGqz99JyBW/32hXssRbLQKsLmuM3f\naqFwC5jKOhz/15sKHo85M7/Z81yOWJbfCoDYmsNTjoDr7PkLZhe6J9CVUqoPUSta\nKS6HVIM+D1Luys0NArKQUzMP82rHf1c7KuWUg46jBznwffE6zeHMCi03ZlYznxq6\n3l8Rk5YRg2xUKs7z8MRslQgo9f0NmJclij4ZoJXEQhL7mHB1ShgNQS9OAIIAm0g=\n-----END CERTIFICATE-----\n',
                 resourceArns: {
-                    thing: 'arn:aws:iot:us-west-2:157731826412:thing/TestCdfDevice001'
+                    thing: 'arn:aws:iot:us-west-2:157731826412:thing/KETTLE002'
                 }
             });
         });
@@ -355,13 +278,13 @@ describe('ActivationService', () => {
 
         expect(mockedGetObject).toBeCalledWith({Bucket: crlBucket, Key: crlKey});
         expect(mockDescribeCert).toBeCalledWith({certificateId: 'test-cert-1'});
-        expect(mockedCreateDevice).toBeCalledWith({deviceId:'TestCdfDevice001',templateId:'edge'},'unittestprofile');
-        expect(mockedListPolicies).toBeCalledWith('TestCdfDevice001', 'ProvisioningTemplate');
+        expect(mockedGetDevice).toBeCalledTimes(1);
+        expect(mockedListPolicies).toBeCalledWith('KETTLE002', 'ProvisioningTemplate');
         expect(mockedProvisionThing).toBeCalledWith({
             provisioningTemplateId: 'cdf_unit_test',
-            parameters: { ThingName: 'TestCdfDevice001', CertificateId: 'test-cert-1' }
+            parameters: { ThingName: 'KETTLE002', CertificateId: 'test-cert-1' }
         });
-        expect(mockedUpdateDevice).toBeCalledWith('TestCdfDevice001', {attributes: {status: 'active'}, awsIotThingArn: 'arn:aws:iot:us-west-2:157731826412:thing/TestCdfDevice001'
+        expect(mockedUpdateDevice).toBeCalledWith('KETTLE002', {attributes: {status: 'active'}, awsIotThingArn: 'arn:aws:iot:us-west-2:157731826412:thing/KETTLE002'
         });
     });
 });

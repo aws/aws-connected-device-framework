@@ -27,7 +27,7 @@ export class CertificatesApigwService extends CertificatesServiceBase implements
         this.baseUrl = config.get('bulkcerts.baseUrl') as string;
     }
 
-    async getCertificates(taskId:string, downloadType:string, additionalHeaders?: RequestHeaders): Promise<string> {
+    async getCertificates(taskId:string, downloadType:string, additionalHeaders?: RequestHeaders): Promise<string[]|Buffer> {
         ow(taskId, ow.string.nonEmpty);
 
         const res = await request.get(`${this.baseUrl}${super.getCertificatesRelativeUrl(taskId)}?downloadType=${downloadType}`)

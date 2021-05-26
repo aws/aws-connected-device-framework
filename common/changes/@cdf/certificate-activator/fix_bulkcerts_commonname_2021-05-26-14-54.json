@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/certificate-activator",
+      "comment": "Updated to use the Asset Library as the approval list.",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@cdf/certificate-activator",
+  "email": "deanhart@amazon.com"
+}

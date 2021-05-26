@@ -263,6 +263,7 @@ ASSETLIBRARY_HISTORY_STACK_NAME=cdf-assetlibraryhistory-${ENVIRONMENT}
 ASSETLIBRARY_STACK_NAME=cdf-assetlibrary-${ENVIRONMENT}
 BASTION_STACK_NAME=cdf-bastion-${ENVIRONMENT}
 BULKCERTS_STACK_NAME=cdf-bulkcerts-${ENVIRONMENT}
+CERTIFICATEACTIVATOR_STACK_NAME=cdf-certificateactivator-${ENVIRONMENT}
 CERTIFICATEVENDOR_STACK_NAME=cdf-certificatevendor-${ENVIRONMENT}
 COMMANDS_STACK_NAME=cdf-commands-${ENVIRONMENT}
 DEVICE_MONITORING_STACK_NAME=cdf-device-monitoring-${ENVIRONMENT}
@@ -609,6 +610,24 @@ if [ -f "$eventsprocessor_config" ]; then
         $AWS_SCRIPT_ARGS
 else
    echo 'NOT DEPLOYING: events-processor'
+fi
+
+
+
+certificateactivator_config=$CONFIG_LOCATION/certificateactivator/$CONFIG_ENVIRONMENT-config.json
+if [ -f "$certificateactivator_config" ]; then
+
+    logTitle 'Deploying certificate activator'
+
+    cd "$root_dir/packages/services/certificateactivator"
+
+    certificateactivator_bucket=$(cat "$certificateactivator_config" | jq -r '.aws.s3.certificates.bucket')
+
+    infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
+    infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "$certificateactivator_config" -b "$certificateactivator_bucket" \
+        $AWS_SCRIPT_ARGS
+else
+   echo 'NOT DEPLOYING: certificate activator'
 fi
 
 

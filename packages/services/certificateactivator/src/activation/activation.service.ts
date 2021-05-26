@@ -8,10 +8,10 @@ import * as pem from 'pem';
 import { TYPES } from '../di/types';
 import { logger } from '../utils/logger';
 import ow from 'ow';
-import config from 'config';
 import { RegistrationEvent, CertificateRevocationList, CertificateStatus } from './activation.models';
 import { DevicesService, Device10Resource, PoliciesService ,ASSTLIBRARY_CLIENT_TYPES } from '@cdf/assetlibrary-client';
 import { ThingsService, ProvisionThingRequest, ProvisionThingResponse, PROVISIONING_CLIENT_TYPES } from '@cdf/provisioning-client';
+import atob from 'atob';
 
 @injectable()
 export class ActivationService {
@@ -34,50 +34,49 @@ export class ActivationService {
     }
 
     public async activate(jitrEvent:RegistrationEvent): Promise<void> {
-        logger.debug(`activation.service activate: in: jitrEvent:${JSON.stringify(jitrEvent)}`);
+        logger.debug(`activation.service: activate: in: jitrEvent:${JSON.stringify(jitrEvent)}`);
 
         ow(jitrEvent.certificateId, ow.string.nonEmpty);
         ow(jitrEvent.caCertificateId, ow.string.nonEmpty);
         ow(jitrEvent.timestamp, ow.number.integer);
         ow(jitrEvent.awsAccountId, ow.string.nonEmpty);
-        ow(jitrEvent.certificateRegistrationTimestamp, ow.string.nonEmpty);
 
-        const certIsRevoked = await this.isCertificateInCRL(jitrEvent.certificateId);
-        if (certIsRevoked) {
-            logger.debug(`certificate ${jitrEvent.certificateId} is in CRL and will not be registered`);
-            await this.revokeCertificate(jitrEvent.certificateId);
-            return;
+        // check whether certificate has been revoked
+        try {
+            const certIsRevoked = await this.isCertificateInCRL(jitrEvent.certificateId);
+            logger.debug(`activation.service: activate: certIsRevoked:${certIsRevoked}`);
+            if (certIsRevoked) {
+                await this.revokeCertificate(jitrEvent.certificateId);
+                return;
+            }
+        } catch (e) {
+            logger.error(`activation.service: activate: error with certificate revocation:${e.message}`);
+            throw e;
         }
-        logger.debug(`certificate ${jitrEvent.certificateId} is in not in CRL and will be registered`);
 
-        const certificateCommonName = await this.getCommonNameFromCertificate(jitrEvent.certificateId);
-        // Validate JITR CN = "TemplateId::DeviceId"
-        if (!certificateCommonName.match(/[A-Za-z0-9_-]+::[A-Za-z0-9_-]+/g)) {
-            logger.error(`certificateCommonName: ${certificateCommonName} does not match format templateid::deviceid`);
-            const error = new Error();
-            error.name = 'ArgumentError';
-            error.message = `certificateCommonName: ${certificateCommonName} does not match format templateid::deviceid`;
-            throw error;
+        // check whether device has been whitelisted      
+        let deviceId:string;
+        try {
+            deviceId = await this.getDeviceIdFromCertificate(jitrEvent.certificateId);
+            const device = await this.devices.getDeviceByID(deviceId);
+            if (device===undefined) {
+                await this.revokeCertificate(jitrEvent.certificateId);
+                return;
+            }
+        } catch(e) {
+            logger.error(`activation.service: activate: error with whitelist:${e.message}`);
+            throw e;
         }
-        const templateId = certificateCommonName.split('::')[0];
-        const deviceId = certificateCommonName.split('::')[1];
+
+        // all good, so go ahead and provision it
+        const thingArn = await this.provisionThing(deviceId.toLowerCase(), jitrEvent.certificateId);
 
         try {
-            await this.createDeviceInAssetLibrary(deviceId, templateId);
+            await this.updateDeviceInAssetLibrary(deviceId, thingArn);
         } catch(e) {
-            logger.warn(`error creating device e: ${JSON.stringify(e)}`);
-            if (e.status === 409) {
-                // device already created
-                // treat this as a duplicate request and do not error
-                return;
-            } else {
-                throw e;
-            }
+            logger.error(`activation.service: activate: error with updating asset library:${e.message}`);
+            throw e;
         }
-
-        const thingArn = await this.provisionThing(deviceId, jitrEvent.certificateId);
-
-        await this.updateDeviceInAssetLibrary(deviceId, thingArn);
 
         logger.debug(`activation.service get exit:`);
     }
@@ -124,20 +123,6 @@ export class ActivationService {
         logger.debug(`activation.service revokeCertificate: exit:`);
     }
 
-    private async createDeviceInAssetLibrary(deviceId: string, templateId: string): Promise<void> {
-        logger.debug(`activation.service createDeviceInAssetLibrary: in: deviceId: ${deviceId}, templateId: ${templateId}`);
-
-        const profileId: string = config.get(`assetLibrary.templateProfiles.${templateId}`);
-
-        const device:Device10Resource = {
-            deviceId,
-            templateId
-        };
-
-        await this.devices.createDevice(device, profileId);
-        logger.debug(`activation.service createDeviceInAssetLibrary: exit:`);
-    }
-
     private async updateDeviceInAssetLibrary(deviceId: string, thingArn: string): Promise<void> {
         logger.debug(`activation.service updateDeviceInAssetLibrary: in: deviceId: ${deviceId}, thingArn: ${thingArn}`);
         const updateRequest:Device10Resource = {
@@ -151,18 +136,19 @@ export class ActivationService {
         logger.debug(`activation.service updateDeviceInAssetLibrary: exit:`);
     }
 
-    private async getCommonNameFromCertificate(certificateId: string): Promise<string> {
-        logger.debug(`activation.service getCommonNameFromCertificate: in: certificateId: ${certificateId}`);
+    private async getDeviceIdFromCertificate(certificateId: string): Promise<string> {
+        logger.debug(`activation.service getDeviceIdFromCertificate: in: certificateId: ${certificateId}`);
 
         const params: AWS.Iot.DescribeCertificateRequest = {
             certificateId
         };
 
         const certResponse: AWS.Iot.DescribeCertificateResponse = await this.iot.describeCertificate(params).promise();
-        const commonName: string = await this.getCertificateCommonName(certResponse.certificateDescription.certificatePem);
+        const commonName = await this.getCertificateCommonName(certResponse.certificateDescription.certificatePem);
+        const deviceId = atob(commonName);
 
-        logger.debug(`activation.service getCommonNameFromCertificate: exit: commonName: ${commonName}`);
-        return commonName;
+        logger.debug(`activation.service getDeviceIdFromCertificate: exit: deviceId: ${deviceId}`);
+        return deviceId;
     }
 
     private getCertificateCommonName(certificatePem:string) : Promise<string> {
@@ -180,24 +166,36 @@ export class ActivationService {
     private async provisionThing(deviceId:string, certificateId:string) : Promise<string> {
         logger.debug(`activation.service provisionThing: in: deviceId:${deviceId}, certificateId:${certificateId}`);
 
-        const provisioningTemplate = await this.policies.listInheritedPoliciesByDevice(deviceId, this.PROVISIONING_POLICY_TYPE);
-        if (!Object.prototype.hasOwnProperty.call(provisioningTemplate,'results') || provisioningTemplate.results.length === 0) {
-            throw new Error('PROVISIONING_TEMPLATE_NOT_FOUND');
+        let provisioningTemplateId:string;
+        try {
+            const policies = await this.policies.listInheritedPoliciesByDevice(deviceId, this.PROVISIONING_POLICY_TYPE);
+            logger.debug(`activation.service provisionThing: policies: ${JSON.stringify(policies)}`);
+            if (policies?.results===undefined || policies.results.length === 0) {
+                throw new Error('PROVISIONING_TEMPLATE_NOT_FOUND');
+            }
+            provisioningTemplateId = JSON.parse(policies.results[0].document)['template'];
+        } catch (e) {
+            logger.error(`activation.service: provisionThing: error with provisioning template:${e.message}`);
+            throw e;
         }
-        const provisioningTemplateDocument = JSON.parse(provisioningTemplate.results[0].document);
-        logger.debug(`activation.service provisionThing: template: ${JSON.stringify(provisioningTemplateDocument)}`);
+        logger.debug(`activation.service provisionThing: provisioningTemplateId: ${provisioningTemplateId}`);
 
         const provisionRequest:ProvisionThingRequest = {
-            provisioningTemplateId: provisioningTemplateDocument.template,
+            provisioningTemplateId,
             parameters: {
                 ThingName: deviceId,
                 CertificateId: certificateId
             }
         };
+        let provisionResponse:ProvisionThingResponse;
+        try {
+            provisionResponse = await this.things.provisionThing(provisionRequest);
+        } catch (e) {   
+            logger.error(`activation.service: provisionThing: error with provisioning:${e.message}`);
+            throw e;
+        }
 
-        const provisionResponse:ProvisionThingResponse = await this.things.provisionThing(provisionRequest);
-
-        logger.debug(`activation.service provisionThing: thingArn: ${provisionResponse.resourceArns.thing}`);
-        return provisionResponse.resourceArns.thing;
+        logger.debug(`activation.service provisionThing: thingArn: ${provisionResponse?.resourceArns?.thing}`);
+        return provisionResponse?.resourceArns?.thing;
     }
 }

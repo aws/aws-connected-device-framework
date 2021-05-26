@@ -27,7 +27,7 @@ export class CertificatesLambdaService extends CertificatesServiceBase implement
         this.lambdaInvoker = lambdaInvoker;
     }
 
-    async getCertificates(taskId:string, downloadType:string, additionalHeaders?: RequestHeaders): Promise<string> {
+    async getCertificates(taskId:string, downloadType:string, additionalHeaders?: RequestHeaders): Promise<string[]|Buffer> {
         ow(taskId, ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()

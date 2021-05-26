@@ -2,16 +2,17 @@
 
 ## Introduction
 
-The CDF Certificate Activator service links the Just In Time Registration (JITR) functionality of AWS IoT with the CDF provisioning flow(s). It includes a rule which invokes a Lambda function based on JITR events emitted from AWS IoT.
+The CDF Certificate Activator service is an opinionated reference implementation of how to integrate a Just In Time Registration (JITR) flow with CDF. The flow of events is:
+- JITR registration flow triggers this service upon new PENDING_ACTIVATION.
+- deviceId is extracted from the certificate common name.
+- certificateId is checked against a certification revocation list. If invalid, it is then revoked.
+- deviceId is verified with asset library to ensure it is whitelisted. If not whitelisted, it is then revoked.
+- device is provisioned and associated with the certificate
+- certificate is activated
 
 ## Dependencies
 
-- It is assumed that the Asset Library is running in `full` mode which supports profiles, with a profile created for the `templateId` in context
-- It is assumed that the Asset Library is running in `full` mode which supports inherited documents, with a provisioning template configured and associated with group hierarcies as required
-- It is assumed that the provisioning template requires `ThingName` and `CertificateId` as parameters
-
-## Limitations
-
-Known limitations which may require customizing the implementation:
-
-- The `templateId` and `deviceId` are stored as `${templateId}::{deviceId}` within the certificate's CN (common name) field, which according to RFC5280 is limited to 64 characters.  If the combination of those 2 attributes exceeds the known limit, an alternate method would be required (such as linking to an alternate data store) to store these values
+- It is assumed that:
+  - the certificate common name represents the (base64 encoded) device id
+  - the Asset Library is running in `full` mode which supports inherited documents, with a provisioning template configured and associated with group hierarcies as required
+  - the provisioning template requires `ThingName` and `CertificateId` as parameters

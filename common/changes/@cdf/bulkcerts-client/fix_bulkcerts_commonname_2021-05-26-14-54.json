@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/bulkcerts-client",
+      "comment": "Fixed incorrect return types.",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@cdf/bulkcerts-client",
+  "email": "deanhart@amazon.com"
+}
