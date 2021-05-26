@@ -625,7 +625,7 @@ if [ -f "$certificateactivator_config" ]; then
 
     infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
     infrastructure/deploy-cfn.bash -e "$ENVIRONMENT" -c "$certificateactivator_config" -b "$certificateactivator_bucket" \
-        $AWS_SCRIPT_ARGS
+        -o $OPENSSL_LAYER_STACK_NAME $AWS_SCRIPT_ARGS
 else
    echo 'NOT DEPLOYING: certificate activator'
 fi
