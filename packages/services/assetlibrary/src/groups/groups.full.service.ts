@@ -68,7 +68,8 @@ export class GroupsServiceFull implements GroupsService {
                 await this.create(group, applyProfile);
                 success++;
             } catch (err) {
-                errors[group.groupPath] = err;
+                //errors[group.groupPath] = err;
+                errors[`${group.parentPath}\${group.name}`] = err;
                 failed++;
             }
         }
