@@ -706,6 +706,7 @@ Resources:
               - ec2:RevokeSecurityGroupIngress
               - events:*
               - iam:*
+              - iot:CreateThing
               - iot:CreatePolicy
               - iot:CreatePolicyVersion
               - iot:CreateThingGroup
