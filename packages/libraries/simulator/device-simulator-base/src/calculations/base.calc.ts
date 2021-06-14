@@ -29,11 +29,11 @@ export abstract class BaseCalc<D,T> implements Calculation<D,T> {
     /**
      * Returns the current value of the result managed by this calculation.
      */
-    get data() { return this._data};
+    get data():D { return this._data}
     /**
      * Updates the current value of the result managed by this calculation. 
      */
-    set data(updated) {
+    set data(updated:D) {
         const logMeta = {...this.CLASS_LOGGING_DATA,  method: 'iterate'};
         logger.verbose(`updated:${JSON.stringify(updated)}`, {...logMeta, type: 'in'} );
         this._data = updated;

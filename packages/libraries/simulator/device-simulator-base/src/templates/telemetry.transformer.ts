@@ -22,7 +22,7 @@ export class TelemetryTransformer {
         logger.verbose('', {...logMeta, type: 'in'} );
     }
 
-    public initialize(locations: TelemetryLocations) {
+    public initialize(locations: TelemetryLocations) : void {
         const logMeta = {...this.CLASS_LOGGING_DATA,  method: 'initialize'};
         logger.silly(`locations: ${JSON.stringify(locations)}`, {...logMeta, type: 'in'} );
 

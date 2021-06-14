@@ -1,6 +1,8 @@
 import { injectable } from 'inversify';
 import ow from 'ow';
 import {logger} from '../utils/logger';
+import fs from 'fs';
+import yaml from 'js-yaml';
 
 @injectable()
 export class LocalStateManager {
@@ -10,8 +12,6 @@ export class LocalStateManager {
     }
 
     public read() : unknown {
-        const fs = require('fs');
-        const yaml = require('js-yaml');
         try {
             const fileContents = fs.readFileSync(this._location, 'utf8');
             return yaml.safeLoad(fileContents);
@@ -22,8 +22,6 @@ export class LocalStateManager {
     }
 
     public save(data:unknown) : void {
-        const fs = require('fs');
-        const yaml = require('js-yaml');
         try {
             const asYaml = yaml.safeDump(data);
             fs.writeFileSync(this._location, asYaml, 'utf8');

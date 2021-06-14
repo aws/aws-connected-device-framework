@@ -21,7 +21,7 @@ export class CalcEngine<D> {
     /**
      * Returns the latest calculated data.
      */
-    get results(): D { return this._results };
+    get results(): D { return this._results }
 
     private _pollerInterval: NodeJS.Timer;
 
@@ -30,7 +30,7 @@ export class CalcEngine<D> {
      * @param initialState Initial starting data.
      * @param calculations An array of all calculations to perform on the data.
      */
-    public initialize(initialState:D, calculations:Calculation<unknown,unknown>[]) {
+    public initialize(initialState:D, calculations:Calculation<unknown,unknown>[]) : void {
         const logMeta = {...this.CLASS_LOGGING_DATA,  method: 'initialize_data'};
         logger.verbose(`initialState: ${JSON.stringify(initialState)}`, {...logMeta, type: 'in'} );
         logger.verbose(`calculations: ${JSON.stringify(calculations)}`, {...logMeta, type: 'in'} );
@@ -48,13 +48,13 @@ export class CalcEngine<D> {
     /**
      * Starts the calculation engine. Ensure that `initialize` has been called first.
      */
-    public start() {
+    public start() : void {
         const logMeta = {...this.CLASS_LOGGING_DATA,  method: 'start'};
         logger.verbose('', {...logMeta, type: 'in'} );
 
         ow(this._calculations, ow.array.minLength(1));
 
-        const _this = this;
+        const _this = this; // eslint-disable-line
         this._pollerInterval = setInterval(() => {
             _this.calculate();
         }, _this.pollerInterval);
@@ -63,7 +63,7 @@ export class CalcEngine<D> {
     /**
      * Stops the calculation engine.
      */
-    public stop() {
+    public stop() : void {
         const logMeta = {...this.CLASS_LOGGING_DATA,  method: 'stop'};
         logger.verbose('', {...logMeta, type: 'in'} );
         clearInterval(this._pollerInterval);
@@ -73,7 +73,7 @@ export class CalcEngine<D> {
         const logMeta = {...this.CLASS_LOGGING_DATA,  method: 'calculate'};
         logger.verbose('', {...logMeta, type: 'in'} );
 
-        let updated:D = Object.assign({}, this._results);
+        const updated:D = Object.assign({}, this._results);
         for (const calculation of this._calculations) {
             calculation.calculate(this._results);
             updated[calculation.name] = calculation.data;

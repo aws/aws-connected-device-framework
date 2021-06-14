@@ -25,7 +25,7 @@ export class AwsIotThing<S,T,U> {
   private CLASS_LOGGING_DATA = {class: 'AwsIotThing'};
 
   private readonly _thingName: string;
-  private _online: boolean = false;
+  private _online = false;
 
   /**
    * The device shadow.
@@ -66,7 +66,7 @@ export class AwsIotThing<S,T,U> {
     this.mqttClient.on('reconnect', ()=> {
       logger.verbose(``, {...this.CLASS_LOGGING_DATA,  method: 'reconnect', type: 'in'} );
     });
-    this.mqttClient.on('error', (error:any)=> {
+    this.mqttClient.on('error', (error:unknown)=> {
       logger.verbose(``, {...this.CLASS_LOGGING_DATA,  method: 'error', type: 'in'} );
       this.emitter.emit('error', error);
     });
@@ -126,7 +126,7 @@ export class AwsIotThing<S,T,U> {
    * @param reported 
    * @param desired 
    */
-  public updateShadow (clientToken:string, reported:unknown, desired?: any): void {
+  public updateShadow (clientToken:string, reported:T, desired?: S): void {
     const logMeta = {...this.CLASS_LOGGING_DATA,  method: 'updateShadow'};
     logger.silly(`clientToken:${clientToken}, reported:${JSON.stringify(reported)}`, {...logMeta, type: 'in'} );
 
@@ -139,7 +139,7 @@ export class AwsIotThing<S,T,U> {
     });
   }
 
-  public publish (topic: string, message: any): Promise<void> {
+  public publish (topic: string, message: unknown): Promise<void> {
     const logMeta = {...this.CLASS_LOGGING_DATA,  method: 'publish'};
     logger.silly(`topic:${topic}, message:${JSON.stringify(message)}`, {...logMeta, type: 'in'} );
 
@@ -154,14 +154,14 @@ export class AwsIotThing<S,T,U> {
     });
   }
 
-  public onReady (callback: (state: any) => void, other:any): void {
+  public onReady (callback: (state: unknown) => void, other:unknown): void {
     const logMeta = {...this.CLASS_LOGGING_DATA,  method: 'onReady'};
     logger.silly(``, {...logMeta, type: 'in'} );
 
     this.emitter.on('ready', callback.bind(other));
   }
 
-  public removeOnReady (callback: (state: any) => void): void {
+  public removeOnReady (callback: (state: unknown) => void): void {
     const logMeta = {...this.CLASS_LOGGING_DATA,  method: 'removeOnReady'};
     logger.silly(``, {...logMeta, type: 'in'} );
 
@@ -172,28 +172,28 @@ export class AwsIotThing<S,T,U> {
   //   this._emitter.on('error', callback);
   // }
 
-  public onChange (clientToken: string, callback: (state: any) => void, other:any): void {
+  public onChange (clientToken: string, callback: (state: unknown) => void, other:unknown): void {
     const logMeta = {...this.CLASS_LOGGING_DATA,  method: 'onChange'};
     logger.silly(`clientToken: ${clientToken}`, {...logMeta, type: 'in'} );
 
     this.emitter.on(clientToken, callback.bind(other));
   }
 
-  public removeOnChange (clientToken:string, callback: (state: any) => void, other: any): void {
+  public removeOnChange (clientToken:string, callback: (state: unknown) => void, other: unknown): void {
     const logMeta = {...this.CLASS_LOGGING_DATA,  method: 'removeOnChange'};
     logger.silly(``, {...logMeta, type: 'in'} );
 
     this.emitter.removeListener(clientToken, callback.bind(other));
   }
 
-  public onDelta (callback: (state: any) => void, other:any): void {
+  public onDelta (callback: (state: unknown) => void, other:unknown): void {
     const logMeta = {...this.CLASS_LOGGING_DATA,  method: 'onDelta'};
     logger.silly(``, {...logMeta, type: 'in'} );
 
     this.emitter.on('delta', callback.bind(other));
   }
 
-  public removeOnDelta (callback: (state: any) => void, other: any): void {
+  public removeOnDelta (callback: (state: unknown) => void, other: unknown): void {
     const logMeta = {...this.CLASS_LOGGING_DATA,  method: 'removeOnDelta'};
     logger.silly(``, {...logMeta, type: 'in'} );
 
@@ -201,11 +201,11 @@ export class AwsIotThing<S,T,U> {
     this.emitter.removeListener('delta', callback.bind(other));
   }
 
-  public onMessage (topic: string, callback: (message: any) => void): void {
+  public onMessage (topic: string, callback: (message: unknown) => void): void {
     const logMeta = {...this.CLASS_LOGGING_DATA,  method: 'onMessage'};
     logger.silly(``, {...logMeta, type: 'in'} );
 
-    this.mqttClient.subscribe(topic, {qos: 0}, (err: any) => {
+    this.mqttClient.subscribe(topic, {qos: 0}, (err: unknown) => {
 
       const logMeta2 = {...this.CLASS_LOGGING_DATA,  method: 'subscribe'};
       logger.silly(`topic: ${topic}`, {...logMeta2, type: 'in'} );

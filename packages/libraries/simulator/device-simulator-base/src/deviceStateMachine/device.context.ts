@@ -38,7 +38,7 @@ export class DeviceContext<D,S,T,U> {
     /**
      * Returns the current state of the state machine.
      */
-    get state() { return this._state; }
+    get state() : DeviceState { return this._state; }
 
     /**
      * Sets the current state of the state machine. Use to set te
@@ -87,7 +87,7 @@ export class DeviceContext<D,S,T,U> {
      * @param callback The callback to execute.
      * @param other The other `this` object to bind the callback to.
      */
-    public onTransition (state:string, callback: (state: any) => void, other:any): void {
+    public onTransition (state:string, callback: (state: unknown) => void, other:unknown): void {
         const logMeta = {...this.CLASS_LOGGING_DATA,  method: 'onTransition'};
         logger.verbose(`state:${state}`, {...logMeta, type: 'in'} );
 
