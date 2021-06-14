@@ -1,0 +1,4 @@
+**/*-output.yml
+.DS_Store
+node_modules
+dist

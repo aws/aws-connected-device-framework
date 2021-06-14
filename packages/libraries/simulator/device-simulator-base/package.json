@@ -1,0 +1,81 @@
+{
+  "name": "@cdf/device-simulator-base",
+  "version": "1.0.0",
+  "description": "CDF Device Simulator base - extend to create your own device simulator.",
+  "author": "Dean Hart <deanhart@amazon.com>",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "config": {
+    "environment": "development"
+  },
+  "scripts": {
+    "clean": "npx shx rm -rf dist deploy tsconfig.tsbuildinfo bundle.zip .rush .nyc_output *.log",
+    "lint": "npx eslint . --ext '.ts'",
+    "build": "npx tsc -b",
+    "test": "rushx lint && NODE_ENV=test NODE_CONFIG_DIR='src/config' jest --silent --passWithNoTests"
+  },
+  "dependencies": {
+    "@cdf/config-inject": "^3.0.0",
+    "aws-iot-device-sdk": "2.2.8",
+    "config": "3.2.6",
+    "dayjs": "1.10.5",
+    "deep-equal": "2.0.5",
+    "deepmerge": "4.2.2",
+    "inversify": "5.1.1",
+    "js-yaml": "4.1.0",
+    "logform": "2.2.0",
+    "ow": "0.23.0",
+    "pem": "1.14.4",
+    "readable-stream": "3.6.0",
+    "reflect-metadata": "0.1.13",
+    "shortid": "2.2.1",
+    "winston": "3.3.3",
+    "winston-transport": "4.4.0",
+    "yargs": "17.0.1",
+    "mustache": "~4.2.0"
+  },
+  "devDependencies": {
+    "@rushstack/eslint-config": "2.3.1",
+    "@types/aws-iot-device-sdk": "2.2.2",
+    "@types/config": "0.0.38",
+    "@types/jest": "26.0.23",
+    "@types/pem": "1.9.5",
+    "@types/shortid": "0.0.29",
+    "@types/yargs": "17.0.0",
+    "@typescript-eslint/eslint-plugin": "4.9.1",
+    "@typescript-eslint/parser": "4.9.1",
+    "eslint": "7.26.0",
+    "jest": "26.6.3",
+    "jest-create-mock-instance": "1.1.0",
+    "jest-haste-map": "26.6.2",
+    "jest-mock": "26.6.2",
+    "jest-mock-extended": "1.0.15",
+    "jest-resolve": "26.6.2",
+    "nodemon": "2.0.7",
+    "nyc": "15.1.0",
+    "shx": "0.3.3",
+    "ts-jest": "26.5.6",
+    "typescript": "4.2.4",
+    "@types/mustache": "~4.1.1"
+  },
+  "jest": {
+    "roots": [
+      "<rootDir>/src"
+    ],
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testMatch": [
+      "<rootDir>/**/?(*.)+(spec|test).ts?(x)"
+    ],
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
+  },
+  "private": true
+}

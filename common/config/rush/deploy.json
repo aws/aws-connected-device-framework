@@ -29,6 +29,7 @@
     "@cdf/express-middleware",
     "@cdf/lambda-invoke",
     "@cdf/logger",
+    "@cdf/device-simulator-base",
     "@cdf/assetlibrary",
     "@cdf/assetlibrary-history",
     "@cdf/auth-devicecert",

@@ -144,6 +144,12 @@
       "shouldPublish": true
     },
     {
+      "packageName": "@cdf/device-simulator-base",
+      "projectFolder": "packages/libraries/simulator/device-simulator-base",
+      "reviewCategory": "library",
+      "shouldPublish": true
+    },
+    {
       "packageName": "@cdf/assetlibrary",
       "projectFolder": "packages/services/assetlibrary",
       "reviewCategory": "production",

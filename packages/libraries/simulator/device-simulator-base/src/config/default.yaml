@@ -1,0 +1,17 @@
+# AWS specific configuration
+aws:
+  region:
+  iot:
+    thingName:
+    keyPath:
+    csrPath:
+    certPath:
+    caPath:
+    endpointAddress:
+
+calculations:
+  interval: 1000
+
+# logging
+logging:
+  level: debug
