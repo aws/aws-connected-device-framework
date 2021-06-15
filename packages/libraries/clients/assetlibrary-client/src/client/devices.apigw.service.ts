@@ -365,7 +365,7 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
 
         let url = `${this.baseUrl}${super.bulkDevicesRelativeUrl()}`;
         const queryString = QSHelper.getQueryString({
-            deviceIds,
+            deviceIds: deviceIds.join(','),
             expandComponents,
             attributes: attributes_qs,
             includeGroups: groups_qs,

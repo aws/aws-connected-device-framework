@@ -49,6 +49,11 @@ const DEVICEPROFILES_FEATURE_UNLINKABLE_GROUP_TEMPLATE_ID = 'TEST-deviceProfiles
 const DEVICEPROFILES_FEATURE_GROUP_TEMPLATE_IDS = [DEVICEPROFILES_FEATURE_LINKABLE_GROUP_TEMPLATE_ID,DEVICEPROFILES_FEATURE_UNLINKABLE_GROUP_TEMPLATE_ID];
 const DEVICEPROFILES_FEATURE_DEVICE_PROFILE_IDS = ['TEST-deviceProfiles-type___TEST-deviceProfiles-profile', 'TEST-deviceProfiles-type___TEST-deviceProfiles-profile-invalid'];
 
+const BULKDEVICES_FEATURE_GROUP_TEMPLATE_ID = 'TEST-bulkdevices-group';
+const BULKDEVICES_FEATURE_GROUP_PATH = '/bulkdevices';
+const BULKDEVICES_FEATURE_DEVICE_TEMPLATE_ID = 'TEST-bulkdevices-type';
+const BULKDEVICES_FEATURE_DEVICE_IDS = ['TEST-bulkdevices-device001','TEST-bulkdevices-device002','TEST-bulkdevices-device003'];
+
 const GROUPPROFILES_FEATURE_GROUP_PATHS = ['/test-groupprofiles-group001','/test-groupprofiles-group002','/test-groupprofiles-group003','/test-groupprofiles-group004','/test-groupprofiles-group005'];
 const GROUPPROFILES_FEATURE_GROUP_TEMPLATE_IDS = ['TEST-groupProfiles-type'];
 const GROUPPROFILES_FEATURE_GROUP_PROFILE_IDS = ['TEST-groupProfiles-type___TEST-groupProfiles-profile', 'TEST-groupProfiles-type___TEST-groupProfiles-profile-invalid'];
@@ -343,6 +348,56 @@ Before({tags: '@setup_devices_feature_lite'}, async function () {
 
 Before({tags: '@teardown_devices_feature_lite'}, async function () {
     await teardown_devices_feature_lite();
+});
+
+async function teardown_bulkdevices_feature() {
+    await deleteAssetLibraryDevices(BULKDEVICES_FEATURE_DEVICE_IDS);
+    await deleteAssetLibraryTemplates(CategoryEnum.device, [BULKDEVICES_FEATURE_DEVICE_TEMPLATE_ID]);
+    await deleteAssetLibraryGroups([BULKDEVICES_FEATURE_GROUP_PATH]);
+    await deleteAssetLibraryTemplates(CategoryEnum.group, [BULKDEVICES_FEATURE_GROUP_TEMPLATE_ID]);
+}
+
+Before({tags: '@setup_bulkdevices_feature'}, async function () {
+    await teardown_bulkdevices_feature();
+
+    // create group template
+    const groupType:TypeResource = {
+        templateId: BULKDEVICES_FEATURE_GROUP_TEMPLATE_ID,
+        category: 'group'
+    };
+    await templatesService.createTemplate(groupType, additionalHeaders);
+    await templatesService.publishTemplate(CategoryEnum.group, BULKDEVICES_FEATURE_GROUP_TEMPLATE_ID, additionalHeaders);
+
+    // create unprovisioned group
+    const bulkdevicesGroup:Group10Resource = {
+        templateId: BULKDEVICES_FEATURE_GROUP_TEMPLATE_ID,
+        parentPath: '/',
+        name: BULKDEVICES_FEATURE_GROUP_PATH.substring(1),
+        attributes: {}
+    };
+    await groupsService.createGroup(bulkdevicesGroup, undefined, additionalHeaders);
+
+    // create device template
+    const testDeviceTemplate:TypeResource = {
+        templateId: BULKDEVICES_FEATURE_DEVICE_TEMPLATE_ID,
+        category: 'device',
+        properties: {
+            stringAttribute: { type: ['string'] },
+            numberAttribute: { type: ['number'] }
+        },
+        relations: {
+            out: {
+                member_of: [BULKDEVICES_FEATURE_GROUP_TEMPLATE_ID]
+            }
+        }
+    };
+    
+    await templatesService.createTemplate(testDeviceTemplate, additionalHeaders);
+    await templatesService.publishTemplate(CategoryEnum.device, BULKDEVICES_FEATURE_DEVICE_TEMPLATE_ID, additionalHeaders);
+});
+
+Before({tags: '@teardown_bulkdevices_feature'}, async function () {
+    await teardown_bulkdevices_feature();
 });
 
 async function teardown_deviceProfiles_feature() {

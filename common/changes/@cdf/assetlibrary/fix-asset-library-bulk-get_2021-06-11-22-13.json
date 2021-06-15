@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/assetlibrary",
+      "comment": "Bug fix for bulk device get with no devices found",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/assetlibrary",
+  "email": "rotach@amazon.com"
+}

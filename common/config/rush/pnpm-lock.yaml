@@ -50,7 +50,7 @@ specifiers:
   '@types/express-version-request': 1.7.1
   '@types/http-errors': 1.8.0
   '@types/jest': 26.0.23
-  '@types/js-yaml': 3.10.0
+  '@types/js-yaml': 3.12.5
   '@types/json-stable-stringify': 1.0.32
   '@types/jsonpath-plus': ~5.0.1
   '@types/jsonwebtoken': 8.5.0
@@ -189,7 +189,7 @@ dependencies:
   '@types/express-version-request': 1.7.1
   '@types/http-errors': 1.8.0
   '@types/jest': 26.0.23
-  '@types/js-yaml': 3.10.0
+  '@types/js-yaml': 3.12.5
   '@types/json-stable-stringify': 1.0.32
   '@types/jsonpath-plus': 5.0.1
   '@types/jsonwebtoken': 8.5.0
@@ -1204,10 +1204,6 @@ packages:
     dependencies:
       jest-diff: 26.6.2
       pretty-format: 26.6.2
-    dev: false
-
-  /@types/js-yaml/3.10.0:
-    resolution: {integrity: sha512-8z+UpYcPOzWG0gn4wjPB0wgV/+Jd46Mp5W1K6Odt35f8KwNdqIJqDSjan7Mn5qYaYEX/xjZ/GuSTFJUTLeT5dw==}
     dev: false
 
   /@types/js-yaml/3.12.5:
@@ -10084,7 +10080,7 @@ packages:
     dev: false
 
   file:projects/integration-tests.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-GxV52rLxFRn9q66zIewT94qCvPX1jnZqABRU4G3QvhCdsp5OtRfImHN7VSW+l4q4vh4xjiFWbDiguBegR5mDxA==, tarball: file:projects/integration-tests.tgz}
+    resolution: {integrity: sha512-SVbtNrrRgK3YeLVfcllrKrdWaJFgr6OliGp/bQX12Fq6R2hF5h6cDpzDCaARcWrOvsuZKNRhjIsQy1T5bPQ6MA==, tarball: file:projects/integration-tests.tgz}
     id: file:projects/integration-tests.tgz
     name: '@rush-temp/integration-tests'
     version: 0.0.0
@@ -10100,6 +10096,8 @@ packages:
       '@types/jsonpath-plus': 5.0.1
       '@types/jsonwebtoken': 8.5.0
       '@types/node': 14.6.1
+      '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
+      '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
       aws-iot-device-sdk: 2.2.6
       aws-sdk: 2.804.0
       chai: 4.2.0
@@ -10107,6 +10105,7 @@ packages:
       chai-uuid: 1.0.6
       config: 3.3.6
       cucumber: 6.0.5
+      eslint: 7.26.0_supports-color@8.0.0
       inversify: 5.1.1
       inversify-binding-decorators: 4.0.0
       inversify-express-utils: 6.3.2
