@@ -1,6 +1,6 @@
 {
   "name": "@cdf/integration-tests",
-  "version": "2.8.0",
+  "version": "2.9.0",
   "description": "CDF Integration Tests",
   "author": "Dean Hart <deanhart@amazon.com>",
   "config": {
@@ -14,7 +14,7 @@
     "integration-test": "NODE_CONFIG=$(cat ${CONFIG_LOCATION}/integration-tests/${npm_package_config_environment}-config.json) NODE_CONFIG_DIR='./src/config' cucumber-js"
   },
   "dependencies": {
-    "@cdf/assetlibrary-client": "^4.0.1",
+    "@cdf/assetlibrary-client": "^4.0.2",
     "@cdf/assetlibraryhistory-client": "^4.0.1",
     "@cdf/commands-client": "^4.1.0",
     "@cdf/errors": "^3.0.0",

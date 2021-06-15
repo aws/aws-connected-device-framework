@@ -22,7 +22,7 @@
     "@cdf/errors": "^3.0.0",
     "@cdf/logger": "^3.0.0",
     "@cdf/lambda-invoke": "^2.0.0",
-    "@cdf/assetlibrary-client": "^4.0.1",
+    "@cdf/assetlibrary-client": "^4.0.2",
     "@cdf/config-inject": "^3.0.0",
     "@cdf/provisioning-client": "^4.0.1",
     "aws-sdk": "2.804.0",
