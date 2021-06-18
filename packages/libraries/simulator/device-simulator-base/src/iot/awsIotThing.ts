@@ -201,9 +201,11 @@ export class AwsIotThing<S,T,U> {
     this.emitter.removeListener('delta', callback.bind(other));
   }
 
-  public onMessage (topic: string, callback: (message: unknown) => void): void {
+  public onMessage (topic: string, callback: (message: unknown) => void, other:unknown): void {
     const logMeta = {...this.CLASS_LOGGING_DATA,  method: 'onMessage'};
     logger.silly(``, {...logMeta, type: 'in'} );
+
+    callback = callback.bind(other);
 
     this.mqttClient.subscribe(topic, {qos: 0}, (err: unknown) => {
 

@@ -9350,7 +9350,7 @@ packages:
     dev: false
 
   file:projects/certificate-activator.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-ifpsu5KhSGgZhT/sBL2S+7d9itZaFkPuxDAJsOwoDtRuwnelSto7CESKsQy2ad6UrDSMG1vPXaO3vIdfZQY4jg==, tarball: file:projects/certificate-activator.tgz}
+    resolution: {integrity: sha512-bNuJa+6jO21SrRfyS8JxNETaMFuEOkn9gitjMYezBhZr3MER5+Oh/6tRayY4ondTnl4juCE/JlWK0TdIeShJxA==, tarball: file:projects/certificate-activator.tgz}
     id: file:projects/certificate-activator.tgz
     name: '@rush-temp/certificate-activator'
     version: 0.0.0
@@ -9398,7 +9398,7 @@ packages:
     dev: false
 
   file:projects/certificate-vendor.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-ku5v0FPAc6laOlf+p/FItkgQXlwn09N7FhBqRrIMT9JZ1TtQ3nD6gX17Focb/gkJHyRMHW17XCJGLCsHdZeI1w==, tarball: file:projects/certificate-vendor.tgz}
+    resolution: {integrity: sha512-VI71xE0qXYdLjAyuTXaFLgaYNAvDc9un59a/FQnVN4cI94c47FvfI/wccQKjfDy1ZMMX+/bhvFgaR1+uYHWMog==, tarball: file:projects/certificate-vendor.tgz}
     id: file:projects/certificate-vendor.tgz
     name: '@rush-temp/certificate-vendor'
     version: 0.0.0
@@ -9489,7 +9489,7 @@ packages:
     dev: false
 
   file:projects/commands.tgz:
-    resolution: {integrity: sha512-YBJDAs9xOzIERInfZDYXZRWYjpqtAcjtEOXJAXamOP4YKo32N49T9zwi4LNRN0RD64RqOgCA0vIZDJQlLNKOKQ==, tarball: file:projects/commands.tgz}
+    resolution: {integrity: sha512-QuOMlcXeDJUqn3gDXQNKDC3o5Ysuj7EyixVFno5DF/WNW38nEnuGsktDn1Wa2VjAJAG9jU0Lw3khZ6pEy2Xm1w==, tarball: file:projects/commands.tgz}
     name: '@rush-temp/commands'
     version: 0.0.0
     dependencies:
@@ -9581,7 +9581,7 @@ packages:
     dev: false
 
   file:projects/device-monitoring.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-dnk77pFbQpQezfOuxsnP1YdYwEjamCjy17TkzqxolSGV+Q5BGMpaENJ682+y7W1gRattkGG5F9zPPNlYMTeRUQ==, tarball: file:projects/device-monitoring.tgz}
+    resolution: {integrity: sha512-KFE2NO1IfKAwW+VSGKAIQI8t9wfSb98dCUA3Egm6XPc/ey4mO5Be/2pJPFIT4UcuwMNcRMxkbaoa+wliNQ3e8Q==, tarball: file:projects/device-monitoring.tgz}
     id: file:projects/device-monitoring.tgz
     name: '@rush-temp/device-monitoring'
     version: 0.0.0
@@ -10080,7 +10080,7 @@ packages:
     dev: false
 
   file:projects/integration-tests.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-SVbtNrrRgK3YeLVfcllrKrdWaJFgr6OliGp/bQX12Fq6R2hF5h6cDpzDCaARcWrOvsuZKNRhjIsQy1T5bPQ6MA==, tarball: file:projects/integration-tests.tgz}
+    resolution: {integrity: sha512-axj4L16EzPQ0LN1mdVKcvrQtc7REEWl0uRRtyODxy07Q5kA9hAxgmL+grKOyLOZL8sIVon7yk1TjIQGi0QXqug==, tarball: file:projects/integration-tests.tgz}
     id: file:projects/integration-tests.tgz
     name: '@rush-temp/integration-tests'
     version: 0.0.0
