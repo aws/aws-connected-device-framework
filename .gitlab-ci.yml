@@ -15,14 +15,13 @@ build:
   stage: build
   script:
     - env | sort
-    # install git
+    # install git (required for `rush change`)
     - yum update -y
     - yum install git -y
     - git version
     # install dependencies
     - node common/scripts/install-run-rush.js install --bypass-policy --purge
     # enforce need for changelog
-    - git status
     - node common/scripts/install-run-rush.js change -v
     # build
     - node common/scripts/install-run-rush.js rebuild
@@ -32,6 +31,7 @@ test:
   script:
     - env | sort
     # test
+    - ls
     - node common/scripts/install-run-rush.js test
     # version projects that have changed
     - node common/scripts/install-run-rush.js publish -a
