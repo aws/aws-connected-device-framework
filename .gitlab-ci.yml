@@ -11,9 +11,9 @@ install:
   script:
     - env | sort
     # install node
-    - sudo yum -y install curl
+    - yum -y install curl
     - curl -sL https://rpm.nodesource.com/setup_14.x | sudo bash -
-    - sudo yum install -y nodejs
+    - yum install -y nodejs
     - node --version
 
 build:
