@@ -1,5 +1,5 @@
 # Official framework image. Look for the different tagged releases at: https://hub.docker.com/r/library/node/tags/
-image: public.ecr.aws/lambda/nodejs:14:2
+image: public.ecr.aws/lambda/nodejs:14
 
 stages:
   - build
