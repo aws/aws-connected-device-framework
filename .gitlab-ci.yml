@@ -1,20 +1,9 @@
 # Official framework image. Look for the different tagged releases at: https://hub.docker.com/r/library/node/tags/
-image: amazonlinux:2
+image: public.ecr.aws/lambda/nodejs:14:2
 
 stages:
-  - install
   - build
   - test
-
-install:
-  stage: install
-  script:
-    - env | sort
-    # install node
-    - yum -y install curl
-    - curl -sL https://rpm.nodesource.com/setup_14.x | sudo bash -
-    - yum install -y nodejs
-    - node --version
 
 build:
   stage: build
