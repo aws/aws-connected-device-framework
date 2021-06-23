@@ -1,12 +1,18 @@
 # Official framework image. Look for the different tagged releases at: https://hub.docker.com/r/library/node/tags/
 image: amazonlinux:2
 
-services:
-  - node:14
-
 stages:
+  - install
   - build
   - test
+
+install:
+  stage: install
+  script:
+    - env
+    # install node
+    - n 14.16.1
+    - node --version
 
 build:
   stage: build
@@ -35,11 +41,4 @@ test:
     - node common/scripts/install-run-rush.js test
     # version projects that have changed
     - node common/scripts/install-run-rush.js publish -a
-  cache:
-    key: ${CI_BUILD_REF_NAME}
-    paths:
-      - common/temp/
-  artifacts:
-    expire_in: 1 week
-    paths:
-      - dist/
+
