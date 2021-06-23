@@ -1,0 +1,52 @@
+# Official framework image. Look for the different tagged releases at: https://hub.docker.com/r/library/node/tags/
+image: node:14-alpine
+
+# This folder is cached between builds
+# http://docs.gitlab.com/ee/ci/yaml/README.html#cache
+cache:
+  paths:
+    - node_modules/
+
+stages:
+  - build
+  - test
+
+build:
+  stage: build
+  script:
+    - env
+    # install dependencies
+    - node common/scripts/install-run-rush.js install --bypass-policy --purge
+    # enforce need for changelog
+    - node common/scripts/install-run-rush.js change -v
+    # build
+    - node common/scripts/install-run-rush.js rebuild
+  cache:
+    key: ${CI_BUILD_REF_NAME}
+    paths:
+      - common/temp/
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - dist/
+
+test:
+  stage: test
+  script:
+    - env
+    # test
+    - node common/scripts/install-run-rush.js test
+    # version projects that have changed
+    - node common/scripts/install-run-rush.js publish -a
+  cache:
+    key: ${CI_BUILD_REF_NAME}
+    paths:
+      - common/temp/
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - dist/
+
+
+
+
