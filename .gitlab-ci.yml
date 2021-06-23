@@ -32,6 +32,7 @@ test:
     - env | sort
     # test
     - ls
+    - cat common/config/rush/command-line.json
     - node common/scripts/install-run-rush.js test
     # version projects that have changed
     - node common/scripts/install-run-rush.js publish -a
