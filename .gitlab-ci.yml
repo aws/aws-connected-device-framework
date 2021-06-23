@@ -9,15 +9,17 @@ stages:
 install:
   stage: install
   script:
-    - env
+    - env | sort
     # install node
-    - n 14.16.1
+    - sudo yum -y install curl
+    - curl -sL https://rpm.nodesource.com/setup_14.x | sudo bash -
+    - sudo yum install -y nodejs
     - node --version
 
 build:
   stage: build
   script:
-    - env
+    - env | sort
     # install dependencies
     - node common/scripts/install-run-rush.js install --bypass-policy --purge
     # enforce need for changelog
@@ -36,7 +38,7 @@ build:
 test:
   stage: test
   script:
-    - env
+    - env | sort
     # test
     - node common/scripts/install-run-rush.js test
     # version projects that have changed
