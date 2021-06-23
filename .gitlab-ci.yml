@@ -5,6 +5,12 @@ stages:
   - build
   - test
 
+cache:  
+  key: "$CI_COMMIT_REF_SLUG"
+  paths:
+    - common/temp/
+    - packages/**/dist/
+
 build:
   stage: build
   script:
@@ -20,14 +26,6 @@ build:
     - node common/scripts/install-run-rush.js change -v
     # build
     - node common/scripts/install-run-rush.js rebuild
-  cache:
-    key: ${CI_BUILD_REF_NAME}
-    paths:
-      - common/temp/
-  artifacts:
-    expire_in: 1 week
-    paths:
-      - packages/**/dist
 
 test:
   stage: test
@@ -37,4 +35,3 @@ test:
     - node common/scripts/install-run-rush.js test
     # version projects that have changed
     - node common/scripts/install-run-rush.js publish -a
-
