@@ -27,7 +27,7 @@ build:
   artifacts:
     expire_in: 1 week
     paths:
-      - dist/
+      - packages/**/dist
 
 test:
   stage: test
