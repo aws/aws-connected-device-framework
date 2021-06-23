@@ -2,8 +2,20 @@
 image: public.ecr.aws/lambda/nodejs:14
 
 stages:
+  - install
   - build
   - test
+
+install:
+  stage: install
+  script:
+    - env | sort
+    # install git
+    - yum update -y
+    - yum install git -y
+    - git version
+
+
 
 build:
   stage: build
