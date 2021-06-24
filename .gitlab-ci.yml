@@ -10,6 +10,8 @@ cache:
   paths:
     - common/temp/
     - packages/**/dist/
+    - packages/**/.rush/
+    - packages/**/tsconfig.tsbuildinfo
 
 build:
   stage: build
@@ -19,6 +21,8 @@ build:
     - yum update -y
     - yum install git -y
     - git version
+    # install openssl (required to test some services)
+    - yum install -y openssl zip
     # install dependencies
     - node common/scripts/install-run-rush.js install --bypass-policy --purge
     # enforce need for changelog
