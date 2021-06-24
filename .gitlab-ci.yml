@@ -1,11 +1,11 @@
 # Official framework image. Look for the different tagged releases at: https://hub.docker.com/r/library/node/tags/
 image: public.ecr.aws/lambda/nodejs:14
 
-include:
-  - local: setup.yml
+# include:
+#   - local: cicd/master-brnach
 
-variables:      
-  !reference [.branch-variables, variables]
+# variables:      
+#   !reference [.branch-variables, variables]
 
 .common-build-steps: &common-build-steps
   # install dependencies
