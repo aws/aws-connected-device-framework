@@ -14,11 +14,13 @@ image: public.ecr.aws/lambda/nodejs:14
   - node common/scripts/install-run-rush.js rebuild
 
 .common-artifacts: &common-artifacts
-  - common/
-  - packages/**/.rush/
-  - packages/**/dist/
-  - packages/**/tsconfig.tsbuildinfo
-  - packages/**/bundle.zip
+  artifacts:
+    paths:
+      - common/
+      - packages/**/.rush/
+      - packages/**/dist/
+      - packages/**/tsconfig.tsbuildinfo
+      - packages/**/bundle.zip
 
 stages:
   - build
@@ -47,9 +49,7 @@ build:
     - *common-build-steps
     # enforce need for changelog
     - node common/scripts/install-run-rush.js change -v
-  artifacts:
-    paths:
-      - *common-artifacts
+  <<: *common-artifacts
 
 
 test:
@@ -60,17 +60,13 @@ test:
     - node common/scripts/install-run-rush.js test
     # version projects that have changed
     - node common/scripts/install-run-rush.js publish -a
-  artifacts:
-    paths:
-      - *common-artifacts
+  <<: *common-artifacts
 
-deployStage:
+.deployStage:
   stage: deployStage
   script:
     # install jq
     - curl -s -qL -o /usr/bin/jq https://stedolan.github.io/jq/download/linux64/jq
     - chmod +x /usr/bin/jq
     # deploy to staging environment
-  artifacts:
-    paths:
-      - *common-artifacts
+  <<: *common-artifacts
