@@ -6,30 +6,32 @@ stages:
   - test
 
 cache:  
+  # enable per-branch caching
   key: "$CI_COMMIT_REF_SLUG"
   paths:
-    - common/temp/
-    - packages/**/dist/
+    - common/
     - packages/**/.rush/
+    - packages/**/dist/
     - packages/**/tsconfig.tsbuildinfo
+
+before_script:
+  - env | sort
+  # install openssl (required to test some services)
+  - yum install -y openssl zip
+  # install git (required for `rush change`)
+  - yum update -y
+  - yum install git -y
+  - git version
 
 build:
   stage: build
   script:
-    - env | sort
-    # install git (required for `rush change`)
-    - yum update -y
-    - yum install git -y
-    - git version
-    # install openssl (required to test some services)
-    - yum install -y openssl zip
     # install dependencies
     - node common/scripts/install-run-rush.js install --bypass-policy --purge
     # enforce need for changelog
     - node common/scripts/install-run-rush.js change -v
     # build
     - node common/scripts/install-run-rush.js rebuild
-    - node common/scripts/install-run-rush.js test
 
 test:
   stage: test
