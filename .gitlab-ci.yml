@@ -1,18 +1,35 @@
 # Official framework image. Look for the different tagged releases at: https://hub.docker.com/r/library/node/tags/
 image: public.ecr.aws/lambda/nodejs:14
 
+include:
+  - local: setup.yml
+
+variables:      
+  !reference [.branch-variables, variables]
+
+.common-build-steps: &common-build-steps
+  # install dependencies
+  - node common/scripts/install-run-rush.js install --bypass-policy --purge
+  # build
+  - node common/scripts/install-run-rush.js rebuild
+
+.common-artifacts: &common-artifacts
+  - common/
+  - packages/**/.rush/
+  - packages/**/dist/
+  - packages/**/tsconfig.tsbuildinfo
+  - packages/**/bundle.zip
+
 stages:
   - build
   - test
 
-cache:  
-  # enable per-branch caching
-  key: "$CI_COMMIT_REF_SLUG"
-  paths:
-    - common/
-    - packages/**/.rush/
-    - packages/**/dist/
-    - packages/**/tsconfig.tsbuildinfo
+### not working at the moment, therefore using artifacts as a temp workaround
+# cache:  
+#   # enable per-branch caching
+#   key: "$CI_COMMIT_REF_SLUG"
+#   paths:
+#     - *common-artifacts
 
 before_script:
   - env | sort
@@ -23,23 +40,37 @@ before_script:
   - yum install git -y
   - git version
 
+
 build:
   stage: build
   script:
-    # install dependencies
-    - node common/scripts/install-run-rush.js install --bypass-policy --purge
+    - &common-build-steps
     # enforce need for changelog
     - node common/scripts/install-run-rush.js change -v
-    # build
-    - node common/scripts/install-run-rush.js rebuild
+  artifacts:
+    paths:
+      - &common-artifacts
+
 
 test:
   stage: test
   script:
-    - env | sort
+    # - &common-build-steps
     # test
-    - ls
-    - cat common/config/rush/command-line.json
     - node common/scripts/install-run-rush.js test
     # version projects that have changed
     - node common/scripts/install-run-rush.js publish -a
+  artifacts:
+    paths:
+      - &common-artifacts
+
+deployStage:
+  stage: deployStage
+  script:
+    # install jq
+    - curl -s -qL -o /usr/bin/jq https://stedolan.github.io/jq/download/linux64/jq
+    - chmod +x /usr/bin/jq
+    # deploy to staging environment
+  artifacts:
+    paths:
+      - &common-artifacts
