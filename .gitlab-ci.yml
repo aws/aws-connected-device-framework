@@ -44,25 +44,25 @@ before_script:
 build:
   stage: build
   script:
-    - &common-build-steps
+    - *common-build-steps
     # enforce need for changelog
     - node common/scripts/install-run-rush.js change -v
   artifacts:
     paths:
-      - &common-artifacts
+      - *common-artifacts
 
 
 test:
   stage: test
   script:
-    # - &common-build-steps
+    # - *common-build-steps
     # test
     - node common/scripts/install-run-rush.js test
     # version projects that have changed
     - node common/scripts/install-run-rush.js publish -a
   artifacts:
     paths:
-      - &common-artifacts
+      - *common-artifacts
 
 deployStage:
   stage: deployStage
@@ -73,4 +73,4 @@ deployStage:
     # deploy to staging environment
   artifacts:
     paths:
-      - &common-artifacts
+      - *common-artifacts
