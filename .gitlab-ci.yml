@@ -25,6 +25,7 @@ build:
     - node common/scripts/install-run-rush.js change -v
     # build
     - node common/scripts/install-run-rush.js rebuild
+    - node common/scripts/install-run-rush.js test
 
 test:
   stage: test
