@@ -47,9 +47,13 @@ buildLayer:
   stage: buildLayer
   image:
     name: gcr.io/kaniko-project/executor:debug
-    entrypoint: [""]
+    entrypoint: ["/busybox/sh"]
   script:
-    - infrastructure/bundle-core.bash
+    - cd infrastructure/lambdaLayers/openssl
+    - cwd=$(pwd)
+    - rm -rf $cwd/build
+    - mkdir -p $cwd/build
+    - /kaniko/executor --dockerfile Dockerfile --no-push
   <<: *common-artifacts
 
 .build:
