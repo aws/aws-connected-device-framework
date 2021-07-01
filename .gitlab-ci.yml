@@ -1,9 +1,5 @@
 # Official framework image. Look for the different tagged releases at: https://hub.docker.com/r/library/node/tags/
-# image: public.ecr.aws/lambda/nodejs:14
-image: docker:19.03.12
-
-variables:
-  DOCKER_TLS_CERTDIR: "/certs"
+image: public.ecr.aws/lambda/nodejs:14
 
 # include:
 #   - local: cicd/master-brnach
@@ -47,12 +43,6 @@ before_script:
   - yum update -y
   - yum install git -y
   - git version
-
-services:
-  - docker:19.03.12-dind
-
-before_script:
-  - docker info
 
 buildLayer:
   stage: buildLayer
