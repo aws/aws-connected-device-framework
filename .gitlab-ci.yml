@@ -58,7 +58,7 @@ buildLayer:
   script:
     - docker ps
 
-build:
+.build:
   stage: build
   script:
     - *common-build-steps
@@ -66,7 +66,7 @@ build:
     - node common/scripts/install-run-rush.js change -v
   <<: *common-artifacts
 
-test:
+.test:
   stage: test
   script:
     - *common-build-steps
@@ -76,7 +76,7 @@ test:
     - node common/scripts/install-run-rush.js publish -a
   <<: *common-artifacts
 
-deployStage:
+.deployStage:
   stage: deployStage
   script:
     # install jq
