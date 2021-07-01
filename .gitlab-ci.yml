@@ -47,7 +47,7 @@ buildLayer:
   stage: buildLayer
   image:
     name: gcr.io/kaniko-project/executor:debug
-    entrypoint: ["/busybox/sh"]
+    entrypoint: [""]
   script:
     - cd infrastructure/lambdaLayers/openssl
     - cwd=$(pwd)
