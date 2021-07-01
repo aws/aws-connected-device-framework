@@ -20,6 +20,7 @@ variables:
   artifacts:
     paths:
       - common/
+      - infrastructure/**/build.zip
       - packages/**/.rush/
       - packages/**/dist/
       - packages/**/tsconfig.tsbuildinfo
@@ -54,9 +55,13 @@ before_script:
   - docker info
 
 buildLayer:
-  stage: buildLayer
+  stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
   script:
-    - docker ps
+    - infrastructure/bundle-core.bash
+  <<: *common-artifacts
 
 .build:
   stage: build
