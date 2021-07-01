@@ -4,11 +4,10 @@ image: public.ecr.aws/lambda/nodejs:14
 # include:
 #   - local: cicd/master-brnach
 
-# variables:      
+# variables:
 #   !reference [.branch-variables, variables]
 
-.common-build-steps: &common-build-steps
-  # install dependencies
+.common-build-steps: &common-build-steps # install dependencies
   - node common/scripts/install-run-rush.js install --bypass-policy --purge
   # build
   - node common/scripts/install-run-rush.js build
@@ -27,7 +26,7 @@ stages:
   - test
 
 ### not working at the moment, therefore using artifacts as a temp workaround
-# cache:  
+# cache:
 #   # enable per-branch caching
 #   key: "$CI_COMMIT_REF_SLUG"
 #   paths:
@@ -42,7 +41,6 @@ before_script:
   - yum install git -y
   - git version
 
-
 build:
   stage: build
   script:
@@ -50,7 +48,6 @@ build:
     # enforce need for changelog
     - node common/scripts/install-run-rush.js change -v
   <<: *common-artifacts
-
 
 test:
   stage: test
@@ -69,4 +66,6 @@ test:
     - curl -s -qL -o /usr/bin/jq https://stedolan.github.io/jq/download/linux64/jq
     - chmod +x /usr/bin/jq
     # deploy to staging environment
+    - echo Bundling...
+    - infrastructure/bundle-core.bash
   <<: *common-artifacts
