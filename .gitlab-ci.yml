@@ -34,14 +34,14 @@ stages:
 #   paths:
 #     - *common-artifacts
 
-before_script:
-  - env | sort
-  # install openssl (required to test some services)
-  - yum install -y openssl zip
-  # install git (required for `rush change`)
-  - yum update -y
-  - yum install git -y
-  - git version
+# before_script:
+#   - env | sort
+#   # install openssl (required to test some services)
+#   - yum install -y openssl zip
+#   # install git (required for `rush change`)
+#   - yum update -y
+#   - yum install git -y
+#   - git version
 
 buildLayer:
   stage: buildLayer
