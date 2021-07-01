@@ -51,7 +51,7 @@ buildLayer:
   script:
     - mkdir -p /openssl/build
     - yum update -y && yum install -y openssl zip
-    - cd /openssl/build && mkdir -p bin lib && cp /bin/openssl bin/ && cp /usr/lib64/libbz2.so.1 lib/ && zip -r build.zip * && rm -rf bin lib && ls -al
+    - cd /openssl/build && mkdir -p bin lib && cp /bin/openssl bin/ && cp /usr/lib64/libbz2.so.1 lib/ && zip -r build.zip * && rm -rf bin lib && pwd
   artifacts:
     paths:
       - /openssl/build/build.zip
