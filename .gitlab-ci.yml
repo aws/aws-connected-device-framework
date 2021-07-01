@@ -24,6 +24,7 @@ image: public.ecr.aws/lambda/nodejs:14
 stages:
   - build
   - test
+  - deployStage
 
 ### not working at the moment, therefore using artifacts as a temp workaround
 # cache:
@@ -59,7 +60,7 @@ test:
     - node common/scripts/install-run-rush.js publish -a
   <<: *common-artifacts
 
-.deployStage:
+deployStage:
   stage: deployStage
   script:
     # install jq
