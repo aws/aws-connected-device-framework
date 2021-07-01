@@ -55,7 +55,7 @@ before_script:
   - docker info
 
 buildLayer:
-  stage: build
+  stage: buildLayer
   image:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: [""]
