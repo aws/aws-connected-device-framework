@@ -1,5 +1,9 @@
 # Official framework image. Look for the different tagged releases at: https://hub.docker.com/r/library/node/tags/
-image: public.ecr.aws/lambda/nodejs:14
+# image: public.ecr.aws/lambda/nodejs:14
+image: docker:19.03.12
+
+variables:
+  DOCKER_TLS_CERTDIR: "/certs"
 
 # include:
 #   - local: cicd/master-brnach
@@ -22,9 +26,10 @@ image: public.ecr.aws/lambda/nodejs:14
       - packages/**/bundle.zip
 
 stages:
-  - build
-  - test
-  - deployStage
+  - buildLayer
+  # - build
+  # - test
+  # - deployStage
 
 ### not working at the moment, therefore using artifacts as a temp workaround
 # cache:
@@ -41,6 +46,17 @@ before_script:
   - yum update -y
   - yum install git -y
   - git version
+
+services:
+  - docker:19.03.12-dind
+
+before_script:
+  - docker info
+
+buildLayer:
+  stage: buildLayer
+  script:
+    - docker ps
 
 build:
   stage: build
