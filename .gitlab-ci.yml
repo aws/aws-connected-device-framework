@@ -49,12 +49,12 @@ buildLayer:
     name: public.ecr.aws/amazonlinux/amazonlinux:2
     entrypoint: [""]
   script:
-    - mkdir -p /tmp/build
+    - mkdir -p common/build
     - yum update -y && yum install -y openssl zip
-    - cd /tmp/build && mkdir -p bin lib && cp /bin/openssl bin/ && cp /usr/lib64/libbz2.so.1 lib/ && zip -r build.zip * && rm -rf bin lib && pwd
+    - cd /common/build && mkdir -p bin lib && cp /bin/openssl bin/ && cp /usr/lib64/libbz2.so.1 lib/ && zip -r build.zip * && rm -rf bin lib
   artifacts:
     paths:
-      - /tmp/build/build.zip
+      - /common/build/build.zip
 
 .build:
   stage: build
