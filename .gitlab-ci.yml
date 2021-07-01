@@ -1,5 +1,4 @@
 # Official framework image. Look for the different tagged releases at: https://hub.docker.com/r/library/node/tags/
-image: public.ecr.aws/lambda/nodejs:14
 
 # include:
 #   - local: cicd/master-brnach
@@ -55,6 +54,7 @@ buildLayer:
 
 .build:
   stage: build
+  image: public.ecr.aws/lambda/nodejs:14
   script:
     - *common-build-steps
     # enforce need for changelog
@@ -63,6 +63,7 @@ buildLayer:
 
 .test:
   stage: test
+  image: public.ecr.aws/lambda/nodejs:14
   script:
     - *common-build-steps
     # test
@@ -73,6 +74,7 @@ buildLayer:
 
 .deployStage:
   stage: deployStage
+  image: public.ecr.aws/lambda/nodejs:14
   script:
     # install jq
     - curl -s -qL -o /usr/bin/jq https://stedolan.github.io/jq/download/linux64/jq
