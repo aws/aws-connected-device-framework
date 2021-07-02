@@ -92,32 +92,55 @@ buildLayer:
   script:
     - *common-build-steps
     # enforce need for changelog
-    - node common/scripts/install-run-rush.js change -v
+    - rush change -v
   <<: *common-artifacts
 
-.test:
+test:
   stage: test
   image: public.ecr.aws/lambda/nodejs:14
   script:
     - *common-build-steps
     # test
-    - node common/scripts/install-run-rush.js test
+    - rush test
     # version projects that have changed
-    - node common/scripts/install-run-rush.js publish -a
+    - rush publish -a
+    # Bundling the node project when it past
+    - echo Bundling...
+    - infrastructure/bundle-core.bash
   <<: *common-artifacts
 
 deployStage:
   stage: deployStage
   image: public.ecr.aws/lambda/nodejs:14
+  variables:
+    DEPLOY_ARTIFACTS_STORE_BUCKET: cdf-cfn-artifacts-317315070315-ap-southeast-2
+    CONFIG_ENVIRONMENT: common/build/configdir
+    ENVIRONMENT: demo
+    VPC_ID: vpc-0edf6d9d5903d4754
+    SOURCE_SECURITY_GROUP_ID: sg-0846a3eef2618ddde
+    PRIVATE_SUBNET_IDS: subnet-04521d956927be786,subnet-0d3bf77524108f064
+    PUBLIC_SUBNET_IDS: subnet-0c6688f4ef6679e6a,subnet-01751ca355739fdbd
+    PRIVATE_ROUTE_TABLE_IDS: rtb-04604d45350f0fee2,rtb-07dc98ec3293c0b02
+    ASSETLIBRARY_MODE: full
+    KEY_PAIR_NAME: cdf-bastion-key
+    BASTION_REMOTE_ACCESS_CIDR: 54.240.193.1/32
+    KMS_KEY_ID: 0546de6a-e7d0-4a92-aa27-fd771d42be0a
+    USE_EXISTING_VPC: true
+    API_GATEWAY_AUTH:
+    TEMPLATE_SNIPPET_S3_URI_BASE: s3://cdf-cfn-artifacts-317315070315-ap-southeast-2/cfn/
+    API_GATEWAY_DEFINITION_TEMPLATE: cfn-apiGateway-noAuth.yaml
+    COGNTIO_USER_POOL_ARN:
+    AUTHORIZER_FUNCTION_ARN:
   script:
-    # install jq
+    # unzip the configuration files into app config dir
     - unzip -d $APP_CONFIG_DIR common/build/config.zip
     - ls -al $APP_CONFIG_DIR
-    # - curl -s -qL -o /usr/bin/jq https://stedolan.github.io/jq/download/linux64/jq
-    # - chmod +x /usr/bin/jq
-    # # Copy the build.zip produced by the buildLayer job
-    # - cp common/build/build.zip infrastructure/lambdaLayers/openssl/build.zip
-    # # deploy to staging environment
-    # - echo Bundling...
-    # - infrastructure/bundle-core.bash
+    # install jq
+    - curl -s -qL -o /usr/bin/jq https://stedolan.github.io/jq/download/linux64/jq
+    - chmod +x /usr/bin/jq
+    # Copy the build.zip produced by the buildLayer job
+    - cp common/build/build.zip infrastructure/lambdaLayers/openssl/build.zip
+    # deploy to staging environment
+    - bash -c cicd/deployproject_build.bash
+
   <<: *common-artifacts
