@@ -9,6 +9,7 @@
 variables:
   CONFIG_REPO_PROJECT_ID: 9703
   CONFIG_PACKAGE_NAME: cdf-infrastructure-demo
+  APP_CONFIG_DIR: common/build/configdir
 
 .common-build-steps: &common-build-steps # install dependencies
   - node common/scripts/install-run-rush.js install --bypass-policy --purge
@@ -110,11 +111,13 @@ deployStage:
   image: public.ecr.aws/lambda/nodejs:14
   script:
     # install jq
-    - curl -s -qL -o /usr/bin/jq https://stedolan.github.io/jq/download/linux64/jq
-    - chmod +x /usr/bin/jq
-    # Copy the build.zip produced by the buildLayer job
-    - cp common/build/build.zip infrastructure/lambdaLayers/openssl/build.zip
-    # deploy to staging environment
-    - echo Bundling...
-    - infrastructure/bundle-core.bash
+    - unzip -d $APP_CONFIG_DIR common/build/config.zip
+    - ls -al $APP_CONFIG_DIR
+    # - curl -s -qL -o /usr/bin/jq https://stedolan.github.io/jq/download/linux64/jq
+    # - chmod +x /usr/bin/jq
+    # # Copy the build.zip produced by the buildLayer job
+    # - cp common/build/build.zip infrastructure/lambdaLayers/openssl/build.zip
+    # # deploy to staging environment
+    # - echo Bundling...
+    # - infrastructure/bundle-core.bash
   <<: *common-artifacts
