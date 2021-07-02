@@ -52,7 +52,9 @@ before_script:
 downloadConfig:
   stage: build
   before_script:
-    - echo 'do nothing on buildLayer'
+    - echo 'download jq'
+    - curl -s -qL -o /usr/bin/jq https://stedolan.github.io/jq/download/linux64/jq
+    - chmod +x /usr/bin/jq
   image:
     name: public.ecr.aws/amazonlinux/amazonlinux:2
     entrypoint: [""]
