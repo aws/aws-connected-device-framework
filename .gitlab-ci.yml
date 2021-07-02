@@ -57,7 +57,7 @@ buildLayer:
     paths:
       - common/build/build.zip
 
-build:
+.build:
   stage: build
   image: public.ecr.aws/lambda/nodejs:14
   script:
@@ -85,7 +85,7 @@ deployStage:
     - curl -s -qL -o /usr/bin/jq https://stedolan.github.io/jq/download/linux64/jq
     - chmod +x /usr/bin/jq
     # Copy the build.zip produced by the buildLayer job
-    - cp common/build/build.zip infastructure/lambdaLayers/openssl/build.zip
+    - cp common/build/build.zip infrastructure/lambdaLayers/openssl/build.zip
     # deploy to staging environment
     - echo Bundling...
     - infrastructure/bundle-core.bash
