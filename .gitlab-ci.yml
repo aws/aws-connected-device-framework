@@ -22,10 +22,9 @@
       - packages/**/bundle.zip
 
 stages:
-  - buildLayer
-  # - build
-  # - test
-  # - deployStage
+  - build
+  - test
+  - deployStage
 
 ### not working at the moment, therefore using artifacts as a temp workaround
 # cache:
@@ -34,17 +33,19 @@ stages:
 #   paths:
 #     - *common-artifacts
 
-# before_script:
-#   - env | sort
-#   # install openssl (required to test some services)
-#   - yum install -y openssl zip
-#   # install git (required for `rush change`)
-#   - yum update -y
-#   - yum install git -y
-#   - git version
+before_script:
+  - env | sort
+  # install openssl (required to test some services)
+  - yum install -y openssl zip
+  # install git (required for `rush change`)
+  - yum update -y
+  - yum install git -y
+  - git version
 
 buildLayer:
-  stage: buildLayer
+  stage: build
+  before_script:
+    - echo 'do nothing on buildLayer'
   image:
     name: public.ecr.aws/amazonlinux/amazonlinux:2
     entrypoint: [""]
@@ -56,7 +57,7 @@ buildLayer:
     paths:
       - common/build/build.zip
 
-.build:
+build:
   stage: build
   image: public.ecr.aws/lambda/nodejs:14
   script:
@@ -76,13 +77,15 @@ buildLayer:
     - node common/scripts/install-run-rush.js publish -a
   <<: *common-artifacts
 
-.deployStage:
+deployStage:
   stage: deployStage
   image: public.ecr.aws/lambda/nodejs:14
   script:
     # install jq
     - curl -s -qL -o /usr/bin/jq https://stedolan.github.io/jq/download/linux64/jq
     - chmod +x /usr/bin/jq
+    # Copy the build.zip produced by the buildLayer job
+    - cp common/build/build.zip infastructure/lambdaLayers/openssl/build.zip
     # deploy to staging environment
     - echo Bundling...
     - infrastructure/bundle-core.bash

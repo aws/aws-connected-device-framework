@@ -30,7 +30,7 @@ if [ -z "$BYPASS_CDF_DOCKER_BUILD" ]; then
     for layer in $(ls $lambda_layers_root); do
         cd "$lambda_layers_root/$layer"
         # infrastructure/build.bash &
-        infrastructure/build-kaniko.bash
+        # infrastructure/build-kaniko.bash
     done
 fi
 
