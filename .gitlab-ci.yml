@@ -41,6 +41,7 @@ before_script:
   - yum update -y
   - yum install git -y
   - git version
+  - npm install -g rush
 
 buildLayer:
   stage: build
