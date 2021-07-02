@@ -158,11 +158,12 @@ integrationTest:
     # export the location of the config
     - export CODEBUILD_SRC_DIR_source_infrastructure="${CI_PROJECT_DIR}/${APP_CONFIG_DIR}"
     # unzip the configuration files into app config dir
-    - bash -c cicd/integrationtestsproject_prebuild.bash
-    # unzip the configuration files into app config dir
     - unzip -d $APP_CONFIG_DIR common/build/config.zip
     - ls -al $APP_CONFIG_DIR
     # install jq
     - curl -s -qL -o /usr/bin/jq https://stedolan.github.io/jq/download/linux64/jq
     - chmod +x /usr/bin/jq
+    # rush install
     - rush update --purge
+    # run in the integration tests
+    - bash -c cicd/integrationtestsproject_build.bash
