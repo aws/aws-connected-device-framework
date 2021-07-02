@@ -40,7 +40,7 @@ stages:
 before_script:
   - env | sort
   # install openssl (required to test some services)
-  - yum install -y openssl zip wget
+  - yum install -y openssl zip
   # install git (required for `rush change`)
   - yum update -y
   - yum install git -y
@@ -55,6 +55,8 @@ downloadConfig:
     - echo 'download jq'
     - curl -s -qL -o /usr/bin/jq https://stedolan.github.io/jq/download/linux64/jq
     - chmod +x /usr/bin/jq
+    - echo 'download wget'
+    - yum install -y wget
   image:
     name: public.ecr.aws/amazonlinux/amazonlinux:2
     entrypoint: [""]
