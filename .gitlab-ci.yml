@@ -120,7 +120,6 @@ deployStage:
   variables:
     DEPLOY_ARTIFACTS_STORE_BUCKET: "cdf-cfn-artifacts-317315070315-ap-southeast-2"
     CONFIG_ENVIRONMENT: demo
-    CODEBUILD_SRC_DIR_source_infrastructure: "common/build/configdir"
     ENVIRONMENT: demo-staging
     VPC_ID: vpc-0edf6d9d5903d4754
     SOURCE_SECURITY_GROUP_ID: sg-0846a3eef2618ddde
@@ -135,6 +134,7 @@ deployStage:
     TEMPLATE_SNIPPET_S3_URI_BASE: "s3://cdf-cfn-artifacts-317315070315-ap-southeast-2/cfn/"
     API_GATEWAY_DEFINITION_TEMPLATE: cfn-apiGateway-noAuth.yaml
   script:
+    - CODEBUILD_SRC_DIR_source_infrastructure="${CI_PROJECT_DIR}/${APP_CONFIG_DIR}"
     # unzip the configuration files into app config dir
     - unzip -d $APP_CONFIG_DIR common/build/config.zip
     - ls -al $APP_CONFIG_DIR
@@ -145,4 +145,3 @@ deployStage:
     - mkdir -p infrastructure/lambdaLayers/openssl/build && cp common/build/build.zip infrastructure/lambdaLayers/openssl/build/build.zip
     # deploy to staging environment
     - bash -c cicd/deployproject_build.bash
-  <<: *common-artifacts
