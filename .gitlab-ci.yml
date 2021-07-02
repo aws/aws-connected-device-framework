@@ -63,7 +63,7 @@ downloadConfig:
     entrypoint: [""]
   script:
     - 'CONFIG_PACKAGE_VERSION=$(curl -H "PRIVATE-TOKEN: $CUSTOM_PERSONAL_ACCESS_TOKEN" ${CI_API_V4_URL}/projects/${CONFIG_REPO_PROJECT_ID}/packages | jq ".[0].id")'
-    - 'wget -H "PRIVATE-TOKEN: $CUSTOM_PERSONAL_ACCESS_TOKEN" ${CI_API_V4_URL}/projects/${CONFIG_REPO_PROJECT_ID}/packages/generic/${CONFIG_PACKAGE_NAME}/${CONFIG_PACKAGE_VERSION}/config.zip'
+    - 'wget --header="PRIVATE-TOKEN: $CUSTOM_PERSONAL_ACCESS_TOKEN" ${CI_API_V4_URL}/projects/${CONFIG_REPO_PROJECT_ID}/packages/generic/${CONFIG_PACKAGE_NAME}/${CONFIG_PACKAGE_VERSION}/config.zip'
     - mkdir -p common/build
     - cp config.zip common/build/config.zip
   artifacts:
