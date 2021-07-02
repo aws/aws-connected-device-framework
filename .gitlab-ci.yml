@@ -41,6 +41,8 @@ before_script:
   - yum update -y
   - yum install git -y
   - git version
+  - curl -f https://get.pnpm.io/v5.js | node - add --global pnpm@5
+  - pnpm version
 
 buildLayer:
   stage: build
