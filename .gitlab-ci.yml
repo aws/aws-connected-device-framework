@@ -134,7 +134,7 @@ deployStage:
     TEMPLATE_SNIPPET_S3_URI_BASE: "s3://cdf-cfn-artifacts-317315070315-ap-southeast-2/cfn/"
     API_GATEWAY_DEFINITION_TEMPLATE: cfn-apiGateway-noAuth.yaml
   script:
-    - CODEBUILD_SRC_DIR_source_infrastructure="${CI_PROJECT_DIR}/${APP_CONFIG_DIR}"
+    - export CODEBUILD_SRC_DIR_source_infrastructure="${CI_PROJECT_DIR}/${APP_CONFIG_DIR}"
     # unzip the configuration files into app config dir
     - unzip -d $APP_CONFIG_DIR common/build/config.zip
     - ls -al $APP_CONFIG_DIR
