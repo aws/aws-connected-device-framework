@@ -12,9 +12,9 @@ variables:
   APP_CONFIG_DIR: common/build/configdir
 
 .common-build-steps: &common-build-steps # install dependencies
-  - node common/scripts/install-run-rush.js install --bypass-policy --purge
+  - rush install --bypass-policy --purge
   # build
-  - node common/scripts/install-run-rush.js build
+  - rush build
 
 .common-artifacts: &common-artifacts
   artifacts:
@@ -28,8 +28,9 @@ variables:
 
 stages:
   - build
-  - test
-  - deployStage
+  # - test
+  # - deployStage
+  - integrationTest
 
 ### not working at the moment, therefore using artifacts as a temp workaround
 # cache:
@@ -91,7 +92,7 @@ buildLayer:
     paths:
       - common/build/build.zip
 
-.build:
+build:
   stage: build
   image: public.ecr.aws/lambda/nodejs:14
   script:
@@ -100,7 +101,7 @@ buildLayer:
     - rush change -v
   <<: *common-artifacts
 
-test:
+.test:
   stage: test
   image: public.ecr.aws/lambda/nodejs:14
   script:
@@ -114,7 +115,7 @@ test:
     - infrastructure/bundle-core.bash
   <<: *common-artifacts
 
-deployStage:
+.deployStage:
   stage: deployStage
   image: public.ecr.aws/lambda/nodejs:14
   variables:
@@ -134,6 +135,7 @@ deployStage:
     TEMPLATE_SNIPPET_S3_URI_BASE: "s3://cdf-cfn-artifacts-317315070315-ap-southeast-2/cfn/"
     API_GATEWAY_DEFINITION_TEMPLATE: cfn-apiGateway-noAuth.yaml
   script:
+    # export the location of the config
     - export CODEBUILD_SRC_DIR_source_infrastructure="${CI_PROJECT_DIR}/${APP_CONFIG_DIR}"
     # unzip the configuration files into app config dir
     - unzip -d $APP_CONFIG_DIR common/build/config.zip
@@ -145,3 +147,22 @@ deployStage:
     - mkdir -p infrastructure/lambdaLayers/openssl/build && cp common/build/build.zip infrastructure/lambdaLayers/openssl/build/build.zip
     # deploy to staging environment
     - bash -c cicd/deployproject_build.bash
+
+integrationTest:
+  stage: integrationTest
+  image: public.ecr.aws/lambda/nodejs:14
+  variables:
+    CONFIG_ENVIRONMENT: demo
+    ENVIRONMENT: demo
+  script:
+    # export the location of the config
+    - export CODEBUILD_SRC_DIR_source_infrastructure="${CI_PROJECT_DIR}/${APP_CONFIG_DIR}"
+    # unzip the configuration files into app config dir
+    - bash -c cicd/integrationtestsproject_prebuild.bash
+    # unzip the configuration files into app config dir
+    - unzip -d $APP_CONFIG_DIR common/build/config.zip
+    - ls -al $APP_CONFIG_DIR
+    # install jq
+    - curl -s -qL -o /usr/bin/jq https://stedolan.github.io/jq/download/linux64/jq
+    - chmod +x /usr/bin/jq
+    - rush update --purge
