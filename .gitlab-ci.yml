@@ -46,9 +46,14 @@ before_script:
   - yum update -y
   - yum install git -y
   - git version
+  # install specific version of pnpm needed by rush
   - curl -f https://get.pnpm.io/v5.js | node - add --global pnpm@5
   - pnpm version
   - npm install -g @microsoft/rush@5.47.0
+  # install aws cli
+  - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+  - unzip awscliv2.zip
+  - ./aws/install
 
 downloadConfig:
   stage: build
