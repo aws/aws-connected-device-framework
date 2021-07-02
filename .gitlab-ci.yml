@@ -142,7 +142,7 @@ deployStage:
     - curl -s -qL -o /usr/bin/jq https://stedolan.github.io/jq/download/linux64/jq
     - chmod +x /usr/bin/jq
     # Copy the build.zip produced by the buildLayer job
-    - cp common/build/build.zip infrastructure/lambdaLayers/openssl/build.zip
+    - cp common/build/build.zip infrastructure/lambdaLayers/openssl/build/build.zip
     # deploy to staging environment
     - bash -c cicd/deployproject_build.bash
   <<: *common-artifacts
