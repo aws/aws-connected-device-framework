@@ -6,7 +6,7 @@ echo deployproject_build started on `date`
 
 # regardless of which environment we're deploying to, staging/live always use the same application config (but
 # note that each service's own installation scripts automatically updates environment specific urls)
-CONFIG_ENVIRONMENT=${ENVIRONMENT%-staging}
+# CONFIG_ENVIRONMENT=${ENVIRONMENT%-staging}
 
 cmd="infrastructure/deploy-core.bash \
   -e $ENVIRONMENT \
