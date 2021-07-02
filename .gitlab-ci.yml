@@ -57,7 +57,7 @@ downloadConfig:
     name: public.ecr.aws/amazonlinux/amazonlinux:2
     entrypoint: [""]
   script:
-    - latest_package_id=$(curl --header --header="JOB-TOKEN: $CI_JOB_TOKEN"  https://gitlab.aws.dev/api/v4/projects/${CONFIG_REPO_PROJECT_ID}/packages | jq '.[0].id')
+    - 'CONFIG_PACKAGE_VERSION=$(curl --header="JOB-TOKEN: $CI_JOB_TOKEN" ${CI_API_V4_URL}/projects/${CONFIG_REPO_PROJECT_ID}/packages | jq '.[0].id')'
     - 'wget --header="JOB-TOKEN: $CI_JOB_TOKEN" ${CI_API_V4_URL}/projects/${CONFIG_REPO_PROJECT_ID}/packages/generic/${CONFIG_PACKAGE_NAME}/${CONFIG_PACKAGE_VERSION}/config.zip'
     - mkdir -p common/build
     - cp config.zip common/build/config.zip
