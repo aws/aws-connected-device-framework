@@ -41,7 +41,7 @@ stages:
 before_script:
   - env | sort
   # install openssl (required to test some services)
-  - yum install -y openssl zip
+  - yum install -y openssl zip unzip
   # install git (required for `rush change`)
   - yum update -y
   - yum install git -y
