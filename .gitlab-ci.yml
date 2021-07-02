@@ -43,6 +43,7 @@ before_script:
   - git version
   - curl -f https://get.pnpm.io/v5.js | node - add --global pnpm@5
   - pnpm version
+  - npm install -g @microsoft/rush@5.47.0
 
 buildLayer:
   stage: build
