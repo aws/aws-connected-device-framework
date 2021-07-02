@@ -6,6 +6,10 @@
 # variables:
 #   !reference [.branch-variables, variables]
 
+variables:
+  CONFIG_REPO_PROJECT_ID: 9703
+  CONFIG_PACKAGE_NAME: cdf-infrastructure-demo
+
 .common-build-steps: &common-build-steps # install dependencies
   - node common/scripts/install-run-rush.js install --bypass-policy --purge
   # build
@@ -44,6 +48,22 @@ before_script:
   - curl -f https://get.pnpm.io/v5.js | node - add --global pnpm@5
   - pnpm version
   - npm install -g @microsoft/rush@5.47.0
+
+downloadConfig:
+  stage: build
+  before_script:
+    - echo 'do nothing on buildLayer'
+  image:
+    name: public.ecr.aws/amazonlinux/amazonlinux:2
+    entrypoint: [""]
+  script:
+    - latest_package_id=$(curl --header --header="JOB-TOKEN: $CI_JOB_TOKEN"  https://gitlab.aws.dev/api/v4/projects/${CONFIG_REPO_PROJECT_ID}/packages | jq '.[0].id')
+    - 'wget --header="JOB-TOKEN: $CI_JOB_TOKEN" ${CI_API_V4_URL}/projects/${CONFIG_REPO_PROJECT_ID}/packages/generic/${CONFIG_PACKAGE_NAME}/${CONFIG_PACKAGE_VERSION}/config.zip'
+    - mkdir -p common/build
+    - cp config.zip common/build/config.zip
+  artifacts:
+    paths:
+      - common/build/config.zip
 
 buildLayer:
   stage: build
