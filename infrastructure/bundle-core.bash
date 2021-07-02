@@ -35,11 +35,11 @@ if [ -z "$BYPASS_CDF_DOCKER_BUILD" ]; then
 fi
 
 cd $root_dir
-rush purge                      # delete all rush temp files
-rush update                     # as temp files deleted, need to refresh dependencies
-rush clean                      # deep clean of compiled files
-rush update                     # refresh dependencies again
-rush build                      # compile
+node common/scripts/install-run-rush.js purge                      # delete all rush temp files
+node common/scripts/install-run-rush.js update                     # as temp files deleted, need to refresh dependencies
+node common/scripts/install-run-rush.js clean                      # deep clean of compiled files
+node common/scripts/install-run-rush.js update                     # refresh dependencies again
+node common/scripts/install-run-rush.js build                      # compile
 npx pnpm recursive run bundle   # create the deployment packages
 
 # wait
