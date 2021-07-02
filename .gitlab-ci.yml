@@ -92,7 +92,7 @@ buildLayer:
     paths:
       - common/build/build.zip
 
-build:
+.build:
   stage: build
   image: public.ecr.aws/lambda/nodejs:14
   script:
