@@ -120,8 +120,8 @@ deployStage:
   image: public.ecr.aws/lambda/nodejs:14
   variables:
     DEPLOY_ARTIFACTS_STORE_BUCKET: "cdf-cfn-artifacts-317315070315-ap-southeast-2"
-    CONFIG_ENVIRONMENT: demo
-    ENVIRONMENT: demo
+    CONFIG_ENVIRONMENT: development
+    ENVIRONMENT: development-staging
     VPC_ID: vpc-0edf6d9d5903d4754
     SOURCE_SECURITY_GROUP_ID: sg-0846a3eef2618ddde
     PRIVATE_SUBNET_IDS: "subnet-04521d956927be786,subnet-0d3bf77524108f064"
