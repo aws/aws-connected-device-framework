@@ -157,7 +157,7 @@ deployStage:
     #echo installing mkdocs...
     ### note this must be installed individually else pip struggles with dependency resolution
     - curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-    - python get-pip.py
+    - python3 get-pip.py
     - pip install --upgrade pip
     - pip install mkdocs
     - pip install markdown-include
