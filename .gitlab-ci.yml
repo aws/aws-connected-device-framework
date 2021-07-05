@@ -153,7 +153,7 @@ deployStage:
   after_script:
     - bash -c cicd/deployproject_postbuild.bash
 
-integrationTest:
+.integrationTest:
   stage: integrationTest
   image: public.ecr.aws/lambda/nodejs:14
   variables:
