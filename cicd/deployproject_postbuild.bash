@@ -61,10 +61,13 @@ if [ "$CI_JOB_STATUS" = "running" ]; then
     
     for tagName in "${tagNames[@]}"; do 
         git tag -f $tagName
-        git push -f origin $tagName
+        git push -o ci.skip -f origin $tagName
     done
 
     echo DEPLOY_ENV $DEPLOY_ENV
+
+     echo publishing artifacts...
+    publish_artifacts "$buildId"
 
     ### Next, if this was a live deploy, publish the artifacts as an installable package
     if [[ "$DEPLOY_ENV" = "LIVE" ]]; then
