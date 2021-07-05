@@ -102,7 +102,7 @@ downloadInfastructureConfig:
     - curl -s -qL -o /usr/bin/jq https://stedolan.github.io/jq/download/linux64/jq
     - chmod +x /usr/bin/jq
     - echo 'download wget'
-    - yum install -y wget
+    - yum install -y wget unzip
   image:
     name: public.ecr.aws/amazonlinux/amazonlinux:2
     entrypoint: [""]
@@ -119,15 +119,14 @@ downloadInfastructureConfig:
 buildLambaLayersZip:
   stage: build
   before_script:
-    - echo 'do nothing on buildLayer'
+    - yum update -y && yum install -y openssl zip
   image:
     name: public.ecr.aws/amazonlinux/amazonlinux:2
     entrypoint: [""]
   script:
     - mkdir -p common/build
-    - yum update -y && yum install -y openssl zip
     - cd common/build && mkdir -p bin lib && cp /bin/openssl bin/ && cp /usr/lib64/libbz2.so.1 lib/ && zip -r build.zip * && rm -rf bin lib
-    - mkdir -p infrastructure/lambdaLayers/openssl/build && cp common/build/build.zip infrastructure/lambdaLayers/openssl/build/build.zip
+    - cd ${CI_PROJECT_DIR} && mkdir -p infrastructure/lambdaLayers/openssl/build && cp common/build/build.zip infrastructure/lambdaLayers/openssl/build/build.zip
   artifacts:
     paths:
       - infrastructure/lambdaLayers/openssl/build/build.zip
