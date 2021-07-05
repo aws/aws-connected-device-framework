@@ -43,7 +43,7 @@ function publish_artifacts() {
 
 echo job status is $CI_JOB_STATUS
 
-if [ "$CI_JOB_STATUS" = "success" ]; then
+if [ "$CI_JOB_STATUS" = "running" ]; then
 
     ### If the deploy was successful ....
 
