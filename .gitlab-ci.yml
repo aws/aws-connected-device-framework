@@ -58,22 +58,27 @@ stages:
 
 before_script:
   - env | sort
+  - "which ssh-agent || ( yum install openssh-client -y )"
+  - eval $(ssh-agent -s)
+  - ssh-add <(echo "$GIT_SSH_PRIV_KEY")
+  - git config --global user.name "${GITLAB_USER_NAME}"
+  - git config --global user.email "${GITLAB_USER_EMAIL}"
+  - mkdir -p ~/.ssh
+  - cat gitlab-known-hosts >> ~/.ssh/known_hosts
   # install openssl (required to test some services)
   - yum install -y openssl zip unzip
   # install git (required for `rush change`)
   - yum update -y
   - yum install git -y
   - git version
-  # install specific version of pnpm needed by rush
-  - curl -f https://get.pnpm.io/v5.js | node - add --global pnpm@5
-  - pnpm version
-  - npm install -g @microsoft/rush@5.47.0
-  # install aws cli
-  - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-  - unzip awscliv2.zip
-  - ./aws/install
-  - git config --global credential.helper store
-  - echo "https://willsia:${CUSTOM_PERSONAL_ACCESS_TOKEN}@${CI_SERVER_HOST}" > ~/.git-credentials
+  # # install specific version of pnpm needed by rush
+  # - curl -f https://get.pnpm.io/v5.js | node - add --global pnpm@5
+  # - pnpm version
+  # - npm install -g @microsoft/rush@5.47.0
+  # # install aws cli
+  # - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+  # - unzip awscliv2.zip
+  # - ./aws/install
 
 downloadConfig:
   stage: build
