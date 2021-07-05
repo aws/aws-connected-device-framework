@@ -67,7 +67,7 @@ variables:
 stages:
   - build
   - test
-  # - deployStage
+  - deployStage
   # - integrationTest
   - deployLive
 
@@ -180,7 +180,7 @@ deployLive:
     - pip install mkdocs-material
     - bash -c cicd/deployproject_postbuild.bash
 
-.deployStage:
+deployStage:
   stage: deployStage
   image: public.ecr.aws/lambda/nodejs:14
   variables:
@@ -192,24 +192,21 @@ deployLive:
     - curl -s -qL -o /usr/bin/jq https://stedolan.github.io/jq/download/linux64/jq
     - chmod +x /usr/bin/jq
     # deploy to staging environment
-    # - bash -c cicd/deployproject_build.bash
+    - bash -c cicd/deployproject_build.bash
 
 .integrationTest:
   stage: integrationTest
   image: public.ecr.aws/lambda/nodejs:14
   variables:
-    CONFIG_ENVIRONMENT: demo
-    ENVIRONMENT: demo
+    CONFIG_ENVIRONMENT: development-staging
+    DEPLOY_ARTIFACTS_STORE_BUCKET: cdf-cfn-artifacts-317315070315-ap-southeast-2
   script:
-    # export the location of the config
-    - export CODEBUILD_SRC_DIR_source_infrastructure="${CI_PROJECT_DIR}/${APP_CONFIG_DIR}"
-    # unzip the configuration files into app config dir
-    - unzip -d $APP_CONFIG_DIR common/build/config.zip
-    - ls -al $APP_CONFIG_DIR
     # install jq
     - curl -s -qL -o /usr/bin/jq https://stedolan.github.io/jq/download/linux64/jq
     - chmod +x /usr/bin/jq
     # rush install
     - rush update --purge
+    # export the location of the config
+    - export CODEBUILD_SRC_DIR_source_infrastructure="${CI_PROJECT_DIR}/${APP_CONFIG_DIR}"
     # run in the integration tests
     - bash -c cicd/integrationtestsproject_build.bash
