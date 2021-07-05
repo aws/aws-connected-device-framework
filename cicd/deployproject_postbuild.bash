@@ -41,7 +41,7 @@ function publish_artifacts() {
     wait
 }
 
-if [ "$CI_JOB_STATUS" -eq "success" ]; then
+if [ "$CI_JOB_STATUS" = "success" ]; then
 
     ### If the deploy was successful ....
 

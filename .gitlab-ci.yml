@@ -45,9 +45,9 @@ variables:
 
 stages:
   - build
-  - test
+  # - test
   - deployStage
-  - integrationTest
+  # - integrationTest
 
 ### not working at the moment, therefore using artifacts as a temp workaround
 # cache:
@@ -118,7 +118,7 @@ buildLayer:
     - rush change -v
   <<: *common-artifacts
 
-test:
+.test:
   stage: test
   image: public.ecr.aws/lambda/nodejs:14
   script:
