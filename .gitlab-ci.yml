@@ -67,7 +67,7 @@ variables:
 stages:
   - build
   - test
-  - deployStages
+  - deployStage
   - integrationTest
   - deployLive
 
