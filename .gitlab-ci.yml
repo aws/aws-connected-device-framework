@@ -58,7 +58,8 @@ stages:
 
 before_script:
   - env | sort
-  - yum install openssh-clients -y
+  - yum update -y
+  - yum install git openssh-clients -y
   - eval $(ssh-agent -s)
   - ssh-add <(echo "$GIT_SSH_PRIV_KEY")
   - git config --global user.name "${GITLAB_USER_NAME}"
@@ -68,8 +69,6 @@ before_script:
   # install openssl (required to test some services)
   - yum install -y openssl zip unzip
   # install git (required for `rush change`)
-  - yum update -y
-  - yum install git -y
   - git version
   # # install specific version of pnpm needed by rush
   # - curl -f https://get.pnpm.io/v5.js | node - add --global pnpm@5
