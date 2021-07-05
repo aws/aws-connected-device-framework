@@ -13,6 +13,7 @@ variables:
 
 .staging-variables: &staging-variables
   DEPLOY_ARTIFACTS_STORE_BUCKET: "cdf-cfn-artifacts-317315070315-ap-southeast-2"
+  ARTIFACT_PUBLISH_LOCATION: "s3://cdf-cfn-artifacts-317315070315-ap-southeast-2/releases"
   CONFIG_ENVIRONMENT: development
   ENVIRONMENT: development-staging
   VPC_ID: vpc-0edf6d9d5903d4754
