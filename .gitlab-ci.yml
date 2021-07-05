@@ -90,8 +90,7 @@ before_script:
   - pnpm version
   - npm install -g @microsoft/rush@5.47.0
   # install aws cli
-  - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-  - unzip awscliv2.zip
+  - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && unzip -qq awscliv2.zip
   - ./aws/install
 
 downloadInfastructureConfig:
