@@ -13,7 +13,6 @@ variables:
 
 .staging-variables: &staging-variables
   DEPLOY_ARTIFACTS_STORE_BUCKET: "cdf-cfn-artifacts-317315070315-ap-southeast-2"
-  ARTIFACT_PUBLISH_LOCATION: "s3://cdf-cfn-artifacts-317315070315-ap-southeast-2/releases"
   CONFIG_ENVIRONMENT: development
   ENVIRONMENT: development-staging
   VPC_ID: vpc-0edf6d9d5903d4754
@@ -28,6 +27,8 @@ variables:
   USE_EXISTING_VPC: "true"
   TEMPLATE_SNIPPET_S3_URI_BASE: "s3://cdf-cfn-artifacts-317315070315-ap-southeast-2/cfn/"
   API_GATEWAY_DEFINITION_TEMPLATE: cfn-apiGateway-noAuth.yaml
+  DOCUMENTATION_PUBLISH_LOCATION: s3://cdf-317315070315-ap-southeast-2-docs
+  ARTIFACT_PUBLISH_LOCATION: "s3://cdf-cfn-artifacts-317315070315-ap-southeast-2/releases"
 
 .common-build-steps: &common-build-steps # install dependencies
   - rush install --bypass-policy --purge
