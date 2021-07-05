@@ -58,7 +58,7 @@ stages:
 
 before_script:
   - env | sort
-  - yum install openssh-client -y
+  - yum install openssh-clients -y
   - eval $(ssh-agent -s)
   - ssh-add <(echo "$GIT_SSH_PRIV_KEY")
   - git config --global user.name "${GITLAB_USER_NAME}"
