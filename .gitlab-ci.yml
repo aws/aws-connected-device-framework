@@ -60,17 +60,18 @@ before_script:
   - env | sort
   - yum update -y
   - yum install git openssh-clients -y
-  - eval $(ssh-agent -s)
-  - ssh-add <(echo "$GIT_SSH_PRIV_KEY")
+  # - eval $(ssh-agent -s)
+  # - ssh-add <(echo "$GIT_SSH_PRIV_KEY")
   - git config --global user.name "${GITLAB_USER_NAME}"
   - git config --global user.email "${GITLAB_USER_EMAIL}"
-  - mkdir -p ~/.ssh
-  - ssh-keyscan ssh.gitlab.aws.dev >> gitlab-known-hosts
-  - cat gitlab-known-hosts >> ~/.ssh/known_hosts
+  # - mkdir -p ~/.ssh
+  # - ssh-keyscan ssh.gitlab.aws.dev >> gitlab-known-hosts
+  # - cat gitlab-known-hosts >> ~/.ssh/known_hosts
   # install openssl (required to test some services)
   - yum install -y openssl zip unzip
   # install git (required for `rush change`)
   - git version
+  - git remote set-url origin https://willsia:${CUSTOM_PERSONAL_ACCESS_TOKEN}@gitlab.aws.dev/connected-device-framework/cdf-core.git
   # # install specific version of pnpm needed by rush
   # - curl -f https://get.pnpm.io/v5.js | node - add --global pnpm@5
   # - pnpm version
