@@ -59,14 +59,9 @@ stages:
 before_script:
   - env | sort
   - yum update -y
-  - yum install git openssh-clients -y
-  # - eval $(ssh-agent -s)
-  # - ssh-add <(echo "$GIT_SSH_PRIV_KEY")
+  - yum install git openssh-clients tar -y
   - git config --global user.name "${GITLAB_USER_NAME}"
   - git config --global user.email "${GITLAB_USER_EMAIL}"
-  # - mkdir -p ~/.ssh
-  # - ssh-keyscan ssh.gitlab.aws.dev >> gitlab-known-hosts
-  # - cat gitlab-known-hosts >> ~/.ssh/known_hosts
   # install openssl (required to test some services)
   - yum install -y openssl zip unzip
   # install git (required for `rush change`)
