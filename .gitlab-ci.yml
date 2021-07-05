@@ -67,8 +67,8 @@ variables:
 stages:
   - build
   - test
-  - deployStage
-  # - integrationTest
+  - deployStages
+  - integrationTest
   - deployLive
 
 ### not working at the moment, therefore using artifacts as a temp workaround
@@ -92,6 +92,9 @@ before_script:
   # install aws cli
   - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && unzip -qq awscliv2.zip
   - ./aws/install
+  # install jq
+  - curl -s -qL -o /usr/bin/jq https://stedolan.github.io/jq/download/linux64/jq
+  - chmod +x /usr/bin/jq
 
 downloadInfastructureConfig:
   stage: build
@@ -152,15 +155,23 @@ test:
     - infrastructure/bundle-core.bash
   <<: *common-artifacts
 
+deployStage:
+  stage: deployStage
+  image: public.ecr.aws/lambda/nodejs:14
+  variables:
+    <<: *staging-variables
+  script:
+    # export the location of the config
+    - export CODEBUILD_SRC_DIR_source_infrastructure="${CI_PROJECT_DIR}/${APP_CONFIG_DIR}"
+    # deploy to staging environment
+    - bash -c cicd/deployproject_build.bash
+
 deployLive:
   stage: deployLive
   image: public.ecr.aws/lambda/nodejs:14
   variables:
     <<: *live-variables
   script:
-    # install jq
-    - curl -s -qL -o /usr/bin/jq https://stedolan.github.io/jq/download/linux64/jq
-    - chmod +x /usr/bin/jq
     # deploy to live environment
     - export CODEBUILD_SRC_DIR_source_infrastructure="${CI_PROJECT_DIR}/${APP_CONFIG_DIR}"
     - bash -c cicd/deployproject_build.bash
@@ -179,34 +190,3 @@ deployLive:
     - pip install pymdown-extensions
     - pip install mkdocs-material
     - bash -c cicd/deployproject_postbuild.bash
-
-deployStage:
-  stage: deployStage
-  image: public.ecr.aws/lambda/nodejs:14
-  variables:
-    <<: *staging-variables
-  script:
-    # export the location of the config
-    - export CODEBUILD_SRC_DIR_source_infrastructure="${CI_PROJECT_DIR}/${APP_CONFIG_DIR}"
-    # install jq
-    - curl -s -qL -o /usr/bin/jq https://stedolan.github.io/jq/download/linux64/jq
-    - chmod +x /usr/bin/jq
-    # deploy to staging environment
-    - bash -c cicd/deployproject_build.bash
-
-.integrationTest:
-  stage: integrationTest
-  image: public.ecr.aws/lambda/nodejs:14
-  variables:
-    CONFIG_ENVIRONMENT: development-staging
-    DEPLOY_ARTIFACTS_STORE_BUCKET: cdf-cfn-artifacts-317315070315-ap-southeast-2
-  script:
-    # install jq
-    - curl -s -qL -o /usr/bin/jq https://stedolan.github.io/jq/download/linux64/jq
-    - chmod +x /usr/bin/jq
-    # rush install
-    - rush update --purge
-    # export the location of the config
-    - export CODEBUILD_SRC_DIR_source_infrastructure="${CI_PROJECT_DIR}/${APP_CONFIG_DIR}"
-    # run in the integration tests
-    - bash -c cicd/integrationtestsproject_build.bash
