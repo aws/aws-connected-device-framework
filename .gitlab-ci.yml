@@ -153,6 +153,14 @@ deployStage:
     - mkdir -p infrastructure/lambdaLayers/openssl/build && cp common/build/build.zip infrastructure/lambdaLayers/openssl/build/build.zip
     # deploy to staging environment
     # - bash -c cicd/deployproject_build.bash
+
+    #echo installing mkdocs...
+    ### note this must be installed individually else pip struggles with dependency resolution
+    - pip install --upgrade pip
+    - pip install mkdocs
+    - pip install markdown-include
+    - pip install pymdown-extensions
+    - pip install mkdocs-material
   after_script:
     - bash -c cicd/deployproject_postbuild.bash
 
