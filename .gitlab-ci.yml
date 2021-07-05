@@ -11,6 +11,23 @@ variables:
   CONFIG_PACKAGE_NAME: cdf-infrastructure-demo
   APP_CONFIG_DIR: common/build/configdir
 
+.staging-variables: &staging-variables
+  DEPLOY_ARTIFACTS_STORE_BUCKET: "cdf-cfn-artifacts-317315070315-ap-southeast-2"
+  CONFIG_ENVIRONMENT: development
+  ENVIRONMENT: development-staging
+  VPC_ID: vpc-0edf6d9d5903d4754
+  SOURCE_SECURITY_GROUP_ID: sg-0846a3eef2618ddde
+  PRIVATE_SUBNET_IDS: "subnet-04521d956927be786,subnet-0d3bf77524108f064"
+  PUBLIC_SUBNET_IDS: "subnet-0c6688f4ef6679e6a,subnet-01751ca355739fdbd"
+  PRIVATE_ROUTE_TABLE_IDS: "rtb-04604d45350f0fee2,rtb-07dc98ec3293c0b02"
+  ASSETLIBRARY_MODE: full
+  KEY_PAIR_NAME: cdf-bastion-key
+  BASTION_REMOTE_ACCESS_CIDR: "54.240.193.1/32"
+  KMS_KEY_ID: "0546de6a-e7d0-4a92-aa27-fd771d42be0a"
+  USE_EXISTING_VPC: "true"
+  TEMPLATE_SNIPPET_S3_URI_BASE: "s3://cdf-cfn-artifacts-317315070315-ap-southeast-2/cfn/"
+  API_GATEWAY_DEFINITION_TEMPLATE: cfn-apiGateway-noAuth.yaml
+
 .common-build-steps: &common-build-steps # install dependencies
   - rush install --bypass-policy --purge
   # build
@@ -119,21 +136,7 @@ deployStage:
   stage: deployStage
   image: public.ecr.aws/lambda/nodejs:14
   variables:
-    DEPLOY_ARTIFACTS_STORE_BUCKET: "cdf-cfn-artifacts-317315070315-ap-southeast-2"
-    CONFIG_ENVIRONMENT: development
-    ENVIRONMENT: development-staging
-    VPC_ID: vpc-0edf6d9d5903d4754
-    SOURCE_SECURITY_GROUP_ID: sg-0846a3eef2618ddde
-    PRIVATE_SUBNET_IDS: "subnet-04521d956927be786,subnet-0d3bf77524108f064"
-    PUBLIC_SUBNET_IDS: "subnet-0c6688f4ef6679e6a,subnet-01751ca355739fdbd"
-    PRIVATE_ROUTE_TABLE_IDS: "rtb-04604d45350f0fee2,rtb-07dc98ec3293c0b02"
-    ASSETLIBRARY_MODE: full
-    KEY_PAIR_NAME: cdf-bastion-key
-    BASTION_REMOTE_ACCESS_CIDR: "54.240.193.1/32"
-    KMS_KEY_ID: "0546de6a-e7d0-4a92-aa27-fd771d42be0a"
-    USE_EXISTING_VPC: "true"
-    TEMPLATE_SNIPPET_S3_URI_BASE: "s3://cdf-cfn-artifacts-317315070315-ap-southeast-2/cfn/"
-    API_GATEWAY_DEFINITION_TEMPLATE: cfn-apiGateway-noAuth.yaml
+    <<: *staging-variables
   script:
     # export the location of the config
     - export CODEBUILD_SRC_DIR_source_infrastructure="${CI_PROJECT_DIR}/${APP_CONFIG_DIR}"
@@ -146,7 +149,9 @@ deployStage:
     # Copy the build.zip produced by the buildLayer job
     - mkdir -p infrastructure/lambdaLayers/openssl/build && cp common/build/build.zip infrastructure/lambdaLayers/openssl/build/build.zip
     # deploy to staging environment
-    - bash -c cicd/deployproject_build.bash
+    # - bash -c cicd/deployproject_build.bash
+  after_script:
+    - bash -c cicd/deployproject_postbuild.bash
 
 integrationTest:
   stage: integrationTest
