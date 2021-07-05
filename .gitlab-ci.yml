@@ -73,7 +73,7 @@ before_script:
   - unzip awscliv2.zip
   - ./aws/install
   - git config --global credential.helper store
-  - echo "https://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}" > ~/.git-credentials
+  - echo "https://willsia:${CUSTOM_PERSONAL_ACCESS_TOKEN}@${CI_SERVER_HOST}" > ~/.git-credentials
 
 downloadConfig:
   stage: build
