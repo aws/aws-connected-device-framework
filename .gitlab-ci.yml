@@ -194,9 +194,9 @@ deployLive:
     - bash -c cicd/deployproject_build.bash
   after_script:
     # set git commit details
-    - git config --global user.name "${GITLAB_USER_NAME}"
-    - git config --global user.email "${GITLAB_USER_EMAIL}"
-    - git remote set-url origin https://willsia:${CUSTOM_PERSONAL_ACCESS_TOKEN}@gitlab.aws.dev/connected-device-framework/cdf-core.git
+    - git config --global user.name "cdf-cicd"
+    - git config --global user.email "cdf-cicd"
+    - git remote set-url origin https://cdf-cicd:${CUSTOM_PERSONAL_ACCESS_TOKEN}@gitlab.aws.dev/connected-device-framework/cdf-core.git
     #echo installing mkdocs...
     - yum install -y python3
     - curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
