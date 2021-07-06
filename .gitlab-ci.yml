@@ -166,7 +166,7 @@ deployStage:
     # export the location of the config
     - export CODEBUILD_SRC_DIR_source_infrastructure="${CI_PROJECT_DIR}/${APP_CONFIG_DIR}"
     # deploy to staging environment
-    # - bash -c cicd/deployproject_build.bash
+    - bash -c cicd/deployproject_build.bash
 
 .integrationTest:
   stage: integrationTest
@@ -193,7 +193,7 @@ deployLive:
     - chmod +x /usr/bin/jq
     # deploy to live environment
     - export CODEBUILD_SRC_DIR_source_infrastructure="${CI_PROJECT_DIR}/${APP_CONFIG_DIR}"
-    # - bash -c cicd/deployproject_build.bash
+    - bash -c cicd/deployproject_build.bash
   after_script:
     # set git commit details
     - git config --global user.name "cdf-cicd"
