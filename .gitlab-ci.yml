@@ -223,7 +223,9 @@ release:
     - env | sort
   script:
     - echo "$BUILD_VERSION" # Output is: 'hello'
-    # - zip asset.zip **/*.zip **/*.yaml **/*.yml **/*.bash **/*.md
-    # - |
-    #   release-cli create --name "Release $CI_COMMIT_TAG" --tag-name $CI_COMMIT_TAG \
-    #     --assets-link "{\"name\":\"${}\",\"url\":\"${PACKAGE_REGISTRY_URL}/asset.zip\"}" \
+    - export PACKAGE_REGISTRY_URL=${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/cdf-core/${BUILD_VERSION}
+    - zip asset.zip **/*.zip **/*.yaml **/*.yml **/*.bash **/*.md
+    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file asset.zip "${PACKAGE_REGISTRY_URL}/asset.zip"'
+    - |
+      release-cli create --name "Release $CI_COMMIT_TAG" --tag-name $CI_COMMIT_TAG \
+        --assets-link "{\"name\":\"assets\",\"url\":\"${PACKAGE_REGISTRY_URL}/asset.zip\"}" \
