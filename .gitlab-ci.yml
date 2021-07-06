@@ -219,6 +219,8 @@ release:
   needs:
     - job: deployLive
       artifacts: true
+  before_script:
+    - env | sort
   script:
     - echo "$BUILD_VERSION" # Output is: 'hello'
     # - zip asset.zip **/*.zip **/*.yaml **/*.yml **/*.bash **/*.md
