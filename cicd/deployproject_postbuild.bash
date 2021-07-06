@@ -41,8 +41,6 @@ function publish_artifacts() {
     wait
 }
 
-echo job status is $CI_JOB_STATUS
-
 if [ "$CI_JOB_STATUS" = "running" ]; then
 
     ### If the deploy was successful ....
@@ -58,6 +56,8 @@ if [ "$CI_JOB_STATUS" = "running" ]; then
     buildId=$(date -u +%Y%m%d%H%M%S)
     tagNames[0]="RELEASE-$DEPLOY_ENV-$buildId"
     tagNames[1]="RELEASE-$DEPLOY_ENV-LATEST"
+
+    echo "BUILD_VERSION=${tagNames[0]}" >> build.env
     
     for tagName in "${tagNames[@]}"; do 
         git tag -f $tagName

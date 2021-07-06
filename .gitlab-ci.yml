@@ -10,6 +10,7 @@ variables:
   CONFIG_REPO_PROJECT_ID: 9703
   CONFIG_PACKAGE_NAME: cdf-infrastructure-demo
   APP_CONFIG_DIR: common/build/configdir
+  PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/cdf-core/${PACKAGE_VERSION}"
 
 .live-variables: &live-variables
   DEPLOY_ARTIFACTS_STORE_BUCKET: "cdf-cfn-artifacts-317315070315-ap-southeast-2"
@@ -66,10 +67,11 @@ variables:
 
 stages:
   - build
-  - test
-  - deployStage
-  - integrationTest
+  # - test
+  # - deployStage
+  # - integrationTest
   - deployLive
+  - release
 
 ### not working at the moment, therefore using artifacts as a temp workaround
 # cache:
@@ -142,7 +144,7 @@ buildLambaLayersZip:
     - rush change -v
   <<: *common-artifacts
 
-test:
+.test:
   stage: test
   image: public.ecr.aws/lambda/nodejs:14
   script:
@@ -155,7 +157,7 @@ test:
     - infrastructure/bundle-core.bash
   <<: *common-artifacts
 
-deployStage:
+.deployStage:
   stage: deployStage
   image: public.ecr.aws/lambda/nodejs:14
   variables:
@@ -166,7 +168,7 @@ deployStage:
     # deploy to staging environment
     - bash -c cicd/deployproject_build.bash
 
-integrationTest:
+.integrationTest:
   stage: integrationTest
   image: public.ecr.aws/lambda/nodejs:14
   variables:
@@ -191,7 +193,7 @@ deployLive:
     - chmod +x /usr/bin/jq
     # deploy to live environment
     - export CODEBUILD_SRC_DIR_source_infrastructure="${CI_PROJECT_DIR}/${APP_CONFIG_DIR}"
-    - bash -c cicd/deployproject_build.bash
+    # - bash -c cicd/deployproject_build.bash
   after_script:
     # set git commit details
     - git config --global user.name "cdf-cicd"
@@ -207,3 +209,19 @@ deployLive:
     - pip install pymdown-extensions
     - pip install mkdocs-material
     - bash -c cicd/deployproject_postbuild.bash
+  artifacts:
+    reports:
+      dotenv: build.env
+
+release:
+  stage: release
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  needs:
+    - job: deployLive
+      artifacts: true
+  script:
+    - echo "$BUILD_VERSION" # Output is: 'hello'
+    # - zip asset.zip **/*.zip **/*.yaml **/*.yml **/*.bash **/*.md
+    # - |
+    #   release-cli create --name "Release $CI_COMMIT_TAG" --tag-name $CI_COMMIT_TAG \
+    #     --assets-link "{\"name\":\"${}\",\"url\":\"${PACKAGE_REGISTRY_URL}/asset.zip\"}" \
