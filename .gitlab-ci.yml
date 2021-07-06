@@ -221,7 +221,7 @@ release:
       artifacts: true
   before_script:
     - env | sort
-    - apk add zip
+    - apk add zip curl
   script:
     - echo "$BUILD_VERSION" # Output is: 'hello'
     - export PACKAGE_REGISTRY_URL=${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/cdf-core/${BUILD_VERSION}
