@@ -67,8 +67,8 @@ variables:
 
 stages:
   - build
-  # - test
-  # - deployStage
+  - test
+  - deployStage
   # - integrationTest
   - deployLive
   - release
@@ -144,7 +144,7 @@ buildLambaLayersZip:
     - rush change -v
   <<: *common-artifacts
 
-.test:
+test:
   stage: test
   image: public.ecr.aws/lambda/nodejs:14
   script:
@@ -157,7 +157,7 @@ buildLambaLayersZip:
     - infrastructure/bundle-core.bash
   <<: *common-artifacts
 
-.deployStage:
+deployStage:
   stage: deployStage
   image: public.ecr.aws/lambda/nodejs:14
   variables:
@@ -166,7 +166,7 @@ buildLambaLayersZip:
     # export the location of the config
     - export CODEBUILD_SRC_DIR_source_infrastructure="${CI_PROJECT_DIR}/${APP_CONFIG_DIR}"
     # deploy to staging environment
-    - bash -c cicd/deployproject_build.bash
+    # - bash -c cicd/deployproject_build.bash
 
 .integrationTest:
   stage: integrationTest
@@ -218,6 +218,8 @@ release:
   image: registry.gitlab.com/gitlab-org/release-cli:latest
   needs:
     - job: deployLive
+      artifacts: true
+    - job: test
       artifacts: true
   before_script:
     - env | sort
