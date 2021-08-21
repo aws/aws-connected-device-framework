@@ -1,0 +1,135 @@
+{
+    "$id": "http://aws.com/cdf/schemas/device.json",
+    "type": "object",
+
+    "properties": {
+        "deviceId": {
+            "description": "Globally unique identifier of the device",
+            "type": "string"
+        }, 
+        "templateId": {
+            "description": "Type of the device",
+            "type": "string"
+        }, 
+        "category": {
+            "description": "Category of template",
+            "type": ["string","null"],
+            "const": "device"
+        }, 
+        "name": {
+            "description": "Name of the device",
+            "type": "string"
+        }, 
+        "description": {
+            "description": "Description of the device",
+            "type": ["string","null"]
+        }, 
+        "imageUrl": {
+            "description": "Image URL of the device",
+            "type": ["string","null"]
+        }, 
+        "awsIotThingArn": {
+            "description": "AWS IoT Thing ARN",
+            "type": ["string","null"]
+        }, 
+        "connected": {
+            "type": "boolean"
+        },
+        "state": {
+            "type": "string",
+            "enum": ["unprovisioned", "active", "decommisioned", "retired"]
+
+        },
+
+
+        "groups": {
+            "description": "Groups associated with the device",
+            "type": "object",
+            "properties": {
+                "in": {
+                    "type": "object",
+                    "patternProperties": {
+                        "^.*$": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "uniqueItems": true
+                },
+                "out": {
+                    "type": "object",
+                    "patternProperties": {
+                        "^.*$": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "uniqueItems": true
+                }
+
+            },
+            "additionalProperties": false
+        },
+
+        "devices": {
+            "description": "Other devices associated with the device",
+            "type": "object",
+            "properties": {
+                "in": {
+                    "type": "object",
+                    "patternProperties": {
+                        "^.*$": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "uniqueItems": true
+                },
+                "out": {
+                    "type": "object",
+                    "patternProperties": {
+                        "^.*$": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "uniqueItems": true
+                }
+
+            },
+            "additionalProperties": false
+        },
+
+        "attributes": {
+            "$ref": "#/definitions/subType"
+        },
+        "components": {
+            "$ref": "#/definitions/componentTypes"
+        }
+    },
+    "additionalProperties": false,
+    "required": ["deviceId", "templateId"],
+
+    "definitions": {
+        "subType": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+        },
+        "componentTypes": {
+            "type": "array",
+            "items": {
+                "anyOf": []
+            }
+        }
+    }
+}

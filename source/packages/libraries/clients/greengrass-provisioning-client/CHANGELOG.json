@@ -1,0 +1,11 @@
+{
+  "name": "@cdf/greengrass-provisioning-client",
+  "entries": [
+    {
+      "version": "2.1.0",
+      "tag": "@cdf/greengrass-provisioning-client_v2.1.0",
+      "date": "Wed, 21 Jul 2021 16:46:57 GMT",
+      "comments": {}
+    }
+  ]
+}

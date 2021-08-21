@@ -1,0 +1,85 @@
+{
+  "name": "@cdf/simulation-manager",
+  "version": "2.0.0",
+  "description": "CDF Simulator:  Simulation Manager REST API",
+  "author": "Dean Hart",
+  "config": {
+    "environment": "development"
+  },
+  "scripts": {
+    "clean": "rushx clean:postrelease && npx shx rm -f bundle.zip",
+    "clean:postrelease": "npx shx rm -rf dist deploy tsconfig.tsbuildinfo .rush .nyc_output *.log",
+    "lint": "npx eslint . --ext '.ts'",
+    "build": "npx tsc -b && npx shx cp -R 'src/config' 'dist/config' && npx shx cp -R 'src/templates' 'dist/templates'",
+    "test": "rushx lint && NODE_ENV= NODE_CONFIG_DIR='./src/config' jest --silent --passWithNoTests",
+    "start": "rushx build && NODE_CONFIG=$(cat ${CONFIG_LOCATION}/simulation-manager/${npm_package_config_environment}-config.json) NODE_CONFIG_DIR='./src/config' nodemon dist/lambda_proxy.js",
+    "prebundle": "npx shx rm -rf ../../../deploy/simulation-manager bundle.zip && npx shx mkdir -p ../../../deploy/simulation-manager",
+    "bundle": "rush deploy --overwrite --project @cdf/simulation-manager --target-folder ../../../deploy/simulation-manager",
+    "postbundle": "cd ../../../deploy/simulation-manager && zip --symlinks -rq ../../packages/services/simulation-manager/bundle.zip * && cd -"
+  },
+  "dependencies": {
+    "aws-sdk": "2.777.0",
+    "aws-serverless-express": "3.3.6",
+    "body-parser": "1.19.0",
+    "config": "3.2.4",
+    "express": "4.17.1",
+    "handlebars": "4.7.7",
+    "inversify": "5.0.5",
+    "inversify-binding-decorators": "4.0.0",
+    "inversify-express-utils": "6.3.2",
+    "json2csv": "4.5.4",
+    "js-yaml": "3.13.1",
+    "logform": "2.1.2",
+    "ow": "0.17.0",
+    "pick-some": "1.0.1",
+    "readable-stream": "2.3.6",
+    "reflect-metadata": "0.1.13",
+    "shortid": "2.2.15",
+    "winston": "3.2.1",
+    "winston-transport": "4.3.0"
+  },
+  "devDependencies": {
+    "@rushstack/eslint-config": "2.3.1",
+    "@types/aws-lambda": "8.10.65",
+    "@types/aws-serverless-express": "3.3.2",
+    "@types/body-parser": "1.19.0",
+    "@types/config": "0.0.37",
+    "@types/express": "4.17.9",
+    "@types/jest": "26.0.18",
+    "@types/json2csv": "4.5.1",
+    "@types/shortid": "0.0.29",
+    "@typescript-eslint/eslint-plugin": "4.9.1",
+    "@typescript-eslint/parser": "4.9.1",
+    "eslint": "7.15.0",
+    "jest": "26.6.3",
+    "jest-create-mock-instance": "1.1.0",
+    "jest-haste-map": "26.6.2",
+    "jest-mock": "26.6.2",
+    "jest-mock-extended": "1.0.10",
+    "jest-resolve": "26.6.2",
+    "nodemon": "2.0.6",
+    "shx": "0.3.3",
+    "ts-jest": "26.4.4",
+    "typescript": "4.1.2"
+  },
+  "jest": {
+    "roots": [
+      "<rootDir>/src"
+    ],
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testMatch": [
+      "<rootDir>/**/?(*.)+(spec|test).ts?(x)"
+    ],
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
+  },
+  "private": true
+}

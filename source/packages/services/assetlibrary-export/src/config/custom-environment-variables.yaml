@@ -1,0 +1,39 @@
+#-----------------------------------------------------------------------------------------------------------------------
+#   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance
+#  with the License. A copy of the License is located at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES
+#  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions
+#  and limitations under the License.
+#-----------------------------------------------------------------------------------------------------------------------
+neptuneUrl: ASSETLIBRARY_NEPTUNE_URL
+aws:
+  region: AWS_REGION
+
+  s3:
+    export:
+      bucket: ASSETLIBRARYEXPORT_AWS_S3_ARTIFACTS_BUCKET
+      prefix: ASSETLIBRARYEXPORT_AWS_S3_ARTIFACTS_PREFIX
+
+defaults:
+  batch:
+    size: ASSETLIBRARYEXPORT_BATCH_SIZE
+    by: ASSETLIBRARYEXPORT_BATCH_BY
+
+  etl:
+    extract:
+      deviceExtractor:
+        expandComponents: ASSETLIBRARYEXPORT_ETL_DEVICEEXTRACTOR_EXPANDCOMPONENTS
+        attributes: ASSETLIBRARYEXPORT_ETL_DEVICEEXTRACTOR_ATTRIBUTES
+        includeGroups: ASSETLIBRARYEXPORT_ETL_DEVICEEXTRACTOR_INCLUDEGROUPS
+
+    load:
+      type: ASSETLIBRARYEXPORT_ETL_LOAD_TYPE
+      path: ASSETLIBRARYEXPORT_ETL_LOAD_PATH
+
+logging:
+  level: ASSETLIBRARYEXPORT_LOGGING_LEVEL

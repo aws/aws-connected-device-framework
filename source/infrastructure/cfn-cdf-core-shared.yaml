@@ -1,0 +1,241 @@
+#-----------------------------------------------------------------------------------------------------------------------
+#   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance
+#  with the License. A copy of the License is located at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES
+#  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions
+#  and limitations under the License.
+#-----------------------------------------------------------------------------------------------------------------------
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: CDF (AWS Connected Device Framework)
+
+Parameters:
+  Environment:
+    Description:  Name of environment.  Used to name the created resources.
+    Type: String
+    MinLength: 1
+  ArtifactsBucket:
+    Description:  Name of environment.  Used to name the created resources.
+    Type: String
+  KmsKeyId:
+    Description: The KMS key ID used to encrypt SSM parameters. If not provided, one will be created.
+    Type: String
+  AuthType:
+    Description: Authorization type to apply to the API gateway endpoints
+    Type: String
+    Default: None
+    AllowedValues:
+      - None
+      - Private
+      - Cognito
+      - LambdaRequest
+      - LambdaToken
+      - ApiKey
+      - IAM
+    MinLength: 1
+  ExistingVpcId:
+    Description: |
+      ID of an existing VPC to deploy CDF (if using AuthType = 'Private') and/or AssetLibrary (if AssetLibraryMode = 'full') into.
+      A new VPC will be created if not provided.
+    Type: String
+    Default: 'N/A'
+  ExistingCDFSecurityGroupId:
+    Description: |
+      ID of an existing security group to deploy CDF and/or AssetLibrary into if an existing VPC is to be used.
+      A new security group will be created if not provided.
+    Type: String
+  ExistingPrivateSubnetIds:
+    Description: |
+      ID of existing private subnetIds to deploy CDF and/or AssetLibrary into if an existing VPC is to be used.
+      New private subnets will be created if not provided.
+    Type: String
+  ExistingPublicSubnetIds:
+    Description: |
+      ID of existing public subnetIds to deploy CDF and/or AssetLibrary into if an existing VPC is to be used.
+      New private subnets will be created if not provided.
+    Type: String
+  ExistingPrivateRouteTableIds:
+    Description: |
+      ID of existing private route tables to deploy AssetLibrary into if an existing VPC is to be used.
+      New private route tables will be created if not provided.
+    Type: String
+  ExistingPrivateApiGatewayVPCEndpoint:
+    Description: |
+      ID of existing VPC endpoint to deploy CDF and/or AssetLibrary into if an existing VPC is to be used.
+      New VPC endpoint will be created if not provided.
+    Type: String
+  IncludeAssetLibrary:
+    Description: If true, the Asset Library service will be deployed.
+    Type: String
+    Default: 'true'
+    AllowedValues:
+      - 'true'
+      - 'false'
+    MinLength: 1
+  AssetLibraryMode:
+    Description: Run in 'lite' mode which includes device registry functionality only, or 'full' mode which augments the device registry with a graph based datastore.
+    Type: String
+    Default: 'full'
+    AllowedValues:
+      - 'full'
+      - 'lite'
+    MinLength: 1
+  IncludeProvisioning:
+    Description: If true, the Provisioning service will be deployed.
+    Type: String
+    Default: 'true'
+    AllowedValues:
+      - 'true'
+      - 'false'
+    MinLength: 1
+  IncludeBulkCerts:
+    Description: If true, the Bulk Certs service will be deployed.
+    Type: String
+    Default: 'true'
+    AllowedValues:
+      - 'true'
+      - 'false'
+    MinLength: 1
+  IncludeCertificateVendor:
+    Description: If true, the CertificateVendor service will be deployed.
+    Type: String
+    Default: 'true'
+    AllowedValues:
+      - 'true'
+      - 'false'
+    MinLength: 1
+
+Conditions:
+  DeployAssetLibrary: !Equals [ !Ref IncludeAssetLibrary, 'true' ]
+  DeployAssetLibraryFull: !And [ !Condition DeployAssetLibrary, !Equals [ !Ref AssetLibraryMode, 'full' ]]
+  DeployProvisioning: !Equals [ !Ref IncludeProvisioning, 'true' ]
+  DeployBulkCerts: !Equals [ !Ref IncludeBulkCerts, 'true' ]
+  DeployCertificateVendor: !Equals [ !Ref IncludeCertificateVendor, 'true' ]
+  UsingVPCForAuth: !Equals [ !Ref AuthType, 'Private' ]
+  UseExistingVpc: !Not [ !Equals [ !Ref ExistingVpcId, 'N/A' ] ]
+  UsingVPC: !Or [ !Condition UsingVPCForAuth, !Condition DeployAssetLibraryFull, !Condition UseExistingVpc ]
+  CreateKmsKey: !Equals [ !Ref KmsKeyId, "" ]
+
+Resources:
+
+  DeploymentHelper:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: ../packages/libraries/core/deployment-helper/infrastructure/cfn-deployment-helper.yaml
+      Parameters:
+        Environment: !Ref Environment
+        ArtifactsBucket: !Ref ArtifactsBucket
+        ExistingVpcId: !Ref ExistingVpcId
+
+  Networking:
+    Condition: UsingVPC
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: ./cloudformation/cfn-networking.yaml
+      Parameters:
+        Environment: !Ref Environment
+        EnableS3VpcEndpoint: !If [ UseExistingVpc, !GetAtt DeploymentHelper.Outputs.IsS3VpcEndpointEnabled, 'true' ]
+        EnableDynamoDBVpcEndpoint: !If [ UseExistingVpc, !GetAtt DeploymentHelper.Outputs.IsDynamoDBVpcEndpointEnabled, 'true' ]
+        EnablePrivateApiGatewayVPCEndpoint: !If [ UseExistingVpc, !GetAtt DeploymentHelper.Outputs.IsPrivateApiGatewayVPCEndpointEnabled, 'true' ]
+        ExistingVpcId: !Ref ExistingVpcId
+        ExistingCDFSecurityGroupId: !Ref ExistingCDFSecurityGroupId
+        ExistingPrivateSubnetIds: !Ref ExistingPrivateSubnetIds
+        ExistingPublicSubnetIds: !Ref ExistingPublicSubnetIds
+        ExistingPrivateRouteTableIds: !Ref ExistingPrivateRouteTableIds
+        ExistingPrivateApiGatewayVPCEndpoint: !Ref ExistingPrivateApiGatewayVPCEndpoint
+      TimeoutInMinutes: 20
+
+  DeploymentHelperVPC:
+    Condition: UsingVPC
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: ../packages/libraries/core/deployment-helper/infrastructure/cfn-deployment-helper-vpc.yaml
+      Parameters:
+        Environment: !Ref Environment
+        ArtifactsBucket: !Ref ArtifactsBucket
+        VpcId: !GetAtt Networking.Outputs.VpcId
+        CDFSecurityGroupId: !GetAtt Networking.Outputs.CDFSecurityGroupId
+        PrivateSubnetIds: !GetAtt Networking.Outputs.PrivateSubnetIds
+        
+  KmsKey:
+    Type: AWS::KMS::Key
+    Condition: CreateKmsKey
+    Properties:
+      Description: CDF encryption key
+      EnableKeyRotation: true
+      KeyPolicy:
+        Version: '2012-10-17'
+        Id: key-default-1
+        Statement:
+          - Sid: Enable IAM User Permissions
+            Effect: Allow
+            Principal:
+              AWS: 
+                - !Sub 'arn:aws:iam::${AWS::AccountId}:root'
+            Action:
+              - kms:*
+            Resource: "*"
+  OpenSsl:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: ./lambdaLayers/openssl/infrastructure/cfn-openssl-layer.yml
+      Parameters:
+        Environment: !Ref Environment
+
+  ApiGatewayCloudWatchRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - apigateway.amazonaws.com
+            Action: 'sts:AssumeRole'
+      Path: /
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs
+
+  ApiGatewayAccountConfig:
+    Type: AWS::ApiGateway::Account
+    Properties:
+      CloudWatchRoleArn: !GetAtt
+        - ApiGatewayCloudWatchRole
+        - Arn
+  
+Outputs:
+  KmsKeyId:
+    Value: !If [ CreateKmsKey, !Ref KmsKey, !Ref KmsKeyId ]
+  VpcId:
+    Condition: UsingVPC
+    Value: !GetAtt Networking.Outputs.VpcId
+  CDFSecurityGroupId:
+    Condition: UsingVPC
+    Value: !GetAtt Networking.Outputs.CDFSecurityGroupId
+  PrivateSubnetIds:
+    Condition: UsingVPC
+    Value: !GetAtt Networking.Outputs.PrivateSubnetIds
+  PublicSubnetIds:
+    Condition: UsingVPC
+    Value: !GetAtt Networking.Outputs.PublicSubnetIds
+  PrivateRouteTableIds:
+    Condition: UsingVPC
+    Value: !GetAtt Networking.Outputs.PrivateRouteTableIds
+  PrivateApiGatewayVPCEndpoint:
+    Condition: UsingVPC
+    Value: !GetAtt Networking.Outputs.PrivateApiGatewayVPCEndpoint
+  OpenSslLambdaLayerArn:
+    Value: !GetAtt OpenSsl.Outputs.LayerVersionArn
+  CustomResourceLambdaArn:
+    Value: !GetAtt DeploymentHelper.Outputs.CustomResourceLambdaArn
+  CustomResourceVPCLambdaArn:
+    Condition: UsingVPC
+    Value: !GetAtt DeploymentHelperVPC.Outputs.CustomResourceVpcLambdaArn
+
+

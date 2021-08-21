@@ -1,0 +1,22 @@
+{
+  "name": "@cdf/simulation-launcher",
+  "entries": [
+    {
+      "version": "2.0.0",
+      "tag": "@cdf/simulation-launcher_v2.0.0",
+      "date": "Wed, 11 Aug 2021 01:26:49 GMT",
+      "comments": {
+        "major": [
+          {
+            "comment": "new service added"
+          }
+        ],
+        "patch": [
+          {
+            "comment": "Fixed issue with incorrect name for simulation S3 bucket and permissions"
+          }
+        ]
+      }
+    }
+  ]
+}

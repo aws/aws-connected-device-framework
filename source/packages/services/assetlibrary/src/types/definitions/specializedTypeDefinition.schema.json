@@ -1,0 +1,81 @@
+{
+    "$id": "http://aws.com/cdf/schemas/specializedTypeDefinition.json",
+    "type": "object",
+    
+    "properties": {
+
+        "properties": {
+            "type": "object",
+            "patternProperties": {
+                "^.*$": {
+                    "type": "object",
+                    "properties": {
+                        "type": {
+                            "oneOf": [
+                                {
+                                    "type": "string",
+                                    "enum": ["number", "integer", "boolean", "string", "null"]
+                                },
+                                {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string",
+                                        "enum": ["number", "integer", "boolean", "string", "null"]
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+
+        "required": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+
+        "relations": {
+            "type": "object",
+            "properties": {
+                "in": {
+                    "type": "object",
+                    "patternProperties": {
+                        "^.*$": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+
+                "out": {
+                    "type": "object",
+                    "patternProperties": {
+                        "^.*$": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+
+            },
+            "additionalProperties": false
+        },
+
+        "components": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        }
+
+    },
+    "additionalProperties": false
+
+}

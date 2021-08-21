@@ -1,0 +1,23 @@
+{
+  "name": "@cdf/express-middleware",
+  "entries": [
+    {
+      "version": "2.1.0",
+      "tag": "@cdf/express-middleware_v2.1.0",
+      "date": "Thu, 29 Jul 2021 00:16:37 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "adding middleware for express based services to remove path from request url to handle custom domain"
+          }
+        ]
+      }
+    },
+    {
+      "version": "2.0.0",
+      "tag": "@cdf/express-middleware_v2.0.0",
+      "date": "Wed, 21 Jul 2021 16:46:57 GMT",
+      "comments": {}
+    }
+  ]
+}

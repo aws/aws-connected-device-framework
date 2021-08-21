@@ -1,0 +1,35 @@
+#-----------------------------------------------------------------------------------------------------------------------
+#   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance
+#  with the License. A copy of the License is located at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES
+#  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions
+#  and limitations under the License.
+#-----------------------------------------------------------------------------------------------------------------------
+## include mappings
+-   command: update
+    path: Mappings.SourceCode
+    value:
+      General:
+        S3Bucket: "%%BUCKET_NAME%%"
+        KeyPrefix: "%%SOLUTION_NAME%%/%%VERSION%%"
+        TemplateBucket: "%%TEMPLATE_BUCKET_NAME%%"
+
+## transfrom all TemplateURL's
+-   command: update
+    path: Resources.Neptune.Properties.TemplateURL
+    value: !Sub
+      - "https://s3.amazonaws.com/${S3Bucket}/${KeyPrefix}/cfn-neptune.template"
+      - S3Bucket: !FindInMap ["SourceCode", "General", "TemplateBucket"]
+        KeyPrefix: !FindInMap ["SourceCode", "General", "KeyPrefix"]
+
+-   command: update
+    path: Resources.AssetLibrary.Properties.TemplateURL
+    value: !Sub
+      - "https://s3.amazonaws.com/${S3Bucket}/${KeyPrefix}/cfn-assetLibrary.template"
+      - S3Bucket: !FindInMap ["SourceCode", "General", "TemplateBucket"]
+        KeyPrefix: !FindInMap ["SourceCode", "General", "KeyPrefix"]

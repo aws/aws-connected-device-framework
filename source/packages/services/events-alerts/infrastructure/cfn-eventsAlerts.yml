@@ -1,0 +1,157 @@
+#-----------------------------------------------------------------------------------------------------------------------
+#   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance
+#  with the License. A copy of the License is located at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES
+#  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions
+#  and limitations under the License.
+#-----------------------------------------------------------------------------------------------------------------------
+AWSTemplateFormatVersion : '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Description: CDF Events (Alerts) Service
+
+
+Parameters:
+  Environment:
+    Description:  Name of environment.  Used to name the created resources.
+    Type: String
+    MinLength: 1
+  ApplicationConfigurationOverride:
+    Description: This allows you to override any configuration application configuration. Must be a JSON formatted string. Any configurations contained in this will override the configurations found and merged from the config files.
+    Type: String
+    MinLength: 1
+
+  EventNotificationsTable:
+    Type: String
+    MinLength: 1
+  EventNotificationsTableArn:
+    Type: String
+    MinLength: 1
+  EventConfigTable:
+    Type: String
+    MinLength: 1
+  EventConfigTableArn:
+    Type: String
+    MinLength: 1
+  DAXClusterEndpoint:
+    Type: String
+    MinLength: 1
+  EventNotificationsStreamArn:
+    Type: String
+    MinLength: 1
+  KmsKeyId:
+    Description: The KMS key ID used to decrypt DynamoDB stream.
+    Type: String
+
+Conditions:
+  KmsKeyIdProvided: !Not [ !Equals [ !Ref KmsKeyId, "" ] ]
+
+Resources:
+
+  KmsPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Condition: KmsKeyIdProvided
+    Properties:
+      Description: "cdf-events-processor policy for accessing KMS"
+      Path: "/cdf/events-processor/"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Action:
+              - 'kms:Decrypt'
+            Effect: Allow
+            Resource: !Sub "arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/${KmsKeyId}"
+
+  DynamoDBStreamLambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: 
+              - lambda.amazonaws.com
+              - iot.amazonaws.com
+          Action: sts:AssumeRole
+      Path: "/"
+      ManagedPolicyArns:
+        - !Ref ApplicationPolicies
+        - arn:aws:iam::aws:policy/AWSLambdaExecute
+        - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
+        - !If [ KmsKeyIdProvided, !Ref KmsPolicy, !Ref "AWS::NoValue" ]
+
+  ApplicationPolicies:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      Description: 'cdf-events-processor application policies'
+      Path: "/"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:          
+          - Sid: "iampassrole"
+            Action:
+              - "iam:PassRole"
+            Effect: Allow
+            Resource: !Sub "arn:aws:iam::${AWS::AccountId}:role/cdf-events-*"
+          - Sid: 'sns'
+            Action: sns:publish
+            Effect: Allow
+            Resource: !Sub "arn:aws:sns:${AWS::Region}:${AWS::AccountId}:cdf-events-*"
+          - Sid: "dynamodbStreams"
+            Action:
+              - dynamodb:DescribeStream
+              - dynamodb:GetRecords
+              - dynamodb:GetShardIterator
+              - dynamodb:ListStreams
+            Effect: Allow
+            Resource: 
+              - !Sub '${EventNotificationsTableArn}/stream/*'
+          - Sid: "dynamodb"
+            Action:
+              - dynamodb:Query
+              - dynamodb:DescribeTable
+            Effect: Allow
+            Resource: 
+              - !Sub '${EventNotificationsTableArn}/index/*'
+              - !Sub '${EventConfigTableArn}/index/*'
+
+  DynamoDBStreamLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'cdf-eventAlerts-${Environment}'
+      CodeUri: ../bundle.zip
+      Handler: packages/services/events-alerts/dist/lambda_proxy_ddbstream.handler
+      MemorySize: 512
+      Role: !GetAtt DynamoDBStreamLambdaExecutionRole.Arn
+      Runtime: nodejs14.x
+      Timeout: 30
+      Environment:
+        Variables:
+          NODE_CONFIG_DIR: 'packages/services/events-alerts/dist/config'
+          NODE_CONFIG: !Ref ApplicationConfigurationOverride
+          EVENTSALERTS_AWS_DYNAMODB_TABLES_EVENTCONFIG_NAME: !Ref EventConfigTable
+          EVENTSALERTS_AWS_DYNAMODB_TABLES_EVENTNOTIFICATIONS_NAME: !Ref EventNotificationsTable
+          EVENTSALERTS_AWS_DYNAMODB_DAX_ENDPOINTS: !Ref DAXClusterEndpoint
+      Tracing: Active
+
+  EventNotificationsSourceMapping:
+    Type: AWS::Lambda::EventSourceMapping
+    Properties: 
+      EventSourceArn: !Ref EventNotificationsStreamArn
+      FunctionName: !Ref DynamoDBStreamLambdaFunction
+      StartingPosition: LATEST
+
+
+Outputs:
+  DynamoDBStreamLambdaArn:
+    Description: DynamoDB Stream Lambda Arn
+    Value: !Sub "${DynamoDBStreamLambdaFunction.Arn}"
+  DynamoDBStreamLambdaConsoleUrl:
+    Description: Console URL for the Lambda Function.
+    Value: !Sub "https://${AWS::Region}.console.aws.amazon.com/lambda/home?region=${AWS::Region}#/functions/${DynamoDBStreamLambdaFunction}"

@@ -1,0 +1,22 @@
+{
+    "extends": "../../tsconfig.libraries.json",
+    "compilerOptions": {
+        "outDir": "dist",
+        "rootDir": "src",
+		"esModuleInterop": true
+    },
+    "references": [
+        {
+            "path": "../../config/config-inject"
+        },
+        {
+            "path": "../../core/errors"
+        },
+        {
+            "path": "../../core/logger"
+        }
+    ],
+    "include": [
+        "src"
+    ]
+}

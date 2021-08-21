@@ -1,0 +1,39 @@
+{
+  "name": "@cdf/deployment-helper",
+  "entries": [
+    {
+      "version": "2.0.0",
+      "tag": "@cdf/deployment-helper_v2.0.0",
+      "date": "Wed, 11 Aug 2021 01:26:49 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "add logic for thing group custom resource lambda to check if thing group had been created manually in the past (and do nothing)"
+          }
+        ],
+        "major": [
+          {
+            "comment": "new service added"
+          }
+        ],
+        "patch": [
+          {
+            "comment": "wire up the RotateCertificatesJobCustomResource to inversify and fix the custom resource logic"
+          }
+        ]
+      }
+    },
+    {
+      "version": "2.0.2",
+      "tag": "@cdf/events-alerts_v2.0.2",
+      "date": "Wed, 21 Jul 2021 16:46:57 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "The generated lambda bundle size has been reduced."
+          }
+        ]
+      }
+    }
+  ]
+}

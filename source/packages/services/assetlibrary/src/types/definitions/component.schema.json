@@ -1,0 +1,53 @@
+{
+    "$id": "http://aws.com/cdf/schemas/component.json",
+    "type": "object",
+
+    "properties": {
+        "deviceId": {
+            "description": "Unique identifier of the component within the device",
+            "type": "string"
+        }, 
+        "templateId": {
+            "description": "Type of the component",
+            "type": "string"
+        }, 
+        "name": {
+            "description": "Name of the component",
+            "type": "string"
+        }, 
+        "description": {
+            "description": "Description of the component",
+            "type": ["string","null"]
+        }, 
+        "imageUrl": {
+            "description": "Image URL of the device",
+            "type": ["string","null"]
+        }, 
+        "awsIotThingArn": {
+            "description": "AWS IoT Thing ARN",
+            "type": ["string","null"]
+        }, 
+        "connected": {
+            "type": "boolean"
+        },
+        "state": {
+            "type": "string",
+            "enum": ["unprovisioned", "active", "decommisioned", "retired"]
+
+        },
+        "attributes": {
+            "$ref": "#/definitions/subType"
+        }
+    },
+    "additionalProperties": false,
+    "required": ["deviceId", "templateId"],
+
+    "definitions": {
+        "subType": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+        }
+    }
+}

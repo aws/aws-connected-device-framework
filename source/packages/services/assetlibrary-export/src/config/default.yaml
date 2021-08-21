@@ -1,0 +1,40 @@
+#-----------------------------------------------------------------------------------------------------------------------
+#   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance
+#  with the License. A copy of the License is located at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES
+#  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions
+#  and limitations under the License.
+#-----------------------------------------------------------------------------------------------------------------------
+neptuneUrl:
+aws:
+  region:
+
+  s3:
+    export:
+      bucket:
+      prefix: assetlibrary-export/
+
+defaults:
+
+  batch:
+    size: 100
+    by: "type"
+
+  etl:
+    extract:
+      deviceExtractor:
+        expandComponents: true
+        attributes: ""
+        includeGroups: true
+
+    load:
+      type: "S3"
+      path: "${aws.s3.export.prefix}${batch.category}/${batch.type}/dt=${moment(batch.timestamp).format('YYYY-MM-DD-HH-MM')}/${batch.id}.json"
+
+logging:
+  level: debug

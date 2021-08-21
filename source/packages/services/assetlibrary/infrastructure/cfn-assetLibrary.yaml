@@ -1,0 +1,368 @@
+#-----------------------------------------------------------------------------------------------------------------------
+#   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance
+#  with the License. A copy of the License is located at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES
+#  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions
+#  and limitations under the License.
+#-----------------------------------------------------------------------------------------------------------------------
+AWSTemplateFormatVersion : '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Description: CDF Asset Library Service
+
+Globals:
+  Api:
+    OpenApiVersion: 3.0.1
+
+Parameters:
+  Environment:
+    Description:  Name of environment.  Used to name the created resources.
+    Type: String
+    MinLength: 1
+
+  ApplicationConfigurationOverride:
+    Description: This allows you to override any configuration application configuration. Must be a JSON formatted string. Any configurations contained in this will override the configurations found and merged from the config files.
+    Type: String
+    MinLength: 1
+
+  VpcId:
+    Description: ID of VPC to deploy the Asset Library into
+    Type: String
+  CDFSecurityGroupId:
+    Description: ID of an existing CDF security group to deploy the Asset Library into (required if running full mode, or private API)
+    Type: String
+  PrivateSubNetIds:
+    Description: Comma delimited list of private subnetIds to deploy the Asset Library into
+    Type: CommaDelimitedList
+  PrivateApiGatewayVPCEndpoint:
+    Description: VPC endpoint required for private api gateway support
+    Type: String
+
+  Mode:
+    Description: Run in 'lite' mode which includes device registry only, or 'full' mode which augments the device registry with an additional datastore
+    Type: String
+    Default: full
+    AllowedValues: 
+      - full
+      - lite
+    MinLength: 1
+
+  TemplateSnippetS3UriBase:
+    Description: |
+      S3 uri of directory where template snippets are stored for the account.
+    Type: String
+    MinLength: 1
+
+  ApiGatewayDefinitionTemplate:
+    Description: |
+      Name of the API Gateway Cloudformation definition along with the authorization method to use.  Use one of the provided
+      templates to implement no auth, private, api key, lambda request, lamdba token, or Cognito auth, or modify one to meet your own
+      authentization requirements.  The template must exist within the provided TemplateSnippetS3UriBase location.
+    Type: String
+    MinLength: 1
+
+  AuthType:
+    Description: Authorization type to apply to the API gateway endpoints
+    Type: String
+    Default: None
+    AllowedValues:
+      - None
+      - Private
+      - Cognito
+      - LambdaRequest
+      - LambdaToken
+      - ApiKey
+      - IAM
+    MinLength: 1
+
+  CognitoUserPoolArn:
+    Description: Cognito user pool arn.  Only required if AuthType is set to 'Cognito'.
+    Type: String
+    Default: 'N/A'
+
+  AuthorizerFunctionArn:
+    Description: Lambda authorizer function arn.  Only required if AuthType is set to 'LambdaRequest' or 'LambdaToken'.
+    Type: String
+    Default: 'N/A'
+
+  ProvisionedConcurrentExecutions:
+    Description: The no. of desired concurrent executions to  provision.  Set to 0 to disable.
+    Type: Number
+    Default: 0
+
+  ApplyAutoscaling:
+    Description: If true, will apply auto-scaling as defined in `./cfn-autoscaling.yml'
+    Type: String
+    Default: false
+    AllowedValues:
+      - true
+      - false
+    MinLength: 1
+
+  CdfService:
+    Description: Service name to tag resources.
+    Type: String
+    Default: assetlibrary
+  NeptuneURL:
+    Description: Neptune Url
+    Type: String
+    Default: ''
+
+  CustomResourceVPCLambdaArn:
+    Description: Custom resource lambda arn with access to vpc
+    Type: String
+    MinLength: 1
+
+  EnableApiGatewayAccessLogs:
+    Description: Enales API gateway Access Logging, defaults to false if not specified.
+    Type: String
+    Default: 'false'
+    AllowedValues:
+      - 'true'
+      - 'false'
+    MinLength: 1
+
+
+Conditions:
+  DeployFullMode: !Equals [ !Ref Mode, 'full' ]
+  DeployLiteMode: !Equals [ !Ref Mode, 'lite' ]
+
+  DeployInVPC: !Not [ !Equals [ !Ref VpcId, 'N/A' ] ]
+
+  DeployWithProvisionedCapacity: !Not [ !Equals [ !Ref ProvisionedConcurrentExecutions, "0" ]]
+  DeployWithScaling: !Equals [ !Ref ApplyAutoscaling, 'true' ]
+
+  DeployWithLambdaAuth: !Or [ !Equals [ !Ref AuthType, 'LambdaRequest' ], !Equals [ !Ref AuthType, 'LambdaToken' ] ]
+  EnableApiGatewayAccessLogs: !Equals [ !Ref EnableApiGatewayAccessLogs, "true"]
+
+Resources:
+
+  ApiGatewayApi:
+    'Fn::Transform':
+      Name: 'AWS::Include'
+      Parameters:
+        Location: !Sub "${TemplateSnippetS3UriBase}${ApiGatewayDefinitionTemplate}"
+    DependsOn:
+      - LambdaFunction
+
+  ApiGatewayAuthorizerInvokeRole:
+    Condition: DeployWithLambdaAuth
+    'Fn::Transform':
+      Name: 'AWS::Include'
+      Parameters:
+        Location: !Sub "${TemplateSnippetS3UriBase}cfn-role-lambdaRequestAuthInvokerRole.yaml"
+    DependsOn:
+      - LambdaFunction
+
+  ApiGatewayAccessLogGroup:
+    Condition: EnableApiGatewayAccessLogs
+    Type: 'AWS::Logs::LogGroup'
+    Properties:
+      LogGroupName: !Sub 'cdf-assetLibrary-apigatewayaccesslogs-${Environment}'
+
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: sts:AssumeRole
+      Path: "/cdf/assetlibrary/"
+      ManagedPolicyArns:
+        - !Ref ApplicationPolicies
+        - arn:aws:iam::aws:policy/AWSLambdaExecute
+        - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
+      Tags:
+        - Key: cdf_environment
+          Value: !Ref Environment
+        - Key: cdf_service
+          Value: !Ref CdfService
+    DependsOn:
+      - ApplicationPolicies
+
+  ApplicationPolicies:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W13
+            reason: "This policy allows the lambda to be able to manage things in IoT"
+    Properties:
+      Description: 'cdf-assetlibrary application policies'
+      Path: "/cdf/assetlibrary/"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Action:
+              - "iot:Publish"
+            Effect: Allow
+            Resource: !Sub "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:topic/cdf/*"
+          - Action:
+              - "iot:CreateThing"
+              - "iot:DescribeThing"
+              - "iot:DeleteThing"
+              - "iot:UpdateThing"
+              - "iot:AddThingToThingGroup"
+              - "iot:ListThingGroupsForThing"
+              - "iot:RemoveThingFromThingGroup"
+            Effect: Allow
+            Resource: 
+            - !Sub "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:thing/*"
+          - Action:
+              - "iot:DescribeThingType"
+              - "iot:CreateThingType"
+            Effect: Allow
+            Resource: 
+            - !Sub "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:thingtype/*"
+          - Action:
+              - "iot:AddThingToThingGroup"
+              - "iot:CreateThingGroup"
+              - "iot:DescribeThingGroup"
+              - "iot:DeleteThingGroup"
+              - "iot:ListThingGroupsForThing"
+              - "iot:ListThingsInThingGroup"
+              - "iot:RemoveThingFromThingGroup"
+              - "iot:UpdateThingGroup"
+            Effect: Allow
+            Resource: 
+            - !Sub "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:thinggroup/*"
+          - Action:
+              - "iot:SearchIndex"
+            Effect: Allow
+            Resource: 
+            - !Sub "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:index/*"
+          - Action:
+              - "iot:ListThingGroups"
+            Effect: Allow
+            Resource: 
+            - "*"
+
+  LambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'cdf-assetLibrary-rest-${Environment}'
+      CodeUri: ../bundle.zip
+      Handler: packages/services/assetlibrary/dist/lambda_proxy.handler
+
+      MemorySize: 512
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Runtime: nodejs14.x
+
+      AutoPublishAlias: live
+
+      DeploymentPreference:
+        Type: AllAtOnce
+
+      ProvisionedConcurrencyConfig:
+        Fn::If:
+        - DeployWithProvisionedCapacity
+        - ProvisionedConcurrentExecutions: !Ref ProvisionedConcurrentExecutions
+        - Ref: AWS::NoValue
+
+      Timeout: 30
+      Environment:
+        Variables:
+          NODE_CONFIG_DIR: 'packages/services/assetlibrary/dist/config'
+          NODE_CONFIG: !Ref ApplicationConfigurationOverride
+          AWS_IOT_ENDPOINT: !GetAtt IotEndpoint.address
+          ASSETLIBRARY_NEPTUNE_URL: !Ref NeptuneURL
+
+      Tracing: Active
+
+      # Difference between full and lite lambda is that lite is not deployed within a VPC
+      VpcConfig:
+        Fn::If:
+        - DeployInVPC
+        - SubnetIds: !Ref PrivateSubNetIds
+          SecurityGroupIds: 
+          - !Ref CDFSecurityGroupId
+        - Ref: AWS::NoValue
+
+      Events:
+        ProxyApiRoot:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiGatewayApi
+            Path: /
+            Method: ANY
+        ProxyApiGreedy:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiGatewayApi
+            Path: /{proxy+}
+            Method: ANY
+      Tags:
+        cdf_environment: !Ref Environment
+        cdf_service: !Ref CdfService
+
+    DependsOn:
+      - LambdaExecutionRole
+
+  # Optional auto-scaling configuration
+  AutoScalingNestedStack:
+    Type: AWS::CloudFormation::Stack
+    Condition: DeployWithScaling
+    Properties:
+      TemplateURL: ./cfn-autoscaling.yml
+      Parameters:
+        LambdaName: !Ref LambdaFunction
+        LambdaAlias: live
+      TimeoutInMinutes: 5
+      Tags:
+        - Key: cdf_environment
+          Value: !Ref Environment
+        - Key: cdf_service
+          Value: !Ref CdfService
+    DependsOn: LambdaFunction
+
+  IotFleetIndex:
+    Type: Custom::IotFleetIndex
+    Condition: DeployLiteMode
+    Version: 1.0
+    Properties:
+      ServiceToken:
+        !Ref CustomResourceVPCLambdaArn
+
+  IotEndpoint:
+    Type: Custom::IotEndpoint
+    Version: 1.0
+    Properties:
+      ServiceToken:
+        !Ref CustomResourceVPCLambdaArn
+
+  AssetLibraryInit:
+    Type: Custom::AssetLibraryInit
+    Condition: DeployFullMode
+    Version: 1.0
+    Properties:
+      ServiceToken:
+        !Ref CustomResourceVPCLambdaArn
+      FunctionName:
+        !Ref LambdaFunction
+
+
+Outputs:
+  RestApiFunctionName:
+    Description: Asset library lambda function name
+    Value: !Ref LambdaFunction
+    Export: 
+      Name: !Sub "cdf-assetlibrary-${Environment}-restApiFunctionName"
+  ApiGatewayUrl:
+    Description: URL for application
+    Value: !Sub 'https://${ApiGatewayApi}.execute-api.${AWS::Region}.amazonaws.com/Prod'
+    Export:
+      Name: !Sub 'cdf-assetlibrary-${Environment}-apigatewayurl'
+  ApiGatewayHost:
+    Description: Host for application
+    Value: !Sub '${ApiGatewayApi}.execute-api.${AWS::Region}.amazonaws.com'
+    Export:
+      Name: !Sub 'cdf-assetlibrary-${Environment}-apigatewayhost'

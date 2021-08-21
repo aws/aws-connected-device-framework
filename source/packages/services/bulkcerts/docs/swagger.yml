@@ -1,0 +1,203 @@
+#-----------------------------------------------------------------------------------------------------------------------
+#   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance
+#  with the License. A copy of the License is located at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES
+#  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions
+#  and limitations under the License.
+#-----------------------------------------------------------------------------------------------------------------------
+swagger: '2.0'
+info:
+  title: "AWS Connected Device Framework: Bulk Certs"
+  description: REST API for bulk creating certificates.
+  version: 1.0.0
+
+consumes:
+- application/vnd.aws-cdf-v1.0+json
+produces:
+- application/vnd.aws-cdf-v1.0+json
+
+tags:
+- name: 'Bulk Certificate Creation'
+  description: |
+    Allows for the asynchronous creation of certifcates in bulk.  The `bulkcertificatestask` endpoints allow for the management of the asynchronous task itself, whereas the `bulk certificates` endpoints allow for the retrieval of the outcome of the task.
+    
+    Optionally, the certificates may be registered with AWS IoT.  This allows for scenarios such as JITP (just-in-time provisioning).
+
+paths:
+
+  /certificates:
+    post:
+      tags:
+      - 'Bulk Certificate Creation'
+      summary: |
+        Creates a batch of certificates.
+      operationId: "createCertificates"
+      parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/BulkCertificatesTaskRequest'
+      responses:
+        202: 
+          description: Created successfully
+          headers:
+            location:
+              type: string
+          schema:
+            $ref: '#/definitions/BulkCertificatesTaskResponse'
+        400:
+          $ref: '#/responses/BadRequest'
+
+  /certificates/{taskId}:
+    parameters:
+    - name: taskId
+      in: path
+      description: Id of the bulk certificate creation task
+      required: true
+      type: string
+        
+    get:
+      tags:
+      - 'Bulk Certificate Creation'
+      summary: Retrieve a batch of pre-generated certificates (the outcome of a batch certificate creation task)
+      operationId: getBulkCertificates
+      produces:
+        - application/zip
+      responses:
+        200:
+          description: Zipfile of certificates
+          schema:
+            type: file
+        303: 
+          description: If certificate creation is still inprogress, a redirect to the certificate task status
+          headers:
+            location:
+              type: string
+        404:
+          $ref: '#/responses/NotFound'
+
+  /certificates/{taskId}/task:
+    parameters:
+    - name: taskId
+      in: path
+      description: Id of the bulk certificate creation task
+      required: true
+      type: string
+        
+    get:
+      tags:
+      - 'Bulk Certificate Creation'
+      summary: Retrieve status of a bulk certificates task
+      operationId: getBulkCertificatesTaskStauts
+      responses:
+        200:
+          description: Pending
+          schema:
+            $ref: '#/definitions/BulkCertificatesTaskStatusResponse'
+        400:
+          $ref: '#/responses/BadRequest'
+        404:
+          $ref: '#/responses/NotFound'
+
+  /supplier/{supplierId}/certificates:
+    parameters:
+    - name: supplierId
+      in: path
+      description: Id supplier for which to create certificates
+      required: true
+      type: string
+
+    post:
+      tags:
+      - 'Bulk Certificate Creation for Specific Supplier'
+      summary: |
+        Creates a batch of certificates for a supplier, using a supplier's specific CA.
+      operationId: "supplierCreateCertificates"
+      parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/BulkCertificatesTaskRequest'
+      responses:
+        202: 
+          description: Created successfully
+          headers:
+            location:
+              type: string
+          schema:
+            $ref: '#/definitions/BulkCertificatesTaskResponse'
+        400:
+          $ref: '#/responses/BadRequest'
+
+definitions:
+
+  BulkCertificatesTaskRequest:
+    type: object
+    properties:
+      quantity:
+        type: number
+      register:
+        type: boolean
+
+  BulkCertificatesTaskResponse:
+    type: object
+    allOf: 
+      - $ref: '#/definitions/BulkCertificatesTaskRequest'
+      - type: object
+        properties:
+          taskId:
+            type: string
+          status:
+            type: string
+            enum: ['in_progress', 'complete']
+
+  BulkCertificatesTaskStatusResponse:
+    properties:
+      taskId:
+        type: string
+        description: ID of the bulk certificates creation task
+      status:
+        type: string
+        description: status of the task
+        enum: ['pending', 'complete']
+      batchDate:
+        type: number
+        description: batch start date time
+      chunksPending:
+        type: number
+        description: number of certificate chunks yet to be completed
+      chunksTotal:
+        type: number
+        description: total number of chunks in this batch
+
+  Error:
+    type: object
+    properties:
+      message:
+        type: string
+
+responses:          
+  Created:
+    description: Created successfully
+    headers:
+      location:
+        type: string
+  BadRequest:
+    description: Invalid input
+    schema:
+      $ref: '#/definitions/Error'
+  NotFound:
+    description: Not found
+    schema:
+      $ref: '#/definitions/Error'
+  Conflict:
+    description: Operation was unsuccessful due to an unsupported status.
+    schema:
+      $ref: '#/definitions/Error'

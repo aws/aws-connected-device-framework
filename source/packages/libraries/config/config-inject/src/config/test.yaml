@@ -1,0 +1,4 @@
+aws:
+  region: 'us-west-2'
+  db:
+    connection_url: 'https://testdb'

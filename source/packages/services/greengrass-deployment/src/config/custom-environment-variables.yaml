@@ -1,0 +1,40 @@
+#-----------------------------------------------------------------------------------------------------------------------
+#   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance
+#  with the License. A copy of the License is located at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES
+#  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions
+#  and limitations under the License.
+#-----------------------------------------------------------------------------------------------------------------------
+aws:
+  accountId: AWS_ACCOUNTID
+  region: AWS_REGION
+
+  ssm:
+    managedInstanceRole: GREENGRASS_DEPLOYMENT_SSM_MANAGED_INSTANCE_ROLE
+
+  sqs:
+    agentlessDeploymentQueue: GREENGRASS_DEPLOYMENT_AGENTLESS_DEPLOYMENT_QUEUE
+    agentbasedDeploymentQueue: GREENGRASS_DEPLOYMENT_AGENTBASED_DEPLOYMENT_QUEUE
+
+  dynamoDB:
+    ggProvisioningTable: GREENGRASS_DEPLOYMENT_AWS_DYNAMODB_GGPROVISIONINGTABLE
+
+  s3:
+    deploymentLogs:
+      bucket: GREENGRASS_DEPLOYMENT_AWS_S3_DEPLOYMENT_LOGS_BUCKET
+      prefix: GREENGRASS_DEPLOYMENT_AWS_S3_DEPLOYMENT_PREFIX
+
+cors:
+  origin: GREENGRASS_DEPLOYMENT_CORS_ORIGIN
+  exposedHeaders: GREENGRASS_DEPLOYMENT_CORS_EXPOSEDHEADERS
+
+logging:
+  level: GREENGRASS_DEPLOYMENT_LOGGING_LEVEL
+
+customDomain:
+  basePath: GREENGRASS_DEPLOYMENT_CUSTOMDOMAIN_BASEPATH

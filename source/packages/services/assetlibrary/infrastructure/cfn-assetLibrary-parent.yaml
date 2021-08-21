@@ -1,0 +1,193 @@
+#-----------------------------------------------------------------------------------------------------------------------
+#   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance
+#  with the License. A copy of the License is located at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES
+#  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions
+#  and limitations under the License.
+#-----------------------------------------------------------------------------------------------------------------------
+AWSTemplateFormatVersion : '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Description: CDF Asset Library Service
+
+Parameters:
+  ArtifactsBucket:
+    Description:  Name of environment.  Used to name the created resources.
+    Type: String
+  ArtifactsConfigPrefix:
+    Description:  Key prefix within bucket where config artifacts are uploaded to.
+    Type: String
+    Default: 'config/'
+
+  Environment:
+    Description:  Name of environment.  Used to name the created resources.
+    Type: String
+    MinLength: 1
+  AssetLibraryApplicationConfigurationOverride:
+    Description: This allows you to override any assetlibrary configuration application configuration. Must be a JSON formatted string. Any configurations contained in this will override the configurations found and merged from the config files.
+    Type: String
+    MinLength: 1
+
+  VpcId:
+    Description: ID of VPC to deploy the Asset Library into
+    Type: String
+  CDFSecurityGroupId:
+    Description: ID of an existing CDF security group to deploy the Asset Library into (required if running full mode, or private API)
+    Type: String
+  PrivateSubNetIds:
+    Description: Comma delimited list of private subnetIds to deploy the Asset Library into
+    Type: String
+  PrivateRouteTableIds:
+    Description: Comma delimited list of private route table ids to allow access to Neptune
+    Type: String
+  PrivateApiGatewayVPCEndpoint:
+    Description: VPC endpoint required for private api gateway support
+    Type: String
+
+  Mode:
+    Description: Run in 'lite' mode which includes device registry only, or 'full' mode which augments the device registry with an additional datastore
+    Type: String
+    Default: full
+    AllowedValues:
+      - full
+      - lite
+    MinLength: 1
+
+  TemplateSnippetS3UriBase:
+    Description: |
+      S3 uri of directory where template snippets are stored for the account.
+    Type: String
+    MinLength: 1
+
+  ApiGatewayDefinitionTemplate:
+    Description: |
+      Name of the API Gateway Cloudformation definition along with the authorization method to use.  Use one of the provided
+      templates to implement no auth, private, api key, lambda request, lamdba token, or Cognito auth, or modify one to meet your own
+      authentization requirements.  The template must exist within the provided TemplateSnippetS3UriBase location.
+    Type: String
+    MinLength: 1
+
+  AuthType:
+    Description: Authorization type to apply to the API gateway endpoints
+    Type: String
+    Default: None
+    AllowedValues:
+      - None
+      - Private
+      - Cognito
+      - LambdaRequest
+      - LambdaToken
+      - ApiKey
+      - IAM
+    MinLength: 1
+
+  CognitoUserPoolArn:
+    Description: Cognito user pool arn.  Only required if AuthType is set to 'Cognito'.
+    Type: String
+    Default: 'N/A'
+
+  AuthorizerFunctionArn:
+    Description: Lambda authorizer function arn.  Only required if AuthType is set to 'LambdaRequest' or 'LambdaToken'.
+    Type: String
+    Default: 'N/A'
+
+  # Neptune Parameters
+  NeptuneDbInstanceType:
+    Description: Neptune DB instance type
+    Type: String
+    Default: db.r4.xlarge
+    AllowedValues:
+      - db.r4.large
+      - db.r4.xlarge
+      - db.r4.2xlarge
+      - db.r4.4xlarge
+      - db.r4.8xlarge
+    ConstraintDescription: Must be a valid Neptune instance type.
+
+  CustomResourceVPCLambdaArn:
+    Description: Custom resource lambda arn with access to vpc
+    Type: String
+    MinLength: 1
+
+  EnableApiGatewayAccessLogs:
+    Description: Enales API gateway Access Logging, defaults to false if not specified.
+    Type: String
+    Default: false
+    AllowedValues:
+      - 'true'
+      - 'false'
+    MinLength: 1
+
+  KmsKeyId:
+    Description: The KMS key ID used to encrypt SSM parameters, DynamoDB and SNS Topics
+    Type: String
+    MinLength: 1
+
+  NeptuneSnapshotIdentifier:
+    Type: String
+    Description: Specifies the identifier for an existing DB cluster snapshot to restore. Refer to Neptune documentation on its use.
+
+Conditions:
+  DeployFullMode: !Equals [ !Ref Mode, 'full' ]
+  DeployInVPC: !Not [ !Equals [ !Ref VpcId, 'N/A' ] ]
+  DeployWithLambdaAuth: !Or [ !Equals [ !Ref AuthType, 'LambdaRequest' ], !Equals [ !Ref AuthType, 'LambdaToken' ] ]
+
+Resources:
+
+  Neptune:
+    Condition: DeployFullMode
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: ./cfn-neptune.yaml
+      Parameters:
+        Environment: !Ref Environment
+        DbInstanceType: !Ref NeptuneDbInstanceType
+        PrivateRouteTableIds: !Ref PrivateRouteTableIds
+        PrivateSubNetIds: !Ref PrivateSubNetIds
+        CDFSecurityGroupId: !Ref CDFSecurityGroupId
+        VpcId: !Ref VpcId
+        CustomResourceVPCLambdaArn: !Ref CustomResourceVPCLambdaArn
+        SnapshotIdentifier: !Ref NeptuneSnapshotIdentifier
+      TimeoutInMinutes: 60
+
+  AssetLibrary:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: ./cfn-assetLibrary.yaml
+      Parameters:
+        Environment: !Ref Environment
+        ApplicationConfigurationOverride: !Ref AssetLibraryApplicationConfigurationOverride
+        VpcId: !Ref VpcId
+        CDFSecurityGroupId: !Ref CDFSecurityGroupId
+        PrivateSubNetIds: !Ref PrivateSubNetIds
+        PrivateApiGatewayVPCEndpoint: !Ref PrivateApiGatewayVPCEndpoint
+        Mode: !Ref Mode
+        TemplateSnippetS3UriBase: !Ref TemplateSnippetS3UriBase
+        ApiGatewayDefinitionTemplate: !Ref ApiGatewayDefinitionTemplate
+        CognitoUserPoolArn: !Ref CognitoUserPoolArn
+        AuthorizerFunctionArn: !Ref AuthorizerFunctionArn
+        AuthType: !Ref AuthType
+        NeptuneURL:  !If [DeployFullMode, !GetAtt Neptune.Outputs.GremlinEndpoint, '']
+        CustomResourceVPCLambdaArn: !Ref CustomResourceVPCLambdaArn
+        EnableApiGatewayAccessLogs: !Ref EnableApiGatewayAccessLogs
+      TimeoutInMinutes: 60
+
+Outputs:
+  RestApiFunctionName:
+    Description: Asset library lambda function name
+    Value: !GetAtt AssetLibrary.Outputs.RestApiFunctionName
+  ApiGatewayUrl:
+    Description: URL for application
+    Value: !GetAtt AssetLibrary.Outputs.ApiGatewayUrl
+  ApiGatewayHost:
+    Description: Host for application
+    Value: !GetAtt AssetLibrary.Outputs.ApiGatewayHost
+  NeptuneURL:
+    Description: Neptune Url
+    Value: !GetAtt Neptune.Outputs.GremlinEndpoint
+    

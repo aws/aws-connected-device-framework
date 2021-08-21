@@ -1,0 +1,75 @@
+/*********************************************************************************************************************
+ *  Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.                                           *
+ *                                                                                                                    *
+ *  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance    *
+ *  with the License. A copy of the License is located at                                                             *
+ *                                                                                                                    *
+ *      http://www.apache.org/licenses/LICENSE-2.0                                                                    *
+ *                                                                                                                    *
+ *  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES *
+ *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
+ *  and limitations under the License.                                                                                *
+ *********************************************************************************************************************/
+import 'reflect-metadata';
+// import { createMockInstance } from 'jest-create-mock-instance';
+import * as AWS from 'aws-sdk';
+import config from 'config';
+import { logger } from '../utils/logger';
+import { RunsDao } from './runs.dao';
+import { RunsService } from './runs.service';
+import { SimulationsDao } from '../simulations/simulations.dao';
+import { SimulationsService } from '../simulations/simulations.service';
+
+let instance: RunsService;
+let mockedS3: AWS.S3;
+let mockedSNS: AWS.SNS;
+let mockedDDB: AWS.DynamoDB.DocumentClient;
+let mockedSimulationsDao: SimulationsDao;
+let mockedSimulationsService: SimulationsService;
+let mockedRunsDao: RunsDao;
+
+// TODO: this test needs to be mocking its dependencies
+describe('CreateRun', () => {
+
+    beforeEach(() => {
+        // mockedDao = createMockInstance(SimulationsDao);
+
+        // TODO: mock these
+        mockedS3 = new AWS.S3({region: config.get('aws.region')});
+        mockedSNS = new AWS.SNS({region: config.get('aws.region')});
+        mockedDDB = new AWS.DynamoDB.DocumentClient({region: config.get('aws.region'), convertEmptyValues:true});
+
+        const mockedS3Factory = () => {
+            return mockedS3;
+        };
+
+        const mockedSNSSactory = () => {
+            return mockedSNS;
+        };
+
+        const mockedDDBFactory = () => {
+            return mockedDDB;
+        };
+
+        mockedSimulationsDao = new SimulationsDao(mockedDDBFactory);
+        mockedSimulationsService = new SimulationsService(mockedSimulationsDao, mockedS3Factory, mockedSNSSactory);
+        mockedRunsDao = new RunsDao(mockedDDBFactory);
+        instance = new RunsService(mockedSimulationsDao, mockedSimulationsService, mockedRunsDao, mockedS3Factory);
+    });
+
+    it('create run launches simulation engine', async () => {
+
+        logger.debug(`Using config: ${JSON.stringify(config.util.toObject())}`);
+
+        const actual = await instance.createRun({
+            item: {
+                simulationId: 'oxeByixA',
+                deviceCount: 5
+            }
+        });
+
+        logger.info(`actual: ${actual}`);
+
+    }, 300000);
+
+});

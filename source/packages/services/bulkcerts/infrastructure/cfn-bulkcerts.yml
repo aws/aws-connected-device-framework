@@ -1,0 +1,447 @@
+#-----------------------------------------------------------------------------------------------------------------------
+#   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance
+#  with the License. A copy of the License is located at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES
+#  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions
+#  and limitations under the License.
+#-----------------------------------------------------------------------------------------------------------------------
+AWSTemplateFormatVersion : '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Globals:
+  Api:
+    # Enable binary for zip file download
+    BinaryMediaTypes:
+      # This is equivalent to application/zip when deployed.
+      - application~1zip
+    OpenApiVersion: 3.0.1
+
+Description: CDF Bulk Certs Service
+
+Parameters:  
+  Environment:
+    Description:  Name of environment.  Used to name the created resources.
+    Type: String
+    MinLength: 1
+
+  ApplicationConfigurationOverride:
+    Description: This allows you to override any configuration application configuration. Must be a JSON formatted string. Any configurations contained in this will override the configurations found and merged from the config files.
+    Type: String
+    MinLength: 1
+
+
+  TemplateSnippetS3UriBase:
+    Description: |
+      S3 uri of directory where template snippets are stored for the account.
+    Type: String
+    MinLength: 1
+
+  AuthType:
+    Description: Authorization type to apply to the API gateway endpoints
+    Type: String
+    Default: None
+    AllowedValues:
+      - None
+      - Private
+      - Cognito
+      - LambdaRequest
+      - LambdaToken
+      - ApiKey
+      - IAM
+    MinLength: 1
+
+  ApiGatewayDefinitionTemplate:
+    Description: |
+      Name of the API Gateway Cloudformation definition along with the authorization method to use.  Use one of the provided
+      templates to implement no auth, private, api key, lambda request, lamdba token, or Cognito auth, or modify one to meet your own
+      authentization requirements.  The template must exist within the provided TemplateSnippetS3UriBase location.
+    Type: String
+    MinLength: 1
+
+  VpcId:
+    Description: ID of VPC to deploy the API into. Only required if AuthType = 'Private'.
+    Type: String
+  CDFSecurityGroupId:
+    Description: ID of an existing CDF security group to deploy the API into. Only required if AuthType = 'Private'.
+    Type: String
+  PrivateSubNetIds:
+    Description: Comma delimited list of private subnetIds to deploy the API into. Only required if AuthType = 'Private'.
+    Type: CommaDelimitedList
+  PrivateApiGatewayVPCEndpoint:
+    Description: VPC endpoint. Only required if AuthType = 'Private'.
+    Type: String
+
+  CognitoUserPoolArn:
+    Description: Cognito user pool arn.  Only required if AuthType is set to 'Cognito'.
+    Type: String
+    Default: 'N/A'
+
+  AuthorizerFunctionArn:
+    Description: Lambda authorizer function arn.  Only required if AuthType is set to 'LambdaRequest' or 'LambdaToken'.
+    Type: String
+    Default: 'N/A'
+
+  KmsKeyId:
+    Description: The KMS key ID used to encrypt SSM parameters, DynamoDB and SNS Topics
+    Type: String
+    MinLength: 1
+
+  OpenSslLambdaLayerArn:
+    Description: OpenSSL lambda layer ARN
+    Type: String
+    MinLength: 1
+
+  BucketName:
+    Description: Name of bucket to store artifacts.
+    Type: String
+    MinLength: 1
+
+  EnableApiGatewayAccessLogs:
+    Description: Enales API gateway Access Logging, defaults to false if not specified.
+    Type: String
+    Default: 'false'
+    AllowedValues:
+      - 'true'
+      - 'false'
+    MinLength: 1
+
+Conditions:
+
+  DeployInVPC: !Not [ !Equals [ !Ref VpcId, 'N/A' ] ]
+  DeployWithLambdaAuth: !Or [ !Equals [ !Ref AuthType, 'LambdaRequest' ], !Equals [ !Ref AuthType, 'LambdaToken' ] ]
+  KmsKeyIdProvided: !Not [ !Equals [ !Ref KmsKeyId, "" ] ]
+  EnableApiGatewayAccessLogs: !Equals [ !Ref EnableApiGatewayAccessLogs, "true"]
+
+Resources:
+
+  ApiGatewayApi:
+    'Fn::Transform':
+      Name: 'AWS::Include'
+      Parameters:
+        Location: !Sub "${TemplateSnippetS3UriBase}${ApiGatewayDefinitionTemplate}"
+    DependsOn:
+      - ApiLambdaFunction
+
+  ApiGatewayAuthorizerInvokeRole:
+    Condition: DeployWithLambdaAuth
+    'Fn::Transform':
+      Name: 'AWS::Include'
+      Parameters:
+        Location: !Sub "${TemplateSnippetS3UriBase}cfn-role-lambdaRequestAuthInvokerRole.yaml"
+    DependsOn:
+      - ApiLambdaFunction
+
+  ApiGatewayAccessLogGroup:
+    Condition: EnableApiGatewayAccessLogs
+    Type: 'AWS::Logs::LogGroup'
+    Properties:
+      LogGroupName: !Sub 'cdf-bulkcerts-apigatewayaccesslogs-${Environment}'
+
+
+  ApiLambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: sts:AssumeRole
+      Path: "/"
+      ManagedPolicyArns:
+        - !Ref SNSPolicy
+        - !Ref DynamoDbPolicy
+        - !Ref IotCaPolicy
+        - !Ref SSMPolicy
+        - arn:aws:iam::aws:policy/AWSLambdaExecute
+        - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
+    DependsOn:
+      - DynamoDbPolicy
+      - SNSPolicy
+      - IotCaPolicy
+      - SSMPolicy
+
+  SnsLambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: sts:AssumeRole
+      Path: "/"
+      ManagedPolicyArns:
+        - !Ref SNSPolicy
+        - !Ref DynamoDbPolicy
+        - !Ref IotCaPolicy
+        - !Ref SSMPolicy
+        - arn:aws:iam::aws:policy/AWSLambdaExecute
+        - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
+    DependsOn:
+      - DynamoDbPolicy
+      - SNSPolicy
+      - IotCaPolicy
+      - SSMPolicy
+
+  SSMPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: "cdf-bulkcerts policy for accessing SSM and KMS"
+      Path: "/cdf/bulkcerts/"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Action:
+              - 'ssm:GetParameter*'
+            Effect: Allow
+            Resource: !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/cdf-ca-key-*"
+          - Action:
+              - kms:Decrypt
+              - kms:GenerateDataKey*
+            Effect: Allow
+            Resource: !Sub "arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/${KmsKeyId}"
+
+  SNSPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: "cdf-bulkcerts policy"
+      Path: "/cdf/bulkcerts/"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Action:
+              - 'sns:Publish'
+            Effect: Allow
+            Resource: 
+              - !Ref CertificatesRequestSnsTopic
+
+  DynamoDbPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: "cdf-bulkcerts policy for accessing DynamoDB"
+      Path: "/cdf/bulkcerts/"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Action:
+              - "dynamodb:BatchGetItem"
+              - "dynamodb:GetItem"
+              - "dynamodb:Query"
+              - "dynamodb:Scan"
+              - "dynamodb:BatchWriteItem"
+              - "dynamodb:PutItem"
+              - "dynamodb:UpdateItem"
+              - "dynamodb:DeleteItem"
+            Effect: Allow
+            Resource: !GetAtt BulkCertificatesTaskTable.Arn
+    DependsOn:
+      - BulkCertificatesTaskTable
+
+  IotCaPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W13
+            reason: "Application needs to manage Certificates in Iot"
+    Properties:
+      Description: "cdf-facade policy for listing/getting IoT CAs"
+      Path: "/cdf/bulkcerts/"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Action:
+              - "iot:ListCACertificates"
+            Effect: Allow
+            Resource: "*"
+          - Action:
+              - "iot:DescribeCACertificate"
+            Effect: Allow
+            Resource: "*"
+          - Action:
+              - "iot:CreateCertificateFromCsr"
+            Effect: Allow
+            Resource: "*"
+
+  ApiLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'cdf-bulkCerts-rest-${Environment}'
+      CodeUri: ../bundle.zip
+      Handler: packages/services/bulkcerts/dist/lambda_proxy.handler
+      Layers:
+        - !Ref OpenSslLambdaLayerArn
+      MemorySize: 128
+      Role: !GetAtt ApiLambdaExecutionRole.Arn
+      Runtime: nodejs14.x
+      Timeout: 300
+      Environment:
+        Variables:
+          NODE_CONFIG_DIR: 'packages/services/bulkcerts/dist/config'
+          NODE_CONFIG: !Ref ApplicationConfigurationOverride
+          BULKCERTS_AWS_DYNAMODB_TASKS_TABLE: !Ref BulkCertificatesTaskTable
+          BULKCERTS_AWS_S3_CERTIFICATES_BUCKET: !Ref BucketName
+          BULKCERTS_EVENTS_REQUEST_TOPIC: !Ref CertificatesRequestSnsTopic
+      Tracing: Active
+
+      VpcConfig:
+        Fn::If:
+          - DeployInVPC
+          - SubnetIds: !Ref PrivateSubNetIds
+            SecurityGroupIds:
+              - !Ref CDFSecurityGroupId
+          - Ref: AWS::NoValue
+
+      Events:
+        ProxyApiRoot:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiGatewayApi
+            Path: /
+            Method: ANY
+        ProxyApiGreedy:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiGatewayApi
+            Path: /{proxy+}
+            Method: ANY
+    DependsOn:
+      - ApiLambdaExecutionRole
+
+  SnsLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'cdf-bulkCerts-sns-${Environment}'
+      CodeUri: ../bundle.zip
+      Layers:
+        - !Ref OpenSslLambdaLayerArn
+      Handler: packages/services/bulkcerts/dist/sns_handler.handler
+      MemorySize: 512
+      Role: !GetAtt SnsLambdaExecutionRole.Arn
+      Runtime: nodejs14.x
+      Timeout: 300
+      ReservedConcurrentExecutions: 3
+      Environment:
+        Variables:
+          NODE_CONFIG_DIR: 'packages/services/bulkcerts/dist/config'
+          NODE_CONFIG: !Ref ApplicationConfigurationOverride
+          BULKCERTS_AWS_DYNAMODB_TASKS_TABLE: !Ref BulkCertificatesTaskTable
+          BULKCERTS_EVENTS_REQUEST_TOPIC: !Ref CertificatesRequestSnsTopic
+      Tracing: Active
+    DependsOn:
+      - SnsLambdaExecutionRole
+
+  CertificatesRequestSnsTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      KmsMasterKeyId: !Ref KmsKeyId
+
+  CertificatesRequestSnsTopicSubscription:
+    Type: AWS::SNS::Subscription   
+    Properties:
+      TopicArn: !Ref CertificatesRequestSnsTopic
+      Endpoint: !GetAtt SnsLambdaFunction.Arn
+      Protocol: "lambda"
+    DependsOn:
+      - SnsLambdaFunction
+
+  SnsLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt SnsLambdaFunction.Arn
+      Action: 'lambda:InvokeFunction'
+      Principal: sns.amazonaws.com
+      SourceArn: !Ref CertificatesRequestSnsTopic
+
+  BulkCertificatesTaskTable:
+    Type: AWS::DynamoDB::Table
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W73
+            reason: "Billing mode can be decided by the customer"
+    Properties:
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      SSESpecification:
+        Fn::If:
+          - KmsKeyIdProvided
+          - KMSMasterKeyId: !Ref KmsKeyId
+            SSEEnabled: true
+            SSEType: KMS
+          - Ref: AWS::NoValue
+      AttributeDefinitions: 
+        - 
+          AttributeName: taskId
+          AttributeType: S
+        - 
+          AttributeName: chunkId
+          AttributeType: N
+      KeySchema: 
+        - 
+          AttributeName: taskId
+          KeyType: HASH
+        - 
+          AttributeName: chunkId
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        -
+          IndexName: 'byChunkId'
+          KeySchema: 
+            - 
+              AttributeName: chunkId
+              KeyType: HASH
+            - 
+              AttributeName: taskId
+              KeyType: RANGE
+          Projection:
+            ProjectionType: KEYS_ONLY
+          ProvisionedThroughput: 
+            ReadCapacityUnits: 5
+            WriteCapacityUnits: 5
+      ProvisionedThroughput: 
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+
+
+Outputs:
+  RestLambdaFunctionArn:
+    Description: Bulk Certs API Lambda Function
+    Value: !Sub '${ApiLambdaFunction.Arn}'
+    Export:
+        Name: !Sub 'cdf-bulkcerts-${Environment}-restApiFunctionArn'
+  SnsLambdaFunctionArn:
+    Description: Bulk Certs SNS Lambda Function
+    Value: !Sub '${SnsLambdaFunction.Arn}'
+    Export:
+        Name: !Sub 'cdf-bulkcerts-${Environment}-snsLambdaFunctionArn'
+  CertificatesRequestSnsTopic:
+    Description: SNS topic
+    Value: !Ref CertificatesRequestSnsTopic
+    Export:
+      Name: !Sub 'cdf-bulkcerts-${Environment}-certificatesRequestSnsTopic'
+  RestApiFunctionName:
+    Description: Asset library lambda function name
+    Value: !Ref ApiLambdaFunction
+    Export:
+      Name: !Sub "cdf-bulkcerts-${Environment}-restApiFunctionName"
+  ApiGatewayUrl:
+    Description: URL for application
+    Value: !Sub 'https://${ApiGatewayApi}.execute-api.${AWS::Region}.amazonaws.com/Prod'
+    Export:
+      Name: !Sub 'cdf-bulkcerts-${Environment}-apigatewayurl'
+  ApiGatewayHost:
+    Description: Host for application
+    Value: !Sub '${ApiGatewayApi}.execute-api.${AWS::Region}.amazonaws.com'
+    Export:
+      Name: !Sub 'cdf-bulkcerts-${Environment}-apigatewayhost'

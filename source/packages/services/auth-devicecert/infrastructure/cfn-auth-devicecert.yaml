@@ -1,0 +1,125 @@
+#-----------------------------------------------------------------------------------------------------------------------
+#   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance
+#  with the License. A copy of the License is located at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES
+#  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions
+#  and limitations under the License.
+#-----------------------------------------------------------------------------------------------------------------------
+---
+AWSTemplateFormatVersion : '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Description: CDF Custom Auth
+
+Parameters:
+ 
+  KmsKeyId:
+    Description: The KMS key ID used to encrypt SSM parameters
+    Type: String
+    MinLength: 1
+  OpenSslLambdaLayerArn:
+    Description: OpenSSL lambda layer ARN
+    Type: String
+    MinLength: 1
+
+Resources:
+  CustAuthLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'cdf-deviceCert-auth-${Environment}'
+      CodeUri: ../bundle.zip
+      Handler: packages/services/auth-devicecert/dist/index.handler
+
+      Layers:
+        - !Ref OpenSslLambdaLayerArn
+      MemorySize: 512
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Runtime: nodejs14.x
+      Timeout: 30
+      Environment:
+        Variables:
+          NODE_CONFIG_DIR: 'packages/services/auth-devicecert/src/config'
+      Tracing: Active
+
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: sts:AssumeRole
+      Path: "/"
+      ManagedPolicyArns:
+        - !Ref SSMPolicy
+        - !Ref LambdaExecutionPolicy
+        - arn:aws:iam::aws:policy/AWSLambdaExecute
+        - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
+    DependsOn:
+      - SSMPolicy    
+
+  SSMPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: "cdf-customauth policy for accessing SSM and KMS"
+      Path: "/"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Action:
+              - 'ssm:GetParameter*'
+            Effect: Allow
+            Resource: !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/cdf-rootca-pem"
+          - Action:
+              - 'kms:Decrypt'
+            Effect: Allow
+            Resource: !Sub "arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/${KmsKeyId}"
+
+  LambdaExecutionPolicy:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      Description: "cdf-auth policy"
+      Path: "/"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Action:
+              - 'iot:ListCACertificates'
+            Effect: Allow
+            Resource: !Sub 'arn:aws:iot:${AWS::Region}:${AWS::AccountId}:cert/*'
+
+  
+  ApiGwAuthInvokeRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: 
+            - lambda.amazonaws.com
+            - apigateway.amazonaws.com
+          Action: sts:AssumeRole
+      Policies:
+      - PolicyName: apiGwLambdaInvoke
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action: lambda:invokeFunction
+            Resource: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:*'
+
+Outputs:
+  CustomAuthLambdaArn:
+    Description: Custom Auth Lambda Arn
+    Value: !Sub "${CustAuthLambdaFunction.Arn}"
+    Export: 
+      Name: !Sub "${AWS::StackName}-CustAuthLambdaArn"

@@ -1,0 +1,11 @@
+{
+  "name": "@cdf/greengrass-deployment-client",
+  "entries": [
+    {
+      "version": "1.1.0",
+      "tag": "@cdf/greengrass-deployment-client_v1.1.0",
+      "date": "Wed, 21 Jul 2021 16:46:57 GMT",
+      "comments": {}
+    }
+  ]
+}

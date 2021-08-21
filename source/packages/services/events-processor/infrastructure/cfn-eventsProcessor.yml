@@ -1,0 +1,803 @@
+#-----------------------------------------------------------------------------------------------------------------------
+#   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance
+#  with the License. A copy of the License is located at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES
+#  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions
+#  and limitations under the License.
+#-----------------------------------------------------------------------------------------------------------------------
+AWSTemplateFormatVersion : '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Description: CDF Events Processor Service
+
+Globals:
+  Api:
+    OpenApiVersion: 3.0.1
+
+Parameters:
+  Environment:
+    Description:  Name of environment.  Used to name the created resources.
+    Type: String
+    MinLength: 1
+
+  ApplicationConfigurationOverride:
+    Description: This allows you to override any configuration application configuration. Must be a JSON formatted string. Any configurations contained in this will override the configurations found and merged from the config files.
+    Type: String
+    MinLength: 1
+
+  TemplateSnippetS3UriBase:
+    Description: |
+      S3 uri of directory where template snippets are stored for the account.
+    Type: String
+    MinLength: 1
+
+  AuthType:
+    Description: Authorization type to apply to the API gateway endpoints
+    Type: String
+    Default: None
+    AllowedValues:
+      - None
+      - Private
+      - Cognito
+      - LambdaRequest
+      - LambdaToken
+      - ApiKey
+      - IAM
+    MinLength: 1
+
+  ApiGatewayDefinitionTemplate:
+    Description: |
+      Name of the API Gateway Cloudformation definition along with the authorization method to use.  Use one of the provided
+      templates to implement no auth, private, api key, lambda request, lamdba token, or Cognito auth, or modify one to meet your own
+      authentization requirements.  The template must exist within the provided TemplateSnippetS3UriBase location.
+    Type: String
+    MinLength: 1
+
+  VpcId:
+    Description: ID of VPC to deploy the API into. Only required if AuthType = 'Private'.
+    Type: String
+  CDFSecurityGroupId:
+    Description: ID of an existing CDF security group to deploy the API into. Only required if AuthType = 'Private'.
+    Type: String
+  PrivateSubNetIds:
+    Description: Comma delimited list of private subnetIds to deploy the API into. Only required if AuthType = 'Private'.
+    Type: CommaDelimitedList
+  PrivateApiGatewayVPCEndpoint:
+    Description: VPC endpoint. Only required if AuthType = 'Private'.
+    Type: String
+
+  CognitoUserPoolArn:
+    Description: Cognito user pool arn.  Only required if AuthType is set to 'Cognito'.
+    Type: String
+    Default: 'N/A'
+
+  AuthorizerFunctionArn:
+    Description: Lambda authorizer function arn.  Only required if AuthType is set to 'LambdaRequest' or 'LambdaToken'.
+    Type: String
+    Default: 'N/A'
+
+  DAXInstanceType:
+    Type: String
+    Default: dax.t2.medium
+    AllowedValues: 
+      - dax.r3.large
+      - dax.r3.xlarge
+      - dax.r3.2xlarge
+      - dax.r3.4xlarge
+      - dax.r3.8xlarge
+      - dax.r4.large
+      - dax.r4.xlarge
+      - dax.r4.2xlarge
+      - dax.r4.4xlarge
+      - dax.r4.8xlarge
+      - dax.r4.16xlarge
+      - dax.t2.small
+      - dax.t2.medium
+    Description: The instance type for the DynamoDB DAX instance
+
+  CustomResourceLambdaArn:
+    Description: Custom resource lambda arn
+    Type: String
+    MinLength: 1
+
+  KmsKeyId:
+    Description: The KMS key ID used to encrypt DynamoDB.
+    Type: String
+
+  EnableApiGatewayAccessLogs:
+    Description: Enales API gateway Access Logging, defaults to false if not specified.
+    Type: String
+    Default: 'false'
+    AllowedValues:
+      - 'true'
+      - 'false'
+    MinLength: 1
+
+Conditions:
+
+  DeployInVPC: !Not [ !Equals [ !Ref VpcId, 'N/A' ] ]
+  DeployWithLambdaAuth: !Or [ !Equals [ !Ref AuthType, 'LambdaRequest' ], !Equals [ !Ref AuthType, 'LambdaToken' ] ]
+  KmsKeyIdProvided: !Not [ !Equals [ !Ref KmsKeyId, "" ] ]
+  EnableApiGatewayAccessLogs: !Equals [ !Ref EnableApiGatewayAccessLogs, "true"]
+
+Resources:
+
+  ApiGatewayApi:
+    'Fn::Transform':
+      Name: 'AWS::Include'
+      Parameters:
+        Location: !Sub "${TemplateSnippetS3UriBase}${ApiGatewayDefinitionTemplate}"
+    DependsOn:
+      - RESTLambdaFunction
+
+  ApiGatewayAuthorizerInvokeRole:
+    Condition: DeployWithLambdaAuth
+    'Fn::Transform':
+      Name: 'AWS::Include'
+      Parameters:
+        Location: !Sub "${TemplateSnippetS3UriBase}cfn-role-lambdaRequestAuthInvokerRole.yaml"
+    DependsOn:
+      - RESTLambdaFunction
+
+  ApiGatewayAccessLogGroup:
+    Condition: EnableApiGatewayAccessLogs
+    Type: 'AWS::Logs::LogGroup'
+    Properties:
+      LogGroupName: !Sub 'cdf-eventsprocessor-apigatewayaccesslogs-${Environment}'
+
+  KmsPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Condition: KmsKeyIdProvided
+    Properties:
+      Description: "cdf-events-processor policy for accessing KMS"
+      Path: "/cdf/events-processor/"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Action:
+              - 'kms:Decrypt'
+            Effect: Allow
+            Resource: !Sub "arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/${KmsKeyId}"
+
+  ApplicationPolicies:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W13
+            reason: "sns access to manage topics, subscriptions"
+    Properties:
+      Description: 'cdf-events-processor application policies'
+      Path: "/"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:          
+          - Sid: "iampassrole"
+            Action:
+              - "iam:PassRole"
+            Effect: Allow
+            Resource: !Sub "arn:aws:iam::${AWS::AccountId}:role/cdf-events-*"
+          - Sid: "dynamodbStreams"
+            Action:
+              - dynamodb:DescribeStream
+              - dynamodb:DescribeTable
+              - dynamodb:GetRecords
+              - dynamodb:GetShardIterator
+              - dynamodb:ListStreams
+              - dynamodb:UpdateTable
+            Effect: Allow
+            # As the events-processor can enable streams from any table, we need to leave this open
+            Resource: '*'
+          - Sid: "dynamodb"
+            Action:
+              - dynamodb:BatchGetItem
+              - dynamodb:BatchWriteItem
+              - dynamodb:PutItem
+              - dynamodb:Query
+              - dynamodb:GetItem
+              - dynamodb:DeleteItem
+              - dynamodb:UpdateItem
+            Effect: Allow
+            Resource: 
+              - !GetAtt EventConfigTable.Arn
+              - "Fn::Join":
+                  - "/"
+                  - - !GetAtt EventConfigTable.Arn
+                    - "index/*"
+              - !GetAtt EventNotificationsTable.Arn
+              - "Fn::Join":
+                  - "/"
+                  - - !GetAtt EventNotificationsTable.Arn
+                    - "index/*"
+          - Sid: "DAX"
+            Action:
+                - "dax:BatchGetItem"
+                - "dax:BatchWriteItem"
+                - "dax:ConditionCheckItem"
+                - "dax:DeleteItem"
+                - "dax:PutItem"
+                - "dax:GetItem"
+                - "dax:Query"
+                - "dax:Scan"
+                - "dax:UpdateItem"
+            Effect: Allow
+            Resource: !GetAtt DAXCluster.Arn
+          - Sid: "lambda"
+            Action:
+              - "lambda:AddPermission"
+              - "lambda:CreateEventSourceMapping"
+              - "lambda:DeleteEventSourceMapping"
+              - "lambda:ListEventSourceMappings"
+              - "lambda:RemovePermission"
+            Effect: Allow
+            Resource: '*'
+          - Sid: "snsTopics"
+            Action:
+              - "sns:CreateTopic"
+              - "sns:DeleteTopic"
+              - "sns:GetTopicAttributes"
+              - "sns:ListSubscriptionsByTopic"
+              - "sns:Subscribe"
+            Effect: Allow
+            Resource: 
+            - !Sub "arn:aws:sns:${AWS::Region}:${AWS::AccountId}:cdf-events-*"
+          - Sid: "snsAll"
+            Action:
+              - "sns:Unsubscribe"
+              - "sns:CreatePlatformEndpoint"
+              - "sns:GetEndpointAttributes"
+            Effect: Allow
+            Resource: '*'
+          - Sid: "iot"
+            Action:
+              - "iot:CreateTopicRule"
+              - "iot:DeleteTopicRule"
+            Effect: Allow
+            Resource: 
+            - !Sub "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:rule/cdfEvents_*"
+
+  DynamoDBStreamLambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          Effect: Allow
+          Principal:
+            Service:
+              - lambda.amazonaws.com
+              - iot.amazonaws.com
+          Action: sts:AssumeRole
+      Path: "/"
+      ManagedPolicyArns:
+        - !Ref ApplicationPolicies
+        - !If [ KmsKeyIdProvided, !Ref KmsPolicy, !Ref "AWS::NoValue" ]
+        - arn:aws:iam::aws:policy/AWSLambdaExecute
+        - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
+    DependsOn:
+      - ApplicationPolicies
+      - KmsPolicy
+
+  DynamoDBStreamLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'cdf-eventsprocessor-ddbStream-${Environment}'
+      CodeUri: ../bundle.zip
+      Handler: packages/services/events-processor/dist/lambda_proxy_ddbstream.handler
+      MemorySize: 512
+      Role: !GetAtt DynamoDBStreamLambdaExecutionRole.Arn
+      Runtime: nodejs14.x
+      Timeout: 30
+      Environment:
+        Variables:
+          AWS_ACCOUNT_ID: !Ref AWS::AccountId
+          NODE_CONFIG_DIR: 'packages/services/events-processor/dist/config'
+          NODE_CONFIG: !Ref ApplicationConfigurationOverride
+          EVENTSPROCESSOR_AWS_DYNAMODB_TABLES_EVENTCONFIG_NAME: !Ref EventConfigTable
+          EVENTSPROCESSOR_AWS_DYNAMODB_TABLES_EVENTNOTIFICATIONS_NAME: !Ref EventNotificationsTable
+          EVENTSPROCESSOR_AWS_DYNAMODB_DAX_ENDPOINTS: !GetAtt DAXCluster.ClusterDiscoveryEndpoint
+          EVENTSPROCESSOR_AWS_IOT_ENDPOINT: !GetAtt IotEndpoint.address
+      Tracing: Active
+
+  LambdaInvokeExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          Effect: Allow
+          Principal:
+            Service:
+              - lambda.amazonaws.com
+              - iot.amazonaws.com
+          Action: sts:AssumeRole
+      Path: "/"
+      ManagedPolicyArns:
+        - !Ref ApplicationPolicies
+        - !If [ KmsKeyIdProvided, !Ref KmsPolicy, !Ref "AWS::NoValue" ]
+        - arn:aws:iam::aws:policy/AWSLambdaExecute
+        - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
+    DependsOn:
+      - ApplicationPolicies
+      - KmsPolicy
+
+  RESTLambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          Effect: Allow
+          Principal:
+            Service:
+              - lambda.amazonaws.com
+              - iot.amazonaws.com
+          Action: sts:AssumeRole
+      Path: "/"
+      ManagedPolicyArns:
+        - !Ref ApplicationPolicies
+        - !If [ KmsKeyIdProvided, !Ref KmsPolicy, !Ref "AWS::NoValue" ]
+        - arn:aws:iam::aws:policy/AWSLambdaExecute
+        - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
+    DependsOn:
+      - ApplicationPolicies
+      - KmsPolicy
+
+  LambdaInvokeLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'cdf-eventsprocessor-invoke-${Environment}'
+      CodeUri: ../bundle.zip
+      Handler: packages/services/events-processor/dist/lambda_proxy_invoke.handler
+      MemorySize: 512
+      Role: !GetAtt LambdaInvokeExecutionRole.Arn
+      Runtime: nodejs14.x
+      Timeout: 30
+      Environment:
+        Variables:
+          AWS_ACCOUNT_ID: !Ref AWS::AccountId
+          NODE_CONFIG_DIR: 'packages/services/events-processor/dist/config'
+          NODE_CONFIG: !Ref ApplicationConfigurationOverride
+          EVENTSPROCESSOR_AWS_DYNAMODB_TABLES_EVENTCONFIG_NAME: !Ref EventConfigTable
+          EVENTSPROCESSOR_AWS_DYNAMODB_TABLES_EVENTNOTIFICATIONS_NAME: !Ref EventNotificationsTable
+          EVENTSPROCESSOR_AWS_DYNAMODB_DAX_ENDPOINTS: !GetAtt DAXCluster.ClusterDiscoveryEndpoint
+          EVENTSPROCESSOR_AWS_IOT_ENDPOINT: !GetAtt IotEndpoint.address
+      Tracing: Active
+
+  RESTLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'cdf-eventsprocessor-rest-${Environment}'
+      CodeUri: ../bundle.zip
+      Handler: packages/services/events-processor/dist/lambda_proxy_restapi.handler
+
+      MemorySize: 256
+      Role: !GetAtt RESTLambdaExecutionRole.Arn
+      Runtime: nodejs14.x
+      Timeout: 30
+      Environment:
+        Variables:
+          AWS_ACCOUNT_ID: !Ref AWS::AccountId
+          NODE_CONFIG_DIR: 'packages/services/events-processor/dist/config'
+          NODE_CONFIG: !Ref ApplicationConfigurationOverride
+          EVENTSPROCESSOR_AWS_DYNAMODB_TABLES_EVENTCONFIG_NAME: !Ref EventConfigTable
+          EVENTSPROCESSOR_AWS_DYNAMODB_TABLES_EVENTNOTIFICATIONS_NAME: !Ref EventNotificationsTable
+          EVENTSPROCESSOR_AWS_DYNAMODB_DAX_ENDPOINTS: !GetAtt DAXCluster.ClusterDiscoveryEndpoint
+          EVENTSPROCESSOR_AWS_LAMBDA_DYNAMODBSTREAM_NAME: !Ref DynamoDBStreamLambdaFunction
+          EVENTSPROCESSOR_AWS_LAMBDA_LAMBDAINVOKE_ARN: !GetAtt LambdaInvokeLambdaFunction.Arn
+          EVENTSPROCESSOR_AWS_IOT_ENDPOINT: !GetAtt IotEndpoint.address
+          EVENTSPROCESSOR_AWS_SQS_ASYNCPROCESSING: !Ref AsyncProcessingQueue
+      Tracing: Active
+
+      VpcConfig:
+        Fn::If:
+          - DeployInVPC
+          - SubnetIds: !Ref PrivateSubNetIds
+            SecurityGroupIds:
+              - !Ref CDFSecurityGroupId
+          - Ref: AWS::NoValue
+
+      Events:
+        ProxyApiRoot:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiGatewayApi
+            Path: /
+            Method: ANY
+        ProxyApiGreedy:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiGatewayApi
+            Path: /{proxy+}
+            Method: ANY
+
+  AsyncProcessingLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          Effect: Allow
+          Principal:
+            Service:
+              - lambda.amazonaws.com
+              - iot.amazonaws.com
+          Action: sts:AssumeRole
+      Path: "/"
+      ManagedPolicyArns:
+        - !Ref ApplicationPolicies
+        - arn:aws:iam::aws:policy/AWSLambdaExecute
+        - !If [ KmsKeyIdProvided, !Ref KmsPolicy, !Ref "AWS::NoValue" ]
+        - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
+      Policies:
+        - PolicyName: app_policies
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: sqs
+                Action:
+                  - sqs:ChangeMessageVisibility
+                  - sqs:DeleteMessage
+                  - sqs:GetQueueAttributes
+                  - sqs:GetQueueUrl
+                  - sqs:ReceiveMessage
+                  - sqs:SendMessage
+                Effect: Allow
+                Resource:
+                  - !GetAtt AsyncProcessingQueue.Arn
+                  - !GetAtt DlqQueue.Arn
+    DependsOn:
+      - ApplicationPolicies
+      - KmsPolicy
+
+  AsyncProcessingLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../bundle.zip
+      Handler: packages/services/events-processor/dist/lambda_proxy_sqs.handler
+
+      MemorySize: 512
+      Role: !GetAtt AsyncProcessingLambdaRole.Arn
+      Runtime: nodejs14.x
+      Timeout: 900
+      Environment:
+        Variables:
+          NODE_CONFIG_DIR: 'packages/services/events-processor/dist/config'
+          NODE_CONFIG: !Ref ApplicationConfigurationOverride
+          EVENTSPROCESSOR_AWS_DYNAMODB_TABLES_EVENTCONFIG_NAME: !Ref EventConfigTable
+          EVENTSPROCESSOR_AWS_DYNAMODB_TABLES_EVENTNOTIFICATIONS_NAME: !Ref EventNotificationsTable
+          EVENTSPROCESSOR_AWS_DYNAMODB_DAX_ENDPOINTS: !GetAtt DAXCluster.ClusterDiscoveryEndpoint
+          EVENTSPROCESSOR_AWS_LAMBDA_DYNAMODBSTREAM_NAME: !Ref DynamoDBStreamLambdaFunction
+          EVENTSPROCESSOR_AWS_LAMBDA_LAMBDAINVOKE_ARN: !GetAtt LambdaInvokeLambdaFunction.Arn
+          EVENTSPROCESSOR_AWS_SQS_ASYNCPROCESSING: !Ref AsyncProcessingQueue
+      Tracing: Active
+
+      VpcConfig:
+        Fn::If:
+          - DeployInVPC
+          - SubnetIds: !Ref PrivateSubNetIds
+            SecurityGroupIds:
+              - !Ref CDFSecurityGroupId
+          - Ref: AWS::NoValue
+
+      Events:
+        AsyncProcessingQueue:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt AsyncProcessingQueue.Arn
+            BatchSize: 5
+
+  EventConfigTable:
+    Type: AWS::DynamoDB::Table
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W28
+            reason: "safely naming this resources to be unique by environment"
+          - id: W73
+            reason: "Can be decided by the customer, to specify the billing mode"
+    Properties:
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      SSESpecification:
+        Fn::If:
+          - KmsKeyIdProvided
+          - KMSMasterKeyId: !Ref KmsKeyId
+            SSEEnabled: true
+            SSEType: KMS
+          - Ref: AWS::NoValue
+      TableName: !Sub 'cdf-eventConfig-${Environment}'
+      KeySchema: 
+        - 
+          AttributeName: pk
+          KeyType: HASH
+        - 
+          AttributeName: sk
+          KeyType: RANGE
+          
+      AttributeDefinitions: 
+        - 
+          AttributeName: pk
+          AttributeType: S
+        - 
+          AttributeName: sk
+          AttributeType: S
+        - 
+          AttributeName: gsi1Sort
+          AttributeType: S
+        - 
+          AttributeName: gsi2Key
+          AttributeType: S
+        - 
+          AttributeName: gsi2Sort
+          AttributeType: S
+
+      ProvisionedThroughput: 
+        ReadCapacityUnits: "5"
+        WriteCapacityUnits: "5"
+
+      GlobalSecondaryIndexes:
+        -
+          IndexName: 'sk-gsi1Sort-index'
+          KeySchema: 
+            - 
+              AttributeName: sk
+              KeyType: HASH
+            - 
+              AttributeName: gsi1Sort
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 5
+            WriteCapacityUnits: 5
+        -
+          ### NOTE: this GSI is longer used, replaced by 'gsi2Key-gsi2Sort-index', but has to remain for backwards compatibility
+          ### as a cloudformation update may only contain 1 GSI add/delete/change per cloudformation update (cannot handle the deletion
+          ### of this one at the same time as the creation of the other. )
+          IndexName: 'gsi2Key-sk-index'
+          KeySchema: 
+            - 
+              AttributeName: "gsi2Key"
+              KeyType: "HASH"
+            - 
+              AttributeName: "sk"
+              KeyType: "RANGE"
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: "5"
+            WriteCapacityUnits: "5"
+        -
+          IndexName: 'gsi2Key-gsi2Sort-index'
+          KeySchema: 
+            - 
+              AttributeName: gsi2Key
+              KeyType: HASH
+            - 
+              AttributeName: gsi2Sort
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 5
+            WriteCapacityUnits: 5
+
+  EventNotificationsTable:
+    Type: AWS::DynamoDB::Table
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W28
+            reason: "safely naming this resources to be unique by environment"
+          - id: W73
+            reason: "Can be decided by the customer, to specify the billing mode"
+    Properties:
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      SSESpecification:
+        Fn::If:
+          - KmsKeyIdProvided
+          - KMSMasterKeyId: !Ref KmsKeyId
+            SSEEnabled: true
+            SSEType: KMS
+          - Ref: AWS::NoValue
+      TableName: !Sub 'cdf-eventNotifications-${Environment}'
+      KeySchema: 
+        - 
+          AttributeName: pk
+          KeyType: HASH
+        - 
+          AttributeName: time
+          KeyType: RANGE
+      AttributeDefinitions: 
+        - 
+          AttributeName: pk
+          AttributeType: S
+        - 
+          AttributeName: time
+          AttributeType: S
+        - 
+          AttributeName: userId
+          AttributeType: S
+        - 
+          AttributeName: gsi2Sort
+          AttributeType: S
+      ProvisionedThroughput: 
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      GlobalSecondaryIndexes:
+        -
+          IndexName: 'userId-gsi2Sort-index'
+          KeySchema: 
+            - 
+              AttributeName: userId
+              KeyType: HASH
+            - 
+              AttributeName: gsi2Sort
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 5
+            WriteCapacityUnits: 5
+        -
+          IndexName: 'userId-time-index'
+          KeySchema: 
+            - 
+              AttributeName: userId
+              KeyType: HASH
+            - 
+              AttributeName: time
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 5
+            WriteCapacityUnits: 5
+      StreamSpecification:
+        StreamViewType: NEW_IMAGE
+
+  DAXCluster:
+    Type: AWS::DAX::Cluster
+    Properties:
+      Description: Event notifications cluster
+      IAMRoleARN: !GetAtt DAXServiceRole.Arn
+      NodeType: !Ref DAXInstanceType
+      SubnetGroupName: !If [ DeployInVPC, !Sub 'cdf-eventNotifications-${Environment}', !Ref 'AWS::NoValue' ]
+      ReplicationFactor: 1
+      SSESpecification:
+        SSEEnabled: 'true'
+    DependsOn:
+      - DAXServiceRole
+
+  DAXSubnetGroup:
+    Type: AWS::DAX::SubnetGroup
+    Condition: DeployInVPC
+    Properties:
+      Description: cdf-events-processor DAX subnet group
+      SubnetGroupName: !Sub 'cdf-eventNotifications-${Environment}'
+      SubnetIds: !Ref PrivateSubNetIds
+
+  DAXServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: 
+              - dax.amazonaws.com
+          Action: sts:AssumeRole
+      Path: "/"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+    DependsOn:
+      - DAXPolicies
+
+  DAXPolicies:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      Description: 'cdf-events-processor DAX policies'
+      Path: "/"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: dynamodb
+            Effect: Allow
+            Action:
+              - dynamodb:Query
+              - dynamodb:Scan
+              - dynamodb:GetItem
+              - dynamodb:PutItem
+              - dynamodb:UpdateItem
+              - dynamodb:DescribeTable
+            Resource: 
+              - !GetAtt EventConfigTable.Arn
+              - "Fn::Join":
+                  - "/"
+                  - - !GetAtt EventConfigTable.Arn
+                    - "index/*"
+
+  IotEndpoint:
+    Type: Custom::IotEndpoint
+    Version: 1.0
+    Properties:
+      ServiceToken:
+        !Ref CustomResourceLambdaArn
+
+  AsyncProcessingQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      MessageRetentionPeriod: 604800
+      VisibilityTimeout: 960
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt DlqQueue.Arn
+        maxReceiveCount: 10
+      KmsMasterKeyId:
+        Fn::If:
+          - KmsKeyIdProvided
+          - Ref: KmsKeyId
+          - Ref: AWS::NoValue
+
+  DlqQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      MessageRetentionPeriod: 1209600
+
+Outputs:
+  RestApiFunctionName:
+    Description: Events REST API lambda function name
+    Value: !Ref RESTLambdaFunction
+    Export:
+      Name: !Sub "cdf-eventsProcessor-${Environment}-restApiFunctionName"
+  ApiGatewayUrl:
+    Description: Events REST API URL
+    Value: !Sub 'https://${ApiGatewayApi}.execute-api.${AWS::Region}.amazonaws.com/Prod'
+    Export:
+      Name: !Sub 'cdf-eventsProcessor-${Environment}-apigatewayurl'
+  ApiGatewayHost:
+    Description: Events REST API host
+    Value: !Sub '${ApiGatewayApi}.execute-api.${AWS::Region}.amazonaws.com'
+    Export:
+      Name: !Sub 'cdf-eventsProcessor-${Environment}-apigatewayhost'
+  DAXClusterEndpoint:
+    Description: DAX Cliuter EndpointConfiguration
+    Value: !GetAtt DAXCluster.ClusterDiscoveryEndpoint
+    Export:
+      Name: !Sub 'cdf-eventsProcessor-${Environment}-DAXClusterEndpoint'
+  EventNotificationsTable:
+    Description: Event Notifications database table
+    Value: !Ref EventNotificationsTable
+    Export:
+      Name: !Sub 'cdf-eventsProcessor-${Environment}-EventNotificationsTable'
+  EventNotificationsTableArn:
+    Description: Event Notifications database table arn
+    Value: !GetAtt EventNotificationsTable.Arn
+    Export:
+      Name: !Sub 'cdf-eventsProcessor-${Environment}-EventNotificationsTableArn'
+  EventNotificationsStreamArn:
+    Description: Event Notifications database table stream
+    Value: !GetAtt EventNotificationsTable.StreamArn
+    Export:
+      Name: !Sub 'cdf-eventsProcessor-${Environment}-EventNotificationsStreamArn'
+  EventConfigTable:
+    Description: Event Config database table
+    Value: !Ref EventConfigTable
+    Export:
+      Name: !Sub 'cdf-eventsProcessor-${Environment}-EventConfigTable'
+  EventConfigTableArn:
+    Description: Event Config database table Arn
+    Value: !GetAtt EventConfigTable.Arn
+    Export:
+      Name: !Sub 'cdf-eventsProcessor-${Environment}-EventConfigTableArn'

@@ -1,0 +1,40 @@
+{
+  "name": "@cdf/auth-jwt",
+  "entries": [
+    {
+      "version": "2.0.2",
+      "tag": "@cdf/auth-jwt_v2.0.2",
+      "date": "Wed, 11 Aug 2021 01:26:49 GMT",
+      "comments": {}
+    },
+    {
+      "version": "5.1.0",
+      "tag": "@cdf/bulkcerts_v5.1.0",
+      "date": "Thu, 29 Jul 2021 00:16:37 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "adding middleware for express based services to remove path from request url to handle custom domain"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@cdf/express-middleware\" from `^2.0.0` to `^2.1.0`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "5.0.5",
+      "tag": "@cdf/bulkcerts_v5.0.5",
+      "date": "Wed, 21 Jul 2021 16:46:57 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "The generated lambda bundle size has been reduced."
+          }
+        ]
+      }
+    }
+  ]
+}

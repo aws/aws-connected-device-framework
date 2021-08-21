@@ -1,0 +1,34 @@
+{
+  "name": "@cdf/assetlibrary-export",
+  "entries": [
+    {
+      "version": "2.0.1",
+      "tag": "@cdf/assetlibrary-export_v2.0.1",
+      "date": "Fri, 20 Aug 2021 16:07:58 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix broken type annotation"
+          }
+        ]
+      }
+    },
+    {
+      "version": "2.0.0",
+      "tag": "@cdf/assetlibrary-export_v2.0.0",
+      "date": "Wed, 11 Aug 2021 01:26:49 GMT",
+      "comments": {
+        "major": [
+          {
+            "comment": "new service added"
+          }
+        ],
+        "patch": [
+          {
+            "comment": "Fixed deployment issue due to inconsistent naming of the service"
+          }
+        ]
+      }
+    }
+  ]
+}

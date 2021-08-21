@@ -1,0 +1,17 @@
+{
+  "name": "cdf",
+  "author": "Dean Hart",
+  "scripts": {},
+  "engines": {
+    "node": "=14",
+    "pnpm": "=6"
+  },
+  "private": true,
+  "husky": {
+    "hooks": {
+      "pre-commit": "rush lint",
+      "prepare-commit-msg": "exec < /dev/tty && git cz --hook || true",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  }
+}

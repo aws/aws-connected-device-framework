@@ -1,0 +1,29 @@
+{
+  "name": "@cdf/bulkcerts",
+  "entries": [
+    {
+      "version": "5.1.1",
+      "tag": "@cdf/bulkcerts_v5.1.1",
+      "date": "Wed, 11 Aug 2021 01:26:49 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "opensource related minor changes"
+          }
+        ]
+      }
+    },
+    {
+      "version": "3.1.1",
+      "tag": "@cdf/certificate-activator_v3.1.1",
+      "date": "Wed, 21 Jul 2021 16:46:57 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "The generated lambda bundle size has been reduced."
+          }
+        ]
+      }
+    }
+  ]
+}

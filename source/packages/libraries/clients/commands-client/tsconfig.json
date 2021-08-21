@@ -1,0 +1,22 @@
+{
+    "extends": "../../tsconfig.libraries.json",
+    "compilerOptions": {
+        "outDir": "dist",
+        "rootDir": "src"
+    },
+    "references": [
+        {
+            "path": "../../config/config-inject"
+        },
+        {
+            "path": "../../core/lambda-invoke"
+        }
+    ],
+    "include": [
+        "src"
+    ],
+    "exclude": [
+        "node_modules",
+        "dist"
+    ]
+}

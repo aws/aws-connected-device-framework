@@ -1,0 +1,322 @@
+#-----------------------------------------------------------------------------------------------------------------------
+#   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance
+#  with the License. A copy of the License is located at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES
+#  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions
+#  and limitations under the License.
+#-----------------------------------------------------------------------------------------------------------------------
+AWSTemplateFormatVersion : '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Description: CDF Asset Library Export Service
+
+Globals:
+  Api:
+    OpenApiVersion: 3.0.1
+
+Parameters:
+  ApplicationConfigurationOverride:
+    Description: This allows you to override any configuration application configuration. Must be a JSON formatted string. Any configurations contained in this will override the configurations found and merged from the config files.
+    Type: String
+    MinLength: 1
+
+  Environment:
+    Description:  Name of environment.  Used to name the created resources.
+    Type: String
+    MinLength: 1
+
+  VpcId:
+    Description: ID of VPC to deploy the Asset Library into
+    Type: String
+
+  CDFSecurityGroupId:
+    Description: ID of an existing CDF security group to deploy the Asset Library into (required if running full mode, or private API)
+    Type: String
+
+  PrivateSubNetIds:
+    Description: Comma delimited list of private subnetIds to deploy the Asset Library into
+    Type: CommaDelimitedList
+
+  BucketName:
+    Description: Name of bucket to store asset library services config.
+    Type: String
+    MinLength: 1
+
+  NeptuneURL:
+    Description: Neptune Url
+    Type: String
+    Default: ''
+
+  KmsKeyId:
+    Description: The KMS key ID used to encrypt SSM parameters, DynamoDB and SNS Topics
+    Type: String
+    MinLength: 1
+
+  ExportETLMaxConcurrency:
+    Description: Max Concurrecny for ETL Execution workflow.
+    Type: String
+    MinLength: 1
+    Default: 10
+
+Conditions:
+
+  DeployInVPC: !Not [ !Equals [ !Ref VpcId, 'N/A' ] ]
+
+Resources:
+
+  ApplicationPolicies:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W13
+            reason: "This Policy allows lambda function to put Objects in S3 bucket"
+    Properties:
+      Description: 'cdf-assetlibrary-export application policies'
+      Path: "/cdf/assetlibrary-export/applicationpolicies/"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - 's3:Put*'
+              - 's3:Get*'
+              - 's3:DeleteObject'
+            Resource: "arn:aws:s3:::${BucketName}/*"
+
+
+  BatchExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: sts:AssumeRole
+      Path: "/cdf/assetlibrary-export/"
+      ManagedPolicyArns:
+        - !Ref ApplicationPolicies
+        - arn:aws:iam::aws:policy/AWSLambdaExecute
+        - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
+    DependsOn:
+      - ApplicationPolicies
+
+  ETLExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: sts:AssumeRole
+      Path: "/cdf/assetlibrary-export/"
+      ManagedPolicyArns:
+        - !Ref ApplicationPolicies
+        - arn:aws:iam::aws:policy/AWSLambdaExecute
+        - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
+    DependsOn:
+      - ApplicationPolicies
+
+  BatchLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'cdf-assetLibrary-export-batch-${Environment}'
+      CodeUri: ../bundle.zip
+      Handler: packages/services/assetlibrary-export/dist/lambda_sf_batch_proxy.export_handler
+      MemorySize: 512
+      Role: !GetAtt BatchExecutionRole.Arn
+      Runtime: nodejs12.x
+      Timeout: 900
+      Environment:
+        Variables:
+          NODE_CONFIG_DIR: 'packages/services/assetlibrary-export/dist/config'
+          NODE_CONFIG: !Ref ApplicationConfigurationOverride
+          ASSETLIBRARY_NEPTUNE_URL: !Ref NeptuneURL
+          ASSETLIBRARYEXPORT_AWS_S3_ARTIFACTS_BUCKET: !Ref BucketName
+
+      Tracing: Active
+      VpcConfig:
+        Fn::If:
+          - DeployInVPC
+          - SubnetIds: !Ref PrivateSubNetIds
+            SecurityGroupIds:
+              - !Ref CDFSecurityGroupId
+          - Ref: AWS::NoValue
+
+  ETLLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'cdf-assetLibrary-export-etl-${Environment}'
+      CodeUri: ../bundle.zip
+      Handler: packages/services/assetlibrary-export/dist/lambda_sf_etl_proxy.export_handler
+      MemorySize: 512
+      Role: !GetAtt ETLExecutionRole.Arn
+      Runtime: nodejs12.x
+      Timeout: 900
+      Environment:
+        Variables:
+          NODE_CONFIG_DIR: 'packages/services/assetlibrary-export/dist/config'
+          NODE_CONFIG: !Ref ApplicationConfigurationOverride
+          ASSETLIBRARY_NEPTUNE_URL: !Ref NeptuneURL
+          ASSETLIBRARYEXPORT_AWS_S3_ARTIFACTS_BUCKET: !Ref BucketName
+
+      Tracing: Active
+      # Difference between full and lite lambda is that lite is not deployed within a VPC
+      VpcConfig:
+        Fn::If:
+          - DeployInVPC
+          - SubnetIds: !Ref PrivateSubNetIds
+            SecurityGroupIds:
+              - !Ref CDFSecurityGroupId
+          - Ref: AWS::NoValue
+
+  AssetLibraryExportStateMachineExecutionRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - "events.amazonaws.com"
+            Action: "sts:AssumeRole"
+      Path: "/"
+      Policies:
+        - PolicyName: StateMachineExecution
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "states:StartExecution"
+                Resource: !Ref AssetLibraryExportStateMachine
+
+
+  # State Machine Definition
+  AssetLibraryExportStateMachine:
+    Type: "AWS::StepFunctions::StateMachine"
+    Properties:
+      DefinitionString:
+        !Sub
+        - |-
+          {
+            "Comment": "State Machine to Batch and perform ETL to export data from Asset Library to S3",
+            "StartAt": "Batch",
+            "States": {
+              "Batch": {
+                "Type": "Task",
+                "Resource": "${BatchLambdaArn}",
+                "Next": "Export"
+              },
+              "Export": {
+                "Type": "Map",
+                "MaxConcurrency": ${ExportETLMaxConcurrency},
+                "Iterator": {
+                  "StartAt": "etl",
+                  "States": {
+                    "etl": {
+                      "Type": "Task",
+                      "Resource": "${ETLLambdaArn}",
+                      "Retry": [{
+                         "ErrorEquals": ["States.All"],
+                         "IntervalSeconds": 5,
+                         "MaxAttempts": 2,
+                         "BackoffRate": 2.0
+                      }],
+                      "End": true
+                    }
+                  }
+                },
+                "Next": "ExportCompletionEvent"
+              },
+              "ExportCompletionEvent": {
+                "Type": "Task",
+                "Resource": "arn:aws:states:::sns:publish",
+                "Parameters": {
+                  "Message": {
+                    "executionId.$": "$$.Execution.Name",
+                    "executionStartTime.$":"$$.Execution.StartTime",
+                    "executionEndTime.$": "$$.State.EnteredTime"
+                  },
+                  "TopicArn": "${ExportCompletionSNSTopicArn}"
+                },
+                "End": true
+              }
+            }
+          }
+        - {
+          BatchLambdaArn: !GetAtt BatchLambdaFunction.Arn,
+          ETLLambdaArn: !GetAtt ETLLambdaFunction.Arn,
+          ExportCompletionSNSTopicArn: !Ref ExportCompletionSNSTopic
+        }
+      RoleArn: !GetAtt AssetLibraryExportStateMachineRole.Arn
+
+  ExportCompletionSNSTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: !Sub 'cdf-assetlibrary-export-completion-${Environment}'
+      KmsMasterKeyId: !Ref KmsKeyId
+
+  AssetLibraryExportStateMachineRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - !Sub states.${AWS::Region}.amazonaws.com
+            Action: "sts:AssumeRole"
+      Path: "/"
+      Policies:
+        - PolicyName: InvokePolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "lambda:InvokeFunction"
+                Resource:
+                  - !GetAtt ETLLambdaFunction.Arn
+                  - !GetAtt BatchLambdaFunction.Arn
+              - Effect: Allow
+                Action:
+                  - "sns:Publish"
+                Resource: !Ref ExportCompletionSNSTopic
+              - Action:
+                  - kms:Decrypt
+                  - kms:GenerateDataKey*
+                Effect: Allow
+                Resource: !Sub "arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/${KmsKeyId}"
+
+Outputs:
+  ETLLambdaFunctionName:
+    Description: AssetLibrary Export ETL Lambda Function name
+    Value: !Ref ETLLambdaFunction
+    Export:
+      Name: !Sub "cdf-assetLibrary-export-${Environment}-etlLambdaFunctionName"
+
+  BatchLambdaFunctionName:
+    Description: AssetLibrary Export Batch Lambda Function name
+    Value: !Ref BatchLambdaFunction
+    Export:
+      Name: !Sub "cdf-assetLibrary-export-${Environment}-batchLambdaFunctionName"
+
+  ExportCompletionSnsTopic:
+    Description: SNS Topic
+    Value: !Ref ExportCompletionSNSTopic
+    Export:
+      Name: !Sub "cdf-assetLibrary-export-${Environment}-exportCompletionSnsTopic"

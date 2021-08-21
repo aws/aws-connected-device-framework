@@ -1,0 +1,13 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [{
+        "Effect": "Allow",
+        "Action": [ "iot:Connect" ],
+        "Resource": [ "arn:aws:iot:${cdf:region}:${cdf:accountId}:client/${cdf:thingName}" ], 
+        "Condition":{  
+            "Bool":{  
+                "iot:Connection.Thing.IsAttached":["true"]
+            }
+        }
+    }]
+}

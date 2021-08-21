@@ -1,0 +1,27 @@
+{
+	"compilerOptions": {
+		"target": "es2019",
+		"module": "commonjs",
+
+        "declaration": true,
+		"declarationMap": true,
+		"sourceMap": true,
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+
+		"allowSyntheticDefaultImports": true,
+		"allowUnreachableCode": false,
+		"allowUnusedLabels": false,
+		"emitDecoratorMetadata": true,
+		"experimentalDecorators": true,
+		"noImplicitAny": true,
+		"noImplicitReturns": true,
+		"noImplicitUseStrict": false,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"pretty": true,
+		"removeComments": true,
+
+		"suppressImplicitAnyIndexErrors": true
+	}
+}

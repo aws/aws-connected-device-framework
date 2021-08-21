@@ -1,0 +1,3 @@
+sim_ticket: https://sim.amazon.com/ProServe-EngSec-1060
+reason: Bypass cfn nag due to limitations involved in processing serverless cloudformation resources.
+approval: submitted

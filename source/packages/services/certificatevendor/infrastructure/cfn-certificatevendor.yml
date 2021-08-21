@@ -1,0 +1,308 @@
+#-----------------------------------------------------------------------------------------------------------------------
+#   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance
+#  with the License. A copy of the License is located at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES
+#  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions
+#  and limitations under the License.
+#-----------------------------------------------------------------------------------------------------------------------
+AWSTemplateFormatVersion : '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Description: CDF Certificate Vendor Service
+
+
+Parameters:
+  Environment:
+    Description:  Name of environment.  Used to name the created resources.
+    Type: String
+    MinLength: 1
+  ApplicationConfigurationOverride:
+    Description: This allows you to override any configuration application configuration. Must be a JSON formatted string. Any configurations contained in this will override the configurations found and merged from the config files.
+    Type: String
+    MinLength: 1
+  BucketName:
+    Description: Name of bucket of where certificates are stored.
+    Type: String
+    MinLength: 1
+  MQTTGetTopic:
+    Description: The MQTT topic where certificate requests are published by a device.
+    Default: cdf/certificates/+/get
+    Type: String
+  MQTTAckTopic:
+    Description: The MQTT topic where certificate acknowledgements are published by a device.
+    Default: cdf/certificates/+/ack
+    Type: String
+  ThingGroupName:
+    Description: Thing Group of devices requiring certification rotation
+    Type: String
+    Default: cdfRotateCertificates
+  KmsKeyId:
+    Description: The KMS key ID used to encrypt SSM parameters
+    Type: String
+  OpenSslLambdaLayerArn:
+    Description: OpenSSL lambda layer ARN
+    Type: String
+    MinLength: 1
+  AssetLibraryFunctionName:
+    Description: AssetLibrary REST Api function name
+    Type: String
+    Default: ''
+  CommandsFunctionName:
+    Description: Commands REST Api function name
+    Type: String
+  CustomResourceLambdaArn:
+    Description: Custom resource lambda arn
+    Type: String
+    MinLength: 1
+
+
+
+Conditions:
+  ThingGroupNameProvided: !Not [ !Equals [ !Ref ThingGroupName, "" ]]
+  KmsKeyProvided: !Not [ !Equals [ !Ref KmsKeyId, "" ]]
+  KmsKeyNotProvided: !Equals [ !Ref KmsKeyId, "" ]
+
+Resources:
+
+  MQTTGetRule:
+    Type: "AWS::IoT::TopicRule"
+    Properties:
+      TopicRulePayload:
+        Actions:
+          -
+            Lambda:
+              FunctionArn: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${LambdaFunction}'
+        Description: "Certificate requests (CDF Certificate Vendor service)"
+        AwsIotSqlVersion: "2016-03-23"
+        RuleDisabled: false
+        Sql: !Sub "SELECT topic(3) as deviceId, topic(4) as action, principal() as certId, * FROM '${MQTTGetTopic}'"
+
+  MQTTAckRule:
+    Type: "AWS::IoT::TopicRule"
+    Properties:
+      TopicRulePayload:
+        Actions:
+          -
+            Lambda:
+              FunctionArn: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${LambdaFunction}'
+        Description: "Certificate acknowledgements (CDF Certificate Vendor service)"
+        AwsIotSqlVersion: "2016-03-23"
+        RuleDisabled: false
+        Sql: !Sub "SELECT topic(3) as deviceId, topic(4) as action, principal() as certId, * FROM '${MQTTAckTopic}'"
+
+  LambdaFunctionGetInvocationPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      SourceArn: !Sub 'arn:aws:iot:${AWS::Region}:${AWS::AccountId}:rule/${MQTTGetRule}'
+      Action: lambda:InvokeFunction
+      Principal: iot.amazonaws.com
+      FunctionName: !GetAtt LambdaFunction.Arn
+      SourceAccount: !Ref AWS::AccountId
+
+  LambdaFunctionAckInvocationPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      SourceArn: !Sub 'arn:aws:iot:${AWS::Region}:${AWS::AccountId}:rule/${MQTTAckRule}'
+      Action: lambda:InvokeFunction
+      Principal: iot.amazonaws.com
+      FunctionName: !GetAtt LambdaFunction.Arn
+      SourceAccount: !Ref AWS::AccountId
+
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          Effect: Allow
+          Principal:
+            Service:
+              - lambda.amazonaws.com
+              - iot.amazonaws.com
+          Action: sts:AssumeRole
+      Path: "/"
+      ManagedPolicyArns:
+        - !Ref ApplicationPolicies
+        - arn:aws:iam::aws:policy/AWSLambdaExecute
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaRole
+        - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
+    Condition: KmsKeyNotProvided
+
+  LambdaExecutionRoleWithCsr:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          Effect: Allow
+          Principal:
+            Service:
+              - lambda.amazonaws.com
+              - iot.amazonaws.com
+          Action: sts:AssumeRole
+      Path: "/"
+      ManagedPolicyArns:
+        - !Ref ApplicationPolicies
+        - !Ref ApplicationCsrPolicies
+        - arn:aws:iam::aws:policy/AWSLambdaExecute
+        - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
+    Condition: KmsKeyProvided
+
+  ApplicationPolicies:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W13
+            reason: "Lambda provided permissions to manage iot Core and s3 bucket"
+    Properties:
+      Description: 'cdf-certificatvendor application policies'
+      Path: "/"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: "iot"
+            Action:
+              - "iot:UpdateCertificate"
+            Effect: Allow
+            Resource:
+                - !Sub "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:cert/*"
+          - Sid: "iotgroup"
+            Action:
+              - "iot:RemoveThingFromThingGroup"
+            Effect: Allow
+            Resource:
+                - !Sub "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:thinggroup/*"
+                - !Sub "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:thing/*"
+          - Sid: "iotthing"
+            Action:
+              - "iot:DescribeThing"
+              - "iot:UpdateThing"
+            Effect: Allow
+            Resource:
+                - !Sub "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:thing/*"
+          - Sid: "s3bucket"
+            Action:
+              - 's3:ListBucket'
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:s3:::${BucketName}'
+          - Sid: "s3objects"
+            Action:
+              - 's3:Get*'
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:s3:::${BucketName}/*'
+          - Sid: "mqtt"
+            Action:
+              - 'iot:Publish'
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:iot:${AWS::Region}:${AWS::AccountId}:topic/cdf/certificates/*'
+          - Sid: "lambda"
+            Action:
+              - 'lambda:InvokeFunction'
+              - 'lambda:Invoke'
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${AssetLibraryFunctionName}'
+
+
+  ApplicationCsrPolicies:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Condition: KmsKeyProvided
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W13
+            reason: "Policy needs to apply to IoT artifacts that are created by the CDF"
+    Properties:
+      Description: 'cdf-certificatvendor policies needed to generate certificates with a CSR'
+      Path: "/"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: "ssm"
+            Action:
+              - 'ssm:GetParameter*'
+            Effect: Allow
+            Resource: !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/cdf-ca-key-*"
+          - Sid: "kms"
+            Action:
+              - 'kms:Decrypt'
+            Effect: Allow
+            Resource: !Sub "arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/${KmsKeyId}"
+          - Sid: "iotca"
+            Action:
+              - 'iot:DescribeCaCertificate'
+            Effect: Allow
+            Resource: !Sub "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:cacert/*"
+          - Sid: "iot"
+            Action:
+              - 'iot:RegisterCertificate'
+              - 'iot:AttachThingPrincipal'
+              - 'iot:ListThingPrincipals'
+              - 'iot:DetachThingPrincipal'
+              - 'iot:ListPrincipalThings'
+              - 'iot:ListPrincipalPolicies'
+            Effect: Allow
+            Resource: "*"
+          - Sid: "iotcert"
+            Action:
+              - 'iot:AttachPrincipalPolicy'
+              - 'iot:DetachPrincipalPolicy'
+              - 'iot:UpdateCertificate'
+              - 'iot:DeleteCertificate'
+            Effect: Allow
+            Resource: !Sub "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:cert/*"
+
+  LambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'cdf-certificateVendor-${Environment}'
+      CodeUri: ../bundle.zip
+      Handler: packages/services/certificatevendor/dist/lambda_proxy.handler
+      Layers:
+        - !Ref OpenSslLambdaLayerArn
+      MemorySize: 128
+      Role: !If [KmsKeyProvided, !GetAtt LambdaExecutionRoleWithCsr.Arn, !GetAtt LambdaExecutionRole.Arn]
+      Runtime: nodejs14.x
+      Timeout: 30
+      Environment:
+        Variables:
+          NODE_CONFIG_DIR: 'packages/services/certificatevendor/dist/config'
+          NODE_CONFIG: !Ref ApplicationConfigurationOverride
+          CERTIFICATEVENDOR_ASSETLIBRARY_APIFUNCTIONNAME: !Ref AssetLibraryFunctionName
+          CERTIFICATEVENDOR_AWS_IOT_ENDPOINT: !GetAtt IotEndpoint.address
+          CERTIFICATEVENDOR_AWS_S3_CERTIFICATES_BUCKET: !Ref BucketName
+      Tracing: Active
+  
+  IotEndpoint:
+    Type: Custom::IotEndpoint
+    Version: 1.0
+    Properties:
+      ServiceToken: !Ref CustomResourceLambdaArn
+
+  IotThingGroup:
+    Type: Custom::IotThingGroup
+    Version: 1.0
+    Properties:
+      ServiceToken: !Ref CustomResourceLambdaArn
+      ThingGroupName: !Ref ThingGroupName
+    Condition: ThingGroupNameProvided
+
+  RotateCertificatesJob:
+    Type: Custom::RotateCertificatesJob
+    Version: 1.0
+    Properties:
+      ServiceToken: !Ref CustomResourceLambdaArn
+      CommandsFunctionName: !Ref CommandsFunctionName
+      ThingGroupArn: !GetAtt IotThingGroup.thingGroupArn
+      MQTTGetTopic: !Ref MQTTGetTopic
+      MQTTAckTopic: !Ref MQTTAckTopic  
+    Condition: ThingGroupNameProvided

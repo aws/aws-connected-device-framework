@@ -1,0 +1,85 @@
+{
+  "name": "@cdf/assetlibrary",
+  "entries": [
+    {
+      "version": "5.3.2",
+      "tag": "@cdf/assetlibrary_v5.3.2",
+      "date": "Fri, 20 Aug 2021 16:07:58 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix broken type annotation"
+          }
+        ]
+      }
+    },
+    {
+      "version": "5.3.1",
+      "tag": "@cdf/assetlibrary_v5.3.1",
+      "date": "Wed, 11 Aug 2021 01:26:49 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "opensource related minor changes"
+          },
+          {
+            "comment": "reverting chnages"
+          }
+        ]
+      }
+    },
+    {
+      "version": "5.3.0",
+      "tag": "@cdf/assetlibrary_v5.3.0",
+      "date": "Thu, 29 Jul 2021 00:16:37 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "adding middleware for express based services to remove path from request url to handle custom domain"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@cdf/express-middleware\" from `^2.0.0` to `^2.1.0`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "5.2.0",
+      "tag": "@cdf/assetlibrary_v5.2.0",
+      "date": "Fri, 23 Jul 2021 16:14:32 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "Return the groupPath of new groups at time of creation as a header."
+          }
+        ]
+      }
+    },
+    {
+      "version": "5.1.0",
+      "tag": "@cdf/assetlibrary_v5.1.0",
+      "date": "Fri, 23 Jul 2021 15:55:06 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "add optional parameter for user to specify neptune backup retention period (default to 15 days)"
+          }
+        ]
+      }
+    },
+    {
+      "version": "5.0.0",
+      "tag": "@cdf/assetlibrary_v5.0.0",
+      "date": "Wed, 21 Jul 2021 16:46:57 GMT",
+      "comments": {
+        "major": [
+          {
+            "comment": "Configured Neptune instance to be encrypted at rest. As this is a backwards incompatible change, the database cluster will need recreating. To aid this, specifying a Neptune snapshot to create a new cluster from has been exposed. In addition, the generated lambda bundle size has been reduced."
+          }
+        ]
+      }
+    }
+  ]
+}

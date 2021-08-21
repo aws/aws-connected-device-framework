@@ -1,0 +1,106 @@
+/*********************************************************************************************************************
+ *  Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.                                           *
+ *                                                                                                                    *
+ *  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance    *
+ *  with the License. A copy of the License is located at                                                             *
+ *                                                                                                                    *
+ *      http://www.apache.org/licenses/LICENSE-2.0                                                                    *
+ *                                                                                                                    *
+ *  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES *
+ *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
+ *  and limitations under the License.                                                                                *
+ *********************************************************************************************************************/
+import 'reflect-metadata';
+import { createMockInstance } from 'jest-create-mock-instance';
+import * as AWS from 'aws-sdk';
+import { logger } from '../utils/logger';
+import { SimulationsDao } from './simulations.dao';
+import { SimulationsService } from './simulations.service';
+
+let instance: SimulationsService;
+let mockedS3: AWS.S3;
+let mockedSNS: AWS.SNS;
+let mockedDao: SimulationsDao;
+
+describe('CreateSimulation', () => {
+
+    beforeEach(() => {
+        mockedDao = createMockInstance(SimulationsDao);
+        mockedS3 = new AWS.S3();
+        mockedSNS = new AWS.SNS();
+
+        const mockedS3Factory = () => {
+            return mockedS3;
+        };
+
+        const mockedS3NSactory = () => {
+            return mockedSNS;
+        };
+        
+        instance = new SimulationsService(mockedDao, mockedS3Factory, mockedS3NSactory);
+    });
+
+    // TODO: this test needs to be mocking its dependences
+    it('create simulation launches provisioning tasks', async () => {
+
+        mockedS3.copyObject = jest.fn().mockImplementationOnce(()=> {
+            return {
+              promise: () => jest.fn().mockReturnValue(undefined)
+            };
+        });
+
+        mockedS3.putObject = jest.fn().mockImplementationOnce(()=> {
+            return {
+              promise: () => jest.fn().mockReturnValue(undefined)
+            };
+        });
+
+
+        const actual = await instance.createSimulation({
+            item: {
+                name: 'test',
+                deviceCount: 10,
+                modules: {
+                    dataGenerator: 'simulations/modules/data-generator.zip',
+                    simulationEngine: 'simulations/modules/simulation-engine.zip',
+                    routeGen: 'simulations/modules/auto-route-gen.zip'
+                },
+                tasks: {
+                    provisioning: {
+                        attributes: {
+                            ca: 'simulations/ca/aws-ca.pem',
+                            privateKey: 'simulations/ca/private.pem.key',
+                            certificate: 'simulations/ca/certificate.pem.crt',
+
+                            supplierTemplate: 'auto_supplier',
+
+                            certificateId: '7b06653e888480c4e61c25f1bbe98ea27008d0097e903a6b1b32a19a9b4bf9e7',
+                            mapboxToken: 'pk.eyJ1IjoiY2hyaXN0b29tZXkiLCJhIjoiY2phMnVxc2p4M2NmbTM0cGM4aXpscGtmZyJ9.Pap5yG2c5LwCWAXuQwq7pg',
+                            region1: 'latitudeMin:47.501957,longitudeMin:-122.432518,latitudeMax:47.728965,longitudeMax:-122.247523,weight:20',
+                            region2: 'latitudeMin:36.309945,longitudeMin:-115.337742,latitudeMax:35.980028,longitudeMax:-114.925754,weight:70'
+                        },
+                        plan: 'simulations/plans/auto-provisioning.jmx',
+                        threads: {
+                            total: 4,
+                            rampUpSecs: 2
+                        }
+                    },
+                    simulation: {
+                        attributes: {
+
+                        },
+                        plan: 'simulations/plans/auto-devices.jmx',
+                        threads: {
+                            total: 4,
+                            rampUpSecs: 2
+                        }
+                    }
+                }
+            }
+        });
+
+        logger.info(`actual: ${actual}`);
+
+    }, 300000);
+
+});

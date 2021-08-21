@@ -1,0 +1,40 @@
+{
+  "name": "@cdf/integration-tests",
+  "entries": [
+    {
+      "version": "2.9.2",
+      "tag": "@cdf/integration-tests_v2.9.2",
+      "date": "Wed, 11 Aug 2021 01:26:49 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix assetlibraryhistory integration tests"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@cdf/assetlibrary-client\" from `^4.1.0` to `^4.1.1`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "2.9.1",
+      "tag": "@cdf/integration-tests_v2.9.1",
+      "date": "Fri, 23 Jul 2021 15:55:06 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "when verifying activation region should check for more than 9 char to cater for more region"
+          }
+        ]
+      }
+    },
+    {
+      "version": "2.9.0",
+      "tag": "@cdf/integration-tests_v2.9.0",
+      "date": "Wed, 21 Jul 2021 16:46:57 GMT",
+      "comments": {}
+    }
+  ]
+}

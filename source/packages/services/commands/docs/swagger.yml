@@ -1,0 +1,704 @@
+#-----------------------------------------------------------------------------------------------------------------------
+#   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance
+#  with the License. A copy of the License is located at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES
+#  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions
+#  and limitations under the License.
+#-----------------------------------------------------------------------------------------------------------------------
+swagger: '2.0'
+info:
+  title: "AWS Connected Device Framework: Commands Service"
+  description: |
+
+  version: 1.0.0
+
+
+consumes:
+- application/vnd.aws-cdf-v1.0+json
+produces:
+- application/vnd.aws-cdf-v1.0+json
+
+ 
+
+tags:
+- name: Templates
+  description: |
+    A `Template` represents a command template that is used to manage what needs defining for any particular command as well as how to execute the command.
+    
+    The main component to a template is its `document`, a json document that is broadcast to all recipients (devices) of a command.  
+    
+    The `document` may contain tokens to reference parameters.  These are added to the `document` in the format of `${name}`.  In addition the parameters should be defined as part of `requiredDocumentParameters` which enforces all `Commands` of the template to provide.
+    
+    A `document` may also reference files.  These are added to the `document` in the format of `${cdf:file:name}`, and in addition added to `requiredFiles`.  The files required for the template must be uploaded to the `Command` before it can be published.  Once the job has been created, these tokens are replaced with pre-signed S3 url's.
+    
+- name: Commands
+  description: |
+    A `Command` represents a command (as defined by a specific template) sent to a device or groups of devices for local execution.
+    
+    A `Command` must have any parameters and files configured that have been defined as part of the `Template` before it can be published.
+    
+- name: Executions
+  description: |
+    An `Execution` represents a specific local execution of a command at the device.
+
+
+paths:
+
+  /templates:
+    post:
+      tags:
+      - Templates
+      summary: |
+        Registers a new job template.
+      operationId: "createTemplate"
+      parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/Template'
+      responses:
+        201:
+          $ref: '#/responses/Created'
+        400:
+          $ref: '#/responses/BadRequest'
+        409:
+          description: Template already exists
+          schema:
+            $ref: '#/responses/Conflict'
+        500:
+          $ref: '#/responses/ServerError'
+          
+    get:
+      tags:
+      - Templates
+      summary: Returns a list of all job templates
+      operationId: "listTemplates"
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: '#/definitions/TemplateList'
+        500:
+          $ref: '#/responses/ServerError'
+  
+
+  /templates/{templateId}:
+    parameters:
+    - name: templateId
+      in: path
+      description: ID of job template
+      required: true
+      type: string
+      
+    get:
+      tags:
+      - Templates
+      summary: Returns a specific template
+      operationId: "getTemplate"
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: '#/definitions/Template'
+        400:
+          $ref: '#/responses/BadRequest'
+        404:
+          $ref: '#/responses/NotFound'
+        500:
+          $ref: '#/responses/ServerError'
+      
+    patch:
+      tags:
+      - Templates
+      summary: Updates a specific template
+      operationId: "patchTemplate"
+      parameters:
+      - name: body
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/Template'
+      responses:
+        204:
+          description: Success
+        400:
+          $ref: '#/responses/BadRequest'
+        404:
+          $ref: '#/responses/NotFound'
+        500:
+          $ref: '#/responses/ServerError'
+      
+    delete:
+      tags:
+      - Templates
+      summary: Deleets a specific template
+      operationId: "deleteTemplate"
+      responses:
+        204:
+          description: Success
+        400:
+          $ref: '#/responses/BadRequest'
+        500:
+          $ref: '#/responses/ServerError'
+      
+  /commands:
+    post:
+      tags:
+      - Commands
+      summary: |
+        Submits a new command.
+      operationId: "createCommand"
+      parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/Command'
+      responses:
+        201:
+          $ref: '#/responses/Created'
+        400:
+          $ref: '#/responses/BadRequest'
+    get:
+      tags:
+      - Commands
+      summary: Returns a list of all commands
+      operationId: "listCommands"
+      parameters:
+      - name: status
+        in: query
+        type: string
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/CommandList'
+        400:
+          $ref: '#/responses/BadRequest'
+        404:
+          $ref: '#/responses/NotFound'
+  
+
+  /commands/{commandId}:
+    parameters:
+    - name: commandId
+      in: path
+      description: ID of command
+      required: true
+      type: string
+      
+    get:
+      tags:
+      - Commands
+      summary: Returns a specific command
+      operationId: "getCommand"
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/Command'
+        400:
+          $ref: '#/responses/BadRequest'
+        404:
+          $ref: '#/responses/NotFound'
+      
+    patch:
+      tags:
+      - Commands
+      summary: Updates a specific command, including setting its status to `in_progress` to start the command.
+      operationId: "patchCommand"
+      parameters:
+      - name: body
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/Command'
+      responses:
+        204:
+          description: OK
+        400:
+          $ref: '#/responses/BadRequest'
+        404:
+          $ref: '#/responses/NotFound'
+
+  
+
+  /commands/{commandId}/files/{fileId}:
+    parameters:
+    - name: commandId
+      in: path
+      description: ID of command
+      required: true
+      type: string
+    - name: fileId
+      in: path
+      description: ID of file as defined in the templates `requiredFiles` attribute
+      required: true
+      type: string
+      
+    put:
+      tags:
+      - Commands
+      summary: 
+        Uploads a file required for the command
+      operationId: "uploadCommandFile"
+      consumes:
+      - multipart/form-data
+      parameters:
+      - in: formData
+        name: file
+        type: file
+      responses:
+        201:
+          $ref: '#/responses/Created'
+        400:
+          $ref: '#/responses/BadRequest'
+      
+    delete:
+      tags:
+      - Commands
+      summary: |
+        Removes a file from the command
+      operationId: "removeCommandFile"
+      responses:
+        204:
+          description: OK
+        400:
+          $ref: '#/responses/BadRequest'
+        404:
+          $ref: '#/responses/NotFound'
+    
+  
+
+  /commands/{commandId}/executions:
+    parameters:
+    - name: commandId
+      in: path
+      description: ID of command
+      required: true
+      type: string
+      
+    get:
+      tags:
+      - Executions
+      summary: Lists the executions of a command
+      operationId: "listExecutions"
+      parameters:
+      - name: status
+        in: query
+        type: string
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/ExecutionSummaryList'
+        400:
+          $ref: '#/responses/BadRequest'
+        404:
+          $ref: '#/responses/NotFound'
+  
+
+  /commands/{commandId}/executions/{thingName}:
+    parameters:
+    - name: commandId
+      in: path
+      description: ID of command
+      required: true
+      type: string
+    - name: thingName
+      in: path
+      description: Name of thing
+      required: true
+      type: string
+      
+    get:
+      tags:
+      - Executions
+      summary: Returns execution details of a specific command for a specific thing
+      operationId: "getThingExecution"
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/ExecutionList'
+        400:
+          $ref: '#/responses/BadRequest'
+        404:
+          $ref: '#/responses/NotFound'
+      
+    delete:
+      tags:
+      - Executions
+      summary: Cancels an execution for a specific thing
+      operationId: "deleteThingExecution"
+      responses:
+        204:
+          description: OK
+        400:
+          $ref: '#/responses/BadRequest'
+        404:
+          $ref: '#/responses/NotFound'
+      
+    
+
+
+definitions:
+
+  TemplateSummary:
+    type: object
+    properties:
+      templateId:
+        type: string
+      description:
+        type: string
+
+  Template:
+    type: object
+    properties:
+      templateId:
+        type: string
+      operation:
+        type: string
+      description:
+        type: string
+      document:
+        type: string
+      requiredDocumentParameters:
+        type: array
+        items:
+          type: string
+      requiredFiles:
+        type: array
+        items:
+          type: string
+      presignedUrlExpiresInSeconds:
+        type: integer
+      abortConfig:
+        schema:
+          $ref: '#/definitions/AbortConfig'
+      jobExecutionsRolloutConfig:
+        schema:
+          $ref: '#/definitions/JobExecutionsRolloutConfig'
+      timeoutConfig:
+        schema:
+          $ref: '#/definitions/TimeoutConfig'
+
+  TemplateList:
+    type: object
+    properties:
+      results:
+        type: array
+        items:
+          $ref: '#/definitions/TemplateSummary'
+      pagination:
+        type: object
+        properties:
+          maxResults:
+            type: number
+          nextToken:
+            type: string
+            
+  Command:
+    type: object
+    properties:
+      commandId:
+        type: string
+      templateId: 
+        type: string
+      status:
+        type: string
+        enum: [draft,in_progress,cancelled,deleted,completed]
+      targets:
+        type: array
+        items:
+          type: string
+      targetQuery:
+        type: object
+        properties:
+          types:
+            type: array
+            items:
+              type: string
+          ancestorPath:
+            type: string
+          eq:
+            type: array
+            items:
+              type: object
+              properties:
+                traversals:
+                  type: object
+                  properties:
+                    relation:
+                      type: string
+                    direction:
+                      type: string
+                field:
+                  type: string
+                value:
+                  type: string
+          neq:
+            type: array
+            items:
+              type: object
+              properties:
+                traversals:
+                  type: object
+                  properties:
+                    relation:
+                      type: string
+                    direction:
+                      type: string
+                field:
+                  type: string
+                value:
+                  type: string
+          lt:
+            type: array
+            items:
+              type: object
+              properties:
+                traversals:
+                  type: object
+                  properties:
+                    relation:
+                      type: string
+                    direction:
+                      type: string
+                field:
+                  type: string
+                value:
+                  type: string
+          lte:
+            type: array
+            items:
+              type: object
+              properties:
+                traversals:
+                  type: object
+                  properties:
+                    relation:
+                      type: string
+                    direction:
+                      type: string
+                field:
+                  type: string
+                value:
+                  type: string
+          gt:
+            type: array
+            items:
+              type: object
+              properties:
+                traversals:
+                  type: object
+                  properties:
+                    relation:
+                      type: string
+                    direction:
+                      type: string
+                field:
+                  type: string
+                value:
+                  type: string
+          gte:
+            type: array
+            items:
+              type: object
+              properties:
+                traversals:
+                  type: object
+                  properties:
+                    relation:
+                      type: string
+                    direction:
+                      type: string
+                field:
+                  type: string
+                value:
+                  type: string
+          startsWith:
+            type: array
+            items:
+              type: object
+              properties:
+                traversals:
+                  type: object
+                  properties:
+                    relation:
+                      type: string
+                    direction:
+                      type: string
+                field:
+                  type: string
+                value:
+                  type: string
+          
+      documentParameters:
+        type: object
+        additionalProperties: 
+          type: string
+      files:
+        type: object
+        additionalProperties: 
+          type: string
+      type:
+        type: string
+        enum: [SNAPSHOT, CONTINUOUS]
+      jobId:
+        type: string
+      abortConfig:
+        schema:
+          $ref: '#/definitions/AbortConfig'
+      jobExecutionsRolloutConfig:
+        schema:
+          $ref: '#/definitions/JobExecutionsRolloutConfig'
+      timeoutConfig:
+        schema:
+          $ref: '#/definitions/TimeoutConfig'
+
+  File:
+    type: object
+    properties:
+      bucketName:
+        type: string
+      s3ObjectKey:
+        type: string
+
+  CommandList:
+    type: object
+    properties:
+      results:
+        type: array
+        items:
+          $ref: '#/definitions/Command'
+      pagination:
+        type: object
+        properties:
+          offset:
+            type: integer
+          count:
+            type: integer
+            
+  Execution:
+    type: object
+    properties:
+      thingName:
+        type: string
+      createdAt:
+        type: string
+      lastUpdatedAt:
+        type: string
+      queuedAt:
+        type: string
+      startedAt:
+        type: string
+      status:
+        type: string
+      percentComplete:
+        type: number
+        
+  ExecutionList:
+    type: object
+    properties:
+      executions:
+        type: array
+        items:
+          $ref: '#/definitions/Execution'
+            
+  ExecutionSummary:
+    type: object
+    properties:
+      thingName:
+        type: string
+      status:
+        type: string
+        
+  ExecutionSummaryList:
+    type: object
+    properties:
+      executions:
+        type: array
+        items:
+          $ref: '#/definitions/ExecutionSummary'
+        
+  JobExecutionsRolloutConfig:
+    type: object
+    properties:
+      maximumPerMinute:
+        type: integer
+      exponentialRate:
+        type: object
+        properties:
+          baseRatePerMinute:
+            type: integer
+          incrementFactor:
+            type: integer
+          rateIncreaseCriteria:
+            type: object
+            properties:
+              numberOfNotifiedThings:
+                type: integer
+              numberOfSucceededThings:
+                type: integer
+
+  AbortConfig:
+    type: object
+    properties:
+      criteriaList:
+        type: array
+        items:
+          $ref: '#/definitions/AbortConfigCriteria'
+
+  AbortConfigCriteria:
+    type: object
+    properties:
+      failureType:
+        type: string
+      action:
+        type: string
+      thresholdPercentage:
+        type: number
+      minNumberOfExecutedThings:
+        type: integer
+
+  TimeoutConfig:
+    type: object
+    properties:
+      inProgressTimeoutInMinutes:
+        type: integer
+
+  Error:
+    type: object
+    properties:
+      error:
+        type: string
+
+responses:          
+  Created:
+    description: Created successfully
+    headers:
+      location:
+        type: string
+  BadRequest:
+    description: Invalid input
+    schema:
+      $ref: '#/definitions/Error'
+  NotFound:
+    description: Not found
+    schema:
+      $ref: '#/definitions/Error'
+  Conflict:
+    description: Conflict
+    schema:
+      $ref: '#/definitions/Error'
+  ServerError:
+    description: Server error
+    schema:
+      $ref: '#/definitions/Error'

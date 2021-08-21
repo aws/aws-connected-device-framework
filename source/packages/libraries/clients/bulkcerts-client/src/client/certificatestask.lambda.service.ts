@@ -1,0 +1,49 @@
+/*********************************************************************************************************************
+ *  Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.                                           *
+ *                                                                                                                    *
+ *  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance    *
+ *  with the License. A copy of the License is located at                                                             *
+ *                                                                                                                    *
+ *      http://www.apache.org/licenses/LICENSE-2.0                                                                    *
+ *                                                                                                                    *
+ *  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES *
+ *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
+ *  and limitations under the License.                                                                                *
+ *********************************************************************************************************************/
+/**
+ * AWS Connected Device Framework: Dashboard Facade
+ * Asset Library implementation of DevicesService *
+ */
+
+/* tslint:disable:no-unused-variable member-ordering */
+
+import {injectable, inject} from 'inversify';
+import ow from 'ow';
+import { CertificateBatchRequest, CertificateBatchTask, RequestHeaders } from './certificatestask.models';
+import {CertificatesTaskService, CertificatesTaskServiceBase} from './certificatestask.service';
+import {LAMBDAINVOKE_TYPES, LambdaInvokerService, LambdaApiGatewayEventBuilder} from '@cdf/lambda-invoke';
+
+@injectable()
+export class CertificatesTaskLambdaService extends CertificatesTaskServiceBase implements CertificatesTaskService {
+
+    constructor(
+        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService) private lambdaInvoker: LambdaInvokerService,
+        @inject('bulkcerts.apiFunctionName') private functionName : string
+    ) {
+        super();
+        this.lambdaInvoker = lambdaInvoker;
+    }
+
+    async createCertificateTask(batchRequest:CertificateBatchRequest,caAlias:string, additionalHeaders?: RequestHeaders): Promise<CertificateBatchTask> {
+        ow(caAlias, ow.string.nonEmpty);
+
+        const event = new LambdaApiGatewayEventBuilder()
+            .setPath(super.certificateTaskCreateRelativeUrl(caAlias))
+            .setMethod('POST')
+            .setBody(batchRequest)
+            .setHeaders(super.buildHeaders(additionalHeaders));
+
+        const res = await this.lambdaInvoker.invoke(this.functionName, event);
+        return res.body;
+    }
+}

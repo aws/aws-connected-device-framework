@@ -1,0 +1,46 @@
+{
+  "name": "@cdf/assetlibrary-history",
+  "entries": [
+    {
+      "version": "4.1.1",
+      "tag": "@cdf/assetlibrary-history_v4.1.1",
+      "date": "Wed, 11 Aug 2021 01:26:49 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix event update and adding devices & groups object from the source record"
+          }
+        ]
+      }
+    },
+    {
+      "version": "4.1.0",
+      "tag": "@cdf/assetlibrary-history_v4.1.0",
+      "date": "Thu, 29 Jul 2021 00:16:37 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "adding middleware for express based services to remove path from request url to handle custom domain"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@cdf/express-middleware\" from `^2.0.0` to `^2.1.0`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "4.0.5",
+      "tag": "@cdf/assetlibrary-history_v4.0.5",
+      "date": "Wed, 21 Jul 2021 16:46:57 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": " the generated lambda bundle size ha"
+          }
+        ]
+      }
+    }
+  ]
+}

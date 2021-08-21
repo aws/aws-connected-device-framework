@@ -1,0 +1,11 @@
+{
+  "name": "@cdf/lambda-invoke",
+  "entries": [
+    {
+      "version": "2.0.0",
+      "tag": "@cdf/lambda-invoke_v2.0.0",
+      "date": "Wed, 21 Jul 2021 16:46:57 GMT",
+      "comments": {}
+    }
+  ]
+}

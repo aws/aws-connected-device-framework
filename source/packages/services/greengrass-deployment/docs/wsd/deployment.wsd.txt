@@ -1,0 +1,31 @@
+title User based Device Activation Flow
+
+participant "User" as u
+participant "<<CDF>>\nGreengrass\nDeployment\nREST API" as cdfrest
+participant "<<CDF>>\nGreengrass\nDeployment\nSQS Handler" as cdfsqs
+participant "<<AWS>>\nSSM" as ssm
+participant "<<AWS>>\nDynamoDB" as ddb
+participant "<<AWS>>\nEventbridge" as eb
+participant "<<AWS>>SQS\nAgentbased\ndeployment" as adq
+participant "<<AWS>>SQS\nssm events" as eq
+participant "Device" as d
+
+u ->+ cdfrest: POST: /devices/{deviceId}/deployments
+cdfrest -> ddb: save deployment info
+cdfrest -> adq: queue: deployment
+cdfrest -->- u: deployment info
+
+adq ->+ cdfsqs: process deployment
+cdfsqs -> ssm: create state manager association
+cdfsqs ->- ddb: save deployment info
+
+ssm ->+ d: Apply association: Ansible playbook
+d --> d:
+d -->- ssm: report association status
+
+ssm ->+ eb: ssm association state change event
+eb -> eq: queue: state change event
+eq ->+ cdfsqs: process ssm events
+cdfsqs ->- ddb: update deployment info
+
+

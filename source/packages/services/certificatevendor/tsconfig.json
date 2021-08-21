@@ -1,0 +1,25 @@
+{
+    "extends": "../../../tsconfig.base.json",
+    "compilerOptions": {
+        "outDir": "dist",
+        "rootDir": "src"
+    },
+    "references": [
+        {
+            "path": "../../libraries/config/config-inject"
+        },
+        {
+            "path": "../../libraries/clients/assetlibrary-client"
+        }
+    ],
+    "include": [
+        "src"
+    ],
+    "exclude": [
+        "node_modules",
+        "dist",
+        ".vscode",
+        ".git",
+        "./**/__mocks__/*.ts"
+    ]
+}

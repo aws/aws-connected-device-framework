@@ -1,0 +1,552 @@
+#--------------------------------------------------------------------------------
+#   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance
+#  with the License. A copy of the License is located at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES
+#  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions
+#  and limitations under the License.
+#---------------------------------------------------------------------------------
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: CDF (AWS Connected Device Framework)
+
+Parameters:
+  Environment:
+    Description:  Name of environment.  Used to name the created resources.
+    Type: String
+    MinLength: 1
+  ArtifactsBucket:
+    Description:  Name of the S3 Bucket to store Device artifacts
+    Type: String
+  ArtifactsConfigPrefix:
+    Description:  Key prefix within bucket where config artifacts are uploaded to.
+    Type: String
+    Default: 'config/'
+  KmsKeyId:
+    Description: The KMS key ID used to encrypt SSM parameters. If not provided, one will be created.
+    Type: String
+  TemplateSnippetS3UriBase:
+    Description: |
+      S3 uri of directory where template snippets are stored for the account.
+    Type: String
+    MinLength: 1
+  AuthType:
+    Description: Authorization type to apply to the API gateway endpoints
+    Type: String
+    Default: None
+    AllowedValues:
+      - None
+      - Private
+      - Cognito
+      - LambdaRequest
+      - LambdaToken
+      - ApiKey
+      - IAM
+    MinLength: 1
+  ApiGatewayDefinitionTemplate:
+    Description: |
+      Name of the API Gateway Cloudformation definition along with the authorization method to use.  Use one of the provided
+      templates to implement no auth, private, api key, lambda request, lamdba token, or Cognito auth, or modify one to meet your own
+      authentization requirements.  The template must exist within the provided TemplateSnippetS3UriBase location.
+    Default: 'cfn-apiGateway-noAuth.yaml'
+    Type: String
+    MinLength: 1
+  ExistingVpcId:
+    Description: |
+      ID of an existing VPC to deploy CDF (if using AuthType = 'Private') and/or AssetLibrary (if AssetLibraryMode = 'full') into.
+      A new VPC will be created if not provided.
+    Type: String
+    Default: 'N/A'
+  ExistingCDFSecurityGroupId:
+    Description: |
+      ID of an existing security group to deploy CDF and/or AssetLibrary into if an existing VPC is to be used.
+      A new security group will be created if not provided.
+    Type: String
+    Default: 'N/A'
+  ExistingPrivateSubnetIds:
+    Description: |
+      ID of existing private subnetIds to deploy CDF and/or AssetLibrary into if an existing VPC is to be used.
+      New private subnets will be created if not provided.
+    Type: String
+    Default: 'N/A'
+  ExistingPublicSubnetIds:
+    Description: |
+      ID of existing public subnetIds to deploy CDF and/or AssetLibrary into if an existing VPC is to be used.
+      New public subnets will be created if not provided.
+    Type: String
+    Default: 'N/A'
+  ExistingPrivateRouteTableIds:
+    Description: |
+      ID of existing private route tables to deploy AssetLibrary into if an existing VPC is to be used.
+      New private route tables will be created if not provided.
+    Type: String
+    Default: 'N/A'
+  ExistingPrivateApiGatewayVPCEndpoint:
+    Description: |
+      ID of existing VPC endpoint to deploy CDF and/or AssetLibrary into if an existing VPC is to be used.
+      New VPC endpoint will be created if not provided.
+    Type: String
+    Default: 'N/A'
+  CognitoUserPoolArn:
+    Description: Cognito user pool arn.  Only required if AuthType is set to 'Cognito'.
+    Type: String
+    Default: 'N/A'
+  AuthorizerFunctionArn:
+    Description: Lambda authorizer function arn.  Only required if AuthType is set to 'LambdaRequest' or 'LambdaToken'.
+    Type: String
+    Default: 'N/A'
+  BastionKeyPairName:
+    Description: Bastion Key Pair name
+    Type: String
+  BastionRemoteAccessCIDR:
+    AllowedPattern: "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/([0-9]|[1-2][0-9]|3[0-2]))$"
+    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/x
+    Description: Allowed CIDR block for external SSH access to the bastions
+    Type: String
+  IncludeAssetLibrary:
+    Description: If true, the Asset Library service will be deployed.
+    Type: String
+    Default: 'true'
+    AllowedValues:
+      - 'true'
+      - 'false'
+    MinLength: 1
+  AssetLibraryMode:
+    Description: Run in 'lite' mode which includes device registry functionality only, or 'full' mode which augments the device registry with a graph based datastore.
+    Type: String
+    Default: 'full'
+    AllowedValues:
+      - 'full'
+      - 'lite'
+    MinLength: 1
+  IncludeProvisioning:
+    Description: If true, the Provisioning service will be deployed.
+    Type: String
+    Default: 'true'
+    AllowedValues:
+      - 'true'
+      - 'false'
+    MinLength: 1
+  IncludeCommands:
+    Description: If true, the Commands service will be deployed.
+    Type: String
+    Default: 'true'
+    AllowedValues:
+      - 'true'
+      - 'false'
+    MinLength: 1
+  IncludeDeviceMonitoring:
+    Description: If true, the Device Monitoring service will be deployed.
+    Type: String
+    Default: 'true'
+    AllowedValues:
+      - 'true'
+      - 'false'
+    MinLength: 1
+  IncludeEventsProcessor:
+    Description: If true, the Event Processor service will be deployed.
+    Type: String
+    Default: 'true'
+    AllowedValues:
+      - 'true'
+      - 'false'
+    MinLength: 1
+  IncludeEventsAlerts:
+    Description: If true, the Event Alerts service will be deployed.
+    Type: String
+    Default: 'true'
+    AllowedValues:
+      - 'true'
+      - 'false'
+    MinLength: 1
+  IncludeAssetLibraryHistory:
+    Description: If true, the Asset Library History service will be deployed.
+    Type: String
+    Default: 'true'
+    AllowedValues:
+      - 'true'
+      - 'false'
+    MinLength: 1
+  IncludeBulkCerts:
+    Description: If true, the Bulk Certs service will be deployed.
+    Type: String
+    Default: 'true'
+    AllowedValues:
+      - 'true'
+      - 'false'
+    MinLength: 1
+  IncludeCertificateActivator:
+    Description: If true, the CertificateActivator service will be deployed.
+    Type: String
+    Default: 'true'
+    AllowedValues:
+      - 'true'
+      - 'false'
+    MinLength: 1
+  IncludeCertificateVendor:
+    Description: If true, the CertificateVendor service will be deployed.
+    Type: String
+    Default: 'true'
+    AllowedValues:
+      - 'true'
+      - 'false'
+    MinLength: 1
+  IncludeSimulationManager:
+    Description: If true, then Simulation Manager will be deployed.
+    Type: String
+    Default: 'true'
+    AllowedValues:
+      - 'true'
+      - 'false'
+  IncludeSimulationLauncher:
+    Description: If true, then Simulation Launcher will be deployed.
+    Type: String
+    Default: 'true'
+    AllowedValues:
+      - 'true'
+      - 'false'
+    MinLength: 1
+  IncludeAssetLibraryExport:
+    Description: If true, then Asset Library Exporter will be deployed.
+    Type: String
+    Default: 'true'
+    AllowedValues:
+      - 'true'
+      - 'false'
+    MinLength: 1
+  JMeterRepoName:
+    Description: JMeter repository Name for the simulation launcher docker image.
+    Type: String
+    Default: 'N/A'
+  EnableApiGatewayAccessLogs:
+    Description: Enables API gateway Access Logging, defaults to false if not specified.
+    Type: String
+    Default: 'false'
+    AllowedValues:
+      - 'true'
+      - 'false'
+    MinLength: 1
+  AssetLibraryAppConfigOverride:
+    Description: Asset Library Application Configuration AssetLibrary Application
+    Type: String
+    Default: '{}'
+    MinLength: 1
+  AssetLibraryExportAppConfigOverride:
+    Description: Asset Library Export Application Configuration AssetLibrary Application
+    Type: String
+    Default: '{}'
+    MinLength: 1
+  ProvisioningAppConfigOverride:
+    Description: Provisioning Application Configuration AssetLibrary Application
+    Type: String
+    Default: '{}'
+    MinLength: 1
+  AssetLibraryHistoryAppConfigOverride:
+    Description: Asset Library History Application Configuration AssetLibrary Application
+    Type: String
+    Default: '{}'
+    MinLength: 1
+  CommandsAppConfigOverride:
+    Description: Asset Library Application Configuration AssetLibrary Application
+    Type: String
+    Default: '{}'
+    MinLength: 1
+  DeviceMonitoringAppConfigOverride:
+    Description: Device Monitoring Application Configuration AssetLibrary Application
+    Type: String
+    Default: '{}'
+    MinLength: 1
+  BulkCertsAppConfigOverride:
+    Description: Bulk Certificates Application Configuration AssetLibrary Application
+    Type: String
+    Default: '{}'
+    MinLength: 1
+  SimulationManagerAppConfigOverride:
+    Description: Simulation Manager Application Configuration AssetLibrary Application
+    Type: String
+    Default: '{}'
+    MinLength: 1
+  SimulationLauncherAppConfigOverride:
+    Description: Simulation Launcher Application Configuration AssetLibrary Application
+    Type: String
+    Default: '{}'
+    MinLength: 1
+  CertificateActivatorAppConfigOverride:
+    Description: Certificate Activator Application Configuration AssetLibrary Application
+    Type: String
+    Default: '{}'
+    MinLength: 1
+  CertificateVendorAppConfigOverride:
+    Description: Certitificate Vendor Application Configuration AssetLibrary Application
+    Type: String
+    Default: '{}'
+    MinLength: 1
+  EventsProcessorAppConfigOverride:
+    Description: Event Processor Application Configuration AssetLibrary Application
+    Type: String
+    Default: '{}'
+    MinLength: 1
+  EventsAlertsAppConfigOverride:
+    Description: Event Alerts Vendor Application Configuration AssetLibrary Application
+    Type: String
+    Default: '{}'
+    MinLength: 1
+  AssetLibraryExportETLMaxConcurrency:
+    Description: Asset Library Export ETL Workflow Max Concurrency
+    Type: String
+    Default: 10
+  NeptuneSnapshotIdentifier:
+    Type: String
+    Description: Specifies the identifier for an existing DB cluster snapshot to restore. Refer to Neptune documentation on its use.
+    Default: ''
+
+Conditions:
+  DeployAssetLibrary: !Equals [ !Ref IncludeAssetLibrary, 'true' ]
+  DeployAssetLibraryFull: !And [ !Condition DeployAssetLibrary, !Equals [ !Ref AssetLibraryMode, 'full' ]]
+  DeployAssetLibraryExport: !And [ !Condition DeployAssetLibrary, !Equals [ !Ref IncludeAssetLibraryExport, 'true' ]]
+  DeployProvisioning: !Equals [ !Ref IncludeProvisioning, 'true' ]
+  DeployCommands: !And [ !Condition DeployAssetLibrary, !Equals [ !Ref IncludeCommands, 'true' ]]
+  DeployEventsAlerts: !Equals [ !Ref IncludeEventsAlerts, 'true' ]
+  DeployEventsProcessor: !Equals [ !Ref IncludeEventsProcessor, 'true' ]
+  DeployAssetLibraryHistory: !And [ !Condition DeployAssetLibrary, !Equals [ !Ref IncludeAssetLibraryHistory, 'true' ]]
+  DeployBulkCerts: !Equals [ !Ref IncludeBulkCerts, 'true' ]
+  DeploySimulationManager: !Equals [ !Ref IncludeSimulationManager, 'true' ]
+  DeploySimulationLauncher: !Equals [ !Ref IncludeSimulationLauncher, 'true' ]
+  UsingVPCForAuth: !Equals [ !Ref AuthType, 'Private' ]
+  UsingVPCForAssetLibrary: !Or [ !Condition UsingVPCForAuth, !Condition DeployAssetLibraryFull ]
+
+Resources:
+
+  Shared:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: ./cfn-cdf-core-shared.yaml
+      Parameters:
+        Environment: !Ref Environment
+        ArtifactsBucket: !Ref ArtifactsBucket
+        KmsKeyId: !Ref KmsKeyId
+        AuthType: !Ref AuthType
+        ExistingVpcId: !Ref ExistingVpcId
+        ExistingCDFSecurityGroupId: !Ref ExistingCDFSecurityGroupId
+        ExistingPrivateSubnetIds: !Ref ExistingPrivateSubnetIds
+        ExistingPublicSubnetIds: !Ref ExistingPublicSubnetIds
+        ExistingPrivateRouteTableIds: !Ref ExistingPrivateRouteTableIds
+        ExistingPrivateApiGatewayVPCEndpoint: !Ref ExistingPrivateApiGatewayVPCEndpoint
+        IncludeAssetLibrary: !Ref IncludeAssetLibrary
+        AssetLibraryMode: !Ref AssetLibraryMode
+        IncludeProvisioning: !Ref IncludeProvisioning
+        IncludeBulkCerts: !Ref IncludeBulkCerts
+        IncludeCertificateVendor: !Ref IncludeCertificateVendor
+      TimeoutInMinutes: 30
+
+  ServicesA:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: ./cfn-cdf-core-services-A.yaml
+      Parameters:
+        Environment: !Ref Environment
+        ArtifactsBucket: !Ref ArtifactsBucket
+        ArtifactsConfigPrefix: !Ref ArtifactsConfigPrefix
+        KmsKeyId: !GetAtt Shared.Outputs.KmsKeyId
+        TemplateSnippetS3UriBase: !Ref TemplateSnippetS3UriBase
+        AuthType: !Ref AuthType
+        ApiGatewayDefinitionTemplate: !Ref ApiGatewayDefinitionTemplate
+        CognitoUserPoolArn: !Ref CognitoUserPoolArn
+        AuthorizerFunctionArn: !Ref AuthorizerFunctionArn
+        BastionKeyPairName: !Ref BastionKeyPairName
+        BastionRemoteAccessCIDR: !Ref BastionRemoteAccessCIDR
+        PublicSubNetIds: !If [ UsingVPCForAssetLibrary, !GetAtt Shared.Outputs.PublicSubnetIds, '' ]
+        IncludeAssetLibrary: !Ref IncludeAssetLibrary
+        AssetLibraryMode: !Ref AssetLibraryMode
+        VpcId: !If [ UsingVPCForAssetLibrary, !GetAtt Shared.Outputs.VpcId, '' ]
+        CDFSecurityGroupId: !If [ UsingVPCForAssetLibrary, !GetAtt Shared.Outputs.CDFSecurityGroupId, '' ]
+        PrivateSubNetIds: !If [ UsingVPCForAssetLibrary, !GetAtt Shared.Outputs.PrivateSubnetIds, '' ]
+        PrivateRouteTableIds: !If [ UsingVPCForAssetLibrary, !GetAtt Shared.Outputs.PrivateRouteTableIds, '' ]
+        PrivateApiGatewayVPCEndpoint: !If [ UsingVPCForAssetLibrary, !GetAtt Shared.Outputs.PrivateApiGatewayVPCEndpoint, '' ]
+        IncludeProvisioning: !Ref IncludeProvisioning
+        OpenSslLambdaLayerArn: !GetAtt Shared.Outputs.OpenSslLambdaLayerArn
+        IncludeCommands: !Ref IncludeCommands
+        IncludeDeviceMonitoring: !Ref IncludeDeviceMonitoring
+        IncludeEventProcessor: !Ref IncludeEventsProcessor
+        IncludeEventAlerts: !Ref IncludeEventsAlerts
+        IncludeAssetLibraryHistory: !Ref IncludeAssetLibraryHistory
+        IncludeBulkCerts: !Ref IncludeBulkCerts
+        IncludeCertificateActivator: !Ref IncludeCertificateActivator
+        IncludeCertificateVendor: !Ref IncludeCertificateVendor
+        IncludeAssetLibraryExport: !Ref IncludeAssetLibraryExport
+        CustomResourceLambdaArn: !GetAtt Shared.Outputs.CustomResourceLambdaArn
+        CustomResourceVPCLambdaArn: !GetAtt Shared.Outputs.CustomResourceVPCLambdaArn
+        EnableApiGatewayAccessLogs: !Ref EnableApiGatewayAccessLogs
+        CertificateActivatorAppConfigOverride: !Ref CertificateActivatorAppConfigOverride
+        CertificateVendorAppConfigOverride: !Ref CertificateVendorAppConfigOverride
+        EventProcessorAppConfigOverride: !Ref EventsProcessorAppConfigOverride
+        EventAlertsAppConfigOverride: !Ref EventsAlertsAppConfigOverride
+        AssetLibraryAppConfigOverride: !Ref AssetLibraryAppConfigOverride
+        AssetLibraryExportAppConfigOverride: !Ref AssetLibraryAppConfigOverride
+        ProvisioningAppConfigOverride: !Ref ProvisioningAppConfigOverride
+        AssetLibraryHistoryAppConfigOverride: !Ref AssetLibraryHistoryAppConfigOverride
+        CommandsAppConfigOverride: !Ref CommandsAppConfigOverride
+        DeviceMonitoringAppConfigOverride: !Ref DeviceMonitoringAppConfigOverride
+        BulkCertsAppConfigOverride: !Ref BulkCertsAppConfigOverride
+        NeptuneSnapshotIdentifier: !Ref NeptuneSnapshotIdentifier
+      TimeoutInMinutes: 120
+    DependsOn:
+      - Shared
+
+  ServicesB:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: ./cfn-cdf-core-services-B.yaml
+      Parameters:
+        Environment: !Ref Environment
+        ArtifactsBucket: !Ref ArtifactsBucket
+        ArtifactsConfigPrefix: !Ref ArtifactsConfigPrefix
+        TemplateSnippetS3UriBase: !Ref TemplateSnippetS3UriBase
+        AuthType: !Ref AuthType
+        ApiGatewayDefinitionTemplate: !Ref ApiGatewayDefinitionTemplate
+        CognitoUserPoolArn: !Ref CognitoUserPoolArn
+        AuthorizerFunctionArn: !Ref AuthorizerFunctionArn
+        PublicSubNetIds: !If [ UsingVPCForAssetLibrary, !GetAtt Shared.Outputs.PublicSubnetIds, '' ] 
+        VpcId: !If [ UsingVPCForAssetLibrary, !GetAtt Shared.Outputs.VpcId, '' ]
+        CDFSecurityGroupId: !If [ UsingVPCForAssetLibrary, !GetAtt Shared.Outputs.CDFSecurityGroupId, '' ]
+        PrivateSubNetIds: !If [ UsingVPCForAssetLibrary, !GetAtt Shared.Outputs.PrivateSubnetIds, '' ]
+        PrivateApiGatewayVPCEndpoint: !If [ UsingVPCForAssetLibrary, !GetAtt Shared.Outputs.PrivateApiGatewayVPCEndpoint, '' ]
+        IncludeSimulationManager: !Ref IncludeSimulationManager
+        IncludeSimulationLauncher: !Ref IncludeSimulationLauncher
+        CustomResourceLambdaArn: !GetAtt Shared.Outputs.CustomResourceLambdaArn
+        AssetLibraryFunctionName: !GetAtt ServicesA.Outputs.AssetLibraryRestApiFunctionName
+        KmsKeyId: !GetAtt Shared.Outputs.KmsKeyId
+        JMeterRepoName: !Ref JMeterRepoName
+        EnableApiGatewayAccessLogs: !Ref EnableApiGatewayAccessLogs
+        SimulationManagerAppConfigOverride: !Ref SimulationManagerAppConfigOverride
+        SimulationLauncherAppConfigOverride: !Ref SimulationLauncherAppConfigOverride
+      TimeoutInMinutes: 120
+    DependsOn:
+      - Shared
+
+
+Outputs:
+  KmsKeyId:
+    Description: KMS Key ID
+    Value: !GetAtt Shared.Outputs.KmsKeyId
+
+  AssetLibraryRestApiFunctionName:
+    Condition: DeployAssetLibrary
+    Description: Asset library REST API lambda function name
+    Value: !GetAtt ServicesA.Outputs.AssetLibraryRestApiFunctionName
+  AssetLibraryApiGatewayUrl:
+    Condition: DeployAssetLibrary
+    Description: Asset Library REST API URL
+    Value: !GetAtt ServicesA.Outputs.AssetLibraryApiGatewayUrl
+  AssetLibraryApiGatewayHost:
+    Condition: DeployAssetLibrary
+    Description: Asset Library REST API host
+    Value: !GetAtt ServicesA.Outputs.AssetLibraryApiGatewayHost
+
+  ProvisioningRestApiFunctionName:
+    Condition: DeployProvisioning
+    Description: Provisioning REST API lambda function name
+    Value: !GetAtt ServicesA.Outputs.ProvisioningRestApiFunctionName
+  ProvisioningApiGatewayUrl:
+    Condition: DeployProvisioning
+    Description: Provisioning REST API URL
+    Value: !GetAtt ServicesA.Outputs.ProvisioningApiGatewayUrl
+  ProvisioningApiGatewayHost:
+    Condition: DeployProvisioning
+    Description: Provisioning REST API host
+    Value: !GetAtt ServicesA.Outputs.ProvisioningApiGatewayHost
+
+  CommandsRestApiFunctionName:
+    Condition: DeployCommands
+    Description: Commands REST API lambda function name
+    Value: !GetAtt ServicesA.Outputs.CommandsRestApiFunctionName
+  CommandsApiGatewayUrl:
+    Condition: DeployCommands
+    Description: Commands REST API URL
+    Value: !GetAtt ServicesA.Outputs.CommandsApiGatewayUrl
+  CommandsApiGatewayHost:
+    Condition: DeployCommands
+    Description: Commands REST API host
+    Value: !GetAtt ServicesA.Outputs.CommandsApiGatewayHost
+
+  EventsProcessorRestApiFunctionName:
+    Condition: DeployEventsProcessor
+    Description: Events Processor REST API lambda function name
+    Value: !GetAtt ServicesA.Outputs.EventsProcessorRestApiFunctionName
+  EventsProcessorApiGatewayUrl:
+    Condition: DeployEventsProcessor
+    Description: Events Processor REST API URL
+    Value: !GetAtt ServicesA.Outputs.EventsProcessorApiGatewayUrl
+  EventsProcessorApiGatewayHost:
+    Condition: DeployEventsProcessor
+    Description: Events Processor REST API host
+    Value: !GetAtt ServicesA.Outputs.EventsProcessorApiGatewayHost
+
+  AssetLibraryHistoryRestApiFunctionName:
+    Condition: DeployAssetLibraryHistory
+    Description: AssetLibraryHistory REST API lambda function name
+    Value: !GetAtt ServicesA.Outputs.AssetLibraryHistoryRestApiFunctionName
+  AssetLibraryHistoryApiGatewayUrl:
+    Condition: DeployAssetLibraryHistory
+    Description: AssetLibraryHistory REST API URL
+    Value: !GetAtt ServicesA.Outputs.AssetLibraryHistoryApiGatewayUrl
+  AssetLibraryHistoryApiGatewayHost:
+    Condition: DeployAssetLibraryHistory
+    Description: AssetLibraryHistory REST API host
+    Value: !GetAtt ServicesA.Outputs.AssetLibraryHistoryApiGatewayHost
+
+  BulkCertsRestApiFunctionName:
+    Condition: DeployBulkCerts
+    Description: Bulk Certs REST API lambda function name
+    Value: !GetAtt ServicesA.Outputs.BulkCertsRestApiFunctionName
+  BulkCertstApiGatewayUrl:
+    Condition: DeployBulkCerts
+    Description: Bulk Certs REST API URL
+    Value: !GetAtt ServicesA.Outputs.BulkCertstApiGatewayUrl
+  BulkCertsApiGatewayHost:
+    Condition: DeployBulkCerts
+    Description: Bulk Certs REST API host
+    Value: !GetAtt ServicesA.Outputs.BulkCertsApiGatewayHost
+
+  SimulationManagerRestApiFunctionName:
+    Condition: DeploySimulationManager
+    Description: SimulationManager REST API lambda function name
+    Value: !GetAtt ServicesB.Outputs.SimulationManagerRestApiFunctionName
+  SimulationManagerApiGatewayUrl:
+    Condition: DeploySimulationManager
+    Description: SimulationManager REST API URL
+    Value: !GetAtt ServicesB.Outputs.SimulationManagerApiGatewayUrl
+  SimulationManagerApiGatewayHost:
+    Condition: DeploySimulationManager
+    Description: SimulationManager REST API host
+    Value: !GetAtt ServicesB.Outputs.SimulationManagerApiGatewayHost
+
+  CDFVpcId:
+    Description: CDF VPC ID
+    Value: !GetAtt Shared.Outputs.VpcId
+  CDFSecurityGroupId:
+    Description: CDF VPC Security Groups
+    Value: !GetAtt Shared.Outputs.CDFSecurityGroupId
+  CDFPrivateSubnetIds:
+    Description: CDF VPC Private Subnets
+    Value: !GetAtt Shared.Outputs.PrivateSubnetIds
+  CDFPublicSubnetIds:
+    Description: CDF VPC Public Subnets
+    Value: !GetAtt Shared.Outputs.PublicSubnetIds
+
+  AssetLibraryExportETLLambdaFunctionName:
+    Condition: DeployAssetLibraryExport
+    Description: AssetLibrary Export ETL Lambda Function name
+    Value: !GetAtt ServicesA.Outputs.AssetLibraryExportETLLambdaFunctionName
+  AssetLibraryExportBatchLambdaFunctionName:
+    Condition: DeployAssetLibraryExport
+    Description: AssetLibrary Export Batch Lambda Function name
+    Value: !GetAtt ServicesA.Outputs.AssetLibraryExportBatchLambdaFunctionName
+  AssetLibraryExportExportCompletionSnsTopic:
+    Condition: DeployAssetLibraryExport
+    Description: Export Completion SNS Topic
+    Value: !GetAtt ServicesA.Outputs.AssetLibraryExportExportCompletionSnsTopic

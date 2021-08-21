@@ -1,0 +1,12 @@
+devDependencies:
+  jest-mock-console: 1.0.1
+lockfileVersion: 5.1
+packages:
+  /jest-mock-console/1.0.1:
+    dev: true
+    peerDependencies:
+      jest: '>= 22.4.2'
+    resolution:
+      integrity: sha512-Bn+Of/cvz9LOEEeEg5IX5Lsf8D2BscXa3Zl5+vSVJl37yiT8gMAPPKfE09jJOwwu1zbagL11QTrH+L/Gn8udOg==
+specifiers:
+  jest-mock-console: ^1.0.1

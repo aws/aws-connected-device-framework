@@ -1,0 +1,119 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "DAXDataAPIs",
+            "Action": [
+                "dax:BatchGetItem",
+                "dax:BatchWriteItem",
+                "dax:ConditionCheckItem",
+                "dax:CreateCluster",
+                "dax:DecreaseReplicationFactor",
+                "dax:DefineAttributeList",
+                "dax:DefineAttributeListId",
+                "dax:DefineKeySchema",
+                "dax:DeleteCluster",
+                "dax:DeleteItem",
+                "dax:DescribeClusters",
+                "dax:Endpoints",
+                "dax:GetItem",
+                "dax:IncreaseReplicationFactor",
+                "dax:ListTags",
+                "dax:PutItem",
+                "dax:Query",
+                "dax:RebootNode",
+                "dax:Scan",
+                "dax:TagResource",
+                "dax:UntagResource",
+                "dax:UpdateCluster",
+                "dax:UpdateItem"
+                ],
+            "Effect": "Allow",
+            "Resource": [
+                "arn:aws:dax:<Region>:<AccountId>:cache/*"
+            ]},
+            {
+            "Sid": "DAXManagementAPIs",
+            "Action": [
+                "dax:CreateParameterGroup",
+                "dax:CreateSubnetGroup",
+                "dax:DeleteParameterGroup",
+                "dax:DeleteSubnetGroup",
+                "dax:DescribeClusters",
+                "dax:DescribeDefaultParameters",
+                "dax:DescribeEvents",
+                "dax:DescribeParameterGroups",
+                "dax:DescribeParameters",
+                "dax:DescribeSubnetGroups",
+                "dax:UpdateParameterGroup",
+                "dax:UpdateSubnetGroup"
+                ],
+            "Effect": "Allow",
+            "Resource": [
+                "*"
+            ]
+        },  
+        {
+            "Sid": "LambdaActionsWhichSupportResourceLevelPermissions",
+            "Effect": "Allow",
+            "Action": [
+                "lambda:*"
+            ],
+            "Resource": [
+                "arn:aws:lambda:<Region>:<AccountId>:function:cdf-*",
+                "arn:aws:lambda:<Region>:<AccountId>:layer:*"
+            ]
+        },
+        {
+            "Sid": "LambdaActionsWhichDoNotSupportResourceLevelPermissions",
+            "Effect": "Allow",
+            "Action": [
+                "lambda:CreateEventSourceMapping",
+                "lambda:DeleteEventSourceMapping",
+                "lambda:UpdateEventSourceMapping",
+                "lambda:GetEventSourceMapping",
+                "lambda:TagResource",
+                "lambda:UntagResource"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "DAXServiceLinkedRole",
+            "Effect": "Allow",
+            "Action": [
+                "iam:CreateServiceLinkedRole"
+            ],
+            "Resource": "*",
+            "Condition": {"StringLike": {"iam:AWSServiceName": "dax.amazonaws.com"}}
+        },
+        {
+            "Sid": "NeptuneServiceLinkedRole",
+            "Action": "iam:CreateServiceLinkedRole",
+            "Effect": "Allow",
+            "Resource": "arn:aws:iam::*:role/aws-service-role/rds.amazonaws.com/AWSServiceRoleForRDS",
+            "Condition": {
+                "StringLike": {
+                    "iam:AWSServiceName":"rds.amazonaws.com"
+                }
+            }
+        },
+        {
+            "Sid": "AutoscalingServiceLinkedRole",
+            "Action": "iam:CreateServiceLinkedRole",
+            "Effect": "Allow",
+            "Resource": "arn:aws:iam::*:role/aws-service-role/autoscaling.amazonaws.com/AWSServiceRoleForAutoScaling",
+            "Condition": {
+                "StringLike": {
+                    "iam:AWSServiceName":"autoscaling.amazonaws.com"
+                }
+            }
+        },
+        {
+            "Sid": "ECS",
+            "Action": "ecs:*",
+            "Effect": "Allow",
+            "Resource": "*"
+        }
+            
+    ]
+}

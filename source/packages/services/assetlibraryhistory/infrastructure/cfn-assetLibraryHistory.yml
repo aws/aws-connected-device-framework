@@ -1,0 +1,372 @@
+#-----------------------------------------------------------------------------------------------------------------------
+#   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
+#                                                                                                                    
+#  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance    
+#  with the License. A copy of the License is located at                                                             
+#                                                                                                                    
+#      http://www.apache.org/licenses/LICENSE-2.0                                                                    
+#                                                                                                                    
+#  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES 
+#  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    
+#  and limitations under the License.                                                                                
+#-----------------------------------------------------------------------------------------------------------------------
+AWSTemplateFormatVersion : '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Description: CDF Asset Library History Service
+
+Globals:
+  Api:
+    OpenApiVersion: 3.0.1
+
+Parameters:
+  Environment:
+    Description:  Name of environment.  Used to name the created resources.
+    Type: String
+    MinLength: 1
+
+  ApplicationConfigurationOverride:
+    Description: This allows you to override any configuration application configuration. Must be a JSON formatted string. Any configurations contained in this will override the configurations found and merged from the config files.
+    Type: String
+    MinLength: 1
+
+  TemplateSnippetS3UriBase:
+    Description: |
+      S3 uri of directory where template snippets are stored for the account.
+    Type: String
+    MinLength: 1
+
+  AuthType:
+    Description: Authorization type to apply to the API gateway endpoints
+    Type: String
+    Default: None
+    AllowedValues:
+      - None
+      - Private
+      - Cognito
+      - LambdaRequest
+      - LambdaToken
+      - ApiKey
+      - IAM
+    MinLength: 1
+
+  ApiGatewayDefinitionTemplate:
+    Description: |
+      Name of the API Gateway Cloudformation definition along with the authorization method to use.  Use one of the provided
+      templates to implement no auth, private, api key, lambda request, lamdba token, or Cognito auth, or modify one to meet your own
+      authentization requirements.  The template must exist within the provided TemplateSnippetS3UriBase location.
+    Type: String
+    MinLength: 1
+
+  VpcId:
+    Description: ID of VPC to deploy the API into. Only required if AuthType = 'Private'.
+    Type: String
+  CDFSecurityGroupId:
+    Description: ID of an existing CDF security group to deploy the API into. Only required if AuthType = 'Private'.
+    Type: String
+  PrivateSubNetIds:
+    Description: Comma delimited list of private subnetIds to deploy the API into. Only required if AuthType = 'Private'.
+    Type: CommaDelimitedList
+  PrivateApiGatewayVPCEndpoint:
+    Description: VPC endpoint. Only required if AuthType = 'Private'.
+    Type: String
+
+  CognitoUserPoolArn:
+    Description: Cognito user pool arn.  Only required if AuthType is set to 'Cognito'.
+    Type: String
+    Default: 'N/A'
+
+  AuthorizerFunctionArn:
+    Description: Lambda authorizer function arn.  Only required if AuthType is set to 'LambdaRequest' or 'LambdaToken'.
+    Type: String
+    Default: 'N/A'
+
+  AssetLibraryEventsTopic:
+    Description: The AssetLibrary events topic to subscribe to.
+    Default: cdf/assetlibrary/events/#
+    Type: String
+    MinLength: 1
+
+  KmsKeyId:
+    Description: The KMS key ID used to encrypt DynamoDB.
+    Type: String
+
+  EnableApiGatewayAccessLogs:
+    Description: Enales API gateway Access Logging, defaults to false if not specified.
+    Type: String
+    Default: 'false'
+    AllowedValues:
+      - 'true'
+      - 'false'
+    MinLength: 1
+
+Conditions:
+
+  DeployInVPC: !Not [ !Equals [ !Ref VpcId, 'N/A' ] ]
+  DeployWithLambdaAuth: !Or [ !Equals [ !Ref AuthType, 'LambdaRequest' ], !Equals [ !Ref AuthType, 'LambdaToken' ] ]
+  KmsKeyIdProvided: !Not [ !Equals [ !Ref KmsKeyId, "" ] ]
+  EnableApiGatewayAccessLogs: !Equals [ !Ref EnableApiGatewayAccessLogs, "true"]
+
+Resources:
+
+  ApiGatewayApi:
+    'Fn::Transform':
+      Name: 'AWS::Include'
+      Parameters:
+        Location: !Sub "${TemplateSnippetS3UriBase}${ApiGatewayDefinitionTemplate}"
+    DependsOn:
+      - RESTLambdaFunction
+
+  ApiGatewayAuthorizerInvokeRole:
+    Condition: DeployWithLambdaAuth
+    'Fn::Transform':
+      Name: 'AWS::Include'
+      Parameters:
+        Location: !Sub "${TemplateSnippetS3UriBase}cfn-role-lambdaRequestAuthInvokerRole.yaml"
+    DependsOn:
+    - RESTLambdaFunction
+
+  ApiGatewayAccessLogGroup:
+    Condition: EnableApiGatewayAccessLogs
+    Type: 'AWS::Logs::LogGroup'
+    Properties:
+      LogGroupName: !Sub 'cdf-assetLibraryHistory-apigatewayaccesslogs-${Environment}'
+
+  AssetLibraryEventsRule:
+    Type: "AWS::IoT::TopicRule"
+    Properties:
+      TopicRulePayload: 
+        Actions:
+          -
+            Lambda:
+              FunctionArn: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${EventsLambdaFunction}'
+        Description: "Saves AssetLibrary configuration changes"
+        AwsIotSqlVersion: "2016-03-23"
+        RuleDisabled: "false" 
+        Sql: !Sub "SELECT * FROM '${AssetLibraryEventsTopic}'"    
+
+  LambdaInvocationPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      SourceArn: !Sub 'arn:aws:iot:${AWS::Region}:${AWS::AccountId}:rule/${AssetLibraryEventsRule}'
+      Action: lambda:InvokeFunction
+      Principal: iot.amazonaws.com
+      FunctionName: !GetAtt EventsLambdaFunction.Arn
+      SourceAccount: !Ref AWS::AccountId 
+  
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - 
+            Effect: Allow
+            Principal:
+              Service: 
+                - lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Path: "/cdf/assetlibraryhistory/"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AWSLambdaExecute
+        - !If [KmsKeyIdProvided, !Ref KmsPolicy, !Ref "AWS::NoValue"]
+        - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
+      Policies:
+        -
+          PolicyName: "DynamoDB"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Action:
+                  - "dynamodb:BatchGetItem"
+                  - "dynamodb:GetItem"
+                  - "dynamodb:Query"
+                  - "dynamodb:Scan"
+                  - "dynamodb:BatchWriteItem"
+                  - "dynamodb:PutItem"
+                  - "dynamodb:UpdateItem"
+                  - "dynamodb:DeleteItem"
+                Effect: Allow
+                Resource:
+                  - !GetAtt HistoryTable.Arn
+                  - !Sub '${HistoryTable.Arn}/index/type-time-index'
+
+  RESTLambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Path: "/cdf/assetlibraryhistory/"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AWSLambdaExecute
+        - !If [ KmsKeyIdProvided, !Ref KmsPolicy, !Ref "AWS::NoValue" ]
+        - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
+      Policies:
+        - PolicyName: "DynamoDB"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Action:
+                  - "dynamodb:BatchGetItem"
+                  - "dynamodb:GetItem"
+                  - "dynamodb:Query"
+                  - "dynamodb:Scan"
+                  - "dynamodb:BatchWriteItem"
+                  - "dynamodb:PutItem"
+                  - "dynamodb:UpdateItem"
+                  - "dynamodb:DeleteItem"
+                Effect: Allow
+                Resource:
+                  - !GetAtt HistoryTable.Arn
+                  - !Sub '${HistoryTable.Arn}/index/type-time-index'
+
+  KmsPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Condition: KmsKeyIdProvided
+    Properties:
+      Description: "cdf-provisioning policy for accessing KMS"
+      Path: "/cdf/assetlibraryhistory/"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Action:
+              - 'kms:Decrypt'
+            Effect: Allow
+            Resource: !Sub "arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/${KmsKeyId}"
+
+  HistoryTable:
+    Type: AWS::DynamoDB::Table
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W28
+            reason: "safely naming this resources to be unique by environment"
+          - id: W73
+            reason: "Can be decided by the customer, to specify the billing mode"
+    Properties:
+      TableName: !Sub 'cdf-assetlibraryhistory-${Environment}'
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      SSESpecification:
+        Fn::If:
+          - KmsKeyIdProvided
+          - KMSMasterKeyId: !Ref KmsKeyId
+            SSEEnabled: true
+            SSEType: KMS
+          - Ref: AWS::NoValue
+      AttributeDefinitions: 
+        - 
+          AttributeName: "objectId"
+          AttributeType: "S"
+        - 
+          AttributeName: "time"
+          AttributeType: "S"
+        - 
+          AttributeName: "type"
+          AttributeType: "S"
+      KeySchema: 
+        - 
+          AttributeName: "objectId"
+          KeyType: "HASH"
+        - 
+          AttributeName: "time"
+          KeyType: "RANGE"
+      GlobalSecondaryIndexes:
+        -
+          IndexName: type-time-index
+          KeySchema: 
+            - 
+              AttributeName: "type"
+              KeyType: "HASH"
+            -
+              AttributeName: "time"
+              KeyType: "RANGE"
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: "5"
+            WriteCapacityUnits: "5"
+      ProvisionedThroughput: 
+        ReadCapacityUnits: "5"
+        WriteCapacityUnits: "5"
+
+  EventsLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'cdf-assetLibraryHistory-events-${Environment}'
+      CodeUri: ../bundle.zip
+      Handler: packages/services/assetlibraryhistory/dist/lambda_iot_rule.iot_rule_handler
+      MemorySize: 128
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Runtime: nodejs14.x
+      Timeout: 30
+      Environment:
+        Variables:
+          NODE_CONFIG_DIR: 'packages/services/assetlibraryhistory/dist/config'
+          NODE_CONFIG: !Ref ApplicationConfigurationOverride
+          ASSETLIBRARYHISTORY_AWS_DYNAMODB_TABLES_EVENTS: !Ref HistoryTable
+      Tracing: Active
+
+  RESTLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'cdf-assetLibraryHistory-rest-${Environment}'
+      CodeUri: ../bundle.zip
+      Handler: packages/services/assetlibraryhistory/dist/lambda_proxy.handler
+      MemorySize: 256
+      Role: !GetAtt RESTLambdaExecutionRole.Arn
+      Runtime: nodejs14.x
+      Timeout: 30
+      Environment:
+        Variables:
+          NODE_CONFIG_DIR: 'packages/services/assetlibraryhistory/dist/config'
+          NODE_CONFIG: !Ref ApplicationConfigurationOverride
+          ASSETLIBRARYHISTORY_AWS_DYNAMODB_TABLES_EVENTS: !Ref HistoryTable
+      Tracing: Active
+
+      VpcConfig:
+        Fn::If:
+          - DeployInVPC
+          - SubnetIds: !Ref PrivateSubNetIds
+            SecurityGroupIds:
+              - !Ref CDFSecurityGroupId
+          - Ref: AWS::NoValue
+
+      Events:
+        ProxyApiRoot:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiGatewayApi
+            Path: /
+            Method: ANY
+        ProxyApiGreedy:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiGatewayApi
+            Path: /{proxy+}
+            Method: ANY
+            
+Outputs:
+  RestApiFunctionName:
+    Description: Asset Library History REST API lambda function name
+    Value: !Ref RESTLambdaFunction
+    Export:
+      Name: !Sub "cdf-assetlibraryhistory-${Environment}-restApiFunctionName"
+  ApiGatewayUrl:
+    Description: Asset Library History REST API URL
+    Value: !Sub 'https://${ApiGatewayApi}.execute-api.${AWS::Region}.amazonaws.com/Prod'
+    Export:
+      Name: !Sub "cdf-assetlibraryhistory-${Environment}-apigatewayurl"
+  ApiGatewayHost:
+    Description: Asset Library History REST API host
+    Value: !Sub '${ApiGatewayApi}.execute-api.${AWS::Region}.amazonaws.com'
+    Export:
+      Name: !Sub "cdf-assetlibraryhistory-${Environment}-apigatewayhost"

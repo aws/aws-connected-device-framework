@@ -1,0 +1,703 @@
+#-----------------------------------------------------------------------------------------------------------------------
+#   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance
+#  with the License. A copy of the License is located at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES
+#  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions
+#  and limitations under the License.
+#-----------------------------------------------------------------------------------------------------------------------
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'CloudFormation Template to setup VPC, two private and public subnets, IGW, NAT Gateways and Routes'
+Parameters:
+  Environment:
+    Description:  Name of environment.  Used to name the created resources.
+    Type: String
+    MinLength: 1
+  VPCCIDR:
+    Type: String
+    Description: IP Address range for the VPC
+    MinLength: '9'
+    MaxLength: '18'
+    Default: 10.1.0.0/16
+    AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
+    ConstraintDescription: must be a valid IP CIDR range of the form x.x.x.x/x.
+  PrivateSubnetOneCIDR:
+    Type: String
+    Description: IP Address range for the private Subnet 1
+    MinLength: '9'
+    MaxLength: '18'
+    Default: 10.1.1.0/24
+    AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
+    ConstraintDescription: must be a valid IP CIDR range of the form x.x.x.x/x.
+  PrivateSubnetTwoCIDR:
+    Type: String
+    Description: IP Address range for the private Subnet 2
+    MinLength: '9'
+    MaxLength: '18'
+    Default: 10.1.2.0/24
+    AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
+    ConstraintDescription: must be a valid IP CIDR range of the form x.x.x.x/x.
+  PublicSubnetOneCIDR:
+    Type: String
+    Description: IP Address range for the public Subnet 1
+    MinLength: '9'
+    MaxLength: '18'
+    Default: 10.1.3.0/24
+    AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
+    ConstraintDescription: must be a valid IP CIDR range of the form x.x.x.x/x.
+  PublicSubnetTwoCIDR:
+    Type: String
+    Description: IP Address range for the public Subnet 2
+    MinLength: '9'
+    MaxLength: '18'
+    Default: 10.1.4.0/24
+    AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
+    ConstraintDescription: must be a valid IP CIDR range of the form x.x.x.x/x.
+  VPCFlowLogsLogGroupRetention:
+    AllowedValues: [ 1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1827, 3653 ]
+    Default: 14
+    Description: Number of days to retain the VPC Flow Logs in CloudWatch
+    Type: String
+  VPCFlowLogsLogFormat:
+    AllowedPattern: '^(\$\{[a-z-]+\})$|^((\$\{[a-z-]+\} )*\$\{[a-z-]+\})$'
+    Default:
+      '${version} ${account-id} ${interface-id} ${srcaddr} ${dstaddr} ${srcport} ${dstport} ${protocol} ${packets} ${bytes} ${start} ${end} ${action}
+          ${log-status}'
+    Description:
+      The fields to include in the flow log record, in the order in which they should appear. Specify the fields using the ${field-id} format,
+      separated by spaces. Using the Default Format as the default value.
+    Type: String
+  VPCFlowLogsMaxAggregationInterval:
+    AllowedValues: [ 60, 600 ]
+    Default: 600
+    Description:
+      The maximum interval of time during which a flow of packets is captured and aggregated into a flow log record. You can specify 60 seconds (1
+      minute) or 600 seconds (10 minutes).
+    Type: String
+  VPCFlowLogsTrafficType:
+    AllowedValues: [ ACCEPT, ALL, REJECT ]
+    Default: REJECT
+    Description: The type of traffic to log. You can log traffic that the resource accepts or rejects, or all traffic.
+    Type: String
+
+  ExistingVpcId:
+    Description: Use existing instead of creating a new one.
+    Type: String
+  ExistingCDFSecurityGroupId:
+    Description: Use existing instead of creating a new one.
+    Type: String
+  ExistingPrivateSubnetIds:
+    Description: Use existing instead of creating a new one.
+    Type: String
+  ExistingPublicSubnetIds:
+    Description: Existing Public Subnet Ids
+    Type: String
+  ExistingPrivateRouteTableIds:
+    Description: Use existing instead of creating a new one.
+    Type: String
+  ExistingPrivateApiGatewayVPCEndpoint:
+    Description: Use existing instead of creating a new one.
+    Type: String
+
+  EnableS3VpcEndpoint:
+    Type: String
+    Default: 'false'
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Description: Enable S3 Vpc Endpoint
+
+  EnableDynamoDBVpcEndpoint:
+    Type: String
+    Default: 'false'
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Description: Enable DynamoDB Vpc Endpoint
+
+  EnablePrivateApiGatewayVPCEndpoint:
+    Type: String
+    Default: 'false'
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Description: Enable Private API Vpc Endpoint
+
+
+
+Conditions:
+  Deploy: !Equals [ !Ref ExistingVpcId, 'N/A' ]
+  DeployS3VpcEndpoint: !Equals [ !Ref EnableS3VpcEndpoint, 'true']
+  DeployDynamoDBVpcEndpoint: !Equals [ !Ref EnableDynamoDBVpcEndpoint, 'true']
+  DeployPrivateApiVpcEndpoint: !Equals [ !Ref EnablePrivateApiGatewayVPCEndpoint, 'true']
+
+Resources:
+  VPC:
+    Condition: Deploy
+    Type: AWS::EC2::VPC
+    Properties:
+      EnableDnsSupport: 'true'
+      EnableDnsHostnames: 'true'
+      CidrBlock: !Ref VPCCIDR
+
+  PrivateSubnetOne:
+    Condition: Deploy
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: !Select
+        - 0
+        - Fn::GetAZs: !Ref 'AWS::Region'
+      CidrBlock: !Ref PrivateSubnetOneCIDR
+
+  PrivateSubnetTwo:
+    Condition: Deploy
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: !Select
+        - 1
+        - Fn::GetAZs: !Ref 'AWS::Region'
+      CidrBlock: !Ref PrivateSubnetTwoCIDR
+
+  PrivateSubnetNacl:
+    Condition: Deploy
+    Type: AWS::EC2::NetworkAcl
+    Properties:
+      VpcId: !Ref VPC
+
+  PrivateSubnetOneNaclAssociation:
+    Condition: Deploy
+    Type: AWS::EC2::SubnetNetworkAclAssociation
+    Properties:
+      NetworkAclId: !Ref PrivateSubnetNacl
+      SubnetId: !Ref PrivateSubnetOne
+
+  PrivateSubnetTwoNaclAssociation:
+    Condition: Deploy
+    Type: AWS::EC2::SubnetNetworkAclAssociation
+    Properties:
+      NetworkAclId: !Ref PrivateSubnetNacl
+      SubnetId: !Ref PrivateSubnetTwo
+
+  PrivateSubnetNatResponseInboundRule:
+    Condition: Deploy
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      NetworkAclId: !Ref PrivateSubnetNacl
+      RuleNumber: 100
+      Protocol: 6
+      RuleAction: allow
+      CidrBlock: 0.0.0.0/0
+      PortRange:
+        From: 1024
+        To: 65535
+
+  PrivateSubnetHttpsInboundRule:
+    Condition: Deploy
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      NetworkAclId: !Ref PrivateSubnetNacl
+      RuleNumber: 101
+      Protocol: 6
+      RuleAction: allow
+      CidrBlock: !Ref VPCCIDR
+      PortRange:
+        From: 443
+        To: 443
+
+  PrivateSubnetGremlinInboundRule:
+    Condition: Deploy
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      NetworkAclId: !Ref PrivateSubnetNacl
+      RuleNumber: 102
+      Protocol: 6
+      RuleAction: allow
+      CidrBlock: !Ref VPCCIDR
+      PortRange:
+        From: 8182
+        To: 8182
+
+  PrivateSubnetGremlinOutboundRule:
+    Condition: Deploy
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      NetworkAclId: !Ref PrivateSubnetNacl
+      RuleNumber: 100
+      Protocol: 6
+      Egress: true
+      RuleAction: allow
+      CidrBlock: !Ref VPCCIDR
+      PortRange:
+        From: 8182
+        To: 8182
+
+  PrivateSubnetHttpsOutboundRule:
+    Condition: Deploy
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      NetworkAclId: !Ref PrivateSubnetNacl
+      RuleNumber: 101
+      Protocol: 6
+      Egress: true
+      RuleAction: allow
+      CidrBlock: 0.0.0.0/0
+      PortRange:
+        From: 443
+        To: 443
+
+  PrivateSubnetResponseOutboundRule:
+    Condition: Deploy
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      NetworkAclId: !Ref PrivateSubnetNacl
+      RuleNumber: 102
+      Protocol: 6
+      Egress: true
+      RuleAction: allow
+      CidrBlock: !Ref VPCCIDR
+      PortRange:
+        From: 1024
+        To: 65535
+
+
+  PublicSubnetOne:
+    Condition: Deploy
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: !Select
+        - 0
+        - Fn::GetAZs: !Ref 'AWS::Region'
+      CidrBlock: !Ref PublicSubnetOneCIDR
+
+  PublicSubnetTwo:
+    Condition: Deploy
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: !Select
+        - 1
+        - Fn::GetAZs: !Ref 'AWS::Region'
+      CidrBlock: !Ref PublicSubnetTwoCIDR
+
+  PublicSubnetNacl:
+    Condition: Deploy
+    Type: AWS::EC2::NetworkAcl
+    Properties:
+      VpcId: !Ref VPC
+
+  PublicSubnetOneNaclAssociation:
+    Condition: Deploy
+    Type: AWS::EC2::SubnetNetworkAclAssociation
+    Properties:
+      NetworkAclId: !Ref PublicSubnetNacl
+      SubnetId: !Ref PublicSubnetOne
+
+  PublicSubnetTwoNaclAssociation:
+    Condition: Deploy
+    Type: AWS::EC2::SubnetNetworkAclAssociation
+    Properties:
+      NetworkAclId: !Ref PublicSubnetNacl
+      SubnetId: !Ref PublicSubnetTwo
+
+  PublicSubnetReturnTrafficInboundRule:
+    Condition: Deploy
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      NetworkAclId: !Ref PublicSubnetNacl
+      RuleNumber: 100
+      Protocol: 6
+      RuleAction: allow
+      CidrBlock: 0.0.0.0/0
+      PortRange:
+        From: 1024
+        To: 65535
+
+  PublicSubnetSshInboundRule:
+    Condition: Deploy
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      NetworkAclId: !Ref PublicSubnetNacl
+      RuleNumber: 101
+      Protocol: 6
+      RuleAction: allow
+      CidrBlock: 0.0.0.0/0
+      PortRange:
+        From: 22
+        To: 22
+
+  PublicSubnetHttpsInboundRule:
+    Condition: Deploy
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      NetworkAclId: !Ref PublicSubnetNacl
+      RuleNumber: 102
+      Protocol: 6
+      RuleAction: allow
+      CidrBlock: 0.0.0.0/0
+      PortRange:
+        From: 443
+        To: 443
+
+  PublicSubnetIcmpInboundRule:
+    Condition: Deploy
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      NetworkAclId: !Ref PublicSubnetNacl
+      RuleNumber: 103
+      Protocol: 1
+      Icmp:
+        Code: -1
+        Type: -1
+      RuleAction: allow
+      CidrBlock: 0.0.0.0/0
+
+  PublicSubnetHttpsOutboundRule:
+    Condition: Deploy
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      NetworkAclId: !Ref PublicSubnetNacl
+      RuleNumber: 100
+      Protocol: 6
+      Egress: true
+      RuleAction: allow
+      CidrBlock: 0.0.0.0/0
+      PortRange:
+        From: 443
+        To: 443
+
+  PublicSubnetGremlinOutboundRule:
+    Condition: Deploy
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      NetworkAclId: !Ref PublicSubnetNacl
+      RuleNumber: 101
+      Protocol: 6
+      Egress: true
+      RuleAction: allow
+      CidrBlock: !Ref VPCCIDR
+      PortRange:
+        From: 8182
+        To: 8182
+
+  PublicSubnetHttpOutboundRule:
+    Condition: Deploy
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      NetworkAclId: !Ref PublicSubnetNacl
+      RuleNumber: 103
+      Protocol: 6
+      Egress: true
+      RuleAction: allow
+      CidrBlock: 0.0.0.0/0
+      PortRange:
+        From: 80
+        To: 80
+
+  PublicSubnetResponseOutboundRule:
+    Condition: Deploy
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      NetworkAclId: !Ref PublicSubnetNacl
+      RuleNumber: 102
+      Protocol: 6
+      Egress: true
+      RuleAction: allow
+      CidrBlock: 0.0.0.0/0
+      PortRange:
+        From: 1024
+        To: 65535
+
+  InternetGateway:
+    Condition: Deploy
+    Type: AWS::EC2::InternetGateway
+
+  GatewayToInternet:
+    Condition: Deploy
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref InternetGateway
+
+  NATGatewayOne:
+    Condition: Deploy
+    DependsOn: GatewayToInternet
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId:
+        Fn::GetAtt:
+        - ElasticIPOne
+        - AllocationId
+      SubnetId: !Ref PublicSubnetOne
+
+  ElasticIPOne:
+    Condition: Deploy
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+
+  NATGatewayTwo:
+    Condition: Deploy
+    DependsOn: GatewayToInternet
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId:
+        Fn::GetAtt:
+        - ElasticIPTwo
+        - AllocationId
+      SubnetId: !Ref PublicSubnetTwo
+
+  ElasticIPTwo:
+    Condition: Deploy
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+
+  PublicRouteTable:
+    Condition: Deploy
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+
+  PublicRoute:
+    Condition: Deploy
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+
+  PublicSubnetOneRouteTableAssociation:
+    Condition: Deploy
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnetOne
+      RouteTableId: !Ref PublicRouteTable
+
+  PublicSubnetTwoRouteTableAssociation:
+    Condition: Deploy
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnetTwo
+      RouteTableId: !Ref PublicRouteTable
+
+  PrivateRouteTableOne:
+    Condition: Deploy
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+
+  PrivateRouteToInternetOne:
+    Condition: Deploy
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref PrivateRouteTableOne
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NATGatewayOne
+
+  PrivateSubnetOneRouteTableAssociation:
+    Condition: Deploy
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PrivateSubnetOne
+      RouteTableId: !Ref PrivateRouteTableOne
+
+  PrivateRouteTableTwo:
+    Condition: Deploy
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+
+  PrivateRouteToInternetTwo:
+    Condition: Deploy
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref PrivateRouteTableTwo
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NATGatewayTwo
+
+  PrivateSubnetTwoRouteTableAssociation:
+    Condition: Deploy
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PrivateSubnetTwo
+      RouteTableId: !Ref PrivateRouteTableTwo
+
+  CDFSecurityGroup:
+    Condition: Deploy
+    Type: AWS::EC2::SecurityGroup
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W5
+            reason: "Relying on default egress"
+          - id: W29
+            reason: "Relying on default egress port"
+          - id: W36
+            reason: "Group Description provided"
+    Properties:
+      GroupDescription: CDF security group
+      VpcId: !Ref VPC
+      SecurityGroupEgress:
+        - IpProtocol: tcp
+          FromPort: 2772
+          ToPort: 2772 # AppConfig local endpoint
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 8182
+          ToPort: 8182 # Neptune endpoint
+          CidrIp: 0.0.0.0/0
+
+  S3Endpoint:
+    Type: "AWS::EC2::VPCEndpoint"
+    Condition: DeployS3VpcEndpoint
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal: '*'
+            Action:
+              - 's3:*'
+            Resource:
+              - '*'
+      RouteTableIds: !If [ Deploy, [ !Ref PrivateRouteTableOne, !Ref PrivateRouteTableTwo ] , !Split [ ',', !Ref ExistingPrivateRouteTableIds ]]
+      ServiceName: !Join
+        - ''
+        - - com.amazonaws.
+          - !Ref 'AWS::Region'
+          - .s3
+      VpcId: !If [ Deploy, !Ref VPC, !Ref ExistingVpcId]
+
+  DynamoDBVpcEndpoint:
+    Type: "AWS::EC2::VPCEndpoint"
+    Condition: DeployDynamoDBVpcEndpoint
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal: '*'
+            Action:
+              - 'dynamodb:*'
+            Resource:
+              - '*'
+      RouteTableIds: !If [ Deploy, [ !Ref PrivateRouteTableOne, !Ref PrivateRouteTableTwo ] , !Split [ ',', !Ref ExistingPrivateRouteTableIds ]]
+      ServiceName: !Join
+        - ''
+        - - com.amazonaws.
+          - !Ref 'AWS::Region'
+          - .dynamodb
+      VpcId: !If [ Deploy, !Ref VPC, !Ref ExistingVpcId]
+
+  PrivateApiGatewayVPCEndpoint:
+    Condition: DeployPrivateApiVpcEndpoint
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      PrivateDnsEnabled: true
+      ServiceName: !Sub com.amazonaws.${AWS::Region}.execute-api
+      VpcEndpointType: Interface
+      VpcId: !If [ Deploy, !GetAtt CDFSecurityGroup.VpcId, !Ref ExistingVpcId]
+      SubnetIds: !If [ Deploy, [ !Ref PrivateSubnetOne, !Ref PrivateSubnetTwo ], !Split [ ',', !Ref ExistingPrivateSubnetIds ]]
+      SecurityGroupIds:
+        - !If [ Deploy, !GetAtt CDFSecurityGroup.GroupId, !Ref ExistingCDFSecurityGroupId]
+
+  VPCFlowLogsLogGroup:
+    Condition: Deploy
+    Type: AWS::Logs::LogGroup
+    Properties:
+      RetentionInDays: !Ref VPCFlowLogsLogGroupRetention
+
+  VPCFlowLogsRole:
+    Condition: Deploy
+    Type: AWS::IAM::Role
+    Properties:
+      Description: Rights to Publish VPC Flow Logs to CloudWatch Logs
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action: sts:AssumeRole
+            Principal:
+              Service:
+                - vpc-flow-logs.amazonaws.com
+      Path: /
+      Tags:
+        - Key: StackName
+          Value: !Ref AWS::StackName
+      Policies:
+        - PolicyName: CloudWatchLogGroup
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Sid: CloudWatchLogs
+                Effect: Allow
+                Action:
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                  - logs:DescribeLogGroups
+                  - logs:DescribeLogStreams
+                Resource: !GetAtt VPCFlowLogsLogGroup.Arn
+
+  VPCFlowLogsToCloudWatch:
+    Condition: Deploy
+    Type: AWS::EC2::FlowLog
+    Properties:
+      LogDestinationType: cloud-watch-logs
+      LogGroupName: !Ref VPCFlowLogsLogGroup
+      DeliverLogsPermissionArn: !GetAtt VPCFlowLogsRole.Arn
+      LogFormat: !Ref VPCFlowLogsLogFormat
+      MaxAggregationInterval: !Ref VPCFlowLogsMaxAggregationInterval
+      ResourceId: !Ref VPC
+      ResourceType: VPC
+      TrafficType: !Ref VPCFlowLogsTrafficType
+
+
+Outputs:
+  VpcId:
+    Description: VpcId
+    Value: !If [ Deploy, !Ref VPC, !Ref ExistingVpcId]
+    Export:
+      Name: !Sub 'cdf-network-${Environment}-VpcId'
+  PrivateSubnetIds:
+    Description: Private subnet ids
+    Value: !If [ Deploy, !Join [ ',', [ !Ref PrivateSubnetOne, !Ref PrivateSubnetTwo ] ], !Ref ExistingPrivateSubnetIds]
+    Export:
+      Name: !Sub 'cdf-network-${Environment}-PrivateSubnetIds'
+  PublicSubnetIds:
+    Description: Public subnet ids
+    Value: !If [ Deploy, !Join [ ',', [ !Ref PublicSubnetOne, !Ref PublicSubnetTwo ] ], !Ref ExistingPublicSubnetIds ]
+    Export:
+      Name: !Sub 'cdf-network-${Environment}-PublicSubnetIds'
+  PrivateRouteTableIds:
+    Description: Private route table ids
+    Value: !If [ Deploy, !Join [ ',', [ !Ref PrivateRouteTableOne, !Ref PrivateRouteTableTwo ] ], !Ref ExistingPrivateRouteTableIds]
+    Export:
+      Name: !Sub 'cdf-network-${Environment}-PrivateRouteTableIds'
+  CDFSecurityGroupId:
+    Description: CDF security group
+    Value: !If [ Deploy, !GetAtt CDFSecurityGroup.GroupId, !Ref ExistingCDFSecurityGroupId]
+    Export:
+      Name: !Sub 'cdf-network-${Environment}-SecurityGroupId'
+  PrivateApiGatewayVPCEndpoint:
+    Description: VPC endpoint for private api support
+    Value: !If [ Deploy, !Ref PrivateApiGatewayVPCEndpoint, !Ref ExistingPrivateApiGatewayVPCEndpoint]
+    Export:
+      Name: !Sub 'cdf-network-${Environment}-PrivateApiGatewayVPCEndpoint'
+
+

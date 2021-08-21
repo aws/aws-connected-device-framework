@@ -1,0 +1,490 @@
+#-----------------------------------------------------------------------------------------------------------------------
+#   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance
+#  with the License. A copy of the License is located at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES
+#  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions
+#  and limitations under the License.
+#-----------------------------------------------------------------------------------------------------------------------
+AWSTemplateFormatVersion : '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Description: CDF Certificate Renewer Service
+
+Parameters:
+  ApplicationConfigurationOverride:
+    Description: This allows you to override any configuration application configuration. Must be a JSON formatted string. Any configurations contained in this will override the configurations found and merged from the config files.
+    Type: String
+    MinLength: 1
+  Environment:
+    Description:  Name of environment.  Used to name the created resources.
+    Type: String
+    MinLength: 1
+  BucketName:
+    Description: Name of bucket of where certificates are stored.
+    Type: String
+    MinLength: 1
+  AssetLibraryFunctionName:
+    Description: AssetLibrary REST API function name
+    Type: String
+    Default: ''
+  CustomResourceLambdaArn:
+    Description: Custom resource lambda arn
+    Type: String
+    MinLength: 1
+  KmsKeyId:
+    Description: The KMS key ID used to encrypt DynamoDB.
+    Type: String
+Conditions:
+  BucketProvided: !Not [ !Equals [ !Ref BucketName, "" ]]
+
+Resources:
+  # ***************************************************************
+  # Lambda
+  # ***************************************************************
+  LambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'cdf-certificateRenewer-deviceDefender-${Environment}'
+      CodeUri: ../bundle.zip
+      Handler: certificaterenewer.handler
+      MemorySize: 128
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Runtime: nodejs12.x
+      Timeout: 300
+      Environment:
+        Variables:
+          NODE_CONFIG_DIR: './config'
+          NODE_CONFIG: !Ref ApplicationConfigurationOverride
+          CERTIFICATERENEWER_PROCESSING_QUEUE_URL: !Ref CertificateRenewerProcessingQueue
+          CERTIFICATERENEWER_DLQ_QUEUE_URL: !Ref CertificateRenewerDeadLetterQueue
+          CERTIFICATERENEWER_ASSETLIBRARY_APIFUNCTIONNAME: !Ref AssetLibraryFunctionName
+          CERTIFICATERENEWER_AWS_S3_CERTIFICATES_BUCKET: !If [BucketProvided, !Ref BucketName, !Ref "AWS::NoValue"]
+      Tracing: Active
+    InvokeConfig:
+      Type: AWS::Lambda::EventInvokeConfig
+      Properties:
+        DestinationConfig:
+          OnFailure:
+            Destination: !GetAtt CertificateRenewerDeadLetterQueue.Arn
+          OnSuccess:
+            Destination: !GetAtt CertificateRenewerProcessingQueue.Arn
+        FunctionName: !Ref LambdaFunction
+        MaximumEventAgeInSeconds: 300
+        MaximumRetryAttempts: 1
+
+  ProcessLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'cdf-certificateRenewer-processor-${Environment}'
+      CodeUri: ../bundle.zip
+      Handler: processrenewer.handler
+      MemorySize: 128
+      Role: !GetAtt ProcessLambdaExecutionRole.Arn
+      Runtime: nodejs12.x
+      Timeout: 300
+      Environment:
+        Variables:
+          NODE_CONFIG_DIR: './config'
+          NODE_CONFIG: !Ref ApplicationConfigurationOverride
+          CERTIFICATERENEWER_PROCESSING_QUEUE_URL: !Ref CertificateRenewerProcessingQueue
+          CERTIFICATERENEWER_DLQ_QUEUE_URL: !Ref CertificateRenewerDeadLetterQueue
+          CERTIFICATERENEWER_ASSETLIBRARY_APIFUNCTIONNAME: !Ref AssetLibraryFunctionName
+          CERTIFICATERENEWER_AWS_S3_CERTIFICATES_BUCKET: !If [BucketProvided, !Ref BucketName, !Ref "AWS::NoValue"]
+          CERTIFICATERENEWER_AWS_DYNAMODB_TABLES_CERTIFICATES: !Ref CertificatesTable
+          CERTIFICATERENEWER_PROCESSING_BATCH_SIZE: 10
+      Tracing: Active
+    Events:
+      Stream:
+        Type: SQS
+        Properties:
+          Queue: !GetAtt CertificateRenewerProcessingQueue.Arn
+          BatchSize: 10
+
+  # ***************************************************************
+  # Lambda Role
+  # ***************************************************************
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          Effect: Allow
+          Principal:
+            Service:
+              - lambda.amazonaws.com
+              - iot.amazonaws.com
+          Action: sts:AssumeRole
+      Path: "/"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AWSLambdaExecute
+        - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
+        - !Ref S3ResourceAccessLambdaPolicies
+        - !Ref DeviceDefenderListResultsPolicies
+        - !Ref SQSAccessPolicies
+        - !Ref IotPolicies
+    DependsOn:
+      - S3ResourceAccessLambdaPolicies
+      - DeviceDefenderListResultsPolicies
+      - SQSAccessPolicies
+      - IotPolicies
+
+  ProcessLambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          Effect: Allow
+          Principal:
+            Service:
+              - lambda.amazonaws.com
+              - iot.amazonaws.com
+          Action: sts:AssumeRole
+      Path: "/"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AWSLambdaExecute
+        - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
+        - !Ref S3ResourceAccessLambdaPolicies
+        - !Ref DeviceDefenderListResultsPolicies
+        - !Ref SQSAccessPolicies
+        - !Ref DynamoDBAccessLambdaPolicies
+        - !Ref IotPolicies
+        - !Ref ApplicationPolicies
+        - !If [ KmsKeyIdProvided, !Ref KmsPolicy, !Ref "AWS::NoValue" ]
+    DependsOn:
+      - S3ResourceAccessLambdaPolicies
+      - DeviceDefenderListResultsPolicies
+      - SQSAccessPolicies
+      - DynamoDBAccessLambdaPolicies
+      - IotPolicies
+      - ApplicationPolicies
+      - KmsPolicy
+
+  ApplicationPolicies:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      Description: 'cdf-certificaterenewer application policies'
+      Path: "/"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: "iampassrole"
+            Action:
+              - "iam:PassRole"
+            Effect: Allow
+            Resource: !Sub "arn:aws:iam::${AWS::AccountId}:role/cdf-*"
+          - Sid: "lambda"
+            Action:
+              - "lambda:AddPermission"
+              - "lambda:CreateEventSourceMapping"
+              - "lambda:DeleteEventSourceMapping"
+              - "lambda:ListEventSourceMappings"
+            Effect: Allow
+            Resource: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:*'
+          - Sid: "iot"
+            Action:
+              - "iot:CreateTopicRule"
+              - "iot:DeleteTopicRule"
+            Effect: Allow
+            Resource:
+              - !Sub "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:rule/*"
+
+  IoTAuditRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          Effect: Allow
+          Principal:
+            Service:
+              - iot.amazonaws.com
+          Action: sts:AssumeRole
+      Path: "/"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSIoTDeviceDefenderAudit
+
+  S3ResourceAccessLambdaPolicies:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      Description: 'S3 input and output bucket access lambda policies'
+      Path: "/"
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - 's3:ListBucket'
+              - 's3:GetObject'
+              - 's3:PutObject'
+            Resource:
+              - !Sub 'arn:aws:s3:::${BucketName}'
+
+  DynamoDBAccessLambdaPolicies:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      Description: 'DynamoDb access lambda policies'
+      Path: "/"
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - "dynamodb:BatchGetItem"
+              - "dynamodb:GetItem"
+              - "dynamodb:Query"
+              - "dynamodb:Scan"
+              - "dynamodb:BatchWriteItem"
+              - "dynamodb:PutItem"
+              - "dynamodb:UpdateItem"
+              - "dynamodb:DeleteItem"
+            Resource:
+              - !GetAtt CertificatesTable.Arn
+
+  DeviceDefenderListResultsPolicies:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W13
+            reason: "Allow lambda to be able to perform the following action on all resources in IoT"
+    Properties:
+      Description: 'AWS IoT Device Defender List Results Policy lambda policies'
+      Path: "/"
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - iot:DescribeAccountAuditConfiguration
+              - iot:DescribeAuditTask
+              - iot:ListAuditTasks
+              - iot:ListScheduledAudits
+              - iot:ListAuditFindings
+              - iot:DescribeCertificate
+              - iot:ListPrincipalThings
+            Resource: '*'
+
+  IotPolicies:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W13
+            reason: "Allow lambda to be able to perform the following action on all resources in IoT"
+    Properties:
+      Description: 'AWS IoT Policy lambda policies'
+      Path: "/"
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - iot:CreateKeysAndCertificate
+              - iot:ListPrincipalPolicies
+              - iot:AttachPolicy
+              - iot:AttachThingPrincipal
+              - iot:ListPrincipalThings
+              - iot:DescribeCertificate
+              - iot:DescribeThing
+            Resource: '*'
+
+  SQSAccessPolicies:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: "AWS SQS access lambda policies"
+      Path: "/cdf/processingqueue/"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Action:
+              - 'sqs:SendMessage'
+            Effect: Allow
+            Resource: !GetAtt CertificateRenewerProcessingQueue.Arn
+          - Action:
+              - 'sqs:SendMessage'
+            Effect: Allow
+            Resource: !GetAtt CertificateRenewerDeadLetterQueue.Arn
+    DependsOn:
+      - CertificateRenewerProcessingQueue
+      - CertificateRenewerDeadLetterQueue
+
+  KmsPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Condition: KmsKeyIdProvided
+    Properties:
+      Description: "cdf-certificaterenewer policy for accessing KMS"
+      Path: "/cdf/certificaterenewer/"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Action:
+              - 'kms:Decrypt'
+            Effect: Allow
+            Resource: !Sub "arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/${KmsKeyId}"
+
+  IoTDeviceDefenderSnsTopicSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      Protocol: lambda
+      Endpoint: !GetAtt
+        - LambdaFunction
+        - Arn
+      TopicArn: !Ref IoTDeviceDefenderSnsTopic
+    DependsOn:
+      - LambdaFunction
+
+  # **********************************************************************
+  # SNS Topics
+  # **********************************************************************
+  IoTDeviceDefenderSnsTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      DisplayName: iot-device-defender-audit-topic
+      TopicName: iot-device-defender-audit-topic
+      KmsMasterKeyId: !Ref KmsKeyId
+      Subscription:
+        - Endpoint: !GetAtt
+            - LambdaFunction
+            - Arn
+          Protocol: lambda
+
+  # ***************************************************************
+  # Topic Role
+  # ***************************************************************
+  IoTDeviceDefenderPublishToTopicRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: iot.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: '/'
+      Policies:
+        - PolicyName: IoTPublishToSnsTopic
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action: "sns:Publish"
+                Resource: !Ref IoTDeviceDefenderSnsTopic
+
+  LambdaFunctionInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref LambdaFunction
+      Principal: sns.amazonaws.com
+      SourceArn: !Ref IoTDeviceDefenderSnsTopic
+
+  ProcessLambdaFunctionEventSourceMapping:
+    Type: AWS::Lambda::EventSourceMapping
+    Properties:
+      BatchSize: 10
+      Enabled: true
+      EventSourceArn: !GetAtt CertificateRenewerProcessingQueue.Arn
+      FunctionName: !GetAtt ProcessLambdaFunction.Arn
+
+  # **********************************************************************
+  # SQS Queue
+  # **********************************************************************
+  CertificateRenewerProcessingQueue:
+    Type: AWS::SQS::Queue
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W48
+            reason: "Encryption not required on non-sensitive data"
+    Properties:
+      MessageRetentionPeriod: 604800
+      VisibilityTimeout: 900
+      RedrivePolicy:
+        deadLetterTargetArn:
+          Fn::GetAtt:
+            - "CertificateRenewerDeadLetterQueue"
+            - "Arn"
+        maxReceiveCount: 5
+      KmsMasterKeyId:
+        Fn::If:
+          - KmsKeyIdProvided
+          - Ref: KmsKeyId
+          - Ref: AWS::NoValue
+
+  CertificateRenewerDeadLetterQueue:
+    Type: AWS::SQS::Queue
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W48
+            reason: "Encryption not required on non-sensitive data"
+
+  # **********************************************************************
+  # DynamoDB Table
+  # **********************************************************************
+  CertificatesTable:
+    Type: AWS::DynamoDB::Table
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W28
+            reason: "Naming a table is not a security risk"
+          - id: W73
+            reason: "Can be decided by the customer, to specify the billing mode"
+    Properties:
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      SSESpecification:
+        KMSMasterKeyId: !Ref KmsKeyId
+        SSEEnabled: true
+        SSEType: KMS  
+      AttributeDefinitions:
+        - AttributeName: "expiringCertificateArn"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "expiringCertificateArn"
+          KeyType: "HASH"
+      ProvisionedThroughput:
+        ReadCapacityUnits: "5"
+        WriteCapacityUnits: "5"
+      TableName: !Sub 'cdf-certificaterenewer-${Environment}'
+  # **********************************************************************
+  # Custom Resource - IoT Device Defender Audit Setting
+  # **********************************************************************
+  IotDeviceDefender:
+    Type: Custom::IotDeviceDefender
+    Version: 1.0
+    Properties:
+      ServiceToken: !Ref CustomResourceLambdaArn
+      RoleArn: !GetAtt IoTAuditRole.Arn
+      TargetArn:
+        !Join
+        - ''
+        - - !Ref IoTDeviceDefenderSnsTopic
+      TargetRoleArn: !GetAtt IoTDeviceDefenderPublishToTopicRole.Arn
+      TargetEnabled: 'true'
+      AuditCheckEnabled: 'true'
+
+Outputs:
+  StackName:
+    Description: Stack Name.
+    Value:
+      Fn::Sub: ${AWS::StackName}
+
+  LambdaArn:
+    Description: Lambda Arn
+    Value: !Sub "${LambdaFunction.Arn}"
+    Export:
+      Name: !Sub "${AWS::StackName}-LambdaArn"
+
+  LambdaFunctionConsoleUrl:
+    Description: Console URL for the Lambda Function.
+    Value: !Sub "https://{AWS::Region}.console.aws.amazon.com/lambda/home?region={AWS::Region}#/functions/{LambdaFunction}"

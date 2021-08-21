@@ -1,0 +1,267 @@
+#-----------------------------------------------------------------------------------------------------------------------
+#   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance
+#  with the License. A copy of the License is located at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES
+#  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions
+#  and limitations under the License.
+#-----------------------------------------------------------------------------------------------------------------------
+AWSTemplateFormatVersion : '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Description: CDF Provisioning Service
+
+Globals:
+  Api:
+    OpenApiVersion: 3.0.1
+
+Parameters:
+  Environment:
+    Description:  Name of environment.  Used to name the created resources.
+    Type: String
+    MinLength: 1
+    
+  ApplicationConfigurationOverride:
+    Description: This allows you to override any configuration application configuration. Must be a JSON formatted string. Any configurations contained in this will override the configurations found and merged from the config files.
+    Type: String
+    MinLength: 1
+
+  TemplateSnippetS3UriBase:
+    Description: |
+      S3 uri of directory where template snippets are stored for the account.
+    Type: String
+    MinLength: 1
+
+  AuthType:
+    Description: Authorization type to apply to the API gateway endpoints
+    Type: String
+    Default: None
+    AllowedValues:
+      - None
+      - Private
+      - Cognito
+      - LambdaRequest
+      - LambdaToken
+      - ApiKey
+      - IAM
+    MinLength: 1
+
+  ApiGatewayDefinitionTemplate:
+    Description: |
+      Name of the API Gateway Cloudformation definition along with the authorization method to use.  Use one of the provided
+      templates to implement no auth, private, api key, lambda request, lamdba token, or Cognito auth, or modify one to meet your own
+      authentization requirements.  The template must exist within the provided TemplateSnippetS3UriBase location.
+    Type: String
+    MinLength: 1
+
+  VpcId:
+    Description: ID of VPC to deploy the API into. Only required if AuthType = 'Private'.
+    Type: String
+  CDFSecurityGroupId:
+    Description: ID of an existing CDF security group to deploy the API into. Only required if AuthType = 'Private'.
+    Type: String
+  PrivateSubNetIds:
+    Description: Comma delimited list of private subnetIds to deploy the API into. Only required if AuthType = 'Private'.
+    Type: CommaDelimitedList
+  PrivateApiGatewayVPCEndpoint:
+    Description: VPC endpoint. Only required if AuthType = 'Private'.
+    Type: String
+
+  CognitoUserPoolArn:
+    Description: Cognito user pool arn.  Only required if AuthType is set to 'Cognito'.
+    Type: String
+    Default: 'N/A'
+
+  AuthorizerFunctionArn:
+    Description: Lambda authorizer function arn.  Only required if AuthType is set to 'LambdaRequest' or 'LambdaToken'.
+    Type: String
+    Default: 'N/A'
+
+  KmsKeyId:
+    Description: The KMS key ID used to encrypt SSM parameters
+    Type: String
+
+  OpenSslLambdaLayerArn:
+    Description: OpenSSL lambda layer ARN
+    Type: String
+    MinLength: 1
+  BucketName:
+    Description: Name of bucket to store command information.
+    Type: String
+    MinLength: 1
+
+  CustomResourceLambdaArn:
+    Description: Custom resource lambda arn
+    Type: String
+    MinLength: 1
+
+  EnableApiGatewayAccessLogs:
+    Description: Enales API gateway Access Logging, defaults to false if not specified.
+    Type: String
+    Default: 'false'
+    AllowedValues:
+      - 'true'
+      - 'false'
+    MinLength: 1
+
+Conditions:
+
+  KmsKeyIdProvided: !Not [ !Equals [ !Ref KmsKeyId, "" ] ]
+
+  DeployInVPC: !Not [ !Equals [ !Ref VpcId, 'N/A' ] ]
+  DeployWithLambdaAuth: !Or [ !Equals [ !Ref AuthType, 'LambdaRequest' ], !Equals [ !Ref AuthType, 'LambdaToken' ] ]
+  EnableApiGatewayAccessLogs: !Equals [ !Ref EnableApiGatewayAccessLogs, "true"]
+
+
+Resources:
+
+
+  ApiGatewayApi:
+    'Fn::Transform':
+      Name: 'AWS::Include'
+      Parameters:
+        Location: !Sub "${TemplateSnippetS3UriBase}${ApiGatewayDefinitionTemplate}"
+    DependsOn:
+      - LambdaFunction
+
+  ApiGatewayAuthorizerInvokeRole:
+    Condition: DeployWithLambdaAuth
+    'Fn::Transform':
+      Name: 'AWS::Include'
+      Parameters:
+        Location: !Sub "${TemplateSnippetS3UriBase}cfn-role-lambdaRequestAuthInvokerRole.yaml"
+    DependsOn:
+      - LambdaFunction
+
+  ApiGatewayAccessLogGroup:
+    Condition: EnableApiGatewayAccessLogs
+    Type: 'AWS::Logs::LogGroup'
+    Properties:
+      LogGroupName: !Sub 'cdf-provisioning-apigatewayaccesslogs-${Environment}'
+
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: 
+              - lambda.amazonaws.com
+              - iot.amazonaws.com
+          Action: sts:AssumeRole
+      Path: "/"
+      ManagedPolicyArns:
+        - !If [KmsKeyIdProvided, !Ref SSMPolicy, !Ref "AWS::NoValue"]
+        - !Ref BulkProvisioningPolicy
+        - arn:aws:iam::aws:policy/AWSLambdaExecute
+        - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
+        - arn:aws:iam::aws:policy/AmazonS3FullAccess
+        - arn:aws:iam::aws:policy/AWSIoTConfigAccess
+
+  BulkProvisioningPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: "cdf-provisioning policy for enabling bulk provisoning"
+      Path: "/cdf/provisioning/"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Action:
+              - 'iam:PassRole'
+            Effect: Allow
+            Resource: !Sub "arn:aws:iam::${AWS::AccountId}:role/cdf-provisioning-*"
+          - Action:
+              - 'iot:RegisterCertificateWithoutCA'
+            Effect: Allow
+            Resource: !Sub "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:cert/*"
+
+  SSMPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Condition: KmsKeyIdProvided
+    Properties:
+      Description: "cdf-provisioning policy for accessing SSM and KMS"
+      Path: "/cdf/provisioning/"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Action:
+              - 'ssm:GetParameter*'
+            Effect: Allow
+            Resource: !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/cdf-ca-key-*"
+          - Action:
+              - 'kms:Decrypt'
+            Effect: Allow
+            Resource: !Sub "arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/${KmsKeyId}"
+
+  LambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'cdf-provisioning-rest-${Environment}'
+      CodeUri: ../bundle.zip
+      Handler: packages/services/provisioning/dist/lambda_proxy.handler
+      Layers:
+        - !Ref OpenSslLambdaLayerArn
+      MemorySize: 512
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Runtime: nodejs14.x
+      AutoPublishAlias: live
+      Timeout: 60
+      Environment:
+        Variables:
+          AWS_ACCOUNT_ID: !Ref AWS::AccountId
+          NODE_CONFIG_DIR: 'packages/services/provisioning/dist/config'
+          NODE_CONFIG: !Ref ApplicationConfigurationOverride
+          CDF_PROVISIONING_S3_ROLEARN: !GetAtt LambdaExecutionRole.Arn
+          CDF_PROVISIONING_S3_TEMPLATES_BUCKET: !Ref BucketName
+          CDF_PROVISIONING_S3_CERTIFICATES_BUCKET: !Ref BucketName
+          CDF_PROVISIONING_S3_BULKREQUESTS_BUCKET: !Ref BucketName
+      Tracing: Active
+
+      VpcConfig:
+        Fn::If:
+          - DeployInVPC
+          - SubnetIds: !Ref PrivateSubNetIds
+            SecurityGroupIds:
+              - !Ref CDFSecurityGroupId
+          - Ref: AWS::NoValue
+
+      Events:
+        ProxyApiRoot:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiGatewayApi
+            Path: /
+            Method: ANY
+        ProxyApiGreedy:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiGatewayApi
+            Path: /{proxy+}
+            Method: ANY
+    DependsOn:
+      - LambdaExecutionRole
+
+Outputs:
+  RestApiFunctionName:
+    Description: Provisioning REST API lambda function name
+    Value: !Ref LambdaFunction
+    Export:
+      Name: !Sub 'cdf-provisioning-${Environment}-restApiFunctionName'
+  ApiGatewayUrl:
+    Description: Provisioning REST API URL
+    Value: !Sub 'https://${ApiGatewayApi}.execute-api.${AWS::Region}.amazonaws.com/Prod'
+    Export:
+      Name: !Sub 'cdf-provisioning-${Environment}-apigatewayurl'
+  ApiGatewayHost:
+    Description: Provisioning REST API host
+    Value: !Sub '${ApiGatewayApi}.execute-api.${AWS::Region}.amazonaws.com'
+    Export:
+      Name: !Sub 'cdf-provisioning-${Environment}-apigatewayhost'
+

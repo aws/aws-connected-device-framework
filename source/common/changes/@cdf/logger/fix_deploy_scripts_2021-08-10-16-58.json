@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/logger",
+      "comment": "",
+      "type": "none"
+    }
+  ],
+  "packageName": "@cdf/logger",
+  "email": "hkhokhar@amazon.com"
+}

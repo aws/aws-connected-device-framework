@@ -1,0 +1,11 @@
+{
+  "name": "@cdf/provisioning-client",
+  "entries": [
+    {
+      "version": "4.0.1",
+      "tag": "@cdf/provisioning-client_v4.0.1",
+      "date": "Wed, 21 Jul 2021 16:46:57 GMT",
+      "comments": {}
+    }
+  ]
+}

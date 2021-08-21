@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/provisioning-client",
+      "comment": "",
+      "type": "none"
+    }
+  ],
+  "packageName": "@cdf/provisioning-client",
+  "email": "hkhokhar@amazon.com"
+}

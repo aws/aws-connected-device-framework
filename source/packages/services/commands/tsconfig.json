@@ -1,0 +1,34 @@
+{
+    "extends": "../../../tsconfig.base.json",
+    "compilerOptions": {
+        "outDir": "dist",
+        "rootDir": "src"
+    },
+    "paths": {
+      "~/*": ["./*"]
+    },
+    "references": [
+        {
+            "path": "../../libraries/config/config-inject"
+        },
+        {
+            "path": "../../libraries/clients/assetlibrary-client"
+        },
+        {
+            "path": "../../libraries/clients/provisioning-client"
+        },
+        {
+            "path": "../../libraries/core/express-middleware"
+        }
+    ],
+    "include": [
+        "src"
+    ],
+    "exclude": [
+        "node_modules",
+        "dist",
+        ".vscode",
+        ".git",
+        "./**/__mocks__/*.ts"
+    ]
+}

@@ -1,0 +1,67 @@
+#-----------------------------------------------------------------------------------------------------------------------
+#   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance
+#  with the License. A copy of the License is located at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES
+#  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions
+#  and limitations under the License.
+#-----------------------------------------------------------------------------------------------------------------------
+AWSTemplateFormatVersion : '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Description: |
+  CDF Asset Library Service Scaling
+  =================================
+  This template provides an example of how to apply auto-scaling to the Asset Library lambda.
+
+
+Parameters:
+  MinCapacity:
+    Description:  The minimum value to scale to in response to a scale-in event.
+    Type: Number
+    Default: 0
+  MaxCapacity:
+    Description:  The maximum value to scale to in response to a scale-out event.
+    Type: Number
+    Default: 100
+  TargetUtilization:
+    Description: Target utilization (0.0 to 1.0).
+    Type: Number
+    Default: 0.7
+  LambdaName:
+    Description:  Lambda Name to apply autoscaling.
+    Type: String
+    MinLength: 1
+  LambdaAlias:  
+    Description: Lambda alias to apply autoscaling.
+    Type: String
+    Default: live
+    MinLength: 1
+
+
+Resources:
+
+  ScalableTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      MaxCapacity: !Ref MaxCapacity
+      MinCapacity: !Ref MinCapacity
+      ResourceId: !Sub "function:${LambdaName}:${LambdaAlias}"
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/lambda.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_Lambda
+      ScalableDimension: lambda:function:ProvisionedConcurrency
+      ServiceNamespace: lambda
+
+  TargetTrackingScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: utilization
+      PolicyType: TargetTrackingScaling
+      ScalingTargetId: !Ref ScalableTarget
+      TargetTrackingScalingPolicyConfiguration:
+        TargetValue: !Ref TargetUtilization
+        PredefinedMetricSpecification:
+          PredefinedMetricType: LambdaProvisionedConcurrencyUtilization

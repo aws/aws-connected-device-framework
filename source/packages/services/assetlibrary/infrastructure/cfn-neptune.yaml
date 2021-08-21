@@ -1,0 +1,432 @@
+#-----------------------------------------------------------------------------------------------------------------------
+#   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance
+#  with the License. A copy of the License is located at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES
+#  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions
+#  and limitations under the License.
+#-----------------------------------------------------------------------------------------------------------------------
+Description: Base Template to create Neptune Stack inside a VPC
+
+Parameters:
+  Environment:
+    Description:  Name of environment.  Used to name the created resources.
+    Type: String
+    MinLength: 1
+
+  VpcId:
+    Description: ID of VPC to deploy Neptune into
+    Type: AWS::EC2::VPC::Id
+  CDFSecurityGroupId:
+    Description: ID of an existing security group to allow access to Neptune
+    Type: AWS::EC2::SecurityGroup::Id
+  PrivateSubNetIds:
+    Description: Comma delimited list of private subnetIds to deploy Neptune into
+    Type: List<AWS::EC2::Subnet::Id>
+  PrivateRouteTableIds:
+    Description: Comma delimited list of private route table ids to allow access to Neptune
+    Type: String
+  DbInstanceType:
+    Description: Neptune DB instance type
+    Type: String
+    Default: db.r4.xlarge
+    AllowedValues:
+      - db.r4.large
+      - db.r4.xlarge
+      - db.r4.2xlarge
+      - db.r4.4xlarge
+      - db.r4.8xlarge
+    ConstraintDescription: Must be a valid Neptune instance type.
+  CreateDBReplicaInstance:
+    Description: Create a read replica for MultiAZ?
+    Type: String
+    Default: 'false'
+    AllowedValues:
+    - 'true'
+    - 'false'
+  NeptuneQueryTimeout:
+    Type: Number
+    Default: 20000
+    Description: Neptune Query Time out (in milliseconds)
+  NeptuneEnableAuditLog:
+    Type: Number
+    Default: 1
+    AllowedValues:
+      - 0
+      - 1
+    Description: Enable Audit Log. 0 means disable and 1 means enable.
+  BackupRetentionDays:
+    Type: Number
+    Default: 1
+    MinValue: 1
+    MaxValue: 35
+    Description: Days automated snapshots will be retained
+  IamAuthEnabled:
+    Type: String
+    Default: 'false'
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Description: Enable IAM Auth for Neptune.
+  NeptuneEncryptAtRest:
+    Type: String
+    Default: 'false'
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Description: Enable Encryption at Rest.
+  SnapshotIdentifier:
+    Type: String
+    Description: Specifies the identifier for an existing DB cluster snapshot to restore. Refer to Neptune documentation on its use.
+
+  CdfService:
+    Description: Service name to tag resources.
+    Type: String
+    Default: assetlibrary
+  BackupRetentionPeriod:
+    Description: Backup retention period (in days).  Must be between 1 - 35
+    Type: String
+    AllowedPattern: ([1-9]|[12][0-9]|3[0-5])
+    Default: 15
+  CustomResourceVPCLambdaArn:
+    Description: Custom resource lambda arn
+    Type: String
+    MinLength: 1
+
+
+Conditions:
+  CreateDBReplicaInstance: !Equals [ !Ref CreateDBReplicaInstance, 'true' ]
+  SnapshotIdentifierProvided: !Not [ !Equals [ !Ref SnapshotIdentifier, '' ]]
+
+Resources:
+
+  NeptuneEngineVersionCheck:
+    Type: Custom::NeptuneEngineVersionCheck
+    Version: 1.0
+    Properties:
+      ServiceToken:
+        !Ref CustomResourceVPCLambdaArn
+      DBClusterEndpoint:
+        !GetAtt NeptuneDBCluster.Endpoint
+    DependsOn:
+      - NeptuneDBInstance
+
+  NeptuneDBSubnetGroup:
+    Type: 'AWS::Neptune::DBSubnetGroup'
+    Properties:
+      DBSubnetGroupDescription: !Sub 'CDF Asset Library (${Environment}) Neptune DB subnet group'
+      SubnetIds: !Ref PrivateSubNetIds
+      Tags:
+        - Key: cdf_environment
+          Value: !Ref Environment
+        - Key: cdf_service
+          Value: !Ref CdfService
+
+  NeptuneSG:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      VpcId: !Ref VpcId
+      GroupDescription: !Sub 'CDF Asset Library (${Environment}) Neptune Access'
+      Tags:
+        - Key: cdf_environment
+          Value: !Ref Environment
+        - Key: cdf_service
+          Value: !Ref CdfService
+
+  NeptuneSGIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref NeptuneSG
+      Description: Neptune SG Self Ingress rule
+      IpProtocol: tcp
+      FromPort: '8182'
+      ToPort: '8182'
+      SourceSecurityGroupId: !Ref NeptuneSG
+
+  NeptuneSGEgress:
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+      GroupId: !Ref NeptuneSG
+      FromPort: 8182
+      ToPort: 8182
+      IpProtocol: tcp
+      SourceSecurityGroupId: !Ref CDFSecurityGroupId
+      Description: Allow access from default securty group
+
+  NeptuneEC2InstanceProfile:
+    Type: 'AWS::IAM::InstanceProfile'
+    Properties:
+      Path: /
+      Roles:
+        - !Ref NeptuneEC2ClientRole
+
+  NeptuneEC2ClientRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Path: /
+      Tags:
+        - Key: cdf_environment
+          Value: !Ref Environment
+        - Key: cdf_service
+          Value: !Ref CdfService
+
+  NeptuneAccessPolicy:
+    Type: 'AWS::IAM::Policy'
+    Properties:
+      PolicyName: NeptuneAccessPolicy
+      PolicyDocument:
+        Statement:
+          - Effect: Allow
+            Action:
+              - 'rds:*'
+              - 'iam:GetAccountSummary'
+              - 'iam:ListAccountAliases'
+              - 'iam:PassRole'
+            Resource: '*'
+      Roles:
+        - !Ref NeptuneEC2ClientRole
+
+  NeptuneIAMAuthPolicy:
+    Type: 'AWS::IAM::Policy'
+    Properties:
+      PolicyName: NeptuneIAMAuthPolicy
+      PolicyDocument:
+        Statement:
+          - Effect: Allow
+            Action:
+              - 'neptune-db:connect'
+            Resource: !Join 
+              - ':'
+              - - 'arn:aws:neptune-db'
+                - !Ref 'AWS::Region'
+                - !Ref 'AWS::AccountId'
+                - !GetAtt 
+                  - NeptuneDBCluster
+                  - ClusterResourceId
+                - '*'
+      Roles:
+        - !Ref NeptuneEC2ClientRole
+
+  NeptuneLoadFromS3Role:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - rds.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Path: /
+      Tags:
+        - Key: cdf_environment
+          Value: !Ref Environment
+        - Key: cdf_service
+          Value: !Ref CdfService
+
+  NeptuneLoadFromS3Policy:
+    Type: 'AWS::IAM::Policy'
+    Properties:
+      PolicyName: NeptuneLoadFromS3Policy
+      PolicyDocument:
+        Statement:
+          - Effect: Allow
+            Action:
+              - 's3:Get*'
+              - 's3:List*'
+            Resource: 'arn:aws:s3:::*'
+      Roles:
+        - !Ref NeptuneLoadFromS3Role
+
+  NeptuneDBClusterParameterGroup:
+    Type: 'AWS::Neptune::DBClusterParameterGroup'
+    Properties:
+      Family: neptune1
+      Description: CDF parameters
+      Parameters:
+        neptune_enable_audit_log: !Ref NeptuneEnableAuditLog
+      Tags:
+        - Key: cdf_environment
+          Value: !Ref Environment
+        - Key: cdf_service
+          Value: !Ref CdfService
+
+  NeptuneDBParameterGroup:
+    Type: 'AWS::Neptune::DBParameterGroup'
+    Properties:
+      Family: neptune1
+      Description: CDF parameters
+      Parameters:
+        neptune_query_timeout: !Ref NeptuneQueryTimeout
+      Tags:
+        - Key: cdf_environment
+          Value: !Ref Environment
+        - Key: cdf_service
+          Value: !Ref CdfService
+
+  NeptuneDBCluster:
+    Type: 'AWS::Neptune::DBCluster'
+    DeletionPolicy: Snapshot
+    UpdateReplacePolicy: Snapshot
+    Properties:
+      DBSubnetGroupName: !Ref NeptuneDBSubnetGroup
+      VpcSecurityGroupIds:
+        - !Ref NeptuneSG
+      DBClusterParameterGroupName: !Ref NeptuneDBClusterParameterGroup
+      IamAuthEnabled: !Ref IamAuthEnabled
+      StorageEncrypted: true
+      BackupRetentionPeriod: !Ref BackupRetentionPeriod
+      SnapshotIdentifier:
+        Fn::If:
+          - SnapshotIdentifierProvided
+          - !Ref SnapshotIdentifier
+          - Ref: AWS::NoValue
+      Tags:
+        - Key: cdf_environment
+          Value: !Ref Environment
+        - Key: cdf_service
+          Value: !Ref CdfService
+
+  NeptuneDBInstance:
+    Type: 'AWS::Neptune::DBInstance'
+    Properties:
+      DBClusterIdentifier: !Ref NeptuneDBCluster
+      DBInstanceClass: !Ref DbInstanceType
+      DBParameterGroupName: !Ref NeptuneDBParameterGroup
+      Tags:
+        - Key: cdf_environment
+          Value: !Ref Environment
+        - Key: cdf_service
+          Value: !Ref CdfService
+
+  NeptuneDBReplicaInstance:
+    Type: 'AWS::Neptune::DBInstance'
+    Condition: CreateDBReplicaInstance
+    Properties:
+      DBClusterIdentifier: !Ref NeptuneDBCluster
+      DBInstanceClass: !Ref DbInstanceType
+      Tags:
+        - Key: cdf_environment
+          Value: !Ref Environment
+        - Key: cdf_service
+          Value: !Ref CdfService
+    DependsOn:
+      - NeptuneDBInstance
+
+Outputs:
+  DBClusterId:
+    Description: Neptune Cluster Identifier
+    Value: !Ref NeptuneDBCluster
+  DBSubnetGroupId:
+    Description: Neptune DBSubnetGroup Identifier
+    Value: !Ref NeptuneDBSubnetGroup
+  DBClusterResourceId:
+    Description: Neptune Cluster Resource Identifier
+    Value: !GetAtt 
+      - NeptuneDBCluster
+      - ClusterResourceId
+  DBClusterEndpoint:
+    Description: Master Endpoint for Neptune Cluster
+    Value: !GetAtt 
+      - NeptuneDBCluster
+      - Endpoint
+    Export: 
+      Name: !Sub "cdf-assetlibrary-neptune-${Environment}-DBClusterEndpoint"
+  DBInstanceEndpoint:
+    Description: Master Instance Endpoint
+    Value: !GetAtt 
+      - NeptuneDBInstance
+      - Endpoint
+  DBReplicaInstanceEndpoint:
+    Description: ReadReplica Instance Endpoint
+    Condition: CreateDBReplicaInstance
+    Value: !GetAtt 
+      - NeptuneDBReplicaInstance
+      - Endpoint
+  SparqlEndpoint:
+    Description: Sparql Endpoint for Neptune
+    Value: !Join 
+      - ''
+      - - 'http://'
+        - !GetAtt 
+          - NeptuneDBCluster
+          - Endpoint
+        - ':'
+        - !GetAtt 
+          - NeptuneDBCluster
+          - Port
+        - /sparql
+    Export: 
+      Name: !Sub "cdf-assetlibrary-neptune-${Environment}-SparqlEndpoint"
+  GremlinEndpoint:
+    Description: Gremlin Endpoint for Neptune
+    Value: !Join 
+      - ''
+      - - 'wss://'
+        - !GetAtt 
+          - NeptuneDBCluster
+          - Endpoint
+        - ':'
+        - !GetAtt 
+          - NeptuneDBCluster
+          - Port
+        - /gremlin
+    Export: 
+      Name: !Sub "cdf-assetlibrary-neptune-${Environment}-GremlinEndpoint"
+  LoaderEndpoint:
+    Description: Loader Endpoint for Neptune
+    Value: !Join 
+      - ''
+      - - 'http://'
+        - !GetAtt 
+          - NeptuneDBCluster
+          - Endpoint
+        - ':'
+        - !GetAtt 
+          - NeptuneDBCluster
+          - Port
+        - /loader
+    Export: 
+      Name: !Sub "cdf-assetlibrary-neptune-${Environment}-LoaderEndpoint"
+  DBClusterReadEndpoint:
+    Description: DB cluster Read Endpoint
+    Value: !GetAtt 
+      - NeptuneDBCluster
+      - ReadEndpoint
+    Export: 
+      Name: !Sub "cdf-assetlibrary-neptune-${Environment}-DBClusterReadEndpoint"
+  DBClusterPort:
+    Description: Port for the Neptune Cluster
+    Value: !GetAtt 
+      - NeptuneDBCluster
+      - Port
+    Export: 
+      Name: !Sub "cdf-assetlibrary-neptune-${Environment}-DBClusterPort"
+  NeptuneLoadFromS3IAMRoleArn:
+    Description: IAM Role for loading data in Neptune
+    Value: !GetAtt 
+      - NeptuneLoadFromS3Role
+      - Arn
+  NeptuneIamAuthRole:
+    Description: IAM Role for IAM Auth
+    Value: !Ref NeptuneEC2ClientRole
+  NeptuneSecurityGroupID:
+    Description: Neptune security group
+    Value: !Ref NeptuneSG
+    Export: 
+      Name: !Sub "cdf-assetlibrary-neptune-${Environment}-NeptuneSecurityGroupID"

@@ -1,0 +1,29 @@
+{
+    "extends": "../../tsconfig.libraries.json",
+    "compilerOptions": {
+        "outDir": "dist",
+        "rootDir": "src"
+    },
+    "references": [
+        {
+            "path": "../logger"
+        },
+        {
+            "path": "../../config/config-inject"
+        },
+        {
+            "path": "../lambda-invoke"
+        }
+    ],
+    "include": [
+        "src"
+    ],
+    "exclude": [
+        "node_modules",
+        "../../../node_modules",
+        "dist",
+        ".vscode",
+        ".git",
+        "./**/__mocks__/*.ts"
+    ]
+}

@@ -1,0 +1,401 @@
+#-----------------------------------------------------------------------------------------------------------------------
+#   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance
+#  with the License. A copy of the License is located at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES
+#  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions
+#  and limitations under the License.
+#-----------------------------------------------------------------------------------------------------------------------
+AWSTemplateFormatVersion : '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Description: CDF Simulation Manager
+
+Globals:
+  Api:
+    OpenApiVersion: 3.0.1
+
+Parameters:
+  Environment:
+    Description:  Name of environment.  Used to name the created resources.
+    Type: String
+    MinLength: 1
+  ApplicationConfigurationOverride:
+    Description: This allows you to override any configuration application configuration. Must be a JSON formatted string. Any configurations contained in this will override the configurations found and merged from the config files.
+    Type: String
+    MinLength: 1
+
+  TemplateSnippetS3UriBase:
+    Description: |
+      S3 uri of directory where template snippets are stored for the account.
+    Type: String
+    MinLength: 1
+
+  ApiGatewayDefinitionTemplate:
+    Description: |
+      Name of the API Gateway Cloudformation definition along with the authorization method to use.  Use one of the provided
+      templates to implement no auth, private, api key, lambda request, lamdba token, or Cognito auth, or modify one to meet your own
+      authentization requirements.  The template must exist within the provided TemplateSnippetS3UriBase location.
+    Type: String
+    MinLength: 1
+
+  AuthType:
+    Description: Authorization type to apply to the API gateway endpoints
+    Type: String
+    Default: None
+    AllowedValues:
+      - None
+      - Private
+      - Cognito
+      - LambdaRequest
+      - LambdaToken
+      - ApiKey
+      - IAM
+    MinLength: 1
+
+  VpcId:
+    Description: ID of VPC to deploy the API into. Only required if AuthType = 'Private'.
+    Type: String
+  CDFSecurityGroupId:
+    Description: ID of an existing CDF security group to deploy the API into. Only required if AuthType = 'Private'.
+    Type: String
+  PrivateSubNetIds:
+    Description: Comma delimited list of private subnetIds to deploy the API into. Only required if AuthType = 'Private'.
+    Type: CommaDelimitedList
+  PrivateApiGatewayVPCEndpoint:
+    Description: VPC endpoint. Only required if AuthType = 'Private'.
+    Type: String
+
+  CognitoUserPoolArn:
+    Description: Cognito user pool arn.  Only required if AuthType is set to 'Cognito'.
+    Type: String
+    Default: 'N/A'
+
+  AuthorizerFunctionArn:
+    Description: Lambda authorizer function arn.  Only required if AuthType is set to 'LambdaRequest' or 'LambdaToken'.
+    Type: String
+    Default: 'N/A'
+
+  CustomResourceLambdaArn:
+    Description: Custom resource lambda arn
+    Type: String
+    MinLength: 1
+
+  BucketName:
+    Description: Name of bucket to store artifacts.
+    Type: String
+    MinLength: 1
+
+  SimulationLauncherSnsTopic:
+    Description: Simulation Launcher SNS Topic
+    Type: String
+    MinLength: 1
+
+  AssetLibraryFunctionName:
+    Description: AssetLibrary REST API function name
+    Type: String
+    Default: ''
+
+  KmsKeyId:
+    Description: The KMS key ID used to encrypt DynamoDB.
+    Type: String
+
+  EnableApiGatewayAccessLogs:
+    Description: Enales API gateway Access Logging, defaults to false if not specified.
+    Type: String
+    Default: 'false'
+    AllowedValues:
+      - 'true'
+      - 'false'
+    MinLength: 1
+
+Conditions:
+  DeployInVPC: !Not [ !Equals [ !Ref VpcId, 'N/A' ] ]
+  DeployWithLambdaAuth: !Or [ !Equals [ !Ref AuthType, 'LambdaRequest' ], !Equals [ !Ref AuthType, 'LambdaToken' ] ]
+  KmsKeyIdProvided: !Not [ !Equals [ !Ref KmsKeyId, "" ] ]
+  EnableApiGatewayAccessLogs: !Equals [ !Ref EnableApiGatewayAccessLogs, "true"]
+
+Resources:
+  ApiGatewayApi:
+    'Fn::Transform':
+      Name: 'AWS::Include'
+      Parameters:
+        Location: !Sub "${TemplateSnippetS3UriBase}${ApiGatewayDefinitionTemplate}"
+    DependsOn:
+      - RESTLambdaFunction
+
+  ApiGatewayAuthorizerInvokeRole:
+    Condition: DeployWithLambdaAuth
+    'Fn::Transform':
+      Name: 'AWS::Include'
+      Parameters:
+        Location: !Sub "${TemplateSnippetS3UriBase}cfn-role-lambdaRequestAuthInvokerRole.yaml"
+    DependsOn:
+      - RESTLambdaFunction
+
+  ApiGatewayAccessLogGroup:
+    Condition: EnableApiGatewayAccessLogs
+    Type: 'AWS::Logs::LogGroup'
+    Properties:
+      LogGroupName: !Sub 'cdf-simulationmanager-apigatewayaccesslogs-${Environment}'
+
+  RESTLambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          Effect: Allow
+          Principal:
+            Service:
+              - lambda.amazonaws.com
+          Action: sts:AssumeRole
+      Path: "/cdf/simulationmanager/"
+      ManagedPolicyArns:
+        - !Ref ApplicationPolicies
+        - !If [KmsKeyIdProvided, !Ref KmsPolicy, !Ref "AWS::NoValue"]
+        - arn:aws:iam::aws:policy/AWSLambdaExecute
+        - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
+    DependsOn:
+      - ApplicationPolicies
+
+  KmsPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Condition: KmsKeyIdProvided
+    Properties:
+      Description: "cdf-provisioning policy for accessing KMS"
+      Path: "/cdf/simulationmanager/"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Action:
+              - kms:Decrypt
+              - kms:GenerateDataKey*
+            Effect: Allow
+            Resource: !Sub "arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/${KmsKeyId}"
+
+  ApplicationPolicies:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      Description: 'cdf-simulation-manager application policies'
+      Path: "/cdf/simulationmanager/"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Action:
+              - "s3:Copy*"
+              - "s3:Put*"
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:s3:::${BucketName}'
+          - Action:
+              - "sns:Publish"
+            Effect: Allow
+            Resource: !Ref SimulationLauncherSnsTopic
+          - Action:
+              - "dynamodb:BatchGetItem"
+              - "dynamodb:GetItem"
+              - "dynamodb:Query"
+              - "dynamodb:Scan"
+              - "dynamodb:BatchWriteItem"
+              - "dynamodb:PutItem"
+              - "dynamodb:UpdateItem"
+              - "dynamodb:DeleteItem"
+            Effect: Allow
+            Resource:
+              - !GetAtt SimulationDeviceState.Arn
+              - !GetAtt SimulationsTable.Arn
+
+  RESTLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'cdf-simulation-manager-rest-${Environment}'
+      CodeUri: ../bundle.zip
+      Handler: packages/services/simulation-manager/dist/api_gateway_proxy.handler
+      MemorySize: 512
+      Role: !GetAtt RESTLambdaExecutionRole.Arn
+      AutoPublishAlias: live
+      Runtime: nodejs12.x
+      Timeout: 30
+      Environment:
+        Variables:
+          NODE_CONFIG_DIR: 'packages/services/simulation-manager/dist/config'
+          NODE_CONFIG: !Ref ApplicationConfigurationOverride
+          SIMULATION_MANAGER_DYNAMODB_TABLE_SIMULATIONS: !Ref SimulationsTable
+          SIMULATION_MANAGER_DYNAMODB_TABLE_STATE: !Ref SimulationDeviceState
+          SIMULATION_MANAGER_S3_BUCKET: !Ref BucketName
+          SIMULATION_MANAGER_SNS_TOPICS_LAUNCH: !Ref SimulationLauncherSnsTopic
+          SIMULATION_MANAGER_IOT_ENDPOINT: !GetAtt IotEndpoint.address
+          SIMULATION_MANAGER_CDF_ASSETLIBRARY_APIFUNCTIONNAME: !Ref AssetLibraryFunctionName
+      Tracing: Active
+
+      VpcConfig:
+        Fn::If:
+          - DeployInVPC
+          - SubnetIds: !Ref PrivateSubNetIds
+            SecurityGroupIds:
+              - !Ref CDFSecurityGroupId
+          - Ref: AWS::NoValue
+
+      Events:
+        ProxyApiRoot:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiGatewayApi
+            Path: /
+            Method: ANY
+        ProxyApiGreedy:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiGatewayApi
+            Path: /{proxy+}
+            Method: ANY
+    DependsOn:
+      - RESTLambdaExecutionRole
+
+  # DynamoDB Tables
+  SimulationsTable:
+    Type: AWS::DynamoDB::Table
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W28
+            reason: "safely naming this resources to be unique by environment"
+          - id: W73
+            reason: "Can be decided by the customer, to specify the billing mode"
+    Properties:
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      SSESpecification:
+        Fn::If:
+          - KmsKeyIdProvided
+          - KMSMasterKeyId: !Ref KmsKeyId
+            SSEEnabled: true
+            SSEType: KMS
+          - Ref: AWS::NoValue
+      TableName: !Sub 'cdf-simulation-${Environment}'
+      AttributeDefinitions:
+        - AttributeName: "pk"
+          AttributeType: "S"
+        - AttributeName: "sk"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "pk"
+          KeyType: "HASH"
+        - AttributeName: "sk"
+          KeyType: "RANGE"
+      ProvisionedThroughput:
+        ReadCapacityUnits: 30
+        WriteCapacityUnits: 30
+
+  # DynamoDB Tables
+  SimulationDeviceState:
+    Type: AWS::DynamoDB::Table
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W28
+            reason: "safely naming this resources to be unique by environment"
+          - id: W73
+            reason: "Can be decided by the customer, to specify the billing mode"
+    Properties:
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      SSESpecification:
+        Fn::If:
+          - KmsKeyIdProvided
+          - KMSMasterKeyId: !Ref KmsKeyId
+            SSEEnabled: true
+            SSEType: KMS
+          - Ref: AWS::NoValue
+      TableName: !Sub 'cdf-simulation-devices-${Environment}'
+      AttributeDefinitions:
+        - AttributeName: "simulationId"
+          AttributeType: "S"
+        - AttributeName: "deviceId"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "simulationId"
+          KeyType: "HASH"
+        - AttributeName: "deviceId"
+          KeyType: "RANGE"
+      ProvisionedThroughput:
+        ReadCapacityUnits: 30
+        WriteCapacityUnits: 30
+
+  # Capture last known device state
+  # TODO: this needs refactoring to decouple from the main simulation as is auto specific
+  CaptureStateRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: iot.amazonaws.com
+          Action: sts:AssumeRole
+      Policies:
+        -
+          PolicyName: "CaptureStatePolicy"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              -
+                Effect: "Allow"
+                Action:
+                  - dynamodb:PutItem
+                Resource: !GetAtt SimulationDeviceState.Arn
+              -
+                Effect: "Allow"
+                Action:
+                  - "kms:Decrypt"
+                  - "kms:DescribeKey*"
+                  - "Kms:List*"
+                Resource: !Sub "arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/${KmsKeyId}"
+      Path: "/"
+      
+  # TODO: this needs refactoring to decouple from the main simulation as is auto specific
+  CaptureStateRule:
+    Type: "AWS::IoT::TopicRule"
+    Properties:
+      TopicRulePayload:
+        Actions:
+          -
+            DynamoDBv2:
+              PutItem:
+                TableName: !Ref SimulationDeviceState
+              RoleArn: !GetAtt CaptureStateRole.Arn
+        Description: "Capture last known vehicle state for use with the CDF Simulator"
+        AwsIotSqlVersion: "2016-03-23"
+        RuleDisabled: "false"
+        Sql: "SELECT SimulationId as simulationId, topic(3) as deviceId, VIN as vin, GeoLocation.Latitude as latitude, GeoLocation.Longitude as longitude, Odometer.Metres as odometer, timestamp() as lastActivity FROM 'dt/cvra/+/cardata'"
+
+  IotEndpoint:
+    Type: Custom::IotEndpoint
+    Version: 1.0
+    Properties:
+      ServiceToken:
+        !Ref CustomResourceLambdaArn
+
+Outputs:
+  RestApiFunctionName:
+    Description: Events REST API lambda function name
+    Value: !Ref RESTLambdaFunction
+    Export:
+      Name: !Sub "cdf-simulation-manager-${Environment}-restApiFunctionName"
+  ApiGatewayUrl:
+    Description: Events REST API URL
+    Value: !Sub 'https://${ApiGatewayApi}.execute-api.${AWS::Region}.amazonaws.com/Prod'
+    Export:
+      Name: !Sub "cdf-simulation-manager-${Environment}-apigatewayurl"
+  ApiGatewayHost:
+    Description: Events REST API host
+    Value: !Sub '${ApiGatewayApi}.execute-api.${AWS::Region}.amazonaws.com'
+    Export:
+      Name: !Sub "cdf-simulation-manager-${Environment}-apigatewayhost"

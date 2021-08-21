@@ -1,0 +1,144 @@
+#-----------------------------------------------------------------------------------------------------------------------
+#   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance
+#  with the License. A copy of the License is located at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES
+#  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions
+#  and limitations under the License.
+#-----------------------------------------------------------------------------------------------------------------------
+AWSTemplateFormatVersion : '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Description: CDF Certificate Activator Service
+
+
+Parameters:
+  Environment:
+    Description:  Name of environment.  Used to name the created resources.
+    Type: String
+    MinLength: 1
+  ApplicationConfigurationOverride:
+    Description: This allows you to override any configuration application configuration. Must be a JSON formatted string. Any configurations contained in this will override the configurations found and merged from the config files.
+    Type: String
+    MinLength: 1
+  BucketName:
+    Description: Name of bucket of where the Certificate Revocation List (CRL) is stored.
+    Type: String
+    MinLength: 1
+  OpenSslLambdaLayerArn:
+    Description: OpenSSL lambda layer ARN
+    Type: String
+    MinLength: 1
+  AssetLibraryFunctionName:
+    Description: AssetLibrary Api Gateway function name
+    Type: String
+    Default: ''
+  ProvisioningFunctionName:
+    Description: Provisioning Api Gateway function name
+    Type: String
+    Default: ''
+
+Conditions:
+  BucketProvided: !Not [ !Equals [ !Ref BucketName, "" ]]
+
+Resources:
+
+  JITRRule:
+    Type: "AWS::IoT::TopicRule"
+    Properties:
+      TopicRulePayload: 
+        Actions:
+          -
+            Lambda:
+              FunctionArn: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${LambdaFunction}'
+        Description: "Certificate requests (CDF Certificate Activator service)"
+        AwsIotSqlVersion: "2016-03-23"
+        RuleDisabled: false
+        Sql: "SELECT * FROM '$aws/events/certificates/registered/+'"
+
+  LambdaFunctionGetInvocationPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      SourceArn: !Sub 'arn:aws:iot:${AWS::Region}:${AWS::AccountId}:rule/${JITRRule}'
+      Action: lambda:InvokeFunction
+      Principal: iot.amazonaws.com
+      FunctionName: !GetAtt LambdaFunction.Arn
+      SourceAccount: !Ref AWS::AccountId
+
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          Effect: Allow
+          Principal:
+            Service:
+              - lambda.amazonaws.com
+              - iot.amazonaws.com
+          Action: sts:AssumeRole
+      Path: "/"
+      ManagedPolicyArns:
+        - !Ref ApplicationPolicies
+        - arn:aws:iam::aws:policy/AWSLambdaExecute
+        - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
+
+  ApplicationPolicies:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      Description: 'cdf-certificateactivator application policies'
+      Path: "/"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: "iot"
+            Action:
+              - "iot:RegisterThing"
+              - "iot:DescribeCertificate"
+              - "iot:UpdateCertificate"
+            Effect: Allow
+            Resource:
+                - !Sub "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:cert/*"
+          - Sid: "s3"
+            Action:
+              - 's3:Get*'
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:s3:::${BucketName}/crl/*'
+          - Sid: lambda
+            Action:
+              - lambda:InvokeFunction
+              - lambda:Invoke
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${AssetLibraryFunctionName}'
+              - !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${ProvisioningFunctionName}'
+
+  LambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub 'cdf-certificateActivator-${Environment}'
+      CodeUri: ../bundle.zip
+      Handler: packages/services/certificateactivator/dist/certificateactivator.handler
+      Layers:
+        - !Ref OpenSslLambdaLayerArn
+      MemorySize: 128
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Runtime: nodejs14.x
+      AutoPublishAlias: live
+      DeploymentPreference:
+        Type: AllAtOnce
+      Timeout: 30
+      Environment:
+        Variables:
+          NODE_CONFIG_DIR: 'packages/services/certificateactivator/dist/config'
+          NODE_CONFIG: !Ref ApplicationConfigurationOverride
+          CERTIFICATEACTIVATOR_ASSETLIBRARY_APIFUNCTIONNAME: !Ref AssetLibraryFunctionName
+          CERTIFICATEACTIVATOR_PROVISIONING_APIFUNCTIONNAME: !Ref ProvisioningFunctionName
+          CERTIFICATEACTIVATOR_AWS_S3_CRL_BUCKET: !If [BucketProvided, !Ref BucketName, !Ref "AWS::NoValue"]
+      Tracing: Active
+

@@ -1,0 +1,23 @@
+{
+  "name": "@cdf/auth-devicecert",
+  "entries": [
+    {
+      "version": "4.0.1",
+      "tag": "@cdf/auth-devicecert_v4.0.1",
+      "date": "Wed, 11 Aug 2021 01:26:49 GMT",
+      "comments": {}
+    },
+    {
+      "version": "2.0.2",
+      "tag": "@cdf/auth-jwt_v2.0.2",
+      "date": "Wed, 21 Jul 2021 16:46:57 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "The generated lambda bundle size has been reduced."
+          }
+        ]
+      }
+    }
+  ]
+}
