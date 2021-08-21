@@ -11,7 +11,6 @@ specifiers:
   '@rush-temp/bulkcerts': file:./projects/bulkcerts.tgz
   '@rush-temp/bulkcerts-client': file:./projects/bulkcerts-client.tgz
   '@rush-temp/certificate-activator': file:./projects/certificate-activator.tgz
-  '@rush-temp/certificate-renewer': file:./projects/certificate-renewer.tgz
   '@rush-temp/certificate-vendor': file:./projects/certificate-vendor.tgz
   '@rush-temp/commands': file:./projects/commands.tgz
   '@rush-temp/commands-client': file:./projects/commands-client.tgz
@@ -23,9 +22,7 @@ specifiers:
   '@rush-temp/events-alerts': file:./projects/events-alerts.tgz
   '@rush-temp/events-processor': file:./projects/events-processor.tgz
   '@rush-temp/express-middleware': file:./projects/express-middleware.tgz
-  '@rush-temp/greengrass-deployment': file:./projects/greengrass-deployment.tgz
   '@rush-temp/greengrass-deployment-client': file:./projects/greengrass-deployment-client.tgz
-  '@rush-temp/greengrass-provisioning': file:./projects/greengrass-provisioning.tgz
   '@rush-temp/greengrass-provisioning-client': file:./projects/greengrass-provisioning-client.tgz
   '@rush-temp/integration-tests': file:./projects/integration-tests.tgz
   '@rush-temp/lambda-invoke': file:./projects/lambda-invoke.tgz
@@ -37,6 +34,7 @@ specifiers:
   '@rush-temp/simulation-manager': file:./projects/simulation-manager.tgz
   '@types/atob': 2.1.2
   '@types/aws-iot-device-sdk': 2.2.2
+  '@types/aws-lambda': 8.10.65
   '@types/body-parser': 1.19.0
   '@types/btoa': 1.2.3
   '@types/busboy': 0.2.3
@@ -63,6 +61,7 @@ specifiers:
   '@types/prettyjson': 0.0.29
   '@types/shortid': 0.0.29
   '@types/sinon': 9.0.9
+  '@types/superagent': 4.1.10
   '@types/uuid': 8.3.0
   '@types/yargs': 17.0.0
   ajv: 6.10.2
@@ -88,11 +87,11 @@ specifiers:
   dot: 1.1.3
   express: 4.17.1
   express-version-request: 1.7.0
-  fast-deep-equal: 3.1.3
   fast-json-patch: 3.0.0-1
   fs: 0.0.1-security
   gremlin: 3.4.8
   handlebars: 4.7.7
+  http-errors: 1.8.0
   inversify-binding-decorators: 4.0.0
   inversify-express-utils: 6.3.2
   jest: 26.6.3
@@ -116,6 +115,7 @@ specifiers:
   node-cache: 5.1.2
   nyc: 15.1.0
   p-limit: 3.1.0
+  pem: 1.14.4
   pick-some: 1.0.1
   prettyjson: 1.2.1
   reflect: 0.1.3
@@ -139,7 +139,6 @@ dependencies:
   '@rush-temp/bulkcerts': file:projects/bulkcerts.tgz_supports-color@8.0.0
   '@rush-temp/bulkcerts-client': file:projects/bulkcerts-client.tgz_supports-color@8.0.0
   '@rush-temp/certificate-activator': file:projects/certificate-activator.tgz_supports-color@8.0.0
-  '@rush-temp/certificate-renewer': file:projects/certificate-renewer.tgz_supports-color@8.0.0
   '@rush-temp/certificate-vendor': file:projects/certificate-vendor.tgz_supports-color@8.0.0
   '@rush-temp/commands': file:projects/commands.tgz
   '@rush-temp/commands-client': file:projects/commands-client.tgz_supports-color@8.0.0
@@ -151,9 +150,7 @@ dependencies:
   '@rush-temp/events-alerts': file:projects/events-alerts.tgz_supports-color@8.0.0
   '@rush-temp/events-processor': file:projects/events-processor.tgz_supports-color@8.0.0
   '@rush-temp/express-middleware': file:projects/express-middleware.tgz_supports-color@8.0.0
-  '@rush-temp/greengrass-deployment': file:projects/greengrass-deployment.tgz_supports-color@8.0.0
   '@rush-temp/greengrass-deployment-client': file:projects/greengrass-deployment-client.tgz_supports-color@8.0.0
-  '@rush-temp/greengrass-provisioning': file:projects/greengrass-provisioning.tgz_supports-color@8.0.0
   '@rush-temp/greengrass-provisioning-client': file:projects/greengrass-provisioning-client.tgz_supports-color@8.0.0
   '@rush-temp/integration-tests': file:projects/integration-tests.tgz_supports-color@8.0.0
   '@rush-temp/lambda-invoke': file:projects/lambda-invoke.tgz_supports-color@8.0.0
@@ -165,6 +162,7 @@ dependencies:
   '@rush-temp/simulation-manager': file:projects/simulation-manager.tgz_supports-color@8.0.0
   '@types/atob': 2.1.2
   '@types/aws-iot-device-sdk': 2.2.2
+  '@types/aws-lambda': 8.10.65
   '@types/body-parser': 1.19.0
   '@types/btoa': 1.2.3
   '@types/busboy': 0.2.3
@@ -191,6 +189,7 @@ dependencies:
   '@types/prettyjson': 0.0.29
   '@types/shortid': 0.0.29
   '@types/sinon': 9.0.9
+  '@types/superagent': 4.1.10
   '@types/uuid': 8.3.0
   '@types/yargs': 17.0.0
   ajv: 6.10.2
@@ -216,11 +215,11 @@ dependencies:
   dot: 1.1.3
   express: 4.17.1
   express-version-request: 1.7.0
-  fast-deep-equal: 3.1.3
   fast-json-patch: 3.0.0-1
   fs: 0.0.1-security
   gremlin: 3.4.8
   handlebars: 4.7.7
+  http-errors: 1.8.0
   inversify-binding-decorators: 4.0.0
   inversify-express-utils: 6.3.2
   jest: 26.6.3_supports-color@8.0.0
@@ -244,6 +243,7 @@ dependencies:
   node-cache: 5.1.2
   nyc: 15.1.0_supports-color@8.0.0
   p-limit: 3.1.0
+  pem: 1.14.4
   pick-some: 1.0.1
   prettyjson: 1.2.1
   reflect: 0.1.3
@@ -1018,10 +1018,6 @@ packages:
       mqtt: 2.18.8
     dev: false
 
-  /@types/aws-lambda/8.10.53:
-    resolution: {integrity: sha512-zHIgKKqwcdeHkPMPKd47DedJ4b+Tv01VGosWtJDMa8s6cnx03IeNagFWEpoxVI+H34fOvxtbqecJddpuVFbU2w==}
-    dev: false
-
   /@types/aws-lambda/8.10.65:
     resolution: {integrity: sha512-JgRpDnvQFrGIO6zckdT9+8FvkPqiaI6JzL2erZtsbQVvWuQiQgaUiOXxFxRqOvSuG9MBGQ08GWkj0G3j81Kzdg==}
     dev: false
@@ -1359,13 +1355,6 @@ packages:
 
   /@types/superagent/4.1.10:
     resolution: {integrity: sha512-xAgkb2CMWUMCyVc/3+7iQfOEBE75NvuZeezvmixbUw3nmENf2tCnQkW5yQLTYqvXUQ+R6EXxdqKKbal2zM5V/g==}
-    dependencies:
-      '@types/cookiejar': 2.1.2
-      '@types/node': 14.14.14
-    dev: false
-
-  /@types/superagent/4.1.7:
-    resolution: {integrity: sha512-JSwNPgRYjIC4pIeOqLwWwfGj6iP1n5NE6kNBEbGx2V8H78xCPwx7QpNp9plaI30+W3cFEzJO7BIIsXE+dbtaGg==}
     dependencies:
       '@types/cookiejar': 2.1.2
       '@types/node': 14.14.14
@@ -4648,17 +4637,6 @@ packages:
       toidentifier: 1.0.0
     dev: false
 
-  /http-errors/1.7.3:
-    resolution: {integrity: sha512-ZTTX0MWrsQ2ZAhA1cejAwDLycFsd7I7nVtnkT3Ol0aqodaKW+0CTZDQ1uBv5whptCnc8e8HeRRJxRs0kmm/Qfw==}
-    engines: {node: '>= 0.6'}
-    dependencies:
-      depd: 1.1.2
-      inherits: 2.0.4
-      setprototypeof: 1.1.1
-      statuses: 1.5.0
-      toidentifier: 1.0.0
-    dev: false
-
   /http-errors/1.8.0:
     resolution: {integrity: sha512-4I8r0C5JDhT5VkvI47QktDW75rNlGVsUf/8hzjCC/wkWI/jdTRmBb9aI7erSG82r1bjKY3F6k28WnsVxB1C73A==}
     engines: {node: '>= 0.6'}
@@ -7080,16 +7058,6 @@ packages:
 
   /pathval/1.1.0:
     resolution: {integrity: sha1-uULm1L3mUwBe9rcTYd74cn0GReA=}
-    dev: false
-
-  /pem/1.14.3:
-    resolution: {integrity: sha512-Q+AMVMD3fzeVvZs5PHeI+pVt0hgZY2fjhkliBW43qyONLgCXPVk1ryim43F9eupHlNGLJNT5T/NNrzhUdiC5Zg==}
-    engines: {node: '>=6.0.0'}
-    dependencies:
-      es6-promisify: 6.1.1
-      md5: 2.3.0
-      os-tmpdir: 1.0.2
-      which: 1.3.1
     dev: false
 
   /pem/1.14.4:
@@ -9726,7 +9694,7 @@ packages:
     dev: false
 
   file:projects/certificate-activator.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-ygftXwYbaxVsoxsjSTJEVW2TilhO82SvphZSYmT+WtvAoQmXofeIeJI3ydBEM4zPrloUTA37gg8ZYfqtYDwQhg==, tarball: file:projects/certificate-activator.tgz}
+    resolution: {integrity: sha512-ZRlfQPozQF7vF1UfOyffrAmjPyNFdqvovMWDkquTQKz+mxbeltfoEqcm3wNPXjSR3456P2sEddmxCc8AlhSXyQ==, tarball: file:projects/certificate-activator.tgz}
     id: file:projects/certificate-activator.tgz
     name: '@rush-temp/certificate-activator'
     version: 0.0.0
@@ -9773,56 +9741,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  file:projects/certificate-renewer.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-o9/d+5NnmLdOFKTbmBEJEcPfOnTkXoUgK2AGBFV7xsy9NvhkTVYG8BDXFPDqzMJr04mxQHIY05m+zBrejiq4ig==, tarball: file:projects/certificate-renewer.tgz}
-    id: file:projects/certificate-renewer.tgz
-    name: '@rush-temp/certificate-renewer'
-    version: 0.0.0
-    dependencies:
-      '@rushstack/eslint-config': 2.3.1_25db0d18da36491395bd3263e8d7e681
-      '@types/aws-lambda': 8.10.53
-      '@types/config': 0.0.37
-      '@types/jest': 26.0.18
-      '@types/pem': 1.9.5
-      '@types/superagent': 4.1.7
-      '@typescript-eslint/eslint-plugin': 4.9.1_fd07bbd6431e6d2022fb6fa2f2b698f2
-      '@typescript-eslint/parser': 4.9.1_25db0d18da36491395bd3263e8d7e681
-      aws-sdk: 2.777.0
-      config: 3.2.4
-      eslint: 7.15.0_supports-color@8.0.0
-      http-errors: 1.7.3
-      inversify: 5.0.5
-      inversify-binding-decorators: 4.0.0
-      jest: 26.6.3_supports-color@8.0.0
-      jest-create-mock-instance: 1.1.0
-      jest-haste-map: 26.6.2
-      jest-mock: 26.6.2
-      jest-mock-extended: 1.0.10_jest@26.6.3+typescript@4.1.2
-      jest-resolve: 26.6.2
-      js-yaml: 3.13.1
-      logform: 2.1.2
-      nodemon: 2.0.6
-      nyc: 15.1.0_supports-color@8.0.0
-      ow: 0.15.0
-      pem: 1.14.3
-      readable-stream: 2.3.6
-      reflect-metadata: 0.1.13
-      shx: 0.3.3
-      superagent: 6.1.0_supports-color@8.0.0
-      ts-jest: 26.4.4_jest@26.6.3+typescript@4.1.2
-      typescript: 4.1.2
-      winston: 3.2.1
-      winston-transport: 4.3.0
-    transitivePeerDependencies:
-      - bufferutil
-      - canvas
-      - supports-color
-      - ts-node
-      - utf-8-validate
-    dev: false
-
   file:projects/certificate-vendor.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-v5ZqXa/J7cMcgMKI3vBoOTeMZKbSoAKLlCssvKzI4ioJoLe1mdSDOZKqcQoCne6di24SSbWckR9aAwxHeWwEMg==, tarball: file:projects/certificate-vendor.tgz}
+    resolution: {integrity: sha512-/zAKckhzM1oTcTlrCTwKSHdQJe0S591lYS/yNpHURZUsPk0FwYtl5tDj5RYnwNPPig48g7MEyfYSWFH2tBgegg==, tarball: file:projects/certificate-vendor.tgz}
     id: file:projects/certificate-vendor.tgz
     name: '@rush-temp/certificate-vendor'
     version: 0.0.0
@@ -9913,7 +9833,7 @@ packages:
     dev: false
 
   file:projects/commands.tgz:
-    resolution: {integrity: sha512-TSBreQvaNJNxQw22q9Sbfn9tGin3FC71MAgpPc+NEAPFG7M1xE9/BZdLV8ERWthdT9oWUCmip3yg4RJQs1/9LQ==, tarball: file:projects/commands.tgz}
+    resolution: {integrity: sha512-2QyITkeTo1YVQxa1xn7cGfxOn/NnG6caZNIg+EnZzh13XF62KWyyf8/uXwBDbFM4hXjAx+kNcvYtwwc799AcAg==, tarball: file:projects/commands.tgz}
     name: '@rush-temp/commands'
     version: 0.0.0
     dependencies:
@@ -10054,7 +9974,7 @@ packages:
     dev: false
 
   file:projects/device-monitoring.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-cWXbGrM4qlzZubmlfQ24RjI0UHo9f7zRMDF9qjoGKbpi2olkVsGlqflDeGbv87oH15TUxrwBR9Ld1xO/+0mJBw==, tarball: file:projects/device-monitoring.tgz}
+    resolution: {integrity: sha512-hOADggPVI0rvgoYAa3VTGrprayEfFBp5GTqd9y2B2bALld8RmWkEG1mW37HMqgZUU+eWJhxEM1PQHB73V3WXfg==, tarball: file:projects/device-monitoring.tgz}
     id: file:projects/device-monitoring.tgz
     name: '@rush-temp/device-monitoring'
     version: 0.0.0
@@ -10370,73 +10290,6 @@ packages:
       - utf-8-validate
     dev: false
 
-  file:projects/greengrass-deployment.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-CkCmnwW3jN4my9tPssty/0bgyC+PP5ZAkoCUBgUHvbusd9LUKFkvTi0oFoT2DoU3OfJCYG+9QqvS2UxbaZKH5A==, tarball: file:projects/greengrass-deployment.tgz}
-    id: file:projects/greengrass-deployment.tgz
-    name: '@rush-temp/greengrass-deployment'
-    version: 0.0.0
-    dependencies:
-      '@rushstack/eslint-config': 2.3.4_3318d341e08b60846a0ca54ab3432060
-      '@types/body-parser': 1.19.0
-      '@types/config': 0.0.38
-      '@types/cors': 2.8.10
-      '@types/express': 4.17.11
-      '@types/express-serve-static-core': 4.17.19
-      '@types/express-version-request': 1.7.1
-      '@types/jest': 26.0.23
-      '@types/json-stable-stringify': 1.0.32
-      '@types/jsonwebtoken': 8.5.0
-      '@types/prettyjson': 0.0.29
-      '@types/uuid': 8.3.0
-      '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
-      '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
-      ajv: 6.10.2
-      async-local-storage: 2.3.1
-      aws-sdk: 2.804.0
-      body-parser: 1.19.0
-      config: 3.3.6
-      cors: 2.8.5
-      eslint: 7.26.0_supports-color@8.0.0
-      express: 4.17.1
-      express-version-request: 1.7.0
-      fast-json-patch: 3.0.0-1
-      gremlin: 3.4.8
-      inversify: 5.1.1
-      inversify-binding-decorators: 4.0.0
-      inversify-express-utils: 6.3.2
-      jest: 26.6.3_supports-color@8.0.0
-      jest-create-mock-instance: 1.1.0
-      jest-haste-map: 26.6.2
-      jest-mock: 26.6.2
-      jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
-      jest-resolve: 26.6.2
-      js-yaml: 4.1.0
-      json-stable-stringify: 1.0.1
-      jsonwebtoken: 8.5.1
-      logform: 2.2.0
-      mime: 2.5.2
-      node-cache: 5.1.2
-      nodemon: 2.0.7
-      nyc: 15.1.0_supports-color@8.0.0
-      ow: 0.23.0
-      prettyjson: 1.2.1
-      readable-stream: 3.6.0
-      reflect-metadata: 0.1.13
-      serverless-http: 2.7.0
-      shx: 0.3.3
-      ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
-      typescript: 4.2.4
-      uuid: 8.3.2
-      winston: 3.3.3
-      winston-transport: 4.4.0
-    transitivePeerDependencies:
-      - bufferutil
-      - canvas
-      - supports-color
-      - ts-node
-      - utf-8-validate
-    dev: false
-
   file:projects/greengrass-provisioning-client.tgz_supports-color@8.0.0:
     resolution: {integrity: sha512-tLLKe1BifaycbGtbh5z7xk1H6WoUn//vOS1Xy4y55s1nUqnjFGHlfjgm6j4+cIKKxpHwVJvfc3MV58U7n89XlA==, tarball: file:projects/greengrass-provisioning-client.tgz}
     id: file:projects/greengrass-provisioning-client.tgz
@@ -10483,77 +10336,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  file:projects/greengrass-provisioning.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-H/lJHVDYoM+pvAofGOcJahAxNJhC3YV5zGFbawPJ0qkBwa6W3uW5MxapgD4YrJGo2i0KOgDhttNlRkT8iJqpPQ==, tarball: file:projects/greengrass-provisioning.tgz}
-    id: file:projects/greengrass-provisioning.tgz
-    name: '@rush-temp/greengrass-provisioning'
-    version: 0.0.0
-    dependencies:
-      '@rushstack/eslint-config': 2.3.4_3318d341e08b60846a0ca54ab3432060
-      '@types/atob': 2.1.2
-      '@types/body-parser': 1.19.0
-      '@types/btoa': 1.2.3
-      '@types/config': 0.0.38
-      '@types/cors': 2.8.10
-      '@types/express': 4.17.11
-      '@types/express-serve-static-core': 4.17.19
-      '@types/express-version-request': 1.7.1
-      '@types/jest': 26.0.23
-      '@types/jsonpath-plus': 5.0.1
-      '@types/jszip': 3.4.1
-      '@types/shortid': 0.0.29
-      '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
-      '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
-      atob: 2.1.2
-      aws-sdk: 2.804.0
-      body-parser: 1.19.0
-      btoa: 1.2.1
-      config: 3.3.6
-      cors: 2.8.5
-      deepmerge: 4.2.2
-      eslint: 7.26.0_supports-color@8.0.0
-      express: 4.17.1
-      express-version-request: 1.7.0
-      fast-deep-equal: 3.1.3
-      inversify: 5.1.1
-      inversify-binding-decorators: 4.0.0
-      inversify-express-utils: 6.3.2
-      jest: 26.6.3_supports-color@8.0.0
-      jest-create-mock-instance: 1.1.0
-      jest-haste-map: 26.6.2
-      jest-mock: 26.6.2
-      jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
-      jest-resolve: 26.6.2
-      js-yaml: 4.1.0
-      jsonpath-plus: 5.0.7
-      jszip: 3.6.0
-      logform: 2.2.0
-      mime: 2.5.2
-      nodemon: 2.0.7
-      nyc: 15.1.0_supports-color@8.0.0
-      ow: 0.23.0
-      p-limit: 3.1.0
-      prettyjson: 1.2.1
-      readable-stream: 3.6.0
-      reflect-metadata: 0.1.13
-      serverless-http: 2.7.0
-      shortid: 2.2.16
-      shx: 0.3.3
-      superagent: 6.1.0_supports-color@8.0.0
-      ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
-      typescript: 4.2.4
-      winston: 3.3.3
-      winston-transport: 4.4.0
-    transitivePeerDependencies:
-      - bufferutil
-      - canvas
-      - supports-color
-      - ts-node
-      - utf-8-validate
-    dev: false
-
   file:projects/integration-tests.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-LkaSqnAII0vqiUV4FsJNOgrc2MIgjLhz/cNaQG9UhSWkC4rMwb8YRHxzT3jdjqxbVflFw/gkb6HwVbsdReW6Kg==, tarball: file:projects/integration-tests.tgz}
+    resolution: {integrity: sha512-jOcGof28wOIm6LEnR0/LONPMNFYFJ1lbiMe57/zju+lxmVrcSVBXAmNCnTxCQkA0A6bB1vrarhbvsCFmzg9Rnw==, tarball: file:projects/integration-tests.tgz}
     id: file:projects/integration-tests.tgz
     name: '@rush-temp/integration-tests'
     version: 0.0.0

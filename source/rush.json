@@ -191,12 +191,13 @@
       "reviewCategory": "production",
       "shouldPublish": true
     },
-    {
-      "packageName": "@cdf/certificate-renewer",
-      "projectFolder": "packages/services/certificaterenewer",
-      "reviewCategory": "production",
-      "shouldPublish": true
-    },
+    // temporarily removed from the open source version:
+    // {
+    //   "packageName": "@cdf/certificate-renewer",
+    //   "projectFolder": "packages/services/certificaterenewer",
+    //   "reviewCategory": "production",
+    //   "shouldPublish": true
+    // },
     {
       "packageName": "@cdf/commands",
       "projectFolder": "packages/services/commands",
@@ -221,18 +222,19 @@
       "reviewCategory": "production",
       "shouldPublish": true
     },
-    {
-      "packageName": "@cdf/greengrass-deployment",
-      "projectFolder": "packages/services/greengrass-deployment",
-      "reviewCategory": "production",
-      "shouldPublish": true
-    },
-    {
-      "packageName": "@cdf/greengrass-provisioning",
-      "projectFolder": "packages/services/greengrass-provisioning",
-      "reviewCategory": "production",
-      "shouldPublish": true
-    },
+    // temporarily removed from the open source version:
+    // {
+    //   "packageName": "@cdf/greengrass-deployment",
+    //   "projectFolder": "packages/services/greengrass-deployment",
+    //   "reviewCategory": "production",
+    //   "shouldPublish": true
+    // },
+    // {
+    //   "packageName": "@cdf/greengrass-provisioning",
+    //   "projectFolder": "packages/services/greengrass-provisioning",
+    //   "reviewCategory": "production",
+    //   "shouldPublish": true
+    // },
     {
       "packageName": "@cdf/provisioning",
       "projectFolder": "packages/services/provisioning",
