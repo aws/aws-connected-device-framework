@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/certificate-vendor",
+      "comment": "Corrected the examples provided in the module overview documentation.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/certificate-vendor",
+  "email": "deanhart@amazon.com"
+}
