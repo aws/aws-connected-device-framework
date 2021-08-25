@@ -380,14 +380,11 @@ definitions:
       presignedUrlExpiresInSeconds:
         type: integer
       abortConfig:
-        schema:
-          $ref: '#/definitions/AbortConfig'
+        $ref: '#/definitions/AbortConfig'
       jobExecutionsRolloutConfig:
-        schema:
-          $ref: '#/definitions/JobExecutionsRolloutConfig'
+        $ref: '#/definitions/JobExecutionsRolloutConfig'
       timeoutConfig:
-        schema:
-          $ref: '#/definitions/TimeoutConfig'
+        $ref: '#/definitions/TimeoutConfig'
 
   TemplateList:
     type: object
@@ -554,22 +551,11 @@ definitions:
       jobId:
         type: string
       abortConfig:
-        schema:
-          $ref: '#/definitions/AbortConfig'
+        $ref: '#/definitions/AbortConfig'
       jobExecutionsRolloutConfig:
-        schema:
-          $ref: '#/definitions/JobExecutionsRolloutConfig'
+        $ref: '#/definitions/JobExecutionsRolloutConfig'
       timeoutConfig:
-        schema:
-          $ref: '#/definitions/TimeoutConfig'
-
-  File:
-    type: object
-    properties:
-      bucketName:
-        type: string
-      s3ObjectKey:
-        type: string
+        $ref: '#/definitions/TimeoutConfig'
 
   CommandList:
     type: object
