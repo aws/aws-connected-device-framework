@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/simulation-manager",
+      "comment": "Fixed errors in swagger docs.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/simulation-manager",
+  "email": "deanhart@amazon.com"
+}

@@ -10,6 +10,18 @@
 #  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions
 #  and limitations under the License.
 #-----------------------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------------------
+#   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance
+#  with the License. A copy of the License is located at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES
+#  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions
+#  and limitations under the License.
+#-----------------------------------------------------------------------------------------------------------------------
 openapi: 3.0.0
 info:
   title: "AWS Connected Device Framework: Asset Library"
@@ -1712,9 +1724,10 @@ components:
       schema:
         type: string
     directionPath:
-      in: query
+      name: direction
+      in: path
       description: Direction of relation
-      explode: true
+      required: true
       schema:
         type: array
         items:
@@ -1726,8 +1739,8 @@ components:
         default: out
 
     groupPathsQuery:
-      name: attributes
-      in: groupPaths
+      name: groupPaths
+      in: query
       description: Optionally only return group based on the paths. By default
         returns all attributes.
       schema:
@@ -1736,8 +1749,8 @@ components:
           type: string
 
     deviceIdsQuery:
-      name: attributes
-      in: deviceIds
+      name: deviceIds
+      in: query
       description: Optionally only return devices with these Ids. By default
         returns all attributes.
       schema:
@@ -1804,6 +1817,7 @@ components:
       schema:
         type: string
     directionQuery:
+      name: direction
       in: query
       description: Direction of relation
       explode: true
@@ -2242,6 +2256,7 @@ components:
               type: integer
 
     SearchResults:
+      type: object
       properties:
         results:
           type: array
@@ -2255,6 +2270,7 @@ components:
                 - $ref: "#/components/schemas/Group_2_0"
 
     TemplateInfo:
+      type: object
       properties:
         templateId:
           description: Unique ID of template
@@ -2286,7 +2302,7 @@ components:
         results:
           type: array
           items:
-            - $ref: "#/components/schemas/TemplateInfo"
+            $ref: "#/components/schemas/TemplateInfo"
         pagination:
           type: object
           properties:
@@ -2296,6 +2312,7 @@ components:
               type: integer
 
     TemplateDefinition:
+      type: object
       properties:
         properties:
           description: Map of allowed properties (string, number, boolean and datetime
@@ -2332,6 +2349,7 @@ components:
                   type: string
 
     Policy:
+      type: object
       properties:
         policyId:
           type: string
@@ -2352,6 +2370,7 @@ components:
           description: the policy document (e.g. a provisioning template)
 
     PolicyList:
+      type: object
       properties:
         policies:
           type: array
@@ -2371,3 +2390,4 @@ components:
       properties:
         message:
           type: string
+

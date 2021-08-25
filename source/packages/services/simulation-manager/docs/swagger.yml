@@ -40,116 +40,77 @@ paths:
       - "Simulations"
       summary: "Create a new Simulation."
       operationId: "CreateSimulation"
-      consumes:
-      - "application/vnd.aws-cdf-v1.0+json"
-      produces:
-      - "application/vnd.aws-cdf-v1.0+json"
-      parameters:
-      - in: "body"
-        name: "body"
-        required: true
-        schema:
-          $ref: '#/definitions/Simulations'
+      requestBody:
+        $ref: '#/components/requestBodies/Simulation'
       responses:
         204:
           description : "success"
           headers: 
-            $ref: '#/definitions/Simulations/SuccessHeader'
-            
-definitions:
-  Simulations:
-    type: "object"
-    properties:
-      name:
-        type: "string"
-        description: "name of the simulation"
-        required: true
-      deviceCount:
-        type: "integer"
-        format: "int64"
-        description: "The number of devices to run the simulation for"
-        required: true
-        default: 1
-      modules:
-        type: "object"
-        description: "A list of key: value s listing the modules that the simulation needs to execute. The bellow properties are provided as an example and key/values can be changed as requiered"
-        properties:
-          simulation-engine:
-            type: "string"
-            description: "An example key value pair representing the module name and S3 path"
-            default: "simulations/modules/simulation-engine.zip"
-          data-generator:
-            type: "string"
-            description: "An example key value pair representing the module name and S3 path"
-            default: "simulations/modules/data-generator.zip"
-      tasks:
-        type: "object"
-        descriptions: "A list of different task that will be executed by the simulator. the Task names are dynamic and can be modified as needed"
-        properties:
-          taskA:
-            type: "object"
-            description: "task name is not fixed and can be modified to suite your purpose"
-            properties:
-              plan: 
+            location:
+              schema:
                 type: "string"
-                description: "S3 path to Jmeter test plan"
-                default: "simulations/plans/taskA.jmx"
-              threads:
-                type: "object"
-                description: "defines the thread configuration that simulator will use"
-                properties:
-                  total: 
-                    type: "int32"
-                    default: "20"
-                    description: "total number of threads that will be used to run the simulation for all the devices. This field has a direct impact on the number of ECS tasks that get created to run the simulation"
-                  rampUpSecs:
-                    type: "int32"
-                    default: "10"
-                    description: "the time in seconds before jmeter ramps up the number of threads it is using to run the simulation"
-              attributes:
-                type: object
-                description: "A list of attributes that will be provided to the simulator to use at execution.these attributes can be modified to suite your needs"
-                properties:
-                  attributeA:
-                    type: "string"
-                  attributeB:
-                    type: "string"
-                  attributeC:
-                    type: "string"
-          taskB:
-            type: "object"
-            description: "task name is not fixed and can be modified to suite your purpose"
-            properties:
-              plan: 
-                type: "string"
-                description: "S3 path to Jmeter test plan"
-                default: "simulations/plans/taskB.jmx"
-              threads:
-                type: "object"
-                description: "defines the thread configuration that simulator will use"
-                properties:
-                  total: 
-                    type: "int32"
-                    default: "20"
-                    description: "total number of threads that will be used to run the simulation for all the devices. This field has a direct impact on the number of ECS tasks that get created to run the simulation"
-                  rampUpSecs:
-                    type: "int32"
-                    default: "10"
-                    description: "the time in seconds before jmeter ramps up the number of threads it is using to run the simulation"
-              attributes:
-                type: object
-                description: "A list of attributes that will be provided to the simulator to use at execution.these attributes can be modified to suite your needs"
-                properties:
-                  attributeA:
-                    type: "string"
-                  attributeB:
-                    type: "string"
-                  attributeC:
-                    type: "string"
             
-    SuccessHeader:
+components:
+
+  requestBodies:
+    Simulation:
+      content:
+        application/vnd.aws-cdf-v1.0+json:
+          schema:
+            $ref: "#/components/schemas/Simulation"
+      
+  schemas:
+    Simulation:
       type: "object"
       properties:
-        location:
+        name:
           type: "string"
-          default: "/simulations/{simulationId}"
+          description: "name of the simulation"
+        deviceCount:
+          type: "integer"
+          format: "int64"
+          description: "The number of devices to run the simulation for"
+          default: 1
+        modules:
+          type: "object"
+          description: "A list of key: value s listing the modules that the simulation needs to execute. The bellow properties are provided as an example and key/values can be changed as requiered"
+          properties:
+            simulation-engine:
+              type: "string"
+              description: "An example key value pair representing the module name and S3 path"
+              default: "simulations/modules/simulation-engine.zip"
+            data-generator:
+              type: "string"
+              description: "An example key value pair representing the module name and S3 path"
+              default: "simulations/modules/data-generator.zip"
+        tasks:
+          type: "object"
+          description: "A list of different task that will be executed by the simulator. the Task names are dynamic and can be modified as needed"
+          additionalProperties:
+            $ref: "#/components/schemas/Task"
+
+    Task:
+      type: "object"
+      description: "task name is not fixed and can be modified to suite your purpose"
+      properties:
+        plan: 
+          type: "string"
+          description: "S3 path to Jmeter test plan"
+        threads:
+          type: "object"
+          description: "defines the thread configuration that simulator will use"
+          properties:
+            total: 
+              type: "integer"
+              format: "int32"
+              default: "20"
+              description: "total number of threads that will be used to run the simulation for all the devices. This field has a direct impact on the number of ECS tasks that get created to run the simulation"
+            rampUpSecs:
+              type: "integer"
+              format: "int32"
+              default: "10"
+              description: "the time in seconds before jmeter ramps up the number of threads it is using to run the simulation"
+        attributes:
+          type: object
+          description: "A list of attributes that will be provided to the simulator to use at execution.these attributes can be modified to suit your needs"
+          additionalProperties: true
