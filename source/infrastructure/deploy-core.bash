@@ -910,6 +910,7 @@ if [ -f "$simulation_launcher_config" ]; then
 
     infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
     infrastructure/deploy-cfn.bash \
+        -b \
         -e "$ENVIRONMENT" \
         -c "$simulation_launcher_config" \
         -l "$CUSTOM_RESOURCE_LAMBDA_ARN" \

@@ -36,14 +36,11 @@
     "@cdf/auth-jwt",
     "@cdf/bulkcerts",
     "@cdf/certificate-activator",
-    "@cdf/certificate-renewer",
     "@cdf/certificate-vendor",
     "@cdf/commands",
     "@cdf/device-monitoring",
     "@cdf/events-alerts",
     "@cdf/events-processor",
-    "@cdf/greengrass-deployment",
-    "@cdf/greengrass-provisioning",
     "@cdf/provisioning",
     "@cdf/deployment-helper",
     "@cdf/simulation-launcher",
@@ -234,14 +231,6 @@
     },
     {
       "projectName": "@cdf/events-processor",
-      "dependenciesToExclude": ["aws-sdk"]
-    },
-    {
-      "projectName": "@cdf/greengrass-deployment",
-      "dependenciesToExclude": ["aws-sdk"]
-    },
-    {
-      "projectName": "@cdf/greengrass-provisioning",
       "dependenciesToExclude": ["aws-sdk"]
     },
     {

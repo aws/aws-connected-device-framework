@@ -271,10 +271,8 @@ if [ "$ASSETLIBRARY_MODE" = "full" ]; then
     fi
 fi
 
-# use existing kms
-if [ -n "$KMS_KEY_ID" ]; then
-    DEPLOY_PARAMETERS+=( KmsKeyId=$KMS_KEY_ID )
-fi
+# if provided, use existing kms
+DEPLOY_PARAMETERS+=( KmsKeyId=$KMS_KEY_ID )
 
 if [ -n "$USE_EXISTING_VPC" ] && [ "$USE_EXISTING_VPC" = 'true' ]; then
     # if private api auth, or asset library full mode, is configured then these will get overwritten
@@ -380,7 +378,9 @@ aws cloudformation package \
 logTitle 'Deploying Simulation Launcher JMeter Container'
 
 repositoryName="cdf-jmeter-$ENVIRONMENT"
-$root_dir/packages/services/simulation-launcher/src/containers/jmeter/infrastructure/deploy.bash -n $repositoryName $AWS_SCRIPT_ARGS
+cd "$root_dir/packages/services/simulation-launcher/src/containers/jmeter/infrastructure"
+./deploy.bash -b -n $repositoryName $AWS_SCRIPT_ARGS
+cd -
 
 DEPLOY_PARAMETERS+=( JMeterRepoName=$repositoryName )
 
