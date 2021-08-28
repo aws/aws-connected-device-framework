@@ -216,7 +216,7 @@ tags:
 
           ?eq=deviceId:MOD123&eq=state:active
 paths:
-  "/templates/devices":
+  "/templates/device":
     get:
       tags:
         - Templates
@@ -240,7 +240,7 @@ paths:
                 $ref: "#/components/schemas/TemplateInfoList"
         "400":
           $ref: "#/components/responses/BadRequest"
-  "/templates/devices/{templateId}":
+  "/templates/device/{templateId}":
     parameters:
       - $ref: '#/components/parameters/templateIdPath'
     post:
@@ -305,7 +305,7 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "404":
           $ref: "#/components/responses/NotFound"
-  "/templates/devices/{templateId}/publish":
+  "/templates/device/{templateId}/publish":
     parameters:
       - $ref: '#/components/parameters/templateIdPath'
     put:
@@ -320,7 +320,7 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "404":
           $ref: "#/components/responses/NotFound"
-  "/templates/groups":
+  "/templates/group":
     get:
       tags:
         - Templates
@@ -344,7 +344,7 @@ paths:
                 $ref: "#/components/schemas/TemplateInfoList"
         "400":
           $ref: "#/components/responses/BadRequest"
-  "/templates/groups/{templateId}":
+  "/templates/group/{templateId}":
     parameters:
       - $ref: '#/components/parameters/templateIdPath'
     post:
@@ -417,7 +417,7 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "404":
           $ref: "#/components/responses/NotFound"
-  "/templates/groups/{templateId}/publish":
+  "/templates/group/{templateId}/publish":
     parameters:
       - $ref: '#/components/parameters/templateIdPath'
     put:
@@ -1852,7 +1852,7 @@ components:
         minimum: 0
     countQuery:
       in: query
-      name: offset
+      name: count
       schema:
         type: integer
         minimum: 0
@@ -2269,6 +2269,66 @@ components:
                 - $ref: "#/components/schemas/Device_2_0"
                 - $ref: "#/components/schemas/Group_2_0"
 
+    TemplateInfoProperties:
+      type: object
+      required: [ "type" ]
+      properties:
+        type:
+          type: array
+          items:
+            type: string
+            enum:
+              - integer
+              - number
+              - string
+              - boolean
+              - datettime
+              - null
+        enum:
+          type: array
+          items:
+            type: string
+        minLength:
+          type: number
+        maxLength: 
+          type: number
+        pattern:
+          type: string
+        format:
+          type: string
+          enum:
+            - date
+            - date-time
+            - uri
+            - email
+            - hostname
+            - ipv4
+            - ipv6
+        minimum:
+          type: number
+        maximum:
+          type: number
+        exclusiveMinimum:
+          type: number
+        exclusiveMaximum:
+          type: number
+        multipleOf:
+          type: number
+        not:
+          type: object
+        oneOf:
+          type: array
+          items:
+            type: object
+        anyOf:
+          type: array
+          items:
+            type: object
+        allOf:
+          type: array
+          items:
+            type: object
+
     TemplateInfo:
       type: object
       properties:
@@ -2281,20 +2341,32 @@ components:
           enum:
             - device
             - group
-        schema:
+        properties:
+          type: object
+          additionalProperties:
+            $ref: "#/components/schemas/TemplateInfoProperties"
+        required:
+          description: List of required properties
+          type: array
+          items:
+            type: string
+        relations:
           type: object
           properties:
-            version:
-              description: Version of template definition (auto-incrementing)
-              type: number
-            definition:
-              $ref: "#/components/schemas/TemplateDefinition"
-            status:
-              description: Status of template
-              type: string
-              enum:
-                - draft
-                - published
+            out:
+              description: Map of defined relationships from this template to others
+              type: object
+              additionalProperties:
+                type: array
+                items:
+                  type: string
+            in:
+              description: Map of defined relationships from other templates to this
+              type: object
+              additionalProperties:
+                type: array
+                items:
+                  type: string
 
     TemplateInfoList:
       type: object
