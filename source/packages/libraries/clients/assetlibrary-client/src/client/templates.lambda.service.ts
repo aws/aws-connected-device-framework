@@ -122,11 +122,7 @@ export class TemplatesLambdaService extends TemplatesServiceBase implements Temp
 
        const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.templatesRelativeUrl(category))
-            .setQueryStringParameters({
-                status,
-                offset:`${offset}`,
-                count:`${count}`
-            })
+            .setQueryStringParameters(qs)
             .setMethod('GET')
             .setHeaders(super.buildHeaders(additionalHeaders));
 
