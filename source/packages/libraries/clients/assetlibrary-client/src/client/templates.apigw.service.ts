@@ -64,7 +64,12 @@ export class TemplatesApigwService extends TemplatesServiceBase implements Templ
         ow(resource.templateId,'templateId', ow.string.nonEmpty);
         ow(resource.category,'category', ow.string.nonEmpty);
 
-        const url = `${this.baseUrl}${super.templateRelativeUrl(resource.category, resource.templateId)}`;
+        const templateId = resource.templateId;
+        const category = resource.category;
+        delete resource.templateId;
+        delete resource.category;
+
+        const url = `${this.baseUrl}${super.templateRelativeUrl(category, templateId)}`;
         await request.patch(url)
             .set(this.buildHeaders(additionalHeaders));
     }
