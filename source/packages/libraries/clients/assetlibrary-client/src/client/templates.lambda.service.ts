@@ -15,7 +15,7 @@ import ow from 'ow';
 import {CategoryEnum, StatusEnum, TypeResource, TypeResourceList} from './templates.model';
 import {RequestHeaders} from './common.model';
 import {TemplatesService, TemplatesServiceBase} from './templates.service';
-import {LambdaApiGatewayEventBuilder, LAMBDAINVOKE_TYPES, LambdaInvokerService, QueryStringParametersDictionary} from '@cdf/lambda-invoke';
+import {LambdaApiGatewayEventBuilder, LAMBDAINVOKE_TYPES, LambdaInvokerService, Dictionary} from '@cdf/lambda-invoke';
 
 @injectable()
 export class TemplatesLambdaService extends TemplatesServiceBase implements TemplatesService {
@@ -109,7 +109,7 @@ export class TemplatesLambdaService extends TemplatesServiceBase implements Temp
     async listTemplates(category: CategoryEnum, status?: string, offset?: number, count?: number, additionalHeaders?: RequestHeaders): Promise<TypeResourceList> {
         ow(category,'category', ow.string.nonEmpty);
         
-        const qs: QueryStringParametersDictionary = {};
+        const qs: Dictionary = {};
         if (status) {
           qs.status = status;
         }
