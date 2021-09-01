@@ -22,7 +22,7 @@ import {DeviceResourceList, DeviceState} from './devices.model';
 import ow from 'ow';
 import {GroupsService, GroupsServiceBase} from './groups.service';
 import {RequestHeaders} from './common.model';
-import {LambdaApiGatewayEventBuilder, LAMBDAINVOKE_TYPES, LambdaInvokerService} from '@cdf/lambda-invoke';
+import {Dictionary,LambdaApiGatewayEventBuilder, LAMBDAINVOKE_TYPES, LambdaInvokerService} from '@cdf/lambda-invoke';
 
 @injectable()
 export class GroupsLambdaService extends GroupsServiceBase implements GroupsService {
@@ -230,5 +230,49 @@ export class GroupsLambdaService extends GroupsServiceBase implements GroupsServ
             .setHeaders(super.buildHeaders(additionalHeaders));
 
         await this.lambdaInvoker.invoke(this.functionName, event);
+    }
+    
+   /**
+     * List all related groups of a specific group.
+     * @param groupPath Path of group for fetching the membership
+     * @param relationship The relationship between the group and groups
+     * @param template Optional filter to return a specific device sub-type
+     * @param direction Optional filter to return a specific direction
+     * @param offset Optional The index to start paginated results from
+     * @param count Optional The maximum number of results to return
+     * @param sort Optional The result returned by the specific sort
+     */
+    async listGroupRelatedGroups(groupPath: string, relationship: string, template?: string, direction?: string, offset?: number, count?: number, sort?: string, additionalHeaders?:RequestHeaders): Promise<GroupResourceList> {
+        ow(groupPath, 'groupPath', ow.string.nonEmpty);
+        ow(relationship, 'relationship',ow.string.nonEmpty);
+
+        let myqs:Dictionary = {};
+        if (template != undefined && template.trim().length > 0) {
+            myqs.template = `${template}`;
+        }
+        if (direction != undefined && direction.trim().length > 0 ) {
+            myqs.direction = `${direction}`;
+        }
+        if (offset != undefined ) {
+            if (String(offset).trim().length > 0) {
+               myqs.offset = `${offset}`;
+            }
+        }
+        if (count != undefined) {
+            if (String(count).trim().length > 0) {
+                myqs.count = `${count}`;
+            }
+        }
+        if (sort != undefined && sort.trim().length > 0 ) {
+            myqs.sort = `${sort}`;
+        }
+        const event = new LambdaApiGatewayEventBuilder()
+            .setMethod('GET')
+            .setPath(super.groupRelatedGroupUrl(groupPath,relationship))
+            .setQueryStringParameters(myqs)
+            .setHeaders(super.buildHeaders(additionalHeaders));
+
+        const res = await this.lambdaInvoker.invoke(this.functionName, event);
+        return res.body;
     }
 }

@@ -21,10 +21,13 @@ import {provisioningContainerModule} from '@cdf/provisioning-client';
 import {notificationsContainerModule} from '@cdf/notifications-client';
 import {greengrassDeploymentContainerModule} from '@cdf/greengrass-deployment-client';
 import {greengrassProvisioningContainerModule} from '@cdf/greengrass-provisioning-client';
-
+import { CDFConfigInjector } from '@cdf/config-inject';
 
 // Load everything needed to the Container
 export const container = new Container();
+
+const configInjector = new CDFConfigInjector();
+container.load(configInjector.getConfigModule());
 
 // bind containers from the cdf client modules
 container.load(assetLibraryContainerModule);

@@ -215,4 +215,54 @@ export class GroupsApigwService extends GroupsServiceBase implements GroupsServi
         await request.delete(url)
             .set(this.buildHeaders(additionalHeaders));
     }
+
+    /**
+     * List all related groups of a specific group.
+     * @param groupPath Path of group for fetching the membership
+     * @param relationship The relationship between the group and groups
+     * @param template Optional filter to return a specific device sub-type
+     * @param direction Optional filter to return a specific direction
+     * @param offset Optional The index to start paginated results from
+     * @param count Optional The maximum number of results to return
+     * @param sort Optional The result returned by the specific sort
+     */
+    async listGroupRelatedGroups(groupPath: string, relationship: string, template?: string, direction?: string, offset?: number, count?: number, sort?: string, additionalHeaders?:RequestHeaders): Promise<GroupResourceList> {
+        ow(groupPath, 'groupPath', ow.string.nonEmpty);
+        ow(relationship, 'relationship',ow.string.nonEmpty);
+
+        let url = `${this.baseUrl}${super.groupRelatedGroupUrl(groupPath,relationship)}`;
+
+        let queryString="";
+        if (template != undefined && template.trim().length > 0) {
+            queryString = queryString + "&template="+template;
+        }
+        if (direction != undefined && direction.trim().length > 0 ) {
+            queryString = queryString + "&direction="+direction;
+        }
+        if (offset != undefined ) {
+            if (String(offset).trim().length > 0) {
+                queryString = queryString + "&offset="+offset;
+            }
+        }
+        if (count != undefined) {
+            if (String(count).trim().length > 0) {
+                queryString = queryString + "&count="+count;
+            }
+        }
+        if (sort != undefined && sort.trim().length > 0 ) {
+            queryString = queryString + "&sort="+sort;
+        }
+        if (queryString ) {
+            queryString = queryString.slice(1);
+        }
+
+        if (queryString) {
+            url += `?${queryString}`;
+        }
+        const res = await request.get(url)
+            .set(this.buildHeaders(additionalHeaders));
+
+        return res.body;
+    }
+
 }
