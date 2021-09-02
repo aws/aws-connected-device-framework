@@ -246,7 +246,7 @@ export class GroupsLambdaService extends GroupsServiceBase implements GroupsServ
         ow(groupPath, 'groupPath', ow.string.nonEmpty);
         ow(relationship, 'relationship',ow.string.nonEmpty);
 
-        let myqs:Dictionary = {};
+        const myqs:Dictionary = {};
         if (template != undefined && template.trim().length > 0) {
             myqs.template = `${template}`;
         }
