@@ -37,6 +37,7 @@ import { CommandsCommandCustomResource } from '../customResources/commandsComman
 import { IotDeviceDefenderCustomResource } from '../customResources/iotDeviceDefender.customResource';
 import { VpcEndpointCustomResource } from '../customResources/vpcEndpoint.customResource';
 import { RotateCertificatesJobCustomResource } from '../customResources/rotateCertificatesJob.customresource';
+import { EventSourceCustomResource } from '../customResources/eventSource.customResource';
 
 // Load everything needed to the Container
 export const container = new Container();
@@ -73,6 +74,7 @@ container.bind<VpcEndpointCustomResource>(TYPES.VpcEndpointCustomResource).to(Vp
 container.bind<S3PutObjectCustomResource>(TYPES.S3PutObjectCustomResource).to(S3PutObjectCustomResource).inSingletonScope();
 
 container.bind<IotDeviceDefenderCustomResource>(TYPES.IotDeviceDefenderCustomResource).to(IotDeviceDefenderCustomResource).inSingletonScope();
+container.bind<EventSourceCustomResource>(TYPES.EventSourceCustomResource).to(EventSourceCustomResource).inSingletonScope();
 
 // lambda invoker
 container.bind<LambdaInvokerService>(LAMBDAINVOKE_TYPES.LambdaInvokerService).to(LambdaInvokerService);
