@@ -33,7 +33,7 @@
 
 ### Bug Fixes
 
-* **device-monitoring:** inject correct client service ([d9b699e](d9b699e5a320736fb7d2a694e2cb73155fbe53c6))
+* **device-monitoring:** inject correct client module ([d9b699e](d9b699e5a320736fb7d2a694e2cb73155fbe53c6))
 
 ## [@cdf/device-monitoring-v3.2.3](@cdf/device-monitoring-v3.2.2...@cdf/device-monitoring-v3.2.3) (2020-07-29)
 
@@ -68,7 +68,7 @@
 
 ### Features
 
-* **auth:** certain services tested ([4253b65](4253b65750e52dd962a3a42dde05626044bb79cc))
+* **auth:** certain modules tested ([4253b65](4253b65750e52dd962a3a42dde05626044bb79cc))
 * **auth:** complete private api and api key auth modes ([46d0183](46d0183e779e21a7ad39e879481b369bec2d060f))
 
 ## [@cdf/device-monitoring-v3.1.1](@cdf/device-monitoring-v3.1.0...@cdf/device-monitoring-v3.1.1) (2020-01-15)

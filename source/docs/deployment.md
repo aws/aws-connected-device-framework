@@ -54,7 +54,7 @@ MANDATORY ARGUMENTS:
 
 If you need to customize the authentication configuration, the recommendation is to copy one of the provided ones as a base, customize as required, then upload it to the configured S3 bucket as part of your deployment script.
 
-If an authentication mechanism is applied to the CDF REST API's, a security perimiter comes into effect around all the core CDF services.  A caller's credentials are validated upon the first entry point into the security boundary for a given request, with all following internal service to service calls for the same request bypassing additional authentication checks.  This is made possible by the provided clients for each of the REST API's (see `{aws-connected-device-framework}/source/packages/libraries/clients/`) that the core CDF services use for inter-service communication.  They can be configured to call their associated REST API by invoking API Gateway, thus requiring to be authorized, or instead invoking the corresponding CDF core's lambda directly thus bypassing any authentication checks.  These clients may be resued within your own custom services to expand the CDF security perimiter to include your custom services too.
+If an authentication mechanism is applied to the CDF REST API's, a security perimiter comes into effect around all the core CDF modules.  A caller's credentials are validated upon the first entry point into the security boundary for a given request, with all following internal module to module calls for the same request bypassing additional authentication checks.  This is made possible by the provided clients for each of the REST API's (see `{aws-connected-device-framework}/source/packages/libraries/clients/`) that the core CDF modules use for inter-module communication.  They can be configured to call their associated REST API by invoking API Gateway, thus requiring to be authorized, or instead invoking the corresponding CDF core's lambda directly thus bypassing any authentication checks.  These clients may be resued within your own custom modules to expand the CDF security perimiter to include your custom modules too.
 
 ## Deploying the project
 
@@ -81,9 +81,9 @@ $ rush bundle
 
 ### Deploying
 
-After all the artifacts are bundled, you can now deploy cdf core services either as **single** cloudformation stack or **multiple** cloudformation stack (one stack per micro-service).
+After all the artifacts are bundled, you can now deploy cdf core modules either as **single** cloudformation stack or **multiple** cloudformation stack (one stack per micro-service).
 
-**Note:** If application configuration project location is not provided as a parameter, all cdf services will be deployed.
+**Note:** If application configuration project location is not provided as a parameter, all cdf modules will be deployed.
 
 #### Deploying CDF core modules in single stack (with nested children stacks) mode 
 

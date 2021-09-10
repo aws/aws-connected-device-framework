@@ -1,9 +1,9 @@
-# Deploying the Asset Library History service
+# Deploying the Asset Library History module
 
 ## Pre-Requisities
 
 - Create an S3 bucket to publish CloudFormation artifacts to
-- As this subscribes to MQTT topics published by the Asset Library service, deploy this before the Asset Library
+- As this subscribes to MQTT topics published by the Asset Library module, deploy this before the Asset Library
 
 ## Deployment Steps
 

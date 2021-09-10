@@ -2,7 +2,7 @@
 
 Each application is written in [TypeScript 4.1.2](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-4-1.html), and transpiled into Node.js v14.x.
 
-The REST API's are hosted within the [Express web framework](https://expressjs.com), using [aws-serverless-express](https://github.com/awslabs/aws-serverless-express) (for older services) or [serverless-http](https://www.npmjs.com/package/serverless-http) (for newer services) to allow the Express application to run within AWS Lambda.
+The REST API's are hosted within the [Express web framework](https://expressjs.com), using [aws-serverless-express](https://github.com/awslabs/aws-serverless-express) (for older modules) or [serverless-http](https://www.npmjs.com/package/serverless-http) (for newer modules) to allow the Express application to run within AWS Lambda.
 
 [InversifyJS](https://github.com/inversify/InversifyJS) is handling dependency injection, along with [inversify-express-utils](https://github.com/inversify/inversify-express-utils) to handle the integration with Express.
 

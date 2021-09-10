@@ -7,7 +7,7 @@ Wed, 11 Aug 2021 01:26:49 GMT
 
 ### Breaking changes
 
-- new service added
+- new module added
 
 ### Minor changes
 

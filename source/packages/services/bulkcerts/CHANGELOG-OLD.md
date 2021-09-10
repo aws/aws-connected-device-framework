@@ -25,7 +25,7 @@
 ### Features
 
 * **apis:** api key and private api auth support ([03240fa](03240fad4867ada8d9babd68d1124e6e4f7770da))
-* **auth:** certain services tested ([4253b65](4253b65750e52dd962a3a42dde05626044bb79cc))
+* **auth:** certain modules tested ([4253b65](4253b65750e52dd962a3a42dde05626044bb79cc))
 * **auth:** complete private api and api key auth modes ([46d0183](46d0183e779e21a7ad39e879481b369bec2d060f))
 
 ## [@cdf/certificate-activator-v2.2.0](@cdf/certificate-activator-v2.1.3...@cdf/certificate-activator-v2.2.0) (2020-05-29)
@@ -33,7 +33,7 @@
 
 ### Features
 
-* **greengrass:** provisioning and deployment service ([5072214](5072214fb81a0d6a8f8641bf0f52fefb7f2ad950))
+* **greengrass:** provisioning and deployment module ([5072214](5072214fb81a0d6a8f8641bf0f52fefb7f2ad950))
 
 ## [@cdf/certificate-activator-v2.1.3](@cdf/certificate-activator-v2.1.2...@cdf/certificate-activator-v2.1.3) (2020-01-31)
 
@@ -97,4 +97,4 @@
 
 ### Features
 
-* **certificate-activator:** added service, and updated publishing ([7854f71](7854f71))
+* **certificate-activator:** added module, and updated publishing ([7854f71](7854f71))

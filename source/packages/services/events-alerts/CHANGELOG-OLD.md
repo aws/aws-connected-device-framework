@@ -108,7 +108,7 @@
 
 ### Features
 
-* **greengrass:** provisioning and deployment service ([5072214](5072214fb81a0d6a8f8641bf0f52fefb7f2ad950))
+* **greengrass:** provisioning and deployment module ([5072214](5072214fb81a0d6a8f8641bf0f52fefb7f2ad950))
 
 ## [@cdf/events-processor-v2.2.2](@cdf/events-processor-v2.2.1...@cdf/events-processor-v2.2.2) (2020-02-04)
 

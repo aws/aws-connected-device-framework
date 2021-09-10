@@ -1,6 +1,6 @@
 # NOTIFICATIONS: Design
 
-The CDF Notifications service is comprised of 2 micro-services:  the CDF Events Processor, and the CDF Events Alerts. 
+The CDF Notifications module is comprised of 2 micro-services:  the CDF Events Processor, and the CDF Events Alerts. 
 
 ## High Level Architecture
 
@@ -58,7 +58,7 @@ Events that are sourced via direct lambda invocation, such as API Gateway or IoT
 
 #### DynamoDB Streams
 
-A DynamoDB Stream may be configured as a trigger to the Events Processor service. 
+A DynamoDB Stream may be configured as a trigger to the Events Processor module. 
 
 Using DynamoDB streams as a Lambda trigger instead of consuming the DynamoDB Stream via Kinesis was chosen so that we benefit from automatic shard handling of scaling up/down.
 

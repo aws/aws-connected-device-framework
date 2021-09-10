@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Devices within the CDF platform are identified by a `deviceId` and grouped in hierarchies.  This structure is managed by the *CDF Asset Library* service.
+Devices within the CDF platform are identified by a `deviceId` and grouped in hierarchies.  This structure is managed by the *CDF Asset Library* module.
 
 When creating commands to be executed by a device, a list of targets is required.  These targets may comprise of CDF devices, CDF groups, AWS IoT thing ARN's, and/or AWS IoT group ARN's.
 
@@ -38,4 +38,4 @@ $aws/events/job/jobID/completed
 $aws/events/job/jobID/canceled
 ```
 
-Upon cancellation/completion, if an ephemeral group was created for the Job, it is automatically deleted by the *CDF Commands* service.
+Upon cancellation/completion, if an ephemeral group was created for the Job, it is automatically deleted by the *CDF Commands* module.

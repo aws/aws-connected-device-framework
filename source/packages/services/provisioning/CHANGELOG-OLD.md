@@ -31,7 +31,7 @@
 
 ### Features
 
-* **greengrass:** provisioning and deployment service ([5072214](5072214fb81a0d6a8f8641bf0f52fefb7f2ad950))
+* **greengrass:** provisioning and deployment module ([5072214](5072214fb81a0d6a8f8641bf0f52fefb7f2ad950))
 
 ## [@cdf/request-queue-v3.1.1](@cdf/request-queue-v3.1.0...@cdf/request-queue-v3.1.1) (2020-01-15)
 
