@@ -10,50 +10,32 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-export interface EventSourceSummaryResource {
-    id: string;
-    name:string;
+import { injectable, inject } from 'inversify';
+import { TYPES } from '../../di/types';
+import {logger} from '../../utils/logger.util';
+import ow from 'ow';
+import { FilterService } from '../../filter/filter.service';
+import { CommonEvent } from '../../transformers/transformers.model';
+
+@injectable()
+export class ApigwTriggerService {
+
+    constructor(@inject(TYPES.FilterService) private filter: FilterService) {
+    }
+
+    public async invoke(event: CommonEvent) : Promise<void> {
+        logger.debug(`apigwtrigger.service invoke: in: model:${JSON.stringify(event)}`);
+
+        // validate input
+        ow(event,'resource', ow.object.nonEmpty);
+        ow(event.eventSourceId, ow.string.nonEmpty);
+        ow(event.principal, ow.string.nonEmpty);
+        ow(event.principalValue, ow.string.nonEmpty);
+
+        // process the message
+        await this.filter.filter([event]);
+ 
+        logger.debug(`apigwtrigger.service invoke: exit`);
+    }
+
 }
-
-export interface EventSourceDetailResource extends EventSourceSummaryResource {
-    principal: string;
-    sourceType: EventSourceType;
-    enabled: boolean;
-
-    dynamoDb?: DynamoDbConfig;
-    iotCore?: IotCoreConfig;
-    apigateway?: ApiGatewayConfig;
-
-}
-
-export enum EventSourceType {
-    ApiGateway = 'ApiGateway',
-    DynamoDB = 'DynamoDB',
-    IoTCore = 'IoTCore'
-}
-
-export class EventSourceResourceList {
-    results: EventSourceSummaryResource[]=[];
-}
-
-export interface EventSourceItem {
-    id: string;
-    name:string;
-    principal: string;
-    sourceType: EventSourceType;
-    enabled: boolean;
-
-    dynamoDb?: DynamoDbConfig;
-    iotCore?: IotCoreConfig;
-}
-
-type DynamoDbConfig = {
-    tableName: string;
-};
-type IotCoreConfig = {
-    mqttTopic: string;
-    attributes: {[key:string]:string};
-};
-type ApiGatewayConfig = {
-    attributes: {[key:string]:string};
-};
