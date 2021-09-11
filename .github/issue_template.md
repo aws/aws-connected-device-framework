@@ -2,7 +2,7 @@
 
 <!-- ISSUES MISSING IMPORTANT INFORMATION MAY BE CLOSED WITHOUT INVESTIGATION. -->
 
-**Aws Connected Device Framework Affected Service(s):**
+**Aws Connected Device Framework Affected Module(s):**
 <!-- include any affected services/libraries names here --> 
 
 **I'm submitting a ...**
