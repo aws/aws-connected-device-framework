@@ -24,8 +24,8 @@ export class ApigwTriggerController implements interfaces.Controller {
 
     constructor( @inject(TYPES.ApigwTriggerService) private apigwtriggerService: ApigwTriggerService) {}
 
-    @httpPost('/apigwtrigger')
-    public async apigwTrigger(@requestBody() event:CommonEvent, @response() res: Response) : Promise<void> {
+    @httpPost('/messages/apigw')
+    public async apigwTrigger(@requestBody() event:CommonEvent|string, @response() res: Response) : Promise<void> {
         
         if (typeof event == 'string') {
             logger.debug(`apigwtrigger.controller apigwTrigger: in: event: ${event}`);
