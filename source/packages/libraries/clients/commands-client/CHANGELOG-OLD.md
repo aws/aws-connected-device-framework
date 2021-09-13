@@ -32,7 +32,7 @@
 
 ### Features
 
-* **auth:** certain services tested ([4253b65](4253b65750e52dd962a3a42dde05626044bb79cc))
+* **auth:** certain modules tested ([4253b65](4253b65750e52dd962a3a42dde05626044bb79cc))
 
 ## [@cdf/commands-client-v3.2.0](@cdf/commands-client-v3.1.0...@cdf/commands-client-v3.2.0) (2020-01-06)
 

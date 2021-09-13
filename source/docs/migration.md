@@ -1,6 +1,6 @@
 # Migrating from pre-open source version
 
-NOTE: The initial release of this open source version does not include the _greengrass-provisioning_ and _greengrass-deployment_ services as their current implementation is based on Greengrass V1. Once they have been upgraded to use Greengrass V2 they will be released. It is recommended that
+NOTE: The initial release of this open source version does not include the _greengrass-provisioning_ and _greengrass-deployment_ modules as their current implementation is based on Greengrass V1. Once they have been upgraded to use Greengrass V2 they will be released. It is recommended that
 
 ## Introduction
 
@@ -57,7 +57,7 @@ Sample command to retrieve the number of messages in the queue
 aws sqs  get-queue-attributes --queue-url <queue url> --attribute-names ApproximateNumberOfMessages
 ```
 
-You can do this by restricting any post or patch operation into the cdf services specified below to prevent the modification or addition of new resources. 
+You can do this by restricting any post or patch operation into the cdf modules specified below to prevent the modification or addition of new resources. 
 
 List of modules and the related SQS resources
 
@@ -119,7 +119,7 @@ JobsTable:
 ```
 
 > **Note**: 
-The [@cdf/ddb-migrator](../packages/libraries/tools/ddb-migrator) utility utilizes DynamoDB scan functionality to copy data from a source to destination table. As this tool is infrastructure agnostic, it is highly advised to understand the scale of the data before executing the service. If the amount of data within the table cannot be migrated by running the tool locally, then the tool must be executed as a Fargate container or within an EC2 instance.
+The [@cdf/ddb-migrator](../packages/libraries/tools/ddb-migrator) utility utilizes DynamoDB scan functionality to copy data from a source to destination table. As this tool is infrastructure agnostic, it is highly advised to understand the scale of the data before executing the module. If the amount of data within the table cannot be migrated by running the tool locally, then the tool must be executed as a Fargate container or within an EC2 instance.
 
 ### Notifications module
 

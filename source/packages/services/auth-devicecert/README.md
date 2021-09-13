@@ -10,7 +10,7 @@ Since creating this reference application, API Gateway now supports [mutual auth
 
 ## Introduction
 
-The custom authorizer service utilizes [API Gateway Custom Authorizer](https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-use-lambda-authorizer.html). A Lambda based authorizer uses information described by headers (`deviceCert` and `deviceId`) to then validate whether the device certificate was signed by the registered CA certificate.
+The custom authorizer module utilizes [API Gateway Custom Authorizer](https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-use-lambda-authorizer.html). A Lambda based authorizer uses information described by headers (`deviceCert` and `deviceId`) to then validate whether the device certificate was signed by the registered CA certificate.
 
 For a valid policy, API Gateway caches the returned policy, associated with the incoming source request parameters. It then uses the cached policy for the current and subsequent requests, over a pre-configured time-to-live (TTL) period of 300 seconds.
 

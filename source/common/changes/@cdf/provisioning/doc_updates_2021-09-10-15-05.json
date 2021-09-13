@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/provisioning",
+      "comment": "Replaced references to CDF components being referred to as services to modules to avoid confusion with AWS services.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/provisioning",
+  "email": "deanhart@amazon.com"
+}

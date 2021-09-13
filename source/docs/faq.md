@@ -1,8 +1,8 @@
 # FAQ
 
 ### Q. Is this a new service?
-
-No. AWS Connected Device Framework is not a new service, but a suite of production grade micro-services that a customer can own and deploy to their accounts to help build common device management patterns using AWS services.
+(
+No. AWS Connected Device Framework is not a new service, but a suite of production grade micro-services (referred to as modules))that a customer can own and deploy to their accounts to help build common device management patterns using AWS services.
 
 ### Q. Which core components are available in the AWS Connected Device Framework?
 
@@ -42,7 +42,7 @@ There is no additional charge for AWS Connected Device Framework. However, you w
 
 ### Q. What are the software components of the AWS Connected Device Framework?
 
-The AWS CDF is comprised of the following micro-services:
+The AWS CDF is comprised of the following modules:
 
 - Bulk certs
 - Provisioning
@@ -71,7 +71,7 @@ The Provisioning component included in the framework does not impose any specifi
 
 ### Q. How scalable and fault tolerant is AWS Connected Device Framework?
 
-The framework is built on native AWS services. The provided references applications are built on the serverless paradigm making it highly scalable and fault tolerant. You can customize this application to create your own highly scalable application. If you make any changes to underlying services, please follow the AWS best practices to ensure high availability and scalability.
+The framework is built on native AWS services. The provided references applications are built on the serverless paradigm making it highly scalable and fault tolerant. You can customize this application to create your own highly scalable application. If you make any changes to underlying modules, please follow the AWS best practices to ensure high availability and scalability.
 
 
 

@@ -2,12 +2,12 @@
 
 # Introduction
 
-The _Simulation Manager_ micro-service, along with the [_Simulation Launcher_](../simulation-launcher/README.md) micro-service, together form the _CDF Fleet Simulator_ module.
+The _Simulation Manager_ module, along with the [_Simulation Launcher_](../simulation-launcher/README.md) module, together form the _CDF Fleet Simulator_ module.
 
 It is responsible for the management of fleet simulations.
 ## Architecture
 
-The following represents the architecture of the Simulation Manager service along with its mandatory sibling [Simulation Launcher](../simulation-launcher/README.md) service.
+The following represents the architecture of the Simulation Manager module along with its mandatory sibling [Simulation Launcher](../simulation-launcher/README.md) module.
 
 ![Architecture](<docs/images/cdf-core-hla-simulator.png>)
 

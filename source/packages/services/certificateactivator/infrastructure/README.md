@@ -1,4 +1,4 @@
-# Deploying the CDF Certificate Activator Service
+# Deploying the CDF Certificate Activator
 
 ## Pre-Requisities
 

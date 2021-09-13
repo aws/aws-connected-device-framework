@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/simulation-launcher",
+      "comment": "Replaced references to CDF components being referred to as services to modules to avoid confusion with AWS services.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/simulation-launcher",
+  "email": "deanhart@amazon.com"
+}

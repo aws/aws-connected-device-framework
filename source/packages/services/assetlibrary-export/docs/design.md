@@ -1,4 +1,4 @@
-# ASSET LIBRARY EXPORT SERVICE DESIGN
+# ASSET LIBRARY EXPORT DESIGN
 
 ## High Level Architecture
 
@@ -15,7 +15,7 @@ The following state machine diagram shows the different state transitions involv
 
 ## Sequence Diagram
 
-The below sequence diagram can be referenced to understand the service level interaction for the export workflow
+The below sequence diagram can be referenced to understand the module level interaction for the export workflow
 
 ![sequence](images/assetlibrary-export-sequence.png)
 

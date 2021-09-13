@@ -14,9 +14,9 @@ Wed, 11 Aug 2021 01:26:49 GMT
 
 ### Breaking changes
 
-- new service added
+- new module added
 
 ### Patches
 
-- Fixed deployment issue due to inconsistent naming of the service
+- Fixed deployment issue due to inconsistent naming of the module
 

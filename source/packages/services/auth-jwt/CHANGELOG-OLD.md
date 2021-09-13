@@ -33,7 +33,7 @@
 
 ### Features
 
-* **greengrass:** provisioning and deployment service ([5072214](5072214fb81a0d6a8f8641bf0f52fefb7f2ad950))
+* **greengrass:** provisioning and deployment module ([5072214](5072214fb81a0d6a8f8641bf0f52fefb7f2ad950))
 
 ## [@cdf/bulkcerts-v4.1.4](@cdf/bulkcerts-v4.1.3...@cdf/bulkcerts-v4.1.4) (2020-01-31)
 
