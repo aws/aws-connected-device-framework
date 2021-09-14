@@ -16,7 +16,6 @@
   },
   "dependencies": {
     "@cdf/assetlibrary-client": "^4.1.1",
-    "@cdf/config-inject": "^3.0.0",
     "@cdf/assetlibraryhistory-client": "^4.0.1",
     "@cdf/commands-client": "^4.1.0",
     "@cdf/errors": "^3.0.0",
