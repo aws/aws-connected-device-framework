@@ -209,7 +209,7 @@ export class SearchDaoFull extends BaseDaoFull {
             results = await traverser.toList();
 
         } finally {
-            conn.close();
+            await conn.close();
         }
 
         logger.debug(`search.full.dao search: results:${JSON.stringify(results)}`);
@@ -258,7 +258,7 @@ export class SearchDaoFull extends BaseDaoFull {
             logger.debug(`search.full.dao buildSearchTraverser: traverser: ${JSON.stringify(traverser.toString())}`);
             results = await traverser.next();
         } finally {
-            conn.close();
+            await conn.close();
         }
 
         logger.debug(`search.full.dao facet: results: ${JSON.stringify(results)}`);
@@ -283,7 +283,7 @@ export class SearchDaoFull extends BaseDaoFull {
             const traverser = this.buildSearchTraverser(conn, request, authorizedPaths);
             result = await traverser.count().next();
         } finally {
-            conn.close();
+            await conn.close();
         }
 
         const total = result.value as number;
