@@ -110,7 +110,7 @@ export class CommonDaoFull extends BaseDaoFull {
             results = await traverser.toList();
             logger.debug(`common.full.dao listRelated: results: ${JSON.stringify(results)}`);
         } finally {
-            conn.close();
+            await conn.close();
         }
 
         if (results===undefined || results.length===0) {
@@ -139,7 +139,7 @@ export class CommonDaoFull extends BaseDaoFull {
         try {
             labelResults = await conn.traversal.V(entityDbId).label().toList();
         } finally {
-            conn.close();
+            await conn.close();
         }
 
         if (labelResults===undefined || labelResults.length===0) {

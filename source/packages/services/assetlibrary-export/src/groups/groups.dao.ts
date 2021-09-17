@@ -69,7 +69,7 @@ export class GroupsDao extends BaseDaoFull {
             results = await traverser.toList();
             logger.debug(`groups.full.dao get: result: ${JSON.stringify(results)}`);
         } finally {
-            conn.close();
+            await conn.close();
         }
 
         if (results===undefined || results.length===0) {

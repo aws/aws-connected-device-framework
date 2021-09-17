@@ -63,7 +63,7 @@ export class TypesDao extends BaseDaoFull {
 
             results = await traverser.toList();
         } finally {
-            conn.close();
+            await conn.close();
         }
 
         logger.debug(`types.full.dao get: results: ${JSON.stringify(results)}`);
