@@ -65,6 +65,7 @@ OPTIONAL ARGUMENTS
     -m (string)   Asset Library mode ('full' or 'lite').  Defaults to full if not provided.
     -p (string)   The name of the key pair to use to deploy the Bastion EC2 host (required for Asset Library (full) mode or Private auth mode).
     -i (string)   The remote access CIDR to configure Bastion SSH access (e.g. 1.2.3.4/32) (required for Asset Library (full) mode).
+    -u (string)   The neptune DB instance type
 
     COMPILING OPTIONS:
     ------------------
@@ -93,7 +94,7 @@ EOF
 # by the service specific deployment script.
 #-------------------------------------------------------------------------------
 
-while getopts ":e:E:p:i:k:K:I:b:c:a:y:z:C:A:Nv:g:n:m:o:r:BYR:P:" opt; do
+while getopts ":e:E:p:i:k:K:I:b:c:a:u:y:z:C:A:Nv:g:n:m:o:r:BYR:P:" opt; do
   case $opt in
     e  ) ENVIRONMENT=$OPTARG;;
     E  ) CONFIG_ENVIRONMENT=$OPTARG;;
@@ -104,6 +105,7 @@ while getopts ":e:E:p:i:k:K:I:b:c:a:y:z:C:A:Nv:g:n:m:o:r:BYR:P:" opt; do
     b  ) ARTIFACTS_BUCKET=$OPTARG;;
     m  ) ASSETLIBRARY_MODE=$OPTARG;;
     c  ) CDF_INFRA_CONFIG=$OPTARG;;
+    u  ) NEPTUNE_INSTANCE_TYPE=$OPTARG;;
 
     a  ) API_GATEWAY_AUTH=$OPTARG;;
     y  ) TEMPLATE_SNIPPET_S3_URI_BASE=$OPTARG;;
@@ -282,6 +284,10 @@ if [ -n "$USE_EXISTING_VPC" ] && [ "$USE_EXISTING_VPC" = 'true' ]; then
     DEPLOY_PARAMETERS+=( ExistingPublicSubnetIds=$PUBLIC_SUBNET_IDS )
     DEPLOY_PARAMETERS+=( ExistingPrivateApiGatewayVPCEndpoint=$PRIVATE_ENDPOINT_ID )
     DEPLOY_PARAMETERS+=( ExistingPrivateRouteTableIds=$PRIVATE_ROUTE_TABLE_IDS )
+fi
+
+if [ -n "$NEPTUNE_INSTANCE_TYPE" ]; then
+  DEPLOY_PARAMETERS+=( NeptuneDbInstanceType=$NEPTUNE_INSTANCE_TYPE )
 fi
 
 if [[ "incorrect_args" -gt 0 ]]; then

@@ -79,6 +79,7 @@ OPTIONAL ARGUMENTS
     -m (string)   Asset Library mode ('full' or 'lite').  Defaults to full if not provided.
     -p (string)   The name of the key pair to use to deploy the Bastion EC2 host (required for Asset Library (full) mode or Private auth mode).
     -i (string)   The remote access CIDR to configure Bastion SSH access (e.g. 1.2.3.4/32) (required for Asset Library (full) mode).
+    -u (string)   The neptune DB instance type
 
     -x (number)   No. of concurrent executions to provision.
     -s (flag)     Apply autoscaling as defined in ./cfn-autosclaling.yml
@@ -555,6 +556,11 @@ if [ -f "$assetlibrary_config" ]; then
     if [ -n "$CUSTOM_RESOURCE_VPC_LAMBDA_ARN" ]; then
         custom_resource_vpc_lambda_arn="-l $CUSTOM_RESOURCE_VPC_LAMBDA_ARN"
     fi
+
+    neptune_instance_type=
+    if [ -n "$NEPTUNE_DB_INSTANCE_TYPE" ]; then
+        neptune_instance_type="-u $NEPTUNE_DB_INSTANCE_TYPE"
+    fi
     
     cd "$root_dir/packages/services/assetlibrary"
     infrastructure/deploy-cfn.bash \
@@ -569,7 +575,7 @@ if [ -f "$assetlibrary_config" ]; then
         -i "$VPCE_ID" \
         -r "$PRIVATE_ROUTE_TABLE_IDS" \
         -m "$ASSETLIBRARY_MODE" \
-        -u "$NEPTUNE_DB_INSTANCE_TYPE" \
+        $neptune_instance_type \
         $custom_resource_vpc_lambda_arn \
         $cognito_auth_arg \
         $lambda_invoker_auth_arg \
