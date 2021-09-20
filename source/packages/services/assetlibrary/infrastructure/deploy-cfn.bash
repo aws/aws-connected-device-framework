@@ -48,6 +48,13 @@ OPTIONAL ARGUMENTS:
                   - LambdaToken
                   - ApiKey
                   - IAM
+    -u (string)   The Neptune DB Instance type. Must be from the following list (default is db.r4.xlarge):
+                  - db.t3.medium
+                  - db.r4.large
+                  - db.r4.xlarge
+                  - db.r4.2xlarge
+                  - db.r4.4xlarge
+                  - db.r4.8xlarge
 
     Required if deploying in full mode, or private api auth:
     --------------------------------------------------------
@@ -204,6 +211,11 @@ Running with:
 
 cwd=$(dirname "$0")
 
+neptune_instance_type=
+if [ -n "$NEPTUNE_DB_INSTANCE_TYPE" ]; then
+    neptune_instance_type="-u $NEPTUNE_DB_INSTANCE_TYPE"
+fi
+
 if [[ "$ASSETLIBRARY_MODE" = "full" ]]; then
 
   logTitle 'Deploying the Neptune CloudFormation template'
@@ -224,7 +236,7 @@ if [[ "$ASSETLIBRARY_MODE" = "full" ]]; then
         PrivateRouteTableIds=$PRIVATE_ROUTE_TABLE_IDS \
         CustomResourceVPCLambdaArn=$CUSTOM_RESOURCE_LAMBDA_ARN \
         SnapshotIdentifier=$ASSETLIBRARY_DB_SNAPSHOT_IDENTIFIER \
-        NeptuneDbInstanceType=$NEPTUNE_DB_INSTANCE_TYPE
+        $neptune_instance_type
         Environment=$ENVIRONMENT \
     --capabilities CAPABILITY_NAMED_IAM \
     --no-fail-on-empty-changeset \
