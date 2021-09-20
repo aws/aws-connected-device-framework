@@ -89,7 +89,7 @@ EOF
 # Validate all arguments
 #-------------------------------------------------------------------------------
 
-while getopts ":e:c:v:g:n:m:y:z:l:C:A:i:r:x:sfD:a:R:P:" opt; do
+while getopts ":e:c:v:g:n:m:y:z:l:C:A:i:r:x:u:sfD:a:R:P:" opt; do
   case ${opt} in
 
     e  ) export ENVIRONMENT=$OPTARG;;
@@ -99,6 +99,7 @@ while getopts ":e:c:v:g:n:m:y:z:l:C:A:i:r:x:sfD:a:R:P:" opt; do
     n  ) export PRIVATE_SUBNET_IDS=$OPTARG;;
     r  ) export PRIVATE_ROUTE_TABLE_IDS=$OPTARG;;
     i  ) export PRIVATE_ENDPOINT_ID=$OPTARG;;
+    u  ) export NEPTUNE_DB_INSTANCE_TYPE=$OPTARG;;
 
     m  ) export ASSETLIBRARY_MODE=$OPTARG;;
 
@@ -178,6 +179,7 @@ Running with:
   CONFIG_LOCATION:                  $CONFIG_LOCATION
   ASSETLIBRARY_MODE:                $ASSETLIBRARY_MODE
   ASSETLIBRARY_DB_SNAPSHOT_IDENTIFIER: $ASSETLIBRARY_DB_SNAPSHOT_IDENTIFIER
+  NEPTUNE_DB_INSTANCE_TYPE:         $NEPTUNE_DB_INSTANCE_TYPE
 
   TEMPLATE_SNIPPET_S3_URI_BASE:     $TEMPLATE_SNIPPET_S3_URI_BASE
   API_GATEWAY_DEFINITION_TEMPLATE:  $API_GATEWAY_DEFINITION_TEMPLATE
@@ -222,6 +224,7 @@ if [[ "$ASSETLIBRARY_MODE" = "full" ]]; then
         PrivateRouteTableIds=$PRIVATE_ROUTE_TABLE_IDS \
         CustomResourceVPCLambdaArn=$CUSTOM_RESOURCE_LAMBDA_ARN \
         SnapshotIdentifier=$ASSETLIBRARY_DB_SNAPSHOT_IDENTIFIER \
+        NeptuneDbInstanceType=$NEPTUNE_DB_INSTANCE_TYPE
         Environment=$ENVIRONMENT \
     --capabilities CAPABILITY_NAMED_IAM \
     --no-fail-on-empty-changeset \

@@ -118,7 +118,7 @@ EOF
 # by the service specific deployment script.
 #-------------------------------------------------------------------------------
 
-while getopts ":e:E:c:p:i:k:K:b:a:y:z:C:A:Nv:g:n:m:o:r:I:x:sD:SBYR:P:" opt; do
+while getopts ":e:E:c:p:i:k:K:b:a:y:z:C:A:Nv:u:g:n:m:o:r:I:x:sD:SBYR:P:" opt; do
   case $opt in
     e  ) ENVIRONMENT=$OPTARG;;
     E  ) CONFIG_ENVIRONMENT=$OPTARG;;
@@ -135,6 +135,7 @@ while getopts ":e:E:c:p:i:k:K:b:a:y:z:C:A:Nv:g:n:m:o:r:I:x:sD:SBYR:P:" opt; do
     s  ) APPLY_AUTOSCALING=true;;
 
     D  ) ASSETLIBRARY_DB_SNAPSHOT_IDENTIFIER=$OPTARG;;
+    u  ) NEPTUNE_DB_INSTANCE_TYPE=$OPTARG;;
 
     S  ) NOTIFICATIONS_CUSTOM_SUBNETS=true;;
 
@@ -258,6 +259,7 @@ The AWS Connected Device Framework (CDF) will install using the following config
     -K (KMS_KEY_ALIAS)                  : $KMS_KEY_ALIAS
 
     -m (ASSETLIBRARY_MODE)              : $ASSETLIBRARY_MODE
+    -u (NEPTUNE_DB_INSTANCE_TYPE)       : $NEPTUNE_DB_INSTANCE_TYPE
     -i (BASTION_REMOTE_ACCESS_CIDR)     : $BASTION_REMOTE_ACCESS_CIDR
     -x (CONCURRENT_EXECUTIONS):         : $CONCURRENT_EXECUTIONS
     -s (APPLY_AUTOSCALING):             : $APPLY_AUTOSCALING
@@ -567,6 +569,7 @@ if [ -f "$assetlibrary_config" ]; then
         -i "$VPCE_ID" \
         -r "$PRIVATE_ROUTE_TABLE_IDS" \
         -m "$ASSETLIBRARY_MODE" \
+        -u "$NEPTUNE_DB_INSTANCE_TYPE" \
         $custom_resource_vpc_lambda_arn \
         $cognito_auth_arg \
         $lambda_invoker_auth_arg \

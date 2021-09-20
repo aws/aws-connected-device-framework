@@ -267,6 +267,17 @@ Parameters:
     Description: Bulk Certificates Application Configuration AssetLibrary Application
     Type: String
     Default: '{}'
+  NeptuneDbInstanceType:
+    Description: Neptune DB instance type
+    Type: String
+    Default: db.r4.xlarge
+    AllowedValues:
+      - db.r4.large
+      - db.r4.xlarge
+      - db.r4.2xlarge
+      - db.r4.4xlarge
+      - db.r4.8xlarge
+    ConstraintDescription: Must be a valid Neptune instance type.
 
   NeptuneSnapshotIdentifier:
     Type: String
@@ -331,6 +342,7 @@ Resources:
         EnableApiGatewayAccessLogs: !Ref EnableApiGatewayAccessLogs
         KmsKeyId: !Ref KmsKeyId
         NeptuneSnapshotIdentifier: !Ref NeptuneSnapshotIdentifier
+        NeptuneDbInstanceType: !Ref NeptuneDBInstanceType
       TimeoutInMinutes: 60
 
   AssetLibraryHistory:
