@@ -35,6 +35,7 @@ Parameters:
     Type: String
     Default: db.r4.xlarge
     AllowedValues:
+      - db.t3.medium
       - db.r4.large
       - db.r4.xlarge
       - db.r4.2xlarge
