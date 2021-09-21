@@ -63,11 +63,30 @@ Parameters:
     MinLength: 1
     Default: 10
 
+  ExportSchedule:
+    Description: Asset Library Export Schedule rate
+    Type: String
+    Default: 'N/A'
+
 Conditions:
 
   DeployInVPC: !Not [ !Equals [ !Ref VpcId, 'N/A' ] ]
+  IsSchedule: !Not [ !Equals [ !Ref ExportSchedule, 'N/A' ]]
 
 Resources:
+
+  # Cloudwatch Event Rule
+  ScheduledRule:
+    Type: AWS::Events::Rule
+    Condition: IsSchedule
+    Properties:
+      Description: "AssetLibrary Export Execution Event Rule"
+      ScheduleExpression: !Ref ExportSchedule
+      State: "ENABLED"
+      Targets:
+        - Arn: !Ref AssetLibraryExportStateMachine
+          Id: AL_Export_Target
+          RoleArn: !GetAtt AssetLibraryExportStateMachineExecutionRole.Arn
 
   ApplicationPolicies:
     Type: 'AWS::IAM::ManagedPolicy'
