@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/assetlibrary-export",
+      "comment": "allows optional schedule parameter for automated asset library backups",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@cdf/assetlibrary-export",
+  "email": "aaron.pittenger@bissell.com"
+}
