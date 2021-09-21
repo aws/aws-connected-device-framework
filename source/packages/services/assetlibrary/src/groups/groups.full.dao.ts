@@ -79,7 +79,7 @@ export class GroupsDaoFull extends BaseDaoFull {
             results = await traverser.toList();
             logger.debug(`groups.full.dao get: result: ${JSON.stringify(results)}`);
         } finally {
-            conn.close();
+            await conn.close();
         }
 
         if (results===undefined || results.length===0) {
@@ -154,7 +154,7 @@ export class GroupsDaoFull extends BaseDaoFull {
 
             await traversal.next();
         } finally {
-            conn.close();
+            await conn.close();
         }
 
         logger.debug(`groups.full.dao create: exit: id:${id}`);
@@ -184,7 +184,7 @@ export class GroupsDaoFull extends BaseDaoFull {
 
             await traversal.next();
         } finally {
-            conn.close();
+            await conn.close();
         }
 
         logger.debug(`groups.full.dao update: exit: id:${id}`);
@@ -217,7 +217,7 @@ export class GroupsDaoFull extends BaseDaoFull {
                             valueMap().with_(process.withOptions.tokens))).
                 toList();
         } finally {
-            conn.close();
+            await conn.close();
         }
 
         logger.debug(`groups.full.dao listParentGroups: results: ${JSON.stringify(results)}`);
@@ -246,7 +246,7 @@ export class GroupsDaoFull extends BaseDaoFull {
         try {
             await conn.traversal.V(dbId).drop().next();
         } finally {
-            conn.close();
+            await conn.close();
         }
 
         logger.debug(`groups.full.dao delete: exit`);
@@ -266,7 +266,7 @@ export class GroupsDaoFull extends BaseDaoFull {
 
             logger.verbose(`groups.full.dao attachToGroup: result:${JSON.stringify(result)}`);
         } finally {
-            conn.close();
+            await conn.close();
         }
 
         logger.debug(`groups.full.dao attachToGroup: exit:`);
@@ -288,7 +288,7 @@ export class GroupsDaoFull extends BaseDaoFull {
 
             logger.verbose(`groups.full.dao detachFromGroup: result:${JSON.stringify(result)}`);
         } finally {
-            conn.close();
+            await conn.close();
         }
 
         logger.debug(`groups.full.dao detachFromGroup: exit:`);

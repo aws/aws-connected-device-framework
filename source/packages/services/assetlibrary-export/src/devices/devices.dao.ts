@@ -82,7 +82,7 @@ export class DevicesDao extends BaseDaoFull {
             results = await traverser.toList();
             logger.debug(`common.full.dao listRelated: results: ${JSON.stringify(results)}`);
         } finally {
-            conn.close();
+            await conn.close();
         }
 
         if (results===undefined || results.length===0) {

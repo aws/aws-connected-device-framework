@@ -93,7 +93,7 @@ export class DevicesDaoFull extends BaseDaoFull {
             results = await traverser.toList();
             logger.debug(`common.full.dao listRelated: results: ${JSON.stringify(results)}`);
         } finally {
-            conn.close();
+            await conn.close();
         }
 
         if (results===undefined || results.length===0) {
@@ -213,7 +213,7 @@ export class DevicesDaoFull extends BaseDaoFull {
             logger.debug(`devices.full.dao create: traversal:${traversal}`);
             await traversal.iterate();
         } finally {
-            conn.close();
+            await conn.close();
         }
 
         logger.debug(`devices.full.dao create: exit: id:${id}`);
@@ -248,7 +248,7 @@ export class DevicesDaoFull extends BaseDaoFull {
             logger.debug(`devices.full.dao createComponent: traversal:${traversal}`);
             await traversal.iterate();
         } finally {
-            conn.close();
+            await conn.close();
         }
 
         logger.debug(`devices.full.dao createComponent: exit: componentId:${componentId}`);
@@ -278,7 +278,7 @@ export class DevicesDaoFull extends BaseDaoFull {
 
             await traversal.iterate();
         } finally {
-            conn.close();
+            await conn.close();
         }
 
         logger.debug(`devices.full.dao update: exit:`);
@@ -294,7 +294,7 @@ export class DevicesDaoFull extends BaseDaoFull {
         try {
             await conn.traversal.V(id).drop().iterate();
         } finally {
-            conn.close();
+            await conn.close();
         }
 
         logger.debug(`devices.full.dao delete: exit`);
@@ -322,7 +322,7 @@ export class DevicesDaoFull extends BaseDaoFull {
 
             logger.debug(`devices.full.dao attachToGroup: result:${JSON.stringify(result)}`);
         } finally {
-            conn.close();
+            await conn.close();
         }
 
         logger.debug(`devices.full.dao attachToGroup: exit:`);
@@ -352,7 +352,7 @@ export class DevicesDaoFull extends BaseDaoFull {
 
             logger.debug(`devices.full.dao detachFromGroup: result:${JSON.stringify(result)}`);
         } finally {
-            conn.close();
+            await conn.close();
         }
 
         logger.debug(`devices.full.dao detachFromGroup: exit:`);
@@ -375,7 +375,7 @@ export class DevicesDaoFull extends BaseDaoFull {
 
             logger.debug(`devices.full.dao attachToDevice: result:${JSON.stringify(result)}`);
         } finally {
-            conn.close();
+            await conn.close();
         }
 
         logger.debug(`devices.full.dao attachToDevice: exit:`);
@@ -400,7 +400,7 @@ export class DevicesDaoFull extends BaseDaoFull {
 
             logger.debug(`devices.full.dao detachFromDevice: result:${JSON.stringify(result)}`);
         } finally {
-            conn.close();
+            await conn.close();
         }
 
         logger.debug(`devices.full.dao detachFromDevice: exit:`);

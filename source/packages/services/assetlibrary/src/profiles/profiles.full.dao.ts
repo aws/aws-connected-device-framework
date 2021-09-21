@@ -66,7 +66,7 @@ export class ProfilesDaoFull extends BaseDaoFull {
             // logger.debug(`profiles.full.dao create: traversal:${traversal}`);
             await traversal.iterate();
         } finally {
-            conn.close();
+            await conn.close();
         }
 
         logger.debug(`profiles.full.dao create: exit: id:${profileId}`);
@@ -94,7 +94,7 @@ export class ProfilesDaoFull extends BaseDaoFull {
             // execute and retrieve the resutls
             result = await traverser.next();
         } finally {
-            conn.close();
+            await conn.close();
         }
 
         if (result===undefined || result.value===undefined || result.value===null) {
@@ -131,7 +131,7 @@ export class ProfilesDaoFull extends BaseDaoFull {
 
             await traversal.iterate();
         } finally {
-            conn.close();
+            await conn.close();
         }
 
         logger.debug(`profiles.full.dao update: exit: id:${id}`);
@@ -172,7 +172,7 @@ export class ProfilesDaoFull extends BaseDaoFull {
         try {
             await conn.traversal.V(id).drop().iterate();
         } finally {
-            conn.close();
+            await conn.close();
         }
 
         logger.debug(`profiles.full.dao delete: exit`);
@@ -196,7 +196,7 @@ export class ProfilesDaoFull extends BaseDaoFull {
 
             result = await traverser.next();
         } finally {
-            conn.close();
+            await conn.close();
         }
 
         logger.debug(`profiles.full.dao get: results: ${JSON.stringify(result)}`);

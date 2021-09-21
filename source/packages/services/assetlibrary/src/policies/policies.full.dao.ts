@@ -43,7 +43,7 @@ export class PoliciesDaoFull extends BaseDaoFull {
                     by( __.select('policy').out('appliesTo').hasLabel('group').fold()).
                 next();
         } finally {
-            conn.close();
+            await conn.close();
         }
 
         logger.debug(`policy.full.dao get: query: ${JSON.stringify(query)}`);
@@ -80,7 +80,7 @@ export class PoliciesDaoFull extends BaseDaoFull {
 
             await traversal.iterate();
         } finally {
-            conn.close();
+            await conn.close();
         }
 
         logger.debug(`policies.dao create: exit: id: ${id}`);
@@ -144,7 +144,7 @@ export class PoliciesDaoFull extends BaseDaoFull {
             const query = await traversal.iterate();
             logger.debug(`policies.dao update: query: ${JSON.stringify(query)}`);
         } finally {
-            conn.close();
+            await conn.close();
         }
 
         logger.debug(`policies.dao update: exit: id: ${id}`);
@@ -197,7 +197,7 @@ export class PoliciesDaoFull extends BaseDaoFull {
                 .by( __.local( __.out('appliesTo').fold())).
             toList();
         } finally {
-            conn.close();
+            await conn.close();
         }
 
         const policies: AttachedPolicy[]=[];
@@ -237,7 +237,7 @@ export class PoliciesDaoFull extends BaseDaoFull {
 
             results = await traverser.toList();
         } finally {
-            conn.close();
+            await conn.close();
         }
 
         const policies: AttachedPolicy[]=[];
@@ -275,7 +275,7 @@ export class PoliciesDaoFull extends BaseDaoFull {
 
             results = await traverser.toList();
         } finally {
-            conn.close();
+            await conn.close();
         }
 
         logger.debug(`results: ${JSON.stringify(results)}`);
@@ -298,7 +298,7 @@ export class PoliciesDaoFull extends BaseDaoFull {
         try {
             await conn.traversal.V(dbId).drop().next();
         } finally {
-            conn.close();
+            await conn.close();
         }
 
         logger.debug(`policies.dao delete: exit`);
