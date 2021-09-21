@@ -213,7 +213,7 @@ cwd=$(dirname "$0")
 
 neptune_instance_type=
 if [ -n "$NEPTUNE_DB_INSTANCE_TYPE" ]; then
-    neptune_instance_type="-u $NEPTUNE_DB_INSTANCE_TYPE"
+    neptune_instance_type="DbInstanceType=$NEPTUNE_DB_INSTANCE_TYPE"
 fi
 
 if [[ "$ASSETLIBRARY_MODE" = "full" ]]; then
@@ -236,7 +236,7 @@ if [[ "$ASSETLIBRARY_MODE" = "full" ]]; then
         PrivateRouteTableIds=$PRIVATE_ROUTE_TABLE_IDS \
         CustomResourceVPCLambdaArn=$CUSTOM_RESOURCE_LAMBDA_ARN \
         SnapshotIdentifier=$ASSETLIBRARY_DB_SNAPSHOT_IDENTIFIER \
-        $neptune_instance_type
+        $neptune_instance_type \
         Environment=$ENVIRONMENT \
     --capabilities CAPABILITY_NAMED_IAM \
     --no-fail-on-empty-changeset \
