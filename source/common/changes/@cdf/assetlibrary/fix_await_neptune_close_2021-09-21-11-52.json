@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/assetlibrary",
+      "comment": "Await neptune close connection",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/assetlibrary",
+  "email": "aaron.pittenger@bissell.com"
+}
