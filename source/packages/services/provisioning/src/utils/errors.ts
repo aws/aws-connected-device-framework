@@ -20,7 +20,7 @@ export function handleError(e:Error, res:Response): void {
         || e.message.startsWith('REGISTRATION_FAILED:')) {
         res.status(400).json({error: e.message}).end();
 
-    } else if (e.message === 'NOT_FOUND') {
+    } else if (e.message === 'NOT_FOUND' || e.name === "ResourceNotFoundException") {
         res.status(404).json({error: 'Resource does not exist'}).end();
 
     } else {
