@@ -85,6 +85,9 @@ OPTIONAL ARGUMENTS
 
     -D (string)   Snapshot ID of Neptune database backup to restore from. Note: once restored from a backup, the same snapshot identifier must be specified for all future deployments too.
 
+    ASSET LIBRARY EXPORT OPTIONS:
+    -----------------------
+    -X (string)   Schedule expression to run the asset library export
 
     NOTIFICATION OPTIONS:
     ---------------------
@@ -118,7 +121,7 @@ EOF
 # by the service specific deployment script.
 #-------------------------------------------------------------------------------
 
-while getopts ":e:E:c:p:i:k:K:b:a:y:z:C:A:Nv:g:n:m:o:r:I:x:sD:SBYR:P:" opt; do
+while getopts ":e:E:c:p:i:k:K:b:a:y:z:C:A:Nv:g:n:m:X:o:r:I:x:sD:SBYR:P:" opt; do
   case $opt in
     e  ) ENVIRONMENT=$OPTARG;;
     E  ) CONFIG_ENVIRONMENT=$OPTARG;;
@@ -135,6 +138,8 @@ while getopts ":e:E:c:p:i:k:K:b:a:y:z:C:A:Nv:g:n:m:o:r:I:x:sD:SBYR:P:" opt; do
     s  ) APPLY_AUTOSCALING=true;;
 
     D  ) ASSETLIBRARY_DB_SNAPSHOT_IDENTIFIER=$OPTARG;;
+
+    X  ) SCHEDULE_EXPRESSION=$OPTARG;;
 
     S  ) NOTIFICATIONS_CUSTOM_SUBNETS=true;;
 
@@ -189,6 +194,7 @@ incorrect_args=$((incorrect_args+$(verifyMandatoryArgument TEMPLATE_SNIPPET_S3_U
 API_GATEWAY_DEFINITION_TEMPLATE="$(defaultIfNotSet 'API_GATEWAY_DEFINITION_TEMPLATE' z ${API_GATEWAY_DEFINITION_TEMPLATE} 'cfn-apiGateway-noAuth.yaml')"
 
 ASSETLIBRARY_MODE="$(defaultIfNotSet 'ASSETLIBRARY_MODE' m ${ASSETLIBRARY_MODE} 'full')"
+SCHEDULE_EXPRESSION="$(defaultIfNotSet 'SCHEDULE_EXPRESSION' X ${SCHEDULE_EXPRESSION} 'N/A')"
 
 KMS_KEY_ALIAS="$(defaultIfNotSet 'KMS_KEY_ALIAS' K cdf-${ENVIRONMENT} 'None')"
 
@@ -831,6 +837,7 @@ if [ -f "$assetlibrary_export_config" ]; then
         -v "$VPC_ID" \
         -g "$CDF_SECURITY_GROUP_ID" \
         -n "$PRIVATE_SUBNET_IDS" \
+        -s "$SCHEDULE_EXPRESSION" \
         $AWS_SCRIPT_ARGS
 else
    echo 'NOT DEPLOYING: Simulation Launcher'
