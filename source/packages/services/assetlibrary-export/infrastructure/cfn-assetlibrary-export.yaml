@@ -298,7 +298,7 @@ Outputs:
     Export:
       Name: !Sub "cdf-assetLibrary-export-${Environment}-exportCompletionSnsTopic"
 
-  ExportStateMachineName:
+  AssetLibraryExportStateMachineArn:
     Description: AssetLibrary Export State Machine ARN
     Value: !Ref AssetLibraryExportStateMachine
     Export:
