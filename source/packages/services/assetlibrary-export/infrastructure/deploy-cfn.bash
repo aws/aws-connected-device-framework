@@ -41,7 +41,6 @@ OPTIONAL ARGUMENTS:
     -v (string)   ID of VPC to deploy into
     -g (string)   IDs of CDF Security Group
     -n (string)   ID of private subnets (comma delimited) to deploy into
-    -s (string)   Schedule expression for the export to run on (like "rate(1 day)" or "cron(0 12 * * ? *)"). Leave off for "on-demand"
 
     AWS options:
     ------------
@@ -51,7 +50,7 @@ OPTIONAL ARGUMENTS:
 EOF
 }
 
-while getopts ":e:c:k:v:g:s:n:R:P:" opt; do
+while getopts ":e:c:k:v:g:n:R:P:" opt; do
   case $opt in
 
     e  ) export ENVIRONMENT=$OPTARG;;
@@ -61,7 +60,6 @@ while getopts ":e:c:k:v:g:s:n:R:P:" opt; do
     v  ) export VPC_ID=$OPTARG;;
     g  ) export CDF_SECURITY_GROUP_ID=$OPTARG;;
     n  ) export PRIVATE_SUBNET_IDS=$OPTARG;;
-    s  ) export SCHEDULE_EXPRESSION=$OPTARG;;
 
     R  ) export AWS_REGION=$OPTARG;;
     P  ) export AWS_PROFILE=$OPTARG;;
@@ -78,7 +76,6 @@ incorrect_args=$((incorrect_args+$(verifyMandatoryArgument ENVIRONMENT e $ENVIRO
 incorrect_args=$((incorrect_args+$(verifyMandatoryArgument CONFIG_LOCATION c "$CONFIG_LOCATION")))
 incorrect_args=$((incorrect_args+$(verifyMandatoryArgument KMS_KEY_ID k "$KMS_KEY_ID")))
 
-SCHEDULE_EXPRESSION="$(defaultIfNotSet 'SCHEDULE_EXPRESSION' s ${SCHEDULE_EXPRESSION} 'N/A')"
 
 if [[ "$incorrect_args" -gt 0 ]]; then
     help_message; exit 1;
@@ -97,7 +94,6 @@ Running with:
   VPC_ID:                           $VPC_ID
   CDF_SECURITY_GROUP_ID:            $CDF_SECURITY_GROUP_ID
   PRIVATE_SUBNET_IDS:               $PRIVATE_SUBNET_IDS
-  SCHEDULE_EXPRESSION:              $SCHEDULE_EXPRESSION
 
   KMS_KEY_ID:                       $KMS_KEY_ID
 
@@ -139,7 +135,6 @@ aws cloudformation deploy \
       BucketName=$assetlibrary_export_bucket \
       KmsKeyId=$KMS_KEY_ID \
       NeptuneURL=$neptune_url \
-      ExportSchedule=$SCHEDULE_EXPRESSION \
   --capabilities CAPABILITY_NAMED_IAM \
   --no-fail-on-empty-changeset \
   $AWS_ARGS
