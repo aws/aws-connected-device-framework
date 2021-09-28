@@ -20,6 +20,9 @@ export const TYPES = {
 
     DynamoDbEventSource: Symbol.for('DynamoDbEventSource'),
     IotCoreEventSource: Symbol.for('IotCoreEventSource'),
+    ApiGatewayEventSource: Symbol.for('ApiGatewayEventSource'),
+
+    ApigwTriggerService: Symbol.for('ApigwTriggerService'),
 
     EventService: Symbol.for('EventService'),
     EventDao: Symbol.for('EventDao'),

@@ -10,50 +10,36 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-export interface EventSourceSummaryResource {
-    id: string;
-    name:string;
+import { injectable } from 'inversify';
+import {logger} from '../../../utils/logger.util';
+import ow from 'ow';
+import {v1 as uuid} from 'uuid';
+import { EventSourceDetailResource } from '../eventsource.models';
+import { EventSource } from './source.interface';
+
+@injectable()
+export class ApiGatewayEventSource implements EventSource  {
+
+    public async create(model:EventSourceDetailResource) : Promise<void> {
+        logger.debug(`apigateway.source create in: model:${JSON.stringify(model)}`);
+
+        ow(model, ow.object.nonEmpty);
+        ow(model.principal, ow.string.nonEmpty);
+        ow(model.apigateway, ow.object.nonEmpty);
+        ow(model.apigateway.attributes, ow.object.nonEmpty);
+
+        // assign a unique event source id
+        if (model.id===undefined) {
+            model.id=uuid();
+        }
+
+        logger.debug(`apigateway.source create: exit:`);
+    }
+
+    public async delete(eventSourceId:string) : Promise<void> {
+        logger.debug(`apigateway.source delete: in: eventSourceId:${eventSourceId}`);
+
+        logger.debug(`apigateway.source delete: exit:`);
+    }
+
 }
-
-export interface EventSourceDetailResource extends EventSourceSummaryResource {
-    principal: string;
-    sourceType: EventSourceType;
-    enabled: boolean;
-
-    dynamoDb?: DynamoDbConfig;
-    iotCore?: IotCoreConfig;
-    apigateway?: ApiGatewayConfig;
-
-}
-
-export enum EventSourceType {
-    ApiGateway = 'ApiGateway',
-    DynamoDB = 'DynamoDB',
-    IoTCore = 'IoTCore'
-}
-
-export class EventSourceResourceList {
-    results: EventSourceSummaryResource[]=[];
-}
-
-export interface EventSourceItem {
-    id: string;
-    name:string;
-    principal: string;
-    sourceType: EventSourceType;
-    enabled: boolean;
-
-    dynamoDb?: DynamoDbConfig;
-    iotCore?: IotCoreConfig;
-}
-
-type DynamoDbConfig = {
-    tableName: string;
-};
-type IotCoreConfig = {
-    mqttTopic: string;
-    attributes: {[key:string]:string};
-};
-type ApiGatewayConfig = {
-    attributes: {[key:string]:string};
-};
