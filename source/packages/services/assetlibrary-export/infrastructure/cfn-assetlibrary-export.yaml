@@ -181,29 +181,6 @@ Resources:
               - !Ref CDFSecurityGroupId
           - Ref: AWS::NoValue
 
-  AssetLibraryExportStateMachineExecutionRole:
-    Type: "AWS::IAM::Role"
-    Properties:
-      AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: "Allow"
-            Principal:
-              Service:
-                - "events.amazonaws.com"
-            Action: "sts:AssumeRole"
-      Path: "/"
-      Policies:
-        - PolicyName: StateMachineExecution
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              - Effect: Allow
-                Action:
-                  - "states:StartExecution"
-                Resource: !Ref AssetLibraryExportStateMachine
-
-
   # State Machine Definition
   AssetLibraryExportStateMachine:
     Type: "AWS::StepFunctions::StateMachine"
@@ -320,3 +297,9 @@ Outputs:
     Value: !Ref ExportCompletionSNSTopic
     Export:
       Name: !Sub "cdf-assetLibrary-export-${Environment}-exportCompletionSnsTopic"
+
+  ExportStateMachineName:
+    Description: AssetLibrary Export State Machine ARN
+    Value: !Ref AssetLibraryExportStateMachine
+    Export:
+      Name: !Sub "cdf-assetlibrary-export-${Environment}-stateMachineArn"
