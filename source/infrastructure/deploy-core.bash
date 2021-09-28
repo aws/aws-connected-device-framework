@@ -837,63 +837,6 @@ else
 fi
 
 ############################################################################################
-# GREENGRASS PROVISIONING
-############################################################################################
- greengrassProvisioning_config=$CONFIG_LOCATION/greengrass-provisioning/$CONFIG_ENVIRONMENT-config.json
- if [ -f "$greengrassProvisioning_config" ]; then
-
-     logTitle 'Deploying Greengrass Provisioning'
-
-     cd "$root_dir/packages/services/greengrass-provisioning"
-
-     infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
-     infrastructure/deploy-cfn.bash \
-         -e "$ENVIRONMENT" \
-         -k "$KMS_KEY_ID" \
-         -c "$greengrassProvisioning_config"  \
-         -y "$TEMPLATE_SNIPPET_S3_URI_BASE" \
-         -z "$API_GATEWAY_DEFINITION_TEMPLATE" \
-         -a "$API_GATEWAY_AUTH" \
-         -v "$VPC_ID" \
-         -g "$CDF_SECURITY_GROUP_ID" \
-         -n "$PRIVATE_SUBNET_IDS" \
-         -i "$VPCE_ID" \
-         $cognito_auth_arg \
-         $lambda_invoker_auth_arg \
-         $AWS_SCRIPT_ARGS
- else
-    echo 'NOT DEPLOYING: Greengrass Provisioning'
- fi
-
-############################################################################################
-# GREENGRASS DEPLOYMENT
-############################################################################################
- greengrassDeployment_config=$CONFIG_LOCATION/greengrass-deployment/$CONFIG_ENVIRONMENT-config.json
- if [ -f "$greengrassDeployment_config" ]; then
-     logTitle 'Deploying Greengrass Deployment'
-
-     cd "$root_dir/packages/services/greengrass-deployment"
-
-     infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
-     infrastructure/deploy-cfn.bash \
-         -e "$ENVIRONMENT" \
-         -c "$greengrassDeployment_config" \
-         -y "$TEMPLATE_SNIPPET_S3_URI_BASE" \
-         -z "$API_GATEWAY_DEFINITION_TEMPLATE" \
-         -a "$API_GATEWAY_AUTH" \
-         -v "$VPC_ID" \
-         -g "$CDF_SECURITY_GROUP_ID" \
-         -n "$PRIVATE_SUBNET_IDS" \
-         -i "$VPCE_ID" \
-         -k "$KMS_KEY_ID" \
-         $cognito_auth_arg \
-         $lambda_invoker_auth_arg \
-         $AWS_SCRIPT_ARGS
- else
-    echo 'NOT DEPLOYING: Greengrass Deployment'
- fi
-
-############################################################################################
 # SIMULATION LAUNCHER
 ############################################################################################
 simulation_launcher_config=$CONFIG_LOCATION/simulation-launcher/$CONFIG_ENVIRONMENT-config.json
