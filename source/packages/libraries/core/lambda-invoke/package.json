@@ -1,6 +1,6 @@
 {
   "name": "@cdf/lambda-invoke",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Lambda Invoker Service",
   "author": "Hassan Khokhar",
   "main": "dist/index.js",
@@ -13,7 +13,7 @@
     "test": "rushx lint && NODE_ENV= NODE_CONFIG_DIR='./src/config' jest --silent --passWithNoTests"
   },
   "dependencies": {
-    "@cdf/config-inject": "^3.0.0",
+    "@cdf/config-inject": "^3.0.1",
     "config": "3.3.6",
     "http-errors": "1.8.0",
     "inversify": "5.1.1",

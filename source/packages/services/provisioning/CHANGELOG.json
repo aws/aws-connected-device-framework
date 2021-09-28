@@ -2,6 +2,26 @@
   "name": "@cdf/provisioning",
   "entries": [
     {
+      "version": "4.2.2",
+      "tag": "@cdf/provisioning_v4.2.2",
+      "date": "Tue, 28 Sep 2021 22:04:37 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Replaced references to CDF components being referred to as services to modules to avoid confusion with AWS services."
+          },
+          {
+            "comment": "properly handle not found errors in provisioning"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@cdf/config-inject\" from `^3.0.0` to `^3.0.1`"
+          }
+        ]
+      }
+    },
+    {
       "version": "4.2.1",
       "tag": "@cdf/provisioning_v4.2.1",
       "date": "Wed, 11 Aug 2021 01:26:49 GMT",

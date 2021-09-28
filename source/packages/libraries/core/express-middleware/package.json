@@ -13,7 +13,7 @@
     "test": "rushx lint && NODE_ENV= NODE_CONFIG_DIR='./src/config' jest --silent --passWithNoTests"
   },
   "dependencies": {
-    "@cdf/config-inject": "^3.0.0",
+    "@cdf/config-inject": "^3.0.1",
     "config": "3.3.6",
     "express": "4.17.1"
   },

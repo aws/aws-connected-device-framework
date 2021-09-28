@@ -2,6 +2,35 @@
   "name": "@cdf/commands",
   "entries": [
     {
+      "version": "4.2.2",
+      "tag": "@cdf/commands_v4.2.2",
+      "date": "Tue, 28 Sep 2021 22:04:37 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Replaced references to CDF components being referred to as services to modules to avoid confusion with AWS services."
+          },
+          {
+            "comment": "Fixed errors in swagger docs."
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@cdf/lambda-invoke\" from `^2.0.0` to `^2.0.1`"
+          },
+          {
+            "comment": "Updating dependency \"@cdf/assetlibrary-client\" from `^4.1.1` to `^4.1.2`"
+          },
+          {
+            "comment": "Updating dependency \"@cdf/config-inject\" from `^3.0.0` to `^3.0.1`"
+          },
+          {
+            "comment": "Updating dependency \"@cdf/provisioning-client\" from `^4.0.1` to `^4.0.2`"
+          }
+        ]
+      }
+    },
+    {
       "version": "4.2.1",
       "tag": "@cdf/commands_v4.2.1",
       "date": "Wed, 11 Aug 2021 01:26:49 GMT",

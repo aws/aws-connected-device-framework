@@ -1,6 +1,6 @@
 {
   "name": "@cdf/bulkcerts",
-  "version": "5.1.1",
+  "version": "5.1.2",
   "description": "CDF Bulk Certificate Creation",
   "author": "Dean Hart",
   "config": {
@@ -19,7 +19,7 @@
   "dependencies": {
     "@cdf/errors": "^3.0.0",
     "@cdf/logger": "^3.0.0",
-    "@cdf/config-inject": "^3.0.0",
+    "@cdf/config-inject": "^3.0.1",
     "@cdf/express-middleware": "^2.1.0",
     "aws-sdk": "2.804.0",
     "aws-serverless-express": "3.4.0",
