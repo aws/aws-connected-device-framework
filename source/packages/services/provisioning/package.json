@@ -1,6 +1,6 @@
 {
   "name": "@cdf/provisioning",
-  "version": "4.2.1",
+  "version": "4.2.2",
   "description": "CDF Provisioning",
   "author": "Dean Hart",
   "config": {
@@ -19,7 +19,7 @@
   "dependencies": {
     "@cdf/errors": "^3.0.0",
     "@cdf/logger": "^3.0.0",
-    "@cdf/config-inject": "^3.0.0",
+    "@cdf/config-inject": "^3.0.1",
     "@cdf/express-middleware": "^2.1.0",
     "aws-sdk": "2.804.0",
     "body-parser": "1.19.0",

@@ -2,6 +2,29 @@
   "name": "@cdf/assetlibrary-export",
   "entries": [
     {
+      "version": "2.0.2",
+      "tag": "@cdf/assetlibrary-export_v2.0.2",
+      "date": "Tue, 28 Sep 2021 22:04:37 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Replaced references to CDF components being referred to as services to modules to avoid confusion with AWS services."
+          },
+          {
+            "comment": "added export for state machine ARN"
+          },
+          {
+            "comment": "Await neptune close connection"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@cdf/config-inject\" from `^3.0.0` to `^3.0.1`"
+          }
+        ]
+      }
+    },
+    {
       "version": "2.0.1",
       "tag": "@cdf/assetlibrary-export_v2.0.1",
       "date": "Fri, 20 Aug 2021 16:07:58 GMT",

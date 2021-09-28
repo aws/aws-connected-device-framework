@@ -2,6 +2,18 @@
   "name": "@cdf/simulation-launcher",
   "entries": [
     {
+      "version": "2.0.1",
+      "tag": "@cdf/simulation-launcher_v2.0.1",
+      "date": "Tue, 28 Sep 2021 22:04:37 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Replaced references to CDF components being referred to as services to modules to avoid confusion with AWS services."
+          }
+        ]
+      }
+    },
+    {
       "version": "2.0.0",
       "tag": "@cdf/simulation-launcher_v2.0.0",
       "date": "Wed, 11 Aug 2021 01:26:49 GMT",

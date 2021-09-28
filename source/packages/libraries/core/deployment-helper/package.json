@@ -1,6 +1,6 @@
 {
   "name": "@cdf/deployment-helper",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "CDF Deployment Helper",
   "author": "Hassan khokhar",
   "config": {
@@ -17,9 +17,9 @@
     "postbundle": "cd ../../../../deploy/deployment-helper && zip --symlinks -rq ../../packages/libraries/core/deployment-helper/bundle.zip * && cd -"
   },
   "dependencies": {
-    "@cdf/lambda-invoke": "^2.0.0",
+    "@cdf/lambda-invoke": "^2.0.1",
     "@cdf/logger": "^3.0.0",
-    "@cdf/config-inject": "^3.0.0",
+    "@cdf/config-inject": "^3.0.1",
     "cfn-response-promise": "1.0.1",
     "config": "3.3.6",
     "http-errors": "1.8.0",

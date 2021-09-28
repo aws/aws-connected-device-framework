@@ -15,14 +15,14 @@
     "integration-test": "NODE_CONFIG=$(cat ${CONFIG_LOCATION}/integration-tests/${npm_package_config_environment}-config.json) NODE_CONFIG_DIR='./src/config' cucumber-js"
   },
   "dependencies": {
-    "@cdf/assetlibrary-client": "^4.1.1",
+    "@cdf/assetlibrary-client": "^4.1.2",
     "@cdf/assetlibraryhistory-client": "^4.0.1",
-    "@cdf/commands-client": "^4.1.0",
+    "@cdf/commands-client": "^4.1.1",
     "@cdf/errors": "^3.0.0",
-    "@cdf/lambda-invoke": "^2.0.0",
+    "@cdf/lambda-invoke": "^2.0.1",
     "@cdf/logger": "^3.0.0",
     "@cdf/notifications-client": "^3.0.1",
-    "@cdf/provisioning-client": "^4.0.1",
+    "@cdf/provisioning-client": "^4.0.2",
     "@cdf/greengrass-deployment-client": "^1.1.0",
     "@cdf/greengrass-provisioning-client": "^2.1.0",
     "aws-sdk": "2.804.0",
