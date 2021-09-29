@@ -1,6 +1,13 @@
 # Change Log - @cdf/assetlibrary
 
-This log was last generated on Tue, 28 Sep 2021 22:04:37 GMT and should not be manually modified.
+This log was last generated on Wed, 29 Sep 2021 23:23:30 GMT and should not be manually modified.
+
+## 5.3.4
+Wed, 29 Sep 2021 23:23:30 GMT
+
+### Patches
+
+- remove template from cache after being updated
 
 ## 5.3.3
 Tue, 28 Sep 2021 22:04:37 GMT
