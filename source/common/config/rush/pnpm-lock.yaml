@@ -70,7 +70,7 @@ specifiers:
   atob: 2.1.2
   aws-iot-device-sdk: 2.2.8
   aws-sdk: 2.804.0
-  axios: 0.21.0
+  axios: 0.21.2
   body-parser: 1.19.0
   btoa: 1.2.1
   busboy: 0.3.1
@@ -106,7 +106,7 @@ specifiers:
   json2csv: 4.5.4
   jsonpath-plus: ~5.0.7
   jsonwebtoken: 8.5.1
-  jszip: 3.6.0
+  jszip: 3.7.0
   jwk-to-pem: 2.0.4
   lodash: 4.17.21
   moment: 2.29.1
@@ -198,7 +198,7 @@ dependencies:
   atob: 2.1.2
   aws-iot-device-sdk: 2.2.8_supports-color@8.0.0
   aws-sdk: 2.804.0
-  axios: 0.21.0
+  axios: 0.21.2
   body-parser: 1.19.0
   btoa: 1.2.1
   busboy: 0.3.1
@@ -234,7 +234,7 @@ dependencies:
   json2csv: 4.5.4
   jsonpath-plus: 5.0.7
   jsonwebtoken: 8.5.1
-  jszip: 3.6.0
+  jszip: 3.7.0
   jwk-to-pem: 2.0.4
   lodash: 4.17.21
   moment: 2.29.1
@@ -1182,7 +1182,7 @@ packages:
     resolution: {integrity: sha512-SDzEIZInC4sivGIFY4Sz1GG6J9UObPwCInYJjko2jzOf/Imx/dlpume6Xxwj1ORL82tBbmN4cPDIDkLbWHk9hw==}
     dependencies:
       '@types/body-parser': 1.19.0
-      '@types/express-serve-static-core': 4.17.16
+      '@types/express-serve-static-core': 4.17.19
       '@types/qs': 6.9.5
       '@types/serve-static': 1.13.8
     dev: false
@@ -2169,10 +2169,10 @@ packages:
     resolution: {integrity: sha512-xh1Rl34h6Fi1DC2WWKfxUTVqRsNnr6LsKz2+hfwDxQJWmrx8+c7ylaqBMcHfl1U1r2dsifOvKX3LQuLNZ+XSvA==}
     dev: false
 
-  /axios/0.21.0:
-    resolution: {integrity: sha512-fmkJBknJKoZwem3/IKSSLpkdNXZeBu5Q7GA/aRsr2btgrptmSCxi2oFjZHqGdK9DoTil9PIHlPIZw2EcRJXRvw==}
+  /axios/0.21.2:
+    resolution: {integrity: sha512-87otirqUw3e8CzHTMO+/9kh/FSgXt/eVDvipijwDtEuwbkySWZ9SBm6VEubmJ/kLKEoLQV/POhxXFb66bfekfg==}
     dependencies:
-      follow-redirects: 1.13.1
+      follow-redirects: 1.14.4
     transitivePeerDependencies:
       - debug
     dev: false
@@ -4173,8 +4173,8 @@ packages:
     resolution: {integrity: sha512-GRnmB5gPyJpAhTQdSZTSp9uaPSvl09KoYcMQtsB9rQoOmzs9dH6ffeccH+Z+cv6P68Hu5bC6JjRh4Ah/mHSNRw==}
     dev: false
 
-  /follow-redirects/1.13.1:
-    resolution: {integrity: sha512-SSG5xmZh1mkPGyKzjZP8zLjltIfpW32Y5QpdNJyjcfGxK3qo3NDDkZOZSFiGn1A6SclQxY9GzEwAHQ3dmYRWpg==}
+  /follow-redirects/1.14.4:
+    resolution: {integrity: sha512-zwGkiSXC1MUJG/qmeIFH2HBJx9u0V46QGUe3YR1fXG8bXQxq7fLj0RjLZQ5nubr9qNJUZrH+xUcwXEoXNpfS+g==}
     engines: {node: '>=4.0'}
     peerDependencies:
       debug: '*'
@@ -5949,6 +5949,15 @@ packages:
       set-immediate-shim: 1.0.1
     dev: false
 
+  /jszip/3.7.0:
+    resolution: {integrity: sha512-Y2OlFIzrDOPWUnpU0LORIcDn2xN7rC9yKffFM/7pGhQuhO+SUhfm2trkJ/S5amjFvem0Y+1EALz/MEPkvHXVNw==}
+    dependencies:
+      lie: 3.3.0
+      pako: 1.0.11
+      readable-stream: 2.3.7
+      set-immediate-shim: 1.0.1
+    dev: false
+
   /just-extend/4.1.1:
     resolution: {integrity: sha512-aWgeGFW67BP3e5181Ep1Fv2v8z//iBJfrvyTnq8wG86vEESwmonn1zPBJ0VfmT9CJq2FIT0VsETtrNFm2a+SHA==}
     dev: false
@@ -7244,6 +7253,7 @@ packages:
   /querystring/0.2.0:
     resolution: {integrity: sha1-sgmEkgO7Jd+CDadW50cAWHhSFiA=}
     engines: {node: '>=0.4.x'}
+    deprecated: The querystring API is considered Legacy. new code should use the URLSearchParams API instead.
     dev: false
 
   /range-parser/1.2.1:
@@ -8843,6 +8853,7 @@ packages:
 
   /uuid/3.3.2:
     resolution: {integrity: sha512-yXJmeNaw3DnnKAOKJE51sL/ZaYfWJRl1pK9dr19YFCu0ObS231AB1/LbqTKRAQ5kw8A90rA6fr4riOUpTZvQZA==}
+    deprecated: Please upgrade  to version 7 or higher.  Older versions may use Math.random() in certain circumstances, which is known to be problematic.  See https://v8.dev/blog/math-random for details.
     hasBin: true
     dev: false
 
@@ -9225,7 +9236,7 @@ packages:
     dev: false
 
   file:projects/assetlibrary-client.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-sNgAqAxnIpMNwnjrdqked/lCdoZViXfV0bvTO9EcqT0XWh1Tzo/U6hHrcqcBiSJLmKiyQlU+b8DF/G/Iys3OWA==, tarball: file:projects/assetlibrary-client.tgz}
+    resolution: {integrity: sha512-JqWpNAl5GEKQwHF7rTWzrMHbyuhP/NFBMmQTHtclG5H07svugEZc5OUqe/m9tRaBYsd11xCwOUFax3bcFFm+uw==, tarball: file:projects/assetlibrary-client.tgz}
     id: file:projects/assetlibrary-client.tgz
     name: '@rush-temp/assetlibrary-client'
     version: 0.0.0
@@ -9273,7 +9284,7 @@ packages:
     dev: false
 
   file:projects/assetlibrary-export.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-yEkPI5jdyDflnyLmxBx0FcxU/pXinwJhitA/bKbNDZswfn4irJpRFq/j31l5+5STjf5A6ob8xJp8AOXNJTaDVw==, tarball: file:projects/assetlibrary-export.tgz}
+    resolution: {integrity: sha512-CWnLl+L8E0FO1n2KnjhMnaJWJlgKjOcGB0wQnjXP+XRWTkT9xRaGIK3Rs9F+CgmaS9wjNJGe0PWYvUMoRSgpnw==, tarball: file:projects/assetlibrary-export.tgz}
     id: file:projects/assetlibrary-export.tgz
     name: '@rush-temp/assetlibrary-export'
     version: 0.0.0
@@ -9334,7 +9345,7 @@ packages:
     dev: false
 
   file:projects/assetlibrary-history.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-HNm+97zLpKCUEZPZFDURKcRRbjuCeT3IL7NCz7/EgvMoCdD2O90P+kBujQOI+tRjQyzCb34QYTyMZDvOWMhc3w==, tarball: file:projects/assetlibrary-history.tgz}
+    resolution: {integrity: sha512-oU2ASAxdEZ4bFOqxNTWIuIasxiHrQLWRS94yHeAARTigYSwQ0JZhRuIXliGJy3IVn9I/wc9wtFhWGTOZfiwZ0Q==, tarball: file:projects/assetlibrary-history.tgz}
     id: file:projects/assetlibrary-history.tgz
     name: '@rush-temp/assetlibrary-history'
     version: 0.0.0
@@ -9391,7 +9402,7 @@ packages:
     dev: false
 
   file:projects/assetlibrary.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-fN9ap9xzkMFm5VZt5YR4Pw/SzhQcTgehfi2QAXrjdYtEpdPD0U0BOmNJgVz9i57pMfc2ePHq3DcIXDmSsS1WRw==, tarball: file:projects/assetlibrary.tgz}
+    resolution: {integrity: sha512-gwWy/L8P87W0bF6H1/tk8FGbgl4FbzDXYNrfd8FTOKXgZNNpncDU8TXk3PqkYAzlazNk+y889mHsRvqhJ71neQ==, tarball: file:projects/assetlibrary.tgz}
     id: file:projects/assetlibrary.tgz
     name: '@rush-temp/assetlibrary'
     version: 0.0.0
@@ -9457,7 +9468,7 @@ packages:
     dev: false
 
   file:projects/assetlibraryhistory-client.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-UscZOevK7Q7XcymGNSyc9zWxyOfTVBZV3jz/b1IhUTRxFCP4bzm1rg0WOWuT4R6H4/szIpdac9891P3T2AXhHQ==, tarball: file:projects/assetlibraryhistory-client.tgz}
+    resolution: {integrity: sha512-RGfIHCgj3aOuHzj8Bsx67ExlY2b9VnCiahuwSUOipUJtps31hTr/idq3ib0hJuBg3gXinamlqS23fxhA4qL/RQ==, tarball: file:projects/assetlibraryhistory-client.tgz}
     id: file:projects/assetlibraryhistory-client.tgz
     name: '@rush-temp/assetlibraryhistory-client'
     version: 0.0.0
@@ -9542,7 +9553,7 @@ packages:
     dev: false
 
   file:projects/auth-jwt.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-UrTwaVHJyLabFWBgtO0J/juM4fzEsG+ewChZswk0UJg3yONLcuNXaV1lSOT3C1U0J/CXgShbo8X1RTJCjR0vRA==, tarball: file:projects/auth-jwt.tgz}
+    resolution: {integrity: sha512-6ps37G2zUIEFnQ2+7afzNvYB56GT2JEWDfYK0SuUCoCbYhbjrjtF5OctPSQjZbkesMZ0aA1J7N8e2cnmaHfqxA==, tarball: file:projects/auth-jwt.tgz}
     id: file:projects/auth-jwt.tgz
     name: '@rush-temp/auth-jwt'
     version: 0.0.0
@@ -9555,7 +9566,7 @@ packages:
       '@types/jwk-to-pem': 2.0.0
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
-      axios: 0.21.0
+      axios: 0.21.2
       config: 3.3.6
       eslint: 7.26.0_supports-color@8.0.0
       jest: 26.6.3_supports-color@8.0.0
@@ -9589,7 +9600,7 @@ packages:
     dev: false
 
   file:projects/bulkcerts-client.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-FegH4vueO2ziHYlJAh5GIUxWqNhHRdkYa4T+9Aiif19JnuCCaEiBxtlbYGma7Uo7ymZzHoM6Aoe8WjEqPfyCvw==, tarball: file:projects/bulkcerts-client.tgz}
+    resolution: {integrity: sha512-XFitn93dn9GhSkRhxN2sP0WvUBIItOsL/pS6ZrvCbqE3PyQLPv7Hn04VVTyR8c6dB3jvkNArcfMAZU+OCZS9Ew==, tarball: file:projects/bulkcerts-client.tgz}
     id: file:projects/bulkcerts-client.tgz
     name: '@rush-temp/bulkcerts-client'
     version: 0.0.0
@@ -9635,7 +9646,7 @@ packages:
     dev: false
 
   file:projects/bulkcerts.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-fI55RDkZJMhv6TSEaDgy7EBWuof+QzW6K+FVF67XfEx97qeEofARFWgHjAAkK7hAS96FTsYXC+Gv29kWzod7/A==, tarball: file:projects/bulkcerts.tgz}
+    resolution: {integrity: sha512-l2xUUeSP8swTfjnCR0VbBJ6TT8Gu7SWAKvtqGKbepRJ1aYvA7Y7oBRBioDZc1auSNfNfXYsHrL/QbjPF8KOCkg==, tarball: file:projects/bulkcerts.tgz}
     id: file:projects/bulkcerts.tgz
     name: '@rush-temp/bulkcerts'
     version: 0.0.0
@@ -9671,7 +9682,7 @@ packages:
       jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
       js-yaml: 4.1.0
-      jszip: 3.6.0
+      jszip: 3.7.0
       logform: 2.2.0
       nodemon: 2.0.7
       nyc: 15.1.0_supports-color@8.0.0
@@ -9694,7 +9705,7 @@ packages:
     dev: false
 
   file:projects/certificate-activator.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-ZRlfQPozQF7vF1UfOyffrAmjPyNFdqvovMWDkquTQKz+mxbeltfoEqcm3wNPXjSR3456P2sEddmxCc8AlhSXyQ==, tarball: file:projects/certificate-activator.tgz}
+    resolution: {integrity: sha512-0vNVbOZww7PLve+u9Izm7iE0tDanhvQhRcvdWdySacGCU4hUKc0cYX2WTDZl/SgyeDu45i6VI5dQVYPrIPs51Q==, tarball: file:projects/certificate-activator.tgz}
     id: file:projects/certificate-activator.tgz
     name: '@rush-temp/certificate-activator'
     version: 0.0.0
@@ -9742,7 +9753,7 @@ packages:
     dev: false
 
   file:projects/certificate-vendor.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-/zAKckhzM1oTcTlrCTwKSHdQJe0S591lYS/yNpHURZUsPk0FwYtl5tDj5RYnwNPPig48g7MEyfYSWFH2tBgegg==, tarball: file:projects/certificate-vendor.tgz}
+    resolution: {integrity: sha512-FY2k4LsLIAJZnk72biwJ52IoeHhF4dkakqvHKu9I0zvrIcWAQyb3mid5U9hKBqy0ukHX+vaYido5rzqcennbVQ==, tarball: file:projects/certificate-vendor.tgz}
     id: file:projects/certificate-vendor.tgz
     name: '@rush-temp/certificate-vendor'
     version: 0.0.0
@@ -9787,7 +9798,7 @@ packages:
     dev: false
 
   file:projects/commands-client.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-BCAeEWk0jaOv9LU5wGGBqFiH0+IG8dYthImEX56f2MY2sBuEj0ru/ZUa+2c2x8uTii6kj2qBPFxcsRClm12Msg==, tarball: file:projects/commands-client.tgz}
+    resolution: {integrity: sha512-viCEzv1MWaj6B9jG5VXqnfI/5HjQP0nPylR6TMZDhMz5cSwdJlU1MF49aLHTdizmO563CLg9HVCu5dBQnI6DFw==, tarball: file:projects/commands-client.tgz}
     id: file:projects/commands-client.tgz
     name: '@rush-temp/commands-client'
     version: 0.0.0
@@ -9833,7 +9844,7 @@ packages:
     dev: false
 
   file:projects/commands.tgz:
-    resolution: {integrity: sha512-2QyITkeTo1YVQxa1xn7cGfxOn/NnG6caZNIg+EnZzh13XF62KWyyf8/uXwBDbFM4hXjAx+kNcvYtwwc799AcAg==, tarball: file:projects/commands.tgz}
+    resolution: {integrity: sha512-sSILA88M1+Ke2PAgPFlSiXDnzTU3zZbuW2sam6d0zevV2L+oMBqt/+v5hUKsaTZKXkxh0OhAv3zZ9wMdhLjyzw==, tarball: file:projects/commands.tgz}
     name: '@rush-temp/commands'
     version: 0.0.0
     dependencies:
@@ -9925,7 +9936,7 @@ packages:
     dev: false
 
   file:projects/deployment-helper.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-btKo+bjV1yvPJjSxhV9rhTqbEjrl3mfbx/gezVvMLZmOVejpZibU+cnSr23G765vlSz9RHXs7Rtf1ETXSmPjug==, tarball: file:projects/deployment-helper.tgz}
+    resolution: {integrity: sha512-Tbm8t+JdavbHmo5p+uQdZz7rM6RSZVlMtpofYfudEq6RoWrvESj67tQxIhAgvsXpGbCoJC4fWDopnkJY7pPSNQ==, tarball: file:projects/deployment-helper.tgz}
     id: file:projects/deployment-helper.tgz
     name: '@rush-temp/deployment-helper'
     version: 0.0.0
@@ -9974,7 +9985,7 @@ packages:
     dev: false
 
   file:projects/device-monitoring.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-hOADggPVI0rvgoYAa3VTGrprayEfFBp5GTqd9y2B2bALld8RmWkEG1mW37HMqgZUU+eWJhxEM1PQHB73V3WXfg==, tarball: file:projects/device-monitoring.tgz}
+    resolution: {integrity: sha512-2W+JAQ0MdyOcOfVtoZc7x1Qxgw7VdPI47ksJt40E9SZGPAG0CUac19A3MS7Af85Nb9go1vkVTMVZjog29t1lCA==, tarball: file:projects/device-monitoring.tgz}
     id: file:projects/device-monitoring.tgz
     name: '@rush-temp/device-monitoring'
     version: 0.0.0
@@ -10019,7 +10030,7 @@ packages:
     dev: false
 
   file:projects/device-simulator-base.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-xD4oY1q1tuuOU1hDYNqC0VQMRzNkrd0qIJOE/Z0Oxakzw9eInwuVg2SqGcYqlBhsV2Tb4psObjl2Bubezh3Vcw==, tarball: file:projects/device-simulator-base.tgz}
+    resolution: {integrity: sha512-9hBAaeLxl1lz0N6cudmMaRpZWUVYHXv41m/p0pIfByyrB64YvOglPeCR+eua9P9hjReSWD2DLe59sMJLf2h6oA==, tarball: file:projects/device-simulator-base.tgz}
     id: file:projects/device-simulator-base.tgz
     name: '@rush-temp/device-simulator-base'
     version: 0.0.0
@@ -10103,7 +10114,7 @@ packages:
     dev: false
 
   file:projects/events-alerts.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-DX5MKO8iXRwId/eUkjxo9EZWzKCREhOviYgTHuZzrlSE/6L2LGErZ0lSxQwvmVDCicb/M9oUFQpSgG9QIokoxA==, tarball: file:projects/events-alerts.tgz}
+    resolution: {integrity: sha512-P26N5v6enbij1ZsLEscgxqjCK/MR82zNALFpi8E18W7+O7cLTBXBlKRwnL3prbuNa8QUAsuAubqLXLiER4mUww==, tarball: file:projects/events-alerts.tgz}
     id: file:projects/events-alerts.tgz
     name: '@rush-temp/events-alerts'
     version: 0.0.0
@@ -10152,7 +10163,7 @@ packages:
     dev: false
 
   file:projects/events-processor.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-Tqzxr9UrAMIW6+ni5bIIxbToHuE5n7eAYuDq8sotdiBJLxl+Gr7cDHZBmmNEKeAFq+yewlrGNixc3ueayfZWiQ==, tarball: file:projects/events-processor.tgz}
+    resolution: {integrity: sha512-r126vUvj1VgZ9Nf5qTc9F4iG/dO+q4L3jKi8MQyeB8c9EYdnyGoqyVddjl7lWpPA7aZsaIB+jwNrD/L2BZw8SQ==, tarball: file:projects/events-processor.tgz}
     id: file:projects/events-processor.tgz
     name: '@rush-temp/events-processor'
     version: 0.0.0
@@ -10212,7 +10223,7 @@ packages:
     dev: false
 
   file:projects/express-middleware.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-QbnlfMW6YKkn9v3exhCl1ZukSvqtab3DKLxKSzQ7JXFtWpYUzsypSdKuYNhUBVpXCEhFlYDyUg2PYidbXgCGsQ==, tarball: file:projects/express-middleware.tgz}
+    resolution: {integrity: sha512-CwysQXPmlJyNromsuA7PN8FaMK0J6CR61Jt3BaEhgZFT+MxbELT/D+Fx2cEVKv0VqOf0STUhQXO2u2YQLJMppA==, tarball: file:projects/express-middleware.tgz}
     id: file:projects/express-middleware.tgz
     name: '@rush-temp/express-middleware'
     version: 0.0.0
@@ -10245,7 +10256,7 @@ packages:
     dev: false
 
   file:projects/greengrass-deployment-client.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-B+cEJrUfbTMxp4itnrY52Uh5ueqCkDwCRAgnS2wiPj0OUbzEJwQ37bWoZv0tvwx78IktxfNshuHfkm4uSmFnPw==, tarball: file:projects/greengrass-deployment-client.tgz}
+    resolution: {integrity: sha512-OIuCCnN6dsqKhT1kNwXHKBf3aHOtpGaXuVr3WfPx8etKoyDuxFBaVO9oKqJYOGo5TNVKGcb4SDuGqWFwsu245Q==, tarball: file:projects/greengrass-deployment-client.tgz}
     id: file:projects/greengrass-deployment-client.tgz
     name: '@rush-temp/greengrass-deployment-client'
     version: 0.0.0
@@ -10291,7 +10302,7 @@ packages:
     dev: false
 
   file:projects/greengrass-provisioning-client.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-tLLKe1BifaycbGtbh5z7xk1H6WoUn//vOS1Xy4y55s1nUqnjFGHlfjgm6j4+cIKKxpHwVJvfc3MV58U7n89XlA==, tarball: file:projects/greengrass-provisioning-client.tgz}
+    resolution: {integrity: sha512-2XNV1EFvEI7grfO4Q//sxyMkfiQ1E3NWT6It86TrM7Gl8MefIA8AeELcfsMepFHjqjmNEo/RJrk4cNqYsWn5nQ==, tarball: file:projects/greengrass-provisioning-client.tgz}
     id: file:projects/greengrass-provisioning-client.tgz
     name: '@rush-temp/greengrass-provisioning-client'
     version: 0.0.0
@@ -10337,7 +10348,7 @@ packages:
     dev: false
 
   file:projects/integration-tests.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-jOcGof28wOIm6LEnR0/LONPMNFYFJ1lbiMe57/zju+lxmVrcSVBXAmNCnTxCQkA0A6bB1vrarhbvsCFmzg9Rnw==, tarball: file:projects/integration-tests.tgz}
+    resolution: {integrity: sha512-v/znV9FCz8bgz6MH8xpdKQEFDILBBBJU3veFexj7YQcP88raQgf/TvvQQZZWTnhadtJGPJUXACkZlQOwK490HA==, tarball: file:projects/integration-tests.tgz}
     id: file:projects/integration-tests.tgz
     name: '@rush-temp/integration-tests'
     version: 0.0.0
@@ -10387,7 +10398,7 @@ packages:
     dev: false
 
   file:projects/lambda-invoke.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-FyFp7jBY8T0EBw5A4SbLPWet3eCX9rgdy3Kv97ssrE41oAs2E6McdJwfNrm5+QLOKVJBeb6pzLYbVadFuJ2jxQ==, tarball: file:projects/lambda-invoke.tgz}
+    resolution: {integrity: sha512-S5mOmOh7NRE4tyT/YmcMqDF62Pqy9YAUijVf/HY2i8wXk//PQpmPMNCFVE37Dw1G7oBLPcDBFu22X/b1oxplBg==, tarball: file:projects/lambda-invoke.tgz}
     id: file:projects/lambda-invoke.tgz
     name: '@rush-temp/lambda-invoke'
     version: 0.0.0
@@ -10466,7 +10477,7 @@ packages:
     dev: false
 
   file:projects/notifications-client.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-e7qBuq/5Irahd2CjB4lBgi7sJvjYDnGIQNIow7qaHVjEMGx49rAuf3O1L5mN62QJ9GD1KaJbluK1fEyZSR2Mew==, tarball: file:projects/notifications-client.tgz}
+    resolution: {integrity: sha512-D44sApnL6cwIcjStq86DBnBdndkLk8BZazQ6G6eN0q06WrOBXSGiH9R5P0LjCtvMVDT4tSnX8o0nJhNOQL+ImA==, tarball: file:projects/notifications-client.tgz}
     id: file:projects/notifications-client.tgz
     name: '@rush-temp/notifications-client'
     version: 0.0.0
@@ -10512,7 +10523,7 @@ packages:
     dev: false
 
   file:projects/provisioning-client.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-DMtFOj4plo66bv45K8Or7D3P7jiuLkq00DAWSHeP6LVsGLv0bOASi7GcU2BHxtqdJcUw8dLnZw5CKqo33xm7wA==, tarball: file:projects/provisioning-client.tgz}
+    resolution: {integrity: sha512-8L9HAmKRupR/SMShD6sqdsI9fhoq1HDTjRh+o1YPUazVKFaU4iS+hibtAVjjW3DfR9qkGIXGJpaJUnle5bvR/g==, tarball: file:projects/provisioning-client.tgz}
     id: file:projects/provisioning-client.tgz
     name: '@rush-temp/provisioning-client'
     version: 0.0.0
@@ -10557,7 +10568,7 @@ packages:
     dev: false
 
   file:projects/provisioning.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-H1UtN4X89AcY4tbr66+B9JgcH1sEIppp8lSdzPP9WayJC1yo0w5+F0RaIVMGoTMwMPH6oJBeqt37leeZXIIrwA==, tarball: file:projects/provisioning.tgz}
+    resolution: {integrity: sha512-p9X55lcnfjxFpDDEDGpLy9TyCC+e+pu933THJj6XJ3dRD5VKFFzq6CC8wsOmj4WRPqisdv7qfG4ZCTdTdaHuow==, tarball: file:projects/provisioning.tgz}
     id: file:projects/provisioning.tgz
     name: '@rush-temp/provisioning'
     version: 0.0.0
@@ -10591,7 +10602,7 @@ packages:
       jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
       js-yaml: 4.1.0
-      jszip: 3.6.0
+      jszip: 3.7.0
       logform: 2.2.0
       nodemon: 2.0.7
       nyc: 15.1.0_supports-color@8.0.0
