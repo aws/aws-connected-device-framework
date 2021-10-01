@@ -303,6 +303,18 @@ Parameters:
     Type: String
     Description: Specifies the identifier for an existing DB cluster snapshot to restore. Refer to Neptune documentation on its use.
     Default: ''
+  NeptuneDbInstanceType:
+    Description: Neptune DB instance type
+    Type: String
+    Default: db.r4.xlarge
+    AllowedValues:
+      - db.t3.medium
+      - db.r4.large
+      - db.r4.xlarge
+      - db.r4.2xlarge
+      - db.r4.4xlarge
+      - db.r4.8xlarge
+    ConstraintDescription: Must be a valid Neptune instance type.
 
 Conditions:
   DeployAssetLibrary: !Equals [ !Ref IncludeAssetLibrary, 'true' ]
@@ -393,6 +405,7 @@ Resources:
         DeviceMonitoringAppConfigOverride: !Ref DeviceMonitoringAppConfigOverride
         BulkCertsAppConfigOverride: !Ref BulkCertsAppConfigOverride
         NeptuneSnapshotIdentifier: !Ref NeptuneSnapshotIdentifier
+        NeptuneDbInstanceType: !Ref NeptuneDbInstanceType
       TimeoutInMinutes: 120
     DependsOn:
       - Shared
