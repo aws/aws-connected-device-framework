@@ -186,6 +186,10 @@ describe('GroupsService', () => {
                 d: false
             },
             groups: {
+                in: {
+                    Linked_to_a: ['pathA1', 'pathA2'],
+                    Linked_to_b: ['pathA3']
+                },
                 out: {
                     linked_to_a: ['pathA1', 'pathA2'],
                     linked_to_b: ['pathA3']
@@ -200,6 +204,10 @@ describe('GroupsService', () => {
         });
 
         const expectedValidateRelationshipsByPathArg:DirectionStringToArrayMap = {
+            in: {
+                linked_to_a: ['patha1', 'patha2'],
+                linked_to_b: ['patha3']
+            },
             out: {
                 linked_to_a: ['patha1', 'patha2'],
                 linked_to_b: ['patha3']
