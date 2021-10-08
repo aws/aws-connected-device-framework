@@ -420,536 +420,536 @@ api_vpc_endpoint_check_check=$(echo "$stack_exports" \
 ############################################################################################
 # NETWORKING
 ############################################################################################
-# assetlibrary_config=$CONFIG_LOCATION/assetlibrary/$CONFIG_ENVIRONMENT-config.json
-# if [[ -f $assetlibrary_config && "$ASSETLIBRARY_MODE" = "full" &&  ( -z "$USE_EXISTING_VPC" || "$USE_EXISTING_VPC" = "false" ) ]] || [[ "$API_GATEWAY_AUTH" == "Private" && ( -z "$USE_EXISTING_VPC" || "$USE_EXISTING_VPC" = "false" ) ]]; then
+assetlibrary_config=$CONFIG_LOCATION/assetlibrary/$CONFIG_ENVIRONMENT-config.json
+if [[ -f $assetlibrary_config && "$ASSETLIBRARY_MODE" = "full" &&  ( -z "$USE_EXISTING_VPC" || "$USE_EXISTING_VPC" = "false" ) ]] || [[ "$API_GATEWAY_AUTH" == "Private" && ( -z "$USE_EXISTING_VPC" || "$USE_EXISTING_VPC" = "false" ) ]]; then
 
-#     logTitle 'Deploying Networking'
+    logTitle 'Deploying Networking'
 
-#     cd "$root_dir/infrastructure"
+    cd "$root_dir/infrastructure"
 
-#     NETWORKING_DEPLOY_PARAMETERS=()
-#     NETWORKING_DEPLOY_PARAMETERS+=( Environment=$ENVIRONMENT )
-#     NETWORKING_DEPLOY_PARAMETERS+=( ExistingVpcId=$VPC_ID )
-#     NETWORKING_DEPLOY_PARAMETERS+=( ExistingCDFSecurityGroupId=$CDF_SECURITY_GROUP_ID )
-#     NETWORKING_DEPLOY_PARAMETERS+=( ExistingPrivateSubnetIds=$PRIVATE_SUBNET_IDS )
-#     NETWORKING_DEPLOY_PARAMETERS+=( ExistingPublicSubnetIds=$PUBLIC_SUBNET_IDS )
-#     NETWORKING_DEPLOY_PARAMETERS+=( ExistingPrivateApiGatewayVPCEndpoint=$VPCE_ID )
-#     NETWORKING_DEPLOY_PARAMETERS+=( ExistingPrivateRouteTableIds=$PRIVATE_ROUTE_TABLE_IDS )
-#     #TODO: move these below as else
-#     NETWORKING_DEPLOY_PARAMETERS+=( EnableS3VpcEndpoint='true' )
-#     NETWORKING_DEPLOY_PARAMETERS+=( EnableDynamoDBVpcEndpoint='true' )
-#     NETWORKING_DEPLOY_PARAMETERS+=( EnablePrivateApiGatewayVPCEndpoint='true' )
+    NETWORKING_DEPLOY_PARAMETERS=()
+    NETWORKING_DEPLOY_PARAMETERS+=( Environment=$ENVIRONMENT )
+    NETWORKING_DEPLOY_PARAMETERS+=( ExistingVpcId=$VPC_ID )
+    NETWORKING_DEPLOY_PARAMETERS+=( ExistingCDFSecurityGroupId=$CDF_SECURITY_GROUP_ID )
+    NETWORKING_DEPLOY_PARAMETERS+=( ExistingPrivateSubnetIds=$PRIVATE_SUBNET_IDS )
+    NETWORKING_DEPLOY_PARAMETERS+=( ExistingPublicSubnetIds=$PUBLIC_SUBNET_IDS )
+    NETWORKING_DEPLOY_PARAMETERS+=( ExistingPrivateApiGatewayVPCEndpoint=$VPCE_ID )
+    NETWORKING_DEPLOY_PARAMETERS+=( ExistingPrivateRouteTableIds=$PRIVATE_ROUTE_TABLE_IDS )
+    #TODO: move these below as else
+    NETWORKING_DEPLOY_PARAMETERS+=( EnableS3VpcEndpoint='true' )
+    NETWORKING_DEPLOY_PARAMETERS+=( EnableDynamoDBVpcEndpoint='true' )
+    NETWORKING_DEPLOY_PARAMETERS+=( EnablePrivateApiGatewayVPCEndpoint='true' )
 
-#     if [[( -n "$USE_EXISTING_VPC" && "$USE_EXISTING_VPC" = "true" )]]; then
-#         NETWORKING_DEPLOY_PARAMETERS+=( EnableS3VpcEndpoint=$s3_vpc_endpoint_check )
-#         NETWORKING_DEPLOY_PARAMETERS+=( EnableDynamoDBVpcEndpoint=$dynamodb_vpc_endpoint_check_check )
-#         NETWORKING_DEPLOY_PARAMETERS+=( EnablePrivateApiGatewayVPCEndpoint=$api_vpc_endpoint_check_check )
-#     fi
+    if [[( -n "$USE_EXISTING_VPC" && "$USE_EXISTING_VPC" = "true" )]]; then
+        NETWORKING_DEPLOY_PARAMETERS+=( EnableS3VpcEndpoint=$s3_vpc_endpoint_check )
+        NETWORKING_DEPLOY_PARAMETERS+=( EnableDynamoDBVpcEndpoint=$dynamodb_vpc_endpoint_check_check )
+        NETWORKING_DEPLOY_PARAMETERS+=( EnablePrivateApiGatewayVPCEndpoint=$api_vpc_endpoint_check_check )
+    fi
 
-#     aws cloudformation deploy \
-#         --template-file cloudformation/cfn-networking.yaml \
-#         --stack-name "$NETWORK_STACK_NAME" --no-fail-on-empty-changeset \
-#         --parameter-overrides "${NETWORKING_DEPLOY_PARAMETERS[@]}" \
-#         --capabilities CAPABILITY_NAMED_IAM \
-#         $AWS_ARGS
+    aws cloudformation deploy \
+        --template-file cloudformation/cfn-networking.yaml \
+        --stack-name "$NETWORK_STACK_NAME" --no-fail-on-empty-changeset \
+        --parameter-overrides "${NETWORKING_DEPLOY_PARAMETERS[@]}" \
+        --capabilities CAPABILITY_NAMED_IAM \
+        $AWS_ARGS
 
-#     stack_exports=$(aws cloudformation list-exports $AWS_ARGS)
+    stack_exports=$(aws cloudformation list-exports $AWS_ARGS)
 
-#     vpc_id_export="$NETWORK_STACK_NAME-VpcId"
-#     VPC_ID=$(echo "$stack_exports" \
-#         | jq -r --arg vpc_id_export "$vpc_id_export" \
-#         '.Exports[] | select(.Name==$vpc_id_export) | .Value')
+    vpc_id_export="$NETWORK_STACK_NAME-VpcId"
+    VPC_ID=$(echo "$stack_exports" \
+        | jq -r --arg vpc_id_export "$vpc_id_export" \
+        '.Exports[] | select(.Name==$vpc_id_export) | .Value')
 
-#     vpce_id_export="$NETWORK_STACK_NAME-PrivateApiGatewayVPCEndpoint"
-#     VPCE_ID=$(echo "$stack_exports" \
-#         | jq -r --arg vpce_id_export "$vpce_id_export" \
-#         '.Exports[] | select(.Name==$vpce_id_export) | .Value')
+    vpce_id_export="$NETWORK_STACK_NAME-PrivateApiGatewayVPCEndpoint"
+    VPCE_ID=$(echo "$stack_exports" \
+        | jq -r --arg vpce_id_export "$vpce_id_export" \
+        '.Exports[] | select(.Name==$vpce_id_export) | .Value')
 
-#     cdf_security_group_id_export="$NETWORK_STACK_NAME-SecurityGroupId"
-#     CDF_SECURITY_GROUP_ID=$(echo "$stack_exports" \
-#         | jq -r --arg cdf_security_group_id_export "$cdf_security_group_id_export" \
-#         '.Exports[] | select(.Name==$cdf_security_group_id_export) | .Value')
+    cdf_security_group_id_export="$NETWORK_STACK_NAME-SecurityGroupId"
+    CDF_SECURITY_GROUP_ID=$(echo "$stack_exports" \
+        | jq -r --arg cdf_security_group_id_export "$cdf_security_group_id_export" \
+        '.Exports[] | select(.Name==$cdf_security_group_id_export) | .Value')
 
-#     private_subnet_ids_export="$NETWORK_STACK_NAME-PrivateSubnetIds"
-#     PRIVATE_SUBNET_IDS=$(echo "$stack_exports" \
-#         | jq -r --arg private_subnet_ids_export "$private_subnet_ids_export" \
-#         '.Exports[] | select(.Name==$private_subnet_ids_export) | .Value')
+    private_subnet_ids_export="$NETWORK_STACK_NAME-PrivateSubnetIds"
+    PRIVATE_SUBNET_IDS=$(echo "$stack_exports" \
+        | jq -r --arg private_subnet_ids_export "$private_subnet_ids_export" \
+        '.Exports[] | select(.Name==$private_subnet_ids_export) | .Value')
 
-#     public_subnet_ids_export="$NETWORK_STACK_NAME-PublicSubnetIds"
-#     PUBLIC_SUBNET_IDS=$(echo "$stack_exports" \
-#         | jq -r --arg public_subnet_ids_export "$public_subnet_ids_export" \
-#         '.Exports[] | select(.Name==$public_subnet_ids_export) | .Value')
+    public_subnet_ids_export="$NETWORK_STACK_NAME-PublicSubnetIds"
+    PUBLIC_SUBNET_IDS=$(echo "$stack_exports" \
+        | jq -r --arg public_subnet_ids_export "$public_subnet_ids_export" \
+        '.Exports[] | select(.Name==$public_subnet_ids_export) | .Value')
 
-#     private_routetable_ids_export="$NETWORK_STACK_NAME-PrivateRouteTableIds"
-#     PRIVATE_ROUTE_TABLE_IDS=$(echo "$stack_exports" \
-#         | jq -r --arg private_routetable_ids_export "$private_routetable_ids_export" \
-#         '.Exports[] | select(.Name==$private_routetable_ids_export) | .Value')
+    private_routetable_ids_export="$NETWORK_STACK_NAME-PrivateRouteTableIds"
+    PRIVATE_ROUTE_TABLE_IDS=$(echo "$stack_exports" \
+        | jq -r --arg private_routetable_ids_export "$private_routetable_ids_export" \
+        '.Exports[] | select(.Name==$private_routetable_ids_export) | .Value')
 
-# fi
+fi
 
 ############################################################################################
 # DEPLOYMENT HELPER VPC
 ############################################################################################
-# if [[ -f $assetlibrary_config && "$ASSETLIBRARY_MODE" = "full" ]] || [[ "$API_GATEWAY_AUTH" == "Private" ]] || [[( -z "$USE_EXISTING_VPC" || "$USE_EXISTING_VPC" = "false" ) ]]; then
-#     logTitle 'Deploying Deployment Helper VPC'
-#     cd "$root_dir/packages/libraries/core/deployment-helper"
-#     infrastructure/deploy-vpc-cfn.bash \
-#         -e "$ENVIRONMENT" \
-#         -a $DEPLOY_ARTIFACTS_STORE_BUCKET \
-#         -v $VPC_ID \
-#         -g $CDF_SECURITY_GROUP_ID \
-#         -n $PRIVATE_SUBNET_IDS \
-#         $AWS_SCRIPT_ARGS
+if [[ -f $assetlibrary_config && "$ASSETLIBRARY_MODE" = "full" ]] || [[ "$API_GATEWAY_AUTH" == "Private" ]] || [[( -z "$USE_EXISTING_VPC" || "$USE_EXISTING_VPC" = "false" ) ]]; then
+    logTitle 'Deploying Deployment Helper VPC'
+    cd "$root_dir/packages/libraries/core/deployment-helper"
+    infrastructure/deploy-vpc-cfn.bash \
+        -e "$ENVIRONMENT" \
+        -a $DEPLOY_ARTIFACTS_STORE_BUCKET \
+        -v $VPC_ID \
+        -g $CDF_SECURITY_GROUP_ID \
+        -n $PRIVATE_SUBNET_IDS \
+        $AWS_SCRIPT_ARGS
 
-#     stack_exports=$(aws cloudformation list-exports $AWS_ARGS)
+    stack_exports=$(aws cloudformation list-exports $AWS_ARGS)
 
-#     custom_resource_vpc_lambda_arn_export="$DEPLOYMENT_HELPER_VPC_STACK_NAME-customResourceVpcLambdaArn"
-#     CUSTOM_RESOURCE_VPC_LAMBDA_ARN=$(echo "$stack_exports" \
-#             | jq -r --arg custom_resource_vpc_lambda_arn_export "$custom_resource_vpc_lambda_arn_export" \
-#             '.Exports[] | select(.Name==$custom_resource_vpc_lambda_arn_export) | .Value')
-# fi
+    custom_resource_vpc_lambda_arn_export="$DEPLOYMENT_HELPER_VPC_STACK_NAME-customResourceVpcLambdaArn"
+    CUSTOM_RESOURCE_VPC_LAMBDA_ARN=$(echo "$stack_exports" \
+            | jq -r --arg custom_resource_vpc_lambda_arn_export "$custom_resource_vpc_lambda_arn_export" \
+            '.Exports[] | select(.Name==$custom_resource_vpc_lambda_arn_export) | .Value')
+fi
 
 ############################################################################################
 # LAMBDA LAYERS
 ############################################################################################
-# logTitle 'Deploying lambda layers'
-# lambda_layers_root="$root_dir/infrastructure/lambdaLayers"
-# for layer in $(ls $lambda_layers_root); do
-#     cd "$lambda_layers_root/$layer"
-#     infrastructure/package-cfn.bash -b $DEPLOY_ARTIFACTS_STORE_BUCKET $AWS_SCRIPT_ARGS
-#     infrastructure/deploy-cfn.bash -e $ENVIRONMENT $AWS_SCRIPT_ARGS
-# done
+logTitle 'Deploying lambda layers'
+lambda_layers_root="$root_dir/infrastructure/lambdaLayers"
+for layer in $(ls $lambda_layers_root); do
+    cd "$lambda_layers_root/$layer"
+    infrastructure/package-cfn.bash -b $DEPLOY_ARTIFACTS_STORE_BUCKET $AWS_SCRIPT_ARGS
+    infrastructure/deploy-cfn.bash -e $ENVIRONMENT $AWS_SCRIPT_ARGS
+done
 
-# logTitle 'Deploying services'
+logTitle 'Deploying services'
 ############################################################################################
 # ASSET LIBRARY
 ############################################################################################
 
-# if [ -f "$assetlibrary_config" ]; then
+if [ -f "$assetlibrary_config" ]; then
 
-#     logTitle 'Deploying Asset Library'
+    logTitle 'Deploying Asset Library'
 
-#     cd "$root_dir/packages/services/assetlibrary"
+    cd "$root_dir/packages/services/assetlibrary"
 
-#     infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
+    infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
 
-#     # TODO: if these are common args and can be shared across stacks such as gg provisioning then they should be out of here and put next to defaults
-#     assetlibrary_concurrent_executions_arg=
-#     if [ -n "$CONCURRENT_EXECUTIONS" ]; then
-#         assetlibrary_concurrent_executions_arg="-x $CONCURRENT_EXECUTIONS"
-#     fi
+    # TODO: if these are common args and can be shared across stacks such as gg provisioning then they should be out of here and put next to defaults
+    assetlibrary_concurrent_executions_arg=
+    if [ -n "$CONCURRENT_EXECUTIONS" ]; then
+        assetlibrary_concurrent_executions_arg="-x $CONCURRENT_EXECUTIONS"
+    fi
 
-#     assetlibrary_autoscaling_arg=
-#     if [ "$APPLY_AUTOSCALING" = "true" ]; then
-#         assetlibrary_autoscaling_arg="-s"
-#     fi
+    assetlibrary_autoscaling_arg=
+    if [ "$APPLY_AUTOSCALING" = "true" ]; then
+        assetlibrary_autoscaling_arg="-s"
+    fi
 
-#     db_snapshot_identifier_arg=
-#     if [ -n "$ASSETLIBRARY_DB_SNAPSHOT_IDENTIFIER" ]; then
-#         db_snapshot_identifier_arg="-D $ASSETLIBRARY_DB_SNAPSHOT_IDENTIFIER"
-#     fi
+    db_snapshot_identifier_arg=
+    if [ -n "$ASSETLIBRARY_DB_SNAPSHOT_IDENTIFIER" ]; then
+        db_snapshot_identifier_arg="-D $ASSETLIBRARY_DB_SNAPSHOT_IDENTIFIER"
+    fi
 
-#     custom_resource_vpc_lambda_arn=
-#     if [ -n "$CUSTOM_RESOURCE_VPC_LAMBDA_ARN" ]; then
-#         custom_resource_vpc_lambda_arn="-l $CUSTOM_RESOURCE_VPC_LAMBDA_ARN"
-#     fi
+    custom_resource_vpc_lambda_arn=
+    if [ -n "$CUSTOM_RESOURCE_VPC_LAMBDA_ARN" ]; then
+        custom_resource_vpc_lambda_arn="-l $CUSTOM_RESOURCE_VPC_LAMBDA_ARN"
+    fi
     
-#     cd "$root_dir/packages/services/assetlibrary"
-#     infrastructure/deploy-cfn.bash \
-#         -e "$ENVIRONMENT" \
-#         -c "$assetlibrary_config" \
-#         -y "$TEMPLATE_SNIPPET_S3_URI_BASE" \
-#         -z "$API_GATEWAY_DEFINITION_TEMPLATE" \
-#         -a "$API_GATEWAY_AUTH" \
-#         -v "$VPC_ID" \
-#         -g "$CDF_SECURITY_GROUP_ID" \
-#         -n "$PRIVATE_SUBNET_IDS" \
-#         -i "$VPCE_ID" \
-#         -r "$PRIVATE_ROUTE_TABLE_IDS" \
-#         -m "$ASSETLIBRARY_MODE" \
-#         $custom_resource_vpc_lambda_arn \
-#         $cognito_auth_arg \
-#         $lambda_invoker_auth_arg \
-#         $assetlibrary_concurrent_executions_arg \
-#         $assetlibrary_autoscaling_arg \
-#         $db_snapshot_identifier_arg \
-#         $AWS_SCRIPT_ARGS
+    cd "$root_dir/packages/services/assetlibrary"
+    infrastructure/deploy-cfn.bash \
+        -e "$ENVIRONMENT" \
+        -c "$assetlibrary_config" \
+        -y "$TEMPLATE_SNIPPET_S3_URI_BASE" \
+        -z "$API_GATEWAY_DEFINITION_TEMPLATE" \
+        -a "$API_GATEWAY_AUTH" \
+        -v "$VPC_ID" \
+        -g "$CDF_SECURITY_GROUP_ID" \
+        -n "$PRIVATE_SUBNET_IDS" \
+        -i "$VPCE_ID" \
+        -r "$PRIVATE_ROUTE_TABLE_IDS" \
+        -m "$ASSETLIBRARY_MODE" \
+        $custom_resource_vpc_lambda_arn \
+        $cognito_auth_arg \
+        $lambda_invoker_auth_arg \
+        $assetlibrary_concurrent_executions_arg \
+        $assetlibrary_autoscaling_arg \
+        $db_snapshot_identifier_arg \
+        $AWS_SCRIPT_ARGS
 
-#     asset_library_deployed="true"
+    asset_library_deployed="true"
 
-# fi
+fi
 
 ############################################################################################
 # PROVISIONING
 ############################################################################################
-# provisioning_config=$CONFIG_LOCATION/provisioning/$CONFIG_ENVIRONMENT-config.json
-# if [ -f "$provisioning_config" ]; then
+provisioning_config=$CONFIG_LOCATION/provisioning/$CONFIG_ENVIRONMENT-config.json
+if [ -f "$provisioning_config" ]; then
 
-#     logTitle 'Deploying provisioning'
+    logTitle 'Deploying provisioning'
 
-#     cd "$root_dir/packages/services/provisioning"
+    cd "$root_dir/packages/services/provisioning"
 
-#     infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
-#     infrastructure/deploy-cfn.bash \
-#         -e "$ENVIRONMENT" \
-#         -c "$provisioning_config" \
-#         -k "$KMS_KEY_ID" \
-#         -o "$OPENSSL_LAYER_STACK_NAME" \
-#         -y "$TEMPLATE_SNIPPET_S3_URI_BASE" \
-#         -z "$API_GATEWAY_DEFINITION_TEMPLATE" \
-#         -a "$API_GATEWAY_AUTH" \
-#         -v "$VPC_ID" \
-#         -g "$CDF_SECURITY_GROUP_ID" \
-#         -n "$PRIVATE_SUBNET_IDS" \
-#         -i "$VPCE_ID" \
-#         -l "$CUSTOM_RESOURCE_LAMBDA_ARN" \
-#         $cognito_auth_arg \
-#         $lambda_invoker_auth_arg \
-#         $AWS_SCRIPT_ARGS
+    infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
+    infrastructure/deploy-cfn.bash \
+        -e "$ENVIRONMENT" \
+        -c "$provisioning_config" \
+        -k "$KMS_KEY_ID" \
+        -o "$OPENSSL_LAYER_STACK_NAME" \
+        -y "$TEMPLATE_SNIPPET_S3_URI_BASE" \
+        -z "$API_GATEWAY_DEFINITION_TEMPLATE" \
+        -a "$API_GATEWAY_AUTH" \
+        -v "$VPC_ID" \
+        -g "$CDF_SECURITY_GROUP_ID" \
+        -n "$PRIVATE_SUBNET_IDS" \
+        -i "$VPCE_ID" \
+        -l "$CUSTOM_RESOURCE_LAMBDA_ARN" \
+        $cognito_auth_arg \
+        $lambda_invoker_auth_arg \
+        $AWS_SCRIPT_ARGS
 
-# else
-#   echo 'NOT DEPLOYING: provisioning'
-# fi
+else
+   echo 'NOT DEPLOYING: provisioning'
+fi
 
 ############################################################################################
 # COMMANDS
 ############################################################################################
-# commands_config=$CONFIG_LOCATION/commands/$CONFIG_ENVIRONMENT-config.json
-# if [ -f "$commands_config" ]; then
+commands_config=$CONFIG_LOCATION/commands/$CONFIG_ENVIRONMENT-config.json
+if [ -f "$commands_config" ]; then
 
-#     logTitle 'Deploying commands'
+    logTitle 'Deploying commands'
 
-#     cd "$root_dir/packages/services/commands"
+    cd "$root_dir/packages/services/commands"
 
-#     infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
-#     infrastructure/deploy-cfn.bash \
-#         -e "$ENVIRONMENT" \
-#         -c "$commands_config" \
-#         -y "$TEMPLATE_SNIPPET_S3_URI_BASE" \
-#         -z "$API_GATEWAY_DEFINITION_TEMPLATE" \
-#         -a "$API_GATEWAY_AUTH" \
-#         -v "$VPC_ID" \
-#         -g "$CDF_SECURITY_GROUP_ID" \
-#         -n "$PRIVATE_SUBNET_IDS" \
-#         -i "$VPCE_ID" \
-#         -l "$CUSTOM_RESOURCE_LAMBDA_ARN" \
-#         -k "$KMS_KEY_ID" \
-#         $cognito_auth_arg \
-#         $lambda_invoker_auth_arg \
-#         $AWS_SCRIPT_ARGS
-# else
-#   echo 'NOT DEPLOYING: commands'
-# fi
+    infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
+    infrastructure/deploy-cfn.bash \
+        -e "$ENVIRONMENT" \
+        -c "$commands_config" \
+        -y "$TEMPLATE_SNIPPET_S3_URI_BASE" \
+        -z "$API_GATEWAY_DEFINITION_TEMPLATE" \
+        -a "$API_GATEWAY_AUTH" \
+        -v "$VPC_ID" \
+        -g "$CDF_SECURITY_GROUP_ID" \
+        -n "$PRIVATE_SUBNET_IDS" \
+        -i "$VPCE_ID" \
+        -l "$CUSTOM_RESOURCE_LAMBDA_ARN" \
+        -k "$KMS_KEY_ID" \
+        $cognito_auth_arg \
+        $lambda_invoker_auth_arg \
+        $AWS_SCRIPT_ARGS
+else
+   echo 'NOT DEPLOYING: commands'
+fi
 
 ############################################################################################
 # DEVICE MONITORING
 ############################################################################################
-# devicemonitoring_config=$CONFIG_LOCATION/devicemonitoring/$CONFIG_ENVIRONMENT-config.json
-# if [ -f "$devicemonitoring_config" ]; then
+devicemonitoring_config=$CONFIG_LOCATION/devicemonitoring/$CONFIG_ENVIRONMENT-config.json
+if [ -f "$devicemonitoring_config" ]; then
 
-#     logTitle 'Deploying device monitoring'
+    logTitle 'Deploying device monitoring'
 
-#     cd "$root_dir/packages/services/device-monitoring"
+    cd "$root_dir/packages/services/device-monitoring"
 
-#     infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
-#     infrastructure/deploy-cfn.bash \
-#         -e "$ENVIRONMENT" \
-#         -c "$devicemonitoring_config" \
-#         $AWS_SCRIPT_ARGS
-# else
-#   echo 'NOT DEPLOYING: device monitoring'
-# fi
+    infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
+    infrastructure/deploy-cfn.bash \
+        -e "$ENVIRONMENT" \
+        -c "$devicemonitoring_config" \
+        $AWS_SCRIPT_ARGS
+else
+   echo 'NOT DEPLOYING: device monitoring'
+fi
 
 ############################################################################################
 # EVENTS PROCESSOR
 ############################################################################################
-# eventsprocessor_config=$CONFIG_LOCATION/events-processor/$CONFIG_ENVIRONMENT-config.json
-# if [ -f "$eventsprocessor_config" ]; then
+eventsprocessor_config=$CONFIG_LOCATION/events-processor/$CONFIG_ENVIRONMENT-config.json
+if [ -f "$eventsprocessor_config" ]; then
 
-#     logTitle 'Deploying events processor'
+    logTitle 'Deploying events processor'
 
-#     cd "$root_dir/packages/services/events-processor"
+    cd "$root_dir/packages/services/events-processor"
 
-#     infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
-#     infrastructure/deploy-cfn.bash \
-#         -e "$ENVIRONMENT" \
-#         -c "$eventsprocessor_config" \
-#         -y "$TEMPLATE_SNIPPET_S3_URI_BASE" \
-#         -z "$API_GATEWAY_DEFINITION_TEMPLATE" \
-#         -a "$API_GATEWAY_AUTH" \
-#         -v "$VPC_ID" \
-#         -g "$CDF_SECURITY_GROUP_ID" \
-#         -n "$PRIVATE_SUBNET_IDS" \
-#         -i "$VPCE_ID" \
-#         -l "$CUSTOM_RESOURCE_LAMBDA_ARN" \
-#         -k "$KMS_KEY_ID" \
-#         $cognito_auth_arg \
-#         $lambda_invoker_auth_arg \
-#         $AWS_SCRIPT_ARGS
-# else
-#   echo 'NOT DEPLOYING: events-processor'
-# fi
+    infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
+    infrastructure/deploy-cfn.bash \
+        -e "$ENVIRONMENT" \
+        -c "$eventsprocessor_config" \
+        -y "$TEMPLATE_SNIPPET_S3_URI_BASE" \
+        -z "$API_GATEWAY_DEFINITION_TEMPLATE" \
+        -a "$API_GATEWAY_AUTH" \
+        -v "$VPC_ID" \
+        -g "$CDF_SECURITY_GROUP_ID" \
+        -n "$PRIVATE_SUBNET_IDS" \
+        -i "$VPCE_ID" \
+        -l "$CUSTOM_RESOURCE_LAMBDA_ARN" \
+        -k "$KMS_KEY_ID" \
+        $cognito_auth_arg \
+        $lambda_invoker_auth_arg \
+        $AWS_SCRIPT_ARGS
+else
+   echo 'NOT DEPLOYING: events-processor'
+fi
 
 ############################################################################################
 # CERTIFICATE ACTIVATOR
 ############################################################################################
-# certificateactivator_config=$CONFIG_LOCATION/certificateactivator/$CONFIG_ENVIRONMENT-config.json
-# if [ -f "$certificateactivator_config" ]; then
+certificateactivator_config=$CONFIG_LOCATION/certificateactivator/$CONFIG_ENVIRONMENT-config.json
+if [ -f "$certificateactivator_config" ]; then
 
-#     logTitle 'Deploying certificate activator'
+    logTitle 'Deploying certificate activator'
 
-#     cd "$root_dir/packages/services/certificateactivator"
+    cd "$root_dir/packages/services/certificateactivator"
 
-#     infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
-#     infrastructure/deploy-cfn.bash \
-#         -e "$ENVIRONMENT" \
-#         -c "$certificateactivator_config" \
-#         -o $OPENSSL_LAYER_STACK_NAME \
-#         $AWS_SCRIPT_ARGS
-# else
-#   echo 'NOT DEPLOYING: certificate activator'
-# fi
+    infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
+    infrastructure/deploy-cfn.bash \
+        -e "$ENVIRONMENT" \
+        -c "$certificateactivator_config" \
+        -o $OPENSSL_LAYER_STACK_NAME \
+        $AWS_SCRIPT_ARGS
+else
+   echo 'NOT DEPLOYING: certificate activator'
+fi
 
 ############################################################################################
 # CERTIFICATE VENDOR
 ############################################################################################
-# certificatevendor_config=$CONFIG_LOCATION/certificatevendor/$CONFIG_ENVIRONMENT-config.json
-# if [ -f "$certificatevendor_config" ]; then
+certificatevendor_config=$CONFIG_LOCATION/certificatevendor/$CONFIG_ENVIRONMENT-config.json
+if [ -f "$certificatevendor_config" ]; then
 
-#     logTitle 'Deploying certificate vendor'
+    logTitle 'Deploying certificate vendor'
 
-#     cd "$root_dir/packages/services/certificatevendor"
+    cd "$root_dir/packages/services/certificatevendor"
 
-#     infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
-#     infrastructure/deploy-cfn.bash \
-#         -e "$ENVIRONMENT" \
-#         -c "$certificatevendor_config" \
-#         -r AssetLibrary \
-#         -k "$KMS_KEY_ID" \
-#         -o $OPENSSL_LAYER_STACK_NAME \
-#         -l "$CUSTOM_RESOURCE_LAMBDA_ARN" \
-#         $AWS_SCRIPT_ARGS
-# else
-#   echo 'NOT DEPLOYING: certificate vendor'
-# fi
+    infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
+    infrastructure/deploy-cfn.bash \
+        -e "$ENVIRONMENT" \
+        -c "$certificatevendor_config" \
+        -r AssetLibrary \
+        -k "$KMS_KEY_ID" \
+        -o $OPENSSL_LAYER_STACK_NAME \
+        -l "$CUSTOM_RESOURCE_LAMBDA_ARN" \
+        $AWS_SCRIPT_ARGS
+else
+   echo 'NOT DEPLOYING: certificate vendor'
+fi
 
 ############################################################################################
 # BULK CERTS
 ############################################################################################
-# bulkcerts_config=$CONFIG_LOCATION/bulkcerts/$CONFIG_ENVIRONMENT-config.json
-# if [ -f "$bulkcerts_config" ]; then
+bulkcerts_config=$CONFIG_LOCATION/bulkcerts/$CONFIG_ENVIRONMENT-config.json
+if [ -f "$bulkcerts_config" ]; then
 
-#     logTitle 'Deploying bulkcerts'
+    logTitle 'Deploying bulkcerts'
 
-#     cd "$root_dir/packages/services/bulkcerts"
+    cd "$root_dir/packages/services/bulkcerts"
 
-#     infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
-#     infrastructure/deploy-cfn.bash \
-#         -e "$ENVIRONMENT" \
-#         -c "$bulkcerts_config" \
-#         -k "$KMS_KEY_ID" \
-#         -y "$TEMPLATE_SNIPPET_S3_URI_BASE" \
-#         -z "$API_GATEWAY_DEFINITION_TEMPLATE" \
-#         -a "$API_GATEWAY_AUTH" \
-#         -v "$VPC_ID" \
-#         -g "$CDF_SECURITY_GROUP_ID" \
-#         -n "$PRIVATE_SUBNET_IDS" \
-#         -i "$VPCE_ID" \
-#         -o $OPENSSL_LAYER_STACK_NAME \
-#         $cognito_auth_arg \
-#         $lambda_invoker_auth_arg \
-#         $AWS_SCRIPT_ARGS
-# else
-#   echo 'NOT DEPLOYING: bulk certs'
-# fi
+    infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
+    infrastructure/deploy-cfn.bash \
+        -e "$ENVIRONMENT" \
+        -c "$bulkcerts_config" \
+        -k "$KMS_KEY_ID" \
+        -y "$TEMPLATE_SNIPPET_S3_URI_BASE" \
+        -z "$API_GATEWAY_DEFINITION_TEMPLATE" \
+        -a "$API_GATEWAY_AUTH" \
+        -v "$VPC_ID" \
+        -g "$CDF_SECURITY_GROUP_ID" \
+        -n "$PRIVATE_SUBNET_IDS" \
+        -i "$VPCE_ID" \
+        -o $OPENSSL_LAYER_STACK_NAME \
+        $cognito_auth_arg \
+        $lambda_invoker_auth_arg \
+        $AWS_SCRIPT_ARGS
+else
+   echo 'NOT DEPLOYING: bulk certs'
+fi
 
 ############################################################################################
 # EVENTS ALERTS
 ############################################################################################
-# eventsalerts_config=$CONFIG_LOCATION/events-alerts/$CONFIG_ENVIRONMENT-config.json
-# if [ -f "$eventsalerts_config" ]; then
+eventsalerts_config=$CONFIG_LOCATION/events-alerts/$CONFIG_ENVIRONMENT-config.json
+if [ -f "$eventsalerts_config" ]; then
 
-#     logTitle 'Deploying events alerts'
+    logTitle 'Deploying events alerts'
 
-#     cd "$root_dir/packages/services/events-alerts"
+    cd "$root_dir/packages/services/events-alerts"
 
-#     infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
-#     infrastructure/deploy-cfn.bash \
-#         -e "$ENVIRONMENT" \
-#         -k "$KMS_KEY_ID" \
-#         -c "$eventsalerts_config" \
-#         $AWS_SCRIPT_ARGS
-# else
-#   echo 'NOT DEPLOYING: events alerts'
-# fi
+    infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
+    infrastructure/deploy-cfn.bash \
+        -e "$ENVIRONMENT" \
+        -k "$KMS_KEY_ID" \
+        -c "$eventsalerts_config" \
+        $AWS_SCRIPT_ARGS
+else
+   echo 'NOT DEPLOYING: events alerts'
+fi
 
 
 ############################################################################################
 # ASSET LIBRARY HISTORY
 ############################################################################################
-# assetlibraryhistory_config=$CONFIG_LOCATION/assetlibraryhistory/$CONFIG_ENVIRONMENT-config.json
-# if [ -f "$assetlibraryhistory_config" ]; then
+assetlibraryhistory_config=$CONFIG_LOCATION/assetlibraryhistory/$CONFIG_ENVIRONMENT-config.json
+if [ -f "$assetlibraryhistory_config" ]; then
 
-#     logTitle 'Deploying asset library history'
+    logTitle 'Deploying asset library history'
 
-#     cd "$root_dir/packages/services/assetlibraryhistory"
+    cd "$root_dir/packages/services/assetlibraryhistory"
 
-#     infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
-#     infrastructure/deploy-cfn.bash \
-#         -e "$ENVIRONMENT" \
-#         -c "$assetlibraryhistory_config" \
-#         -t 'cdf/assetlibrary/events/#' \
-#         -y "$TEMPLATE_SNIPPET_S3_URI_BASE" \
-#         -z "$API_GATEWAY_DEFINITION_TEMPLATE" \
-#         -a "$API_GATEWAY_AUTH" \
-#         -v "$VPC_ID" \
-#         -g "$CDF_SECURITY_GROUP_ID" \
-#         -n "$PRIVATE_SUBNET_IDS" \
-#         -i "$VPCE_ID" \
-#         -k "$KMS_KEY_ID" \
-#         $cognito_auth_arg \
-#         $lambda_invoker_auth_arg \
-#         $AWS_SCRIPT_ARGS
-# else
-#   echo 'NOT DEPLOYING: asset library history'
-# fi
+    infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
+    infrastructure/deploy-cfn.bash \
+        -e "$ENVIRONMENT" \
+        -c "$assetlibraryhistory_config" \
+        -t 'cdf/assetlibrary/events/#' \
+        -y "$TEMPLATE_SNIPPET_S3_URI_BASE" \
+        -z "$API_GATEWAY_DEFINITION_TEMPLATE" \
+        -a "$API_GATEWAY_AUTH" \
+        -v "$VPC_ID" \
+        -g "$CDF_SECURITY_GROUP_ID" \
+        -n "$PRIVATE_SUBNET_IDS" \
+        -i "$VPCE_ID" \
+        -k "$KMS_KEY_ID" \
+        $cognito_auth_arg \
+        $lambda_invoker_auth_arg \
+        $AWS_SCRIPT_ARGS
+else
+   echo 'NOT DEPLOYING: asset library history'
+fi
 
 ############################################################################################
 # ASSET LIBRARY EXPORT
 ############################################################################################
-# assetlibrary_export_config=$CONFIG_LOCATION/assetlibrary-export/$CONFIG_ENVIRONMENT-config.json
-# if [ -f "$assetlibrary_export_config" ]; then
-#     logTitle 'Deploying Asset Library Export'
+assetlibrary_export_config=$CONFIG_LOCATION/assetlibrary-export/$CONFIG_ENVIRONMENT-config.json
+if [ -f "$assetlibrary_export_config" ]; then
+    logTitle 'Deploying Asset Library Export'
 
-#     cd "$root_dir/packages/services/assetlibrary-export"
+    cd "$root_dir/packages/services/assetlibrary-export"
 
-#     infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
-#     infrastructure/deploy-cfn.bash \
-#         -e "$ENVIRONMENT" \
-#         -c "$assetlibrary_export_config" \
-#         -k "$KMS_KEY_ID" \
-#         -v "$VPC_ID" \
-#         -g "$CDF_SECURITY_GROUP_ID" \
-#         -n "$PRIVATE_SUBNET_IDS" \
-#         $AWS_SCRIPT_ARGS
-# else
-#   echo 'NOT DEPLOYING: Simulation Launcher'
-# fi
+    infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
+    infrastructure/deploy-cfn.bash \
+        -e "$ENVIRONMENT" \
+        -c "$assetlibrary_export_config" \
+        -k "$KMS_KEY_ID" \
+        -v "$VPC_ID" \
+        -g "$CDF_SECURITY_GROUP_ID" \
+        -n "$PRIVATE_SUBNET_IDS" \
+        $AWS_SCRIPT_ARGS
+else
+   echo 'NOT DEPLOYING: Simulation Launcher'
+fi
 
 ############################################################################################
 # GREENGRASS PROVISIONING
 ############################################################################################
-#  greengrassProvisioning_config=$CONFIG_LOCATION/greengrass-provisioning/$CONFIG_ENVIRONMENT-config.json
-#  if [ -f "$greengrassProvisioning_config" ]; then
+ greengrassProvisioning_config=$CONFIG_LOCATION/greengrass-provisioning/$CONFIG_ENVIRONMENT-config.json
+ if [ -f "$greengrassProvisioning_config" ]; then
 
-#      logTitle 'Deploying Greengrass Provisioning'
+     logTitle 'Deploying Greengrass Provisioning'
 
-#      cd "$root_dir/packages/services/greengrass-provisioning"
+     cd "$root_dir/packages/services/greengrass-provisioning"
 
-#      infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
-#      infrastructure/deploy-cfn.bash \
-#          -e "$ENVIRONMENT" \
-#          -k "$KMS_KEY_ID" \
-#          -c "$greengrassProvisioning_config"  \
-#          -y "$TEMPLATE_SNIPPET_S3_URI_BASE" \
-#          -z "$API_GATEWAY_DEFINITION_TEMPLATE" \
-#          -a "$API_GATEWAY_AUTH" \
-#          -v "$VPC_ID" \
-#          -g "$CDF_SECURITY_GROUP_ID" \
-#          -n "$PRIVATE_SUBNET_IDS" \
-#          -i "$VPCE_ID" \
-#          $cognito_auth_arg \
-#          $lambda_invoker_auth_arg \
-#          $AWS_SCRIPT_ARGS
-#  else
-#     echo 'NOT DEPLOYING: Greengrass Provisioning'
-#  fi
+     infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
+     infrastructure/deploy-cfn.bash \
+         -e "$ENVIRONMENT" \
+         -k "$KMS_KEY_ID" \
+         -c "$greengrassProvisioning_config"  \
+         -y "$TEMPLATE_SNIPPET_S3_URI_BASE" \
+         -z "$API_GATEWAY_DEFINITION_TEMPLATE" \
+         -a "$API_GATEWAY_AUTH" \
+         -v "$VPC_ID" \
+         -g "$CDF_SECURITY_GROUP_ID" \
+         -n "$PRIVATE_SUBNET_IDS" \
+         -i "$VPCE_ID" \
+         $cognito_auth_arg \
+         $lambda_invoker_auth_arg \
+         $AWS_SCRIPT_ARGS
+ else
+    echo 'NOT DEPLOYING: Greengrass Provisioning'
+ fi
 
 ############################################################################################
 # GREENGRASS DEPLOYMENT
 ############################################################################################
-#  greengrassDeployment_config=$CONFIG_LOCATION/greengrass-deployment/$CONFIG_ENVIRONMENT-config.json
-#  if [ -f "$greengrassDeployment_config" ]; then
-#      logTitle 'Deploying Greengrass Deployment'
+ greengrassDeployment_config=$CONFIG_LOCATION/greengrass-deployment/$CONFIG_ENVIRONMENT-config.json
+ if [ -f "$greengrassDeployment_config" ]; then
+     logTitle 'Deploying Greengrass Deployment'
 
-#      cd "$root_dir/packages/services/greengrass-deployment"
+     cd "$root_dir/packages/services/greengrass-deployment"
 
-#      infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
-#      infrastructure/deploy-cfn.bash \
-#          -e "$ENVIRONMENT" \
-#          -c "$greengrassDeployment_config" \
-#          -y "$TEMPLATE_SNIPPET_S3_URI_BASE" \
-#          -z "$API_GATEWAY_DEFINITION_TEMPLATE" \
-#          -a "$API_GATEWAY_AUTH" \
-#          -v "$VPC_ID" \
-#          -g "$CDF_SECURITY_GROUP_ID" \
-#          -n "$PRIVATE_SUBNET_IDS" \
-#          -i "$VPCE_ID" \
-#          -k "$KMS_KEY_ID" \
-#          $cognito_auth_arg \
-#          $lambda_invoker_auth_arg \
-#          $AWS_SCRIPT_ARGS
-#  else
-#     echo 'NOT DEPLOYING: Greengrass Deployment'
-#  fi
+     infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
+     infrastructure/deploy-cfn.bash \
+         -e "$ENVIRONMENT" \
+         -c "$greengrassDeployment_config" \
+         -y "$TEMPLATE_SNIPPET_S3_URI_BASE" \
+         -z "$API_GATEWAY_DEFINITION_TEMPLATE" \
+         -a "$API_GATEWAY_AUTH" \
+         -v "$VPC_ID" \
+         -g "$CDF_SECURITY_GROUP_ID" \
+         -n "$PRIVATE_SUBNET_IDS" \
+         -i "$VPCE_ID" \
+         -k "$KMS_KEY_ID" \
+         $cognito_auth_arg \
+         $lambda_invoker_auth_arg \
+         $AWS_SCRIPT_ARGS
+ else
+    echo 'NOT DEPLOYING: Greengrass Deployment'
+ fi
 
 ############################################################################################
 # SIMULATION LAUNCHER
 ############################################################################################
-# simulation_launcher_config=$CONFIG_LOCATION/simulation-launcher/$CONFIG_ENVIRONMENT-config.json
-# if [ -f "$simulation_launcher_config" ]; then
+simulation_launcher_config=$CONFIG_LOCATION/simulation-launcher/$CONFIG_ENVIRONMENT-config.json
+if [ -f "$simulation_launcher_config" ]; then
     
-#     logTitle 'Bundling the JMeter container'
+    logTitle 'Bundling the JMeter container'
 
-#     cd "$root_dir/packages/services/simulation-launcher/src/containers/jmeter/infrastructure"
-#     ./bundle.bash
+    cd "$root_dir/packages/services/simulation-launcher/src/containers/jmeter/infrastructure"
+    ./bundle.bash
 
-#     logTitle 'Deploying Simulation Launcher'
+    logTitle 'Deploying Simulation Launcher'
 
-#     cd "$root_dir/packages/services/simulation-launcher"
+    cd "$root_dir/packages/services/simulation-launcher"
 
-#     infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
-#     infrastructure/deploy-cfn.bash \
-#         -b \
-#         -e "$ENVIRONMENT" \
-#         -c "$simulation_launcher_config" \
-#         -l "$CUSTOM_RESOURCE_LAMBDA_ARN" \
-#         -k "$KMS_KEY_ID" \
-#         -v "$VPC_ID" \
-#         -n "$PRIVATE_SUBNET_IDS" \
-#         $AWS_SCRIPT_ARGS
-# else
-#   echo 'NOT DEPLOYING: Simulation Launcher'
-# fi
+    infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
+    infrastructure/deploy-cfn.bash \
+        -b \
+        -e "$ENVIRONMENT" \
+        -c "$simulation_launcher_config" \
+        -l "$CUSTOM_RESOURCE_LAMBDA_ARN" \
+        -k "$KMS_KEY_ID" \
+        -v "$VPC_ID" \
+        -n "$PRIVATE_SUBNET_IDS" \
+        $AWS_SCRIPT_ARGS
+else
+   echo 'NOT DEPLOYING: Simulation Launcher'
+fi
 
 
 ############################################################################################
 # SIMULATION MANAGER
 ############################################################################################
-# simulation_manager_config=$CONFIG_LOCATION/simulation-manager/$CONFIG_ENVIRONMENT-config.json
-# if [ -f "$simulation_manager_config" ]; then
-#     logTitle 'Deploying Simulation Manager'
+simulation_manager_config=$CONFIG_LOCATION/simulation-manager/$CONFIG_ENVIRONMENT-config.json
+if [ -f "$simulation_manager_config" ]; then
+    logTitle 'Deploying Simulation Manager'
 
-#     cd "$root_dir/packages/services/simulation-manager"
+    cd "$root_dir/packages/services/simulation-manager"
 
-#     infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
-#     infrastructure/deploy-cfn.bash \
-#         -e "$ENVIRONMENT" \
-#         -c "$simulation_manager_config" \
-#         -y "$TEMPLATE_SNIPPET_S3_URI_BASE" \
-#         -z "$API_GATEWAY_DEFINITION_TEMPLATE" \
-#         -l "$CUSTOM_RESOURCE_LAMBDA_ARN" \
-#         -k "$KMS_KEY_ID" \
-#         -a "$API_GATEWAY_AUTH" \
-#         -v "$VPC_ID" \
-#         -g "$CDF_SECURITY_GROUP_ID" \
-#         -n "$PRIVATE_SUBNET_IDS" \
-#         -i "$VPCE_ID" \
-#         $cognito_auth_arg \
-#         $lambda_invoker_auth_arg \
-#         $AWS_SCRIPT_ARGS
-# else
-#   echo 'NOT DEPLOYING: Simulation Manager'
-# fi
+    infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
+    infrastructure/deploy-cfn.bash \
+        -e "$ENVIRONMENT" \
+        -c "$simulation_manager_config" \
+        -y "$TEMPLATE_SNIPPET_S3_URI_BASE" \
+        -z "$API_GATEWAY_DEFINITION_TEMPLATE" \
+        -l "$CUSTOM_RESOURCE_LAMBDA_ARN" \
+        -k "$KMS_KEY_ID" \
+        -a "$API_GATEWAY_AUTH" \
+        -v "$VPC_ID" \
+        -g "$CDF_SECURITY_GROUP_ID" \
+        -n "$PRIVATE_SUBNET_IDS" \
+        -i "$VPCE_ID" \
+        $cognito_auth_arg \
+        $lambda_invoker_auth_arg \
+        $AWS_SCRIPT_ARGS
+else
+   echo 'NOT DEPLOYING: Simulation Manager'
+fi
 
 logTitle 'CDF deployment complete!'

@@ -32,7 +32,8 @@
     "reflect-metadata": "0.1.13",
     "superagent": "6.1.0",
     "winston": "3.3.3",
-    "winston-transport": "4.4.0"
+    "winston-transport": "4.4.0",
+    "uuid": "8.3.2"
   },
   "devDependencies": {
     "@types/superagent": "4.1.10",
@@ -40,7 +41,7 @@
 
     "@rushstack/eslint-config": "2.3.4",
     "@types/aws-lambda": "8.10.65",
-
+    "@types/uuid": "8.3.0",
     "nyc": "15.1.0",
     "shx": "0.3.3",
 

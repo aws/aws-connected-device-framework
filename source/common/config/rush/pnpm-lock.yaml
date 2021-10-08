@@ -1182,7 +1182,7 @@ packages:
     resolution: {integrity: sha512-SDzEIZInC4sivGIFY4Sz1GG6J9UObPwCInYJjko2jzOf/Imx/dlpume6Xxwj1ORL82tBbmN4cPDIDkLbWHk9hw==}
     dependencies:
       '@types/body-parser': 1.19.0
-      '@types/express-serve-static-core': 4.17.16
+      '@types/express-serve-static-core': 4.17.19
       '@types/qs': 6.9.5
       '@types/serve-static': 1.13.8
     dev: false
@@ -7244,6 +7244,7 @@ packages:
   /querystring/0.2.0:
     resolution: {integrity: sha1-sgmEkgO7Jd+CDadW50cAWHhSFiA=}
     engines: {node: '>=0.4.x'}
+    deprecated: The querystring API is considered Legacy. new code should use the URLSearchParams API instead.
     dev: false
 
   /range-parser/1.2.1:
@@ -8843,6 +8844,7 @@ packages:
 
   /uuid/3.3.2:
     resolution: {integrity: sha512-yXJmeNaw3DnnKAOKJE51sL/ZaYfWJRl1pK9dr19YFCu0ObS231AB1/LbqTKRAQ5kw8A90rA6fr4riOUpTZvQZA==}
+    deprecated: Please upgrade  to version 7 or higher.  Older versions may use Math.random() in certain circumstances, which is known to be problematic.  See https://v8.dev/blog/math-random for details.
     hasBin: true
     dev: false
 
@@ -9925,7 +9927,7 @@ packages:
     dev: false
 
   file:projects/deployment-helper.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-btKo+bjV1yvPJjSxhV9rhTqbEjrl3mfbx/gezVvMLZmOVejpZibU+cnSr23G765vlSz9RHXs7Rtf1ETXSmPjug==, tarball: file:projects/deployment-helper.tgz}
+    resolution: {integrity: sha512-yl9oZeGQXF135dRpkby5pXzgXg58F/PnWaYEzlV41s5dc4jC92bmhCYRox0AHSZfpmG5dBnevytmw30u/QVeOg==, tarball: file:projects/deployment-helper.tgz}
     id: file:projects/deployment-helper.tgz
     name: '@rush-temp/deployment-helper'
     version: 0.0.0
@@ -9936,6 +9938,7 @@ packages:
       '@types/jest': 26.0.23
       '@types/node': 14.6.1
       '@types/superagent': 4.1.10
+      '@types/uuid': 8.3.0
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
       aws-sdk: 2.804.0
@@ -9963,6 +9966,7 @@ packages:
       superagent: 6.1.0_supports-color@8.0.0
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       typescript: 4.2.4
+      uuid: 8.3.2
       winston: 3.3.3
       winston-transport: 4.4.0
     transitivePeerDependencies:

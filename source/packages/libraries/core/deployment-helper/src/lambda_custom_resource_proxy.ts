@@ -19,6 +19,8 @@ import { logger } from './utils/logger';
 import {CustomResourceManager} from './customResources/customResource.manager';
 import {CustomResourceEvent} from './customResources/customResource.model';
 
+import {v1 as uuid} from 'uuid';
+
 let customResourceManager:CustomResourceManager;
 
 exports.handler = async (event: CustomResourceEvent, context: unknown) => {
@@ -30,7 +32,14 @@ exports.handler = async (event: CustomResourceEvent, context: unknown) => {
 
     try {
         const resourceResult = await customResourceManager[event.RequestType.toLowerCase()](event);
-        return await send(event, context, 'SUCCESS', resourceResult);
+        
+        logger.debug(`existing PhysicalResourceId: ${event.PhysicalResourceId}`);
+        
+        const physicalResourceId = event.PhysicalResourceId || uuid();
+        
+        logger.debug(`Determined PhysicalResourceId:${physicalResourceId}`);
+        
+        return await send(event, context, 'SUCCESS', resourceResult, physicalResourceId);
     } catch (err) {
         logger.error(err);
         return await send(event, context, 'FAILED', err);

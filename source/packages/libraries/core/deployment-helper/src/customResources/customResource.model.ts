@@ -19,5 +19,6 @@ export interface CustomResourceEvent {
     LogicalResourceId: string;
     ResourceType: string;
     ResourceProperties: {[key:string]:string};
+    PhysicalResourceId:string;
 
 }
