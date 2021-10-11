@@ -343,7 +343,7 @@ Resources:
         EnableApiGatewayAccessLogs: !Ref EnableApiGatewayAccessLogs
         KmsKeyId: !Ref KmsKeyId
         NeptuneSnapshotIdentifier: !Ref NeptuneSnapshotIdentifier
-        NeptuneDbInstanceType: !Ref NeptuneDBInstanceType
+        NeptuneDbInstanceType: !Ref NeptuneDbInstanceType
       TimeoutInMinutes: 60
 
   AssetLibraryHistory:
