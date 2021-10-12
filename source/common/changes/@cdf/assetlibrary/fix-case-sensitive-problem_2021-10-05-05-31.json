@@ -2,10 +2,10 @@
   "changes": [
     {
       "packageName": "@cdf/assetlibrary",
-      "comment": "Fixed errors in swagger docs.",
+      "comment": "add lowercasting to create group API",
       "type": "patch"
     }
   ],
   "packageName": "@cdf/assetlibrary",
-  "email": "deanhart@amazon.com"
+  "email": "tsugunao@gmail.com"
 }

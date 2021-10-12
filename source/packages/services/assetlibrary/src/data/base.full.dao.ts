@@ -49,7 +49,7 @@ export class NeptuneConnection {
         return this._traversal;
     }
 
-    public close() : void {
-        this._connection.close();
+    public async close() : Promise<void> {
+        await this._connection.close();
     }
 }

@@ -20,6 +20,7 @@ import { EventSourceAssembler } from './eventsource.assembler';
 import { EventService } from '../events/event.service';
 import { DynamoDbEventSource } from './sources/dynamodb.source';
 import { IotCoreEventSource } from './sources/iotcore.source';
+import { ApiGatewayEventSource } from './sources/apigateway.source';
 
 @injectable()
 export class EventSourceService  {
@@ -29,6 +30,7 @@ export class EventSourceService  {
         @inject(TYPES.EventSourceAssembler) private eventSourceAssembler: EventSourceAssembler,
         @inject(TYPES.DynamoDbEventSource) private dynamoDbEventSource: DynamoDbEventSource,
         @inject(TYPES.IotCoreEventSource) private iotCoreEventSource: IotCoreEventSource,
+        @inject(TYPES.ApiGatewayEventSource) private apiGatewayEventSource: ApiGatewayEventSource,
         @inject(TYPES.EventService) private eventService: EventService) {
         }
 
@@ -52,6 +54,9 @@ export class EventSourceService  {
                 break;
             case EventSourceType.IoTCore:
                 await this.iotCoreEventSource.create(resource);
+                break;
+            case EventSourceType.ApiGateway:
+                await this.apiGatewayEventSource.create(resource);
                 break;
             default:
                 throw new Error('NOT_IMPLEMENTED');
@@ -97,6 +102,9 @@ export class EventSourceService  {
                 break;
             case EventSourceType.IoTCore:
                 await this.iotCoreEventSource.delete(eventSourceId);
+                break;
+            case EventSourceType.ApiGateway:
+                await this.apiGatewayEventSource.delete(eventSourceId);
                 break;
             default:
                 throw new Error('NOT_IMPLEMENTED');

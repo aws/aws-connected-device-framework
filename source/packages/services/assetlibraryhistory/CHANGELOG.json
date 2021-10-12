@@ -2,6 +2,23 @@
   "name": "@cdf/assetlibrary-history",
   "entries": [
     {
+      "version": "4.1.2",
+      "tag": "@cdf/assetlibrary-history_v4.1.2",
+      "date": "Tue, 28 Sep 2021 22:04:37 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Replaced references to CDF components being referred to as services to modules to avoid confusion with AWS services."
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@cdf/config-inject\" from `^3.0.0` to `^3.0.1`"
+          }
+        ]
+      }
+    },
+    {
       "version": "4.1.1",
       "tag": "@cdf/assetlibrary-history_v4.1.1",
       "date": "Wed, 11 Aug 2021 01:26:49 GMT",

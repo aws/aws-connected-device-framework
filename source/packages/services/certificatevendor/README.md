@@ -4,7 +4,7 @@
 
 The certificate vendor manages the rotation of certificates involving a number of moving parts across CDF and AWS IoT.
 
-There are two flows for certificate rotation. In the fist case, device certificates are pre-created and registered before the rotation request. In this case the device requests a new certificate and is vended an S3 presigned URL in order to download the certificate package. In the second case, the device provides the certificate vendor service a CSR. In this way the device can request an updated certificate while keeping the private key on the device. The certificate vendor then uses a CA certificate registered with AWS IoT to create a device certificate from the CSR and return this certificate to the device.
+There are two flows for certificate rotation. In the fist case, device certificates are pre-created and registered before the rotation request. In this case the device requests a new certificate and is vended an S3 presigned URL in order to download the certificate package. In the second case, the device provides the certificate vendor module a CSR. In this way the device can request an updated certificate while keeping the private key on the device. The certificate vendor then uses a CA certificate registered with AWS IoT to create a device certificate from the CSR and return this certificate to the device.
 
 ## Pre-requisites
 
@@ -14,7 +14,7 @@ A certificate package comprising of the certificate, public key and private key 
 
 ### Certificate Creation with a device CSR
 
-A CA certificate needs to be registered with AWS IoT. In addtion, the CA private key needs to be encrypted and stored in EC2 Parameter store so the certificate vendor service can sign device certificates using the CA.
+A CA certificate needs to be registered with AWS IoT. In addtion, the CA private key needs to be encrypted and stored in EC2 Parameter store so the certificate vendor module can sign device certificates using the CA.
 
 ## Deployment
 
@@ -157,7 +157,7 @@ If any failures occur during this flow, a rejected message is sent to the device
 
 An AWS IoT policy must exist and be associated with the certificates to enforce the device to use its thing name as the MQTT clientId.  
 
-In addition the profile should be configured to allow devices to receive AWS IoT Jobs, and to allow for publishing requests to and receiving responses from the CDF Certificate Vendor module service as itself.
+In addition the profile should be configured to allow devices to receive AWS IoT Jobs, and to allow for publishing requests to and receiving responses from the CDF Certificate Vendor module as itself.
 
 Only apprvoed devices (devices that exist within the Device Registry or Asset Library) are authorized to request new certificates.
 

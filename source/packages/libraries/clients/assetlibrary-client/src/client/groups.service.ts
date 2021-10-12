@@ -92,6 +92,19 @@ export interface GroupsService {
     attachToGroup(sourceGroupPath: string, relationship: string, targetGroupPath: string, additionalHeaders?:RequestHeaders): Promise<void>;
 
     detachFromGroup(sourceGroupPath: string, relationship: string, targetGroupPath: string, additionalHeaders?:RequestHeaders): Promise<void>;
+
+    /**
+     * List all related groups of a specific group.
+     * @param groupPath Path of group for fetching the membership
+     * @param relationship The relationship between the group and groups
+     * @param template Optional filter to return a specific device sub-type
+     * @param direction Optional filter to return a specific direction
+     * @param offset Optional The index to start paginated results from
+     * @param count Optional The maximum number of results to return
+     * @param sort Optional The result returned by the specific sort
+     */
+    listGroupRelatedGroups(groupPath: string, relationship: string, template?: string, direction?: string, offset?: number, count?: number, sort?: string, additionalHeaders?:RequestHeaders): Promise<GroupResourceList>;
+
 }
 
 @injectable()
@@ -129,4 +142,7 @@ export class GroupsServiceBase extends ClientServiceBase {
         return PathHelper.encodeUrl('groups', sourceGroupPath, relationship, 'groups', targetGroupPath);
     }
 
+    protected groupRelatedGroupUrl(groupPath: string, relationship: string) : string {
+        return PathHelper.encodeUrl('groups', groupPath, relationship, 'groups');
+    }
 }

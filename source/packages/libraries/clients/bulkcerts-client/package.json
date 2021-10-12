@@ -12,8 +12,8 @@
     "test": "rushx lint && NODE_ENV= NODE_CONFIG_DIR='./src/config' jest --silent --passWithNoTests"
   },
    "dependencies": {
-    "@cdf/config-inject": "^3.0.0",
-    "@cdf/lambda-invoke": "^2.0.0",
+    "@cdf/config-inject": "^3.0.1",
+    "@cdf/lambda-invoke": "^2.0.1",
     "config": "3.3.6",
     "inversify": "5.1.1",
     "inversify-binding-decorators": "4.0.0",

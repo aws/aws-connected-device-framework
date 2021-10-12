@@ -15,7 +15,7 @@
     "test": "rushx lint && NODE_ENV=test NODE_CONFIG_DIR='src/config' jest --silent --passWithNoTests"
   },
   "dependencies": {
-    "@cdf/config-inject": "^3.0.0",
+    "@cdf/config-inject": "^3.0.1",
     "aws-iot-device-sdk": "2.2.8",
     "config": "3.3.6",
     "dayjs": "1.10.5",

@@ -22,6 +22,7 @@ export interface EventSourceDetailResource extends EventSourceSummaryResource {
 
     dynamoDb?: DynamoDbConfig;
     iotCore?: IotCoreConfig;
+    apigateway?: ApiGatewayConfig;
 
 }
 
@@ -51,5 +52,8 @@ type DynamoDbConfig = {
 };
 type IotCoreConfig = {
     mqttTopic: string;
+    attributes: {[key:string]:string};
+};
+type ApiGatewayConfig = {
     attributes: {[key:string]:string};
 };

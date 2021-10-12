@@ -32,6 +32,7 @@ import '../api/events/event.controller';
 import '../api/subscriptions/subscription.controller';
 import '../api/messages/messages.controller';
 import '../api/targets/target.controller';
+import '../api/messages/apigwtrigger.controller';
 import { AlertDao } from '../alerts/alert.dao';
 import { DDBStreamTransformer } from '../transformers/ddbstream.transformer';
 import { FilterService } from '../filter/filter.service';
@@ -41,6 +42,8 @@ import { SNSTarget } from '../api/targets/processors/sns.target';
 import { DynamodDBTarget } from '../api/targets/processors/dynamodb.target';
 import { DynamoDbEventSource } from '../api/eventsources/sources/dynamodb.source';
 import { IotCoreEventSource } from '../api/eventsources/sources/iotcore.source';
+import { ApiGatewayEventSource } from '../api/eventsources/sources/apigateway.source';
+import { ApigwTriggerService } from '../api/messages/apigwtrigger.service';
 import { DynamoDbUtils } from '../utils/dynamoDb.util';
 import { EventConditionsUtils } from '../api/events/event.models';
 import { PushTarget } from '../api/targets/processors/push.target';
@@ -61,6 +64,8 @@ container.bind<EventSourceAssembler>(TYPES.EventSourceAssembler).to(EventSourceA
 
 container.bind<DynamoDbEventSource>(TYPES.DynamoDbEventSource).to(DynamoDbEventSource).inSingletonScope();
 container.bind<IotCoreEventSource>(TYPES.IotCoreEventSource).to(IotCoreEventSource).inSingletonScope();
+container.bind<ApiGatewayEventSource>(TYPES.ApiGatewayEventSource).to(ApiGatewayEventSource).inSingletonScope();
+container.bind<ApigwTriggerService>(TYPES.ApigwTriggerService).to(ApigwTriggerService).inSingletonScope();
 
 container.bind<EventService>(TYPES.EventService).to(EventService).inSingletonScope();
 container.bind<EventDao>(TYPES.EventDao).to(EventDao).inSingletonScope();

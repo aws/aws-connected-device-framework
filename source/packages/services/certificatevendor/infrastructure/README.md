@@ -1,4 +1,4 @@
-# Deploying the Commands service
+# Deploying the Commands module
 
 ## Deployment Steps
 

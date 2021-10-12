@@ -1,6 +1,22 @@
 # Change Log - @cdf/assetlibrary
 
-This log was last generated on Fri, 20 Aug 2021 16:07:58 GMT and should not be manually modified.
+This log was last generated on Wed, 29 Sep 2021 23:23:30 GMT and should not be manually modified.
+
+## 5.3.4
+Wed, 29 Sep 2021 23:23:30 GMT
+
+### Patches
+
+- remove template from cache after being updated
+
+## 5.3.3
+Tue, 28 Sep 2021 22:04:37 GMT
+
+### Patches
+
+- Replaced references to CDF components being referred to as services to modules to avoid confusion with AWS services.
+- Await neptune close connection
+- Fixed errors in swagger docs.
 
 ## 5.3.2
 Fri, 20 Aug 2021 16:07:58 GMT

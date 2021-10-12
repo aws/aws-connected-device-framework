@@ -69,7 +69,7 @@ export class TypesDaoFull extends BaseDaoFull {
 
         // logger.debug(`types.full.dao get: traverser: ${traverser.toString()}`);
         } finally {
-            conn.close();
+            await conn.close();
         }
 
         logger.debug(`types.full.dao get: query: ${JSON.stringify(result)}`);
@@ -134,7 +134,7 @@ export class TypesDaoFull extends BaseDaoFull {
 
             results = await traverser.toList();
         } finally {
-            conn.close();
+            await conn.close();
         }
 
         logger.debug(`types.full.dao get: results: ${JSON.stringify(results)}`);
@@ -186,7 +186,7 @@ export class TypesDaoFull extends BaseDaoFull {
             // logger.debug(`types.full.dao create: traverser: ${JSON.stringify(traverser.toString())}`);
             result = await traverser.next();
         } finally {
-            conn.close();
+            await conn.close();
         }
 
         logger.debug(`types.full.dao create: query: ${JSON.stringify(result)}`);
@@ -303,7 +303,7 @@ export class TypesDaoFull extends BaseDaoFull {
 
             result = await traverser.next();
         } finally {
-            conn.close();
+            await conn.close();
         }
 
         logger.debug(`types.full.dao updateDraft: result: ${JSON.stringify(result)}`);
@@ -490,7 +490,7 @@ export class TypesDaoFull extends BaseDaoFull {
 
             result = await traverser.next();
         } finally {
-            conn.close();
+            await conn.close();
         }
 
         logger.debug(`types.full.dao createDraft: result: ${JSON.stringify(result)}`);
@@ -555,7 +555,7 @@ export class TypesDaoFull extends BaseDaoFull {
                     next();
             }
         } finally {
-            conn.close();
+            await conn.close();
         }
 
         if (query===undefined) {
@@ -580,7 +580,7 @@ export class TypesDaoFull extends BaseDaoFull {
 
             await g.V(dbId).drop().iterate();
         } finally {
-            conn.close();
+            await conn.close();
         }
 
         logger.debug(`types.full.dao delete: exit`);
@@ -620,7 +620,7 @@ export class TypesDaoFull extends BaseDaoFull {
 
             result = await traverser.next();
         } finally {
-            conn.close();
+            await conn.close();
         }
 
         const isValid = (result!==undefined && result.value!==undefined);
@@ -697,7 +697,7 @@ export class TypesDaoFull extends BaseDaoFull {
             logger.debug(`types.full.dao validateRelationshipsByPath: traverser: ${JSON.stringify(traverser.toString())}`);
             results = await traverser.next();
         } finally {
-            conn.close();
+            await conn.close();
         }
 
         // parse the results
@@ -803,7 +803,7 @@ export class TypesDaoFull extends BaseDaoFull {
             return isValid;
         } catch (err) {
             logger.error(JSON.stringify(err));
-            conn.close();
+            await conn.close();
         }
 
         return true;
@@ -817,7 +817,7 @@ export class TypesDaoFull extends BaseDaoFull {
         try {
             result = await conn.traversal.V().hasLabel(templateId).count().next();
         } finally {
-            conn.close();
+            await conn.close();
         }
 
         logger.debug(`types.full.dao countInUse: exit: ${JSON.stringify(result)}`);

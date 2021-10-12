@@ -229,6 +229,41 @@ When('I retrieve {string} device members of {string}', async function (template:
     }
 });
 
+When('I retrieve groups related of {string} with {string} relationship and following parameters:', async function (groupPath:string, relationship:string, data:TableDefinition) {
+    let template = undefined;
+    let direction = undefined;
+    let offset = undefined;
+    let count = undefined;
+    let sort = undefined;
+
+    const rowHash = data.rowsHash();
+    Object.keys(rowHash).forEach( param => {
+        const queries:string[] = rowHash[param].split(',');
+        if (queries && queries.length>0) {
+            queries.forEach(query=> {
+                const attrs:string[] = query.split(':');
+                if (param==='templateId') {
+                    template = attrs[0];
+                } else if (param==='direction') {
+                    direction = attrs[0];
+                } else if (param==='offset') {
+                    offset = attrs[0];
+                } else if (param==='count') {
+                    count = attrs[0];
+                } else if (param==='sort') {
+                    sort = attrs[0];
+                }
+            });
+        }
+    });
+
+    try {
+        this['members'] = await groupService.listGroupRelatedGroups(groupPath, relationship, template, direction, offset, count, sort, getAdditionalHeaders(this));
+    } catch (err) {
+        this[RESPONSE_STATUS]=err.status;
+    }
+});
+
 Then('group contains {int} groups', async function (total:number) {
     expect((<GroupResourceList>this['members']).results.length).eq(total);
 });

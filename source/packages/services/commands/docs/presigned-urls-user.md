@@ -2,7 +2,7 @@
 
 ## Introduction
 
-As part of defining a command template within the commands service, pre-signed urls can be configured to provide a secure way to download files.  In addition, command templates can be configured to allow for devices to request pre-signed urls to upload content relevant to the command.
+As part of defining a command template within the commands module, pre-signed urls can be configured to provide a secure way to download files.  In addition, command templates can be configured to allow for devices to request pre-signed urls to upload content relevant to the command.
 
 ## Enabling Downloading Of Files
 

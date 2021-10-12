@@ -25,7 +25,7 @@
 
 ### Features
 
-* **auth:** certain services tested ([4253b65](4253b65750e52dd962a3a42dde05626044bb79cc))
+* **auth:** certain modules tested ([4253b65](4253b65750e52dd962a3a42dde05626044bb79cc))
 * **auth:** complete private api and api key auth modes ([46d0183](46d0183e779e21a7ad39e879481b369bec2d060f))
 
 ## [@cdf/commands-v3.2.0](@cdf/commands-v3.1.3...@cdf/commands-v3.2.0) (2020-05-29)
@@ -33,7 +33,7 @@
 
 ### Features
 
-* **greengrass:** provisioning and deployment service ([5072214](5072214fb81a0d6a8f8641bf0f52fefb7f2ad950))
+* **greengrass:** provisioning and deployment module ([5072214](5072214fb81a0d6a8f8641bf0f52fefb7f2ad950))
 
 ## [@cdf/commands-v3.1.3](@cdf/commands-v3.1.2...@cdf/commands-v3.1.3) (2020-05-26)
 

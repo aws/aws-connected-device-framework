@@ -2,11 +2,11 @@
 
 ## Introduction
 
-The Asset Library History service is an optional service that stores all changes made to Asset Library resources (devices, groups, policies and/or templates).
+The Asset Library History module is an optional module that stores all changes made to Asset Library resources (devices, groups, policies and/or templates).
 
 ## Architecture
 
-The following represents the architecture of the Asset Library History, along with required the [Asset Library](../assetlibrary/README.md) service.
+The following represents the architecture of the Asset Library History, along with required the [Asset Library](../assetlibrary/README.md) module.
 
 ![Architecture](<../assetlibrary/docs/images/cdf-core-hla-Asset%20Library.png>)
 
@@ -160,7 +160,7 @@ GET /devices?timeFrom=2018-03-15T00:00:00+00:00&timeTo=2018-04-15T00:00:00+00:00
 
 ## Datastore
 
-DynamoDB is the datastore serving the Asset Library History service.  A single DynamoDB table exists as follows:
+DynamoDB is the datastore serving the Asset Library History module.  A single DynamoDB table exists as follows:
 
 Primary Key:
 
@@ -229,7 +229,7 @@ The above partition/sort keys allow for the following queries to be made:
 
 ## Taking Action on Events
 
-The Asset Library History service subcribes to the Asset Library published [events](../assetlibrary/docs/events.md) via an AWS Iot Rule.  The action taken for each event is as follows:
+The Asset Library History module subcribes to the Asset Library published [events](../assetlibrary/docs/events.md) via an AWS Iot Rule.  The action taken for each event is as follows:
 
 Note: the `saved` action below involves writing both a new event item with timestamp set appropriately, along with replicating the item to the `latest` item.
 

@@ -46,6 +46,8 @@ export class SearchRequestModel {
 	startsWith?: SearchRequestFilters;
 	endsWith?: SearchRequestFilters;
 	contains?: SearchRequestFilters;
+  exist?: SearchRequestFilters;
+  nexist?: SearchRequestFilters;
 
 	facetField?: SearchRequestFacet;
 
@@ -63,6 +65,8 @@ export class SearchRequestModel {
 		this.startsWith = other.startsWith;
 		this.endsWith = other.endsWith;
 		this.contains = other.contains;
+    this.exist = other.exist;
+    this.nexist = other.nexist;
 		this.facetField = other.facetField;
 		this.summarize = other.summarize;
 	}
@@ -138,6 +142,14 @@ export class SearchRequestModel {
 			qs = qs.concat(this.buildQSValues('contains', this.contains, true));
 		}
 
+    if (this.exist) {
+			qs = qs.concat(this.buildQSValues('exist', this.exist, true));
+		}
+
+		if (this.nexist) {
+			qs = qs.concat(this.buildQSValues('nexist', this.nexist, true));
+		}
+
 		if (this.summarize) {
 			qs.push(`summarize=${this.summarize}`);
 		}
@@ -199,6 +211,15 @@ export class SearchRequestModel {
 		if (this.contains) {
 			const values=this.buildQSValues('contains', this.contains);
 			qs['contains'] = values.map(v=> v.split('=')[1]);
+		}
+    if (this.exist) {
+			const values=this.buildQSValues('exist', this.exist);
+			qs['exist'] = values.map(v=> v.split('=')[1]);
+		}
+
+		if (this.nexist) {
+			const values=this.buildQSValues('nexist', this.nexist);
+			qs['nexist'] = values.map(v=> v.split('=')[1]);
 		}
 
 		if (this.summarize) {

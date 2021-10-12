@@ -96,7 +96,7 @@ aws-connected-device-framework> rush update       # refresh dependencies again
 
 ## Running a module
 
-Each service has its configuration properties stored in an external file.  We follow a convention of storing these property files within a _cdf-infrastructure-*_ project (e.g. _cdf-infrastructure-demo_), where the name of the property file is of the pattern "<environment\>-config.json".
+Each module has its configuration properties stored in an external file.  We follow a convention of storing these property files within a _cdf-infrastructure-*_ project (e.g. _cdf-infrastructure-demo_), where the name of the property file is of the pattern "<environment\>-config.json".
 
 When running locally, the first step is to define which configuration file to use.  There are 2 ways of doing this based on personal preference - persisted or temporary. As an example, to use the `development-local-config.json` configuration files located within each projects folder in the _cdf-infrastructure-*_ project we would set the environment locally as follows:
 
@@ -194,10 +194,10 @@ Directory | Description
 aws-connected-device-framework/cicd/ | The CloudFormation template to deploy the cicd pipeline, along with the related CodeBuild scripts
 aws-connected-device-framework/common/ | All build and package manager related files
 aws-connected-device-framework/documentation/ | CDF core related documentation
-aws-connected-device-framework/infrastructure/ | The main deployment script for deploying the CDF core services, along with CloudFormation templates that are not specific to any service
+aws-connected-device-framework/infrastructure/ | The main deployment script for deploying the CDF core modules, along with CloudFormation templates that are not specific to any module
 aws-connected-device-framework/packages/integration-tests/ | BDD related automated integration tests
 aws-connected-device-framework/packages/libraries/ | All internal libraries, as well as CDF client libraries
-aws-connected-device-framework/packages/services/ | Deployable services, such as the Asset Library
+aws-connected-device-framework/packages/services/ | Deployable modules, such as the Asset Library
 
 
 ## FAQ
@@ -215,4 +215,4 @@ aws-connected-device-framework/packages/services/ | Deployable services, such as
     + simplify the dependency management across projects (reduced the development environment footprint from >6GB to 300MB)
     + allow for atomic commits spanning multiple projects, simplifying branching, merging and code reviews
 
-    `pnmp` in conjunction with `rush` have features that allow us to efficiently work with monorepos, while still being able to bundle individual services in the way required by AWS Lambda.
+    `pnmp` in conjunction with `rush` have features that allow us to efficiently work with monorepos, while still being able to bundle individual modules in the way required by AWS Lambda.

@@ -34,7 +34,7 @@ export class InitDaoFull extends BaseDaoFull {
         try {
             query = await conn.traversal.V('type___device').next();
         } finally {
-            conn.close();
+            await conn.close();
         }
 
         logger.debug(`init.dao isInitialized: query: ${JSON.stringify(query)}`);
@@ -59,7 +59,7 @@ export class InitDaoFull extends BaseDaoFull {
                 addV('root').property(process.t.id, 'group___/').property('name','/').property('groupPath','/').
                 iterate();
         } finally {
-            conn.close();
+            await conn.close();
         }
     }
 
@@ -71,7 +71,7 @@ export class InitDaoFull extends BaseDaoFull {
             await conn.traversal.V('group___/').property('groupPath','/').
                 iterate();
         } finally {
-            conn.close();
+            await conn.close();
         }
     }
 }

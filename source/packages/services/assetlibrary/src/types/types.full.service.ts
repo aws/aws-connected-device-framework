@@ -12,15 +12,15 @@
  *********************************************************************************************************************/
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../di/types';
-import {logger} from '../utils/logger';
+import { logger } from '../utils/logger';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as util from 'util';
-import { TypesDaoFull, GroupType} from './types.full.dao';
-import { TypeModel, TypeDefinitionModel, TypeDefinitionStatus, TemplateDefinitionJson} from './types.models';
+import { TypesDaoFull, GroupType } from './types.full.dao';
+import { TypeModel, TypeDefinitionModel, TypeDefinitionStatus, TemplateDefinitionJson } from './types.models';
 import { SchemaValidatorService, SchemaValidationResult } from '../utils/schemaValidator.service';
-import {TypeCategory, Operation} from './constants';
-import {EventEmitter, Type, Event} from '../events/eventEmitter.service';
+import { TypeCategory, Operation } from './constants';
+import { EventEmitter, Type, Event } from '../events/eventEmitter.service';
 import * as NodeCache from 'node-cache';
 import ow from 'ow';
 import { TypesService } from './types.service';
@@ -32,20 +32,20 @@ export class TypesServiceFull implements TypesService {
 
     private _readFileAsync = util.promisify(fs.readFile);
 
-    private _typesCache = new NodeCache.default({stdTTL:config.get('cache.types.ttl')});
+    private _typesCache = new NodeCache.default({ stdTTL: config.get('cache.types.ttl') });
 
-    constructor( @inject(TYPES.TypesDao) private typesDao: TypesDaoFull,
+    constructor(@inject(TYPES.TypesDao) private typesDao: TypesDaoFull,
         @inject(TYPES.SchemaValidatorService) private validator: SchemaValidatorService,
-        @inject(TYPES.EventEmitter) private eventEmitter: EventEmitter) {}
+        @inject(TYPES.EventEmitter) private eventEmitter: EventEmitter) { }
 
     private async loadSchema(templateId: string): Promise<string> {
         logger.debug(`types.full.service loadSchema: in: templateId:${templateId}`);
 
-        ow(templateId,'templateId', ow.string.nonEmpty);
+        ow(templateId, 'templateId', ow.string.nonEmpty);
 
         let json: string;
         try {
-            json = await this._readFileAsync(path.join(__dirname, `definitions/${templateId}.schema.json`), {encoding: 'utf8'});
+            json = await this._readFileAsync(path.join(__dirname, `definitions/${templateId}.schema.json`), { encoding: 'utf8' });
         } catch (err) {
             throw new Error('INVALID_TYPE');
         }
@@ -54,26 +54,26 @@ export class TypesServiceFull implements TypesService {
         return json;
     }
 
-    public async validateSubType(templateId:string, category:TypeCategory, document:unknown, op:Operation): Promise<SchemaValidationResult> {
+    public async validateSubType(templateId: string, category: TypeCategory, document: unknown, op: Operation): Promise<SchemaValidationResult> {
         logger.debug(`types.full.service validateSubType: in: templateId: ${templateId}, category: ${category}, document: ${JSON.stringify(document)}, op:${op}`);
 
-        ow(templateId,'templateId', ow.string.nonEmpty);
-        ow(category,'category', ow.string.nonEmpty);
+        ow(templateId, 'templateId', ow.string.nonEmpty);
+        ow(category, 'category', ow.string.nonEmpty);
         ow(document, ow.object.nonEmpty);
 
         // any ids need to be lowercase
-        templateId=templateId.toLowerCase();
+        templateId = templateId.toLowerCase();
 
         // if we have not preprocessed the subtype schema before, retrieve the category schema then merge it with the sub type
         let subTypeSchema = this._typesCache.get(templateId) as TemplateDefinitionJson;
-        if (subTypeSchema===undefined) {
+        if (subTypeSchema === undefined) {
             // retrieve the category schema
             let schema = this._typesCache.get(category) as TemplateDefinitionJson;
-            if (schema===undefined) {
+            if (schema === undefined) {
                 schema = JSON.parse(await this.loadSchema(category));
                 this._typesCache.set(category, schema);
             }
-            if (schema===undefined) {
+            if (schema === undefined) {
                 throw new Error('TEMPLATE_NOT_FOUND');
             }
             await this.initializeSubTypeSchema(templateId, category, schema);
@@ -83,10 +83,10 @@ export class TypesServiceFull implements TypesService {
 
         // if this is an update rather than a create, we need to relax the required fields
         // on the schema validation (if not provided) as updates occur via a patch
-        if (op===Operation.UPDATE) {
+        if (op === Operation.UPDATE) {
             const definedAsCategoryRequired = subTypeSchema.required as string[];
-            if (definedAsCategoryRequired!==undefined) {
-                const categoryRequired:string[] = [];
+            if (definedAsCategoryRequired !== undefined) {
+                const categoryRequired: string[] = [];
                 definedAsCategoryRequired.forEach(r => {
                     if (Object.prototype.hasOwnProperty.call(document, r)) {
                         categoryRequired.push(r);
@@ -95,10 +95,10 @@ export class TypesServiceFull implements TypesService {
                 subTypeSchema.required = categoryRequired;
             }
             const definedAsSubTypeRequired = subTypeSchema.definitions.subType.required as string[];
-            if (definedAsSubTypeRequired!==undefined) {
-                const subTypeRequired:string[] = [];
+            if (definedAsSubTypeRequired !== undefined) {
+                const subTypeRequired: string[] = [];
                 definedAsSubTypeRequired.forEach(r => {
-                    if (Object.prototype.hasOwnProperty.call(document,r)) {
+                    if (Object.prototype.hasOwnProperty.call(document, r)) {
                         subTypeRequired.push(r);
                     }
                 });
@@ -111,40 +111,40 @@ export class TypesServiceFull implements TypesService {
         return await this.validator.validate(subTypeSchema['$id'], subTypeSchema, document, op);
     }
 
-    private async initializeSubTypeSchema(templateId:string, category:TypeCategory, schema:TemplateDefinitionJson): Promise<void> {
+    private async initializeSubTypeSchema(templateId: string, category: TypeCategory, schema: TemplateDefinitionJson): Promise<void> {
         logger.debug(`types.full.service initializeSubTypeSchema: in: category:${category}, templateId:${templateId}, schema:${JSON.stringify(schema)}`);
 
-        const superTypeCategory = (category===TypeCategory.Component) ? TypeCategory.Device : category;
+        const superTypeCategory = (category === TypeCategory.Component) ? TypeCategory.Device : category;
         const typeModel = await this.get(templateId, superTypeCategory, TypeDefinitionStatus.published);
-        if (typeModel===undefined) {
-            throw new Error ('TEMPLATE_NOT_FOUND');
+        if (typeModel === undefined) {
+            throw new Error('TEMPLATE_NOT_FOUND');
         }
 
-        const typeDef =  typeModel.schema.definition;
+        const typeDef = typeModel.schema.definition;
         schema.definitions.subType.properties = typeDef.properties;
         schema.definitions.subType.required = typeDef.required;
 
         // does the sub-type support components?
-        if (category===TypeCategory.Device) {
-            if (typeModel.schema.definition.components!==undefined && typeModel.schema.definition.components.length>0) {
+        if (category === TypeCategory.Device) {
+            if (typeModel.schema.definition.components !== undefined && typeModel.schema.definition.components.length > 0) {
                 // if so, augment the main type schema with the component schemas
                 let componentSchema = this._typesCache.get('component') as TemplateDefinitionJson;
-                if (componentSchema===undefined) {
+                if (componentSchema === undefined) {
                     componentSchema = JSON.parse(await this.loadSchema('component'));
                     this._typesCache.set('component', componentSchema);
                 }
-                const componentSchemas:{[key:string]: TemplateDefinitionJson} = {};
-                for(const componentTemplateId of typeModel.schema.definition.components) {
-                    if (componentSchemas[componentTemplateId]!==undefined) {
+                const componentSchemas: { [key: string]: TemplateDefinitionJson } = {};
+                for (const componentTemplateId of typeModel.schema.definition.components) {
+                    if (componentSchemas[componentTemplateId] !== undefined) {
                         continue;
                     }
                     const componentModel = await this.get(componentTemplateId, TypeCategory.Device, TypeDefinitionStatus.published);
                     const componentDef = componentModel.schema.definition;
                     componentSchema.definitions.subType.properties = componentDef.properties;
                     componentSchema.definitions.subType.required = componentDef.required;
-                    componentSchemas[componentTemplateId]=componentSchema;
+                    componentSchemas[componentTemplateId] = componentSchema;
                 }
-                Object.keys(componentSchemas).forEach(key=> {
+                Object.keys(componentSchemas).forEach(key => {
                     schema.definitions.componentTypes.items.anyOf.push(componentSchemas[key]);
                 });
 
@@ -159,14 +159,14 @@ export class TypesServiceFull implements TypesService {
         logger.debug(`types.full.service initializeSubTypeSchema: exit: schema:${JSON.stringify(schema)}`);
     }
 
-    public async validateType(category:TypeCategory, document:TemplateDefinitionJson, op:Operation): Promise<SchemaValidationResult> {
+    public async validateType(category: TypeCategory, document: TemplateDefinitionJson, op: Operation): Promise<SchemaValidationResult> {
         logger.debug(`types.full.service validateType: in: category: ${category}, document: ${JSON.stringify(document)}`);
 
-        ow(category,'category', ow.string.nonEmpty);
+        ow(category, 'category', ow.string.nonEmpty);
         ow(document, ow.object.nonEmpty);
 
         let schema = this._typesCache.get(category) as TemplateDefinitionJson;
-        if (schema===undefined) {
+        if (schema === undefined) {
             schema = JSON.parse(await this.loadSchema(category));
             this._typesCache.set(category, schema);
         }
@@ -179,18 +179,18 @@ export class TypesServiceFull implements TypesService {
     public async get(templateId: string, category: TypeCategory, status: TypeDefinitionStatus): Promise<TypeModel> {
         logger.debug(`types.full.service get: in: templateId: ${templateId}, category: ${category}, status: ${status}`);
 
-        ow(templateId,'templateId', ow.string.nonEmpty);
-        ow(category,'category', ow.string.nonEmpty);
+        ow(templateId, 'templateId', ow.string.nonEmpty);
+        ow(category, 'category', ow.string.nonEmpty);
 
-        if (status===undefined) {
-            status=TypeDefinitionStatus.published;
+        if (status === undefined) {
+            status = TypeDefinitionStatus.published;
         }
 
         // any ids need to be lowercase
-        templateId=templateId.toLowerCase();
+        templateId = templateId.toLowerCase();
 
-        const result  = await this.typesDao.get(templateId, category, status);
-        if (result!==undefined) {
+        const result = await this.typesDao.get(templateId, category, status);
+        if (result !== undefined) {
             result.schema.definition.relations = result.schema.relations;
         }
 
@@ -198,37 +198,37 @@ export class TypesServiceFull implements TypesService {
         return result;
     }
 
-    public async list(category:TypeCategory, status:TypeDefinitionStatus, offset?:number, count?:number, sort?:SortKeys): Promise<TypeModel[]> {
+    public async list(category: TypeCategory, status: TypeDefinitionStatus, offset?: number, count?: number, sort?: SortKeys): Promise<TypeModel[]> {
         logger.debug(`types.full.service list: in: category:${category}, status:${status}, offset:${offset}, count:${count}, sort:${JSON.stringify(sort)}`);
 
-        ow(category,'category', ow.string.nonEmpty);
+        ow(category, 'category', ow.string.nonEmpty);
 
-        if (status===undefined) {
-            status=TypeDefinitionStatus.published;
+        if (status === undefined) {
+            status = TypeDefinitionStatus.published;
         }
 
-        const results  = await this.typesDao.list(category, status, offset, count, sort);
-        if (results!==undefined && results.length>=0) {
-            for(const r of results) {
+        const results = await this.typesDao.list(category, status, offset, count, sort);
+        if (results !== undefined && results.length >= 0) {
+            for (const r of results) {
                 r.schema.definition.relations = r.schema.relations;
             }
         }
         return results;
     }
 
-    private async validateRelations(definition:TypeDefinitionModel): Promise<boolean> {
+    private async validateRelations(definition: TypeDefinitionModel): Promise<boolean> {
         logger.debug(`types.full.service validateRelations: in: definition:${JSON.stringify(definition)}`);
 
         let linkedTypesValid = true;
 
         // validate that any types provided as part of the in/out relations exist
-        if (definition.relations!==undefined) {
-            let linkedTypes:string[]=[];
-            if (definition.relations.out!==undefined) {
-                Object.keys(definition.relations.out).forEach(k=> definition.relations.out[k].forEach(v=> linkedTypes.push(v)));
+        if (definition.relations !== undefined) {
+            let linkedTypes: string[] = [];
+            if (definition.relations.out !== undefined) {
+                Object.keys(definition.relations.out).forEach(k => definition.relations.out[k].forEach(v => linkedTypes.push(v)));
             }
-            if (definition.relations.in!==undefined) {
-                Object.keys(definition.relations.in).forEach(k=> definition.relations.in[k].forEach(v=> linkedTypes.push(v)));
+            if (definition.relations.in !== undefined) {
+                Object.keys(definition.relations.in).forEach(k => definition.relations.in[k].forEach(v => linkedTypes.push(v)));
             }
             linkedTypes = Array.from(new Set(linkedTypes));
 
@@ -238,16 +238,16 @@ export class TypesServiceFull implements TypesService {
         return linkedTypesValid;
     }
 
-    public async create(templateId:string, category:TypeCategory, definition:TypeDefinitionModel): Promise<SchemaValidationResult> {
+    public async create(templateId: string, category: TypeCategory, definition: TypeDefinitionModel): Promise<SchemaValidationResult> {
         logger.debug(`types.full.service create: in: templateId:${templateId}, category:${category}, definition:${JSON.stringify(definition)}`);
 
-        ow(templateId,'templateId', ow.string.nonEmpty);
-        ow(category,'category', ow.string.nonEmpty);
+        ow(templateId, 'templateId', ow.string.nonEmpty);
+        ow(category, 'category', ow.string.nonEmpty);
 
-        let r:SchemaValidationResult;
+        let r: SchemaValidationResult;
 
         // any ids need to be lowercase
-        templateId=templateId.toLowerCase();
+        templateId = templateId.toLowerCase();
 
         // remove any non printable characters from the id
         templateId = templateId.replace(/[^\x20-\x7E]+/g, '');
@@ -265,13 +265,13 @@ export class TypesServiceFull implements TypesService {
 
         // validate that any types provided as part of the in/out relations exist
         if (!await this.validateRelations(definition)) {
-            r= {isValid:false, errors:{relations:'Invalid relation types'}};
+            r = { isValid: false, errors: { relations: 'Invalid relation types' } };
             logger.debug(`types.full.service create: exit: ${JSON.stringify(r)}`);
             return r;
         }
 
         // todo: move to an assembler function
-        const model:TypeModel= {
+        const model: TypeModel = {
             templateId,
             category,
             schema: {
@@ -282,32 +282,35 @@ export class TypesServiceFull implements TypesService {
             }
         }
         delete definition.relations;
-        
+
         // save to datastore
         await this.typesDao.create(model);
+
+        // delete the template cache
+        await this._typesCache.del(templateId);
 
         // fire event
         await this.eventEmitter.fire({
             objectId: templateId,
-            type: (category===TypeCategory.Group) ? Type.groupTemplate : Type.deviceTemplate,
+            type: (category === TypeCategory.Group) ? Type.groupTemplate : Type.deviceTemplate,
             event: Event.create,
             payload: JSON.stringify(model)
         });
 
-        r= {isValid:true};
+        r = { isValid: true };
         logger.debug(`types.full.service create: exit:${JSON.stringify(r)}`);
         return r;
 
     }
 
-    public async delete(templateId:string, category:TypeCategory): Promise<void> {
+    public async delete(templateId: string, category: TypeCategory): Promise<void> {
         logger.debug(`types.full.service delete: in: templateId:${templateId}, category:${category}`);
 
-        ow(templateId,'templateId', ow.string.nonEmpty);
-        ow(category,'category', ow.string.nonEmpty);
+        ow(templateId, 'templateId', ow.string.nonEmpty);
+        ow(category, 'category', ow.string.nonEmpty);
 
         // any ids need to be lowercase
-        templateId=templateId.toLowerCase();
+        templateId = templateId.toLowerCase();
 
         if (!this.isValidCategory(category)) {
             throw new Error('Invalid category');
@@ -315,8 +318,8 @@ export class TypesServiceFull implements TypesService {
 
         //  ensure no devices exist of this template
         const inUse = await this.typesDao.countInUse(templateId);
-        if (inUse>0) {
-            throw new Error ('TEMPLATE_IN_USE');
+        if (inUse > 0) {
+            throw new Error('TEMPLATE_IN_USE');
         }
 
         const model = await this.get(templateId, category, TypeDefinitionStatus.published);
@@ -325,7 +328,7 @@ export class TypesServiceFull implements TypesService {
         // fire event
         await this.eventEmitter.fire({
             objectId: templateId,
-            type: (category===TypeCategory.Group) ? Type.groupTemplate : Type.deviceTemplate,
+            type: (category === TypeCategory.Group) ? Type.groupTemplate : Type.deviceTemplate,
             event: Event.delete,
             payload: JSON.stringify(model)
         });
@@ -333,14 +336,14 @@ export class TypesServiceFull implements TypesService {
         logger.debug('types.full.service delete: exit:');
     }
 
-    public async update(templateId:string, category:TypeCategory, definition:TypeDefinitionModel): Promise<SchemaValidationResult> {
+    public async update(templateId: string, category: TypeCategory, definition: TypeDefinitionModel): Promise<SchemaValidationResult> {
         logger.debug(`types.full.service update: in: templateId:${templateId}, category:${category}, definition:${JSON.stringify(definition)}`);
 
-        ow(templateId,'templateId', ow.string.nonEmpty);
-        ow(category,'category', ow.string.nonEmpty);
+        ow(templateId, 'templateId', ow.string.nonEmpty);
+        ow(category, 'category', ow.string.nonEmpty);
 
         // any ids need to be lowercase
-        templateId=templateId.toLowerCase();
+        templateId = templateId.toLowerCase();
 
         if (!this.isValidCategory(category)) {
             throw new Error('Invalid category');
@@ -355,11 +358,11 @@ export class TypesServiceFull implements TypesService {
         // validate that any types provided as part of the in/out relations exist
         if (!this.validateRelations(definition)) {
             logger.debug('types.full.service create: exit: linkedTypesValid:false');
-            return {isValid:false, errors:{}};
+            return { isValid: false, errors: {} };
         }
 
         // todo: move to an assembler function
-        const model:TypeModel= {
+        const model: TypeModel = {
             templateId,
             category,
             schema: {
@@ -369,31 +372,31 @@ export class TypesServiceFull implements TypesService {
             }
         }
         delete definition.relations;
-        
+
         // do we have a draft version already?
         const draft = await this.get(model.templateId, model.category, TypeDefinitionStatus.draft
-            );
+        );
 
         // if we do, lets go ahead and update it
-        if (draft!==undefined) {
+        if (draft !== undefined) {
             await this.typesDao.updateDraft(draft, model);
         } else {
             // but if we dont, lets go ahead and create one
             const published = await this.get(model.templateId, model.category, TypeDefinitionStatus.published);
 
             // if we don't have a published one either, then the type does not exist, we can't proceed
-            if (published===undefined) {
+            if (published === undefined) {
                 throw new Error(`Type ${model.templateId} ${model.category} does not exist`);
             }
 
-            model.schema.version=published.schema.version+1;
+            model.schema.version = published.schema.version + 1;
             await this.typesDao.createDraft(model);
         }
 
         // fire event
         await this.eventEmitter.fire({
             objectId: templateId,
-            type: (category===TypeCategory.Group) ? Type.groupTemplate : Type.deviceTemplate,
+            type: (category === TypeCategory.Group) ? Type.groupTemplate : Type.deviceTemplate,
             event: Event.modify,
             payload: JSON.stringify(model),
             attributes: {
@@ -401,20 +404,20 @@ export class TypesServiceFull implements TypesService {
             }
         });
 
-        const r:SchemaValidationResult= {isValid:true};
+        const r: SchemaValidationResult = { isValid: true };
         logger.debug(`types.full.service update: exit:${JSON.stringify(r)}`);
         return r;
 
     }
 
-    public async publish(templateId:string, category:TypeCategory): Promise<void> {
+    public async publish(templateId: string, category: TypeCategory): Promise<void> {
         logger.debug(`types.full.service publish: in: templateId:${templateId}, category:${category}`);
 
-        ow(templateId,'templateId', ow.string.nonEmpty);
-        ow(category,'category', ow.string.nonEmpty);
+        ow(templateId, 'templateId', ow.string.nonEmpty);
+        ow(category, 'category', ow.string.nonEmpty);
 
         // any ids need to be lowercase
-        templateId=templateId.toLowerCase();
+        templateId = templateId.toLowerCase();
 
         if (!this.isValidCategory(category)) {
             throw new Error('Invalid category');
@@ -426,7 +429,7 @@ export class TypesServiceFull implements TypesService {
         // fire event
         await this.eventEmitter.fire({
             objectId: templateId,
-            type: (category===TypeCategory.Group) ? Type.groupTemplate : Type.deviceTemplate,
+            type: (category === TypeCategory.Group) ? Type.groupTemplate : Type.deviceTemplate,
             event: Event.modify,
             attributes: {
                 status: 'published'
@@ -435,19 +438,19 @@ export class TypesServiceFull implements TypesService {
         logger.debug(`types.full.service publish: exit:`);
     }
 
-    public async validateRelationshipsByType(templateId:string, rels:DirectionStringToArrayMap): Promise<boolean> {
+    public async validateRelationshipsByType(templateId: string, rels: DirectionStringToArrayMap): Promise<boolean> {
         logger.debug(`types.full.service validateRelationships: in: templateId:${templateId}, rels:${JSON.stringify(rels)}`);
 
-        ow(templateId,'templateId', ow.string.nonEmpty);
+        ow(templateId, 'templateId', ow.string.nonEmpty);
 
-        if (rels===undefined || (rels.in===undefined && rels.out===undefined)) {
+        if (rels === undefined || (rels.in === undefined && rels.out === undefined)) {
             // nothing to validate
             logger.debug(`types.full.service validateRelationshipsByType: exit: true (nothing)`);
             return true;
         }
 
         // any ids need to be lowercase
-        templateId=templateId.toLowerCase();
+        templateId = templateId.toLowerCase();
 
         // check in datastore
         const isValid = await this.typesDao.validateRelationshipsByType(templateId, rels);
@@ -456,26 +459,26 @@ export class TypesServiceFull implements TypesService {
         return isValid;
     }
 
-    public async validateRelationshipsByPath(templateId:string, rels:DirectionStringToArrayMap): Promise<boolean> {
+    public async validateRelationshipsByPath(templateId: string, rels: DirectionStringToArrayMap): Promise<boolean> {
         // example:  in: templateId:edge, in:{}, out:{"manufactured_by":["/suppliers/bosch"]
         logger.debug(`types.full.service validateRelationshipsByPath: in: templateId:${templateId}, rels:${JSON.stringify(rels)}`);
 
-        ow(templateId,'templateId', ow.string.nonEmpty);
+        ow(templateId, 'templateId', ow.string.nonEmpty);
 
-        if (rels===undefined || (rels.in===undefined && rels.out===undefined)) {
+        if (rels === undefined || (rels.in === undefined && rels.out === undefined)) {
             // nothing to validate
             logger.debug(`types.full.service validateRelationshipsByPath: exit: true (nothing)`);
             return true;
         }
 
         // any ids need to be lowercase
-        templateId=templateId.toLowerCase();
+        templateId = templateId.toLowerCase();
 
         // retrieve the associated group types and allowed relations
         const groupInfo = await this.typesDao.validateRelationshipsByPath(templateId, rels);
 
         // ensure the provided group paths are valid
-        if (groupInfo.invalidGroups!==undefined && groupInfo.invalidGroups.length>0) {
+        if (groupInfo.invalidGroups !== undefined && groupInfo.invalidGroups.length > 0) {
             logger.debug(`types.full.service validateRelationshipsByPath: exit: false (invalid group paths: ${groupInfo.invalidGroups})`);
             return false;
         }
@@ -485,8 +488,8 @@ export class TypesServiceFull implements TypesService {
             for (const rel_name of Object.keys(rels[in_out])) {
 
                 // is the relation type allowed?
-                const allowed_rel = groupInfo.rels.filter(r=> r.name===rel_name.toLowerCase());
-                if (allowed_rel===undefined || allowed_rel===null || allowed_rel.length===0) {
+                const allowed_rel = groupInfo.rels.filter(r => r.name === rel_name.toLowerCase());
+                if (allowed_rel === undefined || allowed_rel === null || allowed_rel.length === 0) {
                     logger.debug(`types.full.service validateRelationshipsByPath: exit: false (invalid relation: ${rel_name})`);
                     return false;
                 }
@@ -494,14 +497,14 @@ export class TypesServiceFull implements TypesService {
                 for (const rel_path of rels[in_out][rel_name]) {
 
                     // is the type of target groups allowed for this relation?
-                    let group:GroupType;
-                    let valid=false;
-                    if (in_out==='in') {
-                        group = groupInfo.groupTypes_in.filter(gt=> gt.path===rel_path.toLowerCase())[0];
-                        valid = allowed_rel.filter(r=> r.outType===group.template).length>0;
+                    let group: GroupType;
+                    let valid = false;
+                    if (in_out === 'in') {
+                        group = groupInfo.groupTypes_in.filter(gt => gt.path === rel_path.toLowerCase())[0];
+                        valid = allowed_rel.filter(r => r.outType === group.template).length > 0;
                     } else {
-                        group = groupInfo.groupTypes_out.filter(gt=> gt.path===rel_path.toLowerCase())[0];
-                        valid = allowed_rel.filter(r=> r.inType===group.template).length>0;
+                        group = groupInfo.groupTypes_out.filter(gt => gt.path === rel_path.toLowerCase())[0];
+                        valid = allowed_rel.filter(r => r.inType === group.template).length > 0;
                     }
                     if (!valid) {
                         logger.debug(`types.full.service validateRelationshipsByPath: exit: false (invalid group ${rel_path} for relation: ${rel_name})`);
@@ -516,14 +519,14 @@ export class TypesServiceFull implements TypesService {
     }
 
     private isValidCategory(category: string): boolean {
-        return (category===TypeCategory.Device || category===TypeCategory.Group);
+        return (category === TypeCategory.Device || category === TypeCategory.Group);
     }
 
-    private async validateSchema(definition: unknown, op:Operation): Promise<SchemaValidationResult> {
+    private async validateSchema(definition: unknown, op: Operation): Promise<SchemaValidationResult> {
         // validate the provided schema
         const cacheKey = 'specializedTypeDefinition';
         let schema = this._typesCache.get(cacheKey) as TemplateDefinitionJson;
-        if (schema===undefined) {
+        if (schema === undefined) {
             schema = JSON.parse(await this.loadSchema(cacheKey));
             this._typesCache.set(cacheKey, schema);
         }

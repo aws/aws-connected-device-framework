@@ -32,7 +32,7 @@
 
 ### Features
 
-* **auth:** certain services tested ([4253b65](4253b65750e52dd962a3a42dde05626044bb79cc))
+* **auth:** certain modules tested ([4253b65](4253b65750e52dd962a3a42dde05626044bb79cc))
 
 ## [@cdf/lambda-invoke-v1.0.1](@cdf/lambda-invoke-v1.0.0...@cdf/lambda-invoke-v1.0.1) (2020-05-29)
 

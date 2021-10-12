@@ -75,14 +75,14 @@ The CDF modules form a layer above the AWS building blocks as shown in the follo
 
 ### Bulk Certificate Creation
 
-With this service a user can request large batches (think 1000's) of device certificates and public/private keys which can later be loaded onto a device. This is useful where customers have a hardware vendor who may not have the ability to create their own device certificates, and the customer does not want to share their CA, so instead can provide access to this service to create the device certificates as required.
+With this module a user can request large batches (think 1000's) of device certificates and public/private keys which can later be loaded onto a device. This is useful where customers have a hardware vendor who may not have the ability to create their own device certificates, and the customer does not want to share their CA, so instead can provide access to this module to create the device certificates as required.
 
 See [overview](source/packages/services/bulkcerts/README.md).
 ### Provisioning
 
-The provisioning service utilizes [AWS IoT Device Provisioning](https://docs.aws.amazon.com/iot/latest/developerguide/iot-provision.html) to provide both programmatic and bulk device provisioning capabilities.  The provisioning service simplifies the use of AWS IoT Device Provisioning by managing a set of provisioning templates to use with both provisioning approaches.
+The provisioning module utilizes [AWS IoT Device Provisioning](https://docs.aws.amazon.com/iot/latest/developerguide/iot-provision.html) to provide both programmatic and bulk device provisioning capabilities.  The provisioning module simplifies the use of AWS IoT Device Provisioning by managing a set of provisioning templates to use with both provisioning approaches.
 
-In addition, it allows for extending the capabilities of the AWS IoT Device Provisioning templating functionality.  To provide an example, an AWS IoT Device Provisioning template allows for creating certificate resources by providing a certificate signing request (CSR), a certificate ID of an existing device certificate, or a device certificate created with a CA certificate registered with AWS IoT.  This service extends these capabilities by also providing the ability to automatically create (and return) new keys and certificates for a device, or to create a device certificate without the CA being registered in the account.
+In addition, it allows for extending the capabilities of the AWS IoT Device Provisioning templating functionality.  To provide an example, an AWS IoT Device Provisioning template allows for creating certificate resources by providing a certificate signing request (CSR), a certificate ID of an existing device certificate, or a device certificate created with a CA certificate registered with AWS IoT.  This module extends these capabilities by also providing the ability to automatically create (and return) new keys and certificates for a device, or to create a device certificate without the CA being registered in the account.
 
 See [overview](source/packages/services/provisioning/README.md).
 ### Greengrass Provisioning

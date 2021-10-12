@@ -2,13 +2,13 @@
 
 # Introduction
 
-The _Simulation Launcher_ micro-service, along with the [_Simulation Manager_](../simulation-manager/README.md) micro-service, together form the _CDF Fleet Simulator_ module.
+The _Simulation Launcher_ module, along with the [_Simulation Manager_](../simulation-manager/README.md) module, together form the _CDF Fleet Simulator_ module.
 
 It is responsible for launching and managing Fargate instances that run multiple instances of a device simulator.
 
 ## Architecture
 
-The following represents the architecture of the Simulation Launcher micro-service along with its mandatory sibling [Simulation Manager](../simulation-manager/README.md) micro-service.
+The following represents the architecture of the Simulation Launcher module along with its mandatory sibling [Simulation Manager](../simulation-manager/README.md) module.
 
 ![Architecture](<docs/images/cdf-core-hla-simulator.png>)
 

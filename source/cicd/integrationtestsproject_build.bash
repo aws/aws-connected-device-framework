@@ -112,5 +112,4 @@ npm run integration-test -- "features/assetlibrary/$ASSETLIBRARY_MODE/*.feature"
 npm run integration-test -- "features/bulkcerts/*.feature"
 npm run integration-test -- "features/commands/*.feature"
 npm run integration-test -- "features/notifications/*.feature"
-npm run integration-test -- "features/greengrass-deployment/*.feature"
-npm run integration-test -- "features/greengrass-provisioning/*.feature"
+

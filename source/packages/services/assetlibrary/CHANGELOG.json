@@ -2,6 +2,41 @@
   "name": "@cdf/assetlibrary",
   "entries": [
     {
+      "version": "5.3.4",
+      "tag": "@cdf/assetlibrary_v5.3.4",
+      "date": "Wed, 29 Sep 2021 23:23:30 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "remove template from cache after being updated"
+          }
+        ]
+      }
+    },
+    {
+      "version": "5.3.3",
+      "tag": "@cdf/assetlibrary_v5.3.3",
+      "date": "Tue, 28 Sep 2021 22:04:37 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Replaced references to CDF components being referred to as services to modules to avoid confusion with AWS services."
+          },
+          {
+            "comment": "Await neptune close connection"
+          },
+          {
+            "comment": "Fixed errors in swagger docs."
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@cdf/config-inject\" from `^3.0.0` to `^3.0.1`"
+          }
+        ]
+      }
+    },
+    {
       "version": "5.3.2",
       "tag": "@cdf/assetlibrary_v5.3.2",
       "date": "Fri, 20 Aug 2021 16:07:58 GMT",

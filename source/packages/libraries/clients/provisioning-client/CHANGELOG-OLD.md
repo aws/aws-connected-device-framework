@@ -23,14 +23,14 @@
 
 ### Features
 
-* **auth:** certain services tested ([4253b65](4253b65750e52dd962a3a42dde05626044bb79cc))
+* **auth:** certain modules tested ([4253b65](4253b65750e52dd962a3a42dde05626044bb79cc))
 
 ## [@cdf/provisioning-client-v3.3.0](@cdf/provisioning-client-v3.2.0...@cdf/provisioning-client-v3.3.0) (2020-05-29)
 
 
 ### Features
 
-* **greengrass:** provisioning and deployment service ([5072214](5072214fb81a0d6a8f8641bf0f52fefb7f2ad950))
+* **greengrass:** provisioning and deployment module ([5072214](5072214fb81a0d6a8f8641bf0f52fefb7f2ad950))
 
 ## [@cdf/provisioning-client-v3.2.0](@cdf/provisioning-client-v3.1.0...@cdf/provisioning-client-v3.2.0) (2020-01-06)
 

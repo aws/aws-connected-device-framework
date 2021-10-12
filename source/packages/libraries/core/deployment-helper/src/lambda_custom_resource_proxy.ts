@@ -33,11 +33,16 @@ exports.handler = async (event: CustomResourceEvent, context: unknown) => {
     try {
         const resourceResult = await customResourceManager[event.RequestType.toLowerCase()](event);
         
-        logger.debug(`existing PhysicalResourceId: ${event.PhysicalResourceId}`);
-        
-        const physicalResourceId = event.PhysicalResourceId || uuid();
-        
-        logger.debug(`Determined PhysicalResourceId:${physicalResourceId}`);
+        let physicalResourceId = '';
+        if (event.PhysicalResourceId) {
+            physicalResourceId = event.PhysicalResourceId;
+            
+            logger.debug(`Found existing event PhysicalResourceId: ${event.PhysicalResourceId})`);
+        } else {
+            physicalResourceId = uuid();
+            
+            logger.debug(`PhysicalResourceId not found in event generating PhysicalResourceId : ${event.PhysicalResourceId})`)
+        }
         
         return await send(event, context, 'SUCCESS', resourceResult, physicalResourceId);
     } catch (err) {

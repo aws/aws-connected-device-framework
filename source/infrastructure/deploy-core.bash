@@ -79,6 +79,13 @@ OPTIONAL ARGUMENTS
     -m (string)   Asset Library mode ('full' or 'lite').  Defaults to full if not provided.
     -p (string)   The name of the key pair to use to deploy the Bastion EC2 host (required for Asset Library (full) mode or Private auth mode).
     -i (string)   The remote access CIDR to configure Bastion SSH access (e.g. 1.2.3.4/32) (required for Asset Library (full) mode).
+    -u (string)   The Neptune DB Instance type. Must be from the following list (default is db.r4.xlarge):
+                  - db.t3.medium
+                  - db.r4.large
+                  - db.r4.xlarge
+                  - db.r4.2xlarge
+                  - db.r4.4xlarge
+                  - db.r4.8xlarge
 
     -x (number)   No. of concurrent executions to provision.
     -s (flag)     Apply autoscaling as defined in ./cfn-autosclaling.yml
@@ -118,7 +125,7 @@ EOF
 # by the service specific deployment script.
 #-------------------------------------------------------------------------------
 
-while getopts ":e:E:c:p:i:k:K:b:a:y:z:C:A:Nv:g:n:m:o:r:I:x:sD:SBYR:P:" opt; do
+while getopts ":e:E:c:p:i:k:K:b:a:y:z:C:A:Nv:u:g:n:m:o:r:I:x:sD:SBYR:P:" opt; do
   case $opt in
     e  ) ENVIRONMENT=$OPTARG;;
     E  ) CONFIG_ENVIRONMENT=$OPTARG;;
@@ -135,6 +142,7 @@ while getopts ":e:E:c:p:i:k:K:b:a:y:z:C:A:Nv:g:n:m:o:r:I:x:sD:SBYR:P:" opt; do
     s  ) APPLY_AUTOSCALING=true;;
 
     D  ) ASSETLIBRARY_DB_SNAPSHOT_IDENTIFIER=$OPTARG;;
+    u  ) NEPTUNE_DB_INSTANCE_TYPE=$OPTARG;;
 
     S  ) NOTIFICATIONS_CUSTOM_SUBNETS=true;;
 
@@ -258,6 +266,7 @@ The AWS Connected Device Framework (CDF) will install using the following config
     -K (KMS_KEY_ALIAS)                  : $KMS_KEY_ALIAS
 
     -m (ASSETLIBRARY_MODE)              : $ASSETLIBRARY_MODE
+    -u (NEPTUNE_DB_INSTANCE_TYPE)       : $NEPTUNE_DB_INSTANCE_TYPE
     -i (BASTION_REMOTE_ACCESS_CIDR)     : $BASTION_REMOTE_ACCESS_CIDR
     -x (CONCURRENT_EXECUTIONS):         : $CONCURRENT_EXECUTIONS
     -s (APPLY_AUTOSCALING):             : $APPLY_AUTOSCALING
@@ -553,6 +562,11 @@ if [ -f "$assetlibrary_config" ]; then
     if [ -n "$CUSTOM_RESOURCE_VPC_LAMBDA_ARN" ]; then
         custom_resource_vpc_lambda_arn="-l $CUSTOM_RESOURCE_VPC_LAMBDA_ARN"
     fi
+
+    neptune_instance_type=
+    if [ -n "$NEPTUNE_DB_INSTANCE_TYPE" ]; then
+        neptune_instance_type="-u $NEPTUNE_DB_INSTANCE_TYPE"
+    fi
     
     cd "$root_dir/packages/services/assetlibrary"
     infrastructure/deploy-cfn.bash \
@@ -567,6 +581,7 @@ if [ -f "$assetlibrary_config" ]; then
         -i "$VPCE_ID" \
         -r "$PRIVATE_ROUTE_TABLE_IDS" \
         -m "$ASSETLIBRARY_MODE" \
+        $neptune_instance_type \
         $custom_resource_vpc_lambda_arn \
         $cognito_auth_arg \
         $lambda_invoker_auth_arg \
@@ -837,63 +852,6 @@ else
 fi
 
 ############################################################################################
-# GREENGRASS PROVISIONING
-############################################################################################
- greengrassProvisioning_config=$CONFIG_LOCATION/greengrass-provisioning/$CONFIG_ENVIRONMENT-config.json
- if [ -f "$greengrassProvisioning_config" ]; then
-
-     logTitle 'Deploying Greengrass Provisioning'
-
-     cd "$root_dir/packages/services/greengrass-provisioning"
-
-     infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
-     infrastructure/deploy-cfn.bash \
-         -e "$ENVIRONMENT" \
-         -k "$KMS_KEY_ID" \
-         -c "$greengrassProvisioning_config"  \
-         -y "$TEMPLATE_SNIPPET_S3_URI_BASE" \
-         -z "$API_GATEWAY_DEFINITION_TEMPLATE" \
-         -a "$API_GATEWAY_AUTH" \
-         -v "$VPC_ID" \
-         -g "$CDF_SECURITY_GROUP_ID" \
-         -n "$PRIVATE_SUBNET_IDS" \
-         -i "$VPCE_ID" \
-         $cognito_auth_arg \
-         $lambda_invoker_auth_arg \
-         $AWS_SCRIPT_ARGS
- else
-    echo 'NOT DEPLOYING: Greengrass Provisioning'
- fi
-
-############################################################################################
-# GREENGRASS DEPLOYMENT
-############################################################################################
- greengrassDeployment_config=$CONFIG_LOCATION/greengrass-deployment/$CONFIG_ENVIRONMENT-config.json
- if [ -f "$greengrassDeployment_config" ]; then
-     logTitle 'Deploying Greengrass Deployment'
-
-     cd "$root_dir/packages/services/greengrass-deployment"
-
-     infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
-     infrastructure/deploy-cfn.bash \
-         -e "$ENVIRONMENT" \
-         -c "$greengrassDeployment_config" \
-         -y "$TEMPLATE_SNIPPET_S3_URI_BASE" \
-         -z "$API_GATEWAY_DEFINITION_TEMPLATE" \
-         -a "$API_GATEWAY_AUTH" \
-         -v "$VPC_ID" \
-         -g "$CDF_SECURITY_GROUP_ID" \
-         -n "$PRIVATE_SUBNET_IDS" \
-         -i "$VPCE_ID" \
-         -k "$KMS_KEY_ID" \
-         $cognito_auth_arg \
-         $lambda_invoker_auth_arg \
-         $AWS_SCRIPT_ARGS
- else
-    echo 'NOT DEPLOYING: Greengrass Deployment'
- fi
-
-############################################################################################
 # SIMULATION LAUNCHER
 ############################################################################################
 simulation_launcher_config=$CONFIG_LOCATION/simulation-launcher/$CONFIG_ENVIRONMENT-config.json
@@ -910,7 +868,6 @@ if [ -f "$simulation_launcher_config" ]; then
 
     infrastructure/package-cfn.bash -b "$DEPLOY_ARTIFACTS_STORE_BUCKET" $AWS_SCRIPT_ARGS
     infrastructure/deploy-cfn.bash \
-        -b \
         -e "$ENVIRONMENT" \
         -c "$simulation_launcher_config" \
         -l "$CUSTOM_RESOURCE_LAMBDA_ARN" \

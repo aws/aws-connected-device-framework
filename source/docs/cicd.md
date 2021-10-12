@@ -37,7 +37,7 @@ OPTIONAL ARGUMENTS
   -p (string)   The name of the key pair to use to deploy the Bastion EC2 host.
   -o (string)   ID of public subnets (comma delimited) to deploy the Bastion into (required if -N set, and Asset Library 'full' mode)
   -i (string)   The remote access CIDR to configure Bastion SSH access (e.g. 1.2.3.4/32).
-  -k (string)   The KMS Key id that the provisoning service will use to decrypt sensitive information.  If not provided, a new KMS key with the alias 'cdf' is created.
+  -k (string)   The KMS Key id that the provisoning module will use to decrypt sensitive information.  If not provided, a new KMS key with the alias 'cdf' is created.
 
   -a (string)   Name of custom auth cloudformation stack (if running with custom auth enabled)
 
@@ -45,7 +45,7 @@ OPTIONAL ARGUMENTS
   -P (string)   AWS profile.
 ```
 
-As the CI/CD pipeline deploys the entire CDF core services, it needs the same parameters as what is used to deploy the core CDF services into an account.
+As the CI/CD pipeline deploys the entire CDF core modules, it needs the same parameters as what is used to deploy the core CDF modules into an account.
 
 ## Implementation
 
@@ -81,7 +81,7 @@ Builds all projects, followed by running all unit tests.
 
 #### post_build step:  `cicd/buildproject_postbuild.bash`
 
-If unit tests were successful, a semantic release of all changed projects is performed by analyzing all the git commit messages since the last install.  Any updated version numbers are committed back to the git code repo.  All services are then bundled ready for deploy.
+If unit tests were successful, a semantic release of all changed projects is performed by analyzing all the git commit messages since the last install.  Any updated version numbers are committed back to the git code repo.  All modules are then bundled ready for deploy.
 
 ### deploy_staging stage
 
@@ -91,7 +91,7 @@ Downloads and installs `[jq](https://stedolan.github.io/jq/)`, `[mkdocs](https:/
 
 #### build step:  `cicd/deployproject_build.bash`
 
-Builds and executes the main `infrastructure/deploy-core.bash` script to deploy all updated services to the staging environment.
+Builds and executes the main `infrastructure/deploy-core.bash` script to deploy all updated modules to the staging environment.
 
 #### post_build step:  `cicd/deployproject_postbuild.bash`
 
@@ -119,7 +119,7 @@ Downloads and installs `[jq](https://stedolan.github.io/jq/)`, `[mkdocs](https:/
 
 #### build step:  `cicd/deployproject_build.bash`
 
-Builds and executes the main `infrastructure/deploy-core.bash` script to deploy all updated services to the live environment.
+Builds and executes the main `infrastructure/deploy-core.bash` script to deploy all updated modules to the live environment.
 
 #### post_build step:  `cicd/deployproject_postbuild.bash`
 

@@ -113,6 +113,8 @@ export class GroupsServiceFull implements GroupsService {
     }
 
     private setIdsToLowercase(model:GroupItem) {
+        logger.debug(`groups.full.service setIdsToLowercase: in:`);
+         
         if (model.groupPath) {
             model.groupPath = model.groupPath.toLowerCase();
         }
@@ -122,6 +124,41 @@ export class GroupsServiceFull implements GroupsService {
         if (model.parentPath) {
             model.parentPath = model.parentPath.toLowerCase();
         }
+        if (model.groups) {
+            if (model.groups.in) {
+                /* lowerrcasting values */
+                Object.keys(model.groups.in).forEach(k=> {
+                    model.groups.in[k] = model.groups.in[k].map(p => {
+                        if (p===undefined) {
+                            return p;
+                        } else {
+                            return p.toLowerCase();
+                        }
+                    });
+                });
+                /* lowercasting keys */
+                model.groups.in = Object.fromEntries(
+                    Object.entries(model.groups.in).map(([k,v]) => [k.toLowerCase(),v])
+                );
+            }
+            if (model.groups.out) {
+                 /* lowerrcasting values */
+                Object.keys(model.groups.out).forEach(k=> {
+                    model.groups.out[k] = model.groups.out[k].map(p => {
+                        if (p===undefined) {
+                            return p;
+                        } else {
+                            return p.toLowerCase();
+                        }
+                    });
+                });
+                /* lowercasting keys */
+                model.groups.out = Object.fromEntries(
+                    Object.entries(model.groups.out).map(([k,v]) => [k.toLowerCase(),v])
+                );
+            }
+        }
+        logger.debug(`groups.full.service setIdsToLowercase: exit:`);
     }
 
     public  async ___test___applyProfile(model: GroupItem, applyProfile?:string) : Promise<GroupItem> {

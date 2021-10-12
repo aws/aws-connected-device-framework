@@ -61,7 +61,7 @@ export class AuthzDaoFull extends BaseDaoFull {
 
             results = await traverser.toList();
         } finally {
-            conn.close();
+            await conn.close();
         }
 
         logger.debug(`authz.full.dao listAuthorizedHierarchies: results:${JSON.stringify(results)}`);

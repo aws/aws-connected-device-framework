@@ -58,7 +58,7 @@ Has the following deprecated modules permanently removed:
 
 In this relase we introduce two distinct deployment methods for CDF:
 -   `Multi stack deployment`: This is the recommended deployment method. In this deployment method each module is deployed as independant CloudFormation stacks. This deployment method is compatible with older CDF deployments and should be used to migrate existing CDF projects. Refer to the [migration guide](./migration.md) for further details.   
--   `Single stack deployment`: This deployment method should only be used for setting up demo CDF environments in a single click and deploy fashion. It deploys a nested CDF stack that creates all the required services. This deployment method is not compatible with older CDF deployments. This deployment method should not be used in a production environment.
+-   `Single stack deployment`: This deployment method should only be used for setting up demo CDF environments in a single click and deploy fashion. It deploys a nested CDF stack that creates all the required modules. This deployment method is not compatible with older CDF deployments. This deployment method should not be used in a production environment.
  
 Includes the following breaking changes:
 -   Any application that has a CloudFormation stack that depends on the CloudFormation outputs that CDF provides, will be affected. Refer to the [migration guide](./migration.md) for further details.  
@@ -129,7 +129,7 @@ Includes breaking changes to the deploy process:
     - Select said security group, then click the *Actions > Delete Security Group* button
     - If `security group associated` is present in *reason*, click to load affected security groups, click _Inbound rules), then remove the said security group from the list
     - If `network interfaces associated` is present in *reason*, click to load affected network interfaces. For each affected network interface, select it, then click *Actions > Change security groups*.  Unselect the `Asset library security group` and instead select the `default VPC security group`.  Click _Save_
-- Due to final lambda bundle size constraints, dependency declaration for CDF libraries have changed to use peer dependencies.  This means that all declared dependencies at the CDF library level now must be explicitly declared by the consuming service, such as a facade service.  
+- Due to final lambda bundle size constraints, dependency declaration for CDF libraries have changed to use peer dependencies.  This means that all declared dependencies at the CDF library level now must be explicitly declared by the consuming module, such as a facade module.  
     - Refer to the differences in `cdf-facade-demo/package.json` for details of how to update your own facade dependencies
     - Refer to the differences in `cdf-infrastructure-demo/deploy.bash` for details of how to update your own deploy script with the updated build process
 - This release introduced APIGW authentication which resulted in almost all deploy scripts changing.
