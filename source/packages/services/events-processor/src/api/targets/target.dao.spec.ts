@@ -63,10 +63,7 @@ describe('TargetDao', () => {
                 pk: `S:${stubbedGoodEmailItem.subscriptionId}`,
                 sk: `ST:email:${stubbedGoodEmailItem.address}`,
                 gsi2Key: `ES:${eventSourceId}:${principal}:${principalValue}`,
-                gsi2Sort: `S:${stubbedGoodEmailItem.subscriptionId}:ST:email:${stubbedGoodEmailItem.address}`,
-                address: stubbedGoodEmailItem.address,
-                subscriptionId: stubbedGoodEmailItem.subscriptionId,
-                targetType: stubbedGoodEmailItem.targetType
+                gsi2Sort: `S:${stubbedGoodEmailItem.subscriptionId}:ST:email:${stubbedGoodEmailItem.address}`
             }
         };
 
