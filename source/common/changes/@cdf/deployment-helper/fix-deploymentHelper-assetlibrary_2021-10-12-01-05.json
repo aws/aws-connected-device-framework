@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/deployment-helper",
+      "comment": "The PhysicalResourceId parameter is added to the function for sending CloudFormation response.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/deployment-helper",
+  "email": "tsugunao@amazon.com"
+}
