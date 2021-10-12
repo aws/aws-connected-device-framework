@@ -39,7 +39,9 @@ export class EventService  {
         this.validateEvent(resource);
 
         // set defaults
-        resource.eventId = uuid();
+        if (resource.eventId === undefined) {
+            resource.eventId = uuid();
+        }
         if (resource.enabled===undefined) {
             resource.enabled = true;
         }
