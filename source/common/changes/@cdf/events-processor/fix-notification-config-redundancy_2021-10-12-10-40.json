@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/events-processor",
+      "comment": "redundancy attributes logic removed in events-processor's target dao",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/events-processor",
+  "email": "tsugunao@amazon.com"
+}
