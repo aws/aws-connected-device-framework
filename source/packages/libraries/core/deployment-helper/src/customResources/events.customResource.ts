@@ -13,7 +13,7 @@ import { CustomResource } from './customResource';
 import ow from 'ow';
 
 @injectable()
-export class EventSourceCustomResource implements CustomResource {
+export class EventsCustomResource implements CustomResource {
 
     constructor(
         @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService) private lambdaInvoker: LambdaInvokerService
@@ -22,11 +22,12 @@ export class EventSourceCustomResource implements CustomResource {
     protected headers:{[key:string]:string};
 
     public async create(customResourceEvent: CustomResourceEvent) : Promise<unknown> {
-        logger.debug(`EventSourceCustomResource: create: in: customResourceEvent: ${JSON.stringify(customResourceEvent)}`);
+        logger.debug(`EventsCustomResource: create: in: customResourceEvent: ${JSON.stringify(customResourceEvent)}`);
 
         const functionName = customResourceEvent?.ResourceProperties?.FunctionName;
         const contentType = customResourceEvent?.ResourceProperties?.ContentType;
         const rawBody = customResourceEvent?.ResourceProperties?.Body;
+        const eventSourceId = customResourceEvent?.ResourceProperties?.EventSourceId;
 
         ow(functionName, ow.string.nonEmpty);
         ow(contentType, ow.string.nonEmpty);
@@ -35,36 +36,36 @@ export class EventSourceCustomResource implements CustomResource {
         const headers = this.getHeaders(contentType);
         const body = JSON.parse(rawBody);
 
-        // create the eventSource
-        const apiEvent = new LambdaApiGatewayEventBuilder()
-            .setMethod('POST')
-            .setPath('/eventsources')
-            .setHeaders(headers)
-            .setBody(body);
+        const invocationPromises = body.map((singleEvent: unknown)  => {
+            logger.debug(`EventsCustomResource: create: event: ${JSON.stringify(singleEvent)}`);
+            
+            // create the event
+            const apiEvent = new LambdaApiGatewayEventBuilder()
+                .setMethod('POST')
+                .setPath(`/eventsources/${eventSourceId}/events`)
+                .setHeaders(headers)
+                .setBody(singleEvent);
+                
+            return this.lambdaInvoker.invoke(functionName, apiEvent);
+        });
 
-        let response;
-        try {
-            response = await this.lambdaInvoker.invoke(functionName, apiEvent);
-        } catch (err) {
-            return response;
-        }
+        const responses = Promise.allSettled(invocationPromises).then((results: any) => {
+            results.forEach((result: any) => {
+                logger.debug(`EventsCustomResource: create: result: ${JSON.stringify(result)}`);    
+            });
+        });
         
-        let eventSourceId = response?.header?.location?.split('/');
-        
-        logger.debug(`EventSourceCustomResource: create: eventSourceId: ${eventSourceId[eventSourceId.length - 1]}`);
-        
-        return { eventSourceId: eventSourceId[eventSourceId.length - 1] };
+        return responses;
 
     }
 
     public async update(customResourceEvent: CustomResourceEvent) : Promise<unknown> {
-        logger.debug(`EventSourceCustomResource: update: in: customResourceEvent: ${JSON.stringify(customResourceEvent)}`);
-
+        logger.debug(`EventsCustomResource: update: in: customResourceEvent: ${JSON.stringify(customResourceEvent)}`);
         return await this.create(customResourceEvent);
     }
 
     public async delete(customResourceEvent: CustomResourceEvent) : Promise<unknown> {
-        logger.debug(`EventSourceCustomResource: delete: in: customResourceEvent: ${JSON.stringify(customResourceEvent)}`);
+        logger.debug(`EventsCustomResource: delete: in: customResourceEvent: ${JSON.stringify(customResourceEvent)}`);
         // no delete
          return {};
     }

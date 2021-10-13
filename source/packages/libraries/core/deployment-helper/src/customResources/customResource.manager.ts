@@ -38,6 +38,7 @@ import { IotDeviceDefenderCustomResource } from './iotDeviceDefender.customResou
 import { VpcEndpointCustomResource } from './vpcEndpoint.customResource';
 import { RotateCertificatesJobCustomResource } from './rotateCertificatesJob.customresource';
 import { EventSourceCustomResource } from './eventSource.customResource';
+import { EventsCustomResource } from './events.customResource';
 
 @injectable()
 export class CustomResourceManager {
@@ -71,7 +72,8 @@ export class CustomResourceManager {
 
         @inject(TYPES.S3PutObjectCustomResource) protected s3PutObjectCustomResource: S3PutObjectCustomResource,
         @inject(TYPES.IotDeviceDefenderCustomResource) protected iotDeviceDefenderCustomResource: IotDeviceDefenderCustomResource,
-        @inject(TYPES.EventSourceCustomResource) protected eventSourceCustomResource: EventSourceCustomResource
+        @inject(TYPES.EventSourceCustomResource) protected eventSourceCustomResource: EventSourceCustomResource,
+        @inject(TYPES.EventsCustomResource) protected eventsCustomResource: EventsCustomResource
     ) {
         this.customResources = {};
 
@@ -103,6 +105,7 @@ export class CustomResourceManager {
         this.customResources['Custom::IotDeviceDefender'] = iotDeviceDefenderCustomResource;
         
         this.customResources['Custom::EventSource'] = eventSourceCustomResource;
+        this.customResources['Custom::Events'] = eventsCustomResource;
     }
 
     public async create(event: CustomResourceEvent) : Promise<unknown> {

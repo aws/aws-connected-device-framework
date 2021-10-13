@@ -50,5 +50,6 @@ export const TYPES = {
     S3PutObjectCustomResource: Symbol.for('S3PutObjectCustomResource'),
     IotDeviceDefenderCustomResource: Symbol.for('IotDeviceDefenderCustomResource'),
     
-    EventSourceCustomResource: Symbol.for('EventSourceCustomResource')
+    EventSourceCustomResource: Symbol.for('EventSourceCustomResource'),
+    EventsCustomResource: Symbol.for('EventsCustomResource')
 };
