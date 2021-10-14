@@ -531,6 +531,9 @@
      * The default branch name. This tells "rush change" which remote branch to compare against.
      * The default value is "master"
      */
+    /*  INTERNAL REPO:  */
+    // "defaultBranch": "master",
+    /* EXTERNAL REPO: */
     "defaultBranch": "main",
 
     /**
