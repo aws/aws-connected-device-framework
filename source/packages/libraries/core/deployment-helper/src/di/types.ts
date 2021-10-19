@@ -48,6 +48,8 @@ export const TYPES = {
     VpcEndpointCustomResource: Symbol.for('VpcEndpointCustomResource'),
 
     S3PutObjectCustomResource: Symbol.for('S3PutObjectCustomResource'),
-    IotDeviceDefenderCustomResource: Symbol.for('IotDeviceDefenderCustomResource')
-
+    IotDeviceDefenderCustomResource: Symbol.for('IotDeviceDefenderCustomResource'),
+    
+    EventSourceCustomResource: Symbol.for('EventSourceCustomResource'),
+    EventsCustomResource: Symbol.for('EventsCustomResource')
 };
