@@ -2,6 +2,21 @@
   "name": "@cdf/assetlibrary",
   "entries": [
     {
+      "version": "5.3.5",
+      "tag": "@cdf/assetlibrary_v5.3.5",
+      "date": "Tue, 19 Oct 2021 23:02:07 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Allow selection of neptune DB instance from deployment scripts"
+          },
+          {
+            "comment": "add lowercasting to create group API"
+          }
+        ]
+      }
+    },
+    {
       "version": "5.3.4",
       "tag": "@cdf/assetlibrary_v5.3.4",
       "date": "Wed, 29 Sep 2021 23:23:30 GMT",

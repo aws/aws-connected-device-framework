@@ -1,6 +1,14 @@
 # Change Log - @cdf/assetlibrary
 
-This log was last generated on Wed, 29 Sep 2021 23:23:30 GMT and should not be manually modified.
+This log was last generated on Tue, 19 Oct 2021 23:02:07 GMT and should not be manually modified.
+
+## 5.3.5
+Tue, 19 Oct 2021 23:02:07 GMT
+
+### Patches
+
+- Allow selection of neptune DB instance from deployment scripts
+- add lowercasting to create group API
 
 ## 5.3.4
 Wed, 29 Sep 2021 23:23:30 GMT
