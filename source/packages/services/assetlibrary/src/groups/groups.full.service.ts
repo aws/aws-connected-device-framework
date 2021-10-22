@@ -96,7 +96,7 @@ export class GroupsServiceFull implements GroupsService {
                 success++;
             } catch (err) {
                 //errors[group.groupPath] = err;
-                errors[`${group.parentPath}\${group.name}`] = err;
+                errors[`${group.parentPath}/${group.name}`] = err;
                 failed++;
             }
         }
