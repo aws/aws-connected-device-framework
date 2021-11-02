@@ -66,8 +66,56 @@ export class EventsCustomResource implements CustomResource {
 
     public async delete(customResourceEvent: CustomResourceEvent) : Promise<unknown> {
         logger.debug(`EventsCustomResource: delete: in: customResourceEvent: ${JSON.stringify(customResourceEvent)}`);
-        // no delete
-         return {};
+
+        const functionName = customResourceEvent?.ResourceProperties?.FunctionName;
+        const contentType = customResourceEvent?.ResourceProperties?.ContentType;
+        const rawBody = customResourceEvent?.ResourceProperties?.Body;
+        const eventSourceId = customResourceEvent?.ResourceProperties?.EventSourceId;
+
+        ow(functionName, ow.string.nonEmpty);
+        ow(contentType, ow.string.nonEmpty);
+        ow(rawBody, ow.string.nonEmpty);
+        ow(eventSourceId, ow.string.nonEmpty);
+        
+        const headers = this.getHeaders(contentType);
+        const path = `/eventsources/${eventSourceId}/events`;
+        
+        const listEvent = new LambdaApiGatewayEventBuilder()
+            .setMethod('GET')
+            .setPath(path)
+            .setHeaders(headers);
+            
+        let eventsResponse;
+        try {
+            eventsResponse = await this.lambdaInvoker.invoke(functionName, listEvent);
+        } catch (err) {
+            if (err.status === 404) {
+                return eventsResponse;
+            }
+            return eventsResponse;
+        }
+        
+        logger.debug(`EventsCustomResource: delete: eventsResponse: ${JSON.stringify(eventsResponse)}`);
+        
+        const invocationPromises = eventsResponse.body.results.map((singleEvent: any) => {
+            logger.debug(`EventsCustomResource: delete: singleEvent: ${JSON.stringify(singleEvent)}`);
+            
+            // delete the event
+            const apiEvent = new LambdaApiGatewayEventBuilder()
+                .setMethod('DELETE')
+                .setPath(`/events/${singleEvent.eventId}`)
+                .setHeaders(headers);
+                
+            return this.lambdaInvoker.invoke(functionName, apiEvent);
+        });
+
+        const responses = Promise.allSettled(invocationPromises).then((results: any) => {
+            results.forEach((result: any) => {
+                logger.debug(`EventsCustomResource: delete: result: ${JSON.stringify(result)}`);    
+            });
+        });
+        
+        return responses;
     }
 
     protected getHeaders(contentType:string): {[key:string]:string} {

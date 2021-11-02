@@ -66,7 +66,7 @@ export class EventSourceCustomResource implements CustomResource {
     public async delete(customResourceEvent: CustomResourceEvent) : Promise<unknown> {
         logger.debug(`EventSourceCustomResource: delete: in: customResourceEvent: ${JSON.stringify(customResourceEvent)}`);
         // no delete
-         return {};
+        return {};
     }
 
     protected getHeaders(contentType:string): {[key:string]:string} {
