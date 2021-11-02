@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/deployment-helper",
+      "comment": "implemented the delete method of events.CustomResource",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/deployment-helper",
+  "email": "komushi@gmail.com"
+}
