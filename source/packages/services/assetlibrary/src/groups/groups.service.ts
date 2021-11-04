@@ -17,9 +17,9 @@ import { SortKeys } from '../data/model';
 
 export interface GroupsService {
 
-    get(groupPath: string, includeGroups?: boolean): Promise<GroupItem> ;
+    get(groupPath: string, includeGroups: boolean): Promise<GroupItem> ;
 
-    getBulk(groupPaths: string[]) : Promise<GroupItemList> ;
+    getBulk(groupPaths: string[], includeGroups: boolean) : Promise<GroupItemList> ;
 
     createBulk(request:GroupItem[], applyProfile?:string) : Promise<BulkGroupsResult> ;
 
