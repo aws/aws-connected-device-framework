@@ -43,14 +43,6 @@ export class TargetDao {
             gsi2Sort: createDelimitedAttribute(PkType.Subscription, item.subscriptionId, PkType.SubscriptionTarget, item.targetType, item.getId())
         };
 
-        // Redundancy as the attributes added here are never to be used anywahere
-        // for (const prop of Object.keys(item)) {
-        //     const value = item[prop];
-        //     if (value !== undefined) {
-        //         putItemAttributeMap[prop]= item[prop];
-        //     }
-        // }
-
         logger.debug(`target.dao buildPutItemAttributeMap: exit:${JSON.stringify(putItemAttributeMap)}`);
         return putItemAttributeMap;
     }
