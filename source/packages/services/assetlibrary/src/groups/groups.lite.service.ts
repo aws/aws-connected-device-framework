@@ -29,7 +29,7 @@ export class GroupsServiceLite implements GroupsService {
         @inject(TYPES.GroupsAssembler) private groupsAssembler: GroupsAssembler,
         @inject(TYPES.EventEmitter) private eventEmitter: EventEmitter) {}
 
-    public async get(groupId: string): Promise<GroupItem> {
+    public async get(groupId: string, _includeGroups=false): Promise<GroupItem> {
         logger.debug(`groups.lite.service get: in: groupId: ${groupId}`);
 
         ow(groupId, ow.string.nonEmpty);

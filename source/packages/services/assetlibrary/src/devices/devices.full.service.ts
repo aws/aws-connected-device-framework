@@ -547,7 +547,7 @@ export class DevicesServiceFull implements DevicesService {
 
         // fetch the existing device / group
         const deviceFuture = this.get(deviceId, false, [], true);
-        const groupFuture = this.groupsService.get(groupPath);
+        const groupFuture = this.groupsService.get(groupPath, false);
         const results = await Promise.all([deviceFuture, groupFuture]);
         const device = results[0];
         const group = results[1];
