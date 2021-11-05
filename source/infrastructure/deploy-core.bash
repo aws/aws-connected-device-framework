@@ -499,7 +499,7 @@ fi
 ############################################################################################
 # DEPLOYMENT HELPER VPC
 ############################################################################################
-if [[ -f $assetlibrary_config && "$ASSETLIBRARY_MODE" = "full" ]] || [[ "$API_GATEWAY_AUTH" == "Private" ]] || [[( -z "$USE_EXISTING_VPC" || "$USE_EXISTING_VPC" = "false" ) ]]; then
+if [[ -f $assetlibrary_config && "$ASSETLIBRARY_MODE" = "full" ]] || [[ "$API_GATEWAY_AUTH" == "Private" ]] ; then
     logTitle 'Deploying Deployment Helper VPC'
     cd "$root_dir/packages/libraries/core/deployment-helper"
     infrastructure/deploy-vpc-cfn.bash \
@@ -516,6 +516,11 @@ if [[ -f $assetlibrary_config && "$ASSETLIBRARY_MODE" = "full" ]] || [[ "$API_GA
     CUSTOM_RESOURCE_VPC_LAMBDA_ARN=$(echo "$stack_exports" \
             | jq -r --arg custom_resource_vpc_lambda_arn_export "$custom_resource_vpc_lambda_arn_export" \
             '.Exports[] | select(.Name==$custom_resource_vpc_lambda_arn_export) | .Value')
+else 
+    custom_resource_vpc_lambda_arn_export="$DEPLOYMENT_HELPER_STACK_NAME-customResourceLambdaArn"
+    CUSTOM_RESOURCE_VPC_LAMBDA_ARN=$(echo "$stack_exports" \
+        | jq -r --arg custom_resource_lambda_arn_export "$custom_resource_lambda_arn_export" \
+        '.Exports[] | select(.Name==$custom_resource_lambda_arn_export) | .Value')
 fi
 
 ############################################################################################
@@ -596,6 +601,7 @@ fi
 
 ############################################################################################
 # PROVISIONING
+
 ############################################################################################
 provisioning_config=$CONFIG_LOCATION/provisioning/$CONFIG_ENVIRONMENT-config.json
 if [ -f "$provisioning_config" ]; then

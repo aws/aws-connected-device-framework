@@ -10,7 +10,7 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { ContainerModule, interfaces, decorate, injectable } from 'inversify';
+import { ContainerModule, interfaces } from 'inversify';
 import { TypesService } from '../types/types.service';
 import { DevicesService } from '../devices/devices.service';
 import { GroupsService } from '../groups/groups.service';
@@ -25,20 +25,20 @@ import { ProfilesService } from '../profiles/profiles.service';
 import { PoliciesService } from '../policies/policies.service';
 import { DevicesServiceLite } from '../devices/devices.lite.service';
 
-import config from 'config';
-import AWS = require('aws-sdk');
 import { InitService } from '../init/init.service';
 import { InitServiceLite } from '../init/init.lite.service';
 import { TypesDaoLite } from '../types/types.lite.dao';
 import { GroupsDaoLite } from '../groups/groups.lite.dao';
 import { DevicesDaoLite } from '../devices/devices.lite.dao';
 import { SearchDaoLite } from '../search/search.lite.dao';
+import { ProfilesAssembler } from '../profiles/profiles.assembler';
+import { FullAssembler } from '../data/full.assembler';
 
 export const LiteContainerModule = new ContainerModule (
     (
         bind: interfaces.Bind,
         _unbind: interfaces.Unbind,
-        isBound: interfaces.IsBound,
+        _isBound: interfaces.IsBound,
         _rebind: interfaces.Rebind
     ) => {
         bind<TypesService>(TYPES.TypesService).to(TypesServiceLite).inSingletonScope();
@@ -55,24 +55,10 @@ export const LiteContainerModule = new ContainerModule (
         bind<SearchService>(TYPES.SearchService).to(SearchServiceLite).inSingletonScope();
         bind<SearchDaoLite>(TYPES.SearchDao).to(SearchDaoLite).inSingletonScope();
 
+        bind<FullAssembler>(TYPES.FullAssembler).to(FullAssembler).inSingletonScope();
         bind<PoliciesService>(TYPES.PoliciesService).to(PoliciesServiceLite).inSingletonScope();
+        bind<ProfilesAssembler>(TYPES.ProfilesAssembler).to(ProfilesAssembler).inSingletonScope();
 
         bind<InitService>(TYPES.InitService).to(InitServiceLite).inSingletonScope();
-
-        decorate(injectable(), AWS.Iot);
-        bind<interfaces.Factory<AWS.Iot>>(TYPES.IotFactory)
-            .toFactory<AWS.Iot>((ctx: interfaces.Context) => {
-            return () => {
-
-                if (!isBound(TYPES.Iot)) {
-                    const iotData = new AWS.Iot({
-                        region: config.get('aws.region'),
-                        endpoint: `https://${config.get('aws.iot.endpoint')}`
-                    });
-                    bind<AWS.Iot>(TYPES.Iot).toConstantValue(iotData);
-                }
-                return ctx.container.get<AWS.Iot>(TYPES.Iot);
-            };
-        });
     }
 );

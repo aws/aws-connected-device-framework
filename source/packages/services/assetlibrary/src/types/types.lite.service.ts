@@ -77,9 +77,7 @@ export class TypesServiceLite implements TypesService {
 
                 // only string types supported
                 for (const key of Object.keys(definition.properties)) {
-                    for (const type of definition.properties[key].type) {
-                        ow(type,'type', ow.string.equals('string'));
-                    }
+                    ow(definition.properties[key].type, 'type', ow.string.equals('string'));
                 }
             }
 
