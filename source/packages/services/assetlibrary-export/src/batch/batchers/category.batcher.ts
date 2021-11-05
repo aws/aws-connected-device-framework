@@ -35,26 +35,26 @@ export class CategoryBatcher implements Batcher {
         const typeCategories = this.getTypeCategories();
 
         return await this.getBatchesByCategories(typeCategories);
-
     }
 
     private async getBatchesByCategories(categories:string[]): Promise<Batch[]> {
         let batches:Batch[] = [];
-        const idsMapByCategory = await this.labelsService.getIdsCategoryMapByLabels(categories);
+
 
         for (const category of categories) {
-            const chunks = _.chunk(idsMapByCategory[category], this.batchSize);
 
-            const _batches:Batch[] = chunks.map((chunk: string[]) => {
+            const count = await this.labelsService.getObjectCount(category);
+            const ranges = this.createRangesByCount(count.total, this.batchSize);
+
+            for(const range of ranges) {
                 const batch = new Batch();
                 batch.id = generate();
                 batch.category = category;
-                batch.items = chunk;
+                batch.range = range;
                 batch.timestamp = moment().toISOString();
-                return batch;
-            });
-
-            batches = _.concat(batches, _batches);
+                batch.total = count.total
+                batches.push(batch);
+            }
         }
 
         return batches;
@@ -62,6 +62,35 @@ export class CategoryBatcher implements Batcher {
 
     private getTypeCategories() {
         return [TypeCategory.Device, TypeCategory.Group];
+    }
+
+    // TODO:  refactor this to a utility or a base class
+    private createRangesByCount(count:number, batchSize:number):Array<[number, number]> {
+        const batches = (count / batchSize) >> 0;
+
+        const hasRemainder = (count % batchSize) > 0
+
+        const result = []
+        let start = 0
+        let end = 0;
+
+        for(let i=0; i<=batches; i++) {
+            start = end;
+            end = end + batchSize;
+
+            if(end <= count) {
+                const range:[number, number] = [start, end];
+                result.push(range);
+            }
+        }
+
+        if(hasRemainder) {
+            const remainder = count % batchSize
+            const range:[number, number] = [start, start + remainder];
+            result.push(range);
+        }
+
+        return result
     }
 
 }

@@ -39,15 +39,19 @@ export class BatchService implements Batcher {
     public async batch(): Promise<Batches> {
         const batches = await this.batchers[this.batchBy].batch();
 
+        // transform the batch id to an index, to compress the state machine outputs to smaller size
+        batches.forEach((batch:Batch, index:number) => {
+            batch.id = index;
+            return batch
+        });
+
         // save individual batches to S3 for etl
         // optimization for step function
         for (const batch of batches) {
             const key = `${this.exportKeyPrefix}_temp/${batch.id}`
             await this.s3Utils.save(this.exportBucket, key, batch);
         }
-
         return batches;
-
     }
 
 }
@@ -57,9 +61,11 @@ export interface Batches extends Array<Batch> {
 }
 
 export class Batch {
-    id: string;
+    id: string | number;
     category: string;
     type?: string;
+    range?: [number, number];
+    total?:number;
     items: string[];
     timestamp: string;
 }

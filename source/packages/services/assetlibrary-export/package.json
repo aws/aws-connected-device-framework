@@ -12,7 +12,7 @@
     "lint": "npx eslint . --ext '.ts'",
     "build": "npx tsc -b && npx shx cp -R 'src/config' 'dist/config'",
     "test": "rushx lint && NODE_ENV= NODE_CONFIG_DIR='./src/config' jest --silent",
-    "start": "rushx build && NODE_CONFIG=$(cat ${CONFIG_LOCATION}/assetlibrary-export/${npm_package_config_environment}-config.json) NODE_CONFIG_DIR='./src/config' nodemon dist/lambda_proxy.js",
+    "start": "rushx build && NODE_CONFIG=$(cat ${CONFIG_LOCATION}/assetlibrary-export/${npm_package_config_environment}-config.json) NODE_CONFIG_DIR='./src/config' nodemon dist/lambda_sf_batch_proxy.js",
     "prebundle": "npx shx rm -rf ../../../deploy/assetlibrary-export bundle.zip && npx shx mkdir -p ../../../deploy/assetlibrary-export",
     "bundle": "rush deploy --overwrite --project @cdf/assetlibrary-export --target-folder ../../../deploy/assetlibrary-export",
     "postbundle": "cd ../../../deploy/assetlibrary-export && zip --symlinks -rq ../../packages/services/assetlibrary-export/bundle.zip * && cd -"

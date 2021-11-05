@@ -11,7 +11,6 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { injectable, inject } from 'inversify';
-import * as _ from 'lodash';
 
 import { TYPES } from '../di/types';
 import { logger } from '../utils/logger';
@@ -25,56 +24,30 @@ export class LabelsService {
         @inject(TYPES.LabelsDao) private labelsDao: LabelsDao ,
     ) {}
 
-    public async getIdsTypeMapByLabels(labels: string[]): Promise<PropertyArrayMap> {
-        logger.debug(`labels.service: getIdsTypeMapByLabels: in: ${labels}`);
+    public async getObjectCount(label: string): Promise<{
+        label:string,
+        total:number
+    }> {
+        logger.debug(`labels.service:getObjectCount: in: ${label}`);
 
-        const map:PropertyArrayMap = {};
-        const idObjects = await this.labelsDao.listIdObjectsByLabels(labels);
+        const result = await this.labelsDao.getObjectCountByLabel(label);
 
-        if(idObjects === undefined || idObjects.length === 0) {
-            logger.debug(`labels.service: getIdsTypeMapByLabels: out: undefined`);
-            return {};
-        }
+        logger.debug(`labels.service:getObjectCount: out: ${result}`);
 
-        _.uniq(idObjects.map(e => e.type)).forEach(type => {
-            map[type] = [];
-        });
-
-        for (const id of idObjects) {
-            map[id.type] = _.concat(map[id.type], id.id);
-        }
-
-        logger.debug(`labels.service: getIdsTypeMapByLabels: out: ${JSON.stringify(map)}`);
-
-        return map;
-
+        return {
+            label,
+            total: result.total
+        };
     }
 
-    public async getIdsCategoryMapByLabels(labels: string[]): Promise<PropertyArrayMap> {
-        logger.debug(`labels.service: getIdsCategoryMapByLabels: in: labels:${labels}`);
+    public async getIdsByRange(label:string, range:[number, number]): Promise<string[]> {
+        logger.debug(`labels.service: getIdsByRange: in: ${label}, range: ${range}`);
 
-        const map:PropertyArrayMap = {};
-        const idObjects = await this.labelsDao.listIdObjectsByLabels(labels);
+        const idObjects = await this.labelsDao.listIdObjectsByLabel(label, range);
+        const ids = idObjects.map(e => e.id);
 
-        if(idObjects && idObjects.length === 0) {
-            return undefined;
-        }
+        logger.debug(`labels.service: getIdsByRange: out: ${ids}`);
 
-        _.uniq(idObjects.map(id => id.category)).forEach(type => {
-            map[type] = [];
-        });
-
-        for (const idObject of idObjects) {
-            map[idObject.category] = _.concat(map[idObject.category], idObject.id);
-        }
-
-        logger.debug(`labels.service: getIdsCategoryMapByLabels: out: ${JSON.stringify(map)}`);
-
-        return map;
+        return ids
     }
-
-}
-
-export interface PropertyArrayMap {
-    [key: string]: string[];
 }

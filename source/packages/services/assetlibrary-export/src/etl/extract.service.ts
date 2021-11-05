@@ -47,7 +47,7 @@ export interface Extractors {
 }
 
 export class Extracted {
-    id: string;
+    id: string | number;
     category: string;
     type?: string;
     items: unknown[];

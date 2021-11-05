@@ -42,7 +42,7 @@ export interface Transformers {
 }
 
 export class Transformed {
-    id: string;
+    id: string | number;
     category: string;
     type: string;
     items: unknown[];

@@ -84,10 +84,17 @@ Resources:
         Statement:
           - Effect: Allow
             Action:
-              - 's3:Put*'
-              - 's3:Get*'
-              - 's3:DeleteObject'
-            Resource: "arn:aws:s3:::${BucketName}/*"
+              - "s3:PutObject"
+              - "s3:PutObjectAcl"
+              - "s3:GetObject"
+              - "s3:GetObjectAcl"
+              - "s3:DeleteObject"
+            Resource: !Sub "arn:aws:s3:::${BucketName}/*"
+          - Effect: Allow
+            Action:
+              - "s3:ListBucket"
+              - "s3:GetBucketLocation"
+            Resource: !Sub "arn:aws:s3:::${BucketName}"
 
 
   BatchExecutionRole:

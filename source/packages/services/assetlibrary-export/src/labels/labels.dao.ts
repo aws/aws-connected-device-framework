@@ -10,14 +10,14 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { process, structure } from 'gremlin';
-import { injectable, inject } from 'inversify';
+import {process, structure} from 'gremlin';
+import {inject, injectable} from 'inversify';
 
-import { logger } from '../utils/logger';
-import { TYPES } from '../di/types';
+import {logger} from '../utils/logger';
+import {TYPES} from '../di/types';
 
-import { BaseDaoFull } from '../data/base.full.dao';
-import { isVertexDto, VertexDto } from '../data/full.model';
+import {BaseDaoFull} from '../data/base.full.dao';
+import {isVertexDto, VertexDto} from '../data/full.model';
 
 @injectable()
 export class LabelsDao extends BaseDaoFull {
@@ -29,14 +29,42 @@ export class LabelsDao extends BaseDaoFull {
         super(neptuneUrl, graphSourceFactory);
     }
 
-    public async listIdObjectsByLabels(labels: string[]): Promise<IdObject[]> {
-        logger.debug(`labels.dao getDeviceIds: in: ${labels}`);
+    public async getObjectCountByLabel(label: string): Promise<{
+        total: any
+    }> {
+        logger.debug(`labels.dao getCountByLabel: in: ${label}`);
+
+        let result: process.Traverser[];
+        const conn = super.getConnection();
+
+        try {
+            const traverser = conn.traversal.V().hasLabel(label).count();
+            logger.debug(`common.full.dao: traverser: ${JSON.stringify(traverser.toString())}`);
+            result = await traverser.toList();
+            logger.debug(`common.full.dao: results: ${JSON.stringify(result)}`);
+        } finally {
+            await conn.close();
+        }
+
+        if (result===undefined || result.length===0) {
+            logger.debug(`labels.dao get: exit: node: undefined`);
+            return undefined;
+        }
+
+        return {
+            total: result[0]
+        };
+
+    }
+
+    public async listIdObjectsByLabel(label: string, range: [number, number]): Promise<IdObject[]> {
+        logger.debug(`labels.dao getDeviceIds: in: ${label}, range: ${range}`);
 
         let results: process.Traverser[];
         const conn = super.getConnection();
 
         try {
-            const traverser = conn.traversal.V().hasLabel(...labels);
+            const traverser = conn.traversal.V().hasLabel(label).range(range[0], range[1]);
             logger.debug(`common.full.dao: traverser: ${JSON.stringify(traverser.toString())}`);
             results = await traverser.toList();
             logger.debug(`common.full.dao: results: ${JSON.stringify(results)}`);
@@ -52,11 +80,9 @@ export class LabelsDao extends BaseDaoFull {
 
         const vertices = results.filter(r=> isVertexDto(r)) as VertexDto[];
 
-        const entityIds = vertices.map(v => {
+        return vertices.map(v => {
             return new IdObject(v);
         });
-
-        return entityIds;
     }
 
 }
