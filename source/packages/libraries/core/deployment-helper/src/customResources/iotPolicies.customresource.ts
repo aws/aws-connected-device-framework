@@ -62,11 +62,11 @@ export class IotPoliciesCustomResource implements CustomResource {
 
         } else {
 
-            // if we have too many, remove the oldest versionn
+            // if we have too many, remove the oldest version
             if (policies.policyVersions?.length>=5) {
                 const oldestPolicyVersionId:number = policies.policyVersions
                     .map(p=>parseInt(p.versionId,10))
-                    .sort()[0];
+                    .sort(function(a, b) { return a-b;})[0];
                 await this._iot.deletePolicyVersion({
                     policyName,
                     policyVersionId: `${oldestPolicyVersionId}`

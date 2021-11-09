@@ -44,7 +44,7 @@ export class GroupsServiceFull implements GroupsService {
         @inject(TYPES.AuthzServiceFull) private authServiceFull: AuthzServiceFull,
         @inject(TYPES.EventEmitter) private eventEmitter: EventEmitter) {}
 
-    public async get(groupPath: string, includeGroups?: boolean): Promise<GroupItem> {
+    public async get(groupPath: string, includeGroups: boolean): Promise<GroupItem> {
         logger.debug(`groups.full.service get: in: groupPath: ${groupPath}`);
 
         ow(groupPath,'groupPath', ow.string.nonEmpty);
@@ -67,8 +67,8 @@ export class GroupsServiceFull implements GroupsService {
         return model;
     }
 
-    public async getBulk(groupPaths:string[]): Promise<GroupItemList> {
-        logger.debug(`groups.full.service: getBulk: in: groupPaths: ${groupPaths}`);
+    public async getBulk(groupPaths:string[], includeGroups:boolean): Promise<GroupItemList> {
+        logger.debug(`groups.full.service: getBulk: in: groupPaths: ${groupPaths}, includeGroups:${includeGroups}`);
 
         ow(groupPaths, ow.array.nonEmpty);
 
@@ -76,7 +76,7 @@ export class GroupsServiceFull implements GroupsService {
 
         await this.authServiceFull.authorizationCheck(groupPaths, [], ClaimAccess.R);
 
-        const result = await this.groupsDao.get(groupPaths);
+        const result = await this.groupsDao.get(groupPaths, includeGroups);
 
         const model = this.groupsAssembler.toGroupItems(result);
         logger.debug(`groups.full.service get: exit: model: ${JSON.stringify(model)}`);
@@ -96,7 +96,7 @@ export class GroupsServiceFull implements GroupsService {
                 success++;
             } catch (err) {
                 //errors[group.groupPath] = err;
-                errors[`${group.parentPath}\${group.name}`] = err;
+                errors[`${group.parentPath}/${group.name}`] = err;
                 failed++;
             }
         }
@@ -263,7 +263,7 @@ export class GroupsServiceFull implements GroupsService {
         }
 
         // ensure parent exists
-        const parent = await this.get(model.parentPath);
+        const parent = await this.get(model.parentPath, false);
         if (parent===undefined) {
             throw new Error ('INVALID_PARENT');
         }
@@ -300,7 +300,7 @@ export class GroupsServiceFull implements GroupsService {
 
         // if a profile to apply has been provided, apply it first
         if (applyProfile!==undefined) {
-            const existing = await this.get(model.groupPath);
+            const existing = await this.get(model.groupPath, true);
             if (existing===undefined) {
                 throw new Error('NOT_FOUND');
             }
@@ -413,7 +413,7 @@ export class GroupsServiceFull implements GroupsService {
 
         await this.authServiceFull.authorizationCheck([], [groupPath], ClaimAccess.D);
 
-        const model = await this.get(groupPath);
+        const model = await this.get(groupPath, false);
         if (model===undefined) {
             throw new Error('NOT_FOUND');
         }
@@ -448,7 +448,7 @@ export class GroupsServiceFull implements GroupsService {
 
         await this.authServiceFull.authorizationCheck([], [sourceGroupPath, targetGroupPath], ClaimAccess.U);
 
-        const sourceGroup = await this.get(sourceGroupPath);
+        const sourceGroup = await this.get(sourceGroupPath, false);
 
         const out: StringToArrayMap = {};
         out[relationship] = [targetGroupPath];

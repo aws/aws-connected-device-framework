@@ -1,6 +1,6 @@
 # Migrating from pre-open source version
 
-NOTE: The initial release of this open source version does not include the _greengrass-provisioning_ and _greengrass-deployment_ modules as their current implementation is based on Greengrass V1. Once they have been upgraded to use Greengrass V2 they will be released. It is recommended that
+NOTE: The initial release of this open source version does not include the _greengrass-provisioning_ and _greengrass-deployment_ modules as their current implementation is based on Greengrass V1. Once they have been upgraded to use Greengrass V2 they will be released. It is recommended that customers who are using the Greengrass V1 versions of those modules do not upgrade to this open sourced version of CDF just yet.
 
 ## Introduction
 

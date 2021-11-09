@@ -31,9 +31,9 @@ export class AssetLibraryBulkGroupsCustomResource implements CustomResource {
     public async create(customResourceEvent: CustomResourceEvent) : Promise<unknown> {
         logger.debug(`AssetLibraryBulkGroupsCustomResource: create: in: customResourceEvent: ${JSON.stringify(customResourceEvent)}`);
 
-        const functionName = customResourceEvent.ResourceProperties.FunctionName;
-        const contentType = customResourceEvent.ResourceProperties.ContentType;
-        const rawBody = customResourceEvent.ResourceProperties.Body;
+        const functionName = customResourceEvent?.ResourceProperties?.FunctionName;
+        const contentType = customResourceEvent?.ResourceProperties?.ContentType;
+        const rawBody = customResourceEvent?.ResourceProperties?.Body;
 
         ow(functionName, ow.string.nonEmpty);
         ow(contentType, ow.string.nonEmpty);
@@ -43,7 +43,7 @@ export class AssetLibraryBulkGroupsCustomResource implements CustomResource {
         const path = '/bulkgroups';
         const body = JSON.parse(rawBody);
 
-        if (body.groups == null || body?.groups.length === 0) {
+        if ( (body.groups?.length??0) === 0) {
             return {}
         }
 
@@ -66,7 +66,7 @@ export class AssetLibraryBulkGroupsCustomResource implements CustomResource {
                 const error = bulkGroupsRes.errors[groupPath]
 
                 if (error.statusCode === 499) {
-                    const group = body.groups.filter((group:{[key:string]: any}) => {
+                    const group = body.groups.filter((group:{[key:string]: string}) => {
                         const _groupPath = (group.parentPath === '/')
                             ? '/' + group.name.toLowerCase()
                             : `${group.parentPath}/${group.name.toLowerCase()}`;
@@ -108,13 +108,13 @@ export class AssetLibraryBulkGroupsCustomResource implements CustomResource {
         return this.headers;
     }
 
-    protected async patchGroup(functionName: string, headers: {[key:string]: string}, group:{[key:string]: any}): Promise<any> {
+    protected async patchGroup(functionName: string, headers: {[key:string]: string}, group:{[key:string]: string}): Promise<any> {
         logger.debug(`AssetLibraryBulkGroupsCustomResource: patchGroup: in: functionName:${functionName}, group:${JSON.stringify(group)}`);
-        const _groupPath = (group.parentPath === '/')
+        const groupPath = (group.parentPath === '/')
             ? '/' + group.name.toLowerCase()
             : `${group.parentPath}/${group.name.toLowerCase()}`;
 
-        const path = `/groups/${encodeURIComponent(_groupPath)}`
+        const path = `/groups/${encodeURIComponent(groupPath)}`
         const event = new LambdaApiGatewayEventBuilder()
             .setMethod('PATCH')
             .setPath(path)

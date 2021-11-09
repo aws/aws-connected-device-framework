@@ -39,11 +39,20 @@ export class EventService  {
         this.validateEvent(resource);
 
         // set defaults
-        resource.eventId = uuid();
+        if (resource.eventId===undefined) {
+            resource.eventId = uuid();
+        }
         if (resource.enabled===undefined) {
             resource.enabled = true;
         }
 
+        const existing = await this.eventDao.get(resource.eventId);
+        if (existing!==undefined) {
+            if (existing.id===resource.eventId) {
+                throw new Error('DUPLICATE_EVENT_ID');
+            }
+        }
+        
         // TODO: validate the conditions format
 
         const eventSource = await this.eventSourceDao.get(resource.eventSourceId);
