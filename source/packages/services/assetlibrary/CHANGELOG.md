@@ -1,6 +1,14 @@
 # Change Log - @cdf/assetlibrary
 
-This log was last generated on Tue, 19 Oct 2021 23:02:07 GMT and should not be manually modified.
+This log was last generated on Tue, 09 Nov 2021 18:18:19 GMT and should not be manually modified.
+
+## 5.3.6
+Tue, 09 Nov 2021 18:18:19 GMT
+
+### Patches
+
+- Removed retrieving a groups related groups when all what was needed was to check the existence of a group. Returning related groups is performing poorly where groups are supernodes - they may have hundreds of thousands, or millions, of related devices, but to return related groups the related devices still need to be read then discarded. This improvement of the query that discards the devices is to follow.
+- bug fix of create bulk group error message
 
 ## 5.3.5
 Tue, 19 Oct 2021 23:02:07 GMT

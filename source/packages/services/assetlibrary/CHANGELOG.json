@@ -2,6 +2,21 @@
   "name": "@cdf/assetlibrary",
   "entries": [
     {
+      "version": "5.3.6",
+      "tag": "@cdf/assetlibrary_v5.3.6",
+      "date": "Tue, 09 Nov 2021 18:18:19 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Removed retrieving a groups related groups when all what was needed was to check the existence of a group. Returning related groups is performing poorly where groups are supernodes - they may have hundreds of thousands, or millions, of related devices, but to return related groups the related devices still need to be read then discarded. This improvement of the query that discards the devices is to follow."
+          },
+          {
+            "comment": "bug fix of create bulk group error message"
+          }
+        ]
+      }
+    },
+    {
       "version": "5.3.5",
       "tag": "@cdf/assetlibrary_v5.3.5",
       "date": "Tue, 19 Oct 2021 23:02:07 GMT",

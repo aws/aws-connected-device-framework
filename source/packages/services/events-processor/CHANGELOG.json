@@ -2,6 +2,18 @@
   "name": "@cdf/events-processor",
   "entries": [
     {
+      "version": "3.3.1",
+      "tag": "@cdf/events-processor_v3.3.1",
+      "date": "Tue, 09 Nov 2021 18:18:19 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "allow users to input eventId"
+          }
+        ]
+      }
+    },
+    {
       "version": "3.3.0",
       "tag": "@cdf/events-processor_v3.3.0",
       "date": "Tue, 28 Sep 2021 22:04:37 GMT",
