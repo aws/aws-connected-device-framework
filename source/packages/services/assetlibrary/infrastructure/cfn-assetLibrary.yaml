@@ -220,6 +220,7 @@ Resources:
           - Action:
               - "iot:DescribeThingType"
               - "iot:CreateThingType"
+              - "iot:DeprecateThingType"
             Effect: Allow
             Resource: 
             - !Sub "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:thingtype/*"
@@ -242,6 +243,7 @@ Resources:
             - !Sub "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:index/*"
           - Action:
               - "iot:ListThingGroups"
+              - "iot:ListThingTypes"
             Effect: Allow
             Resource: 
             - "*"
