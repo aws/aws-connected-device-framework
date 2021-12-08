@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/deployment-helper",
+      "comment": "deployment helper for Events and EventSource ",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/deployment-helper",
+  "email": "tsugunao@amazon.com"
+}

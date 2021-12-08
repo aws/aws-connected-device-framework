@@ -579,11 +579,11 @@ components:
               type: boolean
           readOnly: true
         enabled:
-          description: Enabled status
+          description: Enabled status (This is a placeholder to enable/disable notifications. Currently, not validated)
           type: boolean
           default: true
         alerted:
-          description: Alerted status
+          description: Alerted status (This is a placeholder to enable/disable notifications. Currently, not validated)
           type: boolean
           readOnly: true
       required:
