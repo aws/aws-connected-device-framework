@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/events-processor",
+      "comment": "swagger doc change",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/events-processor",
+  "email": "tsugunao@gmail.com"
+}
