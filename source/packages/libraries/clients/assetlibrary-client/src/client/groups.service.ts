@@ -50,7 +50,7 @@ export interface GroupsService {
      * Returns a single group
      * @param groupPath Path of group to return
      */
-    getGroup(groupPath: string, additionalHeaders?:RequestHeaders): Promise<Group10Resource | Group20Resource>;
+    getGroup(groupPath: string, additionalHeaders?:RequestHeaders, includeGroups?:boolean): Promise<Group10Resource | Group20Resource>;
 
     /**
      * List device members of group for supplied Group name

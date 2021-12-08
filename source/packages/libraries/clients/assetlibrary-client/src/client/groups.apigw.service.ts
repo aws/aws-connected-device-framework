@@ -95,11 +95,14 @@ export class GroupsApigwService extends GroupsServiceBase implements GroupsServi
      * Returns a single group
      * @param groupPath Path of group to return
      */
-    async getGroup(groupPath: string, additionalHeaders?:RequestHeaders): Promise<Group10Resource | Group20Resource> {
+    async getGroup(groupPath: string, additionalHeaders?:RequestHeaders, includeGroups?:boolean): Promise<Group10Resource | Group20Resource> {
         ow(groupPath,'groupPath', ow.string.nonEmpty);
 
-        const url = `${this.baseUrl}${super.groupRelativeUrl(groupPath)}`;
-
+        let url = `${this.baseUrl}${super.groupRelativeUrl(groupPath)}`;
+        const qs = QSHelper.getQueryString({includeGroups});       
+        if (qs) {
+            url += `?${qs}`;
+        }
         const res = await request.get(url)
             .set(this.buildHeaders(additionalHeaders));
 

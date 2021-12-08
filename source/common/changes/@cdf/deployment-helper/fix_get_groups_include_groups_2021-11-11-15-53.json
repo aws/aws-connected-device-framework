@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/deployment-helper",
+      "comment": "fixed lint issue let -> const",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/deployment-helper",
+  "email": "aaron.pittenger@bissell.com"
+}

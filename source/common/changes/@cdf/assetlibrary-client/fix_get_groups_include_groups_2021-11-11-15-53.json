@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/assetlibrary-client",
+      "comment": "added includeGroups query param to getGroup function calls",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@cdf/assetlibrary-client",
+  "email": "aaron.pittenger@bissell.com"
+}
