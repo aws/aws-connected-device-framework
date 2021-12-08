@@ -7,10 +7,7 @@ Wed, 08 Dec 2021 21:31:23 GMT
 
 ### Patches
 
-- Allow selection of neptune DB instance from deployment scripts
-- Removed retrieving a groups related groups when all what was needed was to check the existence of a group. Returning related groups is performing poorly where groups are supernodes - they may have hundreds of thousands, or millions, of related devices, but to return related groups the related devices still need to be read then discarded. This improvement of the query that discards the devices is to follow.
-- add lowercasting to create group API
-- bug fix of create bulk group error message
+- _Version update only_
 
 ## 5.3.7
 Wed, 08 Dec 2021 17:48:56 GMT
