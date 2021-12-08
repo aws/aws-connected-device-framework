@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/assetlibrary",
+      "comment": "The Asset Library search api was experiencing timeouts when attempting searches with 2 or more search criteria on large databases. Root cause analysis discovered an issue with Neptune itself in where an optimal query execution plan was not being executed. This was fixed with Neptune database engine V1.1.0.0.RC1. As part of planned downtime for maintentance, update your Neptune cluster to the latest DB engine.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/assetlibrary",
+  "email": "deanhart@amazon.com"
+}

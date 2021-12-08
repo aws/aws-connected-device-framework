@@ -10,11 +10,13 @@
 #  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions
 #  and limitations under the License.
 #-----------------------------------------------------------------------------------------------------------------------
-neptuneUrl: ASSETLIBRARY_NEPTUNE_URL
 aws:
   region: AWS_REGION
   iot:
     endpoint: AWS_IOT_ENDPOINT
+  neptune:
+    url: ASSETLIBRARY_AWS_NEPTUNE_URL
+    enableDfeOptimization: ASSETLIBRARY_AWS_NEPTUNE_ENABLEDFEOPTIMIZATION
 
 events:
   groups:

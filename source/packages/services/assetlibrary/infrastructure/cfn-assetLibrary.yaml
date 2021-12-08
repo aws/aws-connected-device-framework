@@ -274,7 +274,7 @@ Resources:
           NODE_CONFIG_DIR: 'packages/services/assetlibrary/dist/config'
           NODE_CONFIG: !Ref ApplicationConfigurationOverride
           AWS_IOT_ENDPOINT: !GetAtt IotEndpoint.address
-          ASSETLIBRARY_NEPTUNE_URL: !Ref NeptuneURL
+          ASSETLIBRARY_AWS_NEPTUNE_URL: !Ref NeptuneURL
 
       Tracing: Active
 
