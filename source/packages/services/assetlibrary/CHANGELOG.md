@@ -1,6 +1,16 @@
 # Change Log - @cdf/assetlibrary
 
-This log was last generated on Wed, 08 Dec 2021 17:48:56 GMT and should not be manually modified.
+This log was last generated on Wed, 08 Dec 2021 21:31:23 GMT and should not be manually modified.
+
+## 5.3.8
+Wed, 08 Dec 2021 21:31:23 GMT
+
+### Patches
+
+- Allow selection of neptune DB instance from deployment scripts
+- Removed retrieving a groups related groups when all what was needed was to check the existence of a group. Returning related groups is performing poorly where groups are supernodes - they may have hundreds of thousands, or millions, of related devices, but to return related groups the related devices still need to be read then discarded. This improvement of the query that discards the devices is to follow.
+- add lowercasting to create group API
+- bug fix of create bulk group error message
 
 ## 5.3.7
 Wed, 08 Dec 2021 17:48:56 GMT

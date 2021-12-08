@@ -2,6 +2,21 @@
   "name": "@cdf/deployment-helper",
   "entries": [
     {
+      "version": "2.0.4",
+      "tag": "@cdf/deployment-helper_v2.0.4",
+      "date": "Wed, 08 Dec 2021 21:31:23 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "deployment helper for Events and EventSource "
+          },
+          {
+            "comment": "fixed lint issue let -> const"
+          }
+        ]
+      }
+    },
+    {
       "version": "2.0.3",
       "tag": "@cdf/deployment-helper_v2.0.3",
       "date": "Wed, 08 Dec 2021 17:48:56 GMT",

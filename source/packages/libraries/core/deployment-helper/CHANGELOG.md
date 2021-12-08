@@ -1,6 +1,14 @@
 # Change Log - @cdf/deployment-helper
 
-This log was last generated on Wed, 08 Dec 2021 17:48:56 GMT and should not be manually modified.
+This log was last generated on Wed, 08 Dec 2021 21:31:23 GMT and should not be manually modified.
+
+## 2.0.4
+Wed, 08 Dec 2021 21:31:23 GMT
+
+### Patches
+
+- deployment helper for Events and EventSource 
+- fixed lint issue let -> const
 
 ## 2.0.3
 Wed, 08 Dec 2021 17:48:56 GMT
