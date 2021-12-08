@@ -1,6 +1,13 @@
 # Change Log - @cdf/assetlibrary
 
-This log was last generated on Tue, 09 Nov 2021 18:18:19 GMT and should not be manually modified.
+This log was last generated on Wed, 08 Dec 2021 17:48:56 GMT and should not be manually modified.
+
+## 5.3.7
+Wed, 08 Dec 2021 17:48:56 GMT
+
+### Patches
+
+- The Asset Library search api was experiencing timeouts when attempting searches with 2 or more search criteria on large databases. Root cause analysis discovered an issue with Neptune itself in where an optimal query execution plan was not being executed. This was fixed with Neptune database engine V1.1.0.0.RC1. As part of planned downtime for maintentance, update your Neptune cluster to the latest DB engine.
 
 ## 5.3.6
 Tue, 09 Nov 2021 18:18:19 GMT

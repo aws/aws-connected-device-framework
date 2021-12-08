@@ -1,6 +1,13 @@
 # Change Log - @cdf/deployment-helper
 
-This log was last generated on Tue, 28 Sep 2021 22:04:37 GMT and should not be manually modified.
+This log was last generated on Wed, 08 Dec 2021 17:48:56 GMT and should not be manually modified.
+
+## 2.0.3
+Wed, 08 Dec 2021 17:48:56 GMT
+
+### Patches
+
+- deployment helper for Events and EventSource 
 
 ## 2.0.1
 Tue, 28 Sep 2021 22:04:37 GMT

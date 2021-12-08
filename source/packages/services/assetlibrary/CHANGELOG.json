@@ -2,6 +2,18 @@
   "name": "@cdf/assetlibrary",
   "entries": [
     {
+      "version": "5.3.7",
+      "tag": "@cdf/assetlibrary_v5.3.7",
+      "date": "Wed, 08 Dec 2021 17:48:56 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "The Asset Library search api was experiencing timeouts when attempting searches with 2 or more search criteria on large databases. Root cause analysis discovered an issue with Neptune itself in where an optimal query execution plan was not being executed. This was fixed with Neptune database engine V1.1.0.0.RC1. As part of planned downtime for maintentance, update your Neptune cluster to the latest DB engine."
+          }
+        ]
+      }
+    },
+    {
       "version": "5.3.6",
       "tag": "@cdf/assetlibrary_v5.3.6",
       "date": "Tue, 09 Nov 2021 18:18:19 GMT",
