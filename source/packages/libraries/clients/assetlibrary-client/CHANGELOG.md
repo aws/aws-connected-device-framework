@@ -1,6 +1,13 @@
 # Change Log - @cdf/assetlibrary-client
 
-This log was last generated on Tue, 28 Sep 2021 22:04:37 GMT and should not be manually modified.
+This log was last generated on Wed, 08 Dec 2021 21:31:23 GMT and should not be manually modified.
+
+## 4.2.0
+Wed, 08 Dec 2021 21:31:23 GMT
+
+### Minor changes
+
+- added includeGroups query param to getGroup function calls
 
 ## 4.1.2
 Tue, 28 Sep 2021 22:04:37 GMT

@@ -101,7 +101,7 @@ export class AssetLibraryTemplateCustomResource implements CustomResource {
         return await this.create(customResourceEvent);
     }
 
-    public async delete(customResourceEvent: CustomResourceEvent) : Promise<any> {
+    public async delete(customResourceEvent: CustomResourceEvent) : Promise<unknown> {
 
         const functionName = customResourceEvent.ResourceProperties.FunctionName;
         const contentType = customResourceEvent.ResourceProperties.ContentType;

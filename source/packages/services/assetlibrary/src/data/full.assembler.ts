@@ -40,7 +40,7 @@ export class FullAssembler {
         return node;
     }
 
-    public assembleAssociation(node:Node, r:RelatedEntityDto) {
+    public assembleAssociation(node:Node, r:RelatedEntityDto) : void {
         logger.debug(`full.assembler assembleAssociation: in: r:${JSON.stringify(r)}`);
 
         const l = safeExtractLabels(r.vProps.label);

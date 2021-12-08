@@ -1,6 +1,6 @@
 {
   "name": "@cdf/deployment-helper",
-  "version": "2.0.1",
+  "version": "2.0.4",
   "description": "CDF Deployment Helper",
   "author": "Hassan khokhar",
   "config": {
