@@ -92,12 +92,6 @@ OPTIONAL ARGUMENTS
 
     -D (string)   Snapshot ID of Neptune database backup to restore from. Note: once restored from a backup, the same snapshot identifier must be specified for all future deployments too.
 
-
-    NOTIFICATION OPTIONS:
-    ---------------------
-    -S (flag)     If provided, the DAX cluster will be deployed into a dedicated subnet group based on the provided private subnet ids within a VPC. 
-                  If not provided (default), the DAX cluster will be deployed into the default subnets.
-
     COMPILING OPTIONS:
     ------------------
     -B (flag)     Bypass bundling each module.  If deploying from a prebuilt tarfile rather than source code, setting this flag will speed up the deploy.
@@ -143,8 +137,6 @@ while getopts ":e:E:c:p:i:k:K:b:a:y:z:C:A:Nv:u:g:n:m:o:r:I:x:sD:SBYR:P:" opt; do
 
     D  ) ASSETLIBRARY_DB_SNAPSHOT_IDENTIFIER=$OPTARG;;
     u  ) NEPTUNE_DB_INSTANCE_TYPE=$OPTARG;;
-
-    S  ) NOTIFICATIONS_CUSTOM_SUBNETS=true;;
 
     a  ) API_GATEWAY_AUTH=$OPTARG;;
     y  ) TEMPLATE_SNIPPET_S3_URI_BASE=$OPTARG;;
@@ -271,8 +263,6 @@ The AWS Connected Device Framework (CDF) will install using the following config
     -x (CONCURRENT_EXECUTIONS):         : $CONCURRENT_EXECUTIONS
     -s (APPLY_AUTOSCALING):             : $APPLY_AUTOSCALING
     -D (ASSETLIBRARY_DB_SNAPSHOT_IDENTIFIER)    : $ASSETLIBRARY_DB_SNAPSHOT_IDENTIFIER
-
-    -S (NOTIFICATIONS_CUSTOM_SUBNETS)   : $NOTIFICATIONS_CUSTOM_SUBNETS
 
     -N (USE_EXISTING_VPC)               : $USE_EXISTING_VPC"
 
@@ -848,7 +838,7 @@ if [ -f "$assetlibrary_export_config" ]; then
         -n "$PRIVATE_SUBNET_IDS" \
         $AWS_SCRIPT_ARGS
 else
-   echo 'NOT DEPLOYING: Simulation Launcher'
+   echo 'NOT DEPLOYING: Asset Library Export'
 fi
 
 ############################################################################################
