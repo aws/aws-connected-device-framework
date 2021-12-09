@@ -103,15 +103,15 @@ After all the artifacts are bundled, you can now deploy cdf core modules either 
 **Example of the CDF deploy-core-single-stack.bash arguments:**
 
 ```bash
-$ ./infrastructure/deploy-core-single-stack.bash 
-    -e development
-    -b cdf-deployment
-    -c ~/path/to/infrastructure-folder
-    -p cdf-ec2-keypair 
-    -R eu-west-1 
-    -P dev
-    -y s3://cdf-deployment/template-snippets/ 
-    -i 0.0.0.0/0 
+$ ./infrastructure/deploy-core-single-stack.bash \
+    -e development \
+    -b cdf-deployment \
+    -c ~/path/to/infrastructure-folder \
+    -p cdf-ec2-keypair \
+    -R eu-west-1 \
+    -P dev \
+    -y s3://cdf-deployment/template-snippets/ \
+    -i 0.0.0.0/0 \
     -B 
 ```
 #### Deploying CDF Core in multiple stack mode
@@ -132,15 +132,15 @@ $ ./infrastructure/deploy-core-single-stack.bash
 **Example of the CDF deploy-core.bash arguments:**
 
 ```bash
-$ ./infrastructure/deploy-core.bash 
-    -e development
-    -b cdf-deployment
-    -c ~/path/to/infrastructure-folder
-    -p cdf-ec2-keypair 
-    -R eu-west-1 
-    -P dev
-    -y s3://cdf-deployment/template-snippets/ 
-    -i 0.0.0.0/0 
+$ ./infrastructure/deploy-core.bash \
+    -e development \
+    -b cdf-deployment \
+    -c ~/path/to/infrastructure-folder \
+    -p cdf-ec2-keypair \
+    -R eu-west-1 \
+    -P dev\
+    -y s3://cdf-deployment/template-snippets/ \
+    -i 0.0.0.0/0 \
     -B 
 ```
 
