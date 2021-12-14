@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/assetlibrary-client",
+      "comment": "getPolicy lambda invoke should use policyId",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/assetlibrary-client",
+  "email": "aaron.pittenger@bissell.com"
+}
