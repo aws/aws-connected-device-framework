@@ -1055,6 +1055,7 @@ Resources:
     Properties: 
       DisplayName: !Sub '${DeployPipeline}-onFailure'
       TopicName: !Sub '${DeployPipeline}-onFailure'
+      KmsMasterKeyId: alias/aws/sns
 
   FailedTopicPolicy:
     Type: 'AWS::SNS::TopicPolicy'
@@ -1074,6 +1075,7 @@ Resources:
     Properties: 
       DisplayName: !Sub '${DeployPipeline}-onSuccess'
       TopicName: !Sub '${DeployPipeline}-onSuccess'
+      KmsMasterKeyId: alias/aws/sns
     DependsOn: 
       - DeployPipeline
 
