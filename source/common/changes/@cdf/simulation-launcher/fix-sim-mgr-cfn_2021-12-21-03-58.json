@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/simulation-launcher",
+      "comment": "Missing logging config for simulation runs",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/simulation-launcher",
+  "email": "jonasneu@amazon.com"
+}

@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/simulation-manager",
+      "comment": "Missing S3 permissions for simulation runs",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/simulation-manager",
+  "email": "jonasneu@amazon.com"
+}
