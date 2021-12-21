@@ -43,7 +43,7 @@ jmeter -n $JMETER_FLAGS \
   -t "$JMETER_BIN/cdf/plan.jmx" \
   || true
 
-# need to waut for jmeter to finish writing to the logs once it shuts down
+# need to wait for jmeter to finish writing to the logs once it shuts down
 sleep 5
 
 # upload logs and results to s3

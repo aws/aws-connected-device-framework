@@ -15,7 +15,7 @@ FROM public.ecr.aws/amazonlinux/amazonlinux:latest
 
 LABEL maintainer="Dean Hart"
 
-ARG JMETER_VERSION="5.1.1"
+ARG JMETER_VERSION="5.4.2"
 ARG AWSCLI_VERSION="1.16.278"
 ARG JMETER_PLUGINS_MANAGER_VERSION="1.3"
 ARG CMDRUNNER_VERSION="2.2"
@@ -128,9 +128,13 @@ websocket-samplers=1.2.2 \
 
 RUN  curl --location --silent --show-error --output ${JMETER_HOME}/lib/ext/mqtt-xmeter-1.0.1-jar-with-dependencies.jar https://github.com/emqx/mqtt-jmeter/releases/download/1.0.1/mqtt-xmeter-1.0.1-jar-with-dependencies.jar
 
+# install nodejs 16, commonly used by test plans
+RUN curl -fsSL https://rpm.nodesource.com/setup_16.x | bash - \
+    && yum install -y nodejs
+
  # add additional dependencies
 ADD lib/* ${JMETER_HOME}/lib/ext/
-RUN rm -f /opt/apache-jmeter-5.1.1/lib/httpclient-4.5.7.jar
+RUN rm -f /opt/apache-jmeter-5.4.2/lib/httpclient-4.5.12.jar
 
 WORKDIR /opt/jmeter
 
