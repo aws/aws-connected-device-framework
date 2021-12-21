@@ -2,6 +2,21 @@
   "name": "@cdf/simulation-launcher",
   "entries": [
     {
+      "version": "2.0.2",
+      "tag": "@cdf/simulation-launcher_v2.0.2",
+      "date": "Tue, 21 Dec 2021 05:06:27 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Missing logging config for simulation runs"
+          },
+          {
+            "comment": "Update JMeter to version 5.4.2 to address CVE-2021-44228. JMeter 5.4.2 uses the patched log4j version 2.16.0."
+          }
+        ]
+      }
+    },
+    {
       "version": "2.0.1",
       "tag": "@cdf/simulation-launcher_v2.0.1",
       "date": "Tue, 28 Sep 2021 22:04:37 GMT",

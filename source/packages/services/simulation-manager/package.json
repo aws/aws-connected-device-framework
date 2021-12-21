@@ -1,6 +1,6 @@
 {
   "name": "@cdf/simulation-manager",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "CDF Simulator:  Simulation Manager REST API",
   "author": "Dean Hart",
   "config": {
