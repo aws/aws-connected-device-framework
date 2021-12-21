@@ -190,6 +190,7 @@ Resources:
           - Action:
               - "s3:Copy*"
               - "s3:Put*"
+              - 's3:List*'
             Effect: Allow
             Resource:
               - !Sub 'arn:aws:s3:::${BucketName}'

@@ -12,7 +12,7 @@
 #  and limitations under the License.
 #-----------------------------------------------------------------------------------------------------------------------
 
-export JMETER_VERSION="5.1.1"
+export JMETER_VERSION="5.4.2"
 export AWSCLI_VERSION="1.16.278"
 export JMETER_PLUGINS_MANAGER_VERSION="1.3"
 export CMDRUNNER_VERSION="2.2"

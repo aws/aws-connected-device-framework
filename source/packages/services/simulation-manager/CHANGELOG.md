@@ -1,6 +1,13 @@
 # Change Log - @cdf/simulation-manager
 
-This log was last generated on Tue, 28 Sep 2021 22:04:37 GMT and should not be manually modified.
+This log was last generated on Tue, 21 Dec 2021 05:06:27 GMT and should not be manually modified.
+
+## 2.0.2
+Tue, 21 Dec 2021 05:06:27 GMT
+
+### Patches
+
+- Missing S3 permissions for simulation runs
 
 ## 2.0.1
 Tue, 28 Sep 2021 22:04:37 GMT

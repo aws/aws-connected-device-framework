@@ -2,6 +2,18 @@
   "name": "@cdf/simulation-manager",
   "entries": [
     {
+      "version": "2.0.2",
+      "tag": "@cdf/simulation-manager_v2.0.2",
+      "date": "Tue, 21 Dec 2021 05:06:27 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Missing S3 permissions for simulation runs"
+          }
+        ]
+      }
+    },
+    {
       "version": "2.0.1",
       "tag": "@cdf/simulation-manager_v2.0.1",
       "date": "Tue, 28 Sep 2021 22:04:37 GMT",

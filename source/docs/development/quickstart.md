@@ -10,24 +10,7 @@ Due to the scripts used as part of both the build and deployment steps, only lin
 
 The following is a one-time setup to configure the CDF development environment:
 
-+ ensure you have a [git client](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed
-+ install [Node Version Manager](https://github.com/creationix/nvm#install--update-script):
-
-```sh
-curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.37.2/install.sh | bash
-```
-
-+ using nvm installed from the previous step, install Node.js v14:
-
-```sh
-> nvm use v14
-```
-
-+ install [`rush`](https://rushjs.io) monorepo manager:
-
-```sh
-> npm install -g @microsoft/rush
-```
++ Ensure that you have all [development prerequisites](prerequisites.md) installed.
 
 + clone the project:
 
@@ -38,9 +21,9 @@ curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.37.2/install.sh | b
 + initialize the project dependencies:
 
 ```sh
-> cd aws-connected-device-framework
-aws-connected-device-framework> rush install
-aws-connected-device-framework> rush update
+> cd aws-connected-device-framework/source
+aws-connected-device-framework/source> rush install
+aws-connected-device-framework/source> rush update
 ```
 
 ## Build
@@ -50,13 +33,13 @@ The CDF monorepo is managed by [rush](https://rushjs.io) which under the covers 
 ```sh
 # If this is your first time at using Rush for this project, remove any node_modules 
 # that may have been installed as part of a non-Rush (npm/pnpm) release:
-aws-connected-device-framework> rm -rf node_modules
+aws-connected-device-framework/source> rm -rf node_modules
 
 # One time setup only, initialize the project after cloning from git
-aws-connected-device-framework> rush install
+aws-connected-device-framework/source> rush install
 
 # Install/refresh the dependencies
-aws-connected-device-framework> rush update
+aws-connected-device-framework/source> rush update
 
 # When running the `clean`, `build`, `lint` or `test` commands you have the option to
 # run globally (for all packages), or for a specific package. To run for all packages
@@ -76,20 +59,20 @@ aws-connected-device-framework> rush update
 
 # Taking the above comments into consideration, to build run the following. Note that the first build
 # may take time, but subsequent builds will be quicker delta builds:
-aws-connected-device-framework> rush build
+aws-connected-device-framework/source> rush build
 
 # To lint:
-aws-connected-device-framework> rush lint
+aws-connected-device-framework/source> rush lint
 
 # And to run unit tests:
-aws-connected-device-framework> rush test
+aws-connected-device-framework/source> rush test
 
 # If you experience issues and need to reset everything you have the following 2 commands available:
 #   To remove all build artifacts:
-aws-connected-device-framework> rush purge        # to purge all node_modules:
-aws-connected-device-framework> rush update       # refresh dependencies
-aws-connected-device-framework> rush clean        # perform a deep clean
-aws-connected-device-framework> rush update       # refresh dependencies again
+aws-connected-device-framework/source> rush purge        # to purge all node_modules:
+aws-connected-device-framework/source> rush update       # refresh dependencies
+aws-connected-device-framework/source> rush clean        # perform a deep clean
+aws-connected-device-framework/source> rush update       # refresh dependencies again
 
 ```
 
@@ -141,11 +124,11 @@ aws-connected-device-framework> git switch -c <new_branch_name>
 Switched to a new branch '<new_branch_name>'
 ```
 
-+ At suitable points, commit your work by running the following, and following the prompts to describe your commit:
++ At suitable points, commit your work by running the following, and following the prompts to describe your commit. Note that you must run `rush commit` inside the `source/` directory whereas you can run the `git` commands anywhere within the repo.
 
 ```sh
 aws-connected-device-framework> git add -A
-aws-connected-device-framework> rush commit
+aws-connected-device-framework/source> rush commit
 ```
 
 + When you have finished with your implementation, and ensured that all existing unit tests pass as well as creating any new tests, the following steps are required:
@@ -157,22 +140,22 @@ aws-connected-device-framework> rush commit
 aws-connected-device-framework> git merge origin/master
 
 # once any conflicts have been resolved, test
-aws-connected-device-framework> rush test
+aws-connected-device-framework/source> rush test
 
 # commit changes
 aws-connected-device-framework> git add -A
-aws-connected-device-framework> rush commit
+aws-connected-device-framework/source> rush commit
 ```
 +
     + Generate release notes. the `rush change` command will analyze all commits on the branch, filter out the projects that changed, then prompt you to enter release notes for the updated project:
 
 ```sh
 # generate release notes
-aws-connected-device-framework> rush change
+aws-connected-device-framework/source> rush change
 
 # commit release notes
 aws-connected-device-framework> git add -A
-aws-connected-device-framework> rush commit
+aws-connected-device-framework/source> rush commit
 ```
 
 +
@@ -191,13 +174,13 @@ aws-connected-device-framework> git push
 
 Directory | Description
 ---|---
-aws-connected-device-framework/cicd/ | The CloudFormation template to deploy the cicd pipeline, along with the related CodeBuild scripts
-aws-connected-device-framework/common/ | All build and package manager related files
-aws-connected-device-framework/documentation/ | CDF core related documentation
-aws-connected-device-framework/infrastructure/ | The main deployment script for deploying the CDF core modules, along with CloudFormation templates that are not specific to any module
-aws-connected-device-framework/packages/integration-tests/ | BDD related automated integration tests
-aws-connected-device-framework/packages/libraries/ | All internal libraries, as well as CDF client libraries
-aws-connected-device-framework/packages/services/ | Deployable modules, such as the Asset Library
+source/cicd/ | The CloudFormation template to deploy the cicd pipeline, along with the related CodeBuild scripts
+source/common/ | All build and package manager related files
+source/docs/ | CDF core related documentation
+source/infrastructure/ | The main deployment script for deploying the CDF core modules, along with CloudFormation templates that are not specific to any module
+source/packages/integration-tests/ | BDD related automated integration tests
+source/packages/libraries/ | All internal libraries, as well as CDF client libraries
+source/packages/services/ | Deployable modules, such as the Asset Library
 
 
 ## FAQ

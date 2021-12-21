@@ -153,6 +153,7 @@ Resources:
                 - 'ecr:BatchGetImage'
                 - 'logs:CreateLogStream'
                 - 'logs:PutLogEvents'
+                - 'logs:CreateLogGroup'
               Resource: '*'
 
 
@@ -212,13 +213,14 @@ Resources:
           Image: !Sub "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${JmeterRepoName}:latest"
           Cpu: 1024
           Memory: 2048
-          Essential: 'true'
+          Essential: true
           LogConfiguration:
             LogDriver: awslogs
             Options:
               awslogs-group: !Ref LogGroup
               awslogs-region: !Ref AWS::Region
               awslogs-stream-prefix: jmeter
+              awslogs-create-group: true
 
   LogGroup:
     Type: AWS::Logs::LogGroup
