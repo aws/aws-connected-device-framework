@@ -39,13 +39,12 @@ export class SearchDaoFull extends BaseDaoFull {
 
         logger.debug(`search.full.dao buildSearchTraverser: in: request: ${JSON.stringify(request)}, authorizedPaths:${authorizedPaths}`);
 
-        const filters: process.GraphTraversal[]= [];
+        let source: process.GraphTraversalSource = conn.traversal;
+        if (this.enableDfeOptimization) {
+            source = source.withSideEffect('Neptune#useDFE', true);
+        }
 
         // if a path is provided, that becomes the starting point
-        const source: process.GraphTraversalSource =  conn.traversal;
-        if (this.enableDfeOptimization) {
-            source.withSideEffect('Neptune#useDFE', true);
-        }
         let traverser: process.GraphTraversal;
         if (request.ancestorPath!==undefined) {
             const ancestorId = `group___${request.ancestorPath}`;
@@ -55,7 +54,7 @@ export class SearchDaoFull extends BaseDaoFull {
             traverser = source.V().as('a');
         }
 
-        // construct all the filters that we will eventually pass to match()
+        // construct Gremlin traverser from request parameters
 
         if (request.types!==undefined) {
             request.types.forEach(t=> traverser.select('a').hasLabel(t));
@@ -76,25 +75,25 @@ export class SearchDaoFull extends BaseDaoFull {
         if (request.lt!==undefined) {
             request.lt.forEach(f=> {
                 this.buildSearchFilterVBase(f, traverser);
-                traverser.values(f.field).is(process.P.lt(Number(f.value)));
+                traverser.has(f.field, process.P.lt(Number(f.value)));
             });
         }
         if (request.lte!==undefined) {
             request.lte.forEach(f=> {
                 this.buildSearchFilterVBase(f, traverser);
-                traverser.values(f.field).is(process.P.lte(Number(f.value)));
+                traverser.has(f.field, process.P.lte(Number(f.value)));
             });
         }
         if (request.gt!==undefined) {
             request.gt.forEach(f=> {
                 this.buildSearchFilterVBase(f, traverser);
-                traverser.values(f.field).is(process.P.gt(Number(f.value)));
+                traverser.has(f.field, process.P.gt(Number(f.value)));
             });
         }
         if (request.gte!==undefined) {
             request.gte.forEach(f=> {
                 this.buildSearchFilterVBase(f, traverser);
-                traverser.values(f.field).is(process.P.gte(Number(f.value)));
+                traverser.has(f.field, process.P.gte(Number(f.value)));
             });
         }
         if (request.startsWith!==undefined) {
@@ -126,11 +125,6 @@ export class SearchDaoFull extends BaseDaoFull {
         }
         if (request.contains!==undefined) {
             throw new Error('NOT_SUPPORTED');
-        }
-
-        // apply the match criteria
-        if (filters.length>0) {
-            traverser.match(...filters);
         }
 
         // must reset all traversals so far as we may meed to use simplePath if FGAC is enabled to prevent cyclic checks
