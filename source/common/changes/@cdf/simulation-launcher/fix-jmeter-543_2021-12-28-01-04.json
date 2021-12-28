@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/simulation-launcher",
+      "comment": "Update JMeter to version 5.4.3 to address CVE-2021-45105. JMeter 5.4.3 uses the patched log4j version 2.17.0.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/simulation-launcher",
+  "email": "jonasneu@amazon.com"
+}

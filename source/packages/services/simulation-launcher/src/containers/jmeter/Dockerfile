@@ -15,7 +15,7 @@ FROM public.ecr.aws/amazonlinux/amazonlinux:latest
 
 LABEL maintainer="Dean Hart"
 
-ARG JMETER_VERSION="5.4.2"
+ARG JMETER_VERSION="5.4.3"
 ARG AWSCLI_VERSION="1.16.278"
 ARG JMETER_PLUGINS_MANAGER_VERSION="1.3"
 ARG CMDRUNNER_VERSION="2.2"
@@ -134,7 +134,7 @@ RUN curl -fsSL https://rpm.nodesource.com/setup_16.x | bash - \
 
  # add additional dependencies
 ADD lib/* ${JMETER_HOME}/lib/ext/
-RUN rm -f /opt/apache-jmeter-5.4.2/lib/httpclient-4.5.12.jar
+RUN rm -f /opt/apache-jmeter-5.4.3/lib/httpclient-4.5.12.jar
 
 WORKDIR /opt/jmeter
 
