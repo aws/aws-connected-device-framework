@@ -44,7 +44,7 @@
     "nyc": "15.1.0",
     "shx": "0.3.3",
 
-    "aws-sdk": "2.804.0",
+    "aws-sdk": "2.1048.0",
     "@types/jest": "26.0.23",
     "@typescript-eslint/eslint-plugin": "4.23.0",
     "@typescript-eslint/parser": "4.23.0",

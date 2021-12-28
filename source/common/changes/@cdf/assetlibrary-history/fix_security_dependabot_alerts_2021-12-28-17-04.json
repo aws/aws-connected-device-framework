@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/assetlibrary-history",
+      "comment": "Addressed github security dependabot alerts",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/assetlibrary-history",
+  "email": "deanhart@amazon.com"
+}

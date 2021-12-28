@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@cdf/errors": "^3.0.0",
-    "aws-sdk": "2.804.0",
+    "aws-sdk": "2.1048.0",
     "config": "3.3.6",
     "js-yaml": "4.1.0",
     "logform": "2.2.0",

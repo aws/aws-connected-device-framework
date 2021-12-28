@@ -25,7 +25,7 @@
     "@cdf/assetlibrary-client": "^4.2.0",
     "@cdf/config-inject": "^3.0.1",
     "@cdf/provisioning-client": "^4.0.2",
-    "aws-sdk": "2.804.0",
+    "aws-sdk": "2.1048.0",
     "config": "3.3.6",
     "inversify": "5.1.1",
     "inversify-binding-decorators": "4.0.0",

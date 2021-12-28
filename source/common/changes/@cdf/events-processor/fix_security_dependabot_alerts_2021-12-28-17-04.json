@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/events-processor",
+      "comment": "Addressed github security dependabot alerts",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/events-processor",
+  "email": "deanhart@amazon.com"
+}

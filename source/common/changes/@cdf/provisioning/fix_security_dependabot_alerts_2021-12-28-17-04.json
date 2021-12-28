@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/provisioning",
+      "comment": "Addressed github security dependabot alerts",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/provisioning",
+  "email": "deanhart@amazon.com"
+}

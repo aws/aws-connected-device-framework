@@ -28,7 +28,7 @@
     "winston-transport": "4.4.0"
   },
   "peerDependencies": {
-    "aws-sdk": "2.804.0"
+    "aws-sdk": "2.1048.0"
   },
   "devDependencies": {
     "@types/config": "0.0.38",

@@ -17,7 +17,7 @@
     "postbundle": "cd ../../../deploy/simulation-launcher && zip --symlinks -rq ../../packages/services/simulation-launcher/bundle.zip * && cd -"
   },
   "dependencies": {
-    "aws-sdk": "2.777.0",
+    "aws-sdk": "2.1048.0",
     "config": "3.2.6",
     "js-yaml": "3.13.1",
     "logform": "2.1.2",

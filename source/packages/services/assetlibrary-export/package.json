@@ -20,7 +20,7 @@
   "dependencies": {
     "@cdf/logger": "^3.0.0",
     "@cdf/config-inject": "^3.0.1",
-    "aws-sdk": "2.588.0",
+    "aws-sdk": "2.1048.0",
     "config": "3.2.4",
     "gremlin": "3.4.8",
     "inversify": "5.0.1",
