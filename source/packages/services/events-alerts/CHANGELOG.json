@@ -2,6 +2,18 @@
   "name": "@cdf/events-alerts",
   "entries": [
     {
+      "version": "2.0.5",
+      "tag": "@cdf/events-alerts_v2.0.5",
+      "date": "Tue, 28 Dec 2021 18:37:09 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Addressed github security dependabot alerts"
+          }
+        ]
+      }
+    },
+    {
       "version": "2.0.4",
       "tag": "@cdf/events-alerts_v2.0.4",
       "date": "Tue, 28 Sep 2021 22:04:37 GMT",

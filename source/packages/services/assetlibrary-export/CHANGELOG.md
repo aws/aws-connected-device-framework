@@ -1,6 +1,13 @@
 # Change Log - @cdf/assetlibrary-export
 
-This log was last generated on Tue, 28 Sep 2021 22:04:37 GMT and should not be manually modified.
+This log was last generated on Tue, 28 Dec 2021 18:37:09 GMT and should not be manually modified.
+
+## 2.0.3
+Tue, 28 Dec 2021 18:37:09 GMT
+
+### Patches
+
+- Addressed github security dependabot alerts
 
 ## 2.0.2
 Tue, 28 Sep 2021 22:04:37 GMT

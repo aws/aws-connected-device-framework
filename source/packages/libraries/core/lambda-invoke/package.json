@@ -1,6 +1,6 @@
 {
   "name": "@cdf/lambda-invoke",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Lambda Invoker Service",
   "author": "Hassan Khokhar",
   "main": "dist/index.js",

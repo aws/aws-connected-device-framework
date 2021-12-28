@@ -2,6 +2,44 @@
   "name": "@cdf/integration-tests",
   "entries": [
     {
+      "version": "2.9.3",
+      "tag": "@cdf/integration-tests_v2.9.3",
+      "date": "Tue, 28 Dec 2021 18:37:09 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Addressed github security dependabot alerts"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@cdf/assetlibrary-client\" from `^4.2.0` to `^4.2.1`"
+          },
+          {
+            "comment": "Updating dependency \"@cdf/assetlibraryhistory-client\" from `^4.0.1` to `^4.0.2`"
+          },
+          {
+            "comment": "Updating dependency \"@cdf/commands-client\" from `^4.1.1` to `^4.1.2`"
+          },
+          {
+            "comment": "Updating dependency \"@cdf/lambda-invoke\" from `^2.0.1` to `^2.0.2`"
+          },
+          {
+            "comment": "Updating dependency \"@cdf/notifications-client\" from `^3.0.1` to `^3.0.2`"
+          },
+          {
+            "comment": "Updating dependency \"@cdf/provisioning-client\" from `^4.0.2` to `^4.0.3`"
+          },
+          {
+            "comment": "Updating dependency \"@cdf/greengrass-deployment-client\" from `^1.1.0` to `^1.1.1`"
+          },
+          {
+            "comment": "Updating dependency \"@cdf/greengrass-provisioning-client\" from `^2.1.0` to `^2.1.1`"
+          }
+        ]
+      }
+    },
+    {
       "version": "2.9.2",
       "tag": "@cdf/integration-tests_v2.9.2",
       "date": "Wed, 11 Aug 2021 01:26:49 GMT",

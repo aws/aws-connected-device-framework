@@ -2,6 +2,23 @@
   "name": "@cdf/deployment-helper",
   "entries": [
     {
+      "version": "2.0.5",
+      "tag": "@cdf/deployment-helper_v2.0.5",
+      "date": "Tue, 28 Dec 2021 18:37:09 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Addressed github security dependabot alerts"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@cdf/lambda-invoke\" from `^2.0.1` to `^2.0.2`"
+          }
+        ]
+      }
+    },
+    {
       "version": "2.0.4",
       "tag": "@cdf/deployment-helper_v2.0.4",
       "date": "Wed, 08 Dec 2021 21:31:23 GMT",

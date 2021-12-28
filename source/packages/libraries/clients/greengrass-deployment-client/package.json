@@ -1,6 +1,6 @@
 {
   "name": "@cdf/greengrass-deployment-client",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "CDF Greengrass Deployment Client",
   "author": "Hassan khokhar <hkhokhar@amazon.com>",
   "main": "dist/index.js",
@@ -12,7 +12,7 @@
     "test": "rushx lint && NODE_ENV= NODE_CONFIG_DIR='./src/config' jest --silent --passWithNoTests"
   },
   "dependencies": {
-    "@cdf/lambda-invoke": "^2.0.1",
+    "@cdf/lambda-invoke": "^2.0.2",
     "config": "3.3.6",
     "inversify": "5.1.1",
     "inversify-binding-decorators": "4.0.0",

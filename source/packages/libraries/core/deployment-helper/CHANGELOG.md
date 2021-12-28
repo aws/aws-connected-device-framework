@@ -1,6 +1,13 @@
 # Change Log - @cdf/deployment-helper
 
-This log was last generated on Wed, 08 Dec 2021 21:31:23 GMT and should not be manually modified.
+This log was last generated on Tue, 28 Dec 2021 18:37:09 GMT and should not be manually modified.
+
+## 2.0.5
+Tue, 28 Dec 2021 18:37:09 GMT
+
+### Patches
+
+- Addressed github security dependabot alerts
 
 ## 2.0.4
 Wed, 08 Dec 2021 21:31:23 GMT

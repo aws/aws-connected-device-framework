@@ -2,6 +2,18 @@
   "name": "@cdf/provisioning",
   "entries": [
     {
+      "version": "4.2.3",
+      "tag": "@cdf/provisioning_v4.2.3",
+      "date": "Tue, 28 Dec 2021 18:37:09 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Addressed github security dependabot alerts"
+          }
+        ]
+      }
+    },
+    {
       "version": "4.2.2",
       "tag": "@cdf/provisioning_v4.2.2",
       "date": "Tue, 28 Sep 2021 22:04:37 GMT",

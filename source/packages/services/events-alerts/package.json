@@ -1,6 +1,6 @@
 {
   "name": "@cdf/events-alerts",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "CDF Events (Alerts)",
   "author": "Dean Hart",
   "config": {

@@ -2,6 +2,21 @@
   "name": "@cdf/simulation-manager",
   "entries": [
     {
+      "version": "2.0.3",
+      "tag": "@cdf/simulation-manager_v2.0.3",
+      "date": "Tue, 28 Dec 2021 18:37:09 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Addressed github security dependabot alerts"
+          },
+          {
+            "comment": "Update JMeter to version 5.4.3 to address CVE-2021-45105. JMeter 5.4.3 uses the patched log4j vers"
+          }
+        ]
+      }
+    },
+    {
       "version": "2.0.2",
       "tag": "@cdf/simulation-manager_v2.0.2",
       "date": "Tue, 21 Dec 2021 05:06:27 GMT",

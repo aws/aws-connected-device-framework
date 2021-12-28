@@ -2,6 +2,21 @@
   "name": "@cdf/assetlibrary",
   "entries": [
     {
+      "version": "5.3.9",
+      "tag": "@cdf/assetlibrary_v5.3.9",
+      "date": "Tue, 28 Dec 2021 18:37:09 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Addressed github security dependabot alerts"
+          },
+          {
+            "comment": "Fixes two issues with Asset Library (full mode) search. First, queries that used both comparison operators and certain other operators returned an error. Second, the optional useDFE side effect introduced in version 5.3.7 did not get correctly applied."
+          }
+        ]
+      }
+    },
+    {
       "version": "5.3.8",
       "tag": "@cdf/assetlibrary_v5.3.8",
       "date": "Wed, 08 Dec 2021 21:31:23 GMT",

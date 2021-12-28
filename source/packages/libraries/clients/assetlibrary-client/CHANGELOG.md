@@ -1,6 +1,13 @@
 # Change Log - @cdf/assetlibrary-client
 
-This log was last generated on Wed, 08 Dec 2021 21:31:23 GMT and should not be manually modified.
+This log was last generated on Tue, 28 Dec 2021 18:37:09 GMT and should not be manually modified.
+
+## 4.2.1
+Tue, 28 Dec 2021 18:37:09 GMT
+
+### Patches
+
+- Addressed github security dependabot alerts
 
 ## 4.2.0
 Wed, 08 Dec 2021 21:31:23 GMT

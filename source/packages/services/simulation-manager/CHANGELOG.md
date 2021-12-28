@@ -1,6 +1,14 @@
 # Change Log - @cdf/simulation-manager
 
-This log was last generated on Tue, 21 Dec 2021 05:06:27 GMT and should not be manually modified.
+This log was last generated on Tue, 28 Dec 2021 18:37:09 GMT and should not be manually modified.
+
+## 2.0.3
+Tue, 28 Dec 2021 18:37:09 GMT
+
+### Patches
+
+- Addressed github security dependabot alerts
+- Update JMeter to version 5.4.3 to address CVE-2021-45105. JMeter 5.4.3 uses the patched log4j vers
 
 ## 2.0.2
 Tue, 21 Dec 2021 05:06:27 GMT

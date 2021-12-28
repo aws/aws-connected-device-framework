@@ -1,6 +1,14 @@
 # Change Log - @cdf/assetlibrary
 
-This log was last generated on Wed, 08 Dec 2021 21:31:23 GMT and should not be manually modified.
+This log was last generated on Tue, 28 Dec 2021 18:37:09 GMT and should not be manually modified.
+
+## 5.3.9
+Tue, 28 Dec 2021 18:37:09 GMT
+
+### Patches
+
+- Addressed github security dependabot alerts
+- Fixes two issues with Asset Library (full mode) search. First, queries that used both comparison operators and certain other operators returned an error. Second, the optional useDFE side effect introduced in version 5.3.7 did not get correctly applied.
 
 ## 5.3.8
 Wed, 08 Dec 2021 21:31:23 GMT
