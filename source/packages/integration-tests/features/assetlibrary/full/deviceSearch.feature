@@ -81,6 +81,41 @@ Feature: Device search
     And search result contains device "test-devicesearch-001a"
     And search result contains device "test-devicesearch-001b"
 
+  Scenario: Top level string attribute ends with
+    When I search with following attributes:
+      | ancestorPath | /deviceSearch_feature |
+      | endsWith | deviceId:b |
+    Then search result contains 2 results
+    And search result contains device "test-devicesearch-001b"
+    And search result contains device "test-devicesearch-002b"
+
+  Scenario: Custom string attribute ends with
+    When I search with following attributes:
+      | type | device |
+      | ancestorPath | /deviceSearch_feature |
+      | endsWith | pair:white |
+    Then search result contains 2 results
+    And search result contains device "test-devicesearch-001b"
+    And search result contains device "test-devicesearch-002b"
+
+  Scenario: Top level string attribute contains
+    When I search with following attributes:
+      | ancestorPath | /deviceSearch_feature |
+      | contains | deviceId:rch-002 |
+    Then search result contains 2 results
+    And search result contains device "test-devicesearch-002a"
+    And search result contains device "test-devicesearch-002b"
+
+  Scenario: Custom string attribute contains
+    When I search with following attributes:
+      | type | device |
+      | ancestorPath | /deviceSearch_feature |
+      | contains | pair:white |
+    Then search result contains 3 results
+    And search result contains device "test-devicesearch-001b"
+    And search result contains device "test-devicesearch-002a"
+    And search result contains device "test-devicesearch-002b"
+
   Scenario: Custom number attribute less than
     When I search with following attributes:
       | type | device |

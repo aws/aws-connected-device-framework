@@ -22,7 +22,7 @@
     "@cdf/config-inject": "^3.0.1",
     "aws-sdk": "2.1048.0",
     "config": "3.2.4",
-    "gremlin": "3.4.8",
+    "gremlin": "3.4.12",
     "inversify": "5.0.1",
     "inversify-binding-decorators": "4.0.0",
     "inversify-express-utils": "6.3.2",

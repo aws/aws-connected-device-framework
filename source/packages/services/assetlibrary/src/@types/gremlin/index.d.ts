@@ -286,6 +286,19 @@ declare module 'gremlin' {
             static without(...args: unknown[]): P;
         }
 
+        class TextP {
+            constructor(operator: EnumValue, value: string, other?: any);
+            toString(): string;
+            and(arg?: any): P;
+            or(arg?: any): P;
+            static containing(...args: any[]): TextP;
+            static endingWith(...args: any[]): TextP;
+            static notContaining(...args: any[]): TextP;
+            static notEndingWith(...args: any[]): TextP;
+            static notStartingWith(...args: any[]): TextP;
+            static startingWith(...args: any[]): TextP;
+        }
+
         export class Traversal {
             toList(): Promise<Traverser[]>;
             hasNext(): Promise<boolean>;

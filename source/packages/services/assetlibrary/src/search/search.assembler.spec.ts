@@ -35,7 +35,9 @@ describe('SearchServiceAssembler', () => {
         lts: string|string[]|undefined;
         gtes: string|string[]|undefined;
         facetField: string|undefined;
-        startsWiths: string|string[]|undefined
+        startsWiths: string|string[]|undefined;
+        endsWiths: string|string[]|undefined;
+        containses: string|string[]|undefined;
     };
     beforeEach(() => {
         mockedDeviceAssembler = createMockInstance(DevicesAssembler);
@@ -43,7 +45,7 @@ describe('SearchServiceAssembler', () => {
         instance = new SearchAssembler(mockedDeviceAssembler, mockedGroupAssembler);
     });
 
-    it('happy path to convert the search params to search request model', async () => {
+    it('happy path to convert one search param to a search request model', async () => {
 
         mockedSearchRequest = {
             types: 'auto_ecu',
@@ -55,6 +57,8 @@ describe('SearchServiceAssembler', () => {
             gts: undefined,
             gtes: undefined,
             startsWiths: undefined,
+            endsWiths: undefined,
+            containses: undefined,
             exists: undefined,
             nexists: undefined,
             facetField: undefined
@@ -70,6 +74,8 @@ describe('SearchServiceAssembler', () => {
                 mockedSearchRequest.gts,
                 mockedSearchRequest.gtes,
                 mockedSearchRequest.startsWiths,
+                mockedSearchRequest.endsWiths,
+                mockedSearchRequest.containses,
                 mockedSearchRequest.exists,
                 mockedSearchRequest.nexists,
                 mockedSearchRequest.facetField
@@ -87,6 +93,80 @@ describe('SearchServiceAssembler', () => {
 
     });
 
+    it('happy path to convert all search params to search request model', async () => {
+
+        mockedSearchRequest = {
+            types: 'auto_ecu',
+            ancestorPath: '/vehicle/engine/electronics',
+            eqs: 'eqfield:eqval',
+            neqs: 'neqfield:neqval',
+            lts: 'ltfield:1',
+            ltes: 'ltefield:2000',
+            gts: 'gtfield:3.1416',
+            gtes: 'gtefield:4',
+            startsWiths: 'swfield:abc',
+            endsWiths: 'ewfield:xyz',
+            containses: 'confield:opq',
+            exists: 'exfield:exval',
+            nexists: 'nexfield:nexval',
+            facetField: undefined
+        };
+
+        const searchRequestModel = await instance.toSearchRequestModel(
+                mockedSearchRequest.types,
+                mockedSearchRequest.ancestorPath,
+                mockedSearchRequest.eqs,
+                mockedSearchRequest.neqs,
+                mockedSearchRequest.lts,
+                mockedSearchRequest.ltes,
+                mockedSearchRequest.gts,
+                mockedSearchRequest.gtes,
+                mockedSearchRequest.startsWiths,
+                mockedSearchRequest.endsWiths,
+                mockedSearchRequest.containses,
+                mockedSearchRequest.exists,
+                mockedSearchRequest.nexists,
+                mockedSearchRequest.facetField
+            );
+
+        expect(searchRequestModel).toBeDefined();
+        expect(searchRequestModel.types).toHaveLength(1);
+        expect(searchRequestModel.types[0]).toEqual('auto_ecu');
+        expect(searchRequestModel.eq).toHaveLength(1);
+        expect(searchRequestModel.eq[0].field).toEqual('eqfield');
+        expect(searchRequestModel.eq[0].value).toEqual('eqval');
+        expect(searchRequestModel.neq).toHaveLength(1);
+        expect(searchRequestModel.neq[0].field).toEqual('neqfield');
+        expect(searchRequestModel.neq[0].value).toEqual('neqval');
+        expect(searchRequestModel.lt).toHaveLength(1);
+        expect(searchRequestModel.lt[0].field).toEqual('ltfield');
+        expect(searchRequestModel.lt[0].value).toEqual('1');
+        expect(searchRequestModel.lte).toHaveLength(1);
+        expect(searchRequestModel.lte[0].field).toEqual('ltefield');
+        expect(searchRequestModel.lte[0].value).toEqual('2000');
+        expect(searchRequestModel.gt).toHaveLength(1);
+        expect(searchRequestModel.gt[0].field).toEqual('gtfield');
+        expect(searchRequestModel.gt[0].value).toEqual('3.1416');
+        expect(searchRequestModel.gte).toHaveLength(1);
+        expect(searchRequestModel.gte[0].field).toEqual('gtefield');
+        expect(searchRequestModel.gte[0].value).toEqual('4');
+        expect(searchRequestModel.startsWith).toHaveLength(1);
+        expect(searchRequestModel.startsWith[0].field).toEqual('swfield');
+        expect(searchRequestModel.startsWith[0].value).toEqual('abc');
+        expect(searchRequestModel.endsWith).toHaveLength(1);
+        expect(searchRequestModel.endsWith[0].field).toEqual('ewfield');
+        expect(searchRequestModel.endsWith[0].value).toEqual('xyz');
+        expect(searchRequestModel.contains).toHaveLength(1);
+        expect(searchRequestModel.contains[0].field).toEqual('confield');
+        expect(searchRequestModel.contains[0].value).toEqual('opq');
+        expect(searchRequestModel.exists).toHaveLength(1);
+        expect(searchRequestModel.exists[0].field).toEqual('exfield');
+        expect(searchRequestModel.exists[0].value).toEqual('exval');
+        expect(searchRequestModel.nexists).toHaveLength(1);
+        expect(searchRequestModel.nexists[0].field).toEqual('nexfield');
+        expect(searchRequestModel.nexists[0].value).toEqual('nexval');
+    });
+
     it('should decode the encoded params to search request model', async () => {
 
         mockedSearchRequest = {
@@ -99,6 +179,8 @@ describe('SearchServiceAssembler', () => {
             gts: undefined,
             gtes: undefined,
             startsWiths: undefined,
+            endsWiths: undefined,
+            containses: undefined,
             exists: undefined,
             nexists: undefined,
             facetField: undefined
@@ -114,6 +196,8 @@ describe('SearchServiceAssembler', () => {
             mockedSearchRequest.gts,
             mockedSearchRequest.gtes,
             mockedSearchRequest.startsWiths,
+            mockedSearchRequest.endsWiths,
+            mockedSearchRequest.containses,
             mockedSearchRequest.exists,
             mockedSearchRequest.nexists,
             mockedSearchRequest.facetField
@@ -142,6 +226,8 @@ describe('SearchServiceAssembler', () => {
             gts: undefined,
             gtes: undefined,
             startsWiths: undefined,
+            endsWiths: undefined,
+            containses: undefined,
             exists: undefined,
             nexists: undefined,
             facetField: undefined
@@ -157,6 +243,8 @@ describe('SearchServiceAssembler', () => {
             mockedSearchRequest.gts,
             mockedSearchRequest.gtes,
             mockedSearchRequest.startsWiths,
+            mockedSearchRequest.endsWiths,
+            mockedSearchRequest.containses,
             mockedSearchRequest.exists,
             mockedSearchRequest.nexists,
             mockedSearchRequest.facetField

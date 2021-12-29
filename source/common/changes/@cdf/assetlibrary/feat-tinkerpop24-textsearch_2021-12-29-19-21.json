@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/assetlibrary",
+      "comment": "Support for endsWith and contains search operators (full mode only)",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@cdf/assetlibrary",
+  "email": "jonasneu@amazon.com"
+}

@@ -98,12 +98,22 @@ export class SearchDaoFull extends BaseDaoFull {
         }
         if (request.startsWith!==undefined) {
             request.startsWith.forEach(f=> {
-                const startValue = <string> f.value;
-                const nextCharCode = String.fromCharCode( startValue.charCodeAt(startValue.length-1) + 1);
-                const endValue = this.setCharAt(startValue, startValue.length-1, nextCharCode);
-
                 this.buildSearchFilterVBase(f, traverser);
-                traverser.has(f.field, process.P.between(startValue, endValue));
+                traverser.has(f.field, process.TextP.startingWith(f.value));
+            });
+        }
+
+        if (request.endsWith!==undefined) {
+            request.endsWith.forEach(f=> {
+                this.buildSearchFilterVBase(f, traverser);
+                traverser.has(f.field, process.TextP.endingWith(f.value));
+            });
+        }
+
+        if (request.contains!==undefined) {
+            request.contains.forEach(f=> {
+                this.buildSearchFilterVBase(f, traverser);
+                traverser.has(f.field, process.TextP.containing(f.value));
             });
         }
 
@@ -118,13 +128,6 @@ export class SearchDaoFull extends BaseDaoFull {
             request.nexists.forEach(f=> {
                 this.buildSearchFilterEBaseNegated(f, traverser, f.field, f.value);
             });
-        }
-
-        if (request.endsWith!==undefined) {
-            throw new Error('NOT_SUPPORTED');
-        }
-        if (request.contains!==undefined) {
-            throw new Error('NOT_SUPPORTED');
         }
 
         // must reset all traversals so far as we may meed to use simplePath if FGAC is enabled to prevent cyclic checks
@@ -300,10 +303,6 @@ export class SearchDaoFull extends BaseDaoFull {
         const total = result.value as number;
         logger.debug(`search.full.dao summarize: exit: total: ${total}`);
         return total;
-    }
-
-    private setCharAt(text:string, index:number, replace:string):string {
-        return text.substring(0, index) + replace + text.substring(index+1);
     }
 
 }
