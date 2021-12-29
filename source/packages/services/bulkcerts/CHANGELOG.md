@@ -1,6 +1,13 @@
 # Change Log - @cdf/bulkcerts
 
-This log was last generated on Tue, 28 Dec 2021 18:37:09 GMT and should not be manually modified.
+This log was last generated on Wed, 29 Dec 2021 16:51:04 GMT and should not be manually modified.
+
+## 5.1.4
+Wed, 29 Dec 2021 16:51:04 GMT
+
+### Patches
+
+- Bulkcerts documentation update.
 
 ## 5.1.3
 Tue, 28 Dec 2021 18:37:09 GMT
