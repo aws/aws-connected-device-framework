@@ -2,6 +2,18 @@
   "name": "@cdf/assetlibrary",
   "entries": [
     {
+      "version": "5.4.0",
+      "tag": "@cdf/assetlibrary_v5.4.0",
+      "date": "Wed, 29 Dec 2021 20:21:35 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "Support for endsWith and contains search operators (full mode only)"
+          }
+        ]
+      }
+    },
+    {
       "version": "5.3.9",
       "tag": "@cdf/assetlibrary_v5.3.9",
       "date": "Tue, 28 Dec 2021 18:37:09 GMT",

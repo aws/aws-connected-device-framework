@@ -1,6 +1,13 @@
 # Change Log - @cdf/integration-tests
 
-This log was last generated on Tue, 28 Dec 2021 18:37:09 GMT and should not be manually modified.
+This log was last generated on Wed, 29 Dec 2021 20:21:35 GMT and should not be manually modified.
+
+## 2.9.4
+Wed, 29 Dec 2021 20:21:35 GMT
+
+### Patches
+
+- Tests for endsWith and contains operators in assetlibrary search
 
 ## 2.9.3
 Tue, 28 Dec 2021 18:37:09 GMT

@@ -1,6 +1,13 @@
 # Change Log - @cdf/assetlibrary-export
 
-This log was last generated on Tue, 28 Dec 2021 18:37:09 GMT and should not be manually modified.
+This log was last generated on Wed, 29 Dec 2021 20:21:35 GMT and should not be manually modified.
+
+## 2.0.4
+Wed, 29 Dec 2021 20:21:35 GMT
+
+### Patches
+
+- Update gremlin library from 3.4.8 to 3.4.12
 
 ## 2.0.3
 Tue, 28 Dec 2021 18:37:09 GMT

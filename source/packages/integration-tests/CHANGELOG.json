@@ -2,6 +2,18 @@
   "name": "@cdf/integration-tests",
   "entries": [
     {
+      "version": "2.9.4",
+      "tag": "@cdf/integration-tests_v2.9.4",
+      "date": "Wed, 29 Dec 2021 20:21:35 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Tests for endsWith and contains operators in assetlibrary search"
+          }
+        ]
+      }
+    },
+    {
       "version": "2.9.3",
       "tag": "@cdf/integration-tests_v2.9.3",
       "date": "Tue, 28 Dec 2021 18:37:09 GMT",

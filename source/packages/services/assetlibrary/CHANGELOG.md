@@ -1,6 +1,13 @@
 # Change Log - @cdf/assetlibrary
 
-This log was last generated on Tue, 28 Dec 2021 18:37:09 GMT and should not be manually modified.
+This log was last generated on Wed, 29 Dec 2021 20:21:35 GMT and should not be manually modified.
+
+## 5.4.0
+Wed, 29 Dec 2021 20:21:35 GMT
+
+### Minor changes
+
+- Support for endsWith and contains search operators (full mode only)
 
 ## 5.3.9
 Tue, 28 Dec 2021 18:37:09 GMT

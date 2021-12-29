@@ -2,6 +2,18 @@
   "name": "@cdf/assetlibrary-export",
   "entries": [
     {
+      "version": "2.0.4",
+      "tag": "@cdf/assetlibrary-export_v2.0.4",
+      "date": "Wed, 29 Dec 2021 20:21:35 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Update gremlin library from 3.4.8 to 3.4.12"
+          }
+        ]
+      }
+    },
+    {
       "version": "2.0.3",
       "tag": "@cdf/assetlibrary-export_v2.0.3",
       "date": "Tue, 28 Dec 2021 18:37:09 GMT",
