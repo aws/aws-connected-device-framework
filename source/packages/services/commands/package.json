@@ -20,7 +20,7 @@
     "@cdf/errors": "^3.0.0",
     "@cdf/logger": "^3.0.0",
     "@cdf/lambda-invoke": "^2.0.2",
-    "@cdf/assetlibrary-client": "^4.2.1",
+    "@cdf/assetlibrary-client": "^4.2.2",
     "@cdf/express-middleware": "^2.1.0",
     "@cdf/config-inject": "^3.0.1",
     "@cdf/provisioning-client": "^4.0.3",
