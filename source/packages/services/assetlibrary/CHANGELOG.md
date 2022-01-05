@@ -1,6 +1,13 @@
 # Change Log - @cdf/assetlibrary
 
-This log was last generated on Wed, 29 Dec 2021 20:21:35 GMT and should not be manually modified.
+This log was last generated on Wed, 05 Jan 2022 18:34:59 GMT and should not be manually modified.
+
+## 5.4.1
+Wed, 05 Jan 2022 18:34:59 GMT
+
+### Patches
+
+- Search query not constructed properly when a traversal search was specified followed by a non-traversal search.
 
 ## 5.4.0
 Wed, 29 Dec 2021 20:21:35 GMT

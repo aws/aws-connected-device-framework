@@ -1,6 +1,13 @@
 # Change Log - @cdf/integration-tests
 
-This log was last generated on Wed, 29 Dec 2021 20:21:35 GMT and should not be manually modified.
+This log was last generated on Wed, 05 Jan 2022 18:34:59 GMT and should not be manually modified.
+
+## 2.9.5
+Wed, 05 Jan 2022 18:34:59 GMT
+
+### Patches
+
+- Asset Library Search query not constructed properly when a traversal search was specified followed by a non-traversal search.
 
 ## 2.9.4
 Wed, 29 Dec 2021 20:21:35 GMT
