@@ -20,6 +20,8 @@ import {
     Group10Resource,
     SearchRequestFilter,
     ASSTLIBRARY_CLIENT_TYPES,
+    SearchRequestFilterTraversal,
+    SearchRequestFilterDirection,
 } from '@cdf/assetlibrary-client/dist';
 
 import chai_string = require('chai-string');
@@ -77,7 +79,14 @@ function buildSearchRequest(data:TableDefinition):SearchRequestModel {
                     };
                     // do we have traversals defined?
                     if (attrs.length>2) {
-                        // TODO: process traversals
+                        const traversals:SearchRequestFilterTraversal[] = [];
+                        for(let i=attrs.length-4; i>=0; i=-2) {
+                            traversals.unshift({
+                                relation: attrs[i],
+                                direction: attrs[i+1] as SearchRequestFilterDirection
+                            });
+                        }
+                        filter.traversals = traversals;
                     }
 
                     searchRequest[param].push(filter);
