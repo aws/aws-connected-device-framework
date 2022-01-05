@@ -62,42 +62,49 @@ export class SearchDaoFull extends BaseDaoFull {
 
         if (request.eq!==undefined) {
             request.eq.forEach(f=> {
+                traverser.select('a');
                 this.buildSearchFilterVBase(f, traverser);
                 traverser.has(f.field, f.value);
             });
         }
         if (request.neq!==undefined) {
             request.neq.forEach(f=> {
+                traverser.select('a');
                 this.buildSearchFilterVBase(f, traverser);
                 traverser.not(__.has(f.field, f.value));
             });
         }
         if (request.lt!==undefined) {
             request.lt.forEach(f=> {
+                traverser.select('a');
                 this.buildSearchFilterVBase(f, traverser);
                 traverser.has(f.field, process.P.lt(Number(f.value)));
             });
         }
         if (request.lte!==undefined) {
             request.lte.forEach(f=> {
+                traverser.select('a');
                 this.buildSearchFilterVBase(f, traverser);
                 traverser.has(f.field, process.P.lte(Number(f.value)));
             });
         }
         if (request.gt!==undefined) {
             request.gt.forEach(f=> {
+                traverser.select('a');
                 this.buildSearchFilterVBase(f, traverser);
                 traverser.has(f.field, process.P.gt(Number(f.value)));
             });
         }
         if (request.gte!==undefined) {
             request.gte.forEach(f=> {
+                traverser.select('a');
                 this.buildSearchFilterVBase(f, traverser);
                 traverser.has(f.field, process.P.gte(Number(f.value)));
             });
         }
         if (request.startsWith!==undefined) {
             request.startsWith.forEach(f=> {
+                traverser.select('a');
                 this.buildSearchFilterVBase(f, traverser);
                 traverser.has(f.field, process.TextP.startingWith(f.value));
             });
@@ -105,6 +112,7 @@ export class SearchDaoFull extends BaseDaoFull {
 
         if (request.endsWith!==undefined) {
             request.endsWith.forEach(f=> {
+                traverser.select('a');
                 this.buildSearchFilterVBase(f, traverser);
                 traverser.has(f.field, process.TextP.endingWith(f.value));
             });
@@ -112,6 +120,7 @@ export class SearchDaoFull extends BaseDaoFull {
 
         if (request.contains!==undefined) {
             request.contains.forEach(f=> {
+                traverser.select('a');
                 this.buildSearchFilterVBase(f, traverser);
                 traverser.has(f.field, process.TextP.containing(f.value));
             });
@@ -119,6 +128,7 @@ export class SearchDaoFull extends BaseDaoFull {
 
         if (request.exists!==undefined) {
             request.exists.forEach(f=> {
+                traverser.select('a');
                 this.buildSearchFilterEBase(f, traverser);
                 traverser.has(f.field, f.value);
             });
@@ -126,6 +136,7 @@ export class SearchDaoFull extends BaseDaoFull {
 
         if (request.nexists!==undefined) {
             request.nexists.forEach(f=> {
+                traverser.select('a');
                 this.buildSearchFilterEBaseNegated(f, traverser, f.field, f.value);
             });
         }
@@ -155,7 +166,6 @@ export class SearchDaoFull extends BaseDaoFull {
 
     private buildSearchFilterVBase(filter:SearchRequestFilter|SearchRequestFacet, traverser:process.GraphTraversal) : void {
         if (filter.traversals) {
-            traverser.select('a');
             filter.traversals.forEach(t=> {
                 if (t.direction===SearchRequestFilterDirection.in) {
                     traverser.in_(t.relation);
@@ -168,7 +178,6 @@ export class SearchDaoFull extends BaseDaoFull {
 
     private buildSearchFilterEBase(filter:SearchRequestFilter|SearchRequestFacet, traverser:process.GraphTraversal) : void {
         if (filter.traversals) {
-            traverser.select('a');
             filter.traversals.forEach(t=> {
                 if (t.direction===SearchRequestFilterDirection.in) {
                     traverser.inE(t.relation);
