@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/integration-tests",
+      "comment": "Asset Library Search query not constructed properly when a traversal search was specified followed by a non-traversal search.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/integration-tests",
+  "email": "deanhart@amazon.com"
+}
