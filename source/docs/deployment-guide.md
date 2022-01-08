@@ -1,4 +1,4 @@
-CDF Open Source Launch Guide
+Deployment Guide
 
 *On Local Computer:*
 
