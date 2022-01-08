@@ -70,6 +70,7 @@ The CDF modules form a layer above the AWS building blocks as shown in the follo
 - [Deploying](source/docs/deployment.md)
 - [Private API Gateway support](source/docs/private_api_gateways.md)
 - [CI/CD](source/docs/cicd.md)
+- [Deployment Guide](source/docs/deployment-guide.md)
 
 ## AWS Connected Device Framework Modules
 
