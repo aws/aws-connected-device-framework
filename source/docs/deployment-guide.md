@@ -52,7 +52,7 @@
     1. Create folder “cdf-configurations” file under “source” directory 
     2. Create folder for each required service  under directory “cdf-configurations” i.e. “assetlibrary”.  Note: Make sure name matches service names as show below. Only create folder for services those need to be deployed.
 
-![Dependencies](source/docs/images/cdf-core-hla-HLA.png)
+        ![Dependencies](images/cdf-services.png)
         
     3. Create configuration file under each service folder with name: ENV_NAME-config.json.  (Note: replace ENV_NAME with your environment name) 
     4. Follow configuration.md inside each service for direction on configuration file. (Location: source>packages>services>SERVICE_NAME)
@@ -203,7 +203,9 @@
 13. Create Configurations:
     1. Create folder “cdf-configurations” file under “source” directory 
     2. Create folder for each required service  under directory “cdf-configurations” i.e. “assetlibrary”.  Note: Make sure name matches service names as show below. Only create folder for services those need to be deployed.
-        1. [Image: Screen Shot 2021-11-17 at 3.27.04 PM.png]
+
+        ![Dependencies](images/cdf-services.png)
+
     3. Create configuration file under each service folder with name: ENV_NAME-config.json (Note: replace ENV_NAME with environment name) 
     4. Follow configuration.md  inside each service for direction on configuration file. (Location: source>packages>services>SERVICE_NAME) 
 14. Bundle project using rush:
