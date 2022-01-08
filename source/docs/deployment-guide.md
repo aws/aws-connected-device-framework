@@ -1,6 +1,6 @@
-#Deployment Guide
+# Deployment Guide
 
-##On Local Computer:
+## On Local Computer:
 
 1. Ensure  you have a Docker installed and running. Follow the process here to install Docker:
     1. Docker Installation: * Install Docker Desktop on Mac (https://docs.docker.com/desktop/mac/install/)
@@ -76,7 +76,7 @@
 
 
 
-##On Cloud-9:
+## On Cloud-9:
 
 1. Launch a Cloud9 instance in  your account with a minimum t3.xlarge instance type and Ubuntu 18.04.
 2. Open the launched Cloud9 IDE.
