@@ -65,10 +65,30 @@
 11. Deployment command:
     1. Following command deploys asset library lite version + services that has configuration defined:
         
-            ./infrastructure/deploy-core.bash -e ENV_NAME -b BUCKET-NAME -p EC2_KEYPAIR_NAME -R REGION -P PROFILE_NAME -y s3://BUCKET-NAME/snippets/ -z cfn-apiGateway-noAuth.yaml -i 0.0.0.0/0 -c /aws-connected-device-framework/source/cdf-configurations -m lite -B
+            ./infrastructure/deploy-core.bash -e ENV_NAME \
+            -b BUCKET-NAME \
+            -p EC2_KEYPAIR_NAME \
+            -R REGION \
+            -P PROFILE_NAME \
+            -y s3://BUCKET-NAME/snippets/ \
+            -z cfn-apiGateway-noAuth.yaml \
+            -i 0.0.0.0/0 \
+            -c /aws-connected-device-framework/source/cdf-configurations \
+            -m lite \
+            -B
     2. Following command deploys asset library full ** version + services that has configuration defined:
         
-            ./infrastructure/deploy-core.bash -e ENV_NAME -b BUCKET-NAME -p EC2_KEYPAIR_NAME -R REGION -P PROFILE_NAME -y s3://BUCKET-NAME/snippets/ -z cfn-apiGateway-noAuth.yaml -i 0.0.0.0/0 -c /aws-connected-device-framework/source/cdf-configurations -m full -B
+            ./infrastructure/deploy-core.bash -e ENV_NAME \
+            -b BUCKET-NAME \
+            -p EC2_KEYPAIR_NAME \
+            -R REGION \
+            -P PROFILE_NAME \
+            -y s3://BUCKET-NAME/snippets/ \
+            -z cfn-apiGateway-noAuth.yaml \
+            -i 0.0.0.0/0 \
+            -c /aws-connected-device-framework/source/cdf-configurations \
+            -m full \
+            -B
         
 12. Deploying with changes to code:
     1. rush bundle
@@ -195,11 +215,31 @@
 15. Deployment command:
     1. Following command deploys *asset library lite* version:
             
-            ./infrastructure/deploy-core.bash -e ENV_NAME -b BUCKET-NAME -p EC2_KEYPAIR_NAME -R REGION -P PROFILE_NAME -y s3://BUCKET-NAME/snippets/ -z cfn-apiGateway-noAuth.yaml -i 0.0.0.0/0 -c /aws-connected-device-framework/source/cdf-configurations -m lite -B
+            ./infrastructure/deploy-core.bash -e ENV_NAME \
+            -b BUCKET-NAME \
+            -p EC2_KEYPAIR_NAME \
+            -R REGION \
+            -P PROFILE_NAME \
+            -y s3://BUCKET-NAME/snippets/ \
+            -z cfn-apiGateway-noAuth.yaml \
+            -i 0.0.0.0/0 \
+            -c /aws-connected-device-framework/source/cdf-configurations \
+            -m lite \
+            -B
             
     2. Following command deploys *asset library full* version:
             
-            ./infrastructure/deploy-core.bash -e ENV_NAME -b BUCKET-NAME -p EC2_KEYPAIR_NAME -R REGION -P PROFILE_NAME -y s3://BUCKET-NAME/snippets/ -z cfn-apiGateway-noAuth.yaml -i 0.0.0.0/0 -c /aws-connected-device-framework/source/cdf-configurations -m full -B
+            ./infrastructure/deploy-core.bash -e ENV_NAME \
+            -b BUCKET-NAME \
+            -p EC2_KEYPAIR_NAME \
+            -R REGION \
+            -P PROFILE_NAME \
+            -y s3://BUCKET-NAME/snippets/ \
+            -z cfn-apiGateway-noAuth.yaml \
+            -i 0.0.0.0/0 \
+            -c /aws-connected-device-framework/source/cdf-configurations \
+            -m full \
+            -B
 
 16. Deploying with changes to code:
     1. rush bundle
