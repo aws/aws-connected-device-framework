@@ -69,3 +69,4 @@
 - Lambda Invoke [Changelog](./source/packages/libraries/core/lambda-invoke/CHANGELOG.md)
 - Logger [Changelog](./source/packages/libraries/core/logger/CHANGELOG.md)
 - Simulator [Changelog](./source/packages/libraries/simulator/device-simulator-base/CHANGELOG.md)                
+

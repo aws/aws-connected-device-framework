@@ -49,8 +49,9 @@ export class EventsCustomResource implements CustomResource {
             return this.lambdaInvoker.invoke(functionName, apiEvent);
         });
 
+        /* eslint @typescript-eslint/no-explicit-any: 0 */
         const responses = Promise.allSettled(invocationPromises).then((results: any) => {
-            results.forEach((result: any) => {
+            results.forEach((result: unknown) => {
                 logger.debug(`EventsCustomResource: create: result: ${JSON.stringify(result)}`);    
             });
         });

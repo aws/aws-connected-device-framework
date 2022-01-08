@@ -1,6 +1,6 @@
 {
   "name": "@cdf/assetlibrary-client",
-  "version": "4.1.2",
+  "version": "4.2.2",
   "description": "CDF Asset Library Client",
   "author": "Dean Hart",
   "main": "dist/index.js",
@@ -12,7 +12,7 @@
     "test": "rushx lint && NODE_ENV= NODE_CONFIG_DIR='./src/config' jest --silent --passWithNoTests"
   },
   "dependencies": {
-    "@cdf/lambda-invoke": "^2.0.1",
+    "@cdf/lambda-invoke": "^2.0.2",
     "config": "3.3.6",
     "inversify": "5.1.1",
     "inversify-binding-decorators": "4.0.0",
@@ -27,7 +27,7 @@
     "winston-transport": "4.4.0"
   },
   "peerDependencies": {
-    "aws-sdk": "2.804.0"
+    "aws-sdk": "2.1048.0"
   },
   "devDependencies": {
     "@types/config": "0.0.38",
@@ -40,7 +40,7 @@
     "nyc": "15.1.0",
     "shx": "0.3.3",
 
-    "aws-sdk": "2.804.0",
+    "aws-sdk": "2.1048.0",
     "@types/jest": "26.0.23",
     "@typescript-eslint/eslint-plugin": "4.23.0",
     "@typescript-eslint/parser": "4.23.0",

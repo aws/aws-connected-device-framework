@@ -37,6 +37,8 @@ export class SearchAssembler {
         gts:string|string[],
         gtes:string|string[],
         startsWiths:string|string[],
+        endsWiths:string|string[],
+        containses:string|string[],
         exists:string|string[],
         nexists:string|string[],
         facetField:string,
@@ -62,6 +64,8 @@ export class SearchAssembler {
         req.gt = this.toSearchRequestFilters(gts);
         req.gte = this.toSearchRequestFilters(gtes);
         req.startsWith = this.toSearchRequestFilters(startsWiths);
+        req.endsWith = this.toSearchRequestFilters(endsWiths);
+        req.contains = this.toSearchRequestFilters(containses);
 
         req.exists = this.toSearchRequestFilters(exists);
         req.nexists = this.toSearchRequestFilters(nexists);

@@ -98,12 +98,13 @@ export class GroupsLambdaService extends GroupsServiceBase implements GroupsServ
      * Returns a single group
      * @param groupPath Path of group to return
      */
-    async getGroup(groupPath: string, additionalHeaders?:RequestHeaders): Promise<Group10Resource | Group20Resource> {
+    async getGroup(groupPath: string, additionalHeaders?:RequestHeaders, includeGroups?:boolean): Promise<Group10Resource | Group20Resource> {
         ow(groupPath,'groupPath', ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
             .setMethod('GET')
             .setPath(super.groupRelativeUrl(groupPath))
+            .setQueryStringParameters({includeGroups: `${includeGroups}`})
             .setHeaders(super.buildHeaders(additionalHeaders));
 
         const res = await this.lambdaInvoker.invoke(this.functionName, event);

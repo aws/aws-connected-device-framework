@@ -26,7 +26,8 @@ const __ = process.statics;
 export class SearchDaoFull extends BaseDaoFull {
 
     public constructor(
-        @inject('neptuneUrl') neptuneUrl: string,
+        @inject('aws.neptune.url') neptuneUrl: string,
+        @inject('aws.neptune.enableDfeOptimization') private enableDfeOptimization: boolean,
         @inject(TYPES.TypeUtils) private typeUtils: TypeUtils,
         @inject(TYPES.NodeAssembler) private assembler:NodeAssembler,
 	    @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph
@@ -38,96 +39,106 @@ export class SearchDaoFull extends BaseDaoFull {
 
         logger.debug(`search.full.dao buildSearchTraverser: in: request: ${JSON.stringify(request)}, authorizedPaths:${authorizedPaths}`);
 
-        const filters: process.GraphTraversal[]= [];
+        let source: process.GraphTraversalSource = conn.traversal;
+        if (this.enableDfeOptimization) {
+            source = source.withSideEffect('Neptune#useDFE', true);
+        }
 
         // if a path is provided, that becomes the starting point
         let traverser: process.GraphTraversal;
         if (request.ancestorPath!==undefined) {
             const ancestorId = `group___${request.ancestorPath}`;
-            traverser = conn.traversal.V(ancestorId).
+            traverser = source.V(ancestorId).
                 repeat(__.in_().simplePath().dedup()).emit().as('a');
         } else {
-            traverser = conn.traversal.V().as('a');
+            traverser = source.V().as('a');
         }
 
-        // construct all the filters that we will eventually pass to match()
+        // construct Gremlin traverser from request parameters
 
         if (request.types!==undefined) {
-            request.types.forEach(t=> filters.push(
-                __.as('a').hasLabel(t)) );
+            request.types.forEach(t=> traverser.select('a').hasLabel(t));
         }
 
         if (request.eq!==undefined) {
             request.eq.forEach(f=> {
-                const filter = this.buildSearchFilterVBase(f);
-                filters.push(filter.has(f.field, f.value));
+                traverser.select('a');
+                this.buildSearchFilterVBase(f, traverser);
+                traverser.has(f.field, f.value);
             });
         }
         if (request.neq!==undefined) {
             request.neq.forEach(f=> {
-                const filter = this.buildSearchFilterVBase(f);
-                filters.push(filter.not(__.has(f.field, f.value)));
+                traverser.select('a');
+                this.buildSearchFilterVBase(f, traverser);
+                traverser.not(__.has(f.field, f.value));
             });
         }
         if (request.lt!==undefined) {
             request.lt.forEach(f=> {
-                const filter = this.buildSearchFilterVBase(f);
-                filters.push(filter.values(f.field).is(process.P.lt(Number(f.value))));
+                traverser.select('a');
+                this.buildSearchFilterVBase(f, traverser);
+                traverser.has(f.field, process.P.lt(Number(f.value)));
             });
         }
         if (request.lte!==undefined) {
             request.lte.forEach(f=> {
-                const filter = this.buildSearchFilterVBase(f);
-                filters.push(filter.values(f.field).is(process.P.lte(Number(f.value))));
+                traverser.select('a');
+                this.buildSearchFilterVBase(f, traverser);
+                traverser.has(f.field, process.P.lte(Number(f.value)));
             });
         }
         if (request.gt!==undefined) {
             request.gt.forEach(f=> {
-                const filter = this.buildSearchFilterVBase(f);
-                filters.push(filter.values(f.field).is(process.P.gt(Number(f.value))));
+                traverser.select('a');
+                this.buildSearchFilterVBase(f, traverser);
+                traverser.has(f.field, process.P.gt(Number(f.value)));
             });
         }
         if (request.gte!==undefined) {
             request.gte.forEach(f=> {
-                const filter = this.buildSearchFilterVBase(f);
-                filters.push(filter.values(f.field).is(process.P.gte(Number(f.value))));
+                traverser.select('a');
+                this.buildSearchFilterVBase(f, traverser);
+                traverser.has(f.field, process.P.gte(Number(f.value)));
             });
         }
         if (request.startsWith!==undefined) {
             request.startsWith.forEach(f=> {
-                const startValue = <string> f.value;
-                const nextCharCode = String.fromCharCode( startValue.charCodeAt(startValue.length-1) + 1);
-                const endValue = this.setCharAt(startValue, startValue.length-1, nextCharCode);
+                traverser.select('a');
+                this.buildSearchFilterVBase(f, traverser);
+                traverser.has(f.field, process.TextP.startingWith(f.value));
+            });
+        }
 
-                const filter = this.buildSearchFilterVBase(f);
-                filters.push(filter.has(f.field, process.P.between(startValue, endValue)));
+        if (request.endsWith!==undefined) {
+            request.endsWith.forEach(f=> {
+                traverser.select('a');
+                this.buildSearchFilterVBase(f, traverser);
+                traverser.has(f.field, process.TextP.endingWith(f.value));
+            });
+        }
+
+        if (request.contains!==undefined) {
+            request.contains.forEach(f=> {
+                traverser.select('a');
+                this.buildSearchFilterVBase(f, traverser);
+                traverser.has(f.field, process.TextP.containing(f.value));
             });
         }
 
         if (request.exists!==undefined) {
             request.exists.forEach(f=> {
-                const filter = this.buildSearchFilterEBase(f);
-                filters.push(filter.has(f.field, f.value));
+                traverser.select('a');
+                this.buildSearchFilterEBase(f, traverser);
+                traverser.has(f.field, f.value);
             });
         }
 
         if (request.nexists!==undefined) {
             request.nexists.forEach(f=> {
-                const filter = __.not(this.buildSearchFilterEBase(f).has(f.field, f.value));
-                filters.push(filter);
+                traverser.select('a');
+                this.buildSearchFilterEBaseNegated(f, traverser, f.field, f.value);
             });
-        }
-
-        if (request.endsWith!==undefined) {
-            throw new Error('NOT_SUPPORTED');
-        }
-        if (request.contains!==undefined) {
-            throw new Error('NOT_SUPPORTED');
-        }
-
-        // apply the match criteria
-        if (filters.length>0) {
-            traverser.match(...filters);
         }
 
         // must reset all traversals so far as we may meed to use simplePath if FGAC is enabled to prevent cyclic checks
@@ -135,6 +146,7 @@ export class SearchDaoFull extends BaseDaoFull {
 
         // if authz is enabled, only return results that the user is authorized to view
         if (authorizedPaths!==undefined && authorizedPaths.length>0) {
+
             const authorizedPathIds = authorizedPaths.map(path=>`group___${path}`);
             traverser.
                 local(
@@ -146,40 +158,51 @@ export class SearchDaoFull extends BaseDaoFull {
                 ).as('authorization');
         }
 
-        // logger.debug(`search.full.dao buildSearchTraverser: traverser: ${JSON.stringify(traverser.toString())}`);
+        logger.debug(`search.full.dao buildSearchTraverser: traverser: ${JSON.stringify(traverser.toString())}`);
 
         return traverser.select('matched').dedup();
 
     }
 
-    private buildSearchFilterVBase(filter:SearchRequestFilter|SearchRequestFacet) : process.GraphTraversal {
-        const response:process.GraphTraversal = __.as('a');
+    private buildSearchFilterVBase(filter:SearchRequestFilter|SearchRequestFacet, traverser:process.GraphTraversal) : void {
         if (filter.traversals) {
             filter.traversals.forEach(t=> {
                 if (t.direction===SearchRequestFilterDirection.in) {
-                    response.in_(t.relation);
+                    traverser.in_(t.relation);
                 } else {
-                    response.out(t.relation);
+                    traverser.out(t.relation);
                 }
             });
         }
-        return response;
     }
 
-    private buildSearchFilterEBase(filter:SearchRequestFilter|SearchRequestFacet) : process.GraphTraversal {
-        const response:process.GraphTraversal = __.as('a');
+    private buildSearchFilterEBase(filter:SearchRequestFilter|SearchRequestFacet, traverser:process.GraphTraversal) : void {
         if (filter.traversals) {
             filter.traversals.forEach(t=> {
                 if (t.direction===SearchRequestFilterDirection.in) {
-                    response.inE(t.relation);
+                    traverser.inE(t.relation);
                 } else {
-                    response.outE(t.relation);
+                    traverser.outE(t.relation);
                 }
-                response.otherV();
+                traverser.otherV();
             });
         }
+    }
 
-        return response;
+    private buildSearchFilterEBaseNegated(filter:SearchRequestFilter|SearchRequestFacet, traverser:process.GraphTraversal, field:unknown, value:unknown) : void {
+        if (filter.traversals) {
+            const nested:process.GraphTraversal = __.select('a');
+            filter.traversals.forEach(t=> {
+                if (t.direction===SearchRequestFilterDirection.in) {
+                    nested.inE(t.relation);
+                } else {
+                    nested.outE(t.relation);
+                }
+                nested.otherV();
+            });
+            nested.has(field, value);
+            traverser.not(nested);
+        }
     }
 
     public async search(request: SearchRequestModel, authorizedPaths:string[]): Promise<Node[]> {
@@ -289,10 +312,6 @@ export class SearchDaoFull extends BaseDaoFull {
         const total = result.value as number;
         logger.debug(`search.full.dao summarize: exit: total: ${total}`);
         return total;
-    }
-
-    private setCharAt(text:string, index:number, replace:string):string {
-        return text.substring(0, index) + replace + text.substring(index+1);
     }
 
 }

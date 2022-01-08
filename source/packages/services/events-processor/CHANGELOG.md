@@ -1,6 +1,28 @@
 # Change Log - @cdf/events-processor
 
-This log was last generated on Tue, 28 Sep 2021 22:04:37 GMT and should not be manually modified.
+This log was last generated on Tue, 28 Dec 2021 18:37:09 GMT and should not be manually modified.
+
+## 3.3.3
+Tue, 28 Dec 2021 18:37:09 GMT
+
+### Patches
+
+- Addressed github security dependabot alerts
+
+## 3.3.2
+Wed, 08 Dec 2021 21:31:23 GMT
+
+### Patches
+
+- allow users to input eventId
+- swagger doc change
+
+## 3.3.1
+Tue, 09 Nov 2021 18:18:19 GMT
+
+### Patches
+
+- allow users to input eventId
 
 ## 3.3.0
 Tue, 28 Sep 2021 22:04:37 GMT

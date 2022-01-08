@@ -6,6 +6,17 @@ The following represents optional configuration that can be provided at time of 
 
 ```json
 {
+
+    "aws": {
+        "neptune": {
+          /*
+            Enable DFE optimization which improves search api query performance with large databases. 
+            Should only be set to true where Neptune database engine >= 1.1.0.0.RC1
+          */
+          "enableDfeOptimization": true
+        }
+    },
+
     /*
       Events may be published to an MQTT topic for any additions, updates
       or deletions to groups, devices, policies, group templates, device 
@@ -115,10 +126,6 @@ As part of the deployment flow there is some configuration that is auto-discover
 
 ```json
 {
-    /*
-      AWS Neptune URL of the Asset Library database (if running in full mode)
-    */
-    "neptuneUrl": "?",
     
     "aws": {
         /*
@@ -131,6 +138,15 @@ As part of the deployment flow there is some configuration that is auto-discover
         */
         "iot": {
             "endpoint": "?"
+        },
+
+        "neptune": {
+
+          /*
+            AWS Neptune URL of the Asset Library database (if running in full mode)
+          */
+          "url": "?",
+
         }
     }
 }

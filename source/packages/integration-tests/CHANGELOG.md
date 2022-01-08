@@ -1,6 +1,27 @@
 # Change Log - @cdf/integration-tests
 
-This log was last generated on Wed, 11 Aug 2021 01:26:49 GMT and should not be manually modified.
+This log was last generated on Wed, 05 Jan 2022 18:34:59 GMT and should not be manually modified.
+
+## 2.9.5
+Wed, 05 Jan 2022 18:34:59 GMT
+
+### Patches
+
+- Asset Library Search query not constructed properly when a traversal search was specified followed by a non-traversal search.
+
+## 2.9.4
+Wed, 29 Dec 2021 20:21:35 GMT
+
+### Patches
+
+- Tests for endsWith and contains operators in assetlibrary search
+
+## 2.9.3
+Tue, 28 Dec 2021 18:37:09 GMT
+
+### Patches
+
+- Addressed github security dependabot alerts
 
 ## 2.9.2
 Wed, 11 Aug 2021 01:26:49 GMT

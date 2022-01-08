@@ -2,6 +2,18 @@
   "name": "@cdf/auth-devicecert",
   "entries": [
     {
+      "version": "4.0.3",
+      "tag": "@cdf/auth-devicecert_v4.0.3",
+      "date": "Tue, 28 Dec 2021 18:37:09 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Addressed github security dependabot alerts"
+          }
+        ]
+      }
+    },
+    {
       "version": "4.0.2",
       "tag": "@cdf/auth-devicecert_v4.0.2",
       "date": "Tue, 28 Sep 2021 22:04:37 GMT",

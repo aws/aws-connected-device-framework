@@ -11,15 +11,14 @@ Before attempting an upgrade, read [breaking changes](../docs/breaking-changes.m
 
 ## Installing prerequisites
 
-The following is a one-time setup to configure an environment for development and/or deployment:
+Ensure that all development and deployment [prerequisites](development/prerequisites.md) are installed on your development system.
+This is a one-time setup to configure an environment for development and/or deployment.
 
 If migrating from an existing to a more recent CDF release, the following items should be considered as a prerequisite:
 - Take manual snapshots if you wish to retain the data of your Neptune database
 - Migrate existing DynamoDB table data using the "cdf-dynamodb-migrator"
 
 **Refer to the [migration](./migration.md) document for more detailed and step-by-step instructions on migration**
-
-Install the listed [prerequisites](development/prequisities.md).
 
 ## Defining the configuration
 
@@ -58,7 +57,7 @@ If an authentication mechanism is applied to the CDF REST API's, a security peri
 
 ## Deploying the project
 
-### Deployment Prequisites
+### Deployment Prerequisites
 
 * EC2 Keypair
 * S3 Bucket for CDF resources
@@ -103,15 +102,15 @@ After all the artifacts are bundled, you can now deploy cdf core modules either 
 **Example of the CDF deploy-core-single-stack.bash arguments:**
 
 ```bash
-$ ./infrastructure/deploy-core-single-stack.bash 
-    -e development
-    -b cdf-deployment
-    -p cdf-ec2-keypair 
-    -R eu-west-1 
-    -P dev
-    -y s3://cdf-deployment/template-snippets/ 
-    -i 0.0.0.0/0 
-    -K johndoe
+$ ./infrastructure/deploy-core-single-stack.bash \
+    -e development \
+    -b cdf-deployment \
+    -c ~/path/to/infrastructure-folder \
+    -p cdf-ec2-keypair \
+    -R eu-west-1 \
+    -P dev \
+    -y s3://cdf-deployment/template-snippets/ \
+    -i 0.0.0.0/0 \
     -B 
 ```
 #### Deploying CDF Core in multiple stack mode
@@ -120,6 +119,7 @@ $ ./infrastructure/deploy-core-single-stack.bash
 ./infrastructure/deploy-core.bash 
     -e {env-name} 
     -b {s3-bucket-name} 
+    -c {infrastructure-project-location}
     -p {keypair-name}
     -R {region} 
     -P {aws_cli_profile}
@@ -131,15 +131,15 @@ $ ./infrastructure/deploy-core-single-stack.bash
 **Example of the CDF deploy-core.bash arguments:**
 
 ```bash
-$ ./infrastructure/deploy-core.bash 
-    -e development
-    -b cdf-deployment
-    -p cdf-ec2-keypair 
-    -R eu-west-1 
-    -P dev
-    -y s3://cdf-deployment/template-snippets/ 
-    -i 0.0.0.0/0 
-    -K johndoe
+$ ./infrastructure/deploy-core.bash \
+    -e development \
+    -b cdf-deployment \
+    -c ~/path/to/infrastructure-folder \
+    -p cdf-ec2-keypair \
+    -R eu-west-1 \
+    -P dev\
+    -y s3://cdf-deployment/template-snippets/ \
+    -i 0.0.0.0/0 \
     -B 
 ```
 
