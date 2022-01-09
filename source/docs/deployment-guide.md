@@ -1,4 +1,5 @@
 # Deployment Guide
+AWS Connected Device Framework can be deployed through multiple ways. This deployment guide provide steps by step intruction to deploy CDF through either Local computer(Mac or PC) or Cloud9 EC2 environment. Guide make assumption that you have clone Connected Device Framework to you environment operating through IDE like Visula Studio, Atom for Cloud9.   
 
 ## On Local Computer:
 
