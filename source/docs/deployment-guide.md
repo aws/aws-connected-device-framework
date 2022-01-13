@@ -84,7 +84,7 @@ Below are environmental dependencies which are required to run this project.
 
     b. Create folder for each required service  under directory “cdf-configurations” i.e. “assetlibrary”.  Note: Make sure name matches service names as show below. Only create folder for services those need to be deployed.
 
-        ![Dependencies](images/cdf-services.png)
+    ![Dependencies](images/cdf-services.png)
         
     b.	Create configuration file under each service folder with name: ENV_NAME-config.json.  (Note: replace ENV_NAME with your environment name) 
 
@@ -105,7 +105,8 @@ Below are environmental dependencies which are required to run this project.
         Rush bundle
  
 2.	Run Deployment command. This command will deploy necessary CDF stacks  to AWS cloud formation.
-a.	Following command deploys asset library lite version + services that has configuration defined:
+
+	a. Following command deploys asset library lite version + services that has configuration defined:
         
             ./infrastructure/deploy-core.bash -e ENV_NAME \
             -b BUCKET-NAME \
@@ -118,7 +119,8 @@ a.	Following command deploys asset library lite version + services that has conf
             -c <location of config file> \
             -m lite \
             -B
-b.	Following command deploys asset library full ** version + services that has configuration defined:
+	
+	b. Following command deploys asset library full ** version + services that has configuration defined:
         
             ./infrastructure/deploy-core.bash -e ENV_NAME \
             -b BUCKET-NAME \
@@ -131,13 +133,14 @@ b.	Following command deploys asset library full ** version + services that has c
             -c <location of config file> \
             -m full \
             -B
+	    
 3.	Deployment will take between up to 15 minutes depending on internet speed.  Once deployment is complete following message will appear on terminal screen.
         
         >>>>>>>>  CDF deployment complete!  <<<<<<<<
 	
     Once   deployment is complete you will see all stacks created in cloud formation  in your AWS account.  
     
-        ![Dependencies](images/cdf-deployment-cloudformation.png)
+       ![Dependencies](images/cdf-deployment-cloudformation.png)
 
 Note: If you do not see this message, please follow instructions for troubleshooting.  
 
