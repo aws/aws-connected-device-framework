@@ -1,7 +1,7 @@
 # Deployment Guide
 AWS Connected Device Framework(CDF) can be deployed through multiple ways. This deployment guide provides steps by step instruction to deploy CDF through either Mac or Linux environment. Guide make assumption that you operating through IDE environment like Visual Studio, Atom for Cloud9.   
 
-# Environment Prerequisites
+## Environment Prerequisites
 Below are environmental dependencies which are required to run this project. 
 1. Ensure  you have a Docker CLI installed and running. Please follow the installation instruction below if you do not have Docker CLI.
     Docker Installation:  (https://docs.docker.com/get-docker/)
@@ -29,7 +29,7 @@ Below are environmental dependencies which are required to run this project.
 7. Create Named profile for AWS CLI:
     https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html
  		
-# CDF Project Prerequisites
+## CDF Project Prerequisites
 1. Clone  the project:            
     a. Create directory for CDF project and navigate terminal to that location before executing below command
 
@@ -98,7 +98,7 @@ Below are environmental dependencies which are required to run this project.
         
         rush update
         
-# CDF Deployment
+## CDF Deployment
  
 1.	Compile project with rush
 
