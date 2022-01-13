@@ -1,253 +1,146 @@
 # Deployment Guide
-AWS Connected Device Framework can be deployed through multiple ways. This deployment guide provide steps by step intruction to deploy CDF through either Local computer(Mac or PC) or Cloud9 EC2 environment. Guide make assumption that you have clone Connected Device Framework to you environment operating through IDE like Visula Studio, Atom for Cloud9.   
+AWS Connected Device Framework(CDF) can be deployed through multiple ways. This deployment guide provides steps by step instruction to deploy CDF through either Mac or Linux environment. Guide make assumption that you operating through IDE environment like Visual Studio, Atom for Cloud9.   
 
-## On Local Computer:
+# Environment Prerequisites
+Below are environmental dependencies which are required to run this project. 
+1. Ensure  you have a Docker CLI installed and running. Please follow the installation instruction below if you do not have Docker CLI.
+    Docker Installation:  (https://docs.docker.com/get-docker/)
+   
+2. Ensure  you have a git client installed. Please follow the installation instruction below if you do not have git client.
 
-1. Ensure  you have a Docker installed and running. Follow the process here to install Docker:
-    1. Docker Installation: * Install Docker Desktop on Mac (https://docs.docker.com/desktop/mac/install/)
-    2. Install Docker Desktop on Windows (https://docs.docker.com/desktop/windows/install/)
-2. Ensure  you have a git client (https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed : 
+    Git Installation:  https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
 
-        sudo apt install git-all
-    
-5. Clone  the project:            
-    1. Create directory for CDF project and navigate terminal to that location before executing below command
-    2. git clone https://github.com/aws/aws-connected-device-framework.git
-6. Using  nvm installed from the previous step, install Node.js v14:
+3. Install NVM: 
+	https://github.com/nvm-sh/nvm#installing-and-updating
+
+4. Install Node.js v14 using NVM:
         
         nvm install v14.18.1 
         
-        nvm use v14 
-7. Initialize  the project dependencies:
-        
-        cd aws-connected-device-framework/source
-        
-        export env_name=ENV_NAME
-        
-        export aws_profile=PROFILE_NAME
-        
-        export region='REGION'
-        
-        export kms_key_owner=$(aws iam get-user --query 'User.UserName' --output text)
-        
-        export cdf_admin_email=PASTE YOUR EMAIL HERE
-        
-6. In console Create S3 bucket: i.e. cdf-deployment-assetlibrary 
-
-8. export s3_bucket_name= BUCKET-NAME
-
-10. EC2 Keypair:
-        
-        export keypair_name=${kms_key_owner}_${env_name}_cdf
-        
-        rm -f ~/.ssh/$keypair_name.pem
-        
-        aws ec2 create-key-pair \
-        --key-name ${keypair_name} \
-        --query 'KeyMaterial' \
-        --output text >~/.ssh/${keypair_name}.pem
-        
-        chmod 400 ~/.ssh/${keypair_name}.pem
-        
-9. Create Configurations:
-    1. Create folder “cdf-configurations” file under “source” directory 
-    2. Create folder for each required service  under directory “cdf-configurations” i.e. “assetlibrary”.  Note: Make sure name matches service names as show below. Only create folder for services those need to be deployed.
-
-        ![Dependencies](images/cdf-services.png)
-        
-    3. Create configuration file under each service folder with name: ENV_NAME-config.json.  (Note: replace ENV_NAME with your environment name) 
-    4. Follow configuration.md inside each service for direction on configuration file. (Location: source>packages>services>SERVICE_NAME)
-10. Install and Bundle project using rush:
-        
-        npm install -g @microsoft/rush
-        
-        rush install
-        
-        rush bundle
-        
-11. Deployment command:
-    1. Following command deploys asset library lite version + services that has configuration defined:
-        
-            ./infrastructure/deploy-core.bash -e ENV_NAME \
-            -b BUCKET-NAME \
-            -p EC2_KEYPAIR_NAME \
-            -R REGION \
-            -P PROFILE_NAME \
-            -y s3://BUCKET-NAME/snippets/ \
-            -z cfn-apiGateway-noAuth.yaml \
-            -i 0.0.0.0/0 \
-            -c /aws-connected-device-framework/source/cdf-configurations \
-            -m lite \
-            -B
-    2. Following command deploys asset library full ** version + services that has configuration defined:
-        
-            ./infrastructure/deploy-core.bash -e ENV_NAME \
-            -b BUCKET-NAME \
-            -p EC2_KEYPAIR_NAME \
-            -R REGION \
-            -P PROFILE_NAME \
-            -y s3://BUCKET-NAME/snippets/ \
-            -z cfn-apiGateway-noAuth.yaml \
-            -i 0.0.0.0/0 \
-            -c /aws-connected-device-framework/source/cdf-configurations \
-            -m full \
-            -B
-        
-12. Deploying with changes to code:
-    1. rush bundle
-    2. Run deployment command
-
-
-
-## On Cloud-9:
-
-1. Launch a Cloud9 instance in  your account with a minimum t3.xlarge instance type and Ubuntu 18.04.
-2. Open the launched Cloud9 IDE.
-3. Using the bash terminal in  the Cloud9 IDE, invoke the following commands.
-4. AWS CLI v2 installation: 
-      
-        sudo pip3 uninstall awscli
-        
-        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip"  -o "awscliv2.zip"
-        
-        unzip awscliv2.zip
-        
-        sudo ./aws/install
-        
-        rm -rf aws/ awscliv2.zip
-        
-5. Basic package dependencies
-      
-        sudo apt-get install jq
-        
-6. Follow the instructions for Moving an environment and resizing or encrypting Amazon  EBS volumes (https://docs.aws.amazon.com/cloud9/latest/user-guide/move-environment.html) to increase the root file system volume size to 25  (25GB). If you are using an NVM volume, the script doesn’t look to be  working totally correct so you can use the following:
-    
-    a. Get Instance ID: 
-    
-        INSTANCEID=$(curl http://169.254.169.254/latest/meta-data/instance-id)
-    
-    b. Get the ID of the Amazon EBS volume associated with the instance.
-         
-         VOLUMEID=$(aws ec2 describe-instances \
-          --instance-id $INSTANCEID \
-          --query "Reservations[0].Instances[0].BlockDeviceMappings[0].Ebs.VolumeId" \
-          --output text)
-    
-    c. Resize the EBS volume.
-         
-         aws ec2 modify-volume --volume-id $VOLUMEID --size 25
-    
-    d. Wait for the resize to finish.
-         
-         while [ \
-          "$(aws ec2 describe-volumes-modifications \
-            --volume-id $VOLUMEID \
-            --filters Name=modification-state,Values="optimizing","completed" \
-            --query "length(VolumesModifications)"\
-            --output text)" != "1" ]; do
-         
-         sleep 1
-         
-         done
-    
-    e. Verify Changes
-    
-        sudo growpart /dev/nvme0n1 1
-        
-        sudo resize2fs /dev/nvme0n1p1
-
-7. Ensure  you have a git client (https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed : 
-
-        sudo apt install git-all
-
-8. Clone  the project:
-    1. Create directory for CDF project and navigate terminal to that location before executing below command
-    2. git clone https://github.com/aws/aws-connected-device-framework.git
-
-9. Using  nvm installed from the previous step, install Node.js v14:
-        
-        nvm install v14.18.1 
-        
-        nvm use v14 
-        
-10. Initialize  the project dependencies:
-        
-        cd aws-connected-device-framework/source
-        
-        export env_name=ENV_NAME
-        
-        export aws_profile=PROFILE_NAME
-        
-        export region='REGION'
-        
-        export kms_key_owner=$(aws iam get-user --query 'User.UserName' --output text)
-        
-        export cdf_admin_email=PASTE YOUR EMAIL HERE
-        
-11. In console Create S3 bucket: i.e. cdf-deployment-assetlibrary 
-        
-        export s3_bucket_name= BUCKET-NAME
-        
-12. EC2 Keypair:
-        
-        export keypair_name=${kms_key_owner}_${env_name}_cdf
-        
-        rm -f ~/.ssh/$keypair_name.pem
-        
-        aws ec2 create-key-pair \
-        --key-name ${keypair_name} \
-        --query 'KeyMaterial' \
-        --output text >~/.ssh/${keypair_name}.pem
-        
-        chmod 400 ~/.ssh/${keypair_name}.pem
-        
-13. Create Configurations:
-    1. Create folder “cdf-configurations” file under “source” directory 
-    2. Create folder for each required service  under directory “cdf-configurations” i.e. “assetlibrary”.  Note: Make sure name matches service names as show below. Only create folder for services those need to be deployed.
-
-        ![Dependencies](images/cdf-services.png)
-
-    3. Create configuration file under each service folder with name: ENV_NAME-config.json (Note: replace ENV_NAME with environment name) 
-    4. Follow configuration.md  inside each service for direction on configuration file. (Location: source>packages>services>SERVICE_NAME) 
-14. Bundle project using rush:
-        
-        npm install -g @microsoft/rush
-        
-        rush install
-        
-        rush bundle
-        
-15. Deployment command:
-    1. Following command deploys *asset library lite* version:
-            
-            ./infrastructure/deploy-core.bash -e ENV_NAME \
-            -b BUCKET-NAME \
-            -p EC2_KEYPAIR_NAME \
-            -R REGION \
-            -P PROFILE_NAME \
-            -y s3://BUCKET-NAME/snippets/ \
-            -z cfn-apiGateway-noAuth.yaml \
-            -i 0.0.0.0/0 \
-            -c /aws-connected-device-framework/source/cdf-configurations \
-            -m lite \
-            -B
-            
-    2. Following command deploys *asset library full* version:
-            
-            ./infrastructure/deploy-core.bash -e ENV_NAME \
-            -b BUCKET-NAME \
-            -p EC2_KEYPAIR_NAME \
-            -R REGION \
-            -P PROFILE_NAME \
-            -y s3://BUCKET-NAME/snippets/ \
-            -z cfn-apiGateway-noAuth.yaml \
-            -i 0.0.0.0/0 \
-            -c /aws-connected-device-framework/source/cdf-configurations \
-            -m full \
-            -B
-
-16. Deploying with changes to code:
-    1. rush bundle
-    2. Run deployment command
-
+        nvm use v14
  
+5. Install Rush toll:
+	
+        npm install -g @microsoft/rush
+
+6. Ensure  you have a AWS CLI(Command Line Interface) installed. Please follow the installation instruction below if you do not have AWS CLI.
+    https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html
+
+7. Create Named profile for AWS CLI:
+    https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html
+ 		
+# CDF Project Prerequisites
+1. Clone  the project:            
+    a. Create directory for CDF project and navigate terminal to that location before executing below command
+
+    b. git clone https://github.com/aws/aws-connected-device-framework.git
+
+    c. Go to source directory:
+        
+        cd aws-connected-device-framework/source
+
+2. Setup project prerequisites 
+
+    a.	Setup environment name:  This is environment of project. i.e. Development, Testing, Production  
+    
+    b.	Assign AWS profile created in step-5 in Environment Prerequisite   
+    
+    c.	Assign AWS region in which project will be deployed
+    
+    d.	Assign KMS key name
+    
+    e.	Assign email address for the project     
+        
+        export env_name=ENV_NAME
+        
+        export aws_profile=PROFILE_NAME
+    
+        export region='REGION'
+
+        export kms_key_owner=$(aws iam get-user --query 'User.UserName' --output text)
+       
+        export cdf_admin_email=PASTE YOUR EMAIL HERE
+        
+7. S3 bucket will be used to hold all CDF artifacts.  In console Create S3 bucket(https://s3.console.aws.amazon.com) i.e. cdf-deployment-assetlibrary. 
+	
+        export s3_bucket_name= BUCKET-NAME
+
+8. EC2 key pair is a set of security credentials that you use to prove your identity when connecting to an Amazon EC2 instance. Below command will create EC2 Keypair that will be used by CDF. 
+        
+        export keypair_name=${kms_key_owner}_${env_name}_cdf
+        
+        rm -f ~/.ssh/$keypair_name.pem
+        
+        aws ec2 create-key-pair \
+        --key-name ${keypair_name} \
+        --query 'KeyMaterial' \
+        --output text >~/.ssh/${keypair_name}.pem
+        
+        chmod 400 ~/.ssh/${keypair_name}.pem
+        
+9. Create Configurations: User need to provide configuration which  can be provided at time of deployment via the modules's ENV_NAME-config.json file. If a value is listed, this is the value that is bundled into the application as a default. 
+
+    a.	Create folder “cdf-configurations” file under “source” directory 
+
+    b. Create folder for each required service  under directory “cdf-configurations” i.e. “assetlibrary”.  Note: Make sure name matches service names as show below. Only create folder for services those need to be deployed.
+
+        ![Dependencies](images/cdf-services.png)
+        
+    b.	Create configuration file under each service folder with name: ENV_NAME-config.json.  (Note: replace ENV_NAME with your environment name) 
+
+    c.	Follow configuration.md inside each service for direction on configuration file. (Location: source>packages>services>SERVICE_NAME>docs)
+
+    e. All mandatory configuration must be provided. If any CDF service does not have manatory configuration please create empty JSON file
+
+10. Install and update rush:
+        
+        rush install
+        
+        rush update
+        
+# CDF Deployment
+ 
+1.	Compile project with rush
+
+        Rush bundle
+ 
+2.	Run Deployment command. This command will deploy necessary CDF stacks  to AWS cloud formation.
+a.	Following command deploys asset library lite version + services that has configuration defined:
+        
+            ./infrastructure/deploy-core.bash -e ENV_NAME \
+            -b BUCKET-NAME \
+            -p EC2_KEYPAIR_NAME \
+            -R REGION \
+            -P PROFILE_NAME \
+            -y s3://BUCKET-NAME/snippets/ \
+            -z cfn-apiGateway-noAuth.yaml \
+            -i 0.0.0.0/0 \
+            -c <location of config file> \
+            -m lite \
+            -B
+b.	Following command deploys asset library full ** version + services that has configuration defined:
+        
+            ./infrastructure/deploy-core.bash -e ENV_NAME \
+            -b BUCKET-NAME \
+            -p EC2_KEYPAIR_NAME \
+            -R REGION \
+            -P PROFILE_NAME \
+            -y s3://BUCKET-NAME/snippets/ \
+            -z cfn-apiGateway-noAuth.yaml \
+            -i 0.0.0.0/0 \
+            -c <location of config file> \
+            -m full \
+            -B
+3.	Deployment will take between up to 15 minutes depending on internet speed.  Once deployment is complete following message will appear on terminal screen.
+        
+        >>>>>>>>  CDF deployment complete!  <<<<<<<<
+	
+    Once   deployment is complete you will see all stacks created in cloud formation  in your AWS account.  
+    
+        ![Dependencies](images/cdf-deployment-cloudformation.png)
+
+Note: If you do not see this message, please follow instructions for troubleshooting.  
+
+
+   
+
