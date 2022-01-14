@@ -13,7 +13,7 @@
 import { Response, Request } from 'express';
 import { interfaces, controller, response, request, requestBody, httpPost, httpGet,queryParam } from 'inversify-express-utils';
 import { inject } from 'inversify';
-import { BulkGroupsResource, BulkGroupsResult } from './groups.models';
+import { BulkGroupsResource, BulkGroupsResult, GroupMemberResourceList } from './groups.models';
 import { GroupsService } from './groups.service';
 import {TYPES} from '../di/types';
 import {logger} from '../utils/logger';
@@ -43,16 +43,18 @@ export class BulkGroupsController implements interfaces.Controller {
     @httpGet('')
     public async bulkGetGroups(
             @queryParam('groupPaths') groupPaths: string,
+            @queryParam('includeGroups') groups: string,
             @request() req: Request,
             @response() res: Response
-        ) {
+        ) : Promise<GroupMemberResourceList> {
             logger.info(`bulkgroups.controller bulkGetGroups: in: groupPaths:${groupPaths}`);
             try {
+                const includeGroups = (groups!=='false');
                 let groupPathsAsArray = groupPaths.split(',');
                 // remove duplicate group paths if any
                 groupPathsAsArray = groupPathsAsArray.filter((item, index) => groupPathsAsArray.indexOf(item) === index);
 
-                const items = await this.groupsService.getBulk(groupPathsAsArray);
+                const items = await this.groupsService.getBulk(groupPathsAsArray, includeGroups);
                 const resources = this.groupsAssembler.toGroupMemberResourceList(items, req['version']);
                 res.status(200);
                 return resources;

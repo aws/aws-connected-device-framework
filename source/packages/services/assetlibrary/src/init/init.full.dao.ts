@@ -20,7 +20,7 @@ import { BaseDaoFull } from '../data/base.full.dao';
 export class InitDaoFull extends BaseDaoFull {
 
     public constructor(
-        @inject('neptuneUrl') neptuneUrl: string,
+        @inject('aws.neptune.url') neptuneUrl: string,
 	    @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph
     ) {
         super(neptuneUrl, graphSourceFactory);

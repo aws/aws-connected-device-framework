@@ -21,7 +21,7 @@ export class BaseDaoFull {
     private _graph: structure.Graph;
 
     public constructor(
-        @inject('neptuneUrl') private neptuneUrl: string,
+        @inject('aws.neptune.url') private neptuneUrl: string,
 	    @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph
     ) {
         this._graph = graphSourceFactory();

@@ -49,7 +49,7 @@ The following represents optional configuration that can be provided at time of 
     /*
       local location where to store jmeter execution results
     */
-    "dataDir": "/opt/apache-jmeter-5.1.1/bin/cdf",
+    "dataDir": "/opt/apache-jmeter-5.4.3/bin/cdf",
     /*
       Container allocated memory size. Tune for best performance.
     */

@@ -41,6 +41,7 @@ export class SupplierCertificatesController implements interfaces.Controller {
             };
 
             res.location(`/certificates/${taskId}`);
+            res.header('x-taskid', taskId);
             res.status(202);
 
             return taskResponse;

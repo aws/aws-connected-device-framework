@@ -1424,8 +1424,9 @@ paths:
               type: number
         - name: startsWith
           in: query
-          description: Filter by an attribute based on starting with specific text. E.g.
-            `?startsWith=model:MOD123`
+          description:  >
+            Filter by an attribute based on starting with specific text. Case sensitive.
+            For example: `?startsWith=model:MOD123`
           explode: true
           schema:
             type: array
@@ -1433,7 +1434,9 @@ paths:
               type: string
         - name: endsWith
           in: query
-          description: NOT IMPLEMENTED!`
+          description: >
+            Filter by an attribute based on ending with specific text. Case sensitive.
+            For example: `?endsWith=model:limited%20edition`
           explode: true
           schema:
             type: array
@@ -1441,7 +1444,9 @@ paths:
               type: string
         - name: contains
           in: query
-          description: NOT IMPLEMENTED!
+          description: >
+            Filter by an attribute based on ending with specific text. Case sensitive.
+            For example: `?endsWith=model:quattro`
           explode: true
           schema:
             type: array

@@ -2,6 +2,23 @@
   "name": "@cdf/commands-client",
   "entries": [
     {
+      "version": "4.1.2",
+      "tag": "@cdf/commands-client_v4.1.2",
+      "date": "Tue, 28 Dec 2021 18:37:09 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Addressed github security dependabot alerts"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@cdf/lambda-invoke\" from `^2.0.1` to `^2.0.2`"
+          }
+        ]
+      }
+    },
+    {
       "version": "4.1.1",
       "tag": "@cdf/commands-client_v4.1.1",
       "date": "Tue, 28 Sep 2021 22:04:37 GMT",

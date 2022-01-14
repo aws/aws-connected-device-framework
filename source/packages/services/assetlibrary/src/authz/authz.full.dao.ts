@@ -23,7 +23,7 @@ const __ = process.statics;     // eslint-disable-line no-underscore-dangle
 export class AuthzDaoFull extends BaseDaoFull {
 
     public constructor(
-        @inject('neptuneUrl') neptuneUrl: string,
+        @inject('aws.neptune.url') neptuneUrl: string,
 	    @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph
     ) {
         super(neptuneUrl, graphSourceFactory);

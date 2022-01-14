@@ -36,7 +36,7 @@ cdf:
 
 runners:
   # local working directory
-  dataDir: /opt/apache-jmeter-5.1.1/bin/cdf
+  dataDir: /opt/apache-jmeter-5.4.3/bin/cdf
   # task memory (MiB) per task instance
   memory: 2048
   # task cpu (units) per task instance

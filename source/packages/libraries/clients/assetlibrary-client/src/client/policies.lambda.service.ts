@@ -94,7 +94,7 @@ export class PoliciesLambdaService extends PoliciesServiceBase implements Polici
         ow(policyId,'policyId', ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
-            .setPath(super.policiesRelativeUrl())
+            .setPath(super.policyRelativeUrl(policyId))
             .setMethod('GET')
             .setHeaders(super.buildHeaders(additionalHeaders));
 

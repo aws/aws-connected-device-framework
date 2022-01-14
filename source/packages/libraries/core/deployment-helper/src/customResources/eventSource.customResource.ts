@@ -49,7 +49,7 @@ export class EventSourceCustomResource implements CustomResource {
             return response;
         }
         
-        let eventSourceId = response?.header?.location?.split('/');
+        const eventSourceId = response?.header?.location?.split('/');
         
         logger.debug(`EventSourceCustomResource: create: eventSourceId: ${eventSourceId[eventSourceId.length - 1]}`);
         

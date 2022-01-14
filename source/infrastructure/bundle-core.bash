@@ -71,7 +71,8 @@ rush build                      # compile
 # create the deployment packages
 rm -rf deploy
 mkdir deploy
-npx pnpm recursive run bundle
+
+npx pnpm@6.4.0 recursive run bundle  # pinning to an older version here as latest pnpm (6.20.1) has broken `enable-pre-post-scripts=true`
 
 if [ "$RELEASE_PREP" = "true" ]; then
   rush clean:postrelease            # deep clean of complied files, excluding any bundles

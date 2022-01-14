@@ -264,7 +264,7 @@ if [[ "$ASSETLIBRARY_MODE" = "full" ]]; then
 
   cat $CONFIG_LOCATION | \
     jq --arg neptune_url "$neptune_url" \
-    '.neptuneUrl=$neptune_url' \
+    '.aws.neptune.url=$neptune_url' \
     > $CONFIG_LOCATION.tmp && mv $CONFIG_LOCATION.tmp $CONFIG_LOCATION
 fi
 

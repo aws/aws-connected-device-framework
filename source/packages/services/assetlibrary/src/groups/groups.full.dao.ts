@@ -27,7 +27,7 @@ const __ = process.statics;
 export class GroupsDaoFull extends BaseDaoFull {
 
     public constructor(
-        @inject('neptuneUrl') neptuneUrl: string,
+        @inject('aws.neptune.url') neptuneUrl: string,
         @inject(TYPES.CommonDao) private commonDao: CommonDaoFull,
         @inject(TYPES.FullAssembler) private fullAssembler: FullAssembler,
 	    @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph
@@ -35,7 +35,7 @@ export class GroupsDaoFull extends BaseDaoFull {
         super(neptuneUrl, graphSourceFactory);
     }
 
-    public async get(groupPaths: string[], includeGroups?:boolean): Promise<Node[]> {
+    public async get(groupPaths: string[], includeGroups:boolean): Promise<Node[]> {
         logger.debug(`groups.full.dao get: in: groupPath: ${groupPaths}`);
 
         const dbIds:string[] = groupPaths.map(g=> `group___${g}`);
