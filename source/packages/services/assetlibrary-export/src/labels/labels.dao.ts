@@ -30,7 +30,7 @@ export class LabelsDao extends BaseDaoFull {
     }
 
     public async getObjectCountByLabel(label: string): Promise<{
-        total: any
+        total: number
     }> {
         logger.debug(`labels.dao getCountByLabel: in: ${label}`);
 

@@ -56,7 +56,7 @@ export class TypeBatcher implements Batcher {
         logger.debug(`types.batcher: getBatchesByTypes in: category: ${category}, types: ${JSON.stringify(types)}`);
 
         const typeIds = types.map(type => type.templateId);
-        let batches:Batch[] = [];
+        const batches:Batch[] = [];
 
         for(const type of typeIds) {
             const count = await this.labelsService.getObjectCount(type);

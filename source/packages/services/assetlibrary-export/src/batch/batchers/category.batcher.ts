@@ -12,7 +12,6 @@
  *********************************************************************************************************************/
 import { injectable, inject } from 'inversify';
 import { generate } from 'shortid';
-import * as _ from 'lodash';
 import moment from 'moment';
 
 import { TYPES } from '../../di/types';
@@ -38,7 +37,7 @@ export class CategoryBatcher implements Batcher {
     }
 
     private async getBatchesByCategories(categories:string[]): Promise<Batch[]> {
-        let batches:Batch[] = [];
+        const batches:Batch[] = [];
 
 
         for (const category of categories) {

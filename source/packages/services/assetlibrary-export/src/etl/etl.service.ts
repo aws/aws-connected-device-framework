@@ -35,10 +35,9 @@ export class ETLService {
     ) {}
 
     public async processBatch(batchId: string): Promise<Loaded> {
+        logger.debug(`ETLService: processBatch in:`);
 
         const batch:Batch = await this.s3Utils.get(this.exportBucket, `${this.exportKeyPrefix}_temp/${batchId}`)
-
-        logger.debug(`ETLService: processBatch in:`);
 
         const items = await this.labeslService.getIdsByRange(batch.type, batch.range);
         batch.items = items;
