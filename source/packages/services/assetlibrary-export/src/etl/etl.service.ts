@@ -38,7 +38,7 @@ export class ETLService {
 
         const batch:Batch = await this.s3Utils.get(this.exportBucket, `${this.exportKeyPrefix}_temp/${batchId}`)
 
-        logger.debug(`ETLService: processBatch in: ${JSON.stringify(batch)}`);
+        logger.debug(`ETLService: processBatch in:`);
 
         const items = await this.labeslService.getIdsByRange(batch.type, batch.range);
         batch.items = items;
@@ -50,7 +50,7 @@ export class ETLService {
 
         await this.s3Utils.delete(this.exportBucket, `${this.exportKeyPrefix}_temp/${batchId}`)
 
-        logger.debug(`ETLService: processBatch out: ${JSON.stringify(loadedBatch)}`);
+        logger.debug(`ETLService: processBatch out:`);
 
         return loadedBatch;
 

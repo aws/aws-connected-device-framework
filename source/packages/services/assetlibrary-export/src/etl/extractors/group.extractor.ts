@@ -38,7 +38,7 @@ export class GroupExtractor implements Extractor {
             timestamp: batch.timestamp
         };
 
-        logger.debug(`GroupExtractor: extract: out: ${JSON.stringify(extracted)}`);
+        logger.debug(`GroupExtractor: extract: out`);
 
         return extracted;
     }

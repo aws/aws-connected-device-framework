@@ -38,7 +38,7 @@ export class DeviceExtractor implements Extractor {
     }
 
     public async extract(batch: Batch): Promise<Extracted> {
-        logger.debug(`DeviceExtractor: extract: in: batch: ${JSON.stringify(batch)}`);
+        logger.debug(`DeviceExtractor: extract: in:`);
 
         const attributes = this.attributesList.length === 0
             ? undefined
@@ -54,7 +54,7 @@ export class DeviceExtractor implements Extractor {
             timestamp: batch.timestamp
         };
 
-        logger.debug(`DeviceExtractor: extract: out: extractBatch: ${JSON.stringify(extractedBatch)}`);
+        logger.debug(`DeviceExtractor: extract: out:`);
         return extractedBatch;
     }
 }
