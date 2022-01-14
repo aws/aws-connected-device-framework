@@ -37,4 +37,4 @@ defaults:
       path: "${aws.s3.export.prefix}${batch.category}/${batch.type}/dt=${moment(batch.timestamp).format('YYYY-MM-DD-HH-MM')}/${batch.id}.json"
 
 logging:
-  level: debug
+  level: info
