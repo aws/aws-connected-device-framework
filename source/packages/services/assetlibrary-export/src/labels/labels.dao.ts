@@ -52,7 +52,7 @@ export class LabelsDao extends BaseDaoFull {
         }
 
         return {
-            total: result[0]
+            total: <number><unknown>result[0]
         };
 
     }
