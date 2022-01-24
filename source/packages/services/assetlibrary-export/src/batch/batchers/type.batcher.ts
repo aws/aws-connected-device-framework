@@ -23,15 +23,18 @@ import { TypesService } from '../../types/types.service';
 import { Batch, Batcher, Batches } from '../batch.service';
 import { TypeModel } from '../../types/types.models';
 import { LabelsService } from '../../labels/labels.service';
+import {BatcherBase} from '../batcher.base';
 
 @injectable()
-export class TypeBatcher implements Batcher {
+export class TypeBatcher extends BatcherBase implements Batcher  {
 
     constructor(
         @inject(TYPES.TypesService) private typesService: TypesService,
         @inject(TYPES.LabelsService) private labelsService: LabelsService,
-        @inject('defaults.batch.size') private batchSize: number
-    ) {}
+        @inject('defaults.batch.size') private batchSize: number,
+    ) {
+        super()
+    }
 
     public async batch(): Promise<Batches> {
         logger.debug(`BatchService batch: in`);
@@ -50,7 +53,6 @@ export class TypeBatcher implements Batcher {
         return batches;
 
     }
-
 
     private async getBatchesByTypes(category:string, types: TypeModel[]): Promise<Batch[]> {
         logger.debug(`types.batcher: getBatchesByTypes in: category: ${category}, types: ${JSON.stringify(types)}`);
@@ -80,37 +82,6 @@ export class TypeBatcher implements Batcher {
 
     private getCategories() {
         return [TypeCategory.Device, TypeCategory.Group];
-    }
-
-    // TODO: refactor this to a utility or a base class
-    private createRangesByCount(count:number, batchSize:number):Array<[number, number]> {
-        logger.debug(`types.batcher: createRangesByCount in: count:${count}, batchSize:${batchSize}`);
-
-        const batches = (count / batchSize) >> 0;
-        const hasRemainder = (count % batchSize) > 0
-        const result = []
-        let start = 0
-        let end = 0;
-
-        for(let i=0; i<=batches; i++) {
-            start = end;
-            end = end + batchSize;
-
-            if(end <= count) {
-                const range:[number, number] = [start, end];
-                result.push(range);
-            }
-        }
-
-        if(hasRemainder) {
-            const remainder = count % batchSize
-            const range:[number, number] = [start, start + remainder];
-            result.push(range);
-        }
-
-        logger.debug(`types.batcher: createRangesByCount out: ranges:${JSON.stringify(result)}`);
-
-        return result
     }
 
 }

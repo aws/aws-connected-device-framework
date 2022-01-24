@@ -20,13 +20,16 @@ import { logger } from '../../utils/logger';
 import { Batch, Batcher, Batches } from '../batch.service';
 import { TypeCategory } from '../../types/constants';
 import { LabelsService } from '../../labels/labels.service';
+import {BatcherBase} from '../batcher.base';
 
 @injectable()
-export class CategoryBatcher implements Batcher {
+export class CategoryBatcher extends BatcherBase implements Batcher {
     constructor(
         @inject(TYPES.LabelsService) private labelsService: LabelsService,
         @inject('defaults.batch.size') private batchSize: number
-    ) {}
+    ) {
+        super()
+    }
 
     public async batch(): Promise<Batches> {
         logger.debug(`BatchService batch: in`);
@@ -62,34 +65,4 @@ export class CategoryBatcher implements Batcher {
     private getTypeCategories() {
         return [TypeCategory.Device, TypeCategory.Group];
     }
-
-    // TODO:  refactor this to a utility or a base class
-    private createRangesByCount(count:number, batchSize:number):Array<[number, number]> {
-        const batches = (count / batchSize) >> 0;
-
-        const hasRemainder = (count % batchSize) > 0
-
-        const result = []
-        let start = 0
-        let end = 0;
-
-        for(let i=0; i<=batches; i++) {
-            start = end;
-            end = end + batchSize;
-
-            if(end <= count) {
-                const range:[number, number] = [start, end];
-                result.push(range);
-            }
-        }
-
-        if(hasRemainder) {
-            const remainder = count % batchSize
-            const range:[number, number] = [start, start + remainder];
-            result.push(range);
-        }
-
-        return result
-    }
-
 }
