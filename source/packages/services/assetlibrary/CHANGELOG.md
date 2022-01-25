@@ -1,6 +1,13 @@
 # Change Log - @cdf/assetlibrary
 
-This log was last generated on Wed, 05 Jan 2022 18:34:59 GMT and should not be manually modified.
+This log was last generated on Tue, 25 Jan 2022 19:57:26 GMT and should not be manually modified.
+
+## 5.4.2
+Tue, 25 Jan 2022 19:57:26 GMT
+
+### Patches
+
+- Fixes an error-level log message in request handler to correctly show a status code
 
 ## 5.4.1
 Wed, 05 Jan 2022 18:34:59 GMT

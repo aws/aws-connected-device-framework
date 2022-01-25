@@ -2,6 +2,18 @@
   "name": "@cdf/bulkcerts",
   "entries": [
     {
+      "version": "5.1.5",
+      "tag": "@cdf/bulkcerts_v5.1.5",
+      "date": "Tue, 25 Jan 2022 19:57:26 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Fixes an error-level log message in request handler to correctly show a status code"
+          }
+        ]
+      }
+    },
+    {
       "version": "5.1.4",
       "tag": "@cdf/bulkcerts_v5.1.4",
       "date": "Wed, 29 Dec 2021 16:51:04 GMT",

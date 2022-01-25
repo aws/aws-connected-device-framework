@@ -2,6 +2,18 @@
   "name": "@cdf/assetlibrary",
   "entries": [
     {
+      "version": "5.4.2",
+      "tag": "@cdf/assetlibrary_v5.4.2",
+      "date": "Tue, 25 Jan 2022 19:57:26 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Fixes an error-level log message in request handler to correctly show a status code"
+          }
+        ]
+      }
+    },
+    {
       "version": "5.4.1",
       "tag": "@cdf/assetlibrary_v5.4.1",
       "date": "Wed, 05 Jan 2022 18:34:59 GMT",
