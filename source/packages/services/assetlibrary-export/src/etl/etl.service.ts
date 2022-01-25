@@ -28,18 +28,18 @@ export class ETLService {
         @inject(TYPES.ExtractService) private extractService: ExtractService,
         @inject(TYPES.TransformService) private transformService: TransformService,
         @inject(TYPES.LoadService) private loadService: LoadService,
-        @inject(TYPES.LabelsService) private labeslService: LabelsService,
+        @inject(TYPES.LabelsService) private labelsService: LabelsService,
         @inject('aws.s3.export.bucket') private exportBucket: string,
         @inject('aws.s3.export.prefix') private exportKeyPrefix: string,
         @inject(TYPES.S3Utils) private s3Utils: S3Utils
     ) {}
 
     public async processBatch(batchId: string): Promise<Loaded> {
-        logger.debug(`ETLService: processBatch in:`);
+        logger.debug(`ETLService: processBatch in: ${batchId}`);
 
         const batch:Batch = await this.s3Utils.get(this.exportBucket, `${this.exportKeyPrefix}_temp/${batchId}`)
 
-        const items = await this.labeslService.getIdsByRange(batch.type, batch.range);
+        const items = await this.labelsService.getIdsByRange(batch.type, batch.range);
         batch.items = items;
 
         const extractedBatch = await this.extractService.extract(batch);

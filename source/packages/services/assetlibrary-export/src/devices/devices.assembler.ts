@@ -24,7 +24,7 @@ export class DevicesAssembler {
     constructor( @inject(TYPES.FullAssembler) private fullAssembler: FullAssembler ) {}
 
     public toNode(model:DeviceItem): Node {
-        logger.debug(`device.assembler toNode: in: model:${JSON.stringify(model)}`);
+        logger.silly(`device.assembler toNode: in: model:${JSON.stringify(model)}`);
 
         const node = new Node();
         node.types.push(model.category);
@@ -44,12 +44,12 @@ export class DevicesAssembler {
             }
         }
 
-        logger.debug(`device.assembler toNode: exit: node: ${JSON.stringify(node)}`);
+        logger.silly(`device.assembler toNode: exit: node: ${JSON.stringify(node)}`);
         return node;
     }
 
     public toDeviceItems(nodes: Node[]): DeviceItem[] {
-        logger.debug(`device.assembler toDeviceItems: in: node: ${JSON.stringify(nodes)}`);
+        logger.silly(`device.assembler toDeviceItems: in: node: ${JSON.stringify(nodes)}`);
 
         const devices:DeviceItem[]=[];
         for (const node of nodes) {
@@ -61,10 +61,10 @@ export class DevicesAssembler {
     }
 
     public toDeviceItem(node: Node): DeviceItem {
-        logger.debug(`device.assembler toDeviceItem: in: node: ${JSON.stringify(node)}`);
+        logger.silly(`device.assembler toDeviceItem: in: node: ${JSON.stringify(node)}`);
 
         if (node===undefined) {
-            logger.debug(`device.assembler toDeviceItem: exit: model: undefined`);
+            logger.silly(`device.assembler toDeviceItem: exit: model: undefined`);
             return undefined;
         }
 
@@ -131,16 +131,16 @@ export class DevicesAssembler {
             delete model.components;
         }
 
-        logger.debug(`device.assembler toDeviceItem: exit: model: ${JSON.stringify(model)}`);
+        logger.silly(`device.assembler toDeviceItem: exit: model: ${JSON.stringify(model)}`);
         return model;
 
     }
 
     public fromDeviceResource(res: DeviceBaseResource): DeviceItem {
-        logger.debug(`device.assembler fromDeviceResource: in: res: ${JSON.stringify(res)}`);
+        logger.silly(`device.assembler fromDeviceResource: in: res: ${JSON.stringify(res)}`);
 
         if (res===undefined) {
-            logger.debug(`device.assembler fromDeviceResource: exit: res: undefined`);
+            logger.silly(`device.assembler fromDeviceResource: exit: res: undefined`);
             return undefined;
         }
 
@@ -172,16 +172,16 @@ export class DevicesAssembler {
             }
         }
 
-        logger.debug(`device.assembler fromDeviceResource: exit: item: ${JSON.stringify(item)}`);
+        logger.silly(`device.assembler fromDeviceResource: exit: item: ${JSON.stringify(item)}`);
         return item;
 
     }
 
     public fromBulkDevicesResource(res: BulkDevicesResource): DeviceItem[] {
-        logger.debug(`device.assembler fromBulkDevicesResource: in: res: ${JSON.stringify(res)}`);
+        logger.silly(`device.assembler fromBulkDevicesResource: in: res: ${JSON.stringify(res)}`);
 
         if (res===undefined) {
-            logger.debug(`device.assembler fromBulkDevicesResource: exit: res: undefined`);
+            logger.silly(`device.assembler fromBulkDevicesResource: exit: res: undefined`);
             return undefined;
         }
 
@@ -189,16 +189,16 @@ export class DevicesAssembler {
 
         res.devices.forEach(resource=> items.push(this.fromDeviceResource(resource)));
 
-        logger.debug(`device.assembler fromBulkDevicesResource: exit: items: ${JSON.stringify(items)}`);
+        logger.silly(`device.assembler fromBulkDevicesResource: exit: items: ${JSON.stringify(items)}`);
         return items;
 
     }
 
     public toDeviceResource(item: DeviceItem, version:string): (DeviceBaseResource) {
-        logger.debug(`device.assembler toDeviceResource: in: item: ${JSON.stringify(item)}, version:${version}`);
+        logger.silly(`device.assembler toDeviceResource: in: item: ${JSON.stringify(item)}, version:${version}`);
 
         if (item===undefined) {
-            logger.debug(`device.assembler toDeviceResource: exit: item: undefined`);
+            logger.silly(`device.assembler toDeviceResource: exit: item: undefined`);
             return undefined;
         }
 
@@ -264,16 +264,16 @@ export class DevicesAssembler {
             }
         });
 
-        logger.debug(`device.assembler toDeviceResource: exit: resource: ${JSON.stringify(resource)}`);
+        logger.silly(`device.assembler toDeviceResource: exit: resource: ${JSON.stringify(resource)}`);
         return resource;
 
     }
 
     public toDeviceResourceList(items: DeviceItemList, version:string): (DeviceResourceList) {
-        logger.debug(`device.assembler toDeviceResourceList: in: items: ${JSON.stringify(items)}, version:${version}`);
+        logger.silly(`device.assembler toDeviceResourceList: in: items: ${JSON.stringify(items)}, version:${version}`);
 
         if (items===undefined) {
-            logger.debug(`device.assembler toDeviceResourceList: exit: items: undefined`);
+            logger.silly(`device.assembler toDeviceResourceList: exit: items: undefined`);
             return undefined;
         }
 
@@ -283,7 +283,7 @@ export class DevicesAssembler {
 
         items.results.forEach(item=> resources.results.push(this.toDeviceResource(item, version)));
 
-        logger.debug(`device.assembler toDeviceResourceList: exit: resources: ${JSON.stringify(resources)}`);
+        logger.silly(`device.assembler toDeviceResourceList: exit: resources: ${JSON.stringify(resources)}`);
         return resources;
 
     }
@@ -322,7 +322,7 @@ export class DevicesAssembler {
     }
 
     public toRelatedDeviceModelsList(node: Node, offset?:number|string, count?:number): DeviceItemList {
-        logger.debug(`devices.assembler toRelatedDeviceModelsList: in: node: ${JSON.stringify(node)}`);
+        logger.silly(`devices.assembler toRelatedDeviceModelsList: in: node: ${JSON.stringify(node)}`);
 
         const r:DeviceItemList = {
             results:[]
@@ -364,7 +364,7 @@ export class DevicesAssembler {
             }
         });
 
-        logger.debug(`groups.assembler toRelatedDeviceModelsList: exit: r: ${JSON.stringify(r)}`);
+        logger.silly(`groups.assembler toRelatedDeviceModelsList: exit: r: ${JSON.stringify(r)}`);
         return r;
 
     }

@@ -39,9 +39,9 @@ export class LabelsDao extends BaseDaoFull {
 
         try {
             const traverser = conn.traversal.V().hasLabel(label).count();
-            logger.debug(`common.full.dao: traverser: ${JSON.stringify(traverser.toString())}`);
+            logger.silly(`common.full.dao: traverser: ${JSON.stringify(traverser.toString())}`);
             result = await traverser.toList();
-            logger.debug(`common.full.dao: results: ${JSON.stringify(result)}`);
+            logger.silly(`common.full.dao: results: ${JSON.stringify(result)}`);
         } finally {
             await conn.close();
         }
@@ -65,9 +65,9 @@ export class LabelsDao extends BaseDaoFull {
 
         try {
             const traverser = conn.traversal.V().hasLabel(label).range(range[0], range[1]);
-            logger.debug(`common.full.dao: traverser: ${JSON.stringify(traverser.toString())}`);
+            logger.silly(`common.full.dao: traverser: ${JSON.stringify(traverser.toString())}`);
             results = await traverser.toList();
-            logger.debug(`common.full.dao: results: ${JSON.stringify(results)}`);
+            logger.silly(`common.full.dao: results: ${JSON.stringify(results)}`);
         } finally {
             await conn.close();
         }
@@ -76,7 +76,7 @@ export class LabelsDao extends BaseDaoFull {
             logger.debug(`labels.dao get: exit: node: undefined`);
             return undefined;
         }
-        logger.debug(`labels.dao get: results: ${JSON.stringify(results)}`);
+        logger.silly(`labels.dao get: results: ${JSON.stringify(results)}`);
 
         const vertices = results.filter(r=> isVertexDto(r)) as VertexDto[];
 

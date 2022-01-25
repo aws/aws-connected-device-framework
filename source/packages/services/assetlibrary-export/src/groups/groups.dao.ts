@@ -35,7 +35,7 @@ export class GroupsDao extends BaseDaoFull {
     }
 
     public async get(groupPaths: string[]): Promise<Node[]> {
-        logger.debug(`groups.full.dao get: in: groupPath: ${groupPaths}`);
+        logger.silly(`groups.full.dao get: in: groupPath: ${groupPaths}`);
 
         const dbIds:string[] = groupPaths.map(g=> `group___${g}`);
 
@@ -65,15 +65,15 @@ export class GroupsDao extends BaseDaoFull {
                     __.select('main').valueMap().with_(process.withOptions.tokens)
                 );
 
-            logger.debug(`groups.full.dao get: traverser: ${JSON.stringify(traverser.toString())}`);
+            logger.silly(`groups.full.dao get: traverser: ${JSON.stringify(traverser.toString())}`);
             results = await traverser.toList();
-            logger.debug(`groups.full.dao get: result: ${JSON.stringify(results)}`);
+            logger.silly(`groups.full.dao get: result: ${JSON.stringify(results)}`);
         } finally {
             await conn.close();
         }
 
         if (results===undefined || results.length===0) {
-            logger.debug(`groups.full.dao get: exit: node: undefined`);
+            logger.silly(`groups.full.dao get: exit: node: undefined`);
             return undefined;
         }
 
@@ -90,7 +90,7 @@ export class GroupsDao extends BaseDaoFull {
             nodes.push(node);
         });
 
-        logger.debug(`groups.full.dao get: exit: node: ${JSON.stringify(nodes)}`);
+        logger.silly(`groups.full.dao get: exit: node: ${JSON.stringify(nodes)}`);
         return nodes;
     }
 
