@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/commands",
+      "comment": "Fixes an error-level log message in request handler to correctly show a status code",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/commands",
+  "email": "jonasneu@amazon.com"
+}

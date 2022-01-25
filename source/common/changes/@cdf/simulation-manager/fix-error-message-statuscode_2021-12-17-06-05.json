@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/simulation-manager",
+      "comment": "Fixes an error-level log message in request handler to correctly show a status code",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/simulation-manager",
+  "email": "jonasneu@amazon.com"
+}
