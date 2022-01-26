@@ -84,7 +84,7 @@ OPTIONAL ARGUMENTS:
     ------------------------------------------------------------------------
     -D (string)  Snapshot ID to restore from. Note: once restored from a backup, the same snapshot identifier must be specified for all future deployments too.
 
-    Required if Enhance Search is enabled
+    Required if Enhanced Search is enabled
     -------------------------------------
     -k (string)   The KMS key ID used to encrypt the ElasticSearch database
 

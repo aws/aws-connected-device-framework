@@ -56,8 +56,8 @@ OPTIONAL ARGUMENTS
                       - ApiKey
                       - IAM
 
-    COMMON PRIVATE API AUTH OPTIONS, OR ASSET LIBRARY (FULL) MODE::
-    -------------------------------------------------------------------
+    COMMON PRIVATE API AUTH OPTIONS, OR ASSET LIBRARY FULL/ENHANCED MODES::
+    -----------------------------------------------------------------------
     -N (flag)     Use an existing VPC instead of creating a new one.
     -v (string)   ID of VPC to deploy into (required if -N set)
     -g (string)   ID of CDF security group (required if -N set)
@@ -76,9 +76,9 @@ OPTIONAL ARGUMENTS
 
     ASSET LIBRARY OPTIONS:
     -----------------------
-    -m (string)   Asset Library mode ('full' or 'lite').  Defaults to full if not provided.
-    -p (string)   The name of the key pair to use to deploy the Bastion EC2 host (required for Asset Library (full) mode or Private auth mode).
-    -i (string)   The remote access CIDR to configure Bastion SSH access (e.g. 1.2.3.4/32) (required for Asset Library (full) mode).
+    -m (string)   Asset Library mode ('full', 'enhanced', or 'lite').  Defaults to full if not provided.
+    -p (string)   The name of the key pair to use to deploy the Bastion EC2 host (required for Asset Library full/enhanced modes or Private auth mode).
+    -i (string)   The remote access CIDR to configure Bastion SSH access (e.g. 1.2.3.4/32) (required for Asset Library full/enhanced modes).
     -u (string)   The Neptune DB Instance type. Must be from the following list (default is db.r4.xlarge):
                   - db.t3.medium
                   - db.r4.large
@@ -193,7 +193,7 @@ ASSETLIBRARY_MODE="$(defaultIfNotSet 'ASSETLIBRARY_MODE' m ${ASSETLIBRARY_MODE} 
 KMS_KEY_ALIAS="$(defaultIfNotSet 'KMS_KEY_ALIAS' K cdf-${ENVIRONMENT} 'None')"
 
 if [[ -z "$USE_EXISTING_VPC" ||  "$USE_EXISTING_VPC" = "false" ]]; then
-    # if private api auth, or asset library full mode, is configured then these will get overwritten
+    # if private api auth, or asset library full/enhanced mode, is configured then these will get overwritten
     VPC_ID='N/A'
     CDF_SECURITY_GROUP_ID='N/A'
     PRIVATE_SUBNET_IDS='N/A'
@@ -420,7 +420,7 @@ api_vpc_endpoint_check_check=$(echo "$stack_exports" \
 # NETWORKING
 ############################################################################################
 assetlibrary_config=$CONFIG_LOCATION/assetlibrary/$CONFIG_ENVIRONMENT-config.json
-if [[ -f $assetlibrary_config && "$ASSETLIBRARY_MODE" = "full" &&  ( -z "$USE_EXISTING_VPC" || "$USE_EXISTING_VPC" = "false" ) ]] || [[ "$API_GATEWAY_AUTH" == "Private" && ( -z "$USE_EXISTING_VPC" || "$USE_EXISTING_VPC" = "false" ) ]]; then
+if [[ -f $assetlibrary_config && ( "$ASSETLIBRARY_MODE" = "full" || "$ASSETLIBRARY_MODE" = "enhanced" ) &&  ( -z "$USE_EXISTING_VPC" || "$USE_EXISTING_VPC" = "false" ) ]] || [[ "$API_GATEWAY_AUTH" == "Private" && ( -z "$USE_EXISTING_VPC" || "$USE_EXISTING_VPC" = "false" ) ]]; then
 
     logTitle 'Deploying Networking'
 
@@ -489,7 +489,7 @@ fi
 ############################################################################################
 # DEPLOYMENT HELPER VPC
 ############################################################################################
-if [[ -f $assetlibrary_config && "$ASSETLIBRARY_MODE" = "full" ]] || [[ "$API_GATEWAY_AUTH" == "Private" ]] || [[( -z "$USE_EXISTING_VPC" || "$USE_EXISTING_VPC" = "false" ) ]]; then
+if [[ -f $assetlibrary_config && ( "$ASSETLIBRARY_MODE" = "full" || "$ASSETLIBRARY_MODE" = "enhanced" ) ]] || [[ "$API_GATEWAY_AUTH" == "Private" ]] || [[( -z "$USE_EXISTING_VPC" || "$USE_EXISTING_VPC" = "false" ) ]]; then
     logTitle 'Deploying Deployment Helper VPC'
     cd "$root_dir/packages/libraries/core/deployment-helper"
     infrastructure/deploy-vpc-cfn.bash \
@@ -562,6 +562,7 @@ if [ -f "$assetlibrary_config" ]; then
     infrastructure/deploy-cfn.bash \
         -e "$ENVIRONMENT" \
         -c "$assetlibrary_config" \
+        -k "$KMS_KEY_ID" \
         -y "$TEMPLATE_SNIPPET_S3_URI_BASE" \
         -z "$API_GATEWAY_DEFINITION_TEMPLATE" \
         -a "$API_GATEWAY_AUTH" \
