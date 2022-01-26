@@ -11,8 +11,10 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { injectable } from 'inversify';
+import ow from 'ow';
 
 import { Extracted } from './extract.service';
+
 
 @injectable()
 export class TransformService implements Transformer {
@@ -20,6 +22,15 @@ export class TransformService implements Transformer {
     private readonly transformers: Transformers = {};
 
     public async transform(batch: Extracted): Promise<Transformed> {
+
+        ow(batch, 'batch', ow.object.nonEmpty);
+        ow(batch.category, 'batchCategory', ow.string.nonEmpty);
+        ow(batch.id, 'batchId', ow.string.nonEmpty);
+        ow(batch.type, 'batchType', ow.string.nonEmpty);
+        ow(batch.items, 'batchType', ow.array.nonEmpty);
+        ow(batch.timestamp, 'batchType', ow.number.greaterThan(0));
+
+
         if(!this.transformers[batch.category]) {
             return {
                 id: batch.id,
@@ -46,5 +57,5 @@ export class Transformed {
     category: string;
     type: string;
     items: unknown[];
-    timestamp: string;
+    timestamp: number;
 }

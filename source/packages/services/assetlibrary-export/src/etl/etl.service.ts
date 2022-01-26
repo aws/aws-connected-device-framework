@@ -11,6 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { inject, injectable } from 'inversify';
+import ow from 'ow';
 
 import { TYPES } from '../di/types';
 import { logger } from '../utils/logger';
@@ -36,6 +37,8 @@ export class ETLService {
 
     public async processBatch(batchId: string): Promise<Loaded> {
         logger.debug(`ETLService: processBatch in: ${batchId}`);
+
+        ow(batchId, 'deviceId', ow.string.nonEmpty);
 
         const batch:Batch = await this.s3Utils.get(this.exportBucket, `${this.exportKeyPrefix}_temp/${batchId}`)
 

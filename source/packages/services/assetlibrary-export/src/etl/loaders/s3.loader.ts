@@ -11,14 +11,15 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { inject, injectable } from 'inversify';
-import moment from 'moment';
 import * as _ from 'lodash';
+import { DateTime } from 'luxon';
 
 import { TYPES } from '../../di/types';
 import { logger } from '../../utils/logger';
 
 import { Loader, Loaded } from '../load.service';
 import { Transformed } from '../transform.service';
+import ow from 'ow';
 
 @injectable()
 export class S3Loader implements Loader {
@@ -37,9 +38,16 @@ export class S3Loader implements Loader {
     public async load(batch: Transformed): Promise<Loaded> {
         logger.debug(`S3Loader: load: in: ${JSON.stringify(batch)}`);
 
+        ow(batch, 'batch', ow.object.nonEmpty);
+        ow(batch.category, 'batchCategory', ow.string.nonEmpty);
+        ow(batch.id, 'batchId', ow.string.nonEmpty);
+        ow(batch.type, 'batchType', ow.string.nonEmpty);
+        ow(batch.items, 'batchType', ow.array.nonEmpty);
+        ow(batch.timestamp, 'batchType', ow.number.greaterThan(0));
+
         const compiled = _.template(this.loadPath);
         const compiledKey = compiled({
-            moment,
+            DateTime,
             batch,
             aws: {
                 s3: {

@@ -11,6 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { injectable, inject } from 'inversify';
+import ow from 'ow';
 
 import { TYPES } from '../di/types';
 import { logger } from '../utils/logger';
@@ -30,6 +31,8 @@ export class LabelsService {
     }> {
         logger.debug(`labels.service:getObjectCount: in: ${label}`);
 
+        ow(label, 'label', ow.string.nonEmpty);
+
         const result = await this.labelsDao.getObjectCountByLabel(label);
 
         logger.debug(`labels.service:getObjectCount: out: ${result}`);
@@ -42,6 +45,9 @@ export class LabelsService {
 
     public async getIdsByRange(label:string, range:[number, number]): Promise<string[]> {
         logger.debug(`labels.service: getIdsByRange: in: ${label}, range: ${range}`);
+
+        ow(label, 'label', ow.string.nonEmpty);
+        ow(range, 'range', ow.array.nonEmpty);
 
         const idObjects = await this.labelsDao.listIdObjectsByLabel(label, range);
         const ids = idObjects.map(e => e.id);

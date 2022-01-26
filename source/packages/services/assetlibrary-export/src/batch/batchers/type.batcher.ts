@@ -13,7 +13,6 @@
 import { inject, injectable } from 'inversify';
 import { generate } from 'shortid';
 import * as _ from 'lodash';
-import moment from 'moment';
 
 import { TYPES } from '../../di/types';
 import { logger } from '../../utils/logger';
@@ -71,7 +70,7 @@ export class TypeBatcher extends BatcherBase implements Batcher  {
                 batch.type = type;
                 batch.range = range;
                 batch.total = count.total
-                batch.timestamp = moment().toISOString();
+                batch.timestamp = Date.now();
                 batches.push(batch);
             }
         }

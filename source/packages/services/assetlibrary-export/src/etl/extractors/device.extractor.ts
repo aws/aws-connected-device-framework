@@ -20,6 +20,7 @@ import { DevicesService } from '../../devices/devices.service';
 
 import { Batch } from '../../batch/batch.service';
 import { TypeCategory } from '../../types/constants';
+import ow from 'ow';
 
 @injectable()
 export class DeviceExtractor implements Extractor {
@@ -38,7 +39,14 @@ export class DeviceExtractor implements Extractor {
     }
 
     public async extract(batch: Batch): Promise<Extracted> {
-        logger.debug(`DeviceExtractor: extract: in:`);
+        logger.debug(`DeviceExtractor: extract: in:${JSON.stringify(batch)}`);
+
+        ow(batch, 'batch', ow.object.nonEmpty);
+        ow(batch.category, 'batchCategory', ow.string.nonEmpty);
+        ow(batch.id, 'batchId', ow.string.nonEmpty);
+        ow(batch.type, 'batchType', ow.string.nonEmpty);
+        ow(batch.items, 'batchType', ow.array.nonEmpty);
+        ow(batch.timestamp, 'batchType', ow.number.greaterThan(0));
 
         const attributes = this.attributesList.length === 0
             ? undefined

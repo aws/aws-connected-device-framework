@@ -12,7 +12,6 @@
  *********************************************************************************************************************/
 import { injectable, inject } from 'inversify';
 import { generate } from 'shortid';
-import moment from 'moment';
 
 import { TYPES } from '../../di/types';
 import { logger } from '../../utils/logger';
@@ -53,7 +52,7 @@ export class CategoryBatcher extends BatcherBase implements Batcher {
                 batch.id = generate();
                 batch.category = category;
                 batch.range = range;
-                batch.timestamp = moment().toISOString();
+                batch.timestamp = Date.now();
                 batch.total = count.total
                 batches.push(batch);
             }

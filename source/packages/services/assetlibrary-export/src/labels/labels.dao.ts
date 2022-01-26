@@ -12,6 +12,7 @@
  *********************************************************************************************************************/
 import {process, structure} from 'gremlin';
 import {inject, injectable} from 'inversify';
+import ow from 'ow';
 
 import {logger} from '../utils/logger';
 import {TYPES} from '../di/types';
@@ -33,6 +34,8 @@ export class LabelsDao extends BaseDaoFull {
         total: number
     }> {
         logger.debug(`labels.dao getCountByLabel: in: ${label}`);
+
+        ow(label, 'label', ow.string.nonEmpty);
 
         let result: process.Traverser[];
         const conn = super.getConnection();
@@ -59,6 +62,9 @@ export class LabelsDao extends BaseDaoFull {
 
     public async listIdObjectsByLabel(label: string, range: [number, number]): Promise<IdObject[]> {
         logger.debug(`labels.dao getDeviceIds: in: ${label}, range: ${range}`);
+
+        ow(label, 'label', ow.string.nonEmpty);
+        ow(range, 'range', ow.array.nonEmpty);
 
         let results: process.Traverser[];
         const conn = super.getConnection();

@@ -141,7 +141,7 @@ Resources:
       FunctionName: !Sub 'cdf-assetLibrary-export-batch-${Environment}'
       CodeUri: ../bundle.zip
       Handler: packages/services/assetlibrary-export/dist/lambda_sf_batch_proxy.export_handler
-      MemorySize: 512
+      MemorySize: 1024
       Role: !GetAtt BatchExecutionRole.Arn
       Runtime: nodejs12.x
       Timeout: 900
@@ -167,7 +167,7 @@ Resources:
       FunctionName: !Sub 'cdf-assetLibrary-export-etl-${Environment}'
       CodeUri: ../bundle.zip
       Handler: packages/services/assetlibrary-export/dist/lambda_sf_etl_proxy.export_handler
-      MemorySize: 512
+      MemorySize: 1024
       Role: !GetAtt ETLExecutionRole.Arn
       Runtime: nodejs12.x
       Timeout: 900

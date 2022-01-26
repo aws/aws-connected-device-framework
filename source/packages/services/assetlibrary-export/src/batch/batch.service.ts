@@ -11,6 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { injectable, inject } from 'inversify';
+import pLimit from 'p-limit';
 
 import { TYPES } from '../di/types';
 
@@ -20,6 +21,8 @@ import { S3Utils } from '../utils/s3.util';
 
 @injectable()
 export class BatchService implements Batcher {
+
+    private readonly PROMISE_CONCURRENCY_LIMIT = 10;
 
     private batchers = {};
 
@@ -38,19 +41,21 @@ export class BatchService implements Batcher {
 
     public async batch(): Promise<Batches> {
         const batches = await this.batchers[this.batchBy].batch();
+        const s3Saves:Promise<AWS.S3.PutObjectOutput>[] = [];
 
-        // transform the batch id to an index, to compress the state machine outputs to smaller size
-        batches.forEach((batch:Batch, index:number) => {
-            batch.id = index;
-            return batch
-        });
+        const limit = pLimit(this.PROMISE_CONCURRENCY_LIMIT);
 
         // save individual batches to S3 for etl
         // optimization for step function
-        for (const batch of batches) {
+        for (const index in batches) {
+            const batch = batches[index];
+            batch.id = index;
             const key = `${this.exportKeyPrefix}_temp/${batch.id}`
-            await this.s3Utils.save(this.exportBucket, key, batch);
+            s3Saves.push(limit(() => this.s3Utils.save(this.exportBucket, key, batch)));
         }
+        // concurrently save the individual batches to s3
+        await Promise.all(s3Saves);
+
         return batches;
     }
 
@@ -67,7 +72,7 @@ export class Batch {
     range?: [number, number];
     total?:number;
     items: string[];
-    timestamp: string;
+    timestamp: number;
 }
 
 export interface Batcher {
