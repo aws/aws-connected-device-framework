@@ -46,6 +46,9 @@ export class SearchRequestModel {
     startsWith?: SearchRequestFilters;
     endsWith?: SearchRequestFilters;
     contains?: SearchRequestFilters;
+    fulltext?: SearchRequestFilters;
+    regex?: SearchRequestFilters;
+    lucene?: SearchRequestFilters;
 
     exist?: SearchRequestFilters;
     nexist?: SearchRequestFilters;
@@ -66,6 +69,9 @@ export class SearchRequestModel {
         this.startsWith = other.startsWith;
         this.endsWith = other.endsWith;
         this.contains = other.contains;
+        this.fulltext = other.fulltext;
+        this.regex = other.regex;
+        this.lucene = other.lucene;
         this.exist = other.exist;
         this.nexist = other.nexist;
         this.facetField = other.facetField;
@@ -149,6 +155,18 @@ export class SearchRequestModel {
 			qs = qs.concat(this.buildQSValues('contains', this.contains, true));
 		}
 
+		if (this.fulltext) {
+			qs = qs.concat(this.buildQSValues('fulltext', this.fulltext, true));
+		}
+
+		if (this.regex) {
+			qs = qs.concat(this.buildQSValues('regex', this.regex, true));
+		}
+
+		if (this.lucene) {
+			qs = qs.concat(this.buildQSValues('lucene', this.lucene, true));
+		}
+
     if (this.exist) {
 			qs = qs.concat(this.buildQSValues('exist', this.exist, true));
 		}
@@ -224,6 +242,22 @@ export class SearchRequestModel {
 			const values=this.buildQSValues('contains', this.contains);
 			qs['contains'] = values.map(v=> v.split('=')[1]);
 		}
+
+		if (this.fulltext) {
+			const values=this.buildQSValues('fulltext', this.fulltext);
+			qs['fulltext'] = values.map(v=> v.split('=')[1]);
+		}
+
+		if (this.regex) {
+			const values=this.buildQSValues('regex', this.regex);
+			qs['regex'] = values.map(v=> v.split('=')[1]);
+		}
+
+		if (this.lucene) {
+			const values=this.buildQSValues('lucene', this.lucene);
+			qs['lucene'] = values.map(v=> v.split('=')[1]);
+		}
+
 		if (this.exist) {
 			const values=this.buildQSValues('exist', this.exist);
 			qs['exist'] = values.map(v=> v.split('=')[1]);
