@@ -22,9 +22,10 @@ import { TypeCategory } from '../types/constants';
 import { NotSupportedError } from '../utils/errors';
 import { SearchDaoLite } from './search.lite.dao';
 import { FacetResults, SearchRequestModel } from './search.models';
+import { SearchService } from './search.service';
 
 @injectable()
-export class SearchServiceLite {
+export class SearchServiceLite implements SearchService {
     private readonly DEFAULT_SEARCH_COUNT = 200;
 
     constructor(
