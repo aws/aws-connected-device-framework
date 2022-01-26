@@ -84,6 +84,10 @@ OPTIONAL ARGUMENTS:
     ------------------------------------------------------------------------
     -D (string)  Snapshot ID to restore from. Note: once restored from a backup, the same snapshot identifier must be specified for all future deployments too.
 
+    Required if Enhance Search is enabled
+    -------------------------------------
+    -k (string)   The KMS key ID used to encrypt the ElasticSearch database
+
     AWS options:
     ------------
     -R (string)   AWS region.
@@ -96,7 +100,7 @@ EOF
 # Validate all arguments
 #-------------------------------------------------------------------------------
 
-while getopts ":e:c:v:g:n:m:y:z:l:C:A:i:r:x:u:sfD:a:R:P:" opt; do
+while getopts ":e:c:v:g:n:m:y:z:l:C:A:i:r:x:u:sfD:k:a:R:P" opt; do
   case ${opt} in
 
     e  ) export ENVIRONMENT=$OPTARG;;
@@ -122,6 +126,7 @@ while getopts ":e:c:v:g:n:m:y:z:l:C:A:i:r:x:u:sfD:a:R:P:" opt; do
     l  ) export CUSTOM_RESOURCE_LAMBDA_ARN=$OPTARG;;
 
     D  ) export ASSETLIBRARY_DB_SNAPSHOT_IDENTIFIER=$OPTARG;;
+    k  ) export KMS_KEY_ID=$OPTARG;;
 
     R  ) export AWS_REGION=$OPTARG;;
     P  ) export AWS_PROFILE=$OPTARG;;
@@ -137,6 +142,7 @@ incorrect_args=0
 incorrect_args=$((incorrect_args+$(verifyMandatoryArgument ENVIRONMENT e $ENVIRONMENT)))
 incorrect_args=$((incorrect_args+$(verifyMandatoryArgument CONFIG_LOCATION c "$CONFIG_LOCATION")))
 incorrect_args=$((incorrect_args+$(verifyMandatoryArgument CUSTOM_RESROUCE_LAMBDA_ARN l "$CUSTOM_RESOURCE_LAMBDA_ARN")))
+incorrect_args=$((incorrect_args+$(verifyMandatoryArgument TEMPLATE_SNIPPET_S3_URI_BASE y "$TEMPLATE_SNIPPET_S3_URI_BASE")))
 
 API_GATEWAY_AUTH="$(defaultIfNotSet 'API_GATEWAY_AUTH' a ${API_GATEWAY_AUTH} 'None')"
 incorrect_args=$((incorrect_args+$(verifyApiGatewayAuthType $API_GATEWAY_AUTH)))
@@ -147,23 +153,24 @@ if [[ "$API_GATEWAY_AUTH" = "LambdaRequest" || "$API_GATEWAY_AUTH" = "LambdaToke
     incorrect_args=$((incorrect_args+$(verifyMandatoryArgument AUTHORIZER_FUNCTION_ARN A $AUTHORIZER_FUNCTION_ARN)))
 fi
 
-incorrect_args=$((incorrect_args+$(verifyMandatoryArgument TEMPLATE_SNIPPET_S3_URI_BASE y "$TEMPLATE_SNIPPET_S3_URI_BASE")))
-valid_modes=( lite full )
+ASSETLIBRARY_MODE="$(defaultIfNotSet 'ASSETLIBRARY_MODE' m ${ASSETLIBRARY_MODE} 'full')"
+valid_modes=( lite full enhanced )
 incorrect_args=$((incorrect_args+$(verifyListContainsArgument ASSETLIBRARY_MODE m "$ASSETLIBRARY_MODE" "${valid_modes[@]}")))
-
-if [[ "$ASSETLIBRARY_MODE" = "full" ]]; then
+if [[ "$ASSETLIBRARY_MODE" = "full" ]] || [[ "$ASSETLIBRARY_MODE" = "enhanced" ]]; then
     incorrect_args=$((incorrect_args+$(verifyMandatoryArgument VPC_ID v "$VPC_ID")))
     incorrect_args=$((incorrect_args+$(verifyMandatoryArgument CDF_SECURITY_GROUP_ID g "$CDF_SECURITY_GROUP_ID")))
     incorrect_args=$((incorrect_args+$(verifyMandatoryArgument PRIVATE_SUBNET_IDS n "$PRIVATE_SUBNET_IDS")))
     incorrect_args=$((incorrect_args+$(verifyMandatoryArgument PRIVATE_ROUTE_TABLE_IDS r "$PRIVATE_ROUTE_TABLE_IDS")))
 fi
+if [[ "$ASSETLIBRARY_MODE" = "enhanced" ]]; then
+  incorrect_args=$((incorrect_args+$(verifyMandatoryArgument KMS_KEY_ID k "$KMS_KEY_ID")))
+fi 
 
 if [[ "$incorrect_args" -gt 0 ]]; then
     help_message; exit 1;
 fi
 
 API_GATEWAY_DEFINITION_TEMPLATE="$(defaultIfNotSet 'API_GATEWAY_DEFINITION_TEMPLATE' z ${API_GATEWAY_DEFINITION_TEMPLATE} 'cfn-apiGateway-noAuth.yaml')"
-ASSETLIBRARY_MODE="$(defaultIfNotSet 'ASSETLIBRARY_MODE' m ${ASSETLIBRARY_MODE} 'full')"
 CONCURRENT_EXECUTIONS="$(defaultIfNotSet 'CONCURRENT_EXECUTIONS' x ${CONCURRENT_EXECUTIONS} 0)"
 APPLY_AUTOSCALING="$(defaultIfNotSet 'APPLY_AUTOSCALING' s ${APPLY_AUTOSCALING} false)"
 ENABLE_API_GATEWAY_ACCESS_LOGS="$(defaultIfNotSet 'ENABLE_API_GATEWAY_ACCESS_LOGS' f ${ENABLE_API_GATEWAY_ACCESS_LOGS} false)"
@@ -172,6 +179,7 @@ AWS_ARGS=$(buildAwsArgs "$AWS_REGION" "$AWS_PROFILE" )
 AWS_SCRIPT_ARGS=$(buildAwsScriptArgs "$AWS_REGION" "$AWS_PROFILE" )
 
 NEPTUNE_STACK_NAME=cdf-assetlibrary-neptune-${ENVIRONMENT}
+ENHANCEDSEARCH_STACK_NAME=cdf-assetlibrary-elasticsearch-${ENVIRONMENT}
 ASSETLIBRARY_STACK_NAME=cdf-assetlibrary-${ENVIRONMENT}
 BASTION_STACK_NAME=cdf-bastion-${ENVIRONMENT}
 
@@ -204,6 +212,8 @@ Running with:
   CONCURRENT_EXECUTIONS:            $CONCURRENT_EXECUTIONS
   APPLY_AUTOSCALING:                $APPLY_AUTOSCALING
 
+  KMS_KEY_ID:                       $KMS_KEY_ID
+
   AWS_REGION:                       $AWS_REGION
   AWS_PROFILE:                      $AWS_PROFILE
 "
@@ -211,14 +221,20 @@ Running with:
 
 cwd=$(dirname "$0")
 
-neptune_instance_type=
-if [ -n "$NEPTUNE_DB_INSTANCE_TYPE" ]; then
-    neptune_instance_type="DbInstanceType=$NEPTUNE_DB_INSTANCE_TYPE"
-fi
+case "$ASSETLIBRARY_MODE" in
+  "enhanced"  ) DEPLOY_NEPTUNE=1 NEPTUNE_ENABLE_STREAMS=1 DEPLOY_OPENSEARCH=1 ;;
+  "full"      ) DEPLOY_NEPTUNE=1 NEPTUNE_ENABLE_STREAMS=0 DEPLOY_OPENSEARCH=0 ;;
+  "lite"      ) DEPLOY_NEPTUNE=0 NEPTUNE_ENABLE_STREAMS=0 DEPLOY_OPENSEARCH=0 ;;
+esac
 
-if [[ "$ASSETLIBRARY_MODE" = "full" ]]; then
+if [[ $DEPLOY_NEPTUNE = 1 ]]; then
 
   logTitle 'Deploying the Neptune CloudFormation template'
+
+  neptune_instance_type=
+  if [ -n "$NEPTUNE_DB_INSTANCE_TYPE" ]; then
+      neptune_instance_type="DbInstanceType=$NEPTUNE_DB_INSTANCE_TYPE"
+  fi
 
   # clear any pre-existing stack policies as these are now handled by deletion/update policies within cloudformation
   aws cloudformation set-stack-policy \
@@ -236,16 +252,58 @@ if [[ "$ASSETLIBRARY_MODE" = "full" ]]; then
         PrivateRouteTableIds=$PRIVATE_ROUTE_TABLE_IDS \
         CustomResourceVPCLambdaArn=$CUSTOM_RESOURCE_LAMBDA_ARN \
         SnapshotIdentifier=$ASSETLIBRARY_DB_SNAPSHOT_IDENTIFIER \
+        NeptuneEnableStreams=$NEPTUNE_ENABLE_STREAMS \
         $neptune_instance_type \
         Environment=$ENVIRONMENT \
     --capabilities CAPABILITY_NAMED_IAM \
     --no-fail-on-empty-changeset \
     $AWS_ARGS
 
+  cfn_exports_1=$(aws cloudformation list-exports $AWS_ARGS)
+
+  neptune_url_export="$NEPTUNE_STACK_NAME-GremlinEndpoint"
+  neptune_url=$(echo $cfn_exports_1 \
+      | jq -r --arg neptune_url_export "$neptune_url_export" \
+      '.Exports[] | select(.Name==$neptune_url_export) | .Value')
+
+  neptune_sg_export="$NEPTUNE_STACK_NAME-NeptuneSecurityGroupID"
+  neptune_sg=$(echo $cfn_exports_1 \
+      | jq -r --arg neptune_sg_export "$neptune_sg_export" \
+      '.Exports[] | select(.Name==$neptune_sg_export) | .Value')
+
+  neptune_cluster_endpoint_export="$NEPTUNE_STACK_NAME-DBClusterReadEndpoint"
+  neptune_cluster_endpoint=$(echo $cfn_exports_1 \
+      | jq -r --arg neptune_cluster_endpoint_export "$neptune_cluster_endpoint_export" \
+      '.Exports[] | select(.Name==$neptune_cluster_endpoint_export) | .Value')
+
+  if [[ $DEPLOY_OPENSEARCH = 1 ]]; then
+  
+    logTitle 'Deploying the Enhanced Search CloudFormation template'
+
+    aws cloudformation deploy \
+      --template-file $cwd/cfn-enhancedsearch.yaml \
+      --stack-name $ENHANCEDSEARCH_STACK_NAME \
+      --parameter-overrides \
+          VpcId=$VPC_ID \
+          CDFSecurityGroupId=$CDF_SECURITY_GROUP_ID \
+          PrivateSubNetIds=$PRIVATE_SUBNET_IDS \
+          PrivateRouteTableIds=$PRIVATE_ROUTE_TABLE_IDS \
+          CustomResourceVPCLambdaArn=$CUSTOM_RESOURCE_LAMBDA_ARN \
+          KmsKeyId=$KMS_KEY_ID \
+          NeptuneSecurityGroupId=$neptune_sg \
+          NeptuneClusterEndpoint=$neptune_cluster_endpoint \
+          Environment=$ENVIRONMENT \
+      --capabilities CAPABILITY_NAMED_IAM \
+      --no-fail-on-empty-changeset \
+      $AWS_ARGS 
+  
+  fi
+
 fi
 
 logTitle 'Setting Asset Library configuration'
-aws_iot_endpoint=$(aws iot describe-endpoint  --endpoint-type iot:Data-ATS $AWS_ARGS \
+
+aws_iot_endpoint=$(aws iot describe-endpoint --endpoint-type iot:Data-ATS $AWS_ARGS \
     | jq -r '.endpointAddress')
 
 cat $CONFIG_LOCATION | \
@@ -253,19 +311,30 @@ cat $CONFIG_LOCATION | \
   '.mode=$mode | .aws.iot.endpoint=$aws_iot_endpoint' \
   > $CONFIG_LOCATION.tmp && mv $CONFIG_LOCATION.tmp $CONFIG_LOCATION
 
-if [[ "$ASSETLIBRARY_MODE" = "full" ]]; then
-
-  stack_exports=$(aws cloudformation list-exports $AWS_ARGS)
-
-  neptune_url_export="$NEPTUNE_STACK_NAME-GremlinEndpoint"
-  neptune_url=$(echo $stack_exports \
-      | jq -r --arg neptune_url_export "$neptune_url_export" \
-      '.Exports[] | select(.Name==$neptune_url_export) | .Value')
+if [[ $DEPLOY_NEPTUNE = 1 ]]; then
 
   cat $CONFIG_LOCATION | \
     jq --arg neptune_url "$neptune_url" \
     '.aws.neptune.url=$neptune_url' \
     > $CONFIG_LOCATION.tmp && mv $CONFIG_LOCATION.tmp $CONFIG_LOCATION
+
+  if [[ $DEPLOY_OPENSEARCH = 1 ]]; then
+
+    # refresh CloudFormation exports to include those created by cfn-enhancedsearch stack
+    cfn_exports_2=$(aws cloudformation list-exports $AWS_ARGS)
+
+    opensearch_url_export="$ENHANCEDSEARCH_STACK_NAME-OpenSearchDomainEndpoint"
+    opensearch_url=$(echo $cfn_exports_2 \
+      | jq -r --arg opensearch_url_export "$opensearch_url_export" \
+      '.Exports[] | select(.Name==$opensearch_url_export) | .Value')
+
+    cat $CONFIG_LOCATION | \
+      jq --arg opensearch_url "$opensearch_url" \
+      '.aws.neptune.openSearchEndpoint=$opensearch_url' \
+      > $CONFIG_LOCATION.tmp && mv $CONFIG_LOCATION.tmp $CONFIG_LOCATION
+
+  fi 
+
 fi
 
 application_configuration_override=$(cat $CONFIG_LOCATION)
