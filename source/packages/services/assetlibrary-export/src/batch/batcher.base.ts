@@ -10,7 +10,9 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { injectable } from 'inversify';
 
+@injectable()
 export class BatcherBase {
 
     public createRangesByCount(count:number, batchSize:number):Array<[number, number]> {
