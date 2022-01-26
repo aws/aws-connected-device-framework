@@ -50,6 +50,9 @@ export class SearchController implements interfaces.Controller {
         @queryParam('startsWith') startsWiths: string | string[],
         @queryParam('endsWith') endsWiths: string | string[],
         @queryParam('contains') containses: string | string[],
+        @queryParam('fulltext') fulltexts: string | string[],
+        @queryParam('regex') regexes: string | string[],
+        @queryParam('lucene') lucenes: string | string[],
         @queryParam('exist') exists: string | string[],
         @queryParam('nexist') nexists: string | string[],
         @queryParam('facetField') facetField: string,
@@ -61,7 +64,7 @@ export class SearchController implements interfaces.Controller {
         @response() res: Response
     ): Promise<SearchResultsResource> {
         logger.debug(
-            `search.controller search: in: types:${types}, ancestorPath:${ancestorPath}, eqs:${eqs}, neqs:${neqs}, lts:${lts}, ltes:${ltes}, gts:${gts}, gtes:${gtes}, startsWiths:${startsWiths}, endsWiths:${endsWiths}, containses:${containses}, exists:${exists}, nexists:${nexists}, facetField:${facetField}, summarize:${summarize}, offset:${offset}, count:${count}, sort:${sort}`
+            `search.controller search: in: types:${types}, ancestorPath:${ancestorPath}, eqs:${eqs}, neqs:${neqs}, lts:${lts}, ltes:${ltes}, gts:${gts}, gtes:${gtes}, startsWiths:${startsWiths}, endsWiths:${endsWiths}, containses:${containses}, fulltexts:${fulltexts}, regexes:${regexes}, lucenes:${lucenes}, exists:${exists}, nexists:${nexists}, facetField:${facetField}, summarize:${summarize}, offset:${offset}, count:${count}, sort:${sort}`
         );
 
         const r: SearchResultsResource = { results: [] };
@@ -81,6 +84,9 @@ export class SearchController implements interfaces.Controller {
                 startsWiths,
                 endsWiths,
                 containses,
+                fulltexts,
+                regexes,
+                lucenes,
                 exists,
                 nexists,
                 facetField,
@@ -135,8 +141,12 @@ export class SearchController implements interfaces.Controller {
         @queryParam('startsWith') startsWiths: string | string[],
         @queryParam('endsWith') endsWiths: string | string[],
         @queryParam('contains') containses: string | string[],
+        @queryParam('fulltext') fulltexts: string | string[],
+        @queryParam('regex') regexes: string | string[],
+        @queryParam('lucene') lucenes: string | string[],
         @queryParam('exist') exists: string | string[],
         @queryParam('nexist') nexists: string | string[],
+        @queryParam('facetField') facetField: string,
         @response() res: Response
     ): Promise<void> {
         logger.debug(
@@ -157,8 +167,12 @@ export class SearchController implements interfaces.Controller {
             startsWiths,
             endsWiths,
             containses,
+            fulltexts,
+            regexes,
+            lucenes,
             exists,
-            nexists
+            nexists,
+            facetField
         );
 
         try {
