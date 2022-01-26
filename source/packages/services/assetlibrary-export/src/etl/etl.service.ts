@@ -40,7 +40,12 @@ export class ETLService {
 
         ow(batchId, 'deviceId', ow.string.nonEmpty);
 
-        const batch:Batch = await this.s3Utils.get(this.exportBucket, `${this.exportKeyPrefix}_temp/${batchId}`)
+        let batch:Batch;
+        try {
+            batch= await this.s3Utils.get(this.exportBucket, `${this.exportKeyPrefix}_temp/${batchId}`)
+        } catch(e) {
+            throw new Error("NOT_FOUND");
+        }
 
         const items = await this.labelsService.getIdsByRange(batch.type, batch.range);
         batch.items = items;
