@@ -20,11 +20,12 @@ import { TYPES } from '../di/types';
 import { GroupsAssembler } from '../groups/groups.assembler';
 import { DevicesAssembler } from '../devices/devices.assembler';
 import { SearchDaoLite } from './search.lite.dao';
+import { SearchService } from './search.service';
 import ow from 'ow';
 import { NotSupportedError } from '../utils/errors';
 
 @injectable()
-export class SearchServiceLite {
+export class SearchServiceLite implements SearchService {
 
     private readonly DEFAULT_SEARCH_COUNT=200;
 
