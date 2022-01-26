@@ -100,7 +100,7 @@ EOF
 # Validate all arguments
 #-------------------------------------------------------------------------------
 
-while getopts ":e:c:v:g:n:m:y:z:l:C:A:i:r:x:u:sfD:k:a:R:P" opt; do
+while getopts ":e:c:v:g:n:m:y:z:l:C:A:i:r:x:u:sfD:k:a:R:P:" opt; do
   case ${opt} in
 
     e  ) export ENVIRONMENT=$OPTARG;;
@@ -179,7 +179,7 @@ AWS_ARGS=$(buildAwsArgs "$AWS_REGION" "$AWS_PROFILE" )
 AWS_SCRIPT_ARGS=$(buildAwsScriptArgs "$AWS_REGION" "$AWS_PROFILE" )
 
 NEPTUNE_STACK_NAME=cdf-assetlibrary-neptune-${ENVIRONMENT}
-ENHANCEDSEARCH_STACK_NAME=cdf-assetlibrary-elasticsearch-${ENVIRONMENT}
+ENHANCEDSEARCH_STACK_NAME=cdf-assetlibrary-enhancedsearch-${ENVIRONMENT}
 ASSETLIBRARY_STACK_NAME=cdf-assetlibrary-${ENVIRONMENT}
 BASTION_STACK_NAME=cdf-bastion-${ENVIRONMENT}
 

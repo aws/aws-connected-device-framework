@@ -19,11 +19,15 @@ Parameters:
     Description:  Name of environment. Used to name the created resources.
     Type: String
     MinLength: 1
+    MaxLength: 24
+    ConstraintDescription: Must be ≤24 chars to fit within 28 char limit for OpenSearch domain name with "cdf-" prefix.
   VpcId:
     Description: ID of VPC to deploy the OpenSearch domain into
     Type: AWS::EC2::VPC::Id
   PrivateSubNetIds:
-    Description: Comma delimited list of private subnetIds to deploy Neptune into. Number of subnets must match the number of availability zones deployed into, i.e. only pass one subnet if operating in a single AZ.
+    Description: >
+      Comma delimited list of private subnetIds to deploy Neptune into. Number of subnets must match the number of 
+      availability zones deployed into, i.e. only pass one subnet if operating in a single AZ.
     Type: List<AWS::EC2::Subnet::Id>
   PrivateRouteTableIds:
     Description: Comma delimited list of private route table ids to allow access to Neptune
@@ -39,40 +43,79 @@ Parameters:
     Type: String
     MinLength: 1
   ElasticSearchInstanceType:
-    Description: ElasticSearch instance type.
+    Description: >
+      ElasticSearch instance type. Must be a supported OpenSearch instance type in the region, support ElasticSearch, 
+      and must support at rest. See also: 
+      https://docs.aws.amazon.com/opensearch-service/latest/developerguide/supported-instance-types.html
     Type: String
-    Default: m6g.large.search
-    ConstraintDescription: 'Must be a supported OpenSearch instance type in the region, support ElasticSearch, and must support at rest. See also: https://docs.aws.amazon.com/opensearch-service/latest/developerguide/supported-instance-types.html'
+    Default: t3.small.search
   ElasticSearchInstanceCount:
     Type: Number
     Default: 2
-    Description: The number of data nodes (instances) to use in the OpenSearch domain. Must be a multiple of the number of availability zones.
+    Description: >
+      The number of data nodes (instances) to use in the OpenSearch domain. Must be a multiple of the number of 
+      availability zones.
   ElasticSearchDedicatedMasterCount:
     Type: Number
     Default: 0
     Description: The number of dedicated master nodes (instances) to use in the OpenSearch domain.
   ElasticSearchEBSVolumeSize:
     Type: Number
-    Default: 20
-    Description: Size of EBS volumes attached to each ElasticSearch node, in GB.
+    Default: 10
+    MinValue: 10
+    Description: >
+      Size of EBS volumes attached to each ElasticSearch node, in GiB. Allowed ranges depend on the 
+      instance type chosen in ElasticSearchInstanceType and are documented here:
+      https://docs.aws.amazon.com/opensearch-service/latest/developerguide/limits.html#ebsresource
   ElasticSearchEBSVolumeType:
     Type: String 
     Default: gp2
     Description: Type of the EBS volume attached to each ElasticSearch node.
     AllowedValues:
       - gp2
+      - gp3
       - io1
+      - io2
       - standard
-    ConstraintDescription: |
+    ConstraintDescription: >
       See list of valid EBS volume types at https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-volume-types.html. 
       Not every instance type is compatible with every volume type.
+  ElasticSearchEBSProvisionedIOPS:
+    Type: Number
+    Default: 16000
+    Description: >
+      The number of I/O operations per second (IOPS) that the volume supports. This property applies only to the 
+      Provisioned IOPS EBS volume type (io1).
   ElasticSearchEncryptAtRest:
     Type: String
-    Default: 'false'
+    Default: 'true'
     AllowedValues:
       - 'true'
       - 'false'
     Description: Enable Encryption at rest.
+  ElasticSearchAuditLogsCloudWatchLogsLogGroupArn:
+    Type: String 
+    Default: ''
+    Description: >
+      ARN of Cloudwatch Log Group where ElasticSearch audit Logs are sent. If left empty, logs will not be generated.
+  ElasticSearchApplicationLogsCloudWatchLogsLogGroupArn:
+    Type: String 
+    Default: ''
+    Description: >
+      ARN of Cloudwatch Log Group where ElasticSearch application Logs are sent. If left empty, logs will not be 
+      generated.
+  ElasticSearchIndexSlowLogsCloudWatchLogsLogGroupArn:
+    Type: String 
+    Default: ''
+    Description: >
+      ARN of Cloudwatch Log Group where ElasticSearch Index Slow Logs are sent. If left empty, logs will not be 
+      generated.
+  ElasticSearchSearchSlowLogsCloudWatchLogsLogGroupArn:
+    Type: String 
+    Default: ''
+    Description: >
+      ARN of Cloudwatch Log Group where ElasticSearch Search Slow Logs are sent. If left empty, logs will not be 
+      generated.
   NeptuneClusterEndpoint:
     Description: 'Neptune cluster endpoint. Format: <cluster>:<port>'
     Type: String
@@ -189,6 +232,11 @@ Conditions:
   EnableDedicatedMasterNodes: !Not [ !Equals [ !Ref ElasticSearchDedicatedMasterCount, 0 ] ]
   CreateCloudWatchAlarmCondition: !Equals [ !Ref CreateCloudWatchAlarm, 'true' ]
   EnableNonStringIndexingCondition: !Equals [ !Ref EnableNonStringIndexing, 'true' ]
+  ElasticSearchAuditLogsCloudWatchLogsEnabled: !Not [ !Equals [ !Ref ElasticSearchAuditLogsCloudWatchLogsLogGroupArn, '' ] ]
+  ElasticSearchApplicationLogsCloudWatchLogsEnabled: !Not [ !Equals [ !Ref ElasticSearchApplicationLogsCloudWatchLogsLogGroupArn, '' ] ]
+  ElasticSearchIndexSlowLogsCloudWatchLogsEnabled: !Not [ !Equals [ !Ref ElasticSearchIndexSlowLogsCloudWatchLogsLogGroupArn, '' ] ]
+  ElasticSearchSearchSlowLogsCloudWatchLogsEnabled: !Not [ !Equals [ !Ref ElasticSearchSearchSlowLogsCloudWatchLogsLogGroupArn, '' ] ]
+  ElasticSearchEBSVolumeTypeIsIo1: !Equals [ !Ref ElasticSearchEBSVolumeType, 'io1' ]
 
 
 Resources: 
@@ -213,25 +261,13 @@ Resources:
       IpProtocol: tcp
       SourceSecurityGroupId: !Ref NeptuneSecurityGroupId
       Description: Access from Neptune to ElasticSearch
-
-  # TODO: remove this, debugging use only, allows https access to ElasticSearch API and Kibana via bastion tunneling
-  OpenSearchSGIngressRule2DeleteMe:
-    Type: 'AWS::EC2::SecurityGroupIngress'
-    Properties:
-      GroupId: !Ref OpenSearchSG
-      FromPort: 443
-      ToPort: 443
-      IpProtocol: tcp
-      SourceSecurityGroupId: !Ref CDFSecurityGroupId
-      Description: Access from CDF default security group to ElasticSearch
   
   OpenSearchDomain:
     Type: AWS::OpenSearchService::Domain
-    # TODO: copied deletion/update policies over from Neptune template, probably need something 
-    # equivalent here...
     DeletionPolicy: Snapshot
     UpdateReplacePolicy: Snapshot
     Properties: 
+      DomainName: !Sub 'cdf-${Environment}'
       AccessPolicies:
         Version: '2012-10-17'
         Statement:
@@ -239,62 +275,79 @@ Resources:
             Principal:
               AWS: '*'
             Action: 'es:*'
-            # https://serverfault.com/questions/937008/how-can-one-configure-an-aws-elasticsearch-access-policy-using-cloudformation
-            Resource: '/*'
+            Resource: !Join 
+              - ':'
+              - - 'arn:aws:es'
+                - !Ref 'AWS::Region'
+                - !Ref 'AWS::AccountId'
+                - !Sub 'domain/cdf-${Environment}/*'
       ClusterConfig: 
-        DedicatedMasterCount: 
-          Fn::If:
-            - EnableDedicatedMasterNodes
-            - !Ref ElasticSearchDedicatedMasterCount
-            - Ref: AWS::NoValue
         DedicatedMasterEnabled: 
           Fn::If:
             - EnableDedicatedMasterNodes
             - true
             - false
-        # DedicatedMasterType: 
-        #   Fn::If:
-        #     - EnableDedicatedMasterNodes
-        #     - TODO 
-        #     - Ref: AWS::NoValue
+        DedicatedMasterCount: 
+          Fn::If:
+            - EnableDedicatedMasterNodes
+            - !Ref ElasticSearchDedicatedMasterCount
+            - !Ref AWS::NoValue
+        DedicatedMasterType: 
+          Fn::If:
+            - EnableDedicatedMasterNodes
+            - 3 
+            - !Ref AWS::NoValue
         InstanceCount: !Ref ElasticSearchInstanceCount
         InstanceType: !Ref ElasticSearchInstanceType
         ZoneAwarenessEnabled: true
-      # CognitoOptions: 
-      #   CognitoOptions
       DomainEndpointOptions: 
-        # CustomEndpoint: String
-        # CustomEndpointCertificateArn: String
-        # CustomEndpointEnabled: Boolean
         EnforceHTTPS: true
-        # TLSSecurityPolicy: String
+        TLSSecurityPolicy: 'Policy-Min-TLS-1-2-2019-07'
       EBSOptions: 
         EBSEnabled: true
         VolumeSize: !Ref ElasticSearchEBSVolumeSize
         VolumeType: !Ref ElasticSearchEBSVolumeType
-        # Iops: Integer
+        Iops: 
+          Fn::If:
+            - ElasticSearchEBSVolumeTypeIsIo1
+            - !Ref ElasticSearchEBSProvisionedIOPS
+            - !Ref AWS::NoValue
       EncryptionAtRestOptions: 
         Enabled: !Ref ElasticSearchEncryptAtRest
         KmsKeyId: 
           Fn::If:
             - ElasticSearchEncryptAtRest
             - !Ref KmsKeyId
-            - Ref: AWS::NoValue
+            - !Ref AWS::NoValue
       # When integrating with Amazon OpenSearch Service, Neptune requires Elasticsearch version 7.1 or higher 
       # rather than OpenSearch version 1.0. Neptune is not currently compatible with OpenSearch version 1.0.
       # https://docs.aws.amazon.com/neptune/latest/userguide/full-text-search-cfn-create.html
       EngineVersion: 'Elasticsearch_7.10'
-      # LogPublishingOptions: 
-      #   # TODO, example values from https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-opensearchservice-domain.html#aws-resource-opensearchservice-domain--examples
-      #   ES_APPLICATION_LOGS:
-      #     CloudWatchLogsLogGroupArn: 'arn:aws:logs:us-east-1:123456789012:log-group:/aws/opensearch/domains/opensearch-application-logs'
-      #     Enabled: true
-      #   SEARCH_SLOW_LOGS:
-      #     CloudWatchLogsLogGroupArn: 'arn:aws:logs:us-east-1:123456789012:log-group:/aws/opensearch/domains/opensearch-slow-logs'
-      #     Enabled: true
-      #   INDEX_SLOW_LOGS:
-      #     CloudWatchLogsLogGroupArn: 'arn:aws:logs:us-east-1:123456789012:log-group:/aws/opensearch/domains/opensearch-index-slow-logs'
-      #     Enabled: true
+      LogPublishingOptions: 
+        ES_APPLICATION_LOGS:
+          Fn::If:
+            - ElasticSearchApplicationLogsCloudWatchLogsEnabled
+            - CloudWatchLogsLogGroupArn: !Ref ElasticSearchApplicationLogsCloudWatchLogsLogGroupArn
+              Enabled: true
+            - !Ref AWS::NoValue
+        SEARCH_SLOW_LOGS:
+          Fn::If:
+            - ElasticSearchSearchSlowLogsCloudWatchLogsEnabled
+            - CloudWatchLogsLogGroupArn: !Ref ElasticSearchSearchSlowLogsCloudWatchLogsLogGroupArn
+              Enabled: true
+            - !Ref AWS::NoValue
+        INDEX_SLOW_LOGS:
+          Fn::If:
+            - ElasticSearchIndexSlowLogsCloudWatchLogsEnabled
+            - CloudWatchLogsLogGroupArn: !Ref ElasticSearchIndexSlowLogsCloudWatchLogsLogGroupArn
+              Enabled: true 
+            - !Ref AWS::NoValue
+        AUDIT_LOGS:
+          Fn::If:
+            - ElasticSearchAuditLogsCloudWatchLogsEnabled
+            - CloudWatchLogsLogGroupArn: !Ref ElasticSearchAuditLogsCloudWatchLogsLogGroupArn
+              Enabled: true
+            - !Ref AWS::NoValue
       NodeToNodeEncryptionOptions: 
         Enabled: true
       VPCOptions: 
@@ -310,8 +363,7 @@ Resources:
   ElasticSearchAccessPolicy:
     Type: 'AWS::IAM::ManagedPolicy'
     Properties:
-      ManagedPolicyName: ElasticSearchAccessPolicy
-      Description: "Policy for ElasticSearch Access for Neptune Lambda Poller"
+      Description: "Allows ElasticSearch access for Neptune Lambda Poller"
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -342,10 +394,10 @@ Resources:
               IgnoreMissingDocument: !Ref "IgnoreMissingDocument"
               ReplicationScope: "All"
               EnableNonStringIndexing: !Ref EnableNonStringIndexing
-        ApplicationName: !Sub 'cdf-${CdfService}-neptune-elasticsearch-connector'
+        ApplicationName: !Sub 'cdf-${CdfService}-enhancedsearch-${Environment}'
         LambdaMemorySize: !Ref NeptunePollerLambdaMemorySize
         LambdaRuntime: python3.6
-        LambdaS3Bucket: !Join ["-", ["aws-neptune-customer-samples", Ref: "AWS::Region"]]
+        LambdaS3Bucket: !Join ["-", ["aws-neptune-customer-samples", !Ref "AWS::Region"]]
         LambdaS3Key: "neptune-stream/lambda/python36/release_2021_08_23/neptune-to-es.zip"
         ManagedPolicies: !Ref ElasticSearchAccessPolicy
         LambdaLoggingLevel: !Ref NeptunePollerLambdaLoggingLevel
@@ -362,7 +414,6 @@ Resources:
         MaxPollingWaitTime: !Ref NeptunePollerMaxPollingWaitTime
         NeptuneStreamEndpoint: !Sub 'https://${NeptuneClusterEndpoint}:8182/gremlin/stream'
         IAMAuthEnabledOnSourceStream: false
-        # StreamDBClusterResourceId: !Ref StreamDBClusterResourceId -- only used when IAM Auth is enabled
         MaxPollingInterval: !Ref NeptunePollerMaxPollingInterval
         VPC: !Ref VpcId
         RouteTableIds: !Ref PrivateRouteTableIds
@@ -378,7 +429,7 @@ Outputs:
     Description: HTTPS endpoint URL for ElasticSearch cluster
     Value: !Sub 'https://${OpenSearchDomain.DomainEndpoint}'
     Export: 
-      Name: !Sub "cdf-assetlibrary-elasticsearch-${Environment}-OpenSearchDomainEndpoint"
+      Name: !Sub "cdf-assetlibrary-enhancedsearch-${Environment}-OpenSearchDomainEndpoint"
   HTTPSAccessSG:
     Description: 'HTTPS Access Security Group Arn'
     Value: !GetAtt NeptuneStreamPoller.Outputs.HTTPSAccessSG
