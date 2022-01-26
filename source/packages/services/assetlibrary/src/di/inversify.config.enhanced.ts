@@ -34,7 +34,7 @@ import { ProfilesAssembler } from '../profiles/profiles.assembler';
 import { ProfilesDaoFull } from '../profiles/profiles.full.dao';
 import { ProfilesServiceFull } from '../profiles/profiles.full.service';
 import { ProfilesService } from '../profiles/profiles.service';
-import { SearchDaoFull } from '../search/search.full.dao';
+import { SearchDaoEnhanced } from '../search/search.enhanced.dao';  // TODO: changed compared to inversify.config.full.ts
 import { SearchServiceFull } from '../search/search.full.service';
 import { SearchService } from '../search/search.service';
 import { TypesDaoFull } from '../types/types.full.dao';
@@ -45,16 +45,16 @@ import { TYPES } from './types';
 
 
 
-export const FullContainerModule = new ContainerModule(
+export const EnhancedContainerModule = new ContainerModule (
     (
         bind: interfaces.Bind,
         _unbind: interfaces.Unbind,
         _isBound: interfaces.IsBound,
         _rebind: interfaces.Rebind
     ) => {
-
         bind<string>('neptuneUrl').toConstantValue(process.env.AWS_NEPTUNE_URL);
         bind<boolean>('enableDfeOptimization').toConstantValue(process.env.ENABLE_DFE_OPTIMIZATION === 'true');
+        bind<string>('openSearchEndpoint').toConstantValue(process.env.OPENSEARCH_ENDPOINT);
         bind<string>('defaults.devices.parent.relation').toConstantValue(process.env.DEFAULTS_DEVICES_PARENT_RELATION);
         bind<string>('defaults.devices.parent.groupPath').toConstantValue(process.env.DEFAULTS_DEVICES_PARENT_GROUPPATH);
         bind<string>('defaults.devices.state').toConstantValue(process.env.DEFAULTS_DEVICES_STATE);
@@ -79,7 +79,7 @@ export const FullContainerModule = new ContainerModule(
         bind<ProfilesAssembler>(TYPES.ProfilesAssembler).to(ProfilesAssembler).inSingletonScope();
 
         bind<SearchService>(TYPES.SearchService).to(SearchServiceFull).inSingletonScope();
-        bind<SearchDaoFull>(TYPES.SearchDao).to(SearchDaoFull).inSingletonScope();
+        bind<SearchDaoEnhanced>(TYPES.SearchDao).to(SearchDaoEnhanced).inSingletonScope();
 
         bind<PoliciesService>(TYPES.PoliciesService).to(PoliciesServiceFull).inSingletonScope();
         bind<PoliciesDaoFull>(TYPES.PoliciesDao).to(PoliciesDaoFull).inSingletonScope();
@@ -96,11 +96,11 @@ export const FullContainerModule = new ContainerModule(
         decorate(injectable(), structure.Graph);
         bind<interfaces.Factory<structure.Graph>>(TYPES.GraphSourceFactory)
             .toFactory<structure.Graph>((_ctx: interfaces.Context) => {
-                return () => {
+            return () => {
 
-                    return new structure.Graph();
+                return new structure.Graph();
 
-                };
-            });
+            };
+        });
     }
 );

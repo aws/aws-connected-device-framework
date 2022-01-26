@@ -24,14 +24,17 @@ import { HttpHeaderUtils } from '../utils/httpHeaders';
 import { TypeUtils } from '../utils/typeUtils';
 import * as full from './inversify.config.full';
 import * as lite from './inversify.config.lite';
+import * as enhanced from './inversify.config.enhanced';
 import { TYPES } from './types';
 
 import AWS = require('aws-sdk');
 // Load everything needed to the Container
 export const container = new Container();
 
-if (process.env.MODE==='lite') {
+if (process.env.MODE === 'lite') {
     container.load(lite.LiteContainerModule);
+} else if (process.env.MODE === 'enhanced') {
+    container.load(enhanced.EnhancedContainerModule);
 } else {
     container.load(full.FullContainerModule);
 }

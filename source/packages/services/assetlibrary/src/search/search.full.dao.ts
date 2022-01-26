@@ -27,15 +27,15 @@ export class SearchDaoFull extends BaseDaoFull {
 
     public constructor(
         @inject('neptuneUrl') neptuneUrl: string,
-        @inject('enableDfeOptimization') private enableDfeOptimization: boolean,
-        @inject(TYPES.TypeUtils) private typeUtils: TypeUtils,
-        @inject(TYPES.NodeAssembler) private assembler:NodeAssembler,
+        @inject('enableDfeOptimization') protected enableDfeOptimization: boolean,
+        @inject(TYPES.TypeUtils) protected typeUtils: TypeUtils,
+        @inject(TYPES.NodeAssembler) protected assembler: NodeAssembler,
 	    @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph
     ) {
         super(neptuneUrl, graphSourceFactory);
     }
 
-    private buildSearchTraverser(conn: NeptuneConnection,request: SearchRequestModel, authorizedPaths:string[]) : process.GraphTraversal {
+    protected buildSearchTraverser(conn: NeptuneConnection,request: SearchRequestModel, authorizedPaths:string[]) : process.GraphTraversal {
 
         logger.debug(`search.full.dao buildSearchTraverser: in: request: ${JSON.stringify(request)}, authorizedPaths:${authorizedPaths}`);
 
@@ -43,7 +43,7 @@ export class SearchDaoFull extends BaseDaoFull {
         if (this.enableDfeOptimization) {
             source = source.withSideEffect('Neptune#useDFE', true);
         }
-
+        
         // if a path is provided, that becomes the starting point
         let traverser: process.GraphTraversal;
         if (request.ancestorPath!==undefined) {
@@ -164,7 +164,7 @@ export class SearchDaoFull extends BaseDaoFull {
 
     }
 
-    private buildSearchFilterVBase(filter:SearchRequestFilter|SearchRequestFacet, traverser:process.GraphTraversal) : void {
+    protected buildSearchFilterVBase(filter:SearchRequestFilter|SearchRequestFacet, traverser:process.GraphTraversal) : void {
         if (filter.traversals) {
             filter.traversals.forEach(t=> {
                 if (t.direction===SearchRequestFilterDirection.in) {
@@ -176,7 +176,7 @@ export class SearchDaoFull extends BaseDaoFull {
         }
     }
 
-    private buildSearchFilterEBase(filter:SearchRequestFilter|SearchRequestFacet, traverser:process.GraphTraversal) : void {
+    protected buildSearchFilterEBase(filter:SearchRequestFilter|SearchRequestFacet, traverser:process.GraphTraversal) : void {
         if (filter.traversals) {
             filter.traversals.forEach(t=> {
                 if (t.direction===SearchRequestFilterDirection.in) {
@@ -189,7 +189,7 @@ export class SearchDaoFull extends BaseDaoFull {
         }
     }
 
-    private buildSearchFilterEBaseNegated(filter:SearchRequestFilter|SearchRequestFacet, traverser:process.GraphTraversal, field:unknown, value:unknown) : void {
+    protected buildSearchFilterEBaseNegated(filter:SearchRequestFilter|SearchRequestFacet, traverser:process.GraphTraversal, field:unknown, value:unknown) : void {
         if (filter.traversals) {
             const nested:process.GraphTraversal = __.select('a');
             filter.traversals.forEach(t=> {
@@ -227,7 +227,7 @@ export class SearchDaoFull extends BaseDaoFull {
             const countAsInt = this.typeUtils.parseInt(request.count);
             traverser.range(offsetAsInt,offsetAsInt + countAsInt).valueMap().with_(process.withOptions.tokens);
 
-            logger.debug(`search.full.dao search: traverser:${JSON.stringify(traverser.toString())}`);
+            logger.debug(`search.full.dao search: traverser:${traverser.toString()}`);
 
             results = await traverser.toList();
 
