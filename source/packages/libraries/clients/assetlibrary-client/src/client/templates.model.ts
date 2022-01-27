@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 export class TypeDefinitionModel {
-	properties?: { [key: string]: {type: string|string[]; format?: string; enum?: string }};
+	properties?: { [key: string]: {type: string|string[]; format?: string; enum?: string[] }};
     required?: string[];
     relations?: {
         out?: { [key: string]: string[] },
