@@ -34,42 +34,43 @@ export type SearchRequestFacet = {
 export type SearchRequestFilters = SearchRequestFilter[];
 
 export class SearchRequestModel {
-	types?: string[]=[];
-	ancestorPath?: string;
+    types?: string[]=[];
+    ancestorPath?: string;
 
-	eq?: SearchRequestFilters;
-	neq?: SearchRequestFilters;
-	lt?: SearchRequestFilters;
-	lte?: SearchRequestFilters;
-	gt?: SearchRequestFilters;
-	gte?: SearchRequestFilters;
-	startsWith?: SearchRequestFilters;
-	endsWith?: SearchRequestFilters;
-	contains?: SearchRequestFilters;
-  exist?: SearchRequestFilters;
-  nexist?: SearchRequestFilters;
+    eq?: SearchRequestFilters;
+    neq?: SearchRequestFilters;
+    lt?: SearchRequestFilters;
+    lte?: SearchRequestFilters;
+    gt?: SearchRequestFilters;
+    gte?: SearchRequestFilters;
+    startsWith?: SearchRequestFilters;
+    endsWith?: SearchRequestFilters;
+    contains?: SearchRequestFilters;
 
-	facetField?: SearchRequestFacet;
+    exist?: SearchRequestFilters;
+    nexist?: SearchRequestFilters;
 
-	summarize?: boolean;
+    facetField?: SearchRequestFacet;
 
-	public clone(other:SearchRequestModel) : void {
-		this.types = other.types;
-		this.ancestorPath = other.ancestorPath;
-		this.eq = other.eq;
-		this.neq = other.neq;
-		this.lt = other.lt;
-		this.lte = other.lte;
-		this.gt = other.gt;
-		this.gte = other.gte;
-		this.startsWith = other.startsWith;
-		this.endsWith = other.endsWith;
-		this.contains = other.contains;
-    this.exist = other.exist;
-    this.nexist = other.nexist;
-		this.facetField = other.facetField;
-		this.summarize = other.summarize;
-	}
+    summarize?: boolean;
+
+    public clone(other:SearchRequestModel) : void {
+        this.types = other.types;
+        this.ancestorPath = other.ancestorPath;
+        this.eq = other.eq;
+        this.neq = other.neq;
+        this.lt = other.lt;
+        this.lte = other.lte;
+        this.gt = other.gt;
+        this.gte = other.gte;
+        this.startsWith = other.startsWith;
+        this.endsWith = other.endsWith;
+        this.contains = other.contains;
+        this.exist = other.exist;
+        this.nexist = other.nexist;
+        this.facetField = other.facetField;
+        this.summarize = other.summarize;
+    }
 
 	private buildQSValues(qsParam:string, filters:SearchRequestFilters, encodeKey?: boolean) : string[] {
 		const qs:string[]= [];
@@ -80,19 +81,25 @@ export class SearchRequestModel {
 
 		filters.forEach(f=> {
 			let key = `${qsParam}=`;
-			let v = '';
-			if (f.traversals!==undefined) {
-				f.traversals.forEach(t=> {
-					v+=`${t.relation}:${t.direction}:`;
-				});
-			}
-			v+=`${f.field}:${encodeURIComponent(f.value)}`;
+			const v = `${this.traversalPathToQSValue(f.field, f.traversals)}:${encodeURIComponent(f.value)}`;
 			key = encodeKey ? `${key}${encodeURIComponent(v)}` : `${key}${v}`;
 
 			qs.push(key);
 		});
 
 		return qs;
+	}
+
+	private traversalPathToQSValue(field: string, traversals?: SearchRequestFilterTraversal[]) : string {
+		const parts: string[] = [];
+		if (traversals!==undefined) {
+			traversals.forEach(t=> {
+				parts.push(t.relation);
+				parts.push(t.direction)
+			});
+		}
+		parts.push(field);
+		return parts.join(':');
 	}
 
 	public toHttpQueryString():string {
@@ -154,6 +161,11 @@ export class SearchRequestModel {
 			qs.push(`summarize=${this.summarize}`);
 		}
 
+		if (this.facetField) {
+			const path = this.traversalPathToQSValue(this.facetField.field, this.facetField.traversals)
+			qs.push(`facetField=${encodeURIComponent(path)}`);
+		}
+
 		return qs.join('&');
 	}
 
@@ -212,7 +224,7 @@ export class SearchRequestModel {
 			const values=this.buildQSValues('contains', this.contains);
 			qs['contains'] = values.map(v=> v.split('=')[1]);
 		}
-    if (this.exist) {
+		if (this.exist) {
 			const values=this.buildQSValues('exist', this.exist);
 			qs['exist'] = values.map(v=> v.split('=')[1]);
 		}
@@ -224,6 +236,12 @@ export class SearchRequestModel {
 
 		if (this.summarize) {
 			qs['summarize']=[`${this.summarize}`];
+		}
+
+		if (this.facetField) {
+			qs['facetField']=[
+				this.traversalPathToQSValue(this.facetField.field, this.facetField.traversals)
+			];
 		}
 
 		return qs;

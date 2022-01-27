@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/assetlibrary-client",
+      "comment": "assetlibrary-client now includes facetField param in search request",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/assetlibrary-client",
+  "email": "jonasneu@amazon.com"
+}
