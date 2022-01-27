@@ -54,7 +54,7 @@ export class BatchService implements Batcher {
             s3Saves.push(limit(() => this.s3Utils.save(this.exportBucket, key, batch)));
         }
         // concurrently save the individual batches to s3
-        await Promise.allSettled(s3Saves);
+        await Promise.all(s3Saves);
 
         return batches;
     }
