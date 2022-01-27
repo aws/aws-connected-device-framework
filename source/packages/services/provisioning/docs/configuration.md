@@ -69,11 +69,11 @@ The following represents optional configuration that can be provided at time of 
       /*
         Feature toggle. If enabled, will delete certificates when a thing is deleted and the certificate is no longer in use.
       */
-      "deleteCertificates": null,
+      "certificates": null,
       /*
-        Feature toggle. If enabled, will delete policies when a thing is deleted and the policiy is no longer in use.
+        Feature toggle. If enabled, will delete policies when a thing is deleted and the policy is no longer in use.
       */
-      "deletePolicies": null
+      "policies": null
     }
   },
   "cors": {
