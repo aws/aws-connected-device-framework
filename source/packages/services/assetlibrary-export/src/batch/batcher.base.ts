@@ -17,6 +17,8 @@ export class BatcherBase {
 
     // This function creates exclusive ranges for a given limit (count) and size (batchSize).
     // The function return ranges as sets i.e. input:100, 10,  output: [[0,10] [10, 20] ...]
+    // These ranges will be used to query labels form Neptune. Neptune, works with exclusive ranges,
+    // where the end of one range is the begining of the next one. i.e. [0,10] [10, 20]
     public createRangesByCount(count:number, batchSize:number):Array<[number, number]> {
 
         // count/batch ratio, rounded to whole number, to calculate the batches
