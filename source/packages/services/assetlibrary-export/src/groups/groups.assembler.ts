@@ -27,7 +27,7 @@ export class GroupsAssembler {
     @inject(TYPES.FullAssembler) private fullAssembler: FullAssembler  ) {}
 
     public toNode(model: GroupItem): Node {
-        logger.debug(`groups.assembler toNode: in: model: ${JSON.stringify(model)}`);
+        logger.silly(`groups.assembler toNode: in: model: ${JSON.stringify(model)}`);
 
         const node = new Node();
         node.types.push(model.category);
@@ -44,12 +44,12 @@ export class GroupsAssembler {
             }
         }
 
-        logger.debug(`groups.assembler toNode: exit: node: ${JSON.stringify(node)}`);
+        logger.silly(`groups.assembler toNode: exit: node: ${JSON.stringify(node)}`);
         return node;
     }
 
     public toGroupItems(nodes:Node[]): GroupItem[] {
-        logger.debug(`groups.assmebler toGroupItems: in: nodes: ${JSON.stringify(nodes)}`);
+        logger.silly(`groups.assmebler toGroupItems: in: nodes: ${JSON.stringify(nodes)}`);
 
         const groups: GroupItem[]=[];
         for(const node of nodes) {
@@ -59,10 +59,10 @@ export class GroupsAssembler {
         return groups;
     }
     public toGroupItem(node: Node): GroupItem {
-        logger.debug(`groups.assembler toGroupItem: in: node: ${JSON.stringify(node)}`);
+        logger.silly(`groups.assembler toGroupItem: in: node: ${JSON.stringify(node)}`);
 
         if (node===undefined) {
-            logger.debug(`groups.assembler toGroupItem: exit: model: undefined`);
+            logger.silly(`groups.assembler toGroupItem: exit: model: undefined`);
             return undefined;
         }
 
@@ -153,16 +153,16 @@ export class GroupsAssembler {
             }
         }
 
-        logger.debug(`groups.assembler toGroupItem: exit: model: ${JSON.stringify(model)}`);
+        logger.silly(`groups.assembler toGroupItem: exit: model: ${JSON.stringify(model)}`);
         return model;
 
     }
 
     public fromGroupResource(res: GroupBaseResource): GroupItem {
-        logger.debug(`group.assembler fromGroupResource: in: res: ${JSON.stringify(res)}`);
+        logger.silly(`group.assembler fromGroupResource: in: res: ${JSON.stringify(res)}`);
 
         if (res===undefined) {
-            logger.debug(`group.assembler fromGroupResource: exit: res: undefined`);
+            logger.silly(`group.assembler fromGroupResource: exit: res: undefined`);
             return undefined;
         }
 
@@ -189,16 +189,16 @@ export class GroupsAssembler {
             }
         }
 
-        logger.debug(`group.assembler fromGroupResource: exit: item: ${JSON.stringify(item)}`);
+        logger.silly(`group.assembler fromGroupResource: exit: item: ${JSON.stringify(item)}`);
         return item;
 
     }
 
     public fromBulkGroupsResource(res: BulkGroupsResource): GroupItem[] {
-        logger.debug(`group.assembler fromBulkGroupsResource: in: res: ${JSON.stringify(res)}`);
+        logger.silly(`group.assembler fromBulkGroupsResource: in: res: ${JSON.stringify(res)}`);
 
         if (res===undefined) {
-            logger.debug(`group.assembler fromBulkGroupsResource: exit: res: undefined`);
+            logger.silly(`group.assembler fromBulkGroupsResource: exit: res: undefined`);
             return undefined;
         }
 
@@ -206,16 +206,16 @@ export class GroupsAssembler {
 
         res.groups.forEach(resource=> items.push(this.fromGroupResource(resource)));
 
-        logger.debug(`group.assembler fromBulkGroupsResource: exit: items: ${JSON.stringify(items)}`);
+        logger.silly(`group.assembler fromBulkGroupsResource: exit: items: ${JSON.stringify(items)}`);
         return items;
 
     }
 
     public toGroupResource(item: GroupItem, version:string): (GroupBaseResource) {
-        logger.debug(`group.assembler toGroupResource: in: item: ${JSON.stringify(item)}, version:${version}`);
+        logger.silly(`group.assembler toGroupResource: in: item: ${JSON.stringify(item)}, version:${version}`);
 
         if (item===undefined) {
-            logger.debug(`group.assembler toGroupResource: exit: item: undefined`);
+            logger.silly(`group.assembler toGroupResource: exit: item: undefined`);
             return undefined;
         }
 
@@ -261,16 +261,16 @@ export class GroupsAssembler {
             }
         });
 
-        logger.debug(`group.assembler toGroupResource: exit: resource: ${JSON.stringify(resource)}`);
+        logger.silly(`group.assembler toGroupResource: exit: resource: ${JSON.stringify(resource)}`);
         return resource;
 
     }
 
     public toGroupResourceList(items: GroupItemList, version:string): (GroupResourceList) {
-        logger.debug(`group.assembler toGroupResourceList: in: items: ${JSON.stringify(items)}, version:${version}`);
+        logger.silly(`group.assembler toGroupResourceList: in: items: ${JSON.stringify(items)}, version:${version}`);
 
         if (items===undefined) {
-            logger.debug(`group.assembler toGroupResourceList: exit: items: undefined`);
+            logger.silly(`group.assembler toGroupResourceList: exit: items: undefined`);
             return undefined;
         }
 
@@ -280,16 +280,16 @@ export class GroupsAssembler {
 
         items.results.forEach(item=> resources.results.push(this.toGroupResource(item, version)));
 
-        logger.debug(`group.assembler toGroupResourceList: exit: resources: ${JSON.stringify(resources)}`);
+        logger.silly(`group.assembler toGroupResourceList: exit: resources: ${JSON.stringify(resources)}`);
         return resources;
 
     }
 
     public toGroupMemberResourceList(items: GroupMemberItemList, version:string): (GroupMemberResourceList) {
-        logger.debug(`group.assembler toGroupMemberResourceList: in: items: ${JSON.stringify(items)}, version:${version}`);
+        logger.silly(`group.assembler toGroupMemberResourceList: in: items: ${JSON.stringify(items)}, version:${version}`);
 
         if (items===undefined) {
-            logger.debug(`group.assembler toGroupMemberResourceList: exit: items: undefined`);
+            logger.silly(`group.assembler toGroupMemberResourceList: exit: items: undefined`);
             return undefined;
         }
 
@@ -306,13 +306,13 @@ export class GroupsAssembler {
             }
         });
 
-        logger.debug(`group.assembler toGroupMemberResourceList: exit: resources: ${JSON.stringify(resources)}`);
+        logger.silly(`group.assembler toGroupMemberResourceList: exit: resources: ${JSON.stringify(resources)}`);
         return resources;
 
     }
 
     public toGroupItemList(nodes: Node[]): GroupItem[] {
-        logger.debug(`groups.assembler toGroupItemList: in: nodes: ${JSON.stringify(nodes)}`);
+        logger.silly(`groups.assembler toGroupItemList: in: nodes: ${JSON.stringify(nodes)}`);
 
         if (nodes===undefined) {
             return [];
@@ -324,13 +324,13 @@ export class GroupsAssembler {
             models.push(this.toGroupItem(node));
         }
 
-        logger.debug(`groups.assembler toGroupItemList: exit: models: ${JSON.stringify(models)}`);
+        logger.silly(`groups.assembler toGroupItemList: exit: models: ${JSON.stringify(models)}`);
         return models;
 
     }
 
     public toRelatedGroupItemList(node: Node, offset?:number|string, count?:number): GroupItemList {
-        logger.debug(`groups.assembler toRelatedGroupItemList: in: node: ${JSON.stringify(node)}`);
+        logger.silly(`groups.assembler toRelatedGroupItemList: in: node: ${JSON.stringify(node)}`);
 
         const r:GroupItemList = {
             results:[]
@@ -372,13 +372,13 @@ export class GroupsAssembler {
             }
         });
 
-        logger.debug(`groups.assembler toRelatedGroupItemList: exit: r: ${JSON.stringify(r)}`);
+        logger.silly(`groups.assembler toRelatedGroupItemList: exit: r: ${JSON.stringify(r)}`);
         return r;
 
     }
 
     public toGroupMembersList(nodes: Node[], offset?:number|string, count?:number): GroupMemberItemList {
-        logger.debug(`groups.assembler toGroupMembersList: in: nodes: ${JSON.stringify(nodes)}`);
+        logger.silly(`groups.assembler toGroupMembersList: in: nodes: ${JSON.stringify(nodes)}`);
 
         const r:GroupMemberItemList = {
             results:[]
@@ -406,7 +406,7 @@ export class GroupsAssembler {
             }
         }
 
-        logger.debug(`groups.assembler toGroupModelList: exit: r: ${JSON.stringify(r)}`);
+        logger.silly(`groups.assembler toGroupModelList: exit: r: ${JSON.stringify(r)}`);
         return r;
 
     }

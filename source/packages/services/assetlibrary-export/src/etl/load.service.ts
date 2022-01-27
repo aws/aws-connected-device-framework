@@ -16,6 +16,7 @@ import { TYPES } from '../di/types';
 
 import { S3Loader } from './loaders/s3.loader';
 import { Transformed } from './transform.service';
+import ow from 'ow';
 
 @injectable()
 export class LoadService {
@@ -30,6 +31,9 @@ export class LoadService {
     }
 
     public async load(batch: Transformed): Promise<Loaded> {
+        ow(batch, 'batch', ow.object.nonEmpty);
+        ow(batch.category, 'batch', ow.string.nonEmpty);
+
         return await this.loaders[this.loadType].load(batch);
     }
 }

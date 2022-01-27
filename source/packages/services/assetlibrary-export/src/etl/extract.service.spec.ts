@@ -37,7 +37,7 @@ describe('ExtractService', () => {
                 'deviceId-1',
                 'deviceId-2'
             ],
-            timestamp: 'timestamp'
+            timestamp: 1643230032656
         };
 
         const mockedDeviceExtractorResponse = {
@@ -48,7 +48,7 @@ describe('ExtractService', () => {
                 {deviceId: 'deviceId-1', templateId: 'type1'},
                 {deviceId: 'deviceId-2', templateId: 'type1'},
             ],
-            timestamp: 'timestamp'
+            timestamp: 1643230032656
         };
 
         mockedDeviceExtractor.extract = jest.fn().mockReturnValueOnce(mockedDeviceExtractorResponse);
@@ -75,7 +75,7 @@ describe('ExtractService', () => {
                 'type1/groupPath1',
                 'type1/groupPath2'
             ],
-            timestamp: 'timestamp'
+            timestamp: 1643230032656
         };
 
         const mockedDeviceExtractorResponse = {
@@ -86,7 +86,7 @@ describe('ExtractService', () => {
                 {groupPath: 'type1/groupPath1', templateId: 'type1'},
                 {groupPath: 'type1/groupPath2', templateId: 'type1'},
             ],
-            timestamp: 'timestamp'
+            timestamp: 1643230032656
         };
 
         mockedGroupExtractor.extract = jest.fn().mockReturnValueOnce(mockedDeviceExtractorResponse);

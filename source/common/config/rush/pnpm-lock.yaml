@@ -53,6 +53,7 @@ specifiers:
   '@types/jszip': 3.4.1
   '@types/jwk-to-pem': 2.0.0
   '@types/lodash': 4.14.168
+  '@types/luxon': 2.0.9
   '@types/morgan': 1.9.2
   '@types/multer': 1.4.5
   '@types/mustache': 4.1.1
@@ -109,7 +110,7 @@ specifiers:
   jszip: 3.7.0
   jwk-to-pem: 2.0.4
   lodash: 4.17.21
-  moment: 2.29.1
+  luxon: 2.3.0
   morgan: 1.10.0
   mustache: 4.2.0
   node-cache: 5.1.2
@@ -181,6 +182,7 @@ dependencies:
   '@types/jszip': 3.4.1
   '@types/jwk-to-pem': 2.0.0
   '@types/lodash': 4.14.168
+  '@types/luxon': 2.0.9
   '@types/morgan': 1.9.2
   '@types/multer': 1.4.5
   '@types/mustache': 4.1.1
@@ -237,7 +239,7 @@ dependencies:
   jszip: 3.7.0
   jwk-to-pem: 2.0.4
   lodash: 4.17.21
-  moment: 2.29.1
+  luxon: 2.3.0
   morgan: 1.10.0
   mustache: 4.2.0
   node-cache: 5.1.2
@@ -1272,6 +1274,10 @@ packages:
 
   /@types/lodash/4.14.168:
     resolution: {integrity: sha512-oVfRvqHV/V6D1yifJbVRU3TMp8OT6o6BG+U9MkwuJ3U8/CsDHvalRpsxBqivn71ztOFZBTfJMvETbqHiaNSj7Q==}
+    dev: false
+
+  /@types/luxon/2.0.9:
+    resolution: {integrity: sha512-ZuzIc7aN+i2ZDMWIiSmMdubR9EMMSTdEzF6R+FckP4p6xdnOYKqknTo/k+xXQvciSXlNGIwA4OPU5X7JIFzYdA==}
     dev: false
 
   /@types/mime/2.0.3:
@@ -6178,6 +6184,11 @@ packages:
       yallist: 4.0.0
     dev: false
 
+  /luxon/2.3.0:
+    resolution: {integrity: sha512-gv6jZCV+gGIrVKhO90yrsn8qXPKD8HYZJtrUDSfEbow8Tkw84T9OnCyJhWvnJIaIF/tBuiAjZuQHUt1LddX2mg==}
+    engines: {node: '>=12'}
+    dev: false
+
   /make-dir/3.1.0:
     resolution: {integrity: sha512-g3FeP20LNwhALb/6Cz6Dd4F2ngze0jz7tbzrD2wAV+o9FeNHe4rL+yK2md0J/fiSf1sa1ADhXqi5+oVwOM/eGw==}
     engines: {node: '>=8'}
@@ -9260,7 +9271,7 @@ packages:
     dev: false
 
   file:projects/assetlibrary-export.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-WxWzhYTdXO39U8sifUgoGjurhgrDWclQmMpG1mIqNHw6GWDdGd/QpZv1aFPg1BNmX4MfXVNc3ReayfTiW1EgTg==, tarball: file:projects/assetlibrary-export.tgz}
+    resolution: {integrity: sha512-n4Mv1PO/1KSMz4vUQuv31Z8n+eOQcMSXvWLgBUXCrIrPhby5Z3rMyGrIXRarttjFVpY/LGMkXGkBeF4rYdAKNw==, tarball: file:projects/assetlibrary-export.tgz}
     id: file:projects/assetlibrary-export.tgz
     name: '@rush-temp/assetlibrary-export'
     version: 0.0.0
@@ -9276,6 +9287,7 @@ packages:
       '@types/json-stable-stringify': 1.0.32
       '@types/jsonwebtoken': 8.5.0
       '@types/lodash': 4.14.168
+      '@types/luxon': 2.0.9
       '@types/prettyjson': 0.0.29
       '@types/shortid': 0.0.29
       '@typescript-eslint/eslint-plugin': 4.9.1_fd07bbd6431e6d2022fb6fa2f2b698f2
@@ -9298,11 +9310,13 @@ packages:
       jsonwebtoken: 8.5.1
       lodash: 4.17.21
       logform: 2.1.2
+      luxon: 2.3.0
       mime: 1.6.0
       moment: 2.29.1
       nodemon: 2.0.6
       nyc: 15.1.0_supports-color@8.0.0
       ow: 0.15.0
+      p-limit: 3.1.0
       readable-stream: 2.3.6
       reflect-metadata: 0.1.13
       serverless-http: 2.3.1
@@ -9681,7 +9695,7 @@ packages:
     dev: false
 
   file:projects/certificate-activator.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-Jr4HMHKpfa35vfDaTVDriU0OzS8pWO4Ffi5EuDpAv6lprgF3Vt7fIRWJ1Zm3mPwDA9z6JaG3JBbp3AXOoxCLtw==, tarball: file:projects/certificate-activator.tgz}
+    resolution: {integrity: sha512-LAqoa/uuvXXkoRvBK6BVS/BnTXcyP4yAN6sFEdRjrxl+qAjD8khBOOk4TmdCMzX4q38J27PP/GZ1qKav6SPmkQ==, tarball: file:projects/certificate-activator.tgz}
     id: file:projects/certificate-activator.tgz
     name: '@rush-temp/certificate-activator'
     version: 0.0.0
@@ -9729,7 +9743,7 @@ packages:
     dev: false
 
   file:projects/certificate-vendor.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-5BsFRfK7Fzezzp48WT0dvqgzM1hgl9bL2sQ/xOD5tACgk3gssPH0cDEDZtVy5hab6N3SQryE2c9qU/NLDilQVw==, tarball: file:projects/certificate-vendor.tgz}
+    resolution: {integrity: sha512-vXWRlYVb8iCloOKrdGXyiNSeAIAm6qiGmzdc6jRVLhgZ0Brrh8LYmrADfEigAj+OXtH5jO/4C/wZj6Ld9Ri/TA==, tarball: file:projects/certificate-vendor.tgz}
     id: file:projects/certificate-vendor.tgz
     name: '@rush-temp/certificate-vendor'
     version: 0.0.0
@@ -9820,7 +9834,7 @@ packages:
     dev: false
 
   file:projects/commands.tgz:
-    resolution: {integrity: sha512-xnt0RWnnDCBElKkkSivvOoH9X4AUFxmjW4eJae6s49mq521ux7ilUldQG1etCvwXNbXxEWUFrxhxX5FB+rKzpA==, tarball: file:projects/commands.tgz}
+    resolution: {integrity: sha512-OB82+vO6vZwGaGKn7FW26mxq/kb8gp+L0fUsRzuZKnJ8a5XbxxfRUaI8styZklAMNx9adNJ7InG8+hpRdOmbAQ==, tarball: file:projects/commands.tgz}
     name: '@rush-temp/commands'
     version: 0.0.0
     dependencies:
@@ -9961,7 +9975,7 @@ packages:
     dev: false
 
   file:projects/device-monitoring.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-llR09qI8SY1W5bjQ8u60PDd7c6yD+rf/O+yZh1FeJQqjjusxVmn12vcTz11Hp2/KsdYV1kQOBDQjoengMiR4tQ==, tarball: file:projects/device-monitoring.tgz}
+    resolution: {integrity: sha512-6D12Vrm/xlqHgLJnyEzmtiVAAMxN0ZX2xF9m6hgIaSVBQejblR3PMSNNyJRbHAAhCfeg+WZgPaTkyeCEb3j0rA==, tarball: file:projects/device-monitoring.tgz}
     id: file:projects/device-monitoring.tgz
     name: '@rush-temp/device-monitoring'
     version: 0.0.0
@@ -10324,7 +10338,7 @@ packages:
     dev: false
 
   file:projects/integration-tests.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-eBpmlVf8DSE7q6cJu7SiUkCFKbffLWePxn+U5n9+7L9X6QnFSi95702VaZFwejIFecca8s4czaA4ypIjJm2i+w==, tarball: file:projects/integration-tests.tgz}
+    resolution: {integrity: sha512-LyOp74GTdCTqp3rED5GswsJQphwcoBvA5Cao/KwoNeeRF+uehLjL3PgSGilm7onLa8txsImvpW/3VJKQ5a18Tg==, tarball: file:projects/integration-tests.tgz}
     id: file:projects/integration-tests.tgz
     name: '@rush-temp/integration-tests'
     version: 0.0.0

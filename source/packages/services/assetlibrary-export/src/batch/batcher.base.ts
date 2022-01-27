@@ -11,51 +11,45 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { injectable } from 'inversify';
-import ow from 'ow';
-
-import { Extracted } from './extract.service';
-
 
 @injectable()
-export class TransformService implements Transformer {
+export class BatcherBase {
 
-    private readonly transformers: Transformers = {};
+    // This function creates exclusive ranges for a given limit (count) and size (batchSize).
+    // The function return ranges as sets i.e. input:100, 10,  output: [[0,10] [10, 20] ...]
+    // These ranges will be used to query labels form Neptune. Neptune, works with exclusive ranges,
+    // where the end of one range is the begining of the next one. i.e. [0,10] [10, 20]
+    public createRangesByCount(count:number, batchSize:number):Array<[number, number]> {
 
-    public async transform(batch: Extracted): Promise<Transformed> {
+        // count/batch ratio, rounded to whole number, to calculate the batches
+        const batches = Math.trunc(count / batchSize);
 
-        ow(batch, 'batch', ow.object.nonEmpty);
-        ow(batch.category, 'batchCategory', ow.string.nonEmpty);
-        ow(batch.id, 'batchId', ow.string.nonEmpty);
-        ow(batch.type, 'batchType', ow.string.nonEmpty);
-        ow(batch.items, 'batchType', ow.array.nonEmpty);
-        ow(batch.timestamp, 'batchType', ow.number.greaterThan(0));
+        // check if there is a remainder, since we rounded the batches to a whole number
+        const hasRemainder = (count % batchSize) > 0
 
+        const result = []
+        let start = 0
+        let end = 0;
 
-        if(!this.transformers[batch.category]) {
-            return {
-                id: batch.id,
-                category: batch.category,
-                type: batch.type,
-                items: batch.items,
-                timestamp: batch.timestamp
-            };
+        // generate ranges, i.e. [0,10] [10, 20] ...
+        for(let i=0; i<=batches; i++) {
+            start = end;
+            end = end + batchSize;
+
+            if(end <= count) {
+                const range:[number, number] = [start, end];
+                result.push(range);
+            }
         }
-        return await this.transformers[batch.category].transform(batch);
+
+        // if there is a remainder, then add the remaining items in the batch
+        if(hasRemainder) {
+            const remainder = count % batchSize
+            const range:[number, number] = [start, start + remainder];
+            result.push(range);
+        }
+
+        return result
     }
-}
 
-export interface Transformer {
-    transform(batch: Extracted): Promise<Transformed>;
-}
-
-export interface Transformers {
-    [key: string]: Transformer;
-}
-
-export class Transformed {
-    id: string | number;
-    category: string;
-    type: string;
-    items: unknown[];
-    timestamp: number;
 }

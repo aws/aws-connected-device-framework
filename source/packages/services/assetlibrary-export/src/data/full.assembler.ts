@@ -23,7 +23,7 @@ import { RelatedEntityDto, VertexDto } from './full.model';
 export class FullAssembler {
 
     public assembleNode(entity:VertexDto):Node {
-        logger.debug(`full.assembler assembleNode: in: entity: ${JSON.stringify(entity)}`);
+        logger.silly(`full.assembler assembleNode: in: entity: ${JSON.stringify(entity)}`);
 
         const labels = safeExtractLabels(entity['label']);
         const node = new Node();
@@ -37,12 +37,12 @@ export class FullAssembler {
             }
         });
 
-        logger.debug(`full.assembler assembleNode: exit: node: ${JSON.stringify(node)}`);
+        logger.silly(`full.assembler assembleNode: exit: node: ${JSON.stringify(node)}`);
         return node;
     }
 
     public assembleAssociation(node:Node, r:RelatedEntityDto): void {
-        logger.debug(`full.assembler assembleAssociation: in: r:${JSON.stringify(r)}`);
+        logger.silly(`full.assembler assembleAssociation: in: r:${JSON.stringify(r)}`);
 
         const l = safeExtractLabels(r.vProps.label);
         const other: Node = this.assembleNode(r.vProps);
@@ -54,7 +54,7 @@ export class FullAssembler {
             other.category = TypeCategory.Device;
         }
         node.addLink(r.dir, r.e.label, other);
-        logger.debug(`full.assembler assembleAssociation: exit: ${JSON.stringify(node)}`);
+        logger.silly(`full.assembler assembleAssociation: exit: ${JSON.stringify(node)}`);
     }
 
     public extractPropertyValue(v: NodeAttributeValue): ModelAttributeValue {

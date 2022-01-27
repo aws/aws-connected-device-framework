@@ -12,6 +12,7 @@
  *********************************************************************************************************************/
 
 import { injectable, inject } from 'inversify';
+import ow from 'ow';
 
 import { TYPES } from '../di/types';
 import { logger } from './logger';
@@ -30,6 +31,10 @@ export class S3Utils {
     public async save(bucket:string, key:string, object: any): Promise<AWS.S3.PutObjectOutput> {
         logger.debug(`S3Loader: save: in: bucket:${bucket}, key:${key}, object:${JSON.stringify(object)}`);
 
+        ow(bucket, 'bucket', ow.string.nonEmpty);
+        ow(bucket, 'key', ow.string.nonEmpty);
+        ow(object, 'bucket', ow.object.nonEmpty);
+
         const params:AWS.S3.PutObjectRequest = {
             Bucket: bucket,
             Key: key,
@@ -47,6 +52,9 @@ export class S3Utils {
     public async get(bucket:string, key:string): Promise<any> {
         logger.debug(`S3Loader: get: in: bucket:${bucket}, key:${key}`);
 
+        ow(bucket, 'bucket', ow.string.nonEmpty);
+        ow(bucket, 'key', ow.string.nonEmpty);
+
         const params:AWS.S3.GetObjectRequest = {
             Bucket: bucket,
             Key: key
@@ -63,6 +71,9 @@ export class S3Utils {
 
     public async delete(bucket:string, key:string): Promise<AWS.S3.DeleteObjectOutput> {
         logger.debug(`S3Loader: delete: in: bucket:${bucket}, key:${key}`);
+
+        ow(bucket, 'bucket', ow.string.nonEmpty);
+        ow(bucket, 'key', ow.string.nonEmpty);
 
         const params:AWS.S3.DeleteObjectRequest = {
             Bucket: bucket,

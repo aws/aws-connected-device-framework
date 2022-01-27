@@ -11,6 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { injectable, inject } from 'inversify';
+import ow from 'ow';
 
 import { TYPES } from '../di/types';
 
@@ -19,6 +20,7 @@ import { GroupExtractor } from './extractors/group.extractor';
 
 import { Batch } from '../batch/batch.service';
 import { TypeCategory } from '../types/constants';
+
 
 @injectable()
 export class ExtractService implements Extractor {
@@ -33,6 +35,9 @@ export class ExtractService implements Extractor {
     }
 
     public async extract(batch: Batch): Promise<Extracted> {
+        ow(batch, 'batch', ow.object.nonEmpty);
+        ow(batch.category, 'batch', ow.string.nonEmpty);
+
         return await this.extractors[batch.category].extract(batch);
     }
 
@@ -47,9 +52,9 @@ export interface Extractors {
 }
 
 export class Extracted {
-    id: string;
+    id: string | number;
     category: string;
     type?: string;
     items: unknown[];
-    timestamp: string;
+    timestamp: number;
 }

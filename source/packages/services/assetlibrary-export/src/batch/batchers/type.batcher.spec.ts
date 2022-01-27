@@ -17,7 +17,7 @@ import { TypeBatcher } from './type.batcher';
 import { LabelsService } from '../../labels/labels.service';
 import { TypesService } from '../../types/types.service';
 
-describe('CategoryBatcher', () => {
+describe('TypeBatcher', () => {
 
     let mockedLabelsService: jest.Mocked<LabelsService>;
     let mockedTypesService: jest.Mocked<TypesService>;
@@ -32,15 +32,26 @@ describe('CategoryBatcher', () => {
         instance = new TypeBatcher(mockedTypesService, mockedLabelsService, mockedBatchSize);
     });
 
-    it('should create batches by categories', async () => {
+    it('should create batches by types', async () => {
 
         const mockedRequest1 = {
-            'devicetype1': ['deviceId-1', 'deviceId-1'],
-            'devicetype2': ['deviceId-1', 'deviceId-1']
+            'label': 'devicetype1',
+            'total': 500
         };
+
         const mockedRequest2 = {
-            'grouptype1': [ 'type1/grouppath-1', 'type1/grouppath-2'],
-            'grouptype2': [ 'type2/grouppath-1', 'type2/grouppath-2']
+            'label': 'devicetype2',
+            'total': 500
+        };
+
+        const mockedRequest3 = {
+            'label': 'grouptype2',
+            'total': 500
+        };
+
+        const mockedRequest4 = {
+            'label': 'grouptype2',
+            'total': 500
         };
 
         const mockedDeviceTypes = [{
@@ -56,25 +67,21 @@ describe('CategoryBatcher', () => {
         }];
 
         mockedTypesService.list = jest.fn().mockReturnValueOnce(mockedDeviceTypes).mockReturnValueOnce(mockedGroupTypes);
-        mockedLabelsService.getIdsTypeMapByLabels = jest.fn().mockReturnValueOnce(mockedRequest1).mockReturnValueOnce(mockedRequest2);
+        mockedLabelsService.getObjectCount = jest.fn()
+            .mockReturnValueOnce(mockedRequest1)
+            .mockReturnValueOnce(mockedRequest2)
+            .mockReturnValueOnce(mockedRequest3)
+            .mockReturnValueOnce(mockedRequest4);
 
         const response =  await instance.batch();
+
+        expect(response.length).toEqual(20);
 
         expect(response[0]).toHaveProperty('timestamp');
         expect(response[0]).toHaveProperty('category');
         expect(response[0]).toHaveProperty('id');
-        expect(response[0]).toHaveProperty('items');
+        expect(response[0]).toHaveProperty('range');
         expect(response[0]).toHaveProperty('type');
-
-        expect(response[0].category).toEqual('device');
-        expect(response[0].items.length).toEqual(2);
-        expect(response[0].type).toEqual('devicetype1');
-        expect(response[0].items[0]).toEqual('deviceId-1');
-
-        expect(response[2].category).toEqual('group');
-        expect(response[2].items.length).toEqual(2);
-        expect(response[2].type).toEqual('grouptype1');
-        expect(response[2].items[0]).toEqual('type1/grouppath-1');
 
     });
 

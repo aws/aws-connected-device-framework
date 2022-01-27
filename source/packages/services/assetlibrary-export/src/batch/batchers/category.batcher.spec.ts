@@ -29,25 +29,27 @@ describe('CategoryBatcher', () => {
 
     it('should create batches by categories', async () => {
 
-        const mockedRequest = {
-            'device': ['deviceId-1', 'deviceId-1'],
-            'group': [ 'type1/grouppath-1', 'type2/grouppath-2']
+        const mockedRequest1 = {
+            'label': 'device',
+            'total': 500
         };
 
-        mockedLabelsService.getIdsCategoryMapByLabels = jest.fn().mockReturnValueOnce(mockedRequest);
+        const mockedRequest2 = {
+            'label': 'group',
+            'total': 500
+        };
+
+        mockedLabelsService.getObjectCount = jest.fn().mockReturnValueOnce(mockedRequest1).mockReturnValueOnce(mockedRequest2)
 
         const response =  await instance.batch();
+
+        expect(response.length).toEqual(10);
 
         expect(response[0]).toHaveProperty('timestamp');
         expect(response[0]).toHaveProperty('category');
         expect(response[0]).toHaveProperty('id');
-        expect(response[0]).toHaveProperty('items');
+        expect(response[0]).toHaveProperty('range');
         expect(response[0].type).toBeUndefined();
-
-        expect(response[0].category).toEqual('device');
-        expect(response[0].items.length).toEqual(2);
-
-        expect(response[0].items[0]).toEqual('deviceId-1');
 
     });
 

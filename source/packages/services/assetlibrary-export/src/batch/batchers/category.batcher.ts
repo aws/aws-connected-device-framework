@@ -12,8 +12,6 @@
  *********************************************************************************************************************/
 import { injectable, inject } from 'inversify';
 import { generate } from 'shortid';
-import * as _ from 'lodash';
-import moment from 'moment';
 
 import { TYPES } from '../../di/types';
 import { logger } from '../../utils/logger';
@@ -21,13 +19,16 @@ import { logger } from '../../utils/logger';
 import { Batch, Batcher, Batches } from '../batch.service';
 import { TypeCategory } from '../../types/constants';
 import { LabelsService } from '../../labels/labels.service';
+import {BatcherBase} from '../batcher.base';
 
 @injectable()
-export class CategoryBatcher implements Batcher {
+export class CategoryBatcher extends BatcherBase implements Batcher {
     constructor(
         @inject(TYPES.LabelsService) private labelsService: LabelsService,
         @inject('defaults.batch.size') private batchSize: number
-    ) {}
+    ) {
+        super()
+    }
 
     public async batch(): Promise<Batches> {
         logger.debug(`BatchService batch: in`);
@@ -35,26 +36,26 @@ export class CategoryBatcher implements Batcher {
         const typeCategories = this.getTypeCategories();
 
         return await this.getBatchesByCategories(typeCategories);
-
     }
 
     private async getBatchesByCategories(categories:string[]): Promise<Batch[]> {
-        let batches:Batch[] = [];
-        const idsMapByCategory = await this.labelsService.getIdsCategoryMapByLabels(categories);
+        const batches:Batch[] = [];
+
 
         for (const category of categories) {
-            const chunks = _.chunk(idsMapByCategory[category], this.batchSize);
 
-            const _batches:Batch[] = chunks.map((chunk: string[]) => {
+            const count = await this.labelsService.getObjectCount(category);
+            const ranges = this.createRangesByCount(count.total, this.batchSize);
+
+            for(const range of ranges) {
                 const batch = new Batch();
                 batch.id = generate();
                 batch.category = category;
-                batch.items = chunk;
-                batch.timestamp = moment().toISOString();
-                return batch;
-            });
-
-            batches = _.concat(batches, _batches);
+                batch.range = range;
+                batch.timestamp = Date.now();
+                batch.total = count.total
+                batches.push(batch);
+            }
         }
 
         return batches;
@@ -63,5 +64,4 @@ export class CategoryBatcher implements Batcher {
     private getTypeCategories() {
         return [TypeCategory.Device, TypeCategory.Group];
     }
-
 }

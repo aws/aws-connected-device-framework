@@ -25,47 +25,29 @@ describe('LabelsService', () => {
         instance = new LabelsService(mockedLabelsDao);
     });
 
-    it('should get dictionary of types and list of ids', async () => {
-        const request = ['deviceType1', 'deviceType2', 'groupType1'];
+    it('should get a count by label', async () => {
+        const request = 'someDeviceType';
 
-        const mockedLabelsDaoResponse = [{
-            id: 'device001',
-            type: 'deviceType1',
-            category: 'device'
-        },{
-            id: 'device012',
-            type: 'deviceType1',
-            category: 'device'
-        },{
-            id: 'device044',
-            type: 'deviceType2',
-            category: 'device'
-        },{
-            id: 'groupType1/groupPath1',
-            type: 'groupType1',
-            category: 'group'
-        },{
-            id: 'groupType1/groupPath2',
-            type: 'groupType1',
-            category: 'group'
-        }];
+        const mockedLabelsDaoResponse = {
+            label: 'someDeviceType',
+            total: 500
+        };
 
-        mockedLabelsDao.listIdObjectsByLabels = jest.fn().mockReturnValueOnce(mockedLabelsDaoResponse);
+        mockedLabelsDao.getObjectCountByLabel = jest.fn().mockReturnValueOnce(mockedLabelsDaoResponse);
 
-        const response = await instance.getIdsTypeMapByLabels(request);
+        const response = await instance.getObjectCount(request);
 
-        expect(response).toHaveProperty('deviceType1');
-        expect(response).toHaveProperty('deviceType2');
-        expect(response).toHaveProperty('groupType1');
-        expect(response.groupType1.length).toEqual(2);
-        expect(response.deviceType1.length).toEqual(2);
-        expect(response.deviceType2.length).toEqual(1);
-        expect(response.groupType1[0]).toEqual('groupType1/groupPath1');
+        expect(response).toHaveProperty('label');
+        expect(response).toHaveProperty('total');
+        expect(response.label).toEqual('someDeviceType');
+        expect(response.total).toEqual(500);
+
 
     });
 
-    it('should get dictionary of categories and list of ids', async () => {
-        const request = ['device', 'group'];
+    it('should get ids for a label and range', async () => {
+        const label = 'deviceType1';
+        const range:[number, number] = [0,3];
 
         const mockedLabelsDaoResponse = [{
             id: 'device001',
@@ -77,26 +59,16 @@ describe('LabelsService', () => {
             category: 'device'
         },{
             id: 'device044',
-            type: 'deviceType2',
+            type: 'deviceType1',
             category: 'device'
-        },{
-            id: 'groupType1/groupPath1',
-            type: 'groupType1',
-            category: 'group'
-        },{
-            id: 'groupType1/groupPath2',
-            type: 'groupType1',
-            category: 'group'
         }];
 
-        mockedLabelsDao.listIdObjectsByLabels = jest.fn().mockReturnValueOnce(mockedLabelsDaoResponse);
+        mockedLabelsDao.listIdObjectsByLabel = jest.fn().mockReturnValueOnce(mockedLabelsDaoResponse);
 
-        const response = await instance.getIdsCategoryMapByLabels(request);
+        const response = await instance.getIdsByRange(label, range);
 
-        expect(response).toHaveProperty('device');
-        expect(response).toHaveProperty('group');
-        expect(response.group.length).toEqual(2);
-        expect(response.group[0]).toEqual('groupType1/groupPath1');
+        expect(response.length).toEqual(3);
+        expect(response[0]).toEqual('device001');
 
     });
 });

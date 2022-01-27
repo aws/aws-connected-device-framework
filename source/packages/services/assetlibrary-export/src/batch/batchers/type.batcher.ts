@@ -13,7 +13,6 @@
 import { inject, injectable } from 'inversify';
 import { generate } from 'shortid';
 import * as _ from 'lodash';
-import moment from 'moment';
 
 import { TYPES } from '../../di/types';
 import { logger } from '../../utils/logger';
@@ -23,15 +22,18 @@ import { TypesService } from '../../types/types.service';
 import { Batch, Batcher, Batches } from '../batch.service';
 import { TypeModel } from '../../types/types.models';
 import { LabelsService } from '../../labels/labels.service';
+import {BatcherBase} from '../batcher.base';
 
 @injectable()
-export class TypeBatcher implements Batcher {
+export class TypeBatcher extends BatcherBase implements Batcher  {
 
     constructor(
         @inject(TYPES.TypesService) private typesService: TypesService,
         @inject(TYPES.LabelsService) private labelsService: LabelsService,
-        @inject('defaults.batch.size') private batchSize: number
-    ) {}
+        @inject('defaults.batch.size') private batchSize: number,
+    ) {
+        super()
+    }
 
     public async batch(): Promise<Batches> {
         logger.debug(`BatchService batch: in`);
@@ -55,29 +57,24 @@ export class TypeBatcher implements Batcher {
         logger.debug(`types.batcher: getBatchesByTypes in: category: ${category}, types: ${JSON.stringify(types)}`);
 
         const typeIds = types.map(type => type.templateId);
-        let batches:Batch[] = [];
+        const batches:Batch[] = [];
 
-        const idsMapByType = await this.labelsService.getIdsTypeMapByLabels(typeIds);
+        for(const type of typeIds) {
+            const count = await this.labelsService.getObjectCount(type);
+            const ranges = this.createRangesByCount(count.total, this.batchSize);
 
-        for (const type of Object.keys(idsMapByType)) {
-
-            const ids = idsMapByType[type];
-            const chunks = _.chunk(ids, this.batchSize);
-
-            const _batches:Batch[] = chunks.map((chunk: string[]) => {
+            for(const range of ranges) {
                 const batch = new Batch();
                 batch.id = generate();
                 batch.category = category;
                 batch.type = type;
-                batch.items = chunk;
-                batch.timestamp = moment().toISOString();
-                return batch;
-            });
-
-            batches = _.concat(batches, _batches);
+                batch.range = range;
+                batch.total = count.total
+                batch.timestamp = Date.now();
+                batches.push(batch);
+            }
         }
-
-        logger.debug(`types.batcher: getBatchesByTypes out: batches:`);
+        logger.debug(`types.batcher: getBatchesByTypes out: batches:${JSON.stringify(batches)}`);
 
         return batches;
     }
