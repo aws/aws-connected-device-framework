@@ -10,44 +10,31 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable } from 'inversify';
+import 'reflect-metadata';
 
-@injectable()
-export class BatcherBase {
+import { BatcherBase } from './batcher.base';
 
-    // This function creates exclusive ranges for a given limit (count) and size (batchSize).
-    // The function return ranges as sets i.e. input:100, 10,  output: [[0,10] [10, 20] ...]
-    public createRangesByCount(count:number, batchSize:number):Array<[number, number]> {
+describe('BatchBase', () => {
+    let instance: BatcherBase;
 
-        // count/batch ratio, rounded to whole number, to calculate the batches
-        const batches = Math.trunc(count / batchSize);
+    it('should create ranges by count', () => {
+        const count = 19;
+        const batchSize = 5;
 
-        // check if there is a remainder, since we rounded the batches to a whole number
-        const hasRemainder = (count % batchSize) > 0
+        const expectedRanges = [
+            [0, 5],
+            [5, 10],
+            [10, 15],
+            [15, 19]
+        ];
 
-        const result = []
-        let start = 0
-        let end = 0;
+        instance = new BatcherBase();
 
-        // generate ranges, i.e. [0,10] [10, 20] ...
-        for(let i=0; i<=batches; i++) {
-            start = end;
-            end = end + batchSize;
+        const response = instance.createRangesByCount(count, batchSize);
 
-            if(end <= count) {
-                const range:[number, number] = [start, end];
-                result.push(range);
-            }
-        }
+        expect(response.length).toEqual(4);
+        expect(response).toEqual(expectedRanges);
 
-        // if there is a remainder, then add the remaining items in the batch
-        if(hasRemainder) {
-            const remainder = count % batchSize
-            const range:[number, number] = [start, start + remainder];
-            result.push(range);
-        }
+    });
 
-        return result
-    }
-
-}
+});
