@@ -37,37 +37,25 @@ describe('BatchService', () => {
             id: 'some-uuid',
             category: 'device',
             type: 'type1',
-            items: [
-                'deviceId-1',
-                'deviceId-2'
-            ],
+            range: [0, 100],
             timestamp: 'timestamp'
         },{
             id: 'some-uuid',
             category: 'device',
             type: 'type2',
-            items: [
-                'deviceId-1',
-                'deviceId-2'
-            ],
+            range: [100,200],
             timestamp: 'timestamp'
         },{
             id: 'some-uuid',
             category: 'group',
             type: 'type1',
-            items: [
-                'type1/grouppath-1',
-                'type2/grouppath-2'
-            ],
+            range: [0, 100],
             timestamp: 'timestamp'
         },{
             id: 'some-uuid',
             category: 'group',
             type: 'type2',
-            items: [
-                'type2/grouppath-1',
-                'type2/grouppath-2'
-            ],
+            range: [100,200],
             timestamp: 'timestamp'
         }];
 
@@ -85,34 +73,22 @@ describe('BatchService', () => {
         const expected = [{
             id: 'some-uuid',
             category: 'device',
-            items: [
-                'deviceId-1',
-                'deviceId-2'
-            ],
+            range: [0, 100],
             timestamp: 'timestamp'
         },{
             id: 'some-uuid',
             category: 'device',
-            items: [
-                'deviceId-1',
-                'deviceId-2'
-            ],
+            range: [100,200],
             timestamp: 'timestamp'
         },{
             id: 'some-uuid',
             category: 'group',
-            items: [
-                'type1/grouppath-1',
-                'type2/grouppath-2'
-            ],
+            range: [0, 100],
             timestamp: 'timestamp'
         },{
             id: 'some-uuid',
             category: 'group',
-            items: [
-                'type2/grouppath-1',
-                'type2/grouppath-2'
-            ],
+            range: [100,200],
             timestamp: 'timestamp'
         }];
 

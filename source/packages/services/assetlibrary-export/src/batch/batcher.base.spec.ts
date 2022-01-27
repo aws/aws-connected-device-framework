@@ -10,50 +10,31 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
-import ow from 'ow';
+import 'reflect-metadata';
 
-import { TYPES } from '../di/types';
-import { logger } from '../utils/logger';
+import { BatcherBase } from './batcher.base';
 
-import { LabelsDao } from './labels.dao';
+describe('BatchBase', () => {
+    let instance: BatcherBase;
 
-@injectable()
-export class LabelsService {
+    it('should create ranges by count', () => {
+        const count = 19;
+        const batchSize = 5;
 
-    constructor(
-        @inject(TYPES.LabelsDao) private labelsDao: LabelsDao ,
-    ) {}
+        const expectedRanges = [
+            [0, 5],
+            [5, 10],
+            [10, 15],
+            [15, 19]
+        ];
 
-    public async getObjectCount(label: string): Promise<{
-        label:string,
-        total:number
-    }> {
-        logger.debug(`labels.service:getObjectCount: in: ${label}`);
+        instance = new BatcherBase();
 
-        ow(label, 'label', ow.string.nonEmpty);
+        const response = instance.createRangesByCount(count, batchSize);
 
-        const result = await this.labelsDao.getObjectCountByLabel(label);
+        expect(response.length).toEqual(4);
+        expect(response).toEqual(expectedRanges);
 
-        logger.debug(`labels.service:getObjectCount: out: ${result}`);
+    });
 
-        return {
-            label,
-            total: result.total
-        };
-    }
-
-    public async getIdsByRange(label:string, range:[number, number]): Promise<string[]> {
-        logger.debug(`labels.service: getIdsByRange: in: ${label}, range: ${range}`);
-
-        ow(label, 'label', ow.string.nonEmpty);
-        ow(range, 'range', ow.array.nonEmpty);
-
-        const idObjects = await this.labelsDao.listIdObjectsByLabel(label, range);
-        const ids = idObjects.map(e => e.id);
-
-        logger.debug(`labels.service: getIdsByRange: out: ${ids}`);
-
-        return ids
-    }
-}
+});

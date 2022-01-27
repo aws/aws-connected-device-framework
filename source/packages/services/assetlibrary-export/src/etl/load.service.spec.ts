@@ -35,7 +35,7 @@ describe('LoadService', () => {
                 'deviceId-1',
                 'deviceId-2'
             ],
-            timestamp: 'timestamp'
+            timestamp: 1643230032656
         };
 
         const mockedS3LoaderResponse = {

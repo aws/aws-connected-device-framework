@@ -17,6 +17,7 @@ import { ExtractService } from './extract.service';
 import { TransformService } from './transform.service';
 import { LoadService } from './load.service';
 import { ETLService } from './etl.service';
+import { LabelsService } from '../labels/labels.service';
 
 import { S3Utils } from '../utils/s3.util';
 
@@ -26,6 +27,7 @@ describe('ETLService', () => {
     let mockedExtractService: ExtractService;
     let mockedTransformService: TransformService;
     let mockedLoadService: LoadService;
+    let mockedLablesService: LabelsService;
     let mockedS3Utils: jest.Mocked<S3Utils>;
 
     let instance: ETLService;
@@ -34,9 +36,10 @@ describe('ETLService', () => {
         mockedExtractService = createMockInstance(ExtractService);
         mockedTransformService = createMockInstance(TransformService);
         mockedLoadService = createMockInstance(LoadService);
+        mockedLablesService = createMockInstance(LabelsService);
         mockedS3Utils = createMockInstance(S3Utils);
 
-        instance = new ETLService(mockedExtractService, mockedTransformService, mockedLoadService, 'exportBucket', 'exportKey', mockedS3Utils);
+        instance = new ETLService(mockedExtractService, mockedTransformService, mockedLoadService, mockedLablesService, 'exportBucket', 'exportKey', mockedS3Utils);
 
     });
 
@@ -45,17 +48,17 @@ describe('ETLService', () => {
         const batchId = 'some-uuid'
 
         const mockedExtractServiceResponse = {
-            id: 'some-uuid',
+            id: '1',
             category: 'device',
             type: 'type1',
             items: [
-                {deviceId: 'deviceId-1', templateId: 'type1'},
-                {deviceId: 'deviceId-2', templateId: 'type1'},
+                'deviceId-1',
+                'deviceId-2'
             ],
             timestamp: 'timestamp'
         };
         const mockedTransformServiceResponse = {
-            id: 'some-uuid',
+            id: '1',
             category: 'device',
             type: 'type1',
             items: [
@@ -65,11 +68,26 @@ describe('ETLService', () => {
             timestamp: 'timestamp'
         };
         const mockedLoadServiceResponse = {
-            batchId: 'some-uuid',
+            batchId: '1',
             exportBucket: 'myBucket',
             exportKey: 'assetlibrary-export/device/type1/dt=YYYY-MM-DD-HH-MM/some-uuid.json'
         };
 
+        const mockedLabelServiceResponse = [
+            'deviceId-1',
+            'deviceId-2'
+        ]
+
+        const mockedS3UtilsResponse = {
+            id: '1',
+            category: 'device',
+            type: 'type1',
+            range: [0,100],
+            timestamp: 'timestamp'
+        }
+
+        mockedS3Utils.get = jest.fn().mockReturnValueOnce(mockedS3UtilsResponse);
+        mockedLablesService.getIdsByRange = jest.fn().mockReturnValueOnce(mockedLabelServiceResponse);
         mockedExtractService.extract = jest.fn().mockReturnValueOnce(mockedExtractServiceResponse);
         mockedTransformService.transform = jest.fn().mockReturnValueOnce(mockedTransformServiceResponse);
         mockedLoadService.load = jest.fn().mockReturnValueOnce(mockedLoadServiceResponse);

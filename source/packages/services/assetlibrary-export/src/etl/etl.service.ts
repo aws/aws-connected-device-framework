@@ -11,6 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { inject, injectable } from 'inversify';
+import ow from 'ow';
 
 import { TYPES } from '../di/types';
 import { logger } from '../utils/logger';
@@ -20,6 +21,7 @@ import { ExtractService } from './extract.service';
 import { TransformService } from './transform.service';
 import { LoadService, Loaded } from './load.service';
 import { S3Utils } from '../utils/s3.util';
+import {LabelsService} from '../labels/labels.service';
 
 @injectable()
 export class ETLService {
@@ -27,27 +29,35 @@ export class ETLService {
         @inject(TYPES.ExtractService) private extractService: ExtractService,
         @inject(TYPES.TransformService) private transformService: TransformService,
         @inject(TYPES.LoadService) private loadService: LoadService,
+        @inject(TYPES.LabelsService) private labelsService: LabelsService,
         @inject('aws.s3.export.bucket') private exportBucket: string,
         @inject('aws.s3.export.prefix') private exportKeyPrefix: string,
         @inject(TYPES.S3Utils) private s3Utils: S3Utils
     ) {}
 
     public async processBatch(batchId: string): Promise<Loaded> {
+        logger.debug(`ETLService: processBatch in: ${batchId}`);
 
-        const batch:Batch = await this.s3Utils.get(this.exportBucket, `${this.exportKeyPrefix}_temp/${batchId}`)
+        ow(batchId, 'deviceId', ow.string.nonEmpty);
 
-        logger.debug(`ETLService: processBatch in: ${JSON.stringify(batch)}`);
+        let batch:Batch;
+        try {
+            batch= await this.s3Utils.get(this.exportBucket, `${this.exportKeyPrefix}_temp/${batchId}`)
+        } catch(e) {
+            throw new Error("NOT_FOUND");
+        }
+
+        const items = await this.labelsService.getIdsByRange(batch.type, batch.range);
+        batch.items = items;
 
         const extractedBatch = await this.extractService.extract(batch);
-
         const transformedBatch = await this.transformService.transform(extractedBatch);
-
         const loadedBatch = await this.loadService.load(transformedBatch);
 
-        // Temporiraly turned off cleanups of the temperory export data
-        // await this.s3Utils.delete(this.exportBucket, `${this.exportKeyPrefix}_temp/${batchId}`)
 
-        logger.debug(`ETLService: processBatch out: ${JSON.stringify(loadedBatch)}`);
+        await this.s3Utils.delete(this.exportBucket, `${this.exportKeyPrefix}_temp/${batchId}`)
+
+        logger.debug(`ETLService: processBatch out:`);
 
         return loadedBatch;
 

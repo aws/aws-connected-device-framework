@@ -11,6 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { injectable, inject } from 'inversify';
+import ow from 'ow';
 
 import { TYPES } from '../../di/types';
 import { logger } from '../../utils/logger';
@@ -20,6 +21,7 @@ import { Extracted, Extractor } from '../extract.service';
 import { GroupsService } from '../../groups/groups.service';
 import { TypeCategory } from '../../types/constants';
 
+
 @injectable()
 export class GroupExtractor implements Extractor {
 
@@ -28,7 +30,15 @@ export class GroupExtractor implements Extractor {
     public async extract(batch: Batch): Promise<Extracted> {
         logger.debug(`GroupExtractor: extract: in:`);
 
+        ow(batch, 'batch', ow.object.nonEmpty);
+        ow(batch.category, 'batchCategory', ow.string.nonEmpty);
+        ow(batch.id, 'batchId', ow.string.nonEmpty);
+        ow(batch.type, 'batchType', ow.string.nonEmpty);
+        ow(batch.items, 'batchType', ow.array.nonEmpty);
+        ow(batch.timestamp, 'batchType', ow.number.greaterThan(0));
+
         const groupItemList = await this.groupsService.getBulk(batch.items);
+
 
         const extracted = {
             id: batch.id,
@@ -38,7 +48,7 @@ export class GroupExtractor implements Extractor {
             timestamp: batch.timestamp
         };
 
-        logger.debug(`GroupExtractor: extract: out: ${JSON.stringify(extracted)}`);
+        logger.debug(`GroupExtractor: extract: out`);
 
         return extracted;
     }

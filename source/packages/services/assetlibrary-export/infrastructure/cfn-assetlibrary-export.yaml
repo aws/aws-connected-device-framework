@@ -84,10 +84,17 @@ Resources:
         Statement:
           - Effect: Allow
             Action:
-              - 's3:Put*'
-              - 's3:Get*'
-              - 's3:DeleteObject'
-            Resource: "arn:aws:s3:::${BucketName}/*"
+              - "s3:PutObject"
+              - "s3:PutObjectAcl"
+              - "s3:GetObject"
+              - "s3:GetObjectAcl"
+              - "s3:DeleteObject"
+            Resource: !Sub "arn:aws:s3:::${BucketName}/*"
+          - Effect: Allow
+            Action:
+              - "s3:ListBucket"
+              - "s3:GetBucketLocation"
+            Resource: !Sub "arn:aws:s3:::${BucketName}"
 
 
   BatchExecutionRole:
@@ -134,9 +141,9 @@ Resources:
       FunctionName: !Sub 'cdf-assetLibrary-export-batch-${Environment}'
       CodeUri: ../bundle.zip
       Handler: packages/services/assetlibrary-export/dist/lambda_sf_batch_proxy.export_handler
-      MemorySize: 512
+      MemorySize: 1024
       Role: !GetAtt BatchExecutionRole.Arn
-      Runtime: nodejs12.x
+      Runtime: nodejs14.x
       Timeout: 900
       Environment:
         Variables:
@@ -160,9 +167,9 @@ Resources:
       FunctionName: !Sub 'cdf-assetLibrary-export-etl-${Environment}'
       CodeUri: ../bundle.zip
       Handler: packages/services/assetlibrary-export/dist/lambda_sf_etl_proxy.export_handler
-      MemorySize: 512
+      MemorySize: 1024
       Role: !GetAtt ETLExecutionRole.Arn
-      Runtime: nodejs12.x
+      Runtime: nodejs14.x
       Timeout: 900
       Environment:
         Variables:

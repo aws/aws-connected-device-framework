@@ -34,7 +34,7 @@ export class DevicesDao extends BaseDaoFull {
 
     public async get(deviceIds:string[], expandComponents:boolean, attributes:string[], includeGroups:boolean): Promise<Node[]> {
 
-        logger.debug(`device.full.dao get: in: deviceIds:${deviceIds}, expandComponents:${expandComponents}, attributes:${attributes}, includeGroups:${includeGroups}`);
+        logger.silly(`device.full.dao get: in: deviceIds:${deviceIds}, expandComponents:${expandComponents}, attributes:${attributes}, includeGroups:${includeGroups}`);
 
         const dbIds:string[] = deviceIds.map(d=> `device___${d}`);
 
@@ -78,18 +78,18 @@ export class DevicesDao extends BaseDaoFull {
                 );
 
             // execute and retrieve the results
-            logger.debug(`common.full.dao listRelated: traverser: ${JSON.stringify(traverser.toString())}`);
+            logger.silly(`common.full.dao listRelated: traverser: ${JSON.stringify(traverser.toString())}`);
             results = await traverser.toList();
-            logger.debug(`common.full.dao listRelated: results: ${JSON.stringify(results)}`);
+            logger.silly(`common.full.dao listRelated: results: ${JSON.stringify(results)}`);
         } finally {
             await conn.close();
         }
 
         if (results===undefined || results.length===0) {
-            logger.debug(`device.full.dao get: exit: node: undefined`);
+            logger.silly(`device.full.dao get: exit: node: undefined`);
             return undefined;
         }
-        logger.debug(`device.full.dao get: results: ${JSON.stringify(results)}`);
+        logger.silly(`device.full.dao get: results: ${JSON.stringify(results)}`);
 
         // the result should contain verticesx representing the entities requested as individual rows, then all requested relations as other rows
         // find the main entities first
@@ -105,7 +105,7 @@ export class DevicesDao extends BaseDaoFull {
             nodes.push(node);
         });
 
-        logger.debug(`device.full.dao get: exit: nodes: ${JSON.stringify(nodes)}`);
+        logger.silly(`device.full.dao get: exit: nodes: ${JSON.stringify(nodes)}`);
         return nodes;
     }
 
