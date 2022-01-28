@@ -1,6 +1,13 @@
 # Change Log - @cdf/bulkcerts
 
-This log was last generated on Wed, 29 Dec 2021 16:51:04 GMT and should not be manually modified.
+This log was last generated on Tue, 25 Jan 2022 19:57:26 GMT and should not be manually modified.
+
+## 5.1.5
+Tue, 25 Jan 2022 19:57:26 GMT
+
+### Patches
+
+- Fixes an error-level log message in request handler to correctly show a status code
 
 ## 5.1.4
 Wed, 29 Dec 2021 16:51:04 GMT

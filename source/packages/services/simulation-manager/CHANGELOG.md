@@ -1,6 +1,13 @@
 # Change Log - @cdf/simulation-manager
 
-This log was last generated on Tue, 28 Dec 2021 18:37:09 GMT and should not be manually modified.
+This log was last generated on Tue, 25 Jan 2022 19:57:26 GMT and should not be manually modified.
+
+## 2.0.4
+Tue, 25 Jan 2022 19:57:26 GMT
+
+### Patches
+
+- Fixes an error-level log message in request handler to correctly show a status code
 
 ## 2.0.3
 Tue, 28 Dec 2021 18:37:09 GMT

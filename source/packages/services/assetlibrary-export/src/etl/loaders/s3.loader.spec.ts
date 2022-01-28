@@ -26,7 +26,7 @@ describe('S3Loader', () => {
             return mockedS3;
         };
 
-        const loadPath = '${aws.s3.export.prefix}${batch.category}/${batch.type}/dt=${DateTime.fromMillis(batch.timestamp).toFormat(\'yyyy-LL-dd-HH-mm\')}/${batch.id}.json';
+        const loadPath = '${aws.s3.export.prefix}${batch.category}/${batch.type}/dt=${dateTimeFormat(batch.timestamp, \'yyyy-LL-dd-HH-mm\')}/${batch.id}.json';
 
         instance = new S3Loader(mockedS3Factory, loadPath, 'myBucket', 'assetlibrary-export/');
 
@@ -60,11 +60,11 @@ describe('S3Loader', () => {
 
         expect(response.batchId).toEqual('some-uuid');
         expect(response.exportBucket).toEqual('myBucket');
-        expect(response.exportKey).toEqual('assetlibrary-export/device/type1/dt=2022-01-26-13-47/some-uuid.json');
+        expect(response.exportKey).toEqual('assetlibrary-export/device/type1/dt=2022-01-26-20-47/some-uuid.json');
 
         expect(mockS3PutObject.mock.calls[0][0]).toStrictEqual({
             Bucket: 'myBucket',
-            Key: 'assetlibrary-export/device/type1/dt=2022-01-26-13-47/some-uuid.json',
+            Key: 'assetlibrary-export/device/type1/dt=2022-01-26-20-47/some-uuid.json',
             Body: JSON.stringify([
                 'deviceId-1',
                 'deviceId-2'

@@ -2,6 +2,18 @@
   "name": "@cdf/simulation-manager",
   "entries": [
     {
+      "version": "2.0.4",
+      "tag": "@cdf/simulation-manager_v2.0.4",
+      "date": "Tue, 25 Jan 2022 19:57:26 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Fixes an error-level log message in request handler to correctly show a status code"
+          }
+        ]
+      }
+    },
+    {
       "version": "2.0.3",
       "tag": "@cdf/simulation-manager_v2.0.3",
       "date": "Tue, 28 Dec 2021 18:37:09 GMT",

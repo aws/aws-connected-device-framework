@@ -80,4 +80,60 @@ describe('SearchRequestModel', () => {
         expect(decodeURIComponent(httpQueryString)).toEqual('type=auto_ecu&eq=name:ap-northeast-1%3A55f70ca4-faaa-4aa0-8778-99a102174740');
 
     });
+
+    it('should create query strings that includes all non-null parameters', () => {
+        const searchRequestModel = new SearchRequestModel();
+
+        searchRequestModel.types = ['typeVal'];
+        searchRequestModel.summarize = true;
+        searchRequestModel.ancestorPath = 'ancestorPathVal';
+        searchRequestModel.facetField = { 
+            traversals: [{ relation: 'ab', direction: SearchRequestFilterDirection.out }], 
+            field: 'cd', 
+        };
+
+        // list parameters that have the format param=key:value 
+        const complexValuedQueryParams = [
+            'eq',
+            'neq',
+            'lt',
+            'lte',
+            'gt',
+            'gte',
+            'startsWith',
+            'endsWith',
+            'contains',
+            'exist',
+            'nexist',
+        ];
+        complexValuedQueryParams.forEach(qp => {
+            searchRequestModel[qp] = [{
+                traversals: [{ relation: 'ab', direction: SearchRequestFilterDirection.in }],
+                field: 'cd', 
+                value: `${qp}Val:&/`,  // special chars to test urlencoding
+            }]
+        });
+
+        const httpQueryString = searchRequestModel.toHttpQueryString();
+        const lambdaQueryString = searchRequestModel.toLambdaMultiValueQueryString();
+
+        expect(httpQueryString).toBeDefined();
+        expect(lambdaQueryString).toBeDefined();
+
+        expect(httpQueryString).toContain('type=typeVal');
+        expect(lambdaQueryString.type).toEqual(['typeVal']);
+        expect(httpQueryString).toContain('summarize=true');
+        expect(lambdaQueryString.summarize).toEqual(["true"]);
+        expect(httpQueryString).toContain('ancestorPath=ancestorPathVal');
+        expect(lambdaQueryString.ancestorPath).toEqual(['ancestorPathVal']);
+        expect(httpQueryString).toContain('facetField=ab%3Aout%3Acd');
+        expect(lambdaQueryString.facetField).toEqual(['ab:out:cd']);
+
+        complexValuedQueryParams.forEach(qp => {
+            expect(httpQueryString).toContain(`${qp}=ab%3Ain%3Acd%3A${qp}Val%253A%2526%252F`);
+            expect(lambdaQueryString[qp]).toHaveLength(1)
+            expect(lambdaQueryString[qp][0]).toEqual(`ab:in:cd:${qp}Val%3A%26%2F`);
+        });
+
+    });
 });

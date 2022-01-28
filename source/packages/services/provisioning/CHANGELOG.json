@@ -2,6 +2,30 @@
   "name": "@cdf/provisioning",
   "entries": [
     {
+      "version": "4.2.5",
+      "tag": "@cdf/provisioning_v4.2.5",
+      "date": "Fri, 28 Jan 2022 02:31:34 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Fixed misnamed configuration properties."
+          }
+        ]
+      }
+    },
+    {
+      "version": "4.2.4",
+      "tag": "@cdf/provisioning_v4.2.4",
+      "date": "Tue, 25 Jan 2022 19:57:26 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Fixes an error-level log message in request handler to correctly show a status code"
+          }
+        ]
+      }
+    },
+    {
       "version": "4.2.3",
       "tag": "@cdf/provisioning_v4.2.3",
       "date": "Tue, 28 Dec 2021 18:37:09 GMT",

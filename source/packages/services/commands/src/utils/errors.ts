@@ -32,5 +32,5 @@ export function handleError(e:Error, res:Response): void {
         res.status(500).json({error: e.message}).end();
     }
 
-    logger.error(`handleError: res.status: ${res.status}`);
+    logger.error(`handleError: res.status: ${res.statusCode} ${res.statusMessage}`);
 }

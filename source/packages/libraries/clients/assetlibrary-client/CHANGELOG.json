@@ -2,6 +2,21 @@
   "name": "@cdf/assetlibrary-client",
   "entries": [
     {
+      "version": "4.2.3",
+      "tag": "@cdf/assetlibrary-client_v4.2.3",
+      "date": "Fri, 28 Jan 2022 02:31:34 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "the template model lists an enum parameter, which should be a string[] listing the enum values instead of just a string"
+          },
+          {
+            "comment": "assetlibrary-client now includes facetField param in search request"
+          }
+        ]
+      }
+    },
+    {
       "version": "4.2.2",
       "tag": "@cdf/assetlibrary-client_v4.2.2",
       "date": "Tue, 04 Jan 2022 23:16:00 GMT",

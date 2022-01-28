@@ -42,7 +42,7 @@ export function handleError(e:ErrorWithResponse, res:Response): void {
         res.status(500).json({error: message}).end();
     }
 
-    logger.error(`handleError: res.status: ${res.status}`);
+    logger.error(`handleError: res.status: ${res.statusCode} ${res.statusMessage}`);
 }
 
 interface ErrorWithResponse extends Error {
