@@ -45,9 +45,14 @@ export class S3Loader implements Loader {
         ow(batch.items, 'batchType', ow.array.nonEmpty);
         ow(batch.timestamp, 'batchType', ow.number.greaterThan(0));
 
+        const dateTimeFormat = (timestamp: number, format: string) => {
+            return DateTime.fromMillis(timestamp, {zone: 'utc'}).toFormat(format)
+        }
+
         const compiled = _.template(this.loadPath);
         const compiledKey = compiled({
             DateTime,
+            dateTimeFormat,
             batch,
             aws: {
                 s3: {
