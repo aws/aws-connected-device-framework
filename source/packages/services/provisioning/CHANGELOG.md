@@ -1,6 +1,13 @@
 # Change Log - @cdf/provisioning
 
-This log was last generated on Tue, 25 Jan 2022 19:57:26 GMT and should not be manually modified.
+This log was last generated on Fri, 28 Jan 2022 02:31:34 GMT and should not be manually modified.
+
+## 4.2.5
+Fri, 28 Jan 2022 02:31:34 GMT
+
+### Patches
+
+- Fixed misnamed configuration properties.
 
 ## 4.2.4
 Tue, 25 Jan 2022 19:57:26 GMT

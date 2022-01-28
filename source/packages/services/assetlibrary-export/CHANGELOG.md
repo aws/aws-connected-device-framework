@@ -1,6 +1,13 @@
 # Change Log - @cdf/assetlibrary-export
 
-This log was last generated on Tue, 25 Jan 2022 19:57:26 GMT and should not be manually modified.
+This log was last generated on Fri, 28 Jan 2022 02:31:34 GMT and should not be manually modified.
+
+## 2.1.0
+Fri, 28 Jan 2022 02:31:34 GMT
+
+### Minor changes
+
+- fix(assetlibrary-export): implement batch processing of labels
 
 ## 2.0.5
 Tue, 25 Jan 2022 19:57:26 GMT

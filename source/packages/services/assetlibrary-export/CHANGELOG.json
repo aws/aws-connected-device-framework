@@ -2,6 +2,18 @@
   "name": "@cdf/assetlibrary-export",
   "entries": [
     {
+      "version": "2.1.0",
+      "tag": "@cdf/assetlibrary-export_v2.1.0",
+      "date": "Fri, 28 Jan 2022 02:31:34 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "fix(assetlibrary-export): implement batch processing of labels"
+          }
+        ]
+      }
+    },
+    {
       "version": "2.0.5",
       "tag": "@cdf/assetlibrary-export_v2.0.5",
       "date": "Tue, 25 Jan 2022 19:57:26 GMT",

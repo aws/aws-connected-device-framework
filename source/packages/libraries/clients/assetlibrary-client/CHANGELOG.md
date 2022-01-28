@@ -1,6 +1,14 @@
 # Change Log - @cdf/assetlibrary-client
 
-This log was last generated on Tue, 04 Jan 2022 23:16:00 GMT and should not be manually modified.
+This log was last generated on Fri, 28 Jan 2022 02:31:34 GMT and should not be manually modified.
+
+## 4.2.3
+Fri, 28 Jan 2022 02:31:34 GMT
+
+### Patches
+
+- the template model lists an enum parameter, which should be a string[] listing the enum values instead of just a string
+- assetlibrary-client now includes facetField param in search request
 
 ## 4.2.2
 Tue, 04 Jan 2022 23:16:00 GMT

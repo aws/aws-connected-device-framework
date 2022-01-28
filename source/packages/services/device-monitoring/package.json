@@ -21,7 +21,7 @@
     "@cdf/errors": "^3.0.0",
     "@cdf/logger": "^3.0.0",
     "@cdf/lambda-invoke": "^2.0.2",
-    "@cdf/assetlibrary-client": "^4.2.2",
+    "@cdf/assetlibrary-client": "^4.2.3",
     "@cdf/config-inject": "^3.0.1",
    "config": "3.3.6",
     "http-errors": "1.8.0",
