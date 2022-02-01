@@ -14,7 +14,7 @@ There are 3 top-level categories of templates, each with their own JSON Schema:
 - Devices (see `/src/types/definitions/device.schema.json`)
 - Components (see `/src/types/definitions/component.schema.json`)
 
-When defining a custom type, the group/device template is validated against the JSON schema `/src/types/definitions/specializedTypeDefinition.schema.json`.
+When creating/updating a group/device template, it is validated against the JSON schema `/src/types/definitions/specializedTypeDefinition.schema.json`.
 
 When instances of a template are created/updated (e.g creating a new `mote` device) the top-level category JSON Schema (e.g. `device`) is merged with the schema definition of the custom template (e..g `mote`) in order to provide a template specific JSON schema to validate the group/device.
 
@@ -80,8 +80,6 @@ When a template is declared with relations to other templates (e.g. a `mote` dev
 
 A new `<<relationship>>` edge is added between the source and target templates.  This allows for fast and efficient validation of relationships at the database level.
 
-
-
 ## Example queries
 
 Retrieving the draft version of a template, including its defined relations:
@@ -95,7 +93,3 @@ g.V('type___mote').as('type').
         by(__.bothE('relationship').valueMap(true).fold());
   
 ```
-
-
-
-

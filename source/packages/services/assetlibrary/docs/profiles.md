@@ -10,18 +10,18 @@ The following endpoints are provided to manage profiles:
 
 Endpoint | Description
 ---|---
-`POST /profiles/[device|group]/{template}` | Creates a new profile
-`PATCH /profiles/[device|group]/{template}/{name}` | Updates an existing profile
-`GET /profiles/[device|group]/{template}/{name}` | Retrieves a specific profile
-`DELETE /profiles/[device|group]/{template}/{name}` | Deletes a specific profile
-`GET /profiles/[device|group]/{template}` | Returns all profiles of a given template
+`POST /profiles/[device\|group]/{template}` | Creates a new profile
+`PATCH /profiles/[device\|group]/{template}/{name}` | Updates an existing profile
+`GET /profiles/[device\|group]/{template}/{name}` | Retrieves a specific profile
+`DELETE /profiles/[device\|group]/{template}/{name}` | Deletes a specific profile
+`GET /profiles/[device\|group]/{template}` | Returns all profiles of a given template
 
 An example of a device profile resource:
 
 ```json
 {
-	"profileId": "simple",
-	"templateId": "edge",
+    "profileId": "simple",
+    "templateId": "edge",
     "groups": {
         "manufactured_by": ["/supplier/sup123"]
     },
@@ -36,12 +36,12 @@ An example of a group profile resource:
 
 ```json
 {
-	"profileId": "simple",
-	"templateId": "engine",
-	"parentPath": "/engine",
-	"attributes": {
+    "profileId": "simple",
+    "templateId": "engine",
+    "parentPath": "/engine",
+    "attributes": {
         "location": "west"
-	}
+    }
 }
 ```
 
