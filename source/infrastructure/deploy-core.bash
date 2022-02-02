@@ -86,6 +86,8 @@ OPTIONAL ARGUMENTS
                   - db.r4.2xlarge
                   - db.r4.4xlarge
                   - db.r4.8xlarge
+    -w (string)   The ElasticSearch data node instance type
+    -t (number)   Size of the EBS volume attached to ElasticSearch data nodes
 
     -x (number)   No. of concurrent executions to provision.
     -s (flag)     Apply autoscaling as defined in ./cfn-autosclaling.yml
@@ -119,7 +121,7 @@ EOF
 # by the service specific deployment script.
 #-------------------------------------------------------------------------------
 
-while getopts ":e:E:c:p:i:k:K:b:a:y:z:C:A:Nv:u:g:n:m:o:r:I:x:sD:SBYR:P:" opt; do
+while getopts ":e:E:c:p:i:k:K:b:a:y:z:C:A:Nv:u:w:t:g:n:m:o:r:I:x:sD:SBYR:P:" opt; do
   case $opt in
     e  ) ENVIRONMENT=$OPTARG;;
     E  ) CONFIG_ENVIRONMENT=$OPTARG;;
@@ -137,6 +139,8 @@ while getopts ":e:E:c:p:i:k:K:b:a:y:z:C:A:Nv:u:g:n:m:o:r:I:x:sD:SBYR:P:" opt; do
 
     D  ) ASSETLIBRARY_DB_SNAPSHOT_IDENTIFIER=$OPTARG;;
     u  ) NEPTUNE_DB_INSTANCE_TYPE=$OPTARG;;
+    w  ) ES_INSTANCE_TYPE=$OPTARG;;
+    t  ) ES_EBS_VOLUME_GIBS=$OPTARG;;
 
     a  ) API_GATEWAY_AUTH=$OPTARG;;
     y  ) TEMPLATE_SNIPPET_S3_URI_BASE=$OPTARG;;
@@ -259,6 +263,8 @@ The AWS Connected Device Framework (CDF) will install using the following config
 
     -m (ASSETLIBRARY_MODE)              : $ASSETLIBRARY_MODE
     -u (NEPTUNE_DB_INSTANCE_TYPE)       : $NEPTUNE_DB_INSTANCE_TYPE
+    -w (ES_INSTANCE_TYPE)               : $ES_INSTANCE_TYPE
+    -t (ES_EBS_VOLUME_GIBS)             : $ES_EBS_VOLUME_GIBS
     -i (BASTION_REMOTE_ACCESS_CIDR)     : $BASTION_REMOTE_ACCESS_CIDR
     -x (CONCURRENT_EXECUTIONS):         : $CONCURRENT_EXECUTIONS
     -s (APPLY_AUTOSCALING):             : $APPLY_AUTOSCALING
@@ -557,6 +563,16 @@ if [ -f "$assetlibrary_config" ]; then
     if [ -n "$NEPTUNE_DB_INSTANCE_TYPE" ]; then
         neptune_instance_type="-u $NEPTUNE_DB_INSTANCE_TYPE"
     fi
+
+    enhancedsearch_instance_type=
+    if [ -n "$ES_INSTANCE_TYPE" ]; then
+        enhancedsearch_instance_type="-w $ES_INSTANCE_TYPE"
+    fi
+
+    enhancedsearch_ebs_volume_size=
+    if [ -n "$ES_EBS_VOLUME_GIBS" ]; then
+        enhancedsearch_ebs_volume_size="-t $ES_EBS_VOLUME_GIBS"
+    fi
     
     cd "$root_dir/packages/services/assetlibrary"
     infrastructure/deploy-cfn.bash \
@@ -573,6 +589,8 @@ if [ -f "$assetlibrary_config" ]; then
         -r "$PRIVATE_ROUTE_TABLE_IDS" \
         -m "$ASSETLIBRARY_MODE" \
         $neptune_instance_type \
+        $enhancedsearch_instance_type \
+        $enhancedsearch_ebs_volume_size \
         $custom_resource_vpc_lambda_arn \
         $cognito_auth_arg \
         $lambda_invoker_auth_arg \

@@ -56,6 +56,9 @@ OPTIONAL ARGUMENTS:
                   - db.r4.4xlarge
                   - db.r4.8xlarge
 
+    -w (string)   The ElasticSearch data node instance type
+    -t (number)   Size of the EBS volume attached to ElasticSearch data nodes
+
     Required if deploying in full mode, or private api auth:
     --------------------------------------------------------
     -v (string)   ID of VPC to deploy into
@@ -100,7 +103,7 @@ EOF
 # Validate all arguments
 #-------------------------------------------------------------------------------
 
-while getopts ":e:c:v:g:n:m:y:z:l:C:A:i:r:x:u:sfD:k:a:R:P:" opt; do
+while getopts ":e:c:v:g:n:m:y:z:l:C:A:i:r:x:u:sfD:k:w:t:a:R:P:" opt; do
   case ${opt} in
 
     e  ) export ENVIRONMENT=$OPTARG;;
@@ -127,6 +130,8 @@ while getopts ":e:c:v:g:n:m:y:z:l:C:A:i:r:x:u:sfD:k:a:R:P:" opt; do
 
     D  ) export ASSETLIBRARY_DB_SNAPSHOT_IDENTIFIER=$OPTARG;;
     k  ) export KMS_KEY_ID=$OPTARG;;
+    w  ) export ES_INSTANCE_TYPE=$OPTARG;;
+    t  ) export ES_EBS_VOLUME_GIBS=$OPTARG;;
 
     R  ) export AWS_REGION=$OPTARG;;
     P  ) export AWS_PROFILE=$OPTARG;;
@@ -183,6 +188,9 @@ ENHANCEDSEARCH_STACK_NAME=cdf-assetlibrary-enhancedsearch-${ENVIRONMENT}
 ASSETLIBRARY_STACK_NAME=cdf-assetlibrary-${ENVIRONMENT}
 BASTION_STACK_NAME=cdf-bastion-${ENVIRONMENT}
 
+ES_INSTANCE_TYPE="$(defaultIfNotSet 'ES_INSTANCE_TYPE' s ${ES_INSTANCE_TYPE} 't3.small.search')"
+ES_EBS_VOLUME_GIBS="$(defaultIfNotSet 'ES_EBS_VOLUME_GIBS' s ${ES_EBS_VOLUME_GIBS} '10')"
+
 
 #-------------------------------------------------------------------------------
 # All arguments are good, so inform the user what is configured...
@@ -213,6 +221,8 @@ Running with:
   APPLY_AUTOSCALING:                $APPLY_AUTOSCALING
 
   KMS_KEY_ID:                       $KMS_KEY_ID
+  ES_INSTANCE_TYPE:                 $ES_INSTANCE_TYPE
+  ES_EBS_VOLUME_GIBS:               $ES_EBS_VOLUME_GIBS
 
   AWS_REGION:                       $AWS_REGION
   AWS_PROFILE:                      $AWS_PROFILE
@@ -293,6 +303,8 @@ if [[ $DEPLOY_NEPTUNE = 1 ]]; then
           NeptuneSecurityGroupId=$neptune_sg \
           NeptuneClusterEndpoint=$neptune_cluster_endpoint \
           Environment=$ENVIRONMENT \
+          ElasticSearchInstanceType=$ES_INSTANCE_TYPE \
+          ElasticSearchEBSVolumeSize=$ES_EBS_VOLUME_GIBS \
       --capabilities CAPABILITY_NAMED_IAM \
       --no-fail-on-empty-changeset \
       $AWS_ARGS 
