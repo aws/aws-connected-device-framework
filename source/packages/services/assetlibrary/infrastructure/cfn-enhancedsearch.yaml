@@ -58,7 +58,10 @@ Parameters:
   ElasticSearchDedicatedMasterCount:
     Type: Number
     Default: 0
-    Description: The number of dedicated master nodes (instances) to use in the OpenSearch domain.
+    Description: >
+      The number of dedicated master nodes (instances) to use in the OpenSearch domain. The number must be larger than 2 
+      and should never be an even number. See also:
+      https://docs.aws.amazon.com/opensearch-service/latest/developerguide/managedomains-dedicatedmasternodes.html
   ElasticSearchEBSVolumeSize:
     Type: Number
     Default: 10
