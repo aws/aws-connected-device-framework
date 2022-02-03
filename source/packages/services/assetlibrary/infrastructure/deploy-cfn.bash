@@ -56,8 +56,8 @@ OPTIONAL ARGUMENTS:
                   - db.r4.4xlarge
                   - db.r4.8xlarge
 
-    -w (string)   The ElasticSearch data node instance type
-    -t (number)   Size of the EBS volume attached to ElasticSearch data nodes
+    -w (string)   The ElasticSearch data node instance type (default is t3.small.search)
+    -t (number)   Size of the EBS volume attached to ElasticSearch data nodes in GB (default is 10)
 
     Required if deploying in full mode, or private api auth:
     --------------------------------------------------------
