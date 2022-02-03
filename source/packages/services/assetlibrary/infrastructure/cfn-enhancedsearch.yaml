@@ -44,11 +44,13 @@ Parameters:
     MinLength: 1
   ElasticSearchInstanceType:
     Description: >
-      ElasticSearch instance type. Must be a supported OpenSearch instance type in the region, support ElasticSearch, 
-      and must support at rest. See also: 
+      OpenSearch data instance type. Must be a supported OpenSearch instance type in the region, support ElasticSearch, 
+      and must support encryption at rest. See also: 
       https://docs.aws.amazon.com/opensearch-service/latest/developerguide/supported-instance-types.html
     Type: String
     Default: t3.small.search
+    AllowedPattern: "^[a-z][a-z0-9]+\\.[a-z0-9]+\\.search$"
+    ConstraintDescription: Must be a valid OpenSearch instance type. 
   ElasticSearchInstanceCount:
     Type: Number
     Default: 2
