@@ -31,17 +31,13 @@ Parameters:
     Description: Comma delimited list of private route table ids to allow access to Neptune
     Type: String
   DbInstanceType:
-    Description: Neptune DB instance type
+    Description: >
+      Neptune DB instance type. The list of available instance types for your region can be found here: 
+      https://aws.amazon.com/neptune/pricing/
     Type: String
     Default: db.r4.xlarge
-    AllowedValues:
-      - db.t3.medium
-      - db.r4.large
-      - db.r4.xlarge
-      - db.r4.2xlarge
-      - db.r4.4xlarge
-      - db.r4.8xlarge
-    ConstraintDescription: Must be a valid Neptune instance type.
+    AllowedPattern: "^db\\.[tr]\\d+[a-z0-9]*\\.[a-z0-9]*$"
+    ConstraintDescription: Must be a valid Neptune instance type. 
   CreateDBReplicaInstance:
     Description: Create a read replica for MultiAZ?
     Type: String
@@ -60,6 +56,13 @@ Parameters:
       - 0
       - 1
     Description: Enable Audit Log. 0 means disable and 1 means enable.
+  NeptuneEnableStreams:
+    Type: Number
+    Default: 0
+    AllowedValues:
+      - 0
+      - 1
+    Description: Enable Neptune Streams. 0 means disable and 1 means enable. Must be enabled for Asset Library Enhanced Search.
   BackupRetentionDays:
     Type: Number
     Default: 1
@@ -156,7 +159,7 @@ Resources:
       ToPort: 8182
       IpProtocol: tcp
       SourceSecurityGroupId: !Ref CDFSecurityGroupId
-      Description: Allow access from default securty group
+      Description: Allow access from default security group
 
   NeptuneEC2InstanceProfile:
     Type: 'AWS::IAM::InstanceProfile'
@@ -261,6 +264,7 @@ Resources:
       Description: CDF parameters
       Parameters:
         neptune_enable_audit_log: !Ref NeptuneEnableAuditLog
+        neptune_streams: !Ref NeptuneEnableStreams
       Tags:
         - Key: cdf_environment
           Value: !Ref Environment

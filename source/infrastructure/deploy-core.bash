@@ -56,8 +56,8 @@ OPTIONAL ARGUMENTS
                       - ApiKey
                       - IAM
 
-    COMMON PRIVATE API AUTH OPTIONS, OR ASSET LIBRARY (FULL) MODE::
-    -------------------------------------------------------------------
+    COMMON PRIVATE API AUTH OPTIONS, OR ASSET LIBRARY FULL/ENHANCED MODES::
+    -----------------------------------------------------------------------
     -N (flag)     Use an existing VPC instead of creating a new one.
     -v (string)   ID of VPC to deploy into (required if -N set)
     -g (string)   ID of CDF security group (required if -N set)
@@ -76,9 +76,9 @@ OPTIONAL ARGUMENTS
 
     ASSET LIBRARY OPTIONS:
     -----------------------
-    -m (string)   Asset Library mode ('full' or 'lite').  Defaults to full if not provided.
-    -p (string)   The name of the key pair to use to deploy the Bastion EC2 host (required for Asset Library (full) mode or Private auth mode).
-    -i (string)   The remote access CIDR to configure Bastion SSH access (e.g. 1.2.3.4/32) (required for Asset Library (full) mode).
+    -m (string)   Asset Library mode ('full', 'enhanced', or 'lite').  Defaults to full if not provided.
+    -p (string)   The name of the key pair to use to deploy the Bastion EC2 host (required for Asset Library full/enhanced modes or Private auth mode).
+    -i (string)   The remote access CIDR to configure Bastion SSH access (e.g. 1.2.3.4/32) (required for Asset Library full/enhanced modes).
     -u (string)   The Neptune DB Instance type. Must be from the following list (default is db.r4.xlarge):
                   - db.t3.medium
                   - db.r4.large
@@ -86,6 +86,8 @@ OPTIONAL ARGUMENTS
                   - db.r4.2xlarge
                   - db.r4.4xlarge
                   - db.r4.8xlarge
+    -w (string)   The ElasticSearch data node instance type (default is t3.small.search)
+    -t (number)   Size of the EBS volume attached to ElasticSearch data nodes in GB (default is 10)
 
     -x (number)   No. of concurrent executions to provision.
     -s (flag)     Apply autoscaling as defined in ./cfn-autosclaling.yml
@@ -119,7 +121,7 @@ EOF
 # by the service specific deployment script.
 #-------------------------------------------------------------------------------
 
-while getopts ":e:E:c:p:i:k:K:b:a:y:z:C:A:Nv:u:g:n:m:o:r:I:x:sD:SBYR:P:" opt; do
+while getopts ":e:E:c:p:i:k:K:b:a:y:z:C:A:Nv:u:w:t:g:n:m:o:r:I:x:sD:SBYR:P:" opt; do
   case $opt in
     e  ) ENVIRONMENT=$OPTARG;;
     E  ) CONFIG_ENVIRONMENT=$OPTARG;;
@@ -137,6 +139,8 @@ while getopts ":e:E:c:p:i:k:K:b:a:y:z:C:A:Nv:u:g:n:m:o:r:I:x:sD:SBYR:P:" opt; do
 
     D  ) ASSETLIBRARY_DB_SNAPSHOT_IDENTIFIER=$OPTARG;;
     u  ) NEPTUNE_DB_INSTANCE_TYPE=$OPTARG;;
+    w  ) ES_INSTANCE_TYPE=$OPTARG;;
+    t  ) ES_EBS_VOLUME_GIBS=$OPTARG;;
 
     a  ) API_GATEWAY_AUTH=$OPTARG;;
     y  ) TEMPLATE_SNIPPET_S3_URI_BASE=$OPTARG;;
@@ -193,7 +197,7 @@ ASSETLIBRARY_MODE="$(defaultIfNotSet 'ASSETLIBRARY_MODE' m ${ASSETLIBRARY_MODE} 
 KMS_KEY_ALIAS="$(defaultIfNotSet 'KMS_KEY_ALIAS' K cdf-${ENVIRONMENT} 'None')"
 
 if [[ -z "$USE_EXISTING_VPC" ||  "$USE_EXISTING_VPC" = "false" ]]; then
-    # if private api auth, or asset library full mode, is configured then these will get overwritten
+    # if private api auth, or asset library full/enhanced mode, is configured then these will get overwritten
     VPC_ID='N/A'
     CDF_SECURITY_GROUP_ID='N/A'
     PRIVATE_SUBNET_IDS='N/A'
@@ -259,6 +263,8 @@ The AWS Connected Device Framework (CDF) will install using the following config
 
     -m (ASSETLIBRARY_MODE)              : $ASSETLIBRARY_MODE
     -u (NEPTUNE_DB_INSTANCE_TYPE)       : $NEPTUNE_DB_INSTANCE_TYPE
+    -w (ES_INSTANCE_TYPE)               : $ES_INSTANCE_TYPE
+    -t (ES_EBS_VOLUME_GIBS)             : $ES_EBS_VOLUME_GIBS
     -i (BASTION_REMOTE_ACCESS_CIDR)     : $BASTION_REMOTE_ACCESS_CIDR
     -x (CONCURRENT_EXECUTIONS):         : $CONCURRENT_EXECUTIONS
     -s (APPLY_AUTOSCALING):             : $APPLY_AUTOSCALING
@@ -420,7 +426,7 @@ api_vpc_endpoint_check_check=$(echo "$stack_exports" \
 # NETWORKING
 ############################################################################################
 assetlibrary_config=$CONFIG_LOCATION/assetlibrary/$CONFIG_ENVIRONMENT-config.json
-if [[ -f $assetlibrary_config && "$ASSETLIBRARY_MODE" = "full" &&  ( -z "$USE_EXISTING_VPC" || "$USE_EXISTING_VPC" = "false" ) ]] || [[ "$API_GATEWAY_AUTH" == "Private" && ( -z "$USE_EXISTING_VPC" || "$USE_EXISTING_VPC" = "false" ) ]]; then
+if [[ -f $assetlibrary_config && ( "$ASSETLIBRARY_MODE" = "full" || "$ASSETLIBRARY_MODE" = "enhanced" ) &&  ( -z "$USE_EXISTING_VPC" || "$USE_EXISTING_VPC" = "false" ) ]] || [[ "$API_GATEWAY_AUTH" == "Private" && ( -z "$USE_EXISTING_VPC" || "$USE_EXISTING_VPC" = "false" ) ]]; then
 
     logTitle 'Deploying Networking'
 
@@ -489,7 +495,7 @@ fi
 ############################################################################################
 # DEPLOYMENT HELPER VPC
 ############################################################################################
-if [[ -f $assetlibrary_config && "$ASSETLIBRARY_MODE" = "full" ]] || [[ "$API_GATEWAY_AUTH" == "Private" ]] || [[( -z "$USE_EXISTING_VPC" || "$USE_EXISTING_VPC" = "false" ) ]]; then
+if [[ -f $assetlibrary_config && ( "$ASSETLIBRARY_MODE" = "full" || "$ASSETLIBRARY_MODE" = "enhanced" ) ]] || [[ "$API_GATEWAY_AUTH" == "Private" ]] || [[( -z "$USE_EXISTING_VPC" || "$USE_EXISTING_VPC" = "false" ) ]]; then
     logTitle 'Deploying Deployment Helper VPC'
     cd "$root_dir/packages/libraries/core/deployment-helper"
     infrastructure/deploy-vpc-cfn.bash \
@@ -557,11 +563,22 @@ if [ -f "$assetlibrary_config" ]; then
     if [ -n "$NEPTUNE_DB_INSTANCE_TYPE" ]; then
         neptune_instance_type="-u $NEPTUNE_DB_INSTANCE_TYPE"
     fi
+
+    enhancedsearch_instance_type=
+    if [ -n "$ES_INSTANCE_TYPE" ]; then
+        enhancedsearch_instance_type="-w $ES_INSTANCE_TYPE"
+    fi
+
+    enhancedsearch_ebs_volume_size=
+    if [ -n "$ES_EBS_VOLUME_GIBS" ]; then
+        enhancedsearch_ebs_volume_size="-t $ES_EBS_VOLUME_GIBS"
+    fi
     
     cd "$root_dir/packages/services/assetlibrary"
     infrastructure/deploy-cfn.bash \
         -e "$ENVIRONMENT" \
         -c "$assetlibrary_config" \
+        -k "$KMS_KEY_ID" \
         -y "$TEMPLATE_SNIPPET_S3_URI_BASE" \
         -z "$API_GATEWAY_DEFINITION_TEMPLATE" \
         -a "$API_GATEWAY_AUTH" \
@@ -572,6 +589,8 @@ if [ -f "$assetlibrary_config" ]; then
         -r "$PRIVATE_ROUTE_TABLE_IDS" \
         -m "$ASSETLIBRARY_MODE" \
         $neptune_instance_type \
+        $enhancedsearch_instance_type \
+        $enhancedsearch_ebs_volume_size \
         $custom_resource_vpc_lambda_arn \
         $cognito_auth_arg \
         $lambda_invoker_auth_arg \

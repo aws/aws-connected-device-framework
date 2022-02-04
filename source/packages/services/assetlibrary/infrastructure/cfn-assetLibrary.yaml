@@ -44,12 +44,13 @@ Parameters:
     Type: String
 
   Mode:
-    Description: Run in 'lite' mode which includes device registry only, or 'full' mode which augments the device registry with an additional datastore
+    Description: Run in 'lite' mode which includes device registry only, 'full' mode which augments the device registry with an additional datastore, or 'enhanced' mode which adds enhanced search to full mode
     Type: String
     Default: full
     AllowedValues: 
       - full
       - lite
+      - enhanced
     MinLength: 1
 
   TemplateSnippetS3UriBase:
@@ -129,7 +130,7 @@ Parameters:
 
 
 Conditions:
-  DeployFullMode: !Equals [ !Ref Mode, 'full' ]
+  DeployFullOrEnhancedMode: !Or [ !Equals [ !Ref Mode, 'full' ], !Equals [ !Ref Mode, 'enhanced' ]]
   DeployLiteMode: !Equals [ !Ref Mode, 'lite' ]
 
   DeployInVPC: !Not [ !Equals [ !Ref VpcId, 'N/A' ] ]
@@ -341,7 +342,7 @@ Resources:
 
   AssetLibraryInit:
     Type: Custom::AssetLibraryInit
-    Condition: DeployFullMode
+    Condition: DeployFullOrEnhancedMode
     Version: 1.0
     Properties:
       ServiceToken:
