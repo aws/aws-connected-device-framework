@@ -1,6 +1,13 @@
 # Change Log - @cdf/assetlibrary
 
-This log was last generated on Tue, 25 Jan 2022 19:57:26 GMT and should not be manually modified.
+This log was last generated on Fri, 04 Feb 2022 17:03:38 GMT and should not be manually modified.
+
+## 5.4.3
+Fri, 04 Feb 2022 17:03:38 GMT
+
+### Patches
+
+- Fix bulk data import into Neptune by associating NeptuneLoadFromS3Role with Neptune cluster
 
 ## 5.4.2
 Tue, 25 Jan 2022 19:57:26 GMT
