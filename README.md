@@ -91,23 +91,17 @@ See [overview](source/packages/services/provisioning/README.md).
 
 Takes care of everything cloud side when it come to Greengrass. Allows you to mark a fully configured Greengrass group as a template, then replicate it to as many new instances as you need, as well as configuring any group instance specific details such as the core, devices and subscriptions. Then at a later stage updates to the template can be rolled out too at scale.
 
-See [overview](source/packages/services/greengrass-provisioning/README.md).
-
 ### Greengrass Deployment
 
 *NOTE: Will be released once updated to use Greengrass V2.*
 
 Takes care of everything device side when it come to Greengrass. Allows for remotely installing and configuring the physical Greengrass devices.
 
-See [overview](source/packages/services/greengrass-deployment/README.md).
-
 ### Certificate Renewer
 
 *NOTE: Will be released once fully tested.*
 
 Identifies soon to expire certificates, and if the device is still active/authorized, will create and register new certificates, then inform the device of the new certificate being available.
-
-See [overview](source/packages/services/certificaterenewer/README.md).
 
 ### Certificate Vendor
 
@@ -138,7 +132,7 @@ See [overview](source/packages/services/events-processor/README.md).
 
 Detects the connected status of a device (replaced by Fleet Indexing capabilties, but still useful if a customer is not using Fleet Indexing).
 
-See [overview](source/packages/services/devicemonitoring/README.md).
+See [overview](source/packages/services/device-monitoring/README.md).
 
 ### Commands
 
@@ -152,7 +146,7 @@ See [overview](source/packages/services/commands/README.md).
 
 Tracks and stores all changes made to the Asset Library (devices, groups, policies and/or templates) for auditing purposes.
 
-See [overview](source/packages/services/assetlibrary-history/README.md).
+See [overview](source/packages/services/assetlibraryhistory/README.md).
 
 ### Reference implementations
 
