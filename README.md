@@ -39,7 +39,6 @@ Implementing, deploying and maintaining IoT services can be significantly more c
 
 The ***AWS Connected Device Framework (CDF)*** is a platform comprising of a number of production ready micro-services, all architected and implemented using software and AWS best practices, which builds upon the AWS IoT building blocks to address these challenges.
 
-
 ## Device Lifecycle View
 
 The CDF modules span the following life cycle phases:
@@ -57,6 +56,7 @@ The CDF modules form a layer above the AWS building blocks as shown in the follo
 ![Dependencies](source/docs/images/cdf-core-hla-hla-aws.png)
 
 ## Development
+
 - [Getting Started](source/docs/development/quickstart.md)
 - [Prerequisites for Development](source/docs/development/prerequisites.md)
 - [Consuming application (aka facades)](source/docs/consuming-application.md)
@@ -65,6 +65,7 @@ The CDF modules form a layer above the AWS building blocks as shown in the follo
 - [Unit testing](source/docs/development/unit-testing.md)
 
 ## Deployment
+
 - [Breaking Changes](source/docs/breaking-changes.md)
 - [Migrating from pre open-source versions](source/docs/migration.md)
 - [Deploying](source/docs/deployment.md)
@@ -78,6 +79,7 @@ The CDF modules form a layer above the AWS building blocks as shown in the follo
 With this module a user can request large batches (think 1000's) of device certificates and public/private keys which can later be loaded onto a device. This is useful where customers have a hardware vendor who may not have the ability to create their own device certificates, and the customer does not want to share their CA, so instead can provide access to this module to create the device certificates as required.
 
 See [overview](source/packages/services/bulkcerts/README.md).
+
 ### Provisioning
 
 The provisioning module utilizes [AWS IoT Device Provisioning](https://docs.aws.amazon.com/iot/latest/developerguide/iot-provision.html) to provide both programmatic and bulk device provisioning capabilities.  The provisioning module simplifies the use of AWS IoT Device Provisioning by managing a set of provisioning templates to use with both provisioning approaches.
@@ -85,6 +87,7 @@ The provisioning module utilizes [AWS IoT Device Provisioning](https://docs.aws.
 In addition, it allows for extending the capabilities of the AWS IoT Device Provisioning templating functionality.  To provide an example, an AWS IoT Device Provisioning template allows for creating certificate resources by providing a certificate signing request (CSR), a certificate ID of an existing device certificate, or a device certificate created with a CA certificate registered with AWS IoT.  This module extends these capabilities by also providing the ability to automatically create (and return) new keys and certificates for a device, or to create a device certificate without the CA being registered in the account.
 
 See [overview](source/packages/services/provisioning/README.md).
+
 ### Greengrass Provisioning
 
 *NOTE: Will be released once updated to use Greengrass V2.*
@@ -122,6 +125,7 @@ An enhanced device registry that augments (not replaces) the AWS IoT Device Regi
 With the Asset Library one can define complex models, such as modeling the components of a vehicle.
 
 See [overview](source/packages/services/assetlibrary/README.md).
+
 ### Notifications
 
 Allows one to configure types of events (such as a low battery alert) from multiple different event sources (AWS IoT Core, DynamoDB Stream, Kinesis Data Stream, API Gateway), which interested parties (user, service) can subscribe to receive alerts on events via SNS, MQTT republish, mobile push, or to store in a DynamoDB table.

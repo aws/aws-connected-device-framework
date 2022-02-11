@@ -10,12 +10,11 @@ The following represents the architecture of the Asset Library, along with its o
 
 ![Architecture](<docs/images/cdf-core-hla-Asset%20Library.png>)
 
-
 ## Groups
 
 The hierarchies within Asset Library are represented as Groups.  Each Group has a single parent, but can comprise of many groups and/or devices as its children.
 
-Each Group has the following fixed attributes: 
+Each Group has the following fixed attributes:
 
 - `groupPath` : a unique identifier of a group, including all its parent groups within the hierarchy
 - `templateId` : a schema that defines the allowed properties and relations for the group
@@ -32,7 +31,8 @@ For more information regardng configuring templates, refer to [Templates](docs/t
 #### Sample Group Template
 
 The following sample represents the template for the group `MyCustomGroup`, which comprises of 2 attribute:  `color` (required) and `size` (optional), and an allowed relation to the `MyOtherGroup` group.\
-```
+
+```json
 {
     "name": "mycustomgroup",
     "properties": {
@@ -54,7 +54,7 @@ The following sample represents the template for the group `MyCustomGroup`, whic
 
 The following sample represents an instance of a Group of the above template `MyCustomGroup`:
 
-```
+```json
 {
     "templateId": "mycustomgroup",
     "parentPath": "/parent1",
@@ -89,7 +89,7 @@ For more information regardng configuring templates, refer to [Templates](docs/t
 
 The following sample represents the template for the device `Sensor`, which comprises of 2 attribute:  `firmware` (required) and `version` (number), with an allowed relation to the `MyCustomGroup` group.
 
-```
+```json
 {
     "name": "sensor",
     "properties": {
@@ -111,7 +111,7 @@ The following sample represents the template for the device `Sensor`, which comp
 
 The following sample represents an instance of a Device of the above template `Sensor`:
 
-```
+```json
 {
     "deviceId": "sensor001",
     "templateId": "sensor",
