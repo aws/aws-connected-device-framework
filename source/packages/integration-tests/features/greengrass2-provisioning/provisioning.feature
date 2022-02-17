@@ -3,7 +3,7 @@ Feature: GreengrassV2 Provisioning
   @setup_greengrass2_provisioning
   Scenario: Setup
     Given greengrass2-provisioning template "IntegrationTest" does not exist
-    And I pause for 5000ms
+    And I pause for 10000ms
     And greengrass2-provisioning core device "IntegrationTestCore1" does not exist
     And greengrass2-provisioning core device "IntegrationTestCore2" does not exist
 
@@ -199,7 +199,7 @@ Feature: GreengrassV2 Provisioning
 
   @teardown_greengrass2_provisioning
   Scenario: Teardown
-    Given I pause for 5000ms
+    Given I pause for 10000ms
     Given greengrass2-provisioning template "IntegrationTest" does not exist
     Given greengrass2-provisioning core device "IntegrationTestCore1" does not exist
     And greengrass2-provisioning core device "IntegrationTestCore2" does not exist

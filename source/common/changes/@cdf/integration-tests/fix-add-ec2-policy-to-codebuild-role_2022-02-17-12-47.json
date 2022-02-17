@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/integration-tests",
+      "comment": "increase the timeout before checking result",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/integration-tests",
+  "email": "willsia@amazon.com"
+}
