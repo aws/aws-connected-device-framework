@@ -18,7 +18,7 @@ echo deployproject_build started on `date`
 
 echo Running deploy using the installer project
 
-cd source/packages/service/installer
+cd source/packages/services/installer
 
 rush clean -t '@cdf/installer'
 
