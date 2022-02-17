@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/installer",
+      "comment": "fix the filename for cfn-assetlibrary-export.yaml",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/installer",
+  "email": "willsia@amazon.com"
+}

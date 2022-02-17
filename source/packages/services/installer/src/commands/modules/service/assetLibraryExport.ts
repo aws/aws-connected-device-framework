@@ -112,8 +112,8 @@ export class AssetLibraryExportInstaller implements ServiceModule {
             title: `Packaging stack '${this.stackName}'`,
             task: async () => {
                 await execa('aws', ['cloudformation', 'package',
-                    '--template-file', '../assetlibrary-export/infrastructure/cfn-assetLibrary-export.yaml',
-                    '--output-template-file', '../assetlibrary-export/infrastructure/cfn-assetLibrary-export.yaml.build',
+                    '--template-file', '../assetlibrary-export/infrastructure/cfn-assetlibrary-export.yaml',
+                    '--output-template-file', '../assetlibrary-export/infrastructure/cfn-assetlibrary-export.yaml.build',
                     '--s3-bucket', answers.s3.bucket,
                     '--s3-prefix', 'cloudformation/artifacts/',
                     '--region', answers.region
@@ -144,7 +144,7 @@ export class AssetLibraryExportInstaller implements ServiceModule {
                 addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
 
                 await execa('aws', ['cloudformation', 'deploy',
-                    '--template-file', '../assetlibrary-export/infrastructure/cfn-assetLibrary-export.yaml.build',
+                    '--template-file', '../assetlibrary-export/infrastructure/cfn-assetlibrary-export.yaml.build',
                     '--stack-name', this.stackName,
                     '--parameter-overrides',
                     ...parameterOverrides,
