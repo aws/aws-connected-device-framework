@@ -1,3 +1,4 @@
+import { structure } from 'gremlin';
 /*********************************************************************************************************************
  *  Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.                                           *
  *                                                                                                                    *
@@ -10,46 +11,56 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { ContainerModule, interfaces, decorate, injectable } from 'inversify';
-import { TypesService } from '../types/types.service';
-import { DevicesService } from '../devices/devices.service';
-import { GroupsService } from '../groups/groups.service';
-import { SearchService } from '../search/search.service';
-import { TYPES } from './types';
-import { ProfilesService } from '../profiles/profiles.service';
-import { PoliciesService } from '../policies/policies.service';
+import { ContainerModule, decorate, injectable, interfaces } from 'inversify';
 
-import { structure } from 'gremlin';
-import { TypesDaoFull } from '../types/types.full.dao';
-import { DevicesDaoFull } from '../devices/devices.full.dao';
-import { ProfilesDaoFull } from '../profiles/profiles.full.dao';
-import { GroupsDaoFull } from '../groups/groups.full.dao';
-import { SearchDaoFull } from '../search/search.full.dao';
-import { PoliciesDaoFull } from '../policies/policies.full.dao';
-import { TypesServiceFull } from '../types/types.full.service';
-import { DevicesServiceFull } from '../devices/devices.full.service';
-import { GroupsServiceFull } from '../groups/groups.full.service';
-import { ProfilesServiceFull } from '../profiles/profiles.full.service';
-import { SearchServiceFull } from '../search/search.full.service';
-import { PoliciesServiceFull } from '../policies/policies.full.service';
-import { SchemaValidatorService } from '../utils/schemaValidator.service';
-import { PoliciesAssembler} from '../policies/policies.assembler';
-import { ProfilesAssembler } from '../profiles/profiles.assembler';
-import { InitService } from '../init/init.service';
-import { InitDaoFull } from '../init/init.full.dao';
-import { InitServiceFull } from '../init/init.full.service';
-import { FullAssembler } from '../data/full.assembler';
 import { AuthzDaoFull } from '../authz/authz.full.dao';
 import { AuthzServiceFull } from '../authz/authz.full.service';
 import { CommonDaoFull } from '../data/common.full.dao';
+import { FullAssembler } from '../data/full.assembler';
+import { DevicesDaoFull } from '../devices/devices.full.dao';
+import { DevicesServiceFull } from '../devices/devices.full.service';
+import { DevicesService } from '../devices/devices.service';
+import { GroupsDaoFull } from '../groups/groups.full.dao';
+import { GroupsServiceFull } from '../groups/groups.full.service';
+import { GroupsService } from '../groups/groups.service';
+import { InitDaoFull } from '../init/init.full.dao';
+import { InitServiceFull } from '../init/init.full.service';
+import { InitService } from '../init/init.service';
+import { PoliciesAssembler } from '../policies/policies.assembler';
+import { PoliciesDaoFull } from '../policies/policies.full.dao';
+import { PoliciesServiceFull } from '../policies/policies.full.service';
+import { PoliciesService } from '../policies/policies.service';
+import { ProfilesAssembler } from '../profiles/profiles.assembler';
+import { ProfilesDaoFull } from '../profiles/profiles.full.dao';
+import { ProfilesServiceFull } from '../profiles/profiles.full.service';
+import { ProfilesService } from '../profiles/profiles.service';
+import { SearchDaoFull } from '../search/search.full.dao';
+import { SearchServiceFull } from '../search/search.full.service';
+import { SearchService } from '../search/search.service';
+import { TypesDaoFull } from '../types/types.full.dao';
+import { TypesServiceFull } from '../types/types.full.service';
+import { TypesService } from '../types/types.service';
+import { SchemaValidatorService } from '../utils/schemaValidator.service';
+import { TYPES } from './types';
 
-export const FullContainerModule = new ContainerModule (
+
+
+export const FullContainerModule = new ContainerModule(
     (
         bind: interfaces.Bind,
         _unbind: interfaces.Unbind,
         _isBound: interfaces.IsBound,
         _rebind: interfaces.Rebind
     ) => {
+
+        bind<string>('neptuneUrl').toConstantValue(process.env.AWS_NEPTUNE_URL);
+        bind<boolean>('enableDfeOptimization').toConstantValue(process.env.ENABLE_DFE_OPTIMIZATION === 'true');
+        bind<string>('defaults.devices.parent.relation').toConstantValue(process.env.DEFAULTS_DEVICES_PARENT_RELATION);
+        bind<string>('defaults.devices.parent.groupPath').toConstantValue(process.env.DEFAULTS_DEVICES_PARENT_GROUPPATH);
+        bind<string>('defaults.devices.state').toConstantValue(process.env.DEFAULTS_DEVICES_STATE);
+        bind<boolean>('authorization.enabled').toConstantValue(process.env.AUTHORIZATION_ENABLED === 'true');
+        bind<boolean>('defaults.groups.validateAllowedParentPaths').toConstantValue(process.env.DEFAULTS_GROUPS_VALIDATEALLOWEDPARENTPATHS === 'true');
+
         bind<TypesService>(TYPES.TypesService).to(TypesServiceFull).inSingletonScope();
         bind<TypesDaoFull>(TYPES.TypesDao).to(TypesDaoFull).inSingletonScope();
 
@@ -85,11 +96,11 @@ export const FullContainerModule = new ContainerModule (
         decorate(injectable(), structure.Graph);
         bind<interfaces.Factory<structure.Graph>>(TYPES.GraphSourceFactory)
             .toFactory<structure.Graph>((_ctx: interfaces.Context) => {
-            return () => {
+                return () => {
 
-                return new structure.Graph();
+                    return new structure.Graph();
 
-            };
-        });
+                };
+            });
     }
 );

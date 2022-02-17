@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/deployment-helper",
+      "comment": "migrate configuration to use dotenv-flow and deployment to use installer",
+      "type": "major"
+    }
+  ],
+  "packageName": "@cdf/deployment-helper",
+  "email": "willsia@amazon.com"
+}

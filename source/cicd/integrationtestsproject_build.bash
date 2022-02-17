@@ -17,7 +17,6 @@ set -e
 echo integrationtestsproject_build started on `date`
 
 
-
 echo determining deployed staging urls...
 
 ASSETLIBRARY_STACK_NAME="cdf-assetlibrary-$ENVIRONMENT"
@@ -26,9 +25,8 @@ PROVISIONING_STACK_NAME="cdf-provisioning-$ENVIRONMENT"
 COMMANDS_STACK_NAME="cdf-commands-$ENVIRONMENT"
 BULKCERTS_STACK_NAME="cdf-bulkcerts-$ENVIRONMENT"
 NOTIFICATIONS_STACK_NAME="cdf-eventsProcessor-$ENVIRONMENT"
-GREENGRASS_DEPLOYMENT_STACK_NAME="cdf-greengrass-deployment-$ENVIRONMENT"
-GREENGRASS_PROVISIONING_STACK_NAME="cdf-greengrass-provisioning-$ENVIRONMENT"
-
+GREENGRASS_PROVISIONING_STACK_NAME="cdf-greengrass2-provisioning-$ENVIRONMENT"
+DEVICE_PATCHER_STACK_NAME="cdf-device-patcher-$ENVIRONMENT"
 
 stack_exports=$(aws cloudformation list-exports $AWS_ARGS)
 
@@ -62,54 +60,48 @@ notifications_invoke_url=$(echo $stack_exports \
     | jq -r --arg notifications_invoke_url_export "$notifications_invoke_url_export" \
     '.Exports[] | select(.Name==$notifications_invoke_url_export) | .Value')
 
-greengrass_deployment_invoke_url_export="$GREENGRASS_DEPLOYMENT_STACK_NAME-apigatewayurl"
-greengrass_deployment_invoke_url=$(echo $stack_exports \
-    | jq -r --arg greengrass_deployment_invoke_url_export "$greengrass_deployment_invoke_url_export" \
-    '.Exports[] | select(.Name==$greengrass_deployment_invoke_url_export) | .Value')
-
 greengrass_provisioning_invoke_url_export="$GREENGRASS_PROVISIONING_STACK_NAME-apigatewayurl"
 greengrass_provisioning_invoke_url=$(echo $stack_exports \
     | jq -r --arg greengrass_provisioning_invoke_url_export "$greengrass_provisioning_invoke_url_export" \
     '.Exports[] | select(.Name==$greengrass_provisioning_invoke_url_export) | .Value')
 
+devicepatcher_invoke_url_export="$DEVICE_PATCHER_STACK_NAME-apigatewayurl"
+devicepatcher_invoke_url=$(echo $stack_exports \
+    | jq -r --arg devicepatcher_invoke_url_export "$devicepatcher_invoke_url_export" \
+    '.Exports[] | select(.Name==$devicepatcher_invoke_url_export) | .Value')
+
 echo creating staging integration test config...
 
-LIVE_CONFIG_ENVIRONMENT=${ENVIRONMENT%-staging}
-STAGING_CONFIG_ENVIRONMENT=$ENVIRONMENT
-export CONFIG_LOCATION="$CODEBUILD_SRC_DIR_source_infrastructure"
-STAGING_CONFIG_FILE="${CONFIG_LOCATION}/integration-tests/${STAGING_CONFIG_ENVIRONMENT}-config.json"
-LIVE_CONFIG_FILE="${CONFIG_LOCATION}/integration-tests/${LIVE_CONFIG_ENVIRONMENT}-config.json"
+export CONFIG_LOCATION="${CODEBUILD_SRC_DIR_source_infrastructure}/integration-tests/.env.${ENVIRONMENT}"
 
-echo creating staging config $STAGING_CONFIG_FILE based on $LIVE_CONFIG_FILE
-cat $LIVE_CONFIG_FILE | \
-  jq \
-    --arg assetlibrary_invoke_url "$assetlibrary_invoke_url" \
-    --arg assetlibraryhistory_invoke_url "$assetlibraryhistory_invoke_url" \
-    --arg provisioning_invoke_url "$provisioning_invoke_url" \
-    --arg commands_invoke_url "$commands_invoke_url" \
-    --arg bulkcerts_invoke_url "$bulkcerts_invoke_url" \
-    --arg notifications_invoke_url "$notifications_invoke_url" \
-    --arg greengrass_deployment_invoke_url "$greengrass_deployment_invoke_url" \
-    --arg greengrass_provisioning_invoke_url "$greengrass_provisioning_invoke_url" \
-  '.assetLibrary.baseUrl=$assetlibrary_invoke_url | .assetLibraryHistory.baseUrl=$assetlibraryhistory_invoke_url | .commands.baseUrl=$commands_invoke_url | .provisioning.baseUrl=$provisioning_invoke_url | .greengrassDeployment.baseUrl=$greengrass_deployment_invoke_url | .greengrassProvisioning.baseUrl=$greengrass_provisioning_invoke_url | .bulkCerts.baseUrl=$bulkcerts_invoke_url | .notifications.baseUrl=$notifications_invoke_url' \
-  > $STAGING_CONFIG_FILE
+sed -i.bak '/.*BASE_URL.*/ d' $CONFIG_LOCATION
 
-echo "\naugmented configuration:\n$(cat $STAGING_CONFIG_FILE)\n"
+echo "GREENGRASSPROVISIONING_BASE_URL=${greengrass_provisioning_invoke_url}" >> $CONFIG_LOCATION
+echo "NOTIFICATIONS_BASE_URL=${notifications_invoke_url}" >> $CONFIG_LOCATION
+echo "PROVISIONING_BASE_URL=${provisioning_invoke_url}" >> $CONFIG_LOCATION
+echo "DEVICE_PATCHER_BASE_URL=${devicepatcher_invoke_url}" >> $CONFIG_LOCATION
+echo "BULKCERTS_BASE_URL=${bulkcerts_invoke_url}" >> $CONFIG_LOCATION
+echo "COMMANDS_BASE_URL=${commands_invoke_url}" >> $CONFIG_LOCATION
+echo "ASSETLIBRARYHISTORY_BASE_URL=${assetlibraryhistory_invoke_url}" >> $CONFIG_LOCATION
+echo "ASSETLIBRARY_BASE_URL=${assetlibrary_invoke_url}" >> $CONFIG_LOCATION
 
+echo "\naugmented configuration:\n$(cat $CONFIG_LOCATION)\n"
+
+export APP_CONFIG_DIR="$(pwd)/source/packages/integration-tests/src/config"
 
 echo running integration tests...
 
 cd source/packages/integration-tests
-npm config set @cdf/integration-tests:environment $STAGING_CONFIG_ENVIRONMENT
+npm config set @cdf/integration-tests:environment $ENVIRONMENT
 npm run clean
 npm run build
 npm run integration-test -- "features/provisioning/*.feature"
 npm run integration-test -- "features/assetlibrary/$ASSETLIBRARY_MODE/*.feature"
-
 # TODO: fix asset library history tests
 #npm run integration-test -- "features/assetlibraryhistory/*.feature"
-
+npm run integration-test -- "features/greengrass2-provisioning/*.feature"
 npm run integration-test -- "features/bulkcerts/*.feature"
 npm run integration-test -- "features/commands/*.feature"
 npm run integration-test -- "features/notifications/*.feature"
+npm run integration-test -- "features/device-patcher/*.feature"
 

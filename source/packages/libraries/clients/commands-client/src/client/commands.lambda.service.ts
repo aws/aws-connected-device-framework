@@ -25,12 +25,13 @@ import {LAMBDAINVOKE_TYPES, LambdaInvokerService, LambdaApiGatewayEventBuilder} 
 @injectable()
 export class CommandsLambdaService extends CommandsServiceBase implements CommandsService {
 
+    private functionName : string;
     constructor(
-        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService) private lambdaInvoker: LambdaInvokerService,
-        @inject('commands.apiFunctionName') private functionName : string
+        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService) private lambdaInvoker: LambdaInvokerService
     ) {
         super();
         this.lambdaInvoker = lambdaInvoker;
+        this.functionName = process.env.COMMANDS_API_FUNCTION_NAME;
     }
 
     async createCommand(command: CommandModel, additionalHeaders?: RequestHeaders): Promise<string> {

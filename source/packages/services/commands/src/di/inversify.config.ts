@@ -10,44 +10,53 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import 'reflect-metadata';
+import '@cdf/config-inject';
+
 import { Container, decorate, injectable, interfaces } from 'inversify';
-import { TYPES } from './types';
-import { HttpHeaderUtils } from '../utils/httpHeaders';
-import config from 'config';
-import { CDFConfigInjector } from '@cdf/config-inject';
-import AWS = require('aws-sdk');
-import { TemplatesDao } from '../templates/templates.dao';
-import { TemplatesService } from '../templates/templates.service';
-import {assetLibraryContainerModule} from '@cdf/assetlibrary-client';
-import {provisioningContainerModule} from '@cdf/provisioning-client';
+
+import { assetLibraryContainerModule } from '@cdf/assetlibrary-client';
+import { provisioningContainerModule } from '@cdf/provisioning-client';
 
 // Note: importing @controller's carries out a one time inversify metadata generation...
 import '../templates/templates.controller';
 import '../commands/commands.controller';
 import '../presignedurls/presignedurls.controller';
-
 import { CommandsDao } from '../commands/commands.dao';
 import { CommandsService } from '../commands/commands.service';
+import { CommandsValidator } from '../commands/commands.validator';
+import { CreateAction } from '../commands/workflow/workflow.create';
 import { WorkflowFactory } from '../commands/workflow/workflow.factory';
 import { InvalidTransitionAction } from '../commands/workflow/workflow.invalidTransition';
-import { StartJobAction } from '../commands/workflow/workflow.startjob';
 import { SaveAction } from '../commands/workflow/workflow.save';
-import { CreateAction } from '../commands/workflow/workflow.create';
+import { StartJobAction } from '../commands/workflow/workflow.startjob';
 import { PresignedUrlsService } from '../presignedurls/presignedurls.service';
-import { CommandsValidator } from '../commands/commands.validator';
-import { TemplatesValidator } from '../templates/templates.validator';
 import { RolloutsValidator } from '../rollouts/rollouts.validator';
+import { TemplatesDao } from '../templates/templates.dao';
+import { TemplatesService } from '../templates/templates.service';
+import { TemplatesValidator } from '../templates/templates.validator';
+import { HttpHeaderUtils } from '../utils/httpHeaders';
+import { TYPES } from './types';
 
+import AWS = require('aws-sdk');
 // Load everything needed to the Container
 export const container = new Container();
-
-// allow config to be injected
-const configInjector = new CDFConfigInjector();
-container.load(configInjector.getConfigModule());
 
 // bind containers from the cdf client modules
 container.load(assetLibraryContainerModule);
 container.load(provisioningContainerModule);
+
+container.bind<string>('tmpdir').toConstantValue(process.env.TMPDIR);
+container.bind<string>('aws.region').toConstantValue(process.env.AWS_REGION);
+container.bind<string>('aws.accountId').toConstantValue(process.env.AWS_ACCOUNTID);
+container.bind<string>('aws.s3.bucket').toConstantValue(process.env.AWS_S3_BUCKET);
+container.bind<string>('aws.s3.prefix').toConstantValue(process.env.AWS_S3_PREFIX);
+container.bind<string>('mqtt.topics.presigned').toConstantValue(process.env.MQTT_TOPICS_PRESIGNED);
+container.bind<string>('tables.templates').toConstantValue(process.env.TABLES_TEMPLATES);
+container.bind<string>('tables.jobs').toConstantValue(process.env.TABLES_JOBS);
+container.bind<string>('aws.s3.roleArn').toConstantValue(process.env.AWS_S3_ROLEARN);
+container.bind<string>('aws.jobs.maxTargets').toConstantValue(process.env.AWS_JOBS_MAXTARGETS);
+
 
 container.bind<HttpHeaderUtils>(TYPES.HttpHeaderUtils).to(HttpHeaderUtils);
 
@@ -69,7 +78,7 @@ container.bind<StartJobAction>(TYPES.StartJobAction).to(StartJobAction);
 container.bind<SaveAction>(TYPES.SaveAction).to(SaveAction);
 container.bind<CreateAction>(TYPES.CreateAction).to(CreateAction);
 
-AWS.config.update({region: config.get('aws.region')});
+AWS.config.update({region: process.env.AWS_REGION});
 
 // for 3rd party objects, we need to use factory injectors
 decorate(injectable(), AWS.DynamoDB.DocumentClient);
@@ -105,7 +114,7 @@ container.bind<interfaces.Factory<AWS.IotData>>(TYPES.IotDataFactory)
 
         if (!container.isBound(TYPES.IotData)) {
             const iotData = new AWS.IotData({
-                endpoint: config.get('aws.iot.endpoint'),
+                endpoint: process.env.AWS_IOT_ENDPOINT,
             });
             container.bind<AWS.IotData>(TYPES.IotData).toConstantValue(iotData);
         }

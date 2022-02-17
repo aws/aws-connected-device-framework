@@ -1,0 +1,14 @@
+#!/bin/bash
+
+cd /home/ssm-user
+curl -o certs.zip '{{{presigned_url}}}'
+unzip certs.zip
+sudo cp -R certs/* /greengrass/v2
+
+curl '{{{config_presigned_url}}}' > GreengrassCore/config.yaml
+
+sudo -E java -Droot="/greengrass/v2" -Dlog.store=FILE \
+  -jar GreengrassCore/lib/Greengrass.jar \
+  --init-config GreengrassCore/config.yaml \
+  --component-default-user ggc_user:ggc_group \
+  --setup-system-service true

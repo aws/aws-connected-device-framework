@@ -21,11 +21,14 @@ import { DevicesAssembler } from './devices.assembler';
 import { TypeCategory } from '../types/constants';
 import { EventEmitter, Type, Event } from '../events/eventEmitter.service';
 import { GroupItemList } from '../groups/groups.models';
+import { GroupsDaoLite } from '../groups/groups.lite.dao';
 
 @injectable()
 export class DevicesServiceLite implements DevicesService {
 
-    constructor( @inject(TYPES.DevicesDao) private devicesDao: DevicesDaoLite,
+    constructor(
+        @inject(TYPES.DevicesDao) private devicesDao: DevicesDaoLite,
+        @inject(TYPES.GroupsDao) private groupsDao: GroupsDaoLite,
         @inject(TYPES.DevicesAssembler) private devicesAssembler: DevicesAssembler,
         @inject(TYPES.EventEmitter) private eventEmitter: EventEmitter) {}
 
@@ -82,12 +85,20 @@ export class DevicesServiceLite implements DevicesService {
 
         // NOTE: Device components not supported in lite mode
 
-        // Save to datastore
-        let groups:string[]=[];
-        if (model.groups) {
-            Object.keys(model.groups).forEach(k=> groups = groups.concat(model.groups[k]));
+        let groupIds:string[]=[];
+        if (model.groups?.out) {
+            Object.keys(model.groups.out).forEach(k=> groupIds = groupIds.concat(model.groups.out[k]));
         }
-        const id = await this.devicesDao.create(node, groups);
+
+        // verify all referenced device groups exist
+        const futures = groupIds.map(g=> this.groupsDao.get(g));
+        const groups = await Promise.allSettled(futures);
+        if (groups.some(g=> g.status!=='fulfilled')) {
+            throw {name:'ArgumentError', message:'GROUP_NOT_FOUND'};
+        }
+        
+        // create device and associated groups
+        const id = await this.devicesDao.create(node, groupIds);
 
         // fire event
         await this.eventEmitter.fire({

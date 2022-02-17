@@ -64,12 +64,12 @@ Feature: Subscriptions against an IoTCore event source
   #   When I create a subscription with attributes
   #     | user | { "id": "U001" } |
   #     | principalValue | vin001 |
-  #     | targets | {"email": [{"address": "someone@somewhere.com"}], "push_gcm": [{"platformApplicationArn":"%property:aws.sns.push_gcm.platformApplicationArn%", "token":"6666666666"}]} |
+  #     | targets | {"email": [{"address": "someone@somewhere.com"}], "push_gcm": [{"platformApplicationArn":"%property:AWS_SNS_PUSH_GCM_PLATFORMAPPLICATIONARN%", "token":"6666666666"}]} |
 	#     | ruleParameterValues | { "batteryLevel": 15 } |
   #   Then last subscription exists with attributes
   #     | targets.email[0].address | someone@somewhere.com |
   #     | targets.email[0].subscriptionArn | Pending confirmation |
-  #     | targets.push_gcm[0].platformApplicationArn | %property:aws.sns.push_gcm.platformApplicationArn% |
+  #     | targets.push_gcm[0].platformApplicationArn | %property:AWS_SNS_PUSH_GCM_PLATFORMAPPLICATIONARN% |
   #     | targets.push_gcm[0].token | 6666666666 |
   #     | targets.push_gcm[0].platformEndpointArn | ___arn___ |
   #     | targets.push_gcm[0].subscriptionArn | ___arn___ |
@@ -202,16 +202,16 @@ Feature: Subscriptions against an IoTCore event source
   #   And I am using event "TEST-IoTCore-event"
   #   And I am using subscription for principal "vin001" user "U001"
   #   When I add "push_gcm" target with attributes
-  #     | platformApplicationArn | %property:aws.sns.push_gcm.platformApplicationArn% |
+  #     | platformApplicationArn | %property:AWS_SNS_PUSH_GCM_PLATFORMAPPLICATIONARN% |
   #     | token | 7777777777 |
   #   Then last subscription exists with attributes
   #     | targets.email[0].address | someone@somewhere.com |
   #     | targets.email[0].subscriptionArn | Pending confirmation |
-  #     | targets.push_gcm[0].platformApplicationArn | %property:aws.sns.push_gcm.platformApplicationArn% |
+  #     | targets.push_gcm[0].platformApplicationArn | %property:AWS_SNS_PUSH_GCM_PLATFORMAPPLICATIONARN% |
   #     | targets.push_gcm[0].token | 6666666666 |
   #     | targets.push_gcm[0].platformEndpointArn | ___arn___ |
   #     | targets.push_gcm[0].subscriptionArn | ___arn___ |
-  #     | targets.push_gcm[1].platformApplicationArn | %property:aws.sns.push_gcm.platformApplicationArn% |
+  #     | targets.push_gcm[1].platformApplicationArn | %property:AWS_SNS_PUSH_GCM_PLATFORMAPPLICATIONARN% |
   #     | targets.push_gcm[1].token | 7777777777 |
   #     | targets.push_gcm[1].platformEndpointArn | ___arn___ |
   #     | targets.push_gcm[1].subscriptionArn | ___arn___ |
@@ -230,7 +230,7 @@ Feature: Subscriptions against an IoTCore event source
   #   Then last subscription exists with attributes
   #     | targets.email[0].address | someone@somewhere.com |
   #     | targets.email[0].subscriptionArn | Pending confirmation |
-  #     | targets.push_gcm[0].platformApplicationArn | %property:aws.sns.push_gcm.platformApplicationArn% |
+  #     | targets.push_gcm[0].platformApplicationArn | %property:AWS_SNS_PUSH_GCM_PLATFORMAPPLICATIONARN% |
   #     | targets.push_gcm[0].token | 7777777777 |
   #     | targets.push_gcm[0].platformEndpointArn | ___arn___ |
   #     | targets.push_gcm[0].subscriptionArn | ___arn___ |

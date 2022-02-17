@@ -10,9 +10,10 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import '@cdf/config-inject';
+ 
 import AWS = require('aws-sdk');
 import { logger } from './utils/logger';
-import config from 'config';
 
 export interface LaunchParams {
     simulationId:string;
@@ -43,11 +44,11 @@ export class Simulation {
 
     constructor(region:string) {
         this._ecs = new AWS.ECS({region});
-        this._bucket = config.get('aws.s3.bucket');
-        this._subnetId = config.get('aws.ecs.subnetIds');
-        this._clusterId = config.get('aws.ecs.clusterId');
-        this._securityGroupId = config.get('aws.ecs.securityGroupId');
-        this._taskDefinitionArn = config.get('aws.ecs.taskDefinitionArn');
+        this._bucket = process.env.AWS_S3_BUCKET;
+        this._subnetId = process.env.AWS_ECS_SUBNETIDS;
+        this._clusterId = process.env.AWS_ECS_CLUSTERID;
+        this._securityGroupId = process.env.AWS_ECS_SECURITYGROUPID;
+        this._taskDefinitionArn = process.env.AWS_ECS_TASKDEFINITIONARN;
     }
 
     public async launch(params:LaunchParams) {

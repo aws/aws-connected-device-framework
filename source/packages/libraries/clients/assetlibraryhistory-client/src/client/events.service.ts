@@ -11,7 +11,6 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import {Category, CategoryEventsRequest, Events, ObjectEventsRequest, RequestHeaders} from './events.model';
-import config from 'config';
 import {PathHelper} from '../utils/path.helper';
 import {injectable} from 'inversify';
 
@@ -53,8 +52,9 @@ export class EventsServiceBase {
 
         let headers = Object.assign({}, this._headers);
 
-        if (config.has('assetLibraryHistory.headers')) {
-            const headersFromConfig:RequestHeaders = config.get('assetLibraryHistory.headers') as RequestHeaders;
+        const customHeaders = process.env.ASSETLIBRARYHISTORY_HEADERS;
+        if (customHeaders) {
+            const headersFromConfig:RequestHeaders = customHeaders as unknown as RequestHeaders;
             if (headersFromConfig !== null && headersFromConfig !== undefined) {
                 headers = {...headers, ...headersFromConfig};
             }

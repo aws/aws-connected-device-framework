@@ -15,7 +15,7 @@ import {format} from 'logform';
 const { combine, timestamp, printf } = format;
 
 export const logger = createLogger(<LoggerOptions> {
-    level: 'debug',
+    level: process.env.LOGGING_LEVEL,
     exitOnError: false,
     transports: [
         new transports.Console(),

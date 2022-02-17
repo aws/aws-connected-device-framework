@@ -24,9 +24,12 @@ export class CDFProvisioningTemplate extends AWSProvisioningTemplate {
         clientIdMustMatchThingName?: boolean;
         createDeviceCertificate?: boolean;
         registerDeviceCertificateWithoutCA?: boolean;
+        attachAdditionalPolicies?: [{
+            name?: string;
+            document?: string;
+        }]
     };
 }
-
 export class Parameter {
     Type:ParameterType;
     Default?:string;

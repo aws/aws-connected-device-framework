@@ -46,7 +46,11 @@ export class TypesDaoLite {
             }
         }
 
-        await this.iot.createThingType(params).promise();
+        logger.silly(`types.lite.dao create: params: ${JSON.stringify(params)}`);
+        const r = await this.iot.createThingType(params).promise();
+        logger.silly(`types.lite.dao create: r: ${JSON.stringify(r)}`);
+
+        logger.debug(`types.lite.dao create: exit:`);
     }
 
     public async list(): Promise<TypeModel[]> {

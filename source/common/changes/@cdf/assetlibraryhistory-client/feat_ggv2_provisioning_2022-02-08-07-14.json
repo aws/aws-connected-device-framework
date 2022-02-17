@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/assetlibraryhistory-client",
+      "comment": "migrate configuration to use dotenv-flow and deployment to use installer",
+      "type": "major"
+    }
+  ],
+  "packageName": "@cdf/assetlibraryhistory-client",
+  "email": "willsia@amazon.com"
+}

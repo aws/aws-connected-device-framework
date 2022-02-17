@@ -9,11 +9,10 @@
     "clean": "npx shx rm -rf dist tsconfig.tsbuildinfo bundle.zip .rush .nyc_output *.log",
     "lint": "npx eslint . --ext '.ts'",
     "build": "npx tsc -b",
-    "test": "rushx lint && NODE_ENV= NODE_CONFIG_DIR='./src/config' jest --silent --passWithNoTests"
+    "test": "rushx lint && jest --silent --passWithNoTests"
   },
   "dependencies": {
     "@cdf/lambda-invoke": "^2.0.2",
-    "config": "3.3.6",
     "inversify": "5.1.1",
     "inversify-binding-decorators": "4.0.0",
     "inversify-express-utils": "6.3.2",
@@ -24,22 +23,19 @@
     "reflect-metadata": "0.1.13",
     "superagent": "6.1.0",
     "winston": "3.3.3",
-    "winston-transport": "4.4.0"
+    "winston-transport": "4.4.0",
+    "dotenv-flow": "~3.2.0"
   },
   "peerDependencies": {
     "aws-sdk": "2.1048.0"
   },
   "devDependencies": {
-    "@types/config": "0.0.38",
     "@types/superagent": "4.1.10",
-
     "@rushstack/eslint-config": "2.3.4",
     "eslint": "7.26.0",
-
     "cz-customizable": "~6.3.0",
     "nyc": "15.1.0",
     "shx": "0.3.3",
-
     "aws-sdk": "2.1048.0",
     "@types/jest": "26.0.23",
     "@typescript-eslint/eslint-plugin": "4.23.0",
@@ -51,16 +47,13 @@
     "jest-resolve": "26.6.2",
     "jest": "26.6.3",
     "ts-jest": "26.5.6",
-
     "typescript": "4.2.4",
-  
+    "@types/dotenv-flow": "~3.2.0",
     "@types/node": "14.6.1"
   },
   "jest": {
     "globals": {
-      "NODE_CONFIG_STRICT_MODE": false,
-      "SUPPRESS_NO_CONFIG_WARNING": true
-    },
+               },
     "roots": [
       "<rootDir>/src"
     ],

@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 export const LAMBDAINVOKE_TYPES = {
-    Lambda: Symbol.for('Lambda'),
-    LambdaFactory: Symbol.for('Factory<Lambda>'),
-    LambdaInvokerService: Symbol.for('LambdaInvokerService')
+    Lambda: Symbol.for('LambdaInvoke_Lambda'),
+    LambdaFactory: Symbol.for('LambdaInvoke_Factory<Lambda>'),
+    LambdaInvokerService: Symbol.for('LambdaInvoke_LambdaInvokerService')
 };

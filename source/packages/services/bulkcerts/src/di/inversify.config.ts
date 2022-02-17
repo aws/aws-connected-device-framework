@@ -10,29 +10,43 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import 'reflect-metadata';
+import '@cdf/config-inject';
 import { Container, decorate, injectable, interfaces } from 'inversify';
-import {TYPES} from './types';
-import { CDFConfigInjector } from '@cdf/config-inject';
-import AWS = require('aws-sdk');
-import config from 'config';
-import { CertificatesService } from '../certificates/certificates.service';
+
 import { CertificatesDao } from '../certificates/certificates.dao';
-import { CertificatesTaskService } from '../certificates/certificatestask.service';
+import { CertificatesService } from '../certificates/certificates.service';
 import { CertificatesTaskDao } from '../certificates/certificatestask.dao';
+import { CertificatesTaskService } from '../certificates/certificatestask.service';
+import '../certificates/certificates.controller';
+import '../certificates/supplier.controller';
+import { TYPES } from './types';
+
+import AWS = require('aws-sdk');
 
 // Load everything needed to the Container
 export const container = new Container();
 
-// allow config to be injected
-const configInjector = new CDFConfigInjector();
-container.load(configInjector.getConfigModule());
+// config
+container.bind<string>('aws.dynamodb.tasks.tableName').toConstantValue(process.env.AWS_DYNAMODB_TASKS_TABLENAME);
+container.bind<string>('aws.s3.certificates.bucket').toConstantValue(process.env.AWS_S3_CERTIFICATES_BUCKET);
+container.bind<string>('aws.s3.certificates.prefix').toConstantValue(process.env.AWS_S3_CERTIFICATES_PREFIX);
+container.bind<string>('defaults.chunkSize').toConstantValue(process.env.DEFAULTS_CHUNKSIZE);
+container.bind<string>('deviceCertificateExpiryDays').toConstantValue(process.env.CERTIFICATE_DEFAULT_EXPIRYDAYS);
+container.bind<string>('events.request.topic').toConstantValue(process.env.EVENTS_REQUEST_TOPIC);
+container.bind<string>('deviceCertificateInfo.commonName').toConstantValue(process.env.CERTIFICATE_DEFAULT_COMMONNAME);
+container.bind<string>('deviceCertificateInfo.organization').toConstantValue(process.env.CERTIFICATE_DEFAULT_ORGANIZATION);
+container.bind<string>('deviceCertificateInfo.organizationalUnit').toConstantValue(process.env.CERTIFICATE_DEFAULT_ORGANIZATIONALUNIT);
+container.bind<string>('deviceCertificateInfo.locality').toConstantValue(process.env.CERTIFICATE_DEFAULT_LOCALITY);
+container.bind<string>('deviceCertificateInfo.stateName').toConstantValue(process.env.CERTIFICATE_DEFAULT_STATENAME);
+container.bind<string>('deviceCertificateInfo.country').toConstantValue(process.env.CERTIFICATE_DEFAULT_COUNTRY);
+container.bind<string>('deviceCertificateInfo.emailAddress').toConstantValue(process.env.CERTIFICATE_DEFAULT_EMAILADDRESS);
+container.bind<string>('deviceCertificateInfo.distinguishedNameQualifier').toConstantValue(process.env.CERTIFICATE_DEFAULT_DISTINGUISHEDNAMEQUALIFIER);
 
 container.bind<CertificatesService>(TYPES.CertificatesService).to(CertificatesService).inSingletonScope();
 container.bind<CertificatesDao>(TYPES.CertificatesDao).to(CertificatesDao).inSingletonScope();
 container.bind<CertificatesTaskService>(TYPES.CertificatesTaskService).to(CertificatesTaskService).inSingletonScope();
 container.bind<CertificatesTaskDao>(TYPES.CertificatesTaskDao).to(CertificatesTaskDao).inSingletonScope();
-import '../certificates/certificates.controller';
-import '../certificates/supplier.controller';
 
 // for 3rd party objects, we need to use factory injectors
 // DynamoDB
@@ -42,7 +56,7 @@ container.bind<interfaces.Factory<AWS.DynamoDB>>(TYPES.DynamoDBFactory)
     return () => {
 
         if (!container.isBound(TYPES.DynamoDB)) {
-            const dynamodb = new AWS.DynamoDB({region: config.get('aws.region')});
+            const dynamodb = new AWS.DynamoDB({region: process.env.AWS_REGION});
             container.bind<AWS.DynamoDB>(TYPES.DynamoDB).toConstantValue(dynamodb);
         }
         return container.get<AWS.DynamoDB>(TYPES.DynamoDB);
@@ -55,7 +69,7 @@ container.bind<interfaces.Factory<AWS.Iot>>(TYPES.IotFactory)
     return () => {
 
         if (!container.isBound(TYPES.Iot)) {
-            const iot = new AWS.Iot({region: config.get('aws.region')});
+            const iot = new AWS.Iot({region: process.env.AWS_REGION});
             container.bind<AWS.Iot>(TYPES.Iot).toConstantValue(iot);
         }
         return container.get<AWS.Iot>(TYPES.Iot);
@@ -68,7 +82,7 @@ container.bind<interfaces.Factory<AWS.S3>>(TYPES.S3Factory)
     return () => {
 
         if (!container.isBound(TYPES.S3)) {
-            const s3 = new AWS.S3({region: config.get('aws.region')});
+            const s3 = new AWS.S3({region: process.env.AWS_REGION});
             container.bind<AWS.S3>(TYPES.S3).toConstantValue(s3);
         }
         return container.get<AWS.S3>(TYPES.S3);
@@ -81,7 +95,7 @@ container.bind<interfaces.Factory<AWS.SSM>>(TYPES.SSMFactory)
     return () => {
 
         if (!container.isBound(TYPES.SSM)) {
-            const ssm = new AWS.SSM({region: config.get('aws.region')});
+            const ssm = new AWS.SSM({region: process.env.AWS_REGION});
             container.bind<AWS.SSM>(TYPES.SSM).toConstantValue(ssm);
         }
         return container.get<AWS.SSM>(TYPES.SSM);
@@ -94,7 +108,7 @@ container.bind<interfaces.Factory<AWS.SNS>>(TYPES.SNSFactory)
     return () => {
 
         if (!container.isBound(TYPES.SNS)) {
-            const sns = new AWS.SNS({region: config.get('aws.region')});
+            const sns = new AWS.SNS({region: process.env.AWS_REGION});
             container.bind<AWS.SNS>(TYPES.SNS).toConstantValue(sns);
         }
         return container.get<AWS.SNS>(TYPES.SNS);

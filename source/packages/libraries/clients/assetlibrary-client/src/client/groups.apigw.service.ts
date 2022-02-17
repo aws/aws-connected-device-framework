@@ -11,7 +11,6 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import {injectable} from 'inversify';
-import config from 'config';
 import {QSHelper} from '../utils/qs.helper';
 import {
     BulkLoadGroups,
@@ -33,7 +32,7 @@ export class GroupsApigwService extends GroupsServiceBase implements GroupsServi
 
     public constructor() {
         super();
-        this.baseUrl = config.get('assetLibrary.baseUrl') as string;
+        this.baseUrl = process.env.ASSETLIBRARY_BASE_URL;
     }
 
     /**

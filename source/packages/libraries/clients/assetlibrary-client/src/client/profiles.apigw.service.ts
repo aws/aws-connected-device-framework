@@ -11,7 +11,6 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import {injectable} from 'inversify';
-import config from 'config';
 import ow from 'ow';
 import * as request from 'superagent';
 import {DeviceProfileResource, GroupProfileResource, ProfileResourceList} from './profiles.model';
@@ -25,7 +24,8 @@ export class ProfilesApigwService extends ProfilesServiceBase implements Profile
 
     public constructor() {
         super();
-        this.baseUrl = config.get('assetLibrary.baseUrl') as string;
+        this.baseUrl = process.env.ASSETLIBRARY_BASE_URL;
+        
     }
 
     async createProfile(category: string, body: DeviceProfileResource | GroupProfileResource, additionalHeaders?:RequestHeaders): Promise<void> {

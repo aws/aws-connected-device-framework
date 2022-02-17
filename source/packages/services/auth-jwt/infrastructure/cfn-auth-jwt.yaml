@@ -17,11 +17,11 @@ Transform: AWS::Serverless-2016-10-31
 Description: API Gateway Lambda Authorizer to verify JWT tokens.
 
 Parameters:
-
-  ApplicationConfigurationOverride:
-    Description: This allows you to override any configuration application configuration. Must be a JSON formatted string. Any configurations contained in this will override the configurations found and merged from the config files.
+  Environment:
+    Description:  Name of environment.  Used to name the created resources.
     Type: String
     MinLength: 1
+
   OpenSslLambdaLayerArn:
     Description: OpenSSL lambda layer ARN
     Type: String
@@ -38,19 +38,16 @@ Resources:
       FunctionName: !Sub 'cdf-jwt-auth-${Environment}'
       CodeUri: ../bundle.zip
       Handler: packages/services/auth-jwt/dist/index.handler
-
       Layers:
         - !Ref OpenSslLambdaLayerArn
-
       MemorySize: 512
       Role: !GetAtt LambdaExecutionRole.Arn
       Runtime: nodejs14.x
       Timeout: 30
       Environment:
         Variables:
-          NODE_CONFIG_DIR: 'packages/services/auth-jwt/src/config'
-          NODE_CONFIG: !Ref ApplicationConfigurationOverride
-          CDF_AUTH_JWT_TOKEN_ISSUER: !Ref JwtIssuer
+          TOKEN_ISSUER: !Ref JwtIssuer
+          APP_CONFIG_DIR: 'packages/services/auth-jwt/src/config'
       Tracing: Active
 
   LambdaExecutionRole:

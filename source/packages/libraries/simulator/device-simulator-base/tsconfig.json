@@ -7,9 +7,6 @@
     },
     "references": [
         {
-            "path": "../../config/config-inject"
-        },
-        {
             "path": "../../core/errors"
         },
         {

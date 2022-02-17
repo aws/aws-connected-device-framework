@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/simulation-manager",
+      "comment": "migrate configuration to use dotenv-flow and deployment to use installer",
+      "type": "major"
+    }
+  ],
+  "packageName": "@cdf/simulation-manager",
+  "email": "willsia@amazon.com"
+}

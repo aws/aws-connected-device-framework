@@ -21,4 +21,3 @@
 
 registry=https://registry.npmjs.org/
 always-auth=false
-enable-pre-post-scripts=true

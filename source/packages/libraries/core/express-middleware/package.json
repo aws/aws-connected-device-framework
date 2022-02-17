@@ -10,11 +10,9 @@
     "clean": "npx shx rm -rf dist tsconfig.tsbuildinfo bundle.zip .rush .nyc_output *.log",
     "lint": "npx eslint . --ext '.ts'",
     "build": "npx tsc -b",
-    "test": "rushx lint && NODE_ENV= NODE_CONFIG_DIR='./src/config' jest --silent --passWithNoTests"
+    "test": "rushx lint && jest --silent --passWithNoTests"
   },
   "dependencies": {
-    "@cdf/config-inject": "^3.0.1",
-    "config": "3.3.6",
     "express": "4.17.1"
   },
   "devDependencies": {
@@ -40,9 +38,7 @@
   },
   "jest": {
     "globals": {
-      "NODE_CONFIG_STRICT_MODE": false,
-      "SUPPRESS_NO_CONFIG_WARNING": true
-    },
+               },
     "roots": [
       "<rootDir>/src"
     ],

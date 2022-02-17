@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/notifications-client",
+      "comment": "migrate configuration to use dotenv-flow and deployment to use installer",
+      "type": "major"
+    }
+  ],
+  "packageName": "@cdf/notifications-client",
+  "email": "willsia@amazon.com"
+}

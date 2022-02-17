@@ -22,7 +22,7 @@ Instante CDFConfigInjector in your inversify.config.js and load it into containe
     const configInjector = new CDFConfigInjector();
     container.load(configInjector.getConfigModule());
 ``` 
-Inject config variables from config files into your classes as follows
+Inject config variables from config files into your services as follows
 ```javascript
 @injectable()
 export class TestService {

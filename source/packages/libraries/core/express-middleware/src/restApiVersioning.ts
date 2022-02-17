@@ -24,7 +24,6 @@ export function asArray(supportedVersions:SupportedVersionConfig ): string[] {
       });
     });
   });
-  // console.log(`Supported versions: ${JSON.stringify(mimeTypes)}`);
   return mimeTypes;
 }
 

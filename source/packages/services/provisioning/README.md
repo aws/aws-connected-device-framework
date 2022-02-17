@@ -18,7 +18,7 @@ AWS IoT | Thing Types | Pre-existing optional Thing Types to associate with new 
 AWS IoT | Thing Groups | Pre-existing optional Thing Groups to associate with new Things
 AWS IoT | Policies | Pre-existing optional Policies to associate with new Things
 
-##Using Custom CA with CDF
+## Using Custom CA with CDF
 
 The provisioning module can provision a device using a customer provided CA. The modules uses the provisioning template to determine if the provisioning flow that will be executed will involve creating a device certificate from a customer provided CA. The custom CA flow within the provisioning module uses the CA stored in AWS IoT and gets the CA private key stored in SSM. 
 
@@ -38,4 +38,3 @@ Once the user has the public key in AWS IoT and the private key in SSM using the
 - [Application configuration](docs/configuration.md)
 - [Provisioning templates](docs/provisioning-templates.md)
 - [Swagger](docs/swagger.yml)
-- 

@@ -11,15 +11,15 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import config from 'config';
-import ow from 'ow';
 import { EventEmitter } from 'events';
-import awsIot = require('aws-iot-device-sdk');
 import { inject, injectable } from 'inversify';
+import ow from 'ow';
 
-import {logger} from '../utils/logger';
-import { DeviceShadow, DeviceDelta } from './shadow.model';
 import { DEVICE_SIMULATOR_TYPES } from '../di/types';
+import { logger } from '../utils/logger';
+import { DeviceDelta, DeviceShadow } from './shadow.model';
+
+import awsIot = require('aws-iot-device-sdk');
 
 /**
  * Handles the connection with AWS IoT.
@@ -52,7 +52,7 @@ export class AwsIotThing<S,T,U> {
     const logMeta = {...this.CLASS_LOGGING_DATA,  method: 'constructor'};
     logger.verbose('', {...logMeta, type: 'in'} );
 
-    this._thingName = <string>config.get('aws.iot.thingName');
+    this._thingName = process.env.AWS_IOT_THINGNAME;
     logger.debug(`thingName: ${this._thingName}`, {...logMeta, type: 'value'} );
     ow(this._thingName, ow.string.nonEmpty);
 

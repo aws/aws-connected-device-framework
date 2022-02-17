@@ -11,7 +11,6 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import {injectable} from 'inversify';
-import config from 'config';
 import ow from 'ow';
 import {CategoryEnum, StatusEnum, TypeResource, TypeResourceList} from './templates.model';
 import {QSHelper} from '../utils/qs.helper';
@@ -26,7 +25,7 @@ export class TemplatesApigwService extends TemplatesServiceBase implements Templ
 
     public constructor() {
         super();
-        this.baseUrl = config.get('assetLibrary.baseUrl') as string;
+        this.baseUrl = process.env.ASSETLIBRARY_BASE_URL;
     }
 
     async getTemplate(category: CategoryEnum, templateId: string, status: StatusEnum, additionalHeaders?: RequestHeaders): Promise<TypeResource> {

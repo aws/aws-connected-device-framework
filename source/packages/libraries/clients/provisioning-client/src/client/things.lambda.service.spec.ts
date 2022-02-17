@@ -32,8 +32,9 @@ describe('ThingsServiceLambda', () => {
     // mock lambda invoker
     beforeEach(() => {
         mockedFunctionName = 'provisioning_api_lambda_function_name';
+        process.env.PROVISIONING_API_FUNCTION_NAME = mockedFunctionName
         mockedInvokerService = createMockInstance(LambdaInvokerService);
-        instance = new ThingsLambdaService(mockedInvokerService, mockedFunctionName);
+        instance = new ThingsLambdaService(mockedInvokerService);
     });
 
     it('should provision a thing', async() => {

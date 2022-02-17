@@ -1,0 +1,6 @@
+.nyc_output
+.rush
+*.log
+tsconfig.tsbuildinfo
+/bundle.zip
+/greengrass2-provisioning.build.log

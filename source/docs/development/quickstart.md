@@ -4,7 +4,7 @@
 
 The following describes the steps involved to initialize a CDF development environment from scratch, to build, run and test a project, then finally on how to commit modifications to the source code.
 
-Due to the scripts used as part of both the build and deployment steps, only linux type environments (including macOS) are supported.
+Due to the scripts used as part of both the build and deployment steps, only linux type environments (including macOS) are officially supported.
 
 ## Configuring the development environment
 
@@ -14,13 +14,19 @@ The following is a one-time setup to configure the CDF development environment:
 
 + clone the project:
 
-```sh
+```shell
 > git clone https://github.com/aws/aws-connected-device-framework.git
+```
++ optionally switch to a specific release tag:
+
+```shell
+> cd aws-connected-device-framework
+aws-connected-device-framework> git switch -c tags/<release>
 ```
 
 + initialize the project dependencies:
 
-```sh
+```shell
 > cd aws-connected-device-framework/source
 aws-connected-device-framework/source> rush install
 aws-connected-device-framework/source> rush update
@@ -77,46 +83,26 @@ aws-connected-device-framework/source> rush update       # refresh dependencies 
 ```
 
 
-## Running a module
+## Running a module locally
 
-Each module has its configuration properties stored in an external file.  We follow a convention of storing these property files within a _cdf-infrastructure-*_ project (e.g. _cdf-infrastructure-demo_), where the name of the property file is of the pattern "<environment\>-config.json".
+Each module uses [dotenv-flow](https://github.com/kerimdzhanov/dotenv-flow) to manage its application configuration. When a module is deployed, the [installer module](../packages/installer/README.md) takes care of injecting the configuration into the environment. But when running locally, this configration needs to be provided.
 
-When running locally, the first step is to define which configuration file to use.  There are 2 ways of doing this based on personal preference - persisted or temporary. As an example, to use the `development-local-config.json` configuration files located within each projects folder in the _cdf-infrastructure-*_ project we would set the environment locally as follows:
+The easiest way to generate this configuration is to use the `config-to-env` command of the [installer module](../packages/installer/README.md), If you need to manually generate the configuration file, or understand the available configuration, refer to the modules own `docs/configuration.md` help file.
 
-**Persisted (applicable for multiple starts)**
+Once you have the configuration file, you can start a module as follows:
 
-```sh
-## persist the environment name to local npm config
-npm config set {package name}:environment development-local
-
-## e.g. for the asset library:
-npm config set @cdf/assetlibrary:environment development-local
-
-## start the project
-CONFIG_LOCATION=<path to infrastructure project>; npm run start
-
-## e.g.
-CONFIG_LOCATION="../../../../../cdf-infrastructure-demo"; npm run start
-```
-For reference, the above command stores this configuration in `~./npmrc`.
-
-**Temporary (applicable for the current start only)**
-
-```sh
-## start the project
-CONFIG_LOCATION=<path to infrastructure project>; npm run start --<package name>:environment=<environment name>
-
-## e.g.
-CONFIG_LOCATION="../../../../../cdf-infrastructure-demo"; npm run start --@cdf/assetlibrary:environment=development-local
+```shell
+aws-connected-device-framework> cd source/packages/services/<module_name>
+aws-connected-device-framework/source/packages/services/<module_name>> export CONFIG_LOCATION=<path-to-env-file>; npm run start
 ```
 
 ## Making changes to an existing module
 
 We adhere to what is known as a [GitHub flow](https://guides.github.com/introduction/flow/) as far as our approach to branching is concerned.  Basically this boils down to:
 
-+ The `master` branch always represents a working version of the code that may be deployed to a production environment
-+ Under no circumstances ever commit directly to `master`!
-+ When starting a new feature or fixing a bug, create a new branch from `master`. Name the branch `feat_***` for new features or `fix_***` for hotfixes:
++ The `main` branch always represents a working version of the code, including latest (maybe unofficially released) updates, that may be deployed to a production environment
++ Under no circumstances ever commit directly to `main`!
++ When starting a new feature or fixing a bug, create a new branch from `main`. Name the branch `feat_***` for new features or `fix_***` for hotfixes:
 
 ```sh
 aws-connected-device-framework> git switch -c <new_branch_name>
@@ -128,22 +114,24 @@ Switched to a new branch '<new_branch_name>'
 
 ```sh
 aws-connected-device-framework> git add -A
+aws-connected-device-framework> cd source
 aws-connected-device-framework/source> rush commit
 ```
 
 + When you have finished with your implementation, and ensured that all existing unit tests pass as well as creating any new tests, the following steps are required:
 
-    + Merge changes with the `master` branch:
+    + Merge changes with the `main` branch:
 
 ```sh
-# pull in master into your branch
-aws-connected-device-framework> git merge origin/master
+# pull in main into your branch
+aws-connected-device-framework> git merge origin/main
 
 # once any conflicts have been resolved, test
+aws-connected-device-framework> cd source
 aws-connected-device-framework/source> rush test
 
 # commit changes
-aws-connected-device-framework> git add -A
+aws-connected-device-framework/source> git add -A
 aws-connected-device-framework/source> rush commit
 ```
 +
@@ -154,7 +142,7 @@ aws-connected-device-framework/source> rush commit
 aws-connected-device-framework/source> rush change
 
 # commit release notes
-aws-connected-device-framework> git add -A
+aws-connected-device-framework/source> git add -A
 aws-connected-device-framework/source> rush commit
 ```
 
@@ -168,7 +156,7 @@ aws-connected-device-framework> git push
   + Create a pull request
 
 
-+ Once your pull request has been reviewed, and any issues addressed, merge your implementation back into the main code branch.  Select the _squash merge_ option and provide a summary when merging to condense the various commits for the branch.
++ Once your pull request has been reviewed, and any issues addressed, merge your implementation back into the main code branch.
 
 ## Understanding the directory structure
 

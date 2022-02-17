@@ -12,7 +12,6 @@
  *********************************************************************************************************************/
 import {Policy, PolicyList} from './policies.model';
 import {injectable} from 'inversify';
-import config from 'config';
 import ow from 'ow';
 import {QSHelper} from '../utils/qs.helper';
 import * as request from 'superagent';
@@ -26,7 +25,7 @@ export class PoliciesApigwService extends PoliciesServiceBase implements Policie
 
     public constructor() {
         super();
-        this.baseUrl = config.get('assetLibrary.baseUrl') as string;
+        this.baseUrl = process.env.ASSETLIBRARY_BASE_URL;
     }
 
     async createPolicy(body: Policy, additionalHeaders?:RequestHeaders): Promise<void> {

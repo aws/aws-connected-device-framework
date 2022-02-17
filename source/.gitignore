@@ -114,3 +114,5 @@ tsconfig.tsbuildinfo
 packages/services/**/deploy
 bundle.tar
 bundle.zip
+**/*.temp
+**/*.tmp

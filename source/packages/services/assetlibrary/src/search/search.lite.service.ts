@@ -48,10 +48,7 @@ export class SearchServiceLite {
         if (count===undefined) {
             count=this.DEFAULT_SEARCH_COUNT;
         }
-        if (offset===undefined) {
-            offset='0';
-        }
-
+    
         const models: (GroupItem|DeviceItem)[] = [];
         const results = await this.searchDao.search(model, offset, count);
 

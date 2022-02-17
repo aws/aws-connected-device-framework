@@ -11,17 +11,15 @@
     "clean": "npx shx rm -rf dist tsconfig.tsbuildinfo bundle.zip .rush .nyc_output *.log",
     "lint": "npx eslint . --ext '.ts'",
     "build": "npx tsc -b && npx shx cp -R 'src/config' 'dist/'",
-    "test": "rushx lint && NODE_ENV= NODE_CONFIG_DIR='./src/config' jest --silent --passWithNoTests",
-    "start": "rushx build && NODE_CONFIG=$(cat ${CONFIG_LOCATION}/auth-jwt/${npm_package_config_environment}-config.json) NODE_CONFIG_DIR='./src/config' nodemon dist/index.js",
-    "prebundle": "npx shx rm -rf ../../../deploy/auth-jwt bundle.zip && npx shx mkdir -p ../../../deploy/auth-jwt",
-    "bundle": "rush deploy --overwrite --project @cdf/auth-jwt --target-folder ../../../deploy/auth-jwt",
-    "postbundle": "cd ../../../deploy/auth-jwt && zip --symlinks -rq ../../packages/services/auth-jwt/bundle.zip *"
+    "test": "rushx lint && NODE_ENV= jest --silent --passWithNoTests",
+    "start": "rushx build && APP_CONFIG_DIR=${PWD}/src/config nodemon dist/index.js",
+    "bundle": "../../../infrastructure/bundle-package.bash auth-jwt"
 
   },
   "dependencies": {
     "@cdf/errors": "^3.0.0",
+    "@cdf/config-inject": "^3.0.0",
     "axios": "0.21.2",
-    "config": "3.3.6",
     "js-yaml": "4.1.0",
     "jsonwebtoken": "8.5.1",
     "jwk-to-pem": "2.0.4",
@@ -31,11 +29,11 @@
     "uuid": "8.3.2",
     "readable-stream": "3.6.0",
     "winston": "3.3.3",
-    "winston-transport": "4.4.0"
+    "winston-transport": "4.4.0",
+    "dotenv-flow": "~3.2.0"
   },
   "devDependencies": {
     "@types/aws-lambda": "8.10.65",
-    "@types/config": "0.0.38",
     "@types/jsonwebtoken": "8.5.0",
     "@types/jwk-to-pem": "2.0.0",
 
@@ -56,7 +54,8 @@
     "jest-resolve": "26.6.2",
     "jest": "26.6.3",
     "ts-jest": "26.5.6",
-    "typescript": "4.2.4"
+    "typescript": "4.2.4",
+    "@types/dotenv-flow": "~3.2.0"
   },
   "jest": {
     "globals": {

@@ -26,8 +26,8 @@ const __ = process.statics;
 export class SearchDaoFull extends BaseDaoFull {
 
     public constructor(
-        @inject('aws.neptune.url') neptuneUrl: string,
-        @inject('aws.neptune.enableDfeOptimization') private enableDfeOptimization: boolean,
+        @inject('neptuneUrl') neptuneUrl: string,
+        @inject('enableDfeOptimization') private enableDfeOptimization: boolean,
         @inject(TYPES.TypeUtils) private typeUtils: TypeUtils,
         @inject(TYPES.NodeAssembler) private assembler:NodeAssembler,
 	    @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph

@@ -10,21 +10,27 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { WorkflowAction } from './workflow.interfaces';
-import { TYPES } from '../../di/types';
-import { TemplatesService } from '../../templates/templates.service';
 import { inject, injectable } from 'inversify';
-import { CommandModel } from '../commands.models';
-import { logger } from '../../utils/logger';
-import AWS = require('aws-sdk');
 import ow from 'ow';
-import { DevicesService, GroupsService, ASSTLIBRARY_CLIENT_TYPES, SearchService, SearchRequestModel, Device10Resource, Group10Resource } from '@cdf/assetlibrary-client';
-import { PROVISIONING_CLIENT_TYPES, ThingsService, BulkProvisionThingsRequest } from '@cdf/provisioning-client';
-import config from 'config';
-import { CommandsDao } from '../commands.dao';
-import { CommandsValidator } from '../commands.validator';
-import { TemplateModel } from '../../templates/templates.models';
 
+import {
+    ASSTLIBRARY_CLIENT_TYPES, Device10Resource, DevicesService, Group10Resource, GroupsService,
+    SearchRequestModel, SearchService
+} from '@cdf/assetlibrary-client';
+import {
+    BulkProvisionThingsRequest, PROVISIONING_CLIENT_TYPES, ThingsService
+} from '@cdf/provisioning-client';
+
+import { TYPES } from '../../di/types';
+import { TemplateModel } from '../../templates/templates.models';
+import { TemplatesService } from '../../templates/templates.service';
+import { logger } from '../../utils/logger';
+import { CommandsDao } from '../commands.dao';
+import { CommandModel } from '../commands.models';
+import { CommandsValidator } from '../commands.validator';
+import { WorkflowAction } from './workflow.interfaces';
+
+import AWS = require('aws-sdk');
 @injectable()
 export class StartJobAction implements WorkflowAction {
 
@@ -247,7 +253,7 @@ export class StartJobAction implements WorkflowAction {
 
         // add the target things to the group
         const params:BulkProvisionThingsRequest = {
-            provisioningTemplateId: config.get('templates.addThingToGroup') as string,
+            provisioningTemplateId: process.env.TEMPLATES_ADDTHINGTOGROUP,
             parameters: awsThingTargets.map(thing=> ({ThingName:thing, ThingGroupName:thingGroupName}))
         };
         

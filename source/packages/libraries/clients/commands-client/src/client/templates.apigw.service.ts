@@ -10,13 +10,14 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import {injectable} from 'inversify';
+
+import { injectable } from 'inversify';
 import ow from 'ow';
 import * as request from 'superagent';
-import config from 'config';
-import {TemplateModel} from './templates.models';
-import {RequestHeaders} from './commands.model';
-import {TemplatesService, TemplatesServiceBase} from './templates.service';
+
+import { RequestHeaders } from './commands.model';
+import { TemplateModel } from './templates.models';
+import { TemplatesService, TemplatesServiceBase } from './templates.service';
 
 @injectable()
 export class TemplatesApigwService extends TemplatesServiceBase implements TemplatesService {
@@ -25,7 +26,7 @@ export class TemplatesApigwService extends TemplatesServiceBase implements Templ
 
     public constructor() {
         super();
-        this.baseUrl = config.get('commands.baseUrl') as string;
+        this.baseUrl = process.env.COMMANDS_BASE_URL;
     }
 
     async createTemplate(template: TemplateModel, additionalHeaders?: RequestHeaders): Promise<void> {

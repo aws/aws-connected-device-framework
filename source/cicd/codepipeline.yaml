@@ -642,6 +642,7 @@ Resources:
                 - cloudformation:ExecuteChangeSet
                 - cloudformation:GetTemplateSummary
                 - cloudformation:ListExports
+                - cloudformation:ListStackResources
                 - cloudformation:SetStackPolicy
                 - cognito-idp:*
                 - dax:CreateCluster
@@ -837,6 +838,7 @@ Resources:
                 - ecs:PutAttributes
                 - lambda:Get*
                 - lambda:List*
+                - lambda:ListLayers*
                 - lambda:Create*
                 - lambda:Delete*
                 - lambda:Update*
@@ -891,10 +893,10 @@ Resources:
                 - iam:AddRoleToInstanceProfile
                 - iam:AttachRolePolicy
                 - iam:CreateInstanceProfile
-                - iam:CreatePolicy
+                - iam:CreatePolicy*
                 - iam:CreateRole
                 - iam:DeleteInstanceProfile
-                - iam:DeletePolicy
+                - iam:DeletePolicy*
                 - iam:DeleteRole
                 - iam:DeleteRolePolicy
                 - iam:DetachRolePolicy

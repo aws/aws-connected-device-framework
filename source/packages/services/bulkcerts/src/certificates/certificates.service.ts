@@ -1,3 +1,4 @@
+import * as fs from 'fs';
 /*********************************************************************************************************************
  *  Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.                                           *
  *                                                                                                                    *
@@ -10,20 +11,19 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
-import {logger} from '../utils/logger';
-import * as pem from 'pem';
-import AWS = require('aws-sdk');
-import { TYPES } from '../di/types';
+import { inject, injectable } from 'inversify';
 import JSZip from 'jszip';
-import {v1 as uuid} from 'uuid';
-import * as fs from 'fs';
-import { promisify } from 'util';
-import config from 'config';
 import ow from 'ow';
-import { CertificatesTaskDao } from './certificatestask.dao';
-import { CertificateChunkRequest, CertificateInfo, CommonName } from './certificates.models';
+import * as pem from 'pem';
+import { promisify } from 'util';
+import { v1 as uuid } from 'uuid';
 
+import { TYPES } from '../di/types';
+import { logger } from '../utils/logger';
+import { CertificateChunkRequest, CertificateInfo, CommonName } from './certificates.models';
+import { CertificatesTaskDao } from './certificatestask.dao';
+
+import AWS = require('aws-sdk');
 @injectable()
 export class CertificatesService {
 
@@ -56,8 +56,9 @@ export class CertificatesService {
         ow(req.certInfo, ow.object.nonEmpty);
         ow(req.caAlias, ow.string.nonEmpty);
 
-        const rootCACertId:string = config.get(`supplierRootCa.${req.caAlias}`) as string;
-        logger.debug(`rootCACertId: ${rootCACertId}`);
+        const caEnvVarName = `SUPPLIER_CA_${req.caAlias}`;
+        const rootCACertId:string = process.env[caEnvVarName];
+        logger.debug(`certificates.service createChunk: rootCACertId: ${rootCACertId}`);
 
         let certsZip:JSZip;
 

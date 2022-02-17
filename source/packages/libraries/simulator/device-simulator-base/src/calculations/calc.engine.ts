@@ -1,6 +1,6 @@
 import { Calculation } from './calculation';
 import {logger} from '../utils/logger';
-import { inject, injectable } from 'inversify';
+import { injectable } from 'inversify';
 import ow from 'ow';
 
 /**
@@ -13,10 +13,12 @@ export class CalcEngine<D> {
     private CLASS_LOGGING_DATA = {class: 'CalcEngine'};
 
     private _calculations:Calculation<unknown,unknown>[];
-
     private _results: D;
+    private pollerInterval:number;
 
-    constructor(@inject('calculations.interval') private pollerInterval:number) {}
+    constructor() {
+        this.pollerInterval = Number(process.env.CALCULATIONS_INTERVAL);
+    }
 
     /**
      * Returns the latest calculated data.

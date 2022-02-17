@@ -2,7 +2,7 @@
 
 ## Pre-Requisities
 
-- `cdf-bootstrap/infrastructure/cdf-networking` CloudFormation stack has been deployed
+- `cdf-bootstrap/infrastructure/cdf-network` CloudFormation stack has been deployed
 - `cdf-assetlibrary/infrastructure/cdf-neptune` CloudFormation stack has been deployed
 - Create an S3 bucket to publish CloudFormation artifacts to
 

@@ -15,14 +15,12 @@ Transform: AWS::Serverless-2016-10-31
 
 Description: CDF Certificate Vendor Service
 
-
 Parameters:
+  ApplicationConfigurationOverride:
+    Description: This allows you to override any application configuration.  It should consists of a text-based content with a structure and syntax comprising key–value pairs for properties. Any configurations contained in this will override the configurations found and merged from the default .env files.
+    Type: String
   Environment:
     Description:  Name of environment.  Used to name the created resources.
-    Type: String
-    MinLength: 1
-  ApplicationConfigurationOverride:
-    Description: This allows you to override any configuration application configuration. Must be a JSON formatted string. Any configurations contained in this will override the configurations found and merged from the config files.
     Type: String
     MinLength: 1
   BucketName:
@@ -59,8 +57,12 @@ Parameters:
     Description: Custom resource lambda arn
     Type: String
     MinLength: 1
-
-
+  CaCertificateId:
+    Type: String
+    Default: ''
+  RotatedCertificatePolicy:
+    Type: String
+    Default: ''
 
 Conditions:
   ThingGroupNameProvided: !Not [ !Equals [ !Ref ThingGroupName, "" ]]
@@ -212,7 +214,6 @@ Resources:
             Resource:
               - !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${AssetLibraryFunctionName}'
 
-
   ApplicationCsrPolicies:
     Type: 'AWS::IAM::ManagedPolicy'
     Condition: KmsKeyProvided
@@ -275,11 +276,13 @@ Resources:
       Timeout: 30
       Environment:
         Variables:
-          NODE_CONFIG_DIR: 'packages/services/certificatevendor/dist/config'
-          NODE_CONFIG: !Ref ApplicationConfigurationOverride
-          CERTIFICATEVENDOR_ASSETLIBRARY_APIFUNCTIONNAME: !Ref AssetLibraryFunctionName
-          CERTIFICATEVENDOR_AWS_IOT_ENDPOINT: !GetAtt IotEndpoint.address
-          CERTIFICATEVENDOR_AWS_S3_CERTIFICATES_BUCKET: !Ref BucketName
+          APP_CONFIG_DIR: 'packages/services/certificatevendor/dist/config'
+          APP_CONFIG: !Ref ApplicationConfigurationOverride
+          ASSETLIBRARY_API_FUNCTION_NAME: !Ref AssetLibraryFunctionName
+          AWS_IOT_ENDPOINT: !GetAtt IotEndpoint.address
+          AWS_S3_CERTIFICATES_BUCKET: !Ref BucketName
+          CERTIFICATES_CACERTIFICATEID: !Ref CaCertificateId
+          POLICIES_ROTATEDCERTIFICATEPOLICY: !Ref RotatedCertificatePolicy
       Tracing: Active
   
   IotEndpoint:

@@ -89,7 +89,7 @@ export class DevicesDaoLite {
     }
 
     public async create(n:Node, groups:string[]): Promise<string> {
-        logger.debug(`devices.lite.dao create: in: n:${JSON.stringify(n)}, groups:${groups}`);
+        logger.debug(`devices.lite.dao create: in: n:${JSON.stringify(n)}, groups:${JSON.stringify(groups)}`);
 
         const thingParams: Iot.Types.CreateThingRequest = {
             thingName: <string> n.attributes['deviceId'],
@@ -109,14 +109,16 @@ export class DevicesDaoLite {
             }
         }
 
-        logger.debug(`thingParams: ${JSON.stringify(thingParams)}`);
+        logger.debug(`devices.lite.dao create: thingParams: ${JSON.stringify(thingParams)}`);
         /*  create the device  */
         await this.iot.createThing(thingParams).promise();
 
         /*  associate with the groups  */
-        groups.forEach(async group=> {
-            return this.attachToGroup(thingParams.thingName, group);
-        });
+        if (groups?.length??0>0) {
+            for (const g of groups) {
+                await this.attachToGroup(thingParams.thingName, g);
+            }
+        }
 
         logger.debug(`devices.lite.dao create: exit: thingName:${thingParams.thingName}`);
         return thingParams.thingName;

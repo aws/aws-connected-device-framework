@@ -10,27 +10,31 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import {interfaces, ContainerModule, decorate, injectable} from 'inversify';
-import {EventsService} from '../client/events.service';
-import { EventsourcesService} from '../client/eventsources.service';
-import { SubscriptionsService} from '../client/subscriptions.service';
-import { NOTIFICATIONS_CLIENT_TYPES } from './types';
-import config from 'config';
-import AWS = require('aws-sdk');
-import {LAMBDAINVOKE_TYPES, LambdaInvokerService} from '@cdf/lambda-invoke';
-import {EventsLambdaService} from '../client/events.lambda.service';
-import {EventsourcesLambdaService} from '../client/eventsources.lambda.service';
-import {SubscriptionsLambdaService} from '../client/subscriptions.lambda.service';
-import {EventsApigwService} from '../client/events.apigw.service';
-import {EventsourcesApigwService} from '../client/eventsources.apigw.service';
-import {SubscriptionsApigwService} from '../client/subscriptions.apigw.service';
-import { TargetsService } from '../client/targets.service';
-import { TargetsLambdaService } from '../client/targets.lambda.service';
-import { TargetsApigwService } from '../client/targets.apigw.service';
-import { MessagesDebugService } from '../client/messages.service';
-import { MessagesDebugLambdaService } from '../client/messages.lambda.service';
-import { MessagesDebugApigwService } from '../client/messgaes.apigw.service';
+import 'reflect-metadata'
+import '../config/env';
 
+import { ContainerModule, decorate, injectable, interfaces } from 'inversify';
+
+import { LAMBDAINVOKE_TYPES, LambdaInvokerService } from '@cdf/lambda-invoke';
+
+import { EventsApigwService } from '../client/events.apigw.service';
+import { EventsLambdaService } from '../client/events.lambda.service';
+import { EventsService } from '../client/events.service';
+import { EventsourcesApigwService } from '../client/eventsources.apigw.service';
+import { EventsourcesLambdaService } from '../client/eventsources.lambda.service';
+import { EventsourcesService } from '../client/eventsources.service';
+import { MessagesDebugLambdaService } from '../client/messages.lambda.service';
+import { MessagesDebugService } from '../client/messages.service';
+import { MessagesDebugApigwService } from '../client/messgaes.apigw.service';
+import { SubscriptionsApigwService } from '../client/subscriptions.apigw.service';
+import { SubscriptionsLambdaService } from '../client/subscriptions.lambda.service';
+import { SubscriptionsService } from '../client/subscriptions.service';
+import { TargetsApigwService } from '../client/targets.apigw.service';
+import { TargetsLambdaService } from '../client/targets.lambda.service';
+import { TargetsService } from '../client/targets.service';
+import { NOTIFICATIONS_CLIENT_TYPES } from './types';
+
+import AWS = require('aws-sdk');
 export const notificationsContainerModule = new ContainerModule (
     (
         bind: interfaces.Bind,
@@ -39,7 +43,7 @@ export const notificationsContainerModule = new ContainerModule (
         _rebind: interfaces.Rebind
     ) => {
 
-        if (config.has('notifications.mode') && config.get('notifications.mode') === 'lambda') {
+        if (process.env.NOTIFICATIONS_MODE === 'lambda') {
             bind<EventsService>(NOTIFICATIONS_CLIENT_TYPES.EventsService).to(EventsLambdaService);
             bind<EventsourcesService>(NOTIFICATIONS_CLIENT_TYPES.EventSourcesService).to(EventsourcesLambdaService);
             bind<SubscriptionsService>(NOTIFICATIONS_CLIENT_TYPES.SubscriptionsService).to(SubscriptionsLambdaService);
@@ -55,7 +59,7 @@ export const notificationsContainerModule = new ContainerModule (
                         return () => {
 
                             if (!isBound(LAMBDAINVOKE_TYPES.Lambda)) {
-                                const lambda = new AWS.Lambda({region:config.get('aws.region')});
+                                const lambda = new AWS.Lambda({region:process.env.AWS_REGION});
                                 bind<AWS.Lambda>(LAMBDAINVOKE_TYPES.Lambda).toConstantValue(lambda);
                             }
                             return ctx.container.get<AWS.Lambda>(LAMBDAINVOKE_TYPES.Lambda);
