@@ -282,9 +282,6 @@ Resources:
           - SnapshotIdentifierProvided
           - !Ref SnapshotIdentifier
           - Ref: AWS::NoValue
-      AssociatedRoles:
-        - RoleArn: !GetAtt NeptuneLoadFromS3Role.Arn
-          FeatureName: S3_INTEGRATION
       Tags:
         - Key: cdf_environment
           Value: !Ref Environment

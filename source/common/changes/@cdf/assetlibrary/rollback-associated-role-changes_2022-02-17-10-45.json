@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/assetlibrary",
+      "comment": "rollback the previous change where add associated roles to neptune",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/assetlibrary",
+  "email": "willsia@amazon.com"
+}
