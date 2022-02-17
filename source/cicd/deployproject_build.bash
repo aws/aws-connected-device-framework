@@ -26,4 +26,4 @@ rush build -t '@cdf/installer'
 
 echo Running the deployment
 
-cdf-cli deploy $ENVIRONMENT $AWS_REGION -c $CODEBUILD_SRC_DIR_source_infrastructure/installerv2/$ENVIRONMENT.json
+node --unhandled-rejections=warn-with-error-code dist/index.js deploy $ENVIRONMENT $AWS_REGION -c $CODEBUILD_SRC_DIR_source_infrastructure/installerv2/$ENVIRONMENT.json

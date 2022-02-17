@@ -23,7 +23,7 @@ To build the installer module run this script
 
 ```shell
 aws-connected-device-framework/source> cd packages/services/installer
-aws-connected-device-framework/source/packages/services/installer> rushx build
+aws-connected-device-framework/source/packages/services/installer> rushx create:installer
 ```
 
 ## Commands
