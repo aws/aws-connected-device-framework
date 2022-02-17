@@ -346,6 +346,9 @@ Resources:
               commands:
                 - n 14.16.1
                 - bash -c source/cicd/deployproject_install.bash
+            pre_build:
+              commands:
+                - bash -c source/cicd/deployproject_prebuild.bash
             build:
               commands:
                 - bash -c source/cicd/deployproject_build.bash
@@ -443,6 +446,9 @@ Resources:
               commands:
                 - n 14.16.1
                 - bash -c source/cicd/deployproject_install.bash
+            pre_build:
+              commands:
+                - bash -c source/cicd/deployproject_prebuild.bash
             build:
               commands:
                 - bash -c source/cicd/deployproject_build.bash

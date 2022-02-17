@@ -20,9 +20,8 @@ echo Running deploy using the installer project
 
 cd source/packages/services/installer
 
-rush clean -t '@cdf/installer'
-
-rush build -t '@cdf/installer'
+npm run clean
+npm run build
 
 echo Running the deployment
 
