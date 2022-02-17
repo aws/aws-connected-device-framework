@@ -1,6 +1,6 @@
 {
   "name": "@cdf/provisioning-client",
-  "version": "4.0.3",
+  "version": "5.0.0",
   "description": "Provisioning Library Client",
   "author": "Rahul Sareen",
   "main": "dist/index.js",
@@ -12,7 +12,7 @@
     "test": "rushx lint && jest --silent --passWithNoTests"
   },
   "dependencies": {
-    "@cdf/lambda-invoke": "^2.0.2",
+    "@cdf/lambda-invoke": "^3.0.0",
     "inversify": "5.1.1",
     "inversify-binding-decorators": "4.0.0",
     "inversify-express-utils": "6.3.2",

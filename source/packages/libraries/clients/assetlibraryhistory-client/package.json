@@ -1,6 +1,6 @@
 {
   "name": "@cdf/assetlibraryhistory-client",
-  "version": "4.0.1",
+  "version": "5.0.0",
   "description": "CDF Asset Library History Client",
   "author": "Dean Hart",
   "main": "dist/index.js",
@@ -12,7 +12,7 @@
     "test": "rushx lint && jest --silent --passWithNoTests"
   },
   "dependencies": {
-    "@cdf/lambda-invoke": "^2.0.1",
+    "@cdf/lambda-invoke": "^3.0.0",
     "inversify": "5.1.1",
     "inversify-binding-decorators": "4.0.0",
     "inversify-express-utils": "6.3.2",

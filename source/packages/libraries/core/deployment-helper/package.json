@@ -1,6 +1,6 @@
 {
   "name": "@cdf/deployment-helper",
-  "version": "2.0.5",
+  "version": "3.0.0",
   "description": "CDF Deployment Helper",
   "author": "Hassan khokhar",
   "scripts": {
@@ -12,9 +12,9 @@
     "bundle": "../../../../infrastructure/bundle-package.bash deployment-helper"
   },
   "dependencies": {
-    "@cdf/lambda-invoke": "^2.0.2",
-    "@cdf/logger": "^3.0.0",
-    "@cdf/config-inject": "^3.0.0",
+    "@cdf/lambda-invoke": "^3.0.0",
+    "@cdf/logger": "^4.0.0",
+    "@cdf/config-inject": "^4.0.0",
     "cfn-response-promise": "1.0.1",
     "http-errors": "1.8.0",
     "inversify": "5.1.1",

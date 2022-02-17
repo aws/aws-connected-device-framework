@@ -1,6 +1,6 @@
 {
   "name": "@cdf/event-publisher",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Utility library to be used by cdf components to publish events.",
   "author": "William Sia",
   "main": "dist/index.js",
@@ -14,8 +14,8 @@
   },
   "dependencies": {
     "@aws-sdk/client-eventbridge": "3.38.0",
-    "@cdf/lambda-invoke": "^2.0.1",
-    "@cdf/logger": "^3.0.0",
+    "@cdf/lambda-invoke": "^3.0.0",
+    "@cdf/logger": "^4.0.0",
     "inversify": "5.1.1",
     "inversify-binding-decorators": "4.0.0",
     "logform": "2.2.0",

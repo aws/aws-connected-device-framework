@@ -1,6 +1,6 @@
 {
   "name": "@cdf/assetlibrary-export",
-  "version": "2.0.2",
+  "version": "3.0.0",
   "description": "CDF Asset Library Export Service",
   "author": "Hassan Khokhar",
   "scripts": {
@@ -13,8 +13,8 @@
     "bundle": "../../../infrastructure/bundle-package.bash assetlibrary-export"
   },
   "dependencies": {
-    "@cdf/logger": "^3.0.0",
-    "@cdf/config-inject": "^3.0.0",
+    "@cdf/logger": "^4.0.0",
+    "@cdf/config-inject": "^4.0.0",
     "aws-sdk": "2.952.0",
     "gremlin": "3.4.8",
     "inversify": "5.0.1",

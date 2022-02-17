@@ -2,6 +2,32 @@
   "name": "@cdf/assetlibrary-history",
   "entries": [
     {
+      "version": "5.0.0",
+      "tag": "@cdf/assetlibrary-history_v5.0.0",
+      "date": "Thu, 17 Feb 2022 09:27:38 GMT",
+      "comments": {
+        "major": [
+          {
+            "comment": "migrate configuration to use dotenv-flow and deployment to use installer"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@cdf/errors\" from `^3.0.0` to `^4.0.0`"
+          },
+          {
+            "comment": "Updating dependency \"@cdf/config-inject\" from `^3.0.0` to `^4.0.0`"
+          },
+          {
+            "comment": "Updating dependency \"@cdf/logger\" from `^3.0.0` to `^4.0.0`"
+          },
+          {
+            "comment": "Updating dependency \"@cdf/express-middleware\" from `^2.1.0` to `^3.0.0`"
+          }
+        ]
+      }
+    },
+    {
       "version": "4.1.4",
       "tag": "@cdf/assetlibrary-history_v4.1.4",
       "date": "Tue, 25 Jan 2022 19:57:26 GMT",
