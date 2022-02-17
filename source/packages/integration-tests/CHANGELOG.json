@@ -2,6 +2,18 @@
   "name": "@cdf/integration-tests",
   "entries": [
     {
+      "version": "3.0.1",
+      "tag": "@cdf/integration-tests_v3.0.1",
+      "date": "Thu, 17 Feb 2022 12:56:53 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "increase the timeout before checking result"
+          }
+        ]
+      }
+    },
+    {
       "version": "3.0.0",
       "tag": "@cdf/integration-tests_v3.0.0",
       "date": "Thu, 17 Feb 2022 09:27:38 GMT",
