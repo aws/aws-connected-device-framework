@@ -10,16 +10,16 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
-import ow from 'ow';
-import { logger } from '../utils/logger';
-import { SimulationItem, SimulationStatus, TemplateProperties } from './simulations.model';
-import { TYPES } from '../di/types';
-import { SimulationsDao } from './simulations.dao';
-import config from 'config';
-import * as handlebars from 'handlebars';
-import {generate} from 'shortid';
 import * as fs from 'fs';
+import * as handlebars from 'handlebars';
+import { inject, injectable } from 'inversify';
+import ow from 'ow';
+import { generate } from 'shortid';
+
+import { TYPES } from '../di/types';
+import { logger } from '../utils/logger';
+import { SimulationsDao } from './simulations.dao';
+import { SimulationItem, SimulationStatus, TemplateProperties } from './simulations.model';
 
 export interface CreateSimulationRequest {
     item: SimulationItem;
@@ -39,8 +39,8 @@ export class SimulationsService {
         @inject(TYPES.SNSFactory) snsFactory: () => AWS.SNS) {
             this._sns  =  snsFactory();
             this._s3  =  s3Factory();
-            this._s3Bucket = config.get('aws.s3.bucket');
-            this._s3Prefix = config.get('aws.s3.prefix');
+            this._s3Bucket = process.env.AWS_S3_BUCKET;
+            this._s3Prefix = process.env.AWS_S3_PREFIX;
     }
 
     public async createSimulation(request: CreateSimulationRequest): Promise<string> {
@@ -62,7 +62,7 @@ export class SimulationsService {
         // launch any configured provisioning task asynchronously
         const task = item.tasks.provisioning;
         if (task) {
-            const threadsPerInstance:number = config.get('runners.threads');
+            const threadsPerInstance = Number(process.env.RUNNERS_THREADS);
             const numInstances = Math.ceil(task.threads.total / threadsPerInstance);
             const devicesPerInstance = Math.ceil(item.deviceCount / numInstances);
             const s3RootKey = `${this._s3Prefix}${item.id}/provisioning/`;
@@ -84,7 +84,28 @@ export class SimulationsService {
 
             // prepare the config for each instance
             const properties:TemplateProperties = {
-                config: config.util.toObject(),
+                config: {
+                    aws: {
+                        iot: {
+                            host: process.env.AWS_IOT_HOST
+                        },
+                        region: process.env.AWS_REGION,
+                        s3: {
+                            bucket: process.env.AWS_S3_BUCKET,
+                            prefix: process.env.AWS_S3_PREFIX
+                        }
+                    },
+                    cdf: {
+                        assetlibrary: {
+                            mimetype: process.env.ASSETLIBRARY_MIMETYPE,
+                            apiFunctionName: process.env.ASSETLIBRARY_API_FUNCTION_NAME
+                        }
+                    },
+                    runners: {
+                        dataDir: process.env.RUNNERS_DATADIR
+                    }
+
+                },
                 simulation: item,
                 instance: {
                     id: 0,
@@ -93,7 +114,7 @@ export class SimulationsService {
                 }
             };
 
-            const template = fs.readFileSync(config.get('templates.provisioning'),'utf8');
+            const template = fs.readFileSync(process.env.TEMPLATES_PROVISIONING,'utf8');
             const compiledTemplate = handlebars.compile(template);
 
             for (let instanceId=1; instanceId<=numInstances; instanceId++) {
@@ -126,7 +147,7 @@ export class SimulationsService {
         ow(instances, ow.number.greaterThan(0));
         ow(s3RootKey, ow.string.nonEmpty);
 
-        const topic:string = config.get('aws.sns.topics.launch');
+        const topic:string = process.env.AWS_SNS_TOPICS_LAUNCH;
 
         const msg = {
             simulationId, instances, s3RootKey

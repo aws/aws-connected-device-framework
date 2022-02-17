@@ -20,12 +20,13 @@ import { SimulateIoTCoreMessageRequest } from './messages.model';
 @injectable()
 export class MessagesDebugLambdaService extends MessagesDebugServiceBase implements MessagesDebugService {
 
+    private functionName : string;
     constructor(
-        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService) private lambdaInvoker: LambdaInvokerService,
-        @inject('notifications.apiFunctionName') private functionName : string
+        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService) private lambdaInvoker: LambdaInvokerService
     ) {
         super();
         this.lambdaInvoker = lambdaInvoker;
+        this.functionName = process.env.NOTIFICATIONS_API_FUNCTION_NAME;
     }
 
     async simulateIoTCoreMessage(message:SimulateIoTCoreMessageRequest, additionalHeaders?: RequestHeaders

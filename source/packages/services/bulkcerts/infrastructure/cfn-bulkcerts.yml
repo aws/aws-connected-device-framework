@@ -24,16 +24,15 @@ Globals:
 Description: CDF Bulk Certs Service
 
 Parameters:  
+  
+  ApplicationConfigurationOverride:
+    Description: This allows you to override any application configuration.  It should consists of a text-based content with a structure and syntax comprising key–value pairs for properties. Any configurations contained in this will override the configurations found and merged from the default .env files.
+    Type: String
+  
   Environment:
     Description:  Name of environment.  Used to name the created resources.
     Type: String
     MinLength: 1
-
-  ApplicationConfigurationOverride:
-    Description: This allows you to override any configuration application configuration. Must be a JSON formatted string. Any configurations contained in this will override the configurations found and merged from the config files.
-    Type: String
-    MinLength: 1
-
 
   TemplateSnippetS3UriBase:
     Description: |
@@ -96,13 +95,8 @@ Parameters:
     Type: String
     MinLength: 1
 
-  BucketName:
-    Description: Name of bucket to store artifacts.
-    Type: String
-    MinLength: 1
-
   EnableApiGatewayAccessLogs:
-    Description: Enales API gateway Access Logging, defaults to false if not specified.
+    Description: Enables API gateway Access Logging, defaults to false if not specified.
     Type: String
     Default: 'false'
     AllowedValues:
@@ -110,8 +104,18 @@ Parameters:
       - 'false'
     MinLength: 1
 
-Conditions:
+  BucketName:
+    Description: Name of bucket to store artifacts.
+    Type: String
+    MinLength: 1
 
+  BucketKeyPrefix:
+    Description: Key prefix of bucket to store artifacts.
+    Type: String
+    MinLength: 1
+    Default: certificates/
+
+Conditions:
   DeployInVPC: !Not [ !Equals [ !Ref VpcId, 'N/A' ] ]
   DeployWithLambdaAuth: !Or [ !Equals [ !Ref AuthType, 'LambdaRequest' ], !Equals [ !Ref AuthType, 'LambdaToken' ] ]
   KmsKeyIdProvided: !Not [ !Equals [ !Ref KmsKeyId, "" ] ]
@@ -141,7 +145,6 @@ Resources:
     Type: 'AWS::Logs::LogGroup'
     Properties:
       LogGroupName: !Sub 'cdf-bulkcerts-apigatewayaccesslogs-${Environment}'
-
 
   ApiLambdaExecutionRole:
     Type: AWS::IAM::Role
@@ -287,11 +290,13 @@ Resources:
       Timeout: 300
       Environment:
         Variables:
-          NODE_CONFIG_DIR: 'packages/services/bulkcerts/dist/config'
-          NODE_CONFIG: !Ref ApplicationConfigurationOverride
-          BULKCERTS_AWS_DYNAMODB_TASKS_TABLE: !Ref BulkCertificatesTaskTable
-          BULKCERTS_AWS_S3_CERTIFICATES_BUCKET: !Ref BucketName
-          BULKCERTS_EVENTS_REQUEST_TOPIC: !Ref CertificatesRequestSnsTopic
+          APP_CONFIG: !Ref ApplicationConfigurationOverride
+          APP_CONFIG_DIR: 'packages/services/bulkcerts/dist/config'
+          AWS_DYNAMODB_TASKS_TABLENAME: !Ref BulkCertificatesTaskTable
+          AWS_S3_CERTIFICATES_BUCKET: !Ref BucketName
+          AWS_S3_CERTIFICATES_PREFIX: !Ref BucketKeyPrefix
+          EVENTS_REQUEST_TOPIC: !Ref CertificatesRequestSnsTopic
+
       Tracing: Active
 
       VpcConfig:
@@ -333,10 +338,12 @@ Resources:
       ReservedConcurrentExecutions: 3
       Environment:
         Variables:
-          NODE_CONFIG_DIR: 'packages/services/bulkcerts/dist/config'
-          NODE_CONFIG: !Ref ApplicationConfigurationOverride
-          BULKCERTS_AWS_DYNAMODB_TASKS_TABLE: !Ref BulkCertificatesTaskTable
-          BULKCERTS_EVENTS_REQUEST_TOPIC: !Ref CertificatesRequestSnsTopic
+          APP_CONFIG: !Ref ApplicationConfigurationOverride
+          APP_CONFIG_DIR: 'packages/services/bulkcerts/dist/config'
+          AWS_DYNAMODB_TASKS_TABLENAME: !Ref BulkCertificatesTaskTable
+          AWS_S3_CERTIFICATES_BUCKET: !Ref BucketName
+          AWS_S3_CERTIFICATES_PREFIX: !Ref BucketKeyPrefix
+          EVENTS_REQUEST_TOPIC: !Ref CertificatesRequestSnsTopic
       Tracing: Active
     DependsOn:
       - SnsLambdaExecutionRole

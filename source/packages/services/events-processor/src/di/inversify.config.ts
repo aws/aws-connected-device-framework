@@ -10,21 +10,10 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { decorate, injectable, Container, interfaces } from 'inversify';
-import { TYPES } from './types';
-import config from 'config';
-import { CDFConfigInjector } from '@cdf/config-inject';
-import AWS = require('aws-sdk');
-import AmazonDaxClient = require('amazon-dax-client');
-import { EventSourceService } from '../api/eventsources/eventsource.service';
-import { EventSourceDao } from '../api/eventsources/eventsource.dao';
-import { EventSourceAssembler } from '../api/eventsources/eventsource.assembler';
-import { EventService } from '../api/events/event.service';
-import { EventDao } from '../api/events/event.dao';
-import { EventAssembler } from '../api/events/event.assembler';
-import { SubscriptionService } from '../api/subscriptions/subscription.service';
-import { SubscriptionDao } from '../api/subscriptions/subscription.dao';
-import { SubscriptionAssembler } from '../api/subscriptions/subscription.assembler';
+import 'reflect-metadata';
+import '@cdf/config-inject';
+
+import { Container, decorate, injectable, interfaces } from 'inversify';
 
 // Note: importing @controller's carries out a one time inversify metadata generation...
 import '../api/eventsources/eventsource.controller';
@@ -34,29 +23,54 @@ import '../api/messages/messages.controller';
 import '../api/targets/target.controller';
 import '../api/messages/apigwtrigger.controller';
 import { AlertDao } from '../alerts/alert.dao';
-import { DDBStreamTransformer } from '../transformers/ddbstream.transformer';
-import { FilterService } from '../filter/filter.service';
-import { EmailTarget } from '../api/targets/processors/email.target';
-import { SMSTarget } from '../api/targets/processors/sms.target';
-import { SNSTarget } from '../api/targets/processors/sns.target';
-import { DynamodDBTarget } from '../api/targets/processors/dynamodb.target';
+import { EventAssembler } from '../api/events/event.assembler';
+import { EventDao } from '../api/events/event.dao';
+import { EventConditionsUtils } from '../api/events/event.models';
+import { EventService } from '../api/events/event.service';
+import { EventSourceAssembler } from '../api/eventsources/eventsource.assembler';
+import { EventSourceDao } from '../api/eventsources/eventsource.dao';
+import { EventSourceService } from '../api/eventsources/eventsource.service';
+import { ApiGatewayEventSource } from '../api/eventsources/sources/apigateway.source';
 import { DynamoDbEventSource } from '../api/eventsources/sources/dynamodb.source';
 import { IotCoreEventSource } from '../api/eventsources/sources/iotcore.source';
-import { ApiGatewayEventSource } from '../api/eventsources/sources/apigateway.source';
 import { ApigwTriggerService } from '../api/messages/apigwtrigger.service';
-import { DynamoDbUtils } from '../utils/dynamoDb.util';
-import { EventConditionsUtils } from '../api/events/event.models';
+import { SubscriptionAssembler } from '../api/subscriptions/subscription.assembler';
+import { SubscriptionDao } from '../api/subscriptions/subscription.dao';
+import { SubscriptionService } from '../api/subscriptions/subscription.service';
+import { DynamodDBTarget } from '../api/targets/processors/dynamodb.target';
+import { EmailTarget } from '../api/targets/processors/email.target';
 import { PushTarget } from '../api/targets/processors/push.target';
-import { TargetService } from '../api/targets/target.service';
-import { TargetDao } from '../api/targets/target.dao';
+import { SMSTarget } from '../api/targets/processors/sms.target';
+import { SNSTarget } from '../api/targets/processors/sns.target';
 import { TargetAssembler } from '../api/targets/target.assembler';
+import { TargetDao } from '../api/targets/target.dao';
+import { TargetService } from '../api/targets/target.service';
+import { FilterService } from '../filter/filter.service';
+import { DDBStreamTransformer } from '../transformers/ddbstream.transformer';
+import { DynamoDbUtils } from '../utils/dynamoDb.util';
+import { TYPES } from './types';
 
+import AWS = require('aws-sdk');
+import AmazonDaxClient = require('amazon-dax-client');
 // Load everything needed to the Container
 export const container = new Container();
 
-// allow config to be injected
-const configInjector = new CDFConfigInjector();
-container.load(configInjector.getConfigModule());
+// process.env.AWS_DYNAMODB_TABLES_EVENTNOTIFICATIONS_NAME = 'cdf-eventNotifications-development'
+// process.env.AWS_DYNAMODB_TABLES_EVENTCONFIG_NAME = 'cdf-eventConfig-development'
+// process.env.AWS_REGION="ap-southeast-2"
+
+// config
+container.bind<string>('aws.dynamoDb.tables.eventConfig.name').toConstantValue(process.env.AWS_DYNAMODB_TABLES_EVENTCONFIG_NAME);
+container.bind<string>('aws.dynamoDb.tables.eventNotifications.name').toConstantValue(process.env.AWS_DYNAMODB_TABLES_EVENTNOTIFICATIONS_NAME);
+container.bind<string>('aws.dynamoDb.tables.eventConfig.gsi1').toConstantValue(process.env.AWS_DYNAMODB_TABLES_EVENTCONFIG_GSI1);
+container.bind<string>('aws.dynamoDb.tables.eventConfig.gsi2KeySk').toConstantValue(process.env.AWS_DYNAMODB_TABLES_EVENTCONFIG_GSI2KEYSK);
+container.bind<string>('aws.dynamoDb.tables.eventConfig.gsi2KeyGsi2Sort').toConstantValue(process.env.AWS_DYNAMODB_TABLES_EVENTCONFIG_GSI2KEYGSI2SORT);
+container.bind<string>('aws.region').toConstantValue(process.env.AWS_REGION);
+container.bind<string>('aws.accountId').toConstantValue(process.env.AWS_ACCOUNTID);
+container.bind<string>('aws.sqs.asyncProcessing').toConstantValue(process.env.EVENTSPROCESSOR_AWS_SQS_ASYNCPROCESSING);
+container.bind<string>('aws.lambda.dynamoDbStream.name').toConstantValue(process.env.AWS_LAMBDA_DYNAMODBSTREAM_NAME);
+container.bind<string>('aws.lambda.lambdaInvoke.arn').toConstantValue(process.env.AWS_LAMBDA_LAMBDAINVOKE_ARN);
+
 
 container.bind<EventSourceService>(TYPES.EventSourceService).to(EventSourceService).inSingletonScope();
 container.bind<EventSourceDao>(TYPES.EventSourceDao).to(EventSourceDao).inSingletonScope();
@@ -101,7 +115,7 @@ container.bind<interfaces.Factory<AWS.DynamoDB>>(TYPES.DynamoDBFactory)
     return () => {
 
         if (!container.isBound(TYPES.DynamoDB)) {
-            const dc =  new AWS.DynamoDB({region: config.get('aws.region')});
+            const dc =  new AWS.DynamoDB({region: process.env.AWS_REGION});
             container.bind<AWS.DynamoDB>(TYPES.DynamoDB).toConstantValue(dc);
         }
         return container.get<AWS.DynamoDB>(TYPES.DynamoDB);
@@ -114,7 +128,7 @@ container.bind<interfaces.Factory<AWS.DynamoDB.DocumentClient>>(TYPES.DocumentCl
     return () => {
 
         if (!container.isBound(TYPES.DocumentClient)) {
-            const dc = new AWS.DynamoDB.DocumentClient({region: config.get('aws.region')});
+            const dc = new AWS.DynamoDB.DocumentClient({region: process.env.AWS_REGION});
             container.bind<AWS.DynamoDB.DocumentClient>(TYPES.DocumentClient).toConstantValue(dc);
         }
         return container.get<AWS.DynamoDB.DocumentClient>(TYPES.DocumentClient);
@@ -127,8 +141,8 @@ container.bind<interfaces.Factory<AWS.DynamoDB.DocumentClient>>(TYPES.CachableDo
         if (!container.isBound(TYPES.CachableDocumentClient)) {
             // if we have DAX configured, return a DAX enabled DocumentClient, but if not just return the normal one
             let dc:AWS.DynamoDB.DocumentClient;
-            if (config.has('aws.dynamodb.dax.endpoints')) {
-                const dax = new AmazonDaxClient({endpoints: config.get('aws.dynamodb.dax.endpoints'), region: config.get('aws.region')});
+            if (process.env.AWS_DYNAMODB_DAX_ENDPOINTS) {
+                const dax = new AmazonDaxClient({endpoints: process.env.AWS_DYNAMODB_DAX_ENDPOINTS, region: process.env.AWS_REGION});
                 dc = new AWS.DynamoDB.DocumentClient({service:dax});
             } else {
                 const dcf = container.get<interfaces.Factory<AWS.DynamoDB.DocumentClient>>(TYPES.DocumentClientFactory);
@@ -146,7 +160,7 @@ container.bind<interfaces.Factory<AWS.Lambda>>(TYPES.LambdaFactory)
     return () => {
 
         if (!container.isBound(TYPES.Lambda)) {
-            const l = new AWS.Lambda({region: config.get('aws.region')});
+            const l = new AWS.Lambda({region: process.env.AWS_REGION});
             container.bind<AWS.Lambda>(TYPES.Lambda).toConstantValue(l);
         }
         return container.get<AWS.Lambda>(TYPES.Lambda);
@@ -159,7 +173,7 @@ container.bind<interfaces.Factory<AWS.SNS>>(TYPES.SNSFactory)
     return () => {
 
         if (!container.isBound(TYPES.SNS)) {
-            const l = new AWS.SNS({region: config.get('aws.region')});
+            const l = new AWS.SNS({region: process.env.AWS_REGION});
             container.bind<AWS.SNS>(TYPES.SNS).toConstantValue(l);
         }
         return container.get<AWS.SNS>(TYPES.SNS);
@@ -172,7 +186,7 @@ container.bind<interfaces.Factory<AWS.Iot>>(TYPES.IotFactory)
     return () => {
 
         if (!container.isBound(TYPES.Iot)) {
-            const l = new AWS.Iot({region: config.get('aws.region')});
+            const l = new AWS.Iot({region: process.env.AWS_REGION});
             container.bind<AWS.Iot>(TYPES.Iot).toConstantValue(l);
         }
         return container.get<AWS.Iot>(TYPES.Iot);
@@ -186,8 +200,8 @@ container.bind<interfaces.Factory<AWS.IotData>>(TYPES.IotDataFactory)
 
         if (!container.isBound(TYPES.IotData)) {
             const iotData = new AWS.IotData({
-                region: config.get('aws.region'),
-                endpoint: `https://${config.get('aws.iot.endpoint')}`
+                region: process.env.AWS_REGION,
+                endpoint: `https://${process.env.AWS_IOT_ENDPOINT}`
             });
             container.bind<AWS.IotData>(TYPES.IotData).toConstantValue(iotData);
         }
@@ -201,7 +215,7 @@ container.bind<interfaces.Factory<AWS.SQS>>(TYPES.SQSFactory)
     return () => {
 
         if (!container.isBound(TYPES.SQS)) {
-            const sqs = new AWS.SQS({region: config.get('aws.region')});
+            const sqs = new AWS.SQS({region: process.env.AWS_REGION});
             container.bind<AWS.SQS>(TYPES.SQS).toConstantValue(sqs);
         }
         return container.get<AWS.SQS>(TYPES.SQS);

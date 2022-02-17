@@ -35,9 +35,9 @@ describe('CreateRun', () => {
         // mockedDao = createMockInstance(SimulationsDao);
 
         // TODO: mock these
-        mockedS3 = new AWS.S3({region: config.get('aws.region')});
-        mockedSNS = new AWS.SNS({region: config.get('aws.region')});
-        mockedDDB = new AWS.DynamoDB.DocumentClient({region: config.get('aws.region'), convertEmptyValues:true});
+        mockedS3 = new AWS.S3({region: process.env.AWS_REGION});
+        mockedSNS = new AWS.SNS({region: process.env.AWS_REGION});
+        mockedDDB = new AWS.DynamoDB.DocumentClient({region: process.env.AWS_REGION, convertEmptyValues:true});
 
         const mockedS3Factory = () => {
             return mockedS3;

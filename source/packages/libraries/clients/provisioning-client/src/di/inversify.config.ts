@@ -10,15 +10,17 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import {PROVISIONING_CLIENT_TYPES} from './types';
-import config from 'config';
-import AWS = require('aws-sdk');
+import '../config/env';
 import { ContainerModule, decorate, injectable, interfaces } from 'inversify';
-import { LambdaInvokerService, LAMBDAINVOKE_TYPES } from '@cdf/lambda-invoke';
-import {ThingsLambdaService} from '../client/things.lambda.service';
-import {ThingsService} from '..';
-import {ThingsApigwService} from '../client/things.apigw.service';
 
+import { LAMBDAINVOKE_TYPES, LambdaInvokerService } from '@cdf/lambda-invoke';
+
+import { ThingsService } from '../';
+import { ThingsApigwService } from '../client/things.apigw.service';
+import { ThingsLambdaService } from '../client/things.lambda.service';
+import { PROVISIONING_CLIENT_TYPES } from './types';
+
+import AWS = require('aws-sdk');
 export const provisioningContainerModule = new ContainerModule (
     (
         bind: interfaces.Bind,
@@ -27,7 +29,7 @@ export const provisioningContainerModule = new ContainerModule (
         _rebind: interfaces.Rebind
     ) => {
 
-        if (config.has('provisioning.mode') && config.get('provisioning.mode') === 'lambda') {
+        if (process.env.PROVISIONING_MODE === 'lambda') {
             bind<ThingsService>(PROVISIONING_CLIENT_TYPES.ThingsService).to(ThingsLambdaService);
 
             if (!isBound(LAMBDAINVOKE_TYPES.LambdaInvokerService)) {
@@ -39,7 +41,7 @@ export const provisioningContainerModule = new ContainerModule (
                         return () => {
 
                             if (!isBound(LAMBDAINVOKE_TYPES.Lambda)) {
-                                const lambda = new AWS.Lambda({region:config.get('aws.region')});
+                                const lambda = new AWS.Lambda({region:process.env.AWS_REGION});
                                 bind<AWS.Lambda>(LAMBDAINVOKE_TYPES.Lambda).toConstantValue(lambda);
                             }
                             return ctx.container.get<AWS.Lambda>(LAMBDAINVOKE_TYPES.Lambda);

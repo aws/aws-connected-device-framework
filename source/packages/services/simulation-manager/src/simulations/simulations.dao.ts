@@ -10,13 +10,13 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
-import {logger} from '../utils/logger';
-import {TYPES} from '../di/types';
-import { SimulationItem, SimulationStatus } from './simulations.model';
-import { createDelimitedAttribute, PkType, expandDelimitedAttribute } from '../utils/pkUtils.util';
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
-import config from 'config';
+import { inject, injectable } from 'inversify';
+
+import { TYPES } from '../di/types';
+import { logger } from '../utils/logger';
+import { createDelimitedAttribute, expandDelimitedAttribute, PkType } from '../utils/pkUtils.util';
+import { SimulationItem, SimulationStatus } from './simulations.model';
 
 @injectable()
 export class SimulationsDao {
@@ -28,7 +28,7 @@ export class SimulationsDao {
 	    @inject(TYPES.DocumentClientFactory) documentClientFactory: () => DocumentClient
     ) {
         this._dc = documentClientFactory();
-        this._table = config.get('aws.dynamodb.table.simulations');
+        this._table = process.env.AWS_DYNAMODB_TABLE_SIMULATIONS;
     }
 
     public async save(item:SimulationItem): Promise<void> {

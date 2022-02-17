@@ -10,21 +10,21 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
-import { logger } from '../utils/logger';
-import { RunItem, RunStatus } from './runs.models';
-import * as ps from 'pick-some';
+import * as fs from 'fs';
+import * as handlebars from 'handlebars';
+import { inject, injectable } from 'inversify';
+import { parseAsync } from 'json2csv';
 import ow from 'ow';
-import config from 'config';
+import * as ps from 'pick-some';
+import { generate } from 'shortid';
+
 import { TYPES } from '../di/types';
-import { RunsDao } from './runs.dao';
 import { SimulationsDao } from '../simulations/simulations.dao';
 import { TemplateProperties } from '../simulations/simulations.model';
-import * as handlebars from 'handlebars';
-import * as fs from 'fs';
-import {parseAsync} from 'json2csv';
 import { SimulationsService } from '../simulations/simulations.service';
-import {generate} from 'shortid';
+import { logger } from '../utils/logger';
+import { RunsDao } from './runs.dao';
+import { RunItem, RunStatus } from './runs.models';
 
 export interface CreateRunRequest {
     item: RunItem;
@@ -43,8 +43,8 @@ export class RunsService {
         @inject(TYPES.RunsDao) private _runsDao: RunsDao,
         @inject(TYPES.S3Factory) s3Factory: () => AWS.S3) {
             this._s3  =  s3Factory();
-            this._s3Bucket = config.get('aws.s3.bucket');
-            this._s3Prefix = config.get('aws.s3.prefix');
+            this._s3Bucket = process.env.AWS_S3_BUCKET;
+            this._s3Prefix = process.env.AWS_S3_PREFIX;
         }
 
     public async createRun(request: CreateRunRequest): Promise<string> {
@@ -75,7 +75,7 @@ export class RunsService {
 
         // chunk the devices into how many instances we need to run the simulation
         const task = simulation.tasks.simulation;
-        const runnersThreads:number = config.get('runners.threads');
+        const runnersThreads = Number(process.env.RUNNERS_THREADS);
         const threadsPerInstance:number = Math.min(runnersThreads, run.deviceCount);
         const numInstances = Math.ceil(task.threads.total / threadsPerInstance);
         const devicesPerInstance = Math.ceil(run.deviceCount / numInstances);
@@ -93,7 +93,28 @@ export class RunsService {
 
         // prepare the config for each instance
         const properties:TemplateProperties = {
-            config: config.util.toObject(),
+            config: {
+                aws: {
+                    iot: {
+                        host: process.env.AWS_IOT_HOST
+                    },
+                    region: process.env.AWS_REGION,
+                    s3: {
+                        bucket: process.env.AWS_S3_BUCKET,
+                        prefix: process.env.AWS_S3_PREFIX
+                    }
+                },
+                cdf: {
+                    assetlibrary: {
+                        mimetype: process.env.ASSETLIBRARY_MIMETYPE,
+                        apiFunctionName: process.env.ASSETLIBRARY_API_FUNCTION_NAME
+                    }
+                },
+                runners: {
+                    dataDir: process.env.RUNNERS_DATADIR
+                }
+
+            },
             simulation,
             run,
             instance: {
@@ -102,7 +123,7 @@ export class RunsService {
                 threads: threadsPerInstance
             }
         };
-        const template = fs.readFileSync(config.get('templates.simulation'),'utf8');
+        const template = fs.readFileSync(process.env.TEMPLATES_SIMULATION,'utf8');
         const compiledTemplate = handlebars.compile(template);
 
         for (let instanceId=1; instanceId<=numInstances; instanceId++) {
@@ -134,7 +155,7 @@ export class RunsService {
     public async deleteRun(request: CreateRunRequest): Promise<string> {
         logger.info(`runs.service deleteRun: request:${JSON.stringify(request)}`);
 
-        // TODO: simulation - tear dwon on finished
+        // TODO: simulation - tear down on finished
 
         return 'todo';
 

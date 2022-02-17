@@ -21,7 +21,6 @@ import { AssetLibraryInitCustomResource } from './assetLibraryInit.customResourc
 import { IotEndpointCustomResource } from './iotEndpoint.customresource';
 import { VpcEndpointCheckCustomResource } from './vpcEndpointCheck.customResource';
 import { NeptuneEngineVersionCustomResource } from './neptuneEngineVersion.customResource';
-import { IotTemplatesCustomResource } from './iotTemplates.customresource';
 import { IotPoliciesCustomResource } from './iotPolicies.customresource';
 import { IotEventsCustomResource } from './iotEvents.customresource';
 import { CustomResource } from './customResource';
@@ -39,6 +38,7 @@ import { VpcEndpointCustomResource } from './vpcEndpoint.customResource';
 import { RotateCertificatesJobCustomResource } from './rotateCertificatesJob.customresource';
 import { EventSourceCustomResource } from './eventSource.customResource';
 import { EventsCustomResource } from './events.customResource';
+import { IotRoleAliasCustomResource } from './iotRoleAlias.customResource';
 
 @injectable()
 export class CustomResourceManager {
@@ -60,7 +60,7 @@ export class CustomResourceManager {
         @inject(TYPES.IotEventsCustomResource) protected iotEventsCustomResource: IotEventsCustomResource,
         @inject(TYPES.IotFleetIndexCustomResource) protected iotFleetIndexCustomResource: IotFleetIndexCustomResource,
         @inject(TYPES.IotPoliciesCustomResource) protected iotPoliciesCustomResource: IotPoliciesCustomResource,
-        @inject(TYPES.IotTemplatesCustomResource) protected iotTemplatesCustomResource: IotTemplatesCustomResource,
+        @inject(TYPES.IotRoleAliasCustomResource) protected iotRoleAliasCustomResource: IotRoleAliasCustomResource,
         @inject(TYPES.IotThingGroupCustomResource) protected iotThingGroupCustomResource: IotThingGroupCustomResource,
         @inject(TYPES.IotThingTypeCustomResource) protected iotThingTypeCustomResource: IotThingTypeCustomResource,
         @inject(TYPES.RotateCertificatesJobCustomResource) protected rotateCertificatesJobCustomResource: RotateCertificatesJobCustomResource,
@@ -91,7 +91,6 @@ export class CustomResourceManager {
         this.customResources['Custom::IotEvents'] = iotEventsCustomResource;
         this.customResources['Custom::IotFleetIndex'] = iotFleetIndexCustomResource;
         this.customResources['Custom::IotPolicy'] = iotPoliciesCustomResource;
-        this.customResources['Custom::IotTemplate'] = iotTemplatesCustomResource;
         this.customResources['Custom::IotThingGroup'] = iotThingGroupCustomResource;
         this.customResources['Custom::IotThingType'] = iotThingTypeCustomResource;
 
@@ -103,6 +102,7 @@ export class CustomResourceManager {
 
         this.customResources['Custom::S3PutObject'] = s3PutObjectCustomResource;
         this.customResources['Custom::IotDeviceDefender'] = iotDeviceDefenderCustomResource;
+        this.customResources['Custom::IotRoleAlias'] = iotRoleAliasCustomResource;
         
         this.customResources['Custom::EventSource'] = eventSourceCustomResource;
         this.customResources['Custom::Events'] = eventsCustomResource;

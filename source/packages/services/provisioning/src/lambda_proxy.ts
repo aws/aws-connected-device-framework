@@ -21,8 +21,6 @@ const eventTranslator:SnsToApiGatewayEvents = new SnsToApiGatewayEvents();
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 exports.handler = async (event: any, context: AWSLambda.Context) => {
-  // console.log(`event: ${JSON.stringify(event)}`);
-  // console.log(`context: ${JSON.stringify(context)}`);
 
   // if SNS event, then transform it to look like API Gateway
   // TODO: for now this handles one event and assumes the topic

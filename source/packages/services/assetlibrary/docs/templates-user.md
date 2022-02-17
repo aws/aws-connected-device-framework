@@ -21,9 +21,9 @@ Endpoint | Description
 `POST /templates/group/{templateId}` | Creates a new group template
 `PATCH /templates/group/{templateId}` | Updates an existing group template
 `PUT /templates/group/{templateId}/publish` | Publishes a draft group template, making the template live
-`GET /templates/group?status={draft|published}` | Returns a list of all group templates for the given status
-`GET /templates/group/{templateId}?status={draft|published}` | Returns a specific version of a specific group template
-`DELETE /templates/group/{templateId}?status={draft|published}` | Deletes a specific version of a specific group template
+`GET /templates/group?status={draft\|published}` | Returns a list of all group templates for the given status
+`GET /templates/group/{templateId}?status={draft\|published}` | Returns a specific version of a specific group template
+`DELETE /templates/group/{templateId}?status={draft\|published}` | Deletes a specific version of a specific group template
 
 All group templates automatically inherit the following attributes:
 
@@ -69,9 +69,9 @@ Endpoint | Description
 `POST /templates/device/{templateId}` | Creates a new device template
 `PATCH /templates/device/{templateId}` | Updates an existing device template
 `PUT /templates/device/{templateId}/publish` | Publishes a draft device template, making the template live
-`GET /templates/device?status={draft|published}` | Returns a list of all device templates for the given status
-`GET /templates/device/{templateId}?status={draft|published}` | Returns a specific version of a specific device template
-`DELETE /templates/device/{templateId}?status={draft|published}` | Deletes a specific version of a specific device template
+`GET /templates/device?status={draft\|published}` | Returns a list of all device templates for the given status
+`GET /templates/device/{templateId}?status={draft\|published}` | Returns a specific version of a specific device template
+`DELETE /templates/device/{templateId}?status={draft\|published}` | Deletes a specific version of a specific device template
 
 All device templates automatically inherit the following attributes:
 
@@ -97,9 +97,9 @@ POST /templates/device/mote
     },
     "required": ["length"],
     "relations": {
-    	"out": {
-    		"located_at": ["site"]
-    	}
+        "out": {
+            "located_at": ["site"]
+        }
     },
     "components": ["sensor"]
 }
@@ -299,7 +299,6 @@ Endpoint | Description
 ---|---
 PUT /devices/{deviceId}/{relationship}/groups/{groupPath} | Associates a device to a group via a specific relationship
 DELETE /devices/{deviceId}/{relationship}/groups/{groupPath} | Removes a specific association between a device and group
-
 
 ## Defining Components
 

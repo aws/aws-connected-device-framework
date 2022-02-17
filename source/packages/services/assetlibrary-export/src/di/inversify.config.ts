@@ -10,42 +10,45 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import 'reflect-metadata';
+import '@cdf/config-inject'
+
 import AWS = require('aws-sdk');
-import config from 'config';
-import { decorate, injectable, Container, interfaces } from 'inversify';
-import { CDFConfigInjector } from '@cdf/config-inject';
+import { Container, decorate, injectable, interfaces } from 'inversify';
 
-import { TYPES } from './types';
-
-import { DevicesAssembler } from '../devices/devices.assembler';
-import { GroupsAssembler} from '../groups/groups.assembler';
-import { NodeAssembler } from '../data/assembler';
-
-import { ETLService } from '../etl/etl.service';
 import { BatchService } from '../batch/batch.service';
 import { CategoryBatcher } from '../batch/batchers/category.batcher';
 import { TypeBatcher } from '../batch/batchers/type.batcher';
+import { NodeAssembler } from '../data/assembler';
+import { DevicesAssembler } from '../devices/devices.assembler';
+import { ETLService } from '../etl/etl.service';
 import { ExtractService } from '../etl/extract.service';
-import { TransformService } from '../etl/transform.service';
-import { LoadService } from '../etl/load.service';
-import { LabelsDao } from '../labels/labels.dao';
-import { LabelsService } from '../labels/labels.service';
-
 import { DeviceExtractor } from '../etl/extractors/device.extractor';
 import { GroupExtractor } from '../etl/extractors/group.extractor';
-
+import { LoadService } from '../etl/load.service';
 import { S3Loader } from '../etl/loaders/s3.loader';
+import { TransformService } from '../etl/transform.service';
+import { GroupsAssembler } from '../groups/groups.assembler';
+import { LabelsDao } from '../labels/labels.dao';
+import { LabelsService } from '../labels/labels.service';
 import { S3Utils } from '../utils/s3.util';
-
-import * as full from './inversify.config.full';
 import { TypeUtils } from '../utils/typeUtils';
+import * as full from './inversify.config.full';
+import { TYPES } from './types';
 
 // Load everything needed to the Container
 export const container = new Container();
 
 // allow config to be injected
-const configInjector = new CDFConfigInjector();
-container.load(configInjector.getConfigModule());
+container.bind<string>('aws.s3.export.bucket').toConstantValue(process.env.AWS_S3_EXPORT_BUCKET);
+container.bind<string>('aws.s3.export.prefix').toConstantValue(process.env.AWS_S3_EXPORT_PREFIX);
+container.bind<string>('defaults.batch.by').toConstantValue(process.env.DEFAULTS_BATCH_BY);
+container.bind<string>('defaults.batch.size').toConstantValue(process.env.DEFAULTS_BATCH_SIZE);
+container.bind<string>('defaults.etl.extract.deviceExtractor.attributes').toConstantValue(process.env.DEFAULTS_ETL_EXTRACT_DEVICEEXTRACTOR_ATTRIBUTES);
+container.bind<boolean>('defaults.etl.extract.deviceExtractor.expandComponents').toConstantValue(process.env.DEFAULTS_ETL_EXTRACT_DEVICEEXTRACTOR_EXPANDCOMPONENTS === 'true');
+container.bind<boolean>('defaults.etl.extract.deviceExtractor.includeGroups').toConstantValue(process.env.DEFAULTS_ETL_EXTRACT_DEVICEEXTRACTOR_INCLUDEGROUPS === 'true');
+container.bind<string>('defaults.etl.load.type').toConstantValue(process.env.DEFAULTS_ETL_LOAD_TYPE);
+container.bind<string>('neptuneUrl').toConstantValue(process.env.NEPTUNEURL);
 
 container.load(full.FullContainerModule);
 
@@ -79,7 +82,7 @@ container.bind<interfaces.Factory<AWS.S3>>(TYPES.S3Factory)
         return () => {
 
             if (!container.isBound(TYPES.S3)) {
-                const s3 = new AWS.S3({region: config.get('aws.region')});
+                const s3 = new AWS.S3({region: process.env.AWS_REGION});
                 container.bind<AWS.S3>(TYPES.S3).toConstantValue(s3);
             }
             return container.get<AWS.S3>(TYPES.S3);

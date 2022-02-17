@@ -10,13 +10,14 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import {createLogger, LoggerOptions, transports} from 'winston';
-import {format} from 'logform';
+
+import { format } from 'logform';
+import { createLogger, LoggerOptions, transports } from 'winston';
+
 const { combine, timestamp, printf } = format;
-import config from 'config';
 
 export const logger = createLogger(<LoggerOptions> {
-    level: config.get('logging.level'),
+    level: process.env.LOGGING_LEVEL,
     exitOnError: false,
     transports: [
         new transports.Console(),

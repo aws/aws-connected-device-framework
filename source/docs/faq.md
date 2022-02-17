@@ -46,8 +46,8 @@ The AWS CDF is comprised of the following modules:
 
 - Bulk certs
 - Provisioning
-- Greengrass provisioning
-- Greengrass deployment
+- Greengrass V2 provisioning
+- Device Patcher
 - Certificate renewal
 - Certificate vendor
 - Certificate activator

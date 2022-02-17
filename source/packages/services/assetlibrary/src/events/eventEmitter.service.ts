@@ -10,11 +10,12 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
-import {logger} from '../utils/logger';
+import { inject, injectable } from 'inversify';
+
 import { TYPES } from '../di/types';
+import { logger } from '../utils/logger';
+
 import AWS = require('aws-sdk');
-import config from 'config';
 
 @injectable()
 export class EventEmitter {
@@ -32,7 +33,8 @@ export class EventEmitter {
 
         event.time = new Date().toISOString();
 
-        const topicTemplate = config.get(`events.${event.type}.topic`) as string;
+        const topicEnvName = `EVENTS_${event.type.toUpperCase()}_TOPIC`;
+        const topicTemplate = process.env[topicEnvName];
 
         if (topicTemplate===undefined || topicTemplate.length===0) {
             return;

@@ -11,9 +11,6 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import 'reflect-metadata';
-// import { createMockInstance } from 'jest-create-mock-instance';
-import config from 'config';
-import { logger } from './utils/logger';
 import { Simulation, LaunchParams } from './simulation';
 
 describe('LaunchSimulation', () => {
@@ -21,8 +18,6 @@ describe('LaunchSimulation', () => {
     it.skip('happy path should launch Fargate cluster', async () => {
 
         const instance= new Simulation('us-west-2');
-
-        logger.debug(`Using config: ${JSON.stringify(config.util.toObject())}`);
 
         const params:LaunchParams = {
             simulationId:'DEAN2000',

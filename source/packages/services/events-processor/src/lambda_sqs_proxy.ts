@@ -11,14 +11,10 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import { logger } from './utils/logger.util';
-import {container} from './di/inversify.config';
+import { SubscriptionService } from './api/subscriptions/subscription.service';
+import { container } from './di/inversify.config';
 import { TYPES } from './di/types';
-import {SubscriptionService} from './api/subscriptions/subscription.service';
-import config from 'config';
-
-// log detected config
-logger.info(`\nDetected config:\n${JSON.stringify(config.util.toObject())}\n`);
+import { logger } from './utils/logger.util';
 
 let subscriptionService:SubscriptionService;
 

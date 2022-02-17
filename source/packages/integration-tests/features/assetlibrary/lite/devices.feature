@@ -68,7 +68,7 @@ Feature: Device lifecycle
       | attributes | {"model":"B"} |
     Then device "TEST-devices-device001" exists with attributes
       | description | abc |
-      | awsIotThingArn | arn:aws:iot:%property:aws.region%:%property:aws.accountid%:thing/TEST-devices-device001 |
+      | awsIotThingArn | arn:aws:iot:%property:AWS_REGION%:%property:AWS_ACCOUNTID%:thing/TEST-devices-device001 |
       | attributes | {"serialNumber":"S001","model":"B"} |
 
   Scenario: Device Ids are unique

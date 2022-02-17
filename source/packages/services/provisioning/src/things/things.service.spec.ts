@@ -13,9 +13,10 @@
 import 'reflect-metadata';
 import { ThingsService } from './things.service';
 import AWS from 'aws-sdk';
-import { ClientIdEnforcementPolicyStepProcessor } from './steps/clientidenforcementpolicystepprocessor';
-import { CreateDeviceCertificateStepProcessor } from './steps/createdevicecertificateprocessor';
-import { RegisterDeviceCertificateWithoutCAStepProcessor } from './steps/registerdevicecertificatewithoutcaprocessor';
+import { ClientIdEnforcementPolicyStepProcessor } from './steps/clientIdEnforcementPolicyStepProcessor';
+import { CreateDeviceCertificateStepProcessor } from './steps/createDeviceCertificateProcessor';
+import { RegisterDeviceCertificateWithoutCAStepProcessor } from './steps/registerDeviceCertificateWithoutCaProcessor';
+import { AttachAdditionalPoliciesProcessor } from './steps/attachAdditionalPoliciesProcessor';
 
 let mockIot: AWS.Iot;
 let mockS3: AWS.S3;
@@ -38,8 +39,9 @@ describe('ThingsService', () => {
         const mockClientIdEnforcementPolicyStepProcessor = new ClientIdEnforcementPolicyStepProcessor(() => mockIot, 'region', 'accountId');
         const mockCreateDeviceCertificateStepProcessor = new CreateDeviceCertificateStepProcessor(() => mockIot, () => mockSSM, 365);
         const mockRegisterDeviceCertificateWithoutCAStepProcessor = new RegisterDeviceCertificateWithoutCAStepProcessor(() => mockIot);
+        const mockAttachAdditionalPoliciesProcessorProcessor = new AttachAdditionalPoliciesProcessor(() => mockIot);
 
-        instance = new ThingsService(() => mockIot, () => mockS3, mockClientIdEnforcementPolicyStepProcessor, mockCreateDeviceCertificateStepProcessor, mockRegisterDeviceCertificateWithoutCAStepProcessor,
+        instance = new ThingsService(() => mockIot, () => mockS3, mockClientIdEnforcementPolicyStepProcessor, mockCreateDeviceCertificateStepProcessor, mockRegisterDeviceCertificateWithoutCAStepProcessor, mockAttachAdditionalPoliciesProcessorProcessor,
         's3rolearn', 'templateBucket',  'teplatePrefix', 'templateSuffix', 'bulkRequestBukcet', 'bulkRequestPrefix',
         false, false);
     });
@@ -103,7 +105,7 @@ describe('ThingsService', () => {
         });
 
         // now do the service call
-        const provisionResponse = await instance.provision('test_template_id', {ThingName: 'UnitTestThingName'}, {});
+        const provisionResponse = await instance.provision('test_template_id', {ThingName: 'UnitTestThingName'}, undefined);
 
         expect(provisionResponse).toBeDefined();
         expect(provisionResponse.certificatePem).toEqual(certPem);

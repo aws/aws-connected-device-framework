@@ -20,15 +20,16 @@ Globals:
     OpenApiVersion: 3.0.1
 
 Parameters:
+
+  ApplicationConfigurationOverride:
+    Description: This allows you to override any application configuration.  It should consists of a text-based content with a structure and syntax comprising key–value pairs for properties. Any configurations contained in this will override the configurations found and merged from the default .env files.
+    Type: String
+
   Environment:
     Description:  Name of environment.  Used to name the created resources.
     Type: String
     MinLength: 1
-  ApplicationConfigurationOverride:
-    Description: This allows you to override any configuration application configuration. Must be a JSON formatted string. Any configurations contained in this will override the configurations found and merged from the config files.
-    Type: String
-    MinLength: 1
-
+  
   TemplateSnippetS3UriBase:
     Description: |
       S3 uri of directory where template snippets are stored for the account.
@@ -113,11 +114,29 @@ Parameters:
       - 'false'
     MinLength: 1
 
+  CorsOrigin:
+    Description: Sets the Access-Control-Allow-Origin response header to indicate whether the response can be shared with requesting code from the given origin.
+    Type: String
+    Default: ''
+
+  LoggingLevel:
+    Description: Application logging level
+    Type: String
+    Default: info
+    AllowedValues:
+      - error
+      - warn
+      - info
+      - debug
+      - silly
+
 Conditions:
   DeployInVPC: !Not [ !Equals [ !Ref VpcId, 'N/A' ] ]
   DeployWithLambdaAuth: !Or [ !Equals [ !Ref AuthType, 'LambdaRequest' ], !Equals [ !Ref AuthType, 'LambdaToken' ] ]
   KmsKeyIdProvided: !Not [ !Equals [ !Ref KmsKeyId, "" ] ]
   EnableApiGatewayAccessLogs: !Equals [ !Ref EnableApiGatewayAccessLogs, "true"]
+  CorsOriginProvided: !Not [ !Equals [ !Ref CorsOrigin, "" ] ]
+  LoggingLevelProvided: !Not [ !Equals [ !Ref LoggingLevel, "" ] ]
 
 Resources:
   ApiGatewayApi:
@@ -225,14 +244,16 @@ Resources:
       Timeout: 30
       Environment:
         Variables:
-          NODE_CONFIG_DIR: 'packages/services/simulation-manager/dist/config'
-          NODE_CONFIG: !Ref ApplicationConfigurationOverride
-          SIMULATION_MANAGER_DYNAMODB_TABLE_SIMULATIONS: !Ref SimulationsTable
-          SIMULATION_MANAGER_DYNAMODB_TABLE_STATE: !Ref SimulationDeviceState
-          SIMULATION_MANAGER_S3_BUCKET: !Ref BucketName
-          SIMULATION_MANAGER_SNS_TOPICS_LAUNCH: !Ref SimulationLauncherSnsTopic
-          SIMULATION_MANAGER_IOT_ENDPOINT: !GetAtt IotEndpoint.address
-          SIMULATION_MANAGER_CDF_ASSETLIBRARY_APIFUNCTIONNAME: !Ref AssetLibraryFunctionName
+          APP_CONFIG: !Ref ApplicationConfigurationOverride
+          APP_CONFIG_DIR: 'packages/services/simulation-manager/dist/config'
+          AWS_DYNAMODB_TABLE_SIMULATIONS: !Ref SimulationsTable
+          AWS_DYNAMODB_TABLE_STATE: !Ref SimulationDeviceState
+          AWS_S3_BUCKET: !Ref BucketName
+          AWS_SNS_TOPICS_LAUNCH: !Ref SimulationLauncherSnsTopic
+          AWS_IOT_HOST: !GetAtt IotEndpoint.address
+          ASSETLIBRARY_API_FUNCTION_NAME: !Ref AssetLibraryFunctionName
+          CORS_ORIGIN: !If [ CorsOriginProvided, !Ref CorsOrigin, !Ref AWS::NoValue ]
+          LOGGING_LEVEL: !If [ LoggingLevelProvided, !Ref LoggingLevel, !Ref AWS::NoValue ]
       Tracing: Active
 
       VpcConfig:

@@ -36,7 +36,7 @@ export const TYPES = {
     IotEventsCustomResource: Symbol.for('IotEventsCustomResource'),
     IotFleetIndexCustomResource: Symbol.for('IotFleetIndexCustomResource'),
     IotPoliciesCustomResource: Symbol.for('IotPoliciesCustomResource'),
-    IotTemplatesCustomResource: Symbol.for('IotTemplatesCustomResource'),
+    IotRoleAliasCustomResource: Symbol.for('IotRoleAliasCustomResource'),
     IotThingGroupCustomResource: Symbol.for('IotThingGroupCustomResource'),
     IotThingTypeCustomResource: Symbol.for('IotThingTypeCustomResource'),
 

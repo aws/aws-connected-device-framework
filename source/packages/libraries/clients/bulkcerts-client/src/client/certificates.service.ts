@@ -10,10 +10,11 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import {  RequestHeaders, CertificateBatchTaskWithChunks } from './certificates.models';
-import config from 'config';
-import {PathHelper} from '../utils/path.helper';
-import {injectable} from 'inversify';
+
+import { injectable } from 'inversify';
+
+import { PathHelper } from '../utils/path.helper';
+import { CertificateBatchTaskWithChunks, RequestHeaders } from './certificates.models';
 
 export interface CertificatesService {
     getCertificates(taskId:string, downloadType:string, additionalHeaders?: RequestHeaders): Promise<string[]|Buffer>;
@@ -47,8 +48,8 @@ export class CertificatesServiceBase {
 
         let headers = Object.assign({}, this._headers);
 
-        if (config.has('bulkcerts.headers')) {
-            const headersFromConfig:RequestHeaders = config.get('bulkcerts.headers') as RequestHeaders;
+        const headersFromConfig:RequestHeaders = process.env.BULKCERTS_HEADERS as unknown as RequestHeaders;
+        if (headersFromConfig) {
             if (headersFromConfig !== null && headersFromConfig !== undefined) {
                 headers = {...headers, ...headersFromConfig};
             }

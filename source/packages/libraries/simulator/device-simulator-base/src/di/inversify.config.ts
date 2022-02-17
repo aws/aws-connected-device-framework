@@ -10,16 +10,21 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import config from 'config';
+
+import 'reflect-metadata';
+import '@cdf/config-inject';
+
 import { EventEmitter } from 'events';
 import { ContainerModule, decorate, injectable, interfaces } from 'inversify';
 import ow from 'ow';
+
 import { CalcEngine } from '../calculations/calc.engine';
 import { DeviceContext } from '../deviceStateMachine/device.context';
 import { AwsIotThing } from '../iot/awsIotThing';
 import { LocalStateManager } from '../localState/localState.manager';
 import { TelemetryTransformer } from '../templates/telemetry.transformer';
 import { DEVICE_SIMULATOR_TYPES } from './types';
+
 import awsIot = require('aws-iot-device-sdk');
 
 
@@ -59,12 +64,12 @@ export const deviceSimulatorContainerModule = new ContainerModule (
         // create the mqtt client
         decorate(injectable(), awsIot.thingShadow);
         bind<awsIot.thingShadow>(DEVICE_SIMULATOR_TYPES.AwsIotMqttClient).toDynamicValue(()=> {
-          const keyPath = <string>config.get('aws.iot.keyPath');
-          const certPath = <string>config.get('aws.iot.certPath');
-          const caPath = <string>config.get('aws.iot.caPath');
-          const thingName = <string>config.get('aws.iot.thingName');
-          const host = <string>config.get('aws.iot.endpointAddress');
-          const region = <string>config.get('aws.region');
+          const keyPath = process.env.AWS_IOT_KEYPATH;
+          const certPath = process.env.AWS_IOT_CERTPATH;
+          const caPath = process.env.AWS_IOT_CAPATH;
+          const thingName = process.env.AWS_IOT_THINGNAME;
+          const host = process.env.AWS_IOT_ENDPOINTADDRESS;
+          const region = process.env.AWS_REGION;
   
           ow(keyPath, ow.string.nonEmpty);
           ow(certPath, ow.string.nonEmpty);

@@ -17,9 +17,8 @@ Description: CDF Simulation Launcher
 Parameters:
 
   ApplicationConfigurationOverride:
-    Description: This allows you to override any configuration application configuration. Must be a JSON formatted string. Any configurations contained in this will override the configurations found and merged from the config files.
+    Description: This allows you to override any application configuration.  It should consists of a text-based content with a structure and syntax comprising key–value pairs for properties. Any configurations contained in this will override the configurations found and merged from the default .env files.
     Type: String
-    MinLength: 1
 
   Environment:
     Description:  Name of environment.  Used to name the created resources.
@@ -32,7 +31,7 @@ Parameters:
     MinLength: 1
 
   VpcId:
-    Description: ID of VPC to deploy the Asset Library into
+    Description: ID of VPC to deploy the fleet simulator into
     Type: String
 
   CustomResourceLambdaArn:
@@ -53,6 +52,20 @@ Parameters:
   KmsKeyId:
     Description: The KMS key ID used to encrypt the SNS topic
     Type: String
+
+  LoggingLevel:
+    Description: Application logging level
+    Type: String
+    Default: info
+    AllowedValues:
+      - error
+      - warn
+      - info
+      - debug
+      - silly
+
+Conditions:
+  LoggingLevelProvided: !Not [ !Equals [ !Ref LoggingLevel, "" ] ]
 
 Resources:
 
@@ -156,7 +169,6 @@ Resources:
                 - 'logs:CreateLogGroup'
               Resource: '*'
 
-
   ECSTaskRole:
     Type: AWS::IAM::Role
     Metadata:
@@ -228,7 +240,6 @@ Resources:
       LogGroupName: !Sub "cdf-simulation-launcher-${Environment}"
       RetentionInDays: 14
       
-  
   LambdaExecutionRole:
     Type: AWS::IAM::Role
     Properties:
@@ -291,14 +302,14 @@ Resources:
       Timeout: 300
       Environment:
         Variables:
-          NODE_CONFIG_DIR: packages/services/simulation-launcher/dist/config
-          NODE_CONFIG: !Ref ApplicationConfigurationOverride
-          SIMULATION_LAUNCHER_STACKNAME: !Sub '${AWS::StackName}'
-          SIMULATION_LAUNCHER_AWS_S3_BUCKET: !Ref BucketName
-          SIMULATION_LAUNCHER_AWS_ECS_SUBNETID: !Ref PublicSubNetIds
-          SIMULATION_LAUNCHER_AWS_ECS_CLUSTERID: !Ref ECSCluster
-          SIMULATION_LAUNCHER_AWS_ECS_SECURITYGROUPID: !Ref FargateContainerSecurityGroup
-          SIMULATION_LAUNCHER_AWS_ECS_TASK_DEF_ARN: !Ref JMeterTaskDefinition
+          APP_CONFIG_DIR: 'packages/services/simulation-launcher/dist/config'
+          APP_CONFIG: !Ref ApplicationConfigurationOverride
+          AWS_S3_BUCKET: !Ref BucketName
+          AWS_ECS_SUBNETIDS: !Ref PublicSubNetIds
+          AWS_ECS_CLUSTERID: !Ref ECSCluster
+          AWS_ECS_SECURITYGROUPID: !Ref FargateContainerSecurityGroup
+          AWS_ECS_TASKDEFINITIONARN: !Ref JMeterTaskDefinition
+          LOGGING_LEVEL: !If [ LoggingLevelProvided, !Ref LoggingLevel, !Ref AWS::NoValue ]
       Tracing: Active
     DependsOn:
       - LambdaExecutionRole

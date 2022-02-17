@@ -2,6 +2,56 @@
   "name": "@cdf/assetlibrary",
   "entries": [
     {
+      "version": "6.0.1",
+      "tag": "@cdf/assetlibrary_v6.0.1",
+      "date": "Thu, 17 Feb 2022 10:54:42 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "rollback the previous change where add associated roles to neptune"
+          }
+        ]
+      }
+    },
+    {
+      "version": "6.0.0",
+      "tag": "@cdf/assetlibrary_v6.0.0",
+      "date": "Thu, 17 Feb 2022 09:27:38 GMT",
+      "comments": {
+        "major": [
+          {
+            "comment": "migrate configuration to use dotenv-flow and deployment to use installer"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@cdf/errors\" from `^3.0.0` to `^4.0.0`"
+          },
+          {
+            "comment": "Updating dependency \"@cdf/logger\" from `^3.0.0` to `^4.0.0`"
+          },
+          {
+            "comment": "Updating dependency \"@cdf/config-inject\" from `^3.0.0` to `^4.0.0`"
+          },
+          {
+            "comment": "Updating dependency \"@cdf/express-middleware\" from `^2.1.0` to `^3.0.0`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "5.4.3",
+      "tag": "@cdf/assetlibrary_v5.4.3",
+      "date": "Fri, 04 Feb 2022 17:03:38 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Fix bulk data import into Neptune by associating NeptuneLoadFromS3Role with Neptune cluster"
+          }
+        ]
+      }
+    },
+    {
       "version": "5.4.2",
       "tag": "@cdf/assetlibrary_v5.4.2",
       "date": "Tue, 25 Jan 2022 19:57:26 GMT",

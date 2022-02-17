@@ -9,9 +9,6 @@
             "path": "../logger"
         },
         {
-            "path": "../../config/config-inject"
-        },
-        {
             "path": "../lambda-invoke"
         }
     ],

@@ -2,6 +2,23 @@
   "name": "@cdf/assetlibrary-client",
   "entries": [
     {
+      "version": "5.0.0",
+      "tag": "@cdf/assetlibrary-client_v5.0.0",
+      "date": "Thu, 17 Feb 2022 09:27:38 GMT",
+      "comments": {
+        "major": [
+          {
+            "comment": "migrate configuration to use dotenv-flow and deployment to use installer"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@cdf/lambda-invoke\" from `^2.0.2` to `^3.0.0`"
+          }
+        ]
+      }
+    },
+    {
       "version": "4.2.3",
       "tag": "@cdf/assetlibrary-client_v4.2.3",
       "date": "Fri, 28 Jan 2022 02:31:34 GMT",

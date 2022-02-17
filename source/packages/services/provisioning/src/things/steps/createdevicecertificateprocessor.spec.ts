@@ -12,9 +12,11 @@
  *********************************************************************************************************************/
 import 'reflect-metadata';
 import AWS from 'aws-sdk';
-import { CreateDeviceCertificateStepProcessor } from './createdevicecertificateprocessor';
-import { ProvisioningStepInput, ProvisioningStepOutput } from './provisioningstep.model';
+import { CreateDeviceCertificateStepProcessor } from './createDeviceCertificateProcessor';
+import { ProvisioningStepData } from './provisioningStep.model';
 import * as pem from 'pem';
+import { CreateDeviceCertificateParameters } from '../things.models';
+import clone from 'just-clone';
 
 describe('CreateDeviceCertificateStepProcessor', () => {
     let instance: CreateDeviceCertificateStepProcessor;
@@ -61,7 +63,7 @@ describe('CreateDeviceCertificateStepProcessor', () => {
             };
         });
 
-        const unitTestStepInput: ProvisioningStepInput = {
+        const unitTestStepInput: ProvisioningStepData = {
             template: {
                 Resources: {},
                 Parameters: {},
@@ -81,37 +83,42 @@ describe('CreateDeviceCertificateStepProcessor', () => {
                     country: 'US',
                     emailAddress: 'xxxxxxxxxxxx'
                 }
-            }
+            },
+            state: {}
         };
 
         // now do the service call
-        const output: ProvisioningStepOutput = await instance.process(unitTestStepInput);
+        const stepData = clone(unitTestStepInput);
+        await instance.process(stepData);
 
-        expect(output).toBeDefined();
-        expect(output.parameters.test).toEqual(unitTestStepInput.parameters.test);
-        expect(output.cdfProvisioningParameters.caId).toEqual(unitTestStepInput.cdfProvisioningParameters.caId);
-        expect(output.cdfProvisioningParameters.certInfo).toMatchObject(unitTestStepInput.cdfProvisioningParameters.certInfo);
-        expect(output.parameters.CaCertificatePem).toEqual(cert.certificateDescription.certificatePem);
-        expect(output.parameters.CertificatePem.startsWith('-----BEGIN CERTIFICATE-----\n')).toBeTruthy();
-        expect(output.parameters.CertificatePem.endsWith('-----END CERTIFICATE-----')).toBeTruthy();
-        expect(output.cdfProvisioningParameters.privateKey.startsWith('-----BEGIN RSA PRIVATE KEY-----\n')).toBeTruthy();
-        expect(output.cdfProvisioningParameters.privateKey.endsWith('-----END RSA PRIVATE KEY-----')).toBeTruthy();
+        const cdfInputParams = unitTestStepInput.cdfProvisioningParameters as CreateDeviceCertificateParameters;
+        const cdfOutputParams = stepData.cdfProvisioningParameters as CreateDeviceCertificateParameters;
 
-        const certInfo = await getCertInfo(output.parameters.CertificatePem);
-        expect(certInfo.country).toEqual(unitTestStepInput.cdfProvisioningParameters.certInfo.country);
-        expect(certInfo.state).toEqual(unitTestStepInput.cdfProvisioningParameters.certInfo.stateName);
-        expect(certInfo.locality).toEqual(unitTestStepInput.cdfProvisioningParameters.certInfo.locality);
-        expect(certInfo.organization).toEqual(unitTestStepInput.cdfProvisioningParameters.certInfo.organization);
-        expect(certInfo.organizationUnit).toEqual(unitTestStepInput.cdfProvisioningParameters.certInfo.organizationalUnit);
-        expect(certInfo.commonName).toEqual(unitTestStepInput.cdfProvisioningParameters.certInfo.commonName);
-        expect(certInfo.emailAddress).toEqual(unitTestStepInput.cdfProvisioningParameters.certInfo.emailAddress);
+        expect(stepData).toBeDefined();
+        expect(stepData.parameters.test).toEqual(unitTestStepInput.parameters.test);
+        expect(cdfOutputParams.caId).toEqual(cdfInputParams.caId);
+        expect(cdfOutputParams.certInfo).toMatchObject(cdfInputParams.certInfo);
+        expect(stepData.parameters.CaCertificatePem).toEqual(cert.certificateDescription.certificatePem);
+        expect(stepData.parameters.CertificatePem.startsWith('-----BEGIN CERTIFICATE-----\n')).toBeTruthy();
+        expect(stepData.parameters.CertificatePem.endsWith('-----END CERTIFICATE-----')).toBeTruthy();
+        expect(stepData.state.privateKey.startsWith('-----BEGIN RSA PRIVATE KEY-----\n')).toBeTruthy();
+        expect(stepData.state.privateKey.endsWith('-----END RSA PRIVATE KEY-----')).toBeTruthy();
+
+        const certInfo = await getCertInfo(stepData.parameters.CertificatePem);
+        expect(certInfo.country).toEqual(cdfInputParams.certInfo.country);
+        expect(certInfo.state).toEqual(cdfInputParams.certInfo.stateName);
+        expect(certInfo.locality).toEqual(cdfInputParams.certInfo.locality);
+        expect(certInfo.organization).toEqual(cdfInputParams.certInfo.organization);
+        expect(certInfo.organizationUnit).toEqual(cdfInputParams.certInfo.organizationalUnit);
+        expect(certInfo.commonName).toEqual(cdfInputParams.certInfo.commonName);
+        expect(certInfo.emailAddress).toEqual(cdfInputParams.certInfo.emailAddress);
     });
 
     it('device certificate processor should throw an error if input does not have cdfProvisioningParameters', async () => {
 
         instance = new CreateDeviceCertificateStepProcessor(() => mockIot, () => mockSSM, 365);
 
-        const unitTestStepInput: ProvisioningStepInput = {
+        const unitTestStepInput: ProvisioningStepData = {
             template: {
                 Resources: {},
                 Parameters: {},
@@ -120,15 +127,16 @@ describe('CreateDeviceCertificateStepProcessor', () => {
             parameters: {
                 'test': 'this is only a test'
             },
-            cdfProvisioningParameters: undefined
+            cdfProvisioningParameters: undefined,
+            state: {}
         };
 
         // now do the service call
         try {
-            const output: ProvisioningStepOutput = await instance.process(unitTestStepInput);
-            expect(output).toBeFalsy(); // fail
+            await instance.process(unitTestStepInput);
+            fail();
         } catch (e) {
-            expect(e.message).toEqual('REGISTRATION_FAILED: template called for creation of certificate but cdfProvisioningParameters were not supplied');
+            expect(e.message).toContain('Expected `certInfo` to be of type `object` but received type `undefined`');
         }
     });
 
@@ -136,7 +144,7 @@ describe('CreateDeviceCertificateStepProcessor', () => {
 
         instance = new CreateDeviceCertificateStepProcessor(() => mockIot, () => mockSSM, 365);
 
-        const unitTestStepInput: ProvisioningStepInput = {
+        const unitTestStepInput: ProvisioningStepData = {
             template: {
                 Resources: {},
                 Parameters: {},
@@ -146,6 +154,7 @@ describe('CreateDeviceCertificateStepProcessor', () => {
                 'test': 'this is only a test'
             },
             cdfProvisioningParameters: {
+                caId: undefined,
                 certInfo: {
                     commonName: 'unittest.co',
                     organization: 'UnitTestCo',
@@ -155,13 +164,15 @@ describe('CreateDeviceCertificateStepProcessor', () => {
                     country: 'US',
                     emailAddress: 'xxxxxxxxxxxxxx'
                 }
-            }
+            },
+            state: {}
         };
 
         // now do the service call
+        const stepData = clone(unitTestStepInput);
         try {
-            const output: ProvisioningStepOutput = await instance.process(unitTestStepInput);
-            expect(output).toBeFalsy(); // fail
+            await instance.process(stepData);
+            fail();
         } catch (e) {
             expect(e.message).toEqual('Expected `caId` to be of type `string` but received type `undefined`');
         }
@@ -171,7 +182,7 @@ describe('CreateDeviceCertificateStepProcessor', () => {
 
         instance = new CreateDeviceCertificateStepProcessor(() => mockIot, () => mockSSM, 365);
 
-        const unitTestStepInput: ProvisioningStepInput = {
+        const unitTestStepInput: ProvisioningStepData = {
             template: {
                 Resources: {},
                 Parameters: {},
@@ -181,16 +192,18 @@ describe('CreateDeviceCertificateStepProcessor', () => {
                 'test': 'this is only a test'
             },
             cdfProvisioningParameters: {
-                caId: 'bb889ee7a74078d6dd4595c50be836419c6cf30d29c32481c10e7c723cf550ce'
-            }
+                caId: 'bb889ee7a74078d6dd4595c50be836419c6cf30d29c32481c10e7c723cf550ce',
+                certInfo: undefined
+            },
+            state: {}
         };
 
         // now do the service call
         try {
-            const output: ProvisioningStepOutput = await instance.process(unitTestStepInput);
-            expect(output).toBeFalsy(); // fail
+            await instance.process(unitTestStepInput);
+            fail();
         } catch (e) {
-            expect(e.message).toEqual('REGISTRATION_FAILED: template called for creation of certificate but certificate information was not not supplied');
+            expect(e.message).toContain('Expected `certInfo` to be of type `object` but received type `undefined`');
         }
     });
 });

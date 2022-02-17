@@ -16,8 +16,8 @@ import { logger } from './logger';
 export function handleError(e:Error, res:Response): void {
     logger.error(`handleError: ${e}`);
 
-    if (e.name === 'ArgumentError' || e.message === 'FAILED_VALIDATION'
-        || e.message.startsWith('REGISTRATION_FAILED:')) {
+    if (e.name === 'ArgumentError' || e.message === 'FAILED_VALIDATION' || e.message.startsWith('REGISTRATION_FAILED:')
+        || e.message.startsWith('INVALID_PROVISIONING_TEMPLATE:')) {
         res.status(400).json({error: e.message}).end();
 
     } else if (e.message === 'NOT_FOUND' || e.name === "ResourceNotFoundException") {

@@ -1,0 +1,190 @@
+--- #-----------------------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------------------
+#   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance
+#  with the License. A copy of the License is located at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES
+#  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions
+#  and limitations under the License.
+#-----------------------------------------------------------------------------------------------------------------------
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+
+Description: CDF Greengrass2 Installer Config Generators
+
+Parameters:
+  ApplicationConfigurationOverride:
+    Description: This allows you to override any application configuration.  It should consists of a text-based content with a structure and syntax comprising key–value pairs for properties. Any configurations contained in this will override the configurations found and merged from the default .env files.
+    Type: String
+
+  Environment:
+    Description: Name of environment.  Used to name the created resources.
+    Type: String
+    MinLength: 1
+
+  CustomResourceLambdaArn:
+    Description: Custom resource lambda arn
+    Type: String
+    MinLength: 1
+
+  TokenExchangeRoleAliasPrefix:
+    Description: The AWS IoT role alias that points to a token exchange IAM role. The AWS IoT credentials provider assumes this role to allow the Greengrass core device to interact with AWS services.
+    Type: String
+    MinLength: 1
+    Default: "greengrass2-role-alias"
+
+Resources:
+  GreengrassIotRoleAlias:
+    Type: Custom::IotRoleAlias
+    Version: 1.0
+    Properties:
+      ServiceToken: !Ref CustomResourceLambdaArn
+      TokenExchangeRoleNameArn: !GetAtt GreengrassTokenExchangeRole.Arn
+      TokenExchangeRoleAlias: !Sub "${TokenExchangeRoleAliasPrefix}-${Environment}"
+
+  GreengrassTokenExchangeRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - "credentials.iot.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      Path: "/"
+
+  GreengrassTokenExchangePolicy:
+    Type: "AWS::IAM::Policy"
+    Properties:
+      PolicyName: "root"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - iot:Connect
+              - iot:DescribeCertificate
+              - iot:Publish
+              - iot:Receive
+              - iot:Subscribe
+              - logs:CreateLogGroup
+              - logs:CreateLogStream
+              - logs:DescribeLogStreams
+              - logs:PutLogEvents
+              - s3:GetBucketLocation
+            Resource: "*"
+      Roles:
+        - Ref: "GreengrassTokenExchangeRole"
+
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: sts:AssumeRole
+      Path: "/cdf/greengrass2/"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AWSLambdaExecute
+        - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
+
+  ManualInstallConfigLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "cdf-greengrass2-manual-config-generator-${Environment}"
+      CodeUri: ../bundle.zip
+      Handler: packages/services/greengrass2-installer-config-generators/dist/lambda_manual_handler.handler
+      MemorySize: 256
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Runtime: nodejs14.x
+      Timeout: 30
+      AutoPublishAlias: live
+      DeploymentPreference:
+        Type: AllAtOnce
+      Environment:
+        Variables:
+          APP_CONFIG_DIR: "packages/services/greengrass2-installer-config-generators/dist/config"
+          APP_CONFIG: !Ref ApplicationConfigurationOverride
+          AWS_IOT_ROLE_ALIAS: !Sub "${TokenExchangeRoleAliasPrefix}-${Environment}"
+          AWS_IOT_ENDPOINT_DATA: !GetAtt IotDataEndpoint.address
+          AWS_IOT_ENDPOINT_CREDENTIALS: !GetAtt IotCredentialProviderEndpoint.address
+      Tracing: Active
+
+  FleetProvisioningConfigLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "cdf-greengrass2-fleet-config-generator-${Environment}"
+      CodeUri: ../bundle.zip
+      Handler: packages/services/greengrass2-installer-config-generators/dist/lambda_fleetProvisioning_handler.handler
+      MemorySize: 256
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Runtime: nodejs14.x
+      Timeout: 30
+      AutoPublishAlias: live
+      DeploymentPreference:
+        Type: AllAtOnce
+      Environment:
+        Variables:
+          APP_CONFIG_DIR: "packages/services/greengrass2-installer-config-generators/dist/config"
+          APP_CONFIG: !Ref ApplicationConfigurationOverride
+          AWS_IOT_ROLE_ALIAS: !Sub "${TokenExchangeRoleAliasPrefix}-${Environment}"
+          AWS_IOT_ENDPOINT_DATA: !Ref IotDataEndpoint
+          AWS_IOT_ENDPOINT_CREDENTIALS: !Ref IotCredentialProviderEndpoint
+      Tracing: Active
+
+  IotDataEndpoint:
+    Type: Custom::IotEndpoint
+    Version: 1.0
+    Properties:
+      ServiceToken: !Ref CustomResourceLambdaArn
+      EndpointType: "iot:Data-ATS"
+
+  IotCredentialProviderEndpoint:
+    Type: Custom::IotEndpoint
+    Version: 1.0
+    Properties:
+      ServiceToken: !Ref CustomResourceLambdaArn
+      EndpointType: "iot:CredentialProvider"
+
+Outputs:
+  TokenExchangeRoleAlias:
+    Description: Role Alias which will be assumed by Greengrass Core
+    Value: !Sub "${TokenExchangeRoleAliasPrefix}-${Environment}"
+  ManualInstallConfigLambdaConsoleUrl:
+    Description: Console URL for the manual install Lambda Function.
+    Value: !Sub "https://${AWS::Region}.console.aws.amazon.com/lambda/home?region=${AWS::Region}#/functions/${ManualInstallConfigLambda}"
+  ManualInstallConfigLambdaArn:
+    Description: ManualInstallConfigLambda Arn
+    Value: !Sub "${ManualInstallConfigLambda.Arn}"
+    Export:
+      Name: !Sub "cdf-greengrass2-installer-config-generators-${Environment}-manualInstallConfigLambdaArn"
+  ManualInstallConfigLambdaName:
+    Description: ManualInstallConfigLambda lambda function name
+    Value: !Ref ManualInstallConfigLambda
+    Export:
+      Name: !Sub "cdf-greengrass2-installer-config-generators-${Environment}-manualInstallConfigLambdaName"
+
+  FleetProvisioningConfigLambdaConsoleUrl:
+    Description: Console URL for the manual install Lambda Function.
+    Value: !Sub "https://${AWS::Region}.console.aws.amazon.com/lambda/home?region=${AWS::Region}#/functions/${FleetProvisioningConfigLambda}"
+  FleetProvisioningConfigLambdaArn:
+    Description: FleetProvisioningConfigLambda Arn
+    Value: !Sub "${FleetProvisioningConfigLambda.Arn}"
+    Export:
+      Name: !Sub "cdf-greengrass2-installer-config-generators-${Environment}-fleetProvisioningConfigLambdaArn"
+  FleetProvisioningConfigLambdaName:
+    Description: FleetProvisioningConfigLambda lambda function name
+    Value: !Ref FleetProvisioningConfigLambda
+    Export:
+      Name: !Sub "cdf-greengrass2-installer-config-generators-${Environment}-fleetProvisioningConfigLambdaName"

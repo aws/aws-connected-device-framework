@@ -1,6 +1,6 @@
 {
   "name": "@cdf/errors",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "description": "Library for CDF base errors",
   "author": "Atul Bargaje",
   "main": "dist/index.js",
@@ -10,7 +10,7 @@
     "clean": "npx shx rm -rf dist tsconfig.tsbuildinfo bundle.zip .rush .nyc_output *.log",
     "lint": "npx eslint . --ext '.ts'",
     "build": "npx tsc -b",
-    "test": "rushx lint && NODE_ENV= NODE_CONFIG_DIR='./src/config' jest --silent --passWithNoTests"
+    "test": "rushx lint && jest --silent --passWithNoTests"
   },
   "devDependencies": {
     "@rushstack/eslint-config": "2.3.4",
@@ -33,9 +33,7 @@
   },
   "jest": {
     "globals": {
-      "NODE_CONFIG_STRICT_MODE": false,
-      "SUPPRESS_NO_CONFIG_WARNING": true
-    },
+               },
     "roots": [
       "<rootDir>/src"
     ],

@@ -172,7 +172,7 @@ export class TemplatesDao {
 
         const params = {
             TableName: this.templatesTable,
-            Key: { templateId}
+            Key: { templateId }
         };
 
         await this._dc.delete(params).promise();

@@ -10,10 +10,10 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { Before, setDefaultTimeout} from 'cucumber';
-import AWS = require('aws-sdk');
-import config from 'config';
 
+import { Before, setDefaultTimeout } from 'cucumber';
+
+import AWS = require('aws-sdk');
 setDefaultTimeout(30 * 1000);
 /*
     Cucumber describes current scenario context as “World”. It can be used to store the state of the scenario
@@ -23,12 +23,12 @@ setDefaultTimeout(30 * 1000);
 // tslint:disable:no-invalid-this
 // tslint:disable:only-arrow-functions
 
-const templateBucket = config.get('provisioning.templates.bucket') as string;
-const templatePrefix = config.get('provisioning.templates.prefix') as string;
+const templateBucket = process.env.PROVISIONING_TEMPLATES_BUCKET;
+const templatePrefix = process.env.PROVISIONING_TEMPLATES_PREFIX;
 // const templateSuffix = config.get('provisioning.templates.suffix') as string;
 
-const s3 = new AWS.S3({region: config.get('aws.region')});
-const iot = new AWS.Iot({region: config.get('aws.region')});
+const s3 = new AWS.S3({region: process.env.AWS_REGION});
+const iot = new AWS.Iot({region: process.env.AWS_REGION});
 
 async function teardown() {
     // S3 cleanup - remove template from bucket

@@ -13,10 +13,9 @@
 import {createLogger, LoggerOptions, transports} from 'winston';
 import {format} from 'logform';
 const { combine, timestamp, printf } = format;
-import config from 'config';
 
 export const logger = createLogger(<LoggerOptions> {
-    level: config.get('logging.level'),
+    level: process.env.LOGGER_LEVEL,
     exitOnError: false,
     transports: [
         new transports.Console(),

@@ -10,13 +10,13 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
-import {logger} from '../utils/logger';
-import {TYPES} from '../di/types';
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
-import config from 'config';
-import { RunItem } from './runs.models';
+import { inject, injectable } from 'inversify';
+
+import { TYPES } from '../di/types';
+import { logger } from '../utils/logger';
 import { createDelimitedAttribute, PkType } from '../utils/pkUtils.util';
+import { RunItem } from './runs.models';
 
 @injectable()
 export class RunsDao {
@@ -29,8 +29,8 @@ export class RunsDao {
 	    @inject(TYPES.DocumentClientFactory) documentClientFactory: () => DocumentClient
     ) {
         this._dc = documentClientFactory();
-        this._simulationTable = config.get('aws.dynamodb.table.simulations');
-        this._deviceStateTable = config.get('aws.dynamodb.table.state');
+        this._simulationTable = process.env.AWS_DYNAMODB_TABLE_SIMULATIONS;
+        this._deviceStateTable = process.env.AWS_DYNAMODB_TABLE_STATE;
     }
 
     public async save(item:RunItem): Promise<void> {

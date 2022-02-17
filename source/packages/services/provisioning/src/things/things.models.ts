@@ -10,7 +10,7 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { RegisterThingResponse } from 'aws-sdk/clients/iot';
+
 
 export interface ProvisionThingRequest {
 	provisioningTemplateId:string;
@@ -18,14 +18,16 @@ export interface ProvisionThingRequest {
 	cdfProvisioningParameters?: CdfProvisioningParameters;
 }
 
-export interface CdfProvisioningParameters {
-	caId?: string;
-	certInfo?: CertInfo;
-	certificatePem?: string;
+export type CdfProvisioningParameters = CreateDeviceCertificateParameters | RegisterDeviceCertificateWithoutCAParameters | undefined;
+
+export interface CreateDeviceCertificateParameters {
+	caId: string;
+	certInfo: CertInfo;
+} 
+export interface RegisterDeviceCertificateWithoutCAParameters {
+	certificatePem: string;
 	certificateStatus?: CertificateStatus;
-	privateKey?: string;
-	registered?:RegisterThingResponse;
-}
+} 
 
 export interface CertInfo {
 	commonName?: string;

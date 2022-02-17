@@ -4,7 +4,7 @@ The asset library publishes messages to configurable MQTT topics on certain even
 
 ## Configuration
 
-By default, the MQTT event topics are confgured as follows, but may be overridden per deployment:
+By default, the MQTT event topics are configured as follows, but may be overridden per deployment:
 
 ```yaml
 events:

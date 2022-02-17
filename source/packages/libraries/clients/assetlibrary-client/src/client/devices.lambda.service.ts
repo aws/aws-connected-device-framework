@@ -17,21 +17,22 @@ import {
     Device20Resource,
     DeviceResourceList,
 } from './devices.model';
-import {inject, injectable} from 'inversify';
+import { inject, injectable } from 'inversify';
 import ow from 'ow';
-import {DevicesService, DevicesServiceBase} from './devices.service';
-import {RequestHeaders} from './common.model';
+import { DevicesService, DevicesServiceBase } from './devices.service';
+import { RequestHeaders } from './common.model';
 import { LambdaInvokerService, LAMBDAINVOKE_TYPES, LambdaApiGatewayEventBuilder } from '@cdf/lambda-invoke';
 
 @injectable()
 export class DevicesLambdaService extends DevicesServiceBase implements DevicesService {
 
+    private functionName: string;
     constructor(
         @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService) private lambdaInvoker: LambdaInvokerService,
-        @inject('assetLibrary.apiFunctionName') private functionName : string
     ) {
         super();
         this.lambdaInvoker = lambdaInvoker;
+        this.functionName = process.env.ASSETLIBRARY_API_FUNCTION_NAME
     }
 
     /**
@@ -41,10 +42,10 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
      * @param relationship The relationship between the device and group. For example, this may reflect &#x60;locatedAt&#x60; or &#x60;manufacturedAt&#x60; relations.
      * @param otherDeviceId ID of device to create relationship to.
      */
-    async attachToDevice(deviceId: string, relationship: string, otherDeviceId: string, additionalHeaders?:RequestHeaders): Promise<void> {
+    async attachToDevice(deviceId: string, relationship: string, otherDeviceId: string, additionalHeaders?: RequestHeaders): Promise<void> {
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
-        ow(relationship,'relationship', ow.string.nonEmpty);
-        ow(otherDeviceId,'otherDeviceId', ow.string.nonEmpty);
+        ow(relationship, 'relationship', ow.string.nonEmpty);
+        ow(otherDeviceId, 'otherDeviceId', ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.deviceAttachedDeviceRelativeUrl(deviceId, relationship, otherDeviceId))
@@ -62,11 +63,11 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
      * @param direction Direction (in|out) of the relation,
      * @param otherDeviceId ID of device to create relationship to.
      */
-    async attachToDeviceWithDirection(deviceId: string, relationship: string, direction:string, otherDeviceId: string, additionalHeaders?:RequestHeaders): Promise<void> {
+    async attachToDeviceWithDirection(deviceId: string, relationship: string, direction: string, otherDeviceId: string, additionalHeaders?: RequestHeaders): Promise<void> {
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
-        ow(relationship,'relationship', ow.string.nonEmpty);
-        ow(direction,'direction', ow.string.nonEmpty);
-        ow(otherDeviceId,'otherDeviceId', ow.string.nonEmpty);
+        ow(relationship, 'relationship', ow.string.nonEmpty);
+        ow(direction, 'direction', ow.string.nonEmpty);
+        ow(otherDeviceId, 'otherDeviceId', ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.deviceAttachedDirectionalDeviceRelativeUrl(deviceId, relationship, direction, otherDeviceId))
@@ -83,10 +84,10 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
      * @param relationship The relationship between the device and group. For example, this may reflect &#x60;locatedAt&#x60; or &#x60;manufacturedAt&#x60; relations.
      * @param groupPath Path of group.
      */
-    async attachToGroup(deviceId: string, relationship: string, groupPath: string, additionalHeaders?:RequestHeaders): Promise<void> {
+    async attachToGroup(deviceId: string, relationship: string, groupPath: string, additionalHeaders?: RequestHeaders): Promise<void> {
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
-        ow(relationship,'relationship', ow.string.nonEmpty);
-        ow(groupPath,'groupPath', ow.string.nonEmpty);
+        ow(relationship, 'relationship', ow.string.nonEmpty);
+        ow(groupPath, 'groupPath', ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.deviceAttachedGroupRelativeUrl(deviceId, relationship, groupPath))
@@ -104,11 +105,11 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
      * @param direction Direction (in|out) of the relation.
      * @param groupPath Path of group.
      */
-    async attachToGroupWithDirection(deviceId: string, relationship: string, direction:string, groupPath: string, additionalHeaders?:RequestHeaders): Promise<void> {
+    async attachToGroupWithDirection(deviceId: string, relationship: string, direction: string, groupPath: string, additionalHeaders?: RequestHeaders): Promise<void> {
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
-        ow(relationship,'relationship', ow.string.nonEmpty);
-        ow(direction,'direction', ow.string.nonEmpty);
-        ow(groupPath,'groupPath', ow.string.nonEmpty);
+        ow(relationship, 'relationship', ow.string.nonEmpty);
+        ow(direction, 'direction', ow.string.nonEmpty);
+        ow(groupPath, 'groupPath', ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.deviceAttachedDirectionalGroupRelativeUrl(deviceId, relationship, direction, groupPath))
@@ -124,7 +125,7 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
      * @param deviceId Id of parent device
      * @param body Device to add as a component
      */
-    async createComponent(deviceId: string, body: Device10Resource | Device20Resource, additionalHeaders?:RequestHeaders): Promise<void> {
+    async createComponent(deviceId: string, body: Device10Resource | Device20Resource, additionalHeaders?: RequestHeaders): Promise<void> {
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
         ow(body, 'body', ow.object.nonEmpty);
 
@@ -142,12 +143,12 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
      *
      * @param body Device to add to the asset library
      */
-    async createDevice(body: Device10Resource | Device20Resource, applyProfileId?: string, additionalHeaders?:RequestHeaders): Promise<void> {
+    async createDevice(body: Device10Resource | Device20Resource, applyProfileId?: string, additionalHeaders?: RequestHeaders): Promise<void> {
         ow(body, 'body', ow.object.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.devicesRelativeUrl())
-            .setQueryStringParameters({applyProfile: applyProfileId})
+            .setQueryStringParameters({ applyProfile: applyProfileId })
             .setMethod('POST')
             .setHeaders(super.buildHeaders(additionalHeaders))
             .setBody(body);
@@ -160,13 +161,13 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
      *
      * @param body Device to add to the asset library
      */
-    async bulkCreateDevice(body: BulkDevicesResource, applyProfileId?: string, additionalHeaders?:RequestHeaders): Promise<BulkDevicesResult> {
+    async bulkCreateDevice(body: BulkDevicesResource, applyProfileId?: string, additionalHeaders?: RequestHeaders): Promise<BulkDevicesResult> {
 
         ow(body, 'body', ow.object.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.bulkDevicesRelativeUrl())
-            .setQueryStringParameters({applyProfile: applyProfileId})
+            .setQueryStringParameters({ applyProfile: applyProfileId })
             .setMethod('POST')
             .setHeaders(super.buildHeaders(additionalHeaders))
             .setBody(body);
@@ -175,13 +176,13 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
         return res.body;
     }
 
-    async bulkUpdateDevice(body: BulkDevicesResource, applyProfileId?: string, additionalHeaders?:RequestHeaders): Promise<void> {
+    async bulkUpdateDevice(body: BulkDevicesResource, applyProfileId?: string, additionalHeaders?: RequestHeaders): Promise<void> {
 
         ow(body, 'body', ow.object.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.bulkDevicesRelativeUrl())
-            .setQueryStringParameters({applyProfile: applyProfileId})
+            .setQueryStringParameters({ applyProfile: applyProfileId })
             .setMethod('PATCH')
             .setHeaders(super.buildHeaders(additionalHeaders))
             .setBody(body);
@@ -196,12 +197,12 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
      * @param deviceId Id of parent device
      * @param componentId ID of child component
      */
-    async deleteComponent(deviceId: string, componentId: string, additionalHeaders?:RequestHeaders): Promise<void> {
+    async deleteComponent(deviceId: string, componentId: string, additionalHeaders?: RequestHeaders): Promise<void> {
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
-        ow(componentId, 'componentId',ow.string.nonEmpty);
+        ow(componentId, 'componentId', ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
-            .setPath(super.deviceAttachedComponentRelativeUrl(deviceId,componentId))
+            .setPath(super.deviceAttachedComponentRelativeUrl(deviceId, componentId))
             .setMethod('DELETE')
             .setHeaders(super.buildHeaders(additionalHeaders));
 
@@ -213,7 +214,7 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
      * Deletes a single device
      * @param deviceId ID of device to return
      */
-    async deleteDevice(deviceId: string, additionalHeaders?:RequestHeaders): Promise<void> {
+    async deleteDevice(deviceId: string, additionalHeaders?: RequestHeaders): Promise<void> {
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
@@ -231,12 +232,12 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
      * @param relationship The relationship between the device and group. For example, this may reflect &#x60;locatedAt&#x60; or &#x60;manufacturedAt&#x60; relations.
      * @param otherDeviceId ID of device to create relationship to.
      */
-    async detachFromDevice(deviceId: string, relationship: string, otherDeviceId: string, additionalHeaders?:RequestHeaders): Promise<void> {
+    async detachFromDevice(deviceId: string, relationship: string, otherDeviceId: string, additionalHeaders?: RequestHeaders): Promise<void> {
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
-        ow(relationship,'relationship', ow.string.nonEmpty);
-        ow(otherDeviceId,'otherDeviceId', ow.string.nonEmpty);
+        ow(relationship, 'relationship', ow.string.nonEmpty);
+        ow(otherDeviceId, 'otherDeviceId', ow.string.nonEmpty);
 
-       const event = new LambdaApiGatewayEventBuilder()
+        const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.deviceAttachedDeviceRelativeUrl(deviceId, relationship, otherDeviceId))
             .setMethod('DELETE')
             .setHeaders(super.buildHeaders(additionalHeaders));
@@ -252,13 +253,13 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
      * @param direction Direction (in|out) of relation.
      * @param otherDeviceId ID of device to create relationship to.
      */
-    async detachFromDeviceWithDirection(deviceId: string, relationship: string, direction:string, otherDeviceId: string, additionalHeaders?:RequestHeaders): Promise<void> {
+    async detachFromDeviceWithDirection(deviceId: string, relationship: string, direction: string, otherDeviceId: string, additionalHeaders?: RequestHeaders): Promise<void> {
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
-        ow(relationship,'relationship', ow.string.nonEmpty);
-        ow(direction,'direction', ow.string.nonEmpty);
-        ow(otherDeviceId,'otherDeviceId', ow.string.nonEmpty);
+        ow(relationship, 'relationship', ow.string.nonEmpty);
+        ow(direction, 'direction', ow.string.nonEmpty);
+        ow(otherDeviceId, 'otherDeviceId', ow.string.nonEmpty);
 
-       const event = new LambdaApiGatewayEventBuilder()
+        const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.deviceAttachedDirectionalDeviceRelativeUrl(deviceId, relationship, direction, otherDeviceId))
             .setMethod('DELETE')
             .setHeaders(super.buildHeaders(additionalHeaders));
@@ -273,10 +274,10 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
      * @param relationship The relationship between the device and group. For example, this may reflect &#x60;locatedAt&#x60; or &#x60;manufacturedAt&#x60; relations.
      * @param groupPath Path of group.
      */
-    async detachFromGroup(deviceId: string, relationship: string, groupPath: string, additionalHeaders?:RequestHeaders): Promise<void> {
+    async detachFromGroup(deviceId: string, relationship: string, groupPath: string, additionalHeaders?: RequestHeaders): Promise<void> {
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
-        ow(relationship,'relationship', ow.string.nonEmpty);
-        ow(groupPath,'groupPath', ow.string.nonEmpty);
+        ow(relationship, 'relationship', ow.string.nonEmpty);
+        ow(groupPath, 'groupPath', ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.deviceAttachedGroupRelativeUrl(deviceId, relationship, groupPath))
@@ -294,11 +295,11 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
      * @param direction Direction (in|out) of relation.
      * @param groupPath Path of group.
      */
-    async detachFromGroupWithDirection(deviceId: string, relationship: string, direction:string, groupPath: string, additionalHeaders?:RequestHeaders): Promise<void> {
+    async detachFromGroupWithDirection(deviceId: string, relationship: string, direction: string, groupPath: string, additionalHeaders?: RequestHeaders): Promise<void> {
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
-        ow(relationship,'relationship', ow.string.nonEmpty);
-        ow(direction,'direction', ow.string.nonEmpty);
-        ow(groupPath,'groupPath', ow.string.nonEmpty);
+        ow(relationship, 'relationship', ow.string.nonEmpty);
+        ow(direction, 'direction', ow.string.nonEmpty);
+        ow(groupPath, 'groupPath', ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.deviceAttachedDirectionalGroupRelativeUrl(deviceId, relationship, direction, groupPath))
@@ -314,7 +315,7 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
      * @param deviceId ID of device to return
      * @param expandComponents By default, components of a device are not returned. Passing &#x60;true&#x60; will return and expand a devices components.
      */
-    async getDeviceByID(deviceId: string, expandComponents?: boolean, attributes?: string[], groups?: string[], additionalHeaders?:RequestHeaders): Promise<Device10Resource | Device20Resource> {
+    async getDeviceByID(deviceId: string, expandComponents?: boolean, attributes?: string[], groups?: string[], additionalHeaders?: RequestHeaders): Promise<Device10Resource | Device20Resource> {
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
 
         const attributes_qs = (attributes) ? attributes.join() : undefined;
@@ -340,9 +341,9 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
      * @param deviceId Id of parent device
      * @param componentId ID of child component
      */
-    async updateComponent(deviceId: string, componentId: string, body: Device10Resource | Device20Resource, additionalHeaders?:RequestHeaders): Promise<void> {
+    async updateComponent(deviceId: string, componentId: string, body: Device10Resource | Device20Resource, additionalHeaders?: RequestHeaders): Promise<void> {
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
-        ow(componentId, 'componentId',ow.string.nonEmpty);
+        ow(componentId, 'componentId', ow.string.nonEmpty);
         ow(body, 'body', ow.object.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
@@ -360,7 +361,7 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
      * @param deviceId ID of device to return
      * @param body Device object that needs to be updated in device store
      */
-    async updateDevice(deviceId: string, body: Device10Resource | Device20Resource, applyProfileId?: string, additionalHeaders?:RequestHeaders): Promise<void> {
+    async updateDevice(deviceId: string, body: Device10Resource | Device20Resource, applyProfileId?: string, additionalHeaders?: RequestHeaders): Promise<void> {
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
         ow(body, 'body', ow.object.nonEmpty);
 
@@ -382,13 +383,13 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
      * @param deviceIds IDs of device to return
      * @param expandComponents By default, components of a device are not returned. Passing &#x60;true&#x60; will return and expand a devices components.
      */
-    async getDevicesByID(deviceIds: string[], expandComponents?: boolean, attributes?: string[], groups?: string[], additionalHeaders?:RequestHeaders): Promise<DeviceResourceList> {
-        ow(deviceIds, 'deviceIds',ow.array.nonEmpty.minLength(1));
+    async getDevicesByID(deviceIds: string[], expandComponents?: boolean, attributes?: string[], groups?: string[], additionalHeaders?: RequestHeaders): Promise<DeviceResourceList> {
+        ow(deviceIds, 'deviceIds', ow.array.nonEmpty.minLength(1));
 
         const attributes_qs = (attributes) ? attributes.join() : undefined;
         const groups_qs = (groups) ? groups.join() : undefined;
 
-       const event = new LambdaApiGatewayEventBuilder()
+        const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.bulkDevicesRelativeUrl())
             .setMethod('GET')
             .setQueryStringParameters({

@@ -10,18 +10,23 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+
 import 'reflect-metadata';
-import { Before, Given, When, Then, setDefaultTimeout } from 'cucumber';
-import { ThingsService, ProvisionThingRequest, ProvisionThingResponse } from '@cdf/provisioning-client';
+
+import { fail } from 'assert';
+import { expect, use } from 'chai';
+import { Before, Given, setDefaultTimeout, Then, When } from 'cucumber';
+
+import {
+    PROVISIONING_CLIENT_TYPES, ProvisionThingRequest, ProvisionThingResponse, ThingsService
+} from '@cdf/provisioning-client';
+
+import { Dictionary } from '../../../../libraries/core/lambda-invoke/src';
+import { container } from '../../di/inversify.config';
+import { AUTHORIZATION_TOKEN, replaceTokens } from '../common/common.steps';
+
 import AWS = require('aws-sdk');
 import chai_string = require('chai-string');
-import { expect, use } from 'chai';
-import { fail } from 'assert';
-import config from 'config';
-import {AUTHORIZATION_TOKEN, replaceTokens} from '../common/common.steps';
-import {Dictionary} from '../../../../libraries/core/lambda-invoke/src';
-import {container} from '../../di/inversify.config';
-import {PROVISIONING_CLIENT_TYPES} from '@cdf/provisioning-client';
 use(chai_string);
 /*
     Cucumber describes current scenario context as “World”. It can be used to store the state of the scenario
@@ -43,7 +48,7 @@ function getAdditionalHeaders(world:unknown) : Dictionary {
 }
 
 Before(function () {
-    iot = new AWS.Iot({region: config.get('aws.region')});
+    iot = new AWS.Iot({region: process.env.AWS_REGION});
 });
 
 Given('thing {string} exists', async function(deviceId: string) {

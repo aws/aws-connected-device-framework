@@ -16,20 +16,16 @@ Transform: AWS::Serverless-2016-10-31
 Description: CDF Asset Library Service
 
 Parameters:
-  ArtifactsBucket:
-    Description:  Name of environment.  Used to name the created resources.
+  PrivateApiGatewayVPCEndpoint:
+    Description: VPC endpoint required for private api gateway support
     Type: String
-  ArtifactsConfigPrefix:
-    Description:  Key prefix within bucket where config artifacts are uploaded to.
+
+  ApplicationConfigurationOverride:
+    Description: This allows you to override any application configuration.  It should consists of a text-based content with a structure and syntax comprising key–value pairs for properties. Any configurations contained in this will override the configurations found and merged from the default .env files.
     Type: String
-    Default: 'config/'
 
   Environment:
     Description:  Name of environment.  Used to name the created resources.
-    Type: String
-    MinLength: 1
-  AssetLibraryApplicationConfigurationOverride:
-    Description: This allows you to override any assetlibrary configuration application configuration. Must be a JSON formatted string. Any configurations contained in this will override the configurations found and merged from the config files.
     Type: String
     MinLength: 1
 
@@ -42,13 +38,6 @@ Parameters:
   PrivateSubNetIds:
     Description: Comma delimited list of private subnetIds to deploy the Asset Library into
     Type: String
-  PrivateRouteTableIds:
-    Description: Comma delimited list of private route table ids to allow access to Neptune
-    Type: String
-  PrivateApiGatewayVPCEndpoint:
-    Description: VPC endpoint required for private api gateway support
-    Type: String
-
   Mode:
     Description: Run in 'lite' mode which includes device registry only, or 'full' mode which augments the device registry with an additional datastore
     Type: String
@@ -120,13 +109,8 @@ Parameters:
     Type: String
     Default: false
     AllowedValues:
-      - 'true'
-      - 'false'
-    MinLength: 1
-
-  KmsKeyId:
-    Description: The KMS key ID used to encrypt SSM parameters, DynamoDB and SNS Topics
-    Type: String
+      - true
+      - false
     MinLength: 1
 
   NeptuneSnapshotIdentifier:
@@ -135,8 +119,7 @@ Parameters:
 
 Conditions:
   DeployFullMode: !Equals [ !Ref Mode, 'full' ]
-  DeployInVPC: !Not [ !Equals [ !Ref VpcId, 'N/A' ] ]
-  DeployWithLambdaAuth: !Or [ !Equals [ !Ref AuthType, 'LambdaRequest' ], !Equals [ !Ref AuthType, 'LambdaToken' ] ]
+  UsingVPCForAuth: !Equals [ !Ref AuthType, 'Private' ]
 
 Resources:
 
@@ -148,7 +131,6 @@ Resources:
       Parameters:
         Environment: !Ref Environment
         DbInstanceType: !Ref NeptuneDbInstanceType
-        PrivateRouteTableIds: !Ref PrivateRouteTableIds
         PrivateSubNetIds: !Ref PrivateSubNetIds
         CDFSecurityGroupId: !Ref CDFSecurityGroupId
         VpcId: !Ref VpcId
@@ -161,12 +143,12 @@ Resources:
     Properties:
       TemplateURL: ./cfn-assetLibrary.yaml
       Parameters:
+        ApplicationConfigurationOverride: !Ref ApplicationConfigurationOverride
+        PrivateApiGatewayVPCEndpoint: !If [ UsingVPCForAuth, !Ref PrivateApiGatewayVPCEndpoint, 'N/A' ]
         Environment: !Ref Environment
-        ApplicationConfigurationOverride: !Ref AssetLibraryApplicationConfigurationOverride
         VpcId: !Ref VpcId
         CDFSecurityGroupId: !Ref CDFSecurityGroupId
         PrivateSubNetIds: !Ref PrivateSubNetIds
-        PrivateApiGatewayVPCEndpoint: !Ref PrivateApiGatewayVPCEndpoint
         Mode: !Ref Mode
         TemplateSnippetS3UriBase: !Ref TemplateSnippetS3UriBase
         ApiGatewayDefinitionTemplate: !Ref ApiGatewayDefinitionTemplate

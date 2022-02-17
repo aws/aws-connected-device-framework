@@ -1,19 +1,43 @@
-# Migrating from pre-open source version
+# Migration of backward incompatible changes
 
-NOTE: The initial release of this open source version does not include the _greengrass-provisioning_ and _greengrass-deployment_ modules as their current implementation is based on Greengrass V1. Once they have been upgraded to use Greengrass V2 they will be released. It is recommended that customers who are using the Greengrass V1 versions of those modules do not upgrade to this open sourced version of CDF just yet.
+While we endeavor to always make backward compatible changes, there may be times when we need to make changes that are not backward compatible. If these changes are made at the API level then the affected modules REST API vendor mime types will be versioned supporting both new and old versions, as well as the modules minor version bumped. But if the change affect something else such as how configuration is handled, or how applications are deployed, then the major versions of the modules will be bumped with migration notes added here.
 
-## Introduction
+## Migrating from Release <=1.5 to Release 1.6
 
-Prior to this open source version of CDF, this CDF project had a different directory structure as well as a slightly differnt method of deploying. These changes were required as part of making CDF open source. 
+### Application configuration
+
+In prior release of CDF the modules use [node-config](https://github.com/node-config/node-config) to organize hierarchical configuration which allows us to define default parameters, and extend it to different deployment environments. There are some limitations with `node-config` that prevents [tree shaking](https://webpack.js.org/guides/tree-shaking/) to be applied to reduce the size of the lambda's bundles. As a first step for us to apply tree shaking to CDF services, `node-config` is now replaced with [dotenv flow](https://github.com/kerimdzhanov/dotenv-flow).
+
+This change has 3 impacts: 
+- The CDF infrastructure configuration project that contained a json configuration file per module per environment is now replaced with a single json configuration file per environment. This file is auto-created by the new `installer` module (see next section)
+- All CloudFormation stacks that allow for application configuration passing to override defaults previously accepted a `node-config` json configuration file. These now accept a `dot-env` multi-line string comprising key–value pairs for properties (in the format of [INI](https://en.wikipedia.org/wiki/INI_file) files.  More details of this configuration can be found in `docs/configuration.md` within each CDF module folder.
+- If deploying CDF using the new installer module then the installer will take care of creating the configuration file for you. However, if running a CDF module locally you need to define the application configuration. The installer has a mode where it can auo-generate the local application configuration for you based on an existing CDF deployment.
+
+### New `installer` module
+
+In prior release of CDF, the deployment of modules was carried out using bash scripts. We are introducing the [installer module](../packages/services/installer/README.md) to simplify the deployment process. The new installer will run through a sequence of questions to determine what `parameters` need to be provided to deploy each module. 
+
+>**Its highly advised to run through the new installer in a non-production AWS environment to look at the generated CloudFormation (and its change sets) to understand the potential modification to your existing AWS resources.**  
+
+There are no changes on the CloudFormation definition of the stateful resources and or on the CloudFormation stack name itself. If you had deployed CDF in the past, as long as your answer in the installer wizard matches with the your current deployment the upgrade process should be seamless. The main changes within CloudFormation are mainly related to application configuration changes specified in the section above.
+
+>**In production environment, its highly advised to take a snapshot of the stateful resources (e.g Neptune, DynamoDB) before re-deploying the services with this new installer.**  
+## Migrating from pre-open source version (CodeCommit repo) to open source version (GitHub repo)
+
+NOTE: The initial release of this open source version did not include the _greengrass-provisioning_ and _greengrass-deployment_ modules as their implementation was based on Greengrass V1. New versions of these modules supporting Greengrass V2 were released at a later date.
+
+### Introduction
+
+Prior to this open source version of CDF, this CDF project had a different directory structure as well as a slightly different method of deploying. These changes were required as part of making CDF open source. 
 
 Unfortunately, this introduces backwards incompatible changes to the deployment process. Note there are no changes to how the modules themselves function or the API's they expose, but for existing users who installed CDF prior to open sourcing, their CDF deployment must be updated to continue to be able to merge and deploy updates.
 
 The intended upgrade path requires a backup of databases, the tearing down of existing CDF deployment, redeploying, and restoring the backups. This will require an outage therefore will need to be carried out as part of planned maintenance for production environments. 
 
 It is highly recommended that any migration is tested in non-production environments before attempting to migrate in production!
-### Required Changes Prior to Migration
+#### Required Changes Prior to Migration
 
-#### Module configuration and deploy script changes (_cdf-infrastructure-*_ project)
+##### Module configuration and deploy script changes (_cdf-infrastructure-*_ project)
 
 **Pre open-source version**
 
@@ -23,7 +47,7 @@ This project also contained a `deploy.bash` script that in addition to deploying
 
 **Open-source version**
 
-As this project is open-sourced as as single `aws/aws-connected-device-framework` git repo, there is no accompanying reference `cdf-infrastructure-*` project. Instead, details of how to build this configuration is well documented at [application configuration](./application-configuration.md).
+Until CDF version 1.0.5, a separate folder `cdf-infrastructure-*` outside this repo was expected to house configuration data in JSON format. This has now been replaced by the [CDF installer](../packages/services/installer/README.md).
 
 The `cdf-core` project is renamed to `aws-connected-device-framework`. 
 
@@ -31,37 +55,36 @@ The CDF modules within `aws-connected-device-framework` are now located at `sour
 
 **Change Required**
 
-Any references to `cdf-core` from existing `cdf-infrasturcture-*/deploy.bash` scripts need to be updated as well as possibly updating the path to individual modules if referenced.
+Any references to `cdf-core` from existing `cdf-infrastructure-*/deploy.bash` scripts need to be updated as well as possibly updating the path to individual modules if referenced.
 
-###  Consuming application changes (e.g. _cdf-facade-*_ projects)
+####  Consuming application changes (e.g. _cdf-facade-*_ projects)
 
 **Change Required**
 
-Depending on the implementation of the facade project, the new release could potentially affect the integration between the facade and cdf-core. To mitigate this risk, the integration point between
-cdf-core and the facade should be reviewed and updated as needed.
+Depending on the implementation of the facade project, the new release could potentially affect the integration between the facade and cdf-core. To mitigate this risk, the integration point between cdf-core and the facade should be reviewed and updated as needed.
 
 > **Note**: Validate that your facade Cloudformation stack has no direct dependencies on the Cloudformation outputs of the old cdf-core
 
-## Migration Steps
-### Networking Migration
+### Migration Steps
+#### Networking Migration
 
 If CDF is configured to create its own VPC, the open-source version creates stricter `NetworkAclEntry` rules than the pre open-source version. If you have custom applications accessing the CDF VPC, you may need to add additional custom `NetworkAclEntry`'s (see `../infrastructure/cloudformation/cfn-networking.yaml`).
 
-### SQS
+#### SQS
 
 Ensure that there are no unprocessed messages in the SQS queues before the database migration to avoid inconsistency. 
 
 Sample command to retrieve the number of messages in the queue
 
-```
-aws sqs  get-queue-attributes --queue-url <queue url> --attribute-names ApproximateNumberOfMessages
+```bash
+$ aws sqs  get-queue-attributes --queue-url <queue url> --attribute-names ApproximateNumberOfMessages
 ```
 
 You can do this by restricting any post or patch operation into the cdf modules specified below to prevent the modification or addition of new resources. 
 
 List of modules and the related SQS resources
 
-| CloudFormation template                     | Queue CloudFormation Resource         |
+| CloudFormation template     | Queue CloudFormation Resource     |
 | --------------------------- | --------------------------------- |
 | cfn-certificaterenewer      | CertificateRenewerProcessingQueue |
 | cfn-eventProcessor          | AsyncProcessingQueue              |
@@ -74,12 +97,13 @@ List of modules and the related SQS resources
 | cfn-greengrass-provisioning | BulkDeploymentsStatusQueue        |
 | cfn-greengrass-provisioning | DeploymentStatusQueue             |
 
-### Backup of Databases
+#### Backup of Databases
 
 CDF utilizes Amazon Neptune and DynamoDB as its datastores. This migration requires databases to be backed up and restored after the update.
-#### Neptune
 
-CDF Asset Library utilizes Amazon Neptune as its datastore. To migrate Neptune, navigate through the console and take the snapshot of the db writer instance. Refer to the [officia docs](https://docs.aws.amazon.com/neptune/latest/userguide/backup-restore-create-snapshot.html) for more info.
+##### Neptune
+
+CDF Asset Library utilizes Amazon Neptune as its datastore. To migrate Neptune, navigate through the console and take the snapshot of the db writer instance. Refer to the [official docs](https://docs.aws.amazon.com/neptune/latest/userguide/backup-restore-create-snapshot.html) for more info.
 
 Alternatively, the `aws-cli` can be used:
 
@@ -92,15 +116,15 @@ $ aws neptune create-db-cluster-snapshot --db-cluster-identifier <neptune cluste
 
 > **Its highly advised to take a snapshot of the Neptune database before performing any CDF upgrade (re-running of the deploy scripts). Once the "SnapshotIdentifier" configuration is set it should not be reverted** 
 
-#### DynamoDB
+##### DynamoDB
 
 CDF Commands, Greengrass Provisioning & Deployment, Asset Library History, Event Notifications, and the Bulk Certs modules utilize 1 or more DynamoDB tables. 
 
 The CDF Notifications module (_events-processor_ and _events-alerts_ micro-services) uses DynamoDB streams. Before backing up and/or migrating, this stream must be disabled.
 
 You can disable the stream from cli:
-```sh
-aws dynamodb update-table \
+```bash
+$ aws dynamodb update-table \
     --table-name <tableName> \
     --stream-specification StreamEnabled=false
 ```
@@ -121,11 +145,11 @@ JobsTable:
 > **Note**: 
 The [@cdf/ddb-migrator](../packages/libraries/tools/ddb-migrator) utility utilizes DynamoDB scan functionality to copy data from a source to destination table. As this tool is infrastructure agnostic, it is highly advised to understand the scale of the data before executing the module. If the amount of data within the table cannot be migrated by running the tool locally, then the tool must be executed as a Fargate container or within an EC2 instance.
 
-### Notifications module
+#### Notifications module
 
 The Notifications module is comprised of two micro-services, [events-processor](../packages/services/events-processor/README.md) and [events-alerts](../packages/services/events-alerts/README.md). 
 
-**Events Alerts Stack** references Events Processor through Cloudformation import as shown below
+**Events Alerts Stack** references Events Processor through Cloudformation import as shown below:
 
 ```yaml
 EventNotificationsSourceMapping:
@@ -137,7 +161,7 @@ EventNotificationsSourceMapping:
     StartingPosition: LATEST
 ```
 
-However, in this latest revision of the cfn-eventsProcessor, the export name is renamed as shown below
+However, in this latest revision of the cfn-eventsProcessor, the export name is renamed as shown below:
 
 ```yaml
 EventNotificationsStreamArn:
@@ -149,6 +173,8 @@ EventNotificationsStreamArn:
 
 When you deploy the latest version of events processor, it will fail as the previous export (which will be deleted) is being used by **Events Alert**. The easiest way to resolve is to delete the **Events Alert** stack and then update the **Events Processor** stack to the latest version before re-deploying **Events Alerts**
 
-### Consuming applications (e.g. `cdf-facade-* projects`)
+#### Consuming applications (e.g. `cdf-facade-* projects`)
 
 Once the data migration has been verified the last step is to re-deploy any consuming applications with a modified application configuration to include the updated CDF module REST API endpoints.
+
+

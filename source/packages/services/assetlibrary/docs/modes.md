@@ -4,9 +4,9 @@
 
 The Asset Library is capable of running in one of two modes:  `full` and `lite`.
 
-The `lite` version uses The AWS IoT Device Registry to store all devices and groups data, whereas the `full` version utilizes AWS Neptune to augment the AWS IoT Device Registry to provide more advanced data modelling features.
+The `lite` version uses The AWS IoT Device Registry to store all devices and groups data, whereas the `full` version utilizes [AWS Neptune](https://aws.amazon.com/neptune/) to provide more advanced data modelling features.
 
-The mode is determined via a comfiguration property that is to be provided at the time of deployment.  The following describes the differences in functionality between the two modes.
+The mode is determined via a configuration property at the time of deployment.  The following describes the differences in functionality between the two modes.
 
 
 ## Supported Functionality by REST API
@@ -23,7 +23,7 @@ The following table indicates which REST API's are available in which mode:
 | `GET /devices/{deviceId}` | Find a device by ID | ✅ | ✅ |
 | `DELETE /devices/{deviceId}` | Delete a device | ✅ | ✅ |
 | `PATCH /devices/{deviceId}` | Performs a partial update of an existing device | ✅ | ✅ (supports optimistic locking by providing an optional `expectedVersion`.  If not provided, the latest version of the device will be updated) |
-| `PUT /devices/{deviceId}/{relationship}/groups/{groupPath}` | Associates a device to a a group, giving context to its relationship | ✅ | ✅ (does not support providing context to the relationship - only supported value for `relatiobship` is `group`) |
+| `PUT /devices/{deviceId}/{relationship}/groups/{groupPath}` | Associates a device to a a group, giving context to its relationship | ✅ | ✅ (does not support providing context to the relationship - only supported value for `relationship` is `group`) |
 | `DELETE /devices/{deviceId}/{relationship}/groups/{groupPath}` | Removes a device from an associated group | ✅ | ✅ (only supported value for `relationship` is `group`) |
 | `PUT /devices/{deviceId}/{relationship}/devices/{otherDeviceId}` | Associates a device to another device, giving context to its relationship | ✅ | ⛔ |
 | `DELETE /devices/{deviceId}/{relationship}/devices/{otherDeviceId}` | Removes a device from an associated device | ✅ | ⛔ |
@@ -165,4 +165,4 @@ Not supported in `lite` mode.
 | No. query terms | Maximum 2048 characters | Maximum 2048 characters, and maximum 5 query terms per query |
 | No. results | Unlimited | Maximm 500 per query |
 | Aggregation | Supported | Not supported |
-| Searching by group ancestors | Supported | Supports filtering by direct linked groups only |
+| Searching by group ancestors | Supported | Supports filtering by directly linked groups only |

@@ -1,0 +1,20 @@
+{
+  "name": "@cdf/greengrass2-provisioning-client",
+  "entries": [
+    {
+      "version": "1.0.1",
+      "tag": "@cdf/greengrass2-provisioning-client_v1.0.1",
+      "date": "Thu, 17 Feb 2022 09:27:38 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@cdf/assetlibrary-client\" from `^4.1.2` to `^5.0.0`"
+          },
+          {
+            "comment": "Updating dependency \"@cdf/lambda-invoke\" from `^2.0.1` to `^3.0.0`"
+          }
+        ]
+      }
+    }
+  ]
+}

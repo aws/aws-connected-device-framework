@@ -60,8 +60,6 @@ describe('LambdaInvokeService', () => {
         expect(response.body).toEqual(mockedLambdaApiGatewayResponse.body);
         expect(response.status).toEqual(mockedLambdaApiGatewayResponse.status);
         expect(response.header).toEqual(mockedLambdaApiGatewayResponse.header);
-
-        // console.log(response);
     });
 
     it('should throw an error if status code is greater than 300', async () => {

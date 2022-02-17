@@ -2,6 +2,18 @@
   "name": "@cdf/lambda-invoke",
   "entries": [
     {
+      "version": "3.0.0",
+      "tag": "@cdf/lambda-invoke_v3.0.0",
+      "date": "Thu, 17 Feb 2022 09:27:38 GMT",
+      "comments": {
+        "major": [
+          {
+            "comment": "migrate configuration to use dotenv-flow and deployment to use installer"
+          }
+        ]
+      }
+    },
+    {
       "version": "2.0.2",
       "tag": "@cdf/lambda-invoke_v2.0.2",
       "date": "Tue, 28 Dec 2021 18:37:09 GMT",

@@ -1,0 +1,23 @@
+{
+  "name": "@cdf/greengrass2-installer-config-generators",
+  "entries": [
+    {
+      "version": "0.1.1",
+      "tag": "@cdf/greengrass2-installer-config-generators_v0.1.1",
+      "date": "Thu, 17 Feb 2022 09:27:38 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@cdf/errors\" from `^3.0.0` to `^4.0.0`"
+          },
+          {
+            "comment": "Updating dependency \"@cdf/logger\" from `^3.0.0` to `^4.0.0`"
+          },
+          {
+            "comment": "Updating dependency \"@cdf/config-inject\" from `^3.0.0` to `^4.0.0`"
+          }
+        ]
+      }
+    }
+  ]
+}

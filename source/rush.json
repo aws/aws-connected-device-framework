@@ -5,7 +5,7 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/rush/v5/rush.schema.json",
   "rushVersion": "5.47.0",
-  "pnpmVersion": "6.4.0",
+  "pnpmVersion": "6.24.1",
 
   
   /**
@@ -90,8 +90,14 @@
       "shouldPublish": true
     },
     {
-      "packageName": "@cdf/greengrass-provisioning-client",
-      "projectFolder": "packages/libraries/clients/greengrass-provisioning-client",
+      "packageName": "@cdf/device-patcher-client",
+      "projectFolder": "packages/libraries/clients/device-patcher-client",
+      "reviewCategory": "library",
+      "shouldPublish": true
+    },
+    {
+      "packageName": "@cdf/greengrass2-provisioning-client",
+      "projectFolder": "packages/libraries/clients/greengrass2-provisioning-client",
       "reviewCategory": "library",
       "shouldPublish": true
     },
@@ -101,21 +107,9 @@
       "reviewCategory": "library",
       "shouldPublish": true
     },
-     {
-       "packageName": "@cdf/greengrass-deployment-client",
-       "projectFolder": "packages/libraries/clients/greengrass-deployment-client",
-       "reviewCategory": "library",
-       "shouldPublish": true
-     },
     {
       "packageName": "@cdf/provisioning-client",
       "projectFolder": "packages/libraries/clients/provisioning-client",
-      "reviewCategory": "library",
-      "shouldPublish": true
-    },
-    {
-      "packageName": "@cdf/config-inject",
-      "projectFolder": "packages/libraries/config/config-inject",
       "reviewCategory": "library",
       "shouldPublish": true
     },
@@ -144,8 +138,20 @@
       "shouldPublish": true
     },
     {
+      "packageName": "@cdf/config-inject",
+      "projectFolder": "packages/libraries/config/config-inject",
+      "reviewCategory": "library",
+      "shouldPublish": true
+    },
+    {
       "packageName": "@cdf/device-simulator-base",
       "projectFolder": "packages/libraries/simulator/device-simulator-base",
+      "reviewCategory": "library",
+      "shouldPublish": true
+    },
+    {
+      "packageName": "@cdf/thing-list-builder",
+      "projectFolder": "packages/libraries/core/thing-list-builder",
       "reviewCategory": "library",
       "shouldPublish": true
     },
@@ -191,13 +197,6 @@
       "reviewCategory": "production",
       "shouldPublish": true
     },
-    // temporarily removed from the open source version:
-    // {
-    //   "packageName": "@cdf/certificate-renewer",
-    //   "projectFolder": "packages/services/certificaterenewer",
-    //   "reviewCategory": "production",
-    //   "shouldPublish": true
-    // },
     {
       "packageName": "@cdf/commands",
       "projectFolder": "packages/services/commands",
@@ -222,19 +221,24 @@
       "reviewCategory": "production",
       "shouldPublish": true
     },
-    // temporarily removed from the open source version:
-    // {
-    //   "packageName": "@cdf/greengrass-deployment",
-    //   "projectFolder": "packages/services/greengrass-deployment",
-    //   "reviewCategory": "production",
-    //   "shouldPublish": true
-    // },
-    // {
-    //   "packageName": "@cdf/greengrass-provisioning",
-    //   "projectFolder": "packages/services/greengrass-provisioning",
-    //   "reviewCategory": "production",
-    //   "shouldPublish": true
-    // },
+     {
+       "packageName": "@cdf/device-patcher",
+       "projectFolder": "packages/services/device-patcher",
+       "reviewCategory": "production",
+       "shouldPublish": true
+     },
+    {
+      "packageName": "@cdf/greengrass2-provisioning",
+      "projectFolder": "packages/services/greengrass2-provisioning",
+      "reviewCategory": "production",
+      "shouldPublish": true
+    },
+    {
+      "packageName": "@cdf/greengrass2-installer-config-generators",
+      "projectFolder": "packages/services/greengrass2-installer-config-generators",
+      "reviewCategory": "production",
+      "shouldPublish": true
+    },
     {
       "packageName": "@cdf/provisioning",
       "projectFolder": "packages/services/provisioning",
@@ -244,6 +248,12 @@
     {
       "packageName": "@cdf/deployment-helper",
       "projectFolder": "packages/libraries/core/deployment-helper",
+      "reviewCategory": "library",
+      "shouldPublish": true
+    },
+    {
+      "packageName": "@cdf/event-publisher",
+      "projectFolder": "packages/libraries/core/event-publisher",
       "reviewCategory": "library",
       "shouldPublish": true
     },
@@ -268,6 +278,12 @@
     {
       "packageName": "@cdf/assetlibrary-export",
       "projectFolder": "packages/services/assetlibrary-export",
+      "reviewCategory": "production",
+      "shouldPublish": true
+    },
+    {
+      "packageName": "@cdf/installer",
+      "projectFolder": "packages/services/installer",
       "reviewCategory": "production",
       "shouldPublish": true
     }
@@ -304,7 +320,7 @@
      * The default value is false to avoid legacy compatibility issues.
      * It is strongly recommended to set strictPeerDependencies=true.
      */
-    "strictPeerDependencies": true,
+    "strictPeerDependencies": false,
 
     /**
      * Configures the strategy used to select versions during installation.
