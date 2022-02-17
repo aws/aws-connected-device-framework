@@ -2,6 +2,18 @@
   "name": "@cdf/assetlibrary",
   "entries": [
     {
+      "version": "6.0.1",
+      "tag": "@cdf/assetlibrary_v6.0.1",
+      "date": "Thu, 17 Feb 2022 10:54:42 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "rollback the previous change where add associated roles to neptune"
+          }
+        ]
+      }
+    },
+    {
       "version": "6.0.0",
       "tag": "@cdf/assetlibrary_v6.0.0",
       "date": "Thu, 17 Feb 2022 09:27:38 GMT",

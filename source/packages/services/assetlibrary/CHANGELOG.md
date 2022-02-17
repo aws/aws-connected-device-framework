@@ -1,6 +1,13 @@
 # Change Log - @cdf/assetlibrary
 
-This log was last generated on Thu, 17 Feb 2022 09:27:38 GMT and should not be manually modified.
+This log was last generated on Thu, 17 Feb 2022 10:54:42 GMT and should not be manually modified.
+
+## 6.0.1
+Thu, 17 Feb 2022 10:54:42 GMT
+
+### Patches
+
+- rollback the previous change where add associated roles to neptune
 
 ## 6.0.0
 Thu, 17 Feb 2022 09:27:38 GMT
