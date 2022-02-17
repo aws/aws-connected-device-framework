@@ -57,30 +57,7 @@ The CDF modules span the following life cycle phases:
 
 ![Life Cycle Phases](source/docs/images/cdf-core-hla-lifecycle.png)
 
-## Architecture
 
-The CDF modules can be mostly deployed independently. The following shows dependencies between the modules (dotted line is an optional dependency).
-
-![Dependencies](source/docs/images/cdf-core-hla-HLA.png)
-
-The CDF modules form a layer above the AWS building blocks as shown in the following architecture diagram. A typical customer deployment will involve the development of facade layer (the consuming application(s) of CDF modules) that contains the customer's unique business logic and orchestrates the underlying CDF modules.
-
-![Dependencies](source/docs/images/cdf-core-hla-hla-aws.png)
-
-## Development
-- [Getting Started](source/docs/development/quickstart.md)
-- [Prerequisites for Development](source/docs/development/prerequisites.md)
-- [Consuming application (aka facades)](source/docs/consuming-application.md)
-- [Tech Stack](source/docs/development/tech-stack.md)
-- [Dependency Injection](source/docs/development/dependency-injection.md)
-- [Unit testing](source/docs/development/unit-testing.md)
-
-## Deployment
-- [Release notes](https://github.com/aws/aws-connected-device-framework/releases)
-- [Migrating major changes](source/docs/migration.md)
-- [Deploying](source/docs/deployment.md)
-- [Private API Gateway support](source/docs/private_api_gateways.md)
-- [CI/CD](source/docs/cicd.md)
 
 ## AWS Connected Device Framework Modules
 
@@ -195,6 +172,31 @@ A framework that can be followed to implement a device simulator. Includes a ref
 See [overview](source/packages/services/simulation-manager/README.md).
 
 Scales out device simulators for load testing your platform, as well as executing test plans to test other areas of your platform.
+
+## Architecture
+
+The CDF modules can be mostly deployed independently. The following shows dependencies between the modules (dotted line is an optional dependency).
+
+![Dependencies](source/docs/images/cdf-core-hla-HLA.png)
+
+The CDF modules form a layer above the AWS building blocks as shown in the following architecture diagram. A typical customer deployment will involve the development of facade layer (the consuming application(s) of CDF modules) that contains the customer's unique business logic and orchestrates the underlying CDF modules.
+
+![Dependencies](source/docs/images/cdf-core-hla-hla-aws.png)
+
+## Development
+- [Getting Started](source/docs/development/quickstart.md)
+- [Prerequisites for Development](source/docs/development/prerequisites.md)
+- [Consuming application (aka facades)](source/docs/consuming-application.md)
+- [Tech Stack](source/docs/development/tech-stack.md)
+- [Dependency Injection](source/docs/development/dependency-injection.md)
+- [Unit testing](source/docs/development/unit-testing.md)
+
+## Deployment
+- [Release notes](https://github.com/aws/aws-connected-device-framework/releases)
+- [Migrating major changes](source/docs/migration.md)
+- [Deploying](source/docs/deployment.md)
+- [Private API Gateway support](source/docs/private_api_gateways.md)
+- [CI/CD](source/docs/cicd.md)
 
 ## Copyright
 
