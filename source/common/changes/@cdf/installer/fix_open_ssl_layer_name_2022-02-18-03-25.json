@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/installer",
+      "comment": "update openssl stack name to be backwards compatible",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/installer",
+  "email": "aaron.pittenger@bissell.com"
+}
