@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/installer",
+      "comment": "rollback the cdf-openssl stack name to make it backward compatible",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/installer",
+  "email": "willsia@amazon.com"
+}

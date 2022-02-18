@@ -22,7 +22,7 @@ export class OpenSslInstaller implements InfrastructureModule {
   private readonly stackName: string;
 
   constructor(environment: string) {
-    this.stackName = `cdf-openssl-layer-${environment}`;
+    this.stackName = `cdf-openssl-${environment}`;
   }
 
   public async prompts(answers: Answers): Promise<Answers> {
