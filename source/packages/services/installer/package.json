@@ -1,6 +1,6 @@
 {
   "name": "@cdf/installer",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "CDF install wizard.",
   "author": "Dean Hart",
   "scripts": {
@@ -40,7 +40,8 @@
     "just-clone": "~5.0.1",
     "@aws-sdk/client-kms": "~3.43.0",
     "ow": "~0.28.1",
-    "dotenv-flow": "~3.2.0"
+    "dotenv-flow": "~3.2.0",
+    "find-up": "5.0.0"
   },
   "devDependencies": {
     "@rushstack/eslint-config": "2.3.4",
