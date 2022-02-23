@@ -1,8 +1,73 @@
 # PROVISIONING TEMPLATES
 
-The provisioning module manages the provisioning of things, certificates and policies via [Provisioning Templates](https://docs.aws.amazon.com/iot/latest/developerguide/provision-template.html).
+The Provisioning module manages the provisioning of things, certificates and policies via [Provisioning Templates](https://docs.aws.amazon.com/iot/latest/developerguide/provision-template.html).
 
-CDF extends AWS IoT Provisoning Templates by allowing the following extra configuration options to be applied to enhance the functionality of provisioning templates:
+## TL;DR - Examples
+
+The following accepts `ThingName` as a parameter. A thing is created with the name set to `Parameters.ThingName`. As the `CDF.createDeviceCertificate` extension is set to `true`, a certificate is automatically created on behalf of the device, with the values of `Parameters.CertificatePem` and `Parameters.CaCertificatePem` auto-populated. These values are used in the registration of the certificate which is set to automatically activated and associated with the device. The existing `myPolicy` is attached to the certificate. As the `CDF.attachAdditionalPolicies` extension is set, the `attachAdditionalPolicies` policy is also associated with the certificate.
+
+```xml
+{
+    "Parameters": {
+        "ThingName": {
+            "Type": "String"
+        },
+        "CertificatePem": {
+            "Type": "String"
+        },
+        "CaCertificatePem": {
+            "Type": "String"
+        }
+    },
+    "Resources": {
+        "thing": {
+            "Type": "AWS::IoT::Thing",
+            "Properties": {
+                "ThingName": {
+                    "Ref": "ThingName"
+                }
+            },
+            "OverrideSettings": {
+                "ThingTypeName": "REPLACE"
+            }
+        },
+        "certificate": {
+            "Type": "AWS::IoT::Certificate",
+            "Properties": {
+                "CACertificatePem": {
+                    "Ref": "CaCertificatePem"
+                },
+                "CertificatePem": {
+                    "Ref": "CertificatePem"
+                },
+                "Status": "ACTIVE"
+            },
+            "OverrideSettings": {
+                "Status": "REPLACE"
+            }
+        },
+        "policy": {
+            "Type": "AWS::IoT::Policy",
+            "Properties": {
+                "PolicyName": "myPolicy"
+            }
+        }
+    },
+    
+    "CDF": {
+        "createDeviceCertificate": true,
+        "attachAdditionalPolicies": [{
+            "name": "attachAdditionalPolicies"
+        }]
+    }
+}
+```
+
+Refer to the [AWS IoT documentation](https://docs.aws.amazon.com/iot/latest/developerguide/provision-template.html) for further examples such as adding attributes to the Thing, associating a Thing with a Thing Type and/or Thing Group, using alternate methods of creating certificates such as by providing a CSR, and creating new policies to associate with the certificate.
+
+## CDF Extensions
+
+CDF extends AWS IoT Provisioning Templates by allowing the following extra configuration options to be applied to enhance the functionality of provisioning templates:
 
 ### `$.CDF.createDeviceCertificate` 
 If set to `true`, a certificate will be created on behalf of the device, which can then be used as configured in the template to register and associate with the device.  By default, is `false`.
