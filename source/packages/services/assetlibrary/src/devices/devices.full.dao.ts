@@ -16,9 +16,10 @@ import {logger} from '../utils/logger';
 import {TYPES} from '../di/types';
 import {Node} from '../data/node';
 import { FullAssembler } from '../data/full.assembler';
-import { ModelAttributeValue, DirectionStringToArrayMap, SortKeys } from '../data/model';
+import { ModelAttributeValue, SortKeys, DirectionToRelatedEntityArrayMap, RelatedEntityArrayMap } from '../data/model';
 import { BaseDaoFull } from '../data/base.full.dao';
 import { CommonDaoFull } from '../data/common.full.dao';
+import {EntityTypeMap} from '../data/model';
 import { isRelatedEntityDto, isVertexDto, RelatedEntityDto, VertexDto } from '../data/full.model';
 
 const __ = process.statics;
@@ -121,14 +122,17 @@ export class DevicesDaoFull extends BaseDaoFull {
         return nodes;
     }
 
-    public async getLabels(deviceId: string): Promise<string[]> {
-        logger.debug(`devices.full.dao getLabels: in: deviceId: ${deviceId}`);
+    public async getLabels(deviceIds: string[]): Promise<EntityTypeMap> {
+        logger.debug(`devices.full.dao getLabels: in: deviceId: ${deviceIds}`);
 
-        const id = 'device___' + deviceId;
-        return await this.commonDao.getLabels(id);
+        const dbIds = deviceIds.map(d=> `device___${d}`);
+        const result = await this.commonDao.getLabels(dbIds);
+        Object.values(result).map(labels=> labels.filter(l=> l!=='device' && l!=='component'));
+        logger.debug(`devices.full.dao getLabels: result: ${result}`);
+        return result;
     }
 
-    public async create(n:Node, groups:DirectionStringToArrayMap, devices:DirectionStringToArrayMap, components:Node[]): Promise<string> {
+    public async create(n:Node, groups:DirectionToRelatedEntityArrayMap, devices:DirectionToRelatedEntityArrayMap, components:Node[]): Promise<string> {
         logger.debug(`devices.full.dao create: in: n:${JSON.stringify(n)}, groups:${groups}, devices:${JSON.stringify(devices)}, components:${components}`);
 
         const id = `device___${n.attributes['deviceId']}`;
@@ -148,45 +152,28 @@ export class DevicesDaoFull extends BaseDaoFull {
             }
             traversal.as('device');
 
-            /*  associate with the groups  */
-            if (groups) {
-                if (groups.in) {
-                    Object.keys(groups.in).forEach(rel=> {
-                        groups.in[rel].forEach(v=> {
-                            const groupId = `group___${v}`;
-                            traversal.V(groupId).addE(rel).to('device');
-                        });
-                    });
-                }
-                if (groups.out) {
-                    Object.keys(groups.out).forEach(rel=> {
-                        groups.out[rel].forEach(v=> {
-                            const groupId = `group___${v}`;
-                            traversal.V(groupId).addE(rel).from_('device');
-                        });
-                    });
-                }
-            }
-
-            /*  associate with the devices  */
-            if (devices) {
-                if (devices.in) {
-                    Object.keys(devices.in).forEach(rel=> {
-                        devices.in[rel].forEach(v=> {
-                            const deviceId = `device___${v}`;
-                            traversal.V(deviceId).addE(rel).to('device');
-                        });
-                    });
-                }
-                if (devices.out) {
-                    Object.keys(devices.out).forEach(rel=> {
-                        devices.out[rel].forEach(v=> {
-                            const deviceId = `device___${v}`;
-                            traversal.V(deviceId).addE(rel).from_('device');
+            /*  associate with the related devices and groups  */
+            const associateRels = (rels:RelatedEntityArrayMap, category:'device'|'group', direction:'in'|'out') => {
+                if (Object.keys(rels??{}).length>0) {
+                    Object.entries(rels).forEach(([rel,entities])=> {
+                        entities.forEach(entity=> {
+                            const dbIdId = `${category}___${entity.id}`;
+                            if (direction==='in') {
+                                traversal.V(dbIdId).addE(rel).to('device');
+                            } else {
+                                traversal.V(dbIdId).addE(rel).from_('device');
+                            }
+                            if (entity.isAuthCheck) {
+                                traversal.property(process.cardinality.single, 'isAuthCheck', true);
+                            }
                         });
                     });
                 }
             }
+            associateRels(groups?.in, 'group', 'in');
+            associateRels(groups?.out, 'group', 'out');
+            associateRels(devices?.in, 'device', 'in');
+            associateRels(devices?.out, 'device', 'out');
 
             /*  create the components  */
             if (components) {
@@ -300,7 +287,7 @@ export class DevicesDaoFull extends BaseDaoFull {
         logger.debug(`devices.full.dao delete: exit`);
     }
 
-    public async attachToGroup(deviceId:string, relationship:string, direction:string, groupPath:string) : Promise<void> {
+    public async attachToGroup(deviceId:string, relationship:string, direction:'in'|'out', groupPath:string, isAuthCheck:boolean) : Promise<void> {
         logger.debug(`device.full.dao attachToGroup: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, groupPath:${groupPath}`);
 
         let sourceId:string;
@@ -316,9 +303,14 @@ export class DevicesDaoFull extends BaseDaoFull {
 
         const conn = super.getConnection();
         try {
-            const result = await conn.traversal.V(targetId).as('target').
-                V(sourceId).as('source').addE(relationship).to('target').
-                iterate();
+            const traverser = conn.traversal.V(targetId).as('target').
+                V(sourceId).as('source').addE(relationship).to('target');
+
+            if (isAuthCheck) {
+                traverser.property(process.cardinality.single, 'isAuthCheck', true);
+            }
+
+            const result = await traverser.iterate();
 
             logger.debug(`devices.full.dao attachToGroup: result:${JSON.stringify(result)}`);
         } finally {
@@ -328,7 +320,7 @@ export class DevicesDaoFull extends BaseDaoFull {
         logger.debug(`devices.full.dao attachToGroup: exit:`);
     }
 
-    public async detachFromGroup(deviceId:string, relationship:string, direction:string, groupPath:string) : Promise<void> {
+    public async detachFromGroup(deviceId:string, relationship:string, direction:'in'|'out', groupPath:string) : Promise<void> {
         logger.debug(`device.full.dao detachFromGroup: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, groupPath:${groupPath}`);
 
         let sourceId:string;
@@ -358,7 +350,7 @@ export class DevicesDaoFull extends BaseDaoFull {
         logger.debug(`devices.full.dao detachFromGroup: exit:`);
     }
 
-    public async attachToDevice(deviceId:string, relationship:string, direction:string, otherDeviceId:string) : Promise<void> {
+    public async attachToDevice(deviceId:string, relationship:string, direction:'in'|'out', otherDeviceId:string, isAuthCheck:boolean) : Promise<void> {
         logger.debug(`device.full.dao attachToDevice: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, otherDeviceId:${otherDeviceId}`);
 
         const source = (direction==='out') ? deviceId : otherDeviceId;
@@ -369,10 +361,14 @@ export class DevicesDaoFull extends BaseDaoFull {
 
         const conn = super.getConnection();
         try {
-            const result = await conn.traversal.V(targetId).as('other').
-                V(sourceId).addE(relationship).to('other').
-                iterate();
+            const traverser = conn.traversal.V(targetId).as('other').
+                V(sourceId).addE(relationship).to('other');
 
+            if (isAuthCheck) {
+                traverser.property(process.cardinality.single, 'isAuthCheck', true);
+            }
+
+            const result = await traverser.iterate();
             logger.debug(`devices.full.dao attachToDevice: result:${JSON.stringify(result)}`);
         } finally {
             await conn.close();

@@ -15,11 +15,13 @@ import { TYPES } from '../di/types';
 import {logger} from '../utils/logger';
 import { Claims, ClaimAccess } from '../authz/claims';
 import { AuthzDaoFull } from './authz.full.dao';
+import { RelatedEntityArrayMap, StringArrayMap } from '../data/model';
 
 @injectable()
 export class AuthzServiceFull {
 
-    constructor( @inject(TYPES.AuthzDaoFull) private dao: AuthzDaoFull,
+    constructor( 
+        @inject(TYPES.AuthzDaoFull) private dao: AuthzDaoFull,
         @inject('authorization.enabled') private isAuthzEnabled: boolean) {}
 
     public async authorizationCheck(deviceIds:string[], groupPaths:string[], accessLevelRequired:ClaimAccess):Promise<void> {
@@ -52,7 +54,7 @@ export class AuthzServiceFull {
         // determine if the user has any access to provided ids via their allowed hierarchies
         const authorizations = await this.dao.listAuthorizedHierarchies(deviceIds, groupPaths, claims.listPaths());
 
-        // if one if the requested items is missing, we refuse the whole request
+        // if one of the requested items is missing, we refuse the whole request
         if (authorizations.exists.length!==deviceIds.length+groupPaths.length) {
             throw new Error('NOT_FOUND');
         }
@@ -83,5 +85,19 @@ export class AuthzServiceFull {
             throw new Error('NOT_AUTHORIZED');
         }
 
+    }
+
+    public updateRelsIdentifyingAuth(rels:RelatedEntityArrayMap, authRels:StringArrayMap) : void {
+        if (rels) {                                                                
+            for (const [relation,entities] of Object.entries(rels)) {
+                if (authRels[relation]) {
+                    for (const entity of entities) {
+                        if (authRels[relation].includes(entity.id)) {
+                            rels[relation].find(e=>e.id===entity.id).isAuthCheck = true;
+                        }
+                    }
+                }
+            }
+        }
     }
 }

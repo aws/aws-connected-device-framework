@@ -32,6 +32,7 @@ import { ProfilesServiceFull } from '../profiles/profiles.full.service';
 import { GroupsAssembler } from '../groups/groups.assembler';
 import { AuthzServiceFull } from '../authz/authz.full.service';
 import { TypeUtils } from '../utils/typeUtils';
+import { SchemaValidatorService } from '../types/schemaValidator.full.service';
 
 const validDeviceId1 = 'ABC123';
 const validDeviceId2 = 'XYZ890';
@@ -45,10 +46,15 @@ describe('DevicesService', () => {
     let mockedProfilesService: jest.Mocked<ProfilesService>;
     let mockedEventEmitter: jest.Mocked<EventEmitter>;
     let mockedAuthzServiceFull: jest.Mocked<AuthzServiceFull>;
-    let mcokedTypeUtils: jest.Mocked<TypeUtils>;
+    let mockedTypeUtils: jest.Mocked<TypeUtils>;
+    let mockedSchemaValidatorService: jest.Mocked<SchemaValidatorService>;
     let instance: DevicesService;
 
     beforeEach(() => {
+        const isAuthzEnabled = false;
+        const defaultDeviceParentGroup = '/unprovisoned';
+        const defaultDeviceParentRelation = 'parent';
+        const defaultDeviceState = 'active';
         mockedDao = createMockInstance(DevicesDaoFull);
         mockedTypesService = createMockInstance(TypesServiceFull);
         mockedDeviceAssembler = createMockInstance(DevicesAssembler);
@@ -57,9 +63,11 @@ describe('DevicesService', () => {
         mockedProfilesService = createMockInstance(ProfilesServiceFull);
         mockedAuthzServiceFull = createMockInstance(AuthzServiceFull);
         mockedEventEmitter = createMockInstance(EventEmitter);
-        mcokedTypeUtils = createMockInstance(TypeUtils);
-        instance = new DevicesServiceFull(mockedDao, mcokedTypeUtils, mockedTypesService, mockedDeviceAssembler, mockedGroupsAssembler, mockedGroupsService, mockedEventEmitter,
-            mockedProfilesService, mockedAuthzServiceFull, 'parent', '/unprovisioned', 'active');
+        mockedTypeUtils = createMockInstance(TypeUtils);
+        mockedSchemaValidatorService = createMockInstance(SchemaValidatorService);
+        instance = new DevicesServiceFull(isAuthzEnabled, defaultDeviceParentGroup, defaultDeviceParentRelation, defaultDeviceState,
+            mockedAuthzServiceFull, mockedDeviceAssembler, mockedDao, mockedEventEmitter, mockedGroupsAssembler, mockedGroupsService,
+            mockedProfilesService, mockedSchemaValidatorService, mockedTypesService, mockedTypeUtils);
     });
 
     it('applying profile with attributes and groups to empty device', async() => {
@@ -82,7 +90,7 @@ describe('DevicesService', () => {
             },
             groups: {
                 out: {
-                    linked_to: ['path1', 'path2']
+                    linked_to: [{id:'path1'}, {id:'path2'}]
                 }
             }
         });
@@ -98,7 +106,7 @@ describe('DevicesService', () => {
             },
             groups: {
                 out: {
-                    linked_to: ['path1', 'path2']
+                    linked_to: [{id:'path1'}, {id:'path2'}]
                 }
             }
         });
@@ -127,8 +135,8 @@ describe('DevicesService', () => {
             },
             groups: {
                 out: {
-                    linked_to_a: ['pathA1', 'pathA2'],
-                    linked_to_b: ['pathA3']
+                    linked_to_a: [{id:'pathA1'}, {id:'pathA2'}],
+                    linked_to_b: [{id:'pathA3'}]
                 }
             }
         });
@@ -145,8 +153,8 @@ describe('DevicesService', () => {
             },
             groups: {
                 out: {
-                    linked_to_a: ['pathB1'],
-                    linked_to_c: ['pathB2']
+                    linked_to_a: [{id:'pathB1'}],
+                    linked_to_c: [{id:'pathB2'}]
                 }
             }
         });
@@ -163,9 +171,9 @@ describe('DevicesService', () => {
             },
             groups: {
                 out: {
-                    linked_to_a: ['pathA1', 'pathA2'],
-                    linked_to_b: ['pathA3'],
-                    linked_to_c: ['pathB2']
+                    linked_to_a: [{id:'pathA1'}, {id:'pathA2'}],
+                    linked_to_b: [{id:'pathA3'}],
+                    linked_to_c: [{id:'pathB2'}]
                 }
             }
         });

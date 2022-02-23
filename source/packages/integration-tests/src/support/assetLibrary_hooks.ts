@@ -21,20 +21,21 @@ import {
     Group10Resource,
     ProfilesService,
     ASSTLIBRARY_CLIENT_TYPES,
-} from '@cdf/assetlibrary-client/dist';
+    Device20Resource,
+    RequestHeaders,
+} from '@cdf/assetlibrary-client';
 import { sign } from 'jsonwebtoken';
 import {container} from '../di/inversify.config';
-import {} from '@cdf/assetlibrary-client';
-import {RequestHeaders} from '@cdf/assetlibrary-client/dist/client/common.model';
 
 setDefaultTimeout(30 * 1000);
 
-const DEVICES_FEATURE_DEVICE_IDS = ['TEST-devices-device001','TEST-devices-device002','TEST-devices-device003','TEST-devices-device004'];
+const DEVICES_FEATURE_DEVICE_IDS = ['TEST-devices-device001','TEST-devices-device002','TEST-devices-device003','TEST-devices-device004','TEST-devices-linkableDevice001'];
 const DEVICES_FEATURE_LINKABLE_GROUP_PATH = '/TEST-devices-linkableGroup001';
 const DEVICES_FEATURE_UNLINKABLE_GROUP_PATH = '/TEST-devices-unlinkableGroup001';
 const DEVICES_FEATURE_UNPROVISIONED_GROUP_PATH = '/unprovisioned';
 const DEVICES_FEATURE_GROUP_PATHS = [DEVICES_FEATURE_LINKABLE_GROUP_PATH, DEVICES_FEATURE_UNLINKABLE_GROUP_PATH, '/unprovisioned'];
-const DEVICES_FEATURE_DEVICE_TEMPLATE_IDS = ['TEST-devices-type'];
+const DEVICES_FEATURE_LINKABLE_DEVICE_TEMPLATE_ID = 'TEST-devices-linkableDevice';
+const DEVICES_FEATURE_DEVICE_TEMPLATE_IDS = ['TEST-devices-type',DEVICES_FEATURE_LINKABLE_DEVICE_TEMPLATE_ID];
 const DEVICES_FEATURE_LINKABLE_GROUP_TEMPLATE_ID = 'TEST-devices-linkableGroup';
 const DEVICES_FEATURE_UNLINKABLE_GROUP_TEMPLATE_ID = 'TEST-devices-unlinkableGroup';
 const DEVICES_FEATURE_GROUP_TEMPLATE_IDS = [DEVICES_FEATURE_LINKABLE_GROUP_TEMPLATE_ID,DEVICES_FEATURE_UNLINKABLE_GROUP_TEMPLATE_ID];
@@ -233,6 +234,22 @@ Before({tags: '@setup_devices_feature'}, async function () {
         attributes: {}
     };
     await groupsService.createGroup(unlinkableGroup, undefined, additionalHeaders);
+
+    // create linkable device template
+    const linkableDeviceType:TypeResource = {
+        templateId: DEVICES_FEATURE_LINKABLE_DEVICE_TEMPLATE_ID,
+        category: 'device'
+    };
+    await templatesService.createTemplate(linkableDeviceType, additionalHeaders);
+    await templatesService.publishTemplate(CategoryEnum.device, DEVICES_FEATURE_LINKABLE_DEVICE_TEMPLATE_ID, additionalHeaders);
+
+    // create linkable group
+    const linkableDevice:Device20Resource = {
+        templateId: linkableDeviceType.templateId,
+        deviceId: 'TEST-devices-linkableDevice001',
+        attributes: {}
+    };
+    await devicesService.createDevice(linkableDevice, undefined, additionalHeaders);
 });
 
 Before({tags: '@teardown_devices_feature'}, async function () {

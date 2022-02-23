@@ -16,19 +16,20 @@ import { PoliciesAssembler} from './policies.assembler';
 import { TYPES } from '../di/types';
 import { PoliciesDaoFull} from './policies.full.dao';
 import {logger} from '../utils/logger';
-import {TypesService} from '../types/types.service';
 import {EventEmitter, Type, Event} from '../events/eventEmitter.service';
 import { Operation, TypeCategory } from '../types/constants';
 import ow from 'ow';
 import { PoliciesService } from './policies.service';
+import { SchemaValidatorService } from '../types/schemaValidator.full.service';
 
 @injectable()
 export class PoliciesServiceFull implements PoliciesService {
 
-    constructor( @inject(TYPES.PoliciesDao) private policiesDao: PoliciesDaoFull,
+    constructor( 
+        @inject(TYPES.EventEmitter) private eventEmitter: EventEmitter,
         @inject(TYPES.PoliciesAssembler) private policiesAssembler: PoliciesAssembler,
-        @inject(TYPES.TypesService) private typesService: TypesService,
-        @inject(TYPES.EventEmitter) private eventEmitter: EventEmitter) {}
+        @inject(TYPES.PoliciesDao) private policiesDao: PoliciesDaoFull,
+        @inject(TYPES.SchemaValidatorService) private validator: SchemaValidatorService) {}
 
     private setIdsToLowercase(model:PolicyModel) {
         model.policyId = model.policyId.toLowerCase();
@@ -55,36 +56,36 @@ export class PoliciesServiceFull implements PoliciesService {
         return model;
     }
 
-    public async create(model: PolicyModel) : Promise<string> {
-        logger.debug(`policies.full.service create: in: model: ${JSON.stringify(model)}`);
+    public async create(policy: PolicyModel) : Promise<string> {
+        logger.debug(`policies.full.service create: in: model: ${JSON.stringify(policy)}`);
 
-        ow(model, ow.object.nonEmpty);
-        ow(model.policyId, ow.string.nonEmpty);
-        ow(model.type, ow.string.nonEmpty);
-        ow(model.document, ow.string.nonEmpty);
-        ow(model.appliesTo, ow.array.nonEmpty.minLength(1));
+        ow(policy, ow.object.nonEmpty);
+        ow(policy.policyId, ow.string.nonEmpty);
+        ow(policy.type, ow.string.nonEmpty);
+        ow(policy.document, ow.string.nonEmpty);
+        ow(policy.appliesTo, ow.array.nonEmpty.minLength(1));
 
         // remove any non printable characters from the id
-        model.policyId = model.policyId.replace(/[^\x20-\x7E]+/g, '');
+        policy.policyId = policy.policyId.replace(/[^\x20-\x7E]+/g, '');
 
         // any ids need to be lowercase
-        this.setIdsToLowercase(model);
+        this.setIdsToLowercase(policy);
 
         // schema validation
-        const validate = await this.typesService.validateType(TypeCategory.Policy, model, Operation.CREATE);
+        const validate = await this.validator.validateType(TypeCategory.Policy, policy, Operation.CREATE);
         if (!validate.isValid) {
             throw new Error('FAILED_VALIDATION');
         }
 
         // Save to datastore
-        const id = await this.policiesDao.create(model);
+        const id = await this.policiesDao.create(policy);
 
         // fire event
         await this.eventEmitter.fire({
-            objectId: model.policyId,
+            objectId: policy.policyId,
             type: Type.policy,
             event: Event.create,
-            payload: JSON.stringify(model)
+            payload: JSON.stringify(policy)
         });
 
         logger.debug(`policies.full.service create: exit: id: ${id}`);

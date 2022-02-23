@@ -13,8 +13,8 @@
 import { injectable, inject } from 'inversify';
 import {logger} from '../utils/logger';
 import { TypeModel, TypeDefinitionModel, TypeDefinitionStatus} from './types.models';
-import { SchemaValidationResult } from '../utils/schemaValidator.service';
-import {TypeCategory, Operation} from './constants';
+import { SchemaValidationResult } from './schemaValidator.full.service';
+import {TypeCategory} from './constants';
 import ow from 'ow';
 import { TypesService } from './types.service';
 import { TYPES } from '../di/types';
@@ -27,16 +27,6 @@ export class TypesServiceLite implements TypesService {
 
     constructor( @inject(TYPES.TypesDao) private typesDao:TypesDaoLite,
         @inject(TYPES.EventEmitter) private eventEmitter: EventEmitter) {}
-
-    public async validateSubType(templateId:string, category:TypeCategory, document:unknown, op:Operation): Promise<SchemaValidationResult> {
-        logger.debug(`types.lite.service validateSubType: in: templateId: ${templateId}, category: ${category}, document: ${JSON.stringify(document)}, op:${op}`);
-        throw new Error('NOT_SUPPORTED');
-    }
-
-    public async validateType(category:TypeCategory, document:unknown, _op:Operation): Promise<SchemaValidationResult> {
-        logger.debug(`types.lite.service validateType: in: category: ${category}, document: ${JSON.stringify(document)}`);
-        throw new Error('NOT_SUPPORTED');
-    }
 
     public async get(templateId: string, category: TypeCategory, status?: TypeDefinitionStatus): Promise<TypeModel> {
         logger.debug(`types.lite.service get: in: templateId: ${templateId}, category: ${category}, status: ${status}`);
@@ -143,16 +133,4 @@ export class TypesServiceLite implements TypesService {
         logger.debug(`types.lite.service publish: in: templateId:${templateId}, category:${category}`);
         throw new Error('NOT_SUPPORTED');
     }
-
-    public async validateRelationshipsByType(templateId:string, out:{ [key: string] : string[]}): Promise<boolean> {
-        logger.debug(`types.lite.service validateRelationships: in: templateId:${templateId}, out:${JSON.stringify(out)}`);
-        throw new Error('NOT_SUPPORTED');
-    }
-
-    public async validateRelationshipsByPath(templateId:string, out:{ [key: string] : string[]}): Promise<boolean> {
-        // example:  in: templateId:edge, out:{"manufactured_by":["/suppliers/bosch"]
-        logger.debug(`types.lite.service validateRelationshipsByPath: in: templateId:${templateId}, out:${JSON.stringify(out)}`);
-        throw new Error('NOT_SUPPORTED');
-    }
-
 }

@@ -85,9 +85,11 @@ export class DevicesServiceLite implements DevicesService {
 
         // NOTE: Device components not supported in lite mode
 
-        let groupIds:string[]=[];
+        const groupIds:string[]=[];
         if (model.groups?.out) {
-            Object.keys(model.groups.out).forEach(k=> groupIds = groupIds.concat(model.groups.out[k]));
+            Object.keys(model.groups.out)
+                .forEach(relation=> groupIds.push(
+                    ... Object.values(model.groups.out[relation]).map(e=>e.id)));
         }
 
         // verify all referenced device groups exist

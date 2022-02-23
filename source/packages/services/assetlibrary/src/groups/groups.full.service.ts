@@ -25,24 +25,30 @@ import { ProfilesService } from '../profiles/profiles.service';
 import { GroupsService } from './groups.service';
 import { DevicesAssembler } from '../devices/devices.assembler';
 import { DeviceItemList } from '../devices/devices.models';
-import { StringToArrayMap, DirectionStringToArrayMap, SortKeys } from '../data/model';
+import { SortKeys, DirectionToRelatedEntityArrayMap, RelatedEntityArrayMap } from '../data/model';
 import { AuthzServiceFull } from '../authz/authz.full.service';
 import { ClaimAccess } from '../authz/claims';
 import { TypeUtils } from '../utils/typeUtils';
+import { TypeDefinitionStatus } from '../types/types.models';
+import { SchemaValidatorService } from '../types/schemaValidator.full.service';
 
 @injectable()
 export class GroupsServiceFull implements GroupsService {
 
     constructor(
+        @inject('authorization.enabled') private isAuthzEnabled: boolean,
         @inject('defaults.groups.validateAllowedParentPaths') private validateAllowedParentPaths: boolean,
-        @inject(TYPES.TypeUtils) private typeUtils: TypeUtils,
-        @inject(TYPES.GroupsDao) private groupsDao: GroupsDaoFull ,
-        @inject(TYPES.TypesService) private typesService: TypesService,
-        @inject(TYPES.GroupsAssembler) private groupsAssembler: GroupsAssembler,
-        @inject(TYPES.DevicesAssembler) private devicesAssembler: DevicesAssembler,
-        @inject(TYPES.ProfilesService) private profilesService: ProfilesService,
         @inject(TYPES.AuthzServiceFull) private authServiceFull: AuthzServiceFull,
-        @inject(TYPES.EventEmitter) private eventEmitter: EventEmitter) {}
+        @inject(TYPES.DevicesAssembler) private devicesAssembler: DevicesAssembler,
+        @inject(TYPES.EventEmitter) private eventEmitter: EventEmitter,
+        @inject(TYPES.GroupsAssembler) private groupsAssembler: GroupsAssembler,
+        @inject(TYPES.GroupsDao) private groupsDao: GroupsDaoFull ,
+        @inject(TYPES.ProfilesService) private profilesService: ProfilesService,
+        @inject(TYPES.SchemaValidatorService) private validator: SchemaValidatorService,
+        @inject(TYPES.TypesService) private typesService: TypesService,
+        @inject(TYPES.TypeUtils) private typeUtils: TypeUtils) {
+
+        }
 
     public async get(groupPath: string, includeGroups: boolean): Promise<GroupItem> {
         logger.debug(`groups.full.service get: in: groupPath: ${groupPath}`);
@@ -82,6 +88,7 @@ export class GroupsServiceFull implements GroupsService {
         logger.debug(`groups.full.service get: exit: model: ${JSON.stringify(model)}`);
         return {results:model};
     }
+
     public async createBulk(groups:GroupItem[], applyProfile?:string) : Promise<BulkGroupsResult> {
         logger.debug(`groups.full.service createBulk: in: groups: ${JSON.stringify(groups)}, applyProfile:${applyProfile}`);
 
@@ -113,7 +120,7 @@ export class GroupsServiceFull implements GroupsService {
     }
 
     private setIdsToLowercase(model:GroupItem) {
-        logger.debug(`groups.full.service setIdsToLowercase: in:`);
+        logger.debug(`groups.full.service setIdsToLowercase: in: ${JSON.stringify(model)}`);
          
         if (model.groupPath) {
             model.groupPath = model.groupPath.toLowerCase();
@@ -124,41 +131,25 @@ export class GroupsServiceFull implements GroupsService {
         if (model.parentPath) {
             model.parentPath = model.parentPath.toLowerCase();
         }
-        if (model.groups) {
-            if (model.groups.in) {
-                /* lowerrcasting values */
-                Object.keys(model.groups.in).forEach(k=> {
-                    model.groups.in[k] = model.groups.in[k].map(p => {
-                        if (p===undefined) {
-                            return p;
-                        } else {
-                            return p.toLowerCase();
-                        }
-                    });
-                });
-                /* lowercasting keys */
-                model.groups.in = Object.fromEntries(
-                    Object.entries(model.groups.in).map(([k,v]) => [k.toLowerCase(),v])
-                );
-            }
-            if (model.groups.out) {
-                 /* lowerrcasting values */
-                Object.keys(model.groups.out).forEach(k=> {
-                    model.groups.out[k] = model.groups.out[k].map(p => {
-                        if (p===undefined) {
-                            return p;
-                        } else {
-                            return p.toLowerCase();
-                        }
-                    });
-                });
-                /* lowercasting keys */
-                model.groups.out = Object.fromEntries(
-                    Object.entries(model.groups.out).map(([k,v]) => [k.toLowerCase(),v])
-                );
-            }
+
+        const relatedIdToLowercase = (rels: RelatedEntityArrayMap) => {
+            /* lowercasting values */
+            Object.values(rels).forEach(entities=> {
+                entities.forEach(entity=> entity.id = entity.id.toLowerCase());
+            });
+            /* lowercasting keys */
+            rels = Object.fromEntries(
+                Object.entries(rels).map(([k,v]) => [k.toLowerCase(),v]));
+            return rels;
+        };
+        if (model.groups?.in) {
+            model.groups.in = relatedIdToLowercase(model.groups.in);
         }
-        logger.debug(`groups.full.service setIdsToLowercase: exit:`);
+        if (model.groups?.out) {
+            model.groups.out = relatedIdToLowercase(model.groups.out);
+        }
+
+        logger.debug(`groups.full.service setIdsToLowercase: model: ${JSON.stringify(model)}`);
     }
 
     public  async ___test___applyProfile(model: GroupItem, applyProfile?:string) : Promise<GroupItem> {
@@ -217,127 +208,141 @@ export class GroupsServiceFull implements GroupsService {
 
     }
 
-    public async create(model:GroupItem, applyProfile?:string) : Promise<string> {
-        logger.debug(`groups.full.service create: in: model:${JSON.stringify(model)}, applyProfile:${applyProfile}`);
+    public async create(group:GroupItem, applyProfile?:string) : Promise<string> {
+        logger.debug(`groups.full.service create: in: model:${JSON.stringify(group)}, applyProfile:${applyProfile}`);
 
-        ow(model, ow.object.nonEmpty);
-        ow(model.templateId, ow.string.nonEmpty);
-        ow(model.name, ow.string.nonEmpty);
+        ow(group, ow.object.nonEmpty);
+        ow(group.templateId, ow.string.nonEmpty);
+        ow(group.name, ow.string.nonEmpty);
 
         // if a profile to apply has been provided, apply it first
         if (applyProfile!==undefined) {
-            model = await this.applyProfile(model, applyProfile);
+            group = await this.applyProfile(group, applyProfile);
         }
 
         // remove any non printable characters from the id
-        model.name = model.name.replace(/[^\x20-\x7E]+/g, '');
+        group.name = group.name.replace(/[^\x20-\x7E]+/g, '');
 
         // any ids need to be lowercase
-        this.setIdsToLowercase(model);
+        this.setIdsToLowercase(group);
 
-        await this.authServiceFull.authorizationCheck([], [model.parentPath, ...model.listRelatedGroupPaths()], ClaimAccess.C);
+        await this.authServiceFull.authorizationCheck([], [group.parentPath, ...group.listRelatedGroupPaths()], ClaimAccess.C);
 
-        // schema validation
-        const validateSubTypeFuture = this.typesService.validateSubType(model.templateId, TypeCategory.Group, model, Operation.CREATE);
-        // if configured so, validate the parent path relations too (default is allow any parent path relationship)
-        const relsToValidate:DirectionStringToArrayMap = Object.assign({}, model.groups);
-        if (this.validateAllowedParentPaths) {
-            if (relsToValidate.out===undefined) {
-                relsToValidate.out= {};
-            }
-            relsToValidate.out.parent = [model.parentPath];
+        // perform validation of the group...
+        const template = await this.typesService.get(group.templateId, TypeCategory.Group, TypeDefinitionStatus.published);
+        if (template===undefined) {
+            throw new Error ('INVALID_TEMPLATE');
         }
-        const validateRelationshipsFuture = this.typesService.validateRelationshipsByPath(model.templateId, relsToValidate);
-        const results = await Promise.all([validateSubTypeFuture, validateRelationshipsFuture]);
+        const validateSubTypeFuture = this.validator.validateSubType(template, group, Operation.CREATE);
+        const relations:DirectionToRelatedEntityArrayMap = Object.assign({}, group.groups);
+        if (this.validateAllowedParentPaths) {
+            if (relations.out===undefined) {
+                relations.out= {};
+            }
+            relations.out.parent = [{id:group.parentPath}];
+        }
+        const validateRelationshipsFuture = this.validator.validateRelationshipsByIds(template, relations, undefined);
+        const [subTypeValidation,validateRelationships] = await Promise.all([validateSubTypeFuture, validateRelationshipsFuture]);
 
         // schema validation results
-        const subTypeValidation = results[0];
         if (!subTypeValidation.isValid) {
             throw new Error('FAILED_VALIDATION');
         }
 
-        // validate the path associations
-        const relationshipsValidation=results[1];
-        if (!relationshipsValidation)  {
+        // validate the id associations
+        if (!validateRelationships.isValid)  {
             throw new Error('INVALID_RELATION');
         }
 
+        // if fgac is enabled, we need to ensure any relations configured as identifying auth in its template are flagged to be saved as so
+        if (this.isAuthzEnabled) {
+            const incomingAuthRelations = template.schema.relations.incomingAuthRelations();
+            const outgoingAuthRelations = template.schema.relations.outgoingAuthRelations();
+            this.authServiceFull.updateRelsIdentifyingAuth(group.groups?.in, incomingAuthRelations);
+            this.authServiceFull.updateRelsIdentifyingAuth(group.groups?.out, outgoingAuthRelations);
+        }
+
         // ensure parent exists
-        const parent = await this.get(model.parentPath, false);
+        const parent = await this.get(group.parentPath, false);
         if (parent===undefined) {
             throw new Error ('INVALID_PARENT');
         }
 
-        model.groupPath = (model.parentPath==='/') ?
-            '/' + model.name.toLowerCase() :
-            `${model.parentPath}/${model.name.toLowerCase()}`;
+        group.groupPath = (group.parentPath==='/') ?
+            '/' + group.name.toLowerCase() :
+            `${group.parentPath}/${group.name.toLowerCase()}`;
 
         // Assemble item into node
-        model.category = TypeCategory.Group;
-        const node = this.groupsAssembler.toNode(model);
+        group.category = TypeCategory.Group;
+        const node = this.groupsAssembler.toNode(group);
 
         // Save to datastore
-        await this.groupsDao.create(node, model.groups);
+        logger.debug(`groups.full.service create: *****: ${JSON.stringify(node)}`);
+        await this.groupsDao.create(node, group.groups);
 
         // fire event
         await this.eventEmitter.fire({
-            objectId: model.groupPath,
+            objectId: group.groupPath,
             type: Type.group,
             event: Event.create,
-            payload: JSON.stringify(model)
+            payload: JSON.stringify(group)
         });
 
-        logger.debug(`groups.full.service create: exit: ${model.groupPath}`);
-        return model.groupPath;
+        logger.debug(`groups.full.service create: exit: ${group.groupPath}`);
+        return group.groupPath;
 
     }
 
-    public async update(model: GroupItem, applyProfile?:string) : Promise<void> {
-        logger.debug(`groups.full.service update: in: model:${JSON.stringify(model)}, applyProfile:${applyProfile}`);
+    public async update(group: GroupItem, applyProfile?:string) : Promise<void> {
+        logger.debug(`groups.full.service update: in: model:${JSON.stringify(group)}, applyProfile:${applyProfile}`);
 
-        ow(model, ow.object.nonEmpty);
-        ow(model.groupPath, ow.string.nonEmpty);
+        ow(group, ow.object.nonEmpty);
+        ow(group.groupPath, ow.string.nonEmpty);
 
         // if a profile to apply has been provided, apply it first
         if (applyProfile!==undefined) {
-            const existing = await this.get(model.groupPath, true);
+            const existing = await this.get(group.groupPath, true);
             if (existing===undefined) {
                 throw new Error('NOT_FOUND');
             }
-            const merged = Object.assign(new GroupItem(), existing, model);
-            model = await this.applyProfile(merged, applyProfile);
+            const merged = Object.assign(new GroupItem(), existing, group);
+            group = await this.applyProfile(merged, applyProfile);
         }
 
         // any ids need to be lowercase
-        this.setIdsToLowercase(model);
+        this.setIdsToLowercase(group);
 
-        await this.authServiceFull.authorizationCheck([], [model.groupPath, ...model.listRelatedGroupPaths()], ClaimAccess.U);
+        await this.authServiceFull.authorizationCheck([], [group.groupPath, ...group.listRelatedGroupPaths()], ClaimAccess.U);
 
-        const labels = await this.groupsDao.getLabels(model.groupPath);
-        if (labels===undefined) {
+        const labels = await this.groupsDao.getLabels([group.groupPath]);
+        const templateId = labels[group.groupPath]?.[0];
+        if (templateId===undefined) {
             throw new Error('NOT_FOUND');
         }
-        const templateId = labels.filter(l=> l!=='group')[0];
 
         // schema validation
-        const validate = await this.typesService.validateSubType(templateId, TypeCategory.Group, model, Operation.UPDATE);
-        if (!validate.isValid) {
+        const template = await this.typesService.get(templateId, TypeCategory.Group, TypeDefinitionStatus.published);
+        if (template===undefined) {
+            throw new Error ('INVALID_TEMPLATE');
+        }
+        const subTypeValidation = await this.validator.validateSubType(template, group, Operation.UPDATE);
+        if (!subTypeValidation.isValid) {
             throw new Error('FAILED_VALIDATION');
         }
 
-        model.category = TypeCategory.Group;
-        model.templateId = templateId;
-        const node = this.groupsAssembler.toNode(model);
+        group.category = TypeCategory.Group;
+        group.templateId = templateId;
+        const node = this.groupsAssembler.toNode(group);
 
         // Save to datastore
         await this.groupsDao.update(node);
 
         // fire event
         await this.eventEmitter.fire({
-            objectId: model.groupPath,
+            objectId: group.groupPath,
             type: Type.group,
             event: Event.modify,
-            payload: JSON.stringify(model)
+            payload: JSON.stringify(group)
         });
 
         logger.debug(`groups.full.service update: exit:`);
@@ -448,18 +453,48 @@ export class GroupsServiceFull implements GroupsService {
 
         await this.authServiceFull.authorizationCheck([], [sourceGroupPath, targetGroupPath], ClaimAccess.U);
 
-        const sourceGroup = await this.get(sourceGroupPath, false);
+        // fetch the existing groups
+        const sourceGroupFuture = this.get(sourceGroupPath, false);
+        const targetGroupFuture = this.get(targetGroupPath, false);
+        const [sourceGroup,targetGroup] = await Promise.all([sourceGroupFuture, targetGroupFuture]);
+        
+        // make sure they exist
+        if (sourceGroup===undefined || targetGroup===undefined) {
+            throw new Error('NOT_FOUND');
+        }
+        
+        // if the relation already exists, there's no need to continue
+        if (sourceGroup.groups?.out?.[relationship]?.find(e=> e.id===targetGroupPath)) {
+            logger.debug(`groups.full.service attachToGroup: relation already exits:`);
+            return;
+        }
+        
+        // ensure that the group relation is allowed
+        const relatedGroup: DirectionToRelatedEntityArrayMap = {
+            out: {
+                [relationship]: [{
+                    id: targetGroupPath,
+                }]
+            }
+        };
 
-        const out: StringToArrayMap = {};
-        out[relationship] = [targetGroupPath];
-
-        const isValid = await this.typesService.validateRelationshipsByPath(sourceGroup.templateId, {out});
-        if (!isValid) {
+        const template = await this.typesService.get(sourceGroup.templateId, TypeCategory.Group, TypeDefinitionStatus.published);
+        const validationResult = await this.validator.validateRelationshipsByIds(template, relatedGroup, undefined);
+        if (!validationResult.isValid) {
             throw new Error('FAILED_VALIDATION');
         }
 
+        // if fgac is enabled, we need to ensure any relations configured as identifying auth in its template are flagged to be saved as so
+        let isAuthCheck = true;
+        if (this.isAuthzEnabled) {
+            const authRelations = template.schema.relations.outgoingAuthRelations();
+            this.authServiceFull.updateRelsIdentifyingAuth(relatedGroup.out, authRelations);
+            isAuthCheck = relatedGroup.out[relationship][0].isAuthCheck??false;
+        }
+
+
         // Save to datastore
-        await this.groupsDao.attachToGroup(sourceGroupPath, relationship, targetGroupPath);
+        await this.groupsDao.attachToGroup(sourceGroupPath, relationship, targetGroupPath, isAuthCheck);
 
         // fire event
         await this.eventEmitter.fire({

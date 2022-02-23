@@ -23,7 +23,7 @@ export class LiteAssembler {
         throw new Error('NOT_IMPLEMENTED');
     }
 
-    public assembleAssociation(_node:Node, _r:RelatedEntityDto) {
+    public assembleAssociation(_node:Node, _r:RelatedEntityDto) : void {
         throw new Error('NOT_IMPLEMENTED');
     }
 

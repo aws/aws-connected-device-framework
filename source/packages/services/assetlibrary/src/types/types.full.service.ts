@@ -13,167 +13,23 @@
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../di/types';
 import { logger } from '../utils/logger';
-import * as fs from 'fs';
-import * as path from 'path';
-import * as util from 'util';
-import { TypesDaoFull, GroupType } from './types.full.dao';
-import { TypeModel, TypeDefinitionModel, TypeDefinitionStatus, TemplateDefinitionJson } from './types.models';
-import { SchemaValidatorService, SchemaValidationResult } from '../utils/schemaValidator.service';
+import { TypesDaoFull } from './types.full.dao';
+import { TypeModel, TypeDefinitionModel, TypeDefinitionStatus, isRelationTargetExpanded } from './types.models';
 import { TypeCategory, Operation } from './constants';
 import { EventEmitter, Type, Event } from '../events/eventEmitter.service';
-import * as NodeCache from 'node-cache';
 import ow from 'ow';
 import { TypesService } from './types.service';
-import { DirectionStringToArrayMap, SortKeys } from '../data/model';
+import { SortKeys } from '../data/model';
+import { SchemaValidationResult, SchemaValidatorService } from './schemaValidator.full.service';
 
 @injectable()
 export class TypesServiceFull implements TypesService {
 
-    private _readFileAsync = util.promisify(fs.readFile);
-
-    private _typesCache = new NodeCache.default({ stdTTL: Number(process.env.CACHE_TYPES_TTL)});
-
-    constructor(@inject(TYPES.TypesDao) private typesDao: TypesDaoFull,
+    constructor(
         @inject(TYPES.SchemaValidatorService) private validator: SchemaValidatorService,
+        @inject(TYPES.TypesDao) private typesDao: TypesDaoFull,
         @inject(TYPES.EventEmitter) private eventEmitter: EventEmitter) { }
 
-    private async loadSchema(templateId: string): Promise<string> {
-        logger.debug(`types.full.service loadSchema: in: templateId:${templateId}`);
-
-        ow(templateId, 'templateId', ow.string.nonEmpty);
-
-        let json: string;
-        try {
-            json = await this._readFileAsync(path.join(__dirname, `definitions/${templateId}.schema.json`), { encoding: 'utf8' });
-        } catch (err) {
-            throw new Error('INVALID_TYPE');
-        }
-
-        logger.debug(`types.full.service loadSchema: exit: ${json}`);
-        return json;
-    }
-
-    public async validateSubType(templateId: string, category: TypeCategory, document: unknown, op: Operation): Promise<SchemaValidationResult> {
-        logger.debug(`types.full.service validateSubType: in: templateId: ${templateId}, category: ${category}, document: ${JSON.stringify(document)}, op:${op}`);
-
-        ow(templateId, 'templateId', ow.string.nonEmpty);
-        ow(category, 'category', ow.string.nonEmpty);
-        ow(document, ow.object.nonEmpty);
-
-        // any ids need to be lowercase
-        templateId = templateId.toLowerCase();
-
-        // if we have not preprocessed the subtype schema before, retrieve the category schema then merge it with the sub type
-        let subTypeSchema = this._typesCache.get(templateId) as TemplateDefinitionJson;
-        if (subTypeSchema === undefined) {
-            // retrieve the category schema
-            let schema = this._typesCache.get(category) as TemplateDefinitionJson;
-            if (schema === undefined) {
-                schema = JSON.parse(await this.loadSchema(category));
-                this._typesCache.set(category, schema);
-            }
-            if (schema === undefined) {
-                throw new Error('TEMPLATE_NOT_FOUND');
-            }
-            await this.initializeSubTypeSchema(templateId, category, schema);
-            this._typesCache.set(templateId, schema, 10);
-            subTypeSchema = schema as TemplateDefinitionJson;
-        }
-
-        // if this is an update rather than a create, we need to relax the required fields
-        // on the schema validation (if not provided) as updates occur via a patch
-        if (op === Operation.UPDATE) {
-            const definedAsCategoryRequired = subTypeSchema.required as string[];
-            if (definedAsCategoryRequired !== undefined) {
-                const categoryRequired: string[] = [];
-                definedAsCategoryRequired.forEach(r => {
-                    if (Object.prototype.hasOwnProperty.call(document, r)) {
-                        categoryRequired.push(r);
-                    }
-                });
-                subTypeSchema.required = categoryRequired;
-            }
-            const definedAsSubTypeRequired = subTypeSchema.definitions.subType.required as string[];
-            if (definedAsSubTypeRequired !== undefined) {
-                const subTypeRequired: string[] = [];
-                definedAsSubTypeRequired.forEach(r => {
-                    if (Object.prototype.hasOwnProperty.call(document, r)) {
-                        subTypeRequired.push(r);
-                    }
-                });
-                subTypeSchema.definitions.subType.required = subTypeRequired;
-            }
-        }
-
-        logger.debug(`types.full.service validateSubType: schema:${JSON.stringify(subTypeSchema)}`);
-
-        return await this.validator.validate(subTypeSchema['$id'], subTypeSchema, document, op);
-    }
-
-    private async initializeSubTypeSchema(templateId: string, category: TypeCategory, schema: TemplateDefinitionJson): Promise<void> {
-        logger.debug(`types.full.service initializeSubTypeSchema: in: category:${category}, templateId:${templateId}, schema:${JSON.stringify(schema)}`);
-
-        const superTypeCategory = (category === TypeCategory.Component) ? TypeCategory.Device : category;
-        const typeModel = await this.get(templateId, superTypeCategory, TypeDefinitionStatus.published);
-        if (typeModel === undefined) {
-            throw new Error('TEMPLATE_NOT_FOUND');
-        }
-
-        const typeDef = typeModel.schema.definition;
-        schema.definitions.subType.properties = typeDef.properties;
-        schema.definitions.subType.required = typeDef.required;
-
-        // does the sub-type support components?
-        if (category === TypeCategory.Device) {
-            if (typeModel.schema.definition.components !== undefined && typeModel.schema.definition.components.length > 0) {
-                // if so, augment the main type schema with the component schemas
-                let componentSchema = this._typesCache.get('component') as TemplateDefinitionJson;
-                if (componentSchema === undefined) {
-                    componentSchema = JSON.parse(await this.loadSchema('component'));
-                    this._typesCache.set('component', componentSchema);
-                }
-                const componentSchemas: { [key: string]: TemplateDefinitionJson } = {};
-                for (const componentTemplateId of typeModel.schema.definition.components) {
-                    if (componentSchemas[componentTemplateId] !== undefined) {
-                        continue;
-                    }
-                    const componentModel = await this.get(componentTemplateId, TypeCategory.Device, TypeDefinitionStatus.published);
-                    const componentDef = componentModel.schema.definition;
-                    componentSchema.definitions.subType.properties = componentDef.properties;
-                    componentSchema.definitions.subType.required = componentDef.required;
-                    componentSchemas[componentTemplateId] = componentSchema;
-                }
-                Object.keys(componentSchemas).forEach(key => {
-                    schema.definitions.componentTypes.items.anyOf.push(componentSchemas[key]);
-                });
-
-            } else {
-                delete schema.properties.components;
-                delete schema.definitions.componentTypes;
-            }
-        }
-
-        schema['$id'] = `http://aws.com/cdf/schemas/${templateId}.json`;
-
-        logger.debug(`types.full.service initializeSubTypeSchema: exit: schema:${JSON.stringify(schema)}`);
-    }
-
-    public async validateType(category: TypeCategory, document: TemplateDefinitionJson, op: Operation): Promise<SchemaValidationResult> {
-        logger.debug(`types.full.service validateType: in: category: ${category}, document: ${JSON.stringify(document)}`);
-
-        ow(category, 'category', ow.string.nonEmpty);
-        ow(document, ow.object.nonEmpty);
-
-        let schema = this._typesCache.get(category) as TemplateDefinitionJson;
-        if (schema === undefined) {
-            schema = JSON.parse(await this.loadSchema(category));
-            this._typesCache.set(category, schema);
-        }
-
-        logger.debug(`types.full.service validateType: schema:${JSON.stringify(schema)}`);
-
-        return await this.validator.validate(schema['$id'], schema, document, op);
-    }
 
     public async get(templateId: string, category: TypeCategory, status: TypeDefinitionStatus): Promise<TypeModel> {
         logger.debug(`types.full.service get: in: templateId: ${templateId}, category: ${category}, status: ${status}`);
@@ -191,7 +47,16 @@ export class TypesServiceFull implements TypesService {
         const result = await this.typesDao.get(templateId, category, status);
         if (result !== undefined) {
             result.schema.definition.relations = result.schema.relations;
+
+            // retrieve the component definitions
+            if (result.schema.definition.components?.length > 0) {
+                result.schema.definition.componentTypes =[];
+                for(const componentTemplateId of result.schema.definition.components) {
+                    result.schema.definition.componentTypes.push(await this.get(componentTemplateId, TypeCategory.Component, status));
+                }
+            }
         }
+
 
         logger.debug(`types.full.service get: exit: ${JSON.stringify(result)}`);
         return result;
@@ -218,23 +83,29 @@ export class TypesServiceFull implements TypesService {
     private async validateRelations(definition: TypeDefinitionModel): Promise<boolean> {
         logger.debug(`types.full.service validateRelations: in: definition:${JSON.stringify(definition)}`);
 
-        let linkedTypesValid = true;
+        let linkedTargetsValid = true;
 
         // validate that any types provided as part of the in/out relations exist
         if (definition.relations !== undefined) {
-            let linkedTypes: string[] = [];
+            let linkedTargetNames: string[] = [];
             if (definition.relations.out !== undefined) {
-                Object.keys(definition.relations.out).forEach(k => definition.relations.out[k].forEach(v => linkedTypes.push(v)));
+                Object.values(definition.relations.out).forEach(v => 
+                    v.map(v2=> (isRelationTargetExpanded(v2)) ? v2 : {name:v2})
+                    .forEach(v2=> linkedTargetNames.push(v2.name))
+                );
             }
             if (definition.relations.in !== undefined) {
-                Object.keys(definition.relations.in).forEach(k => definition.relations.in[k].forEach(v => linkedTypes.push(v)));
+                Object.values(definition.relations.in).forEach(v => 
+                    v.map(v2=> (isRelationTargetExpanded(v2)) ? v2 : {name:v2})
+                    .forEach(v2=> linkedTargetNames.push(v2.name))
+                );
             }
-            linkedTypes = Array.from(new Set(linkedTypes));
+            linkedTargetNames = Array.from(new Set(linkedTargetNames));
 
-            linkedTypesValid = await this.typesDao.validateLinkedTypesExist(linkedTypes);
+            linkedTargetsValid = await this.typesDao.validateLinkedTypesExist(linkedTargetNames);
         }
-        logger.debug(`types.full.service create: exit: linkedTypesValid:${linkedTypesValid}`);
-        return linkedTypesValid;
+        logger.debug(`types.full.service create: exit: linkedTargetsValid:${linkedTargetsValid}`);
+        return linkedTargetsValid;
     }
 
     public async create(templateId: string, category: TypeCategory, definition: TypeDefinitionModel): Promise<SchemaValidationResult> {
@@ -256,7 +127,7 @@ export class TypesServiceFull implements TypesService {
         }
 
         // validate the schema
-        const validationResult = await this.validateSchema(definition, Operation.CREATE);
+        const validationResult = await this.validator.validateSchema(definition, Operation.CREATE);
         if (!validationResult.isValid) {
             logger.debug(`types.full.service create: exit: validationResult:${JSON.stringify(definition)}`);
             return validationResult;
@@ -286,7 +157,7 @@ export class TypesServiceFull implements TypesService {
         await this.typesDao.create(model);
 
         // delete the template cache
-        await this._typesCache.del(templateId);
+        await this.validator.deleteFromCache(templateId);
 
         // fire event
         await this.eventEmitter.fire({
@@ -348,7 +219,7 @@ export class TypesServiceFull implements TypesService {
             throw new Error('Invalid category');
         }
 
-        const validationResult = await this.validateSchema(definition, Operation.UPDATE);
+        const validationResult = await this.validator.validateSchema(definition, Operation.UPDATE);
         if (!validationResult.isValid) {
             logger.debug(`types.full.service update: exit: validationResult:${JSON.stringify(definition)}`);
             return validationResult;
@@ -437,100 +308,8 @@ export class TypesServiceFull implements TypesService {
         logger.debug(`types.full.service publish: exit:`);
     }
 
-    public async validateRelationshipsByType(templateId: string, rels: DirectionStringToArrayMap): Promise<boolean> {
-        logger.debug(`types.full.service validateRelationships: in: templateId:${templateId}, rels:${JSON.stringify(rels)}`);
-
-        ow(templateId, 'templateId', ow.string.nonEmpty);
-
-        if (rels === undefined || (rels.in === undefined && rels.out === undefined)) {
-            // nothing to validate
-            logger.debug(`types.full.service validateRelationshipsByType: exit: true (nothing)`);
-            return true;
-        }
-
-        // any ids need to be lowercase
-        templateId = templateId.toLowerCase();
-
-        // check in datastore
-        const isValid = await this.typesDao.validateRelationshipsByType(templateId, rels);
-
-        logger.debug(`types.full.service validateRelationships: exit: ${isValid}`);
-        return isValid;
-    }
-
-    public async validateRelationshipsByPath(templateId: string, rels: DirectionStringToArrayMap): Promise<boolean> {
-        // example:  in: templateId:edge, in:{}, out:{"manufactured_by":["/suppliers/bosch"]
-        logger.debug(`types.full.service validateRelationshipsByPath: in: templateId:${templateId}, rels:${JSON.stringify(rels)}`);
-
-        ow(templateId, 'templateId', ow.string.nonEmpty);
-
-        if (rels === undefined || (rels.in === undefined && rels.out === undefined)) {
-            // nothing to validate
-            logger.debug(`types.full.service validateRelationshipsByPath: exit: true (nothing)`);
-            return true;
-        }
-
-        // any ids need to be lowercase
-        templateId = templateId.toLowerCase();
-
-        // retrieve the associated group types and allowed relations
-        const groupInfo = await this.typesDao.validateRelationshipsByPath(templateId, rels);
-
-        // ensure the provided group paths are valid
-        if (groupInfo.invalidGroups !== undefined && groupInfo.invalidGroups.length > 0) {
-            logger.debug(`types.full.service validateRelationshipsByPath: exit: false (invalid group paths: ${groupInfo.invalidGroups})`);
-            return false;
-        }
-
-        // ensure the provided relations are valid
-        for (const in_out of Object.keys(rels)) {
-            for (const rel_name of Object.keys(rels[in_out])) {
-
-                // is the relation type allowed?
-                const allowed_rel = groupInfo.rels.filter(r => r.name === rel_name.toLowerCase());
-                if (allowed_rel === undefined || allowed_rel === null || allowed_rel.length === 0) {
-                    logger.debug(`types.full.service validateRelationshipsByPath: exit: false (invalid relation: ${rel_name})`);
-                    return false;
-                }
-
-                for (const rel_path of rels[in_out][rel_name]) {
-
-                    // is the type of target groups allowed for this relation?
-                    let group: GroupType;
-                    let valid = false;
-                    if (in_out === 'in') {
-                        group = groupInfo.groupTypes_in.filter(gt => gt.path === rel_path.toLowerCase())[0];
-                        valid = allowed_rel.filter(r => r.outType === group.template).length > 0;
-                    } else {
-                        group = groupInfo.groupTypes_out.filter(gt => gt.path === rel_path.toLowerCase())[0];
-                        valid = allowed_rel.filter(r => r.inType === group.template).length > 0;
-                    }
-                    if (!valid) {
-                        logger.debug(`types.full.service validateRelationshipsByPath: exit: false (invalid group ${rel_path} for relation: ${rel_name})`);
-                        return false;
-                    }
-                }
-            }
-        }
-
-        logger.debug('types.full.service validateRelationshipsByPath: exit: true');
-        return true;
-    }
-
     private isValidCategory(category: string): boolean {
         return (category === TypeCategory.Device || category === TypeCategory.Group);
-    }
-
-    private async validateSchema(definition: unknown, op: Operation): Promise<SchemaValidationResult> {
-        // validate the provided schema
-        const cacheKey = 'specializedTypeDefinition';
-        let schema = this._typesCache.get(cacheKey) as TemplateDefinitionJson;
-        if (schema === undefined) {
-            schema = JSON.parse(await this.loadSchema(cacheKey));
-            this._typesCache.set(cacheKey, schema);
-        }
-
-        return await this.validator.validate(schema['$id'], schema, definition, op);
     }
 
 }

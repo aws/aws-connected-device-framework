@@ -14,10 +14,10 @@ import { process, structure } from 'gremlin';
 import { injectable, inject } from 'inversify';
 import {logger} from '../utils/logger';
 import { TYPES } from '../di/types';
-import {TypeModel, TypeVersionModel, TypeRelationsModel, TypeDefinitionStatus } from './types.models';
+import { TypeModel, TypeVersionModel, TypeRelationsModel, TypeDefinitionStatus, isRelationTargetExpanded } from './types.models';
 import * as jsonpatch from 'fast-json-patch';
 import { TypeCategory } from './constants';
-import { DirectionStringToArrayMap, SortKeys } from '../data/model';
+import { DirectionToStringArrayMap, SortKeys } from '../data/model';
 import { BaseDaoFull } from '../data/base.full.dao';
 
 const __ = process.statics;
@@ -199,20 +199,22 @@ export class TypesDaoFull extends BaseDaoFull {
     }
 
     private addCreateRelationStepsToTraversal(rels:TypeRelationsModel, templateId:string, traverser:process.GraphTraversal) {
-        if (rels && rels.out) {
-            for (const key of Object.keys(rels.out)) {
-                rels.out[key]=rels.out[key].sort();
-                for (const outTemplate of rels.out[key]) {
-                    this.addCreateOutboundRelationStepToTraversal(templateId.toLowerCase(), outTemplate.toLowerCase(), key.toLowerCase(), traverser);
+        if (rels?.out) {
+            for (const relation of Object.keys(rels.out)) {
+                rels.out[relation].sort();
+                for (const t of rels.out[relation]) {
+                    const templateName = (isRelationTargetExpanded(t)) ? t.name : t;
+                    this.addCreateOutboundRelationStepToTraversal(templateId, templateName, relation, traverser);
                 }
             }
         }
 
-        if (rels && rels.in) {
-            for (const key of Object.keys(rels.in)) {
-                rels.in[key]=rels.in[key].sort();
-                for (const inTemplate of rels.in[key]) {
-                    this.addCreateInboundRelationStepToTraversal(templateId.toLowerCase(), inTemplate.toLowerCase(), key.toLowerCase(), traverser);
+        if (rels?.in) {
+            for (const relation of Object.keys(rels.in)) {
+                rels.in[relation].sort();
+                for (const t of rels.in[relation]) {
+                    const templateName = (isRelationTargetExpanded(t)) ? t.name : t;
+                    this.addCreateInboundRelationStepToTraversal(templateId, templateName, relation, traverser);
                 }
             }
         }
@@ -220,6 +222,10 @@ export class TypesDaoFull extends BaseDaoFull {
 
     private addCreateOutboundRelationStepToTraversal(templateId:string, outTemplate:string, relation:string, traverser:process.GraphTraversal) {
         logger.debug(`types.full.dao addCreateOutboundRelationStepToTraversal: in: templateId:${templateId}, outTemplate:${outTemplate}, relation:${relation}`);
+
+        templateId = templateId.toLowerCase();
+        outTemplate = outTemplate.toLowerCase();
+        relation = relation.toLowerCase();
 
         const status = this.typeDefinitionStatusToLink(templateId, outTemplate);
 
@@ -233,6 +239,10 @@ export class TypesDaoFull extends BaseDaoFull {
 
     private addCreateInboundRelationStepToTraversal(templateId:string, inTemplate:string, relation:string, traverser:process.GraphTraversal) {
         logger.debug(`types.full.dao addCreateInboundRelationStepToTraversal: in: templateId:${templateId}, inTemplate:${inTemplate}, relation:${relation}`);
+
+        templateId = templateId.toLowerCase();
+        inTemplate = inTemplate.toLowerCase();
+        relation = relation.toLowerCase();
 
         const status = this.typeDefinitionStatusToLink(templateId, inTemplate);
 
@@ -265,17 +275,19 @@ export class TypesDaoFull extends BaseDaoFull {
 
             if (updated.schema.relations) {
                 const changedRelations = this.identifyChangedRelations(existing.schema.relations, updated.schema.relations);
-                logger.debug(`changedRelations: ${JSON.stringify(changedRelations)}`);
+                logger.debug(`types.full.dao updateDraft: changedRelations: ${JSON.stringify(changedRelations)}`);
 
-                Object.keys(changedRelations.add.in).forEach(key=> {
-                    changedRelations.add.in[key].forEach(value=> {
-                        this.addCreateInboundRelationStepToTraversal(existing.templateId, value, key, traverser);
+                Object.keys(changedRelations.add.in).forEach(relation=> {
+                    changedRelations.add.in[relation].forEach(t=> {
+                        const templateName = (isRelationTargetExpanded(t)) ? t.name : t;
+                        this.addCreateInboundRelationStepToTraversal(existing.templateId, templateName, relation, traverser);
                     });
                 });
 
-                Object.keys(changedRelations.add.out).forEach(key=> {
-                    changedRelations.add.out[key].forEach(value=> {
-                        this.addCreateOutboundRelationStepToTraversal(existing.templateId, value, key, traverser);
+                Object.keys(changedRelations.add.out).forEach(relation=> {
+                    changedRelations.add.out[relation].forEach(t=> {
+                        const templateName = (isRelationTargetExpanded(t)) ? t.name : t;
+                        this.addCreateOutboundRelationStepToTraversal(existing.templateId, templateName, relation, traverser);
                     });
                 });
 
@@ -326,22 +338,22 @@ export class TypesDaoFull extends BaseDaoFull {
 
     private identifyChangedRelations(existing:TypeRelationsModel, updated:TypeRelationsModel): ChangedRelations  {
         // before we diff, sort the relations.  this avoids reporting any unneccessary modifications where just the ordering may have changed
-        if (existing && existing.in) {
+        if (existing?.in) {
             for (const key of Object.keys(existing.in)) {
                 existing.in[key]=existing.in[key].sort();
             }
         }
-        if (existing && existing.out) {
+        if (existing?.out) {
             for (const key of Object.keys(existing.out)) {
                 existing.out[key]=existing.out[key].sort();
             }
         }
-        if (updated && updated.in) {
+        if (updated?.in) {
             for (const key of Object.keys(updated.in)) {
                 updated.in[key]=updated.in[key].sort();
             }
         }
-        if (updated && updated.out) {
+        if (updated?.out) {
             for (const key of Object.keys(updated.out)) {
                 updated.out[key]=updated.out[key].sort();
             }
@@ -586,7 +598,7 @@ export class TypesDaoFull extends BaseDaoFull {
         logger.debug(`types.full.dao delete: exit`);
     }
 
-    public async validateRelationshipsByType(templateId:string, relations:DirectionStringToArrayMap): Promise<boolean> {
+    public async validateRelationshipsByType(templateId:string, relations:DirectionToStringArrayMap): Promise<boolean> {
         logger.debug(`types.full.dao validateRelationshipsByType: in: templateId:${templateId}, relations:${JSON.stringify(relations)}`);
 
         const id = `type___${templateId}`;
@@ -597,23 +609,21 @@ export class TypesDaoFull extends BaseDaoFull {
             const traverser = conn.traversal.V(id).
                 outE('current_definition').has('status','published').inV().as('def');
 
-            if (relations && relations.in) {
-                Object.keys(relations.in).forEach(rel_name=> {
-                    const values = relations.in[rel_name] as string[];
-                    values.forEach(value=> {
+            if (relations?.in) {
+                Object.entries(relations.in).forEach(([relation,templates])=> {
+                    templates.forEach(template=> {
                         traverser.select('def').bothE('relationship').
-                            has('name',rel_name).
-                            has('fromTemplate',value);
+                            has('name',relation).
+                            has('fromTemplate',template);
                     });
                 });
             }
-            if (relations && relations.out) {
-                Object.keys(relations.out).forEach(rel_name=> {
-                    const values = relations.out[rel_name] as string[];
-                    values.forEach(value=> {
+            if (relations?.out) {
+                Object.entries(relations.out).forEach(([relation,templates])=> {
+                    templates.forEach(template=> {
                         traverser.select('def').bothE('relationship').
-                            has('name',rel_name).
-                            has('toTemplate',value);
+                            has('name',relation).
+                            has('toTemplate',template);
                     });
                 });
             }
@@ -623,165 +633,10 @@ export class TypesDaoFull extends BaseDaoFull {
             await conn.close();
         }
 
-        const isValid = (result!==undefined && result.value!==undefined);
+        const isValid = (result?.value!==undefined);
         logger.debug(`types.full.dao validateRelationshipsByType: exit: ${isValid}`);
         return isValid;
 
-    }
-
-    public async validateRelationshipsByPath(templateId:string, relations:DirectionStringToArrayMap): Promise<RelationsByPath> {
-        logger.debug(`types.full.dao validateRelationshipsByPath: in: templateId:${templateId}, relations:${JSON.stringify(relations)}`);
-
-        const id = `type___${templateId.toLowerCase()}`;
-
-        let results;
-        const rels_paths_in:string[]=[];
-        const rels_paths_out:string[]=[];
-
-        const conn = super.getConnection();
-        try {
-            // get a handle on the type
-            const traverser = conn.traversal.V(id).
-                outE('current_definition').has('status','published').inV().as('def');
-
-            // get all known allowed relationships
-            traverser.select('def').bothE('relationship').fold().as('rels');
-
-            // extrapolate the paths from the rels parameter to make our lives easier...
-            if (relations && relations.in) {
-                Object.keys(relations.in).forEach(rel=> {
-                    relations.in[rel].forEach(path=> {
-                        rels_paths_in.push(path.toLowerCase());
-                    });
-                });
-            }
-            if (relations && relations.out) {
-                Object.keys(relations.out).forEach(rel=> {
-                    relations.out[rel].forEach(path=> {
-                        rels_paths_out.push(path.toLowerCase());
-                    });
-                });
-            }
-
-            // get a handle to the groups that we're trying to associate with, and project them
-            let index = 1;
-            const groupAliases:string[]=[];
-            rels_paths_in.forEach(path=> {
-                const alias = `g_in_${index}`;
-                traverser.V(`group___${path.toLowerCase()}`).as(alias);
-                groupAliases.push(alias);
-                index++;
-            });
-            rels_paths_out.forEach(path=> {
-                const alias = `g_out_${index}`;
-                traverser.V(`group___${path.toLowerCase()}`).as(alias);
-                groupAliases.push(alias);
-                index++;
-            });
-
-            // we need to project all the groups, as well as details of the allowed relationships
-            const projections:string[]=[];
-            projections.push(...groupAliases);
-            projections.push('rels');
-            projections.push('rels_props');
-            traverser.project(...projections);
-
-            // return the details of all the groups to match with the above projections
-            groupAliases.forEach(alias=> traverser.by(__.select(alias)));
-
-            // also return details of the relations (the edge) along with the relations properties (its valuemap)
-            traverser.by(__.select('rels'));
-            traverser.by(__.select('rels').unfold().valueMap().with_(process.withOptions.tokens).fold());
-
-            // execute the query
-            logger.debug(`types.full.dao validateRelationshipsByPath: traverser: ${JSON.stringify(traverser.toString())}`);
-            results = await traverser.next();
-        } finally {
-            await conn.close();
-        }
-
-        // parse the results
-        const groupTypes_in:GroupType[]=[];
-        const groupTypes_out:GroupType[]=[];
-        const rels:unknown[]=[];
-        const rels_props:unknown[]=[];
-        const validGroups_in:string[]=[];
-        const validGroups_out:string[]=[];
-        const allowed_rels:AllowedRelation[]=[];
-        logger.debug(`types.full.dao validateRelationshipsByPath: results: ${JSON.stringify(results)}`);
-
-        if (results!==undefined && results.value!==null) {
-            const values = JSON.parse(JSON.stringify(results.value));
-            Object.keys(values).forEach(k=> {
-                if (k.startsWith('g_')) {
-                    // this is a group that we have found based on the provided relations data
-                    const path = this.extractNameFromId( values[k].id);
-                    const isIncoming = k.startsWith('g_in_');
-
-                    if (isIncoming) {
-                        validGroups_in.push(path);
-                    } else {
-                        validGroups_out.push(path);
-                    }
-                    (values[k].label.split('::') as string[]).
-                        filter(l=> l!=='group' && l!=='device').
-                        forEach(l=> {
-                            if (isIncoming) {
-                                groupTypes_in.push({path,template:l});
-                            } else {
-                                groupTypes_out.push({path,template:l});
-                            }
-                        });
-                } else if (k==='rels') {
-                    // this is an allowed relationship for the provided templateId
-                    for(const r of values[k]) {
-                        rels.push(r);
-                    }
-                } else if (k==='rels_props') {
-                    // this is an allowed relationship (its properties) for the provided templateId
-                    for(const r of values[k]) {
-                        rels_props.push(r);
-                    }
-                }
-            });
-        }
-
-        // format the allowed relations to make it easier to work with
-        for(const r of rels) {
-            const rel_props = rels_props.filter(rp=> rp['id']===r['id'])[0];
-            allowed_rels.push({
-               name:rel_props['name'],
-               outType:this.extractNameFromId(r['outV']['id']),
-               inType:this.extractNameFromId(r['inV']['id'])
-            });
-        }
-
-        // validate that all requested group paths were found
-        const invalidGroups:string[]=[];
-        rels_paths_in.forEach(path=> {
-            if (!validGroups_in.includes(path)) {
-                invalidGroups.push(path);
-            }
-        });
-        rels_paths_out.forEach(path=> {
-            if (!validGroups_out.includes(path)) {
-                invalidGroups.push(path);
-            }
-        });
-
-        const response:RelationsByPath = {
-            groupTypes_in,
-            groupTypes_out,
-            rels: allowed_rels,
-            invalidGroups
-        };
-        logger.debug(`types.full.dao validateRelationshipsByPath: exit: ${JSON.stringify(response)}`);
-        return response;
-    }
-
-    private extractNameFromId(id:string):string {
-        // given `type___test-devices-unlinkablegroup___v1`, return `type___test-devices-unlinkablegroup`
-        return id.split('___')[1];
     }
 
     public async validateLinkedTypesExist(types:string[]): Promise<boolean> {
@@ -895,9 +750,11 @@ interface ChangedRelations {
     add: TypeRelationsModel;
 }
 
-interface RelationsByPath {
-    groupTypes_in:GroupType[];
-    groupTypes_out:GroupType[];
+export interface RelationsByPath {
+    groupTypesIn:GroupType[];
+    groupTypesOut:GroupType[];
+    deviceTypesIn:DeviceType[];
+    deviceTypesOut:DeviceType[];
     rels:AllowedRelation[];
     invalidGroups:string[];
 }
@@ -910,5 +767,10 @@ interface AllowedRelation {
 
 export interface GroupType {
     path:string;
+    template:string;
+}
+
+export interface DeviceType {
+    id:string;
     template:string;
 }

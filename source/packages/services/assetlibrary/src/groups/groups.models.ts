@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { TypeCategory } from '../types/constants';
-import { ModelAttributeValue, StringToArrayMap, DirectionStringToArrayMap } from '../data/model';
+import { ModelAttributeValue, StringArrayMap, DirectionToStringArrayMap, DirectionToRelatedEntityArrayMap } from '../data/model';
 import { DeviceItem, DeviceBaseResource } from '../devices/devices.models';
 
 export class GroupBaseResource {
@@ -34,11 +34,11 @@ export class GroupBaseResource {
 }
 
 export class Group10Resource extends GroupBaseResource {
-	groups?: StringToArrayMap = {};
+	groups?: StringArrayMap = {};
 }
 
 export class Group20Resource extends GroupBaseResource {
-	groups?: DirectionStringToArrayMap = {};
+	groups?: DirectionToStringArrayMap = {};
 }
 
 export class GroupResourceList {
@@ -57,7 +57,7 @@ export class GroupItem {
 	description?: string;
 	parentPath: string;
 
-	groups?: DirectionStringToArrayMap = {};
+	groups?: DirectionToRelatedEntityArrayMap = {};
 	attributes?: { [key: string] : ModelAttributeValue} = {};
 
 	// used for optimistic locking in 'lite' mode
@@ -73,20 +73,18 @@ export class GroupItem {
 
 	public listRelatedGroupPaths():string[] {
 		const relatedGroupPaths:string[]= [];
-		if (this.groups) {
-			if (this.groups.in) {
-				Object.keys(this.groups.in).forEach(k=> relatedGroupPaths.push(...this.groups.in[k]));
-			}
-			if (this.groups.out) {
-				Object.keys(this.groups.out).forEach(k=> relatedGroupPaths.push(...this.groups.out[k]));
-			}
+		if (this.groups?.in) {
+			Object.values(this.groups.in).forEach(relations => relations.forEach( relation => relatedGroupPaths.push(relation.id)));
+		}
+		if (this.groups?.out) {
+			Object.values(this.groups.out).forEach(relations => relations.forEach( relation => relatedGroupPaths.push(relation.id)));
 		}
 		return relatedGroupPaths;
 	}
 }
 
 export interface GroupItemList {
-    results: GroupItem[];
+	results: GroupItem[];
 	pagination?: {
 		offset:number|string;
 		count: number;

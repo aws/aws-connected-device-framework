@@ -16,9 +16,10 @@ import {logger} from '../utils/logger';
 import {TYPES} from '../di/types';
 import {Node} from '../data/node';
 import { FullAssembler } from '../data/full.assembler';
-import { ModelAttributeValue, DirectionStringToArrayMap, SortKeys } from '../data/model';
+import { ModelAttributeValue, SortKeys, RelatedEntityArrayMap, DirectionToRelatedEntityArrayMap } from '../data/model';
 import { BaseDaoFull } from '../data/base.full.dao';
 import { CommonDaoFull } from '../data/common.full.dao';
+import {EntityTypeMap} from '../data/model';
 import { isRelatedEntityDto, isVertexDto, RelatedEntityDto, VertexDto } from '../data/full.model';
 
 const __ = process.statics;
@@ -103,14 +104,17 @@ export class GroupsDaoFull extends BaseDaoFull {
         return nodes;
     }
 
-    public async getLabels(groupPath: string): Promise<string[]> {
-        logger.debug(`groups.full.dao getLabels: in: groupPath: ${groupPath}`);
+    public async getLabels(groupPaths: string[]): Promise<EntityTypeMap> {
+        logger.debug(`groups.full.dao getLabels: in: groupPaths: ${groupPaths}`);
 
-        const id = 'group___' + groupPath;
-        return await this.commonDao.getLabels(id);
+        const dbIds = groupPaths.map(d=> `group___${d}`);
+        const result = await this.commonDao.getLabels(dbIds);
+        Object.values(result).map(labels=> labels.filter(l=> l!=='group'));
+        logger.debug(`groups.full.dao getLabels: result: ${result}`);
+        return result;
     }
 
-    public async create(n: Node, groups:DirectionStringToArrayMap): Promise<string> {
+    public async create(n: Node, groups:DirectionToRelatedEntityArrayMap): Promise<string> {
         logger.debug(`groups.full.dao create: in: n:${JSON.stringify(n)}, groups:${JSON.stringify(groups)}`);
 
         const id = `group___${n.attributes['groupPath']}`;
@@ -132,25 +136,26 @@ export class GroupsDaoFull extends BaseDaoFull {
             traversal.as('group')
                 .addE('parent').from_('group').to('parent');
 
-                /*  associate with the groups  */
-                if (groups) {
-                    if (groups.in) {
-                        Object.keys(groups.in).forEach(rel=> {
-                            groups.in[rel].forEach(v=> {
-                                const groupId = `group___${v}`;
-                                traversal.V(groupId).addE(rel).to('group');
-                            });
-                        });
-                    }
-                    if (groups.out) {
-                        Object.keys(groups.out).forEach(rel=> {
-                            groups.out[rel].forEach(v=> {
-                                const groupId = `group___${v}`;
-                                traversal.V(groupId).addE(rel).from_('group');
+                /*  associate with any related groups  */
+                const associateRels = (rels:RelatedEntityArrayMap, direction:'in'|'out') => {
+                    if (Object.keys(rels??{}).length>0) {
+                        Object.entries(rels).forEach(([rel,entities])=> {
+                            entities.forEach(entity=> {
+                                const dbIdId = `group___${entity.id}`;
+                                if (direction==='in') {
+                                    traversal.V(dbIdId).addE(rel).to('group');
+                                } else {
+                                    traversal.V(dbIdId).addE(rel).from_('group');
+                                }
+                                if (entity.isAuthCheck) {
+                                    traversal.property(process.cardinality.single, 'isAuthCheck', true);
+                                }
                             });
                         });
                     }
                 }
+                associateRels(groups?.in, 'in');
+                associateRels(groups?.out, 'out');
 
             await traversal.next();
         } finally {
@@ -252,17 +257,22 @@ export class GroupsDaoFull extends BaseDaoFull {
         logger.debug(`groups.full.dao delete: exit`);
     }
 
-    public async attachToGroup(sourceGroupPath:string, relationship:string, targetGroupPath:string) : Promise<void> {
-        logger.debug(`groups.full.dao attachToGroup: in: sourceGroupPath:${sourceGroupPath}, relationship:${relationship}, targetGroupPath:${targetGroupPath}`);
+    public async attachToGroup(sourceGroupPath:string, relationship:string, targetGroupPath:string, isAuthCheck:boolean) : Promise<void> {
+        logger.debug(`groups.full.dao attachToGroup: in: sourceGroupPath:${sourceGroupPath}, relationship:${relationship}, targetGroupPath:${targetGroupPath}, isAuthCheck:${isAuthCheck}`);
 
         const sourceId = `group___${sourceGroupPath}`;
         const targetId = `group___${targetGroupPath}`;
 
         const conn = super.getConnection();
         try {
-            const result = await conn.traversal.V(targetId).as('target').
-                V(sourceId).as('source').addE(relationship).to('target').
-                iterate();
+            const traverser = conn.traversal.V(targetId).as('target').
+                V(sourceId).as('source').addE(relationship).to('target');
+
+                if (isAuthCheck) {
+                    traverser.property(process.cardinality.single, 'isAuthCheck', true);
+                }
+
+                const result = await traverser.iterate();
 
             logger.verbose(`groups.full.dao attachToGroup: result:${JSON.stringify(result)}`);
         } finally {

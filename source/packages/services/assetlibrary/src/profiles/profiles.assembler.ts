@@ -19,6 +19,7 @@ import { ProfileNode, DeviceProfileItem, GroupProfileItem, DeviceProfile10Resour
 import { GroupItem } from '../groups/groups.models';
 import { DevicesAssembler } from '../devices/devices.assembler';
 import { DeviceItem } from '../devices/devices.models';
+import { RelatedEntityArrayMap, StringArrayMap } from '../data/model';
 
 @injectable()
 export class ProfilesAssembler {
@@ -46,7 +47,11 @@ export class ProfilesAssembler {
         node.types = node.types.filter(t=> t!==TypeCategory.Device && t!==TypeCategory.Group);
         node.types.push(TypeCategory.Profile);
         node.templateId = model.templateId;
-        node.groups = model.groups;
+        if (model.groups) {
+            node.groups= {};
+        }
+        node.groups.in = Object.fromEntries( Object.entries(model.groups.in).map(([relation, entities]) => [relation, entities.map(e=>e.id)]));
+        node.groups.in = Object.fromEntries( Object.entries(model.groups.out).map(([relation, entities]) => [relation, entities.map(e=>e.id)]));
 
         logger.debug(`profiles.assembler toNode: exit: node: ${JSON.stringify(node)}`);
         return node;
@@ -116,20 +121,37 @@ export class ProfilesAssembler {
 
         const resource = this.devicesAssembler.toDeviceResource(item as DeviceItem, version) as DeviceProfileResource;
 
+        const assembleRelated = (from:RelatedEntityArrayMap, to:StringArrayMap)=> {
+            if (from) {
+                if (to===undefined) to = {};
+                for(const [relation,entities] of Object.entries(from)) {
+                    if (to[relation]===undefined) {
+                        to[relation]= [];
+                    }
+                    to[relation].push(...entities.map(entity=>entity.id));
+                }
+            }
+        }
+
         // then add the attributes which are specific to profile models
         resource.profileId = item.profileId;
 
         if (version.startsWith('1.0')) {
             if (item.groups!==undefined) {
+                const typedResource:DeviceProfile10Resource = resource;
                 (resource as DeviceProfile10Resource).groups = {};
                 Object.keys(item.groups).forEach(direction=> {
                     Object.keys(item.groups[direction]).forEach(relation=> {
                         (resource as DeviceProfile10Resource).groups[relation] = item.groups[direction][relation];
                     });
                 });
+                assembleRelated(item.groups?.in, typedResource.groups);
+                assembleRelated(item.groups?.out, typedResource.groups);
             }
         } else {
-            (resource as DeviceProfile20Resource).groups = item.groups;
+            const typedResource:DeviceProfile20Resource = resource;
+            assembleRelated(item.groups?.in, typedResource.groups.in);
+            assembleRelated(item.groups?.out, typedResource.groups.out);
         }
 
         logger.debug(`profiles.assembler toDeviceProfileResource: exit: resource: ${JSON.stringify(resource)}`);
@@ -167,6 +189,18 @@ export class ProfilesAssembler {
             return undefined;
         }
 
+        const assembleRelated = (from:RelatedEntityArrayMap, to:StringArrayMap)=> {
+            if (from) {
+                if (to===undefined) to = {};
+                for(const [relation,entities] of Object.entries(from)) {
+                    if (to[relation]===undefined) {
+                        to[relation]= [];
+                    }
+                    to[relation].push(...entities.map(entity=>entity.id));
+                }
+            }
+        }
+
         const resource = this.groupsAssembler.toGroupResource(item as GroupItem, version) as GroupProfileResource;
 
         // then add the attributes which are specific to profile models
@@ -174,15 +208,18 @@ export class ProfilesAssembler {
 
         if (version.startsWith('1.0')) {
             if (item.groups!==undefined) {
-                (resource as GroupProfile10Resource).groups = {};
-                Object.keys(item.groups).forEach(direction=> {
-                    Object.keys(item.groups[direction]).forEach(relation=> {
-                        (resource as GroupProfile10Resource).groups[relation] = item.groups[direction][relation];
-                    });
-                });
+                const typedResource = resource as GroupProfile10Resource;
+                if (item.groups) {
+                    assembleRelated(item.groups?.in, typedResource.groups);
+                    assembleRelated(item.groups?.out, typedResource.groups);
+                } else {
+                    delete typedResource.groups;
+                }
             }
         } else {
-            (resource as GroupProfile20Resource).groups = item.groups;
+            const typedResource = resource as GroupProfile20Resource;
+            assembleRelated(item.groups?.in, typedResource.groups.in);
+            assembleRelated(item.groups?.out, typedResource.groups.out);
         }
 
         logger.debug(`profiles.assembler toGroupProfileResource: exit: resource: ${JSON.stringify(resource)}`);
