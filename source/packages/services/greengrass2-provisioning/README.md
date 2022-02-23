@@ -2,31 +2,98 @@
 
 ## INTRODUCTION
 
-The `Greengrass V2 Provisioning` service provides these functionalities
+The `Greengrass V2 Provisioning` module takes care of the cloud portion of provisioning Greengrass C2 cores and client devices by providing the following features:
 
-* Provision 1 or more Greengrass V2 Cores
-* Provision 1 or more Client Devices
-* Associate Client Devices with Greengrass V2 Cores
-* Create template, which represents greengrass components (and their relevant configuration)
-* Deploy templates to one or more Greengrass V2 Cores
+- Defining templates to represent a set of components (and their config) to deploy
+- Auto-provisioning of Greengrass V2 cores, including the registration of the Thing, automated generation and registration of device certificates, association of policies, and generation of the core's installer configuration files
+- Auto-provisioning of Greengrass V2 client devices, including the registration of the Thing, the automated generation and registration of device certificates, association of policies, and association with the Greengrass core
+- Deletion of Greengrass V2 cores and client devices, including the deletion of their Things and certificates
+- Provides an opinionated way of deploying sets of components (as defined in the template) as part of the initial Greengrass V2 deployment as well as subsequent deployment updates
+- Fleet wide view of template versions deployed, as well as deployment status
+- Optional integration with the CDF Asset Library allowing Asset Library devices, groups, and/or search queries to be the target of deployments
+- End to end integration tests, including the auto-provisioning of a Greengrass core to be used as part of testing
+
+The [Greengrass V2 Installer Config Generator module](../greengrass2-installer-config-generators/README.md) provides reference implementations of how to generate the installer configuration files for [manual provisioning](https://docs.aws.amazon.com/greengrass/v2/developerguide/quick-installation.html) and [fleet provisioning](https://docs.aws.amazon.com/greengrass/v2/developerguide/fleet-provisioning.html) as described in the AWS Greengrass V2 Developer Guide.
+
+The [Device Patcher module](../device-patcher/README.md) can be used for the initial installation and configuration of the physical Greengrass V2 core and client devices.
 
 
+## Pre-requisites
 
-## Deployment
+This module utilizes the [Provisioning module](../provisioning/README.md) to perform the actual provisioning which will be automatically installed by the [Installer module](../installer/README.md) when this module has been selected for install. [Provisioning templates](../provisioning/docs/provisioning-templates.md) are used to define how a core and/or client device should be provisioned. A provisioning template must be configured and uploaded to S3 to be referenced by the walkthrough below.
 
-Follow the instruction [here](../installer/README.md#) to deploy Greengrass Version 2 Provisioning and Installer Configuration Services. The installer will automatically includes the `Provisioning` and `Asset Library` modules.
+An example of a provisioning template that can be used to provision a Thing to represent a Greengrass V2 core is as follows. This template will accept `Parameters.ThingName` as a parameter. As the `CDF.createDeviceCertificate` option is set to `true`, a certificate will be created on behalf of the device with it automatically setting the `Parameters.CertificatePem` and `Parameters.CaCertificatePem` values which is a convineince for development / testing, but if using this in a production environment the recommended (most secure option) of registering device would be to remove `CDF.createDeviceCertificate`, `
 
+```xml
+{
+    "Parameters": {
+        "ThingName": {
+            "Type": "String"
+        },
+        "CertificatePem": {
+            "Type": "String"
+        },
+        "CaCertificatePem": {
+            "Type": "String"
+        }
+    },
+    "Resources": {
+        "thing": {
+            "Type": "AWS::IoT::Thing",
+            "Properties": {
+                "ThingName": {
+                    "Ref": "ThingName"
+                }
+            },
+            "OverrideSettings": {
+                "ThingTypeName": "REPLACE"
+            }
+        },
+        "certificate": {
+            "Type": "AWS::IoT::Certificate",
+            "Properties": {
+                "CACertificatePem": {
+                    "Ref": "CaCertificatePem"
+                },
+                "CertificatePem": {
+                    "Ref": "CertificatePem"
+                },
+                "Status": "ACTIVE"
+            },
+            "OverrideSettings": {
+                "Status": "REPLACE"
+            }
+        },
+        "policy": {
+            "Type": "AWS::IoT::Policy",
+            "Properties": {
+                "PolicyName": "CDFGreengrass2CorePolicy"
+            }
+        }
+    },
+    
+    "CDF": {
+        "createDeviceCertificate": true,
+        "attachAdditionalPolicies": [{
+            "name": "myTokenExchangeRoleAliasPolicy"
+        }]
+    }
+}
+```
 
 ## Walkthrough
 
+Refer to the [swagger](docs/swagger.yml) as you progress through this walkthrough to understand the options of the various steps involved.
+
 ### Provision a core
 
-Make the following REST call to provision a core (register a thing, create and associate a certificate, associate the multiple policies required, and creates the Greengrass installer config), replacing the following tokens
+The following REST call will provision a core (registers a thing, creates and associate a certificate, associate the multiple policies required, and creates the Greengrass installer config).
+
+Replacing the following tokens in the example:
 
 - `<core-name>` - the name of the GG2 core to create
 - `<provisioning-template>` - the name of the provisioning template to use.
 - `<ca-id>` - The CA certificate identifier
-
 
 #### Request
 
@@ -66,9 +133,9 @@ x-taskid: <taskId>
 
 ***
 
-As this request is asynchronous (depending on how many need to be created, may take longer than API Gateway execution limit), a task is created. The response will return the header `x-taskid` to identify the task.
+As this request is asynchronous (depending on how many need to be created, may take longer than API Gateway execution limit), a task is created which batches, queues and fans out the cores to be created. The response will return the header `x-taskid` to identify the task.
 
-Using the `x-taskid`, view the status of the task:
+Using the `x-taskid`, retrieve the status of the task:
 
 
 #### Request
@@ -224,7 +291,7 @@ Content-Type: application/vnd.aws-cdf-v1.0+json
 
 ### Power on the core
 
-Before a GG2 deployment can be executed, the core itself must be powered on to allow it to self-register with the Greengrass2 platform. The steps defined in [Grreengrass V2 Provisioning Integration Testing](<docs/integration-testing.md>) can be used to setup a Greengrass2 core device on EC2.
+Before a GG2 deployment can be executed, the core itself must be powered on to allow it to self-register with the Greengrass2 platform. The steps defined in [Grreengrass V2 Provisioning Integration Testing](<docs/integration-testing.md>) can be used to setup a Greengrass2 core device on EC2 for testing.
 
 After powering on the core, you can verify that it has been successfully registered with the Greengrass2 platform by running the following to check its status (once connected `device.status` will be reported as `HEALTHY`):
 
