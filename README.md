@@ -50,14 +50,38 @@ Implementing, deploying and maintaining IoT services can be significantly more c
 
 The ***AWS Connected Device Framework (CDF)*** is a platform comprising of a number of production ready micro-services, all architected and implemented using software and AWS best practices, which builds upon the AWS IoT building blocks to address these challenges.
 
-
 ## Device Lifecycle View
 
 The CDF modules span the following life cycle phases:
 
 ![Life Cycle Phases](source/docs/images/cdf-core-hla-lifecycle.png)
 
+## Architecture
 
+The CDF modules can be mostly deployed independently. The following shows dependencies between the modules (dotted line is an optional dependency).
+
+![Dependencies](source/docs/images/cdf-core-hla-HLA.png)
+
+The CDF modules form a layer above the AWS building blocks as shown in the following architecture diagram. A typical customer deployment will involve the development of facade layer (the consuming application(s) of CDF modules) that contains the customer's unique business logic and orchestrates the underlying CDF modules.
+
+![Dependencies](source/docs/images/cdf-core-hla-hla-aws.png)
+
+## Development
+
+- [Getting Started](source/docs/development/quickstart.md)
+- [Prerequisites for Development](source/docs/development/prerequisites.md)
+- [Consuming application (aka facades)](source/docs/consuming-application.md)
+- [Tech Stack](source/docs/development/tech-stack.md)
+- [Dependency Injection](source/docs/development/dependency-injection.md)
+- [Unit testing](source/docs/development/unit-testing.md)
+
+## Deployment
+
+- [Release notes](https://github.com/aws/aws-connected-device-framework/releases)
+- [Migrating major changes](source/docs/migration.md)
+- [Deploying](source/docs/deployment.md)
+- [Private API Gateway support](source/docs/private_api_gateways.md)
+- [CI/CD](source/docs/cicd.md)
 
 ## AWS Connected Device Framework Modules
 
@@ -68,6 +92,7 @@ AWS CDF is comprised of the following modules. You only need to deploy and enabl
 With this module a user can request large batches (think 1000's) of device certificates and public/private keys which can later be loaded onto a device. This is useful where customers have a hardware vendor who may not have the ability to create their own device certificates, and the customer does not want to share their CA, so instead can provide access to this module to create the device certificates as required.
 
 See [overview](source/packages/services/bulkcerts/README.md).
+
 ### Provisioning
 
 The provisioning module utilizes [AWS IoT Device Provisioning](https://docs.aws.amazon.com/iot/latest/developerguide/iot-provision.html) to provide both programmatic and bulk device provisioning capabilities.  The provisioning module simplifies the use of AWS IoT Device Provisioning by managing a set of provisioning templates to use with both provisioning approaches.
@@ -75,6 +100,7 @@ The provisioning module utilizes [AWS IoT Device Provisioning](https://docs.aws.
 In addition, it allows for extending the capabilities of the AWS IoT Device Provisioning template functionality.  To provide an example, an AWS IoT Device Provisioning template allows for creating certificate resources by providing a certificate signing request (CSR), a certificate ID of an existing device certificate, or a device certificate created with a CA certificate registered with AWS IoT.  This module extends these capabilities by also providing the ability to automatically create (and return) new keys and certificates for a device, or to create a device certificate without the CA being registered in the account.
 
 See [overview](source/packages/services/provisioning/README.md).
+
 ### Greengrass V2 Provisioning
 
 Takes care of everything cloud side when it come to Greengrass v2. Allows you to define a template of components to deploy as a Greengrass core, as well as the cloud provisioning of Greengrass core and connected devices. In addition allows you to manage and roll out updates at scale..
@@ -82,7 +108,6 @@ Takes care of everything cloud side when it come to Greengrass v2. Allows you to
 See [overview](source/packages/services/greengrass2-provisioning/README.md).
 
 ### Device Patcher
-
 
 Allows for the remote installation and configuration of physical devices, such as remotely installing device certificates and the Greengrass SDK on devices intended to be Greengrass core devices.
 
@@ -93,8 +118,6 @@ See [overview](source/packages/services/device-patcher/README.md).
 *NOTE: Will be released once fully tested.*
 
 Identifies soon to expire certificates, and if the device is still active/authorized, will create and register new certificates, then inform the device of the new certificate being available.
-
-See [overview](source/packages/services/certificaterenewer/README.md).
 
 ### Certificate Vendor
 
@@ -115,6 +138,7 @@ An enhanced device registry that augments (not replaces) the AWS IoT Device Regi
 With the Asset Library one can define complex models, such as modeling the components of a vehicle.
 
 See [overview](source/packages/services/assetlibrary/README.md).
+
 ### Notifications
 
 Allows one to configure types of events (such as a low battery alert) from multiple different event sources (AWS IoT Core, DynamoDB Stream, Kinesis Data Stream, API Gateway), which interested parties (user, service) can subscribe to receive alerts on events via SNS, MQTT republish, mobile push, or to store in a DynamoDB table.
@@ -172,31 +196,6 @@ A framework that can be followed to implement a device simulator. Includes a ref
 See [overview](source/packages/services/simulation-manager/README.md).
 
 Scales out device simulators for load testing your platform, as well as executing test plans to test other areas of your platform.
-
-## Architecture
-
-The CDF modules can be mostly deployed independently. The following shows dependencies between the modules (dotted line is an optional dependency).
-
-![Dependencies](source/docs/images/cdf-core-hla-HLA.png)
-
-The CDF modules form a layer above the AWS building blocks as shown in the following architecture diagram. A typical customer deployment will involve the development of facade layer (the consuming application(s) of CDF modules) that contains the customer's unique business logic and orchestrates the underlying CDF modules.
-
-![Dependencies](source/docs/images/cdf-core-hla-hla-aws.png)
-
-## Development
-- [Getting Started](source/docs/development/quickstart.md)
-- [Prerequisites for Development](source/docs/development/prerequisites.md)
-- [Consuming application (aka facades)](source/docs/consuming-application.md)
-- [Tech Stack](source/docs/development/tech-stack.md)
-- [Dependency Injection](source/docs/development/dependency-injection.md)
-- [Unit testing](source/docs/development/unit-testing.md)
-
-## Deployment
-- [Release notes](https://github.com/aws/aws-connected-device-framework/releases)
-- [Migrating major changes](source/docs/migration.md)
-- [Deploying](source/docs/deployment.md)
-- [Private API Gateway support](source/docs/private_api_gateways.md)
-- [CI/CD](source/docs/cicd.md)
 
 ## Copyright
 

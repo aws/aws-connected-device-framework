@@ -18,7 +18,7 @@ When creating device certificates they can be signed by the Amazon Root certific
 
 The following outlines the steps for registering other root CA's. 
 
-> Note that a CA may be registered with just one account within a region. If your devices need the ability to connect to multiple accounts within a region, such as having the same device certificate signed by a single CA able to connect to different development, testing, and production accounts, then use the [_CDF provisioning module_](source/packages/services/provisioning/README.md) to auto-create the device certificate as part of the provisioning flow which supports [multi-account registration](https://docs.aws.amazon.com/iot/latest/developerguide/x509-client-certs.html#multiple-account-cert).
+> Note that a CA may be registered with just one account within a region. If your devices need the ability to connect to multiple accounts within a region, such as having the same device certificate signed by a single CA able to connect to different development, testing, and production accounts, then use the [_CDF provisioning module_](../provisioning/README.md) to auto-create the device certificate as part of the provisioning flow which supports [multi-account registration](https://docs.aws.amazon.com/iot/latest/developerguide/x509-client-certs.html#multiple-account-cert).
 
 #### 1/ Register your CA with AWS IoT
 
