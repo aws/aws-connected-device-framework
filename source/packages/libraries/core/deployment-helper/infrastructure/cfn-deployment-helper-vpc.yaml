@@ -57,7 +57,7 @@ Resources:
           - !Ref CDFSecurityGroupId
       Environment:
         Variables:
-          NODE_CONFIG_DIR: 'packages/libraries/core/deployment-helper/dist/config'
+          APP_CONFIG_DIR: 'packages/libraries/core/deployment-helper/dist/config'
 
   CustomResourceLambdaVPCRole:
     Type: AWS::IAM::Role

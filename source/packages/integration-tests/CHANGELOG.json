@@ -2,6 +2,65 @@
   "name": "@cdf/integration-tests",
   "entries": [
     {
+      "version": "3.0.1",
+      "tag": "@cdf/integration-tests_v3.0.1",
+      "date": "Thu, 17 Feb 2022 12:56:53 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "increase the timeout before checking result"
+          }
+        ]
+      }
+    },
+    {
+      "version": "3.0.0",
+      "tag": "@cdf/integration-tests_v3.0.0",
+      "date": "Thu, 17 Feb 2022 09:27:38 GMT",
+      "comments": {
+        "major": [
+          {
+            "comment": "migrate configuration to use dotenv-flow and deployment to use installer"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@cdf/assetlibrary-client\" from `^4.1.2` to `^5.0.0`"
+          },
+          {
+            "comment": "Updating dependency \"@cdf/assetlibraryhistory-client\" from `^4.0.1` to `^5.0.0`"
+          },
+          {
+            "comment": "Updating dependency \"@cdf/commands-client\" from `^4.1.1` to `^5.0.0`"
+          },
+          {
+            "comment": "Updating dependency \"@cdf/errors\" from `^3.0.0` to `^4.0.0`"
+          },
+          {
+            "comment": "Updating dependency \"@cdf/device-patcher-client\" from `^1.1.0` to `^1.1.1`"
+          },
+          {
+            "comment": "Updating dependency \"@cdf/config-inject\" from `^3.0.0` to `^4.0.0`"
+          },
+          {
+            "comment": "Updating dependency \"@cdf/greengrass2-provisioning-client\" from `^1.0.0` to `^1.0.1`"
+          },
+          {
+            "comment": "Updating dependency \"@cdf/lambda-invoke\" from `^2.0.1` to `^3.0.0`"
+          },
+          {
+            "comment": "Updating dependency \"@cdf/logger\" from `^3.0.0` to `^4.0.0`"
+          },
+          {
+            "comment": "Updating dependency \"@cdf/notifications-client\" from `^3.0.1` to `^4.0.0`"
+          },
+          {
+            "comment": "Updating dependency \"@cdf/provisioning-client\" from `^4.0.2` to `^5.0.0`"
+          }
+        ]
+      }
+    },
+    {
       "version": "2.9.5",
       "tag": "@cdf/integration-tests_v2.9.5",
       "date": "Wed, 05 Jan 2022 18:34:59 GMT",

@@ -5,9 +5,7 @@
         "rootDir": "src"
     },
     "references": [
-        {
-            "path": "../../libraries/config/config-inject"
-        }
+
     ],
     "include": [
         "src"

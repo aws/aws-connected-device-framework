@@ -12,13 +12,13 @@ The following represents the architecture of the Asset Library, along with its o
 
 ## Groups
 
-The hierarchies within Asset Library are represented as Groups.  Each Group has a single parent, but can comprise of many groups and/or devices as its children.
+The hierarchies within Asset Library are represented as Groups.  Each Group has exactly one parent, but can comprise of many groups and/or devices as its children.
 
 Each Group has the following fixed attributes:
 
-- `groupPath` : a unique identifier of a group, including all its parent groups within the hierarchy
+- `groupPath` : a unique identifier of a group, including all its parent groups within the hierarchy (defined implicitly by `parentPath` and `name`)
 - `templateId` : a schema that defines the allowed properties and relations for the group
-- `name` : the name of the group (used along with the `parentPath` to define the `groupPath`
+- `name` : the name of the group (used along with the `parentPath` to define the `groupPath`)
 - `parentPath` : the path of the group's immediate parent
 - `description` : a description of the group
 
@@ -26,11 +26,28 @@ Groups can be related to other groups via their `relations` attribute, which inc
 
 Different Group Templates can be created to align with ones business, with each Group Template augmenting the above list of fixed attributes with its own attributes, as well as specifiying which group to group and group to device relations are allowed.  An example Group Template could be a `Site`, with its `address` being an attribute, and a `located_at` relationship to a Group Template representing a physical location as follows:
 
-For more information regardng configuring templates, refer to [Templates](docs/templates-user.md).
+```json
+{
+    "name": "Site",
+    "properties": {
+        "address": {"type": "string"}
+    },
+    "relations": {
+        "out": {
+            "located_at": [
+                "Location"
+            ]
+        }
+    },
+    "required": ["address"]
+}
+```
+
+For more information regarding configuring templates, refer to [Templates](docs/templates-user.md).
 
 #### Sample Group Template
 
-The following sample represents the template for the group `MyCustomGroup`, which comprises of 2 attribute:  `color` (required) and `size` (optional), and an allowed relation to the `MyOtherGroup` group.\
+The following sample represents the template for the group `MyCustomGroup`, which comprises of 2 attribute:  `color` (required) and `size` (optional), and an allowed relation to the `MyOtherGroup` group.
 
 ```json
 {
@@ -59,6 +76,7 @@ The following sample represents an instance of a Group of the above template `My
     "templateId": "mycustomgroup",
     "parentPath": "/parent1",
     "name": "group1",
+    "description": "My custom group",
 
     "groups": {
         "located_at": ["/anotherhierarchy/group2"]
@@ -83,9 +101,9 @@ A Device Template has the same format as a Group Template with the addition of a
 
 Each Device has the following fixed attributes:  `deviceId`, `templateId`, `description`, `awsIotThingArn`, `imageUrl`, `connected` and `state`.
 
-For more information regardng configuring templates, refer to [Templates](docs/templates-user.md).
+For more information regarding configuring templates, refer to [Templates](docs/templates-user.md).
 
-##### Sample Device Template
+#### Sample Device Template
 
 The following sample represents the template for the device `Sensor`, which comprises of 2 attribute:  `firmware` (required) and `version` (number), with an allowed relation to the `MyCustomGroup` group.
 
@@ -107,7 +125,7 @@ The following sample represents the template for the device `Sensor`, which comp
 }
 ```
 
-##### Sample Device
+#### Sample Device
 
 The following sample represents an instance of a Device of the above template `Sensor`:
 
@@ -127,9 +145,9 @@ The following sample represents an instance of a Device of the above template `S
 
 ## Policies
 
-A Policy represents an object that can be associated with any number of hierarchies, and is then inherited by devices that are also associated with all the same hierarchies that the policy applies to.  An example of policies could be around definining how to provision a device by specifying which provisining templates to use as follows:
+A Policy represents an object that can be associated with any number of hierarchies, and is then inherited by devices that are also associated with all the same hierarchies that the policy applies to.  An example of policies could be around definining how to provision a device by specifying which provisioning templates to use as follows:
 
-__Scenario 1__
+#### Scenario 1
 
 A hierarchy represents a location.  A default permissive policy is applied to group `/location` with a more restrictive policy applied to `/location/china`.
 
@@ -150,7 +168,7 @@ Devices:
 
 In the example above, retrieving the list of policies for `device001` would return `policy_permissive`, whereas retrieiving the policy list for `device002` will be the chain `policy_restrictive` then `policy_permissive`, with the consuming application containing the business logic for which policy to use (e.g. use `policy_permissive` as that's associated with the lowest level group `/location/china`).
 
-__Scenario 2__
+#### Scenario 2
 
 Hierarchies represent location and supplier.  A default permissive policy is applied to group `/location` and `/supplier` with a more restrictive policies applied to combinations of `/location/china` and `/supplier/supplier2`.
 

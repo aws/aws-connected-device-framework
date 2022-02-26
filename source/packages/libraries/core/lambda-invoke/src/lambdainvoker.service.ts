@@ -32,7 +32,7 @@ export class LambdaInvokerService {
     }
 
     public async invoke(functionName: string, apiEvent: LambdaApiGatewayEventBuilder) {
-        logger.debug(`LambdaUtil.invoke: apiEvent: ${JSON.stringify(apiEvent)}`);
+        logger.debug(`LambdaInvokerService: invoke: functionName:${functionName}, apiEvent:${JSON.stringify(apiEvent)}`);
 
         const invokeRequest: AWS.Lambda.InvocationRequest = {
             FunctionName: functionName,
@@ -41,20 +41,26 @@ export class LambdaInvokerService {
         };
 
         const invokeResponse: AWS.Lambda.InvocationResponse = await this.lambda.invoke(invokeRequest).promise();
-        logger.debug(`invokeResponse: ${JSON.stringify(invokeResponse)}`);
+        logger.silly(`LambdaInvokerService: invoke: invokeResponse: ${JSON.stringify(invokeResponse)}`);
 
         if (invokeResponse.StatusCode >= 200 && invokeResponse.StatusCode < 300 ) {
-            const response = new LambdaApiGatewayEventResponse(invokeResponse.Payload);
-            logger.debug(`payload: ${JSON.stringify(response)}`);
+            const responsePayload = new LambdaApiGatewayEventResponse(invokeResponse.Payload);
+            logger.silly(`LambdaInvokerService: invoke: payload: ${JSON.stringify(responsePayload)}`);
 
-            if (response.status > 300) {
-                const error = createHttpError(response.status);
-                error.status = response.status;
-                error.response = response;
+            if ((invokeResponse.FunctionError?.length??0)>0) {
+                const error = createHttpError(500);
+                error.response = responsePayload;
                 throw error;
             }
 
-            return response;
+            if (responsePayload.status > 300) {
+                const error = createHttpError(responsePayload.status);
+                error.status = responsePayload.status;
+                error.response = responsePayload;
+                throw error;
+            }
+
+            return responsePayload;
         } else {
             const error = createHttpError(invokeResponse.StatusCode);
             error.status = invokeResponse.StatusCode;

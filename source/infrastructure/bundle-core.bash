@@ -63,16 +63,16 @@ if [ -z "$BYPASS_CDF_DOCKER_BUILD" ]; then
     done
 fi
 
-cd $root_dir
-rush purge                      # delete all rush temp files
 rush update                     # as temp files deleted, need to refresh dependencies
 rush build                      # compile
 
 # create the deployment packages
+cd $root_dir
 rm -rf deploy
 mkdir deploy
 
-npx pnpm@6.4.0 recursive run bundle  # pinning to an older version here as latest pnpm (6.20.1) has broken `enable-pre-post-scripts=true`
+# pinning to an older version here as latest pnpm (6.20.1) has broken `enable-pre-post-scripts=true`
+npx pnpm@6.4.0 recursive run bundle
 
 if [ "$RELEASE_PREP" = "true" ]; then
   rush clean:postrelease            # deep clean of complied files, excluding any bundles

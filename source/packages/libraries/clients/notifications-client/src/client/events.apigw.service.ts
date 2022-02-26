@@ -10,14 +10,15 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import {injectable} from 'inversify';
-import config from 'config';
+
+import { injectable } from 'inversify';
 import ow from 'ow';
 import * as request from 'superagent';
-import {QSHelper} from '../utils/qs.helper';
-import {EventResource, EventResourceList} from './events.model';
-import {EventsService, EventsServiceBase} from './events.service';
-import {RequestHeaders} from './common.model';
+
+import { QSHelper } from '../utils/qs.helper';
+import { RequestHeaders } from './common.model';
+import { EventResource, EventResourceList } from './events.model';
+import { EventsService, EventsServiceBase } from './events.service';
 
 @injectable()
 export class EventsApigwService extends EventsServiceBase implements EventsService {
@@ -26,7 +27,7 @@ export class EventsApigwService extends EventsServiceBase implements EventsServi
 
     public constructor() {
         super();
-        this.baseUrl = config.get('notifications.baseUrl') as string;
+        this.baseUrl = process.env.NOTIFICATIONS_BASE_URL;
     }
 
     async createEvent(eventSourceId: string, event: EventResource, additionalHeaders?: RequestHeaders): Promise<string> {

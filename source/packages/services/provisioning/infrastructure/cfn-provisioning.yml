@@ -20,16 +20,15 @@ Globals:
     OpenApiVersion: 3.0.1
 
 Parameters:
+  ApplicationConfigurationOverride:
+    Description: This allows you to override any application configuration.  It should consists of a text-based content with a structure and syntax comprising key–value pairs for properties. Any configurations contained in this will override the configurations found and merged from the default .env files.
+    Type: String
+
   Environment:
     Description:  Name of environment.  Used to name the created resources.
     Type: String
     MinLength: 1
     
-  ApplicationConfigurationOverride:
-    Description: This allows you to override any configuration application configuration. Must be a JSON formatted string. Any configurations contained in this will override the configurations found and merged from the config files.
-    Type: String
-    MinLength: 1
-
   TemplateSnippetS3UriBase:
     Description: |
       S3 uri of directory where template snippets are stored for the account.
@@ -89,6 +88,7 @@ Parameters:
     Description: OpenSSL lambda layer ARN
     Type: String
     MinLength: 1
+
   BucketName:
     Description: Name of bucket to store command information.
     Type: String
@@ -109,17 +109,12 @@ Parameters:
     MinLength: 1
 
 Conditions:
-
   KmsKeyIdProvided: !Not [ !Equals [ !Ref KmsKeyId, "" ] ]
-
   DeployInVPC: !Not [ !Equals [ !Ref VpcId, 'N/A' ] ]
   DeployWithLambdaAuth: !Or [ !Equals [ !Ref AuthType, 'LambdaRequest' ], !Equals [ !Ref AuthType, 'LambdaToken' ] ]
   EnableApiGatewayAccessLogs: !Equals [ !Ref EnableApiGatewayAccessLogs, "true"]
 
-
 Resources:
-
-
   ApiGatewayApi:
     'Fn::Transform':
       Name: 'AWS::Include'
@@ -215,13 +210,12 @@ Resources:
       Timeout: 60
       Environment:
         Variables:
+          APP_CONFIG: !Ref ApplicationConfigurationOverride
+          APP_CONFIG_DIR: 'packages/services/provisioning/dist/config'
           AWS_ACCOUNT_ID: !Ref AWS::AccountId
-          NODE_CONFIG_DIR: 'packages/services/provisioning/dist/config'
-          NODE_CONFIG: !Ref ApplicationConfigurationOverride
-          CDF_PROVISIONING_S3_ROLEARN: !GetAtt LambdaExecutionRole.Arn
-          CDF_PROVISIONING_S3_TEMPLATES_BUCKET: !Ref BucketName
-          CDF_PROVISIONING_S3_CERTIFICATES_BUCKET: !Ref BucketName
-          CDF_PROVISIONING_S3_BULKREQUESTS_BUCKET: !Ref BucketName
+          AWS_S3_ROLE_ARN: !GetAtt LambdaExecutionRole.Arn
+          AWS_S3_TEMPLATES_BUCKET: !Ref BucketName
+          AWS_S3_BULKREQUESTS_BUCKET: !Ref BucketName
       Tracing: Active
 
       VpcConfig:

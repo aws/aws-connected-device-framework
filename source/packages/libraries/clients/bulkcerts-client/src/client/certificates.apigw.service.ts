@@ -17,12 +17,12 @@
 
 /* tslint:disable:no-unused-variable member-ordering */
 
-import {injectable} from 'inversify';
+import { injectable } from 'inversify';
 import ow from 'ow';
 import * as request from 'superagent';
-import config from 'config';
-import { RequestHeaders, CertificateBatchTaskWithChunks} from './certificates.models';
-import {CertificatesService, CertificatesServiceBase} from './certificates.service';
+
+import { CertificateBatchTaskWithChunks, RequestHeaders } from './certificates.models';
+import { CertificatesService, CertificatesServiceBase } from './certificates.service';
 
 @injectable()
 export class CertificatesApigwService extends CertificatesServiceBase implements CertificatesService {
@@ -31,7 +31,7 @@ export class CertificatesApigwService extends CertificatesServiceBase implements
 
     public constructor() {
         super();
-        this.baseUrl = config.get('bulkcerts.baseUrl') as string;
+        this.baseUrl = process.env.BULKCERTS_BASEURL;
     }
 
     async getCertificates(taskId:string, downloadType:string, additionalHeaders?: RequestHeaders): Promise<string[]|Buffer> {

@@ -27,9 +27,11 @@ export class IotEndpointCustomResource implements CustomResource {
         this._iot = iotFactory();
     }
 
-    public async create(_customResourceEvent: CustomResourceEvent) : Promise<unknown> {
+    public async create(customResourceEvent: CustomResourceEvent) : Promise<unknown> {
+
+        const endpointType = customResourceEvent?.ResourceProperties?.EndpointType ?? 'iot:Data-ATS';
         const params:AWS.Iot.Types.DescribeEndpointRequest = {
-            endpointType: 'iot:Data-ATS'
+            endpointType
         };
         const result = await this._iot.describeEndpoint(params).promise();
         return {

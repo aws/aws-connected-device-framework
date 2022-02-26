@@ -10,23 +10,26 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+ import 'reflect-metadata';
+ import '@cdf/config-inject';
 import { Container, decorate, injectable, interfaces } from 'inversify';
-import { TYPES } from './types';
-import config from 'config';
-import { CDFConfigInjector } from '@cdf/config-inject';
-import AWS = require('aws-sdk');
+
 import { assetLibraryContainerModule } from '@cdf/assetlibrary-client';
 import { provisioningContainerModule } from '@cdf/provisioning-client';
+
 import { ActivationService } from '../activation/activation.service';
+import { TYPES } from './types';
+
+import AWS = require('aws-sdk');
 
 // Load everything needed to the Container
 export const container = new Container();
 
-// allow config to be injected
-const configInjector = new CDFConfigInjector();
-container.load(configInjector.getConfigModule());
 container.load(assetLibraryContainerModule);
 container.load(provisioningContainerModule);
+
+container.bind<string>('aws.s3.crl.bucket').toConstantValue(process.env.AWS_S3_CRL_BUCKET);
+container.bind<string>('aws.s3.crl.key').toConstantValue(process.env.AWS_S3_CRL_KEY);
 
 container.bind<ActivationService>(TYPES.ActivationService).to(ActivationService);
 
@@ -37,7 +40,7 @@ container.bind<interfaces.Factory<AWS.Iot>>(TYPES.IotFactory)
     return () => {
 
         if (!container.isBound(TYPES.Iot)) {
-            const iot = new AWS.Iot({region: config.get('aws.region')});
+            const iot = new AWS.Iot({region: process.env.AWS_REGION});
             container.bind<AWS.Iot>(TYPES.Iot).toConstantValue(iot);
         }
         return container.get<AWS.Iot>(TYPES.Iot);
@@ -51,7 +54,7 @@ container.bind<interfaces.Factory<AWS.S3>>(TYPES.S3Factory)
     return () => {
 
         if (!container.isBound(TYPES.S3)) {
-            const s3 = new AWS.S3({region: config.get('aws.region')});
+            const s3 = new AWS.S3({region: process.env.AWS_REGION});
             container.bind<AWS.S3>(TYPES.S3).toConstantValue(s3);
         }
         return container.get<AWS.S3>(TYPES.S3);

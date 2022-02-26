@@ -10,29 +10,25 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import 'reflect-metadata';
-
-import {Request, Response, NextFunction, Application} from 'express';
-
 import { container } from './di/inversify.config';
+
+import { json } from 'body-parser';
+import { Application, NextFunction, Request, Response } from 'express';
+import { setVersionByAcceptHeader } from 'express-version-request';
 import { InversifyExpressServer } from 'inversify-express-utils';
-import * as bodyParser from 'body-parser';
-import {logger} from './utils/logger';
-import config from 'config';
-import {asArray, SupportedVersionConfig, DEFAULT_MIME_TYPE, normalisePath} from '@cdf/express-middleware';
-import {setVersionByAcceptHeader} from 'express-version-request';
+
+import { DEFAULT_MIME_TYPE, normalisePath } from '@cdf/express-middleware';
+
 import { setClaims } from './authz/authz.middleware';
+import { logger } from './utils/logger';
+
 import cors = require('cors');
 
 // Start the server
 const server = new InversifyExpressServer(container);
 
-// log detected config
-logger.info(`\nDetected config:\n${JSON.stringify(config.util.toObject())}\n`);
-
 // load in the supported versions
-const supportedVersionConfig:SupportedVersionConfig = config.get('supportedApiVersions');
-const supportedVersions:string[] = asArray(supportedVersionConfig);
+const supportedVersions: string[] = process.env.SUPPORTED_API_VERSIONS?.split(',') || [];
 
 server.setConfig((app) => {
 
@@ -48,23 +44,23 @@ server.setConfig((app) => {
       next();
     }
   });
-
+ 
   app.use((req, _res, next) => {
-    if (config.has('customDomain.basePath')) {
-      const basePathToRemove = config.get<string>('customDomain.basePath')
-      req.url = normalisePath(req.url, basePathToRemove);
-      logger.debug(`${basePathToRemove} is removed from the request url`)
-    }
-    next();
+      const customDomainPath = process.env.CUSTOM_DOMAIN_BASE_PATH;
+      if (customDomainPath) {
+          req.url = normalisePath(req.url, customDomainPath);
+          logger.silly(`${customDomainPath} is removed from the request url`)
+      }
+      next();
   });
 
-  app.use(bodyParser.json({ type: supportedVersions }));
+  app.use(json({ type: supportedVersions }));
 
   // extrapolate the version from the header and place on the request to make to easier for the controllers to deal with
   app.use(setVersionByAcceptHeader());
 
   // if authz is enabled, parse the claims
-  if (config.get('authorization.enabled')) {
+  if (process.env.AUTHORIZATION_ENABLED==="true") {
     app.use(setClaims()) ;
   }
 
@@ -78,21 +74,23 @@ server.setConfig((app) => {
   });
 
   // enable cors
-  const corsAllowedOrigin = config.get('cors.origin') as string;
-  let exposedHeaders = config.get('cors.exposedHeaders') as string;
-  if (exposedHeaders===null || exposedHeaders==='') {
-    exposedHeaders=undefined;
+  const corsAllowedOrigin = process.env.CORS_ORIGIN;
+  let exposedHeaders = process.env.CORS_EXPOSED_HEADERS;
+  if (exposedHeaders === null || exposedHeaders === '') {
+      exposedHeaders = undefined;
   }
-  if (corsAllowedOrigin !== null && corsAllowedOrigin !== '') {
-    const c = cors({
-      origin: corsAllowedOrigin,
-      exposedHeaders
-    });
-    app.use(c);
+  if (corsAllowedOrigin?.length>0) {
+      const c = cors({
+          origin: corsAllowedOrigin,
+          exposedHeaders
+      });
+      app.use(c);
   }
+
 });
 
 export const serverInstance:Application = server.build();
-serverInstance.listen(3000);
+const port = process.env.PORT;
+serverInstance.listen(port);
 
-logger.info('Server started on port 3000 :)');
+logger.info(`Server started on port ${port} :)`);

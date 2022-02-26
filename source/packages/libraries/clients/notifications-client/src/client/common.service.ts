@@ -10,9 +10,10 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import {injectable} from 'inversify';
-import config from 'config';
-import {RequestHeaders} from './common.model';
+
+import { injectable } from 'inversify';
+
+import { RequestHeaders } from './common.model';
 
 @injectable()
 export class CommonServiceBase  {
@@ -28,11 +29,9 @@ export class CommonServiceBase  {
 
         let headers = Object.assign({}, this._headers);
 
-        if (config.has('notifications.headers')) {
-            const headersFromConfig:RequestHeaders = config.get('notifications.headers') as RequestHeaders;
-            if (headersFromConfig !== null && headersFromConfig !== undefined) {
-                headers = {...headers, ...headersFromConfig};
-            }
+        const headersFromConfig:RequestHeaders = process.env.NOTIFICATIONS_HEADERS as unknown as RequestHeaders;
+        if (headersFromConfig !== null && headersFromConfig !== undefined) {
+            headers = {...headers, ...headersFromConfig};
         }
 
         if (additionalHeaders !== null && additionalHeaders !== undefined) {

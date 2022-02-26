@@ -10,8 +10,11 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import 'reflect-metadata';
+import '@cdf/config-inject';
+
 import { Container } from 'inversify';
-import { CDFConfigInjector } from '@cdf/config-inject';
+
 import { assetLibraryContainerModule } from '@cdf/assetlibrary-client';
 
 import { AssetLibUpdate } from '../assetlib_update';
@@ -19,10 +22,6 @@ import { TYPES } from './types';
 
 // Load everything needed to the Container
 export const container = new Container();
-
-// allow config to be injected
-const configInjector = new CDFConfigInjector();
-container.load(configInjector.getConfigModule());
 
 // bind containers from the cdf client modules
 container.load(assetLibraryContainerModule);

@@ -17,12 +17,13 @@ Description: CDF Events (Alerts) Service
 
 
 Parameters:
+  
+  ApplicationConfigurationOverride:
+    Description: This allows you to override any application configuration.  It should consists of a text-based content with a structure and syntax comprising key–value pairs for properties. Any configurations contained in this will override the configurations found and merged from the default .env files.
+    Type: String
+  
   Environment:
     Description:  Name of environment.  Used to name the created resources.
-    Type: String
-    MinLength: 1
-  ApplicationConfigurationOverride:
-    Description: This allows you to override any configuration application configuration. Must be a JSON formatted string. Any configurations contained in this will override the configurations found and merged from the config files.
     Type: String
     MinLength: 1
 
@@ -40,16 +41,30 @@ Parameters:
     MinLength: 1
   DAXClusterEndpoint:
     Type: String
-    MinLength: 1
+    Default: ''
   EventNotificationsStreamArn:
     Type: String
     MinLength: 1
+    
   KmsKeyId:
     Description: The KMS key ID used to decrypt DynamoDB stream.
     Type: String
 
+  LoggingLevel:
+    Description: Application logging level
+    Type: String
+    Default: info
+    AllowedValues:
+      - error
+      - warn
+      - info
+      - debug
+      - silly
+
 Conditions:
   KmsKeyIdProvided: !Not [ !Equals [ !Ref KmsKeyId, "" ] ]
+  DAXClusterEndpointlProvided: !Not [ !Equals [ !Ref DAXClusterEndpoint, "" ] ]
+  LoggingLevelProvided: !Not [ !Equals [ !Ref LoggingLevel, "" ] ]
 
 Resources:
 
@@ -133,11 +148,11 @@ Resources:
       Timeout: 30
       Environment:
         Variables:
-          NODE_CONFIG_DIR: 'packages/services/events-alerts/dist/config'
-          NODE_CONFIG: !Ref ApplicationConfigurationOverride
-          EVENTSALERTS_AWS_DYNAMODB_TABLES_EVENTCONFIG_NAME: !Ref EventConfigTable
-          EVENTSALERTS_AWS_DYNAMODB_TABLES_EVENTNOTIFICATIONS_NAME: !Ref EventNotificationsTable
-          EVENTSALERTS_AWS_DYNAMODB_DAX_ENDPOINTS: !Ref DAXClusterEndpoint
+          APP_CONFIG_DIR: 'packages/services/events-alerts/dist/config'
+          APP_CONFIG: !Ref ApplicationConfigurationOverride
+          AWS_ACCOUNTID: !Ref AWS::AccountId
+          AWS_DYNAMODB_TABLES_EVENTCONFIG_NAME: !Ref EventConfigTable
+          AWS_DYNAMODB_DAX_ENDPOINTS: !Ref DAXClusterEndpoint
       Tracing: Active
 
   EventNotificationsSourceMapping:

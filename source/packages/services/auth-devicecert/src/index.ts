@@ -10,10 +10,10 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import '@cdf/config-inject'
 import { logger } from './utils/logger';
 import * as Errors from '@cdf/errors';
 import { ApiGwCustomAuthorizer } from './api-gw.custom.authorizer';
-import config from 'config';
 import {APIGWAuthPolicyBuilder, ApiOptions, Policy} from './api-gw.policy.builder';
 
 /**
@@ -37,7 +37,7 @@ export async function handler(event: any, context: any, callback: any) : Promise
     logger.info(`handler input : ${JSON.stringify({ Context: context, Event: event })}`);
 
     if (_awsRegion===undefined) {
-        _awsRegion = config.get('aws.region') as string;
+        _awsRegion = process.env.AWS_REGION;
     }
     if (_apiGwCustomAuth===undefined) {
         _apiGwCustomAuth = new ApiGwCustomAuthorizer(_awsRegion);

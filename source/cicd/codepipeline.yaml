@@ -346,6 +346,9 @@ Resources:
               commands:
                 - n 14.16.1
                 - bash -c source/cicd/deployproject_install.bash
+            pre_build:
+              commands:
+                - bash -c source/cicd/deployproject_prebuild.bash
             build:
               commands:
                 - bash -c source/cicd/deployproject_build.bash
@@ -443,6 +446,9 @@ Resources:
               commands:
                 - n 14.16.1
                 - bash -c source/cicd/deployproject_install.bash
+            pre_build:
+              commands:
+                - bash -c source/cicd/deployproject_prebuild.bash
             build:
               commands:
                 - bash -c source/cicd/deployproject_build.bash
@@ -642,6 +648,7 @@ Resources:
                 - cloudformation:ExecuteChangeSet
                 - cloudformation:GetTemplateSummary
                 - cloudformation:ListExports
+                - cloudformation:ListStackResources
                 - cloudformation:SetStackPolicy
                 - cognito-idp:*
                 - dax:CreateCluster
@@ -673,6 +680,9 @@ Resources:
                 - dynamodb:ListTables
                 - dynamodb:UpdateTable
                 - dynamodb:UpdateContinuousBackups
+                - ec2:RunInstances
+                - ec2:TerminateInstances
+                - ec2:DescribeInstances
                 - ec2:AllocateAddress
                 - ec2:AssociateAddress
                 - ec2:AssociateRouteTable
@@ -837,6 +847,7 @@ Resources:
                 - ecs:PutAttributes
                 - lambda:Get*
                 - lambda:List*
+                - lambda:ListLayers*
                 - lambda:Create*
                 - lambda:Delete*
                 - lambda:Update*
@@ -891,10 +902,10 @@ Resources:
                 - iam:AddRoleToInstanceProfile
                 - iam:AttachRolePolicy
                 - iam:CreateInstanceProfile
-                - iam:CreatePolicy
+                - iam:CreatePolicy*
                 - iam:CreateRole
                 - iam:DeleteInstanceProfile
-                - iam:DeletePolicy
+                - iam:DeletePolicy*
                 - iam:DeleteRole
                 - iam:DeleteRolePolicy
                 - iam:DetachRolePolicy

@@ -1,6 +1,27 @@
 # Change Log - @cdf/assetlibrary
 
-This log was last generated on Tue, 25 Jan 2022 19:57:26 GMT and should not be manually modified.
+This log was last generated on Thu, 17 Feb 2022 10:54:42 GMT and should not be manually modified.
+
+## 6.0.1
+Thu, 17 Feb 2022 10:54:42 GMT
+
+### Patches
+
+- rollback the previous change where add associated roles to neptune
+
+## 6.0.0
+Thu, 17 Feb 2022 09:27:38 GMT
+
+### Breaking changes
+
+- migrate configuration to use dotenv-flow and deployment to use installer
+
+## 5.4.3
+Fri, 04 Feb 2022 17:03:38 GMT
+
+### Patches
+
+- Fix bulk data import into Neptune by associating NeptuneLoadFromS3Role with Neptune cluster
 
 ## 5.4.2
 Tue, 25 Jan 2022 19:57:26 GMT

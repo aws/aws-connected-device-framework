@@ -2,22 +2,24 @@
   "name": "@cdf/config-inject",
   "entries": [
     {
-      "version": "3.0.1",
-      "tag": "@cdf/config-inject_v3.0.1",
-      "date": "Tue, 28 Sep 2021 22:04:37 GMT",
+      "version": "4.0.0",
+      "tag": "@cdf/config-inject_v4.0.0",
+      "date": "Thu, 17 Feb 2022 09:27:38 GMT",
       "comments": {
-        "patch": [
+        "major": [
           {
-            "comment": "Replaced references to CDF components being referred to as services to modules to avoid confusion with AWS services."
+            "comment": "migrate configuration to use dotenv-flow and deployment to use installer"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@cdf/errors\" from `^3.0.0` to `^4.0.0`"
+          },
+          {
+            "comment": "Updating dependency \"@cdf/logger\" from `^3.0.0` to `^4.0.0`"
           }
         ]
       }
-    },
-    {
-      "version": "3.0.0",
-      "tag": "@cdf/config-inject_v3.0.0",
-      "date": "Wed, 21 Jul 2021 16:46:57 GMT",
-      "comments": {}
     }
   ]
 }

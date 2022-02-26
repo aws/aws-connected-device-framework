@@ -8,9 +8,7 @@
       "~/*": ["./*"]
     },
     "references": [
-        {
-            "path": "../../libraries/config/config-inject"
-        },
+
         {
             "path": "../../libraries/clients/assetlibrary-client"
         },

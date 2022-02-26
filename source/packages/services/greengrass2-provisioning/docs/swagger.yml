@@ -1,0 +1,1635 @@
+openapi: 3.0.0
+info:
+  title: "Connected Device Framework: Greengrass V2 Provisioning"
+  description: >
+    Allows for management and bulk provisioning of Greengrass V2 core devices.
+
+  version: 1.0.0
+
+tags:
+  - name: Templates
+    description: >
+      Templates represent the components (and their relevant configuration) to be deployed to a Greengrass core device. Templates are versioned to aid with managing how changes are rolled out to target core devices.
+
+  - name: Core Device Tasks
+    description: >
+      Tasks are what manage the creation of Greengrass core devices.
+
+  - name: Core Devices
+    description: >
+      Greengrass core devices are provisioned in prepartion for deploying compoonents via predefined templates.
+
+  - name: Client Device Tasks
+    description: >
+      Tasks are what manage the creation of Greengrass client devices.
+
+  - name: Client Devices
+    description: >
+      Client devices are associated with core devices.
+
+  - name: Deployments
+    description: >
+      Once a Greengrass core device has been configured, a deployment may be executed.
+
+  - name: Deployment Tasks
+    description: >
+      Tasks are what manage the creation of Greengrass core deployments.
+
+
+paths:
+  "/templates":
+    get:
+      parameters:
+        - $ref: '#/components/parameters/count'
+        - $ref: '#/components/parameters/exclusiveStartName'
+      tags:
+        - Templates
+      summary: List all available templates.
+      operationId: listTemplates
+      responses:
+        "200":
+          description: OK
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: "#/components/schemas/TemplateList"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    post:
+      tags:
+        - Templates
+      summary: Create a new template.
+      description: >
+        Defines a new template comprised on the components, and their configuration, to construct a Greengrass core device from.
+
+      operationId: createTemplate
+      requestBody:
+        content:
+          application/vnd.aws-cdf-v1.0+json:
+            schema:
+              $ref: '#/components/schemas/Template'
+            examples:
+              Python:
+                description: The following example components object specifies to deploy a component, com.example.PythonRuntime, that expects a configuration parameter named pythonVersion.
+                value:
+                  name: edge_cameras
+                  components:
+                    - key: com.example.PythonRuntime
+                      version: 1.0.0
+                      configurationUpdate:
+                        merge: "{\"pythonVersion\":\"3.7\"}"
+              IncludingReset:
+                description: The following example components object specifies to deploy this industrial dashboard component and configuration update.
+                value:
+                  name: dashboards
+                  components:
+                    - key: com.example.IndustrialDashboard
+                      version: 1.0.0
+                      configurationUpdate:
+                        reset:
+                          - "/network/useHttps"
+                          - "/tags"
+                        merge: "{\"tags\":[\"/boiler/1/temperature\",\"/boiler/1/pressure\",\"/boiler/2/temperature\",\"/boiler/2/pressure\"]}"
+              JobConfig:
+                description: The following example request overrides any default job rollout config.
+                value:
+                  name: edge_cameras
+                  components:
+                    - key: com.example.PythonRuntime
+                      version: 1.0.0
+                      configurationUpdate:
+                        merge: "{\"pythonVersion\":\"3.7\"}"
+                  jobConfig:
+                    jobExecutionsRolloutConfig:
+                      exponentialRate:
+                        baseRatePerMinute: 100
+                        incrementFactor:
+                        rateIncreaseCriteria:
+                          numberOfNotifiedThings:
+                          numberOfSucceededThings:
+                      maximumPerMinute:
+                    abortConfig:
+                      criteriaList:
+                        - failureType:
+                          action:
+                          thresholdPercentage:
+                          minNumberOfExecutedThings:
+                    timeoutConfig:
+                      inProgressTimeoutInMinutes:
+              DeploymentPolicies:
+                description: The following example request specifies custom Greengrass deployment policies.
+                value:
+                  name: edge_cameras
+                  components:
+                    - key: com.example.PythonRuntime
+                      version: 1.0.0
+                      configurationUpdate:
+                        merge: "{\"pythonVersion\":\"3.7\"}"
+                  DeploymentPolicies:
+                    failureHandlingPolicy: ROLLBACK
+                    componentUpdatePolicy:
+                      timeoutInSeconds: 60
+                      action: NOTIFY_COMPONENTS
+                    configurationValidationPolicy:
+                      timeoutInSeconds: 60
+
+      responses:
+        "201":
+          description: Created
+          headers:
+            location:
+              schema:
+                type: string
+              description: URI of template created.
+            x-name:
+              schema:
+                type: string
+              description: Name of template created.
+            x-version:
+              schema:
+                type: integer
+              description: Version of template created.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "409":
+          $ref: "#/components/responses/Conflict"
+
+  "/templates/{templateName}":
+    parameters:
+      - $ref: '#/components/parameters/templateName'
+    put:
+      tags:
+        - Templates
+      summary: Update an existing template.
+      description: >
+        Updates an existing template, creating a new template version in the process.
+
+      operationId: updateTemplate
+      requestBody:
+        content:
+          application/vnd.aws-cdf-v1.0+json:
+            schema:
+              $ref: '#/components/schemas/EditableTemplate'
+      responses:
+        "204":
+          description: Updated
+          headers:
+            location:
+              schema:
+                type: string
+              description: URI of template updated.
+            x-name:
+              schema:
+                type: string
+              description: Name of template updated.
+            x-version:
+              schema:
+                type: integer
+              description: New latest version of template.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+    get:
+      tags:
+        - Templates
+      summary: Find a specific template
+      description: >
+        Returns a specific template by template name.
+      operationId: getTemplate
+      responses:
+        "200":
+          description: OK
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: "#/components/schemas/Template"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+    delete:
+      tags:
+        - Templates
+      summary: Delete a specific template
+      description: >
+        Deletes a template by template name.
+      operationId: deleteTemplate
+      responses:
+        "204":
+          description: No Content
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  "/templates/{templateName}/versions":
+    parameters:
+      - $ref: '#/components/parameters/templateName'
+    get:
+      parameters:
+        - $ref: '#/components/parameters/count'
+        - $ref: '#/components/parameters/exclusiveStartVersion'
+      tags:
+        - Templates
+      summary: List template versions.
+      description: >
+        List all versions for a specific template.
+      operationId: listTemplateVersions
+      responses:
+        "200":
+          description: OK
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: "#/components/schemas/TemplateVersionList"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    
+  "/templates/{templateName}/versions/{templateVersion}":
+    parameters:
+      - $ref: '#/components/parameters/templateName'
+      - $ref: '#/components/parameters/templateVersion'
+    get:
+      tags:
+        - Templates
+      summary: Retrieve a specific template version.
+      description: >
+        Retrieve a specific template version.
+      operationId: getTemplateVersion
+      responses:
+        "200":
+          description: OK
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: "#/components/schemas/Template"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  "/coreTasks":
+    post:
+      tags:
+        - Core Device Tasks
+      summary: Provision / delete Greengrass V2 cores.
+      description: >
+        If `type` is `Create`, a task is created to provision 1 or more Greengrass V2 cores based on a predefined provisioning templates. If `type` is `Delete` then the task created is to delete 1 or more cores.
+
+        When `Create`, if the referenced `thingName` does not exist, an AWS IoT Thing is provisioned using the provided `provisioningTemplate`, then configured as a Greengrass V2 Core device. If it exists, the AWS IoT Thing is not updated but the Greengrass V2 Core device configuration is.
+
+        This is an asynchronous call, meaning that when submitted the call will return immediately with a `taskId` while the cores are being created/deleted in the background. Use the `GET /coreTasks/:taskId` to retrieve the status of the task.
+
+      operationId: createCoreTask
+      requestBody:
+        content:
+          application/vnd.aws-cdf-v1.0+json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/ProvisionCoresTask'
+                - $ref: '#/components/schemas/DeleteCoresTask'
+            examples:
+              provision_cores:
+                value:
+                  coreVersion: 2.5.1
+                  type: Create
+                  cores:
+                    - name: my-core-one
+                      templateName: my-template
+                    - name: my-core-two
+                      templateName: my-template
+                    - name: my-core-three
+                      templateName: my-other-template
+              delete_cores:
+                value:
+                  type: Delete
+                  cores:
+                    - name: my-core-one
+                    - name: my-core-two
+                    - name: my-core-three
+      responses:
+        "202":
+          description: Accepted
+          headers:
+            location:
+              schema:
+                type: string
+              description: URI of core task created.
+            x-taskid:
+              schema:
+                type: string
+              description: ID of core task created.
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: "#/components/schemas/CoreTask"
+
+    get:
+      parameters:
+        - $ref: '#/components/parameters/count'
+        - $ref: '#/components/parameters/exclusiveStartTaskId'
+      tags:
+        - Core Device Tasks
+      summary: Lists core tasks.
+      description: >
+        Lists all core tasks executed to create Greengrass V2 cores managed by this service. 
+      operationId: listCoreTasks
+      responses:
+        "200":
+          description: OK
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: "#/components/schemas/CoreTaskList"
+
+  "/coreTasks/{taskId}":
+    parameters:
+      - $ref: '#/components/parameters/taskId'
+    get:
+      tags:
+        - Core Device Tasks
+      summary: Retrieves a Greengrass Core device task.
+      description: >
+        Retrieves the definition and status of the Greengrass Core device task.
+      operationId: getCoreTask
+      responses:
+        "200":
+          description: OK
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: "#/components/schemas/CoreTask"
+
+  "/cores":
+    parameters:
+      - $ref: '#/components/parameters/templateNameQuery'
+      - $ref: '#/components/parameters/templateVersionQuery'
+      - $ref: '#/components/parameters/failedOnly'
+      - $ref: '#/components/parameters/count'
+      - $ref: '#/components/parameters/exclusiveStartThingName'
+
+    get:
+      tags:
+        - Core Devices
+      summary: Lists Greengrass V2 cores managed by this service.
+      description: >
+        Lists all Greengrass V2 cores managed by this service. 
+
+        May optionally filter by `templateName`, `templateVersion`, and `failedOnly`.
+
+      operationId: listCores
+      responses:
+        "200":
+          description: OK
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: "#/components/schemas/CoreList"
+
+  "/cores/{thingName}":
+    parameters:
+      - $ref: '#/components/parameters/thingName'
+    get:
+      tags:
+        - Core Devices
+      summary: Retrieves a Greengrass Core device.
+      description: >
+        Retrieves the definition of a specific Greengrass Core device.
+      operationId: getCore
+      responses:
+        "200":
+          description: OK
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: "#/components/schemas/Core"
+
+  "/cores/:thingName/deviceTasks":
+    parameters:
+      - $ref: '#/components/parameters/thingName'
+    post:
+      tags:
+        - Client Device Tasks
+      summary: Associate client devices with the provided core.
+      description: >
+        Associates 1 or more client devices with an existing Greengrass V2 core.
+
+        If the referenced `thingName` does not exist, an AWS IoT Thing is provisioned using the provided `provisioningTemplate`.
+
+        The AWS IoT thing is then associated with the Greengrass V2 core.
+
+        This is an asynchronous call, meaning that when submitted the call will return immediately with a `taskId` while the cores are being created in the background. Use the `GET /deviceTasks/:taskId` to retrieve the status of the task.
+
+      operationId: createDeviceTask
+      requestBody:
+        content:
+          application/vnd.aws-cdf-v1.0+json:
+            schema:
+              $ref: '#/components/schemas/DeviceTask'
+
+      responses:
+        "202":
+          description: Accepted
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: "#/components/schemas/DeviceTask"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "409":
+          $ref: "#/components/responses/Conflict"
+
+  "/deviceTasks/:taskId":
+    parameters:
+      - $ref: '#/components/parameters/taskId'
+    get:
+      tags:
+        - Client Device Tasks
+      summary: Retrieves a Greengrass client device task.
+      description: >
+        Retrieves the definition and status of the Greengrass client device task.
+      operationId: getDeviceTask
+      responses:
+        "200":
+          description: OK
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: "#/components/schemas/DeviceTask"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  "/devices/:thingName":
+    parameters:
+      - $ref: '#/components/parameters/thingName'
+    get:
+      tags:
+        - Client Devices
+      summary: Retrieves a Greengrass client device.
+      description: >
+        Retrieves the definition of a specific Greengrass client device.
+      operationId: getDevice
+      responses:
+        "200":
+          description: OK
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: "#/components/schemas/Device"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+    delete:
+      parameters:
+        - $ref: '#/components/parameters/deprovision'
+      tags:
+        - Client Devices
+      summary: Deletes a Greengrass V2 client device.
+      description: >
+        Deletes a Greengrass V2 client device.
+
+        Client devices are disassociated from its core with an option to delete their corresponding AWS IoT things.
+
+      operationId: deleteDevice
+      responses:
+        "204":
+          description: No content
+
+  "/deploymentTasks":
+    post:
+      tags:
+        - Deployment Tasks
+      summary: Create a deployment task.
+      description: >
+        Deploy the components as configured per the template/version assigned to 1 or more Greengrass V2 cores.
+
+        This is an asynchronous call, meaning that when submitted the call will return immediately with a `taskId` while the deployments are being created in the background. Use the `GET /deployments/:taskId` to retrieve the status of the task.
+
+      operationId: createDeploymentTask
+      requestBody:
+        content:
+          application/vnd.aws-cdf-v1.0+json:
+            schema:
+              $ref: '#/components/schemas/NewDeploymentTask'
+
+      responses:
+        "202":
+          description: Accepted
+          headers:
+            location:
+              schema:
+                type: string
+              description: URI of deployment task created.
+            x-taskid:
+              schema:
+                type: string
+              description: ID of deployment task created.
+
+    get:
+      parameters:
+        - $ref: '#/components/parameters/count'
+        - $ref: '#/components/parameters/exclusiveStartTaskId'
+      tags:
+        - Deployment Tasks
+      summary: Lists deployment tasks.
+      description: >
+        Lists all deployment tasks managed by this service. 
+      operationId: listDeployments
+      responses:
+        "200":
+          description: OK
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: "#/components/schemas/DeploymentTaskList"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  "/deploymentTasks/:taskId":
+    parameters:
+      - $ref: '#/components/parameters/taskId'
+    get:
+      tags:
+        - Deployment Tasks
+      summary: Retrieves a deployment task.
+      description: >
+        Retrieves the definition and status of a deployment task.
+      operationId: getDeploymentTask
+      responses:
+        "200":
+          description: OK
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: "#/components/schemas/DeploymentTask"
+
+  "/deploymentTasks/:taskId/cores":
+    parameters:
+      - $ref: '#/components/parameters/taskId'
+    get:
+      parameters:
+        - $ref: '#/components/parameters/count'
+        - $ref: '#/components/parameters/exclusiveStartThingName'
+      tags:
+        - Cores
+      summary: Lists all cores updated as part of a deployment task.
+      description: >
+        Retrieves the definition and status of a deployment task.
+      operationId: listDeploymentTaskCores
+      responses:
+        "200":
+          description: OK
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: "#/components/schemas/CoreDeploymentList"
+
+  "/deploymentTasks/:taskId/cores/:thingName":
+    parameters:
+      - $ref: '#/components/parameters/taskId'
+      - $ref: '#/components/parameters/thingName'
+    get:
+      tags:
+        - Deployment Tasks
+      summary: Retrieve core deployment status.
+      description: >
+        Retrieves the status of a specific core of a specific deployment.
+      operationId: getDeploymentTaskCore
+      responses:
+        "200":
+          description: OK
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: "#/components/schemas/CoreDeployment"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  "/cores/:thingName/deployments":
+    parameters:
+      - $ref: '#/components/parameters/thingName'
+    get:
+      parameters:
+        - $ref: '#/components/parameters/count'
+        - $ref: '#/components/parameters/exclusiveStartTaskId'
+      tags:
+        - Deployments
+      summary: Lists core deployments.
+      description: >
+        Lists details of all deployments a core has been part of.
+      operationId: listCoreDeployments
+      responses:
+        "200":
+          description: OK
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: "#/components/schemas/DeploymentTaskList"
+
+  "/fleet/summary":
+    get:
+      tags:
+        - Summaries
+      summary: Returns fleet summary.
+      description: >
+        Provides a summary of the entire fleet managed by this module.
+      operationId: getFleetSummary
+      responses:
+        "200":
+          description: OK
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: "#/components/schemas/FleetSummary"
+
+
+components:
+
+  parameters:
+
+    templateName:
+      name: templateName
+      in: path
+      description: Name of template
+      required: true
+      schema:
+        type: string
+
+    templateVersion:
+      name: templateVersion
+      in: path
+      description: Template version number.
+      required: true
+      schema:
+        type: integer
+
+    templateNameQuery:
+      name: templateName
+      in: query
+      description: Name of template
+      schema:
+        type: string
+
+    templateVersionQuery:
+      name: templateVersion
+      in: query
+      description: Template version number.
+      schema:
+        type: integer
+
+    taskIdQuery:
+      name: taskId
+      in: query
+      description: Device creation task id.
+      schema:
+        type: integer
+
+    taskId:
+      name: taskId
+      in: path
+      description: Task ID
+      required: true
+      schema:
+        type: string
+
+    thingName:
+      name: thingName
+      in: path
+      description: Name of the thing within AWS IoT.
+      required: true
+      schema:
+        type: string
+
+    deprovision:
+      name: deprovision
+      in: query
+      description: If true, the devices corresponding AWS IoT Thing will be deprovisioned.
+      schema:
+        type: boolean
+        default: false
+
+    deprovisionClients:
+      name: deprovisionClients
+      in: query
+      description: If true, the cores corresponding AWS IoT Thing will be deprovisioned.
+      schema:
+        type: boolean
+        default: false
+
+    failedOnly:
+      name: failedOnly
+      in: query
+      description: Filters cores with failed deployments.
+      schema:
+        type: boolean
+        default: false
+
+    count:
+      name: count
+      in: query
+      description: Total number of results to return per paginated response.
+      schema:
+        type: integer
+        minimum: 1
+
+    exclusiveStartName:
+      name: exclusiveStartName
+      in: query
+      description: Paginated results to start from name (exclusive of).
+      schema:
+        type: string
+
+    exclusiveStartThingName:
+      name: exclusiveStartThingName
+      in: query
+      description: Paginated results to start from thing name (exclusive of).
+      schema:
+        type: string
+
+    exclusiveStartVersion:
+      name: exclusiveStartVersion
+      in: query
+      description: Paginated results to start from version (exclusive of).
+      schema:
+        type: integer
+        minimum: 1
+
+    exclusiveStartTaskId:
+      name: exclusiveStartTaskId
+      in: query
+      description: Paginated results to start from task id (exclusive of).
+      schema:
+        type: string
+
+
+  responses:
+
+    Created:
+      description: Created successfully
+      headers:
+        location:
+          schema:
+            type: string
+
+    Accepted:
+      description: Accepted for processing
+      headers:
+        location:
+          schema:
+            type: string
+
+    NoContent:
+      description: No content
+
+    BadRequest:
+      description: Invalid input
+      content:
+        application/vnd.aws-cdf-v1.0+json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+    NotFound:
+      description: Not found
+      content:
+        application/vnd.aws-cdf-v1.0+json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+    Conflict:
+      description: Conflict
+      content:
+        application/vnd.aws-cdf-v1.0+json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+
+  schemas:
+
+    EditableTemplate:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of template.
+        components:
+          type: array
+          description: A list of components
+          items:
+            $ref: "#/components/schemas/Component"
+        jobConfig:
+          $ref: "#/components/schemas/JobConfig"
+          description: Optional default job config to be applied to deployments created using this template. May be provided/overridden at time of creating the deployment.
+        deploymentPolicies:
+          $ref: "#/components/schemas/DeploymentPolicy"
+          description: Optional default policies to be applied to deployments created using this template. May be provided/overridden at time of creating the deployment.
+
+    Template:
+      allOf:
+        - $ref: "#/components/schemas/EditableTemplate"
+        - type: object
+          properties:
+            version:
+              type: number
+              description: Auto-incrementing template version number.
+              readOnly: true
+            enabled:
+              type: boolean
+              description: Whether the template is enabled for use.
+            createdAt:
+              type: string
+              format: 'date-time'
+              description: Date/time the template was created.
+              readOnly: true
+            updatedAt:
+              type: string
+              format: 'date-time'
+              description: Date/time the template was updated.
+              readOnly: true
+
+    TemplateList:
+      properties:
+        templates:
+          type: array
+          description: A list of templates
+          items:
+            $ref: "#/components/schemas/Template"
+        pagination:
+          type: object
+          properties:
+            lastEvaluated:
+              type: object
+              properties:
+                name:
+                  type: string
+            count:
+              type: integer
+
+    TemplateVersionList:
+      properties:
+        templates:
+          type: array
+          description: A list of templates
+          items:
+            $ref: "#/components/schemas/Template"
+        pagination:
+          type: object
+          properties:
+            lastEvaluated:
+              type: object
+              properties:
+                version:
+                  type: integer
+            count:
+              type: integer
+
+    Component:
+      type: object
+      properties:
+        key:
+          type: string
+          description: Unique ID of the component.
+        version:
+          type: number
+          description: Specific version of the component
+        configurationUpdate:
+          type: object
+          description: The configuration updates to deploy for the component. You can define reset updates and merge updates. A reset updates the keys that you specify to the default configuration for the component. A merge updates the core device’s component configuration with the keys and values that you specify. The AWS IoT Greengrass Core software applies reset updates before it applies merge updates. For more information, see Update component configurations in the AWS IoT Greengrass V2 Developer Guide.
+          properties:
+            merge:
+              type: string
+              description: A serialized JSON string that contains the configuration object to merge to target devices. The core device merges this configuration with the component’s existing configuration. If this is the first time a component deploys on a device, the core device merges this configuration with the component’s default configuration. This means that the core device keeps it’s existing configuration for keys and values that you don’t specify in this object. For more information, see Merge configuration updates in the AWS IoT Greengrass V2 Developer Guide.
+            reset:
+              type: array
+              description: The list of configuration nodes to reset to default values on target devices. Use JSON pointers to specify each node to reset. JSON pointers start with a forward slash (/ ) and use forward slashes to separate the key for each level in the object. For more information, see the JSON pointer specification and Reset configuration updates in the AWS IoT Greengrass V2 Developer Guide.
+              items:
+                type: string
+        runWith:
+          type: object
+          description: The system user and group that the AWS IoT Greengrass Core software uses to run component processes on the core device. If you omit this parameter, the AWS IoT Greengrass Core software uses the system user and group that you configure for the core device. For more information, see Configure the user and group that run components in the AWS IoT Greengrass V2 Developer Guide.
+          properties:
+            posixUser:
+              type: string
+              description: The POSIX system user and (optional) group to use to run this component. Specify the user and group separated by a colon. The group is optional. If you don’t specify a group, the AWS IoT Greengrass Core software uses the primary user for the group.
+
+    JobConfig:
+      properties:
+        jobExecutionsRolloutConfig:
+          type: object
+          description: The rollout configuration for the job. This configuration defines the rate at which the job rolls out to the fleet of target devices.
+          properties:
+            exponentialRate:
+              description: The exponential rate to increase the job rollout rate.
+              type: object
+              properties:
+                baseRatePerMinute:
+                  type: integer
+                  description: The minimum number of devices that receive a pending job notification, per minute, when the job starts. This parameter defines the initial rollout rate of the job.
+                incrementFactor:
+                  type: number
+                  description: The exponential factor (up to 1 dp) to increase the rollout rate for the job.
+                rateIncreaseCriteria:
+                  description: The criteria to increase the rollout rate for the job.
+                  type: object
+                  properties:
+                    numberOfNotifiedThings:
+                      type: integer
+                      description: The number of devices to receive the job notification before the rollout rate increases.
+                    numberOfSucceededThings:
+                      type: integer
+                      description: The number of devices to successfully run the configuration job before the rollout rate increases.
+            maximumPerMinute:
+              type: integer
+              description: The maximum number of devices that receive a pending job notification, per minute.
+        abortConfig:
+          description: The stop configuration for the job. This configuration defines when and how to stop a job rollout.
+          type: object
+          properties:
+            criteriaList:
+              description: The list of criteria that define when and how to cancel the configuration deployment. The deployment stops if the following conditions are true - The number of things that receive the deployment exceeds the `minNumberOfExecutedThings`, and/or the percentage of failures with type `failureType` exceeds the `thresholdPercentage`.
+
+              type: array
+              items:
+                type: object
+                properties:
+                  failureType:
+                    type: string
+                    enum:
+                    - FAILED
+                    - REJECTED
+                    - TIMED_OUT
+                    - ALL
+                    description: The type of job deployment failure that can cancel a job.
+                  action:
+                    type: string
+                    description: The action to perform when the criteria are met.
+                  thresholdPercentage:
+                    type: number
+                    description: The minimum percentage (up to 2 dp) of failureType failures that occur before the job can cancel.
+                  minNumberOfExecutedThings:
+                    type: integer
+                    description: The minimum number of things that receive the configuration before the job can cancel.
+        timeoutConfig:
+          description: The timeout configuration for the job. This configuration defines the amount of time each device has to complete the job.
+          type: object
+          properties:
+            inProgressTimeoutInMinutes:
+              type: integer
+              description: The amount of time, in minutes, that devices have to complete the job. The timer starts when the job status is set to IN_PROGRESS . If the job status does not change to a terminal state before the time expires, then the job status is set to TIMED_OUT. The timeout interval must be between 1 minute and 7 days (10080 minutes).
+
+    DeploymentPolicy:
+      description: The deployment policy for the deployment. These policies define how the deployment updates components and handles failure.
+      properties:
+        failureHandlingPolicy:
+          type: string
+          enum:
+          - ROLLBACK
+          - DO_NOTHING
+          description: The failure handling policy for the configuration deployment. This policy defines what to do if the deployment fails.
+        componentUpdatePolicy:
+          description: The component update policy for the configuration deployment. This policy defines when it’s safe to deploy the configuration to devices.
+          type: object
+          properties:
+            timeoutInSeconds:
+              type: integer
+              description: The amount of time in seconds that each component on a device has to report that it’s safe to update. If the component waits for longer than this timeout, then the deployment proceeds on the device.
+              default: 60
+            action:
+              type: string
+              enum:
+              - NOTIFY_COMPONENTS
+              - SKIP_NOTIFY_COMPONENTS
+              description: |
+                Whether or not to notify components and wait for components to become safe to update. Choose from the following options:
+                - `NOTIFY_COMPONENTS` – The deployment notifies each component before it stops and updates that component. Components can use the SubscribeToComponentUpdates IPC operation to receive these notifications. Then, components can respond with the DeferComponentUpdate IPC operation. For more information, see Create deployments in the AWS IoT Greengrass V2 Developer Guide .
+                - `SKIP_NOTIFY_COMPONENTS` – The deployment does not notify components or wait for them to be safe to update.
+              default: NOTIFY_COMPONENTS
+        configurationValidationPolicy:
+          description: The configuration validation policy for the configuration deployment. This policy defines how long each component has to validate its configure updates.
+          type: object
+          properties:
+            timeoutInSeconds:
+              type: integer
+              description: The amount of time in seconds that a component can validate its configuration updates. If the validation time exceeds this timeout, then the deployment proceeds for the device.
+              default: 30
+
+    ProvisionCoresTask:    
+      type: object
+      properties:
+        coreVersion:
+          type: string
+          description: Greengrass nucleus version to provision.
+        type:
+          type: string
+          enum:
+            - Create
+        cores:
+          type: array
+          items:
+            $ref: '#/components/schemas/NewCore'
+          description: Core devices managed via this task.
+
+    DeleteCoresTask:    
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - Delete
+        cores:
+          type: array
+          items:
+            $ref: '#/components/schemas/DeleteCore'
+          description: Core devices managed via this task.
+
+    CoreTask:   
+      allOf:
+        - $ref: "#/components/schemas/ProvisionCoresTask"
+        - type: object
+          properties: 
+            taskId:
+              type: string
+              description: Unique ID of the task.
+              readOnly: true
+            taskStatus:
+              type: string
+              enum: [Waiting, InProgress, Success, Failure]
+              description: The core task status.
+              readOnly: true
+            cores:
+              type: array
+              items:
+                $ref: '#/components/schemas/Core'
+              description: Core devices managed via this task.
+            statusMessage:
+              type: string
+              description: Descriptive message regarding the status, such as an error message.
+              readOnly: true
+            type:
+              type: string
+              enum: [Create, Update]
+              description: The core task type.
+              readOnly: true
+            createdAt:
+              type: string
+              format: 'date-time'
+              description: Date/time the task was created.
+              readOnly: true
+            updatedAt:
+              type: string
+              format: 'date-time'
+              description: Date/time the task was updated.
+              readOnly: true
+
+    CoreTaskList:
+      properties:
+        cores:
+          type: array
+          description: A list of core tasks.
+          items:
+            $ref: "#/components/schemas/CoreTask"
+        pagination:
+          type: object
+          properties:
+            lastEvaluated:
+              type: object
+              properties:
+                taskId:
+                  type: string
+            count:
+              type: integer
+
+    NewCore:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Thing name.
+        provisioningTemplate:
+          type: string
+          description: Name of provisioning template to use to create the AWS IoT Thing.
+        provisioningParameters:
+          type: object
+          additionalProperties:
+            type: string
+          description: Key value map of parameters required by the provisioning template.
+        cdfProvisioningParameters:
+          type: object
+          description: Key value map of CDF parameter extensions required by the provisioning template.
+          properties:
+            caId:
+              type: string
+              description: CA ID to use (if a certificate has been requested to be created by CDF on behalf of the device)
+            certInfo:
+              type: object
+              description: Certificate attributes (if a certificate has been requested to be created by CDF on behalf of the device)
+              properties:
+                commonName:
+                  type: string
+                organization:
+                  type: string
+                organizationalUnit:
+                  type: string
+                locality:
+                  type: string
+                stateName:
+                  type: string
+                country:
+                  type: string
+                emailAddress:
+                  type: string
+                daysExpiry:
+                  type: number
+        configFileGenerator:
+          type: string
+          description: Alias of config file generator lambda to use to generate the installer config. If not provided, no installer config is generated.
+
+    DeleteCore:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Thing name.
+
+    Core:
+      allOf:
+        - $ref: "#/components/schemas/NewCore"
+        - type: object
+          properties:
+            template: 
+              type: object
+              properties:
+                desired:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    version:
+                      type: integer
+                reported:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    version:
+                      type: integer
+                    deploymentStatus:
+                      type: string
+                    deploymentStatusMessage:
+                      type: string
+                    jobStatus:
+                      type: string
+
+            greengrassTemplate:
+              type: string
+              description: Name of template to use to configure the Greengrass Core device.
+            greengrassTemplateVersion:
+              type: integer
+              description: Version of template to use to configure the Greengrass Core device.
+            provisioningTemplate:
+              type: string
+              description: Name of provisioning template to use to create the AWS IoT Thing.
+            provisioningParameters:
+              type: object
+              additionalProperties:
+                type: string
+              description: Key value map of parameters required by the provisioning template.
+            cdfProvisioningParameters:
+              type: object
+              description: Key value map of CDF parameter extensions required by the provisioning template.
+              properties:
+                caId:
+                  type: string
+                  description: CA ID to use (if a certificate has been requested to be created by CDF on behalf of the device)
+                certInfo:
+                  type: object
+                  description: Certificate attributes (if a certificate has been requested to be created by CDF on behalf of the device)
+                  properties:
+                    commonName:
+                      type: string
+                    organization:
+                      type: string
+                    organizationalUnit:
+                      type: string
+                    locality:
+                      type: string
+                    stateName:
+                      type: string
+                    country:
+                      type: string
+                    emailAddress:
+                      type: string
+                    daysExpiry:
+                      type: number
+            artifacts:
+              type: object
+              description: Any artifacts, such as certificates and keys, that may have been created by the device provisioning process.
+              additionalProperties:
+                type: object
+                properties:
+                  bucket:
+                    type: string
+                    description: Bucket where artifact is stored.
+                    readOnly: true
+                  key:
+                    type: string
+                    description: Key where artifact is stored.
+                    readOnly: true
+                  createdAt:
+                    type: string
+                    format: 'date-time'
+                    description: Date/time the artifact was created.
+                    readOnly: true
+              readOnly: true
+            deployed:
+              type: boolean
+              description: Whether the configured template version has been deployed to the Greengrass V2 core.
+              readOnly: true
+            coreVersion:
+              type: string
+              description: The version of the AWS IoT Greengrass Core software that the core device runs. This version is equivalent to the version of the AWS IoT Greengrass nucleus component that runs on the core device. For more information, see the AWS IoT Greengrass nucleus component in the AWS IoT Greengrass V2 Developer Guide.
+              readOnly: true
+            platform:
+              type: string
+              description: The operating system platform that the core device runs.
+              readOnly: true
+            architecture:
+              type: string
+              description: The computer architecture of the core device.
+              readOnly: true
+            status:
+              type: string
+              description: |
+                The status of the core device. The core device status can be:
+                  - `HEALTHY` – The AWS IoT Greengrass Core software and all components run on the core device without issue.
+                  - `UNHEALTHY` – The AWS IoT Greengrass Core software or a component is in a failed state on the core device.
+              readOnly: true
+            lastStatusUpdateTimestamp:
+              type: string
+              format: 'date-time'
+              description: The time at which the core device’s status last updated.
+              readOnly: true
+            createdAt:
+              type: string
+              format: 'date-time'
+              description: Date/time the core device was created.
+              readOnly: true
+            updatedAt:
+              type: string
+              format: 'date-time'
+              description: Date/time the core device was updated.
+              readOnly: true
+
+    CoreList:
+      properties:
+        cores:
+          type: array
+          description: A list of cores.
+          items:
+            $ref: "#/components/schemas/Core"
+        pagination:
+          type: object
+          properties:
+            lastEvaluated:
+              type: object
+              properties:
+                thingName:
+                  type: string
+            count:
+              type: integer
+
+    DeviceTask:    
+      type: object
+      properties:
+        taskId:
+          type: string
+          description: Unique ID of the task.
+          readOnly: true
+        taskStatus:
+          type: string
+          enum: [Waiting, InProgress, Success, Failure]
+          description: The core task status.
+          readOnly: true
+        statusMessage:
+          type: string
+          description: Descriptive message regarding the status, such as an error message.
+          readOnly: true
+        devices:
+          type: array
+          items:
+            $ref: '#/components/schemas/Device'
+          description: Client devices managed via this task.
+        createdAt:
+          type: string
+          format: 'date-time'
+          description: Date/time the task was created.
+          readOnly: true
+        updatedAt:
+          type: string
+          format: 'date-time'
+          description: Date/time the task was updated.
+          readOnly: true
+
+    Device:
+      type: object
+      properties:
+        thingName:
+          type: string
+          description: Thing name.
+        provisioningTemplate:
+          type: string
+          description: Name of provisioning template to use to create the AWS IoT Thing.
+        provisioningParameters:
+          type: object
+          additionalProperties:
+            type: string
+          description: Key value map of parameters required by the provisioning template.
+        cdfProvisioningParameters:
+          type: object
+          description: Key value map of CDF parameter extensions required by the provisioning template.
+          properties:
+            caId:
+              type: string
+              description: CA ID to use (if a certificate has been requested to be created by CDF on behalf of the device)
+            certInfo:
+              type: object
+              description: Certificate attributes (if a certificate has been requested to be created by CDF on behalf of the device)
+              properties:
+                commonName:
+                  type: string
+                organization:
+                  type: string
+                organizationalUnit:
+                  type: string
+                locality:
+                  type: string
+                stateName:
+                  type: string
+                country:
+                  type: string
+                emailAddress:
+                  type: string
+                daysExpiry:
+                  type: number
+        artifacts:
+          type: object
+          description: Any artifacts, such as certificates and keys, that may have been created by the device provisioning process.
+          additionalProperties:
+            type: object
+            properties:
+              bucket:
+                type: string
+                description: Bucket where artifact is stored.
+                readOnly: true
+              key:
+                type: string
+                description: Key where artifact is stored.
+                readOnly: true
+              createdAt:
+                type: string
+                format: 'date-time'
+                description: Date/time the artifact was created.
+                readOnly: true
+          readOnly: true
+        createdAt:
+          type: string
+          format: 'date-time'
+          description: Date/time the client device was created.
+          readOnly: true
+        updatedAt:
+          type: string
+          format: 'date-time'
+          description: Date/time the client device was updated.
+          readOnly: true
+
+    NewDeploymentTask:    
+      type: object
+      properties:
+        template:
+          type: object
+          properties:
+            name:
+              type: string
+              description: Name of template to deploy
+            version:
+              type: number
+              description: Version of template to deploy. If not provided, latest version will be deployed.
+          required:
+          - name
+        targets:
+          type: object
+          description: The Greengrass V2 cores to deploy.
+          properties:
+            thingNames:
+              type: array
+              items:
+                type: string
+              description: The Greengrass V2 core thing names to deploy. 
+            thingGroups:
+              type: array
+              items:
+                type: string
+              description: A list of thing groups that contain Greengrass V2 core thing names to deploy. Only cores belonging to these groups will be deployed - all other things will be ignored. 
+            assetLibraryDeviceIds:
+              type: array
+              items:
+                type: string
+              description: A list of Asset Library device ids, that represent Greengrass V2 cores, to deploy. Only cores will be deployed - all other things will be ignored.
+            assetLibraryGroupPaths:
+              type: array
+              items:
+                type: string
+              description: A list of Asset Library group paths, that are associated with devices representing Greengrass V2 cores, to deploy. Only cores will be deployed - all other things will be ignored.
+            assetLibraryQuery:
+              type: object
+              items:
+                type: string
+              description: An Asset Library query to use to generate a list of Asset Library devices associated with Greengrass V2 cores to deploy. Only cores will be deployed - all other things will be ignored.
+        iotJobConfig:
+          type: object
+          properties:
+            jobExecutionRolloutConfig:
+              type: object
+              description: Allows you to create a staged rollout of the command.
+              properties:
+                maximumPerMinute:
+                  type: number
+                  description: The maximum number of things that will be notified of a pending job, per minute. This parameter allows you to create a staged rollout.
+                exponentialRate:
+                  type: object
+                  description: The rate of increase for a job rollout. This parameter allows you to define an exponential rate for a job rollout.
+                  properties:
+                    baseRatePerMinute:
+                      type: number
+                      description: The minimum number of things that will be notified of a pending job, per minute at the start of job rollout. This parameter allows you to define the initial rate of rollout.
+                    incrementFactor:
+                      type: number
+                      description: The exponential factor to increase the rate of rollout for a job. AWS IoT supports up to one digit after the decimal (for example, 1.5, but not 1.55).
+                    rateIncreaseCriteria:
+                      type: object
+                      description: The criteria to initiate the increase in rate of rollout for a job.
+                      properties:
+                        numberOfNotifiedThings:
+                          type: number
+                          description: The threshold for number of notified things that will initiate the increase in rate of rollout.
+                        numberOfSucceededThings:
+                          type: number
+                          description: The threshold for number of succeeded things that will initiate the increase in rate of rollout.
+            abortConfig:
+              type: object
+              description: Allows you to create criteria to abort a command.
+              properties:
+                criteriaList:
+                  type: array
+                  description: The list of criteria that determine when and how to abort the command.
+                  items:
+                    type: object
+                    properties:
+                      failureType:
+                        type: string
+                        description: The type of job execution failures that can initiate a job abort.
+                      action:
+                        type: string
+                        description: The type of job action to take to initiate the job abort.
+                      thresholdPercentage:
+                        type: number
+                        description: The minimum percentage of job execution failures that must occur to initiate the job abort. AWS IoT supports up to two digits after the decimal (for example, 10.9 and 10.99, but not 10.999).
+                      minNumberOfExecutedThings:
+                        type: number
+                        description: The minimum number of things which must receive job execution notifications before the job can be aborted.
+            timeoutConfig:
+              type: object
+              description: Specifies the amount of time each device has to finish its execution of the job. The timer is started when the job execution status is set to IN_PROGRESS . If the job execution status is not set to another terminal state before the time expires, it will be automatically set to TIMED_OUT .
+              properties:
+                inProgressTimeoutInMinutes:
+                  type: number
+                  description: Specifies the amount of time, in minutes, this device has to finish execution of this job. The timeout interval can be anywhere between 1 minute and 7 days (1 to 10080 minutes). The in progress timer can't be updated and will apply to all job executions for the job. Whenever a job execution remains in the IN_PROGRESS status for longer than this interval, the job execution will fail and switch to the terminal TIMED_OUT status.
+      required:
+        - template
+        - targets
+    
+    DeploymentTask: 
+      allOf:
+        - $ref: "#/components/schemas/NewDeploymentTask"
+        - type: object
+          properties: 
+            taskId:
+              type: string
+              description: Unique ID of the task.
+              readOnly: true
+            taskStatus:
+              type: string
+              enum: [Waiting, InProgress, Success, Failure]
+              description: The core task status.
+              readOnly: true
+            statusMessage:
+              type: string
+              description: Descriptive message regarding the status, such as an error message.
+              readOnly: true
+            createdAt:
+              type: string
+              format: 'date-time'
+              description: Date/time the task was created.
+              readOnly: true
+            updatedAt:
+              type: string
+              format: 'date-time'
+              description: Date/time the task was updated.
+              readOnly: true
+
+    DeploymentTaskList:
+      properties:
+        deployments:
+          type: array
+          description: A list of deployment tasks.
+          items:
+            $ref: "#/components/schemas/DeploymentTask"
+        pagination:
+          type: object
+          properties:
+            lastEvaluated:
+              type: object
+              properties:
+                taskId:
+                  type: string
+            count:
+              type: integer
+
+    CoreDeployment:
+      type: object
+      properties:
+        core: 
+          type: string
+          description: AWS IoT thing name of the Greengrass V2 core.
+          readOnly: true
+        status:
+          type: string
+          description: The AWS IoT Job execution status.
+          enum:
+          - SUCCEEDED
+          - FAILED
+          - REJECTED
+          - CANCELED
+          - REMOVED
+          - TIMED_OUT
+          readOnly: true
+
+    CoreDeploymentList:
+      properties:
+        cores:
+          type: array
+          description: A list of cores deployed.
+          items:
+            $ref: "#/components/schemas/CoreDeployment"
+        pagination:
+          type: object
+          properties:
+            count:
+              type: string
+            lastEvaluated:
+              type: object
+              properties:
+                thingName:
+                  type: string
+
+    FleetSummary:
+      type: object
+      properties:
+        templates: 
+          type: object
+          additionalProperties:
+            type: object
+            properties:
+              latestVersion:
+                type: number
+              versions:
+                additionalProperties:
+                  type: object
+                  properties:
+                      desiredInUse:
+                        type: number
+                      reportedInUse:
+                        type: number
+                      lastDeploymentSuccess:
+                        type: number
+                      lastDeploymentFailed:
+                        type: number
+                      lastDeploymentInProgress:
+                        type: number
+      example:
+        templates:
+          - name: my-template
+            latestVersion: 2
+            versions:
+              "1":
+                desiredInUse: 0
+                reportedInUse: 1
+                lastDeploymentSuccess: 0
+                lastDeploymentFailed: 1
+                lastDeploymentInProgress: 0
+              "2":
+                desiredInUse: 3
+                reportedInUse: 2
+                lastDeploymentSuccess: 2
+                lastDeploymentFailed: 0
+                lastDeploymentInProgress: 0
+
+    Error:
+      type: object
+      properties:
+        message:
+          type: string

@@ -1,0 +1,53 @@
+{
+  "name": "@cdf/installer",
+  "entries": [
+    {
+      "version": "0.1.4",
+      "tag": "@cdf/installer_v0.1.4",
+      "date": "Fri, 18 Feb 2022 17:44:18 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "The monorepo root was not correctly identified when installing using the cdf-cli command run from outside the installer module directory."
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.1.3",
+      "tag": "@cdf/installer_v0.1.3",
+      "date": "Fri, 18 Feb 2022 03:10:00 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "rollback the cdf-openssl stack name to make it backward compatible"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.1.2",
+      "tag": "@cdf/installer_v0.1.2",
+      "date": "Thu, 17 Feb 2022 11:16:43 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix the filename for cfn-assetlibrary-export.yaml"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.1.1",
+      "tag": "@cdf/installer_v0.1.1",
+      "date": "Thu, 17 Feb 2022 09:27:38 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@cdf/config-inject\" from `^3.0.0` to `^4.0.0`"
+          }
+        ]
+      }
+    }
+  ]
+}

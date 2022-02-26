@@ -10,26 +10,23 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import 'reflect-metadata';
 import { container } from './di/inversify.config';
+
+import { json } from 'body-parser';
+import { Application, NextFunction, Request, Response } from 'express';
 import { InversifyExpressServer } from 'inversify-express-utils';
-import * as bodyParser from 'body-parser';
-import {logger} from './utils/logger';
-import config from 'config';
-import {Request, Response, NextFunction, Application} from 'express';
-import {asArray, normalisePath, SupportedVersionConfig} from '@cdf/express-middleware';
+
+import { normalisePath } from '@cdf/express-middleware';
+
+import { logger } from './utils/logger';
+
 import cors = require('cors');
-
-const PORT = 3002;
-
-logger.debug(`config: ${JSON.stringify(config.util.toObject(config))}`);
 
 // Start the server
 const server = new InversifyExpressServer(container);
 
 // load in the supported versions
-const supportedVersionConfig:SupportedVersionConfig = config.get('supportedApiVersions');
-const supportedVersions:string[] = asArray(supportedVersionConfig);
+const supportedVersions: string[] = process.env.SUPPORTED_API_VERSIONS?.split(',') || [];
 
 server.setConfig((app) => {
   // only process requests that we can support the requested accept header
@@ -42,15 +39,15 @@ server.setConfig((app) => {
   });
 
   app.use((req, _res, next) => {
-    if (config.has('customDomain.basePath')) {
-      const basePathToRemove = config.get<string>('customDomain.basePath')
-      req.url = normalisePath(req.url, basePathToRemove);
-      logger.debug(`${basePathToRemove} is removed from the request url`)
+    const customDomainPath = process.env.CUSTOM_DOMAIN_BASE_PATH;
+    if (customDomainPath) {
+        req.url = normalisePath(req.url, customDomainPath);
+        logger.silly(`${customDomainPath} is removed from the request url`)
     }
     next();
   });
 
-  app.use(bodyParser.json({ type: supportedVersions }));
+  app.use(json({ type: supportedVersions }));
 
   // default the response's headers
   app.use( (req,res,next)=> {
@@ -62,21 +59,22 @@ server.setConfig((app) => {
   });
 
   // enable cors
-  const corsAllowedOrigin = config.get('cors.origin') as string;
-  let exposedHeaders = config.get('cors.exposedHeaders') as string;
-  if (exposedHeaders===null || exposedHeaders==='') {
-    exposedHeaders=undefined;
+  const corsAllowedOrigin = process.env.CORS_ORIGIN;
+  let exposedHeaders = process.env.CORS_EXPOSED_HEADERS;
+  if (exposedHeaders === null || exposedHeaders === '') {
+      exposedHeaders = undefined;
   }
-  if (corsAllowedOrigin !== null && corsAllowedOrigin !== '') {
-    const c = cors({
-      origin: corsAllowedOrigin,
-      exposedHeaders
-    });
-    app.use(c);
+  if (corsAllowedOrigin?.length>0) {
+      const c = cors({
+          origin: corsAllowedOrigin,
+          exposedHeaders
+      });
+      app.use(c);
   }
 });
 
 export const serverInstance:Application = server.build();
-serverInstance.listen(PORT);
+const port = process.env.PORT;
+serverInstance.listen(port);
 
-logger.info(`Server started on port ${PORT} :)`);
+logger.info(`Server started on port ${port} :)`);

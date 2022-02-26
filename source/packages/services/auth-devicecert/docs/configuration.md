@@ -1,35 +1,14 @@
 # AUTH DEVICE CERT CONFIGURATION
-## Optional Configuration
 
-The following represents optional configuration that can be provided at time of deployment via the modules `{env}-config.json` file. If a value is listed, this is the value that is bundled into the application as a default. You only need to specify a configuration value from the following if you need to change it:
+The recommended way to create a local configuration file for the Auth Device Cert service is through CDF's [installer](../../installer/README.md#deployment-using-wizard).
+# Configuration for Running Locally
 
-```json
-{
-  /*
-    Application logging level. Set to (in order) error, warn, info, verbose, debug 
-    or silly.
-  */
-  "logging": {
-      "level": "debug"
-  }
-}
-```
+Once you had deployed cdf to your AWS account, you can generate `.env` file to be used for your local development
 
-## Required Configuration For Running Locally
+The instruction to generate the local file can be found [here](../../installer/README.md#local-development). The `.env` file will be populated with resources and options that are specified during the deployment wizard flow.
 
-As part of the deployment flow there is some configuration that is auto-discovered and set. If running the Auth Device Cert locally, the following configuration will need defining manually via the Auth Device Cert's `{env}-config.json` file.
-
-```json
-{
-  "aws": {
-    /*
-      The AWS region code 
-    */       
-    "region": "?",
-    /*
-      The AWS account ID
-    */      
-    "accountId": "?"
-  }
-}
+```ini
+# The allowed CORS origin to validate requests against.
+#Application logging level. Set to (in order) error, warn, info, verbose, debug  or silly.
+LOGGING_LEVEL=info
 ```

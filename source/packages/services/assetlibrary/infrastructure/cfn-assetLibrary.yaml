@@ -20,28 +20,27 @@ Globals:
     OpenApiVersion: 3.0.1
 
 Parameters:
+  
+  ApplicationConfigurationOverride:
+    Description: This allows you to override any application configuration.  It should consists of a text-based content with a structure and syntax comprising key–value pairs for properties. Any configurations contained in this will override the configurations found and merged from the default .env files.
+    Type: String
+
   Environment:
     Description:  Name of environment.  Used to name the created resources.
-    Type: String
-    MinLength: 1
-
-  ApplicationConfigurationOverride:
-    Description: This allows you to override any configuration application configuration. Must be a JSON formatted string. Any configurations contained in this will override the configurations found and merged from the config files.
     Type: String
     MinLength: 1
 
   VpcId:
     Description: ID of VPC to deploy the Asset Library into
     Type: String
+  
   CDFSecurityGroupId:
     Description: ID of an existing CDF security group to deploy the Asset Library into (required if running full mode, or private API)
     Type: String
+  
   PrivateSubNetIds:
     Description: Comma delimited list of private subnetIds to deploy the Asset Library into
     Type: CommaDelimitedList
-  PrivateApiGatewayVPCEndpoint:
-    Description: VPC endpoint required for private api gateway support
-    Type: String
 
   Mode:
     Description: Run in 'lite' mode which includes device registry only, or 'full' mode which augments the device registry with an additional datastore
@@ -51,6 +50,10 @@ Parameters:
       - full
       - lite
     MinLength: 1
+  
+  PrivateApiGatewayVPCEndpoint:
+    Description: VPC endpoint. Only required if AuthType = 'Private'.
+    Type: String
 
   TemplateSnippetS3UriBase:
     Description: |
@@ -242,6 +245,8 @@ Resources:
             - !Sub "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:index/*"
           - Action:
               - "iot:ListThingGroups"
+              - "iot:ListThingTypes"
+              - "iot:DeprecateThingType"
             Effect: Allow
             Resource: 
             - "*"
@@ -252,32 +257,26 @@ Resources:
       FunctionName: !Sub 'cdf-assetLibrary-rest-${Environment}'
       CodeUri: ../bundle.zip
       Handler: packages/services/assetlibrary/dist/lambda_proxy.handler
-
       MemorySize: 512
       Role: !GetAtt LambdaExecutionRole.Arn
       Runtime: nodejs14.x
-
       AutoPublishAlias: live
-
       DeploymentPreference:
         Type: AllAtOnce
-
       ProvisionedConcurrencyConfig:
         Fn::If:
         - DeployWithProvisionedCapacity
         - ProvisionedConcurrentExecutions: !Ref ProvisionedConcurrentExecutions
         - Ref: AWS::NoValue
-
       Timeout: 30
       Environment:
         Variables:
-          NODE_CONFIG_DIR: 'packages/services/assetlibrary/dist/config'
-          NODE_CONFIG: !Ref ApplicationConfigurationOverride
+          APP_CONFIG: !Ref ApplicationConfigurationOverride
+          APP_CONFIG_DIR: 'packages/services/assetlibrary/dist/config'
+          MODE: !Ref Mode
           AWS_IOT_ENDPOINT: !GetAtt IotEndpoint.address
-          ASSETLIBRARY_AWS_NEPTUNE_URL: !Ref NeptuneURL
-
+          AWS_NEPTUNE_URL: !Ref NeptuneURL
       Tracing: Active
-
       # Difference between full and lite lambda is that lite is not deployed within a VPC
       VpcConfig:
         Fn::If:
@@ -286,7 +285,6 @@ Resources:
           SecurityGroupIds: 
           - !Ref CDFSecurityGroupId
         - Ref: AWS::NoValue
-
       Events:
         ProxyApiRoot:
           Type: Api

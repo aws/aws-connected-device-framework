@@ -2,6 +2,18 @@
   "name": "@cdf/logger",
   "entries": [
     {
+      "version": "4.0.0",
+      "tag": "@cdf/logger_v4.0.0",
+      "date": "Thu, 17 Feb 2022 09:27:38 GMT",
+      "comments": {
+        "major": [
+          {
+            "comment": "migrate configuration to use dotenv-flow and deployment to use installer"
+          }
+        ]
+      }
+    },
+    {
       "version": "3.0.0",
       "tag": "@cdf/logger_v3.0.0",
       "date": "Wed, 21 Jul 2021 16:46:57 GMT",

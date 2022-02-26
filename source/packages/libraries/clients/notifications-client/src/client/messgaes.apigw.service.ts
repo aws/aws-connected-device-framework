@@ -10,13 +10,14 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import {injectable} from 'inversify';
-import config from 'config';
+
+import { injectable } from 'inversify';
 import ow from 'ow';
 import * as request from 'superagent';
-import {RequestHeaders} from './common.model';
-import { MessagesDebugService, MessagesDebugServiceBase } from './messages.service';
+
+import { RequestHeaders } from './common.model';
 import { SimulateIoTCoreMessageRequest } from './messages.model';
+import { MessagesDebugService, MessagesDebugServiceBase } from './messages.service';
 
 @injectable()
 export class MessagesDebugApigwService extends MessagesDebugServiceBase implements MessagesDebugService {
@@ -25,7 +26,7 @@ export class MessagesDebugApigwService extends MessagesDebugServiceBase implemen
 
     public constructor() {
         super();
-        this.baseUrl = config.get('notifications.baseUrl') as string;
+        this.baseUrl = process.env.NOTIFICATIONS_BASE_URL;
     }
 
     async simulateIoTCoreMessage(message:SimulateIoTCoreMessageRequest, additionalHeaders?: RequestHeaders

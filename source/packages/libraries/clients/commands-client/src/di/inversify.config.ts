@@ -10,18 +10,23 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import {interfaces, ContainerModule, decorate, injectable} from 'inversify';
-import {COMMANDS_CLIENT_TYPES} from './types';
-import {CommandsService} from '../client/commands.service';
-import {TemplatesService} from '../client/templates.service';
-import {LAMBDAINVOKE_TYPES, LambdaInvokerService} from '@cdf/lambda-invoke';
-import AWS = require('aws-sdk');
-import config from 'config';
-import {CommandsLambdaService} from '../client/commands.lambda.service';
-import {CommandsApigwService} from '../client/commands.apigw.service';
-import {TemplatesLambdaService} from '../client/templates.lambda.service';
-import {TemplatesApigwService} from '../client/templates.apigw.service';
 
+import 'reflect-metadata';
+import '../config/env';
+
+import { ContainerModule, decorate, injectable, interfaces } from 'inversify';
+
+import { LAMBDAINVOKE_TYPES, LambdaInvokerService } from '@cdf/lambda-invoke';
+
+import { CommandsApigwService } from '../client/commands.apigw.service';
+import { CommandsLambdaService } from '../client/commands.lambda.service';
+import { CommandsService } from '../client/commands.service';
+import { TemplatesApigwService } from '../client/templates.apigw.service';
+import { TemplatesLambdaService } from '../client/templates.lambda.service';
+import { TemplatesService } from '../client/templates.service';
+import { COMMANDS_CLIENT_TYPES } from './types';
+
+import AWS = require('aws-sdk');
 export const commandsContainerModule = new ContainerModule (
     (
         bind: interfaces.Bind,
@@ -29,7 +34,7 @@ export const commandsContainerModule = new ContainerModule (
         isBound: interfaces.IsBound,
         _rebind: interfaces.Rebind
     ) => {
-        if (config.has('commands.mode') && config.get('commands.mode') === 'lambda') {
+        if (process.env.COMMANDS_MODE === 'lambda') {
             bind<CommandsService>(COMMANDS_CLIENT_TYPES.CommandsService).to(CommandsLambdaService);
             bind<TemplatesService>(COMMANDS_CLIENT_TYPES.TemplatesService).to(TemplatesLambdaService);
 
@@ -42,7 +47,7 @@ export const commandsContainerModule = new ContainerModule (
                         return () => {
 
                             if (!isBound(LAMBDAINVOKE_TYPES.Lambda)) {
-                                const lambda = new AWS.Lambda({region:config.get('aws.region')});
+                                const lambda = new AWS.Lambda({region:process.env.AWS_REGION});
                                 bind<AWS.Lambda>(LAMBDAINVOKE_TYPES.Lambda).toConstantValue(lambda);
                             }
                             return ctx.container.get<AWS.Lambda>(LAMBDAINVOKE_TYPES.Lambda);

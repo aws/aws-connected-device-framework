@@ -133,7 +133,7 @@ Before proceeding, note these known issues:
     to delete the security group as it will be associated with an ENI created by Sagemaker for the
     notebook to access the Neptune cluster.
 - If any lambdas are configured with provisioned capacity, such as Asset Libary out of the box, the
-    cdf-networking-* stack delete may fail due to the inability to delete the CDF security group. This
+    cdf-network-* stack delete may fail due to the inability to delete the CDF security group. This
     is due to ENI's created by lambda autoscaling still being associated with the security groups. These
     will eventually be cleaned up by themselves, but if unable to wait, you will need to manually delete
     the ENI's.

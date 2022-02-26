@@ -1,0 +1,10 @@
+## The following env config needs defining per environment:
+
+ASSETLIBRARYHISTORY_BASE_URL=
+ASSETLIBRARYHISTORY_HEADERS=
+ASSETLIBRARYHISTORY_MODE=
+ASSETLIBRARYHISTORY_API_FUNCTION_NAME=
+
+
+## optional to override:
+LOGGING_LEVEL=info

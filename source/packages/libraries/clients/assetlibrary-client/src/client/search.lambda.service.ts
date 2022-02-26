@@ -24,13 +24,14 @@ import {
 
 @injectable()
 export class SearchLambdaService extends SearchServiceBase implements SearchService {
+    private functionName: string;
 
     constructor(
         @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService) private lambdaInvoker: LambdaInvokerService,
-        @inject('assetLibrary.apiFunctionName') private functionName : string
     ) {
         super();
         this.lambdaInvoker = lambdaInvoker;
+        this.functionName = process.env.ASSETLIBRARY_API_FUNCTION_NAME
     }
 
     public async search(searchRequest:SearchRequestModel, offset?:number, count?:number, additionalHeaders?:RequestHeaders) : Promise<SearchResultsModel> {

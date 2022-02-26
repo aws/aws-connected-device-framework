@@ -24,12 +24,13 @@ import {
 @injectable()
 export class EventsLambdaService extends EventsServiceBase implements EventsService {
 
+    private functionName : string;
     constructor(
-        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService) private lambdaInvoker: LambdaInvokerService,
-        @inject('assetLibraryHistory.apiFunctionName') private functionName : string
+        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService) private lambdaInvoker: LambdaInvokerService
     ) {
         super();
         this.lambdaInvoker = lambdaInvoker;
+        this.functionName = process.env.ASSETLIBRARYHISTORY_API_FUNCTION_NAME;
     }
 
     async listObjectEvents(req: ObjectEventsRequest, additionalHeaders?: RequestHeaders): Promise<Events> {

@@ -26,7 +26,7 @@ const __ = process.statics;
 export class ProfilesDaoFull extends BaseDaoFull {
 
     public constructor(
-        @inject('aws.neptune.url') neptuneUrl: string,
+        @inject('neptuneUrl') neptuneUrl: string,
 	    @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph
     ) {
         super(neptuneUrl, graphSourceFactory);

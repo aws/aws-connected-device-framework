@@ -24,12 +24,13 @@ import {
 @injectable()
 export class TemplatesLambdaService extends TemplatesServiceBase implements TemplatesService {
 
+    private functionName : string;
     constructor(
-        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService) private lambdaInvoker: LambdaInvokerService,
-        @inject('commands.apiFunctionName') private functionName : string
+        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService) private lambdaInvoker: LambdaInvokerService
     ) {
         super();
         this.lambdaInvoker = lambdaInvoker;
+        this.functionName = process.env.COMMANDS_API_FUNCTION_NAME;
     }
     async createTemplate(template: TemplateModel, additionalHeaders?: RequestHeaders): Promise<void> {
         ow(template, ow.object.nonEmpty);

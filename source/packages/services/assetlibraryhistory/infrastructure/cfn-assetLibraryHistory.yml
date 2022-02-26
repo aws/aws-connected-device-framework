@@ -20,13 +20,12 @@ Globals:
     OpenApiVersion: 3.0.1
 
 Parameters:
-  Environment:
-    Description:  Name of environment.  Used to name the created resources.
-    Type: String
-    MinLength: 1
 
   ApplicationConfigurationOverride:
-    Description: This allows you to override any configuration application configuration. Must be a JSON formatted string. Any configurations contained in this will override the configurations found and merged from the config files.
+    Description: This allows you to override any application configuration.  It should consists of a text-based content with a structure and syntax comprising key–value pairs for properties. Any configurations contained in this will override the configurations found and merged from the default .env files.
+    Type: String
+  Environment:
+    Description:  Name of environment.  Used to name the created resources.
     Type: String
     MinLength: 1
 
@@ -99,6 +98,7 @@ Parameters:
       - 'true'
       - 'false'
     MinLength: 1
+
 
 Conditions:
 
@@ -232,7 +232,7 @@ Resources:
     Type: AWS::IAM::ManagedPolicy
     Condition: KmsKeyIdProvided
     Properties:
-      Description: "cdf-provisioning policy for accessing KMS"
+      Description: "cdf-assetlibraryhistory policy for accessing KMS"
       Path: "/cdf/assetlibraryhistory/"
       PolicyDocument:
         Version: "2012-10-17"
@@ -310,9 +310,9 @@ Resources:
       Timeout: 30
       Environment:
         Variables:
-          NODE_CONFIG_DIR: 'packages/services/assetlibraryhistory/dist/config'
-          NODE_CONFIG: !Ref ApplicationConfigurationOverride
-          ASSETLIBRARYHISTORY_AWS_DYNAMODB_TABLES_EVENTS: !Ref HistoryTable
+          APP_CONFIG_DIR: 'packages/services/assetlibraryhistory/dist/config'
+          APP_CONFIG: !Ref ApplicationConfigurationOverride
+          AWS_DYNAMODB_TABLE_EVENTS: !Ref HistoryTable
       Tracing: Active
 
   RESTLambdaFunction:
@@ -327,9 +327,9 @@ Resources:
       Timeout: 30
       Environment:
         Variables:
-          NODE_CONFIG_DIR: 'packages/services/assetlibraryhistory/dist/config'
-          NODE_CONFIG: !Ref ApplicationConfigurationOverride
-          ASSETLIBRARYHISTORY_AWS_DYNAMODB_TABLES_EVENTS: !Ref HistoryTable
+          APP_CONFIG_DIR: 'packages/services/assetlibraryhistory/dist/config'
+          APP_CONFIG: !Ref ApplicationConfigurationOverride
+          AWS_DYNAMODB_TABLE_EVENTS: !Ref HistoryTable
       Tracing: Active
 
       VpcConfig:

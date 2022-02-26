@@ -20,11 +20,10 @@ Globals:
     OpenApiVersion: 3.0.1
 
 Parameters:
-  ApplicationConfigurationOverride:
-    Description: This allows you to override any configuration application configuration. Must be a JSON formatted string. Any configurations contained in this will override the configurations found and merged from the config files.
-    Type: String
-    MinLength: 1
 
+  ApplicationConfigurationOverride:
+    Description: This allows you to override any application configuration.  It should consists of a text-based content with a structure and syntax comprising key–value pairs for properties. Any configurations contained in this will override the configurations found and merged from the default .env files.
+    Type: String
   Environment:
     Description:  Name of environment.  Used to name the created resources.
     Type: String
@@ -147,10 +146,10 @@ Resources:
       Timeout: 900
       Environment:
         Variables:
-          NODE_CONFIG_DIR: 'packages/services/assetlibrary-export/dist/config'
-          NODE_CONFIG: !Ref ApplicationConfigurationOverride
-          ASSETLIBRARY_NEPTUNE_URL: !Ref NeptuneURL
-          ASSETLIBRARYEXPORT_AWS_S3_ARTIFACTS_BUCKET: !Ref BucketName
+          APP_CONFIG_DIR: 'packages/services/assetlibrary-export/dist/config'
+          APP_CONFIG: !Ref ApplicationConfigurationOverride
+          NEPTUNEURL: !Ref NeptuneURL
+          AWS_S3_EXPORT_BUCKET: !Ref BucketName
 
       Tracing: Active
       VpcConfig:
@@ -173,10 +172,10 @@ Resources:
       Timeout: 900
       Environment:
         Variables:
-          NODE_CONFIG_DIR: 'packages/services/assetlibrary-export/dist/config'
-          NODE_CONFIG: !Ref ApplicationConfigurationOverride
-          ASSETLIBRARY_NEPTUNE_URL: !Ref NeptuneURL
-          ASSETLIBRARYEXPORT_AWS_S3_ARTIFACTS_BUCKET: !Ref BucketName
+          APP_CONFIG: !Ref ApplicationConfigurationOverride
+          APP_CONFIG_DIR: 'packages/services/assetlibrary-export/dist/config'
+          NEPTUNEURL: !Ref NeptuneURL
+          AWS_S3_EXPORT_BUCKET: !Ref BucketName
 
       Tracing: Active
       # Difference between full and lite lambda is that lite is not deployed within a VPC

@@ -16,11 +16,11 @@ Description: CDF (AWS Connected Device Framework)
 
 Parameters:
   Environment:
-    Description:  Name of environment.  Used to name the created resources.
+    Description: Name of environment.  Used to name the created resources.
     Type: String
     MinLength: 1
   ArtifactsBucket:
-    Description:  Name of environment.  Used to name the created resources.
+    Description: Name of environment.  Used to name the created resources.
     Type: String
   KmsKeyId:
     Description: The KMS key ID used to encrypt SSM parameters. If not provided, one will be created.
@@ -43,7 +43,7 @@ Parameters:
       ID of an existing VPC to deploy CDF (if using AuthType = 'Private') and/or AssetLibrary (if AssetLibraryMode = 'full') into.
       A new VPC will be created if not provided.
     Type: String
-    Default: 'N/A'
+    Default: "N/A"
   ExistingCDFSecurityGroupId:
     Description: |
       ID of an existing security group to deploy CDF and/or AssetLibrary into if an existing VPC is to be used.
@@ -72,57 +72,41 @@ Parameters:
   IncludeAssetLibrary:
     Description: If true, the Asset Library service will be deployed.
     Type: String
-    Default: 'true'
+    Default: "true"
     AllowedValues:
-      - 'true'
-      - 'false'
+      - "true"
+      - "false"
     MinLength: 1
   AssetLibraryMode:
     Description: Run in 'lite' mode which includes device registry functionality only, or 'full' mode which augments the device registry with a graph based datastore.
     Type: String
-    Default: 'full'
+    Default: "full"
     AllowedValues:
-      - 'full'
-      - 'lite'
+      - "full"
+      - "lite"
     MinLength: 1
-  IncludeProvisioning:
-    Description: If true, the Provisioning service will be deployed.
+  ExistingEventBusArn:
+    Description: Arn of an existing eventbus to use instead of creating one.
     Type: String
-    Default: 'true'
-    AllowedValues:
-      - 'true'
-      - 'false'
-    MinLength: 1
-  IncludeBulkCerts:
-    Description: If true, the Bulk Certs service will be deployed.
-    Type: String
-    Default: 'true'
-    AllowedValues:
-      - 'true'
-      - 'false'
-    MinLength: 1
-  IncludeCertificateVendor:
-    Description: If true, the CertificateVendor service will be deployed.
-    Type: String
-    Default: 'true'
-    AllowedValues:
-      - 'true'
-      - 'false'
-    MinLength: 1
 
 Conditions:
-  DeployAssetLibrary: !Equals [ !Ref IncludeAssetLibrary, 'true' ]
-  DeployAssetLibraryFull: !And [ !Condition DeployAssetLibrary, !Equals [ !Ref AssetLibraryMode, 'full' ]]
-  DeployProvisioning: !Equals [ !Ref IncludeProvisioning, 'true' ]
-  DeployBulkCerts: !Equals [ !Ref IncludeBulkCerts, 'true' ]
-  DeployCertificateVendor: !Equals [ !Ref IncludeCertificateVendor, 'true' ]
-  UsingVPCForAuth: !Equals [ !Ref AuthType, 'Private' ]
-  UseExistingVpc: !Not [ !Equals [ !Ref ExistingVpcId, 'N/A' ] ]
-  UsingVPC: !Or [ !Condition UsingVPCForAuth, !Condition DeployAssetLibraryFull, !Condition UseExistingVpc ]
-  CreateKmsKey: !Equals [ !Ref KmsKeyId, "" ]
+  DeployAssetLibrary: !Equals [!Ref IncludeAssetLibrary, "true"]
+  DeployAssetLibraryFull:
+    !And [
+      !Condition DeployAssetLibrary,
+      !Equals [!Ref AssetLibraryMode, "full"],
+    ]
+  UsingVPCForAuth: !Equals [!Ref AuthType, "Private"]
+  UseExistingVpc: !Not [!Equals [!Ref ExistingVpcId, "N/A"]]
+  UsingVPC:
+    !Or [
+      !Condition UsingVPCForAuth,
+      !Condition DeployAssetLibraryFull,
+      !Condition UseExistingVpc,
+    ]
+  CreateKmsKey: !Equals [!Ref KmsKeyId, ""]
 
 Resources:
-
   DeploymentHelper:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -130,7 +114,16 @@ Resources:
       Parameters:
         Environment: !Ref Environment
         ArtifactsBucket: !Ref ArtifactsBucket
-        ExistingVpcId: !Ref ExistingVpcId
+        VpcId: !Ref ExistingVpcId
+
+  EventBus:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: ./cloudformation/cfn-eventbus.yaml
+      Parameters:
+        Environment: !Ref Environment
+        ExistingEventBusArn: !Ref ExistingEventBusArn
+      TimeoutInMinutes: 20
 
   Networking:
     Condition: UsingVPC
@@ -139,9 +132,24 @@ Resources:
       TemplateURL: ./cloudformation/cfn-networking.yaml
       Parameters:
         Environment: !Ref Environment
-        EnableS3VpcEndpoint: !If [ UseExistingVpc, !GetAtt DeploymentHelper.Outputs.IsS3VpcEndpointEnabled, 'true' ]
-        EnableDynamoDBVpcEndpoint: !If [ UseExistingVpc, !GetAtt DeploymentHelper.Outputs.IsDynamoDBVpcEndpointEnabled, 'true' ]
-        EnablePrivateApiGatewayVPCEndpoint: !If [ UseExistingVpc, !GetAtt DeploymentHelper.Outputs.IsPrivateApiGatewayVPCEndpointEnabled, 'true' ]
+        EnableS3VpcEndpoint:
+          !If [
+            UseExistingVpc,
+            !GetAtt DeploymentHelper.Outputs.IsS3VpcEndpointEnabled,
+            "true",
+          ]
+        EnableDynamoDBVpcEndpoint:
+          !If [
+            UseExistingVpc,
+            !GetAtt DeploymentHelper.Outputs.IsDynamoDBVpcEndpointEnabled,
+            "true",
+          ]
+        EnablePrivateApiGatewayVPCEndpoint:
+          !If [
+            UseExistingVpc,
+            !GetAtt DeploymentHelper.Outputs.IsPrivateApiGatewayVPCEndpointEnabled,
+            "true",
+          ]
         ExistingVpcId: !Ref ExistingVpcId
         ExistingCDFSecurityGroupId: !Ref ExistingCDFSecurityGroupId
         ExistingPrivateSubnetIds: !Ref ExistingPrivateSubnetIds
@@ -161,7 +169,7 @@ Resources:
         VpcId: !GetAtt Networking.Outputs.VpcId
         CDFSecurityGroupId: !GetAtt Networking.Outputs.CDFSecurityGroupId
         PrivateSubnetIds: !GetAtt Networking.Outputs.PrivateSubnetIds
-        
+
   KmsKey:
     Type: AWS::KMS::Key
     Condition: CreateKmsKey
@@ -169,14 +177,14 @@ Resources:
       Description: CDF encryption key
       EnableKeyRotation: true
       KeyPolicy:
-        Version: '2012-10-17'
+        Version: "2012-10-17"
         Id: key-default-1
         Statement:
           - Sid: Enable IAM User Permissions
             Effect: Allow
             Principal:
-              AWS: 
-                - !Sub 'arn:aws:iam::${AWS::AccountId}:root'
+              AWS:
+                - !Sub "arn:aws:iam::${AWS::AccountId}:root"
             Action:
               - kms:*
             Resource: "*"
@@ -188,16 +196,16 @@ Resources:
         Environment: !Ref Environment
 
   ApiGatewayCloudWatchRole:
-    Type: 'AWS::IAM::Role'
+    Type: "AWS::IAM::Role"
     Properties:
       AssumeRolePolicyDocument:
-        Version: '2012-10-17'
+        Version: "2012-10-17"
         Statement:
           - Effect: Allow
             Principal:
               Service:
                 - apigateway.amazonaws.com
-            Action: 'sts:AssumeRole'
+            Action: "sts:AssumeRole"
       Path: /
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs
@@ -208,10 +216,12 @@ Resources:
       CloudWatchRoleArn: !GetAtt
         - ApiGatewayCloudWatchRole
         - Arn
-  
+
 Outputs:
   KmsKeyId:
-    Value: !If [ CreateKmsKey, !Ref KmsKey, !Ref KmsKeyId ]
+    Value: !If [CreateKmsKey, !Ref KmsKey, !Ref KmsKeyId]
+  EventBusArn:
+    Value: !GetAtt EventBus.Outputs.EventBusArn
   VpcId:
     Condition: UsingVPC
     Value: !GetAtt Networking.Outputs.VpcId
@@ -237,5 +247,3 @@ Outputs:
   CustomResourceVPCLambdaArn:
     Condition: UsingVPC
     Value: !GetAtt DeploymentHelperVPC.Outputs.CustomResourceVpcLambdaArn
-
-

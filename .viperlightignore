@@ -19,8 +19,6 @@ source/packages/integration-tests/.rush/temp/package-deps_test.json
 source/packages/libraries/clients/assetlibrary-client/.rush/temp/package-deps_clean.json
 source/packages/libraries/clients/bulkcerts-client/.rush/temp/package-deps_clean.json
 source/packages/libraries/clients/commands-client/.rush/temp/package-deps_clean.json
-source/packages/libraries/clients/greengrass-deployment-client/.rush/temp/package-deps_clean.json
-source/packages/libraries/clients/greengrass-provisioning-client/.rush/temp/package-deps_clean.json
 source/packages/libraries/clients/notifications-client/.rush/temp/package-deps_clean.json
 source/packages/libraries/config/config-inject/.rush/temp/package-deps_clean.json
 source/packages/libraries/core/deployment-helper/.rush/temp/package-deps_clean.json

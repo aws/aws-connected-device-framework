@@ -10,14 +10,15 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import {injectable} from 'inversify';
-import config from 'config';
+
+import { injectable } from 'inversify';
 import ow from 'ow';
 import * as request from 'superagent';
-import {RequestHeaders} from './common.model';
-import { TargetsServiceBase, TargetsService } from './targets.service';
-import { TargetResource } from './targets.model';
+
 import { logger } from '../utils/logger';
+import { RequestHeaders } from './common.model';
+import { TargetResource } from './targets.model';
+import { TargetsService, TargetsServiceBase } from './targets.service';
 
 @injectable()
 export class TargetsApigwService extends TargetsServiceBase implements TargetsService {
@@ -26,7 +27,7 @@ export class TargetsApigwService extends TargetsServiceBase implements TargetsSe
 
     public constructor() {
         super();
-        this.baseUrl = config.get('notifications.baseUrl') as string;
+        this.baseUrl = process.env.NOTIFICATIONS_BASE_URL;
     }
 
     async createTarget(subscriptionId: string, targetType:string, target: TargetResource, additionalHeaders?: RequestHeaders): Promise<void> {

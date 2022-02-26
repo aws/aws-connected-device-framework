@@ -17,12 +17,11 @@ Description: CDF Certificate Activator Service
 
 
 Parameters:
+  ApplicationConfigurationOverride:
+    Description: This allows you to override any application configuration.  It should consists of a text-based content with a structure and syntax comprising key–value pairs for properties. Any configurations contained in this will override the configurations found and merged from the default .env files.
+    Type: String
   Environment:
     Description:  Name of environment.  Used to name the created resources.
-    Type: String
-    MinLength: 1
-  ApplicationConfigurationOverride:
-    Description: This allows you to override any configuration application configuration. Must be a JSON formatted string. Any configurations contained in this will override the configurations found and merged from the config files.
     Type: String
     MinLength: 1
   BucketName:
@@ -42,8 +41,20 @@ Parameters:
     Type: String
     Default: ''
 
+  LoggingLevel:
+    Description: Application logging level
+    Type: String
+    Default: info
+    AllowedValues:
+      - error
+      - warn
+      - info
+      - debug
+      - silly
+
 Conditions:
   BucketProvided: !Not [ !Equals [ !Ref BucketName, "" ]]
+  LoggingLevelProvided: !Not [ !Equals [ !Ref LoggingLevel, "" ] ]
 
 Resources:
 
@@ -135,10 +146,12 @@ Resources:
       Timeout: 30
       Environment:
         Variables:
-          NODE_CONFIG_DIR: 'packages/services/certificateactivator/dist/config'
-          NODE_CONFIG: !Ref ApplicationConfigurationOverride
-          CERTIFICATEACTIVATOR_ASSETLIBRARY_APIFUNCTIONNAME: !Ref AssetLibraryFunctionName
-          CERTIFICATEACTIVATOR_PROVISIONING_APIFUNCTIONNAME: !Ref ProvisioningFunctionName
-          CERTIFICATEACTIVATOR_AWS_S3_CRL_BUCKET: !If [BucketProvided, !Ref BucketName, !Ref "AWS::NoValue"]
+          APP_CONFIG_DIR: 'packages/services/certificateactivator/dist/config'
+          APP_CONFIG: !Ref ApplicationConfigurationOverride
+          ASSETLIBRARY_API_FUNCTION_NAME: !Ref AssetLibraryFunctionName
+          PROVISIONING_API_FUNCTION_NAME: !Ref ProvisioningFunctionName
+          AWS_S3_CRL_BUCKET: !If [BucketProvided, !Ref BucketName, !Ref AWS::NoValue ]
+          LOGGING_LEVEL: !If [ LoggingLevelProvided, !Ref LoggingLevel, !Ref AWS::NoValue ]
+
       Tracing: Active
 

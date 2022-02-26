@@ -10,19 +10,31 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { decorate, injectable, Container, interfaces } from 'inversify';
-import { TYPES } from './types';
+import 'reflect-metadata';
+import '@cdf/config-inject'
+
+import { Container, decorate, injectable, interfaces } from 'inversify';
+
+import { NodeAssembler } from '../data/assembler';
 import { DevicesAssembler } from '../devices/devices.assembler';
-import { GroupsAssembler} from '../groups/groups.assembler';
+import { EventEmitter } from '../events/eventEmitter.service';
+import { GroupsAssembler } from '../groups/groups.assembler';
 import { SearchAssembler } from '../search/search.assembler';
 import { HttpHeaderUtils } from '../utils/httpHeaders';
-import { EventEmitter } from '../events/eventEmitter.service';
-
-import config from 'config';
-import { CDFConfigInjector } from '@cdf/config-inject';
-import AWS = require('aws-sdk');
-import * as lite from './inversify.config.lite';
+import { TypeUtils } from '../utils/typeUtils';
 import * as full from './inversify.config.full';
+import * as lite from './inversify.config.lite';
+import { TYPES } from './types';
+
+import AWS = require('aws-sdk');
+// Load everything needed to the Container
+export const container = new Container();
+
+if (process.env.MODE==='lite') {
+    container.load(lite.LiteContainerModule);
+} else {
+    container.load(full.FullContainerModule);
+}
 
 // Note: importing @controller's carries out a one time inversify metadata generation...
 import '../search/search.controller';
@@ -34,21 +46,6 @@ import '../types/types.controller';
 import '../policies/policies.controller';
 import '../profiles/profiles.controller';
 import '../init/init.controller';
-import { NodeAssembler } from '../data/assembler';
-import { TypeUtils } from '../utils/typeUtils';
-
-// Load everything needed to the Container
-export const container = new Container();
-
-// allow config to be injected
-const configInjector = new CDFConfigInjector();
-container.load(configInjector.getConfigModule());
-
-if (config.get('mode')==='lite') {
-    container.load(lite.LiteContainerModule);
-} else {
-    container.load(full.FullContainerModule);
-}
 
 container.bind<HttpHeaderUtils>(TYPES.HttpHeaderUtils).to(HttpHeaderUtils).inSingletonScope();
 container.bind<TypeUtils>(TYPES.TypeUtils).to(TypeUtils).inSingletonScope();
@@ -66,24 +63,11 @@ container.bind<interfaces.Factory<AWS.IotData>>(TYPES.IotDataFactory)
 
         if (!container.isBound(TYPES.IotData)) {
             const iotData = new AWS.IotData({
-                region: config.get('aws.region'),
-                endpoint: `https://${config.get('aws.iot.endpoint')}`
+                region: process.env.AWS_REGION,
+                endpoint: `https://${process.env.AWS_IOT_ENDPOINT}`,
             });
             container.bind<AWS.IotData>(TYPES.IotData).toConstantValue(iotData);
         }
         return container.get<AWS.IotData>(TYPES.IotData);
-    };
-});
-
-decorate(injectable(), AWS.Iot);
-container.bind<interfaces.Factory<AWS.Iot>>(TYPES.IotFactory)
-    .toFactory<AWS.Iot>(() => {
-    return () => {
-
-        if (!container.isBound(TYPES.Iot)) {
-            const iot = new AWS.Iot({region: config.get('aws.region')});
-            container.bind<AWS.Iot>(TYPES.Iot).toConstantValue(iot);
-        }
-        return container.get<AWS.Iot>(TYPES.Iot);
     };
 });

@@ -27,9 +27,6 @@ Parameters:
   PrivateSubNetIds:
     Description: Comma delimited list of private subnetIds to deploy Neptune into
     Type: List<AWS::EC2::Subnet::Id>
-  PrivateRouteTableIds:
-    Description: Comma delimited list of private route table ids to allow access to Neptune
-    Type: String
   DbInstanceType:
     Description: Neptune DB instance type
     Type: String
@@ -41,6 +38,11 @@ Parameters:
       - db.r4.2xlarge
       - db.r4.4xlarge
       - db.r4.8xlarge
+      - db.r5.large
+      - db.r5.xlarge
+      - db.r5.2xlarge
+      - db.r5.4xlarge
+      - db.r5.8xlarge
     ConstraintDescription: Must be a valid Neptune instance type.
   CreateDBReplicaInstance:
     Description: Create a read replica for MultiAZ?
@@ -60,12 +62,6 @@ Parameters:
       - 0
       - 1
     Description: Enable Audit Log. 0 means disable and 1 means enable.
-  BackupRetentionDays:
-    Type: Number
-    Default: 1
-    MinValue: 1
-    MaxValue: 35
-    Description: Days automated snapshots will be retained
   IamAuthEnabled:
     Type: String
     Default: 'false'
@@ -73,16 +69,10 @@ Parameters:
       - 'true'
       - 'false'
     Description: Enable IAM Auth for Neptune.
-  NeptuneEncryptAtRest:
-    Type: String
-    Default: 'false'
-    AllowedValues:
-      - 'true'
-      - 'false'
-    Description: Enable Encryption at Rest.
   SnapshotIdentifier:
     Type: String
     Description: Specifies the identifier for an existing DB cluster snapshot to restore. Refer to Neptune documentation on its use.
+    Default: ''
 
   CdfService:
     Description: Service name to tag resources.
@@ -144,8 +134,8 @@ Resources:
       GroupId: !Ref NeptuneSG
       Description: Neptune SG Self Ingress rule
       IpProtocol: tcp
-      FromPort: '8182'
-      ToPort: '8182'
+      FromPort: 8182
+      ToPort: 8182
       SourceSecurityGroupId: !Ref NeptuneSG
 
   NeptuneSGEgress:
