@@ -124,7 +124,7 @@ Feature: Device Profiles
     Given assetlibrary device profile "TEST-deviceProfiles-profile-XXX" of "TEST-deviceProfiles-type" does not exist
     When I create device "TEST-deviceProfiles-device005" applying profile "TEST-deviceProfiles-profil-XXX" with attributes
       | templateId | TEST-deviceProfiles-type |
-    Then it fails with a 400
+    Then it fails with a 404
     And device "TEST-deviceProfiles-device005" does not exist
 
 

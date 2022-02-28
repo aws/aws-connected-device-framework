@@ -97,7 +97,7 @@ export class DevicesDaoFull extends BaseDaoFull {
             await conn.close();
         }
 
-        if (results===undefined || results.length===0) {
+        if ((results?.length??0)===0) {
             logger.debug(`device.full.dao get: exit: node: undefined`);
             return undefined;
         }
@@ -125,15 +125,19 @@ export class DevicesDaoFull extends BaseDaoFull {
     public async getLabels(deviceIds: string[]): Promise<EntityTypeMap> {
         logger.debug(`devices.full.dao getLabels: in: deviceId: ${deviceIds}`);
 
+        if ((deviceIds?.length??0)===0) {
+            return {};
+        }
+
         const dbIds = deviceIds.map(d=> `device___${d}`);
         const result = await this.commonDao.getLabels(dbIds);
-        Object.values(result).map(labels=> labels.filter(l=> l!=='device' && l!=='component'));
-        logger.debug(`devices.full.dao getLabels: result: ${result}`);
+        Object.entries(result).forEach(([id,labels])=> result[id]=labels.filter(l=> l!=='device' && l!=='component'));
+        logger.debug(`devices.full.dao getLabels: result: ${JSON.stringify(result)}`);
         return result;
     }
 
     public async create(n:Node, groups:DirectionToRelatedEntityArrayMap, devices:DirectionToRelatedEntityArrayMap, components:Node[]): Promise<string> {
-        logger.debug(`devices.full.dao create: in: n:${JSON.stringify(n)}, groups:${groups}, devices:${JSON.stringify(devices)}, components:${components}`);
+        logger.debug(`devices.full.dao create: in: n:${JSON.stringify(n)}, groups:${JSON.stringify(groups)}, devices:${JSON.stringify(devices)}, components:${components}`);
 
         const id = `device___${n.attributes['deviceId']}`;
         const labels = n.types.join('::');

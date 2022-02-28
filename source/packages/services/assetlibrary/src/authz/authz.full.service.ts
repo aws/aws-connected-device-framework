@@ -16,6 +16,7 @@ import {logger} from '../utils/logger';
 import { Claims, ClaimAccess } from '../authz/claims';
 import { AuthzDaoFull } from './authz.full.dao';
 import { RelatedEntityArrayMap, StringArrayMap } from '../data/model';
+import { NotAuthorizedError, NotFoundError } from '../utils/errors';
 
 @injectable()
 export class AuthzServiceFull {
@@ -56,14 +57,14 @@ export class AuthzServiceFull {
 
         // if one of the requested items is missing, we refuse the whole request
         if (authorizations.exists.length!==deviceIds.length+groupPaths.length) {
-            throw new Error('NOT_FOUND');
+            const notFound = combinedIds.filter(id=> !authorizations.exists.includes(id));
+            throw new NotFoundError(`Device/groups ${notFound.toString()} not found.`);
         }
 
         // if the user does not have access to all, then not authorized to any
         const notAuthorized = Object.keys(authorizations.authorized).filter(k=> !combinedIds.includes(k));
         if (notAuthorized.length>0) {
-            logger.debug(`authz.full.service authorizationCheck: not authorized to: ${notAuthorized}`);
-            throw new Error('NOT_AUTHORIZED');
+            throw new NotAuthorizedError(`Access to ${JSON.stringify(notAuthorized)} not authorized.`);
         }
 
         // even though the user has access to a hierarchy, need to ensure its the right level of access
@@ -78,11 +79,9 @@ export class AuthzServiceFull {
             }
         }
 
-        logger.debug(`authz.full.service authorizationCheck: entitiesWithSufficientAccess:${JSON.stringify(entitiesWithSufficientAccess)}`);
-
         if (entitiesWithSufficientAccess.length!==combinedIds.length) {
             logger.debug(`authz.full.service authorizationCheck: not authorized`);
-            throw new Error('NOT_AUTHORIZED');
+            throw new NotAuthorizedError(`Insufficient access to ${JSON.stringify(entitiesWithSufficientAccess)}.`);
         }
 
     }

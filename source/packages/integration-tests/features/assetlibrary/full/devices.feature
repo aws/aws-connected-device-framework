@@ -17,7 +17,7 @@ Feature: Device lifecycle
   Scenario: Setup
     Given group "/TEST-devices-linkableGroup001" exists
     And group "/TEST-devices-unlinkableGroup001" exists
-    and device "test-devices-linkabledevice001" exists
+    And device "test-devices-linkabledevice001" exists
 
 
   Scenario: Create a new Device Template
@@ -43,7 +43,7 @@ Feature: Device lifecycle
       | awsIotThingArn | arn:aws:iot:us-east-1:xxxxxxxxxxxx:thing/test-devices-device001 |
       | state | active |
       | groups | {"linked_to":["/test-devices-linkablegroup001"]} |
-      | devices | {"sibling":["/test-devices-linkabledevice001"]} |
+      | devices | {"sibling":["test-devices-linkabledevice001"]} |
       | attributes | {"serialNumber":"S001","model":"A"} |
     Then device "TEST-devices-device001" exists with attributes
       | templateId | test-devices-type |
@@ -51,7 +51,7 @@ Feature: Device lifecycle
       | awsIotThingArn | arn:aws:iot:us-east-1:xxxxxxxxxxxx:thing/test-devices-device001 |
       | state | active |
       | groups | {"linked_to":["/test-devices-linkablegroup001"]} |
-      | devices | {"sibling":["/test-devices-linkabledevice001"]} |
+      | devices | {"sibling":["test-devices-linkabledevice001"]} |
       | attributes | {"serialNumber":"S001","model":"A"} |
 
 

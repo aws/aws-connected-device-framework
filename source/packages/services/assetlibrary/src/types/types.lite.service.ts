@@ -21,6 +21,7 @@ import { TYPES } from '../di/types';
 import { TypesDaoLite } from './types.lite.dao';
 import { EventEmitter, Type, Event } from '../events/eventEmitter.service';
 import { SortKeys } from '../data/model';
+import { NotSupportedError } from '../utils/errors';
 
 @injectable()
 export class TypesServiceLite implements TypesService {
@@ -126,11 +127,11 @@ export class TypesServiceLite implements TypesService {
 
     public async update(templateId:string, category:TypeCategory, definition:TypeDefinitionModel): Promise<SchemaValidationResult> {
         logger.debug(`types.lite.service update: in: templateId:${templateId}, category:${category}, definition:${JSON.stringify(definition)}`);
-        throw new Error('NOT_SUPPORTED');
+        throw new NotSupportedError();
     }
 
     public async publish(templateId:string, category:TypeCategory): Promise<void> {
         logger.debug(`types.lite.service publish: in: templateId:${templateId}, category:${category}`);
-        throw new Error('NOT_SUPPORTED');
+        throw new NotSupportedError();
     }
 }

@@ -21,6 +21,7 @@ import ow from 'ow';
 import { TypesService } from './types.service';
 import { SortKeys } from '../data/model';
 import { SchemaValidationResult, SchemaValidatorService } from './schemaValidator.full.service';
+import { InvalidCategoryError, TemplateInUseError, TemplateNotFoundError } from '../utils/errors';
 
 @injectable()
 export class TypesServiceFull implements TypesService {
@@ -123,7 +124,7 @@ export class TypesServiceFull implements TypesService {
         templateId = templateId.replace(/[^\x20-\x7E]+/g, '');
 
         if (!this.isValidCategory(category)) {
-            throw new Error('Invalid category');
+            throw new InvalidCategoryError(category);
         }
 
         // validate the schema
@@ -183,13 +184,13 @@ export class TypesServiceFull implements TypesService {
         templateId = templateId.toLowerCase();
 
         if (!this.isValidCategory(category)) {
-            throw new Error('Invalid category');
+            throw new InvalidCategoryError(category);
         }
 
         //  ensure no devices exist of this template
         const inUse = await this.typesDao.countInUse(templateId);
         if (inUse > 0) {
-            throw new Error('TEMPLATE_IN_USE');
+            throw new TemplateInUseError(templateId);
         }
 
         const model = await this.get(templateId, category, TypeDefinitionStatus.published);
@@ -216,7 +217,7 @@ export class TypesServiceFull implements TypesService {
         templateId = templateId.toLowerCase();
 
         if (!this.isValidCategory(category)) {
-            throw new Error('Invalid category');
+            throw new InvalidCategoryError(category);
         }
 
         const validationResult = await this.validator.validateSchema(definition, Operation.UPDATE);
@@ -256,7 +257,7 @@ export class TypesServiceFull implements TypesService {
 
             // if we don't have a published one either, then the type does not exist, we can't proceed
             if (published === undefined) {
-                throw new Error(`Type ${model.templateId} ${model.category} does not exist`);
+                throw new TemplateNotFoundError(model.templateId);
             }
 
             model.schema.version = published.schema.version + 1;
@@ -290,7 +291,7 @@ export class TypesServiceFull implements TypesService {
         templateId = templateId.toLowerCase();
 
         if (!this.isValidCategory(category)) {
-            throw new Error('Invalid category');
+            throw new InvalidCategoryError(category);
         }
 
         // save to datastore

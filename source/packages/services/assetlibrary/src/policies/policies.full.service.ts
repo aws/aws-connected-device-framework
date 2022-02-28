@@ -21,6 +21,7 @@ import { Operation, TypeCategory } from '../types/constants';
 import ow from 'ow';
 import { PoliciesService } from './policies.service';
 import { SchemaValidatorService } from '../types/schemaValidator.full.service';
+import { SchemaValidationError } from '../utils/errors';
 
 @injectable()
 export class PoliciesServiceFull implements PoliciesService {
@@ -74,7 +75,7 @@ export class PoliciesServiceFull implements PoliciesService {
         // schema validation
         const validate = await this.validator.validateType(TypeCategory.Policy, policy, Operation.CREATE);
         if (!validate.isValid) {
-            throw new Error('FAILED_VALIDATION');
+            throw new SchemaValidationError(validate);
         }
 
         // Save to datastore

@@ -111,19 +111,19 @@ export class DevicesAssembler {
 
         // remove any empty collection attributes
         if (Object.keys(model.groups?.in??{}).length===0) {
-            delete model.groups.in;
+            delete model.groups?.in;
         }
         if (Object.keys(model.groups?.out??{}).length===0) {
-            delete model.groups.out;
+            delete model.groups?.out;
         }
         if ( Object.keys(model.groups??{}).length===0) {
             delete model.groups;
         }
         if (Object.keys(model.devices?.in??{}).length===0) {
-            delete model.devices.in;
+            delete model.devices?.in;
         }
         if (Object.keys(model.devices?.out??{}).length===0) {
-            delete model.devices.out;
+            delete model.devices?.out;
         }
         if ( Object.keys(model.devices??{}).length===0) {
             delete model.devices;
@@ -218,7 +218,6 @@ export class DevicesAssembler {
 
         const assembleRelated = (from:RelatedEntityArrayMap, to:StringArrayMap)=> {
             if (from) {
-                if (to===undefined) to = {};
                 for(const [relation,entities] of Object.entries(from)) {
                     if (to[relation]===undefined) {
                         to[relation]= [];
@@ -236,12 +235,14 @@ export class DevicesAssembler {
 
             // populate version specific device info
             if (item.groups) {
+                typedResource.groups= {};
                 assembleRelated(item.groups?.in, typedResource.groups);
                 assembleRelated(item.groups?.out, typedResource.groups);
             } else {
                 delete typedResource.groups;
             }
             if (item.devices) {
+                typedResource.devices= {};
                 assembleRelated(item.devices?.in, typedResource.devices);
                 assembleRelated(item.devices?.out, typedResource.devices);
             } else {
@@ -253,9 +254,22 @@ export class DevicesAssembler {
             const typedResource:Device20Resource = resource;
 
             // populate version specific device info)
+            typedResource.groups = {};
+            if (item.groups.in) {
+                typedResource.groups.in = {}
+            }
             assembleRelated(item.groups?.in, typedResource.groups.in);
+            if (item.groups.out) {
+                typedResource.groups.out = {}
+            }
             assembleRelated(item.groups?.out, typedResource.groups.out);
+            if (item.devices.in) {
+                typedResource.devices.in = {}
+            }
             assembleRelated(item.devices?.in, typedResource.devices.in);
+            if (item.devices.out) {
+                typedResource.devices.out = {}
+            }
             assembleRelated(item.devices?.out, typedResource.devices.out);
         }
 

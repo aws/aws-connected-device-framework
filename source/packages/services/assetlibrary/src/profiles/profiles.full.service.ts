@@ -10,19 +10,25 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
-import { TYPES } from '../di/types';
-import {logger} from '../utils/logger';
-import {TypesService} from '../types/types.service';
-import {Operation } from '../types/constants';
-import {EventEmitter, Type, Event} from '../events/eventEmitter.service';
+
+import { inject, injectable } from 'inversify';
+import clone from 'just-clone';
 import ow from 'ow';
-import { DeviceProfileItem, GroupProfileItem, ProfileItemList } from './profiles.models';
+
+import { TYPES } from '../di/types';
+import { Event, EventEmitter, Type } from '../events/eventEmitter.service';
+import { Operation } from '../types/constants';
+import { SchemaValidatorService } from '../types/schemaValidator.full.service';
+import { TypeDefinitionStatus } from '../types/types.models';
+import { TypesService } from '../types/types.service';
+import {
+    ProfileNotFoundError, RelationValidationError, SchemaValidationError, TemplateNotFoundError
+} from '../utils/errors';
+import { logger } from '../utils/logger';
 import { ProfilesAssembler } from './profiles.assembler';
 import { ProfilesDaoFull } from './profiles.full.dao';
+import { DeviceProfileItem, GroupProfileItem, ProfileItemList } from './profiles.models';
 import { ProfilesService } from './profiles.service';
-import { TypeDefinitionStatus } from '../types/types.models';
-import { SchemaValidatorService } from '../types/schemaValidator.full.service';
 
 @injectable()
 export class ProfilesServiceFull implements ProfilesService {
@@ -61,34 +67,31 @@ export class ProfilesServiceFull implements ProfilesService {
         // as a profile is just an instance of a group/device with a few extra fields, we
         // validate it against the template of the group/device.  This involves us removing
         // the profile specific fields before validation, then adding them back in afterwards
-        const profileId = model.profileId;
-        const category = model.category;
-        delete model.profileId;
-        delete model.category;
+
+        const profile = clone(model);
+
+        delete profile.profileId;
+        delete profile.category;
 
         // note: we always treat the op as an update even when creating so that we can relax the device/group
         // required fields as they will be optional for a profile
-        const template = await this.typesService.get(model.templateId, category, TypeDefinitionStatus.published);
+        const template = await this.typesService.get(profile.templateId, model.category, TypeDefinitionStatus.published);
         if (template===undefined) {
-            throw new Error ('INVALID_TEMPLATE');
+            throw new TemplateNotFoundError(profile.templateId);
         }
-        const validateSubTypeFuture = this.validator.validateSubType(template, model, Operation.UPDATE);
-        const validateRelationshipsFuture = this.validator.validateRelationshipsByIds(template, model.groups, undefined);
+        const validateSubTypeFuture = this.validator.validateSubType(template, profile, Operation.UPDATE);
+        const validateRelationshipsFuture = this.validator.validateRelationshipsByIds(template, profile.groups, undefined);
         const [subTypeValidation,validateRelationships] = await Promise.all([validateSubTypeFuture, validateRelationshipsFuture]);
 
         // schema validation results
         if (!subTypeValidation.isValid) {
-            throw new Error('FAILED_VALIDATION');
+            throw new SchemaValidationError(subTypeValidation.errors);
         }
 
         // validate the id associations
         if (!validateRelationships.isValid)  {
-            throw new Error('INVALID_RELATION');
+            throw new RelationValidationError(validateRelationships);
         }
-
-        // Add the profile specific attributes back to the model
-        model.profileId = profileId;
-        model.category = category;
 
         logger.debug('profiles.full.service validate: exit:');
     }
@@ -177,7 +180,7 @@ export class ProfilesServiceFull implements ProfilesService {
 
         const profile = await this.get(templateId, profileId);
         if (profile===undefined) {
-            throw new Error('NOT_FOUND');
+            throw new ProfileNotFoundError(profileId);
         }
 
         await this.profilesDao.delete(templateId, profileId);

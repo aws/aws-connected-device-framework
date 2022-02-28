@@ -31,6 +31,7 @@ import { ClaimAccess } from '../authz/claims';
 import { TypeUtils } from '../utils/typeUtils';
 import { TypeDefinitionStatus } from '../types/types.models';
 import { SchemaValidatorService } from '../types/schemaValidator.full.service';
+import { RelationValidationError, ProfileNotFoundError, SchemaValidationError, TemplateNotFoundError, GroupNotFoundError } from '../utils/errors';
 
 @injectable()
 export class GroupsServiceFull implements GroupsService {
@@ -162,7 +163,7 @@ export class GroupsServiceFull implements GroupsService {
         // retrieve profile
         const profile = await this.profilesService.get(model.templateId, applyProfile) as GroupProfileItem;
         if (profile===undefined) {
-            throw new Error('INVALID_PROFILE');
+            throw new ProfileNotFoundError(applyProfile);
         }
 
         // apply profile to unset attributes
@@ -209,7 +210,7 @@ export class GroupsServiceFull implements GroupsService {
     }
 
     public async create(group:GroupItem, applyProfile?:string) : Promise<string> {
-        logger.debug(`groups.full.service create: in: model:${JSON.stringify(group)}, applyProfile:${applyProfile}`);
+        logger.debug(`groups.full.service create: in: group:${JSON.stringify(group)}, applyProfile:${applyProfile}`);
 
         ow(group, ow.object.nonEmpty);
         ow(group.templateId, ow.string.nonEmpty);
@@ -231,7 +232,7 @@ export class GroupsServiceFull implements GroupsService {
         // perform validation of the group...
         const template = await this.typesService.get(group.templateId, TypeCategory.Group, TypeDefinitionStatus.published);
         if (template===undefined) {
-            throw new Error ('INVALID_TEMPLATE');
+            throw new TemplateNotFoundError(group.templateId);
         }
         const validateSubTypeFuture = this.validator.validateSubType(template, group, Operation.CREATE);
         const relations:DirectionToRelatedEntityArrayMap = Object.assign({}, group.groups);
@@ -246,12 +247,12 @@ export class GroupsServiceFull implements GroupsService {
 
         // schema validation results
         if (!subTypeValidation.isValid) {
-            throw new Error('FAILED_VALIDATION');
+           throw new SchemaValidationError(subTypeValidation.errors);
         }
 
         // validate the id associations
         if (!validateRelationships.isValid)  {
-            throw new Error('INVALID_RELATION');
+            throw new RelationValidationError(validateRelationships);
         }
 
         // if fgac is enabled, we need to ensure any relations configured as identifying auth in its template are flagged to be saved as so
@@ -265,7 +266,7 @@ export class GroupsServiceFull implements GroupsService {
         // ensure parent exists
         const parent = await this.get(group.parentPath, false);
         if (parent===undefined) {
-            throw new Error ('INVALID_PARENT');
+            throw new GroupNotFoundError(group.parentPath);
         }
 
         group.groupPath = (group.parentPath==='/') ?
@@ -303,7 +304,7 @@ export class GroupsServiceFull implements GroupsService {
         if (applyProfile!==undefined) {
             const existing = await this.get(group.groupPath, true);
             if (existing===undefined) {
-                throw new Error('NOT_FOUND');
+                throw new GroupNotFoundError(group.groupPath);
             }
             const merged = Object.assign(new GroupItem(), existing, group);
             group = await this.applyProfile(merged, applyProfile);
@@ -317,17 +318,17 @@ export class GroupsServiceFull implements GroupsService {
         const labels = await this.groupsDao.getLabels([group.groupPath]);
         const templateId = labels[group.groupPath]?.[0];
         if (templateId===undefined) {
-            throw new Error('NOT_FOUND');
+            throw new TemplateNotFoundError(templateId);
         }
 
         // schema validation
         const template = await this.typesService.get(templateId, TypeCategory.Group, TypeDefinitionStatus.published);
         if (template===undefined) {
-            throw new Error ('INVALID_TEMPLATE');
+            throw new TemplateNotFoundError(templateId);
         }
         const subTypeValidation = await this.validator.validateSubType(template, group, Operation.UPDATE);
         if (!subTypeValidation.isValid) {
-            throw new Error('FAILED_VALIDATION');
+           throw new SchemaValidationError(subTypeValidation.errors);
         }
 
         group.category = TypeCategory.Group;
@@ -420,7 +421,7 @@ export class GroupsServiceFull implements GroupsService {
 
         const model = await this.get(groupPath, false);
         if (model===undefined) {
-            throw new Error('NOT_FOUND');
+            throw new GroupNotFoundError(groupPath);
         }
 
         // Save to datastore
@@ -459,8 +460,11 @@ export class GroupsServiceFull implements GroupsService {
         const [sourceGroup,targetGroup] = await Promise.all([sourceGroupFuture, targetGroupFuture]);
         
         // make sure they exist
-        if (sourceGroup===undefined || targetGroup===undefined) {
-            throw new Error('NOT_FOUND');
+        if (sourceGroup===undefined) {
+            throw new GroupNotFoundError(sourceGroupPath);
+        }
+        if (targetGroup===undefined) {
+            throw new GroupNotFoundError(targetGroupPath);
         }
         
         // if the relation already exists, there's no need to continue
@@ -481,7 +485,7 @@ export class GroupsServiceFull implements GroupsService {
         const template = await this.typesService.get(sourceGroup.templateId, TypeCategory.Group, TypeDefinitionStatus.published);
         const validationResult = await this.validator.validateRelationshipsByIds(template, relatedGroup, undefined);
         if (!validationResult.isValid) {
-            throw new Error('FAILED_VALIDATION');
+           throw new RelationValidationError(validationResult);
         }
 
         // if fgac is enabled, we need to ensure any relations configured as identifying auth in its template are flagged to be saved as so

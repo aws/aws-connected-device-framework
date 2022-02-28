@@ -141,20 +141,27 @@ export class CommonDaoFull extends BaseDaoFull {
         let results;
         const conn = super.getConnection();
         try {
-            results = await conn.traversal.V(entityDbIds).project('id','label')
+            const query = conn.traversal.V(entityDbIds).project('id','labels')
                 .by(__.coalesce(__.values('deviceId'),__.values('groupPath')))
-                .by(__.label().fold())
-                .toList();
+                .by(__.label().fold());
+
+            logger.silly(`common.full.dao getLabels: query: ${JSON.stringify(query)}`);
+            results = await query.toList();
         } finally {
             await conn.close();
         }
+        logger.silly(`common.full.dao getLabels: results: ${JSON.stringify(results)}`);
 
         if ((results?.length??0)===0) {
             logger.debug('common.full.dao getLabels: exit: labels:{}');
             return {};
         } else {
-            const labels:EntityTypeMap = JSON.parse(JSON.stringify(results)) as EntityTypeMap;
-            logger.debug(`common.full.dao getLabels: exit: labels: ${labels}`);
+            const labels:EntityTypeMap = {};
+            for (const result of results) {
+                const id = <string>result.id;
+                labels[id] = <string[]>result.labels;
+            }
+            logger.debug(`common.full.dao getLabels: exit: labels: ${JSON.stringify(labels)}`);
             return labels;
         }
     }

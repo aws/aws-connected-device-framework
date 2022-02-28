@@ -19,6 +19,7 @@ import * as jsonpatch from 'fast-json-patch';
 import { TypeCategory } from './constants';
 import { DirectionToStringArrayMap, SortKeys } from '../data/model';
 import { BaseDaoFull } from '../data/base.full.dao';
+import { TemplateNotFoundError } from '../utils/errors';
 
 const __ = process.statics;
 
@@ -524,7 +525,7 @@ export class TypesDaoFull extends BaseDaoFull {
         // do we have an existing draft verison?
         const draft = await this.get(templateId, category, TypeDefinitionStatus.draft);
         if (draft===undefined) {
-            throw new Error('NOT_FOUND');
+            throw new TemplateNotFoundError(`${templateId} (draft)`)
         }
 
         // do we have an existing published verison?

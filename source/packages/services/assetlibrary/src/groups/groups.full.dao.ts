@@ -107,10 +107,14 @@ export class GroupsDaoFull extends BaseDaoFull {
     public async getLabels(groupPaths: string[]): Promise<EntityTypeMap> {
         logger.debug(`groups.full.dao getLabels: in: groupPaths: ${groupPaths}`);
 
+        if ((groupPaths?.length??0)===0) {
+            return {};
+        }
+
         const dbIds = groupPaths.map(d=> `group___${d}`);
         const result = await this.commonDao.getLabels(dbIds);
-        Object.values(result).map(labels=> labels.filter(l=> l!=='group'));
-        logger.debug(`groups.full.dao getLabels: result: ${result}`);
+        Object.entries(result).forEach(([path,labels])=> result[path]=labels.filter(l=> l!=='group'));
+        logger.debug(`groups.full.dao getLabels: result: ${JSON.stringify(result)}`);
         return result;
     }
 

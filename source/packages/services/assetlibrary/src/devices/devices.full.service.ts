@@ -29,6 +29,7 @@ import { Operation, TypeCategory } from '../types/constants';
 import { SchemaValidatorService } from '../types/schemaValidator.full.service';
 import { TypeDefinitionStatus } from '../types/types.models';
 import { TypesService } from '../types/types.service';
+import { DeviceNotFoundError, GroupNotFoundError, RelationValidationError, ProfileNotFoundError, SchemaValidationError, TemplateNotFoundError } from '../utils/errors';
 import { logger } from '../utils/logger';
 import { TypeUtils } from '../utils/typeUtils';
 import { DevicesAssembler } from './devices.assembler';
@@ -214,7 +215,7 @@ export class DevicesServiceFull implements DevicesService {
         // retrieve profile
         const profile = await this.profilesService.get(model.templateId, applyProfile) as DeviceProfileItem;
         if (profile===undefined) {
-            throw new Error('INVALID_PROFILE');
+            throw new ProfileNotFoundError(applyProfile);
         }
 
         // apply profile to unset attributes
@@ -302,7 +303,7 @@ export class DevicesServiceFull implements DevicesService {
         // perform validation of the device...
         const template = await this.typesService.get(device.templateId, TypeCategory.Device, TypeDefinitionStatus.published);
         if (template===undefined) {
-            throw new Error ('INVALID_TEMPLATE');
+            throw new TemplateNotFoundError(device.templateId);
         }
         const validateSubTypeFuture = this.validator.validateSubType(template, device, Operation.CREATE);
         const validateRelationshipsFuture = this.validator.validateRelationshipsByIds(template, device.groups, device.devices);
@@ -310,12 +311,12 @@ export class DevicesServiceFull implements DevicesService {
 
         // schema validation results
         if (!subTypeValidation.isValid) {
-            throw new Error('FAILED_VALIDATION');
+            throw new SchemaValidationError(subTypeValidation.errors);
         }
 
         // validate the id associations
         if (!validateRelationships.isValid)  {
-            throw new Error('INVALID_RELATION');
+            throw new RelationValidationError(validateRelationships);
         }
 
         // if fgac is enabled, we need to ensure any relations configured as identifying auth in its template are flagged to be saved as so
@@ -436,7 +437,7 @@ export class DevicesServiceFull implements DevicesService {
         if (applyProfile!==undefined) {
             const existing = await this.get(device.deviceId);
             if (existing===undefined) {
-                throw new Error('NOT_FOUND');
+                throw new DeviceNotFoundError(device.deviceId);
             }
             const merged = Object.assign(new DeviceItem(), existing, device);
             device = await this.applyProfile(merged, applyProfile);
@@ -453,14 +454,14 @@ export class DevicesServiceFull implements DevicesService {
         const labels = await this.devicesDao.getLabels([device.deviceId]);
         const templateId = labels[device.deviceId]?.[0];
         if (templateId===undefined) {
-            throw new Error('TEMPLATE_NOT_FOUND');
+            throw new TemplateNotFoundError(templateId);
         }
 
         // schema validation
         const template = await this.typesService.get(templateId, TypeCategory.Device, TypeDefinitionStatus.published);
         const validate = await this.validator.validateSubType(template, device, Operation.UPDATE);
         if (!validate.isValid) {
-            throw new Error('FAILED_VALIDATION');
+            throw new SchemaValidationError(validate.errors);
         }
 
         // Assemble devicemodel into node
@@ -531,8 +532,11 @@ export class DevicesServiceFull implements DevicesService {
         const [device,group] = await Promise.all([deviceFuture, groupFuture]);
         
         // make sure they exist
-        if (device===undefined || group===undefined) {
-            throw new Error('NOT_FOUND');
+        if (device===undefined ) {
+            throw new DeviceNotFoundError(deviceId);
+        }
+        if (group===undefined) {
+            throw new GroupNotFoundError(groupPath);
         }
         
         // if the relation already exists, there's no need to continue
@@ -553,7 +557,7 @@ export class DevicesServiceFull implements DevicesService {
         const template = await this.typesService.get(device.templateId, TypeCategory.Device, TypeDefinitionStatus.published);
         const validationResult = await this.validator.validateRelationshipsByIds(template, relatedGroup, undefined);
         if (!validationResult.isValid) {
-            throw new Error('FAILED_VALIDATION');
+            throw new RelationValidationError(validationResult);
         }
 
         // if fgac is enabled, we need to ensure any relations configured as identifying auth in its template are flagged to be saved as so
@@ -638,8 +642,11 @@ export class DevicesServiceFull implements DevicesService {
         const [device,otherDevice] = await Promise.all([deviceFuture, otherDeviceFuture]);
 
         // make sure they exist
-        if (device===undefined || otherDevice===undefined) {
-            throw new Error('NOT_FOUND');
+        if (device===undefined ) {
+            throw new DeviceNotFoundError(deviceId);
+        }
+        if (otherDevice===undefined ) {
+            throw new DeviceNotFoundError(otherDeviceId);
         }
 
         // if the relation already exists, there's no need to continue
@@ -657,9 +664,12 @@ export class DevicesServiceFull implements DevicesService {
             }
         };
         const template = await this.typesService.get(device.templateId, TypeCategory.Device, TypeDefinitionStatus.published);
+        if (template===undefined) {
+            throw new TemplateNotFoundError(device.templateId);
+        }
         const validationResult = await this.validator.validateRelationshipsByIds(template, undefined, relatedDevice);
         if (!validationResult.isValid) {
-            throw new Error('FAILED_VALIDATION');
+            throw new RelationValidationError(validationResult);
         }
 
         // if fgac is enabled, we need to ensure any relations configured as identifying auth in its template are flagged to be saved as so
@@ -810,17 +820,17 @@ export class DevicesServiceFull implements DevicesService {
         // ensure the parent device exists
         const parentDevice = await this.get(parentDeviceId);
         if (parentDevice===undefined) {
-            throw new Error('NOT_FOUND');
+            throw new DeviceNotFoundError(parentDeviceId);
         }
 
         // perform validation of the device...
         const parentTemplate = await this.typesService.get(parentDevice.templateId, TypeCategory.Device, TypeDefinitionStatus.published);
         if (parentTemplate===undefined) {
-            throw new Error ('INVALID_TEMPLATE');
+            throw new TemplateNotFoundError(parentDevice.templateId);
         }
         const componentTemplate = parentTemplate.schema.definition.componentTypes?.find(c=>c.templateId=component.templateId);
         if (componentTemplate===undefined) {
-            throw new Error ('INVALID_TEMPLATE');
+            throw new TemplateNotFoundError(component.templateId);
         }
         const validateSubTypeFuture = this.validator.validateSubType(componentTemplate, component, Operation.CREATE);
         const validateRelationshipsFuture = this.validator.validateRelationshipsByIds(componentTemplate, component.groups, undefined);
@@ -828,12 +838,12 @@ export class DevicesServiceFull implements DevicesService {
 
         // schema validation results
         if (!subTypeValidation.isValid) {
-            throw new Error('FAILED_VALIDATION');
+            throw new SchemaValidationError(subTypeValidation.errors);
         }
 
         // validate the path associations
         if (!validateRelationships.isValid)  {
-            throw new Error('INVALID_RELATION');
+            throw new RelationValidationError(validateRelationships);
         }
 
         // Assemble devicemodel into node

@@ -42,7 +42,15 @@
                         "^.*$": {
                             "type": "array",
                             "items": {
-                                "type": "string"
+                                "type": "object",
+                                "properties":{ 
+                                    "id": {
+                                        "type": "string"
+                                    },
+                                    "isAuthCheck": {
+                                        "type": "boolean"
+                                    }
+                                }
                             }
                         }
                     },
@@ -54,7 +62,15 @@
                         "^.*$": {
                             "type": "array",
                             "items": {
-                                "type": "string"
+                                "type": "object",
+                                "properties":{ 
+                                    "id": {
+                                        "type": "string"
+                                    },
+                                    "isAuthCheck": {
+                                        "type": "boolean"
+                                    }
+                                }
                             }
                         }
                     },

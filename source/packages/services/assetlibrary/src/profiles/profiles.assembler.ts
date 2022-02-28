@@ -50,8 +50,12 @@ export class ProfilesAssembler {
         if (model.groups) {
             node.groups= {};
         }
-        node.groups.in = Object.fromEntries( Object.entries(model.groups.in).map(([relation, entities]) => [relation, entities.map(e=>e.id)]));
-        node.groups.in = Object.fromEntries( Object.entries(model.groups.out).map(([relation, entities]) => [relation, entities.map(e=>e.id)]));
+        if (model.groups?.in) {
+            node.groups.in = Object.fromEntries( Object.entries(model.groups.in).map(([relation, entities]) => [relation, entities.map(e=>e.id)]));
+        }
+        if (model.groups?.out) {
+            node.groups.in = Object.fromEntries( Object.entries(model.groups.out).map(([relation, entities]) => [relation, entities.map(e=>e.id)]));
+        }
 
         logger.debug(`profiles.assembler toNode: exit: node: ${JSON.stringify(node)}`);
         return node;
@@ -78,7 +82,18 @@ export class ProfilesAssembler {
         delete model.attributes['profileId'];
         const groups = model.attributes['groups'] as string;
         if (groups) {
-            model.groups = JSON.parse(groups);
+            model.groups= {}
+            type ParsedGroups = {
+                in?: { [key: string] : string[]},
+                out?: { [key: string] : string[]}
+            };
+            const parsedGroups = JSON.parse(groups) as ParsedGroups;
+            if (parsedGroups.in) {
+                model.groups.in = Object.fromEntries( Object.entries(parsedGroups.in).map(([relation, entities]) => [relation, entities.map(e=>({id:e}))]));
+            }
+            if (parsedGroups.out) {
+                model.groups.out = Object.fromEntries( Object.entries(parsedGroups.out).map(([relation, entities]) => [relation, entities.map(e=>({id:e}))]));
+            }
             delete model.attributes['groups'];
         } else {
             delete model.groups;
@@ -123,7 +138,6 @@ export class ProfilesAssembler {
 
         const assembleRelated = (from:RelatedEntityArrayMap, to:StringArrayMap)=> {
             if (from) {
-                if (to===undefined) to = {};
                 for(const [relation,entities] of Object.entries(from)) {
                     if (to[relation]===undefined) {
                         to[relation]= [];
@@ -136,22 +150,24 @@ export class ProfilesAssembler {
         // then add the attributes which are specific to profile models
         resource.profileId = item.profileId;
 
-        if (version.startsWith('1.0')) {
-            if (item.groups!==undefined) {
+        if (item.groups) {
+            if (version.startsWith('1.0')) {
                 const typedResource:DeviceProfile10Resource = resource;
-                (resource as DeviceProfile10Resource).groups = {};
-                Object.keys(item.groups).forEach(direction=> {
-                    Object.keys(item.groups[direction]).forEach(relation=> {
-                        (resource as DeviceProfile10Resource).groups[relation] = item.groups[direction][relation];
-                    });
-                });
-                assembleRelated(item.groups?.in, typedResource.groups);
-                assembleRelated(item.groups?.out, typedResource.groups);
+                typedResource.groups = {};
+                assembleRelated(item.groups.in, typedResource.groups);
+                assembleRelated(item.groups.out, typedResource.groups);
+           } else {
+                const typedResource:DeviceProfile20Resource = resource;
+                typedResource.groups = {};
+                if (item.groups.in) {
+                    typedResource.groups.in = {}
+                }
+                assembleRelated(item.groups.in, typedResource.groups.in);
+                if (item.groups.out) {
+                    typedResource.groups.out = {}
+                }
+                assembleRelated(item.groups.out, typedResource.groups.out);
             }
-        } else {
-            const typedResource:DeviceProfile20Resource = resource;
-            assembleRelated(item.groups?.in, typedResource.groups.in);
-            assembleRelated(item.groups?.out, typedResource.groups.out);
         }
 
         logger.debug(`profiles.assembler toDeviceProfileResource: exit: resource: ${JSON.stringify(resource)}`);
@@ -191,7 +207,6 @@ export class ProfilesAssembler {
 
         const assembleRelated = (from:RelatedEntityArrayMap, to:StringArrayMap)=> {
             if (from) {
-                if (to===undefined) to = {};
                 for(const [relation,entities] of Object.entries(from)) {
                     if (to[relation]===undefined) {
                         to[relation]= [];
@@ -207,17 +222,17 @@ export class ProfilesAssembler {
         resource.profileId = item.profileId;
 
         if (version.startsWith('1.0')) {
+            const typedResource = resource as GroupProfile10Resource;
             if (item.groups!==undefined) {
-                const typedResource = resource as GroupProfile10Resource;
-                if (item.groups) {
-                    assembleRelated(item.groups?.in, typedResource.groups);
-                    assembleRelated(item.groups?.out, typedResource.groups);
-                } else {
-                    delete typedResource.groups;
-                }
+                typedResource.groups = {};
+                assembleRelated(item.groups?.in, typedResource.groups);
+                assembleRelated(item.groups?.out, typedResource.groups);
+            } else {
+                delete typedResource.groups;
             }
         } else {
             const typedResource = resource as GroupProfile20Resource;
+            typedResource.groups = {};
             assembleRelated(item.groups?.in, typedResource.groups.in);
             assembleRelated(item.groups?.out, typedResource.groups.out);
         }

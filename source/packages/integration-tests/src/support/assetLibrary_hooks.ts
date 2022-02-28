@@ -32,7 +32,6 @@ setDefaultTimeout(30 * 1000);
 const DEVICES_FEATURE_DEVICE_IDS = ['TEST-devices-device001','TEST-devices-device002','TEST-devices-device003','TEST-devices-device004','TEST-devices-linkableDevice001'];
 const DEVICES_FEATURE_LINKABLE_GROUP_PATH = '/TEST-devices-linkableGroup001';
 const DEVICES_FEATURE_UNLINKABLE_GROUP_PATH = '/TEST-devices-unlinkableGroup001';
-const DEVICES_FEATURE_UNPROVISIONED_GROUP_PATH = '/unprovisioned';
 const DEVICES_FEATURE_GROUP_PATHS = [DEVICES_FEATURE_LINKABLE_GROUP_PATH, DEVICES_FEATURE_UNLINKABLE_GROUP_PATH, '/unprovisioned'];
 const DEVICES_FEATURE_LINKABLE_DEVICE_TEMPLATE_ID = 'TEST-devices-linkableDevice';
 const DEVICES_FEATURE_DEVICE_TEMPLATE_IDS = ['TEST-devices-type',DEVICES_FEATURE_LINKABLE_DEVICE_TEMPLATE_ID];
@@ -210,13 +209,13 @@ Before({tags: '@setup_devices_feature'}, async function () {
     await groupsService.createGroup(linkableGroup, undefined, additionalHeaders);
 
     // create unprovisioned group
-    const unprovosionedGroup:Group10Resource = {
+    const unprovisionedGroup:Group10Resource = {
         templateId: DEVICES_FEATURE_LINKABLE_GROUP_TEMPLATE_ID,
         parentPath: '/',
-        name: DEVICES_FEATURE_UNPROVISIONED_GROUP_PATH.substring(1),
+        name: 'unprovisioned',
         attributes: {}
     };
-    await groupsService.createGroup(unprovosionedGroup, undefined, additionalHeaders);
+    await groupsService.createGroup(unprovisionedGroup, undefined, additionalHeaders);
 
     // create unlinkable group template
     const unlinkableGroupType:TypeResource = {
@@ -238,16 +237,26 @@ Before({tags: '@setup_devices_feature'}, async function () {
     // create linkable device template
     const linkableDeviceType:TypeResource = {
         templateId: DEVICES_FEATURE_LINKABLE_DEVICE_TEMPLATE_ID,
-        category: 'device'
+        category: 'device',
+        relations: {
+            out: {
+                parent: [DEVICES_FEATURE_LINKABLE_GROUP_TEMPLATE_ID]
+            }
+        }
     };
     await templatesService.createTemplate(linkableDeviceType, additionalHeaders);
     await templatesService.publishTemplate(CategoryEnum.device, DEVICES_FEATURE_LINKABLE_DEVICE_TEMPLATE_ID, additionalHeaders);
 
-    // create linkable group
+    // create linkable device
     const linkableDevice:Device20Resource = {
         templateId: linkableDeviceType.templateId,
         deviceId: 'TEST-devices-linkableDevice001',
-        attributes: {}
+        attributes: {},
+        groups: {
+            out: {
+                parent: ['/unprovisioned']
+            }
+        }
     };
     await devicesService.createDevice(linkableDevice, undefined, additionalHeaders);
 });

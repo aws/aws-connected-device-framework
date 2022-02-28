@@ -19,7 +19,7 @@ import { TYPES } from '../di/types';
 import {TypeCategory} from '../types/constants';
 import { FullAssembler } from '../data/full.assembler';
 import { determineIfDeviceItem } from '../devices/devices.models';
-import { RelatedEntityArrayMap, StringArrayMap } from '../data/model';
+import { DirectionToRelatedEntityArrayMap, RelatedEntityArrayMap, StringArrayMap } from '../data/model';
 
 @injectable()
 export class GroupsAssembler {
@@ -176,11 +176,11 @@ export class GroupsAssembler {
             }
         });
 
-        const assembleRelated = (from:StringArrayMap, to:RelatedEntityArrayMap)=> {
+        const assembleRelated = (from:StringArrayMap, rels:DirectionToRelatedEntityArrayMap, direction:'in'|'out')=> {
             if (from) {
-                if (to===undefined) to = {};
+                if (rels[direction] ===undefined) rels[direction] = {};
                 for(const [relation,ids] of Object.entries(from)) {
-                    to[relation] = ids.map(id=>({id}));
+                    rels[direction][relation] = ids.map(id=>({id}));
                 }
             }
         }
@@ -189,13 +189,13 @@ export class GroupsAssembler {
         if (determineIfGroup20Resource(res)) {
             // v2.0 supports both incoming and outgoing links
             const res_2_0 = res as Group20Resource;
-            assembleRelated(res_2_0.groups?.in, item.groups.in);
-            assembleRelated(res_2_0.groups?.out, item.groups.out);
+            assembleRelated(res_2_0.groups?.in, item.groups, 'in');
+            assembleRelated(res_2_0.groups?.out, item.groups, 'out');
         } else {
             // as v1.0 only supports outgoing links, we default all to outgoing
             const res_1_0 = res as Group10Resource;
             if (res_1_0.groups) {
-                assembleRelated(res_1_0.groups, item.groups.out);
+                assembleRelated(res_1_0.groups, item.groups, 'out');
             }
         }
 
