@@ -17,8 +17,7 @@ import {
     TemplatesService,
     CategoryEnum,
     TypeResource,
-    Device10Resource,
-    Group10Resource,
+    Group20Resource,
     ProfilesService,
     ASSTLIBRARY_CLIENT_TYPES,
     Device20Resource,
@@ -200,7 +199,7 @@ Before({tags: '@setup_devices_feature'}, async function () {
     await templatesService.publishTemplate(CategoryEnum.group, DEVICES_FEATURE_LINKABLE_GROUP_TEMPLATE_ID, additionalHeaders);
 
     // create linkable group
-    const linkableGroup:Group10Resource = {
+    const linkableGroup:Group20Resource = {
         templateId: DEVICES_FEATURE_LINKABLE_GROUP_TEMPLATE_ID,
         parentPath: '/',
         name: DEVICES_FEATURE_LINKABLE_GROUP_PATH.substring(1),
@@ -209,7 +208,7 @@ Before({tags: '@setup_devices_feature'}, async function () {
     await groupsService.createGroup(linkableGroup, undefined, additionalHeaders);
 
     // create unprovisioned group
-    const unprovisionedGroup:Group10Resource = {
+    const unprovisionedGroup:Group20Resource = {
         templateId: DEVICES_FEATURE_LINKABLE_GROUP_TEMPLATE_ID,
         parentPath: '/',
         name: 'unprovisioned',
@@ -226,7 +225,7 @@ Before({tags: '@setup_devices_feature'}, async function () {
     await templatesService.publishTemplate(CategoryEnum.group, DEVICES_FEATURE_UNLINKABLE_GROUP_TEMPLATE_ID, additionalHeaders);
 
     // create unlinkable group template
-    const unlinkableGroup:Group10Resource = {
+    const unlinkableGroup:Group20Resource = {
         templateId: DEVICES_FEATURE_UNLINKABLE_GROUP_TEMPLATE_ID,
         parentPath: '/',
         name: DEVICES_FEATURE_UNLINKABLE_GROUP_PATH.substring(1),
@@ -285,43 +284,43 @@ Before({tags: '@setup_devicesWithAuth_feature'}, async function () {
     await templatesService.publishTemplate(CategoryEnum.group, groupTemplateId, additionalHeaders);
 
     // create group hierrarchy
-    const g1:Group10Resource = {
+    const g1:Group20Resource = {
         templateId: groupTemplateId,
         parentPath: '/',
         name: '1',
         attributes: {}
     };
-    const g1_1:Group10Resource = {
+    const g1_1:Group20Resource = {
         templateId: groupTemplateId,
         parentPath: '/1',
         name: '1',
         attributes: {}
     };
-    const g1_2:Group10Resource = {
+    const g1_2:Group20Resource = {
         templateId: groupTemplateId,
         parentPath: '/1',
         name: '2',
         attributes: {}
     };
-    const g1_1_1:Group10Resource = {
+    const g1_1_1:Group20Resource = {
         templateId: groupTemplateId,
         parentPath: '/1/1',
         name: '1',
         attributes: {}
     };
-    const g1_1_2:Group10Resource = {
+    const g1_1_2:Group20Resource = {
         templateId: groupTemplateId,
         parentPath: '/1/1',
         name: '2',
         attributes: {}
     };
-    const g1_2_1:Group10Resource = {
+    const g1_2_1:Group20Resource = {
         templateId: groupTemplateId,
         parentPath: '/1/2',
         name: '1',
         attributes: {}
     };
-    const g1_2_2:Group10Resource = {
+    const g1_2_2:Group20Resource = {
         templateId: groupTemplateId,
         parentPath: '/1/2',
         name: '2',
@@ -363,14 +362,14 @@ Before({tags: '@setup_devices_feature_lite'}, async function () {
     await teardown_devices_feature_lite();
 
     // create  group
-    const group:Group10Resource = {
+    const group:Group20Resource = {
         name: DEVICES_FEATURE_LITE_GROUP_PATH,
         attributes: {}
     };
     await groupsService.createGroup(group);
 
     // create unprovisioned group
-    const unprovisionedGroup:Group10Resource = {
+    const unprovisionedGroup:Group20Resource = {
         name: DEVICES_FEATURE_LITE_UNPROVISIONED_GROUP_PATH,
         attributes: {}
     };
@@ -401,7 +400,7 @@ Before({tags: '@setup_bulkdevices_feature'}, async function () {
     await templatesService.publishTemplate(CategoryEnum.group, BULKDEVICES_FEATURE_GROUP_TEMPLATE_ID, additionalHeaders);
 
     // create unprovisioned group
-    const bulkdevicesGroup:Group10Resource = {
+    const bulkdevicesGroup:Group20Resource = {
         templateId: BULKDEVICES_FEATURE_GROUP_TEMPLATE_ID,
         parentPath: '/',
         name: BULKDEVICES_FEATURE_GROUP_PATH.substring(1),
@@ -452,7 +451,7 @@ Before({tags: '@setup_deviceProfiles_feature'}, async function () {
     await templatesService.publishTemplate(CategoryEnum.group, DEVICEPROFILES_FEATURE_LINKABLE_GROUP_TEMPLATE_ID, additionalHeaders);
 
     // create linkable group 1
-    const linkableGroup:Group10Resource = {
+    const linkableGroup:Group20Resource = {
         templateId: DEVICEPROFILES_FEATURE_LINKABLE_GROUP_TEMPLATE_ID,
         parentPath: '/',
         name: DEVICEPROFILES_FEATURE_LINKABLE_GROUP_1_PATH.substring(1),
@@ -623,7 +622,7 @@ Before({tags: '@setup_deviceSearch_feature'}, async function () {
     await templatesService.createTemplate(deviceType, additionalHeaders);
     await templatesService.publishTemplate(CategoryEnum.device, DEVICESEARCH_FEATURES_DEVICE_TEMPLATE_IDS[0], additionalHeaders);
 
-    const group:Group10Resource = {
+    const group:Group20Resource = {
         templateId: 'root',
         parentPath: '/',
         name: 'deviceSearch_feature',
@@ -631,7 +630,7 @@ Before({tags: '@setup_deviceSearch_feature'}, async function () {
     };
     await groupsService.createGroup(group);
 
-    const device:Device10Resource = {
+    const device:Device20Resource = {
         templateId: DEVICESEARCH_FEATURES_DEVICE_TEMPLATE_IDS[0],
         deviceId: DEVICESEARCH_FEATURES_DEVICE_ID_1A,
         attributes: {
@@ -639,7 +638,9 @@ Before({tags: '@setup_deviceSearch_feature'}, async function () {
             position: 1
         },
         groups: {
-            'located_at': DEVICESEARCH_FEATURES_GROUPS_PATHS
+            out: {
+                'located_at': DEVICESEARCH_FEATURES_GROUPS_PATHS
+            }
         }
     };
     await devicesService.createDevice(device, undefined, additionalHeaders);
@@ -704,43 +705,43 @@ Before({tags: '@setup_deviceSearchWithAuth_feature'}, async function () {
     await templatesService.publishTemplate(CategoryEnum.device, deviceTemplateId, additionalHeaders);
 
     // create group hierarchy
-    const g1:Group10Resource = {
+    const g1:Group20Resource = {
         templateId: groupTemplateId,
         parentPath: '/',
         name: '1',
         attributes: {}
     };
-    const g1_1:Group10Resource = {
+    const g1_1:Group20Resource = {
         templateId: groupTemplateId,
         parentPath: '/1',
         name: '1',
         attributes: {}
     };
-    const g1_2:Group10Resource = {
+    const g1_2:Group20Resource = {
         templateId: groupTemplateId,
         parentPath: '/1',
         name: '2',
         attributes: {}
     };
-    const g1_1_1:Group10Resource = {
+    const g1_1_1:Group20Resource = {
         templateId: groupTemplateId,
         parentPath: '/1/1',
         name: '1',
         attributes: {}
     };
-    const g1_1_2:Group10Resource = {
+    const g1_1_2:Group20Resource = {
         templateId: groupTemplateId,
         parentPath: '/1/1',
         name: '2',
         attributes: {}
     };
-    const g1_2_1:Group10Resource = {
+    const g1_2_1:Group20Resource = {
         templateId: groupTemplateId,
         parentPath: '/1/2',
         name: '1',
         attributes: {}
     };
-    const g1_2_2:Group10Resource = {
+    const g1_2_2:Group20Resource = {
         templateId: groupTemplateId,
         parentPath: '/1/2',
         name: '2',
@@ -748,7 +749,7 @@ Before({tags: '@setup_deviceSearchWithAuth_feature'}, async function () {
     };
     await groupsService.bulkCreateGroup({groups:[g1, g1_1, g1_2, g1_1_1, g1_1_2, g1_2_1, g1_2_2]}, undefined, additionalHeaders);
 
-    const device:Device10Resource = {
+    const device:Device20Resource = {
         templateId: deviceTemplateId,
         deviceId: 'TEST-deviceSearchWithAuth-001A',
         attributes: {
@@ -756,7 +757,9 @@ Before({tags: '@setup_deviceSearchWithAuth_feature'}, async function () {
             position: 1
         },
         groups: {
-            'located_at': ['/1/1/1']
+            out: {
+                'located_at': ['/1/1/1']
+            }
         }
     };
     await devicesService.createDevice(device, undefined, additionalHeaders);
@@ -765,7 +768,9 @@ Before({tags: '@setup_deviceSearchWithAuth_feature'}, async function () {
     device.attributes.pair = 'black-white';
     device.attributes.position = 2;
     device.groups= {
-        'located_at': ['/1/1/2']
+        out: {
+            'located_at': ['/1/1/2']
+        }
     };
     await devicesService.createDevice(device, undefined, additionalHeaders);
 
@@ -773,7 +778,9 @@ Before({tags: '@setup_deviceSearchWithAuth_feature'}, async function () {
     device.attributes.pair = 'white-red';
     device.attributes.position = 3;
     device.groups= {
-        'located_at': ['/1/2/1']
+        out: {
+            'located_at': ['/1/2/1']
+        }
     };
     await devicesService.createDevice(device, undefined, additionalHeaders);
 
@@ -781,7 +788,9 @@ Before({tags: '@setup_deviceSearchWithAuth_feature'}, async function () {
     device.attributes.pair = 'red-white';
     device.attributes.position = 4;
     device.groups= {
-        'located_at': ['/1/2/2']
+        out: {
+            'located_at': ['/1/2/2']
+        }
     };
     await devicesService.createDevice(device, undefined, additionalHeaders);
 
@@ -813,13 +822,13 @@ Before({tags: '@setup_deviceSearch_lite_feature'}, async function () {
     };
     await templatesService.createTemplate(deviceType, additionalHeaders);
 
-    const group:Group10Resource = {
+    const group:Group20Resource = {
         name: DEVICESEARCH_LITE_FEATURES_GROUPS_PATHS[0],
         attributes: {}
     };
     await groupsService.createGroup(group, undefined, additionalHeaders);
 
-    const device:Device10Resource = {
+    const device:Device20Resource = {
         templateId: DEVICESEARCH_FEATURES_DEVICE_TEMPLATE_IDS[0],
         deviceId: DEVICESEARCH_FEATURES_DEVICE_ID_1A,
         attributes: {
@@ -827,7 +836,9 @@ Before({tags: '@setup_deviceSearch_lite_feature'}, async function () {
             position: '1'
         },
         groups: {
-            'group': [DEVICESEARCH_LITE_FEATURES_GROUPS_PATHS[0]]
+            out: {
+                'group': [DEVICESEARCH_LITE_FEATURES_GROUPS_PATHS[0]]
+            }
         }
     };
     await devicesService.createDevice(device, undefined, additionalHeaders);
@@ -878,7 +889,7 @@ Before({tags: '@setup_groupSearch_feature'}, async function () {
     await templatesService.createTemplate(groupType, additionalHeaders);
     await templatesService.publishTemplate(CategoryEnum.group, GROUPSEARCH_FEATURES_GROUP_TEMPLATE_IDS[0], additionalHeaders);
 
-    const group:Group10Resource = {
+    const group:Group20Resource = {
         templateId: 'root',
         parentPath: '/',
         name: 'groupSearch_feature',
@@ -886,7 +897,7 @@ Before({tags: '@setup_groupSearch_feature'}, async function () {
     };
     await groupsService.createGroup(group, undefined, additionalHeaders);
 
-    const childGroup:Group10Resource = {
+    const childGroup:Group20Resource = {
         templateId: GROUPSEARCH_FEATURES_GROUP_TEMPLATE_IDS[0],
         parentPath: '/groupSearch_feature',
         name: 'AA',
@@ -928,13 +939,13 @@ Before({tags: '@setup_groupSearch_lite_feature'}, async function () {
     await teardown_groupSearch_lite_feature();
 
     // now go through the setup steps
-    const group:Group10Resource = {
+    const group:Group20Resource = {
         name: GROUPSEARCH_LITE_FEATURES_GROUP_PATH_ROOT,
         attributes: {}
     };
     await groupsService.createGroup(group, undefined, additionalHeaders);
 
-    const childGroup:Group10Resource = {
+    const childGroup:Group20Resource = {
         parentPath: GROUPSEARCH_LITE_FEATURES_GROUP_PATH_ROOT,
         name: GROUPSEARCH_LITE_FEATURES_GROUP_PATH_AA,
         attributes: {

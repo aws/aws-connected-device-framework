@@ -12,7 +12,7 @@
  *********************************************************************************************************************/
 import 'reflect-metadata';
 import { Given, setDefaultTimeout, When, TableDefinition, Then} from 'cucumber';
-import { Device10Resource, DevicesService } from '@cdf/assetlibrary-client';
+import { Device20Resource, DevicesService } from '@cdf/assetlibrary-client';
 import { fail } from 'assert';
 import stringify from 'json-stable-stringify';
 
@@ -37,8 +37,10 @@ const deviceService:DevicesService = container.get(ASSTLIBRARY_CLIENT_TYPES.Devi
 
 function getAdditionalHeaders(world:unknown) : Dictionary {
     const authCode= world[AUTHORIZATION_TOKEN];
-    const headers =  {
-        Authorization: authCode
+    const headers = {
+        Authorization: authCode,
+        Accept: 'application/vnd.aws-cdf-v2.0+json',
+        'Content-Type': 'application/vnd.aws-cdf-v2.0+json',
     };
     return headers;
 }
@@ -61,7 +63,7 @@ async function registerDevice (world:unknown, deviceId:string, data:TableDefinit
 
     const d = data.rowsHash();
 
-    const device: Device10Resource = {
+    const device: Device20Resource = {
         deviceId,
         templateId: undefined,
     };
@@ -113,7 +115,7 @@ When('I create device {string} with invalid attributes', async function (deviceI
 When('I update device {string} with attributes', async function (deviceId:string, data:TableDefinition) {
     const d = data.rowsHash();
 
-    const device: Device10Resource = {
+    const device: Device20Resource = {
         templateId: undefined
     };
 
@@ -138,7 +140,7 @@ When('I update device {string} with attributes', async function (deviceId:string
 });
 
 When('I update device {string} applying profile {string}', async function (deviceId:string, profileId:string) {
-    const device: Device10Resource = {
+    const device: Device20Resource = {
         deviceId,
         templateId: undefined
     };
@@ -200,10 +202,10 @@ Then('device {string} exists with attributes', async function (deviceId:string, 
     });
 });
 
-Then('device {string} is {string} {string}', async function (deviceId, rel, groupPath) {
+Then('device {string} is {string} {string} {string}', async function (deviceId, out, rel, groupPath) {
     try {
         const device = await deviceService.getDeviceByID(deviceId, undefined, undefined, undefined, getAdditionalHeaders(this));
-        expect(device.groups[rel]).include(groupPath);
+        expect(device.groups?.[out]?.[rel]).include(groupPath);
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
         fail(`Expected rel ${rel} of ${groupPath}`);

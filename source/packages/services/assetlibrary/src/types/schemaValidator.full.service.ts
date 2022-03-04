@@ -47,13 +47,13 @@ export class SchemaValidatorService {
         // remove any undefined properties from the input document
         const docAsJson = JSON.parse(JSON.stringify(document));
         Object.keys(docAsJson).forEach(k => {
-            if (docAsJson[k]===undefined) {
+            if (docAsJson[k]===undefined || docAsJson[k]==={}) {
                 delete docAsJson[k];
             }
         });
         document = docAsJson;
 
-        // if its an update, validation may be different there always compile rather than use existing
+        // if its an update, validation may be different therefore always compile rather than reuse existing
         this._validator.removeSchema(schemaId);
         const validate = this._validator.compile(jsonSchema);
 
@@ -146,20 +146,29 @@ export class SchemaValidatorService {
         // on the schema validation (if not provided) as updates occur via a patch
         if (op === Operation.UPDATE) {
             const definedAsCategoryRequired = subTypeSchema.required as string[];
-            if (definedAsCategoryRequired !== undefined) {
+            logger.silly(`schemaValidator.full.service definedAsCategoryRequired:${JSON.stringify(definedAsCategoryRequired)}`);
+            logger.silly(`schemaValidator.full.service instance:${JSON.stringify(instance)}`);
+            if ((definedAsCategoryRequired?.length??0)>0) {
                 const categoryRequired: string[] = [];
                 definedAsCategoryRequired.forEach(r => {
-                    if (Object.prototype.hasOwnProperty.call(instance, r)) {
+                    logger.silly(`schemaValidator.full.service checking:${JSON.stringify(r)}`);
+                    if (instance.hasOwnProperty.call(r)) {
+                        logger.silly(`schemaValidator.full.service has!`);
                         categoryRequired.push(r);
                     }
                 });
                 subTypeSchema.required = categoryRequired;
             }
+
             const definedAsSubTypeRequired = subTypeSchema.definitions.subType.required as string[];
-            if (definedAsSubTypeRequired !== undefined) {
+            logger.silly(`schemaValidator.full.service definedAsSubTypeRequired:${JSON.stringify(definedAsSubTypeRequired)}`);
+            logger.silly(`schemaValidator.full.service instance:${JSON.stringify(instance)}`);
+            if ((definedAsSubTypeRequired?.length??0)>0) {
                 const subTypeRequired: string[] = [];
                 definedAsSubTypeRequired.forEach(r => {
-                    if (Object.prototype.hasOwnProperty.call(instance, r)) {
+                    logger.silly(`schemaValidator.full.service checking:${JSON.stringify(r)}`);
+                    if (instance.hasOwnProperty.call(r)) {
+                        logger.silly(`schemaValidator.full.service has!`);
                         subTypeRequired.push(r);
                     }
                 });

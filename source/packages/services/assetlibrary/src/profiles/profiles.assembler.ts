@@ -54,7 +54,7 @@ export class ProfilesAssembler {
             node.groups.in = Object.fromEntries( Object.entries(model.groups.in).map(([relation, entities]) => [relation, entities.map(e=>e.id)]));
         }
         if (model.groups?.out) {
-            node.groups.in = Object.fromEntries( Object.entries(model.groups.out).map(([relation, entities]) => [relation, entities.map(e=>e.id)]));
+            node.groups.out = Object.fromEntries( Object.entries(model.groups.out).map(([relation, entities]) => [relation, entities.map(e=>e.id)]));
         }
 
         logger.debug(`profiles.assembler toNode: exit: node: ${JSON.stringify(node)}`);

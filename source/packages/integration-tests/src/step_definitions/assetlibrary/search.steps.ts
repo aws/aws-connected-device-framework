@@ -16,19 +16,19 @@ import {
     SearchService,
     SearchRequestModel,
     SearchResultsModel,
-    Device10Resource,
-    Group10Resource,
+    Device20Resource,
+    Group20Resource,
     SearchRequestFilter,
     ASSTLIBRARY_CLIENT_TYPES,
     SearchRequestFilterTraversal,
     SearchRequestFilterDirection,
-} from '@cdf/assetlibrary-client/dist';
+} from '@cdf/assetlibrary-client';
 
 import chai_string = require('chai-string');
 import { expect, use} from 'chai';
 import { RESPONSE_STATUS, AUTHORIZATION_TOKEN } from '../common/common.steps';
 import {container} from '../../di/inversify.config';
-import {Dictionary} from '../../../../libraries/core/lambda-invoke/src';
+import {Dictionary} from '@cdf/lambda-invoke';
 
 use(chai_string);
 /*
@@ -46,7 +46,9 @@ export const SEARCH_RESULTS = 'searchResults';
 const searchService:SearchService = container.get(ASSTLIBRARY_CLIENT_TYPES.SearchService);
 function getAdditionalHeaders(world:unknown) : Dictionary {
     return  {
-        Authorization: world[AUTHORIZATION_TOKEN]
+        Authorization: world[AUTHORIZATION_TOKEN],
+        Accept: 'application/vnd.aws-cdf-v2.0+json',
+        'Content-Type': 'application/vnd.aws-cdf-v2.0+json',
     };
 }
 
@@ -132,7 +134,7 @@ Then('search result contains {int} results', function (total:number) {
 Then('search result contains device {string}', function (deviceId:string) {
     let found=false;
     (<SearchResultsModel>this[SEARCH_RESULTS]).results.forEach(item=> {
-        if ( (<Device10Resource>item).deviceId===deviceId) {
+        if ( (<Device20Resource>item).deviceId===deviceId) {
             found=true;
         }
     });
@@ -143,7 +145,7 @@ Then('search result contains device {string}', function (deviceId:string) {
 Then('search result contains group {string}', function (groupPath:string) {
     let found=false;
     (<SearchResultsModel>this[SEARCH_RESULTS]).results.forEach(item=> {
-        if ( (<Group10Resource>item).groupPath===groupPath) {
+        if ( (<Group20Resource>item).groupPath===groupPath) {
             found=true;
         }
     });

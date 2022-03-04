@@ -40,7 +40,7 @@ export class DevicesAssembler {
         node.version = model.version;
 
         for(const p in model.attributes) {
-            if (Object.prototype.hasOwnProperty.call(model.attributes, p)) {
+            if (model.attributes.hasOwnProperty(p)) {
                 node.attributes[p] = model.attributes[p];
             }
         }
@@ -255,19 +255,19 @@ export class DevicesAssembler {
 
             // populate version specific device info)
             typedResource.groups = {};
-            if (item.groups.in) {
+            if (item.groups?.in) {
                 typedResource.groups.in = {}
             }
             assembleRelated(item.groups?.in, typedResource.groups.in);
-            if (item.groups.out) {
+            if (item.groups?.out) {
                 typedResource.groups.out = {}
             }
             assembleRelated(item.groups?.out, typedResource.groups.out);
-            if (item.devices.in) {
+            if (item.devices?.in) {
                 typedResource.devices.in = {}
             }
             assembleRelated(item.devices?.in, typedResource.devices.in);
-            if (item.devices.out) {
+            if (item.devices?.out) {
                 typedResource.devices.out = {}
             }
             assembleRelated(item.devices?.out, typedResource.devices.out);

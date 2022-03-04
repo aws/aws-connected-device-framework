@@ -39,7 +39,7 @@ export class DevicesAssembler {
         node.version = model.version;
 
         for(const p in model.attributes) {
-            if (Object.prototype.hasOwnProperty.call(model.attributes, p)) {
+            if (model.attributes.hasOwnProperty(p)) {
                 node.attributes[p] = model.attributes[p];
             }
         }

@@ -41,7 +41,7 @@ export class EventsLambdaService extends EventsServiceBase implements EventsServ
         // lambda querystring needs everything as strings...
         const qs:Dictionary = {};
         for(const property in req) {
-            if (Object.prototype.hasOwnProperty.call(req,property)) {
+            if (req.hasOwnProperty(property)) {
                 qs[property] = `${req[property]}`;
             }
         }
@@ -83,7 +83,7 @@ export class EventsLambdaService extends EventsServiceBase implements EventsServ
         // lambda querystring needs everything as strings...
         const qs:Dictionary = {};
         for(const property in req) {
-            if (Object.prototype.hasOwnProperty.call(req,property)) {
+            if (req.hasOwnProperty(property)) {
                 qs[property] = `${req[property]}`;
             }
         }

@@ -13,7 +13,7 @@
 import { Given, setDefaultTimeout, When, TableDefinition, Then} from 'cucumber';
 import {
     GroupsService,
-    Group10Resource,
+    Group20Resource,
     GroupResourceList,
     DeviceResourceList,
     ASSTLIBRARY_CLIENT_TYPES,
@@ -41,7 +41,9 @@ setDefaultTimeout(10 * 1000);
 const groupService:GroupsService = container.get(ASSTLIBRARY_CLIENT_TYPES.GroupsService);
 function getAdditionalHeaders(world:unknown) : Dictionary {
     return  {
-        Authorization: world[AUTHORIZATION_TOKEN]
+        Authorization: world[AUTHORIZATION_TOKEN],
+        Accept: 'application/vnd.aws-cdf-v2.0+json',
+        'Content-Type': 'application/vnd.aws-cdf-v2.0+json',
     };
 }
 
@@ -66,7 +68,7 @@ async function createGroup (world:unknown, name:string, parentPath:string, data:
         parentPath=undefined;
     }
 
-    const group: Group10Resource = {
+    const group: Group20Resource = {
         parentPath,
         name,
         templateId: undefined
@@ -118,7 +120,7 @@ When('I update group {string} with attributes', async function (groupPath:string
 
     const d = data.rowsHash();
 
-    const group: Group10Resource = {
+    const group: Group20Resource = {
         templateId: undefined
     };
 
@@ -143,7 +145,7 @@ When('I update group {string} with attributes', async function (groupPath:string
 });
 
 When('I update group {string} applying profile {string}', async function (groupPath:string, profileId:string) {
-    const group: Group10Resource = {
+    const group: Group20Resource = {
         groupPath,
         templateId: undefined
     };

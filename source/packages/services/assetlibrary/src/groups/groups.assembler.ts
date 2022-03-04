@@ -40,7 +40,7 @@ export class GroupsAssembler {
         node.version = model.version;
 
         for(const p in model.attributes) {
-            if (Object.prototype.hasOwnProperty.call(model.attributes, p)) {
+            if (model.attributes.hasOwnProperty(p)) {
                 node.attributes[p] = model.attributes[p];
             }
         }
@@ -50,7 +50,7 @@ export class GroupsAssembler {
     }
 
     public toGroupItems(nodes:Node[]): GroupItem[] {
-        logger.debug(`groups.assmebler toGroupItems: in: nodes: ${JSON.stringify(nodes)}`);
+        logger.debug(`groups.assembler toGroupItems: in: nodes: ${JSON.stringify(nodes)}`);
 
         const groups: GroupItem[]=[];
         for(const node of nodes) {
@@ -231,7 +231,6 @@ export class GroupsAssembler {
 
         const assembleRelated = (from:RelatedEntityArrayMap, to:StringArrayMap)=> {
             if (from) {
-                if (to===undefined) to = {};
                 for(const [relation,entities] of Object.entries(from)) {
                     if (to[relation]===undefined) {
                         to[relation]= [];
@@ -260,7 +259,14 @@ export class GroupsAssembler {
             const typedResource:Group20Resource = resource;
 
             // populate version specific device info
+            typedResource.groups = {};
+            if (item.groups?.in) {
+                typedResource.groups.in = {}
+            }
             assembleRelated(item.groups?.in, typedResource.groups.in);
+            if (item.groups?.out) {
+                typedResource.groups.out = {}
+            }
             assembleRelated(item.groups?.out, typedResource.groups.out);
         }
 
