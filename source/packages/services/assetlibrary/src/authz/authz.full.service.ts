@@ -56,7 +56,7 @@ export class AuthzServiceFull {
         const authorizations = await this.dao.listAuthorizedHierarchies(deviceIds, groupPaths, claims.listPaths());
 
         // if one of the requested items is missing, we refuse the whole request
-        if (authorizations.exists.length!==deviceIds.length+groupPaths.length) {
+        if ((authorizations?.exists?.length??0) !== (deviceIds?.length??0) + (groupPaths?.length??0) ) {
             const notFound = combinedIds.filter(id=> !authorizations.exists.includes(id));
             throw new NotFoundError(`Device/groups ${notFound.toString()} not found.`);
         }
@@ -84,9 +84,12 @@ export class AuthzServiceFull {
             throw new NotAuthorizedError(`Insufficient access to ${JSON.stringify(entitiesWithSufficientAccess)}.`);
         }
 
+        logger.debug(`authz.full.service authorizationCheck: exit`);
+
     }
 
     public updateRelsIdentifyingAuth(rels:RelatedEntityArrayMap, authRels:StringArrayMap) : void {
+        logger.silly(`authz.full.service updateRelsIdentifyingAuth: in: rels: ${JSON.stringify(rels)}, authRels: ${JSON.stringify(authRels)}`);
         if (rels) {                                                                
             for (const [relation,entities] of Object.entries(rels)) {
                 if (authRels[relation]) {

@@ -673,7 +673,7 @@ async function teardown_deviceSearchWithAuth_feature() {
     await deleteAssetLibraryTemplates(CategoryEnum.group, ['TEST-deviceSearchWithAuthGroup']);
 }
 
-Before({tags: '@setup_deviceSearchWithAuth_feature'}, async function () {
+Before({tags: '@setup_deviceSearchWithAuth_feature', timeout: 60000}, async function () {
 
     // teardown first just in case
     await teardown_deviceSearchWithAuth_feature();

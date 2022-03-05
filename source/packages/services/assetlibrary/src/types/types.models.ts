@@ -12,6 +12,7 @@
  *********************************************************************************************************************/
 
 import { StringArrayMap } from '../data/model';
+import { logger } from '../utils/logger';
 import { TypeCategory } from './constants';
 
 export interface TypeModel {
@@ -111,7 +112,12 @@ export class TypeRelationsModel {
     }
 
     public outgoingAuthRelations() :StringArrayMap {
+        logger.silly(`types.models outgoingAuthRelations: in:`);
         const result:StringArrayMap  = {};
+        logger.silly(`types.models outgoingAuthRelations: this.in: ${JSON.stringify(this.out)}`);
+        if (this.out===undefined) {
+            return result;
+        }
         for(const [relation,targets] of Object.entries(this.out)) {
             for (const target of targets) {
                 if (isRelationTargetExpanded(target)) {
@@ -124,11 +130,17 @@ export class TypeRelationsModel {
                 }
             }
         }
+        logger.silly(`types.models outgoingAuthRelations: result: ${JSON.stringify(result)}`);
         return result;
     }
 
     public incomingAuthRelations() : StringArrayMap {
+        logger.silly(`types.models incomingAuthRelations: in:`);
         const result:StringArrayMap  = {};
+        logger.silly(`types.models incomingAuthRelations: this.in: ${JSON.stringify(this.in)}`);
+        if (this.in===undefined) {
+            return result;
+        }
         for(const [relation,targets] of Object.entries(this.in)) {
             for (const target of targets) {
                 if (isRelationTargetExpanded(target)) {
@@ -141,6 +153,7 @@ export class TypeRelationsModel {
                 }
             }
         }
+        logger.silly(`types.models incomingAuthRelations: result: ${JSON.stringify(result)}`);
         return result;
     }
 }

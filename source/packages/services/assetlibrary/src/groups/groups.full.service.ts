@@ -116,7 +116,7 @@ export class GroupsServiceFull implements GroupsService {
             errors
         };
 
-        logger.debug(`groups.full.service createBulk: exit: response: ${response}`);
+        logger.debug(`groups.full.service createBulk: exit: response: ${JSON.stringify(response)}`);
         return response;
     }
 
