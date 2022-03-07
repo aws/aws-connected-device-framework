@@ -271,19 +271,35 @@ async function teardown_devicesWithAuth_feature() {
     await deleteAssetLibraryTemplates(CategoryEnum.group, ['TEST-devicesWithAuthGroup']);
 }
 
-Before({tags: '@setup_devicesWithAuth_feature'}, async function () {
+Before({tags: '@setup_devicesWithAuth_feature', timeout:60000}, async function () {
     await teardown_devicesWithAuth_feature();
 
     // create linkable group template
     const groupTemplateId = 'TEST-devicesWithAuthGroup';
     const groupType:TypeResource = {
         templateId: groupTemplateId,
-        category: 'group'
+        category: 'group',
+        relations: {
+            out: {
+                parent: [{
+                    name: 'root',
+                    includeInAuth: true
+                }]
+            }
+        }
     };
     await templatesService.createTemplate(groupType, additionalHeaders);
+
+    // as this is a self reference, the relation needs to be added post creation
+    groupType.relations.out.parent.push({
+        name: groupTemplateId,
+        includeInAuth: true
+    });
+    await templatesService.updateTemplate(groupType, additionalHeaders);
+
     await templatesService.publishTemplate(CategoryEnum.group, groupTemplateId, additionalHeaders);
 
-    // create group hierrarchy
+    // create group hierarchy
     const g1:Group20Resource = {
         templateId: groupTemplateId,
         parentPath: '/',

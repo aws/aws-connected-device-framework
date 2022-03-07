@@ -271,12 +271,12 @@ export class GroupsDaoFull extends BaseDaoFull {
         try {
             const traverser = conn.traversal.V(targetId).as('target').
                 V(sourceId).as('source').addE(relationship).to('target');
+            
+            if (isAuthCheck) {
+                traverser.property(process.cardinality.single, 'isAuthCheck', true);
+            }
 
-                if (isAuthCheck) {
-                    traverser.property(process.cardinality.single, 'isAuthCheck', true);
-                }
-
-                const result = await traverser.iterate();
+            const result = await traverser.iterate();
 
             logger.verbose(`groups.full.dao attachToGroup: result:${JSON.stringify(result)}`);
         } finally {

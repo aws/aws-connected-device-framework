@@ -42,11 +42,10 @@ export class AuthzServiceFull {
         const combinedIds:string[]= [];
         combinedIds.push(...deviceIds, ...groupPaths);
 
-        if (combinedIds.length===0) {
+        logger.debug(`authz.full.service authorizationCheck: combinedIds:${JSON.stringify(combinedIds)}`);
+        if (combinedIds.length===0) {            
             return;
         }
-
-        logger.debug(`authz.full.service authorizationCheck: combinedIds:${JSON.stringify(combinedIds)}`);
 
         // retrieve the claims from the thread local
         const claims = Claims.getInstance();
@@ -56,9 +55,9 @@ export class AuthzServiceFull {
         const authorizations = await this.dao.listAuthorizedHierarchies(deviceIds, groupPaths, claims.listPaths());
 
         // if one of the requested items is missing, we refuse the whole request
-        if ((authorizations?.exists?.length??0) !== (deviceIds?.length??0) + (groupPaths?.length??0) ) {
+        if ((authorizations?.exists?.length??0) !== (combinedIds.length) ) {
             const notFound = combinedIds.filter(id=> !authorizations.exists.includes(id));
-            throw new NotFoundError(`Device/groups ${notFound.toString()} not found.`);
+            throw new NotFoundError(`Device(s)/group(s) ${JSON.stringify(notFound)} not found.`);
         }
 
         // if the user does not have access to all, then not authorized to any

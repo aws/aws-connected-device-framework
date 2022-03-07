@@ -14,12 +14,18 @@ export class TypeDefinitionModel {
 	properties?: { [key: string]: {type: string|string[]; format?: string; enum?: string[] }};
     required?: string[];
     relations?: {
-        out?: { [key: string]: string[] },
-        in?: { [key: string]: string[] }
+        out?: { [key: string]: RelationTarget[] };
+        in?: { [key: string]: RelationTarget[] };
     };
     components?: string[];
 }
 
+export type RelationTarget = RelationTargetSimple | RelationTargetExpanded;
+export type RelationTargetSimple = string;
+export type RelationTargetExpanded = {
+    name: string,
+    includeInAuth?:boolean,
+};
 export class TypeResource extends TypeDefinitionModel {
     templateId: string;
     category: CategoryEnum;

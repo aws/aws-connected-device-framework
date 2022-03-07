@@ -14,7 +14,7 @@ import { process, structure } from 'gremlin';
 import { injectable, inject } from 'inversify';
 import {logger} from '../utils/logger';
 import { TYPES } from '../di/types';
-import { TypeModel, TypeVersionModel, TypeRelationsModel, TypeDefinitionStatus, isRelationTargetExpanded } from './types.models';
+import { TypeModel, TypeVersionModel, TypeRelationsModel, TypeDefinitionStatus, isRelationTargetExpanded, RelationTarget } from './types.models';
 import * as jsonpatch from 'fast-json-patch';
 import { TypeCategory } from './constants';
 import { DirectionToStringArrayMap, SortKeys } from '../data/model';
@@ -184,13 +184,13 @@ export class TypesDaoFull extends BaseDaoFull {
 
             this.addCreateRelationStepsToTraversal(model.schema.relations, model.templateId, traverser);
 
-            // logger.debug(`types.full.dao create: traverser: ${JSON.stringify(traverser.toString())}`);
+            logger.silly(`types.full.dao create: traverser: ${JSON.stringify(traverser.toString())}`);
             result = await traverser.next();
+            logger.silly(`types.full.dao create: result: ${JSON.stringify(result)}`);
         } finally {
             await conn.close();
         }
 
-        logger.debug(`types.full.dao create: query: ${JSON.stringify(result)}`);
 
         if (result===undefined) {
             logger.debug(`types.full.dao create: exit: query: undefined`);
@@ -205,7 +205,8 @@ export class TypesDaoFull extends BaseDaoFull {
                 rels.out[relation].sort();
                 for (const t of rels.out[relation]) {
                     const templateName = (isRelationTargetExpanded(t)) ? t.name : t;
-                    this.addCreateOutboundRelationStepToTraversal(templateId, templateName, relation, traverser);
+                    const includeInAuth = (isRelationTargetExpanded(t)) ? t.includeInAuth : undefined;
+                    this.addCreateOutboundRelationStepToTraversal(templateId, templateName, relation, includeInAuth, traverser);
                 }
             }
         }
@@ -215,14 +216,15 @@ export class TypesDaoFull extends BaseDaoFull {
                 rels.in[relation].sort();
                 for (const t of rels.in[relation]) {
                     const templateName = (isRelationTargetExpanded(t)) ? t.name : t;
-                    this.addCreateInboundRelationStepToTraversal(templateId, templateName, relation, traverser);
+                    const includeInAuth = (isRelationTargetExpanded(t)) ? t.includeInAuth : undefined;
+                    this.addCreateInboundRelationStepToTraversal(templateId, templateName, relation, includeInAuth, traverser);
                 }
             }
         }
     }
 
-    private addCreateOutboundRelationStepToTraversal(templateId:string, outTemplate:string, relation:string, traverser:process.GraphTraversal) {
-        logger.debug(`types.full.dao addCreateOutboundRelationStepToTraversal: in: templateId:${templateId}, outTemplate:${outTemplate}, relation:${relation}`);
+    private addCreateOutboundRelationStepToTraversal(templateId:string, outTemplate:string, relation:string, includeInAuth:boolean, traverser:process.GraphTraversal) {
+        logger.debug(`types.full.dao addCreateOutboundRelationStepToTraversal: in: templateId:${templateId}, outTemplate:${outTemplate}, relation:${relation}, includeInAuth:${includeInAuth}`);
 
         templateId = templateId.toLowerCase();
         outTemplate = outTemplate.toLowerCase();
@@ -234,11 +236,16 @@ export class TypesDaoFull extends BaseDaoFull {
             addE('relationship').
                 property('name', relation).
                 property('fromTemplate', templateId).
-                property('toTemplate', outTemplate).
-                from_('definition').to(`rel_out_${outTemplate}`);
+                property('toTemplate', outTemplate);
+
+        if (includeInAuth) {
+            traverser.property('includeInAuth', true);
+        }
+
+        traverser.from_('definition').to(`rel_out_${outTemplate}`);
     }
 
-    private addCreateInboundRelationStepToTraversal(templateId:string, inTemplate:string, relation:string, traverser:process.GraphTraversal) {
+    private addCreateInboundRelationStepToTraversal(templateId:string, inTemplate:string, relation:string, includeInAuth:boolean, traverser:process.GraphTraversal) {
         logger.debug(`types.full.dao addCreateInboundRelationStepToTraversal: in: templateId:${templateId}, inTemplate:${inTemplate}, relation:${relation}`);
 
         templateId = templateId.toLowerCase();
@@ -251,8 +258,13 @@ export class TypesDaoFull extends BaseDaoFull {
             addE('relationship').
                 property('name', relation).
                 property('fromTemplate', inTemplate).
-                property('toTemplate', templateId).
-                from_(`rel_in_${inTemplate}`).to('definition');
+                property('toTemplate', templateId);
+
+        if (includeInAuth) {
+            traverser.property('includeInAuth', true);
+        }
+
+        traverser. from_(`rel_in_${inTemplate}`).to('definition');
     }
 
     private typeDefinitionStatusToLink(fromTemplateId:string, toTemplateId:string): string {
@@ -278,20 +290,6 @@ export class TypesDaoFull extends BaseDaoFull {
                 const changedRelations = this.identifyChangedRelations(existing.schema.relations, updated.schema.relations);
                 logger.debug(`types.full.dao updateDraft: changedRelations: ${JSON.stringify(changedRelations)}`);
 
-                Object.keys(changedRelations.add.in).forEach(relation=> {
-                    changedRelations.add.in[relation].forEach(t=> {
-                        const templateName = (isRelationTargetExpanded(t)) ? t.name : t;
-                        this.addCreateInboundRelationStepToTraversal(existing.templateId, templateName, relation, traverser);
-                    });
-                });
-
-                Object.keys(changedRelations.add.out).forEach(relation=> {
-                    changedRelations.add.out[relation].forEach(t=> {
-                        const templateName = (isRelationTargetExpanded(t)) ? t.name : t;
-                        this.addCreateOutboundRelationStepToTraversal(existing.templateId, templateName, relation, traverser);
-                    });
-                });
-
                 const removedRelations: process.GraphTraversal[]= [];
 
                 Object.keys(changedRelations.remove.in).forEach(key=> {
@@ -312,14 +310,30 @@ export class TypesDaoFull extends BaseDaoFull {
                             __.union(...removedRelations)
                         ).drop();
                 }
+
+                Object.keys(changedRelations.add.in).forEach(relation=> {
+                    changedRelations.add.in[relation].forEach(t=> {
+                        const templateName = (isRelationTargetExpanded(t)) ? t.name : t;
+                        const includeInAuth = (isRelationTargetExpanded(t)) ? t.includeInAuth : undefined;
+                        this.addCreateInboundRelationStepToTraversal(existing.templateId, templateName, relation, includeInAuth, traverser);
+                    });
+                });
+
+                Object.keys(changedRelations.add.out).forEach(relation=> {
+                    changedRelations.add.out[relation].forEach(t=> {
+                        const templateName = (isRelationTargetExpanded(t)) ? t.name : t;
+                        const includeInAuth = (isRelationTargetExpanded(t)) ? t.includeInAuth : undefined;
+                        this.addCreateOutboundRelationStepToTraversal(existing.templateId, templateName, relation, includeInAuth, traverser);
+                    });
+                });
             }
 
+            logger.silly(`types.full.dao updateDraft: traverser: ${JSON.stringify(traverser)}`);
             result = await traverser.next();
+            logger.silly(`types.full.dao updateDraft: result: ${JSON.stringify(result)}`);
         } finally {
             await conn.close();
         }
-
-        logger.debug(`types.full.dao updateDraft: result: ${JSON.stringify(result)}`);
 
         if (result===undefined || result.value===null) {
             logger.debug(`types.full.dao updateDraft: exit: result: undefined`);
@@ -338,7 +352,7 @@ export class TypesDaoFull extends BaseDaoFull {
     }
 
     private identifyChangedRelations(existing:TypeRelationsModel, updated:TypeRelationsModel): ChangedRelations  {
-        // before we diff, sort the relations.  this avoids reporting any unneccessary modifications where just the ordering may have changed
+        // before we diff, sort the relations.  this avoids reporting any unnecessary modifications where just the ordering may have changed
         if (existing?.in) {
             for (const key of Object.keys(existing.in)) {
                 existing.in[key]=existing.in[key].sort();
@@ -362,6 +376,7 @@ export class TypesDaoFull extends BaseDaoFull {
 
         // perform a diff of the relations so we can determine what specifically to add and remove
         const diff = jsonpatch.compare(existing, updated);
+        logger.silly(`types.full.dao identifyChangedRelations: diff: ${JSON.stringify(diff)}`);
 
         // based on the changes, build up the relation changes query
         const toRemove = new TypeRelationsModel();
@@ -418,7 +433,7 @@ export class TypesDaoFull extends BaseDaoFull {
 
             } else if (p.length===4) {     //////////////////// a target type of a relation has changed
 
-                // the diff output isnt great to work with for array diffs, therefore calculate the diff ourselves
+                // the diff output isn't great to work with for array diffs, therefore calculate the diff ourselves
                 if (processed4Levels.indexOf(`${p[1]}/${p[2]}`)<0) {
 
                     processed4Levels.push(`${p[1]}/${p[2]}`);
@@ -691,6 +706,17 @@ export class TypesDaoFull extends BaseDaoFull {
 
         const json = JSON.parse( JSON.stringify(result));
 
+        const buildTarget = (template:string, includeInAuth:boolean) : RelationTarget => {
+            if (includeInAuth===undefined) {
+                return template;
+            } else {
+                return {
+                    name: template,
+                    includeInAuth: includeInAuth
+                }
+            }
+        };
+
         const definitionJson = json['definition'];
         if (definitionJson!==undefined && (<unknown[]>definitionJson).length>0) {
 
@@ -709,22 +735,23 @@ export class TypesDaoFull extends BaseDaoFull {
                     const outTemplate = entry['fromTemplate'];
                     const inTemplate = entry['toTemplate'];
                     const relationship = entry['name'];
+                    const includeInAuth = entry['includeInAuth'];
 
                     const direction = (templateId===outTemplate) ? 'out' : 'in';
 
                     if (outTemplate===inTemplate) {
                         // self link
                         if ( relations.outgoingIncludes(relationship,inTemplate)) {
-                            relations.addIncoming(relationship, outTemplate);
+                            relations.addIncoming(relationship,  buildTarget(outTemplate, includeInAuth));
                         } else {
-                            relations.addOutgoing(relationship, inTemplate);
+                            relations.addOutgoing(relationship, buildTarget(inTemplate, includeInAuth));
                         }
                     } else if (direction==='out') {
                         // outgoing link
-                        relations.addOutgoing(relationship, inTemplate);
+                        relations.addOutgoing(relationship,  buildTarget(inTemplate, includeInAuth));
                     } else {
                         // incoming link
-                        relations.addIncoming(relationship, outTemplate);
+                        relations.addIncoming(relationship, buildTarget(outTemplate, includeInAuth));
                     }
                 }
                 definition.relations=relations;

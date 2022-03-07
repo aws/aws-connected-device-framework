@@ -103,14 +103,14 @@ export class DevicesDaoFull extends BaseDaoFull {
         }
         logger.debug(`device.full.dao get: results: ${JSON.stringify(results)}`);
 
-        // the result should contain verticesx representing the entities requested as individual rows, then all requested relations as other rows
+        // the result should contain vertices representing the entities requested as individual rows, then all requested relations as other rows
         // find the main entities first
         const nodes: Node[] = [];
         const devices = results.filter(r=> isVertexDto(r)) as VertexDto[];
         devices.forEach(d=> {
             // construct the node
             const node = this.fullAssembler.assembleNode(d);
-            // find any reltions for the device
+            // find any relations for the device
             const relatedEntities = results.filter(r=> isRelatedEntityDto(r) && r.entityId===d['deviceId'][0])
                 .map(r=> r as unknown as RelatedEntityDto);
 
@@ -236,6 +236,9 @@ export class DevicesDaoFull extends BaseDaoFull {
             traversal.V(id).as('device').
                 addE('component_of').from_('component').to('device');
 
+            /* for simplification, always add isAuthCheck from the component to the device, regardless fo whether used or not */
+            traversal.property(process.cardinality.single, 'isAuthCheck', true);
+            
             logger.debug(`devices.full.dao createComponent: traversal:${traversal}`);
             await traversal.iterate();
         } finally {
@@ -304,6 +307,8 @@ export class DevicesDaoFull extends BaseDaoFull {
             sourceId = `group___${groupPath}`;
             targetId = `device___${deviceId}`;
         }
+
+        // const edgeLabels = (isAuthCheck) ? `___auth::${relationship}` : relationship;
 
         const conn = super.getConnection();
         try {
