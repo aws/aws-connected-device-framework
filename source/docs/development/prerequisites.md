@@ -14,3 +14,4 @@ Tool / Technology | Reason
 ---|---
 [aws cli (v2)](http://docs.aws.amazon.com/cli/latest/userguide/installing.html) | Used as part of some deployment scripts
 [jq](https://stedolan.github.io/jq/download/) | Used as part of some deployment scripts
+[docker](https://docs.docker.com/get-docker/) | Used for building the OpenSSL Lambda layer
