@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/certificate-vendor",
+      "comment": "correct typo in assetlibrary client import",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/certificate-vendor",
+  "email": "tony.sherman@bissell.com"
+}
