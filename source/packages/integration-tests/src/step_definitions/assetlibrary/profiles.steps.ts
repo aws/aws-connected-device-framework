@@ -16,7 +16,7 @@ import {
     ProfilesService,
     DeviceProfile10Resource,
     GroupProfile10Resource,
-    ASSTLIBRARY_CLIENT_TYPES,
+    ASSETLIBRARY_CLIENT_TYPES,
 } from '@cdf/assetlibrary-client/dist';
 import stringify from 'json-stable-stringify';
 import { fail } from 'assert';
@@ -37,7 +37,7 @@ import {Dictionary} from '../../../../libraries/core/lambda-invoke/src';
 
 setDefaultTimeout(10 * 1000);
 
-const profileService:ProfilesService = container.get(ASSTLIBRARY_CLIENT_TYPES.ProfilesService);
+const profileService:ProfilesService = container.get(ASSETLIBRARY_CLIENT_TYPES.ProfilesService);
 function getAdditionalHeaders(world:unknown) : Dictionary {
     return  {
         Authorization: world[AUTHORIZATION_TOKEN]

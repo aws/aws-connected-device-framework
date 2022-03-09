@@ -10,7 +10,7 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-export const ASSTLIBRARY_CLIENT_TYPES = {
+export const ASSETLIBRARY_CLIENT_TYPES = {
 
     DevicesService: Symbol.for('AssetLibraryClient_DevicesService'),
     GroupsService: Symbol.for('AssetLibraryClient_GroupsService'),
@@ -23,3 +23,6 @@ export const ASSTLIBRARY_CLIENT_TYPES = {
     RestClientFactory: Symbol.for('Factory<AssetLibraryClient_RestClient>')
 
 };
+
+// This type will be deprecated. Left here to avoid breaking change for legacy users.
+export const ASSTLIBRARY_CLIENT_TYPES = ASSETLIBRARY_CLIENT_TYPES;

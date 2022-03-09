@@ -12,14 +12,14 @@
  *********************************************************************************************************************/
 import 'reflect-metadata';
 import { inject, injectable } from 'inversify';
-import { DevicesService, Device10Resource, ASSTLIBRARY_CLIENT_TYPES } from '@cdf/assetlibrary-client';
+import { DevicesService, Device10Resource, ASSETLIBRARY_CLIENT_TYPES } from '@cdf/assetlibrary-client';
 import { logger } from './utils/logger';
 
 @injectable()
 export class AssetLibUpdate {
 
     constructor(
-        @inject(ASSTLIBRARY_CLIENT_TYPES.DevicesService) private readonly devices:DevicesService
+        @inject(ASSETLIBRARY_CLIENT_TYPES.DevicesService) private readonly devices:DevicesService
     ) {}
 
     public async updateDeviceConnected(deviceId: string, connected:boolean) : Promise<void> {
