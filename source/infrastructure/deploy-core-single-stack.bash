@@ -65,18 +65,23 @@ OPTIONAL ARGUMENTS
     -m (string)   Asset Library mode ('full' or 'lite').  Defaults to full if not provided.
     -p (string)   The name of the key pair to use to deploy the Bastion EC2 host (required for Asset Library (full) mode or Private auth mode).
     -i (string)   The remote access CIDR to configure Bastion SSH access (e.g. 1.2.3.4/32) (required for Asset Library (full) mode).
-    -u (string)   The Neptune DB Instance type. Must be from the following list (default is db.r4.xlarge):
-                  - db.t3.medium
-                  - db.r4.large
-                  - db.r4.xlarge
-                  - db.r4.2xlarge
-                  - db.r4.4xlarge
-                  - db.r4.8xlarge
-                  - db.r5.large
-                  - db.r5.xlarge
-                  - db.r5.2xlarge
-                  - db.r5.4xlarge
-                  - db.r5.8xlarge
+    -u (string)   The Neptune DB Instance type. Must be from the following list (default is db.r5.xlarge):
+                    - db.r5.large
+                    - db.r5.xlarge
+                    - db.r5.2xlarge
+                    - db.r5.4xlarge
+                    - db.r5.8xlarge
+                    - db.r5.12xlarge
+                    - db.r5.16xlarge
+                    - db.r5.24xlarge
+                    - db.r5d.large
+                    - db.r5d.xlarge 
+                    - db.r5d.2xlarge
+                    - db.r5d.4xlarge
+                    - db.r5d.8xlarge
+                    - db.r5d.12xlarge
+                    - db.r5d.16xlarge
+                    - db.r5d.24xlarge 
 
     COMPILING OPTIONS:
     ------------------

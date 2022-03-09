@@ -61,7 +61,7 @@ export class AssetLibraryInstaller implements RestModule {
         message: `Select the Neptune database instance type:`,
         type: 'input',
         name: 'assetLibrary.neptuneDbInstanceType',
-        default: answers.assetLibrary?.neptuneDbInstanceType ?? 'db.r4.xlarge',
+        default: answers.assetLibrary?.neptuneDbInstanceType ?? 'db.r5.xlarge',
         askAnswered: true,
         when(answers: Answers) {
           return answers.assetLibrary?.mode === 'full';
