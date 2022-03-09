@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
  import '../config/env';
-import { ASSTLIBRARY_CLIENT_TYPES } from './types';
+import { ASSETLIBRARY_CLIENT_TYPES } from './types';
 import { DevicesService } from '../client/devices.service';
 import { GroupsService } from '../client/groups.service';
 import { PoliciesService } from '../client/policies.service';
@@ -45,12 +45,12 @@ export const assetLibraryContainerModule = new ContainerModule(
         const assetlibraryMode = process.env.ASSETLIBRARY_MODE
 
         if (assetlibraryMode === 'lambda') {
-            bind<DevicesService>(ASSTLIBRARY_CLIENT_TYPES.DevicesService).to(DevicesLambdaService);
-            bind<GroupsService>(ASSTLIBRARY_CLIENT_TYPES.GroupsService).to(GroupsLambdaService);
-            bind<PoliciesService>(ASSTLIBRARY_CLIENT_TYPES.PoliciesService).to(PoliciesLambdaService);
-            bind<SearchService>(ASSTLIBRARY_CLIENT_TYPES.SearchService).to(SearchLambdaService);
-            bind<TemplatesService>(ASSTLIBRARY_CLIENT_TYPES.TemplatesService).to(TemplatesLambdaService);
-            bind<ProfilesService>(ASSTLIBRARY_CLIENT_TYPES.ProfilesService).to(ProfilesLambdaService);
+            bind<DevicesService>(ASSETLIBRARY_CLIENT_TYPES.DevicesService).to(DevicesLambdaService);
+            bind<GroupsService>(ASSETLIBRARY_CLIENT_TYPES.GroupsService).to(GroupsLambdaService);
+            bind<PoliciesService>(ASSETLIBRARY_CLIENT_TYPES.PoliciesService).to(PoliciesLambdaService);
+            bind<SearchService>(ASSETLIBRARY_CLIENT_TYPES.SearchService).to(SearchLambdaService);
+            bind<TemplatesService>(ASSETLIBRARY_CLIENT_TYPES.TemplatesService).to(TemplatesLambdaService);
+            bind<ProfilesService>(ASSETLIBRARY_CLIENT_TYPES.ProfilesService).to(ProfilesLambdaService);
 
             if (!isBound(LAMBDAINVOKE_TYPES.LambdaInvokerService)) {
                 bind<LambdaInvokerService>(LAMBDAINVOKE_TYPES.LambdaInvokerService).to(LambdaInvokerService);
@@ -69,12 +69,12 @@ export const assetLibraryContainerModule = new ContainerModule(
             }
 
         } else {
-            bind<DevicesService>(ASSTLIBRARY_CLIENT_TYPES.DevicesService).to(DevicesApigwService);
-            bind<GroupsService>(ASSTLIBRARY_CLIENT_TYPES.GroupsService).to(GroupsApigwService);
-            bind<PoliciesService>(ASSTLIBRARY_CLIENT_TYPES.PoliciesService).to(PoliciesApigwService);
-            bind<SearchService>(ASSTLIBRARY_CLIENT_TYPES.SearchService).to(SearchApigwService);
-            bind<TemplatesService>(ASSTLIBRARY_CLIENT_TYPES.TemplatesService).to(TemplatesApigwService);
-            bind<ProfilesService>(ASSTLIBRARY_CLIENT_TYPES.ProfilesService).to(ProfilesApigwService);
+            bind<DevicesService>(ASSETLIBRARY_CLIENT_TYPES.DevicesService).to(DevicesApigwService);
+            bind<GroupsService>(ASSETLIBRARY_CLIENT_TYPES.GroupsService).to(GroupsApigwService);
+            bind<PoliciesService>(ASSETLIBRARY_CLIENT_TYPES.PoliciesService).to(PoliciesApigwService);
+            bind<SearchService>(ASSETLIBRARY_CLIENT_TYPES.SearchService).to(SearchApigwService);
+            bind<TemplatesService>(ASSETLIBRARY_CLIENT_TYPES.TemplatesService).to(TemplatesApigwService);
+            bind<ProfilesService>(ASSETLIBRARY_CLIENT_TYPES.ProfilesService).to(ProfilesApigwService);
         }
     }
 );

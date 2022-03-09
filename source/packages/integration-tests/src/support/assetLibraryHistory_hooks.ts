@@ -18,7 +18,7 @@ import {
     CategoryEnum,
     TypeResource,
     Group10Resource,
-    ASSTLIBRARY_CLIENT_TYPES,
+    ASSETLIBRARY_CLIENT_TYPES,
 } from '@cdf/assetlibrary-client/dist';
 import {container} from '../di/inversify.config';
 import {sign} from 'jsonwebtoken';
@@ -39,9 +39,9 @@ const DEVICEHISTORY_FEATURE_DEVICE_IDS = ['test-devicehistory-device001'];
 // tslint:disable:no-invalid-this
 // tslint:disable:only-arrow-functions
 
-const devicesService:DevicesService = container.get(ASSTLIBRARY_CLIENT_TYPES.DevicesService);
-const groupsService:GroupsService = container.get(ASSTLIBRARY_CLIENT_TYPES.GroupsService);
-const templatesService:TemplatesService = container.get(ASSTLIBRARY_CLIENT_TYPES.TemplatesService);
+const devicesService:DevicesService = container.get(ASSETLIBRARY_CLIENT_TYPES.DevicesService);
+const groupsService:GroupsService = container.get(ASSETLIBRARY_CLIENT_TYPES.GroupsService);
+const templatesService:TemplatesService = container.get(ASSETLIBRARY_CLIENT_TYPES.TemplatesService);
 
 const adminClaims:{[key:string]: string[]}= {
     cdf_al: ['/:*']

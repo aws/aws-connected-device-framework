@@ -15,7 +15,7 @@ import { inject, injectable } from 'inversify';
 
 import { IoTClient, ListThingsInThingGroupCommand } from '@aws-sdk/client-iot';
 import {
-    ASSTLIBRARY_CLIENT_TYPES, Device10Resource, DevicesService, Group10Resource, GroupsService,
+    ASSETLIBRARY_CLIENT_TYPES, Device10Resource, DevicesService, Group10Resource, GroupsService,
     SearchRequestModel, SearchService
 } from '@cdf/assetlibrary-client';
 
@@ -29,9 +29,9 @@ export class AwsIotThingListBuilder {
   private iot: IoTClient;
 
     constructor(
-        @inject(ASSTLIBRARY_CLIENT_TYPES.DevicesService) private assetLibraryDeviceClient: DevicesService,
-        @inject(ASSTLIBRARY_CLIENT_TYPES.GroupsService) private assetLibraryGroupClient: GroupsService,
-        @inject(ASSTLIBRARY_CLIENT_TYPES.SearchService) private assetLibrarySearchClient: SearchService,
+        @inject(ASSETLIBRARY_CLIENT_TYPES.DevicesService) private assetLibraryDeviceClient: DevicesService,
+        @inject(ASSETLIBRARY_CLIENT_TYPES.GroupsService) private assetLibraryGroupClient: GroupsService,
+        @inject(ASSETLIBRARY_CLIENT_TYPES.SearchService) private assetLibrarySearchClient: SearchService,
         @inject(THING_LIST_BUILDER_TYPES.IotFactory) iotFactory: () => IoTClient) {
           this.iot = iotFactory();
         }

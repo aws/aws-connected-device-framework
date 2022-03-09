@@ -6,7 +6,7 @@ The Asset Library service is a device registry that allows one to manage their f
 
 ## Architecture
 
-The following represents the architecture of the Asset Library, along with its optional sibling service the [Asset Library History](../../assetlibrary-history/docs/README.md) service.
+The following represents the architecture of the Asset Library, along with its optional sibling service the [Asset Library History](../../assetlibraryhistory/docs/README.md) service.
 
 ![Architecture](<docs/images/cdf-core-hla-Asset%20Library.png>)
 

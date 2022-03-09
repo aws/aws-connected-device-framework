@@ -12,7 +12,7 @@ Ensure that all development and deployment [prerequisites](development/prerequis
 
 ### AWS CLI Credentials
 
-The installer executes a number of aws commands (e.g, `aws cloudformation package`, `aws cloudformation deploy`) to upload artifacts and deploy the modules to the target account. Ensure that you have IAM credential with the right policies set up on your shell when running the scripts below.
+The installer executes a number of aws commands (e.g, `aws cloudformation package`, `aws cloudformation deploy`) to upload artifacts and deploy the modules to the target account. Ensure that you have IAM credential with the right policies set up on your shell when running the scripts below. Create Named profile for IAM credential: https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html
 
 ### Backup and migrate existing data
 

@@ -19,7 +19,7 @@ import {
     Device10Resource,
     Group10Resource,
     SearchRequestFilter,
-    ASSTLIBRARY_CLIENT_TYPES,
+    ASSETLIBRARY_CLIENT_TYPES,
     SearchRequestFilterTraversal,
     SearchRequestFilterDirection,
 } from '@cdf/assetlibrary-client/dist';
@@ -43,7 +43,7 @@ setDefaultTimeout(10 * 1000);
 
 export const SEARCH_RESULTS = 'searchResults';
 
-const searchService:SearchService = container.get(ASSTLIBRARY_CLIENT_TYPES.SearchService);
+const searchService:SearchService = container.get(ASSETLIBRARY_CLIENT_TYPES.SearchService);
 function getAdditionalHeaders(world:unknown) : Dictionary {
     return  {
         Authorization: world[AUTHORIZATION_TOKEN]

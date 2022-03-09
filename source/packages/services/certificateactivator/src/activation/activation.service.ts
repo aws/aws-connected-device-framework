@@ -16,7 +16,7 @@ import { TYPES } from '../di/types';
 import { logger } from '../utils/logger';
 import ow from 'ow';
 import { RegistrationEvent, CertificateRevocationList, CertificateStatus } from './activation.models';
-import { DevicesService, Device10Resource, PoliciesService ,ASSTLIBRARY_CLIENT_TYPES } from '@cdf/assetlibrary-client';
+import { DevicesService, Device10Resource, PoliciesService ,ASSETLIBRARY_CLIENT_TYPES } from '@cdf/assetlibrary-client';
 import { ThingsService, ProvisionThingRequest, ProvisionThingResponse, PROVISIONING_CLIENT_TYPES } from '@cdf/provisioning-client';
 import atob from 'atob';
 
@@ -33,8 +33,8 @@ export class ActivationService {
         @inject('aws.s3.crl.key') private crlKey: string,
         @inject(TYPES.IotFactory) iotFactory: () => AWS.Iot,
         @inject(TYPES.S3Factory) s3Factory: () => AWS.S3,
-        @inject(ASSTLIBRARY_CLIENT_TYPES.DevicesService) private devices:DevicesService,
-        @inject(ASSTLIBRARY_CLIENT_TYPES.PoliciesService) private policies:PoliciesService,
+        @inject(ASSETLIBRARY_CLIENT_TYPES.DevicesService) private devices:DevicesService,
+        @inject(ASSETLIBRARY_CLIENT_TYPES.PoliciesService) private policies:PoliciesService,
         @inject(PROVISIONING_CLIENT_TYPES.ThingsService) private things:ThingsService) {
             this.iot = iotFactory();
             this.s3 = s3Factory();
