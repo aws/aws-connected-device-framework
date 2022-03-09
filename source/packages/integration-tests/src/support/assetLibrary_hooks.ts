@@ -20,7 +20,7 @@ import {
     Device10Resource,
     Group10Resource,
     ProfilesService,
-    ASSTLIBRARY_CLIENT_TYPES,
+    ASSETLIBRARY_CLIENT_TYPES,
 } from '@cdf/assetlibrary-client/dist';
 import { sign } from 'jsonwebtoken';
 import {container} from '../di/inversify.config';
@@ -107,10 +107,10 @@ const GROUPSEARCH_LITE_FEATURES_GROUP_PATH_BA = `BA`;
 const GROUPSEARCH_LITE_FEATURES_GROUP_PATH_BB = `BB`;
 const GROUPSEARCH_LITE_FEATURES_GROUPS_PATHS = [GROUPSEARCH_LITE_FEATURES_GROUP_PATH_AA,GROUPSEARCH_LITE_FEATURES_GROUP_PATH_AB,GROUPSEARCH_LITE_FEATURES_GROUP_PATH_BA,GROUPSEARCH_LITE_FEATURES_GROUP_PATH_BB,GROUPSEARCH_LITE_FEATURES_GROUP_PATH_ROOT];
 
-const devicesService:DevicesService = container.get(ASSTLIBRARY_CLIENT_TYPES.DevicesService);
-const groupsService:GroupsService = container.get(ASSTLIBRARY_CLIENT_TYPES.GroupsService);
-const templatesService:TemplatesService = container.get(ASSTLIBRARY_CLIENT_TYPES.TemplatesService);
-const profilesService:ProfilesService = container.get(ASSTLIBRARY_CLIENT_TYPES.ProfilesService);
+const devicesService:DevicesService = container.get(ASSETLIBRARY_CLIENT_TYPES.DevicesService);
+const groupsService:GroupsService = container.get(ASSETLIBRARY_CLIENT_TYPES.GroupsService);
+const templatesService:TemplatesService = container.get(ASSETLIBRARY_CLIENT_TYPES.TemplatesService);
+const profilesService:ProfilesService = container.get(ASSETLIBRARY_CLIENT_TYPES.ProfilesService);
 
 /*
     Cucumber describes current scenario context as “World”. It can be used to store the state of the scenario

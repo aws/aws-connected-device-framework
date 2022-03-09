@@ -13,7 +13,7 @@
 import { injectable, inject } from 'inversify';
 import {logger} from '../utils/logger';
 import ow from 'ow';
-import { DevicesService, Device10Resource, ASSTLIBRARY_CLIENT_TYPES } from '@cdf/assetlibrary-client';
+import { DevicesService, Device10Resource, ASSETLIBRARY_CLIENT_TYPES } from '@cdf/assetlibrary-client';
 import { RegistryManager } from './registry.interfaces';
 
 @injectable()
@@ -22,7 +22,7 @@ export class AssetLibraryRegistryManager implements RegistryManager {
     constructor(
         @inject('defaults.device.status.success.key') private successStatusKey: string,
         @inject('defaults.device.status.success.value') private successStatusValue: string,
-        @inject(ASSTLIBRARY_CLIENT_TYPES.DevicesService) private devices:DevicesService) {}
+        @inject(ASSETLIBRARY_CLIENT_TYPES.DevicesService) private devices:DevicesService) {}
 
     public async isWhitelisted(deviceId:string, _attributes?:{ [key: string] : string | number | boolean }) : Promise<boolean> {
         logger.debug(`certificates.service isWhitelisted: in: deviceId:${deviceId}`);
