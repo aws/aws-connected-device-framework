@@ -74,10 +74,10 @@ export class GroupItem {
 	public listRelatedGroupPaths():string[] {
 		const relatedGroupPaths:string[]= [];
 		if (this.groups?.in) {
-			Object.values(this.groups.in).forEach(relations => relations.forEach( relation => relatedGroupPaths.push(relation.id)));
+			Object.values(this.groups.in).forEach(relations => relations.forEach( relation => relatedGroupPaths.push(relation.id.toLowerCase())));
 		}
 		if (this.groups?.out) {
-			Object.values(this.groups.out).forEach(relations => relations.forEach( relation => relatedGroupPaths.push(relation.id)));
+			Object.values(this.groups.out).forEach(relations => relations.forEach( relation => relatedGroupPaths.push(relation.id.toLowerCase())));
 		}
 		return relatedGroupPaths;
 	}

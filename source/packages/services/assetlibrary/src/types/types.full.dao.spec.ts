@@ -244,21 +244,21 @@ describe('TypesDao', () => {
         expect(changes.remove.in).toEqual({});
     });
 
-    it('Relations out.keys.types 1 removed', async () => {
+    it('Relations out.keys.types 1 expanded added', async () => {
         const existing = new TypeRelationsModel();
         existing.out = {
-                installed_at: ['site','location']
+            parent: [{name:'root', includeInAuth:true}]
         };
         const updated = new TypeRelationsModel();
         updated.out = {
-            installed_at: ['location']
+            parent: [{name:'root', includeInAuth:true}, {name:'test-deviceswithauthgroup', includeInAuth:true}]
         };
 
         const changes = instance.__private___identifyChangedRelations(existing, updated);
 
-        expect(changes.add.out).toEqual({});
+        expect(changes.add.out).toEqual({parent: [{name:'test-deviceswithauthgroup', includeInAuth:true}]});
         expect(changes.add.in).toEqual({});
-        expect(changes.remove.out).toEqual({installed_at: ['site']});
+        expect(changes.remove.out).toEqual({});
         expect(changes.remove.in).toEqual({});
     });
 });

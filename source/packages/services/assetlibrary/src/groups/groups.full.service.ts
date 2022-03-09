@@ -259,8 +259,8 @@ export class GroupsServiceFull implements GroupsService {
         if (this.isAuthzEnabled) {
             const incomingAuthRelations = template.schema.relations.incomingAuthRelations();
             const outgoingAuthRelations = template.schema.relations.outgoingAuthRelations();
-            this.authServiceFull.updateRelsIdentifyingAuth(group.groups?.in, incomingAuthRelations);
-            this.authServiceFull.updateRelsIdentifyingAuth(group.groups?.out, outgoingAuthRelations);
+            this.authServiceFull.updateRelsIdentifyingAuth(relations?.in, incomingAuthRelations);
+            this.authServiceFull.updateRelsIdentifyingAuth(relations?.out, outgoingAuthRelations);
         }
 
         // ensure parent exists

@@ -59,7 +59,8 @@ export const FullContainerModule = new ContainerModule(
         bind<string>('defaults.devices.parent.groupPath').toConstantValue(process.env.DEFAULTS_DEVICES_PARENT_GROUPPATH);
         bind<string>('defaults.devices.state').toConstantValue(process.env.DEFAULTS_DEVICES_STATE);
         bind<boolean>('authorization.enabled').toConstantValue(process.env.AUTHORIZATION_ENABLED === 'true');
-        bind<boolean>('defaults.groups.validateAllowedParentPaths').toConstantValue(process.env.DEFAULTS_GROUPS_VALIDATEALLOWEDPARENTPATHS === 'true');
+        // if fgac is enabled, then validation of parent paths is automatically enabled too
+        bind<boolean>('defaults.groups.validateAllowedParentPaths').toConstantValue(process.env.DEFAULTS_GROUPS_VALIDATEALLOWEDPARENTPATHS === 'true' || process.env.AUTHORIZATION_ENABLED === 'true');
 
         bind<TypesService>(TYPES.TypesService).to(TypesServiceFull).inSingletonScope();
         bind<TypesDaoFull>(TYPES.TypesDao).to(TypesDaoFull).inSingletonScope();

@@ -14,7 +14,7 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from '../di/types';
 import { logger } from '../utils/logger';
 import { TypesDaoFull } from './types.full.dao';
-import { TypeModel, TypeDefinitionModel, TypeDefinitionStatus, isRelationTargetExpanded } from './types.models';
+import { TypeModel, TypeDefinitionModel, TypeDefinitionStatus, isRelationTargetExpanded, RelationTarget } from './types.models';
 import { TypeCategory, Operation } from './constants';
 import { EventEmitter, Type, Event } from '../events/eventEmitter.service';
 import ow from 'ow';
@@ -109,6 +109,23 @@ export class TypesServiceFull implements TypesService {
         return linkedTargetsValid;
     }
 
+    private relatedIdsToLowercase (rels: { [key: string]: RelationTarget[] }) : { [key: string]: RelationTarget[] } {
+        /* lowercasting values */
+        Object.values(rels).forEach(entities=> {
+            entities.forEach(entity=> {
+                if (isRelationTargetExpanded(entity)) {
+                    entity.name = entity.name.toLowerCase();
+                } else {
+                    entity = entity.toLowerCase();
+                }
+            });
+        });
+        /* lowercasting keys */
+        rels = Object.fromEntries(
+            Object.entries(rels).map(([k,v]) => [k.toLowerCase(),v]));
+        return rels;
+    }
+
     public async create(templateId: string, category: TypeCategory, definition: TypeDefinitionModel): Promise<SchemaValidationResult> {
         logger.debug(`types.full.service create: in: templateId:${templateId}, category:${category}, definition:${JSON.stringify(definition)}`);
 
@@ -119,6 +136,12 @@ export class TypesServiceFull implements TypesService {
 
         // any ids need to be lowercase
         templateId = templateId.toLowerCase();
+        if (definition.relations?.in) {
+            this.relatedIdsToLowercase(definition.relations.in);
+        }
+        if (definition.relations?.out) {
+            this.relatedIdsToLowercase(definition.relations.out);
+        }
 
         // remove any non printable characters from the id
         templateId = templateId.replace(/[^\x20-\x7E]+/g, '');
@@ -215,6 +238,12 @@ export class TypesServiceFull implements TypesService {
 
         // any ids need to be lowercase
         templateId = templateId.toLowerCase();
+        if (definition.relations?.in) {
+            this.relatedIdsToLowercase(definition.relations.in);
+        }
+        if (definition.relations?.out) {
+            this.relatedIdsToLowercase(definition.relations.out);
+        }
 
         if (!this.isValidCategory(category)) {
             throw new InvalidCategoryError(category);

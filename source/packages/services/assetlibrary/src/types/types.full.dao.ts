@@ -14,7 +14,7 @@ import { process, structure } from 'gremlin';
 import { injectable, inject } from 'inversify';
 import {logger} from '../utils/logger';
 import { TYPES } from '../di/types';
-import { TypeModel, TypeVersionModel, TypeRelationsModel, TypeDefinitionStatus, isRelationTargetExpanded, RelationTarget } from './types.models';
+import { TypeModel, TypeVersionModel, TypeRelationsModel, TypeDefinitionStatus, isRelationTargetExpanded, RelationTarget, RelationTargetExpanded } from './types.models';
 import * as jsonpatch from 'fast-json-patch';
 import { TypeCategory } from './constants';
 import { DirectionToStringArrayMap, SortKeys } from '../data/model';
@@ -352,29 +352,37 @@ export class TypesDaoFull extends BaseDaoFull {
     }
 
     private identifyChangedRelations(existing:TypeRelationsModel, updated:TypeRelationsModel): ChangedRelations  {
+        logger.debug(`types.full.dao identifyChangedRelations: in: existing: ${JSON.stringify(existing)}, updated: ${JSON.stringify(updated)}`);
+
         // before we diff, sort the relations.  this avoids reporting any unnecessary modifications where just the ordering may have changed
+        const sortRelationTarget = (a:RelationTarget,b:RelationTarget) => {
+            const aName = (isRelationTargetExpanded(a)) ? a.name : a;
+            const bName = (isRelationTargetExpanded(b)) ? b.name : b;
+            return aName.localeCompare(bName);
+        }
         if (existing?.in) {
             for (const key of Object.keys(existing.in)) {
-                existing.in[key]=existing.in[key].sort();
+                existing.in[key]=existing.in[key].sort(sortRelationTarget);
             }
         }
         if (existing?.out) {
             for (const key of Object.keys(existing.out)) {
-                existing.out[key]=existing.out[key].sort();
+                existing.out[key]=existing.out[key].sort(sortRelationTarget);
             }
         }
         if (updated?.in) {
             for (const key of Object.keys(updated.in)) {
-                updated.in[key]=updated.in[key].sort();
+                updated.in[key]=updated.in[key].sort(sortRelationTarget);
             }
         }
         if (updated?.out) {
             for (const key of Object.keys(updated.out)) {
-                updated.out[key]=updated.out[key].sort();
+                updated.out[key]=updated.out[key].sort(sortRelationTarget);
             }
         }
 
         // perform a diff of the relations so we can determine what specifically to add and remove
+        logger.silly(`types.full.dao identifyChangedRelations: sorted: existing: ${JSON.stringify(existing)}, updated: ${JSON.stringify(updated)}`);
         const diff = jsonpatch.compare(existing, updated);
         logger.silly(`types.full.dao identifyChangedRelations: diff: ${JSON.stringify(diff)}`);
 
@@ -411,7 +419,7 @@ export class TypesDaoFull extends BaseDaoFull {
                         }
                     }
                 } else {
-                    logger.warn(`types.full.dao Unsupported diff op: ${JSON.stringify(d)}`);
+                    logger.warn(`types.full.dao identifyChangedRelations: Unsupported diff op: ${JSON.stringify(d)}`);
                 }
 
             } else if (p.length===3) {     //////////////////// specific relation changed
@@ -428,7 +436,7 @@ export class TypesDaoFull extends BaseDaoFull {
                         toAdd.out[p[2]] = updated['out'][p[2]];
                     }
                 } else {
-                    logger.warn(`types.full.dao Unsupported diff op: ${JSON.stringify(d)}`);
+                    logger.warn(`types.full.dao identifyChangedRelations: Unsupported diff op: ${JSON.stringify(d)}`);
                 }
 
             } else if (p.length===4) {     //////////////////// a target type of a relation has changed
@@ -442,53 +450,57 @@ export class TypesDaoFull extends BaseDaoFull {
                     const updatedTypes = (p[1]==='in') ? updated['in'][p[2]] : updated['out'][p[2]];
 
                     // first find removed
-                    if (existingTypes) {
-                        existingTypes.forEach(t=> {
-                            if (updatedTypes.indexOf(t)<0) {
-                                if (p[1]==='in') {
-                                    if (toRemove.in[p[2]]===undefined) {
-                                        toRemove.in[p[2]]=[];
-                                    }
-                                    toRemove.in[p[2]].push(t);
+                    const findDifferences = (sourceArray:RelationTarget[], targetArray:RelationTarget[], differences:TypeRelationsModel) => {
+                        sourceArray.forEach(source=> {
+                            const sourceIsExpanded = isRelationTargetExpanded(source);
+                            const indexOf = (target:RelationTarget) => {
+                                const targetIsExpanded = isRelationTargetExpanded(target);
+                                if (sourceIsExpanded !== targetIsExpanded) {
+                                    return false;
+                                }
+                                if (sourceIsExpanded) {
+                                    return (source as RelationTargetExpanded).name === (target as RelationTargetExpanded).name;
                                 } else {
-                                    if (toRemove.out[p[2]]===undefined) {
-                                        toRemove.out[p[2]]=[];
+                                    return source === target;
+                                }
+                            };
+                            if (targetArray.findIndex(indexOf)<0) {
+                                if (p[1]==='in') {
+                                    if (differences.in[p[2]]===undefined) {
+                                        differences.in[p[2]]=[];
                                     }
-                                    toRemove.out[p[2]].push(t);
+                                    differences.in[p[2]].push(source);
+                                } else {
+                                    if (differences.out[p[2]]===undefined) {
+                                        differences.out[p[2]]=[];
+                                    }
+                                    differences.out[p[2]].push(source);
                                 }
                             }
                         });
+                    }
+                    if (existingTypes) {
+                        findDifferences(existingTypes, updatedTypes, toRemove);
                     }
 
                     // then find added
                     if (updatedTypes) {
-                        updatedTypes.forEach(t=> {
-                            if (existingTypes.indexOf(t)<0) {
-                                if (p[1]==='in') {
-                                    if (toAdd.in[p[2]]===undefined) {
-                                        toAdd.in[p[2]]=[];
-                                    }
-                                    toAdd.in[p[2]].push(t);
-                                } else {
-                                    if (toAdd.out[p[2]]===undefined) {
-                                        toAdd.out[p[2]]=[];
-                                    }
-                                    toAdd.out[p[2]].push(t);
-                                }
-                            }
-                        });
+                        findDifferences(updatedTypes, existingTypes, toAdd);
                     }
                 }
 
             } else {
-                logger.warn(`types.full.dao Unsupported diff op: ${JSON.stringify(d)}`);
+                logger.warn(`types.full.dao identifyChangedRelations: Unsupported diff op: ${JSON.stringify(d)}`);
             }
         });
 
-        return {
+        const response = {
             add: toAdd,
             remove: toRemove
         };
+
+        logger.debug(`types.full.dao identifyChangedRelations: exit: ${JSON.stringify(response)}`);
+        return response;
     }
 
     public async createDraft(model: TypeModel): Promise<void> {

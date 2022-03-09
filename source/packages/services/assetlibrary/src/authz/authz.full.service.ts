@@ -100,5 +100,6 @@ export class AuthzServiceFull {
                 }
             }
         }
+        logger.silly(`authz.full.service updateRelsIdentifyingAuth: updated: rels: ${JSON.stringify(rels)}`);
     }
 }
