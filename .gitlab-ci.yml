@@ -232,14 +232,12 @@ deployLive:
   variables:
     <<: *live-variables
   before_script:
-    - *common-install-node-dependencies
+    - *common-install-deployment-dependencie
     # set git commit details
     - *common-git-steps
     # installing mkdocs...
     - *common-markdown-steps
   script:
-    - curl -s -qL -o /usr/bin/jq https://stedolan.github.io/jq/download/linux64/jq
-    - chmod +x /usr/bin/jq
     # deploy to live environment
     - pushd source
     # rush install
