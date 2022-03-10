@@ -97,7 +97,7 @@ filterCommits:
     - feature/gitlab-pipeline 
   stage: filterCommits
   before_script:
-    - echo "No dependencies needed for this"
+    - yum update -y && yum install -y git tar openssl zip unzip
   image:
     name: public.ecr.aws/amazonlinux/amazonlinux:2
     entrypoint: [""]
