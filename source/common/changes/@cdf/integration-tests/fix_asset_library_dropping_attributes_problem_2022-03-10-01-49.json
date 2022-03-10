@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/integration-tests",
+      "comment": "updated process of updating groups and devices so drops work",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/integration-tests",
+  "email": "aaron.pittenger@bissell.com"
+}
