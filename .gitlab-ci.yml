@@ -214,7 +214,6 @@ deployLive:
   image: public.ecr.aws/lambda/nodejs:14
   variables:
     <<: *live-variables
-  when: always
   before_script:
     - *common-install-node-dependencies
     # set git commit details
