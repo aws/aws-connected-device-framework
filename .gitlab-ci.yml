@@ -177,6 +177,7 @@ test:
     # - rush test
     # Bundling the node project when it past
     - export RUSH_PARALLELISM=8
+    - cd ${CI_PROJECT_DIR}
     - bash -c source/cicd/buildproject_postbuild.bash
   <<: *common-artifacts
 
