@@ -1,37 +1,23 @@
 # Official framework image. Look for the different tagged releases at: https://hub.docker.com/r/library/node/tags/
 
-# include:
-#   - local: cicd/master-brnach
-
-# variables:
-#   !reference [.branch-variables, variables]
-
 variables:
-  CONFIG_REPO_PROJECT_ID: 9703
-  CONFIG_PACKAGE_NAME: cdf-infrastructure-demo
   RUSH_PARALLELISM: 8
   APP_CONFIG_DIR: common/build/configdir
   BRANCH: main
-  PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/aws-connected-device-framework/${PACKAGE_VERSION}"
 
 .staging-variables: &staging-variables
   ENVIRONMENT: development-staging
   AWS_REGION: us-west-2
-  DOCUMENTATION_PUBLISH_LOCATION: s3://cdf-157731826412-us-west-2-docs
-  ARTIFACT_PUBLISH_LOCATION: "s3://cdf-157731826412-us-west-2/releases"
 
 .live-variables: &live-variables
   ENVIRONMENT: development
   AWS_REGION: us-west-2
-  DOCUMENTATION_PUBLISH_LOCATION: s3://cdf-157731826412-us-west-2-docs
-  ARTIFACT_PUBLISH_LOCATION: "s3://cdf-157731826412-us-west-2/releases"
 
 .common-build-steps: &common-build-steps # install dependencies
   - cd ${CI_PROJECT_DIR}/source
   - rush update
   # build
   - rush build
-
 
 .common-install-deployment-dependencies: &common-install-deployment-dependencies
   - env | sort
@@ -110,7 +96,7 @@ before_script:
 
 filterCommits:
   only:
-    - main
+    - feature/gitlab-pipeline
   stage: filterCommits
   before_script:
     - yum update -y && yum install -y git tar openssl zip unzip
@@ -122,7 +108,7 @@ filterCommits:
 
 downloadInfastructureConfig:
   only:
-    - main
+    - feature/gitlab-pipeline
   stage: build
   before_script:
     - env | sort
@@ -146,7 +132,7 @@ downloadInfastructureConfig:
 
 buildLambaLayersZip:
   only:
-    - main
+    - feature/gitlab-pipeline
   stage: build
   before_script:
     - yum update -y && yum install -y openssl zip
@@ -163,7 +149,7 @@ buildLambaLayersZip:
 
 test:
   only:
-    - main
+    - feature/gitlab-pipeline
   stage: test
   image: public.ecr.aws/lambda/nodejs:14
   before_script:
@@ -184,7 +170,7 @@ test:
 
 deployStage:
   only:
-    - main
+    - feature/gitlab-pipeline
   stage: deployStage
   image: public.ecr.aws/lambda/nodejs:14
   variables:
@@ -209,7 +195,7 @@ deployStage:
 
 integrationTest:
   only:
-    - main
+    - feature/gitlab-pipeline
   stage: integrationTest
   image: public.ecr.aws/lambda/nodejs:14
   variables:
@@ -226,7 +212,7 @@ integrationTest:
 
 deployLive:
   only:
-    - main
+    - feature/gitlab-pipeline
   stage: deployLive
   image: public.ecr.aws/lambda/nodejs:14
   variables:
