@@ -33,7 +33,6 @@
     "js-yaml": "4.1.0",
     "node-localstorage": "~2.2.1",
     "ora": "~5.4.1",
-    "pkg-dir": "~5.0.0",
     "recursive-copy": "~2.0.13",
     "reflect-metadata": "0.1.13",
     "listr2": "~3.13.5",

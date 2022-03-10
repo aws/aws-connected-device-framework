@@ -3,13 +3,13 @@ import inquirer from 'inquirer';
 import { ListrTask } from 'listr2';
 import ow from 'ow';
 import path from 'path';
-import pkgDir from 'pkg-dir';
 
 import { CloudFormationClient, DescribeStacksCommand } from '@aws-sdk/client-cloudformation';
 
 import { Answers } from '../../../models/answers';
 import { InfrastructureModule, ModuleName } from '../../../models/modules';
 import { deleteStack } from '../../../utils/cloudformation.util';
+import { getMonorepoRoot } from '../../../prompts/paths.prompt';
 
 export class DeploymentHelperInstaller implements InfrastructureModule {
 
@@ -85,12 +85,10 @@ export class DeploymentHelperInstaller implements InfrastructureModule {
 
     const tasks: ListrTask[] = [];
 
-
     const templateFileIn = 'infrastructure/cfn-deployment-helper.yaml';
     const vpcTemplateFileIn = 'infrastructure/cfn-deployment-helper-vpc.yaml';
     const skipVpcDeploymentHelper = answers.vpc?.id === undefined
-    const installerPackageRoot = await pkgDir();
-    const monorepoRoot = path.join(installerPackageRoot, '..', '..', '..', '..');
+    const monorepoRoot = await getMonorepoRoot();
 
     if (answers.deploymentHelper?.deploy) {
       tasks.push({

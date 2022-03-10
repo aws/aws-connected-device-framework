@@ -3,13 +3,13 @@ import inquirer from 'inquirer';
 import { ListrTask } from 'listr2';
 import ow from 'ow';
 import path from 'path';
-import pkgDir from 'pkg-dir';
 
 import { LambdaClient, ListLayerVersionsCommand } from '@aws-sdk/client-lambda';
 
 import { Answers } from '../../../models/answers';
 import { InfrastructureModule, ModuleName } from '../../../models/modules';
 import { deleteStack } from '../../../utils/cloudformation.util';
+import { getMonorepoRoot } from '../../../prompts/paths.prompt';
 
 export class OpenSslInstaller implements InfrastructureModule {
 
@@ -67,8 +67,7 @@ export class OpenSslInstaller implements InfrastructureModule {
 
     const tasks: ListrTask[] = [];
 
-    const installerPackageRoot = await pkgDir();
-    const monorepoRoot = path.join(installerPackageRoot, '..', '..', '..', '..');
+    const monorepoRoot = await getMonorepoRoot();
 
     if (answers.openSsl.deploy) {
       tasks.push({

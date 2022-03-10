@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/installer",
+      "comment": "Parts of the installer were still assuming the installer had been ran from with the installer package dir rather than from within anywhere within the monorepo as supported by cdf-cli.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/installer",
+  "email": "deanhart@amazon.com"
+}
