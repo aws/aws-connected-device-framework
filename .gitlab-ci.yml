@@ -250,7 +250,9 @@ deployLive:
 
 release:
   only:
-    - feature/gitlab-pipeline 
+    - tags
+  except:
+    - branches
   stage: release
   image: registry.gitlab.com/gitlab-org/release-cli:latest
   needs:
@@ -267,5 +269,5 @@ release:
     - zip -R asset.zip **/*.zip **/*.yaml **/*.yml **/*.bash **/*.md
     - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file asset.zip "${PACKAGE_REGISTRY_URL}/asset.zip"'
     - |
-      release-cli create --name "Release $BUILD_VERSION" --tag-name $BUILD_VERSION \
+      release-cli create --name "Release $CI_COMMIT_TAG" --tag-name $CI_COMMIT_TAG \
         --assets-link "{\"name\":\"assets\",\"url\":\"${PACKAGE_REGISTRY_URL}/asset.zip\"}" \
