@@ -134,7 +134,7 @@ test:
     - infrastructure/bundle-core.bash
   <<: *common-artifacts
 
-deployStage:
+.deployStage:
   stage: deployStage
   image: public.ecr.aws/lambda/nodejs:14
   variables:
@@ -159,7 +159,7 @@ deployStage:
     # run in the integration tests
     - bash -c cicd/integrationtestsproject_build.bash
 
-deployLive:
+.deployLive:
   stage: deployLive
   image: public.ecr.aws/lambda/nodejs:14
   variables:
@@ -190,7 +190,7 @@ deployLive:
     reports:
       dotenv: build.env
 
-release:
+.release:
   stage: release
   image: registry.gitlab.com/gitlab-org/release-cli:latest
   needs:
