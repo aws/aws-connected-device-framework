@@ -175,7 +175,7 @@ test:
     # build
     - rush build
     - export RUSH_PARALLELISM=1
-    # - rush test
+    - rush test
     # Bundling the node project when it past
     - export RUSH_PARALLELISM=8
     - cd ${CI_PROJECT_DIR}
@@ -198,12 +198,12 @@ deployStage:
   script:
     - pushd source
     # rush install
-    # - rush update --purge
+    - rush update --purge
     - popd
     # export the location of the config
     - export CODEBUILD_SRC_DIR_source_infrastructure="${CI_PROJECT_DIR}/${APP_CONFIG_DIR}"
     # deploy to staging environment
-    # - bash -c source/cicd/deployproject_build.bash
+    - bash -c source/cicd/deployproject_build.bash
   after_script:
   - bash -c source/cicd/deployproject_postbuild.bash
 
@@ -222,7 +222,7 @@ integrationTest:
     # export the location of the config
     - export CODEBUILD_SRC_DIR_source_infrastructure="${CI_PROJECT_DIR}/${APP_CONFIG_DIR}"
     # run in the integration tests
-    # - bash -c source/cicd/integrationtestsproject_build.bash
+    - bash -c source/cicd/integrationtestsproject_build.bash
 
 deployLive:
   only:
@@ -244,7 +244,7 @@ deployLive:
     - rush update --purge
     - popd
     - export CODEBUILD_SRC_DIR_source_infrastructure="${CI_PROJECT_DIR}/${APP_CONFIG_DIR}"
-    # - bash -c source/cicd/deployproject_build.bash
+    - bash -c source/cicd/deployproject_build.bash
   after_script:
     - bash -c source/cicd/deployproject_postbuild.bash
 
