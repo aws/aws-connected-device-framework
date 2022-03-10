@@ -131,10 +131,12 @@ test:
     - rush update
     # build
     - rush build
+    - export RUSH_PARALLELISM=1
     - rush test
     # version projects that have changed
     - rush publish -a
     # Bundling the node project when it past
+    - export RUSH_PARALLELISM=8
     - echo Bundling...
     - infrastructure/bundle-core.bash -z
   <<: *common-artifacts
