@@ -11,6 +11,7 @@ variables:
   CONFIG_PACKAGE_NAME: cdf-infrastructure-demo
   RUSH_PARALLELISM: 8
   APP_CONFIG_DIR: common/build/configdir
+  BRANCH: main
   PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/aws-connected-device-framework/${PACKAGE_VERSION}"
 
 .staging-variables: &staging-variables
@@ -42,7 +43,7 @@ variables:
   - npm install -g @microsoft/rush
   # install aws cli
   - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && unzip -qq awscliv2.zip
-  - ./aws/install
+  - ./aws/install && rm -rf ./aws && rm awscliv2.zip
   # install jq
   - curl -s -qL -o /usr/bin/jq https://stedolan.github.io/jq/download/linux64/jq
   - chmod +x /usr/bin/jq
