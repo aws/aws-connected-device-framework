@@ -31,6 +31,11 @@ variables:
   # build
   - rush build
 
+
+.common-install-node-dependencies: &common-install-node-dependencies # install dependencies
+  - curl -f https://get.pnpm.io/v5.js | node - add --global pnpm@5
+  - npm install -g @microsoft/rush
+
 .common-markdown-steps: &common-markdown-steps # install dependencies
   - yum install -y python3
   - curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
@@ -89,6 +94,8 @@ before_script:
 
 filterCommits:
   stage: filterCommits
+  before_script:
+    - echo "No dependencies needed for this"
   image:
     name: public.ecr.aws/amazonlinux/amazonlinux:2
     entrypoint: [""]
@@ -137,6 +144,7 @@ test:
   image: public.ecr.aws/lambda/nodejs:14
   before_script:
     # set git commit details
+    - *common-install-node-dependencies
     - *common-git-steps
   script:
     - *common-build-steps
@@ -155,6 +163,7 @@ deployStage:
   variables:
     <<: *staging-variables
   before_script:
+  - *common-install-node-dependencies
   # set git commit details
   - *common-git-steps
   # installing mkdocs...
@@ -193,6 +202,7 @@ deployLive:
     <<: *live-variables
   when: always
   before_script:
+    - *common-install-node-dependencies
     # set git commit details
     - *common-git-steps
     # installing mkdocs...
