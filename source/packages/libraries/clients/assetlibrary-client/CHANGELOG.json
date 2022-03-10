@@ -2,6 +2,21 @@
   "name": "@cdf/assetlibrary-client",
   "entries": [
     {
+      "version": "5.0.1",
+      "tag": "@cdf/assetlibrary-client_v5.0.1",
+      "date": "Thu, 10 Mar 2022 00:08:34 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "the template model lists an enum parameter, which should be a string[] listing the enum values instead of just a string"
+          },
+          {
+            "comment": "correct typo in assetlibrary client"
+          }
+        ]
+      }
+    },
+    {
       "version": "5.0.0",
       "tag": "@cdf/assetlibrary-client_v5.0.0",
       "date": "Thu, 17 Feb 2022 09:27:38 GMT",

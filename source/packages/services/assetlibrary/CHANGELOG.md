@@ -1,6 +1,13 @@
 # Change Log - @cdf/assetlibrary
 
-This log was last generated on Thu, 17 Feb 2022 10:54:42 GMT and should not be manually modified.
+This log was last generated on Thu, 10 Mar 2022 00:08:34 GMT and should not be manually modified.
+
+## 6.0.2
+Thu, 10 Mar 2022 00:08:34 GMT
+
+### Patches
+
+- added r5 instances to possible neptune DB selections
 
 ## 6.0.1
 Thu, 17 Feb 2022 10:54:42 GMT
