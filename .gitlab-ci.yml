@@ -36,17 +36,17 @@ variables:
 .common-artifacts: &common-artifacts
   artifacts:
     paths:
-      - common/
-      - infrastructure/**/build.zip
-      - packages/**/.rush/
-      - packages/**/dist/
-      - packages/**/tsconfig.tsbuildinfo
-      - packages/**/bundle.zip
+      - source/common/
+      - source/infrastructure/**/build.zip
+      - souce/packages/**/.rush/
+      - source/packages/**/dist/
+      - source/packages/**/tsconfig.tsbuildinfo
+      - source/packages/**/bundle.zip
 
 stages:
   - build
   - test
-  # - deployStage
+  - deployStage
   # - integrationTest
   # - deployLive
   # - release
@@ -111,7 +111,7 @@ buildLambaLayersZip:
     - cd ${CI_PROJECT_DIR} && mkdir -p infrastructure/lambdaLayers/openssl/build && cp common/build/build.zip infrastructure/lambdaLayers/openssl/build/build.zip
   artifacts:
     paths:
-      - infrastructure/lambdaLayers/openssl/build/build.zip
+      - source/infrastructure/lambdaLayers/openssl/build/build.zip
 
 .build:
   stage: build
@@ -127,12 +127,10 @@ test:
   image: public.ecr.aws/lambda/nodejs:14
   script:
     - *common-build-steps
-    - cd ${CI_PROJECT_DIR}/source
-    - rush update
     # build
     - rush build
     - export RUSH_PARALLELISM=1
-    - rush test
+    # - rush test
     # version projects that have changed
     - rush publish -a
     # Bundling the node project when it past
@@ -141,7 +139,7 @@ test:
     - infrastructure/bundle-core.bash -z
   <<: *common-artifacts
 
-.deployStage:
+deployStage:
   stage: deployStage
   image: public.ecr.aws/lambda/nodejs:14
   variables:
@@ -150,7 +148,7 @@ test:
     # export the location of the config
     - export CODEBUILD_SRC_DIR_source_infrastructure="${CI_PROJECT_DIR}/${APP_CONFIG_DIR}"
     # deploy to staging environment
-    - bash -c cicd/deployproject_build.bash
+    - bash -c source/cicd/deployproject_build.bash
 
 .integrationTest:
   stage: integrationTest
@@ -164,7 +162,7 @@ test:
     # export the location of the config
     - export CODEBUILD_SRC_DIR_source_infrastructure="${CI_PROJECT_DIR}/${APP_CONFIG_DIR}"
     # run in the integration tests
-    - bash -c cicd/integrationtestsproject_build.bash
+    - bash -c source/cicd/integrationtestsproject_build.bash
 
 .deployLive:
   stage: deployLive
@@ -177,7 +175,7 @@ test:
     - chmod +x /usr/bin/jq
     # deploy to live environment
     - export CODEBUILD_SRC_DIR_source_infrastructure="${CI_PROJECT_DIR}/${APP_CONFIG_DIR}"
-    - bash -c cicd/deployproject_build.bash
+    - bash -c source/cicd/deployproject_build.bash
   after_script:
     # set git commit details
     - git config --global user.name "cdf-cicd"
