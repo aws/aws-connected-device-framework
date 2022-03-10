@@ -13,19 +13,17 @@ variables:
   APP_CONFIG_DIR: common/build/configdir
   PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/aws-connected-device-framework/${PACKAGE_VERSION}"
 
-.live-variables: &live-variables
-  DEPLOY_ARTIFACTS_STORE_BUCKET: "cdf-cfn-artifacts-317315070315-ap-southeast-2"
-  ENVIRONMENT: development
-  AWS_REGION: us-west-2
-  DOCUMENTATION_PUBLISH_LOCATION: s3://cdf-317315070315-ap-southeast-2-docs
-  ARTIFACT_PUBLISH_LOCATION: "s3://cdf-cfn-artifacts-317315070315-ap-southeast-2/releases"
-
 .staging-variables: &staging-variables
-  DEPLOY_ARTIFACTS_STORE_BUCKET: "cdf-cfn-artifacts-317315070315-ap-southeast-2"
   ENVIRONMENT: development-staging
   AWS_REGION: us-west-2
-  DOCUMENTATION_PUBLISH_LOCATION: s3://cdf-317315070315-ap-southeast-2-docs
-  ARTIFACT_PUBLISH_LOCATION: "s3://cdf-cfn-artifacts-317315070315-ap-southeast-2/releases"
+  DOCUMENTATION_PUBLISH_LOCATION: s3://cdf-157731826412-us-west-2-docs
+  ARTIFACT_PUBLISH_LOCATION: "s3://cdf-157731826412-us-west-2/releases"
+
+.live-variables: &live-variables
+  ENVIRONMENT: development
+  AWS_REGION: us-west-2
+  DOCUMENTATION_PUBLISH_LOCATION: s3://cdf-157731826412-us-west-2-docs
+  ARTIFACT_PUBLISH_LOCATION: "s3://cdf-157731826412-us-west-2/releases"
 
 .common-build-steps: &common-build-steps # install dependencies
   - cd ${CI_PROJECT_DIR}/source
@@ -47,8 +45,8 @@ stages:
   - build
   - test
   - deployStage
-  # - integrationTest
-  # - deployLive
+  - integrationTest
+  - deployLive
   # - release
 
 ### not working at the moment, therefore using artifacts as a temp workaround
@@ -152,23 +150,24 @@ deployStage:
     # export the location of the config
     - export CODEBUILD_SRC_DIR_source_infrastructure="${CI_PROJECT_DIR}/${APP_CONFIG_DIR}"
     # deploy to staging environment
-    - bash -c source/cicd/deployproject_build.bash
+    # - bash -c source/cicd/deployproject_build.bash
 
-.integrationTest:
+integrationTest:
   stage: integrationTest
   image: public.ecr.aws/lambda/nodejs:14
   variables:
-    CONFIG_ENVIRONMENT: development-staging
-    DEPLOY_ARTIFACTS_STORE_BUCKET: cdf-cfn-artifacts-317315070315-ap-southeast-2
+    <<: *staging-variables
   script:
+    - pushd source
     # rush install
     - rush update --purge
+    - popd
     # export the location of the config
     - export CODEBUILD_SRC_DIR_source_infrastructure="${CI_PROJECT_DIR}/${APP_CONFIG_DIR}"
     # run in the integration tests
     - bash -c source/cicd/integrationtestsproject_build.bash
 
-.deployLive:
+deployLive:
   stage: deployLive
   image: public.ecr.aws/lambda/nodejs:14
   variables:
@@ -178,26 +177,30 @@ deployStage:
     - curl -s -qL -o /usr/bin/jq https://stedolan.github.io/jq/download/linux64/jq
     - chmod +x /usr/bin/jq
     # deploy to live environment
+    - pushd source
+    # rush install
+    - rush update --purge
+    - popd
     - export CODEBUILD_SRC_DIR_source_infrastructure="${CI_PROJECT_DIR}/${APP_CONFIG_DIR}"
     - bash -c source/cicd/deployproject_build.bash
-  after_script:
-    # set git commit details
-    - git config --global user.name "cdf-cicd"
-    - git config --global user.email "cdf-cicd"
-    - git remote set-url origin https://cdf-cicd:${CUSTOM_PERSONAL_ACCESS_TOKEN}@gitlab.aws.dev/connected-device-framework/cdf-core.git
-    #echo installing mkdocs...
-    - yum install -y python3
-    - curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-    - python3 get-pip.py
-    - pip install --upgrade pip
-    - pip install mkdocs
-    - pip install markdown-include
-    - pip install pymdown-extensions
-    - pip install mkdocs-material
-    - bash -c cicd/deployproject_postbuild.bash
-  artifacts:
-    reports:
-      dotenv: build.env
+  # after_script:
+  #   # set git commit details
+  #   - git config --global user.name "cdf-cicd"
+  #   - git config --global user.email "cdf-cicd"
+  #   - git remote set-url origin https://cdf-cicd:${CUSTOM_PERSONAL_ACCESS_TOKEN}@gitlab.aws.dev/connected-device-framework/cdf-core.git
+  #   #echo installing mkdocs...
+  #   - yum install -y python3
+  #   - curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+  #   - python3 get-pip.py
+  #   - pip install --upgrade pip
+  #   - pip install mkdocs
+  #   - pip install markdown-include
+  #   - pip install pymdown-extensions
+  #   - pip install mkdocs-material
+  #   - bash -c cicd/deployproject_postbuild.bash
+  # artifacts:
+  #   reports:
+  #     dotenv: build.env
 
 .release:
   stage: release
