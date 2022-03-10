@@ -548,7 +548,7 @@
      * The default value is "master"
      */
     /*  INTERNAL REPO:  */
-    "defaultBranch": "master",
+    "defaultBranch": "main",
 
     /* EXTERNAL REPO: */
     // "defaultBranch": "main",
