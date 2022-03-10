@@ -93,6 +93,8 @@ before_script:
   - chmod +x /usr/bin/jq
 
 filterCommits:
+  only:
+    - feature/gitlab-pipeline 
   stage: filterCommits
   before_script:
     - echo "No dependencies needed for this"
@@ -103,6 +105,8 @@ filterCommits:
     - bash -c source/cicd/filterproject_prebuild.bash
 
 downloadInfastructureConfig:
+  only:
+    - feature/gitlab-pipeline 
   stage: build
   before_script:
     - env | sort
@@ -125,6 +129,8 @@ downloadInfastructureConfig:
       - $APP_CONFIG_DIR/
 
 buildLambaLayersZip:
+  only:
+    - feature/gitlab-pipeline 
   stage: build
   before_script:
     - yum update -y && yum install -y openssl zip
@@ -140,6 +146,8 @@ buildLambaLayersZip:
       - source/infrastructure/lambdaLayers/openssl/build/build.zip
 
 test:
+  only:
+    - feature/gitlab-pipeline 
   stage: test
   image: public.ecr.aws/lambda/nodejs:14
   before_script:
@@ -158,6 +166,8 @@ test:
   <<: *common-artifacts
 
 deployStage:
+  only:
+    - feature/gitlab-pipeline 
   stage: deployStage
   image: public.ecr.aws/lambda/nodejs:14
   variables:
@@ -181,6 +191,8 @@ deployStage:
   - bash -c source/cicd/deployproject_postbuild.bash
 
 integrationTest:
+  only:
+    - feature/gitlab-pipeline 
   stage: integrationTest
   image: public.ecr.aws/lambda/nodejs:14
   variables:
@@ -196,6 +208,8 @@ integrationTest:
     # - bash -c source/cicd/integrationtestsproject_build.bash
 
 deployLive:
+  only:
+    - feature/gitlab-pipeline 
   stage: deployLive
   image: public.ecr.aws/lambda/nodejs:14
   variables:
@@ -221,6 +235,8 @@ deployLive:
     - bash -c source/cicd/deployproject_postbuild.bash
 
 release:
+  only:
+    - feature/gitlab-pipeline 
   stage: release
   image: registry.gitlab.com/gitlab-org/release-cli:latest
   needs:
