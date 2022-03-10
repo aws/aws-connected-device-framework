@@ -237,16 +237,20 @@ deployLive:
 
 release:
   only:
-    - tags
+    refs:
+      - tags
   except:
-    - branches
+    refs:
+      - branches
+    variables:
+      - $CI_COMMIT_TAG == "RELEASE-LIVE-LATEST"
+      - $CI_COMMIT_TAG == "RELEASE-STAGING-LATEST"
   stage: release
   image: registry.gitlab.com/gitlab-org/release-cli:latest
   before_script:
     - env | sort
     - apk add zip curl
   script:
-    - echo "$BUILD_VERSION" # Output is: 'hello'
     - export PACKAGE_REGISTRY_URL=${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/aws-connected-device-framework/${BUILD_VERSION}
     - zip -R asset.zip **/*.zip **/*.yaml **/*.yml **/*.bash **/*.md
     - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file asset.zip "${PACKAGE_REGISTRY_URL}/asset.zip"'
