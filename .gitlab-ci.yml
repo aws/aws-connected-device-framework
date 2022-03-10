@@ -32,6 +32,21 @@ variables:
   - rush build
 
 
+.common-install-deployment-dependencies: &common-install-deployment-dependencies
+  - env | sort
+  - yum update -y
+  # install tool dependencies (required to test some services)
+  - yum install -y git tar openssl zip unzip
+  # install specific version of pnpm needed by rush
+  - curl -f https://get.pnpm.io/v5.js | node - add --global pnpm@5
+  - npm install -g @microsoft/rush
+  # install aws cli
+  - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && unzip -qq awscliv2.zip
+  - ./aws/install
+  # install jq
+  - curl -s -qL -o /usr/bin/jq https://stedolan.github.io/jq/download/linux64/jq
+  - chmod +x /usr/bin/jq
+
 .common-install-node-dependencies: &common-install-node-dependencies # install dependencies
   - curl -f https://get.pnpm.io/v5.js | node - add --global pnpm@5
   - npm install -g @microsoft/rush
@@ -64,8 +79,8 @@ variables:
 stages:
   - filterCommits
   - build
-  - deployStage
   - test
+  - deployStage
   - integrationTest
   - deployLive
   - release
@@ -152,7 +167,7 @@ test:
   image: public.ecr.aws/lambda/nodejs:14
   before_script:
     # set git commit details
-    - *common-install-node-dependencies
+    - *common-install-deployment-dependencies
     - *common-git-steps
   script:
     - *common-build-steps
@@ -173,7 +188,7 @@ deployStage:
   variables:
     <<: *staging-variables
   before_script:
-  - *common-install-node-dependencies
+  - *common-install-deployment-dependencies
   # set git commit details
   - *common-git-steps
   # installing mkdocs...
