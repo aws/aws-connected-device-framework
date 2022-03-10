@@ -57,6 +57,7 @@ variables:
       - source/packages/**/bundle.zip
 
 stages:
+  - filterCommits
   - build
   - deployStage
   - test
@@ -76,11 +77,8 @@ before_script:
   - yum update -y
   # install tool dependencies (required to test some services)
   - yum install -y git tar openssl zip unzip
-  # install git (required for `rush change`)
-  - git version
-  # # install specific version of pnpm needed by rush
+  # install specific version of pnpm needed by rush
   - curl -f https://get.pnpm.io/v5.js | node - add --global pnpm@5
-  - pnpm version
   - npm install -g @microsoft/rush
   # install aws cli
   - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && unzip -qq awscliv2.zip
@@ -88,6 +86,14 @@ before_script:
   # install jq
   - curl -s -qL -o /usr/bin/jq https://stedolan.github.io/jq/download/linux64/jq
   - chmod +x /usr/bin/jq
+
+filterCommits:
+  stage: filterCommits
+  image:
+    name: public.ecr.aws/amazonlinux/amazonlinux:2
+    entrypoint: [""]
+  script:
+    - bash -c source/cicd/filterproject_prebuild.bash
 
 downloadInfastructureConfig:
   stage: build
@@ -126,30 +132,21 @@ buildLambaLayersZip:
     paths:
       - source/infrastructure/lambdaLayers/openssl/build/build.zip
 
-.build:
-  stage: build
-  image: public.ecr.aws/lambda/nodejs:14
-  script:
-    - *common-build-steps
-    # enforce need for changelog
-    - rush change -v
-  <<: *common-artifacts
-
 test:
   stage: test
   image: public.ecr.aws/lambda/nodejs:14
+  before_script:
+    # set git commit details
+    - *common-git-steps
   script:
     - *common-build-steps
     # build
     - rush build
     - export RUSH_PARALLELISM=1
     # - rush test
-    # version projects that have changed
-    - rush publish -a
     # Bundling the node project when it past
     - export RUSH_PARALLELISM=8
-    - echo Bundling...
-    - infrastructure/bundle-core.bash -z
+    - bash -c source/cicd/buildproject_postbuild.bash
   <<: *common-artifacts
 
 deployStage:
@@ -157,6 +154,11 @@ deployStage:
   image: public.ecr.aws/lambda/nodejs:14
   variables:
     <<: *staging-variables
+  before_script:
+  # set git commit details
+  - *common-git-steps
+  # installing mkdocs...
+  - *common-markdown-steps
   script:
     - pushd source
     # rush install
@@ -167,10 +169,6 @@ deployStage:
     # deploy to staging environment
     # - bash -c source/cicd/deployproject_build.bash
   after_script:
-  # set git commit details
-  - *common-git-steps
-  # installing mkdocs...
-  - *common-markdown-steps
   - bash -c source/cicd/deployproject_postbuild.bash
 
 integrationTest:
@@ -186,7 +184,7 @@ integrationTest:
     # export the location of the config
     - export CODEBUILD_SRC_DIR_source_infrastructure="${CI_PROJECT_DIR}/${APP_CONFIG_DIR}"
     # run in the integration tests
-    - bash -c source/cicd/integrationtestsproject_build.bash
+    # - bash -c source/cicd/integrationtestsproject_build.bash
 
 deployLive:
   stage: deployLive
@@ -194,6 +192,11 @@ deployLive:
   variables:
     <<: *live-variables
   when: always
+  before_script:
+    # set git commit details
+    - *common-git-steps
+    # installing mkdocs...
+    - *common-markdown-steps
   script:
     - curl -s -qL -o /usr/bin/jq https://stedolan.github.io/jq/download/linux64/jq
     - chmod +x /usr/bin/jq
@@ -203,12 +206,8 @@ deployLive:
     - rush update --purge
     - popd
     - export CODEBUILD_SRC_DIR_source_infrastructure="${CI_PROJECT_DIR}/${APP_CONFIG_DIR}"
-    - bash -c source/cicd/deployproject_build.bash
+    # - bash -c source/cicd/deployproject_build.bash
   after_script:
-    # set git commit details
-    - *common-git-steps
-    # installing mkdocs...
-    - *common-markdown-steps
     - bash -c source/cicd/deployproject_postbuild.bash
 
 release:

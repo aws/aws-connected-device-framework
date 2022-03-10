@@ -21,6 +21,4 @@ cd source
 echo Installing...
 rush update
 
-echo Enforcing the need for change log
-rush change -v
 
