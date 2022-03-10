@@ -44,22 +44,22 @@ variables:
 .common-git-steps: &common-git-steps # install dependencies
   - git config --global user.name "gitlab-ci-token"
   - git config --global user.email "gitlab-ci-token"
-  - git remote set-url origin https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.aws.dev/connected-device-framework/cdf-core.git
+  - git remote set-url origin https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.aws.dev/robotics-and-engineering-gsp/cdf/aws-connected-device-framework.git
 
 .common-artifacts: &common-artifacts
   artifacts:
     paths:
       - source/common/
       - source/infrastructure/**/build.zip
-      - souce/packages/**/.rush/
+      - source/packages/**/.rush/
       - source/packages/**/dist/
       - source/packages/**/tsconfig.tsbuildinfo
       - source/packages/**/bundle.zip
 
 stages:
   - build
-  - test
   - deployStage
+  - test
   - integrationTest
   - deployLive
   - release
