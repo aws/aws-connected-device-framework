@@ -232,7 +232,7 @@ deployLive:
   variables:
     <<: *live-variables
   before_script:
-    - *common-install-deployment-dependencie
+    - *common-install-deployment-dependencies
     # set git commit details
     - *common-git-steps
     # installing mkdocs...
