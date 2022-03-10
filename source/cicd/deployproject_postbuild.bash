@@ -33,33 +33,27 @@ function publish_artifacts() {
     aws s3 cp "../$coreBundleName" "$ARTIFACT_PUBLISH_LOCATION/core/$coreBundleName"
 }
 
-if [ "$CODEBUILD_BUILD_SUCCEEDING" -eq 1 ]; then
+### First lets tag this release so we can always identify specific version of source code...
+echo tagging release...
+if [[ $ENVIRONMENT == *"-staging" ]]; then
+    DEPLOY_ENV='STAGING'
+else
+    DEPLOY_ENV='LIVE'
+fi
 
-    ### If the deploy was successful ....
+buildId=$(date -u +%Y%m%d%H%M%S)
+tagNames[0]="RELEASE-$DEPLOY_ENV-$buildId"
+tagNames[1]="RELEASE-$DEPLOY_ENV-LATEST"
 
-    ### First lets tag this release so we can always identify specific version of source code...
-    echo tagging release...
-    if [[ $ENVIRONMENT == *"-staging" ]]; then
-        DEPLOY_ENV='STAGING'
-    else
-        DEPLOY_ENV='LIVE'
-    fi
+for tagName in "${tagNames[@]}"; do 
+    git tag -f $tagName
+    git push -f origin $tagName
+done
 
-    buildId=$(date -u +%Y%m%d%H%M%S)
-    tagNames[0]="RELEASE-$DEPLOY_ENV-$buildId"
-    tagNames[1]="RELEASE-$DEPLOY_ENV-LATEST"
-    
-    for tagName in "${tagNames[@]}"; do 
-        git tag -f $tagName
-        git push -f origin $tagName
-    done
+echo DEPLOY_ENV $DEPLOY_ENV
 
-    echo DEPLOY_ENV $DEPLOY_ENV
-
-    ### Next, if this was a live deploy, publish the artifacts as an installable package
-    if [[ "$DEPLOY_ENV" = "LIVE" ]]; then
-        echo publishing artifacts...
-        publish_artifacts "$buildId"
-    fi
-
+### Next, if this was a live deploy, publish the artifacts as an installable package
+if [[ "$DEPLOY_ENV" = "LIVE" ]]; then
+    echo publishing artifacts...
+    publish_artifacts "$buildId"
 fi

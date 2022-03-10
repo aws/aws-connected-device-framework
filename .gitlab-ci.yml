@@ -31,6 +31,21 @@ variables:
   # build
   - rush build
 
+.common-markdown-steps: &common-markdown-steps # install dependencies
+  - yum install -y python3
+  - curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+  - python3 get-pip.py
+  - pip install --upgrade pip
+  - pip install mkdocs
+  - pip install markdown-include
+  - pip install pymdown-extensions
+  - pip install mkdocs-material
+
+.common-git-steps: &common-git-steps # install dependencies
+  - git config --global user.name "gitlab-ci-token"
+  - git config --global user.email "gitlab-ci-token"
+  - git remote set-url origin https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.aws.dev/connected-device-framework/cdf-core.git
+
 .common-artifacts: &common-artifacts
   artifacts:
     paths:
@@ -47,7 +62,7 @@ stages:
   - deployStage
   - integrationTest
   - deployLive
-  # - release
+  - release
 
 ### not working at the moment, therefore using artifacts as a temp workaround
 # cache:
@@ -151,6 +166,12 @@ deployStage:
     - export CODEBUILD_SRC_DIR_source_infrastructure="${CI_PROJECT_DIR}/${APP_CONFIG_DIR}"
     # deploy to staging environment
     # - bash -c source/cicd/deployproject_build.bash
+  after_script:
+  # set git commit details
+  - *common-git-steps
+  # installing mkdocs...
+  - *common-markdown-steps
+  - bash -c source/cicd/deployproject_postbuild.bash
 
 integrationTest:
   stage: integrationTest
@@ -183,26 +204,14 @@ deployLive:
     - popd
     - export CODEBUILD_SRC_DIR_source_infrastructure="${CI_PROJECT_DIR}/${APP_CONFIG_DIR}"
     - bash -c source/cicd/deployproject_build.bash
-  # after_script:
-  #   # set git commit details
-  #   - git config --global user.name "cdf-cicd"
-  #   - git config --global user.email "cdf-cicd"
-  #   - git remote set-url origin https://cdf-cicd:${CUSTOM_PERSONAL_ACCESS_TOKEN}@gitlab.aws.dev/connected-device-framework/cdf-core.git
-  #   #echo installing mkdocs...
-  #   - yum install -y python3
-  #   - curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-  #   - python3 get-pip.py
-  #   - pip install --upgrade pip
-  #   - pip install mkdocs
-  #   - pip install markdown-include
-  #   - pip install pymdown-extensions
-  #   - pip install mkdocs-material
-  #   - bash -c cicd/deployproject_postbuild.bash
-  # artifacts:
-  #   reports:
-  #     dotenv: build.env
+  after_script:
+    # set git commit details
+    - *common-git-steps
+    # installing mkdocs...
+    - *common-markdown-steps
+    - bash -c source/cicd/deployproject_postbuild.bash
 
-.release:
+release:
   stage: release
   image: registry.gitlab.com/gitlab-org/release-cli:latest
   needs:
