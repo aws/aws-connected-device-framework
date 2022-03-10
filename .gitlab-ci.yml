@@ -110,7 +110,7 @@ before_script:
 
 filterCommits:
   only:
-    - feature/gitlab-pipeline 
+    - main
   stage: filterCommits
   before_script:
     - yum update -y && yum install -y git tar openssl zip unzip
@@ -122,7 +122,7 @@ filterCommits:
 
 downloadInfastructureConfig:
   only:
-    - feature/gitlab-pipeline 
+    - main
   stage: build
   before_script:
     - env | sort
@@ -146,7 +146,7 @@ downloadInfastructureConfig:
 
 buildLambaLayersZip:
   only:
-    - feature/gitlab-pipeline 
+    - main
   stage: build
   before_script:
     - yum update -y && yum install -y openssl zip
@@ -163,7 +163,7 @@ buildLambaLayersZip:
 
 test:
   only:
-    - feature/gitlab-pipeline 
+    - main
   stage: test
   image: public.ecr.aws/lambda/nodejs:14
   before_script:
@@ -184,7 +184,7 @@ test:
 
 deployStage:
   only:
-    - feature/gitlab-pipeline 
+    - main
   stage: deployStage
   image: public.ecr.aws/lambda/nodejs:14
   variables:
@@ -209,7 +209,7 @@ deployStage:
 
 integrationTest:
   only:
-    - feature/gitlab-pipeline 
+    - main
   stage: integrationTest
   image: public.ecr.aws/lambda/nodejs:14
   variables:
@@ -226,7 +226,7 @@ integrationTest:
 
 deployLive:
   only:
-    - feature/gitlab-pipeline 
+    - main
   stage: deployLive
   image: public.ecr.aws/lambda/nodejs:14
   variables:
