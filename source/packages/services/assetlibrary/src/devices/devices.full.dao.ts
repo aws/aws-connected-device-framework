@@ -263,22 +263,26 @@ export class DevicesDaoFull extends BaseDaoFull {
 
         const conn = super.getConnection();
         try {
-            const traversal = conn.traversal.V(id);
-
-            for (const key of Object.keys(n.attributes)) {
-                const val = n.attributes[key];
-                if (val!==undefined) {
-                    if (val===null) {
-                        traversal.properties(key).drop();
-                    } else {
-                        traversal.property(process.cardinality.single, key, val);
-                    }
-                }
+          const updateTraversal = conn.traversal.V(id);
+          const dropTraversals = [];
+        
+          for (const key of Object.keys(n.attributes)) {
+            const val = n.attributes[key];
+            if (val !== undefined) {
+              if (val === null) {
+                dropTraversals.push(conn.traversal.V(id).properties(key).drop());
+              } else {
+                updateTraversal.property(process.cardinality.single, key, val);
+              }
             }
-
-            await traversal.iterate();
+          }
+        
+          await updateTraversal.iterate();
+          for(const dropTraversal of dropTraversals){
+            await dropTraversal.iterate();
+          }
         } finally {
-            await conn.close();
+          await conn.close();
         }
 
         logger.debug(`devices.full.dao update: exit:`);
