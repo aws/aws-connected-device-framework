@@ -98,15 +98,15 @@ Feature: Device lifecycle
       | attributes | {"serialNumber":"S001","model":"B"} |
 
 
-  Scenario: Clear existing custom device attribute
+  Scenario: Clear existing custom device attribute while updating others
     Given device "TEST-devices-device001" exists
     When I update device "TEST-devices-device001" with attributes
       | templateId | TEST-devices-type |
-      | attributes | {"serialNumber":null} |
+      | attributes | {"serialNumber":null,"model":"C"} |
     Then device "TEST-devices-device001" exists with attributes
       | description | My description |
       | awsIotThingArn | arn:aws:iot:us-east-1:xxxxxxxxxxxx:thing/test-devices-device001 |
-      | attributes |  {"model":"B"} |
+      | attributes |  {"model":"C"} |
 
 
   Scenario: Clear existing top level device attribute
@@ -117,7 +117,7 @@ Feature: Device lifecycle
     Then device "TEST-devices-device001" exists with attributes
       | description | My description |
       | awsIotThingArn | ___undefined___ |
-      | attributes |  {"model":"B"} |
+      | attributes |  {"model":"C"} |
 
 
   Scenario: Device Ids are unique
