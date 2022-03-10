@@ -16,7 +16,7 @@ import {
     Group10Resource,
     GroupResourceList,
     DeviceResourceList,
-    ASSTLIBRARY_CLIENT_TYPES,
+    ASSETLIBRARY_CLIENT_TYPES,
 } from '@cdf/assetlibrary-client/dist';
 import { fail } from 'assert';
 import stringify from 'json-stable-stringify';
@@ -38,7 +38,7 @@ use(chai_string);
 
 setDefaultTimeout(10 * 1000);
 
-const groupService:GroupsService = container.get(ASSTLIBRARY_CLIENT_TYPES.GroupsService);
+const groupService:GroupsService = container.get(ASSETLIBRARY_CLIENT_TYPES.GroupsService);
 function getAdditionalHeaders(world:unknown) : Dictionary {
     return  {
         Authorization: world[AUTHORIZATION_TOKEN]

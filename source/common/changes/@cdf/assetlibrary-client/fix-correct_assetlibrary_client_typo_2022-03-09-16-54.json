@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/assetlibrary-client",
+      "comment": "correct typo in assetlibrary client",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/assetlibrary-client",
+  "email": "tony.sherman@bissell.com"
+}

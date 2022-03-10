@@ -1,25 +1,23 @@
-# DEVICE PATCHING MODULE OVERVIEW
+# DEVICE PATCHER MODULE OVERVIEW
 
 ## Introduction
 
-The _Device Patching_ service provides a scalable way to patch an actual physical device by executing ansible playbooks.
+The _Device Patcher_ module provides a scalable way to patch a physical device by remotely executing Ansible playbooks on the device.
 
-The service utilizes SSM to activate the device as a hybrid instance and creates state manager associations which run Ansible playbooks to remotely patch the software on the physical device.
+The module utilizes SSM to activate the device as a hybrid instance and creates state manager associations which run Ansible playbooks to remotely patch the software on the physical device.
 
 ## Walkthrough
-The following represents step-by-step walkthough to setup a ggv2 core on a EC2 instance. Refer to the swagger for further details about each API and its options.
+The following represents step-by-step walkthrough to setup a Greengrass V2 core device on a EC2 instance. Refer to the [swagger](docs/swagger.yaml) for further details about each API and its options.
 
-### Pre-reqs:
-To successfully deploy Device Patcher software on the device. There are a few pre-requisits that must be met.
+### Pre-requisites:
+To successfully deploy Device Patcher software on the device there are a few pre-requisites that must be met.
 
-+ Ansible Playbook stored in S3 for SSM State Manager
-+ SSM Agent installed on the device/instance 
++ Ansible Playbook stored in [S3](https://aws.amazon.com/s3/) for [SSM State Manager](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-state.html)
++ [SSM Agent](https://docs.aws.amazon.com/systems-manager/latest/userguide/ssm-agent.html) installed on the device/instance 
 + Ansible Agent installed on the device/instance
 
 ### Step 1: Define a deployment template
-In order to deploy a Core, the first step is to create a deployment template. The template specifies configuration for a particular deployment. The payload has 2 main parts, the source of
-where the playbook is referenced from a S3 bucket and the extraVars to pass to the playbook itself. These extraVars should be common to all deployment jobs. These can be overwritten when the actual
-deployment job is created.
+In order to deploy a Greengrass V2 core device, the first step is to create a deployment template. The template specifies configuration for a particular deployment. The payload has 2 main parts, the source of where the playbook is referenced from a S3 bucket and the `extraVars` to pass to the playbook itself. These `extraVars` should be common to all deployment jobs. These can be overwritten when the actual deployment job is created.
 
 #### REQUEST
 
@@ -29,8 +27,8 @@ Content-Type: application/vnd.aws-cdf-v1.0+json
 Accept: application/vnd.aws-cdf-v1.0+json
 
 {
-	"description": "Linux GG Core installation template",
-	"type": "agentbased",
+    "description": "Linux GG Core installation template",
+    "type": "agentbased",
     "source": {
         "type": "s3",
     	"bucket":"cdf-xxxxxxxxxxxx-us-west-2",
@@ -61,14 +59,11 @@ Accept: application/vnd.aws-cdf-v1.0+json
 }
 ```
 
-All templates are versioned within the system. The first PUT call will create the template, whereas subsequent PUT's will update it.
+All templates are versioned within the system. The first `PUT` call will create the template, whereas subsequent `PUT`'s will update it.
 
 ### Step 2: Activating the Device
 
-In order to run a deployment job on the device first needs to be activated as a hybrid instance within SSM. This can be done by generating an activation code for the device
-and then following the steps to stop/register/start the SSM agent on the device itself. Since this step is done on the device itself, connectivity to the device is required
-This is the only time when a physical connection between the device and host needs to be made. The API call below will generate the activation code which can be taken
-to activate the SSM agent. This step will allow this device to be activated as a Hybrid instance in SSM.
+In order to run a deployment job on the device first needs to be activated as a hybrid instance within SSM. This can be done by generating an activation code for the device and then following the steps to stop/register/start the SSM agent on the device itself. Since this step is done on the device itself, connectivity to the device is required. This is the only time when a physical connection between the device and host needs to be made. The API call below will generate the activation code which can be taken to activate the SSM agent. This step will allow this device to be activated as a Hybrid instance in SSM.
 
 #### REQUEST
 ```bash
@@ -77,7 +72,7 @@ Content-Type: application/vnd.aws-cdf-v1.0+json
 Accept: application/vnd.aws-cdf-v1.0+json
 
 {
-	"deviceId": <my-test-core-id>
+    "deviceId": <my-test-core-id>
 }
 ```
 
@@ -94,8 +89,7 @@ Accept: application/vnd.aws-cdf-v1.0+json
 
 Upon successfully activating the device, The core deployment step can be executed. The following request will create a new SSM State Manager Association which will execute Ansible playbook on the device itself.
 
-This particular endpoint is an asynchronous REST API. The deployment gets queued which is processed at a later time. The payload requires a list of deployments. The individual deployment has required properties such as deviceId, DeploymentTemplateName, and extraVars for overriding
-playbook parameters defined in the deployment template or unique to a particular deployment.
+This particular endpoint is an asynchronous REST API. The deployment gets queued which is processed at a later time. The payload requires a list of deployments. The individual deployment has required properties such as deviceId, DeploymentTemplateName, and extraVars for overriding playbook parameters defined in the deployment template or unique to a particular deployment.
 
 #### REQUEST
 ```bash

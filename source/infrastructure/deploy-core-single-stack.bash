@@ -72,6 +72,11 @@ OPTIONAL ARGUMENTS
                   - db.r4.2xlarge
                   - db.r4.4xlarge
                   - db.r4.8xlarge
+                  - db.r5.large
+                  - db.r5.xlarge
+                  - db.r5.2xlarge
+                  - db.r5.4xlarge
+                  - db.r5.8xlarge
 
     COMPILING OPTIONS:
     ------------------

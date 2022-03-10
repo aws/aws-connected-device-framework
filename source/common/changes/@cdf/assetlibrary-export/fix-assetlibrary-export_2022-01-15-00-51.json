@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/assetlibrary-export",
+      "comment": "fix(assetlibrary-export): implement batch processing of labels",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@cdf/assetlibrary-export",
+  "email": "hkhokhar@amazon.com"
+}
