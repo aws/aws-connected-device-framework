@@ -255,11 +255,6 @@ release:
     - branches
   stage: release
   image: registry.gitlab.com/gitlab-org/release-cli:latest
-  needs:
-    - job: deployLive
-      artifacts: true
-    - job: test
-      artifacts: true
   before_script:
     - env | sort
     - apk add zip curl
