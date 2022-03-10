@@ -42,9 +42,9 @@ variables:
   - pip install mkdocs-material
 
 .common-git-steps: &common-git-steps # install dependencies
-  - git config --global user.name "cdf-cicd"
-  - git config --global user.email "cdf-cicd"
-  - git remote set-url origin https://oauth2:${GIT_ACCESS_TOKEN}@gitlab.aws.dev/robotics-and-engineering-gsp/cdf/aws-connected-device-framework.git
+  - git config --global user.name "gitlab-ci-token"
+  - git config --global user.email "gitlab-ci-token"
+  - git remote set-url origin https://gitlab-ci-token:$PROJECT_ACCESS_TOKEN@$CI_SERVER_HOST/$CI_PROJECT_PATH.git
 
 .common-artifacts: &common-artifacts
   artifacts:
