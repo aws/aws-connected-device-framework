@@ -9,7 +9,7 @@
 variables:
   CONFIG_REPO_PROJECT_ID: 9703
   CONFIG_PACKAGE_NAME: cdf-infrastructure-demo
-  RUSH_PARALLELISM: 4
+  RUSH_PARALLELISM: 8
   APP_CONFIG_DIR: common/build/configdir
   PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/aws-connected-device-framework/${PACKAGE_VERSION}"
 
