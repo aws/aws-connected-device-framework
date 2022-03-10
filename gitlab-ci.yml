@@ -9,44 +9,21 @@
 variables:
   CONFIG_REPO_PROJECT_ID: 9703
   CONFIG_PACKAGE_NAME: cdf-infrastructure-demo
+  RUSH_PARALLELISM: 4
   APP_CONFIG_DIR: common/build/configdir
-  PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/cdf-core/${PACKAGE_VERSION}"
+  PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/aws-connected-device-framework/${PACKAGE_VERSION}"
 
 .live-variables: &live-variables
   DEPLOY_ARTIFACTS_STORE_BUCKET: "cdf-cfn-artifacts-317315070315-ap-southeast-2"
-  CONFIG_ENVIRONMENT: development
   ENVIRONMENT: development
-  VPC_ID: vpc-0edf6d9d5903d4754
-  SOURCE_SECURITY_GROUP_ID: sg-0846a3eef2618ddde
-  PRIVATE_SUBNET_IDS: "subnet-04521d956927be786,subnet-0d3bf77524108f064"
-  PUBLIC_SUBNET_IDS: "subnet-0c6688f4ef6679e6a,subnet-01751ca355739fdbd"
-  PRIVATE_ROUTE_TABLE_IDS: "rtb-04604d45350f0fee2,rtb-07dc98ec3293c0b02"
-  ASSETLIBRARY_MODE: full
-  KEY_PAIR_NAME: cdf-bastion-key
-  BASTION_REMOTE_ACCESS_CIDR: "54.240.193.1/32"
-  KMS_KEY_ID: "0546de6a-e7d0-4a92-aa27-fd771d42be0a"
-  USE_EXISTING_VPC: "true"
-  TEMPLATE_SNIPPET_S3_URI_BASE: "s3://cdf-cfn-artifacts-317315070315-ap-southeast-2/cfn/"
-  API_GATEWAY_DEFINITION_TEMPLATE: cfn-apiGateway-noAuth.yaml
+  AWS_REGION: us-west-2
   DOCUMENTATION_PUBLISH_LOCATION: s3://cdf-317315070315-ap-southeast-2-docs
   ARTIFACT_PUBLISH_LOCATION: "s3://cdf-cfn-artifacts-317315070315-ap-southeast-2/releases"
 
 .staging-variables: &staging-variables
   DEPLOY_ARTIFACTS_STORE_BUCKET: "cdf-cfn-artifacts-317315070315-ap-southeast-2"
-  CONFIG_ENVIRONMENT: development
   ENVIRONMENT: development-staging
-  VPC_ID: vpc-0edf6d9d5903d4754
-  SOURCE_SECURITY_GROUP_ID: sg-0846a3eef2618ddde
-  PRIVATE_SUBNET_IDS: "subnet-04521d956927be786,subnet-0d3bf77524108f064"
-  PUBLIC_SUBNET_IDS: "subnet-0c6688f4ef6679e6a,subnet-01751ca355739fdbd"
-  PRIVATE_ROUTE_TABLE_IDS: "rtb-04604d45350f0fee2,rtb-07dc98ec3293c0b02"
-  ASSETLIBRARY_MODE: full
-  KEY_PAIR_NAME: cdf-bastion-key
-  BASTION_REMOTE_ACCESS_CIDR: "54.240.193.1/32"
-  KMS_KEY_ID: "0546de6a-e7d0-4a92-aa27-fd771d42be0a"
-  USE_EXISTING_VPC: "true"
-  TEMPLATE_SNIPPET_S3_URI_BASE: "s3://cdf-cfn-artifacts-317315070315-ap-southeast-2/cfn/"
-  API_GATEWAY_DEFINITION_TEMPLATE: cfn-apiGateway-noAuth.yaml
+  AWS_REGION: us-west-2
   DOCUMENTATION_PUBLISH_LOCATION: s3://cdf-317315070315-ap-southeast-2-docs
   ARTIFACT_PUBLISH_LOCATION: "s3://cdf-cfn-artifacts-317315070315-ap-southeast-2/releases"
 
@@ -68,10 +45,10 @@ variables:
 stages:
   - build
   - test
-  - deployStage
+  # - deployStage
   # - integrationTest
-  - deployLive
-  - release
+  # - deployLive
+  # - release
 
 ### not working at the moment, therefore using artifacts as a temp workaround
 # cache:
@@ -226,7 +203,7 @@ release:
     - apk add zip curl
   script:
     - echo "$BUILD_VERSION" # Output is: 'hello'
-    - export PACKAGE_REGISTRY_URL=${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/cdf-core/${BUILD_VERSION}
+    - export PACKAGE_REGISTRY_URL=${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/aws-connected-device-framework/${BUILD_VERSION}
     - zip -R asset.zip **/*.zip **/*.yaml **/*.yml **/*.bash **/*.md
     - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file asset.zip "${PACKAGE_REGISTRY_URL}/asset.zip"'
     - |
