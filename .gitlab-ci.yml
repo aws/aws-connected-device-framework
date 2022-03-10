@@ -29,7 +29,7 @@ variables:
 
 .common-build-steps: &common-build-steps # install dependencies
   - cd ${CI_PROJECT_DIR}/source
-  - rush install --bypass-policy --purge
+  - rush update
   # build
   - rush build
 
@@ -68,7 +68,7 @@ before_script:
   # # install specific version of pnpm needed by rush
   - curl -f https://get.pnpm.io/v5.js | node - add --global pnpm@5
   - pnpm version
-  - npm install -g @microsoft/rush@5.47.0
+  - npm install -g @microsoft/rush
   # install aws cli
   - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && unzip -qq awscliv2.zip
   - ./aws/install
@@ -127,6 +127,10 @@ test:
   image: public.ecr.aws/lambda/nodejs:14
   script:
     - *common-build-steps
+    - cd ${CI_PROJECT_DIR}/source
+    - rush update
+    # build
+    - rush build
     - rush test
     # version projects that have changed
     - rush publish -a
