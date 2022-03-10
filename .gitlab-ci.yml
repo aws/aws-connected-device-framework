@@ -28,6 +28,7 @@ variables:
   ARTIFACT_PUBLISH_LOCATION: "s3://cdf-cfn-artifacts-317315070315-ap-southeast-2/releases"
 
 .common-build-steps: &common-build-steps # install dependencies
+  - cd ${CI_PROJECT_ID}/source
   - rush install --bypass-policy --purge
   # build
   - rush build
@@ -126,12 +127,13 @@ test:
   image: public.ecr.aws/lambda/nodejs:14
   script:
     - *common-build-steps
+    - cd ${CI_PROJECT_ID}/source
     - rush test
     # version projects that have changed
     - rush publish -a
     # Bundling the node project when it past
     - echo Bundling...
-    - infrastructure/bundle-core.bash
+    - infrastructure/bundle-core.bash -z
   <<: *common-artifacts
 
 .deployStage:
