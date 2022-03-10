@@ -1,6 +1,7 @@
 # Official framework image. Look for the different tagged releases at: https://hub.docker.com/r/library/node/tags/
 
 variables:
+  CONFIG_PACKAGE_NAME: cdf-infrastructure-demo
   RUSH_PARALLELISM: 8
   APP_CONFIG_DIR: common/build/configdir
   BRANCH: main
