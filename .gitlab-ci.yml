@@ -145,6 +145,10 @@ deployStage:
   variables:
     <<: *staging-variables
   script:
+    - pushd source
+    # rush install
+    - rush update --purge
+    - popd
     # export the location of the config
     - export CODEBUILD_SRC_DIR_source_infrastructure="${CI_PROJECT_DIR}/${APP_CONFIG_DIR}"
     # deploy to staging environment
