@@ -10,11 +10,12 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import {TemplateModel} from './templates.models';
-import {RequestHeaders} from './commands.model';
-import config from 'config';
-import {PathHelper} from '../utils/path.helper';
-import {injectable} from 'inversify';
+
+import { injectable } from 'inversify';
+
+import { PathHelper } from '../utils/path.helper';
+import { RequestHeaders } from './commands.model';
+import { TemplateModel } from './templates.models';
 
 export interface TemplatesService {
     createTemplate(template: TemplateModel, additionalHeaders?: RequestHeaders): Promise<void>;
@@ -50,11 +51,10 @@ export class TemplatesServiceBase {
 
         let headers = Object.assign({}, this._headers);
 
-        if (config.has('commands.headers')) {
-            const headersFromConfig:RequestHeaders = config.get('commands.headers') as RequestHeaders;
-            if (headersFromConfig !== null && headersFromConfig !== undefined) {
-                headers = {...headers, ...headersFromConfig};
-            }
+
+        const headersFromConfig:RequestHeaders =  process.env.COMMANDS_HEADERS as unknown as  RequestHeaders;
+        if (headersFromConfig !== null && headersFromConfig !== undefined) {
+            headers = {...headers, ...headersFromConfig};
         }
 
         if (additionalHeaders !== null && additionalHeaders !== undefined) {

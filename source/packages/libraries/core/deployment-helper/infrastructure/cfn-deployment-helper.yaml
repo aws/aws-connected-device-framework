@@ -22,16 +22,15 @@ Parameters:
   ArtifactsBucket:
     Description:  Name of environment.  Used to name the created resources.
     Type: String
-  ExistingVpcId:
+  VpcId:
     Description: |
       ID of an existing VPC to deploy CDF (if using AuthType = 'Private') and/or AssetLibrary (if AssetLibraryMode = 'full') into.
       A new VPC will be created if not provided.
     Type: String
     Default: 'N/A'
 
-
 Conditions:
-  UseExistingVpc: !Not [ !Equals [ !Ref ExistingVpcId, 'N/A' ] ]
+  UseExistingVpc: !Not [ !Equals [ !Ref VpcId, 'N/A' ] ]
 
 Resources:
   CheckS3VpcEndpoint:
@@ -41,7 +40,7 @@ Resources:
     Properties:
       ServiceToken:
         !GetAtt CustomResourceLambda.Arn
-      VpcId: !Ref ExistingVpcId
+      VpcId: !Ref VpcId
       Region: !Sub '${AWS::Region}'
       ServiceName: 's3'
 
@@ -52,7 +51,7 @@ Resources:
     Properties:
       ServiceToken:
         !GetAtt CustomResourceLambda.Arn
-      VpcId: !Ref ExistingVpcId
+      VpcId: !Ref VpcId
       Region: !Sub '${AWS::Region}'
       ServiceName: 'dynamodb'
 
@@ -63,7 +62,7 @@ Resources:
     Properties:
       ServiceToken:
         !GetAtt CustomResourceLambda.Arn
-      VpcId: !Ref ExistingVpcId
+      VpcId: !Ref VpcId
       Region: !Sub '${AWS::Region}'
       ServiceName: 'execute-api'
 
@@ -80,7 +79,7 @@ Resources:
       Tracing: Active
       Environment:
         Variables:
-          NODE_CONFIG_DIR: 'packages/libraries/core/deployment-helper/dist/config'
+          APP_CONFIG_DIR: 'packages/libraries/core/deployment-helper/dist/config'
 
   CustomResourceLambdaRole:
     Type: AWS::IAM::Role

@@ -1,0 +1,17 @@
+{
+  "name": "@cdf/device-patcher-client",
+  "entries": [
+    {
+      "version": "1.1.1",
+      "tag": "@cdf/device-patcher-client_v1.1.1",
+      "date": "Thu, 17 Feb 2022 09:27:38 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@cdf/lambda-invoke\" from `^2.0.1` to `^3.0.0`"
+          }
+        ]
+      }
+    }
+  ]
+}

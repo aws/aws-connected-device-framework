@@ -128,13 +128,12 @@ Parameters:
       - 'false'
     Description: Enable Private API Vpc Endpoint
 
-
-
 Conditions:
   Deploy: !Equals [ !Ref ExistingVpcId, 'N/A' ]
   DeployS3VpcEndpoint: !Equals [ !Ref EnableS3VpcEndpoint, 'true']
   DeployDynamoDBVpcEndpoint: !Equals [ !Ref EnableDynamoDBVpcEndpoint, 'true']
   DeployPrivateApiVpcEndpoint: !Equals [ !Ref EnablePrivateApiGatewayVPCEndpoint, 'true']
+  PrivateApiGatewayVPCEndpointInUse: !Or [ !Equals [ !Ref EnablePrivateApiGatewayVPCEndpoint, 'true'], !Not [ !Equals [ !Ref ExistingPrivateApiGatewayVPCEndpoint, '' ] ] ]
 
 Resources:
   VPC:
@@ -695,8 +694,9 @@ Outputs:
     Export:
       Name: !Sub 'cdf-network-${Environment}-SecurityGroupId'
   PrivateApiGatewayVPCEndpoint:
+    Condition: PrivateApiGatewayVPCEndpointInUse
     Description: VPC endpoint for private api support
-    Value: !If [ Deploy, !Ref PrivateApiGatewayVPCEndpoint, !Ref ExistingPrivateApiGatewayVPCEndpoint]
+    Value: !If [ DeployPrivateApiVpcEndpoint, !Ref PrivateApiGatewayVPCEndpoint, !Ref ExistingPrivateApiGatewayVPCEndpoint]
     Export:
       Name: !Sub 'cdf-network-${Environment}-PrivateApiGatewayVPCEndpoint'
 

@@ -20,13 +20,13 @@ Globals:
     OpenApiVersion: 3.0.1
 
 Parameters:
+  
+  ApplicationConfigurationOverride:
+    Description: This allows you to override any application configuration.  It should consists of a text-based content with a structure and syntax comprising key–value pairs for properties. Any configurations contained in this will override the configurations found and merged from the default .env files.
+    Type: String
+
   Environment:
     Description:  Name of environment.  Used to name the created resources.
-    Type: String
-    MinLength: 1
-
-  ApplicationConfigurationOverride:
-    Description: This allows you to override any configuration application configuration. Must be a JSON formatted string. Any configurations contained in this will override the configurations found and merged from the config files.
     Type: String
     MinLength: 1
 
@@ -118,6 +118,7 @@ Parameters:
       - 'true'
       - 'false'
     MinLength: 1
+
 
 Conditions:
 
@@ -359,14 +360,14 @@ Resources:
       Timeout: 30
       Environment:
         Variables:
-          NODE_CONFIG_DIR: 'packages/services/commands/dist/config'
-          NODE_CONFIG: !Ref ApplicationConfigurationOverride
-          COMMANDS_S3_ROLE_ARN: !Sub '${PresignedUrlLambdaExecutionRole.Arn}'
-          COMMANDS_TABLES_TEMPLATES: !Ref TemplatesTable
-          COMMANDS_TABLES_JOBS: !Ref JobsTable
-          COMMANDS_ASSETLIBRARY_APIFUNCTIONNAME: !Ref AssetLibraryFunctionName
-          COMMANDS_PROVISIONING_APIFUNCTIONNAME: !Ref ProvisioningFunctionName
-          COMMANDS_S3_BUCKET: !Ref BucketName
+          APP_CONFIG_DIR: 'packages/services/commands/dist/config'
+          APP_CONFIG: !Ref ApplicationConfigurationOverride
+          AWS_S3_BUCKET: !Ref BucketName
+          AWS_S3_ROLEARN: !Sub '${PresignedUrlLambdaExecutionRole.Arn}'
+          TABLES_TEMPLATES: !Ref TemplatesTable
+          TABLES_JOBS: !Ref JobsTable
+          ASSETLIBRARY_API_FUNCTION_NAME: !Ref AssetLibraryFunctionName
+          PROVISIONING_API_FUNCTION_NAME: !Ref ProvisioningFunctionName
       Tracing: Active
 
   JobLifecycleLambdaFunction:
@@ -381,14 +382,14 @@ Resources:
       Timeout: 30
       Environment:
         Variables:
-          NODE_CONFIG_DIR: 'packages/services/commands/dist/config'
-          NODE_CONFIG: !Ref ApplicationConfigurationOverride
-          COMMANDS_S3_ROLE_ARN: !Sub '${JobLifecycleLambdaExecutionRole.Arn}'
-          COMMANDS_TABLES_TEMPLATES: !Ref TemplatesTable
-          COMMANDS_TABLES_JOBS: !Ref JobsTable
-          COMMANDS_ASSETLIBRARY_APIFUNCTIONNAME: !Ref AssetLibraryFunctionName
-          COMMANDS_PROVISIONING_APIFUNCTIONNAME: !Ref ProvisioningFunctionName
-          COMMANDS_S3_BUCKET: !Ref BucketName
+          APP_CONFIG_DIR: 'packages/services/commands/dist/config'
+          APP_CONFIG: !Ref ApplicationConfigurationOverride
+          AWS_S3_BUCKET: !Ref BucketName
+          AWS_S3_ROLEARN: !Sub '${PresignedUrlLambdaExecutionRole.Arn}'
+          TABLES_TEMPLATES: !Ref TemplatesTable
+          TABLES_JOBS: !Ref JobsTable
+          ASSETLIBRARY_API_FUNCTION_NAME: !Ref AssetLibraryFunctionName
+          PROVISIONING_API_FUNCTION_NAME: !Ref ProvisioningFunctionName
       Tracing: Active
 
   RESTLambdaFunction:
@@ -397,24 +398,22 @@ Resources:
       FunctionName: !Sub 'cdf-commands-rest-${Environment}'
       CodeUri: ../bundle.zip
       Handler: packages/services/commands/dist/lambda_proxy.handler
-
       MemorySize: 256
       Role: !GetAtt RESTLambdaExecutionRole.Arn
       Runtime: nodejs14.x
       Timeout: 30
       Environment:
         Variables:
-          NODE_CONFIG_DIR: 'packages/services/commands/dist/config'
-          NODE_CONFIG: !Ref ApplicationConfigurationOverride
-          COMMANDS_S3_ROLE_ARN: !Sub '${RESTLambdaExecutionRole.Arn}'
-          COMMANDS_TABLES_TEMPLATES: !Ref TemplatesTable
-          COMMANDS_TABLES_JOBS: !Ref JobsTable
-          COMMANDS_ASSETLIBRARY_APIFUNCTIONNAME: !Ref AssetLibraryFunctionName
-          COMMANDS_PROVISIONING_APIFUNCTIONNAME: !Ref ProvisioningFunctionName
-          COMMANDS_S3_BUCKET: !Ref BucketName
-          COMMANDS_IOT_ENDPOINT: !Ref IotEndpoint
+          APP_CONFIG_DIR: 'packages/services/commands/dist/config'
+          APP_CONFIG: !Ref ApplicationConfigurationOverride
+          AWS_S3_BUCKET: !Ref BucketName
+          AWS_S3_ROLEARN: !Sub '${PresignedUrlLambdaExecutionRole.Arn}'
+          TABLES_TEMPLATES: !Ref TemplatesTable
+          TABLES_JOBS: !Ref JobsTable
+          ASSETLIBRARY_API_FUNCTION_NAME: !Ref AssetLibraryFunctionName
+          PROVISIONING_API_FUNCTION_NAME: !Ref ProvisioningFunctionName
+          AWS_IOT_ENDPOINT: !Ref IotEndpoint
       Tracing: Active
-
       VpcConfig:
         Fn::If:
           - DeployInVPC

@@ -43,7 +43,7 @@ export class EventAssembler {
     }
 
     public toResource(item:EventItem): EventResource {
-        logger.debug(`event.assembler toRe: in: re:${JSON.stringify(item)}`);
+        logger.debug(`event.assembler toResource: in: item:${JSON.stringify(item)}`);
 
         const resource:EventResource = {
             eventId: item.id,
@@ -59,7 +59,7 @@ export class EventAssembler {
             disableAlertThreshold: item.disableAlertThreshold
         };
 
-        logger.debug(`event.assembler toRe: exit: node: ${JSON.stringify(resource)}`);
+        logger.debug(`event.assembler toResource: exit: node: ${JSON.stringify(resource)}`);
         return resource;
 
     }

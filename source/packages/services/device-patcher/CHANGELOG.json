@@ -1,0 +1,26 @@
+{
+  "name": "@cdf/device-patcher",
+  "entries": [
+    {
+      "version": "0.1.1",
+      "tag": "@cdf/device-patcher_v0.1.1",
+      "date": "Thu, 17 Feb 2022 09:27:38 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@cdf/errors\" from `^3.0.0` to `^4.0.0`"
+          },
+          {
+            "comment": "Updating dependency \"@cdf/logger\" from `^3.0.0` to `^4.0.0`"
+          },
+          {
+            "comment": "Updating dependency \"@cdf/config-inject\" from `^3.0.0` to `^4.0.0`"
+          },
+          {
+            "comment": "Updating dependency \"@cdf/express-middleware\" from `^2.1.0` to `^3.0.0`"
+          }
+        ]
+      }
+    }
+  ]
+}

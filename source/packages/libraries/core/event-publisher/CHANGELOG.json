@@ -1,0 +1,25 @@
+{
+  "name": "@cdf/event-publisher",
+  "entries": [
+    {
+      "version": "1.0.0",
+      "tag": "@cdf/event-publisher_v1.0.0",
+      "date": "Thu, 17 Feb 2022 09:27:38 GMT",
+      "comments": {
+        "major": [
+          {
+            "comment": "migrate configuration to use dotenv-flow and deployment to use installer"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@cdf/lambda-invoke\" from `^2.0.1` to `^3.0.0`"
+          },
+          {
+            "comment": "Updating dependency \"@cdf/logger\" from `^3.0.0` to `^4.0.0`"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -2,6 +2,26 @@
   "name": "@cdf/auth-jwt",
   "entries": [
     {
+      "version": "3.0.0",
+      "tag": "@cdf/auth-jwt_v3.0.0",
+      "date": "Thu, 17 Feb 2022 09:27:38 GMT",
+      "comments": {
+        "major": [
+          {
+            "comment": "migrate configuration to use dotenv-flow and deployment to use installer"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@cdf/errors\" from `^3.0.0` to `^4.0.0`"
+          },
+          {
+            "comment": "Updating dependency \"@cdf/config-inject\" from `^3.0.0` to `^4.0.0`"
+          }
+        ]
+      }
+    },
+    {
       "version": "2.0.3",
       "tag": "@cdf/auth-jwt_v2.0.3",
       "date": "Tue, 28 Sep 2021 22:04:37 GMT",

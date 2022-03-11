@@ -10,18 +10,15 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import {injectable} from 'inversify';
+
+import { injectable } from 'inversify';
 import ow from 'ow';
 import * as request from 'superagent';
-import config from 'config';
+
 import {
-    CommandListModel,
-    CommandModel,
-    ExecutionModel,
-    ExecutionSummaryListModel,
-    RequestHeaders,
+    CommandListModel, CommandModel, ExecutionModel, ExecutionSummaryListModel, RequestHeaders
 } from './commands.model';
-import {CommandsService, CommandsServiceBase} from './commands.service';
+import { CommandsService, CommandsServiceBase } from './commands.service';
 
 @injectable()
 export class CommandsApigwService extends CommandsServiceBase implements CommandsService {
@@ -30,7 +27,7 @@ export class CommandsApigwService extends CommandsServiceBase implements Command
 
     public constructor() {
         super();
-        this.baseUrl = config.get('commands.baseUrl') as string;
+        this.baseUrl = process.env.COMMANDS_BASE_URL;
     }
 
     async createCommand(command: CommandModel, additionalHeaders?: RequestHeaders): Promise<string> {

@@ -1,0 +1,30 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: CDF EventBridge custom bus
+
+Parameters:
+  Environment:
+    Description:  Name of environment.  Used to name the created resources.
+    Type: String
+    MinLength: 1
+  
+  ExistingEventBusArn:
+    Description: Arn of an existing eventbus to use instead of creating one.
+    Type: String
+
+Conditions:
+  Deploy: !Equals [ !Ref ExistingEventBusArn, '' ]
+
+Resources:
+
+  EventBus: 
+    Condition: Deploy
+    Type: AWS::Events::EventBus
+    Properties: 
+      Name: !Sub 'cdf-${Environment}'
+
+Outputs:
+  EventBusArn:
+    Description: EventBusArn
+    Value: !If [ Deploy, !GetAtt EventBus.Arn, !Ref ExistingEventBusArn]
+    Export:
+      Name: !Sub 'cdf-${Environment}-eventbus'

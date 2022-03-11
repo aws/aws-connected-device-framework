@@ -1,6 +1,20 @@
 # Change Log - @cdf/assetlibrary-export
 
-This log was last generated on Fri, 28 Jan 2022 02:31:34 GMT and should not be manually modified.
+This log was last generated on Thu, 10 Mar 2022 00:08:34 GMT and should not be manually modified.
+
+## 3.1.0
+Thu, 10 Mar 2022 00:08:34 GMT
+
+### Minor changes
+
+- fix(assetlibrary-export): implement batch processing of labels
+
+## 3.0.0
+Thu, 17 Feb 2022 09:27:38 GMT
+
+### Breaking changes
+
+- migrate configuration to use dotenv-flow and deployment to use installer
 
 ## 2.1.0
 Fri, 28 Jan 2022 02:31:34 GMT

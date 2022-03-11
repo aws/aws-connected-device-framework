@@ -27,9 +27,6 @@ Parameters:
   PrivateSubNetIds:
     Description: Comma delimited list of private subnetIds to deploy Neptune into
     Type: List<AWS::EC2::Subnet::Id>
-  PrivateRouteTableIds:
-    Description: Comma delimited list of private route table ids to allow access to Neptune
-    Type: String
   DbInstanceType:
     Description: >
       Neptune DB instance type. The list of available instance types for your region can be found here: 
@@ -63,12 +60,6 @@ Parameters:
       - 0
       - 1
     Description: Enable Neptune Streams. 0 means disable and 1 means enable. Must be enabled for Asset Library Enhanced Search.
-  BackupRetentionDays:
-    Type: Number
-    Default: 1
-    MinValue: 1
-    MaxValue: 35
-    Description: Days automated snapshots will be retained
   IamAuthEnabled:
     Type: String
     Default: 'false'
@@ -76,16 +67,10 @@ Parameters:
       - 'true'
       - 'false'
     Description: Enable IAM Auth for Neptune.
-  NeptuneEncryptAtRest:
-    Type: String
-    Default: 'false'
-    AllowedValues:
-      - 'true'
-      - 'false'
-    Description: Enable Encryption at Rest.
   SnapshotIdentifier:
     Type: String
     Description: Specifies the identifier for an existing DB cluster snapshot to restore. Refer to Neptune documentation on its use.
+    Default: ''
 
   CdfService:
     Description: Service name to tag resources.
@@ -147,8 +132,8 @@ Resources:
       GroupId: !Ref NeptuneSG
       Description: Neptune SG Self Ingress rule
       IpProtocol: tcp
-      FromPort: '8182'
-      ToPort: '8182'
+      FromPort: 8182
+      ToPort: 8182
       SourceSecurityGroupId: !Ref NeptuneSG
 
   NeptuneSGEgress:

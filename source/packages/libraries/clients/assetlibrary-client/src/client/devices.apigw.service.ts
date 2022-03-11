@@ -20,7 +20,6 @@ import {
     DeviceResourceList,
 } from './devices.model';
 import {injectable} from 'inversify';
-import config from 'config';
 import ow from 'ow';
 import * as request from 'superagent';
 import {QSHelper} from '../utils/qs.helper';
@@ -34,7 +33,7 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
 
     public constructor() {
         super();
-        this.baseUrl = config.get('assetLibrary.baseUrl') as string;
+        this.baseUrl = process.env.ASSETLIBRARY_BASE_URL;
     }
 
     /**

@@ -16,16 +16,18 @@ import {logger} from '../utils/logger';
 import AWS = require('aws-sdk');
 import { TYPES } from '../di/types';
 import { CDFProvisioningTemplate } from './templates/template.models';
-import { RegisterThingRequest, RegisterThingResponse, StartThingRegistrationTaskResponse, StartThingRegistrationTaskRequest, DescribeThingGroupResponse, DescribeThingRegistrationTaskRequest } from 'aws-sdk/clients/iot';
+import { RegisterThingRequest, StartThingRegistrationTaskResponse, StartThingRegistrationTaskRequest, DescribeThingGroupResponse, DescribeThingRegistrationTaskRequest } from 'aws-sdk/clients/iot';
 import { AWSError, Iot } from 'aws-sdk';
+import clone from 'just-clone';
 import { GetObjectRequest, GetObjectOutput, PutObjectRequest } from 'aws-sdk/clients/s3';
 import {v1 as uuid} from 'uuid';
 import { GetPolicyResponse } from 'aws-sdk/clients/iot';
 import { PromiseResult } from 'aws-sdk/lib/request';
-import { ProvisioningStepInput, ProvisioningStepOutput } from './steps/provisioningstep.model';
-import { ClientIdEnforcementPolicyStepProcessor } from './steps/clientidenforcementpolicystepprocessor';
-import { CreateDeviceCertificateStepProcessor } from './steps/createdevicecertificateprocessor';
-import { RegisterDeviceCertificateWithoutCAStepProcessor } from './steps/registerdevicecertificatewithoutcaprocessor';
+import { ProvisioningStepData } from './steps/provisioningStep.model';
+import { ClientIdEnforcementPolicyStepProcessor } from './steps/clientIdEnforcementPolicyStepProcessor';
+import { CreateDeviceCertificateStepProcessor } from './steps/createDeviceCertificateProcessor';
+import { RegisterDeviceCertificateWithoutCAStepProcessor } from './steps/registerDeviceCertificateWithoutCaProcessor';
+import { AttachAdditionalPoliciesProcessor } from './steps/attachAdditionalPoliciesProcessor';
 
 @injectable()
 export class ThingsService {
@@ -39,6 +41,7 @@ export class ThingsService {
         @inject(TYPES.ClientIdEnforcementPolicyStepProcessor) private clientIdEnforcementPolicyStepProcessor: ClientIdEnforcementPolicyStepProcessor,
         @inject(TYPES.CreateDeviceCertificateStepProcessor) private createDeviceCertificateStepProcessor: CreateDeviceCertificateStepProcessor,
         @inject(TYPES.RegisterDeviceCertificateWithoutCAStepProcessor) private registerDeviceCertificateWithoutCAStepProcessor: RegisterDeviceCertificateWithoutCAStepProcessor,
+        @inject(TYPES.AttachAdditionalPoliciesProcessor) private attachAdditionalPoliciesProcessor: AttachAdditionalPoliciesProcessor,
         @inject('aws.s3.roleArn') private s3RoleArn: string,
         @inject('aws.s3.templates.bucket') private templateBucketName: string,
         @inject('aws.s3.templates.prefix') private templatePrefix: string,
@@ -61,73 +64,77 @@ export class ThingsService {
             Bucket: this.templateBucketName,
             Key: key
         };
-        logger.debug(`s3Params: ${JSON.stringify(s3Params)}`);
-        const result = await this._s3.getObject(s3Params).promise() as AWS.S3.GetObjectOutput;
-        const templateBody = result.Body.toString();
 
-        // lets strongly type the template body, so that we can determine the CDF specific pre/post steps (if any)
-        const cdfTemplate: CDFProvisioningTemplate = JSON.parse(templateBody);
-        logger.debug(`cdfTemplate: ${JSON.stringify(cdfTemplate)}`);
+        let cdfTemplate: CDFProvisioningTemplate
+        try {
+            logger.debug(`things.service provision: s3Params: ${JSON.stringify(s3Params)}`);
+            const result = await this._s3.getObject(s3Params).promise() as AWS.S3.GetObjectOutput;
+            const templateBody = result.Body.toString();
+
+            // lets strongly type the template body, so that we can determine the CDF specific pre/post steps (if any)
+            cdfTemplate = JSON.parse(templateBody);
+            logger.debug(`cdfTemplate: ${JSON.stringify(cdfTemplate)}`);
+        } catch (err) {
+            if (err.name=== 'NoSuchKey') {
+                throw new Error(`INVALID_PROVISIONING_TEMPLATE: ${provisioningTemplateId}`);
+            } else {
+                throw err;
+            }
+        }
         const {CDF, ...awsTemplate} = cdfTemplate;
-        logger.debug(`awsTemplate: ${JSON.stringify(awsTemplate)}`);
 
         // ---- PRE PROCESS ----------------
 
-        const preProcessInput: ProvisioningStepInput = {
+        const stepData: ProvisioningStepData = {
             template: cdfTemplate,
             parameters,
-            cdfProvisioningParameters: (cdfProvisioningParameters === undefined ? {} : cdfProvisioningParameters)
+            cdfProvisioningParameters,
+            state: {}
         };
 
         // perform CDF pre-process steps before we apply the provisioning template
-        const preProcessOutput: ProvisioningStepOutput = await this.preProcessSteps(preProcessInput);
+        await this.preProcessSteps(stepData);
 
         // ---- PROVISIONING ---------------
 
         // provision thing with AWS IoT
         const iotParams: RegisterThingRequest = {
             templateBody: JSON.stringify(awsTemplate),
-            parameters: preProcessOutput.parameters
+            parameters: stepData.parameters
         };
 
-        let registered:RegisterThingResponse;
         try {
-            registered = await this._iot.registerThing(iotParams).promise() as AWS.Iot.Types.RegisterThingResponse;
+            const registered = await this._iot.registerThing(iotParams).promise() as AWS.Iot.Types.RegisterThingResponse;
+            if (stepData.state===undefined) {
+                stepData.state = {};
+            }
+            if (stepData.state===undefined) {
+                stepData.state = {};
+            }
+            stepData.state.arns = {
+                policyLogicalName: registered.resourceArns['PolicyLogicalName'],
+                certificate: registered.resourceArns['certificate'],
+                thing: registered.resourceArns['thing']
+            }
+            stepData.state.certificatePem = registered.certificatePem;
         } catch (err) {
             throw new Error('REGISTRATION_FAILED: ' + (<AWSError>err).message);
         }
 
         // ---- POST PROCESS ---------------
 
-        const postProcessInput: ProvisioningStepInput = {
-            template: cdfTemplate,
-            parameters: preProcessOutput.parameters,
-            cdfProvisioningParameters: preProcessOutput.cdfProvisioningParameters
-        };
-
-        // add registered info to CDF parameters if needed in post-processing steps
-        postProcessInput.cdfProvisioningParameters.registered = registered;
-
         // perform CDF post-process steps
-        const postProcessOutput: ProvisioningStepOutput = await this.postProcessSteps(postProcessInput);
+        await this.postProcessSteps(stepData);
 
-        // all done
-        let policyLogicalName;
-        let certificate;
-        let thing;
-        if (registered.resourceArns) {
-            policyLogicalName = registered.resourceArns['PolicyLogicalName'];
-            certificate = registered.resourceArns['certificate'];
-            thing = registered.resourceArns['thing'];
-        }
+        // ---- FINISHED ---------------
 
         const response: ProvisionThingResponse = {
-            certificatePem: (registered.certificatePem === null)? undefined : registered.certificatePem,
-            privateKey: postProcessOutput.cdfProvisioningParameters.privateKey,
+            certificatePem: stepData.state.certificatePem,
+            privateKey: stepData.state.privateKey,
             resourceArns: {
-                policyLogicalName,
-                certificate,
-                thing
+                policyLogicalName: stepData.state.arns.policyLogicalName,
+                certificate: stepData.state.arns.certificate,
+                thing: stepData.state.arns.thing
             }
         };
 
@@ -139,66 +146,50 @@ export class ThingsService {
         return response;
     }
 
-    private async preProcessSteps(preProcessInput: ProvisioningStepInput): Promise<ProvisioningStepOutput> {
-        const loggerInput = {
-            ...preProcessInput,
-            template: {...preProcessInput.template},
-            parameters: {...preProcessInput.parameters},
-            cdfProvisioningParameters: {...preProcessInput.cdfProvisioningParameters}
-        };
-        loggerInput.cdfProvisioningParameters.privateKey = this.removeStringForLogging(loggerInput.cdfProvisioningParameters.privateKey);
-        logger.debug(`things.service preProcessSteps: in: preProcessInput:${JSON.stringify(loggerInput)}`);
+    private async preProcessSteps(stepData: ProvisioningStepData): Promise<void> {
+        logger.debug(`things.service preProcessSteps: in: stepData:${JSON.stringify(this.redactStepData(stepData))}`);
 
-        let preProcessOutput: ProvisioningStepOutput = {
-            parameters: preProcessInput.parameters,
-            cdfProvisioningParameters: preProcessInput.cdfProvisioningParameters
-        };
+        const cdfOptions = stepData.template.CDF;
 
-        if (preProcessInput.template.CDF===undefined) {
-            return preProcessOutput;
-        }
+        if (!cdfOptions) return
 
-        if (preProcessInput.template.CDF.createDeviceCertificate === true) {
+        if (cdfOptions.createDeviceCertificate === true) {
             logger.debug(`things.service preProcessSteps: processing createDeviceCertificate`);
-
-            preProcessOutput = await this.createDeviceCertificateStepProcessor.process(preProcessInput);
+            await this.createDeviceCertificateStepProcessor.process(stepData);
         }
 
-        if (preProcessInput.template.CDF.registerDeviceCertificateWithoutCA === true) {
+        if (cdfOptions.registerDeviceCertificateWithoutCA === true) {
             logger.debug(`things.service preProcessSteps: processing registerDeviceCertificateWithoutCA`);
-
-            preProcessOutput = await this.registerDeviceCertificateWithoutCAStepProcessor.process(preProcessInput);
+            await this.registerDeviceCertificateWithoutCAStepProcessor.process(stepData);
         }
 
-        logger.debug(`things.service preProcessSteps: exit:`);
-        return preProcessOutput;
+        logger.debug(`things.service preProcessSteps: exit: ${JSON.stringify(this.redactStepData(stepData))}`);
     }
 
-    private async postProcessSteps(postProcessInput: ProvisioningStepInput): Promise<ProvisioningStepOutput> {
-        const loggerInput = {
-            ...postProcessInput,
-            template: {...postProcessInput.template},
-            parameters: {...postProcessInput.parameters},
-            cdfProvisioningParameters: {...postProcessInput.cdfProvisioningParameters}
-        };
-        loggerInput.cdfProvisioningParameters.privateKey = this.removeStringForLogging(loggerInput.cdfProvisioningParameters.privateKey);
-        logger.debug(`things.service postProcessSteps: in: postProcessInput:${JSON.stringify(loggerInput)}`);
+    private async postProcessSteps(stepData: ProvisioningStepData): Promise<void> {
+        logger.debug(`things.service postProcessSteps: in: stepData:${JSON.stringify(this.redactStepData(stepData))}`);
 
-        let postProcessOutput: ProvisioningStepOutput = {
-            parameters: postProcessInput.parameters,
-            cdfProvisioningParameters: postProcessInput.cdfProvisioningParameters
-        };
+        const cdfOptions = stepData.template.CDF;
 
-        if (postProcessInput.template.CDF===undefined) {
-            return postProcessOutput;
+        if (!cdfOptions) return
+
+        if (cdfOptions?.clientIdMustMatchThingName === true) {
+            await this.clientIdEnforcementPolicyStepProcessor.process(stepData);
         }
 
-        if (postProcessInput.template.CDF.clientIdMustMatchThingName === true) {
-            postProcessOutput = await this.clientIdEnforcementPolicyStepProcessor.process(postProcessInput);
+        if ((stepData.template.CDF?.attachAdditionalPolicies?.length??0) > 0 ) {
+            await this.attachAdditionalPoliciesProcessor.process(stepData);
         }
 
-        logger.debug(`things.service postProcessSteps: exit:`);
-        return postProcessOutput;
+        logger.debug(`things.service postProcessSteps: exit: ${JSON.stringify(this.redactStepData(stepData))}`);
+    }
+
+    private redactStepData(stepData: ProvisioningStepData): ProvisioningStepData {
+        const redactedStepData = clone(stepData)
+        if (stepData.state) {
+            redactedStepData.state.privateKey = this.removeStringForLogging(stepData.state.privateKey);
+        }
+        return redactedStepData;
     }
 
     public async bulkProvision(provisioningTemplateId:string, parameters:{[key:string]:string}[]) : Promise<BulkProvisionThingsResponse> {

@@ -24,7 +24,6 @@ import { EventEmitter, Type, Event } from '../events/eventEmitter.service';
 import * as NodeCache from 'node-cache';
 import ow from 'ow';
 import { TypesService } from './types.service';
-import config from 'config';
 import { DirectionStringToArrayMap, SortKeys } from '../data/model';
 
 @injectable()
@@ -32,7 +31,7 @@ export class TypesServiceFull implements TypesService {
 
     private _readFileAsync = util.promisify(fs.readFile);
 
-    private _typesCache = new NodeCache.default({ stdTTL: config.get('cache.types.ttl') });
+    private _typesCache = new NodeCache.default({ stdTTL: Number(process.env.CACHE_TYPES_TTL)});
 
     constructor(@inject(TYPES.TypesDao) private typesDao: TypesDaoFull,
         @inject(TYPES.SchemaValidatorService) private validator: SchemaValidatorService,

@@ -10,15 +10,19 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import {interfaces, ContainerModule, decorate, injectable} from 'inversify';
-import {ASSETLIBRARYHISTORY_CLIENT_TYPES} from './types';
-import {LAMBDAINVOKE_TYPES, LambdaInvokerService} from '@cdf/lambda-invoke';
-import config from 'config';
-import {EventsService} from '..';
-import {EventsLambdaService} from '../client/events.lambda.service';
-import AWS = require('aws-sdk');
-import {EventsApigwService} from '../client/events.apigw.service';
+import 'reflect-metadata'
+import '../config/env';
 
+import { ContainerModule, decorate, injectable, interfaces } from 'inversify';
+
+import { LAMBDAINVOKE_TYPES, LambdaInvokerService } from '@cdf/lambda-invoke';
+
+import { EventsService } from '../';
+import { EventsApigwService } from '../client/events.apigw.service';
+import { EventsLambdaService } from '../client/events.lambda.service';
+import { ASSETLIBRARYHISTORY_CLIENT_TYPES } from './types';
+
+import AWS = require('aws-sdk');
 export const assetLibraryHistoryContainerModule = new ContainerModule (
     (
         bind: interfaces.Bind,
@@ -26,7 +30,7 @@ export const assetLibraryHistoryContainerModule = new ContainerModule (
         isBound: interfaces.IsBound,
         _rebind: interfaces.Rebind
     ) => {
-        if (config.has('assetLibraryHistory.mode') && config.get('assetLibraryHistory.mode') === 'lambda') {
+        if (process.env.ASSETLIBRARYHISTORY_MODE === 'lambda') {
             bind<EventsService>(ASSETLIBRARYHISTORY_CLIENT_TYPES.EventsService).to(EventsLambdaService);
 
             if (!isBound(LAMBDAINVOKE_TYPES.LambdaInvokerService)) {
@@ -38,7 +42,7 @@ export const assetLibraryHistoryContainerModule = new ContainerModule (
                         return () => {
 
                             if (!isBound(LAMBDAINVOKE_TYPES.Lambda)) {
-                                const lambda = new AWS.Lambda({region:config.get('aws.region')});
+                                const lambda = new AWS.Lambda({region:process.env.AWS_REGION});
                                 bind<AWS.Lambda>(LAMBDAINVOKE_TYPES.Lambda).toConstantValue(lambda);
                             }
                             return ctx.container.get<AWS.Lambda>(LAMBDAINVOKE_TYPES.Lambda);

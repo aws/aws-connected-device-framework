@@ -11,12 +11,13 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import { setDefaultTimeout, Then, Given, TableDefinition, When} from 'cucumber';
-import {expect} from 'chai';
-import config from 'config';
+import { expect } from 'chai';
+import { Given, setDefaultTimeout, TableDefinition, Then, When } from 'cucumber';
+import { JSONPath } from 'jsonpath-plus';
 import { sign } from 'jsonwebtoken';
-import {JSONPath} from 'jsonpath-plus';
 
+import { logger } from '../utils/logger';
+import {Readable} from "stream";
 
 setDefaultTimeout(10 * 1000);
 
@@ -39,7 +40,7 @@ export function getAdditionalHeaders(authToken?:string) : Dictionary {
 
 export function replaceTokens(text:string) : string {
     return text.replace(/%property:(.*?)%/g, (_a,property)=> {
-        return config.get(property);
+        return process.env[property];
     });
 }
 
@@ -67,7 +68,7 @@ Given('my authorization is', async function (data:TableDefinition) {
     this[AUTHORIZATION_TOKEN]=signedToken;
 });
 
-When('I pause for {int}ms', async function (ms:number) {
+When('I pause for {int}ms', {timeout: -1}, async function (ms:number) {
     return new Promise(resolve => setTimeout(resolve, ms));
 });
 
@@ -82,7 +83,7 @@ export function validateExpectedAttributes<T>(model:T, data:TableDefinition) : v
         const expected = replaceTokens(d[key]);
         const expandedKey = replaceTokens(key);
         const actual = JSONPath({path:expandedKey, json});
-        // logger.debug(`*****> key:${expandedKey}, actual:${JSON.stringify(actual)}`);
+        logger.debug(`*****> key:${expandedKey}, actual:${JSON.stringify(actual)}`);
         if (expected==='___null___') {
             expect(actual?.[0], expandedKey).eq(null);
         } else if (expected==='___undefined___') {
@@ -101,6 +102,15 @@ export function validateExpectedAttributes<T>(model:T, data:TableDefinition) : v
         } else {
             expect(String(actual?.[0]), expandedKey).to.eq( expected);
         }
+    });
+}
+
+export async function streamToString(stream: Readable): Promise<string> {
+    return await new Promise((resolve, reject) => {
+        const chunks: Uint8Array[] = [];
+        stream.on('data', (chunk) => chunks.push(chunk));
+        stream.on('error', reject);
+        stream.on('end', () => resolve(Buffer.concat(chunks).toString('utf-8')));
     });
 }
 

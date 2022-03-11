@@ -11,7 +11,6 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import {injectable} from 'inversify';
-import config from 'config';
 import ow from 'ow';
 import * as request from 'superagent';
 import {SearchRequestModel, SearchResultsModel} from './search.model';
@@ -26,7 +25,8 @@ export class SearchApigwService extends SearchServiceBase implements SearchServi
 
     public constructor() {
         super();
-        this.baseUrl = config.get('assetLibrary.baseUrl') as string;
+        this.baseUrl = process.env.ASSETLIBRARY_BASE_URL;
+        
     }
 
     public async search(searchRequest:SearchRequestModel, offset?:number, count?:number, additionalHeaders?:RequestHeaders) : Promise<SearchResultsModel> {

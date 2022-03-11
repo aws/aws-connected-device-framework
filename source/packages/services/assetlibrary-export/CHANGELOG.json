@@ -2,6 +2,38 @@
   "name": "@cdf/assetlibrary-export",
   "entries": [
     {
+      "version": "3.1.0",
+      "tag": "@cdf/assetlibrary-export_v3.1.0",
+      "date": "Thu, 10 Mar 2022 00:08:34 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "fix(assetlibrary-export): implement batch processing of labels"
+          }
+        ]
+      }
+    },
+    {
+      "version": "3.0.0",
+      "tag": "@cdf/assetlibrary-export_v3.0.0",
+      "date": "Thu, 17 Feb 2022 09:27:38 GMT",
+      "comments": {
+        "major": [
+          {
+            "comment": "migrate configuration to use dotenv-flow and deployment to use installer"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@cdf/logger\" from `^3.0.0` to `^4.0.0`"
+          },
+          {
+            "comment": "Updating dependency \"@cdf/config-inject\" from `^3.0.0` to `^4.0.0`"
+          }
+        ]
+      }
+    },
+    {
       "version": "2.1.0",
       "tag": "@cdf/assetlibrary-export_v2.1.0",
       "date": "Fri, 28 Jan 2022 02:31:34 GMT",

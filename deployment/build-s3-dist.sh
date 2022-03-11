@@ -103,9 +103,6 @@ done
 # remove non-release templates
 rm $template_dist_dir/cfn-auth-jwt.template
 rm $template_dist_dir/cfn-auth-devicecert.template
-rm $template_dist_dir/cfn-certificaterenewer.template
-rm $template_dist_dir/cfn-greengrass-deployment.template
-rm $template_dist_dir/cfn-greengrass-provisioning.template
 
 
 # override the S3 Code Uri and TemplateURL for the cfn templates to point to a S3 location
@@ -150,9 +147,11 @@ cp $source_dir/packages/services/events-processor/bundle.zip $build_dist_dir/cdf
 cp $source_dir/packages/services/events-alerts/bundle.zip $build_dist_dir/cdf-events-alerts.zip
 cp $source_dir/packages/services/bulkcerts/bundle.zip $build_dist_dir/cdf-bulkcerts.zip
 cp $source_dir/packages/services/certificateactivator/bundle.zip $build_dist_dir/cdf-certificate-activator.zip
-cp $source_dir/packages/services/certificaterenewer/bundle.zip $build_dist_dir/cdf-certificate-renewer.zip
 cp $source_dir/packages/services/certificatevendor/bundle.zip $build_dist_dir/cdf-certificate-vendor.zip
 cp $source_dir/packages/services/simulation-launcher/bundle.zip $build_dist_dir/cdf-simulation-launcher.zip
 cp $source_dir/packages/services/simulation-manager/bundle.zip $build_dist_dir/cdf-simulation-manager.zip
+cp $source_dir/packages/services/device-patcher/bundle.zip $build_dist_dir/cdf-device-patcher.zip
+cp $source_dir/packages/services/greengrass2-provisioning/bundle.zip $build_dist_dir/cdf-greengrass2-provisioning.zip
+cp $source_dir/packages/services/greengrass2-installer-config-generators/bundle.zip $build_dist_dir/cdf-greengrass2-installer-config-generators.zip
 
 

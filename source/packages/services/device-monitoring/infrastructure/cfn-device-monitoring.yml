@@ -15,15 +15,17 @@ Transform: AWS::Serverless-2016-10-31
 
 Description: "IoT Device Monitoring"
 
-Parameters:  
+Parameters:
+  
+  ApplicationConfigurationOverride:
+    Description: This allows you to override any application configuration.  It should consists of a text-based content with a structure and syntax comprising key–value pairs for properties. Any configurations contained in this will override the configurations found and merged from the default .env files.
+    Type: String  
+  
   Environment:
     Description:  Name of environment.  Used to name the created resources.
     Type: String
     MinLength: 1
-  ApplicationConfigurationOverride:
-    Description: This allows you to override any configuration application configuration. Must be a JSON formatted string. Any configurations contained in this will override the configurations found and merged from the config files.
-    Type: String
-    MinLength: 1
+
   AssetLibraryFunctionName:
     Description: AssetLibrary REST API function name
     Type: String
@@ -110,13 +112,13 @@ Resources:
       FunctionName: !Sub 'cdf-deviceMonitoring-${Environment}'
       CodeUri: ../bundle.zip
       Handler: packages/services/device-monitoring/dist/iot_lifecycle_event.lambda_handler
-      MemorySize: 512
+      MemorySize: 128
       Role: !GetAtt IoTLifecycleLambdaRole.Arn
       Runtime: nodejs14.x
-      Timeout: 30
+      Timeout: 29
       Environment:
         Variables:
-          NODE_CONFIG_DIR: 'packages/services/device-monitoring/dist/config'
-          NODE_CONFIG: !Ref ApplicationConfigurationOverride
-          ASSETLIBRARY_APIFUNCTIONNAME: !Ref AssetLibraryFunctionName
+          APP_CONFIG_DIR: 'packages/services/device-monitoring/dist/config'
+          APP_CONFIG: !Ref ApplicationConfigurationOverride
+          ASSETLIBRARY_API_FUNCTION_NAME: !Ref AssetLibraryFunctionName
       Tracing: Active

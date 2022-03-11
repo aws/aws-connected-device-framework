@@ -10,15 +10,17 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { logger } from './utils/logger';
-import * as Errors from '@cdf/errors';
-import config from 'config';
+import '@cdf/config-inject'
+import { Context, CustomAuthorizerEvent } from 'aws-lambda';
 import ow from 'ow';
-import {APIGWAuthPolicyBuilder} from './api-gw.policy.builder';
+
+import * as Errors from '@cdf/errors';
+
 import { ApiGwCustomAuthorizer } from './api-gw.custom.authorizer';
-import {CustomAuthorizerEvent, Context} from 'aws-lambda';
- 
-const _awsRegion =config.get('aws.region') as string;
+import { APIGWAuthPolicyBuilder } from './api-gw.policy.builder';
+import { logger } from './utils/logger';
+
+const _awsRegion = process.env.AWS_REGION;
 const _apiGwCustomAuth = new ApiGwCustomAuthorizer();
 
 /**

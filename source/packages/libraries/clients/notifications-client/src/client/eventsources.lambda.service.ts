@@ -20,12 +20,13 @@ import {LambdaApiGatewayEventBuilder, LAMBDAINVOKE_TYPES, LambdaInvokerService} 
 @injectable()
 export class EventsourcesLambdaService extends EventsourcesServiceBase implements EventsourcesService {
 
+    private functionName : string;
     constructor(
-        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService) private lambdaInvoker: LambdaInvokerService,
-        @inject('notifications.apiFunctionName') private functionName : string
+        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService) private lambdaInvoker: LambdaInvokerService
     ) {
         super();
         this.lambdaInvoker = lambdaInvoker;
+        this.functionName = process.env.NOTIFICATIONS_API_FUNCTION_NAME;
     }
 
     async createEventSource(eventSource: EventSourceDetailResource, additionalHeaders?: RequestHeaders): Promise<string> {

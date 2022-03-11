@@ -55,38 +55,38 @@ export class SearchDaoLite {
         }
 
         if (request.eq!==undefined) {
-            Object.keys(request.eq).forEach( key => {
-                filters.push(`${this.getFilterKey(key)}:${request.eq[key]}`);
+            request.eq.forEach( filter => {
+                filters.push(`${this.getFilterKey(filter['field'])}:${filter['value']}`);
             });
         }
         if (request.neq!==undefined) {
-            Object.keys(request.neq).forEach( key => {
-                filters.push(`NOT ${this.getFilterKey(key)}:${request.neq[key]}`);
+            request.neq.forEach( filter => {
+                filters.push(`NOT ${this.getFilterKey(filter['field'])}:${filter['value']}`);
             });
         }
         if (request.lt!==undefined) {
-            Object.keys(request.lt).forEach( key => {
-                filters.push(`${this.getFilterKey(key)}<${request.lt[key]}`);
+            request.lt.forEach( filter => {
+                filters.push(`${this.getFilterKey(filter['field'])} < ${filter['value']}`);
             });
         }
         if (request.lte!==undefined) {
-            Object.keys(request.lte).forEach( key => {
-                filters.push(`${this.getFilterKey(key)}<=${request.lte[key]}`);
+            request.lte.forEach( filter => {
+                filters.push(`${this.getFilterKey(filter['field'])}<=${filter['value']}`);
             });
         }
         if (request.gt!==undefined) {
-            Object.keys(request.gt).forEach( key => {
-                filters.push(`${this.getFilterKey(key)}>${request.gt[key]}`);
+            request.gt.forEach( filter => {
+                filters.push(`${this.getFilterKey(filter['field'])}>${filter['value']}`);
             });
         }
         if (request.gte!==undefined) {
-            Object.keys(request.gte).forEach( key => {
-                filters.push(`${this.getFilterKey(key)}>=${request.gte[key]}`);
+            request.gte.forEach( filter => {
+                filters.push(`${this.getFilterKey(filter['field'])}>=${filter['value']}`);
             });
         }
         if (request.startsWith!==undefined) {
-            Object.keys(request.startsWith).forEach(key => {
-                filters.push(`${this.getFilterKey(key)}:${request.startsWith[key]}*`);
+            request.startsWith.forEach( filter => {
+                filters.push(`${this.getFilterKey(filter['field'])}:${filter['value']}*`);
             });
         }
         if (request.endsWith!==undefined) {
@@ -95,7 +95,6 @@ export class SearchDaoLite {
         if (request.contains!==undefined) {
             throw new Error('NOT_SUPPORTED');
         }
-
         const filtersAsString = filters.join(' ');
         logger.debug(`search.lite.dao buildQueryString: filters: ${filtersAsString}`);
 

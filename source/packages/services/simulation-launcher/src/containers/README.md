@@ -34,7 +34,7 @@ docker build -t jmeter jmeter/.
 Retrieve the `docker login` command:
 
 ```sh
-aws ecr get-login --no-include-email 
+aws ecr get-login-password --no-include-email 
 ```
 
 Copy, paste and run the response from the previous step to log into the docker repo.

@@ -2,6 +2,55 @@
   "name": "@cdf/certificate-activator",
   "entries": [
     {
+      "version": "4.0.1",
+      "tag": "@cdf/certificate-activator_v4.0.1",
+      "date": "Thu, 10 Mar 2022 00:08:34 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "correct typo in assetlibrary client import"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@cdf/assetlibrary-client\" from `^5.0.0` to `^5.0.1`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "4.0.0",
+      "tag": "@cdf/certificate-activator_v4.0.0",
+      "date": "Thu, 17 Feb 2022 09:27:38 GMT",
+      "comments": {
+        "major": [
+          {
+            "comment": "migrate configuration to use dotenv-flow and deployment to use installer"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@cdf/errors\" from `^3.0.0` to `^4.0.0`"
+          },
+          {
+            "comment": "Updating dependency \"@cdf/config-inject\" from `^3.0.0` to `^4.0.0`"
+          },
+          {
+            "comment": "Updating dependency \"@cdf/logger\" from `^3.0.0` to `^4.0.0`"
+          },
+          {
+            "comment": "Updating dependency \"@cdf/lambda-invoke\" from `^2.0.2` to `^3.0.0`"
+          },
+          {
+            "comment": "Updating dependency \"@cdf/assetlibrary-client\" from `^4.2.3` to `^5.0.0`"
+          },
+          {
+            "comment": "Updating dependency \"@cdf/provisioning-client\" from `^4.0.3` to `^5.0.0`"
+          }
+        ]
+      }
+    },
+    {
       "version": "3.1.4",
       "tag": "@cdf/certificate-activator_v3.1.4",
       "date": "Tue, 28 Dec 2021 18:37:09 GMT",

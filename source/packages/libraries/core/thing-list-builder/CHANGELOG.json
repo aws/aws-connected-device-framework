@@ -1,0 +1,45 @@
+{
+  "name": "@cdf/thing-list-builder",
+  "entries": [
+    {
+      "version": "1.0.1",
+      "tag": "@cdf/thing-list-builder_v1.0.1",
+      "date": "Thu, 10 Mar 2022 00:08:34 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "correct typo in assetlibrary client import"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@cdf/assetlibrary-client\" from `^5.0.0` to `^5.0.1`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.0.0",
+      "tag": "@cdf/thing-list-builder_v1.0.0",
+      "date": "Thu, 17 Feb 2022 09:27:38 GMT",
+      "comments": {
+        "major": [
+          {
+            "comment": "migrate configuration to use dotenv-flow and deployment to use installer"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@cdf/assetlibrary-client\" from `^4.1.2` to `^5.0.0`"
+          },
+          {
+            "comment": "Updating dependency \"@cdf/lambda-invoke\" from `^2.0.1` to `^3.0.0`"
+          },
+          {
+            "comment": "Updating dependency \"@cdf/logger\" from `^3.0.0` to `^4.0.0`"
+          }
+        ]
+      }
+    }
+  ]
+}

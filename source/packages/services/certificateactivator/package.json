@@ -1,6 +1,6 @@
 {
   "name": "@cdf/certificate-activator",
-  "version": "3.1.4",
+  "version": "4.0.1",
   "description": "CDF Certificate Activator",
   "author": "Dean Hart",
   "config": {
@@ -11,20 +11,17 @@
     "clean": "npx shx rm -rf dist tsconfig.tsbuildinfo bundle.zip .rush .nyc_output *.log",
     "lint": "npx eslint . --ext '.ts'",
     "build": "npx tsc -b && npx shx cp -R 'src/config' 'dist/'",
-    "test": "rushx lint && NODE_ENV=local_test NODE_CONFIG_DIR='./src/config' jest --silent",
-    "start": "rushx build && NODE_CONFIG=$(cat ${CONFIG_LOCATION}/certificateactivator/${npm_package_config_environment}-config.json) NODE_CONFIG_DIR='./src/config' nodemon dist/lambda_proxy.js",
-    
-    "prebundle": "npx shx rm -rf ../../../deploy/certificateactivator bundle.zip && npx shx mkdir -p ../../../deploy/certificateactivator",
-    "bundle": "rush deploy --overwrite --project @cdf/certificate-activator --target-folder ../../../deploy/certificateactivator",
-    "postbundle": "cd ../../../deploy/certificateactivator && zip --symlinks -rq ../../packages/services/certificateactivator/bundle.zip *"
+    "test": "rushx lint && jest --silent",
+    "start": "rushx build && APP_CONFIG_DIR=${PWD}/src/config nodemon dist/lambda_proxy.js",
+    "bundle": "../../../infrastructure/bundle-package.bash certificate-activator"
   },
   "dependencies": {
-    "@cdf/errors": "^3.0.0",
-    "@cdf/logger": "^3.0.0",
-    "@cdf/lambda-invoke": "^2.0.2",
-    "@cdf/assetlibrary-client": "^4.2.3",
-    "@cdf/config-inject": "^3.0.1",
-    "@cdf/provisioning-client": "^4.0.3",
+    "@cdf/errors": "^4.0.0",
+    "@cdf/config-inject": "^4.0.0",
+    "@cdf/logger": "^4.0.0",
+    "@cdf/lambda-invoke": "^3.0.0",
+    "@cdf/assetlibrary-client": "^5.0.1",
+    "@cdf/provisioning-client": "^5.0.0",
     "aws-sdk": "2.1048.0",
     "config": "3.3.6",
     "inversify": "5.1.1",
@@ -39,10 +36,11 @@
     "superagent": "6.1.0",
     "winston": "3.3.3",
     "winston-transport": "4.4.0",
-    "atob": "2.1.2"
+    "atob": "2.1.2",
+    "dotenv-flow": "~3.2.0",
+    "dotenv": "^8.2.0"
   },
   "devDependencies": {
-    "@types/config": "0.0.38",
     "@types/pem": "1.9.5",
 
     "@rushstack/eslint-config": "2.3.4",
@@ -63,7 +61,8 @@
     "jest": "26.6.3",
     "ts-jest": "26.5.6",
     "typescript": "4.2.4",
-    "@types/atob": "2.1.2"
+    "@types/atob": "2.1.2",
+    "@types/dotenv-flow": "~3.2.0"
   },
   "jest": {
     "globals": {

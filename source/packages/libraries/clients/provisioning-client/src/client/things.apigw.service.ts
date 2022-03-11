@@ -20,7 +20,6 @@ import {
 } from './things.model';
 
 import {injectable} from 'inversify';
-import config from 'config';
 import ow from 'ow';
 import * as request from 'superagent';
 import {ThingsService, ThingsServiceBase} from './things.service';
@@ -32,7 +31,7 @@ export class ThingsApigwService extends ThingsServiceBase implements ThingsServi
 
     public constructor() {
         super();
-        this.baseUrl = config.get('provisioning.baseUrl') as string;
+        this.baseUrl = process.env.PROVISIONING_BASE_URL;
     }
 
     /**

@@ -1,6 +1,8 @@
 # CI/CD
 ## Introduction
 
+> Note: This applies to the AWS internal CodeCommit repository, not the public facing Github mirror.
+
 The CDF core modules are compiled, tested, and deployed, via a single AWS CodePipeline CI/CD pipeline.
 
 ## Deployment of Pipeline
@@ -89,9 +91,13 @@ If unit tests were successful, a semantic release of all changed projects is per
 
 Downloads and installs `[jq](https://stedolan.github.io/jq/)`, `[mkdocs](https://www.mkdocs.org)` and any related mkdoc plugins.
 
+#### pre_build step:  `cicd/deployproject_postbuild.bash`
+
+delete all rush temp files so the path from previous code build phase so it would not cause an issue with the build step that will build the `installer` module
+
 #### build step:  `cicd/deployproject_build.bash`
 
-Builds and executes the main `infrastructure/deploy-core.bash` script to deploy all updated modules to the staging environment.
+Builds and executes the [installer](../packages/services/installer/README.md) module to deploy all updated modules to the live environment.
 
 #### post_build step:  `cicd/deployproject_postbuild.bash`
 
@@ -116,10 +122,13 @@ Runs the integration tests against the deployed staging environment.
 #### install step:  `cicd/deployproject_install.bash`
 
 Downloads and installs `[jq](https://stedolan.github.io/jq/)`, `[mkdocs](https://www.mkdocs.org)` and any related mkdoc plugins.
+#### pre_build step:  `cicd/deployproject_postbuild.bash`
+
+delete all rush temp files so the path from previous code build phase so it would not cause an issue with the build step that will build the `installer` module
 
 #### build step:  `cicd/deployproject_build.bash`
 
-Builds and executes the main `infrastructure/deploy-core.bash` script to deploy all updated modules to the live environment.
+Builds and executes the [installer](../packages/services/installer/README.md) module to deploy all updated modules to the live environment.
 
 #### post_build step:  `cicd/deployproject_postbuild.bash`
 

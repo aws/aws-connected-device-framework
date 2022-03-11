@@ -18,7 +18,6 @@ import {
     Thing,
 } from './things.model';
 import {PathHelper} from '../utils/path.helper';
-import config from 'config';
 import {injectable} from 'inversify';
 
 export interface ThingsService {
@@ -70,8 +69,9 @@ export class ThingsServiceBase {
 
         let headers = Object.assign({}, this._headers);
 
-        if (config.has('provisioning.headers')) {
-            const headersFromConfig:RequestHeaders = config.get('provisioning.headers') as RequestHeaders;
+        const customHeaders = process.env.PROVISIONING_HEADERS;
+        if (customHeaders) {
+            const headersFromConfig:RequestHeaders = customHeaders as unknown as RequestHeaders;
             if (headersFromConfig !== null && headersFromConfig !== undefined) {
                 headers = {...headers, ...headersFromConfig};
             }

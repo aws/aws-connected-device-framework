@@ -2,6 +2,32 @@
   "name": "@cdf/events-processor",
   "entries": [
     {
+      "version": "4.0.0",
+      "tag": "@cdf/events-processor_v4.0.0",
+      "date": "Thu, 17 Feb 2022 09:27:38 GMT",
+      "comments": {
+        "major": [
+          {
+            "comment": "migrate configuration to use dotenv-flow and deployment to use installer"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@cdf/errors\" from `^3.0.0` to `^4.0.0`"
+          },
+          {
+            "comment": "Updating dependency \"@cdf/logger\" from `^3.0.0` to `^4.0.0`"
+          },
+          {
+            "comment": "Updating dependency \"@cdf/express-middleware\" from `^2.1.0` to `^3.0.0`"
+          },
+          {
+            "comment": "Updating dependency \"@cdf/config-inject\" from `^3.0.0` to `^4.0.0`"
+          }
+        ]
+      }
+    },
+    {
       "version": "3.3.3",
       "tag": "@cdf/events-processor_v3.3.3",
       "date": "Tue, 28 Dec 2021 18:37:09 GMT",

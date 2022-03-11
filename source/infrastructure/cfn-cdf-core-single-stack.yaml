@@ -1,3 +1,4 @@
+---
 #--------------------------------------------------------------------------------
 #   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
 #
@@ -16,16 +17,16 @@ Description: CDF (AWS Connected Device Framework)
 
 Parameters:
   Environment:
-    Description:  Name of environment.  Used to name the created resources.
+    Description: Name of environment.  Used to name the created resources.
     Type: String
     MinLength: 1
   ArtifactsBucket:
-    Description:  Name of the S3 Bucket to store Device artifacts
+    Description: Name of the S3 Bucket to store Device artifacts
     Type: String
   ArtifactsConfigPrefix:
-    Description:  Key prefix within bucket where config artifacts are uploaded to.
+    Description: Key prefix within bucket where config artifacts are uploaded to.
     Type: String
-    Default: 'config/'
+    Default: "config/"
   KmsKeyId:
     Description: The KMS key ID used to encrypt SSM parameters. If not provided, one will be created.
     Type: String
@@ -52,53 +53,57 @@ Parameters:
       Name of the API Gateway Cloudformation definition along with the authorization method to use.  Use one of the provided
       templates to implement no auth, private, api key, lambda request, lamdba token, or Cognito auth, or modify one to meet your own
       authentization requirements.  The template must exist within the provided TemplateSnippetS3UriBase location.
-    Default: 'cfn-apiGateway-noAuth.yaml'
+    Default: "cfn-apiGateway-noAuth.yaml"
     Type: String
     MinLength: 1
+  ExistingEventBusArn:
+    Description: Arn of an existing eventbus to use instead of creating one.
+    Type: String
+    Default: ""
   ExistingVpcId:
     Description: |
       ID of an existing VPC to deploy CDF (if using AuthType = 'Private') and/or AssetLibrary (if AssetLibraryMode = 'full') into.
       A new VPC will be created if not provided.
     Type: String
-    Default: 'N/A'
+    Default: "N/A"
   ExistingCDFSecurityGroupId:
     Description: |
       ID of an existing security group to deploy CDF and/or AssetLibrary into if an existing VPC is to be used.
       A new security group will be created if not provided.
     Type: String
-    Default: 'N/A'
+    Default: "N/A"
   ExistingPrivateSubnetIds:
     Description: |
       ID of existing private subnetIds to deploy CDF and/or AssetLibrary into if an existing VPC is to be used.
       New private subnets will be created if not provided.
     Type: String
-    Default: 'N/A'
+    Default: "N/A"
   ExistingPublicSubnetIds:
     Description: |
       ID of existing public subnetIds to deploy CDF and/or AssetLibrary into if an existing VPC is to be used.
       New public subnets will be created if not provided.
     Type: String
-    Default: 'N/A'
+    Default: "N/A"
   ExistingPrivateRouteTableIds:
     Description: |
       ID of existing private route tables to deploy AssetLibrary into if an existing VPC is to be used.
       New private route tables will be created if not provided.
     Type: String
-    Default: 'N/A'
+    Default: "N/A"
   ExistingPrivateApiGatewayVPCEndpoint:
     Description: |
       ID of existing VPC endpoint to deploy CDF and/or AssetLibrary into if an existing VPC is to be used.
       New VPC endpoint will be created if not provided.
     Type: String
-    Default: 'N/A'
+    Default: "N/A"
   CognitoUserPoolArn:
     Description: Cognito user pool arn.  Only required if AuthType is set to 'Cognito'.
     Type: String
-    Default: 'N/A'
+    Default: "N/A"
   AuthorizerFunctionArn:
     Description: Lambda authorizer function arn.  Only required if AuthType is set to 'LambdaRequest' or 'LambdaToken'.
     Type: String
-    Default: 'N/A'
+    Default: "N/A"
   BastionKeyPairName:
     Description: Bastion Key Pair name
     Type: String
@@ -107,194 +112,212 @@ Parameters:
     ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/x
     Description: Allowed CIDR block for external SSH access to the bastions
     Type: String
+
+  IncludeDevicePatcher:
+    Description: If true, the Device Patcher service will be deployed.
+    Type: String
+    Default: "true"
+    AllowedValues:
+      - "true"
+      - "false"
+    MinLength: 1
+
+  IncludeGreengrass2:
+    Description: If true, the Greengrass2 Provisioning and Installer Configs Generator service will be deployed.
+    Type: String
+    Default: "true"
+    AllowedValues:
+      - "true"
+      - "false"
+    MinLength: 1
+
   IncludeAssetLibrary:
     Description: If true, the Asset Library service will be deployed.
     Type: String
-    Default: 'true'
+    Default: "true"
     AllowedValues:
-      - 'true'
-      - 'false'
+      - "true"
+      - "false"
     MinLength: 1
   AssetLibraryMode:
     Description: Run in 'lite' mode which includes device registry functionality only, or 'full' mode which augments the device registry with a graph based datastore.
     Type: String
-    Default: 'full'
+    Default: "full"
     AllowedValues:
-      - 'full'
-      - 'lite'
+      - "full"
+      - "lite"
     MinLength: 1
   IncludeProvisioning:
     Description: If true, the Provisioning service will be deployed.
     Type: String
-    Default: 'true'
+    Default: "true"
     AllowedValues:
-      - 'true'
-      - 'false'
+      - "true"
+      - "false"
     MinLength: 1
   IncludeCommands:
     Description: If true, the Commands service will be deployed.
     Type: String
-    Default: 'true'
+    Default: "true"
     AllowedValues:
-      - 'true'
-      - 'false'
+      - "true"
+      - "false"
     MinLength: 1
   IncludeDeviceMonitoring:
     Description: If true, the Device Monitoring service will be deployed.
     Type: String
-    Default: 'true'
+    Default: "true"
     AllowedValues:
-      - 'true'
-      - 'false'
+      - "true"
+      - "false"
     MinLength: 1
   IncludeEventsProcessor:
     Description: If true, the Event Processor service will be deployed.
     Type: String
-    Default: 'true'
+    Default: "true"
     AllowedValues:
-      - 'true'
-      - 'false'
+      - "true"
+      - "false"
     MinLength: 1
   IncludeEventsAlerts:
     Description: If true, the Event Alerts service will be deployed.
     Type: String
-    Default: 'true'
+    Default: "true"
     AllowedValues:
-      - 'true'
-      - 'false'
+      - "true"
+      - "false"
     MinLength: 1
   IncludeAssetLibraryHistory:
     Description: If true, the Asset Library History service will be deployed.
     Type: String
-    Default: 'true'
+    Default: "true"
     AllowedValues:
-      - 'true'
-      - 'false'
+      - "true"
+      - "false"
     MinLength: 1
   IncludeBulkCerts:
     Description: If true, the Bulk Certs service will be deployed.
     Type: String
-    Default: 'true'
+    Default: "true"
     AllowedValues:
-      - 'true'
-      - 'false'
+      - "true"
+      - "false"
     MinLength: 1
   IncludeCertificateActivator:
     Description: If true, the CertificateActivator service will be deployed.
     Type: String
-    Default: 'true'
+    Default: "true"
     AllowedValues:
-      - 'true'
-      - 'false'
+      - "true"
+      - "false"
     MinLength: 1
   IncludeCertificateVendor:
     Description: If true, the CertificateVendor service will be deployed.
     Type: String
-    Default: 'true'
+    Default: "true"
     AllowedValues:
-      - 'true'
-      - 'false'
+      - "true"
+      - "false"
     MinLength: 1
   IncludeSimulationManager:
     Description: If true, then Simulation Manager will be deployed.
     Type: String
-    Default: 'true'
+    Default: "true"
     AllowedValues:
-      - 'true'
-      - 'false'
+      - "true"
+      - "false"
   IncludeSimulationLauncher:
     Description: If true, then Simulation Launcher will be deployed.
     Type: String
-    Default: 'true'
+    Default: "true"
     AllowedValues:
-      - 'true'
-      - 'false'
+      - "true"
+      - "false"
     MinLength: 1
   IncludeAssetLibraryExport:
     Description: If true, then Asset Library Exporter will be deployed.
     Type: String
-    Default: 'true'
+    Default: "true"
     AllowedValues:
-      - 'true'
-      - 'false'
+      - "true"
+      - "false"
     MinLength: 1
   JMeterRepoName:
     Description: JMeter repository Name for the simulation launcher docker image.
     Type: String
-    Default: 'N/A'
+    Default: "N/A"
   EnableApiGatewayAccessLogs:
     Description: Enables API gateway Access Logging, defaults to false if not specified.
     Type: String
-    Default: 'false'
+    Default: "false"
     AllowedValues:
-      - 'true'
-      - 'false'
+      - "true"
+      - "false"
     MinLength: 1
+  Greengrass2ProvisioningAppConfigOverride:
+    Description: Greengrass2 Provisioning Application Configuration
+    Type: String
+    Default: ""
+  DevicePatcherAppConfigOverride:
+    Description: Device Patcher Application Configuration
+    Type: String
+    Default: ""
+  Greengrass2InstallerConfigsGeneratorAppConfigOverride:
+    Description: Greengrass2 Installer Configs Generator Application Configuration
+    Type: String
+    Default: ""
   AssetLibraryAppConfigOverride:
     Description: Asset Library Application Configuration AssetLibrary Application
     Type: String
-    Default: '{}'
-    MinLength: 1
+    Default: ""
   AssetLibraryExportAppConfigOverride:
     Description: Asset Library Export Application Configuration AssetLibrary Application
     Type: String
-    Default: '{}'
-    MinLength: 1
+    Default: ""
   ProvisioningAppConfigOverride:
     Description: Provisioning Application Configuration AssetLibrary Application
     Type: String
-    Default: '{}'
-    MinLength: 1
+    Default: ""
   AssetLibraryHistoryAppConfigOverride:
     Description: Asset Library History Application Configuration AssetLibrary Application
     Type: String
-    Default: '{}'
-    MinLength: 1
+    Default: ""
   CommandsAppConfigOverride:
     Description: Asset Library Application Configuration AssetLibrary Application
     Type: String
-    Default: '{}'
-    MinLength: 1
+    Default: ""
   DeviceMonitoringAppConfigOverride:
     Description: Device Monitoring Application Configuration AssetLibrary Application
     Type: String
-    Default: '{}'
-    MinLength: 1
+    Default: ""
   BulkCertsAppConfigOverride:
     Description: Bulk Certificates Application Configuration AssetLibrary Application
     Type: String
-    Default: '{}'
-    MinLength: 1
+    Default: ""
   SimulationManagerAppConfigOverride:
     Description: Simulation Manager Application Configuration AssetLibrary Application
     Type: String
-    Default: '{}'
-    MinLength: 1
+    Default: ""
   SimulationLauncherAppConfigOverride:
     Description: Simulation Launcher Application Configuration AssetLibrary Application
     Type: String
-    Default: '{}'
-    MinLength: 1
+    Default: ""
   CertificateActivatorAppConfigOverride:
     Description: Certificate Activator Application Configuration AssetLibrary Application
     Type: String
-    Default: '{}'
-    MinLength: 1
+    Default: ""
   CertificateVendorAppConfigOverride:
     Description: Certitificate Vendor Application Configuration AssetLibrary Application
     Type: String
-    Default: '{}'
-    MinLength: 1
+    Default: ""
   EventsProcessorAppConfigOverride:
     Description: Event Processor Application Configuration AssetLibrary Application
     Type: String
-    Default: '{}'
-    MinLength: 1
+    Default: ""
   EventsAlertsAppConfigOverride:
     Description: Event Alerts Vendor Application Configuration AssetLibrary Application
     Type: String
-    Default: '{}'
-    MinLength: 1
+    Default: ""
   AssetLibraryExportETLMaxConcurrency:
     Description: Asset Library Export ETL Workflow Max Concurrency
     Type: String
@@ -302,7 +325,7 @@ Parameters:
   NeptuneSnapshotIdentifier:
     Type: String
     Description: Specifies the identifier for an existing DB cluster snapshot to restore. Refer to Neptune documentation on its use.
-    Default: ''
+    Default: ""
   NeptuneDbInstanceType:
     Description: Neptune DB instance type
     Type: String
@@ -314,25 +337,43 @@ Parameters:
       - db.r4.2xlarge
       - db.r4.4xlarge
       - db.r4.8xlarge
+      - db.r5.large
+      - db.r5.xlarge
+      - db.r5.2xlarge
+      - db.r5.4xlarge
+      - db.r5.8xlarge
     ConstraintDescription: Must be a valid Neptune instance type.
 
 Conditions:
-  DeployAssetLibrary: !Equals [ !Ref IncludeAssetLibrary, 'true' ]
-  DeployAssetLibraryFull: !And [ !Condition DeployAssetLibrary, !Equals [ !Ref AssetLibraryMode, 'full' ]]
-  DeployAssetLibraryExport: !And [ !Condition DeployAssetLibrary, !Equals [ !Ref IncludeAssetLibraryExport, 'true' ]]
-  DeployProvisioning: !Equals [ !Ref IncludeProvisioning, 'true' ]
-  DeployCommands: !And [ !Condition DeployAssetLibrary, !Equals [ !Ref IncludeCommands, 'true' ]]
-  DeployEventsAlerts: !Equals [ !Ref IncludeEventsAlerts, 'true' ]
-  DeployEventsProcessor: !Equals [ !Ref IncludeEventsProcessor, 'true' ]
-  DeployAssetLibraryHistory: !And [ !Condition DeployAssetLibrary, !Equals [ !Ref IncludeAssetLibraryHistory, 'true' ]]
-  DeployBulkCerts: !Equals [ !Ref IncludeBulkCerts, 'true' ]
-  DeploySimulationManager: !Equals [ !Ref IncludeSimulationManager, 'true' ]
-  DeploySimulationLauncher: !Equals [ !Ref IncludeSimulationLauncher, 'true' ]
-  UsingVPCForAuth: !Equals [ !Ref AuthType, 'Private' ]
-  UsingVPCForAssetLibrary: !Or [ !Condition UsingVPCForAuth, !Condition DeployAssetLibraryFull ]
+  DeployAssetLibrary: !Equals [!Ref IncludeAssetLibrary, "true"]
+  DeployAssetLibraryFull:
+    !And [
+      !Condition DeployAssetLibrary,
+      !Equals [!Ref AssetLibraryMode, "full"],
+    ]
+  DeployAssetLibraryExport:
+    !And [
+      !Condition DeployAssetLibrary,
+      !Equals [!Ref IncludeAssetLibraryExport, "true"],
+    ]
+  DeployProvisioning: !Equals [!Ref IncludeProvisioning, "true"]
+  DeployCommands:
+    !And [!Condition DeployAssetLibrary, !Equals [!Ref IncludeCommands, "true"]]
+  DeployEventsProcessor: !Equals [!Ref IncludeEventsProcessor, "true"]
+  DeployAssetLibraryHistory:
+    !And [
+      !Condition DeployAssetLibrary,
+      !Equals [!Ref IncludeAssetLibraryHistory, "true"],
+    ]
+  DeployBulkCerts: !Equals [!Ref IncludeBulkCerts, "true"]
+  DeploySimulationManager: !Equals [!Ref IncludeSimulationManager, "true"]
+  DeployGreengrass2: !Equals [!Ref IncludeGreengrass2, "true"]
+  DeployDevicePatcher: !Equals [!Ref IncludeDevicePatcher, "true"]
+  UsingVPCForAuth: !Equals [!Ref AuthType, "Private"]
+  UsingVPCForAssetLibrary:
+    !Or [!Condition UsingVPCForAuth, !Condition DeployAssetLibraryFull]
 
 Resources:
-
   Shared:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -342,6 +383,7 @@ Resources:
         ArtifactsBucket: !Ref ArtifactsBucket
         KmsKeyId: !Ref KmsKeyId
         AuthType: !Ref AuthType
+        ExistingEventBusArn: !Ref ExistingEventBusArn
         ExistingVpcId: !Ref ExistingVpcId
         ExistingCDFSecurityGroupId: !Ref ExistingCDFSecurityGroupId
         ExistingPrivateSubnetIds: !Ref ExistingPrivateSubnetIds
@@ -350,9 +392,6 @@ Resources:
         ExistingPrivateApiGatewayVPCEndpoint: !Ref ExistingPrivateApiGatewayVPCEndpoint
         IncludeAssetLibrary: !Ref IncludeAssetLibrary
         AssetLibraryMode: !Ref AssetLibraryMode
-        IncludeProvisioning: !Ref IncludeProvisioning
-        IncludeBulkCerts: !Ref IncludeBulkCerts
-        IncludeCertificateVendor: !Ref IncludeCertificateVendor
       TimeoutInMinutes: 30
 
   ServicesA:
@@ -360,9 +399,9 @@ Resources:
     Properties:
       TemplateURL: ./cfn-cdf-core-services-A.yaml
       Parameters:
+        EventBusArn: !GetAtt Shared.Outputs.EventBusArn
         Environment: !Ref Environment
         ArtifactsBucket: !Ref ArtifactsBucket
-        ArtifactsConfigPrefix: !Ref ArtifactsConfigPrefix
         KmsKeyId: !GetAtt Shared.Outputs.KmsKeyId
         TemplateSnippetS3UriBase: !Ref TemplateSnippetS3UriBase
         AuthType: !Ref AuthType
@@ -371,14 +410,42 @@ Resources:
         AuthorizerFunctionArn: !Ref AuthorizerFunctionArn
         BastionKeyPairName: !Ref BastionKeyPairName
         BastionRemoteAccessCIDR: !Ref BastionRemoteAccessCIDR
-        PublicSubNetIds: !If [ UsingVPCForAssetLibrary, !GetAtt Shared.Outputs.PublicSubnetIds, '' ]
+        PublicSubNetIds:
+          !If [
+            UsingVPCForAssetLibrary,
+            !GetAtt Shared.Outputs.PublicSubnetIds,
+            "",
+          ]
+        IncludeGreengrass2: !Ref IncludeGreengrass2
+        IncludeDevicePatcher: !Ref IncludeDevicePatcher
         IncludeAssetLibrary: !Ref IncludeAssetLibrary
         AssetLibraryMode: !Ref AssetLibraryMode
-        VpcId: !If [ UsingVPCForAssetLibrary, !GetAtt Shared.Outputs.VpcId, '' ]
-        CDFSecurityGroupId: !If [ UsingVPCForAssetLibrary, !GetAtt Shared.Outputs.CDFSecurityGroupId, '' ]
-        PrivateSubNetIds: !If [ UsingVPCForAssetLibrary, !GetAtt Shared.Outputs.PrivateSubnetIds, '' ]
-        PrivateRouteTableIds: !If [ UsingVPCForAssetLibrary, !GetAtt Shared.Outputs.PrivateRouteTableIds, '' ]
-        PrivateApiGatewayVPCEndpoint: !If [ UsingVPCForAssetLibrary, !GetAtt Shared.Outputs.PrivateApiGatewayVPCEndpoint, '' ]
+        VpcId: !If [UsingVPCForAssetLibrary, !GetAtt Shared.Outputs.VpcId, ""]
+        CDFSecurityGroupId:
+          !If [
+            UsingVPCForAssetLibrary,
+            !GetAtt Shared.Outputs.CDFSecurityGroupId,
+            "",
+          ]
+        PrivateSubNetIds:
+          !If [
+            UsingVPCForAssetLibrary,
+            !GetAtt Shared.Outputs.PrivateSubnetIds,
+            "",
+          ]
+        PrivateRouteTableIds:
+          !If [
+            UsingVPCForAssetLibrary,
+            !GetAtt Shared.Outputs.PrivateRouteTableIds,
+            "",
+          ]
+        PrivateApiGatewayVPCEndpoint:
+          !If [
+            UsingVPCForAssetLibrary,
+            !GetAtt Shared.Outputs.PrivateApiGatewayVPCEndpoint,
+            "",
+          ]
+        AssetLibraryExportETLMaxConcurrency: !Ref AssetLibraryExportETLMaxConcurrency
         IncludeProvisioning: !Ref IncludeProvisioning
         OpenSslLambdaLayerArn: !GetAtt Shared.Outputs.OpenSslLambdaLayerArn
         IncludeCommands: !Ref IncludeCommands
@@ -393,12 +460,15 @@ Resources:
         CustomResourceLambdaArn: !GetAtt Shared.Outputs.CustomResourceLambdaArn
         CustomResourceVPCLambdaArn: !GetAtt Shared.Outputs.CustomResourceVPCLambdaArn
         EnableApiGatewayAccessLogs: !Ref EnableApiGatewayAccessLogs
+        Greengrass2ProvisioningAppConfigOverride: !Ref Greengrass2ProvisioningAppConfigOverride
+        Greengrass2InstallerConfigsGeneratorAppConfigOverride: !Ref Greengrass2InstallerConfigsGeneratorAppConfigOverride
+        DevicePatcherAppConfigOverride: !Ref DevicePatcherAppConfigOverride
         CertificateActivatorAppConfigOverride: !Ref CertificateActivatorAppConfigOverride
         CertificateVendorAppConfigOverride: !Ref CertificateVendorAppConfigOverride
         EventProcessorAppConfigOverride: !Ref EventsProcessorAppConfigOverride
         EventAlertsAppConfigOverride: !Ref EventsAlertsAppConfigOverride
         AssetLibraryAppConfigOverride: !Ref AssetLibraryAppConfigOverride
-        AssetLibraryExportAppConfigOverride: !Ref AssetLibraryAppConfigOverride
+        AssetLibraryExportAppConfigOverride: !Ref AssetLibraryExportAppConfigOverride
         ProvisioningAppConfigOverride: !Ref ProvisioningAppConfigOverride
         AssetLibraryHistoryAppConfigOverride: !Ref AssetLibraryHistoryAppConfigOverride
         CommandsAppConfigOverride: !Ref CommandsAppConfigOverride
@@ -423,11 +493,31 @@ Resources:
         ApiGatewayDefinitionTemplate: !Ref ApiGatewayDefinitionTemplate
         CognitoUserPoolArn: !Ref CognitoUserPoolArn
         AuthorizerFunctionArn: !Ref AuthorizerFunctionArn
-        PublicSubNetIds: !If [ UsingVPCForAssetLibrary, !GetAtt Shared.Outputs.PublicSubnetIds, '' ] 
-        VpcId: !If [ UsingVPCForAssetLibrary, !GetAtt Shared.Outputs.VpcId, '' ]
-        CDFSecurityGroupId: !If [ UsingVPCForAssetLibrary, !GetAtt Shared.Outputs.CDFSecurityGroupId, '' ]
-        PrivateSubNetIds: !If [ UsingVPCForAssetLibrary, !GetAtt Shared.Outputs.PrivateSubnetIds, '' ]
-        PrivateApiGatewayVPCEndpoint: !If [ UsingVPCForAssetLibrary, !GetAtt Shared.Outputs.PrivateApiGatewayVPCEndpoint, '' ]
+        PublicSubNetIds:
+          !If [
+            UsingVPCForAssetLibrary,
+            !GetAtt Shared.Outputs.PublicSubnetIds,
+            "",
+          ]
+        VpcId: !If [UsingVPCForAssetLibrary, !GetAtt Shared.Outputs.VpcId, ""]
+        CDFSecurityGroupId:
+          !If [
+            UsingVPCForAssetLibrary,
+            !GetAtt Shared.Outputs.CDFSecurityGroupId,
+            "",
+          ]
+        PrivateSubNetIds:
+          !If [
+            UsingVPCForAssetLibrary,
+            !GetAtt Shared.Outputs.PrivateSubnetIds,
+            "",
+          ]
+        PrivateApiGatewayVPCEndpoint:
+          !If [
+            UsingVPCForAssetLibrary,
+            !GetAtt Shared.Outputs.PrivateApiGatewayVPCEndpoint,
+            "",
+          ]
         IncludeSimulationManager: !Ref IncludeSimulationManager
         IncludeSimulationLauncher: !Ref IncludeSimulationLauncher
         CustomResourceLambdaArn: !GetAtt Shared.Outputs.CustomResourceLambdaArn
@@ -440,7 +530,6 @@ Resources:
       TimeoutInMinutes: 120
     DependsOn:
       - Shared
-
 
 Outputs:
   KmsKeyId:
@@ -524,6 +613,23 @@ Outputs:
     Condition: DeployBulkCerts
     Description: Bulk Certs REST API host
     Value: !GetAtt ServicesA.Outputs.BulkCertsApiGatewayHost
+
+  DevicePatcherRestApiFunctionName:
+    Condition: DeployDevicePatcher
+    Description: Device Patcher REST API lambda function name
+    Value: !GetAtt ServicesA.Outputs.DevicePatcherRestApiFunctionName
+  DevicePatcherApiGatewayUrl:
+    Condition: DeployDevicePatcher
+    Description: Device Patcher REST API URL
+    Value: !GetAtt ServicesA.Outputs.DevicePatcherApiGatewayUrl
+  Greengrass2ProvisioningRestApiFunctionName:
+    Condition: DeployGreengrass2
+    Description: Device Patcher REST API lambda function name
+    Value: !GetAtt ServicesA.Outputs.Greengrass2ProvisioningRestApiFunctionName
+  Greengrass2ProvisioningApiGatewayUrl:
+    Condition: DeployGreengrass2
+    Description: Device Patcher REST API URL
+    Value: !GetAtt ServicesA.Outputs.Greengrass2ProvisioningApiGatewayUrl
 
   SimulationManagerRestApiFunctionName:
     Condition: DeploySimulationManager

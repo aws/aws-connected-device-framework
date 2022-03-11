@@ -33,6 +33,7 @@ Parameters:
     Type: String
     MinLength: 1
 
+
   AuthType:
     Description: Authorization type to apply to the API gateway endpoints
     Type: String
@@ -121,8 +122,8 @@ Parameters:
     Type: String
     Default: false
     AllowedValues:
-      - 'true'
-      - 'false'
+      - true
+      - false
     MinLength: 1
   
   SimulationManagerAppConfigOverride:
@@ -147,7 +148,7 @@ Resources:
     Properties:
       TemplateURL: ../packages/services/simulation-launcher/infrastructure/cfn-simulation-launcher.yaml
       Parameters:
-        ApplicationConfigurationOverride: !Ref SimulationLauncherAppConfigOverride
+        ApplicationConfigurationOverride: !Ref SimulationLauncherAppConfigOverride 
         Environment: !Ref Environment
         JmeterRepoName: !Ref JMeterRepoName
         VpcId: !Ref VpcId

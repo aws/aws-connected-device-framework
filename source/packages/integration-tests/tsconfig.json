@@ -4,7 +4,8 @@
         "outDir": "dist",
         "rootDir": "src",
         "moduleResolution": "node",
-		"suppressImplicitAnyIndexErrors": true
+        "suppressImplicitAnyIndexErrors": true,
+        "resolveJsonModule": true
     },
     "references": [
         {
@@ -23,7 +24,10 @@
             "path": "../libraries/clients/notifications-client"
         },
         {
-            "path": "../libraries/clients/greengrass-deployment-client"
+            "path": "../libraries/clients/device-patcher-client"
+        },
+        {
+            "path": "../libraries/clients/greengrass2-provisioning-client"
         }
     ],
     "include": [

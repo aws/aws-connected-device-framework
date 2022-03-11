@@ -12,11 +12,10 @@
  *********************************************************************************************************************/
 import {createLogger, LoggerOptions, transports} from 'winston';
 import {format} from 'logform';
-import config from 'config';
 const { combine, timestamp, printf } = format;
 
 export const logger = createLogger(<LoggerOptions> {
-    level: config.get('logging.level'),
+    level: process.env.LOGGING_LEVEL,
     exitOnError: false,
     transports: [
         new transports.Console(),

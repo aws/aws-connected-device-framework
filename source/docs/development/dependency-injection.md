@@ -12,7 +12,7 @@ The following dependencies are required:
 - inversify-binding-decorators
 - inversify-express-utils
 
-In addition, for unit testng, the following development dependencies are required:
+In addition, for unit testing, the following development dependencies are required:
 
 - @types/jest
 - jest
@@ -91,7 +91,7 @@ const server = new InversifyExpressServer(container);
 
 Let's continue with the `Parent` and `Child` class examples above.
 
-If the `Parent` class is run as is, it will call the `returnSomething()` method of `Child`, and return `Hello World`.  But when writing unit tests we need to isolate the `Parent` class, and not call the `Child` class.  The following is an exmaple of how to mock the `Child` class using the [jest](https://facebook.github.io/jest/) testing framework:
+If the `Parent` class is run as is, it will call the `returnSomething()` method of `Child`, and return `Hello World`.  But when writing unit tests we need to isolate the `Parent` class, and not call the `Child` class.  The following is an example of how to mock the `Child` class using the [jest](https://facebook.github.io/jest/) testing framework:
 
 ```javascript
 import 'reflect-metadata';

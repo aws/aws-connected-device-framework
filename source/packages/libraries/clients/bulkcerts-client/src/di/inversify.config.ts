@@ -10,18 +10,23 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import {interfaces, ContainerModule, decorate, injectable} from 'inversify';
-import {BULKCERTS_CLIENT_TYPES} from './types';
-import {LAMBDAINVOKE_TYPES, LambdaInvokerService} from '@cdf/lambda-invoke';
-import AWS = require('aws-sdk');
-import config from 'config';
-import {CertificatesTaskService} from '../client/certificatestask.service';
-import {CertificatesTaskLambdaService} from '../client/certificatestask.lambda.service';
-import {CertificatesTaskApigwService} from '../client/certificatestask.apigw.service';
-import {CertificatesService} from '../client/certificates.service';
-import {CertificatesLambdaService} from '../client/certificates.lambda.service';
-import {CertificatesApigwService} from '../client/certificates.apigw.service';
 
+import 'reflect-metadata';
+import '../config/env';
+
+import { ContainerModule, decorate, injectable, interfaces } from 'inversify';
+
+import { LAMBDAINVOKE_TYPES, LambdaInvokerService } from '@cdf/lambda-invoke';
+
+import { CertificatesApigwService } from '../client/certificates.apigw.service';
+import { CertificatesLambdaService } from '../client/certificates.lambda.service';
+import { CertificatesService } from '../client/certificates.service';
+import { CertificatesTaskApigwService } from '../client/certificatestask.apigw.service';
+import { CertificatesTaskLambdaService } from '../client/certificatestask.lambda.service';
+import { CertificatesTaskService } from '../client/certificatestask.service';
+import { BULKCERTS_CLIENT_TYPES } from './types';
+
+import AWS = require('aws-sdk');
 export const bulkcertsContainerModule = new ContainerModule (
     (
         bind: interfaces.Bind,
@@ -29,7 +34,7 @@ export const bulkcertsContainerModule = new ContainerModule (
         isBound: interfaces.IsBound,
         _rebind: interfaces.Rebind
     ) => {
-        if (config.has('bulkcerts.mode') && config.get('bulkcerts.mode') === 'lambda') {
+        if (process.env.BULKCERTS_MODE === 'lambda') {
             bind<CertificatesTaskService>(BULKCERTS_CLIENT_TYPES.CertificatesTaskService).to(CertificatesTaskLambdaService);
             bind<CertificatesService>(BULKCERTS_CLIENT_TYPES.CertificatesService).to(CertificatesLambdaService);
 
@@ -42,7 +47,7 @@ export const bulkcertsContainerModule = new ContainerModule (
                         return () => {
 
                             if (!isBound(LAMBDAINVOKE_TYPES.Lambda)) {
-                                const lambda = new AWS.Lambda({region:config.get('aws.region')});
+                                const lambda = new AWS.Lambda({region:process.env.AWS_REGION});
                                 bind<AWS.Lambda>(LAMBDAINVOKE_TYPES.Lambda).toConstantValue(lambda);
                             }
                             return ctx.container.get<AWS.Lambda>(LAMBDAINVOKE_TYPES.Lambda);

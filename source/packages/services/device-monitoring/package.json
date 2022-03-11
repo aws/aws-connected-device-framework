@@ -1,29 +1,21 @@
 {
   "name": "@cdf/device-monitoring",
-  "version": "4.0.4",
+  "version": "5.0.1",
   "description": "CDF Device Monitoring",
-  "author": "Rahul Sareen",
-  "config": {
-    "environment": "development"
-  },
-  "scripts": {
+  "author": "Rahul Sareen",  "scripts": {
     "clean": "npx shx rm -rf dist tsconfig.tsbuildinfo bundle.zip .rush .nyc_output *.log",
     "lint": "npx eslint . --ext '.ts'",
     "build": "npx tsc -b && npx shx cp -R 'src/config' 'dist/'",
-    "test": "rushx lint && NODE_ENV= NODE_CONFIG_DIR='./src/config' jest --silent --passWithNoTests",
-    "start": "rushx build && NODE_CONFIG=$(cat ${CONFIG_LOCATION}/devicemonitoring/${npm_package_config_environment}-config.json) NODE_CONFIG_DIR='./src/config' nodemon dist/lambda_proxy.js",
-    
-    "prebundle": "npx shx rm -rf ../../../deploy/device-monitoring bundle.zip && npx shx mkdir -p ../../../deploy/device-monitoring",
-    "bundle": "rush deploy --overwrite --project @cdf/device-monitoring --target-folder ../../../deploy/device-monitoring",
-    "postbundle": "cd ../../../deploy/device-monitoring && zip --symlinks -rq ../../packages/services/device-monitoring/bundle.zip *"
+    "test": "rushx lint && jest --silent --passWithNoTests",
+    "start": "rushx build && APP_CONFIG_DIR=${PWD}/src/config nodemon dist/lambda_proxy.js",
+    "bundle": "../../../infrastructure/bundle-package.bash device-monitoring"
   },
   "dependencies": {
-    "@cdf/errors": "^3.0.0",
-    "@cdf/logger": "^3.0.0",
-    "@cdf/lambda-invoke": "^2.0.2",
-    "@cdf/assetlibrary-client": "^4.2.3",
-    "@cdf/config-inject": "^3.0.1",
-   "config": "3.3.6",
+    "@cdf/errors": "^4.0.0",
+    "@cdf/config-inject": "^4.0.0",
+    "@cdf/logger": "^4.0.0",
+    "@cdf/lambda-invoke": "^3.0.0",
+    "@cdf/assetlibrary-client": "^5.0.1",
     "http-errors": "1.8.0",
     "js-yaml": "4.1.0",
     "logform": "2.2.0",
@@ -35,11 +27,12 @@
     "reflect-metadata": "0.1.13",
     "superagent": "6.1.0",
     "winston": "3.3.3",
-    "winston-transport": "4.4.0"
+    "winston-transport": "4.4.0",
+    "dotenv-flow": "~3.2.0",
+    "dotenv": "^8.2.0"
   },
   "devDependencies": {
     "@types/superagent": "4.1.10",
-    "@types/config": "0.0.38",
 
     "@rushstack/eslint-config": "2.3.4",
     "eslint": "7.26.0",
@@ -58,7 +51,8 @@
     "jest-resolve": "26.6.2",
     "jest": "26.6.3",
     "ts-jest": "26.5.6",
-    "typescript": "4.2.4"
+    "typescript": "4.2.4",
+    "@types/dotenv-flow": "~3.2.0"
   },
   "nyc": {
     "exclude": [

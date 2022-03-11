@@ -10,16 +10,18 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { expect } from 'chai';
-import { setDefaultTimeout, When, TableDefinition, Then, Given} from 'cucumber';
-import {CommandsService, CommandModel, COMMANDS_CLIENT_TYPES} from '@cdf/commands-client';
-import stringify from 'json-stable-stringify';
-import {RESPONSE_STATUS, replaceTokens, AUTHORIZATION_TOKEN} from '../common/common.steps';
-import AWS = require('aws-sdk');
-import config from 'config';
-import {container} from '../../di/inversify.config';
-import {Dictionary} from '../../../../libraries/core/lambda-invoke/src';
 
+import { expect } from 'chai';
+import { Given, setDefaultTimeout, TableDefinition, Then, When } from 'cucumber';
+import stringify from 'json-stable-stringify';
+
+import { CommandModel, COMMANDS_CLIENT_TYPES, CommandsService } from '@cdf/commands-client';
+
+import { Dictionary } from '../../../../libraries/core/lambda-invoke/src';
+import { container } from '../../di/inversify.config';
+import { AUTHORIZATION_TOKEN, replaceTokens, RESPONSE_STATUS } from '../common/common.steps';
+
+import AWS = require('aws-sdk');
 export const COMMAND_ID = 'commandId';
 export const COMMAND_DETAILS = 'commandDetails';
 /*
@@ -39,7 +41,7 @@ function getAdditionalHeaders(world:unknown) : Dictionary {
     };
 }
 
-const iot: AWS.Iot = new AWS.Iot({region: config.get('aws.region')});
+const iot: AWS.Iot = new AWS.Iot({region: process.env.AWS_REGION});
 
 function buildCommandModel(data:TableDefinition) {
     const d = data.rowsHash();

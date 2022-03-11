@@ -10,31 +10,34 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import {inject, injectable} from 'inversify';
+import { inject, injectable } from 'inversify';
 import ow from 'ow';
-import {CategoryEnum, StatusEnum, TypeResource, TypeResourceList} from './templates.model';
-import {RequestHeaders} from './common.model';
-import {TemplatesService, TemplatesServiceBase} from './templates.service';
-import {LambdaApiGatewayEventBuilder, LAMBDAINVOKE_TYPES, LambdaInvokerService, Dictionary} from '@cdf/lambda-invoke';
+import { CategoryEnum, StatusEnum, TypeResource, TypeResourceList } from './templates.model';
+import { RequestHeaders } from './common.model';
+import { TemplatesService, TemplatesServiceBase } from './templates.service';
+import { LambdaApiGatewayEventBuilder, LAMBDAINVOKE_TYPES, LambdaInvokerService, Dictionary } from '@cdf/lambda-invoke';
 
 @injectable()
 export class TemplatesLambdaService extends TemplatesServiceBase implements TemplatesService {
 
+    private functionName: string;
+
     constructor(
         @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService) private lambdaInvoker: LambdaInvokerService,
-        @inject('assetLibrary.apiFunctionName') private functionName : string
     ) {
         super();
         this.lambdaInvoker = lambdaInvoker;
+        this.functionName = process.env.ASSETLIBRARY_API_FUNCTION_NAME
+
     }
 
     async getTemplate(category: CategoryEnum, templateId: string, status: StatusEnum, additionalHeaders?: RequestHeaders): Promise<TypeResource> {
-        ow(category,'category', ow.string.nonEmpty);
-        ow(templateId,'templateId', ow.string.nonEmpty);
+        ow(category, 'category', ow.string.nonEmpty);
+        ow(templateId, 'templateId', ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.templateRelativeUrl(category, templateId))
-            .setQueryStringParameters({status})
+            .setQueryStringParameters({ status })
             .setMethod('GET')
             .setHeaders(super.buildHeaders(additionalHeaders));
 
@@ -44,9 +47,9 @@ export class TemplatesLambdaService extends TemplatesServiceBase implements Temp
     }
 
     async createTemplate(resource: TypeResource, additionalHeaders?: RequestHeaders): Promise<void> {
-        ow(resource,'resource', ow.object.nonEmpty);
-        ow(resource.templateId,'templateId', ow.string.nonEmpty);
-        ow(resource.category,'category', ow.string.nonEmpty);
+        ow(resource, 'resource', ow.object.nonEmpty);
+        ow(resource.templateId, 'templateId', ow.string.nonEmpty);
+        ow(resource.category, 'category', ow.string.nonEmpty);
 
         const templateId = resource.templateId;
         const category = resource.category;
@@ -64,9 +67,9 @@ export class TemplatesLambdaService extends TemplatesServiceBase implements Temp
     }
 
     async updateTemplate(resource: TypeResource, additionalHeaders?: RequestHeaders): Promise<void> {
-        ow(resource,'resource', ow.object.nonEmpty);
-        ow(resource.templateId,'templateId', ow.string.nonEmpty);
-        ow(resource.category,'category', ow.string.nonEmpty);
+        ow(resource, 'resource', ow.object.nonEmpty);
+        ow(resource.templateId, 'templateId', ow.string.nonEmpty);
+        ow(resource.category, 'category', ow.string.nonEmpty);
 
         const templateId = resource.templateId;
         const category = resource.category;
@@ -83,8 +86,8 @@ export class TemplatesLambdaService extends TemplatesServiceBase implements Temp
     }
 
     async publishTemplate(category: CategoryEnum, templateId: string, additionalHeaders?: RequestHeaders): Promise<void> {
-        ow(category,'category', ow.string.nonEmpty);
-        ow(templateId,'templateId', ow.string.nonEmpty);
+        ow(category, 'category', ow.string.nonEmpty);
+        ow(templateId, 'templateId', ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.publishTemplateRelativeUrl(category, templateId))
@@ -95,8 +98,8 @@ export class TemplatesLambdaService extends TemplatesServiceBase implements Temp
     }
 
     async deleteTemplate(category: CategoryEnum, templateId: string, additionalHeaders?: RequestHeaders): Promise<void> {
-        ow(category,'category', ow.string.nonEmpty);
-        ow(templateId,'templateId', ow.string.nonEmpty);
+        ow(category, 'category', ow.string.nonEmpty);
+        ow(templateId, 'templateId', ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.templateRelativeUrl(category, templateId))
@@ -107,20 +110,20 @@ export class TemplatesLambdaService extends TemplatesServiceBase implements Temp
     }
 
     async listTemplates(category: CategoryEnum, status?: string, offset?: number, count?: number, additionalHeaders?: RequestHeaders): Promise<TypeResourceList> {
-        ow(category,'category', ow.string.nonEmpty);
-        
+        ow(category, 'category', ow.string.nonEmpty);
+
         const qs: Dictionary = {};
         if (status) {
-          qs.status = status;
+            qs.status = status;
         }
         if (offset) {
-          qs.offset = `${offset}`;
+            qs.offset = `${offset}`;
         }
         if (count) {
-          qs.count = `${count}`;
+            qs.count = `${count}`;
         }
 
-       const event = new LambdaApiGatewayEventBuilder()
+        const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.templatesRelativeUrl(category))
             .setQueryStringParameters(qs)
             .setMethod('GET')

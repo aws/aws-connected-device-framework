@@ -2,6 +2,18 @@
   "name": "@cdf/express-middleware",
   "entries": [
     {
+      "version": "3.0.0",
+      "tag": "@cdf/express-middleware_v3.0.0",
+      "date": "Thu, 17 Feb 2022 09:27:38 GMT",
+      "comments": {
+        "major": [
+          {
+            "comment": "migrate configuration to use dotenv-flow and deployment to use installer"
+          }
+        ]
+      }
+    },
+    {
       "version": "2.1.0",
       "tag": "@cdf/express-middleware_v2.1.0",
       "date": "Thu, 29 Jul 2021 00:16:37 GMT",

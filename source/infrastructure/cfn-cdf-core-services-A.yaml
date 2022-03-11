@@ -1,14 +1,14 @@
 #--------------------------------------------------------------------------------
 #   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
-#                                                                                                                    
-#  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance    
-#  with the License. A copy of the License is located at                                                             
-#                                                                                                                    
-#      http://www.apache.org/licenses/LICENSE-2.0                                                                    
-#                                                                                                                    
-#  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES 
-#  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    
-#  and limitations under the License.                                                                                
+#
+#  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance
+#  with the License. A copy of the License is located at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES
+#  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions
+#  and limitations under the License.
 #---------------------------------------------------------------------------------
 AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
@@ -16,17 +16,12 @@ Description: CDF (AWS Connected Device Framework)
 
 Parameters:
   Environment:
-    Description:  Name of environment.  Used to name the created resources.
+    Description: Name of environment.  Used to name the created resources.
     Type: String
     MinLength: 1
   ArtifactsBucket:
-    Description:  Name of environment.  Used to name the created resources.
+    Description: Name of environment.  Used to name the created resources.
     Type: String
-  ArtifactsConfigPrefix:
-    Description:  Key prefix within bucket where config artifacts are uploaded to.
-    Type: String
-    Default: 'config/'
-
   KmsKeyId:
     Description: The KMS key ID used to encrypt SSM parameters. If not provided, one will be created.
     Type: String
@@ -55,17 +50,17 @@ Parameters:
       Name of the API Gateway Cloudformation definition along with the authorization method to use.  Use one of the provided
       templates to implement no auth, private, api key, lambda request, lamdba token, or Cognito auth, or modify one to meet your own
       authentization requirements.  The template must exist within the provided TemplateSnippetS3UriBase location.
-    Default: 'cfn-apiGateway-noAuth.yaml'
+    Default: "cfn-apiGateway-noAuth.yaml"
     Type: String
     MinLength: 1
   CognitoUserPoolArn:
     Description: Cognito user pool arn.  Only required if AuthType is set to 'Cognito'.
     Type: String
-    Default: 'N/A'
+    Default: "N/A"
   AuthorizerFunctionArn:
     Description: Lambda authorizer function arn.  Only required if AuthType is set to 'LambdaRequest' or 'LambdaToken'.
     Type: String
-    Default: 'N/A'
+    Default: "N/A"
 
   BastionKeyPairName:
     Description: Bastion Key Pair name
@@ -75,7 +70,7 @@ Parameters:
     ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/x
     Description: Allowed CIDR block for external SSH access to the bastions
     Type: String
-    Default: '0.0.0.0/0'
+    Default: "0.0.0.0/0"
   PublicSubNetIds:
     Description: Comma delimited list of private subnetIds to deploy the Bastion into
     Type: String
@@ -83,19 +78,24 @@ Parameters:
   IncludeAssetLibrary:
     Description: If true, the Asset Library service will be deployed.
     Type: String
-    Default: 'true'
+    Default: "true"
     AllowedValues:
-      - 'true'
-      - 'false'
+      - "true"
+      - "false"
     MinLength: 1
   AssetLibraryMode:
     Description: Run in 'lite' mode which includes device registry functionality only, or 'full' mode which augments the device registry with a graph based datastore.
     Type: String
-    Default: 'full'
+    Default: "full"
     AllowedValues:
-      - 'full'
-      - 'lite'
+      - "full"
+      - "lite"
     MinLength: 1
+
+  EventBusArn:
+    Description: Arn of EventBus used by CDF services to publish events
+    Type: String
+
   VpcId:
     Description: ID of VPC to deploy the Asset Library into
     Type: String
@@ -115,88 +115,106 @@ Parameters:
   IncludeProvisioning:
     Description: If true, the Provisioning service will be deployed.
     Type: String
-    Default: 'true'
+    Default: "true"
     AllowedValues:
-      - 'true'
-      - 'false'
-    MinLength: 1 
+      - "true"
+      - "false"
+    MinLength: 1
   OpenSslLambdaLayerArn:
     Description: OpenSSL lambda layer ARN
     Type: String
     MinLength: 1
 
+  IncludeDevicePatcher:
+    Description: If true, the Device Patcher service will be deployed.
+    Type: String
+    Default: "true"
+    AllowedValues:
+      - "true"
+      - "false"
+    MinLength: 1
+
+  IncludeGreengrass2:
+    Description: If true, the Greengrass2 Provisioning and Installer Configs Generator service will be deployed.
+    Type: String
+    Default: "true"
+    AllowedValues:
+      - "true"
+      - "false"
+    MinLength: 1
+
   IncludeCommands:
     Description: If true, the Commands service will be deployed.
     Type: String
-    Default: 'true'
+    Default: "true"
     AllowedValues:
-      - 'true'
-      - 'false'
+      - "true"
+      - "false"
     MinLength: 1
   IncludeDeviceMonitoring:
     Description: If true, the Device Monitoring service will be deployed.
     Type: String
-    Default: 'true'
+    Default: "true"
     AllowedValues:
-      - 'true'
-      - 'false'
+      - "true"
+      - "false"
     MinLength: 1
   IncludeEventProcessor:
     Description: If true, the Event Processor service will be deployed.
     Type: String
-    Default: 'true'
+    Default: "true"
     AllowedValues:
-      - 'true'
-      - 'false'
+      - "true"
+      - "false"
     MinLength: 1
   IncludeEventAlerts:
     Description: If true, the Event Alerts service will be deployed.
     Type: String
-    Default: 'true'
+    Default: "true"
     AllowedValues:
-      - 'true'
-      - 'false'
+      - "true"
+      - "false"
     MinLength: 1
   IncludeAssetLibraryHistory:
     Description: If true, the Asset Library History service will be deployed.
     Type: String
-    Default: 'true'
+    Default: "true"
     AllowedValues:
-      - 'true'
-      - 'false'
+      - "true"
+      - "false"
     MinLength: 1
   IncludeBulkCerts:
     Description: If true, the Bulk Certs service will be deployed.
     Type: String
-    Default: 'true'
+    Default: "true"
     AllowedValues:
-      - 'true'
-      - 'false'
+      - "true"
+      - "false"
     MinLength: 1
   IncludeCertificateActivator:
     Description: If true, the CertificateActivator service will be deployed.
     Type: String
-    Default: 'true'
+    Default: "true"
     AllowedValues:
-      - 'true'
-      - 'false'
+      - "true"
+      - "false"
     MinLength: 1
   IncludeCertificateVendor:
     Description: If true, the CertificateVendor service will be deployed.
     Type: String
-    Default: 'true'
+    Default: "true"
     AllowedValues:
-      - 'true'
-      - 'false'
+      - "true"
+      - "false"
     MinLength: 1
 
   IncludeAssetLibraryExport:
     Description: If true, then Asset Library Exporter will be deployed.
     Type: String
-    Default: 'true'
+    Default: "true"
     AllowedValues:
-      - 'true'
-      - 'false'
+      - "true"
+      - "false"
     MinLength: 1
 
   CustomResourceLambdaArn:
@@ -211,12 +229,23 @@ Parameters:
   EnableApiGatewayAccessLogs:
     Description: Enales API gateway Access Logging, defaults to false if not specified.
     Type: String
-    Default: 'false'
+    Default: "false"
     AllowedValues:
-      - 'true'
-      - 'false'
+      - "true"
+      - "false"
     MinLength: 1
 
+  Greengrass2ProvisioningAppConfigOverride:
+    Description: Greengrass2
+    Type: String
+    Default: ""
+  DevicePatcherAppConfigOverride:
+    Description: Device Patcher Application Configuration
+    Type: String
+    Default: ""
+  Greengrass2InstallerConfigsGeneratorAppConfigOverride:
+    Description: Greengrass2 Installer Configs Generator Application Configuration
+    Type: String
 
   AssetLibraryExportETLMaxConcurrency:
     Description: Asset Library Export ETL Workflow Max Concurrency
@@ -226,47 +255,48 @@ Parameters:
   CertificateActivatorAppConfigOverride:
     Description: Certificate Activator Application Configuration AssetLibrary Application
     Type: String
-    Default: '{}'
+    Default: ""
   CertificateVendorAppConfigOverride:
     Description: Certitificate Vendor Application Configuration AssetLibrary Application
     Type: String
-    Default: '{}'
+    Default: ""
   EventProcessorAppConfigOverride:
     Description: Event Processor Application Configuration AssetLibrary Application
     Type: String
-    Default: '{}'
+    Default: ""
   EventAlertsAppConfigOverride:
     Description: Event Alerts Vendor Application Configuration AssetLibrary Application
     Type: String
-    Default: '{}'
+    Default: ""
   AssetLibraryAppConfigOverride:
     Description: Asset Library Application Configuration AssetLibrary Application
     Type: String
-    Default: '{}'
+    Default: ""
   AssetLibraryExportAppConfigOverride:
     Description: Asset Library Application Configuration AssetLibrary Application
     Type: String
-    Default: '{}'
+    Default: ""
   ProvisioningAppConfigOverride:
     Description: Provisioning Application Configuration AssetLibrary Application
     Type: String
-    Default: '{}'
+    Default: ""
   AssetLibraryHistoryAppConfigOverride:
     Description: Asset Library History Application Configuration AssetLibrary Application
     Type: String
-    Default: '{}'
+    Default: ""
   CommandsAppConfigOverride:
     Description: Asset Library Application Configuration AssetLibrary Application
     Type: String
-    Default: '{}'
+    Default: ""
   DeviceMonitoringAppConfigOverride:
     Description: Device Monitoring Application Configuration AssetLibrary Application
     Type: String
-    Default: '{}'
+    Default: ""
   BulkCertsAppConfigOverride:
     Description: Bulk Certificates Application Configuration AssetLibrary Application
     Type: String
-    Default: '{}'
+    Default: ""
+
   NeptuneDbInstanceType:
     Description: Neptune DB instance type
     Type: String
@@ -278,6 +308,11 @@ Parameters:
       - db.r4.2xlarge
       - db.r4.4xlarge
       - db.r4.8xlarge
+      - db.r5.large
+      - db.r5.xlarge
+      - db.r5.2xlarge
+      - db.r5.4xlarge
+      - db.r5.8xlarge
     ConstraintDescription: Must be a valid Neptune instance type.
 
   NeptuneSnapshotIdentifier:
@@ -285,25 +320,42 @@ Parameters:
     Description: Specifies the identifier for an existing DB cluster snapshot to restore. Refer to Neptune documentation on its use.
 
 Conditions:
-  DeployAssetLibrary: !Equals [ !Ref IncludeAssetLibrary, 'true' ]
-  DeployAssetLibraryExport: !And [ !Condition DeployAssetLibrary, !Equals [ !Ref IncludeAssetLibraryExport, 'true' ]]
-  DeployAssetLibraryHistory: !And [ !Condition DeployAssetLibrary, !Equals [ !Ref IncludeAssetLibraryHistory, 'true' ]]
-  DeployAssetLibraryFull: !And [ !Condition DeployAssetLibrary, !Equals [ !Ref AssetLibraryMode, 'full' ]]
-  DeployProvisioning: !Equals [ !Ref IncludeProvisioning, 'true' ]
-  DeployCommands: !And [ !Condition DeployAssetLibrary, !Equals [ !Ref IncludeCommands, 'true' ]]
-  DeployDeviceMonitoring: !And [ !Condition DeployAssetLibrary, !Equals [ !Ref IncludeDeviceMonitoring, 'true' ]]
-  DeployEventProcessor: !Equals [ !Ref IncludeEventProcessor, 'true' ]
-  DeployEventAlerts: !Equals [ !Ref IncludeEventAlerts, 'true' ]
-  DeployBulkCerts: !Equals [ !Ref IncludeBulkCerts, 'true' ]
-  DeployCertificateActivator: !Equals [ !Ref IncludeCertificateActivator, 'true' ]
-  DeployCertificateVendor: !Equals [ !Ref IncludeCertificateVendor, 'true' ]
-
-  UsingVPCForAuth: !Equals [ !Ref AuthType, 'Private' ]
-  UsingVPCForAssetLibrary: !Or [ !Condition UsingVPCForAuth, !Condition DeployAssetLibraryFull ]
-
+  DeployAssetLibrary: !Equals [!Ref IncludeAssetLibrary, "true"]
+  DeployAssetLibraryExport:
+    !And [
+      !Condition DeployAssetLibrary,
+      !Equals [!Ref IncludeAssetLibraryExport, "true"],
+    ]
+  DeployAssetLibraryHistory:
+    !And [
+      !Condition DeployAssetLibrary,
+      !Equals [!Ref IncludeAssetLibraryHistory, "true"],
+    ]
+  DeployAssetLibraryFull:
+    !And [
+      !Condition DeployAssetLibrary,
+      !Equals [!Ref AssetLibraryMode, "full"],
+    ]
+  DeployProvisioning: !Equals [!Ref IncludeProvisioning, "true"]
+  DeployCommands:
+    !And [!Condition DeployAssetLibrary, !Equals [!Ref IncludeCommands, "true"]]
+  DeployDeviceMonitoring:
+    !And [
+      !Condition DeployAssetLibrary,
+      !Equals [!Ref IncludeDeviceMonitoring, "true"],
+    ]
+  DeployEventProcessor: !Equals [!Ref IncludeEventProcessor, "true"]
+  DeployEventAlerts: !Equals [!Ref IncludeEventAlerts, "true"]
+  DeployBulkCerts: !Equals [!Ref IncludeBulkCerts, "true"]
+  DeployCertificateActivator: !Equals [!Ref IncludeCertificateActivator, "true"]
+  DeployCertificateVendor: !Equals [!Ref IncludeCertificateVendor, "true"]
+  DeployGreengrass2: !Equals [!Ref IncludeGreengrass2, "true"]
+  DeployDevicePatcher: !Equals [!Ref IncludeDevicePatcher, "true"]
+  UsingVPCForAuth: !Equals [!Ref AuthType, "Private"]
+  UsingVPCForAssetLibrary:
+    !Or [!Condition UsingVPCForAuth, !Condition DeployAssetLibraryFull]
 
 Resources:
-
   Bastion:
     Type: AWS::CloudFormation::Stack
     Condition: DeployAssetLibraryFull
@@ -315,7 +367,7 @@ Resources:
         PublicSubNetIds: !Ref PublicSubNetIds
         KeyPairName: !Ref BastionKeyPairName
         RemoteAccessCIDR: !Ref BastionRemoteAccessCIDR
-        EnableTCPForwarding: 'true'
+        EnableTCPForwarding: "true"
         CDFSecurityGroupId: !Ref CDFSecurityGroupId
       TimeoutInMinutes: 20
 
@@ -325,23 +377,24 @@ Resources:
     Properties:
       TemplateURL: ../packages/services/assetlibrary/infrastructure/cfn-assetLibrary-parent.yaml
       Parameters:
-        ArtifactsBucket: !Ref ArtifactsBucket
+        ApplicationConfigurationOverride: !Ref AssetLibraryAppConfigOverride
+        PrivateApiGatewayVPCEndpoint:
+          !If [UsingVPCForAuth, !Ref PrivateApiGatewayVPCEndpoint, "N/A"]
         Environment: !Ref Environment
-        AssetLibraryApplicationConfigurationOverride: !Ref AssetLibraryAppConfigOverride
-        VpcId: !If [ UsingVPCForAssetLibrary, !Ref VpcId, '' ]
-        CDFSecurityGroupId: !If [ UsingVPCForAssetLibrary, !Ref CDFSecurityGroupId, '' ]
-        PrivateSubNetIds: !If [ UsingVPCForAssetLibrary, !Ref PrivateSubNetIds, '' ]
-        PrivateRouteTableIds: !If [ UsingVPCForAssetLibrary, !Ref PrivateRouteTableIds, '' ]
-        PrivateApiGatewayVPCEndpoint: !If [ UsingVPCForAssetLibrary, !Ref PrivateApiGatewayVPCEndpoint, '' ]
+        VpcId: !If [UsingVPCForAssetLibrary, !Ref VpcId, ""]
+        CDFSecurityGroupId:
+          !If [UsingVPCForAssetLibrary, !Ref CDFSecurityGroupId, ""]
+        PrivateSubNetIds:
+          !If [UsingVPCForAssetLibrary, !Ref PrivateSubNetIds, ""]
         Mode: !Ref AssetLibraryMode
         TemplateSnippetS3UriBase: !Ref TemplateSnippetS3UriBase
         ApiGatewayDefinitionTemplate: !Ref ApiGatewayDefinitionTemplate
         AuthType: !Ref AuthType
         CognitoUserPoolArn: !Ref CognitoUserPoolArn
         AuthorizerFunctionArn: !Ref AuthorizerFunctionArn
-        CustomResourceVPCLambdaArn: !If [ UsingVPCForAssetLibrary, !Ref CustomResourceVPCLambdaArn, '' ]
+        CustomResourceVPCLambdaArn:
+          !If [UsingVPCForAssetLibrary, !Ref CustomResourceVPCLambdaArn, ""]
         EnableApiGatewayAccessLogs: !Ref EnableApiGatewayAccessLogs
-        KmsKeyId: !Ref KmsKeyId
         NeptuneSnapshotIdentifier: !Ref NeptuneSnapshotIdentifier
         NeptuneDbInstanceType: !Ref NeptuneDbInstanceType
       TimeoutInMinutes: 60
@@ -352,15 +405,17 @@ Resources:
     Properties:
       TemplateURL: ../packages/services/assetlibraryhistory/infrastructure/cfn-assetLibraryHistory.yml
       Parameters:
+        ApplicationConfigurationOverride: !Ref AssetLibraryHistoryAppConfigOverride
         Environment: !Ref Environment
-        ApplicationConfigurationOverride: !Ref AssetLibraryAppConfigOverride
         TemplateSnippetS3UriBase: !Ref TemplateSnippetS3UriBase
         AuthType: !Ref AuthType
         ApiGatewayDefinitionTemplate: !Ref ApiGatewayDefinitionTemplate
-        VpcId: !If [ UsingVPCForAuth, !Ref VpcId, 'N/A' ]
-        CDFSecurityGroupId: !If [ UsingVPCForAuth, !Ref CDFSecurityGroupId, 'N/A' ]
-        PrivateSubNetIds: !If [ UsingVPCForAuth, !Ref PrivateSubNetIds, 'N/A' ]
-        PrivateApiGatewayVPCEndpoint: !If [ UsingVPCForAuth, !Ref PrivateApiGatewayVPCEndpoint, 'N/A' ]
+        VpcId: !If [UsingVPCForAuth, !Ref VpcId, "N/A"]
+        CDFSecurityGroupId:
+          !If [UsingVPCForAuth, !Ref CDFSecurityGroupId, "N/A"]
+        PrivateSubNetIds: !If [UsingVPCForAuth, !Ref PrivateSubNetIds, "N/A"]
+        PrivateApiGatewayVPCEndpoint:
+          !If [UsingVPCForAuth, !Ref PrivateApiGatewayVPCEndpoint, "N/A"]
         CognitoUserPoolArn: !Ref CognitoUserPoolArn
         AuthorizerFunctionArn: !Ref AuthorizerFunctionArn
         KmsKeyId: !Ref KmsKeyId
@@ -372,11 +427,13 @@ Resources:
     Properties:
       TemplateURL: ../packages/services/assetlibrary-export/infrastructure/cfn-assetlibrary-export.yaml
       Parameters:
-        Environment: !Ref Environment
         ApplicationConfigurationOverride: !Ref AssetLibraryExportAppConfigOverride
-        VpcId: !If [ UsingVPCForAssetLibrary, !Ref VpcId, 'N/A' ]
-        CDFSecurityGroupId: !If [ UsingVPCForAssetLibrary, !Ref CDFSecurityGroupId, 'N/A' ]
-        PrivateSubNetIds: !If [ UsingVPCForAssetLibrary, !Ref PrivateSubNetIds, 'N/A' ]
+        Environment: !Ref Environment
+        VpcId: !If [UsingVPCForAssetLibrary, !Ref VpcId, "N/A"]
+        CDFSecurityGroupId:
+          !If [UsingVPCForAssetLibrary, !Ref CDFSecurityGroupId, "N/A"]
+        PrivateSubNetIds:
+          !If [UsingVPCForAssetLibrary, !Ref PrivateSubNetIds, "N/A"]
         KmsKeyId: !Ref KmsKeyId
         NeptuneURL: !GetAtt AssetLibrary.Outputs.NeptuneURL
         ExportETLMaxConcurrency: !Ref AssetLibraryExportETLMaxConcurrency
@@ -388,15 +445,17 @@ Resources:
     Properties:
       TemplateURL: ../packages/services/provisioning/infrastructure/cfn-provisioning.yml
       Parameters:
-        Environment: !Ref Environment
         ApplicationConfigurationOverride: !Ref ProvisioningAppConfigOverride
+        Environment: !Ref Environment
         TemplateSnippetS3UriBase: !Ref TemplateSnippetS3UriBase
         AuthType: !Ref AuthType
         ApiGatewayDefinitionTemplate: !Ref ApiGatewayDefinitionTemplate
-        VpcId: !If [ UsingVPCForAuth, !Ref VpcId, 'N/A' ]
-        CDFSecurityGroupId: !If [ UsingVPCForAuth, !Ref CDFSecurityGroupId, 'N/A' ]
-        PrivateSubNetIds: !If [ UsingVPCForAuth, !Ref PrivateSubNetIds, 'N/A' ]
-        PrivateApiGatewayVPCEndpoint: !If [ UsingVPCForAuth, !Ref PrivateApiGatewayVPCEndpoint, 'N/A' ]
+        VpcId: !If [UsingVPCForAuth, !Ref VpcId, "N/A"]
+        CDFSecurityGroupId:
+          !If [UsingVPCForAuth, !Ref CDFSecurityGroupId, "N/A"]
+        PrivateSubNetIds: !If [UsingVPCForAuth, !Ref PrivateSubNetIds, "N/A"]
+        PrivateApiGatewayVPCEndpoint:
+          !If [UsingVPCForAuth, !Ref PrivateApiGatewayVPCEndpoint, "N/A"]
         CognitoUserPoolArn: !Ref CognitoUserPoolArn
         AuthorizerFunctionArn: !Ref AuthorizerFunctionArn
         KmsKeyId: !Ref KmsKeyId
@@ -411,15 +470,17 @@ Resources:
     Properties:
       TemplateURL: ../packages/services/commands/infrastructure/cfn-commands.yml
       Parameters:
-        Environment: !Ref Environment
         ApplicationConfigurationOverride: !Ref CommandsAppConfigOverride
+        Environment: !Ref Environment
         TemplateSnippetS3UriBase: !Ref TemplateSnippetS3UriBase
         AuthType: !Ref AuthType
         ApiGatewayDefinitionTemplate: !Ref ApiGatewayDefinitionTemplate
-        VpcId: !If [ UsingVPCForAuth, !Ref VpcId, 'N/A' ]
-        CDFSecurityGroupId: !If [ UsingVPCForAuth, !Ref CDFSecurityGroupId, 'N/A' ]
-        PrivateSubNetIds: !If [ UsingVPCForAuth, !Ref PrivateSubNetIds, 'N/A' ]
-        PrivateApiGatewayVPCEndpoint: !If [ UsingVPCForAuth, !Ref PrivateApiGatewayVPCEndpoint, 'N/A' ]
+        VpcId: !If [UsingVPCForAuth, !Ref VpcId, "N/A"]
+        CDFSecurityGroupId:
+          !If [UsingVPCForAuth, !Ref CDFSecurityGroupId, "N/A"]
+        PrivateSubNetIds: !If [UsingVPCForAuth, !Ref PrivateSubNetIds, "N/A"]
+        PrivateApiGatewayVPCEndpoint:
+          !If [UsingVPCForAuth, !Ref PrivateApiGatewayVPCEndpoint, "N/A"]
         CognitoUserPoolArn: !Ref CognitoUserPoolArn
         AuthorizerFunctionArn: !Ref AuthorizerFunctionArn
         BucketName: !Ref ArtifactsBucket
@@ -435,9 +496,70 @@ Resources:
     Properties:
       TemplateURL: ../packages/services/device-monitoring/infrastructure/cfn-device-monitoring.yml
       Parameters:
-        Environment: !Ref Environment
         ApplicationConfigurationOverride: !Ref DeviceMonitoringAppConfigOverride
+        Environment: !Ref Environment
         AssetLibraryFunctionName: !GetAtt AssetLibrary.Outputs.RestApiFunctionName
+
+
+  DevicePatcher:
+    Type: AWS::CloudFormation::Stack
+    Condition: DeployDevicePatcher
+    Properties:
+      TemplateURL: ../packages/services/device-patcher/infrastructure/cfn-device-patcher.yml
+      Parameters:
+        ApplicationConfigurationOverride: !Ref DevicePatcherAppConfigOverride
+        Environment: !Ref Environment
+        ArtifactsBucket: !Ref ArtifactsBucket
+        TemplateSnippetS3UriBase: !Ref TemplateSnippetS3UriBase
+        AuthType: !Ref AuthType
+        ApiGatewayDefinitionTemplate: !Ref ApiGatewayDefinitionTemplate
+        VpcId: !If [UsingVPCForAuth, !Ref VpcId, "N/A"]
+        CDFSecurityGroupId:
+          !If [UsingVPCForAuth, !Ref CDFSecurityGroupId, "N/A"]
+        PrivateSubNetIds: !If [UsingVPCForAuth, !Ref PrivateSubNetIds, "N/A"]
+        PrivateApiGatewayVPCEndpoint:
+          !If [UsingVPCForAuth, !Ref PrivateApiGatewayVPCEndpoint, "N/A"]
+        CognitoUserPoolArn: !Ref CognitoUserPoolArn
+        AuthorizerFunctionArn: !Ref AuthorizerFunctionArn
+        KmsKeyId: !Ref KmsKeyId
+        EnableApiGatewayAccessLogs: !Ref EnableApiGatewayAccessLogs
+
+  Greengrass2InstallerConfigGenerators:
+    Type: AWS::CloudFormation::Stack
+    Condition: DeployGreengrass2
+    Properties:
+      TemplateURL: ../packages/services/greengrass2-provisioning/infrastructure/cfn-greengrass2-installer-config-generators.yml
+      Parameters:
+        ApplicationConfigurationOverride: !Ref Greengrass2InstallerConfigsGeneratorAppConfigOverride
+        Environment: !Ref Environment
+        CustomResourceLambdaArn: !Ref CustomResourceLambdaArn
+
+  Greengrass2Provisioning:
+    Type: AWS::CloudFormation::Stack
+    Condition: DeployGreengrass2
+    Properties:
+      TemplateURL: ../packages/services/greengrass2-provisioning/infrastructure/cfn-greengrass2-provisioning.yml
+      Parameters:
+        ArtifactsBucket: !Ref ArtifactsBucket
+        EventBridgeBusName: !Ref EventBusArn
+        ApplicationConfigurationOverride: !Ref Greengrass2ProvisioningAppConfigOverride
+        Environment: !Ref Environment
+        TemplateSnippetS3UriBase: !Ref TemplateSnippetS3UriBase
+        AuthType: !Ref AuthType
+        InstallerConfigGenerators: !Sub '{"MANUAL_INSTALL":"cdf-greengrass2-manual-config-generator-${Environment}","FLEET_PROVISIONING":"cdf-greengrass2-fleet-config-generator-${Environment}"}'
+        ApiGatewayDefinitionTemplate: !Ref ApiGatewayDefinitionTemplate
+        AssetLibraryFunctionName: !GetAtt AssetLibrary.Outputs.RestApiFunctionName
+        ProvisioningFunctionName: !GetAtt Provisioning.Outputs.RestApiFunctionName
+        VpcId: !If [UsingVPCForAuth, !Ref VpcId, "N/A"]
+        CDFSecurityGroupId:
+          !If [UsingVPCForAuth, !Ref CDFSecurityGroupId, "N/A"]
+        PrivateSubNetIds: !If [UsingVPCForAuth, !Ref PrivateSubNetIds, "N/A"]
+        PrivateApiGatewayVPCEndpoint:
+          !If [UsingVPCForAuth, !Ref PrivateApiGatewayVPCEndpoint, "N/A"]
+        CognitoUserPoolArn: !Ref CognitoUserPoolArn
+        AuthorizerFunctionArn: !Ref AuthorizerFunctionArn
+        KmsKeyId: !Ref KmsKeyId
+        EnableApiGatewayAccessLogs: !Ref EnableApiGatewayAccessLogs
 
   EventsProcessor:
     Type: AWS::CloudFormation::Stack
@@ -445,15 +567,17 @@ Resources:
     Properties:
       TemplateURL: ../packages/services/events-processor/infrastructure/cfn-eventsProcessor.yml
       Parameters:
-        Environment: !Ref Environment
         ApplicationConfigurationOverride: !Ref EventProcessorAppConfigOverride
+        Environment: !Ref Environment
         TemplateSnippetS3UriBase: !Ref TemplateSnippetS3UriBase
         AuthType: !Ref AuthType
         ApiGatewayDefinitionTemplate: !Ref ApiGatewayDefinitionTemplate
-        VpcId: !If [ UsingVPCForAuth, !Ref VpcId, 'N/A' ]
-        CDFSecurityGroupId: !If [ UsingVPCForAuth, !Ref CDFSecurityGroupId, 'N/A' ]
-        PrivateSubNetIds: !If [ UsingVPCForAuth, !Ref PrivateSubNetIds, 'N/A' ]
-        PrivateApiGatewayVPCEndpoint: !If [ UsingVPCForAuth, !Ref PrivateApiGatewayVPCEndpoint, 'N/A' ]
+        VpcId: !If [UsingVPCForAuth, !Ref VpcId, "N/A"]
+        CDFSecurityGroupId:
+          !If [UsingVPCForAuth, !Ref CDFSecurityGroupId, "N/A"]
+        PrivateSubNetIds: !If [UsingVPCForAuth, !Ref PrivateSubNetIds, "N/A"]
+        PrivateApiGatewayVPCEndpoint:
+          !If [UsingVPCForAuth, !Ref PrivateApiGatewayVPCEndpoint, "N/A"]
         CognitoUserPoolArn: !Ref CognitoUserPoolArn
         AuthorizerFunctionArn: !Ref AuthorizerFunctionArn
         CustomResourceLambdaArn: !Ref CustomResourceLambdaArn
@@ -466,8 +590,8 @@ Resources:
     Properties:
       TemplateURL: ../packages/services/events-alerts/infrastructure/cfn-eventsAlerts.yml
       Parameters:
-        Environment: !Ref Environment
         ApplicationConfigurationOverride: !Ref EventAlertsAppConfigOverride
+        Environment: !Ref Environment
         KmsKeyId: !Ref KmsKeyId
         EventNotificationsTable: !GetAtt EventsProcessor.Outputs.EventNotificationsTable
         EventNotificationsTableArn: !GetAtt EventsProcessor.Outputs.EventNotificationsTableArn
@@ -482,15 +606,17 @@ Resources:
     Properties:
       TemplateURL: ../packages/services/bulkcerts/infrastructure/cfn-bulkcerts.yml
       Parameters:
-        Environment: !Ref Environment
         ApplicationConfigurationOverride: !Ref BulkCertsAppConfigOverride
+        Environment: !Ref Environment
         TemplateSnippetS3UriBase: !Ref TemplateSnippetS3UriBase
         AuthType: !Ref AuthType
         ApiGatewayDefinitionTemplate: !Ref ApiGatewayDefinitionTemplate
-        VpcId: !If [ UsingVPCForAuth, !Ref VpcId, 'N/A' ]
-        CDFSecurityGroupId: !If [ UsingVPCForAuth, !Ref CDFSecurityGroupId, 'N/A' ]
-        PrivateSubNetIds: !If [ UsingVPCForAuth, !Ref PrivateSubNetIds, 'N/A' ]
-        PrivateApiGatewayVPCEndpoint: !If [ UsingVPCForAuth, !Ref PrivateApiGatewayVPCEndpoint, 'N/A' ]
+        VpcId: !If [UsingVPCForAuth, !Ref VpcId, "N/A"]
+        CDFSecurityGroupId:
+          !If [UsingVPCForAuth, !Ref CDFSecurityGroupId, "N/A"]
+        PrivateSubNetIds: !If [UsingVPCForAuth, !Ref PrivateSubNetIds, "N/A"]
+        PrivateApiGatewayVPCEndpoint:
+          !If [UsingVPCForAuth, !Ref PrivateApiGatewayVPCEndpoint, "N/A"]
         CognitoUserPoolArn: !Ref CognitoUserPoolArn
         AuthorizerFunctionArn: !Ref AuthorizerFunctionArn
         KmsKeyId: !Ref KmsKeyId
@@ -504,8 +630,8 @@ Resources:
     Properties:
       TemplateURL: ../packages/services/certificateactivator/infrastructure/cfn-certificateactivator.yml
       Parameters:
-        Environment: !Ref Environment
         ApplicationConfigurationOverride: !Ref CertificateActivatorAppConfigOverride
+        Environment: !Ref Environment
         BucketName: !Ref ArtifactsBucket
         OpenSslLambdaLayerArn: !Ref OpenSslLambdaLayerArn
         AssetLibraryFunctionName: !GetAtt AssetLibrary.Outputs.RestApiFunctionName
@@ -517,15 +643,14 @@ Resources:
     Properties:
       TemplateURL: ../packages/services/certificatevendor/infrastructure/cfn-certificatevendor.yml
       Parameters:
-        Environment: !Ref Environment
         ApplicationConfigurationOverride: !Ref CertificateVendorAppConfigOverride
+        Environment: !Ref Environment
         BucketName: !Ref ArtifactsBucket
         KmsKeyId: !Ref KmsKeyId
         OpenSslLambdaLayerArn: !Ref OpenSslLambdaLayerArn
         AssetLibraryFunctionName: !GetAtt AssetLibrary.Outputs.RestApiFunctionName
         CommandsFunctionName: !GetAtt Commands.Outputs.RestApiFunctionName
         CustomResourceLambdaArn: !Ref CustomResourceLambdaArn
-
 
 Outputs:
   AssetLibraryRestApiFunctionName:
@@ -607,7 +732,7 @@ Outputs:
   BulkCertsRestApiFunctionName:
     Condition: DeployBulkCerts
     Description: Bulk Certs REST API lambda function name
-    Value: !GetAtt  BulkCerts.Outputs.RestApiFunctionName
+    Value: !GetAtt BulkCerts.Outputs.RestApiFunctionName
   BulkCertstApiGatewayUrl:
     Condition: DeployBulkCerts
     Description: Bulk Certs REST API URL
@@ -616,4 +741,19 @@ Outputs:
     Condition: DeployBulkCerts
     Description: Bulk Certs REST API host
     Value: !GetAtt BulkCerts.Outputs.ApiGatewayHost
-
+  DevicePatcherRestApiFunctionName:
+    Condition: DeployDevicePatcher
+    Description: Device Patcher REST API lambda function name
+    Value: !GetAtt DevicePatcher.Outputs.RestApiFunctionName
+  DevicePatcherApiGatewayUrl:
+    Condition: DeployDevicePatcher
+    Description: Device Patcher REST API URL
+    Value: !GetAtt DevicePatcher.Outputs.ApiGatewayUrl
+  Greengrass2ProvisioningRestApiFunctionName:
+    Condition: DeployGreengrass2
+    Description: Device Patcher REST API lambda function name
+    Value: !GetAtt Greengrass2Provisioning.Outputs.RestApiFunctionName
+  Greengrass2ProvisioningApiGatewayUrl:
+    Condition: DeployGreengrass2
+    Description: Device Patcher REST API URL
+    Value: !GetAtt Greengrass2Provisioning.Outputs.ApiGatewayUrl

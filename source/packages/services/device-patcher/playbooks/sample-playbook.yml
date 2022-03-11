@@ -1,0 +1,7 @@
+---
+- hosts: all
+  remote_user: ec2_user
+  gather_facts: false
+  become: yes
+  tasks:
+    - ping:

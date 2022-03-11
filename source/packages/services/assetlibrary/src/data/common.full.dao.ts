@@ -27,7 +27,7 @@ const __ = process.statics;
 export class CommonDaoFull extends BaseDaoFull {
 
     public constructor(
-        @inject('aws.neptune.url') neptuneUrl: string,
+        @inject('neptuneUrl') neptuneUrl: string,
         @inject(TYPES.TypeUtils) private typeUtils: TypeUtils,
         @inject(TYPES.FullAssembler) private fullAssembler: FullAssembler,
 	    @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph

@@ -1,6 +1,27 @@
 # Change Log - @cdf/integration-tests
 
-This log was last generated on Wed, 05 Jan 2022 18:34:59 GMT and should not be manually modified.
+This log was last generated on Thu, 10 Mar 2022 00:08:34 GMT and should not be manually modified.
+
+## 3.0.2
+Thu, 10 Mar 2022 00:08:34 GMT
+
+### Patches
+
+- correct typo in assetlibrary client import
+
+## 3.0.1
+Thu, 17 Feb 2022 12:56:53 GMT
+
+### Patches
+
+- increase the timeout before checking result
+
+## 3.0.0
+Thu, 17 Feb 2022 09:27:38 GMT
+
+### Breaking changes
+
+- migrate configuration to use dotenv-flow and deployment to use installer
 
 ## 2.9.5
 Wed, 05 Jan 2022 18:34:59 GMT

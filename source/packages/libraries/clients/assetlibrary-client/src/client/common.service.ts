@@ -11,7 +11,6 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { injectable } from 'inversify';
-import config from 'config';
 import {RequestHeaders} from './common.model';
 
 @injectable()
@@ -28,8 +27,10 @@ export abstract class ClientServiceBase  {
 
         let headers = Object.assign({}, this._headers);
 
-        if (config.has('assetLibrary.headers')) {
-            const headersFromConfig:RequestHeaders = config.get('assetLibrary.headers') as RequestHeaders;
+        const customHeaders = process.env.ASSETLIBRARY_HEADERS;
+
+        if (customHeaders) {
+            const headersFromConfig:RequestHeaders = customHeaders as unknown as RequestHeaders;
             if (headersFromConfig !== null && headersFromConfig !== undefined) {
                 headers = {...headers, ...headersFromConfig};
             }

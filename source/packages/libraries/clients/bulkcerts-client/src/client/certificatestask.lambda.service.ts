@@ -26,12 +26,13 @@ import {LAMBDAINVOKE_TYPES, LambdaInvokerService, LambdaApiGatewayEventBuilder} 
 @injectable()
 export class CertificatesTaskLambdaService extends CertificatesTaskServiceBase implements CertificatesTaskService {
 
+    private functionName : string;
     constructor(
-        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService) private lambdaInvoker: LambdaInvokerService,
-        @inject('bulkcerts.apiFunctionName') private functionName : string
+        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService) private lambdaInvoker: LambdaInvokerService
     ) {
         super();
         this.lambdaInvoker = lambdaInvoker;
+        this.functionName = process.env.BULKCERTS_API_FUNCTION_NAME;
     }
 
     async createCertificateTask(batchRequest:CertificateBatchRequest,caAlias:string, additionalHeaders?: RequestHeaders): Promise<CertificateBatchTask> {

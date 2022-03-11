@@ -3,9 +3,8 @@
  * The default scenario file path is "deploy.json"; additional files use the naming pattern
  * "deploy-<scenario-name>.json". For full documentation, please see https://rushjs.io
  */
- {
+{
   "$schema": "https://developer.microsoft.com/json-schemas/rush/v5/deploy-scenario.schema.json",
-
   /**
    * The "rush deploy" command prepares a deployment folder, starting from the main project and collecting
    * all of its dependencies (both NPM packages and other Rush projects).  The main project is specified
@@ -19,35 +18,38 @@
    */
   "deploymentProjectNames": [
     "@cdf/assetlibrary-client",
-    "@cdf/assetlibraryhistory-client",
-    "@cdf/commands-client",
-    "@cdf/greengrass-provisioning-client",
-    "@cdf/notifications-client",
-    "@cdf/provisioning-client",
-    "@cdf/config-inject",
-    "@cdf/errors",
-    "@cdf/express-middleware",
-    "@cdf/lambda-invoke",
-    "@cdf/logger",
-    "@cdf/device-simulator-base",
-    "@cdf/assetlibrary",
+    "@cdf/assetlibrary-export",
     "@cdf/assetlibrary-history",
+    "@cdf/assetlibrary",
+    "@cdf/assetlibraryhistory-client",
     "@cdf/auth-devicecert",
     "@cdf/auth-jwt",
     "@cdf/bulkcerts",
     "@cdf/certificate-activator",
     "@cdf/certificate-vendor",
+    "@cdf/config-inject",
+    "@cdf/commands-client",
     "@cdf/commands",
+    "@cdf/deployment-helper",
     "@cdf/device-monitoring",
+    "@cdf/device-simulator-base",
+    "@cdf/errors",
     "@cdf/events-alerts",
     "@cdf/events-processor",
+    "@cdf/express-middleware",
+    "@cdf/greengrass2-installer-config-generators",
+    "@cdf/greengrass2-provisioning-client",
+    "@cdf/greengrass2-provisioning",
+    "@cdf/device-patcher",
+    "@cdf/installer",
+    "@cdf/lambda-invoke",
+    "@cdf/logger",
+    "@cdf/notifications-client",
+    "@cdf/provisioning-client",
     "@cdf/provisioning",
-    "@cdf/deployment-helper",
     "@cdf/simulation-launcher",
-    "@cdf/simulation-manager",
-    "@cdf/assetlibrary-export"
+    "@cdf/simulation-manager"
   ],
-
   /**
    * When deploying a local Rush project, the package.json "devDependencies" are normally excluded.
    * If you want to include them, set "includeDevDependencies" to true.
@@ -55,7 +57,6 @@
    * The default value is false.
    */
   // "includeDevDependencies": true,
-
   /**
    * When deploying a local Rush project, normally the .npmignore filter is applied so that Rush only copies
    * files that would be packaged by "npm pack".  Setting "includeNpmIgnoreFiles" to true will disable this
@@ -64,7 +65,6 @@
    * The default value is false.
    */
   // "includeNpmIgnoreFiles": true,
-
   /**
    * To improve backwards compatibility with legacy packages, the PNPM package manager installs extra links in the
    * node_modules folder that enable packages to import undeclared dependencies.  In some cases this workaround may
@@ -74,7 +74,6 @@
    * The default value is false.
    */
   "omitPnpmWorkaroundLinks": false,
-
   /**
    * Specify how links (symbolic links, hard links, and/or NTFS junctions) will be created in the deployed folder:
    *
@@ -84,14 +83,12 @@
    * - "none": Do nothing; some other tool may create the links later.
    */
   // "linkCreation": "script",
-
   /**
    * If this path is specified, then after "rush deploy", recursively copy the files from this folder to
    * the deployment target folder (common/deploy). This can be used to provide additional configuration files
    * or scripts needed by the server when deploying. The path is resolved relative to the repository root.
    */
   //  "folderToCopy": "repo-tools/assets/deploy-config",
-
   /**
    * Customize how Rush projects are processed during deployment.
    */
@@ -139,107 +136,149 @@
     //     // "@types/*"
     //   ]
     // }
-
-    
     {
       "projectName": "@cdf/assetlibrary-client",
-      "dependenciesToExclude": ["aws-sdk"]
+      "dependenciesToExclude": [
+        "aws-sdk"
+      ]
     },
     {
       "projectName": "@cdf/assetlibraryhistory-client",
-      "dependenciesToExclude": ["aws-sdk"]
+      "dependenciesToExclude": [
+        "aws-sdk"
+      ]
     },
     {
       "projectName": "@cdf/commands-client",
-      "dependenciesToExclude": ["aws-sdk"]
-    },
-    {
-      "projectName": "@cdf/greengrass-provisioning-client",
-      "dependenciesToExclude": ["aws-sdk"]
+      "dependenciesToExclude": [
+        "aws-sdk"
+      ]
     },
     {
       "projectName": "@cdf/notifications-client",
-      "dependenciesToExclude": ["aws-sdk"]
+      "dependenciesToExclude": [
+        "aws-sdk"
+      ]
     },
     {
       "projectName": "@cdf/provisioning-client",
-      "dependenciesToExclude": ["aws-sdk"]
-    },
-    {
-      "projectName": "@cdf/config-inject",
-      "dependenciesToExclude": ["aws-sdk"]
+      "dependenciesToExclude": [
+        "aws-sdk"
+      ]
     },
     {
       "projectName": "@cdf/errors",
-      "dependenciesToExclude": ["aws-sdk"]
+      "dependenciesToExclude": [
+        "aws-sdk"
+      ]
     },
     {
       "projectName": "@cdf/express-middleware",
-      "dependenciesToExclude": ["aws-sdk"]
+      "dependenciesToExclude": [
+        "aws-sdk"
+      ]
     },
     {
       "projectName": "@cdf/lambda-invoke",
-      "dependenciesToExclude": ["aws-sdk"]
+      "dependenciesToExclude": [
+        "aws-sdk"
+      ]
     },
     {
       "projectName": "@cdf/logger",
-      "dependenciesToExclude": ["aws-sdk"]
+      "dependenciesToExclude": [
+        "aws-sdk"
+      ]
     },
     {
       "projectName": "@cdf/assetlibrary",
-      "dependenciesToExclude": ["aws-sdk"]
+      "dependenciesToExclude": [
+        "aws-sdk"
+      ]
     },
     {
       "projectName": "@cdf/assetlibrary-history",
-      "dependenciesToExclude": ["aws-sdk"]
+      "dependenciesToExclude": [
+        "aws-sdk"
+      ]
     },
     {
       "projectName": "@cdf/assetlibrary-export",
-      "dependenciesToExclude": ["aws-sdk"]
+      "dependenciesToExclude": [
+        "aws-sdk"
+      ]
     },
     {
       "projectName": "@cdf/auth-devicecert",
-      "dependenciesToExclude": ["aws-sdk"]
+      "dependenciesToExclude": [
+        "aws-sdk"
+      ]
     },
     {
       "projectName": "@cdf/auth-jwt",
-      "dependenciesToExclude": ["aws-sdk"]
+      "dependenciesToExclude": [
+        "aws-sdk"
+      ]
     },
     {
       "projectName": "@cdf/bulkcerts",
-      "dependenciesToExclude": ["aws-sdk"]
+      "dependenciesToExclude": [
+        "aws-sdk"
+      ]
     },
     {
       "projectName": "@cdf/certificate-activator",
-      "dependenciesToExclude": ["aws-sdk"]
+      "dependenciesToExclude": [
+        "aws-sdk"
+      ]
+    },
+    {
+      "projectName": "@cdf/config-inject",
+      "dependenciesToExclude": [
+        "aws-sdk"
+      ]
     },
     {
       "projectName": "@cdf/certificate-vendor",
-      "dependenciesToExclude": ["aws-sdk"]
+      "dependenciesToExclude": [
+        "aws-sdk"
+      ]
     },
     {
       "projectName": "@cdf/commands",
-      "dependenciesToExclude": ["aws-sdk"]
+      "dependenciesToExclude": [
+        "aws-sdk"
+      ]
     },
     {
       "projectName": "@cdf/device-monitoring",
-      "dependenciesToExclude": ["aws-sdk"]
+      "dependenciesToExclude": [
+        "aws-sdk"
+      ]
     },
     {
       "projectName": "@cdf/events-alerts",
-      "dependenciesToExclude": ["aws-sdk"]
+      "dependenciesToExclude": [
+        "aws-sdk"
+      ]
     },
     {
       "projectName": "@cdf/events-processor",
-      "dependenciesToExclude": ["aws-sdk"]
+      "dependenciesToExclude": [
+        "aws-sdk"
+      ]
     },
     {
       "projectName": "@cdf/assetlibrary-export",
-      "dependenciesToExclude": ["aws-sdk"]
+      "dependenciesToExclude": [
+        "aws-sdk"
+      ]
     },
     {
       "projectName": "@cdf/deployment-helper",
-      "dependenciesToExclude": ["aws-sdk"]
+      "dependenciesToExclude": [
+        "aws-sdk"
+      ]
     }
   ]
 }

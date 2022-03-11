@@ -12,7 +12,6 @@
  *********************************************************************************************************************/
 import { logger } from './utils/logger';
 import {verify} from 'jsonwebtoken';
-import config from 'config';
 import axios from 'axios';
 import * as jwkToBuffer from 'jwk-to-pem';
 import ow from 'ow';
@@ -34,7 +33,7 @@ export class ApiGwCustomAuthorizer {
     private publicKeys:MapOfKidToPublicKey;
 
     constructor() {
-        this.cognitoIssuer = config.get('token.issuer') as string;
+        this.cognitoIssuer = process.env.TOKEN_ISSUER;
         if (this.cognitoIssuer===undefined) {
             throw new Error('Token Issuer must be defined');
         }

@@ -1,0 +1,302 @@
+import ow from 'ow';
+import execa from 'execa';
+import inquirer from 'inquirer';
+import { ListrTask } from 'listr2';
+import { Answers } from '../../../models/answers';
+import { ModuleName, ServiceModule } from '../../../models/modules';
+import { ConfigBuilder } from "../../../utils/configBuilder";
+import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
+import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
+import { deleteStack, getStackParameters, getStackResourceSummaries } from '../../../utils/cloudformation.util';
+
+export class CertificateVendorInstaller implements ServiceModule {
+
+  public readonly friendlyName = 'Certificate Vendor';
+  public readonly name = 'certificateVendor';
+
+  public readonly type = 'SERVICE';
+  public readonly dependsOnMandatory: ModuleName[] = [
+    'assetLibrary',
+    'commands',
+    'deploymentHelper',
+    'kms',
+    'openSsl',
+  ];
+  private readonly stackName: string;
+  private readonly assetLibraryStackName: string;
+  private readonly commandsStackName: string;
+
+  constructor(environment: string) {
+    this.stackName = `cdf-certificatevendor-${environment}`
+    this.assetLibraryStackName = `cdf-assetlibrary-${environment}`;
+    this.commandsStackName = `cdf-commands-${environment}`;
+  }
+
+  public readonly dependsOnOptional: ModuleName[] = [];
+
+  public async prompts(answers: Answers): Promise<Answers> {
+
+    delete answers.certificateVendor?.redeploy;
+    let updatedAnswers: Answers = await inquirer.prompt([
+      redeployIfAlreadyExistsPrompt(this.name, this.stackName),
+    ], answers);
+    if ((updatedAnswers.certificateVendor?.redeploy ?? true) === false) {
+      return updatedAnswers;
+    }
+
+    updatedAnswers = await inquirer.prompt([
+      {
+        message: 'Will you be requesting certificates using a CSR?',
+        type: 'confirm',
+        name: 'certificateVendor.providingCSRs',
+        default: false,
+        askAnswered: true,
+      },
+
+      {
+        message: 'Enter the CA certificate ID to be used to sign the certificates requested with a CSR:',
+        type: 'input',
+        name: 'certificateVendor.caCertificateId',
+        default: updatedAnswers.certificateVendor?.caCertificateId,
+        askAnswered: true,
+        when(answers: Answers) {
+          return answers.certificateVendor?.providingCSRs ?? false;
+        },
+        validate(answer: string) {
+          if ((answer?.length ?? 0) === 0) {
+            return `You must enter the CA certificate ID.`;
+          }
+          return true;
+        },
+      },
+      {
+        message: 'Enter the name of the policy to associate with certificates requested with a CSR:',
+        type: 'input',
+        name: 'certificateVendor.rotatedCertificatePolicy',
+        default: updatedAnswers.certificateVendor?.rotatedCertificatePolicy,
+        askAnswered: true,
+        when(answers: Answers) {
+          return answers.certificateVendor?.providingCSRs ?? false;
+        },
+        validate(answer: string) {
+          if ((answer?.length ?? 0) === 0) {
+            return `You must enter the policy name.`;
+          }
+          return true;
+        },
+      },
+      ...applicationConfigurationPrompt(this.name, answers, [
+        {
+          defaultConfiguration: 'certificates/',
+          propertyName: 'certificatesPrefix',
+          question: 'The key prefix where certificates are stored'
+        },
+        {
+          defaultConfiguration: '.zip',
+          propertyName: 'certificatesSuffix',
+          question: 'The key suffix where certificates are stored'
+        },
+        {
+          defaultConfiguration: 300,
+          propertyName: 'presignedUrlExpiryInSeconds',
+          question: 'S3 Presigned Url expiry in seconds'
+        },
+        {
+          defaultConfiguration: 'cdfRotateCertificates',
+          propertyName: 'rotateCertificatesThingGroup',
+          question: 'Change the name of the thing group if you want to use analternate thing group.'
+        },
+        {
+          defaultConfiguration: 'cdf/certificates/{thingName}/get/accepted',
+          propertyName: 'getSuccessTopic',
+          question: 'MQTT Topic for Get Success'
+        },
+        {
+          defaultConfiguration: 'cdf/certificates/{thingName}/get/rejected',
+          propertyName: 'getFailureTopic',
+          question: 'MQTT Topic for Get Failure'
+        },
+        {
+          defaultConfiguration: 'cdf/certificates/+/get',
+          propertyName: 'getRootTopic',
+          question: 'MQTT Topic for Get Root'
+        },
+        {
+          defaultConfiguration: 'cdf/certificates/{thingName}/ack/accepted',
+          propertyName: 'ackSuccessTopic',
+          question: 'MQTT Topic for Ack Success'
+        },
+        {
+          defaultConfiguration: 'cdf/certificates/{thingName}/ack/rejected',
+          propertyName: 'ackFailureTopic',
+          question: 'MQTT Topic for Ack Failure'
+        },
+        {
+          defaultConfiguration: 'cdf/certificates/+/ack',
+          propertyName: 'ackRootTopic',
+          question: 'MQTT Topic for Ack Root'
+        },
+        {
+          defaultConfiguration: false,
+          propertyName: 'deletePreviousCertificate',
+          question: 'A feature toggle to enable deleting of the old certificate once rotated.'
+        },
+        {
+          defaultConfiguration: 'status',
+          propertyName: 'deviceStatusSuccessKey',
+          question: 'The key to use when updating the device state in the Device Registry or Asset Library'
+        },
+
+        {
+          defaultConfiguration: 'active',
+          propertyName: 'deviceStatusSuccessValue',
+          question: 'The value to use when updating the device state in the Device Registry or Asset Library'
+        },
+
+        {
+          defaultConfiguration: 1095,
+          propertyName: 'certificateExpiryInDays',
+          question: 'If creating a new certificate from a CSR, the expiration date to set.'
+        },
+
+        {
+          defaultConfiguration: 'AssetLibrary',
+          propertyName: 'registryMode',
+          question: 'Which data store to use to validate the status of a device'
+        },
+      ]),
+    ], updatedAnswers);
+
+    return updatedAnswers;
+
+  }
+
+  public async install(answers: Answers): Promise<[Answers, ListrTask[]]> {
+
+    ow(answers, ow.object.nonEmpty);
+    ow(answers.certificateVendor, ow.object.nonEmpty);
+    ow(answers.environment, ow.string.nonEmpty);
+    ow(answers.s3.bucket, ow.string.nonEmpty);
+
+    const tasks: ListrTask[] = [];
+
+    if ((answers.certificateVendor.redeploy ?? true) === false) {
+      return [answers, tasks];
+    }
+
+    tasks.push({
+      title: `Detecting environment config for stack '${this.stackName}'`,
+      task: async () => {
+        if (answers.certificateVendor === undefined) {
+          answers.certificateVendor = {};
+        }
+        const assetlibrarybyResourceLogicalId = await getStackResourceSummaries(this.assetLibraryStackName, answers.region);
+        const commandsbyResourceLogicalId = await getStackResourceSummaries(this.commandsStackName, answers.region);
+        answers.certificateVendor.commandsFunctionName = commandsbyResourceLogicalId('RESTLambdaFunction');
+        answers.certificateVendor.assetLibraryFunctionName = assetlibrarybyResourceLogicalId('LambdaFunction');
+      }
+    });
+
+
+    tasks.push({
+      title: `Packaging stack '${this.stackName}'`,
+      task: async () => {
+        await execa('aws', ['cloudformation', 'package',
+          '--template-file', '../certificatevendor/infrastructure/cfn-certificatevendor.yml',
+          '--output-template-file', '../certificatevendor/infrastructure/cfn-certificatevendor.yml.build',
+          '--s3-bucket', answers.s3.bucket,
+          '--s3-prefix', 'cloudformation/artifacts/',
+          '--region', answers.region
+        ]);
+      }
+    });
+
+    tasks.push({
+      title: `Deploying stack '${this.stackName}'`,
+      task: async () => {
+
+        const parameterOverrides = [
+          `Environment=${answers.environment}`,
+          `BucketName=${answers.s3.bucket}`,
+          `KmsKeyId=${answers.kms.id}`,
+          `OpenSslLambdaLayerArn=${answers.openSsl.arn}`,
+          `AssetLibraryFunctionName=${answers.certificateVendor.assetLibraryFunctionName}`,
+          `CommandsFunctionName=${answers.certificateVendor.commandsFunctionName}`,
+          `CustomResourceLambdaArn=${answers.deploymentHelper.lambdaArn}`,
+        ];
+
+        const addIfSpecified = (key: string, value: unknown) => {
+          if (value !== undefined) parameterOverrides.push(`${key}=${value}`)
+        };
+
+        addIfSpecified('CaCertificateId', answers.certificateVendor.caCertificateId);
+        addIfSpecified('RotatedCertificatePolicy', answers.certificateVendor.rotatedCertificatePolicy);
+        addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
+
+        await execa('aws', ['cloudformation', 'deploy',
+          '--template-file', '../certificatevendor/infrastructure/cfn-certificatevendor.yml.build',
+          '--stack-name', this.stackName,
+          '--parameter-overrides',
+          ...parameterOverrides,
+          '--capabilities', 'CAPABILITY_NAMED_IAM',
+          '--no-fail-on-empty-changeset',
+          '--region', answers.region
+        ]);
+      }
+    });
+
+    return [answers, tasks];
+  }
+
+
+  public generateApplicationConfiguration(answers: Answers): string {
+    const configBuilder = new ConfigBuilder()
+
+    configBuilder
+      .add(`LOGGING_LEVEL`, answers.certificateVendor.loggingLevel)
+      .add(`AWS_S3_CERTIFICATES_PREFIX`, answers.certificateVendor.certificatesPrefix)
+      .add(`AWS_S3_CERTIFICATES_SUFFIX`, answers.certificateVendor.certificatesSuffix)
+      .add(`AWS_S3_CERTIFICATES_PRESIGNEDURL_EXPIRESINSECONDS`, answers.certificateVendor.presignedUrlExpiryInSeconds)
+      .add(`AWS_IOT_THINGGROUP_ROTATECERTIFICATES`, answers.certificateVendor.rotateCertificatesThingGroup)
+      .add(`MQTT_TOPICS_GET_SUCCESS`, answers.certificateVendor.getSuccessTopic)
+      .add(`MQTT_TOPICS_GET_FAILURE`, answers.certificateVendor.getFailureTopic)
+      .add(`MQTT_TOPICS_GET_ROOT`, answers.certificateVendor.getRootTopic)
+      .add(`MQTT_TOPICS_ACK_SUCCESS`, answers.certificateVendor.ackSuccessTopic)
+      .add(`MQTT_TOPICS_ACK_FAILURE`, answers.certificateVendor.ackFailureTopic)
+      .add(`MQTT_TOPICS_ACK_ROOT`, answers.certificateVendor.ackRootTopic)
+      .add(`FEATURES_DELETEPREVIOUSCERTIFICATE`, answers.certificateVendor.deletePreviousCertificate)
+      .add(`DEFAULTS_DEVICE_STATUS_SUCCESS_KEY`, answers.certificateVendor.deviceStatusSuccessKey)
+      .add(`DEFAULTS_DEVICE_STATUS_SUCCESS_VALUE`, answers.certificateVendor.deviceStatusSuccessValue)
+      .add(`DEFAULTS_CERTIFICATES_CERTIFICATEEXPIRYDAYS`, answers.certificateVendor.certificateExpiryInDays)
+      .add(`REGISTRY_MODE`, answers.certificateVendor.registryMode)
+
+    return configBuilder.config;
+  }
+
+  public async generateLocalConfiguration(answers: Answers): Promise<string> {
+    const byParameterKey = await getStackParameters(this.stackName, answers.region)
+
+    const configBuilder = new ConfigBuilder()
+
+    configBuilder
+      .add(`AWS_IOT_ENDPOINT`, answers.iotEndpoint)
+      .add(`ASSETLIBRARY_API_FUNCTION_NAME`, byParameterKey('AssetLibraryFunctionName'))
+      .add(`AWS_S3_CERTIFICATES_BUCKET`, byParameterKey('BucketName'))
+      .add(`CERTIFICATES_CACERTIFICATEID`, byParameterKey('CERTIFICATES_CACERTIFICATEID'))
+      .add(`POLICIES_ROTATEDCERTIFICATEPOLICY`, byParameterKey('POLICIES_ROTATEDCERTIFICATEPOLICY'))
+
+    return configBuilder.config;
+  }
+
+  public async delete(answers: Answers): Promise<ListrTask[]> {
+    const tasks: ListrTask[] = [];
+    tasks.push({
+      title: `Deleting stack '${this.stackName}'`,
+      task: async () => {
+        await deleteStack(this.stackName, answers.region)
+      }
+    });
+    return tasks
+
+  }
+}
