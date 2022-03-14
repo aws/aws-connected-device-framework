@@ -1,4 +1,4 @@
-import { Answers } from '../../../models/answers';
+import { Answers, AssetLibraryMode } from '../../../models/answers';
 import { ListrTask } from 'listr2';
 import { ModuleName, RestModule, PostmanEnvironment } from '../../../models/modules';
 import { ConfigBuilder } from "../../../utils/configBuilder";
@@ -11,8 +11,15 @@ import { applicationConfigurationPrompt } from "../../../prompts/applicationConf
 import { deleteStack, getStackOutputs, getStackParameters } from '../../../utils/cloudformation.util';
 import { enableAutoScaling, provisionedConcurrentExecutions } from '../../../prompts/autoscaling.prompt';
 
-export class AssetLibraryInstaller implements RestModule {
+export function modeRequiresNeptune(mode: string): boolean {
+  return mode === AssetLibraryMode.Full || mode === AssetLibraryMode.Enhanced;
+}
 
+export function modeRequiresOpenSearch(mode: string): boolean {
+  return mode === AssetLibraryMode.Enhanced;
+}
+
+export class AssetLibraryInstaller implements RestModule {
 
   public readonly friendlyName = 'Asset Library';
   public readonly name = 'assetLibrary';
@@ -44,11 +51,11 @@ export class AssetLibraryInstaller implements RestModule {
 
     updatedAnswers = await inquirer.prompt([
       {
-        message: `Run in 'full' mode (with Amazon Neptune), or 'lite' mode (using AWS IoT Device Registry only). Note that 'lite' mode supports a reduced set of Asset Library features (see documentation for further info).`,
+        message: `Asset library mode: 'full' uses Amazon Neptune as data store. 'enhanced' adds Amazon OpenSearch for enhanced search features. 'lite' uses only AWS IoT Device Registry and supports a reduced feature set. See documentation for details.`,
         type: 'list',
-        choices: ['full', 'lite'],
+        choices: [AssetLibraryMode.Full, AssetLibraryMode.Lite, AssetLibraryMode.Enhanced],
         name: 'assetLibrary.mode',
-        default: answers.assetLibrary?.mode ?? 'full',
+        default: answers.assetLibrary?.mode ?? AssetLibraryMode.Full,
         askAnswered: true,
         validate(answer: string) {
           if (answer?.length === 0) {
@@ -64,7 +71,7 @@ export class AssetLibraryInstaller implements RestModule {
         default: answers.assetLibrary?.neptuneDbInstanceType ?? 'db.r4.xlarge',
         askAnswered: true,
         when(answers: Answers) {
-          return answers.assetLibrary?.mode === 'full';
+          return modeRequiresNeptune(answers.assetLibrary?.mode);
         },
         validate(answer: string) {
           if (answer?.length === 0) {
@@ -80,7 +87,7 @@ export class AssetLibraryInstaller implements RestModule {
         default: answers.assetLibrary?.createDbReplicaInstance ?? false,
         askAnswered: true,
         when(answers: Answers) {
-          return answers.assetLibrary?.mode === 'full';
+          return modeRequiresNeptune(answers.assetLibrary?.mode);
         },
         validate(answer: string) {
           if (answer?.length === 0) {
@@ -90,13 +97,13 @@ export class AssetLibraryInstaller implements RestModule {
         },
       },
       {
-        message: `Restore the database from a snapshot? If not, a fresh database will be created.`,
+        message: `Restore the Neptune database from a snapshot? If not, a fresh database will be created.`,
         type: 'confirm',
         name: 'assetLibrary.restoreFromSnapshot',
         default: answers.assetLibrary?.restoreFromSnapshot ?? false,
         askAnswered: true,
         when(answers: Answers) {
-          return answers.assetLibrary?.mode === 'full';
+          return modeRequiresNeptune(answers.assetLibrary?.mode);
         },
         validate(answer: string) {
           if (answer?.length === 0) {
@@ -112,7 +119,7 @@ export class AssetLibraryInstaller implements RestModule {
         default: answers.assetLibrary?.neptuneSnapshotIdentifier,
         askAnswered: true,
         when(answers: Answers) {
-          return answers.assetLibrary?.mode === 'full' &&
+          return modeRequiresNeptune(answers.assetLibrary?.mode) &&
             answers.assetLibrary?.restoreFromSnapshot;
         },
         validate(answer: string) {
@@ -174,7 +181,7 @@ export class AssetLibraryInstaller implements RestModule {
       return [answers, tasks];
     }
 
-    if (answers.assetLibrary.mode === 'full') {
+    if (modeRequiresNeptune(answers.assetLibrary.mode)) {
       tasks.push({
         title: `Deploying stack '${this.neptuneStackName}'`,
         task: async () => {
@@ -253,7 +260,7 @@ export class AssetLibraryInstaller implements RestModule {
         addIfSpecified('NeptuneURL', answers.assetLibrary.neptuneUrl);
         addIfSpecified('ApplyAutoscaling', answers.assetLibrary.enableAutoScaling);
         addIfSpecified('ProvisionedConcurrentExecutions', answers.assetLibrary.provisionedConcurrentExecutions);
-        addIfSpecified('CustomResourceVPCLambdaArn', answers.assetLibrary.mode === 'full' ?
+        addIfSpecified('CustomResourceVPCLambdaArn', modeRequiresNeptune(answers.assetLibrary.mode) ?
           answers.deploymentHelper.vpcLambdaArn : answers.deploymentHelper.lambdaArn);
         addIfSpecified('CognitoUserPoolArn', answers.apigw.cognitoUserPoolArn);
         addIfSpecified('AuthorizerFunctionArn', answers.apigw.lambdaAuthorizerArn);

@@ -12,6 +12,7 @@ import { Answers } from "../../../models/answers";
 import { InfrastructureModule, ModuleName } from "../../../models/modules";
 import { deleteStack } from "../../../utils/cloudformation.util";
 import { getMonorepoRoot } from "../../../prompts/paths.prompt";
+import { modeRequiresNeptune } from '../service/assetLibrary';
 
 export class VpcInstaller implements InfrastructureModule {
   public readonly friendlyName = "VPC";
@@ -41,7 +42,7 @@ export class VpcInstaller implements InfrastructureModule {
             return (
               answers.modules.expandedIncludingOptional.includes("vpc") ||
               answers.apigw?.type === "Private" ||
-              answers.assetLibrary?.mode == "full"
+              modeRequiresNeptune(answers.assetLibrary?.mode)
             );
           },
         },
@@ -56,7 +57,7 @@ export class VpcInstaller implements InfrastructureModule {
               (answers.vpc?.useExisting ?? false) &&
               (answers.modules.expandedIncludingOptional.includes("vpc") ||
                 answers.apigw?.type === "Private" ||
-                answers.assetLibrary?.mode == "full")
+                modeRequiresNeptune(answers.assetLibrary?.mode))
             );
           },
         },
@@ -131,7 +132,7 @@ export class VpcInstaller implements InfrastructureModule {
 
       const skipDeployment =
         answers.apigw?.type !== "Private" &&
-        answers.assetLibrary?.mode !== "full" &&
+        ! modeRequiresNeptune(answers.assetLibrary?.mode) &&
         answers.notifications?.useDax !== true;
 
       tasks.push(
