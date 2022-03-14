@@ -14,7 +14,7 @@ import inquirer from 'inquirer';
 import { ListrTask } from 'listr2';
 import ow from 'ow';
 import path from 'path';
-import { Answers } from '../../../models/answers';
+import { Answers, AssetLibraryMode } from '../../../models/answers';
 import { ModuleName, PostmanEnvironment, RestModule } from '../../../models/modules';
 import { applicationConfigurationPrompt } from '../../../prompts/applicationConfiguration.prompt';
 import {
@@ -44,6 +44,13 @@ const ASSUMED_NEPTUNE_ENGINE_VERSION = '1.1.0.0';
 // AWS.RDS.DescribeOrderableDBInstanceOptions API.
 const DEFAULT_NEPTUNE_INSTANCE_TYPE = 'db.r5.xlarge';
 
+export function modeRequiresNeptune(mode: string): boolean {
+    return mode === AssetLibraryMode.Full || mode === AssetLibraryMode.Enhanced;
+}
+
+export function modeRequiresOpenSearch(mode: string): boolean {
+    return mode === AssetLibraryMode.Enhanced;
+}
 export class AssetLibraryInstaller implements RestModule {
     public readonly friendlyName = 'Asset Library';
     public readonly name = 'assetLibrary';
@@ -79,11 +86,15 @@ export class AssetLibraryInstaller implements RestModule {
             updatedAnswers = await inquirer.prompt(
                 [
                     {
-                        message: `Run in 'full' mode (with Amazon Neptune), or 'lite' mode (using AWS IoT Device Registry only). Note that 'lite' mode supports a reduced set of Asset Library features (see documentation for further info).`,
+                        message: `Asset library mode: 'full' uses Amazon Neptune as data store. 'enhanced' adds Amazon OpenSearch for enhanced search features. 'lite' uses only AWS IoT Device Registry and supports a reduced feature set. See documentation for details.`,
                         type: 'list',
-                        choices: ['full', 'lite'],
+                        choices: [
+                            AssetLibraryMode.Full,
+                            AssetLibraryMode.Lite,
+                            AssetLibraryMode.Enhanced,
+                        ],
                         name: 'assetLibrary.mode',
-                        default: answers.assetLibrary?.mode ?? 'full',
+                        default: answers.assetLibrary?.mode ?? AssetLibraryMode.Full,
                         askAnswered: true,
                         validate(answer: string) {
                             if (answer?.length === 0) {
@@ -108,7 +119,7 @@ export class AssetLibraryInstaller implements RestModule {
                         loop: false,
                         pageSize: 10,
                         when(answers: Answers) {
-                            return answers.assetLibrary?.mode === 'full';
+                            return modeRequiresNeptune(answers.assetLibrary?.mode);
                         },
                         validate(answer: string) {
                             if (
@@ -129,7 +140,7 @@ export class AssetLibraryInstaller implements RestModule {
                         default: answers.assetLibrary?.createDbReplicaInstance ?? false,
                         askAnswered: true,
                         when(answers: Answers) {
-                            return answers.assetLibrary?.mode === 'full';
+                            return modeRequiresNeptune(answers.assetLibrary?.mode);
                         },
                         validate(answer: string) {
                             if (answer?.length === 0) {
@@ -145,7 +156,7 @@ export class AssetLibraryInstaller implements RestModule {
                         default: answers.assetLibrary?.restoreFromSnapshot ?? false,
                         askAnswered: true,
                         when(answers: Answers) {
-                            return answers.assetLibrary?.mode === 'full';
+                            return modeRequiresNeptune(answers.assetLibrary?.mode);
                         },
                         validate(answer: string) {
                             if (answer?.length === 0) {
@@ -162,7 +173,7 @@ export class AssetLibraryInstaller implements RestModule {
                         askAnswered: true,
                         when(answers: Answers) {
                             return (
-                                answers.assetLibrary?.mode === 'full' &&
+                                modeRequiresNeptune(answers.assetLibrary?.mode) &&
                                 answers.assetLibrary?.restoreFromSnapshot
                             );
                         },
@@ -216,7 +227,7 @@ export class AssetLibraryInstaller implements RestModule {
         includeOptionalModule(
             'vpc',
             updatedAnswers.modules,
-            updatedAnswers.assetLibrary.mode === 'full'
+            modeRequiresNeptune(updatedAnswers.assetLibrary.mode)
         );
         return updatedAnswers;
     }
@@ -290,7 +301,7 @@ export class AssetLibraryInstaller implements RestModule {
         );
         addIfSpecified(
             'CustomResourceVPCLambdaArn',
-            answers.assetLibrary.mode === 'full'
+            modeRequiresNeptune(answers.assetLibrary?.mode)
                 ? answers.deploymentHelper.vpcLambdaArn
                 : answers.deploymentHelper.lambdaArn
         );
@@ -335,7 +346,7 @@ export class AssetLibraryInstaller implements RestModule {
             return [answers, tasks];
         }
 
-        if (answers.assetLibrary.mode === 'full') {
+        if (modeRequiresNeptune(answers.assetLibrary?.mode)) {
             tasks.push({
                 title: `Deploying stack '${this.neptuneStackName}'`,
                 task: async () => {
@@ -433,12 +444,14 @@ export class AssetLibraryInstaller implements RestModule {
             },
         });
 
-        tasks.push({
-            title: `Deleting stack '${this.neptuneStackName}'`,
-            task: async () => {
-                await deleteStack(this.neptuneStackName, answers.region);
-            },
-        });
+        if (modeRequiresNeptune(answers.assetLibrary?.mode)) {
+            tasks.push({
+                title: `Deleting stack '${this.neptuneStackName}'`,
+                task: async () => {
+                    await deleteStack(this.neptuneStackName, answers.region);
+                },
+            });
+        }
         return tasks;
     }
 }

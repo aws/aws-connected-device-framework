@@ -103,6 +103,7 @@ export interface ProvisionedConcurrencyModuleAttribues extends ServiceModuleAttr
     provisionedConcurrentExecutions?: number;
     enableAutoScaling?: boolean;
 }
+
 export interface RestServiceModuleAttribues extends ServiceModuleAttributes {
     enableCustomDomain?: boolean;
     customDomainBasePath?: string;
@@ -121,15 +122,27 @@ export interface OrganizationManager extends RestServiceModuleAttribues {
     artifactBucketPrefix?: string;
 }
 
+export const enum AssetLibraryMode {
+    Lite = 'lite',
+    Full = 'full',
+    Enhanced = 'enhanced',
+}
+
 export interface AssetLibrary
     extends RestServiceModuleAttribues,
         ProvisionedConcurrencyModuleAttribues {
-    mode?: 'full' | 'lite';
+    mode?: AssetLibraryMode;
+    // Neptune Configuration
     neptuneDbInstanceType?: string;
     createDbReplicaInstance?: boolean;
     neptuneSnapshotIdentifier?: string;
     restoreFromSnapshot?: boolean;
     neptuneUrl?: string;
+    // OpenSearch Configuration
+    openSearchDataNodeInstanceType?: string;
+    openSearchEBSVolumeSize?: number;
+    neptuneSecurityGroup?: string;
+    neptuneClusterReadEndpoint?: string;
     // Application Configuration
     defaultAnswer?: boolean;
     defaultDevicesParentRelationName?: string;
