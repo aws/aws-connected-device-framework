@@ -323,10 +323,10 @@ export class DevicesServiceFull implements DevicesService {
         if (this.isAuthzEnabled) {
             const incomingAuthRelations = template.schema.relations.incomingAuthRelations();
             const outgoingAuthRelations = template.schema.relations.outgoingAuthRelations();
-            this.authServiceFull.updateRelsIdentifyingAuth(device.groups?.in, incomingAuthRelations);
-            this.authServiceFull.updateRelsIdentifyingAuth(device.groups?.out, outgoingAuthRelations);
-            this.authServiceFull.updateRelsIdentifyingAuth(device.devices?.in, incomingAuthRelations);
-            this.authServiceFull.updateRelsIdentifyingAuth(device.devices?.out, outgoingAuthRelations);
+            this.authServiceFull.updateRelsIdentifyingAuth(device.groups?.in, validateRelationships.groupLabels, incomingAuthRelations);
+            this.authServiceFull.updateRelsIdentifyingAuth(device.groups?.out, validateRelationships.groupLabels, outgoingAuthRelations);
+            this.authServiceFull.updateRelsIdentifyingAuth(device.devices?.in, validateRelationships.deviceLabels, incomingAuthRelations);
+            this.authServiceFull.updateRelsIdentifyingAuth(device.devices?.out, validateRelationships.deviceLabels, outgoingAuthRelations);
         }
 
         // Assemble devicemodel into node
@@ -555,9 +555,9 @@ export class DevicesServiceFull implements DevicesService {
         };
         
         const template = await this.typesService.get(device.templateId, TypeCategory.Device, TypeDefinitionStatus.published);
-        const validationResult = await this.validator.validateRelationshipsByIds(template, relatedGroup, undefined);
-        if (!validationResult.isValid) {
-            throw new RelationValidationError(validationResult);
+        const validateRelationships = await this.validator.validateRelationshipsByIds(template, relatedGroup, undefined);
+        if (!validateRelationships.isValid) {
+            throw new RelationValidationError(validateRelationships);
         }
 
         // if fgac is enabled, we need to ensure any relations configured as identifying auth in its template are flagged to be saved as so
@@ -566,7 +566,7 @@ export class DevicesServiceFull implements DevicesService {
             const authRelations = (direction==='in') ?
                     template.schema.relations.incomingAuthRelations() : 
                     template.schema.relations.outgoingAuthRelations();
-            this.authServiceFull.updateRelsIdentifyingAuth(relatedGroup[direction], authRelations);
+            this.authServiceFull.updateRelsIdentifyingAuth(relatedGroup[direction], validateRelationships.groupLabels, authRelations);
             isAuthCheck = relatedGroup[direction][relationship][0].isAuthCheck??false;
         }
 
@@ -667,9 +667,9 @@ export class DevicesServiceFull implements DevicesService {
         if (template===undefined) {
             throw new TemplateNotFoundError(device.templateId);
         }
-        const validationResult = await this.validator.validateRelationshipsByIds(template, undefined, relatedDevice);
-        if (!validationResult.isValid) {
-            throw new RelationValidationError(validationResult);
+        const validateRelationships = await this.validator.validateRelationshipsByIds(template, undefined, relatedDevice);
+        if (!validateRelationships.isValid) {
+            throw new RelationValidationError(validateRelationships);
         }
 
         // if fgac is enabled, we need to ensure any relations configured as identifying auth in its template are flagged to be saved as so
@@ -678,7 +678,7 @@ export class DevicesServiceFull implements DevicesService {
             const authRelations = (direction==='in') ?
                     template.schema.relations.incomingAuthRelations() : 
                     template.schema.relations.outgoingAuthRelations();
-            this.authServiceFull.updateRelsIdentifyingAuth(relatedDevice[direction], authRelations);
+            this.authServiceFull.updateRelsIdentifyingAuth(relatedDevice[direction], validateRelationships.deviceLabels, authRelations);
             isAuthCheck = relatedDevice[direction][relationship][0].isAuthCheck??false;
         }
 

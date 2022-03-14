@@ -354,7 +354,10 @@ Before({tags: '@setup_devicesWithAuth_feature', timeout:60000}, async function (
         },
         relations: {
             out: {
-                linked_to: [groupTemplateId]
+                linked_to: [{
+                    name: groupTemplateId,
+                    includeInAuth: true
+                }]
             }
         }
     };
@@ -697,9 +700,25 @@ Before({tags: '@setup_deviceSearchWithAuth_feature', timeout: 60000}, async func
     const groupTemplateId = 'TEST-deviceSearchWithAuthGroup';
     const groupType:TypeResource = {
         templateId: groupTemplateId,
-        category: 'group'
+        category: 'group',
+        relations: {
+            out: {
+                parent: [{
+                    name: 'root',
+                    includeInAuth: true
+                }]
+            }
+        }
     };
     await templatesService.createTemplate(groupType, additionalHeaders);
+
+    // as this is a self reference, the relation needs to be added post creation
+    groupType.relations.out.parent.push({
+        name: groupTemplateId,
+        includeInAuth: true
+    });
+    await templatesService.updateTemplate(groupType, additionalHeaders);
+
     await templatesService.publishTemplate(CategoryEnum.group, groupTemplateId, additionalHeaders);
 
     // now go through the setup steps
@@ -713,7 +732,10 @@ Before({tags: '@setup_deviceSearchWithAuth_feature', timeout: 60000}, async func
         },
         relations: {
             out: {
-                'located_at': [groupTemplateId]
+                'located_at': [{
+                    name: groupTemplateId,
+                    includeInAuth: true
+                }]
             }
         }
     };

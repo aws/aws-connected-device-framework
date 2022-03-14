@@ -235,14 +235,13 @@ export class GroupsServiceFull implements GroupsService {
             throw new TemplateNotFoundError(group.templateId);
         }
         const validateSubTypeFuture = this.validator.validateSubType(template, group, Operation.CREATE);
-        const relations:DirectionToRelatedEntityArrayMap = Object.assign({}, group.groups);
         if (this.validateAllowedParentPaths) {
-            if (relations.out===undefined) {
-                relations.out= {};
+            if (group.groups.out===undefined) {
+                group.groups.out= {};
             }
-            relations.out.parent = [{id:group.parentPath}];
+            group.groups.out.parent = [{id:group.parentPath}];
         }
-        const validateRelationshipsFuture = this.validator.validateRelationshipsByIds(template, relations, undefined);
+        const validateRelationshipsFuture = this.validator.validateRelationshipsByIds(template, group.groups, undefined);
         const [subTypeValidation,validateRelationships] = await Promise.all([validateSubTypeFuture, validateRelationshipsFuture]);
 
         // schema validation results
@@ -259,8 +258,8 @@ export class GroupsServiceFull implements GroupsService {
         if (this.isAuthzEnabled) {
             const incomingAuthRelations = template.schema.relations.incomingAuthRelations();
             const outgoingAuthRelations = template.schema.relations.outgoingAuthRelations();
-            this.authServiceFull.updateRelsIdentifyingAuth(relations?.in, incomingAuthRelations);
-            this.authServiceFull.updateRelsIdentifyingAuth(relations?.out, outgoingAuthRelations);
+            this.authServiceFull.updateRelsIdentifyingAuth(group.groups?.in, validateRelationships.groupLabels, incomingAuthRelations);
+            this.authServiceFull.updateRelsIdentifyingAuth(group.groups?.out, validateRelationships.groupLabels, outgoingAuthRelations);
         }
 
         // ensure parent exists
@@ -483,16 +482,16 @@ export class GroupsServiceFull implements GroupsService {
         };
 
         const template = await this.typesService.get(sourceGroup.templateId, TypeCategory.Group, TypeDefinitionStatus.published);
-        const validationResult = await this.validator.validateRelationshipsByIds(template, relatedGroup, undefined);
-        if (!validationResult.isValid) {
-           throw new RelationValidationError(validationResult);
+        const validateRelationships = await this.validator.validateRelationshipsByIds(template, relatedGroup, undefined);
+        if (!validateRelationships.isValid) {
+           throw new RelationValidationError(validateRelationships);
         }
 
         // if fgac is enabled, we need to ensure any relations configured as identifying auth in its template are flagged to be saved as so
         let isAuthCheck = true;
         if (this.isAuthzEnabled) {
             const authRelations = template.schema.relations.outgoingAuthRelations();
-            this.authServiceFull.updateRelsIdentifyingAuth(relatedGroup.out, authRelations);
+            this.authServiceFull.updateRelsIdentifyingAuth(relatedGroup.out, validateRelationships.groupLabels, authRelations);
             isAuthCheck = relatedGroup.out[relationship][0].isAuthCheck??false;
         }
 

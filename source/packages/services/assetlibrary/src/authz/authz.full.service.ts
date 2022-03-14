@@ -15,7 +15,7 @@ import { TYPES } from '../di/types';
 import {logger} from '../utils/logger';
 import { Claims, ClaimAccess } from '../authz/claims';
 import { AuthzDaoFull } from './authz.full.dao';
-import { RelatedEntityArrayMap, StringArrayMap } from '../data/model';
+import { EntityTypeMap, RelatedEntityArrayMap, StringArrayMap } from '../data/model';
 import { NotAuthorizedError, NotFoundError } from '../utils/errors';
 
 @injectable()
@@ -87,19 +87,21 @@ export class AuthzServiceFull {
 
     }
 
-    public updateRelsIdentifyingAuth(rels:RelatedEntityArrayMap, authRels:StringArrayMap) : void {
-        logger.silly(`authz.full.service updateRelsIdentifyingAuth: in: rels: ${JSON.stringify(rels)}, authRels: ${JSON.stringify(authRels)}`);
-        if (rels) {                                                                
-            for (const [relation,entities] of Object.entries(rels)) {
-                if (authRels[relation]) {
+    public updateRelsIdentifyingAuth(relatedEntities:RelatedEntityArrayMap, entityLabels:EntityTypeMap, authenticatedTypes:StringArrayMap) : void {
+        logger.silly(`authz.full.service updateRelsIdentifyingAuth: in: relatedEntities: ${JSON.stringify(relatedEntities)}, entityLabels: ${JSON.stringify(entityLabels)}, authenticatedTypes: ${JSON.stringify(authenticatedTypes)}`);
+        if (relatedEntities) {                                                                
+            for (const [relation,entities] of Object.entries(relatedEntities)) {
+                if (authenticatedTypes[relation]) {
                     for (const entity of entities) {
-                        if (authRels[relation].includes(entity.id)) {
-                            rels[relation].find(e=>e.id===entity.id).isAuthCheck = true;
+                        const labels = entityLabels[entity.id];
+                        // if (authenticatedTypes[relation].includes(entity.id)) {
+                        if (authenticatedTypes[relation].some(t=> labels.indexOf(t)>=0)) {
+                            relatedEntities[relation].find(e=>e.id===entity.id).isAuthCheck = true;
                         }
                     }
                 }
             }
         }
-        logger.silly(`authz.full.service updateRelsIdentifyingAuth: updated: rels: ${JSON.stringify(rels)}`);
+        logger.silly(`authz.full.service updateRelsIdentifyingAuth: updated: rels: ${JSON.stringify(relatedEntities)}`);
     }
 }
