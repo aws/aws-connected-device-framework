@@ -10,6 +10,7 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { CreateServiceLinkedRoleCommand, IAMClient } from '@aws-sdk/client-iam';
 import inquirer from 'inquirer';
 import { ListrTask } from 'listr2';
 import ow from 'ow';
@@ -378,6 +379,31 @@ export class AssetLibraryInstaller implements RestModule {
                     answers.assetLibrary.neptuneUrl = byOutputKey('GremlinEndpoint');
                 },
             });
+            if (modeRequiresOpenSearch(answers.assetLibrary.mode)) {
+                tasks.push({
+                    title: `Ensure service-linked role 'AWSServiceRoleForAmazonElasticsearchService' exists`,
+                    task: async () => {
+                        const iamClient = new IAMClient({});
+                        const command = new CreateServiceLinkedRoleCommand({
+                            AWSServiceName: 'es.amazonaws.com',
+                        });
+                        try {
+                            await iamClient.send(command);
+                        } catch (err) {
+                            console.error(`ERROR! ${JSON.stringify(err)}`);
+                            throw err;
+                        }
+
+                        // An error occurred (InvalidInput) when calling the CreateServiceLinkedRole operation: Service role name
+                        // AWSServiceRoleForAmazonElasticsearchService has been taken in this account, please try a different suffix.
+
+                        // await execa('aws', [
+                        //   'iam', 'create-service-linked-role',
+                        //   '--aws-service-name', 'es.amazonaws.com'
+                        // ]);
+                    },
+                });
+            }
         }
 
         tasks.push({
