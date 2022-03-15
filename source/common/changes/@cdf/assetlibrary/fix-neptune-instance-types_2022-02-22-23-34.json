@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/assetlibrary",
+      "comment": "Make Cloudformation templates more permissive w.r.t. Neptune instance types",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/assetlibrary",
+  "email": "jonasneu@amazon.com"
+}
