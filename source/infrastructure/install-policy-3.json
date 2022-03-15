@@ -109,11 +109,27 @@
             }
         },
         {
+            "Sid": "OpenSearchServiceLinkedRoleCreate",
+            "Action": "iam:CreateServiceLinkedRole",
+            "Effect": "Allow",
+            "Resource": "arn:aws:iam::*:role/aws-service-role/es.amazonaws.com/AWSServiceRoleForAmazonElasticsearchService",
+            "Condition": {
+                "StringLike": {
+                    "iam:AWSServiceName":"es.amazonaws.com"
+                }
+            }
+        },
+        {
+            "Sid": "OpenSearchServiceLinkedRoleGet",
+            "Action": "iam:GetRole",
+            "Effect": "Allow",
+            "Resource": "arn:aws:iam::*:role/aws-service-role/es.amazonaws.com/AWSServiceRoleForAmazonElasticsearchService"
+        },
+        {
             "Sid": "ECS",
             "Action": "ecs:*",
             "Effect": "Allow",
             "Resource": "*"
-        }
-            
+        } 
     ]
 }

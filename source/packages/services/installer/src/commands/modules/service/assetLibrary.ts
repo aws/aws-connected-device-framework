@@ -10,6 +10,7 @@ import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
 import { deleteStack, getStackOutputs, getStackParameters } from '../../../utils/cloudformation.util';
 import { enableAutoScaling, provisionedConcurrentExecutions } from '../../../prompts/autoscaling.prompt';
+import { IAMClient, CreateServiceLinkedRoleCommand } from '@aws-sdk/client-iam';
 
 export function modeRequiresNeptune(mode: string): boolean {
   return mode === AssetLibraryMode.Full || mode === AssetLibraryMode.Enhanced;
@@ -223,6 +224,33 @@ export class AssetLibraryInstaller implements RestModule {
       });
     }
 
+    if (modeRequiresOpenSearch(answers.assetLibrary.mode)) {
+      tasks.push({
+        title: `Ensere service-linked role 'AWSServiceRoleForAmazonElasticsearchService' exists`,
+        task: async () => {
+          const iamClient = new IAMClient({});
+          const command = new CreateServiceLinkedRoleCommand({
+            AWSServiceName: 'es.amazonaws.com'
+          });
+          try {
+            await iamClient.send(command);
+          } catch (err) {
+            console.error(`ERROR! ${JSON.stringify(err)}`);
+            throw(err);
+          }
+
+          // An error occurred (InvalidInput) when calling the CreateServiceLinkedRole operation: Service role name
+          // AWSServiceRoleForAmazonElasticsearchService has been taken in this account, please try a different suffix.
+
+
+          // await execa('aws', [
+          //   'iam', 'create-service-linked-role',
+          //   '--aws-service-name', 'es.amazonaws.com'
+          // ]);
+        }
+      });
+
+    }
 
     tasks.push({
       title: `Packaging stack '${this.applicationStackName}'`,
