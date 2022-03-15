@@ -1,6 +1,13 @@
 # Change Log - @cdf/installer
 
-This log was last generated on Thu, 10 Mar 2022 00:24:53 GMT and should not be manually modified.
+This log was last generated on Tue, 15 Mar 2022 18:37:51 GMT and should not be manually modified.
+
+## 0.1.6
+Tue, 15 Mar 2022 18:37:51 GMT
+
+### Patches
+
+- Assetlibrary installer: Display list of available Neptune instance types
 
 ## 0.1.5
 Thu, 10 Mar 2022 00:24:53 GMT

@@ -2,6 +2,18 @@
   "name": "@cdf/installer",
   "entries": [
     {
+      "version": "0.1.6",
+      "tag": "@cdf/installer_v0.1.6",
+      "date": "Tue, 15 Mar 2022 18:37:51 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Assetlibrary installer: Display list of available Neptune instance types"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.1.5",
       "tag": "@cdf/installer_v0.1.5",
       "date": "Thu, 10 Mar 2022 00:24:53 GMT",
