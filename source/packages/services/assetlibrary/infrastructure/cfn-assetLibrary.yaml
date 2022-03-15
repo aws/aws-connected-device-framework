@@ -95,7 +95,7 @@ Parameters:
     Default: 'N/A'
 
   ProvisionedConcurrentExecutions:
-    Description: The no. of desired concurrent executions to  provision.  Set to 0 to disable.
+    Description: The no. of desired concurrent executions to provision. Set to 0 to disable.
     Type: Number
     Default: 0
 

@@ -10,7 +10,7 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { CreateServiceLinkedRoleCommand, IAMClient } from '@aws-sdk/client-iam';
+import { CreateServiceLinkedRoleCommand, GetRoleCommand, IAMClient } from '@aws-sdk/client-iam';
 import inquirer from 'inquirer';
 import { ListrTask } from 'listr2';
 import ow from 'ow';
@@ -63,9 +63,11 @@ export class AssetLibraryInstaller implements RestModule {
 
     public readonly stackName: string;
     private readonly neptuneStackName: string;
+    private readonly enhancedSearchStackName: string;
 
     constructor(environment: string) {
         this.neptuneStackName = `cdf-assetlibrary-neptune-${environment}`;
+        this.enhancedSearchStackName = `cdf-assetlibrary-enhancedsearch-${environment}`;
         this.stackName = `cdf-assetlibrary-${environment}`;
     }
     includeOptionalModules: (answers: Answers) => Answers;
@@ -162,6 +164,53 @@ export class AssetLibraryInstaller implements RestModule {
                         validate(answer: string) {
                             if (answer?.length === 0) {
                                 return 'You must confirm whether to restore from a snapshot or not.';
+                            }
+                            return true;
+                        },
+                    },
+                    {
+                        message: `Select the OpenSearch cluster data node instance type:`,
+                        type: 'input',
+                        name: 'assetLibrary.openSearchDataNodeInstanceType',
+                        default:
+                            answers.assetLibrary?.openSearchDataNodeInstanceType ??
+                            't3.small.search',
+                        askAnswered: true,
+                        when: (answers: Answers) =>
+                            modeRequiresOpenSearch(answers.assetLibrary?.mode),
+                        validate(answer: string) {
+                            if (answer?.length === 0) {
+                                return 'You must enter the OpenSearch data node instance type.';
+                            }
+                            return true;
+                        },
+                    },
+                    {
+                        message: `Enter the number of OpenSearch cluster data node instances. This number must either be 1 or a multiple of the number of private subnets in the VPC:`,
+                        type: 'number',
+                        name: 'assetLibrary.openSearchDataNodeInstanceCount',
+                        default: answers.assetLibrary?.openSearchDataNodeInstanceCount ?? 1,
+                        askAnswered: true,
+                        when: (answers: Answers) =>
+                            modeRequiresOpenSearch(answers.assetLibrary?.mode),
+                        validate(answer: number) {
+                            if (answer < 1) {
+                                return 'The number of OpenSearch data node instances must be a non-zero multiple of the number of availability zones.';
+                            }
+                            return true;
+                        },
+                    },
+                    {
+                        message: `Size of the EBS volume attached to OpenSearch data nodes in GiB`,
+                        type: 'number',
+                        name: 'assetLibrary.openSearchEBSVolumeSize',
+                        default: answers.assetLibrary?.openSearchEBSVolumeSize ?? 10,
+                        askAnswered: true,
+                        when: (answers: Answers) =>
+                            modeRequiresOpenSearch(answers.assetLibrary?.mode),
+                        validate(answer: number) {
+                            if (answer < 10) {
+                                return `You must specify at least 10 GiB for EBS volume size. For detailed documentation, see: https://docs.aws.amazon.com/opensearch-service/latest/developerguide/limits.html#ebsresource`;
                             }
                             return true;
                         },
@@ -379,28 +428,127 @@ export class AssetLibraryInstaller implements RestModule {
                     answers.assetLibrary.neptuneUrl = byOutputKey('GremlinEndpoint');
                 },
             });
+
             if (modeRequiresOpenSearch(answers.assetLibrary.mode)) {
                 tasks.push({
                     title: `Ensure service-linked role 'AWSServiceRoleForAmazonElasticsearchService' exists`,
                     task: async () => {
                         const iamClient = new IAMClient({});
-                        const command = new CreateServiceLinkedRoleCommand({
-                            AWSServiceName: 'es.amazonaws.com',
+
+                        const getCommand1 = new GetRoleCommand({
+                            RoleName: 'AWSServiceRoleForAmazonOpenSearchService',
                         });
                         try {
-                            await iamClient.send(command);
-                        } catch (err) {
-                            console.error(`ERROR! ${JSON.stringify(err)}`);
-                            throw err;
+                            const data1 = await iamClient.send(getCommand1);
+                            console.log(
+                                `First attempt at finding SLR ${data1.$metadata.httpStatusCode}`
+                            );
+                            if (data1.$metadata.httpStatusCode === 200) return;
+                        } catch {
+                            /* do nothing */
                         }
+                        // also probe for the legacy name of the role
+                        const getCommand2 = new GetRoleCommand({
+                            RoleName: 'AWSServiceRoleForAmazonElasticsearchService',
+                        });
+                        try {
+                            const data2 = await iamClient.send(getCommand2);
+                            console.log(
+                                `Second attempt at finding SLR ${data2.$metadata.httpStatusCode}`
+                            );
+                            if (data2.$metadata.httpStatusCode === 200) return;
+                        } catch {
+                            /* do nothing */
+                        }
+
+                        // if neither role exists, create it
+                        const createCommand = new CreateServiceLinkedRoleCommand({
+                            AWSServiceName: 'es.amazonaws.com',
+                        });
+                        await iamClient.send(createCommand);
 
                         // An error occurred (InvalidInput) when calling the CreateServiceLinkedRole operation: Service role name
                         // AWSServiceRoleForAmazonElasticsearchService has been taken in this account, please try a different suffix.
+                    },
+                });
 
-                        // await execa('aws', [
-                        //   'iam', 'create-service-linked-role',
-                        //   '--aws-service-name', 'es.amazonaws.com'
-                        // ]);
+                tasks.push({
+                    title: `Deploying stack '${this.enhancedSearchStackName}'`,
+                    task: async () => {
+                        const vpcSubnetIdsArr = answers.vpc.privateSubnetIds.split(',');
+                        const instanceCount = answers.assetLibrary.openSearchDataNodeInstanceCount;
+                        let subnetIds = answers.vpc.privateSubnetIds;
+                        if (instanceCount < vpcSubnetIdsArr.length) {
+                            subnetIds = vpcSubnetIdsArr.slice(0, instanceCount).join(',');
+                        } else if (instanceCount % vpcSubnetIdsArr.length != 0) {
+                            throw new Error(
+                                `The chosen number of OpenSearch data nodes (${instanceCount}) is not an integer multiple of the number of VPC subnets given (${vpcSubnetIdsArr.length}: ${answers.vpc.privateSubnetIds}).`
+                            );
+                        }
+                        const availabilityZoneCount = subnetIds.split(',').length;
+
+                        const parameterOverrides = [
+                            `Environment=${answers.environment}`,
+                            `VpcId=${answers.vpc.id}`,
+                            `CDFSecurityGroupId=${answers.vpc.securityGroupId}`,
+                            `PrivateSubNetIds=${subnetIds}`,
+                            `CustomResourceVPCLambdaArn=${answers.deploymentHelper.vpcLambdaArn}`,
+                            `KmsKeyId=${answers.kms.id}`,
+                            `NeptuneSecurityGroupId=${answers.assetLibrary.neptuneSecurityGroup}`,
+                            `NeptuneClusterEndpoint=${answers.assetLibrary.neptuneClusterReadEndpoint}`,
+                            `OpenSearchInstanceType=${answers.assetLibrary.openSearchDataNodeInstanceType}`,
+                            `OpenSearchInstanceCount=${answers.assetLibrary.openSearchDataNodeInstanceCount}`,
+                            `OpenSearchEBSVolumeSize=${answers.assetLibrary.openSearchEBSVolumeSize}`,
+                            `OpenSearchAvailabilityZoneCount=${availabilityZoneCount}`,
+                            // # Parameters available in the Cloudformation template but not currently exposed in the installer are
+                            // # listed as comments below.
+                            // ## Unused Parameters for defining OpenSearch cluster setup:
+                            // OpenSearchDedicatedMasterCount
+                            // OpenSearchDedicatedMasterInstanceType
+                            // OpenSearchEBSVolumeType
+                            // OpenSearchEBSProvisionedIOPS
+                            // NumberOfShards
+                            // NumberOfReplica
+                            // ## Unused Parameters for defining stream poller lambda behavior:
+                            // NeptunePollerLambdaMemorySize
+                            // NeptunePollerLambdaLoggingLevel
+                            // NeptunePollerStreamRecordsBatchSize
+                            // NeptunePollerMaxPollingWaitTime
+                            // NeptunePollerMaxPollingInterval
+                            // NeptunePollerStepFunctionFallbackPeriod
+                            // NeptunePollerStepFunctionFallbackPeriodUnit
+                            // ## Unused Parameters for defining data syncing behavior:
+                            // GeoLocationFields
+                            // PropertiesToExclude
+                            // DatatypesToExclude
+                            // IgnoreMissingDocument
+                            // EnableNonStringIndexing
+                            // ## Unused Parameters for defining monitoring and alerting:
+                            // OpenSearchAuditLogsCloudWatchLogsLogGroupArn
+                            // OpenSearchApplicationLogsCloudWatchLogsLogGroupArn
+                            // OpenSearchIndexSlowLogsCloudWatchLogsLogGroupArn
+                            // OpenSearchSearchSlowLogsCloudWatchLogsLogGroupArn
+                            // CreateCloudWatchAlarm
+                            // NotificationEmail
+                        ];
+
+                        await packageAndDeployStack({
+                            answers: answers,
+                            stackName: this.enhancedSearchStackName,
+                            serviceName: 'assetlibrary',
+                            templateFile: 'infrastructure/cfn-enhancedsearch.yaml',
+                            cwd: path.join(
+                                monorepoRoot,
+                                'source',
+                                'packages',
+                                'services',
+                                'assetlibrary'
+                            ),
+                            parameterOverrides: parameterOverrides,
+                            needsPackaging: false,
+                            needsCapabilityNamedIAM: true,
+                            needsCapabilityAutoExpand: false,
+                        });
                     },
                 });
             }
