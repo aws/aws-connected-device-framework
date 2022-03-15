@@ -10,13 +10,9 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import 'reflect-metadata';
-
 import { Module, ModuleName } from '../models/modules';
 import { expandModuleList, topologicallySortModules } from './modules.prompt';
 
-// import {  topologicallySortModules } from './modules.prompt';
- 
  describe('modules', () => {
 
     const m:Module = {
@@ -87,12 +83,12 @@ import { expandModuleList, topologicallySortModules } from './modules.prompt';
         expect(actual.some(m => m === 'vpc')).toBeTruthy();
 
     });
- 
+
      it('topological sort', () => {
 
          // execute
          const actual = topologicallySortModules(modules, modules.map(m => m.name));
- 
+
          // verify
          expect(actual).toBeDefined();
          expect(actual[0]).toContain('apigw');
@@ -104,8 +100,7 @@ import { expandModuleList, topologicallySortModules } from './modules.prompt';
          expect(actual[1]).toContain('provisioning');
          expect(actual[2]).toContain('commands');
          expect(actual[2]).toContain('greengrass2Provisioning');
- 
+
      });
-  
+
  });
- 

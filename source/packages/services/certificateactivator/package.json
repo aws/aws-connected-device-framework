@@ -1,6 +1,6 @@
 {
   "name": "@cdf/certificate-activator",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "CDF Certificate Activator",
   "author": "Dean Hart",
   "config": {
@@ -20,7 +20,7 @@
     "@cdf/config-inject": "^4.0.0",
     "@cdf/logger": "^4.0.0",
     "@cdf/lambda-invoke": "^3.0.0",
-    "@cdf/assetlibrary-client": "^5.0.0",
+    "@cdf/assetlibrary-client": "^5.0.1",
     "@cdf/provisioning-client": "^5.0.0",
     "aws-sdk": "2.1048.0",
     "config": "3.3.6",

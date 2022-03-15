@@ -1,6 +1,20 @@
 # Change Log - @cdf/installer
 
-This log was last generated on Fri, 18 Feb 2022 17:44:18 GMT and should not be manually modified.
+This log was last generated on Tue, 15 Mar 2022 18:37:51 GMT and should not be manually modified.
+
+## 0.1.6
+Tue, 15 Mar 2022 18:37:51 GMT
+
+### Patches
+
+- Assetlibrary installer: Display list of available Neptune instance types
+
+## 0.1.5
+Thu, 10 Mar 2022 00:24:53 GMT
+
+### Patches
+
+- Parts of the installer were still assuming the installer had been ran from with the installer package dir rather than from within anywhere within the monorepo as supported by cdf-cli.
 
 ## 0.1.4
 Fri, 18 Feb 2022 17:44:18 GMT
