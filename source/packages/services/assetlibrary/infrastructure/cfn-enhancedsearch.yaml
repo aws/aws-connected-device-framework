@@ -29,9 +29,6 @@ Parameters:
       Comma delimited list of private subnetIds to deploy Neptune into. Number of subnets must match the number of 
       availability zones deployed into, i.e. only pass one subnet if operating in a single AZ.
     Type: List<AWS::EC2::Subnet::Id>
-  PrivateRouteTableIds:
-    Description: Comma delimited list of private route table ids to allow access to Neptune
-    Type: String
   CDFSecurityGroupId:
     Description: ID of an existing security group to allow access to ElasticSearch
     Type: AWS::EC2::SecurityGroup::Id
@@ -42,7 +39,18 @@ Parameters:
     Description: The KMS key ID used to encrypt the ElasticSearch database
     Type: String
     MinLength: 1
-  ElasticSearchInstanceType:
+  OpenSearchAvailabilityZoneCount:
+    Description: >
+      If deploying more than one data instance (defined in OpenSearchInstanceCount), the instances can be distributed
+      across availability zones. Default is 1, i.e. single-AZ. Choose 2 or 3 for multi-AZ. The list of subnets given in
+      PrivateSubNetIDs must have a length equal to the number given here. The number of data instances in 
+      OpenSearchInstanceCount must be an integer multiple of the number given here.
+    Type: Number
+    Default: 1
+    MinValue: 1
+    MaxValue: 3
+    ConstraintDescription: OpenSearchAvailabilityZoneCount must equal 1, 2, or 3. 
+  OpenSearchInstanceType:
     Description: >
       OpenSearch data instance type. Must be a supported OpenSearch instance type in the region, support ElasticSearch, 
       and must support encryption at rest. See also: 
@@ -51,28 +59,37 @@ Parameters:
     Default: t3.small.search
     AllowedPattern: "^[a-z][a-z0-9]+\\.[a-z0-9]+\\.search$"
     ConstraintDescription: Must be a valid OpenSearch instance type. 
-  ElasticSearchInstanceCount:
+  OpenSearchInstanceCount:
     Type: Number
-    Default: 2
+    Default: 1
     Description: >
-      The number of data nodes (instances) to use in the OpenSearch domain. Must be a multiple of the number of 
-      availability zones.
-  ElasticSearchDedicatedMasterCount:
+      The number of data nodes (instances) to use in the OpenSearch domain. Must be an integer multiple of the number of 
+      availability zones specified in OpenSearchAvailabilityZoneCount.
+  OpenSearchDedicatedMasterCount:
     Type: Number
     Default: 0
     Description: >
       The number of dedicated master nodes (instances) to use in the OpenSearch domain. The number must be larger than 2 
       and should never be an even number. See also:
       https://docs.aws.amazon.com/opensearch-service/latest/developerguide/managedomains-dedicatedmasternodes.html
-  ElasticSearchEBSVolumeSize:
+  OpenSearchDedicatedMasterInstanceType:
+    Description: >
+      OpenSearch master instance type. Must be a supported OpenSearch instance type in the region, support ElasticSearch, 
+      and must support encryption at rest. See also: 
+      https://docs.aws.amazon.com/opensearch-service/latest/developerguide/supported-instance-types.html
+    Type: String
+    Default: t3.small.search
+    AllowedPattern: "^[a-z][a-z0-9]+\\.[a-z0-9]+\\.search$"
+    ConstraintDescription: Must be a valid OpenSearch instance type. 
+  OpenSearchEBSVolumeSize:
     Type: Number
     Default: 10
     MinValue: 10
     Description: >
       Size of EBS volumes attached to each ElasticSearch node, in GiB. Allowed ranges depend on the 
-      instance type chosen in ElasticSearchInstanceType and are documented here:
+      instance type chosen in OpenSearchInstanceType and are documented here:
       https://docs.aws.amazon.com/opensearch-service/latest/developerguide/limits.html#ebsresource
-  ElasticSearchEBSVolumeType:
+  OpenSearchEBSVolumeType:
     Type: String 
     Default: gp2
     Description: Type of the EBS volume attached to each ElasticSearch node.
@@ -85,37 +102,30 @@ Parameters:
     ConstraintDescription: >
       See list of valid EBS volume types at https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-volume-types.html. 
       Not every instance type is compatible with every volume type.
-  ElasticSearchEBSProvisionedIOPS:
+  OpenSearchEBSProvisionedIOPS:
     Type: Number
     Default: 16000
     Description: >
       The number of I/O operations per second (IOPS) that the volume supports. This property applies only to the 
       Provisioned IOPS EBS volume type (io1).
-  ElasticSearchEncryptAtRest:
-    Type: String
-    Default: 'true'
-    AllowedValues:
-      - 'true'
-      - 'false'
-    Description: Enable Encryption at rest.
-  ElasticSearchAuditLogsCloudWatchLogsLogGroupArn:
+  OpenSearchAuditLogsCloudWatchLogsLogGroupArn:
     Type: String 
     Default: ''
     Description: >
       ARN of Cloudwatch Log Group where ElasticSearch audit Logs are sent. If left empty, logs will not be generated.
-  ElasticSearchApplicationLogsCloudWatchLogsLogGroupArn:
+  OpenSearchApplicationLogsCloudWatchLogsLogGroupArn:
     Type: String 
     Default: ''
     Description: >
       ARN of Cloudwatch Log Group where ElasticSearch application Logs are sent. If left empty, logs will not be 
       generated.
-  ElasticSearchIndexSlowLogsCloudWatchLogsLogGroupArn:
+  OpenSearchIndexSlowLogsCloudWatchLogsLogGroupArn:
     Type: String 
     Default: ''
     Description: >
       ARN of Cloudwatch Log Group where ElasticSearch Index Slow Logs are sent. If left empty, logs will not be 
       generated.
-  ElasticSearchSearchSlowLogsCloudWatchLogsLogGroupArn:
+  OpenSearchSearchSlowLogsCloudWatchLogsLogGroupArn:
     Type: String 
     Default: ''
     Description: >
@@ -233,15 +243,16 @@ Parameters:
 
 
 Conditions:
-  ElasticSearchEncryptAtRest: !Equals [ !Ref ElasticSearchEncryptAtRest, 'true' ]
-  EnableDedicatedMasterNodes: !Not [ !Equals [ !Ref ElasticSearchDedicatedMasterCount, 0 ] ]
+  KmsKeyIdProvided: !Not [ !Equals [ !Ref KmsKeyId, "" ] ]  
+  EnableDedicatedMasterNodes: !Not [ !Equals [ !Ref OpenSearchDedicatedMasterCount, 0 ] ]
   CreateCloudWatchAlarmCondition: !Equals [ !Ref CreateCloudWatchAlarm, 'true' ]
   EnableNonStringIndexingCondition: !Equals [ !Ref EnableNonStringIndexing, 'true' ]
-  ElasticSearchAuditLogsCloudWatchLogsEnabled: !Not [ !Equals [ !Ref ElasticSearchAuditLogsCloudWatchLogsLogGroupArn, '' ] ]
-  ElasticSearchApplicationLogsCloudWatchLogsEnabled: !Not [ !Equals [ !Ref ElasticSearchApplicationLogsCloudWatchLogsLogGroupArn, '' ] ]
-  ElasticSearchIndexSlowLogsCloudWatchLogsEnabled: !Not [ !Equals [ !Ref ElasticSearchIndexSlowLogsCloudWatchLogsLogGroupArn, '' ] ]
-  ElasticSearchSearchSlowLogsCloudWatchLogsEnabled: !Not [ !Equals [ !Ref ElasticSearchSearchSlowLogsCloudWatchLogsLogGroupArn, '' ] ]
-  ElasticSearchEBSVolumeTypeIsIo1: !Equals [ !Ref ElasticSearchEBSVolumeType, 'io1' ]
+  ElasticSearchAuditLogsCloudWatchLogsEnabled: !Not [ !Equals [ !Ref OpenSearchAuditLogsCloudWatchLogsLogGroupArn, '' ] ]
+  ElasticSearchApplicationLogsCloudWatchLogsEnabled: !Not [ !Equals [ !Ref OpenSearchApplicationLogsCloudWatchLogsLogGroupArn, '' ] ]
+  ElasticSearchIndexSlowLogsCloudWatchLogsEnabled: !Not [ !Equals [ !Ref OpenSearchIndexSlowLogsCloudWatchLogsLogGroupArn, '' ] ]
+  ElasticSearchSearchSlowLogsCloudWatchLogsEnabled: !Not [ !Equals [ !Ref OpenSearchSearchSlowLogsCloudWatchLogsLogGroupArn, '' ] ]
+  OpenSearchEBSVolumeTypeIsIo1: !Equals [ !Ref OpenSearchEBSVolumeType, 'io1' ]
+  EnableZoneAwareness: !Not [ !Equals [ !Ref OpenSearchAvailabilityZoneCount, 1 ] ]
 
 
 Resources: 
@@ -287,6 +298,8 @@ Resources:
                 - !Ref 'AWS::AccountId'
                 - !Sub 'domain/cdf-${Environment}/*'
       ClusterConfig: 
+        InstanceCount: !Ref OpenSearchInstanceCount
+        InstanceType: !Ref OpenSearchInstanceType
         DedicatedMasterEnabled: 
           Fn::If:
             - EnableDedicatedMasterNodes
@@ -295,33 +308,40 @@ Resources:
         DedicatedMasterCount: 
           Fn::If:
             - EnableDedicatedMasterNodes
-            - !Ref ElasticSearchDedicatedMasterCount
+            - !Ref OpenSearchDedicatedMasterCount
             - !Ref AWS::NoValue
         DedicatedMasterType: 
           Fn::If:
             - EnableDedicatedMasterNodes
-            - 3 
+            - !Ref OpenSearchDedicatedMasterInstanceType
             - !Ref AWS::NoValue
-        InstanceCount: !Ref ElasticSearchInstanceCount
-        InstanceType: !Ref ElasticSearchInstanceType
-        ZoneAwarenessEnabled: true
+        ZoneAwarenessEnabled: 
+          Fn::If:
+            - EnableZoneAwareness
+            - true
+            - false
+        ZoneAwarenessConfig:
+          Fn::If:
+            - EnableZoneAwareness
+            - AvailabilityZoneCount: !Ref OpenSearchAvailabilityZoneCount
+            - !Ref AWS::NoValue
       DomainEndpointOptions: 
         EnforceHTTPS: true
         TLSSecurityPolicy: 'Policy-Min-TLS-1-2-2019-07'
       EBSOptions: 
         EBSEnabled: true
-        VolumeSize: !Ref ElasticSearchEBSVolumeSize
-        VolumeType: !Ref ElasticSearchEBSVolumeType
+        VolumeSize: !Ref OpenSearchEBSVolumeSize
+        VolumeType: !Ref OpenSearchEBSVolumeType
         Iops: 
           Fn::If:
-            - ElasticSearchEBSVolumeTypeIsIo1
-            - !Ref ElasticSearchEBSProvisionedIOPS
+            - OpenSearchEBSVolumeTypeIsIo1
+            - !Ref OpenSearchEBSProvisionedIOPS
             - !Ref AWS::NoValue
       EncryptionAtRestOptions: 
-        Enabled: !Ref ElasticSearchEncryptAtRest
+        Enabled: true
         KmsKeyId: 
           Fn::If:
-            - ElasticSearchEncryptAtRest
+            - KmsKeyIdProvided
             - !Ref KmsKeyId
             - !Ref AWS::NoValue
       # When integrating with Amazon OpenSearch Service, Neptune requires Elasticsearch version 7.1 or higher 
@@ -332,25 +352,25 @@ Resources:
         ES_APPLICATION_LOGS:
           Fn::If:
             - ElasticSearchApplicationLogsCloudWatchLogsEnabled
-            - CloudWatchLogsLogGroupArn: !Ref ElasticSearchApplicationLogsCloudWatchLogsLogGroupArn
+            - CloudWatchLogsLogGroupArn: !Ref OpenSearchApplicationLogsCloudWatchLogsLogGroupArn
               Enabled: true
             - !Ref AWS::NoValue
         SEARCH_SLOW_LOGS:
           Fn::If:
             - ElasticSearchSearchSlowLogsCloudWatchLogsEnabled
-            - CloudWatchLogsLogGroupArn: !Ref ElasticSearchSearchSlowLogsCloudWatchLogsLogGroupArn
+            - CloudWatchLogsLogGroupArn: !Ref OpenSearchSearchSlowLogsCloudWatchLogsLogGroupArn
               Enabled: true
             - !Ref AWS::NoValue
         INDEX_SLOW_LOGS:
           Fn::If:
             - ElasticSearchIndexSlowLogsCloudWatchLogsEnabled
-            - CloudWatchLogsLogGroupArn: !Ref ElasticSearchIndexSlowLogsCloudWatchLogsLogGroupArn
+            - CloudWatchLogsLogGroupArn: !Ref OpenSearchIndexSlowLogsCloudWatchLogsLogGroupArn
               Enabled: true 
             - !Ref AWS::NoValue
         AUDIT_LOGS:
           Fn::If:
             - ElasticSearchAuditLogsCloudWatchLogsEnabled
-            - CloudWatchLogsLogGroupArn: !Ref ElasticSearchAuditLogsCloudWatchLogsLogGroupArn
+            - CloudWatchLogsLogGroupArn: !Ref OpenSearchAuditLogsCloudWatchLogsLogGroupArn
               Enabled: true
             - !Ref AWS::NoValue
       NodeToNodeEncryptionOptions: 
@@ -421,7 +441,6 @@ Resources:
         IAMAuthEnabledOnSourceStream: false
         MaxPollingInterval: !Ref NeptunePollerMaxPollingInterval
         VPC: !Ref VpcId
-        RouteTableIds: !Ref PrivateRouteTableIds
         CreateDDBVPCEndPoint: false
         CreateMonitoringEndPoint: true
         CreateCloudWatchAlarm: !Ref CreateCloudWatchAlarm

@@ -126,6 +126,7 @@ export interface AssetLibrary
   neptuneUrl?: string;
   // OpenSearch Configuration
   openSearchDataNodeInstanceType?: string;
+  openSearchDataNodeInstanceCount?: number;
   openSearchEBSVolumeSize?: number;
   neptuneSecurityGroup?: string;
   neptuneClusterReadEndpoint?: string;
