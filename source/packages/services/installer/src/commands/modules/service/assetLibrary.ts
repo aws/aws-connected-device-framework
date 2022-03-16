@@ -381,6 +381,10 @@ export class AssetLibraryInstaller implements RestModule {
         addIfSpecified('DbInstanceType', answers.assetLibrary.neptuneDbInstanceType);
         addIfSpecified('CreateDBReplicaInstance', answers.assetLibrary.createDbReplicaInstance);
         addIfSpecified('SnapshotIdentifier', answers.assetLibrary.neptuneSnapshotIdentifier);
+        // The Neptune-to-OpenSearch integration relies on Neptune Streams
+        if (modeRequiresOpenSearch(answers.assetLibrary.mode)) {
+            parameterOverrides.push('NeptuneEnableStreams=1');
+        }
         return parameterOverrides;
     }
 
