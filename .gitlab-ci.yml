@@ -14,6 +14,8 @@ variables:
   ENVIRONMENT: development
   AWS_REGION: us-west-2
 
+.default-run-condition: &default-run-condition
+  - if: ($CI_COMMIT_BRANCH == "feature/gitlab-pipeline" && $CI_COMMIT_MESSAGE != /.*\[skip ci\].*/)
 
 .common-build-steps: &common-build-steps # install dependencies
   - cd ${CI_PROJECT_DIR}/source
@@ -77,9 +79,7 @@ default:
 
 downloadInfastructureConfig:
   rules:
-    - if: '$CI_COMMIT_BRANCH == "feature/gitlab-pipeline"'
-    - if: '$CI_COMMIT_TITLE = /.*\[skip ci\].*/'
-      when: never
+    - *default-run-condition
   stage: build
   before_script:
     - env | sort
@@ -103,10 +103,7 @@ downloadInfastructureConfig:
 
 buildLambaLayersZip:
   rules:
-    - if: '$CI_COMMIT_BRANCH == "feature/gitlab-pipeline"'
-      when: always
-    - if: '$CI_COMMIT_TITLE = /.*\[skip ci\].*/'
-      when: never
+    - *default-run-condition
   stage: build
   before_script:
     - yum update -y && yum install -y openssl zip
@@ -123,10 +120,7 @@ buildLambaLayersZip:
 
 test:
   rules:
-    - if: '$CI_COMMIT_BRANCH == "feature/gitlab-pipeline"'
-      when: always
-    - if: '$CI_COMMIT_TITLE = /.*\[skip ci\].*/'
-      when: never
+    - *default-run-condition
   stage: test
   script:
     - *common-build-steps
@@ -142,10 +136,7 @@ test:
 
 deployStage:
   rules:
-    - if: '$CI_COMMIT_BRANCH == "feature/gitlab-pipeline"'
-      when: always
-    - if: '$CI_COMMIT_TITLE = /.*\[skip ci\].*/'
-      when: never
+    - *default-run-condition
   stage: deployStage
   variables:
     <<: *staging-variables
@@ -163,10 +154,7 @@ deployStage:
 
 integrationTest:
   rules:
-    - if: '$CI_COMMIT_BRANCH == "feature/gitlab-pipeline"'
-      when: always
-    - if: '$CI_COMMIT_TITLE = /.*\[skip ci\].*/'
-      when: never
+    - *default-run-condition
   stage: integrationTest
   before_script:
     - *common-install-deployment-dependencies
@@ -184,10 +172,7 @@ integrationTest:
 
 deployLive:
   rules:
-    - if: '$CI_COMMIT_BRANCH == "feature/gitlab-pipeline"'
-      when: always
-    - if: '$CI_COMMIT_TITLE = /.*\[skip ci\].*/'
-      when: never
+    - *default-run-condition
   stage: deployLive
   variables:
     <<: *live-variables
