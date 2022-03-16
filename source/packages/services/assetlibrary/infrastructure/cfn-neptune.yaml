@@ -32,7 +32,6 @@ Parameters:
       Neptune DB instance type. The list of available instance types for your region can be found here: 
       https://aws.amazon.com/neptune/pricing/
     Type: String
-    Default: db.r4.xlarge
     AllowedPattern: "^db\\.[tr]\\d+[a-z0-9]*\\.[a-z0-9]*$"
     ConstraintDescription: Must be a valid Neptune instance type. 
   CreateDBReplicaInstance:

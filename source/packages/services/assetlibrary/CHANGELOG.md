@@ -1,6 +1,13 @@
 # Change Log - @cdf/assetlibrary
 
-This log was last generated on Thu, 10 Mar 2022 00:08:34 GMT and should not be manually modified.
+This log was last generated on Tue, 15 Mar 2022 18:37:51 GMT and should not be manually modified.
+
+## 6.0.3
+Tue, 15 Mar 2022 18:37:51 GMT
+
+### Patches
+
+- Make Cloudformation templates more permissive w.r.t. Neptune instance types
 
 ## 6.0.2
 Thu, 10 Mar 2022 00:08:34 GMT
