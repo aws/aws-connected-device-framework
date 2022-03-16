@@ -28,7 +28,6 @@ export class VpcInstaller implements InfrastructureModule {
   }
 
   public async prompts(answers: Answers): Promise<Answers> {
-    delete answers.vpc?.useExisting;
 
     answers = await inquirer.prompt(
       [
@@ -38,6 +37,7 @@ export class VpcInstaller implements InfrastructureModule {
           type: "confirm",
           name: "vpc.useExisting",
           default: answers.vpc?.useExisting ?? false,
+          askAnswered: true,
           when(answers: Answers) {
             return (
               answers.modules.expandedIncludingOptional.includes("vpc") ||
