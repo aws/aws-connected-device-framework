@@ -39,16 +39,6 @@ variables:
   - curl -f https://get.pnpm.io/v5.js | node - add --global pnpm@5
   - npm install -g @microsoft/rush
 
-.common-markdown-steps: &common-markdown-steps # install dependencies
-  - yum install -y python3
-  - curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-  - python3 get-pip.py
-  - pip install --upgrade pip
-  - pip install mkdocs
-  - pip install markdown-include
-  - pip install pymdown-extensions
-  - pip install mkdocs-material
-
 .common-git-steps: &common-git-steps # install dependencies
   - git config --global user.name "gitlab-ci-token"
   - git config --global user.email "gitlab-ci-token"
@@ -80,20 +70,11 @@ stages:
 #   paths:
 #     - *common-artifacts
 
-before_script:
-  - env | sort
-  - yum update -y
-  # install tool dependencies (required to test some services)
-  - yum install -y git tar openssl zip unzip
-  # install specific version of pnpm needed by rush
-  - curl -f https://get.pnpm.io/v5.js | node - add --global pnpm@5
-  - npm install -g @microsoft/rush
-  # install aws cli
-  - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && unzip -qq awscliv2.zip
-  - ./aws/install
-  # install jq
-  - curl -s -qL -o /usr/bin/jq https://stedolan.github.io/jq/download/linux64/jq
-  - chmod +x /usr/bin/jq
+default:
+  image: public.ecr.aws/lambda/nodejs:14
+  before_script:
+    - *common-install-deployment-dependencies
+    - *common-git-steps
 
 filterCommits:
   only:
@@ -152,11 +133,6 @@ test:
   only:
     - feature/gitlab-pipeline
   stage: test
-  image: public.ecr.aws/lambda/nodejs:14
-  before_script:
-    # set git commit details
-    - *common-install-deployment-dependencies
-    - *common-git-steps
   script:
     - *common-build-steps
     # build
@@ -173,15 +149,8 @@ deployStage:
   only:
     - feature/gitlab-pipeline
   stage: deployStage
-  image: public.ecr.aws/lambda/nodejs:14
   variables:
     <<: *staging-variables
-  before_script:
-  - *common-install-deployment-dependencies
-  # set git commit details
-  - *common-git-steps
-  # installing mkdocs...
-  - *common-markdown-steps
   script:
     - pushd source
     # rush install
@@ -198,7 +167,8 @@ integrationTest:
   only:
     - feature/gitlab-pipeline
   stage: integrationTest
-  image: public.ecr.aws/lambda/nodejs:14
+  before_script:
+    - *common-install-deployment-dependencies
   variables:
     <<: *staging-variables
   script:
@@ -215,15 +185,8 @@ deployLive:
   only:
     - feature/gitlab-pipeline
   stage: deployLive
-  image: public.ecr.aws/lambda/nodejs:14
   variables:
     <<: *live-variables
-  before_script:
-    - *common-install-deployment-dependencies
-    # set git commit details
-    - *common-git-steps
-    # installing mkdocs...
-    - *common-markdown-steps
   script:
     # deploy to live environment
     - pushd source
