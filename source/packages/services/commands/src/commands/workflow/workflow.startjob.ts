@@ -14,7 +14,7 @@ import { inject, injectable } from 'inversify';
 import ow from 'ow';
 
 import {
-    ASSTLIBRARY_CLIENT_TYPES, Device10Resource, DevicesService, Group10Resource, GroupsService,
+    ASSETLIBRARY_CLIENT_TYPES, Device10Resource, DevicesService, Group10Resource, GroupsService,
     SearchRequestModel, SearchService
 } from '@cdf/assetlibrary-client';
 import {
@@ -41,9 +41,9 @@ export class StartJobAction implements WorkflowAction {
         @inject(TYPES.CommandsValidator) private commandsValidator: CommandsValidator,
         @inject(TYPES.TemplatesService) private templatesService: TemplatesService,
         @inject(TYPES.CommandsDao) private commandsDao: CommandsDao,
-        @inject(ASSTLIBRARY_CLIENT_TYPES.DevicesService) private assetLibraryDeviceClient: DevicesService,
-        @inject(ASSTLIBRARY_CLIENT_TYPES.GroupsService) private assetLibraryGroupClient: GroupsService,
-        @inject(ASSTLIBRARY_CLIENT_TYPES.SearchService) private assetLibrarySearchClient: SearchService,
+        @inject(ASSETLIBRARY_CLIENT_TYPES.DevicesService) private assetLibraryDeviceClient: DevicesService,
+        @inject(ASSETLIBRARY_CLIENT_TYPES.GroupsService) private assetLibraryGroupClient: GroupsService,
+        @inject(ASSETLIBRARY_CLIENT_TYPES.SearchService) private assetLibrarySearchClient: SearchService,
         @inject(PROVISIONING_CLIENT_TYPES.ThingsService) private thingsService: ThingsService,
         @inject('aws.s3.bucket') private s3Bucket: string,
         @inject('aws.s3.prefix') private s3Prefix: string,

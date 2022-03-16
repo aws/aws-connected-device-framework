@@ -65,13 +65,7 @@ OPTIONAL ARGUMENTS
     -m (string)   Asset Library mode ('full' or 'lite').  Defaults to full if not provided.
     -p (string)   The name of the key pair to use to deploy the Bastion EC2 host (required for Asset Library (full) mode or Private auth mode).
     -i (string)   The remote access CIDR to configure Bastion SSH access (e.g. 1.2.3.4/32) (required for Asset Library (full) mode).
-    -u (string)   The Neptune DB Instance type. Must be from the following list (default is db.r4.xlarge):
-                  - db.t3.medium
-                  - db.r4.large
-                  - db.r4.xlarge
-                  - db.r4.2xlarge
-                  - db.r4.4xlarge
-                  - db.r4.8xlarge
+    -u (string)   The Neptune DB Instance type. Default is db.r5.xlarge but may change in future. Refer to https://aws.amazon.com/neptune/pricing/ for a list of instance types available in your region.
 
     COMPILING OPTIONS:
     ------------------
@@ -166,6 +160,7 @@ incorrect_args=$((incorrect_args+$(verifyMandatoryArgument TEMPLATE_SNIPPET_S3_U
 API_GATEWAY_DEFINITION_TEMPLATE="$(defaultIfNotSet 'API_GATEWAY_DEFINITION_TEMPLATE' z ${API_GATEWAY_DEFINITION_TEMPLATE} 'cfn-apiGateway-noAuth.yaml')"
 
 ASSETLIBRARY_MODE="$(defaultIfNotSet 'ASSETLIBRARY_MODE' m ${ASSETLIBRARY_MODE} 'full')"
+NEPTUNE_INSTANCE_TYPE="$(defaultIfNotSet 'NEPTUNE_INSTANCE_TYPE' m ${NEPTUNE_INSTANCE_TYPE} 'db.r5.xlarge')"
 BASTION_REMOTE_ACCESS_CIDR="$(defaultIfNotSet 'BASTION_REMOTE_ACCESS_CIDR' i ${BASTION_REMOTE_ACCESS_CIDR} '0.0.0.0/0')"
 
 DEPLOY_PARAMETERS+=( Environment=$ENVIRONMENT )

@@ -1,0 +1,188 @@
+# Official framework image. Look for the different tagged releases at: https://hub.docker.com/r/library/node/tags/
+
+variables:
+  CONFIG_PACKAGE_NAME: cdf-infrastructure-demo
+  RUSH_PARALLELISM: 8
+  APP_CONFIG_DIR: common/build/configdir
+  BRANCH: main
+
+.staging-variables: &staging-variables
+  ENVIRONMENT: development-staging
+  AWS_REGION: us-west-2
+
+.live-variables: &live-variables
+  ENVIRONMENT: development
+  AWS_REGION: us-west-2
+
+.default-run-condition: &default-run-condition
+  - if: ($CI_COMMIT_BRANCH == "main" && $CI_COMMIT_MESSAGE != /.*\[skip ci\].*/)
+
+.common-build-steps: &common-build-steps # install dependencies
+  - cd ${CI_PROJECT_DIR}/source
+  - rush update
+  # build
+  - rush build
+
+.common-install-deployment-dependencies: &common-install-deployment-dependencies
+  - env | sort
+  - yum update -y
+  # install tool dependencies (required to test some services)
+  - yum install -y git tar openssl zip unzip
+  # install specific version of pnpm needed by rush
+  - curl -f https://get.pnpm.io/v5.js | node - add --global pnpm@5
+  - npm install -g @microsoft/rush
+  # install aws cli
+  - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && unzip -qq awscliv2.zip
+  - ./aws/install && rm -rf ./aws && rm awscliv2.zip
+  # install jq
+  - curl -s -qL -o /usr/bin/jq https://stedolan.github.io/jq/download/linux64/jq
+  - chmod +x /usr/bin/jq
+
+.common-install-node-dependencies: &common-install-node-dependencies # install dependencies
+  - curl -f https://get.pnpm.io/v5.js | node - add --global pnpm@5
+  - npm install -g @microsoft/rush
+
+.common-git-steps: &common-git-steps # install dependencies
+  - git config --global user.name "gitlab-ci-token"
+  - git config --global user.email "gitlab-ci-token"
+  - git remote set-url origin https://gitlab-ci-token:$PROJECT_ACCESS_TOKEN@$CI_SERVER_HOST/$CI_PROJECT_PATH.git
+
+.common-artifacts: &common-artifacts
+  artifacts:
+    paths:
+      - source/common/
+      - source/infrastructure/**/build.zip
+      - source/packages/**/.rush/
+      - source/packages/**/dist/
+      - source/packages/**/tsconfig.tsbuildinfo
+      - source/packages/**/bundle.zip
+
+stages:
+  - build
+  - test
+  - deployStage
+  - integrationTest
+  - deployLive
+
+### not working at the moment, therefore using artifacts as a temp workaround
+# cache:
+#   # enable per-branch caching
+#   key: "$CI_COMMIT_REF_SLUG"
+#   paths:
+#     - *common-artifacts
+
+default:
+  image: public.ecr.aws/lambda/nodejs:14
+  before_script:
+    - *common-install-deployment-dependencies
+    - *common-git-steps
+
+downloadInfastructureConfig:
+  rules:
+    - *default-run-condition
+  stage: build
+  before_script:
+    - env | sort
+    - echo 'download jq'
+    - curl -s -qL -o /usr/bin/jq https://stedolan.github.io/jq/download/linux64/jq
+    - chmod +x /usr/bin/jq
+    - echo 'download wget'
+    - yum install -y wget unzip
+  image:
+    name: public.ecr.aws/amazonlinux/amazonlinux:2
+    entrypoint: [""]
+  script:
+    - 'CONFIG_PACKAGE_VERSION=$(curl -H "PRIVATE-TOKEN: $CDF_INFRASTRUCTURE_GIT_TOKEN" "${CI_API_V4_URL}/projects/${CONFIG_REPO_PROJECT_ID}/packages?sort=desc" | jq -r ".[0].version")'
+    - 'wget --header="PRIVATE-TOKEN: $CDF_INFRASTRUCTURE_GIT_TOKEN" ${CI_API_V4_URL}/projects/${CONFIG_REPO_PROJECT_ID}/packages/generic/${CONFIG_PACKAGE_NAME}/${CONFIG_PACKAGE_VERSION}/config.zip'
+    - mkdir -p common/build
+    - cp config.zip common/build/config.zip
+    - unzip -d $APP_CONFIG_DIR common/build/config.zip
+  artifacts:
+    paths:
+      - $APP_CONFIG_DIR/
+
+buildLambaLayersZip:
+  rules:
+    - *default-run-condition
+  stage: build
+  before_script:
+    - yum update -y && yum install -y openssl zip
+  image:
+    name: public.ecr.aws/amazonlinux/amazonlinux:2
+    entrypoint: [""]
+  script:
+    - cd ${CI_PROJECT_DIR}/source && mkdir -p common/build
+    - cd common/build && mkdir -p bin lib && cp /bin/openssl bin/ && cp /usr/lib64/libbz2.so.1 lib/ && zip -r build.zip * && rm -rf bin lib
+    - cd ${CI_PROJECT_DIR}/source && mkdir -p infrastructure/lambdaLayers/openssl/build && cp common/build/build.zip infrastructure/lambdaLayers/openssl/build/build.zip
+  artifacts:
+    paths:
+      - source/infrastructure/lambdaLayers/openssl/build/build.zip
+
+test:
+  rules:
+    - *default-run-condition
+  stage: test
+  script:
+    - *common-build-steps
+    # build
+    - rush build
+    - export RUSH_PARALLELISM=1
+    - rush test
+    # Bundling the node project when it past
+    - export RUSH_PARALLELISM=8
+    - cd ${CI_PROJECT_DIR}
+    - bash -c source/cicd/buildproject_postbuild.bash
+  <<: *common-artifacts
+
+deployStage:
+  rules:
+    - *default-run-condition
+  stage: deployStage
+  variables:
+    <<: *staging-variables
+  script:
+    - pushd source
+    # rush install
+    - rush update --purge
+    - popd
+    # export the location of the config
+    - export CODEBUILD_SRC_DIR_source_infrastructure="${CI_PROJECT_DIR}/${APP_CONFIG_DIR}"
+    # deploy to staging environment
+    - bash -c source/cicd/deployproject_build.bash
+  after_script:
+  - bash -c source/cicd/deployproject_postbuild.bash
+
+integrationTest:
+  rules:
+    - *default-run-condition
+  stage: integrationTest
+  before_script:
+    - *common-install-deployment-dependencies
+  variables:
+    <<: *staging-variables
+  script:
+    - pushd source
+    # rush install
+    - rush update --purge
+    - popd
+    # export the location of the config
+    - export CODEBUILD_SRC_DIR_source_infrastructure="${CI_PROJECT_DIR}/${APP_CONFIG_DIR}"
+    # run in the integration tests
+    - bash -c source/cicd/integrationtestsproject_build.bash
+
+deployLive:
+  rules:
+    - *default-run-condition
+  stage: deployLive
+  variables:
+    <<: *live-variables
+  script:
+    # deploy to live environment
+    - pushd source
+    # rush install
+    - rush update --purge
+    - popd
+    - export CODEBUILD_SRC_DIR_source_infrastructure="${CI_PROJECT_DIR}/${APP_CONFIG_DIR}"
+    - bash -c source/cicd/deployproject_build.bash
+  after_script:
+    - bash -c source/cicd/deployproject_postbuild.bash

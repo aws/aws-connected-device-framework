@@ -1,6 +1,14 @@
 # Change Log - @cdf/assetlibrary-client
 
-This log was last generated on Thu, 17 Feb 2022 09:27:38 GMT and should not be manually modified.
+This log was last generated on Thu, 10 Mar 2022 00:08:34 GMT and should not be manually modified.
+
+## 5.0.1
+Thu, 10 Mar 2022 00:08:34 GMT
+
+### Patches
+
+- the template model lists an enum parameter, which should be a string[] listing the enum values instead of just a string
+- correct typo in assetlibrary client
 
 ## 5.0.0
 Thu, 17 Feb 2022 09:27:38 GMT

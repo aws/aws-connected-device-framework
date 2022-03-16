@@ -19,7 +19,7 @@ import stringify from 'json-stable-stringify';
 import chai_string = require('chai-string');
 import {expect, use} from 'chai';
 import { RESPONSE_STATUS, replaceTokens, AUTHORIZATION_TOKEN} from '../common/common.steps';
-import {ASSTLIBRARY_CLIENT_TYPES} from '@cdf/assetlibrary-client/dist';
+import {ASSETLIBRARY_CLIENT_TYPES} from '@cdf/assetlibrary-client/dist';
 import {Dictionary} from '../../../../libraries/core/lambda-invoke/src';
 import {container} from '../../di/inversify.config';
 use(chai_string);
@@ -33,7 +33,7 @@ use(chai_string);
 
 setDefaultTimeout(10 * 1000);
 
-const deviceService:DevicesService = container.get(ASSTLIBRARY_CLIENT_TYPES.DevicesService);
+const deviceService:DevicesService = container.get(ASSETLIBRARY_CLIENT_TYPES.DevicesService);
 
 function getAdditionalHeaders(world:unknown) : Dictionary {
     const authCode= world[AUTHORIZATION_TOKEN];

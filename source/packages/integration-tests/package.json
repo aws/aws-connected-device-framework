@@ -1,6 +1,6 @@
 {
   "name": "@cdf/integration-tests",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "CDF Integration Tests",
   "author": "Dean Hart",
   "scripts": {
@@ -15,7 +15,7 @@
     "@aws-sdk/client-greengrassv2": "~3.38.0",
     "@aws-sdk/client-s3": "~3.38.0",
     "@aws-sdk/s3-request-presigner": "~3.38.0",
-    "@cdf/assetlibrary-client": "^5.0.0",
+    "@cdf/assetlibrary-client": "^5.0.1",
     "@cdf/assetlibraryhistory-client": "^5.0.0",
     "@cdf/commands-client": "^5.0.0",
     "@cdf/errors": "^4.0.0",

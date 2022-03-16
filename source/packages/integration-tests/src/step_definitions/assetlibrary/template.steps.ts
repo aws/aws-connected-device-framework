@@ -17,7 +17,7 @@ import {
     CategoryEnum,
     StatusEnum,
     TypeResource,
-    ASSTLIBRARY_CLIENT_TYPES,
+    ASSETLIBRARY_CLIENT_TYPES,
 } from '@cdf/assetlibrary-client';
 import { fail } from 'assert';
 import {RESPONSE_STATUS, replaceTokens, AUTHORIZATION_TOKEN} from '../common/common.steps';
@@ -33,7 +33,7 @@ import {Dictionary} from '@cdf/lambda-invoke';
 
 setDefaultTimeout(10 * 1000);
 
-const templatesService:TemplatesService = container.get(ASSTLIBRARY_CLIENT_TYPES.TemplatesService);
+const templatesService:TemplatesService = container.get(ASSETLIBRARY_CLIENT_TYPES.TemplatesService);
 function getAdditionalHeaders(world:unknown) : Dictionary {
     return  {
         Authorization: world[AUTHORIZATION_TOKEN],

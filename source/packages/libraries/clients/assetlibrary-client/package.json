@@ -1,6 +1,6 @@
 {
   "name": "@cdf/assetlibrary-client",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "CDF Asset Library Client",
   "author": "Dean Hart",
   "main": "dist/index.js",

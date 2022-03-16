@@ -16,8 +16,6 @@ set -e
 
 echo filterproject_prebuild started on `date`
 
-cd $CODEBUILD_SRC_DIR
-
 #  retrieve the latest git message for this specific commit
 git_commit_message="$(git log --format=%B -n 1)"
 echo git_commit_message: $git_commit_message

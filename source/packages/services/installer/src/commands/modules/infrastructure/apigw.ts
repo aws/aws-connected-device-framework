@@ -6,7 +6,7 @@ import path from 'path';
 
 import { Answers, ApiAuthenticationType } from '../../../models/answers';
 import { InfrastructureModule, ModuleName } from '../../../models/modules';
-import { getAbsolutePath, pathPrompt } from '../../../prompts/paths.prompt';
+import { getAbsolutePath, getMonorepoRoot, pathPrompt } from '../../../prompts/paths.prompt';
 import { S3Utils } from '../../../utils/s3.util';
 
 export class ApiGwInstaller implements InfrastructureModule {
@@ -187,7 +187,8 @@ export class ApiGwInstaller implements InfrastructureModule {
         answers.apigw.templateSnippetS3UriBase = `s3://${bucket}/${prefix}`
         const s3 = new S3Utils(answers.region);
 
-        const snippetPath = await getAbsolutePath(answers.apigw.cloudFormationSnippetsPath)
+        const monorepoRoot = await getMonorepoRoot();
+        const snippetPath = await getAbsolutePath(monorepoRoot, answers.apigw.cloudFormationSnippetsPath);
         const snippets = fs.readdirSync(snippetPath);
         for (const f of snippets) {
           task.output = `Uploading ${f}`;

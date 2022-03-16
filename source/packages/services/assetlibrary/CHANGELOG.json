@@ -2,6 +2,30 @@
   "name": "@cdf/assetlibrary",
   "entries": [
     {
+      "version": "6.0.3",
+      "tag": "@cdf/assetlibrary_v6.0.3",
+      "date": "Tue, 15 Mar 2022 18:37:51 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Make Cloudformation templates more permissive w.r.t. Neptune instance types"
+          }
+        ]
+      }
+    },
+    {
+      "version": "6.0.2",
+      "tag": "@cdf/assetlibrary_v6.0.2",
+      "date": "Thu, 10 Mar 2022 00:08:34 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "added r5 instances to possible neptune DB selections"
+          }
+        ]
+      }
+    },
+    {
       "version": "6.0.1",
       "tag": "@cdf/assetlibrary_v6.0.1",
       "date": "Thu, 17 Feb 2022 10:54:42 GMT",
