@@ -15,7 +15,7 @@ variables:
   AWS_REGION: us-west-2
 
 .default-run-condition: &default-run-condition
-  - if: ($CI_COMMIT_BRANCH == "feature/gitlab-pipeline" && $CI_COMMIT_MESSAGE != /.*\[skip ci\].*/)
+  - if: ($CI_COMMIT_BRANCH == "main" && $CI_COMMIT_MESSAGE != /.*\[skip ci\].*/)
 
 .common-build-steps: &common-build-steps # install dependencies
   - cd ${CI_PROJECT_DIR}/source
