@@ -18,22 +18,22 @@ echo buildproject_postbuild started on `date`
 
 cd source
 
-# echo "enforce need for changelog"
-# rush change -v
+echo "enforce need for changelog"
+rush change -v
 
-# echo "Applying version updates"
-# rush publish -a
+echo "Applying version updates"
+rush publish -a
 
-# echo Committing updated files
-# set +e
-# git add -A
-# git update-index --refresh 
-# git diff-index --quiet HEAD -- ; differences=$?
-# set -e
-# if [ $differences -eq 1 ]; then
-#     git commit -am 'ci(@cdf) buildproject_prebuild [skip ci]'
-#     git push origin HEAD:$BRANCH
-# fi
+echo Committing updated files
+set +e
+git add -A
+git update-index --refresh 
+git diff-index --quiet HEAD -- ; differences=$?
+set -e
+if [ $differences -eq 1 ]; then
+    git commit -am 'ci(@cdf) buildproject_prebuild [skip ci]'
+    git push origin HEAD:$BRANCH
+fi
 
 echo Bundling...
 infrastructure/bundle-core.bash -z
