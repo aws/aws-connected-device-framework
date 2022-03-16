@@ -123,7 +123,6 @@ export interface AssetLibrary
   createDbReplicaInstance?: boolean;
   neptuneSnapshotIdentifier?: string;
   restoreFromSnapshot?: boolean;
-  neptuneUrl?: string;
   // OpenSearch Configuration
   openSearchDataNodeInstanceType?: string;
   openSearchDataNodeInstanceCount?: number;
@@ -132,12 +131,14 @@ export interface AssetLibrary
   neptuneClusterReadEndpoint?: string;
   // Application Configuration
   defaultAnswer?: boolean;
+  neptuneUrl?: string;
   defaultDevicesParentRelationName?: string;
   defaultDevicesParentPath?: string;
   defaultDevicesState?: string;
   defaultGroupsValidateAllowedParentPath?: string;
   enableDfeOptimization?: boolean;
   authorizationEnabled?: boolean;
+  openSearchEndpoint?: string;
 }
 
 export interface AssetLibraryExport extends ServiceModuleAttributes {

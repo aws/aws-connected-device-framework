@@ -10,7 +10,7 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
- import { Answers, AssetLibraryMode } from '../../../models/answers';
+import { Answers, AssetLibraryMode } from '../../../models/answers';
 import { ListrTask } from 'listr2';
 import { ModuleName, RestModule, PostmanEnvironment } from '../../../models/modules';
 import { ConfigBuilder } from '../../../utils/configBuilder';
@@ -317,7 +317,7 @@ export class AssetLibraryInstaller implements RestModule {
 
     if (modeRequiresOpenSearch(answers.assetLibrary.mode)) {
       tasks.push({
-        title: `Ensure service-linked role 'AWSServiceRoleForAmazonElasticsearchService' exists`,
+        title: `Ensuring service-linked role for Amazon OpenSearch service exists`,
         task: async () => {
           const iamClient = new IAMClient({});
 
@@ -326,7 +326,6 @@ export class AssetLibraryInstaller implements RestModule {
           });
           try {
             const data1 = await iamClient.send(getCommand1);
-            console.log(`First attempt at finding SLR ${data1.$metadata.httpStatusCode}`);
             if (data1.$metadata.httpStatusCode === 200) return;
           } catch { /* do nothing */ }
           // also probe for the legacy name of the role
@@ -335,18 +334,14 @@ export class AssetLibraryInstaller implements RestModule {
           });
           try {
             const data2 = await iamClient.send(getCommand2);
-            console.log(`Second attempt at finding SLR ${data2.$metadata.httpStatusCode}`);
             if (data2.$metadata.httpStatusCode === 200) return;
           } catch { /* do nothing */ }
 
-          // if neither role exists, create it
+          // if neither role name exists, create it
           const createCommand = new CreateServiceLinkedRoleCommand({
             AWSServiceName: 'es.amazonaws.com'
           });
           await iamClient.send(createCommand);
-
-          // An error occurred (InvalidInput) when calling the CreateServiceLinkedRole operation: Service role name
-          // AWSServiceRoleForAmazonElasticsearchService has been taken in this account, please try a different suffix.
         }
       });
 
@@ -421,6 +416,13 @@ export class AssetLibraryInstaller implements RestModule {
         }
       });
 
+      tasks.push({
+        title: `Retrieving config from stack '${this.neptuneStackName}'`,
+        task: async () => {
+          const byOutputKey = await getStackOutputs(this.enhancedSearchStackName, answers.region)
+          answers.assetLibrary.openSearchEndpoint = byOutputKey('OpenSearchDomainEndpoint');
+        }
+      });
     }
 
     tasks.push({
@@ -494,6 +496,7 @@ export class AssetLibraryInstaller implements RestModule {
       .add(`DEFAULTS_GROUPS_VALIDATEALLOWEDPARENTPATHS`, answers.assetLibrary?.defaultGroupsValidateAllowedParentPath)
       .add(`ENABLE_DFE_OPTIMIZATION`, answers.assetLibrary?.enableDfeOptimization)
       .add(`AUTHORIZATION_ENABLED`, answers.assetLibrary?.authorizationEnabled)
+      .add(`OPENSEARCH_ENDPOINT`, answers.assetLibrary?.openSearchEndpoint)
 
     return configBuilder.config;
   }
