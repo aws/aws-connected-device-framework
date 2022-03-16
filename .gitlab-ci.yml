@@ -56,7 +56,6 @@ variables:
       - source/packages/**/bundle.zip
 
 stages:
-  - filterCommits
   - build
   - test
   - deployStage
@@ -75,18 +74,6 @@ default:
   before_script:
     - *common-install-deployment-dependencies
     - *common-git-steps
-
-# filterCommits:
-#   only:
-#     - feature/gitlab-pipeline
-#   stage: filterCommits
-#   before_script:
-#     - yum update -y && yum install -y git tar openssl zip unzip
-#   image:
-#     name: public.ecr.aws/amazonlinux/amazonlinux:2
-#     entrypoint: [""]
-#   script:
-#     - bash -c source/cicd/filterproject_prebuild.bash
 
 downloadInfastructureConfig:
   rules:
