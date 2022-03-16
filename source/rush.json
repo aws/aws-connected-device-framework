@@ -538,7 +538,7 @@
      */
 
     /*  INTERNAL REPO:  */
-    "url": "https://git-codecommit.us-west-2.amazonaws.com/v1/repos/aws-connected-device-framework",
+    "url": "https://gitlab.aws.dev/robotics-and-engineering-gsp/cdf/aws-connected-device-framework.git",
 
     /* EXTERNAL REPO: */
     // "url": "https://github.com/aws/aws-connected-device-framework",
@@ -548,7 +548,7 @@
      * The default value is "master"
      */
     /*  INTERNAL REPO:  */
-    "defaultBranch": "master",
+    "defaultBranch": "main",
 
     /* EXTERNAL REPO: */
     // "defaultBranch": "main",
