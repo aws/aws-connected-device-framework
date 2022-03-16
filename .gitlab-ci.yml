@@ -104,6 +104,7 @@ downloadInfastructureConfig:
 buildLambaLayersZip:
   rules:
     - if: '$CI_COMMIT_BRANCH == "feature/gitlab-pipeline"'
+      when: always
     - if: '$CI_COMMIT_TITLE = /.*\[skip ci\].*/'
       when: never
   stage: build
@@ -123,6 +124,7 @@ buildLambaLayersZip:
 test:
   rules:
     - if: '$CI_COMMIT_BRANCH == "feature/gitlab-pipeline"'
+      when: always
     - if: '$CI_COMMIT_TITLE = /.*\[skip ci\].*/'
       when: never
   stage: test
@@ -141,6 +143,7 @@ test:
 deployStage:
   rules:
     - if: '$CI_COMMIT_BRANCH == "feature/gitlab-pipeline"'
+      when: always
     - if: '$CI_COMMIT_TITLE = /.*\[skip ci\].*/'
       when: never
   stage: deployStage
@@ -161,6 +164,7 @@ deployStage:
 integrationTest:
   rules:
     - if: '$CI_COMMIT_BRANCH == "feature/gitlab-pipeline"'
+      when: always
     - if: '$CI_COMMIT_TITLE = /.*\[skip ci\].*/'
       when: never
   stage: integrationTest
@@ -181,6 +185,7 @@ integrationTest:
 deployLive:
   rules:
     - if: '$CI_COMMIT_BRANCH == "feature/gitlab-pipeline"'
+      when: always
     - if: '$CI_COMMIT_TITLE = /.*\[skip ci\].*/'
       when: never
   stage: deployLive
