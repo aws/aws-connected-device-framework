@@ -123,7 +123,7 @@ buildLambaLayersZip:
     name: public.ecr.aws/amazonlinux/amazonlinux:2
     entrypoint: [""]
   script:
-    - mkdir -p common/build
+    - cd ${CI_PROJECT_DIR}/source && mkdir -p common/build
     - cd common/build && mkdir -p bin lib && cp /bin/openssl bin/ && cp /usr/lib64/libbz2.so.1 lib/ && zip -r build.zip * && rm -rf bin lib
     - cd ${CI_PROJECT_DIR}/source && mkdir -p infrastructure/lambdaLayers/openssl/build && cp common/build/build.zip infrastructure/lambdaLayers/openssl/build/build.zip
   artifacts:
