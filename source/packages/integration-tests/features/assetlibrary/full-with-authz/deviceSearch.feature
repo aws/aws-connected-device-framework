@@ -74,12 +74,12 @@ Feature: Device search
     And search result contains device "test-devicesearchwithauth-002a"
     And search result contains device "test-devicesearchwithauth-002b"
 
-#  @teardown_deviceSearchWithAuth_feature
-#  Scenario: Teardown
-#   Given my authorization is
-#     | / | * |
-#    And device "TEST-deviceSearchWithAuth-001A" does not exist
-#    And device "TEST-deviceSearchWithAuth-001B" does not exist
-#    And device "TEST-deviceSearchWithAuth-002A" does not exist
-#    And device "TEST-deviceSearchWithAuth-002B" does not exist
-#    And group "/1" does not exist
+ @teardown_deviceSearchWithAuth_feature
+ Scenario: Teardown
+  Given my authorization is
+    | / | * |
+   And device "TEST-deviceSearchWithAuth-001A" does not exist
+   And device "TEST-deviceSearchWithAuth-001B" does not exist
+   And device "TEST-deviceSearchWithAuth-002A" does not exist
+   And device "TEST-deviceSearchWithAuth-002B" does not exist
+   And group "/1" does not exist
