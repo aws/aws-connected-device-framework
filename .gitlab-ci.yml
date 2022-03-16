@@ -62,7 +62,6 @@ stages:
   - deployStage
   - integrationTest
   - deployLive
-  - release
 
 ### not working at the moment, therefore using artifacts as a temp workaround
 # cache:
@@ -77,21 +76,23 @@ default:
     - *common-install-deployment-dependencies
     - *common-git-steps
 
-filterCommits:
-  only:
-    - feature/gitlab-pipeline
-  stage: filterCommits
-  before_script:
-    - yum update -y && yum install -y git tar openssl zip unzip
-  image:
-    name: public.ecr.aws/amazonlinux/amazonlinux:2
-    entrypoint: [""]
-  script:
-    - bash -c source/cicd/filterproject_prebuild.bash
+# filterCommits:
+#   only:
+#     - feature/gitlab-pipeline
+#   stage: filterCommits
+#   before_script:
+#     - yum update -y && yum install -y git tar openssl zip unzip
+#   image:
+#     name: public.ecr.aws/amazonlinux/amazonlinux:2
+#     entrypoint: [""]
+#   script:
+#     - bash -c source/cicd/filterproject_prebuild.bash
 
 downloadInfastructureConfig:
-  only:
-    - feature/gitlab-pipeline
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "feature/gitlab-pipeline"'
+    - if: '$CI_COMMIT_TITLE = /.*\[skip ci\].*/'
+      when: never
   stage: build
   before_script:
     - env | sort
@@ -114,8 +115,10 @@ downloadInfastructureConfig:
       - $APP_CONFIG_DIR/
 
 buildLambaLayersZip:
-  only:
-    - feature/gitlab-pipeline
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "feature/gitlab-pipeline"'
+    - if: '$CI_COMMIT_TITLE = /.*\[skip ci\].*/'
+      when: never
   stage: build
   before_script:
     - yum update -y && yum install -y openssl zip
@@ -131,8 +134,10 @@ buildLambaLayersZip:
       - source/infrastructure/lambdaLayers/openssl/build/build.zip
 
 test:
-  only:
-    - feature/gitlab-pipeline
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "feature/gitlab-pipeline"'
+    - if: '$CI_COMMIT_TITLE = /.*\[skip ci\].*/'
+      when: never
   stage: test
   script:
     - *common-build-steps
@@ -147,8 +152,10 @@ test:
   <<: *common-artifacts
 
 deployStage:
-  only:
-    - feature/gitlab-pipeline
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "feature/gitlab-pipeline"'
+    - if: '$CI_COMMIT_TITLE = /.*\[skip ci\].*/'
+      when: never
   stage: deployStage
   variables:
     <<: *staging-variables
@@ -165,8 +172,10 @@ deployStage:
   - bash -c source/cicd/deployproject_postbuild.bash
 
 integrationTest:
-  only:
-    - feature/gitlab-pipeline
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "feature/gitlab-pipeline"'
+    - if: '$CI_COMMIT_TITLE = /.*\[skip ci\].*/'
+      when: never
   stage: integrationTest
   before_script:
     - *common-install-deployment-dependencies
@@ -183,8 +192,10 @@ integrationTest:
     - bash -c source/cicd/integrationtestsproject_build.bash
 
 deployLive:
-  only:
-    - feature/gitlab-pipeline
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "feature/gitlab-pipeline"'
+    - if: '$CI_COMMIT_TITLE = /.*\[skip ci\].*/'
+      when: never
   stage: deployLive
   variables:
     <<: *live-variables
@@ -198,26 +209,3 @@ deployLive:
     - bash -c source/cicd/deployproject_build.bash
   after_script:
     - bash -c source/cicd/deployproject_postbuild.bash
-
-release:
-  only:
-    refs:
-      - tags
-  except:
-    refs:
-      - branches
-    variables:
-      - $CI_COMMIT_TAG == "RELEASE-LIVE-LATEST"
-      - $CI_COMMIT_TAG == "RELEASE-STAGING-LATEST"
-  stage: release
-  image: registry.gitlab.com/gitlab-org/release-cli:latest
-  before_script:
-    - env | sort
-    - apk add zip curl
-  script:
-    - export PACKAGE_REGISTRY_URL=${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/aws-connected-device-framework/${BUILD_VERSION}
-    - zip -R asset.zip **/*.zip **/*.yaml **/*.yml **/*.bash **/*.md
-    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file asset.zip "${PACKAGE_REGISTRY_URL}/asset.zip"'
-    - |
-      release-cli create --name "Release $CI_COMMIT_TAG" --tag-name $CI_COMMIT_TAG \
-        --assets-link "{\"name\":\"assets\",\"url\":\"${PACKAGE_REGISTRY_URL}/asset.zip\"}" \
