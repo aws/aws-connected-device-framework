@@ -2,231 +2,198 @@
 
 ## Introduction
 
-Fine-grained access control within the CDF Asset Library allows one to segment their Asset Library model into sub-models, allowing for fine-grained access control at the device/group level based on a user's allowed access levels.  Note that fine-grained access control is available in the _full_ (graph) mode only.
+Enabling fine-grained access control (FGAC) mode within the CDF Asset Library allows for controlling granular permissions at the device/group level based on a user's allowed access levels.  Note that FGAC is available in the _full_ (graph) mode only.
 
-A user’s allowed access to group hierarchies, and their allowed operations on these hierarchies, is managed via an external IdP (such as Cognito).
+A user’s allowed access to group hierarchies, and their allowed operations on these hierarchies, is managed via an external IdP (such as Cognito). When a user signs into the IdP, and a JWT auth token is generated, a custom claim `cdf_al` needs to be added to the JWT which specifies the user's allowed access. The Asset Library will enforce that the user is only able to interact with the devices/groups that belong to the group hierarchies as defined in the JWT custom claim.
 
-When constructing a data model within Asset Library, devices and groups are organized into group hierarchies.  Each group within a hierarchy is identified by a unique group path.  When fine-grained access control is enabled for an Asset Library deployment, the IdP will allow for CRUD method operations and group paths to be added to an identities claims.  These claims will be passed to the Asset Library as part of the identities JWT token, with the JWT token being first validated by an API Gateway custom authorizer.
+## Configuration
 
-Within Asset Library, any attempted access to a device or group will be validated by traversing all outgoing relations to the device/group.  Only operations on devices/groups that belong to group hierarchies that are present in the identities claims, along with the allowed access level, will be performed.
+As mentioned in the introduction, a JWT is required to be created by an IdP and passed to the Asset Library as the `Authorization` http header. It is recommended that a Lambda authorizer be deployed to validate the JWT token. The `auth-jwt` reference project may be used for this.
 
-## Example
+To enable FGAC, the Asset Library `AUTHORIZATION_ENABLED` configuration property should be set to `true`. 
 
-### Example graph
+When `AUTHORIZATION_ENABLED` is set to `true`, this also automatically sets `DEFAULTS_GROUPS_VALIDATEALLOWEDPARENTPATHS` to `true`. This means that allowed `parent` relations will need to be defined on group types including updating the built-in `root` group category.
 
-Let’s take an example of a graph that we will refer to in the following sections:
+## Asset Library Data Model Design
 
-![example](<images/../images/CDF%20Asset%20Library%20FGAC.png>)
+When enabling FGAC, a user's access to a particular device and/or group is based on what outgoing relations that have been marked as to be included in auth checks can be traversed until a group path is found that the user's JWT has granted access. Let's take the following example:
 
-This example has a concept of multi-tenancy (multiple companies at the top-level represented as groups).  Printers are the modeled devices, with the printers shared across the different companies.  Access to the printers is managed per company via company specific pools represented as groups.  Each company can also have its own tag groups.  Tags are used to group devices for searching, whereas pool groups are used as authorization to specific devices.  The naming and structure of these groups is irrelevant for this example.
+![example](images/fgac_example.drawio.png)
 
-The following are the authorization constraints that need to be applied for the example:
+In this example we have a group hierarchy (`/resellers`) containing 2 groups: `/resellers/company1` and `/resellers/company2`. Each of those reseller groups has associated with them 1 device each via the `belongs_to` relationship (`/resellers/company1` has device `001` and `/resellers/company2` has device `002`). There is a second hierarchy `/tags` which represents the tags `/tags/red` and `/tags/black`. The device are associated with the tag hierarchy via the `has_tag` relation, allowing for searching for devices via tags. 
 
-* Users within a company can only see printers that are assigned to pool groups that they have access to
-* Users can search for devices associated with tags associated with their company
+All the relations in the example above with the exception of the `has_tag` relation between a device and tag group have the relation property `includeInAuth` set to `true`. This identifies these specific relations as being used to identify whether a user is authorized to the device/group. As an example, if someone is trying to access device `001` either by querying the device directly, querying what is related to `/resellers/company1`, querying what is related to `/tags/black`, or performing a search, it will traverse all outgoing relations from the device that have been marked as `includeInAuth` set to `true` and collect those group paths. In this example it will find the group paths `/resellers/company1`, `/resellers`, and finally `/`. It is these group paths that are cross referenced with the group paths provided as part of the `cdf_al` claim of the users JWT to determine whether access is granted.
 
-### Example Asset Library Data Model Configuration
+Let's say we have the following 3 users:
+- User `Lee` requires read only access to devices that belong to `/resellers/company1` - device `001`
+- User `Stewart` requires write access to devices that belong to `/resellers/company2` - device `002`
+- User `Sarah` is an admin who required full access to everything - both devices `001` and `002`
 
-In the above example, we configure tenants (companies) as a top-level group in the hierarchy. 
+We want all users to be able to filter using the `/tags` hierarchy, but to  only return devices that the have access to via the `/resellers` hierarchy. To accomplish this, we define the users `cdf_al` custom claim in their JWT as follows:
 
-Template:
+User | `cdf_al` custom claim 
+---|---
+`Lee` | `["/tags:R", "/resellers/company1:R"]`
+`Stewart` | `["/tags:R", "/resellers/company2:*"]`
+`Sarah` | `["/*"]`
 
+
+Here would be the results of various calls made by those users:
+
+**Retrieve device `001` via `GET /devices/001`**
+
+User | Result
+---|---
+`Lee` | 200 (OK) - device `001`
+`Stewart` | 403 (Not authorized)
+`Sarah` | 200 (OK) - device `001`
+
+**Updating device `001` via `PATCH /devices/001`**
+
+User | Result
+---|---
+`Lee` | 403 (Not authorized)
+`Stewart` | 403 (Not authorized)
+`Sarah` | 204 (No body)
+
+**Updating device `002` via `PATCH /devices/002`**
+
+User | Result
+---|---
+`Lee` | 403 (Not authorized)
+`Stewart` | 204 (No body)
+`Sarah` | 204 (No body)
+
+**Listing all devices via `GET /search?type=device`**
+
+User | Result
+---|---
+`Lee` | 200 (OK) - device `001`
+`Stewart` | 200 (OK) - device `002`
+`Sarah` | 200 (OK) - devices `001` and `002`
+
+**Listing all device associated with the tag `/tags/red` via `GET /groups/%2ftags%2fred/members/devices`**
+
+User | Result
+---|---
+`Lee` | 200 (OK) - no results
+`Stewart` | 200 (OK) - device `002`
+`Sarah` | 200 (OK) - device `002`
+
+**Retrieving the `company2` groups via `GET /groups/%2fresellers%2fcompany2`**
+
+User | Result
+---|---
+`Lee` | 403 (Not authorized)
+`Stewart` | 200 (OK) - group `/resellers/company2`
+`Sarah` | 200 (OK) - group `/resellers/company2`
+
+**Creating new `company3` group via `POST /groups`**
+
+User | Result
+---|---
+`Lee` | 403 (Not authorized)
+`Stewart` | 403 (Not authorized)
+`Sarah` | 201 (Created)
+
+## Asset Library Data Model Implementation
+
+When defining types (aka templates), in order to mark a relation between 2 group/device types as to be included in auth checks, set the relations `includeInAuth` property to `true`. The creation of the device/group types in the example above would be as follows:
+
+**Update the built-in `root` group category to support defining a recursive `parent` relation that is part of auth checks:**
 ```json
+PATCH /templates/group/root
+Accept: application/vnd.aws-cdf-v2.0+json
+Content-Type: application/vnd.aws-cdf-v2.0+json
+
 {
-    "templateId": "company",
-    "category": "group",
-    "properties": {
-        "classification": {
-            "type": "string",
-            "enum": ["Super","EndCustomer","Reseller"]
-        }
-    },
-    "relations": {},
-    "required": ["classification"]
-}
-
-```
-
-Example:
-
-```json
- {
-    "attributes": {
-        "classification": "Super"
-    },
-    "category": "group",
-    "templateId": "company",
-    "parentPath": "/",
-    "name": "Acme Systems",
-    "groupPath": "/acme systems"
-}
-
-```
-
-Next level, we configure 2 root groups to act as containers for tags and pools respectively.  Their parent being a company group.  This will allow us to restrict access at different levels of group hierarchies:
-
-Example:
-
-```json
-{
-    "attributes": {},
-    "category": "group",
-    "templateId": "root",
-    "name": "tags",
-    "groupPath": "/acme systems/tags",
-    "parentPath": "/acem systems"
-} 
-{
-    "attributes": {},
-    "category": "group",
-    "templateId": "root",
-    "name": "pools",
-    "groupPath": "/acme systems/pools",
-    "parentPath": "/acem systems"
-}
-
-```
-
-The next level in our example we have tags specific to a company.  Tags are used in searching across devices:
-
-Template:
-
-```json
-{
-    "templateId": "tag",
-    "category": "group",
     "properties": {},
     "relations": {
         "out": {
-            "tagged": ["printer"]
+            "parent": [{
+                "name": "root",
+                "includeInAuth": true
+            }]
         }
     },
     "required": []
 }
-
 ```
 
-Example:
-
+**Create new `tag` group category defining an outgoing `parent` relation to `root` that is part of auth checks:**
 ```json
+POST /templates/group/tag
+Accept: application/vnd.aws-cdf-v2.0+json
+Content-Type: application/vnd.aws-cdf-v2.0+json
+
 {
-    "attributes": {},
-    "category": "group",
-    "templateId": "tag",
-    "name": "Priority",
-    "groupPath": "/acme systems/tags/priority",
-    "parentPath": "/acme systems/tags"
-}
-
-```
-
-At the same level of tags, we also have printer pools:
-
-Template:
-
-```json
-{
-    "templateId": "printerpool",
-    "category": "group",
     "properties": {},
     "relations": {
-        "in": {
-            "pool": [
-                "printer"
-            ]
+        "out": {
+            "parent": [{
+                "name": "root",
+                "includeInAuth": true
+            }]
         }
     },
     "required": []
 }
-
 ```
 
-Example:
-
+**Create new `reseller` group category defining an outgoing `parent` relation to `root` that is part of auth checks:**
 ```json
+POST /templates/group/reseller
+Accept: application/vnd.aws-cdf-v2.0+json
+Content-Type: application/vnd.aws-cdf-v2.0+json
+
 {
-    "attributes": {},
-    "category": "group",
-    "templateId": "printerpool",
-    "name": "Public",
-    "groupPath": "/acme systems/pools/public",
-    "parentPath": "/acme systems/pools"
-}
-
-```
-
-At the bottom level we have the printers (devices) which are associated with a companies tags and pools.  Note that the `printerpool` group has an outgoing relation, so it is this group hierarchy that will be traversed to carry out authorization checks.  Tags are incoming relations, therefore are used for grouping only. 
-
-Template:
-
-```json
-{
-    "templateId": "printer",
-    "category": "device",
-    "properties": {
-        "product": {
-            "type": "string"
-        },
-        "model": {
-            "type": "string"
-        },
-        "serialNumber": {
-            "type": "string"
-        }
-    },
+    "properties": {},
     "relations": {
         "out": {
-            "pool": [
-                "printerpool"
-            ]
-        },
-        "in": {
-            "tagged": [
-                "tag"
-            ]
+            "parent": [{
+                "name": "root",
+                "includeInAuth": true
+            }]
         }
     },
-    "required": ["model","serialNumber"]
+    "required": []
 }
-
 ```
 
-Example:
-
+**Create new `sensor` device category defining an outgoing `belongs_to` relation to `reseller` that is part of auth checks, and an outgoing `has_tag` relation to `tag` that is not part of auth checks:**
 ```json
-{
-    "groups": {
-        "pool": [
-            "/acme systems/pools/public"
-        ],
-        "tagged": [
-            "/acme systems/tags/priority"
-        ]
-    },
-    "attributes": {
-        "product": "Acme Pro Line",
-        "serialNumber": "ABC123",
-        "model": "4001"
-    },
-    "category": "device",
-    "templateId": "printer",
-    "state": "active",
-    "deviceId": "printer_a"
-}
+POST /templates/group/reseller
+Accept: application/vnd.aws-cdf-v2.0+json
+Content-Type: application/vnd.aws-cdf-v2.0+json
 
+{
+    "properties": {},
+    "relations": {
+        "out": {
+            "belongs_to": [{
+                "name": "reseller",
+                "includeInAuth": true
+            }],
+            "has_tag": ["tag"]
+        }
+    },
+    "required": []
+}
 ```
 
-### Example IdP Configuration
+### More information regarding the external IdP configuration
 
-The external IdP should allow for the configuring of claims by specifying a group path along with allowed operations.  The following represent example custom claims where the claim key is `cdf_al`, and the claim value is an array of group paths along with allowed claim access levels: ‘C’reate, ’R’ead, ’U’pdate, ’D’elete, or ’*‘ as a shortcut for full privileges:
+The external IdP should allow for the configuring of claims by specifying a group path along with allowed operations.  The following represent example custom claims where the claim key is `cdf_al`, and the claim value is an array of group paths along with allowed claim access levels: `C`reate, `R`ead, `U`pdate, `D`elete, or ’*‘ as a shortcut for full privileges:
+
+Note that as JWT custom claims only support strings, not arrays, the value of the `cdf_al` custom claim needs to be a stringified version of the array as follows:
+
+User | `cdf_al` custom claim | stringified `cdf_al`
+---|---|---
+`Lee` | `["/tags:R", "/resellers/company1:R"]` | `"[\"/tags:R\", \"/resellers/company1:R\"]"`
+`Stewart` | `["/tags:R", "/resellers/company2:*"]` | `"[\"/tags:R\", \"/resellers/company2:*\"]"`
+`Sarah` | `["/*"]` | `"[\"/*\"]"`
 
 
-| Role | Description | Custom Claims |
-|---|---|---|
-| Super Administrator | Full privileges to entire Asset Library	| "cdf_al": ["/:*"] |
-| Company Administrator | Full privileges to a specific tenant | "cdf_al": ["/acme solutions/my llc/:*"] |
-| Super User | Able to manage tags, and manage a specific pool of printers | "cdf_al": ["/acme solutions/tags:\*","/acme solutions/pools/public:\*"] |
-| User | Able to use tags, and use printers from a specific pool | "cdf_al": ["/acme solutions/tags:R","/acme solutions/pools/public:R"] |
 
 An example (decrypted) JWT payload generated by the IdP including the custom claims would be:
 
@@ -235,61 +202,8 @@ An example (decrypted) JWT payload generated by the IdP including the custom cla
   "iss": "Some IdP",
   "iat": 1570654016,
   "exp": 1602190016,
-  "cdf_al": ["/acme solutions/tags:R", "/acme solutions/pools/public:R"]
+  "cdf_al": "[\"/tags:R\", \"/resellers/company2:*\"]"
 }
 
 ```
 
-## Asset Library Authorization Checks
-
-Authorization checks via supplied JWT tokens are configurable via feature toggles per installation.  By default, for backwards compatibility, fine-grained access control is disabled.
-
-If enabled, an API Gateway Lambda Authorizer needs to be deployed and configured for use with the Asset Library with the sole responsibility of verifying the supplied JWT (structure checks, signature verification, standard claims, expiration, etc).  If trusted, the request will be forwarded to the Asset Library.  Note: an example API Gateway Lambda Authorizer (see _jwt-auth_ project) is included with CDF as a reference.
-
-As fine-grained access controls needs to be carried out at the group/device level within the group hierarchies, it is not possible to perform the authorization checks within the service layer as the service layer has no knowledge of a groups/devices hierarchy.  The authorization checks are carried out in the data layer (Amazon Neptune) to allow for fast and efficient checks.
-
-All the device/group REST API’s start with a specific device/group in context.  For these types of queries, a preliminary query can be executed to see if a user has access to the device/group in context via one of its hierarchy as follows:
-
-Pseudo code (internal to Asset Library):
-
-```sh
-1. Lookup matching group claims:
-    1. Starting with the device
-        1. Navigate all outgoing links through all related hierarchies until one of the paths defined in a claim is found
-        2. Return these matched group paths to the Asset Library
-2. Compare matched group claims:
-    1. For each returned matched group, compare the required authorization level with the authorization level claimed
-3. If authorized, proceed as normal
-
-```
-
-Example Gremlin query to satisfy item 1 above using a traversal query looking for exact matches:
-
-```sql
-g.V('device___20000-xxxxxxxxxxxx').
-      until(
-         has('groupPath',within('/acme systems/pools/public'))
-      ).
-      repeat(out()).values('groupPath')
-
-```
-
-The search REST API behaves differently the devices/groups.  Instead of starting with a specific device/group in context, it searches across all devices/groups.  For this, a Gremlin _match_ command is performed to ensure returned devices/groups are part of a group hierarchy the user has access to.
-
-Example Gremlin query adding a match statement to the existing search query, ensuring the returned devices/groups can be accessible via the allowed public and private pool for customer Acme Systems:
-
-```sql
-g.V().as('a').
- match(
-   .as('a').hasLabel('printer'),
-   .as('a').until(hasId('group___/acme systems/pools/public', 'group___/acme systems/pools/private')).repeat(__.out())
- )
-
-```
-
-
-## Asset Library REST API Responses
-
-Any REST API actions deemed as not allowed due to failed authorization checks will return _403 Forbidden_.
-
-Prior to this feature, only outgoing relations from devices to group hierarchies were allowed.  Due to this, there was no need to identify incoming vs outgoing relations in the device related REST API responses.  As we now need to differentiate, a version 2 of the API (`application/vnd.aws-cdf-v2.0+json`) is supported that identifies incoming vs outgoing separately.  The existing version 1 of the API remains as-is.
