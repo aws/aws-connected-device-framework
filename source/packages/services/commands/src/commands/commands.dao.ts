@@ -145,7 +145,7 @@ export class CommandsDao {
         };
 
         Object.keys(model).forEach(k=> {
-            if (Object.prototype.hasOwnProperty.call(model,k) && k !== 'commandId' ) {
+            if (model.hasOwnProperty(k) && k !== 'commandId' ) {
                 if (params.UpdateExpression==='') {
                     params.UpdateExpression+='set ';
                 } else {

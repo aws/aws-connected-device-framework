@@ -91,7 +91,7 @@ Feature: Groups Profiles
     Given assetlibrary group profile "TEST-groupProfiles-profile-XXX" of "TEST-groupProfiles-type" does not exist
     When I create group "/TEST-groupProfiles-group005" of "/" applying profile "TEST-groupProfiles-profile-XXX" with attributes
       | templateId | TEST-groupProfiles-type |
-    Then it fails with a 400
+    Then it fails with a 404
     And group "/TEST-groupProfiles-group005" does not exist
 
 

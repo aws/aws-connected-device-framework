@@ -14,8 +14,8 @@ import 'reflect-metadata';
 import { Given, setDefaultTimeout, When, TableDefinition, Then} from 'cucumber';
 import {
     ProfilesService,
-    DeviceProfile10Resource,
-    GroupProfile10Resource,
+    DeviceProfile20Resource,
+    GroupProfile20Resource,
     ASSETLIBRARY_CLIENT_TYPES,
 } from '@cdf/assetlibrary-client/dist';
 import stringify from 'json-stable-stringify';
@@ -40,7 +40,9 @@ setDefaultTimeout(10 * 1000);
 const profileService:ProfilesService = container.get(ASSETLIBRARY_CLIENT_TYPES.ProfilesService);
 function getAdditionalHeaders(world:unknown) : Dictionary {
     return  {
-        Authorization: world[AUTHORIZATION_TOKEN]
+        Authorization: world[AUTHORIZATION_TOKEN],
+        Accept: 'application/vnd.aws-cdf-v2.0+json',
+        'Content-Type': 'application/vnd.aws-cdf-v2.0+json',
     };
 }
 
@@ -122,7 +124,7 @@ When('I delete assetlibrary {word} profile {string} of {string}', async function
 Then('assetlibrary {word} profile {string} of {string} exists with attributes', async function (category:string, profileId:string, templateId:string, data:TableDefinition) {
     const d = data.rowsHash();
 
-    let r:DeviceProfile10Resource|GroupProfile10Resource;
+    let r:DeviceProfile20Resource|GroupProfile20Resource;
     if (isDevice(category)) {
         r = await profileService.getDeviceProfile(templateId, profileId, getAdditionalHeaders(this));
     } else if (isGroup(category)) {

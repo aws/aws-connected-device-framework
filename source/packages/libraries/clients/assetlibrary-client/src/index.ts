@@ -24,6 +24,7 @@ export * from './client/search.model';
 export * from './client/search.service';
 export * from './client/profiles.model';
 export * from './client/profiles.service';
+export * from './client/common.model';
 
 export {ASSETLIBRARY_CLIENT_TYPES, ASSTLIBRARY_CLIENT_TYPES} from './di/types';
 export {assetLibraryContainerModule} from './di/inversify.config';

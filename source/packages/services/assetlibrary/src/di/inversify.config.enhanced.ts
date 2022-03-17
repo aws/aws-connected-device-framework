@@ -40,7 +40,7 @@ import { SearchService } from '../search/search.service';
 import { TypesDaoFull } from '../types/types.full.dao';
 import { TypesServiceFull } from '../types/types.full.service';
 import { TypesService } from '../types/types.service';
-import { SchemaValidatorService } from '../utils/schemaValidator.service';
+import { SchemaValidatorService } from '../types/schemaValidator.full.service';
 import { TYPES } from './types';
 
 

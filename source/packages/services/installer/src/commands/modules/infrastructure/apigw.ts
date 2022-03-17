@@ -59,7 +59,8 @@ export class ApiGwInstaller implements InfrastructureModule {
         message: 'Enter the name of the CloudFormation snippet that configures the REST APIs:',
         type: 'input',
         name: 'apigw.cloudFormationTemplate',
-        default: () => {
+        default: (answers: Answers) => {
+          if (answers.apigw?.cloudFormationTemplate !== undefined) return answers.apigw.cloudFormationTemplate;
           let cloudformationTemplate = 'cfn-apiGateway-noAuth.yaml'
           switch (answers.apigw?.type) {
             case "ApiKey":

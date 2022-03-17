@@ -13,7 +13,7 @@
 
 import 'reflect-metadata';
 import { setDefaultTimeout, When, TableDefinition, Then} from 'cucumber';
-import { Device10Resource, DevicesService, BulkDevicesResource } from '@cdf/assetlibrary-client';
+import { Device20Resource, DevicesService, BulkDevicesResource } from '@cdf/assetlibrary-client';
 import { fail } from 'assert';
 
 import chai_string = require('chai-string');
@@ -38,19 +38,21 @@ const deviceService:DevicesService = container.get(ASSETLIBRARY_CLIENT_TYPES.Dev
 function getAdditionalHeaders(world:unknown) : Dictionary {
     const authCode= world[AUTHORIZATION_TOKEN];
     const headers =  {
-        Authorization: authCode
+        Authorization: authCode,
+        Accept: 'application/vnd.aws-cdf-v2.0+json',
+        'Content-Type': 'application/vnd.aws-cdf-v2.0+json',
     };
     return headers;
 }
 
-async function bulkRegisterDevice (world:unknown, devicesToCreate:Device10Resource[]) {
+async function bulkRegisterDevice (world:unknown, devicesToCreate:Device20Resource[]) {
     const headers = getAdditionalHeaders(world);
     const bulkDeviceCreateBody: BulkDevicesResource = { devices: devicesToCreate };
     await deviceService.bulkCreateDevice(bulkDeviceCreateBody, undefined, headers);
 }
 
-function parseBulkDeviceTable(d:TableDefinition): Device10Resource[] {
-    const devices: Device10Resource[] = [];
+function parseBulkDeviceTable(d:TableDefinition): Device20Resource[] {
+    const devices: Device20Resource[] = [];
     const deviceRows = d.rows();
     deviceRows.forEach((dr) => {
         devices.push({

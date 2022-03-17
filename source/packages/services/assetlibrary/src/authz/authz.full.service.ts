@@ -15,11 +15,14 @@ import { TYPES } from '../di/types';
 import {logger} from '../utils/logger';
 import { Claims, ClaimAccess } from '../authz/claims';
 import { AuthzDaoFull } from './authz.full.dao';
+import { EntityTypeMap, RelatedEntityArrayMap, StringArrayMap } from '../data/model';
+import { NotAuthorizedError, NotFoundError } from '../utils/errors';
 
 @injectable()
 export class AuthzServiceFull {
 
-    constructor( @inject(TYPES.AuthzDaoFull) private dao: AuthzDaoFull,
+    constructor( 
+        @inject(TYPES.AuthzDaoFull) private dao: AuthzDaoFull,
         @inject('authorization.enabled') private isAuthzEnabled: boolean) {}
 
     public async authorizationCheck(deviceIds:string[], groupPaths:string[], accessLevelRequired:ClaimAccess):Promise<void> {
@@ -39,11 +42,10 @@ export class AuthzServiceFull {
         const combinedIds:string[]= [];
         combinedIds.push(...deviceIds, ...groupPaths);
 
-        if (combinedIds.length===0) {
+        logger.debug(`authz.full.service authorizationCheck: combinedIds:${JSON.stringify(combinedIds)}`);
+        if (combinedIds.length===0) {            
             return;
         }
-
-        logger.debug(`authz.full.service authorizationCheck: combinedIds:${JSON.stringify(combinedIds)}`);
 
         // retrieve the claims from the thread local
         const claims = Claims.getInstance();
@@ -52,16 +54,16 @@ export class AuthzServiceFull {
         // determine if the user has any access to provided ids via their allowed hierarchies
         const authorizations = await this.dao.listAuthorizedHierarchies(deviceIds, groupPaths, claims.listPaths());
 
-        // if one if the requested items is missing, we refuse the whole request
-        if (authorizations.exists.length!==deviceIds.length+groupPaths.length) {
-            throw new Error('NOT_FOUND');
+        // if one of the requested items is missing, we refuse the whole request
+        if ((authorizations?.exists?.length??0) !== (combinedIds.length) ) {
+            const notFound = combinedIds.filter(id=> !authorizations.exists.includes(id));
+            throw new NotFoundError(`Device(s)/group(s) ${JSON.stringify(notFound)} not found.`);
         }
 
         // if the user does not have access to all, then not authorized to any
         const notAuthorized = Object.keys(authorizations.authorized).filter(k=> !combinedIds.includes(k));
         if (notAuthorized.length>0) {
-            logger.debug(`authz.full.service authorizationCheck: not authorized to: ${notAuthorized}`);
-            throw new Error('NOT_AUTHORIZED');
+            throw new NotAuthorizedError(`Access to ${JSON.stringify(notAuthorized)} not authorized.`);
         }
 
         // even though the user has access to a hierarchy, need to ensure its the right level of access
@@ -76,12 +78,29 @@ export class AuthzServiceFull {
             }
         }
 
-        logger.debug(`authz.full.service authorizationCheck: entitiesWithSufficientAccess:${JSON.stringify(entitiesWithSufficientAccess)}`);
-
         if (entitiesWithSufficientAccess.length!==combinedIds.length) {
             logger.debug(`authz.full.service authorizationCheck: not authorized`);
-            throw new Error('NOT_AUTHORIZED');
+            throw new NotAuthorizedError(`Insufficient access to ${JSON.stringify(entitiesWithSufficientAccess)}.`);
         }
 
+        logger.debug(`authz.full.service authorizationCheck: exit`);
+
+    }
+
+    public updateRelsIdentifyingAuth(relatedEntities:RelatedEntityArrayMap, entityLabels:EntityTypeMap, authenticatedTypes:StringArrayMap) : void {
+        logger.silly(`authz.full.service updateRelsIdentifyingAuth: in: relatedEntities: ${JSON.stringify(relatedEntities)}, entityLabels: ${JSON.stringify(entityLabels)}, authenticatedTypes: ${JSON.stringify(authenticatedTypes)}`);
+        if (relatedEntities) {                                                                
+            for (const [relation,entities] of Object.entries(relatedEntities)) {
+                if (authenticatedTypes[relation]) {
+                    for (const entity of entities) {
+                        const labels = entityLabels[entity.id];
+                        if (authenticatedTypes[relation].some(t=> labels.indexOf(t)>=0)) {
+                            relatedEntities[relation].find(e=>e.id===entity.id).isAuthCheck = true;
+                        }
+                    }
+                }
+            }
+        }
+        logger.silly(`authz.full.service updateRelsIdentifyingAuth: updated: rels: ${JSON.stringify(relatedEntities)}`);
     }
 }

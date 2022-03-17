@@ -19,6 +19,7 @@ import { TYPES } from '../di/types';
 import {TypeCategory} from '../types/constants';
 import { FullAssembler } from '../data/full.assembler';
 import { determineIfDeviceItem } from '../devices/devices.models';
+import { DirectionToRelatedEntityArrayMap, RelatedEntityArrayMap, RelationDirection, StringArrayMap } from '../data/model';
 
 @injectable()
 export class GroupsAssembler {
@@ -39,7 +40,7 @@ export class GroupsAssembler {
         node.version = model.version;
 
         for(const p in model.attributes) {
-            if (Object.prototype.hasOwnProperty.call(model.attributes, p)) {
+            if (model.attributes.hasOwnProperty(p)) {
                 node.attributes[p] = model.attributes[p];
             }
         }
@@ -49,7 +50,7 @@ export class GroupsAssembler {
     }
 
     public toGroupItems(nodes:Node[]): GroupItem[] {
-        logger.debug(`groups.assmebler toGroupItems: in: nodes: ${JSON.stringify(nodes)}`);
+        logger.debug(`groups.assembler toGroupItems: in: nodes: ${JSON.stringify(nodes)}`);
 
         const groups: GroupItem[]=[];
         for(const node of nodes) {
@@ -113,7 +114,7 @@ export class GroupsAssembler {
                         if (model.groups.in[key]===undefined) {
                             model.groups.in[key]=[];
                         }
-                        model.groups.in[key].push((other.attributes['groupPath'] as string[])[0]);
+                        model.groups.in[key].push({id:(other.attributes['groupPath'] as string[])[0]});
                     }
                 });
             }
@@ -133,7 +134,7 @@ export class GroupsAssembler {
                         if (model.groups.out[key]===undefined) {
                             model.groups.out[key]=[];
                         }
-                        model.groups.out[key].push((other.attributes['groupPath'] as string[])[0]);
+                        model.groups.out[key].push({id:(other.attributes['groupPath'] as string[])[0]});
                     }
                 });
 
@@ -175,17 +176,26 @@ export class GroupsAssembler {
             }
         });
 
+        const assembleRelated = (from:StringArrayMap, rels:DirectionToRelatedEntityArrayMap, direction:RelationDirection)=> {
+            if (from) {
+                if (rels[direction] ===undefined) rels[direction] = {};
+                for(const [relation,ids] of Object.entries(from)) {
+                    rels[direction][relation] = ids.map(id=>({id}));
+                }
+            }
+        }
+
         // populate version specific device info
         if (determineIfGroup20Resource(res)) {
             // v2.0 supports both incoming and outgoing links
             const res_2_0 = res as Group20Resource;
-            item.groups=res_2_0.groups;
+            assembleRelated(res_2_0.groups?.in, item.groups, 'in');
+            assembleRelated(res_2_0.groups?.out, item.groups, 'out');
         } else {
             // as v1.0 only supports outgoing links, we default all to outgoing
             const res_1_0 = res as Group10Resource;
             if (res_1_0.groups) {
-                item.groups= {out:{}};
-                Object.keys(res_1_0.groups).forEach(rel=>  item.groups.out[rel]=res_1_0.groups[rel]);
+                assembleRelated(res_1_0.groups, item.groups, 'out');
             }
         }
 
@@ -219,6 +229,17 @@ export class GroupsAssembler {
             return undefined;
         }
 
+        const assembleRelated = (from:RelatedEntityArrayMap, to:StringArrayMap)=> {
+            if (from) {
+                for(const [relation,entities] of Object.entries(from)) {
+                    if (to[relation]===undefined) {
+                        to[relation]= [];
+                    }
+                    to[relation].push(...entities.map(entity=>entity.id));
+                }
+            }
+        }
+
         let resource:GroupBaseResource;
         if (version.startsWith('1.')) {
             // v1 specific...
@@ -227,21 +248,8 @@ export class GroupsAssembler {
 
             // populate version specific device info
             if (item.groups) {
-                typedResource.groups = {};
-                if (item.groups.in) {
-                    Object.keys(item.groups.in).forEach(rel=> {
-                        typedResource.groups[rel] = item.groups.in[rel];
-                    });
-                }
-                if (item.groups.out) {
-                    Object.keys(item.groups.out).forEach(rel=> {
-                        if (typedResource.groups[rel]) {
-                            typedResource.groups[rel].push(...item.groups.out[rel]);
-                        } else {
-                            typedResource.groups[rel] = item.groups.out[rel];
-                        }
-                    });
-                }
+                assembleRelated(item.groups?.in, typedResource.groups);
+                assembleRelated(item.groups?.out, typedResource.groups);
             } else {
                 delete typedResource.groups;
             }
@@ -251,7 +259,15 @@ export class GroupsAssembler {
             const typedResource:Group20Resource = resource;
 
             // populate version specific device info
-            typedResource.groups = item.groups;
+            typedResource.groups = {};
+            if (item.groups?.in) {
+                typedResource.groups.in = {}
+            }
+            assembleRelated(item.groups?.in, typedResource.groups.in);
+            if (item.groups?.out) {
+                typedResource.groups.out = {}
+            }
+            assembleRelated(item.groups?.out, typedResource.groups.out);
         }
 
         // common properties

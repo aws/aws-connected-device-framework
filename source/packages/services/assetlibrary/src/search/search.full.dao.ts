@@ -141,11 +141,11 @@ export class SearchDaoFull extends BaseDaoFull {
             });
         }
 
-        // must reset all traversals so far as we may meed to use simplePath if FGAC is enabled to prevent cyclic checks
-        traverser.select('a').dedup().fold().unfold().as('matched');
-
         // if authz is enabled, only return results that the user is authorized to view
         if (authorizedPaths!==undefined && authorizedPaths.length>0) {
+
+            // must reset all traversals so far as we need to use simplePath when FGAC is enabled to prevent cyclic checks
+            traverser.select('a').dedup().fold().unfold().as('a');
 
             const authorizedPathIds = authorizedPaths.map(path=>`group___${path}`);
             traverser.
@@ -153,14 +153,14 @@ export class SearchDaoFull extends BaseDaoFull {
                     __.until(
                         __.hasId(process.P.within(authorizedPathIds))
                     ).repeat(
-                        __.out().simplePath().dedup()
+                        __.outE().has('isAuthCheck',true).otherV().simplePath().dedup()
                     )
                 ).as('authorization');
         }
 
         logger.debug(`search.full.dao buildSearchTraverser: traverser: ${JSON.stringify(traverser.toString())}`);
 
-        return traverser.select('matched').dedup();
+        return traverser.select('a').dedup();
 
     }
 

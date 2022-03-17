@@ -2508,14 +2508,33 @@ components:
               additionalProperties:
                 type: array
                 items:
-                  type: string
+                  oneOf:
+                    - type: string
+                    - type: object
+                      properties:
+                        name:
+                          type: string
+                          description: Name of relation
+                        includeInAuth:
+                          type: boolean
+                          description: If `true`, this relation will be used as part fo veriifying authorization when fine-grained access control is enabled.
+
             in:
               description: Map of defined relationships from other templates to this
               type: object
               additionalProperties:
                 type: array
                 items:
-                  type: string
+                  oneOf:
+                    - type: string
+                    - type: object
+                      properties:
+                        name:
+                          type: string
+                          description: Name of relation
+                        includeInAuth:
+                          type: boolean
+                          description: If `true`, this relation will be used as part fo veriifying authorization when fine-grained access control is enabled.
 
     Policy:
       type: object

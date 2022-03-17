@@ -34,17 +34,17 @@ Feature: Device Profiles
   Scenario: Create a new Device Profile
     Given assetlibrary device profile "TEST-deviceProfiles-profile" of "TEST-deviceProfiles-type" does not exist
     When I create the assetlibrary device profile "TEST-deviceProfiles-profile" of "TEST-deviceProfiles-type" with attributes
-      | groups | {"linked_to": ["/TEST-deviceProfiles-linkableGroup001"]} |
+      | groups | {"out":{"linked_to": ["/TEST-deviceProfiles-linkableGroup001"]}} |
       | attributes | {"model": "abc123", "serialNumber": "S123"} |
     Then assetlibrary device profile "TEST-deviceProfiles-profile" of "TEST-deviceProfiles-type" exists with attributes
-      | groups | {"linked_to": ["/TEST-deviceProfiles-linkableGroup001"]} |
+      | groups | {"out":{"linked_to": ["/TEST-deviceProfiles-linkableGroup001"]}} |
       | attributes | {"model": "abc123", "serialNumber": "S123"} |
 
 
   Scenario: Create a new Device Profile with invalid attribute fails
     Given assetlibrary device profile "TEST-deviceProfiles-profile-invalid" of "TEST-deviceProfiles-type" does not exist
     When I create the assetlibrary device profile "TEST-deviceProfiles-profile-invalid" of "TEST-deviceProfiles-type" with attributes
-      | groups | {"linked_to": ["/TEST-deviceProfiles-linkableGroup001"]} |
+      | groups | {"out":{"linked_to": ["/TEST-deviceProfiles-linkableGroup001"]}} |
       | attributes | {"invalid_attribute": "abc123"} |
     Then it fails with a 400
     And assetlibrary device profile "TEST-deviceProfiles-profile-invalid" of "TEST-deviceProfiles-type" does not exist
@@ -53,7 +53,7 @@ Feature: Device Profiles
   Scenario: Create a new Device Profile with invalid group relation fails
     Given assetlibrary device profile "TEST-deviceProfiles-profile-invalid" of "TEST-deviceProfiles-type" does not exist
     When I create the assetlibrary device profile "TEST-deviceProfiles-profile-invalid" of "TEST-deviceProfiles-type" with attributes
-      | groups | {"invalid_relation": ["/TEST-deviceProfiles-linkableGroup001"]} |
+      | groups | {"out":{"invalid_relation": ["/TEST-deviceProfiles-linkableGroup001"]}} |
       | attributes | {"model": "abc123", "serialNumber": "S123"} |
     Then it fails with a 400
     And assetlibrary device profile "TEST-deviceProfiles-profile-invalid" of "TEST-deviceProfiles-type" does not exist
@@ -67,7 +67,7 @@ Feature: Device Profiles
       | templateId | TEST-deviceProfiles-type |
     Then device "TEST-deviceProfiles-device001" exists with attributes
       | templateId | test-deviceprofiles-type |
-      | groups | {"linked_to":["/test-deviceprofiles-linkablegroup001"]} |
+      | groups | {"out":{"linked_to":["/test-deviceprofiles-linkablegroup001"]}} |
       | attributes | {"model": "abc123", "serialNumber": "S123"} |
 
 
@@ -80,7 +80,7 @@ Feature: Device Profiles
       | attributes | {"model": "abc456"} |
     Then device "TEST-deviceProfiles-device002" exists with attributes
       | templateId | test-deviceprofiles-type |
-      | groups | {"linked_to":["/test-deviceprofiles-linkablegroup001"]} |
+      | groups | {"out":{"linked_to":["/test-deviceprofiles-linkablegroup001"]}} |
       | attributes | {"model": "abc456", "serialNumber": "S123"} |
 
 
@@ -91,10 +91,10 @@ Feature: Device Profiles
     When I create device "TEST-deviceProfiles-device003" applying profile "TEST-deviceProfiles-profile" with attributes
       | templateId | TEST-deviceProfiles-type |
       | attributes | {"model": "abc456"} |
-      | groups | {"linked_to":["/test-deviceProfiles-linkablegroup002"]} |
+      | groups | {"out":{"linked_to":["/test-deviceProfiles-linkablegroup002"]}} |
     Then device "TEST-deviceProfiles-device003" exists with attributes
       | templateId | test-deviceprofiles-type |
-      | groups | {"linked_to":["/test-deviceprofiles-linkablegroup002"]} |
+      | groups | {"out":{"linked_to":["/test-deviceprofiles-linkablegroup002"]}} |
       | attributes | {"model": "abc456", "serialNumber": "S123"} |
 
 
@@ -105,12 +105,12 @@ Feature: Device Profiles
     And I remove device "TEST-deviceProfiles-device003" from group "/TEST-deviceProfiles-linkableGroup002" related via "linked_to"
     Then device "TEST-deviceProfiles-device003" exists with attributes
       | templateId | test-deviceprofiles-type |
-      | groups | ___undefined___ |
+      | groups | {} |
       | attributes | {"model": "abc456"} |
     When I update device "TEST-deviceProfiles-device003" applying profile "TEST-deviceProfiles-profile"
     Then device "TEST-deviceProfiles-device003" exists with attributes
       | templateId | test-deviceprofiles-type |
-      | groups | ___undefined___ |
+      | groups | {} |
       | attributes | {"model": "abc123", "serialNumber": "S123"} |
 
 
@@ -124,7 +124,7 @@ Feature: Device Profiles
     Given assetlibrary device profile "TEST-deviceProfiles-profile-XXX" of "TEST-deviceProfiles-type" does not exist
     When I create device "TEST-deviceProfiles-device005" applying profile "TEST-deviceProfiles-profil-XXX" with attributes
       | templateId | TEST-deviceProfiles-type |
-    Then it fails with a 400
+    Then it fails with a 404
     And device "TEST-deviceProfiles-device005" does not exist
 
 

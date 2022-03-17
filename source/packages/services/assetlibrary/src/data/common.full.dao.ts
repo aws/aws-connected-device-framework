@@ -16,7 +16,7 @@ import {logger} from '../utils/logger';
 import {TYPES} from '../di/types';
 import {Node} from './node';
 import { FullAssembler } from './full.assembler';
-import { ModelAttributeValue, SortKeys } from './model';
+import { EntityTypeMap, ModelAttributeValue, SortKeys } from './model';
 import { BaseDaoFull } from './base.full.dao';
 import { isRelatedEntityDto, isVertexDto, RelatedEntityDto, VertexDto } from './full.model';
 import { TypeUtils } from '../utils/typeUtils';
@@ -131,38 +131,38 @@ export class CommonDaoFull extends BaseDaoFull {
 
     }
 
-    public async getLabels(entityDbId: string): Promise<string[]> {
-        logger.debug(`common.full.dao getLabels: in: entityDbId: ${entityDbId}`);
+    public async getLabels(entityDbIds: string[]): Promise<EntityTypeMap> {
+        logger.debug(`common.full.dao getLabels: in: entityDbIds: ${entityDbIds}`);
 
-        let labelResults;
+        if ((entityDbIds?.length??0)===0) {
+            return {};
+        }
+
+        let results;
         const conn = super.getConnection();
         try {
-            labelResults = await conn.traversal.V(entityDbId).label().toList();
+            const query = conn.traversal.V(entityDbIds).project('id','labels')
+                .by(__.coalesce(__.values('deviceId'),__.values('groupPath')))
+                .by(__.label().fold());
+
+            logger.silly(`common.full.dao getLabels: query: ${JSON.stringify(query)}`);
+            results = await query.toList();
         } finally {
             await conn.close();
         }
+        logger.silly(`common.full.dao getLabels: results: ${JSON.stringify(results)}`);
 
-        if (labelResults===undefined || labelResults.length===0) {
-            logger.debug('common.full.dao getLabels: exit: labels:undefined');
-            return undefined;
+        if ((results?.length??0)===0) {
+            logger.debug('common.full.dao getLabels: exit: labels:{}');
+            return {};
         } else {
-            const labels:string[] = JSON.parse(JSON.stringify(labelResults)) as string[];
-            if (labels.length===1) {
-                // all devices/groups should have 2 labels
-                // if only 1 is returned it is an older version of the Neptune engine
-                // which returns labels as a concatinated string (label1::label2)
-                // attempt to be compatable with this
-                const splitLabels:string[] = labels[0].split('::');
-                if (splitLabels.length < 2) {
-                    logger.error(`common.full.dao getLabels: entityDbId ${entityDbId} does not have correct labels`);
-                    throw new Error('INVALID_LABELS');
-                }
-                logger.debug(`common.full.dao getLabels: exit: labels: ${labels}`);
-                return labels;
-            } else {
-                logger.debug(`common.full.dao getLabels: exit: labels: ${labels}`);
-                return labels;
+            const labels:EntityTypeMap = {};
+            for (const result of results) {
+                const id = <string>result.id;
+                labels[id] = <string[]>result.labels;
             }
+            logger.debug(`common.full.dao getLabels: exit: labels: ${JSON.stringify(labels)}`);
+            return labels;
         }
     }
 }

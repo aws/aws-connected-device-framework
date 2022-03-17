@@ -17,6 +17,7 @@ Feature: Device lifecycle
   Scenario: Setup
     Given group "/TEST-devices-linkableGroup001" exists
     And group "/TEST-devices-unlinkableGroup001" exists
+    And device "test-devices-linkabledevice001" exists
 
 
   Scenario: Create a new Device Template
@@ -25,12 +26,12 @@ Feature: Device lifecycle
     When I create the assetlibrary device template "TEST-devices-type" with attributes
       | properties | {"serialNumber":{"type":["string","null"]},"model":{"type":"string"}} |
       | required | ["model"] |
-      | relations | {"out":{"linked_to":["test-devices-linkablegroup"],"parent":["test-devices-linkablegroup"]}} |
+      | relations | {"out":{"linked_to":["test-devices-linkablegroup"],"parent":["test-devices-linkablegroup"],"sibling":["test-devices-linkabledevice"]}} |
     And publish assetlibrary device template "TEST-devices-type"
     Then published assetlibrary device template "TEST-devices-type" exists with attributes
       | properties | {"serialNumber":{"type":["string","null"]},"model":{"type":"string"}} |
       | required | ["model"] |
-      | relations | {"out":{"linked_to":["test-devices-linkablegroup"],"parent":["test-devices-linkablegroup"]}} |
+      | relations | {"out":{"linked_to":["test-devices-linkablegroup"],"parent":["test-devices-linkablegroup"],"sibling":["test-devices-linkabledevice"]}} |
 
 
   Scenario: Create a Device with valid attributes
@@ -41,14 +42,16 @@ Feature: Device lifecycle
       | description | My description |
       | awsIotThingArn | arn:aws:iot:us-east-1:xxxxxxxxxxxx:thing/test-devices-device001 |
       | state | active |
-      | groups | {"linked_to":["/test-devices-linkablegroup001"]} |
+      | groups | {"out":{"linked_to":["/test-devices-linkablegroup001"]}} |
+      | devices | {"out":{"sibling":["test-devices-linkabledevice001"]}} |
       | attributes | {"serialNumber":"S001","model":"A"} |
     Then device "TEST-devices-device001" exists with attributes
       | templateId | test-devices-type |
       | description | My description |
       | awsIotThingArn | arn:aws:iot:us-east-1:xxxxxxxxxxxx:thing/test-devices-device001 |
       | state | active |
-      | groups | {"linked_to":["/test-devices-linkablegroup001"]} |
+      | groups | {"out":{"linked_to":["/test-devices-linkablegroup001"]}} |
+      | devices | {"out":{"sibling":["test-devices-linkabledevice001"]}} |
       | attributes | {"serialNumber":"S001","model":"A"} |
 
 
@@ -71,7 +74,7 @@ Feature: Device lifecycle
     Then device "TEST-devices-device003" exists with attributes
       | templateId | test-devices-type |
       | state | unprovisioned |
-      | groups | {"parent":["/unprovisioned"]} |
+      | groups | {"out":{"parent":["/unprovisioned"]}} |
       | attributes | {"serialNumber":"S001","model":"A"} |
 
 
@@ -81,7 +84,7 @@ Feature: Device lifecycle
     When I create device "TEST-devices-device004" with invalid attributes
       | templateId | TEST-devices-type |
       | state | active |
-      | groups | {"linked_to":["/test-devices-unlinkablegroup001"]} |
+      | groups | {"out":{"linked_to":["/test-devices-unlinkablegroup001"]}} |
       | attributes | {"serialNumber":"S001","model":"A"} |
     Then it fails with a 400
     And device "TEST-devices-device004" does not exist
@@ -175,3 +178,5 @@ Feature: Device lifecycle
     And published assetlibrary group template "TEST-devices-linkableGroup" does not exist
     And draft assetlibrary group template "TEST-devices-unlinkableGroup" does not exist
     And published assetlibrary group template "TEST-devices-unlinkableGroup" does not exist
+    And draft assetlibrary device template "TEST-devices-linkableDevice" does not exist
+    And published assetlibrary device template "TEST-devices-linkableDevice" does not exist

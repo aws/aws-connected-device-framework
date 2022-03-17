@@ -39,7 +39,7 @@ export class GroupsAssembler {
         node.version = model.version;
 
         for(const p in model.attributes) {
-            if (Object.prototype.hasOwnProperty.call(model.attributes, p)) {
+            if (model.attributes.hasOwnProperty(p)) {
                 node.attributes[p] = model.attributes[p];
             }
         }
@@ -49,7 +49,7 @@ export class GroupsAssembler {
     }
 
     public toGroupItems(nodes:Node[]): GroupItem[] {
-        logger.silly(`groups.assmebler toGroupItems: in: nodes: ${JSON.stringify(nodes)}`);
+        logger.silly(`groups.assembler toGroupItems: in: nodes: ${JSON.stringify(nodes)}`);
 
         const groups: GroupItem[]=[];
         for(const node of nodes) {

@@ -8,7 +8,7 @@
     "clean:postrelease": "npx shx rm -rf dist build tsconfig.tsbuildinfo .nyc_output coverage dist build features/dist",
     "lint": "npx eslint . --ext '.ts'",
     "build": "rushx clean && npx tsc && npx shx mkdir -p features/dist && npx shx cp -R 'dist/step_definitions' 'features/dist/step_definitions' && npx shx cp -R 'src/testResources' 'dist/testResources' && npx shx cp -R 'dist/support' 'features/dist/support' && npx shx cp -R 'dist/di' 'features/dist/di' && npx shx cp -R 'src/config' 'features/dist/config'",
-    "integration-test": "cucumber-js"
+    "integration-test": "APP_CONFIG_DIR=${PWD}/src/config cucumber-js"
   },
   "dependencies": {
     "@aws-sdk/client-ec2": "~3.38.0",

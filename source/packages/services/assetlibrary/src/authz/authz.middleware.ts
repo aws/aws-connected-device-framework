@@ -27,25 +27,25 @@ export function setClaims() : RequestHandler {
 
         logger.debug(`authz.middleware setClaims in:`);
 
-        // decodes the JWT, extacts the claims, and serializes as an object in a ThreadLocal
+        // decodes the JWT, extracts the claims, and serializes as an object in a ThreadLocal
         // to make it easier for the service/dao layers to obtain.
 
         // Note:  it is he responsibility of the custom authorizer to verify the incoming JWT
 
-        if (req && req['headers'] && req['headers'][JWT_HEADER]) {
+        if (req?.['headers']?.[JWT_HEADER]) {
             const header = req['headers'][JWT_HEADER] as string;
 
             try {
                 const token = header.replace('Bearer ','');
                 const decoded = decode(token);
+                logger.debug(`authz.middleware decoded: ${JSON.stringify(decoded)}`);
+                
                 let claims_header = decoded[JWT_CLAIMS];
 
                 // Check if the claims are passed as string and if so, parse the string as JSON
                 if(typeof claims_header === 'string') {
                     claims_header = JSON.parse(claims_header);
                 }
-
-                logger.debug(JSON.stringify(decoded));
 
                 const claims = new Claims(claims_header);
 
