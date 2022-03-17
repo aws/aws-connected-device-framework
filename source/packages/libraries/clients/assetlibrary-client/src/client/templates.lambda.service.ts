@@ -51,15 +51,17 @@ export class TemplatesLambdaService extends TemplatesServiceBase implements Temp
         ow(resource.templateId, 'templateId', ow.string.nonEmpty);
         ow(resource.category, 'category', ow.string.nonEmpty);
 
-        const templateId = resource.templateId;
-        const category = resource.category;
-        delete resource.templateId;
-        delete resource.category;
+
+        const url = super.templateRelativeUrl(resource.category, resource.templateId);
+
+        const body = Object.assign({}, resource);
+        delete body.templateId;
+        delete body.category;
 
         const event = new LambdaApiGatewayEventBuilder()
-            .setPath(super.templateRelativeUrl(category, templateId))
+            .setPath(url)
             .setMethod('POST')
-            .setBody(resource)
+            .setBody(body)
             .setHeaders(super.buildHeaders(additionalHeaders));
 
         const res = await this.lambdaInvoker.invoke(this.functionName, event);
@@ -71,15 +73,16 @@ export class TemplatesLambdaService extends TemplatesServiceBase implements Temp
         ow(resource.templateId, 'templateId', ow.string.nonEmpty);
         ow(resource.category, 'category', ow.string.nonEmpty);
 
-        const templateId = resource.templateId;
-        const category = resource.category;
-        delete resource.templateId;
-        delete resource.category;
+        const url = super.templateRelativeUrl(resource.category, resource.templateId);
+        const body = Object.assign({}, resource);
+        delete body.templateId;
+        delete body.category;
+
 
         const event = new LambdaApiGatewayEventBuilder()
-            .setPath(super.templateRelativeUrl(category, templateId))
+            .setPath(url)
             .setMethod('PATCH')
-            .setBody(resource)
+            .setBody(body)
             .setHeaders(super.buildHeaders(additionalHeaders));
 
         await this.lambdaInvoker.invoke(this.functionName, event);

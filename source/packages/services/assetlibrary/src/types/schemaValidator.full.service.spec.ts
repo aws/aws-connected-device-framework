@@ -14,17 +14,29 @@ import 'reflect-metadata';
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { SchemaValidatorService } from './schemaValidator.service';
-import { Operation } from '../types/constants';
+import { SchemaValidatorService } from './schemaValidator.full.service';
+import { Operation, TypeCategory } from './constants';
+import { DevicesDaoFull } from '../devices/devices.full.dao';
+import { GroupsDaoFull } from '../groups/groups.full.dao';
+import createMockInstance from 'jest-create-mock-instance';
+import { DirectionToRelatedEntityArrayMap, EntityTypeMap } from '../data/model';
+import { TypeModel, TypeRelationsModel } from './types.models';
+import { TypesDaoFull } from './types.full.dao';
 
 describe('SchemaValidatorService', () => {
+    let mockedDevicesDaoFull: jest.Mocked<DevicesDaoFull>;
+    let mockedGroupsDaoFull: jest.Mocked<GroupsDaoFull>;
+    let mockedTypesDao: jest.Mocked<TypesDaoFull>;
     let instance: SchemaValidatorService;
     let superTypeSchema: any;
     let specializedTypeSchema: any;
     let toValidate: any;
 
     beforeEach(() => {
-        instance = new SchemaValidatorService();
+        mockedTypesDao = createMockInstance(TypesDaoFull);
+        mockedDevicesDaoFull = createMockInstance(DevicesDaoFull);
+        mockedGroupsDaoFull = createMockInstance(GroupsDaoFull);
+        instance = new SchemaValidatorService(mockedTypesDao, mockedDevicesDaoFull, mockedGroupsDaoFull);
         superTypeSchema = JSON.parse(fs.readFileSync(path.join(__dirname, '../../src/types/definitions/device.schema.json'), {encoding: 'utf8'}));
         specializedTypeSchema = JSON.parse(fs.readFileSync(path.join(__dirname, '../../src/utils/testResources/test.schema.json'), {encoding: 'utf8'}));
         superTypeSchema.definitions.subType.properties = specializedTypeSchema.properties;
@@ -380,4 +392,66 @@ describe('SchemaValidatorService', () => {
         expect(result.isValid).toEqual(false);
         expect(Object.keys(result.errors).length).toBeGreaterThan(0);
     }
+
+
+    it('validateRelationshipsByIds - happy path', async () => {
+        // mocks
+        const mockedDeviceLabels:EntityTypeMap = {
+            'device1': ['device','template2'],
+            'device2': ['device','template3'],
+        };
+        mockedDevicesDaoFull.getLabels = jest.fn().mockResolvedValueOnce(mockedDeviceLabels);
+
+        const mockedGroupLabels:EntityTypeMap = {
+            '/group/1': ['group','template4'],
+            '/group/2': ['group','template5'],
+        };
+        mockedGroupsDaoFull.getLabels = jest.fn().mockResolvedValueOnce(mockedGroupLabels);
+        
+        // test
+        const typeRelationsModel = new TypeRelationsModel();
+        typeRelationsModel.in = {
+            'rel1': ['template2','template4'],
+        };
+        typeRelationsModel.out = {
+            'rel2': ['template3'],
+            'rel3': ['template5'],
+        };
+        const template:TypeModel = {
+            templateId: 'template1',
+            category: TypeCategory.Device,
+            schema: {
+                definition: {},
+                relations: typeRelationsModel
+            }
+        };
+        const groups:DirectionToRelatedEntityArrayMap = {
+            in: {
+                rel1: [{id:'/group/1'}]
+            },
+            out: {
+                rel3: [{id:'/group/2'}],
+            }
+        }
+        const devices:DirectionToRelatedEntityArrayMap = {
+            in: {
+                rel1: [{id:'device1'}]
+            },
+            out: {
+                rel2: [{id:'device2'}],
+            }
+        }
+        const actual = await instance.validateRelationshipsByIds(template, groups, devices);
+
+        // verify
+        expect(actual).toBeDefined;
+        expect(actual.isValid).toEqual(true);
+        expect(actual.deviceLabels).toEqual(mockedDeviceLabels);
+        expect(actual.groupLabels).toEqual(mockedGroupLabels);
+        expect(mockedDevicesDaoFull.getLabels).toBeCalledTimes(1);
+        expect(mockedDevicesDaoFull.getLabels).toBeCalledWith(['device1','device2']);
+        expect(mockedGroupsDaoFull.getLabels).toBeCalledTimes(1);
+        expect(mockedGroupsDaoFull.getLabels).toBeCalledWith(['/group/1','/group/2']);
+        
+    });
 });

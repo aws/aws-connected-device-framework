@@ -50,12 +50,13 @@ export class TemplatesApigwService extends TemplatesServiceBase implements Templ
 
         const url = `${this.baseUrl}${super.templateRelativeUrl(resource.category, resource.templateId)}`;
 
-        delete resource.templateId;
-        delete resource.category;
+        const body = Object.assign({}, resource);
+        delete body.templateId;
+        delete body.category;
 
         await request.post(url)
             .set(this.buildHeaders(additionalHeaders))
-            .send(resource);
+            .send(body);
     }
 
     async updateTemplate(resource: TypeResource, additionalHeaders?: RequestHeaders): Promise<void> {
@@ -63,14 +64,15 @@ export class TemplatesApigwService extends TemplatesServiceBase implements Templ
         ow(resource.templateId,'templateId', ow.string.nonEmpty);
         ow(resource.category,'category', ow.string.nonEmpty);
 
-        const templateId = resource.templateId;
-        const category = resource.category;
-        delete resource.templateId;
-        delete resource.category;
+        const url = `${this.baseUrl}${super.templateRelativeUrl(resource.category, resource.templateId)}`;
 
-        const url = `${this.baseUrl}${super.templateRelativeUrl(category, templateId)}`;
+        const body = Object.assign({}, resource);
+        delete body.templateId;
+        delete body.category;
+
         await request.patch(url)
-            .set(this.buildHeaders(additionalHeaders));
+            .set(this.buildHeaders(additionalHeaders))
+            .send(body);
     }
 
     async publishTemplate(category: CategoryEnum, templateId: string, additionalHeaders?: RequestHeaders): Promise<void> {

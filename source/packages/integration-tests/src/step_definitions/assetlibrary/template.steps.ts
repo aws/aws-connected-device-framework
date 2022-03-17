@@ -18,11 +18,11 @@ import {
     StatusEnum,
     TypeResource,
     ASSETLIBRARY_CLIENT_TYPES,
-} from '@cdf/assetlibrary-client/dist';
+} from '@cdf/assetlibrary-client';
 import { fail } from 'assert';
 import {RESPONSE_STATUS, replaceTokens, AUTHORIZATION_TOKEN} from '../common/common.steps';
 import {container} from '../../di/inversify.config';
-import {Dictionary} from '../../../../libraries/core/lambda-invoke/src';
+import {Dictionary} from '@cdf/lambda-invoke';
 /*
     Cucumber describes current scenario context as “World”. It can be used to store the state of the scenario
     context (you can also define helper methods in it). World can be access by using the this keyword inside
@@ -36,7 +36,9 @@ setDefaultTimeout(10 * 1000);
 const templatesService:TemplatesService = container.get(ASSETLIBRARY_CLIENT_TYPES.TemplatesService);
 function getAdditionalHeaders(world:unknown) : Dictionary {
     return  {
-        Authorization: world[AUTHORIZATION_TOKEN]
+        Authorization: world[AUTHORIZATION_TOKEN],
+        Accept: 'application/vnd.aws-cdf-v2.0+json',
+        'Content-Type': 'application/vnd.aws-cdf-v2.0+json',
     };
 }
 

@@ -18,6 +18,7 @@ import { SearchRequestModel } from './search.models';
 import {NodeAssembler} from '../data/assembler';
 import { Iot } from 'aws-sdk';
 import { TypeCategory } from '../types/constants';
+import { NotSupportedError } from '../utils/errors';
 
 @injectable()
 export class SearchDaoLite {
@@ -90,10 +91,10 @@ export class SearchDaoLite {
             });
         }
         if (request.endsWith!==undefined) {
-            throw new Error('NOT_SUPPORTED');
+            throw new NotSupportedError();
         }
         if (request.contains!==undefined) {
-            throw new Error('NOT_SUPPORTED');
+            throw new NotSupportedError();
         }
         const filtersAsString = filters.join(' ');
         logger.debug(`search.lite.dao buildQueryString: filters: ${filtersAsString}`);

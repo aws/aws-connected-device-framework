@@ -15,16 +15,17 @@ import { injectable } from 'inversify';
 import {Node, NodeAttributeValue} from './node';
 import { ModelAttributeValue } from './model';
 import { RelatedEntityDto, VertexDto } from './full.model';
+import { NotSupportedError } from '../utils/errors';
 
 @injectable()
 export class LiteAssembler {
 
     public assembleNode(_entity:VertexDto):Node {
-        throw new Error('NOT_IMPLEMENTED');
+        throw new NotSupportedError();
     }
 
-    public assembleAssociation(_node:Node, _r:RelatedEntityDto) {
-        throw new Error('NOT_IMPLEMENTED');
+    public assembleAssociation(_node:Node, _r:RelatedEntityDto) : void {
+        throw new NotSupportedError();
     }
 
     public extractPropertyValue(v: NodeAttributeValue): ModelAttributeValue {
