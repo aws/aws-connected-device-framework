@@ -2,6 +2,18 @@
   "name": "@cdf/installer",
   "entries": [
     {
+      "version": "0.1.7",
+      "tag": "@cdf/installer_v0.1.7",
+      "date": "Thu, 17 Mar 2022 05:13:05 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Fix dependency between apigw.cloudFormationTemplate and apigw.type default value"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.1.6",
       "tag": "@cdf/installer_v0.1.6",
       "date": "Tue, 15 Mar 2022 18:37:51 GMT",
