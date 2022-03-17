@@ -16,7 +16,7 @@ import {logger} from '../utils/logger';
 import {TYPES} from '../di/types';
 import {Node} from '../data/node';
 import { FullAssembler } from '../data/full.assembler';
-import { ModelAttributeValue, SortKeys, DirectionToRelatedEntityArrayMap, RelatedEntityArrayMap } from '../data/model';
+import { ModelAttributeValue, SortKeys, DirectionToRelatedEntityArrayMap, RelatedEntityArrayMap, RelationDirection } from '../data/model';
 import { BaseDaoFull } from '../data/base.full.dao';
 import { CommonDaoFull } from '../data/common.full.dao';
 import {EntityTypeMap} from '../data/model';
@@ -157,7 +157,7 @@ export class DevicesDaoFull extends BaseDaoFull {
             traversal.as('device');
 
             /*  associate with the related devices and groups  */
-            const associateRels = (rels:RelatedEntityArrayMap, category:'device'|'group', direction:'in'|'out') => {
+            const associateRels = (rels:RelatedEntityArrayMap, category:'device'|'group', direction:RelationDirection) => {
                 if (Object.keys(rels??{}).length>0) {
                     Object.entries(rels).forEach(([rel,entities])=> {
                         entities.forEach(entity=> {
@@ -294,7 +294,7 @@ export class DevicesDaoFull extends BaseDaoFull {
         logger.debug(`devices.full.dao delete: exit`);
     }
 
-    public async attachToGroup(deviceId:string, relationship:string, direction:'in'|'out', groupPath:string, isAuthCheck:boolean) : Promise<void> {
+    public async attachToGroup(deviceId:string, relationship:string, direction:RelationDirection, groupPath:string, isAuthCheck:boolean) : Promise<void> {
         logger.debug(`device.full.dao attachToGroup: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, groupPath:${groupPath}`);
 
         let sourceId:string;
@@ -307,8 +307,6 @@ export class DevicesDaoFull extends BaseDaoFull {
             sourceId = `group___${groupPath}`;
             targetId = `device___${deviceId}`;
         }
-
-        // const edgeLabels = (isAuthCheck) ? `___auth::${relationship}` : relationship;
 
         const conn = super.getConnection();
         try {
@@ -329,7 +327,7 @@ export class DevicesDaoFull extends BaseDaoFull {
         logger.debug(`devices.full.dao attachToGroup: exit:`);
     }
 
-    public async detachFromGroup(deviceId:string, relationship:string, direction:'in'|'out', groupPath:string) : Promise<void> {
+    public async detachFromGroup(deviceId:string, relationship:string, direction:RelationDirection, groupPath:string) : Promise<void> {
         logger.debug(`device.full.dao detachFromGroup: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, groupPath:${groupPath}`);
 
         let sourceId:string;
@@ -359,7 +357,7 @@ export class DevicesDaoFull extends BaseDaoFull {
         logger.debug(`devices.full.dao detachFromGroup: exit:`);
     }
 
-    public async attachToDevice(deviceId:string, relationship:string, direction:'in'|'out', otherDeviceId:string, isAuthCheck:boolean) : Promise<void> {
+    public async attachToDevice(deviceId:string, relationship:string, direction:RelationDirection, otherDeviceId:string, isAuthCheck:boolean) : Promise<void> {
         logger.debug(`device.full.dao attachToDevice: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, otherDeviceId:${otherDeviceId}`);
 
         const source = (direction==='out') ? deviceId : otherDeviceId;

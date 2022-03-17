@@ -94,7 +94,6 @@ export class AuthzServiceFull {
                 if (authenticatedTypes[relation]) {
                     for (const entity of entities) {
                         const labels = entityLabels[entity.id];
-                        // if (authenticatedTypes[relation].includes(entity.id)) {
                         if (authenticatedTypes[relation].some(t=> labels.indexOf(t)>=0)) {
                             relatedEntities[relation].find(e=>e.id===entity.id).isAuthCheck = true;
                         }

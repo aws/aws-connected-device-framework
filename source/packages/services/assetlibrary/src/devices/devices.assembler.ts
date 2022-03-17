@@ -17,7 +17,7 @@ import {Node, StringNodeMap} from '../data/node';
 import {TypeCategory} from '../types/constants';
 import { TYPES } from '../di/types';
 import { FullAssembler } from '../data/full.assembler';
-import { DirectionToRelatedEntityArrayMap, RelatedEntityArrayMap, StringArrayMap } from '../data/model';
+import { DirectionToRelatedEntityArrayMap, RelatedEntityArrayMap, RelationDirection, StringArrayMap } from '../data/model';
 
 @injectable()
 export class DevicesAssembler {
@@ -155,7 +155,7 @@ export class DevicesAssembler {
         });
 
         // populate version specific device info
-        const assembleRelated = (from:StringArrayMap, rels:DirectionToRelatedEntityArrayMap, direction:'in'|'out')=> {
+        const assembleRelated = (from:StringArrayMap, rels:DirectionToRelatedEntityArrayMap, direction:RelationDirection)=> {
             if (from) {
                 if (rels[direction] ===undefined) rels[direction] = {};
                 for(const [relation,ids] of Object.entries(from)) {
@@ -304,7 +304,7 @@ export class DevicesAssembler {
 
     }
 
-    private assembleRelated(model:DeviceItem, related:StringNodeMap, direction:'in'|'out') {
+    private assembleRelated(model:DeviceItem, related:StringNodeMap, direction:RelationDirection) {
         Object.keys(related).forEach( key => {
             const others = related[key];
             if (others!==undefined) {

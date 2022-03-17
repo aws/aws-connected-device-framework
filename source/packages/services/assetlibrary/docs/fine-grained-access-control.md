@@ -35,7 +35,7 @@ User | `cdf_al` custom claim
 ---|---
 `Lee` | `["/tags:R", "/resellers/company1:R"]`
 `Stewart` | `["/tags:R", "/resellers/company2:*"]`
-`Sarah` | `["/*"]`
+`Sarah` | `["/:*"]`
 
 
 Here would be the results of various calls made by those users:
@@ -191,7 +191,7 @@ User | `cdf_al` custom claim | stringified `cdf_al`
 ---|---|---
 `Lee` | `["/tags:R", "/resellers/company1:R"]` | `"[\"/tags:R\", \"/resellers/company1:R\"]"`
 `Stewart` | `["/tags:R", "/resellers/company2:*"]` | `"[\"/tags:R\", \"/resellers/company2:*\"]"`
-`Sarah` | `["/*"]` | `"[\"/*\"]"`
+`Sarah` | `["/:*"]` | `"[\"/:*\"]"`
 
 
 

@@ -19,7 +19,7 @@ import { TYPES } from '../di/types';
 import {TypeCategory} from '../types/constants';
 import { FullAssembler } from '../data/full.assembler';
 import { determineIfDeviceItem } from '../devices/devices.models';
-import { DirectionToRelatedEntityArrayMap, RelatedEntityArrayMap, StringArrayMap } from '../data/model';
+import { DirectionToRelatedEntityArrayMap, RelatedEntityArrayMap, RelationDirection, StringArrayMap } from '../data/model';
 
 @injectable()
 export class GroupsAssembler {
@@ -176,7 +176,7 @@ export class GroupsAssembler {
             }
         });
 
-        const assembleRelated = (from:StringArrayMap, rels:DirectionToRelatedEntityArrayMap, direction:'in'|'out')=> {
+        const assembleRelated = (from:StringArrayMap, rels:DirectionToRelatedEntityArrayMap, direction:RelationDirection)=> {
             if (from) {
                 if (rels[direction] ===undefined) rels[direction] = {};
                 for(const [relation,ids] of Object.entries(from)) {

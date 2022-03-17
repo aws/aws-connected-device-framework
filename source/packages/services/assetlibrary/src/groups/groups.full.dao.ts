@@ -16,7 +16,7 @@ import {logger} from '../utils/logger';
 import {TYPES} from '../di/types';
 import {Node} from '../data/node';
 import { FullAssembler } from '../data/full.assembler';
-import { ModelAttributeValue, SortKeys, RelatedEntityArrayMap, DirectionToRelatedEntityArrayMap } from '../data/model';
+import { ModelAttributeValue, SortKeys, RelatedEntityArrayMap, DirectionToRelatedEntityArrayMap, RelationDirection } from '../data/model';
 import { BaseDaoFull } from '../data/base.full.dao';
 import { CommonDaoFull } from '../data/common.full.dao';
 import {EntityTypeMap} from '../data/model';
@@ -141,7 +141,7 @@ export class GroupsDaoFull extends BaseDaoFull {
                 .addE('parent').from_('group').to('parent');
 
                 /*  associate with any related groups  */
-                const associateRels = (rels:RelatedEntityArrayMap, direction:'in'|'out') => {
+                const associateRels = (rels:RelatedEntityArrayMap, direction:RelationDirection) => {
                     if (Object.keys(rels??{}).length>0) {
                         Object.entries(rels).forEach(([rel,entities])=> {
                             entities.forEach(entity=> {
