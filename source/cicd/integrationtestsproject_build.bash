@@ -95,6 +95,7 @@ cd source/packages/integration-tests
 npm config set @cdf/integration-tests:environment $ENVIRONMENT
 npm run clean
 npm run build
+npm run integration-test -- "features/device-patcher/*.feature"
 npm run integration-test -- "features/provisioning/*.feature"
 npm run integration-test -- "features/assetlibrary/$ASSETLIBRARY_MODE/*.feature"
 # TODO: fix asset library history tests
@@ -103,5 +104,5 @@ npm run integration-test -- "features/greengrass2-provisioning/*.feature"
 npm run integration-test -- "features/bulkcerts/*.feature"
 npm run integration-test -- "features/commands/*.feature"
 npm run integration-test -- "features/notifications/*.feature"
-npm run integration-test -- "features/device-patcher/*.feature"
+
 
