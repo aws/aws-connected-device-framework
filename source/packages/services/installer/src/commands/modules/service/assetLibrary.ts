@@ -327,7 +327,9 @@ export class AssetLibraryInstaller implements RestModule {
           try {
             const data1 = await iamClient.send(getCommand1);
             if (data1.$metadata.httpStatusCode === 200) return;
-          } catch { /* do nothing */ }
+          } catch (err) {
+            if (err.name !== 'NoSuchEntity') throw(err);
+          }
           // also probe for the legacy name of the role
           const getCommand2 = new GetRoleCommand({
             RoleName: 'AWSServiceRoleForAmazonElasticsearchService'
@@ -335,7 +337,9 @@ export class AssetLibraryInstaller implements RestModule {
           try {
             const data2 = await iamClient.send(getCommand2);
             if (data2.$metadata.httpStatusCode === 200) return;
-          } catch { /* do nothing */ }
+          } catch (err) {
+            if (err.name !== 'NoSuchEntity') throw(err);
+          }
 
           // if neither role name exists, create it
           const createCommand = new CreateServiceLinkedRoleCommand({
