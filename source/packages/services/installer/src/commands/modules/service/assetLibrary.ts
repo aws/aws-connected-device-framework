@@ -415,7 +415,8 @@ export class AssetLibraryInstaller implements RestModule {
             ...parameterOverrides,
             '--capabilities', 'CAPABILITY_NAMED_IAM',
             '--no-fail-on-empty-changeset',
-            '--region', answers.region
+            '--region', answers.region,
+            '--tags', 'cdf_service=assetlibrary', `cdf_environment=${answers.environment}`,
           ]);
         }
       });
