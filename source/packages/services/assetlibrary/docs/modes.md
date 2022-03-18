@@ -2,9 +2,10 @@
 
 ## Introduction
 
-The Asset Library is capable of running in one of two modes:  `full` and `lite`.
+The Asset Library is capable of running in one of three modes:  `full`, `enhanced`, and `lite`.
 
-The `lite` version uses The AWS IoT Device Registry to store all devices and groups data, whereas the `full` version utilizes [AWS Neptune](https://aws.amazon.com/neptune/) to provide more advanced data modelling features.
+The `lite` version uses The AWS IoT Device Registry to store all devices and groups data, whereas the `full` version utilizes [AWS Neptune](https://aws.amazon.com/neptune/) to provide more advanced data modeling features.
+In `enhanced` mode, an OpenSearch cluster is deployed as secondary data store and provides enhanced search functionality.
 
 The mode is determined via a configuration property at the time of deployment.  The following describes the differences in functionality between the two modes.
 
@@ -15,7 +16,7 @@ The following table indicates which REST API's are available in which mode:
 
 ### Devices
 
-| Endpoint | Description | `full` mode | `lite` mode |
+| Endpoint | Description | `full` and `enhanced` modes | `lite` mode |
 |---|---|---|---|
 | `POST /devices` | Adds a new device to the Asset Library | ✅ (adding to a default parent group if none provided) | ✅ (creating components not supported, and no default parent group set if none provided) |
 | `POST /bulkdevices` | Adds a batch of devices to the Asset Library | ✅ | ✅ (see `POST /devices`) |
@@ -34,7 +35,7 @@ The following table indicates which REST API's are available in which mode:
 
 ### Groups
 
-| Endpoint | Description | `full` mode | `lite` mode |
+| Endpoint | Description | `full` and `enhanced` modes | `lite` mode |
 |---|---|---|---|
 | `POST /groups` | Adds a new group to the device library as a child of the `parentPath` as specified in the request body | ✅ | ✅ (specifying a parent is optional, specifying a template is not supported, and linking groups to other groups not supported) |
 | `POST /bulkgroups` | Adds a batch of new group to the asset library as a child of the `parentPath` as specified in the request body | ✅ | ✅ (see `POST /groups`) |
@@ -49,7 +50,7 @@ The following table indicates which REST API's are available in which mode:
 
 ### Device Templates
 
-| Endpoint | Description | `full` mode | `lite` mode |
+| Endpoint | Description | `full` and `enhanced` modes | `lite` mode |
 |---|---|---|---|
 | `POST /templates/devices/{templateId}` | Registers a new device template within the system, using the JSON Schema standard to define the device template attributes and constraints | ✅ | ✅ (string types supported only, defining allowed relations to other group types not supported, and required attributes not supported) |
 | `GET /templates/devices/{templateId}` | Find device template by ID | ✅ | ✅ |
@@ -59,7 +60,7 @@ The following table indicates which REST API's are available in which mode:
 
 ### Group Templates
 
-| Endpoint | Description | `full` mode | `lite` mode |
+| Endpoint | Description | `full` and `enhanced` modes | `lite` mode |
 |---|---|---|---|
 | `POST /templates/groups/{templateId}` | Registers a new group template within the system, using the JSON Schema standard to define the group template attributes and constraints | ✅ | ⛔ |
 | `GET /templates/groups/{templateId}` | Find group template by ID | ✅ | ⛔ |
@@ -69,7 +70,7 @@ The following table indicates which REST API's are available in which mode:
 
 ### Device Profiles
 
-| Endpoint | Description | `full` mode | `lite` mode |
+| Endpoint | Description | `full` and `enhanced` modes | `lite` mode |
 |---|---|---|---|
 | `POST /profiles/device/{templateId}` | Adds a new device profile for a specific template | ✅ | ⛔ |
 | `GET /profiles/device/{templateId}` | Return all device profiles for a specific template | ✅ | ⛔ |
@@ -79,7 +80,7 @@ The following table indicates which REST API's are available in which mode:
 
 ### Group Profiles
 
-| Endpoint | Description | `full` mode | `lite` mode |
+| Endpoint | Description | `full` and `enhanced` modes | `lite` mode |
 |---|---|---|---|
 | `POST /profiles/group/{templateId}` | Adds a new group profile for a specific template | ✅ | ⛔ |
 | `GET /profiles/group/{templateId}` | Return all group profiles for a specific template | ✅ | ⛔ |
@@ -89,7 +90,7 @@ The following table indicates which REST API's are available in which mode:
 
 ### Policies
 
-| Endpoint | Description | `full` mode | `lite` mode |
+| Endpoint | Description | `full` and `enhanced` modes | `lite` mode |
 |---|---|---|---|
 | `POST /policies` | Creates a new `Policy`, and applies it to the provided `Groups` | ✅ | ⛔ |
 | `GET /policies` | List policies, optionally filtered by policy type | ✅ | ⛔ |
@@ -100,10 +101,25 @@ The following table indicates which REST API's are available in which mode:
 
 ### Search
 
-| Endpoint | Description | `full` mode | `lite` mode |
-|---|---|---|---|
-| `GET /search` | Search for groups and devices | ✅ | ✅ |
-
+| Endpoint/Parameter | Description | `full` mode | `enhanced` mode | `lite` mode |
+|------------------------------------|---|---|---|---|
+| `GET /search`                      | Search for groups and devices | ✅ | ✅ |
+| `GET /search?type={filter}         | ✅ | ✅ | ✅ |
+| `GET /search?ancestorPath={filter} | ✅ | ✅ | ✅ |
+| `GET /search?eq={filter}           | ✅ | ✅ | ✅ |
+| `GET /search?neq={filter}          | ✅ | ✅ | ✅ |
+| `GET /search?lt={filter}           | ✅ | ✅ | ✅ |
+| `GET /search?lte={filter}          | ✅ | ✅ | ✅ |
+| `GET /search?gt={filter}           | ✅ | ✅ | ✅ |
+| `GET /search?gte={filter}          | ✅ | ✅ | ✅ |
+| `GET /search?exists={filter}       | ✅ | ✅ | ✅ |
+| `GET /search?nexists={filter}      | ✅ | ✅ | ✅ |
+| `GET /search?startsWith={filter}   | ✅ | ✅ (faster) | ✅ |
+| `GET /search?endsWith={filter}     | ✅ (since version 5.4.0) | ✅ (faster) | ⛔ |
+| `GET /search?contains={filter}     | ✅ (since version 5.4.0)| ✅ (faster) | ⛔ |
+| `GET /search?fulltext={filter}     | ✅ | ⛔ | ⛔ |
+| `GET /search?regex={filter}        | ✅ | ⛔ | ⛔ |
+| `GET /search?lucene={filter}       | ✅ | ⛔ | ⛔ |
 
 ## Supported Functionality by Area
 
@@ -160,9 +176,11 @@ Not supported in `lite` mode.
 
 ### Search
 
-| Description | `full` mode | `lite` mode |
+| Description | `full` mode | `enhanced` mode | `lite` mode |
 |---|---|---|
-| No. query terms | Maximum 2048 characters | Maximum 2048 characters, and maximum 5 query terms per query |
-| No. results | Unlimited | Maximm 500 per query |
-| Aggregation | Supported | Not supported |
-| Searching by group ancestors | Supported | Supports filtering by directly linked groups only |
+| No. query terms | Maximum 2048 characters | Maximum 2048 characters | Maximum 2048 characters, and maximum 5 query terms per query |
+| No. results | Unlimited | Unlimited | Maximm 500 per query |
+| Aggregation | Supported | Supported | Not supported |
+| Searching by group ancestors | Supported | Supported | Supports filtering by directly linked groups only |
+| `endsWith` and `contains` operators | Supported, using Neptune string search | Supported, using OpenSearch | Not supported |
+| `fulltext`, `regex`, `lucene` operators | Not supported | Supported | Not supported |
