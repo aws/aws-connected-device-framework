@@ -2230,6 +2230,14 @@ components:
       required: true
 
   schemas:
+    Pagination:
+      type: object
+      properties:
+        offset:
+          type: integer
+        count:
+          type: integer
+
     Entity:
       type: object
       properties:
@@ -2511,12 +2519,7 @@ components:
               - $ref: '#/components/schemas/Group_1_0'
               - $ref: '#/components/schemas/Group_2_0'
         pagination:
-          type: object
-          properties:
-            offset:
-              type: integer
-            count:
-              type: integer
+          $ref: '#/components/schemas/Pagination'
         total:
           type: number
           description: Total number of search results.  Only returned by the search API
@@ -2532,12 +2535,7 @@ components:
               - $ref: '#/components/schemas/Device_1_0'
               - $ref: '#/components/schemas/Device_2_0'
         pagination:
-          type: object
-          properties:
-            offset:
-              type: integer
-            count:
-              type: integer
+          $ref: '#/components/schemas/Pagination'
         total:
           type: number
           description: Total number of search results.  Only returned by the search API
@@ -2553,12 +2551,7 @@ components:
               - $ref: '#/components/schemas/DeviceProfile_1_0'
               - $ref: '#/components/schemas/DeviceProfile_2_0'
         pagination:
-          type: object
-          properties:
-            offset:
-              type: integer
-            count:
-              type: integer
+          $ref: '#/components/schemas/Pagination'
 
     GroupProfileList:
       type: object
@@ -2570,12 +2563,7 @@ components:
               - $ref: '#/components/schemas/GroupProfile_1_0'
               - $ref: '#/components/schemas/GroupProfile_2_0'
         pagination:
-          type: object
-          properties:
-            offset:
-              type: integer
-            count:
-              type: integer
+          $ref: '#/components/schemas/Pagination'
 
     SearchResults:
       type: object
@@ -2590,6 +2578,8 @@ components:
               - anyOf:
                   - $ref: '#/components/schemas/Device_2_0'
                   - $ref: '#/components/schemas/Group_2_0'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
 
     TemplateInfoProperties:
       type: object
@@ -2698,12 +2688,7 @@ components:
           items:
             $ref: '#/components/schemas/TemplateInfo'
         pagination:
-          type: object
-          properties:
-            offset:
-              type: integer
-            count:
-              type: integer
+          $ref: '#/components/schemas/Pagination'
 
     TemplateDefinition:
       type: object
@@ -2791,12 +2776,7 @@ components:
           items:
             $ref: '#/components/schemas/Policy'
         pagination:
-          type: object
-          properties:
-            offset:
-              type: integer
-            count:
-              type: integer
+          $ref: '#/components/schemas/Pagination'
 
     Error:
       type: object
