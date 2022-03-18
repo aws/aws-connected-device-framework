@@ -34,6 +34,8 @@ export const container = new Container();
 if (process.env.MODE === 'lite') {
     container.load(lite.LiteContainerModule);
 } else if (process.env.MODE === 'enhanced') {
+    // EnhancedContainerModule extends, not replaces, FullContainerModule
+    container.load(full.FullContainerModule);
     container.load(enhanced.EnhancedContainerModule);
 } else {
     container.load(full.FullContainerModule);
