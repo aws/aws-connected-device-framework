@@ -362,10 +362,7 @@ Resources:
             - KmsKeyIdProvided
             - !Ref KmsKeyId
             - !Ref AWS::NoValue
-      # When integrating with Amazon OpenSearch Service, Neptune requires Elasticsearch version 7.1 or higher 
-      # rather than OpenSearch version 1.0. Neptune is not currently compatible with OpenSearch version 1.0.
-      # https://docs.aws.amazon.com/neptune/latest/userguide/full-text-search-cfn-create.html
-      EngineVersion: 'Elasticsearch_7.10'
+      EnableVersionUpgrade: true
       LogPublishingOptions: 
         ES_APPLICATION_LOGS:
           Fn::If:
