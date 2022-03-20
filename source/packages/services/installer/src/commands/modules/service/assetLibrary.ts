@@ -366,7 +366,6 @@ export class AssetLibraryInstaller implements RestModule {
           const parameterOverrides = [
             `Environment=${answers.environment}`,
             `VpcId=${answers.vpc.id}`,
-            `CDFSecurityGroupId=${answers.vpc.securityGroupId}`,
             `PrivateSubNetIds=${subnetIds}`,
             `CustomResourceVPCLambdaArn=${answers.deploymentHelper.vpcLambdaArn}`,
             `KmsKeyId=${answers.kms.id}`,

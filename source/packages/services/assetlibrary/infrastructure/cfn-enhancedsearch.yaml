@@ -29,9 +29,6 @@ Parameters:
       Comma delimited list of private subnetIds to deploy Neptune into. Number of subnets must match the number of 
       availability zones deployed into, i.e. only pass one subnet if operating in a single AZ.
     Type: List<AWS::EC2::Subnet::Id>
-  CDFSecurityGroupId:
-    Description: ID of an existing security group to allow access to ElasticSearch
-    Type: AWS::EC2::SecurityGroup::Id
   NeptuneSecurityGroupId:
     Description: ID of an existing security group that contains the Neptune nodes
     Type: AWS::EC2::SecurityGroup::Id
@@ -261,14 +258,15 @@ Resources:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
       VpcId: !Ref VpcId
-      GroupDescription: !Sub 'CDF Asset Library (${Environment}) OpenSearch Access'
-      Tags:
-        - Key: cdf_environment
-          Value: !Ref Environment
-        - Key: cdf_service
-          Value: !Ref CdfService
+      GroupDescription: !Sub 'CDF Asset Library (${Environment}) OpenSearch Security Group'
 
-  OpenSearchSGIngressRule:
+  NeptuneStreamPollerSG:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      VpcId: !Ref VpcId
+      GroupDescription: !Sub 'CDF Asset Library (${Environment}) Neptune Stream Poller Security Group'
+
+  OpenSearchSGIngressRule1:
     Type: 'AWS::EC2::SecurityGroupIngress'
     Properties:
       GroupId: !Ref OpenSearchSG
@@ -276,7 +274,27 @@ Resources:
       ToPort: 443
       IpProtocol: tcp
       SourceSecurityGroupId: !Ref NeptuneSecurityGroupId
-      Description: Access from Neptune to ElasticSearch
+      Description: Access from Neptune to OpenSearch
+
+  OpenSearchSGIngressRule2:
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+      GroupId: !Ref OpenSearchSG
+      FromPort: 443
+      ToPort: 443
+      IpProtocol: tcp
+      SourceSecurityGroupId: !Ref NeptuneStreamPollerSG
+      Description: Access from Neptune Stream Poller to OpenSearch
+
+  NeptuneSGIngressRule:
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties: 
+      GroupId: !Ref NeptuneSecurityGroupId
+      FromPort: 8182
+      ToPort: 8182
+      IpProtocol: tcp
+      SourceSecurityGroupId: !Ref NeptuneStreamPollerSG
+      Description: Access from Neptune Stream Poller to Neptune
   
   OpenSearchDomain:
     Type: AWS::OpenSearchService::Domain
@@ -385,7 +403,7 @@ Resources:
         - Key: cdf_service
           Value: !Ref CdfService
 
-  ElasticSearchAccessPolicy:
+  OpenSearchAccessPolicy:
     Type: 'AWS::IAM::ManagedPolicy'
     Properties:
       Description: "Allows ElasticSearch access for Neptune Lambda Poller"
@@ -424,7 +442,7 @@ Resources:
         LambdaRuntime: python3.6
         LambdaS3Bucket: !Join ["-", ["aws-neptune-customer-samples", !Ref "AWS::Region"]]
         LambdaS3Key: "neptune-stream/lambda/python36/release_2021_08_23/neptune-to-es.zip"
-        ManagedPolicies: !Ref ElasticSearchAccessPolicy
+        ManagedPolicies: !Ref OpenSearchAccessPolicy
         LambdaLoggingLevel: !Ref NeptunePollerLambdaLoggingLevel
         StreamRecordsHandler: 
           # The published template in the Neptune documentation uses a three-level mapping here.
@@ -446,7 +464,7 @@ Resources:
         CreateCloudWatchAlarm: !Ref CreateCloudWatchAlarm
         NotificationEmail: !Ref NotificationEmail
         SubnetIds: !Join [ ",", !Ref PrivateSubNetIds ]
-        SecurityGroupIds: !Ref CDFSecurityGroupId
+        SecurityGroupIds: !Ref NeptuneStreamPollerSG
 
 Outputs:
   OpenSearchDomainEndpoint:
