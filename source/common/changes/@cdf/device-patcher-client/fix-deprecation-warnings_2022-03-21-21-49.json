@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/device-patcher-client",
+      "comment": "Upgrade dependencies marked as deprecated",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/device-patcher-client",
+  "email": "jonasneu@amazon.com"
+}

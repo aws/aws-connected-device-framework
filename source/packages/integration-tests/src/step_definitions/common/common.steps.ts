@@ -12,7 +12,7 @@
  *********************************************************************************************************************/
 
 import { expect } from 'chai';
-import { Given, setDefaultTimeout, TableDefinition, Then, When } from 'cucumber';
+import { Given, setDefaultTimeout, DataTable, Then, When } from '@cucumber/cucumber';
 import { JSONPath } from 'jsonpath-plus';
 import { sign } from 'jsonwebtoken';
 
@@ -53,7 +53,7 @@ Given('pause for {int}ms', async function (ms:number) {
     return new Promise(resolve => setTimeout(resolve, ms));
 });
 
-Given('my authorization is', async function (data:TableDefinition) {
+Given('my authorization is', async function (data:DataTable) {
     const d = data.rowsHash();
 
     const token =  {
@@ -76,7 +76,7 @@ Then('it fails with a {int}', function (status:number) {
     expect(this[RESPONSE_STATUS], 'response').eq(status);
 });
 
-export function validateExpectedAttributes<T>(model:T, data:TableDefinition) : void {
+export function validateExpectedAttributes<T>(model:T, data:DataTable) : void {
     const d = data.rowsHash();
     const json = model as unknown as Record<string, unknown>;
     Object.keys(d).forEach( key => {
@@ -114,7 +114,7 @@ export async function streamToString(stream: Readable): Promise<string> {
     });
 }
 
-export function buildModel<T>(data:TableDefinition) : T {
+export function buildModel<T>(data:DataTable) : T {
     const d = data.rowsHash();
 
     const resource = { } as T;
