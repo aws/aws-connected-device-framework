@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import 'reflect-metadata';
-import { setDefaultTimeout, When, TableDefinition, Then} from 'cucumber';
+import { setDefaultTimeout, When, DataTable, Then} from '@cucumber/cucumber';
 import {
     SearchService,
     SearchRequestModel,
@@ -52,7 +52,7 @@ function getAdditionalHeaders(world:unknown) : Dictionary {
     };
 }
 
-function buildSearchRequest(data:TableDefinition):SearchRequestModel {
+function buildSearchRequest(data:DataTable):SearchRequestModel {
     const d = data.rowsHash();
 
     const searchRequest = new SearchRequestModel();
@@ -99,7 +99,7 @@ function buildSearchRequest(data:TableDefinition):SearchRequestModel {
     return searchRequest;
 }
 
-When('I search with following attributes:', async function (data:TableDefinition) {
+When('I search with following attributes:', async function (data:DataTable) {
     const searchRequest = buildSearchRequest(data);
 
     try {
@@ -113,7 +113,7 @@ When('I search with following attributes:', async function (data:TableDefinition
     }
 });
 
-When('I search with summary with following attributes:', async function (data:TableDefinition) {
+When('I search with summary with following attributes:', async function (data:DataTable) {
     const searchRequest = buildSearchRequest(data);
     searchRequest.summarize=true;
 

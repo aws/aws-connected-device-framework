@@ -17,6 +17,7 @@ specifiers:
   '@aws-sdk/smithy-client': 3.38.0
   '@aws-sdk/types': 3.38.0
   '@aws-sdk/util-dynamodb': 3.38.0
+  '@cucumber/cucumber': 7.3.2
   '@rush-temp/assetlibrary': file:./projects/assetlibrary.tgz
   '@rush-temp/assetlibrary-client': file:./projects/assetlibrary-client.tgz
   '@rush-temp/assetlibrary-export': file:./projects/assetlibrary-export.tgz
@@ -63,7 +64,6 @@ specifiers:
   '@types/chai-string': 1.4.2
   '@types/chai-uuid': ^1.0.2
   '@types/config': 0.0.38
-  '@types/cucumber': 6.0.1
   '@types/dot': 1.1.4
   '@types/express-version-request': 1.7.1
   '@types/http-errors': 1.8.0
@@ -74,7 +74,6 @@ specifiers:
   '@types/json2csv': 4.5.1
   '@types/jsonpath-plus': ~5.0.1
   '@types/jsonwebtoken': 8.5.0
-  '@types/jszip': 3.4.1
   '@types/jwk-to-pem': 2.0.0
   '@types/lodash': 4.14.168
   '@types/luxon': 2.0.9
@@ -86,12 +85,12 @@ specifiers:
   '@types/pem': 1.9.5
   '@types/prettyjson': 0.0.29
   '@types/sinon': 9.0.9
-  '@types/superagent': 4.1.10
+  '@types/superagent': 4.1.15
   '@types/uuid': 8.3.0
   '@types/yargs': 17.0.0
   adm-zip: 0.5.9
   ajv: 6.10.2
-  amazon-dax-client: 1.2.6
+  amazon-dax-client: 1.2.7
   async-local-storage: 2.3.1
   aws-iot-device-sdk: 2.2.8
   aws-lambda: 1.0.6
@@ -108,7 +107,6 @@ specifiers:
   commander: ~8.3.0
   config: 3.3.6
   cors: 2.8.5
-  cucumber: 6.0.5
   cz-customizable: ~6.3.0
   dayjs: 1.10.5
   deep-equal: 2.0.5
@@ -162,7 +160,7 @@ specifiers:
   replace-in-file: ~6.3.2
   shx: 0.3.3
   sinon: 9.2.1
-  superagent: 6.1.0
+  superagent: 7.1.1
   supports-color: ~8.0.0
   typed-rest-client: 1.8.0
   typescript: 4.2.4
@@ -187,6 +185,7 @@ dependencies:
   '@aws-sdk/smithy-client': 3.38.0
   '@aws-sdk/types': 3.38.0
   '@aws-sdk/util-dynamodb': 3.38.0
+  '@cucumber/cucumber': 7.3.2
   '@rush-temp/assetlibrary': file:projects/assetlibrary.tgz_supports-color@8.0.0
   '@rush-temp/assetlibrary-client': file:projects/assetlibrary-client.tgz_supports-color@8.0.0
   '@rush-temp/assetlibrary-export': file:projects/assetlibrary-export.tgz_supports-color@8.0.0
@@ -233,7 +232,6 @@ dependencies:
   '@types/chai-string': 1.4.2
   '@types/chai-uuid': 1.0.2
   '@types/config': 0.0.38
-  '@types/cucumber': 6.0.1
   '@types/dot': 1.1.4
   '@types/express-version-request': 1.7.1
   '@types/http-errors': 1.8.0
@@ -244,7 +242,6 @@ dependencies:
   '@types/json2csv': 4.5.1
   '@types/jsonpath-plus': 5.0.2
   '@types/jsonwebtoken': 8.5.0
-  '@types/jszip': 3.4.1
   '@types/jwk-to-pem': 2.0.0
   '@types/lodash': 4.14.168
   '@types/luxon': 2.0.9
@@ -256,12 +253,12 @@ dependencies:
   '@types/pem': 1.9.5
   '@types/prettyjson': 0.0.29
   '@types/sinon': 9.0.9
-  '@types/superagent': 4.1.10
+  '@types/superagent': 4.1.15
   '@types/uuid': 8.3.0
   '@types/yargs': 17.0.0
   adm-zip: 0.5.9
   ajv: 6.10.2
-  amazon-dax-client: 1.2.6
+  amazon-dax-client: 1.2.7
   async-local-storage: 2.3.1
   aws-iot-device-sdk: 2.2.8_supports-color@8.0.0
   aws-lambda: 1.0.6
@@ -278,7 +275,6 @@ dependencies:
   commander: 8.3.0
   config: 3.3.6
   cors: 2.8.5
-  cucumber: 6.0.5
   cz-customizable: 6.3.0
   dayjs: 1.10.5
   deep-equal: 2.0.5
@@ -332,7 +328,7 @@ dependencies:
   replace-in-file: 6.3.2
   shx: 0.3.3
   sinon: 9.2.1
-  superagent: 6.1.0_supports-color@8.0.0
+  superagent: 7.1.1_supports-color@8.0.0
   supports-color: 8.0.0
   typed-rest-client: 1.8.0
   typescript: 4.2.4
@@ -453,7 +449,7 @@ packages:
     resolution: {integrity: sha512-H8PjG5WJ4wz0UXAFXeJjWCW1vkvIJ3qUUD+rGRwJ2/hj+xT58Qle2MTql/2MGzkU+1JLAFuR6aJpLAjHwhmwwg==}
     dependencies:
       '@aws-sdk/types': 3.53.0
-      '@aws-sdk/util-utf8-browser': 3.37.0
+      '@aws-sdk/util-utf8-browser': 3.52.0
       tslib: 1.14.1
     dev: false
 
@@ -3401,6 +3397,104 @@ packages:
       minimist: 1.2.5
     dev: false
 
+  /@cucumber/create-meta/5.0.0:
+    resolution: {integrity: sha512-Z5kMZkUff00S3/KSnKzB/KOm2UIxMXY1xXmj2dQMlD49lV6v/W8EEvgDMNtQotQNSOQU5bDupmWQpk+o16tXIw==}
+    dependencies:
+      '@cucumber/messages': 16.0.1
+    dev: false
+
+  /@cucumber/cucumber-expressions/12.1.3:
+    resolution: {integrity: sha512-LB8MAzE4F/t2KIgsDEz4gZH0xSI4aG0/LmYUPyISPPjUS1pI/yGWWyeX2WsiUQxpSs765WcNIq5Bggt7gGGO3Q==}
+    dependencies:
+      regexp-match-indices: 1.0.2
+    dev: false
+
+  /@cucumber/cucumber/7.3.2:
+    resolution: {integrity: sha512-qqptM9w+UqXEYBAkrIGpIVPXDWv+zp0LrS89LiwHZwBp0cJg00su/iPMZ4j8TvCJiKfAwJXsAI1yjrd1POtU+w==}
+    engines: {node: '>=10'}
+    hasBin: true
+    dependencies:
+      '@cucumber/create-meta': 5.0.0
+      '@cucumber/cucumber-expressions': 12.1.3
+      '@cucumber/gherkin': 19.0.3
+      '@cucumber/gherkin-streams': 2.0.2
+      '@cucumber/html-formatter': 15.0.2
+      '@cucumber/messages': 16.0.1
+      '@cucumber/tag-expressions': 3.0.1
+      assertion-error-formatter: 3.0.0
+      bluebird: 3.7.2
+      capital-case: 1.0.4
+      cli-table3: 0.6.1
+      colors: 1.4.0
+      commander: 7.2.0
+      create-require: 1.1.1
+      duration: 0.2.2
+      durations: 3.4.2
+      figures: 3.2.0
+      glob: 7.2.0
+      indent-string: 4.0.0
+      is-generator: 1.0.3
+      is-stream: 2.0.1
+      knuth-shuffle-seeded: 1.0.6
+      lodash: 4.17.21
+      mz: 2.7.0
+      progress: 2.0.3
+      resolve: 1.22.0
+      resolve-pkg: 2.0.0
+      stack-chain: 2.0.0
+      stacktrace-js: 2.0.2
+      string-argv: 0.3.1
+      tmp: 0.2.1
+      util-arity: 1.1.0
+      verror: 1.10.1
+    dev: false
+
+  /@cucumber/gherkin-streams/2.0.2:
+    resolution: {integrity: sha512-cKmXOBz4OwGlrHMBCc4qCC3KzLaqcEZ11nWWskIbv6jyfvlIRuM2OgEF6VLcNVewczifW1p6DrDj0OO+BeXocA==}
+    hasBin: true
+    dependencies:
+      '@cucumber/gherkin': 19.0.3
+      '@cucumber/message-streams': 2.1.0
+      '@cucumber/messages': 16.0.1
+      commander: 7.2.0
+      source-map-support: 0.5.19
+    dev: false
+
+  /@cucumber/gherkin/19.0.3:
+    resolution: {integrity: sha512-gWdMm8mfRk3P+VugJWvNALaQV5QnT+5RkqWy3tO+4NsMSQZPo5p4V4vXwriQZ/sZR1Wni5TDRztuRsKLgZ3XHA==}
+    dependencies:
+      '@cucumber/message-streams': 2.1.0
+      '@cucumber/messages': 16.0.1
+    dev: false
+
+  /@cucumber/html-formatter/15.0.2:
+    resolution: {integrity: sha512-j+YGY4ytj78G/v1gZo53D+vuKXlTg/oxNwSCCGvRQo75+AqYDJSkm/vexXJQ5lY1rXAvlbZ9KI6jhg6LDs0YdQ==}
+    hasBin: true
+    dependencies:
+      '@cucumber/messages': 16.0.1
+      commander: 7.2.0
+      source-map-support: 0.5.19
+    dev: false
+
+  /@cucumber/message-streams/2.1.0:
+    resolution: {integrity: sha512-Yh3mw3qv6QL9NI/ihkZF8V9MX2GbnR6oktv34kC3uAbrQy9d/b2SZ3HNjG3J9JQqpV4B7Om3SPElJYIeo66TrA==}
+    dependencies:
+      '@cucumber/messages': 16.0.1
+    dev: false
+
+  /@cucumber/messages/16.0.1:
+    resolution: {integrity: sha512-80JcaAfQragFqR1rMhRwiqWL9HcR6Z4LDD2mfF0Lxg/lFkCNvmWa9Jl10NUNfFXYD555NKPzP/8xFo55abw8TQ==}
+    dependencies:
+      '@types/uuid': 8.3.0
+      class-transformer: 0.4.0
+      reflect-metadata: 0.1.13
+      uuid: 8.3.2
+    dev: false
+
+  /@cucumber/tag-expressions/3.0.1:
+    resolution: {integrity: sha512-OGCXaJ1BQXmQ5b9pw+JYsBGumK2/LPZiLmbj1o1JFVeSNs2PY8WPQFSyXrskhrHz5Nd/6lYg7lvGMtFHOncC4w==}
+    dev: false
+
   /@dabh/diagnostics/2.0.3:
     resolution: {integrity: sha512-hrlQOIi7hAfzsMqlGSFyVucrx38O+j6wiGOf//H2ecvIEqYN4ADBSS2iLMh5UFyDunCNniUIPk/q3riFv45xRA==}
     dependencies:
@@ -3419,7 +3513,7 @@ packages:
       globals: 12.4.0
       ignore: 4.0.6
       import-fresh: 3.3.0
-      js-yaml: 3.13.1
+      js-yaml: 3.14.1
       lodash: 4.17.21
       minimatch: 3.1.2
       strip-json-comments: 3.1.1
@@ -3916,21 +4010,20 @@ packages:
     resolution: {integrity: sha512-Vsyi9ogDAY3REZDjYnXMRJJa62SDvxHXxJI5nGDQdZW058dDE+av/anynN2rLKbCKXDRNw3D/sQmqxVflZFi4A==}
     requiresBuild: true
     dev: false
-    optional: true
 
   /@types/aws-serverless-express/3.3.2:
     resolution: {integrity: sha512-2vBt5YCjDFAkFC53O8/TEJpjsDnF8Gz0ntxwESWotgXurWrFGdmVkt0Z6t9buVO2bO833+SMsWd8PL+2io4A9Q==}
     dependencies:
-      '@types/aws-lambda': 8.10.65
-      '@types/express': 4.17.9
+      '@types/aws-lambda': 8.10.93
+      '@types/express': 4.17.13
       '@types/node': 14.6.1
     dev: false
 
   /@types/aws-serverless-express/3.3.3:
     resolution: {integrity: sha512-gIPinyiEsda2Z6Dx6GdQs47/GXaBGEGOMkYWtmqFDsVSDHzWtnIKBBBVQKyMdcK/0ZXa31zzlT+CobFnwNbsTQ==}
     dependencies:
-      '@types/aws-lambda': 8.10.65
-      '@types/express': 4.17.11
+      '@types/aws-lambda': 8.10.93
+      '@types/express': 4.17.13
       '@types/node': 14.6.1
     dev: false
 
@@ -4020,7 +4113,7 @@ packages:
   /@types/cors/2.8.8:
     resolution: {integrity: sha512-fO3gf3DxU2Trcbr75O7obVndW/X5k8rJNZkLXlQWStTHhP71PkRqjwPIEI0yMnJdg9R9OasjU+Bsr+Hr1xy/0w==}
     dependencies:
-      '@types/express': 4.17.9
+      '@types/express': 4.17.13
     dev: false
 
   /@types/cucumber/6.0.1:
@@ -4095,7 +4188,7 @@ packages:
     resolution: {integrity: sha512-SDzEIZInC4sivGIFY4Sz1GG6J9UObPwCInYJjko2jzOf/Imx/dlpume6Xxwj1ORL82tBbmN4cPDIDkLbWHk9hw==}
     dependencies:
       '@types/body-parser': 1.19.0
-      '@types/express-serve-static-core': 4.17.16
+      '@types/express-serve-static-core': 4.17.28
       '@types/qs': 6.9.7
       '@types/serve-static': 1.13.10
     dev: false
@@ -4288,8 +4381,8 @@ packages:
     resolution: {integrity: sha512-Hl219/BT5fLAaz6NDkSuhzasy49dwQS/DSdu4MdggFB8zcXv7vflBI3xp7FEmkmdDkBUI2bPUNeMttp2knYdxw==}
     dev: false
 
-  /@types/superagent/4.1.10:
-    resolution: {integrity: sha512-xAgkb2CMWUMCyVc/3+7iQfOEBE75NvuZeezvmixbUw3nmENf2tCnQkW5yQLTYqvXUQ+R6EXxdqKKbal2zM5V/g==}
+  /@types/superagent/4.1.15:
+    resolution: {integrity: sha512-mu/N4uvfDN2zVQQ5AYJI/g4qxn2bHB6521t1UuH09ShNWjebTqN0ZFuYK9uYjcgmI0dTQEs+Owi1EO6U0OkOZQ==}
     dependencies:
       '@types/cookiejar': 2.1.2
       '@types/node': 14.6.1
@@ -4836,10 +4929,9 @@ packages:
       uri-js: 4.4.1
     dev: false
 
-  /amazon-dax-client/1.2.6:
-    resolution: {integrity: sha512-Z3Cv3cg3YCsH0e23CVhqyfOKI73TBcE99iufB9Ls8wp3SPOsgr+FVKSHswS/LZF7Bif7hohc/hhYdUQPVcEarw==}
+  /amazon-dax-client/1.2.7:
+    resolution: {integrity: sha512-89oPB311qtHY/tH8p83mw41PEdp1dS9lFOhzWTlAZeSrPvVJJn+6rwqd7ksYilxOkSrrXwe7G8IURygC0RGGaw==}
     engines: {node: '>= 4.8.0'}
-    deprecated: Use 1.2.7 or newer for connection management improvements
     dependencies:
       antlr4: 4.8.0
       aws-sdk: 2.1048.0
@@ -5665,6 +5757,14 @@ packages:
     resolution: {integrity: sha512-xIZLh8gBm4dqNX0gkzrBeyI86J2eCjWzYAs40q88smG844YIrN4tVQl/RhquHvKEKImWWFIVh1Lxe5n1G/N+GQ==}
     dev: false
 
+  /capital-case/1.0.4:
+    resolution: {integrity: sha512-ds37W8CytHgwnhGGTi88pcPyR15qoNkOpYwmMMfnWqqWgESapLqvDx6huFjQ5vqWSn2Z06173XNA7LtMOeUh1A==}
+    dependencies:
+      no-case: 3.0.4
+      tslib: 2.3.1
+      upper-case-first: 2.0.2
+    dev: false
+
   /capture-exit/2.0.0:
     resolution: {integrity: sha512-PiT/hQmTonHhl/HFGN+Lx3JJUznrVYJ3+AQsnthneZbvW7x+f08Tk7yLJTLEOUvBTbduLeeBkxEaYXUOUrRq6g==}
     engines: {node: 6.* || 8.* || >= 10.*}
@@ -5792,6 +5892,10 @@ packages:
     resolution: {integrity: sha512-uc2Vix1frTfnuzxxu1Hp4ktSvM3QaI4oXl4ZUqL1wjTu/BGki9TrCWoqLTg/drR1KwAEarXuRFCG2Svr1GxPFw==}
     dev: false
 
+  /class-transformer/0.4.0:
+    resolution: {integrity: sha512-ETWD/H2TbWbKEi7m9N4Km5+cw1hNcqJSxlSYhsLsNjQzWWiZIYA1zafxpK9PwVfaZ6AqR5rrjPVUBGESm5tQUA==}
+    dev: false
+
   /class-utils/0.3.6:
     resolution: {integrity: sha512-qOhPa/Fj7s6TY8H8esGu5QNpMMQxz79h+urzrNYN6mn+9BnxlDGf5QZ+XeCDsxSjPqsSR56XOZOJmpeurnLMeg==}
     engines: {node: '>=0.10.0'}
@@ -5844,6 +5948,15 @@ packages:
     dependencies:
       object-assign: 4.1.1
       string-width: 2.1.1
+    optionalDependencies:
+      colors: 1.4.0
+    dev: false
+
+  /cli-table3/0.6.1:
+    resolution: {integrity: sha512-w0q/enDHhPLq44ovMGdQeeDLvwxwavsJX7oQGYt/LrBlYsyaxyDnp6z3QzFut/6kLLKnlcUVJLrpB7KBfgG/RA==}
+    engines: {node: 10.* || >= 12.*}
+    dependencies:
+      string-width: 4.2.3
     optionalDependencies:
       colors: 1.4.0
     dev: false
@@ -6021,6 +6134,11 @@ packages:
     resolution: {integrity: sha512-Gar0ASD4BDyKC4hl4DwHqDrmvjoxWKZigVnAbn5H1owvm4CxCPdb0HQDehwNYMJpla5+M2tPmPARzhtYuwpHow==}
     dev: false
 
+  /commander/7.2.0:
+    resolution: {integrity: sha512-QrWXB+ZQSVPmIWIhtEO9H+gwHaMGYiF5ChvoJ+K9ZGHG/sVsa6yiesAD1GC/x46sET00Xlwo1u49RVVVzvcSkw==}
+    engines: {node: '>= 10'}
+    dev: false
+
   /commander/8.3.0:
     resolution: {integrity: sha512-OkTL9umf+He2DZkUq8f8J9of7yL6RJKI24dVITBmNfZBmri9zYZQrKkuXiKhyfPSu8tUhnVBB1iKXevvnlR4Ww==}
     engines: {node: '>= 12'}
@@ -6149,6 +6267,10 @@ packages:
     dependencies:
       object-assign: 4.1.1
       vary: 1.1.2
+    dev: false
+
+  /create-require/1.1.1:
+    resolution: {integrity: sha512-dcKFX3jn0MpIaXjisoRvexIJVEKzaq7z2rZKxf+MSr9TkdmHmsU4m2lcLojrj/FHl8mk5VxMmYA+ftRkP/3oKQ==}
     dev: false
 
   /cross-spawn/6.0.5:
@@ -6451,6 +6573,13 @@ packages:
     engines: {node: '>=8'}
     dev: false
 
+  /dezalgo/1.0.3:
+    resolution: {integrity: sha1-f3Qt4Gb8dIvI24IFad3c5Jvw1FY=}
+    dependencies:
+      asap: 2.0.6
+      wrappy: 1.0.2
+    dev: false
+
   /diagnostics/1.1.1:
     resolution: {integrity: sha512-8wn1PmdunLJ9Tqbx+Fx/ZEuHfJf4NKSN2ZBj7SJC/OWRWha843+WsTjqMe1B5E3p28jqBlp+mJ2fPVxPyNgYKQ==}
     dependencies:
@@ -6539,7 +6668,7 @@ packages:
   /duplexer2/0.1.4:
     resolution: {integrity: sha1-ixLauHjA1p4+eJEFFmKjL8a93ME=}
     dependencies:
-      readable-stream: 2.1.5
+      readable-stream: 2.3.7
     dev: false
 
   /duplexer3/0.1.4:
@@ -6569,6 +6698,11 @@ packages:
     dependencies:
       d: 1.0.1
       es5-ext: 0.10.58
+    dev: false
+
+  /durations/3.4.2:
+    resolution: {integrity: sha512-V/lf7y33dGaypZZetVI1eu7BmvkbC4dItq12OElLRpKuaU5JxQstV2zHwLv8P7cNbQ+KL1WD80zMCTx5dNC4dg==}
+    engines: {node: '>=0.10.0'}
     dev: false
 
   /ecdsa-sig-formatter/1.0.11:
@@ -6899,7 +7033,7 @@ packages:
     dependencies:
       '@babel/code-frame': 7.16.7
       '@eslint/eslintrc': 0.2.2_supports-color@8.0.0
-      ajv: 6.10.2
+      ajv: 6.12.6
       chalk: 4.1.2
       cross-spawn: 7.0.3
       debug: 4.3.3_supports-color@8.0.0
@@ -6919,7 +7053,7 @@ packages:
       import-fresh: 3.3.0
       imurmurhash: 0.1.4
       is-glob: 4.0.3
-      js-yaml: 3.13.1
+      js-yaml: 3.14.1
       json-stable-stringify-without-jsonify: 1.0.1
       levn: 0.4.1
       lodash: 4.17.21
@@ -6945,7 +7079,7 @@ packages:
     dependencies:
       '@babel/code-frame': 7.12.11
       '@eslint/eslintrc': 0.4.3_supports-color@8.0.0
-      ajv: 6.10.2
+      ajv: 6.12.6
       chalk: 4.1.2
       cross-spawn: 7.0.3
       debug: 4.3.3_supports-color@8.0.0
@@ -7501,9 +7635,22 @@ packages:
       mime-types: 2.1.35
     dev: false
 
-  /formidable/1.2.6:
-    resolution: {integrity: sha512-KcpbcpuLNOwrEjnbpMC0gS+X8ciDoZE1kkqzat4a8vrprf+s9pKNQ/QIwWfbfs4ltgmFl3MD177SNTkve3BwGQ==}
-    deprecated: 'Please upgrade to latest, formidable@v2 or formidable@v3! Check these notes: https://bit.ly/2ZEqIau'
+  /form-data/4.0.0:
+    resolution: {integrity: sha512-ETEklSGi5t0QMZuiXoA/Q6vcnxcLQP5vdugSpuAyi6SVGi2clPPp+xgEhuMaHC+zGgn31Kd235W35f7Hykkaww==}
+    engines: {node: '>= 6'}
+    dependencies:
+      asynckit: 0.4.0
+      combined-stream: 1.0.8
+      mime-types: 2.1.35
+    dev: false
+
+  /formidable/2.0.1:
+    resolution: {integrity: sha512-rjTMNbp2BpfQShhFbR3Ruk3qk2y9jKpvMW78nJgx8QKtxjDVrwbZG+wvDOmVbifHyOUOQJXxqEy6r0faRrPzTQ==}
+    dependencies:
+      dezalgo: 1.0.3
+      hexoid: 1.0.0
+      once: 1.4.0
+      qs: 6.9.3
     dev: false
 
   /forwarded/0.2.0:
@@ -7912,6 +8059,11 @@ packages:
     dependencies:
       glob: 7.2.0
       readable-stream: 3.6.0
+    dev: false
+
+  /hexoid/1.0.0:
+    resolution: {integrity: sha512-QFLV0taWQOZtvIRIAdBChesmogZrtuXvVWsFHZTk2SU+anspqZ2vMnoLg7IE1+Uk16N19APic1BuF8bC8c2m5g==}
+    engines: {node: '>=8'}
     dev: false
 
   /hmac-drbg/1.0.1:
@@ -9737,6 +9889,12 @@ packages:
     resolution: {integrity: sha1-miyr0bno4K6ZOkv31YdcOcQujqw=}
     dev: false
 
+  /lower-case/2.0.2:
+    resolution: {integrity: sha512-7fm3l3NAF9WfN6W3JOmf5drwpVqX78JtoGJ3A6W0a6ZnldM41w2fV5D490psKFTpMds8TJse/eHLFFsNHHjHgg==}
+    dependencies:
+      tslib: 2.3.1
+    dev: false
+
   /lowercase-keys/1.0.1:
     resolution: {integrity: sha512-G2Lj61tXDnVFFOi8VZds+SoQjtQC3dgokKdDG2mTm1tx4m50NUHBOZSBwQQHyy0V12A0JTG4icfZQH+xPyh8VA==}
     engines: {node: '>=0.10.0'}
@@ -10194,6 +10352,13 @@ packages:
     resolution: {integrity: sha512-rmTZ9kz+f3rCvK2TD1Ue/oZlns7OGoIWP4fc3llxxRXlOkHKoWPPWJOfFYpITabSow43QJbRIoHQXtt10VldyQ==}
     dependencies:
       lower-case: 1.1.4
+    dev: false
+
+  /no-case/3.0.4:
+    resolution: {integrity: sha512-fgAN3jGAh+RoxUGZHTSOLJIqUc2wmoBwGR4tbpNAKmmovFoWq0OdRkb0VkldReO2a2iBT/OEulG9XSUc10r3zg==}
+    dependencies:
+      lower-case: 2.0.2
+      tslib: 2.3.1
     dev: false
 
   /node-cache/5.1.2:
@@ -11011,6 +11176,11 @@ packages:
     engines: {node: '>=0.6'}
     dev: false
 
+  /qs/6.9.3:
+    resolution: {integrity: sha512-EbZYNarm6138UKKq46tdx08Yo/q9ZhFoAXAI1meAFd2GtbRDhbZY2WQSICskT0c5q99aFzLG1D4nvTk9tqfXIw==}
+    engines: {node: '>=0.6'}
+    dev: false
+
   /querystring/0.2.0:
     resolution: {integrity: sha1-sgmEkgO7Jd+CDadW50cAWHhSFiA=}
     engines: {node: '>=0.4.x'}
@@ -11186,6 +11356,17 @@ packages:
       safe-regex: 1.1.0
     dev: false
 
+  /regexp-match-indices/1.0.2:
+    resolution: {integrity: sha512-DwZuAkt8NF5mKwGGER1EGh2PRqyvhRhhLviH+R8y8dIuaQROlUfXjt4s9ZTXstIsSkptf06BSvwcEmmfheJJWQ==}
+    dependencies:
+      regexp-tree: 0.1.24
+    dev: false
+
+  /regexp-tree/0.1.24:
+    resolution: {integrity: sha512-s2aEVuLhvnVJW6s/iPgEGK6R+/xngd2jNQ+xy4bXNDKxZKJH6jpPHY6kVeVv1IeLCHgswRj+Kl3ELaDjG6V1iw==}
+    hasBin: true
+    dev: false
+
   /regexp.prototype.flags/1.4.1:
     resolution: {integrity: sha512-pMR7hBVUUGI7PMA37m2ofIdQCsomVnas+Jn5UPGAHQ+/LlwKm/aTLJHdasmHRzlfeZwHiAOaRSo2rbBDm3nNUQ==}
     engines: {node: '>= 0.4'}
@@ -11285,6 +11466,13 @@ packages:
   /resolve-from/5.0.0:
     resolution: {integrity: sha512-qYg9KP24dD5qka9J47d0aVky0N+b4fTU89LN9iDnjB5waksiC49rvMB0PrUJQGoTmH50XPiqOvAjDfaijGxYZw==}
     engines: {node: '>=8'}
+    dev: false
+
+  /resolve-pkg/2.0.0:
+    resolution: {integrity: sha512-+1lzwXehGCXSeryaISr6WujZzowloigEofRB+dj75y9RRa/obVcYgbHJd53tdYw8pvZj8GojXaaENws8Ktw/hQ==}
+    engines: {node: '>=8'}
+    dependencies:
+      resolve-from: 5.0.0
     dev: false
 
   /resolve-url/0.2.1:
@@ -11789,6 +11977,13 @@ packages:
       urix: 0.1.0
     dev: false
 
+  /source-map-support/0.5.19:
+    resolution: {integrity: sha512-Wonm7zOCIJzBGQdB+thsPar0kYuCIzYvxZwlBa87yi/Mdjv7Tip2cyVbLj5o0cFPN4EVkuTwb3GDDyUx2DGnGw==}
+    dependencies:
+      buffer-from: 1.1.2
+      source-map: 0.6.1
+    dev: false
+
   /source-map-support/0.5.21:
     resolution: {integrity: sha512-uBHU3L3czsIyYXKX88fdrGovxdSCoTGDRZ6SYXtSRxLZUzHg5P/66Ht6uoUlHu9EZod+inXhKo3qQgwXUT/y1w==}
     dependencies:
@@ -12108,17 +12303,16 @@ packages:
     engines: {node: '>=8'}
     dev: false
 
-  /superagent/6.1.0_supports-color@8.0.0:
-    resolution: {integrity: sha512-OUDHEssirmplo3F+1HWKUrUjvnQuA+nZI6i/JJBdXb5eq9IyEQwPyPpqND+SSsxf6TygpBEkUjISVRN4/VOpeg==}
-    engines: {node: '>= 7.0.0'}
-    deprecated: Please upgrade to v7.0.2+ of superagent.  We have fixed numerous issues with streams, form-data, attach(), filesystem errors not bubbling up (ENOENT on attach()), and all tests are now passing.  See the releases tab for more information at <https://github.com/visionmedia/superagent/releases>.
+  /superagent/7.1.1_supports-color@8.0.0:
+    resolution: {integrity: sha512-CQ2weSS6M+doIwwYFoMatklhRbx6sVNdB99OEJ5czcP3cng76Ljqus694knFWgOj3RkrtxZqIgpe6vhe0J7QWQ==}
+    engines: {node: '>=6.4.0 <13 || >=14'}
     dependencies:
       component-emitter: 1.3.0
       cookiejar: 2.1.3
       debug: 4.3.3_supports-color@8.0.0
       fast-safe-stringify: 2.1.1
-      form-data: 3.0.1
-      formidable: 1.2.6
+      form-data: 4.0.0
+      formidable: 2.0.1
       methods: 1.1.2
       mime: 2.6.0
       qs: 6.10.3
@@ -12311,6 +12505,13 @@ packages:
       os-tmpdir: 1.0.2
     dev: false
 
+  /tmp/0.2.1:
+    resolution: {integrity: sha512-76SUhtfqR2Ijn+xllcI5P1oyannHNHByD80W1q447gU3mp9G9PSpGdWmjUOHRDPiHYacIk66W7ubDTuPF3BEtQ==}
+    engines: {node: '>=8.17.0'}
+    dependencies:
+      rimraf: 3.0.2
+    dev: false
+
   /tmpl/1.0.5:
     resolution: {integrity: sha512-3f0uOEAQwIqGuWW2MVzYg8fV/QNnc/IpuJNG837rLuczAaLVHslWHZQj4IGiEl5Hs3kkbhwL9Ab7Hrsmuj+Smw==}
     dev: false
@@ -12417,7 +12618,7 @@ packages:
       jest: '>=26 <27'
       typescript: '>=3.8 <5.0'
     dependencies:
-      '@types/jest': 26.0.18
+      '@types/jest': 26.0.23
       bs-logger: 0.2.6
       buffer-from: 1.1.2
       fast-json-stable-stringify: 2.1.0
@@ -12678,6 +12879,12 @@ packages:
       pupa: 2.1.1
       semver-diff: 3.1.1
       xdg-basedir: 4.0.0
+    dev: false
+
+  /upper-case-first/2.0.2:
+    resolution: {integrity: sha512-514ppYHBaKwfJRK/pNC6c/OxfGa0obSnAl106u97Ed0I625Nin96KAjttZF6ZL3e1XLtphxnqrOi9iWgm+u+bg==}
+    dependencies:
+      tslib: 2.3.1
     dev: false
 
   /upper-case/1.1.3:
@@ -12945,7 +13152,7 @@ packages:
     resolution: {integrity: sha512-B2wPuwUi3vhzn/51Uukcao4dIduEiPOcOt9HJ3QeaXgkJ5Z7UwpBzxS4ZGNHtrxrUvTwemsQiSys0ihOf8Mp1A==}
     engines: {node: '>= 6.4.0'}
     dependencies:
-      readable-stream: 2.3.6
+      readable-stream: 2.3.7
       triple-beam: 1.3.0
     dev: false
 
@@ -12964,12 +13171,12 @@ packages:
       async: 2.6.3
       diagnostics: 1.1.1
       is-stream: 1.1.0
-      logform: 2.1.2
+      logform: 2.2.0
       one-time: 0.0.4
       readable-stream: 3.6.0
       stack-trace: 0.0.10
       triple-beam: 1.3.0
-      winston-transport: 4.3.0
+      winston-transport: 4.4.0
     dev: false
 
   /winston/3.3.3:
@@ -13211,7 +13418,7 @@ packages:
     dev: false
 
   file:projects/assetlibrary-client.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-4AYR98Zl/Z7SCM9U3cnYHvOP7Ix40T431AA1/ji7v8Y6KLFtxsKze++2BPX0HnF8/+4iA5bAEOSTAg2RUq0nGA==, tarball: file:projects/assetlibrary-client.tgz}
+    resolution: {integrity: sha512-iqV5eZ77pmbRVGyvBzlg39zu8xN3zHxAkisAPvykwS6tZ+8YuAmy9MT9tLeYSDfRdvi7/osWvx1kDSDy2gC/gQ==, tarball: file:projects/assetlibrary-client.tgz}
     id: file:projects/assetlibrary-client.tgz
     name: '@rush-temp/assetlibrary-client'
     version: 0.0.0
@@ -13220,7 +13427,7 @@ packages:
       '@types/dotenv-flow': 3.2.0
       '@types/jest': 26.0.23
       '@types/node': 14.6.1
-      '@types/superagent': 4.1.10
+      '@types/superagent': 4.1.15
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
       aws-sdk: 2.1048.0
@@ -13243,7 +13450,7 @@ packages:
       readable-stream: 3.6.0
       reflect-metadata: 0.1.13
       shx: 0.3.3
-      superagent: 6.1.0_supports-color@8.0.0
+      superagent: 7.1.1_supports-color@8.0.0
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       typescript: 4.2.4
       winston: 3.3.3
@@ -13447,7 +13654,7 @@ packages:
     dev: false
 
   file:projects/assetlibraryhistory-client.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-QHlf9AoEmX+A0VooeL6ugjjM5W5zsdkmll+8fxnXjie1rqvU2bIe72yaHJrNqPGkOi1WFlvwBXEWpVhlFicw6Q==, tarball: file:projects/assetlibraryhistory-client.tgz}
+    resolution: {integrity: sha512-/DtsxmLBMD8chH8oxPUGteJxrH8WG8O+TTWCc9SjiwB7wKEpizICq/ioZxk5LmxnMfEOzM2M/R9fIv6sI1rZ+A==, tarball: file:projects/assetlibraryhistory-client.tgz}
     id: file:projects/assetlibraryhistory-client.tgz
     name: '@rush-temp/assetlibraryhistory-client'
     version: 0.0.0
@@ -13455,7 +13662,7 @@ packages:
       '@rushstack/eslint-config': 2.3.4_3318d341e08b60846a0ca54ab3432060
       '@types/dotenv-flow': 3.2.0
       '@types/jest': 26.0.23
-      '@types/superagent': 4.1.10
+      '@types/superagent': 4.1.15
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
       aws-sdk: 2.952.0
@@ -13477,7 +13684,7 @@ packages:
       readable-stream: 3.6.0
       reflect-metadata: 0.1.13
       shx: 0.3.3
-      superagent: 6.1.0_supports-color@8.0.0
+      superagent: 7.1.1_supports-color@8.0.0
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       typescript: 4.2.4
       winston: 3.3.3
@@ -13579,7 +13786,7 @@ packages:
     dev: false
 
   file:projects/bulkcerts-client.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-yjN/jZBF9jgduSNZWOEgKq9RoRxwgzNZCRF4F+BpvlY76TpH4wGlozepi47UsP5rG97UB+Kb3Hv/39DRcqKuXg==, tarball: file:projects/bulkcerts-client.tgz}
+    resolution: {integrity: sha512-2hCuHbHZsrkVfclATE6YnqcCeqqC25OJgulVQUh5kg7UPvE9hvrJJ6XApGTMuqv4eaQlhO0cTgppoBQGRnoHww==, tarball: file:projects/bulkcerts-client.tgz}
     id: file:projects/bulkcerts-client.tgz
     name: '@rush-temp/bulkcerts-client'
     version: 0.0.0
@@ -13588,7 +13795,7 @@ packages:
       '@types/dotenv-flow': 3.2.0
       '@types/jest': 26.0.23
       '@types/node': 14.6.1
-      '@types/superagent': 4.1.10
+      '@types/superagent': 4.1.15
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
       aws-sdk: 2.952.0
@@ -13610,7 +13817,7 @@ packages:
       readable-stream: 3.6.0
       reflect-metadata: 0.1.13
       shx: 0.3.3
-      superagent: 6.1.0_supports-color@8.0.0
+      superagent: 7.1.1_supports-color@8.0.0
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       typescript: 4.2.4
       winston: 3.3.3
@@ -13624,7 +13831,7 @@ packages:
     dev: false
 
   file:projects/bulkcerts.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-TtxIT0IOuupgBsxpZR3l59W82DgJhYz7hGRVdV/7i1wSdX7KHzGqVD0OQjlmgqBcYqS3GaUeNAueBjTsf1vi+A==, tarball: file:projects/bulkcerts.tgz}
+    resolution: {integrity: sha512-XhXTEo1QAOc0LF3mi+HWifhIesKNxO9A5PVcAN49TIFS0DjkNEybtbyAxwtS8B0J+lvsnOb3nS2qul4x97rjqg==, tarball: file:projects/bulkcerts.tgz}
     id: file:projects/bulkcerts.tgz
     name: '@rush-temp/bulkcerts'
     version: 0.0.0
@@ -13684,7 +13891,7 @@ packages:
     dev: false
 
   file:projects/certificate-activator.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-aJA5/WLho2BJTnTwaAq/VC1DD0AeoFENBS0pQlmcw2ej7lWNaRXubppdJWUhYAerSqLOt/bG4If4kkyMQMbI3A==, tarball: file:projects/certificate-activator.tgz}
+    resolution: {integrity: sha512-ox6MH7ot/W66j5xMC5ZS4S0YB2GJZYy328ngzb1x8I7VMXBqwEPUCdm9+//3SLxxCoUogxK+GYPh9iqPUQ1/cw==, tarball: file:projects/certificate-activator.tgz}
     id: file:projects/certificate-activator.tgz
     name: '@rush-temp/certificate-activator'
     version: 0.0.0
@@ -13720,7 +13927,7 @@ packages:
       readable-stream: 3.6.0
       reflect-metadata: 0.1.13
       shx: 0.3.3
-      superagent: 6.1.0_supports-color@8.0.0
+      superagent: 7.1.1_supports-color@8.0.0
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       typescript: 4.2.4
       winston: 3.3.3
@@ -13734,7 +13941,7 @@ packages:
     dev: false
 
   file:projects/certificate-vendor.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-4P1xRMBfDZLWdClY54Ywg080tSj5X+egEbdtxs2AwnJCE1GBnqnLguYI8SA14dZ1u2qzlMgVfScY7kTBsPwV4g==, tarball: file:projects/certificate-vendor.tgz}
+    resolution: {integrity: sha512-bAlm5OylHJy+qabpulWVzqLOVDeurshOvokG/vUPdSMuUL4k9EbI9fCYXfYhnr+2XXjU7x+lJpjZUa4Z3SmhpQ==, tarball: file:projects/certificate-vendor.tgz}
     id: file:projects/certificate-vendor.tgz
     name: '@rush-temp/certificate-vendor'
     version: 0.0.0
@@ -13766,7 +13973,7 @@ packages:
       readable-stream: 3.6.0
       reflect-metadata: 0.1.13
       shx: 0.3.3
-      superagent: 6.1.0_supports-color@8.0.0
+      superagent: 7.1.1_supports-color@8.0.0
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       typescript: 4.2.4
       winston: 3.3.3
@@ -13780,7 +13987,7 @@ packages:
     dev: false
 
   file:projects/commands-client.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-WJVsGNTPIyna7ITvltx6QZzGiDWw13u5qabvnKvzGQWcK+Iv+zBl021SnH/69LI8gTuiv0moUp+wnXaK19GZyg==, tarball: file:projects/commands-client.tgz}
+    resolution: {integrity: sha512-sYWi21ipzaWDYpHhnFD7rkFWjWGuRTay1KxXT0bQP3MQaqb1gMyFinYP1vVE/PnFXrRlc7N9+aT+LAjq9qi+nQ==, tarball: file:projects/commands-client.tgz}
     id: file:projects/commands-client.tgz
     name: '@rush-temp/commands-client'
     version: 0.0.0
@@ -13789,7 +13996,7 @@ packages:
       '@types/dotenv-flow': 3.2.0
       '@types/jest': 26.0.23
       '@types/node': 14.6.1
-      '@types/superagent': 4.1.10
+      '@types/superagent': 4.1.15
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
       aws-sdk: 2.952.0
@@ -13811,7 +14018,7 @@ packages:
       readable-stream: 3.6.0
       reflect-metadata: 0.1.13
       shx: 0.3.3
-      superagent: 6.1.0_supports-color@8.0.0
+      superagent: 7.1.1_supports-color@8.0.0
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       typescript: 4.2.4
       winston: 3.3.3
@@ -13825,7 +14032,7 @@ packages:
     dev: false
 
   file:projects/commands.tgz:
-    resolution: {integrity: sha512-v2kN6+ysa9pN7IXIHAkZX0TrHthdHppupO2fHpZrchRfOw/wcVkmIjK7ZAMU3IZQ+hrdWAuyX94ngBrlC/Jdrw==, tarball: file:projects/commands.tgz}
+    resolution: {integrity: sha512-qSI1s7J43nMjwiNSAIUCba1WJ0xv9BrOu4fvOBfuvZQMvt7RXMUblRUGTY5YQ9Yd0CQ+KJRKK2SWiWinoRoBZA==, tarball: file:projects/commands.tgz}
     name: '@rush-temp/commands'
     version: 0.0.0
     dependencies:
@@ -13867,7 +14074,7 @@ packages:
       serverless-http: 2.7.0
       shx: 0.3.3
       sinon: 9.2.1
-      superagent: 6.1.0_supports-color@8.0.0
+      superagent: 7.1.1_supports-color@8.0.0
       supports-color: 8.0.0
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       typescript: 4.2.4
@@ -13915,7 +14122,7 @@ packages:
     dev: false
 
   file:projects/deployment-helper.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-4CjlCDRLOQlRv40e7VupIaKJF+oseRLJOfoBZ4jnjdHlA7FA2bZZscUaF0Dt7buqPk13QVTRbt4jIKk/njHMmA==, tarball: file:projects/deployment-helper.tgz}
+    resolution: {integrity: sha512-qHPVnxxoD9MCCoIQUkS76eeiNTjdALzXhzTd3qEsMnAVHuJcBKnJmEiBz53fUWO1HC3/15ydkV48u7mUZFp6iA==, tarball: file:projects/deployment-helper.tgz}
     id: file:projects/deployment-helper.tgz
     name: '@rush-temp/deployment-helper'
     version: 0.0.0
@@ -13925,7 +14132,7 @@ packages:
       '@types/dotenv-flow': 3.2.0
       '@types/jest': 26.0.23
       '@types/node': 14.6.1
-      '@types/superagent': 4.1.10
+      '@types/superagent': 4.1.15
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
       aws-sdk: 2.1048.0
@@ -13950,7 +14157,7 @@ packages:
       readable-stream: 3.6.0
       reflect-metadata: 0.1.13
       shx: 0.3.3
-      superagent: 6.1.0_supports-color@8.0.0
+      superagent: 7.1.1_supports-color@8.0.0
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       typescript: 4.2.4
       winston: 3.3.3
@@ -13964,7 +14171,7 @@ packages:
     dev: false
 
   file:projects/device-monitoring.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-mE5v1An36bF8MW8ovZ+ciQmJfYR4CJDLTU55iPAE4fLkx53Uhu+MKCpp/+wpczZz6YvCq22EFI40mBDSMkRcuQ==, tarball: file:projects/device-monitoring.tgz}
+    resolution: {integrity: sha512-ZV52H+PWlCmHV1cixJQJlbOdrkilKk1mMGgKsq8jPJ13Usv0kWrh2wMcMMWYfAYAktK+U25Gn3QOPiu195uvVA==, tarball: file:projects/device-monitoring.tgz}
     id: file:projects/device-monitoring.tgz
     name: '@rush-temp/device-monitoring'
     version: 0.0.0
@@ -13972,7 +14179,7 @@ packages:
       '@rushstack/eslint-config': 2.3.4_3318d341e08b60846a0ca54ab3432060
       '@types/dotenv-flow': 3.2.0
       '@types/jest': 26.0.23
-      '@types/superagent': 4.1.10
+      '@types/superagent': 4.1.15
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
       dotenv: 8.6.0
@@ -13996,7 +14203,7 @@ packages:
       readable-stream: 3.6.0
       reflect-metadata: 0.1.13
       shx: 0.3.3
-      superagent: 6.1.0_supports-color@8.0.0
+      superagent: 7.1.1_supports-color@8.0.0
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       typescript: 4.2.4
       winston: 3.3.3
@@ -14010,7 +14217,7 @@ packages:
     dev: false
 
   file:projects/device-patcher-client.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-0K3RUdFGaO61ytr/L+CsHBBgPWDXGC51RffkAXrc8b9RgZ41ATdj/ViDivna1XY9YUf/rHVb4TiX1OS7SxVUeg==, tarball: file:projects/device-patcher-client.tgz}
+    resolution: {integrity: sha512-OkvTuX6nYMCm33KXHl448UAv63//XEYWSPlFAGQRhC8ubhNYGimX/aDO/SK2wIQ7uYGoLsK2qa0xUjob5UQ6GA==, tarball: file:projects/device-patcher-client.tgz}
     id: file:projects/device-patcher-client.tgz
     name: '@rush-temp/device-patcher-client'
     version: 0.0.0
@@ -14019,7 +14226,7 @@ packages:
       '@types/dotenv-flow': 3.2.0
       '@types/jest': 26.0.23
       '@types/node': 14.6.1
-      '@types/superagent': 4.1.10
+      '@types/superagent': 4.1.15
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
       aws-sdk: 2.952.0
@@ -14042,7 +14249,7 @@ packages:
       readable-stream: 3.6.0
       reflect-metadata: 0.1.13
       shx: 0.3.3
-      superagent: 6.1.0_supports-color@8.0.0
+      superagent: 7.1.1_supports-color@8.0.0
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       typescript: 4.2.4
       winston: 3.3.3
@@ -14201,7 +14408,7 @@ packages:
     dev: false
 
   file:projects/event-publisher.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-Mq8NEpBm+7atUCxVl4w+5JXJCY6icCUEejKtsXXiTnMhi5i8ITddfpT2rIAaiXfPzzoH23vHJh8bq3mdaUPA1g==, tarball: file:projects/event-publisher.tgz}
+    resolution: {integrity: sha512-7gjDQnG6Zmi7EJgZ1xdZcugnqcHPQfagbU9NlhTk9U5G/82wZahd8vC4JcmnK0ktAldCAl9WnqE4nYGzyucK7g==, tarball: file:projects/event-publisher.tgz}
     id: file:projects/event-publisher.tgz
     name: '@rush-temp/event-publisher'
     version: 0.0.0
@@ -14210,7 +14417,7 @@ packages:
       '@aws-sdk/client-iot': 3.37.0
       '@rushstack/eslint-config': 2.3.4_3318d341e08b60846a0ca54ab3432060
       '@types/jest': 26.0.23
-      '@types/superagent': 4.1.10
+      '@types/superagent': 4.1.15
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
       eslint: 7.26.0_supports-color@8.0.0
@@ -14226,7 +14433,7 @@ packages:
       nyc: 15.1.0_supports-color@8.0.0
       ow: 0.23.0
       shx: 0.3.3
-      superagent: 6.1.0_supports-color@8.0.0
+      superagent: 7.1.1_supports-color@8.0.0
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       typescript: 4.2.4
       winston: 3.3.3
@@ -14240,7 +14447,7 @@ packages:
     dev: false
 
   file:projects/events-alerts.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-tkRu4iXW/oPtFSHFBuAjXsnbIjjEcogV9+cUnQKsSTNNn8QnEWse0hTSL4QkSLSd7yU8+DUSZHfOBN5gCQaczQ==, tarball: file:projects/events-alerts.tgz}
+    resolution: {integrity: sha512-GWnCT0+i0doiMDvdsUglJluEx7ZpQ7XSmsju60Y4tduaKU/3p7fEtwebZJMoNQjvb8sst8LlRIzlQEV1VXxC/g==, tarball: file:projects/events-alerts.tgz}
     id: file:projects/events-alerts.tgz
     name: '@rush-temp/events-alerts'
     version: 0.0.0
@@ -14253,7 +14460,7 @@ packages:
       '@types/uuid': 8.3.0
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
-      amazon-dax-client: 1.2.6
+      amazon-dax-client: 1.2.7
       aws-sdk: 2.1048.0
       dot: 1.1.3
       dotenv: 8.6.0
@@ -14290,7 +14497,7 @@ packages:
     dev: false
 
   file:projects/events-processor.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-KHSrdHQsHbzPzzh+VsFGw+ttllJ11T9Mg492FGCv37gUhXrKYMULVaOYC4UeGWISnj80TFIewO7qwcUD84QRaA==, tarball: file:projects/events-processor.tgz}
+    resolution: {integrity: sha512-DA4luIwiXEAcTL7m0CMgyvGNVmaWyhGZeMMSQYqKXhkpV0zDQ9qrnk9oeSvHiD2e8xi70b75VuBVUqrjudpd2w==, tarball: file:projects/events-processor.tgz}
     id: file:projects/events-processor.tgz
     name: '@rush-temp/events-processor'
     version: 0.0.0
@@ -14306,7 +14513,7 @@ packages:
       '@types/uuid': 8.3.0
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
-      amazon-dax-client: 1.2.6
+      amazon-dax-client: 1.2.7
       aws-sdk: 2.1048.0
       body-parser: 1.19.0
       cors: 2.8.5
@@ -14336,7 +14543,7 @@ packages:
       reflect-metadata: 0.1.13
       serverless-http: 2.7.0
       shx: 0.3.3
-      superagent: 6.1.0_supports-color@8.0.0
+      superagent: 7.1.1_supports-color@8.0.0
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       typescript: 4.2.4
       uuid: 8.3.2
@@ -14424,7 +14631,7 @@ packages:
     dev: false
 
   file:projects/greengrass2-provisioning-client.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-cp6VyTYvwBZ6FkAnOm0YswMqoU8KpzKgaQocJRlfQ+Sh5LrW7H7Rf5uVNYRE+MRdqa21hSf5IWHRKKrdRs0QbQ==, tarball: file:projects/greengrass2-provisioning-client.tgz}
+    resolution: {integrity: sha512-eYw2F8o/tE2XLMFvPCUbWT/o6Y5dvgqRCPXN3OF3hLRo2G1oqrvHwN0l3qE3beOpR/NfEfHp7yqz+Qi3iO90IQ==, tarball: file:projects/greengrass2-provisioning-client.tgz}
     id: file:projects/greengrass2-provisioning-client.tgz
     name: '@rush-temp/greengrass2-provisioning-client'
     version: 0.0.0
@@ -14433,7 +14640,7 @@ packages:
       '@types/dotenv-flow': 3.2.0
       '@types/jest': 26.0.23
       '@types/node': 14.6.1
-      '@types/superagent': 4.1.10
+      '@types/superagent': 4.1.15
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
       aws-sdk: 2.952.0
@@ -14455,7 +14662,7 @@ packages:
       readable-stream: 3.6.0
       reflect-metadata: 0.1.13
       shx: 0.3.3
-      superagent: 6.1.0_supports-color@8.0.0
+      superagent: 7.1.1_supports-color@8.0.0
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       typescript: 4.2.4
       winston: 3.3.3
@@ -14603,7 +14810,7 @@ packages:
     dev: false
 
   file:projects/integration-tests.tgz_39c40f0eb041e1e032be051403b5059d:
-    resolution: {integrity: sha512-1Kape/PlGASMTa8eGo+omonMu7/mK1ft6jVkIxXYL+2angWQMIaYw0ePDr8yuYMPHMu1rfQgMVsPoxvCXT2UUA==, tarball: file:projects/integration-tests.tgz}
+    resolution: {integrity: sha512-gIL3R5g/xbdGlXolf3Uo3p7fsLuG4bUqVIzxUmH1Zr05rWTcqbaZ6BRqolXeBT4ROc5uoiKbMhz66H2jlulZsw==, tarball: file:projects/integration-tests.tgz}
     id: file:projects/integration-tests.tgz
     name: '@rush-temp/integration-tests'
     version: 0.0.0
@@ -14612,6 +14819,7 @@ packages:
       '@aws-sdk/client-greengrassv2': 3.38.0
       '@aws-sdk/client-s3': 3.38.0_@aws-sdk+signature-v4-crt@3.38.0
       '@aws-sdk/s3-request-presigner': 3.38.0_@aws-sdk+signature-v4-crt@3.38.0
+      '@cucumber/cucumber': 7.3.2
       '@types/atob': 2.1.2
       '@types/aws-iot-device-sdk': 2.2.2
       '@types/chai': 4.2.14
@@ -14648,7 +14856,7 @@ packages:
       reflect-metadata: 0.1.13
       replace-in-file: 6.3.2
       shx: 0.3.3
-      superagent: 6.1.0_supports-color@8.0.0
+      superagent: 7.1.1_supports-color@8.0.0
       typed-rest-client: 1.8.0
       typescript: 4.2.4
       winston: 3.3.3
@@ -14662,7 +14870,7 @@ packages:
     dev: false
 
   file:projects/lambda-invoke.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-n5egS+jPfCm/Au62y0wtXGXsdchDb/+uzfWlgqQeZya5zUt/aCsioZnE3IXyFMX5bq2SKZo7308cZ6n+Vtcj4A==, tarball: file:projects/lambda-invoke.tgz}
+    resolution: {integrity: sha512-R7I6sh9Xapm9bIYSjRDwbBUvQsW9D8EB+RxvD7y7091vRCn9Rme1O28rXXS4AuNCs6CAu9apFuO2C/iNlw7SXg==, tarball: file:projects/lambda-invoke.tgz}
     id: file:projects/lambda-invoke.tgz
     name: '@rush-temp/lambda-invoke'
     version: 0.0.0
@@ -14692,7 +14900,7 @@ packages:
       readable-stream: 3.6.0
       reflect-metadata: 0.1.13
       shx: 0.3.3
-      superagent: 6.1.0_supports-color@8.0.0
+      superagent: 7.1.1_supports-color@8.0.0
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       typescript: 4.2.4
       winston: 3.3.3
@@ -14739,7 +14947,7 @@ packages:
     dev: false
 
   file:projects/notifications-client.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-Rcj0EOnTk+81E5PjhOrtF8tm9riu5nf7Xdq4qCyoj6yCN9t1V1XvZPauf6SoqNN+AhYz1G1QTn0Dxqbiprf+Qg==, tarball: file:projects/notifications-client.tgz}
+    resolution: {integrity: sha512-elHwK0aOgwJLZSLwzQN+KnLZ3uFzKp1VstwXiQjkT4DFPVx02SnkA9fSdQAbNjPFczfKrzaFt//4H63cT0J61Q==, tarball: file:projects/notifications-client.tgz}
     id: file:projects/notifications-client.tgz
     name: '@rush-temp/notifications-client'
     version: 0.0.0
@@ -14748,7 +14956,7 @@ packages:
       '@types/dotenv-flow': 3.2.0
       '@types/jest': 26.0.23
       '@types/node': 14.6.1
-      '@types/superagent': 4.1.10
+      '@types/superagent': 4.1.15
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
       aws-sdk: 2.952.0
@@ -14770,7 +14978,7 @@ packages:
       readable-stream: 3.6.0
       reflect-metadata: 0.1.13
       shx: 0.3.3
-      superagent: 6.1.0_supports-color@8.0.0
+      superagent: 7.1.1_supports-color@8.0.0
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       typescript: 4.2.4
       winston: 3.3.3
@@ -14784,7 +14992,7 @@ packages:
     dev: false
 
   file:projects/provisioning-client.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-E0QBZ3LrisJAKovnahnhknfb4VGbx4aL0afbRXI23/lBTHW3E74RdxD06kkAOebzD51ciqZka82BAA9zzfNwAw==, tarball: file:projects/provisioning-client.tgz}
+    resolution: {integrity: sha512-0Fk98phvSVTqyZ+o2IU/d+lt206R088OlGml/+48DXhW4VRXsROM5FsxHS2F2Gv4ctLmSlErCi8FfqNZLR2XTg==, tarball: file:projects/provisioning-client.tgz}
     id: file:projects/provisioning-client.tgz
     name: '@rush-temp/provisioning-client'
     version: 0.0.0
@@ -14792,7 +15000,7 @@ packages:
       '@rushstack/eslint-config': 2.3.4_3318d341e08b60846a0ca54ab3432060
       '@types/dotenv-flow': 3.2.0
       '@types/jest': 26.0.23
-      '@types/superagent': 4.1.10
+      '@types/superagent': 4.1.15
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
       aws-sdk: 2.1048.0
@@ -14814,7 +15022,7 @@ packages:
       readable-stream: 3.6.0
       reflect-metadata: 0.1.13
       shx: 0.3.3
-      superagent: 6.1.0_supports-color@8.0.0
+      superagent: 7.1.1_supports-color@8.0.0
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       typescript: 4.2.4
       winston: 3.3.3
@@ -14828,7 +15036,7 @@ packages:
     dev: false
 
   file:projects/provisioning.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-1Yxc1Ymy5p6pQpgnPBO6hhJeM3JvY9aFJ9wK+7majxzj2xyD3d8qGA31qVVnX2o+yML7iHvpofnYc3c4fnJOIw==, tarball: file:projects/provisioning.tgz}
+    resolution: {integrity: sha512-Guj1hTESIbefDh5pYcQCaHxo79TAVeeFUKP5OH8wivDBLwjmVMo0SwFhmkPQpN0TbC9nVNDnJR0+g1dL8uihNQ==, tarball: file:projects/provisioning.tgz}
     id: file:projects/provisioning.tgz
     name: '@rush-temp/provisioning'
     version: 0.0.0
@@ -14986,7 +15194,7 @@ packages:
     dev: false
 
   file:projects/thing-list-builder.tgz_supports-color@8.0.0:
-    resolution: {integrity: sha512-Q1xoEc7HpVXEUzFm5eR8S140kZoM3bSU9JJivG+Ere101upBYqo7u/tel+213uf7K5G8xPJmwLauVEFXKY95Bw==, tarball: file:projects/thing-list-builder.tgz}
+    resolution: {integrity: sha512-3prF5+m2OcSRe106qjeNZNgCGE3TPDtqGrYfhB5q0PB9d93K9xp9paHFQLaUB5k4CWuBpidd1jQZ5tnyGzIIlA==, tarball: file:projects/thing-list-builder.tgz}
     id: file:projects/thing-list-builder.tgz
     name: '@rush-temp/thing-list-builder'
     version: 0.0.0
@@ -14994,7 +15202,7 @@ packages:
       '@aws-sdk/client-iot': 3.37.0
       '@rushstack/eslint-config': 2.3.4_3318d341e08b60846a0ca54ab3432060
       '@types/jest': 26.0.23
-      '@types/superagent': 4.1.10
+      '@types/superagent': 4.1.15
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
       eslint: 7.26.0_supports-color@8.0.0
@@ -15010,7 +15218,7 @@ packages:
       nyc: 15.1.0_supports-color@8.0.0
       ow: 0.23.0
       shx: 0.3.3
-      superagent: 6.1.0_supports-color@8.0.0
+      superagent: 7.1.1_supports-color@8.0.0
       ts-jest: 26.5.6_jest@26.6.3+typescript@4.2.4
       typescript: 4.2.4
       winston: 3.3.3

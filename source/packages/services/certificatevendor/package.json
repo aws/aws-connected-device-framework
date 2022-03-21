@@ -26,7 +26,7 @@
     "pem": "1.14.4",
     "reflect-metadata": "0.1.13",
     "readable-stream": "3.6.0",
-    "superagent": "6.1.0",
+    "superagent": "7.1.1",
     "winston": "3.3.3",
     "winston-transport": "4.4.0",
     "dotenv-flow": "~3.2.0",

@@ -24,13 +24,13 @@
     "ow": "0.23.0",
     "readable-stream": "3.6.0",
     "reflect-metadata": "0.1.13",
-    "superagent": "6.1.0",
+    "superagent": "7.1.1",
     "winston": "3.3.3",
     "winston-transport": "4.4.0",
     "dotenv-flow": "~3.2.0"
   },
   "devDependencies": {
-    "@types/superagent": "4.1.10",
+    "@types/superagent": "4.1.15",
 
     "@rushstack/eslint-config": "2.3.4",
     "@types/aws-lambda": "8.10.65",

@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import 'reflect-metadata';
-import { Given, setDefaultTimeout, When, TableDefinition, Then} from 'cucumber';
+import { Given, setDefaultTimeout, When, DataTable, Then} from '@cucumber/cucumber';
 import { Device20Resource, DevicesService } from '@cdf/assetlibrary-client';
 import { fail } from 'assert';
 import stringify from 'json-stable-stringify';
@@ -59,7 +59,7 @@ Given('device {string} exists', async function (deviceId:string) {
     expect(device.deviceId).equalIgnoreCase(deviceId);
 });
 
-async function registerDevice (world:unknown, deviceId:string, data:TableDefinition, profileId?:string) {
+async function registerDevice (world:unknown, deviceId:string, data:DataTable, profileId?:string) {
 
     const d = data.rowsHash();
 
@@ -85,7 +85,7 @@ async function registerDevice (world:unknown, deviceId:string, data:TableDefinit
     await deviceService.createDevice(device, profileId, headers);
 }
 
-When('I create device {string} with attributes', async function (deviceId:string, data:TableDefinition) {
+When('I create device {string} with attributes', async function (deviceId:string, data:DataTable) {
     try {
         await registerDevice(this, deviceId, data);
     } catch (err) {
@@ -93,7 +93,7 @@ When('I create device {string} with attributes', async function (deviceId:string
     }
 });
 
-When('I create device {string} applying profile {string} with attributes', async function (deviceId:string, profileId:string, data:TableDefinition) {
+When('I create device {string} applying profile {string} with attributes', async function (deviceId:string, profileId:string, data:DataTable) {
 
     try {
         await registerDevice(this, deviceId, data, profileId);
@@ -102,7 +102,7 @@ When('I create device {string} applying profile {string} with attributes', async
     }
 });
 
-When('I create device {string} with invalid attributes', async function (deviceId:string, data:TableDefinition) {
+When('I create device {string} with invalid attributes', async function (deviceId:string, data:DataTable) {
     try {
         await registerDevice(this, deviceId, data);
         fail('Expected 400');
@@ -112,7 +112,7 @@ When('I create device {string} with invalid attributes', async function (deviceI
     }
 });
 
-When('I update device {string} with attributes', async function (deviceId:string, data:TableDefinition) {
+When('I update device {string} with attributes', async function (deviceId:string, data:DataTable) {
     const d = data.rowsHash();
 
     const device: Device20Resource = {
@@ -184,7 +184,7 @@ When('I get device {string}', async function (deviceId:string) {
     }
 });
 
-Then('device {string} exists with attributes', async function (deviceId:string, data:TableDefinition) {
+Then('device {string} exists with attributes', async function (deviceId:string, data:DataTable) {
     const d = data.rowsHash();
     const r = await deviceService.getDeviceByID(deviceId, undefined, undefined, undefined, getAdditionalHeaders(this));
 
