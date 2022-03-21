@@ -133,8 +133,8 @@ Parameters:
     Type: String
   NeptunePollerLambdaMemorySize:
     Type: Number
-    Default: 2048
-    Description: Neptune Poller Lambda  memory size (in MB).
+    Default: 512
+    Description: Neptune Poller Lambda memory size (in MB).
     AllowedValues:
       - 128
       - 256
@@ -160,7 +160,7 @@ Parameters:
     Description: "Number of records to be read from stream in each batch. Should be between 1 to 50000."
   NeptunePollerMaxPollingWaitTime: 
     Type: Number
-    Default: 60
+    Default: 10
     MaxValue: 3600
     MinValue: 0
     Description: "Maximum wait time in seconds between two successive polling from stream. Set value to 0 sec for continuous polling. Maximum value can be 3600 sec (1 hour)."
@@ -169,7 +169,7 @@ Parameters:
     Default: 600
     MaxValue: 900
     MinValue: 5
-    Description: "Period for which we can continuously poll stream for records on one Lambda instance. Should be between 5 sec to 900 sec. This parameter is used to set Poller Lambda Timeout."
+    Description: "Number of seconds for which we can continuously poll stream for records on one Lambda instance. Should be between 5 sec to 900 sec. This parameter is used to set Poller Lambda Timeout."
   NeptunePollerStepFunctionFallbackPeriod: 
     Type: Number
     Default: 5
@@ -300,6 +300,8 @@ Resources:
     Type: AWS::OpenSearchService::Domain
     DeletionPolicy: Snapshot
     UpdateReplacePolicy: Snapshot
+    UpdatePolicy:
+      EnableVersionUpgrade: true
     Properties: 
       DomainName: !Sub 'cdf-${Environment}'
       AccessPolicies:
@@ -362,7 +364,6 @@ Resources:
             - KmsKeyIdProvided
             - !Ref KmsKeyId
             - !Ref AWS::NoValue
-      EnableVersionUpgrade: true
       LogPublishingOptions: 
         ES_APPLICATION_LOGS:
           Fn::If:
@@ -438,7 +439,7 @@ Resources:
         LambdaMemorySize: !Ref NeptunePollerLambdaMemorySize
         LambdaRuntime: python3.6
         LambdaS3Bucket: !Join ["-", ["aws-neptune-customer-samples", !Ref "AWS::Region"]]
-        LambdaS3Key: "neptune-stream/lambda/python36/release_2021_08_23/neptune-to-es.zip"
+        LambdaS3Key: "neptune-stream/lambda/python36/release_2022_03_14/neptune-to-es.zip"
         ManagedPolicies: !Ref OpenSearchAccessPolicy
         LambdaLoggingLevel: !Ref NeptunePollerLambdaLoggingLevel
         StreamRecordsHandler: 
