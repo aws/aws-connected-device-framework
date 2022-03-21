@@ -1,6 +1,13 @@
 # Change Log - @cdf/certificate-vendor
 
-This log was last generated on Thu, 10 Mar 2022 00:08:34 GMT and should not be manually modified.
+This log was last generated on Mon, 21 Mar 2022 21:58:32 GMT and should not be manually modified.
+
+## 5.0.2
+Mon, 21 Mar 2022 21:58:32 GMT
+
+### Patches
+
+- Upgrade dependencies marked as deprecated
 
 ## 5.0.1
 Thu, 10 Mar 2022 00:08:34 GMT

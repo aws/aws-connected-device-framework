@@ -2,6 +2,26 @@
   "name": "@cdf/device-monitoring",
   "entries": [
     {
+      "version": "5.0.2",
+      "tag": "@cdf/device-monitoring_v5.0.2",
+      "date": "Mon, 21 Mar 2022 21:58:32 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Upgrade dependencies marked as deprecated"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@cdf/lambda-invoke\" from `^3.0.0` to `^3.0.1`"
+          },
+          {
+            "comment": "Updating dependency \"@cdf/assetlibrary-client\" from `^5.0.1` to `^5.0.2`"
+          }
+        ]
+      }
+    },
+    {
       "version": "5.0.1",
       "tag": "@cdf/device-monitoring_v5.0.1",
       "date": "Thu, 10 Mar 2022 00:08:34 GMT",

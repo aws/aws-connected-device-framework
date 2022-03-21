@@ -1,6 +1,6 @@
 {
   "name": "@cdf/device-monitoring",
-  "version": "5.0.1",
+  "version": "5.0.2",
   "description": "CDF Device Monitoring",
   "author": "Rahul Sareen",  "scripts": {
     "clean": "npx shx rm -rf dist tsconfig.tsbuildinfo bundle.zip .rush .nyc_output *.log",
@@ -14,8 +14,8 @@
     "@cdf/errors": "^4.0.0",
     "@cdf/config-inject": "^4.0.0",
     "@cdf/logger": "^4.0.0",
-    "@cdf/lambda-invoke": "^3.0.0",
-    "@cdf/assetlibrary-client": "^5.0.1",
+    "@cdf/lambda-invoke": "^3.0.1",
+    "@cdf/assetlibrary-client": "^5.0.2",
     "http-errors": "1.8.0",
     "js-yaml": "4.1.0",
     "logform": "2.2.0",
