@@ -63,6 +63,8 @@ stages:
   - deployStage
   - integrationTest
   - deployLive
+  - upload
+  - triggerCpp
 
 ### not working at the moment, therefore using artifacts as a temp workaround
 # cache:
@@ -186,3 +188,29 @@ deployLive:
     - bash -c source/cicd/deployproject_build.bash
   after_script:
     - bash -c source/cicd/deployproject_postbuild.bash
+
+upload:
+   before_script:
+    - yum update -y
+    - yum install -y git
+  image:
+    name: public.ecr.aws/amazonlinux/amazonlinux:2
+    entrypoint: [""]
+  stage: upload
+  rules:
+    - if: ($CI_COMMIT_BRANCH == "feat_command_and_control")
+  script:
+    # Create archive based on latest commit
+    - git archive --format=zip --output=cdf.zip $CI_COMMIT_SHA
+    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file cdf.zip "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/aws-connected-device-framework/${CI_JOB_ID}/cdf.zip"'
+
+triggerCpp:
+  stage: triggerCpp
+  image:
+    name: public.ecr.aws/amazonlinux/amazonlinux:2
+    entrypoint: [""]
+  rules:
+    - if: ($CI_COMMIT_BRANCH == "feat_command_and_control")
+  trigger:
+    project: robotics-and-engineering-gsp/cdf/aws-connected-product-platform
+    branch: main
