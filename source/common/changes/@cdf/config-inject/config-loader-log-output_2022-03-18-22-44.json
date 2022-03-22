@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/config-inject",
+      "comment": "print module name when outputting loaded config on startup",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/config-inject",
+  "email": "jonasneu@amazon.com"
+}
