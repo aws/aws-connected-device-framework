@@ -190,13 +190,13 @@ deployLive:
     - bash -c source/cicd/deployproject_postbuild.bash
 
 upload:
-   before_script:
+  stage: upload
+  before_script:
     - yum update -y
     - yum install -y git
   image:
     name: public.ecr.aws/amazonlinux/amazonlinux:2
     entrypoint: [""]
-  stage: upload
   rules:
     - if: ($CI_COMMIT_BRANCH == "feat_command_and_control")
   script:
@@ -206,9 +206,6 @@ upload:
 
 triggerCpp:
   stage: triggerCpp
-  image:
-    name: public.ecr.aws/amazonlinux/amazonlinux:2
-    entrypoint: [""]
   rules:
     - if: ($CI_COMMIT_BRANCH == "feat_command_and_control")
   trigger:
