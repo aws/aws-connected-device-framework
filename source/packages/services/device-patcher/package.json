@@ -17,7 +17,7 @@
   "dependencies": {
     "@cdf/errors": "^4.0.0",
     "@cdf/logger": "^4.0.0",
-    "@cdf/config-inject": "^4.0.0",
+    "@cdf/config-inject": "^4.0.1",
     "@cdf/express-middleware": "^3.0.0",
     "atob": "2.1.2",
     "aws-sdk": "2.804.0",

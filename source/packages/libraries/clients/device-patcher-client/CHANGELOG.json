@@ -2,6 +2,23 @@
   "name": "@cdf/device-patcher-client",
   "entries": [
     {
+      "version": "1.1.3",
+      "tag": "@cdf/device-patcher-client_v1.1.3",
+      "date": "Tue, 22 Mar 2022 22:51:44 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "print module name when outputting loaded config on startup"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@cdf/lambda-invoke\" from `^3.0.1` to `^3.0.2`"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.1.2",
       "tag": "@cdf/device-patcher-client_v1.1.2",
       "date": "Mon, 21 Mar 2022 21:58:32 GMT",

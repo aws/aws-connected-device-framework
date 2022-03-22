@@ -1,6 +1,6 @@
 {
   "name": "@cdf/config-inject",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "this library load config from files and inject it into process.env to make it accessible as environment variables",
   "author": "Atul Bargaje <atulbar@amazon.com>",
   "main": "dist/index.js",

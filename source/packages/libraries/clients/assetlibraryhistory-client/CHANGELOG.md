@@ -1,6 +1,13 @@
 # Change Log - @cdf/assetlibraryhistory-client
 
-This log was last generated on Mon, 21 Mar 2022 21:58:32 GMT and should not be manually modified.
+This log was last generated on Tue, 22 Mar 2022 22:51:44 GMT and should not be manually modified.
+
+## 5.0.2
+Tue, 22 Mar 2022 22:51:44 GMT
+
+### Patches
+
+- print module name when outputting loaded config on startup
 
 ## 5.0.1
 Mon, 21 Mar 2022 21:58:32 GMT

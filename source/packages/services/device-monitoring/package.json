@@ -12,10 +12,10 @@
   },
   "dependencies": {
     "@cdf/errors": "^4.0.0",
-    "@cdf/config-inject": "^4.0.0",
+    "@cdf/config-inject": "^4.0.1",
     "@cdf/logger": "^4.0.0",
-    "@cdf/lambda-invoke": "^3.0.1",
-    "@cdf/assetlibrary-client": "^5.0.2",
+    "@cdf/lambda-invoke": "^3.0.2",
+    "@cdf/assetlibrary-client": "^5.0.3",
     "http-errors": "1.8.0",
     "js-yaml": "4.1.0",
     "logform": "2.2.0",

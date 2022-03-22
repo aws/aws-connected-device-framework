@@ -1,6 +1,13 @@
 # Change Log - @cdf/device-patcher-client
 
-This log was last generated on Mon, 21 Mar 2022 21:58:32 GMT and should not be manually modified.
+This log was last generated on Tue, 22 Mar 2022 22:51:44 GMT and should not be manually modified.
+
+## 1.1.3
+Tue, 22 Mar 2022 22:51:44 GMT
+
+### Patches
+
+- print module name when outputting loaded config on startup
 
 ## 1.1.2
 Mon, 21 Mar 2022 21:58:32 GMT

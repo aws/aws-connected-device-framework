@@ -2,6 +2,23 @@
   "name": "@cdf/notifications-client",
   "entries": [
     {
+      "version": "4.0.2",
+      "tag": "@cdf/notifications-client_v4.0.2",
+      "date": "Tue, 22 Mar 2022 22:51:44 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "print module name when outputting loaded config on startup"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@cdf/lambda-invoke\" from `^3.0.1` to `^3.0.2`"
+          }
+        ]
+      }
+    },
+    {
       "version": "4.0.1",
       "tag": "@cdf/notifications-client_v4.0.1",
       "date": "Mon, 21 Mar 2022 21:58:32 GMT",
