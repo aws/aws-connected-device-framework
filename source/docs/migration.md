@@ -10,7 +10,7 @@ These changes only affect Asset Library users who have FGAC enabled.
 
 Prior to 1.0.10, FGAC authorization was carried out by traversing all outgoing relations from groups/devices until a group hierarchy a user is authorized to is found. This has been enhanced so now one can specify which outgoing relations are to be included in the checks thus making the authorization checks more efficient. This is carried out by setting the new `includeInAuth` property to `true` when defining a relation between 2 types. Refer to [Fine Grained Access Control](../packages/services/assetlibrary/docs/fine-grained-access-control.md) for more details.
 
-## Migrating from Release <=1.5 to Release 1.6
+## Migrating from Release <=1.0.5 to Release 1.0.6
 
 ### Application configuration
 
