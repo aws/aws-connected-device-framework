@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/device-patcher-client",
+      "comment": "print module name when outputting loaded config on startup",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/device-patcher-client",
+  "email": "jonasneu@amazon.com"
+}

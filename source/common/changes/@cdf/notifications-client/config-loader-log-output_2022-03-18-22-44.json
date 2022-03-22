@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/notifications-client",
+      "comment": "print module name when outputting loaded config on startup",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/notifications-client",
+  "email": "jonasneu@amazon.com"
+}

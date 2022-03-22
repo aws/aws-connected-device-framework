@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/assetlibrary-client",
+      "comment": "print module name when outputting loaded config on startup",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/assetlibrary-client",
+  "email": "jonasneu@amazon.com"
+}

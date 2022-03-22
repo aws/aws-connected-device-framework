@@ -23,5 +23,5 @@ if ((process.env.CONFIG_LOCATION?.length ?? 0) > 0) {
 
 load(fileLocations);
 
-console.log(`Loaded config:`);
-console.log(process.env)
+console.log(`Module config-inject loaded config:`);
+console.log(process.env);

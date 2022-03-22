@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/commands-client",
+      "comment": "print module name when outputting loaded config on startup",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/commands-client",
+  "email": "jonasneu@amazon.com"
+}
