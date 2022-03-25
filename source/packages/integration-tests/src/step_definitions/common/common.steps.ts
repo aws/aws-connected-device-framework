@@ -104,7 +104,7 @@ export function validateExpectedAttributes<T>(model: T, data: TableDefinition, w
             let v = world;
             keys.forEach(k => v = v[k]);
             expect(actual?.[0], expandedKey).to.eq(v);
-        } else if (expected.startsWith('{')) {
+        } else if (expected.startsWith('{') && expected.endsWith('}')) {
             const json = JSON.parse(expected);
             expect(actual?.[0], expandedKey).to.deep.eq(json);
         } else {
