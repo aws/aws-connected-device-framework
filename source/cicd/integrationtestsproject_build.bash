@@ -112,6 +112,6 @@ npm run integration-test -- "features/greengrass2-provisioning/*.feature"
 npm run integration-test -- "features/bulkcerts/*.feature"
 npm run integration-test -- "features/commands/*.feature"
 npm run integration-test -- "features/notifications/*.feature"
-npm run integration-test -- "features/commandandcontrol/shadows.feature"
+npm run integration-test -- "features/commandandcontrol/*.feature"
 
 
