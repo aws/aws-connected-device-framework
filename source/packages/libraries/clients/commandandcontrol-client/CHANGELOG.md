@@ -1,16 +1,9 @@
-# Change Log - @cdf/greengrass2-provisioning
+# Change Log - @cdf/commandandcontrol-client
 
 This log was last generated on Fri, 25 Mar 2022 03:55:57 GMT and should not be manually modified.
 
-## 0.1.2
+## 0.0.1
 Fri, 25 Mar 2022 03:55:57 GMT
-
-### Patches
-
-- differentiate type of AWSDK v2 and v3
-
-## 0.1.1
-Thu, 17 Feb 2022 09:27:38 GMT
 
 _Initial release_
 

@@ -2,6 +2,18 @@
   "name": "@cdf/installer",
   "entries": [
     {
+      "version": "0.2.0",
+      "tag": "@cdf/installer_v0.2.0",
+      "date": "Fri, 25 Mar 2022 03:55:57 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "adding command and control to installer"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.1.8",
       "tag": "@cdf/installer_v0.1.8",
       "date": "Thu, 17 Mar 2022 21:52:07 GMT",

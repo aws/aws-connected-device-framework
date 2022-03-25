@@ -1,6 +1,13 @@
 # Change Log - @cdf/installer
 
-This log was last generated on Thu, 17 Mar 2022 21:52:07 GMT and should not be manually modified.
+This log was last generated on Fri, 25 Mar 2022 03:55:57 GMT and should not be manually modified.
+
+## 0.2.0
+Fri, 25 Mar 2022 03:55:57 GMT
+
+### Minor changes
+
+- adding command and control to installer
 
 ## 0.1.8
 Thu, 17 Mar 2022 21:52:07 GMT

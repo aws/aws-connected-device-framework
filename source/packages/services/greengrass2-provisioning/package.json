@@ -1,6 +1,6 @@
 {
   "name": "@cdf/greengrass2-provisioning",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "CDF Greengrass V2 Provisioning",
   "author": "Dean Hart",
   "scripts": {
@@ -33,7 +33,7 @@
     "@cdf/logger": "^4.0.0",
     "@cdf/config-inject": "^4.0.1",
     "@cdf/provisioning-client": "^5.0.2",
-    "@cdf/thing-list-builder": "~1.0.2",
+    "@cdf/thing-list-builder": "~1.1.0",
     "@cdf/event-publisher": "~1.0.1",
     "adm-zip": "0.5.9",
     "aws-lambda": "1.0.6",
