@@ -68,7 +68,6 @@ container.bind<number>('aws.jobs.maxTargets').toConstantValue(parseInt(process.e
 // bind containers from the cdf client modules
 container.load(assetLibraryContainerModule);
 container.load(provisioningContainerModule);
-container.load(thingListBuilderContainerModule);
 
 container.bind<CommandsDao>(TYPES.CommandsDao).to(CommandsDao);
 container.bind<CommandsService>(TYPES.CommandsService).to(CommandsService);
@@ -135,6 +134,8 @@ container.bind<interfaces.Factory<AWS.IotData>>(TYPES.IotDataFactory)
             return container.get<AWS.IotData>(TYPES.IotData);
         };
     });
+
+container.load(thingListBuilderContainerModule);
 
 // S3
 decorate(injectable(), AWS.S3);

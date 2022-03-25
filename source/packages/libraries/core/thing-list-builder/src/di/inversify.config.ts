@@ -24,6 +24,10 @@ export const thingListBuilderContainerModule = new ContainerModule (
         _rebind: interfaces.Rebind
     ) => {
 
+        if (!isBound('aws.region')) {
+            bind<string>('aws.region').toConstantValue(process.env.AWS_REGION);
+        }
+
         bind<AwsIotThingListBuilder>(THING_LIST_BUILDER_TYPES.AwsIotThingListBuilder).to(AwsIotThingListBuilder);
 
         if (!isBound(THING_LIST_BUILDER_TYPES.IotFactory)) {
