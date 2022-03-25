@@ -1,6 +1,13 @@
 # Change Log - @cdf/thing-list-builder
 
-This log was last generated on Fri, 25 Mar 2022 03:55:57 GMT and should not be manually modified.
+This log was last generated on Fri, 25 Mar 2022 06:23:54 GMT and should not be manually modified.
+
+## 1.1.1
+Fri, 25 Mar 2022 06:23:54 GMT
+
+### Patches
+
+- check if region and iot factory have been bound before
 
 ## 1.1.0
 Fri, 25 Mar 2022 03:55:57 GMT

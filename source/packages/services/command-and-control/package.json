@@ -1,6 +1,6 @@
 {
   "name": "@cdf/command-and-control",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "CDF Command & Control",
   "author": "Dean Hart",
   "config": {
@@ -23,7 +23,7 @@
     "@cdf/lambda-invoke": "^3.0.0",
     "@cdf/logger": "^4.0.0",
     "@cdf/provisioning-client": "^5.0.0",
-    "@cdf/thing-list-builder": "^1.1.0",
+    "@cdf/thing-list-builder": "^1.1.1",
     "ajv": "6.10.2",
     "aws-sdk": "2.804.0",
     "body-parser": "1.19.0",
