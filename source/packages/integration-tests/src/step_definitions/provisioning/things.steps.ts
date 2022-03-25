@@ -15,7 +15,7 @@ import 'reflect-metadata';
 
 import { fail } from 'assert';
 import { expect, use } from 'chai';
-import { Before, Given, setDefaultTimeout, Then, When } from '@cucumber/cucumber';
+import { Before, Given, setDefaultTimeout, Then, When } from 'cucumber';
 
 import {
     PROVISIONING_CLIENT_TYPES, ProvisionThingRequest, ProvisionThingResponse, ThingsService

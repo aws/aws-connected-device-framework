@@ -1,9 +1,9 @@
 # ASSET LIBRARY CONFIGURATION
 
-The recommended way to create a local configuration file for the Asset Library service is through CDF's [installer](../../installer/README.md#deployment-using-wizard).
+The recommended way to create a local configuration file for the Asset Library module is through CDF's [installer](../../installer/README.md#deployment-using-wizard).
 # Configuration for Running Locally
 
-Once you had deployed cdf to your AWS account, you can generate `.env` file to be used for your local development
+Once you had deployed CDF to your AWS account, you can generate `.env` file to be used for your local development.
 
 The instruction to generate the local file can be found [here](../../installer/README.md#local-development). The `.env` file will be populated with resources and options that are specified during the deployment wizard flow.
 
@@ -27,9 +27,9 @@ EVENTS_PROFILES_TOPIC=cdf/assetlibrary/events/profiles/{objectId}/{event}
 
 # When a device is created, if certain attributes are not provided then
 # these defaults are used. These only need to be set if they need to be 
-# changed
+# changed.
 
-# If no intial group to be associated with is provided when the device
+# If no initial group to be associated with is provided when the device
 # is first created, the following `relation` is created to the 
 # specified  `groupPath`:  
 DEFAULTS_DEVICES_PARENT_RELATION=parent
@@ -55,10 +55,6 @@ CUSTOMDOMAIN_BASEPATH=
 # use Neptune as its datastore, whereas `lite` will offer a reduced feature set 
 # (see documentation) and use the AWS IoT Device Registry as its datastore.
 MODE=full
-
-CACHE_TYPES_TTL=30
-    
-SUPPORTED_API_VERSIONS=application/vnd.aws-cdf-v1.0+json,application/vnd.aws-cdf-v2.0+json
 
 # If true, fine-grained access control will be enabled. Refer to documentation 
 # for additional steps required (custom IdP claims).

@@ -14,7 +14,7 @@ import { expect, use } from 'chai';
 import chaiUuid = require('chai-uuid');
 use(chaiUuid);
 
-import { setDefaultTimeout, Given, When, DataTable, Then} from '@cucumber/cucumber';
+import { setDefaultTimeout, Given, When, TableDefinition, Then} from 'cucumber';
 import { AUTHORIZATION_TOKEN, RESPONSE_STATUS, validateExpectedAttributes} from '../common/common.steps';
 import {container} from '../../di/inversify.config';
 import { EventsourcesService, EventsService, NOTIFICATIONS_CLIENT_TYPES } from '@cdf/notifications-client/dist';
@@ -67,7 +67,7 @@ Given('event {string} exists', async function (eventName:string) {
     expect(event?.eventId).to.eq(eventId);
 });
 
-When('I create an event with attributes', async function (data:DataTable) {
+When('I create an event with attributes', async function (data:TableDefinition) {
     // logger.debug(`I create an event with attributes:`);
     this[RESPONSE_STATUS]=null;
     try {
@@ -83,7 +83,7 @@ When('I create an event with attributes', async function (data:DataTable) {
     }
 });
 
-When('I update event with attributes', async function (data:DataTable) {
+When('I update event with attributes', async function (data:TableDefinition) {
     // logger.debug(`I update event with attributes:`);
     const id = await getEventIdFromName(eventsourcesService, eventsService, this, this[EVENTSOURCE_NAME], this[EVENT_NAME]);
     // logger.debug(`\t id: ${id}`);
@@ -110,7 +110,7 @@ When('I delete event', async function () {
     await eventsService.deleteEvent(id, getAdditionalHeaders(this[AUTHORIZATION_TOKEN]));
 });
 
-Then('last event exists with attributes', async function (data:DataTable) {
+Then('last event exists with attributes', async function (data:TableDefinition) {
     // logger.debug(`last event exists with attributes:`);
     delete this[RESPONSE_STATUS];
     delete this[EVENT_DETAILS];

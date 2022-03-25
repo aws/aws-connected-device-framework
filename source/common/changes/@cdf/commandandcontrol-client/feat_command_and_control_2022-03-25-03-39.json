@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/commandandcontrol-client",
+      "comment": "",
+      "type": "none"
+    }
+  ],
+  "packageName": "@cdf/commandandcontrol-client",
+  "email": "willsia@amazon.com"
+}

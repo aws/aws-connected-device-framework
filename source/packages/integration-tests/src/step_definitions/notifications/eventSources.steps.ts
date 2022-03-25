@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { expect } from 'chai';
-import { setDefaultTimeout, Given, When, DataTable, Then} from '@cucumber/cucumber';
+import { setDefaultTimeout, Given, When, TableDefinition, Then} from 'cucumber';
 import { AUTHORIZATION_TOKEN, RESPONSE_STATUS, validateExpectedAttributes} from '../common/common.steps';
 import {container} from '../../di/inversify.config';
 import { EventsourcesService, NOTIFICATIONS_CLIENT_TYPES } from '@cdf/notifications-client/dist';
@@ -49,7 +49,7 @@ Given('eventsource {string} exists', async function (name:string) {
     expect(matches).to.be.true;
 });
 
-When('I create an eventsource with attributes', async function (data:DataTable) {
+When('I create an eventsource with attributes', async function (data:TableDefinition) {
     this[EVENTSOURCE_ID]=null;
     this[RESPONSE_STATUS]=null;
     try {
@@ -71,7 +71,7 @@ When('I delete eventsource', async function () {
     await eventsourcesService.deleteEventSource(id, getAdditionalHeaders(this[AUTHORIZATION_TOKEN]));
 });
 
-Then('last eventsource exists with attributes', async function (data:DataTable) {
+Then('last eventsource exists with attributes', async function (data:TableDefinition) {
     this[RESPONSE_STATUS]=null;
     this[EVENTSOURCE_DETAILS]=null;
     const id = this[EVENTSOURCE_ID];

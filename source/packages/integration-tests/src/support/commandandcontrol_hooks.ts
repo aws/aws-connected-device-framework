@@ -1,0 +1,232 @@
+/*********************************************************************************************************************
+ *  Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.                                           *
+ *                                                                                                                    *
+ *  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance    *
+ *  with the License. A copy of the License is located at                                                             *
+ *                                                                                                                    *
+ *      http://www.apache.org/licenses/LICENSE-2.0                                                                    *
+ *                                                                                                                    *
+ *  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES *
+ *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
+ *  and limitations under the License.                                                                                *
+ *********************************************************************************************************************/
+
+import { Before, setDefaultTimeout } from 'cucumber';
+import fs from 'fs';
+
+import { COMMANDANDCONTROL_CLIENT_TYPES, CommandsService } from '@cdf/commandandcontrol-client';
+import { Dictionary } from '@cdf/lambda-invoke';
+
+import { container } from '../di/inversify.config';
+import { listCommands } from '../step_definitions/commandandcontrol/commands.steps';
+import { AUTHORIZATION_TOKEN } from '../step_definitions/common/common.steps';
+import os from 'os';
+
+import AWS = require('aws-sdk');
+import path = require('path');
+import { CommandAndControlProvisioningWorld } from '../step_definitions/commandandcontrol/commandandcontrol.world';
+
+setDefaultTimeout(30 * 1000);
+
+/*
+    Cucumber describes current scenario context as “World”. It can be used to store the state of the scenario
+    context (you can also define helper methods in it). World can be access by using the this keyword inside
+    step functions (that’s why it’s not recommended to use arrow functions).
+ */
+// tslint:disable:no-invalid-this
+// tslint:disable:only-arrow-functions
+
+function getAdditionalHeaders(world:unknown) : Dictionary {
+    return  {
+        Authorization: world[AUTHORIZATION_TOKEN]
+    };
+}
+
+const iot = new AWS.Iot({region: process.env.AWS_REGION});
+const commandsService: CommandsService = container.get(COMMANDANDCONTROL_CLIENT_TYPES.CommandsService);
+
+async function deleteCommands(world:unknown, operations:string[]) {
+    // list all existing commands
+    const commands = await listCommands();
+    for(const op of operations) {
+        const opCommands = commands.filter(c => c.operation === op);
+        if (opCommands?.length > 0) {
+            for(const command of opCommands) {
+                await commandsService.deleteCommand(command.id, getAdditionalHeaders(world));
+            }
+        }
+    }
+}
+
+async function createThing(thingName:string) : Promise<void> {
+    const rc = await iot.createKeysAndCertificate({
+        setAsActive: true,
+    }).promise();
+
+    const tmpCertDir = path.join(os.tmpdir(), 'cac-certs');
+    if (!fs.existsSync(tmpCertDir)) {
+        fs.mkdirSync(tmpCertDir);
+    }
+    fs.writeFileSync(path.join(tmpCertDir, `${thingName}-certificate.pem.crt`), rc.certificatePem);
+    fs.writeFileSync(path.join(tmpCertDir, `${thingName}-private.pem.key`), rc.keyPair.PrivateKey);
+    fs.writeFileSync(path.join(tmpCertDir, `${thingName}-public.pem.key`), rc.keyPair.PublicKey);
+
+    try {
+        await iot.getPolicy({
+            policyName: process.env.COMMANDANDCONTROL_TESTDEVICE_POLICYNAME
+        }).promise();
+    } catch (e) {
+        await iot.createPolicy({
+            policyName: process.env.COMMANDANDCONTROL_TESTDEVICE_POLICYNAME,
+            policyDocument: process.env.COMMANDANDCONTROL_TESTDEVICE_POLICYDOCUMENT
+        }).promise();
+    }
+
+    await iot.attachPrincipalPolicy({
+        policyName: process.env.COMMANDANDCONTROL_TESTDEVICE_POLICYNAME,
+        principal: rc.certificateArn,
+    }).promise();
+
+    const rt = await iot.createThing({
+        thingName,
+    }).promise();
+
+    await iot.attachThingPrincipal({
+        thingName: rt.thingName,
+        principal: rc.certificateArn,
+    }).promise();
+
+}
+
+async function deleteThing(thingName:string) {
+    try {
+        const jobs = await iot.listJobExecutionsForThing({thingName}).promise();
+        if ((jobs?.executionSummaries?.length??0)>0) {
+            jobs.executionSummaries.forEach(async (job) => {
+                try {
+                    await iot.deleteJob({jobId: job.jobId, force: true}).promise();
+                } catch (e) {
+                    // ignore
+                }
+            });
+        }
+    } catch (e) {
+        // ignore
+    }
+
+    let certificateId;
+    try {
+        const thingPrincipals = await iot.listThingPrincipals({thingName}).promise();
+        const certArn = thingPrincipals.principals[0];
+        certificateId = certArn.split('/')[1];
+
+        const policies = await iot.listPrincipalPolicies({principal: certArn}).promise();
+        policies.policies.forEach(async (policy) => {
+            await iot.detachPrincipalPolicy({principal: certArn, policyName:policy.policyName}).promise();
+            try {
+                await iot.deletePolicy({policyName:policy.policyName}).promise();
+            } catch (e) {
+                // ignore
+            }
+        });
+        await iot.detachThingPrincipal({thingName, principal: certArn}).promise();
+    } catch (e) {
+        if (e.code!=='ResourceNotFoundException') {
+            throw e;
+        }
+        // ignore
+    }
+    
+    try {
+        if (certificateId!==undefined) {
+            await iot.updateCertificate({certificateId, newStatus: 'INACTIVE'}).promise();
+        }
+    } catch (e) {
+        // ignore
+    }
+    
+    try {
+        if (certificateId!==undefined) {
+            await iot.deleteCertificate({certificateId}).promise();
+        }
+    } catch (e) {
+        // ignore
+    }
+
+    try {
+        await iot.deleteThing({thingName}).promise();
+    } catch (e) {
+        // ignore
+    }
+}
+
+async function createThingGroup(thingGroupName:string, ... thingNames:string[]) {
+    await iot.createThingGroup({
+        thingGroupName,
+    }).promise();
+
+    for(const thingName of thingNames) {
+        await iot.addThingToThingGroup({
+            thingGroupName,
+            thingName,
+        }).promise();
+    }
+}
+
+async function deleteThingGroup(thingGroupName:string) {
+    await iot.deleteThingGroup({
+        thingGroupName,
+    }).promise();
+}
+
+async function teardown_commandandcontrol_topics_feature(world:unknown) {
+    await deleteCommands(world, ['cdf-integration-test-reboot']);
+}
+
+Before({tags: '@setup_commandandcontrol_topics'}, async function () {
+    await teardown_commandandcontrol_topics_feature(this);
+});
+
+Before({tags: '@teardown_commandandcontrol_topics'}, async function () {
+    await teardown_commandandcontrol_topics_feature(this);
+});
+
+async function teardown_commandandcontrol_shadows_feature(world:unknown) {
+    await deleteCommands(world, ['cdf-integration-test-stats']);
+}
+
+Before({tags: '@setup_commandandcontrol_shadows'}, async function () {
+    await teardown_commandandcontrol_shadows_feature(this);
+});
+
+Before({tags: '@teardown_commandandcontrol_shadows'}, async function () {
+    await teardown_commandandcontrol_shadows_feature(this);
+});
+
+async function teardown_commandandcontrol_jobs_feature(world:CommandAndControlProvisioningWorld) {
+    await deleteCommands(world, ['cdf-integration-test-ota']);
+    await deleteThing('cdf-integration-test-cac-device1');
+    await deleteThing('cdf-integration-test-cac-device2');
+    await deleteThingGroup('cdf-integration-test-cac-group1');
+    
+    if (world.jobsTestClients) {
+        Object.entries(world.jobsTestClients).forEach(async ([thingName, client]) => {
+            await client.disconnect();
+            world.jobsTestClients[thingName] = undefined;
+        });
+        delete world.jobsTestClients;
+    }
+    world = undefined;
+}
+
+
+Before({tags: '@setup_commandandcontrol_jobs'}, async function () {
+    await teardown_commandandcontrol_jobs_feature(this);
+    await createThing('cdf-integration-test-cac-device1');
+    await createThing('cdf-integration-test-cac-device2');
+    await createThingGroup('cdf-integration-test-cac-group1', 'cdf-integration-test-cac-device1', 'cdf-integration-test-cac-device2');
+});
+
+Before({tags: '@teardown_commandandcontrol_jobs'}, async function () {
+    await teardown_commandandcontrol_jobs_feature(this);
+});

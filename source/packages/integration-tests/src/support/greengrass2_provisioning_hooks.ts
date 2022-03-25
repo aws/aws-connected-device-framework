@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import { Before, setDefaultTimeout } from '@cucumber/cucumber';
+import { Before, setDefaultTimeout } from 'cucumber';
 
 import {
     DescribeInstancesCommand, EC2Client, TerminateInstancesCommand

@@ -1,0 +1,893 @@
+openapi: '3.0.2'
+info:
+  title: CDF Command & Control Service
+  description: |
+    This service provides an opinionated zero code approach to building (the cloud-side portion of) command and control flows.
+
+    A user is able to configure different types of commands applicable to specific thing types, such as reboot, along with specifying optional payloads and parameters, whether a reply is expected, and what delivery method the command should utilize. 
+
+    The user has the option to have the command delivered via custom MQTT topics if they want the command to be actioned if the device is currently online only, via an AWS IoT Device Shadow if they require the device to action the command even if experiencing intermittent periods of connectivity, or as an AWS IoT Job if the user requires extended workflow functionality such as rollout, abort, and timeout functionality.
+
+    The command supports sending to a variety of different targets regardless of the delivery method configured: a thing or list of things, a thing group or list of thing groups, a dynamic group or list of dynamic groups, an asset library device or list of devices, an asset library group or list of groups, an asset library query, or any combination of.
+
+    If the command is expected to send a reply, the reply is associated with the original request, making retrieval of the reply simple regardless of the delivery method used.
+
+    All with zero code!
+
+  version: '1.0'
+
+tags:
+  - name: Commands
+    description: |
+      A command defines the what and how a command message is to be sent to a device.
+  - name: Messages
+    description: |
+      A message represents an instance of a command sent to a specific device.
+  - name: Replies
+    description: |
+      A reply represents the reply to a specific message sent to a device if the command was configured to expect a reply.
+
+paths:
+  /commands:
+    post:
+      tags:
+        - Commands
+      summary: Define a new command
+      requestBody:
+        required: true
+        content:
+          application/vnd.aws-cdf-v1.0+json:
+            schema:
+              $ref: '#/components/schemas/Command'
+            examples:
+              simple_command_via_shadow:
+                summary: Send a simple command request via a shadow.
+                value:
+                  name: reboot
+                  deliveryMethod:
+                    type: SHADOW
+              command_with_config_via_topic:
+                summary: Send a command request with a body via a topic to a device that must be online.
+                value:
+                  name: set_temperature
+                  payloadTemplate: "{\"temperature\":\"{value}\"}"
+                  payloadParams:
+                    - value
+                  deliveryMethod:
+                    type: TOPIC
+                    onlineOnly: true
+              command_expecting_reply_via_topic:
+                summary: Send a command request, expecting a response, via a topic.
+                value:
+                  name: set_temperature
+                  payloadTemplate: "{\"temperature\":\"{value}\"}"
+                  payloadParams:
+                    - value
+                  deliveryMethod:
+                    type: TOPIC
+                    expectReply: true
+              command_via_topic_with_custom_rollout_config:
+                summary: Send a command request via a Job with a payload containing a pre-signed url, custom rollout config, and custom abort config specified.
+                value:
+                  name: enable_logging
+                  payloadTemplate: "{\"logging\":{\"enabled\":true,\"level\":\"{loggingLevel}\"},\"uploadUrl\":\"${aws:iot:s3-presigned-url:https://s3.region.amazonaws.com/bucket/logs}\"}"
+                  payloadParams:
+                    - loggingLevel
+                  deliveryMethod:
+                    type: JOB
+                    expectReply: true
+      responses:
+        '200':
+          description: Command that was created
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: '#/components/schemas/Command'
+              examples:
+                simple_command_via_shadow_response:
+                  $ref: '#/components/examples/simple_command_via_shadow_response'
+                command_with_config_via_topic_response:
+                  $ref: '#/components/examples/command_with_config_via_topic_response'
+                command_expecting_reply_via_topic_response:
+                  $ref: '#/components/examples/command_expecting_reply_via_topic_response'
+                command_via_topic_with_custom_rollout_config_response:
+                  $ref: '#/components/examples/command_via_topic_with_custom_rollout_config_response'
+    get:
+      parameters:
+        - $ref: '#/components/parameters/tag'
+        - $ref: '#/components/parameters/fromCommandIdExclusive'
+        - $ref: '#/components/parameters/count'
+      tags:
+        - Commands
+      summary: Returns a list of commands.
+      responses:
+        '200':
+          description: List of commands.
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: '#/components/schemas/CommandList'
+              examples:
+                list_of_commands_response:
+                  $ref: '#/components/examples/list_of_commands_response'     
+  
+  /commands/{commandId}:
+    parameters:
+      - $ref: '#/components/parameters/commandId'
+    get:
+      tags:
+        - Commands
+      summary: Returns a specific command.
+      responses:
+        '200':
+          description: Command that was created
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: '#/components/schemas/Command'
+              examples:
+                simple_command_via_shadow_response:
+                  $ref: '#/components/examples/simple_command_via_shadow_response'
+                command_with_config_via_topic_response:
+                  $ref: '#/components/examples/command_with_config_via_topic_response'
+                command_expecting_reply_via_topic_response:
+                  $ref: '#/components/examples/command_expecting_reply_via_topic_response'
+                command_via_topic_with_custom_rollout_config_response:
+                  $ref: '#/components/examples/command_via_topic_with_custom_rollout_config_response'
+
+
+  /commands/{commandId}/messages:
+    parameters:
+      - $ref: '#/components/parameters/commandId'
+    post:
+      tags:
+        - Messages
+      summary: Sends a new message of a specific command to a target.
+      requestBody:
+        required: true
+        content:
+          application/vnd.aws-cdf-v1.0+json:
+            schema:
+              $ref: '#/components/schemas/Message'
+            examples:
+              send_simple_message:
+                summary: Send a message for a command with no payload params required.
+                value:
+                  commandId: jNBQ0RFYlZ
+                  targets:
+                    awsIoT:
+                      thingNames: ["my-thing-1"]
+              send_message_with_params:
+                summary: Send a message for a command that requires params providing.
+                value:
+                  commandId: jNBQ0RFYlZ
+                  targets:
+                    awsIoT:
+                      thingNames: ["my-thing-1"]
+                  payloadParamValues:
+                    loggingLevel: debug
+              send_message_with_multiple_targets:
+                summary: Send a message for a command with a combination of targets.
+                value:
+                  commandId: jNBQ0RFYlZ
+                  targets:
+                    awsIoT:
+                      thingNames: ["my-thing-1"]
+                      thingGroupNames: ["my-group-1","my-group-2"]
+                    assetLibrary:
+                      deviceIds: ["device001"]
+                      groupPaths: ["/devices/provisioned"]
+              send_message_with_asset_library_query:
+                summary: Send a message for a command using an Asset Library query to determine the targets.
+                value:
+                  commandId: jNBQ0RFYlZ
+                  targets:
+                    assetLibrary:
+                      query:
+                        ancestorPath: /devices/bulb/color
+                        eq:
+                          - field: firmware
+                            value: 1.1.23
+                          - traversals:
+                              - relation: located_in
+                                direction: out
+                            field: name
+                            value: Colorado
+      responses:
+        '200':
+          description: Message that was created
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: '#/components/schemas/Message'
+              examples:
+                simple_message_created_response:
+                  $ref: '#/components/examples/simple_message_response'
+                send_message_with_params_response:
+                  $ref: '#/components/examples/send_message_with_params_response'
+                send_message_with_multiple_targets_response:
+                  $ref: '#/components/examples/send_message_with_multiple_targets_response'
+                send_message_with_asset_library_query_response:
+                  $ref: '#/components/examples/send_message_with_asset_library_query_response'
+
+    get:
+      parameters:
+        - $ref: '#/components/parameters/fromCreatedAtExclusive'
+        - $ref: '#/components/parameters/count'      
+      tags:
+        - Messages
+      summary: Returns a list of messages for a given command.
+      responses:
+        '200':
+          description: List of message.
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: '#/components/schemas/MessageList'
+              examples:
+                list_of_messages_response:
+                  $ref: '#/components/examples/list_of_messages_response'
+
+  /messages/{messageId}:
+    parameters:
+      - $ref: '#/components/parameters/messageId'
+    get:
+      tags:
+        - Messages
+      summary: Returns a specific message.
+      responses:
+        '200':
+          description: Message that was created
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: '#/components/schemas/Message'
+              examples:
+                simple_message_response:
+                  $ref: '#/components/examples/simple_message_response'
+                send_message_with_params_response:
+                  $ref: '#/components/examples/send_message_with_params_response'
+                send_message_with_multiple_targets_response:
+                  $ref: '#/components/examples/send_message_with_multiple_targets_response'
+                send_message_with_asset_library_query_response:
+                  $ref: '#/components/examples/send_message_with_asset_library_query_response'
+
+  /messages/{messageId}/recipients:
+    parameters:
+      - $ref: '#/components/parameters/messageId'
+    get:
+      parameters:
+        - $ref: '#/components/parameters/fromThingNameExclusive'
+        - $ref: '#/components/parameters/count'
+      tags:
+        - Replies
+      summary: Returns a list of recipients of a specific message.
+      responses:
+        '200':
+          description: List of message recipients.
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: '#/components/schemas/RecipientList'
+              examples:
+                list_of_replies_response:
+                  $ref: '#/components/examples/list_of_recipients_response'
+
+  /messages/{messageId}/recipients/{thingName}:
+    parameters:
+      - $ref: '#/components/parameters/messageId'
+      - $ref: '#/components/parameters/thingNamePath'
+    get:
+      tags:
+        - Replies
+      summary: Returns a a specific recipient of a specific message.
+      responses:
+        '200':
+          description: Message recipient.
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: '#/components/schemas/Recipient'
+        '404':
+          description: Message and/o recipient not found.
+  
+  /messages/{messageId}/recipients/{thingName}/replies:
+    parameters:
+      - $ref: '#/components/parameters/messageId'
+      - $ref: '#/components/parameters/thingNamePath'
+    get:
+      parameters:
+        - $ref: '#/components/parameters/fromReceivedAtExclusive'
+        - $ref: '#/components/parameters/count'
+      tags:
+        - Replies
+      summary: Returns a list of replies of a specific message if the command was configured to expect a reply.
+      responses:
+        '200':
+          description: List of message replies.
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: '#/components/schemas/ReplyList'
+              examples:
+                list_of_replies_response:
+                  $ref: '#/components/examples/list_of_replies_response'
+        '409':
+          description: Reply not expected.
+  
+
+components:
+  parameters:
+    commandId:
+      in: path
+      name: commandId
+      description: ID of command.
+      required: true
+      schema:
+        type: string
+    messageId:
+      in: path
+      name: messageId
+      description: ID of message.
+      required: true
+      schema:
+        type: string
+    thingNamePath:
+      in: path
+      name: thingName
+      description: Thing name.
+      required: true
+      schema:
+        type: string
+    thingNameQuery:
+      in: query
+      name: thingName
+      description: Optionally filter by thing name.
+      schema:
+        type: string
+    fromCommandIdExclusive:
+      in: query
+      name: fromCommandIdExclusive
+      description: ID of command to paginate from (exclusive).
+      schema:
+        type: string
+    fromCreatedAtExclusive:
+      in: query
+      name: fromCreatedAtExclusive
+      description: Time (epoch) to paginate from (exclusive).
+      schema:
+        type: number
+    fromThingNameExclusive:
+      in: query
+      name: fromThingNameExclusive
+      description: Thing name to paginate from (exclusive).
+      schema:
+        type: string
+    fromReceivedAtExclusive:
+      in: query
+      name: fromReceivedAtExclusive
+      description: Time (epoch) to paginate from (exclusive).
+      schema:
+        type: number
+    count:
+      in: query
+      name: count
+      description: Number of results to return.
+      schema:
+        type: integer
+    tag:
+      name: tag
+      in: query
+      description: Filter based on a tag, where the key and value are separated by a colon. Both key and value should be url component encoded. E.g. `?tag=key:value`.
+      explode: true
+      schema:
+        type: array
+        items:
+          type: string
+
+  schemas:
+
+    EditableCommand:
+      type: object
+      properties:
+        operation:
+          type: string
+        deliveryMethod:
+          type: object
+          properties:
+            value:
+              oneOf:
+                - $ref: '#/components/schemas/TopicDeliveryMethod'
+                - $ref: '#/components/schemas/ShadowDeliveryMethod'
+                - $ref: '#/components/schemas/JobDeliveryMethod'
+              discriminator:
+                propertyName: type
+        payloadTemplate:
+          type: string
+        payloadParams:
+          type: array
+          items:
+            type: string
+        enabled:
+          type: boolean
+          
+    Command:
+      allOf:
+        - $ref: '#/components/schemas/EditableCommand'
+        - type: object
+          properties:
+            id:
+              type: string
+              readOnly: true
+            createdAt:
+              type: string
+              format: date-time
+              readOnly: true
+            updatedAt:
+              type: string
+              format: date-time
+              readOnly: true
+    
+    CommandList:
+      type: object
+      properties:
+        commands:
+          type: array
+          items:
+            $ref: '#/components/schemas/Command'
+        pagination:
+          type: object
+          description: Pagination details
+          properties:
+            lastEvaluated:
+              type: object
+              properties:
+                commandId:
+                  type: string
+            count:
+              type: number
+
+    DeliveryMethod:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+          enum:
+            - TOPIC
+            - SHADOW
+            - JOB
+        expectReply:
+          type: boolean
+          default: false
+          description: If true, a correlation id will be generated as part of the payload, and the response will automatically associated with the original request.
+
+    TopicDeliveryMethod:
+      allOf:
+        - $ref: '#/components/schemas/DeliveryMethod'
+        - type: object
+          properties:
+            onlineOnly:
+              type: boolean
+              default: false
+              description: If true, the command will only be sent if the target device is online.  Note that this feature is dependent on whether Fleet Indexing is enabled or not for the account (optional as has a cost).
+
+    ShadowDeliveryMethod:
+      allOf:
+        - $ref: '#/components/schemas/DeliveryMethod'
+
+    JobDeliveryMethod:
+      allOf:
+        - $ref: '#/components/schemas/DeliveryMethod'
+        - type: object
+          properties:
+            presignedUrlConfig:
+              type: object
+              properties:
+                expiresInSec:
+                  type: number
+                  description: Configuration information for pre-signed S3 URLs that may be referenced within the command payload. How long (in seconds) pre-signed URLs are valid. Valid values are 60 - 3600, the default value is 3600 seconds. Pre-signed URLs are generated when Jobs receives an MQTT request for the job document.
+            jobExecutionsRolloutConfig:
+              type: object
+              description: Allows you to create a staged rollout of the command.
+              properties:
+                maximumPerMinute:
+                  type: number
+                  description: The maximum number of things that will be notified of a pending job, per minute. This parameter allows you to create a staged rollout.
+                exponentialRate:
+                  type: object
+                  description: The rate of increase for a job rollout. This parameter allows you to define an exponential rate for a job rollout.
+                  properties:
+                    baseRatePerMinute:
+                      type: number
+                      description: The minimum number of things that will be notified of a pending job, per minute at the start of job rollout. This parameter allows you to define the initial rate of rollout.
+                    incrementFactor:
+                      type: number
+                      description: The exponential factor to increase the rate of rollout for a job. AWS IoT supports up to one digit after the decimal (for example, 1.5, but not 1.55).
+                    rateIncreaseCriteria:
+                      type: object
+                      description: The criteria to initiate the increase in rate of rollout for a job.
+                      properties:
+                        numberOfNotifiedThings:
+                          type: number
+                          description: The threshold for number of notified things that will initiate the increase in rate of rollout.
+                        numberOfSucceededThings:
+                          type: number
+                          description: The threshold for number of succeeded things that will initiate the increase in rate of rollout.
+            abortConfig:
+              type: object
+              description: Allows you to create criteria to abort a command.
+              properties:
+                criteriaList:
+                  type: array
+                  description: The list of criteria that determine when and how to abort the command.
+                  items:
+                    type: object
+                    properties:
+                      failureType:
+                        type: string
+                        description: The type of job execution failures that can initiate a job abort.
+                      action:
+                        type: string
+                        description: The type of job action to take to initiate the job abort.
+                      thresholdPercentage:
+                        type: number
+                        description: The minimum percentage of job execution failures that must occur to initiate the job abort. AWS IoT supports up to two digits after the decimal (for example, 10.9 and 10.99, but not 10.999).
+                      minNumberOfExecutedThings:
+                        type: number
+                        description: The minimum number of things which must receive job execution notifications before the job can be aborted.
+            timeoutConfig:
+              type: object
+              description: Specifies the amount of time each device has to finish its execution of the job. The timer is started when the job execution status is set to IN_PROGRESS . If the job execution status is not set to another terminal state before the time expires, it will be automatically set to TIMED_OUT .
+              properties:
+                inProgressTimeoutInMinutes:
+                  type: number
+                  description: Specifies the amount of time, in minutes, this device has to finish execution of this job. The timeout interval can be anywhere between 1 minute and 7 days (1 to 10080 minutes). The in progress timer can't be updated and will apply to all job executions for the job. Whenever a job execution remains in the IN_PROGRESS status for longer than this interval, the job execution will fail and switch to the terminal TIMED_OUT status.
+
+    NewMessage:
+      type: object
+      properties:
+        commandId:
+          type: string
+          readOnly: true
+        payloadParamValues:
+          type: object
+          additionalProperties: 
+            type: object
+            properties:
+              value:
+                oneOf:
+                  - type: string
+                  - type: integer
+                  - type: boolean
+        targets:
+          type: object
+          properties:
+            awsIot:
+              type: object
+              properties:
+                thingNames:
+                  type: array
+                  items: 
+                    type: string
+                thingGroupNames:
+                  type: array
+                  items: 
+                    type: string
+            assetLibrary:
+              type: object
+              properties:
+                deviceIds:
+                  type: array
+                  items: 
+                    type: string
+                groupPaths:
+                  type: array
+                  items: 
+                    type: string
+                query:
+                  type: string
+
+    Message:
+      allOf:
+        - $ref: '#/components/schemas/NewMessage'
+        - type: object
+          properties:
+            id:
+              type: string
+              readOnly: true
+            status:
+              type: string
+              enum:
+                - identifying_targets
+                - sending
+                - awaiting_replies
+                - success
+                - failed
+              readOnly: true
+            createdAt:
+              type: string
+              format: date-time
+              readOnly: true
+            updatedAt:
+              type: string
+              format: date-time
+              readOnly: true
+
+    MessageList:
+      type: object
+      properties:
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/Message'
+        pagination:
+          type: object
+          description: Pagination details
+          properties:
+            lastEvaluated:
+              type: object
+              properties:
+                createdAt:
+                  type: number
+            count:
+              type: number
+
+
+    Recipient:
+      type: object
+      properties:
+        thingName:
+          type: string
+          readOnly: true
+        status:
+          type: string
+          enum:
+            - pending
+            - success
+            - failed
+          readOnly: true
+        statusMessage:
+          type: string
+          readOnly: true
+        correlationId:
+          type: string
+          readOnly: true
+
+    RecipientList:
+      type: object
+      properties:
+        recipients:
+          type: array
+          items:
+            $ref: '#/components/schemas/Recipient'
+        pagination:
+          type: object
+          description: Pagination details
+          properties:
+            lastEvaluated:
+              type: object
+              properties:
+                thingName:
+                  type: string
+            count:
+              type: number
+
+    Reply:
+      type: object
+      properties:
+        receivedAt:
+          type: string
+          format: date-time
+          readOnly: true
+        action:
+          type: string
+          enum:
+            - accepted
+            - rejected
+            - reply
+          readOnly: true
+        payload:
+          description: The reply. Can be any value.
+          type: object
+
+
+    ReplyList:
+      type: object
+      properties:
+        replies:
+          type: array
+          items:
+            $ref: '#/components/schemas/Reply'
+        pagination:
+          type: object
+          description: Pagination details
+          properties:
+            lastEvaluated:
+              type: object
+              properties:
+                receivedAt:
+                  type: number
+            count:
+              type: number
+
+  examples:
+
+    simple_command_via_shadow_response:
+      summary: Response of sending a simple command request via a shadow.
+      value:
+        id: Yb9VrtApSo
+        name: reboot
+        deliveryMethod:
+          type: SHADOW
+        createdAt: "2021-07-21T17:32:28Z"
+    command_with_config_via_topic_response:
+      summary: Response of sending a command request with a body via a topic to a device that must be online.
+      value:
+        id: Yb9VrtApSo
+        name: set_temperature
+        payloadTemplate: "{\"temperature\":\"${value}\"}"
+        payloadParams:
+          - value
+        deliveryMethod:
+          type: TOPIC
+          onlineOnly: true
+        createdAt: "2021-07-21T17:32:28Z"
+    command_expecting_reply_via_topic_response:
+      summary: Response of sending a command request, expecting a response, via a topic.
+      value:
+        id: Yb9VrtApSo
+        name: set_temperature
+        payloadTemplate: "{\"temperature\":\"${value}\"}"
+        payloadParams:
+          - value:
+        deliveryMethod:
+          type: TOPIC
+          expectReply: true
+        createdAt: "2021-07-21T17:32:28Z"
+    command_via_topic_with_custom_rollout_config_response:
+      summary: Response of sending a command request via a Job with a payload containing a pre-signed url, custom rollout config, and custom abort config specified.
+      value:
+        id: Yb9VrtApSo
+        name: enable_logging
+        payloadTemplate: "{\"logging\":{\"enabled\":true,\"level\":\"${loggingLevel}\"},\"uploadUrl\":\"${aws:iot:s3-presigned-url:${s3Url}}\"}"
+        payloadParams:
+          - loggingLevel:
+          - s3Url
+        deliveryMethod:
+          type: TOPIC
+          expectReply: true
+        createdAt: "2021-07-21T17:32:28Z"
+
+    list_of_commands_response:
+      summary: List of commands.
+      value:
+        commands:
+          - id: Yb9VrtApSo
+            name: enable_logging
+            payloadTemplate: "{\"logging\":{\"enabled\":true,\"level\":\"${loggingLevel}\"},\"uploadUrl\":\"${aws:iot:s3-presigned-url:https://s3.region.amazonaws.com/bucket/logs}\"}"
+            payloadParams:
+              - loggingLevel:
+            deliveryMethod:
+              type: TOPIC
+              expectReply: true
+            createdAt: "2021-07-21T17:32:28Z"
+          - id: UhoXNlnVnk
+            name: set_temperature
+            payloadTemplate: "{\"temperature\":${value}}"
+            payloadParams:
+              - value:
+            deliveryMethod:
+              type: TOPIC
+              onlineOnly: true
+            createdAt: "2021-07-21T17:32:28Z"
+        pagination:
+          lastEvaluated:
+            commandId: uwiJSIaoa
+          count: 2
+
+    simple_message_response:
+      summary: Response of a message for a command with no params required.
+      value:
+        id: Yb9VrtApSo
+        commandId: jNBQ0RFYlZ
+        targets:
+          awsIoT:
+            thingNames: ["my-thing-1"]
+        createdAt: "2021-07-21T17:32:28Z"
+    send_message_with_params_response:
+      summary: Response of a message for a command that requires params providing.
+      value:
+        id: UhoXNlnVnk
+        commandId: jNBQ0RFYlZ
+        targets:
+          awsIoT:
+            thingNames: ["my-thing-1"]
+        payloadParamValues:
+          loggingLevel: debug
+        createdAt: "2021-07-21T17:32:28Z"
+    send_message_with_multiple_targets_response:
+      summary: Response of a message for a command with a combination of targets.
+      value:
+        id: Yb9VrtApSo
+        commandId: jNBQ0RFYlZ
+        targets:
+          awsIoT:
+            thingNames: ["my-thing-1"]
+            groupNames: ["my-group-1","my-group-2"]
+          assetLibrary:
+            deviceIds: ["device001"]
+            groupPaths: ["/devices/provisioned"]
+        createdAt: "2021-07-21T17:32:28Z"
+    send_message_with_asset_library_query_response:
+      summary: Response of a message for a command using an Asset Library query to determine the targets.
+      value:
+        id: Yb9VrtApSo
+        commandId: jNBQ0RFYlZ
+        targets:
+          assetLibrary:
+            query:
+              ancestorPath: /devices/bulb/color
+              eq:
+                - field: firmware
+                  value: 1.1.23
+                - traversals:
+                    - relation: located_in
+                      direction: out
+                  field: name
+                  value: Colorado
+        createdAt: "2021-07-21T17:32:28Z"
+
+    list_of_messages_response:
+      summary: List of messages.
+      value:
+        messages:
+          - id: Yb9VrtApSo
+            commandId: jNBQ0RFYlZ
+            targets:
+              assetLibrary:
+                query:
+                  ancestorPath: /devices/bulb/color
+                  eq:
+                    - field: firmware
+                      value: 1.1.23
+                    - traversals:
+                        - relation: located_in
+                          direction: out
+                      field: name
+                      value: Colorado
+            createdAt: "2021-07-21T17:32:28Z"
+          - id: IUrPdtBOq6
+            commandId: jNBQ0RFYlZ
+            targets:
+              awsIoT:
+                thingNames: ["my-thing-1"]
+            payloadParamValues:
+              loggingLevel: debug
+            createdAt: "2021-07-21T17:32:28Z"
+        pagination:
+
+    list_of_recipients_response:
+      summary: List of recipients.
+      value:
+        recipients:
+          - thingName: my-thing-1
+            status: success
+            correlationId: KS5521Xmy8
+          - thingName: my-thing-2
+            status: success
+            correlationId: L6BpKtry7u
+        pagination:
+
+    list_of_replies_response:
+      summary: List of replies.
+      value:
+        replies:
+          - receivedAt: "2021-07-21T17:32:28Z"
+            action: accepted
+          - receivedAt: "2021-07-21T17:33:45Z"
+            action: reply
+          - payload:
+              color: red
+        pagination:

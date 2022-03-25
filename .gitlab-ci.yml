@@ -17,6 +17,9 @@ variables:
 .default-run-condition: &default-run-condition
   - if: ($CI_COMMIT_BRANCH == "main" && $CI_COMMIT_MESSAGE != /.*\[skip ci\].*/)
 
+.branch-run-condition: &branch-run-condition
+  - if: ($CI_COMMIT_BRANCH != "main")
+
 .common-build-steps: &common-build-steps # install dependencies
   - cd ${CI_PROJECT_DIR}/source
   - rush update
@@ -120,7 +123,8 @@ buildLambaLayersZip:
     paths:
       - source/infrastructure/lambdaLayers/openssl/build/build.zip
 
-test:
+
+branchTest:
   rules:
     - *default-run-condition
   stage: test
@@ -135,6 +139,16 @@ test:
     - cd ${CI_PROJECT_DIR}
     - bash -c source/cicd/buildproject_postbuild.bash
   <<: *common-artifacts
+
+test:
+  rules:
+    - *branch-run-condition
+  stage: test
+  script:
+    - *common-build-steps
+    - rush build
+    - export RUSH_PARALLELISM=1
+    - rush test
 
 deployStage:
   rules:
@@ -190,13 +204,13 @@ deployLive:
     - bash -c source/cicd/deployproject_postbuild.bash
 
 upload:
-  stage: upload
   before_script:
     - yum update -y
     - yum install -y git
   image:
     name: public.ecr.aws/amazonlinux/amazonlinux:2
     entrypoint: [""]
+  stage: upload
   rules:
     - if: ($CI_COMMIT_BRANCH == "feat_command_and_control")
   script:

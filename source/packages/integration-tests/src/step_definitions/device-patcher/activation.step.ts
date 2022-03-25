@@ -14,7 +14,7 @@
 import 'reflect-metadata';
 import chai_string = require('chai-string');
 import { expect, use } from 'chai';
-import {Given, When, Then, setDefaultTimeout, DataTable} from '@cucumber/cucumber';
+import {Given, When, Then, setDefaultTimeout, TableDefinition} from 'cucumber';
 
 import { ActivationService } from '@cdf/device-patcher-client';
 import { DEVICE_PATCHER_CLIENT_TYPES } from '@cdf/device-patcher-client';
@@ -56,7 +56,7 @@ When('I delete the activation for {string} edge device', async function(_deviceI
     }
 });
 
-Then('an activation exists for {string} with attributes', async function(_deviceId: string, data:DataTable) {
+Then('an activation exists for {string} with attributes', async function(_deviceId: string, data:TableDefinition) {
     const activationId = this['activation'].activationId;
     let activation;
     try {
@@ -68,7 +68,7 @@ Then('an activation exists for {string} with attributes', async function(_device
     validateExpectedAttributes(activation, data);
 });
 
-Then('an activation is created with attributes', async function(data:DataTable) {
+Then('an activation is created with attributes', async function(data:TableDefinition) {
     const activation = this['activation'];
     validateExpectedAttributes(activation, data);
 });

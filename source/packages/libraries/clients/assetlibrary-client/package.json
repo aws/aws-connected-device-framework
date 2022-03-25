@@ -52,8 +52,6 @@
     "@types/node": "14.6.1"
   },
   "jest": {
-    "globals": {
-               },
     "roots": [
       "<rootDir>/src"
     ],

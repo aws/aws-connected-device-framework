@@ -15,7 +15,7 @@ import { fail } from 'assert';
 import chaiUuid = require('chai-uuid');
 use(chaiUuid);
 
-import { setDefaultTimeout, When, DataTable, Then, Given} from '@cucumber/cucumber';
+import { setDefaultTimeout, When, TableDefinition, Then, Given} from 'cucumber';
 import { AUTHORIZATION_TOKEN, RESPONSE_STATUS, validateExpectedAttributes} from '../common/common.steps';
 import {container} from '../../di/inversify.config';
 import { EventsourcesService, EventsService, MessagesDebugService, NOTIFICATIONS_CLIENT_TYPES, SubscriptionsService } from '@cdf/notifications-client/dist';
@@ -68,7 +68,7 @@ Given('I am using subscription for principal {string} user {string}', async func
     expect(this[SUBSCRIPTION_ID], 'SUBSCRIPTION_ID').to.not.be.undefined;
 });
 
-When('I create a subscription with attributes', async function (data:DataTable) {
+When('I create a subscription with attributes', async function (data:TableDefinition) {
     this[SUBSCRIPTION_ID]=null;
     this[RESPONSE_STATUS]=null;
     try {
@@ -79,7 +79,7 @@ When('I create a subscription with attributes', async function (data:DataTable) 
     }
 });
 
-When('I update subscription with attributes', async function (data:DataTable) {
+When('I update subscription with attributes', async function (data:TableDefinition) {
     this[SUBSCRIPTION_ID]=null;
     this[RESPONSE_STATUS]=null;
     try {
@@ -89,7 +89,7 @@ When('I update subscription with attributes', async function (data:DataTable) {
     }
 });
 
-When('I send the following iotcore message', async function (data:DataTable) {
+When('I send the following iotcore message', async function (data:TableDefinition) {
     try {
         const d = data.rowsHash();
         const params:SimulateIoTCoreMessageRequest = {
@@ -102,7 +102,7 @@ When('I send the following iotcore message', async function (data:DataTable) {
     }
 });
 
-Then('last subscription exists with attributes', async function (data:DataTable) {
+Then('last subscription exists with attributes', async function (data:TableDefinition) {
     this[RESPONSE_STATUS]=null;
     this[SUBSCRIPTION_DETAILS]=null;
     const id = this[SUBSCRIPTION_ID];

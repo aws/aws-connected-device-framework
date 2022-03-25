@@ -21,6 +21,7 @@ import {provisioningContainerModule} from '@cdf/provisioning-client';
 import {notificationsContainerModule} from '@cdf/notifications-client';
 import {greengrass2ProvisioningContainerModule} from '@cdf/greengrass2-provisioning-client';
 import {devicePatcherContainerModule} from '@cdf/device-patcher-client';
+import {commandAndControlContainerModule} from '@cdf/commandandcontrol-client';
 
 
 // Load everything needed to the Container
@@ -34,3 +35,4 @@ container.load(provisioningContainerModule);
 container.load(notificationsContainerModule);
 container.load(greengrass2ProvisioningContainerModule);
 container.load(devicePatcherContainerModule)
+container.load(commandAndControlContainerModule);
