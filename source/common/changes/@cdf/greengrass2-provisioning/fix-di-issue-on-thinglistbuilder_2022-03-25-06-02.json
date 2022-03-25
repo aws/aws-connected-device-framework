@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/greengrass2-provisioning",
+      "comment": "should load thing-list-module after loading iot",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/greengrass2-provisioning",
+  "email": "willsia@amazon.com"
+}
