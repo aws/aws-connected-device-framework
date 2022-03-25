@@ -13,19 +13,19 @@
 import 'reflect-metadata';
 import '@cdf/config-inject';
 
-import {Container, decorate, injectable, interfaces} from 'inversify';
+import { Container, decorate, injectable, interfaces } from 'inversify';
 
-import {DynamoDBClient} from '@aws-sdk/client-dynamodb';
-import {GreengrassV2Client} from '@aws-sdk/client-greengrassv2';
-import {IoTClient} from '@aws-sdk/client-iot';
-import {LambdaClient} from '@aws-sdk/client-lambda';
-import {S3Client} from '@aws-sdk/client-s3';
-import {SQSClient} from '@aws-sdk/client-sqs';
-import {DynamoDBDocumentClient} from '@aws-sdk/lib-dynamodb';
-import {assetLibraryContainerModule} from '@cdf/assetlibrary-client';
-import {provisioningContainerModule} from '@cdf/provisioning-client';
-import {thingListBuilderContainerModule} from '@cdf/thing-list-builder';
-import {eventPublisherContainerModule} from '@cdf/event-publisher';
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
+import { GreengrassV2Client } from '@aws-sdk/client-greengrassv2';
+import { IoTClient } from '@aws-sdk/client-iot';
+import { LambdaClient } from '@aws-sdk/client-lambda';
+import { S3Client } from '@aws-sdk/client-s3';
+import { SQSClient } from '@aws-sdk/client-sqs';
+import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
+import { assetLibraryContainerModule } from '@cdf/assetlibrary-client';
+import { provisioningContainerModule } from '@cdf/provisioning-client';
+import { thingListBuilderContainerModule } from '@cdf/thing-list-builder';
+import { eventPublisherContainerModule } from '@cdf/event-publisher';
 
 // Note: importing @controller's carries out a one time inversify metadata generation...
 import '../templates/templates.controller';
@@ -35,23 +35,23 @@ import '../devices/devices.controller';
 import '../cores/cores.controller';
 import '../fleet/fleet.controller';
 import '../deploymentTasks/deploymentTasks.controller';
-import {CoresAssembler} from '../cores/cores.assembler';
-import {CoresDao} from '../cores/cores.dao';
-import {CoresService} from '../cores/cores.service';
-import {CoreTasksAssembler} from '../coreTasks/coreTasks.assembler';
-import {CoreTasksDao} from '../coreTasks/coreTasks.dao';
-import {CoreTasksService} from '../coreTasks/coreTasks.service';
-import {DeploymentsService} from '../deployments/deployments.service';
-import {DeploymentTasksDao} from '../deploymentTasks/deploymentTasks.dao';
-import {DeploymentTasksService} from '../deploymentTasks/deploymentTasks.service';
-import {FleetDao} from '../fleet/fleet.dao';
-import {FleetService} from '../fleet/fleet.service';
-import {TemplatesAssembler} from '../templates/templates.assembler';
-import {TemplatesDao} from '../templates/templates.dao';
-import {TemplatesService} from '../templates/templates.service';
-import {DynamoDbUtils} from '../utils/dynamoDb.util';
-import {S3Utils} from '../utils/s3.util';
-import {TYPES} from './types';
+import { CoresAssembler } from '../cores/cores.assembler';
+import { CoresDao } from '../cores/cores.dao';
+import { CoresService } from '../cores/cores.service';
+import { CoreTasksAssembler } from '../coreTasks/coreTasks.assembler';
+import { CoreTasksDao } from '../coreTasks/coreTasks.dao';
+import { CoreTasksService } from '../coreTasks/coreTasks.service';
+import { DeploymentsService } from '../deployments/deployments.service';
+import { DeploymentTasksDao } from '../deploymentTasks/deploymentTasks.dao';
+import { DeploymentTasksService } from '../deploymentTasks/deploymentTasks.service';
+import { FleetDao } from '../fleet/fleet.dao';
+import { FleetService } from '../fleet/fleet.service';
+import { TemplatesAssembler } from '../templates/templates.assembler';
+import { TemplatesDao } from '../templates/templates.dao';
+import { TemplatesService } from '../templates/templates.service';
+import { DynamoDbUtils } from '../utils/dynamoDb.util';
+import { S3Utils } from '../utils/s3.util';
+import { TYPES } from './types';
 import { DevicesAssembler } from '../devices/devices.assembler';
 import { DevicesService } from '../devices/devices.service';
 import { DevicesDao } from '../devices/devices.dao';
@@ -65,7 +65,6 @@ export const container = new Container();
 // bind containers from the cdf library modules
 container.load(provisioningContainerModule);
 container.load(assetLibraryContainerModule);
-container.load(thingListBuilderContainerModule);
 container.load(eventPublisherContainerModule);
 
 container.bind<DynamoDbUtils>(TYPES.DynamoDbUtils).to(DynamoDbUtils).inSingletonScope();
@@ -106,7 +105,7 @@ container.bind<interfaces.Factory<DynamoDBClient>>(TYPES.DynamoDBFactory)
         return () => {
 
             if (!container.isBound(TYPES.DynamoDB)) {
-                const ddb = new DynamoDBClient({region: process.env.AWS_REGION});
+                const ddb = new DynamoDBClient({ region: process.env.AWS_REGION });
                 container.bind<DynamoDBClient>(TYPES.DynamoDB).toConstantValue(ddb);
             }
             return container.get<DynamoDBClient>(TYPES.DynamoDB);
@@ -134,7 +133,7 @@ container.bind<interfaces.Factory<DynamoDBDocumentClient>>(TYPES.DynamoDBDocumen
                     // Whether to return numbers as a string instead of converting them to native JavaScript numbers.
                     wrapNumbers: false, // false, by default.
                 };
-                const translateConfig = {marshallOptions, unmarshallOptions};
+                const translateConfig = { marshallOptions, unmarshallOptions };
                 const ddbDocClient = DynamoDBDocumentClient.from(ddb, translateConfig);
                 container.bind<DynamoDBDocumentClient>(TYPES.DynamoDBDocument).toConstantValue(ddbDocClient);
             }
@@ -148,7 +147,7 @@ container.bind<interfaces.Factory<SQSClient>>(TYPES.SQSFactory)
         return () => {
 
             if (!container.isBound(TYPES.SQS)) {
-                const sqs = new SQSClient({region: process.env.AWS_REGION});
+                const sqs = new SQSClient({ region: process.env.AWS_REGION });
                 container.bind<SQSClient>(TYPES.SQS).toConstantValue(sqs);
             }
             return container.get<SQSClient>(TYPES.SQS);
@@ -161,7 +160,7 @@ container.bind<interfaces.Factory<S3Client>>(TYPES.S3Factory)
         return () => {
 
             if (!container.isBound(TYPES.S3)) {
-                const s3 = new S3Client({region: process.env.AWS_REGION});
+                const s3 = new S3Client({ region: process.env.AWS_REGION });
                 container.bind<S3Client>(TYPES.S3).toConstantValue(s3);
             }
             return container.get<S3Client>(TYPES.S3);
@@ -174,12 +173,15 @@ container.bind<interfaces.Factory<IoTClient>>(TYPES.IotFactory)
         return () => {
 
             if (!container.isBound(TYPES.Iot)) {
-                const iot = new IoTClient({region: process.env.AWS_REGION});
+                const iot = new IoTClient({ region: process.env.AWS_REGION });
                 container.bind<IoTClient>(TYPES.Iot).toConstantValue(iot);
             }
             return container.get<IoTClient>(TYPES.Iot);
         };
     });
+
+container.load(thingListBuilderContainerModule);
+
 
 decorate(injectable(), GreengrassV2Client);
 container.bind<interfaces.Factory<GreengrassV2Client>>(TYPES.Greengrassv2Factory)
@@ -187,7 +189,7 @@ container.bind<interfaces.Factory<GreengrassV2Client>>(TYPES.Greengrassv2Factory
         return () => {
 
             if (!container.isBound(TYPES.Greengrassv2)) {
-                const ggv2 = new GreengrassV2Client({region: process.env.AWS_REGION});
+                const ggv2 = new GreengrassV2Client({ region: process.env.AWS_REGION });
                 container.bind<GreengrassV2Client>(TYPES.Greengrassv2).toConstantValue(ggv2);
             }
             return container.get<GreengrassV2Client>(TYPES.Greengrassv2);
@@ -200,7 +202,7 @@ container.bind<interfaces.Factory<LambdaClient>>(TYPES.LambdaFactory)
         return () => {
 
             if (!container.isBound(TYPES.Lambda)) {
-                const l = new LambdaClient({region: process.env.AWS_REGION});
+                const l = new LambdaClient({ region: process.env.AWS_REGION });
                 container.bind<LambdaClient>(TYPES.Lambda).toConstantValue(l);
             }
             return container.get<LambdaClient>(TYPES.Lambda);

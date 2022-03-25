@@ -27,6 +27,7 @@ BULKCERTS_STACK_NAME="cdf-bulkcerts-$ENVIRONMENT"
 NOTIFICATIONS_STACK_NAME="cdf-eventsProcessor-$ENVIRONMENT"
 GREENGRASS_PROVISIONING_STACK_NAME="cdf-greengrass2-provisioning-$ENVIRONMENT"
 DEVICE_PATCHER_STACK_NAME="cdf-device-patcher-$ENVIRONMENT"
+COMMAND_AND_CONTROL_STACK_NAME="cdf-commandandcontrol-$ENVIRONMENT"
 
 stack_exports=$(aws cloudformation list-exports $AWS_ARGS)
 
@@ -49,6 +50,11 @@ commands_invoke_url_export="$COMMANDS_STACK_NAME-apigatewayurl"
 commands_invoke_url=$(echo $stack_exports \
     | jq -r --arg commands_invoke_url_export "$commands_invoke_url_export" \
     '.Exports[] | select(.Name==$commands_invoke_url_export) | .Value')
+
+commandandcontrol_invoke_url_export="$COMMAND_AND_CONTROL_STACK_NAME-apigatewayurl"
+commandandcontrol_invoke_url=$(echo $stack_exports \
+    | jq -r --arg commandandcontrol_invoke_url_export "$commandandcontrol_invoke_url_export" \
+    '.Exports[] | select(.Name==$commandandcontrol_invoke_url_export) | .Value')
 
 bulkcerts_invoke_url_export="$BULKCERTS_STACK_NAME-apigatewayurl"
 bulkcerts_invoke_url=$(echo $stack_exports \
@@ -84,6 +90,8 @@ echo "BULKCERTS_BASE_URL=${bulkcerts_invoke_url}" >> $CONFIG_LOCATION
 echo "COMMANDS_BASE_URL=${commands_invoke_url}" >> $CONFIG_LOCATION
 echo "ASSETLIBRARYHISTORY_BASE_URL=${assetlibraryhistory_invoke_url}" >> $CONFIG_LOCATION
 echo "ASSETLIBRARY_BASE_URL=${assetlibrary_invoke_url}" >> $CONFIG_LOCATION
+echo "COMMANDANDCONTROL_BASE_URL=${commandandcontrol_invoke_url}" >> $CONFIG_LOCATION
+
 
 echo "\naugmented configuration:\n$(cat $CONFIG_LOCATION)\n"
 
@@ -104,5 +112,6 @@ npm run integration-test -- "features/greengrass2-provisioning/*.feature"
 npm run integration-test -- "features/bulkcerts/*.feature"
 npm run integration-test -- "features/commands/*.feature"
 npm run integration-test -- "features/notifications/*.feature"
+npm run integration-test -- "features/commandandcontrol/shadows.feature"
 
 
