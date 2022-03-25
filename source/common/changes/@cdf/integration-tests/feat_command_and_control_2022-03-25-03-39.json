@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/integration-tests",
+      "comment": "adding new integration tests for command and control",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@cdf/integration-tests",
+  "email": "willsia@amazon.com"
+}

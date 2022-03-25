@@ -16,7 +16,7 @@ import { EventsourcesService, EventsService, SubscriptionsService, TargetsServic
 import { EventResource } from '@cdf/notifications-client/dist/client/events.model';
 import { EventSourceDetailResource } from '@cdf/notifications-client/dist/client/eventsources.model';
 import { SubscriptionResource, SubscriptionV2Resource } from '@cdf/notifications-client/dist/client/subscriptions.model';
-import { DataTable } from '@cucumber/cucumber';
+import { TableDefinition } from 'cucumber';
 import { AUTHORIZATION_TOKEN, buildModel } from '../common/common.steps';
 import { TargetResource } from '@cdf/notifications-client/dist/client/targets.model';
 
@@ -85,29 +85,29 @@ export async function getSubscriptionIdFromPrincipal(eventsourcesService:Eventso
     return subscriptionId;
 }
 
-export async function createEventSource (eventsourcesService:EventsourcesService, world:unknown, data:DataTable) : Promise<string> {
+export async function createEventSource (eventsourcesService:EventsourcesService, world:unknown, data:TableDefinition) : Promise<string> {
     const model:EventSourceDetailResource = buildModel(data);
     return await eventsourcesService.createEventSource(model, getAdditionalHeaders(world[AUTHORIZATION_TOKEN]));
 }
 
-export async function createEvent (eventsService:EventsService, world:unknown, eventSourceId:string, data:DataTable) : Promise<string> {
+export async function createEvent (eventsService:EventsService, world:unknown, eventSourceId:string, data:TableDefinition) : Promise<string> {
     const model:EventResource = buildModel(data);
     return await eventsService.createEvent(eventSourceId, model, getAdditionalHeaders(world[AUTHORIZATION_TOKEN]));
 }
 
-export async function updateEvent (eventsService:EventsService, world:unknown, eventId:string, data:DataTable) : Promise<void> {
+export async function updateEvent (eventsService:EventsService, world:unknown, eventId:string, data:TableDefinition) : Promise<void> {
     const model:EventResource = buildModel(data);
     model.eventId = eventId;
     // logger.debug(`model: ${JSON.stringify(model)}`);
     await eventsService.updateEvent(model, getAdditionalHeaders(world[AUTHORIZATION_TOKEN]));
 }
 
-export async function createSubscription (service:SubscriptionsService, world:unknown, eventId:string, data:DataTable) : Promise<string> {
+export async function createSubscription (service:SubscriptionsService, world:unknown, eventId:string, data:TableDefinition) : Promise<string> {
     const model:SubscriptionResource = buildModel(data);
     return await service.createSubscription(eventId, model, getAdditionalHeaders(world[AUTHORIZATION_TOKEN]));
 }
 
-export async function createTarget(service:TargetsService, world:unknown, subscriptionId:string, targetType:string, data:DataTable) : Promise<void> {
+export async function createTarget(service:TargetsService, world:unknown, subscriptionId:string, targetType:string, data:TableDefinition) : Promise<void> {
     const model:TargetResource = buildModel(data);
     await service.createTarget(subscriptionId, targetType, model, getAdditionalHeaders(world[AUTHORIZATION_TOKEN]));
 }
@@ -116,7 +116,7 @@ export async function deleteTarget(service:TargetsService, world:unknown, subscr
     await service.deleteTarget(subscriptionId, targetType, endpoint, getAdditionalHeaders(world[AUTHORIZATION_TOKEN]));
 }
 
-export async function updateSubscription (service:SubscriptionsService, world:unknown, data:DataTable) : Promise<void> {
+export async function updateSubscription (service:SubscriptionsService, world:unknown, data:TableDefinition) : Promise<void> {
     const model:SubscriptionResource = buildModel(data);
     model.id = world[SUBSCRIPTION_ID];
     await service.updateSubscription(model, getAdditionalHeaders(world[AUTHORIZATION_TOKEN]));

@@ -13,17 +13,17 @@
     "test": "rushx lint && jest --silent --passWithNoTests"
   },
   "dependencies": {
+    "@aws-sdk/client-iot": "~3.37.0",
     "@cdf/assetlibrary-client": "^5.0.3",
     "@cdf/lambda-invoke": "^3.0.2",
     "@cdf/logger": "^4.0.0",
-    "inversify": "5.1.1",
     "inversify-binding-decorators": "4.0.0",
+    "inversify": "5.1.1",
     "logform": "2.2.0",
     "ow": "0.23.0",
     "superagent": "7.1.1",
-    "winston": "3.3.3",
     "winston-transport": "4.4.0",
-    "@aws-sdk/client-iot": "~3.37.0"
+    "winston": "3.3.3"
   },
   "devDependencies": {
     "@types/superagent": "4.1.15",

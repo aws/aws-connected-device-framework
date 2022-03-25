@@ -14,7 +14,7 @@ import 'reflect-metadata';
 
 import { fail } from 'assert';
 import { expect, use } from 'chai';
-import { Given, setDefaultTimeout, DataTable, Then, When } from '@cucumber/cucumber';
+import { Given, setDefaultTimeout, TableDefinition, Then, When } from 'cucumber';
 
 import {
     GREENGRASS2_PROVISIONING_CLIENT_TYPES, Template, TemplatesService
@@ -50,7 +50,7 @@ Given('greengrass2-provisioning template {string} does not exist', async functio
     }
 });
 
-When('I create greengrass2-provisioning template {string} with attributes:', async function (templateName:string, data:DataTable) {
+When('I create greengrass2-provisioning template {string} with attributes:', async function (templateName:string, data:TableDefinition) {
     try {
         const template:Template = buildTemplateModel(data);
         template.name = templateName;
@@ -61,7 +61,7 @@ When('I create greengrass2-provisioning template {string} with attributes:', asy
     }
 });
 
-When('I update greengrass2-provisioning template {string} with attributes:', async function (templateName:string, data:DataTable) {
+When('I update greengrass2-provisioning template {string} with attributes:', async function (templateName:string, data:TableDefinition) {
     try {
         const template:Template = buildTemplateModel(data);
         template.name = templateName;
@@ -72,7 +72,7 @@ When('I update greengrass2-provisioning template {string} with attributes:', asy
     }
 });
 
-Then('greengrass2-provisioning template {string} exists with attributes:', async function (name:string, data:DataTable) {
+Then('greengrass2-provisioning template {string} exists with attributes:', async function (name:string, data:TableDefinition) {
 
     let template:Template;
     try {
@@ -93,7 +93,7 @@ Then('greengrass2-provisioning template {string} exists', async function (name:s
     }
 });
 
-function buildTemplateModel<T>(data:DataTable) : T {
+function buildTemplateModel<T>(data:TableDefinition) : T {
     const d = data.rowsHash();
 
     const resource = { } as T;

@@ -14,7 +14,7 @@
 import 'reflect-metadata';
 import chai_string = require('chai-string');
 import { use } from 'chai';
-import { Then, When, setDefaultTimeout, DataTable } from '@cucumber/cucumber';
+import { Then, When, setDefaultTimeout, TableDefinition } from 'cucumber';
 import { replaceInFile, ReplaceInFileConfig } from 'replace-in-file';
 
 
@@ -46,7 +46,7 @@ setDefaultTimeout(10 * 1000);
 
 const deploymentService: DeploymentService = container.get(DEVICE_PATCHER_CLIENT_TYPES.DeploymentService);
 
-When('I create a patch deployment Task for {string} edge device with attributes', async function (deviceId: string, data: DataTable) {
+When('I create a patch deployment Task for {string} edge device with attributes', async function (deviceId: string, data: TableDefinition) {
     const deployment: CreateDeploymentRequest = buildDeploymentModel(data);
 
     const deploymentTask = {
@@ -155,7 +155,7 @@ Then('deployments exists for {string}', async function (deviceId: string) {
     }
 });
 
-Then('a list of deployments for {string} exists with attributes', async function (deviceId: string, data: DataTable) {
+Then('a list of deployments for {string} exists with attributes', async function (deviceId: string, data: TableDefinition) {
     let deployment
     try {
         deployment = await deploymentService.listDeploymentsByDeviceId(deviceId, undefined, getAdditionalHeaders(world.authToken));
@@ -166,7 +166,7 @@ Then('a list of deployments for {string} exists with attributes', async function
     validateExpectedAttributes(deployment, data);
 });
 
-Then('deployment Task exists with following attributes', async function (data: DataTable) {
+Then('deployment Task exists with following attributes', async function (data: TableDefinition) {
     const taskId = this['deploymentTaskId'];
     let deploymentTask
     try {
@@ -179,7 +179,7 @@ Then('deployment Task exists with following attributes', async function (data: D
     validateExpectedAttributes(deploymentTask, data);
 })
 
-Then('deployment exists for deployment Task with following attributes', async function (data: DataTable) {
+Then('deployment exists for deployment Task with following attributes', async function (data: TableDefinition) {
     const taskId = this['deploymentTaskId'];
     let deploymentTask
     try {
@@ -192,7 +192,7 @@ Then('deployment exists for deployment Task with following attributes', async fu
     validateExpectedAttributes(deploymentTask, data);
 })
 
-Then('last deployment for device exists with following attributes', async function (data: DataTable) {
+Then('last deployment for device exists with following attributes', async function (data: TableDefinition) {
     const taskId = this['deploymentTaskId'];
     let deploymentTask
     try {
@@ -205,7 +205,7 @@ Then('last deployment for device exists with following attributes', async functi
     validateExpectedAttributes(deploymentTask, data);
 })
 
-function buildDeploymentModel<T>(data: DataTable): T {
+function buildDeploymentModel<T>(data: TableDefinition): T {
     const d = data.rowsHash();
 
     const resource = {} as T;

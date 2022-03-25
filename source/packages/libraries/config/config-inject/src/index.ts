@@ -9,8 +9,7 @@ if (process.env.APP_CONFIG) {
   Object.assign(process.env, result)
 }
 
-// APP_CONFIG_DIR is specificed in cloudformation definition of lambda and 
-// npm run start of the services
+// APP_CONFIG_DIR is specified in cloudformation definition of lambda and npm run start of the services
 // This will populate any value that is not specified by APP_CONFIG with default value (dotenv.load functionality)
 const fileLocations = [
   process.env.APP_CONFIG_DIR + '/.env.defaults'

@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/installer",
+      "comment": "adding command and control to installer",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@cdf/installer",
+  "email": "willsia@amazon.com"
+}

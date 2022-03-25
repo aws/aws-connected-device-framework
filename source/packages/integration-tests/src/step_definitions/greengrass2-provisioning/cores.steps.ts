@@ -14,7 +14,7 @@ import 'reflect-metadata';
 
 import { fail } from 'assert';
 import { expect, use } from 'chai';
-import { Given, setDefaultTimeout, DataTable, Then, When } from '@cucumber/cucumber';
+import { Given, setDefaultTimeout, TableDefinition, Then, When } from 'cucumber';
 import * as fs from 'fs';
 import { replaceInFile, ReplaceInFileConfig } from 'replace-in-file';
 import yaml from 'js-yaml';
@@ -58,7 +58,7 @@ Given('greengrass2-provisioning core device {string} does not exist', async func
     }
 });
 
-Given('greengrass2-provisioning core device {string} exists with attributes:', async function (name: string, data: DataTable) {
+Given('greengrass2-provisioning core device {string} exists with attributes:', async function (name: string, data: TableDefinition) {
     let core: Core;
     try {
         core = await coresService.getCore(name, getAdditionalHeaders(world.authToken));
@@ -81,7 +81,7 @@ Then('config file for {string} should not exists', async function (name: string)
     }
 });
 
-Then('config file for {string} exists with attributes:', async function (name: string, data: DataTable) {
+Then('config file for {string} exists with attributes:', async function (name: string, data: TableDefinition) {
     let config: unknown;
     try {
         const response = await s3.send(new GetObjectCommand({
@@ -106,7 +106,7 @@ Then('greengrass2-provisioning core device {string} exists', async function (nam
     }
 });
 
-When('I create greengrass2-provisioning core task with attributes:', async function (data: DataTable) {
+When('I create greengrass2-provisioning core task with attributes:', async function (data: TableDefinition) {
     delete world.lastCoreTaskId;
     try {
         const task: NewCoreTask = buildModel(data);
@@ -228,7 +228,7 @@ When('I wait until greengrass2-provisioning core device {string} is {string}', {
     expect(core?.device?.status).to.eq(deviceStatus);
 });
 
-Then('last greengrass2-provisioning core task exists with attributes:', async function (data: DataTable) {
+Then('last greengrass2-provisioning core task exists with attributes:', async function (data: TableDefinition) {
     let task: CoreTask;
     try {
         task = await coresService.getCoreTask(world.lastCoreTaskId, getAdditionalHeaders(world.authToken));

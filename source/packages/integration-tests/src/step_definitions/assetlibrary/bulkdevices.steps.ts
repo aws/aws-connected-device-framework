@@ -12,7 +12,7 @@
  *********************************************************************************************************************/
 
 import 'reflect-metadata';
-import { setDefaultTimeout, When, DataTable, Then} from '@cucumber/cucumber';
+import { setDefaultTimeout, When, TableDefinition, Then} from 'cucumber';
 import { Device20Resource, DevicesService, BulkDevicesResource } from '@cdf/assetlibrary-client';
 import { fail } from 'assert';
 
@@ -51,7 +51,7 @@ async function bulkRegisterDevice (world:unknown, devicesToCreate:Device20Resour
     await deviceService.bulkCreateDevice(bulkDeviceCreateBody, undefined, headers);
 }
 
-function parseBulkDeviceTable(d:DataTable): Device20Resource[] {
+function parseBulkDeviceTable(d:TableDefinition): Device20Resource[] {
     const devices: Device20Resource[] = [];
     const deviceRows = d.rows();
     deviceRows.forEach((dr) => {
@@ -67,12 +67,12 @@ function parseBulkDeviceTable(d:DataTable): Device20Resource[] {
     return devices;
 }
 
-When('I bulk create the following devices', async function (data:DataTable) {
+When('I bulk create the following devices', async function (data:TableDefinition) {
     const devices = parseBulkDeviceTable(data);
     await bulkRegisterDevice(this, devices);
 });
 
-Then('a bulk get of {string} returns the following devices', async function (devicesToGet: string, data:DataTable) {
+Then('a bulk get of {string} returns the following devices', async function (devicesToGet: string, data:TableDefinition) {
     const devices = parseBulkDeviceTable(data);
     const devicesReceived = await deviceService.getDevicesByID(devicesToGet.split(','));
 

@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/events-processor",
+      "comment": "",
+      "type": "none"
+    }
+  ],
+  "packageName": "@cdf/events-processor",
+  "email": "willsia@amazon.com"
+}

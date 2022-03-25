@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import 'reflect-metadata';
-import { setDefaultTimeout, DataTable, Then, When } from '@cucumber/cucumber';
+import { setDefaultTimeout, TableDefinition, Then, When } from 'cucumber';
 import chai_string = require('chai-string');
 import { use } from 'chai';
 import {GREENGRASS2_PROVISIONING_CLIENT_TYPES, NewDeploymentTask, DeploymentsService, DeploymentTask} from '@cdf/greengrass2-provisioning-client';
@@ -33,7 +33,7 @@ setDefaultTimeout(10 * 1000);
 
 const deploymentsService: DeploymentsService = container.get(GREENGRASS2_PROVISIONING_CLIENT_TYPES.DeploymentsService);
 
-When('I create greengrass2-provisioning deployment task with attributes:', async function (data:DataTable) {
+When('I create greengrass2-provisioning deployment task with attributes:', async function (data:TableDefinition) {
     delete world.lastDeploymentTaskId;
     try {
         const task:NewDeploymentTask = buildModel(data);
@@ -44,7 +44,7 @@ When('I create greengrass2-provisioning deployment task with attributes:', async
     }
 });
 
-Then('last greengrass2-provisioning deployment task exists with attributes:', async function (data:DataTable) {
+Then('last greengrass2-provisioning deployment task exists with attributes:', async function (data:TableDefinition) {
     let task:DeploymentTask;
     try {
         task = await deploymentsService.getDeploymentTask(world.lastDeploymentTaskId, getAdditionalHeaders(world.authToken));

@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import 'reflect-metadata';
-import { Given, setDefaultTimeout, DataTable, Then, When } from '@cucumber/cucumber';
+import { Given, setDefaultTimeout, TableDefinition, Then, When } from 'cucumber';
 import chai_string = require('chai-string');
 import { expect, use } from 'chai';
 import { fail } from 'assert';
@@ -56,7 +56,7 @@ When('I retrieve device-patch-deployment template {string}', async function (tem
     }
 });
 
-When('I create device-patch-deployment template {string} with attributes', async function (templateName:string, data:DataTable) {
+When('I create device-patch-deployment template {string} with attributes', async function (templateName:string, data:TableDefinition) {
     try {
         const template:DeploymentTemplate = buildTemplateModel(data);
         template.name = templateName;
@@ -76,7 +76,7 @@ When('I delete the device-patch-deployment template {string}', async function (t
     }
 });
 
-When('I update device-patch-deployment template {string} with attributes', async function (name:string, data:DataTable) {
+When('I update device-patch-deployment template {string} with attributes', async function (name:string, data:TableDefinition) {
     try {
         const existing = await templatesService.getTemplate(name, getAdditionalHeaders(world.authToken));
         const updated:DeploymentTemplate = buildTemplateModel(data);
@@ -88,7 +88,7 @@ When('I update device-patch-deployment template {string} with attributes', async
     }
 });
 
-Then('device-patch-deployment template {string} exists with attributes', async function (name:string, data:DataTable) {
+Then('device-patch-deployment template {string} exists with attributes', async function (name:string, data:TableDefinition) {
     let template;
     try {
         template = await templatesService.getTemplate(name, getAdditionalHeaders(world.authToken));
@@ -109,7 +109,7 @@ Then('device-patch-deployment template {string} exists', async function (name:st
     }
 });
 
-function buildTemplateModel<T>(data:DataTable) : T {
+function buildTemplateModel<T>(data:TableDefinition) : T {
     const d = data.rowsHash();
 
     const resource = { } as T;
