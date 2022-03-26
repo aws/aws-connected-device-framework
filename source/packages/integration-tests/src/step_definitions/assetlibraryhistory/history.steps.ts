@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import 'reflect-metadata';
-import { setDefaultTimeout, TableDefinition, Then, When} from 'cucumber';
+import { setDefaultTimeout, DataTable, Then, When} from '@cucumber/cucumber';
 import {
     EventsService,
     ObjectEventsRequest,
@@ -101,7 +101,7 @@ Then('{int} history records exist since the test started for {word} {string}', a
     }
 });
 
-Then('history record {int} contains attributes', async function (index:number, data:TableDefinition) {
+Then('history record {int} contains attributes', async function (index:number, data:DataTable) {
 
     const d = data.rowsHash();
 

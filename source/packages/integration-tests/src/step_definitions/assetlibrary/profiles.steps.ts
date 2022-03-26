@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import 'reflect-metadata';
-import { Given, setDefaultTimeout, When, TableDefinition, Then} from 'cucumber';
+import { Given, setDefaultTimeout, When, DataTable, Then} from '@cucumber/cucumber';
 import {
     ProfilesService,
     DeviceProfile20Resource,
@@ -77,7 +77,7 @@ Given('assetlibrary {word} profile {string} of {string} exists', async function 
     expect(profile.profileId).equalIgnoreCase(profileId);
 });
 
-When('I create the assetlibrary {word} profile {string} of {string} with attributes', async function (category:string, profileId:string, templateId:string, data:TableDefinition) {
+When('I create the assetlibrary {word} profile {string} of {string} with attributes', async function (category:string, profileId:string, templateId:string, data:DataTable) {
     const d = data.rowsHash();
 
     const profile = {
@@ -121,7 +121,7 @@ When('I delete assetlibrary {word} profile {string} of {string}', async function
     }
 });
 
-Then('assetlibrary {word} profile {string} of {string} exists with attributes', async function (category:string, profileId:string, templateId:string, data:TableDefinition) {
+Then('assetlibrary {word} profile {string} of {string} exists with attributes', async function (category:string, profileId:string, templateId:string, data:DataTable) {
     const d = data.rowsHash();
 
     let r:DeviceProfile20Resource|GroupProfile20Resource;

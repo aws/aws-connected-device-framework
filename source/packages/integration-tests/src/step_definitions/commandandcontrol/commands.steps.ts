@@ -13,7 +13,7 @@
 import 'reflect-metadata';
 
 import { use, expect } from 'chai';
-import { setDefaultTimeout, TableDefinition, Then, When, Given } from 'cucumber';
+import { setDefaultTimeout, DataTable, Then, When, Given } from '@cucumber/cucumber';
 
 import { container } from '../../di/inversify.config';
 import { buildModel, validateExpectedAttributes } from '../common/common.steps';
@@ -51,15 +51,14 @@ Given('command-and-control command with operation {string} does not exist', asyn
   expect(command).to.be.undefined;
 });
 
-When('I create command-and-control command with attributes:', async function (data: TableDefinition) {
+When('I create command-and-control command with attributes:', async function (data: DataTable) {
   delete world.lastCommand;
   const command: CommandResource = buildModel(data);
-  console.log(`Creating command: ${JSON.stringify(command)}`);
   world.lastCommand = command;
   world.lastCommand.id = await commandsService.createCommand(command, getAdditionalHeaders(world.authToken));
 });
 
-Then('last command-and-control command exists with attributes:', async function (data: TableDefinition) {
+Then('last command-and-control command exists with attributes:', async function (data: DataTable) {
   const command = await commandsService.getCommand(world.lastCommand.id, getAdditionalHeaders(world.authToken));
   validateExpectedAttributes(command, data);
 });

@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import { Before, setDefaultTimeout } from 'cucumber';
+import { Before, setDefaultTimeout } from '@cucumber/cucumber';
 
 import {
     DescribeInstancesCommand, EC2Client, TerminateInstancesCommand
@@ -26,6 +26,7 @@ import { getAdditionalHeaders } from '../step_definitions/notifications/notifica
 
 import AWS = require('aws-sdk');
 import { logger } from '../step_definitions/utils/logger';
+import { world } from '../step_definitions/greengrass2-provisioning/greengrass2.world';
 setDefaultTimeout(30 * 1000);
 /*
     Cucumber describes current scenario context as “World”. It can be used to store the state of the scenario
@@ -95,7 +96,7 @@ async function teardown(world: unknown) {
 }
 
 Before({ tags: '@setup_greengrass2_provisioning' }, async function () {
-    await teardown(this);
+    await teardown(world);
 
     // create the provisioning template
     const integrationTestTemplate = {
@@ -162,5 +163,5 @@ Before({ tags: '@setup_greengrass2_provisioning' }, async function () {
 });
 
 Before({ tags: '@teardown_greengrass2_provisioning' }, async function () {
-    await teardown(this);
+    await teardown(world);
 });

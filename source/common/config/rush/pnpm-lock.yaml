@@ -58,6 +58,7 @@ specifiers:
   '@rush-temp/simulation-manager': file:./projects/simulation-manager.tgz
   '@rush-temp/thing-list-builder': file:./projects/thing-list-builder.tgz
   '@types/adm-zip': 0.4.34
+  '@types/atob': 2.1.2
   '@types/aws-iot-device-sdk': 2.2.2
   '@types/body-parser': 1.19.0
   '@types/btoa': 1.2.3
@@ -74,7 +75,7 @@ specifiers:
   '@types/js-yaml': 3.12.5
   '@types/json-stable-stringify': 1.0.32
   '@types/json2csv': 4.5.1
-  '@types/jsonpath-plus': ~5.0.1
+  '@types/jsonpath-plus': 5.0.1
   '@types/jsonwebtoken': 8.5.0
   '@types/jwk-to-pem': 2.0.0
   '@types/lodash': 4.14.168
@@ -93,6 +94,7 @@ specifiers:
   ajv: 6.10.2
   amazon-dax-client: 1.2.7
   async-local-storage: 2.3.1
+  atob: 2.1.2
   aws-iot-device-sdk: 2.2.8
   aws-iot-device-sdk-v2: 1.6.5
   aws-lambda: 1.0.6
@@ -137,7 +139,7 @@ specifiers:
   jest-resolve: 26.6.2
   json-rules-engine: 5.3.0
   json-stable-stringify: 1.0.1
-  json-to-pretty-yaml: ~1.2.2
+  json-to-pretty-yaml: 1.2.2
   json2csv: 4.5.4
   jsonpath-plus: 5.0.7
   jsonwebtoken: 8.5.1
@@ -167,7 +169,6 @@ specifiers:
   typed-rest-client: 1.8.0
   typescript: 4.2.4
   uuid: 8.3.2
-  yaml: ~1.10.2
   yargs: 17.0.1
 
 dependencies:
@@ -228,6 +229,7 @@ dependencies:
   '@rush-temp/simulation-manager': file:projects/simulation-manager.tgz
   '@rush-temp/thing-list-builder': file:projects/thing-list-builder.tgz
   '@types/adm-zip': 0.4.34
+  '@types/atob': 2.1.2
   '@types/aws-iot-device-sdk': 2.2.2
   '@types/body-parser': 1.19.0
   '@types/btoa': 1.2.3
@@ -244,7 +246,7 @@ dependencies:
   '@types/js-yaml': 3.12.5
   '@types/json-stable-stringify': 1.0.32
   '@types/json2csv': 4.5.1
-  '@types/jsonpath-plus': 5.0.2
+  '@types/jsonpath-plus': 5.0.1
   '@types/jsonwebtoken': 8.5.0
   '@types/jwk-to-pem': 2.0.0
   '@types/lodash': 4.14.168
@@ -263,6 +265,7 @@ dependencies:
   ajv: 6.10.2
   amazon-dax-client: 1.2.7
   async-local-storage: 2.3.1
+  atob: 2.1.2
   aws-iot-device-sdk: 2.2.8
   aws-iot-device-sdk-v2: 1.6.5
   aws-lambda: 1.0.6
@@ -337,7 +340,6 @@ dependencies:
   typed-rest-client: 1.8.0
   typescript: 4.2.4
   uuid: 8.3.2
-  yaml: 1.10.2
   yargs: 17.0.1
 
 packages:
@@ -4551,8 +4553,8 @@ packages:
       '@types/node': 14.6.1
     dev: false
 
-  /@types/jsonpath-plus/5.0.2:
-    resolution: {integrity: sha512-s67hpzTVH+gyVli40QMna0CBloDeRmzwujvCJgV/lp6D7GhBbbH9bJDSzBJuckcaXsOtCFKn1DtQMFo9i9vtKg==}
+  /@types/jsonpath-plus/5.0.1:
+    resolution: {integrity: sha512-kdhqBgp6Wm5bDAvEg1iX/QQGwt7pfFp7XnGDi/ETuw1BMM6a1n/FwanCemzVocedXvTXJuOX0bPmu/WpMejHTA==}
     dev: false
 
   /@types/jsonwebtoken/8.5.0:
@@ -5816,37 +5818,6 @@ packages:
   /aws-sdk/2.1048.0:
     resolution: {integrity: sha512-mVwWo+Udiuc/yEZ/DgJQGqOEtfiQjgUdtshx/t6ISe3+jW3TF9hUACwADwx2Sr/fuJyyJ3QD5JYLt5Cw35wQpA==}
     engines: {node: '>= 10.0.0'}
-    dependencies:
-      buffer: 4.9.2
-      events: 1.1.1
-      ieee754: 1.1.13
-      jmespath: 0.15.0
-      querystring: 0.2.0
-      sax: 1.2.1
-      url: 0.10.3
-      uuid: 3.3.2
-      xml2js: 0.4.19
-    dev: false
-
-  /aws-sdk/2.804.0:
-    resolution: {integrity: sha512-a02pZdjL06MunElAZPPEjpghOp/ZA+16f+t4imh1k9FCDpsNVQrT23HRq/PMvRADA5uZZRkYwX8r9o6oH/1RlA==}
-    engines: {node: '>= 0.8.0'}
-    dependencies:
-      buffer: 4.9.2
-      events: 1.1.1
-      ieee754: 1.1.13
-      jmespath: 0.15.0
-      querystring: 0.2.0
-      sax: 1.2.1
-      url: 0.10.3
-      uuid: 3.3.2
-      xml2js: 0.4.19
-    dev: false
-
-  /aws-sdk/2.952.0:
-    resolution: {integrity: sha512-FZkmOWAyDSQMeD8iioeoSW873ZjPXLfGejr0gNi8kQB7JrllOayPaexpq70aT+7n5bAzArjSIH8OAB+BoHYijA==}
-    engines: {node: '>= 0.8.0'}
-    requiresBuild: true
     dependencies:
       buffer: 4.9.2
       events: 1.1.1
@@ -14606,7 +14577,7 @@ packages:
     dev: false
 
   file:projects/assetlibrary-export.tgz:
-    resolution: {integrity: sha512-qqqkD8T/LJO8HRow1PRCIFWDqJ2gej1ag9US049R9RrTckmQOGBTPhDtsr4Ff0dZuybmjApiEMOVP2lkhR2w7Q==, tarball: file:projects/assetlibrary-export.tgz}
+    resolution: {integrity: sha512-J8RswW+OG/lvti9/yiGMO4icuXLwSSZFCR++KL/B2xIMJ/vfnYfbHkfs4EoH3SP3crJZ412oQ5pmlBQ/PWxSdQ==, tarball: file:projects/assetlibrary-export.tgz}
     name: '@rush-temp/assetlibrary-export'
     version: 0.0.0
     dependencies:
@@ -14626,7 +14597,7 @@ packages:
       '@types/shortid': 0.0.29
       '@typescript-eslint/eslint-plugin': 4.9.1_0b1b46b43d081c4dc59edd286c1ecaad
       '@typescript-eslint/parser': 4.9.1_eslint@7.15.0+typescript@4.2.4
-      aws-sdk: 2.952.0
+      aws-sdk: 2.1048.0
       dotenv: 8.6.0
       dotenv-flow: 3.2.0
       eslint: 7.15.0
@@ -14793,7 +14764,7 @@ packages:
     dev: false
 
   file:projects/assetlibraryhistory-client.tgz:
-    resolution: {integrity: sha512-oj3zBzcp/1IKBo8TY6yDrovnIlWAb5vJirqiK6VSsyg7NS242MvlCK9zIdbxk24qMIqb9yRNZhPSTzi8lz2i0g==, tarball: file:projects/assetlibraryhistory-client.tgz}
+    resolution: {integrity: sha512-lZ2+CO3htGxvS0eggcgcVgc2sdYt153hxHV2WWy95d2bi8WTfNgbdesTYJEcSWoAlmW4riuB5Eqpi040WquWTg==, tarball: file:projects/assetlibraryhistory-client.tgz}
     name: '@rush-temp/assetlibraryhistory-client'
     version: 0.0.0
     dependencies:
@@ -14803,7 +14774,7 @@ packages:
       '@types/superagent': 4.1.15
       '@typescript-eslint/eslint-plugin': 4.23.0_7cfaee78cda985ff9bc3d8b5cb92a136
       '@typescript-eslint/parser': 4.23.0_eslint@7.26.0+typescript@4.2.4
-      aws-sdk: 2.952.0
+      aws-sdk: 2.1048.0
       dotenv-flow: 3.2.0
       eslint: 7.26.0
       inversify: 5.1.1
@@ -14836,7 +14807,7 @@ packages:
     dev: false
 
   file:projects/auth-devicecert.tgz:
-    resolution: {integrity: sha512-BuVnCgUUIRWfo0l/8dJcD0y/ZbbemyhDFm+ScW/Z6hkPbj95d83Cf/EqkmlVIg8ByyvqAjwQyR+pZGaoqGYhLA==, tarball: file:projects/auth-devicecert.tgz}
+    resolution: {integrity: sha512-NRdZtEPixj+8bgWTNG1CRIAm0mTMv1JQkzm21keFO5mBF6TLrlKxDPQKZnRXIXU7POZIQa1oJKbzwYYFn9Q7Bw==, tarball: file:projects/auth-devicecert.tgz}
     name: '@rush-temp/auth-devicecert'
     version: 0.0.0
     dependencies:
@@ -14846,7 +14817,7 @@ packages:
       '@types/pem': 1.9.5
       '@typescript-eslint/eslint-plugin': 4.23.0_7cfaee78cda985ff9bc3d8b5cb92a136
       '@typescript-eslint/parser': 4.23.0_eslint@7.26.0+typescript@4.2.4
-      aws-sdk: 2.952.0
+      aws-sdk: 2.1048.0
       dotenv: 8.6.0
       dotenv-flow: 3.2.0
       eslint: 7.26.0
@@ -14922,7 +14893,7 @@ packages:
     dev: false
 
   file:projects/bulkcerts-client.tgz:
-    resolution: {integrity: sha512-It7y5lpZQhbi59SZjD+SfPLnjf+7ZlOzIj6UDB+G2hDTbZyCFP7S7KSitfrRJ0R6qZelTVLEAywd2e2tAnPTZw==, tarball: file:projects/bulkcerts-client.tgz}
+    resolution: {integrity: sha512-GNOA6pdJM8ZOQNGNMaJTbSvXRZ8r5gyvaudvWz4v6BiCAPHa4oA9b457FOkQG4Zt9eem+uhWVhh7US/hiOKLwg==, tarball: file:projects/bulkcerts-client.tgz}
     name: '@rush-temp/bulkcerts-client'
     version: 0.0.0
     dependencies:
@@ -14933,7 +14904,7 @@ packages:
       '@types/superagent': 4.1.15
       '@typescript-eslint/eslint-plugin': 4.23.0_7cfaee78cda985ff9bc3d8b5cb92a136
       '@typescript-eslint/parser': 4.23.0_eslint@7.26.0+typescript@4.2.4
-      aws-sdk: 2.952.0
+      aws-sdk: 2.1048.0
       dotenv-flow: 3.2.0
       eslint: 7.26.0
       inversify: 5.1.1
@@ -15119,7 +15090,7 @@ packages:
     dev: false
 
   file:projects/command-and-control.tgz:
-    resolution: {integrity: sha512-csTF6tTHUPGFEFXSaMJLXVEvlplaozpVUOgoEO8Apk7C8Tt3bnY9BzcpxPaP14C7demaV9uFR+G+nv/+LLLHGw==, tarball: file:projects/command-and-control.tgz}
+    resolution: {integrity: sha512-eW47IpocwtoTom4GHwNw73SOKQCKMs65ZMuaJty8/N1rWxJyYEWvH9vsqjOys5uBQBHMfRlUTnzPHvEmF9LFZQ==, tarball: file:projects/command-and-control.tgz}
     name: '@rush-temp/command-and-control'
     version: 0.0.0
     dependencies:
@@ -15135,7 +15106,7 @@ packages:
       '@typescript-eslint/eslint-plugin': 4.23.0_8cafe19e88c048d291c7ede5acbc6ea5
       '@typescript-eslint/parser': 4.23.0_3318d341e08b60846a0ca54ab3432060
       ajv: 6.10.2
-      aws-sdk: 2.804.0
+      aws-sdk: 2.1048.0
       aws-xray-sdk: 3.3.4
       aws-xray-sdk-core: 3.3.4
       body-parser: 1.19.0
@@ -15222,7 +15193,7 @@ packages:
     dev: false
 
   file:projects/commands-client.tgz:
-    resolution: {integrity: sha512-E7xjlyGmv4qgOOuucti+vKBDmWdZUWjKRjcmGfooJQ1raMCon6hNw4Tn75KNlguGDlZu8z0FxwN0MbkdTQEilA==, tarball: file:projects/commands-client.tgz}
+    resolution: {integrity: sha512-01Pszteos+cZ4MeFsG6rUpxrvzzsd3Fsu6BNHTWkV4MBZ7Lj86RTkvmWFsDBmurCf1bgve17TvAXu2QuezYc3g==, tarball: file:projects/commands-client.tgz}
     name: '@rush-temp/commands-client'
     version: 0.0.0
     dependencies:
@@ -15233,7 +15204,7 @@ packages:
       '@types/superagent': 4.1.15
       '@typescript-eslint/eslint-plugin': 4.23.0_7cfaee78cda985ff9bc3d8b5cb92a136
       '@typescript-eslint/parser': 4.23.0_eslint@7.26.0+typescript@4.2.4
-      aws-sdk: 2.952.0
+      aws-sdk: 2.1048.0
       dotenv-flow: 3.2.0
       eslint: 7.26.0
       inversify: 5.1.1
@@ -15448,7 +15419,7 @@ packages:
     dev: false
 
   file:projects/device-patcher-client.tgz:
-    resolution: {integrity: sha512-+WAmFhHQQVjBqL88CQep0PdZEDPvWfq6eFXXFnkkQQ+xNLzrKG80GDj+QgTNsa6KuAIU5lhTtS+Y/Ag8AE9+dQ==, tarball: file:projects/device-patcher-client.tgz}
+    resolution: {integrity: sha512-laCQcpiDCmazoV676Bf7BwpkJGll1MtIM8fuwmyYJt0BjlBzFCii0lELlvBawwQMea9Tbx41rKBpaIRbq+bEHQ==, tarball: file:projects/device-patcher-client.tgz}
     name: '@rush-temp/device-patcher-client'
     version: 0.0.0
     dependencies:
@@ -15459,7 +15430,7 @@ packages:
       '@types/superagent': 4.1.15
       '@typescript-eslint/eslint-plugin': 4.23.0_7cfaee78cda985ff9bc3d8b5cb92a136
       '@typescript-eslint/parser': 4.23.0_eslint@7.26.0+typescript@4.2.4
-      aws-sdk: 2.952.0
+      aws-sdk: 2.1048.0
       cz-customizable: 6.3.0
       dotenv-flow: 3.2.0
       eslint: 7.26.0
@@ -15493,7 +15464,7 @@ packages:
     dev: false
 
   file:projects/device-patcher.tgz:
-    resolution: {integrity: sha512-uJgvzz+yJqx2GblZ72pt7F1mOw8QODYV2YGHQtgXinfNlLIRs7E1RWHrE5rU/+IVhwu+mSt4guoDp7LTN8UJVQ==, tarball: file:projects/device-patcher.tgz}
+    resolution: {integrity: sha512-1YS9fNTESeSi+loXzBTqEZ03wmHnVQ8FsL/36PgTzldVullZ9zuaJr3wTxOCK7ggnoNZ6wts/qshyPbtlUzEPw==, tarball: file:projects/device-patcher.tgz}
     name: '@rush-temp/device-patcher'
     version: 0.0.0
     dependencies:
@@ -15512,7 +15483,7 @@ packages:
       '@typescript-eslint/eslint-plugin': 4.23.0_7cfaee78cda985ff9bc3d8b5cb92a136
       '@typescript-eslint/parser': 4.23.0_eslint@7.26.0+typescript@4.2.4
       atob: 2.1.2
-      aws-sdk: 2.804.0
+      aws-sdk: 2.1048.0
       body-parser: 1.19.0
       btoa: 1.2.1
       config: 3.3.6
@@ -15853,7 +15824,7 @@ packages:
     dev: false
 
   file:projects/greengrass2-provisioning-client.tgz:
-    resolution: {integrity: sha512-X2ZheFMIt5BmchnWweE/euxxZBKaTZt7/B5zC3k0+LEPf8uKK5vYqegTG96eYAJ++zMKmVgPuyJOPxWUzaR9LA==, tarball: file:projects/greengrass2-provisioning-client.tgz}
+    resolution: {integrity: sha512-SC4ZHOxncmLzjHoGgZMyUI3xElZ2J/x/Fj+fgPzklswmAeHp/pdAsPSduFwblCDBze4dmgP8vJrpW7RF9eBwsQ==, tarball: file:projects/greengrass2-provisioning-client.tgz}
     name: '@rush-temp/greengrass2-provisioning-client'
     version: 0.0.0
     dependencies:
@@ -15864,7 +15835,7 @@ packages:
       '@types/superagent': 4.1.15
       '@typescript-eslint/eslint-plugin': 4.23.0_7cfaee78cda985ff9bc3d8b5cb92a136
       '@typescript-eslint/parser': 4.23.0_eslint@7.26.0+typescript@4.2.4
-      aws-sdk: 2.952.0
+      aws-sdk: 2.1048.0
       dotenv-flow: 3.2.0
       eslint: 7.26.0
       inversify: 5.1.1
@@ -15897,7 +15868,7 @@ packages:
     dev: false
 
   file:projects/greengrass2-provisioning.tgz:
-    resolution: {integrity: sha512-dtWuyVFbLXD8iry4vjN9WAMTYc2dLwVPJA0/JzybWa+3OmQ8gLcNSkpoKgj2wjEzYsxv1iW+dnv3i3tw4ClkFQ==, tarball: file:projects/greengrass2-provisioning.tgz}
+    resolution: {integrity: sha512-/YI4Jk53zdsIEyWITaAAhwqy2AEI6KY9aBbSrib86mSaFDdABZZHk7rt19SjiOF2S1k0pmpA1d65EnS64XdycA==, tarball: file:projects/greengrass2-provisioning.tgz}
     name: '@rush-temp/greengrass2-provisioning'
     version: 0.0.0
     dependencies:
@@ -16030,7 +16001,7 @@ packages:
     dev: false
 
   file:projects/integration-tests.tgz_@aws-sdk+signature-v4-crt@3.38.0:
-    resolution: {integrity: sha512-N0ZK/ZWd43dwhPDHgImSaVSsorelsA+R58XsrSLLnHMu3ltIcGUhFLNQHNosfKaj2RthmNFx4fkKVfeA/pmhiw==, tarball: file:projects/integration-tests.tgz}
+    resolution: {integrity: sha512-1n07IwOEXVf1J3q9I9SgL7YHhd8evoL8nUIl4s65rBur+RXKATaBgLbnstHWiYPx4nD2MjnLE34e6D/ZdAKzSQ==, tarball: file:projects/integration-tests.tgz}
     id: file:projects/integration-tests.tgz
     name: '@rush-temp/integration-tests'
     version: 0.0.0
@@ -16048,14 +16019,14 @@ packages:
       '@types/dotenv-flow': 3.2.0
       '@types/js-yaml': 3.12.5
       '@types/json-stable-stringify': 1.0.32
-      '@types/jsonpath-plus': 5.0.2
+      '@types/jsonpath-plus': 5.0.1
       '@types/jsonwebtoken': 8.5.0
       '@types/node': 14.6.1
       '@typescript-eslint/eslint-plugin': 4.23.0_7cfaee78cda985ff9bc3d8b5cb92a136
       '@typescript-eslint/parser': 4.23.0_eslint@7.26.0+typescript@4.2.4
       atob: 2.1.2
       aws-iot-device-sdk-v2: 1.6.5
-      aws-sdk: 2.952.0
+      aws-sdk: 2.1048.0
       axios: 0.25.0
       chai: 4.2.0
       chai-string: 1.5.0_chai@4.2.0
@@ -16166,7 +16137,7 @@ packages:
     dev: false
 
   file:projects/notifications-client.tgz:
-    resolution: {integrity: sha512-zCiis/DDg4pWmOcO9aHX+DWZJzoNk7xzVdjL0S4wLZYF88hY/apZD+N7pnHVeeGJv3KYvHoEa0kHt8swvunSdA==, tarball: file:projects/notifications-client.tgz}
+    resolution: {integrity: sha512-uv0lE/p3LjfkeElCC+V9PcMIcqozWPq9hNEm0kpiuokDTyvIbYyGD17S2Z1MGtPwllgc5D2wHSJSb59yUPkXCg==, tarball: file:projects/notifications-client.tgz}
     name: '@rush-temp/notifications-client'
     version: 0.0.0
     dependencies:
@@ -16177,7 +16148,7 @@ packages:
       '@types/superagent': 4.1.15
       '@typescript-eslint/eslint-plugin': 4.23.0_7cfaee78cda985ff9bc3d8b5cb92a136
       '@typescript-eslint/parser': 4.23.0_eslint@7.26.0+typescript@4.2.4
-      aws-sdk: 2.952.0
+      aws-sdk: 2.1048.0
       dotenv-flow: 3.2.0
       eslint: 7.26.0
       inversify: 5.1.1
@@ -16408,7 +16379,7 @@ packages:
     dev: false
 
   file:projects/thing-list-builder.tgz:
-    resolution: {integrity: sha512-/EW2tK0GisErjjDO1px3eAczvS6drEw8E5dEI6002Qp4N7AvXjZLK1bSTBBIXWcGkErlEjvjW1yihWQEesNoiw==, tarball: file:projects/thing-list-builder.tgz}
+    resolution: {integrity: sha512-vr+DItgloTzYp3As5Q54bDvt+YuqE3UWOSYRdcpo0RovByWi1neA3Ud/ipawhaATk8zW+tZYF6Y6XMbGWyvbFw==, tarball: file:projects/thing-list-builder.tgz}
     name: '@rush-temp/thing-list-builder'
     version: 0.0.0
     dependencies:

@@ -10,7 +10,7 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { Given, setDefaultTimeout, When, TableDefinition, Then} from 'cucumber';
+import { Given, setDefaultTimeout, When, DataTable, Then} from '@cucumber/cucumber';
 import {
     GroupsService,
     Group20Resource,
@@ -60,7 +60,7 @@ Given('group {string} exists', async function (groupPath:string) {
     await groupService.getGroup(groupPath, getAdditionalHeaders(this));
 });
 
-async function createGroup (world:unknown, name:string, parentPath:string, data:TableDefinition, profileId?:string) {
+async function createGroup (world:unknown, name:string, parentPath:string, data:DataTable, profileId?:string) {
 
     const d = data.rowsHash();
 
@@ -90,7 +90,7 @@ async function createGroup (world:unknown, name:string, parentPath:string, data:
     await groupService.createGroup(group, profileId, getAdditionalHeaders(world));
 }
 
-When('I create group {string} of {string} with attributes', async function (name:string, parentPath:string, data:TableDefinition) {
+When('I create group {string} of {string} with attributes', async function (name:string, parentPath:string, data:DataTable) {
     try {
         await createGroup(this, name, parentPath, data);
     } catch (err) {
@@ -98,7 +98,7 @@ When('I create group {string} of {string} with attributes', async function (name
     }
 });
 
-When('I create group {string} of {string} applying profile {string} with attributes', async function (name:string, parentPath:string, profileId:string, data:TableDefinition) {
+When('I create group {string} of {string} applying profile {string} with attributes', async function (name:string, parentPath:string, profileId:string, data:DataTable) {
     try {
         await createGroup(this, name, parentPath, data, profileId);
     } catch (err) {
@@ -106,7 +106,7 @@ When('I create group {string} of {string} applying profile {string} with attribu
     }
 });
 
-When('I create group {string} of {string} with invalid attributes', async function (name:string, parentPath:string, data:TableDefinition) {
+When('I create group {string} of {string} with invalid attributes', async function (name:string, parentPath:string, data:DataTable) {
     try {
         await createGroup(this, name, parentPath, data);
         fail('Expected 400');
@@ -116,7 +116,7 @@ When('I create group {string} of {string} with invalid attributes', async functi
     }
 });
 
-When('I update group {string} with attributes', async function (groupPath:string, data:TableDefinition) {
+When('I update group {string} with attributes', async function (groupPath:string, data:DataTable) {
 
     const d = data.rowsHash();
 
@@ -189,7 +189,7 @@ When('I attach group {string} to group {string} via {string}', async function (t
     }
 });
 
-Then('group {string} exists with attributes', async function (groupPath:string, data:TableDefinition) {
+Then('group {string} exists with attributes', async function (groupPath:string, data:DataTable) {
 
     const d = data.rowsHash();
     const r = await groupService.getGroup(groupPath, getAdditionalHeaders(this));
@@ -231,7 +231,7 @@ When('I retrieve {string} device members of {string}', async function (template:
     }
 });
 
-When('I retrieve groups related of {string} with {string} relationship and following parameters:', async function (groupPath:string, relationship:string, data:TableDefinition) {
+When('I retrieve groups related of {string} with {string} relationship and following parameters:', async function (groupPath:string, relationship:string, data:DataTable) {
     let template = undefined;
     let direction = undefined;
     let offset = undefined;

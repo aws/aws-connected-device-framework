@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import { Before, setDefaultTimeout } from 'cucumber';
+import { Before, setDefaultTimeout } from '@cucumber/cucumber';
 import fs from 'fs';
 
 import { COMMANDANDCONTROL_CLIENT_TYPES, CommandsService } from '@cdf/commandandcontrol-client';
@@ -24,7 +24,7 @@ import os from 'os';
 
 import AWS = require('aws-sdk');
 import path = require('path');
-import { CommandAndControlProvisioningWorld } from '../step_definitions/commandandcontrol/commandandcontrol.world';
+import { CommandAndControlProvisioningWorld, world } from '../step_definitions/commandandcontrol/commandandcontrol.world';
 
 setDefaultTimeout(30 * 1000);
 
@@ -67,18 +67,33 @@ async function createThing(thingName:string) : Promise<void> {
     if (!fs.existsSync(tmpCertDir)) {
         fs.mkdirSync(tmpCertDir);
     }
-    fs.writeFileSync(path.join(tmpCertDir, `${thingName}-certificate.pem.crt`), rc.certificatePem);
-    fs.writeFileSync(path.join(tmpCertDir, `${thingName}-private.pem.key`), rc.keyPair.PrivateKey);
-    fs.writeFileSync(path.join(tmpCertDir, `${thingName}-public.pem.key`), rc.keyPair.PublicKey);
+    const certPath = path.join(tmpCertDir, `${thingName}-certificate.pem.crt`);
+    fs.writeFileSync(certPath, rc.certificatePem);
+    const privateKeyPath = path.join(tmpCertDir, `${thingName}-private.pem.key`);
+    fs.writeFileSync(privateKeyPath, rc.keyPair.PrivateKey);
+    const publicKeyPath = path.join(tmpCertDir, `${thingName}-public.pem.key`);
+    fs.writeFileSync(publicKeyPath, rc.keyPair.PublicKey);
+
+    try {
+        await iot.deletePolicy({
+            policyName: process.env.COMMANDANDCONTROL_TESTDEVICE_POLICYNAME
+        }).promise();
+    } catch (e) {
+        //ignore
+    }
 
     try {
         await iot.getPolicy({
             policyName: process.env.COMMANDANDCONTROL_TESTDEVICE_POLICYNAME
         }).promise();
     } catch (e) {
+        let policyDocument = process.env.COMMANDANDCONTROL_TESTDEVICE_POLICYDOCUMENT;
+        policyDocument = policyDocument.split('${AWS_REGION}').join(process.env.AWS_REGION);
+        policyDocument = policyDocument.split('${AWS_ACCOUNTID}').join(process.env.AWS_ACCOUNTID);
+
         await iot.createPolicy({
             policyName: process.env.COMMANDANDCONTROL_TESTDEVICE_POLICYNAME,
-            policyDocument: process.env.COMMANDANDCONTROL_TESTDEVICE_POLICYDOCUMENT
+            policyDocument
         }).promise();
     }
 
@@ -181,38 +196,47 @@ async function deleteThingGroup(thingGroupName:string) {
 
 async function teardown_commandandcontrol_topics_feature(world:unknown) {
     await deleteCommands(world, ['cdf-integration-test-reboot']);
+    await createThing('cdf-integration-test-cac-topics-device1');
+    await createThing('cdf-integration-test-cac-topics-device2');
 }
 
 Before({tags: '@setup_commandandcontrol_topics'}, async function () {
-    await teardown_commandandcontrol_topics_feature(this);
+    await teardown_commandandcontrol_topics_feature(world);
+    await createThing('cdf-integration-test-cac-topics-device1');
+    await createThing('cdf-integration-test-cac-topics-device2');
 });
 
 Before({tags: '@teardown_commandandcontrol_topics'}, async function () {
-    await teardown_commandandcontrol_topics_feature(this);
+    await teardown_commandandcontrol_topics_feature(world);
 });
 
 async function teardown_commandandcontrol_shadows_feature(world:unknown) {
     await deleteCommands(world, ['cdf-integration-test-stats']);
+    await deleteThing('cdf-integration-test-cac-shadows-device1');
+    await deleteThing('cdf-integration-test-cac-shadows-device2');
+    await deleteThingGroup('cdf-integration-test-cac-shadows-group1');
 }
 
 Before({tags: '@setup_commandandcontrol_shadows'}, async function () {
-    await teardown_commandandcontrol_shadows_feature(this);
+    await teardown_commandandcontrol_shadows_feature(world);
+    await createThing('cdf-integration-test-cac-shadows-device1');
+    await createThing('cdf-integration-test-cac-shadows-device2');
+    await createThingGroup('cdf-integration-test-cac-shadows-group1', 'cdf-integration-test-cac-shadows-device1', 'cdf-integration-test-cac-shadows-device2');
 });
 
 Before({tags: '@teardown_commandandcontrol_shadows'}, async function () {
-    await teardown_commandandcontrol_shadows_feature(this);
+    await teardown_commandandcontrol_shadows_feature(world);
 });
 
 async function teardown_commandandcontrol_jobs_feature(world:CommandAndControlProvisioningWorld) {
     await deleteCommands(world, ['cdf-integration-test-ota']);
-    await deleteThing('cdf-integration-test-cac-device1');
-    await deleteThing('cdf-integration-test-cac-device2');
-    await deleteThingGroup('cdf-integration-test-cac-group1');
+    await deleteThing('cdf-integration-test-cac-jobs-device1');
+    await deleteThing('cdf-integration-test-cac-jobs-device2');
+    await deleteThingGroup('cdf-integration-test-cac-jobs-group1');
     
-    if (world.jobsTestClients) {
-        Object.entries(world.jobsTestClients).forEach(async ([thingName, client]) => {
+    if (world?.jobsTestClients) {
+        Object.entries(world.jobsTestClients).forEach(async ([_thingName, client]) => {
             await client.disconnect();
-            world.jobsTestClients[thingName] = undefined;
         });
         delete world.jobsTestClients;
     }
@@ -221,12 +245,12 @@ async function teardown_commandandcontrol_jobs_feature(world:CommandAndControlPr
 
 
 Before({tags: '@setup_commandandcontrol_jobs'}, async function () {
-    await teardown_commandandcontrol_jobs_feature(this);
-    await createThing('cdf-integration-test-cac-device1');
-    await createThing('cdf-integration-test-cac-device2');
-    await createThingGroup('cdf-integration-test-cac-group1', 'cdf-integration-test-cac-device1', 'cdf-integration-test-cac-device2');
+    await teardown_commandandcontrol_jobs_feature(world);
+    await createThing('cdf-integration-test-cac-jobs-device1');
+    await createThing('cdf-integration-test-cac-jobs-device2');
+    await createThingGroup('cdf-integration-test-cac-jobs-group1', 'cdf-integration-test-cac-jobs-device1', 'cdf-integration-test-cac-jobs-device2');
 });
 
 Before({tags: '@teardown_commandandcontrol_jobs'}, async function () {
-    await teardown_commandandcontrol_jobs_feature(this);
+    await teardown_commandandcontrol_jobs_feature(world);
 });

@@ -14,7 +14,7 @@ import 'reflect-metadata';
 
 import { fail } from 'assert';
 import { expect, use } from 'chai';
-import { Given, setDefaultTimeout, TableDefinition, Then, When } from 'cucumber';
+import { Given, setDefaultTimeout, DataTable, Then, When } from '@cucumber/cucumber';
 import {
     Device, DevicesService, DeviceTask, GREENGRASS2_PROVISIONING_CLIENT_TYPES, NewDeviceTask
 } from '@cdf/greengrass2-provisioning-client';
@@ -52,7 +52,7 @@ Given('greengrass2-provisioning client device {string} does not exist', async fu
     }
 });
 
-Given('greengrass2-provisioning client device {string} exists with attributes:', async function (name: string, data: TableDefinition) {
+Given('greengrass2-provisioning client device {string} exists with attributes:', async function (name: string, data: DataTable) {
     let device: Device;
     try {
         device = await devicesService.getDevice(name, getAdditionalHeaders(world.authToken));
@@ -72,7 +72,7 @@ Then('greengrass2-provisioning client device {string} exists', async function (n
     }
 });
 
-When('I create greengrass2-provisioning client device task with attributes:', async function (data: TableDefinition) {
+When('I create greengrass2-provisioning client device task with attributes:', async function (data: DataTable) {
     delete world.lastClientDeviceTaskId;
     try {
         const task: NewDeviceTask = buildModel(data);
@@ -93,7 +93,7 @@ When('I delete client device {string}', async function (name: string) {
     }
 });
 
-When('I create greengrass2-provisioning client device task with invalid attributes:', async function (data: TableDefinition) {
+When('I create greengrass2-provisioning client device task with invalid attributes:', async function (data: DataTable) {
     delete world.lastClientDeviceTaskId;
     try {
         const task: NewDeviceTask = buildModel(data);
@@ -109,7 +109,7 @@ Then('last greengrass2-provisioning client device task fails with a {int}', func
 });
 
 
-Then('last greengrass2-provisioning client device task exists with attributes:', async function (data: TableDefinition) {
+Then('last greengrass2-provisioning client device task exists with attributes:', async function (data: DataTable) {
     let task: DeviceTask;
     try {
         task = await devicesService.getDeviceTask(world.lastClientDeviceTaskId, getAdditionalHeaders(world.authToken));

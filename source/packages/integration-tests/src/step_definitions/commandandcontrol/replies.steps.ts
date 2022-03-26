@@ -13,7 +13,7 @@
 import 'reflect-metadata';
 
 import { use } from 'chai';
-import { setDefaultTimeout, TableDefinition, Then, When } from 'cucumber';
+import { setDefaultTimeout, DataTable, Then, When } from '@cucumber/cucumber';
 import axios from 'axios';
 
 import { container } from '../../di/inversify.config';
@@ -44,9 +44,8 @@ setDefaultTimeout(15 * 1000);
 
 const messagesService: MessagesService = container.get(COMMANDANDCONTROL_CLIENT_TYPES.MessagesService);
 
-async function createClient(thingName:string) {
-  let client = world.jobsTestClients[thingName];
-  if (client===undefined) {
+async function createJobsTestClient(thingName:string) : Promise<JobsTestClient> {
+  if ( world.jobsTestClients?.[thingName]===undefined) {
     const tmpCertDir = path.join(os.tmpdir(), 'cac-certs');
     const certPath = path.join(tmpCertDir, `${thingName}-certificate.pem.crt`);
     const keyPath = path.join(tmpCertDir, `${thingName}-private.pem.key`);
@@ -55,30 +54,26 @@ async function createClient(thingName:string) {
     const ca = await axios.get<string>('https://www.amazontrust.com/repository/AmazonRootCA1.pem');
     fs.writeFileSync(caPath, ca.data);
 
-    client = new JobsTestClient(thingName, certPath, keyPath, caPath);
-    await client.connect();
-    await client.getNextJobDocument();
-    world.jobsTestClients[thingName] = client;
+    if (world.jobsTestClients===undefined) {
+      world.jobsTestClients = {};
+    }
+    world.jobsTestClients[thingName] = new JobsTestClient(thingName, certPath, keyPath, caPath);
+    try {
+      await world.jobsTestClients[thingName].connect();
+      await world.jobsTestClients[thingName].getNextJobDocument();
+    } catch (e) {
+      const { requestId, cfId, extendedRequestId } = e.$metadata;
+      console.log({ requestId, cfId, extendedRequestId });
+    }
   }
+  return world.jobsTestClients[thingName];
 }
 
 When('thing {string} replies to last command-and-control message as {string}', async function (thingName:string,action:string) {
-  switch(world.lastCommand.deliveryMethod.type) {
-    case 'TOPIC':
-    case 'SHADOW':
-      await reply(thingName, action);
-      break;
-
-    case 'JOB': {
-      await reply(thingName, action);
-      break;
-    }
-    default:
-      fail('not implemented yet');
-  }
+  await reply(thingName, action);
 });
 
-When('thing {string} replies to last command-and-control message with payload:', async function (thingName:string, data: TableDefinition) {
+When('thing {string} replies to last command-and-control message with payload:', async function (thingName:string, data: DataTable) {
   switch(world.lastCommand.deliveryMethod.type) {
     case 'TOPIC':
     case 'SHADOW':
@@ -94,11 +89,11 @@ When('thing {string} replies to last command-and-control message with payload:',
   }
 });
 
-When('thing {string} replies to last command-and-control message as {string} with payload:', async function (thingName:string, action:string, data: TableDefinition) {
+When('thing {string} replies to last command-and-control message as {string} with payload:', async function (thingName:string, action:string, data: DataTable) {
   await reply(thingName, action, data);
 });
 
-async function reply(thingName:string, action:string, data?:TableDefinition) {
+async function reply(thingName:string, action:string, data?:DataTable) {
   const command = world.lastCommand;
   const recipient = await messagesService.getRecipient(world.lastMessageId, thingName, getAdditionalHeaders(world.authToken));
   const payload =  buildModel(data);
@@ -113,12 +108,16 @@ async function reply(thingName:string, action:string, data?:TableDefinition) {
       break;
 
     case 'JOB': {
-      let client = world.jobsTestClients[thingName];
+      let client = world.jobsTestClients?.[thingName];
       if (client===undefined) {
-        await createClient(thingName);
-        client = world.jobsTestClients[thingName];
+        client = await createJobsTestClient(thingName);
       }
-      await client.updateJobExecution(action as iotjobs.model.JobStatus, payload as {[key: string]: string});
+      try {
+        await client.updateJobExecution(action as iotjobs.model.JobStatus, payload as {[key: string]: string});
+      } catch (e) {
+        const { requestId, cfId, extendedRequestId } = e.$metadata;
+        console.log({ requestId, cfId, extendedRequestId });
+      }
       break;
     }
 
@@ -127,18 +126,21 @@ async function reply(thingName:string, action:string, data?:TableDefinition) {
 
   }}
 
-Then('last command-and-control message has replies from {string}:', async function (thingName:string, data: TableDefinition) {
+Then('last command-and-control message has replies from {string}:', async function (thingName:string, data: DataTable) {
   const replies = await messagesService.listReplies(world.lastMessageId, thingName, undefined, undefined, getAdditionalHeaders(world.authToken));
   validateExpectedAttributes(replies, data, world);
 });
 
-function build_direct_mqtt_connection(thingName:string) : mqtt.MqttClientConnection {
+async function build_direct_mqtt_connection(thingName:string) : Promise<mqtt.MqttClientConnection> {
 
   const tmpCertDir = path.join(os.tmpdir(), 'cac-certs');
   const certPath = path.join(tmpCertDir, `${thingName}-certificate.pem.crt`);
   const keyPath = path.join(tmpCertDir, `${thingName}-private.pem.key`);
-  const caPath = path.join(tmpCertDir, 'AmazonRootCA1.pem');
   const endpoint:string = process.env.AWS_IOT_ENDPOINT;
+  
+  const caPath = path.join(tmpCertDir, 'AmazonRootCA1.pem');
+  const ca = await axios.get<string>('https://www.amazontrust.com/repository/AmazonRootCA1.pem');
+  fs.writeFileSync(caPath, ca.data);
 
   let config_builder = iot.AwsIotMqttConnectionConfigBuilder.new_mtls_builder_from_path(certPath, keyPath);
   config_builder.with_certificate_authority_from_path(undefined, caPath);
@@ -154,28 +156,32 @@ function build_direct_mqtt_connection(thingName:string) : mqtt.MqttClientConnect
 async function replyToTopic(thingName:string, correlationId:string, action:string, payload?:unknown) : Promise<void> {
   const topic = `cmd/cdf/cac/${thingName}/${correlationId}/${action}`;
 
-  const connection = build_direct_mqtt_connection(thingName);
+  const connection = await build_direct_mqtt_connection(thingName);
   const msg = {
     timestamp:(new Date()).getTime(),
     payload
   }
 
-  await connection.connect()
-  await connection.publish(topic, msg, mqtt.QoS.AtLeastOnce);
-  await connection.disconnect();
+  try {
+    await connection.connect()
+    await connection.publish(topic, msg, mqtt.QoS.AtLeastOnce);
+  } catch (e) {
+    const { requestId, cfId, extendedRequestId } = e.$metadata;
+    console.log({ requestId, cfId, extendedRequestId });
+  } finally {
+    await connection.disconnect();
+  }
 
 }
 
 async function replyToShadow(thingName:string, correlationId:string, operation:string, action:string, payload?:unknown) : Promise<void> {
-  const connection = build_direct_mqtt_connection(thingName);
+  const connection = await build_direct_mqtt_connection(thingName);
 
   const shadow = new iotshadow.IotShadowClient(connection);
 
-  await connection.connect()
-
   const req:iotshadow.model.UpdateNamedShadowRequest = {
     thingName,
-    shadowName: 'cdf-cac',
+    shadowName: 'cac',
     clientToken: correlationId,
     state: {
       desired: {
@@ -192,9 +198,17 @@ async function replyToShadow(thingName:string, correlationId:string, operation:s
     payload
   };
 
-  await shadow.publishUpdateNamedShadow(req, mqtt.QoS.AtLeastOnce);
 
-  await connection.disconnect();
+  try {
+    await connection.connect()
+    await shadow.publishUpdateNamedShadow(req, mqtt.QoS.AtLeastOnce);
+  } catch (e) {
+    const { requestId, cfId, extendedRequestId } = e.$metadata;
+    console.log({ requestId, cfId, extendedRequestId });
+  } finally {
+    await connection.disconnect();
+  }
+
 }
 
 

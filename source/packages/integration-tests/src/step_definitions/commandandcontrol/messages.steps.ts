@@ -13,7 +13,7 @@
 import 'reflect-metadata';
 
 import { expect, use } from 'chai';
-import { setDefaultTimeout, TableDefinition, Then, When } from 'cucumber';
+import { setDefaultTimeout, DataTable, Then, When } from '@cucumber/cucumber';
 
 import { container } from '../../di/inversify.config';
 import { buildModel, validateExpectedAttributes } from '../common/common.steps';
@@ -36,7 +36,7 @@ setDefaultTimeout(20 * 1000);
 
 const messagesService: MessagesService = container.get(COMMANDANDCONTROL_CLIENT_TYPES.MessagesService);
 
-When('I send command-and-control message to last command with attributes:', async function (data: TableDefinition) {
+When('I send command-and-control message to last command with attributes:', async function (data: DataTable) {
   const message: MessageResource = buildModel(data);
   message.commandId = world.lastCommand.id;
   world.lastMessageId = await messagesService.createMessage(message, getAdditionalHeaders(world.authToken));
@@ -62,12 +62,12 @@ When('I wait until last command-and-control message has {string} status', async 
 });
 
 
-Then('last command-and-control message exists with attributes:', async function (data: TableDefinition) {
+Then('last command-and-control message exists with attributes:', async function (data: DataTable) {
   const message = await messagesService.getMessage(world.lastMessageId, getAdditionalHeaders(world.authToken));
   validateExpectedAttributes(message, data, world);
 });
 
-Then('last command-and-control message has recipients:', async function (data: TableDefinition) {
+Then('last command-and-control message has recipients:', async function (data: DataTable) {
   const recipients = await messagesService.listRecipients(world.lastMessageId, undefined, undefined, getAdditionalHeaders(world.authToken));
   validateExpectedAttributes(recipients, data, world);
 });
