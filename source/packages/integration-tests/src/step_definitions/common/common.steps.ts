@@ -120,14 +120,13 @@ export async function streamToString(stream: Readable): Promise<string> {
     });
 }
 
-export function buildModel<T>(data: DataTable): T {
+export function buildModel<T>(data: DataTable, initial: Record<string,string> = {}) : T {
     if (data === undefined) {
         return undefined;
     }
 
     const d = data.rowsHash();
-
-    const resource = {} as T;
+    const resource = { ...initial } as unknown as T;
 
     Object.keys(d).forEach(key => {
         const value = replaceTokens(d[key]);

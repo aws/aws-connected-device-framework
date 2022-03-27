@@ -17,6 +17,7 @@ import {
     DeviceProfile20Resource,
     GroupProfile20Resource,
     ASSETLIBRARY_CLIENT_TYPES,
+    DeviceProfileResource,
 } from '@cdf/assetlibrary-client/dist';
 import stringify from 'json-stable-stringify';
 import { fail } from 'assert';
@@ -24,7 +25,7 @@ import { fail } from 'assert';
 import chai_string = require('chai-string');
 import {expect, use} from 'chai';
 use(chai_string);
-import { RESPONSE_STATUS, AUTHORIZATION_TOKEN } from '../common/common.steps';
+import { RESPONSE_STATUS, AUTHORIZATION_TOKEN, buildModel } from '../common/common.steps';
 import {container} from '../../di/inversify.config';
 import {Dictionary} from '../../../../libraries/core/lambda-invoke/src';
 /*
@@ -78,31 +79,27 @@ Given('assetlibrary {word} profile {string} of {string} exists', async function 
 });
 
 When('I create the assetlibrary {word} profile {string} of {string} with attributes', async function (category:string, profileId:string, templateId:string, data:DataTable) {
-    const d = data.rowsHash();
-
-    const profile = {
-        profileId,
-        templateId
-    };
-
-    Object.keys(d).forEach( key => {
-        const value = d[key];
-        if (value.startsWith('{') || value.startsWith('[')) {
-            profile[key] = JSON.parse(d[key]);
-        } else if (value==='___null___') {
-            profile[key] = null;
-        } else if (value==='___undefined___') {
-            delete profile[key];
-        } else {
-            profile[key] = d[key];
-        }
-    });
+    const profile = buildModel<DeviceProfileResource>(data, {profileId, templateId});
 
     try {
         if (isDevice(category)) {
             await profileService.createDeviceProfile(profile, getAdditionalHeaders(this));
         } else if (isGroup(category)) {
             await profileService.createGroupProfile(profile, getAdditionalHeaders(this));
+        }
+    } catch (err) {
+        this[RESPONSE_STATUS]=err.status;
+    }
+});
+
+When('I update the assetlibrary {word} profile {string} of {string} with attributes', async function (category:string, profileId:string, templateId:string, data:DataTable) {
+    const profile = buildModel<DeviceProfileResource>(data, {profileId, templateId});
+
+    try {
+        if (isDevice(category)) {
+            await profileService.updateDeviceProfile(templateId, profileId, profile, getAdditionalHeaders(this));
+        } else if (isGroup(category)) {
+            await profileService.updateGroupProfile(templateId, profileId, profile, getAdditionalHeaders(this));
         }
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
