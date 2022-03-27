@@ -178,26 +178,26 @@ export class GroupsDaoFull extends BaseDaoFull {
 
         const conn = super.getConnection();
         try {
-          const updateTraversal = conn.traversal.V(id);
-          const dropTraversals = [];
+            const traversal = conn.traversal.V(id);
+            // drop() step terminates a traversal, process all drops as part of a final union step 
+            const dropTraversals: process.GraphTraversal[] = [];
         
-          for (const key of Object.keys(n.attributes)) {
-            const val = n.attributes[key];
-            if (val !== undefined) {
-              if (val === null) {
-                dropTraversals.push(conn.traversal.V(id).properties(key).drop());
-              } else {
-                updateTraversal.property(process.cardinality.single, key, val);
-              }
+            for (const [key, val] of Object.entries(n.attributes)) {
+                if (val !== undefined) {
+                    if (val === null) {
+                        dropTraversals.push(__.properties(key));
+                    } else {
+                        traversal.property(process.cardinality.single, key, val);
+                    }
+                }
             }
-          }
-        
-          await updateTraversal.iterate();
-          for(const dropTraversal of dropTraversals){
-            await dropTraversal.iterate();
-          }
+            if (dropTraversals.length > 0) {
+                traversal.local(__.union(...dropTraversals)).drop();
+            }
+            
+            await traversal.iterate();
         } finally {
-          await conn.close();
+            await conn.close();
         }
 
         logger.debug(`groups.full.dao update: exit: id:${id}`);
