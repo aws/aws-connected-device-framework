@@ -140,6 +140,19 @@ Feature: Group lifecycle
       | parentPath | / |
       | attributes | {"color":"black","size":"M"} |
 
+  Scenario: Clear existing custom group attributes
+    Given group "/TEST-groups-group001" exists
+    When I update group "/TEST-groups-group001" with attributes
+      | templateId | test-groups-grouptemplate001 |
+      | attributes | {"color":null} |
+    Then group "/TEST-groups-group001" exists with attributes
+      | templateId | test-groups-grouptemplate001 |
+      | name | TEST-groups-group001 |
+      | description | My group |
+      | parentPath | / |
+      | attributes |  {"size":"M"} |
+
+  # Covers https://github.com/aws/aws-connected-device-framework/issues/64
   Scenario: Clear existing custom group attributes while updating others
     Given group "/TEST-groups-group001" exists
     When I update group "/TEST-groups-group001" with attributes
