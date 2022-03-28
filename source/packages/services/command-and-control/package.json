@@ -1,6 +1,6 @@
 {
   "name": "@cdf/command-and-control",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "CDF Command & Control",
   "author": "Dean Hart",
   "config": {

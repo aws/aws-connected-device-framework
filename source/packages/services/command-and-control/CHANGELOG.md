@@ -1,6 +1,13 @@
 # Change Log - @cdf/command-and-control
 
-This log was last generated on Mon, 28 Mar 2022 00:28:46 GMT and should not be manually modified.
+This log was last generated on Mon, 28 Mar 2022 03:56:19 GMT and should not be manually modified.
+
+## 0.0.4
+Mon, 28 Mar 2022 03:56:19 GMT
+
+### Patches
+
+- fix uidGenerator to allow it to be accessed from children class
 
 ## 0.0.3
 Mon, 28 Mar 2022 00:28:46 GMT
