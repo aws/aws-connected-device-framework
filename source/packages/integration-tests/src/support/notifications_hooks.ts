@@ -14,7 +14,7 @@
 import { EventsourcesService, EventsService, NOTIFICATIONS_CLIENT_TYPES, SubscriptionsService } from '@cdf/notifications-client/dist';
 import { getEventIdFromName, getAdditionalHeaders, getEventSourceIdFromName } from '../step_definitions/notifications/notifications.utils';
 
-import { Before, setDefaultTimeout} from 'cucumber';
+import { Before, setDefaultTimeout} from '@cucumber/cucumber';
 import { container } from '../di/inversify.config';
 import { EventSourceType } from '@cdf/notifications-client/dist/client/eventsources.model';
 import { AUTHORIZATION_TOKEN } from '../step_definitions/common/common.steps';

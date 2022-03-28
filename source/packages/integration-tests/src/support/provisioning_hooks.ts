@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import { Before, setDefaultTimeout } from 'cucumber';
+import { Before, setDefaultTimeout } from '@cucumber/cucumber';
 
 import AWS = require('aws-sdk');
 setDefaultTimeout(30 * 1000);

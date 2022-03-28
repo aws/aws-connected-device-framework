@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/notifications-client",
+      "comment": "revert to latest aws-sdk",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/notifications-client",
+  "email": "willsia@amazon.com"
+}

@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/auth-devicecert",
+      "comment": "revert to latest aws-sdk",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/auth-devicecert",
+  "email": "willsia@amazon.com"
+}

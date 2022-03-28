@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/commands-client",
+      "comment": "revert to latest aws-sdk",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/commands-client",
+  "email": "willsia@amazon.com"
+}
