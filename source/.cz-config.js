@@ -39,6 +39,7 @@ module.exports = {
         { name: 'certificateactivator' },
         { name: 'certificatevendor' }, 
         { name: 'commands' },
+        { name: 'command-and-control' },
         { name: 'device-patcher' },
         { name: 'events-alerts' }, 
         { name: 'events-processor' }, 

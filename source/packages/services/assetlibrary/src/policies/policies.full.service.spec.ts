@@ -15,26 +15,25 @@ import { createMockInstance } from 'jest-create-mock-instance';
 
 import { PoliciesServiceFull } from './policies.full.service';
 import { PoliciesAssembler } from './policies.assembler';
-import { TypesService } from '../types/types.service';
-import { TypesServiceFull } from '../types/types.full.service';
 import { PoliciesDaoFull } from './policies.full.dao';
 import { AttachedPolicy, PolicyModel } from './policies.models';
 import { EventEmitter } from '../events/eventEmitter.service';
 import { PoliciesService } from './policies.service';
+import { SchemaValidatorService } from '../types/schemaValidator.full.service';
 
 describe('PoliciesService', () => {
     let mockedDao: jest.Mocked<PoliciesDaoFull>;
-    let mockedTypesService: jest.Mocked<TypesService>;
+    let mockedSchemaValidatorService: jest.Mocked<SchemaValidatorService>;
     let mockedAssembler: jest.Mocked<PoliciesAssembler>;
     let mockedEventEmitter: jest.Mocked<EventEmitter>;
     let instance: PoliciesService;
 
     beforeEach(() => {
         mockedDao = createMockInstance(PoliciesDaoFull);
-        mockedTypesService = createMockInstance(TypesServiceFull);
+        mockedSchemaValidatorService = createMockInstance(SchemaValidatorService);
         mockedAssembler = createMockInstance(PoliciesAssembler);
         mockedEventEmitter = createMockInstance(EventEmitter);
-        instance = new PoliciesServiceFull(mockedDao, mockedAssembler, mockedTypesService, mockedEventEmitter);
+        instance = new PoliciesServiceFull(mockedEventEmitter,  mockedAssembler, mockedDao, mockedSchemaValidatorService, );
     });
 
     it('A single attached policy matches on both device groups and type', async () => {

@@ -22,6 +22,7 @@ import { TypeCategory } from '../types/constants';
 import { EventEmitter, Type, Event } from '../events/eventEmitter.service';
 import { GroupItemList } from '../groups/groups.models';
 import { GroupsDaoLite } from '../groups/groups.lite.dao';
+import { DeviceNotFoundError, NotSupportedError } from '../utils/errors';
 
 @injectable()
 export class DevicesServiceLite implements DevicesService {
@@ -33,7 +34,7 @@ export class DevicesServiceLite implements DevicesService {
         @inject(TYPES.EventEmitter) private eventEmitter: EventEmitter) {}
 
     public async listRelatedDevices(_deviceId: string, _relationship: string, _direction:string, _template:string, _state:string, _offset:number, _count:number) : Promise<DeviceItemList> {
-        throw new Error('NOT_SUPPORTED');
+        throw new NotSupportedError();
     }
 
     public async get(deviceId:string, _expandComponents?:boolean, _attributes?:string[], _includeGroups?:boolean): Promise<DeviceItem> {
@@ -64,7 +65,7 @@ export class DevicesServiceLite implements DevicesService {
     }
 
     public async createBulk(_devices:DeviceItem[], _applyProfile?:string) : Promise<BulkDevicesResult> {
-        throw new Error('NOT_SUPPORTED');
+        throw new NotSupportedError();
     }
 
     public async create(model: DeviceItem, applyProfile?:string) : Promise<string> {
@@ -85,9 +86,11 @@ export class DevicesServiceLite implements DevicesService {
 
         // NOTE: Device components not supported in lite mode
 
-        let groupIds:string[]=[];
+        const groupIds:string[]=[];
         if (model.groups?.out) {
-            Object.keys(model.groups.out).forEach(k=> groupIds = groupIds.concat(model.groups.out[k]));
+            Object.keys(model.groups.out)
+                .forEach(relation=> groupIds.push(
+                    ... Object.values(model.groups.out[relation]).map(e=>e.id)));
         }
 
         // verify all referenced device groups exist
@@ -113,7 +116,7 @@ export class DevicesServiceLite implements DevicesService {
     }
 
     public async updateBulk(_devices:DeviceItem[], _applyProfile?:string) : Promise<BulkDevicesResult> {
-        throw new Error('NOT_SUPPORTED');
+        throw new NotSupportedError();
     }
 
     public async update(model:DeviceItem, applyProfile?:string) : Promise<void> {
@@ -130,7 +133,7 @@ export class DevicesServiceLite implements DevicesService {
         // as 'lite' only supports updating full resources, we need to fetch the original, then merge thge changes
         const existing = await this.get(model.deviceId);
         if (existing===undefined) {
-            throw new Error('NOT_FOUND');
+            throw new DeviceNotFoundError(model.deviceId);
         }
         const merged = Object.assign(new DeviceItem(), existing, model);
         merged.attributes = {...existing.attributes, ...model.attributes};
@@ -220,27 +223,27 @@ export class DevicesServiceLite implements DevicesService {
     }
 
     public async attachToDevice(_deviceId:string, _relationship:string, _direction:string, _otherDeviceId:string) : Promise<void> {
-        throw new Error('NOT_SUPPORTED');
+        throw new NotSupportedError();
     }
 
     public async detachFromDevice(_deviceId:string, _relationship:string, _direction:string, _otherDeviceId:string) : Promise<void> {
-        throw new Error('NOT_SUPPORTED');
+        throw new NotSupportedError();
     }
 
     public async updateComponent(_deviceId:string, _componentId:string, _model:DeviceItem) : Promise<void> {
-        throw new Error('NOT_SUPPORTED');
+        throw new NotSupportedError();
     }
 
     public async deleteComponent(_deviceId:string, _componentId:string) : Promise<void> {
-        throw new Error('NOT_SUPPORTED');
+        throw new NotSupportedError();
     }
 
     public async createComponent(_parentDeviceId:string, _model:DeviceItem) : Promise<string> {
-        throw new Error('NOT_SUPPORTED');
+        throw new NotSupportedError();
     }
 
     public async listRelatedGroups(_deviceId: string, _relationship: string, _direction:string, _template:string, _offset:number, _count:number) : Promise<GroupItemList> {
-        throw new Error('NOT_SUPPORTED');
+        throw new NotSupportedError();
     }
 
 }

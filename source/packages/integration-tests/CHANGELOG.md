@@ -1,6 +1,27 @@
 # Change Log - @cdf/integration-tests
 
-This log was last generated on Thu, 10 Mar 2022 00:08:34 GMT and should not be manually modified.
+This log was last generated on Mon, 28 Mar 2022 00:28:46 GMT and should not be manually modified.
+
+## 3.1.1
+Mon, 28 Mar 2022 00:28:46 GMT
+
+### Patches
+
+- fix tests issues identified in previous integration tests run
+
+## 3.1.0
+Fri, 25 Mar 2022 03:55:57 GMT
+
+### Minor changes
+
+- adding new integration tests for command and control
+
+## 3.0.3
+Mon, 21 Mar 2022 21:58:32 GMT
+
+### Patches
+
+- Upgrade dependencies marked as deprecated
 
 ## 3.0.2
 Thu, 10 Mar 2022 00:08:34 GMT

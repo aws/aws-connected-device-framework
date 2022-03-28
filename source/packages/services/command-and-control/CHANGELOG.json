@@ -1,0 +1,58 @@
+{
+  "name": "@cdf/command-and-control",
+  "entries": [
+    {
+      "version": "0.0.4",
+      "tag": "@cdf/command-and-control_v0.0.4",
+      "date": "Mon, 28 Mar 2022 03:56:19 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix uidGenerator to allow it to be accessed from children class"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.0.3",
+      "tag": "@cdf/command-and-control_v0.0.3",
+      "date": "Mon, 28 Mar 2022 00:28:46 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "default port specified in .env.defaults"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.0.2",
+      "tag": "@cdf/command-and-control_v0.0.2",
+      "date": "Fri, 25 Mar 2022 06:23:54 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "should load thing-list-module after loading iot"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@cdf/thing-list-builder\" from `^1.1.0` to `^1.1.1`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.0.1",
+      "tag": "@cdf/command-and-control_v0.0.1",
+      "date": "Fri, 25 Mar 2022 03:55:57 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@cdf/thing-list-builder\" from `^1.0.0` to `^1.1.0`"
+          }
+        ]
+      }
+    }
+  ]
+}

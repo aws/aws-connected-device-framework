@@ -1,13 +1,15 @@
 import inquirer from 'inquirer';
 import { ListrTask } from 'listr2';
 import ow from 'ow';
-
 import {
-  CreateAliasCommand, CreateKeyCommand, DescribeKeyCommand, EnableKeyRotationCommand, KMSClient,
+  CreateAliasCommand,
+  CreateKeyCommand,
+  DescribeKeyCommand,
+  EnableKeyRotationCommand,
+  KMSClient,
   ListAliasesCommand,
-  UpdateAliasCommand
+  UpdateAliasCommand,
 } from '@aws-sdk/client-kms';
-
 import { Answers } from '../../../models/answers';
 import { InfrastructureModule, ModuleName } from '../../../models/modules';
 
@@ -62,9 +64,15 @@ export class KmsKeyInstaller implements InfrastructureModule {
         when(answers: Answers) {
           return answers.kms.useExisting && answers.kms.identifyBy === 'id';
         },
-        validate(answer: string) {
+        validate: async (answer: string) => {
           if (answer?.length === 0) {
             return 'You must enter the KMS key Id.';
+          }
+          const kms = new KMSClient({ region: answers.region });
+          try {
+            await kms.send(new DescribeKeyCommand({ KeyId: answer }));
+          } catch (err) {
+            return `KMS Key ID ${answer} not found in account ${answers.accountId} ${answers.region}.`;
           }
           return true;
         },
@@ -77,7 +85,7 @@ export class KmsKeyInstaller implements InfrastructureModule {
         default: answers.kms?.alias,
         askAnswered: true,
         when(answers: Answers) {
-          return (answers.kms.useExisting && answers.kms.identifyBy === 'alias') || !answers.kms.useExisting;
+          return !answers.kms.useExisting || answers.kms.identifyBy === 'alias';
         },
         validate(answer: string) {
           if (answer?.length === 0) {
@@ -89,38 +97,26 @@ export class KmsKeyInstaller implements InfrastructureModule {
 
     ], answers);
 
-    // verify exists
+    // remove "alias/" prefix if entered
+    if (answers.kms.alias.startsWith("alias/")) {
+      answers.kms.alias = answers.kms.alias.substring(6);
+    }
+
+    // verify if "use existing KMS alias" exists and if yes, rewrite to KMS ID
     if (answers.kms.useExisting === true) {
-      const kms = new KMSClient({ region: answers.region });
       if (answers.kms.identifyBy === 'alias') {
+        const kms = new KMSClient({ region: answers.region });
         const aliases = await kms.send(new ListAliasesCommand({}));
         const key = aliases.Aliases?.find(a => a.AliasName === `alias/${answers.kms.alias}`);
         if (key === undefined) {
-          throw new Error(`KMS Key alias ${answers.kms.alias} not found`);
+          throw new Error(`KMS Key alias ${answers.kms.alias} not found in account ${answers.accountId} ${answers.region}.`);
         } else {
           answers.kms.id = key.TargetKeyId;
         }
-      } else {
-        const key = await kms.send(new DescribeKeyCommand({ KeyId: answers.kms.id }));
-        if (key === undefined) {
-          throw new Error(`KMS Key alias ${answers.kms.alias} not found`);
-        }
-      }
-    } else {
-      const kms = new KMSClient({ region: answers.region });
-      const aliases = await kms.send(new ListAliasesCommand({}));
-      const key = aliases.Aliases?.find(a => a.AliasName === `alias/${answers.kms.alias}`);
-      if (key !== undefined) {
-        answers.kms.useExisting = true
-        answers.kms.id = key.TargetKeyId;
-      } else {
-        delete answers.kms?.identifyBy;
-        delete answers.kms?.id;
       }
     }
 
     return answers;
-
   }
 
   public async install(answers: Answers): Promise<[Answers, ListrTask[]]> {
@@ -128,12 +124,29 @@ export class KmsKeyInstaller implements InfrastructureModule {
     ow(answers, ow.object.plain);
     ow(answers.region, ow.string.nonEmpty);
     ow(answers.environment, ow.string.nonEmpty);
+    ow(answers.kms, ow.object.plain);
     ow(answers.kms.useExisting, ow.boolean);
 
     const tasks: ListrTask[] = [];
     const kms = new KMSClient({ region: answers.region });
 
-    if (answers.kms.useExisting === false) {
+    // A KMS Key must not be created if either of the following is true:
+    // 1. answers.kms.id was set in prompts/config (only possible if answers.kms.useExisting is true)
+    // 2. the KMS alias already exists, either because useExisting is true or because a previous run created it
+
+    if (answers.kms.alias === undefined) {
+      answers.kms.alias = `cdf-${answers.environment}`;
+    }
+
+    if (answers.kms.id === undefined) {
+      const aliases = await kms.send(new ListAliasesCommand({}));
+      const existingAlias = aliases.Aliases?.find(a => a.AliasName === `alias/${answers.kms.alias}`);
+      if (existingAlias !== undefined) {
+        answers.kms.id = existingAlias.TargetKeyId;
+      }
+    }
+
+    if (answers.kms.id === undefined) {
       tasks.push(
         {
           title: 'Creating KMS key',
@@ -184,9 +197,6 @@ export class KmsKeyInstaller implements InfrastructureModule {
         }
       );
 
-      if (answers.kms.alias === undefined) {
-        answers.kms.alias = `cdf-${answers.environment}`;
-      }
       const aliases = await kms.send(new ListAliasesCommand({}));
       const alias = aliases.Aliases?.find(a => a.AliasName === `alias/${answers.kms.alias}`);
 

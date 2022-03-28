@@ -46,7 +46,22 @@
                         "^.*$": {
                             "type": "array",
                             "items": {
-                                "type": "string"
+                                "oneOf": [
+                                    {
+                                        "type": "object",
+                                        "properties":{ 
+                                            "name": {
+                                                "type": "string"
+                                            },
+                                            "includeInAuthCheck": {
+                                                "type": "boolean"
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "type": "string"
+                                    }
+                                ]
                             }
                         }
                     }
@@ -58,7 +73,22 @@
                         "^.*$": {
                             "type": "array",
                             "items": {
-                                "type": "string"
+                                "oneOf": [
+                                    {
+                                        "type": "object",
+                                        "properties":{ 
+                                            "name": {
+                                                "type": "string"
+                                            },
+                                            "includeInAuthCheck": {
+                                                "type": "boolean"
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "type": "string"
+                                    }
+                                ]
                             }
                         }
                     }

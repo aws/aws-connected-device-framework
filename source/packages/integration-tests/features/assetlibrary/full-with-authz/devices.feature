@@ -27,7 +27,7 @@ Feature: Device lifecycle
       | templateId | TEST-devicesWithAuthDevice |
       | description | My description |
       | state | active |
-      | groups | { "linked_to": ["/1/2/1"]} |
+      | groups | {"out": { "linked_to": ["/1/2/1"]}} |
     Then device "TEST-devicesWithAuth-device001" exists
 
   Scenario: Cannot create a Device when unauthorized due to access level
@@ -37,7 +37,7 @@ Feature: Device lifecycle
       | templateId | TEST-devicesWithAuthDevice |
       | description | My description |
       | state | active |
-      | groups | { "linked_to": ["/1/2/1"]} |
+      | groups | {"out": { "linked_to": ["/1/2/1"]}} |
     Then it fails with a 403
     And device "TEST-devicesWithAuth-device002" does not exist
 
@@ -48,7 +48,7 @@ Feature: Device lifecycle
       | templateId | TEST-devicesWithAuthDevice |
       | description | My description |
       | state | active |
-      | groups | { "linked_to": ["/1/2/1"]} |
+      | groups | {"out": { "linked_to": ["/1/2/1"]}} |
     Then it fails with a 403
     And device "TEST-devicesWithAuth-device003" does not exist
 

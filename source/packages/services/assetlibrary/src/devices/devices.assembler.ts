@@ -17,6 +17,7 @@ import {Node, StringNodeMap} from '../data/node';
 import {TypeCategory} from '../types/constants';
 import { TYPES } from '../di/types';
 import { FullAssembler } from '../data/full.assembler';
+import { DirectionToRelatedEntityArrayMap, RelatedEntityArrayMap, RelationDirection, StringArrayMap } from '../data/model';
 
 @injectable()
 export class DevicesAssembler {
@@ -39,7 +40,7 @@ export class DevicesAssembler {
         node.version = model.version;
 
         for(const p in model.attributes) {
-            if (Object.prototype.hasOwnProperty.call(model.attributes, p)) {
+            if (model.attributes.hasOwnProperty(p)) {
                 node.attributes[p] = model.attributes[p];
             }
         }
@@ -109,25 +110,25 @@ export class DevicesAssembler {
         this.assembleRelated(model, node.out, 'out');
 
         // remove any empty collection attributes
-        if (model.groups && model.groups.in && Object.keys(model.groups.in).length===0) {
-            delete model.groups.in;
+        if (Object.keys(model.groups?.in??{}).length===0) {
+            delete model.groups?.in;
         }
-        if (model.groups && model.groups.out && Object.keys(model.groups.out).length===0) {
-            delete model.groups.out;
+        if (Object.keys(model.groups?.out??{}).length===0) {
+            delete model.groups?.out;
         }
-        if ( Object.keys(model.groups).length===0) {
+        if ( Object.keys(model.groups??{}).length===0) {
             delete model.groups;
         }
-        if (model.devices && model.devices.in && Object.keys(model.devices.in).length===0) {
-            delete model.devices.in;
+        if (Object.keys(model.devices?.in??{}).length===0) {
+            delete model.devices?.in;
         }
-        if (model.devices && model.devices.out && Object.keys(model.devices.out).length===0) {
-            delete model.devices.out;
+        if (Object.keys(model.devices?.out??{}).length===0) {
+            delete model.devices?.out;
         }
-        if ( Object.keys(model.devices).length===0) {
+        if ( Object.keys(model.devices??{}).length===0) {
             delete model.devices;
         }
-        if (model.components &&model.components.length===0) {
+        if ((model.components?.length??0)===0) {
             delete model.components;
         }
 
@@ -154,21 +155,34 @@ export class DevicesAssembler {
         });
 
         // populate version specific device info
+        const assembleRelated = (from:StringArrayMap, rels:DirectionToRelatedEntityArrayMap, direction:RelationDirection)=> {
+            if (from) {
+                if (rels[direction] ===undefined) rels[direction] = {};
+                for(const [relation,ids] of Object.entries(from)) {
+                    rels[direction][relation] = ids.map(id=>({id}));
+                }
+            }
+        }
         if (determineIfDevice20Resource(res)) {
             // v2.0 supports both incoming and outgoing links
             const res_2_0 = res as Device20Resource;
-            item.groups=res_2_0.groups;
-            item.devices=res_2_0.devices;
+            if (res_2_0.groups) {
+                item.groups= {};
+            }
+            assembleRelated(res_2_0.groups?.in, item.groups, 'in');
+            assembleRelated(res_2_0.groups?.out, item.groups, 'out');
+            assembleRelated(res_2_0.devices?.in, item.devices, 'in');
+            assembleRelated(res_2_0.devices?.out, item.devices, 'out');
         } else {
             // as v1.0 only supported outgoing links, we default all to outgoing
             const res_1_0 = res as Device10Resource;
             if (res_1_0.groups) {
-                item.groups= {out:{}};
-                Object.keys(res_1_0.groups).forEach(rel=>  item.groups.out[rel]=res_1_0.groups[rel]);
+                item.groups.out= {};
+                assembleRelated(res_1_0.groups, item.groups, 'out');
             }
             if (res_1_0.devices) {
-                item.devices= {out:{}};
-                Object.keys(res_1_0.devices).forEach(rel=>  item.devices.out[rel]=res_1_0.devices[rel]);
+                item.devices.out= {};
+                assembleRelated(res_1_0.devices, item.devices, 'out');
             }
         }
 
@@ -202,6 +216,17 @@ export class DevicesAssembler {
             return undefined;
         }
 
+        const assembleRelated = (from:RelatedEntityArrayMap, to:StringArrayMap)=> {
+            if (from) {
+                for(const [relation,entities] of Object.entries(from)) {
+                    if (to[relation]===undefined) {
+                        to[relation]= [];
+                    }
+                    to[relation].push(...entities.map(entity=>entity.id));
+                }
+            }
+        }
+
         let resource:DeviceBaseResource;
         if (version.startsWith('1.')) {
             // v1 specific...
@@ -210,40 +235,16 @@ export class DevicesAssembler {
 
             // populate version specific device info
             if (item.groups) {
-                typedResource.groups = {};
-                if (item.groups.in) {
-                    Object.keys(item.groups.in).forEach(rel=> {
-                        typedResource.groups[rel] = item.groups.in[rel];
-                    });
-                }
-                if (item.groups.out) {
-                    Object.keys(item.groups.out).forEach(rel=> {
-                        if (typedResource.groups[rel]) {
-                            typedResource.groups[rel].push(...item.groups.out[rel]);
-                        } else {
-                            typedResource.groups[rel] = item.groups.out[rel];
-                        }
-                    });
-                }
+                typedResource.groups= {};
+                assembleRelated(item.groups?.in, typedResource.groups);
+                assembleRelated(item.groups?.out, typedResource.groups);
             } else {
                 delete typedResource.groups;
             }
             if (item.devices) {
-                typedResource.devices = {};
-                if (item.devices.in) {
-                    Object.keys(item.devices.in).forEach(rel=> {
-                        typedResource.devices[rel] = item.devices.in[rel];
-                    });
-                }
-                if (item.devices.out) {
-                    Object.keys(item.devices.out).forEach(rel=> {
-                        if (typedResource.devices[rel]) {
-                            typedResource.devices[rel].push(...item.devices.out[rel]);
-                        } else {
-                            typedResource.devices[rel] = item.devices.out[rel];
-                        }
-                    });
-                }
+                typedResource.devices= {};
+                assembleRelated(item.devices?.in, typedResource.devices);
+                assembleRelated(item.devices?.out, typedResource.devices);
             } else {
                 delete typedResource.devices;
             }
@@ -253,8 +254,23 @@ export class DevicesAssembler {
             const typedResource:Device20Resource = resource;
 
             // populate version specific device info)
-            typedResource.groups = item.groups;
-            typedResource.devices = item.devices;
+            typedResource.groups = {};
+            if (item.groups?.in) {
+                typedResource.groups.in = {}
+            }
+            assembleRelated(item.groups?.in, typedResource.groups.in);
+            if (item.groups?.out) {
+                typedResource.groups.out = {}
+            }
+            assembleRelated(item.groups?.out, typedResource.groups.out);
+            if (item.devices?.in) {
+                typedResource.devices.in = {}
+            }
+            assembleRelated(item.devices?.in, typedResource.devices.in);
+            if (item.devices?.out) {
+                typedResource.devices.out = {}
+            }
+            assembleRelated(item.devices?.out, typedResource.devices.out);
         }
 
         // common properties
@@ -288,7 +304,7 @@ export class DevicesAssembler {
 
     }
 
-    private assembleRelated(model:DeviceItem, related:StringNodeMap, direction:string) {
+    private assembleRelated(model:DeviceItem, related:StringNodeMap, direction:RelationDirection) {
         Object.keys(related).forEach( key => {
             const others = related[key];
             if (others!==undefined) {
@@ -300,7 +316,7 @@ export class DevicesAssembler {
                         if (model.groups[direction][key]===undefined) {
                             model.groups[direction][key]=[];
                         }
-                        model.groups[direction][key].push((other.attributes['groupPath'] as string[])[0]);
+                        model.groups[direction][key].push({id:(other.attributes['groupPath'] as string[])[0]});
                     } else if (other.category===TypeCategory.Device) {
                         if (model.devices[direction]===undefined) {
                             model.devices[direction]= {};
@@ -308,7 +324,7 @@ export class DevicesAssembler {
                         if (model.devices[direction][key]===undefined) {
                             model.devices[direction][key]=[];
                         }
-                        model.devices[direction][key].push((other.attributes['deviceId'] as string[])[0]);
+                        model.devices[direction][key].push({id:(other.attributes['deviceId'] as string[])[0]});
                     } else if (other.category===TypeCategory.Component) {
                         if (model.components===undefined) {
                             model.components=[];

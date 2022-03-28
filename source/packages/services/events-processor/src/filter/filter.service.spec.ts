@@ -477,7 +477,7 @@ describe('FilterService', () => {
         const attributeMap = await instance.getTemplatePropertiesData(mockedSubscriptionItem, mockedEvent, mockedTemplateCache);
         expect(attributeMap).toEqual({
             batteryLevel: 21,
-            sequence: 4
+            sequence: 4,
         });
 
         expect(mockedGetEventConfigCall).toBeCalledTimes(1);

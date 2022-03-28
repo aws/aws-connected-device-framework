@@ -46,24 +46,24 @@
     DynamoDbUtils: Symbol.for('DynamoDbUtils'),
     S3Utils: Symbol.for('S3Utils'),
 
-    DynamoDB: Symbol.for('DynamoDB'),
-    DynamoDBFactory: Symbol.for('Factory<DynamoDB>'),
+    DynamoDB: Symbol.for('DynamoDBV3'),
+    DynamoDBFactory: Symbol.for('Factory<DynamoDBV3>'),
     
-    DynamoDBDocument: Symbol.for('DynamoDBDocument'),
-    DynamoDBDocumentFactory: Symbol.for('Factory<DynamoDBDocument>'),
+    DynamoDBDocument: Symbol.for('DynamoDBDocumentV3'),
+    DynamoDBDocumentFactory: Symbol.for('Factory<DynamoDBDocumentV3>'),
     
-    Greengrassv2: Symbol.for('Greengrassv2'),
-    Greengrassv2Factory: Symbol.for('Factory<Greengrassv2>'),
+    Greengrassv2: Symbol.for('Greengrassv2V3'),
+    Greengrassv2Factory: Symbol.for('Factory<Greengrassv2V3>'),
     
-    Iot: Symbol.for('Iot'),
-    IotFactory: Symbol.for('Factory<Iot>'),
+    Iot: Symbol.for('IotV3'),
+    IotFactory: Symbol.for('Factory<IotV3>'),
     
-    Lambda: Symbol.for('Lambda'),
-    LambdaFactory: Symbol.for('Factory<Lambda>'),
+    Lambda: Symbol.for('LambdaV3'),
+    LambdaFactory: Symbol.for('Factory<LambdaV3>'),
     
-    S3: Symbol.for('S3'),
-    S3Factory: Symbol.for('Factory<S3>'),
+    S3: Symbol.for('S3V3'),
+    S3Factory: Symbol.for('Factory<S3V3>'),
     
-    SQS: Symbol.for('SQS'),
-    SQSFactory: Symbol.for('Factory<SQS>'),
+    SQS: Symbol.for('SQSV3'),
+    SQSFactory: Symbol.for('Factory<SQSV3>'),
 }

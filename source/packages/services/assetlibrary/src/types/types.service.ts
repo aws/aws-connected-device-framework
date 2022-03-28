@@ -12,15 +12,11 @@
  *********************************************************************************************************************/
 
 import { TypeModel, TypeDefinitionModel, TypeDefinitionStatus } from './types.models';
-import { SchemaValidationResult } from '../utils/schemaValidator.service';
-import {TypeCategory, Operation} from './constants';
-import { DirectionStringToArrayMap, SortKeys } from '../data/model';
+import { SchemaValidationResult } from './schemaValidator.full.service';
+import {TypeCategory} from './constants';
+import { SortKeys } from '../data/model';
 
 export interface TypesService {
-
-    validateSubType(templateId:string, category:TypeCategory, document:unknown, op:Operation): Promise<SchemaValidationResult>;
-
-    validateType(category:TypeCategory, document:unknown, op:Operation): Promise<SchemaValidationResult>;
 
     get(templateId: string, category: TypeCategory, status: TypeDefinitionStatus): Promise<TypeModel>;
 
@@ -34,8 +30,6 @@ export interface TypesService {
 
     publish(templateId:string, category:TypeCategory): Promise<void>;
 
-    validateRelationshipsByType(templateId:string, rels:DirectionStringToArrayMap): Promise<boolean>;
-
-    validateRelationshipsByPath(templateId:string, rels:DirectionStringToArrayMap): Promise<boolean>;
-
 }
+
+

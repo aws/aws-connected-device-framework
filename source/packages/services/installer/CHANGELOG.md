@@ -1,6 +1,27 @@
 # Change Log - @cdf/installer
 
-This log was last generated on Tue, 15 Mar 2022 18:37:51 GMT and should not be manually modified.
+This log was last generated on Fri, 25 Mar 2022 03:55:57 GMT and should not be manually modified.
+
+## 0.2.0
+Fri, 25 Mar 2022 03:55:57 GMT
+
+### Minor changes
+
+- adding command and control to installer
+
+## 0.1.8
+Thu, 17 Mar 2022 21:52:07 GMT
+
+### Patches
+
+- Fixes issue where installer creates new KMS key on every run
+
+## 0.1.7
+Thu, 17 Mar 2022 05:13:05 GMT
+
+### Patches
+
+- Fix dependency between apigw.cloudFormationTemplate and apigw.type default value
 
 ## 0.1.6
 Tue, 15 Mar 2022 18:37:51 GMT

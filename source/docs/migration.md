@@ -2,7 +2,15 @@
 
 While we endeavor to always make backward compatible changes, there may be times when we need to make changes that are not backward compatible. If these changes are made at the API level then the affected modules REST API vendor mime types will be versioned supporting both new and old versions, as well as the modules minor version bumped. But if the change affect something else such as how configuration is handled, or how applications are deployed, then the major versions of the modules will be bumped with migration notes added here.
 
-## Migrating from Release <=1.5 to Release 1.6
+## Migrating from Release <=1.0.9 to 1.0.10
+
+### Asset Library Fine Grained Access Control (FGAC)
+
+These changes only affect Asset Library users who have FGAC enabled.
+
+Prior to 1.0.10, FGAC authorization was carried out by traversing all outgoing relations from groups/devices until a group hierarchy a user is authorized to is found. This has been enhanced so now one can specify which outgoing relations are to be included in the checks thus making the authorization checks more efficient. This is carried out by setting the new `includeInAuth` property to `true` when defining a relation between 2 types. Refer to [Fine Grained Access Control](../packages/services/assetlibrary/docs/fine-grained-access-control.md) for more details.
+
+## Migrating from Release <=1.0.5 to Release 1.0.6
 
 ### Application configuration
 

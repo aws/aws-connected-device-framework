@@ -1,6 +1,6 @@
 {
   "name": "@cdf/provisioning-client",
-  "version": "5.0.0",
+  "version": "5.0.2",
   "description": "Provisioning Library Client",
   "author": "Rahul Sareen",
   "main": "dist/index.js",
@@ -12,7 +12,7 @@
     "test": "rushx lint && jest --silent --passWithNoTests"
   },
   "dependencies": {
-    "@cdf/lambda-invoke": "^3.0.0",
+    "@cdf/lambda-invoke": "^3.0.2",
     "inversify": "5.1.1",
     "inversify-binding-decorators": "4.0.0",
     "inversify-express-utils": "6.3.2",
@@ -20,7 +20,7 @@
     "logform": "2.2.0",
     "ow": "0.23.0",
     "reflect-metadata": "0.1.13",
-    "superagent": "6.1.0",
+    "superagent": "7.1.1",
     "readable-stream": "3.6.0",
     "winston": "3.3.3",
     "winston-transport": "4.4.0",
@@ -38,11 +38,10 @@
     "logform": "2.2.0",
     "ow": "0.23.0",
     "reflect-metadata": "0.1.13",
-    "superagent": "6.1.0",
     "readable-stream": "3.6.0",
     "winston": "3.3.3",
     "winston-transport": "4.4.0",
-    "@types/superagent": "4.1.10",
+    "@types/superagent": "4.1.15",
     "@rushstack/eslint-config": "2.3.4",
     "eslint": "7.26.0",
     "nyc": "15.1.0",

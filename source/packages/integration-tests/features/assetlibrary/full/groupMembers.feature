@@ -27,35 +27,35 @@ Feature: Group Members
       | attributes | {} |
     And I create device "TEST-groupMembers-device001" with attributes
       | templateId | TEST-groupMembers-deviceLinkableToGroupA |
-      | groups | {"located_at":["/TEST-groupMembers-parent"]} |
+      | groups | {"out":{"located_at":["/TEST-groupMembers-parent"]}} |
       | state | active |
       | attributes | {} |
     Then group "/TEST-groupMembers-parent" exists
     And device "TEST-groupMembers-device001" exists
-    And device "TEST-groupMembers-device001" is "located_at" "/test-groupmembers-parent"
+    And device "TEST-groupMembers-device001" is "out" "located_at" "/test-groupmembers-parent"
 
 
   Scenario: A Device cannot have duplicated relations to the same group
-    Given device "TEST-groupMembers-device001" is "located_at" "/test-groupmembers-parent"
+    Given device "TEST-groupMembers-device001" is "out" "located_at" "/test-groupmembers-parent"
     When I add device "TEST-groupMembers-device001" to group "/test-groupmembers-parent" related via "located_at"
     Then device "TEST-groupMembers-device001" exists with attributes
-      | groups | {"located_at":["/test-groupmembers-parent"]} |
+      | groups | {"out":{"located_at":["/test-groupmembers-parent"]}} |
 
 
   Scenario: Multiple devices can be added to a group
     When I create device "TEST-groupMembers-device002" with attributes
       | templateId | TEST-groupMembers-deviceLinkableToGroupB |
-      | groups | {"located_at":["/TEST-groupMembers-parent"]} |
+      | groups | {"out":{"located_at":["/TEST-groupMembers-parent"]}} |
       | state | active |
       | attributes | {} |
     And I create device "TEST-groupMembers-device003" with attributes
       | templateId | test-groupmembers-devicelinkabletogroupb |
-      | groups | {"located_at":["/test-groupmembers-parent"]} |
+      | groups | {"out":{"located_at":["/test-groupmembers-parent"]}} |
       | attributes | {} |
     Then device "TEST-groupMembers-device002" exists
-    And device "TEST-groupMembers-device002" is "located_at" "/test-groupmembers-parent"
+    And device "TEST-groupMembers-device002" is "out" "located_at" "/test-groupmembers-parent"
     And device "TEST-groupMembers-device003" exists
-    And device "TEST-groupMembers-device003" is "located_at" "/test-groupmembers-parent"
+    And device "TEST-groupMembers-device003" is "out" "located_at" "/test-groupmembers-parent"
 
 
   Scenario: Child groups can be added to the parent

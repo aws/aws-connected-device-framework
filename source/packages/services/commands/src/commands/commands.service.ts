@@ -118,7 +118,7 @@ export class CommandsService {
 
         command.commandId = uuid();
         // if the command was created without specifying status then set it to DRAFT
-        if (!Object.prototype.hasOwnProperty.call(command,'commandStatus')) {
+        if (!command.hasOwnProperty('commandStatus')) {
             command.commandStatus = CommandStatus.DRAFT;
         }
 

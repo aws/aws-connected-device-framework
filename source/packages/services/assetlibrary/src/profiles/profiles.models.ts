@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { Node } from '../data/node';
-import { DirectionStringToArrayMap } from '../data/model';
+import { DirectionToStringArrayMap } from '../data/model';
 import { Device10Resource, Device20Resource, DeviceBaseResource, DeviceItem } from '../devices/devices.models';
 import { Group10Resource, Group20Resource, GroupBaseResource, GroupItem } from '../groups/groups.models';
 
@@ -51,7 +51,7 @@ export class GroupProfileItem extends GroupItem {
 
 export class ProfileNode extends Node {
 	templateId?: string;
-	groups?: DirectionStringToArrayMap;
+	groups?: DirectionToStringArrayMap;
 }
 
 export class ProfileResourceList {

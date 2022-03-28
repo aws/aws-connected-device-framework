@@ -11,9 +11,10 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 export const THING_LIST_BUILDER_TYPES = {
+
     AwsIotThingListBuilder: Symbol.for('AwsIotThingListBuilder'),
-    
-    IotFactory: Symbol.for('Factory<Iot>'),
-    Iot: Symbol.for('Iot')
-    
+
+    // these need adding to consuming container
+    Iot: Symbol.for('IotV3'),
+    IotFactory: Symbol.for('Factory<IotV3>')
 };

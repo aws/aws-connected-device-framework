@@ -94,6 +94,28 @@ describe('TypesDao', () => {
         expect(changes.remove.in).toEqual({located_at: ['site']});
     });
 
+    it('Relations in.key.type changed to expanded', async () => {
+        const existing = new TypeRelationsModel();
+        existing.in = {
+            located_at: ['site']
+        };
+        const updated = new TypeRelationsModel();
+        updated.in = {
+            located_at: [{
+                name: 'site',
+                includeInAuth: true
+            }]
+        };
+
+        const changes = instance.__private___identifyChangedRelations(existing, updated);
+
+        expect(changes.add.out).toEqual({});
+        expect(changes.add.in).toEqual(updated.in);
+        expect(changes.remove.out).toEqual({});
+        expect(changes.remove.in).toEqual(existing.in);
+    });
+
+
     it('Relations out added', async () => {
         const existing = new TypeRelationsModel();
         existing.in = {
@@ -219,6 +241,24 @@ describe('TypesDao', () => {
         expect(changes.add.out).toEqual({});
         expect(changes.add.in).toEqual({});
         expect(changes.remove.out).toEqual({installed_at: ['site']});
+        expect(changes.remove.in).toEqual({});
+    });
+
+    it('Relations out.keys.types 1 expanded added', async () => {
+        const existing = new TypeRelationsModel();
+        existing.out = {
+            parent: [{name:'root', includeInAuth:true}]
+        };
+        const updated = new TypeRelationsModel();
+        updated.out = {
+            parent: [{name:'root', includeInAuth:true}, {name:'test-deviceswithauthgroup', includeInAuth:true}]
+        };
+
+        const changes = instance.__private___identifyChangedRelations(existing, updated);
+
+        expect(changes.add.out).toEqual({parent: [{name:'test-deviceswithauthgroup', includeInAuth:true}]});
+        expect(changes.add.in).toEqual({});
+        expect(changes.remove.out).toEqual({});
         expect(changes.remove.in).toEqual({});
     });
 });

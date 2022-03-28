@@ -1,6 +1,27 @@
 # Change Log - @cdf/device-patcher-client
 
-This log was last generated on Thu, 17 Feb 2022 09:27:38 GMT and should not be manually modified.
+This log was last generated on Mon, 28 Mar 2022 00:28:46 GMT and should not be manually modified.
+
+## 1.1.4
+Mon, 28 Mar 2022 00:28:46 GMT
+
+### Patches
+
+- revert to latest aws-sdk
+
+## 1.1.3
+Tue, 22 Mar 2022 22:51:44 GMT
+
+### Patches
+
+- print module name when outputting loaded config on startup
+
+## 1.1.2
+Mon, 21 Mar 2022 21:58:32 GMT
+
+### Patches
+
+- Upgrade dependencies marked as deprecated
 
 ## 1.1.1
 Thu, 17 Feb 2022 09:27:38 GMT

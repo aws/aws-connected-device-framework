@@ -1,6 +1,13 @@
 # Change Log - @cdf/assetlibrary-export
 
-This log was last generated on Thu, 10 Mar 2022 00:08:34 GMT and should not be manually modified.
+This log was last generated on Mon, 28 Mar 2022 00:28:46 GMT and should not be manually modified.
+
+## 3.1.1
+Mon, 28 Mar 2022 00:28:46 GMT
+
+### Patches
+
+- revert to latest aws-sdk
 
 ## 3.1.0
 Thu, 10 Mar 2022 00:08:34 GMT

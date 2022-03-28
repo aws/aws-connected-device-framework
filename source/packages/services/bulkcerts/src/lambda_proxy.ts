@@ -24,7 +24,7 @@ exports.handler = (event: any, context: any) => {
   // if SNS event, then transform it to look like API Gateway
   // TODO: for now this handles one event and assumes the topic
   //       this should be made more abstract to handle multiple message types / topics
-  if (Object.prototype.hasOwnProperty.call(event,'Records')) {
+  if (event.hasOwnProperty('Records')) {
     const r = event.Records[0];
     if (r.EventSource === 'aws:sns') {
       const eventJson:Message = JSON.parse(r.Sns.Message);
