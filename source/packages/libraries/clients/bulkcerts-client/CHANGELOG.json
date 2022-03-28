@@ -2,6 +2,18 @@
   "name": "@cdf/bulkcerts-client",
   "entries": [
     {
+      "version": "2.0.3",
+      "tag": "@cdf/bulkcerts-client_v2.0.3",
+      "date": "Mon, 28 Mar 2022 00:28:46 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "revert to latest aws-sdk"
+          }
+        ]
+      }
+    },
+    {
       "version": "2.0.2",
       "tag": "@cdf/bulkcerts-client_v2.0.2",
       "date": "Tue, 22 Mar 2022 22:51:44 GMT",

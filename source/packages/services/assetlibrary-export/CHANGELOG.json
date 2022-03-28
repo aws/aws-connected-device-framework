@@ -2,6 +2,18 @@
   "name": "@cdf/assetlibrary-export",
   "entries": [
     {
+      "version": "3.1.1",
+      "tag": "@cdf/assetlibrary-export_v3.1.1",
+      "date": "Mon, 28 Mar 2022 00:28:46 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "revert to latest aws-sdk"
+          }
+        ]
+      }
+    },
+    {
       "version": "3.1.0",
       "tag": "@cdf/assetlibrary-export_v3.1.0",
       "date": "Thu, 10 Mar 2022 00:08:34 GMT",

@@ -2,6 +2,18 @@
   "name": "@cdf/auth-devicecert",
   "entries": [
     {
+      "version": "5.0.1",
+      "tag": "@cdf/auth-devicecert_v5.0.1",
+      "date": "Mon, 28 Mar 2022 00:28:46 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "revert to latest aws-sdk"
+          }
+        ]
+      }
+    },
+    {
       "version": "5.0.0",
       "tag": "@cdf/auth-devicecert_v5.0.0",
       "date": "Thu, 17 Feb 2022 09:27:38 GMT",

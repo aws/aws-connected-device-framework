@@ -2,6 +2,18 @@
   "name": "@cdf/device-patcher",
   "entries": [
     {
+      "version": "0.1.2",
+      "tag": "@cdf/device-patcher_v0.1.2",
+      "date": "Mon, 28 Mar 2022 00:28:46 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "revert to latest aws-sdk"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.1.1",
       "tag": "@cdf/device-patcher_v0.1.1",
       "date": "Thu, 17 Feb 2022 09:27:38 GMT",

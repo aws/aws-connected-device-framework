@@ -1,6 +1,13 @@
 # Change Log - @cdf/device-patcher-client
 
-This log was last generated on Tue, 22 Mar 2022 22:51:44 GMT and should not be manually modified.
+This log was last generated on Mon, 28 Mar 2022 00:28:46 GMT and should not be manually modified.
+
+## 1.1.4
+Mon, 28 Mar 2022 00:28:46 GMT
+
+### Patches
+
+- revert to latest aws-sdk
 
 ## 1.1.3
 Tue, 22 Mar 2022 22:51:44 GMT

@@ -2,6 +2,18 @@
   "name": "@cdf/greengrass2-provisioning-client",
   "entries": [
     {
+      "version": "1.0.4",
+      "tag": "@cdf/greengrass2-provisioning-client_v1.0.4",
+      "date": "Mon, 28 Mar 2022 00:28:46 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "revert to latest aws-sdk"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.0.3",
       "tag": "@cdf/greengrass2-provisioning-client_v1.0.3",
       "date": "Tue, 22 Mar 2022 22:51:44 GMT",
