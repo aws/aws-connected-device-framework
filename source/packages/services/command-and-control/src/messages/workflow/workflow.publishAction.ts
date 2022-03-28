@@ -22,25 +22,29 @@ import { WorkflowAction } from './workflow.interfaces';
 @injectable()
 export abstract class WorkflowPublishAction implements WorkflowAction {
 
-    protected readonly uidGenerator:ShortUniqueId;
+    protected readonly shortIdGenerator: ShortUniqueId;
 
     constructor() {
-        this.uidGenerator = new ShortUniqueId({
+        this.shortIdGenerator = new ShortUniqueId({
             dictionary: 'alphanum_lower',
             length: 9,
         });
     }
 
-    abstract process(message:MessageItem,command:CommandItem): Promise<boolean>;
+    abstract process(message: MessageItem, command: CommandItem): Promise<boolean>;
 
-    protected replacePayloadTokens(message:MessageItem,command:CommandItem) : string {
+    protected uidGenerator(): string {
+        return this.shortIdGenerator();
+    }
+
+    protected replacePayloadTokens(message: MessageItem, command: CommandItem): string {
         ow(message, ow.object.nonEmpty);
         ow(command, ow.object.nonEmpty);
 
         let payload;
         if (command.payloadTemplate) {
             let payloadString = JSON.stringify(command.payloadTemplate);
-            if (message.payloadParamValues!==undefined) {
+            if (message.payloadParamValues !== undefined) {
                 Object.keys(message.payloadParamValues).forEach(k => {
                     const token = '${' + k + '}';
                     payloadString = payloadString.split(token).join(message.payloadParamValues[k] as string);

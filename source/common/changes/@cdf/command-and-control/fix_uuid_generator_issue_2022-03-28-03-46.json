@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/command-and-control",
+      "comment": "fix uidGenerator to allow it to be accessed from children class",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/command-and-control",
+  "email": "willsia@amazon.com"
+}
