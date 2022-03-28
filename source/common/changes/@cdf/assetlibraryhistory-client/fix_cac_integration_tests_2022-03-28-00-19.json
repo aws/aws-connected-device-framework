@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/assetlibraryhistory-client",
+      "comment": "revert to latest aws-sdk",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/assetlibraryhistory-client",
+  "email": "willsia@amazon.com"
+}

@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/bulkcerts-client",
+      "comment": "revert to latest aws-sdk",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/bulkcerts-client",
+  "email": "willsia@amazon.com"
+}
