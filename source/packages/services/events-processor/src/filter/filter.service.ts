@@ -226,6 +226,8 @@ export class FilterService {
             });
         }
 
+        templatePropertiesData['principalValue'] = event.principalValue
+
         logger.debug(`filter.service getEventAttributes: exit: attributeMap:${JSON.stringify(templatePropertiesData)}`);
         // Return an object of referenced template properties and their values
         return templatePropertiesData;
