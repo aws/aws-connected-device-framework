@@ -1,0 +1,11 @@
+{
+    "changes": [
+      {
+        "packageName": "@cdf/assetlibrary",
+        "comment": "replace deprecated String.prototype.substr()",
+        "type": "patch"
+      }
+    ],
+    "packageName": "@cdf/assetlibrary",
+    "email": "rootcommander@gmail.com"
+}
