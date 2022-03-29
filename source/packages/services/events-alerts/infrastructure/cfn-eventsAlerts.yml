@@ -152,7 +152,7 @@ Resources:
           APP_CONFIG: !Ref ApplicationConfigurationOverride
           AWS_ACCOUNTID: !Ref AWS::AccountId
           AWS_DYNAMODB_TABLES_EVENTCONFIG_NAME: !Ref EventConfigTable
-          AWS_DYNAMODB_DAX_ENDPOINTS: !Ref DAXClusterEndpoint
+          # AWS_DYNAMODB_DAX_ENDPOINTS: !Ref DAXClusterEndpoint
       Tracing: Active
 
   EventNotificationsSourceMapping:
