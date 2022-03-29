@@ -44,14 +44,14 @@ describe('DevicesAssembler', () => {
             templateId: 'templateA',
             groups: {
                 out: {
-                    rel1: ['group1'],
-                    rel2: ['group2','group3']
+                    rel1: [{id:'group1'}],
+                    rel2: [{id:'group2'},{id:'group3'}]
                 }
             },
             devices: {
                 out: {
-                    rel3:['deviceA'],
-                    rel4:['deviceB','deviceC']
+                    rel3:[{id:'deviceA'}],
+                    rel4:[{id:'deviceB'},{id:'deviceC'}]
                 }
             }
         });
@@ -92,18 +92,18 @@ describe('DevicesAssembler', () => {
             templateId: 'templateA',
             groups: {
                 in: {
-                    rel1: ['group1']
+                    rel1: [{id:'group1'}]
                 },
                 out: {
-                    rel2: ['group2','group3']
+                    rel2: [{id:'group2'},{id:'group3'}]
                 }
             },
             devices: {
                 in: {
-                    rel3:['deviceA']
+                    rel3:[{id:'deviceA'}]
                 },
                 out: {
-                    rel4:['deviceB','deviceC']
+                    rel4:[{id:'deviceB'},{id:'deviceC'}]
                 }
             }
         });

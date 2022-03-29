@@ -21,6 +21,7 @@ import { GroupsAssembler } from '../groups/groups.assembler';
 import { DevicesAssembler } from '../devices/devices.assembler';
 import { SearchDaoLite } from './search.lite.dao';
 import ow from 'ow';
+import { NotSupportedError } from '../utils/errors';
 
 @injectable()
 export class SearchServiceLite {
@@ -76,14 +77,12 @@ export class SearchServiceLite {
 
     public async summary(model: SearchRequestModel): Promise<number> {
         logger.debug(`search.lite.service summary: in: model: ${JSON.stringify(model)}`);
-
-        throw new Error('NOT_SUPPORTED');
+        throw new NotSupportedError();
     }
 
     public async facet(model: SearchRequestModel): Promise<FacetResults> {
         logger.debug(`search.lite.service facet: in: model: ${JSON.stringify(model)}`);
-
-        throw new Error('NOT_SUPPORTED');
+        throw new NotSupportedError();
     }
 
 }

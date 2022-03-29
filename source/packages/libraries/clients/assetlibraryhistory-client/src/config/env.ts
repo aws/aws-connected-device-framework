@@ -6,4 +6,4 @@ const fileLocations = [
 
 load(fileLocations);
 
-console.log(`Loaded config: ${JSON.stringify(process.env, null, 2)}`);
+console.log(`Module assetlibraryhistory-client loaded config: ${JSON.stringify(process.env, null, 2)}`);

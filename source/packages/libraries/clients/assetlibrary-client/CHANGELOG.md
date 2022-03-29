@@ -1,6 +1,28 @@
 # Change Log - @cdf/assetlibrary-client
 
-This log was last generated on Thu, 17 Feb 2022 09:27:38 GMT and should not be manually modified.
+This log was last generated on Tue, 22 Mar 2022 22:51:44 GMT and should not be manually modified.
+
+## 5.0.3
+Tue, 22 Mar 2022 22:51:44 GMT
+
+### Patches
+
+- print module name when outputting loaded config on startup
+
+## 5.0.2
+Mon, 21 Mar 2022 21:58:32 GMT
+
+### Patches
+
+- Upgrade dependencies marked as deprecated
+
+## 5.0.1
+Thu, 10 Mar 2022 00:08:34 GMT
+
+### Patches
+
+- the template model lists an enum parameter, which should be a string[] listing the enum values instead of just a string
+- correct typo in assetlibrary client
 
 ## 5.0.0
 Thu, 17 Feb 2022 09:27:38 GMT

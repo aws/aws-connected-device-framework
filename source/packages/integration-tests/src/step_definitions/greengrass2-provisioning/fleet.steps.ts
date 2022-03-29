@@ -14,7 +14,7 @@ import 'reflect-metadata';
 
 import { fail } from 'assert';
 import { use } from 'chai';
-import { setDefaultTimeout, TableDefinition, Then } from 'cucumber';
+import { setDefaultTimeout, DataTable, Then } from '@cucumber/cucumber';
 import {
     GREENGRASS2_PROVISIONING_CLIENT_TYPES
 } from '@cdf/greengrass2-provisioning-client';
@@ -40,7 +40,7 @@ setDefaultTimeout(10 * 1000);
 
 const fleetService: FleetService = container.get(GREENGRASS2_PROVISIONING_CLIENT_TYPES.FleetService);
 
-Then('fleet summary should be updated with this attributes:', async function (data: TableDefinition) {
+Then('fleet summary should be updated with this attributes:', async function (data: DataTable) {
     let summary
     try {
         summary = await fleetService.getFleetSummary(getAdditionalHeaders(world.authToken))

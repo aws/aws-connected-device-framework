@@ -22,33 +22,44 @@ import { InitService } from './init.service';
 @injectable()
 export class InitServiceFull implements InitService {
 
-    constructor( @inject(TYPES.InitDao) private initDao: InitDaoFull,
+    constructor( 
+        @inject(TYPES.InitDao) private initDao: InitDaoFull,
         @inject(TYPES.TypesService) private typesService: TypesService) {}
 
-    public async init(): Promise<void> {
-        logger.debug('init.service init: in:');
-
-        const initialized  = await this.initDao.isInitialized();
-        if (initialized) {
-
-            await this.initDao.applyFixes();
-
-            logger.debug(`init.service exit: already initialized!`);
-            throw new Error ('ALREADY_INITIALIZED');
-        } else {
-
-            // seed the database with the type categories
-            await this.initDao.initialize();
-
-            // create the root group type definition
-            const definition:TypeDefinitionModel= {
-                properties: {}
+        public async init(): Promise<void> {
+            logger.debug('init.service init: in:');
+    
+            const initialized  = await this.initDao.isInitialized();
+            if (!initialized) {
+                // seed the database with the type categories
+                await this.initDao.initialize();
+    
+                // create the root group type definition
+                const definition:TypeDefinitionModel= {
+                    properties: {}
+                }
+                await this.typesService.create('root', TypeCategory.Group, definition);
+                await this.typesService.publish('root', TypeCategory.Group);
+    
             }
-            await this.typesService.create('root', TypeCategory.Group, definition);
-            await this.typesService.publish('root', TypeCategory.Group);
-
+    
+            // apply any database upgrades as needed (in sequence)
+            const version = await this.initDao.getVersion();
+            switch(version) {
+                case 0:
+                    await this.initDao.upgrade_from_0();
+                    await this.initDao.setVersion(1);
+                    break;
+    
+                // in the future add additional case statements for each new version. remember to remove
+                // the break from previous case versions so that the case statements all fall through so
+                // just one break exists before hitting the default case.
+    
+                default:
+                    // ignore the rest
+            }
+    
+            logger.debug(`init.service init: exit:`);
         }
-
-    }
 
 }

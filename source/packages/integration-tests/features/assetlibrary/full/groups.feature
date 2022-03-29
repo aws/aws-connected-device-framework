@@ -60,14 +60,14 @@ Feature: Group lifecycle
       | templateId | test-groups-grouptemplate002 |
       | description | My second group |
       | attributes | {} |
-      | groups | {"belongs_to":["/test-groups-group001"]} |
+      | groups | {"out":{"belongs_to":["/test-groups-group001"]}} |
     Then group "/TEST-groups-group002" exists with attributes
       | templateId | test-groups-grouptemplate002 |
       | name | TEST-groups-group002 |
       | description | My second group |
       | attributes | {} |
       | parentPath | / |
-      | groups | {"belongs_to":["/test-groups-group001"]} |
+      | groups | {"out":{"belongs_to":["/test-groups-group001"]}} |
 
   Scenario: Linking a group during creation using a defined relation but unsupported type is unsuccessful
     Given group "/TEST-groups-group002" exists
@@ -75,7 +75,7 @@ Feature: Group lifecycle
       | templateId | test-groups-grouptemplate002 |
       | description | My second group |
       | attributes | {} |
-      | groups | {"belongs_to":["/test-groups-group002"]} |
+      | groups | {"out":{"belongs_to":["/test-groups-group002"]}} |
     Then it fails with a 400
      And group "/TEST-groups-group004" does not exist
 
@@ -85,7 +85,7 @@ Feature: Group lifecycle
       | templateId | test-groups-grouptemplate002 |
       | description | My second group |
       | attributes | {} |
-      | groups | {"linked_to":["/test-groups-group001"]} |
+      | groups | {"out":{"linked_to":["/test-groups-group001"]}} |
     Then it fails with a 400
      And group "/TEST-groups-group004" does not exist
 
@@ -99,7 +99,7 @@ Feature: Group lifecycle
       | description | My second group |
       | attributes | {} |
       | parentPath | / |
-      | groups | ___undefined___ |
+      | groups | {} |
 
   Scenario: Relinking a group is successful
     Given group "/TEST-groups-group001" exists
@@ -111,7 +111,7 @@ Feature: Group lifecycle
       | description | My second group |
       | attributes | {} |
       | parentPath | / |
-      | groups | {"belongs_to":["/test-groups-group001"]} |
+      | groups | {"out":{"belongs_to":["/test-groups-group001"]}} |
 
   Scenario: Linking a group with defined relation but unsupported type is unsuccessful
     Given group "/TEST-groups-group001" exists

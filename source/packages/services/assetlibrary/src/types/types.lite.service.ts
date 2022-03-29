@@ -13,30 +13,21 @@
 import { injectable, inject } from 'inversify';
 import {logger} from '../utils/logger';
 import { TypeModel, TypeDefinitionModel, TypeDefinitionStatus} from './types.models';
-import { SchemaValidationResult } from '../utils/schemaValidator.service';
-import {TypeCategory, Operation} from './constants';
+import { SchemaValidationResult } from './schemaValidator.full.service';
+import {TypeCategory} from './constants';
 import ow from 'ow';
 import { TypesService } from './types.service';
 import { TYPES } from '../di/types';
 import { TypesDaoLite } from './types.lite.dao';
 import { EventEmitter, Type, Event } from '../events/eventEmitter.service';
 import { SortKeys } from '../data/model';
+import { NotSupportedError } from '../utils/errors';
 
 @injectable()
 export class TypesServiceLite implements TypesService {
 
     constructor( @inject(TYPES.TypesDao) private typesDao:TypesDaoLite,
         @inject(TYPES.EventEmitter) private eventEmitter: EventEmitter) {}
-
-    public async validateSubType(templateId:string, category:TypeCategory, document:unknown, op:Operation): Promise<SchemaValidationResult> {
-        logger.debug(`types.lite.service validateSubType: in: templateId: ${templateId}, category: ${category}, document: ${JSON.stringify(document)}, op:${op}`);
-        throw new Error('NOT_SUPPORTED');
-    }
-
-    public async validateType(category:TypeCategory, document:unknown, _op:Operation): Promise<SchemaValidationResult> {
-        logger.debug(`types.lite.service validateType: in: category: ${category}, document: ${JSON.stringify(document)}`);
-        throw new Error('NOT_SUPPORTED');
-    }
 
     public async get(templateId: string, category: TypeCategory, status?: TypeDefinitionStatus): Promise<TypeModel> {
         logger.debug(`types.lite.service get: in: templateId: ${templateId}, category: ${category}, status: ${status}`);
@@ -136,23 +127,11 @@ export class TypesServiceLite implements TypesService {
 
     public async update(templateId:string, category:TypeCategory, definition:TypeDefinitionModel): Promise<SchemaValidationResult> {
         logger.debug(`types.lite.service update: in: templateId:${templateId}, category:${category}, definition:${JSON.stringify(definition)}`);
-        throw new Error('NOT_SUPPORTED');
+        throw new NotSupportedError();
     }
 
     public async publish(templateId:string, category:TypeCategory): Promise<void> {
         logger.debug(`types.lite.service publish: in: templateId:${templateId}, category:${category}`);
-        throw new Error('NOT_SUPPORTED');
+        throw new NotSupportedError();
     }
-
-    public async validateRelationshipsByType(templateId:string, out:{ [key: string] : string[]}): Promise<boolean> {
-        logger.debug(`types.lite.service validateRelationships: in: templateId:${templateId}, out:${JSON.stringify(out)}`);
-        throw new Error('NOT_SUPPORTED');
-    }
-
-    public async validateRelationshipsByPath(templateId:string, out:{ [key: string] : string[]}): Promise<boolean> {
-        // example:  in: templateId:edge, out:{"manufactured_by":["/suppliers/bosch"]
-        logger.debug(`types.lite.service validateRelationshipsByPath: in: templateId:${templateId}, out:${JSON.stringify(out)}`);
-        throw new Error('NOT_SUPPORTED');
-    }
-
 }

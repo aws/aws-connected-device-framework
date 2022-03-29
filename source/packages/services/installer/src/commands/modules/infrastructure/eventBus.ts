@@ -4,10 +4,10 @@ import inquirer from 'inquirer';
 import { ListrTask } from 'listr2';
 import ow from 'ow';
 import path from 'path';
-import pkgDir from 'pkg-dir';
 
 import { Answers } from '../../../models/answers';
 import { InfrastructureModule, ModuleName } from '../../../models/modules';
+import { getMonorepoRoot } from '../../../prompts/paths.prompt';
 import { deleteStack } from '../../../utils/cloudformation.util';
 
 export class EvenBusInstaller implements InfrastructureModule {
@@ -63,8 +63,7 @@ export class EvenBusInstaller implements InfrastructureModule {
     }
 
     const tasks: ListrTask[] = [];
-    const installerPackageRoot = await pkgDir();
-    const monorepoRoot = path.join(installerPackageRoot, '..', '..', '..', '..');
+    const monorepoRoot = await getMonorepoRoot();
 
     tasks.push({
       title: `Deploying stack '${this.stackName}'`,

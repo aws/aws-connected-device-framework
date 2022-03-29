@@ -1,6 +1,6 @@
 {
   "name": "@cdf/event-publisher",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Utility library to be used by cdf components to publish events.",
   "author": "William Sia",
   "main": "dist/index.js",
@@ -14,19 +14,19 @@
   },
   "dependencies": {
     "@aws-sdk/client-eventbridge": "3.38.0",
-    "@cdf/lambda-invoke": "^3.0.0",
+    "@cdf/lambda-invoke": "^3.0.2",
     "@cdf/logger": "^4.0.0",
     "inversify": "5.1.1",
     "inversify-binding-decorators": "4.0.0",
     "logform": "2.2.0",
     "ow": "0.23.0",
-    "superagent": "6.1.0",
+    "superagent": "7.1.1",
     "winston": "3.3.3",
     "winston-transport": "4.4.0",
     "@aws-sdk/client-iot": "~3.37.0"
   },
   "devDependencies": {
-    "@types/superagent": "4.1.10",
+    "@types/superagent": "4.1.15",
 
     "@rushstack/eslint-config": "2.3.4",
     "eslint": "7.26.0",
