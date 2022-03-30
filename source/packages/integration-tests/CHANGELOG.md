@@ -1,6 +1,13 @@
 # Change Log - @cdf/integration-tests
 
-This log was last generated on Mon, 28 Mar 2022 00:28:46 GMT and should not be manually modified.
+This log was last generated on Wed, 30 Mar 2022 00:46:17 GMT and should not be manually modified.
+
+## 3.1.2
+Wed, 30 Mar 2022 00:46:17 GMT
+
+### Patches
+
+- updated process of updating groups and devices so drops work
 
 ## 3.1.1
 Mon, 28 Mar 2022 00:28:46 GMT

@@ -2,6 +2,18 @@
   "name": "@cdf/integration-tests",
   "entries": [
     {
+      "version": "3.1.2",
+      "tag": "@cdf/integration-tests_v3.1.2",
+      "date": "Wed, 30 Mar 2022 00:46:17 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "updated process of updating groups and devices so drops work"
+          }
+        ]
+      }
+    },
+    {
       "version": "3.1.1",
       "tag": "@cdf/integration-tests_v3.1.1",
       "date": "Mon, 28 Mar 2022 00:28:46 GMT",

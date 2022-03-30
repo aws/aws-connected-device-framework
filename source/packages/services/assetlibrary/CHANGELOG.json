@@ -2,6 +2,21 @@
   "name": "@cdf/assetlibrary",
   "entries": [
     {
+      "version": "6.0.4",
+      "tag": "@cdf/assetlibrary_v6.0.4",
+      "date": "Wed, 30 Mar 2022 00:46:17 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "updated process of updating groups and devices so drops work"
+          },
+          {
+            "comment": "replace deprecated String.prototype.substr()"
+          }
+        ]
+      }
+    },
+    {
       "version": "6.0.3",
       "tag": "@cdf/assetlibrary_v6.0.3",
       "date": "Tue, 15 Mar 2022 18:37:51 GMT",
