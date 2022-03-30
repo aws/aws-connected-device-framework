@@ -51,7 +51,7 @@ export class FilterService {
         for (const ev of events) {
 
             // perform lookup to see if any subscriptions are configured for the event source/principal/principalValue (cached for the duration of the method call)
-            const subscriptions = await this.listSubscriptionsForEvent(ev, subscriptionMap);
+            const subscriptions = (await this.listSubscriptionsForEvent(ev, subscriptionMap)).filter(o => o.enabled);
 
             // if we have subscriptions, lets evaluate them against the datasource
             if (subscriptions !== undefined) {
