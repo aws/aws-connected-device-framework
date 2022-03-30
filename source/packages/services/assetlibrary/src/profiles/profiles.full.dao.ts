@@ -117,16 +117,20 @@ export class ProfilesDaoFull extends BaseDaoFull {
         const conn = super.getConnection();
         try {
             const traversal = conn.traversal.V(id);
-
-            for (const key of Object.keys(n.attributes)) {
-                const val = n.attributes[key];
-                if (val!==undefined) {
-                    if (val===null) {
-                        traversal.properties(key).drop();
+            // drop() step terminates a traversal, process all drops as part of a final union step 
+            const dropTraversals: process.GraphTraversal[] = [];
+        
+            for (const [key, val] of Object.entries(n.attributes)) {
+                if (val !== undefined) {
+                    if (val === null) {
+                        dropTraversals.push(__.properties(key));
                     } else {
                         traversal.property(process.cardinality.single, key, val);
                     }
                 }
+            }
+            if (dropTraversals.length > 0) {
+                traversal.local(__.union(...dropTraversals)).drop();
             }
 
             await traversal.iterate();
