@@ -17,7 +17,7 @@ import request from 'superagent';
 
 import { QSHelper } from '../utils/qs.helper';
 import {
-    MessageResource, NewMessageResource, RecipientList, ReplyList, Recipient
+    MessageResource, NewMessageResource, RecipientList, ReplyList, Recipient, MessageList
 } from './messages.model';
 import { MessagesService, MessagesServiceBase } from './messages.service';
 import { RequestHeaders } from './common.model';
@@ -49,6 +49,19 @@ export class MessagesApigwService extends MessagesServiceBase implements Message
         const res = await request.get(url)
             .set(this.buildHeaders(additionalHeaders));
 
+        return res.body;
+    }
+
+    async listMessages(commandId: string, count?:number, fromCreatedAtExclusive?:number ,additionalHeaders?: RequestHeaders ): Promise<MessageList> {
+
+        let url = `${this.baseUrl}${super.commandMessagesRelativeUrl(commandId)}`;
+        const queryString = QSHelper.getQueryString({count, fromCreatedAtExclusive});
+        if (queryString) {
+            url += `?${queryString}`;
+        }
+        const res = await request.get(url)
+            .set(this.buildHeaders(additionalHeaders));
+  
         return res.body;
     }
 

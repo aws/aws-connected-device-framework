@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/commandandcontrol-client",
+      "comment": "added additional functionality to commandandcontrol-client to list messages by commandId",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@cdf/commandandcontrol-client",
+  "email": "bahavar@amazon.com"
+}

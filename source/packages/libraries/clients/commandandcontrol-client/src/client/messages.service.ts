@@ -14,12 +14,13 @@
 import { injectable } from 'inversify';
 
 import { PathHelper } from '../utils/path.helper';
-import { MessageResource, NewMessageResource, RecipientList, ReplyList, Recipient } from './messages.model';
+import { MessageResource, NewMessageResource, RecipientList, ReplyList, Recipient, MessageList } from './messages.model';
 import { RequestHeaders } from './common.model';
 
 export interface MessagesService {
     createMessage(message: NewMessageResource, additionalHeaders?: RequestHeaders ): Promise<string>;
     getMessage(messageId: string, additionalHeaders?: RequestHeaders ): Promise<MessageResource>;
+    listMessages(commandId:string, count?:number, fromCreatedAtExclusive?:number ): Promise<MessageList>
     getRecipient(messageId: string, thingName:string, additionalHeaders?: RequestHeaders) : Promise<Recipient>;
     listRecipients(messageId: string, fromThingNameExclusive?:string, count?:string, additionalHeaders?: RequestHeaders) : Promise<RecipientList>;
     listReplies(messageId: string, thingName: string, fromReceivedAtExclusive?:number, count?:string, additionalHeaders?: RequestHeaders) : Promise<ReplyList>;
