@@ -33,6 +33,7 @@ export class AgentbasedDeploymentService {
     private artifactsBucket: string = process.env.AWS_S3_ARTIFACTS_BUCKET
     private artifactsBucketPrefix: string = process.env.AWS_S3_ARTIFACTS_PREFIX
     private queueUrl: string = process.env.AWS_SQS_QUEUES_DEPLOYMENT_TASKS;
+    private ssmAnsiblePatchDocument: string = process.env.AWS_SSM_ANSIBLE_PATCH_DOCUMENT;
 
     constructor(
         @inject(TYPES.SSMFactory) ssmFactory: () => AWS.SSM,
@@ -112,13 +113,11 @@ export class AgentbasedDeploymentService {
         const playbookUrl = await this.getS3SignedURL(template.playbookSource);
 
         const associationParams: AWS.SSM.CreateAssociationRequest = {
-            Name: 'AWS-RunAnsiblePlaybook',
+            Name: this.ssmAnsiblePatchDocument,
             AssociationName: `${deployment.deploymentId}`,
             Parameters: {
-                playbook: [''],
                 playbookurl: [playbookUrl],
                 extravars: this.convertExtraVarsToString(extraVars),
-                check: ['False']
             },
             OutputLocation: {
                 'S3Location': {
@@ -186,7 +185,6 @@ export class AgentbasedDeploymentService {
         logger.debug(`agentbasedDeploymentService: delete: out: result: ${JSON.stringify(result)}`);
     }
 
-
     public async update(deployment: DeploymentItem): Promise<void> {
         logger.debug(`agentbasedDeploymentService: update in: deployment: ${deployment}`)
 
@@ -205,61 +203,44 @@ export class AgentbasedDeploymentService {
         // get the association Id by doing a list
         const association = await this.agentbasedDeploymentDao.getByDeploymentId(deployment.deploymentId);
 
+        // if the association is not found, then create a new one by deploying
         if (!association) {
-            throw new Error('ASSOCIATION_NOT_FOUND');
+            return await this.deploy(deployment);
         }
 
         ow(association.associationId, 'Association Id', ow.string.nonEmpty);
 
-        const playbookUrl = await this.getS3SignedURL(template.playbookSource);
-
-        const extraVars = {
-            ...template?.extraVars,
-            ...deployment.extraVars
-        }
-
-        await this.transformExtraVars(extraVars)
-
-        const associationUpdateParams: AWS.SSM.UpdateAssociationRequest = {
-            Name: 'AWS-RunAnsiblePlaybook',
-            AssociationName: `${deployment.deploymentId}`,
-            AssociationId: association.associationId,
-            Parameters: {
-                playbook: [''],
-                playbookurl: [playbookUrl],
-                extravars: this.convertExtraVarsToString(extraVars),
-                check: ['False']
-            },
-            OutputLocation: {
-                'S3Location': {
-                    'OutputS3BucketName': this.artifactsBucket,
-                    'OutputS3KeyPrefix': this.artifactsBucketPrefix
-                }
-            }
-        };
-
-
+        // If an association is found, then update the association
         try {
+            const playbookUrl = await this.getS3SignedURL(template.playbookSource);
+
+            const extraVars = {
+                ...template?.extraVars,
+                ...deployment.extraVars
+            }
+
+            await this.transformExtraVars(extraVars)
+
+            const associationUpdateParams: AWS.SSM.UpdateAssociationRequest = {
+                Name: this.ssmAnsiblePatchDocument,
+                AssociationName: `${deployment.deploymentId}`,
+                AssociationId: association.associationId,
+                Parameters: {
+                    playbookurl: [playbookUrl],
+                    extravars: this.convertExtraVarsToString(extraVars),
+                },
+                OutputLocation: {
+                    'S3Location': {
+                        'OutputS3BucketName': this.artifactsBucket,
+                        'OutputS3KeyPrefix': this.artifactsBucketPrefix
+                    }
+                }
+            };
             await this.ssm.updateAssociation(associationUpdateParams).promise();
         } catch (err) {
-            logger.error(`ssm.updateAssociation: in: ${associationUpdateParams} : error: ${JSON.stringify(err)}`);
+            logger.error(`ssm.updateAssociation: in: error: ${JSON.stringify(err)}`);
             throw err;
         }
-
-
-        const params: AWS.SSM.StartAssociationsOnceRequest = {
-            AssociationIds: [association.associationId]
-        }
-
-        let result;
-        try {
-            result = this.ssm.startAssociationsOnce(params).promise();
-        } catch (err) {
-            logger.error(`agentbasedDeployment.service ssm.startAssociationOnce err: ${err}`);
-            throw err;
-        }
-
-        logger.debug(`agentbasedDeploymentService: update out: result: ${result}`)
     }
 
     private async getInstanceByActivationId(activationId: string) {
