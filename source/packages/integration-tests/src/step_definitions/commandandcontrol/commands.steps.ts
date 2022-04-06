@@ -66,7 +66,8 @@ Then('last command-and-control command exists with attributes:', async function 
 export async function listCommands() : Promise<CommandResource[]> {
   const commands:CommandResource[]= [];
   let r:CommandResourceList;
-  while (true) {
+  const condition = true;
+  while (condition) {
     r = await commandsService.listCommands(undefined, undefined, undefined, getAdditionalHeaders(world.authToken));
     commands.push(...r.commands)
     if (r.pagination?.lastEvaluated?.commandId) {

@@ -41,7 +41,11 @@ export class BulkCertificatesInstaller implements RestModule {
       return updatedAnswers;
     }
 
+<<<<<<< HEAD
     const suppliers = await this.getSuppliers(answers);
+=======
+    let suppliers = await this.getSuppliers(answers);
+>>>>>>> 006eedf5347cf7657d7e8ebcd47ee1906676cb92
     updatedAnswers.bulkCerts.suppliers = suppliers;
 
     updatedAnswers = await inquirer.prompt([
