@@ -15,7 +15,7 @@ export class JobsTestClient {
   private buildConnection(): mqtt.MqttClientConnection {
 
     const endpoint: string = process.env.AWS_IOT_ENDPOINT;
-    let config_builder = iot.AwsIotMqttConnectionConfigBuilder.new_mtls_builder_from_path(this.certPath, this.keyPath);
+    const config_builder = iot.AwsIotMqttConnectionConfigBuilder.new_mtls_builder_from_path(this.certPath, this.keyPath);
     config_builder.with_certificate_authority_from_path(undefined, this.caPath);
     config_builder.with_clean_session(false);
     config_builder.with_client_id(this.thingName);
@@ -40,10 +40,10 @@ export class JobsTestClient {
   }
 
   public async getNextJobDocument(): Promise<void> {
-    return new Promise<void>(async (resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       try {
 
-        await this.jobsClient.subscribeToDescribeJobExecutionAccepted({
+        this.jobsClient.subscribeToDescribeJobExecutionAccepted({
           thingName: this.thingName,
           jobId: "$next"
         }, mqtt.QoS.AtLeastOnce,
@@ -57,7 +57,7 @@ export class JobsTestClient {
             }
         });
 
-        await this.jobsClient.publishDescribeJobExecution({
+        this.jobsClient.publishDescribeJobExecution({
           thingName: this.thingName,
           jobId: "$next"
         }, mqtt.QoS.AtLeastOnce);
@@ -74,9 +74,9 @@ export class JobsTestClient {
       throw new Error('NO_JOB');
     }
 
-    return new Promise<void>(async (resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       try {
-        await this.jobsClient.publishUpdateJobExecution({
+        this.jobsClient.publishUpdateJobExecution({
           thingName: this.thingName,
           jobId: this.job.jobId,
           status,

@@ -93,6 +93,7 @@ async function teardown_deployments_feature(world:unknown) {
 }
 
 async function teardown_activation_features() {
+    console.log('teardown_activation_features');
 }
 
 async function teardown_deployment_templates_features(world:unknown) {
