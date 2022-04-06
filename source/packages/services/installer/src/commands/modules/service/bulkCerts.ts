@@ -1,4 +1,4 @@
-import { Answers } from '../../../models/answers';
+import { Answers, CA, Suppliers } from '../../../models/answers';
 import { ListrTask } from 'listr2';
 import { ModuleName, RestModule, PostmanEnvironment } from '../../../models/modules';
 import { ConfigBuilder } from "../../../utils/configBuilder";
@@ -9,6 +9,7 @@ import { customDomainPrompt } from '../../../prompts/domain.prompt';
 import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
 import { deleteStack, getStackOutputs, getStackParameters, getStackResourceSummaries } from '../../../utils/cloudformation.util';
+import { Lambda } from '@aws-sdk/client-lambda'
 
 export class BulkCertificatesInstaller implements RestModule {
 
@@ -40,7 +41,72 @@ export class BulkCertificatesInstaller implements RestModule {
       return updatedAnswers;
     }
 
+    const suppliers = await this.getSuppliers(answers);
+    updatedAnswers.bulkCerts.suppliers = suppliers;
+
     updatedAnswers = await inquirer.prompt([
+      {
+        message: `Create or modify supplier CA alias :`,
+        type: 'confirm',
+        name: 'bulkCerts.setSupplier',
+        default: answers.bulkCerts?.setSupplier ?? true,
+        askAnswered: true
+      },
+      {
+        message: 'Select the suppliers you wish to modify',
+        type: 'list',
+        name: 'bulkCerts.caAlias',
+        choices:  suppliers.list,
+        pageSize: 20,
+        loop: false,
+        askAnswered: true,
+        default: suppliers.list.length -1 ,
+        validate(answer:string[]) {
+          if (answer?.length===0) {
+             return false;
+          }
+          return true;
+        },
+        when(answers: Answers) {
+          return answers.bulkCerts?.setSupplier === true && suppliers.list?.length > 1;
+        }
+      },
+      {
+        message: `No supplier was found, Create a new alias :`,
+        type: 'confirm',
+        name: 'bulkCerts.setSupplier',
+        default: answers.bulkCerts?.setSupplier ?? true,
+        askAnswered: true,
+        when(answers: Answers) {
+          return answers.bulkCerts?.setSupplier === true && suppliers.list?.length === 1;
+        },
+      },
+      {
+        message: `Enter new supplier alias, must follow the format "SUPPLIER_CA_{alias}":`,
+        type: 'input',
+        name: 'bulkCerts.caAlias',
+        default: answers.bulkCerts?.caAlias,
+        askAnswered: true,
+        validate(answer:string) {
+          if (! answer.startsWith('SUPPLIER_CA_')) {
+             return "Alias must start with SUPPLIER_CA_";
+          }
+          return true;
+        },
+        when(answers: Answers) {
+          return answers.bulkCerts?.setSupplier === true && (answers.bulkCerts.suppliers.list?.length === 1 || answers.bulkCerts.caAlias === "Create New Supplier") ;
+        },
+      },
+      {
+        message: `Supplier CA Id:`,
+        type: 'input',
+        name: 'bulkCerts.caId',
+        default: answers.bulkCerts?.caId,
+        askAnswered: true,
+        when(answers: Answers) {
+          return answers.bulkCerts?.setSupplier === true;
+        },
+      },
       {
         message: 'Would you like to provide any default values for the device certificates?',
         type: 'confirm',
@@ -229,6 +295,17 @@ export class BulkCertificatesInstaller implements RestModule {
   public generateApplicationConfiguration(answers: Answers): string {
     const configBuilder = new ConfigBuilder()
 
+    if(!answers.bulkCerts.suppliers.list.includes(answers.bulkCerts.caAlias)){
+      answers.bulkCerts?.suppliers?.cas.push({alias:answers.bulkCerts.caAlias, caId:answers.bulkCerts.caId});
+    }
+    answers.bulkCerts?.suppliers?.cas?.forEach(supplier => {
+      if( supplier.alias == answers.bulkCerts.caAlias){
+        supplier.caId = answers.bulkCerts.caId;
+      }
+      configBuilder.add(supplier.alias,supplier.caId);
+    });
+
+    
     configBuilder
       .add(`CUSTOMDOMAIN_BASEPATH`, answers.bulkCerts.customDomainBasePath)
       .add(`LOGGING_LEVEL`, answers.bulkCerts.loggingLevel)
@@ -274,5 +351,24 @@ export class BulkCertificatesInstaller implements RestModule {
     });
     return tasks
 
+}
+
+private async getSuppliers(answers:Answers): Promise<Suppliers> {
+  const lambda = new Lambda({ region: answers.region });
+  const config = await lambda.getFunctionConfiguration({ FunctionName: `cdf-bulkCerts-sns-${answers.environment}` });
+  const list:string[] = [];
+  const cas:CA[] = [];
+  const variables = config.Environment?.Variables;
+  const appConfigStr = variables['APP_CONFIG'] as string;
+  appConfigStr.split('\r\n').forEach(element => {
+    if(element.startsWith('SUPPLIER_CA_')) {
+      const [key,value] = element.split('=');
+      list.push(key);
+      cas.push({alias:key, caId:value});
+    }
+  });
+  list.push("Create New Supplier");
+  const suppliers:Suppliers = {list,cas};
+  return suppliers;
 }
 }
