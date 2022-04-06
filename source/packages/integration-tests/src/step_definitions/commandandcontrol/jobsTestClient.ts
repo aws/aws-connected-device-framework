@@ -40,7 +40,7 @@ export class JobsTestClient {
   }
 
   public async getNextJobDocument(): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
+    const result = new Promise<void>((resolve, reject) => {
       try {
 
         this.jobsClient.subscribeToDescribeJobExecutionAccepted({
@@ -67,6 +67,7 @@ export class JobsTestClient {
         reject(error);
       }
     });
+    return Promise.resolve(result);
   }
 
   public async updateJobExecution(status: iotjobs.model.JobStatus, statusDetails?: { [key: string]: string }): Promise<void> {
@@ -74,7 +75,7 @@ export class JobsTestClient {
       throw new Error('NO_JOB');
     }
 
-    return new Promise<void>((resolve, reject) => {
+    const result = new Promise<void>((resolve, reject) => {
       try {
         this.jobsClient.publishUpdateJobExecution({
           thingName: this.thingName,
@@ -91,5 +92,6 @@ export class JobsTestClient {
         reject(error);
       }
     });
+    return Promise.resolve(result);
   }
 }
