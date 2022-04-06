@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/installer",
+      "comment": "Added the capability to the instaler to create/modify supplier CA",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@cdf/installer",
+  "email": "bahavar@amazon.com"
+}
