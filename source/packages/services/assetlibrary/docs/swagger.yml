@@ -1551,12 +1551,11 @@ paths:
             Filter by an attribute based on a regex pattern. This filter is only available in the
             "enhanced" mode of Asset Library.
 
-            For example: `?regex=serialNo:XY[A-Z]\-[0-4][^9].*`. Syntax and limitations are those of
-            the ElasticSearch DSL, documented here:
-            https://www.elastic.co/guide/en/elasticsearch/reference/7.10/regexp-syntax.html.
-            Notably, ElasticSearch does NOT support:
+            For example: `?regex=serialNo:XY[A-Z]\-[0-4][^9].*`. Regular expressions use the Lucene syntax, which
+            differs from more standardized implementations. Notably, the Lucene syntax does NOT support:
             1. anchor operators, such as ^ and $ for start and end of a string
             2. character class tokens such as \d (any digit) and \S (all non-whitespace character)
+            See also: https://opensearch.org/docs/latest/opensearch/query-dsl/term/#regex.
 
             Regex filters are performed against the original complete value of the field, not individual
             words. For example, a device with attribute "mfg" set to "Widgets Incorporated" can be found with
