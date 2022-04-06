@@ -10,7 +10,6 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-// import { ContainerModule, decorate, injectable, interfaces } from 'inversify';
 import { ContainerModule, interfaces } from 'inversify';
 import { SearchDaoEnhanced } from '../search/search.enhanced.dao';
 import { TYPES } from './types';
