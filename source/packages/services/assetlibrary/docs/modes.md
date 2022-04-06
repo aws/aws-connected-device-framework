@@ -101,25 +101,24 @@ The following table indicates which REST API's are available in which mode:
 
 ### Search
 
-| Endpoint/Parameter | Description | `full` mode | `enhanced` mode | `lite` mode |
-|------------------------------------|---|---|---|---|
-| `GET /search`                      | Search for groups and devices | ✅ | ✅ |
-| `GET /search?type={filter}         | ✅ | ✅ | ✅ |
-| `GET /search?ancestorPath={filter} | ✅ | ✅ | ✅ |
-| `GET /search?eq={filter}           | ✅ | ✅ | ✅ |
-| `GET /search?neq={filter}          | ✅ | ✅ | ✅ |
-| `GET /search?lt={filter}           | ✅ | ✅ | ✅ |
-| `GET /search?lte={filter}          | ✅ | ✅ | ✅ |
-| `GET /search?gt={filter}           | ✅ | ✅ | ✅ |
-| `GET /search?gte={filter}          | ✅ | ✅ | ✅ |
-| `GET /search?exists={filter}       | ✅ | ✅ | ✅ |
-| `GET /search?nexists={filter}      | ✅ | ✅ | ✅ |
-| `GET /search?startsWith={filter}   | ✅ | ✅ (faster) | ✅ |
-| `GET /search?endsWith={filter}     | ✅ (since version 5.4.0) | ✅ (faster) | ⛔ |
-| `GET /search?contains={filter}     | ✅ (since version 5.4.0)| ✅ (faster) | ⛔ |
-| `GET /search?fulltext={filter}     | ✅ | ⛔ | ⛔ |
-| `GET /search?regex={filter}        | ✅ | ⛔ | ⛔ |
-| `GET /search?lucene={filter}       | ✅ | ⛔ | ⛔ |
+| Endpoint/Parameter                  | `full` mode | `enhanced` mode | `lite` mode |
+|-------------------------------------|---|---|---|
+| `GET /search?type={filter}`         | ✅ | ✅ | ✅ |
+| `GET /search?ancestorPath={filter}` | ✅ | ✅ | ✅ |
+| `GET /search?eq={filter}`           | ✅ | ✅ | ✅ |
+| `GET /search?neq={filter}`          | ✅ | ✅ | ✅ |
+| `GET /search?lt={filter}`           | ✅ | ✅ | ✅ |
+| `GET /search?lte={filter}`          | ✅ | ✅ | ✅ |
+| `GET /search?gt={filter}`           | ✅ | ✅ | ✅ |
+| `GET /search?gte={filter}`          | ✅ | ✅ | ✅ |
+| `GET /search?exists={filter}`       | ✅ | ✅ | ✅ |
+| `GET /search?nexists={filter}`      | ✅ | ✅ | ✅ |
+| `GET /search?startsWith={filter}`   | ✅ | ✅ (faster) | ✅ |
+| `GET /search?endsWith={filter}`     | ✅ (since version 5.4.0) | ✅ (faster) | ⛔ |
+| `GET /search?contains={filter}`     | ✅ (since version 5.4.0)| ✅ (faster) | ⛔ |
+| `GET /search?fulltext={filter}`     | ⛔ | ✅ | ⛔ |
+| `GET /search?regex={filter}`        | ⛔ | ✅ | ⛔ |
+| `GET /search?lucene={filter}`       | ⛔ | ✅ | ⛔ |
 
 ## Supported Functionality by Area
 
