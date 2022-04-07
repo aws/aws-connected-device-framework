@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/assetlibraryhistory-client",
+      "comment": "fix parsing of ASSETLIBRARYHISTORY_HEADERS config setting",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/assetlibraryhistory-client",
+  "email": "jonasneu@amazon.com"
+}
