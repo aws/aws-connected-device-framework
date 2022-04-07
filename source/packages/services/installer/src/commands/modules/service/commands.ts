@@ -62,7 +62,7 @@ export class CommandsInstaller implements RestModule {
         type: 'confirm',
         name: 'commands.useAssetLibrary',
         default: updatedAnswers.commands?.useAssetLibrary,
-        when: !answers.modules.list.includes('assetLibrary'),
+        when: !answers.modules.list.includes('assetLibrary') && !answers.commandAndControl?.useAssetLibrary && !answers.greengrass2Provisioning?.useAssetLibrary,
         askAnswered: true
       },
       ...applicationConfigurationPrompt(this.name, answers, [

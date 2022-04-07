@@ -62,7 +62,7 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
         type: 'confirm',
         name: 'greengrass2Provisioning.useAssetLibrary',
         default: updatedAnswers.greengrass2Provisioning?.useAssetLibrary,
-        when: !answers.modules.list.includes('assetLibrary'),
+        when: !answers.modules.list.includes('assetLibrary') && !answers.commandAndControl?.useAssetLibrary && !answers.commands?.useAssetLibrary,
         askAnswered: true
       },
       enableAutoScaling(this.name, answers),

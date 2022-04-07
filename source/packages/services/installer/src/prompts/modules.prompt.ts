@@ -94,7 +94,7 @@ export function topologicallySortModules(modules:Module[], toSort:string[]) : st
 
   // next keep processing until we have no more dependant modules to process
   let count = 0;
-  while (remaining.length > 0 && count < 5) {
+  while (remaining.length > 0 && count < 6) {
     const nextLevel = remaining.filter(m => m.dependsOnMandatory.every(e=>visited.includes(e)) && m.dependsOnOptional.every(e=>visited.includes(e))).map(m=>m.name);
     // console.log(`nextLevel: ${JSON.stringify(nextLevel)}`);
     groups.push(nextLevel);

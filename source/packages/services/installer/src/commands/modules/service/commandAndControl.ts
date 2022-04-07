@@ -62,7 +62,7 @@ export class CommandAndControlInstaller implements RestModule {
         type: 'confirm',
         name: 'commandAndControl.useAssetLibrary',
         default: updatedAnswers.commandAndControl?.useAssetLibrary,
-        when: !answers.modules.list.includes('assetLibrary'),
+        when: !answers.modules.list.includes('assetLibrary') && !answers.greengrass2Provisioning?.useAssetLibrary && !answers.commands?.useAssetLibrary,
         askAnswered: true
       },
       ...applicationConfigurationPrompt(this.name, answers, [
