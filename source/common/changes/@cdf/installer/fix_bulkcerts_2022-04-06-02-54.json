@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@cdf/installer",
-      "comment": "Added the capability to the instaler to create/modify supplier CA",
+      "comment": "Added the capability to the installer to create/modify supplier CA",
       "type": "minor"
     }
   ],

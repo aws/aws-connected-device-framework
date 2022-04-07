@@ -40,10 +40,11 @@ export class JobsTestClient {
   }
 
   public async getNextJobDocument(): Promise<void> {
-    const result = new Promise<void>((resolve, reject) => {
+    
+    // eslint-disable-next-line no-async-promise-executor
+    return new Promise<void>(async (resolve, reject) => {
       try {
-
-        this.jobsClient.subscribeToDescribeJobExecutionAccepted({
+        await this.jobsClient.subscribeToDescribeJobExecutionAccepted({
           thingName: this.thingName,
           jobId: "$next"
         }, mqtt.QoS.AtLeastOnce,
@@ -67,17 +68,16 @@ export class JobsTestClient {
         reject(error);
       }
     });
-    return Promise.resolve(result);
   }
 
   public async updateJobExecution(status: iotjobs.model.JobStatus, statusDetails?: { [key: string]: string }): Promise<void> {
     if (this.job === undefined) {
       throw new Error('NO_JOB');
     }
-
-    const result = new Promise<void>((resolve, reject) => {
+    // eslint-disable-next-line no-async-promise-executor
+    return new Promise<void>(async (resolve, reject) => {
       try {
-        this.jobsClient.publishUpdateJobExecution({
+        await this.jobsClient.publishUpdateJobExecution({
           thingName: this.thingName,
           jobId: this.job.jobId,
           status,
@@ -92,6 +92,5 @@ export class JobsTestClient {
         reject(error);
       }
     });
-    return Promise.resolve(result);
   }
 }
