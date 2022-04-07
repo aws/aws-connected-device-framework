@@ -1,5 +1,6 @@
 ## The following env config needs defining per environment:
 
+```ini
 AWS_ACCOUNTID=
 AWS_DYNAMODB_DAX_ENDPOINTS=
 AWS_DYNAMODB_TABLES_EVENTCONFIG_NAME=
@@ -9,9 +10,13 @@ AWS_LAMBDA_DYNAMODBSTREAM_NAME=
 AWS_LAMBDA_LAMBDAINVOKE_ARN=
 AWS_REGION=
 AWS_SQS_ASYNCPROCESSING=
+```
 
-## optional to override:
+## The following may be overridden:
+
+```ini
 CORS_ORIGIN=*
 CORS_EXPOSED_HEADERS=content-type,location
 CUSTOMDOMAIN_BASEPATH=
 LOGGING_LEVEL=info
+```

@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/integration-tests",
+      "comment": "rewrite of integration-test documentation",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/integration-tests",
+  "email": "jonasneu@amazon.com"
+}
