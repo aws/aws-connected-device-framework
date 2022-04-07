@@ -38,8 +38,11 @@ export class DeploymentHelperInstaller implements InfrastructureModule {
     this.deploymentHelperStackName = `cdf-deployment-helper-${environment}`;
   }
 
-  public async prompts(answers: Answers): Promise<Answers> {
+  private deployVpc({ apigw, assetLibrary, notifications }: Answers): boolean {
+    return apigw?.type === "Private" || assetLibrary?.mode === "full" || notifications?.useDax === true;
+  }
 
+  public async prompts(answers: Answers): Promise<Answers> {
     if (answers.deploymentHelper === undefined) {
       answers.deploymentHelper = {};
     }
@@ -50,7 +53,9 @@ export class DeploymentHelperInstaller implements InfrastructureModule {
         StackName: this.deploymentHelperStackName
       }))]
 
-      if (answers.vpc?.id) {
+      if (this.deployVpc(answers)) {
+        // if vpc need to be deployed we need to check whether
+        // deployment helper stack exists or not
         describePromises.push(cloudFormation.send(new DescribeStacksCommand({
           StackName: this.vpcDeploymentHelperStackName
         })))

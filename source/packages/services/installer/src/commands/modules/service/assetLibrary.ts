@@ -53,9 +53,29 @@ export class AssetLibraryInstaller implements RestModule {
     this.applicationStackName = `cdf-assetlibrary-${environment}`
   }
 
+  private deployAssetLibrary({ greengrass2Provisioning, modules, commandAndControl, commands }: Answers): boolean {
+
+    if (
+      modules.list.includes('assetLibrary') ||
+      modules.list.includes('deviceMonitoring') ||
+      modules.list.includes('certificateActivator') ||
+      greengrass2Provisioning?.useAssetLibrary ||
+      commands?.useAssetLibrary ||
+      commandAndControl?.useAssetLibrary
+    ) {
+      return true;
+    }
+
+    return false
+  }
+
   public async prompts(answers: Answers): Promise<Answers> {
 
+    if (!this.deployAssetLibrary(answers))
+      return answers
+
     delete answers.assetLibrary?.redeploy;
+
     let updatedAnswers: Answers = await inquirer.prompt([
       redeployIfAlreadyExistsPrompt(this.name, this.applicationStackName),
     ], answers);
@@ -90,7 +110,7 @@ export class AssetLibraryInstaller implements RestModule {
         name: 'assetLibrary.neptuneDbInstanceType',
         default: (
           answers.assetLibrary?.neptuneDbInstanceType ??
-          (neptuneInstanceTypes.indexOf(DEFAULT_NEPTUNE_INSTANCE_TYPE) >= 0)
+            (neptuneInstanceTypes.indexOf(DEFAULT_NEPTUNE_INSTANCE_TYPE) >= 0)
             ? DEFAULT_NEPTUNE_INSTANCE_TYPE
             : undefined
         ),
@@ -101,7 +121,7 @@ export class AssetLibraryInstaller implements RestModule {
           return answers.assetLibrary?.mode === 'full';
         },
         validate(answer: string) {
-          if (neptuneInstanceTypes.length > 0 && ! neptuneInstanceTypes.includes(answer)) {
+          if (neptuneInstanceTypes.length > 0 && !neptuneInstanceTypes.includes(answer)) {
             return `Neptune DB Instance Type must be one of: ${neptuneInstanceTypes.join(', ')}`;
           }
           return true;
@@ -197,12 +217,14 @@ export class AssetLibraryInstaller implements RestModule {
   }
 
   public async install(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    const tasks: ListrTask[] = [];
+
+    if (!this.deployAssetLibrary(answers))
+      return [answers, tasks]
 
     ow(answers, ow.object.nonEmpty);
     ow(answers.environment, ow.string.nonEmpty);
     ow(answers.assetLibrary, ow.object.nonEmpty);
-
-    const tasks: ListrTask[] = [];
 
     if ((answers.assetLibrary.redeploy ?? true) === false) {
       return [answers, tasks];

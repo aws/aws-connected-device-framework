@@ -215,12 +215,16 @@ async function configWizard(
 
   answersStorage.save(answers);
 
-  // prompt for module specific configuration
-  const grouped = topologicallySortModules(
+  // For prompt phase, we'll deploy in reverse order of install phase
+  // to ensure that optional modules can access the dependendent modules
+  // to decide if optional modules needed to be installed or not
+  const reversedGrouped = topologicallySortModules(
     modules,
     answers.modules.expandedIncludingOptional
-  );
-  for (const layer of grouped) {
+  ).reverse();
+
+
+  for (const layer of reversedGrouped) {
     for (const name of layer) {
       const m = modules.find((m) => m.name === name);
       if (m.prompts) {

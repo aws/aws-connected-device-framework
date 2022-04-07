@@ -57,6 +57,14 @@ export class CommandsInstaller implements RestModule {
     }
 
     updatedAnswers = await inquirer.prompt([
+      {
+        message: 'Do you need Asset Library to perform complex query?',
+        type: 'confirm',
+        name: 'commands.useAssetLibrary',
+        default: updatedAnswers.commands?.useAssetLibrary,
+        when: !answers.modules.list.includes('assetLibrary'),
+        askAnswered: true
+      },
       ...applicationConfigurationPrompt(this.name, answers, [
         {
           question: 'MQTT topic for presignedurl generation',
@@ -198,12 +206,12 @@ export class CommandsInstaller implements RestModule {
   public async delete(answers: Answers): Promise<ListrTask[]> {
     const tasks: ListrTask[] = [];
     tasks.push({
-        title: `Deleting stack '${this.stackName}'`,
-        task: async () => {
-          await deleteStack(this.stackName, answers.region)
-        }
+      title: `Deleting stack '${this.stackName}'`,
+      task: async () => {
+        await deleteStack(this.stackName, answers.region)
+      }
     });
     return tasks
 
-}
+  }
 }

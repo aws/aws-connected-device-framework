@@ -57,6 +57,14 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
     }
 
     updatedAnswers = await inquirer.prompt([
+      {
+        message: 'Do you need Asset Library to perform complex query?',
+        type: 'confirm',
+        name: 'greengrass2Provisioning.useAssetLibrary',
+        default: updatedAnswers.greengrass2Provisioning?.useAssetLibrary,
+        when: !answers.modules.list.includes('assetLibrary'),
+        askAnswered: true
+      },
       enableAutoScaling(this.name, answers),
       provisionedConcurrentExecutions(this.name, answers),
       ...applicationConfigurationPrompt(this.name, answers, [

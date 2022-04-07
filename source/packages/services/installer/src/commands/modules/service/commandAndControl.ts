@@ -57,6 +57,14 @@ export class CommandAndControlInstaller implements RestModule {
     }
 
     updatedAnswers = await inquirer.prompt([
+      {
+        message: 'Do you need Asset Library to perform complex query?',
+        type: 'confirm',
+        name: 'commandAndControl.useAssetLibrary',
+        default: updatedAnswers.commandAndControl?.useAssetLibrary,
+        when: !answers.modules.list.includes('assetLibrary'),
+        askAnswered: true
+      },
       ...applicationConfigurationPrompt(this.name, answers, [
         {
           question: 'Provisioning template to add a thing to a thing group',

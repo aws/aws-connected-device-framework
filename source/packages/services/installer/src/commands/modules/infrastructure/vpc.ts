@@ -14,14 +14,9 @@ import inquirer from "inquirer";
 import { ListrTask } from "listr2";
 import ow from "ow";
 import path from "path";
-
-import {
-  CloudFormationClient,
-  DescribeStacksCommand,
-} from "@aws-sdk/client-cloudformation";
 import { Answers } from "../../../models/answers";
 import { InfrastructureModule, ModuleName } from "../../../models/modules";
-import { deleteStack, packageAndDeployStack } from "../../../utils/cloudformation.util";
+import { deleteStack, packageAndDeployStack, getStackOutputs } from "../../../utils/cloudformation.util";
 import { getMonorepoRoot } from "../../../prompts/paths.prompt";
 
 export class VpcInstaller implements InfrastructureModule {
@@ -37,8 +32,16 @@ export class VpcInstaller implements InfrastructureModule {
     this.stackName = `cdf-network-${region}`;
   }
 
+  private deployVpc({ apigw, assetLibrary, notifications }: Answers): boolean {
+    return apigw?.type === "Private" || assetLibrary?.mode === "full" || notifications?.useDax === true;
+  }
+
   public async prompts(answers: Answers): Promise<Answers> {
     delete answers.vpc?.useExisting;
+
+    if (!this.deployVpc(answers)) {
+      return answers
+    }
 
     answers = await inquirer.prompt(
       [
@@ -129,6 +132,7 @@ export class VpcInstaller implements InfrastructureModule {
     return answers;
   }
 
+
   public async install(answers: Answers): Promise<[Answers, ListrTask[]]> {
     ow(answers, ow.object.nonEmpty);
 
@@ -136,19 +140,17 @@ export class VpcInstaller implements InfrastructureModule {
 
     const monorepoRoot = await getMonorepoRoot();
 
+    if (!this.deployVpc(answers)) {
+      return [answers, tasks]
+    }
+
     if (answers.vpc?.useExisting === false) {
       ow(answers.environment, ow.string.nonEmpty);
       ow(answers.region, ow.string.nonEmpty);
 
-      const skipDeployment =
-        answers.apigw?.type !== "Private" &&
-        answers.assetLibrary?.mode !== "full" &&
-        answers.notifications?.useDax !== true;
-
       tasks.push(
         {
           title: `Deploying stack '${this.stackName}'`,
-          skip: skipDeployment,
           task: async () => {
             const parameterOverrides = [
               `Environment=${answers.environment}`,
@@ -179,33 +181,13 @@ export class VpcInstaller implements InfrastructureModule {
 
         {
           title: `Retrieving network information from stack '${this.stackName}'`,
-          skip: skipDeployment,
           task: async () => {
-            const cloudFormation = new CloudFormationClient({
-              region: answers.region,
-            });
-            const r = await cloudFormation.send(
-              new DescribeStacksCommand({
-                StackName: this.stackName,
-              })
-            );
-
-            answers.vpc.id = r?.Stacks?.[0]?.Outputs?.find(
-              (o) => o.OutputKey === "VpcId"
-            )?.OutputValue;
-            answers.vpc.securityGroupId = r?.Stacks?.[0]?.Outputs?.find(
-              (o) => o.OutputKey === "CDFSecurityGroupId"
-            )?.OutputValue;
-            answers.vpc.privateSubnetIds = r?.Stacks?.[0]?.Outputs?.find(
-              (o) => o.OutputKey === "PrivateSubnetIds"
-            )?.OutputValue;
-            answers.vpc.publicSubnetIds = r?.Stacks?.[0]?.Outputs?.find(
-              (o) => o.OutputKey === "PublicSubnetIds"
-            )?.OutputValue;
-            answers.vpc.privateApiGatewayVpcEndpoint =
-              r?.Stacks?.[0]?.Outputs?.find(
-                (o) => o.OutputKey === "PrivateApiGatewayVPCEndpoint"
-              )?.OutputValue;
+            const byOutputKey = await getStackOutputs(this.stackName, answers.region)
+            answers.vpc.id = byOutputKey("VpcId")
+            answers.vpc.securityGroupId = byOutputKey("CDFSecurityGroupId")
+            answers.vpc.privateSubnetIds = byOutputKey("PrivateSubnetIds")
+            answers.vpc.publicSubnetIds = byOutputKey("PublicSubnetIds")
+            answers.vpc.privateApiGatewayVpcEndpoint = byOutputKey("PrivateApiGatewayVPCEndpoint")
           },
         }
       );
