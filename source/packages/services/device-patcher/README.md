@@ -27,15 +27,12 @@ Content-Type: application/vnd.aws-cdf-v1.0+json
 Accept: application/vnd.aws-cdf-v1.0+json
 
 {
-    "description": "Linux GG Core installation template",
+    "description": "EC2 GGV2 Core installation template",
     "type": "agentbased",
     "source": {
         "type": "s3",
     	"bucket":"cdf-xxxxxxxxxxxx-us-west-2",
-    	"prefix":"greengrass-deployment/facility-controller/fc-ansible-gginstall.yaml"
-    },
-    "extraVars": {
-      "iot_cred_endpoint": "iot-cred...."
+    	"prefix":"device-patcher/playbooks/ggv2-ec2-amazonlinux2-installer.yml"
     }
 }
 ```
@@ -48,14 +45,14 @@ Accept: application/vnd.aws-cdf-v1.0+json
     "source": {
         "type": "s3",
         "bucket": "cdf-xxxxxxxxxxxx-us-east-1",
-        "prefix": "greengrass-deployment/facility-controller/fc-ansible-gginstall.yaml"
+        "prefix": "device-patcher/playbooks/ggv2-ec2-amazonlinux2-installer.yml"
     },
     "type": "agentbased",
     "versionNo": 1,
     "createdAt": "2020-06-04T01:42:18.804Z",
     "updatedAt": "2020-06-04T01:42:18.804Z",
     "enabled": true,
-    "description": "Linux GG Core installation template"
+    "description": "EC2 GGV2 Core installation template"
 }
 ```
 
@@ -102,8 +99,8 @@ Accept: application/vnd.aws-cdf-v1.0+json
         "deviceId": "ec2-ggv2core-device1",
         "deploymentTemplateName": "ggv2-ec2-installer-template",
         "extraVars":{
-            "iot_thing_name": "ec2-ggv2core-device1",
-            "iot_device_cred_zip_url": "<s3-signed-url>"
+          "iot_device_cred_zip_url": "${aws:s3:presign:https://<bucket><prefix>?expiresIn=604800}",
+          "iot_device_config_url": "${aws:s3:presign:https://<bucket><preix>?expiresIn=604800}"
         }
     }]
 }
@@ -142,8 +139,8 @@ Accept: application/vnd.aws-cdf-v1.0+json
             "deploymentType": "agentbased",
             "statusMessage": "SSM:InProgress",
             "extraVars": {
-                "iot_thing_name": "ec2-ggv2core-device1",
-                "iot_device_cred_zip_url": "<s3-signed-url>"
+              "iot_device_cred_zip_url": "${aws:s3:presign:https://cdf-xxxxxxxxxx-us-west-2/greengrass2/artifacts/ggv2-test-core-1/certs.zip?expiresIn=604800}",
+              "iot_device_config_url": "${aws:s3:presign:https://cdf-xxxxxxxxxx-us-west-2/greengrass2/artifacts/ggv2-test-core-1/installerConfig.yml?expiresIn=604800}"
             },
             "associationId": "b919b476-e507-49fd-a963-b5e0076daa8b"
         },
@@ -158,8 +155,8 @@ Accept: application/vnd.aws-cdf-v1.0+json
             "deploymentType": "agentbased",
             "statusMessage": "SSM:Failed",
             "extraVars": {
-                "iot_thing_name": "ec2-ggv2core-device1",
-                "iot_device_cred_zip_url": "<s3-signed-url>"
+              "iot_device_cred_zip_url": "${aws:s3:presign:https://cdf-xxxxxxxxxx-us-west-2/greengrass2/artifacts/ggv2-test-core-1/certs.zip?expiresIn=604800}",
+              "iot_device_config_url": "${aws:s3:presign:https://cdf-xxxxxxxxxx-us-west-2/greengrass2/artifacts/ggv2-test-core-1/installerConfig.yml?expiresIn=604800}"
             },
             "associationId": "032bbe91-281e-46eb-9f3f-564180a9eda3"
         }
@@ -192,8 +189,8 @@ Accept: application/vnd.aws-cdf-v1.0+json
       "deploymentType": "agentbased",
       "statusMessage": "SSM:InProgress",
       "extraVars": {
-        "iot_thing_name": "ec2-ggv2core-device1",
-        "iot_device_cred_zip_url": "<s3-signed-url>"
+        "iot_device_cred_zip_url": "${aws:s3:presign:https://cdf-xxxxxxxxxx-us-west-2/greengrass2/artifacts/ggv2-test-core-1/certs.zip?expiresIn=604800}",
+        "iot_device_config_url": "${aws:s3:presign:https://cdf-xxxxxxxxxxx-us-west-2/greengrass2/artifacts/ggv2-test-core-1/installerConfig.yml?expiresIn=604800}"
       },
       "associationId": "b919b476-e507-49fd-a963-b5e0076daa8b"
     }
@@ -211,10 +208,7 @@ Content-Type: application/vnd.aws-cdf-v1.0+json
 Accept: application/vnd.aws-cdf-v1.0+json
 
 {
-	"deploymentStatus": "retry",
-	"extraVars": {
-	  "iot_device_cred_zip_url": "<s3-signed-url>"
-	}
+	"deploymentStatus": "retry"
 }
 ```
 

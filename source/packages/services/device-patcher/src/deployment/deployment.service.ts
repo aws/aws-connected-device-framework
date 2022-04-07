@@ -206,7 +206,7 @@ export class DeploymentService {
                 deployment.statusMessage = e.code;
             }
         }
-
+        deployment.statusMessage = "";
         await this.deploymentDao.update(existingDeployment);
 
         logger.debug(`deployment.service patch out: result: ${JSON.stringify(result)}`);

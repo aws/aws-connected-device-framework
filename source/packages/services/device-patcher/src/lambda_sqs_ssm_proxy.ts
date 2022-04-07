@@ -28,11 +28,9 @@ const activationService: ActivationService = container.get<ActivationService>(TY
 
 const agentbasedDeploymentService: AgentbasedDeploymentService = container.get<AgentbasedDeploymentService>(TYPES.AgentbasedDeploymentService);
 
-// eslint-disable-next-line  @typescript-eslint/no-explicit-any
-exports.handler = async (event: any, context: any, callback: any) => {
+exports.handler = async (event: Event): Promise<void> => {
 
     logger.debug(`event: ${JSON.stringify(event)}`);
-    logger.debug(`context: ${JSON.stringify(context)}`);
 
     if (event.Records) {
         for (const record of event.Records) {
@@ -55,7 +53,7 @@ exports.handler = async (event: any, context: any, callback: any) => {
 
                     } else if (
                         eventBody['detail-type'] === 'EC2 State Manager Instance Association State Change' &&
-                        eventBody.detail['document-name'] === 'AWS-RunAnsiblePlaybook'
+                        eventBody.detail['document-name'] === process.env.AWS_SSM_ANSIBLE_PATCH_DOCUMENT
                     ) {
 
                         logger.debug(`lambda_sqs_ssm_proxy: ssm_event: EC2 State Manager Instance Association State Change`);
@@ -93,7 +91,7 @@ exports.handler = async (event: any, context: any, callback: any) => {
 
                     } else if (
                         eventBody['detail-type'] === 'EC2 State Manager Association State Change' &&
-                        eventBody.detail['document-name'] === 'AWS-RunAnsiblePlaybook'
+                        eventBody.detail['document-name'] === process.env.AWS_SSM_ANSIBLE_PATCH_DOCUMENT
                     ) {
 
                         logger.debug(`lambda_sqs_ssm_proxy: ssm_event: EC2 State Manager Association State Change`);
@@ -109,8 +107,26 @@ exports.handler = async (event: any, context: any, callback: any) => {
             }
 
         }
-
-        callback(null, null);
     }
     logger.debug(`lambda_sqs_proxy handler: exit:`);
 };
+
+export interface Event {
+    Records: SQSEvent[];
+}
+
+export interface SQSEvent {
+    messageId: string;
+    receiptHandle: string;
+    body: string;
+    attributes: {
+        [key: string]: string;
+    };
+    messageAttributes: {
+        [key: string]: string;
+    };
+    md5OfBody: string;
+    eventSource: string;
+    eventSourceARN: string;
+    awsRegion: string;
+}
