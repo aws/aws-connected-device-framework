@@ -10,27 +10,11 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-
 import { injectable } from 'inversify';
-
-import { PathHelper } from '../utils/path.helper';
-import { RequestHeaders } from './commands.model';
-import { TemplateModel } from './templates.models';
-
-export interface TemplatesService {
-    createTemplate(template: TemplateModel, additionalHeaders?: RequestHeaders): Promise<void>;
-
-    getTemplate(templateId: string, additionalHeaders?: RequestHeaders): Promise<TemplateModel>;
-
-    listTemplates(additionalHeaders?: RequestHeaders): Promise<TemplateModel>;
-
-    updateTemplate(template: TemplateModel, additionalHeaders?: RequestHeaders): Promise<void>;
-
-    deleteTemplate(templateId: string, additionalHeaders?: RequestHeaders): Promise<void>;
-}
+import {RequestHeaders} from './common.model';
 
 @injectable()
-export class TemplatesServiceBase {
+export abstract class ClientServiceBase  {
 
     protected MIME_TYPE = 'application/vnd.aws-cdf-v1.0+json';
 
@@ -38,26 +22,18 @@ export class TemplatesServiceBase {
         'Accept': this.MIME_TYPE,
         'Content-Type': this.MIME_TYPE
     };
-
-    protected templatesRelativeUrl() : string {
-        return '/templates';
-    }
-
-    protected templateRelativeUrl(templateId: string) : string {
-        return PathHelper.encodeUrl('templates', templateId);
-    }
-
-    protected buildHeaders(additionalHeaders:RequestHeaders) : RequestHeaders {
+    
+    protected buildHeaders(additionalHeaders:RequestHeaders): RequestHeaders {
 
         let headers: RequestHeaders = Object.assign({}, this._headers);
 
-        const customHeaders = process.env.COMMANDS_HEADERS;
+        const customHeaders = process.env.COMMANDANDCONTROL_HEADERS;
         if (customHeaders !== undefined) {
             try {
                 const headersFromConfig: RequestHeaders = JSON.parse(customHeaders) as unknown as RequestHeaders;
                 headers = {...headers, ...headersFromConfig};
             } catch (err) { 
-                const wrappedErr = `Failed to parse configuration parameter COMMANDS_HEADERS as JSON with error: ${err}`;
+                const wrappedErr = `Failed to parse configuration parameter COMMANDANDCONTROL_HEADERS as JSON with error: ${err}`;
                 console.log(wrappedErr);
                 throw new Error(wrappedErr);
             }
