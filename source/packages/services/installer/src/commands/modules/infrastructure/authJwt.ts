@@ -10,7 +10,7 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { Answers } from '../../../models/answers';
+import { Answers, Apigw } from '../../../models/answers';
 import { ListrTask } from 'listr2';
 import { ModuleName, InfrastructureModule } from '../../../models/modules';
 import ow from 'ow';
@@ -27,7 +27,7 @@ export class AuthJwtInstaller implements InfrastructureModule {
 
   public readonly type = 'INFRASTRUCTURE';
   public readonly dependsOnMandatory: ModuleName[] = [
-    "openSsl", "apigw"
+    "openSsl"
   ];
   public readonly dependsOnOptional: ModuleName[] = [];
   private readonly stackName: string;
@@ -36,10 +36,19 @@ export class AuthJwtInstaller implements InfrastructureModule {
     this.stackName = `cdf-auth-jwt-${environment}`
   }
 
+  private deployAuthJwt({ type, useExistingLambdaAuthorizer }: Apigw): boolean {
+
+    if ((type === 'LambdaRequest' || type === 'LambdaToken')
+      && !useExistingLambdaAuthorizer) {
+      return true
+    }
+
+    return false;
+  }
+
   public async prompts(answers: Answers): Promise<Answers> {
 
-    if ((answers.apigw?.type === 'LambdaRequest' || answers.apigw?.type === 'LambdaToken')
-      && !answers.apigw?.useExistingLambdaAuthorizer) {
+    if (this.deployAuthJwt(answers.apigw)) {
 
       delete answers.authJwt?.redeploy;
       let updatedAnswers: Answers = await inquirer.prompt([
@@ -78,8 +87,7 @@ export class AuthJwtInstaller implements InfrastructureModule {
 
     const tasks: ListrTask[] = [];
 
-    if ((answers.apigw?.type === 'LambdaRequest' || answers.apigw?.type === 'LambdaToken')
-      && !answers.apigw?.useExistingLambdaAuthorizer) {
+    if (this.deployAuthJwt(answers.apigw)) {
 
       ow(answers.authJwt, ow.object.nonEmpty);
       ow(answers.authJwt.tokenIssuer, ow.string.nonEmpty);
