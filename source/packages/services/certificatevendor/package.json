@@ -15,7 +15,7 @@
     "@cdf/errors": "^4.0.0",
     "@cdf/logger": "^4.0.0",
     "@cdf/lambda-invoke": "^3.0.2",
-    "@cdf/assetlibrary-client": "^5.0.3",
+    "@cdf/assetlibrary-client": "^5.0.4",
     "@cdf/config-inject": "^4.0.1",
     "aws-sdk": "2.1048.0",
     "inversify": "5.1.1",

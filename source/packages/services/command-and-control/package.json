@@ -16,13 +16,13 @@
     "bundle": "../../../infrastructure/bundle-package.bash command-and-control"
   },
   "dependencies": {
-    "@cdf/assetlibrary-client": "^5.0.0",
+    "@cdf/assetlibrary-client": "^5.0.4",
     "@cdf/config-inject": "^4.0.0",
     "@cdf/errors": "^4.0.0",
     "@cdf/express-middleware": "^3.0.0",
     "@cdf/lambda-invoke": "^3.0.0",
     "@cdf/logger": "^4.0.0",
-    "@cdf/provisioning-client": "^5.0.0",
+    "@cdf/provisioning-client": "^5.0.3",
     "@cdf/thing-list-builder": "^1.1.1",
     "ajv": "6.10.2",
     "aws-sdk": "2.1048.0",

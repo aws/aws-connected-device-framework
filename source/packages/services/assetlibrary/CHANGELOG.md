@@ -1,6 +1,13 @@
 # Change Log - @cdf/assetlibrary
 
-This log was last generated on Wed, 30 Mar 2022 00:46:17 GMT and should not be manually modified.
+This log was last generated on Thu, 07 Apr 2022 05:00:50 GMT and should not be manually modified.
+
+## 6.0.5
+Thu, 07 Apr 2022 05:00:50 GMT
+
+### Patches
+
+- minor formatting fix in readme
 
 ## 6.0.4
 Wed, 30 Mar 2022 00:46:17 GMT
