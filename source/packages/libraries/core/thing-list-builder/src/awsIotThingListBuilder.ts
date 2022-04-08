@@ -235,7 +235,7 @@ export class AwsIotThingListBuilder {
 
   private getName(arn: string): string {
     // arn:aws:iot:us-east-1:xxxxxxxxxxxx:thing/MyLightBulb
-    return arn?.split(':')[6];
+    return arn?.split(':')[5].split('/')[1];
   }
 
   private isDevice(arg: unknown): arg is Device10Resource {
