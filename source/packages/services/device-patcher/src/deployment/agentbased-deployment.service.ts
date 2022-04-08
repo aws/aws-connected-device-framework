@@ -32,7 +32,7 @@ export class AgentbasedDeploymentService {
     private artifactsBucket: string = process.env.AWS_S3_ARTIFACTS_BUCKET
     private artifactsBucketPrefix: string = process.env.AWS_S3_ARTIFACTS_PREFIX
     private queueUrl: string = process.env.AWS_SQS_QUEUES_DEPLOYMENT_TASKS;
-    private ssmAnsiblePatchDocument: string = 'AWS-ApplyAnsiblePlaybooks';
+    private ssmAnsiblePatchDocument = 'AWS-ApplyAnsiblePlaybooks';
 
     constructor(
         @inject(TYPES.SSMFactory) ssmFactory: () => AWS.SSM,
