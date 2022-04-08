@@ -52,43 +52,43 @@ export class CommandsInstaller implements RestModule {
       redeployIfAlreadyExistsPrompt(this.name, this.stackName),
 
     ], answers);
-    if ((updatedAnswers.commands?.redeploy ?? true) === false) {
-      return updatedAnswers;
+
+    if ((updatedAnswers.commands?.redeploy ?? true)) {
+
+      updatedAnswers = await inquirer.prompt([
+        {
+          message: 'When using the Asset Library module as an enhanced device registry, the Commands module can use it to help search across devices and groups to define the command targets. You have not chosen to install the Asset Library module - would you like to install it?\nNote: as there is additional cost associated with installing the Asset Library module, ensure you familiarize yourself with its capabilities and benefits in the online CDF github documentation.',
+          type: 'confirm',
+          name: 'commands.useAssetLibrary',
+          default: updatedAnswers.commands?.useAssetLibrary,
+          askAnswered: true
+        },
+        ...applicationConfigurationPrompt(this.name, answers, [
+          {
+            question: 'MQTT topic for presignedurl generation',
+            defaultConfiguration: 'cdf/commands/presignedurl/{commandId}/{thingName}/{direction}',
+            propertyName: 'presignedUrlTopic'
+          },
+          {
+            question: 'S3 key prefix where commands artifacs are stored',
+            defaultConfiguration: 'commands/',
+            propertyName: 'commandArtifactsPrefix'
+          },
+          {
+            question: 'Max number of targerts for a job',
+            defaultConfiguration: 100,
+            propertyName: 'maxTargetsForJob'
+          },
+          {
+            question: 'Provisioning template to add a thing to a thing group',
+            defaultConfiguration: 'add_thing_to_group',
+            propertyName: 'addThingToGroupTemplate'
+          }
+        ]),
+        ...customDomainPrompt(this.name, answers)
+      ], updatedAnswers);
     }
-
-    updatedAnswers = await inquirer.prompt([
-      {
-        message: 'When using the Asset Library module as an enhanced device registry, the Commands module can use it to help search across devices and groups to define the command targets. You have not chosen to install the Asset Library module - would you like to install it?\nNote: as there is additional cost associated with installing the Asset Library module, ensure you familiarize yourself with its capabilities and benefits in the online CDF github documentation.',
-        type: 'confirm',
-        name: 'commands.useAssetLibrary',
-        default: updatedAnswers.commands?.useAssetLibrary,
-        askAnswered: true
-      },
-      ...applicationConfigurationPrompt(this.name, answers, [
-        {
-          question: 'MQTT topic for presignedurl generation',
-          defaultConfiguration: 'cdf/commands/presignedurl/{commandId}/{thingName}/{direction}',
-          propertyName: 'presignedUrlTopic'
-        },
-        {
-          question: 'S3 key prefix where commands artifacs are stored',
-          defaultConfiguration: 'commands/',
-          propertyName: 'commandArtifactsPrefix'
-        },
-        {
-          question: 'Max number of targerts for a job',
-          defaultConfiguration: 100,
-          propertyName: 'maxTargetsForJob'
-        },
-        {
-          question: 'Provisioning template to add a thing to a thing group',
-          defaultConfiguration: 'add_thing_to_group',
-          propertyName: 'addThingToGroupTemplate'
-        }
-      ]),
-      ...customDomainPrompt(this.name, answers)
-    ], updatedAnswers);
-
+    
     updatedAnswers.modules.expandedMandatory = includeOptionalModule('assetLibrary', updatedAnswers.modules, updatedAnswers.commands.useAssetLibrary)
 
     return updatedAnswers;

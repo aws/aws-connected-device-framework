@@ -33,7 +33,7 @@ export class NotificationsInstaller implements RestModule {
     'deploymentHelper',
     'kms',
   ];
-  
+
   public readonly dependsOnOptional: ModuleName[] = [];
   private readonly eventsProcessorStackName: string;
   private readonly eventsAlertStackName: string;
@@ -49,41 +49,38 @@ export class NotificationsInstaller implements RestModule {
     let updatedAnswers: Answers = await inquirer.prompt([
       redeployIfAlreadyExistsPrompt('notifications', this.eventsProcessorStackName),
     ], answers);
-    if ((updatedAnswers.notifications?.redeploy ?? true) === false) {
-      return updatedAnswers;
+    if ((updatedAnswers.notifications?.redeploy ?? true)) {
+
+      updatedAnswers = await inquirer.prompt([
+        {
+          message: 'Use DAX for DynamoDB caching',
+          type: 'confirm',
+          name: 'notifications.useDax',
+          default: true,
+          askAnswered: true
+        },
+        {
+          message: `Select the DAX database instance type:`,
+          type: 'input',
+          name: 'notifications.daxInstanceType',
+          default: answers.notifications?.daxInstanceType ?? 'dax.t2.medium',
+          askAnswered: true,
+          when(answers: Answers) {
+            return answers.notifications?.useDax === true;
+          },
+          validate(answer: string) {
+            if (answer?.length === 0) {
+              return 'You must enter the DAX Instance Type.';
+            }
+            return true;
+          }
+        },
+        ...applicationConfigurationPrompt(this.name, answers, []),
+        ...customDomainPrompt(this.name, answers),
+      ], updatedAnswers);
     }
 
-    updatedAnswers = await inquirer.prompt([
-      {
-        message: 'Use DAX for DynamoDB caching',
-        type: 'confirm',
-        name: 'notifications.useDax',
-        default: true,
-        askAnswered: true
-      },
-      {
-        message: `Select the DAX database instance type:`,
-        type: 'input',
-        name: 'notifications.daxInstanceType',
-        default: answers.notifications?.daxInstanceType ?? 'dax.t2.medium',
-        askAnswered: true,
-        when(answers: Answers) {
-          return answers.notifications?.useDax === true;
-        },
-        validate(answer: string) {
-          if (answer?.length === 0) {
-            return 'You must enter the DAX Instance Type.';
-          }
-          return true;
-        }
-      },
-      ...applicationConfigurationPrompt(this.name, answers, []),
-      ...customDomainPrompt(this.name, answers),
-    ], updatedAnswers);
-
     updatedAnswers.modules.expandedMandatory = includeOptionalModule('vpc', updatedAnswers.modules, updatedAnswers.notifications.useDax)
-
-
     return updatedAnswers;
   }
 

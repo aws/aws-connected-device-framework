@@ -52,7 +52,8 @@ async function deployAction(
 
   const grouped = topologicallySortModules(
     modules,
-    answers.modules.expandedIncludingOptional
+    answers.modules.expandedIncludingOptional,
+    false
   );
 
   for (const layer of grouped) {
@@ -65,13 +66,17 @@ async function deployAction(
         throw new Error(`Module ${name} not found!`);
       }
       if (m.install) {
-        const [_, subTasks] = await m.install(answers);
-        if (subTasks?.length > 0) {
-          layerTasks.push({
-            title: m.friendlyName,
-            task: (_, parentTask): Listr =>
-              parentTask.newListr(subTasks, { concurrent: false }),
-          });
+        if (answers.modules.expandedMandatory.includes(m.name) || answers.modules.list.includes(m.name)) {
+          const [_, subTasks] = await m.install(answers);
+          if (subTasks?.length > 0) {
+            layerTasks.push({
+              title: m.friendlyName,
+              task: (_, parentTask): Listr =>
+                parentTask.newListr(subTasks, { concurrent: false }),
+            });
+          }
+        } else {
+          console.log(chalk.green(`\nSkipping optional module ${m.name}\n`));
         }
       } else {
         throw new Error(`Module ${name} has no install functionality defined!`);
@@ -222,7 +227,7 @@ async function configWizard(
 
   while (optionalModuleAdded) {
     const originalExpandedMandatory = clone(answers.modules.expandedMandatory)
-    
+
     const mandatoryGrouped = topologicallySortModules(
       modules,
       answers.modules.expandedMandatory

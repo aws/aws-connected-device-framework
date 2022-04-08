@@ -28,8 +28,8 @@ export class VpcInstaller implements InfrastructureModule {
 
   private stackName: string;
 
-  constructor(region: string) {
-    this.stackName = `cdf-network-${region}`;
+  constructor(environment: string) {
+    this.stackName = `cdf-network-${environment}`;
   }
 
   public async prompts(answers: Answers): Promise<Answers> {
@@ -141,7 +141,6 @@ export class VpcInstaller implements InfrastructureModule {
             });
           },
         },
-
         {
           title: `Retrieving network information from stack '${this.stackName}'`,
           task: async () => {

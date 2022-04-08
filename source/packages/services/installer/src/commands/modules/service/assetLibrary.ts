@@ -61,139 +61,138 @@ export class AssetLibraryInstaller implements RestModule {
     let updatedAnswers: Answers = await inquirer.prompt([
       redeployIfAlreadyExistsPrompt(this.name, this.applicationStackName),
     ], answers);
-    if ((updatedAnswers.assetLibrary?.redeploy ?? true) === false) {
-      return updatedAnswers;
+
+    if ((updatedAnswers.assetLibrary?.redeploy ?? true)) {
+      const neptuneInstanceTypes = await getNeptuneInstancetypeList(
+        answers.region,
+        ASSUMED_NEPTUNE_ENGINE_VERSION
+      );
+
+      updatedAnswers = await inquirer.prompt([
+        {
+          message: `Run in 'full' mode (with Amazon Neptune), or 'lite' mode (using AWS IoT Device Registry only). Note that 'lite' mode supports a reduced set of Asset Library features (see documentation for further info).`,
+          type: 'list',
+          choices: ['full', 'lite'],
+          name: 'assetLibrary.mode',
+          default: answers.assetLibrary?.mode ?? 'full',
+          askAnswered: true,
+          validate(answer: string) {
+            if (answer?.length === 0) {
+              return 'You must enter the mode.';
+            }
+            return true;
+          }
+        },
+        {
+          message: `${(neptuneInstanceTypes.length > 0) ? "Select" : "Enter"} the Neptune database instance type:`,
+          type: (neptuneInstanceTypes.length > 0) ? 'list' : 'input',
+          choices: neptuneInstanceTypes,
+          name: 'assetLibrary.neptuneDbInstanceType',
+          default: (
+            answers.assetLibrary?.neptuneDbInstanceType ??
+              (neptuneInstanceTypes.indexOf(DEFAULT_NEPTUNE_INSTANCE_TYPE) >= 0)
+              ? DEFAULT_NEPTUNE_INSTANCE_TYPE
+              : undefined
+          ),
+          askAnswered: true,
+          loop: false,
+          pageSize: 10,
+          when(answers: Answers) {
+            return answers.assetLibrary?.mode === 'full';
+          },
+          validate(answer: string) {
+            if (neptuneInstanceTypes.length > 0 && !neptuneInstanceTypes.includes(answer)) {
+              return `Neptune DB Instance Type must be one of: ${neptuneInstanceTypes.join(', ')}`;
+            }
+            return true;
+          }
+        },
+        {
+          message: `Create a Neptune read replica for multi-AZ?`,
+          type: 'confirm',
+          name: 'assetLibrary.createDbReplicaInstance',
+          default: answers.assetLibrary?.createDbReplicaInstance ?? false,
+          askAnswered: true,
+          when(answers: Answers) {
+            return answers.assetLibrary?.mode === 'full';
+          },
+          validate(answer: string) {
+            if (answer?.length === 0) {
+              return 'You must confirm whether to create a read replica.';
+            }
+            return true;
+          },
+        },
+        {
+          message: `Restore the database from a snapshot? If not, a fresh database will be created.`,
+          type: 'confirm',
+          name: 'assetLibrary.restoreFromSnapshot',
+          default: answers.assetLibrary?.restoreFromSnapshot ?? false,
+          askAnswered: true,
+          when(answers: Answers) {
+            return answers.assetLibrary?.mode === 'full';
+          },
+          validate(answer: string) {
+            if (answer?.length === 0) {
+              return 'You must confirm whether to restore from a snapshot or not.';
+            }
+            return true;
+          },
+        },
+        {
+          message: `Enter the Neptune database snapshot identifier:`,
+          type: 'input',
+          name: 'assetLibrary.neptuneSnapshotIdentifier',
+          default: answers.assetLibrary?.neptuneSnapshotIdentifier,
+          askAnswered: true,
+          when(answers: Answers) {
+            return answers.assetLibrary?.mode === 'full' &&
+              answers.assetLibrary?.restoreFromSnapshot;
+          },
+          validate(answer: string) {
+            if (answer?.length === 0) {
+              return 'You must enter the Neptune DB Instance Identifier.';
+            }
+            return true;
+          }
+        },
+        enableAutoScaling(this.name, answers),
+        provisionedConcurrentExecutions(this.name, answers),
+        ...applicationConfigurationPrompt(this.name, answers, [
+          {
+            question: 'Enable authorization?',
+            propertyName: 'authorizationEnabled',
+            defaultConfiguration: false,
+          },
+          {
+            question: 'Enter Default Devices Parent Relationship name',
+            propertyName: 'defaultDevicesParentRelationName',
+            defaultConfiguration: 'parent'
+          }, {
+            question: 'Enter Default Devices Parent Path',
+            propertyName: 'defaultDevicesParentPath',
+            defaultConfiguration: '/unprovisioned'
+          },
+          {
+            question: 'Enter Default Device State',
+            propertyName: 'defaultDevicesState',
+            defaultConfiguration: 'unprovisioned'
+          },
+          {
+            question: 'Always validate against allowed parent path?',
+            propertyName: 'defaultGroupsValidateAllowedParentPath',
+            defaultConfiguration: false,
+          },
+          {
+            question: 'Use Neptune DFE Query Engine for search?',
+            propertyName: 'enableDfeOptimization',
+            defaultConfiguration: false,
+          }
+        ]),
+        ...customDomainPrompt(this.name, answers),
+      ], updatedAnswers);
     }
-
-    const neptuneInstanceTypes = await getNeptuneInstancetypeList(
-      answers.region,
-      ASSUMED_NEPTUNE_ENGINE_VERSION
-    );
-
-    updatedAnswers = await inquirer.prompt([
-      {
-        message: `Run in 'full' mode (with Amazon Neptune), or 'lite' mode (using AWS IoT Device Registry only). Note that 'lite' mode supports a reduced set of Asset Library features (see documentation for further info).`,
-        type: 'list',
-        choices: ['full', 'lite'],
-        name: 'assetLibrary.mode',
-        default: answers.assetLibrary?.mode ?? 'full',
-        askAnswered: true,
-        validate(answer: string) {
-          if (answer?.length === 0) {
-            return 'You must enter the mode.';
-          }
-          return true;
-        }
-      },
-      {
-        message: `${(neptuneInstanceTypes.length > 0) ? "Select" : "Enter"} the Neptune database instance type:`,
-        type: (neptuneInstanceTypes.length > 0) ? 'list' : 'input',
-        choices: neptuneInstanceTypes,
-        name: 'assetLibrary.neptuneDbInstanceType',
-        default: (
-          answers.assetLibrary?.neptuneDbInstanceType ??
-            (neptuneInstanceTypes.indexOf(DEFAULT_NEPTUNE_INSTANCE_TYPE) >= 0)
-            ? DEFAULT_NEPTUNE_INSTANCE_TYPE
-            : undefined
-        ),
-        askAnswered: true,
-        loop: false,
-        pageSize: 10,
-        when(answers: Answers) {
-          return answers.assetLibrary?.mode === 'full';
-        },
-        validate(answer: string) {
-          if (neptuneInstanceTypes.length > 0 && !neptuneInstanceTypes.includes(answer)) {
-            return `Neptune DB Instance Type must be one of: ${neptuneInstanceTypes.join(', ')}`;
-          }
-          return true;
-        }
-      },
-      {
-        message: `Create a Neptune read replica for multi-AZ?`,
-        type: 'confirm',
-        name: 'assetLibrary.createDbReplicaInstance',
-        default: answers.assetLibrary?.createDbReplicaInstance ?? false,
-        askAnswered: true,
-        when(answers: Answers) {
-          return answers.assetLibrary?.mode === 'full';
-        },
-        validate(answer: string) {
-          if (answer?.length === 0) {
-            return 'You must confirm whether to create a read replica.';
-          }
-          return true;
-        },
-      },
-      {
-        message: `Restore the database from a snapshot? If not, a fresh database will be created.`,
-        type: 'confirm',
-        name: 'assetLibrary.restoreFromSnapshot',
-        default: answers.assetLibrary?.restoreFromSnapshot ?? false,
-        askAnswered: true,
-        when(answers: Answers) {
-          return answers.assetLibrary?.mode === 'full';
-        },
-        validate(answer: string) {
-          if (answer?.length === 0) {
-            return 'You must confirm whether to restore from a snapshot or not.';
-          }
-          return true;
-        },
-      },
-      {
-        message: `Enter the Neptune database snapshot identifier:`,
-        type: 'input',
-        name: 'assetLibrary.neptuneSnapshotIdentifier',
-        default: answers.assetLibrary?.neptuneSnapshotIdentifier,
-        askAnswered: true,
-        when(answers: Answers) {
-          return answers.assetLibrary?.mode === 'full' &&
-            answers.assetLibrary?.restoreFromSnapshot;
-        },
-        validate(answer: string) {
-          if (answer?.length === 0) {
-            return 'You must enter the Neptune DB Instance Identifier.';
-          }
-          return true;
-        }
-      },
-      enableAutoScaling(this.name, answers),
-      provisionedConcurrentExecutions(this.name, answers),
-      ...applicationConfigurationPrompt(this.name, answers, [
-        {
-          question: 'Enable authorization?',
-          propertyName: 'authorizationEnabled',
-          defaultConfiguration: false,
-        },
-        {
-          question: 'Enter Default Devices Parent Relationship name',
-          propertyName: 'defaultDevicesParentRelationName',
-          defaultConfiguration: 'parent'
-        }, {
-          question: 'Enter Default Devices Parent Path',
-          propertyName: 'defaultDevicesParentPath',
-          defaultConfiguration: '/unprovisioned'
-        },
-        {
-          question: 'Enter Default Device State',
-          propertyName: 'defaultDevicesState',
-          defaultConfiguration: 'unprovisioned'
-        },
-        {
-          question: 'Always validate against allowed parent path?',
-          propertyName: 'defaultGroupsValidateAllowedParentPath',
-          defaultConfiguration: false,
-        },
-        {
-          question: 'Use Neptune DFE Query Engine for search?',
-          propertyName: 'enableDfeOptimization',
-          defaultConfiguration: false,
-        }
-      ]),
-      ...customDomainPrompt(this.name, answers),
-    ], updatedAnswers);
-
+    
     updatedAnswers.modules.expandedMandatory = includeOptionalModule('vpc', updatedAnswers.modules, updatedAnswers.assetLibrary.mode === 'full')
 
     return updatedAnswers;

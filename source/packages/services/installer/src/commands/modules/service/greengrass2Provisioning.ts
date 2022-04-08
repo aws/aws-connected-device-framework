@@ -55,45 +55,44 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
       redeployIfAlreadyExistsPrompt(this.name, this.stackName),
     ], answers);
 
-    if ((updatedAnswers.greengrass2Provisioning?.redeploy ?? true) === false) {
-      return updatedAnswers;
+    if ((updatedAnswers.greengrass2Provisioning?.redeploy ?? true)) {
+
+      updatedAnswers = await inquirer.prompt([
+        {
+          message: 'When using the Asset Library module as an enhanced device registry, the Greengrass2 Provisioning module can use it to help search across devices and groups to define the deployment targets. You have not chosen to install the Asset Library module - would you like to install it?\nNote: as there is additional cost associated with installing the Asset Library module, ensure you familiarize yourself with its capabilities and benefits in the online CDF github documentation.',
+          type: 'confirm',
+          name: 'greengrass2Provisioning.useAssetLibrary',
+          default: updatedAnswers.greengrass2Provisioning?.useAssetLibrary ?? false,
+          askAnswered: true,
+        },
+        enableAutoScaling(this.name, answers),
+        provisionedConcurrentExecutions(this.name, answers),
+        ...applicationConfigurationPrompt(this.name, answers, [
+          {
+            defaultConfiguration: 10,
+            propertyName: "promisesConcurrency",
+            question: 'The number of concurrent dynamodb operations'
+          },
+          {
+            defaultConfiguration: 20,
+            propertyName: "corezBatchSize",
+            question: 'Batch size for processing core tasks'
+          },
+          {
+            defaultConfiguration: 20,
+            propertyName: "devicesBatchSize",
+            question: 'Batch size for processing device tasks'
+          },
+          {
+            defaultConfiguration: 50,
+            propertyName: "deploymentsBatchSize",
+            question: 'Batch size for processing deployment tasks'
+          },
+
+        ]),
+        ...customDomainPrompt(this.name, answers),
+      ], updatedAnswers);
     }
-
-    updatedAnswers = await inquirer.prompt([
-      {
-        message: 'When using the Asset Library module as an enhanced device registry, the Greengrass2 Provisioning module can use it to help search across devices and groups to define the deployment targets. You have not chosen to install the Asset Library module - would you like to install it?\nNote: as there is additional cost associated with installing the Asset Library module, ensure you familiarize yourself with its capabilities and benefits in the online CDF github documentation.',
-        type: 'confirm',
-        name: 'greengrass2Provisioning.useAssetLibrary',
-        default: updatedAnswers.greengrass2Provisioning?.useAssetLibrary ?? false,
-        askAnswered: true,
-      },
-      enableAutoScaling(this.name, answers),
-      provisionedConcurrentExecutions(this.name, answers),
-      ...applicationConfigurationPrompt(this.name, answers, [
-        {
-          defaultConfiguration: 10,
-          propertyName: "promisesConcurrency",
-          question: 'The number of concurrent dynamodb operations'
-        },
-        {
-          defaultConfiguration: 20,
-          propertyName: "corezBatchSize",
-          question: 'Batch size for processing core tasks'
-        },
-        {
-          defaultConfiguration: 20,
-          propertyName: "devicesBatchSize",
-          question: 'Batch size for processing device tasks'
-        },
-        {
-          defaultConfiguration: 50,
-          propertyName: "deploymentsBatchSize",
-          question: 'Batch size for processing deployment tasks'
-        },
-
-      ]),
-      ...customDomainPrompt(this.name, answers),
-    ], updatedAnswers);
 
     updatedAnswers.modules.expandedMandatory = includeOptionalModule('assetLibrary', updatedAnswers.modules, updatedAnswers.greengrass2Provisioning.useAssetLibrary)
 
