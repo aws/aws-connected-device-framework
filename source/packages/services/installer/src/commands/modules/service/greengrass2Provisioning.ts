@@ -23,6 +23,7 @@ import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
 import { deleteStack, getStackOutputs, getStackParameters, getStackResourceSummaries, packageAndDeployStack } from '../../../utils/cloudformation.util';
 import { enableAutoScaling, provisionedConcurrentExecutions } from '../../../prompts/autoscaling.prompt';
+import { includeOptionalModule } from '../../../utils/modules.util';
 
 export class Greengrass2ProvisioningInstaller implements RestModule {
 
@@ -38,7 +39,7 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
     'eventBus',
     'provisioning',
     'greengrass2InstallerConfigGenerators'];
-  public readonly dependsOnOptional: ModuleName[] = ['vpc', 'authJwt', 'assetLibrary'];
+  public readonly dependsOnOptional: ModuleName[] = ['assetLibrary'];
 
   private readonly stackName: string;
 
@@ -49,21 +50,22 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
   public async prompts(answers: Answers): Promise<Answers> {
 
     delete answers.greengrass2Provisioning?.redeploy;
+
     let updatedAnswers: Answers = await inquirer.prompt([
       redeployIfAlreadyExistsPrompt(this.name, this.stackName),
     ], answers);
+
     if ((updatedAnswers.greengrass2Provisioning?.redeploy ?? true) === false) {
       return updatedAnswers;
     }
 
     updatedAnswers = await inquirer.prompt([
       {
-        message: 'Do you need Asset Library to perform complex query?',
+        message: 'When using the Asset Library module as an enhanced device registry, the Greengrass2 Provisioning module can use it to help search across devices and groups to define the deployment targets. You have not chosen to install the Asset Library module - would you like to install it?\nNote: as there is additional cost associated with installing the Asset Library module, ensure you familiarize yourself with its capabilities and benefits in the online CDF github documentation.',
         type: 'confirm',
         name: 'greengrass2Provisioning.useAssetLibrary',
-        default: updatedAnswers.greengrass2Provisioning?.useAssetLibrary,
-        when: !answers.modules.list.includes('assetLibrary') && !answers.commandAndControl?.useAssetLibrary && !answers.commands?.useAssetLibrary,
-        askAnswered: true
+        default: updatedAnswers.greengrass2Provisioning?.useAssetLibrary ?? false,
+        askAnswered: true,
       },
       enableAutoScaling(this.name, answers),
       provisionedConcurrentExecutions(this.name, answers),
@@ -92,6 +94,8 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
       ]),
       ...customDomainPrompt(this.name, answers),
     ], updatedAnswers);
+
+    updatedAnswers.modules.expandedMandatory = includeOptionalModule('assetLibrary', updatedAnswers.modules, updatedAnswers.greengrass2Provisioning.useAssetLibrary)
 
     return updatedAnswers;
 

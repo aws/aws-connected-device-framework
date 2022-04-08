@@ -33,6 +33,9 @@ export class CertificateVendorInstaller implements ServiceModule {
     'kms',
     'openSsl',
   ];
+
+  public readonly dependsOnOptional: ModuleName[] = [];
+  
   private readonly stackName: string;
   private readonly assetLibraryStackName: string;
   private readonly commandsStackName: string;
@@ -43,7 +46,7 @@ export class CertificateVendorInstaller implements ServiceModule {
     this.commandsStackName = `cdf-commands-${environment}`;
   }
 
-  public readonly dependsOnOptional: ModuleName[] = [];
+  
 
   public async prompts(answers: Answers): Promise<Answers> {
 

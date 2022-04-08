@@ -19,6 +19,7 @@ import path from 'path';
 import { Answers, ApiAuthenticationType } from '../../../models/answers';
 import { InfrastructureModule, ModuleName } from '../../../models/modules';
 import { getAbsolutePath, getMonorepoRoot, pathPrompt } from '../../../prompts/paths.prompt';
+import { includeOptionalModule } from '../../../utils/modules.util';
 import { S3Utils } from '../../../utils/s3.util';
 import { SsmUtils } from '../../../utils/ssm.util';
 export class ApiGwInstaller implements InfrastructureModule {
@@ -130,7 +131,7 @@ export class ApiGwInstaller implements InfrastructureModule {
         message: 'Use existing lambda authorizer:',
         type: 'input',
         name: 'apigw.useExistingLambdaAuthorizer',
-        default: answers.apigw?.useExistingLambdaAuthorizer,
+        default: answers.apigw?.useExistingLambdaAuthorizer ?? false,
         askAnswered: true,
         when(answers: Answers) {
           return (answers.apigw?.type === 'LambdaRequest' || answers.apigw?.type === 'LambdaToken')
@@ -178,6 +179,9 @@ export class ApiGwInstaller implements InfrastructureModule {
     if ((answers.apigw?.type ?? '') === 'None') {
       // TODO potentially remove old ansers
     }
+
+    answers.modules.expandedMandatory = includeOptionalModule('vpc', answers.modules, answers.apigw.type === 'Private')
+    answers.modules.expandedMandatory = includeOptionalModule('authJwt', answers.modules, answers.apigw.type === 'LambdaRequest' || answers.apigw.type === 'LambdaToken')
 
     return answers;
 

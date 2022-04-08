@@ -20,6 +20,7 @@ import { applicationConfigurationPrompt } from "../../../prompts/applicationConf
 import { customDomainPrompt } from '../../../prompts/domain.prompt';
 import ow from 'ow';
 import { deleteStack, getStackOutputs, getStackResourceSummaries, packageAndDeployStack } from '../../../utils/cloudformation.util';
+import { includeOptionalModule } from '../../../utils/modules.util';
 
 export class NotificationsInstaller implements RestModule {
 
@@ -32,7 +33,8 @@ export class NotificationsInstaller implements RestModule {
     'deploymentHelper',
     'kms',
   ];
-  public readonly dependsOnOptional: ModuleName[] = ['vpc', 'authJwt'];
+  
+  public readonly dependsOnOptional: ModuleName[] = [];
   private readonly eventsProcessorStackName: string;
   private readonly eventsAlertStackName: string;
 
@@ -78,6 +80,9 @@ export class NotificationsInstaller implements RestModule {
       ...applicationConfigurationPrompt(this.name, answers, []),
       ...customDomainPrompt(this.name, answers),
     ], updatedAnswers);
+
+    updatedAnswers.modules.expandedMandatory = includeOptionalModule('vpc', updatedAnswers.modules, updatedAnswers.notifications.useDax)
+
 
     return updatedAnswers;
   }

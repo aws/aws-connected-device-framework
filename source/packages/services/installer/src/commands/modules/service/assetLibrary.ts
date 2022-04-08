@@ -22,6 +22,7 @@ import { applicationConfigurationPrompt } from '../../../prompts/applicationConf
 import { deleteStack, getStackOutputs, getStackParameters, packageAndDeployStack } from '../../../utils/cloudformation.util';
 import { enableAutoScaling, provisionedConcurrentExecutions } from '../../../prompts/autoscaling.prompt';
 import { getNeptuneInstancetypeList } from '../../../utils/instancetypes';
+import { includeOptionalModule } from '../../../utils/modules.util';
 
 // CDF does not specify a Neptune engine version in its Cloudformation templates. When updating a CDF
 // deployment, the existing Neptune engine version remains unchanged, for new deployments the Neptune
@@ -43,36 +44,17 @@ export class AssetLibraryInstaller implements RestModule {
     'apigw',
     'deploymentHelper',
   ];
-  public readonly dependsOnOptional: ModuleName[] = ['vpc', 'authJwt'];
+  public readonly dependsOnOptional: ModuleName[] = ['vpc'];
   private readonly applicationStackName: string;
   private readonly neptuneStackName: string;
-
 
   constructor(environment: string) {
     this.neptuneStackName = `cdf-assetlibrary-neptune-${environment}`
     this.applicationStackName = `cdf-assetlibrary-${environment}`
   }
-
-  private deployAssetLibrary({ greengrass2Provisioning, modules, commandAndControl, commands }: Answers): boolean {
-
-    if (
-      modules.list.includes('assetLibrary') ||
-      modules.list.includes('deviceMonitoring') ||
-      modules.list.includes('certificateActivator') ||
-      greengrass2Provisioning?.useAssetLibrary ||
-      commands?.useAssetLibrary ||
-      commandAndControl?.useAssetLibrary
-    ) {
-      return true;
-    }
-
-    return false
-  }
+  includeOptionalModules: (answers: Answers) => Answers;
 
   public async prompts(answers: Answers): Promise<Answers> {
-
-    if (!this.deployAssetLibrary(answers))
-      return answers
 
     delete answers.assetLibrary?.redeploy;
 
@@ -212,15 +194,14 @@ export class AssetLibraryInstaller implements RestModule {
       ...customDomainPrompt(this.name, answers),
     ], updatedAnswers);
 
+    updatedAnswers.modules.expandedMandatory = includeOptionalModule('vpc', updatedAnswers.modules, updatedAnswers.assetLibrary.mode === 'full')
+
     return updatedAnswers;
 
   }
 
   public async install(answers: Answers): Promise<[Answers, ListrTask[]]> {
     const tasks: ListrTask[] = [];
-
-    if (!this.deployAssetLibrary(answers))
-      return [answers, tasks]
 
     ow(answers, ow.object.nonEmpty);
     ow(answers.environment, ow.string.nonEmpty);

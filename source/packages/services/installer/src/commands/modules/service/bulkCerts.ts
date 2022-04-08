@@ -31,14 +31,13 @@ export class BulkCertificatesInstaller implements RestModule {
     'apigw',
     'kms',
     'openSsl'];
-  public readonly dependsOnOptional: ModuleName[] = ['vpc', 'authJwt'];
+
+    public readonly dependsOnOptional: ModuleName[] = [];
 
   private readonly stackName: string;
 
   constructor(environment: string) {
-
     this.stackName = `cdf-bulkcerts-${environment}`
-
   }
 
   public async prompts(answers: Answers): Promise<Answers> {

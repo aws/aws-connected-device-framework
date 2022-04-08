@@ -20,6 +20,7 @@ import { applicationConfigurationPrompt } from "../../../prompts/applicationConf
 import { customDomainPrompt } from '../../../prompts/domain.prompt';
 import ow from 'ow';
 import { deleteStack, getStackOutputs, getStackParameters, getStackResourceSummaries, packageAndDeployStack } from '../../../utils/cloudformation.util';
+import { includeOptionalModule } from '../../../utils/modules.util';
 
 export class CommandAndControlInstaller implements RestModule {
 
@@ -31,9 +32,8 @@ export class CommandAndControlInstaller implements RestModule {
     'apigw',
     'kms',
     'deploymentHelper',
-    'assetLibrary', // TODO: should be optional
     'provisioning'];
-  public readonly dependsOnOptional: ModuleName[] = ['vpc', 'authJwt'];
+  public readonly dependsOnOptional: ModuleName[] = ['assetLibrary'];
 
   private readonly stackName: string;
   private readonly assetLibraryStackName: string;
@@ -58,11 +58,10 @@ export class CommandAndControlInstaller implements RestModule {
 
     updatedAnswers = await inquirer.prompt([
       {
-        message: 'Do you need Asset Library to perform complex query?',
+        message: 'When using the Asset Library module as an enhanced device registry, the Command & Control module can use it to help search across devices and groups to define the command targets. You have not chosen to install the Asset Library module - would you like to install it?\nNote: as there is additional cost associated with installing the Asset Library module, ensure you familiarize yourself with its capabilities and benefits in the online CDF github documentation.',
         type: 'confirm',
         name: 'commandAndControl.useAssetLibrary',
         default: updatedAnswers.commandAndControl?.useAssetLibrary,
-        when: !answers.modules.list.includes('assetLibrary') && !answers.greengrass2Provisioning?.useAssetLibrary && !answers.commands?.useAssetLibrary,
         askAnswered: true
       },
       ...applicationConfigurationPrompt(this.name, answers, [
@@ -84,6 +83,8 @@ export class CommandAndControlInstaller implements RestModule {
       ]),
       ...customDomainPrompt(this.name, answers)
     ], updatedAnswers);
+
+    updatedAnswers.modules.expandedMandatory = includeOptionalModule('assetLibrary', updatedAnswers.modules, updatedAnswers.commandAndControl.useAssetLibrary)
 
     return updatedAnswers;
   }

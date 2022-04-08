@@ -29,12 +29,15 @@ export class FleetSimulatorInstaller implements RestModule {
 
   public readonly type = 'SERVICE';
   public readonly dependsOnMandatory: ModuleName[] = [
+    'apigw',
     'vpc',
     'kms',
     'deploymentHelper',
     'assetLibrary'
   ];
-  public readonly dependsOnOptional: ModuleName[] = ['authJwt'];
+  
+  public readonly dependsOnOptional: ModuleName[] = [];
+
   private readonly simulationLauncherStackName: string;
   private readonly simulationManagerStackName: string;
   private readonly assetLibraryStackName: string;

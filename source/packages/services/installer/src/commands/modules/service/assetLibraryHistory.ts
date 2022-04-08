@@ -33,7 +33,8 @@ export class AssetLibraryHistoryInstaller implements RestModule {
     'deploymentHelper',
     'kms'
   ];
-  public readonly dependsOnOptional: ModuleName[] = ['vpc', 'authJwt'];
+  
+  public readonly dependsOnOptional: ModuleName[] = [];
   private readonly stackName: string;
 
   constructor(environment: string) {

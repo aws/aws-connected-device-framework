@@ -26,9 +26,7 @@ export class AuthJwtInstaller implements InfrastructureModule {
   public readonly name = 'authJwt';
 
   public readonly type = 'INFRASTRUCTURE';
-  public readonly dependsOnMandatory: ModuleName[] = [
-    "openSsl"
-  ];
+  public readonly dependsOnMandatory: ModuleName[] = ["openSsl"];
   public readonly dependsOnOptional: ModuleName[] = [];
   private readonly stackName: string;
 

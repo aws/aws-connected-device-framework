@@ -23,7 +23,7 @@ export class VpcInstaller implements InfrastructureModule {
   public readonly friendlyName = "VPC";
   public readonly name = "vpc";
   public readonly dependsOnMandatory: ModuleName[] = [];
-  public readonly dependsOnOptional: ModuleName[] = ["apigw"];
+  public readonly dependsOnOptional: ModuleName[] = [];
   public readonly type = "INFRASTRUCTURE";
 
   private stackName: string;
@@ -32,16 +32,8 @@ export class VpcInstaller implements InfrastructureModule {
     this.stackName = `cdf-network-${region}`;
   }
 
-  private deployVpc({ apigw, assetLibrary, notifications }: Answers): boolean {
-    return apigw?.type === "Private" || assetLibrary?.mode === "full" || notifications?.useDax === true;
-  }
-
   public async prompts(answers: Answers): Promise<Answers> {
     delete answers.vpc?.useExisting;
-
-    if (!this.deployVpc(answers)) {
-      return answers
-    }
 
     answers = await inquirer.prompt(
       [
@@ -51,13 +43,6 @@ export class VpcInstaller implements InfrastructureModule {
           type: "confirm",
           name: "vpc.useExisting",
           default: answers.vpc?.useExisting ?? false,
-          when(answers: Answers) {
-            return (
-              answers.modules.expandedIncludingOptional.includes("vpc") ||
-              answers.apigw?.type === "Private" ||
-              answers.assetLibrary?.mode == "full"
-            );
-          },
         },
         {
           message: "Enter existing VPC id:",
@@ -66,12 +51,7 @@ export class VpcInstaller implements InfrastructureModule {
           default: answers.vpc?.id,
           askAnswered: true,
           when(answers: Answers) {
-            return (
-              (answers.vpc?.useExisting ?? false) &&
-              (answers.modules.expandedIncludingOptional.includes("vpc") ||
-                answers.apigw?.type === "Private" ||
-                answers.assetLibrary?.mode == "full")
-            );
+            return answers.vpc?.useExisting ?? false;
           },
         },
         {
@@ -81,11 +61,7 @@ export class VpcInstaller implements InfrastructureModule {
           default: answers.vpc?.securityGroupId,
           askAnswered: true,
           when(answers: Answers) {
-            return (
-              (answers.vpc?.useExisting ?? false) &&
-              (answers.modules.expandedIncludingOptional.includes("vpc") ||
-                answers.apigw?.type === "Private")
-            );
+            return answers.vpc?.useExisting ?? false;
           },
         },
         {
@@ -96,12 +72,7 @@ export class VpcInstaller implements InfrastructureModule {
           default: answers.vpc?.privateSubnetIds,
           askAnswered: true,
           when(answers: Answers) {
-            // TODO validate when needed
-            return (
-              (answers.vpc?.useExisting ?? false) &&
-              (answers.modules.expandedIncludingOptional.includes("vpc") ||
-                answers.apigw?.type === "Private")
-            );
+            return answers.vpc?.useExisting ?? false;
           },
         },
         {
@@ -111,11 +82,7 @@ export class VpcInstaller implements InfrastructureModule {
           default: answers.vpc?.privateApiGatewayVpcEndpoint,
           askAnswered: true,
           when(answers: Answers) {
-            // TODO validate when needed
-            return (
-              (answers.vpc?.useExisting ?? false) &&
-              answers.modules.expandedIncludingOptional.includes("vpc")
-            );
+            return answers.vpc?.useExisting ?? false;
           },
         },
       ],
@@ -139,10 +106,6 @@ export class VpcInstaller implements InfrastructureModule {
     const tasks: ListrTask[] = [];
 
     const monorepoRoot = await getMonorepoRoot();
-
-    if (!this.deployVpc(answers)) {
-      return [answers, tasks]
-    }
 
     if (answers.vpc?.useExisting === false) {
       ow(answers.environment, ow.string.nonEmpty);

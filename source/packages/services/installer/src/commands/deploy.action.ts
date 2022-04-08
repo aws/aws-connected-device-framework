@@ -1,5 +1,6 @@
 import chalk from "chalk";
 import inquirer from "inquirer";
+import clone from "just-clone";
 import { Listr, ListrTask } from "listr2";
 import { Answers } from "../models/answers";
 import { loadModules, Module, ModuleName } from "../models/modules";
@@ -143,6 +144,7 @@ async function configWizard(
     answers.modules.list,
     false
   );
+
   answers.modules.expandedIncludingOptional = expandModuleList(
     modules,
     answers.modules.list,
@@ -170,7 +172,6 @@ async function configWizard(
   );
 
   // TODO: verify that bundles exist for all the selected modules
-
   answers = await inquirer.prompt(
     [
       chooseS3BucketPrompt(
@@ -215,24 +216,31 @@ async function configWizard(
 
   answersStorage.save(answers);
 
-  // For prompt phase, we'll deploy in reverse order of install phase
-  // to ensure that optional modules can access the dependendent modules
-  // to decide if optional modules needed to be installed or not
-  const reversedGrouped = topologicallySortModules(
-    modules,
-    answers.modules.expandedIncludingOptional
-  ).reverse();
+  let optionalModuleAdded = true
 
+  let answeredModule: { [key: string]: boolean } = {}
 
-  for (const layer of reversedGrouped) {
-    for (const name of layer) {
-      const m = modules.find((m) => m.name === name);
-      if (m.prompts) {
-        console.log(chalk.yellow(`\n${m.friendlyName}...`));
-        answers = await m.prompts(answers);
-        answersStorage.save(answers);
+  while (optionalModuleAdded) {
+    const originalExpandedMandatory = clone(answers.modules.expandedMandatory)
+    
+    const mandatoryGrouped = topologicallySortModules(
+      modules,
+      answers.modules.expandedMandatory
+    );
+
+    for (const layer of mandatoryGrouped) {
+      for (const name of layer) {
+        const m = modules.find((m) => m.name === name);
+        if (m.prompts && !answeredModule[name]) {
+          console.log(chalk.yellow(`\n${m.friendlyName}...`));
+          answers = await m.prompts(answers);
+          answersStorage.save(answers);
+          answeredModule[name] = true
+        }
       }
     }
+
+    optionalModuleAdded = originalExpandedMandatory.length !== answers.modules.expandedMandatory.length;
   }
 
   console.log(
@@ -240,6 +248,7 @@ async function configWizard(
       `Configuration has been saved to '${answersStorage.getConfigurationFilePath()}'.\nIt is highly recommended that you store this configuration under source control to automate future deployments.`
     )
   );
+
   return answers;
 }
 
