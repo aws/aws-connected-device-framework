@@ -1,6 +1,13 @@
 # Change Log - @cdf/installer
 
-This log was last generated on Fri, 25 Mar 2022 03:55:57 GMT and should not be manually modified.
+This log was last generated on Fri, 08 Apr 2022 07:03:46 GMT and should not be manually modified.
+
+## 0.2.1
+Fri, 08 Apr 2022 07:03:46 GMT
+
+### Patches
+
+- corrected the naming of command-and-control environment variables
 
 ## 0.2.0
 Fri, 25 Mar 2022 03:55:57 GMT
