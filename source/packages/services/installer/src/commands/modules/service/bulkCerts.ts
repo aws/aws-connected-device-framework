@@ -367,7 +367,7 @@ private async getSuppliers(answers:Answers): Promise<Suppliers> {
   const list:string[] = [];
   const cas:CA[] = [];
   try{
-    const config = await lambda.getFunctionConfiguration({ FunctionName: `cdf-bulkCerts-sns2-${answers.environment}` });
+    const config = await lambda.getFunctionConfiguration({ FunctionName: `cdf-bulkCerts-sns-${answers.environment}` });
     const variables = config.Environment?.Variables;
     const appConfigStr = variables['APP_CONFIG'] as string;
     appConfigStr.split('\r\n').forEach(element => {

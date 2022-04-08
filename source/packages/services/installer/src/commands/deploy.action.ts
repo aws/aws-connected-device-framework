@@ -74,11 +74,20 @@ async function deployAction(
       } else {
         throw new Error(`Module ${name} has no install functionality defined!`);
       }
+      
     }
 
     const listr = new Listr(layerTasks, { concurrent: true });
     await listr.run();
   }
+
+  // Remove unnecessary answers
+  delete answers.bulkCerts?.suppliers;
+  delete answers.bulkCerts?.setSupplier;
+  delete answers.bulkCerts?.caAlias;
+  delete answers.bulkCerts?.caId;
+  answersStorage.save(answers);
+
 
   const finishedAt = new Date().getTime();
   const took = (finishedAt - startedAt) / 1000;
