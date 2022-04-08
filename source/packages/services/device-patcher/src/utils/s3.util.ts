@@ -41,4 +41,17 @@ export class S3Utils {
         return signedUrl;
     }
 
+    public async uploadFile(bucket: string, key: string, file: Buffer): Promise<void> {
+        logger.debug(`s3.util:  uploadFile: in: fileLocation: ${file}`);
+
+        try {
+            await this.s3.upload({ Bucket: bucket, Key:key, Body: file }).promise();
+            logger.debug('commands.service uploadFile: exit:');
+        } catch (err) {
+            logger.error(`commands.service uploadFile: err:${err}`);
+            throw new Error('FAILED_UPLOAD');
+        }
+
+    }
+
 }

@@ -15,14 +15,18 @@ import {inject, injectable} from 'inversify';
 
 import { logger } from '../utils/logger.util';
 import { TYPES } from '../di/types';
+import { S3Utils } from '../utils/s3.util';
 
 import { DeploymentTemplateItem } from './template.model';
-import {DeploymentTemplatesDao, TemplateListPaginationKey} from './template.dao';
+import { DeploymentTemplatesDao, TemplateListPaginationKey } from './template.dao';
 
 @injectable()
 export class DeploymentTemplatesService {
     constructor(
-        @inject(TYPES.DeploymentTemplateDao) private deploymentTemplatesDao: DeploymentTemplatesDao
+        @inject(TYPES.DeploymentTemplateDao) private deploymentTemplatesDao: DeploymentTemplatesDao,
+        @inject(TYPES.S3Utils) private s3Utils: S3Utils,
+        @inject('aws.s3.bucket') private s3Bucket: string,
+        @inject('aws.s3.prefix') private s3Prefix: string
     ) {}
 
     public async save(template: DeploymentTemplateItem): Promise<void> {
@@ -31,10 +35,16 @@ export class DeploymentTemplatesService {
         ow(template, 'Template Information', ow.object.nonEmpty);
         ow(template.name, ow.string.nonEmpty);
         ow(template.deploymentType, ow.string.nonEmpty);
-        ow(template.playbookSource, ow.object.nonEmpty);
-        ow(template.playbookSource.type, ow.string.nonEmpty);
-        ow(template.playbookSource.bucket, ow.string.nonEmpty);
-        ow(template.playbookSource.prefix, ow.string.nonEmpty);
+        ow(template.playbookName, ow.string.nonEmpty);
+        ow(template.playbookFile, ow.object.hasKeys('buffer'));
+
+        const uploadPath = `${this.s3Prefix}playbooks/${template.playbookName}`;
+        await this.s3Utils.uploadFile(this.s3Bucket, uploadPath, template.playbookFile);
+
+        template.playbookSource = {
+            bucket: this.s3Bucket,
+            key: uploadPath
+        };
 
         const existingTemplate = await this.deploymentTemplatesDao.get(template.name);
 
@@ -53,7 +63,7 @@ export class DeploymentTemplatesService {
             template.enabled = template.enabled ?? true;
         }
 
-        return this.deploymentTemplatesDao.save(template);
+        await this.deploymentTemplatesDao.save(template);
     }
 
     public async get(name: string): Promise<DeploymentTemplateItem> {

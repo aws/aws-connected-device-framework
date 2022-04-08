@@ -12,17 +12,21 @@
  *********************************************************************************************************************/
 import { Response } from 'express';
 import { inject } from 'inversify';
+import ow from 'ow';
+import multer from "multer";
+
 import {
     interfaces,
     controller,
     response,
-    requestBody,
+    request,
     requestParam,
     httpGet,
     httpPut,
     httpDelete,
     queryParam
 } from 'inversify-express-utils';
+import { Request } from 'express';
 
 import { handleError } from '../utils/errors';
 import { logger } from '../utils/logger.util';
@@ -31,29 +35,36 @@ import { TYPES } from '../di/types';
 import { DeploymentTemplatesService } from './template.service';
 import { DeploymentTemplateAssembler } from './template.assembler';
 
-import { DeploymentTemplateItem, DeploymentTemplateResource,} from './template.model';
+import { DeploymentTemplateItem } from './template.model';
+
+const storage = multer.memoryStorage();
+const upload = multer({storage});
 
 @controller('/deploymentTemplates')
 export class DeploymentTemplateController implements interfaces.Controller {
 
     public constructor(
         @inject(TYPES.DeploymentTemplatesService) private deploymentTemplatesService: DeploymentTemplatesService,
-        @inject(TYPES.DeploymentTemplateAssembler) private deploymentTemplateAssembler: DeploymentTemplateAssembler
+        @inject(TYPES.DeploymentTemplateAssembler) private deploymentTemplateAssembler: DeploymentTemplateAssembler,
     ) {}
 
-    @httpPut('/:name')
+    @httpPut('/:name', upload.single('playbookFile'))
     public async saveTemplate(
         @response() res: Response,
         @requestParam('name') name: string,
-        @requestBody() req: DeploymentTemplateResource,
+        @request() req: Request,
     ): Promise<void> {
-
-        logger.info(`DeploymentTemplate.controller saveTemplate: in: item:${JSON.stringify(req)}`);
-
-        const template: DeploymentTemplateResource = req;
-        template.name = name;
+        logger.info(`DeploymentTemplate.controller saveTemplate: in: item:`);
 
         try {
+            ow(req.file, ow.object.hasKeys('buffer'));
+            ow(req.body.playbookName, ow.string.nonEmpty);
+            ow(req.body.deploymentType, ow.string.nonEmpty);
+
+            const template: DeploymentTemplateItem = req.body;
+            template.name = name;
+            template.playbookFile = req.file.buffer;
+
             await this.deploymentTemplatesService.save(template);
         } catch (err) {
             logger.error(`DeploymentTemplate.controller : err: ${err}`);

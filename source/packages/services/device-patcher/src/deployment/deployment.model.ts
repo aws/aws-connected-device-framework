@@ -44,9 +44,8 @@ export class DeploymentItem {
 }
 
 export interface DeploymentSource {
-    type: DeploymentType;
     bucket: string;
-    prefix: string;
+    key: string;
 }
 
 export enum DeploymentType {

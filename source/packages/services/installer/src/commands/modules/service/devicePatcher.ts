@@ -87,7 +87,7 @@ export class DevicePatcherInstaller implements RestModule {
                     `ApiGatewayDefinitionTemplate=${answers.apigw.cloudFormationTemplate}`,
                     `KmsKeyId=${answers.kms.id}`,
                     `ArtifactsBucket=${answers.s3.bucket}`,
-                    `ArtifactsKeyPrefix=devicePatcher/`,
+                    `ArtifactsKeyPrefix=device-patcher/`,
                     `VpcId=${answers.vpc?.id ?? 'N/A'}`,
                     `CDFSecurityGroupId=${answers.vpc?.securityGroupId ?? ''}`,
                     `PrivateSubNetIds=${answers.vpc?.privateSubnetIds ?? ''}`,

@@ -21,7 +21,7 @@ import { ActivationDao } from '../activation/activation.dao';
 import { AgentbasedDeploymentDao } from './agentbased-deployment.dao';
 import { ExpressionParser } from '../utils/expression.util';
 import { DescribeInstanceInformationRequest } from 'aws-sdk/clients/ssm';
-import {DeploymentTemplatesService} from '../templates/template.service';
+import { DeploymentTemplatesService } from '../templates/template.service';
 
 
 @injectable()
@@ -29,16 +29,14 @@ export class AgentbasedDeploymentService {
 
     private readonly ssm: AWS.SSM;
     private readonly sqs: AWS.SQS;
-    private readonly s3: AWS.S3;
     private artifactsBucket: string = process.env.AWS_S3_ARTIFACTS_BUCKET
     private artifactsBucketPrefix: string = process.env.AWS_S3_ARTIFACTS_PREFIX
     private queueUrl: string = process.env.AWS_SQS_QUEUES_DEPLOYMENT_TASKS;
-    private ssmAnsiblePatchDocument: string = process.env.AWS_SSM_ANSIBLE_PATCH_DOCUMENT;
+    private ssmAnsiblePatchDocument: string = 'AWS-ApplyAnsiblePlaybooks';
 
     constructor(
         @inject(TYPES.SSMFactory) ssmFactory: () => AWS.SSM,
         @inject(TYPES.SQSFactory) sqsFactory: () => AWS.SQS,
-        @inject(TYPES.S3Factory) s3Factory: () => AWS.S3,
         @inject(TYPES.ActivationDao) private activationDao: ActivationDao,
         @inject(TYPES.AgentbasedDeploymentDao) private agentbasedDeploymentDao: AgentbasedDeploymentDao,
         @inject(TYPES.ExpressionParser) private expressionParser: ExpressionParser,
@@ -46,7 +44,6 @@ export class AgentbasedDeploymentService {
     ) {
         this.ssm = ssmFactory();
         this.sqs = sqsFactory();
-        this.s3 = s3Factory();
     }
 
     public async create(deployment: DeploymentItem): Promise<void> {
@@ -113,19 +110,21 @@ export class AgentbasedDeploymentService {
 
             await this.transformExtraVars(extraVars);
 
-            const playbook = await this.getS3SignedURL(template.playbookSource);
+            const playbook = await this.getAssociationSourceParameter(template.playbookSource);
 
             const associationParams: AWS.SSM.CreateAssociationRequest = {
                 Name: this.ssmAnsiblePatchDocument,
                 AssociationName: `${deployment.deploymentId}`,
                 Parameters: {
-                    playbookurl: [ playbook ],
-                    extravars: this.convertExtraVarsToString(extraVars),
+                    SourceType: ['S3'],
+                    SourceInfo: [playbook],
+                    ExtraVariables: this.convertExtraVarsToString(extraVars),
+                    PlaybookFile: [template.playbookName]
                 },
                 OutputLocation: {
                     'S3Location': {
                         'OutputS3BucketName': this.artifactsBucket,
-                        'OutputS3KeyPrefix': this.artifactsBucketPrefix
+                        'OutputS3KeyPrefix': `${this.artifactsBucketPrefix}/logs/`
                     }
                 },
                 ComplianceSeverity: 'UNSPECIFIED',
@@ -213,7 +212,7 @@ export class AgentbasedDeploymentService {
         // If an association is found, then update the association
         try {
 
-            const playbook = await this.getS3SignedURL(template.playbookSource);
+            const playbook = await this.getAssociationSourceParameter(template.playbookSource);
 
             const extraVars = {
                 ...template?.extraVars,
@@ -227,13 +226,15 @@ export class AgentbasedDeploymentService {
                 AssociationName: `${deployment.deploymentId}`,
                 AssociationId: association.associationId,
                 Parameters: {
-                    playbookurl: [ playbook ],
-                    extravars: this.convertExtraVarsToString(extraVars),
+                    SourceType: ['S3'],
+                    SourceInfo: [playbook],
+                    ExtraVariables: this.convertExtraVarsToString(extraVars),
+                    PlaybookFile: [template.playbookName]
                 },
                 OutputLocation: {
                     'S3Location': {
                         'OutputS3BucketName': this.artifactsBucket,
-                        'OutputS3KeyPrefix': this.artifactsBucketPrefix
+                        'OutputS3KeyPrefix': `${this.artifactsBucketPrefix}/logs/`
                     }
                 }
             };
@@ -320,35 +321,21 @@ export class AgentbasedDeploymentService {
 
     }
 
-    private async getS3SignedURL(source: DeploymentSource): Promise<string> {
-        logger.debug(`agentbasedDeployment.service getS3SignedURL: in source: ${JSON.stringify(source)}`);
+    private getAssociationSourceParameter(source: DeploymentSource): string {
+        logger.debug(`agentbasedDeployment.service getS3Path: in source: ${JSON.stringify(source)}`);
 
         ow(source, 'Source Information', ow.object.nonEmpty);
         ow(source.bucket, 'Bucket', ow.string.nonEmpty);
-        ow(source.prefix, 'Prefix', ow.string.nonEmpty);
+        ow(source.key, 'key', ow.string.nonEmpty);
 
-        const params = { Bucket: source.bucket, Key: source.prefix };
-        const url = await this.s3.getSignedUrl('getObject', params);
+        const associationS3Param = {
+            path: `https://s3.amazon.com/${source.bucket}/${source.key}`,
+        };
 
-        logger.debug(`gentbasedDeployment.service getS3SignedURL: exit: out: url: ${url}`);
+        logger.debug(`gentbasedDeployment.service getS3Path: exit: out: path : ${associationS3Param}`);
 
-        return url;
+        return JSON.stringify(associationS3Param);
     }
-
-    // private async _getPlaybook(source: DeploymentSource): Promise<string> {
-    //     logger.debug(`agentbasedDeployment.service getPlaybook: in source: ${JSON.stringify(source)}`);
-    //
-    //     ow(source, 'Source Information', ow.object.nonEmpty);
-    //     ow(source.bucket, 'Bucket', ow.string.nonEmpty);
-    //     ow(source.prefix, 'Prefix', ow.string.nonEmpty);
-    //
-    //     const params = { Bucket: source.bucket, Key: source.prefix };
-    //     const object = await this.s3.getObject(params);
-    //
-    //     logger.debug(`gentbasedDeployment.service getPlaybook: exit: out:`);
-    //
-    //     return object.toString();
-    // }
 
     private convertExtraVarsToString(extraVars: { [key: string]: string }): [string] {
         const vars: string[] = [];

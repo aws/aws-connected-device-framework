@@ -216,9 +216,10 @@ Resources:
             Action:
               - 's3:List*'
               - 's3:Get*'
+              - 's3:Put*'
             Effect: Allow
             Resource:
-              - !Sub 'arn:aws:s3:::${ArtifactsBucket}/*'
+              - !Sub 'arn:aws:s3:::${ArtifactsBucket}/${ArtifactsKeyPrefix}*'
           - Sid: iam
             Action:
               - iam:PassRole
@@ -323,7 +324,6 @@ Resources:
           AWS_S3_ARTIFACTS_PREFIX: !Ref ArtifactsKeyPrefix
           AWS_SSM_MANAGED_INSTANCE_ROLE: !Ref SSMManagedInstanceRole
           AWS_SQS_QUEUES_DEPLOYMENT_TASKS: !Ref AgentbasedDeploymentQueue
-          AWS_SSM_ANSIBLE_PATCH_DOCUMENT: !Ref SSMAnsiblePatchDocument
       Tracing: Active
 
       VpcConfig:
@@ -371,7 +371,6 @@ Resources:
           AWS_S3_ARTIFACTS_PREFIX: !Ref ArtifactsKeyPrefix
           AWS_SSM_MANAGED_INSTANCE_ROLE: !Ref SSMManagedInstanceRole
           AWS_SQS_QUEUES_DEPLOYMENT_TASKS: !Ref AgentbasedDeploymentQueue
-          AWS_SSM_ANSIBLE_PATCH_DOCUMENT: !Ref SSMAnsiblePatchDocument
       Events:
         AgentbasedDeploymentQueue:
           Type: SQS
@@ -404,7 +403,7 @@ Resources:
           AWS_S3_ARTIFACTS_PREFIX: !Ref ArtifactsKeyPrefix
           AWS_SSM_MANAGED_INSTANCE_ROLE: !Ref SSMManagedInstanceRole
           AWS_SQS_QUEUES_DEPLOYMENT_TASKS: !Ref AgentbasedDeploymentQueue
-          AWS_SSM_ANSIBLE_PATCH_DOCUMENT: !Ref SSMAnsiblePatchDocument
+
       Events:
         SSMStageChangeDeloymentQueue:
           Type: SQS
@@ -511,120 +510,19 @@ Resources:
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
-          - Sid: "s3Objects"
+          - Sid: "s3logs"
             Action:
               - 's3:Put*'
             Effect: Allow
             Resource:
-              - !Sub 'arn:aws:s3:::${ArtifactsBucket}/*'
-
-
-  SSMAnsiblePatchDocument:
-    Type: AWS::SSM::Document
-    Properties:
-      Content:
-        schemaVersion: '2.2'
-        description: 'Run a script on Linux instances.'
-        parameters:
-          playbookurl:
-            type: String
-            description: "You must specify the URL in the following
-                formats: http://example.com/playbook.yml For security reasons, you can't specify a URL with quotes."
-            default: ''
-            allowedPattern: "^\\s*$|^(http|https|s3)://[^']*$"
-          extravars:
-            type: String
-            description: "(Optional) Additional variables to pass to Ansible at runtime. Enter
-              a space separated list of key/value pairs. For example: color=red flavor=lime"
-            default: SSM=True
-            displayType: textarea
-          timeoutSeconds:
-            type: String
-            description: "(Optional) The time in seconds for a command to be completed before
-              it is considered to have failed."
-            default: '3600'
-          verbose:
-            type: String
-            description: "(Optional) Set the verbosity level for logging Playbook executions.
-              Specify -v for low verbosity, -vv or –vvv for medium verbosity, and -vvvv for
-              debug level."
-            allowedValues:
-              - "-v"
-              - "-vv"
-              - "-vvv"
-              - "-vvvv"
-            default: "-v"
-          installDependencies:
-            type: String
-            description: "(Required) If set to True, Systems Manager installs Ansible and
-              its dependencies, including Python, from the PyPI repo. If set to False, then
-              verify that Ansible and its dependencies are installed on the target instances.
-              If they aren’t, the SSM document fails to run."
-            allowedValues:
-              - 'True'
-              - 'False'
-            default: 'True'
-        mainSteps:
-          - action: aws:runShellScript
-            name: runCommands
-            inputs:
-              timeoutSeconds: '60'
-              runCommand:
-                - "#!/bin/bash"
-                - "ansible --version"
-                - "if  [[ \"{{installDependencies}}\" == True ]] ; then"
-                - "   echo \"Installing and or updating required tools: Ansible, wget unzip ....\" >&2"
-                - "   if [ -f  \"/etc/system-release\" ] ; then"
-                - "     if cat /etc/system-release|grep -i 'Amazon Linux release 2' ; then "
-                - "       sudo yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm"
-                - "       sudo yum install -y ansible"
-                - "       sudo yum -y install unzip"
-                - "     elif cat /etc/system-release|grep -i 'Amazon Linux AMI' ; then "
-                - "       sudo pip install ansible --upgrade"
-                - "       sudo yum -y install unzip"
-                - "     elif cat /etc/system-release|grep -i 'Red Hat Enterprise Linux' ; then "
-                - "       sudo yum -y install python3-pip"
-                - "       sudo pip3 install ansible"
-                - "       sudo yum -y install unzip"
-                - "     else"
-                - "       echo \"There was a problem installing or updating the required tools for the document. You can review the log files to help you correct the problem.\" >&2"
-                - "       exit 1"
-                - "     fi"
-                - "   elif cat /etc/issue|grep -i Ubuntu ; then "
-                - "     UBUNTU_VERSION=$(cat /etc/issue | grep -i ubuntu | awk '{print $2}' |  awk -F'.' '{print $1}')"
-                - "     sudo apt-get update"
-                - "     if [ $(($UBUNTU_VERSION > 18)) == 1 ]; then"
-                - "       sudo DEBIAN_FRONTEND=noninteractive apt-get install python3-pip -y"
-                - "       sudo pip3 install ansible --upgrade"
-                - "     else"
-                - "       sudo DEBIAN_FRONTEND=noninteractive apt-get install python-pip -y"
-                - "       sudo pip install ansible --upgrade"
-                - "     fi"
-                - "     sudo DEBIAN_FRONTEND=noninteractive apt-get install unzip -y"
-                - "   else"
-                - "     echo \"There was a problem installing or updating the required tools for the document. You can review the log files to help you correct the problem.\" >&2"
-                - "     exit 1"
-                - "   fi"
-                - "fi"
-                - "echo \"Running Ansible in `pwd`\""
-                - "#this section locates files and unzips them"
-                - "for zip in $(find -iname '*.zip'); do"
-                - "  unzip -o $zip"
-                - "done"
-                - "execdir=$(dirname $0)"
-                - "cd $execdir"
-                - "if [[ \"{{playbookurl}}\" == http* ]]; then"
-                - "    wget '{{playbookurl}}' -O playbook.yml"
-                - "    if [ $? -ne 0 ]; then"
-                - "        echo \"There was a problem downloading the playbook. Make sure the URL is correct and that the playbook exists.\" >&2"
-                - "        exit 1"
-                - "    fi"
-                - "else"
-                - "    echo \"The playbook URL is not valid. Verify the URL and try again.\""
-                - "fi"
-                - "ansible-playbook -i \"localhost,\" -c local -e \"{{extravars}}\" \"{{verbose}}\" playbook.yml"
-      DocumentType: Command
-      Name: 'CDF-DevicePatcher-ApplyAnsiblePlaybook'
+              - !Sub 'arn:aws:s3:::${ArtifactsBucket}/${ArtifactsKeyPrefix}logs/*'
+          - Sid: "s3playbooks"
+            Action:
+              - 's3:GetObject'
+              - 's3:GetObjectVersion'
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:s3:::${ArtifactsBucket}/${ArtifactsKeyPrefix}playbooks/*'
 
   AgentbasedDeploymentQueue:
     Type: AWS::SQS::Queue

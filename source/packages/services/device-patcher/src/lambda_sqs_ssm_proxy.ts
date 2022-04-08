@@ -53,7 +53,7 @@ exports.handler = async (event: Event): Promise<void> => {
 
                     } else if (
                         eventBody['detail-type'] === 'EC2 State Manager Instance Association State Change' &&
-                        eventBody.detail['document-name'] === process.env.AWS_SSM_ANSIBLE_PATCH_DOCUMENT
+                        eventBody.detail['document-name'] === 'AWS-ApplyAnsiblePlaybooks'
                     ) {
 
                         logger.debug(`lambda_sqs_ssm_proxy: ssm_event: EC2 State Manager Instance Association State Change`);

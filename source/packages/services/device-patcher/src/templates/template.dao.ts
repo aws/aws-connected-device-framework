@@ -51,6 +51,7 @@ export class DeploymentTemplatesDao {
                     updatedAt: template.updatedAt?.toISOString(),
                     versionNo: template.versionNo,
                     enabled: template.enabled,
+                    playbookName: template.playbookName,
                     playbookSource: template.playbookSource,
                     deploymentType: template.deploymentType,
                     extraVars: template.extraVars,
@@ -226,6 +227,7 @@ export class DeploymentTemplatesDao {
 
             t[key] = {
                 name: templateName,
+                playbookName: i.playbookName,
                 playbookSource: i.playbookSource,
                 deploymentType: i.deploymentType,
                 extraVars: i.extraVars,

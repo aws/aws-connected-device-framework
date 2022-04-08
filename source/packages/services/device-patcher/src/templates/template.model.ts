@@ -11,9 +11,8 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 export interface DeploymentSource {
-    type: DeploymentType;
     bucket: string;
-    prefix: string;
+    key: string;
 }
 
 export enum DeploymentType {
@@ -28,7 +27,9 @@ export class DeploymentTemplateItem {
     extraVars?: { [key: string]: string}
     name?: string;
     options?: string[];
+    playbookName?: string;
     playbookSource?: DeploymentSource;
+    playbookFile?: Buffer;
     deploymentType?: DeploymentType;
     updatedAt?: Date;
     versionNo?: number;
@@ -41,6 +42,7 @@ export class DeploymentTemplateResource {
     extraVars?: { [key: string]: string}
     name?: string;
     options?: string[];
+    playbookName?: string;
     playbookSource?: DeploymentSource;
     deploymentType?: DeploymentType;
     updatedAt?: Date;

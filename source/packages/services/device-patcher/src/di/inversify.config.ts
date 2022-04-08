@@ -47,6 +47,9 @@ import { ExpressionParser } from '../utils/expression.util';
 // Load everything needed to the Container
 export const container = new Container();
 
+container.bind<string>('aws.s3.bucket').toConstantValue(process.env.AWS_S3_ARTIFACTS_BUCKET);
+container.bind<string>('aws.s3.prefix').toConstantValue(process.env.AWS_S3_ARTIFACTS_PREFIX);
+
 container.bind<HttpHeaderUtils>(TYPES.HttpHeaderUtils).to(HttpHeaderUtils).inSingletonScope();
 
 container.bind<DeploymentTaskDao>(TYPES.DeploymentTaskDao).to(DeploymentTaskDao).inSingletonScope();
@@ -75,6 +78,8 @@ import '../activation/activation.controller';
 
 container.bind<DynamoDbUtils>(TYPES.DynamoDbUtils).to(DynamoDbUtils).inSingletonScope();
 container.bind<ExpressionParser>(TYPES.ExpressionParser).to(ExpressionParser).inSingletonScope();
+
+
 
 // for 3rd party objects, we need to use factory injectors
 // DynamoDB
