@@ -10,14 +10,17 @@ In the past, `assetLibrary` is always deployed when you select `greengrass2Provi
 
 In this release, a new question is added to these modules to check if `assetLibrary` to make the dependency explicit. Now you can deploy these services without `assetLibrary` (removing the capability to select devices by assetLibrary query).
 
-If you had deployed one of these modules (`greengrass2Provisioning`, `commands` , or `commandAndControl`) but did not use the functionality that `assetLibrary` provides, you can re-run the deployment wizard and answer `No`  for this question
+If you had deployed one of these modules (`greengrass2Provisioning`, `commands` , or `commandAndControl`) but did not use the functionality that `assetLibrary` provides, you can re-run the deployment wizard and answer `No`  for this question.
 
 ```bash
 Greengrass V2 Provisioning...
-? Do you need Asset Library to perform complex query? No
+? When using the Asset Library module as an enhanced device registry, the Greengrass2 Provisioning module can use it to help search across devices and
+ groups to define the deployment targets. You have not chosen to install the Asset Library module - would you like to install it?
+Note: as there is additional cost associated with installing the Asset Library module, ensure you familiarize yourself with its capabilities and benef
+its in the online CDF github documentation
 ```
 
-Once the deployment is finished, you can then manually delete the `assetLibrary` stack.
+This should re-generate the new configuration file with the right settings. Once the deployment is finished, you can then manually delete the `assetLibrary` stack.
 
 ## Migrating from Release <=1.0.9 to 1.0.10
 

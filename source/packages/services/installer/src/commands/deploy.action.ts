@@ -218,7 +218,7 @@ async function configWizard(
 
   let optionalModuleAdded = true
 
-  let answeredModule: { [key: string]: boolean } = {}
+  const answeredModule: { [key: string]: boolean } = {}
 
   while (optionalModuleAdded) {
     const originalExpandedMandatory = clone(answers.modules.expandedMandatory)
