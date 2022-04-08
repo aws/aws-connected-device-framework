@@ -193,7 +193,7 @@ export class AssetLibraryInstaller implements RestModule {
       ], updatedAnswers);
     }
     
-    updatedAnswers.modules.expandedMandatory = includeOptionalModule('vpc', updatedAnswers.modules, updatedAnswers.assetLibrary.mode === 'full')
+    includeOptionalModule('vpc', updatedAnswers.modules, updatedAnswers.assetLibrary.mode === 'full')
 
     return updatedAnswers;
 

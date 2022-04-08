@@ -94,7 +94,7 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
       ], updatedAnswers);
     }
 
-    updatedAnswers.modules.expandedMandatory = includeOptionalModule('assetLibrary', updatedAnswers.modules, updatedAnswers.greengrass2Provisioning.useAssetLibrary)
+    includeOptionalModule('assetLibrary', updatedAnswers.modules, updatedAnswers.greengrass2Provisioning.useAssetLibrary)
 
     return updatedAnswers;
 

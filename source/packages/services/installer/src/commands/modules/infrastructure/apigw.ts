@@ -180,8 +180,8 @@ export class ApiGwInstaller implements InfrastructureModule {
       // TODO potentially remove old ansers
     }
 
-    answers.modules.expandedMandatory = includeOptionalModule('vpc', answers.modules, answers.apigw.type === 'Private')
-    answers.modules.expandedMandatory = includeOptionalModule('authJwt', answers.modules, answers.apigw.type === 'LambdaRequest' || answers.apigw.type === 'LambdaToken')
+    includeOptionalModule('vpc', answers.modules, answers.apigw.type === 'Private')
+    includeOptionalModule('authJwt', answers.modules, answers.apigw.type === 'LambdaRequest' || answers.apigw.type === 'LambdaToken')
 
     return answers;
 

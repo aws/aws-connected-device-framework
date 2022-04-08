@@ -83,7 +83,7 @@ export class CommandAndControlInstaller implements RestModule {
       ], updatedAnswers);
     }
 
-    updatedAnswers.modules.expandedMandatory = includeOptionalModule('assetLibrary', updatedAnswers.modules, updatedAnswers.commandAndControl.useAssetLibrary)
+    includeOptionalModule('assetLibrary', updatedAnswers.modules, updatedAnswers.commandAndControl.useAssetLibrary)
     return updatedAnswers;
   }
 

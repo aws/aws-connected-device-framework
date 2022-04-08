@@ -88,8 +88,8 @@ export class CommandsInstaller implements RestModule {
         ...customDomainPrompt(this.name, answers)
       ], updatedAnswers);
     }
-    
-    updatedAnswers.modules.expandedMandatory = includeOptionalModule('assetLibrary', updatedAnswers.modules, updatedAnswers.commands.useAssetLibrary)
+
+    includeOptionalModule('assetLibrary', updatedAnswers.modules, updatedAnswers.commands.useAssetLibrary)
 
     return updatedAnswers;
   }

@@ -80,7 +80,7 @@ export class NotificationsInstaller implements RestModule {
       ], updatedAnswers);
     }
 
-    updatedAnswers.modules.expandedMandatory = includeOptionalModule('vpc', updatedAnswers.modules, updatedAnswers.notifications.useDax)
+    includeOptionalModule('vpc', updatedAnswers.modules, updatedAnswers.notifications.useDax)
     return updatedAnswers;
   }
 
