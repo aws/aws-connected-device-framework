@@ -12,7 +12,7 @@
 #-----------------------------------------------------------------------------------------------------------------------
 AWSTemplateFormatVersion : '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: CDF Asset Library Service Neptune-to-ElasticSearch connection for enhanced search
+Description: CDF Asset Library Service Neptune-to-OpenSearch connection for enhanced search
 
 Parameters:
   Environment:
@@ -33,7 +33,7 @@ Parameters:
     Description: ID of an existing security group that contains the Neptune nodes
     Type: AWS::EC2::SecurityGroup::Id
   KmsKeyId:
-    Description: The KMS key ID used to encrypt the ElasticSearch database
+    Description: The KMS key ID used to encrypt the OpenSearch database
     Type: String
     MinLength: 1
   OpenSearchAvailabilityZoneCount:
@@ -49,8 +49,8 @@ Parameters:
     ConstraintDescription: OpenSearchAvailabilityZoneCount must equal 1, 2, or 3. 
   OpenSearchInstanceType:
     Description: >
-      OpenSearch data instance type. Must be a supported OpenSearch instance type in the region, support ElasticSearch, 
-      and must support encryption at rest. See also: 
+      OpenSearch data instance type. Must be a supported OpenSearch instance type in the region and must support 
+      encryption at rest. See also: 
       https://docs.aws.amazon.com/opensearch-service/latest/developerguide/supported-instance-types.html
     Type: String
     Default: t3.small.search
@@ -71,8 +71,8 @@ Parameters:
       https://docs.aws.amazon.com/opensearch-service/latest/developerguide/managedomains-dedicatedmasternodes.html
   OpenSearchDedicatedMasterInstanceType:
     Description: >
-      OpenSearch master instance type. Must be a supported OpenSearch instance type in the region, support ElasticSearch, 
-      and must support encryption at rest. See also: 
+      OpenSearch master instance type. Must be a supported OpenSearch instance type in the region and must support 
+      encryption at rest. See also: 
       https://docs.aws.amazon.com/opensearch-service/latest/developerguide/supported-instance-types.html
     Type: String
     Default: t3.small.search
@@ -83,13 +83,13 @@ Parameters:
     Default: 10
     MinValue: 10
     Description: >
-      Size of EBS volumes attached to each ElasticSearch node, in GiB. Allowed ranges depend on the 
+      Size of EBS volumes attached to each OpenSearch node, in GiB. Allowed ranges depend on the 
       instance type chosen in OpenSearchInstanceType and are documented here:
       https://docs.aws.amazon.com/opensearch-service/latest/developerguide/limits.html#ebsresource
   OpenSearchEBSVolumeType:
     Type: String 
     Default: gp2
-    Description: Type of the EBS volume attached to each ElasticSearch node.
+    Description: Type of the EBS volume attached to each OpenSearch node.
     AllowedValues:
       - gp2
       - gp3
@@ -109,24 +109,24 @@ Parameters:
     Type: String 
     Default: ''
     Description: >
-      ARN of Cloudwatch Log Group where ElasticSearch audit Logs are sent. If left empty, logs will not be generated.
+      ARN of Cloudwatch Log Group where OpenSearch audit Logs are sent. If left empty, logs will not be generated.
   OpenSearchApplicationLogsCloudWatchLogsLogGroupArn:
     Type: String 
     Default: ''
     Description: >
-      ARN of Cloudwatch Log Group where ElasticSearch application Logs are sent. If left empty, logs will not be 
+      ARN of Cloudwatch Log Group where OpenSearch application Logs are sent. If left empty, logs will not be 
       generated.
   OpenSearchIndexSlowLogsCloudWatchLogsLogGroupArn:
     Type: String 
     Default: ''
     Description: >
-      ARN of Cloudwatch Log Group where ElasticSearch Index Slow Logs are sent. If left empty, logs will not be 
+      ARN of Cloudwatch Log Group where OpenSearch Index Slow Logs are sent. If left empty, logs will not be 
       generated.
   OpenSearchSearchSlowLogsCloudWatchLogsLogGroupArn:
     Type: String 
     Default: ''
     Description: >
-      ARN of Cloudwatch Log Group where ElasticSearch Search Slow Logs are sent. If left empty, logs will not be 
+      ARN of Cloudwatch Log Group where OpenSearch Search Slow Logs are sent. If left empty, logs will not be 
       generated.
   NeptuneClusterEndpoint:
     Description: 'Neptune cluster endpoint. Format: <cluster>:<port>'
@@ -244,10 +244,10 @@ Conditions:
   EnableDedicatedMasterNodes: !Not [ !Equals [ !Ref OpenSearchDedicatedMasterCount, 0 ] ]
   CreateCloudWatchAlarmCondition: !Equals [ !Ref CreateCloudWatchAlarm, 'true' ]
   EnableNonStringIndexingCondition: !Equals [ !Ref EnableNonStringIndexing, 'true' ]
-  ElasticSearchAuditLogsCloudWatchLogsEnabled: !Not [ !Equals [ !Ref OpenSearchAuditLogsCloudWatchLogsLogGroupArn, '' ] ]
-  ElasticSearchApplicationLogsCloudWatchLogsEnabled: !Not [ !Equals [ !Ref OpenSearchApplicationLogsCloudWatchLogsLogGroupArn, '' ] ]
-  ElasticSearchIndexSlowLogsCloudWatchLogsEnabled: !Not [ !Equals [ !Ref OpenSearchIndexSlowLogsCloudWatchLogsLogGroupArn, '' ] ]
-  ElasticSearchSearchSlowLogsCloudWatchLogsEnabled: !Not [ !Equals [ !Ref OpenSearchSearchSlowLogsCloudWatchLogsLogGroupArn, '' ] ]
+  OpenSearchAuditLogsCloudWatchLogsEnabled: !Not [ !Equals [ !Ref OpenSearchAuditLogsCloudWatchLogsLogGroupArn, '' ] ]
+  OpenSearchApplicationLogsCloudWatchLogsEnabled: !Not [ !Equals [ !Ref OpenSearchApplicationLogsCloudWatchLogsLogGroupArn, '' ] ]
+  OpenSearchIndexSlowLogsCloudWatchLogsEnabled: !Not [ !Equals [ !Ref OpenSearchIndexSlowLogsCloudWatchLogsLogGroupArn, '' ] ]
+  OpenSearchSearchSlowLogsCloudWatchLogsEnabled: !Not [ !Equals [ !Ref OpenSearchSearchSlowLogsCloudWatchLogsLogGroupArn, '' ] ]
   OpenSearchEBSVolumeTypeIsIo1: !Equals [ !Ref OpenSearchEBSVolumeType, 'io1' ]
   EnableZoneAwareness: !Not [ !Equals [ !Ref OpenSearchAvailabilityZoneCount, 1 ] ]
 
@@ -367,25 +367,25 @@ Resources:
       LogPublishingOptions: 
         ES_APPLICATION_LOGS:
           Fn::If:
-            - ElasticSearchApplicationLogsCloudWatchLogsEnabled
+            - OpenSearchApplicationLogsCloudWatchLogsEnabled
             - CloudWatchLogsLogGroupArn: !Ref OpenSearchApplicationLogsCloudWatchLogsLogGroupArn
               Enabled: true
             - !Ref AWS::NoValue
         SEARCH_SLOW_LOGS:
           Fn::If:
-            - ElasticSearchSearchSlowLogsCloudWatchLogsEnabled
+            - OpenSearchSearchSlowLogsCloudWatchLogsEnabled
             - CloudWatchLogsLogGroupArn: !Ref OpenSearchSearchSlowLogsCloudWatchLogsLogGroupArn
               Enabled: true
             - !Ref AWS::NoValue
         INDEX_SLOW_LOGS:
           Fn::If:
-            - ElasticSearchIndexSlowLogsCloudWatchLogsEnabled
+            - OpenSearchIndexSlowLogsCloudWatchLogsEnabled
             - CloudWatchLogsLogGroupArn: !Ref OpenSearchIndexSlowLogsCloudWatchLogsLogGroupArn
               Enabled: true 
             - !Ref AWS::NoValue
         AUDIT_LOGS:
           Fn::If:
-            - ElasticSearchAuditLogsCloudWatchLogsEnabled
+            - OpenSearchAuditLogsCloudWatchLogsEnabled
             - CloudWatchLogsLogGroupArn: !Ref OpenSearchAuditLogsCloudWatchLogsLogGroupArn
               Enabled: true
             - !Ref AWS::NoValue
@@ -404,11 +404,11 @@ Resources:
   OpenSearchAccessPolicy:
     Type: 'AWS::IAM::ManagedPolicy'
     Properties:
-      Description: "Allows ElasticSearch access for Neptune Lambda Poller"
+      Description: "Allows OpenSearch access for Neptune Lambda Poller"
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
-          - Sid: "elasticsearchaccess"
+          - Sid: "opensearchaccess"
             Effect: Allow
             Action:
               - 'es:ESHttpDelete'
@@ -466,7 +466,7 @@ Resources:
 
 Outputs:
   OpenSearchDomainEndpoint:
-    Description: HTTPS endpoint URL for ElasticSearch cluster
+    Description: HTTPS endpoint URL for OpenSearch cluster
     Value: !Sub 'https://${OpenSearchDomain.DomainEndpoint}'
     Export: 
       Name: !Sub "cdf-assetlibrary-enhancedsearch-${Environment}-OpenSearchDomainEndpoint"

@@ -112,15 +112,24 @@
             "Sid": "OpenSearchServiceLinkedRoleCreate",
             "Action": "iam:CreateServiceLinkedRole",
             "Effect": "Allow",
-            "Resource": "arn:aws:iam::*:role/aws-service-role/es.amazonaws.com/AWSServiceRoleForAmazonElasticsearchService",
+            "Resource": "arn:aws:iam::*:role/aws-service-role/es.amazonaws.com/AWSServiceRoleForAmazonOpenSearchService",
             "Condition": {
                 "StringLike": {
-                    "iam:AWSServiceName":"es.amazonaws.com"
+                    "iam:AWSServiceName": [
+                        "opensearchservice.amazonaws.com",
+                        "es.amazonaws.com"
+                    ]
                 }
             }
         },
         {
             "Sid": "OpenSearchServiceLinkedRoleGet",
+            "Action": "iam:GetRole",
+            "Effect": "Allow",
+            "Resource": "arn:aws:iam::*:role/aws-service-role/es.amazonaws.com/AWSServiceRoleForAmazonOpenSearchService"
+        },
+        {
+            "Sid": "OpenSearchLegacyServiceLinkedRoleGet",
             "Action": "iam:GetRole",
             "Effect": "Allow",
             "Resource": "arn:aws:iam::*:role/aws-service-role/es.amazonaws.com/AWSServiceRoleForAmazonElasticsearchService"
