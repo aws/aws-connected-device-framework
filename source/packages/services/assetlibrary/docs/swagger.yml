@@ -1535,8 +1535,8 @@ paths:
             `fulltext=widgets` matches "Widgets Incorporated". If the filter query contains more than one
             word, they are combined using logical `or``, for example `fulltext=Widgets Gadgets Incorporated`
             matches "Widgets Incorporated" and "Gadgets Incorporated" and "Gadgets Ltd". Field and search
-            strings are split into words using the rules of the ElasticSearch standard query analyzer:
-            https://www.elastic.co/guide/en/elasticsearch/reference/current/analysis-standard-analyzer.html
+            strings are split into words using the rules of the OpenSearch standard query analyzer:
+            https://opensearch.org/docs/latest/opensearch/query-dsl/full-text/
 
             Append the `~` character to any word to allow for fuzzy matches. Specify the edit distance
             allowed by fuzzy match in the format `~n`, for example `Masachussets~3` matches "Massachusetts".
