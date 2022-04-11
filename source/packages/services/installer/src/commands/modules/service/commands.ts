@@ -65,24 +65,9 @@ export class CommandsInstaller implements RestModule {
         },
         ...applicationConfigurationPrompt(this.name, answers, [
           {
-            question: 'MQTT topic for presignedurl generation',
-            defaultConfiguration: 'cdf/commands/presignedurl/{commandId}/{thingName}/{direction}',
-            propertyName: 'presignedUrlTopic'
-          },
-          {
             question: 'S3 key prefix where commands artifacs are stored',
             defaultConfiguration: 'commands/',
             propertyName: 'commandArtifactsPrefix'
-          },
-          {
-            question: 'Max number of targerts for a job',
-            defaultConfiguration: 100,
-            propertyName: 'maxTargetsForJob'
-          },
-          {
-            question: 'Provisioning template to add a thing to a thing group',
-            defaultConfiguration: 'add_thing_to_group',
-            propertyName: 'addThingToGroupTemplate'
           }
         ]),
         ...customDomainPrompt(this.name, answers)

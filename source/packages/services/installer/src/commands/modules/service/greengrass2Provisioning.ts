@@ -67,29 +67,7 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
         },
         enableAutoScaling(this.name, answers),
         provisionedConcurrentExecutions(this.name, answers),
-        ...applicationConfigurationPrompt(this.name, answers, [
-          {
-            defaultConfiguration: 10,
-            propertyName: "promisesConcurrency",
-            question: 'The number of concurrent dynamodb operations'
-          },
-          {
-            defaultConfiguration: 20,
-            propertyName: "corezBatchSize",
-            question: 'Batch size for processing core tasks'
-          },
-          {
-            defaultConfiguration: 20,
-            propertyName: "devicesBatchSize",
-            question: 'Batch size for processing device tasks'
-          },
-          {
-            defaultConfiguration: 50,
-            propertyName: "deploymentsBatchSize",
-            question: 'Batch size for processing deployment tasks'
-          },
-
-        ]),
+        ...applicationConfigurationPrompt(this.name, answers, []),
         ...customDomainPrompt(this.name, answers),
       ], updatedAnswers);
     }

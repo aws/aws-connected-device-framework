@@ -62,23 +62,7 @@ export class CommandAndControlInstaller implements RestModule {
           default: updatedAnswers.commandAndControl?.useAssetLibrary,
           askAnswered: true
         },
-        ...applicationConfigurationPrompt(this.name, answers, [
-          {
-            question: 'Provisioning template to add a thing to a thing group',
-            defaultConfiguration: 'add_thing_to_group',
-            propertyName: 'addThingToGroupTemplate'
-          },
-          {
-            question: 'Topic for Command and Control',
-            defaultConfiguration: 'cmd/cdf/cac/${thingName}',
-            propertyName: 'deliveryMethodTopic'
-          },
-          {
-            question: 'Shadow name for Command and Control Service',
-            defaultConfiguration: 'cac',
-            propertyName: 'awsIotShadowName'
-          },
-        ]),
+        ...applicationConfigurationPrompt(this.name, answers, []),
         ...customDomainPrompt(this.name, answers)
       ], updatedAnswers);
     }
