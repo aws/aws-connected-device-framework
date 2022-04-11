@@ -12,6 +12,8 @@
  *********************************************************************************************************************/
 import { RDSClient, DescribeOrderableDBInstanceOptionsCommand } from '@aws-sdk/client-rds';
 
+import { PricingClient, GetProductsCommand } from '@aws-sdk/client-pricing';
+
 async function fetchNeptuneInstancetypes(
   region: string,
   neptuneEngineVersion: string
@@ -53,6 +55,77 @@ export function compareNeptuneInstancetypeNames(p1: string, p2: string): number 
   const p2tshirtNo = tshirtStrToNumber(p2tshirt);
   return p1tshirtNo - p2tshirtNo;
 }
+
+
+export type DaxInstanceType = {
+  product: {
+    productFamily: string;
+    attributes: {
+      memory: string;
+      vcpu: string;
+      instanceType: string;
+      usagetype: string;
+      locationType: string;
+      instanceFamily: string;
+      regionCode: string;
+      servicecode: string;
+      currentGeneration: string;
+      networkPerformance: string;
+      location: string;
+      servicename: string;
+      operation: string;
+    };
+    sku: string;
+  };
+  serviceCode: string;
+  version: string;
+  publicationDate: Date;
+}
+
+export async function getDaxInstanceTypeList(region: string): Promise<string[]> {
+  try {
+    // Pricing Client API endpoint only availble in 2 regions
+    // https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/using-pelong.html
+    const client = new PricingClient({ region: 'us-east-1' })
+
+    let moreResultsToPage = true
+    let getProductResponse, nextToken, getProductRequest;
+
+    const priceList: string[] = []
+
+    while (moreResultsToPage) {
+      getProductRequest = {
+        ServiceCode: 'AmazonDAX',
+        Filters: [
+          { Type: 'TERM_MATCH', Field: 'regionCode', Value: region },
+          { Type: 'TERM_MATCH', Field: 'productFamily', Value: 'DAX' }
+        ],
+        NextToken: nextToken
+      }
+      getProductResponse = await client.send(new GetProductsCommand(getProductRequest))
+      priceList.push(...getProductResponse.PriceList as string[])
+      nextToken = getProductResponse.NextToken
+      moreResultsToPage = nextToken !== undefined
+    }
+
+    const filteredList = priceList
+      .map(o => JSON.parse(o as string) as DaxInstanceType)
+      // Instance type does not have the dax prefix
+      // Usage type looks like this 
+      // EUW3-NodeUsage:dax.t3.small
+      .map(o => o.product.attributes.usagetype.split(':')[1])
+      .sort()
+
+    return filteredList
+
+  } catch (err) {
+    console.warn(
+      `Error while trying to fetch list of available DAX instance types from Pricing API. Will proceed without list. Error was: ${err}`
+    );
+    return [];
+  }
+}
+
 
 export async function getNeptuneInstancetypeList(
   region: string,

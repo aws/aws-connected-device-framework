@@ -21,7 +21,9 @@ import { customDomainPrompt } from '../../../prompts/domain.prompt';
 import ow from 'ow';
 import { deleteStack, getStackOutputs, getStackResourceSummaries, packageAndDeployStack } from '../../../utils/cloudformation.util';
 import { includeOptionalModule } from '../../../utils/modules.util';
+import { getDaxInstanceTypeList } from '../../../utils/instancetypes';
 
+const DEFAULT_DAX_INSTANCE_TYPE = 'dax.t2.medium';
 export class NotificationsInstaller implements RestModule {
 
   public readonly friendlyName = 'Notifications';
@@ -51,6 +53,10 @@ export class NotificationsInstaller implements RestModule {
     ], answers);
     if ((updatedAnswers.notifications?.redeploy ?? true)) {
 
+      const daxInstanceTypes = await getDaxInstanceTypeList(
+        answers.region,
+      );
+
       updatedAnswers = await inquirer.prompt([
         {
           message: 'Use DAX for DynamoDB caching',
@@ -60,17 +66,25 @@ export class NotificationsInstaller implements RestModule {
           askAnswered: true
         },
         {
-          message: `Select the DAX database instance type:`,
-          type: 'input',
+          message: `${(daxInstanceTypes.length > 0) ? "Select" : "Enter"} the DAX database instance type:`,
+          type: (daxInstanceTypes.length > 0) ? 'list' : 'input',
+          choices: daxInstanceTypes,
           name: 'notifications.daxInstanceType',
-          default: answers.notifications?.daxInstanceType ?? 'dax.t2.medium',
+          default: (
+            answers.notifications?.daxInstanceType ??
+              (daxInstanceTypes.indexOf(DEFAULT_DAX_INSTANCE_TYPE) >= 0)
+              ? DEFAULT_DAX_INSTANCE_TYPE
+              : undefined
+          ),
           askAnswered: true,
+          loop: false,
+          pageSize: 10,
           when(answers: Answers) {
             return answers.notifications?.useDax === true;
           },
           validate(answer: string) {
-            if (answer?.length === 0) {
-              return 'You must enter the DAX Instance Type.';
+            if (daxInstanceTypes.length > 0 && !daxInstanceTypes.includes(answer)) {
+              return `DAX Instance Type must be one of: ${daxInstanceTypes.join(', ')}`;
             }
             return true;
           }
