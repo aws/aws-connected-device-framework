@@ -83,16 +83,7 @@ export class OpenSslInstaller implements InfrastructureModule {
 
     if (answers.openSsl.deploy) {
       tasks.push({
-        title: 'Building OpenSSL',
-        task: async () => {
-          await execa('infrastructure/build.bash', ['--region', answers.region], {
-            cwd: path.join(monorepoRoot, 'source', 'infrastructure', 'lambdaLayers', 'openssl')
-          });
-        }
-      });
-
-      tasks.push({
-        title: `Packaging and deploying stack '${this.stackName}'`,
+        title: `Packaging stack '${this.stackName}'`,
         task: async () => {
           await packageAndDeployStack({
             answers: answers,
