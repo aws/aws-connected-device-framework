@@ -1,6 +1,13 @@
 # Change Log - @cdf/installer
 
-This log was last generated on Fri, 08 Apr 2022 07:03:46 GMT and should not be manually modified.
+This log was last generated on Wed, 13 Apr 2022 15:53:28 GMT and should not be manually modified.
+
+## 0.2.2
+Wed, 13 Apr 2022 15:53:28 GMT
+
+### Patches
+
+- fix installer flow when specifying existing KMS key by ID
 
 ## 0.2.1
 Fri, 08 Apr 2022 07:03:46 GMT

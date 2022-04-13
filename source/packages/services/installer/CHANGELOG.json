@@ -2,6 +2,18 @@
   "name": "@cdf/installer",
   "entries": [
     {
+      "version": "0.2.2",
+      "tag": "@cdf/installer_v0.2.2",
+      "date": "Wed, 13 Apr 2022 15:53:28 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix installer flow when specifying existing KMS key by ID"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.2.1",
       "tag": "@cdf/installer_v0.2.1",
       "date": "Fri, 08 Apr 2022 07:03:46 GMT",
