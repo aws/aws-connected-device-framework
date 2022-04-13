@@ -82,7 +82,7 @@ export class BulkCertificatesInstaller implements RestModule {
         },
       },
       {
-        message: `Enter new supplier alias":`,
+        message: `Enter new supplier alias:`,
         type: 'input',
         name: 'bulkCerts.caAlias',
         default: answers.bulkCerts?.caAlias,
