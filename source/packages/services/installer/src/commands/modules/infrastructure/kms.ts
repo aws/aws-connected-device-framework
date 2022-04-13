@@ -98,7 +98,7 @@ export class KmsKeyInstaller implements InfrastructureModule {
     ], answers);
 
     // remove "alias/" prefix if entered
-    if (answers.kms.alias.startsWith("alias/")) {
+    if (answers.kms.alias?.startsWith("alias/")) {
       answers.kms.alias = answers.kms.alias.substring(6);
     }
 

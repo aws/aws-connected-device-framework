@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/installer",
+      "comment": "fix installer flow when specifying existing KMS key by ID",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/installer",
+  "email": "jonasneu@amazon.com"
+}
