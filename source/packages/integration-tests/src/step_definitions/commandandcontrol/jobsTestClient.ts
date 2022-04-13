@@ -58,7 +58,7 @@ export class JobsTestClient {
             }
         });
 
-        this.jobsClient.publishDescribeJobExecution({
+        await this.jobsClient.publishDescribeJobExecution({
           thingName: this.thingName,
           jobId: "$next"
         }, mqtt.QoS.AtLeastOnce);
