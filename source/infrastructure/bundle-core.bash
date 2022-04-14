@@ -63,7 +63,7 @@ if [ -z "$BYPASS_CDF_DOCKER_BUILD" ]; then
     done
 fi
 
-rush update                     # as temp files deleted, need to refresh dependencies
+rush install                    # as temp files deleted, need to refresh dependencies
 rush build                      # compile
 
 # create the deployment packages
