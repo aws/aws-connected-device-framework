@@ -30,10 +30,16 @@ export class TemplatesLambdaService extends TemplatesServiceBase implements Temp
         this.functionName = process.env.DEVICE_PATCHER_API_FUNCTION_NAME;
     }
 
-    async createTemplate(_template: CreateDeploymentTemplateParams, _additionalHeaders?:RequestHeaders) : Promise<DeploymentTemplate> {
+    async createTemplate(_template: CreateDeploymentTemplateParams, _additionalHeaders?:RequestHeaders) : Promise<void> {
         // files cannot be passed via multipart/form-data with the direct lambda invocation.
         // This requires extension of the API to support the content-type=json header with file content passed as a buffer
-        throw('Not implemented');
+        throw('NOT_IMPLEMENTED');
+    }
+
+    async updateTemplate(_template: CreateDeploymentTemplateParams, _additionalHeaders?:RequestHeaders) : Promise<void> {
+        // files cannot be passed via multipart/form-data with the direct lambda invocation.
+        // This requires extension of the API to support the content-type=json header with file content passed as a buffer
+        throw('NOT_IMPLEMENTED');
     }
 
     async getTemplate(name: string, additionalHeaders?:RequestHeaders) : Promise<DeploymentTemplate> {

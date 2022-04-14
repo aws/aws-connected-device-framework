@@ -22,7 +22,8 @@ import {
     request,
     requestParam,
     httpGet,
-    httpPut,
+    httpPatch,
+    httpPost,
     httpDelete,
     queryParam
 } from 'inversify-express-utils';
@@ -48,34 +49,74 @@ export class DeploymentTemplateController implements interfaces.Controller {
         @inject(TYPES.DeploymentTemplateAssembler) private deploymentTemplateAssembler: DeploymentTemplateAssembler,
     ) {}
 
-    @httpPut('/:name', upload.single('playbookFile'))
-    public async saveTemplate(
+    @httpPost('', upload.single('playbookFile'))
+    public async createTemplate(
         @response() res: Response,
-        @requestParam('name') name: string,
         @request() req: Request,
     ): Promise<void> {
-        logger.info(`DeploymentTemplate.controller saveTemplate: in: item:`);
+        logger.info(`DeploymentTemplate.controller createTemplate: in: item:`);
 
         try {
+            ow(req, ow.object.nonEmpty);
             ow(req.file, ow.object.hasKeys('buffer'));
-            ow(req.body.playbookName, ow.string.nonEmpty);
-            ow(req.body.deploymentType, ow.string.nonEmpty);
+            ow(req.body, ow.object.nonEmpty);
 
             const template: DeploymentTemplateItem = req.body;
-            template.name = name;
+
+            ow(template.name, ow.string.nonEmpty);
+            ow(template.deploymentType, ow.string.nonEmpty);
+
             template.playbookFile = req.file.buffer;
+            template.playbookName = req.file.originalname;
 
-            if(req.body.extraVars) {
-                template.extraVars = JSON.parse(req.body.extraVars);
+            if(template.extraVars) {
+                if(typeof template.extraVars === 'string') {
+                    throw new Error("BAD_REQUEST")
+                }
             }
-
-            await this.deploymentTemplatesService.save(template);
+            await this.deploymentTemplatesService.create(template);
         } catch (err) {
             logger.error(`DeploymentTemplate.controller : err: ${err}`);
             handleError(err, res);
         }
 
-        logger.debug(`DeploymentTemplate.controller saveTemplate: exit:`);
+        logger.debug(`DeploymentTemplate.controller createTemplate: exit:`);
+    }
+
+    @httpPatch('/:name', upload.single('playbookFile'))
+    public async updateTemplate(
+        @response() res: Response,
+        @requestParam('name') name: string,
+        @request() req: Request,
+    ): Promise<void> {
+        logger.info(`DeploymentTemplate.controller updateTemplate: in: item:`);
+
+        try {
+            ow(req, ow.object.nonEmpty);
+            ow(req.body, ow.object.nonEmpty);
+            ow(name, ow.string.nonEmpty);
+
+            const template: DeploymentTemplateItem = req.body;
+            template.name = name;
+
+            if (req.file) {
+                template.playbookFile = req.file.buffer;
+                template.playbookName = req.file.originalname;
+            }
+
+            if(template.extraVars) {
+                if(typeof template.extraVars === 'string') {
+                    throw new Error("BAD_REQUEST")
+                }
+            }
+
+            await this.deploymentTemplatesService.update(template);
+        } catch (err) {
+            logger.error(`DeploymentTemplate.controller : err: ${err}`);
+            handleError(err, res);
+        }
+
+        logger.debug(`DeploymentTemplate.controller updateTemplate: exit:`);
     }
 
     @httpGet('/:name')

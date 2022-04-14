@@ -52,7 +52,6 @@ async function createIntegrationTestDeploymentTemplate(world:unknown, name:strin
         const integration_test_playbook_path = resolve(`${__dirname}/../../../src/testResources/integration-test-playbook.yaml`);
         const template:CreateDeploymentTemplateParams = {
             name,
-            playbookName: 'integration-test-playbook.yaml',
             playbookFileLocation: integration_test_playbook_path,
             description: 'Integration Test Template Ansible playbook',
             deploymentType: DeploymentType.AGENTBASED,
@@ -72,7 +71,6 @@ async function createGGV2CoreDeploymentTemplate(world:unknown, name:string) {
         const integration_test_playbook_path = resolve(`${__dirname}/../../../src/testResources/ggv2-ec2-amazonlinux2-installer-playbook.yml`);
         const template:CreateDeploymentTemplateParams = {
             name,
-            playbookName: 'ggv2-ec2-amazonlinux2-installer-playbook.yml',
             playbookFileLocation: integration_test_playbook_path,
             description: 'GGV2 EC2 Amazon Linux 2 Installer Template',
             deploymentType: DeploymentType.AGENTBASED

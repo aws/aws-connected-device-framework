@@ -29,7 +29,7 @@ export class DeploymentTemplatesService {
         @inject('aws.s3.prefix') private s3Prefix: string
     ) {}
 
-    public async save(template: DeploymentTemplateItem): Promise<void> {
+    public async create(template: DeploymentTemplateItem): Promise<void> {
         logger.debug(`templates.service save: in: item: ${JSON.stringify(template)}`);
 
         ow(template, 'Template Information', ow.object.nonEmpty);
@@ -37,6 +37,17 @@ export class DeploymentTemplatesService {
         ow(template.deploymentType, ow.string.nonEmpty);
         ow(template.playbookName, ow.string.nonEmpty);
         ow(template.playbookFile, ow.object.hasKeys('buffer'));
+
+        const existingTemplate = await this.deploymentTemplatesDao.get(template.name);
+
+        if (existingTemplate) {
+            throw new Error("CONFLICT");
+        }
+
+        template.versionNo = 1;
+        template.createdAt = new Date();
+        template.updatedAt = template.createdAt;
+        template.enabled = template.enabled ?? true;
 
         const uploadPath = `${this.s3Prefix}playbooks/${template.name}___${template.playbookName}`;
         await this.s3Utils.uploadFile(this.s3Bucket, uploadPath, template.playbookFile);
@@ -46,21 +57,47 @@ export class DeploymentTemplatesService {
             key: uploadPath
         };
 
+        await this.deploymentTemplatesDao.save(template);
+
+    }
+
+    public async update(template: DeploymentTemplateItem): Promise<void> {
+        logger.debug(`templates.service update: in: item: ${JSON.stringify(template)}`);
+
+        ow(template, 'Template Information', ow.object.nonEmpty);
+        ow(template.name, ow.string.nonEmpty);
+
         const existingTemplate = await this.deploymentTemplatesDao.get(template.name);
 
-        // set remaining data
-        const now = new Date();
-        template.updatedAt = now;
-        if (existingTemplate) {
-            template.versionNo = existingTemplate.versionNo+1;
-            template.createdAt = existingTemplate.createdAt;
-            template.enabled = existingTemplate.enabled ?? existingTemplate.enabled;
+        if (!existingTemplate) {
+            throw new Error("NOT_FOUND");
+        }
 
-        } else {
-            template.versionNo = 1;
-            template.createdAt = now;
-            template.updatedAt = template.createdAt;
-            template.enabled = template.enabled ?? true;
+        template.updatedAt = new Date();
+        template.versionNo = existingTemplate.versionNo+1;
+        template.createdAt = existingTemplate.createdAt;
+        template.enabled = existingTemplate.enabled ?? existingTemplate.enabled;
+
+        if (template.extraVars){
+            template.extraVars = {
+                ...existingTemplate.extraVars,
+                ...template.extraVars
+            };
+        }
+
+        template = {
+            ...existingTemplate,
+            ...template
+        };
+
+        if(template.playbookFile) {
+            const uploadPath = `${this.s3Prefix}playbooks/${template.name}___${template.playbookName}`;
+            await this.s3Utils.uploadFile(this.s3Bucket, uploadPath, template.playbookFile);
+
+            template.playbookSource = {
+                bucket: this.s3Bucket,
+                key: uploadPath
+            };
         }
 
         await this.deploymentTemplatesDao.save(template);

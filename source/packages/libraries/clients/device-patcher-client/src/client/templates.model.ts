@@ -23,11 +23,19 @@ export enum DeploymentType {
 export interface CreateDeploymentTemplateParams {
 	description?: string;
 	enabled?: boolean;
-	extraVars?: { [key: string]: string} | string;
+	extraVars?: { [key: string]: string};
 	name: string;
-	playbookName: string;
 	playbookFileLocation: string;
 	deploymentType: DeploymentType;
+}
+
+export interface UpdateDeploymentTemplateParams {
+	description?: string;
+	enabled?: boolean;
+	extraVars?: { [key: string]: string};
+	name: string;
+	playbookFileLocation?: string;
+	deploymentType?: DeploymentType;
 }
 
 export class DeploymentTemplate {

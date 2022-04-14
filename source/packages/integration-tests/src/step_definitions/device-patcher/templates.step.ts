@@ -17,7 +17,7 @@ import { expect, use } from 'chai';
 import { fail } from 'assert';
 import { resolve } from 'path';
 
-import {DEVICE_PATCHER_CLIENT_TYPES, TemplatesService, CreateDeploymentTemplateParams} from '@cdf/device-patcher-client';
+import {DEVICE_PATCHER_CLIENT_TYPES, TemplatesService, CreateDeploymentTemplateParams, UpdateDeploymentTemplateParams} from '@cdf/device-patcher-client';
 
 import {container} from '../../di/inversify.config';
 import {replaceTokens, RESPONSE_STATUS, validateExpectedAttributes} from '../common/common.steps';
@@ -79,17 +79,16 @@ When('I delete the device-patch-deployment template {string}', async function (t
     }
 });
 
-// When('I update device-patch-deployment template {string} with attributes', async function (name:string, data:DataTable) {
-//     try {
-//         const existing = await templatesService.getTemplate(name, getAdditionalHeaders(world.authToken));
-//         const updated:UpdateDeploymentTemplateParams = buildTemplateModel(data);
-//         const merged = Object.assign({}, existing, updated);
-//         await templatesService.createTemplate(merged, getAdditionalHeaders(world.authToken));
-//     } catch (err) {
-//         this[RESPONSE_STATUS]=err.status;
-//         fail(`saveTemplate failed, err: ${JSON.stringify(err)}`);
-//     }
-// });
+When('I update device-patch-deployment template {string} with attributes', async function (name:string, data:DataTable) {
+    try {
+        const params:UpdateDeploymentTemplateParams = buildTemplateModel(data);
+        params.name = name;
+        await templatesService.updateTemplate(params, getAdditionalHeaders(world.authToken));
+    } catch (err) {
+        this[RESPONSE_STATUS]=err.status;
+        fail(`saveTemplate failed, err: ${JSON.stringify(err)}`);
+    }
+});
 
 Then('device-patch-deployment template {string} exists with attributes', async function (name:string, data:DataTable) {
     let template;

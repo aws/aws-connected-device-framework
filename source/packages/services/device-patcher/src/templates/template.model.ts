@@ -24,7 +24,7 @@ export class DeploymentTemplateItem {
     createdAt?: Date;
     description?: string;
     enabled?: boolean;
-    extraVars?: { [key: string]: string}
+    extraVars?: { [key: string]: string };
     name?: string;
     options?: string[];
     playbookName?: string;
@@ -39,7 +39,7 @@ export class DeploymentTemplateResource {
     createdAt?: Date;
     description?: string;
     enabled?: boolean;
-    extraVars?: { [key: string]: string}
+    extraVars?: { [key: string]: string };
     name?: string;
     options?: string[];
     playbookName?: string;

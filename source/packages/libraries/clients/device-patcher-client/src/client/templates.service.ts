@@ -2,11 +2,13 @@ import {PathHelper} from '../utils/path.helper';
 import {ClientServiceBase} from './common.service';
 import {injectable} from 'inversify';
 import { RequestHeaders } from './common.model';
-import { CreateDeploymentTemplateParams, DeploymentTemplate, DeploymentTemplateList } from './templates.model';
+import { CreateDeploymentTemplateParams, UpdateDeploymentTemplateParams, DeploymentTemplate, DeploymentTemplateList } from './templates.model';
 
 export interface TemplatesService {
 
-    createTemplate(template: CreateDeploymentTemplateParams, additionalHeaders?:RequestHeaders) : Promise<DeploymentTemplate>;
+    createTemplate(template: CreateDeploymentTemplateParams, additionalHeaders?:RequestHeaders) : Promise<void>;
+
+    updateTemplate(template: UpdateDeploymentTemplateParams, additionalHeaders?:RequestHeaders) : Promise<void>;
 
     getTemplate(name: string, additionalHeaders?:RequestHeaders) : Promise<DeploymentTemplate>;
 
