@@ -1,6 +1,13 @@
 # Change Log - @cdf/installer
 
-This log was last generated on Wed, 13 Apr 2022 15:53:28 GMT and should not be manually modified.
+This log was last generated on Thu, 14 Apr 2022 04:49:09 GMT and should not be manually modified.
+
+## 0.2.3
+Thu, 14 Apr 2022 04:49:09 GMT
+
+### Patches
+
+- docs: remove duplication of calling rush install followed by rush bundle
 
 ## 0.2.2
 Wed, 13 Apr 2022 15:53:28 GMT
