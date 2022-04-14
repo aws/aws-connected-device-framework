@@ -46,9 +46,9 @@ export class S3Utils {
 
         try {
             await this.s3.upload({ Bucket: bucket, Key:key, Body: file }).promise();
-            logger.debug('commands.service uploadFile: exit:');
+            logger.debug('s3.Util.service uploadFile: exit:');
         } catch (err) {
-            logger.error(`commands.service uploadFile: err:${err}`);
+            logger.error(`s3.Util.service uploadFile: err:${err}`);
             throw new Error('FAILED_UPLOAD');
         }
 
