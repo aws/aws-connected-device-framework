@@ -19,4 +19,4 @@ echo integrationtestsproject_prebuild started on `date`
 cd source
 
 echo Installing...
-rush update --purge
+rush install --purge
