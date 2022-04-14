@@ -17,7 +17,7 @@ import ow from 'ow';
 import * as request from 'superagent';
 
 import { RequestHeaders } from './common.model';
-import { DeploymentTemplate, DeploymentTemplateList } from './templates.model';
+import { CreateDeploymentTemplateParams, DeploymentTemplate, DeploymentTemplateList } from './templates.model';
 import { TemplatesService, TemplatesServiceBase } from './templates.service';
 
 @injectable()
@@ -30,14 +30,23 @@ export class TemplatesApigwService extends TemplatesServiceBase implements Templ
         this.baseUrl = process.env.DEVICE_PATCHER_BASE_URL;
     }
 
-    async saveTemplate(template: DeploymentTemplate, additionalHeaders?:RequestHeaders) : Promise<DeploymentTemplate> {
+    async createTemplate(template: CreateDeploymentTemplateParams, additionalHeaders?:RequestHeaders) : Promise<DeploymentTemplate> {
         ow(template, ow.object.nonEmpty);
         ow(template.name, ow.string.nonEmpty);
+        ow(template.playbookFileLocation, ow.string.nonEmpty);
+        ow(template.playbookName, ow.string.nonEmpty);
+
+        if (template.extraVars) {
+            template.extraVars = JSON.stringify(template.extraVars);
+        }
+
         const url = `${this.baseUrl}${super.templateRelativeUrl(template.name)}`;
 
         const res = await request.put(url)
-            .send(template)
-            .set(this.buildHeaders(additionalHeaders));
+            .set(this.buildHeaders(additionalHeaders))
+            .field(template)
+            .attach('playbookFile', template.playbookFileLocation)
+
         return res.body;
 
     }

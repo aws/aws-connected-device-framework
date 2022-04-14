@@ -119,12 +119,12 @@ export class AgentbasedDeploymentService {
                     SourceType: ['S3'],
                     SourceInfo: [playbook],
                     ExtraVariables: this.convertExtraVarsToString(extraVars),
-                    PlaybookFile: [template.playbookName]
+                    PlaybookFile: [`${template.name}___${template.playbookName}`]
                 },
                 OutputLocation: {
                     'S3Location': {
                         'OutputS3BucketName': this.artifactsBucket,
-                        'OutputS3KeyPrefix': `${this.artifactsBucketPrefix}/logs/`
+                        'OutputS3KeyPrefix': `${this.artifactsBucketPrefix}logs/`
                     }
                 },
                 ComplianceSeverity: 'UNSPECIFIED',
@@ -229,12 +229,12 @@ export class AgentbasedDeploymentService {
                     SourceType: ['S3'],
                     SourceInfo: [playbook],
                     ExtraVariables: this.convertExtraVarsToString(extraVars),
-                    PlaybookFile: [template.playbookName]
+                    PlaybookFile: [`${template.name}___${template.playbookName}`]
                 },
                 OutputLocation: {
                     'S3Location': {
                         'OutputS3BucketName': this.artifactsBucket,
-                        'OutputS3KeyPrefix': `${this.artifactsBucketPrefix}/logs/`
+                        'OutputS3KeyPrefix': `${this.artifactsBucketPrefix}logs/`
                     }
                 }
             };
@@ -329,7 +329,7 @@ export class AgentbasedDeploymentService {
         ow(source.key, 'key', ow.string.nonEmpty);
 
         const associationS3Param = {
-            path: `https://s3.amazon.com/${source.bucket}/${source.key}`,
+            path: `https://s3.amazonaws.com/${source.bucket}/${source.key}`,
         };
 
         logger.debug(`gentbasedDeployment.service getS3Path: exit: out: path : ${associationS3Param}`);

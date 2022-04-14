@@ -45,7 +45,7 @@ Accept: application/vnd.aws-cdf-v1.0+json
     "source": {
         "type": "s3",
         "bucket": "cdf-xxxxxxxxxxxx-us-east-1",
-        "prefix": "device-patcher/playbooks/ggv2-ec2-amazonlinux2-installer.yml"
+        "prefix": "device-patcher/playbooks/ggv2-ec2-amazonlinux2-installer-playbook.yml"
     },
     "type": "agentbased",
     "versionNo": 1,

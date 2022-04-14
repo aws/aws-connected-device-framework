@@ -65,6 +65,10 @@ export class DeploymentTemplateController implements interfaces.Controller {
             template.name = name;
             template.playbookFile = req.file.buffer;
 
+            if(req.body.extraVars) {
+                template.extraVars = JSON.parse(req.body.extraVars);
+            }
+
             await this.deploymentTemplatesService.save(template);
         } catch (err) {
             logger.error(`DeploymentTemplate.controller : err: ${err}`);

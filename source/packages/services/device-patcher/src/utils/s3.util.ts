@@ -54,4 +54,15 @@ export class S3Utils {
 
     }
 
+    public async deleteObject(bucket:string, key:string): Promise<void> {
+        logger.debug(`s3.util: deleteObject: in: bucket:${bucket}, key:${key}`);
+        try {
+            await this.s3.deleteObject({ Bucket: bucket, Key: key }).promise();
+            logger.debug('s3.util: deleteObject: exit:');
+        } catch (err) {
+            logger.error(`s3.util: deleteObject: err:${err}`);
+            throw new Error('FAILED_DELETE');
+        }
+    }
+
 }

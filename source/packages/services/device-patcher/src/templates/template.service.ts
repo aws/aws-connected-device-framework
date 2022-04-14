@@ -38,7 +38,7 @@ export class DeploymentTemplatesService {
         ow(template.playbookName, ow.string.nonEmpty);
         ow(template.playbookFile, ow.object.hasKeys('buffer'));
 
-        const uploadPath = `${this.s3Prefix}playbooks/${template.playbookName}`;
+        const uploadPath = `${this.s3Prefix}playbooks/${template.name}___${template.playbookName}`;
         await this.s3Utils.uploadFile(this.s3Bucket, uploadPath, template.playbookFile);
 
         template.playbookSource = {
@@ -101,7 +101,13 @@ export class DeploymentTemplatesService {
 
         ow(name, ow.string.nonEmpty);
 
-        await this.deploymentTemplatesDao.delete(name);
+        const template = await this.get(name);
+
+        if(template){
+            await this.deploymentTemplatesDao.delete(name);
+            await this.s3Utils.deleteObject(template.playbookSource.bucket, template.playbookSource.key);
+        }
+
 
         logger.debug(`templates.service get: delete:`);
     }

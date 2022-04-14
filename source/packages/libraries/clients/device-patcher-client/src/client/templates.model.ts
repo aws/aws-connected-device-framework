@@ -11,13 +11,8 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 export interface DeploymentSource {
-	type: DeploymentSourceType;
 	bucket: string;
-	prefix: string;
-}
-
-export enum DeploymentSourceType {
-	S3='s3',
+	key: string;
 }
 
 export enum DeploymentType {
@@ -25,13 +20,28 @@ export enum DeploymentType {
 	AGENTBASED='agentbased',
 }
 
+export interface CreateDeploymentTemplateParams {
+	description?: string;
+	enabled?: boolean;
+	extraVars?: { [key: string]: string} | string;
+	name: string;
+	playbookName: string;
+	playbookFileLocation: string;
+	deploymentType: DeploymentType;
+}
+
 export class DeploymentTemplate {
-	description: string;
+	description?: string;
 	enabled?: boolean;
 	extraVars?: { [key: string]: string}
 	name: string;
-	playbookSource: DeploymentSource;
+	playbookName: string;
+	playbookSource?: DeploymentSource;
+	playbookFileLocation?: string;
 	deploymentType: DeploymentType;
+	updatedAt: Date;
+	createdAt: Date;
+	versionNo: number;
 }
 
 export class DeploymentTemplateList {

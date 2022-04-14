@@ -205,6 +205,46 @@ Then('last deployment for device exists with following attributes', async functi
     validateExpectedAttributes(deploymentTask, data);
 })
 
+Then('deployment for {string} exists with following attributes', async function (deviceId: string, data: DataTable) {
+    let deployment
+    try {
+        deployment = await deploymentService.listDeploymentsByDeviceId(deviceId, undefined, getAdditionalHeaders(world.authToken));
+    } catch (err) {
+        this[RESPONSE_STATUS] = err.status;
+        fail(`listDeploymentsByDeviceId failed, err: ${JSON.stringify(err)}`);
+    }
+
+    validateExpectedAttributes(deployment, data);
+})
+
+Then('I create a patch deployment Task for {string} edge device using {string} template', async function (deviceId: string, template: string ) {
+
+    const artifacts_certs_bucket = this['core']?.artifacts?.certs?.bucket;
+    const artifacts_certs_key = this['core']?.artifacts?.certs?.key;
+    const artifacts_config_bucket = this['core']?.artifacts?.config?.bucket;
+    const artifacts_config_key = this['core']?.artifacts?.config?.key;
+
+    const deployment: CreateDeploymentRequest = {
+        deviceId,
+        deploymentTemplateName: template,
+        extraVars: {
+            iot_device_cred_zip_url: "${aws:s3:presign:https://" + artifacts_certs_bucket + "/" + artifacts_certs_key + "?expiresIn=604800}",
+            iot_device_config_url: "${aws:s3:presign:https://" + artifacts_config_bucket + "/" + artifacts_config_key + "?expiresIn=604800}"
+        }
+    };
+
+    const deploymentTask = {
+        deployments: [deployment]
+
+    }
+    try {
+        this['deploymentTaskId'] = await deploymentService.createDeploymentTask(deploymentTask, getAdditionalHeaders(world.authToken));
+    } catch (e) {
+        this[RESPONSE_STATUS] = e.status;
+    }
+
+})
+
 function buildDeploymentModel<T>(data: DataTable): T {
     const d = data.rowsHash();
 

@@ -217,6 +217,7 @@ Resources:
               - 's3:List*'
               - 's3:Get*'
               - 's3:Put*'
+              - 's3:Delete*'
             Effect: Allow
             Resource:
               - !Sub 'arn:aws:s3:::${ArtifactsBucket}/${ArtifactsKeyPrefix}*'

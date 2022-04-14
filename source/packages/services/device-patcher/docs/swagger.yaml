@@ -436,7 +436,7 @@ components:
         playbookSource:
           type: "s3"
           bucket: "myBucket"
-          prefix: "device-patching/ggv2-ec2-amazonlinux2-installer.yml"
+          prefix: "device-patching/ggv2-ec2-amazonlinux2-installer-playbook.yml"
         extraVars:
           commonVar1: commonVarVal1
           commonVar2: commonVarVal2
@@ -474,7 +474,7 @@ components:
             playbookSource:
               type: "s3"
               bucket: "myBucket"
-              prefix: "device-patching/ggv2-ec2-amazonlinux2-installer.yml"
+              prefix: "device-patching/ggv2-ec2-amazonlinux2-installer-playbook.yml"
             extraVars:
               commonVar1: commonVarVal1
               commonVar2: commonVarVal2
