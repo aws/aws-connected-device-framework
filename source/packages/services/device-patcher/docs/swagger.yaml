@@ -34,10 +34,30 @@ tags:
 
 paths:
   "/deploymentTemplates":
+    post:
+      tags:
+        - Deployment Templates
+      summary: Creates a new patch deployment template
+      description: >
+        Defines a new template by specifying the type of the deployment "agentless" or "agentbased" and a source of the ansible playbook.
+
+      operationId: createTemplate
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateDeploymentTemplate'
+      responses:
+        "201":
+          description: Created
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "409":
+          $ref: "#/components/responses/Conflict"
     get:
       tags:
         - Deployment Templates
-      summary: List all available templates.
+      summary: List all available patch deployment templates.
       operationId: listTemplates
       responses:
         "200":
@@ -52,30 +72,24 @@ paths:
   "/deploymentTemplates/{templateName}":
     parameters:
       - $ref: '#/components/parameters/templateName'
-    put:
+    patch:
       tags:
         - Deployment Templates
-      summary: Creates a new template or updates an exisitng template.
+      summary: Updates a patch deployment template
       description: >
         Defines a new template by specifying the type of the deployment "agentless" or "agentbased" and a source of the ansible playbook.
 
-      operationId: saveTemplate
+      operationId: updateTemplate
       requestBody:
         content:
-          application/vnd.aws-cdf-v1.0+json:
+          multipart/form-data:
             schema:
-              $ref: '#/components/schemas/DeploymentTemplate'
+              $ref: '#/components/schemas/UpdateDeploymentTemplate'
       responses:
         "201":
           description: Created
-          content:
-            application/vnd.aws-cdf-v1.0+json:
-              schema:
-                $ref: "#/components/schemas/DeploymentTemplate"
         "400":
           $ref: "#/components/responses/BadRequest"
-        "409":
-          $ref: "#/components/responses/Conflict"
 
     get:
       tags:
@@ -377,55 +391,115 @@ components:
 
   schemas:
 
-    DeploymentTemplate:
+    CreateDeploymentTemplate:
       type: object
       properties:
+        playbookFile:
+          type: string
+          format: binary
+          description: Path to the playbook file
+          example: /home/user/playbook.yml
         name:
           type: string
           description: Name of template.
         deploymentType:
           type: string
           description: type
-          enum: [agentless, agentbased]
-        deploymentSource:
-          type: object
-          properties:
-            type:
-              type: string
-              description: Type of source
-              enum: [S3]
-            bucket:
-              type: string
-              description: Bucket Name of the playbook source
-            prefix:
-              type: string
-              description: Bucket key prefix of the playbook source
-        versionNo:
-          type: number
-          description: Auto-incrementing template version number.
-          readOnly: true
-        createdAt:
-          type: string
-          format: 'date-time'
-          description: Date/time the template was created.
-          readOnly: true
-        updatedAt:
-          type: string
-          format: 'date-time'
-          description: Date/time the template was updated.
-          readOnly: true
+          enum: [ agentless, agentbased ]
         enabled:
           type: boolean
           description: Whether the template is enabled for use.
         description:
           type: string
           description: Description regarding the template
-        extraVars:
+        extraVars[<key>]:
+          type: string
+          description: Extra Variables that need to be passed down to the ansible exeucution as input external paramters
+      required:
+        - name
+        - deploymentType
+        - playbookFile
+      example:
+        name: ggv2 installer template
+        deploymentType: "agentbased"
+        playbookFile: "/usr/bin/device-patcher/ggv2-ec2-amazonlinux2-installer-playbook.yml"
+        extraVars[key1]: val1
+        extraVars[key2]: val2
+
+
+    UpdateDeploymentTemplate:
+      type: object
+      properties:
+        playbookFile:
+          type: string
+          format: binary
+          description: Path to the playbook file
+          example: /home/user/playbook.yml
+        deploymentType:
+          type: string
+          description: type
+          enum: [ agentless, agentbased ]
+        enabled:
+          type: boolean
+          description: Whether the template is enabled for use.
+        description:
+          type: string
+          description: Description regarding the template
+        extraVars[key]:
+          type: string
+          description: Extra Variables that need to be passed down to the ansible exeucution as input external paramters
+      example:
+        name: ggv2 installer template
+        extraVars[key1]: var1
+
+    DeploymentTemplate:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of template.
+        playbookName:
+          type: string
+          description: Name of the playbook.
+        playbookSource:
           type: object
+          properties:
+            key:
+              type: string
+              description: key path of where the ansible playbook file is stored in S3.
+            bucket:
+              type: string
+              description: Bucket of where the ansible playbook file is stored in S3.
+          description: Name of template.
+        deploymentType:
+          type: string
+          description: type
+          enum: [agentless, agentbased]
+        enabled:
+          type: boolean
+          description: Whether the template is enabled for use.
+        VersionNo:
+          type: number
+          description: Version of the template.
+        description:
+          type: string
+          description: Description regarding the template
+        createdAt:
+          type: string
+          format: 'date-time'
+          description: Date/time the group was created.
+          readOnly: true
+        updatedAt:
+          type: string
+          format: 'date-time'
+          description: Date/time the group was updated.
+          readOnly: true
+        extraVars[key]:
+          type: object
+          description: Extra Variables that need to be passed down to the ansible exeucution as input external paramters
           properties:
             <key>:
               type: string
-
       example:
         name: ggv2 installer template
         versionNo: 1
@@ -433,10 +507,10 @@ components:
         updatedAt: "2020-03-16T21:42:53.594Z"
         enabled: true
         deploymentType: "agentbased"
+        playbookName: "ggv2-ec2-amazonlinux2-installer-playbook.yml"
         playbookSource:
-          type: "s3"
           bucket: "myBucket"
-          prefix: "device-patching/ggv2-ec2-amazonlinux2-installer-playbook.yml"
+          key: "device-patching/ggv2-ec2-amazonlinux2-installer-playbook.yml"
         extraVars:
           commonVar1: commonVarVal1
           commonVar2: commonVarVal2

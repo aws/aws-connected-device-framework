@@ -22,37 +22,31 @@ In order to deploy a Greengrass V2 core device, the first step is to create a de
 #### REQUEST
 
 ```bash
-PUT /deploymentTemplates/<template_name> HTTP/1.1
-Content-Type: application/vnd.aws-cdf-v1.0+json
-Accept: application/vnd.aws-cdf-v1.0+json
-
-{
-    "description": "EC2 GGV2 Core installation template",
-    "type": "agentbased",
-    "source": {
-        "type": "s3",
-    	"bucket":"cdf-xxxxxxxxxxxx-us-west-2",
-    	"prefix":"device-patcher/playbooks/ggv2-ec2-amazonlinux2-installer.yml"
-    }
-}
+curl --location --request POST '<endpoint>/deploymentTemplates' \
+    --header 'Content-Type: multipart/form-data' \
+    --header 'Accept: application/vnd.aws-cdf-v1.0+json' \
+    --form 'name="sampleTemplate"' \
+    --form 'playbookFile=@"<path-to-playbook-file>"' \
+    --form 'deploymentType="agentbased"' \
+    --form 'description="Sample Patch Deployment Template"'
 ```
 
 #### RESPONSE
 
 ```json
 {
-    "name": "<template_name>",
-    "source": {
-        "type": "s3",
-        "bucket": "cdf-xxxxxxxxxxxx-us-east-1",
-        "prefix": "device-patcher/playbooks/ggv2-ec2-amazonlinux2-installer-playbook.yml"
-    },
-    "type": "agentbased",
-    "versionNo": 1,
-    "createdAt": "2020-06-04T01:42:18.804Z",
-    "updatedAt": "2020-06-04T01:42:18.804Z",
-    "enabled": true,
-    "description": "EC2 GGV2 Core installation template"
+  "name": "sampleTemplate",
+  "playbookName": "sample-playbook.yml",
+  "playbookSource": {
+    "bucket": "xxxxxxxxxxxxxx",
+    "key": "device-patcher/playbooks/sampleTemplate5___sample-playbook.yml"
+  },
+  "deploymentType": "agentbased",
+  "versionNo": 2,
+  "createdAt": "2022-04-14T20:48:47.410Z",
+  "updatedAt": "2022-04-14T20:48:58.748Z",
+  "enabled": true,
+  "description": "Sample Patch Deployment Template updated"
 }
 ```
 
@@ -64,13 +58,12 @@ In order to run a deployment job on the device first needs to be activated as a 
 
 #### REQUEST
 ```bash
-POST /activations HTTP/1.1
-Content-Type: application/vnd.aws-cdf-v1.0+json
-Accept: application/vnd.aws-cdf-v1.0+json
-
-{
-    "deviceId": <my-test-core-id>
-}
+curl --location --request POST '<endpoint>/activations' \
+--header 'Content-Type: application/vnd.aws-cdf-v1.0+json' \
+--header 'Accept: application/vnd.aws-cdf-v1.0+json' \
+--data-raw '{
+	"deviceId": "ggv2-test-core-1"
+}'
 ```
 
 #### RESPONSE
@@ -90,20 +83,19 @@ This particular endpoint is an asynchronous REST API. The deployment gets queued
 
 #### REQUEST
 ```bash
-POST /deploymentTasks HTTP/1.1
-Content-Type: application/vnd.aws-cdf-v1.0+json
-Accept: application/vnd.aws-cdf-v1.0+json
-
-{
+curl --location --request POST '<endpoint>/deploymentTasks' \
+--header 'Content-Type: application/vnd.aws-cdf-v1.0+json' \
+--header 'Accept: application/vnd.aws-cdf-v1.0+json' \
+--data-raw '{
     "deployments": [{
-        "deviceId": "ec2-ggv2core-device1",
+        "deviceId": "<device-identifier>",
         "deploymentTemplateName": "ggv2-ec2-installer-template",
         "extraVars":{
-          "iot_device_cred_zip_url": "${aws:s3:presign:https://<bucket><prefix>?expiresIn=604800}",
-          "iot_device_config_url": "${aws:s3:presign:https://<bucket><preix>?expiresIn=604800}"
+            "iot_device_config_url": "${aws:s3:presign:https://<bucket>/<prefix>?expiresIn=604800}",
+            "iot_device_cred_zip_url": "${aws:s3:presign:https://<bucket>/<prefix>?expiresIn=604800}"
         }
     }]
-}
+}'
 ```
 
 #### RESPONSE
@@ -118,9 +110,9 @@ There are couple different ways the status of the deployment can be checked. If 
 
 #### REQUEST
 ```bash
-GET /deploymentTasks/{taskId}/deployments HTTP/1.1
-Content-Type: application/vnd.aws-cdf-v1.0+json
-Accept: application/vnd.aws-cdf-v1.0+json
+curl --location --request GET '<endpoint>/deploymentTasks/{deploymentTaskId}/deployments' \
+--header 'Content-Type: application/vnd.aws-cdf-v1.0+json' \
+--header 'Accept: application/vnd.aws-cdf-v1.0+json'
 ```
 
 #### RESPONSE
@@ -168,9 +160,9 @@ If the deployment for a particular device needs to be checked, then the followin
 
 #### REQUEST
 ```bash
-GET /devices/{deviceId}/deployments HTTP/1.1
-Content-Type: application/vnd.aws-cdf-v1.0+json
-Accept: application/vnd.aws-cdf-v1.0+json
+curl --location --request GET '<endpoint>/devices/{deviceId}/deployments' \
+--header 'Content-Type: application/vnd.aws-cdf-v1.0+json' \
+--header 'Accept: application/vnd.aws-cdf-v1.0+json'
 ```
 
 #### RESPONSE
@@ -203,13 +195,12 @@ Accept: application/vnd.aws-cdf-v1.0+json
 #### REQUEST
 
 ```bash
-PATCH /deployments/{deploymentId} HTTP/1.1
-Content-Type: application/vnd.aws-cdf-v1.0+json
-Accept: application/vnd.aws-cdf-v1.0+json
-
-{
+curl --location --request PATCH '<endpoint>/deployments/{deploymentId}' \
+--header 'Content-Type: application/vnd.aws-cdf-v1.0+json' \
+--header 'Accept: application/vnd.aws-cdf-v1.0+json' \
+--data-raw '{
 	"deploymentStatus": "retry"
-}
+}'
 ```
 
 #### RESPONSE
