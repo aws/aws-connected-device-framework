@@ -1,5 +1,6 @@
 ## The following env config needs defining per environment:
 
+```ini
 ASSETLIBRARY_BASE_URL=
 ASSETLIBRARYHISTORY_BASE_URL=
 AWS_ACCOUNTID=
@@ -27,10 +28,13 @@ PROVISIONING_TEMPLATES_PREFIX=
 PROVISIONING_TEMPLATES_SUFFIX=
 THING_ARN=
 THING_NAME=
+```
 
-## The following may be overridden
+## The following may be overridden:
 
+```ini
 COMMANDANDCONTROL_TESTDEVICE_POLICYNAME=cdf-integration-tests-cac
 COMMANDANDCONTROL_TESTDEVICE_POLICYDOCUMENT="{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Action\":[\"iot:Connect\"],\"Resource\":[\"*\"]},{\"Effect\":\"Allow\",\"Action\":[\"iot:Publish\",\"iot:Receive\"],\"Resource\":[\"arn:aws:iot:${AWS_REGION}:${AWS_ACCOUNTID}:topic/*\"]},{\"Effect\":\"Allow\",\"Action\":[\"iot:Subscribe\"],\"Resource\":[\"arn:aws:iot:${AWS_REGION}:${AWS_ACCOUNTID}:topicfilter/*\"]}]}"
 GREENGRASS2PROVISIONING_EC2_INSTANCETYPE=t3.medium
 LOGGING_LEVEL=debug
+```

@@ -14,26 +14,25 @@
 import { injectable } from 'inversify';
 
 import { PathHelper } from '../utils/path.helper';
-import { MessageResource, NewMessageResource, RecipientList, ReplyList, Recipient } from './messages.model';
+import { ClientServiceBase } from './common.service';
+import { MessageResource, NewMessageResource, RecipientList, ReplyList, Recipient, MessageList } from './messages.model';
 import { RequestHeaders } from './common.model';
 
 export interface MessagesService {
     createMessage(message: NewMessageResource, additionalHeaders?: RequestHeaders ): Promise<string>;
     getMessage(messageId: string, additionalHeaders?: RequestHeaders ): Promise<MessageResource>;
+    listMessages(commandId:string, count?:number, fromCreatedAtExclusive?:number ): Promise<MessageList>
     getRecipient(messageId: string, thingName:string, additionalHeaders?: RequestHeaders) : Promise<Recipient>;
     listRecipients(messageId: string, fromThingNameExclusive?:string, count?:string, additionalHeaders?: RequestHeaders) : Promise<RecipientList>;
     listReplies(messageId: string, thingName: string, fromReceivedAtExclusive?:number, count?:string, additionalHeaders?: RequestHeaders) : Promise<ReplyList>;
 }
 
 @injectable()
-export class MessagesServiceBase {
+export class MessagesServiceBase extends ClientServiceBase {
 
-    protected MIME_TYPE = 'application/vnd.aws-cdf-v1.0+json';
-
-    protected _headers: RequestHeaders = {
-        'Accept': this.MIME_TYPE,
-        'Content-Type': this.MIME_TYPE
-    };
+    constructor() {
+        super();
+    }
 
     protected commandMessagesRelativeUrl(commandId:string) : string {
         return PathHelper.encodeUrl('commands', commandId, 'messages');
@@ -53,34 +52,6 @@ export class MessagesServiceBase {
 
     protected messageRepliesRelativeUrl(messageId:string, thingName:string) : string {
         return PathHelper.encodeUrl('messages', messageId, 'recipients', thingName, 'replies');
-    }
-
-
-    protected buildHeaders(additionalHeaders:RequestHeaders) : RequestHeaders {
-
-        let headers = Object.assign({}, this._headers);
-
-        const customHeaders = process.env.COMMANDANDCONTROL_HEADERS;
-
-        if (customHeaders) {
-            const headersFromConfig:RequestHeaders = customHeaders as unknown as RequestHeaders;
-            if (headersFromConfig !== null && headersFromConfig !== undefined) {
-                headers = {...headers, ...headersFromConfig};
-            }
-        }
-
-        if (additionalHeaders !== null && additionalHeaders !== undefined) {
-            headers = {...headers, ...additionalHeaders};
-        }
-
-        const keys = Object.keys(headers);
-        keys.forEach(k=> {
-            if (headers[k]===undefined || headers[k]===null) {
-                delete headers[k];
-            }
-        });
-
-        return headers;
     }
 
 }

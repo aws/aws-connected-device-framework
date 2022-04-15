@@ -1,7 +1,12 @@
 ## The following env config needs defining per environment:
 
+```ini
 AWS_REGION=
 AWS_ACCOUNTID=
+```
 
-## optional to override:
+## The following may be overridden:
+
+```ini
 LOGGING_LEVEL=info
+```
