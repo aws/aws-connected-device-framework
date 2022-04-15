@@ -16,8 +16,15 @@ To successfully deploy Device Patcher software on the device there are a few pre
 + [SSM Agent](https://docs.aws.amazon.com/systems-manager/latest/userguide/ssm-agent.html) installed on the device/instance 
 + Ansible Agent installed on the device/instance
 
+# Step 0: Host Machine Setup
+The host machine or edge device needs to be connected to the internet and have the prequisites installed.
+- [SSM Agent](https://docs.aws.amazon.com/systems-manager/latest/userguide/ssm-agent.html)
+- [Ansible Agent](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html)
+
+> **NOTE:** If the host machine is an EC2 instance, then the steps defined in [Device Patcher Integration Testing](<docs/integration-testing.md>) can be used to create an AMI to launch an EC2 instance with pre-reqs installed.
+
 ### Step 1: Define a deployment template
-In order to deploy a Greengrass V2 core device, the first step is to create a deployment template. The template specifies configuration for a particular deployment. The payload has 2 main parts, the source of where the playbook is referenced from a S3 bucket and the `extraVars` to pass to the playbook itself. These `extraVars` should be common to all deployment jobs. These can be overwritten when the actual deployment job is created.
+In order to deploy an ansible Patch, the first step is to create a patch deployment template. The template specifies configuration for a particular patch. The payload has 2 main parts, the ansible playbook file and the `extraVars` to pass to the playbook itself. These `extraVars` should be common to all deployment patches. These can be overwritten when the actual deployment patch is created.
 
 #### REQUEST
 
@@ -50,7 +57,7 @@ curl --location --request POST '<endpoint>/deploymentTemplates' \
 }
 ```
 
-All templates are versioned within the system. The first `PUT` call will create the template, whereas subsequent `PUT`'s will update it.
+All templates are versioned within the system. The first `POST` call will create the template, whereas subsequent `PATCH` will update it.
 
 ### Step 2: Activating the Device
 
@@ -75,9 +82,23 @@ curl --location --request POST '<endpoint>/activations' \
 }
 ```
 
+#### Step 2.1: Activate the Host Machine using the Activation Response from Step 2
+
+In order to activate the device, the activation code needs to be passed to the device. This can be done by running the following command on the device:
+
+```bash
+# The following commands can be exeucted from the local machine on a host, provided the HOST endpoint, private and user allows the connection. 
+# The second command below requires the "$ACTIVATION_CODE", "$ACTIVATION_ID" & "$ACTIVATION_REGION" be replaced with the values from the response from Step 2.
+
+ssh -o "StrictHostKeyChecking=no" -i ${HOST_PRIVATE_KEY_PATH} ${HOST_USER}@${HOST_DNS_ENDPOINT} 'sudo systemctl stop amazon-ssm-agent'
+ssh -o "StrictHostKeyChecking=no" -i ${HOST_PRIVATE_KEY_PATH} ${HOST_USER}@${HOST_DNS_ENDPOINT} 'sudo -E amazon-ssm-agent -register -code "$ACTIVATION_CODE" -id "$ACTIVATION_ID" -region "$ACTIVATION_REGION" -clear'
+ssh -o "StrictHostKeyChecking=no" -i ${HOST_PRIVATE_KEY_PATH} ${HOST_USER}@${HOST_DNS_ENDPOINT} 'sudo systemctl start amazon-ssm-agent'
+
+```
+
 ### Step 3: Deploy the Patch (Ansible Playbook) to the device
 
-Upon successfully activating the device, The core deployment step can be executed. The following request will create a new SSM State Manager Association which will execute Ansible playbook on the device itself.
+Upon successfully activating the device, The patch deployment step can be executed. The following request will create a new SSM State Manager Association which will execute Ansible playbook on the device itself.
 
 This particular endpoint is an asynchronous REST API. The deployment gets queued which is processed at a later time. The payload requires a list of deployments. The individual deployment has required properties such as deviceId, DeploymentTemplateName, and extraVars for overriding playbook parameters defined in the deployment template or unique to a particular deployment.
 
