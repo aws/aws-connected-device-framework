@@ -62,7 +62,12 @@ async function deleteAction(
     }
 
     const listr = new Listr(layerTasks, { concurrent: true });
-    await listr.run();
+    try {
+      await listr.run();
+    } catch (e) {
+      console.log(e.message);
+      process.exit(1);
+    }
   }
 
   const finishedAt = new Date().getTime();

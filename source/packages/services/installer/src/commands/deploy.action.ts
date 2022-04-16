@@ -29,7 +29,7 @@ async function deployAction(
 
   let answers: Answers;
 
-  const configFile = options["config"]
+  const configFile = options["config"];
 
   if (configFile === undefined) {
     answers = await configWizard(environment, region);
@@ -77,7 +77,12 @@ async function deployAction(
     }
 
     const listr = new Listr(layerTasks, { concurrent: true });
-    await listr.run();
+    try {
+      await listr.run();
+    } catch (e) {
+      console.log(e.message);
+      process.exit(1);
+    }
   }
 
   const finishedAt = new Date().getTime();
@@ -120,7 +125,11 @@ async function configWizard(
   delete answers.modules?.expandedMandatory;
   delete answers.modules?.expandedIncludingOptional;
 
-  const previouslyChosenModulesSet = new Set([...answers.modules?.list ?? [], ...answers.modules?.expandedMandatory ?? [], ...answers.modules?.expandedIncludingOptional ?? []])
+  const previouslyChosenModulesSet = new Set([
+    ...(answers.modules?.list ?? []),
+    ...(answers.modules?.expandedMandatory ?? []),
+    ...(answers.modules?.expandedIncludingOptional ?? []),
+  ]);
 
   // obtain list of service modules to choose from to deploy
   const servicesList = buildServicesList(modules, answers.modules?.list);
@@ -148,12 +157,16 @@ async function configWizard(
     true
   );
 
-  const newlyChosenModulesSet = new Set([...answers.modules?.list ?? [], ...answers.modules?.expandedMandatory ?? [], ...answers.modules?.expandedIncludingOptional ?? []])
+  const newlyChosenModulesSet = new Set([
+    ...(answers.modules?.list ?? []),
+    ...(answers.modules?.expandedMandatory ?? []),
+    ...(answers.modules?.expandedIncludingOptional ?? []),
+  ]);
 
   for (const module of previouslyChosenModulesSet) {
     if (!newlyChosenModulesSet.has(module as ModuleName)) {
       // answer for modules that are unchecked will be deleted
-      delete answers[`${module}`]
+      delete answers[`${module}`];
     }
   }
 
