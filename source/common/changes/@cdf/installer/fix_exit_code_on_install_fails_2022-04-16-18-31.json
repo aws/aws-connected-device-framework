@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/installer",
+      "comment": "Installer will exit with code 1 if a task in the installer fails",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/installer",
+  "email": "tony.sherman@bissell.com"
+}
