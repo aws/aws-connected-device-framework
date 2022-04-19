@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@cdf/device-patcher",
-      "comment": "unbreak, state manager assoication (ansible exeuction) run documents and improve Patch templates API ",
+      "comment": "unbreak, state manager association (ansible execution) run documents and improve Patch templates API ",
       "type": "major"
     }
   ],

@@ -46,10 +46,10 @@ curl --location --request POST '<endpoint>/deploymentTemplates' \
   "playbookName": "sample-playbook.yml",
   "playbookSource": {
     "bucket": "xxxxxxxxxxxxxx",
-    "key": "device-patcher/playbooks/sampleTemplate5___sample-playbook.yml"
+    "key": "device-patcher/playbooks/sampleTemplate___sample-playbook.yml"
   },
   "deploymentType": "agentbased",
-  "versionNo": 2,
+  "versionNo": 1,
   "createdAt": "2022-04-14T20:48:47.410Z",
   "updatedAt": "2022-04-14T20:48:58.748Z",
   "enabled": true,
@@ -87,13 +87,20 @@ curl --location --request POST '<endpoint>/activations' \
 In order to activate the device, the activation code needs to be passed to the device. This can be done by running the following command on the device:
 
 ```bash
-# The following commands can be exeucted from the local machine on a host, provided the HOST endpoint, private and user allows the connection. 
+# The following commands can be executed from the local machine on a host, provided the HOST endpoint, private key, and user allows the connection. 
 # The second command below requires the "$ACTIVATION_CODE", "$ACTIVATION_ID" & "$ACTIVATION_REGION" be replaced with the values from the response from Step 2.
 
-ssh -o "StrictHostKeyChecking=no" -i ${HOST_PRIVATE_KEY_PATH} ${HOST_USER}@${HOST_DNS_ENDPOINT} 'sudo systemctl stop amazon-ssm-agent'
-ssh -o "StrictHostKeyChecking=no" -i ${HOST_PRIVATE_KEY_PATH} ${HOST_USER}@${HOST_DNS_ENDPOINT} 'sudo -E amazon-ssm-agent -register -code "$ACTIVATION_CODE" -id "$ACTIVATION_ID" -region "$ACTIVATION_REGION" -clear'
-ssh -o "StrictHostKeyChecking=no" -i ${HOST_PRIVATE_KEY_PATH} ${HOST_USER}@${HOST_DNS_ENDPOINT} 'sudo systemctl start amazon-ssm-agent'
+# If the communication with host is via SSH, then the following commands can be used:
+ssh -i ${HOST_PRIVATE_KEY_PATH} ${HOST_USER}@${HOST_DNS_ENDPOINT} 'sudo systemctl stop amazon-ssm-agent'
+ssh -i ${HOST_PRIVATE_KEY_PATH} ${HOST_USER}@${HOST_DNS_ENDPOINT} 'sudo -E amazon-ssm-agent -register -code "$ACTIVATION_CODE" -id "$ACTIVATION_ID" -region "$ACTIVATION_REGION" -clear'
+ssh -i ${HOST_PRIVATE_KEY_PATH} ${HOST_USER}@${HOST_DNS_ENDPOINT} 'sudo systemctl start amazon-ssm-agent'
 
+# If the commands need to be ran directly on the host:
+> sudo systemctl stop amazon-ssm-agent
+> sudo -E amazon-ssm-agent -register -code "$ACTIVATION_CODE" -id "$ACTIVATION_ID" -region "$ACTIVATION_REGION" -clear
+> sudo systemctl start amazon-ssm-agent
+
+# Refer this link to activate the SSM agent for different platforms: https://docs.aws.amazon.com/systems-manager/latest/userguide/sysman-install-managed-linux.html
 ```
 
 ### Step 3: Deploy the Patch (Ansible Playbook) to the device
@@ -131,6 +138,8 @@ There are couple different ways the status of the deployment can be checked. If 
 
 #### REQUEST
 ```bash
+# The {deploymentTaskId} can be obtained from the response Header from Step 3.
+
 curl --location --request GET '<endpoint>/deploymentTasks/{deploymentTaskId}/deployments' \
 --header 'Content-Type: application/vnd.aws-cdf-v1.0+json' \
 --header 'Accept: application/vnd.aws-cdf-v1.0+json'

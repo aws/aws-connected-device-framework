@@ -29,8 +29,7 @@ export class AgentbasedDeploymentService {
 
     private readonly ssm: AWS.SSM;
     private readonly sqs: AWS.SQS;
-    private artifactsBucket: string = process.env.AWS_S3_ARTIFACTS_BUCKET
-    private artifactsBucketPrefix: string = process.env.AWS_S3_ARTIFACTS_PREFIX
+
     private queueUrl: string = process.env.AWS_SQS_QUEUES_DEPLOYMENT_TASKS;
     private ssmAnsiblePatchDocument = 'AWS-ApplyAnsiblePlaybooks';
 
@@ -40,7 +39,9 @@ export class AgentbasedDeploymentService {
         @inject(TYPES.ActivationDao) private activationDao: ActivationDao,
         @inject(TYPES.AgentbasedDeploymentDao) private agentbasedDeploymentDao: AgentbasedDeploymentDao,
         @inject(TYPES.ExpressionParser) private expressionParser: ExpressionParser,
-        @inject(TYPES.DeploymentTemplatesService) private templatesService: DeploymentTemplatesService
+        @inject(TYPES.DeploymentTemplatesService) private templatesService: DeploymentTemplatesService,
+        @inject('aws.s3.bucket') private artifactsBucket: string,
+        @inject('aws.s3.prefix') private artifactsBucketPrefix: string
     ) {
         this.ssm = ssmFactory();
         this.sqs = sqsFactory();

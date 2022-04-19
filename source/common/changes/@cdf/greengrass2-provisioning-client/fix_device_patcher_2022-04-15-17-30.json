@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@cdf/greengrass2-provisioning-client",
-      "comment": "",
+      "comment": "fix(greengrasss2-client): minor env var naming update",
       "type": "none"
     }
   ],
