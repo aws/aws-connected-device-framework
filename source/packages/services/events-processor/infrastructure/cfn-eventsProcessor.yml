@@ -120,7 +120,7 @@ Parameters:
   LoggingLevel:
     Description: Application logging level
     Type: String
-    Default: info
+    Default: silly
     AllowedValues:
       - error
       - warn
@@ -317,7 +317,7 @@ Resources:
           AWS_ACCOUNTID: !Ref AWS::AccountId
           AWS_DYNAMODB_TABLES_EVENTCONFIG_NAME: !Ref EventConfigTable
           AWS_DYNAMODB_TABLES_EVENTNOTIFICATIONS_NAME: !Ref EventNotificationsTable
-          # AWS_DYNAMODB_DAX_ENDPOINTS: !GetAtt DAXCluster.ClusterDiscoveryEndpoint
+          AWS_DYNAMODB_DAX_ENDPOINTS: !GetAtt DAXCluster.ClusterDiscoveryEndpoint
           AWS_IOT_ENDPOINT: !GetAtt IotEndpoint.address
           AWS_LAMBDA_DYNAMODBSTREAM_NAME: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:cdf-eventsprocessor-ddbStream-${Environment}"
           AWS_LAMBDA_LAMBDAINVOKE_ARN: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:cdf-eventsprocessor-invoke-${Environment}"
@@ -398,7 +398,7 @@ Resources:
           AWS_ACCOUNTID: !Ref AWS::AccountId
           AWS_DYNAMODB_TABLES_EVENTCONFIG_NAME: !Ref EventConfigTable
           AWS_DYNAMODB_TABLES_EVENTNOTIFICATIONS_NAME: !Ref EventNotificationsTable
-          # AWS_DYNAMODB_DAX_ENDPOINTS: !GetAtt DAXCluster.ClusterDiscoveryEndpoint
+          AWS_DYNAMODB_DAX_ENDPOINTS: !GetAtt DAXCluster.ClusterDiscoveryEndpoint
           AWS_IOT_ENDPOINT: !GetAtt IotEndpoint.address
           AWS_LAMBDA_DYNAMODBSTREAM_NAME: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:cdf-eventsprocessor-ddbStream-${Environment}"
           AWS_LAMBDA_LAMBDAINVOKE_ARN: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:cdf-eventsprocessor-invoke-${Environment}"
@@ -434,7 +434,7 @@ Resources:
           AWS_ACCOUNTID: !Ref AWS::AccountId
           AWS_DYNAMODB_TABLES_EVENTCONFIG_NAME: !Ref EventConfigTable
           AWS_DYNAMODB_TABLES_EVENTNOTIFICATIONS_NAME: !Ref EventNotificationsTable
-          # AWS_DYNAMODB_DAX_ENDPOINTS: !GetAtt DAXCluster.ClusterDiscoveryEndpoint
+          AWS_DYNAMODB_DAX_ENDPOINTS: !GetAtt DAXCluster.ClusterDiscoveryEndpoint
           AWS_IOT_ENDPOINT: !GetAtt IotEndpoint.address
           AWS_LAMBDA_DYNAMODBSTREAM_NAME: !Ref DynamoDBStreamLambdaFunction
           AWS_LAMBDA_LAMBDAINVOKE_ARN: !GetAtt LambdaInvokeLambdaFunction.Arn
@@ -530,7 +530,7 @@ Resources:
           AWS_ACCOUNTID: !Ref AWS::AccountId
           AWS_DYNAMODB_TABLES_EVENTCONFIG_NAME: !Ref EventConfigTable
           AWS_DYNAMODB_TABLES_EVENTNOTIFICATIONS_NAME: !Ref EventNotificationsTable
-          # AWS_DYNAMODB_DAX_ENDPOINTS: !GetAtt DAXCluster.ClusterDiscoveryEndpoint
+          AWS_DYNAMODB_DAX_ENDPOINTS: !GetAtt DAXCluster.ClusterDiscoveryEndpoint
           AWS_IOT_ENDPOINT: !GetAtt IotEndpoint.address
           AWS_LAMBDA_DYNAMODBSTREAM_NAME: !Ref DynamoDBStreamLambdaFunction
           AWS_LAMBDA_LAMBDAINVOKE_ARN: !GetAtt LambdaInvokeLambdaFunction.Arn
@@ -747,7 +747,15 @@ Resources:
           FromPort: 443
           ToPort: 443
           CidrIp: 0.0.0.0/0
-      
+
+  DAXClusterParameterGroup:
+    Type: AWS::DAX::ParameterGroup
+    Properties:
+      ParameterGroupName: !Sub "cdf-eventNotifications-${Environment}-parameter"
+      Description: !Sub "parameter group for cdf-eventNotifications-${Environment}" 
+      ParameterNameValues:
+         "query-ttl-millis" : "3000"
+         "record-ttl-millis" : "3000"
 
   DAXCluster:
     Type: AWS::DAX::Cluster
@@ -755,6 +763,7 @@ Resources:
       Description: Event notifications cluster
       IAMRoleARN: !GetAtt DAXServiceRole.Arn
       NodeType: !Ref DAXInstanceType
+      ParameterGroupName: !Ref DAXClusterParameterGroup
       SubnetGroupName:
         !If [
           DeployInVPC,

@@ -31,7 +31,7 @@ export class EventDao {
         @inject('aws.dynamoDb.tables.eventConfig.name') private eventConfigTable:string,
         @inject('aws.dynamoDb.tables.eventConfig.gsi1') private eventConfigGSI1:string,
         @inject(TYPES.DynamoDbUtils) private dynamoDbUtils:DynamoDbUtils,
-	    @inject(TYPES.CachableDocumentClientFactory) cachableDocumentClientFactory: () => AWS.DynamoDB.DocumentClient
+	    @inject(TYPES.CachableDocumentClientFactory) cachableDocumentClientFactory: () => AWS.DynamoDB.DocumentClient,
     ) {
         this._cachedDc = cachableDocumentClientFactory();
     }
@@ -59,7 +59,7 @@ export class EventDao {
 
         const eventCreate = {
             PutRequest: {
-                Item: {
+                Item: this.dynamoDbUtils.removeUndefinedParameter({
                     pk: eventSourceDbId,
                     sk: eventDbId,
                     gsi1Sort: createDelimitedAttribute(PkType.Event, item.id, PkType.EventSource, item.eventSourceId),
@@ -72,7 +72,7 @@ export class EventDao {
                     supportedTargets: item.supportedTargets,
                     templateProperties: item.templateProperties,
                     disableAlertThreshold: item.disableAlertThreshold
-                }
+                })
             }
         };
 
