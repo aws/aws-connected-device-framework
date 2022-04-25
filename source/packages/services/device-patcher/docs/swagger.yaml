@@ -19,34 +19,34 @@ info:
   version: 1.0.0
 
 tags:
-  - name: Deployment Templates
+  - name: Patch Templates
     description: >
-      A Template that provides specifies the configuration of a deployment Task
+      A Template that provides specifies the configuration of a patch Task
 
   - name: Activation
     description: >
       Activation represent SSM acitvation of devices as hybrid instances
 
-  - name: Deployment Tasks
+  - name: Patch Tasks
     description: >
-      Deployment represent SSM State Manager association against devices managed as hybrid instances.
+      Patch represent SSM State Manager association against devices managed as hybrid instances.
 
 
 paths:
-  "/deploymentTemplates":
+  "/patchTemplates":
     post:
       tags:
-        - Deployment Templates
-      summary: Creates a new patch deployment template
+        - Patch Templates
+      summary: Creates a new patch patch template
       description: >
-        Defines a new template by specifying the type of the deployment "agentless" or "agentbased" and a source of the ansible playbook.
+        Defines a new template by specifying the type of the patch "agentless" or "agentbased" and a source of the ansible playbook.
 
       operationId: createTemplate
       requestBody:
         content:
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/CreateDeploymentTemplate'
+              $ref: '#/components/schemas/CreatePatchTemplate'
       responses:
         "201":
           description: Created
@@ -56,8 +56,8 @@ paths:
           $ref: "#/components/responses/Conflict"
     get:
       tags:
-        - Deployment Templates
-      summary: List all available patch deployment templates.
+        - Patch Templates
+      summary: List all available patch patch templates.
       operationId: listTemplates
       responses:
         "200":
@@ -65,26 +65,26 @@ paths:
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/DeploymentTemplatesList"
+                $ref: "#/components/schemas/PatchTemplatesList"
         "404":
           $ref: "#/components/responses/NotFound"
 
-  "/deploymentTemplates/{templateName}":
+  "/patchTemplates/{templateName}":
     parameters:
       - $ref: '#/components/parameters/templateName'
     patch:
       tags:
-        - Deployment Templates
-      summary: Updates a patch deployment template
+        - Patch Templates
+      summary: Updates a patch patch template
       description: >
-        Defines a new template by specifying the type of the deployment "agentless" or "agentbased" and a source of the ansible playbook.
+        Defines a new template by specifying the type of the patch "agentless" or "agentbased" and a source of the ansible playbook.
 
       operationId: updateTemplate
       requestBody:
         content:
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/UpdateDeploymentTemplate'
+              $ref: '#/components/schemas/UpdatePatchTemplate'
       responses:
         "201":
           description: Created
@@ -93,10 +93,10 @@ paths:
 
     get:
       tags:
-        - Deployment Templates
-      summary: Find a specific deployment template
+        - Patch Templates
+      summary: Find a specific patch template
       description: >
-        Returns a specific deployment template by template name.
+        Returns a specific patch template by template name.
       operationId: getTemplate
       responses:
         "200":
@@ -104,15 +104,15 @@ paths:
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/DeploymentTemplate"
+                $ref: "#/components/schemas/PatchTemplate"
         "404":
           $ref: "#/components/responses/NotFound"
     delete:
       tags:
-        - Deployment Templates
-      summary: Deletes a specific deployment template
+        - Patch Templates
+      summary: Deletes a specific patch template
       description: >
-        Deletes a specific deployment template by template name.
+        Deletes a specific patch template by template name.
       operationId: deleteTemplate
       responses:
         "204":
@@ -175,66 +175,66 @@ paths:
   "/deployemntTasks":
     "post":
       tags:
-        - Deployment Tasks
-      summary: Creates a device deployments in bulk
+        - Patch Tasks
+      summary: Creates a device patches in bulk
       description: >
         Creates an SSM state manager association for a ssm managed device
 
-      operationId: createDeploymentTask
+      operationId: createPatchTask
       requestBody:
         content:
           application/vnd.aws-cdf-v1.0+json:
             schema:
-              $ref: '#/components/schemas/DeploymentList'
+              $ref: '#/components/schemas/PatchList'
       responses:
         "200":
           description: OK
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/DeploymentTask"
+                $ref: "#/components/schemas/PatchTask"
 
 
-  "/deploymentTasks/{deploymentTaskId}":
+  "/patchTasks/{patchTaskId}":
     parameters:
-      - $ref: '#/components/parameters/deploymentTaskId'
+      - $ref: '#/components/parameters/patchTaskId'
     get:
       tags:
-        - Deployment Tasks
-      summary: Find a specific deployment Task by deploymentTaskId
-      operationId: getDeploymentById
+        - Patch Tasks
+      summary: Find a specific patch Task by patchTaskId
+      operationId: getPatchById
       responses:
         "200":
           description: OK
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/DeploymentTask"
+                $ref: "#/components/schemas/PatchTask"
         "404":
           $ref: "#/components/responses/NotFound"
 
-  "/deployments/{deploymentId}":
+  "/patches/{patchId}":
     parameters:
-      - $ref: '#/components/parameters/deploymentId'
+      - $ref: '#/components/parameters/patchId'
     get:
       tags:
-        - Deployment
-      summary: Get a deployment by its Id
-      operationId: getDeployment
+        - Patch
+      summary: Get a patch by its Id
+      operationId: getPatch
       responses:
         "200":
           description: OK
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/Deployment"
+                $ref: "#/components/schemas/Patch"
         "404":
           $ref: "#/components/responses/NotFound"
     patch:
       tags:
-        - Deployment
-      summary: Retry a specific deployment by deploymentId
-      operationId: patchDeploymentById
+        - Patch
+      summary: Retry a specific patch by patchId
+      operationId: patchPatchById
       description: >
         Retries an SSM state manager association for a ssm managed device
 
@@ -242,7 +242,7 @@ paths:
         content:
           application/vnd.aws-cdf-v1.0+json:
             schema:
-              $ref: '#/components/schemas/RetryDeployment'
+              $ref: '#/components/schemas/RetryPatch'
       responses:
         "200":
           description: OK
@@ -253,49 +253,49 @@ paths:
 
     delete:
       tags:
-        - Deployment
-      summary: Deletes a specific deployment by deploymentId
-      operationId: deleteDeploymentById
+        - Patch
+      summary: Deletes a specific patch by patchId
+      operationId: deletePatchById
       responses:
         "204":
           description: OK
         "404":
           $ref: "#/components/responses/NotFound"
 
-  "/deploymentTasks/{deploymentTaskId}/deployments":
+  "/patchTasks/{patchTaskId}/patches":
     parameters:
-      - $ref: '#/components/parameters/deploymentTaskId'
+      - $ref: '#/components/parameters/patchTaskId'
     get:
       tags:
-        - Deployment Tasks
-      summary: Gets the list of deployments associated with a particular deployment Task
-      operationId: getDeploymentsByTask
+        - Patch Tasks
+      summary: Gets the list of patches associated with a particular patch Task
+      operationId: getPatchsByTask
       responses:
         "200":
           description: OK
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/DeploymentList"
+                $ref: "#/components/schemas/PatchList"
         "404":
           $ref: "#/components/responses/NotFound"
 
 
-  "/devices/{deviceId}/deployments":
+  "/devices/{deviceId}/patches":
     parameters:
       - $ref: '#/components/parameters/deviceId'
     get:
       tags:
-        - Deployment
-      summary: Gets the list of deployments associated with a particular device
-      operationId: getDeploymentsByDevice
+        - Patch
+      summary: Gets the list of patches associated with a particular device
+      operationId: getPatchsByDevice
       responses:
         "200":
           description: OK
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: "#/components/schemas/DeploymentList"
+                $ref: "#/components/schemas/PatchList"
         "404":
           $ref: "#/components/responses/NotFound"
 
@@ -327,18 +327,18 @@ components:
       schema:
         type: string
 
-    deploymentTaskId:
-      name: deploymentTaskId
+    patchTaskId:
+      name: patchTaskId
       in: path
-      description: Deployment Task ID
+      description: Patch Task ID
       required: true
       schema:
         type: string
 
-    deploymentId:
-      name: deploymentId
+    patchId:
+      name: patchId
       in: path
-      description: Deployment ID
+      description: Patch ID
       required: true
       schema:
         type: string
@@ -391,7 +391,7 @@ components:
 
   schemas:
 
-    CreateDeploymentTemplate:
+    CreatePatchTemplate:
       type: object
       properties:
         playbookFile:
@@ -402,7 +402,7 @@ components:
         name:
           type: string
           description: Name of template.
-        deploymentType:
+        patchType:
           type: string
           description: type
           enum: [ agentless, agentbased ]
@@ -417,17 +417,17 @@ components:
           description: Extra Variables that need to be passed down to the ansible exeucution as input external paramters
       required:
         - name
-        - deploymentType
+        - patchType
         - playbookFile
       example:
         name: ggv2 installer template
-        deploymentType: "agentbased"
+        patchType: "agentbased"
         playbookFile: "/usr/bin/device-patcher/ggv2-ec2-amazonlinux2-installer-playbook.yml"
         extraVars[key1]: val1
         extraVars[key2]: val2
 
 
-    UpdateDeploymentTemplate:
+    UpdatePatchTemplate:
       type: object
       properties:
         playbookFile:
@@ -435,7 +435,7 @@ components:
           format: binary
           description: Path to the playbook file
           example: /home/user/playbook.yml
-        deploymentType:
+        patchType:
           type: string
           description: type
           enum: [ agentless, agentbased ]
@@ -452,7 +452,7 @@ components:
         name: ggv2 installer template
         extraVars[key1]: var1
 
-    DeploymentTemplate:
+    PatchTemplate:
       type: object
       properties:
         name:
@@ -471,7 +471,7 @@ components:
               type: string
               description: Bucket of where the ansible playbook file is stored in S3.
           description: Name of template.
-        deploymentType:
+        patchType:
           type: string
           description: type
           enum: [agentless, agentbased]
@@ -506,7 +506,7 @@ components:
         createdAt: "2020-03-16T21:42:53.594Z"
         updatedAt: "2020-03-16T21:42:53.594Z"
         enabled: true
-        deploymentType: "agentbased"
+        patchType: "agentbased"
         playbookName: "ggv2-ec2-amazonlinux2-installer-playbook.yml"
         playbookSource:
           bucket: "myBucket"
@@ -517,13 +517,13 @@ components:
 
 
 
-    DeploymentTemplatesList:
+    PatchTemplatesList:
       properties:
         tempaltes:
           type: array
           description: A list of templates
           items:
-            $ref: "#/components/schemas/DeploymentTemplate"
+            $ref: "#/components/schemas/PatchTemplate"
         pagination:
           type: object
           properties:
@@ -544,7 +544,7 @@ components:
             createdAt: "2020-03-16T21:42:53.594Z"
             updatedAt: "2020-03-16T21:42:53.594Z"
             enabled: true
-            deploymentType: "agentbased"
+            patchType: "agentbased"
             playbookSource:
               type: "s3"
               bucket: "myBucket"
@@ -574,12 +574,12 @@ components:
         activationCode: "nxj3IC1HBquDVxM14Oqo"
         activationRegion: "us-east-1"
 
-    DeploymentTask:
+    PatchTask:
       type: object
       properties:
         taskId:
           type: string
-          description: deployment Task Id
+          description: patch Task Id
         createdAt:
           type: string
           format: 'date-time'
@@ -590,27 +590,27 @@ components:
           format: 'date-time'
           description: Date/time the group was updated.
           readOnly: true
-        deployments:
+        patches:
           type: array
-          description: A list of deployments
+          description: A list of patches
           items:
-            $ref: "#/components/schemas/Deployment"
+            $ref: "#/components/schemas/Patch"
 
 
-    Deployment:
+    Patch:
       type: object
       properties:
         taskId:
           type: string
-          description: Deployment Task Id
+          description: Patch Task Id
           readOnly: true
         deviceId:
           type: string
           description: The Id of the Device
           readOnly: true
-        deploymentId:
+        patchId:
           type: string
-          description: The Id of the deployment
+          description: The Id of the patch
         createdAt:
           type: string
           format: 'date-time'
@@ -621,20 +621,20 @@ components:
           format: 'date-time'
           description: Date/time the group was updated.
           readOnly: true
-        deploymentTemplateName:
+        patchTemplateName:
           type: string
-          description: Deployment Template Name
-        deploymentStatus:
+          description: Patch Template Name
+        patchStatus:
           type: string
-          description: The status of the deployment
+          description: The status of the patch
           enum: [pending, success, failed]
-        deploymentType:
+        patchType:
           type: string
-          description: The type of deployment
+          description: The type of patch
           enum: [agentless, agentbased]
         statusMessage:
           type: string
-          description: Message detail pertaining to deploymentStatus
+          description: Message detail pertaining to patchStatus
           readOnly: true
         associationId:
           type: string
@@ -651,35 +651,35 @@ components:
 
       example:
         deviceId: "ggv2-ec2-devive1"
-        deploymentId: "a1b83c20-ab84-11ea-9634-37cb5e1c09aa"
+        patchId: "a1b83c20-ab84-11ea-9634-37cb5e1c09aa"
         createdAt: "2020-06-11T01:41:12.546Z"
         updatedAt: "2020-06-11T01:41:12.546Z"
-        deploymentTemplateName: "ggv2-ec2-amazonlinux2-template"
-        deploymentStatus: "failed"
-        deploymentType: "agentbased"
+        patchTemplateName: "ggv2-ec2-amazonlinux2-template"
+        patchStatus: "failed"
+        patchType: "agentbased"
         statusMessage: "DEVICE_NOT_ACTIVATED_AS_HYBRID_INSTANCE"
-        assoicationId: "a1b83c20-ab84-11ea-9634-37cb5e1c09aa"
+        associationId: "a1b83c20-ab84-11ea-9634-37cb5e1c09aa"
         extraVars:
           iot_endpoint: "<string>"
           iot_role_alias: "<string>"
 
-    RetryDeployment:
+    RetryPatch:
       type: object
       properties:
-        deploymentStatus:
+        patchStatus:
           type: string
-          description: retry is the only supported patching operation supported for Retry Deployments
+          description: retry is the only supported patching operation supported for Retry Patchs
       example:
-        deploymentStatus: "retry"
+        patchStatus: "retry"
 
-    DeploymentList:
+    PatchList:
       type: object
       properties:
-        deployments:
+        patches:
           type: array
           description: A list of templates
           items:
-            $ref: "#/components/schemas/Deployment"
+            $ref: "#/components/schemas/Patch"
         pagination:
           type: object
           properties:
@@ -688,7 +688,7 @@ components:
               properties:
                 nextToken:
                   type: string
-                  description: the last evauluated key token, can be used to retrieve the next batch of deployments
+                  description: the last evauluated key token, can be used to retrieve the next batch of patches
             count:
               type: integer
 

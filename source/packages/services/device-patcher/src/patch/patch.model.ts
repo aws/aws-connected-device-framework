@@ -10,50 +10,50 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import {DeploymentTemplateItem} from '../templates/template.model';
-import {DeploymentListPaginationKey} from './deploymentTask.dao';
+import { PatchTemplateItem } from '../templates/template.model';
+import { PatchListPaginationKey } from './patchTask.dao';
 
-export class DeploymentResource {
+export class PatchResource {
     taskId?: string;
     deviceId: string;
-    deploymentId?: string;
-    deploymentTemplateName?: string;
-    deploymentStatus?: DeploymentStatus;
+    patchId?: string;
+    patchTemplateName?: string;
+    patchStatus?: PatchStatus;
     createdAt?: Date;
     updatedAt?: Date;
-    deploymentTemplate?: DeploymentTemplateItem;
-    deploymentType?: DeploymentType;
+    patchTemplate?: PatchTemplateItem;
+    patchType?: PatchType;
     statusMessage?: string;
     associationId?: string;
     extraVars?: { [key: string]: string}
 }
 
-export class DeploymentItem {
+export class PatchItem {
     taskId?: string;
     deviceId: string;
-    deploymentId?: string;
-    deploymentTemplateName?: string;
-    deploymentStatus?: DeploymentStatus;
+    patchId?: string;
+    patchTemplateName?: string;
+    patchStatus?: PatchStatus;
     createdAt?: Date;
     updatedAt?: Date;
-    deploymentTemplate?: DeploymentTemplateItem;
-    deploymentType?: DeploymentType;
+    patchTemplate?: PatchTemplateItem;
+    patchType?: PatchType;
     statusMessage?: string;
     associationId?: string;
     extraVars?: { [key: string]: string}
 }
 
-export interface DeploymentSource {
+export interface PatchSource {
     bucket: string;
     key: string;
 }
 
-export enum DeploymentType {
+export enum PatchType {
     AGENTLESS='agentless',
     AGENTBASED='agentbased',
 }
 
-export enum DeploymentStatus {
+export enum PatchStatus {
     RETRY='retry',
     CREATED='created',
     PENDING='pending',
@@ -61,15 +61,15 @@ export enum DeploymentStatus {
     FAILED='failed'
 }
 
-export interface DeploymentListResource {
-    deployments: DeploymentItem[];
+export interface PatchListResource {
+    patches: PatchItem[];
     pagination?: {
-        lastEvaluated?: DeploymentListPaginationKey,
+        lastEvaluated?: PatchListPaginationKey,
         count?:number,
     };
 }
 
 export interface AssociationModel {
-    deploymentId: string;
+    patchId: string;
     associationId: string;
 }

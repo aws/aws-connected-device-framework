@@ -23,22 +23,22 @@ import { ActivationAssembler } from '../activation/activation.assember';
 import { ActivationService } from '../activation/activation.service';
 import { ActivationDao } from '../activation/activation.dao';
 
-import { DeploymentManager } from '../deployment/deployment.manager';
-import { DeploymentService } from '../deployment/deployment.service';
-import { DeploymentDao } from '../deployment/deployment.dao';
-import { DeploymentAssembler } from '../deployment/deployment.assembler';
+import { PatchManager } from '../patch/patch.manager';
+import { PatchService } from '../patch/patch.service';
+import { PatchDao } from '../patch/patch.dao';
+import { PatchAssembler } from '../patch/patch.assembler';
 
-import { AgentbasedDeploymentDao } from '../deployment/agentbased-deployment.dao';
-import { AgentbasedDeploymentService } from '../deployment/agentbased-deployment.service';
+import { AgentbasedPatchDao } from '../patch/agentbased-patch.dao';
+import { AgentbasedPatchService } from '../patch/agentbased-patch.service';
 
-import { DeploymentTemplatesDao} from '../templates/template.dao';
-import { DeploymentTemplatesService } from '../templates/template.service';
-import { DeploymentTemplateAssembler } from '../templates/template.assembler';
+import { PatchTemplatesDao} from '../templates/template.dao';
+import { PatchTemplatesService } from '../templates/template.service';
+import { PatchTemplateAssembler } from '../templates/template.assembler';
 
 
-import {DeploymentTaskService} from '../deployment/deploymentTask.service';
-import {DeploymentTaskAssembler} from '../deployment/deploymentTask.assembler';
-import {DeploymentTaskDao} from '../deployment/deploymentTask.dao';
+import {PatchTaskService} from '../patch/patchTask.service';
+import {PatchTaskAssembler} from '../patch/patchTask.assembler';
+import {PatchTaskDao} from '../patch/patchTask.dao';
 
 import { S3Utils } from '../utils/s3.util';
 import { DynamoDbUtils } from '../utils/dynamoDb.util';
@@ -52,22 +52,22 @@ container.bind<string>('aws.s3.prefix').toConstantValue(process.env.AWS_S3_ARTIF
 
 container.bind<HttpHeaderUtils>(TYPES.HttpHeaderUtils).to(HttpHeaderUtils).inSingletonScope();
 
-container.bind<DeploymentTaskDao>(TYPES.DeploymentTaskDao).to(DeploymentTaskDao).inSingletonScope();
-container.bind<DeploymentTaskAssembler>(TYPES.DeploymentTaskAssembler).to(DeploymentTaskAssembler).inSingletonScope();
-container.bind<DeploymentTaskService>(TYPES.DeploymentTaskService).to(DeploymentTaskService).inRequestScope();
-import '../deployment/deploymentTask.controller';
+container.bind<PatchTaskDao>(TYPES.PatchTaskDao).to(PatchTaskDao).inSingletonScope();
+container.bind<PatchTaskAssembler>(TYPES.PatchTaskAssembler).to(PatchTaskAssembler).inSingletonScope();
+container.bind<PatchTaskService>(TYPES.PatchTaskService).to(PatchTaskService).inRequestScope();
+import '../patch/patchTask.controller';
 
-container.bind<AgentbasedDeploymentService>(TYPES.AgentbasedDeploymentService).to(AgentbasedDeploymentService).inSingletonScope();
-container.bind<AgentbasedDeploymentDao>(TYPES.AgentbasedDeploymentDao).to(AgentbasedDeploymentDao).inSingletonScope();
-container.bind<DeploymentService>(TYPES.DeploymentService).to(DeploymentService).inSingletonScope();
-container.bind<DeploymentManager>(TYPES.DeploymentManager).to(DeploymentManager).inSingletonScope();
-container.bind<DeploymentDao>(TYPES.DeploymentDao).to(DeploymentDao).inSingletonScope();
-container.bind<DeploymentAssembler>(TYPES.DeploymentAssembler).to(DeploymentAssembler).inSingletonScope();
-import '../deployment/deployment.controller';
+container.bind<AgentbasedPatchService>(TYPES.AgentbasedPatchService).to(AgentbasedPatchService).inSingletonScope();
+container.bind<AgentbasedPatchDao>(TYPES.AgentbasedPatchDao).to(AgentbasedPatchDao).inSingletonScope();
+container.bind<PatchService>(TYPES.PatchService).to(PatchService).inSingletonScope();
+container.bind<PatchManager>(TYPES.PatchManager).to(PatchManager).inSingletonScope();
+container.bind<PatchDao>(TYPES.PatchDao).to(PatchDao).inSingletonScope();
+container.bind<PatchAssembler>(TYPES.PatchAssembler).to(PatchAssembler).inSingletonScope();
+import '../patch/patch.controller';
 
-container.bind<DeploymentTemplatesService>(TYPES.DeploymentTemplatesService).to(DeploymentTemplatesService).inSingletonScope();
-container.bind<DeploymentTemplatesDao>(TYPES.DeploymentTemplateDao).to(DeploymentTemplatesDao).inSingletonScope();
-container.bind<DeploymentTemplateAssembler>(TYPES.DeploymentTemplateAssembler).to(DeploymentTemplateAssembler).inSingletonScope();
+container.bind<PatchTemplatesService>(TYPES.PatchTemplatesService).to(PatchTemplatesService).inSingletonScope();
+container.bind<PatchTemplatesDao>(TYPES.PatchTemplateDao).to(PatchTemplatesDao).inSingletonScope();
+container.bind<PatchTemplateAssembler>(TYPES.PatchTemplateAssembler).to(PatchTemplateAssembler).inSingletonScope();
 import '../templates/template.controller';
 
 container.bind<ActivationAssembler>(TYPES.ActivationAssembler).to(ActivationAssembler).inSingletonScope();

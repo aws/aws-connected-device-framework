@@ -16,30 +16,30 @@ import { inject, injectable } from 'inversify';
 import { TYPES } from '../di/types';
 import { logger } from '../utils/logger.util';
 
-import { AssociationModel, DeploymentItem, DeploymentSource } from './deployment.model';
+import { AssociationModel, PatchItem, PatchSource } from './patch.model';
 import { ActivationDao } from '../activation/activation.dao';
-import { AgentbasedDeploymentDao } from './agentbased-deployment.dao';
+import { AgentbasedPatchDao } from './agentbased-patch.dao';
 import { ExpressionParser } from '../utils/expression.util';
 import { DescribeInstanceInformationRequest } from 'aws-sdk/clients/ssm';
-import { DeploymentTemplatesService } from '../templates/template.service';
+import { PatchTemplatesService } from '../templates/template.service';
 
 
 @injectable()
-export class AgentbasedDeploymentService {
+export class AgentbasedPatchService {
 
     private readonly ssm: AWS.SSM;
     private readonly sqs: AWS.SQS;
 
-    private queueUrl: string = process.env.AWS_SQS_QUEUES_DEPLOYMENT_TASKS;
+    private queueUrl: string = process.env.AWS_SQS_QUEUES_PATCH_TASKS;
     private ssmAnsiblePatchDocument = 'AWS-ApplyAnsiblePlaybooks';
 
     constructor(
         @inject(TYPES.SSMFactory) ssmFactory: () => AWS.SSM,
         @inject(TYPES.SQSFactory) sqsFactory: () => AWS.SQS,
         @inject(TYPES.ActivationDao) private activationDao: ActivationDao,
-        @inject(TYPES.AgentbasedDeploymentDao) private agentbasedDeploymentDao: AgentbasedDeploymentDao,
+        @inject(TYPES.AgentbasedPatchDao) private agentbasedPatchDao: AgentbasedPatchDao,
         @inject(TYPES.ExpressionParser) private expressionParser: ExpressionParser,
-        @inject(TYPES.DeploymentTemplatesService) private templatesService: DeploymentTemplatesService,
+        @inject(TYPES.PatchTemplatesService) private templatesService: PatchTemplatesService,
         @inject('aws.s3.bucket') private artifactsBucket: string,
         @inject('aws.s3.prefix') private artifactsBucketPrefix: string
     ) {
@@ -47,49 +47,49 @@ export class AgentbasedDeploymentService {
         this.sqs = sqsFactory();
     }
 
-    public async create(deployment: DeploymentItem): Promise<void> {
-        logger.debug(`agentbasedDeployment.service: create: in: deployment: ${deployment}`);
+    public async create(patch: PatchItem): Promise<void> {
+        logger.debug(`agentbasedPatch.service: create: in: patch: ${patch}`);
 
-        ow(deployment, 'Deployment Information', ow.object.nonEmpty);
-        ow(deployment.deploymentId, 'Deployment Id', ow.string.nonEmpty);
-        ow(deployment.deploymentTemplateName, 'Deployment Template Name', ow.string.nonEmpty);
-        ow(deployment.deploymentStatus, 'Deployment Status', ow.string.nonEmpty);
-        ow(deployment.deploymentType, 'Deployment Type', ow.string.nonEmpty);
-        ow(deployment.deviceId, 'Deployment Device Id', ow.string.nonEmpty);
+        ow(patch, 'Patch Information', ow.object.nonEmpty);
+        ow(patch.patchId, 'Patch Id', ow.string.nonEmpty);
+        ow(patch.patchTemplateName, 'Patch Template Name', ow.string.nonEmpty);
+        ow(patch.patchStatus, 'Patch Status', ow.string.nonEmpty);
+        ow(patch.patchType, 'Patch Type', ow.string.nonEmpty);
+        ow(patch.deviceId, 'Patch Device Id', ow.string.nonEmpty);
 
         const sqsRequest: AWS.SQS.SendMessageRequest = {
             QueueUrl: this.queueUrl,
-            MessageBody: JSON.stringify(deployment)
+            MessageBody: JSON.stringify(patch)
         };
 
         try {
             await this.sqs.sendMessage(sqsRequest).promise();
         } catch (err) {
-            logger.error(`agentbasedDeployment.service sqs.sendMessage: in: ${sqsRequest} : error: ${JSON.stringify(err)}`);
+            logger.error(`agentbasedPatch.service sqs.sendMessage: in: ${sqsRequest} : error: ${JSON.stringify(err)}`);
             throw err;
         }
 
-        logger.debug(`agentbasedDeployment.service: create: exit`);
+        logger.debug(`agentbasedPatch.service: create: exit`);
 
     }
 
-    public async deploy(deployment: DeploymentItem): Promise<void> {
-        logger.debug(`agentbasedDeploymentService: deploy: in: deployment: ${JSON.stringify(deployment)}`);
+    public async deploy(patch: PatchItem): Promise<void> {
+        logger.debug(`agentbasedPatchService: deploy: in: patch: ${JSON.stringify(patch)}`);
 
-        ow(deployment, 'Deployment Information', ow.object.nonEmpty);
-        ow(deployment.deploymentId, 'Deployment Id', ow.string.nonEmpty);
-        ow(deployment.deploymentTemplateName, 'Deployment Template Name', ow.string.nonEmpty);
-        ow(deployment.deploymentStatus, 'Deployment Status', ow.string.nonEmpty);
-        ow(deployment.deploymentType, 'Deployment Type', ow.string.nonEmpty);
-        ow(deployment.deviceId, 'Deployment Device Id', ow.string.nonEmpty);
+        ow(patch, 'Patch Information', ow.object.nonEmpty);
+        ow(patch.patchId, 'Patch Id', ow.string.nonEmpty);
+        ow(patch.patchTemplateName, 'Patch Template Name', ow.string.nonEmpty);
+        ow(patch.patchStatus, 'Patch Status', ow.string.nonEmpty);
+        ow(patch.patchType, 'Patch Type', ow.string.nonEmpty);
+        ow(patch.deviceId, 'Patch Device Id', ow.string.nonEmpty);
 
-        const template = await this.templatesService.get(deployment.deploymentTemplateName);
+        const template = await this.templatesService.get(patch.patchTemplateName);
 
         if (!template) {
             throw new Error('TEMPLATE_NOT_FOUND');
         }
 
-        const activation = await this.activationDao.getByDeviceId(deployment.deviceId);
+        const activation = await this.activationDao.getByDeviceId(patch.deviceId);
 
         if (!activation) {
             throw new Error('DEVICE_ACTIVATION_NOT_FOUND');
@@ -106,7 +106,7 @@ export class AgentbasedDeploymentService {
         try {
             const extraVars = {
                 ...template?.extraVars,
-                ...deployment.extraVars
+                ...patch.extraVars
             }
 
             await this.transformExtraVars(extraVars);
@@ -115,7 +115,7 @@ export class AgentbasedDeploymentService {
 
             const associationParams: AWS.SSM.CreateAssociationRequest = {
                 Name: this.ssmAnsiblePatchDocument,
-                AssociationName: `${deployment.deploymentId}`,
+                AssociationName: `${patch.patchId}`,
                 Parameters: {
                     SourceType: ['S3'],
                     SourceInfo: [playbook],
@@ -142,27 +142,27 @@ export class AgentbasedDeploymentService {
             throw err;
         }
 
-        const deploymentAssociation: AssociationModel = {
-            deploymentId: deployment.deploymentId,
+        const patchAssociation: AssociationModel = {
+            patchId: patch.patchId,
             associationId: association.AssociationDescription.AssociationId
         };
 
-        await this.agentbasedDeploymentDao.save(deploymentAssociation);
+        await this.agentbasedPatchDao.save(patchAssociation);
 
-        logger.debug(`agentbasedDeploymentService: deploy: out: result: ${JSON.stringify(association)}`);
+        logger.debug(`agentbasedPatchService: deploy: out: result: ${JSON.stringify(association)}`);
     }
 
-    public async delete(deployment: DeploymentItem): Promise<void> {
-        logger.debug(`agentbasedDeploymentService: delete: in: deployment: ${deployment}`);
+    public async delete(patch: PatchItem): Promise<void> {
+        logger.debug(`agentbasedPatchService: delete: in: patch: ${patch}`);
 
-        ow(deployment, 'Deployment Information', ow.object.nonEmpty);
-        ow(deployment.deploymentId, 'Deployment Id', ow.string.nonEmpty);
-        ow(deployment.deploymentTemplateName, 'Deployment Template Name', ow.string.nonEmpty);
-        ow(deployment.deploymentStatus, 'Deployment Status', ow.string.nonEmpty);
-        ow(deployment.deploymentType, 'Deployment Type', ow.string.nonEmpty);
-        ow(deployment.deviceId, 'Deployment Device Id', ow.string.nonEmpty);
+        ow(patch, 'Patch Information', ow.object.nonEmpty);
+        ow(patch.patchId, 'Patch Id', ow.string.nonEmpty);
+        ow(patch.patchTemplateName, 'Patch Template Name', ow.string.nonEmpty);
+        ow(patch.patchStatus, 'Patch Status', ow.string.nonEmpty);
+        ow(patch.patchType, 'Patch Type', ow.string.nonEmpty);
+        ow(patch.deviceId, 'Patch Device Id', ow.string.nonEmpty);
 
-        const association = await this.agentbasedDeploymentDao.getByDeploymentId(deployment.deploymentId);
+        const association = await this.agentbasedPatchDao.getByPatchId(patch.patchId);
 
         if (!association) {
             return;
@@ -176,36 +176,36 @@ export class AgentbasedDeploymentService {
         try {
             result = this.ssm.deleteAssociation(params).promise();
         } catch (err) {
-            logger.error(`agentbasedDeployment.service ssm.deleteAssociation err: ${err}`);
+            logger.error(`agentbasedPatch.service ssm.deleteAssociation err: ${err}`);
             throw err;
         }
 
-        await this.agentbasedDeploymentDao.delete(association);
+        await this.agentbasedPatchDao.delete(association);
 
-        logger.debug(`agentbasedDeploymentService: delete: out: result: ${JSON.stringify(result)}`);
+        logger.debug(`agentbasedPatchService: delete: out: result: ${JSON.stringify(result)}`);
     }
 
-    public async update(deployment: DeploymentItem): Promise<void> {
-        logger.debug(`agentbasedDeploymentService: update in: deployment: ${deployment}`)
+    public async update(patch: PatchItem): Promise<void> {
+        logger.debug(`agentbasedPatchService: update in: patch: ${patch}`)
 
-        ow(deployment, 'Deployment Information', ow.object.nonEmpty);
-        ow(deployment.deploymentId, 'Deployment Id', ow.string.nonEmpty);
-        ow(deployment.deploymentTemplateName, 'Deployment Template Name', ow.string.nonEmpty);
-        ow(deployment.deploymentStatus, 'Deployment Status', ow.string.nonEmpty);
-        ow(deployment.deploymentType, 'Deployment Type', ow.string.nonEmpty);
-        ow(deployment.deviceId, 'Deployment Device Id', ow.string.nonEmpty);
+        ow(patch, 'Patch Information', ow.object.nonEmpty);
+        ow(patch.patchId, 'Patch Id', ow.string.nonEmpty);
+        ow(patch.patchTemplateName, 'Patch Template Name', ow.string.nonEmpty);
+        ow(patch.patchStatus, 'Patch Status', ow.string.nonEmpty);
+        ow(patch.patchType, 'Patch Type', ow.string.nonEmpty);
+        ow(patch.deviceId, 'Patch Device Id', ow.string.nonEmpty);
 
-        const template = await this.templatesService.get(deployment.deploymentTemplateName);
+        const template = await this.templatesService.get(patch.patchTemplateName);
 
         if (!template) {
             throw new Error('TEMPLATE_NOT_FOUND');
         }
         // get the association Id by doing a list
-        const association = await this.agentbasedDeploymentDao.getByDeploymentId(deployment.deploymentId);
+        const association = await this.agentbasedPatchDao.getByPatchId(patch.patchId);
 
         // if the association is not found, then create a new one by deploying
         if (!association) {
-            return await this.deploy(deployment);
+            return await this.deploy(patch);
         }
 
         ow(association.associationId, 'Association Id', ow.string.nonEmpty);
@@ -217,14 +217,14 @@ export class AgentbasedDeploymentService {
 
             const extraVars = {
                 ...template?.extraVars,
-                ...deployment.extraVars
+                ...patch.extraVars
             }
 
             await this.transformExtraVars(extraVars)
 
             const associationUpdateParams: AWS.SSM.UpdateAssociationRequest = {
                 Name: this.ssmAnsiblePatchDocument,
-                AssociationName: `${deployment.deploymentId}`,
+                AssociationName: `${patch.patchId}`,
                 AssociationId: association.associationId,
                 Parameters: {
                     SourceType: ['S3'],
@@ -247,7 +247,7 @@ export class AgentbasedDeploymentService {
     }
 
     private async getInstanceByActivationId(activationId: string) {
-        logger.debug(`agentbasedDeploymentService: getInstanceByActivationId: in: activation: ${activationId}`);
+        logger.debug(`agentbasedPatchService: getInstanceByActivationId: in: activation: ${activationId}`);
 
         ow(activationId, 'Activation Id', ow.string.nonEmpty);
 
@@ -261,7 +261,7 @@ export class AgentbasedDeploymentService {
         try {
             result = await this.ssm.describeInstanceInformation(params).promise();
         } catch (err) {
-            logger.error(`agentbasedDeployment.service ssm.describeInstanceInformation err: ${err}`);
+            logger.error(`agentbasedPatch.service ssm.describeInstanceInformation err: ${err}`);
             throw err;
         }
 
@@ -270,13 +270,13 @@ export class AgentbasedDeploymentService {
         }
 
 
-        logger.debug(`agentbasedDeploymentService: getInstanceByActivationId: exit: instance: ${JSON.stringify(result)}`);
+        logger.debug(`agentbasedPatchService: getInstanceByActivationId: exit: instance: ${JSON.stringify(result)}`);
 
         return result.InstanceInformationList[0].InstanceId;
     }
 
     public async getInstance(instanceId: string): Promise<AWS.SSM.InstanceInformation> {
-        logger.debug(`agentbasedDeploymentService: getInstance in: instanceId: ${instanceId}`);
+        logger.debug(`agentbasedPatchService: getInstance in: instanceId: ${instanceId}`);
 
         ow(instanceId, 'Instance Id', ow.string.nonEmpty);
 
@@ -290,7 +290,7 @@ export class AgentbasedDeploymentService {
         try {
             result = await this.ssm.describeInstanceInformation(params).promise();
         } catch (err) {
-            logger.error(`agentbasedDeployment.service ssm.describeInstanceInformation err: ${err}`);
+            logger.error(`agentbasedPatch.service ssm.describeInstanceInformation err: ${err}`);
             throw err;
         }
 
@@ -298,32 +298,32 @@ export class AgentbasedDeploymentService {
             throw new Error("TARGET_INSTANCE_NOT_FOUND")
         }
 
-        logger.debug(`agentbasedDeploymentService: getInstance: exit: instance: ${JSON.stringify(result)}`);
+        logger.debug(`agentbasedPatchService: getInstance: exit: instance: ${JSON.stringify(result)}`);
 
         return result.InstanceInformationList[0];
     }
 
-    public async getDeploymentByAssociationId(associationId: string): Promise<AssociationModel> {
-        logger.debug(`agentbasedDeploymentDao: getDeploymentByAssociationId in: associationId: ${associationId}`);
+    public async getPatchByAssociationId(associationId: string): Promise<AssociationModel> {
+        logger.debug(`agentbasedPatchDao: getPatchByAssociationId in: associationId: ${associationId}`);
 
         ow(associationId, 'Association Id', ow.string.nonEmpty);
 
         let result;
         try {
-            result = await this.agentbasedDeploymentDao.getByAssociationId(associationId);
+            result = await this.agentbasedPatchDao.getByAssociationId(associationId);
         } catch (err) {
-            logger.error(`agentbasedDeployment.service agentbasedDeploymentDao.get err: ${err}`);
+            logger.error(`agentbasedPatch.service agentbasedPatchDao.get err: ${err}`);
             throw err;
         }
 
-        logger.debug(`agentbasedDeploymentService: getDeploymentByInstanceId: exit: association: ${JSON.stringify(result)}`);
+        logger.debug(`agentbasedPatchService: getPatchByInstanceId: exit: association: ${JSON.stringify(result)}`);
 
         return result;
 
     }
 
-    private getAssociationSourceParameter(source: DeploymentSource): string {
-        logger.debug(`agentbasedDeployment.service getS3Path: in source: ${JSON.stringify(source)}`);
+    private getAssociationSourceParameter(source: PatchSource): string {
+        logger.debug(`agentbasedPatch.service getS3Path: in source: ${JSON.stringify(source)}`);
 
         ow(source, 'Source Information', ow.object.nonEmpty);
         ow(source.bucket, 'Bucket', ow.string.nonEmpty);
@@ -333,7 +333,7 @@ export class AgentbasedDeploymentService {
             path: `https://s3.amazonaws.com/${source.bucket}/${source.key}`,
         };
 
-        logger.debug(`gentbasedDeployment.service getS3Path: exit: out: path : ${associationS3Param}`);
+        logger.debug(`gentbasedPatch.service getS3Path: exit: out: path : ${associationS3Param}`);
 
         return JSON.stringify(associationS3Param);
     }

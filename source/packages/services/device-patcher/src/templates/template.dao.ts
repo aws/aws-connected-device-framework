@@ -18,10 +18,10 @@ import { logger } from '../utils/logger.util';
 import { createDelimitedAttribute, expandDelimitedAttribute, PkType } from '../utils/pKUtils.util';
 import { DynamoDbUtils } from '../utils/dynamoDb.util';
 
-import { DeploymentTemplateItem } from './template.model';
+import { PatchTemplateItem } from './template.model';
 
 @injectable()
-export class DeploymentTemplatesDao {
+export class PatchTemplatesDao {
 
     private readonly SI1_INDEX = 'sk-si1Sort-index';
     private readonly tableName = process.env.AWS_DYNAMODB_TABLE_NAME
@@ -35,25 +35,25 @@ export class DeploymentTemplatesDao {
         this.dc = documentClientFactory();
     }
 
-    public async save(template: DeploymentTemplateItem): Promise<void> {
-        logger.debug(`DeploymentTemplatesDao create: in: template: ${JSON.stringify(template)}`);
+    public async save(template: PatchTemplateItem): Promise<void> {
+        logger.debug(`PatchTemplatesDao create: in: template: ${JSON.stringify(template)}`);
 
-        const templateDbId = createDelimitedAttribute(PkType.DeploymentTemplate, template.name);
+        const templateDbId = createDelimitedAttribute(PkType.PatchTemplate, template.name);
 
         // create/update the current version record
         const currentRecord : AWS.DynamoDB.DocumentClient.WriteRequest = {
             PutRequest: {
                 Item: {
                     pk: templateDbId,
-                    sk:  PkType.DeploymentTemplate,
-                    si1Sort: createDelimitedAttribute(PkType.DeploymentTemplate, template.enabled, template.name),
+                    sk:  PkType.PatchTemplate,
+                    si1Sort: createDelimitedAttribute(PkType.PatchTemplate, template.enabled, template.name),
                     createdAt: template.createdAt?.toISOString(),
                     updatedAt: template.updatedAt?.toISOString(),
                     versionNo: template.versionNo,
                     enabled: template.enabled,
                     playbookName: template.playbookName,
                     playbookSource: template.playbookSource,
-                    deploymentType: template.deploymentType,
+                    patchType: template.patchType,
                     extraVars: template.extraVars,
                     options: template.options,
                     description: template.description
@@ -66,7 +66,7 @@ export class DeploymentTemplatesDao {
             PutRequest: {
                 Item: {
                     pk: templateDbId,
-                    sk:  createDelimitedAttribute(PkType.DeploymentTemplateVersion, template.versionNo),
+                    sk:  createDelimitedAttribute(PkType.PatchTemplateVersion, template.versionNo),
                     createdAt: template.createdAt?.toISOString(),
                     updatedAt: template.updatedAt?.toISOString(),
                     versionNo: template.versionNo
@@ -85,11 +85,11 @@ export class DeploymentTemplatesDao {
             throw new Error('SAVE_FAILED');
         }
 
-        logger.debug(`DeploymentTemplateDao: create: exit:`);
+        logger.debug(`PatchTemplateDao: create: exit:`);
     }
 
-    public async get(templateName: string): Promise<DeploymentTemplateItem> {
-        logger.debug(`DeploymentTemplatesDao get: in: templateName: ${templateName}`);
+    public async get(templateName: string): Promise<PatchTemplateItem> {
+        logger.debug(`PatchTemplatesDao get: in: templateName: ${templateName}`);
 
         const params = {
             TableName: this.tableName,
@@ -99,8 +99,8 @@ export class DeploymentTemplatesDao {
                 '#range': 'sk'
             },
             ExpressionAttributeValues: {
-                ':hash': createDelimitedAttribute(PkType.DeploymentTemplate, templateName),
-                ':range': PkType.DeploymentTemplate
+                ':hash': createDelimitedAttribute(PkType.PatchTemplate, templateName),
+                ':range': PkType.PatchTemplate
             }
         };
 
@@ -118,19 +118,19 @@ export class DeploymentTemplatesDao {
 
         const templates = this.assembleTemplateList(results.Items);
 
-        logger.debug(`DeploymentTemplatesDao get: exit: deploymentTemplate: ${JSON.stringify(templates)}`);
+        logger.debug(`PatchTemplatesDao get: exit: patchTemplate: ${JSON.stringify(templates)}`);
         return templates[0];
     }
 
-    public async list(count?:number, lastEvaluated?: TemplateListPaginationKey) : Promise<[DeploymentTemplateItem[], TemplateListPaginationKey]> {
+    public async list(count?:number, lastEvaluated?: TemplateListPaginationKey) : Promise<[PatchTemplateItem[], TemplateListPaginationKey]> {
         logger.debug(`templates.dao list: in: count:${count}, lastEvaluated:${JSON.stringify(lastEvaluated)}`);
 
         let exclusiveStartKey: DynamoDbPaginationKey;
         if (lastEvaluated?.name) {
             exclusiveStartKey = {
-                pk: createDelimitedAttribute(PkType.DeploymentTemplate, lastEvaluated.name),
-                siKey1: PkType.DeploymentTemplate,
-                sk: createDelimitedAttribute(PkType.DeploymentTemplateVersion, 'current'),
+                pk: createDelimitedAttribute(PkType.PatchTemplate, lastEvaluated.name),
+                siKey1: PkType.PatchTemplate,
+                sk: createDelimitedAttribute(PkType.PatchTemplateVersion, 'current'),
             }
         }
 
@@ -142,14 +142,14 @@ export class DeploymentTemplatesDao {
                 '#hash': 'sk'
             },
             ExpressionAttributeValues: {
-                ':hash': PkType.DeploymentTemplate
+                ':hash': PkType.PatchTemplate
             },
             Select: 'ALL_ATTRIBUTES',
             ExclusiveStartKey: exclusiveStartKey,
             Limit: count
         };
 
-        logger.silly(`deploymentTemplates.dao list: params: ${JSON.stringify(params)}`);
+        logger.silly(`patchTemplates.dao list: params: ${JSON.stringify(params)}`);
 
         const results = await this.dc.query(params).promise();
         if ((results?.Items?.length ?? 0) === 0) {
@@ -157,7 +157,7 @@ export class DeploymentTemplatesDao {
             return [undefined, undefined];
         }
 
-        logger.silly(`deploymentTemplates.dao list: results: ${JSON.stringify(results)}`);
+        logger.silly(`patchTemplates.dao list: results: ${JSON.stringify(results)}`);
 
         const templates = this.assembleTemplateList(results.Items);
         let paginationKey: TemplateListPaginationKey;
@@ -180,7 +180,7 @@ export class DeploymentTemplatesDao {
             TableName: this.tableName,
             KeyConditionExpression: `#hash = :hash`,
             ExpressionAttributeNames: {'#hash': 'pk'},
-            ExpressionAttributeValues: {':hash': createDelimitedAttribute(PkType.DeploymentTemplate, name)}
+            ExpressionAttributeValues: {':hash': createDelimitedAttribute(PkType.PatchTemplate, name)}
         };
 
         const queryResults = await this.dc.query(queryParams).promise();
@@ -212,14 +212,14 @@ export class DeploymentTemplatesDao {
         logger.debug(`templates.dao delete: exit:`);
     }
 
-    private assembleTemplateList(items:AWS.DynamoDB.DocumentClient.ItemList) : DeploymentTemplateItem[] {
+    private assembleTemplateList(items:AWS.DynamoDB.DocumentClient.ItemList) : PatchTemplateItem[] {
         logger.debug(`templates.dao assembleTemplate: items: ${JSON.stringify(items)}`);
 
         if ((items?.length ?? 0) === 0) {
             return undefined;
         }
 
-        const t: { [version: string]: DeploymentTemplateItem } = {};
+        const t: { [version: string]: PatchTemplateItem } = {};
         items.forEach(i => {
             const templateName = expandDelimitedAttribute(i.pk)[1];
             const templateVersion = i.versionNo;
@@ -229,7 +229,7 @@ export class DeploymentTemplatesDao {
                 name: templateName,
                 playbookName: i.playbookName,
                 playbookSource: i.playbookSource,
-                deploymentType: i.deploymentType,
+                patchType: i.patchType,
                 extraVars: i.extraVars,
                 options: i.options,
                 versionNo: i.versionNo,
@@ -240,7 +240,7 @@ export class DeploymentTemplatesDao {
             }
         })
 
-        logger.debug(`DeploymentTemplates.dao assembleTemplate: exit: ${JSON.stringify(items)}`);
+        logger.debug(`PatchTemplates.dao assembleTemplate: exit: ${JSON.stringify(items)}`);
         return Object.values(t);
     }
 

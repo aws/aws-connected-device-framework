@@ -23,19 +23,19 @@ The host machine or edge device needs to be connected to the internet and have t
 
 > **NOTE:** If the host machine is an EC2 instance, then the steps defined in [Device Patcher Integration Testing](<docs/integration-testing.md>) can be used to create an AMI to launch an EC2 instance with pre-reqs installed.
 
-### Step 1: Define a deployment template
-In order to deploy an ansible Patch, the first step is to create a patch deployment template. The template specifies configuration for a particular patch. The payload has 2 main parts, the ansible playbook file and the `extraVars` to pass to the playbook itself. These `extraVars` should be common to all deployment patches. These can be overwritten when the actual deployment patch is created.
+### Step 1: Define a patch template
+In order to deploy an ansible Patch, the first step is to create a patch template. The template specifies configuration for a particular patch. The payload has 2 main parts, the ansible playbook file and the `extraVars` to pass to the playbook itself. These `extraVars` should be common to all patches. These can be overwritten when the actual patch is created.
 
 #### REQUEST
 
 ```bash
-curl --location --request POST '<endpoint>/deploymentTemplates' \
+curl --location --request POST '<endpoint>/patchTemplates' \
     --header 'Content-Type: multipart/form-data' \
     --header 'Accept: application/vnd.aws-cdf-v1.0+json' \
     --form 'name="sampleTemplate"' \
     --form 'playbookFile=@"<path-to-playbook-file>"' \
-    --form 'deploymentType="agentbased"' \
-    --form 'description="Sample Patch Deployment Template"'
+    --form 'patchType="agentbased"' \
+    --form 'description="Sample Patch Template"'
 ```
 
 #### RESPONSE
@@ -48,12 +48,12 @@ curl --location --request POST '<endpoint>/deploymentTemplates' \
     "bucket": "xxxxxxxxxxxxxx",
     "key": "device-patcher/playbooks/sampleTemplate___sample-playbook.yml"
   },
-  "deploymentType": "agentbased",
+  "patchType": "agentbased",
   "versionNo": 1,
   "createdAt": "2022-04-14T20:48:47.410Z",
   "updatedAt": "2022-04-14T20:48:58.748Z",
   "enabled": true,
-  "description": "Sample Patch Deployment Template updated"
+  "description": "Sample Patch Template updated"
 }
 ```
 
@@ -61,7 +61,7 @@ All templates are versioned within the system. The first `POST` call will create
 
 ### Step 2: Activating the Device
 
-In order to run a deployment job on the device first needs to be activated as a hybrid instance within SSM. This can be done by generating an activation code for the device and then following the steps to stop/register/start the SSM agent on the device itself. Since this step is done on the device itself, connectivity to the device is required. This is the only time when a physical connection between the device and host needs to be made. The API call below will generate the activation code which can be taken to activate the SSM agent. This step will allow this device to be activated as a Hybrid instance in SSM.
+In order to run a patch job on the device first needs to be activated as a hybrid instance within SSM. This can be done by generating an activation code for the device and then following the steps to stop/register/start the SSM agent on the device itself. Since this step is done on the device itself, connectivity to the device is required. This is the only time when a physical connection between the device and host needs to be made. The API call below will generate the activation code which can be taken to activate the SSM agent. This step will allow this device to be activated as a Hybrid instance in SSM.
 
 #### REQUEST
 ```bash
@@ -105,19 +105,19 @@ ssh -i ${HOST_PRIVATE_KEY_PATH} ${HOST_USER}@${HOST_DNS_ENDPOINT} 'sudo systemct
 
 ### Step 3: Deploy the Patch (Ansible Playbook) to the device
 
-Upon successfully activating the device, The patch deployment step can be executed. The following request will create a new SSM State Manager Association which will execute Ansible playbook on the device itself.
+Upon successfully activating the device, The patch step can be executed. The following request will create a new SSM State Manager Association which will execute Ansible playbook on the device itself.
 
-This particular endpoint is an asynchronous REST API. The deployment gets queued which is processed at a later time. The payload requires a list of deployments. The individual deployment has required properties such as deviceId, DeploymentTemplateName, and extraVars for overriding playbook parameters defined in the deployment template or unique to a particular deployment.
+This particular endpoint is an asynchronous REST API. The patch gets queued which is processed at a later time. The payload requires a list of patches. The individual patch has required properties such as deviceId, PatchTemplateName, and extraVars for overriding playbook parameters defined in the patch template or unique to a particular patch.
 
 #### REQUEST
 ```bash
-curl --location --request POST '<endpoint>/deploymentTasks' \
+curl --location --request POST '<endpoint>/patchTasks' \
 --header 'Content-Type: application/vnd.aws-cdf-v1.0+json' \
 --header 'Accept: application/vnd.aws-cdf-v1.0+json' \
 --data-raw '{
-    "deployments": [{
+    "patches": [{
         "deviceId": "<device-identifier>",
-        "deploymentTemplateName": "ggv2-ec2-installer-template",
+        "patchTemplateName": "ggv2-ec2-installer-template",
         "extraVars":{
             "iot_device_config_url": "${aws:s3:presign:https://<bucket>/<prefix>?expiresIn=604800}",
             "iot_device_cred_zip_url": "${aws:s3:presign:https://<bucket>/<prefix>?expiresIn=604800}"
@@ -132,15 +132,15 @@ curl --location --request POST '<endpoint>/deploymentTasks' \
 HTTP: 200 OK
 ```
 
-### Step 4: Check the deployment status
+### Step 4: Check the patch status
 
-There are couple different ways the status of the deployment can be checked. If the status of the whole deployment task needs to be checked, then the following query can be made
+There are couple different ways the status of the patch can be checked. If the status of the whole patch task needs to be checked, then the following query can be made
 
 #### REQUEST
 ```bash
-# The {deploymentTaskId} can be obtained from the response Header from Step 3.
+# The {patchTaskId} can be obtained from the response Header from Step 3.
 
-curl --location --request GET '<endpoint>/deploymentTasks/{deploymentTaskId}/deployments' \
+curl --location --request GET '<endpoint>/patchTasks/{patchTaskId}/patches' \
 --header 'Content-Type: application/vnd.aws-cdf-v1.0+json' \
 --header 'Accept: application/vnd.aws-cdf-v1.0+json'
 ```
@@ -149,16 +149,16 @@ curl --location --request GET '<endpoint>/deploymentTasks/{deploymentTaskId}/dep
 
 ```json
 {
-    "deployments": [
+    "patches": [
         {
             "deviceId": "ec2-ggv2core-device1",
-            "deploymentId": "2eb2dbc0-62e1-11ec-b3fe-919bdd9a87d1",
+            "patchId": "2eb2dbc0-62e1-11ec-b3fe-919bdd9a87d1",
             "taskId": "2e7c6270-62e1-11ec-b3fe-919bdd9a87d1",
             "createdAt": "2021-12-22T04:39:43.228Z",
             "updatedAt": "2021-12-22T04:39:55.017Z",
-            "deploymentTemplateName": "sample-playbook-template",
-            "deploymentStatus": "pending",
-            "deploymentType": "agentbased",
+            "patchTemplateName": "sample-playbook-template",
+            "patchStatus": "pending",
+            "patchType": "agentbased",
             "statusMessage": "SSM:InProgress",
             "extraVars": {
               "iot_device_cred_zip_url": "${aws:s3:presign:https://cdf-xxxxxxxxxx-us-west-2/greengrass2/artifacts/ggv2-test-core-1/certs.zip?expiresIn=604800}",
@@ -168,13 +168,13 @@ curl --location --request GET '<endpoint>/deploymentTasks/{deploymentTaskId}/dep
         },
         {
             "deviceId": "ec2-ggv2core-device1",
-            "deploymentId": "52240a20-62e1-11ec-b3fe-919bdd9a87d1",
+            "patchId": "52240a20-62e1-11ec-b3fe-919bdd9a87d1",
             "taskId": "51de75a0-62e1-11ec-b3fe-919bdd9a87d1",
             "createdAt": "2021-12-22T04:40:42.690Z",
             "updatedAt": "2021-12-22T17:24:33.818Z",
-            "deploymentTemplateName": "ggv2-ec2-installer-template",
-            "deploymentStatus": "failed",
-            "deploymentType": "agentbased",
+            "patchTemplateName": "ggv2-ec2-installer-template",
+            "patchStatus": "failed",
+            "patchType": "agentbased",
             "statusMessage": "SSM:Failed",
             "extraVars": {
               "iot_device_cred_zip_url": "${aws:s3:presign:https://cdf-xxxxxxxxxx-us-west-2/greengrass2/artifacts/ggv2-test-core-1/certs.zip?expiresIn=604800}",
@@ -186,11 +186,11 @@ curl --location --request GET '<endpoint>/deploymentTasks/{deploymentTaskId}/dep
 }
 ```
 
-If the deployment for a particular device needs to be checked, then the following query can be made to retrieve the deployment for a particular device
+If the patch for a particular device needs to be checked, then the following query can be made to retrieve the patch for a particular device
 
 #### REQUEST
 ```bash
-curl --location --request GET '<endpoint>/devices/{deviceId}/deployments' \
+curl --location --request GET '<endpoint>/devices/{deviceId}/patches' \
 --header 'Content-Type: application/vnd.aws-cdf-v1.0+json' \
 --header 'Accept: application/vnd.aws-cdf-v1.0+json'
 ```
@@ -199,16 +199,16 @@ curl --location --request GET '<endpoint>/devices/{deviceId}/deployments' \
 
 ```json
 {
-  "deployments": [
+  "patches": [
     {
       "deviceId": "ec2-ggv2core-device1",
-      "deploymentId": "2eb2dbc0-62e1-11ec-b3fe-919bdd9a87d1",
+      "patchId": "2eb2dbc0-62e1-11ec-b3fe-919bdd9a87d1",
       "taskId": "2e7c6270-62e1-11ec-b3fe-919bdd9a87d1",
       "createdAt": "2021-12-22T04:39:43.228Z",
       "updatedAt": "2021-12-22T04:39:55.017Z",
-      "deploymentTemplateName": "sample-playbook-template",
-      "deploymentStatus": "pending",
-      "deploymentType": "agentbased",
+      "patchTemplateName": "sample-playbook-template",
+      "patchStatus": "pending",
+      "patchType": "agentbased",
       "statusMessage": "SSM:InProgress",
       "extraVars": {
         "iot_device_cred_zip_url": "${aws:s3:presign:https://cdf-xxxxxxxxxx-us-west-2/greengrass2/artifacts/ggv2-test-core-1/certs.zip?expiresIn=604800}",
@@ -220,16 +220,16 @@ curl --location --request GET '<endpoint>/devices/{deviceId}/deployments' \
 }
 ```
 
-### OPTIONAL Step 5: Re-run a specific deployment
+### OPTIONAL Step 5: Re-run a specific patch
 
 #### REQUEST
 
 ```bash
-curl --location --request PATCH '<endpoint>/deployments/{deploymentId}' \
+curl --location --request PATCH '<endpoint>/patches/{patchId}' \
 --header 'Content-Type: application/vnd.aws-cdf-v1.0+json' \
 --header 'Accept: application/vnd.aws-cdf-v1.0+json' \
 --data-raw '{
-	"deploymentStatus": "retry"
+	"patchStatus": "retry"
 }'
 ```
 

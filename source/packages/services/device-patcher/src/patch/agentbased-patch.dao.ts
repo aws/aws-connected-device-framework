@@ -17,10 +17,10 @@ import { TYPES } from '../di/types';
 import { logger } from '../utils/logger.util';
 import { createDelimitedAttribute, PkType } from '../utils/pKUtils.util';
 
-import { AssociationModel } from './deployment.model';
+import { AssociationModel } from './patch.model';
 
 @injectable()
-export class AgentbasedDeploymentDao {
+export class AgentbasedPatchDao {
 
     private dc: AWS.DynamoDB.DocumentClient;
     private readonly SI1_INDEX = 'sk-si1Sort-index';
@@ -33,42 +33,42 @@ export class AgentbasedDeploymentDao {
     }
 
     public async save(association: AssociationModel): Promise<void> {
-        logger.debug(`agentbasedDeployment.dao: save: in: deployment: ${JSON.stringify(association)}`);
+        logger.debug(`agentbasedPatch.dao: save: in: patch: ${JSON.stringify(association)}`);
 
         const params = {
             TableName: this.tableName,
             Item: {
-                pk: createDelimitedAttribute(PkType.DeviceDeploymentTask, association.deploymentId),
-                sk: createDelimitedAttribute(PkType.DeviceDeploymentTask, PkType.DeviceDeploymentAssociation, 'map'),
-                si1Sort: createDelimitedAttribute(PkType.DeviceDeploymentAssociation, association.associationId),
-                deploymentId: association.deploymentId,
+                pk: createDelimitedAttribute(PkType.DevicePatch, association.patchId),
+                sk: createDelimitedAttribute(PkType.DevicePatch, PkType.DevicePatchAssociation, 'map'),
+                si1Sort: createDelimitedAttribute(PkType.DevicePatchAssociation, association.associationId),
+                patchId: association.patchId,
                 associationId: association.associationId
             }
         };
 
         await this.dc.put(params).promise();
 
-        logger.debug(`agentbasedDeployment.dao: save: exit: `);
+        logger.debug(`agentbasedPatch.dao: save: exit: `);
     }
 
     public async delete(association: AssociationModel): Promise<void> {
-        logger.debug(`agentlessDeployment.dao: delete: in: deployment: ${JSON.stringify(association)}`);
+        logger.debug(`agentlessPatch.dao: delete: in: patch: ${JSON.stringify(association)}`);
 
         const params = {
             TableName: this.tableName,
             Key: {
-                pk: createDelimitedAttribute(PkType.DeviceDeploymentTask, association.deploymentId),
-                sk: createDelimitedAttribute(PkType.DeviceDeploymentTask, PkType.DeviceDeploymentAssociation, 'map')
+                pk: createDelimitedAttribute(PkType.DevicePatch, association.patchId),
+                sk: createDelimitedAttribute(PkType.DevicePatch, PkType.DevicePatchAssociation, 'map')
             }
         };
 
         await this.dc.delete(params).promise();
 
-        logger.debug(`agentlessDeployment.dao delete: exit:`);
+        logger.debug(`agentlessPatch.dao delete: exit:`);
     }
 
     public async getByAssociationId(associationId: string): Promise<AssociationModel> {
-        logger.debug(`agentbasedDeployment.dao: getByAssociationId: associationId: ${associationId}`);
+        logger.debug(`agentbasedPatch.dao: getByAssociationId: associationId: ${associationId}`);
 
         const params = {
             TableName: this.tableName,
@@ -79,57 +79,57 @@ export class AgentbasedDeploymentDao {
                 '#sk': 'si1Sort'
             },
             ExpressionAttributeValues: {
-                ':pk': createDelimitedAttribute(PkType.DeviceDeploymentTask, PkType.DeviceDeploymentAssociation, 'map'),
-                ':sk': createDelimitedAttribute(PkType.DeviceDeploymentAssociation, associationId)
+                ':pk': createDelimitedAttribute(PkType.DevicePatch, PkType.DevicePatchAssociation, 'map'),
+                ':sk': createDelimitedAttribute(PkType.DevicePatchAssociation, associationId)
             }
         };
 
         const result = await this.dc.query(params).promise();
         if (result.Items===undefined || result.Items.length===0) {
-            logger.debug('agentbasedDeployments.dao query: exit: undefined');
+            logger.debug('agentbasedPatchs.dao query: exit: undefined');
             return undefined;
         }
 
         const i = result.Items[0];
         const pkElements = i.pk.split(':');
 
-        const deploymentAssociation: AssociationModel = {
-            deploymentId: i.deploymentId,
+        const patchAssociation: AssociationModel = {
+            patchId: i.patchId,
             associationId: pkElements[1],
         };
 
-        logger.debug(`agentbaseddeployment.dao:getByAssociationId:out:${JSON.stringify(deploymentAssociation)}`);
+        logger.debug(`agentbasedpatch.dao:getByAssociationId:out:${JSON.stringify(patchAssociation)}`);
 
-        return deploymentAssociation;
+        return patchAssociation;
     }
 
-    public async getByDeploymentId(deploymentId: string): Promise<AssociationModel> {
-        logger.debug(`agentbasedDeployment.dao: getByDeploymentId: deploymentId: ${deploymentId}`);
+    public async getByPatchId(patchId: string): Promise<AssociationModel> {
+        logger.debug(`agentbasedPatch.dao: getByPatchId: patchId: ${patchId}`);
 
         const params = {
             TableName: this.tableName,
             Key: {
-                pk: createDelimitedAttribute(PkType.DeviceDeploymentTask, deploymentId),
-                sk: createDelimitedAttribute(PkType.DeviceDeploymentTask, PkType.DeviceDeploymentAssociation, 'map')
+                pk: createDelimitedAttribute(PkType.DevicePatch, patchId),
+                sk: createDelimitedAttribute(PkType.DevicePatch, PkType.DevicePatchAssociation, 'map')
             }
         };
 
         const result = await this.dc.get(params).promise();
         if (result.Item===undefined) {
-            logger.debug('agentbasedDeployments.dao exit: undefined');
+            logger.debug('agentbasedPatchs.dao exit: undefined');
             return undefined;
         }
 
         const i = result.Item;
 
-        const deploymentAssociation: AssociationModel = {
-            deploymentId: i.deploymentId,
+        const patchAssociation: AssociationModel = {
+            patchId: i.patchId,
             associationId: i.associationId,
         };
 
-        logger.debug(`agentbaseddeployment.dao:getByDeploymentId:out: ${JSON.stringify(deploymentAssociation)}`);
+        logger.debug(`agentbasedpatch.dao:getByPatchId:out: ${JSON.stringify(patchAssociation)}`);
 
-        return deploymentAssociation;
+        return patchAssociation;
     }
 
 }

@@ -17,28 +17,28 @@ import { logger } from '../utils/logger.util';
 import { TYPES } from '../di/types';
 import { S3Utils } from '../utils/s3.util';
 
-import { DeploymentTemplateItem } from './template.model';
-import { DeploymentTemplatesDao, TemplateListPaginationKey } from './template.dao';
+import { PatchTemplateItem } from './template.model';
+import { PatchTemplatesDao, TemplateListPaginationKey } from './template.dao';
 
 @injectable()
-export class DeploymentTemplatesService {
+export class PatchTemplatesService {
     constructor(
-        @inject(TYPES.DeploymentTemplateDao) private deploymentTemplatesDao: DeploymentTemplatesDao,
+        @inject(TYPES.PatchTemplateDao) private patchTemplatesDao: PatchTemplatesDao,
         @inject(TYPES.S3Utils) private s3Utils: S3Utils,
         @inject('aws.s3.bucket') private s3Bucket: string,
         @inject('aws.s3.prefix') private s3Prefix: string
     ) {}
 
-    public async create(template: DeploymentTemplateItem): Promise<void> {
+    public async create(template: PatchTemplateItem): Promise<void> {
         logger.debug(`templates.service save: in: item: ${JSON.stringify(template)}`);
 
         ow(template, 'Template Information', ow.object.nonEmpty);
         ow(template.name, ow.string.nonEmpty);
-        ow(template.deploymentType, ow.string.nonEmpty);
+        ow(template.patchType, ow.string.nonEmpty);
         ow(template.playbookName, ow.string.nonEmpty);
         ow(template.playbookFile, ow.object.hasKeys('buffer'));
 
-        const existingTemplate = await this.deploymentTemplatesDao.get(template.name);
+        const existingTemplate = await this.patchTemplatesDao.get(template.name);
 
         if (existingTemplate) {
             throw new Error("CONFLICT");
@@ -57,17 +57,17 @@ export class DeploymentTemplatesService {
             key: uploadPath
         };
 
-        await this.deploymentTemplatesDao.save(template);
+        await this.patchTemplatesDao.save(template);
 
     }
 
-    public async update(template: DeploymentTemplateItem): Promise<void> {
+    public async update(template: PatchTemplateItem): Promise<void> {
         logger.debug(`templates.service update: in: item: ${JSON.stringify(template)}`);
 
         ow(template, 'Template Information', ow.object.nonEmpty);
         ow(template.name, ow.string.nonEmpty);
 
-        const existingTemplate = await this.deploymentTemplatesDao.get(template.name);
+        const existingTemplate = await this.patchTemplatesDao.get(template.name);
 
         if (!existingTemplate) {
             throw new Error("NOT_FOUND");
@@ -100,15 +100,15 @@ export class DeploymentTemplatesService {
             };
         }
 
-        await this.deploymentTemplatesDao.save(template);
+        await this.patchTemplatesDao.save(template);
     }
 
-    public async get(name: string): Promise<DeploymentTemplateItem> {
+    public async get(name: string): Promise<PatchTemplateItem> {
         logger.debug(`templates.service get: in name: ${name}`);
 
         ow(name, ow.string.nonEmpty);
 
-        const template = await this.deploymentTemplatesDao.get(name);
+        const template = await this.patchTemplatesDao.get(name);
 
         if(!template) {
             throw new Error('NOT_FOUND');
@@ -118,7 +118,7 @@ export class DeploymentTemplatesService {
         return template;
     }
 
-    public async list(count?: number, lastEvaluated?: TemplateListPaginationKey): Promise<[DeploymentTemplateItem[], TemplateListPaginationKey]> {
+    public async list(count?: number, lastEvaluated?: TemplateListPaginationKey): Promise<[PatchTemplateItem[], TemplateListPaginationKey]> {
        logger.debug(`templates.service count:${count}, lastEvaluated:${JSON.stringify(lastEvaluated)}:`);
 
         if (count) {
@@ -126,7 +126,7 @@ export class DeploymentTemplatesService {
         }
 
         // retrieve
-        const result = await this.deploymentTemplatesDao.list(count, lastEvaluated);
+        const result = await this.patchTemplatesDao.list(count, lastEvaluated);
 
         logger.debug(`templates.service get: exit: items: ${JSON.stringify(result)}`);
         return result;
@@ -141,7 +141,7 @@ export class DeploymentTemplatesService {
         const template = await this.get(name);
 
         if(template){
-            await this.deploymentTemplatesDao.delete(name);
+            await this.patchTemplatesDao.delete(name);
             await this.s3Utils.deleteObject(template.playbookSource.bucket, template.playbookSource.key);
         }
 

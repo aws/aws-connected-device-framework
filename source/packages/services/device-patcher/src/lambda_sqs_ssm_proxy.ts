@@ -18,15 +18,15 @@ import { logger } from './utils/logger.util';
 import { ActivationService } from './activation/activation.service';
 import { ActivationItem } from './activation/activation.model';
 
-import { DeploymentService } from './deployment/deployment.service';
-import { DeploymentItem } from './deployment/deployment.model';
+import { PatchService } from './patch/patch.service';
+import { PatchItem } from './patch/patch.model';
 
-import { AgentbasedDeploymentService } from './deployment/agentbased-deployment.service';
+import { AgentbasedPatchService } from './patch/agentbased-patch.service';
 
-const deploymentService: DeploymentService = container.get<DeploymentService>(TYPES.DeploymentService);
-const activationService: ActivationService = container.get<ActivationService>(TYPES.DeploymentService);
+const patchService: PatchService = container.get<PatchService>(TYPES.PatchService);
+const activationService: ActivationService = container.get<ActivationService>(TYPES.PatchService);
 
-const agentbasedDeploymentService: AgentbasedDeploymentService = container.get<AgentbasedDeploymentService>(TYPES.AgentbasedDeploymentService);
+const agentbasedPatchService: AgentbasedPatchService = container.get<AgentbasedPatchService>(TYPES.AgentbasedPatchService);
 
 exports.handler = async (event: Event): Promise<void> => {
 
@@ -60,34 +60,34 @@ exports.handler = async (event: Event): Promise<void> => {
                         logger.debug(`lambda_sqs_ssm_proxy: ssm_event_body: ${JSON.stringify(eventBody)}`);
 
                         const instanceId = eventBody.detail['instance-id'];
-                        const deploymentStatus = eventBody.detail['status'].toLowerCase();
+                        const patchStatus = eventBody.detail['status'].toLowerCase();
                         const associationId = eventBody.detail['association-id'];
                         const statusMessage = `SSM:${eventBody.detail['detailed-status']}`
 
                         const lastExecutionDate = eventBody.detail['last-execution-date']
 
-                        const instanceInformation = await agentbasedDeploymentService.getInstance(instanceId);
-                        const association = await agentbasedDeploymentService.getDeploymentByAssociationId(associationId);
+                        const instanceInformation = await agentbasedPatchService.getInstance(instanceId);
+                        const association = await agentbasedPatchService.getPatchByAssociationId(associationId);
 
                         const deviceId = instanceInformation.Name;
-                        const deploymentId = association.deploymentId;
+                        const patchId = association.patchId;
 
-                        const deployment: DeploymentItem = {
+                        const patch: PatchItem = {
                             deviceId,
-                            deploymentId,
-                            deploymentStatus,
+                            patchId: patchId,
+                            patchStatus: patchStatus,
                             statusMessage,
                             updatedAt: new Date(lastExecutionDate)
                         };
 
-                        const existingDeployment = await deploymentService.get(deploymentId)
+                        const existingPatch = await patchService.get(patchId)
 
-                        if (existingDeployment.updatedAt > deployment.updatedAt) {
-                            logger.debug(`lambda_sqs_ssm_proxy: handler: ignoring old event: existing deployment: ${JSON.stringify(existingDeployment)}`);
+                        if (existingPatch.updatedAt > patch.updatedAt) {
+                            logger.debug(`lambda_sqs_ssm_proxy: handler: ignoring old event: existing patch: ${JSON.stringify(existingPatch)}`);
                             return
                         }
 
-                        await deploymentService.update(deployment);
+                        await patchService.update(patch);
 
                     } else if (
                         eventBody['detail-type'] === 'EC2 State Manager Association State Change' &&

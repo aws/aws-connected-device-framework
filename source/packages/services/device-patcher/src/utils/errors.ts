@@ -21,7 +21,7 @@ export function handleError(e:Error, res:Response): void {
         e.message.startsWith('MISSING_REQUIRED') ||
         e.message === 'FAILED_VALIDATION' ||
         e.message === 'UNSUPPORTED_TRANSITION' ||
-        e.message === 'UNSUPPORTED_DEPLOYMENT_STATUS' ||
+        e.message === 'UNSUPPORTED_PATCH_STATUS' ||
         e.message === 'BAD_REQUEST'
     ) {
         res.status(400).json({error: e.message}).end();
