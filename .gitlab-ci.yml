@@ -18,8 +18,7 @@ variables:
   - if: ($CI_COMMIT_BRANCH == "main" && $CI_COMMIT_MESSAGE != /.*\[skip ci\].*/)
 
 .branch-run-condition: &branch-run-condition
- # - if: ($CI_COMMIT_BRANCH != "main")
-  - if: ($CI_COMMIT_BRANCH != "feat/pipeline/release_package") 
+  - if: ($CI_COMMIT_BRANCH != "main")
 
 .common-build-steps: &common-build-steps # install dependencies
   - cd ${CI_PROJECT_DIR}/source
@@ -86,7 +85,7 @@ default:
 
 downloadInfastructureConfig:
   rules:
-    - *default-run-condition
+    - if: ($CI_COMMIT_BRANCH == "feat_command_and_control")
   stage: build
   before_script:
     - env | sort
@@ -110,7 +109,7 @@ downloadInfastructureConfig:
 
 buildLambaLayersZip:
   rules:
-    - *default-run-condition
+    - if: ($CI_COMMIT_BRANCH == "feat_command_and_control")
   stage: build
   before_script:
     - yum update -y && yum install -y openssl zip
@@ -128,7 +127,7 @@ buildLambaLayersZip:
 
 branchTest:
   rules:
-    - *default-run-condition
+    - if: ($CI_COMMIT_BRANCH == "feat_command_and_control")
   stage: test
   script:
     - *common-build-steps
