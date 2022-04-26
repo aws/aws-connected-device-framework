@@ -231,6 +231,9 @@ release:
     name: public.ecr.aws/amazonlinux/amazonlinux:2
     entrypoint: [""]
   stage: release
+  before_script:
+    - *common-install-deployment-dependencies
+    - *common-install-node-dependencies
   rules:
     - if: ($CI_COMMIT_BRANCH == "feat/pipeline/release_package")
   script:
