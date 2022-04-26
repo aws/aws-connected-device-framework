@@ -30,7 +30,7 @@ variables:
   - env | sort
   - yum update -y
   # install tool dependencies (required to test some services)
-  - yum install -y git tar openssl zip unzip tar
+  - yum install -y git tar openssl zip unzip
   # install specific version of pnpm needed by rush
   - curl -f https://get.pnpm.io/v5.js | node - add --global pnpm@5
   - npm install -g @microsoft/rush
@@ -203,7 +203,7 @@ deployLive:
 upload:
   before_script:
     - yum update -y
-    - yum install -y git
+    - yum install -y git tar
   image:
     name: public.ecr.aws/amazonlinux/amazonlinux:2
     entrypoint: [""]
