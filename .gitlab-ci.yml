@@ -68,6 +68,7 @@ stages:
   - deployLive
   - upload
   - triggerCpp
+  - release
 
 ### not working at the moment, therefore using artifacts as a temp workaround
 # cache:
