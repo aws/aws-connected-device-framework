@@ -131,7 +131,8 @@ export class NotificationsInstaller implements RestModule {
           ...parameterOverrides,
           '--capabilities', 'CAPABILITY_NAMED_IAM', 'CAPABILITY_AUTO_EXPAND',
           '--no-fail-on-empty-changeset',
-          '--region', answers.region
+          '--region', answers.region,
+          '--tags', 'cdf_service=events-processor', `cdf_environment=${answers.environment}`, ...answers.customTags.split(' '),
         ]);
       }
     });
@@ -189,7 +190,8 @@ export class NotificationsInstaller implements RestModule {
           '--parameter-overrides', ...parameterOverrides,
           '--capabilities', 'CAPABILITY_NAMED_IAM', 'CAPABILITY_AUTO_EXPAND',
           '--no-fail-on-empty-changeset',
-          '--region', answers.region
+          '--region', answers.region,
+          '--tags', 'cdf_service=events-alerts', `cdf_environment=${answers.environment}`, ...answers.customTags.split(' '),
         ]);
       }
     });

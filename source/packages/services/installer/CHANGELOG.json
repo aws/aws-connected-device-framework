@@ -2,6 +2,18 @@
   "name": "@cdf/installer",
   "entries": [
     {
+      "version": "0.3.0",
+      "tag": "@cdf/installer_v0.3.0",
+      "date": "Tue, 26 Apr 2022 03:49:33 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "tag all CDF resources with two mandatory and arbitrary optional tags"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.2.3",
       "tag": "@cdf/installer_v0.2.3",
       "date": "Thu, 14 Apr 2022 04:49:09 GMT",

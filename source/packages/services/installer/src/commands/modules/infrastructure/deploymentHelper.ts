@@ -117,7 +117,8 @@ export class DeploymentHelperInstaller implements InfrastructureModule {
             `ArtifactsBucket=${answers.s3.bucket}`,
             '--capabilities', 'CAPABILITY_NAMED_IAM',
             '--no-fail-on-empty-changeset',
-            '--region', answers.region
+            '--region', answers.region,
+            '--tags', 'cdf_service=deployment-helper', `cdf_environment=${answers.environment}`, ...answers.customTags.split(' '),
           ], {
             cwd: path.join(monorepoRoot, 'source', 'packages', 'libraries', 'core', 'deployment-helper')
           });
@@ -155,7 +156,8 @@ export class DeploymentHelperInstaller implements InfrastructureModule {
             `PrivateSubnetIds=${answers.vpc?.privateSubnetIds ?? 'N/A'}`,
             '--capabilities', 'CAPABILITY_NAMED_IAM',
             '--no-fail-on-empty-changeset',
-            '--region', answers.region
+            '--region', answers.region,
+            '--tags', 'cdf_service=deployment-helper', `cdf_environment=${answers.environment}`, ...answers.customTags.split(' '),
           ], {
             cwd: path.join(monorepoRoot, 'source', 'packages', 'libraries', 'core', 'deployment-helper')
           });

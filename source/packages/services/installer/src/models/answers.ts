@@ -2,6 +2,7 @@ import { ModuleName } from "./modules";
 
 export interface Answers {
   accountId?: string;
+  customTags?: string;
   iotEndpoint?: string;
   iotCredentialEndpoint?: string;
   environment: string;
@@ -13,9 +14,7 @@ export interface Answers {
   s3?: S3;
   eventBus?: EventBus;
   openSsl?: OpenSsl;
-
   deploymentHelper?: DeploymentHelper;
-
   assetLibraryExport?: AssetLibraryExport;
   assetLibrary?: AssetLibrary;
   assetLibraryHistory?: AssetLibraryHistory;

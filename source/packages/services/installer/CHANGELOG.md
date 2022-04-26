@@ -1,6 +1,13 @@
 # Change Log - @cdf/installer
 
-This log was last generated on Thu, 14 Apr 2022 04:49:09 GMT and should not be manually modified.
+This log was last generated on Tue, 26 Apr 2022 03:49:33 GMT and should not be manually modified.
+
+## 0.3.0
+Tue, 26 Apr 2022 03:49:33 GMT
+
+### Minor changes
+
+- tag all CDF resources with two mandatory and arbitrary optional tags
 
 ## 0.2.3
 Thu, 14 Apr 2022 04:49:09 GMT
