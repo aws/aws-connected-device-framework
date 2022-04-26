@@ -81,7 +81,6 @@ specifiers:
   '@types/lodash': 4.14.168
   '@types/luxon': 2.0.9
   '@types/morgan': 1.9.2
-  '@types/multer': 1.4.5
   '@types/mustache': 4.1.1
   '@types/node': 14.6.1
   '@types/node-localstorage': ~1.3.0
@@ -150,6 +149,7 @@ specifiers:
   luxon: 2.3.0
   moment: 2.29.1
   morgan: 1.10.0
+  multer: 1.4.4
   mustache: 4.2.0
   node-cache: 5.1.2
   node-localstorage: ~2.2.1
@@ -252,7 +252,6 @@ dependencies:
   '@types/lodash': 4.14.168
   '@types/luxon': 2.0.9
   '@types/morgan': 1.9.2
-  '@types/multer': 1.4.5
   '@types/mustache': 4.1.1
   '@types/node': 14.6.1
   '@types/node-localstorage': 1.3.0
@@ -321,6 +320,7 @@ dependencies:
   luxon: 2.3.0
   moment: 2.29.1
   morgan: 1.10.0
+  multer: 1.4.4
   mustache: 4.2.0
   node-cache: 5.1.2
   node-localstorage: 2.2.1
@@ -4598,6 +4598,12 @@ packages:
       '@types/express': 4.17.13
     dev: false
 
+  /@types/multer/1.4.7:
+    resolution: {integrity: sha512-/SNsDidUFCvqqcWDwxv2feww/yqhNeTRL5CVoL3jU4Goc4kKEL10T7Eye65ZqPNi4HRx8sAEX59pV1aEH7drNA==}
+    dependencies:
+      '@types/express': 4.17.13
+    dev: false
+
   /@types/mustache/4.1.1:
     resolution: {integrity: sha512-Sm0NWeLhS2QL7NNGsXvO+Fgp7e3JLHCO6RS3RCnfjAnkw6Y1bsji/AGfISdQZDIR/AeOyzkrxRk9jBkl55zdJw==}
     dev: false
@@ -5551,6 +5557,10 @@ packages:
       picomatch: 2.3.1
     dev: false
 
+  /append-field/1.0.0:
+    resolution: {integrity: sha1-HjRA6RXwsSA9I3SOeO3XubW0PlY=}
+    dev: false
+
   /append-transform/2.0.0:
     resolution: {integrity: sha512-7yeyCEurROLQJFv5Xj4lEGTy0borxepjFv1g22oAdqFu//SrAlDl1O1Nxx15SH1RoliUml6p8dwJW9jvZughhg==}
     engines: {node: '>=8'}
@@ -6289,6 +6299,14 @@ packages:
   /buffers/0.1.1:
     resolution: {integrity: sha1-skV5w77U1tOWru5tmorn9Ugqt7s=}
     engines: {node: '>=0.2.0'}
+    dev: false
+
+  /busboy/0.2.14:
+    resolution: {integrity: sha1-bCpiLvz0fFe7vh4qnDetNseSVFM=}
+    engines: {node: '>=0.8.0'}
+    dependencies:
+      dicer: 0.2.5
+      readable-stream: 1.1.14
     dev: false
 
   /busboy/0.3.1:
@@ -7234,6 +7252,14 @@ packages:
       colorspace: 1.1.4
       enabled: 1.0.2
       kuler: 1.0.1
+    dev: false
+
+  /dicer/0.2.5:
+    resolution: {integrity: sha1-WZbAhrszIYyBLAkL3cCc0S+stw8=}
+    engines: {node: '>=0.8.0'}
+    dependencies:
+      readable-stream: 1.1.14
+      streamsearch: 0.1.2
     dev: false
 
   /dicer/0.3.0:
@@ -11266,6 +11292,20 @@ packages:
     resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
     dev: false
 
+  /multer/1.4.4:
+    resolution: {integrity: sha512-2wY2+xD4udX612aMqMcB8Ws2Voq6NIUPEtD1be6m411T4uDH/VtL9i//xvcyFlTVfRdaBsk7hV5tgrGQqhuBiw==}
+    engines: {node: '>= 0.10.0'}
+    dependencies:
+      append-field: 1.0.0
+      busboy: 0.2.14
+      concat-stream: 1.6.2
+      mkdirp: 0.5.5
+      object-assign: 4.1.1
+      on-finished: 2.3.0
+      type-is: 1.6.18
+      xtend: 4.0.2
+    dev: false
+
   /mustache/4.2.0:
     resolution: {integrity: sha512-71ippSywq5Yb7/tVYyGbkBggbU8H3u5Rz56fH60jGFgr8uHwxs+aSKeqmluIVzM0m0kB7xQjKS6qPfd0b2ZoqQ==}
     hasBin: true
@@ -12297,6 +12337,15 @@ packages:
 
   /readable-stream/1.0.34:
     resolution: {integrity: sha1-Elgg40vIQtLyqq+v5MKRbuMsFXw=}
+    dependencies:
+      core-util-is: 1.0.3
+      inherits: 2.0.4
+      isarray: 0.0.1
+      string_decoder: 0.10.31
+    dev: false
+
+  /readable-stream/1.1.14:
+    resolution: {integrity: sha1-fPTFTvZI44EwhMY23SB54WbAgdk=}
     dependencies:
       core-util-is: 1.0.3
       inherits: 2.0.4
@@ -13361,7 +13410,7 @@ packages:
   /superagent/6.1.0:
     resolution: {integrity: sha512-OUDHEssirmplo3F+1HWKUrUjvnQuA+nZI6i/JJBdXb5eq9IyEQwPyPpqND+SSsxf6TygpBEkUjISVRN4/VOpeg==}
     engines: {node: '>= 7.0.0'}
-    deprecated: Please upgrade to v7.0.2+ of superagent.  We have fixed numerous issues with streams, form-data, attach(), filesystem errors not bubbling up (ENOENT on attach()), and all tests are now passing.  See the releases tab for more information at <https://github.com/visionmedia/superagent/releases>. Thanks to @shadowgate15, @spence-s, and @niftylettuce. Superagent is sponsored by Forward Email at <https://forwardemail.net>.
+    deprecated: Please upgrade to v7.0.2+ of superagent.  We have fixed numerous issues with streams, form-data, attach(), filesystem errors not bubbling up (ENOENT on attach()), and all tests are now passing.  See the releases tab for more information at <https://github.com/visionmedia/superagent/releases>.
     dependencies:
       component-emitter: 1.3.0
       cookiejar: 2.1.3
@@ -13381,7 +13430,7 @@ packages:
   /superagent/6.1.0_supports-color@8.0.0:
     resolution: {integrity: sha512-OUDHEssirmplo3F+1HWKUrUjvnQuA+nZI6i/JJBdXb5eq9IyEQwPyPpqND+SSsxf6TygpBEkUjISVRN4/VOpeg==}
     engines: {node: '>= 7.0.0'}
-    deprecated: Please upgrade to v7.0.2+ of superagent.  We have fixed numerous issues with streams, form-data, attach(), filesystem errors not bubbling up (ENOENT on attach()), and all tests are now passing.  See the releases tab for more information at <https://github.com/visionmedia/superagent/releases>. Thanks to @shadowgate15, @spence-s, and @niftylettuce. Superagent is sponsored by Forward Email at <https://forwardemail.net>.
+    deprecated: Please upgrade to v7.0.2+ of superagent.  We have fixed numerous issues with streams, form-data, attach(), filesystem errors not bubbling up (ENOENT on attach()), and all tests are now passing.  See the releases tab for more information at <https://github.com/visionmedia/superagent/releases>.
     dependencies:
       component-emitter: 1.3.0
       cookiejar: 2.1.3
@@ -14996,7 +15045,7 @@ packages:
     dev: false
 
   file:projects/certificate-activator.tgz:
-    resolution: {integrity: sha512-R81YjTc5/lAphIwrkcBUZoVEP3JL8PNwduRDYV2zDKTNm+Uq3xj6yIGxRWxXDny8H9TBcCu90YABYqJkumZTUw==, tarball: file:projects/certificate-activator.tgz}
+    resolution: {integrity: sha512-bNbhz8B/uVNQNDva0mGi2VLz7uEI8G/vBCzGfwCa8/ijJYCfxm516PYNbJmKpJdAYOF7Up3jEb4qRLC0qHLrdQ==, tarball: file:projects/certificate-activator.tgz}
     name: '@rush-temp/certificate-activator'
     version: 0.0.0
     dependencies:
@@ -15045,7 +15094,7 @@ packages:
     dev: false
 
   file:projects/certificate-vendor.tgz:
-    resolution: {integrity: sha512-NXQaP+PKAhbnC68S3/BvhuGo2T8vo97UpB8dc+/7DHgZXJhE5sTWmPegZxqvtKNsD8vRNcvbroKtjkM4Um6tpA==, tarball: file:projects/certificate-vendor.tgz}
+    resolution: {integrity: sha512-sSd35KXvuCTv43WReYx0ygXySiCBeFPyo5PYGiyCndRagIyWYjzHhdoxsadjwOU+EX+V60nZm/JHb2KrtPqIsA==, tarball: file:projects/certificate-vendor.tgz}
     name: '@rush-temp/certificate-vendor'
     version: 0.0.0
     dependencies:
@@ -15090,7 +15139,7 @@ packages:
     dev: false
 
   file:projects/command-and-control.tgz:
-    resolution: {integrity: sha512-eW47IpocwtoTom4GHwNw73SOKQCKMs65ZMuaJty8/N1rWxJyYEWvH9vsqjOys5uBQBHMfRlUTnzPHvEmF9LFZQ==, tarball: file:projects/command-and-control.tgz}
+    resolution: {integrity: sha512-dwvPOGWgA13zFpG5ED3d+2Fr3rPPpWCODoeBjf4ZlDTAQVF07HklMYd8SwA8nZxSufDyKsabbkeO8pwg6bbEIA==, tarball: file:projects/command-and-control.tgz}
     name: '@rush-temp/command-and-control'
     version: 0.0.0
     dependencies:
@@ -15149,7 +15198,7 @@ packages:
     dev: false
 
   file:projects/commandandcontrol-client.tgz:
-    resolution: {integrity: sha512-Dpa/ChdOKGLi5daTtLt7czKA3Xp+4Azv9aYx3lSY0VdZVydyUSL7ISRmid5ukd2twT7IErrgC6Y9SmVJrUCrdA==, tarball: file:projects/commandandcontrol-client.tgz}
+    resolution: {integrity: sha512-0CGSuZKS8MInRCioqRGqGJyWcXQ7UYxGw1hgKVoV2brhWa5bXnMXWqz3jgvAXIBaa6uJ25ryJh8vOzj/TF56FQ==, tarball: file:projects/commandandcontrol-client.tgz}
     name: '@rush-temp/commandandcontrol-client'
     version: 0.0.0
     dependencies:
@@ -15237,7 +15286,7 @@ packages:
     dev: false
 
   file:projects/commands.tgz:
-    resolution: {integrity: sha512-nJYJg37LZI3pCZOOCK4Ny4m+1Fe/QZV4sNH81iK/5buME/IwN0yHk+XmwytMp5oK3GuNmMhBDM4PMXPI2JpQkA==, tarball: file:projects/commands.tgz}
+    resolution: {integrity: sha512-WYh38VOYGLvh3xr8jMFMNKCGSKLfqVAul24S06Q03A3+DDgf3tcJLJ6hKCJWF2+dc+8ZDrdgMEZdGmRrmPN6/w==, tarball: file:projects/commands.tgz}
     name: '@rush-temp/commands'
     version: 0.0.0
     dependencies:
@@ -15374,7 +15423,7 @@ packages:
     dev: false
 
   file:projects/device-monitoring.tgz:
-    resolution: {integrity: sha512-8FyryK0OVLYTxhKk/iD6mfuEVNbem0wUGXc0P0JaZMEcXjCFdh8dYjvqL/WXxHfbdfqe/jgdzqLzthTX+EyqrQ==, tarball: file:projects/device-monitoring.tgz}
+    resolution: {integrity: sha512-bfZ/vA027qIYl4/OHPZ8WMgmBXpRPTFM/tlJBhzFlhIrVRv71rhOJkVgTCouwLRV1/hxyg+E9i7jAbFDCDLLWw==, tarball: file:projects/device-monitoring.tgz}
     name: '@rush-temp/device-monitoring'
     version: 0.0.0
     dependencies:
@@ -15464,7 +15513,7 @@ packages:
     dev: false
 
   file:projects/device-patcher.tgz:
-    resolution: {integrity: sha512-1YS9fNTESeSi+loXzBTqEZ03wmHnVQ8FsL/36PgTzldVullZ9zuaJr3wTxOCK7ggnoNZ6wts/qshyPbtlUzEPw==, tarball: file:projects/device-patcher.tgz}
+    resolution: {integrity: sha512-h8SaH+oYrRclO+R6J087uZ86Sjhj0em9iK49uwNsVAUrG9E29nj2ntmw3dLVFRK4CDlF88Rw2h7LT5HPU92+UA==, tarball: file:projects/device-patcher.tgz}
     name: '@rush-temp/device-patcher'
     version: 0.0.0
     dependencies:
@@ -15479,6 +15528,7 @@ packages:
       '@types/express-serve-static-core': 4.17.19
       '@types/express-version-request': 1.7.1
       '@types/jest': 26.0.23
+      '@types/multer': 1.4.7
       '@types/uuid': 8.3.0
       '@typescript-eslint/eslint-plugin': 4.23.0_7cfaee78cda985ff9bc3d8b5cb92a136
       '@typescript-eslint/parser': 4.23.0_eslint@7.26.0+typescript@4.2.4
@@ -15505,6 +15555,7 @@ packages:
       js-yaml: 4.1.0
       logform: 2.2.0
       mime: 2.5.2
+      multer: 1.4.4
       nyc: 15.1.0
       ow: 0.23.0
       readable-stream: 3.6.0
@@ -15824,7 +15875,7 @@ packages:
     dev: false
 
   file:projects/greengrass2-provisioning-client.tgz:
-    resolution: {integrity: sha512-SC4ZHOxncmLzjHoGgZMyUI3xElZ2J/x/Fj+fgPzklswmAeHp/pdAsPSduFwblCDBze4dmgP8vJrpW7RF9eBwsQ==, tarball: file:projects/greengrass2-provisioning-client.tgz}
+    resolution: {integrity: sha512-SdeSCLRlVcwZQc1HocbQyO7YW3ZbKvKs/odBdcLuC/qiOFKG56799dO4/BL3OptYtsUwpmBwTOvbM/dHwDANiQ==, tarball: file:projects/greengrass2-provisioning-client.tgz}
     name: '@rush-temp/greengrass2-provisioning-client'
     version: 0.0.0
     dependencies:
@@ -15868,7 +15919,7 @@ packages:
     dev: false
 
   file:projects/greengrass2-provisioning.tgz:
-    resolution: {integrity: sha512-/YI4Jk53zdsIEyWITaAAhwqy2AEI6KY9aBbSrib86mSaFDdABZZHk7rt19SjiOF2S1k0pmpA1d65EnS64XdycA==, tarball: file:projects/greengrass2-provisioning.tgz}
+    resolution: {integrity: sha512-ZmdODE1heiWCoBZPq55iXfMmBOldWt+yWv+LDvD2sqrExdLf/P2eYRquzp4CbVVBhERnefk2tFKFR5FCMbvi+Q==, tarball: file:projects/greengrass2-provisioning.tgz}
     name: '@rush-temp/greengrass2-provisioning'
     version: 0.0.0
     dependencies:
@@ -16001,7 +16052,7 @@ packages:
     dev: false
 
   file:projects/integration-tests.tgz_@aws-sdk+signature-v4-crt@3.38.0:
-    resolution: {integrity: sha512-ErKSgCknsL+G+/XxbpPDPSYwIj4/Y7RvFodk+G7msgRkgGkbUbxB7KTkGwj/p0kE+K4xCWP0xgTjeqsqWnOrqA==, tarball: file:projects/integration-tests.tgz}
+    resolution: {integrity: sha512-JXUHPoTUtXrMFgAAM7lJZyvkQJ5xTI0uXRptsZ10YHNvcfzfzMw7sOX3ZQwoukgEw+qdyqYoVh7aGv0pEkp3dQ==, tarball: file:projects/integration-tests.tgz}
     id: file:projects/integration-tests.tgz
     name: '@rush-temp/integration-tests'
     version: 0.0.0
@@ -16379,7 +16430,7 @@ packages:
     dev: false
 
   file:projects/thing-list-builder.tgz:
-    resolution: {integrity: sha512-vr+DItgloTzYp3As5Q54bDvt+YuqE3UWOSYRdcpo0RovByWi1neA3Ud/ipawhaATk8zW+tZYF6Y6XMbGWyvbFw==, tarball: file:projects/thing-list-builder.tgz}
+    resolution: {integrity: sha512-27hwWnwuFY9HaCB9Ho/So19+oLzSt8n8rc1hirNaz3wAeNlvdOZx8XnQuw1C7LMNwJZmDX6xLsguq5E2XDu2nQ==, tarball: file:projects/thing-list-builder.tgz}
     name: '@rush-temp/thing-list-builder'
     version: 0.0.0
     dependencies:
