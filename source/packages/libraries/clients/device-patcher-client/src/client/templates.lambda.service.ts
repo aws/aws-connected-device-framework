@@ -16,7 +16,7 @@ import ow from 'ow';
 import {RequestHeaders} from './common.model';
 import { LambdaInvokerService, LAMBDAINVOKE_TYPES, LambdaApiGatewayEventBuilder } from '@cdf/lambda-invoke';
 import { TemplatesServiceBase, TemplatesService } from './templates.service';
-import {CreateDeploymentTemplateParams, DeploymentTemplate, DeploymentTemplateList} from './templates.model';
+import { CreatePatchTemplateParams, PatchTemplate, PatchTemplateList } from './templates.model';
 
 @injectable()
 export class TemplatesLambdaService extends TemplatesServiceBase implements TemplatesService {
@@ -30,19 +30,19 @@ export class TemplatesLambdaService extends TemplatesServiceBase implements Temp
         this.functionName = process.env.DEVICE_PATCHER_API_FUNCTION_NAME;
     }
 
-    async createTemplate(_template: CreateDeploymentTemplateParams, _additionalHeaders?:RequestHeaders) : Promise<void> {
+    async createTemplate(_template: CreatePatchTemplateParams, _additionalHeaders?:RequestHeaders) : Promise<void> {
         // files cannot be passed via multipart/form-data with the direct lambda invocation.
         // This requires extension of the API to support the content-type=json header with file content passed as a buffer
         throw('NOT_IMPLEMENTED');
     }
 
-    async updateTemplate(_template: CreateDeploymentTemplateParams, _additionalHeaders?:RequestHeaders) : Promise<void> {
+    async updateTemplate(_template: CreatePatchTemplateParams, _additionalHeaders?:RequestHeaders) : Promise<void> {
         // files cannot be passed via multipart/form-data with the direct lambda invocation.
         // This requires extension of the API to support the content-type=json header with file content passed as a buffer
         throw('NOT_IMPLEMENTED');
     }
 
-    async getTemplate(name: string, additionalHeaders?:RequestHeaders) : Promise<DeploymentTemplate> {
+    async getTemplate(name: string, additionalHeaders?:RequestHeaders) : Promise<PatchTemplate> {
 
         ow(name, ow.string.nonEmpty);
 
@@ -55,7 +55,7 @@ export class TemplatesLambdaService extends TemplatesServiceBase implements Temp
         return res.body;
     }
 
-    async listTemplates(additionalHeaders?:RequestHeaders) : Promise<DeploymentTemplateList> {
+    async listTemplates(additionalHeaders?:RequestHeaders) : Promise<PatchTemplateList> {
 
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.templatesRelativeUrl())

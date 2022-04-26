@@ -359,7 +359,7 @@ Resources:
       Role: !GetAtt SQSLambdaExecutionRole.Arn
       Runtime: nodejs14.x
       AutoPublishAlias: live
-      PatchPreference:
+      DeploymentPreference:
         Type: AllAtOnce
       Timeout: 900
       Environment:
@@ -391,7 +391,7 @@ Resources:
       Role: !GetAtt SSMEventsLambdaExecutionRole.Arn
       Runtime: nodejs14.x
       AutoPublishAlias: live
-      PatchPreference:
+      DeploymentPreference:
         Type: AllAtOnce
       Timeout: 900
       Environment:

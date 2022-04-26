@@ -2,17 +2,17 @@ import {PathHelper} from '../utils/path.helper';
 import {ClientServiceBase} from './common.service';
 import {injectable} from 'inversify';
 import { RequestHeaders } from './common.model';
-import { CreateDeploymentTemplateParams, UpdateDeploymentTemplateParams, DeploymentTemplate, DeploymentTemplateList } from './templates.model';
+import { CreatePatchTemplateParams, UpdatePatchTemplateParams, PatchTemplate, PatchTemplateList } from './templates.model';
 
 export interface TemplatesService {
 
-    createTemplate(template: CreateDeploymentTemplateParams, additionalHeaders?:RequestHeaders) : Promise<void>;
+    createTemplate(template: CreatePatchTemplateParams, additionalHeaders?:RequestHeaders) : Promise<void>;
 
-    updateTemplate(template: UpdateDeploymentTemplateParams, additionalHeaders?:RequestHeaders) : Promise<void>;
+    updateTemplate(template: UpdatePatchTemplateParams, additionalHeaders?:RequestHeaders) : Promise<void>;
 
-    getTemplate(name: string, additionalHeaders?:RequestHeaders) : Promise<DeploymentTemplate>;
+    getTemplate(name: string, additionalHeaders?:RequestHeaders) : Promise<PatchTemplate>;
 
-    listTemplates(additionalHeaders?:RequestHeaders) : Promise<DeploymentTemplateList>;
+    listTemplates(additionalHeaders?:RequestHeaders) : Promise<PatchTemplateList>;
 
     deleteTemplate(name: string, additionalHeaders?:RequestHeaders): Promise<void>;
 
@@ -26,10 +26,10 @@ export class TemplatesServiceBase extends ClientServiceBase {
     }
 
     protected templatesRelativeUrl() : string {
-        return '/deploymentTemplates';
+        return '/patchTemplates';
     }
 
     protected templateRelativeUrl(id:string) : string {
-        return PathHelper.encodeUrl('deploymentTemplates', id);
+        return PathHelper.encodeUrl('patchTemplates', id);
     }
 }

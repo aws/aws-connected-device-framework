@@ -17,7 +17,7 @@ import { expect, use } from 'chai';
 import { fail } from 'assert';
 import { resolve } from 'path';
 
-import {DEVICE_PATCHER_CLIENT_TYPES, TemplatesService, CreateDeploymentTemplateParams, UpdateDeploymentTemplateParams} from '@cdf/device-patcher-client';
+import {DEVICE_PATCHER_CLIENT_TYPES, TemplatesService, CreatePatchTemplateParams, UpdatePatchTemplateParams} from '@cdf/device-patcher-client';
 
 import {container} from '../../di/inversify.config';
 import {replaceTokens, RESPONSE_STATUS, validateExpectedAttributes} from '../common/common.steps';
@@ -37,7 +37,7 @@ setDefaultTimeout(10 * 1000);
 
 const templatesService: TemplatesService = container.get(DEVICE_PATCHER_CLIENT_TYPES.TemplatesService);
 
-Given('device-patch-deployment template {string} does not exist', async function (name:string) {
+Given('patch template {string} does not exist', async function (name:string) {
     try {
         await templatesService.getTemplate(name, getAdditionalHeaders(world.authToken));
         expect.fail('Not found should have been thrown');
@@ -49,7 +49,7 @@ Given('device-patch-deployment template {string} does not exist', async function
 
 
 
-When('I retrieve device-patch-deployment template {string}', async function (templateName:string) {
+When('I retrieve patch template {string}', async function (templateName:string) {
     try {
         await templatesService.getTemplate(templateName, getAdditionalHeaders(world.authToken));
     } catch (err) {
@@ -57,10 +57,10 @@ When('I retrieve device-patch-deployment template {string}', async function (tem
     }
 });
 
-When('I create device-patch-deployment template {string} with attributes', async function (templateName:string, data:DataTable) {
+When('I create patch template {string} with attributes', async function (templateName:string, data:DataTable) {
     try {
         const integration_test_playbook_path = resolve(`${__dirname}/../../../../src/testResources/integration-test-playbook.yaml`);
-        const template:CreateDeploymentTemplateParams = buildTemplateModel(data);
+        const template:CreatePatchTemplateParams = buildTemplateModel(data);
         template.name = templateName;
         template.playbookFileLocation = integration_test_playbook_path;
         await templatesService.createTemplate(template, getAdditionalHeaders(world.authToken));
@@ -70,7 +70,7 @@ When('I create device-patch-deployment template {string} with attributes', async
     }
 });
 
-When('I delete the device-patch-deployment template {string}', async function (templateName:string) {
+When('I delete the patch template {string}', async function (templateName:string) {
     try {
         await templatesService.deleteTemplate(templateName, getAdditionalHeaders(world.authToken));
     } catch (err) {
@@ -79,9 +79,9 @@ When('I delete the device-patch-deployment template {string}', async function (t
     }
 });
 
-When('I update device-patch-deployment template {string} with attributes', async function (name:string, data:DataTable) {
+When('I update patch template {string} with attributes', async function (name:string, data:DataTable) {
     try {
-        const params:UpdateDeploymentTemplateParams = buildTemplateModel(data);
+        const params:UpdatePatchTemplateParams = buildTemplateModel(data);
         params.name = name;
         await templatesService.updateTemplate(params, getAdditionalHeaders(world.authToken));
     } catch (err) {
@@ -90,7 +90,7 @@ When('I update device-patch-deployment template {string} with attributes', async
     }
 });
 
-Then('device-patch-deployment template {string} exists with attributes', async function (name:string, data:DataTable) {
+Then('patch template {string} exists with attributes', async function (name:string, data:DataTable) {
     let template;
     try {
         template = await templatesService.getTemplate(name, getAdditionalHeaders(world.authToken));
@@ -102,9 +102,9 @@ Then('device-patch-deployment template {string} exists with attributes', async f
     validateExpectedAttributes(template, data);
 });
 
-Then('device-patch-deployment template {string} exists', async function (name:string) {
+Then('patch template {string} exists', async function (name:string) {
     try {
-        world['deploymentTemplate'] = await templatesService.getTemplate(name, getAdditionalHeaders(world.authToken));
+        world['patchTemplate'] = await templatesService.getTemplate(name, getAdditionalHeaders(world.authToken));
     } catch (err) {
         this[RESPONSE_STATUS]=err.status;
         expect.fail('Should have been found');

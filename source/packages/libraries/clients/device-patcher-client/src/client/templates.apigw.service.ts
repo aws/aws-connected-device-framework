@@ -17,10 +17,10 @@ import * as request from 'superagent';
 
 import {RequestHeaders} from './common.model';
 import {
-    CreateDeploymentTemplateParams,
-    DeploymentTemplate,
-    DeploymentTemplateList,
-    UpdateDeploymentTemplateParams
+    CreatePatchTemplateParams,
+    PatchTemplate,
+    PatchTemplateList,
+    UpdatePatchTemplateParams
 } from './templates.model';
 import {TemplatesService, TemplatesServiceBase} from './templates.service';
 
@@ -34,11 +34,11 @@ export class TemplatesApigwService extends TemplatesServiceBase implements Templ
         this.baseUrl = process.env.DEVICE_PATCHER_BASE_URL;
     }
 
-    async createTemplate(template: CreateDeploymentTemplateParams, additionalHeaders?:RequestHeaders) : Promise<void> {
+    async createTemplate(template: CreatePatchTemplateParams, additionalHeaders?:RequestHeaders) : Promise<void> {
         ow(template, ow.object.nonEmpty);
         ow(template.name, ow.string.nonEmpty);
         ow(template.playbookFileLocation, ow.string.nonEmpty);
-        ow(template.deploymentType, ow.string.nonEmpty);
+        ow(template.patchType, ow.string.nonEmpty);
 
         if (template.extraVars) {
             const keys = Object.keys(template.extraVars);
@@ -58,7 +58,7 @@ export class TemplatesApigwService extends TemplatesServiceBase implements Templ
         return res.body;
     }
 
-    async updateTemplate(template: UpdateDeploymentTemplateParams, additionalHeaders: RequestHeaders): Promise<void> {
+    async updateTemplate(template: UpdatePatchTemplateParams, additionalHeaders: RequestHeaders): Promise<void> {
         ow(template, ow.object.nonEmpty);
         ow(template.name, ow.string.nonEmpty);
 
@@ -80,7 +80,7 @@ export class TemplatesApigwService extends TemplatesServiceBase implements Templ
         return res.body;
     }
 
-    async getTemplate(name: string, additionalHeaders?:RequestHeaders) : Promise<DeploymentTemplate> {
+    async getTemplate(name: string, additionalHeaders?:RequestHeaders) : Promise<PatchTemplate> {
 
         ow(name, ow.string.nonEmpty);
 
@@ -91,7 +91,7 @@ export class TemplatesApigwService extends TemplatesServiceBase implements Templ
         return res.body;
     }
 
-    async listTemplates(additionalHeaders?:RequestHeaders) : Promise<DeploymentTemplateList> {
+    async listTemplates(additionalHeaders?:RequestHeaders) : Promise<PatchTemplateList> {
 
         const url = `${this.baseUrl}${super.templatesRelativeUrl()}`;
 

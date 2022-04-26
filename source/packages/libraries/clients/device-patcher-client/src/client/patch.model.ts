@@ -10,47 +10,47 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { DeploymentType } from './templates.model' 
+import { PatchType } from './templates.model'
 
-export class DeploymentTaskRequest {
-	deployments: CreateDeploymentRequest[]
+export class PatchTaskRequest {
+	patches: CreatePatchRequest[]
 }
 
-export class DeploymentTaskResponse {
+export class PatchTaskResponse {
 	taskId: string;
 	createdAt: Date;
 	updatedAt: Date;
 }
 
-export interface CreateDeploymentRequest {
+export interface CreatePatchRequest {
 	deviceId: string;
-	deploymentTemplateName: string;
-	deploymentType?: DeploymentType;
+	patchTemplateName: string;
+	patchType?: PatchType;
 	extraVars?: { [key: string]: string}
 }
 
-export interface UpdateDeploymentRequest {
-	deploymentId: string,
-	deploymentStatus?: string,
+export interface UpdatePatchRequest {
+	patchId: string,
+	patchStatus?: string,
 	extraVars?: { [key: string]: string}
 }
 
-export interface DeploymentResponse {
+export interface PatchResponse {
 	taskId?: string;
 	deviceId: string;
-	deploymentId: string;
-	deploymentTemplateName?: string;
-	deploymentStatus?: DeploymentStatus;
+	patchId: string;
+	patchTemplateName?: string;
+	patchStatus?: patchStatus;
 	createdAt?: Date;
 	updatedAt?: Date;
-	deploymentType?: DeploymentType;
+	patchType?: PatchType;
 	statusMessage?: string;
 	associationId?: string;
 	extraVars?: { [key: string]: string}
 }
 
 
-export enum DeploymentStatus {
+export enum patchStatus {
 	RETRY='retry',
 	CREATED='created',
 	PENDING='pending',
@@ -58,14 +58,14 @@ export enum DeploymentStatus {
 	FAILED='failed'
 }
 
-export class ListDeploymentsResponse {
-	deployments: DeploymentResponse[];
+export class ListPatchResponse {
+	patches: PatchResponse[];
 	pagination?: {
-		lastEvaluated?: DeploymentListPaginationKey,
+		lastEvaluated?: PatchListPaginationKey,
 		count?:number,
 	};
 }
 
-export declare type DeploymentListPaginationKey = {
+export declare type PatchListPaginationKey = {
 	nextToken: string;
 }

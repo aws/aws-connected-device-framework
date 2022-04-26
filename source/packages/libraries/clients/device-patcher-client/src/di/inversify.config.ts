@@ -21,9 +21,9 @@ import { LAMBDAINVOKE_TYPES, LambdaInvokerService } from '@cdf/lambda-invoke';
 import { ActivationApigwService } from '../client/activation.apigw.service';
 import { ActivationLambdaService } from '../client/activation.lambda.service';
 import { ActivationService } from '../client/activation.service';
-import { DeploymentApigwService } from '../client/deployment.apigw.service';
-import { DeploymentLambdaService } from '../client/deployment.lambda.service';
-import { DeploymentService } from '../client/deployment.service';
+import { PatchApigwService } from '../client/patch.apigw.service';
+import { PatchLambdaService } from '../client/patch.lambda.service';
+import { PatchService } from '../client/patch.service';
 import { TemplatesApigwService } from '../client/templates.apigw.service';
 import { TemplatesLambdaService } from '../client/templates.lambda.service';
 import { TemplatesService } from '../client/templates.service';
@@ -39,7 +39,7 @@ export const devicePatcherContainerModule = new ContainerModule (
     ) => {
 
         if (process.env.DEVICE_PATCHER_MODE === 'lambda') {
-            bind<DeploymentService>(DEVICE_PATCHER_CLIENT_TYPES.DeploymentService).to(DeploymentLambdaService);
+            bind<PatchService>(DEVICE_PATCHER_CLIENT_TYPES.PatchService).to(PatchLambdaService);
             bind<ActivationService>(DEVICE_PATCHER_CLIENT_TYPES.ActivationService).to(ActivationLambdaService);
             bind<TemplatesService>(DEVICE_PATCHER_CLIENT_TYPES.TemplatesService).to(TemplatesLambdaService);
 
@@ -60,7 +60,7 @@ export const devicePatcherContainerModule = new ContainerModule (
                     });
             }
         } else {
-            bind<DeploymentService>(DEVICE_PATCHER_CLIENT_TYPES.DeploymentService).to(DeploymentApigwService);
+            bind<PatchService>(DEVICE_PATCHER_CLIENT_TYPES.PatchService).to(PatchApigwService);
             bind<ActivationService>(DEVICE_PATCHER_CLIENT_TYPES.ActivationService).to(ActivationApigwService);
             bind<TemplatesService>(DEVICE_PATCHER_CLIENT_TYPES.TemplatesService).to(TemplatesApigwService);
         }

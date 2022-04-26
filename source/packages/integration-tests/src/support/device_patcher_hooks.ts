@@ -15,7 +15,7 @@ import { Before, setDefaultTimeout} from '@cucumber/cucumber';
 import { resolve } from 'path';
 
 import { Dictionary } from '@cdf/lambda-invoke';
-import { TemplatesService, DeploymentType, CreateDeploymentTemplateParams } from '@cdf/device-patcher-client';
+import { TemplatesService, PatchType, CreatePatchTemplateParams } from '@cdf/device-patcher-client';
 import { DEVICE_PATCHER_CLIENT_TYPES } from '@cdf/device-patcher-client';
 
 import { container } from '../di/inversify.config';
@@ -26,7 +26,7 @@ import {DescribeInstancesCommand, EC2Client, TerminateInstancesCommand} from '@a
 
 setDefaultTimeout(30 * 1000);
 
-const INTEGRATION_TEST_DEPLOYMENT_TEMPLATE = 'integration_test_template';
+const INTEGRATION_TEST_PATCH_TEMPLATE = 'integration_test_template';
 const GGV2_CORE_INSTALLATION_TEMPLATE = 'ggv2_ec2_amazonlinux2_template';
 
 const ec2 = new EC2Client({ region: process.env.AWS_REGION });
@@ -39,7 +39,7 @@ function getAdditionalHeaders(world:unknown) : Dictionary {
 
 const templatesSvc:TemplatesService = container.get(DEVICE_PATCHER_CLIENT_TYPES.TemplatesService);
 
-async function deleteDeploymentTemplate(world:unknown, name:string) {
+async function deletepatchTemplate(world:unknown, name:string) {
     try {
         await templatesSvc.deleteTemplate(name, getAdditionalHeaders(world))
     } catch (e) {
@@ -47,14 +47,14 @@ async function deleteDeploymentTemplate(world:unknown, name:string) {
     }
 }
 
-async function createIntegrationTestDeploymentTemplate(world:unknown, name:string) {
+async function createIntegrationTestPatchTemplate(world:unknown, name:string) {
     try {
         const integration_test_playbook_path = resolve(`${__dirname}/../../../src/testResources/integration-test-playbook.yaml`);
-        const template:CreateDeploymentTemplateParams = {
+        const template:CreatePatchTemplateParams = {
             name,
             playbookFileLocation: integration_test_playbook_path,
             description: 'Integration Test Template Ansible playbook',
-            deploymentType: DeploymentType.AGENTBASED,
+            patchType: PatchType.AGENTBASED,
             extraVars: {
                 commonVar1: 'commonVarVal1',
                 commonVar2: 'commonVarVal2',
@@ -66,14 +66,14 @@ async function createIntegrationTestDeploymentTemplate(world:unknown, name:strin
     }
 }
 
-async function createGGV2CoreDeploymentTemplate(world:unknown, name:string) {
+async function createGGV2CorePatchTemplate(world:unknown, name:string) {
     try {
         const integration_test_playbook_path = resolve(`${__dirname}/../../../src/testResources/ggv2-ec2-amazonlinux2-installer-playbook.yml`);
-        const template:CreateDeploymentTemplateParams = {
+        const template:CreatePatchTemplateParams = {
             name,
             playbookFileLocation: integration_test_playbook_path,
             description: 'GGV2 EC2 Amazon Linux 2 Installer Template',
-            deploymentType: DeploymentType.AGENTBASED
+            patchType: PatchType.AGENTBASED
         }
         await templatesSvc.createTemplate(template, getAdditionalHeaders(world))
     } catch (e) {
@@ -96,30 +96,30 @@ async function cleanupEC2Instances() {
 
 }
 
-async function teardown_deployments_feature(world:unknown) {
-    await deleteDeploymentTemplate(world, INTEGRATION_TEST_DEPLOYMENT_TEMPLATE);
+async function teardown_patches_feature(world:unknown) {
+    await deletepatchTemplate(world, INTEGRATION_TEST_PATCH_TEMPLATE);
     await cleanupEC2Instances();
 }
 
 async function teardown_activation_features() {
 }
 
-async function teardown_deployment_templates_features(world:unknown) {
-    await deleteDeploymentTemplate(world, INTEGRATION_TEST_DEPLOYMENT_TEMPLATE);
+async function teardown_patch_templates_features(world:unknown) {
+    await deletepatchTemplate(world, INTEGRATION_TEST_PATCH_TEMPLATE);
 }
 
-async function teardown_enhanced_deployment_templates_features(world: unknown) {
-    await deleteDeploymentTemplate(world, GGV2_CORE_INSTALLATION_TEMPLATE);
+async function teardown_enhanced_patch_templates_features(world: unknown) {
+    await deletepatchTemplate(world, GGV2_CORE_INSTALLATION_TEMPLATE);
     await cleanupEC2Instances();
 }
 
-Before({tags: '@setup_deployment_features'}, async function () {
-    await teardown_deployments_feature(this);
-    await createIntegrationTestDeploymentTemplate(this, INTEGRATION_TEST_DEPLOYMENT_TEMPLATE);
+Before({tags: '@setup_patch_features'}, async function () {
+    // await teardown_patches_feature(this);
+    await createIntegrationTestPatchTemplate(this, INTEGRATION_TEST_PATCH_TEMPLATE);
 });
 
-Before({tags: '@teardown_deployment_features'}, async function () {
-    await teardown_deployments_feature(this);
+Before({tags: '@teardown_patch_features'}, async function () {
+    await teardown_patches_feature(this);
 });
 
 Before({tags: '@setup_activation_features'}, async function () {
@@ -130,21 +130,21 @@ Before({tags: '@teardown_activation_features'}, async function () {
     await teardown_activation_features();
 });
 
-Before({tags: '@setup_deployment_templates_features'}, async function () {
-    await teardown_deployment_templates_features(this);
+Before({tags: '@setup_patch_templates_features'}, async function () {
+    await teardown_patch_templates_features(this);
 });
 
-Before({tags: '@teardown_deployment_templates_features'}, async function () {
-    await teardown_deployment_templates_features(this);
+Before({tags: '@teardown_patch_templates_features'}, async function () {
+    await teardown_patch_templates_features(this);
 });
 
-Before({tags: '@setup_deployment_features_enhanced'}, async function () {
-    await teardown_enhanced_deployment_templates_features(this);
-    await createGGV2CoreDeploymentTemplate(this, GGV2_CORE_INSTALLATION_TEMPLATE);
+Before({tags: '@setup_patch_features_enhanced'}, async function () {
+    await teardown_enhanced_patch_templates_features(this);
+    await createGGV2CorePatchTemplate(this, GGV2_CORE_INSTALLATION_TEMPLATE);
 });
 
-Before({tags: '@teardown_deployment_features_enhanced'}, async function () {
-    await teardown_enhanced_deployment_templates_features(this);
+Before({tags: '@teardown_patch_features_enhanced'}, async function () {
+    await teardown_enhanced_patch_templates_features(this);
 });
 
 

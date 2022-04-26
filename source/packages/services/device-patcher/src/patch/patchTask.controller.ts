@@ -86,7 +86,7 @@ export class PatchTaskController implements interfaces.Controller {
 
     }
 
-    @httpGet('/:taskId/patchs')
+    @httpGet('/:taskId/patches')
     public async getPatchs(
         @response() res: Response,
         @requestParam('taskId') taskId: string,
@@ -99,7 +99,7 @@ export class PatchTaskController implements interfaces.Controller {
             const [items, paginationKey] = await this.patchTaskService.getPatches(taskId, count, {nextToken: exclusiveStartToken});
             const resources = this.patchAssembler.toListResource(items, count, paginationKey);
 
-            logger.debug(`PatchTask.controller getPatchs: exit: ${JSON.stringify(resources)}`);
+            logger.debug(`PatchTask.controller getPatches: exit: ${JSON.stringify(resources)}`);
 
             res.status(200).send(resources);
         } catch (err) {
