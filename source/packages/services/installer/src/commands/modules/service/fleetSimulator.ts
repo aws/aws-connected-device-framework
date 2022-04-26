@@ -134,7 +134,8 @@ export class FleetSimulatorInstaller implements RestModule {
           ...parameterOverrides,
           '--capabilities', 'CAPABILITY_NAMED_IAM',
           '--no-fail-on-empty-changeset',
-          '--region', answers.region
+          '--region', answers.region,
+          '--tags', 'cdf_service=simulation-launcher', `cdf_environment=${answers.environment}`, ...answers.customTags.split(' '),
         ]);
       }
     });
@@ -158,7 +159,8 @@ export class FleetSimulatorInstaller implements RestModule {
           '--output-template-file', '../simulation-manager/infrastructure/cfn-simulation-manager.yml.build',
           '--s3-bucket', answers.s3.bucket,
           '--s3-prefix', 'cloudformation/artifacts/',
-          '--region', answers.region
+          '--region', answers.region,
+          '--tags', 'cdf_service=simulation-manager', `cdf_environment=${answers.environment}`, ...answers.customTags.split(' '),
         ]);
       }
     });
@@ -198,7 +200,8 @@ export class FleetSimulatorInstaller implements RestModule {
           '--parameter-overrides', ...parameterOverrides,
           '--capabilities', 'CAPABILITY_NAMED_IAM',
           '--no-fail-on-empty-changeset',
-          '--region', answers.region
+          '--region', answers.region,
+          '--tags', 'cdf_service=simulation-manager', `cdf_environment=${answers.environment}`, ...answers.customTags.split(' '),
         ]);
       }
     });

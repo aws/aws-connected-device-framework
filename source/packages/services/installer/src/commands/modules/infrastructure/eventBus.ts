@@ -75,7 +75,8 @@ export class EvenBusInstaller implements InfrastructureModule {
           `Environment=${answers.environment}`,
           `ExistingEventBusArn=${answers.eventBus?.arn ?? ''}`,
           '--no-fail-on-empty-changeset',
-          '--region', answers.region
+          '--region', answers.region,
+          '--tags', 'cdf_service=eventbus', `cdf_environment=${answers.environment}`, ...answers.customTags.split(' '),
         ], {
           cwd: path.join(monorepoRoot, 'source', 'infrastructure', 'cloudformation')
         });

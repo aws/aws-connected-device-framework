@@ -107,7 +107,8 @@ export class DeviceMonitoringInstaller implements ServiceModule {
           ...parameterOverrides,
           '--capabilities', 'CAPABILITY_NAMED_IAM',
           '--no-fail-on-empty-changeset',
-          '--region', answers.region
+          '--region', answers.region,
+          '--tags', 'cdf_service=device-monitoring', `cdf_environment=${answers.environment}`, ...answers.customTags.split(' '),
         ]);
       }
     });

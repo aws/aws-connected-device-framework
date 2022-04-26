@@ -104,7 +104,8 @@ export class AssetLibraryHistoryInstaller implements RestModule {
           ...parameterOverrides,
           '--capabilities', 'CAPABILITY_NAMED_IAM', 'CAPABILITY_AUTO_EXPAND',
           '--no-fail-on-empty-changeset',
-          '--region', answers.region
+          '--region', answers.region,
+          '--tags', 'cdf_service=assetlibrary-history', `cdf_environment=${answers.environment}`, ...answers.customTags.split(' '),
         ]);
       }
     });
