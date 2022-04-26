@@ -225,15 +225,12 @@ triggerCpp:
     branch: main
 
 release:
-  before_script:
-    - yum install -y tar
   image:
-    name: public.ecr.aws/amazonlinux/amazonlinux:2
+    name: public.ecr.aws/lambda/nodejs:14
     entrypoint: [""]
   stage: release
   before_script:
     - *common-install-deployment-dependencies
-    - *common-install-node-dependencies
   rules:
     - if: ($CI_COMMIT_BRANCH == "feat/pipeline/release_package")
   script:
