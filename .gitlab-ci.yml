@@ -85,7 +85,7 @@ default:
 
 downloadInfastructureConfig:
   rules:
-    - if: ($CI_COMMIT_BRANCH == "feat_command_and_control")
+    - if: ($CI_COMMIT_BRANCH == "feat/pipeline/release_package")
   stage: build
   before_script:
     - env | sort
@@ -109,7 +109,7 @@ downloadInfastructureConfig:
 
 buildLambaLayersZip:
   rules:
-    - if: ($CI_COMMIT_BRANCH == "feat_command_and_control")
+    - if: ($CI_COMMIT_BRANCH == "feat/pipeline/release_package")
   stage: build
   before_script:
     - yum update -y && yum install -y openssl zip
@@ -127,7 +127,7 @@ buildLambaLayersZip:
 
 branchTest:
   rules:
-    - if: ($CI_COMMIT_BRANCH == "feat_command_and_control")
+    - if: ($CI_COMMIT_BRANCH == "feat/pipeline/release_package")
   stage: test
   script:
     - *common-build-steps
