@@ -215,9 +215,8 @@ upload:
     - git archive --format=zip --output=cdf.zip $CI_COMMIT_SHA
     - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file cdf.zip "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/aws-connected-device-framework/${CI_JOB_ID}/cdf.zip"'
     # Create release package
-    - pwd
-    - tar -cvf ${CI_PROJECT_DIR} --exclude=node_modules --exclude=.git --exclude=dist --exclude=deploy --exclude=.history --exclude=temp .
-    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file aws-connected-device-framework.tar "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/aws-connected-device-framework/${CI_JOB_ID}/aws-connected-device-framework.tar"'
+    - tar -cvf ../aws-connected-device-framework.tar --exclude=node_modules --exclude=.git --exclude=dist --exclude=deploy --exclude=.history --exclude=temp .
+    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ../aws-connected-device-framework.tar "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/aws-connected-device-framework/${CI_JOB_ID}/aws-connected-device-framework.tar"'
 triggerCpp:
   stage: triggerCpp
   rules:
