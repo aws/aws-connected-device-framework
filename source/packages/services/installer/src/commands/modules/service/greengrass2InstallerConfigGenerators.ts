@@ -123,7 +123,8 @@ export class Greengrass2InstallerConfigGeneratorsInstaller implements ServiceMod
                     ...parameterOverrides,
                     '--capabilities', 'CAPABILITY_NAMED_IAM', 'CAPABILITY_AUTO_EXPAND',
                     '--no-fail-on-empty-changeset',
-                    '--region', answers.region
+                    '--region', answers.region,
+                    '--tags', 'cdf_service=greengrass2-installer-config-generators', `cdf_environment=${answers.environment}`, ...answers.customTags.split(' '),
                 ]);
             }
         });

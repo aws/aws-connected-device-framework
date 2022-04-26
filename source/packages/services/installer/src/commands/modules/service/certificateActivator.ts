@@ -120,7 +120,8 @@ export class CertificateActivatorInstaller implements ServiceModule {
           ...parameterOverrides,
           '--capabilities', 'CAPABILITY_NAMED_IAM',
           '--no-fail-on-empty-changeset',
-          '--region', answers.region
+          '--region', answers.region,
+          '--tags', 'cdf_service=certificateactivator', `cdf_environment=${answers.environment}`, ...answers.customTags.split(' '),
         ]);
       }
     });

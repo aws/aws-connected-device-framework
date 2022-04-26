@@ -10,32 +10,29 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { Answers, ProvisionedConcurrencyModuleAttribues as ProvisionedConcurrencyModuleAttributes } from '../models/answers';
-import { ModuleName } from '../models/modules';
-import { Question } from 'inquirer';
 
-export function enableAutoScaling(moduleName: ModuleName, answers: Answers): Question {
-    return {
-        message: 'Deployed with a autoscaling?',
-        type: 'confirm',
-        name: `${moduleName}.enableAutoScaling`,
-        default: (answers[moduleName] as ProvisionedConcurrencyModuleAttributes)?.enableAutoScaling ?? false,
-        askAnswered: true,
-    };
+// For rules relating to tag keys and values, see
+// https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html#tag-restrictions
+// https://docs.aws.amazon.com/directoryservice/latest/devguide/API_Tag.html
+//
+// \p{L} and \p{N} and \p{Zs} are Unicode property escapes for letters, numbers and space separators, respectively:
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions/Unicode_Property_Escapes
+// https://unicode.org/reports/tr18/#General_Category_Property
+const tagKeyPattern = /^[\p{L}\p{N}+\-=._:@]{1,128}$/u;
+const tagValuePattern = /^[\p{L}\p{N}\p{Zs}+\-=._:/@]{0,256}$/u;
+// const kvRegex = /^([\p{L}\p{N}+\-=._:/@]{1,128})=([\p{L}\p{Zs}\p{N}+\-=._:@]{1,256})*$/u;
+export function isValidTagKey(str: string): boolean {
+  // The aws: prefix is reserved for AWS use.
+  if (str.startsWith('aws:')) return false;
+  // [EC2] Instance tag keys can't comprise only . (one period), .. (two periods), or _index.
+  if (str === '.' || str === '..' || str === '_index') return false;
+  if (!str.match(tagKeyPattern)) return false;
+  return true;
 }
 
-export function provisionedConcurrentExecutions(moduleName: ModuleName, answers: Answers): Question {
-    return {
-        message: 'The no. of desired concurrent executions to  provision.  Set to 0 to disable.',
-        type: 'input',
-        name: `${moduleName}.provisionedConcurrentExecutions`,
-        default: (answers[moduleName] as ProvisionedConcurrencyModuleAttributes)?.provisionedConcurrentExecutions ?? 0,
-        askAnswered: true,
-        validate(answer: number) {
-            if (answer < 0) {
-                return `You must enter number larger than 0.`;
-            }
-            return true;
-        },
-    };
+export function isValidTagValue(str: string): boolean {
+  // values starting with, ending with, or consisting of only whitespace are discouraged
+  if (str.trim() !== str) return false;
+  if (!str.match(tagValuePattern)) return false;
+  else return true;
 }

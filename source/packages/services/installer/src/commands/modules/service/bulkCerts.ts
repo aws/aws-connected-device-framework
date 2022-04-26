@@ -209,7 +209,8 @@ export class BulkCertificatesInstaller implements RestModule {
           '--parameter-overrides', ...parameterOverrides,
           '--capabilities', 'CAPABILITY_NAMED_IAM', 'CAPABILITY_AUTO_EXPAND',
           '--no-fail-on-empty-changeset',
-          '--region', answers.region
+          '--region', answers.region,
+          '--tags', 'cdf_service=bulkcerts', `cdf_environment=${answers.environment}`, ...answers.customTags.split(' '),
         ]);
       }
     });
