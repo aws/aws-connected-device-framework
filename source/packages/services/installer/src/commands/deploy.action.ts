@@ -75,8 +75,6 @@ async function deployAction(
                 parentTask.newListr(subTasks, { concurrent: false }),
             });
           }
-        } else {
-          console.log(chalk.green(`\nSkipping optional module ${m.name}\n`));
         }
       } else {
         throw new Error(`Module ${name} has no install functionality defined!`);

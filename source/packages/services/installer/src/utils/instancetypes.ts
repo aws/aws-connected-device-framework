@@ -12,7 +12,7 @@
  *********************************************************************************************************************/
 import { RDSClient, DescribeOrderableDBInstanceOptionsCommand } from '@aws-sdk/client-rds';
 
-import { PricingClient, GetProductsCommand } from '@aws-sdk/client-pricing';
+import { PricingClient, GetProductsCommand, GetProductsCommandInput, GetProductsCommandOutput } from '@aws-sdk/client-pricing';
 
 async function fetchNeptuneInstancetypes(
   region: string,
@@ -89,7 +89,10 @@ export async function getDaxInstanceTypeList(region: string): Promise<string[]> 
     const client = new PricingClient({ region: 'us-east-1' })
 
     let moreResultsToPage = true
-    let getProductResponse, nextToken, getProductRequest;
+    let
+      getProductResponse: GetProductsCommandOutput,
+      nextToken: string,
+      getProductRequest: GetProductsCommandInput;
 
     const priceList: string[] = []
 

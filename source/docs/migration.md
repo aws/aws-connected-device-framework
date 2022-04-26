@@ -6,7 +6,7 @@ While we endeavor to always make backward compatible changes, there may be times
 
 ### Asset Library is now optional modules
 
-In the past, `assetLibrary` is always deployed when you select `greengrass2Provisioning`, `commands` , or `commandAndControl` modules.
+Since CDF version 1.0.6, `assetLibrary` is always deployed when you select `greengrass2Provisioning`, `commands` , or `commandAndControl` modules.
 
 In this release, a new question is added to these modules to check if `assetLibrary` to make the dependency explicit. Now you can deploy these services without `assetLibrary` (removing the capability to select devices by assetLibrary query).
 
