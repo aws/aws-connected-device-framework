@@ -18,7 +18,8 @@ variables:
   - if: ($CI_COMMIT_BRANCH == "main" && $CI_COMMIT_MESSAGE != /.*\[skip ci\].*/)
 
 .branch-run-condition: &branch-run-condition
-  - if: ($CI_COMMIT_BRANCH != "main")
+ # - if: ($CI_COMMIT_BRANCH != "main")
+  - if: ($CI_COMMIT_BRANCH != "feat/pipeline/release_package") 
 
 .common-build-steps: &common-build-steps # install dependencies
   - cd ${CI_PROJECT_DIR}/source
@@ -128,7 +129,6 @@ buildLambaLayersZip:
 branchTest:
   rules:
     - *default-run-condition
-    - if: ($CI_COMMIT_BRANCH == "feat/pipeline/release_package")
   stage: test
   script:
     - *common-build-steps
