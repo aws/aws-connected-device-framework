@@ -1,6 +1,13 @@
 # Change Log - @cdf/installer
 
-This log was last generated on Wed, 27 Apr 2022 06:44:55 GMT and should not be manually modified.
+This log was last generated on Wed, 27 Apr 2022 08:32:22 GMT and should not be manually modified.
+
+## 0.3.2
+Wed, 27 Apr 2022 08:32:22 GMT
+
+### Patches
+
+- refactoring the prompt works to make sure that optional module questions only being asked when needed
 
 ## 0.3.1
 Wed, 27 Apr 2022 06:44:55 GMT
