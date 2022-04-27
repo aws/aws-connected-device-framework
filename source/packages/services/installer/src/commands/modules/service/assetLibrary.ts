@@ -16,11 +16,10 @@ import { ModuleName, RestModule, PostmanEnvironment } from '../../../models/modu
 import { ConfigBuilder } from '../../../utils/configBuilder';
 import inquirer from 'inquirer';
 import ow from 'ow';
-import execa from 'execa';
 import { customDomainPrompt } from '../../../prompts/domain.prompt';
 import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from '../../../prompts/applicationConfiguration.prompt';
-import { deleteStack, getStackOutputs, getStackParameters } from '../../../utils/cloudformation.util';
+import { deleteStack, getStackOutputs, getStackParameters, packageAndDeployStack } from '../../../utils/cloudformation.util';
 import { enableAutoScaling, provisionedConcurrentExecutions } from '../../../prompts/autoscaling.prompt';
 import { getNeptuneInstancetypeList } from '../../../utils/instancetypes';
 
@@ -230,16 +229,14 @@ export class AssetLibraryInstaller implements RestModule {
           addIfSpecified('CreateDBReplicaInstance', answers.assetLibrary.createDbReplicaInstance);
           addIfSpecified('SnapshotIdentifier', answers.assetLibrary.neptuneSnapshotIdentifier);
 
-          await execa('aws', ['cloudformation', 'deploy',
-            '--template-file', '../assetlibrary/infrastructure/cfn-neptune.yaml',
-            '--stack-name', this.neptuneStackName,
-            '--parameter-overrides',
-            ...parameterOverrides,
-            '--capabilities', 'CAPABILITY_NAMED_IAM',
-            '--no-fail-on-empty-changeset',
-            '--region', answers.region,
-            '--tags', 'cdf_service=assetlibrary', `cdf_environment=${answers.environment}`, ...answers.customTags.split(' '),
-          ]);
+          await packageAndDeployStack({
+            answers: answers,
+            stackName: this.neptuneStackName,
+            serviceName: 'assetlibrary',
+            templateFile: '../assetlibrary/infrastructure/cfn-neptune.yaml',
+            parameterOverrides,
+            needsCapabilityNamedIAM: true,
+          })
         }
       });
 
@@ -252,24 +249,9 @@ export class AssetLibraryInstaller implements RestModule {
       });
     }
 
-
     tasks.push({
-      title: `Packaging stack '${this.applicationStackName}'`,
+      title: `Packaging and deploying stack '${this.applicationStackName}'`,
       task: async () => {
-        await execa('aws', ['cloudformation', 'package',
-          '--template-file', '../assetlibrary/infrastructure/cfn-assetLibrary.yaml',
-          '--output-template-file', '../assetlibrary/infrastructure/cfn-assetLibrary.yaml.build',
-          '--s3-bucket', answers.s3.bucket,
-          '--s3-prefix', 'cloudformation/artifacts/',
-          '--region', answers.region
-        ]);
-      }
-    });
-
-    tasks.push({
-      title: `Deploying stack '${this.applicationStackName}'`,
-      task: async () => {
-
         const parameterOverrides = [
           `Environment=${answers.environment}`,
           `VpcId=${answers.vpc?.id ?? 'N/A'}`,
@@ -295,18 +277,17 @@ export class AssetLibraryInstaller implements RestModule {
         addIfSpecified('AuthorizerFunctionArn', answers.apigw.lambdaAuthorizerArn);
         addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
 
-
-        await execa('aws', ['cloudformation', 'deploy',
-          '--template-file', '../assetlibrary/infrastructure/cfn-assetLibrary.yaml.build',
-          '--stack-name', this.applicationStackName,
-          '--parameter-overrides',
-          ...parameterOverrides,
-          '--capabilities', 'CAPABILITY_NAMED_IAM', 'CAPABILITY_AUTO_EXPAND',
-          '--no-fail-on-empty-changeset',
-          '--region', answers.region,
-          '--tags', 'cdf_service=assetlibrary', `cdf_environment=${answers.environment}`, ...answers.customTags.split(' '),
-        ]);
-      }
+        await packageAndDeployStack({
+          answers: answers,
+          stackName: this.applicationStackName,
+          serviceName: 'assetlibrary',
+          templateFile: '../assetlibrary/infrastructure/cfn-assetLibrary.yaml',
+          parameterOverrides,
+          needsPackaging: true,
+          needsCapabilityNamedIAM: true,
+          needsCapabilityAutoExpand: true,
+        });
+      },
     });
 
     return [answers, tasks];

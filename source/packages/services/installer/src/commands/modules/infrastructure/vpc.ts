@@ -1,4 +1,15 @@
-import execa from "execa";
+/*********************************************************************************************************************
+ *  Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.                                           *
+ *                                                                                                                    *
+ *  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance    *
+ *  with the License. A copy of the License is located at                                                             *
+ *                                                                                                                    *
+ *      http://www.apache.org/licenses/LICENSE-2.0                                                                    *
+ *                                                                                                                    *
+ *  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES *
+ *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
+ *  and limitations under the License.                                                                                *
+ *********************************************************************************************************************/
 import inquirer from "inquirer";
 import { ListrTask } from "listr2";
 import ow from "ow";
@@ -10,7 +21,7 @@ import {
 } from "@aws-sdk/client-cloudformation";
 import { Answers } from "../../../models/answers";
 import { InfrastructureModule, ModuleName } from "../../../models/modules";
-import { deleteStack } from "../../../utils/cloudformation.util";
+import { deleteStack, packageAndDeployStack } from "../../../utils/cloudformation.util";
 import { getMonorepoRoot } from "../../../prompts/paths.prompt";
 
 export class VpcInstaller implements InfrastructureModule {
@@ -139,43 +150,30 @@ export class VpcInstaller implements InfrastructureModule {
           title: `Deploying stack '${this.stackName}'`,
           skip: skipDeployment,
           task: async () => {
-            await execa(
-              "aws",
-              [
-                "cloudformation",
-                "deploy",
-                "--template-file",
-                "cfn-networking.yaml",
-                "--stack-name",
-                this.stackName,
-                "--parameter-overrides",
-                `Environment=${answers.environment}`,
-                `ExistingVpcId=N/A`,
-                `ExistingCDFSecurityGroupId=`,
-                `ExistingPrivateSubnetIds=`,
-                `ExistingPublicSubnetIds=`,
-                `ExistingPrivateApiGatewayVPCEndpoint=`,
-                `ExistingPrivateRouteTableIds=`,
-                `EnableS3VpcEndpoint=${true}`,
-                `EnableDynamoDBVpcEndpoint=${answers.notifications?.useDax ?? false
-                }`,
-                `EnablePrivateApiGatewayVPCEndpoint=${answers.apigw?.type === "Private" ? true : false
-                }`,
-                "--capabilities",
-                "CAPABILITY_NAMED_IAM",
-                "--no-fail-on-empty-changeset",
-                "--region",
-                answers.region,
-              ],
-              {
-                cwd: path.join(
-                  monorepoRoot,
-                  "source",
-                  "infrastructure",
-                  "cloudformation"
-                ),
-              }
-            );
+            const parameterOverrides = [
+              `Environment=${answers.environment}`,
+              `ExistingVpcId=N/A`,
+              `ExistingCDFSecurityGroupId=`,
+              `ExistingPrivateSubnetIds=`,
+              `ExistingPublicSubnetIds=`,
+              `ExistingPrivateApiGatewayVPCEndpoint=`,
+              `ExistingPrivateRouteTableIds=`,
+              `EnableS3VpcEndpoint=${true}`,
+              `EnableDynamoDBVpcEndpoint=${answers.notifications?.useDax ?? false
+              }`,
+              `EnablePrivateApiGatewayVPCEndpoint=${answers.apigw?.type === "Private" ? true : false
+              }`,
+            ];
+
+            await packageAndDeployStack({
+              answers: answers,
+              stackName: this.stackName,
+              serviceName: 'vpc',
+              templateFile: 'cfn-networking.yaml',
+              parameterOverrides,
+              needsCapabilityNamedIAM: true,
+              cwd: path.join(monorepoRoot, "source", "infrastructure", "cloudformation"),
+            });
           },
         },
 

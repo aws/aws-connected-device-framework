@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import {isValidTagKey, isValidTagValue} from './tags';
+import {isValidTagKey, isValidTagValue, TagsList} from './tags';
 
 const VALID_TAG_KEYS_AND_VALID_TAG_VALUES = [
   'abc', 'ABC', 'AbC', 'abc+def',  'abc+def', 'abc@def.com', '01:02:03:04:05:06', 'abc=def', 'abc:def', 'abc_def',
@@ -56,5 +56,26 @@ describe('isValidTagValue', () => {
     it(`should return false for the invalid tag value "${tagValue}"`, async () => {
       expect(isValidTagValue(tagValue)).toStrictEqual(false);
     });
+  });
+});
+
+describe('TagsList', () => {
+  it('should parse a semicolon separated list', async () => {
+    const tl = new TagsList('abc;d=ef;ghi;1 2z');
+    expect(tl.tags).toStrictEqual([{key: 'abc', value: 'd=ef'}, {key: 'ghi', value: '1 2z'}]);
+  });
+
+  it('should fail parsing a semicolon separated list with an odd number of elements', async () => {
+    expect(() => new TagsList('a;b;c')).toThrowError();
+  });
+
+  it('should correctly handle trailing semicolong', async () => {
+    const tl = new TagsList('a;b;c;d;');
+    expect(tl.tags).toStrictEqual([{key: 'a', value: 'b'}, {key: 'c', value: 'd'}]);
+  });
+
+  it('should return correctly formatted AWS CLI options', async () => {
+    const tl = new TagsList('abc;d=ef;ghi;1 2z');
+    expect(tl.asCLIOptions()).toStrictEqual(['abc=d=ef', 'ghi=1 2z']);
   });
 });
