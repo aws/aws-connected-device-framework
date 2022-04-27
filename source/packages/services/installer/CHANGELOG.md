@@ -1,6 +1,13 @@
 # Change Log - @cdf/installer
 
-This log was last generated on Tue, 26 Apr 2022 03:49:33 GMT and should not be manually modified.
+This log was last generated on Wed, 27 Apr 2022 06:44:55 GMT and should not be manually modified.
+
+## 0.3.1
+Wed, 27 Apr 2022 06:44:55 GMT
+
+### Patches
+
+- remove the packaging of openssl from installer
 
 ## 0.3.0
 Tue, 26 Apr 2022 03:49:33 GMT
