@@ -1,3 +1,15 @@
+/*********************************************************************************************************************
+ *  Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.                                           *
+ *                                                                                                                    *
+ *  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance    *
+ *  with the License. A copy of the License is located at                                                             *
+ *                                                                                                                    *
+ *      http://www.apache.org/licenses/LICENSE-2.0                                                                    *
+ *                                                                                                                    *
+ *  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES *
+ *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
+ *  and limitations under the License.                                                                                *
+ *********************************************************************************************************************/
 import execa from 'execa';
 import inquirer from 'inquirer';
 import { ListrTask } from 'listr2';
@@ -8,7 +20,7 @@ import { LambdaClient, ListLayerVersionsCommand } from '@aws-sdk/client-lambda';
 
 import { Answers } from '../../../models/answers';
 import { InfrastructureModule, ModuleName } from '../../../models/modules';
-import { deleteStack } from '../../../utils/cloudformation.util';
+import { deleteStack, packageAndDeployStack } from '../../../utils/cloudformation.util';
 import { getMonorepoRoot } from '../../../prompts/paths.prompt';
 
 export class OpenSslInstaller implements InfrastructureModule {
@@ -80,35 +92,17 @@ export class OpenSslInstaller implements InfrastructureModule {
       });
 
       tasks.push({
-        title: `Packaging stack '${this.stackName}'`,
+        title: `Packaging and deploying stack '${this.stackName}'`,
         task: async () => {
-          await execa('aws', ['cloudformation', 'package',
-            '--template-file', 'infrastructure/cfn-openssl-layer.yml',
-            '--output-template-file', 'infrastructure/cfn-openssl-layer.yml.build',
-            '--s3-bucket', answers.s3.bucket,
-            '--s3-prefix', 'cloudformation/artifacts/',
-            '--region', answers.region
-          ], {
-            cwd: path.join(monorepoRoot, 'source', 'infrastructure', 'lambdaLayers', 'openssl')
-          });
-        }
-      });
-
-      tasks.push({
-        title: `Deploying stack '${this.stackName}'`,
-        task: async () => {
-
-          await execa('aws', ['cloudformation', 'deploy',
-            '--template-file', 'infrastructure/cfn-openssl-layer.yml.build',
-            '--stack-name', this.stackName,
-            '--parameter-overrides',
-            `Environment=${answers.environment}`,
-            '--capabilities', 'CAPABILITY_NAMED_IAM',
-            '--no-fail-on-empty-changeset',
-            '--region', answers.region,
-            '--tags', 'cdf_service=openssl', `cdf_environment=${answers.environment}`, ...answers.customTags.split(' '),
-          ], {
-            cwd: path.join(monorepoRoot, 'source', 'infrastructure', 'lambdaLayers', 'openssl')
+          await packageAndDeployStack({
+            answers: answers,
+            stackName: this.stackName,
+            serviceName: 'openssl',
+            templateFile: 'infrastructure/cfn-openssl-layer.yml',
+            parameterOverrides: [`Environment=${answers.environment}`],
+            needsPackaging: true,
+            needsCapabilityNamedIAM: true,
+            cwd: path.join(monorepoRoot, 'source', 'infrastructure', 'lambdaLayers', 'openssl'),
           });
         }
       });

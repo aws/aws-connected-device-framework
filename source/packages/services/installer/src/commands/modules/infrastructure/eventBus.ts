@@ -1,5 +1,16 @@
+/*********************************************************************************************************************
+ *  Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.                                           *
+ *                                                                                                                    *
+ *  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance    *
+ *  with the License. A copy of the License is located at                                                             *
+ *                                                                                                                    *
+ *      http://www.apache.org/licenses/LICENSE-2.0                                                                    *
+ *                                                                                                                    *
+ *  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES *
+ *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
+ *  and limitations under the License.                                                                                *
+ *********************************************************************************************************************/
 import { CloudFormationClient, DescribeStacksCommand } from '@aws-sdk/client-cloudformation';
-import execa from 'execa';
 import inquirer from 'inquirer';
 import { ListrTask } from 'listr2';
 import ow from 'ow';
@@ -8,7 +19,7 @@ import path from 'path';
 import { Answers } from '../../../models/answers';
 import { InfrastructureModule, ModuleName } from '../../../models/modules';
 import { getMonorepoRoot } from '../../../prompts/paths.prompt';
-import { deleteStack } from '../../../utils/cloudformation.util';
+import { deleteStack, packageAndDeployStack } from '../../../utils/cloudformation.util';
 
 export class EvenBusInstaller implements InfrastructureModule {
 
@@ -68,17 +79,13 @@ export class EvenBusInstaller implements InfrastructureModule {
     tasks.push({
       title: `Deploying stack '${this.stackName}'`,
       task: async () => {
-        await execa('aws', ['cloudformation', 'deploy',
-          '--template-file', 'cfn-eventbus.yaml',
-          '--stack-name', this.stackName,
-          '--parameter-overrides',
-          `Environment=${answers.environment}`,
-          `ExistingEventBusArn=${answers.eventBus?.arn ?? ''}`,
-          '--no-fail-on-empty-changeset',
-          '--region', answers.region,
-          '--tags', 'cdf_service=eventbus', `cdf_environment=${answers.environment}`, ...answers.customTags.split(' '),
-        ], {
-          cwd: path.join(monorepoRoot, 'source', 'infrastructure', 'cloudformation')
+        await packageAndDeployStack({
+          answers: answers,
+          stackName: this.stackName,
+          serviceName: 'eventbus',
+          templateFile: 'cfn-eventbus.yaml',
+          parameterOverrides: [`Environment=${answers.environment}`, `ExistingEventBusArn=${answers.eventBus?.arn ?? ''}`],
+          cwd: path.join(monorepoRoot, 'source', 'infrastructure', 'cloudformation'),
         });
       }
     });

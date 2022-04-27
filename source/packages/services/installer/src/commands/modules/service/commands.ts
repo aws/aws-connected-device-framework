@@ -1,3 +1,15 @@
+/*********************************************************************************************************************
+ *  Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.                                           *
+ *                                                                                                                    *
+ *  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance    *
+ *  with the License. A copy of the License is located at                                                             *
+ *                                                                                                                    *
+ *      http://www.apache.org/licenses/LICENSE-2.0                                                                    *
+ *                                                                                                                    *
+ *  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES *
+ *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
+ *  and limitations under the License.                                                                                *
+ *********************************************************************************************************************/
 import { Answers } from '../../../models/answers';
 import { ListrTask } from 'listr2';
 import { ModuleName, RestModule, PostmanEnvironment } from '../../../models/modules';
@@ -7,8 +19,7 @@ import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
 import { customDomainPrompt } from '../../../prompts/domain.prompt';
 import ow from 'ow';
-import execa from 'execa';
-import { deleteStack, getStackOutputs, getStackParameters, getStackResourceSummaries } from '../../../utils/cloudformation.util';
+import { deleteStack, getStackOutputs, getStackParameters, getStackResourceSummaries, packageAndDeployStack } from '../../../utils/cloudformation.util';
 
 export class CommandsInstaller implements RestModule {
 
@@ -101,20 +112,7 @@ export class CommandsInstaller implements RestModule {
     });
 
     tasks.push({
-      title: `Packaging stack '${this.stackName}'`,
-      task: async () => {
-        await execa('aws', ['cloudformation', 'package',
-          '--template-file', '../commands/infrastructure/cfn-commands.yml',
-          '--output-template-file', '../commands/infrastructure/cfn-commands.yml.build',
-          '--s3-bucket', answers.s3.bucket,
-          '--s3-prefix', 'cloudformation/artifacts/',
-          '--region', answers.region
-        ]);
-      }
-    });
-
-    tasks.push({
-      title: `Deploying stack '${this.stackName}'`,
+      title: `Packaging and deploying stack '${this.stackName}'`,
       task: async () => {
         const parameterOverrides = [
           `Environment=${answers.environment}`,
@@ -140,16 +138,16 @@ export class CommandsInstaller implements RestModule {
         addIfSpecified('AuthorizerFunctionArn', answers.apigw.lambdaAuthorizerArn);
         addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
 
-        await execa('aws', ['cloudformation', 'deploy',
-          '--template-file', '../commands/infrastructure/cfn-commands.yml.build',
-          '--stack-name', this.stackName,
-          '--parameter-overrides',
-          ...parameterOverrides,
-          '--capabilities', 'CAPABILITY_NAMED_IAM', 'CAPABILITY_AUTO_EXPAND',
-          '--no-fail-on-empty-changeset',
-          '--region', answers.region,
-          '--tags', 'cdf_service=commands', `cdf_environment=${answers.environment}`, ...answers.customTags.split(' '),
-        ]);
+        await packageAndDeployStack({
+          answers: answers,
+          stackName: this.stackName,
+          serviceName: 'commands',
+          templateFile: '../commands/infrastructure/cfn-commands.yml',
+          parameterOverrides,
+          needsPackaging: true,
+          needsCapabilityNamedIAM: true,
+          needsCapabilityAutoExpand: true,
+        });
       }
     });
 

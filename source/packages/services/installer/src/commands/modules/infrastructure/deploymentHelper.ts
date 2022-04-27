@@ -1,4 +1,15 @@
-import execa from 'execa';
+/*********************************************************************************************************************
+ *  Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.                                           *
+ *                                                                                                                    *
+ *  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance    *
+ *  with the License. A copy of the License is located at                                                             *
+ *                                                                                                                    *
+ *      http://www.apache.org/licenses/LICENSE-2.0                                                                    *
+ *                                                                                                                    *
+ *  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES *
+ *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
+ *  and limitations under the License.                                                                                *
+ *********************************************************************************************************************/
 import inquirer from 'inquirer';
 import { ListrTask } from 'listr2';
 import ow from 'ow';
@@ -8,7 +19,7 @@ import { CloudFormationClient, DescribeStacksCommand } from '@aws-sdk/client-clo
 
 import { Answers } from '../../../models/answers';
 import { InfrastructureModule, ModuleName } from '../../../models/modules';
-import { deleteStack } from '../../../utils/cloudformation.util';
+import { deleteStack, packageAndDeployStack } from '../../../utils/cloudformation.util';
 import { getMonorepoRoot } from '../../../prompts/paths.prompt';
 
 export class DeploymentHelperInstaller implements InfrastructureModule {
@@ -92,74 +103,43 @@ export class DeploymentHelperInstaller implements InfrastructureModule {
 
     if (answers.deploymentHelper?.deploy) {
       tasks.push({
-        title: `Packaging stack '${this.deploymentHelperStackName}'`,
+        title: `Packaging and deploying stack '${this.deploymentHelperStackName}'`,
         task: async () => {
-          await execa('aws', ['cloudformation', 'package',
-            '--template-file', templateFileIn,
-            '--output-template-file', templateFileIn + '.build',
-            '--s3-bucket', answers.s3.bucket,
-            '--s3-prefix', 'cloudformation/artifacts/',
-            '--region', answers.region
-          ], {
-            cwd: path.join(monorepoRoot, 'source', 'packages', 'libraries', 'core', 'deployment-helper')
+          await packageAndDeployStack({
+            answers: answers,
+            stackName: this.deploymentHelperStackName,
+            serviceName: 'deployment-helper',
+            templateFile: templateFileIn,
+            parameterOverrides: [`Environment=${answers.environment}`, `ArtifactsBucket=${answers.s3.bucket}`],
+            needsPackaging: true,
+            needsCapabilityNamedIAM: true,
+            needsCapabilityAutoExpand: false,
+            cwd: path.join(monorepoRoot, 'source', 'packages', 'libraries', 'core', 'deployment-helper'),
           });
         }
       });
 
       tasks.push({
-        title: `Deploying stack '${this.deploymentHelperStackName}'`,
-        task: async () => {
-          await execa('aws', ['cloudformation', 'deploy',
-            '--template-file', templateFileIn + '.build',
-            '--stack-name', this.deploymentHelperStackName,
-            '--parameter-overrides',
-            `Environment=${answers.environment}`,
-            `ArtifactsBucket=${answers.s3.bucket}`,
-            '--capabilities', 'CAPABILITY_NAMED_IAM',
-            '--no-fail-on-empty-changeset',
-            '--region', answers.region,
-            '--tags', 'cdf_service=deployment-helper', `cdf_environment=${answers.environment}`, ...answers.customTags.split(' '),
-          ], {
-            cwd: path.join(monorepoRoot, 'source', 'packages', 'libraries', 'core', 'deployment-helper')
-          });
-        }
-      });
-
-      tasks.push({
-        title: `Packaging stack '${this.vpcDeploymentHelperStackName}'`,
+        title: `Packaging and deploying stack '${this.vpcDeploymentHelperStackName}'`,
         skip: skipVpcDeploymentHelper,
         task: async () => {
-          await execa('aws', ['cloudformation', 'package',
-            '--template-file', vpcTemplateFileIn,
-            '--output-template-file', vpcTemplateFileIn + '.build',
-            '--s3-bucket', answers.s3.bucket,
-            '--s3-prefix', 'cloudformation/artifacts/',
-            '--region', answers.region
-          ], {
-            cwd: path.join(monorepoRoot, 'source', 'packages', 'libraries', 'core', 'deployment-helper')
-          });
-        }
-      });
-
-      tasks.push({
-        title: `Deploying stack '${this.vpcDeploymentHelperStackName}'`,
-        skip: skipVpcDeploymentHelper,
-        task: async () => {
-          await execa('aws', ['cloudformation', 'deploy',
-            '--template-file', vpcTemplateFileIn + '.build',
-            '--stack-name', this.vpcDeploymentHelperStackName,
-            '--parameter-overrides',
+          const parameterOverrides = [
             `Environment=${answers.environment}`,
             `ArtifactsBucket=${answers.s3.bucket}`,
             `VpcId=${answers.vpc?.id ?? 'N/A'}`,
             `CDFSecurityGroupId=${answers.vpc?.securityGroupId ?? 'N/A'}`,
             `PrivateSubnetIds=${answers.vpc?.privateSubnetIds ?? 'N/A'}`,
-            '--capabilities', 'CAPABILITY_NAMED_IAM',
-            '--no-fail-on-empty-changeset',
-            '--region', answers.region,
-            '--tags', 'cdf_service=deployment-helper', `cdf_environment=${answers.environment}`, ...answers.customTags.split(' '),
-          ], {
-            cwd: path.join(monorepoRoot, 'source', 'packages', 'libraries', 'core', 'deployment-helper')
+          ];
+
+          await packageAndDeployStack({
+            answers: answers,
+            stackName: this.vpcDeploymentHelperStackName,
+            serviceName: 'deployment-helper',
+            templateFile: vpcTemplateFileIn,
+            parameterOverrides,
+            needsPackaging: true,
+            needsCapabilityNamedIAM: true,
+            cwd: path.join(monorepoRoot, 'source', 'packages', 'libraries', 'core', 'deployment-helper'),
           });
         }
       });
