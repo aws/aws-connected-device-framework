@@ -68,89 +68,35 @@ export class AuthJwtInstaller implements InfrastructureModule {
 
     ow(answers, ow.object.nonEmpty);
     ow(answers.environment, ow.string.nonEmpty);
-
-    const tasks: ListrTask[] = [];
-
-<<<<<<< HEAD
-    if (this.deployAuthJwt(answers.apigw)) {
-
-      ow(answers.authJwt, ow.object.nonEmpty);
-      ow(answers.authJwt.tokenIssuer, ow.string.nonEmpty);
-
-      if ((answers.authJwt.redeploy ?? true)) {
-        tasks.push({
-          title: `Packaging and deploying stack '${this.stackName}'`,
-          task: async () => {
-
-            const parameterOverrides = [
-              `Environment=${answers.environment}`,
-              `OpenSslLambdaLayerArn=${answers.openSsl.arn}`,
-              `JwtIssuer=${answers.authJwt.tokenIssuer}`,
-            ];
-
-            const addIfSpecified = (key: string, value: unknown) => {
-              if (value !== undefined) parameterOverrides.push(`${key}=${value}`)
-            };
-
-            addIfSpecified('LoggingLevel', answers.authJwt.loggingLevel);
-
-            await packageAndDeployStack({
-              answers: answers,
-              stackName: this.stackName,
-              serviceName: 'auth-jwt',
-              templateFile: '../auth-jwt/infrastructure/cfn-auth-jwt.yaml',
-              parameterOverrides,
-              needsPackaging: true,
-              needsCapabilityNamedIAM: true,
-            });
-          }
-        },
-        );
-      }
-=======
->>>>>>> a356cc34 (fix some issues on authJwt and make includeOptionalModule pass by reference)
-
     ow(answers.authJwt, ow.object.nonEmpty);
     ow(answers.authJwt.tokenIssuer, ow.string.nonEmpty);
 
+    const tasks: ListrTask[] = [];
+      
     if ((answers.authJwt.redeploy ?? true)) {
       tasks.push({
-        title: `Packaging stack '${this.stackName}'`,
+        title: `Packaging and deploying stack '${this.stackName}'`,
         task: async () => {
-          await execa('aws', ['cloudformation', 'package',
-            '--template-file', '../auth-jwt/infrastructure/cfn-auth-jwt.yaml',
-            '--output-template-file', '../auth-jwt/infrastructure/cfn-auth-jwt.yaml.build',
-            '--s3-bucket', answers.s3.bucket,
-            '--s3-prefix', 'cloudformation/artifacts/',
-            '--region', answers.region
-          ]);
-        }
-      });
-      tasks.push({
-        title: `Deploying stack '${this.stackName}'`,
-        task: async () => {
-
           const parameterOverrides = [
             `Environment=${answers.environment}`,
             `OpenSslLambdaLayerArn=${answers.openSsl.arn}`,
             `JwtIssuer=${answers.authJwt.tokenIssuer}`,
           ];
-
           const addIfSpecified = (key: string, value: unknown) => {
             if (value !== undefined) parameterOverrides.push(`${key}=${value}`)
           };
 
           addIfSpecified('LoggingLevel', answers.authJwt.loggingLevel);
 
-          await execa('aws', ['cloudformation', 'deploy',
-            '--template-file', '../auth-jwt/infrastructure/cfn-auth-jwt.yaml.build',
-            '--stack-name', this.stackName,
-            '--parameter-overrides',
-            ...parameterOverrides,
-            '--capabilities', 'CAPABILITY_NAMED_IAM',
-            '--no-fail-on-empty-changeset',
-            '--region', answers.region
-          ]);
+          await packageAndDeployStack({
+            answers: answers,
+            stackName: this.stackName,
+            serviceName: 'auth-jwt',
+            templateFile: '../auth-jwt/infrastructure/cfn-auth-jwt.yaml',
+            parameterOverrides,
+            needsPackaging: true,
+            needsCapabilityNamedIAM: true,
+          });
         }
       },
       );
