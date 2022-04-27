@@ -2,6 +2,18 @@
   "name": "@cdf/installer",
   "entries": [
     {
+      "version": "0.3.3",
+      "tag": "@cdf/installer_v0.3.3",
+      "date": "Wed, 27 Apr 2022 09:56:58 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "authJwt is not being considered in topological sort"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.3.2",
       "tag": "@cdf/installer_v0.3.2",
       "date": "Wed, 27 Apr 2022 08:32:22 GMT",

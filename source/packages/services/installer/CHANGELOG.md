@@ -1,6 +1,13 @@
 # Change Log - @cdf/installer
 
-This log was last generated on Wed, 27 Apr 2022 08:32:22 GMT and should not be manually modified.
+This log was last generated on Wed, 27 Apr 2022 09:56:58 GMT and should not be manually modified.
+
+## 0.3.3
+Wed, 27 Apr 2022 09:56:58 GMT
+
+### Patches
+
+- authJwt is not being considered in topological sort
 
 ## 0.3.2
 Wed, 27 Apr 2022 08:32:22 GMT
