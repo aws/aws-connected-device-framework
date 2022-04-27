@@ -32,7 +32,8 @@ export class DevicePatcherInstaller implements RestModule {
         'apigw',
         'kms',
         'openSsl'];
-    public readonly dependsOnOptional: ModuleName[] = ['vpc', 'authJwt'];
+
+    public readonly dependsOnOptional: ModuleName[] = [];
 
     private readonly stackName: string;
 

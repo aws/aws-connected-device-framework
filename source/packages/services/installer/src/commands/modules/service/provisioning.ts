@@ -31,7 +31,8 @@ export class ProvisioningInstaller implements RestModule {
     'openSsl',
     'deploymentHelper',
   ];
-  public readonly dependsOnOptional: ModuleName[] = ['vpc', 'authJwt'];
+  
+  public readonly dependsOnOptional: ModuleName[] = [];
 
   private readonly stackName: string
 

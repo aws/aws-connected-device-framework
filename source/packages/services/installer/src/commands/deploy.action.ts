@@ -1,5 +1,6 @@
 import chalk from "chalk";
 import inquirer from "inquirer";
+import clone from "just-clone";
 import { Listr, ListrTask } from "listr2";
 import { Answers } from "../models/answers";
 import { loadModules, Module, ModuleName } from "../models/modules";
@@ -51,7 +52,8 @@ async function deployAction(
 
   const grouped = topologicallySortModules(
     modules,
-    answers.modules.expandedIncludingOptional
+    answers.modules.expandedIncludingOptional,
+    false
   );
 
   for (const layer of grouped) {
@@ -64,13 +66,15 @@ async function deployAction(
         throw new Error(`Module ${name} not found!`);
       }
       if (m.install) {
-        const [_, subTasks] = await m.install(answers);
-        if (subTasks?.length > 0) {
-          layerTasks.push({
-            title: m.friendlyName,
-            task: (_, parentTask): Listr =>
-              parentTask.newListr(subTasks, { concurrent: false }),
-          });
+        if (answers.modules.expandedMandatory.includes(m.name) || answers.modules.list.includes(m.name)) {
+          const [_, subTasks] = await m.install(answers);
+          if (subTasks?.length > 0) {
+            layerTasks.push({
+              title: m.friendlyName,
+              task: (_, parentTask): Listr =>
+                parentTask.newListr(subTasks, { concurrent: false }),
+            });
+          }
         }
       } else {
         throw new Error(`Module ${name} has no install functionality defined!`);
@@ -143,6 +147,7 @@ async function configWizard(
     answers.modules.list,
     false
   );
+
   answers.modules.expandedIncludingOptional = expandModuleList(
     modules,
     answers.modules.list,
@@ -170,7 +175,6 @@ async function configWizard(
   );
 
   // TODO: verify that bundles exist for all the selected modules
-
   answers = await inquirer.prompt(
     [
       chooseS3BucketPrompt(
@@ -215,20 +219,31 @@ async function configWizard(
 
   answersStorage.save(answers);
 
-  // prompt for module specific configuration
-  const grouped = topologicallySortModules(
-    modules,
-    answers.modules.expandedIncludingOptional
-  );
-  for (const layer of grouped) {
-    for (const name of layer) {
-      const m = modules.find((m) => m.name === name);
-      if (m.prompts) {
-        console.log(chalk.yellow(`\n${m.friendlyName}...`));
-        answers = await m.prompts(answers);
-        answersStorage.save(answers);
+  let optionalModuleAdded = true
+
+  const answeredModule: { [key: string]: boolean } = {}
+
+  while (optionalModuleAdded) {
+    const originalExpandedMandatory = clone(answers.modules.expandedMandatory)
+
+    const mandatoryGrouped = topologicallySortModules(
+      modules,
+      answers.modules.expandedMandatory
+    );
+
+    for (const layer of mandatoryGrouped) {
+      for (const name of layer) {
+        const m = modules.find((m) => m.name === name);
+        if (m.prompts && !answeredModule[name]) {
+          console.log(chalk.yellow(`\n${m.friendlyName}...`));
+          answers = await m.prompts(answers);
+          answersStorage.save(answers);
+          answeredModule[name] = true
+        }
       }
     }
+
+    optionalModuleAdded = originalExpandedMandatory.length !== answers.modules.expandedMandatory.length;
   }
 
   console.log(
@@ -236,6 +251,7 @@ async function configWizard(
       `Configuration has been saved to '${answersStorage.getConfigurationFilePath()}'.\nIt is highly recommended that you store this configuration under source control to automate future deployments.`
     )
   );
+
   return answers;
 }
 

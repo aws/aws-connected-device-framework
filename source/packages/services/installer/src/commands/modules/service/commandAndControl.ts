@@ -20,6 +20,7 @@ import { applicationConfigurationPrompt } from "../../../prompts/applicationConf
 import { customDomainPrompt } from '../../../prompts/domain.prompt';
 import ow from 'ow';
 import { deleteStack, getStackOutputs, getStackParameters, getStackResourceSummaries, packageAndDeployStack } from '../../../utils/cloudformation.util';
+import { includeOptionalModule } from '../../../utils/modules.util';
 
 export class CommandAndControlInstaller implements RestModule {
 
@@ -31,9 +32,8 @@ export class CommandAndControlInstaller implements RestModule {
     'apigw',
     'kms',
     'deploymentHelper',
-    'assetLibrary', // TODO: should be optional
     'provisioning'];
-  public readonly dependsOnOptional: ModuleName[] = ['vpc', 'authJwt'];
+  public readonly dependsOnOptional: ModuleName[] = ['assetLibrary'];
 
   private readonly stackName: string;
   private readonly assetLibraryStackName: string;
@@ -52,31 +52,22 @@ export class CommandAndControlInstaller implements RestModule {
       redeployIfAlreadyExistsPrompt(this.name, this.stackName),
 
     ], answers);
-    if ((updatedAnswers.commandAndControl?.redeploy ?? true) === false) {
-      return updatedAnswers;
+    if (updatedAnswers.commandAndControl?.redeploy ?? true) {
+
+      updatedAnswers = await inquirer.prompt([
+        {
+          message: 'When using the Asset Library module as an enhanced device registry, the Command & Control module can use it to help search across devices and groups to define the command targets. You have not chosen to install the Asset Library module - would you like to install it?\nNote: as there is additional cost associated with installing the Asset Library module, ensure you familiarize yourself with its capabilities and benefits in the online CDF github documentation.',
+          type: 'confirm',
+          name: 'commandAndControl.useAssetLibrary',
+          default: updatedAnswers.commandAndControl?.useAssetLibrary,
+          askAnswered: true
+        },
+        ...applicationConfigurationPrompt(this.name, answers, []),
+        ...customDomainPrompt(this.name, answers)
+      ], updatedAnswers);
     }
 
-    updatedAnswers = await inquirer.prompt([
-      ...applicationConfigurationPrompt(this.name, answers, [
-        {
-          question: 'Provisioning template to add a thing to a thing group',
-          defaultConfiguration: 'add_thing_to_group',
-          propertyName: 'addThingToGroupTemplate'
-        },
-        {
-          question: 'Topic for Command and Control',
-          defaultConfiguration: 'cmd/cdf/cac/${thingName}',
-          propertyName: 'deliveryMethodTopic'
-        },
-        {
-          question: 'Shadow name for Command and Control Service',
-          defaultConfiguration: 'cac',
-          propertyName: 'awsIotShadowName'
-        },
-      ]),
-      ...customDomainPrompt(this.name, answers)
-    ], updatedAnswers);
-
+    includeOptionalModule('assetLibrary', updatedAnswers.modules, updatedAnswers.commandAndControl.useAssetLibrary)
     return updatedAnswers;
   }
 

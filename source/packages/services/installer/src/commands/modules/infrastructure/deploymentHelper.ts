@@ -10,17 +10,14 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import inquirer from 'inquirer';
 import { ListrTask } from 'listr2';
 import ow from 'ow';
 import path from 'path';
-
-import { CloudFormationClient, DescribeStacksCommand } from '@aws-sdk/client-cloudformation';
-
 import { Answers } from '../../../models/answers';
 import { InfrastructureModule, ModuleName } from '../../../models/modules';
 import { deleteStack, packageAndDeployStack } from '../../../utils/cloudformation.util';
 import { getMonorepoRoot } from '../../../prompts/paths.prompt';
+import { CloudFormationClient, DescribeStacksCommand } from '@aws-sdk/client-cloudformation';
 
 export class DeploymentHelperInstaller implements InfrastructureModule {
 
@@ -39,49 +36,11 @@ export class DeploymentHelperInstaller implements InfrastructureModule {
   }
 
   public async prompts(answers: Answers): Promise<Answers> {
-
     if (answers.deploymentHelper === undefined) {
       answers.deploymentHelper = {};
     }
-
-    try {
-      const cloudFormation = new CloudFormationClient({ region: answers.region });
-      const describePromises = [cloudFormation.send(new DescribeStacksCommand({
-        StackName: this.deploymentHelperStackName
-      }))]
-
-      if (answers.vpc?.id) {
-        describePromises.push(cloudFormation.send(new DescribeStacksCommand({
-          StackName: this.vpcDeploymentHelperStackName
-        })))
-      }
-
-      const describerDeploymentHelperStackResult = await Promise.all(describePromises);
-      const stacksFound = describerDeploymentHelperStackResult.find(o => o.Stacks.length < 1) === undefined
-
-      if (stacksFound) {
-        // if it does exist, ask whether it needs to be redeployed
-        answers = await inquirer.prompt([
-          {
-            message: 'The deployment helper has been previously deployed. Does it need redeploying?',
-            type: 'confirm',
-            name: 'deploymentHelper.deploy',
-            default: answers.deploymentHelper?.deploy,
-            askAnswered: true,
-          },
-        ], answers);
-      }
-    } catch (e) {
-      if (e.code !== 'ValidationError') {
-        // not yet deployed, so deploy it
-        answers.deploymentHelper.deploy = true;
-      } else {
-        throw e;
-      }
-    }
-
+    answers.deploymentHelper.deploy = true
     return answers;
-
   }
 
   public async install(answers: Answers): Promise<[Answers, ListrTask[]]> {

@@ -24,10 +24,17 @@ type GetCloudFormationStackDetail = (key: string) => string
 
 const getStackOutputs = async (stackName: string, region: string): Promise<GetCloudFormationStackDetail> => {
     const cloudformation = new CloudFormationClient({ region });
-
     if (!inMemoryStackOutputs[stackName]) {
-        const response = await cloudformation.send(new DescribeStacksCommand({ StackName: stackName }))
-        inMemoryStackOutputs[stackName] = response.Stacks[0].Outputs
+        try {
+            const response = await cloudformation.send(new DescribeStacksCommand({ StackName: stackName }))
+            inMemoryStackOutputs[stackName] = response.Stacks[0].Outputs
+        } catch (e) {
+            if (e.code !== 'ValidationError') {
+                inMemoryStackOutputs[stackName] = []
+            } else {
+                throw e;
+            }
+        }
     }
 
     const getStackResourceId = (key: string): string => {
@@ -38,16 +45,27 @@ const getStackOutputs = async (stackName: string, region: string): Promise<GetCl
 
 const getStackResourceSummaries = async (stackName: string, region: string): Promise<GetCloudFormationStackDetail> => {
     const cloudformation = new CloudFormationClient({ region });
-
     if (!inMemoryStackResourceSummaries[stackName]) {
-        const resources = await cloudformation.send(new ListStackResourcesCommand({
-            StackName: stackName
-        }));
-        inMemoryStackResourceSummaries[stackName] = resources.StackResourceSummaries
+
+        try {
+            // Check if stack exists, listStackResources will return result even if
+            // stack is deleted
+            await cloudformation.send(new DescribeStacksCommand({ StackName: stackName }))
+            const resources = await cloudformation.send(new ListStackResourcesCommand({
+                StackName: stackName
+            }));
+            inMemoryStackResourceSummaries[stackName] = resources.StackResourceSummaries
+        } catch (e) {
+            if (e.code !== 'ValidationError') {
+                inMemoryStackResourceSummaries[stackName] = []
+            } else {
+                throw e;
+            }
+        }
     }
 
     const getStackResourceId = (key: string): string => {
-        return inMemoryStackResourceSummaries[stackName].find(r => r.LogicalResourceId === key)?.PhysicalResourceId;
+        return inMemoryStackResourceSummaries[stackName]?.find(r => r.LogicalResourceId === key)?.PhysicalResourceId;
     }
     return getStackResourceId
 }
@@ -55,12 +73,20 @@ const getStackResourceSummaries = async (stackName: string, region: string): Pro
 const getStackParameters = async (stackName: string, region: string): Promise<GetCloudFormationStackDetail> => {
     const cloudformation = new CloudFormationClient({ region });
 
-
     if (!inMemoryStackParameters[stackName]) {
-        const stack = await cloudformation.send(new DescribeStacksCommand({
-            StackName: stackName
-        }));
-        inMemoryStackParameters[stackName] = stack.Stacks[0].Parameters
+        try {
+            const stack = await cloudformation.send(new DescribeStacksCommand({
+                StackName: stackName
+            }));
+            inMemoryStackParameters[stackName] = stack.Stacks[0].Parameters
+        } catch (e) {
+            if (e.code !== 'ValidationError') {
+                inMemoryStackParameters[stackName] = []
+            } else {
+                throw e;
+            }
+
+        }
     }
 
     const getStackResourceId = (key: string): string => {

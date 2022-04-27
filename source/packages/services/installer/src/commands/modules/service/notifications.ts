@@ -20,7 +20,10 @@ import { applicationConfigurationPrompt } from "../../../prompts/applicationConf
 import { customDomainPrompt } from '../../../prompts/domain.prompt';
 import ow from 'ow';
 import { deleteStack, getStackOutputs, getStackResourceSummaries, packageAndDeployStack } from '../../../utils/cloudformation.util';
+import { includeOptionalModule } from '../../../utils/modules.util';
+import { getDaxInstanceTypeList } from '../../../utils/instancetypes';
 
+const DEFAULT_DAX_INSTANCE_TYPE = 'dax.t2.medium';
 export class NotificationsInstaller implements RestModule {
 
   public readonly friendlyName = 'Notifications';
@@ -32,7 +35,8 @@ export class NotificationsInstaller implements RestModule {
     'deploymentHelper',
     'kms',
   ];
-  public readonly dependsOnOptional: ModuleName[] = ['vpc', 'authJwt'];
+
+  public readonly dependsOnOptional: ModuleName[] = [];
   private readonly eventsProcessorStackName: string;
   private readonly eventsAlertStackName: string;
 
@@ -47,38 +51,50 @@ export class NotificationsInstaller implements RestModule {
     let updatedAnswers: Answers = await inquirer.prompt([
       redeployIfAlreadyExistsPrompt('notifications', this.eventsProcessorStackName),
     ], answers);
-    if ((updatedAnswers.notifications?.redeploy ?? true) === false) {
-      return updatedAnswers;
+    if ((updatedAnswers.notifications?.redeploy ?? true)) {
+
+      const daxInstanceTypes = await getDaxInstanceTypeList(
+        answers.region,
+      );
+
+      updatedAnswers = await inquirer.prompt([
+        {
+          message: 'Use DAX for DynamoDB caching',
+          type: 'confirm',
+          name: 'notifications.useDax',
+          default: true,
+          askAnswered: true
+        },
+        {
+          message: `${(daxInstanceTypes.length > 0) ? "Select" : "Enter"} the DAX database instance type:`,
+          type: (daxInstanceTypes.length > 0) ? 'list' : 'input',
+          choices: daxInstanceTypes,
+          name: 'notifications.daxInstanceType',
+          default: (
+            answers.notifications?.daxInstanceType ??
+              (daxInstanceTypes.indexOf(DEFAULT_DAX_INSTANCE_TYPE) >= 0)
+              ? DEFAULT_DAX_INSTANCE_TYPE
+              : undefined
+          ),
+          askAnswered: true,
+          loop: false,
+          pageSize: 10,
+          when(answers: Answers) {
+            return answers.notifications?.useDax === true;
+          },
+          validate(answer: string) {
+            if (daxInstanceTypes.length > 0 && !daxInstanceTypes.includes(answer)) {
+              return `DAX Instance Type must be one of: ${daxInstanceTypes.join(', ')}`;
+            }
+            return true;
+          }
+        },
+        ...applicationConfigurationPrompt(this.name, answers, []),
+        ...customDomainPrompt(this.name, answers),
+      ], updatedAnswers);
     }
 
-    updatedAnswers = await inquirer.prompt([
-      {
-        message: 'Use DAX for DynamoDB caching',
-        type: 'confirm',
-        name: 'notifications.useDax',
-        default: true,
-        askAnswered: true
-      },
-      {
-        message: `Select the DAX database instance type:`,
-        type: 'input',
-        name: 'notifications.daxInstanceType',
-        default: answers.notifications?.daxInstanceType ?? 'dax.t2.medium',
-        askAnswered: true,
-        when(answers: Answers) {
-          return answers.notifications?.useDax === true;
-        },
-        validate(answer: string) {
-          if (answer?.length === 0) {
-            return 'You must enter the DAX Instance Type.';
-          }
-          return true;
-        }
-      },
-      ...applicationConfigurationPrompt(this.name, answers, []),
-      ...customDomainPrompt(this.name, answers),
-    ], updatedAnswers);
-
+    includeOptionalModule('vpc', updatedAnswers.modules, updatedAnswers.notifications.useDax)
     return updatedAnswers;
   }
 
