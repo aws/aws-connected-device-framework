@@ -27,7 +27,7 @@ export class ApiGwInstaller implements InfrastructureModule {
   public readonly friendlyName = 'API Gateway';
   public readonly name = 'apigw';
   public readonly dependsOnMandatory: ModuleName[] = [];
-  public dependsOnOptional: ModuleName[] = [];
+  public dependsOnOptional: ModuleName[] = ['authJwt'];
   public readonly type = 'INFRASTRUCTURE';
 
   public async prompts(answers: Answers): Promise<Answers> {
