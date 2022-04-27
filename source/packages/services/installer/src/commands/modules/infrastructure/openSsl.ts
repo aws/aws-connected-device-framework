@@ -10,7 +10,6 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import execa from 'execa';
 import inquirer from 'inquirer';
 import { ListrTask } from 'listr2';
 import ow from 'ow';
@@ -82,15 +81,6 @@ export class OpenSslInstaller implements InfrastructureModule {
     const monorepoRoot = await getMonorepoRoot();
 
     if (answers.openSsl.deploy) {
-      tasks.push({
-        title: 'Building OpenSSL',
-        task: async () => {
-          await execa('infrastructure/build.bash', ['--region', answers.region], {
-            cwd: path.join(monorepoRoot, 'source', 'infrastructure', 'lambdaLayers', 'openssl')
-          });
-        }
-      });
-
       tasks.push({
         title: `Packaging and deploying stack '${this.stackName}'`,
         task: async () => {

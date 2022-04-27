@@ -20,7 +20,7 @@ import { Answers, ApiAuthenticationType } from '../../../models/answers';
 import { InfrastructureModule, ModuleName } from '../../../models/modules';
 import { getAbsolutePath, getMonorepoRoot, pathPrompt } from '../../../prompts/paths.prompt';
 import { S3Utils } from '../../../utils/s3.util';
-
+import { SsmUtils } from '../../../utils/ssm.util';
 export class ApiGwInstaller implements InfrastructureModule {
 
   public readonly friendlyName = 'API Gateway';
@@ -210,8 +210,18 @@ export class ApiGwInstaller implements InfrastructureModule {
           await s3.uploadStreamToS3(bucket, prefix + name, fileContent);
         }
         task.output = `Uploads complete`;
-      }
+      },
     });
+
+    tasks.push({
+      title: 'Uploading API Gateway Cloudformation snippets',
+      task: async (_, task): Promise<void> => {
+        const ssm = new SsmUtils(answers.region);
+        const ssmPath = `/cdf/${this.name}/${answers.environment}/templateSnippetS3UriBase`
+        await ssm.storeParameter(ssmPath, answers.apigw.templateSnippetS3UriBase)
+        task.output = `Template snippets location ${answers.apigw.templateSnippetS3UriBase} is stored in ${ssmPath}`
+      },
+    })
 
     return [answers, tasks];
   }
