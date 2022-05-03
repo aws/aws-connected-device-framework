@@ -333,7 +333,7 @@ export class AgentbasedPatchService {
             path: `https://s3.amazonaws.com/${source.bucket}/${source.key}`,
         };
 
-        logger.debug(`gentbasedPatch.service getS3Path: exit: out: path : ${associationS3Param}`);
+        logger.debug(`agentbasedPatch.service getS3Path: exit: out: path : ${associationS3Param}`);
 
         return JSON.stringify(associationS3Param);
     }
