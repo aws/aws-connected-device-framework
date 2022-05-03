@@ -1,6 +1,6 @@
 # DEVICE PATCHER INTEGRATION TESTING
 
-The integration testing of this module requires a EC2 Instance. We deploy one as needed as an EC2 instance. To simplify this process, a custom AMI and launch template is used.
+The integration testing of this module requires an EC2 instance. To simplify this process, a custom AMI and launch template is used.
 
 ## Device Patcher EC2 Instance (Ready For SSM (Ansible) Patch Deployments)
 
