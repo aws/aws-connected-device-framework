@@ -1,6 +1,55 @@
 # Change Log - @cdf/installer
 
-This log was last generated on Fri, 25 Mar 2022 03:55:57 GMT and should not be manually modified.
+This log was last generated on Wed, 27 Apr 2022 09:56:58 GMT and should not be manually modified.
+
+## 0.3.3
+Wed, 27 Apr 2022 09:56:58 GMT
+
+### Patches
+
+- authJwt is not being considered in topological sort
+
+## 0.3.2
+Wed, 27 Apr 2022 08:32:22 GMT
+
+### Patches
+
+- refactoring the prompt works to make sure that optional module questions only being asked when needed
+
+## 0.3.1
+Wed, 27 Apr 2022 06:44:55 GMT
+
+### Patches
+
+- remove the packaging of openssl from installer
+
+## 0.3.0
+Tue, 26 Apr 2022 03:49:33 GMT
+
+### Minor changes
+
+- tag all CDF resources with two mandatory and arbitrary optional tags
+
+## 0.2.3
+Thu, 14 Apr 2022 04:49:09 GMT
+
+### Patches
+
+- docs: remove duplication of calling rush install followed by rush bundle
+
+## 0.2.2
+Wed, 13 Apr 2022 15:53:28 GMT
+
+### Patches
+
+- fix installer flow when specifying existing KMS key by ID
+
+## 0.2.1
+Fri, 08 Apr 2022 07:03:46 GMT
+
+### Patches
+
+- corrected the naming of command-and-control environment variables
 
 ## 0.2.0
 Fri, 25 Mar 2022 03:55:57 GMT

@@ -11,41 +11,43 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { inject, injectable } from 'inversify';
-
+import { sign } from 'jsonwebtoken'
 import { logger } from '../utils/logger';
 
-import {CustomResourceEvent} from './customResource.model';
+import { CustomResourceEvent } from './customResource.model';
 import { LambdaInvokerService, LAMBDAINVOKE_TYPES, LambdaApiGatewayEventBuilder } from '@cdf/lambda-invoke';
 import { CustomResource } from './customResource';
+
+const DEFAULT_SECRET = 'XfDKQoegNG'
 
 @injectable()
 export class AssetLibraryInitCustomResource implements CustomResource {
 
     constructor(
         @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService) private lambdaInvoker: LambdaInvokerService
-    ) {}
+    ) { }
 
-    protected headers:{[key:string]:string};
+    protected headers: { [key: string]: string };
     private DEFAULT_MIME_TYPE = 'application/vnd.aws-cdf-v1.0+json';
-    private mimeType:string = this.DEFAULT_MIME_TYPE;
+    private mimeType: string = this.DEFAULT_MIME_TYPE;
 
-    public async create(customResourceEvent: CustomResourceEvent) : Promise<unknown> {
+    public async create(customResourceEvent: CustomResourceEvent): Promise<unknown> {
         logger.debug(`AssetLibraryInitCustomResource: create: in: customResourceEvent: ${JSON.stringify(customResourceEvent)}`);
         const endpoint = customResourceEvent.ResourceProperties.FunctionName;
         await this.init(endpoint, 5000, 60);
         return {};
     }
 
-    public async update(customResourceEvent: CustomResourceEvent) : Promise<unknown> {
+    public async update(customResourceEvent: CustomResourceEvent): Promise<unknown> {
         logger.debug(`AssetLibraryInitCustomResource: update: in: customResourceEvent: ${JSON.stringify(customResourceEvent)}`);
         return await this.create(customResourceEvent);
     }
 
-    public async delete(_customResourceEvent: CustomResourceEvent) : Promise<unknown> {
-         return {};
+    public async delete(_customResourceEvent: CustomResourceEvent): Promise<unknown> {
+        return {};
     }
 
-    private async init(functionName:string, retryDelay: number, retryMaxCount: number): Promise<void> {
+    private async init(functionName: string, retryDelay: number, retryMaxCount: number): Promise<void> {
 
         logger.debug(`AssetLibraryInitCustomResource: init: in: functionName:${functionName}, retryDelay:${retryDelay}, retryMaxCount: {retryMaxCount}`);
 
@@ -79,13 +81,13 @@ export class AssetLibraryInitCustomResource implements CustomResource {
                     return;
                 }
 
-                if(retryMaxCount === requestCount) {
+                if (retryMaxCount === requestCount) {
                     throw new Error('RetryLimitException');
                 }
 
-                if((err.timeout || err.status === 504 || err.status === 500) && requestCount <= retryMaxCount) {
+                if ((err.timeout || err.status === 504 || err.status === 500) && requestCount <= retryMaxCount) {
                     logger.error(`AssetLibraryInitCustomResource: _init: retrying: count: ${requestCount}`);
-                    requestCount+=1;
+                    requestCount += 1;
                     await timeout(retryDelay);
                     await _init();
                 } else {
@@ -96,15 +98,15 @@ export class AssetLibraryInitCustomResource implements CustomResource {
         return _init();
     }
 
-    protected getHeaders(): {[key:string]:string} {
-        if (this.headers===undefined) {
+    protected getHeaders(): { [key: string]: string } {
+        if (this.headers === undefined) {
             const h = {
                 'Accept': this.mimeType,
-                'Content-Type': this.mimeType
+                'Content-Type': this.mimeType,
+                'Authorization': sign({ cdf_al: ["/:*"] }, DEFAULT_SECRET)
             };
-            this.headers = {...h};
+            this.headers = { ...h };
         }
         return this.headers;
     }
-
 }

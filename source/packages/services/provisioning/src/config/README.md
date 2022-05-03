@@ -1,13 +1,16 @@
 ## The following env config needs defining per environment:
 
+```ini
 AWS_REGION=
 AWS_ACCOUNTID=
 AWS_S3_ROLE_ARN=
 AWS_S3_TEMPLATES_BUCKET=
 AWS_S3_BULKREQUESTS_BUCKET=
+```
 
 ## The following may be overridden:
 
+```ini
 AWS_S3_TEMPLATES_PREFIX=templates/
 AWS_S3_TEMPLATES_SUFFIX=.json
 AWS_S3_BULKREQUESTS_PREFIX=bullkrequests/
@@ -18,3 +21,4 @@ DEVICE_CERTIFICATE_EXPIRY_DAYS=365
 FEATURES_DELETE_CERTIFICATES=false
 FEATURES_DELETE_POLICIES=false
 LOGGING_LEVEL=info
+```

@@ -1,6 +1,6 @@
 {
   "name": "@cdf/device-patcher-client",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "CDF Device Patcher Client",
   "author": "Hassan khokhar <hkhokhar@amazon.com>",
   "main": "dist/index.js",

@@ -1,6 +1,13 @@
 # Change Log - @cdf/greengrass2-provisioning-client
 
-This log was last generated on Mon, 28 Mar 2022 00:28:46 GMT and should not be manually modified.
+This log was last generated on Thu, 07 Apr 2022 05:00:50 GMT and should not be manually modified.
+
+## 1.0.5
+Thu, 07 Apr 2022 05:00:50 GMT
+
+### Patches
+
+- fix parsing of GREENGRASSPROVISIONING2_HEADERS config setting
 
 ## 1.0.4
 Mon, 28 Mar 2022 00:28:46 GMT

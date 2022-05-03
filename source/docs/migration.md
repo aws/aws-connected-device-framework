@@ -2,6 +2,26 @@
 
 While we endeavor to always make backward compatible changes, there may be times when we need to make changes that are not backward compatible. If these changes are made at the API level then the affected modules REST API vendor mime types will be versioned supporting both new and old versions, as well as the modules minor version bumped. But if the change affect something else such as how configuration is handled, or how applications are deployed, then the major versions of the modules will be bumped with migration notes added here.
 
+## Migrating from Release <=1.0.10 to 1.0.11
+
+### Asset Library is now optional modules
+
+Since CDF version 1.0.6, `assetLibrary` is always deployed when you select `greengrass2Provisioning`, `commands` , or `commandAndControl` modules.
+
+In this release, a new question is added to these modules to check if `assetLibrary` to make the dependency explicit. Now you can deploy these services without `assetLibrary` (removing the capability to select devices by assetLibrary query).
+
+If you had deployed one of these modules (`greengrass2Provisioning`, `commands` , or `commandAndControl`) but did not use the functionality that `assetLibrary` provides, you can re-run the deployment wizard and answer `No`  for this question.
+
+```bash
+Greengrass V2 Provisioning...
+? When using the Asset Library module as an enhanced device registry, the Greengrass2 Provisioning module can use it to help search across devices and
+ groups to define the deployment targets. You have not chosen to install the Asset Library module - would you like to install it?
+Note: as there is additional cost associated with installing the Asset Library module, ensure you familiarize yourself with its capabilities and benef
+its in the online CDF github documentation
+```
+
+This should re-generate the new configuration file with the right settings. Once the deployment is finished, you can then manually delete the `assetLibrary` stack.
+
 ## Migrating from Release <=1.0.9 to 1.0.10
 
 ### Asset Library Fine Grained Access Control (FGAC)

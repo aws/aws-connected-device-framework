@@ -1,4 +1,15 @@
-import execa from 'execa';
+/*********************************************************************************************************************
+ *  Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.                                           *
+ *                                                                                                                    *
+ *  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance    *
+ *  with the License. A copy of the License is located at                                                             *
+ *                                                                                                                    *
+ *      http://www.apache.org/licenses/LICENSE-2.0                                                                    *
+ *                                                                                                                    *
+ *  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES *
+ *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
+ *  and limitations under the License.                                                                                *
+ *********************************************************************************************************************/
 import inquirer from 'inquirer';
 import { ListrTask } from 'listr2';
 import ow from 'ow';
@@ -9,7 +20,7 @@ import { ConfigBuilder } from "../../../utils/configBuilder";
 import { customDomainPrompt } from '../../../prompts/domain.prompt';
 import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
-import { deleteStack, getStackOutputs, getStackParameters, getStackResourceSummaries } from '../../../utils/cloudformation.util';
+import { deleteStack, getStackOutputs, getStackParameters, getStackResourceSummaries, packageAndDeployStack } from '../../../utils/cloudformation.util';
 
 export class DevicePatcherInstaller implements RestModule {
 
@@ -21,7 +32,8 @@ export class DevicePatcherInstaller implements RestModule {
         'apigw',
         'kms',
         'openSsl'];
-    public readonly dependsOnOptional: ModuleName[] = ['vpc', 'authJwt'];
+
+    public readonly dependsOnOptional: ModuleName[] = [];
 
     private readonly stackName: string;
 
@@ -64,20 +76,7 @@ export class DevicePatcherInstaller implements RestModule {
         }
 
         tasks.push({
-            title: `Packaging stack '${this.stackName}'`,
-            task: async () => {
-                await execa('aws', ['cloudformation', 'package',
-                    '--template-file', '../device-patcher/infrastructure/cfn-device-patcher.yml',
-                    '--output-template-file', '../device-patcher/infrastructure/cfn-device-patcher.yml.build',
-                    '--s3-bucket', answers.s3.bucket,
-                    '--s3-prefix', 'cloudformation/artifacts/',
-                    '--region', answers.region
-                ]);
-            }
-        });
-
-        tasks.push({
-            title: `Deploying stack '${this.stackName}'`,
+            title: `Packaging and deploying stack '${this.stackName}'`,
             task: async () => {
 
                 const parameterOverrides = [
@@ -102,15 +101,16 @@ export class DevicePatcherInstaller implements RestModule {
                 addIfSpecified('CognitoUserPoolArn', answers.apigw.cognitoUserPoolArn);
                 addIfSpecified('AuthorizerFunctionArn', answers.apigw.lambdaAuthorizerArn);
 
-                await execa('aws', ['cloudformation', 'deploy',
-                    '--template-file', '../device-patcher/infrastructure/cfn-device-patcher.yml.build',
-                    '--stack-name', this.stackName,
-                    '--parameter-overrides',
-                    ...parameterOverrides,
-                    '--capabilities', 'CAPABILITY_NAMED_IAM', 'CAPABILITY_AUTO_EXPAND',
-                    '--no-fail-on-empty-changeset',
-                    '--region', answers.region
-                ]);
+                await packageAndDeployStack({
+                  answers: answers,
+                  stackName: this.stackName,
+                  serviceName: 'device-patcher',
+                  templateFile: '../device-patcher/infrastructure/cfn-device-patcher.yml',
+                  parameterOverrides,
+                  needsPackaging: true,
+                  needsCapabilityNamedIAM: true,
+                  needsCapabilityAutoExpand: true,
+                });
             }
         });
 

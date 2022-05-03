@@ -53,7 +53,7 @@ export class JobAction extends WorkflowPublishAction {
 
         const msg:MessagePayload = {
             name: command.operation,
-            correlationId: super.uidGenerator(),
+            correlationId: this.uidGenerator(),
             payload,
         };
 

@@ -9,7 +9,6 @@ The `installer` module provides a set of tools for installing and managing CDF m
 Ensure that CDF modules had been built and bundled ready for deployment.
 
 ```shell
-aws-connected-device-framework/source> rush install
 aws-connected-device-framework/source> rush bundle
 ```
 
