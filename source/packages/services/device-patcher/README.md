@@ -138,7 +138,7 @@ There are couple different ways the status of the patch can be checked. If the s
 
 #### REQUEST
 ```bash
-# The {patchTaskId} can be obtained from the response Header from Step 3.
+# The {patchTaskId} can be obtained from the x-taskid response Header from Step 3.
 
 curl --location --request GET '<endpoint>/patchTasks/{patchTaskId}/patches' \
 --header 'Content-Type: application/vnd.aws-cdf-v1.0+json' \
