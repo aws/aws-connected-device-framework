@@ -6,31 +6,33 @@ Note:  only the _full_ mode is tested as part of the CI/CD pipeline.  We need to
 
 - Run asset library with FGAC enabled (only supported in _full_ mode):
 ```sh
-$ assetlibrary> CONFIG_LOCATION="../../../../../cdf-infrastructure-demo" ASSETLIBRARY_AUTHORIZATION_ENABLED=true  npm run start
+$ assetlibrary> CONFIG_LOCATION="path/to/local/.env" ASSETLIBRARY_AUTHORIZATION_ENABLED=true  npm run start
 ```
 - Run FGAC specific integration tests:
 ```sh
-$ integration-tests> CONFIG_LOCATION="../../../../cdf-infrastructure-demo" pnpm run integration-test  -- features/assetlibrary/full-with-authz/*
+$ integration-tests> CONFIG_LOCATION="path/to/integrationtest/.env" pnpm run integration-test  -- features/assetlibrary/full-with-authz/*
 ```
 
 ### Testing lite mode
 
+See the [special notes for running lite mode tests](./lite/README.md).
+
 - Run asset library in _lite_ mode:
 ```sh
-$ assetlibrary> CONFIG_LOCATION="../../../../../cdf-infrastructure-demo" ASSETLIBRARY_MODE=lite  npm run start
+$ assetlibrary> CONFIG_LOCATION="path/to/local/.env" ASSETLIBRARY_MODE=lite  npm run start
 ```
 - Run FGAC specific integration tests:
 ```sh
-$ integration-tests> CONFIG_LOCATION="../../../../cdf-infrastructure-demo" pnpm run integration-test  -- features/assetlibrary/lite/*
+$ integration-tests> CONFIG_LOCATION="path/to/integrationtest/.env" pnpm run integration-test  -- features/assetlibrary/lite/*
 ```
 
 ### Testing full mode
 
 - Run asset library in the default _full_ mode (requires a Neptune tunnel of running loc)
 ```sh
-$ assetlibrary> CONFIG_LOCATION="../../../../../cdf-infrastructure-demo" npm run start
+$ assetlibrary> CONFIG_LOCATION="path/to/local/.env" npm run start
 ```
 - Run FGAC specific integration tests:
 ```sh
-$ integration-tests> CONFIG_LOCATION="../../../../cdf-infrastructure-demo" pnpm run integration-test  -- features/assetlibrary/full/*
+$ integration-tests> CONFIG_LOCATION="path/to/integrationtest/.env" pnpm run integration-test  -- features/assetlibrary/full/*
 ```

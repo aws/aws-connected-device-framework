@@ -1,3 +1,15 @@
+/*********************************************************************************************************************
+ *  Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.                                           *
+ *                                                                                                                    *
+ *  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance    *
+ *  with the License. A copy of the License is located at                                                             *
+ *                                                                                                                    *
+ *      http://www.apache.org/licenses/LICENSE-2.0                                                                    *
+ *                                                                                                                    *
+ *  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES *
+ *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
+ *  and limitations under the License.                                                                                *
+ *********************************************************************************************************************/
 import * as fs from 'fs';
 import inquirer from 'inquirer';
 import { ListrTask } from 'listr2';
@@ -7,14 +19,15 @@ import path from 'path';
 import { Answers, ApiAuthenticationType } from '../../../models/answers';
 import { InfrastructureModule, ModuleName } from '../../../models/modules';
 import { getAbsolutePath, getMonorepoRoot, pathPrompt } from '../../../prompts/paths.prompt';
+import { includeOptionalModule } from '../../../utils/modules.util';
 import { S3Utils } from '../../../utils/s3.util';
-
+import { SsmUtils } from '../../../utils/ssm.util';
 export class ApiGwInstaller implements InfrastructureModule {
 
   public readonly friendlyName = 'API Gateway';
   public readonly name = 'apigw';
   public readonly dependsOnMandatory: ModuleName[] = [];
-  public dependsOnOptional: ModuleName[] = [];
+  public dependsOnOptional: ModuleName[] = ['authJwt'];
   public readonly type = 'INFRASTRUCTURE';
 
   public async prompts(answers: Answers): Promise<Answers> {
@@ -118,7 +131,7 @@ export class ApiGwInstaller implements InfrastructureModule {
         message: 'Use existing lambda authorizer:',
         type: 'input',
         name: 'apigw.useExistingLambdaAuthorizer',
-        default: answers.apigw?.useExistingLambdaAuthorizer,
+        default: answers.apigw?.useExistingLambdaAuthorizer ?? false,
         askAnswered: true,
         when(answers: Answers) {
           return (answers.apigw?.type === 'LambdaRequest' || answers.apigw?.type === 'LambdaToken')
@@ -167,6 +180,9 @@ export class ApiGwInstaller implements InfrastructureModule {
       // TODO potentially remove old ansers
     }
 
+    includeOptionalModule('vpc', answers.modules, answers.apigw.type === 'Private')
+    includeOptionalModule('authJwt', answers.modules, answers.apigw.type === 'LambdaRequest' || answers.apigw.type === 'LambdaToken')
+
     return answers;
 
   }
@@ -198,8 +214,18 @@ export class ApiGwInstaller implements InfrastructureModule {
           await s3.uploadStreamToS3(bucket, prefix + name, fileContent);
         }
         task.output = `Uploads complete`;
-      }
+      },
     });
+
+    tasks.push({
+      title: 'Uploading API Gateway Cloudformation snippets',
+      task: async (_, task): Promise<void> => {
+        const ssm = new SsmUtils(answers.region);
+        const ssmPath = `/cdf/${this.name}/${answers.environment}/templateSnippetS3UriBase`
+        await ssm.storeParameter(ssmPath, answers.apigw.templateSnippetS3UriBase)
+        task.output = `Template snippets location ${answers.apigw.templateSnippetS3UriBase} is stored in ${ssmPath}`
+      },
+    })
 
     return [answers, tasks];
   }

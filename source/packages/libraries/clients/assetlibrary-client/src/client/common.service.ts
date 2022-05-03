@@ -18,21 +18,24 @@ export abstract class ClientServiceBase  {
 
     protected MIME_TYPE = 'application/vnd.aws-cdf-v1.0+json';
 
-    private readonly _headers:RequestHeaders = {
+    private readonly _headers: RequestHeaders = {
         'Accept': this.MIME_TYPE,
         'Content-Type': this.MIME_TYPE
     };
 
-    protected buildHeaders(additionalHeaders:RequestHeaders) : RequestHeaders {
+    protected buildHeaders(additionalHeaders:RequestHeaders): RequestHeaders {
 
-        let headers = Object.assign({}, this._headers);
+        let headers: RequestHeaders = Object.assign({}, this._headers);
 
         const customHeaders = process.env.ASSETLIBRARY_HEADERS;
-
-        if (customHeaders) {
-            const headersFromConfig:RequestHeaders = customHeaders as unknown as RequestHeaders;
-            if (headersFromConfig !== null && headersFromConfig !== undefined) {
+        if (customHeaders !== undefined) {
+            try {
+                const headersFromConfig: RequestHeaders = JSON.parse(customHeaders) as unknown as RequestHeaders;
                 headers = {...headers, ...headersFromConfig};
+            } catch (err) { 
+                const wrappedErr = `Failed to parse configuration parameter ASSETLIBRARY_HEADERS as JSON with error: ${err}`;
+                console.log(wrappedErr);
+                throw new Error(wrappedErr);
             }
         }
 

@@ -381,8 +381,8 @@ Resources:
           AWS_S3_BUCKET: !Ref BucketName
           AWS_IOT_ENDPOINT: !GetAtt IotEndpoint.address
           AWS_DYNAMODB_TABLE: !Ref DataTable
-          ASSETLIBRARY_APIFUNCTIONNAME: !Ref AssetLibraryFunctionName
-          PROVISIONING_APIFUNCTIONNAME: !Ref ProvisioningFunctionName
+          ASSETLIBRARY_API_FUNCTION_NAME: !Ref AssetLibraryFunctionName
+          PROVISIONING_API_FUNCTION_NAME: !Ref ProvisioningFunctionName
       
       Tracing: Active
 
@@ -431,8 +431,8 @@ Resources:
           AWS_S3_BUCKET: !Ref BucketName
           AWS_IOT_ENDPOINT: !GetAtt IotEndpoint.address
           AWS_DYNAMODB_TABLE: !Ref DataTable
-          ASSETLIBRARY_APIFUNCTIONNAME: !Ref AssetLibraryFunctionName
-          PROVISIONING_APIFUNCTIONNAME: !Ref ProvisioningFunctionName
+          ASSETLIBRARY_API_FUNCTION_NAME: !Ref AssetLibraryFunctionName
+          PROVISIONING_API_FUNCTION_NAME: !Ref ProvisioningFunctionName
       
       Tracing: Active
 
@@ -477,12 +477,12 @@ Resources:
           APP_CONFIG_DIR: 'packages/services/command-and-control/dist/config'
           APP_CONFIG: !Ref ApplicationConfigurationOverride
           AWS_ACCOUNTID: !Ref AWS::AccountId
-          ASSETLIBRARY_APIFUNCTIONNAME: !Ref AssetLibraryFunctionName
+          ASSETLIBRARY_API_FUNCTION_NAME: !Ref AssetLibraryFunctionName
           AWS_DYNAMODB_TABLE: !Ref DataTable
           AWS_IOT_ENDPOINT: !GetAtt IotEndpoint.address
           AWS_S3_BUCKET: !Ref BucketName
           AWS_S3_ROLE_ARN: !Sub '${LambdaExecutionRole.Arn}'
-          PROVISIONING_APIFUNCTIONNAME: !Ref ProvisioningFunctionName
+          PROVISIONING_API_FUNCTION_NAME: !Ref ProvisioningFunctionName
       
       Tracing: Active
 
@@ -529,14 +529,14 @@ Resources:
           APP_CONFIG_DIR: 'packages/services/command-and-control/dist/config'
           APP_CONFIG: !Ref ApplicationConfigurationOverride
           AWS_ACCOUNTID: !Ref AWS::AccountId
-          ASSETLIBRARY_APIFUNCTIONNAME: !Ref AssetLibraryFunctionName
+          ASSETLIBRARY_API_FUNCTION_NAME: !Ref AssetLibraryFunctionName
           AWS_DYNAMODB_TABLE: !Ref DataTable
           AWS_IOT_ENDPOINT: !GetAtt IotEndpoint.address
           AWS_S3_BUCKET: !Ref BucketName
           AWS_S3_ROLE_ARN: !Sub '${LambdaExecutionRole.Arn}'
           AWS_SQS_QUEUES_MESSAGES_QUEUEURL: !Ref MessagesQueue
           AWS_SQS_QUEUES_COMMANDS_QUEUEURL: !Ref CommandsQueue
-          PROVISIONING_APIFUNCTIONNAME: !Ref ProvisioningFunctionName
+          PROVISIONING_API_FUNCTION_NAME: !Ref ProvisioningFunctionName
 
       Tracing: Active
 

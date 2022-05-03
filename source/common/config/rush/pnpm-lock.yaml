@@ -8,8 +8,10 @@ specifiers:
   '@aws-sdk/client-eventbridge': 3.38.0
   '@aws-sdk/client-iam': ~3.53.0
   '@aws-sdk/client-kms': ~3.53.0
+  '@aws-sdk/client-pricing': ~3.53.0
   '@aws-sdk/client-rds': ~3.53.0
   '@aws-sdk/client-sqs': 3.38.0
+  '@aws-sdk/client-ssm': ~3.53.0
   '@aws-sdk/client-sts': ~3.53.0
   '@aws-sdk/lib-dynamodb': 3.38.0
   '@aws-sdk/s3-request-presigner': ~3.38.0
@@ -70,7 +72,7 @@ specifiers:
   '@types/dot': 1.1.4
   '@types/express-version-request': 1.7.1
   '@types/http-errors': 1.8.0
-  '@types/inquirer': ~8.1.3
+  '@types/inquirer': 8.2.1
   '@types/inquirer-fuzzy-path': ~2.3.3
   '@types/js-yaml': 3.12.5
   '@types/json-stable-stringify': 1.0.32
@@ -126,7 +128,7 @@ specifiers:
   fs: 0.0.1-security
   handlebars: 4.7.7
   http-errors: 1.8.0
-  inquirer: ~8.2.0
+  inquirer: 8.2.1
   inquirer-fuzzy-path: ~2.3.0
   inquirer-s3: ~1.0.1
   inversify-binding-decorators: 4.0.0
@@ -179,8 +181,10 @@ dependencies:
   '@aws-sdk/client-eventbridge': 3.38.0
   '@aws-sdk/client-iam': 3.53.0
   '@aws-sdk/client-kms': 3.53.0
+  '@aws-sdk/client-pricing': 3.53.0
   '@aws-sdk/client-rds': 3.53.0
   '@aws-sdk/client-sqs': 3.38.0
+  '@aws-sdk/client-ssm': 3.53.0
   '@aws-sdk/client-sts': 3.53.0
   '@aws-sdk/lib-dynamodb': 3.38.0_e5b2d1ca3985fe3231b56796989ab541
   '@aws-sdk/s3-request-presigner': 3.38.0_@aws-sdk+signature-v4-crt@3.38.0
@@ -241,7 +245,7 @@ dependencies:
   '@types/dot': 1.1.4
   '@types/express-version-request': 1.7.1
   '@types/http-errors': 1.8.0
-  '@types/inquirer': 8.1.3
+  '@types/inquirer': 8.2.1
   '@types/inquirer-fuzzy-path': 2.3.3
   '@types/js-yaml': 3.12.5
   '@types/json-stable-stringify': 1.0.32
@@ -455,7 +459,7 @@ packages:
     resolution: {integrity: sha512-H8PjG5WJ4wz0UXAFXeJjWCW1vkvIJ3qUUD+rGRwJ2/hj+xT58Qle2MTql/2MGzkU+1JLAFuR6aJpLAjHwhmwwg==}
     dependencies:
       '@aws-sdk/types': 3.53.0
-      '@aws-sdk/util-utf8-browser': 3.37.0
+      '@aws-sdk/util-utf8-browser': 3.52.0
       tslib: 1.14.1
     dev: false
 
@@ -992,6 +996,45 @@ packages:
       tslib: 2.3.1
     dev: false
 
+  /@aws-sdk/client-pricing/3.53.0:
+    resolution: {integrity: sha512-vfXK2huPSQSzA310awFU582yXXISAjeBFSZcA+hJdPxLCG1cu/H5pocM6iZZ1Za6TC215pYNlmEjUnl5J1TEvg==}
+    engines: {node: '>=12.0.0'}
+    dependencies:
+      '@aws-crypto/sha256-browser': 2.0.0
+      '@aws-crypto/sha256-js': 2.0.0
+      '@aws-sdk/client-sts': 3.53.0
+      '@aws-sdk/config-resolver': 3.53.0
+      '@aws-sdk/credential-provider-node': 3.53.0
+      '@aws-sdk/fetch-http-handler': 3.53.0
+      '@aws-sdk/hash-node': 3.53.0
+      '@aws-sdk/invalid-dependency': 3.53.0
+      '@aws-sdk/middleware-content-length': 3.53.0
+      '@aws-sdk/middleware-host-header': 3.53.0
+      '@aws-sdk/middleware-logger': 3.53.0
+      '@aws-sdk/middleware-retry': 3.53.0
+      '@aws-sdk/middleware-serde': 3.53.0
+      '@aws-sdk/middleware-signing': 3.53.0
+      '@aws-sdk/middleware-stack': 3.53.0
+      '@aws-sdk/middleware-user-agent': 3.53.0
+      '@aws-sdk/node-config-provider': 3.53.0
+      '@aws-sdk/node-http-handler': 3.53.0
+      '@aws-sdk/protocol-http': 3.53.0
+      '@aws-sdk/smithy-client': 3.53.0
+      '@aws-sdk/types': 3.53.0
+      '@aws-sdk/url-parser': 3.53.0
+      '@aws-sdk/util-base64-browser': 3.52.0
+      '@aws-sdk/util-base64-node': 3.52.0
+      '@aws-sdk/util-body-length-browser': 3.52.0
+      '@aws-sdk/util-body-length-node': 3.52.0
+      '@aws-sdk/util-defaults-mode-browser': 3.53.0
+      '@aws-sdk/util-defaults-mode-node': 3.53.0
+      '@aws-sdk/util-user-agent-browser': 3.53.0
+      '@aws-sdk/util-user-agent-node': 3.53.0
+      '@aws-sdk/util-utf8-browser': 3.52.0
+      '@aws-sdk/util-utf8-node': 3.52.0
+      tslib: 2.3.1
+    dev: false
+
   /@aws-sdk/client-rds/3.53.0:
     resolution: {integrity: sha512-QH3FzmNJnALTFT9+hbZI3VkZI8vXJmf4JsTkee9R4nQbEeRuoPCv3eKyJq/JWtiNkJIEi1njtswmEoyAYiingw==}
     engines: {node: '>=12.0.0'}
@@ -1189,6 +1232,47 @@ packages:
       entities: 2.2.0
       fast-xml-parser: 3.19.0
       tslib: 2.3.1
+    dev: false
+
+  /@aws-sdk/client-ssm/3.53.0:
+    resolution: {integrity: sha512-TtN72Oqb27iAI0Wgp1tTlAY7Q2MtcERhJY6fdOmJ9qqrad8ie85L4MlT8/zcQ17Se+kwGE24kXLerqBhxs/PDA==}
+    engines: {node: '>=12.0.0'}
+    dependencies:
+      '@aws-crypto/sha256-browser': 2.0.0
+      '@aws-crypto/sha256-js': 2.0.0
+      '@aws-sdk/client-sts': 3.53.0
+      '@aws-sdk/config-resolver': 3.53.0
+      '@aws-sdk/credential-provider-node': 3.53.0
+      '@aws-sdk/fetch-http-handler': 3.53.0
+      '@aws-sdk/hash-node': 3.53.0
+      '@aws-sdk/invalid-dependency': 3.53.0
+      '@aws-sdk/middleware-content-length': 3.53.0
+      '@aws-sdk/middleware-host-header': 3.53.0
+      '@aws-sdk/middleware-logger': 3.53.0
+      '@aws-sdk/middleware-retry': 3.53.0
+      '@aws-sdk/middleware-serde': 3.53.0
+      '@aws-sdk/middleware-signing': 3.53.0
+      '@aws-sdk/middleware-stack': 3.53.0
+      '@aws-sdk/middleware-user-agent': 3.53.0
+      '@aws-sdk/node-config-provider': 3.53.0
+      '@aws-sdk/node-http-handler': 3.53.0
+      '@aws-sdk/protocol-http': 3.53.0
+      '@aws-sdk/smithy-client': 3.53.0
+      '@aws-sdk/types': 3.53.0
+      '@aws-sdk/url-parser': 3.53.0
+      '@aws-sdk/util-base64-browser': 3.52.0
+      '@aws-sdk/util-base64-node': 3.52.0
+      '@aws-sdk/util-body-length-browser': 3.52.0
+      '@aws-sdk/util-body-length-node': 3.52.0
+      '@aws-sdk/util-defaults-mode-browser': 3.53.0
+      '@aws-sdk/util-defaults-mode-node': 3.53.0
+      '@aws-sdk/util-user-agent-browser': 3.53.0
+      '@aws-sdk/util-user-agent-node': 3.53.0
+      '@aws-sdk/util-utf8-browser': 3.52.0
+      '@aws-sdk/util-utf8-node': 3.52.0
+      '@aws-sdk/util-waiter': 3.53.0
+      tslib: 2.3.1
+      uuid: 8.3.2
     dev: false
 
   /@aws-sdk/client-sso/3.37.0:
@@ -4488,18 +4572,18 @@ packages:
   /@types/inquirer-autocomplete-prompt/1.3.3:
     resolution: {integrity: sha512-Q0haaW77uL0ybgoG5zrMXf6q4dhxZ7gv802079tQHRS2RR72wcHT0sCJNPa9OKEYyiJC9p5mxbgDPd6zSbKoMA==}
     dependencies:
-      '@types/inquirer': 8.1.3
+      '@types/inquirer': 8.2.1
     dev: false
 
   /@types/inquirer-fuzzy-path/2.3.3:
     resolution: {integrity: sha512-9yHL2/qr/xJCHjAxLr9jsE0vpqhlRaTE/FqNJ/3wGfvGaFAKeX9Yh0ro5Z6dRTeyF9S9g39OCYTqQCGJRBm4Lg==}
     dependencies:
-      '@types/inquirer': 8.1.3
+      '@types/inquirer': 8.2.1
       '@types/inquirer-autocomplete-prompt': 1.3.3
     dev: false
 
-  /@types/inquirer/8.1.3:
-    resolution: {integrity: sha512-AayK4ZL5ssPzR1OtnOLGAwpT0Dda3Xi/h1G0l1oJDNrowp7T1423q4Zb8/emr7tzRlCy4ssEri0LWVexAqHyKQ==}
+  /@types/inquirer/8.2.1:
+    resolution: {integrity: sha512-wKW3SKIUMmltbykg4I5JzCVzUhkuD9trD6efAmYgN2MrSntY0SMRQzEnD3mkyJ/rv9NLbTC7g3hKKE86YwEDLw==}
     dependencies:
       '@types/through': 0.0.30
       rxjs: 7.5.5
@@ -14996,7 +15080,7 @@ packages:
     dev: false
 
   file:projects/certificate-activator.tgz:
-    resolution: {integrity: sha512-R81YjTc5/lAphIwrkcBUZoVEP3JL8PNwduRDYV2zDKTNm+Uq3xj6yIGxRWxXDny8H9TBcCu90YABYqJkumZTUw==, tarball: file:projects/certificate-activator.tgz}
+    resolution: {integrity: sha512-bNbhz8B/uVNQNDva0mGi2VLz7uEI8G/vBCzGfwCa8/ijJYCfxm516PYNbJmKpJdAYOF7Up3jEb4qRLC0qHLrdQ==, tarball: file:projects/certificate-activator.tgz}
     name: '@rush-temp/certificate-activator'
     version: 0.0.0
     dependencies:
@@ -15045,7 +15129,7 @@ packages:
     dev: false
 
   file:projects/certificate-vendor.tgz:
-    resolution: {integrity: sha512-NXQaP+PKAhbnC68S3/BvhuGo2T8vo97UpB8dc+/7DHgZXJhE5sTWmPegZxqvtKNsD8vRNcvbroKtjkM4Um6tpA==, tarball: file:projects/certificate-vendor.tgz}
+    resolution: {integrity: sha512-sSd35KXvuCTv43WReYx0ygXySiCBeFPyo5PYGiyCndRagIyWYjzHhdoxsadjwOU+EX+V60nZm/JHb2KrtPqIsA==, tarball: file:projects/certificate-vendor.tgz}
     name: '@rush-temp/certificate-vendor'
     version: 0.0.0
     dependencies:
@@ -15090,7 +15174,7 @@ packages:
     dev: false
 
   file:projects/command-and-control.tgz:
-    resolution: {integrity: sha512-eW47IpocwtoTom4GHwNw73SOKQCKMs65ZMuaJty8/N1rWxJyYEWvH9vsqjOys5uBQBHMfRlUTnzPHvEmF9LFZQ==, tarball: file:projects/command-and-control.tgz}
+    resolution: {integrity: sha512-dwvPOGWgA13zFpG5ED3d+2Fr3rPPpWCODoeBjf4ZlDTAQVF07HklMYd8SwA8nZxSufDyKsabbkeO8pwg6bbEIA==, tarball: file:projects/command-and-control.tgz}
     name: '@rush-temp/command-and-control'
     version: 0.0.0
     dependencies:
@@ -15149,7 +15233,7 @@ packages:
     dev: false
 
   file:projects/commandandcontrol-client.tgz:
-    resolution: {integrity: sha512-Dpa/ChdOKGLi5daTtLt7czKA3Xp+4Azv9aYx3lSY0VdZVydyUSL7ISRmid5ukd2twT7IErrgC6Y9SmVJrUCrdA==, tarball: file:projects/commandandcontrol-client.tgz}
+    resolution: {integrity: sha512-0CGSuZKS8MInRCioqRGqGJyWcXQ7UYxGw1hgKVoV2brhWa5bXnMXWqz3jgvAXIBaa6uJ25ryJh8vOzj/TF56FQ==, tarball: file:projects/commandandcontrol-client.tgz}
     name: '@rush-temp/commandandcontrol-client'
     version: 0.0.0
     dependencies:
@@ -15237,7 +15321,7 @@ packages:
     dev: false
 
   file:projects/commands.tgz:
-    resolution: {integrity: sha512-nJYJg37LZI3pCZOOCK4Ny4m+1Fe/QZV4sNH81iK/5buME/IwN0yHk+XmwytMp5oK3GuNmMhBDM4PMXPI2JpQkA==, tarball: file:projects/commands.tgz}
+    resolution: {integrity: sha512-WYh38VOYGLvh3xr8jMFMNKCGSKLfqVAul24S06Q03A3+DDgf3tcJLJ6hKCJWF2+dc+8ZDrdgMEZdGmRrmPN6/w==, tarball: file:projects/commands.tgz}
     name: '@rush-temp/commands'
     version: 0.0.0
     dependencies:
@@ -15326,7 +15410,7 @@ packages:
     dev: false
 
   file:projects/deployment-helper.tgz:
-    resolution: {integrity: sha512-c9liLR0T01HQMbK3WdYwRzcjv37STW/sS8RwOz1RlGOGouexOzsQiULvb8BpSoR+bNXb9KMWakPMQLw9WQlgYA==, tarball: file:projects/deployment-helper.tgz}
+    resolution: {integrity: sha512-NRGIGkwhRvQtv1i7wGqvN5wxRDzE2m/5NJNOpKYKTsEMJbuPLNA5wG8WKOuhaJ/EoaH/L2+MHmQaKExcSMZ3wA==, tarball: file:projects/deployment-helper.tgz}
     name: '@rush-temp/deployment-helper'
     version: 0.0.0
     dependencies:
@@ -15334,6 +15418,7 @@ packages:
       '@types/aws-lambda': 8.10.65
       '@types/dotenv-flow': 3.2.0
       '@types/jest': 26.0.23
+      '@types/jsonwebtoken': 8.5.0
       '@types/node': 14.6.1
       '@types/superagent': 4.1.15
       '@typescript-eslint/eslint-plugin': 4.23.0_7cfaee78cda985ff9bc3d8b5cb92a136
@@ -15353,6 +15438,7 @@ packages:
       jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
       js-yaml: 4.1.0
+      jsonwebtoken: 8.5.1
       logform: 2.2.0
       nodemon: 2.0.7
       nyc: 15.1.0
@@ -15374,7 +15460,7 @@ packages:
     dev: false
 
   file:projects/device-monitoring.tgz:
-    resolution: {integrity: sha512-8FyryK0OVLYTxhKk/iD6mfuEVNbem0wUGXc0P0JaZMEcXjCFdh8dYjvqL/WXxHfbdfqe/jgdzqLzthTX+EyqrQ==, tarball: file:projects/device-monitoring.tgz}
+    resolution: {integrity: sha512-bfZ/vA027qIYl4/OHPZ8WMgmBXpRPTFM/tlJBhzFlhIrVRv71rhOJkVgTCouwLRV1/hxyg+E9i7jAbFDCDLLWw==, tarball: file:projects/device-monitoring.tgz}
     name: '@rush-temp/device-monitoring'
     version: 0.0.0
     dependencies:
@@ -15824,7 +15910,7 @@ packages:
     dev: false
 
   file:projects/greengrass2-provisioning-client.tgz:
-    resolution: {integrity: sha512-SC4ZHOxncmLzjHoGgZMyUI3xElZ2J/x/Fj+fgPzklswmAeHp/pdAsPSduFwblCDBze4dmgP8vJrpW7RF9eBwsQ==, tarball: file:projects/greengrass2-provisioning-client.tgz}
+    resolution: {integrity: sha512-SdeSCLRlVcwZQc1HocbQyO7YW3ZbKvKs/odBdcLuC/qiOFKG56799dO4/BL3OptYtsUwpmBwTOvbM/dHwDANiQ==, tarball: file:projects/greengrass2-provisioning-client.tgz}
     name: '@rush-temp/greengrass2-provisioning-client'
     version: 0.0.0
     dependencies:
@@ -15868,7 +15954,7 @@ packages:
     dev: false
 
   file:projects/greengrass2-provisioning.tgz:
-    resolution: {integrity: sha512-/YI4Jk53zdsIEyWITaAAhwqy2AEI6KY9aBbSrib86mSaFDdABZZHk7rt19SjiOF2S1k0pmpA1d65EnS64XdycA==, tarball: file:projects/greengrass2-provisioning.tgz}
+    resolution: {integrity: sha512-ZmdODE1heiWCoBZPq55iXfMmBOldWt+yWv+LDvD2sqrExdLf/P2eYRquzp4CbVVBhERnefk2tFKFR5FCMbvi+Q==, tarball: file:projects/greengrass2-provisioning.tgz}
     name: '@rush-temp/greengrass2-provisioning'
     version: 0.0.0
     dependencies:
@@ -15940,7 +16026,7 @@ packages:
     dev: false
 
   file:projects/installer.tgz_65ac33d01e93914f067c7c2f950d07df:
-    resolution: {integrity: sha512-O6eunhuRSeqSwwMQWb9gG4P6GNAvVmJebwKeaac5oqbC7LVRUPC9pxINjtKFecAWbWvRzHa8mn53m6ruhF+JBA==, tarball: file:projects/installer.tgz}
+    resolution: {integrity: sha512-d0neTthRHoQiS8dBdrVE/58UVO6Q3UjR/mzJK2ECaHHHz84zcdNDBjeLsSAL9sJnyIbnV4nnpFIrZR//e8VY0Q==, tarball: file:projects/installer.tgz}
     id: file:projects/installer.tgz
     name: '@rush-temp/installer'
     version: 0.0.0
@@ -15950,13 +16036,15 @@ packages:
       '@aws-sdk/client-iot': 3.53.0
       '@aws-sdk/client-kms': 3.53.0
       '@aws-sdk/client-lambda': 3.53.0
+      '@aws-sdk/client-pricing': 3.53.0
       '@aws-sdk/client-rds': 3.53.0
       '@aws-sdk/client-s3': 3.53.1_@aws-sdk+signature-v4-crt@3.38.0
+      '@aws-sdk/client-ssm': 3.53.0
       '@aws-sdk/client-sts': 3.53.0
       '@aws-sdk/lib-storage': 3.53.1_e714371a4675eebea50097d6e8bcab8e
       '@rushstack/eslint-config': 2.3.4_eslint@7.26.0+typescript@4.2.4
       '@types/dotenv-flow': 3.2.0
-      '@types/inquirer': 8.1.3
+      '@types/inquirer': 8.2.1
       '@types/inquirer-fuzzy-path': 2.3.3
       '@types/jest': 26.0.23
       '@types/node': 14.6.1
@@ -16001,7 +16089,7 @@ packages:
     dev: false
 
   file:projects/integration-tests.tgz_@aws-sdk+signature-v4-crt@3.38.0:
-    resolution: {integrity: sha512-1n07IwOEXVf1J3q9I9SgL7YHhd8evoL8nUIl4s65rBur+RXKATaBgLbnstHWiYPx4nD2MjnLE34e6D/ZdAKzSQ==, tarball: file:projects/integration-tests.tgz}
+    resolution: {integrity: sha512-JXUHPoTUtXrMFgAAM7lJZyvkQJ5xTI0uXRptsZ10YHNvcfzfzMw7sOX3ZQwoukgEw+qdyqYoVh7aGv0pEkp3dQ==, tarball: file:projects/integration-tests.tgz}
     id: file:projects/integration-tests.tgz
     name: '@rush-temp/integration-tests'
     version: 0.0.0
@@ -16379,7 +16467,7 @@ packages:
     dev: false
 
   file:projects/thing-list-builder.tgz:
-    resolution: {integrity: sha512-vr+DItgloTzYp3As5Q54bDvt+YuqE3UWOSYRdcpo0RovByWi1neA3Ud/ipawhaATk8zW+tZYF6Y6XMbGWyvbFw==, tarball: file:projects/thing-list-builder.tgz}
+    resolution: {integrity: sha512-27hwWnwuFY9HaCB9Ho/So19+oLzSt8n8rc1hirNaz3wAeNlvdOZx8XnQuw1C7LMNwJZmDX6xLsguq5E2XDu2nQ==, tarball: file:projects/thing-list-builder.tgz}
     name: '@rush-temp/thing-list-builder'
     version: 0.0.0
     dependencies:

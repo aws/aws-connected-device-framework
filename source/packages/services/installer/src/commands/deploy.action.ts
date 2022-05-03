@@ -1,5 +1,6 @@
 import chalk from "chalk";
 import inquirer from "inquirer";
+import clone from "just-clone";
 import { Listr, ListrTask } from "listr2";
 import { Answers } from "../models/answers";
 import { loadModules, Module, ModuleName } from "../models/modules";
@@ -13,6 +14,7 @@ import {
 } from "../prompts/modules.prompt";
 import { chooseS3BucketPrompt } from "../prompts/s3.prompt";
 import { AnswersStorage } from "../utils/answersStorage";
+import { isValidTagKey, isValidTagValue } from "../utils/tags";
 
 let modules: Module[];
 
@@ -50,7 +52,8 @@ async function deployAction(
 
   const grouped = topologicallySortModules(
     modules,
-    answers.modules.expandedIncludingOptional
+    answers.modules.expandedIncludingOptional,
+    false
   );
 
   for (const layer of grouped) {
@@ -63,13 +66,15 @@ async function deployAction(
         throw new Error(`Module ${name} not found!`);
       }
       if (m.install) {
-        const [_, subTasks] = await m.install(answers);
-        if (subTasks?.length > 0) {
-          layerTasks.push({
-            title: m.friendlyName,
-            task: (_, parentTask): Listr =>
-              parentTask.newListr(subTasks, { concurrent: false }),
-          });
+        if (answers.modules.expandedMandatory.includes(m.name) || answers.modules.list.includes(m.name)) {
+          const [_, subTasks] = await m.install(answers);
+          if (subTasks?.length > 0) {
+            layerTasks.push({
+              title: m.friendlyName,
+              task: (_, parentTask): Listr =>
+                parentTask.newListr(subTasks, { concurrent: false }),
+            });
+          }
         }
       } else {
         throw new Error(`Module ${name} has no install functionality defined!`);
@@ -151,6 +156,7 @@ async function configWizard(
     answers.modules.list,
     false
   );
+
   answers.modules.expandedIncludingOptional = expandModuleList(
     modules,
     answers.modules.list,
@@ -178,7 +184,6 @@ async function configWizard(
   );
 
   // TODO: verify that bundles exist for all the selected modules
-
   answers = await inquirer.prompt(
     [
       chooseS3BucketPrompt(
@@ -186,26 +191,68 @@ async function configWizard(
         "s3.bucket",
         answers.s3?.bucket
       ),
+      {
+        message: `Enter custom tags to be applied to all resources created for this CDF environment. You can enter up to 48 tags in the format key1;val1;key2;val2;...`,
+        type: 'input',
+        name: 'customTags',
+        default: answers.customTags ?? '',
+        askAnswered: true,
+        validate(answer: string) {
+          if (answer.endsWith(';')) answer = answer.substring(0, answer.length - 1);
+          const keyvals = answer.split(';');
+          if (keyvals.length % 2 !== 0) {
+            return `Please enter tags in the format key1;val1;key2;val2;... There must be an even number of keys/values but you entered ${keyvals.length}.`;
+          }
+          if (keyvals.length > 48*2) {
+            return `You entered ${keyvals.length} tags but the maximum is 48. The CloudFormation service limit is 50, CDF always includes cdf_environment and cdf_service.`
+          }
+          for (let idx=0; idx<keyvals.length/2; idx++) {
+            const key = keyvals[idx*2];
+            const val = keyvals[idx*2+1];
+            if (key === 'cdf_environment' || key == 'cdf_service') {
+              return 'The tags cdf_environment and cdf_service are always included and cannot be specified as custom tags.';
+            }
+            if (! isValidTagKey(key)) {
+              return `"${key}" is not a valid tag key. Tag keys can contain up to 128 characters, numbers, and any of +\\-=._:@. Keys must not start with "aws:" or equal ".", "..", "_index", or the empty string. See also https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html#tag-restrictions`;
+            }
+            if (! isValidTagValue(val)) {
+              return `"${val}" is not a valid tag value. Tag keys can contain up to 256 characters, numbers, spaces, and any of +\\-=._:/@. Values should not start or end with a space. See also: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html#tag-restrictions`;
+            }
+          }
+          return true;
+        },
+      }
     ],
     answers
   );
 
   answersStorage.save(answers);
 
-  // prompt for module specific configuration
-  const grouped = topologicallySortModules(
-    modules,
-    answers.modules.expandedIncludingOptional
-  );
-  for (const layer of grouped) {
-    for (const name of layer) {
-      const m = modules.find((m) => m.name === name);
-      if (m.prompts) {
-        console.log(chalk.yellow(`\n${m.friendlyName}...`));
-        answers = await m.prompts(answers);
-        answersStorage.save(answers);
+  let optionalModuleAdded = true
+
+  const answeredModule: { [key: string]: boolean } = {}
+
+  while (optionalModuleAdded) {
+    const originalExpandedMandatory = clone(answers.modules.expandedMandatory)
+
+    const mandatoryGrouped = topologicallySortModules(
+      modules,
+      answers.modules.expandedMandatory
+    );
+
+    for (const layer of mandatoryGrouped) {
+      for (const name of layer) {
+        const m = modules.find((m) => m.name === name);
+        if (m.prompts && !answeredModule[name]) {
+          console.log(chalk.yellow(`\n${m.friendlyName}...`));
+          answers = await m.prompts(answers);
+          answersStorage.save(answers);
+          answeredModule[name] = true
+        }
       }
     }
+
+    optionalModuleAdded = originalExpandedMandatory.length !== answers.modules.expandedMandatory.length;
   }
 
   console.log(
@@ -213,6 +260,7 @@ async function configWizard(
       `Configuration has been saved to '${answersStorage.getConfigurationFilePath()}'.\nIt is highly recommended that you store this configuration under source control to automate future deployments.`
     )
   );
+
   return answers;
 }
 
