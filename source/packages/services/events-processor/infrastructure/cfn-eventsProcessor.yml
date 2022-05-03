@@ -83,22 +83,12 @@ Parameters:
   DAXInstanceType:
     Type: String
     Default: dax.t2.medium
-    AllowedValues:
-      - dax.r3.large
-      - dax.r3.xlarge
-      - dax.r3.2xlarge
-      - dax.r3.4xlarge
-      - dax.r3.8xlarge
-      - dax.r4.large
-      - dax.r4.xlarge
-      - dax.r4.2xlarge
-      - dax.r4.4xlarge
-      - dax.r4.8xlarge
-      - dax.r4.16xlarge
-      - dax.t2.small
-      - dax.t2.medium
-    Description: The instance type for the DynamoDB DAX instance
-
+    AllowedPattern: "^dax\\.[tr]\\d+[a-z0-9]*\\.[a-z0-9]*$"
+    Description: >
+      The instance type for the DynamoDB DAX instance. The list of available instance types for your region can be found here:
+      https://aws.amazon.com/dynamodb/pricing/
+    ConstraintDescription: Must be a valid DAX instance type. 
+  
   CustomResourceLambdaArn:
     Description: Custom resource lambda arn
     Type: String

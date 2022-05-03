@@ -1,6 +1,13 @@
 # Change Log - @cdf/assetlibrary-client
 
-This log was last generated on Tue, 22 Mar 2022 22:51:44 GMT and should not be manually modified.
+This log was last generated on Thu, 07 Apr 2022 05:00:50 GMT and should not be manually modified.
+
+## 5.0.4
+Thu, 07 Apr 2022 05:00:50 GMT
+
+### Patches
+
+- fix parsing of ASSETLIBRARY_HEADERS config setting
 
 ## 5.0.3
 Tue, 22 Mar 2022 22:51:44 GMT

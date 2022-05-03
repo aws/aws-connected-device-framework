@@ -8,28 +8,21 @@ Due to the scripts used as part of both the build and deployment steps, only lin
 
 ## Configuring the development environment
 
-The following is a one-time setup to configure the CDF development environment:
+The following is a one-time setup to configure the CDF development environment.
 
 + Ensure that you have all [development prerequisites](prerequisites.md) installed.
 
-+ clone the project:
++ Clone the project:
 
 ```shell
 > git clone https://github.com/aws/aws-connected-device-framework.git
-```
-+ optionally switch to a specific release tag:
-
-```shell
-> cd aws-connected-device-framework
-aws-connected-device-framework> git switch -c tags/<release>
-```
-
-+ initialize the project dependencies:
-
-```shell
 > cd aws-connected-device-framework/source
-aws-connected-device-framework/source> rush install
-aws-connected-device-framework/source> rush update
+```
+
++ Optionally switch to a specific release tag:
+
+```shell
+aws-connected-device-framework/source> git switch -c tags/<release>
 ```
 
 ## Build
@@ -41,11 +34,8 @@ The CDF monorepo is managed by [rush](https://rushjs.io) which under the covers 
 # that may have been installed as part of a non-Rush (npm/pnpm) release:
 aws-connected-device-framework/source> rm -rf node_modules
 
-# One time setup only, initialize the project after cloning from git
+# One time setup only, install pinned dependencies based on shrinkwrapped
 aws-connected-device-framework/source> rush install
-
-# Install/refresh the dependencies
-aws-connected-device-framework/source> rush update
 
 # When running the `clean`, `build`, `lint` or `test` commands you have the option to
 # run globally (for all packages), or for a specific package. To run for all packages
@@ -76,12 +66,9 @@ aws-connected-device-framework/source> rush test
 # If you experience issues and need to reset everything you have the following 2 commands available:
 #   To remove all build artifacts:
 aws-connected-device-framework/source> rush purge        # to purge all node_modules:
-aws-connected-device-framework/source> rush update       # refresh dependencies
 aws-connected-device-framework/source> rush clean        # perform a deep clean
-aws-connected-device-framework/source> rush update       # refresh dependencies again
-
+aws-connected-device-framework/source> rush install      # refresh dependencies again
 ```
-
 
 ## Running a module locally
 
@@ -157,6 +144,23 @@ aws-connected-device-framework> git push
 
 
 + Once your pull request has been reviewed, and any issues addressed, merge your implementation back into the main code branch.
+
+## Changing package dependencies
+
+If your code changes include changes to the dependencies listed in a `package.json` file. you need to update the repo-wide "shrinkwrap" file. This file contains the resolved and pinned dependencies for all CDF packages:
+
+```sh
+rush update
+git add source/common/config/rush/pnpm-lock.yaml
+git add source/common/config/rush/repo-state.json 
+```
+
+Note that these two files cannot be merged. If your branch `feat_branch` has a merge conflict with `main`, the steps to resolve are:
+
+1. Merge `main` into `feat_branch`.
+2. Resolve all other merge conflicts, discard all changes in `pnpm-lock.yaml` and `repo-state.json`.
+3. Run `rush update` again.
+4. Commit the resulting `pnpm-lock.yaml` and `repo-state.json` to your branch.
 
 ## Understanding the directory structure
 

@@ -19,6 +19,6 @@ echo buildproject_prebuild started on `date`
 cd source
 
 echo Installing...
-rush update
+rush install
 
 

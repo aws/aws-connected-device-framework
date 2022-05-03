@@ -1,6 +1,6 @@
 {
   "name": "@cdf/thing-list-builder",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Builds a list of targets (thing names) based on provided AWS IoT things/thing groups and CDF Asset Library devices/groups/search query.",
   "author": "Dean Hart",
   "main": "dist/index.js",
@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-iot": "~3.37.0",
-    "@cdf/assetlibrary-client": "^5.0.3",
+    "@cdf/assetlibrary-client": "^5.0.4",
     "@cdf/lambda-invoke": "^3.0.2",
     "@cdf/logger": "^4.0.0",
     "inversify-binding-decorators": "4.0.0",

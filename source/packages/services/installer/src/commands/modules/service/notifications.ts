@@ -1,3 +1,15 @@
+/*********************************************************************************************************************
+ *  Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.                                           *
+ *                                                                                                                    *
+ *  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance    *
+ *  with the License. A copy of the License is located at                                                             *
+ *                                                                                                                    *
+ *      http://www.apache.org/licenses/LICENSE-2.0                                                                    *
+ *                                                                                                                    *
+ *  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES *
+ *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
+ *  and limitations under the License.                                                                                *
+ *********************************************************************************************************************/
 import { Answers } from '../../../models/answers';
 import { ListrTask } from 'listr2';
 import { ModuleName, RestModule, PostmanEnvironment } from '../../../models/modules';
@@ -7,9 +19,11 @@ import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
 import { customDomainPrompt } from '../../../prompts/domain.prompt';
 import ow from 'ow';
-import execa from 'execa';
-import { deleteStack, getStackOutputs, getStackResourceSummaries } from '../../../utils/cloudformation.util';
+import { deleteStack, getStackOutputs, getStackResourceSummaries, packageAndDeployStack } from '../../../utils/cloudformation.util';
+import { includeOptionalModule } from '../../../utils/modules.util';
+import { getDaxInstanceTypeList } from '../../../utils/instancetypes';
 
+const DEFAULT_DAX_INSTANCE_TYPE = 'dax.t2.medium';
 export class NotificationsInstaller implements RestModule {
 
   public readonly friendlyName = 'Notifications';
@@ -21,7 +35,8 @@ export class NotificationsInstaller implements RestModule {
     'deploymentHelper',
     'kms',
   ];
-  public readonly dependsOnOptional: ModuleName[] = ['vpc', 'authJwt'];
+
+  public readonly dependsOnOptional: ModuleName[] = [];
   private readonly eventsProcessorStackName: string;
   private readonly eventsAlertStackName: string;
 
@@ -36,38 +51,50 @@ export class NotificationsInstaller implements RestModule {
     let updatedAnswers: Answers = await inquirer.prompt([
       redeployIfAlreadyExistsPrompt('notifications', this.eventsProcessorStackName),
     ], answers);
-    if ((updatedAnswers.notifications?.redeploy ?? true) === false) {
-      return updatedAnswers;
+    if ((updatedAnswers.notifications?.redeploy ?? true)) {
+
+      const daxInstanceTypes = await getDaxInstanceTypeList(
+        answers.region,
+      );
+
+      updatedAnswers = await inquirer.prompt([
+        {
+          message: 'Use DAX for DynamoDB caching',
+          type: 'confirm',
+          name: 'notifications.useDax',
+          default: true,
+          askAnswered: true
+        },
+        {
+          message: `${(daxInstanceTypes.length > 0) ? "Select" : "Enter"} the DAX database instance type:`,
+          type: (daxInstanceTypes.length > 0) ? 'list' : 'input',
+          choices: daxInstanceTypes,
+          name: 'notifications.daxInstanceType',
+          default: (
+            answers.notifications?.daxInstanceType ??
+              (daxInstanceTypes.indexOf(DEFAULT_DAX_INSTANCE_TYPE) >= 0)
+              ? DEFAULT_DAX_INSTANCE_TYPE
+              : undefined
+          ),
+          askAnswered: true,
+          loop: false,
+          pageSize: 10,
+          when(answers: Answers) {
+            return answers.notifications?.useDax === true;
+          },
+          validate(answer: string) {
+            if (daxInstanceTypes.length > 0 && !daxInstanceTypes.includes(answer)) {
+              return `DAX Instance Type must be one of: ${daxInstanceTypes.join(', ')}`;
+            }
+            return true;
+          }
+        },
+        ...applicationConfigurationPrompt(this.name, answers, []),
+        ...customDomainPrompt(this.name, answers),
+      ], updatedAnswers);
     }
 
-    updatedAnswers = await inquirer.prompt([
-      {
-        message: 'Use DAX for DynamoDB caching',
-        type: 'confirm',
-        name: 'notifications.useDax',
-        default: true,
-        askAnswered: true
-      },
-      {
-        message: `Select the DAX database instance type:`,
-        type: 'input',
-        name: 'notifications.daxInstanceType',
-        default: answers.notifications?.daxInstanceType ?? 'dax.t2.medium',
-        askAnswered: true,
-        when(answers: Answers) {
-          return answers.notifications?.useDax === true;
-        },
-        validate(answer: string) {
-          if (answer?.length === 0) {
-            return 'You must enter the DAX Instance Type.';
-          }
-          return true;
-        }
-      },
-      ...applicationConfigurationPrompt(this.name, answers, []),
-      ...customDomainPrompt(this.name, answers),
-    ], updatedAnswers);
-
+    includeOptionalModule('vpc', updatedAnswers.modules, updatedAnswers.notifications.useDax)
     return updatedAnswers;
   }
 
@@ -86,20 +113,7 @@ export class NotificationsInstaller implements RestModule {
 
 
     tasks.push({
-      title: `Packaging stack '${this.eventsProcessorStackName}'`,
-      task: async () => {
-        await execa('aws', ['cloudformation', 'package',
-          '--template-file', '../events-processor/infrastructure/cfn-eventsProcessor.yml',
-          '--output-template-file', '../events-processor/infrastructure/cfn-eventsProcessor.yml.build',
-          '--s3-bucket', answers.s3.bucket,
-          '--s3-prefix', 'cloudformation/artifacts/',
-          '--region', answers.region
-        ]);
-      }
-    });
-
-    tasks.push({
-      title: `Deploying stack '${this.eventsProcessorStackName}'`,
+      title: `Packaging and deploying stack '${this.eventsProcessorStackName}'`,
       task: async () => {
 
         const parameterOverrides = [
@@ -124,15 +138,16 @@ export class NotificationsInstaller implements RestModule {
         addIfSpecified('AuthorizerFunctionArn', answers.apigw.lambdaAuthorizerArn);
         addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
 
-        await execa('aws', ['cloudformation', 'deploy',
-          '--template-file', '../events-processor/infrastructure/cfn-eventsProcessor.yml.build',
-          '--stack-name', this.eventsProcessorStackName,
-          '--parameter-overrides',
-          ...parameterOverrides,
-          '--capabilities', 'CAPABILITY_NAMED_IAM', 'CAPABILITY_AUTO_EXPAND',
-          '--no-fail-on-empty-changeset',
-          '--region', answers.region
-        ]);
+        await packageAndDeployStack({
+          answers: answers,
+          stackName: this.eventsProcessorStackName,
+          serviceName: 'events-processor',
+          templateFile: '../events-processor/infrastructure/cfn-eventsProcessor.yml',
+          parameterOverrides,
+          needsPackaging: true,
+          needsCapabilityNamedIAM: true,
+          needsCapabilityAutoExpand: true,
+        });
       }
     });
 
@@ -150,20 +165,7 @@ export class NotificationsInstaller implements RestModule {
     });
 
     tasks.push({
-      title: `Packaging stack '${this.eventsAlertStackName}'`,
-      task: async () => {
-        await execa('aws', ['cloudformation', 'package',
-          '--template-file', '../events-alerts/infrastructure/cfn-eventsAlerts.yml',
-          '--output-template-file', '../events-alerts/infrastructure/cfn-eventsAlerts.yml.build',
-          '--s3-bucket', answers.s3.bucket,
-          '--s3-prefix', 'cloudformation/artifacts/',
-          '--region', answers.region
-        ]);
-      }
-    });
-
-    tasks.push({
-      title: `Deploying stack '${this.eventsAlertStackName}'`,
+      title: `Packaging and deploying stack '${this.eventsAlertStackName}'`,
       task: async () => {
 
         const parameterOverrides = [
@@ -183,14 +185,16 @@ export class NotificationsInstaller implements RestModule {
         addIfSpecified('DAXClusterEndpoint', answers.notifications.daxClusterEndpoint);
         addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
 
-        await execa('aws', ['cloudformation', 'deploy',
-          '--template-file', '../events-alerts/infrastructure/cfn-eventsAlerts.yml.build',
-          '--stack-name', this.eventsAlertStackName,
-          '--parameter-overrides', ...parameterOverrides,
-          '--capabilities', 'CAPABILITY_NAMED_IAM', 'CAPABILITY_AUTO_EXPAND',
-          '--no-fail-on-empty-changeset',
-          '--region', answers.region
-        ]);
+        await packageAndDeployStack({
+          answers: answers,
+          stackName: this.eventsAlertStackName,
+          serviceName: 'events-alerts',
+          templateFile: '../events-alerts/infrastructure/cfn-eventsAlerts.yml',
+          parameterOverrides,
+          needsPackaging: true,
+          needsCapabilityNamedIAM: true,
+          needsCapabilityAutoExpand: true,
+        });
       }
     });
 

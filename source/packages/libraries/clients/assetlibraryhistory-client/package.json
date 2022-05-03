@@ -1,6 +1,6 @@
 {
   "name": "@cdf/assetlibraryhistory-client",
-  "version": "5.0.3",
+  "version": "5.0.4",
   "description": "CDF Asset Library History Client",
   "author": "Dean Hart",
   "main": "dist/index.js",

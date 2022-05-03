@@ -67,13 +67,17 @@ export class ThingsServiceBase {
 
     protected buildHeaders(additionalHeaders:RequestHeaders) : RequestHeaders {
 
-        let headers = Object.assign({}, this._headers);
+        let headers: RequestHeaders = Object.assign({}, this._headers);
 
         const customHeaders = process.env.PROVISIONING_HEADERS;
-        if (customHeaders) {
-            const headersFromConfig:RequestHeaders = customHeaders as unknown as RequestHeaders;
-            if (headersFromConfig !== null && headersFromConfig !== undefined) {
+        if (customHeaders !== undefined) {
+            try {
+                const headersFromConfig: RequestHeaders = JSON.parse(customHeaders) as unknown as RequestHeaders;
                 headers = {...headers, ...headersFromConfig};
+            } catch (err) { 
+                const wrappedErr = `Failed to parse configuration parameter PROVISIONING_HEADERS as JSON with error: ${err}`;
+                console.log(wrappedErr);
+                throw new Error(wrappedErr);
             }
         }
 

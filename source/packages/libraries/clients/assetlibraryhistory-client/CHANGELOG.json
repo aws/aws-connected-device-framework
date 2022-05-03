@@ -2,6 +2,18 @@
   "name": "@cdf/assetlibraryhistory-client",
   "entries": [
     {
+      "version": "5.0.4",
+      "tag": "@cdf/assetlibraryhistory-client_v5.0.4",
+      "date": "Thu, 07 Apr 2022 05:00:50 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix parsing of ASSETLIBRARYHISTORY_HEADERS config setting"
+          }
+        ]
+      }
+    },
+    {
       "version": "5.0.3",
       "tag": "@cdf/assetlibraryhistory-client_v5.0.3",
       "date": "Mon, 28 Mar 2022 00:28:46 GMT",

@@ -1,6 +1,13 @@
 # Change Log - @cdf/events-processor
 
-This log was last generated on Mon, 21 Mar 2022 21:58:32 GMT and should not be manually modified.
+This log was last generated on Wed, 27 Apr 2022 08:32:22 GMT and should not be manually modified.
+
+## 4.0.2
+Wed, 27 Apr 2022 08:32:22 GMT
+
+### Patches
+
+- installer will now check valid instance types, cloudformation only check the regex pattern
 
 ## 4.0.1
 Mon, 21 Mar 2022 21:58:32 GMT

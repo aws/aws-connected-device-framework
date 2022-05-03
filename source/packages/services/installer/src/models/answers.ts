@@ -2,6 +2,7 @@ import { ModuleName } from "./modules";
 
 export interface Answers {
   accountId?: string;
+  customTags?: string;
   iotEndpoint?: string;
   iotCredentialEndpoint?: string;
   environment: string;
@@ -13,9 +14,7 @@ export interface Answers {
   s3?: S3;
   eventBus?: EventBus;
   openSsl?: OpenSsl;
-
   deploymentHelper?: DeploymentHelper;
-
   assetLibraryExport?: AssetLibraryExport;
   assetLibrary?: AssetLibrary;
   assetLibraryHistory?: AssetLibraryHistory;
@@ -214,6 +213,7 @@ export interface Commands extends RestServiceModuleAttribues {
   addThingToGroupTemplate?: string;
   maxTargetsForJob?: number;
   commandArtifactsPrefix?: string;
+  useAssetLibrary?: boolean;
 }
 
 
@@ -224,6 +224,7 @@ export interface CommandAndControl extends RestServiceModuleAttribues {
   deliveryMethodTopic?: string;
   awsIotShadowName?: string;
   addThingToGroupTemplate?: string;
+  useAssetLibrary?: boolean;
 }
 
 export interface DeviceMonitoring extends ServiceModuleAttributes {
@@ -265,6 +266,7 @@ export interface Greengrass2Provisioning
   corezBatchSize?: number;
   devicesBatchSize?: number;
   deploymentsBatchSize?: number;
+  useAssetLibrary?: boolean;
 }
 
 export interface Provisioning extends RestServiceModuleAttribues {

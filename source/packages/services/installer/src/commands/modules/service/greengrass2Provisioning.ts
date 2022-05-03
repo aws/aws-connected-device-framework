@@ -1,4 +1,15 @@
-import execa from 'execa';
+/*********************************************************************************************************************
+ *  Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.                                           *
+ *                                                                                                                    *
+ *  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance    *
+ *  with the License. A copy of the License is located at                                                             *
+ *                                                                                                                    *
+ *      http://www.apache.org/licenses/LICENSE-2.0                                                                    *
+ *                                                                                                                    *
+ *  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES *
+ *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
+ *  and limitations under the License.                                                                                *
+ *********************************************************************************************************************/
 import inquirer from 'inquirer';
 import { ListrTask } from 'listr2';
 import ow from 'ow';
@@ -10,8 +21,9 @@ import { ConfigBuilder } from "../../../utils/configBuilder";
 import { customDomainPrompt } from '../../../prompts/domain.prompt';
 import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
-import { deleteStack, getStackOutputs, getStackParameters, getStackResourceSummaries } from '../../../utils/cloudformation.util';
+import { deleteStack, getStackOutputs, getStackParameters, getStackResourceSummaries, packageAndDeployStack } from '../../../utils/cloudformation.util';
 import { enableAutoScaling, provisionedConcurrentExecutions } from '../../../prompts/autoscaling.prompt';
+import { includeOptionalModule } from '../../../utils/modules.util';
 
 export class Greengrass2ProvisioningInstaller implements RestModule {
 
@@ -27,7 +39,7 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
     'eventBus',
     'provisioning',
     'greengrass2InstallerConfigGenerators'];
-  public readonly dependsOnOptional: ModuleName[] = ['vpc', 'authJwt', 'assetLibrary'];
+  public readonly dependsOnOptional: ModuleName[] = ['assetLibrary'];
 
   private readonly stackName: string;
 
@@ -38,41 +50,29 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
   public async prompts(answers: Answers): Promise<Answers> {
 
     delete answers.greengrass2Provisioning?.redeploy;
+
     let updatedAnswers: Answers = await inquirer.prompt([
       redeployIfAlreadyExistsPrompt(this.name, this.stackName),
     ], answers);
-    if ((updatedAnswers.greengrass2Provisioning?.redeploy ?? true) === false) {
-      return updatedAnswers;
+
+    if ((updatedAnswers.greengrass2Provisioning?.redeploy ?? true)) {
+
+      updatedAnswers = await inquirer.prompt([
+        {
+          message: 'When using the Asset Library module as an enhanced device registry, the Greengrass2 Provisioning module can use it to help search across devices and groups to define the deployment targets. You have not chosen to install the Asset Library module - would you like to install it?\nNote: as there is additional cost associated with installing the Asset Library module, ensure you familiarize yourself with its capabilities and benefits in the online CDF github documentation.',
+          type: 'confirm',
+          name: 'greengrass2Provisioning.useAssetLibrary',
+          default: updatedAnswers.greengrass2Provisioning?.useAssetLibrary ?? false,
+          askAnswered: true,
+        },
+        enableAutoScaling(this.name, answers),
+        provisionedConcurrentExecutions(this.name, answers),
+        ...applicationConfigurationPrompt(this.name, answers, []),
+        ...customDomainPrompt(this.name, answers),
+      ], updatedAnswers);
     }
 
-    updatedAnswers = await inquirer.prompt([
-      enableAutoScaling(this.name, answers),
-      provisionedConcurrentExecutions(this.name, answers),
-      ...applicationConfigurationPrompt(this.name, answers, [
-        {
-          defaultConfiguration: 10,
-          propertyName: "promisesConcurrency",
-          question: 'The number of concurrent dynamodb operations'
-        },
-        {
-          defaultConfiguration: 20,
-          propertyName: "corezBatchSize",
-          question: 'Batch size for processing core tasks'
-        },
-        {
-          defaultConfiguration: 20,
-          propertyName: "devicesBatchSize",
-          question: 'Batch size for processing device tasks'
-        },
-        {
-          defaultConfiguration: 50,
-          propertyName: "deploymentsBatchSize",
-          question: 'Batch size for processing deployment tasks'
-        },
-
-      ]),
-      ...customDomainPrompt(this.name, answers),
-    ], updatedAnswers);
+    includeOptionalModule('assetLibrary', updatedAnswers.modules, updatedAnswers.greengrass2Provisioning.useAssetLibrary)
 
     return updatedAnswers;
 
@@ -121,20 +121,7 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
     });
 
     tasks.push({
-      title: `Packaging stack '${this.stackName}'`,
-      task: async () => {
-        await execa('aws', ['cloudformation', 'package',
-          '--template-file', '../greengrass2-provisioning/infrastructure/cfn-greengrass2-provisioning.yml',
-          '--output-template-file', '../greengrass2-provisioning/infrastructure/cfn-greengrass2-provisioning.yml.build',
-          '--s3-bucket', answers.s3.bucket,
-          '--s3-prefix', 'cloudformation/artifacts/',
-          '--region', answers.region
-        ]);
-      }
-    });
-
-    tasks.push({
-      title: `Deploying stack '${this.stackName}'`,
+      title: `Packaging and deploying stack '${this.stackName}'`,
       task: async () => {
 
         const parameterOverrides = [
@@ -165,15 +152,16 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
         addIfSpecified('AuthorizerFunctionArn', answers.apigw.lambdaAuthorizerArn);
         addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
 
-        await execa('aws', ['cloudformation', 'deploy',
-          '--template-file', '../greengrass2-provisioning/infrastructure/cfn-greengrass2-provisioning.yml.build',
-          '--stack-name', this.stackName,
-          '--parameter-overrides',
-          ...parameterOverrides,
-          '--capabilities', 'CAPABILITY_NAMED_IAM', 'CAPABILITY_AUTO_EXPAND',
-          '--no-fail-on-empty-changeset',
-          '--region', answers.region
-        ]);
+        await packageAndDeployStack({
+          answers: answers,
+          stackName: this.stackName,
+          serviceName: 'greengrass2-provisioning',
+          templateFile: '../greengrass2-provisioning/infrastructure/cfn-greengrass2-provisioning.yml',
+          parameterOverrides,
+          needsPackaging: true,
+          needsCapabilityNamedIAM: true,
+          needsCapabilityAutoExpand: true,
+        });
       }
     });
 

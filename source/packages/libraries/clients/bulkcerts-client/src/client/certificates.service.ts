@@ -46,12 +46,17 @@ export class CertificatesServiceBase {
 
     protected buildHeaders(additionalHeaders:RequestHeaders): RequestHeaders {
 
-        let headers = Object.assign({}, this._headers);
+        let headers: RequestHeaders = Object.assign({}, this._headers);
 
-        const headersFromConfig:RequestHeaders = process.env.BULKCERTS_HEADERS as unknown as RequestHeaders;
-        if (headersFromConfig) {
-            if (headersFromConfig !== null && headersFromConfig !== undefined) {
+        const customHeaders = process.env.BULKCERTS_HEADERS;
+        if (customHeaders !== undefined) {
+            try {
+                const headersFromConfig: RequestHeaders = JSON.parse(customHeaders) as unknown as RequestHeaders;
                 headers = {...headers, ...headersFromConfig};
+            } catch (err) { 
+                const wrappedErr = `Failed to parse configuration parameter BULKCERTS_HEADERS as JSON with error: ${err}`;
+                console.log(wrappedErr);
+                throw new Error(wrappedErr);
             }
         }
 
