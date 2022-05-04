@@ -39,7 +39,7 @@ function getAdditionalHeaders(world:unknown) : Dictionary {
 
 const templatesSvc:TemplatesService = container.get(DEVICE_PATCHER_CLIENT_TYPES.TemplatesService);
 
-async function deletepatchTemplate(world:unknown, name:string) {
+async function deletePatchTemplate(world:unknown, name:string) {
     try {
         await templatesSvc.deleteTemplate(name, getAdditionalHeaders(world))
     } catch (e) {
@@ -97,7 +97,7 @@ async function cleanupEC2Instances() {
 }
 
 async function teardown_patches_feature(world:unknown) {
-    await deletepatchTemplate(world, INTEGRATION_TEST_PATCH_TEMPLATE);
+    await deletePatchTemplate(world, INTEGRATION_TEST_PATCH_TEMPLATE);
     await cleanupEC2Instances();
 }
 
@@ -105,11 +105,11 @@ async function teardown_activation_features() {
 }
 
 async function teardown_patch_templates_features(world:unknown) {
-    await deletepatchTemplate(world, INTEGRATION_TEST_PATCH_TEMPLATE);
+    await deletePatchTemplate(world, INTEGRATION_TEST_PATCH_TEMPLATE);
 }
 
 async function teardown_enhanced_patch_templates_features(world: unknown) {
-    await deletepatchTemplate(world, GGV2_CORE_INSTALLATION_TEMPLATE);
+    await deletePatchTemplate(world, GGV2_CORE_INSTALLATION_TEMPLATE);
     await cleanupEC2Instances();
 }
 

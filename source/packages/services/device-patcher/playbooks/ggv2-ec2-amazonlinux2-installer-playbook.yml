@@ -39,7 +39,6 @@
     iot_greengrass_core_software_url: "https://d2s8p88vqu9w66.cloudfront.net/releases/greengrass-nucleus-latest.zip"
     iot_root_ca_file_name: "AmazonRootCA1.pem"
     iot_greengrass_core_software_dir_name: "GreengrassCore"
-    iot_greengrass_core_version: "2.4.0"
     greengrass_root_dir: "/greengrass/v2"
 
     amazon_linux_extra_packages:
