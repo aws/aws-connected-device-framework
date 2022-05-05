@@ -1,6 +1,13 @@
 # Change Log - @cdf/installer
 
-This log was last generated on Wed, 27 Apr 2022 09:56:58 GMT and should not be manually modified.
+This log was last generated on Thu, 05 May 2022 01:48:19 GMT and should not be manually modified.
+
+## 0.3.4
+Thu, 05 May 2022 01:48:19 GMT
+
+### Patches
+
+- fix installer not allowing zero custom tags
 
 ## 0.3.3
 Wed, 27 Apr 2022 09:56:58 GMT

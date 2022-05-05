@@ -2,6 +2,18 @@
   "name": "@cdf/installer",
   "entries": [
     {
+      "version": "0.3.4",
+      "tag": "@cdf/installer_v0.3.4",
+      "date": "Thu, 05 May 2022 01:48:19 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix installer not allowing zero custom tags"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.3.3",
       "tag": "@cdf/installer_v0.3.3",
       "date": "Wed, 27 Apr 2022 09:56:58 GMT",
