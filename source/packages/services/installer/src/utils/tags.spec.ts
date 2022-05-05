@@ -63,19 +63,22 @@ describe('TagsList', () => {
   it('should parse a semicolon separated list', async () => {
     const tl = new TagsList('abc;d=ef;ghi;1 2z');
     expect(tl.tags).toStrictEqual([{key: 'abc', value: 'd=ef'}, {key: 'ghi', value: '1 2z'}]);
+    expect(tl.length).toStrictEqual(2);
   });
 
   it('should fail parsing a semicolon separated list with an odd number of elements', async () => {
     expect(() => new TagsList('a;b;c')).toThrowError();
   });
 
-  it('should correctly handle trailing semicolong', async () => {
-    const tl = new TagsList('a;b;c;d;');
-    expect(tl.tags).toStrictEqual([{key: 'a', value: 'b'}, {key: 'c', value: 'd'}]);
+  it('should correctly handle trailing semicolon', async () => {
+    const tl = new TagsList('a;b;c;d;e;f;');
+    expect(tl.tags).toStrictEqual([{key: 'a', value: 'b'}, {key: 'c', value: 'd'}, {key: 'e', value: 'f'}]);
+    expect(tl.length).toStrictEqual(3);
   });
 
   it('should return correctly formatted AWS CLI options', async () => {
     const tl = new TagsList('abc;d=ef;ghi;1 2z');
     expect(tl.asCLIOptions()).toStrictEqual(['abc=d=ef', 'ghi=1 2z']);
+    expect(tl.length).toStrictEqual(2);
   });
 });

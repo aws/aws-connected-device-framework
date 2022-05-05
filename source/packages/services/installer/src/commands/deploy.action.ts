@@ -14,7 +14,7 @@ import {
 } from "../prompts/modules.prompt";
 import { chooseS3BucketPrompt } from "../prompts/s3.prompt";
 import { AnswersStorage } from "../utils/answersStorage";
-import { isValidTagKey, isValidTagValue } from "../utils/tags";
+import { isValidTagKey, isValidTagValue, TagsList } from "../utils/tags";
 
 let modules: Module[];
 
@@ -189,27 +189,29 @@ async function configWizard(
         default: answers.customTags ?? '',
         askAnswered: true,
         validate(answer: string) {
-          if (answer.endsWith(';')) answer = answer.substring(0, answer.length - 1);
-          const keyvals = answer.split(';');
-          if (keyvals.length % 2 !== 0) {
-            return `Please enter tags in the format key1;val1;key2;val2;... There must be an even number of keys/values but you entered ${keyvals.length}.`;
+          let tagsList: TagsList;
+          try {
+            tagsList = new TagsList(answer);
           }
-          if (keyvals.length > 48*2) {
-            return `You entered ${keyvals.length} tags but the maximum is 48. The CloudFormation service limit is 50, CDF always includes cdf_environment and cdf_service.`
+          catch {
+            return `Please enter tags in the format key1;val1;key2;val2;... There must be an even number of keys/values.`;
           }
-          for (let idx=0; idx<keyvals.length/2; idx++) {
-            const key = keyvals[idx*2];
-            const val = keyvals[idx*2+1];
-            if (key === 'cdf_environment' || key == 'cdf_service') {
+          if (tagsList.length > 48*2) {
+            return `You entered ${tagsList.length} tags but the maximum is 48. The CloudFormation service limit is 50, CDF always includes cdf_environment and cdf_service.`
+          }
+          for (let idx=0; idx<tagsList.length; idx++) {
+            const tag = tagsList.tags[idx];
+            if (tag.key === 'cdf_environment' || tag.key == 'cdf_service') {
               return 'The tags cdf_environment and cdf_service are always included and cannot be specified as custom tags.';
             }
-            if (! isValidTagKey(key)) {
-              return `"${key}" is not a valid tag key. Tag keys can contain up to 128 characters, numbers, and any of +\\-=._:@. Keys must not start with "aws:" or equal ".", "..", "_index", or the empty string. See also https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html#tag-restrictions`;
+            if (! isValidTagKey(tag.key)) {
+              return `"${tag.key}" is not a valid tag key. Tag keys can contain up to 128 characters, numbers, and any of +\\-=._:@. Keys must not start with "aws:" or equal ".", "..", "_index", or the empty string. See also https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html#tag-restrictions`;
             }
-            if (! isValidTagValue(val)) {
-              return `"${val}" is not a valid tag value. Tag keys can contain up to 256 characters, numbers, spaces, and any of +\\-=._:/@. Values should not start or end with a space. See also: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html#tag-restrictions`;
+            if (! isValidTagValue(tag.value)) {
+              return `"${tag.value}" is not a valid tag value. Tag keys can contain up to 256 characters, numbers, spaces, and any of +\\-=._:/@. Values should not start or end with a space. See also: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html#tag-restrictions`;
             }
           }
+
           return true;
         },
       }
