@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/greengrass2-installer-config-generators",
+      "comment": "add TokenExchangeRoleName cloudformation output",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/greengrass2-installer-config-generators",
+  "email": "jonasneu@amazon.com"
+}
