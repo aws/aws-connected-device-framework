@@ -162,7 +162,7 @@ export interface BulkCerts extends RestServiceModuleAttribues {
   expiryDays?: number;
   suppliers?: Suppliers;
   caAlias?: string;
-  caId?:string;
+  caValue?:string;
 }
 
 export interface Suppliers {
@@ -172,7 +172,7 @@ export interface Suppliers {
 
 export interface CA {
   alias:string;
-  caId:string
+  value:string;
 }
 export interface CertificateActivator extends ServiceModuleAttributes {
   provisioningFunctionName?: string;
