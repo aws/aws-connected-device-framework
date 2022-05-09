@@ -87,10 +87,10 @@ async function deployAction(
   }
 
   // Remove unnecessary answers
-  delete answers.bulkCerts?.suppliers;
+  delete answers.bulkCerts?.suppliers.list;
   delete answers.bulkCerts?.setSupplier;
   delete answers.bulkCerts?.caAlias;
-  delete answers.bulkCerts?.caId;
+  delete answers.bulkCerts?.caValue;
   answersStorage.save(answers);
 
 

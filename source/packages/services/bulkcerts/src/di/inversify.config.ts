@@ -114,3 +114,16 @@ container.bind<interfaces.Factory<AWS.SNS>>(TYPES.SNSFactory)
         return container.get<AWS.SNS>(TYPES.SNS);
     };
 });
+// ACMPCA
+decorate(injectable(), AWS.ACMPCA);
+container.bind<interfaces.Factory<AWS.ACMPCA>>(TYPES.ACMPCAFactory)
+    .toFactory<AWS.ACMPCA>(() => {
+    return () => {
+
+        if (!container.isBound(TYPES.ACMPCA)) {
+            const acmpma = new AWS.ACMPCA({region: process.env.AWS_REGION});
+            container.bind<AWS.ACMPCA>(TYPES.ACMPCA).toConstantValue(acmpma);
+        }
+        return container.get<AWS.ACMPCA>(TYPES.ACMPCA);
+    };
+});

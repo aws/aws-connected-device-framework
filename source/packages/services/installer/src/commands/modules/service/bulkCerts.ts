@@ -10,7 +10,7 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { Answers, CA, Suppliers } from '../../../models/answers';
+import { Answers, Suppliers } from '../../../models/answers';
 import { ListrTask } from 'listr2';
 import { ModuleName, RestModule, PostmanEnvironment } from '../../../models/modules';
 import { ConfigBuilder } from "../../../utils/configBuilder";
@@ -108,10 +108,10 @@ export class BulkCertificatesInstaller implements RestModule {
         },
       },
       {
-        message: `Supplier CA Id:`,
+        message: `Supplier CA value:`,
         type: 'input',
-        name: 'bulkCerts.caId',
-        default: answers.bulkCerts?.caId,
+        name: 'bulkCerts.caValue',
+        default: answers.bulkCerts?.caValue,
         askAnswered: true,
         when(answers: Answers) {
           return answers.bulkCerts?.setSupplier === true;
@@ -297,7 +297,7 @@ export class BulkCertificatesInstaller implements RestModule {
 
     if (answers.bulkCerts.setSupplier){
       if(!answers.bulkCerts.suppliers.list.includes(answers.bulkCerts.caAlias)){
-        answers.bulkCerts.suppliers.cas.push({alias:answers.bulkCerts.caAlias, caId:answers.bulkCerts.caId});
+        answers.bulkCerts.suppliers.cas.push({alias:answers.bulkCerts.caAlias, value:answers.bulkCerts.caValue});
       }
       answers.bulkCerts.suppliers.cas.forEach(supplier => {
         let alias = supplier.alias;
@@ -305,11 +305,12 @@ export class BulkCertificatesInstaller implements RestModule {
           alias =`SUPPLIER_CA_${supplier.alias}`;
         }
         if( alias == answers.bulkCerts.caAlias){
-          supplier.caId = answers.bulkCerts.caId;
+          supplier.value = answers.bulkCerts.caValue;
         }
-        configBuilder.add(alias,supplier.caId);
+        configBuilder.add(alias,supplier.value);
       });
     }
+
     
 
     
@@ -327,7 +328,7 @@ export class BulkCertificatesInstaller implements RestModule {
       .add(`CERTIFICATE_DEFAULT_DISTINGUISHEDNAMEQUALIFIER`, answers.bulkCerts.distinguishedNameIdentifier)
       .add(`CERTIFICATE_DEFAULT_EXPIRYDAYS`, answers.bulkCerts.expiryDays)
       .add(`DEFAULTS_CHUNKSIZE`, answers.bulkCerts.chunksize)
-
+    console.log(configBuilder.config);
     return configBuilder.config;
   }
 
@@ -362,9 +363,19 @@ export class BulkCertificatesInstaller implements RestModule {
 
 private async getSuppliers(answers:Answers): Promise<Suppliers> {
   const lambda = new Lambda({ region: answers.region });
+  let suppliers:Suppliers ;
 
-  const list:string[] = [];
-  const cas:CA[] = [];
+  if(typeof answers === 'undefined' || typeof answers.bulkCerts === 'undefined' || typeof answers.bulkCerts.suppliers === 'undefined'){
+    suppliers={list:[],cas:[]};
+  } else {
+    suppliers = answers.bulkCerts.suppliers;
+    suppliers['list'] = [];
+    for( const ca  of suppliers.cas){
+      suppliers.list.push(ca.alias);
+    }
+  }
+
+  //append lambda suppliers if none are present in the config
   try{
     const config = await lambda.getFunctionConfiguration({ FunctionName: `cdf-bulkCerts-sns-${answers.environment}` });
     const variables = config.Environment?.Variables;
@@ -373,15 +384,19 @@ private async getSuppliers(answers:Answers): Promise<Suppliers> {
       if(element.startsWith('SUPPLIER_CA_')) {
         const [key,value] = element.split('=');
         const alias = key.replace('SUPPLIER_CA_','');
-        list.push(alias);
-        cas.push({alias, caId:value});
+        
+        if (!suppliers.list.includes(alias)) {
+          suppliers.list.push(alias);
+          suppliers.cas.push({alias, value});
+        }
       }
     });
   }catch(e){
     e.name==='ResourceNotFoundException' && console.log(`No suppliers found`);
   }
-  list.push("Create New Supplier");
-  const suppliers:Suppliers = {list,cas};
+  if(suppliers.list.length==0 || !suppliers.list.includes("Create New Supplier")){
+    suppliers.list.push("Create New Supplier");
+  }
   return suppliers;
  
 }
