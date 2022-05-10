@@ -45,7 +45,7 @@ Parameters:
   EventNotificationsStreamArn:
     Type: String
     MinLength: 1
-    
+
   KmsKeyId:
     Description: The KMS key ID used to decrypt DynamoDB stream.
     Type: String
@@ -152,7 +152,12 @@ Resources:
           APP_CONFIG: !Ref ApplicationConfigurationOverride
           AWS_ACCOUNTID: !Ref AWS::AccountId
           AWS_DYNAMODB_TABLES_EVENTCONFIG_NAME: !Ref EventConfigTable
-          # AWS_DYNAMODB_DAX_ENDPOINTS: !Ref DAXClusterEndpoint
+          AWS_DYNAMODB_DAX_ENDPOINTS:
+            !If [
+              DAXClusterEndpointlProvided,
+              !Ref DAXClusterEndpoint,
+              !Ref "AWS::NoValue",
+            ]
       Tracing: Active
 
   EventNotificationsSourceMapping:
