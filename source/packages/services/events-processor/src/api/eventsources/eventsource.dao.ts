@@ -22,7 +22,7 @@ import { DynamoDbUtils } from '../../utils/dynamoDb.util';
 export class EventSourceDao {
 
     private _cachedDc: AWS.DynamoDB.DocumentClient;
-    
+
     public constructor(
         @inject('aws.dynamoDb.tables.eventConfig.name') private eventConfigTable: string,
         @inject('aws.dynamoDb.tables.eventConfig.gsi1') private eventConfigGSI1: string,
@@ -45,19 +45,21 @@ export class EventSourceDao {
             }
         };
 
+        const eventSourceDynamoDBItem = this.dynamoDbUtils.removeUndefinedParameter({
+            pk: createDelimitedAttribute(PkType.EventSource, es.id),
+            sk: createDelimitedAttribute(PkType.Type, PkType.EventSource),
+            gsi1Sort: createDelimitedAttribute(PkType.EventSource, es.enabled, es.id),
+            name: es.name,
+            sourceType: es.sourceType,
+            principal: es.principal,
+            enabled: es.enabled,
+            dynamoDb: es.dynamoDb,
+            iotCore: es.iotCore
+        })
+
         const eventSourceCreate = {
             PutRequest: {
-                Item: this.dynamoDbUtils.removeUndefinedParameter({
-                    pk: createDelimitedAttribute(PkType.EventSource, es.id),
-                    sk: createDelimitedAttribute(PkType.Type, PkType.EventSource),
-                    gsi1Sort: createDelimitedAttribute(PkType.EventSource, es.enabled, es.id),
-                    name: es.name,
-                    sourceType: es.sourceType,
-                    principal: es.principal,
-                    enabled: es.enabled,
-                    dynamoDb: es.dynamoDb,
-                    iotCore: es.iotCore
-                })
+                Item: eventSourceDynamoDBItem
             }
         };
 

@@ -98,6 +98,16 @@ Parameters:
     Description: The KMS key ID used to encrypt DynamoDB.
     Type: String
 
+  ItemCacheTTL:
+    Type: Number
+    Description: TTL default value for DAX Item Cache.
+    Default: 60000
+  
+  QueryCacheTTL:
+    Type: Number
+    Description: TTL default value for DAX Query Cache.
+    Default: 60000
+
   EnableApiGatewayAccessLogs:
     Description: Enales API gateway Access Logging, defaults to false if not specified.
     Type: String
@@ -754,8 +764,8 @@ Resources:
       ParameterGroupName: !Sub "cdf-eventNotifications-${Environment}-parameter"
       Description: !Sub "parameter group for cdf-eventNotifications-${Environment}" 
       ParameterNameValues:
-         "query-ttl-millis" : "3000"
-         "record-ttl-millis" : "3000"
+         "query-ttl-millis" : !Ref QueryCacheTTL
+         "record-ttl-millis" : !Ref ItemCacheTTL
 
   DAXCluster:
     Type: AWS::DAX::Cluster
