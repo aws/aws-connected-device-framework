@@ -218,7 +218,7 @@ upload:
 triggerCpp:
   stage: triggerCpp
   rules:
-    - if: ($CI_COMMIT_BRANCH == "cpp")
+    - if: ($CI_COMMIT_BRANCH == "main")
   trigger:
     project: robotics-and-engineering-gsp/cdf/aws-connected-product-platform
     branch: main

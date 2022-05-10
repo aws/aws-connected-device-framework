@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/events-processor",
+      "comment": "fix the issue where disable DAX is not working and allow TTL for item and query cache to be set",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@cdf/events-processor",
+  "email": "willsia@amazon.com"
+}

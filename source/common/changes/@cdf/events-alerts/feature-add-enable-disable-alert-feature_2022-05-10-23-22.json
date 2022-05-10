@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/events-alerts",
+      "comment": "re-enable DAX query by event alerts",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/events-alerts",
+  "email": "willsia@amazon.com"
+}
