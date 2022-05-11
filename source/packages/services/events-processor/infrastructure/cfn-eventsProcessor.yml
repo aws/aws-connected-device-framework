@@ -130,7 +130,7 @@ Parameters:
   LoggingLevel:
     Description: Application logging level
     Type: String
-    Default: silly
+    Default: info
     AllowedValues:
       - error
       - warn
