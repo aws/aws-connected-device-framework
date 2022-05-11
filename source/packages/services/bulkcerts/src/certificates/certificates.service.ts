@@ -393,9 +393,13 @@ export class CertificatesService {
             Validity: { Value: this.defaultDaysExpiry, Type: "DAYS" }
         };
 
+<<<<<<< HEAD
         if (typeof certInfo !== 'undefined' && typeof certInfo.country !== 'undefined' && 
         typeof certInfo.organization !== 'undefined' && typeof certInfo.organizationalUnit !== 'undefined' && 
         typeof certInfo.stateName !== 'undefined' && typeof certInfo.commonName!== 'undefined' ){
+=======
+        if (certInfo && certInfo.country && certInfo.organization && certInfo.organizationalUnit && certInfo.stateName && certInfo.commonName){
+>>>>>>> 5b02ab36c1b960106cd569c066d8df1c9422cb9e
             const apiPassthrough = {
                 Subject: {
                     Country: certInfo.country,
