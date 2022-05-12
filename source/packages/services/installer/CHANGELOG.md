@@ -1,6 +1,13 @@
 # Change Log - @cdf/installer
 
-This log was last generated on Thu, 05 May 2022 01:48:19 GMT and should not be manually modified.
+This log was last generated on Thu, 12 May 2022 01:58:21 GMT and should not be manually modified.
+
+## 0.4.0
+Thu, 12 May 2022 01:58:21 GMT
+
+### Minor changes
+
+- Added the capability to the installer to create/modify supplier CA
 
 ## 0.3.4
 Thu, 05 May 2022 01:48:19 GMT
