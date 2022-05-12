@@ -25,7 +25,7 @@ export class FleetApigwService extends FleetServiceBase implements FleetService 
 
     public constructor() {
         super();
-        this.baseUrl = process.env.GREENGRASSPROVISIONING_BASE_URL;
+        this.baseUrl = process.env.GREENGRASS2PROVISIONING_BASE_URL;
     }
 
     async getFleetSummary(additionalHeaders?: RequestHeaders): Promise<TemplateUsage> {

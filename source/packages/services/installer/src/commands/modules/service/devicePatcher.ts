@@ -86,7 +86,7 @@ export class DevicePatcherInstaller implements RestModule {
                     `ApiGatewayDefinitionTemplate=${answers.apigw.cloudFormationTemplate}`,
                     `KmsKeyId=${answers.kms.id}`,
                     `ArtifactsBucket=${answers.s3.bucket}`,
-                    `ArtifactsKeyPrefix=devicePatcher/`,
+                    `ArtifactsKeyPrefix=device-patcher/`,
                     `VpcId=${answers.vpc?.id ?? 'N/A'}`,
                     `CDFSecurityGroupId=${answers.vpc?.securityGroupId ?? ''}`,
                     `PrivateSubNetIds=${answers.vpc?.privateSubnetIds ?? ''}`,
@@ -144,14 +144,14 @@ export class DevicePatcherInstaller implements RestModule {
 
         const artifactsBucket = byParameterKey('ArtifactsBucket')
         const artifactsKeyPrefix = byParameterKey('ArtifactsKeyPrefix')
-        const deploymentTasksQueue = byResourceLogicalId('AgentbasedDeploymentQueue')
+        const patchTasksQueue = byResourceLogicalId('AgentbasedPatchQueue')
         const ssmManagedInstanceRole = byResourceLogicalId('SSMManagedInstanceRole');
 
         const configBuilder = new ConfigBuilder()
             .add(`AWS_DYNAMODB_TABLE_NAME`, table)
             .add(`AWS_S3_ARTIFACTS_BUCKET`, artifactsBucket)
             .add(`AWS_S3_ARTIFACTS_PREFIX`, artifactsKeyPrefix)
-            .add(`AWS_SQS_QUEUES_DEPLOYMENT_TASKS`, deploymentTasksQueue)
+            .add(`AWS_SQS_QUEUES_PATCH_TASKS`, patchTasksQueue)
             .add(`AWS_SSM_MANAGED_INSTANCE_ROLE`, ssmManagedInstanceRole)
 
         return configBuilder.config;

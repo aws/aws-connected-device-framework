@@ -10,8 +10,8 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-export * from './client/deployment.model';
-export * from './client/deployment.service';
+export * from './client/patch.model';
+export * from './client/patch.service';
 export * from './client/activation.model';
 export * from './client/activation.service';
 export * from './client/templates.model';

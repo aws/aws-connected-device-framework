@@ -15,43 +15,42 @@ import { injectable } from 'inversify';
 import { logger } from '../utils/logger.util';
 import { TemplateListPaginationKey } from './template.dao';
 import {
-    DeploymentTemplateItem,
-    DeploymentTemplateResource,
-    DeploymentTemplatesListResource
+    PatchTemplateItem,
+    PatchTemplateResource,
+    PatchTemplatesListResource
 } from './template.model';
-import {DeploymentItem, DeploymentResource} from '../deployment/deployment.model';
 
 @injectable()
-export class DeploymentTemplateAssembler {
+export class PatchTemplateAssembler {
 
-    public toResource(item: DeploymentTemplateItem): DeploymentTemplateResource {
+    public toResource(item: PatchTemplateItem): PatchTemplateResource {
         logger.debug(`templates.assembler toResource: in: item:${JSON.stringify(item)}`);
 
         if (item===undefined) {
-            logger.debug(`deployment.assembler toResource: exit: item: undefined`);
+            logger.debug(`patch.assembler toResource: exit: item: undefined`);
             return undefined;
         }
 
-        const resource = new DeploymentResource();
+        const resource = new PatchTemplateResource();
 
         // common properties
         Object.keys(item).forEach(key=> {
             resource[key] = item[key];
         });
 
-        logger.debug(`DeploymentTemplates.assembler toResource: exit:${JSON.stringify(resource)}`);
+        logger.debug(`PatchTemplates.assembler toResource: exit:${JSON.stringify(resource)}`);
         return resource;
     }
 
-    public toItem(res:DeploymentTemplateResource): DeploymentTemplateItem {
-        logger.debug(`Deploymenttemplate.assembler toItem: in: resource:${JSON.stringify(res)}`);
+    public toItem(res:PatchTemplateResource): PatchTemplateItem {
+        logger.debug(`Patchtemplate.assembler toItem: in: resource:${JSON.stringify(res)}`);
 
         if (res===undefined) {
-            logger.debug(`deploymentTemplate.assembler fromResource: exit: res: undefined`);
+            logger.debug(`patchTemplate.assembler fromResource: exit: res: undefined`);
             return undefined;
         }
 
-        const item = new DeploymentItem();
+        const item = new PatchTemplateItem();
 
         // common properties
         Object.keys(res).forEach(key=> {
@@ -59,14 +58,14 @@ export class DeploymentTemplateAssembler {
         });
 
 
-        logger.debug(`DeploymentTemplates.assembler toItem: exit:${JSON.stringify(item)}`);
+        logger.debug(`PatchTemplates.assembler toItem: exit:${JSON.stringify(item)}`);
         return item;
     }
 
-    public toListResource(items:DeploymentTemplateItem[], count?:number, paginateFrom?:TemplateListPaginationKey ): DeploymentTemplatesListResource {
-        logger.debug(`DeploymentTemplates.assembler toListResource: in: items:${JSON.stringify(items)}, count:${count}, paginateFrom:${JSON.stringify(paginateFrom)}`);
+    public toListResource(items:PatchTemplateItem[], count?:number, paginateFrom?:TemplateListPaginationKey ): PatchTemplatesListResource {
+        logger.debug(`PatchTemplates.assembler toListResource: in: items:${JSON.stringify(items)}, count:${count}, paginateFrom:${JSON.stringify(paginateFrom)}`);
 
-        const list:DeploymentTemplatesListResource= {
+        const list:PatchTemplatesListResource= {
             templates:[]
         };
 
@@ -88,7 +87,7 @@ export class DeploymentTemplateAssembler {
             items.forEach(i=> list.templates.push(this.toResource(i)));
         }
 
-        logger.debug(`DeploymentTemplates.assembler toListResource: exit: ${JSON.stringify(list)}`);
+        logger.debug(`PatchTemplates.assembler toListResource: exit: ${JSON.stringify(list)}`);
         return list;
 
     }

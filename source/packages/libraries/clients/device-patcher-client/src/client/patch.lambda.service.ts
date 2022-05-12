@@ -16,16 +16,16 @@ import { injectable, inject } from 'inversify';
 import { LambdaInvokerService, LAMBDAINVOKE_TYPES, LambdaApiGatewayEventBuilder } from '@cdf/lambda-invoke';
 
 import {RequestHeaders} from './common.model';
-import {DeploymentServiceBase, DeploymentService} from './deployment.service';
+import {PatchServiceBase, PatchService} from './patch.service';
 import {
-    UpdateDeploymentRequest,
-    DeploymentResponse,
-    DeploymentTaskRequest,
-    DeploymentTaskResponse, ListDeploymentsResponse
-} from './deployment.model';
+    UpdatePatchRequest,
+    PatchResponse,
+    PatchTaskRequest,
+    PatchTaskResponse, ListPatchResponse
+} from './patch.model';
 
 @injectable()
-export class DeploymentLambdaService extends DeploymentServiceBase implements DeploymentService {
+export class PatchLambdaService extends PatchServiceBase implements PatchService {
     
     private functionName : string;
     constructor(
@@ -36,26 +36,26 @@ export class DeploymentLambdaService extends DeploymentServiceBase implements De
         this.functionName = process.env.DEVICE_PATCHER_API_FUNCTION_NAME;
     }
 
-    public async createDeploymentTask(deploymentTaskRequest: DeploymentTaskRequest, additionalHeaders?:RequestHeaders): Promise<string> {
-        ow(deploymentTaskRequest, ow.object.nonEmpty);
-        ow(deploymentTaskRequest.deployments, ow.array.nonEmpty);
+    public async createPatchTask(patchTaskRequest: PatchTaskRequest, additionalHeaders?:RequestHeaders): Promise<string> {
+        ow(patchTaskRequest, ow.object.nonEmpty);
+        ow(patchTaskRequest.patches, ow.array.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
-            .setPath(super.deploymentTasksRelativeUrl())
+            .setPath(super.patchTasksRelativeUrl())
             .setPath('POST')
             .setHeaders(super.buildHeaders(additionalHeaders))
-            .setBody(deploymentTaskRequest)
+            .setBody(patchTaskRequest)
 
         const res = await this.lambdaInvoker.invoke(this.functionName, event);
         const location = res.header?.location;
         return location.substring(location.lastIndexOf('/') + 1);
     }
 
-    public async getDeployment(deploymentId: string, additionalHeaders?:RequestHeaders): Promise<DeploymentResponse> {
-        ow(deploymentId, ow.string.nonEmpty);
+    public async getPatch(patchId: string, additionalHeaders?:RequestHeaders): Promise<PatchResponse> {
+        ow(patchId, ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
-            .setPath(super.deploymentsRelativeUrl(deploymentId))
+            .setPath(super.patchesRelativeUrl(patchId))
             .setMethod('GET')
             .setHeaders(super.buildHeaders(additionalHeaders));
 
@@ -63,12 +63,12 @@ export class DeploymentLambdaService extends DeploymentServiceBase implements De
         return res.body;
     }
 
-    public async getDeploymentTask(taskId: string, additionalHeaders?:RequestHeaders): Promise<DeploymentTaskResponse> {
+    public async getPatchTask(taskId: string, additionalHeaders?:RequestHeaders): Promise<PatchTaskResponse> {
         ow(taskId, ow.string.nonEmpty);
 
 
         const event = new LambdaApiGatewayEventBuilder()
-            .setPath(super.deploymentTaskRelativeUrl(taskId))
+            .setPath(super.patchTaskRelativeUrl(taskId))
             .setMethod('GET')
             .setHeaders(super.buildHeaders(additionalHeaders));
 
@@ -76,11 +76,11 @@ export class DeploymentLambdaService extends DeploymentServiceBase implements De
         return res.body;
     }
 
-    public async listDeploymentsByTaskId(taskId: string, additionalHeaders?:RequestHeaders): Promise<ListDeploymentsResponse> {
+    public async listPatchesByTaskId(taskId: string, additionalHeaders?:RequestHeaders): Promise<ListPatchResponse> {
         ow(taskId, ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
-            .setPath(super.deploymentByTaskRelativeUrl(taskId))
+            .setPath(super.patchByTaskRelativeUrl(taskId))
             .setQueryStringParameters({status})
             .setMethod('GET')
             .setHeaders(super.buildHeaders(additionalHeaders));
@@ -89,11 +89,11 @@ export class DeploymentLambdaService extends DeploymentServiceBase implements De
         return res.body;
     }
 
-    public async listDeploymentsByDeviceId(deviceId: string, status?: string, additionalHeaders?:RequestHeaders): Promise<ListDeploymentsResponse> {
+    public async listPatchesByDeviceId(deviceId: string, status?: string, additionalHeaders?:RequestHeaders): Promise<ListPatchResponse> {
         ow(deviceId, ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
-            .setPath(super.deploymentByDeviceRelativeUrl(deviceId))
+            .setPath(super.patchByDeviceRelativeUrl(deviceId))
             .setQueryStringParameters({status})
             .setMethod('GET')
             .setHeaders(super.buildHeaders(additionalHeaders));
@@ -102,25 +102,25 @@ export class DeploymentLambdaService extends DeploymentServiceBase implements De
         return res.body;
     }
 
-    public async updateDeployment(deploymentRequest: UpdateDeploymentRequest, additionalHeaders?:RequestHeaders): Promise<void> {
-        ow(deploymentRequest, ow.object.nonEmpty);
-        ow(deploymentRequest.deploymentStatus, ow.string.nonEmpty);
-        ow(deploymentRequest.deploymentId, ow.string.nonEmpty);
+    public async updatePatch(patchRequest: UpdatePatchRequest, additionalHeaders?:RequestHeaders): Promise<void> {
+        ow(patchRequest, ow.object.nonEmpty);
+        ow(patchRequest.patchStatus, ow.string.nonEmpty);
+        ow(patchRequest.patchId, ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
-            .setPath(super.deploymentsRelativeUrl(deploymentRequest.deploymentId))
+            .setPath(super.patchesRelativeUrl(patchRequest.patchId))
             .setPath('POST')
             .setHeaders(super.buildHeaders(additionalHeaders))
-            .setBody(deploymentRequest)
+            .setBody(patchRequest)
 
         await this.lambdaInvoker.invoke(this.functionName, event);
     }
 
-    public async deleteDeployment(deploymentId: string, additionalHeaders?:RequestHeaders): Promise<void> {
-        ow(deploymentId, ow.string.nonEmpty);
+    public async deletePatch(patchId: string, additionalHeaders?:RequestHeaders): Promise<void> {
+        ow(patchId, ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
-            .setPath(super.deploymentsRelativeUrl(deploymentId))
+            .setPath(super.patchesRelativeUrl(patchId))
             .setMethod('DELETE')
             .setHeaders(super.buildHeaders(additionalHeaders));
 

@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/installer",
+      "comment": "minor updates for device-patcher deployment",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/installer",
+  "email": "hkhokhar@amazon.com"
+}

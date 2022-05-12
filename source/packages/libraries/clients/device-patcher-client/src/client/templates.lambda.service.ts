@@ -16,7 +16,7 @@ import ow from 'ow';
 import {RequestHeaders} from './common.model';
 import { LambdaInvokerService, LAMBDAINVOKE_TYPES, LambdaApiGatewayEventBuilder } from '@cdf/lambda-invoke';
 import { TemplatesServiceBase, TemplatesService } from './templates.service';
-import { DeploymentTemplate, DeploymentTemplateList } from './templates.model';
+import { CreatePatchTemplateParams, PatchTemplate, PatchTemplateList } from './templates.model';
 
 @injectable()
 export class TemplatesLambdaService extends TemplatesServiceBase implements TemplatesService {
@@ -30,23 +30,19 @@ export class TemplatesLambdaService extends TemplatesServiceBase implements Temp
         this.functionName = process.env.DEVICE_PATCHER_API_FUNCTION_NAME;
     }
 
-    async saveTemplate(template: DeploymentTemplate, additionalHeaders?:RequestHeaders) : Promise<DeploymentTemplate> {
-
-        ow(template, ow.object.nonEmpty);
-        ow(template.name, ow.string.nonEmpty);
-
-        const event = new LambdaApiGatewayEventBuilder()
-            .setPath(super.templateRelativeUrl(template.name))
-            .setMethod('PUT')
-            .setHeaders(super.buildHeaders(additionalHeaders))
-            .setBody(template);
-
-        const res = await this.lambdaInvoker.invoke(this.functionName, event);
-        return res.body;
-
+    async createTemplate(_template: CreatePatchTemplateParams, _additionalHeaders?:RequestHeaders) : Promise<void> {
+        // files cannot be passed via multipart/form-data with the direct lambda invocation.
+        // This requires extension of the API to support the content-type=json header with file content passed as a buffer
+        throw('NOT_IMPLEMENTED');
     }
 
-    async getTemplate(name: string, additionalHeaders?:RequestHeaders) : Promise<DeploymentTemplate> {
+    async updateTemplate(_template: CreatePatchTemplateParams, _additionalHeaders?:RequestHeaders) : Promise<void> {
+        // files cannot be passed via multipart/form-data with the direct lambda invocation.
+        // This requires extension of the API to support the content-type=json header with file content passed as a buffer
+        throw('NOT_IMPLEMENTED');
+    }
+
+    async getTemplate(name: string, additionalHeaders?:RequestHeaders) : Promise<PatchTemplate> {
 
         ow(name, ow.string.nonEmpty);
 
@@ -59,7 +55,7 @@ export class TemplatesLambdaService extends TemplatesServiceBase implements Temp
         return res.body;
     }
 
-    async listTemplates(additionalHeaders?:RequestHeaders) : Promise<DeploymentTemplateList> {
+    async listTemplates(additionalHeaders?:RequestHeaders) : Promise<PatchTemplateList> {
 
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.templatesRelativeUrl())

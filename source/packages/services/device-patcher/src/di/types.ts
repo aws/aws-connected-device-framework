@@ -16,8 +16,8 @@ export const TYPES = {
     ActivationService: Symbol.for('ActivationService'),
     ActivationDao: Symbol.for('ActivationDao'),
 
-    AgentbasedDeploymentService: Symbol.for('AgentbasedDeploymentService'),
-    AgentbasedDeploymentDao: Symbol.for('AgentbasedDeploymentDao'),
+    AgentbasedPatchService: Symbol.for('AgentbasedPatchService'),
+    AgentbasedPatchDao: Symbol.for('AgentbasedPatchDao'),
 
     SSMService: Symbol.for('SSMService'),
 
@@ -28,18 +28,18 @@ export const TYPES = {
     DocumentClient: Symbol.for('DocumentClient'),
     DocumentClientFactory: Symbol.for('Factory<DocumentClient>'),
 
-    DeploymentTaskService: Symbol.for('DeploymentTaskService'),
-    DeploymentTaskAssembler: Symbol.for('DeploymentTaskAssembler'),
-    DeploymentTaskDao: Symbol.for('DeploymentTask'),
+    PatchTaskService: Symbol.for('PatchTaskService'),
+    PatchTaskAssembler: Symbol.for('PatchTaskAssembler'),
+    PatchTaskDao: Symbol.for('PatchTask'),
 
-    DeploymentDao: Symbol.for('DeploymentDao'),
-    DeploymentService: Symbol.for('DeploymentService'),
-    DeploymentManager: Symbol.for('DeploymentManager'),
-    DeploymentAssembler: Symbol.for('DeploymentAssembler'),
+    PatchDao: Symbol.for('PatchDao'),
+    PatchService: Symbol.for('PatchService'),
+    PatchManager: Symbol.for('PatchManager'),
+    PatchAssembler: Symbol.for('PatchAssembler'),
 
-    DeploymentTemplatesService: Symbol.for('DeploymentTemplatesService'),
-    DeploymentTemplateDao: Symbol.for('DeploymentTemplateDao'),
-    DeploymentTemplateAssembler: Symbol.for('DeploymentTemplateAssembler'),
+    PatchTemplatesService: Symbol.for('PatchTemplatesService'),
+    PatchTemplateDao: Symbol.for('PatchTemplateDao'),
+    PatchTemplateAssembler: Symbol.for('PatchTemplateAssembler'),
 
     ExpressionParser: Symbol.for('ExpressionParser'),
 

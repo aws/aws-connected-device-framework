@@ -19,32 +19,32 @@ import {TYPES} from '../di/types';
 import {logger} from '../utils/logger.util';
 import {createDelimitedAttribute, expandDelimitedAttribute, PkType} from '../utils/pKUtils.util';
 
-import {DeploymentTaskItem, DeploymentTaskList,} from './deploymentTask.model';
-import {DeploymentItem} from './deployment.model';
-import {DeploymentDao} from './deployment.dao';
+import {PatchTaskItem, PatchTaskList } from './patchTask.model';
+import {PatchItem} from './patch.model';
+import {PatchDao} from './patch.dao';
 
 @injectable()
-export class DeploymentTaskDao {
+export class PatchTaskDao {
 
     private dc: AWS.DynamoDB.DocumentClient;
     private readonly tableName = process.env.AWS_DYNAMODB_TABLE_NAME
 
     constructor(
         @inject(TYPES.DocumentClientFactory) documentClientFactory: () => AWS.DynamoDB.DocumentClient,
-        @inject(TYPES.DeploymentDao) private deploymentDao: DeploymentDao,
+        @inject(TYPES.PatchDao) private patchDao: PatchDao,
     ) {
         this.dc = documentClientFactory();
     }
 
-    public async save(task: DeploymentTaskItem): Promise<void> {
-        logger.debug(`deployment.dao: save: in: deploymentTask: ${JSON.stringify(task)}`);
+    public async save(task: PatchTaskItem): Promise<void> {
+        logger.debug(`patch.dao: save: in: patchTask: ${JSON.stringify(task)}`);
 
         const params = {
             TableName: this.tableName,
             Item: {
-                pk: createDelimitedAttribute(PkType.DeploymentTask, task.taskId),
-                sk:  createDelimitedAttribute(PkType.DeploymentTask, task.taskId),
-                si1Sort: createDelimitedAttribute(PkType.DeploymentTask),
+                pk: createDelimitedAttribute(PkType.PatchTask, task.taskId),
+                sk:  createDelimitedAttribute(PkType.PatchTask, task.taskId),
+                si1Sort: createDelimitedAttribute(PkType.PatchTask),
                 createdAt: task.createdAt?.toISOString(),
                 updatedAt: task.updatedAt?.toISOString(),
             }
@@ -52,36 +52,36 @@ export class DeploymentTaskDao {
 
         await this.dc.put(params).promise();
 
-        logger.debug(`deployment.dao: save: exit: `);
+        logger.debug(`patch.dao: save: exit: `);
     }
 
-    public async get(taskId:string): Promise<DeploymentTaskItem> {
-        logger.debug(`deploymentTask.dao:get:in:taskId:${taskId}`);
+    public async get(taskId:string): Promise<PatchTaskItem> {
+        logger.debug(`patchTask.dao:get:in:taskId:${taskId}`);
 
         const params = {
             TableName: this.tableName,
             Key: {
-                pk: createDelimitedAttribute(PkType.DeploymentTask, taskId),
-                sk: createDelimitedAttribute(PkType.DeploymentTask, taskId)
+                pk: createDelimitedAttribute(PkType.PatchTask, taskId),
+                sk: createDelimitedAttribute(PkType.PatchTask, taskId)
             }
         };
 
 
         const result = await this.dc.get(params).promise();
         if (result.Item===undefined) {
-            logger.debug('agentbasedDeployments.dao exit: undefined');
+            logger.debug('agentbasedPatchs.dao exit: undefined');
             return undefined;
         }
 
-        const deploymentTaskList = this.assemble([result.Item]);
+        const patchTaskList = this.assemble([result.Item]);
 
-        logger.debug(`deployment.dao: list: exit: deploymentList: ${JSON.stringify(deploymentTaskList)}`);
+        logger.debug(`patch.dao: list: exit: patchList: ${JSON.stringify(patchTaskList)}`);
 
-        return deploymentTaskList.deploymentTasks[0];
+        return patchTaskList.patchTasks[0];
     }
 
-    public async getDeployments(taskId: string, count?:number, exclusiveStart?: DeploymentListPaginationKey): Promise<[DeploymentItem[], DeploymentListPaginationKey]> {
-        logger.debug(`deploymentTask.dao:getDeployments:in:taskId:${taskId}`);
+    public async getPatchs(taskId: string, count?:number, exclusiveStart?: PatchListPaginationKey): Promise<[PatchItem[], PatchListPaginationKey]> {
+        logger.debug(`patchTask.dao:getPatchs:in:taskId:${taskId}`);
 
         let exclusiveStartKey:DynamoDbPaginationKey;
         if (exclusiveStart?.nextToken) {
@@ -97,8 +97,8 @@ export class DeploymentTaskDao {
                 '#sk': 'sk'
             },
             ExpressionAttributeValues: {
-                ':pk': createDelimitedAttribute(PkType.DeploymentTask, taskId),
-                ':sk': createDelimitedAttribute(PkType.DeviceDeploymentTask)
+                ':pk': createDelimitedAttribute(PkType.PatchTask, taskId),
+                ':sk': createDelimitedAttribute(PkType.DevicePatch)
             },
             ExclusiveStartKey: exclusiveStartKey,
             Limit: count
@@ -106,20 +106,20 @@ export class DeploymentTaskDao {
 
         const results = await this.dc.query(params).promise();
         if ((results?.Items?.length??0)===0) {
-            logger.debug(`deploymentTask.dao:getDeployments exit: undefined`);
+            logger.debug(`patchTask.dao:getPatchs exit: undefined`);
             return [undefined,undefined];
         }
 
-        const deploymentItemKeys = results.Items.map(item => {
+        const patchItemKeys = results.Items.map(item => {
             return {
-                deploymentId: expandDelimitedAttribute(item.sk)[1],
+                patchId: expandDelimitedAttribute(item.sk)[1],
                 deviceId: expandDelimitedAttribute(item.si2Hash)[1]
             }
         })
 
-        const deployments = await this.deploymentDao.getBulk(deploymentItemKeys);
+        const patches = await this.patchDao.getBulk(patchItemKeys);
 
-        let paginationKey:DeploymentListPaginationKey;
+        let paginationKey:PatchListPaginationKey;
         if (results.LastEvaluatedKey) {
             const nextToken = btoa(`${JSON.stringify(results.LastEvaluatedKey)}`)
             paginationKey = {
@@ -127,30 +127,30 @@ export class DeploymentTaskDao {
             }
         }
 
-        logger.debug(`deploymentTask.dao:getDeployments: exit: response:${JSON.stringify(deployments)}, paginationKey:${paginationKey}`);
-        return [deployments, paginationKey];
+        logger.debug(`patchTask.dao:getPatchs: exit: response:${JSON.stringify(patches)}, paginationKey:${paginationKey}`);
+        return [patches, paginationKey];
 
     }
 
-    private assemble(items: AWS.DynamoDB.DocumentClient.ItemList): DeploymentTaskList {
-        const list = new DeploymentTaskList();
+    private assemble(items: AWS.DynamoDB.DocumentClient.ItemList): PatchTaskList {
+        const list = new PatchTaskList();
 
         for(const i of items) {
             const pkElements = i.pk.split(':');
-            const deployment: DeploymentTaskItem = {
+            const patch: PatchTaskItem = {
                 taskId: pkElements[1],
                 createdAt: new Date(i.createdAt),
                 updatedAt: new Date(i.updatedAt),
             };
 
-            list.deploymentTasks.push(deployment);
+            list.patchTasks.push(patch);
         }
         return list;
     }
 
 }
 
-export declare type DeploymentListPaginationKey = {
+export declare type PatchListPaginationKey = {
     nextToken: string;
 }
 

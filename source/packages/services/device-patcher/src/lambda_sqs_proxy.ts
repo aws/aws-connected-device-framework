@@ -13,10 +13,10 @@
 import { container } from './di/inversify.config';
 import { logger } from './utils/logger.util';
 import { TYPES } from './di/types';
-import { DeploymentService } from './deployment/deployment.service';
-import { DeploymentItem } from './deployment/deployment.model';
+import { PatchService } from './patch/patch.service';
+import { PatchItem } from './patch/patch.model';
 
-const deploymentService: DeploymentService = container.get<DeploymentService>(TYPES.DeploymentService);
+const patchService: PatchService = container.get<PatchService>(TYPES.PatchService);
 
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
 exports.handler = async(event: any, _context: any, callback: any) => {
@@ -26,11 +26,11 @@ exports.handler = async(event: any, _context: any, callback: any) => {
     if(event.Records) {
         for (const record of event.Records) {
             if(record.eventSource === 'aws:sqs') {
-                const deployment: DeploymentItem = JSON.parse(record.body);
+                const patch: PatchItem = JSON.parse(record.body);
                 try {
-                    await deploymentService.deploy(deployment);
+                    await patchService.deploy(patch);
                 } catch (err) {
-                    logger.error(`deploymentService.deploy: in: ${deployment} err: ${err}`);
+                    logger.error(`patchService.deploy: in: ${patch} err: ${err}`);
                     callback('error', null);
                 }
             } else {

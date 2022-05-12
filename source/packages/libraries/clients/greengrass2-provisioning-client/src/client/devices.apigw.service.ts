@@ -26,7 +26,7 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
 
     public constructor() {
         super();
-        this.baseUrl = process.env.GREENGRASSPROVISIONING_BASE_URL;
+        this.baseUrl = process.env.GREENGRASS2PROVISIONING_BASE_URL;
     }
 
     async createDeviceTask(task: NewDeviceTask, additionalHeaders?: RequestHeaders): Promise<string> {
