@@ -1,6 +1,6 @@
 {
   "name": "@cdf/device-patcher",
-  "version": "0.1.2",
+  "version": "1.0.0",
   "description": "Device patcher Module",
   "author": "Hassan Khokhar",
   "config": {

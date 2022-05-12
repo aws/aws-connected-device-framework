@@ -1,6 +1,13 @@
 # Change Log - @cdf/integration-tests
 
-This log was last generated on Thu, 07 Apr 2022 05:00:50 GMT and should not be manually modified.
+This log was last generated on Thu, 12 May 2022 21:12:39 GMT and should not be manually modified.
+
+## 3.1.5
+Thu, 12 May 2022 21:12:39 GMT
+
+### Patches
+
+- better coverage for device-patcher API
 
 ## 3.1.4
 Thu, 07 Apr 2022 05:00:50 GMT
