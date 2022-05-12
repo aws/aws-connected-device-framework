@@ -1,6 +1,13 @@
 # Change Log - @cdf/assetlibrary
 
-This log was last generated on Thu, 07 Apr 2022 05:00:50 GMT and should not be manually modified.
+This log was last generated on Wed, 27 Apr 2022 06:44:55 GMT and should not be manually modified.
+
+## 6.0.6
+Wed, 27 Apr 2022 06:44:55 GMT
+
+### Patches
+
+- options request should not require claims check
 
 ## 6.0.5
 Thu, 07 Apr 2022 05:00:50 GMT

@@ -1,6 +1,48 @@
 # Change Log - @cdf/installer
 
-This log was last generated on Tue, 26 Apr 2022 03:49:33 GMT and should not be manually modified.
+This log was last generated on Thu, 12 May 2022 03:51:07 GMT and should not be manually modified.
+
+## 0.4.1
+Thu, 12 May 2022 03:51:07 GMT
+
+### Patches
+
+- minor bug fix, to fix issue where installer would fail due to empty answers
+
+## 0.4.0
+Thu, 12 May 2022 01:58:21 GMT
+
+### Minor changes
+
+- Added the capability to the installer to create/modify supplier CA
+
+## 0.3.4
+Thu, 05 May 2022 01:48:19 GMT
+
+### Patches
+
+- fix installer not allowing zero custom tags
+
+## 0.3.3
+Wed, 27 Apr 2022 09:56:58 GMT
+
+### Patches
+
+- authJwt is not being considered in topological sort
+
+## 0.3.2
+Wed, 27 Apr 2022 08:32:22 GMT
+
+### Patches
+
+- refactoring the prompt works to make sure that optional module questions only being asked when needed
+
+## 0.3.1
+Wed, 27 Apr 2022 06:44:55 GMT
+
+### Patches
+
+- remove the packaging of openssl from installer
 
 ## 0.3.0
 Tue, 26 Apr 2022 03:49:33 GMT

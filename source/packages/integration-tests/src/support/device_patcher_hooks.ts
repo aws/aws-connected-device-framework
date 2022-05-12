@@ -102,6 +102,7 @@ async function teardown_patches_feature(world:unknown) {
 }
 
 async function teardown_activation_features() {
+    console.log('teardown_activation_features');
 }
 
 async function teardown_patch_templates_features(world:unknown) {

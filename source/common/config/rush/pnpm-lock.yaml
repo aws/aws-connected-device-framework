@@ -8,8 +8,10 @@ specifiers:
   '@aws-sdk/client-eventbridge': 3.38.0
   '@aws-sdk/client-iam': ~3.53.0
   '@aws-sdk/client-kms': ~3.53.0
+  '@aws-sdk/client-pricing': ~3.53.0
   '@aws-sdk/client-rds': ~3.53.0
   '@aws-sdk/client-sqs': 3.38.0
+  '@aws-sdk/client-ssm': ~3.53.0
   '@aws-sdk/client-sts': ~3.53.0
   '@aws-sdk/lib-dynamodb': 3.38.0
   '@aws-sdk/s3-request-presigner': ~3.38.0
@@ -179,8 +181,10 @@ dependencies:
   '@aws-sdk/client-eventbridge': 3.38.0
   '@aws-sdk/client-iam': 3.53.0
   '@aws-sdk/client-kms': 3.53.0
+  '@aws-sdk/client-pricing': 3.53.0
   '@aws-sdk/client-rds': 3.53.0
   '@aws-sdk/client-sqs': 3.38.0
+  '@aws-sdk/client-ssm': 3.53.0
   '@aws-sdk/client-sts': 3.53.0
   '@aws-sdk/lib-dynamodb': 3.38.0_e5b2d1ca3985fe3231b56796989ab541
   '@aws-sdk/s3-request-presigner': 3.38.0_@aws-sdk+signature-v4-crt@3.38.0
@@ -992,6 +996,45 @@ packages:
       tslib: 2.3.1
     dev: false
 
+  /@aws-sdk/client-pricing/3.53.0:
+    resolution: {integrity: sha512-vfXK2huPSQSzA310awFU582yXXISAjeBFSZcA+hJdPxLCG1cu/H5pocM6iZZ1Za6TC215pYNlmEjUnl5J1TEvg==}
+    engines: {node: '>=12.0.0'}
+    dependencies:
+      '@aws-crypto/sha256-browser': 2.0.0
+      '@aws-crypto/sha256-js': 2.0.0
+      '@aws-sdk/client-sts': 3.53.0
+      '@aws-sdk/config-resolver': 3.53.0
+      '@aws-sdk/credential-provider-node': 3.53.0
+      '@aws-sdk/fetch-http-handler': 3.53.0
+      '@aws-sdk/hash-node': 3.53.0
+      '@aws-sdk/invalid-dependency': 3.53.0
+      '@aws-sdk/middleware-content-length': 3.53.0
+      '@aws-sdk/middleware-host-header': 3.53.0
+      '@aws-sdk/middleware-logger': 3.53.0
+      '@aws-sdk/middleware-retry': 3.53.0
+      '@aws-sdk/middleware-serde': 3.53.0
+      '@aws-sdk/middleware-signing': 3.53.0
+      '@aws-sdk/middleware-stack': 3.53.0
+      '@aws-sdk/middleware-user-agent': 3.53.0
+      '@aws-sdk/node-config-provider': 3.53.0
+      '@aws-sdk/node-http-handler': 3.53.0
+      '@aws-sdk/protocol-http': 3.53.0
+      '@aws-sdk/smithy-client': 3.53.0
+      '@aws-sdk/types': 3.53.0
+      '@aws-sdk/url-parser': 3.53.0
+      '@aws-sdk/util-base64-browser': 3.52.0
+      '@aws-sdk/util-base64-node': 3.52.0
+      '@aws-sdk/util-body-length-browser': 3.52.0
+      '@aws-sdk/util-body-length-node': 3.52.0
+      '@aws-sdk/util-defaults-mode-browser': 3.53.0
+      '@aws-sdk/util-defaults-mode-node': 3.53.0
+      '@aws-sdk/util-user-agent-browser': 3.53.0
+      '@aws-sdk/util-user-agent-node': 3.53.0
+      '@aws-sdk/util-utf8-browser': 3.52.0
+      '@aws-sdk/util-utf8-node': 3.52.0
+      tslib: 2.3.1
+    dev: false
+
   /@aws-sdk/client-rds/3.53.0:
     resolution: {integrity: sha512-QH3FzmNJnALTFT9+hbZI3VkZI8vXJmf4JsTkee9R4nQbEeRuoPCv3eKyJq/JWtiNkJIEi1njtswmEoyAYiingw==}
     engines: {node: '>=12.0.0'}
@@ -1189,6 +1232,47 @@ packages:
       entities: 2.2.0
       fast-xml-parser: 3.19.0
       tslib: 2.3.1
+    dev: false
+
+  /@aws-sdk/client-ssm/3.53.0:
+    resolution: {integrity: sha512-TtN72Oqb27iAI0Wgp1tTlAY7Q2MtcERhJY6fdOmJ9qqrad8ie85L4MlT8/zcQ17Se+kwGE24kXLerqBhxs/PDA==}
+    engines: {node: '>=12.0.0'}
+    dependencies:
+      '@aws-crypto/sha256-browser': 2.0.0
+      '@aws-crypto/sha256-js': 2.0.0
+      '@aws-sdk/client-sts': 3.53.0
+      '@aws-sdk/config-resolver': 3.53.0
+      '@aws-sdk/credential-provider-node': 3.53.0
+      '@aws-sdk/fetch-http-handler': 3.53.0
+      '@aws-sdk/hash-node': 3.53.0
+      '@aws-sdk/invalid-dependency': 3.53.0
+      '@aws-sdk/middleware-content-length': 3.53.0
+      '@aws-sdk/middleware-host-header': 3.53.0
+      '@aws-sdk/middleware-logger': 3.53.0
+      '@aws-sdk/middleware-retry': 3.53.0
+      '@aws-sdk/middleware-serde': 3.53.0
+      '@aws-sdk/middleware-signing': 3.53.0
+      '@aws-sdk/middleware-stack': 3.53.0
+      '@aws-sdk/middleware-user-agent': 3.53.0
+      '@aws-sdk/node-config-provider': 3.53.0
+      '@aws-sdk/node-http-handler': 3.53.0
+      '@aws-sdk/protocol-http': 3.53.0
+      '@aws-sdk/smithy-client': 3.53.0
+      '@aws-sdk/types': 3.53.0
+      '@aws-sdk/url-parser': 3.53.0
+      '@aws-sdk/util-base64-browser': 3.52.0
+      '@aws-sdk/util-base64-node': 3.52.0
+      '@aws-sdk/util-body-length-browser': 3.52.0
+      '@aws-sdk/util-body-length-node': 3.52.0
+      '@aws-sdk/util-defaults-mode-browser': 3.53.0
+      '@aws-sdk/util-defaults-mode-node': 3.53.0
+      '@aws-sdk/util-user-agent-browser': 3.53.0
+      '@aws-sdk/util-user-agent-node': 3.53.0
+      '@aws-sdk/util-utf8-browser': 3.52.0
+      '@aws-sdk/util-utf8-node': 3.52.0
+      '@aws-sdk/util-waiter': 3.53.0
+      tslib: 2.3.1
+      uuid: 8.3.2
     dev: false
 
   /@aws-sdk/client-sso/3.37.0:
@@ -15375,7 +15459,7 @@ packages:
     dev: false
 
   file:projects/deployment-helper.tgz:
-    resolution: {integrity: sha512-c9liLR0T01HQMbK3WdYwRzcjv37STW/sS8RwOz1RlGOGouexOzsQiULvb8BpSoR+bNXb9KMWakPMQLw9WQlgYA==, tarball: file:projects/deployment-helper.tgz}
+    resolution: {integrity: sha512-NRGIGkwhRvQtv1i7wGqvN5wxRDzE2m/5NJNOpKYKTsEMJbuPLNA5wG8WKOuhaJ/EoaH/L2+MHmQaKExcSMZ3wA==, tarball: file:projects/deployment-helper.tgz}
     name: '@rush-temp/deployment-helper'
     version: 0.0.0
     dependencies:
@@ -15383,6 +15467,7 @@ packages:
       '@types/aws-lambda': 8.10.65
       '@types/dotenv-flow': 3.2.0
       '@types/jest': 26.0.23
+      '@types/jsonwebtoken': 8.5.0
       '@types/node': 14.6.1
       '@types/superagent': 4.1.15
       '@typescript-eslint/eslint-plugin': 4.23.0_7cfaee78cda985ff9bc3d8b5cb92a136
@@ -15402,6 +15487,7 @@ packages:
       jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
       js-yaml: 4.1.0
+      jsonwebtoken: 8.5.1
       logform: 2.2.0
       nodemon: 2.0.7
       nyc: 15.1.0
@@ -15991,7 +16077,7 @@ packages:
     dev: false
 
   file:projects/installer.tgz_65ac33d01e93914f067c7c2f950d07df:
-    resolution: {integrity: sha512-oQwO0DkfKqKWOdHFSLNUScQAottB0DkvAry26K4vqDES750YuIJO3WyyM3tV/SNLDPyRPIw16nZrzvn63mvimQ==, tarball: file:projects/installer.tgz}
+    resolution: {integrity: sha512-d0neTthRHoQiS8dBdrVE/58UVO6Q3UjR/mzJK2ECaHHHz84zcdNDBjeLsSAL9sJnyIbnV4nnpFIrZR//e8VY0Q==, tarball: file:projects/installer.tgz}
     id: file:projects/installer.tgz
     name: '@rush-temp/installer'
     version: 0.0.0
@@ -16001,8 +16087,10 @@ packages:
       '@aws-sdk/client-iot': 3.53.0
       '@aws-sdk/client-kms': 3.53.0
       '@aws-sdk/client-lambda': 3.53.0
+      '@aws-sdk/client-pricing': 3.53.0
       '@aws-sdk/client-rds': 3.53.0
       '@aws-sdk/client-s3': 3.53.1_@aws-sdk+signature-v4-crt@3.38.0
+      '@aws-sdk/client-ssm': 3.53.0
       '@aws-sdk/client-sts': 3.53.0
       '@aws-sdk/lib-storage': 3.53.1_e714371a4675eebea50097d6e8bcab8e
       '@rushstack/eslint-config': 2.3.4_eslint@7.26.0+typescript@4.2.4

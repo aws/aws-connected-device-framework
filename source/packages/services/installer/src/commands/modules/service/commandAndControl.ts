@@ -1,3 +1,15 @@
+/*********************************************************************************************************************
+ *  Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.                                           *
+ *                                                                                                                    *
+ *  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance    *
+ *  with the License. A copy of the License is located at                                                             *
+ *                                                                                                                    *
+ *      http://www.apache.org/licenses/LICENSE-2.0                                                                    *
+ *                                                                                                                    *
+ *  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES *
+ *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
+ *  and limitations under the License.                                                                                *
+ *********************************************************************************************************************/
 import { Answers } from '../../../models/answers';
 import { ListrTask } from 'listr2';
 import { ModuleName, RestModule, PostmanEnvironment } from '../../../models/modules';
@@ -7,8 +19,8 @@ import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
 import { customDomainPrompt } from '../../../prompts/domain.prompt';
 import ow from 'ow';
-import execa from 'execa';
-import { deleteStack, getStackOutputs, getStackParameters, getStackResourceSummaries } from '../../../utils/cloudformation.util';
+import { deleteStack, getStackOutputs, getStackParameters, getStackResourceSummaries, packageAndDeployStack } from '../../../utils/cloudformation.util';
+import { includeOptionalModule } from '../../../utils/modules.util';
 
 export class CommandAndControlInstaller implements RestModule {
 
@@ -20,9 +32,8 @@ export class CommandAndControlInstaller implements RestModule {
     'apigw',
     'kms',
     'deploymentHelper',
-    'assetLibrary', // TODO: should be optional
     'provisioning'];
-  public readonly dependsOnOptional: ModuleName[] = ['vpc', 'authJwt'];
+  public readonly dependsOnOptional: ModuleName[] = ['assetLibrary'];
 
   private readonly stackName: string;
   private readonly assetLibraryStackName: string;
@@ -41,31 +52,22 @@ export class CommandAndControlInstaller implements RestModule {
       redeployIfAlreadyExistsPrompt(this.name, this.stackName),
 
     ], answers);
-    if ((updatedAnswers.commandAndControl?.redeploy ?? true) === false) {
-      return updatedAnswers;
+    if (updatedAnswers.commandAndControl?.redeploy ?? true) {
+
+      updatedAnswers = await inquirer.prompt([
+        {
+          message: 'When using the Asset Library module as an enhanced device registry, the Command & Control module can use it to help search across devices and groups to define the command targets. You have not chosen to install the Asset Library module - would you like to install it?\nNote: as there is additional cost associated with installing the Asset Library module, ensure you familiarize yourself with its capabilities and benefits in the online CDF github documentation.',
+          type: 'confirm',
+          name: 'commandAndControl.useAssetLibrary',
+          default: updatedAnswers.commandAndControl?.useAssetLibrary,
+          askAnswered: true
+        },
+        ...applicationConfigurationPrompt(this.name, answers, []),
+        ...customDomainPrompt(this.name, answers)
+      ], updatedAnswers);
     }
 
-    updatedAnswers = await inquirer.prompt([
-      ...applicationConfigurationPrompt(this.name, answers, [
-        {
-          question: 'Provisioning template to add a thing to a thing group',
-          defaultConfiguration: 'add_thing_to_group',
-          propertyName: 'addThingToGroupTemplate'
-        },
-        {
-          question: 'Topic for Command and Control',
-          defaultConfiguration: 'cmd/cdf/cac/${thingName}',
-          propertyName: 'deliveryMethodTopic'
-        },
-        {
-          question: 'Shadow name for Command and Control Service',
-          defaultConfiguration: 'cac',
-          propertyName: 'awsIotShadowName'
-        },
-      ]),
-      ...customDomainPrompt(this.name, answers)
-    ], updatedAnswers);
-
+    includeOptionalModule('assetLibrary', updatedAnswers.modules, updatedAnswers.commandAndControl.useAssetLibrary)
     return updatedAnswers;
   }
 
@@ -96,20 +98,7 @@ export class CommandAndControlInstaller implements RestModule {
     });
 
     tasks.push({
-      title: `Packaging stack '${this.stackName}'`,
-      task: async () => {
-        await execa('aws', ['cloudformation', 'package',
-          '--template-file', '../command-and-control/infrastructure/cfn-command-and-control.yml',
-          '--output-template-file', '../command-and-control/infrastructure/cfn-command-and-control.yml.build',
-          '--s3-bucket', answers.s3.bucket,
-          '--s3-prefix', 'cloudformation/artifacts/',
-          '--region', answers.region
-        ]);
-      }
-    });
-
-    tasks.push({
-      title: `Deploying stack '${this.stackName}'`,
+      title: `Packaging and deploying stack '${this.stackName}'`,
       task: async () => {
         const parameterOverrides = [
           `Environment=${answers.environment}`,
@@ -135,16 +124,16 @@ export class CommandAndControlInstaller implements RestModule {
         addIfSpecified('AuthorizerFunctionArn', answers.apigw.lambdaAuthorizerArn);
         addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
 
-        await execa('aws', ['cloudformation', 'deploy',
-          '--template-file', '../command-and-control/infrastructure/cfn-command-and-control.yml.build',
-          '--stack-name', this.stackName,
-          '--parameter-overrides',
-          ...parameterOverrides,
-          '--capabilities', 'CAPABILITY_NAMED_IAM', 'CAPABILITY_AUTO_EXPAND',
-          '--no-fail-on-empty-changeset',
-          '--region', answers.region,
-          '--tags', 'cdf_service=commandandcontrol', `cdf_environment=${answers.environment}`, ...answers.customTags.split(' '),
-        ]);
+        await packageAndDeployStack({
+          answers: answers,
+          stackName: this.stackName,
+          serviceName: 'commandandcontrol',
+          templateFile: '../command-and-control/infrastructure/cfn-command-and-control.yml',
+          parameterOverrides,
+          needsPackaging: true,
+          needsCapabilityNamedIAM: true,
+          needsCapabilityAutoExpand: true,
+        });
       }
     });
 
