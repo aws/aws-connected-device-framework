@@ -15,7 +15,7 @@ export class JobsTestClient {
   private buildConnection(): mqtt.MqttClientConnection {
 
     const endpoint: string = process.env.AWS_IOT_ENDPOINT;
-    let config_builder = iot.AwsIotMqttConnectionConfigBuilder.new_mtls_builder_from_path(this.certPath, this.keyPath);
+    const config_builder = iot.AwsIotMqttConnectionConfigBuilder.new_mtls_builder_from_path(this.certPath, this.keyPath);
     config_builder.with_certificate_authority_from_path(undefined, this.caPath);
     config_builder.with_clean_session(false);
     config_builder.with_client_id(this.thingName);
@@ -40,9 +40,10 @@ export class JobsTestClient {
   }
 
   public async getNextJobDocument(): Promise<void> {
+    
+    // eslint-disable-next-line no-async-promise-executor
     return new Promise<void>(async (resolve, reject) => {
       try {
-
         await this.jobsClient.subscribeToDescribeJobExecutionAccepted({
           thingName: this.thingName,
           jobId: "$next"
@@ -73,7 +74,7 @@ export class JobsTestClient {
     if (this.job === undefined) {
       throw new Error('NO_JOB');
     }
-
+    // eslint-disable-next-line no-async-promise-executor
     return new Promise<void>(async (resolve, reject) => {
       try {
         await this.jobsClient.publishUpdateJobExecution({

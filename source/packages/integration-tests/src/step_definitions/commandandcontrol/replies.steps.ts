@@ -142,7 +142,7 @@ async function build_direct_mqtt_connection(thingName:string) : Promise<mqtt.Mqt
   const ca = await axios.get<string>('https://www.amazontrust.com/repository/AmazonRootCA1.pem');
   fs.writeFileSync(caPath, ca.data);
 
-  let config_builder = iot.AwsIotMqttConnectionConfigBuilder.new_mtls_builder_from_path(certPath, keyPath);
+  const config_builder = iot.AwsIotMqttConnectionConfigBuilder.new_mtls_builder_from_path(certPath, keyPath);
   config_builder.with_certificate_authority_from_path(undefined, caPath);
   config_builder.with_clean_session(false);
   config_builder.with_client_id(thingName);

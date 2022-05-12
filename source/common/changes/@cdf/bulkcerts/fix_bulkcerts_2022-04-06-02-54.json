@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/bulkcerts",
+      "comment": "corrected README documentation ",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/bulkcerts",
+  "email": "bahavar@amazon.com"
+}

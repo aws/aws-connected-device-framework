@@ -147,6 +147,7 @@ export interface AuthJwt extends ServiceModuleAttributes {
 
 export interface BulkCerts extends RestServiceModuleAttribues {
   setCertificateDefaults?: boolean;
+  setSupplier?: boolean;
   commonName?: string;
   organization?: string;
   organizationalUnit?: string;
@@ -159,8 +160,20 @@ export interface BulkCerts extends RestServiceModuleAttribues {
   defaultAnswer?: boolean;
   chunksize: number;
   expiryDays?: number;
+  suppliers?: Suppliers;
+  caAlias?: string;
+  caValue?:string;
 }
 
+export interface Suppliers {
+  list?: string[];
+  cas: CA[];
+}
+
+export interface CA {
+  alias:string;
+  value:string
+}
 export interface CertificateActivator extends ServiceModuleAttributes {
   provisioningFunctionName?: string;
   assetLibraryFunctionName?: string;

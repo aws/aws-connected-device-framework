@@ -41,6 +41,14 @@ async function deployAction(
 
   if (options["dryrun"] !== undefined) {
     // Dry run only produced the config without running the deployment
+
+    // Remove unnecessary answers
+    delete answers.bulkCerts?.suppliers.list;
+    delete answers.bulkCerts?.setSupplier;
+    delete answers.bulkCerts?.caAlias;
+    delete answers.bulkCerts?.caValue;
+    answersStorage.save(answers);
+
     return;
   }
 
@@ -79,11 +87,20 @@ async function deployAction(
       } else {
         throw new Error(`Module ${name} has no install functionality defined!`);
       }
+      
     }
 
     const listr = new Listr(layerTasks, { concurrent: true });
     await listr.run();
   }
+
+  // Remove unnecessary answers
+  delete answers.bulkCerts?.suppliers.list;
+  delete answers.bulkCerts?.setSupplier;
+  delete answers.bulkCerts?.caAlias;
+  delete answers.bulkCerts?.caValue;
+  answersStorage.save(answers);
+
 
   const finishedAt = new Date().getTime();
   const took = (finishedAt - startedAt) / 1000;
