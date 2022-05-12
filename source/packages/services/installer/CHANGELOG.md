@@ -1,6 +1,13 @@
 # Change Log - @cdf/installer
 
-This log was last generated on Thu, 12 May 2022 01:58:21 GMT and should not be manually modified.
+This log was last generated on Thu, 12 May 2022 03:51:07 GMT and should not be manually modified.
+
+## 0.4.1
+Thu, 12 May 2022 03:51:07 GMT
+
+### Patches
+
+- minor bug fix, to fix issue where installer would fail due to empty answers
 
 ## 0.4.0
 Thu, 12 May 2022 01:58:21 GMT
