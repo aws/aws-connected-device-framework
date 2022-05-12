@@ -43,12 +43,13 @@ async function deployAction(
     // Dry run only produced the config without running the deployment
 
     // Remove unnecessary answers
-    delete answers.bulkCerts?.suppliers.list;
-    delete answers.bulkCerts?.setSupplier;
-    delete answers.bulkCerts?.caAlias;
-    delete answers.bulkCerts?.caValue;
-    answersStorage.save(answers);
-
+    if(answers !== undefined && answers.bulkCerts !== undefined) {
+      delete answers.bulkCerts?.suppliers?.list;
+      delete answers.bulkCerts?.setSupplier;
+      delete answers.bulkCerts?.caAlias;
+      delete answers.bulkCerts?.caValue;
+      answersStorage.save(answers);
+    }
     return;
   }
 
