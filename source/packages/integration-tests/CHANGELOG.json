@@ -2,6 +2,23 @@
   "name": "@cdf/integration-tests",
   "entries": [
     {
+      "version": "3.1.5",
+      "tag": "@cdf/integration-tests_v3.1.5",
+      "date": "Thu, 12 May 2022 21:12:39 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "better coverage for device-patcher API"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@cdf/device-patcher-client\" from `^1.1.5` to `^2.0.0`"
+          }
+        ]
+      }
+    },
+    {
       "version": "3.1.4",
       "tag": "@cdf/integration-tests_v3.1.4",
       "date": "Thu, 07 Apr 2022 05:00:50 GMT",

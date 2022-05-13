@@ -12,20 +12,20 @@
  *********************************************************************************************************************/
 import { injectable } from 'inversify';
 import {logger} from '../utils/logger.util';
-import {DeploymentTaskResource, DeploymentTaskItem } from './deploymentTask.model';
+import {PatchTaskResource, PatchTaskItem } from './patchTask.model';
 
 @injectable()
-export class DeploymentTaskAssembler {
+export class PatchTaskAssembler {
 
-    public toItem(res: DeploymentTaskResource): DeploymentTaskItem {
-        logger.debug(`deploymentTask.assembler fromResource: in: res: ${JSON.stringify(res)}`);
+    public toItem(res: PatchTaskResource): PatchTaskItem {
+        logger.debug(`patchTask.assembler fromResource: in: res: ${JSON.stringify(res)}`);
 
         if (res===undefined) {
-            logger.debug(`deploymentTask.assembler fromResource: exit: res: undefined`);
+            logger.debug(`patchTask.assembler fromResource: exit: res: undefined`);
             return undefined;
         }
 
-        const item = new DeploymentTaskItem();
+        const item = new PatchTaskItem();
 
         // common properties
         Object.keys(res).forEach(key=> {
@@ -37,7 +37,7 @@ export class DeploymentTaskAssembler {
 
     }
 
-    public toResource(item: DeploymentTaskItem): (DeploymentTaskResource) {
+    public toResource(item: PatchTaskItem): (PatchTaskResource) {
         logger.debug(`activation.assembler toResource: in: item: ${JSON.stringify(item)}`);
 
         if (item===undefined) {
@@ -45,7 +45,7 @@ export class DeploymentTaskAssembler {
             return undefined;
         }
 
-        const resource = new DeploymentTaskResource();
+        const resource = new PatchTaskResource();
 
         // common properties
         Object.keys(item).forEach(key=> {

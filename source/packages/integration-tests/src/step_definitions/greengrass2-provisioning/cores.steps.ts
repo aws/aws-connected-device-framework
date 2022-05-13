@@ -62,6 +62,7 @@ Given('greengrass2-provisioning core device {string} exists with attributes:', a
     let core: Core;
     try {
         core = await coresService.getCore(name, getAdditionalHeaders(world.authToken));
+        this['core'] = core;
     } catch (err) {
         world.errStatus = err.status;
         fail(`getCore failed, err: ${JSON.stringify(err)}`);

@@ -22,29 +22,24 @@
   gather_facts: false
   become: yes
   vars:
-    # Required params, needed to be passed as env vars i.e. flag: --extraVars "iot_role_alias=myIoTRolaAlias iot_data_endpoint=<some-endpoint>"
-    iot_role_alias: ""
-    iot_data_endpoint: ""
-    iot_cred_endpoint: ""
-    iot_thing_name: ""
 
     # signed urls for downloading the device certs
     iot_device_cred_zip_url: ""
+    # All passed through extraVars passed through from CDF:Device-Patcher Module needs to be base64 decoded
+    decoded_iot_device_cred_zip_url: "{{ iot_device_cred_zip_url | b64decode }}"
+
+    # signed urls for downloading the device config yaml
+    iot_device_config_url: ""
+    # All passed through extraVars passed through from CDF:Device-Patcher Module needs to be base64 decoded
+    decoded_iot_device_config_url: "{{ iot_device_config_url | b64decode }}"
 
     # Defaults, can be overridden through env vars if needed
+    # Any of these overrides are passed through as extraVars through Device Patcher API these would need to be base64 decoded
     iot_root_ca_url: "https://www.amazontrust.com/repository/AmazonRootCA1.pem"
     iot_greengrass_core_software_url: "https://d2s8p88vqu9w66.cloudfront.net/releases/greengrass-nucleus-latest.zip"
-
     iot_root_ca_file_name: "AmazonRootCA1.pem"
-    iot_device_cert_pem_file_name: "cert.pem"
-    iot_device_cert_key_file_name: "private.key"
     iot_greengrass_core_software_dir_name: "GreengrassCore"
-    iot_greengrass_core_version: "2.4.0"
-
     greengrass_root_dir: "/greengrass/v2"
-
-    # aws defaults
-    aws_region: "us-west-2"
 
     amazon_linux_extra_packages:
       - "corretto8"
@@ -56,12 +51,9 @@
     - name: 'Check mandatory variables are defined'
       assert:
         that:
-          - iot_role_alias != ""
-          - iot_data_endpoint != ""
-          - iot_cred_endpoint != ""
-          - iot_thing_name != ""
           - iot_device_cred_zip_url != ""
-        fail_msg: "Missing required envVars, verify the following envVars are passed [iot_role_alias, iot_data_endpoint, iot_cred_endpoint, iot_thing_name, iot_device_cred_zip_url ]"
+          - iot_device_config_url != ""
+        fail_msg: "Missing required envVars, verify the following envVars are passed [iot_device_cred_zip_url, iot_device_config_url]"
         success_msg: "Required Variables are defined"
 
     - name: Create greengrass root directory
@@ -82,8 +74,13 @@
 
     - name: Download Device Credential Zip file
       get_url:
-        url: "{{ iot_device_cred_zip_url }}"
+        url: "{{ decoded_iot_device_cred_zip_url }}"
         dest: "{{ greengrass_root_dir }}/certs.zip"
+
+    - name: Download Device Config File
+      get_url:
+        url: "{{ decoded_iot_device_config_url }}"
+        dest: "{{ iot_greengrass_core_software_dir_name }}/config.yaml"
 
     - name: Extract certs zip
       ansible.builtin.unarchive:
@@ -97,26 +94,6 @@
         dest: "{{ greengrass_root_dir }}"
         remote_src: yes
         directory_mode: yes
-
-    - name: Create the Greengrass Core Config
-      copy:
-        dest: "{{ iot_greengrass_core_software_dir_name }}/config.yaml"
-        content: |
-          system:
-            certificateFilePath: "{{ greengrass_root_dir }}/{{ iot_device_cert_pem_file_name }}"
-            privateKeyPath: "{{ greengrass_root_dir }}/{{ iot_device_cert_key_file_name }}"
-            rootCaPath: "{{ greengrass_root_dir }}/{{ iot_root_ca_file_name }}"
-            rootpath: "{{ greengrass_root_dir }}"
-            thingName: "{{ iot_thing_name }}"
-          services:
-            aws.greengrass.Nucleus:
-              componentType: "NUCLEUS"
-              version: "{{ iot_greengrass_core_version }}"
-              configuration:
-                awsRegion: "{{ aws_region }}"
-                iotRoleAlias: "{{ iot_role_alias }}"
-                iotDataEndpoint: "{{ iot_data_endpoint }}"
-                iotCredEndpoint: "{{ iot_cred_endpoint }}"
 
     - name: Download & Unarchive the Greengrass Core software within a specified directory
       ansible.builtin.unarchive:

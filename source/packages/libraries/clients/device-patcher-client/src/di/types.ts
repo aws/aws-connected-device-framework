@@ -12,7 +12,7 @@
  *********************************************************************************************************************/
 export const DEVICE_PATCHER_CLIENT_TYPES = {
 
-    DeploymentService: Symbol.for('DevicePatcherClient_DeploymentService'),
+    PatchService: Symbol.for('DevicePatcherClient_PatchService'),
     ActivationService: Symbol.for('DevicePatcherClient_ActivationService'),
     TemplatesService: Symbol.for('DevicePatcherClient_TemplatesService'),
 

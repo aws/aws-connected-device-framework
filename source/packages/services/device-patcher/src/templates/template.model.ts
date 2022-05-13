@@ -10,45 +10,47 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-export interface DeploymentSource {
-    type: DeploymentType;
+export interface PatchSource {
     bucket: string;
-    prefix: string;
+    key: string;
 }
 
-export enum DeploymentType {
+export enum PatchType {
     AGENTLESS='agentless',
     AGENTBASED='agentbased',
 }
 
-export class DeploymentTemplateItem {
+export class PatchTemplateItem {
     createdAt?: Date;
     description?: string;
     enabled?: boolean;
-    extraVars?: { [key: string]: string}
+    extraVars?: { [key: string]: string };
     name?: string;
     options?: string[];
-    playbookSource?: DeploymentSource;
-    deploymentType?: DeploymentType;
+    playbookName?: string;
+    playbookSource?: PatchSource;
+    playbookFile?: Buffer;
+    patchType?: PatchType;
     updatedAt?: Date;
     versionNo?: number;
 }
 
-export class DeploymentTemplateResource {
+export class PatchTemplateResource {
     createdAt?: Date;
     description?: string;
     enabled?: boolean;
-    extraVars?: { [key: string]: string}
+    extraVars?: { [key: string]: string };
     name?: string;
     options?: string[];
-    playbookSource?: DeploymentSource;
-    deploymentType?: DeploymentType;
+    playbookName?: string;
+    playbookSource?: PatchSource;
+    patchType?: PatchType;
     updatedAt?: Date;
     versionNo?: number;
 }
 
-export class DeploymentTemplatesListResource {
-    templates: DeploymentTemplateItem[] = [];
+export class PatchTemplatesListResource {
+    templates: PatchTemplateItem[] = [];
     pagination?: {
         lastEvaluated?: {
             name: string

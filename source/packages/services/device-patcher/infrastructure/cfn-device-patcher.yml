@@ -170,7 +170,7 @@ Resources:
               - 'sqs:GetQueueAttributes'
             Effect: Allow
             Resource:
-              - !GetAtt AgentbasedDeploymentQueue.Arn
+              - !GetAtt AgentbasedPatchQueue.Arn
               - !GetAtt SSMStateChangeEventsQueue.Arn
           - Sid: dynamodb1
             Effect: Allow
@@ -216,9 +216,11 @@ Resources:
             Action:
               - 's3:List*'
               - 's3:Get*'
+              - 's3:Put*'
+              - 's3:Delete*'
             Effect: Allow
             Resource:
-              - !Sub 'arn:aws:s3:::${ArtifactsBucket}/*'
+              - !Sub 'arn:aws:s3:::${ArtifactsBucket}/${ArtifactsKeyPrefix}*'
           - Sid: iam
             Action:
               - iam:PassRole
@@ -322,7 +324,7 @@ Resources:
           AWS_S3_ARTIFACTS_BUCKET: !Ref ArtifactsBucket
           AWS_S3_ARTIFACTS_PREFIX: !Ref ArtifactsKeyPrefix
           AWS_SSM_MANAGED_INSTANCE_ROLE: !Ref SSMManagedInstanceRole
-          AWS_SQS_QUEUES_DEPLOYMENT_TASKS: !Ref AgentbasedDeploymentQueue
+          AWS_SQS_QUEUES_PATCH_TASKS: !Ref AgentbasedPatchQueue
       Tracing: Active
 
       VpcConfig:
@@ -369,15 +371,15 @@ Resources:
           AWS_S3_ARTIFACTS_BUCKET: !Ref ArtifactsBucket
           AWS_S3_ARTIFACTS_PREFIX: !Ref ArtifactsKeyPrefix
           AWS_SSM_MANAGED_INSTANCE_ROLE: !Ref SSMManagedInstanceRole
-          AWS_SQS_QUEUES_DEPLOYMENT_TASKS: !Ref AgentbasedDeploymentQueue
+          AWS_SQS_QUEUES_PATCH_TASKS: !Ref AgentbasedPatchQueue
       Events:
-        AgentbasedDeploymentQueue:
+        AgentbasedPatchQueue:
           Type: SQS
           Properties:
-            Queue: !GetAtt AgentbasedDeploymentQueue.Arn
+            Queue: !GetAtt AgentbasedPatchQueue.Arn
 
     DependsOn:
-      - AgentbasedDeploymentQueue
+      - AgentbasedPatchQueue
 
   SSMEventsLambdaFunction:
     Type: AWS::Serverless::Function
@@ -401,7 +403,8 @@ Resources:
           AWS_S3_ARTIFACTS_BUCKET: !Ref ArtifactsBucket
           AWS_S3_ARTIFACTS_PREFIX: !Ref ArtifactsKeyPrefix
           AWS_SSM_MANAGED_INSTANCE_ROLE: !Ref SSMManagedInstanceRole
-          AWS_SQS_QUEUES_DEPLOYMENT_TASKS: !Ref AgentbasedDeploymentQueue
+          AWS_SQS_QUEUES_PATCH_TASKS: !Ref AgentbasedPatchQueue
+
       Events:
         SSMStageChangeDeloymentQueue:
           Type: SQS
@@ -508,14 +511,21 @@ Resources:
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
-          - Sid: "s3Objects"
+          - Sid: "s3logs"
             Action:
               - 's3:Put*'
             Effect: Allow
             Resource:
-              - !Sub 'arn:aws:s3:::${ArtifactsBucket}/*'
+              - !Sub 'arn:aws:s3:::${ArtifactsBucket}/${ArtifactsKeyPrefix}logs/*'
+          - Sid: "s3playbooks"
+            Action:
+              - 's3:GetObject'
+              - 's3:GetObjectVersion'
+            Effect: Allow
+            Resource:
+              - !Sub 'arn:aws:s3:::${ArtifactsBucket}/${ArtifactsKeyPrefix}playbooks/*'
 
-  AgentbasedDeploymentQueue:
+  AgentbasedPatchQueue:
     Type: AWS::SQS::Queue
     Properties:
       MessageRetentionPeriod: 604800

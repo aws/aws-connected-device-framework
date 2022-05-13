@@ -28,54 +28,54 @@ import {handleError} from '../utils/errors';
 import {logger} from '../utils/logger.util';
 
 import {TYPES} from '../di/types';
-import {DeploymentService} from './deployment.service';
-import {DeploymentAssembler} from './deployment.assembler';
-import {DeploymentResource} from './deployment.model';
+import {PatchService} from './patch.service';
+import {PatchAssembler} from './patch.assembler';
+import {PatchResource} from './patch.model';
 
 
 @controller('')
-export class DeploymentController implements interfaces.Controller {
+export class PatchController implements interfaces.Controller {
 
     public constructor(
-        @inject(TYPES.DeploymentService) private deploymentService: DeploymentService,
-        @inject(TYPES.DeploymentAssembler) private deploymentAssembler: DeploymentAssembler,
+        @inject(TYPES.PatchService) private patchService: PatchService,
+        @inject(TYPES.PatchAssembler) private patchAssembler: PatchAssembler,
     ) {}
 
-    @httpGet('/deployments/:deploymentId')
-    public async getDeployment(
+    @httpGet('/patches/:patchId')
+    public async getPatch(
         @response() res: Response,
-        @requestParam('deploymentId') deploymentId: string,
-    ): Promise<DeploymentResource> {
-        logger.debug(`Deployment.controller getDeployment: in: deploymentId: ${deploymentId}`);
+        @requestParam('patchId') patchId: string,
+    ): Promise<PatchResource> {
+        logger.debug(`Patch.controller getPatch: in: patchId: ${patchId}`);
 
-        let deploymentResource: DeploymentResource;
+        let patchResource: PatchResource;
 
         try {
-           deploymentResource = await this.deploymentService.get(deploymentId);
+           patchResource = await this.patchService.get(patchId);
         } catch (err) {
             handleError(err, res);
         }
 
-        logger.debug(`Deployment.controller getDeployment: exit: ${JSON.stringify(deploymentResource)}`);
+        logger.debug(`Patch.controller getPatch: exit: ${JSON.stringify(patchResource)}`);
 
-        return deploymentResource;
+        return patchResource;
 
     }
 
-    @httpGet('/devices/:deviceId/deployments')
-    public async listDeployments(
+    @httpGet('/devices/:deviceId/patches')
+    public async listPatches(
         @response() res: Response,
         @requestParam('deviceId') deviceId: string,
-        @queryParam('deploymentStatus') deploymentStatus: string,
+        @queryParam('patchStatus') patchStatus: string,
         @queryParam('count') count: number,
         @queryParam('exclusiveStartToken') exclusiveStartToken: string,
     ): Promise<void> {
-        logger.debug(`Deployment.controller getDeployment: in: deviceId: ${deviceId}`);
+        logger.debug(`Patch.controller getPatch: in: deviceId: ${deviceId}`);
 
         try {
-            const [items, paginationKey] = await this.deploymentService.listDeploymentsByDeviceId(deviceId, deploymentStatus, count, {nextToken: exclusiveStartToken});
-            const resources = this.deploymentAssembler.toListResource(items, count, paginationKey);
-            logger.debug(`Deployment.controller getDeployment: exit: ${JSON.stringify(resources)}`);
+            const [items, paginationKey] = await this.patchService.listPatchesByDeviceId(deviceId, patchStatus, count, {nextToken: exclusiveStartToken});
+            const resources = this.patchAssembler.toListResource(items, count, paginationKey);
+            logger.debug(`Patch.controller getPatch: exit: ${JSON.stringify(resources)}`);
 
             res.status(200).send(resources);
         } catch (err) {
@@ -83,38 +83,38 @@ export class DeploymentController implements interfaces.Controller {
         }
     }
 
-    @httpDelete('/deployments/:deploymentId')
-    public async deleteDeployment(
-        @requestParam('deploymentId') deploymentId: string,
+    @httpDelete('/patches/:patchId')
+    public async deletePatch(
+        @requestParam('patchId') patchId: string,
         @response() res: Response
     ): Promise<void> {
 
-        logger.debug(`Deployment.controller deleteDeployment: in: deploymentId: ${deploymentId}`);
+        logger.debug(`Patch.controller deletePatch: in: patchId: ${patchId}`);
 
         try {
-            await this.deploymentService.delete(deploymentId);
+            await this.patchService.delete(patchId);
         } catch (err) {
             handleError(err, res);
         }
 
-        logger.debug(`Deployment.controller delete: exit:}`);
+        logger.debug(`Patch.controller delete: exit:}`);
     }
 
-    @httpPatch('/deployments/:deploymentId')
-    public async patchDeployment(
-        @requestParam('deploymentId') deploymentId: string,
-        @requestBody() req: DeploymentResource,
+    @httpPatch('/patches/:patchId')
+    public async patchPatch(
+        @requestParam('patchId') patchId: string,
+        @requestBody() req: PatchResource,
         @response() res: Response
     ): Promise<void> {
-        logger.debug(`Deployment.controller patchDeployment: in: deploymentId: ${deploymentId}`);
+        logger.debug(`Patch.controller patchPatch: in: patchId: ${patchId}`);
 
         try {
-            await this.deploymentService.retry(deploymentId, req);
+            await this.patchService.retry(patchId, req);
         } catch (err) {
             handleError(err, res);
         }
 
-        logger.debug(`Deployment.controller patch: exit:}`);
+        logger.debug(`Patch.controller patch: exit:}`);
     }
 
 }

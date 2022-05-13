@@ -2,6 +2,18 @@
   "name": "@cdf/device-patcher-client",
   "entries": [
     {
+      "version": "2.0.0",
+      "tag": "@cdf/device-patcher-client_v2.0.0",
+      "date": "Thu, 12 May 2022 21:12:39 GMT",
+      "comments": {
+        "major": [
+          {
+            "comment": "update clients to implement new changes to the device-patcher API"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.1.5",
       "tag": "@cdf/device-patcher-client_v1.1.5",
       "date": "Thu, 07 Apr 2022 05:00:50 GMT",

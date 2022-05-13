@@ -17,53 +17,53 @@ import {ClientServiceBase} from './common.service';
 import { RequestHeaders } from './common.model';
 
 import {
-    DeploymentResponse,
-    ListDeploymentsResponse, DeploymentTaskRequest, DeploymentTaskResponse, UpdateDeploymentRequest
-} from './deployment.model'
+    PatchResponse,
+    ListPatchResponse, PatchTaskRequest, PatchTaskResponse, UpdatePatchRequest
+} from './patch.model'
 
-export interface DeploymentService {
+export interface PatchService {
 
-    createDeploymentTask(deploymentRequest: DeploymentTaskRequest, additionalHeaders?:RequestHeaders): Promise<string>;
+    createPatchTask(patchRequest: PatchTaskRequest, additionalHeaders?:RequestHeaders): Promise<string>;
 
-    getDeploymentTask(taskId: string, additionalHeaders?:RequestHeaders): Promise<DeploymentTaskResponse>;
+    getPatchTask(taskId: string, additionalHeaders?:RequestHeaders): Promise<PatchTaskResponse>;
 
-    getDeployment(deploymentId: string, additionalHeaders?:RequestHeaders): Promise<DeploymentResponse>;
+    getPatch(patchId: string, additionalHeaders?:RequestHeaders): Promise<PatchResponse>;
 
-    listDeploymentsByTaskId(taskId:string, additionalHeaders?:RequestHeaders): Promise<ListDeploymentsResponse>;
+    listPatchesByTaskId(taskId:string, additionalHeaders?:RequestHeaders): Promise<ListPatchResponse>;
 
-    listDeploymentsByDeviceId(deviceId: string, status?: string, additionalHeaders?:RequestHeaders): Promise<ListDeploymentsResponse>;
+    listPatchesByDeviceId(deviceId: string, status?: string, additionalHeaders?:RequestHeaders): Promise<ListPatchResponse>;
 
-    updateDeployment(deployment: UpdateDeploymentRequest, additionalHeaders?:RequestHeaders): Promise<void>;
+    updatePatch(patch: UpdatePatchRequest, additionalHeaders?:RequestHeaders): Promise<void>;
 
-    deleteDeployment(deploymentId: string, additionalHeaders?:RequestHeaders): Promise<void>;
+    deletePatch(patchId: string, additionalHeaders?:RequestHeaders): Promise<void>;
 
 }
 
 @injectable()
-export class DeploymentServiceBase extends ClientServiceBase {
+export class PatchServiceBase extends ClientServiceBase {
 
     constructor() {
         super();
     }
 
-    protected deploymentTasksRelativeUrl(): string {
-        return PathHelper.encodeUrl('deploymentTasks');
+    protected patchTasksRelativeUrl(): string {
+        return PathHelper.encodeUrl('patchTasks');
     }
 
-    protected deploymentTaskRelativeUrl(taskId: string): string {
-        return PathHelper.encodeUrl('deploymentTasks', taskId);
+    protected patchTaskRelativeUrl(taskId: string): string {
+        return PathHelper.encodeUrl('patchTasks', taskId);
     }
 
-    protected deploymentByTaskRelativeUrl(taskId: string): string {
-        return PathHelper.encodeUrl('deploymentTasks', taskId, 'deployments');
+    protected patchByTaskRelativeUrl(taskId: string): string {
+        return PathHelper.encodeUrl('patchTasks', taskId, 'patches');
     }
 
-    protected deploymentsRelativeUrl(deploymentId: string) : string {
-        return PathHelper.encodeUrl( 'deployments', deploymentId);
+    protected patchesRelativeUrl(patchId: string) : string {
+        return PathHelper.encodeUrl( 'patches', patchId);
     }
 
-    protected deploymentByDeviceRelativeUrl(deviceId: string) : string {
-        return PathHelper.encodeUrl('devices', deviceId, 'deployments');
+    protected patchByDeviceRelativeUrl(deviceId: string) : string {
+        return PathHelper.encodeUrl('devices', deviceId, 'patches');
     }
 
 }

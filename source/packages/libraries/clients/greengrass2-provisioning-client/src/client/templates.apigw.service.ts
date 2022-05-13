@@ -27,7 +27,7 @@ export class TemplatesApigwService extends TemplatesServiceBase implements Templ
 
     public constructor() {
         super();
-        this.baseUrl = process.env.GREENGRASSPROVISIONING_BASE_URL;
+        this.baseUrl = process.env.GREENGRASS2PROVISIONING_BASE_URL;
     }
 
     async createTemplate(template: NewTemplate, additionalHeaders?: RequestHeaders): Promise<void> {

@@ -50,11 +50,11 @@ export function isPkType(value:string, type:PkType) : boolean {
 }
 
 export enum PkType {
-    DeploymentTemplate='T',
-    DeploymentTemplateVersion='TV',
+    PatchTemplate='T',
+    PatchTemplateVersion='TV',
     Device='D',
-    DeploymentTask='DT',
-    DeviceDeploymentTask='DDT',
+    PatchTask='PT',
+    DevicePatch='DP',
     DeviceActivation='DA',
-    DeviceDeploymentAssociation='DDA'
+    DevicePatchAssociation='DPA'
 }
