@@ -12,57 +12,57 @@
  *********************************************************************************************************************/
 import { injectable } from 'inversify';
 import {logger} from '../utils/logger.util';
-import {DeploymentResource, DeploymentItem, DeploymentListResource} from './deployment.model';
-import {DeploymentListPaginationKey} from './deploymentTask.dao';
+import {PatchResource, PatchItem, PatchListResource} from './patch.model';
+import {PatchListPaginationKey} from './patchTask.dao';
 
 @injectable()
-export class DeploymentAssembler {
+export class PatchAssembler {
 
-    public toItem(res: DeploymentResource): DeploymentItem {
-        logger.debug(`deployment.assembler fromResource: in: res: ${JSON.stringify(res)}`);
+    public toItem(res: PatchResource): PatchItem {
+        logger.debug(`patch.assembler fromResource: in: res: ${JSON.stringify(res)}`);
 
         if (res===undefined) {
-            logger.debug(`deployment.assembler fromResource: exit: res: undefined`);
+            logger.debug(`patch.assembler fromResource: exit: res: undefined`);
             return undefined;
         }
 
-        const item = new DeploymentItem();
+        const item = new PatchItem();
 
         // common properties
         Object.keys(res).forEach(key=> {
             item[key] = res[key];
         });
 
-        logger.debug(`deployment.assembler fromResource: exit: item: ${JSON.stringify(item)}`);
+        logger.debug(`patch.assembler fromResource: exit: item: ${JSON.stringify(item)}`);
         return item;
 
     }
 
-    public toResource(item: DeploymentItem): (DeploymentResource) {
-        logger.debug(`deployment.assembler toResource: in: item: ${JSON.stringify(item)}`);
+    public toResource(item: PatchItem): (PatchResource) {
+        logger.debug(`patch.assembler toResource: in: item: ${JSON.stringify(item)}`);
 
         if (item===undefined) {
-            logger.debug(`deployment.assembler toResource: exit: item: undefined`);
+            logger.debug(`patch.assembler toResource: exit: item: undefined`);
             return undefined;
         }
 
-        const resource = new DeploymentResource();
+        const resource = new PatchResource();
 
         // common properties
         Object.keys(item).forEach(key=> {
             resource[key] = item[key];
         });
 
-        logger.debug(`deployment.assembler toResource: exit: resource: ${JSON.stringify(resource)}`);
+        logger.debug(`patch.assembler toResource: exit: resource: ${JSON.stringify(resource)}`);
         return resource;
 
     }
 
-    public toListResource(items: DeploymentItem[], count?:number, paginateFrom?:DeploymentListPaginationKey): DeploymentListResource {
-        logger.debug(`deployment.assembler toListResource: in: items:${JSON.stringify(items)}, count:${count}, paginateFrom:${JSON.stringify(paginateFrom)}`);
+    public toListResource(items: PatchItem[], count?:number, paginateFrom?:PatchListPaginationKey): PatchListResource {
+        logger.debug(`patch.assembler toListResource: in: items:${JSON.stringify(items)}, count:${count}, paginateFrom:${JSON.stringify(paginateFrom)}`);
 
-        const list:DeploymentListResource= {
-            deployments:[]
+        const list:PatchListResource= {
+            patches:[]
         };
 
         if (count!==undefined || paginateFrom!==undefined) {
@@ -80,10 +80,10 @@ export class DeploymentAssembler {
         }
 
         if ((items?.length??0)>0) {
-            list.deployments = items.map(i=> this.toResource(i))
+            list.patches = items.map(i=> this.toResource(i))
         }
 
-        logger.debug(`deployment.assembler toListResource: exit: ${JSON.stringify(list)}`);
+        logger.debug(`patch.assembler toListResource: exit: ${JSON.stringify(list)}`);
         return list;
     }
 }

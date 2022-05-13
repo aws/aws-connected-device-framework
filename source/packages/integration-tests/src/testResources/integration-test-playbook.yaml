@@ -1,0 +1,22 @@
+---
+- hosts: all
+  remote_user: ec2_user
+  gather_facts: false
+  become: yes
+  vars:
+    # Required params, needed to be passed as env vars i.e. flag: --extraVars "commonVar1=commonVarVal1"
+    commonVar1: ""
+    commonVar2: ""
+    uniqueVar1: ""
+    uniqueVar2: ""
+
+  tasks:
+    - name: 'Check mandatory variables are defined'
+      assert:
+        that:
+          - commonVar1 != ""
+          - commonVar2 != ""
+          - uniqueVar1 != ""
+          - uniqueVar2 != ""
+        fail_msg: "Missing required envVars "
+        success_msg: "Required Variables are defined"

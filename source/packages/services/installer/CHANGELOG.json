@@ -2,6 +2,30 @@
   "name": "@cdf/installer",
   "entries": [
     {
+      "version": "0.4.2",
+      "tag": "@cdf/installer_v0.4.2",
+      "date": "Thu, 12 May 2022 21:12:39 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "minor updates for device-patcher deployment"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.4.1",
+      "tag": "@cdf/installer_v0.4.1",
+      "date": "Thu, 12 May 2022 03:51:07 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "minor bug fix, to fix issue where installer would fail due to empty answers"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.4.0",
       "tag": "@cdf/installer_v0.4.0",
       "date": "Thu, 12 May 2022 01:58:21 GMT",

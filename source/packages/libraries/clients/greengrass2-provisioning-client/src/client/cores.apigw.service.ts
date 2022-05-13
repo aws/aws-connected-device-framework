@@ -28,7 +28,7 @@ export class CoresApigwService extends CoresServiceBase implements CoresService 
 
     public constructor() {
         super();
-        this.baseUrl = process.env.GREENGRASSPROVISIONING_BASE_URL;
+        this.baseUrl = process.env.GREENGRASS2PROVISIONING_BASE_URL;
     }
 
     async createCoreTask(task: NewCoreTask, additionalHeaders?: RequestHeaders): Promise<string> {
