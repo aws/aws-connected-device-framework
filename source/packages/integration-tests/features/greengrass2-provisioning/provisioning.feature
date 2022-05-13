@@ -178,7 +178,7 @@ Feature: GreengrassV2 Provisioning
       | $.taskStatus                                                    | Success                                                                |
       | $.createdAt                                                     | ___regex___:^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}).(\d{3})Z$ |
       | $.updatedAt                                                     | ___regex___:^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}).(\d{3})Z$ |
-    And I pause for 30000ms
+    And I pause for 60000ms
     Then fleet summary should be updated with this attributes:
       | $.templates.IntegrationTest.latestVersion                    | 2 |
       | $.templates.IntegrationTest.versions.2.desiredInUse          | 1 |
