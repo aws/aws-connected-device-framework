@@ -68,6 +68,7 @@ stages:
   - deployLive
   - upload
   - triggerCpp
+  - release
 
 ### not working at the moment, therefore using artifacts as a temp workaround
 # cache:
@@ -138,6 +139,7 @@ branchTest:
     - export RUSH_PARALLELISM=8
     - cd ${CI_PROJECT_DIR}
     - bash -c source/cicd/buildproject_postbuild.bash
+    #
   <<: *common-artifacts
 
 test:
@@ -222,3 +224,17 @@ triggerCpp:
   trigger:
     project: robotics-and-engineering-gsp/cdf/aws-connected-product-platform
     branch: main
+
+release:
+  image:
+    name: public.ecr.aws/lambda/nodejs:14
+    entrypoint: [""]
+  stage: release
+  before_script:
+    - *common-install-deployment-dependencies
+  rules:
+    - *default-run-condition
+  script:
+    # Create release package
+    - tar -cvf ../aws-connected-device-framework.tar --exclude=node_modules --exclude=.git --exclude=dist --exclude=deploy --exclude=.history --exclude=temp .
+    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ../aws-connected-device-framework.tar "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/aws-connected-device-framework/${CI_JOB_ID}/aws-connected-device-framework.tar"'
