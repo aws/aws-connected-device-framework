@@ -12,7 +12,7 @@
  *********************************************************************************************************************/
 
 import { expect } from 'chai';
-import { Given, setDefaultTimeout, TableDefinition, Then, When } from 'cucumber';
+import { Given, setDefaultTimeout, DataTable, Then, When } from '@cucumber/cucumber';
 import stringify from 'json-stable-stringify';
 
 import { CommandModel, COMMANDS_CLIENT_TYPES, CommandsService } from '@cdf/commands-client';
@@ -43,7 +43,7 @@ function getAdditionalHeaders(world:unknown) : Dictionary {
 
 const iot: AWS.Iot = new AWS.Iot({region: process.env.AWS_REGION});
 
-function buildCommandModel(data:TableDefinition) {
+function buildCommandModel(data:DataTable) {
     const d = data.rowsHash();
 
     const command = { } as CommandModel;
@@ -64,12 +64,12 @@ function buildCommandModel(data:TableDefinition) {
     return command;
 }
 
-async function createCommand (world:unknown, data:TableDefinition) {
+async function createCommand (world:unknown, data:DataTable) {
     const command = buildCommandModel(data);
     return await commandsService.createCommand(command, getAdditionalHeaders(world));
 }
 
-async function updateCommand (world:unknown, commandId:string, data:TableDefinition) {
+async function updateCommand (world:unknown, commandId:string, data:DataTable) {
     const command = buildCommandModel(data);
     command.commandId = commandId;
     return await commandsService.updateCommand(command, getAdditionalHeaders(world));
@@ -92,7 +92,7 @@ Given('last command exists', async function () {
 
 });
 
-When('I create a command with attributes', async function (data:TableDefinition) {
+When('I create a command with attributes', async function (data:DataTable) {
     this[COMMAND_ID]=null;
     this[RESPONSE_STATUS]=null;
     try {
@@ -102,7 +102,7 @@ When('I create a command with attributes', async function (data:TableDefinition)
     }
 });
 
-When('I update last command with attributes', async function (data:TableDefinition) {
+When('I update last command with attributes', async function (data:DataTable) {
     this[RESPONSE_STATUS]=null;
 
     const commandId = this[COMMAND_ID];
@@ -124,7 +124,7 @@ When('I upload file {string} to last command as file alias {string}', async func
 
 });
 
-Then('last command exists with attributes', async function (data:TableDefinition) {
+Then('last command exists with attributes', async function (data:DataTable) {
     this[RESPONSE_STATUS]=null;
     this[COMMAND_DETAILS]=null;
     const commandId = this[COMMAND_ID];

@@ -1,6 +1,13 @@
 # Change Log - @cdf/deployment-helper
 
-This log was last generated on Thu, 17 Feb 2022 09:27:38 GMT and should not be manually modified.
+This log was last generated on Mon, 21 Mar 2022 21:58:32 GMT and should not be manually modified.
+
+## 3.0.1
+Mon, 21 Mar 2022 21:58:32 GMT
+
+### Patches
+
+- Upgrade dependencies marked as deprecated
 
 ## 3.0.0
 Thu, 17 Feb 2022 09:27:38 GMT

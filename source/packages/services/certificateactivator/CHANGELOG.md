@@ -1,6 +1,20 @@
 # Change Log - @cdf/certificate-activator
 
-This log was last generated on Thu, 17 Feb 2022 09:27:38 GMT and should not be manually modified.
+This log was last generated on Tue, 22 Mar 2022 07:59:08 GMT and should not be manually modified.
+
+## 4.0.3
+Tue, 22 Mar 2022 07:59:08 GMT
+
+### Patches
+
+- Upgrade dependencies marked as deprecated
+
+## 4.0.1
+Thu, 10 Mar 2022 00:08:34 GMT
+
+### Patches
+
+- correct typo in assetlibrary client import
 
 ## 4.0.0
 Thu, 17 Feb 2022 09:27:38 GMT

@@ -13,12 +13,19 @@
 import { NodeAttributeValue } from './node';
 export type ModelAttributeValue = string | number | boolean;
 
-export type StringToArrayMap = { [key: string] : string[]};
+export type StringArrayMap = { [key: string] : string[]};
+export type RelatedEntity = { id:string, isAuthCheck?:boolean};
+export type RelatedEntityArrayMap = { [key: string] : RelatedEntity[]};
 
-export type DirectionStringToArrayMap = {
-	in?: StringToArrayMap,
-	out?: StringToArrayMap
+export type DirectionToStringArrayMap = {
+	in?: StringArrayMap,
+	out?: StringArrayMap
 };
+export type DirectionToRelatedEntityArrayMap = {
+	in?: RelatedEntityArrayMap,
+	out?: RelatedEntityArrayMap
+};
+
 
 export type SortDirection = 'ASC' | 'DESC';
 export type SortKey = {
@@ -44,15 +51,6 @@ export function assembleSortKeys(sort?:string) : SortKeys {
     return sk;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function applyMixins(derivedCtor: any, baseCtors: any[]) : void{
-    baseCtors.forEach(baseCtor => {
-        Object.getOwnPropertyNames(baseCtor.prototype).forEach(name => {
-            Object.defineProperty(derivedCtor.prototype, name, Object.getOwnPropertyDescriptor(baseCtor.prototype, name));
-        });
-    });
-}
-
 export function safeExtractLabels(rawLabelAttribute:NodeAttributeValue) : string[] {
     let labels: string[] = [];
     if (Array.isArray(rawLabelAttribute) && rawLabelAttribute.length>=2) {
@@ -64,3 +62,10 @@ export function safeExtractLabels(rawLabelAttribute:NodeAttributeValue) : string
     }
     return labels;
 }
+
+export interface EntityTypeMap {
+    [id: string] : string[];
+}
+
+export type RelationDirection = 'in'|'out';
+export type OmniRelationDirection = RelationDirection|'both';

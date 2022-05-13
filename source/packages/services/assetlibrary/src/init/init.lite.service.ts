@@ -11,13 +11,14 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { injectable } from 'inversify';
+import { NotSupportedError } from '../utils/errors';
 import { InitService } from './init.service';
 
 @injectable()
 export class InitServiceLite implements InitService {
 
     public async init(): Promise<void> {
-        throw new Error('NOT_SUPPORTED');
+        throw new NotSupportedError();
     }
 
 }

@@ -11,45 +11,52 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import { injectable, inject } from 'inversify';
-import { DeviceItem, BulkDevicesResult, DeviceState, DeviceItemList} from './devices.models';
-import { DevicesAssembler} from './devices.assembler';
-import { TYPES } from '../di/types';
-import { DevicesDaoFull} from './devices.full.dao';
-import { GroupsService} from '../groups/groups.service';
-import {logger} from '../utils/logger';
-import {TypesService} from '../types/types.service';
-import {TypeCategory, Operation} from '../types/constants';
-import {Node} from '../data/node';
-import {EventEmitter, Type, Event} from '../events/eventEmitter.service';
+import { inject, injectable } from 'inversify';
 import ow from 'ow';
-import { ProfilesService } from '../profiles/profiles.service';
-import { DeviceProfileItem } from '../profiles/profiles.models';
-import { DevicesService } from './devices.service';
+
+import { AuthzServiceFull } from '../authz/authz.full.service';
+import { ClaimAccess } from '../authz/claims';
+import { RelatedEntityArrayMap, SortKeys, DirectionToRelatedEntityArrayMap, RelationDirection, OmniRelationDirection } from '../data/model';
+import { Node } from '../data/node';
+import { TYPES } from '../di/types';
+import { Event, EventEmitter, Type } from '../events/eventEmitter.service';
 import { GroupsAssembler } from '../groups/groups.assembler';
 import { GroupItemList } from '../groups/groups.models';
-import { DirectionStringToArrayMap, SortKeys } from '../data/model';
-import { ClaimAccess } from '../authz/claims';
-import { AuthzServiceFull } from '../authz/authz.full.service';
+import { GroupsService } from '../groups/groups.service';
+import { DeviceProfileItem } from '../profiles/profiles.models';
+import { ProfilesService } from '../profiles/profiles.service';
+import { Operation, TypeCategory } from '../types/constants';
+import { SchemaValidatorService } from '../types/schemaValidator.full.service';
+import { TypeDefinitionStatus } from '../types/types.models';
+import { TypesService } from '../types/types.service';
+import { DeviceNotFoundError, GroupNotFoundError, RelationValidationError, ProfileNotFoundError, SchemaValidationError, TemplateNotFoundError } from '../utils/errors';
+import { logger } from '../utils/logger';
 import { TypeUtils } from '../utils/typeUtils';
+import { DevicesAssembler } from './devices.assembler';
+import { DevicesDaoFull } from './devices.full.dao';
+import { BulkDevicesResult, DeviceItem, DeviceItemList, DeviceState } from './devices.models';
+import { DevicesService } from './devices.service';
 
 @injectable()
 export class DevicesServiceFull implements DevicesService {
 
-    constructor( @inject(TYPES.DevicesDao) private devicesDao: DevicesDaoFull,
-        @inject(TYPES.TypeUtils) private typeUtils: TypeUtils,
-        @inject(TYPES.TypesService) private typesService: TypesService,
+    constructor( 
+        @inject('authorization.enabled') private isAuthzEnabled: boolean,
+        @inject('defaults.devices.parent.groupPath') public defaultDeviceParentGroup: string,
+        @inject('defaults.devices.parent.relation') public defaultDeviceParentRelation: string,
+        @inject('defaults.devices.state') public defaultDeviceState: string,
+        @inject(TYPES.AuthzServiceFull) private authServiceFull: AuthzServiceFull,
         @inject(TYPES.DevicesAssembler) private devicesAssembler: DevicesAssembler,
+        @inject(TYPES.DevicesDao) private devicesDao: DevicesDaoFull,
+        @inject(TYPES.EventEmitter) private eventEmitter: EventEmitter,
         @inject(TYPES.GroupsAssembler) private groupsAssembler: GroupsAssembler,
         @inject(TYPES.GroupsService) private groupsService: GroupsService,
-        @inject(TYPES.EventEmitter) private eventEmitter: EventEmitter,
         @inject(TYPES.ProfilesService) private profilesService: ProfilesService,
-        @inject(TYPES.AuthzServiceFull) private authServiceFull: AuthzServiceFull,
-        @inject('defaults.devices.parent.relation') public defaultDeviceParentRelation: string,
-        @inject('defaults.devices.parent.groupPath') public defaultDeviceParentGroup: string,
-        @inject('defaults.devices.state') public defaultDeviceState: string) {}
+        @inject(TYPES.SchemaValidatorService) private validator: SchemaValidatorService,
+        @inject(TYPES.TypesService) private typesService: TypesService,
+        @inject(TYPES.TypeUtils) private typeUtils: TypeUtils) {}
 
-    public async listRelatedDevices(deviceId: string, relationship: string, direction:string, template:string, state:string, offset:number, count:number, sort:SortKeys) : Promise<DeviceItemList> {
+    public async listRelatedDevices(deviceId: string, relationship: string, direction:OmniRelationDirection, template:string, state:string, offset:number, count:number, sort:SortKeys) : Promise<DeviceItemList> {
         logger.debug(`device.full.service listRelatedDevices: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, template:${template}, state:${state}, offset:${offset}, count:${count}, sort:${JSON.stringify(sort)}`);
 
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
@@ -69,15 +76,9 @@ export class DevicesServiceFull implements DevicesService {
         // any ids need to be lowercase
         deviceId=deviceId.toLowerCase();
         relationship=relationship.toLowerCase();
-        if (template) {
-            template=template.toLowerCase();
-        }
-        if (state) {
-            state=state.toLowerCase();
-        }
-        if (direction) {
-            direction=direction.toLowerCase();
-        }
+        template=template.toLowerCase();
+        state=state.toLowerCase();
+        direction=direction.toLowerCase() as OmniRelationDirection;
 
         await this.authServiceFull.authorizationCheck([deviceId], [], ClaimAccess.R);
 
@@ -93,7 +94,7 @@ export class DevicesServiceFull implements DevicesService {
         return model;
     }
 
-    public async listRelatedGroups(deviceId: string, relationship: string, direction:string, template:string, offset:number, count:number, sort:SortKeys) : Promise<GroupItemList> {
+    public async listRelatedGroups(deviceId: string, relationship: string, direction:OmniRelationDirection, template:string, offset:number, count:number, sort:SortKeys) : Promise<GroupItemList> {
         logger.debug(`device.full.service listRelatedGroups: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, template:${template}, offset:${offset}, count:${count}, sort:${JSON.stringify(sort)}`);
 
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
@@ -110,10 +111,8 @@ export class DevicesServiceFull implements DevicesService {
         // any ids need to be lowercase
         deviceId=deviceId.toLowerCase();
         relationship=relationship.toLowerCase();
-        if (template) {
-            template=template.toLowerCase();
-        }
-        direction=direction.toLowerCase();
+        template=template.toLowerCase();
+        direction=direction.toLowerCase() as OmniRelationDirection;
 
         // note: workaround for weird typescript issue. even though offset/count are declared as numbers
         // throughout, they are being interpreted as strings, therefore need to force to int beforehand
@@ -216,7 +215,7 @@ export class DevicesServiceFull implements DevicesService {
         // retrieve profile
         const profile = await this.profilesService.get(model.templateId, applyProfile) as DeviceProfileItem;
         if (profile===undefined) {
-            throw new Error('INVALID_PROFILE');
+            throw new ProfileNotFoundError(applyProfile);
         }
 
         // apply profile to unset attributes
@@ -262,88 +261,96 @@ export class DevicesServiceFull implements DevicesService {
 
     }
 
-    public async create(model: DeviceItem, applyProfile?:string) : Promise<string> {
-        logger.debug(`device.full.service create: in: model: ${JSON.stringify(model)}, applyProfile:${applyProfile}`);
+    public async create(device: DeviceItem, applyProfile?:string) : Promise<string> {
+        logger.debug(`device.full.service create: in: device: ${JSON.stringify(device)}, applyProfile:${applyProfile}`);
 
-        ow(model, ow.object.nonEmpty);
-        ow(model.templateId, ow.string.nonEmpty);
-        ow(model.deviceId, ow.string.nonEmpty);
+        ow(device, ow.object.nonEmpty);
+        ow(device.templateId, ow.string.nonEmpty);
+        ow(device.deviceId, ow.string.nonEmpty);
 
         // if a profile to apply has been provided, apply it first
         if (applyProfile!==undefined) {
-            model = await this.applyProfile(model, applyProfile);
+            device = await this.applyProfile(device, applyProfile);
         }
 
         // remove any non printable characters from the id
-        model.deviceId = model.deviceId.replace(/[^\x20-\x7E]+/g, '');
+        device.deviceId = device.deviceId.replace(/[^\x20-\x7E]+/g, '');
 
         // any ids need to be lowercase
-        this.setIdsToLowercase(model);
+        this.setIdsToLowercase(device);
 
-        // default initial association if none provided
-        if ( (model.groups===undefined || (model.groups.in===undefined && model.groups.out===undefined)) &&
-             (model.devices===undefined || (model.devices.in===undefined && model.devices.out===undefined)) &&
-             this.defaultDeviceParentRelation!=='' && this.defaultDeviceParentGroup!=='') {
-            model.groups= {
-                out: {}
+        // default initial associations if none provided
+        if ( (device.groups?.in===undefined && device.groups?.out===undefined) &&
+             (device.devices?.in===undefined && device.devices?.out===undefined) &&
+             (this.defaultDeviceParentRelation??'')!=='' && (this.defaultDeviceParentGroup??'')!=='') {
+            device.groups = { 
+                out: { 
+                    [this.defaultDeviceParentRelation]: [{
+                        id: this.defaultDeviceParentGroup,
+                    }]
+                } 
             };
-            model.groups.out[this.defaultDeviceParentRelation] = [this.defaultDeviceParentGroup];
         }
 
-        // we cant check authz til here, as we need to understand any related devices and groups first
-        await this.authServiceFull.authorizationCheck(model.listRelatedDeviceIds(), model.listRelatedGroupPaths(), ClaimAccess.C);
+        // we can't check authz til here, as we need to understand any related devices and groups first
+        await this.authServiceFull.authorizationCheck(device.listRelatedDeviceIds(), device.listRelatedGroupPaths(), ClaimAccess.C);
 
         // default initial state if none provided
-        if (model.state===undefined && this.defaultDeviceState!==undefined) {
-            model.state = <DeviceState> this.defaultDeviceState;
+        if (device.state===undefined && this.defaultDeviceState!==undefined) {
+            device.state = <DeviceState> this.defaultDeviceState;
         }
 
         // perform validation of the device...
-        const validateSubTypeFuture = this.typesService.validateSubType(model.templateId, TypeCategory.Device, model, Operation.CREATE);
-        const validateGroupRelationshipsFuture = this.typesService.validateRelationshipsByPath(model.templateId, model.groups);
-        const validateDeviceRelationshipsFuture = this.typesService.validateRelationshipsByType(model.templateId, model.devices);
-        const results = await Promise.all([validateSubTypeFuture, validateGroupRelationshipsFuture, validateDeviceRelationshipsFuture]);
+        const template = await this.typesService.get(device.templateId, TypeCategory.Device, TypeDefinitionStatus.published);
+        if (template===undefined) {
+            throw new TemplateNotFoundError(device.templateId);
+        }
+        const validateSubTypeFuture = this.validator.validateSubType(template, device, Operation.CREATE);
+        const validateRelationshipsFuture = this.validator.validateRelationshipsByIds(template, device.groups, device.devices);
+        const [subTypeValidation,validateRelationships] = await Promise.all([validateSubTypeFuture, validateRelationshipsFuture]);
 
         // schema validation results
-        const subTypeValidation = results[0];
         if (!subTypeValidation.isValid) {
-            throw new Error('FAILED_VALIDATION');
+            throw new SchemaValidationError(subTypeValidation.errors);
         }
 
-        // validate the path associations
-        const groupRelationshipsValidation=results[1];
-        if (!groupRelationshipsValidation)  {
-            throw new Error('INVALID_RELATION');
+        // validate the id associations
+        if (!validateRelationships.isValid)  {
+            throw new RelationValidationError(validateRelationships);
         }
 
-        // validate the device associations
-        const deviceRelationshipsValidation=results[2];
-        if (!deviceRelationshipsValidation)  {
-            throw new Error('INVALID_RELATION');
+        // if fgac is enabled, we need to ensure any relations configured as identifying auth in its template are flagged to be saved as so
+        if (this.isAuthzEnabled) {
+            const incomingAuthRelations = template.schema.relations.incomingAuthRelations();
+            const outgoingAuthRelations = template.schema.relations.outgoingAuthRelations();
+            this.authServiceFull.updateRelsIdentifyingAuth(device.groups?.in, validateRelationships.groupLabels, incomingAuthRelations);
+            this.authServiceFull.updateRelsIdentifyingAuth(device.groups?.out, validateRelationships.groupLabels, outgoingAuthRelations);
+            this.authServiceFull.updateRelsIdentifyingAuth(device.devices?.in, validateRelationships.deviceLabels, incomingAuthRelations);
+            this.authServiceFull.updateRelsIdentifyingAuth(device.devices?.out, validateRelationships.deviceLabels, outgoingAuthRelations);
         }
 
         // Assemble devicemodel into node
-        model.category = TypeCategory.Device;
-        const node = this.devicesAssembler.toNode(model);
+        device.category = TypeCategory.Device;
+        const node = this.devicesAssembler.toNode(device);
 
         // Assemble the devices components
         const components: Node[]=[];
-        if (model.components!==undefined) {
-            model.components.forEach(c=> {
+        if (device.components!==undefined) {
+            device.components.forEach(c=> {
                 c.category = TypeCategory.Component;
                 components.push(this.devicesAssembler.toNode(c));
             });
         }
 
         // Save to datastore
-        const id = await this.devicesDao.create(node, model.groups, model.devices, components);
+        const id = await this.devicesDao.create(node, device.groups, device.devices, components);
 
         // fire event
         await this.eventEmitter.fire({
-            objectId: model.deviceId,
+            objectId: device.deviceId,
             type: Type.device,
             event: Event.create,
-            payload: JSON.stringify(model)
+            payload: JSON.stringify(device)
         });
 
         logger.debug(`device.full.service create: exit: id: ${id}`);
@@ -355,58 +362,31 @@ export class DevicesServiceFull implements DevicesService {
         logger.debug(`device.full.service setIdsToLowercase: in:`);
 
         model.deviceId = model.deviceId.toLowerCase();
-        if (model.templateId!==undefined) {
-            model.templateId = model.templateId.toLowerCase();
-        }
-        if (model.groups) {
-            if (model.groups.in) {
-                Object.keys(model.groups.in).forEach(k=> {
-                    model.groups.in[k] = model.groups.in[k].map(p => {
-                        if (p===undefined) {
-                            return p;
-                        } else {
-                            return p.toLowerCase();
-                        }
-                    });
-                });
-            }
-            if (model.groups.out) {
-                Object.keys(model.groups.out).forEach(k=> {
-                    model.groups.out[k] = model.groups.out[k].map(p => {
-                        if (p===undefined) {
-                            return p;
-                        } else {
-                            return p.toLowerCase();
-                        }
-                    });
-                });
-            }
+        model.templateId = model.templateId?.toLowerCase();
 
+        const relatedIdToLowercase = (rels: RelatedEntityArrayMap) => {
+            /* lowercasting values */
+            Object.values(rels).forEach(entities=> {
+                entities.forEach(entity=> entity.id = entity.id.toLowerCase());
+            });
+            /* lowercasting keys */
+            rels = Object.fromEntries(
+                Object.entries(rels).map(([k,v]) => [k.toLowerCase(),v]));
+            return rels;
+        };
+        if (model.groups?.in) {
+            model.groups.in = relatedIdToLowercase(model.groups.in);
         }
-        if (model.devices) {
-            if (model.devices.in)  {
-                Object.keys(model.devices.in).forEach(k=> {
-                    model.devices.in[k] = model.devices.in[k].map(d => {
-                        if (d===undefined) {
-                            return d;
-                        } else {
-                            return d.toLowerCase();
-                        }
-                    });
-                });
-            }
-            if (model.devices.out)  {
-                Object.keys(model.devices.out).forEach(k=> {
-                    model.devices.out[k] = model.devices.out[k].map(d => {
-                        if (d===undefined) {
-                            return d;
-                        } else {
-                            return d.toLowerCase();
-                        }
-                    });
-                });
-            }
+        if (model.groups?.out) {
+            model.groups.out = relatedIdToLowercase(model.groups.out);
         }
+        if (model.devices?.in) {
+            model.devices.in = relatedIdToLowercase(model.devices.in);
+        }
+        if (model.devices?.out) {
+            model.devices.out = relatedIdToLowercase(model.devices.out);
+        }
+
         if (model.components) {
             model.components = model.components.map(c => {
                 if (c && c.deviceId) {
@@ -447,56 +427,57 @@ export class DevicesServiceFull implements DevicesService {
         return response;
     }
 
-    public async update(model:DeviceItem, applyProfile?:string) : Promise<void> {
-        logger.debug(`device.full.service update: in: model: ${JSON.stringify(model)}, applyProfile:${applyProfile}`);
+    public async update(device:DeviceItem, applyProfile?:string) : Promise<void> {
+        logger.debug(`device.full.service update: in: model: ${JSON.stringify(device)}, applyProfile:${applyProfile}`);
 
-        ow(model, ow.object.nonEmpty);
-        ow(model.deviceId, ow.string.nonEmpty);
+        ow(device, ow.object.nonEmpty);
+        ow(device.deviceId, ow.string.nonEmpty);
 
         // if a profile to apply has been provided, apply it first
         if (applyProfile!==undefined) {
-            const existing = await this.get(model.deviceId);
+            const existing = await this.get(device.deviceId);
             if (existing===undefined) {
-                throw new Error('NOT_FOUND');
+                throw new DeviceNotFoundError(device.deviceId);
             }
-            const merged = Object.assign(new DeviceItem(), existing, model);
-            model = await this.applyProfile(merged, applyProfile);
+            const merged = Object.assign(new DeviceItem(), existing, device);
+            device = await this.applyProfile(merged, applyProfile);
         }
 
         // any ids need to be lowercase
-        this.setIdsToLowercase(model);
+        this.setIdsToLowercase(device);
 
-        const deviceIds=model.listRelatedDeviceIds();
-        deviceIds.push(model.deviceId);
-        await this.authServiceFull.authorizationCheck(deviceIds, model.listRelatedGroupPaths(), ClaimAccess.U);
+        // authz check
+        const deviceIds=device.listRelatedDeviceIds();
+        deviceIds.push(device.deviceId);
+        await this.authServiceFull.authorizationCheck(deviceIds, device.listRelatedGroupPaths(), ClaimAccess.U);
 
-        const labels = await this.devicesDao.getLabels(model.deviceId);
-        if (labels===undefined) {
-            throw new Error('NOT_FOUND');
+        const labels = await this.devicesDao.getLabels([device.deviceId]);
+        const templateId = labels[device.deviceId]?.[0];
+        if (templateId===undefined) {
+            throw new TemplateNotFoundError(templateId);
         }
 
-        const templateId = labels.filter(l=> l!=='device' && l!=='component')[0];
-
         // schema validation
-        const validate = await this.typesService.validateSubType(templateId, TypeCategory.Device, model, Operation.UPDATE);
+        const template = await this.typesService.get(templateId, TypeCategory.Device, TypeDefinitionStatus.published);
+        const validate = await this.validator.validateSubType(template, device, Operation.UPDATE);
         if (!validate.isValid) {
-            throw new Error('FAILED_VALIDATION');
+            throw new SchemaValidationError(validate.errors);
         }
 
         // Assemble devicemodel into node
-        model.category = TypeCategory.Device;
-        model.templateId = templateId;
-        const node = this.devicesAssembler.toNode(model);
+        device.category = TypeCategory.Device;
+        device.templateId = templateId;
+        const node = this.devicesAssembler.toNode(device);
 
         // Save to datastore
         await this.devicesDao.update(node);
 
         // fire event
         await this.eventEmitter.fire({
-            objectId: model.deviceId,
+            objectId: device.deviceId,
             type: Type.device,
             event: Event.modify,
-            payload: JSON.stringify(model)
+            payload: JSON.stringify(device)
         });
 
         logger.debug(`device.full.service update: exit:`);
@@ -530,12 +511,12 @@ export class DevicesServiceFull implements DevicesService {
 
     }
 
-    public async attachToGroup(deviceId:string, relationship:string, direction:string, groupPath:string) : Promise<void>{
+    public async attachToGroup(deviceId:string, relationship:string, direction:RelationDirection, groupPath:string) : Promise<void>{
         logger.debug(`device.full.service attachToGroup: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, groupPath:${groupPath}`);
 
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
         ow(relationship,'relationship', ow.string.nonEmpty);
-        ow(direction,'direction', ow.string.nonEmpty);
+        ow(direction,'direction', ow.string.oneOf(['in','out']));
         ow(groupPath,'groupPath', ow.string.nonEmpty);
 
         // any ids need to be lowercase
@@ -548,34 +529,49 @@ export class DevicesServiceFull implements DevicesService {
         // fetch the existing device / group
         const deviceFuture = this.get(deviceId, false, [], true);
         const groupFuture = this.groupsService.get(groupPath, false);
-        const results = await Promise.all([deviceFuture, groupFuture]);
-        const device = results[0];
-        const group = results[1];
-
+        const [device,group] = await Promise.all([deviceFuture, groupFuture]);
+        
         // make sure they exist
-        if (device===undefined || group===undefined) {
-            throw new Error('NOT_FOUND');
+        if (device===undefined ) {
+            throw new DeviceNotFoundError(deviceId);
         }
-
+        if (group===undefined) {
+            throw new GroupNotFoundError(groupPath);
+        }
+        
         // if the relation already exists, there's no need to continue
-        if (device.groups !== undefined && device.groups[direction] !== undefined && device.groups[direction][relationship] !== undefined &&
-            device.groups[direction][relationship].includes(groupPath)) {
+        if (device.groups?.[direction]?.[relationship]?.find(e=> e.id===groupPath)) {
             logger.debug(`device.full.service attachToGroup: relation already exits:`);
             return;
         }
-
+        
         // ensure that the group relation is allowed
-        const rels: DirectionStringToArrayMap = {};
-        rels[direction]= {};
-        rels[direction][relationship] = [ group.groupPath ];
+        const relatedGroup: DirectionToRelatedEntityArrayMap = {
+            [direction]: {
+                [relationship]: [{
+                    id: groupPath,
+                }]
+            }
+        };
+        
+        const template = await this.typesService.get(device.templateId, TypeCategory.Device, TypeDefinitionStatus.published);
+        const validateRelationships = await this.validator.validateRelationshipsByIds(template, relatedGroup, undefined);
+        if (!validateRelationships.isValid) {
+            throw new RelationValidationError(validateRelationships);
+        }
 
-        const isValid = await this.typesService.validateRelationshipsByPath(device.templateId, rels);
-        if (!isValid) {
-            throw new Error('FAILED_VALIDATION');
+        // if fgac is enabled, we need to ensure any relations configured as identifying auth in its template are flagged to be saved as so
+        let isAuthCheck = true;
+        if (this.isAuthzEnabled) {
+            const authRelations = (direction==='in') ?
+                    template.schema.relations.incomingAuthRelations() : 
+                    template.schema.relations.outgoingAuthRelations();
+            this.authServiceFull.updateRelsIdentifyingAuth(relatedGroup[direction], validateRelationships.groupLabels, authRelations);
+            isAuthCheck = relatedGroup[direction][relationship][0].isAuthCheck??false;
         }
 
         // Save to datastore
-        await this.devicesDao.attachToGroup(deviceId, relationship, direction, groupPath);
+        await this.devicesDao.attachToGroup(deviceId, relationship, direction, groupPath, isAuthCheck);
 
         // fire event
         await this.eventEmitter.fire({
@@ -592,12 +588,12 @@ export class DevicesServiceFull implements DevicesService {
         logger.debug(`device.full.service attachToGroup: exit:`);
     }
 
-    public async detachFromGroup(deviceId:string, relationship:string, direction:string, groupPath:string) : Promise<void>{
+    public async detachFromGroup(deviceId:string, relationship:string, direction:RelationDirection, groupPath:string) : Promise<void>{
         logger.debug(`device.full.service detachFromGroup: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, groupPath:${groupPath}`);
 
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
         ow(relationship,'relationship', ow.string.nonEmpty);
-        ow(direction,'direction', ow.string.nonEmpty);
+        ow(direction,'direction', ow.string.oneOf(['in','out']));
         ow(groupPath,'groupPath', ow.string.nonEmpty);
 
         // any ids need to be lowercase
@@ -625,12 +621,12 @@ export class DevicesServiceFull implements DevicesService {
         logger.debug(`device.full.service detachFromGroup: exit:`);
     }
 
-    public async attachToDevice(deviceId:string, relationship:string, direction:string, otherDeviceId:string): Promise<void> {
+    public async attachToDevice(deviceId:string, relationship:string, direction:RelationDirection, otherDeviceId:string): Promise<void> {
         logger.debug(`device.full.service attachToDevice: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, otherDeviceId:${otherDeviceId}`);
 
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
         ow(relationship,'relationship', ow.string.nonEmpty);
-        ow(direction,'direction', ow.string.nonEmpty);
+        ow(direction,'direction', ow.string.oneOf(['in','out']));
         ow(otherDeviceId,'otherDeviceId', ow.string.nonEmpty);
 
         // any ids need to be lowercase
@@ -643,32 +639,51 @@ export class DevicesServiceFull implements DevicesService {
         // fetch the existing device / group
         const deviceFuture = this.get(deviceId, false, [], false);
         const otherDeviceFuture = this.get(otherDeviceId, false, [], false);
-        const results = await Promise.all([deviceFuture, otherDeviceFuture]);
-        const device = results[0];
-        const otherDevice = results[1];
+        const [device,otherDevice] = await Promise.all([deviceFuture, otherDeviceFuture]);
 
         // make sure they exist
-        if (device===undefined || otherDevice===undefined) {
-            throw new Error('NOT_FOUND');
+        if (device===undefined ) {
+            throw new DeviceNotFoundError(deviceId);
+        }
+        if (otherDevice===undefined ) {
+            throw new DeviceNotFoundError(otherDeviceId);
         }
 
         // if the relation already exists, there's no need to continue
-        if (device.devices!==undefined && device.devices[direction]!==undefined && device.devices[direction][relationship].includes(otherDeviceId)) {
+        if (device.devices?.[direction]?.[relationship]?.find(e=>e.id===otherDeviceId)) {
             logger.debug(`device.full.service attachToDevice: relation already exits:`);
             return;
         }
 
         // ensure that the relation is allowed
-        const rels: DirectionStringToArrayMap = {};
-        rels[direction]= {};
-        rels[direction][relationship] = [otherDeviceId];
-        const isValid = await this.typesService.validateRelationshipsByType(device.templateId, rels);
-        if (!isValid) {
-            throw new Error('FAILED_VALIDATION');
+        const relatedDevice: DirectionToRelatedEntityArrayMap = {
+            [direction]: {
+                [relationship]: [{
+                    id: otherDeviceId,
+                }]
+            }
+        };
+        const template = await this.typesService.get(device.templateId, TypeCategory.Device, TypeDefinitionStatus.published);
+        if (template===undefined) {
+            throw new TemplateNotFoundError(device.templateId);
+        }
+        const validateRelationships = await this.validator.validateRelationshipsByIds(template, undefined, relatedDevice);
+        if (!validateRelationships.isValid) {
+            throw new RelationValidationError(validateRelationships);
+        }
+
+        // if fgac is enabled, we need to ensure any relations configured as identifying auth in its template are flagged to be saved as so
+        let isAuthCheck = true;
+        if (this.isAuthzEnabled) {
+            const authRelations = (direction==='in') ?
+                    template.schema.relations.incomingAuthRelations() : 
+                    template.schema.relations.outgoingAuthRelations();
+            this.authServiceFull.updateRelsIdentifyingAuth(relatedDevice[direction], validateRelationships.deviceLabels, authRelations);
+            isAuthCheck = relatedDevice[direction][relationship][0].isAuthCheck??false;
         }
 
         // Save to datastore
-        await this.devicesDao.attachToDevice(deviceId, relationship, direction, otherDeviceId);
+        await this.devicesDao.attachToDevice(deviceId, relationship, direction, otherDeviceId, isAuthCheck);
 
         // fire event
         await this.eventEmitter.fire({
@@ -685,12 +700,12 @@ export class DevicesServiceFull implements DevicesService {
         logger.debug(`device.full.service attachToDevice: exit:`);
     }
 
-    public async detachFromDevice(deviceId:string, relationship:string, direction:string, otherDeviceId:string) : Promise<void>{
+    public async detachFromDevice(deviceId:string, relationship:string, direction:RelationDirection, otherDeviceId:string) : Promise<void>{
         logger.debug(`device.full.service detachFromDevice: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, otherDeviceId:${otherDeviceId}`);
 
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
         ow(relationship,'relationship', ow.string.nonEmpty);
-        ow(direction,'direction', ow.string.nonEmpty);
+        ow(direction,'direction', ow.string.oneOf(['in','out']));
         ow(otherDeviceId,'otherDeviceId', ow.string.nonEmpty);
 
         // any ids need to be lowercase
@@ -718,23 +733,23 @@ export class DevicesServiceFull implements DevicesService {
         logger.debug(`device.full.service detachFromDevice: exit:`);
     }
 
-    public async updateComponent(deviceId:string, componentId:string, model:DeviceItem) : Promise<void> {
-        logger.debug(`device.full.service updateComponent: in: deviceId:${deviceId}, componentId:${componentId}, model:${JSON.stringify(model)}`);
+    public async updateComponent(deviceId:string, componentId:string, component:DeviceItem) : Promise<void> {
+        logger.debug(`device.full.service updateComponent: in: deviceId:${deviceId}, componentId:${componentId}, model:${JSON.stringify(component)}`);
 
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
         ow(componentId, 'componentId',ow.string.nonEmpty);
-        ow(model, ow.object.nonEmpty);
-
+        ow(component, ow.object.nonEmpty);
+  
         // any ids need to be lowercase
         deviceId = deviceId.toLowerCase();
         componentId = componentId.toLowerCase();
-        this.setIdsToLowercase(model);
+        this.setIdsToLowercase(component);
 
         await this.authServiceFull.authorizationCheck([componentId], [], ClaimAccess.U);
 
         // Assemble devicemodel into node
-        model.category = TypeCategory.Component;
-        const node = this.devicesAssembler.toNode(model);
+        component.category = TypeCategory.Component;
+        const node = this.devicesAssembler.toNode(component);
         node.attributes['deviceId'] = `${deviceId}___${componentId}`;
 
         // Save to datastore
@@ -745,7 +760,7 @@ export class DevicesServiceFull implements DevicesService {
             objectId: deviceId,
             type: Type.device,
             event: Event.modify,
-            payload: JSON.stringify(model),
+            payload: JSON.stringify(component),
             attributes: {
                 deviceId,
                 componentId
@@ -788,46 +803,52 @@ export class DevicesServiceFull implements DevicesService {
 
     }
 
-    public async createComponent(parentDeviceId:string, model:DeviceItem) : Promise<string> {
-        logger.debug(`device.full.service createComponent: in: parentDeviceId:${parentDeviceId}, model:${JSON.stringify(model)}`);
+    public async createComponent(parentDeviceId:string, component:DeviceItem) : Promise<string> {
+        logger.debug(`device.full.service createComponent: in: parentDeviceId:${parentDeviceId}, model:${JSON.stringify(component)}`);
 
         ow(parentDeviceId, ow.string.nonEmpty);
-        ow(model, ow.object.nonEmpty);
-        ow(model.deviceId, ow.string.nonEmpty);
-        ow(model.templateId, ow.string.nonEmpty);
+        ow(component, ow.object.nonEmpty);
+        ow(component.deviceId, ow.string.nonEmpty);
+        ow(component.templateId, ow.string.nonEmpty);
 
         // any ids need to be lowercase
         parentDeviceId = parentDeviceId.toLowerCase();
-        this.setIdsToLowercase(model);
+        this.setIdsToLowercase(component);
 
         await this.authServiceFull.authorizationCheck([parentDeviceId], [], ClaimAccess.C);
 
+        // ensure the parent device exists
+        const parentDevice = await this.get(parentDeviceId);
+        if (parentDevice===undefined) {
+            throw new DeviceNotFoundError(parentDeviceId);
+        }
+
         // perform validation of the device...
-        const validateSubTypeFuture = this.typesService.validateSubType(model.templateId, TypeCategory.Component, model, Operation.CREATE);
-        const validateRelationshipsFuture = this.typesService.validateRelationshipsByType(model.templateId, model.groups);
-        const results = await Promise.all([validateSubTypeFuture, validateRelationshipsFuture]);
+        const parentTemplate = await this.typesService.get(parentDevice.templateId, TypeCategory.Device, TypeDefinitionStatus.published);
+        if (parentTemplate===undefined) {
+            throw new TemplateNotFoundError(parentDevice.templateId);
+        }
+        const componentTemplate = parentTemplate.schema.definition.componentTypes?.find(c=>c.templateId=component.templateId);
+        if (componentTemplate===undefined) {
+            throw new TemplateNotFoundError(component.templateId);
+        }
+        const validateSubTypeFuture = this.validator.validateSubType(componentTemplate, component, Operation.CREATE);
+        const validateRelationshipsFuture = this.validator.validateRelationshipsByIds(componentTemplate, component.groups, undefined);
+        const [subTypeValidation,validateRelationships] = await Promise.all([validateSubTypeFuture, validateRelationshipsFuture]);
 
         // schema validation results
-        const subTypeValidation = results[0];
         if (!subTypeValidation.isValid) {
-            throw new Error('FAILED_VALIDATION');
+            throw new SchemaValidationError(subTypeValidation.errors);
         }
 
         // validate the path associations
-        const relationshipsValidation=results[1];
-        if (!relationshipsValidation)  {
-            throw new Error('UNDEFINED_RELATIONS');
-        }
-
-        // ensure the device exists
-        const parent = await this.devicesDao.get([parentDeviceId], false, [], false);
-        if (parent===undefined) {
-            throw new Error('NOT_FOUND');
+        if (!validateRelationships.isValid)  {
+            throw new RelationValidationError(validateRelationships);
         }
 
         // Assemble devicemodel into node
-        model.category = TypeCategory.Component;
-        const node = this.devicesAssembler.toNode(model);
+        component.category = TypeCategory.Component;
+        const node = this.devicesAssembler.toNode(component);
 
         // Save to datastore
         const id = await this.devicesDao.createComponent(parentDeviceId, node);
@@ -837,7 +858,7 @@ export class DevicesServiceFull implements DevicesService {
             objectId: parentDeviceId,
             type: Type.device,
             event: Event.create,
-            payload: JSON.stringify(model),
+            payload: JSON.stringify(component),
             attributes: {
                 deviceId: parentDeviceId,
                 componentId: id

@@ -11,32 +11,155 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { Response } from 'express';
+import { SchemaValidationResult, ValidateRelationshipsByIdsResult } from '../types/schemaValidator.full.service';
 import { logger } from './logger';
 
-export function handleError(e:Error, res:Response): void {
+export function handleError(e: Error, res: Response): void {
     logger.error(`handleError: ${e}`);
 
-    if (e.name === 'ArgumentError' || e.message === 'FAILED_VALIDATION' || e.message === 'UNDEFINED_RELATIONS'
-        || e.message === 'INVALID_RELATION' || e.message === 'INVALID_PROFILE' ) {
-        res.status(400).json({error: e.message}).end();
-    } else if (e.message === 'NOT_AUTHORIZED') {
-        res.status(403).json({error: 'Not authorized'}).end();
-    } else if (e.message?.endsWith('NOT_FOUND')) {
-        res.status(404).json({error: 'Item not found'}).end();
-    } else if (e.name==='ResourceNotFoundException') {
-        res.status(404).json({error: e.message}).end();
-    } else if (e.name === 'ConditionalCheckFailedException' || e.message === 'TEMPLATE_IN_USE' ||
-            e.message.indexOf('with id already exists')>=0 || e.name === 'ResourceAlreadyExistsException') {
-        res.status(409).json({error: 'Item already exists'}).end();
-    } else if (e.message === 'ALREADY_INITIALIZED' ) {
-        res.status(409).json({error: 'Already initialized'}).end();
-    } else if (e.message==='NOT_SUPPORTED' ) {
-        res.status(501).json({error: 'This endpoint is not supported when running in this mode'}).end();
-    } else if (e.message==='NOT_IMPLEMENTED' ) {
-        res.status(501).json({error: 'TODO:  Not yet implemented'}).end();
-    } else {
-        res.status(500).json({error: e.message}).end();
+    let status: number;
+    let json: unknown = { error: e.message };
+    switch (e.name) {
+        case 'SchemaValidationError': {
+            status = 400;
+            json = {
+                error: e.message,
+                errors: (e as SchemaValidationError).errors
+            };
+            break;
+        }
+        case 'RelationValidationError': {
+            status = 400;
+            const ive = e as RelationValidationError;
+            json = {
+                error: e.message,
+                invalidDeviceIds: ive.issues.invalidDeviceIds,
+                invalidGroupPaths: ive.issues.invalidGroupPaths,
+                invalidRelations: ive.issues.invalidRelations,
+            };
+            break;
+        }
+        case 'InvalidCategoryError':
+        case 'ArgumentError':
+            status = 400;
+            break;
+
+        case 'NotAuthorizedError':
+            status = 403;
+            break;
+
+        case 'NotFoundError':
+        case 'TemplateNotFoundError':
+        case 'ProfileNotFoundError':
+        case 'DeviceNotFoundError':
+        case 'GroupNotFoundError':
+            status = 404;
+            break;
+
+        case 'TemplateInUseError':
+            status = 409;
+            break;
+
+        case 'ConditionalCheckFailedException':
+        case 'ResourceAlreadyExistsException':
+            status = 409;
+            json = {
+                error: 'Item already exists.'
+            };
+            break;
+
+        case 'NotSupportedError':
+            status = 501;
+            break;
+
+        default:
+            if (e.message.indexOf('with id already exists') >= 0) {   // thrown by neptune
+                status = 409;
+                json = {
+                    error: 'Item already exists.'
+                };
+            } else {
+                status = 500;
+            }
+
     }
 
-    logger.error(`handleError: res.status: ${res.statusCode} ${res.statusMessage}`);
+    logger.error(`handleError: status:${status}, json:${JSON.stringify(json)}`);
+    res.status(status).json(json).end();
+}
+
+export class SchemaValidationError extends Error {
+    constructor(public errors: { [dataPath: string]: string } | SchemaValidationResult) {
+        super('Refer to errors for further information.');
+        this.name = 'SchemaValidationError';
+    }
+}
+export class RelationValidationError extends Error {
+    constructor(public issues: ValidateRelationshipsByIdsResult) {
+        super('Related devices/groups failed validation');
+        this.name = 'RelationValidationError';
+    }
+}
+
+export class NotFoundError extends Error {
+    constructor(message: string) {
+        super(message);
+        this.name = 'NotFoundError';
+    }
+}
+
+export class DeviceNotFoundError extends NotFoundError {
+    constructor(id: string) {
+        super(`Device ${id} not found.`);
+        this.name = 'DeviceNotFoundError';
+    }
+}
+
+export class GroupNotFoundError extends NotFoundError {
+    constructor(id: string) {
+        super(`Group ${id} not found.`);
+        this.name = 'GroupNotFoundError';
+    }
+}
+
+export class TemplateNotFoundError extends NotFoundError {
+    constructor(templateName: string) {
+        super(`Template ${templateName} not found.`);
+        this.name = 'TemplateNotFoundError';
+    }
+}
+
+export class ProfileNotFoundError extends NotFoundError {
+    constructor(name: string) {
+        super(`Profile ${name} not found.`);
+        this.name = 'ProfileNotFoundError';
+    }
+}
+
+export class InvalidCategoryError extends Error {
+    constructor(category: string) {
+        super(`Category ${category} invalid.`);
+        this.name = 'InvalidCategoryError';
+    }
+}
+
+export class TemplateInUseError extends Error {
+    constructor(templateName: string) {
+        super(`Template ${templateName} is in use.`);
+        this.name = 'TemplateInUseError';
+    }
+}
+
+export class NotSupportedError extends Error {
+    constructor() {
+        super(`Action not supported in this mode.`);
+        this.name = 'NotSupportedError';
+    }
+}
+
+export class NotAuthorizedError extends Error {
+    constructor(message: string) {
+        super(message);
+        this.name = 'NotAuthorizedError';
+    }
 }

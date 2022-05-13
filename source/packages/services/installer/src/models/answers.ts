@@ -25,6 +25,7 @@ export interface Answers {
   certificateActivator?: CertificateActivator;
   certificateVendor?: CertificateVendor;
   commands?: Commands;
+  commandAndControl?: CommandAndControl;
   deviceMonitoring?: DeviceMonitoring;
   notifications?: Notifications;
   greengrass2InstallerConfigGenerators?: Greengrass2InstallerConfigGenerators;
@@ -200,6 +201,16 @@ export interface Commands extends RestServiceModuleAttribues {
   addThingToGroupTemplate?: string;
   maxTargetsForJob?: number;
   commandArtifactsPrefix?: string;
+}
+
+
+export interface CommandAndControl extends RestServiceModuleAttribues {
+  provisioningFunctionName?: string;
+  assetLibraryFunctionName?: string;
+  // Application Configuration
+  deliveryMethodTopic?: string;
+  awsIotShadowName?: string;
+  addThingToGroupTemplate?: string;
 }
 
 export interface DeviceMonitoring extends ServiceModuleAttributes {

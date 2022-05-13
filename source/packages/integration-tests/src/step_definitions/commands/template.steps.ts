@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { expect } from 'chai';
-import { Given, setDefaultTimeout, Then, TableDefinition, When} from 'cucumber';
+import { Given, setDefaultTimeout, Then, DataTable, When} from '@cucumber/cucumber';
 import {TemplatesService, TemplateModel, COMMANDS_CLIENT_TYPES} from '@cdf/commands-client/dist';
 import { fail } from 'assert';
 import stringify from 'json-stable-stringify';
@@ -49,7 +49,7 @@ Given('command template {string} exists', async function (templateId:string) {
     expect(template.templateId).eq(templateId);
 });
 
-async function createTemplate (world:unknown, templateId:string, data:TableDefinition) {
+async function createTemplate (world:unknown, templateId:string, data:DataTable) {
 
     const d = data.rowsHash();
 
@@ -73,7 +73,7 @@ async function createTemplate (world:unknown, templateId:string, data:TableDefin
     await templatesService.createTemplate(template, getAdditionalHeaders(world));
 }
 
-When('I create the command template {string} with attributes', async function (templateId:string, data:TableDefinition) {
+When('I create the command template {string} with attributes', async function (templateId:string, data:DataTable) {
     try {
         await createTemplate(this, templateId, data);
     } catch (err) {
@@ -81,7 +81,7 @@ When('I create the command template {string} with attributes', async function (t
     }
 });
 
-When('I update command template {string} with attributes', async function (templateId:string, data:TableDefinition) {
+When('I update command template {string} with attributes', async function (templateId:string, data:DataTable) {
     const d = data.rowsHash();
 
     const template = {
@@ -124,7 +124,7 @@ When('I delete command template {string}', async function (templateId:string) {
     }
 });
 
-Then('command template {string} exists with attributes', async function (templateId:string, data:TableDefinition) {
+Then('command template {string} exists with attributes', async function (templateId:string, data:DataTable) {
     const d = data.rowsHash();
     const r = await templatesService.getTemplate(templateId, getAdditionalHeaders(this));
 

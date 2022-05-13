@@ -352,8 +352,8 @@ export class ThingsService {
 
         for (const describeThingGroupResult of describeThingGroupResults) {
             let groupAttributes:{[key:string]:string} = {};
-            if (Object.prototype.hasOwnProperty.call( describeThingGroupResult, 'thingGroupProperties')) {
-                if (Object.prototype.hasOwnProperty.call( describeThingGroupResult,'attributePayload')) {
+            if (describeThingGroupResult.hasOwnProperty( 'thingGroupProperties')) {
+                if (describeThingGroupResult.hasOwnProperty( 'attributePayload')) {
                     groupAttributes = describeThingGroupResult.thingGroupProperties.attributePayload.attributes;
                 }
             }

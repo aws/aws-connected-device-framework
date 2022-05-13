@@ -66,7 +66,7 @@ export class StartJobAction implements WorkflowAction {
         if (template.requiredDocumentParameters !== undefined ) {
             for(const key of template.requiredDocumentParameters) {
                 // validation: check we have all document parameters required by the template defined for the command
-                if (merged.documentParameters===undefined || !Object.prototype.hasOwnProperty.call(merged.documentParameters,key)) {
+                if (merged.documentParameters===undefined || !merged.documentParameters.hasOwnProperty(key)) {
                     throw new Error(`MISSING_REQUIRED_DOCUMENT_PARAMETER: ${key}`);
                 }
                 // replace any required document parameters in the job document with the command files

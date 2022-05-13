@@ -76,7 +76,7 @@ export class TemplatesDao {
         };
 
         Object.keys(model).forEach(k=> {
-            if (Object.prototype.hasOwnProperty.call(model,k) && k !== 'templateId' ) {
+            if (model.hasOwnProperty(k) && k !== 'templateId' ) {
                 if (params.UpdateExpression==='') {
                     params.UpdateExpression+='set ';
                 } else {

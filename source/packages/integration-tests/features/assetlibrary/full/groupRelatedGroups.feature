@@ -51,14 +51,14 @@ Feature: Group lifecycle
       | templateId | test-groups-grouptemplate002 |
       | description | My group user|
       | attributes | {"gSysUserId":"guym02","ownerHistoryNum":"0"} |
-      | groups | {"owner":["/test-groups-group001"]} |
+      | groups | {"out":{"owner":["/test-groups-group001"]}} |
     Then group "/TEST-groups-group002" exists with attributes
       | templateId | test-groups-grouptemplate002 |
       | name | TEST-groups-group002 |
       | description | My group user|
       | parentPath | / |
       | attributes | {"gSysUserId":"guym02","ownerHistoryNum":"0"} |
-      | groups | {"owner":["/test-groups-group001"]} |
+      | groups | {"out":{"owner":["/test-groups-group001"]}} |
 
   Scenario: Create a group with valid attributes
     Given published assetlibrary group template "TEST-groups-groupTemplate002" exists
@@ -67,14 +67,14 @@ Feature: Group lifecycle
       | templateId | test-groups-grouptemplate002 |
       | description | My group user|
       | attributes | {"gSysUserId":"guym03","ownerHistoryNum":"0"} |
-      | groups | {"owner":["/test-groups-group001"]} |
+      | groups | {"out":{"owner":["/test-groups-group001"]}} |
     Then group "/TEST-groups-group003" exists with attributes
       | templateId | test-groups-grouptemplate002 |
       | name | TEST-groups-group003 |
       | description | My group user|
       | parentPath | / |
       | attributes | {"gSysUserId":"guym03","ownerHistoryNum":"0"} |
-      | groups | {"owner":["/test-groups-group001"]} |
+      | groups | {"out":{"owner":["/test-groups-group001"]}} |
 
   #1
   Scenario: Can retrieve related group with all parameter

@@ -1,6 +1,6 @@
 {
   "name": "@cdf/assetlibrary-client",
-  "version": "5.0.0",
+  "version": "5.0.3",
   "description": "CDF Asset Library Client",
   "author": "Dean Hart",
   "main": "dist/index.js",
@@ -12,7 +12,7 @@
     "test": "rushx lint && jest --silent --passWithNoTests"
   },
   "dependencies": {
-    "@cdf/lambda-invoke": "^3.0.0",
+    "@cdf/lambda-invoke": "^3.0.2",
     "inversify": "5.1.1",
     "inversify-binding-decorators": "4.0.0",
     "inversify-express-utils": "6.3.2",
@@ -21,7 +21,7 @@
     "ow": "0.23.0",
     "readable-stream": "3.6.0",
     "reflect-metadata": "0.1.13",
-    "superagent": "6.1.0",
+    "superagent": "7.1.1",
     "winston": "3.3.3",
     "winston-transport": "4.4.0",
     "dotenv-flow": "~3.2.0"
@@ -30,7 +30,7 @@
     "aws-sdk": "2.1048.0"
   },
   "devDependencies": {
-    "@types/superagent": "4.1.10",
+    "@types/superagent": "4.1.15",
     "@rushstack/eslint-config": "2.3.4",
     "eslint": "7.26.0",
     "cz-customizable": "~6.3.0",
@@ -52,8 +52,6 @@
     "@types/node": "14.6.1"
   },
   "jest": {
-    "globals": {
-               },
     "roots": [
       "<rootDir>/src"
     ],

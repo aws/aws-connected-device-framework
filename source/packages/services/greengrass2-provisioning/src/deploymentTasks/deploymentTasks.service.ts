@@ -145,9 +145,15 @@ export class DeploymentTasksService {
         ow(task.id, 'task id', ow.string.nonEmpty);
 
         // 1st expand the targets. Can take time if there's quite a few to expand, hence why this is function if carried out async to break out of the APIGW execution timeout 
-        const expandedTargets = await this.awsIotThingListBuilder.listThings(task.targets.thingNames, task.targets.thingGroupNames, task.targets.assetLibraryDeviceIds, task.targets.assetLibraryGroupPaths, task.targets.assetLibraryQuery);
-        ow(expandedTargets, 'expanded targets', ow.array.nonEmpty);
-        task.deployments = expandedTargets.map(t => { return { coreName: t, taskStatus: 'Waiting' } });
+        const expandedTargets = await this.awsIotThingListBuilder.listThings({
+            thingNames: task.targets.thingNames, 
+            thingGroupNames: task.targets.thingGroupNames, 
+            assetLibraryDeviceIds: task.targets.assetLibraryDeviceIds, 
+            assetLibraryGroupPaths: task.targets.assetLibraryGroupPaths, 
+            assetLibraryQuery: task.targets.assetLibraryQuery
+        });
+        ow(expandedTargets?.thingNames, 'expanded targets', ow.array.nonEmpty);
+        task.deployments = expandedTargets.thingNames.map(t => { return { coreName: t, taskStatus: 'Waiting' } });
 
         // there could be 1000's of expanded targets to process, therefore split into batches for more efficient processing
         const batcher = <T>(items: T[]) =>

@@ -21,6 +21,7 @@ import { EventEmitter, Type, Event } from '../events/eventEmitter.service';
 import { GroupsAssembler } from './groups.assembler';
 import { GroupsDaoLite, ListMembersResponse } from './groups.lite.dao';
 import { DeviceItemList } from '../devices/devices.models';
+import { GroupNotFoundError, NotSupportedError } from '../utils/errors';
 
 @injectable()
 export class GroupsServiceLite implements GroupsService {
@@ -36,7 +37,7 @@ export class GroupsServiceLite implements GroupsService {
 
         const result  = await this.groupsDao.get(groupId);
         if (result===undefined) {
-            throw new Error('NOT_FOUND');
+            throw new GroupNotFoundError(groupId);
         }
 
         const model = this.groupsAssembler.toGroupItem(result);
@@ -60,7 +61,7 @@ export class GroupsServiceLite implements GroupsService {
     }
 
     public async createBulk(_groups:GroupItem[], _applyProfile?:string) : Promise<BulkGroupsResult> {
-        throw new Error('NOT_SUPPORTED');
+        throw new NotSupportedError();
     }
 
     public async create(model:GroupItem, applyProfile?:string) : Promise<string> {
@@ -116,7 +117,7 @@ export class GroupsServiceLite implements GroupsService {
         // as 'lite' only supports updating full resources, we need to fetch the original, then merge thge changes
         const existing = await this.get(model.groupPath);
         if (existing===undefined) {
-            throw new Error('NOT_FOUND');
+            throw new GroupNotFoundError(model.groupPath);
         }
         const merged = Object.assign(new GroupItem(), existing, model);
         merged.attributes = {...existing.attributes, ...model.attributes};
@@ -182,7 +183,7 @@ export class GroupsServiceLite implements GroupsService {
 
         const model = await this.get(groupPath);
         if (model===undefined) {
-            throw new Error('NOT_FOUND');
+            throw new GroupNotFoundError(groupPath);
         }
 
         // Save to datastore
@@ -202,29 +203,29 @@ export class GroupsServiceLite implements GroupsService {
 
     public async attachToGroup(sourceGroupPath:string, relationship:string, targetGroupPath:string) : Promise<void> {
         logger.debug(`groups.lite.service attachToGroup: in: sourceGroupPath:${sourceGroupPath}, relationship:${relationship}, targetGroupPath:${targetGroupPath}`);
-        throw new Error('NOT_SUPPORTED');
+        throw new NotSupportedError();
     }
 
     public async detachFromGroup(sourceGroupPath:string, relationship:string, targetGroupPath:string) : Promise<void> {
         logger.debug(`groups.lite.service detachFromGroup: in: sourceGroupPath:${sourceGroupPath}, relationship:${relationship}, targetGroupPath:${targetGroupPath}`);
-        throw new Error('NOT_SUPPORTED');
+        throw new NotSupportedError();
     }
 
     public async listRelatedGroups(groupPath: string, relationship: string, direction:string, template:string, offset:number, count:number) : Promise<GroupItemList> {
         logger.debug(`groups.full.service listRelatedGroups: in: groupPath:${groupPath}, relationship:${relationship}, direction:${direction}, template:${template}, offset:${offset}, count:${count}`);
-        throw new Error('NOT_SUPPORTED');
+        throw new NotSupportedError();
     }
 
     public async listRelatedDevices(groupPath: string, relationship: string, direction:string, template:string, state:string, offset:number, count:number) : Promise<DeviceItemList> {
         logger.debug(`groups.full.service listRelatedDevices: in: groupPath:${groupPath}, relationship:${relationship}, direction:${direction}, template:${template}, state:${state}, offset:${offset}, count:${count}`);
-        throw new Error('NOT_SUPPORTED');
+        throw new NotSupportedError();
     }
 
     public async attachToDevice(_groupPath:string, _relationship:string, _otherDeviceId:string) : Promise<void> {
-        throw new Error('NOT_SUPPORTED');
+        throw new NotSupportedError();
     }
 
     public async detachFromDevice(_groupPath:string, _relationship:string, _otherDeviceId:string) : Promise<void> {
-        throw new Error('NOT_SUPPORTED');
+        throw new NotSupportedError();
     }
 }

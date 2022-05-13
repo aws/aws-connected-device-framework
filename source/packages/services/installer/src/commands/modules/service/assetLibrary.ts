@@ -1,18 +1,40 @@
+/*********************************************************************************************************************
+ *  Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.                                           *
+ *                                                                                                                    *
+ *  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance    *
+ *  with the License. A copy of the License is located at                                                             *
+ *                                                                                                                    *
+ *      http://www.apache.org/licenses/LICENSE-2.0                                                                    *
+ *                                                                                                                    *
+ *  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES *
+ *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
+ *  and limitations under the License.                                                                                *
+ *********************************************************************************************************************/
 import { Answers } from '../../../models/answers';
 import { ListrTask } from 'listr2';
 import { ModuleName, RestModule, PostmanEnvironment } from '../../../models/modules';
-import { ConfigBuilder } from "../../../utils/configBuilder";
+import { ConfigBuilder } from '../../../utils/configBuilder';
 import inquirer from 'inquirer';
 import ow from 'ow';
 import execa from 'execa';
 import { customDomainPrompt } from '../../../prompts/domain.prompt';
 import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
-import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
+import { applicationConfigurationPrompt } from '../../../prompts/applicationConfiguration.prompt';
 import { deleteStack, getStackOutputs, getStackParameters } from '../../../utils/cloudformation.util';
 import { enableAutoScaling, provisionedConcurrentExecutions } from '../../../prompts/autoscaling.prompt';
+import { getNeptuneInstancetypeList } from '../../../utils/instancetypes';
+
+// CDF does not specify a Neptune engine version in its Cloudformation templates. When updating a CDF
+// deployment, the existing Neptune engine version remains unchanged, for new deployments the Neptune
+// service default applies. For rendering a list of available Neptune instance types, however, some
+// recent Neptune engine version number must be assumed or else obsolete old versions are included in
+// the response from the AWS.RDS.DescribeOrderableDBInstanceOptions API.
+const ASSUMED_NEPTUNE_ENGINE_VERSION = '1.1.0.0';
+// This value is ignored if it is not included in the list of instance types returned by the
+// AWS.RDS.DescribeOrderableDBInstanceOptions API.
+const DEFAULT_NEPTUNE_INSTANCE_TYPE = 'db.r5.xlarge';
 
 export class AssetLibraryInstaller implements RestModule {
-
 
   public readonly friendlyName = 'Asset Library';
   public readonly name = 'assetLibrary';
@@ -42,6 +64,11 @@ export class AssetLibraryInstaller implements RestModule {
       return updatedAnswers;
     }
 
+    const neptuneInstanceTypes = await getNeptuneInstancetypeList(
+      answers.region,
+      ASSUMED_NEPTUNE_ENGINE_VERSION
+    );
+
     updatedAnswers = await inquirer.prompt([
       {
         message: `Run in 'full' mode (with Amazon Neptune), or 'lite' mode (using AWS IoT Device Registry only). Note that 'lite' mode supports a reduced set of Asset Library features (see documentation for further info).`,
@@ -58,17 +85,25 @@ export class AssetLibraryInstaller implements RestModule {
         }
       },
       {
-        message: `Select the Neptune database instance type:`,
-        type: 'input',
+        message: `${(neptuneInstanceTypes.length > 0) ? "Select" : "Enter"} the Neptune database instance type:`,
+        type: (neptuneInstanceTypes.length > 0) ? 'list' : 'input',
+        choices: neptuneInstanceTypes,
         name: 'assetLibrary.neptuneDbInstanceType',
-        default: answers.assetLibrary?.neptuneDbInstanceType ?? 'db.r5.xlarge',
+        default: (
+          answers.assetLibrary?.neptuneDbInstanceType ??
+          (neptuneInstanceTypes.indexOf(DEFAULT_NEPTUNE_INSTANCE_TYPE) >= 0)
+            ? DEFAULT_NEPTUNE_INSTANCE_TYPE
+            : undefined
+        ),
         askAnswered: true,
+        loop: false,
+        pageSize: 10,
         when(answers: Answers) {
           return answers.assetLibrary?.mode === 'full';
         },
         validate(answer: string) {
-          if (answer?.length === 0) {
-            return 'You must enter the Neptune DB Instance Type.';
+          if (neptuneInstanceTypes.length > 0 && ! neptuneInstanceTypes.includes(answer)) {
+            return `Neptune DB Instance Type must be one of: ${neptuneInstanceTypes.join(', ')}`;
           }
           return true;
         }

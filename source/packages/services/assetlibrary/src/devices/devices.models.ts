@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { TypeCategory } from '../types/constants';
-import { ModelAttributeValue, StringToArrayMap, DirectionStringToArrayMap } from '../data/model';
+import { ModelAttributeValue, StringArrayMap, DirectionToStringArrayMap, DirectionToRelatedEntityArrayMap } from '../data/model';
 
 export class DeviceBaseResource {
 	deviceId: string;
@@ -37,14 +37,14 @@ export class DeviceBaseResource {
 
 }
 export class Device10Resource extends DeviceBaseResource {
-	groups?: StringToArrayMap = {};
-	devices?: StringToArrayMap = {};
+	groups?: StringArrayMap = {};
+	devices?: StringArrayMap = {};
 }
 
 export class Device20Resource extends DeviceBaseResource {
-	groups?: DirectionStringToArrayMap = {};
+	groups?: DirectionToStringArrayMap = {};
 
-	devices?: DirectionStringToArrayMap = {};
+	devices?: DirectionToStringArrayMap = {};
 }
 
 export class DeviceResourceList {
@@ -95,9 +95,9 @@ export class DeviceItem {
 	relation?: string;
 	direction?: string;
 
-	groups?: DirectionStringToArrayMap = {};
+	groups?: DirectionToRelatedEntityArrayMap = {};
 
-	devices?: DirectionStringToArrayMap = {};
+	devices?: DirectionToRelatedEntityArrayMap = {};
 
 	public constructor(init?:Partial<DeviceItem>) {
         Object.assign(this, init);
@@ -105,26 +105,22 @@ export class DeviceItem {
 
 	public listRelatedGroupPaths():string[] {
 		const relatedGroupPaths:string[]= [];
-		if (this.groups) {
-			if (this.groups.in) {
-				Object.keys(this.groups.in).forEach(k=> relatedGroupPaths.push(...this.groups.in[k]));
-			}
-			if (this.groups.out) {
-				Object.keys(this.groups.out).forEach(k=> relatedGroupPaths.push(...this.groups.out[k]));
-			}
+		if (this.groups?.in) {
+			Object.values(this.groups.in).forEach(relations => relations.forEach( relation => relatedGroupPaths.push(relation.id)));
+		}
+		if (this.groups?.out) {
+			Object.values(this.groups.out).forEach(relations => relations.forEach( relation => relatedGroupPaths.push(relation.id)));
 		}
 		return relatedGroupPaths;
 	}
 
 	public listRelatedDeviceIds():string[] {
 		const relatedDeviceIds:string[]= [];
-		if (this.devices) {
-			if (this.devices.in) {
-				Object.keys(this.devices.in).forEach(k=> relatedDeviceIds.push(...this.devices.in[k]));
-			}
-			if (this.devices.out) {
-				Object.keys(this.devices.out).forEach(k=> relatedDeviceIds.push(...this.devices.out[k]));
-			}
+		if (this.devices?.in) {
+			Object.values(this.devices.in).forEach(relations => relations.forEach( relation => relatedDeviceIds.push(relation.id)));
+		}
+		if (this.devices?.out) {
+			Object.values(this.devices.out).forEach(relations => relations.forEach( relation => relatedDeviceIds.push(relation.id)));
 		}
 		return relatedDeviceIds;
 	}
