@@ -18,6 +18,8 @@ import { isValidTagKey, isValidTagValue, TagsList } from "../utils/tags";
 
 let modules: Module[];
 
+
+
 async function deployAction(
   environment: string,
   region: string,
@@ -41,15 +43,8 @@ async function deployAction(
 
   if (options["dryrun"] !== undefined) {
     // Dry run only produced the config without running the deployment
-
-    // Remove unnecessary answers
-    if(answers !== undefined && answers.bulkCerts !== undefined) {
-      delete answers.bulkCerts?.suppliers?.list;
-      delete answers.bulkCerts?.setSupplier;
-      delete answers.bulkCerts?.caAlias;
-      delete answers.bulkCerts?.caValue;
-      answersStorage.save(answers);
-    }
+    answers = await cleanUpConfig(answers)
+    answersStorage.save(answers);
     return;
   }
 
@@ -96,10 +91,7 @@ async function deployAction(
   }
 
   // Remove unnecessary answers
-  delete answers.bulkCerts?.suppliers.list;
-  delete answers.bulkCerts?.setSupplier;
-  delete answers.bulkCerts?.caAlias;
-  delete answers.bulkCerts?.caValue;
+  answers = await cleanUpConfig(answers)
   answersStorage.save(answers);
 
 
@@ -274,5 +266,24 @@ async function configWizard(
 
   return answers;
 }
+
+async function cleanUpConfig(answers:Answers): Promise<Answers> {
+  // Remove unnecessary answers
+  if(answers && answers.hasOwnProperty("bulkCerts")) {
+   if(answers.bulkCerts.hasOwnProperty("suppliers") && answers.bulkCerts.suppliers.hasOwnProperty("list")){
+     delete answers.bulkCerts.suppliers.list;
+   }
+   if(answers.bulkCerts.hasOwnProperty("setSupplier")){
+     delete answers.bulkCerts.setSupplier;
+   }
+   if(answers.bulkCerts.hasOwnProperty("caAlias")){
+     delete answers.bulkCerts.caAlias;
+   }
+   if(answers.bulkCerts.hasOwnProperty("caValue")){
+     delete answers.bulkCerts.caValue;
+   }
+ }
+ return answers;
+ }
 
 export default deployAction;

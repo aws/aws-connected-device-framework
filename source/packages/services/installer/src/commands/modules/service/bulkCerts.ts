@@ -333,7 +333,6 @@
        .add(`CERTIFICATE_DEFAULT_DISTINGUISHEDNAMEQUALIFIER`, answers.bulkCerts.distinguishedNameIdentifier)
        .add(`CERTIFICATE_DEFAULT_EXPIRYDAYS`, answers.bulkCerts.expiryDays)
        .add(`DEFAULTS_CHUNKSIZE`, answers.bulkCerts.chunksize)
-     console.log(configBuilder.config);
      return configBuilder.config;
    }
  
