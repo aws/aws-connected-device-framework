@@ -60,7 +60,7 @@ describe('EventModel', () => {
     });
 
 
-    it('should handle condition without parameter', () => {
+    it('should populate parameters using the input', () => {
         const conditions: EventConditions = {
             all: [
                 {
