@@ -137,6 +137,7 @@ export class NotificationsInstaller implements RestModule {
       delete answers.notifications?.queryCacheTTL
       delete answers.notifications?.daxInstanceType
       delete answers.notifications?.daxClusterEndpoint
+      delete answers.notifications?.daxClusterArn
     }
 
     return updatedAnswers;
