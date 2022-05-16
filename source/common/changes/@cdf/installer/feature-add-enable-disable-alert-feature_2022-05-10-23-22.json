@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/installer",
+      "comment": "allow users to specify TTL for DAX query and item cache",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@cdf/installer",
+  "email": "willsia@amazon.com"
+}

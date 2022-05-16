@@ -17,7 +17,7 @@ export abstract class SubscriptionBaseResource {
     id: string;
 
     principalValue?: string;
-    ruleParameterValues?: { [key: string] : string};
+    ruleParameterValues?: { [key: string]: string };
     event?: {
         id: string;
         name?: string;
@@ -30,6 +30,8 @@ export abstract class SubscriptionBaseResource {
     enabled?: boolean;
     alerted?: boolean;
 }
+
+export type UpdateSubcriptionRequest = Pick<SubscriptionBaseResource, "enabled" | "ruleParameterValues"> & { id?: string }
 
 export class SubscriptionV1Resource extends SubscriptionBaseResource {
     targets?: TargetsV1Resource;
@@ -83,7 +85,7 @@ export class SubscriptionItem {
     id: string;
 
     principalValue?: string;
-    ruleParameterValues?: { [key: string] : string};
+    ruleParameterValues?: { [key: string]: string };
     event?: {
         id?: string;
         name?: string;
@@ -99,15 +101,15 @@ export class SubscriptionItem {
     };
 
     sns?: {
-        topicArn:string;
+        topicArn: string;
     };
 
     targets?: TargetsItem;
 
     enabled?: boolean;
     alerted?: boolean;
- 
-    constructor(id?:string) {
-        this.id=id;
+
+    constructor(id?: string) {
+        this.id = id;
     }
 }

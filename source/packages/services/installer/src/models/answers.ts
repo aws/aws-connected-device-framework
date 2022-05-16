@@ -234,13 +234,15 @@ export interface DeviceMonitoring extends ServiceModuleAttributes {
 export interface Notifications extends RestServiceModuleAttribues {
   useDax?: boolean;
   daxInstanceType?: string;
-
   notificationsTableName?: string;
   notificationsTableArn?: string;
   notificationsTableStreamArn?: string;
   configTableName?: string;
   configTableArn?: string;
   daxClusterEndpoint?: string;
+  daxClusterArn?: string;
+  queryCacheTTL?: number;
+  itemCacheTTL?: number;
 }
 
 export interface Greengrass2InstallerConfigGenerators
