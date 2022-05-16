@@ -21,12 +21,16 @@ Parameters:
   ApplicationConfigurationOverride:
     Description: This allows you to override any application configuration.  It should consists of a text-based content with a structure and syntax comprising key–value pairs for properties. Any configurations contained in this will override the configurations found and merged from the default .env files.
     Type: String
-  
   Environment:
     Description:  Name of environment.  Used to name the created resources.
     Type: String
     MinLength: 1
-
+  CDFSecurityGroupId:
+    Description: ID of an existing CDF security group to deploy the API into. Only required if AuthType = 'Private'.
+    Type: String
+  PrivateSubNetIds:
+    Description: Comma delimited list of private subnetIds to deploy the API into. Only required if AuthType = 'Private'.
+    Type: CommaDelimitedList
   EventNotificationsTable:
     Type: String
     MinLength: 1
@@ -39,6 +43,9 @@ Parameters:
   EventConfigTableArn:
     Type: String
     MinLength: 1
+  DAXClusterArn:
+    Type: String
+    Default: ''
   DAXClusterEndpoint:
     Type: String
     Default: ''
@@ -63,7 +70,8 @@ Parameters:
 
 Conditions:
   KmsKeyIdProvided: !Not [ !Equals [ !Ref KmsKeyId, "" ] ]
-  DAXClusterEndpointlProvided: !Not [ !Equals [ !Ref DAXClusterEndpoint, "" ] ]
+  DAXClusterEndpointProvided: !Not [ !Equals [ !Ref DAXClusterEndpoint, "" ] ]
+  DAXClusterArnProvided: !Not [ !Equals [ !Ref DAXClusterArn, "" ] ]
   LoggingLevelProvided: !Not [ !Equals [ !Ref LoggingLevel, "" ] ]
 
 Resources:
@@ -99,6 +107,7 @@ Resources:
         - !Ref ApplicationPolicies
         - arn:aws:iam::aws:policy/AWSLambdaExecute
         - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
         - !If [ KmsKeyIdProvided, !Ref KmsPolicy, !Ref "AWS::NoValue" ]
 
   ApplicationPolicies:
@@ -135,6 +144,22 @@ Resources:
             Resource: 
               - !Sub '${EventNotificationsTableArn}/index/*'
               - !Sub '${EventConfigTableArn}/index/*'
+          - !If
+            - DAXClusterArnProvided
+            - Sid: "DAX"
+              Action:
+                - "dax:BatchGetItem"
+                - "dax:BatchWriteItem"
+                - "dax:ConditionCheckItem"
+                - "dax:DeleteItem"
+                - "dax:PutItem"
+                - "dax:GetItem"
+                - "dax:Query"
+                - "dax:Scan"
+                - "dax:UpdateItem"
+              Effect: Allow
+              Resource: !Ref DAXClusterArn
+            - !Ref "AWS::NoValue"
 
   DynamoDBStreamLambdaFunction:
     Type: AWS::Serverless::Function
@@ -154,11 +179,18 @@ Resources:
           AWS_DYNAMODB_TABLES_EVENTCONFIG_NAME: !Ref EventConfigTable
           AWS_DYNAMODB_DAX_ENDPOINTS:
             !If [
-              DAXClusterEndpointlProvided,
+              DAXClusterEndpointProvided,
               !Ref DAXClusterEndpoint,
               !Ref "AWS::NoValue",
             ]
       Tracing: Active
+      VpcConfig:
+        Fn::If:
+          - DAXClusterEndpointProvided
+          - SubnetIds: !Ref PrivateSubNetIds
+            SecurityGroupIds:
+              - !Ref CDFSecurityGroupId
+          - Ref: AWS::NoValue
 
   EventNotificationsSourceMapping:
     Type: AWS::Lambda::EventSourceMapping

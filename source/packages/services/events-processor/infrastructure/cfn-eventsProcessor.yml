@@ -435,6 +435,13 @@ Resources:
             ]
           LOGGING_LEVEL:
             !If [LoggingLevelProvided, !Ref LoggingLevel, !Ref AWS::NoValue]
+      VpcConfig:
+        Fn::If:
+          - DeployInVPC
+          - SubnetIds: !Ref PrivateSubNetIds
+            SecurityGroupIds:
+              - !Ref CDFSecurityGroupId
+          - Ref: AWS::NoValue
       Tracing: Active
 
   RESTLambdaFunction:
@@ -903,6 +910,12 @@ Outputs:
     Value: !Sub "${ApiGatewayApi}.execute-api.${AWS::Region}.amazonaws.com"
     Export:
       Name: !Sub "cdf-eventsProcessor-${Environment}-apigatewayhost"
+  DAXClusterArn:
+    Condition: DeployInVPC
+    Description: Arn of DAX Cluster
+    Value: !GetAtt DAXCluster.Arn
+    Export:
+      Name: !Sub "cdf-eventsProcessor-${Environment}-DAXClusterArn"
   DAXClusterEndpoint:
     Condition: DeployInVPC
     Description: DAX Cliuter EndpointConfiguration

@@ -91,6 +91,7 @@ export class SubscriptionController implements interfaces.Controller {
                 id: subscriptionId,
                 ...resource
             });
+            res.status(204)
         } catch (e) {
             handleError(e, res);
         }

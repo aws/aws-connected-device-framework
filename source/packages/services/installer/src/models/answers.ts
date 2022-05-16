@@ -227,6 +227,7 @@ export interface Notifications extends RestServiceModuleAttribues {
   configTableName?: string;
   configTableArn?: string;
   daxClusterEndpoint?: string;
+  daxClusterArn?: string;
   queryCacheTTL?: number;
   itemCacheTTL?: number;
 }

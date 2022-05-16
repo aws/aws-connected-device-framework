@@ -217,6 +217,7 @@ export class NotificationsInstaller implements RestModule {
         answers.notifications.configTableName = byOutputKey('EventConfigTable');
         answers.notifications.configTableArn = byOutputKey('EventConfigTableArn');
         answers.notifications.daxClusterEndpoint = byOutputKey('DAXClusterEndpoint');
+        answers.notifications.daxClusterArn = byOutputKey('DAXClusterArn');
       }
     });
 
@@ -239,7 +240,20 @@ export class NotificationsInstaller implements RestModule {
         };
 
         addIfSpecified('DAXClusterEndpoint', answers.notifications.daxClusterEndpoint);
+        addIfSpecified('DAXClusterArn', answers.notifications.daxClusterArn);
         addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
+
+        if (!answers.notifications.daxClusterEndpoint) {
+          // When DAX is disabled, even if VPC is specified we will set it to N/A to match
+          // the CloudFormation condition
+          parameterOverrides.push(
+            `CDFSecurityGroupId=${''}`,
+            `PrivateSubNetIds=${''}`)
+        } else {
+          parameterOverrides.push(
+            `CDFSecurityGroupId=${answers.vpc?.securityGroupId ?? ''}`,
+            `PrivateSubNetIds=${answers.vpc?.privateSubnetIds ?? ''}`)
+        }
 
         await packageAndDeployStack({
           answers: answers,
