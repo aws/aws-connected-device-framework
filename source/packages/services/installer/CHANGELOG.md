@@ -1,6 +1,13 @@
 # Change Log - @cdf/installer
 
-This log was last generated on Fri, 13 May 2022 01:29:37 GMT and should not be manually modified.
+This log was last generated on Mon, 16 May 2022 03:04:28 GMT and should not be manually modified.
+
+## 0.5.0
+Mon, 16 May 2022 03:04:28 GMT
+
+### Minor changes
+
+- allow users to specify TTL for DAX query and item cache
 
 ## 0.4.3
 Fri, 13 May 2022 01:29:37 GMT

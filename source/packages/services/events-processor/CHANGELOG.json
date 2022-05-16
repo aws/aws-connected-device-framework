@@ -2,6 +2,18 @@
   "name": "@cdf/events-processor",
   "entries": [
     {
+      "version": "4.1.0",
+      "tag": "@cdf/events-processor_v4.1.0",
+      "date": "Mon, 16 May 2022 03:04:28 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "fix the issue where disable DAX is not working and allow TTL for item and query cache to be set"
+          }
+        ]
+      }
+    },
+    {
       "version": "4.0.2",
       "tag": "@cdf/events-processor_v4.0.2",
       "date": "Wed, 27 Apr 2022 08:32:22 GMT",

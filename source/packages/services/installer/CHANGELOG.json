@@ -2,6 +2,18 @@
   "name": "@cdf/installer",
   "entries": [
     {
+      "version": "0.5.0",
+      "tag": "@cdf/installer_v0.5.0",
+      "date": "Mon, 16 May 2022 03:04:28 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "allow users to specify TTL for DAX query and item cache"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.4.3",
       "tag": "@cdf/installer_v0.4.3",
       "date": "Fri, 13 May 2022 01:29:37 GMT",
