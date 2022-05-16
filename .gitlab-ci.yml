@@ -67,7 +67,6 @@ stages:
   - integrationTest
   - deployLive
   - release
-  - triggerCpp
 
 ### not working at the moment, therefore using artifacts as a temp workaround
 # cache:
@@ -200,14 +199,6 @@ deployLive:
     - bash -c source/cicd/deployproject_build.bash
   after_script:
     - bash -c source/cicd/deployproject_postbuild.bash
-
-triggerCpp:
-  stage: triggerCpp
-  rules:
-    - if: ($CI_COMMIT_BRANCH == "main")
-  trigger:
-    project: robotics-and-engineering-gsp/cdf/aws-connected-product-platform
-    branch: main
 
 release:
   image:
