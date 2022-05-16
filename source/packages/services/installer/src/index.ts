@@ -27,7 +27,7 @@ program.action(() => {
 });
 
 process.on('unhandledRejection', function(err) {
-	console.log(err)
+	console.log('installer fails with error: ', err)
     process.exit(1)
 });
 
