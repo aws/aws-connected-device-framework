@@ -26,8 +26,9 @@ program.action(() => {
 	process.exit(1);
 });
 
-// if (!process.argv.slice(2).length) {
-// 	program.outputHelp();
-// }
+process.on('unhandledRejection', function(err) {
+	console.log(err)
+    process.exit(1)
+});
 
 program.parse();
