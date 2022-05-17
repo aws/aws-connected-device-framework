@@ -1,6 +1,13 @@
 # Change Log - @cdf/events-alerts
 
-This log was last generated on Mon, 21 Mar 2022 21:58:32 GMT and should not be manually modified.
+This log was last generated on Mon, 16 May 2022 03:04:28 GMT and should not be manually modified.
+
+## 3.0.2
+Mon, 16 May 2022 03:04:28 GMT
+
+### Patches
+
+- re-enable DAX query by event alerts
 
 ## 3.0.1
 Mon, 21 Mar 2022 21:58:32 GMT

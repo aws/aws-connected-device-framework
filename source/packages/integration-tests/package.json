@@ -1,6 +1,6 @@
 {
   "name": "@cdf/integration-tests",
-  "version": "3.1.4",
+  "version": "3.1.5",
   "description": "CDF Integration Tests",
   "author": "Dean Hart",
   "scripts": {
@@ -20,7 +20,7 @@
     "@cdf/commandandcontrol-client": "^0.1.1",
     "@cdf/commands-client": "^5.0.4",
     "@cdf/config-inject": "^4.0.1",
-    "@cdf/device-patcher-client": "^1.1.5",
+    "@cdf/device-patcher-client": "^2.0.0",
     "@cdf/errors": "^4.0.0",
     "@cdf/greengrass2-provisioning-client": "^1.0.5",
     "@cdf/lambda-invoke": "^3.0.2",

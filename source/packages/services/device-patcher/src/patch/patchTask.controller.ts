@@ -27,34 +27,34 @@ import {logger} from '../utils/logger.util';
 
 import {TYPES} from '../di/types';
 
-import {DeploymentTaskService} from './deploymentTask.service';
-import { DeploymentTaskAssembler } from './deploymentTask.assembler';
-import {DeploymentTaskResource} from './deploymentTask.model';
-import {DeploymentAssembler} from './deployment.assembler';
+import {PatchTaskService} from './patchTask.service';
+import { PatchTaskAssembler } from './patchTask.assembler';
+import {PatchTaskResource} from './patchTask.model';
+import {PatchAssembler} from './patch.assembler';
 
 
-@controller('/deploymentTasks')
-export class DeploymentTaskController implements interfaces.Controller {
+@controller('/patchTasks')
+export class PatchTaskController implements interfaces.Controller {
 
     public constructor(
-        @inject(TYPES.DeploymentTaskService) private deploymentTaskService: DeploymentTaskService,
-        @inject(TYPES.DeploymentTaskAssembler) private deploymentTaskAssembler: DeploymentTaskAssembler,
-        @inject(TYPES.DeploymentAssembler) private deploymentAssembler: DeploymentAssembler
+        @inject(TYPES.PatchTaskService) private patchTaskService: PatchTaskService,
+        @inject(TYPES.PatchTaskAssembler) private patchTaskAssembler: PatchTaskAssembler,
+        @inject(TYPES.PatchAssembler) private patchAssembler: PatchAssembler
     ) {}
 
     @httpPost('')
-    public async createDeploymentTask(
-        @requestBody() resource: DeploymentTaskResource,
+    public async createPatchTask(
+        @requestBody() resource: PatchTaskResource,
         @response() res: Response
     ): Promise<void> {
-        logger.debug(`DeploymentTask.controller createDeploymentTask(): deploymentRequest:${JSON.stringify(resource)}`);
+        logger.debug(`PatchTask.controller createPatchTask(): patchRequest:${JSON.stringify(resource)}`);
 
         try {
-            const item = this.deploymentTaskAssembler.toItem(resource)
-            const deployment = await this.deploymentTaskService.create(item);
+            const item = this.patchTaskAssembler.toItem(resource)
+            const patch = await this.patchTaskService.create(item);
 
-            res.location(`/deploymentTasks/${deployment.taskId}`)
-                .header('x-deploymentTaskId', deployment.taskId)
+            res.location(`/patchTasks/${patch.taskId}`)
+                .header('x-taskId', patch.taskId)
                 .status(202)
                 .send();
 
@@ -62,44 +62,44 @@ export class DeploymentTaskController implements interfaces.Controller {
             handleError(err, res);
         }
 
-        logger.debug(`DeploymentTask.controller createDeploymentTask: exit:`);
+        logger.debug(`PatchTask.controller createPatchTask: exit:`);
     }
 
     @httpGet('/:taskId')
-    public async getDeploymentTask(
+    public async getPatchTask(
         @response() res: Response,
         @requestParam('taskId') taskId: string,
-    ): Promise<DeploymentTaskResource> {
-        logger.debug(`DeploymentTask.controller getDeploymentTask: in: taskId: ${taskId}`);
+    ): Promise<PatchTaskResource> {
+        logger.debug(`PatchTask.controller getPatchTask: in: taskId: ${taskId}`);
 
-        let deploymentTask: DeploymentTaskResource;
+        let patchTask: PatchTaskResource;
 
         try {
-            deploymentTask = await this.deploymentTaskService.get(taskId);
+            patchTask = await this.patchTaskService.get(taskId);
         } catch (err) {
             handleError(err, res);
         }
 
-        logger.debug(`DeploymentTask.controller getDeploymentTask: exit: ${JSON.stringify(deploymentTask)}`);
+        logger.debug(`PatchTask.controller getPatchTask: exit: ${JSON.stringify(patchTask)}`);
 
-        return deploymentTask;
+        return patchTask;
 
     }
 
-    @httpGet('/:taskId/deployments')
-    public async getDeployments(
+    @httpGet('/:taskId/patches')
+    public async getPatchs(
         @response() res: Response,
         @requestParam('taskId') taskId: string,
         @queryParam('count') count: number,
         @queryParam('exclusiveStartToken') exclusiveStartToken: string,
     ): Promise<void> {
-        logger.debug(`DeploymentTask.controller getDeploymentTask: in: taskId: ${taskId}`);
+        logger.debug(`PatchTask.controller getPatchTask: in: taskId: ${taskId}`);
 
         try {
-            const [items, paginationKey] = await this.deploymentTaskService.getDeployments(taskId, count, {nextToken: exclusiveStartToken});
-            const resources = this.deploymentAssembler.toListResource(items, count, paginationKey);
+            const [items, paginationKey] = await this.patchTaskService.getPatches(taskId, count, {nextToken: exclusiveStartToken});
+            const resources = this.patchAssembler.toListResource(items, count, paginationKey);
 
-            logger.debug(`DeploymentTask.controller getDeployments: exit: ${JSON.stringify(resources)}`);
+            logger.debug(`PatchTask.controller getPatches: exit: ${JSON.stringify(resources)}`);
 
             res.status(200).send(resources);
         } catch (err) {

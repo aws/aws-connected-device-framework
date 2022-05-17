@@ -60,4 +60,8 @@ export class TagsList {
   public asCLIOptions(): string[] {
     return this.tags.map(t => `${t.key}=${t.value}`);
   }
+
+  public get length() {
+    return this.tags.length;
+  }
 }

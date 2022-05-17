@@ -2,6 +2,90 @@
   "name": "@cdf/installer",
   "entries": [
     {
+      "version": "0.5.1",
+      "tag": "@cdf/installer_v0.5.1",
+      "date": "Tue, 17 May 2022 00:04:26 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "all unhandled rejection will now return exit code 1"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.5.0",
+      "tag": "@cdf/installer_v0.5.0",
+      "date": "Mon, 16 May 2022 03:04:28 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "allow users to specify TTL for DAX query and item cache"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.4.3",
+      "tag": "@cdf/installer_v0.4.3",
+      "date": "Fri, 13 May 2022 01:29:37 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "minor bug fix, to fix issue where installer would fail due to empty answers"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.4.2",
+      "tag": "@cdf/installer_v0.4.2",
+      "date": "Thu, 12 May 2022 21:12:39 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "minor updates for device-patcher deployment"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.4.1",
+      "tag": "@cdf/installer_v0.4.1",
+      "date": "Thu, 12 May 2022 03:51:07 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "minor bug fix, to fix issue where installer would fail due to empty answers"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.4.0",
+      "tag": "@cdf/installer_v0.4.0",
+      "date": "Thu, 12 May 2022 01:58:21 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "Added the capability to the installer to create/modify supplier CA"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.3.4",
+      "tag": "@cdf/installer_v0.3.4",
+      "date": "Thu, 05 May 2022 01:48:19 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix installer not allowing zero custom tags"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.3.3",
       "tag": "@cdf/installer_v0.3.3",
       "date": "Wed, 27 Apr 2022 09:56:58 GMT",

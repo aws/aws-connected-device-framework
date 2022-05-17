@@ -268,6 +268,27 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
+    patch:
+      tags:
+      - Subscriptions
+      summary: Modify existing subscription
+      operationId: updateSubscription
+      requestBody:
+        required: true
+        content:
+          application/vnd.aws-cdf-v2.0+json:
+            schema:
+                $ref: '#/components/schemas/UpdateSubscription'
+            examples:
+              disableSubscription:
+                $ref: '#/components/examples/DisableSubscription'
+      responses:
+      responses:
+        '204':
+          $ref: '#/components/responses/Modified
+        '404':
+          $ref: '#/components/responses/NotFound'       
+  
     delete:
       tags:
       - Subscriptions
@@ -537,6 +558,22 @@ components:
                   type: string
             count:
               type: number
+
+    UpdateSubscription :
+      properties:
+        ruleParameterValues:
+          description: The values of any required rule parameters of the event
+          type: object
+          additionalProperties:
+            oneOf:
+              - type: string
+              - type: number
+              - type: boolean
+        enabled:
+          description: Enabled status (This is a placeholder to enable/disable notifications. Currently, not validated)
+          type: boolean
+      required:
+        - id
     
     SubscriptionBase:
       properties:
@@ -817,9 +854,11 @@ components:
       description: The value of the principal to filter by.
       schema:
         type: string
-	                        
+
   examples:
-  
+
+    
+
     NewDynamoDBEventSource:
       summary: Creating a new DynamoDB event source
       value:
@@ -945,7 +984,13 @@ components:
           push_gcm:
             - platformApplicationArn: arn:aws:sns:us-west-2:123456789012:app/GCM/MyApplication
               token: EXAMPLE12345
-              
+
+    DisableSubscription:
+      summary: Disable existing subscription to prevent alert being sent
+      value:
+        enabled:
+          id: false
+
     NewEmailTarget:
       summary: A new email target
       value:

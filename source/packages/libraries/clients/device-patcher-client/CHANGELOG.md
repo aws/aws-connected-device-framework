@@ -1,6 +1,13 @@
 # Change Log - @cdf/device-patcher-client
 
-This log was last generated on Thu, 07 Apr 2022 05:00:50 GMT and should not be manually modified.
+This log was last generated on Thu, 12 May 2022 21:12:39 GMT and should not be manually modified.
+
+## 2.0.0
+Thu, 12 May 2022 21:12:39 GMT
+
+### Breaking changes
+
+- update clients to implement new changes to the device-patcher API
 
 ## 1.1.5
 Thu, 07 Apr 2022 05:00:50 GMT

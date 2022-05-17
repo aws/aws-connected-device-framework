@@ -478,6 +478,7 @@ describe('FilterService', () => {
         expect(attributeMap).toEqual({
             batteryLevel: 21,
             sequence: 4,
+            principalValue
         });
 
         expect(mockedGetEventConfigCall).toBeCalledTimes(1);

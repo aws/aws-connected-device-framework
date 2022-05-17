@@ -89,12 +89,57 @@ export class NotificationsInstaller implements RestModule {
             return true;
           }
         },
+        {
+          message: `Enter TTL (Time to Live) settings for DAX Query Cache in milliseconds`,
+          type: 'input',
+          name: 'notifications.queryCacheTTL',
+          default: (
+            answers.notifications?.queryCacheTTL ?? 60000
+          ),
+          askAnswered: true,
+          when(answers: Answers) {
+            return answers.notifications?.useDax === true;
+          },
+          validate(answer: number) {
+            if (answer < 0) {
+              return `DAX Query Cache TTL has to be larger than 0`;
+            }
+            return true;
+          }
+        },
+        {
+          message: `Enter TTL (Time to Live) settings for DAX Item Cache in milliseconds`,
+          type: 'input',
+          name: 'notifications.itemCacheTTL',
+          default: (
+            answers.notifications?.itemCacheTTL ?? 60000
+          ),
+          askAnswered: true,
+          when(answers: Answers) {
+            return answers.notifications?.useDax === true;
+          },
+          validate(answer: number) {
+            if (answer < 0) {
+              return `DAX Item Cache TTL has to be larger than 0`;
+            }
+            return true;
+          }
+        },
         ...applicationConfigurationPrompt(this.name, answers, []),
         ...customDomainPrompt(this.name, answers),
       ], updatedAnswers);
     }
 
     includeOptionalModule('vpc', updatedAnswers.modules, updatedAnswers.notifications.useDax)
+
+    if (!answers.notifications?.useDax) {
+      delete answers.notifications?.itemCacheTTL
+      delete answers.notifications?.queryCacheTTL
+      delete answers.notifications?.daxInstanceType
+      delete answers.notifications?.daxClusterEndpoint
+      delete answers.notifications?.daxClusterArn
+    }
+
     return updatedAnswers;
   }
 
@@ -111,29 +156,41 @@ export class NotificationsInstaller implements RestModule {
       return [answers, tasks];
     }
 
-
     tasks.push({
       title: `Packaging and deploying stack '${this.eventsProcessorStackName}'`,
       task: async () => {
 
         const parameterOverrides = [
           `Environment=${answers.environment}`,
-          `VpcId=${answers.vpc?.id ?? 'N/A'}`,
-          `CDFSecurityGroupId=${answers.vpc?.securityGroupId ?? ''}`,
-          `PrivateSubNetIds=${answers.vpc?.privateSubnetIds ?? ''}`,
           `TemplateSnippetS3UriBase=${answers.apigw.templateSnippetS3UriBase}`,
           `ApiGatewayDefinitionTemplate=${answers.apigw.cloudFormationTemplate}`,
           `AuthType=${answers.apigw.type}`,
           `KmsKeyId=${answers.kms.id}`,
-          `PrivateApiGatewayVPCEndpoint=${answers.vpc?.privateApiGatewayVpcEndpoint ?? ''}`,
           `CustomResourceLambdaArn=${answers.deploymentHelper.lambdaArn}`,
+          `PrivateApiGatewayVPCEndpoint=${answers.vpc?.privateApiGatewayVpcEndpoint ?? ''}`
         ];
+
+        if (!answers.notifications.useDax) {
+          // When DAX is disabled, even if VPC is specified we will set it to N/A to match
+          // the CloudFormation condition
+          parameterOverrides.push(
+            `VpcId=${'N/A'}`,
+            `CDFSecurityGroupId=${''}`,
+            `PrivateSubNetIds=${''}`)
+        } else {
+          parameterOverrides.push(
+            `VpcId=${answers.vpc?.id ?? 'N/A'}`,
+            `CDFSecurityGroupId=${answers.vpc?.securityGroupId ?? ''}`,
+            `PrivateSubNetIds=${answers.vpc?.privateSubnetIds ?? ''}`)
+        }
 
         const addIfSpecified = (key: string, value: unknown) => {
           if (value !== undefined) parameterOverrides.push(`${key}=${value}`)
-        };
+        }
 
         addIfSpecified('DAXInstanceType', answers.notifications.daxInstanceType);
+        addIfSpecified('QueryCacheTTL', answers.notifications.queryCacheTTL);
+        addIfSpecified('ItemCacheTTL', answers.notifications.itemCacheTTL);
         addIfSpecified('CognitoUserPoolArn', answers.apigw.cognitoUserPoolArn);
         addIfSpecified('AuthorizerFunctionArn', answers.apigw.lambdaAuthorizerArn);
         addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
@@ -161,6 +218,7 @@ export class NotificationsInstaller implements RestModule {
         answers.notifications.configTableName = byOutputKey('EventConfigTable');
         answers.notifications.configTableArn = byOutputKey('EventConfigTableArn');
         answers.notifications.daxClusterEndpoint = byOutputKey('DAXClusterEndpoint');
+        answers.notifications.daxClusterArn = byOutputKey('DAXClusterArn');
       }
     });
 
@@ -183,7 +241,20 @@ export class NotificationsInstaller implements RestModule {
         };
 
         addIfSpecified('DAXClusterEndpoint', answers.notifications.daxClusterEndpoint);
+        addIfSpecified('DAXClusterArn', answers.notifications.daxClusterArn);
         addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
+
+        if (!answers.notifications.daxClusterEndpoint) {
+          // When DAX is disabled, even if VPC is specified we will set it to N/A to match
+          // the CloudFormation condition
+          parameterOverrides.push(
+            `CDFSecurityGroupId=${''}`,
+            `PrivateSubNetIds=${''}`)
+        } else {
+          parameterOverrides.push(
+            `CDFSecurityGroupId=${answers.vpc?.securityGroupId ?? ''}`,
+            `PrivateSubNetIds=${answers.vpc?.privateSubnetIds ?? ''}`)
+        }
 
         await packageAndDeployStack({
           answers: answers,

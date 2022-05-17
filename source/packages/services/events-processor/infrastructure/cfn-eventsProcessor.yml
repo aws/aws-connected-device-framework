@@ -23,7 +23,7 @@ Parameters:
   ApplicationConfigurationOverride:
     Description: This allows you to override any application configuration.  It should consists of a text-based content with a structure and syntax comprising key–value pairs for properties. Any configurations contained in this will override the configurations found and merged from the default .env files.
     Type: String
-  
+
   Environment:
     Description: Name of environment.  Used to name the created resources.
     Type: String
@@ -87,8 +87,8 @@ Parameters:
     Description: >
       The instance type for the DynamoDB DAX instance. The list of available instance types for your region can be found here:
       https://aws.amazon.com/dynamodb/pricing/
-    ConstraintDescription: Must be a valid DAX instance type. 
-  
+    ConstraintDescription: Must be a valid DAX instance type.
+
   CustomResourceLambdaArn:
     Description: Custom resource lambda arn
     Type: String
@@ -97,6 +97,16 @@ Parameters:
   KmsKeyId:
     Description: The KMS key ID used to encrypt DynamoDB.
     Type: String
+
+  ItemCacheTTL:
+    Type: Number
+    Description: TTL default value for DAX Item Cache.
+    Default: 60000
+
+  QueryCacheTTL:
+    Type: Number
+    Description: TTL default value for DAX Query Cache.
+    Default: 60000
 
   EnableApiGatewayAccessLogs:
     Description: Enales API gateway Access Logging, defaults to false if not specified.
@@ -137,7 +147,6 @@ Conditions:
     ]
   KmsKeyIdProvided: !Not [!Equals [!Ref KmsKeyId, ""]]
   EnableApiGatewayAccessLogs: !Equals [!Ref EnableApiGatewayAccessLogs, "true"]
-
   CorsOriginProvided: !Not [!Equals [!Ref CorsOrigin, ""]]
   CustomDomainBasePathProvided: !Not [!Equals [!Ref CustomDomainBasePath, ""]]
   LoggingLevelProvided: !Not [!Equals [!Ref LoggingLevel, ""]]
@@ -230,19 +239,22 @@ Resources:
                   - "/"
                   - - !GetAtt EventNotificationsTable.Arn
                     - "index/*"
-          - Sid: "DAX"
-            Action:
-              - "dax:BatchGetItem"
-              - "dax:BatchWriteItem"
-              - "dax:ConditionCheckItem"
-              - "dax:DeleteItem"
-              - "dax:PutItem"
-              - "dax:GetItem"
-              - "dax:Query"
-              - "dax:Scan"
-              - "dax:UpdateItem"
-            Effect: Allow
-            Resource: !GetAtt DAXCluster.Arn
+          - !If
+            - DeployInVPC
+            - Sid: "DAX"
+              Action:
+                - "dax:BatchGetItem"
+                - "dax:BatchWriteItem"
+                - "dax:ConditionCheckItem"
+                - "dax:DeleteItem"
+                - "dax:PutItem"
+                - "dax:GetItem"
+                - "dax:Query"
+                - "dax:Scan"
+                - "dax:UpdateItem"
+              Effect: Allow
+              Resource: !GetAtt DAXCluster.Arn
+            - !Ref "AWS::NoValue"
           - Sid: "lambda"
             Action:
               - "lambda:AddPermission"
@@ -312,16 +324,21 @@ Resources:
       Timeout: 30
       Environment:
         Variables:
-          APP_CONFIG_DIR: 'packages/services/events-processor/dist/config'
+          APP_CONFIG_DIR: "packages/services/events-processor/dist/config"
           APP_CONFIG: !Ref ApplicationConfigurationOverride
           AWS_ACCOUNTID: !Ref AWS::AccountId
           AWS_DYNAMODB_TABLES_EVENTCONFIG_NAME: !Ref EventConfigTable
           AWS_DYNAMODB_TABLES_EVENTNOTIFICATIONS_NAME: !Ref EventNotificationsTable
-          # AWS_DYNAMODB_DAX_ENDPOINTS: !GetAtt DAXCluster.ClusterDiscoveryEndpoint
           AWS_IOT_ENDPOINT: !GetAtt IotEndpoint.address
           AWS_LAMBDA_DYNAMODBSTREAM_NAME: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:cdf-eventsprocessor-ddbStream-${Environment}"
           AWS_LAMBDA_LAMBDAINVOKE_ARN: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:cdf-eventsprocessor-invoke-${Environment}"
           EVENTSPROCESSOR_AWS_SQS_ASYNCPROCESSING: !Ref AsyncProcessingQueue
+          AWS_DYNAMODB_DAX_ENDPOINTS:
+            !If [
+              DeployInVPC,
+              !GetAtt DAXCluster.ClusterDiscoveryEndpoint,
+              !Ref "AWS::NoValue",
+            ]
           CORS_ORIGIN:
             !If [CorsOriginProvided, !Ref CorsOrigin, !Ref AWS::NoValue]
           CUSTOMDOMAIN_BASEPATH:
@@ -393,17 +410,21 @@ Resources:
       Timeout: 30
       Environment:
         Variables:
-          APP_CONFIG_DIR: 'packages/services/events-processor/dist/config'
+          APP_CONFIG_DIR: "packages/services/events-processor/dist/config"
           APP_CONFIG: !Ref ApplicationConfigurationOverride
           AWS_ACCOUNTID: !Ref AWS::AccountId
           AWS_DYNAMODB_TABLES_EVENTCONFIG_NAME: !Ref EventConfigTable
           AWS_DYNAMODB_TABLES_EVENTNOTIFICATIONS_NAME: !Ref EventNotificationsTable
-          # AWS_DYNAMODB_DAX_ENDPOINTS: !GetAtt DAXCluster.ClusterDiscoveryEndpoint
           AWS_IOT_ENDPOINT: !GetAtt IotEndpoint.address
           AWS_LAMBDA_DYNAMODBSTREAM_NAME: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:cdf-eventsprocessor-ddbStream-${Environment}"
           AWS_LAMBDA_LAMBDAINVOKE_ARN: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:cdf-eventsprocessor-invoke-${Environment}"
           EVENTSPROCESSOR_AWS_SQS_ASYNCPROCESSING: !Ref AsyncProcessingQueue
-
+          AWS_DYNAMODB_DAX_ENDPOINTS:
+            !If [
+              DeployInVPC,
+              !GetAtt DAXCluster.ClusterDiscoveryEndpoint,
+              !Ref "AWS::NoValue",
+            ]
           CORS_ORIGIN:
             !If [CorsOriginProvided, !Ref CorsOrigin, !Ref AWS::NoValue]
           CUSTOMDOMAIN_BASEPATH:
@@ -414,6 +435,13 @@ Resources:
             ]
           LOGGING_LEVEL:
             !If [LoggingLevelProvided, !Ref LoggingLevel, !Ref AWS::NoValue]
+      VpcConfig:
+        Fn::If:
+          - DeployInVPC
+          - SubnetIds: !Ref PrivateSubNetIds
+            SecurityGroupIds:
+              - !Ref CDFSecurityGroupId
+          - Ref: AWS::NoValue
       Tracing: Active
 
   RESTLambdaFunction:
@@ -422,23 +450,27 @@ Resources:
       FunctionName: !Sub "cdf-eventsprocessor-rest-${Environment}"
       CodeUri: ../bundle.zip
       Handler: packages/services/events-processor/dist/lambda_proxy_restapi.handler
-
       MemorySize: 256
       Role: !GetAtt RESTLambdaExecutionRole.Arn
       Runtime: nodejs14.x
       Timeout: 30
       Environment:
         Variables:
-          APP_CONFIG_DIR: 'packages/services/events-processor/dist/config'
+          APP_CONFIG_DIR: "packages/services/events-processor/dist/config"
           APP_CONFIG: !Ref ApplicationConfigurationOverride
           AWS_ACCOUNTID: !Ref AWS::AccountId
           AWS_DYNAMODB_TABLES_EVENTCONFIG_NAME: !Ref EventConfigTable
           AWS_DYNAMODB_TABLES_EVENTNOTIFICATIONS_NAME: !Ref EventNotificationsTable
-          # AWS_DYNAMODB_DAX_ENDPOINTS: !GetAtt DAXCluster.ClusterDiscoveryEndpoint
           AWS_IOT_ENDPOINT: !GetAtt IotEndpoint.address
           AWS_LAMBDA_DYNAMODBSTREAM_NAME: !Ref DynamoDBStreamLambdaFunction
           AWS_LAMBDA_LAMBDAINVOKE_ARN: !GetAtt LambdaInvokeLambdaFunction.Arn
           EVENTSPROCESSOR_AWS_SQS_ASYNCPROCESSING: !Ref AsyncProcessingQueue
+          AWS_DYNAMODB_DAX_ENDPOINTS:
+            !If [
+              DeployInVPC,
+              !GetAtt DAXCluster.ClusterDiscoveryEndpoint,
+              !Ref "AWS::NoValue",
+            ]
           CORS_ORIGIN:
             !If [CorsOriginProvided, !Ref CorsOrigin, !Ref AWS::NoValue]
           CUSTOMDOMAIN_BASEPATH:
@@ -525,16 +557,21 @@ Resources:
       Timeout: 900
       Environment:
         Variables:
-          APP_CONFIG_DIR: 'packages/services/events-processor/dist/config'
+          APP_CONFIG_DIR: "packages/services/events-processor/dist/config"
           APP_CONFIG: !Ref ApplicationConfigurationOverride
           AWS_ACCOUNTID: !Ref AWS::AccountId
           AWS_DYNAMODB_TABLES_EVENTCONFIG_NAME: !Ref EventConfigTable
           AWS_DYNAMODB_TABLES_EVENTNOTIFICATIONS_NAME: !Ref EventNotificationsTable
-          # AWS_DYNAMODB_DAX_ENDPOINTS: !GetAtt DAXCluster.ClusterDiscoveryEndpoint
           AWS_IOT_ENDPOINT: !GetAtt IotEndpoint.address
           AWS_LAMBDA_DYNAMODBSTREAM_NAME: !Ref DynamoDBStreamLambdaFunction
           AWS_LAMBDA_LAMBDAINVOKE_ARN: !GetAtt LambdaInvokeLambdaFunction.Arn
           EVENTSPROCESSOR_AWS_SQS_ASYNCPROCESSING: !Ref AsyncProcessingQueue
+          AWS_DYNAMODB_DAX_ENDPOINTS:
+            !If [
+              DeployInVPC,
+              !GetAtt DAXCluster.ClusterDiscoveryEndpoint,
+              !Ref "AWS::NoValue",
+            ]
           CORS_ORIGIN:
             !If [CorsOriginProvided, !Ref CorsOrigin, !Ref AWS::NoValue]
           CUSTOMDOMAIN_BASEPATH:
@@ -747,14 +784,25 @@ Resources:
           FromPort: 443
           ToPort: 443
           CidrIp: 0.0.0.0/0
-      
+
+  DAXClusterParameterGroup:
+    Condition: DeployInVPC
+    Type: AWS::DAX::ParameterGroup
+    Properties:
+      ParameterGroupName: !Sub "cdf-eventNotifications-${Environment}-parameter"
+      Description: !Sub "parameter group for cdf-eventNotifications-${Environment}"
+      ParameterNameValues:
+        "query-ttl-millis": !Ref QueryCacheTTL
+        "record-ttl-millis": !Ref ItemCacheTTL
 
   DAXCluster:
+    Condition: DeployInVPC
     Type: AWS::DAX::Cluster
     Properties:
       Description: Event notifications cluster
       IAMRoleARN: !GetAtt DAXServiceRole.Arn
       NodeType: !Ref DAXInstanceType
+      ParameterGroupName: !Ref DAXClusterParameterGroup
       SubnetGroupName:
         !If [
           DeployInVPC,
@@ -762,27 +810,23 @@ Resources:
           !Ref "AWS::NoValue",
         ]
       SecurityGroupIds:
-        - !If [
-          DeployInVPC,
-          !Ref DAXSecurityGroup,
-          !Ref "AWS::NoValue",
-        ]
+        - !If [DeployInVPC, !Ref DAXSecurityGroup, !Ref "AWS::NoValue"]
       ReplicationFactor: 1
       SSESpecification:
         SSEEnabled: "true"
     DependsOn:
       - DAXServiceRole
-      
 
   DAXSubnetGroup:
-    Type: AWS::DAX::SubnetGroup
     Condition: DeployInVPC
+    Type: AWS::DAX::SubnetGroup
     Properties:
       Description: cdf-events-processor DAX subnet group
       SubnetGroupName: !Sub "cdf-eventNotifications-${Environment}"
       SubnetIds: !Ref PrivateSubNetIds
 
   DAXServiceRole:
+    Condition: DeployInVPC
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
@@ -801,6 +845,7 @@ Resources:
       - DAXPolicies
 
   DAXPolicies:
+    Condition: DeployInVPC
     Type: "AWS::IAM::ManagedPolicy"
     Properties:
       Description: "cdf-events-processor DAX policies"
@@ -865,7 +910,14 @@ Outputs:
     Value: !Sub "${ApiGatewayApi}.execute-api.${AWS::Region}.amazonaws.com"
     Export:
       Name: !Sub "cdf-eventsProcessor-${Environment}-apigatewayhost"
+  DAXClusterArn:
+    Condition: DeployInVPC
+    Description: Arn of DAX Cluster
+    Value: !GetAtt DAXCluster.Arn
+    Export:
+      Name: !Sub "cdf-eventsProcessor-${Environment}-DAXClusterArn"
   DAXClusterEndpoint:
+    Condition: DeployInVPC
     Description: DAX Cliuter EndpointConfiguration
     Value: !GetAtt DAXCluster.ClusterDiscoveryEndpoint
     Export:

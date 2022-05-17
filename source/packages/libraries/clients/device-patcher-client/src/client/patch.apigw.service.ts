@@ -18,15 +18,15 @@ import * as request from 'superagent';
 import { QSHelper } from '../utils/qs.helper';
 import { RequestHeaders } from './common.model';
 import {
-    DeploymentResponse,
-    DeploymentTaskRequest,
-    DeploymentTaskResponse, ListDeploymentsResponse, UpdateDeploymentRequest
-} from './deployment.model';
-import { DeploymentService, DeploymentServiceBase } from './deployment.service';
+    PatchResponse,
+    PatchTaskRequest,
+    PatchTaskResponse, ListPatchResponse, UpdatePatchRequest
+} from './patch.model';
+import { PatchService, PatchServiceBase } from './patch.service';
 
 
 @injectable()
-export class DeploymentApigwService extends DeploymentServiceBase implements DeploymentService {
+export class PatchApigwService extends PatchServiceBase implements PatchService {
     private readonly baseUrl:string;
 
     public constructor() {
@@ -34,49 +34,49 @@ export class DeploymentApigwService extends DeploymentServiceBase implements Dep
         this.baseUrl = process.env.DEVICE_PATCHER_BASE_URL;
     }
 
-    public async createDeploymentTask(deploymentTaskRequest: DeploymentTaskRequest, additionalHeaders?:RequestHeaders): Promise<string> {
-        ow(deploymentTaskRequest, ow.object.nonEmpty);
-        ow(deploymentTaskRequest.deployments, ow.array.nonEmpty);
+    public async createPatchTask(patchTaskRequest: PatchTaskRequest, additionalHeaders?:RequestHeaders): Promise<string> {
+        ow(patchTaskRequest, ow.object.nonEmpty);
+        ow(patchTaskRequest.patches, ow.array.nonEmpty);
 
-        const res = await request.post(`${this.baseUrl}${super.deploymentTasksRelativeUrl()}`)
+        const res = await request.post(`${this.baseUrl}${super.patchTasksRelativeUrl()}`)
             .set(super.buildHeaders(additionalHeaders))
-            .send(deploymentTaskRequest);
+            .send(patchTaskRequest);
 
         const location = res.get('Location');
         return location.substring(location.lastIndexOf('/') + 1);
     }
 
-    public async getDeployment(deploymentId: string, additionalHeaders?:RequestHeaders): Promise<DeploymentResponse> {
-        ow(deploymentId, ow.string.nonEmpty);
+    public async getPatch(patchId: string, additionalHeaders?:RequestHeaders): Promise<PatchResponse> {
+        ow(patchId, ow.string.nonEmpty);
 
-        const url = `${this.baseUrl}${super.deploymentsRelativeUrl(deploymentId)}`;
+        const url = `${this.baseUrl}${super.patchesRelativeUrl(patchId)}`;
         const res = await request.get(url).set(super.buildHeaders(additionalHeaders));
 
         return res.body;
     }
 
-    public async getDeploymentTask(taskId: string, additionalHeaders?:RequestHeaders): Promise<DeploymentTaskResponse> {
+    public async getPatchTask(taskId: string, additionalHeaders?:RequestHeaders): Promise<PatchTaskResponse> {
         ow(taskId, ow.string.nonEmpty);
 
-        const url = `${this.baseUrl}${super.deploymentTaskRelativeUrl(taskId)}`;
+        const url = `${this.baseUrl}${super.patchTaskRelativeUrl(taskId)}`;
         const res = await request.get(url).set(super.buildHeaders(additionalHeaders));
 
         return res.body;
     }
 
-    public async listDeploymentsByTaskId(taskId: string, additionalHeaders?:RequestHeaders): Promise<ListDeploymentsResponse> {
+    public async listPatchesByTaskId(taskId: string, additionalHeaders?:RequestHeaders): Promise<ListPatchResponse> {
         ow(taskId, ow.string.nonEmpty);
 
-        const url = `${this.baseUrl}${super.deploymentByTaskRelativeUrl(taskId)}`;
+        const url = `${this.baseUrl}${super.patchByTaskRelativeUrl(taskId)}`;
         const res = await request.get(url).set(super.buildHeaders(additionalHeaders));
 
         return res.body;
     }
 
-    public async listDeploymentsByDeviceId(deviceId: string, status?: string, additionalHeaders?:RequestHeaders): Promise<ListDeploymentsResponse> {
+    public async listPatchesByDeviceId(deviceId: string, status?: string, additionalHeaders?:RequestHeaders): Promise<ListPatchResponse> {
         ow(deviceId, ow.string.nonEmpty);
 
-        let url = `${this.baseUrl}${super.deploymentByDeviceRelativeUrl(deviceId)}`;
+        let url = `${this.baseUrl}${super.patchByDeviceRelativeUrl(deviceId)}`;
 
         const queryString = QSHelper.getQueryString({status});
         if (queryString) {
@@ -87,22 +87,22 @@ export class DeploymentApigwService extends DeploymentServiceBase implements Dep
         return res.body;
     }
 
-    public async updateDeployment(deploymentRequest: UpdateDeploymentRequest, additionalHeaders?:RequestHeaders): Promise<void> {
-        ow(deploymentRequest, ow.object.nonEmpty);
-        ow(deploymentRequest.deploymentStatus, ow.string.nonEmpty);
-        ow(deploymentRequest.deploymentId, ow.string.nonEmpty);
+    public async updatePatch(patchRequest: UpdatePatchRequest, additionalHeaders?:RequestHeaders): Promise<void> {
+        ow(patchRequest, ow.object.nonEmpty);
+        ow(patchRequest.patchStatus, ow.string.nonEmpty);
+        ow(patchRequest.patchId, ow.string.nonEmpty);
 
-        const res = await request.post(`${this.baseUrl}${super.deploymentsRelativeUrl(deploymentRequest.deploymentId)}`)
+        const res = await request.post(`${this.baseUrl}${super.patchesRelativeUrl(patchRequest.patchId)}`)
             .set(super.buildHeaders(additionalHeaders))
-            .send(deploymentRequest);
+            .send(patchRequest);
 
         return res.body;
     }
 
-    public async deleteDeployment(deploymentId:string,  additionalHeaders?:RequestHeaders): Promise<void> {
-        ow(deploymentId, ow.string.nonEmpty);
+    public async deletePatch(patchId:string, additionalHeaders?:RequestHeaders): Promise<void> {
+        ow(patchId, ow.string.nonEmpty);
 
-        const url = `${this.baseUrl}${super.deploymentsRelativeUrl(deploymentId)}`;
+        const url = `${this.baseUrl}${super.patchesRelativeUrl(patchId)}`;
         await request.delete(url).set(super.buildHeaders(additionalHeaders));
 
     }

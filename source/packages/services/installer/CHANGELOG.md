@@ -1,6 +1,55 @@
 # Change Log - @cdf/installer
 
-This log was last generated on Wed, 27 Apr 2022 09:56:58 GMT and should not be manually modified.
+This log was last generated on Tue, 17 May 2022 00:04:26 GMT and should not be manually modified.
+
+## 0.5.1
+Tue, 17 May 2022 00:04:26 GMT
+
+### Patches
+
+- all unhandled rejection will now return exit code 1
+
+## 0.5.0
+Mon, 16 May 2022 03:04:28 GMT
+
+### Minor changes
+
+- allow users to specify TTL for DAX query and item cache
+
+## 0.4.3
+Fri, 13 May 2022 01:29:37 GMT
+
+### Patches
+
+- minor bug fix, to fix issue where installer would fail due to empty answers
+
+## 0.4.2
+Thu, 12 May 2022 21:12:39 GMT
+
+### Patches
+
+- minor updates for device-patcher deployment
+
+## 0.4.1
+Thu, 12 May 2022 03:51:07 GMT
+
+### Patches
+
+- minor bug fix, to fix issue where installer would fail due to empty answers
+
+## 0.4.0
+Thu, 12 May 2022 01:58:21 GMT
+
+### Minor changes
+
+- Added the capability to the installer to create/modify supplier CA
+
+## 0.3.4
+Thu, 05 May 2022 01:48:19 GMT
+
+### Patches
+
+- fix installer not allowing zero custom tags
 
 ## 0.3.3
 Wed, 27 Apr 2022 09:56:58 GMT
