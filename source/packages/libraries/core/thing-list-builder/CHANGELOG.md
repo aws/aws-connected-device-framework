@@ -1,6 +1,13 @@
 # Change Log - @cdf/thing-list-builder
 
-This log was last generated on Fri, 25 Mar 2022 06:23:54 GMT and should not be manually modified.
+This log was last generated on Fri, 08 Apr 2022 07:03:46 GMT and should not be manually modified.
+
+## 1.1.2
+Fri, 08 Apr 2022 07:03:46 GMT
+
+### Patches
+
+- modified the logic for extracting thingname from resource ARN
 
 ## 1.1.1
 Fri, 25 Mar 2022 06:23:54 GMT

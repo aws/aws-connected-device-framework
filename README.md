@@ -74,6 +74,7 @@ The CDF modules form a layer above the AWS building blocks as shown in the follo
 - [Tech Stack](source/docs/development/tech-stack.md)
 - [Dependency Injection](source/docs/development/dependency-injection.md)
 - [Unit testing](source/docs/development/unit-testing.md)
+- [Integration tests](source/packages/integration-tests/README.md)
 
 ## Deployment
 

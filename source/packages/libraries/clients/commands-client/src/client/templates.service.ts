@@ -49,12 +49,18 @@ export class TemplatesServiceBase {
 
     protected buildHeaders(additionalHeaders:RequestHeaders) : RequestHeaders {
 
-        let headers = Object.assign({}, this._headers);
+        let headers: RequestHeaders = Object.assign({}, this._headers);
 
-
-        const headersFromConfig:RequestHeaders =  process.env.COMMANDS_HEADERS as unknown as  RequestHeaders;
-        if (headersFromConfig !== null && headersFromConfig !== undefined) {
-            headers = {...headers, ...headersFromConfig};
+        const customHeaders = process.env.COMMANDS_HEADERS;
+        if (customHeaders !== undefined) {
+            try {
+                const headersFromConfig: RequestHeaders = JSON.parse(customHeaders) as unknown as RequestHeaders;
+                headers = {...headers, ...headersFromConfig};
+            } catch (err) { 
+                const wrappedErr = `Failed to parse configuration parameter COMMANDS_HEADERS as JSON with error: ${err}`;
+                console.log(wrappedErr);
+                throw new Error(wrappedErr);
+            }
         }
 
         if (additionalHeaders !== null && additionalHeaders !== undefined) {

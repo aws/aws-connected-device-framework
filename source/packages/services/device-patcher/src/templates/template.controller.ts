@@ -12,72 +12,128 @@
  *********************************************************************************************************************/
 import { Response } from 'express';
 import { inject } from 'inversify';
+import ow from 'ow';
+import multer from "multer";
+
 import {
     interfaces,
     controller,
     response,
-    requestBody,
+    request,
     requestParam,
     httpGet,
-    httpPut,
+    httpPatch,
+    httpPost,
     httpDelete,
     queryParam
 } from 'inversify-express-utils';
+import { Request } from 'express';
 
 import { handleError } from '../utils/errors';
 import { logger } from '../utils/logger.util';
 
 import { TYPES } from '../di/types';
-import { DeploymentTemplatesService } from './template.service';
-import { DeploymentTemplateAssembler } from './template.assembler';
+import { PatchTemplatesService } from './template.service';
+import { PatchTemplateAssembler } from './template.assembler';
 
-import { DeploymentTemplateItem, DeploymentTemplateResource,} from './template.model';
+import { PatchTemplateItem } from './template.model';
 
-@controller('/deploymentTemplates')
-export class DeploymentTemplateController implements interfaces.Controller {
+const storage = multer.memoryStorage();
+const upload = multer({storage});
+
+@controller('/patchTemplates')
+export class PatchTemplateController implements interfaces.Controller {
 
     public constructor(
-        @inject(TYPES.DeploymentTemplatesService) private deploymentTemplatesService: DeploymentTemplatesService,
-        @inject(TYPES.DeploymentTemplateAssembler) private deploymentTemplateAssembler: DeploymentTemplateAssembler
+        @inject(TYPES.PatchTemplatesService) private patchTemplatesService: PatchTemplatesService,
+        @inject(TYPES.PatchTemplateAssembler) private patchTemplateAssembler: PatchTemplateAssembler,
     ) {}
 
-    @httpPut('/:name')
-    public async saveTemplate(
+    @httpPost('', upload.single('playbookFile'))
+    public async createTemplate(
         @response() res: Response,
-        @requestParam('name') name: string,
-        @requestBody() req: DeploymentTemplateResource,
+        @request() req: Request,
     ): Promise<void> {
-
-        logger.info(`DeploymentTemplate.controller saveTemplate: in: item:${JSON.stringify(req)}`);
-
-        const template: DeploymentTemplateResource = req;
-        template.name = name;
+        logger.info(`PatchTemplate.controller createTemplate: in: item:`);
 
         try {
-            await this.deploymentTemplatesService.save(template);
+            ow(req, ow.object.nonEmpty);
+            ow(req.file, ow.object.hasKeys('buffer'));
+            ow(req.body, ow.object.nonEmpty);
+
+            const template: PatchTemplateItem = req.body;
+
+            ow(template.name, ow.string.nonEmpty);
+            ow(template.patchType, ow.string.nonEmpty);
+
+            template.playbookFile = req.file.buffer;
+            template.playbookName = req.file.originalname;
+
+            if(template.extraVars) {
+                if(typeof template.extraVars === 'string') {
+                    throw new Error("BAD_REQUEST")
+                }
+            }
+            await this.patchTemplatesService.create(template);
         } catch (err) {
-            logger.error(`DeploymentTemplate.controller : err: ${err}`);
+            logger.error(`PatchTemplate.controller : err: ${err}`);
             handleError(err, res);
         }
 
-        logger.debug(`DeploymentTemplate.controller saveTemplate: exit:`);
+        logger.debug(`PatchTemplate.controller createTemplate: exit:`);
+    }
+
+    @httpPatch('/:name', upload.single('playbookFile'))
+    public async updateTemplate(
+        @response() res: Response,
+        @requestParam('name') name: string,
+        @request() req: Request,
+    ): Promise<void> {
+        logger.info(`PatchTemplate.controller updateTemplate: in: item:`);
+
+        try {
+            ow(req, ow.object.nonEmpty);
+            ow(req.body, ow.object.nonEmpty);
+            ow(name, ow.string.nonEmpty);
+
+            const template: PatchTemplateItem = req.body;
+            template.name = name;
+
+            if (req.file) {
+                template.playbookFile = req.file.buffer;
+                template.playbookName = req.file.originalname;
+            }
+
+            if(template.extraVars) {
+                if(typeof template.extraVars === 'string') {
+                    throw new Error("BAD_REQUEST")
+                }
+            }
+
+            await this.patchTemplatesService.update(template);
+        } catch (err) {
+            logger.error(`PatchTemplate.controller : err: ${err}`);
+            handleError(err, res);
+        }
+
+        logger.debug(`PatchTemplate.controller updateTemplate: exit:`);
     }
 
     @httpGet('/:name')
     public async getTemplate(
         @response() res:Response,
         @requestParam('name') name: string
-    ): Promise<DeploymentTemplateItem> {
-        logger.info(`DeploymentTemplate.controller getTemplate: in: templateId:${name}`);
+    ): Promise<PatchTemplateItem> {
+        logger.info(`PatchTemplate.controller getTemplate: in: templateId:${name}`);
 
-        let template:DeploymentTemplateItem;
+        let template:PatchTemplateItem;
         try {
-            template = await this.deploymentTemplatesService.get(name);
+            template = await this.patchTemplatesService.get(name);
         } catch (err) {
-            logger.error(`DeploymentTemplate.controller : err: ${err}`);
+            logger.error(`PatchTemplate.controller : err: ${err}`);
             handleError(err, res);
         }
-        logger.debug(`DeploymentTemplate.controller getTemplate: exit:`);
+        logger.debug(`PatchTemplate.controller getTemplate: exit:`);
         return template;
     }
 
@@ -87,16 +143,16 @@ export class DeploymentTemplateController implements interfaces.Controller {
         @queryParam('exclusiveStartName') exclusiveStartName: string,
         @response() res:Response,
     ): Promise<void> {
-        logger.info(`DeploymentTemplates.controller listTemplate: in: count:${count}, exclusiveStartName:${exclusiveStartName}`);
+        logger.info(`PatchTemplates.controller listTemplate: in: count:${count}, exclusiveStartName:${exclusiveStartName}`);
 
         try {
-            const [items, paginationKey] = await this.deploymentTemplatesService.list(count, {name: exclusiveStartName});
-            const resources = this.deploymentTemplateAssembler.toListResource(items, count, paginationKey);
-            logger.debug(`DeploymentTemplates.controller listTemplates: exit: ${JSON.stringify(resources)}`);
+            const [items, paginationKey] = await this.patchTemplatesService.list(count, {name: exclusiveStartName});
+            const resources = this.patchTemplateAssembler.toListResource(items, count, paginationKey);
+            logger.debug(`PatchTemplates.controller listTemplates: exit: ${JSON.stringify(resources)}`);
             res.status(200).send(resources);
 
         } catch (err) {
-            logger.error(`DeploymentTemplate.controller : err: ${err}`);
+            logger.error(`PatchTemplate.controller : err: ${err}`);
             handleError(err, res);
         }
     }
@@ -106,7 +162,7 @@ export class DeploymentTemplateController implements interfaces.Controller {
         logger.info(`templates.controller deleteTemplate: in: name:${name}`);
 
         try {
-            await this.deploymentTemplatesService.delete(name);
+            await this.patchTemplatesService.delete(name);
         } catch (e) {
             handleError(e,res);
         }

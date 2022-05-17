@@ -180,6 +180,7 @@ function lambaInvokeRestApi {
     path=$3
     body=$4             # optional
     function_name=$5    # optional
+    queryString=$6      # optional
 
     if [[ -z "$body" ]]; then
         body='{}'
@@ -193,6 +194,10 @@ function lambaInvokeRestApi {
           '.Exports[] | select(.Name==$function_name_export) | .Value')
     fi
 
+    if [[ -z "$queryString" ]]; then
+        queryString='{}'
+    fi
+
     response_file=lambda_response.json
 
     event_payload='
@@ -200,10 +205,12 @@ function lambaInvokeRestApi {
         "resource": "/{proxy+}",
         "path": "'"$path"'",
         "httpMethod": "'"$method"'",
+        "multiValueQueryStringParameters" : '"$queryString"',
         "headers": {
             "accept": "application/vnd.aws-cdf-v1.0+json",
-            "content-type": "application/vnd.aws-cdf-v1.0+json"
-        },
+            "content-type": "application/vnd.aws-cdf-v1.0+json",
+            "authorization": "'"$ACCESS_TOKEN"'"
+         },
         "body": '"$( echo $body | jq '@json')"'
     }'
 

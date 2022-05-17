@@ -17,7 +17,7 @@ import { SubscriptionItem } from '../api/subscriptions/subscription.models';
 import { TYPES } from '../di/types';
 import { logger } from '../utils/logger.util';
 import { SubscriptionDao } from '../api/subscriptions/subscription.dao';
-import { Rule, Engine, TopLevelCondition, EngineResult} from 'json-rules-engine';
+import { Rule, Engine, TopLevelCondition, EngineResult } from 'json-rules-engine';
 import { AlertDao } from '../alerts/alert.dao';
 import { AlertItem } from '../alerts/alert.models';
 import { EventConditionsUtils, TemplatePropertiesData } from '../api/events/event.models';
@@ -34,36 +34,36 @@ export class FilterService {
         @inject(TYPES.EventDao) private eventDao: EventDao) {
     }
 
-    public async filter(events:CommonEvent[]): Promise<void> {
+    public async filter(events: CommonEvent[]): Promise<void> {
         logger.debug(`filter.service filter: in: model:${JSON.stringify(events)}`);
 
         ow(events, ow.array.nonEmpty);
 
         // for performance, cache for the duration of the method call...
-        const subscriptionMap: { [key:string]:SubscriptionItem[]} = {};
-        const ruleMap: { [key:string]:Rule} = {};
+        const subscriptionMap: { [key: string]: SubscriptionItem[] } = {};
+        const ruleMap: { [key: string]: Rule } = {};
 
         const engine = new Engine();
 
-        const alerts:AlertItem[]=[];
-        const changedSubAlerts:{[key:string]:SubscriptionItem}= {};
+        const alerts: AlertItem[] = [];
+        const changedSubAlerts: { [key: string]: SubscriptionItem } = {};
 
-        for(const ev of events) {
+        for (const ev of events) {
 
             // perform lookup to see if any subscriptions are configured for the event source/principal/principalValue (cached for the duration of the method call)
-            const subscriptions = await this.listSubscriptionsForEvent(ev, subscriptionMap);
+            const subscriptions = (await this.listSubscriptionsForEvent(ev, subscriptionMap)).filter(o => o.enabled);
 
             // if we have subscriptions, lets evaluate them against the datasource
-            if (subscriptions!==undefined) {
+            if (subscriptions !== undefined) {
 
-                for(const sub of subscriptions) {
+                for (const sub of subscriptions) {
 
                     // initializing an empty cache
-                    const templateCache:TemplateCache = {};
+                    const templateCache: TemplateCache = {};
 
                     // initialize the rule (cached for the duration of the method call)
                     let rule = ruleMap[sub.event.id];
-                    if (rule===undefined) {
+                    if (rule === undefined) {
                         rule = new Rule({
                             conditions: sub.event.conditions as TopLevelCondition,
                             event: {
@@ -77,16 +77,16 @@ export class FilterService {
 
                     // add all root elements with '__' prefix, except attributes
                     Object.keys(ev)
-                        .filter(key=> key!=='attributes')
-                        .forEach(key=> engine.addFact( '__' + key, ev[key]));
+                        .filter(key => key !== 'attributes')
+                        .forEach(key => engine.addFact('__' + key, ev[key]));
 
                     // add all the known facts
                     Object.keys(ev.attributes)
-                        .filter(key=> ev.attributes[key]!==undefined && ev.attributes[key]!==null)
-                        .forEach(key=> engine.addFact(key, ev.attributes[key]));
+                        .filter(key => ev.attributes[key] !== undefined && ev.attributes[key] !== null)
+                        .forEach(key => engine.addFact(key, ev.attributes[key]));
 
                     // evaluate the rules
-                    let results:EngineResult;
+                    let results: EngineResult;
                     try {
                         results = await engine.run();
                     } catch (err) {
@@ -94,13 +94,13 @@ export class FilterService {
                     }
                     logger.debug(`filter.service filter: results:${JSON.stringify(results)}`);
 
-                    if (results?.events?.length>0 ) {
+                    if (results?.events?.length > 0) {
                         if (!sub.alerted || sub.event.disableAlertThreshold) {
                             // a new alert...
                             const attributes = await this.getTemplatePropertiesData(sub, ev, templateCache);
                             alerts.push(this.buildAlert(sub, attributes));
                             if (!sub.alerted) {
-                                changedSubAlerts[sub.id]= {
+                                changedSubAlerts[sub.id] = {
                                     id: sub.id,
                                     eventSource: {
                                         id: sub.eventSource.id,
@@ -110,12 +110,12 @@ export class FilterService {
                                     alerted: true
                                 };
                             }
-                            sub.alerted=true;
+                            sub.alerted = true;
                         }
-                    } else if (results?.events?.length===0 && sub.alerted) {
+                    } else if (results?.events?.length === 0 && sub.alerted) {
                         // an alert that needs resetting...
-                        sub.alerted=false;
-                        changedSubAlerts[sub.id]= {
+                        sub.alerted = false;
+                        changedSubAlerts[sub.id] = {
                             id: sub.id,
                             eventSource: {
                                 id: sub.eventSource.id,
@@ -127,21 +127,21 @@ export class FilterService {
                     }
 
                     // clear the engine state ready for the next run
-                    Object.keys(ev.attributes).forEach(key=> engine.removeFact(key));
+                    Object.keys(ev.attributes).forEach(key => engine.removeFact(key));
                     engine.removeRule(rule);
                 }
 
                 // save the subscription in case its state changed
                 const mapKey = this.subscriptionMapKey(ev);
-                subscriptionMap[mapKey]=subscriptions;
+                subscriptionMap[mapKey] = subscriptions;
             }
         }
 
         logger.debug(`filter.service filter: alerts:${JSON.stringify(alerts)}`);
-        if (alerts.length>0) {
+        if (alerts.length > 0) {
             await this.alertDao.create(alerts);
         }
-        if (Object.keys(changedSubAlerts).length>0) {
+        if (Object.keys(changedSubAlerts).length > 0) {
             await this.alertDao.updateChangedSubAlertStatus(changedSubAlerts);
         }
 
@@ -149,9 +149,9 @@ export class FilterService {
 
     }
 
-    private buildAlert(sub:SubscriptionItem, templatePropertiesData: TemplatePropertiesData):AlertItem {
+    private buildAlert(sub: SubscriptionItem, templatePropertiesData: TemplatePropertiesData): AlertItem {
         logger.debug(`filter.service buildAlert: in: sub:${JSON.stringify(sub)}`);
-        const alert:AlertItem = {
+        const alert: AlertItem = {
             version: 2.0,
             time: new Date().toISOString(),
             subscription: {
@@ -176,22 +176,22 @@ export class FilterService {
         return alert;
     }
 
-    private subscriptionMapKey(ev:CommonEvent) : string {
+    private subscriptionMapKey(ev: CommonEvent): string {
         return `${ev.eventSourceId}:${ev.principal}:${ev.principalValue}`;
     }
 
-    private async listSubscriptionsForEvent(ev:CommonEvent, subscriptionMap:{ [key:string]:SubscriptionItem[]} ) {
+    private async listSubscriptionsForEvent(ev: CommonEvent, subscriptionMap: { [key: string]: SubscriptionItem[] }) {
         logger.debug(`filter.service listSubscriptionsForEvent: in: ev:${JSON.stringify(ev)}, subscriptionMap:${JSON.stringify(subscriptionMap)}`);
 
         const mapKey = this.subscriptionMapKey(ev);
         let subscriptions = subscriptionMap[mapKey];
-        if (subscriptions===undefined) {
+        if (subscriptions === undefined) {
             subscriptions = await this.subscriptionDao.listSubscriptionsForEventMessage(ev.eventSourceId, ev.principal, ev.principalValue);
-            if (subscriptions!==undefined && subscriptions.length>0) {
-                for(const sub of subscriptions) {
-                    this.eventConditionsUtils.populateParameters(sub.event.conditions,sub.ruleParameterValues);
+            if (subscriptions !== undefined && subscriptions.length > 0) {
+                for (const sub of subscriptions) {
+                    this.eventConditionsUtils.populateParameters(sub.event.conditions, sub.ruleParameterValues);
                 }
-                subscriptionMap[mapKey]=subscriptions;
+                subscriptionMap[mapKey] = subscriptions;
             }
         }
 
@@ -199,7 +199,7 @@ export class FilterService {
         return subscriptions;
     }
 
-    private async getTemplatePropertiesData(sub: SubscriptionItem, event: CommonEvent, templateCache: TemplateCache) : Promise<TemplatePropertiesData> {
+    private async getTemplatePropertiesData(sub: SubscriptionItem, event: CommonEvent, templateCache: TemplateCache): Promise<TemplatePropertiesData> {
         logger.debug(`filter.service getEventAttributes: in: ev:${JSON.stringify(sub)}, subscriptionMap:${JSON.stringify(event)}`);
         const templatePropertiesData = {};
 
@@ -218,12 +218,13 @@ export class FilterService {
         const eventConfig = templateCache[event_id];
 
         // get all the template properties referenced in the templates
-        const templateProperties =  eventConfig.templateProperties;
+        const templateProperties = eventConfig.templateProperties;
 
         if (templateProperties) {
             templateProperties.forEach(k => {
                 templatePropertiesData[k] = event.attributes[k];
             });
+            templatePropertiesData['principalValue'] = event.principalValue
         }
 
         logger.debug(`filter.service getEventAttributes: exit: attributeMap:${JSON.stringify(templatePropertiesData)}`);

@@ -27,7 +27,7 @@ export class DeploymentsApigwService extends DeploymentsServiceBase implements D
 
     public constructor() {
         super();
-        this.baseUrl = process.env.GREENGRASSPROVISIONING_BASE_URL;
+        this.baseUrl = process.env.GREENGRASS2PROVISIONING_BASE_URL;
     }
 
     async createDeploymentTask(task:NewDeploymentTask, additionalHeaders?:RequestHeaders) : Promise<string> {

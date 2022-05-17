@@ -1,6 +1,28 @@
 # Change Log - @cdf/assetlibrary
 
-This log was last generated on Tue, 15 Mar 2022 18:37:51 GMT and should not be manually modified.
+This log was last generated on Wed, 27 Apr 2022 06:44:55 GMT and should not be manually modified.
+
+## 6.0.6
+Wed, 27 Apr 2022 06:44:55 GMT
+
+### Patches
+
+- options request should not require claims check
+
+## 6.0.5
+Thu, 07 Apr 2022 05:00:50 GMT
+
+### Patches
+
+- minor formatting fix in readme
+
+## 6.0.4
+Wed, 30 Mar 2022 00:46:17 GMT
+
+### Patches
+
+- updated process of updating groups and devices so drops work
+- replace deprecated String.prototype.substr()
 
 ## 6.0.3
 Tue, 15 Mar 2022 18:37:51 GMT
