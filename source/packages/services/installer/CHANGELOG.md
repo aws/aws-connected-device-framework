@@ -1,6 +1,13 @@
 # Change Log - @cdf/installer
 
-This log was last generated on Mon, 16 May 2022 03:04:28 GMT and should not be manually modified.
+This log was last generated on Tue, 17 May 2022 00:04:26 GMT and should not be manually modified.
+
+## 0.5.1
+Tue, 17 May 2022 00:04:26 GMT
+
+### Patches
+
+- all unhandled rejection will now return exit code 1
 
 ## 0.5.0
 Mon, 16 May 2022 03:04:28 GMT

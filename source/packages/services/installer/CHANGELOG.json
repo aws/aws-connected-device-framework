@@ -2,6 +2,18 @@
   "name": "@cdf/installer",
   "entries": [
     {
+      "version": "0.5.1",
+      "tag": "@cdf/installer_v0.5.1",
+      "date": "Tue, 17 May 2022 00:04:26 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "all unhandled rejection will now return exit code 1"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.5.0",
       "tag": "@cdf/installer_v0.5.0",
       "date": "Mon, 16 May 2022 03:04:28 GMT",
