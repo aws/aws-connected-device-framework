@@ -64,6 +64,25 @@ export class CertificateActivatorInstaller implements ServiceModule {
     return updatedAnswers;
   }
 
+  private getParameterOverrides(answers: Answers): string[] {
+    const parameterOverrides = [
+      `Environment=${answers.environment}`,
+      `BucketName=${answers.s3.bucket}`,
+      `OpenSslLambdaLayerArn=${answers.openSsl.arn}`,
+      `AssetLibraryFunctionName=${answers.certificateActivator.assetLibraryFunctionName}`,
+      `ProvisioningFunctionName=${answers.certificateActivator.provisioningFunctionName}`,
+    ];
+
+    const addIfSpecified = (key: string, value: unknown) => {
+      if (value !== undefined) parameterOverrides.push(`${key}=${value}`)
+    };
+
+    addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
+
+
+    return parameterOverrides;
+  }
+
   public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
     const tasks: ListrTask[] = [{
       title: `Packaging module '${this.name}'`,
@@ -71,7 +90,7 @@ export class CertificateActivatorInstaller implements ServiceModule {
         await packageAndUploadTemplate({
           answers: answers,
           templateFile: '../certificateactivator/infrastructure/cfn-certificateactivator.yml',
-
+          parameterOverrides: this.getParameterOverrides(answers)
         });
       },
     }
@@ -111,26 +130,13 @@ export class CertificateActivatorInstaller implements ServiceModule {
       title: `Packaging and deploying stack '${this.stackName}'`,
       task: async () => {
 
-        const parameterOverrides = [
-          `Environment=${answers.environment}`,
-          `BucketName=${answers.s3.bucket}`,
-          `OpenSslLambdaLayerArn=${answers.openSsl.arn}`,
-          `AssetLibraryFunctionName=${answers.certificateActivator.assetLibraryFunctionName}`,
-          `ProvisioningFunctionName=${answers.certificateActivator.provisioningFunctionName}`,
-        ];
-
-        const addIfSpecified = (key: string, value: unknown) => {
-          if (value !== undefined) parameterOverrides.push(`${key}=${value}`)
-        };
-
-        addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
 
         await packageAndDeployStack({
           answers: answers,
           stackName: this.stackName,
           serviceName: 'certificateactivator',
           templateFile: '../certificateactivator/infrastructure/cfn-certificateactivator.yml',
-          parameterOverrides,
+          parameterOverrides: this.getParameterOverrides(answers),
           needsPackaging: true,
           needsCapabilityNamedIAM: true,
         });

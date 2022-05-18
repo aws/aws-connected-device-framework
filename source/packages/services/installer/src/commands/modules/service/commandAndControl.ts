@@ -70,7 +70,36 @@ export class CommandAndControlInstaller implements RestModule {
     includeOptionalModule('assetLibrary', updatedAnswers.modules, updatedAnswers.commandAndControl.useAssetLibrary)
     return updatedAnswers;
   }
-  
+
+  private getParameterOverrides(answers: Answers): string[] {
+    const parameterOverrides = [
+      `Environment=${answers.environment}`,
+      `VpcId=${answers.vpc?.id ?? 'N/A'}`,
+      `CDFSecurityGroupId=${answers.vpc?.securityGroupId ?? ''}`,
+      `PrivateSubNetIds=${answers.vpc?.privateSubnetIds ?? ''}`,
+      `PrivateApiGatewayVPCEndpoint=${answers.vpc?.privateApiGatewayVpcEndpoint ?? ''}`,
+      `TemplateSnippetS3UriBase=${answers.apigw.templateSnippetS3UriBase}`,
+      `ApiGatewayDefinitionTemplate=${answers.apigw.cloudFormationTemplate}`,
+      `AuthType=${answers.apigw.type}`,
+      `KmsKeyId=${answers.kms.id}`,
+      `BucketName=${answers.s3.bucket}`,
+      `CustomResourceLambdaArn=${answers.deploymentHelper.lambdaArn}`,
+      `ProvisioningFunctionName=${answers.commandAndControl.provisioningFunctionName}`,
+      `AssetLibraryFunctionName=${answers.commandAndControl.assetLibraryFunctionName ?? ''}`,
+    ];
+
+    const addIfSpecified = (key: string, value: unknown) => {
+      if (value !== undefined) parameterOverrides.push(`${key}=${value}`)
+    };
+
+    addIfSpecified('CognitoUserPoolArn', answers.apigw.cognitoUserPoolArn);
+    addIfSpecified('AuthorizerFunctionArn', answers.apigw.lambdaAuthorizerArn);
+    addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
+
+    return parameterOverrides;
+  }
+
+
   public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
     const tasks: ListrTask[] = [{
       title: `Packaging module '${this.name}'`,
@@ -78,6 +107,7 @@ export class CommandAndControlInstaller implements RestModule {
         await packageAndUploadTemplate({
           answers: answers,
           templateFile: '../command-and-control/infrastructure/cfn-command-and-control.yml',
+          parameterOverrides: this.getParameterOverrides(answers),
         });
       },
     }
@@ -114,36 +144,14 @@ export class CommandAndControlInstaller implements RestModule {
     tasks.push({
       title: `Packaging and deploying stack '${this.stackName}'`,
       task: async () => {
-        const parameterOverrides = [
-          `Environment=${answers.environment}`,
-          `VpcId=${answers.vpc?.id ?? 'N/A'}`,
-          `CDFSecurityGroupId=${answers.vpc?.securityGroupId ?? ''}`,
-          `PrivateSubNetIds=${answers.vpc?.privateSubnetIds ?? ''}`,
-          `PrivateApiGatewayVPCEndpoint=${answers.vpc?.privateApiGatewayVpcEndpoint ?? ''}`,
-          `TemplateSnippetS3UriBase=${answers.apigw.templateSnippetS3UriBase}`,
-          `ApiGatewayDefinitionTemplate=${answers.apigw.cloudFormationTemplate}`,
-          `AuthType=${answers.apigw.type}`,
-          `KmsKeyId=${answers.kms.id}`,
-          `BucketName=${answers.s3.bucket}`,
-          `CustomResourceLambdaArn=${answers.deploymentHelper.lambdaArn}`,
-          `ProvisioningFunctionName=${answers.commandAndControl.provisioningFunctionName}`,
-          `AssetLibraryFunctionName=${answers.commandAndControl.assetLibraryFunctionName ?? ''}`,
-        ];
 
-        const addIfSpecified = (key: string, value: unknown) => {
-          if (value !== undefined) parameterOverrides.push(`${key}=${value}`)
-        };
-
-        addIfSpecified('CognitoUserPoolArn', answers.apigw.cognitoUserPoolArn);
-        addIfSpecified('AuthorizerFunctionArn', answers.apigw.lambdaAuthorizerArn);
-        addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
 
         await packageAndDeployStack({
           answers: answers,
           stackName: this.stackName,
           serviceName: 'commandandcontrol',
           templateFile: '../command-and-control/infrastructure/cfn-command-and-control.yml',
-          parameterOverrides,
+          parameterOverrides: this.getParameterOverrides(answers),
           needsPackaging: true,
           needsCapabilityNamedIAM: true,
           needsCapabilityAutoExpand: true,

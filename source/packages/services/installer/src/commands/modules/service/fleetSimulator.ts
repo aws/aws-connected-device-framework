@@ -96,6 +96,56 @@ export class FleetSimulatorInstaller implements RestModule {
     return updatedAnswers;
   }
 
+
+  private getSimulationLauncherOverrides(answers: Answers): string[] {
+    const parameterOverrides = [
+      `Environment=${answers.environment}`,
+      `JmeterRepoName=${answers.fleetSimulator?.jmeterRepoName}`,
+      `VpcId=${answers.vpc?.id}`,
+      `PublicSubNetIds=${answers.vpc?.privateSubnetIds}`, // TODO:check how cfn uses this - should it be public or private subnets?
+      `CustomResourceLambdaArn=${answers.deploymentHelper.lambdaArn}`,
+      `KmsKeyId=${answers.kms.id}`,
+      `BucketName=${answers.s3.bucket}`,
+    ];
+
+    const addIfSpecified = (key: string, value: unknown) => {
+      if (value !== undefined) parameterOverrides.push(`${key}=${value}`)
+    };
+
+    addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
+    return parameterOverrides;
+  }
+
+
+  private getSimulationManagerOverrides(answers: Answers): string[] {
+    const parameterOverrides = [
+      `Environment=${answers.environment}`,
+      `TemplateSnippetS3UriBase=${answers.apigw.templateSnippetS3UriBase}`,
+      `ApiGatewayDefinitionTemplate=${answers.apigw.cloudFormationTemplate}`,
+      `AuthType=${answers.apigw.type}`,
+      `VpcId=${answers.vpc?.id ?? 'N/A'}`,
+      `CDFSecurityGroupId=${answers.vpc?.securityGroupId ?? ''}`,
+      `PrivateSubNetIds=${answers.vpc?.privateSubnetIds ?? ''}`,
+      `PrivateApiGatewayVPCEndpoint=${answers.vpc?.privateApiGatewayVpcEndpoint ?? ''}`,
+      `CustomResourceLambdaArn=${answers.deploymentHelper.lambdaArn}`,
+      `BucketName=${answers.s3.bucket}`,
+      `SimulationLauncherSnsTopic=${answers.fleetSimulator.snsTopic}`,
+      `AssetLibraryFunctionName=${answers.fleetSimulator.assetLibraryFunctionName}`,
+      `KmsKeyId=${answers.kms.id}`,
+
+    ]
+
+    const addIfSpecified = (key: string, value: unknown) => {
+      if (value !== undefined) parameterOverrides.push(`${key}=${value}`)
+    };
+
+    addIfSpecified('CognitoUserPoolArn', answers.apigw.cognitoUserPoolArn);
+    addIfSpecified('AuthorizerFunctionArn', answers.apigw.lambdaAuthorizerArn);
+    addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
+    return parameterOverrides;
+  }
+
+
   public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
     const tasks: ListrTask[] = [{
       title: `Packaging module '${this.name} [Simulation Launcher]'`,
@@ -103,6 +153,7 @@ export class FleetSimulatorInstaller implements RestModule {
         await packageAndUploadTemplate({
           answers: answers,
           templateFile: '../simulation-launcher/infrastructure/cfn-simulation-launcher.yaml',
+          parameterOverrides: this.getSimulationLauncherOverrides(answers)
         });
       },
     },
@@ -112,6 +163,7 @@ export class FleetSimulatorInstaller implements RestModule {
         await packageAndUploadTemplate({
           answers: answers,
           templateFile: '../simulation-manager/infrastructure/cfn-simulation-manager.yml',
+          parameterOverrides: this.getSimulationManagerOverrides(answers)
         });
       },
     }
@@ -135,28 +187,14 @@ export class FleetSimulatorInstaller implements RestModule {
     tasks.push({
       title: `Packaging and deploying stack '${this.simulationLauncherStackName}'`,
       task: async () => {
-        const parameterOverrides = [
-          `Environment=${answers.environment}`,
-          `JmeterRepoName=${answers.fleetSimulator?.jmeterRepoName}`,
-          `VpcId=${answers.vpc?.id}`,
-          `PublicSubNetIds=${answers.vpc?.privateSubnetIds}`, // TODO:check how cfn uses this - should it be public or private subnets?
-          `CustomResourceLambdaArn=${answers.deploymentHelper.lambdaArn}`,
-          `KmsKeyId=${answers.kms.id}`,
-          `BucketName=${answers.s3.bucket}`,
-        ];
 
-        const addIfSpecified = (key: string, value: unknown) => {
-          if (value !== undefined) parameterOverrides.push(`${key}=${value}`)
-        };
-
-        addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
 
         await packageAndDeployStack({
           answers: answers,
           stackName: this.simulationLauncherStackName,
           serviceName: 'simulation-launcher',
           templateFile: '../simulation-launcher/infrastructure/cfn-simulation-launcher.yaml',
-          parameterOverrides,
+          parameterOverrides: this.getSimulationLauncherOverrides(answers),
           needsPackaging: true,
           needsCapabilityNamedIAM: true,
         });
@@ -177,38 +215,12 @@ export class FleetSimulatorInstaller implements RestModule {
     tasks.push({
       title: `Packaging and deploying stack '${this.simulationManagerStackName}'`,
       task: async () => {
-
-        const parameterOverrides = [
-          `Environment=${answers.environment}`,
-          `TemplateSnippetS3UriBase=${answers.apigw.templateSnippetS3UriBase}`,
-          `ApiGatewayDefinitionTemplate=${answers.apigw.cloudFormationTemplate}`,
-          `AuthType=${answers.apigw.type}`,
-          `VpcId=${answers.vpc?.id ?? 'N/A'}`,
-          `CDFSecurityGroupId=${answers.vpc?.securityGroupId ?? ''}`,
-          `PrivateSubNetIds=${answers.vpc?.privateSubnetIds ?? ''}`,
-          `PrivateApiGatewayVPCEndpoint=${answers.vpc?.privateApiGatewayVpcEndpoint ?? ''}`,
-          `CustomResourceLambdaArn=${answers.deploymentHelper.lambdaArn}`,
-          `BucketName=${answers.s3.bucket}`,
-          `SimulationLauncherSnsTopic=${answers.fleetSimulator.snsTopic}`,
-          `AssetLibraryFunctionName=${answers.fleetSimulator.assetLibraryFunctionName}`,
-          `KmsKeyId=${answers.kms.id}`,
-
-        ]
-
-        const addIfSpecified = (key: string, value: unknown) => {
-          if (value !== undefined) parameterOverrides.push(`${key}=${value}`)
-        };
-
-        addIfSpecified('CognitoUserPoolArn', answers.apigw.cognitoUserPoolArn);
-        addIfSpecified('AuthorizerFunctionArn', answers.apigw.lambdaAuthorizerArn);
-        addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
-
         await packageAndDeployStack({
           answers: answers,
           stackName: this.simulationManagerStackName,
           serviceName: 'simulation-manager',
           templateFile: '../simulation-manager/infrastructure/cfn-simulation-manager.yml',
-          parameterOverrides,
+          parameterOverrides: this.getSimulationManagerOverrides(answers),
           needsPackaging: true,
           needsCapabilityNamedIAM: true,
         });

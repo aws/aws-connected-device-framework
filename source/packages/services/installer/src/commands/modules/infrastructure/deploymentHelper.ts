@@ -46,6 +46,17 @@ export class DeploymentHelperInstaller implements InfrastructureModule {
     return answers;
   }
 
+  private getParameterOverrides(answers: Answers): string[] {
+    const parameterOverrides = [
+      `Environment=${answers.environment}`,
+      `ArtifactsBucket=${answers.s3.bucket}`,
+      `VpcId=${answers.vpc?.id ?? 'N/A'}`,
+      `CDFSecurityGroupId=${answers.vpc?.securityGroupId ?? 'N/A'}`,
+      `PrivateSubnetIds=${answers.vpc?.privateSubnetIds ?? 'N/A'}`,
+    ];
+    return parameterOverrides;
+  }
+
   public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
     const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [{
@@ -55,6 +66,7 @@ export class DeploymentHelperInstaller implements InfrastructureModule {
           answers: answers,
           templateFile: templateFileIn,
           cwd: path.join(monorepoRoot, 'source', 'packages', 'libraries', 'core', 'deployment-helper'),
+          parameterOverrides: [`Environment=${answers.environment}`, `ArtifactsBucket=${answers.s3.bucket}`],
         });
       }
     },
@@ -65,6 +77,7 @@ export class DeploymentHelperInstaller implements InfrastructureModule {
           answers: answers,
           templateFile: vpcTemplateFileIn,
           cwd: path.join(monorepoRoot, 'source', 'packages', 'libraries', 'core', 'deployment-helper'),
+          parameterOverrides: this.getParameterOverrides(answers),
         });
       }
     }
@@ -107,20 +120,12 @@ export class DeploymentHelperInstaller implements InfrastructureModule {
         title: `Packaging and deploying stack '${this.vpcDeploymentHelperStackName}'`,
         skip: skipVpcDeploymentHelper,
         task: async () => {
-          const parameterOverrides = [
-            `Environment=${answers.environment}`,
-            `ArtifactsBucket=${answers.s3.bucket}`,
-            `VpcId=${answers.vpc?.id ?? 'N/A'}`,
-            `CDFSecurityGroupId=${answers.vpc?.securityGroupId ?? 'N/A'}`,
-            `PrivateSubnetIds=${answers.vpc?.privateSubnetIds ?? 'N/A'}`,
-          ];
-
           await packageAndDeployStack({
             answers: answers,
             stackName: this.vpcDeploymentHelperStackName,
             serviceName: 'deployment-helper',
             templateFile: vpcTemplateFileIn,
-            parameterOverrides,
+            parameterOverrides: this.getParameterOverrides(answers),
             needsPackaging: true,
             needsCapabilityNamedIAM: true,
             cwd: path.join(monorepoRoot, 'source', 'packages', 'libraries', 'core', 'deployment-helper'),

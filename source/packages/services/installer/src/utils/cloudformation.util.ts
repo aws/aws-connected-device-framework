@@ -125,7 +125,7 @@ interface packageAndDeployStackParams {
     cwd?: string,
 }
 
-type packageStackParams = Pick<packageAndDeployStackParams, 'answers' | 'templateFile' | 'cwd' | 'needsPackaging'>
+type packageStackParams = Pick<packageAndDeployStackParams, 'answers' | 'templateFile' | 'cwd' | 'needsPackaging'> & { parameterOverrides?: string[] }
 
 export interface CloudFormationParameter {
     ParameterKey: string,
@@ -138,7 +138,8 @@ const packageAndUploadTemplate = async ({
     answers,
     templateFile,
     cwd,
-    needsPackaging = true
+    needsPackaging = true,
+    parameterOverrides = []
 }: packageStackParams): Promise<void> => {
 
     const { bucket } = answers.s3
@@ -160,22 +161,33 @@ const packageAndUploadTemplate = async ({
     }
 
     const templateFileName = path.parse(templateFile).name
-
     const templatePath = cwd !== undefined ? path.join(cwd, templateFileBuilt) : templateFileBuilt
 
-    const s3 = new S3Utils(answers.region);
-
     const templateContent = fs.readFileSync(templatePath, 'utf-8');
+
+    const s3 = new S3Utils(answers.region);
     await s3.uploadStreamToS3(bucket, `cloudformation/templates/${templateFileName}.template`, templateContent);
 
     const { Parameters: templateParameters } = yaml.load(templateContent, { schema: CLOUDFORMATION_SCHEMA }) as { Parameters: { [key: string]: object } }
-    const parameterOverrides: CloudFormationParameterList = templateParameters === undefined ? [] : Object.keys(templateParameters).map(o => {
-        return {
-            'ParameterKey': o, 'ParameterValue': templateParameters[o]['Default'] ? templateParameters[o]['Default'] : ''
-        }
+
+    const parametersBasedOnAnswers = parameterOverrides.map(str => {
+        const value = str.slice(str.indexOf('=') + 1);
+        const key = str.slice(0, str.indexOf('='));
+        if (value !== 'undefined')
+            return { 'ParameterKey': key, 'ParameterValue': value }
+        else
+            return { 'ParameterKey': key, 'ParameterValue': '' }
     })
 
-    await s3.uploadStreamToS3(bucket, `cloudformation/parameters/${templateFileName}.json`, JSON.stringify(parameterOverrides));
+    const allParameters: CloudFormationParameterList = templateParameters === undefined ? [] : Object.keys(templateParameters).
+        filter(parameterKey => parametersBasedOnAnswers.find(o => o.ParameterKey === parameterKey) === undefined).
+        map(o => {
+            return {
+                'ParameterKey': o, 'ParameterValue': templateParameters[o]['Default'] ? templateParameters[o]['Default'] : ''
+            }
+        })
+
+    await s3.uploadStreamToS3(bucket, `cloudformation/parameters/${templateFileName}.json`, JSON.stringify([...allParameters, ...parametersBasedOnAnswers]));
 }
 
 const packageAndDeployStack = async ({

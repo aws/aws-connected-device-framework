@@ -143,6 +143,77 @@ export class NotificationsInstaller implements RestModule {
     return updatedAnswers;
   }
 
+  private getEventsProcessorOverrides(answers: Answers): string[] {
+    const parameterOverrides = [
+      `Environment=${answers.environment}`,
+      `TemplateSnippetS3UriBase=${answers.apigw.templateSnippetS3UriBase}`,
+      `ApiGatewayDefinitionTemplate=${answers.apigw.cloudFormationTemplate}`,
+      `AuthType=${answers.apigw.type}`,
+      `KmsKeyId=${answers.kms.id}`,
+      `CustomResourceLambdaArn=${answers.deploymentHelper.lambdaArn}`,
+      `PrivateApiGatewayVPCEndpoint=${answers.vpc?.privateApiGatewayVpcEndpoint ?? ''}`
+    ];
+
+    if (!answers.notifications.useDax) {
+      // When DAX is disabled, even if VPC is specified we will set it to N/A to match
+      // the CloudFormation condition
+      parameterOverrides.push(
+        `VpcId=${'N/A'}`,
+        `CDFSecurityGroupId=${''}`,
+        `PrivateSubNetIds=${''}`)
+    } else {
+      parameterOverrides.push(
+        `VpcId=${answers.vpc?.id ?? 'N/A'}`,
+        `CDFSecurityGroupId=${answers.vpc?.securityGroupId ?? ''}`,
+        `PrivateSubNetIds=${answers.vpc?.privateSubnetIds ?? ''}`)
+    }
+
+    const addIfSpecified = (key: string, value: unknown) => {
+      if (value !== undefined) parameterOverrides.push(`${key}=${value}`)
+    }
+
+    addIfSpecified('DAXInstanceType', answers.notifications.daxInstanceType);
+    addIfSpecified('QueryCacheTTL', answers.notifications.queryCacheTTL);
+    addIfSpecified('ItemCacheTTL', answers.notifications.itemCacheTTL);
+    addIfSpecified('CognitoUserPoolArn', answers.apigw.cognitoUserPoolArn);
+    addIfSpecified('AuthorizerFunctionArn', answers.apigw.lambdaAuthorizerArn);
+    addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
+    return parameterOverrides;
+  }
+
+  private getEventsAlertsOverrides(answers: Answers): string[] {
+    const parameterOverrides = [
+      `Environment=${answers.environment}`,
+      `KmsKeyId=${answers.kms.id}`,
+      `EventNotificationsTable=${answers.notifications.notificationsTableName}`,
+      `EventNotificationsTableArn=${answers.notifications.notificationsTableArn}`,
+      `EventConfigTable=${answers.notifications.configTableName}`,
+      `EventConfigTableArn=${answers.notifications.configTableArn}`,
+      `EventNotificationsStreamArn=${answers.notifications.notificationsTableStreamArn}`,
+    ]
+
+    const addIfSpecified = (key: string, value: unknown) => {
+      if (value !== undefined) parameterOverrides.push(`${key}=${value}`)
+    };
+
+    addIfSpecified('DAXClusterEndpoint', answers.notifications.daxClusterEndpoint);
+    addIfSpecified('DAXClusterArn', answers.notifications.daxClusterArn);
+    addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
+
+    if (!answers.notifications.daxClusterEndpoint) {
+      // When DAX is disabled, even if VPC is specified we will set it to N/A to match
+      // the CloudFormation condition
+      parameterOverrides.push(
+        `CDFSecurityGroupId=${''}`,
+        `PrivateSubNetIds=${''}`)
+    } else {
+      parameterOverrides.push(
+        `CDFSecurityGroupId=${answers.vpc?.securityGroupId ?? ''}`,
+        `PrivateSubNetIds=${answers.vpc?.privateSubnetIds ?? ''}`)
+    }
+    return parameterOverrides;
+  }
+
   public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
     const tasks: ListrTask[] = [{
       title: `Packaging module '${this.name} [Events Processor]'`,
@@ -150,6 +221,7 @@ export class NotificationsInstaller implements RestModule {
         await packageAndUploadTemplate({
           answers: answers,
           templateFile: '../events-processor/infrastructure/cfn-eventsProcessor.yml',
+          parameterOverrides: this.getEventsProcessorOverrides(answers)
         });
       },
     },
@@ -159,6 +231,7 @@ export class NotificationsInstaller implements RestModule {
         await packageAndUploadTemplate({
           answers: answers,
           templateFile: '../events-alerts/infrastructure/cfn-eventsAlerts.yml',
+          parameterOverrides: this.getEventsAlertsOverrides(answers),
         });
       },
     }
@@ -183,47 +256,14 @@ export class NotificationsInstaller implements RestModule {
       title: `Packaging and deploying stack '${this.eventsProcessorStackName}'`,
       task: async () => {
 
-        const parameterOverrides = [
-          `Environment=${answers.environment}`,
-          `TemplateSnippetS3UriBase=${answers.apigw.templateSnippetS3UriBase}`,
-          `ApiGatewayDefinitionTemplate=${answers.apigw.cloudFormationTemplate}`,
-          `AuthType=${answers.apigw.type}`,
-          `KmsKeyId=${answers.kms.id}`,
-          `CustomResourceLambdaArn=${answers.deploymentHelper.lambdaArn}`,
-          `PrivateApiGatewayVPCEndpoint=${answers.vpc?.privateApiGatewayVpcEndpoint ?? ''}`
-        ];
 
-        if (!answers.notifications.useDax) {
-          // When DAX is disabled, even if VPC is specified we will set it to N/A to match
-          // the CloudFormation condition
-          parameterOverrides.push(
-            `VpcId=${'N/A'}`,
-            `CDFSecurityGroupId=${''}`,
-            `PrivateSubNetIds=${''}`)
-        } else {
-          parameterOverrides.push(
-            `VpcId=${answers.vpc?.id ?? 'N/A'}`,
-            `CDFSecurityGroupId=${answers.vpc?.securityGroupId ?? ''}`,
-            `PrivateSubNetIds=${answers.vpc?.privateSubnetIds ?? ''}`)
-        }
-
-        const addIfSpecified = (key: string, value: unknown) => {
-          if (value !== undefined) parameterOverrides.push(`${key}=${value}`)
-        }
-
-        addIfSpecified('DAXInstanceType', answers.notifications.daxInstanceType);
-        addIfSpecified('QueryCacheTTL', answers.notifications.queryCacheTTL);
-        addIfSpecified('ItemCacheTTL', answers.notifications.itemCacheTTL);
-        addIfSpecified('CognitoUserPoolArn', answers.apigw.cognitoUserPoolArn);
-        addIfSpecified('AuthorizerFunctionArn', answers.apigw.lambdaAuthorizerArn);
-        addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
 
         await packageAndDeployStack({
           answers: answers,
           stackName: this.eventsProcessorStackName,
           serviceName: 'events-processor',
           templateFile: '../events-processor/infrastructure/cfn-eventsProcessor.yml',
-          parameterOverrides,
+          parameterOverrides: this.getEventsProcessorOverrides(answers),
           needsPackaging: true,
           needsCapabilityNamedIAM: true,
           needsCapabilityAutoExpand: true,
@@ -248,43 +288,12 @@ export class NotificationsInstaller implements RestModule {
     tasks.push({
       title: `Packaging and deploying stack '${this.eventsAlertStackName}'`,
       task: async () => {
-
-        const parameterOverrides = [
-          `Environment=${answers.environment}`,
-          `KmsKeyId=${answers.kms.id}`,
-          `EventNotificationsTable=${answers.notifications.notificationsTableName}`,
-          `EventNotificationsTableArn=${answers.notifications.notificationsTableArn}`,
-          `EventConfigTable=${answers.notifications.configTableName}`,
-          `EventConfigTableArn=${answers.notifications.configTableArn}`,
-          `EventNotificationsStreamArn=${answers.notifications.notificationsTableStreamArn}`,
-        ]
-
-        const addIfSpecified = (key: string, value: unknown) => {
-          if (value !== undefined) parameterOverrides.push(`${key}=${value}`)
-        };
-
-        addIfSpecified('DAXClusterEndpoint', answers.notifications.daxClusterEndpoint);
-        addIfSpecified('DAXClusterArn', answers.notifications.daxClusterArn);
-        addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
-
-        if (!answers.notifications.daxClusterEndpoint) {
-          // When DAX is disabled, even if VPC is specified we will set it to N/A to match
-          // the CloudFormation condition
-          parameterOverrides.push(
-            `CDFSecurityGroupId=${''}`,
-            `PrivateSubNetIds=${''}`)
-        } else {
-          parameterOverrides.push(
-            `CDFSecurityGroupId=${answers.vpc?.securityGroupId ?? ''}`,
-            `PrivateSubNetIds=${answers.vpc?.privateSubnetIds ?? ''}`)
-        }
-
         await packageAndDeployStack({
           answers: answers,
           stackName: this.eventsAlertStackName,
           serviceName: 'events-alerts',
           templateFile: '../events-alerts/infrastructure/cfn-eventsAlerts.yml',
-          parameterOverrides,
+          parameterOverrides: this.getEventsAlertsOverrides(answers),
           needsPackaging: true,
           needsCapabilityNamedIAM: true,
           needsCapabilityAutoExpand: true,

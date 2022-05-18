@@ -59,6 +59,31 @@ export class DevicePatcherInstaller implements RestModule {
         return updatedAnswers;
     }
 
+    private getParameterOverrides(answers: Answers): string[] {
+        const parameterOverrides = [
+            `Environment=${answers.environment}`,
+            `AuthType=${answers.apigw.type}`,
+            `TemplateSnippetS3UriBase=${answers.apigw.templateSnippetS3UriBase}`,
+            `ApiGatewayDefinitionTemplate=${answers.apigw.cloudFormationTemplate}`,
+            `KmsKeyId=${answers.kms.id}`,
+            `ArtifactsBucket=${answers.s3.bucket}`,
+            `ArtifactsKeyPrefix=device-patcher/`,
+            `VpcId=${answers.vpc?.id ?? 'N/A'}`,
+            `CDFSecurityGroupId=${answers.vpc?.securityGroupId ?? ''}`,
+            `PrivateSubNetIds=${answers.vpc?.privateSubnetIds ?? ''}`,
+            `PrivateApiGatewayVPCEndpoint=${answers.vpc?.privateApiGatewayVpcEndpoint ?? ''}`,
+        ];
+
+        const addIfSpecified = (key: string, value: unknown) => {
+            if (value !== undefined) parameterOverrides.push(`${key}=${value}`)
+        };
+
+        addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
+        addIfSpecified('CognitoUserPoolArn', answers.apigw.cognitoUserPoolArn);
+        addIfSpecified('AuthorizerFunctionArn', answers.apigw.lambdaAuthorizerArn);
+        return parameterOverrides;
+    }
+
     public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
         const tasks: ListrTask[] = [{
             title: `Packaging module '${this.name}'`,
@@ -66,6 +91,7 @@ export class DevicePatcherInstaller implements RestModule {
                 await packageAndUploadTemplate({
                     answers: answers,
                     templateFile: '../device-patcher/infrastructure/cfn-device-patcher.yml',
+                    parameterOverrides: this.getParameterOverrides(answers),
                 });
             },
         }
@@ -92,35 +118,12 @@ export class DevicePatcherInstaller implements RestModule {
         tasks.push({
             title: `Packaging and deploying stack '${this.stackName}'`,
             task: async () => {
-
-                const parameterOverrides = [
-                    `Environment=${answers.environment}`,
-                    `AuthType=${answers.apigw.type}`,
-                    `TemplateSnippetS3UriBase=${answers.apigw.templateSnippetS3UriBase}`,
-                    `ApiGatewayDefinitionTemplate=${answers.apigw.cloudFormationTemplate}`,
-                    `KmsKeyId=${answers.kms.id}`,
-                    `ArtifactsBucket=${answers.s3.bucket}`,
-                    `ArtifactsKeyPrefix=device-patcher/`,
-                    `VpcId=${answers.vpc?.id ?? 'N/A'}`,
-                    `CDFSecurityGroupId=${answers.vpc?.securityGroupId ?? ''}`,
-                    `PrivateSubNetIds=${answers.vpc?.privateSubnetIds ?? ''}`,
-                    `PrivateApiGatewayVPCEndpoint=${answers.vpc?.privateApiGatewayVpcEndpoint ?? ''}`,
-                ];
-
-                const addIfSpecified = (key: string, value: unknown) => {
-                    if (value !== undefined) parameterOverrides.push(`${key}=${value}`)
-                };
-
-                addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
-                addIfSpecified('CognitoUserPoolArn', answers.apigw.cognitoUserPoolArn);
-                addIfSpecified('AuthorizerFunctionArn', answers.apigw.lambdaAuthorizerArn);
-
                 await packageAndDeployStack({
                     answers: answers,
                     stackName: this.stackName,
                     serviceName: 'device-patcher',
                     templateFile: '../device-patcher/infrastructure/cfn-device-patcher.yml',
-                    parameterOverrides,
+                    parameterOverrides: this.getParameterOverrides(answers),
                     needsPackaging: true,
                     needsCapabilityNamedIAM: true,
                     needsCapabilityAutoExpand: true,

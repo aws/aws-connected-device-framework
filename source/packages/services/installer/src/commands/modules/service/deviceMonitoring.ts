@@ -56,6 +56,21 @@ export class DeviceMonitoringInstaller implements ServiceModule {
     return updatedAnswers;
   }
 
+  private getParameterOverrides(answers: Answers): string[] {
+    const parameterOverrides = [
+      `Environment=${answers.environment}`,
+      `AssetLibraryFunctionName=${answers.deviceMonitoring.assetLibraryFunctionName}`,
+    ];
+
+    const addIfSpecified = (key: string, value: unknown) => {
+      if (value !== undefined) parameterOverrides.push(`${key}=${value}`)
+    };
+
+    addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
+    return parameterOverrides;
+  }
+
+
   public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
     const tasks: ListrTask[] = [{
       title: `Packaging module '${this.name}'`,
@@ -63,6 +78,7 @@ export class DeviceMonitoringInstaller implements ServiceModule {
         await packageAndUploadTemplate({
           answers: answers,
           templateFile: '../device-monitoring/infrastructure/cfn-device-monitoring.yml',
+          parameterOverrides: this.getParameterOverrides(answers),
         });
       },
     }
@@ -100,23 +116,14 @@ export class DeviceMonitoringInstaller implements ServiceModule {
       title: `Packaging and deploying stack '${this.stackName}'`,
       task: async () => {
 
-        const parameterOverrides = [
-          `Environment=${answers.environment}`,
-          `AssetLibraryFunctionName=${answers.deviceMonitoring.assetLibraryFunctionName}`,
-        ];
-
-        const addIfSpecified = (key: string, value: unknown) => {
-          if (value !== undefined) parameterOverrides.push(`${key}=${value}`)
-        };
-
-        addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
+   
 
         await packageAndDeployStack({
           answers: answers,
           stackName: this.stackName,
           serviceName: 'device-monitoring',
           templateFile: '../device-monitoring/infrastructure/cfn-device-monitoring.yml',
-          parameterOverrides,
+          parameterOverrides: this.getParameterOverrides(answers),
           needsPackaging: true,
           needsCapabilityNamedIAM: true,
         });

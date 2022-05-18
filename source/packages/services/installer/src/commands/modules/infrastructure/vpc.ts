@@ -99,6 +99,24 @@ export class VpcInstaller implements InfrastructureModule {
     return answers;
   }
 
+  private getParameterOverrides(answers: Answers): string[] {
+    const parameterOverrides = [
+      `Environment=${answers.environment}`,
+      `ExistingVpcId=N/A`,
+      `ExistingCDFSecurityGroupId=`,
+      `ExistingPrivateSubnetIds=`,
+      `ExistingPublicSubnetIds=`,
+      `ExistingPrivateApiGatewayVPCEndpoint=`,
+      `ExistingPrivateRouteTableIds=`,
+      `EnableS3VpcEndpoint=${true}`,
+      `EnableDynamoDBVpcEndpoint=${answers.notifications?.useDax ?? false
+      }`,
+      `EnablePrivateApiGatewayVPCEndpoint=${answers.apigw?.type === "Private" ? true : false
+      }`,
+    ];
+    return parameterOverrides;
+  }
+
   public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
     const tasks: ListrTask[] = [{
       title: `Packing module '${this.name}'`,
@@ -108,6 +126,7 @@ export class VpcInstaller implements InfrastructureModule {
           answers: answers,
           templateFile: 'cfn-networking.yaml',
           cwd: path.join(monorepoRoot, "source", "infrastructure", "cloudformation"),
+          parameterOverrides: this.getParameterOverrides(answers),
           needsPackaging: false
         });
       },
@@ -115,6 +134,8 @@ export class VpcInstaller implements InfrastructureModule {
 
     return [answers, tasks]
   }
+
+
 
   public async install(answers: Answers): Promise<[Answers, ListrTask[]]> {
     ow(answers, ow.object.nonEmpty);
@@ -131,27 +152,12 @@ export class VpcInstaller implements InfrastructureModule {
         {
           title: `Deploying stack '${this.stackName}'`,
           task: async () => {
-            const parameterOverrides = [
-              `Environment=${answers.environment}`,
-              `ExistingVpcId=N/A`,
-              `ExistingCDFSecurityGroupId=`,
-              `ExistingPrivateSubnetIds=`,
-              `ExistingPublicSubnetIds=`,
-              `ExistingPrivateApiGatewayVPCEndpoint=`,
-              `ExistingPrivateRouteTableIds=`,
-              `EnableS3VpcEndpoint=${true}`,
-              `EnableDynamoDBVpcEndpoint=${answers.notifications?.useDax ?? false
-              }`,
-              `EnablePrivateApiGatewayVPCEndpoint=${answers.apigw?.type === "Private" ? true : false
-              }`,
-            ];
-
             await packageAndDeployStack({
               answers: answers,
               stackName: this.stackName,
               serviceName: 'vpc',
               templateFile: 'cfn-networking.yaml',
-              parameterOverrides,
+              parameterOverrides: this.getParameterOverrides(answers),
               needsCapabilityNamedIAM: true,
               cwd: path.join(monorepoRoot, "source", "infrastructure", "cloudformation"),
             });

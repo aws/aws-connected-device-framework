@@ -106,6 +106,27 @@ export class AssetLibraryExportInstaller implements ServiceModule {
         return updatedAnswers;
     }
 
+    private getParameterOverrides(answers: Answers): string[] {
+        const parameterOverrides = [
+            `Environment=${answers.environment}`,
+            `VpcId=${answers.vpc?.id ?? 'N/A'}`,
+            `CDFSecurityGroupId=${answers.vpc?.securityGroupId ?? ''}`,
+            `PrivateSubNetIds=${answers.vpc?.privateSubnetIds ?? ''}`,
+            `AuthType=${answers.apigw.type}`,
+            `BucketName=${answers.s3.bucket}`,
+            `KmsKeyId=${answers.kms.id}`,
+            `NeptuneURL=${answers.assetLibrary.neptuneUrl}`,
+            `ExportETLMaxConcurrency=${answers.assetLibraryExport.maxConcurrency}`,
+        ];
+
+        const addIfSpecified = (key: string, value: unknown) => {
+            if (value !== undefined) parameterOverrides.push(`${key}=${value}`)
+        };
+
+        addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
+        return parameterOverrides;
+    }
+
     public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
         const tasks: ListrTask[] = [{
             title: `Packaging module '${this.name}'`,
@@ -113,6 +134,7 @@ export class AssetLibraryExportInstaller implements ServiceModule {
                 await packageAndUploadTemplate({
                     answers: answers,
                     templateFile: '../assetlibrary-export/infrastructure/cfn-assetlibrary-export.yaml',
+                    parameterOverrides: this.getParameterOverrides(answers),
                 });
             },
         }
@@ -136,30 +158,14 @@ export class AssetLibraryExportInstaller implements ServiceModule {
             title: `Packaging and deploy stack '${this.stackName}'`,
             task: async () => {
 
-                const parameterOverrides = [
-                    `Environment=${answers.environment}`,
-                    `VpcId=${answers.vpc?.id ?? 'N/A'}`,
-                    `CDFSecurityGroupId=${answers.vpc?.securityGroupId ?? ''}`,
-                    `PrivateSubNetIds=${answers.vpc?.privateSubnetIds ?? ''}`,
-                    `AuthType=${answers.apigw.type}`,
-                    `BucketName=${answers.s3.bucket}`,
-                    `KmsKeyId=${answers.kms.id}`,
-                    `NeptuneURL=${answers.assetLibrary.neptuneUrl}`,
-                    `ExportETLMaxConcurrency=${answers.assetLibraryExport.maxConcurrency}`,
-                ];
 
-                const addIfSpecified = (key: string, value: unknown) => {
-                    if (value !== undefined) parameterOverrides.push(`${key}=${value}`)
-                };
-
-                addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
 
                 await packageAndDeployStack({
                     answers: answers,
                     stackName: this.stackName,
                     serviceName: 'assetlibrary-export',
                     templateFile: '../assetlibrary-export/infrastructure/cfn-assetlibrary-export.yaml',
-                    parameterOverrides,
+                    parameterOverrides: this.getParameterOverrides(answers),
                     needsPackaging: true,
                     needsCapabilityNamedIAM: true,
                     needsCapabilityAutoExpand: true,

@@ -226,6 +226,35 @@ export class BulkCertificatesInstaller implements RestModule {
     return updatedAnswers;
   }
 
+
+
+  private getParameterOverrides(answers: Answers): string[] {
+    const parameterOverrides = [
+      `Environment=${answers.environment}`,
+      `TemplateSnippetS3UriBase=${answers.apigw.templateSnippetS3UriBase}`,
+      `AuthType=${answers.apigw.type}`,
+      `ApiGatewayDefinitionTemplate=${answers.apigw.cloudFormationTemplate}`,
+      `VpcId=${answers.vpc?.id ?? 'N/A'}`,
+      `CDFSecurityGroupId=${answers.vpc?.securityGroupId ?? ''}`,
+      `PrivateSubNetIds=${answers.vpc?.privateSubnetIds ?? ''}`,
+      `PrivateApiGatewayVPCEndpoint=${answers.vpc?.privateApiGatewayVpcEndpoint ?? ''}`,
+      `KmsKeyId=${answers.kms.id}`,
+      `OpenSslLambdaLayerArn=${answers.openSsl.arn}`,
+      `BucketName=${answers.s3.bucket}`,
+      `BucketKeyPrefix=certificates/`,
+    ]
+
+    const addIfSpecified = (key: string, value: unknown) => {
+      if (value !== undefined) parameterOverrides.push(`${key}=${value}`)
+    };
+
+    addIfSpecified('CognitoUserPoolArn', answers.apigw.cognitoUserPoolArn);
+    addIfSpecified('AuthorizerFunctionArn', answers.apigw.lambdaAuthorizerArn);
+    addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
+
+    return parameterOverrides;
+  }
+
   public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
     const tasks: ListrTask[] = [{
       title: `Packaging module '${this.name}'`,
@@ -233,6 +262,7 @@ export class BulkCertificatesInstaller implements RestModule {
         await packageAndUploadTemplate({
           answers: answers,
           templateFile: '../bulkcerts/infrastructure/cfn-bulkcerts.yml',
+          parameterOverrides: this.getParameterOverrides(answers),
         });
       },
     }
@@ -260,36 +290,12 @@ export class BulkCertificatesInstaller implements RestModule {
     tasks.push({
       title: `Packaging and deploying stack '${this.stackName}'`,
       task: async () => {
-
-        const parameterOverrides = [
-          `Environment=${answers.environment}`,
-          `TemplateSnippetS3UriBase=${answers.apigw.templateSnippetS3UriBase}`,
-          `AuthType=${answers.apigw.type}`,
-          `ApiGatewayDefinitionTemplate=${answers.apigw.cloudFormationTemplate}`,
-          `VpcId=${answers.vpc?.id ?? 'N/A'}`,
-          `CDFSecurityGroupId=${answers.vpc?.securityGroupId ?? ''}`,
-          `PrivateSubNetIds=${answers.vpc?.privateSubnetIds ?? ''}`,
-          `PrivateApiGatewayVPCEndpoint=${answers.vpc?.privateApiGatewayVpcEndpoint ?? ''}`,
-          `KmsKeyId=${answers.kms.id}`,
-          `OpenSslLambdaLayerArn=${answers.openSsl.arn}`,
-          `BucketName=${answers.s3.bucket}`,
-          `BucketKeyPrefix=certificates/`,
-        ]
-
-        const addIfSpecified = (key: string, value: unknown) => {
-          if (value !== undefined) parameterOverrides.push(`${key}=${value}`)
-        };
-
-        addIfSpecified('CognitoUserPoolArn', answers.apigw.cognitoUserPoolArn);
-        addIfSpecified('AuthorizerFunctionArn', answers.apigw.lambdaAuthorizerArn);
-        addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
-
         await packageAndDeployStack({
           answers: answers,
           stackName: this.stackName,
           serviceName: 'bulkcerts',
           templateFile: '../bulkcerts/infrastructure/cfn-bulkcerts.yml',
-          parameterOverrides,
+          parameterOverrides: this.getParameterOverrides(answers),
           needsPackaging: true,
           needsCapabilityNamedIAM: true,
           needsCapabilityAutoExpand: true,

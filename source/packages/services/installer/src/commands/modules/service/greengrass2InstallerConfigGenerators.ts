@@ -84,6 +84,20 @@ export class Greengrass2InstallerConfigGeneratorsInstaller implements ServiceMod
         return updatedAnswers;
     }
 
+    private getParameterOverrides(answers: Answers): string[] {
+        const parameterOverrides = [
+            `Environment=${answers.environment}`,
+            `CustomResourceLambdaArn=${answers.deploymentHelper.lambdaArn}`,
+        ];
+
+        const addIfSpecified = (key: string, value: unknown) => {
+            if (value !== undefined) parameterOverrides.push(`${key}=${value}`)
+        };
+
+        addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
+        return parameterOverrides;
+    }
+
     public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
         const tasks: ListrTask[] = [{
             title: `Packaging module '${this.name}'`,
@@ -91,6 +105,7 @@ export class Greengrass2InstallerConfigGeneratorsInstaller implements ServiceMod
                 await packageAndUploadTemplate({
                     answers: answers,
                     templateFile: '../greengrass2-installer-config-generators/infrastructure/cfn-greengrass2-installer-config-generators.yml',
+                    parameterOverrides: this.getParameterOverrides(answers),
                 });
             },
         }
@@ -102,7 +117,7 @@ export class Greengrass2InstallerConfigGeneratorsInstaller implements ServiceMod
         ow(answers, ow.object.nonEmpty);
         ow(answers.environment, ow.string.nonEmpty);
         ow(answers.s3.bucket, ow.string.nonEmpty);
-        ow(answers.deploymentHelper.lambdaArn, ow.string.nonEmpty); 
+        ow(answers.deploymentHelper.lambdaArn, ow.string.nonEmpty);
 
 
         const tasks: ListrTask[] = [];
@@ -115,23 +130,14 @@ export class Greengrass2InstallerConfigGeneratorsInstaller implements ServiceMod
             title: `Packaging and deploying stack '${this.stackName}'`,
             task: async () => {
 
-                const parameterOverrides = [
-                    `Environment=${answers.environment}`,
-                    `CustomResourceLambdaArn=${answers.deploymentHelper.lambdaArn}`,
-                ];
 
-                const addIfSpecified = (key: string, value: unknown) => {
-                    if (value !== undefined) parameterOverrides.push(`${key}=${value}`)
-                };
-
-                addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
 
                 await packageAndDeployStack({
                     answers: answers,
                     stackName: this.stackName,
                     serviceName: 'greengrass2-installer-config-generators',
                     templateFile: '../greengrass2-installer-config-generators/infrastructure/cfn-greengrass2-installer-config-generators.yml',
-                    parameterOverrides,
+                    parameterOverrides: this.getParameterOverrides(answers),
                     needsPackaging: true,
                     needsCapabilityNamedIAM: true,
                     needsCapabilityAutoExpand: true,

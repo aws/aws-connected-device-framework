@@ -56,6 +56,23 @@ export class AuthDeviceCertInstaller implements ServiceModule {
 
   }
 
+
+  private getParameterOverrides(answers: Answers): string[] {
+    const parameterOverrides = [
+      `Environment=${answers.environment}`,
+      `KmsKeyId=${answers.kms.id}`,
+      `OpenSslLambdaLayerArn=${answers.openSsl.arn}`,
+    ];
+
+    const addIfSpecified = (key: string, value: unknown) => {
+      if (value !== undefined) parameterOverrides.push(`${key}=${value}`)
+    };
+
+    addIfSpecified('LoggingLevel', answers.authDeviceCert.loggingLevel);
+
+    return parameterOverrides;
+  }
+
   public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
     const tasks: ListrTask[] = [{
       title: `Packaging module '${this.name}'`,
@@ -63,6 +80,7 @@ export class AuthDeviceCertInstaller implements ServiceModule {
         await packageAndUploadTemplate({
           answers: answers,
           templateFile: '../auth-devicecert/infrastructure/cfn-auth-devicecert.yaml',
+          parameterOverrides: this.getParameterOverrides(answers),
         });
       },
     }
@@ -87,24 +105,13 @@ export class AuthDeviceCertInstaller implements ServiceModule {
       title: `Packaging and deploying stack '${this.stackName}'`,
       task: async () => {
 
-        const parameterOverrides = [
-          `Environment=${answers.environment}`,
-          `KmsKeyId=${answers.kms.id}`,
-          `OpenSslLambdaLayerArn=${answers.openSsl.arn}`,
-        ];
-
-        const addIfSpecified = (key: string, value: unknown) => {
-          if (value !== undefined) parameterOverrides.push(`${key}=${value}`)
-        };
-
-        addIfSpecified('LoggingLevel', answers.authDeviceCert.loggingLevel);
 
         await packageAndDeployStack({
           answers: answers,
           stackName: this.stackName,
           serviceName: 'auth-devicecert',
           templateFile: '../auth-devicecert/infrastructure/cfn-auth-devicecert.yaml',
-          parameterOverrides,
+          parameterOverrides: this.getParameterOverrides(answers),
           needsPackaging: true,
           needsCapabilityNamedIAM: true,
         });
