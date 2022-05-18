@@ -15,9 +15,12 @@ import ow from 'ow';
 import path from 'path';
 import { Answers } from '../../../models/answers';
 import { InfrastructureModule, ModuleName } from '../../../models/modules';
-import { deleteStack, packageAndDeployStack } from '../../../utils/cloudformation.util';
+import { deleteStack, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
 import { getMonorepoRoot } from '../../../prompts/paths.prompt';
 import { CloudFormationClient, DescribeStacksCommand } from '@aws-sdk/client-cloudformation';
+
+const templateFileIn = 'infrastructure/cfn-deployment-helper.yaml';
+const vpcTemplateFileIn = 'infrastructure/cfn-deployment-helper-vpc.yaml';
 
 export class DeploymentHelperInstaller implements InfrastructureModule {
 
@@ -43,8 +46,33 @@ export class DeploymentHelperInstaller implements InfrastructureModule {
     return answers;
   }
 
-  public async install(answers: Answers): Promise<[Answers, ListrTask[]]> {
+  public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    const monorepoRoot = await getMonorepoRoot();
+    const tasks: ListrTask[] = [{
+      title: `Packaging '${this.name} [Default Deployment Helper]'`,
+      task: async () => {
+        await packageAndUploadTemplate({
+          answers: answers,
+          templateFile: templateFileIn,
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'libraries', 'core', 'deployment-helper'),
+        });
+      }
+    },
+    {
+      title: `Packaging '${this.name} [VPC Deployment Helper]'`,
+      task: async () => {
+        await packageAndUploadTemplate({
+          answers: answers,
+          templateFile: vpcTemplateFileIn,
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'libraries', 'core', 'deployment-helper'),
+        });
+      }
+    }
+    ];
+    return [answers, tasks]
+  }
 
+  public async install(answers: Answers): Promise<[Answers, ListrTask[]]> {
     ow(answers, ow.object.plain);
     ow(answers.environment, ow.string.nonEmpty);
     ow(answers.region, ow.string.nonEmpty);
@@ -54,9 +82,6 @@ export class DeploymentHelperInstaller implements InfrastructureModule {
     }
 
     const tasks: ListrTask[] = [];
-
-    const templateFileIn = 'infrastructure/cfn-deployment-helper.yaml';
-    const vpcTemplateFileIn = 'infrastructure/cfn-deployment-helper-vpc.yaml';
     const skipVpcDeploymentHelper = answers.vpc?.id === undefined
     const monorepoRoot = await getMonorepoRoot();
 

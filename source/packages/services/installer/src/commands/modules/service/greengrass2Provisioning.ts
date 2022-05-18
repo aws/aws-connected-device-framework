@@ -21,7 +21,7 @@ import { ConfigBuilder } from "../../../utils/configBuilder";
 import { customDomainPrompt } from '../../../prompts/domain.prompt';
 import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
-import { deleteStack, getStackOutputs, getStackParameters, getStackResourceSummaries, packageAndDeployStack } from '../../../utils/cloudformation.util';
+import { deleteStack, getStackOutputs, getStackParameters, getStackResourceSummaries, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
 import { enableAutoScaling, provisionedConcurrentExecutions } from '../../../prompts/autoscaling.prompt';
 import { includeOptionalModule } from '../../../utils/modules.util';
 
@@ -75,7 +75,20 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
     includeOptionalModule('assetLibrary', updatedAnswers.modules, updatedAnswers.greengrass2Provisioning.useAssetLibrary)
 
     return updatedAnswers;
+  }
 
+  public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    const tasks: ListrTask[] = [{
+      title: `Packaging module '${this.name}'`,
+      task: async () => {
+        await packageAndUploadTemplate({
+          answers: answers,
+          templateFile: '../greengrass2-provisioning/infrastructure/cfn-greengrass2-provisioning.yml',
+        });
+      },
+    }
+    ];
+    return [answers, tasks]
   }
 
   public async install(answers: Answers): Promise<[Answers, ListrTask[]]> {

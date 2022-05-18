@@ -18,7 +18,7 @@ import ow from 'ow';
 import inquirer from 'inquirer';
 import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
-import { deleteStack, packageAndDeployStack } from '../../../utils/cloudformation.util';
+import { deleteStack, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
 
 export class AuthDeviceCertInstaller implements ServiceModule {
 
@@ -55,6 +55,21 @@ export class AuthDeviceCertInstaller implements ServiceModule {
     return updatedAnswers;
 
   }
+
+  public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    const tasks: ListrTask[] = [{
+      title: `Packaging module '${this.name}'`,
+      task: async () => {
+        await packageAndUploadTemplate({
+          answers: answers,
+          templateFile: '../auth-devicecert/infrastructure/cfn-auth-devicecert.yaml',
+        });
+      },
+    }
+    ];
+    return [answers, tasks]
+  }
+
 
   public async install(answers: Answers): Promise<[Answers, ListrTask[]]> {
 
@@ -116,12 +131,12 @@ export class AuthDeviceCertInstaller implements ServiceModule {
   public async delete(answers: Answers): Promise<ListrTask[]> {
     const tasks: ListrTask[] = [];
     tasks.push({
-        title: `Deleting stack '${this.stackName}'`,
-        task: async () => {
-          await deleteStack(this.stackName, answers.region)
-        }
+      title: `Deleting stack '${this.stackName}'`,
+      task: async () => {
+        await deleteStack(this.stackName, answers.region)
+      }
     });
     return tasks
 
-}
+  }
 }

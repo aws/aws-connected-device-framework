@@ -19,7 +19,7 @@ import ow from 'ow';
 import { customDomainPrompt } from '../../../prompts/domain.prompt';
 import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from '../../../prompts/applicationConfiguration.prompt';
-import { deleteStack, getStackOutputs, getStackParameters, packageAndDeployStack } from '../../../utils/cloudformation.util';
+import { deleteStack, getStackOutputs, getStackParameters, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
 import { enableAutoScaling, provisionedConcurrentExecutions } from '../../../prompts/autoscaling.prompt';
 import { getNeptuneInstancetypeList } from '../../../utils/instancetypes';
 import { includeOptionalModule } from '../../../utils/modules.util';
@@ -192,12 +192,34 @@ export class AssetLibraryInstaller implements RestModule {
         ...customDomainPrompt(this.name, answers),
       ], updatedAnswers);
     }
-    
+
     includeOptionalModule('vpc', updatedAnswers.modules, updatedAnswers.assetLibrary.mode === 'full')
-
     return updatedAnswers;
-
   }
+
+  public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    const tasks: ListrTask[] = [{
+      title: `Packaging module '${this.name} [Neptune]'`,
+      task: async () => {
+        await packageAndUploadTemplate({
+          answers: answers,
+          templateFile: '../assetlibrary/infrastructure/cfn-neptune.yaml',
+          needsPackaging: false
+        });
+      },
+    },
+    {
+      title: `Packaging module '${this.name} [Application]'`,
+      task: async () => {
+        await packageAndUploadTemplate({
+          answers: answers,
+          templateFile: '../assetlibrary/infrastructure/cfn-assetLibrary.yaml',
+        });
+      },
+    }];
+    return [answers, tasks]
+  }
+
 
   public async install(answers: Answers): Promise<[Answers, ListrTask[]]> {
     const tasks: ListrTask[] = [];

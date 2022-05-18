@@ -18,7 +18,7 @@ import { ModuleName, ServiceModule } from '../../../models/modules';
 import { ConfigBuilder } from "../../../utils/configBuilder";
 import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
-import { deleteStack, getStackOutputs, packageAndDeployStack } from '../../../utils/cloudformation.util';
+import { deleteStack, getStackOutputs, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
 
 export class Greengrass2InstallerConfigGeneratorsInstaller implements ServiceModule {
 
@@ -82,15 +82,27 @@ export class Greengrass2InstallerConfigGeneratorsInstaller implements ServiceMod
         ], updatedAnswers);
 
         return updatedAnswers;
+    }
 
+    public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+        const tasks: ListrTask[] = [{
+            title: `Packaging module '${this.name}'`,
+            task: async () => {
+                await packageAndUploadTemplate({
+                    answers: answers,
+                    templateFile: '../greengrass2-installer-config-generators/infrastructure/cfn-greengrass2-installer-config-generators.yml',
+                });
+            },
+        }
+        ];
+        return [answers, tasks]
     }
 
     public async install(answers: Answers): Promise<[Answers, ListrTask[]]> {
-
         ow(answers, ow.object.nonEmpty);
         ow(answers.environment, ow.string.nonEmpty);
         ow(answers.s3.bucket, ow.string.nonEmpty);
-        ow(answers.deploymentHelper.lambdaArn, ow.string.nonEmpty);
+        ow(answers.deploymentHelper.lambdaArn, ow.string.nonEmpty); 
 
 
         const tasks: ListrTask[] = [];
@@ -115,14 +127,14 @@ export class Greengrass2InstallerConfigGeneratorsInstaller implements ServiceMod
                 addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
 
                 await packageAndDeployStack({
-                  answers: answers,
-                  stackName: this.stackName,
-                  serviceName: 'greengrass2-installer-config-generators',
-                  templateFile: '../greengrass2-installer-config-generators/infrastructure/cfn-greengrass2-installer-config-generators.yml',
-                  parameterOverrides,
-                  needsPackaging: true,
-                  needsCapabilityNamedIAM: true,
-                  needsCapabilityAutoExpand: true,
+                    answers: answers,
+                    stackName: this.stackName,
+                    serviceName: 'greengrass2-installer-config-generators',
+                    templateFile: '../greengrass2-installer-config-generators/infrastructure/cfn-greengrass2-installer-config-generators.yml',
+                    parameterOverrides,
+                    needsPackaging: true,
+                    needsCapabilityNamedIAM: true,
+                    needsCapabilityAutoExpand: true,
                 });
             }
         });

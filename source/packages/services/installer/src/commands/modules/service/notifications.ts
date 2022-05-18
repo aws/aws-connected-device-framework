@@ -19,7 +19,7 @@ import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
 import { customDomainPrompt } from '../../../prompts/domain.prompt';
 import ow from 'ow';
-import { deleteStack, getStackOutputs, getStackResourceSummaries, packageAndDeployStack } from '../../../utils/cloudformation.util';
+import { deleteStack, getStackOutputs, getStackResourceSummaries, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
 import { includeOptionalModule } from '../../../utils/modules.util';
 import { getDaxInstanceTypeList } from '../../../utils/instancetypes';
 
@@ -141,6 +141,29 @@ export class NotificationsInstaller implements RestModule {
     }
 
     return updatedAnswers;
+  }
+
+  public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    const tasks: ListrTask[] = [{
+      title: `Packaging module '${this.name} [Events Processor]'`,
+      task: async () => {
+        await packageAndUploadTemplate({
+          answers: answers,
+          templateFile: '../events-processor/infrastructure/cfn-eventsProcessor.yml',
+        });
+      },
+    },
+    {
+      title: `Packaging module '${this.name} [Events Alerts]'`,
+      task: async () => {
+        await packageAndUploadTemplate({
+          answers: answers,
+          templateFile: '../events-alerts/infrastructure/cfn-eventsAlerts.yml',
+        });
+      },
+    }
+    ];
+    return [answers, tasks]
   }
 
   public async install(answers: Answers): Promise<[Answers, ListrTask[]]> {

@@ -20,7 +20,7 @@ import { customDomainPrompt } from '../../../prompts/domain.prompt';
 import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
 
-import { deleteStack, getStackOutputs, getStackResourceSummaries, packageAndDeployStack } from '../../../utils/cloudformation.util';
+import { deleteStack, getStackOutputs, getStackResourceSummaries, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
 
 export class AssetLibraryHistoryInstaller implements RestModule {
 
@@ -33,7 +33,7 @@ export class AssetLibraryHistoryInstaller implements RestModule {
     'deploymentHelper',
     'kms'
   ];
-  
+
   public readonly dependsOnOptional: ModuleName[] = [];
   private readonly stackName: string;
 
@@ -58,6 +58,20 @@ export class AssetLibraryHistoryInstaller implements RestModule {
 
     return updatedAnswers;
 
+  }
+
+  public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    const tasks: ListrTask[] = [{
+      title: `Packaging module '${this.name}'`,
+      task: async () => {
+        await packageAndUploadTemplate({
+          answers: answers,
+          templateFile: '../assetlibraryhistory/infrastructure/cfn-assetLibraryHistory.yml',
+        });
+      },
+    }
+    ];
+    return [answers, tasks]
   }
 
   public async install(answers: Answers): Promise<[Answers, ListrTask[]]> {

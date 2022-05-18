@@ -5,6 +5,7 @@ import { Command } from 'commander';
 import { configCmd } from './commands/config.cmd';
 import { deleteCmd } from './commands/delete.cmd';
 import { deployCmd } from './commands/deploy.cmd';
+import { packageCmd } from './commands/package.cmd';
 import { postmanCmd } from './commands/postman.cmd';
 
 const program = new Command();
@@ -14,6 +15,7 @@ program.name('cdf-cli')
 	.addCommand(deployCmd())
 	.addCommand(configCmd())
 	.addCommand(postmanCmd())
+	.addCommand(packageCmd())
 	.addCommand(deleteCmd())
 	.showHelpAfterError('(add --help for additional information)')
 	.showSuggestionAfterError();

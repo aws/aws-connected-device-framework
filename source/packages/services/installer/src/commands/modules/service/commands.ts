@@ -19,7 +19,7 @@ import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
 import { customDomainPrompt } from '../../../prompts/domain.prompt';
 import ow from 'ow';
-import { deleteStack, getStackOutputs, getStackParameters, getStackResourceSummaries, packageAndDeployStack } from '../../../utils/cloudformation.util';
+import { deleteStack, getStackOutputs, getStackParameters, getStackResourceSummaries, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
 import { includeOptionalModule } from '../../../utils/modules.util';
 
 export class CommandsInstaller implements RestModule {
@@ -77,6 +77,20 @@ export class CommandsInstaller implements RestModule {
     includeOptionalModule('assetLibrary', updatedAnswers.modules, updatedAnswers.commands.useAssetLibrary)
 
     return updatedAnswers;
+  }
+
+  public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    const tasks: ListrTask[] = [{
+      title: `Packaging module '${this.name}'`,
+      task: async () => {
+        await packageAndUploadTemplate({
+          answers: answers,
+          templateFile: '../commands/infrastructure/cfn-commands.yml',
+        });
+      },
+    }
+    ];
+    return [answers, tasks]
   }
 
   public async install(answers: Answers): Promise<[Answers, ListrTask[]]> {

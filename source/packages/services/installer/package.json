@@ -34,6 +34,7 @@
     "inquirer-s3": "~1.0.1",
     "inquirer": "8.2.1",
     "js-yaml": "4.1.0",
+    "js-yaml-cloudformation-schema" : "1.0.0",
     "node-localstorage": "~2.2.1",
     "ora": "~5.4.1",
     "recursive-copy": "~2.0.13",
@@ -44,6 +45,7 @@
     "find-up": "5.0.0"
   },
   "devDependencies": {
+    "@types/js-yaml": "4.0.5",
     "@rushstack/eslint-config": "2.3.4",
     "eslint": "7.26.0",
     "nyc": "15.1.0",

@@ -15,6 +15,11 @@ import execa from 'execa';
 import { CloudFormationClient, DeleteStackCommand, DescribeStacksCommand, ListStackResourcesCommand, Output, Parameter, StackResourceSummary, waitUntilStackDeleteComplete } from '@aws-sdk/client-cloudformation';
 import { Answers } from '../models/answers';
 import { TagsList } from '../utils/tags';
+import fs from 'fs';
+import path from 'path';
+import { S3Utils } from './s3.util';
+import yaml from 'js-yaml'
+import { CLOUDFORMATION_SCHEMA } from 'js-yaml-cloudformation-schema';
 
 const inMemoryStackOutputs: { [key: string]: Output[] } = {}
 const inMemoryStackResourceSummaries: { [key: string]: StackResourceSummary[] } = {}
@@ -109,64 +114,120 @@ const deleteStack = async (stackName: string, region: string): Promise<void> => 
 }
 
 interface packageAndDeployStackParams {
-  answers: Answers,
-  stackName: string,
-  serviceName: string,
-  templateFile: string,
-  parameterOverrides?: string[],
-  needsPackaging?: boolean,
-  needsCapabilityNamedIAM?: boolean,
-  needsCapabilityAutoExpand?: boolean,
-  cwd?: string,
+    answers: Answers,
+    stackName: string,
+    serviceName: string,
+    templateFile: string,
+    parameterOverrides?: string[],
+    needsPackaging?: boolean,
+    needsCapabilityNamedIAM?: boolean,
+    needsCapabilityAutoExpand?: boolean,
+    cwd?: string,
 }
 
-const packageAndDeployStack = async({
-  answers,
-  stackName,
-  serviceName,
-  templateFile,
-  parameterOverrides = [],
-  needsPackaging = false,
-  needsCapabilityNamedIAM = false,
-  needsCapabilityAutoExpand = false,
-  cwd = undefined,
+type packageStackParams = Pick<packageAndDeployStackParams, 'answers' | 'templateFile' | 'cwd' | 'needsPackaging'>
+
+export interface CloudFormationParameter {
+    ParameterKey: string,
+    ParameterValue: String
+}
+
+export type CloudFormationParameterList = CloudFormationParameter[]
+
+const packageAndUploadTemplate = async ({
+    answers,
+    templateFile,
+    cwd,
+    needsPackaging = true
+}: packageStackParams): Promise<void> => {
+
+    const { bucket } = answers.s3
+
+    const cmdOptions = (cwd !== undefined) ? { cwd: cwd } : {};
+
+    let templateFileBuilt = templateFile
+
+    if (needsPackaging) {
+        templateFileBuilt = `${templateFile}.build`;
+        const packageArgs = [
+            '--template-file', templateFile,
+            '--output-template-file', templateFileBuilt,
+            '--s3-bucket', answers.s3.bucket,
+            '--s3-prefix', 'cloudformation/artifacts',
+            '--region', answers.region,
+        ];
+        await execa('aws', ['cloudformation', 'package', ...packageArgs], cmdOptions);
+    }
+
+    const templateFileName = path.parse(templateFile).name
+
+    const templatePath = cwd !== undefined ? path.join(cwd, templateFileBuilt) : templateFileBuilt
+
+    const s3 = new S3Utils(answers.region);
+
+    const templateContent = fs.readFileSync(templatePath, 'utf-8');
+    await s3.uploadStreamToS3(bucket, `cloudformation/templates/${templateFileName}.template`, templateContent);
+
+    const { Parameters: templateParameters } = yaml.load(templateContent, { schema: CLOUDFORMATION_SCHEMA }) as { Parameters: { [key: string]: object } }
+    const parameterOverrides: CloudFormationParameterList = templateParameters === undefined ? [] : Object.keys(templateParameters).map(o => {
+        return {
+            'ParameterKey': o, 'ParameterValue': templateParameters[o]['Default'] ? templateParameters[o]['Default'] : ''
+        }
+    })
+
+    await s3.uploadStreamToS3(bucket, `cloudformation/parameters/${templateFileName}.json`, JSON.stringify(parameterOverrides));
+}
+
+const packageAndDeployStack = async ({
+    answers,
+    stackName,
+    serviceName,
+    templateFile,
+    parameterOverrides = [],
+    needsPackaging = false,
+    needsCapabilityNamedIAM = false,
+    needsCapabilityAutoExpand = false,
+    cwd = undefined,
 }: packageAndDeployStackParams): Promise<void> => {
-  ow(answers, ow.object.nonEmpty);
-  ow(stackName, ow.string.nonEmpty);
-  ow(serviceName, ow.string.nonEmpty);
-  ow(templateFile, ow.string.nonEmpty);
-  ow(needsPackaging, ow.boolean);
-  ow(needsCapabilityNamedIAM, ow.boolean);
-  ow(needsCapabilityAutoExpand, ow.boolean);
+    ow(answers, ow.object.nonEmpty);
+    ow(stackName, ow.string.nonEmpty);
+    ow(serviceName, ow.string.nonEmpty);
+    ow(templateFile, ow.string.nonEmpty);
+    ow(needsPackaging, ow.boolean);
+    ow(needsCapabilityNamedIAM, ow.boolean);
+    ow(needsCapabilityAutoExpand, ow.boolean);
 
-  const templateFileBuilt = (needsPackaging) ? `${templateFile}.build` : templateFile;
-  const cmdOptions = (cwd !== undefined) ? {cwd: cwd} : {};
+    const templateFileBuilt = (needsPackaging) ? `${templateFile}.build` : templateFile;
+    const cmdOptions = (cwd !== undefined) ? { cwd: cwd } : {};
 
-  if (needsPackaging) {
-    const packageArgs = [
-      '--template-file', templateFile,
-      '--output-template-file', templateFileBuilt,
-      '--s3-bucket', answers.s3.bucket,
-      '--s3-prefix', 'cloudformation/artifacts/',
-      '--region', answers.region,
+    if (needsPackaging) {
+        const packageArgs = [
+            '--template-file', templateFile,
+            '--output-template-file', templateFileBuilt,
+            '--s3-bucket', answers.s3.bucket,
+            '--s3-prefix', 'cloudformation/artifacts/',
+            '--region', answers.region,
+        ];
+        await execa('aws', ['cloudformation', 'package', ...packageArgs], cmdOptions);
+
+
+    }
+
+    const tagsList = new TagsList(answers.customTags ?? '');
+
+    const deployArgs = [
+        '--template-file', templateFileBuilt,
+        '--stack-name', stackName,
+        '--no-fail-on-empty-changeset',
+        '--region', answers.region,
+        '--tags', `cdf_service=${serviceName}`, `cdf_environment=${answers.environment}`, ...tagsList.asCLIOptions(),
     ];
-    await execa('aws', ['cloudformation', 'package', ...packageArgs], cmdOptions);
-  }
+    if (parameterOverrides.length > 0) deployArgs.push('--parameter-overrides', ...parameterOverrides);
+    if (needsCapabilityNamedIAM || needsCapabilityAutoExpand) deployArgs.push('--capabilities');
+    if (needsCapabilityNamedIAM) deployArgs.push('CAPABILITY_NAMED_IAM');
+    if (needsCapabilityAutoExpand) deployArgs.push('CAPABILITY_AUTO_EXPAND');
 
-  const tagsList = new TagsList(answers.customTags ?? '');
-  const deployArgs = [
-    '--template-file', templateFileBuilt,
-    '--stack-name', stackName,
-    '--no-fail-on-empty-changeset',
-    '--region', answers.region,
-    '--tags', `cdf_service=${serviceName}`, `cdf_environment=${answers.environment}`, ...tagsList.asCLIOptions(),
-  ];
-  if (parameterOverrides.length > 0) deployArgs.push('--parameter-overrides', ...parameterOverrides);
-  if (needsCapabilityNamedIAM || needsCapabilityAutoExpand) deployArgs.push('--capabilities');
-  if (needsCapabilityNamedIAM) deployArgs.push('CAPABILITY_NAMED_IAM');
-  if (needsCapabilityAutoExpand) deployArgs.push('CAPABILITY_AUTO_EXPAND');
-
-  await execa('aws', ['cloudformation', 'deploy', ...deployArgs], cmdOptions);
+    await execa('aws', ['cloudformation', 'deploy', ...deployArgs], cmdOptions);
 }
 
 export {
@@ -175,4 +236,6 @@ export {
     getStackResourceSummaries,
     getStackParameters,
     packageAndDeployStack,
+    packageAndUploadTemplate
+
 }

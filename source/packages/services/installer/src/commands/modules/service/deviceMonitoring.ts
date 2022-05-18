@@ -19,7 +19,7 @@ import { ModuleName, ServiceModule } from '../../../models/modules';
 import { ConfigBuilder } from "../../../utils/configBuilder";
 import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
-import { deleteStack, getStackParameters, getStackResourceSummaries, packageAndDeployStack } from '../../../utils/cloudformation.util';
+import { deleteStack, getStackParameters, getStackResourceSummaries, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
 
 export class DeviceMonitoringInstaller implements ServiceModule {
 
@@ -54,7 +54,20 @@ export class DeviceMonitoringInstaller implements ServiceModule {
       applicationConfigurationPrompt(this.name, answers, []),
       updatedAnswers);
     return updatedAnswers;
+  }
 
+  public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    const tasks: ListrTask[] = [{
+      title: `Packaging module '${this.name}'`,
+      task: async () => {
+        await packageAndUploadTemplate({
+          answers: answers,
+          templateFile: '../device-monitoring/infrastructure/cfn-device-monitoring.yml',
+        });
+      },
+    }
+    ];
+    return [answers, tasks]
   }
 
   public async install(answers: Answers): Promise<[Answers, ListrTask[]]> {

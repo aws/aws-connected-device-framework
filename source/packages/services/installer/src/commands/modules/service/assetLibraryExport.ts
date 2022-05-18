@@ -18,7 +18,7 @@ import inquirer from 'inquirer';
 import ow from 'ow';
 import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
-import { deleteStack, getStackParameters, packageAndDeployStack } from '../../../utils/cloudformation.util';
+import { deleteStack, getStackParameters, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
 
 export class AssetLibraryExportInstaller implements ServiceModule {
 
@@ -104,7 +104,20 @@ export class AssetLibraryExportInstaller implements ServiceModule {
         ], updatedAnswers);
 
         return updatedAnswers;
+    }
 
+    public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+        const tasks: ListrTask[] = [{
+            title: `Packaging module '${this.name}'`,
+            task: async () => {
+                await packageAndUploadTemplate({
+                    answers: answers,
+                    templateFile: '../assetlibrary-export/infrastructure/cfn-assetlibrary-export.yaml',
+                });
+            },
+        }
+        ];
+        return [answers, tasks]
     }
 
     public async install(answers: Answers): Promise<[Answers, ListrTask[]]> {
@@ -142,14 +155,14 @@ export class AssetLibraryExportInstaller implements ServiceModule {
                 addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
 
                 await packageAndDeployStack({
-                  answers: answers,
-                  stackName: this.stackName,
-                  serviceName: 'assetlibrary-export',
-                  templateFile: '../assetlibrary-export/infrastructure/cfn-assetlibrary-export.yaml',
-                  parameterOverrides,
-                  needsPackaging: true,
-                  needsCapabilityNamedIAM: true,
-                  needsCapabilityAutoExpand: true,
+                    answers: answers,
+                    stackName: this.stackName,
+                    serviceName: 'assetlibrary-export',
+                    templateFile: '../assetlibrary-export/infrastructure/cfn-assetlibrary-export.yaml',
+                    parameterOverrides,
+                    needsPackaging: true,
+                    needsCapabilityNamedIAM: true,
+                    needsCapabilityAutoExpand: true,
                 });
             }
         });
@@ -191,7 +204,7 @@ export class AssetLibraryExportInstaller implements ServiceModule {
         tasks.push({
             title: `Deleting stack '${this.stackName}'`,
             task: async () => {
-                 await deleteStack(this.stackName, answers.region)
+                await deleteStack(this.stackName, answers.region)
             }
         });
         return tasks

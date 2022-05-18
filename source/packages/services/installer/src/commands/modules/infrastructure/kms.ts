@@ -131,6 +131,10 @@ export class KmsKeyInstaller implements InfrastructureModule {
     return answers;
   }
 
+  public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    return [answers, []]
+  }
+
   public async install(answers: Answers): Promise<[Answers, ListrTask[]]> {
 
     ow(answers, ow.object.plain);

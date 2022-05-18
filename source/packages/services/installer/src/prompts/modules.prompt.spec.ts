@@ -22,6 +22,7 @@ import { expandModuleList, topologicallySortModules } from './modules.prompt';
         dependsOnOptional: [],
         prompts: undefined,
         install: undefined,
+        package: undefined,
         delete: undefined,
         type: 'SERVICE'
     };

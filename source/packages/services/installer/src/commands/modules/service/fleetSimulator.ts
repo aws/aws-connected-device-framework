@@ -19,7 +19,7 @@ import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
 import { customDomainPrompt } from '../../../prompts/domain.prompt';
 import ow from 'ow';
-import { deleteStack, getStackOutputs, getStackParameters, getStackResourceSummaries, packageAndDeployStack } from '../../../utils/cloudformation.util';
+import { deleteStack, getStackOutputs, getStackParameters, getStackResourceSummaries, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
 
 
 export class FleetSimulatorInstaller implements RestModule {
@@ -35,7 +35,7 @@ export class FleetSimulatorInstaller implements RestModule {
     'deploymentHelper',
     'assetLibrary'
   ];
-  
+
   public readonly dependsOnOptional: ModuleName[] = [];
 
   private readonly simulationLauncherStackName: string;
@@ -94,6 +94,29 @@ export class FleetSimulatorInstaller implements RestModule {
     ], updatedAnswers);
 
     return updatedAnswers;
+  }
+
+  public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    const tasks: ListrTask[] = [{
+      title: `Packaging module '${this.name} [Simulation Launcher]'`,
+      task: async () => {
+        await packageAndUploadTemplate({
+          answers: answers,
+          templateFile: '../simulation-launcher/infrastructure/cfn-simulation-launcher.yaml',
+        });
+      },
+    },
+    {
+      title: `Packaging module '${this.name} [Simulation Manager]'`,
+      task: async () => {
+        await packageAndUploadTemplate({
+          answers: answers,
+          templateFile: '../simulation-manager/infrastructure/cfn-simulation-manager.yml',
+        });
+      },
+    }
+    ];
+    return [answers, tasks]
   }
 
   public async install(answers: Answers): Promise<[Answers, ListrTask[]]> {

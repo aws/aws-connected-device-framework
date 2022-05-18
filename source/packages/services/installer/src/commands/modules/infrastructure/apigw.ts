@@ -184,7 +184,11 @@ export class ApiGwInstaller implements InfrastructureModule {
     includeOptionalModule('authJwt', answers.modules, answers.apigw.type === 'LambdaRequest' || answers.apigw.type === 'LambdaToken')
 
     return answers;
+  }
 
+  public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    const results = await this.install(answers)
+    return results;
   }
 
   public async install(answers: Answers): Promise<[Answers, ListrTask[]]> {

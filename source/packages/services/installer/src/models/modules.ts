@@ -59,6 +59,7 @@ export interface Module {
   type: "SERVICE" | "INFRASTRUCTURE";
   prompts: (answers: Answers) => Promise<Answers>;
   install: (answers: Answers) => Promise<[Answers, ListrTask[]]>;
+  package: (answers: Answers) => Promise<[Answers, ListrTask[]]>;
   delete: (answers: Answers) => Promise<ListrTask[]>;
 }
 

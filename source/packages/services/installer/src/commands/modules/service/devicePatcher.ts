@@ -20,7 +20,7 @@ import { ConfigBuilder } from "../../../utils/configBuilder";
 import { customDomainPrompt } from '../../../prompts/domain.prompt';
 import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
-import { deleteStack, getStackOutputs, getStackParameters, getStackResourceSummaries, packageAndDeployStack } from '../../../utils/cloudformation.util';
+import { deleteStack, getStackOutputs, getStackParameters, getStackResourceSummaries, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
 
 export class DevicePatcherInstaller implements RestModule {
 
@@ -57,6 +57,20 @@ export class DevicePatcherInstaller implements RestModule {
         ], updatedAnswers);
 
         return updatedAnswers;
+    }
+
+    public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+        const tasks: ListrTask[] = [{
+            title: `Packaging module '${this.name}'`,
+            task: async () => {
+                await packageAndUploadTemplate({
+                    answers: answers,
+                    templateFile: '../device-patcher/infrastructure/cfn-device-patcher.yml',
+                });
+            },
+        }
+        ];
+        return [answers, tasks]
     }
 
     public async install(answers: Answers): Promise<[Answers, ListrTask[]]> {
@@ -102,14 +116,14 @@ export class DevicePatcherInstaller implements RestModule {
                 addIfSpecified('AuthorizerFunctionArn', answers.apigw.lambdaAuthorizerArn);
 
                 await packageAndDeployStack({
-                  answers: answers,
-                  stackName: this.stackName,
-                  serviceName: 'device-patcher',
-                  templateFile: '../device-patcher/infrastructure/cfn-device-patcher.yml',
-                  parameterOverrides,
-                  needsPackaging: true,
-                  needsCapabilityNamedIAM: true,
-                  needsCapabilityAutoExpand: true,
+                    answers: answers,
+                    stackName: this.stackName,
+                    serviceName: 'device-patcher',
+                    templateFile: '../device-patcher/infrastructure/cfn-device-patcher.yml',
+                    parameterOverrides,
+                    needsPackaging: true,
+                    needsCapabilityNamedIAM: true,
+                    needsCapabilityAutoExpand: true,
                 });
             }
         });

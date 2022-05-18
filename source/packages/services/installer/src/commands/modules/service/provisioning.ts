@@ -19,7 +19,7 @@ import { customDomainPrompt } from '../../../prompts/domain.prompt';
 import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
 import ow from 'ow';
-import { deleteStack, getStackOutputs, getStackParameters, getStackResourceSummaries, packageAndDeployStack } from '../../../utils/cloudformation.util';
+import { deleteStack, getStackOutputs, getStackParameters, getStackResourceSummaries, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
 export class ProvisioningInstaller implements RestModule {
 
   public readonly friendlyName = 'Provisioning';
@@ -31,7 +31,7 @@ export class ProvisioningInstaller implements RestModule {
     'openSsl',
     'deploymentHelper',
   ];
-  
+
   public readonly dependsOnOptional: ModuleName[] = [];
 
   private readonly stackName: string
@@ -89,6 +89,20 @@ export class ProvisioningInstaller implements RestModule {
       ])], updatedAnswers);
 
     return updatedAnswers;
+  }
+
+  public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    const tasks: ListrTask[] = [{
+      title: `Packaging module '${this.name}'`,
+      task: async () => {
+        await packageAndUploadTemplate({
+          answers: answers,
+          templateFile: '../provisioning/infrastructure/cfn-provisioning.yml'
+        });
+      },
+    }
+    ];
+    return [answers, tasks]
   }
 
   public async install(answers: Answers): Promise<[Answers, ListrTask[]]> {
