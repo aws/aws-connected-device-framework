@@ -129,7 +129,7 @@ type packageStackParams = Pick<packageAndDeployStackParams, 'answers' | 'templat
 
 export interface CloudFormationParameter {
     ParameterKey: string,
-    ParameterValue: String
+    ParameterValue: string
 }
 
 export type CloudFormationParameterList = CloudFormationParameter[]
@@ -168,7 +168,7 @@ const packageAndUploadTemplate = async ({
     const s3 = new S3Utils(answers.region);
     await s3.uploadStreamToS3(bucket, `cloudformation/templates/${templateFileName}.template`, templateContent);
 
-    const { Parameters: templateParameters } = yaml.load(templateContent, { schema: CLOUDFORMATION_SCHEMA }) as { Parameters: { [key: string]: object } }
+    const { Parameters: templateParameters } = yaml.load(templateContent, { schema: CLOUDFORMATION_SCHEMA }) as { Parameters: { [key: string]: unknown } }
 
     const parametersBasedOnAnswers = parameterOverrides.map(str => {
         const value = str.slice(str.indexOf('=') + 1);
