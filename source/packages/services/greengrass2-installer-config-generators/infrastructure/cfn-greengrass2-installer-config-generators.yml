@@ -161,6 +161,10 @@ Outputs:
   TokenExchangeRoleAlias:
     Description: Role Alias which will be assumed by Greengrass Core
     Value: !Sub "${TokenExchangeRoleAliasPrefix}-${Environment}"
+  TokenExchangeRoleName:
+    Description: Name of the IAM Role which will be assumed by Greengrass Core
+    Value: !Ref GreengrassTokenExchangeRole
+
   ManualInstallConfigLambdaConsoleUrl:
     Description: Console URL for the manual install Lambda Function.
     Value: !Sub "https://${AWS::Region}.console.aws.amazon.com/lambda/home?region=${AWS::Region}#/functions/${ManualInstallConfigLambda}"

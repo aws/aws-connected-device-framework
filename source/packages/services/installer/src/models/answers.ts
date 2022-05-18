@@ -2,6 +2,7 @@ import { ModuleName } from "./modules";
 
 export interface Answers {
   accountId?: string;
+  customTags?: string;
   iotEndpoint?: string;
   iotCredentialEndpoint?: string;
   environment: string;
@@ -13,9 +14,7 @@ export interface Answers {
   s3?: S3;
   eventBus?: EventBus;
   openSsl?: OpenSsl;
-
   deploymentHelper?: DeploymentHelper;
-
   assetLibraryExport?: AssetLibraryExport;
   assetLibrary?: AssetLibrary;
   assetLibraryHistory?: AssetLibraryHistory;
@@ -148,6 +147,7 @@ export interface AuthJwt extends ServiceModuleAttributes {
 
 export interface BulkCerts extends RestServiceModuleAttribues {
   setCertificateDefaults?: boolean;
+  setSupplier?: boolean;
   commonName?: string;
   organization?: string;
   organizationalUnit?: string;
@@ -160,8 +160,20 @@ export interface BulkCerts extends RestServiceModuleAttribues {
   defaultAnswer?: boolean;
   chunksize: number;
   expiryDays?: number;
+  suppliers?: Suppliers;
+  caAlias?: string;
+  caValue?:string;
 }
 
+export interface Suppliers {
+  list?: string[];
+  cas: CA[];
+}
+
+export interface CA {
+  alias:string;
+  value:string
+}
 export interface CertificateActivator extends ServiceModuleAttributes {
   provisioningFunctionName?: string;
   assetLibraryFunctionName?: string;
@@ -201,6 +213,7 @@ export interface Commands extends RestServiceModuleAttribues {
   addThingToGroupTemplate?: string;
   maxTargetsForJob?: number;
   commandArtifactsPrefix?: string;
+  useAssetLibrary?: boolean;
 }
 
 
@@ -211,6 +224,7 @@ export interface CommandAndControl extends RestServiceModuleAttribues {
   deliveryMethodTopic?: string;
   awsIotShadowName?: string;
   addThingToGroupTemplate?: string;
+  useAssetLibrary?: boolean;
 }
 
 export interface DeviceMonitoring extends ServiceModuleAttributes {
@@ -220,13 +234,15 @@ export interface DeviceMonitoring extends ServiceModuleAttributes {
 export interface Notifications extends RestServiceModuleAttribues {
   useDax?: boolean;
   daxInstanceType?: string;
-
   notificationsTableName?: string;
   notificationsTableArn?: string;
   notificationsTableStreamArn?: string;
   configTableName?: string;
   configTableArn?: string;
   daxClusterEndpoint?: string;
+  daxClusterArn?: string;
+  queryCacheTTL?: number;
+  itemCacheTTL?: number;
 }
 
 export interface Greengrass2InstallerConfigGenerators
@@ -252,6 +268,7 @@ export interface Greengrass2Provisioning
   corezBatchSize?: number;
   devicesBatchSize?: number;
   deploymentsBatchSize?: number;
+  useAssetLibrary?: boolean;
 }
 
 export interface Provisioning extends RestServiceModuleAttribues {

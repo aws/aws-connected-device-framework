@@ -82,7 +82,7 @@ export CONFIG_LOCATION="${CODEBUILD_SRC_DIR_source_infrastructure}/integration-t
 
 sed -i.bak '/.*BASE_URL.*/ d' $CONFIG_LOCATION
 
-echo "GREENGRASSPROVISIONING_BASE_URL=${greengrass_provisioning_invoke_url}" >> $CONFIG_LOCATION
+echo "GREENGRASS2PROVISIONING_BASE_URL=${greengrass_provisioning_invoke_url}" >> $CONFIG_LOCATION
 echo "NOTIFICATIONS_BASE_URL=${notifications_invoke_url}" >> $CONFIG_LOCATION
 echo "PROVISIONING_BASE_URL=${provisioning_invoke_url}" >> $CONFIG_LOCATION
 echo "DEVICE_PATCHER_BASE_URL=${devicepatcher_invoke_url}" >> $CONFIG_LOCATION

@@ -1,6 +1,6 @@
 {
   "name": "@cdf/greengrass2-installer-config-generators",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "CDF Greengrass V2 Provisioning - Sample core device installer config generators",
   "author": "Dean Hart",
   "scripts": {

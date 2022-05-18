@@ -1,6 +1,13 @@
 # Change Log - @cdf/command-and-control
 
-This log was last generated on Mon, 28 Mar 2022 03:56:19 GMT and should not be manually modified.
+This log was last generated on Fri, 08 Apr 2022 07:03:46 GMT and should not be manually modified.
+
+## 0.0.5
+Fri, 08 Apr 2022 07:03:46 GMT
+
+### Patches
+
+- minor fixes to command-and-control to support assetlibrary targets
 
 ## 0.0.4
 Mon, 28 Mar 2022 03:56:19 GMT

@@ -12,11 +12,11 @@
  *********************************************************************************************************************/
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../di/types';
-import {logger} from '../../utils/logger.util';
+import { logger } from '../../utils/logger.util';
 import pLimit from 'p-limit';
 import ow from 'ow';
-import {v1 as uuid} from 'uuid';
-import { SubscriptionItem } from './subscription.models';
+import { v1 as uuid } from 'uuid';
+import { SubscriptionItem, UpdateSubcriptionRequest } from './subscription.models';
 import { SubscriptionAssembler } from './subscription.assembler';
 import { SubscriptionDao, PaginationKey } from './subscription.dao';
 import { EventDao } from '../events/event.dao';
@@ -26,10 +26,10 @@ import { TargetItem, TargetTypeStrings, TargetItemBase } from '../targets/target
 import { ListSubscriptionsByTopicResponse } from 'aws-sdk/clients/sns';
 
 @injectable()
-export class SubscriptionService  {
+export class SubscriptionService {
 
     private readonly PROMISE_CONCURRENCY_LIMIT = 5;
- 
+
     private sqs: AWS.SQS;
 
     constructor(
@@ -37,19 +37,19 @@ export class SubscriptionService  {
         @inject(TYPES.EventDao) private eventDao: EventDao,
         @inject(TYPES.SubscriptionAssembler) private subscriptionAssembler: SubscriptionAssembler,
         @inject(TYPES.TargetService) private targetService: TargetService,
-         @inject(TYPES.SNSTarget) private snsTarget: SNSTarget,
-         @inject('aws.sqs.asyncProcessing') private asyncProcessingQueue:string,
-         @inject(TYPES.SQSFactory) sqsFactory: () => AWS.SQS) {
-             this.sqs = sqsFactory();
+        @inject(TYPES.SNSTarget) private snsTarget: SNSTarget,
+        @inject('aws.sqs.asyncProcessing') private asyncProcessingQueue: string,
+        @inject(TYPES.SQSFactory) sqsFactory: () => AWS.SQS) {
+        this.sqs = sqsFactory();
     }
 
-    public async get(subscriptionId:string) : Promise<SubscriptionItem> {
+    public async get(subscriptionId: string): Promise<SubscriptionItem> {
         logger.debug(`subscription.service get: in: subscriptionId:${subscriptionId}`);
 
         ow(subscriptionId, ow.string.nonEmpty);
 
-        const subscription  = await this.subscriptionDao.get(subscriptionId);
-        if (subscription===undefined) {
+        const subscription = await this.subscriptionDao.get(subscriptionId);
+        if (subscription === undefined) {
             throw new Error('NOT_FOUND');
         }
 
@@ -57,25 +57,25 @@ export class SubscriptionService  {
         // within 72 hrs. If we know of any being in a pending state, double-check its status to see if
         // it has been confirmed or automatically deleted.
 
-        let existingSnsSubscriptions:ListSubscriptionsByTopicResponse;
-        const targetTypes:TargetTypeStrings[] = ['email', 'sms'];
-        for(const targetType of targetTypes) {
+        let existingSnsSubscriptions: ListSubscriptionsByTopicResponse;
+        const targetTypes: TargetTypeStrings[] = ['email', 'sms'];
+        for (const targetType of targetTypes) {
             const targets = subscription.targets?.[targetType] ?? [];
-            for(let i=targets.length-1; i>=0; i--) {
+            for (let i = targets.length - 1; i >= 0; i--) {
                 const target = subscription.targets[targetType][i];
                 const snsSubscriptionArn = target['subscriptionArn'];
                 logger.debug(`>>>>> snsSubscriptionArn:${snsSubscriptionArn}`);
                 if (!this.snsTarget.isPendingConfirmation(snsSubscriptionArn)) {
                     continue;
                 }
-                if (existingSnsSubscriptions===undefined) {
+                if (existingSnsSubscriptions === undefined) {
                     existingSnsSubscriptions = await this.snsTarget.listSubscriptions(subscription.sns?.topicArn);
                 }
-                const matches = existingSnsSubscriptions.Subscriptions?.filter(s=> s.Endpoint===target.getId());
+                const matches = existingSnsSubscriptions.Subscriptions?.filter(s => s.Endpoint === target.getId());
                 if (matches?.length > 0) {
                     // update with latest info if different to what we have
                     const latestArn = matches[0].SubscriptionArn;
-                    if (latestArn!==target['subscriptionArn']) {
+                    if (latestArn !== target['subscriptionArn']) {
                         target['subscriptionArn'] = matches[0].SubscriptionArn;
                         await this.targetService.update(target);
                     }
@@ -96,41 +96,41 @@ export class SubscriptionService  {
      * @param userId
      * @param excludeSubscriptionId
      */
-    public async listSnsTargetArns(userId:string, excludeSubscriptionId?:string) : Promise<Set<string>> {
+    public async listSnsTargetArns(userId: string, excludeSubscriptionId?: string): Promise<Set<string>> {
         logger.debug(`subscription.service listTargetArns: in: userId:${userId}, excludeSubscriptionId:${excludeSubscriptionId}`);
 
         let subscriptions = await this.listByUser(userId);
-        if (excludeSubscriptionId!==undefined) {
-            subscriptions = subscriptions.filter(s=> s.id!==excludeSubscriptionId);
+        if (excludeSubscriptionId !== undefined) {
+            subscriptions = subscriptions.filter(s => s.id !== excludeSubscriptionId);
         }
-        const targetArns = new Set( subscriptions
-            .map( s=> Object.keys(s.targets)
-                        .map(tt=> s.targets[tt])
-                        .flat())
+        const targetArns = new Set(subscriptions
+            .map(s => Object.keys(s.targets)
+                .map(tt => s.targets[tt])
+                .flat())
             .flat()
-            .map(t=> t['subscriptionArn'])
-            .filter(arn=> arn!==undefined));
+            .map(t => t['subscriptionArn'])
+            .filter(arn => arn !== undefined));
 
         logger.debug(`subscription.service listTargetArns: exit:${JSON.stringify(targetArns)}`);
         return targetArns;
     }
 
-    public async delete(subscriptionId:string) : Promise<void> {
+    public async delete(subscriptionId: string): Promise<void> {
         logger.debug(`subscription.service delete: in: subscriptionId:${subscriptionId}`);
 
         ow(subscriptionId, ow.string.nonEmpty);
 
         const current = await this.subscriptionDao.get(subscriptionId);
-        if (current===undefined) {
+        if (current === undefined) {
             throw new Error('NOT_FOUND');
         }
 
         // safe delete targets
-        if(current?.targets) {
-            for(const targetType of Object.keys(current.targets)) {
+        if (current?.targets) {
+            for (const targetType of Object.keys(current.targets)) {
                 const targets = current.targets[targetType];
                 if (targets) {
-                    for(const t of targets) {
+                    for (const t of targets) {
                         await this.safeDeleteTarget(subscriptionId, targetType as TargetTypeStrings, (t as TargetItemBase).getId());
                     }
                 }
@@ -142,7 +142,7 @@ export class SubscriptionService  {
 
         // delete the sns topic if there are no remaining subscriptions for the user
         const subscriptions = await this.listByUser(current.user.id);
-        if (subscriptions===undefined || subscriptions.filter(s=> s.id!==subscriptionId).length===0) {
+        if (subscriptions === undefined || subscriptions.filter(s => s.id !== subscriptionId).length === 0) {
             await this.snsTarget.deleteTopic(current.user.id);
         }
 
@@ -157,7 +157,7 @@ export class SubscriptionService  {
      * @param targetType
      * @param targetId
      */
-    public async safeDeleteTarget(subscriptionId:string, targetType:TargetTypeStrings, targetId:string) : Promise<void> {
+    public async safeDeleteTarget(subscriptionId: string, targetType: TargetTypeStrings, targetId: string): Promise<void> {
         logger.debug(`subscription.service safeDeleteTarget: in: subscriptionId:${subscriptionId}, targetType:${targetType}, targetId:${targetId}`);
 
         ow(subscriptionId, ow.string.nonEmpty);
@@ -165,12 +165,12 @@ export class SubscriptionService  {
         ow(targetId, ow.string.nonEmpty);
 
         const subscription = await this.get(subscriptionId);
-        if (subscription===undefined) {
+        if (subscription === undefined) {
             throw new Error('SUBSCRIPTION_NOT_FOUND');
         }
 
-        const target = subscription.targets?.[targetType]?.flat().filter(t=> t.getId()===targetId)?.[0];
-        if (target===undefined) {
+        const target = subscription.targets?.[targetType]?.flat().filter(t => t.getId() === targetId)?.[0];
+        if (target === undefined) {
             throw new Error('TARGET_NOT_FOUND');
         }
 
@@ -181,7 +181,7 @@ export class SubscriptionService  {
         const otherTargetArns = await this.listSnsTargetArns(subscription.user.id, subscriptionId);
 
         // 2nd now that we know which targets are used across other subscriptions, we can exclude cleaning them up
-        const reused = (target['subscriptionArn']!==undefined && otherTargetArns.has(target['subscriptionArn']));
+        const reused = (target['subscriptionArn'] !== undefined && otherTargetArns.has(target['subscriptionArn']));
 
         // 3rd we can now go ahead and safely delegate the deletion of the target
         this.targetService.delete(subscriptionId, targetType, targetId, !reused);
@@ -190,17 +190,17 @@ export class SubscriptionService  {
 
     }
 
-    public async deleteByUser(userId:string, principal?:string, principalValue?:string) : Promise<void> {
+    public async deleteByUser(userId: string, principal?: string, principalValue?: string): Promise<void> {
         logger.debug(`subscription.service deleteByUser: in: userId:${userId}, principal:${principal}, principalValue:${principalValue}`);
 
         ow(userId, ow.string.nonEmpty);
 
         const subscriptions = await this.listByUser(userId, true, principal, principalValue);
 
-        for(const sub of subscriptions) {
+        for (const sub of subscriptions) {
             await this.sqs.sendMessage({
                 QueueUrl: this.asyncProcessingQueue,
-                MessageBody: JSON.stringify({subscriptionId: sub.id}),
+                MessageBody: JSON.stringify({ subscriptionId: sub.id }),
                 MessageAttributes: {
                     messageType: {
                         DataType: 'String',
@@ -210,31 +210,31 @@ export class SubscriptionService  {
             }).promise();
         }
 
-            logger.debug(`subscription.service deleteByUser: exit:`);
+        logger.debug(`subscription.service deleteByUser: exit:`);
     }
 
-    public async listByUser(userId:string, returnIdsOnly=false, principal?:string, principalValue?:string) : Promise<SubscriptionItem[]> {
+    public async listByUser(userId: string, returnIdsOnly = false, principal?: string, principalValue?: string): Promise<SubscriptionItem[]> {
         logger.debug(`subscription.service listByUser: in: userId:${userId}, returnIdsOnly:${returnIdsOnly}, principal:${principal}, principalValue:${principalValue}`);
 
         ow(userId, ow.string.nonEmpty);
 
-        let results:SubscriptionItem[] = [];
-        let subscriptionIds:string[];
-        if (principal!==undefined && principalValue!==undefined) {
+        let results: SubscriptionItem[] = [];
+        let subscriptionIds: string[];
+        if (principal !== undefined && principalValue !== undefined) {
             subscriptionIds = await this.subscriptionDao.listSubscriptionIdsForUserPrincipal(userId, principal, principalValue);
         } else {
             subscriptionIds = await this.subscriptionDao.listSubscriptionIdsForUser(userId);
         }
 
-        if (subscriptionIds?.length>0) {
+        if (subscriptionIds?.length > 0) {
             if (returnIdsOnly) {
-                results = subscriptionIds.map(id=> new SubscriptionItem(id));
+                results = subscriptionIds.map(id => new SubscriptionItem(id));
             } else {
 
                 const limit = pLimit(this.PROMISE_CONCURRENCY_LIMIT);
-                const gets:Promise<SubscriptionItem>[]= [];
-                for(const id of subscriptionIds) {
-                    gets.push( limit(()=> this.get(id)));
+                const gets: Promise<SubscriptionItem>[] = [];
+                for (const id of subscriptionIds) {
+                    gets.push(limit(() => this.get(id)));
                 }
                 results = await Promise.all(gets);
             }
@@ -244,7 +244,7 @@ export class SubscriptionService  {
     }
 
 
-    public async listByEvent(eventId:string, from?:PaginationKey) : Promise<[SubscriptionItem[], PaginationKey]> {
+    public async listByEvent(eventId: string, from?: PaginationKey): Promise<[SubscriptionItem[], PaginationKey]> {
         logger.debug(`subscription.service listByEvent: in: eventId:${eventId}, from:${JSON.stringify(from)}`);
 
         ow(eventId, ow.string.nonEmpty);
@@ -255,7 +255,7 @@ export class SubscriptionService  {
         return [results, pagintion];
     }
 
-    public async create(item:SubscriptionItem) : Promise<string> {
+    public async create(item: SubscriptionItem): Promise<string> {
         logger.debug(`subscription.service create: in: model:${JSON.stringify(item)}`);
 
         // validate input
@@ -268,15 +268,15 @@ export class SubscriptionService  {
 
         // set defaults
         item.id = uuid();
-        item.alerted=false;
-        if (item.enabled===undefined) {
-            item.enabled=true;
+        item.alerted = false;
+        if (item.enabled === undefined) {
+            item.enabled = true;
         }
 
         // verify the provided event exists
         const event = await this.eventDao.get(item.event.id);
         logger.debug(`subscription.service create: event: ${JSON.stringify(event)}`);
-        if (event===undefined) {
+        if (event === undefined) {
             throw new Error('EVENT_NOT_FOUND');
         }
 
@@ -284,27 +284,27 @@ export class SubscriptionService  {
         this.subscriptionAssembler.augmentItem(item, event);
 
         // verify that all required ruleParameterValues have been provided
-        if (event.ruleParameters?.length>0) {
+        if (event.ruleParameters?.length > 0) {
             ow(item.ruleParameterValues, ow.object.nonEmpty);
             ow(item.ruleParameterValues, ow.object.hasKeys(...event.ruleParameters));
         }
 
         // verify that a subscription for the user/principalValue does not already exist
         const existing = await this.subscriptionDao.listSubscriptionIdsForEventUserPrincipal(event.eventSourceId, event.id, event.principal, item.principalValue, item.user.id);
-        if (existing?.length>0) {
+        if (existing?.length > 0) {
             logger.debug(`subscription.service create: subscription ${existing[0]} already exists for this event/user/principal`);
             throw new Error('SUBSCRIPTION_FOR_USER_PRINCIPAL_ALREADY_EXISTS');
         }
 
         // create sns topic
         const topicArn = await this.snsTarget.initTopic(item.user.id);
-        item.sns = {topicArn};
+        item.sns = { topicArn };
 
         // create the targets
-        for(const targetType of Object.keys(item.targets)) {
+        for (const targetType of Object.keys(item.targets)) {
             const targets = item.targets[targetType];
             if (targets) {
-                for(const target of targets) {
+                for (const target of targets) {
                     (target as TargetItem).subscriptionId = item.id;
                     await this.targetService.create(target, topicArn, item.principalValue, event, true);
                 }
@@ -319,24 +319,24 @@ export class SubscriptionService  {
 
     }
 
-    public async update(updated:SubscriptionItem) : Promise<void> {
+    public async update(updated: UpdateSubcriptionRequest): Promise<void> {
         logger.debug(`subscription.service update: in: updated:${JSON.stringify(updated)}`);
 
         // validate input
         ow(updated, ow.object.nonEmpty);
         ow(updated.id, ow.string.nonEmpty);
-        ow(updated.principalValue, ow.undefined);
-        ow(updated.event, ow.undefined);
-        ow(updated.eventSource, ow.undefined);
-        ow(updated.user, ow.undefined);
-        ow(updated.sns, ow.undefined);
-        ow(updated.targets, ow.undefined);
-        ow(updated.enabled, ow.undefined);
-        ow(updated.alerted, ow.undefined);
+
+        if (!('enabled' in updated)) {
+            ow(updated.ruleParameterValues, "ruleParameterValues", ow.array.minLength(1))
+        }
+
+        if (updated.ruleParameterValues === undefined) {
+            ow(updated.enabled, "enabled", ow.boolean)
+        }
 
         // retrieve current
         const existing = await this.get(updated.id);
-        if (existing===undefined) {
+        if (existing === undefined) {
             throw new Error('NOT_FOUND');
         }
 
@@ -344,10 +344,10 @@ export class SubscriptionService  {
         const merged = Object.assign({}, existing, updated);
 
         // retrieve event details
-        const event = await this.eventDao.get(merged.event.id);
+        const event = await this.eventDao.get(existing.event.id);
 
         // verify that all required ruleParameterValues have been provided
-        if (event?.ruleParameters) {
+        if (event?.ruleParameters.length > 0) {
             ow(merged.ruleParameterValues, ow.object.nonEmpty);
             ow(merged.ruleParameterValues, ow.object.hasKeys(...event.ruleParameters));
         }
@@ -356,7 +356,6 @@ export class SubscriptionService  {
         await this.subscriptionDao.update(merged);
 
         logger.debug(`subscription.service update: exit:`);
-
     }
 
 }

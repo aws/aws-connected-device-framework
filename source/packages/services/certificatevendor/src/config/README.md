@@ -1,14 +1,17 @@
 ## The following mandatory env config needs defining per environment:
 
+```ini
 ASSETLIBRARY_API_FUNCTION_NAME=
 AWS_IOT_ENDPOINT=
 AWS_REGION=
 AWS_S3_CERTIFICATES_BUCKET=
 CERTIFICATES_CACERTIFICATEID=
 POLICIES_ROTATEDCERTIFICATEPOLICY=
+```
 
-## optional to override:
+## The following may be overridden:
 
+```ini
 AWS_IOT_THINGGROUP_ROTATECERTIFICATES=cdfRotateCertificates
 AWS_S3_CERTIFICATES_PREFIX=certificates/
 AWS_S3_CERTIFICATES_SUFFIX=.zip
@@ -30,3 +33,4 @@ DEFAULTS_CERTIFICATES_CERTIFICATEEXPIRYDAYS=1095
 REGISTRY_MODE=Assetlibrary
 
 LOGGING_LEVEL=info
+```

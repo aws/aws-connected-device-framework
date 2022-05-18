@@ -1,5 +1,6 @@
 ## The following env config needs defining per environment:
 
+```ini
 AWS_ACCOUNTID=
 AWS_REGION=
 AWS_S3_BUCKET=
@@ -10,10 +11,13 @@ TABLES_JOBS=
 
 ASSETLIBRARY_API_FUNCTION_NAME=
 PROVISIONING_API_FUNCTION_NAME=
+```
 
+## The following may be overridden:
 
-## optional to override:
+```ini
 AWS_S3_PREFIX=commands/
 TEMPLATES_ADDTHINGTOGROUP=add_thing_to_group
 CUSTOMDOMAIN_BASEPATH=
 LOGGING_LEVEL=info
+```

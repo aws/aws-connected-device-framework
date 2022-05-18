@@ -18,21 +18,19 @@ import { logger } from './utils/logger.util';
 import { ActivationService } from './activation/activation.service';
 import { ActivationItem } from './activation/activation.model';
 
-import { DeploymentService } from './deployment/deployment.service';
-import { DeploymentItem } from './deployment/deployment.model';
+import { PatchService } from './patch/patch.service';
+import { PatchItem } from './patch/patch.model';
 
-import { AgentbasedDeploymentService } from './deployment/agentbased-deployment.service';
+import { AgentbasedPatchService } from './patch/agentbased-patch.service';
 
-const deploymentService: DeploymentService = container.get<DeploymentService>(TYPES.DeploymentService);
-const activationService: ActivationService = container.get<ActivationService>(TYPES.DeploymentService);
+const patchService: PatchService = container.get<PatchService>(TYPES.PatchService);
+const activationService: ActivationService = container.get<ActivationService>(TYPES.PatchService);
 
-const agentbasedDeploymentService: AgentbasedDeploymentService = container.get<AgentbasedDeploymentService>(TYPES.AgentbasedDeploymentService);
+const agentbasedPatchService: AgentbasedPatchService = container.get<AgentbasedPatchService>(TYPES.AgentbasedPatchService);
 
-// eslint-disable-next-line  @typescript-eslint/no-explicit-any
-exports.handler = async (event: any, context: any, callback: any) => {
+exports.handler = async (event: Event): Promise<void> => {
 
     logger.debug(`event: ${JSON.stringify(event)}`);
-    logger.debug(`context: ${JSON.stringify(context)}`);
 
     if (event.Records) {
         for (const record of event.Records) {
@@ -55,45 +53,45 @@ exports.handler = async (event: any, context: any, callback: any) => {
 
                     } else if (
                         eventBody['detail-type'] === 'EC2 State Manager Instance Association State Change' &&
-                        eventBody.detail['document-name'] === 'AWS-RunAnsiblePlaybook'
+                        eventBody.detail['document-name'] === 'AWS-ApplyAnsiblePlaybooks'
                     ) {
 
                         logger.debug(`lambda_sqs_ssm_proxy: ssm_event: EC2 State Manager Instance Association State Change`);
                         logger.debug(`lambda_sqs_ssm_proxy: ssm_event_body: ${JSON.stringify(eventBody)}`);
 
                         const instanceId = eventBody.detail['instance-id'];
-                        const deploymentStatus = eventBody.detail['status'].toLowerCase();
+                        const patchStatus = eventBody.detail['status'].toLowerCase();
                         const associationId = eventBody.detail['association-id'];
                         const statusMessage = `SSM:${eventBody.detail['detailed-status']}`
 
                         const lastExecutionDate = eventBody.detail['last-execution-date']
 
-                        const instanceInformation = await agentbasedDeploymentService.getInstance(instanceId);
-                        const association = await agentbasedDeploymentService.getDeploymentByAssociationId(associationId);
+                        const instanceInformation = await agentbasedPatchService.getInstance(instanceId);
+                        const association = await agentbasedPatchService.getPatchByAssociationId(associationId);
 
                         const deviceId = instanceInformation.Name;
-                        const deploymentId = association.deploymentId;
+                        const patchId = association.patchId;
 
-                        const deployment: DeploymentItem = {
+                        const patch: PatchItem = {
                             deviceId,
-                            deploymentId,
-                            deploymentStatus,
+                            patchId: patchId,
+                            patchStatus: patchStatus,
                             statusMessage,
                             updatedAt: new Date(lastExecutionDate)
                         };
 
-                        const existingDeployment = await deploymentService.get(deploymentId)
+                        const existingPatch = await patchService.get(patchId)
 
-                        if (existingDeployment.updatedAt > deployment.updatedAt) {
-                            logger.debug(`lambda_sqs_ssm_proxy: handler: ignoring old event: existing deployment: ${JSON.stringify(existingDeployment)}`);
+                        if (existingPatch.updatedAt > patch.updatedAt) {
+                            logger.debug(`lambda_sqs_ssm_proxy: handler: ignoring old event: existing patch: ${JSON.stringify(existingPatch)}`);
                             return
                         }
 
-                        await deploymentService.update(deployment);
+                        await patchService.update(patch);
 
                     } else if (
                         eventBody['detail-type'] === 'EC2 State Manager Association State Change' &&
-                        eventBody.detail['document-name'] === 'AWS-RunAnsiblePlaybook'
+                        eventBody.detail['document-name'] === 'AWS-ApplyAnsiblePlaybooks'
                     ) {
 
                         logger.debug(`lambda_sqs_ssm_proxy: ssm_event: EC2 State Manager Association State Change`);
@@ -109,8 +107,26 @@ exports.handler = async (event: any, context: any, callback: any) => {
             }
 
         }
-
-        callback(null, null);
     }
     logger.debug(`lambda_sqs_proxy handler: exit:`);
 };
+
+export interface Event {
+    Records: SQSEvent[];
+}
+
+export interface SQSEvent {
+    messageId: string;
+    receiptHandle: string;
+    body: string;
+    attributes: {
+        [key: string]: string;
+    };
+    messageAttributes: {
+        [key: string]: string;
+    };
+    md5OfBody: string;
+    eventSource: string;
+    eventSourceARN: string;
+    awsRegion: string;
+}

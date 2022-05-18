@@ -18,7 +18,7 @@ import {
     LambdaApiGatewayEventBuilder, LAMBDAINVOKE_TYPES, LambdaInvokerService
 } from '@cdf/lambda-invoke';
 import { MessagesService, MessagesServiceBase } from './messages.service';
-import { MessageResource, NewMessageResource, RecipientList, ReplyList, Recipient } from './messages.model';
+import { MessageResource, NewMessageResource, RecipientList, ReplyList, Recipient, MessageList } from './messages.model';
 import { RequestHeaders } from './common.model';
 
 
@@ -57,6 +57,22 @@ export class MessagesLambdaService extends MessagesServiceBase implements Messag
             .setMethod('GET')
             .setHeaders(super.buildHeaders(additionalHeaders));
 
+        const res = await this.lambdaInvoker.invoke(this.functionName, event);
+        return res.body;
+    }
+
+    async listMessages(commandId: string, count?:number, fromCreatedAtExclusive?:number , additionalHeaders?: RequestHeaders ): Promise<MessageList> {
+        ow(commandId, ow.string.nonEmpty);
+  
+        const event = new LambdaApiGatewayEventBuilder()
+            .setPath(super.commandMessagesRelativeUrl(commandId))
+            .setMethod('GET')
+            .setQueryStringParameters({
+              fromCreatedAtExclusive: `${fromCreatedAtExclusive}`,
+              count: `${count}`
+          })
+            .setHeaders(super.buildHeaders(additionalHeaders));
+  
         const res = await this.lambdaInvoker.invoke(this.functionName, event);
         return res.body;
     }

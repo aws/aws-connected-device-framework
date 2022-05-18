@@ -124,7 +124,7 @@ x-taskid: jshs783h
 
 ### 1c/ Request a batch of certificates, auto-generating the certificate common name (incremental method)
 
-The following example  will create 100 sequential device certificates with a `commonName` starting from `templateFoo::AB1CD79EF` and ending with `templateFoo::AB1CD79F54`. This `commonName` format of `<proviioningTemplateName>::<deviceId>` is useful in JITR provisioning flows where devices are able to self register based on information presented in the certificate. Note that the count provided in the `commonName` field `${incement(100)}` will override the quantity value
+The following example  will create 100 sequential device certificates with a `commonName` starting from \``templateFoo::`\``AB1CD79EF` and ending with \``templateFoo::`\``AB1CD79F54`. This `commonName` format of \``<proviioningTemplateName>::`\``<deviceId>` is useful in JITR provisioning flows where devices are able to self register based on information presented in the certificate. Note that the count provided in the `commonName` field `${incement(100)}` will override the quantity value
 
 ##### Request
 
@@ -135,7 +135,7 @@ Content-Type: application/vnd.aws-cdf-v1.0+json
 {
   "quantity": 100,
   "certInfo": {
-    "commonName": "templateFoo::AB1CD79EF${incement(100)}",
+    "commonName": "`templateFoo::`AB1CD79EF${incement(100)}",
     "includeCA": true
   }
 }
@@ -155,7 +155,7 @@ x-taskid: jshs783h
 
 ### 1d/ Request a batch of certificates, auto-generating the certificate common name (list method)
 
-Th following example  will create 3 device certificates with  `commonNames` of `templateFoo:AB1CD79EF1`, `templateFoo:AB1CD79EF2` and `templateFoo:AB1CD79EF3`. Note that the number of elements in the `commonNameList` array would override the quantity value
+Th following example  will create 3 device certificates with  `commonNames` of \``templateFoo::`\``AB1CD79EF1`, \``templateFoo::`\``AB1CD79EF2` and \``templateFoo::`\``AB1CD79EF3`. Note that the number of elements in the `commonNameList` array would override the quantity value
 
 ##### Request
 
@@ -167,7 +167,7 @@ Content-Type: application/vnd.aws-cdf-v1.0+json
 {
   "quantity": 3,
   "certInfo": {
-    "commonName": "templateFoo::${list}" ,
+    "commonName": "`templateFoo::`${list}" ,
     "commonNameList":["AB1CD79EF1","AB1CD79EF2","AB1CD79EF3"]
   }
 }
@@ -187,7 +187,7 @@ x-taskid: jshs783h
 
 ### 1e/ Request a batch of certificates, auto-generating the certificate common name (static method)
 
-The following example  will create 100 device certificates with a static `commonName` of `templateFoo::AB1CD79EF`.
+The following example  will create 100 device certificates with a static `commonName` of \``templateFoo::`\``AB1CD79EF`.
 
 ##### Request
 
@@ -199,7 +199,7 @@ Content-Type: application/vnd.aws-cdf-v1.0+json
 {
   "quantity": 100,
   "certInfo": {
-    "commonName": "templateFoo::AB1CD79EF${static}"
+    "commonName": "`templateFoo::`AB1CD79EF${static}"
   }   
 }
 ```
