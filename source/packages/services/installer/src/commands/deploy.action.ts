@@ -27,7 +27,7 @@ async function deployAction(
   const configFile = options["config"]
 
   if (configFile === undefined) {
-    answers = await configWizard(environment, region);
+    answers = await configWizard(environment, region, false);
   } else {
     answers = await answersStorage.loadFromFile(configFile);
   }

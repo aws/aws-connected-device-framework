@@ -2,6 +2,7 @@ import { ModuleName } from "./modules";
 
 export interface Answers {
   accountId?: string;
+  packageOnly?:boolean;
   customTags?: string;
   iotEndpoint?: string;
   iotCredentialEndpoint?: string;

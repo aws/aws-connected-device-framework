@@ -18,7 +18,7 @@ async function packageAction(
 
     let answers: Answers;
     if (configFile === undefined) {
-        answers = await configWizard(environment, region);
+        answers = await configWizard(environment, region, true);
     } else {
         const answersStorage = new AnswersStorage('', region, environment);
         answers = await answersStorage.loadFromFile(configFile);

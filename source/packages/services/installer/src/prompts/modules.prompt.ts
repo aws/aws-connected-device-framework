@@ -109,7 +109,7 @@ export function topologicallySortModules(modules: Module[], toSort: string[], ex
   return groups;
 }
 
-export function chooseServicesPrompt(modulesList:ModuleListItem[]): CheckboxQuestion {
+export function chooseServicesPrompt(modulesList: ModuleListItem[]): CheckboxQuestion {
   return {
     message: 'Select the CDF modules to deploy:',
     type: 'checkbox',
@@ -127,7 +127,7 @@ export function chooseServicesPrompt(modulesList:ModuleListItem[]): CheckboxQues
   };
 }
 
-export function selectServicePrompt(modulesList:ModuleListItem[]): ListQuestion {
+export function selectServicePrompt(modulesList: ModuleListItem[]): ListQuestion {
   return {
     message: 'Select a module:',
     type: 'list',
@@ -145,9 +145,9 @@ export function selectServicePrompt(modulesList:ModuleListItem[]): ListQuestion 
   };
 }
 
-export function confirmServicesPrompt(modules:Module[]): ConfirmQuestion {
-  return     {
-    message: (answers:Answers) => {
+export function confirmServicesPrompt(modules: Module[]): ConfirmQuestion {
+  return {
+    message: (answers: Answers) => {
       const chosenModuleNames = answers.modules.list;
       const chosenModuleFriendlyNames = modules.filter(m => chosenModuleNames.includes(m.name)).map(m => m.friendlyName);
       return `The following modules are selected for installation:\n${chosenModuleFriendlyNames.map(m => `   - ${m}`).join('\n')}\n\nOK to proceed?`;
@@ -158,7 +158,7 @@ export function confirmServicesPrompt(modules:Module[]): ConfirmQuestion {
   };
 }
 
-export function redeployIfAlreadyExistsPrompt(name:ModuleName, stackName:string): ConfirmQuestion {
+export function redeployIfAlreadyExistsPrompt(name: ModuleName, stackName: string): ConfirmQuestion {
   return {
     message: `${name} is already deployed. Redeploy?`,
     type: 'confirm',
@@ -166,6 +166,7 @@ export function redeployIfAlreadyExistsPrompt(name:ModuleName, stackName:string)
     default: false,
     askAnswered: true,
     when: async (answers: Answers) => {
+      if (answers.packageOnly === true) return false;
       const cloudformation = new CloudFormationClient({ region: answers.region });
       try {
         await cloudformation.send(new DescribeStacksCommand({ StackName: stackName }));

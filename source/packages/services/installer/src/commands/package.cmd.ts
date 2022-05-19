@@ -7,7 +7,7 @@ export function packageCmd(): Command {
         .description('Package the CloudFormation templates and its referenced artifacts')
         .argument('<environment>', 'CDF environment')
         .argument('<region>', 'AWS region')
-        .option('-c, --config <configLocation>', 'bypass wizard and install using an existing config')
+        .option('-c, --config <configLocation>', 'bypass wizard and package using an existing config')
         .action(packageAction)
         .showHelpAfterError(chalk.yellowBright('\n(add --help for additional information)'))
         .showSuggestionAfterError();

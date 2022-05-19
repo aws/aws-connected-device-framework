@@ -11,12 +11,14 @@ import { isValidTagKey, isValidTagValue, TagsList } from "./tags";
 
 async function configWizard(
     environment: string,
-    region: string
+    region: string,
+    packageOnly = false
 ): Promise<Answers> {
 
     const modules = loadModules(environment);
-    const accountId = await getCurrentAwsAccountId(region);
 
+    let accountId;
+    accountId = await getCurrentAwsAccountId(region);
     const accountConfirmation = await inquirer.prompt([
         {
             message: `Detected account ${chalk.blue(
@@ -110,6 +112,7 @@ async function configWizard(
                 name: 'customTags',
                 default: answers.customTags ?? '',
                 askAnswered: true,
+                when: packageOnly === false,
                 validate(answer: string) {
                     let tagsList: TagsList;
                     try {
@@ -141,6 +144,7 @@ async function configWizard(
         answers
     );
 
+    answers.packageOnly = packageOnly
     answersStorage.save(answers);
 
     let optionalModuleAdded = true
@@ -168,6 +172,9 @@ async function configWizard(
         }
         optionalModuleAdded = originalExpandedMandatory.length !== answers.modules.expandedMandatory.length;
     }
+
+    delete answers.packageOnly
+    answersStorage.save(answers);
 
     console.log(
         chalk.green(
