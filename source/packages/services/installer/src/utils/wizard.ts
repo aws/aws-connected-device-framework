@@ -17,8 +17,7 @@ async function configWizard(
 
     const modules = loadModules(environment);
 
-    let accountId;
-    accountId = await getCurrentAwsAccountId(region);
+    const accountId = await getCurrentAwsAccountId(region);
     const accountConfirmation = await inquirer.prompt([
         {
             message: `Detected account ${chalk.blue(
