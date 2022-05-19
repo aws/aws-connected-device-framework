@@ -165,6 +165,7 @@ const packageAndUploadTemplate = async ({
 
     const templateContent = fs.readFileSync(templatePath, 'utf-8');
 
+    // Upload Packaged Templates to S3
     const s3 = new S3Utils(answers.region);
     await s3.uploadStreamToS3(bucket, `cloudformation/templates/${templateFileName}.template`, templateContent);
 
@@ -181,12 +182,14 @@ const packageAndUploadTemplate = async ({
 
     const allParameters: CloudFormationParameterList = templateParameters === undefined ? [] : Object.keys(templateParameters).
         filter(parameterKey => parametersBasedOnAnswers.find(o => o.ParameterKey === parameterKey) === undefined).
-        map(o => {
+        map(key => {
             return {
-                'ParameterKey': o, 'ParameterValue': templateParameters[o]['Default'] ? templateParameters[o]['Default'] : ''
+                // Set the value to default value if CloudFormatin provides one
+                'ParameterKey': key, 'ParameterValue': templateParameters[key]['Default'] ? templateParameters[key]['Default'] : ''
             }
         })
 
+    // Upload Parameter Files to S3
     await s3.uploadStreamToS3(bucket, `cloudformation/parameters/${templateFileName}.json`, JSON.stringify([...allParameters, ...parametersBasedOnAnswers]));
 }
 
