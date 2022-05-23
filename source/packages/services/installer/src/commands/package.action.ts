@@ -1,28 +1,17 @@
 import chalk from "chalk";
 import { Listr, ListrTask } from "listr2";
-import { Answers } from "../models/answers";
 import { loadModules } from "../models/modules";
 import { topologicallySortModules } from "../prompts/modules.prompt";
 import { AnswersStorage } from "../utils/answersStorage";
-import configWizard from "../utils/wizard";
+import { S3Utils } from "../utils/s3.util";
+import { TagsList } from "../utils/tags";
 
 async function packageAction(
-    environment: string,
-    region: string,
-    options: unknown
+    pathToConfigFile: string
 ): Promise<void> {
+    const answers = await AnswersStorage.loadFromFile(pathToConfigFile);
+    const modules = loadModules(answers.environment);
 
-    const modules = loadModules(environment);
-
-    const configFile = options["config"]
-
-    let answers: Answers;
-    if (configFile === undefined) {
-        answers = await configWizard(environment, region, true);
-    } else {
-        const answersStorage = new AnswersStorage('', region, environment);
-        answers = await answersStorage.loadFromFile(configFile);
-    }
     /**
     * start the template packaging
     **/
@@ -35,6 +24,18 @@ async function packageAction(
         answers.modules.expandedIncludingOptional,
         false
     );
+
+    const listr = new Listr([{
+        title: 'Packaging tags parameters',
+        task: async () => {
+            const s3 = new S3Utils(answers.region);
+            const { bucket } = answers.s3
+            const tagsList = new TagsList(answers.customTags ?? '');
+            await s3.uploadStreamToS3(bucket, `cloudformation/parameters/tags.json`, JSON.stringify(tagsList.asJSONFile()));
+        }
+    }]);
+
+    await listr.run();
 
     for (const layer of grouped) {
         const layerTasks: ListrTask[] = [];

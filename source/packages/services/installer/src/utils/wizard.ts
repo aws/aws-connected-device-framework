@@ -12,7 +12,7 @@ import { isValidTagKey, isValidTagValue, TagsList } from "./tags";
 async function configWizard(
     environment: string,
     region: string,
-    packageOnly = false
+    dryRun = false
 ): Promise<Answers> {
 
     const modules = loadModules(environment);
@@ -111,7 +111,6 @@ async function configWizard(
                 name: 'customTags',
                 default: answers.customTags ?? '',
                 askAnswered: true,
-                when: packageOnly === false,
                 validate(answer: string) {
                     let tagsList: TagsList;
                     try {
@@ -143,7 +142,7 @@ async function configWizard(
         answers
     );
 
-    answers.packageOnly = packageOnly
+    answers.dryRun = dryRun
     answersStorage.save(answers);
 
     let optionalModuleAdded = true
@@ -172,7 +171,7 @@ async function configWizard(
         optionalModuleAdded = originalExpandedMandatory.length !== answers.modules.expandedMandatory.length;
     }
 
-    delete answers.packageOnly
+    delete answers.dryRun
     answersStorage.save(answers);
 
     console.log(

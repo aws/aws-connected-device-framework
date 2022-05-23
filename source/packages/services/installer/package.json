@@ -28,7 +28,7 @@
     "@aws-sdk/client-ssm": "~3.53.0",
     "@aws-sdk/lib-storage": "~3.53.0",
     "chalk": "~4.1.2",
-    "commander": "~8.3.0",
+    "commander": "~9.2.0",
     "execa": "~5.1.1",
     "inquirer-fuzzy-path": "~2.3.0",
     "inquirer-s3": "~1.0.1",

@@ -115,9 +115,6 @@ export class DeviceMonitoringInstaller implements ServiceModule {
     tasks.push({
       title: `Packaging and deploying stack '${this.stackName}'`,
       task: async () => {
-
-   
-
         await packageAndDeployStack({
           answers: answers,
           stackName: this.stackName,
@@ -153,12 +150,12 @@ export class DeviceMonitoringInstaller implements ServiceModule {
   public async delete(answers: Answers): Promise<ListrTask[]> {
     const tasks: ListrTask[] = [];
     tasks.push({
-        title: `Deleting stack '${this.stackName}'`,
-        task: async () => {
-          await deleteStack(this.stackName, answers.region)
-        }
+      title: `Deleting stack '${this.stackName}'`,
+      task: async () => {
+        await deleteStack(this.stackName, answers.region)
+      }
     });
     return tasks
 
-}
+  }
 }

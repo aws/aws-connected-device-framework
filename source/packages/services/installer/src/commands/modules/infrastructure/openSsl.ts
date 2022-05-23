@@ -56,7 +56,7 @@ export class OpenSslInstaller implements InfrastructureModule {
           name: 'openSsl.deploy',
           default: false,
           askAnswered: true,
-          when: answers.packageOnly === false
+          when: answers.dryRun === false
         }
       ], answers);
 

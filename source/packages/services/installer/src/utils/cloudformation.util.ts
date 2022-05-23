@@ -184,7 +184,7 @@ const packageAndUploadTemplate = async ({
         filter(parameterKey => parametersBasedOnAnswers.find(o => o.ParameterKey === parameterKey) === undefined).
         map(key => {
             return {
-                // Set the value to default value if CloudFormatin provides one
+                // Set the value to default value if CloudFormation provides one
                 'ParameterKey': key, 'ParameterValue': templateParameters[key]['Default'] ? templateParameters[key]['Default'] : ''
             }
         })

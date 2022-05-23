@@ -25,18 +25,18 @@ async function deployAction(
   let answers: Answers;
 
   const configFile = options["config"]
-
+  
   if (configFile === undefined) {
-    answers = await configWizard(environment, region, false);
+    answers = await AnswersStorage.loadFromFile(configFile);
   } else {
-    answers = await answersStorage.loadFromFile(configFile);
-  }
-
-  if (options["dryrun"] !== undefined) {
-    // Dry run only produced the config without running the deployment
-    answers = await cleanUpConfig(answers)
-    answersStorage.save(answers);
-    return;
+    const dryRun = options["dryrun"] !== undefined
+    answers = await configWizard(environment, region, dryRun);
+    if (dryRun) {
+      // Dry run only produced the config without running the deployment
+      answers = await cleanUpConfig(answers)
+      answersStorage.save(answers);
+      return;
+    }
   }
 
   /**

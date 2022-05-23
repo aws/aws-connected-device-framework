@@ -108,7 +108,7 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
     addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
 
     return parameterOverrides;
-}
+  }
 
   public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
     const tasks: ListrTask[] = [{
@@ -171,7 +171,7 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
       title: `Packaging and deploying stack '${this.stackName}'`,
       task: async () => {
 
-        
+
         await packageAndDeployStack({
           answers: answers,
           stackName: this.stackName,

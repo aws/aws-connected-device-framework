@@ -166,7 +166,7 @@ export function redeployIfAlreadyExistsPrompt(name: ModuleName, stackName: strin
     default: false,
     askAnswered: true,
     when: async (answers: Answers) => {
-      if (answers.packageOnly === true) return false;
+      if (answers.dryRun === true) return false;
       const cloudformation = new CloudFormationClient({ region: answers.region });
       try {
         await cloudformation.send(new DescribeStacksCommand({ StackName: stackName }));

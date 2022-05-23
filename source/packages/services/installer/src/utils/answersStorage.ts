@@ -62,13 +62,8 @@ export class AnswersStorage {
     return answers;
   }
 
-  public async loadFromFile(configLocation: string): Promise<Answers> {
+  public static async loadFromFile(configLocation: string): Promise<Answers> {
     const configOnDisk = await fs.readFile(configLocation, "utf8");
-    const answers: Answers = Object.assign({}, JSON.parse(configOnDisk), {
-      accountId: this.accountId,
-      region: this.region,
-      environment: this.environment,
-    });
-    return answers;
+    return JSON.parse(configOnDisk);
   }
 }

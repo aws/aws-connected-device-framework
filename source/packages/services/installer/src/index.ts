@@ -20,17 +20,16 @@ program.name('cdf-cli')
 	.showHelpAfterError('(add --help for additional information)')
 	.showSuggestionAfterError();
 
-
 // fallback to help
 program.action(() => {
-	console.log( chalk.yellowBright('\n  No command specified\n'));
+	console.log(chalk.yellowBright('\n  No command specified\n'));
 	program.outputHelp();
 	process.exit(1);
 });
 
-process.on('unhandledRejection', function(err) {
+process.on('unhandledRejection', function (err) {
 	console.log('installer fails with error: ', err)
-    process.exit(1)
+	process.exit(1)
 });
 
 program.parse();
