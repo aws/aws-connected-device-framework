@@ -261,6 +261,7 @@ export class BulkCertificatesInstaller implements RestModule {
       task: async () => {
         await packageAndUploadTemplate({
           answers: answers,
+          serviceName: 'bulkcerts',
           templateFile: '../bulkcerts/infrastructure/cfn-bulkcerts.yml',
           parameterOverrides: this.getParameterOverrides(answers),
         });

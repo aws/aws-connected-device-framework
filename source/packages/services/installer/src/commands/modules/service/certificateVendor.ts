@@ -216,6 +216,7 @@ export class CertificateVendorInstaller implements ServiceModule {
       task: async () => {
         await packageAndUploadTemplate({
           answers: answers,
+          serviceName: 'certificatevendor',
           templateFile: '../certificatevendor/infrastructure/cfn-certificatevendor.yml',
           parameterOverrides: this.getParameterOverrides(answers),
         });

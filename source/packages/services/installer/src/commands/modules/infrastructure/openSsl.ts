@@ -75,6 +75,7 @@ export class OpenSslInstaller implements InfrastructureModule {
         const monorepoRoot = await getMonorepoRoot();
         await packageAndUploadTemplate({
           answers: answers,
+          serviceName: 'openssl',
           templateFile: 'infrastructure/cfn-openssl-layer.yml',
           cwd: path.join(monorepoRoot, 'source', 'infrastructure', 'lambdaLayers', 'openssl'),
           parameterOverrides: [`Environment=${answers.environment}`]

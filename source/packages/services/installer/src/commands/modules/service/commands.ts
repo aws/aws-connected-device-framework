@@ -112,6 +112,7 @@ export class CommandsInstaller implements RestModule {
       task: async () => {
         await packageAndUploadTemplate({
           answers: answers,
+          serviceName: 'commands',
           templateFile: '../commands/infrastructure/cfn-commands.yml',
           parameterOverrides: this.getParameterOverrides(answers),
         });

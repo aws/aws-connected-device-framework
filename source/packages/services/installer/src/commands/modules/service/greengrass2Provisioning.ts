@@ -116,6 +116,7 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
       task: async () => {
         await packageAndUploadTemplate({
           answers: answers,
+          serviceName: 'greengrass2-provisioning',
           templateFile: '../greengrass2-provisioning/infrastructure/cfn-greengrass2-provisioning.yml',
           parameterOverrides: this.getParameterOverrides(answers),
         });
@@ -170,8 +171,6 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
     tasks.push({
       title: `Packaging and deploying stack '${this.stackName}'`,
       task: async () => {
-
-
         await packageAndDeployStack({
           answers: answers,
           stackName: this.stackName,

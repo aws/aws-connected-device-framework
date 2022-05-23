@@ -87,6 +87,7 @@ export class AuthJwtInstaller implements InfrastructureModule {
           answers: answers,
           templateFile: '../auth-jwt/infrastructure/cfn-auth-jwt.yaml',
           parameterOverrides: this.getParameterOverrides(answers),
+          serviceName: 'auth-jwt',
         });
       }
     }

@@ -124,6 +124,7 @@ export class VpcInstaller implements InfrastructureModule {
         const monorepoRoot = await getMonorepoRoot();
         await packageAndUploadTemplate({
           answers: answers,
+          serviceName: 'vpc',
           templateFile: 'cfn-networking.yaml',
           cwd: path.join(monorepoRoot, "source", "infrastructure", "cloudformation"),
           parameterOverrides: this.getParameterOverrides(answers),

@@ -79,6 +79,7 @@ export class AuthDeviceCertInstaller implements ServiceModule {
       task: async () => {
         await packageAndUploadTemplate({
           answers: answers,
+          serviceName: 'auth-devicecert',
           templateFile: '../auth-devicecert/infrastructure/cfn-auth-devicecert.yaml',
           parameterOverrides: this.getParameterOverrides(answers),
         });

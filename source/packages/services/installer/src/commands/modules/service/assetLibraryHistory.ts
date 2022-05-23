@@ -89,6 +89,7 @@ export class AssetLibraryHistoryInstaller implements RestModule {
       task: async () => {
         await packageAndUploadTemplate({
           answers: answers,
+          serviceName: 'assetlibrary-history',
           templateFile: '../assetlibraryhistory/infrastructure/cfn-assetLibraryHistory.yml',
           parameterOverrides: this.getParameterOverrides(answers),
         });

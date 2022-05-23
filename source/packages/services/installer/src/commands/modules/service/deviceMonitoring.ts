@@ -77,6 +77,7 @@ export class DeviceMonitoringInstaller implements ServiceModule {
       task: async () => {
         await packageAndUploadTemplate({
           answers: answers,
+          serviceName: 'device-monitoring',
           templateFile: '../device-monitoring/infrastructure/cfn-device-monitoring.yml',
           parameterOverrides: this.getParameterOverrides(answers),
         });

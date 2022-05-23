@@ -72,6 +72,7 @@ export class EvenBusInstaller implements InfrastructureModule {
         await packageAndUploadTemplate({
           answers: answers,
           templateFile: 'cfn-eventbus.yaml',
+          serviceName: 'eventbus',
           cwd: path.join(monorepoRoot, 'source', 'infrastructure', 'cloudformation'),
           parameterOverrides: [`Environment=${answers.environment}`, `ExistingEventBusArn=${answers.eventBus?.arn ?? ''}`],
           needsPackaging: false

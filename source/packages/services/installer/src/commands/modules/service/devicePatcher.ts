@@ -90,6 +90,7 @@ export class DevicePatcherInstaller implements RestModule {
       task: async () => {
         await packageAndUploadTemplate({
           answers: answers,
+          serviceName: 'device-patcher',
           templateFile: '../device-patcher/infrastructure/cfn-device-patcher.yml',
           parameterOverrides: this.getParameterOverrides(answers),
         });

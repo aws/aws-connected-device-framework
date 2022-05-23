@@ -104,6 +104,7 @@ export class Greengrass2InstallerConfigGeneratorsInstaller implements ServiceMod
       task: async () => {
         await packageAndUploadTemplate({
           answers: answers,
+          serviceName: 'greengrass2-installer-config-generators',
           templateFile: '../greengrass2-installer-config-generators/infrastructure/cfn-greengrass2-installer-config-generators.yml',
           parameterOverrides: this.getParameterOverrides(answers),
         });
@@ -129,9 +130,6 @@ export class Greengrass2InstallerConfigGeneratorsInstaller implements ServiceMod
     tasks.push({
       title: `Packaging and deploying stack '${this.stackName}'`,
       task: async () => {
-
-
-
         await packageAndDeployStack({
           answers: answers,
           stackName: this.stackName,

@@ -89,6 +89,7 @@ export class CertificateActivatorInstaller implements ServiceModule {
       task: async () => {
         await packageAndUploadTemplate({
           answers: answers,
+          serviceName: 'certificateactivator',
           templateFile: '../certificateactivator/infrastructure/cfn-certificateactivator.yml',
           parameterOverrides: this.getParameterOverrides(answers)
         });
@@ -129,8 +130,6 @@ export class CertificateActivatorInstaller implements ServiceModule {
     tasks.push({
       title: `Packaging and deploying stack '${this.stackName}'`,
       task: async () => {
-
-
         await packageAndDeployStack({
           answers: answers,
           stackName: this.stackName,

@@ -220,6 +220,7 @@ export class NotificationsInstaller implements RestModule {
       task: async () => {
         await packageAndUploadTemplate({
           answers: answers,
+          serviceName: 'events-processor',
           templateFile: '../events-processor/infrastructure/cfn-eventsProcessor.yml',
           parameterOverrides: this.getEventsProcessorOverrides(answers)
         });
@@ -230,6 +231,7 @@ export class NotificationsInstaller implements RestModule {
       task: async () => {
         await packageAndUploadTemplate({
           answers: answers,
+          serviceName: 'events-alerts',
           templateFile: '../events-alerts/infrastructure/cfn-eventsAlerts.yml',
           parameterOverrides: this.getEventsAlertsOverrides(answers),
         });

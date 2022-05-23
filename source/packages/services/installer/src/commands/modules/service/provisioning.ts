@@ -122,6 +122,7 @@ export class ProvisioningInstaller implements RestModule {
       task: async () => {
         await packageAndUploadTemplate({
           answers: answers,
+          serviceName: 'provisioning',
           templateFile: '../provisioning/infrastructure/cfn-provisioning.yml',
           parameterOverrides: this.getParameterOverrides(answers)
         });

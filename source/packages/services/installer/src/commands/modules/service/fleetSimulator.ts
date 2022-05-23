@@ -152,6 +152,7 @@ export class FleetSimulatorInstaller implements RestModule {
       task: async () => {
         await packageAndUploadTemplate({
           answers: answers,
+          serviceName: 'simulation-launcher',
           templateFile: '../simulation-launcher/infrastructure/cfn-simulation-launcher.yaml',
           parameterOverrides: this.getSimulationLauncherOverrides(answers)
         });
@@ -162,6 +163,7 @@ export class FleetSimulatorInstaller implements RestModule {
       task: async () => {
         await packageAndUploadTemplate({
           answers: answers,
+          serviceName: 'simulation-manager',
           templateFile: '../simulation-manager/infrastructure/cfn-simulation-manager.yml',
           parameterOverrides: this.getSimulationManagerOverrides(answers)
         });

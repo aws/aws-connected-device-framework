@@ -65,6 +65,7 @@ export class DeploymentHelperInstaller implements InfrastructureModule {
         await packageAndUploadTemplate({
           answers: answers,
           templateFile: templateFileIn,
+          serviceName: 'deployment-helper',
           cwd: path.join(monorepoRoot, 'source', 'packages', 'libraries', 'core', 'deployment-helper'),
           parameterOverrides: [`Environment=${answers.environment}`, `ArtifactsBucket=${answers.s3.bucket}`],
         });
@@ -75,6 +76,7 @@ export class DeploymentHelperInstaller implements InfrastructureModule {
       task: async () => {
         await packageAndUploadTemplate({
           answers: answers,
+          serviceName: 'deployment-helper',
           templateFile: vpcTemplateFileIn,
           cwd: path.join(monorepoRoot, 'source', 'packages', 'libraries', 'core', 'deployment-helper'),
           parameterOverrides: this.getParameterOverrides(answers),

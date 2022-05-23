@@ -26,7 +26,7 @@ async function deployAction(
 
   const configFile = options["config"]
   
-  if (configFile === undefined) {
+  if (configFile !== undefined) {
     answers = await AnswersStorage.loadFromFile(configFile);
   } else {
     const dryRun = options["dryrun"] !== undefined

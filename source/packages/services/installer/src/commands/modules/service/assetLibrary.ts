@@ -205,7 +205,8 @@ export class AssetLibraryInstaller implements RestModule {
           answers: answers,
           templateFile: '../assetlibrary/infrastructure/cfn-neptune.yaml',
           parameterOverrides: this.getNeptuneParameterOverrides(answers),
-          needsPackaging: false
+          needsPackaging: false,
+          serviceName: 'assetlibrary',
         });
       },
     },
@@ -214,6 +215,7 @@ export class AssetLibraryInstaller implements RestModule {
       task: async () => {
         await packageAndUploadTemplate({
           answers: answers,
+          serviceName: 'assetlibrary',
           templateFile: '../assetlibrary/infrastructure/cfn-assetLibrary.yaml',
           parameterOverrides: this.getAssetLibraryParameterOverrides(answers),
         });

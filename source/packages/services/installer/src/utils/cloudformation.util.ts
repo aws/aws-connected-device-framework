@@ -125,7 +125,7 @@ interface packageAndDeployStackParams {
   cwd?: string,
 }
 
-type packageStackParams = Pick<packageAndDeployStackParams, 'answers' | 'templateFile' | 'cwd' | 'needsPackaging'> & { parameterOverrides?: string[] }
+type packageStackParams = Pick<packageAndDeployStackParams, 'answers' | 'templateFile' | 'cwd' | 'needsPackaging' | 'serviceName'> & { parameterOverrides?: string[] }
 
 export interface CloudFormationParameter {
   ParameterKey: string,
@@ -138,6 +138,7 @@ const packageAndUploadTemplate = async ({
   answers,
   templateFile,
   cwd,
+  serviceName,
   needsPackaging = true,
   parameterOverrides = []
 }: packageStackParams): Promise<void> => {
@@ -191,6 +192,11 @@ const packageAndUploadTemplate = async ({
 
   // Upload Parameter Files to S3
   await s3.uploadStreamToS3(bucket, `cloudformation/parameters/${templateFileName}.json`, JSON.stringify([...allParameters, ...parametersBasedOnAnswers]));
+
+  const tagsList = new TagsList(answers.customTags ?? '');
+  const tagsListParameters = tagsList.asJSONFile()
+  tagsListParameters.push(...[{ Key: 'cdf_environment', Value: answers.environment }, { Key: 'cdf_service', Value: serviceName }])
+  await s3.uploadStreamToS3(bucket, `cloudformation/tags/${templateFileName}.json`, JSON.stringify(tagsListParameters));
 }
 
 const packageAndDeployStack = async ({

@@ -133,6 +133,7 @@ export class AssetLibraryExportInstaller implements ServiceModule {
       task: async () => {
         await packageAndUploadTemplate({
           answers: answers,
+          serviceName: 'assetlibrary-export',
           templateFile: '../assetlibrary-export/infrastructure/cfn-assetlibrary-export.yaml',
           parameterOverrides: this.getParameterOverrides(answers),
         });

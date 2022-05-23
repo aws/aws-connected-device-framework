@@ -106,6 +106,7 @@ export class CommandAndControlInstaller implements RestModule {
       task: async () => {
         await packageAndUploadTemplate({
           answers: answers,
+          serviceName: 'commandandcontrol',
           templateFile: '../command-and-control/infrastructure/cfn-command-and-control.yml',
           parameterOverrides: this.getParameterOverrides(answers),
         });

@@ -63,7 +63,7 @@ This will deploy all the modules configured in your last deployment wizard run. 
 
 The packaging command will package all the modules that selected and upload both the CloudFormation template files and parameter files to S3 bucket.
 
-For example, if you specify `cdf-packaging-bucket` as the s3 bucket to use, the templates will be uploaded to `s3://cdf-packaging-bucket/cloudformation/templates` and the parameters file will be uploaded to `s3://cdf-packaging-bucket/cloudformation/parameters`. It will also upload the list of tagging parameters to `s3://cdf-packaging-bucket/cloudformation/parameters/tags.json`
+For example, if you specify `cdf-packaging-bucket` as the s3 bucket to use, the templates will be uploaded to `s3://cdf-packaging-bucket/cloudformation/templates` and the parameters file will be uploaded to `s3://cdf-packaging-bucket/cloudformation/parameters`. It will also upload the list of tagging parameters to `s3://cdf-packaging-bucket/cloudformation/tags`
 
 The installer will try to pre-populate the parameters file based on your answer and default value in the CloudFormation template, but there are some parameters that are dependent on the output of other stacks, make sure you deploy the stack in the right  order (see "Deploying the packaged template manually" below for a suggested ordering).
 
