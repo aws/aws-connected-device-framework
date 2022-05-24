@@ -1,6 +1,13 @@
 # Change Log - @cdf/installer
 
-This log was last generated on Tue, 17 May 2022 00:04:26 GMT and should not be manually modified.
+This log was last generated on Tue, 24 May 2022 04:06:34 GMT and should not be manually modified.
+
+## 0.6.0
+Tue, 24 May 2022 04:06:34 GMT
+
+### Minor changes
+
+- introduce package only command
 
 ## 0.5.1
 Tue, 17 May 2022 00:04:26 GMT
