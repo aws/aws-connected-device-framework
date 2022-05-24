@@ -143,7 +143,10 @@ const packageAndUploadTemplate = async ({
   parameterOverrides = []
 }: packageStackParams): Promise<void> => {
 
-  const { bucket } = answers.s3
+  const { bucket, optionalDeploymentBucket, optionalDeploymentPrefix } = answers.s3
+
+  const artifactBucket = optionalDeploymentBucket !== undefined ? optionalDeploymentBucket : bucket
+  const artifactPrefix = optionalDeploymentPrefix !== undefined ? optionalDeploymentPrefix : 'cloudformation'
 
   const cmdOptions = (cwd !== undefined) ? { cwd: cwd } : {};
 
@@ -154,8 +157,8 @@ const packageAndUploadTemplate = async ({
     const packageArgs = [
       '--template-file', templateFile,
       '--output-template-file', templateFileBuilt,
-      '--s3-bucket', answers.s3.bucket,
-      '--s3-prefix', 'cloudformation/artifacts',
+      '--s3-bucket', artifactBucket,
+      '--s3-prefix', `${artifactPrefix}/artifacts`,
       '--region', answers.region,
     ];
     await execa('aws', ['cloudformation', 'package', ...packageArgs], cmdOptions);
@@ -168,7 +171,7 @@ const packageAndUploadTemplate = async ({
 
   // Upload Packaged Templates to S3
   const s3 = new S3Utils(answers.region);
-  await s3.uploadStreamToS3(bucket, `cloudformation/templates/${templateFileName}.template`, templateContent);
+  await s3.uploadStreamToS3(artifactBucket, `${artifactPrefix}/templates/${templateFileName}.template`, templateContent);
 
   const { Parameters: templateParameters } = yaml.load(templateContent, { schema: CLOUDFORMATION_SCHEMA }) as { Parameters: { [key: string]: unknown } }
 
@@ -191,12 +194,12 @@ const packageAndUploadTemplate = async ({
     })
 
   // Upload Parameter Files to S3
-  await s3.uploadStreamToS3(bucket, `cloudformation/parameters/${templateFileName}.json`, JSON.stringify([...allParameters, ...parametersBasedOnAnswers]));
+  await s3.uploadStreamToS3(artifactBucket, `${artifactPrefix}/parameters/${templateFileName}.json`, JSON.stringify([...allParameters, ...parametersBasedOnAnswers]));
 
   const tagsList = new TagsList(answers.customTags ?? '');
   const tagsListParameters = tagsList.asJSONFile()
   tagsListParameters.push(...[{ Key: 'cdf_environment', Value: answers.environment }, { Key: 'cdf_service', Value: serviceName }])
-  await s3.uploadStreamToS3(bucket, `cloudformation/tags/${templateFileName}.json`, JSON.stringify(tagsListParameters));
+  await s3.uploadStreamToS3(artifactBucket, `${artifactPrefix}/tags/${templateFileName}.json`, JSON.stringify(tagsListParameters));
 }
 
 const packageAndDeployStack = async ({
@@ -221,17 +224,20 @@ const packageAndDeployStack = async ({
   const templateFileBuilt = (needsPackaging) ? `${templateFile}.build` : templateFile;
   const cmdOptions = (cwd !== undefined) ? { cwd: cwd } : {};
 
+  const { bucket, optionalDeploymentBucket, optionalDeploymentPrefix } = answers.s3
+
+  const artifactBucket = optionalDeploymentBucket !== undefined ? optionalDeploymentBucket : bucket
+  const artifactPrefix = optionalDeploymentPrefix !== undefined ? optionalDeploymentPrefix : 'cloudformation'
+
   if (needsPackaging) {
     const packageArgs = [
       '--template-file', templateFile,
       '--output-template-file', templateFileBuilt,
-      '--s3-bucket', answers.s3.bucket,
-      '--s3-prefix', 'cloudformation/artifacts/',
+      '--s3-bucket', artifactBucket,
+      '--s3-prefix', `${artifactPrefix}/artifacts`,
       '--region', answers.region,
     ];
     await execa('aws', ['cloudformation', 'package', ...packageArgs], cmdOptions);
-
-
   }
 
   const tagsList = new TagsList(answers.customTags ?? '');

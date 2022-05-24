@@ -2,7 +2,7 @@ import { ModuleName } from "./modules";
 
 export interface Answers {
   accountId?: string;
-  dryRun?:boolean;
+  dryRun?: boolean;
   customTags?: string;
   iotEndpoint?: string;
   iotCredentialEndpoint?: string;
@@ -85,6 +85,8 @@ export interface Vpc {
 
 export interface S3 {
   bucket?: string;
+  optionalDeploymentBucket?: string;
+  optionalDeploymentPrefix?: string;
 }
 
 export interface OpenSsl {
@@ -163,7 +165,7 @@ export interface BulkCerts extends RestServiceModuleAttribues {
   expiryDays?: number;
   suppliers?: Suppliers;
   caAlias?: string;
-  caValue?:string;
+  caValue?: string;
 }
 
 export interface Suppliers {
@@ -172,8 +174,8 @@ export interface Suppliers {
 }
 
 export interface CA {
-  alias:string;
-  value:string
+  alias: string;
+  value: string
 }
 export interface CertificateActivator extends ServiceModuleAttributes {
   provisioningFunctionName?: string;

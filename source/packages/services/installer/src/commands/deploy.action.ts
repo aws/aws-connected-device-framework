@@ -25,7 +25,7 @@ async function deployAction(
   let answers: Answers;
 
   const configFile = options["config"]
-  
+
   if (configFile !== undefined) {
     answers = await AnswersStorage.loadFromFile(configFile);
   } else {
@@ -39,6 +39,8 @@ async function deployAction(
     }
   }
 
+  answers.s3.optionalDeploymentBucket = options["bucket"]
+  answers.s3.optionalDeploymentPrefix = options["prefix"]
   /**
    * start the deployment...
    */
@@ -107,6 +109,17 @@ async function cleanUpConfig(answers: Answers): Promise<Answers> {
       delete answers.bulkCerts.caValue;
     }
   }
+
+  if (answers.hasOwnProperty("s3")) {
+    if (answers.s3.hasOwnProperty("optionalDeploymentBucket")) {
+      delete answers.s3.optionalDeploymentBucket;
+    }
+  
+    if (answers.s3.hasOwnProperty("optionalDeploymentPrefix")) {
+      delete answers.s3.optionalDeploymentPrefix;
+    }
+  }
+
   return answers;
 }
 

@@ -5,8 +5,10 @@ import { topologicallySortModules } from "../prompts/modules.prompt";
 import { AnswersStorage } from "../utils/answersStorage";
 
 async function packageAction(
-    pathToConfigFile: string
+    pathToConfigFile: string,
+    options: unknown
 ): Promise<void> {
+
     const answers = await AnswersStorage.loadFromFile(pathToConfigFile);
     const modules = loadModules(answers.environment);
 
@@ -22,6 +24,9 @@ async function packageAction(
         answers.modules.expandedIncludingOptional,
         false
     );
+
+    answers.s3.optionalDeploymentBucket = options["bucket"]
+    answers.s3.optionalDeploymentPrefix = options["prefix"]
 
     for (const layer of grouped) {
         const layerTasks: ListrTask[] = [];
