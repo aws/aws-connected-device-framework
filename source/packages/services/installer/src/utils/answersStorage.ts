@@ -22,6 +22,13 @@ const configurationRootPath = path.join(
   "config"
 );
 
+// To allow us to re use config for multiple unique deployment
+export interface DeploymentInformation {
+  accountId: string,
+  environment: string,
+  region: string
+}
+
 export class AnswersStorage {
   private localStorage: LocalStorage;
   private environmentFileName: string;
@@ -62,8 +69,12 @@ export class AnswersStorage {
     return answers;
   }
 
-  public static async loadFromFile(configLocation: string): Promise<Answers> {
+  public static async loadFromFile(configLocation: string, deploymentInformation?: DeploymentInformation): Promise<Answers> {
     const configOnDisk = await fs.readFile(configLocation, "utf8");
-    return JSON.parse(configOnDisk);
+    const answer: Answers = JSON.parse(configOnDisk);
+    return {
+      ...answer,
+      ...deploymentInformation
+    }
   }
 }

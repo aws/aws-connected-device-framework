@@ -27,7 +27,10 @@ async function deployAction(
   const configFile = options["config"]
 
   if (configFile !== undefined) {
-    answers = await AnswersStorage.loadFromFile(configFile);
+    answers = await AnswersStorage.loadFromFile(configFile,
+      {
+        environment, region, accountId
+      });
   } else {
     const dryRun = options["dryrun"] !== undefined
     answers = await configWizard(environment, region, dryRun);
@@ -114,7 +117,7 @@ async function cleanUpConfig(answers: Answers): Promise<Answers> {
     if (answers.s3.hasOwnProperty("optionalDeploymentBucket")) {
       delete answers.s3.optionalDeploymentBucket;
     }
-  
+
     if (answers.s3.hasOwnProperty("optionalDeploymentPrefix")) {
       delete answers.s3.optionalDeploymentPrefix;
     }
