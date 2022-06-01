@@ -1,4 +1,3 @@
-import * as fs from 'fs';
 /*********************************************************************************************************************
  *  Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.                                           *
  *                                                                                                                    *
@@ -11,12 +10,14 @@ import * as fs from 'fs';
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+ import * as fs from 'fs';
 import { inject, injectable } from 'inversify';
 import JSZip from 'jszip';
 import ow from 'ow';
 import * as pem from 'pem';
 import { promisify } from 'util';
 import { v1 as uuid } from 'uuid';
+import pLimit from 'p-limit';
 
 import { TYPES } from '../di/types';
 import { logger } from '../utils/logger';
@@ -43,7 +44,8 @@ export class CertificatesService {
         @inject('aws.s3.certificates.bucket') private certificatesBucket: string,
         @inject('aws.s3.certificates.prefix') private certificatesPrefix: string,
         @inject('defaults.chunkSize') private defaultChunkSize: number,
-        @inject('deviceCertificateExpiryDays') private defaultDaysExpiry: number) {
+        @inject('deviceCertificateExpiryDays') private defaultDaysExpiry: number,
+        @inject('aws.acm.concurrency.limit') private acmConcurrencyLimit: number) {
         this._iot = iotFactory();
         this._s3 = s3Factory();
         this._ssm = ssmFactory();
@@ -155,9 +157,9 @@ export class CertificatesService {
 
         const chunkStart = (chunkId - 1) * this.defaultChunkSize;
         const chunkEnd = ((chunkId - 1) * this.defaultChunkSize) + quantity;
-
+        const limit = pLimit(this.acmConcurrencyLimit);
         for (let i = chunkStart; i < chunkEnd; ++i) {
-            promises.push(this.CreateCertificateWithAcm(i,certInfo,caArn));
+            promises.push(limit(() => this.createCertificateWithAcm(i,certInfo,caArn)));
         }
         await Promise.all(promises)
            .then((results) => {
@@ -171,7 +173,7 @@ export class CertificatesService {
         return certsZip;
     }
 
-    private async CreateCertificateWithAcm(index:number,certInfo: CertificateInfo,caArn: string): Promise<ACMCertificate> {
+    private async createCertificateWithAcm(index:number,certInfo: CertificateInfo,caArn: string): Promise<ACMCertificate> {
         const privateKey = await this.createPrivateKey();
         certInfo.commonName = await this.createCommonName(certInfo.commonName, index);
         const csr = await this.createCSR(privateKey, certInfo);
@@ -390,13 +392,11 @@ export class CertificatesService {
             Csr: csr,
             CertificateAuthorityArn: caArn,
             SigningAlgorithm: "SHA256WITHRSA",
-            Validity: { Value: this.defaultDaysExpiry, Type: "DAYS" }
+            Validity: { Value: certInfo.daysExpiry ?? this.defaultDaysExpiry, Type: "DAYS" }
         };
 
-        if (typeof certInfo !== 'undefined' && typeof certInfo.country !== 'undefined' && 
-        typeof certInfo.organization !== 'undefined' && typeof certInfo.organizationalUnit !== 'undefined' && 
-        typeof certInfo.stateName !== 'undefined' && typeof certInfo.commonName!== 'undefined' ){
-            const apiPassthrough = {
+        if (certInfo?.country && certInfo?.organization  && certInfo?.organizationalUnit && certInfo?.stateName  && certInfo?.commonName ){
+            const apiPassthrough:AWS.ACMPCA.ApiPassthrough = {
                 Subject: {
                     Country: certInfo.country,
                     Organization: certInfo.organization,
@@ -431,22 +431,14 @@ export class CertificatesService {
         return {certificateArn: data.CertificateArn, certificate: cert.Certificate};
     }
 
-    private uploadStreamToS3(bucket: string, key: string, body: NodeJS.ReadableStream): Promise<string> {
-        return new Promise((resolve: any, reject: any) => {
-            const params = {
-                Bucket: bucket,
-                Key: key,
-                Body: body
-            };
-            this._s3.upload(params, (err: any, data: any) => {
-                if (err) {
-                    return reject(err);
-                }
-                const eTag = data.ETag;
-
-                return resolve(eTag);
-            });
-        });
+    private async uploadStreamToS3(bucket: string, key: string, body: NodeJS.ReadableStream): Promise<string> {
+        const params = {
+            Bucket: bucket,
+            Key: key,
+            Body: body
+        };
+        const data = await this._s3.upload(params).promise();
+        return data.ETag
     }
 
     private async deleteCertificates(taskId: string): Promise<void> {

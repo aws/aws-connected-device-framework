@@ -369,7 +369,7 @@
    const lambda = new Lambda({ region: answers.region });
    let suppliers:Suppliers ;
  
-   if(typeof answers === 'undefined' || typeof answers.bulkCerts === 'undefined' || typeof answers.bulkCerts.suppliers === 'undefined'){
+   if( answers?.bulkCerts?.suppliers ){
      suppliers={list:[],cas:[]};
    } else {
      suppliers = answers.bulkCerts.suppliers;

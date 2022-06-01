@@ -50,16 +50,17 @@ describe('CertificatesService', () => {
             return mockApmca;
         };
 
-        instance = new CertificatesService( mockedCertificatesTaskDao, mockIotFactory, mockS3Factory, mockSsmFactory, mockApmcaFactory, 'unit-test-bucket', 'certs/',100, 365);
+        instance = new CertificatesService( mockedCertificatesTaskDao, mockIotFactory, mockS3Factory, mockSsmFactory, mockApmcaFactory, 'unit-test-bucket', 'certs/',100, 365,10);
     });
 
     it('createBatch should create batch with customer CA', async () => {
 
         jest.setTimeout(15000);
 
-        const mockUpload = mockS3.upload = <any>(jest.fn((_params, cb) => {
-            cb(null, 'pass');
-        }));
+        const mockUploadResponse = new MockUploadResponse();
+        mockUploadResponse.error = null;
+        mockUploadResponse.response = {ETag:'test',Location:'https://unit-test-bucket.s3.amazon.com/certs/testBatchId',Bucket:'unit-test-bucket',Key:'certs/testBatchId'} ;
+        const mockUpload = mockS3.upload = <any>(jest.fn((_params) => mockUploadResponse));
 
         // fake CA PEM
         const describeCaCertResponse:AWS.Iot.Types.DescribeCACertificateResponse = {
@@ -99,7 +100,7 @@ describe('CertificatesService', () => {
 
         const chunkRequest:CertificateChunkRequest = {
             certInfo:{
-                commonName: 'unittest.org',
+                commonName: 'unittest.aws.dev',
                 organization: 'test',
                 organizationalUnit: 'QA',
                 locality: 'Testtown',
@@ -124,9 +125,10 @@ describe('CertificatesService', () => {
 
         jest.setTimeout(15000);
 
-        const mockUpload = mockS3.upload = <any>(jest.fn((_params, cb) => {
-            cb(null, 'pass');
-        }));
+        const mockUploadResponse = new MockUploadResponse();
+        mockUploadResponse.error = null;
+        mockUploadResponse.response = {ETag:'test',Location:'https://unit-test-bucket.s3.amazon.com/certs/testBatchId',Bucket:'unit-test-bucket',Key:'certs/testBatchId'} ;
+        const mockUpload = mockS3.upload = <any>(jest.fn((_params) => mockUploadResponse));
 
         // fake CA PEM
         const describeCaCertResponse:AWS.Iot.Types.DescribeCACertificateResponse = {
@@ -195,9 +197,10 @@ describe('CertificatesService', () => {
 
         jest.setTimeout(15000);
 
-        const mockUpload = mockS3.upload = <any>(jest.fn((_params, cb) => {
-            cb(null, 'pass');
-        }));
+        const mockUploadResponse = new MockUploadResponse();
+        mockUploadResponse.error = null;
+        mockUploadResponse.response = {ETag:'test',Location:'https://unit-test-bucket.s3.amazon.com/certs/testBatchId',Bucket:'unit-test-bucket',Key:'certs/testBatchId'} ;
+        const mockUpload = mockS3.upload = <any>(jest.fn((_params) => mockUploadResponse));
 
         const createCertFromCsrResponse:AWS.Iot.CreateCertificateFromCsrResponse = {
             certificateArn:'arn:aws:iot:us-west-2:xxxxxxxxxxxx:cacert/3d2ecfdb0eba2898626291e7e18a37cee791dbc81940a39e8ce922f9ff2feb32',
@@ -212,7 +215,7 @@ describe('CertificatesService', () => {
 
         const chunkRequest:CertificateChunkRequest = {
             certInfo: {
-                commonName: 'unittest.org',
+                commonName: 'unittest.aws.dev',
                 organization: 'test',
                 organizationalUnit: 'QA',
                 locality: 'Testtown',
@@ -236,9 +239,10 @@ describe('CertificatesService', () => {
 
         jest.setTimeout(15000);
 
-        const mockUpload = mockS3.upload = <any>(jest.fn((_params, cb) => {
-            cb(null, 'pass');
-        }));
+        const mockUploadResponse = new MockUploadResponse();
+        mockUploadResponse.error = null;
+        mockUploadResponse.response = {ETag:'test',Location:'https://unit-test-bucket.s3.amazon.com/certs/testBatchId',Bucket:'unit-test-bucket',Key:'certs/testBatchId'} ;
+        const mockUpload = mockS3.upload = <any>(jest.fn((_params) => mockUploadResponse));
 
         const issueCertificateResponse:AWS.ACMPCA.IssueCertificateResponse = {
             CertificateArn:'arn:aws:acm-pca:us-west-2:xxxxxxxxxxxx/certificate/17ef9add-91a6-4c1f-b13b-0f6ec1952722'
@@ -262,7 +266,7 @@ describe('CertificatesService', () => {
 
         const chunkRequest:CertificateChunkRequest = {
             certInfo: {
-                commonName: 'unittest.org',
+                commonName: 'unittest.aws.dev',
                 organization: 'test',
                 organizationalUnit: 'QA',
                 locality: 'Testtown',
@@ -382,9 +386,10 @@ describe('CertificatesService', () => {
 
         jest.setTimeout(15000);
 
-        const mockUpload = mockS3.upload = <any>(jest.fn((_params, cb) => {
-            cb(null, 'pass');
-        }));
+        const mockUploadResponse = new MockUploadResponse();
+        mockUploadResponse.error = null;
+        mockUploadResponse.response = {ETag:'test',Location:'https://unit-test-bucket.s3.amazon.com/certs/testBatchId',Bucket:'unit-test-bucket',Key:'certs/testBatchId'} ;
+        const mockUpload = mockS3.upload = <any>(jest.fn((_params) => mockUploadResponse));
 
         // fake CA PEM
         const describeCaCertResponse:AWS.Iot.Types.DescribeCACertificateResponse = {
@@ -454,10 +459,12 @@ describe('CertificatesService', () => {
     it('createBatch should create batch with custome CA with static CommonNames ', async () => {
 
         jest.setTimeout(15000);
+        
 
-        const mockUpload = mockS3.upload = <any>(jest.fn((_params, cb) => {
-            cb(null, 'pass');
-        }));
+        const mockUploadResponse = new MockUploadResponse();
+        mockUploadResponse.error = null;
+        mockUploadResponse.response = {ETag:'test',Location:'https://unit-test-bucket.s3.amazon.com/certs/testBatchId',Bucket:'unit-test-bucket',Key:'certs/testBatchId'} ;
+        const mockUpload = mockS3.upload = <any>(jest.fn((_params) => mockUploadResponse));
 
         // fake CA PEM
         const describeCaCertResponse:AWS.Iot.Types.DescribeCACertificateResponse = {
@@ -547,6 +554,21 @@ class MockDeleteObjectsResponse {
     public error: AWSError;
 
     promise(): Promise<AWS.S3.Types.DeleteObjectsOutput> {
+        return new Promise((resolve, reject) => {
+            if (this.error !== null) {
+                return reject(this.error);
+            } else {
+                return resolve(this.response);
+            }
+        });
+    }
+}
+
+class MockUploadResponse {
+    public response: AWS.S3.Types.ManagedUpload.SendData;
+    public error: AWSError;
+
+    promise(): Promise<AWS.S3.Types.ManagedUpload.SendData> {
         return new Promise((resolve, reject) => {
             if (this.error !== null) {
                 return reject(this.error);

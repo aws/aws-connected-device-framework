@@ -10,13 +10,13 @@ When a batch is requested, a task is created to track the creation of certificat
 
 ### [Optional] Registering a custom CA with AWS IoT
 
-When creating device certificates they can be signed by the Amazon Root certificate authority (CA), or alternatively signed by other root CA's. It is recommended that other root CA's are used due to:
+When creating device certificates they can be signed by the Amazon Root certificate authority (CA), or alternatively signed by other root CAs. It is recommended that other root CAs are used due to:
 
-- currently all device certificates created using the Amazon Root CA are long-lived certificates. With other root CA's you have the opportunity to specify device expiration dates
+- currently all device certificates created using the Amazon Root CA are long-lived certificates. With other root CAs you have the opportunity to specify device expiration dates
 - if you need devices to self-register themselves using  [just-in-time registration](https://aws.amazon.com/blogs/iot/just-in-time-registration-of-device-certificates-on-aws-iot/) (JITR) or [just-in-time provisioning](https://docs.aws.amazon.com/iot/latest/developerguide/jit-provisioning.html) (JITP) type provisioning flows, then you must register a root CA
-- a recommended best practice is to use different CA's per device suppliers. Then in the event of a CA being compromised, just that single supplier can be notified and have a new CA issued for use with the other suppliers remaining unaffected
+- a recommended best practice is to use different CAs per device suppliers. Then in the event of a CA being compromised, just that single supplier can be notified and have a new CA issued for use with the other suppliers remaining unaffected
 
-The following outlines the steps for registering other root CA's. 
+The following outlines the steps for registering other root CAs. 
 
 > Note that a CA may be registered with just one account within a region. If your devices need the ability to connect to multiple accounts within a region, such as having the same device certificate signed by a single CA able to connect to different development, testing, and production accounts, then use the [_CDF provisioning module_](../provisioning/README.md) to auto-create the device certificate as part of the provisioning flow which supports [multi-account registration](https://docs.aws.amazon.com/iot/latest/developerguide/x509-client-certs.html#multiple-account-cert).
 
@@ -46,17 +46,18 @@ aws ssm put-parameter --type SecureString /
 
 
 ### [Optional] Creating certificates with ACMPCA
-Customers who need addition security can use Private CAs in AWS Certificate Manager (ACMPCA) to manage the generation of their device certificates.
+Customers who need additional security can use Private CAs in AWS Certificate Manager (ACMPCA) to manage the generation of their device certificates. 
+Additional resources can be found [here](https://docs.aws.amazon.com/acm-pca/latest/userguide/PcaWelcome.html).
 
 #### 1/ Create a private CA in AWS ACM
-if you need to create a private CA, refer to [][https://docs.aws.amazon.com/acm-pca/latest/userguide/PcaPlanning.html]
+if you need to create a private CA, refer to [PCA Planning Documentation](https://docs.aws.amazon.com/acm-pca/latest/userguide/PcaPlanning.html).
 Once you have created your private CA go to the next step and use its arn as value for the supplier.
 
-### Define which CA's are to be used per supplier alias
+### Define which CAs are to be used per supplier alias
 
-As you will see from the walkthrough below, an alias (`supplierId`) is required as part of the REST API call to create device certificates. Behind the scenes this alias is mapped to specific CA's to use to sign the device certificates. This mapping needs to be defined before device certificates can be created for a specific supplier.
+As you will see from the walkthrough below, an alias (`supplierId`) is required as part of the REST API call to create device certificates. Behind the scenes this alias is mapped to specific CAs to use to sign the device certificates. This mapping needs to be defined before device certificates can be created for a specific supplier.
 
-The alias to CA ID is defined in the application configuration at time of deployment. If this mapping needs to change post deployment, then the application configuration should be updated followed by a redeployment. The following is an excerpt of a sample application configuration where aliases `supplier1` and `supplier2` are mapped to different custom CA's, `supplier3` is mapped to the Amazon Root CA and `supplier4` is mapped to the ACMPCA:
+The alias to CA ID is defined in the application configuration at time of deployment. If this mapping needs to change post deployment, then the application configuration should be updated followed by a redeployment. The following is an excerpt of a sample application configuration where aliases `supplier1` and `supplier2` are mapped to different custom CAs, `supplier3` is mapped to the Amazon Root CA and `supplier4` is mapped to the ACMPCA:
 
 ```json
 {
