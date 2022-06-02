@@ -18,7 +18,7 @@ export interface ProvisionThingRequest {
 	cdfProvisioningParameters?: CdfProvisioningParameters;
 }
 
-export type CdfProvisioningParameters = CreateDeviceCertificateParameters | RegisterDeviceCertificateWithoutCAParameters | undefined;
+export type CdfProvisioningParameters = CreateDeviceCertificateParameters | RegisterDeviceCertificateWithoutCAParameters | UseACMPCAParameters | undefined;
 
 export interface CreateDeviceCertificateParameters {
 	caId: string;
@@ -27,6 +27,14 @@ export interface CreateDeviceCertificateParameters {
 export interface RegisterDeviceCertificateWithoutCAParameters {
 	certificatePem: string;
 	certificateStatus?: CertificateStatus;
+} 
+
+export interface UseACMPCAParameters {
+	caArn?: string;
+	caAlias?: string;
+	
+	csr?: string;
+	certInfo: CertInfo;
 } 
 
 export interface CertInfo {

@@ -27,68 +27,36 @@ const templateBucket = process.env.PROVISIONING_TEMPLATES_BUCKET;
 const templatePrefix = process.env.PROVISIONING_TEMPLATES_PREFIX;
 // const templateSuffix = config.get('provisioning.templates.suffix') as string;
 
-const s3 = new AWS.S3({region: process.env.AWS_REGION});
-const iot = new AWS.Iot({region: process.env.AWS_REGION});
+const s3 = new AWS.S3({ region: process.env.AWS_REGION });
+const iot = new AWS.Iot({ region: process.env.AWS_REGION });
 
-async function teardown() {
+const BASIC_CSR_TEMPLATE_NAME = 'IntegrationTestTemplateWithCSR';
+
+const BASIC_THING_NAME = 'BasicIntegrationTestThing';
+const BASIC_POLICY_NAME = 'BasicIntegrationTestPolicy';
+
+export const AWS_ISSUED_CERTIFICATE_TEMPLATE_NAME = 'IntegrationTestTemplateAwsIssued';
+const AWS_ISSUED_THING_NAME = 'AwsIssuedIntegrationTestThing'
+const AWS_ISSUED_POLICY_NAME = 'AwsIssuedIntegrationTestPolicy';
+
+export const ACMPCA_TEMPLATE_NAME = 'IntegrationTestTemplateWithACMPCA';
+const ACMPCA_THING_NAME = 'ACMPCAIntegrationTestThing';
+
+async function teardownBasic() {
     // S3 cleanup - remove template from bucket
-    const deleteObjectRequest = {
-        Bucket: templateBucket,
-        Key: `${templatePrefix}IntegrationTestTemplate.json`
-    };
-    await s3.deleteObject(deleteObjectRequest).promise();
-
-    // IoT cleanup - delete cert, policy, thing
-    const thingName = 'IntegrationTestThing';
-    const policyName = 'IntegrationTestPolicy';
-
-    let certificateId;
-    try {
-        const thingPrincipals = await iot.listThingPrincipals({thingName}).promise();
-        const certArn = thingPrincipals.principals[0];
-        certificateId = certArn.split('/')[1];
-
-        await iot.detachPrincipalPolicy({principal: certArn, policyName}).promise();
-        await iot.detachThingPrincipal({thingName, principal: certArn}).promise();
-    } catch (err) {
-        if (err.code!=='ResourceNotFoundException') {
-            throw err;
-        }
-    }
-
-    try {
-        if (certificateId!==undefined) {
-            await iot.updateCertificate({certificateId, newStatus: 'INACTIVE'}).promise();
-            await iot.deleteCertificate({certificateId}).promise();
-        }
-    } catch (err) {
-        if (err.code!=='ResourceNotFoundException') {
-            throw err;
-        }
-    }
-
-    try {
-        await iot.deletePolicy({policyName}).promise();
-    } catch (err) {
-        if (err.code!=='ResourceNotFoundException') {
-            throw err;
-        }
-    }
-
-    try {
-        await iot.deleteThing({thingName}).promise();
-    } catch (err) {
-        if (err.code!=='ResourceNotFoundException') {
-            throw err;
-        }
-    }
+    await Promise.all([
+        deleteTemplate(BASIC_CSR_TEMPLATE_NAME),
+        deleteTemplate(AWS_ISSUED_CERTIFICATE_TEMPLATE_NAME),
+        deleteThing(AWS_ISSUED_THING_NAME, AWS_ISSUED_POLICY_NAME),
+        deleteThing(BASIC_THING_NAME, BASIC_POLICY_NAME)
+    ]);
 }
 
-Before({tags: '@setup_thing_provisioning'}, async function () {
-    await teardown();
+Before({ tags: '@setup_basic_provisioning' }, async function () {
+    await teardownBasic();
 
     // create a provisioning template
-    const integrationTestTemplate = {
+    const template = {
         Parameters: {
             ThingName: {
                 Type: 'String'
@@ -106,42 +74,194 @@ Before({tags: '@setup_thing_provisioning'}, async function () {
                     }
                 }
             },
-            certificate : {
-                Type : 'AWS::IoT::Certificate',
-                Properties : {
-                    CertificateSigningRequest: {Ref: 'CSR'}
+            certificate: {
+                Type: 'AWS::IoT::Certificate',
+                Properties: {
+                    CertificateSigningRequest: { Ref: 'CSR' }
                 }
             },
-            policy : {
+            policy: {
                 Type: 'AWS::IoT::Policy',
                 Properties: {
-                    PolicyName: 'IntegrationTestPolicy'
+                    PolicyName: BASIC_POLICY_NAME
                 }
             }
         }
     };
+
+    const awsIssuedTemplate = {
+        "CDF": {
+            "createDeviceAWSCertificate": true
+        },
+        "Parameters": {
+            "ThingName": {
+                "Type": "String"
+            },
+            "CertificateId": {
+                "Type": "String"
+            }
+        },
+        "Resources": {
+            "thing": {
+                "Type": "AWS::IoT::Thing",
+                "Properties": {
+                    "ThingName": {
+                        "Ref": "ThingName"
+                    }
+                }
+            },
+            "certificate": {
+                "Type": "AWS::IoT::Certificate",
+                "Properties": {
+                    "CertificateId": { "Ref": "CertificateId" }
+                }
+            },
+            "policy": {
+                "Type": "AWS::IoT::Policy",
+                "Properties": {
+                    "PolicyName": AWS_ISSUED_POLICY_NAME
+                }
+            }
+        }
+    }
+
+    await Promise.all([
+        uploadTemplate(BASIC_CSR_TEMPLATE_NAME, template),
+        uploadTemplate(AWS_ISSUED_CERTIFICATE_TEMPLATE_NAME, awsIssuedTemplate),
+        createTestPolicy(BASIC_POLICY_NAME),
+        createTestPolicy(AWS_ISSUED_POLICY_NAME)
+    ]);
+});
+
+Before({ tags: '@teardown_basic_provisioning' }, async function () {
+    await teardownBasic();
+});
+
+async function teardownAcmpca() {
+    await Promise.all([
+        deleteTemplate(ACMPCA_TEMPLATE_NAME),
+        deleteThing(ACMPCA_THING_NAME)
+    ]);
+}
+
+Before({ tags: '@setup_acmpca_provisioning' }, async function () {
+    await teardownAcmpca();
+
+    // create a provisioning template
+    const template = {
+        Parameters: {
+            ThingName: {
+                Type: String
+            },
+            CertificateId: {
+                Type: 'String'
+            }
+        },
+        Resources: {
+            thing: {
+                Type: 'AWS::IoT::Thing',
+                Properties: {
+                    ThingName: {
+                        Ref: 'ThingName'
+                    }
+                }
+            },
+            certificate: {
+                Type: 'AWS::IoT::Certificate',
+                Properties: {
+                    CertificateId: { Ref: "CertificateId" }
+                }
+            }
+        },
+        CDF: {
+            useACMPCA: true
+        }
+    };
+    await uploadTemplate(ACMPCA_TEMPLATE_NAME, template);
+});
+
+Before({ tags: '@teardown_acmpca_provisioning' }, async function () {
+    await teardownAcmpca();
+});
+
+async function deleteThing(thingName: string, policyName?: string) {
+    let certificateId;
+    try {
+        const thingPrincipals = await iot.listThingPrincipals({ thingName }).promise();
+        const certArn = thingPrincipals.principals[0];
+        certificateId = certArn?.split('/')[1];
+
+        if (certArn && policyName) {
+            await iot.detachPrincipalPolicy({ principal: certArn, policyName }).promise();
+        }
+        if (certArn) {
+            await iot.detachThingPrincipal({ thingName, principal: certArn }).promise();
+        }
+    } catch (err) {
+        if (err.code !== 'ResourceNotFoundException') {
+            throw err;
+        }
+    }
+
+    try {
+        if (certificateId !== undefined) {
+            await iot.updateCertificate({ certificateId, newStatus: 'INACTIVE' }).promise();
+            await iot.deleteCertificate({ certificateId }).promise();
+        }
+    } catch (err) {
+        if (err.code !== 'ResourceNotFoundException') {
+            throw err;
+        }
+    }
+
+    try {
+        if (policyName) {
+            await iot.deletePolicy({ policyName }).promise();
+        }
+    } catch (err) {
+        if (err.code !== 'ResourceNotFoundException') {
+            throw err;
+        }
+    }
+
+    try {
+        await iot.deleteThing({ thingName }).promise();
+    } catch (err) {
+        if (err.code !== 'ResourceNotFoundException') {
+            throw err;
+        }
+    }
+}
+
+async function uploadTemplate(name: string, template: unknown): Promise<void> {
     // upload to S3
     const putObjectRequest = {
         Bucket: templateBucket,
-        Key: `${templatePrefix}IntegrationTestTemplate.json`,
-        Body: JSON.stringify(integrationTestTemplate)
+        Key: `${templatePrefix}${name}.json`,
+        Body: JSON.stringify(template)
     };
     await s3.putObject(putObjectRequest).promise();
+}
 
+async function deleteTemplate(name: string): Promise<void> {
+    const deleteObjectRequest = {
+        Bucket: templateBucket,
+        Key: `${templatePrefix}${name}.json`
+    };
+    await s3.deleteObject(deleteObjectRequest).promise();
+}
+
+async function createTestPolicy(policyName: string): Promise<void> {
     // create an IoT policy (if not exists)
-    const policyName = 'IntegrationTestPolicy';
     try {
-        await iot.getPolicy({policyName}).promise();
+        await iot.getPolicy({ policyName }).promise();
     } catch (e) {
-        if (e.name==='ResourceNotFoundException') {
+        if (e.name === 'ResourceNotFoundException') {
             const integrationTestPolicy = {
                 policyName,
-                policyDocument: '{"Version": "2012-10-17","Statement": [{"Effect": "Allow","Action": "iot:*","Resource": "*"}]}'};
+                policyDocument: '{"Version": "2012-10-17","Statement": [{"Effect": "Allow","Action": "iot:*","Resource": "*"}]}'
+            };
             await iot.createPolicy(integrationTestPolicy).promise();
         }
     }
-});
-
-Before({tags: '@teardown_thing_provisioning'}, async function () {
-    await teardown();
-});
+}

@@ -16,9 +16,10 @@ import { ProvisioningStepData } from './provisioningStep.model';
 import { logger } from '../../utils/logger';
 import { TYPES } from '../../di/types';
 import AWS = require('aws-sdk');
-import * as pem from 'pem';
 import ow from 'ow';
-import { CertInfo, CreateDeviceCertificateParameters } from '../things.models';
+import { CreateDeviceCertificateParameters } from '../things.models';
+import { CertUtils } from '../../utils/cert';
+import * as pem from 'pem';
 
 @injectable()
 export class CreateDeviceCertificateStepProcessor implements ProvisioningStepProcessor {
@@ -27,6 +28,7 @@ export class CreateDeviceCertificateStepProcessor implements ProvisioningStepPro
   private _ssm: AWS.SSM;
 
   public constructor(
+    @inject(TYPES.CertUtils) private certUtils: CertUtils,  
     @inject(TYPES.IotFactory) iotFactory: () => AWS.Iot,
     @inject(TYPES.SSMFactory) ssmFactory: () => AWS.SSM,
     @inject('deviceCertificateExpiryDays') private defaultExpiryDays: number) {
@@ -45,12 +47,12 @@ export class CreateDeviceCertificateStepProcessor implements ProvisioningStepPro
         const futures:Promise<string>[] = [
             this.getCaPem(params?.caId),
             this.getCaPrivateKey(params?.caId),
-            this.createPrivateKey()
+            this.certUtils.createPrivateKey()
         ];
 
         const [caPem,caKey,privateKey] = await Promise.all(futures);
 
-        const csr = await this.createCSR(privateKey, params.certInfo);
+        const csr = await this.certUtils.createCSR(privateKey, params.certInfo);
         const certificate = await this.createCertificate(csr, params.certInfo.daysExpiry ?? this.defaultExpiryDays,  caKey, caPem);
 
         if (stepData.parameters===undefined) {
@@ -83,47 +85,6 @@ export class CreateDeviceCertificateStepProcessor implements ProvisioningStepPro
         const ssmResponse = await this._ssm.getParameter(params).promise();
         logger.debug('CreateDeviceCertificateStepProcessor: getCaPrivateKey: exit: REDACTED');
         return ssmResponse.Parameter.Value;
-    }
-
-    private createPrivateKey() : Promise<string> {
-        logger.debug(`CreateDeviceCertificateStepProcessor: createPrivateKey: in:`);
-        /* eslint-disable @typescript-eslint/no-explicit-any */
-        return new Promise((resolve:any,reject:any) =>  {
-            pem.createPrivateKey(2048, (err:any, data:any) => {
-                if(err) {
-                    logger.debug(`CreateDeviceCertificateStepProcessor: createPrivateKey: err:${err}`);
-                    return reject(err);
-                }
-                logger.debug('CreateDeviceCertificateStepProcessor: createPrivateKey: exit: REDACTED');
-                return resolve(data.key);
-            });
-        });
-    }
-
-    // generate certificate signing request
-    private createCSR(privateKey:string, certInfo: CertInfo) : Promise<string> {
-        logger.debug(`CreateDeviceCertificateStepProcessor: createCSR: in: privateKey: REDACTED, certInfo:${JSON.stringify(certInfo)}`);
-        /* eslint-disable @typescript-eslint/no-explicit-any */
-        return new Promise((resolve:any,reject:any) =>  {
-            const csrOptions: pem.CSRCreationOptions = {
-                commonName: certInfo.commonName,
-                organization: certInfo.organization,
-                organizationUnit: certInfo.organizationalUnit,
-                locality: certInfo.locality,
-                state: certInfo.stateName,
-                country: certInfo.country,
-                emailAddress: certInfo.emailAddress,
-                clientKey:privateKey
-            };
-            pem.createCSR(csrOptions, (err:any, data:any) => {
-                if(err) {
-                    logger.debug(`CreateDeviceCertificateStepProcessor: createCSR: err:${JSON.stringify(err)}`);
-                    return reject(err);
-                }
-                logger.debug(`CreateDeviceCertificateStepProcessor: createCSR: exit:${JSON.stringify(data.csr)}`);
-                return resolve(data.csr);
-            });
-        });
     }
 
     private createCertificate(csr:string, days:number, rootKey:string, rootPem:string) : Promise<string> {

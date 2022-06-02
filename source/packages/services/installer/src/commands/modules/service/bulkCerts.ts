@@ -10,7 +10,7 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { Answers, BulkCerts, Suppliers } from '../../../models/answers';
+import { Answers, BulkCerts, CAAliases } from '../../../models/answers';
 import { ListrTask } from 'listr2';
 import { ModuleName, RestModule, PostmanEnvironment } from '../../../models/modules';
 import { ConfigBuilder } from "../../../utils/configBuilder";
@@ -226,8 +226,6 @@ export class BulkCertificatesInstaller implements RestModule {
     return updatedAnswers;
   }
 
-
-
   private getParameterOverrides(answers: Answers): string[] {
     const parameterOverrides = [
       `Environment=${answers.environment}`,
@@ -319,7 +317,6 @@ export class BulkCertificatesInstaller implements RestModule {
   public generateApplicationConfiguration(answers: Answers): string {
     const configBuilder = new ConfigBuilder()
 
-
     if (answers.bulkCerts.setSupplier) {
       if (!answers.bulkCerts.suppliers.list.includes(answers.bulkCerts.caAlias)) {
         answers.bulkCerts.suppliers.cas.push({ alias: answers.bulkCerts.caAlias, value: answers.bulkCerts.caValue });
@@ -336,9 +333,6 @@ export class BulkCertificatesInstaller implements RestModule {
       });
     }
 
-
-
-
     configBuilder
       .add(`CUSTOMDOMAIN_BASEPATH`, answers.bulkCerts.customDomainBasePath)
       .add(`LOGGING_LEVEL`, answers.bulkCerts.loggingLevel)
@@ -352,7 +346,7 @@ export class BulkCertificatesInstaller implements RestModule {
       .add(`CERTIFICATE_DEFAULT_EMAILADDRESS`, answers.bulkCerts.emailAddress)
       .add(`CERTIFICATE_DEFAULT_DISTINGUISHEDNAMEQUALIFIER`, answers.bulkCerts.distinguishedNameIdentifier)
       .add(`CERTIFICATE_DEFAULT_EXPIRYDAYS`, answers.bulkCerts.expiryDays)
-      .add(`DEFAULTS_CHUNKSIZE`, answers.bulkCerts.chunksize)
+      .add(`DEFAULTS_CHUNKSIZE`, answers.bulkCerts.chunksize);
     return configBuilder.config;
   }
 
@@ -385,9 +379,9 @@ export class BulkCertificatesInstaller implements RestModule {
 
   }
 
-  private async getSuppliers(answers: Answers): Promise<Suppliers> {
+  private async getSuppliers(answers: Answers): Promise<CAAliases> {
     const lambda = new Lambda({ region: answers.region });
-    let suppliers: Suppliers;
+    let suppliers: CAAliases;
 
     if (typeof answers === 'undefined' || typeof answers.bulkCerts === 'undefined' || typeof answers.bulkCerts.suppliers === 'undefined') {
       suppliers = { list: [], cas: [] };
