@@ -19,7 +19,7 @@ import path from 'path';
 import { Answers } from '../../../models/answers';
 import { InfrastructureModule, ModuleName } from '../../../models/modules';
 import { getMonorepoRoot } from '../../../prompts/paths.prompt';
-import { deleteStack, packageAndDeployStack } from '../../../utils/cloudformation.util';
+import { deleteStack, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
 
 export class EvenBusInstaller implements InfrastructureModule {
 
@@ -33,6 +33,7 @@ export class EvenBusInstaller implements InfrastructureModule {
   constructor(environment: string) {
     this.stackName = `cdf-eventbus-${environment}`;
   }
+
 
   public async prompts(answers: Answers): Promise<Answers> {
 
@@ -61,7 +62,25 @@ export class EvenBusInstaller implements InfrastructureModule {
     }
 
     return answers;
+  }
 
+  public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    const tasks: ListrTask[] = [{
+      title: `Packaging module '${this.name}'`,
+      task: async () => {
+        const monorepoRoot = await getMonorepoRoot();
+        await packageAndUploadTemplate({
+          answers: answers,
+          templateFile: 'cfn-eventbus.yaml',
+          serviceName: 'eventbus',
+          cwd: path.join(monorepoRoot, 'source', 'infrastructure', 'cloudformation'),
+          parameterOverrides: [`Environment=${answers.environment}`, `ExistingEventBusArn=${answers.eventBus?.arn ?? ''}`],
+          needsPackaging: false
+        });
+      },
+    }
+    ];
+    return [answers, tasks]
   }
 
   public async install(answers: Answers): Promise<[Answers, ListrTask[]]> {

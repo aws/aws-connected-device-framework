@@ -184,7 +184,11 @@ export class ApiGwInstaller implements InfrastructureModule {
     includeOptionalModule('authJwt', answers.modules, answers.apigw.type === 'LambdaRequest' || answers.apigw.type === 'LambdaToken')
 
     return answers;
+  }
 
+  public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    const results = await this.install(answers)
+    return results;
   }
 
   public async install(answers: Answers): Promise<[Answers, ListrTask[]]> {
@@ -199,11 +203,12 @@ export class ApiGwInstaller implements InfrastructureModule {
     tasks.push({
       title: 'Uploading API Gateway Cloudformation snippets',
       task: async (_, task): Promise<void> => {
-        const bucket = answers.s3.bucket;
-        const prefix = `cloudformation/snippets/${answers.environment}/`;
-        answers.apigw.templateSnippetS3UriBase = `s3://${bucket}/${prefix}`
+        const { bucket, optionalDeploymentBucket, optionalDeploymentPrefix } = answers.s3
+        const artifactBucket = optionalDeploymentBucket !== undefined ? optionalDeploymentBucket : bucket
+        const artifactPrefix = optionalDeploymentPrefix !== undefined ? optionalDeploymentPrefix : 'cloudformation'
+        const prefix = `${artifactPrefix}/snippets/${answers.environment}/`;
+        answers.apigw.templateSnippetS3UriBase = `s3://${artifactBucket}/${prefix}`
         const s3 = new S3Utils(answers.region);
-
         const monorepoRoot = await getMonorepoRoot();
         const snippetPath = await getAbsolutePath(monorepoRoot, answers.apigw.cloudFormationSnippetsPath);
         const snippets = fs.readdirSync(snippetPath);
@@ -211,7 +216,7 @@ export class ApiGwInstaller implements InfrastructureModule {
           task.output = `Uploading ${f}`;
           const fileContent = fs.readFileSync(path.join(snippetPath, f));
           const name = path.parse(f).base;
-          await s3.uploadStreamToS3(bucket, prefix + name, fileContent);
+          await s3.uploadStreamToS3(artifactBucket, prefix + name, fileContent);
         }
         task.output = `Uploads complete`;
       },

@@ -18,7 +18,7 @@ import ow from 'ow';
 import inquirer from 'inquirer';
 import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
-import { deleteStack, packageAndDeployStack } from '../../../utils/cloudformation.util';
+import { deleteStack, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
 
 export class AuthDeviceCertInstaller implements ServiceModule {
 
@@ -56,6 +56,40 @@ export class AuthDeviceCertInstaller implements ServiceModule {
 
   }
 
+
+  private getParameterOverrides(answers: Answers): string[] {
+    const parameterOverrides = [
+      `Environment=${answers.environment}`,
+      `KmsKeyId=${answers.kms.id}`,
+      `OpenSslLambdaLayerArn=${answers.openSsl.arn}`,
+    ];
+
+    const addIfSpecified = (key: string, value: unknown) => {
+      if (value !== undefined) parameterOverrides.push(`${key}=${value}`)
+    };
+
+    addIfSpecified('LoggingLevel', answers.authDeviceCert.loggingLevel);
+
+    return parameterOverrides;
+  }
+
+  public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    const tasks: ListrTask[] = [{
+      title: `Packaging module '${this.name}'`,
+      task: async () => {
+        await packageAndUploadTemplate({
+          answers: answers,
+          serviceName: 'auth-devicecert',
+          templateFile: '../auth-devicecert/infrastructure/cfn-auth-devicecert.yaml',
+          parameterOverrides: this.getParameterOverrides(answers),
+        });
+      },
+    }
+    ];
+    return [answers, tasks]
+  }
+
+
   public async install(answers: Answers): Promise<[Answers, ListrTask[]]> {
 
     ow(answers, ow.object.nonEmpty);
@@ -72,24 +106,13 @@ export class AuthDeviceCertInstaller implements ServiceModule {
       title: `Packaging and deploying stack '${this.stackName}'`,
       task: async () => {
 
-        const parameterOverrides = [
-          `Environment=${answers.environment}`,
-          `KmsKeyId=${answers.kms.id}`,
-          `OpenSslLambdaLayerArn=${answers.openSsl.arn}`,
-        ];
-
-        const addIfSpecified = (key: string, value: unknown) => {
-          if (value !== undefined) parameterOverrides.push(`${key}=${value}`)
-        };
-
-        addIfSpecified('LoggingLevel', answers.authDeviceCert.loggingLevel);
 
         await packageAndDeployStack({
           answers: answers,
           stackName: this.stackName,
           serviceName: 'auth-devicecert',
           templateFile: '../auth-devicecert/infrastructure/cfn-auth-devicecert.yaml',
-          parameterOverrides,
+          parameterOverrides: this.getParameterOverrides(answers),
           needsPackaging: true,
           needsCapabilityNamedIAM: true,
         });
@@ -116,12 +139,12 @@ export class AuthDeviceCertInstaller implements ServiceModule {
   public async delete(answers: Answers): Promise<ListrTask[]> {
     const tasks: ListrTask[] = [];
     tasks.push({
-        title: `Deleting stack '${this.stackName}'`,
-        task: async () => {
-          await deleteStack(this.stackName, answers.region)
-        }
+      title: `Deleting stack '${this.stackName}'`,
+      task: async () => {
+        await deleteStack(this.stackName, answers.region)
+      }
     });
     return tasks
 
-}
+  }
 }
