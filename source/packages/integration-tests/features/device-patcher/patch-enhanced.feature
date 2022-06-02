@@ -18,7 +18,7 @@ Feature: Patch Enhanced
       | $.name          | DevicePatcherIntegrationTestCore |
     And I create a patch patch Task for "DevicePatcherIntegrationTestCore" edge device using "ggv2_ec2_amazonlinux2_template" template
     Then greengrass2-provisioning core device "DevicePatcherIntegrationTestCore" exists
-    And I pause for 280000ms
+    And I pause for 360000ms
     Then patch for "DevicePatcherIntegrationTestCore" exists with following attributes
       | $.patches[?(@.deviceId=="DevicePatcherIntegrationTestCore")].deviceId             | DevicePatcherIntegrationTestCore                                                       |
       | $.patches[?(@.deviceId=="DevicePatcherIntegrationTestCore")].patchId              | ___regex___:^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$ |
