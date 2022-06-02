@@ -48,7 +48,7 @@ Feature: Device Patching
     When I create a patch Task for "ec2_edge_device_01" edge device with attributes
       | patchTemplateName | integration_test_template                                       |
       | extraVars              | { "uniqueVar1": "uniqueVarVal1", "uniqueVar2": "uniqueVarVal2"} |
-    And I pause for 120000ms
+    And I pause for 280000ms
     And last patch for device exists with following attributes
       | $.patches[?(@.deviceId=="ec2_edge_device_01")].deviceId             | ec2_edge_device_01                                                                     |
       | $.patches[?(@.deviceId=="ec2_edge_device_01")].patchId         | ___regex___:^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$ |
