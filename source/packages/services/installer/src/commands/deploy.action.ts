@@ -96,33 +96,20 @@ async function deployAction(
   console.log(chalk.bgGreen(`\nDeployment complete! (${took}s)\n`));
 }
 
+
 async function cleanUpConfig(answers: Answers): Promise<Answers> {
   // Remove unnecessary answers
-  if (answers && answers.hasOwnProperty("bulkCerts")) {
-    if (answers.bulkCerts.hasOwnProperty("suppliers") && answers.bulkCerts.suppliers.hasOwnProperty("list")) {
-      delete answers.bulkCerts.suppliers.list;
-    }
-    if (answers.bulkCerts.hasOwnProperty("setSupplier")) {
-      delete answers.bulkCerts.setSupplier;
-    }
-    if (answers.bulkCerts.hasOwnProperty("caAlias")) {
-      delete answers.bulkCerts.caAlias;
-    }
-    if (answers.bulkCerts.hasOwnProperty("caValue")) {
-      delete answers.bulkCerts.caValue;
-    }
-  }
+  delete answers?.bulkCerts?.suppliers;
+  delete answers?.bulkCerts?.setSupplier;
+  delete answers?.bulkCerts?.caAlias;
+  delete answers?.bulkCerts?.caValue;
 
-  if (answers.hasOwnProperty("s3")) {
-    if (answers.s3.hasOwnProperty("optionalDeploymentBucket")) {
-      delete answers.s3.optionalDeploymentBucket;
-    }
-
-    if (answers.s3.hasOwnProperty("optionalDeploymentPrefix")) {
-      delete answers.s3.optionalDeploymentPrefix;
-    }
-  }
-
+  delete answers?.provisioning?.pcaAliases;
+  delete answers?.provisioning?.setPcaAliases;
+  delete answers?.provisioning?.pcaAlias;
+  delete answers?.provisioning?.pcaArn;
+  delete answers?.s3?.optionalDeploymentBucket;
+  delete answers.s3.optionalDeploymentPrefix;
   return answers;
 }
 

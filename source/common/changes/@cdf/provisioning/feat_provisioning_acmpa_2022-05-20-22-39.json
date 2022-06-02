@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/provisioning",
+      "comment": "Added support for creating and registering AWS IoT device certificates using AWS ACM PCA.",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@cdf/provisioning",
+  "email": "deanhart@amazon.com"
+}

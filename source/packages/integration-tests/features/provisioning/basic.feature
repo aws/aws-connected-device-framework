@@ -11,17 +11,23 @@
 #  and limitations under the License.
 #-----------------------------------------------------------------------------------------------------------------------
 
-Feature: Provisioning Things
+Feature: Provisioning things using basic template functionality
 
-  @setup_thing_provisioning
+  @setup_basic_provisioning
   Scenario: Setup
-    Given thing "IntegrationTestThing" does not exist
+    Given thing "BasicIntegrationTestThing" does not exist
 
   Scenario: Provision a Thing
-    Given thing "IntegrationTestThing" does not exist
-    When I provision a thing "IntegrationTestThing"
-    Then the thing "IntegrationTestThing" is provisioned
+    Given thing "BasicIntegrationTestThing" does not exist
+    When I provision a thing "BasicIntegrationTestThing" using a csr
+    Then the thing "BasicIntegrationTestThing" is provisioned
 
-  @teardown_thing_provisioning
+  Scenario: Provision a Thing with AWS issued certificate
+    Given thing "AwsIssuedIntegrationTestThing" does not exist
+    When I provision a thing "AwsIssuedIntegrationTestThing" using aws iot certificate
+    Then the thing "AwsIssuedIntegrationTestThing" is provisioned
+
+  @teardown_basic_provisioning
   Scenario: Teardown
-    Given thing "IntegrationTestThing" does not exist
+    Given thing "BasicIntegrationTestThing" does not exist
+    And thing "AwsIssuedIntegrationTestThing" does not exist

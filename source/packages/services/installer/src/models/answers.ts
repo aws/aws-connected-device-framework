@@ -163,12 +163,12 @@ export interface BulkCerts extends RestServiceModuleAttribues {
   defaultAnswer?: boolean;
   chunksize: number;
   expiryDays?: number;
-  suppliers?: Suppliers;
+  suppliers?: CAAliases;
   caAlias?: string;
   caValue?: string;
 }
 
-export interface Suppliers {
+export interface CAAliases {
   list?: string[];
   cas: CA[];
 }
@@ -282,6 +282,13 @@ export interface Provisioning extends RestServiceModuleAttribues {
   templateSuffix?: string;
   templatesPrefix?: string;
   bulkRequestsPrefix?: string;
+
+  // ACM PCA specific
+  pcaCrossAccountRoleArn?: string;
+  setPcaAliases?: boolean;
+  pcaAliases?: CAAliases;
+  pcaAlias?: string;
+  pcaArn?:string;
 }
 
 export interface FleetSimulator extends RestServiceModuleAttribues {
