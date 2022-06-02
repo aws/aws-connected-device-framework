@@ -19,7 +19,7 @@ import { ModuleName, ServiceModule } from '../../../models/modules';
 import { ConfigBuilder } from "../../../utils/configBuilder";
 import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
-import { deleteStack, getStackParameters, getStackResourceSummaries, packageAndDeployStack } from '../../../utils/cloudformation.util';
+import { deleteStack, getStackParameters, getStackResourceSummaries, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
 
 export class DeviceMonitoringInstaller implements ServiceModule {
 
@@ -54,7 +54,37 @@ export class DeviceMonitoringInstaller implements ServiceModule {
       applicationConfigurationPrompt(this.name, answers, []),
       updatedAnswers);
     return updatedAnswers;
+  }
 
+  private getParameterOverrides(answers: Answers): string[] {
+    const parameterOverrides = [
+      `Environment=${answers.environment}`,
+      `AssetLibraryFunctionName=${answers.deviceMonitoring.assetLibraryFunctionName}`,
+    ];
+
+    const addIfSpecified = (key: string, value: unknown) => {
+      if (value !== undefined) parameterOverrides.push(`${key}=${value}`)
+    };
+
+    addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
+    return parameterOverrides;
+  }
+
+
+  public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    const tasks: ListrTask[] = [{
+      title: `Packaging module '${this.name}'`,
+      task: async () => {
+        await packageAndUploadTemplate({
+          answers: answers,
+          serviceName: 'device-monitoring',
+          templateFile: '../device-monitoring/infrastructure/cfn-device-monitoring.yml',
+          parameterOverrides: this.getParameterOverrides(answers),
+        });
+      },
+    }
+    ];
+    return [answers, tasks]
   }
 
   public async install(answers: Answers): Promise<[Answers, ListrTask[]]> {
@@ -86,24 +116,12 @@ export class DeviceMonitoringInstaller implements ServiceModule {
     tasks.push({
       title: `Packaging and deploying stack '${this.stackName}'`,
       task: async () => {
-
-        const parameterOverrides = [
-          `Environment=${answers.environment}`,
-          `AssetLibraryFunctionName=${answers.deviceMonitoring.assetLibraryFunctionName}`,
-        ];
-
-        const addIfSpecified = (key: string, value: unknown) => {
-          if (value !== undefined) parameterOverrides.push(`${key}=${value}`)
-        };
-
-        addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
-
         await packageAndDeployStack({
           answers: answers,
           stackName: this.stackName,
           serviceName: 'device-monitoring',
           templateFile: '../device-monitoring/infrastructure/cfn-device-monitoring.yml',
-          parameterOverrides,
+          parameterOverrides: this.getParameterOverrides(answers),
           needsPackaging: true,
           needsCapabilityNamedIAM: true,
         });
@@ -133,12 +151,12 @@ export class DeviceMonitoringInstaller implements ServiceModule {
   public async delete(answers: Answers): Promise<ListrTask[]> {
     const tasks: ListrTask[] = [];
     tasks.push({
-        title: `Deleting stack '${this.stackName}'`,
-        task: async () => {
-          await deleteStack(this.stackName, answers.region)
-        }
+      title: `Deleting stack '${this.stackName}'`,
+      task: async () => {
+        await deleteStack(this.stackName, answers.region)
+      }
     });
     return tasks
 
-}
+  }
 }

@@ -2,6 +2,18 @@
   "name": "@cdf/installer",
   "entries": [
     {
+      "version": "0.6.0",
+      "tag": "@cdf/installer_v0.6.0",
+      "date": "Tue, 24 May 2022 04:06:34 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "introduce package only command"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.5.1",
       "tag": "@cdf/installer_v0.5.1",
       "date": "Tue, 17 May 2022 00:04:26 GMT",

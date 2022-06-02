@@ -19,7 +19,7 @@ import { customDomainPrompt } from '../../../prompts/domain.prompt';
 import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
 import ow from 'ow';
-import { deleteStack, getStackOutputs, getStackParameters, getStackResourceSummaries, packageAndDeployStack } from '../../../utils/cloudformation.util';
+import { deleteStack, getStackOutputs, getStackParameters, getStackResourceSummaries, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
 export class ProvisioningInstaller implements RestModule {
 
   public readonly friendlyName = 'Provisioning';
@@ -31,7 +31,7 @@ export class ProvisioningInstaller implements RestModule {
     'openSsl',
     'deploymentHelper',
   ];
-  
+
   public readonly dependsOnOptional: ModuleName[] = [];
 
   private readonly stackName: string
@@ -91,6 +91,47 @@ export class ProvisioningInstaller implements RestModule {
     return updatedAnswers;
   }
 
+  private getParameterOverrides(answers: Answers): string[] {
+    const parameterOverrides = [
+      `Environment=${answers.environment}`,
+      `AuthType=${answers.apigw.type}`,
+      `TemplateSnippetS3UriBase=${answers.apigw.templateSnippetS3UriBase}`,
+      `ApiGatewayDefinitionTemplate=${answers.apigw.cloudFormationTemplate}`,
+      `VpcId=${answers.vpc?.id ?? 'N/A'}`,
+      `CDFSecurityGroupId=${answers.vpc?.securityGroupId ?? ''}`,
+      `PrivateSubNetIds=${answers.vpc?.privateSubnetIds ?? ''}`,
+      `PrivateApiGatewayVPCEndpoint=${answers.vpc?.privateApiGatewayVpcEndpoint ?? ''}`,
+      `KmsKeyId=${answers.kms.id}`,
+      `OpenSslLambdaLayerArn=${answers.openSsl.arn}`,
+      `BucketName=${answers.s3.bucket}`,
+      `CustomResourceLambdaArn=${answers.deploymentHelper.lambdaArn}`,
+    ];
+
+    const addIfSpecified = (key: string, value: unknown) => {
+      if (value !== undefined) parameterOverrides.push(`${key}=${value}`)
+    };
+    addIfSpecified('CognitoUserPoolArn', answers.apigw.cognitoUserPoolArn);
+    addIfSpecified('AuthorizerFunctionArn', answers.apigw.lambdaAuthorizerArn);
+    addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
+    return parameterOverrides;
+  }
+
+  public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    const tasks: ListrTask[] = [{
+      title: `Packaging module '${this.name}'`,
+      task: async () => {
+        await packageAndUploadTemplate({
+          answers: answers,
+          serviceName: 'provisioning',
+          templateFile: '../provisioning/infrastructure/cfn-provisioning.yml',
+          parameterOverrides: this.getParameterOverrides(answers)
+        });
+      },
+    }
+    ];
+    return [answers, tasks]
+  }
+
   public async install(answers: Answers): Promise<[Answers, ListrTask[]]> {
 
     ow(answers, ow.object.plain);
@@ -110,36 +151,12 @@ export class ProvisioningInstaller implements RestModule {
     tasks.push({
       title: `Packaging stack '${this.stackName}'`,
       task: async () => {
-
-        const parameterOverrides = [
-          `Environment=${answers.environment}`,
-          `AuthType=${answers.apigw.type}`,
-          `TemplateSnippetS3UriBase=${answers.apigw.templateSnippetS3UriBase}`,
-          `ApiGatewayDefinitionTemplate=${answers.apigw.cloudFormationTemplate}`,
-          `VpcId=${answers.vpc?.id ?? 'N/A'}`,
-          `CDFSecurityGroupId=${answers.vpc?.securityGroupId ?? ''}`,
-          `PrivateSubNetIds=${answers.vpc?.privateSubnetIds ?? ''}`,
-          `PrivateApiGatewayVPCEndpoint=${answers.vpc?.privateApiGatewayVpcEndpoint ?? ''}`,
-          `KmsKeyId=${answers.kms.id}`,
-          `OpenSslLambdaLayerArn=${answers.openSsl.arn}`,
-          `BucketName=${answers.s3.bucket}`,
-          `CustomResourceLambdaArn=${answers.deploymentHelper.lambdaArn}`,
-        ];
-
-        const addIfSpecified = (key: string, value: unknown) => {
-          if (value !== undefined) parameterOverrides.push(`${key}=${value}`)
-        };
-
-        addIfSpecified('CognitoUserPoolArn', answers.apigw.cognitoUserPoolArn);
-        addIfSpecified('AuthorizerFunctionArn', answers.apigw.lambdaAuthorizerArn);
-        addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
-
         await packageAndDeployStack({
           answers: answers,
           stackName: this.stackName,
           serviceName: 'provisioning',
           templateFile: '../provisioning/infrastructure/cfn-provisioning.yml',
-          parameterOverrides,
+          parameterOverrides: this.getParameterOverrides(answers),
           needsPackaging: true,
           needsCapabilityNamedIAM: true,
         });

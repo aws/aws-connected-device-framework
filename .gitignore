@@ -122,3 +122,4 @@ ggv2_core_device_install_script.txt
 *.yaml.build
 *.yml.build
 
+*.template

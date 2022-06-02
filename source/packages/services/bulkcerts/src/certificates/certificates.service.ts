@@ -32,6 +32,7 @@ export class CertificatesService {
     private _s3: AWS.S3;
     private _ssm: AWS.SSM;
     private _acmpca: AWS.ACMPCA;
+    private _defaultAcmConcurrencyLimit=5;
 
     private _writeFileAsync = promisify(fs.writeFile);
 
@@ -149,27 +150,32 @@ export class CertificatesService {
     }
 
     private async createChunkWithAcm(quantity: number, certInfo: CertificateInfo, caArn: string, chunkId: number): Promise<JSZip> {
-        logger.debug(`certificates.service createChunkWithACM: in: quantity: ${quantity}, certInfo: ${JSON.stringify(certInfo)}, caArn: ${caArn}, chunkId: ${chunkId}`);
+        logger.info(`certificates.service createChunkWithACM: in: quantity: ${quantity}, certInfo: ${JSON.stringify(certInfo)}, caArn: ${caArn}, chunkId: ${chunkId}, ACM Concurrency Limit:${this.acmConcurrencyLimit}`);
 
         const jszip = new JSZip();
         const certsZip = jszip.folder('certs');
-        const promises = [];
+        const promises: Promise<ACMCertificate>[] = [];
 
         const chunkStart = (chunkId - 1) * this.defaultChunkSize;
         const chunkEnd = ((chunkId - 1) * this.defaultChunkSize) + quantity;
-        const limit = pLimit(this.acmConcurrencyLimit);
+        
+        const limit = pLimit(this.acmConcurrencyLimit ?? this._defaultAcmConcurrencyLimit);
+        
         for (let i = chunkStart; i < chunkEnd; ++i) {
-            promises.push(limit(() => this.createCertificateWithAcm(i,certInfo,caArn)));
+            promises.push(
+                limit(async () => {
+                    const response = await this.createCertificateWithAcm(i,certInfo,caArn);
+                    return response;
+                })
+            );
         }
-        await Promise.all(promises)
-           .then((results) => {
-               for(const result of results){
-                   certsZip.file(`${result.certificateArn}_cert.pem`, result.certificate);
-               }
-           })
-           .catch((e) => {
-               logger.error(`certificates.service createChunkWithACM exit error: ${JSON.stringify(e)}`)
-           });
+
+        const results = await Promise.all(promises);
+        
+        for(const result of results){
+            certsZip.file(`${result.certificateArn}_cert.pem`, result.certificate);
+        }
+
         return certsZip;
     }
 

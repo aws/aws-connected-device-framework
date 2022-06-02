@@ -31,7 +31,7 @@ export const container = new Container();
 container.bind<string>('aws.dynamodb.tasks.tableName').toConstantValue(process.env.AWS_DYNAMODB_TASKS_TABLENAME);
 container.bind<string>('aws.s3.certificates.bucket').toConstantValue(process.env.AWS_S3_CERTIFICATES_BUCKET);
 container.bind<string>('aws.s3.certificates.prefix').toConstantValue(process.env.AWS_S3_CERTIFICATES_PREFIX);
-container.bind<string>('aws.acm.concurrency.limit').toConstantValue(process.env.AWS_ACM_CONCURRENCY_LIMIT);
+container.bind<number>('aws.acm.concurrency.limit').toConstantValue(parseInt(process.env.AWS_ACM_CONCURRENCY_LIMIT));
 container.bind<string>('defaults.chunkSize').toConstantValue(process.env.DEFAULTS_CHUNKSIZE);
 container.bind<string>('deviceCertificateExpiryDays').toConstantValue(process.env.CERTIFICATE_DEFAULT_EXPIRYDAYS);
 container.bind<string>('events.request.topic').toConstantValue(process.env.EVENTS_REQUEST_TOPIC);

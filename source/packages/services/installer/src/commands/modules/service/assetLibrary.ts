@@ -19,7 +19,7 @@ import ow from 'ow';
 import { customDomainPrompt } from '../../../prompts/domain.prompt';
 import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from '../../../prompts/applicationConfiguration.prompt';
-import { deleteStack, getStackOutputs, getStackParameters, packageAndDeployStack } from '../../../utils/cloudformation.util';
+import { deleteStack, getStackOutputs, getStackParameters, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
 import { enableAutoScaling, provisionedConcurrentExecutions } from '../../../prompts/autoscaling.prompt';
 import { getNeptuneInstancetypeList } from '../../../utils/instancetypes';
 import { includeOptionalModule } from '../../../utils/modules.util';
@@ -192,12 +192,86 @@ export class AssetLibraryInstaller implements RestModule {
         ...customDomainPrompt(this.name, answers),
       ], updatedAnswers);
     }
-    
+
     includeOptionalModule('vpc', updatedAnswers.modules, updatedAnswers.assetLibrary.mode === 'full')
-
     return updatedAnswers;
-
   }
+
+  public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    const tasks: ListrTask[] = [{
+      title: `Packaging module '${this.name} [Neptune]'`,
+      task: async () => {
+        await packageAndUploadTemplate({
+          answers: answers,
+          templateFile: '../assetlibrary/infrastructure/cfn-neptune.yaml',
+          parameterOverrides: this.getNeptuneParameterOverrides(answers),
+          needsPackaging: false,
+          serviceName: 'assetlibrary',
+        });
+      },
+    },
+    {
+      title: `Packaging module '${this.name} [Application]'`,
+      task: async () => {
+        await packageAndUploadTemplate({
+          answers: answers,
+          serviceName: 'assetlibrary',
+          templateFile: '../assetlibrary/infrastructure/cfn-assetLibrary.yaml',
+          parameterOverrides: this.getAssetLibraryParameterOverrides(answers),
+        });
+      },
+    }];
+    return [answers, tasks]
+  }
+
+  private getAssetLibraryParameterOverrides(answers: Answers): string[] {
+    const parameterOverrides = [
+      `Environment=${answers.environment}`,
+      `VpcId=${answers.vpc?.id ?? 'N/A'}`,
+      `CDFSecurityGroupId=${answers.vpc?.securityGroupId ?? ''}`,
+      `PrivateSubNetIds=${answers.vpc?.privateSubnetIds ?? ''}`,
+      `Mode=${answers.assetLibrary.mode}`,
+      `TemplateSnippetS3UriBase=${answers.apigw.templateSnippetS3UriBase}`,
+      `ApiGatewayDefinitionTemplate=${answers.apigw.cloudFormationTemplate}`,
+      `PrivateApiGatewayVPCEndpoint=${answers.vpc?.privateApiGatewayVpcEndpoint ?? ''}`,
+      `AuthType=${answers.apigw.type}`
+    ];
+
+    const addIfSpecified = (key: string, value: unknown) => {
+      if (value !== undefined) parameterOverrides.push(`${key}=${value}`)
+    };
+
+    addIfSpecified('NeptuneURL', answers.assetLibrary.neptuneUrl);
+    addIfSpecified('ApplyAutoscaling', answers.assetLibrary.enableAutoScaling);
+    addIfSpecified('ProvisionedConcurrentExecutions', answers.assetLibrary.provisionedConcurrentExecutions);
+    addIfSpecified('CustomResourceVPCLambdaArn', answers.assetLibrary.mode === 'full' ?
+      answers.deploymentHelper.vpcLambdaArn : answers.deploymentHelper.lambdaArn);
+    addIfSpecified('CognitoUserPoolArn', answers.apigw.cognitoUserPoolArn);
+    addIfSpecified('AuthorizerFunctionArn', answers.apigw.lambdaAuthorizerArn);
+    addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
+
+    return parameterOverrides;
+  }
+
+  private getNeptuneParameterOverrides(answers: Answers): string[] {
+    const parameterOverrides = [
+      `Environment=${answers.environment}`,
+      `VpcId=${answers.vpc.id}`,
+      `CDFSecurityGroupId=${answers.vpc.securityGroupId ?? ''}`,
+      `PrivateSubNetIds=${answers.vpc.privateSubnetIds ?? ''}`,
+      `CustomResourceVPCLambdaArn=${answers.deploymentHelper.vpcLambdaArn}`,
+    ];
+
+    const addIfSpecified = (key: string, value: unknown) => {
+      if (value !== undefined) parameterOverrides.push(`${key}=${value}`)
+    };
+
+    addIfSpecified('DbInstanceType', answers.assetLibrary.neptuneDbInstanceType);
+    addIfSpecified('CreateDBReplicaInstance', answers.assetLibrary.createDbReplicaInstance);
+    addIfSpecified('SnapshotIdentifier', answers.assetLibrary.neptuneSnapshotIdentifier);
+    return parameterOverrides
+  }
+
 
   public async install(answers: Answers): Promise<[Answers, ListrTask[]]> {
     const tasks: ListrTask[] = [];
@@ -214,29 +288,12 @@ export class AssetLibraryInstaller implements RestModule {
       tasks.push({
         title: `Deploying stack '${this.neptuneStackName}'`,
         task: async () => {
-
-          const parameterOverrides = [
-            `Environment=${answers.environment}`,
-            `VpcId=${answers.vpc.id}`,
-            `CDFSecurityGroupId=${answers.vpc.securityGroupId ?? ''}`,
-            `PrivateSubNetIds=${answers.vpc.privateSubnetIds ?? ''}`,
-            `CustomResourceVPCLambdaArn=${answers.deploymentHelper.vpcLambdaArn}`,
-          ];
-
-          const addIfSpecified = (key: string, value: unknown) => {
-            if (value !== undefined) parameterOverrides.push(`${key}=${value}`)
-          };
-
-          addIfSpecified('DbInstanceType', answers.assetLibrary.neptuneDbInstanceType);
-          addIfSpecified('CreateDBReplicaInstance', answers.assetLibrary.createDbReplicaInstance);
-          addIfSpecified('SnapshotIdentifier', answers.assetLibrary.neptuneSnapshotIdentifier);
-
           await packageAndDeployStack({
             answers: answers,
             stackName: this.neptuneStackName,
             serviceName: 'assetlibrary',
             templateFile: '../assetlibrary/infrastructure/cfn-neptune.yaml',
-            parameterOverrides,
+            parameterOverrides: this.getNeptuneParameterOverrides(answers),
             needsCapabilityNamedIAM: true,
           })
         }
@@ -254,37 +311,12 @@ export class AssetLibraryInstaller implements RestModule {
     tasks.push({
       title: `Packaging and deploying stack '${this.applicationStackName}'`,
       task: async () => {
-        const parameterOverrides = [
-          `Environment=${answers.environment}`,
-          `VpcId=${answers.vpc?.id ?? 'N/A'}`,
-          `CDFSecurityGroupId=${answers.vpc?.securityGroupId ?? ''}`,
-          `PrivateSubNetIds=${answers.vpc?.privateSubnetIds ?? ''}`,
-          `Mode=${answers.assetLibrary.mode}`,
-          `TemplateSnippetS3UriBase=${answers.apigw.templateSnippetS3UriBase}`,
-          `ApiGatewayDefinitionTemplate=${answers.apigw.cloudFormationTemplate}`,
-          `PrivateApiGatewayVPCEndpoint=${answers.vpc?.privateApiGatewayVpcEndpoint ?? ''}`,
-          `AuthType=${answers.apigw.type}`
-        ];
-
-        const addIfSpecified = (key: string, value: unknown) => {
-          if (value !== undefined) parameterOverrides.push(`${key}=${value}`)
-        };
-
-        addIfSpecified('NeptuneURL', answers.assetLibrary.neptuneUrl);
-        addIfSpecified('ApplyAutoscaling', answers.assetLibrary.enableAutoScaling);
-        addIfSpecified('ProvisionedConcurrentExecutions', answers.assetLibrary.provisionedConcurrentExecutions);
-        addIfSpecified('CustomResourceVPCLambdaArn', answers.assetLibrary.mode === 'full' ?
-          answers.deploymentHelper.vpcLambdaArn : answers.deploymentHelper.lambdaArn);
-        addIfSpecified('CognitoUserPoolArn', answers.apigw.cognitoUserPoolArn);
-        addIfSpecified('AuthorizerFunctionArn', answers.apigw.lambdaAuthorizerArn);
-        addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
-
         await packageAndDeployStack({
           answers: answers,
           stackName: this.applicationStackName,
           serviceName: 'assetlibrary',
           templateFile: '../assetlibrary/infrastructure/cfn-assetLibrary.yaml',
-          parameterOverrides,
+          parameterOverrides: this.getAssetLibraryParameterOverrides(answers),
           needsPackaging: true,
           needsCapabilityNamedIAM: true,
           needsCapabilityAutoExpand: true,

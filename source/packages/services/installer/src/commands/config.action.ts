@@ -19,9 +19,7 @@ async function configAction(
   const iotEndpoint = await getCurrentIotEndpoint(region);
   const iotCredentialEndpoint = await getCurrentIotCredentialEndpoint(region);
 
-  const answerStorage = new AnswersStorage(accountId, region, environment);
-
-  let answers = await answerStorage.loadFromFile(deploymentConfig);
+  let answers = await AnswersStorage.loadFromFile(deploymentConfig);
 
   answers = Object.assign(answers, {
     accountId,
