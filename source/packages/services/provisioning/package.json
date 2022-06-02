@@ -1,13 +1,13 @@
 {
   "name": "@cdf/provisioning",
-  "version": "5.0.2",
+  "version": "5.1.0",
   "description": "CDF Provisioning",
   "author": "Dean Hart",
   "scripts": {
     "clean": "npx shx rm -rf dist tsconfig.tsbuildinfo bundle.zip .rush .nyc_output *.log",
     "lint": "npx eslint . --ext '.ts'",
     "build": "npx tsc -b && npx shx cp -R 'src/config' 'dist/' && npx shx cp -R 'src/things/policies' 'dist/things/policies'",
-    "test": "rushx lint && jest --silent",
+    "test": "rushx lint && jest",
     "start": "rushx build && APP_CONFIG_DIR=${PWD}/src/config nodemon dist/lambda_proxy.js",
     "bundle": "../../../infrastructure/bundle-package.bash provisioning"
   },

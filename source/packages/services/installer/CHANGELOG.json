@@ -2,6 +2,18 @@
   "name": "@cdf/installer",
   "entries": [
     {
+      "version": "0.7.0",
+      "tag": "@cdf/installer_v0.7.0",
+      "date": "Thu, 02 Jun 2022 00:45:32 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "Added support for creating and registering AWS IoT device certificates using AWS ACM PCA."
+          }
+        ]
+      }
+    },
+    {
       "version": "0.6.0",
       "tag": "@cdf/installer_v0.6.0",
       "date": "Tue, 24 May 2022 04:06:34 GMT",

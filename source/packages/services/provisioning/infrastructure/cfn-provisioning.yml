@@ -108,13 +108,20 @@ Parameters:
       - 'false'
     MinLength: 1
 
+  ACMPCACrossAccountRoleArn:
+    Description: If ACM PCA functionality is to be used, and a ACM PCA is located within a different AWS Account, specify the cross-account IAM Role ARN.
+    Type: String
+    Default: ''
+
 Conditions:
   KmsKeyIdProvided: !Not [ !Equals [ !Ref KmsKeyId, "" ] ]
   DeployInVPC: !Not [ !Equals [ !Ref VpcId, 'N/A' ] ]
   DeployWithLambdaAuth: !Or [ !Equals [ !Ref AuthType, 'LambdaRequest' ], !Equals [ !Ref AuthType, 'LambdaToken' ] ]
   EnableApiGatewayAccessLogs: !Equals [ !Ref EnableApiGatewayAccessLogs, "true"]
+  ACMPCACrossAccountAccessRequired:  !Not [ !Equals [ !Ref ACMPCACrossAccountRoleArn, "" ] ] 
 
 Resources:
+
   ApiGatewayApi:
     'Fn::Transform':
       Name: 'AWS::Include'
@@ -154,6 +161,7 @@ Resources:
       ManagedPolicyArns:
         - !If [KmsKeyIdProvided, !Ref SSMPolicy, !Ref "AWS::NoValue"]
         - !Ref BulkProvisioningPolicy
+        - !Ref ACMPolicy
         - arn:aws:iam::aws:policy/AWSLambdaExecute
         - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
         - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
@@ -163,7 +171,7 @@ Resources:
   BulkProvisioningPolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
-      Description: "cdf-provisioning policy for enabling bulk provisoning"
+      Description: "cdf-provisioning policy for enabling bulk provisioning"
       Path: "/cdf/provisioning/"
       PolicyDocument:
         Version: "2012-10-17"
@@ -175,7 +183,7 @@ Resources:
           - Action:
               - 'iot:RegisterCertificateWithoutCA'
             Effect: Allow
-            Resource: !Sub "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:cert/*"
+            Resource: !Sub "*"
 
   SSMPolicy:
     Type: AWS::IAM::ManagedPolicy
@@ -194,6 +202,26 @@ Resources:
               - 'kms:Decrypt'
             Effect: Allow
             Resource: !Sub "arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/${KmsKeyId}"
+
+  ACMPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: "cdf-bulkcerts policy for accessing ACM PCA"
+      Path: "/cdf/provisioning/"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Action:
+              - 'acm-pca:IssueCertificate'
+              - 'acm-pca:GetCertificate'
+            Effect: Allow
+            Resource: "*"
+
+          # optional cross-account role access for ACM PCA
+          - Fn::If:
+              - ACMPCACrossAccountAccessRequired
+              - !Ref ACMPCACrossAccountRoleArn
+              - Ref: AWS::NoValue
 
   LambdaFunction:
     Type: AWS::Serverless::Function
@@ -216,6 +244,7 @@ Resources:
           AWS_S3_ROLE_ARN: !GetAtt LambdaExecutionRole.Arn
           AWS_S3_TEMPLATES_BUCKET: !Ref BucketName
           AWS_S3_BULKREQUESTS_BUCKET: !Ref BucketName
+          ACM_PCA_CROSS_ACCOUNT_ROLE_ARN: !Ref ACMPCACrossAccountRoleArn
       Tracing: Active
 
       VpcConfig:
@@ -248,6 +277,11 @@ Outputs:
     Value: !Ref LambdaFunction
     Export:
       Name: !Sub 'cdf-provisioning-${Environment}-restApiFunctionName'
+  LambdaExecutionRoleArn:
+    Description: Provisioning REST API lambda function execution role
+    Value: !GetAtt LambdaExecutionRole.Arn
+    Export:
+      Name: !Sub 'cdf-provisioning-${Environment}-lambdaExecutionRoleArn'
   ApiGatewayUrl:
     Description: Provisioning REST API URL
     Value: !Sub 'https://${ApiGatewayApi}.execute-api.${AWS::Region}.amazonaws.com/Prod'

@@ -1,6 +1,13 @@
 # Change Log - @cdf/installer
 
-This log was last generated on Tue, 24 May 2022 04:06:34 GMT and should not be manually modified.
+This log was last generated on Thu, 02 Jun 2022 00:45:32 GMT and should not be manually modified.
+
+## 0.7.0
+Thu, 02 Jun 2022 00:45:32 GMT
+
+### Minor changes
+
+- Added support for creating and registering AWS IoT device certificates using AWS ACM PCA.
 
 ## 0.6.0
 Tue, 24 May 2022 04:06:34 GMT

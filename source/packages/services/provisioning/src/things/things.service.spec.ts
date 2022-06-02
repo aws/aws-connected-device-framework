@@ -17,33 +17,48 @@ import { ClientIdEnforcementPolicyStepProcessor } from './steps/clientIdEnforcem
 import { CreateDeviceCertificateStepProcessor } from './steps/createDeviceCertificateProcessor';
 import { RegisterDeviceCertificateWithoutCAStepProcessor } from './steps/registerDeviceCertificateWithoutCaProcessor';
 import { AttachAdditionalPoliciesProcessor } from './steps/attachAdditionalPoliciesProcessor';
+import { UseACMPCAStepProcessor } from './steps/useACMPCAProcessor';
+import createMockInstance from 'jest-create-mock-instance';
+import { CreateAwsCertiticateProcessor } from './steps/createAwsCertificateProcessor';
 
 let mockIot: AWS.Iot;
 let mockS3: AWS.S3;
+let mockClientIdEnforcementPolicyStepProcessor: jest.Mocked<ClientIdEnforcementPolicyStepProcessor>;
+let mockCreateDeviceCertificateStepProcessor: jest.Mocked<CreateDeviceCertificateStepProcessor>;
+let mockCreateAwsCertiticateProcessor: jest.Mocked<CreateAwsCertiticateProcessor>;
+let mockRegisterDeviceCertificateWithoutCAStepProcessor: jest.Mocked<RegisterDeviceCertificateWithoutCAStepProcessor>;
+let mockUseACMPCAProcessor: jest.Mocked<UseACMPCAStepProcessor>;
+let mockAttachAdditionalPoliciesProcessorProcessor: jest.Mocked<AttachAdditionalPoliciesProcessor>;
 let instance: ThingsService;
 
 describe('ThingsService', () => {
 
-    beforeEach(()=> {
+    beforeEach(() => {
         mockIot = new AWS.Iot();
         mockS3 = new AWS.S3();
+        mockClientIdEnforcementPolicyStepProcessor = createMockInstance(ClientIdEnforcementPolicyStepProcessor);
+        mockCreateDeviceCertificateStepProcessor = createMockInstance(CreateDeviceCertificateStepProcessor);
+        mockRegisterDeviceCertificateWithoutCAStepProcessor = createMockInstance(RegisterDeviceCertificateWithoutCAStepProcessor);
+        mockUseACMPCAProcessor = createMockInstance(UseACMPCAStepProcessor);
+        mockAttachAdditionalPoliciesProcessorProcessor = createMockInstance(AttachAdditionalPoliciesProcessor);
 
         // SSM mock
         const mockSSM = new AWS.SSM();
-        mockSSM.getParameter = jest.fn().mockImplementationOnce(()=> {
+        mockSSM.getParameter = jest.fn().mockImplementationOnce(() => {
             return {
-              promise: () : AWS.SSM.Types.GetParameterResult => null
+                promise: (): AWS.SSM.Types.GetParameterResult => null
             };
         });
 
-        const mockClientIdEnforcementPolicyStepProcessor = new ClientIdEnforcementPolicyStepProcessor(() => mockIot, 'region', 'accountId');
-        const mockCreateDeviceCertificateStepProcessor = new CreateDeviceCertificateStepProcessor(() => mockIot, () => mockSSM, 365);
-        const mockRegisterDeviceCertificateWithoutCAStepProcessor = new RegisterDeviceCertificateWithoutCAStepProcessor(() => mockIot);
-        const mockAttachAdditionalPoliciesProcessorProcessor = new AttachAdditionalPoliciesProcessor(() => mockIot);
-
-        instance = new ThingsService(() => mockIot, () => mockS3, mockClientIdEnforcementPolicyStepProcessor, mockCreateDeviceCertificateStepProcessor, mockRegisterDeviceCertificateWithoutCAStepProcessor, mockAttachAdditionalPoliciesProcessorProcessor,
-        's3rolearn', 'templateBucket',  'teplatePrefix', 'templateSuffix', 'bulkRequestBukcet', 'bulkRequestPrefix',
-        false, false);
+        instance = new ThingsService(() => mockIot, () => mockS3,
+            mockClientIdEnforcementPolicyStepProcessor,
+            mockCreateDeviceCertificateStepProcessor,
+            mockCreateAwsCertiticateProcessor,
+            mockRegisterDeviceCertificateWithoutCAStepProcessor,
+            mockUseACMPCAProcessor,
+            mockAttachAdditionalPoliciesProcessorProcessor,
+            's3rolearn', 'templateBucket', 'teplatePrefix', 'templateSuffix', 'bulkRequestBukcet', 'bulkRequestPrefix',
+            false, false);
     });
 
     it('provision should provision thing', async () => {
@@ -79,9 +94,9 @@ describe('ThingsService', () => {
         };
 
         // S3 mock
-        mockS3.getObject = jest.fn().mockImplementationOnce(()=> {
+        mockS3.getObject = jest.fn().mockImplementationOnce(() => {
             return {
-            promise: () : AWS.S3.Types.GetObjectOutput => s3GetObjectResponse
+                promise: (): AWS.S3.Types.GetObjectOutput => s3GetObjectResponse
             };
         });
 
@@ -98,14 +113,14 @@ describe('ThingsService', () => {
         };
 
         // IoT mocks
-        mockIot.registerThing = jest.fn().mockImplementationOnce(()=> {
+        mockIot.registerThing = jest.fn().mockImplementationOnce(() => {
             return {
-            promise: () : AWS.Iot.Types.RegisterThingResponse => registerThingResponse
+                promise: (): AWS.Iot.Types.RegisterThingResponse => registerThingResponse
             };
         });
 
         // now do the service call
-        const provisionResponse = await instance.provision('test_template_id', {ThingName: 'UnitTestThingName'}, undefined);
+        const provisionResponse = await instance.provision('test_template_id', { ThingName: 'UnitTestThingName' }, undefined);
 
         expect(provisionResponse).toBeDefined();
         expect(provisionResponse.certificatePem).toEqual(certPem);
@@ -116,29 +131,29 @@ describe('ThingsService', () => {
 
     it('should delete thing without cert or policy', async () => {
 
-        const listThingPrincipalsResponse:AWS.Iot.Types.ListThingPrincipalsResponse = {
+        const listThingPrincipalsResponse: AWS.Iot.Types.ListThingPrincipalsResponse = {
             principals: []
         };
 
-        mockIot.listThingPrincipals = jest.fn().mockImplementationOnce(()=> {
+        mockIot.listThingPrincipals = jest.fn().mockImplementationOnce(() => {
             return {
-              promise: () : AWS.Iot.Types.ListThingPrincipalsResponse => listThingPrincipalsResponse
+                promise: (): AWS.Iot.Types.ListThingPrincipalsResponse => listThingPrincipalsResponse
             };
         });
 
         let deleteThingResponseCalls = 0;
-        mockIot.deleteThing = jest.fn().mockImplementationOnce(()=> {
+        mockIot.deleteThing = jest.fn().mockImplementationOnce(() => {
             deleteThingResponseCalls++;
             return {
-              promise: () : AWS.Iot.Types.DeleteThingResponse => null
+                promise: (): AWS.Iot.Types.DeleteThingResponse => null
             };
         });
 
         let deleteCertificateCalls = 0;
-        mockIot.deleteCertificate = jest.fn().mockImplementationOnce(()=> {
+        mockIot.deleteCertificate = jest.fn().mockImplementationOnce(() => {
             deleteCertificateCalls++;
             return {
-              promise: () : {} => null
+                promise: (): {} => null
             };
         });
 

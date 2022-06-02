@@ -13,13 +13,15 @@
 export const TYPES = {
 
     Controller: Symbol.for('Controller'),
-    HttpHeaderUtils: Symbol.for('HttpHeaderUtils'),
     ThingsService: Symbol.for('ThingsService'),
     EventEmitter: Symbol.for('EventEmitter'),
+    CertUtils: Symbol.for('CertUtils'),
 
     ClientIdEnforcementPolicyStepProcessor: Symbol.for('ClientIdEnforcementPolicyStepProcessor'),
     CreateDeviceCertificateStepProcessor: Symbol.for('CreateDeviceCertificateStepProcessor'),
+    CreateAwsCertiticateProcessor: Symbol.for('CreateAwsCertiticateProcessor'),
     RegisterDeviceCertificateWithoutCAStepProcessor: Symbol.for('RegisterDeviceCertificateWithoutCAStepProcessor'),
+    UseACMPCAStepProcessor: Symbol.for('UseACMPCAStepProcessor'),
     AttachAdditionalPoliciesProcessor: Symbol.for('AttachAdditionalPoliciesProcessor'),
 
     Iot: Symbol.for('Iot'),
@@ -29,6 +31,10 @@ export const TYPES = {
     SSM: Symbol.for('SSM'),
     SSMFactory: Symbol.for('Factory<SSM>'),
     SNS: Symbol.for('SNS'),
-    SNSFactory: Symbol.for('Factory<SNS>')
+    SNSFactory: Symbol.for('Factory<SNS>'),
+    ACMPCA: Symbol.for('ACMPCA'),
+    ACMPCAFactory: Symbol.for('Factory<ACMPCA>'),
+    STS: Symbol.for('STS'),
+    STSFactory: Symbol.for('Factory<STS>')
 
 };

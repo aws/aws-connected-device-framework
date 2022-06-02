@@ -45,7 +45,7 @@ describe('ThingsServiceLambda', () => {
             },
             cdfProvisioningParameters: {
                 certificatePem: '-----BEGIN CERTIFICATE-----\\\\nMIIDkjC....',
-                certificateStatus: 'ACTIVE'
+                certificateStatus: CertificateStatus.ACTIVE
             }
         };
 
