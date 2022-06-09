@@ -22,6 +22,7 @@ import { NotificationsInstaller } from "../commands/modules/service/notification
 import { FleetSimulatorInstaller } from "../commands/modules/service/fleetSimulator";
 import { DevicePatcherInstaller } from "../commands/modules/service/devicePatcher";
 import { AssetLibraryExportInstaller } from "../commands/modules/service/assetLibraryExport";
+import { CommandAndControlInstaller } from "../commands/modules/service/commandAndControl";
 
 export type ModuleName =
   // infrastructure modules:
@@ -36,6 +37,7 @@ export type ModuleName =
   | "assetLibraryExport"
   | "assetLibraryHistory"
   | "authDeviceCert"
+  | "commandAndControl"
   | "devicePatcher"
   | "bulkCerts"
   | "certificateActivator"
@@ -57,6 +59,7 @@ export interface Module {
   type: "SERVICE" | "INFRASTRUCTURE";
   prompts: (answers: Answers) => Promise<Answers>;
   install: (answers: Answers) => Promise<[Answers, ListrTask[]]>;
+  package: (answers: Answers) => Promise<[Answers, ListrTask[]]>;
   delete: (answers: Answers) => Promise<ListrTask[]>;
 }
 
@@ -94,13 +97,14 @@ export const loadModules = (environment: string): Module[] => {
     new CertificateActivatorInstaller(environment),
     new CertificateVendorInstaller(environment),
     new CommandsInstaller(environment),
+    new CommandAndControlInstaller(environment),
     new DeviceMonitoringInstaller(environment),
+    new DevicePatcherInstaller(environment),
     new FleetSimulatorInstaller(environment),
     new Greengrass2InstallerConfigGeneratorsInstaller(environment),
     new Greengrass2ProvisioningInstaller(environment),
     new NotificationsInstaller(environment),
     new ProvisioningInstaller(environment),
-    new DevicePatcherInstaller(environment),
   ];
   return modules;
 };

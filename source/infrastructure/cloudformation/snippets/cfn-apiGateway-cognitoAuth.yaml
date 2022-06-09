@@ -12,6 +12,10 @@
 #-----------------------------------------------------------------------------------------------------------------------
 Type: AWS::Serverless::Api
 Properties:
+  Cors:
+    AllowMethods: "'GET, POST, DELETE, PUT'"
+    AllowOrigin: "'*'"
+    AllowHeaders: "'Content-type, Origin, X-Requested-With, Content-Type, Accept, Authorization'"
   StageName: Prod
   EndpointConfiguration: REGIONAL
   AccessLogSetting:

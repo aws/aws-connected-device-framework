@@ -125,18 +125,40 @@ export interface EffectiveDeployment {
 
 export type CoreTaskStatus = 'Waiting' | 'InProgress' | 'Success' | 'Failure';
 
-export interface CdfProvisioningParameters {
-    caId?: string;
-    certInfo?: {
-        commonName?: string;
-        organization?: string;
-        organizationalUnit?: string;
-        locality?: string;
-        stateName?: string;
-        country?: string;
-        emailAddress?: string;
-        daysExpiry?: number;
-    };
+
+export type CdfProvisioningParameters = CreateDeviceCertificateParameters | RegisterDeviceCertificateWithoutCAParameters | UseACMPCAParameters | undefined;
+
+export interface CreateDeviceCertificateParameters {
+	caId: string;
+	certInfo: CertInfo;
+} 
+export interface RegisterDeviceCertificateWithoutCAParameters {
+	certificatePem: string;
+	certificateStatus?: CertificateStatus;
+}
+
+export enum CertificateStatus {
+	ACTIVE = 'ACTIVE',
+	INACTIVE = 'INACTIVE'
+}
+
+export interface UseACMPCAParameters {
+	caArn?: string;
+	caAlias?: string;
+	
+	csr?: string;
+	certInfo: CertInfo;
+} 
+
+export interface CertInfo {
+	commonName?: string;
+	organization?: string;
+	organizationalUnit?: string;
+	locality?: string;
+	stateName?: string;
+	country?: string;
+	emailAddress?: string;
+	daysExpiry?:number;	
 }
 
 export type InstallerConfigGenerators = { [alias: string]: string };

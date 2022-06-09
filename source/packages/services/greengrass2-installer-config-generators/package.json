@@ -1,6 +1,6 @@
 {
   "name": "@cdf/greengrass2-installer-config-generators",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "CDF Greengrass V2 Provisioning - Sample core device installer config generators",
   "author": "Dean Hart",
   "scripts": {
@@ -14,7 +14,7 @@
   "dependencies": {
     "@cdf/errors": "^4.0.0",
     "@cdf/logger": "^4.0.0",
-    "@cdf/config-inject": "^4.0.0",
+    "@cdf/config-inject": "^4.0.1",
     "aws-lambda": "1.0.6",
     "dotenv-flow": "3.2.0",
     "logform": "2.2.0",

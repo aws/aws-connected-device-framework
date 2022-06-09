@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/greengrass2-provisioning-client",
+      "comment": "fix(greengrasss2-client): minor env var naming update",
+      "type": "none"
+    }
+  ],
+  "packageName": "@cdf/greengrass2-provisioning-client",
+  "email": "hkhokhar@amazon.com"
+}

@@ -561,6 +561,10 @@ Resources:
           FromPort: 8182
           ToPort: 8182 # Neptune endpoint
           CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 8111
+          ToPort: 8111 # Neptune endpoint
+          CidrIp: 0.0.0.0/0
 
   S3Endpoint:
     Type: "AWS::EC2::VPCEndpoint"

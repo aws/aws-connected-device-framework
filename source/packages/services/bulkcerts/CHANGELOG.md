@@ -1,6 +1,20 @@
 # Change Log - @cdf/bulkcerts
 
-This log was last generated on Thu, 17 Feb 2022 09:27:38 GMT and should not be manually modified.
+This log was last generated on Thu, 12 May 2022 01:58:21 GMT and should not be manually modified.
+
+## 6.0.2
+Thu, 12 May 2022 01:58:21 GMT
+
+### Patches
+
+- corrected README documentation 
+
+## 6.0.1
+Mon, 21 Mar 2022 21:58:32 GMT
+
+### Patches
+
+- Upgrade dependencies marked as deprecated
 
 ## 6.0.0
 Thu, 17 Feb 2022 09:27:38 GMT

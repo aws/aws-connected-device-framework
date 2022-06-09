@@ -31,7 +31,8 @@ export class EventSourceService  {
         @inject(TYPES.DynamoDbEventSource) private dynamoDbEventSource: DynamoDbEventSource,
         @inject(TYPES.IotCoreEventSource) private iotCoreEventSource: IotCoreEventSource,
         @inject(TYPES.ApiGatewayEventSource) private apiGatewayEventSource: ApiGatewayEventSource,
-        @inject(TYPES.EventService) private eventService: EventService) {
+        @inject(TYPES.EventService) private eventService: EventService,
+        ) {
         }
 
     public async create(resource:EventSourceDetailResource) : Promise<string> {

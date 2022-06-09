@@ -14,7 +14,7 @@ import { expect, use } from 'chai';
 import chaiUuid = require('chai-uuid');
 use(chaiUuid);
 
-import { setDefaultTimeout, When, TableDefinition} from 'cucumber';
+import { setDefaultTimeout, When, DataTable} from '@cucumber/cucumber';
 import { AUTHORIZATION_TOKEN, RESPONSE_STATUS} from '../common/common.steps';
 import {container} from '../../di/inversify.config';
 import { NOTIFICATIONS_CLIENT_TYPES, SubscriptionsService, TargetsService } from '@cdf/notifications-client/dist';
@@ -35,7 +35,7 @@ setDefaultTimeout(10 * 1000);
 const subscriptionsService:SubscriptionsService = container.get(NOTIFICATIONS_CLIENT_TYPES.SubscriptionsService);
 const targetsService:TargetsService = container.get(NOTIFICATIONS_CLIENT_TYPES.TargetsService);
 
-When('I add {string} target with attributes', async function (targetType:string, data:TableDefinition) {
+When('I add {string} target with attributes', async function (targetType:string, data:DataTable) {
     this[RESPONSE_STATUS]=null;
     try {
         await createTarget(targetsService, this, this[SUBSCRIPTION_ID], targetType, data);

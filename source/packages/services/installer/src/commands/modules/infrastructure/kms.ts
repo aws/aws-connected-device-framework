@@ -1,3 +1,15 @@
+/*********************************************************************************************************************
+ *  Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.                                           *
+ *                                                                                                                    *
+ *  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance    *
+ *  with the License. A copy of the License is located at                                                             *
+ *                                                                                                                    *
+ *      http://www.apache.org/licenses/LICENSE-2.0                                                                    *
+ *                                                                                                                    *
+ *  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES *
+ *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
+ *  and limitations under the License.                                                                                *
+ *********************************************************************************************************************/
 import inquirer from 'inquirer';
 import { ListrTask } from 'listr2';
 import ow from 'ow';
@@ -98,7 +110,7 @@ export class KmsKeyInstaller implements InfrastructureModule {
     ], answers);
 
     // remove "alias/" prefix if entered
-    if (answers.kms.alias.startsWith("alias/")) {
+    if (answers.kms.alias?.startsWith("alias/")) {
       answers.kms.alias = answers.kms.alias.substring(6);
     }
 
@@ -117,6 +129,10 @@ export class KmsKeyInstaller implements InfrastructureModule {
     }
 
     return answers;
+  }
+
+  public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    return [answers, []]
   }
 
   public async install(answers: Answers): Promise<[Answers, ListrTask[]]> {

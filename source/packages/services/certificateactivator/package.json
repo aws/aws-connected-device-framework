@@ -1,6 +1,6 @@
 {
   "name": "@cdf/certificate-activator",
-  "version": "4.0.1",
+  "version": "4.0.3",
   "description": "CDF Certificate Activator",
   "author": "Dean Hart",
   "config": {
@@ -17,11 +17,11 @@
   },
   "dependencies": {
     "@cdf/errors": "^4.0.0",
-    "@cdf/config-inject": "^4.0.0",
+    "@cdf/config-inject": "^4.0.1",
     "@cdf/logger": "^4.0.0",
-    "@cdf/lambda-invoke": "^3.0.0",
-    "@cdf/assetlibrary-client": "^5.0.1",
-    "@cdf/provisioning-client": "^5.0.0",
+    "@cdf/lambda-invoke": "^3.0.2",
+    "@cdf/assetlibrary-client": "^5.0.4",
+    "@cdf/provisioning-client": "^5.1.0",
     "aws-sdk": "2.1048.0",
     "config": "3.3.6",
     "inversify": "5.1.1",
@@ -33,7 +33,7 @@
     "pem": "1.14.4",
     "readable-stream": "3.6.0",
     "reflect-metadata": "0.1.13",
-    "superagent": "6.1.0",
+    "superagent": "7.1.1",
     "winston": "3.3.3",
     "winston-transport": "4.4.0",
     "atob": "2.1.2",

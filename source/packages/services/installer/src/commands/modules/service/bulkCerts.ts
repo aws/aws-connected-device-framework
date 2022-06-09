@@ -1,14 +1,26 @@
-import { Answers } from '../../../models/answers';
+/*********************************************************************************************************************
+ *  Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.                                           *
+ *                                                                                                                    *
+ *  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance    *
+ *  with the License. A copy of the License is located at                                                             *
+ *                                                                                                                    *
+ *      http://www.apache.org/licenses/LICENSE-2.0                                                                    *
+ *                                                                                                                    *
+ *  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES *
+ *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
+ *  and limitations under the License.                                                                                *
+ *********************************************************************************************************************/
+import { Answers, BulkCerts, CAAliases } from '../../../models/answers';
 import { ListrTask } from 'listr2';
 import { ModuleName, RestModule, PostmanEnvironment } from '../../../models/modules';
 import { ConfigBuilder } from "../../../utils/configBuilder";
 import inquirer from 'inquirer';
 import ow from 'ow';
-import execa from 'execa';
 import { customDomainPrompt } from '../../../prompts/domain.prompt';
 import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
-import { deleteStack, getStackOutputs, getStackParameters, getStackResourceSummaries } from '../../../utils/cloudformation.util';
+import { Lambda } from '@aws-sdk/client-lambda'
+import { deleteStack, getStackOutputs, getStackParameters, getStackResourceSummaries, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
 
 export class BulkCertificatesInstaller implements RestModule {
 
@@ -20,14 +32,13 @@ export class BulkCertificatesInstaller implements RestModule {
     'apigw',
     'kms',
     'openSsl'];
-  public readonly dependsOnOptional: ModuleName[] = ['vpc', 'authJwt'];
+
+  public readonly dependsOnOptional: ModuleName[] = [];
 
   private readonly stackName: string;
 
   constructor(environment: string) {
-
     this.stackName = `cdf-bulkcerts-${environment}`
-
   }
 
   public async prompts(answers: Answers): Promise<Answers> {
@@ -40,7 +51,77 @@ export class BulkCertificatesInstaller implements RestModule {
       return updatedAnswers;
     }
 
+    const suppliers = await this.getSuppliers(answers);
+
+    if (updatedAnswers.bulkCerts === undefined) {
+      updatedAnswers.bulkCerts = {} as BulkCerts;
+    }
+
+    updatedAnswers.bulkCerts.suppliers = suppliers;
+
     updatedAnswers = await inquirer.prompt([
+      {
+        message: `Create or modify supplier CA alias ?`,
+        type: 'confirm',
+        name: 'bulkCerts.setSupplier',
+        default: answers.bulkCerts?.setSupplier ?? true,
+        askAnswered: true
+      },
+      {
+        message: 'Select the suppliers you wish to modify',
+        type: 'list',
+        name: 'bulkCerts.caAlias',
+        choices: suppliers.list,
+        pageSize: 20,
+        loop: false,
+        askAnswered: true,
+        default: suppliers.list.length - 1,
+        validate(answer: string[]) {
+          if (answer?.length === 0) {
+            return false;
+          }
+          return true;
+        },
+        when(answers: Answers) {
+          return answers.bulkCerts?.setSupplier === true && suppliers.list?.length > 1;
+        }
+      },
+      {
+        message: `No supplier was found, Create a new alias ?`,
+        type: 'confirm',
+        name: 'bulkCerts.setSupplier',
+        default: answers.bulkCerts?.setSupplier ?? true,
+        askAnswered: true,
+        when(answers: Answers) {
+          return answers.bulkCerts?.setSupplier === true && suppliers.list?.length === 1;
+        },
+      },
+      {
+        message: `Enter new supplier alias:`,
+        type: 'input',
+        name: 'bulkCerts.caAlias',
+        default: answers.bulkCerts?.caAlias,
+        askAnswered: true,
+        validate(answer: string[]) {
+          if (answer?.length === 0) {
+            return false;
+          }
+          return true;
+        },
+        when(answers: Answers) {
+          return answers.bulkCerts?.setSupplier === true && (answers.bulkCerts.suppliers.list?.length === 1 || answers.bulkCerts.caAlias === "Create New Supplier");
+        },
+      },
+      {
+        message: `Supplier CA value:`,
+        type: 'input',
+        name: 'bulkCerts.caValue',
+        default: answers.bulkCerts?.caValue,
+        askAnswered: true,
+        when(answers: Answers) {
+          return answers.bulkCerts?.setSupplier === true;
+        },
+      },
       {
         message: 'Would you like to provide any default values for the device certificates?',
         type: 'confirm',
@@ -143,9 +224,51 @@ export class BulkCertificatesInstaller implements RestModule {
     ], updatedAnswers);
 
     return updatedAnswers;
-
-
   }
+
+  private getParameterOverrides(answers: Answers): string[] {
+    const parameterOverrides = [
+      `Environment=${answers.environment}`,
+      `TemplateSnippetS3UriBase=${answers.apigw.templateSnippetS3UriBase}`,
+      `AuthType=${answers.apigw.type}`,
+      `ApiGatewayDefinitionTemplate=${answers.apigw.cloudFormationTemplate}`,
+      `VpcId=${answers.vpc?.id ?? 'N/A'}`,
+      `CDFSecurityGroupId=${answers.vpc?.securityGroupId ?? ''}`,
+      `PrivateSubNetIds=${answers.vpc?.privateSubnetIds ?? ''}`,
+      `PrivateApiGatewayVPCEndpoint=${answers.vpc?.privateApiGatewayVpcEndpoint ?? ''}`,
+      `KmsKeyId=${answers.kms.id}`,
+      `OpenSslLambdaLayerArn=${answers.openSsl.arn}`,
+      `BucketName=${answers.s3.bucket}`,
+      `BucketKeyPrefix=certificates/`,
+    ]
+
+    const addIfSpecified = (key: string, value: unknown) => {
+      if (value !== undefined) parameterOverrides.push(`${key}=${value}`)
+    };
+
+    addIfSpecified('CognitoUserPoolArn', answers.apigw.cognitoUserPoolArn);
+    addIfSpecified('AuthorizerFunctionArn', answers.apigw.lambdaAuthorizerArn);
+    addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
+
+    return parameterOverrides;
+  }
+
+  public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    const tasks: ListrTask[] = [{
+      title: `Packaging module '${this.name}'`,
+      task: async () => {
+        await packageAndUploadTemplate({
+          answers: answers,
+          serviceName: 'bulkcerts',
+          templateFile: '../bulkcerts/infrastructure/cfn-bulkcerts.yml',
+          parameterOverrides: this.getParameterOverrides(answers),
+        });
+      },
+    }
+    ];
+    return [answers, tasks]
+  }
+
 
   public async install(answers: Answers): Promise<[Answers, ListrTask[]]> {
 
@@ -164,53 +287,18 @@ export class BulkCertificatesInstaller implements RestModule {
     }
 
     tasks.push({
-      title: `Packaging stack '${this.stackName}'`,
+      title: `Packaging and deploying stack '${this.stackName}'`,
       task: async () => {
-        await execa('aws', ['cloudformation', 'package',
-          '--template-file', '../bulkcerts/infrastructure/cfn-bulkcerts.yml',
-          '--output-template-file', '../bulkcerts/infrastructure/cfn-bulkcerts.yml.build',
-          '--s3-bucket', answers.s3.bucket,
-          '--s3-prefix', 'cloudformation/artifacts/',
-          '--region', answers.region
-        ]);
-      }
-    });
-
-    tasks.push({
-      title: `Deploying stack '${this.stackName}'`,
-      task: async () => {
-
-        const parameterOverrides = [
-          `Environment=${answers.environment}`,
-          `TemplateSnippetS3UriBase=${answers.apigw.templateSnippetS3UriBase}`,
-          `AuthType=${answers.apigw.type}`,
-          `ApiGatewayDefinitionTemplate=${answers.apigw.cloudFormationTemplate}`,
-          `VpcId=${answers.vpc?.id ?? 'N/A'}`,
-          `CDFSecurityGroupId=${answers.vpc?.securityGroupId ?? ''}`,
-          `PrivateSubNetIds=${answers.vpc?.privateSubnetIds ?? ''}`,
-          `PrivateApiGatewayVPCEndpoint=${answers.vpc?.privateApiGatewayVpcEndpoint ?? ''}`,
-          `KmsKeyId=${answers.kms.id}`,
-          `OpenSslLambdaLayerArn=${answers.openSsl.arn}`,
-          `BucketName=${answers.s3.bucket}`,
-          `BucketKeyPrefix=certificates/`,
-        ]
-
-        const addIfSpecified = (key: string, value: unknown) => {
-          if (value !== undefined) parameterOverrides.push(`${key}=${value}`)
-        };
-
-        addIfSpecified('CognitoUserPoolArn', answers.apigw.cognitoUserPoolArn);
-        addIfSpecified('AuthorizerFunctionArn', answers.apigw.lambdaAuthorizerArn);
-        addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
-
-        await execa('aws', ['cloudformation', 'deploy',
-          '--template-file', '../bulkcerts/infrastructure/cfn-bulkcerts.yml.build',
-          '--stack-name', this.stackName,
-          '--parameter-overrides', ...parameterOverrides,
-          '--capabilities', 'CAPABILITY_NAMED_IAM', 'CAPABILITY_AUTO_EXPAND',
-          '--no-fail-on-empty-changeset',
-          '--region', answers.region
-        ]);
+        await packageAndDeployStack({
+          answers: answers,
+          stackName: this.stackName,
+          serviceName: 'bulkcerts',
+          templateFile: '../bulkcerts/infrastructure/cfn-bulkcerts.yml',
+          parameterOverrides: this.getParameterOverrides(answers),
+          needsPackaging: true,
+          needsCapabilityNamedIAM: true,
+          needsCapabilityAutoExpand: true,
+        });
       }
     });
 
@@ -218,16 +306,32 @@ export class BulkCertificatesInstaller implements RestModule {
   }
 
   public async generatePostmanEnvironment(answers: Answers): Promise<PostmanEnvironment> {
-      const byOutputKey = await getStackOutputs(this.stackName, answers.region)
-      return {
-        key: 'bulkcerts_base_url',
-        value: byOutputKey('ApiGatewayUrl'),
-        enabled: true
-      }
+    const byOutputKey = await getStackOutputs(this.stackName, answers.region)
+    return {
+      key: 'bulkcerts_base_url',
+      value: byOutputKey('ApiGatewayUrl'),
+      enabled: true
+    }
   }
 
   public generateApplicationConfiguration(answers: Answers): string {
     const configBuilder = new ConfigBuilder()
+
+    if (answers.bulkCerts.setSupplier) {
+      if (!answers.bulkCerts.suppliers.list.includes(answers.bulkCerts.caAlias)) {
+        answers.bulkCerts.suppliers.cas.push({ alias: answers.bulkCerts.caAlias, value: answers.bulkCerts.caValue });
+      }
+      answers.bulkCerts.suppliers.cas.forEach(supplier => {
+        let alias = supplier.alias;
+        if (!supplier.alias.startsWith('SUPPLIER_CA_')) {
+          alias = `SUPPLIER_CA_${supplier.alias}`;
+        }
+        if (alias == answers.bulkCerts.caAlias) {
+          supplier.value = answers.bulkCerts.caValue;
+        }
+        configBuilder.add(alias, supplier.value);
+      });
+    }
 
     configBuilder
       .add(`CUSTOMDOMAIN_BASEPATH`, answers.bulkCerts.customDomainBasePath)
@@ -242,8 +346,7 @@ export class BulkCertificatesInstaller implements RestModule {
       .add(`CERTIFICATE_DEFAULT_EMAILADDRESS`, answers.bulkCerts.emailAddress)
       .add(`CERTIFICATE_DEFAULT_DISTINGUISHEDNAMEQUALIFIER`, answers.bulkCerts.distinguishedNameIdentifier)
       .add(`CERTIFICATE_DEFAULT_EXPIRYDAYS`, answers.bulkCerts.expiryDays)
-      .add(`DEFAULTS_CHUNKSIZE`, answers.bulkCerts.chunksize)
-
+      .add(`DEFAULTS_CHUNKSIZE`, answers.bulkCerts.chunksize);
     return configBuilder.config;
   }
 
@@ -267,12 +370,53 @@ export class BulkCertificatesInstaller implements RestModule {
   public async delete(answers: Answers): Promise<ListrTask[]> {
     const tasks: ListrTask[] = [];
     tasks.push({
-        title: `Deleting stack '${this.stackName}'`,
-        task: async () => {
-          await deleteStack(this.stackName, answers.region)
-        }
+      title: `Deleting stack '${this.stackName}'`,
+      task: async () => {
+        await deleteStack(this.stackName, answers.region)
+      }
     });
     return tasks
 
+  }
+
+  private async getSuppliers(answers: Answers): Promise<CAAliases> {
+    const lambda = new Lambda({ region: answers.region });
+    let suppliers: CAAliases;
+
+    if (typeof answers === 'undefined' || typeof answers.bulkCerts === 'undefined' || typeof answers.bulkCerts.suppliers === 'undefined') {
+      suppliers = { list: [], cas: [] };
+    } else {
+      suppliers = answers.bulkCerts.suppliers;
+      suppliers['list'] = [];
+      for (const ca of suppliers.cas) {
+        suppliers.list.push(ca.alias);
+      }
+    }
+
+    //append lambda suppliers if none are present in the config
+    try {
+      const config = await lambda.getFunctionConfiguration({ FunctionName: `cdf-bulkCerts-sns-${answers.environment}` });
+      const variables = config.Environment?.Variables;
+      const appConfigStr = variables['APP_CONFIG'] as string;
+      appConfigStr.split('\r\n').forEach(element => {
+        if (element.startsWith('SUPPLIER_CA_')) {
+          const [key, value] = element.split('=');
+          const alias = key.replace('SUPPLIER_CA_', '');
+
+          if (!suppliers.list.includes(alias)) {
+            suppliers.list.push(alias);
+            suppliers.cas.push({ alias, value });
+          }
+        }
+      });
+    } catch (e) {
+      e.name === 'ResourceNotFoundException' && console.log(`No suppliers found`);
+    }
+    if (suppliers.list.length == 0 || !suppliers.list.includes("Create New Supplier")) {
+      suppliers.list.push("Create New Supplier");
+    }
+    return suppliers;
+
+  }
 }
-}
+

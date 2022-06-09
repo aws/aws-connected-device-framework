@@ -2,6 +2,18 @@
   "name": "@cdf/greengrass2-installer-config-generators",
   "entries": [
     {
+      "version": "0.1.2",
+      "tag": "@cdf/greengrass2-installer-config-generators_v0.1.2",
+      "date": "Fri, 06 May 2022 04:48:51 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "add TokenExchangeRoleName cloudformation output"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.1.1",
       "tag": "@cdf/greengrass2-installer-config-generators_v0.1.1",
       "date": "Thu, 17 Feb 2022 09:27:38 GMT",

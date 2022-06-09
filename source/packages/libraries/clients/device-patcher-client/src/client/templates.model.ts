@@ -10,32 +10,50 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-export interface DeploymentSource {
-	type: DeploymentSourceType;
+export interface PatchSource {
 	bucket: string;
-	prefix: string;
+	key: string;
 }
 
-export enum DeploymentSourceType {
-	S3='s3',
-}
-
-export enum DeploymentType {
+export enum PatchType {
 	AGENTLESS='agentless',
 	AGENTBASED='agentbased',
 }
 
-export class DeploymentTemplate {
-	description: string;
+export interface CreatePatchTemplateParams {
+	description?: string;
+	enabled?: boolean;
+	extraVars?: { [key: string]: string};
+	name: string;
+	playbookFileLocation: string;
+	patchType: PatchType;
+}
+
+export interface UpdatePatchTemplateParams {
+	description?: string;
+	enabled?: boolean;
+	extraVars?: { [key: string]: string};
+	name: string;
+	playbookFileLocation?: string;
+	patchType?: PatchType;
+}
+
+export class PatchTemplate {
+	description?: string;
 	enabled?: boolean;
 	extraVars?: { [key: string]: string}
 	name: string;
-	playbookSource: DeploymentSource;
-	deploymentType: DeploymentType;
+	playbookName: string;
+	playbookSource?: PatchSource;
+	playbookFileLocation?: string;
+	patchType: PatchType;
+	updatedAt: Date;
+	createdAt: Date;
+	versionNo: number;
 }
 
-export class DeploymentTemplateList {
-	templates: DeploymentTemplate[] = [];
+export class PatchTemplateList {
+	templates: PatchTemplate[] = [];
 	pagination?: {
 		offset:number|string;
 		count: number;

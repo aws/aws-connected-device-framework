@@ -1,3 +1,15 @@
+/*********************************************************************************************************************
+ *  Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.                                           *
+ *                                                                                                                    *
+ *  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance    *
+ *  with the License. A copy of the License is located at                                                             *
+ *                                                                                                                    *
+ *      http://www.apache.org/licenses/LICENSE-2.0                                                                    *
+ *                                                                                                                    *
+ *  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES *
+ *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
+ *  and limitations under the License.                                                                                *
+ *********************************************************************************************************************/
 import * as fs from 'fs';
 import inquirer from 'inquirer';
 import { ListrTask } from 'listr2';
@@ -7,14 +19,15 @@ import path from 'path';
 import { Answers, ApiAuthenticationType } from '../../../models/answers';
 import { InfrastructureModule, ModuleName } from '../../../models/modules';
 import { getAbsolutePath, getMonorepoRoot, pathPrompt } from '../../../prompts/paths.prompt';
+import { includeOptionalModule } from '../../../utils/modules.util';
 import { S3Utils } from '../../../utils/s3.util';
-
+import { SsmUtils } from '../../../utils/ssm.util';
 export class ApiGwInstaller implements InfrastructureModule {
 
   public readonly friendlyName = 'API Gateway';
   public readonly name = 'apigw';
   public readonly dependsOnMandatory: ModuleName[] = [];
-  public dependsOnOptional: ModuleName[] = [];
+  public dependsOnOptional: ModuleName[] = ['authJwt'];
   public readonly type = 'INFRASTRUCTURE';
 
   public async prompts(answers: Answers): Promise<Answers> {
@@ -118,7 +131,7 @@ export class ApiGwInstaller implements InfrastructureModule {
         message: 'Use existing lambda authorizer:',
         type: 'input',
         name: 'apigw.useExistingLambdaAuthorizer',
-        default: answers.apigw?.useExistingLambdaAuthorizer,
+        default: answers.apigw?.useExistingLambdaAuthorizer ?? false,
         askAnswered: true,
         when(answers: Answers) {
           return (answers.apigw?.type === 'LambdaRequest' || answers.apigw?.type === 'LambdaToken')
@@ -167,8 +180,15 @@ export class ApiGwInstaller implements InfrastructureModule {
       // TODO potentially remove old ansers
     }
 
-    return answers;
+    includeOptionalModule('vpc', answers.modules, answers.apigw.type === 'Private')
+    includeOptionalModule('authJwt', answers.modules, answers.apigw.type === 'LambdaRequest' || answers.apigw.type === 'LambdaToken')
 
+    return answers;
+  }
+
+  public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    const results = await this.install(answers)
+    return results;
   }
 
   public async install(answers: Answers): Promise<[Answers, ListrTask[]]> {
@@ -183,11 +203,12 @@ export class ApiGwInstaller implements InfrastructureModule {
     tasks.push({
       title: 'Uploading API Gateway Cloudformation snippets',
       task: async (_, task): Promise<void> => {
-        const bucket = answers.s3.bucket;
-        const prefix = `cloudformation/snippets/${answers.environment}/`;
-        answers.apigw.templateSnippetS3UriBase = `s3://${bucket}/${prefix}`
+        const { bucket, optionalDeploymentBucket, optionalDeploymentPrefix } = answers.s3
+        const artifactBucket = optionalDeploymentBucket !== undefined ? optionalDeploymentBucket : bucket
+        const artifactPrefix = optionalDeploymentPrefix !== undefined ? optionalDeploymentPrefix : 'cloudformation'
+        const prefix = `${artifactPrefix}/snippets/${answers.environment}/`;
+        answers.apigw.templateSnippetS3UriBase = `s3://${artifactBucket}/${prefix}`
         const s3 = new S3Utils(answers.region);
-
         const monorepoRoot = await getMonorepoRoot();
         const snippetPath = await getAbsolutePath(monorepoRoot, answers.apigw.cloudFormationSnippetsPath);
         const snippets = fs.readdirSync(snippetPath);
@@ -195,11 +216,21 @@ export class ApiGwInstaller implements InfrastructureModule {
           task.output = `Uploading ${f}`;
           const fileContent = fs.readFileSync(path.join(snippetPath, f));
           const name = path.parse(f).base;
-          await s3.uploadStreamToS3(bucket, prefix + name, fileContent);
+          await s3.uploadStreamToS3(artifactBucket, prefix + name, fileContent);
         }
         task.output = `Uploads complete`;
-      }
+      },
     });
+
+    tasks.push({
+      title: 'Uploading API Gateway Cloudformation snippets',
+      task: async (_, task): Promise<void> => {
+        const ssm = new SsmUtils(answers.region);
+        const ssmPath = `/cdf/${this.name}/${answers.environment}/templateSnippetS3UriBase`
+        await ssm.storeParameter(ssmPath, answers.apigw.templateSnippetS3UriBase)
+        task.output = `Template snippets location ${answers.apigw.templateSnippetS3UriBase} is stored in ${ssmPath}`
+      },
+    })
 
     return [answers, tasks];
   }

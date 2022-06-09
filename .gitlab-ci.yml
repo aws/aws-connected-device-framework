@@ -17,9 +17,12 @@ variables:
 .default-run-condition: &default-run-condition
   - if: ($CI_COMMIT_BRANCH == "main" && $CI_COMMIT_MESSAGE != /.*\[skip ci\].*/)
 
+.branch-run-condition: &branch-run-condition
+  - if: ($CI_COMMIT_BRANCH != "main")
+
 .common-build-steps: &common-build-steps # install dependencies
   - cd ${CI_PROJECT_DIR}/source
-  - rush update
+  - rush install
   # build
   - rush build
 
@@ -63,6 +66,7 @@ stages:
   - deployStage
   - integrationTest
   - deployLive
+  - release
 
 ### not working at the moment, therefore using artifacts as a temp workaround
 # cache:
@@ -118,7 +122,8 @@ buildLambaLayersZip:
     paths:
       - source/infrastructure/lambdaLayers/openssl/build/build.zip
 
-test:
+
+branchTest:
   rules:
     - *default-run-condition
   stage: test
@@ -132,7 +137,18 @@ test:
     - export RUSH_PARALLELISM=8
     - cd ${CI_PROJECT_DIR}
     - bash -c source/cicd/buildproject_postbuild.bash
+    #
   <<: *common-artifacts
+
+test:
+  rules:
+    - *branch-run-condition
+  stage: test
+  script:
+    - *common-build-steps
+    - rush build
+    - export RUSH_PARALLELISM=1
+    - rush test
 
 deployStage:
   rules:
@@ -142,8 +158,7 @@ deployStage:
     <<: *staging-variables
   script:
     - pushd source
-    # rush install
-    - rush update --purge
+    - rush install --purge
     - popd
     # export the location of the config
     - export CODEBUILD_SRC_DIR_source_infrastructure="${CI_PROJECT_DIR}/${APP_CONFIG_DIR}"
@@ -162,8 +177,7 @@ integrationTest:
     <<: *staging-variables
   script:
     - pushd source
-    # rush install
-    - rush update --purge
+    - rush install --purge
     - popd
     # export the location of the config
     - export CODEBUILD_SRC_DIR_source_infrastructure="${CI_PROJECT_DIR}/${APP_CONFIG_DIR}"
@@ -179,10 +193,23 @@ deployLive:
   script:
     # deploy to live environment
     - pushd source
-    # rush install
-    - rush update --purge
+    - rush install --purge
     - popd
     - export CODEBUILD_SRC_DIR_source_infrastructure="${CI_PROJECT_DIR}/${APP_CONFIG_DIR}"
     - bash -c source/cicd/deployproject_build.bash
   after_script:
     - bash -c source/cicd/deployproject_postbuild.bash
+
+release:
+  image:
+    name: public.ecr.aws/lambda/nodejs:14
+    entrypoint: [""]
+  stage: release
+  before_script:
+    - *common-install-deployment-dependencies
+  rules:
+    - *default-run-condition
+  script:
+    # Create release package
+    - tar -cvf ../aws-connected-device-framework.tar --exclude=.git  --exclude=deploy --exclude=.history --exclude=temp .
+    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ../aws-connected-device-framework.tar "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/aws-connected-device-framework/${CI_JOB_ID}/aws-connected-device-framework.tar"'

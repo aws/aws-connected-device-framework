@@ -1,6 +1,6 @@
 {
   "name": "@cdf/certificate-vendor",
-  "version": "5.0.1",
+  "version": "5.0.2",
   "description": "CDF Certificate Vendor",
   "author": "Dean Hart",
   "scripts": {
@@ -14,9 +14,9 @@
   "dependencies": {
     "@cdf/errors": "^4.0.0",
     "@cdf/logger": "^4.0.0",
-    "@cdf/lambda-invoke": "^3.0.0",
-    "@cdf/assetlibrary-client": "^5.0.1",
-    "@cdf/config-inject": "^4.0.0",
+    "@cdf/lambda-invoke": "^3.0.2",
+    "@cdf/assetlibrary-client": "^5.0.4",
+    "@cdf/config-inject": "^4.0.1",
     "aws-sdk": "2.1048.0",
     "inversify": "5.1.1",
     "inversify-binding-decorators": "4.0.0",
@@ -26,7 +26,7 @@
     "pem": "1.14.4",
     "reflect-metadata": "0.1.13",
     "readable-stream": "3.6.0",
-    "superagent": "6.1.0",
+    "superagent": "7.1.1",
     "winston": "3.3.3",
     "winston-transport": "4.4.0",
     "dotenv-flow": "~3.2.0",

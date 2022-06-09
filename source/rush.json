@@ -90,6 +90,12 @@
       "shouldPublish": true
     },
     {
+      "packageName": "@cdf/commandandcontrol-client",
+      "projectFolder": "packages/libraries/clients/commandandcontrol-client",
+      "reviewCategory": "library",
+      "shouldPublish": true
+    },
+    {
       "packageName": "@cdf/device-patcher-client",
       "projectFolder": "packages/libraries/clients/device-patcher-client",
       "reviewCategory": "library",
@@ -278,6 +284,12 @@
     {
       "packageName": "@cdf/assetlibrary-export",
       "projectFolder": "packages/services/assetlibrary-export",
+      "reviewCategory": "production",
+      "shouldPublish": true
+    },
+    {
+      "packageName": "@cdf/command-and-control",
+      "projectFolder": "packages/services/command-and-control",
       "reviewCategory": "production",
       "shouldPublish": true
     },
@@ -547,11 +559,7 @@
      * The default branch name. This tells "rush change" which remote branch to compare against.
      * The default value is "master"
      */
-    /*  INTERNAL REPO:  */
     "defaultBranch": "main",
-
-    /* EXTERNAL REPO: */
-    // "defaultBranch": "main",
 
     /**
      * The default remote. This tells "rush change" which remote to compare against if the remote URL is

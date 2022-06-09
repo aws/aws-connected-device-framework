@@ -18,17 +18,15 @@ import { logger } from '../../utils/logger';
 
 import { ProvisioningStepData } from './provisioningStep.model';
 import { ProvisioningStepProcessor } from './provisioningStepProcessor';
-import { CertificateStatus, RegisterDeviceCertificateWithoutCAParameters } from '../things.models';
+import { RegisterDeviceCertificateWithoutCAParameters } from '../things.models';
+import { CertUtils } from '../../utils/cert';
 
 @injectable()
 export class RegisterDeviceCertificateWithoutCAStepProcessor implements ProvisioningStepProcessor {
 
-    private _iot: AWS.Iot;
-
     public constructor(
-        @inject(TYPES.IotFactory) iotFactory: () => AWS.Iot
+        @inject(TYPES.CertUtils) private certUtils: CertUtils
     ) {
-        this._iot = iotFactory();
     }
 
     public async process(stepData: ProvisioningStepData): Promise<void> {
@@ -38,7 +36,7 @@ export class RegisterDeviceCertificateWithoutCAStepProcessor implements Provisio
         ow(cdfParams?.certificatePem, 'certificate pem', ow.string.nonEmpty);
         ow(cdfParams?.certificateStatus, 'certificate status', ow.string.nonEmpty);
 
-        const certificateId = await this.registerCertificateWithoutCA(cdfParams.certificatePem, cdfParams.certificateStatus);
+        const certificateId = await this.certUtils.registerCertificateWithoutCA(cdfParams.certificatePem, cdfParams.certificateStatus);
 
         if (stepData.parameters===undefined) {
             stepData.parameters = {};
@@ -46,24 +44,5 @@ export class RegisterDeviceCertificateWithoutCAStepProcessor implements Provisio
         stepData.parameters.CertificateId = certificateId;
 
         logger.debug(`RegisterDeviceCertificateWithoutCAStepProcessor: process: exit:`);
-    }
-
-    private async registerCertificateWithoutCA(certificatePem: string, status: CertificateStatus): Promise<string> {
-        logger.debug(`RegisterDeviceCertificateWithoutCAStepProcessor: registerCertificateWithoutCA: in: ${certificatePem}`);
-
-        const params: AWS.Iot.RegisterCertificateWithoutCARequest = {
-            certificatePem,
-            status
-        };
-
-        let result;
-        try {
-            result = await this._iot.registerCertificateWithoutCA(params).promise();
-        } catch (err) {
-            logger.error(err);
-            throw err;
-        }
-
-        return result.certificateId;
     }
 }

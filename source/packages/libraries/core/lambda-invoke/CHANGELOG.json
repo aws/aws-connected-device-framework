@@ -2,6 +2,30 @@
   "name": "@cdf/lambda-invoke",
   "entries": [
     {
+      "version": "3.0.2",
+      "tag": "@cdf/lambda-invoke_v3.0.2",
+      "date": "Tue, 22 Mar 2022 22:51:44 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "print module name when outputting loaded config on startup"
+          }
+        ]
+      }
+    },
+    {
+      "version": "3.0.1",
+      "tag": "@cdf/lambda-invoke_v3.0.1",
+      "date": "Mon, 21 Mar 2022 21:58:32 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Upgrade dependencies marked as deprecated"
+          }
+        ]
+      }
+    },
+    {
       "version": "3.0.0",
       "tag": "@cdf/lambda-invoke_v3.0.0",
       "date": "Thu, 17 Feb 2022 09:27:38 GMT",

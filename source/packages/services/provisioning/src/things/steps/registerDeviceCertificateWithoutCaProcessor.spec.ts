@@ -11,30 +11,30 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import 'reflect-metadata';
-import AWS from 'aws-sdk';
 
 import {RegisterDeviceCertificateWithoutCAStepProcessor} from './registerDeviceCertificateWithoutCaProcessor';
 import {ProvisioningStepData} from './provisioningStep.model';
 import {CertificateStatus} from '../things.models';
+import { CertUtils } from '../../utils/cert';
+import createMockInstance from 'jest-create-mock-instance';
 
 describe('RegisterDeviceCertificateWithoutCAStepProcessor', () => {
+    let certUtils: jest.Mocked<CertUtils>;
     let instance: RegisterDeviceCertificateWithoutCAStepProcessor;
 
-    const mockIot = new AWS.Iot();
+    beforeEach(() => {
+        jest.resetModules();
+        certUtils = createMockInstance(CertUtils);
+        instance = new RegisterDeviceCertificateWithoutCAStepProcessor(certUtils);
+    })
 
     it('should register a certificate without a CA', async () => {
-       instance = new RegisterDeviceCertificateWithoutCAStepProcessor(() => mockIot);
 
-       const registerCertificateWithoutCAMockResponse = {
-           certificateId: 'bb889ee7a74078d6dd4595c50be836419c6cf30d29c32481c10e7c723cf550ce',
-           certificateArn: 'arn:aws:iot:us-west-2:1234567890:cacert/bb889ee7a74078d6dd4595c50be836419c6cf30d29c32481c10e7c723cf550ce',
-       };
+       const certificateId = 'bb889ee7a74078d6dd4595c50be836419c6cf30d29c32481c10e7c723cf550ce';
 
-        const mockedRegisterCertificateWithoutCA = mockIot.registerCertificateWithoutCA = jest.fn().mockImplementationOnce(()=> {
-            return {
-                promise: () => registerCertificateWithoutCAMockResponse
-            };
-        });
+        const mockedRegisterCertificateWithoutCA = 
+            certUtils.registerCertificateWithoutCA = 
+                jest.fn().mockImplementationOnce(()=> certificateId);
 
        const stepData: ProvisioningStepData = {
            template: {
@@ -55,7 +55,7 @@ describe('RegisterDeviceCertificateWithoutCAStepProcessor', () => {
        await instance.process(stepData);
 
         expect(stepData).toBeDefined();
-        expect(stepData.parameters.CertificateId).toEqual(registerCertificateWithoutCAMockResponse.certificateId);
+        expect(stepData.parameters.CertificateId).toEqual(certificateId);
         expect(mockedRegisterCertificateWithoutCA).toBeCalledTimes(1);
     });
 });

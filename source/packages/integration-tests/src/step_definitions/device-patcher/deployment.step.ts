@@ -14,11 +14,11 @@
 import 'reflect-metadata';
 import chai_string = require('chai-string');
 import { use } from 'chai';
-import { Then, When, setDefaultTimeout, TableDefinition } from 'cucumber';
+import { Then, When, setDefaultTimeout, DataTable } from '@cucumber/cucumber';
 import { replaceInFile, ReplaceInFileConfig } from 'replace-in-file';
 
 
-import { DeploymentService, CreateDeploymentRequest } from '@cdf/device-patcher-client';
+import { PatchService, CreatePatchRequest } from '@cdf/device-patcher-client';
 import { DEVICE_PATCHER_CLIENT_TYPES } from '@cdf/device-patcher-client';
 
 import { container } from '../../di/inversify.config';
@@ -44,21 +44,21 @@ use(chai_string);
 
 setDefaultTimeout(10 * 1000);
 
-const deploymentService: DeploymentService = container.get(DEVICE_PATCHER_CLIENT_TYPES.DeploymentService);
+const patchService: PatchService = container.get(DEVICE_PATCHER_CLIENT_TYPES.PatchService);
 
-When('I create a patch deployment Task for {string} edge device with attributes', async function (deviceId: string, data: TableDefinition) {
-    const deployment: CreateDeploymentRequest = buildDeploymentModel(data);
+When('I create a patch Task for {string} edge device with attributes', async function (deviceId: string, data: DataTable) {
+    const patch: CreatePatchRequest = buildPatchModel(data);
 
-    const deploymentTask = {
-        deployments: [{
+    const patchTask = {
+        patches: [{
             deviceId,
-            deploymentTemplateName: deployment.deploymentTemplateName,
-            extraVars: deployment.extraVars
+            patchTemplateName: patch.patchTemplateName,
+            extraVars: patch.extraVars
         }]
 
     }
     try {
-        this['deploymentTaskId'] = await deploymentService.createDeploymentTask(deploymentTask, getAdditionalHeaders(world.authToken));
+        this['patchTaskId'] = await patchService.createPatchTask(patchTask, getAdditionalHeaders(world.authToken));
     } catch (e) {
         this[RESPONSE_STATUS] = e.status;
     }
@@ -131,81 +131,121 @@ When('I launch an EC2 Instance {string} emulating as an edge device', async func
 
 
 
-When('I list deployments for {string} device', async function (deviceId: string) {
+When('I list patches for {string} device', async function (deviceId: string) {
     try {
-        this['deployment'] = await deploymentService.listDeploymentsByDeviceId(deviceId, undefined, getAdditionalHeaders(world.authToken));
+        this['patches'] = await patchService.listPatchesByDeviceId(deviceId, undefined, getAdditionalHeaders(world.authToken));
     } catch (e) {
         this[RESPONSE_STATUS] = e.status;
     }
 });
 
-When('I delete {string} for a device {string}', async function (deploymentId: string) {
+When('I delete {string} for a device {string}', async function (patchId: string) {
     try {
-        await deploymentService.deleteDeployment(deploymentId, getAdditionalHeaders(world.authToken));
+        await patchService.deletePatch(patchId, getAdditionalHeaders(world.authToken));
     } catch (e) {
         this[RESPONSE_STATUS] = e.status;
     }
 });
 
-Then('deployments exists for {string}', async function (deviceId: string) {
+Then('patches exists for {string}', async function (deviceId: string) {
     try {
-        await deploymentService.listDeploymentsByDeviceId(deviceId, undefined, getAdditionalHeaders(world.authToken));
+        await patchService.listPatchesByDeviceId(deviceId, undefined, getAdditionalHeaders(world.authToken));
     } catch (e) {
         this[RESPONSE_STATUS] = e.status;
     }
 });
 
-Then('a list of deployments for {string} exists with attributes', async function (deviceId: string, data: TableDefinition) {
-    let deployment
+Then('a list of patches for {string} exists with attributes', async function (deviceId: string, data: DataTable) {
+    let patches
     try {
-        deployment = await deploymentService.listDeploymentsByDeviceId(deviceId, undefined, getAdditionalHeaders(world.authToken));
+        patches = await patchService.listPatchesByDeviceId(deviceId, undefined, getAdditionalHeaders(world.authToken));
     } catch (e) {
         this[RESPONSE_STATUS] = e.status;
     }
 
-    validateExpectedAttributes(deployment, data);
+    validateExpectedAttributes(patches, data);
 });
 
-Then('deployment Task exists with following attributes', async function (data: TableDefinition) {
-    const taskId = this['deploymentTaskId'];
-    let deploymentTask
+Then('patch Task exists with following attributes', async function (data: DataTable) {
+    const taskId = this['patchTaskId'];
+    let patchTask
     try {
-        deploymentTask = await deploymentService.getDeploymentTask(taskId, getAdditionalHeaders(world.authToken));
+        patchTask = await patchService.getPatchTask(taskId, getAdditionalHeaders(world.authToken));
     } catch (err) {
         this[RESPONSE_STATUS] = err.status;
         fail(`getTemplate failed, err: ${JSON.stringify(err)}`);
     }
 
-    validateExpectedAttributes(deploymentTask, data);
+    validateExpectedAttributes(patchTask, data);
 })
 
-Then('deployment exists for deployment Task with following attributes', async function (data: TableDefinition) {
-    const taskId = this['deploymentTaskId'];
-    let deploymentTask
+Then('patch exists for patch Task with following attributes', async function (data: DataTable) {
+    const taskId = this['patchTaskId'];
+    let patchTask
     try {
-        deploymentTask = await deploymentService.listDeploymentsByTaskId(taskId, getAdditionalHeaders(world.authToken));
+        patchTask = await patchService.listPatchesByTaskId(taskId, getAdditionalHeaders(world.authToken));
     } catch (err) {
         this[RESPONSE_STATUS] = err.status;
         fail(`getTemplate failed, err: ${JSON.stringify(err)}`);
     }
 
-    validateExpectedAttributes(deploymentTask, data);
+    validateExpectedAttributes(patchTask, data);
 })
 
-Then('last deployment for device exists with following attributes', async function (data: TableDefinition) {
-    const taskId = this['deploymentTaskId'];
-    let deploymentTask
+Then('last patch for device exists with following attributes', async function (data: DataTable) {
+    const taskId = this['patchTaskId'];
+    let patchTask
     try {
-        deploymentTask = await deploymentService.listDeploymentsByTaskId(taskId, getAdditionalHeaders(world.authToken));
+        patchTask = await patchService.listPatchesByTaskId(taskId, getAdditionalHeaders(world.authToken));
     } catch (err) {
         this[RESPONSE_STATUS] = err.status;
         fail(`getTemplate failed, err: ${JSON.stringify(err)}`);
     }
     
-    validateExpectedAttributes(deploymentTask, data);
+    validateExpectedAttributes(patchTask, data);
 })
 
-function buildDeploymentModel<T>(data: TableDefinition): T {
+Then('patch for {string} exists with following attributes', async function (deviceId: string, data: DataTable) {
+    let patch
+    try {
+        patch = await patchService.listPatchesByDeviceId(deviceId, undefined, getAdditionalHeaders(world.authToken));
+    } catch (err) {
+        this[RESPONSE_STATUS] = err.status;
+        fail(`listPatchesByDeviceId failed, err: ${JSON.stringify(err)}`);
+    }
+
+    validateExpectedAttributes(patch, data);
+})
+
+Then('I create a patch patch Task for {string} edge device using {string} template', async function (deviceId: string, template: string ) {
+
+    const artifacts_certs_bucket = this['core']?.artifacts?.certs?.bucket;
+    const artifacts_certs_key = this['core']?.artifacts?.certs?.key;
+    const artifacts_config_bucket = this['core']?.artifacts?.config?.bucket;
+    const artifacts_config_key = this['core']?.artifacts?.config?.key;
+
+    const patch: CreatePatchRequest = {
+        deviceId,
+        patchTemplateName: template,
+        extraVars: {
+            iot_device_cred_zip_url: "${aws:s3:presign:https://" + artifacts_certs_bucket + "/" + artifacts_certs_key + "?expiresIn=604800}",
+            iot_device_config_url: "${aws:s3:presign:https://" + artifacts_config_bucket + "/" + artifacts_config_key + "?expiresIn=604800}"
+        }
+    };
+
+    const patchTask = {
+        patches: [patch]
+
+    }
+    try {
+        this['patchTaskId'] = await patchService.createPatchTask(patchTask, getAdditionalHeaders(world.authToken));
+    } catch (e) {
+        this[RESPONSE_STATUS] = e.status;
+    }
+
+})
+
+function buildPatchModel<T>(data: DataTable): T {
     const d = data.rowsHash();
 
     const resource = {} as T;

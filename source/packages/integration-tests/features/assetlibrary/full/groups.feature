@@ -152,6 +152,19 @@ Feature: Group lifecycle
       | parentPath | / |
       | attributes |  {"size":"M"} |
 
+  # Covers https://github.com/aws/aws-connected-device-framework/issues/64
+  Scenario: Clear existing custom group attributes while updating others
+    Given group "/TEST-groups-group001" exists
+    When I update group "/TEST-groups-group001" with attributes
+      | templateId | test-groups-grouptemplate001 |
+      | attributes | {"color":null,"size":"L"} |
+    Then group "/TEST-groups-group001" exists with attributes
+      | templateId | test-groups-grouptemplate001 |
+      | name | TEST-groups-group001 |
+      | description | My group |
+      | parentPath | / |
+      | attributes |  {"size":"L"} |
+
   Scenario: Clear existing top level group attribute
     Given group "/TEST-groups-group001" exists
     When I update group "/TEST-groups-group001" with attributes
@@ -162,7 +175,7 @@ Feature: Group lifecycle
       | name | TEST-groups-group001 |
       | description | ___undefined___ |
       | parentPath | / |
-      | attributes |  {"size":"M"} |
+      | attributes |  {"size":"L"} |
 
   Scenario: Group paths are unique
     Given group "/TEST-groups-group001" exists

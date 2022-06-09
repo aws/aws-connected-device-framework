@@ -64,7 +64,7 @@ export class GroupsDaoLite {
         let parent;
         const parentPath = <string> n.attributes['parentPath'];
         if (parentPath) {
-            parent = parentPath.substr(parentPath.lastIndexOf('/')+1);
+            parent = parentPath.slice(parentPath.lastIndexOf('/')+1);
         }
 
         const params:Iot.Types.CreateThingGroupRequest = {

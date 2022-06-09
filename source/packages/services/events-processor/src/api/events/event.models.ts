@@ -61,33 +61,36 @@ export interface EventItem {
 
 }
 export interface EventConditions {
-    all?:EventConditions|EventCondition[];
-    any?:EventConditions|EventCondition[];
+    all?: EventConditions | EventCondition[];
+    any?: EventConditions | EventCondition[];
 }
 export interface EventCondition {
-    fact:string;
-    operator:string;
-    value:number|string|boolean|EventFactCondition;
+    fact: string;
+    operator: string;
+    value: number | string | boolean | EventFactCondition;
 }
 export interface EventFactCondition {
-    fact:string;
+    fact: string;
 }
 
 @injectable()
 export class EventConditionsUtils {
-    public extractParameters(ec:EventConditions) : string[] {
-        if (ec===undefined) {
+    public extractParameters(ec: EventConditions): string[] {
+        if (ec === undefined) {
             return undefined;
         }
 
-        const parameters:string[]= [];
+        const parameters: string[] = [];
 
         if (ec?.all) {
             if (isEventConditions(ec.all)) {
                 parameters.push(...this.extractParameters(ec.all));
             } else {
-                for(const condition of ec.all) {
-                    parameters.push(this.extractParameter(condition));
+                for (const condition of ec.all) {
+                    const extractedParameter = this.extractParameter(condition)
+                    if (extractedParameter) {
+                        parameters.push(extractedParameter);
+                    }
                 }
             }
         }
@@ -96,48 +99,51 @@ export class EventConditionsUtils {
             if (isEventConditions(ec.any)) {
                 parameters.push(...this.extractParameters(ec.any));
             } else {
-                for(const condition of ec.any) {
-                    parameters.push(this.extractParameter(condition));
+                for (const condition of ec.any) {
+                    const extractedParameter = this.extractParameter(condition)
+                    if (extractedParameter) {
+                        parameters.push(extractedParameter);
+                    }
                 }
             }
         }
         return parameters;
     }
-    public extractParameter(ec:EventCondition) : string {
+    public extractParameter(ec: EventCondition): string {
         if (typeof ec?.value === 'string') {
-            if (ec.value.indexOf('$')===0) {
+            if (ec.value.indexOf('$') === 0) {
                 return ec.value.replace('$', '');
             }
         }
         return undefined;
     }
 
-    public populateParameters(ec:EventConditions, valueMap:{[key:string]:string|boolean|number}) : void {
+    public populateParameters(ec: EventConditions, valueMap: { [key: string]: string | boolean | number }): void {
         if (ec?.all) {
             if (isEventConditions(ec.all)) {
-                this.populateParameters(ec.all,valueMap);
+                this.populateParameters(ec.all, valueMap);
             } else {
-                for(const condition of ec.all) {
-                    this.populateParameter(condition,valueMap);
+                for (const condition of ec.all) {
+                    this.populateParameter(condition, valueMap);
                 }
             }
         }
 
         if (ec?.any) {
             if (isEventConditions(ec.any)) {
-                this.populateParameters(ec.any,valueMap);
+                this.populateParameters(ec.any, valueMap);
             } else {
-                for(const condition of ec.any) {
-                    this.populateParameter(condition,valueMap);
+                for (const condition of ec.any) {
+                    this.populateParameter(condition, valueMap);
                 }
             }
         }
     }
-    public populateParameter(ec:EventCondition, valueMap:{[key:string]:string|boolean|number}) : void {
-        if (valueMap!==undefined) {
-            for(const key of Object.keys(valueMap)) {
-                if (ec.value===`$${key}`) {
-                    ec.value=valueMap[key];
+    public populateParameter(ec: EventCondition, valueMap: { [key: string]: string | boolean | number }): void {
+        if (valueMap !== undefined) {
+            for (const key of Object.keys(valueMap)) {
+                if (ec.value === `$${key}`) {
+                    ec.value = valueMap[key];
                     return;
                 }
             }
@@ -145,12 +151,12 @@ export class EventConditionsUtils {
     }
 }
 
-export enum EventTargetType {'email','sms','mqtt','dynamodb','push_gcm','push_adm','push_apns'}
+export enum EventTargetType { 'email', 'sms', 'mqtt', 'dynamodb', 'push_gcm', 'push_adm', 'push_apns' }
 export type EventTargetTypeStrings = keyof typeof EventTargetType;
 
-export type TemplateMap = { [key: string] : string};
-export type TargetTemplateMap = { [key in EventTargetTypeStrings] : string};
-export type TemplatePropertiesData = {[key: string]: string | number | boolean};
+export type TemplateMap = { [key: string]: string };
+export type TargetTemplateMap = { [key in EventTargetTypeStrings]: string };
+export type TemplatePropertiesData = { [key: string]: string | number | boolean };
 
 export function isEventConditions(conditions: EventConditions | EventCondition[]): conditions is EventConditions {
     return (<EventCondition[]>conditions).length === undefined;

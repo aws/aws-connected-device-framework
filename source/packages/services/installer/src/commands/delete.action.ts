@@ -37,7 +37,8 @@ async function deleteAction(
 
   const grouped = topologicallySortModules(
     modules,
-    answers.modules.expandedIncludingOptional
+    answers.modules.expandedIncludingOptional,
+    false
   ).reverse();
 
   for (const layer of grouped) {

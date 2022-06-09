@@ -1,6 +1,6 @@
 {
   "name": "@cdf/assetlibrary",
-  "version": "6.0.3",
+  "version": "6.0.6",
   "description": "CDF Asset Library",
   "author": "Dean Hart",
   "config": {
@@ -18,7 +18,7 @@
   "dependencies": {
     "@cdf/errors": "^4.0.0",
     "@cdf/logger": "^4.0.0",
-    "@cdf/config-inject": "^4.0.0",
+    "@cdf/config-inject": "^4.0.1",
     "@cdf/express-middleware": "^3.0.0",
     "ajv": "6.10.2",
     "async-local-storage": "2.3.1",

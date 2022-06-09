@@ -74,6 +74,7 @@ The CDF modules form a layer above the AWS building blocks as shown in the follo
 - [Tech Stack](source/docs/development/tech-stack.md)
 - [Dependency Injection](source/docs/development/dependency-injection.md)
 - [Unit testing](source/docs/development/unit-testing.md)
+- [Integration tests](source/packages/integration-tests/README.md)
 
 ## Deployment
 
@@ -153,11 +154,21 @@ See [overview](source/packages/services/device-monitoring/README.md).
 
 ### Commands
 
+> Note: this module is deprecated and has been replaced with the _Command & Control_ module.
+
 Utilizes AWS IoT Jobs to issue commands to a device or set of devices, and optionally inspect their execution status.  It augments AWS IoT jobs by providing the ability to create Job templates (job document, parameters, and files), and enforcing that each requested command adheres to a template before executing.
 
 Also allows for sending jobs to thousands of devices, by automatically managing temporary groups to overcome any limitations with the no. of allowed targets.  Can optionally use Asset Library devices, groups, and search queries as Job targets.
 
 See [overview](source/packages/services/commands/README.md).
+
+### Command & Control
+
+This module provides a simple zero-code approach to implement command and control functionality using AWS IoT Shadows, AWS IoT Jobs, and/or MQTT topics as desired. In addition, it supports sending to a variety of different targets regardless of the delivery method configured: a thing or list of things, a thing group or list of thing groups, a dynamic group or list of dynamic groups, an Asset Library device or list of devices, an Asset Library group or list of groups, an Asset Library search query, or any combination of.
+
+Finally, any messages sent back from the device related to the command message are correlated to the original message where the entire conversation can be easily retrieved.
+
+See [overview](source/packages/services/command-and-control/README.md).
 
 ### Asset Library History
 

@@ -1,6 +1,6 @@
 # Deployment
 
-## TL;DR - Deployments Steps
+## Deployments Steps
 
 Before attempting an upgrade, read [release notes](https://github.com/aws/aws-connected-device-framework/releases) and [migration notes](./migration.md) to verify changes.  
 
@@ -54,13 +54,26 @@ If an authentication mechanism is applied to the CDF REST API's, a security peri
 
 ## Deploying the project
 
+### Deploying from pre-bundled releases
+Each github release comes with a pre-bundled release artifact that can be used to simplify the deployment.
+
+```shell
+mkdir aws-connected-device-framework
+tar -xvf aws-connected-device-framework.tar -C aws-connected-device-framework
+aws-connected-device-framework> cd source
+```
+**You can now skip to the `Deploying` step**
+
+### Deploying from source
+Alternatively you can choose to clone the source code to build and bundle them yourself.
+
 **All the commands below should be run inside the source folder**
 
 ```shell
 aws-connected-device-framework> cd source
 ```
 
-### Bundling
+#### Bundling
 
 To build and bundle the modules, run the following command:
 

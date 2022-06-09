@@ -1,6 +1,6 @@
 {
   "name": "@cdf/installer",
-  "version": "0.1.8",
+  "version": "0.7.0",
   "description": "CDF install wizard.",
   "author": "Dean Hart",
   "scripts": {
@@ -15,23 +15,26 @@
     "cdf-cli": "./dist/index.js"
   },
   "dependencies": {
-    "@cdf/config-inject": "^4.0.0",
+    "@cdf/config-inject": "^4.0.1",
     "@aws-sdk/client-cloudformation": "~3.53.0",
     "@aws-sdk/client-iam": "~3.53.0",
     "@aws-sdk/client-iot": "~3.53.0",
     "@aws-sdk/client-kms": "~3.53.0",
     "@aws-sdk/client-lambda": "~3.53.0",
     "@aws-sdk/client-rds": "~3.53.0",
+    "@aws-sdk/client-pricing": "~3.53.0",
     "@aws-sdk/client-s3": "~3.53.0",
     "@aws-sdk/client-sts": "~3.53.0",
+    "@aws-sdk/client-ssm": "~3.53.0",
     "@aws-sdk/lib-storage": "~3.53.0",
     "chalk": "~4.1.2",
-    "commander": "~8.3.0",
+    "commander": "~9.2.0",
     "execa": "~5.1.1",
     "inquirer-fuzzy-path": "~2.3.0",
     "inquirer-s3": "~1.0.1",
-    "inquirer": "~8.2.0",
+    "inquirer": "8.2.1",
     "js-yaml": "4.1.0",
+    "js-yaml-cloudformation-schema" : "1.0.0",
     "node-localstorage": "~2.2.1",
     "ora": "~5.4.1",
     "recursive-copy": "~2.0.13",
@@ -42,6 +45,7 @@
     "find-up": "5.0.0"
   },
   "devDependencies": {
+    "@types/js-yaml": "4.0.5",
     "@rushstack/eslint-config": "2.3.4",
     "eslint": "7.26.0",
     "nyc": "15.1.0",
@@ -59,7 +63,7 @@
     "typescript": "4.2.4",
     "@types/node": "14.6.1",
     "@types/node-localstorage": "~1.3.0",
-    "@types/inquirer": "~8.1.3",
+    "@types/inquirer": "8.2.1",
     "@types/inquirer-fuzzy-path": "~2.3.3",
     "@types/dotenv-flow": "~3.2.0"
   },

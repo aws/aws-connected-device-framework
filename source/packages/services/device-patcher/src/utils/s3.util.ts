@@ -41,4 +41,28 @@ export class S3Utils {
         return signedUrl;
     }
 
+    public async uploadFile(bucket: string, key: string, file: Buffer): Promise<void> {
+        logger.debug(`s3.util:  uploadFile: in: fileLocation: ${file}`);
+
+        try {
+            await this.s3.upload({ Bucket: bucket, Key:key, Body: file }).promise();
+            logger.debug('s3.Util.service uploadFile: exit:');
+        } catch (err) {
+            logger.error(`s3.Util.service uploadFile: err:${err}`);
+            throw new Error('FAILED_UPLOAD');
+        }
+
+    }
+
+    public async deleteObject(bucket:string, key:string): Promise<void> {
+        logger.debug(`s3.util: deleteObject: in: bucket:${bucket}, key:${key}`);
+        try {
+            await this.s3.deleteObject({ Bucket: bucket, Key: key }).promise();
+            logger.debug('s3.util: deleteObject: exit:');
+        } catch (err) {
+            logger.error(`s3.util: deleteObject: err:${err}`);
+            throw new Error('FAILED_DELETE');
+        }
+    }
+
 }

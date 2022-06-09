@@ -1,16 +1,22 @@
-import execa from "execa";
+/*********************************************************************************************************************
+ *  Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.                                           *
+ *                                                                                                                    *
+ *  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance    *
+ *  with the License. A copy of the License is located at                                                             *
+ *                                                                                                                    *
+ *      http://www.apache.org/licenses/LICENSE-2.0                                                                    *
+ *                                                                                                                    *
+ *  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES *
+ *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
+ *  and limitations under the License.                                                                                *
+ *********************************************************************************************************************/
 import inquirer from "inquirer";
 import { ListrTask } from "listr2";
 import ow from "ow";
 import path from "path";
-
-import {
-  CloudFormationClient,
-  DescribeStacksCommand,
-} from "@aws-sdk/client-cloudformation";
 import { Answers } from "../../../models/answers";
 import { InfrastructureModule, ModuleName } from "../../../models/modules";
-import { deleteStack } from "../../../utils/cloudformation.util";
+import { deleteStack, packageAndDeployStack, getStackOutputs, packageAndUploadTemplate } from "../../../utils/cloudformation.util";
 import { getMonorepoRoot } from "../../../prompts/paths.prompt";
 import { modeRequiresNeptune } from '../service/assetLibrary';
 
@@ -18,13 +24,13 @@ export class VpcInstaller implements InfrastructureModule {
   public readonly friendlyName = "VPC";
   public readonly name = "vpc";
   public readonly dependsOnMandatory: ModuleName[] = [];
-  public readonly dependsOnOptional: ModuleName[] = ["apigw"];
+  public readonly dependsOnOptional: ModuleName[] = [];
   public readonly type = "INFRASTRUCTURE";
 
   private stackName: string;
 
-  constructor(region: string) {
-    this.stackName = `cdf-network-${region}`;
+  constructor(environment: string) {
+    this.stackName = `cdf-network-${environment}`;
   }
 
   public async prompts(answers: Answers): Promise<Answers> {
@@ -68,11 +74,7 @@ export class VpcInstaller implements InfrastructureModule {
           default: answers.vpc?.securityGroupId,
           askAnswered: true,
           when(answers: Answers) {
-            return (
-              (answers.vpc?.useExisting ?? false) &&
-              (answers.modules.expandedIncludingOptional.includes("vpc") ||
-                answers.apigw?.type === "Private")
-            );
+            return answers.vpc?.useExisting ?? false;
           },
         },
         {
@@ -83,12 +85,7 @@ export class VpcInstaller implements InfrastructureModule {
           default: answers.vpc?.privateSubnetIds,
           askAnswered: true,
           when(answers: Answers) {
-            // TODO validate when needed
-            return (
-              (answers.vpc?.useExisting ?? false) &&
-              (answers.modules.expandedIncludingOptional.includes("vpc") ||
-                answers.apigw?.type === "Private")
-            );
+            return answers.vpc?.useExisting ?? false;
           },
         },
         {
@@ -98,11 +95,7 @@ export class VpcInstaller implements InfrastructureModule {
           default: answers.vpc?.privateApiGatewayVpcEndpoint,
           askAnswered: true,
           when(answers: Answers) {
-            // TODO validate when needed
-            return (
-              (answers.vpc?.useExisting ?? false) &&
-              answers.modules.expandedIncludingOptional.includes("vpc")
-            );
+            return answers.vpc?.useExisting ?? false;
           },
         },
       ],
@@ -119,6 +112,43 @@ export class VpcInstaller implements InfrastructureModule {
     return answers;
   }
 
+  private getParameterOverrides(answers: Answers): string[] {
+    const parameterOverrides = [
+      `Environment=${answers.environment}`,
+      `ExistingVpcId=N/A`,
+      `ExistingCDFSecurityGroupId=`,
+      `ExistingPrivateSubnetIds=`,
+      `ExistingPublicSubnetIds=`,
+      `ExistingPrivateApiGatewayVPCEndpoint=`,
+      `ExistingPrivateRouteTableIds=`,
+      `EnableS3VpcEndpoint=${true}`,
+      `EnableDynamoDBVpcEndpoint=${answers.notifications?.useDax ?? false
+      }`,
+      `EnablePrivateApiGatewayVPCEndpoint=${answers.apigw?.type === "Private" ? true : false
+      }`,
+    ];
+    return parameterOverrides;
+  }
+
+  public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    const tasks: ListrTask[] = [{
+      title: `Packing module '${this.name}'`,
+      task: async () => {
+        const monorepoRoot = await getMonorepoRoot();
+        await packageAndUploadTemplate({
+          answers: answers,
+          serviceName: 'vpc',
+          templateFile: 'cfn-networking.yaml',
+          cwd: path.join(monorepoRoot, "source", "infrastructure", "cloudformation"),
+          parameterOverrides: this.getParameterOverrides(answers),
+          needsPackaging: false
+        });
+      },
+    },];
+
+    return [answers, tasks]
+  }
+
   public async install(answers: Answers): Promise<[Answers, ListrTask[]]> {
     ow(answers, ow.object.nonEmpty);
 
@@ -130,85 +160,30 @@ export class VpcInstaller implements InfrastructureModule {
       ow(answers.environment, ow.string.nonEmpty);
       ow(answers.region, ow.string.nonEmpty);
 
-      const skipDeployment =
-        answers.apigw?.type !== "Private" &&
-        ! modeRequiresNeptune(answers.assetLibrary?.mode) &&
-        answers.notifications?.useDax !== true;
-
       tasks.push(
         {
           title: `Deploying stack '${this.stackName}'`,
-          skip: skipDeployment,
           task: async () => {
-            await execa(
-              "aws",
-              [
-                "cloudformation",
-                "deploy",
-                "--template-file",
-                "cfn-networking.yaml",
-                "--stack-name",
-                this.stackName,
-                "--parameter-overrides",
-                `Environment=${answers.environment}`,
-                `ExistingVpcId=N/A`,
-                `ExistingCDFSecurityGroupId=`,
-                `ExistingPrivateSubnetIds=`,
-                `ExistingPublicSubnetIds=`,
-                `ExistingPrivateApiGatewayVPCEndpoint=`,
-                `ExistingPrivateRouteTableIds=`,
-                `EnableS3VpcEndpoint=${true}`,
-                `EnableDynamoDBVpcEndpoint=${answers.notifications?.useDax ?? false
-                }`,
-                `EnablePrivateApiGatewayVPCEndpoint=${answers.apigw?.type === "Private" ? true : false
-                }`,
-                "--capabilities",
-                "CAPABILITY_NAMED_IAM",
-                "--no-fail-on-empty-changeset",
-                "--region",
-                answers.region,
-              ],
-              {
-                cwd: path.join(
-                  monorepoRoot,
-                  "source",
-                  "infrastructure",
-                  "cloudformation"
-                ),
-              }
-            );
+            await packageAndDeployStack({
+              answers: answers,
+              stackName: this.stackName,
+              serviceName: 'vpc',
+              templateFile: 'cfn-networking.yaml',
+              parameterOverrides: this.getParameterOverrides(answers),
+              needsCapabilityNamedIAM: true,
+              cwd: path.join(monorepoRoot, "source", "infrastructure", "cloudformation"),
+            });
           },
         },
-
         {
           title: `Retrieving network information from stack '${this.stackName}'`,
-          skip: skipDeployment,
           task: async () => {
-            const cloudFormation = new CloudFormationClient({
-              region: answers.region,
-            });
-            const r = await cloudFormation.send(
-              new DescribeStacksCommand({
-                StackName: this.stackName,
-              })
-            );
-
-            answers.vpc.id = r?.Stacks?.[0]?.Outputs?.find(
-              (o) => o.OutputKey === "VpcId"
-            )?.OutputValue;
-            answers.vpc.securityGroupId = r?.Stacks?.[0]?.Outputs?.find(
-              (o) => o.OutputKey === "CDFSecurityGroupId"
-            )?.OutputValue;
-            answers.vpc.privateSubnetIds = r?.Stacks?.[0]?.Outputs?.find(
-              (o) => o.OutputKey === "PrivateSubnetIds"
-            )?.OutputValue;
-            answers.vpc.publicSubnetIds = r?.Stacks?.[0]?.Outputs?.find(
-              (o) => o.OutputKey === "PublicSubnetIds"
-            )?.OutputValue;
-            answers.vpc.privateApiGatewayVpcEndpoint =
-              r?.Stacks?.[0]?.Outputs?.find(
-                (o) => o.OutputKey === "PrivateApiGatewayVPCEndpoint"
-              )?.OutputValue;
+            const byOutputKey = await getStackOutputs(this.stackName, answers.region)
+            answers.vpc.id = byOutputKey("VpcId")
+            answers.vpc.securityGroupId = byOutputKey("CDFSecurityGroupId")
+            answers.vpc.privateSubnetIds = byOutputKey("PrivateSubnetIds")
+            answers.vpc.publicSubnetIds = byOutputKey("PublicSubnetIds")
+            answers.vpc.privateApiGatewayVpcEndpoint = byOutputKey("PrivateApiGatewayVPCEndpoint")
           },
         }
       );

@@ -1,6 +1,27 @@
 # Change Log - @cdf/events-processor
 
-This log was last generated on Thu, 17 Feb 2022 09:27:38 GMT and should not be manually modified.
+This log was last generated on Mon, 16 May 2022 03:04:28 GMT and should not be manually modified.
+
+## 4.1.0
+Mon, 16 May 2022 03:04:28 GMT
+
+### Minor changes
+
+- fix the issue where disable DAX is not working and allow TTL for item and query cache to be set
+
+## 4.0.2
+Wed, 27 Apr 2022 08:32:22 GMT
+
+### Patches
+
+- installer will now check valid instance types, cloudformation only check the regex pattern
+
+## 4.0.1
+Mon, 21 Mar 2022 21:58:32 GMT
+
+### Patches
+
+- Upgrade dependencies marked as deprecated
 
 ## 4.0.0
 Thu, 17 Feb 2022 09:27:38 GMT

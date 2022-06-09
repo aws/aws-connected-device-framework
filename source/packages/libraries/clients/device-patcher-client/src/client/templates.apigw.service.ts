@@ -10,15 +10,19 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-/* tslint:disable:no-unused-variable member-ordering */
 
-import { injectable } from 'inversify';
+import {injectable} from 'inversify';
 import ow from 'ow';
 import * as request from 'superagent';
 
-import { RequestHeaders } from './common.model';
-import { DeploymentTemplate, DeploymentTemplateList } from './templates.model';
-import { TemplatesService, TemplatesServiceBase } from './templates.service';
+import {RequestHeaders} from './common.model';
+import {
+    CreatePatchTemplateParams,
+    PatchTemplate,
+    PatchTemplateList,
+    UpdatePatchTemplateParams
+} from './templates.model';
+import {TemplatesService, TemplatesServiceBase} from './templates.service';
 
 @injectable()
 export class TemplatesApigwService extends TemplatesServiceBase implements TemplatesService {
@@ -30,19 +34,53 @@ export class TemplatesApigwService extends TemplatesServiceBase implements Templ
         this.baseUrl = process.env.DEVICE_PATCHER_BASE_URL;
     }
 
-    async saveTemplate(template: DeploymentTemplate, additionalHeaders?:RequestHeaders) : Promise<DeploymentTemplate> {
+    async createTemplate(template: CreatePatchTemplateParams, additionalHeaders?:RequestHeaders) : Promise<void> {
         ow(template, ow.object.nonEmpty);
         ow(template.name, ow.string.nonEmpty);
-        const url = `${this.baseUrl}${super.templateRelativeUrl(template.name)}`;
+        ow(template.playbookFileLocation, ow.string.nonEmpty);
+        ow(template.patchType, ow.string.nonEmpty);
 
-        const res = await request.put(url)
-            .send(template)
-            .set(this.buildHeaders(additionalHeaders));
+        if (template.extraVars) {
+            const keys = Object.keys(template.extraVars);
+            for (const key of keys) {
+                template[`extraVars[${key}]`] = template.extraVars[key];
+            }
+            delete template.extraVars;
+        }
+
+        const url = `${this.baseUrl}${super.templatesRelativeUrl()}`;
+
+        const res = await request.post(url)
+            .set(this.buildHeaders(additionalHeaders))
+            .field(template)
+            .attach('playbookFile', template.playbookFileLocation)
+
         return res.body;
-
     }
 
-    async getTemplate(name: string, additionalHeaders?:RequestHeaders) : Promise<DeploymentTemplate> {
+    async updateTemplate(template: UpdatePatchTemplateParams, additionalHeaders: RequestHeaders): Promise<void> {
+        ow(template, ow.object.nonEmpty);
+        ow(template.name, ow.string.nonEmpty);
+
+        if (template.extraVars) {
+            const keys = Object.keys(template.extraVars);
+            for (const key of keys) {
+                template[`extraVars[${key}]`] = template.extraVars[key];
+            }
+            delete template.extraVars;
+        }
+
+        const url = `${this.baseUrl}${super.templateRelativeUrl(template.name)}`;
+
+        const res = await request.patch(url)
+            .set(this.buildHeaders(additionalHeaders))
+            .field(template)
+            .attach('playbookFile', template.playbookFileLocation)
+
+        return res.body;
+    }
+
+    async getTemplate(name: string, additionalHeaders?:RequestHeaders) : Promise<PatchTemplate> {
 
         ow(name, ow.string.nonEmpty);
 
@@ -51,17 +89,15 @@ export class TemplatesApigwService extends TemplatesServiceBase implements Templ
         const res = await request.get(url)
             .set(this.buildHeaders(additionalHeaders));
         return res.body;
-
     }
 
-    async listTemplates(additionalHeaders?:RequestHeaders) : Promise<DeploymentTemplateList> {
+    async listTemplates(additionalHeaders?:RequestHeaders) : Promise<PatchTemplateList> {
 
         const url = `${this.baseUrl}${super.templatesRelativeUrl()}`;
 
         const res = await request.get(url)
             .set(this.buildHeaders(additionalHeaders));
         return res.body;
-
     }
 
     async deleteTemplate(name: string, additionalHeaders?:RequestHeaders) : Promise<void> {
@@ -72,6 +108,5 @@ export class TemplatesApigwService extends TemplatesServiceBase implements Templ
 
         await request.delete(url)
             .set(this.buildHeaders(additionalHeaders));
-
     }
 }

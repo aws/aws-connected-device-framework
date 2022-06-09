@@ -2,6 +2,7 @@
     "extends": "../../tsconfig.base.json",
     "compilerOptions": {
         "composite": true,
+        "experimentalDecorators": true
     },
     "exclude": [
         "node_modules",

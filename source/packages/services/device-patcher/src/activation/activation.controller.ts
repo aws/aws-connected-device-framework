@@ -58,7 +58,7 @@ export class ActivationController implements interfaces.Controller {
         @response() res: Response,
         @requestParam('activationId') activationId: string
     ): Promise<ActivationResource> {
-        logger.debug(`Deployment.controller getDeployment: in: activationId:${activationId}`);
+        logger.debug(`activation.controller getActivation: in: activationId:${activationId}`);
 
         let activation: ActivationResource;
 
@@ -68,7 +68,7 @@ export class ActivationController implements interfaces.Controller {
             handleError(err, res);
         }
 
-        logger.debug(`Deployment.controller getDeployment: exit: ${JSON.stringify(activation)}`);
+        logger.debug(`activation.controller getActivation: exit: ${JSON.stringify(activation)}`);
 
         return activation;
     }
@@ -79,7 +79,7 @@ export class ActivationController implements interfaces.Controller {
         @response() res: Response,
         @requestParam('activationId') activationId: string
     ): Promise<void> {
-        logger.debug(`Deployment.controller de: in: activationId: ${activationId}`);
+        logger.debug(`activation.controller: in: activationId: ${activationId}`);
 
         try {
             await this.activationService.deleteActivation(activationId);
@@ -87,6 +87,6 @@ export class ActivationController implements interfaces.Controller {
             handleError(err, res);
         }
 
-        logger.debug(`Deployment.controller getDeployment: exit:`);
+        logger.debug(`activation.controller getActivation: exit:`);
     }
 }

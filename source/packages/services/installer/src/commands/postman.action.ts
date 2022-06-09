@@ -16,7 +16,10 @@ async function postmanAction(
 
   answers = Object.assign(answers, {});
   const modules = loadModules(environment);
-  const servicesList = buildServicesList(modules, answers.modules?.list).filter(
+
+  const allDeployedServices = [...answers.modules?.list ?? [], ...answers.modules?.expandedMandatory ?? []]
+
+  const servicesList = buildServicesList(modules, allDeployedServices).filter(
     (o) => o.checked
   );
 

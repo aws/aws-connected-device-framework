@@ -1,6 +1,34 @@
 # Change Log - @cdf/thing-list-builder
 
-This log was last generated on Thu, 10 Mar 2022 00:08:34 GMT and should not be manually modified.
+This log was last generated on Fri, 08 Apr 2022 07:03:46 GMT and should not be manually modified.
+
+## 1.1.2
+Fri, 08 Apr 2022 07:03:46 GMT
+
+### Patches
+
+- modified the logic for extracting thingname from resource ARN
+
+## 1.1.1
+Fri, 25 Mar 2022 06:23:54 GMT
+
+### Patches
+
+- check if region and iot factory have been bound before
+
+## 1.1.0
+Fri, 25 Mar 2022 03:55:57 GMT
+
+### Minor changes
+
+- adding functionality to support command and control
+
+## 1.0.2
+Mon, 21 Mar 2022 21:58:32 GMT
+
+### Patches
+
+- Upgrade dependencies marked as deprecated
 
 ## 1.0.1
 Thu, 10 Mar 2022 00:08:34 GMT

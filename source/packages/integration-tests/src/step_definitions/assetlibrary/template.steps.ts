@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { expect } from 'chai';
-import { Given, setDefaultTimeout, When, TableDefinition, Then} from 'cucumber';
+import { Given, setDefaultTimeout, When, DataTable, Then} from '@cucumber/cucumber';
 import {
     TemplatesService,
     CategoryEnum,
@@ -86,7 +86,7 @@ Given('assetlibrary {word} template {string} exists', async function (
     }
 });
 
-When('I create the assetlibrary {word} template {string} with attributes', async function (category:CategoryEnum, templateId:string, data:TableDefinition) {
+When('I create the assetlibrary {word} template {string} with attributes', async function (category:CategoryEnum, templateId:string, data:DataTable) {
     const d = data.rowsHash();
 
     const resource = new TypeResource();
@@ -126,7 +126,7 @@ When('I delete assetlibrary {word} template {string}', async function (category:
 });
 
 Then('{word} assetlibrary {word} template {string} exists with attributes', async function (status:StatusEnum,
-    category:CategoryEnum, templateId:string, data:TableDefinition) {
+    category:CategoryEnum, templateId:string, data:DataTable) {
     const rowHash = data.rowsHash();
 
     try {
@@ -142,7 +142,7 @@ Then('{word} assetlibrary {word} template {string} exists with attributes', asyn
 });
 
 Then('assetlibrary {word} template {string} exists with attributes', async function (
-    category:CategoryEnum, templateId:string, data:TableDefinition) {
+    category:CategoryEnum, templateId:string, data:DataTable) {
     const rowHash = data.rowsHash();
 
     try {
