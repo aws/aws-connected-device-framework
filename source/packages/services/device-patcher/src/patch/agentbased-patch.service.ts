@@ -119,6 +119,7 @@ export class AgentbasedPatchService {
                 Parameters: {
                     SourceType: ['S3'],
                     SourceInfo: [playbook],
+                    InstallDependencies: ['False'],
                     ExtraVariables: this.convertExtraVarsToString(extraVars),
                     PlaybookFile: [`${template.name}___${template.playbookName}`]
                 },
@@ -227,6 +228,7 @@ export class AgentbasedPatchService {
                 AssociationName: `${patch.patchId}`,
                 AssociationId: association.associationId,
                 Parameters: {
+                    InstallDependencies: ['False'],
                     SourceType: ['S3'],
                     SourceInfo: [playbook],
                     ExtraVariables: this.convertExtraVarsToString(extraVars),

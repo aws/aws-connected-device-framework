@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/device-patcher",
+      "comment": "should not run install dependencies step when running ansible playbook",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/device-patcher",
+  "email": "willsia@amazon.com"
+}
