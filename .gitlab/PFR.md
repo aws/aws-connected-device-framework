@@ -1,5 +1,5 @@
 ### Feature Name: 
-<!-- Specify the name of the feature follow the example below -->
+<!-- Specify the name of the feature following the example below -->
 <!-- [Device-Patcher]: agentless deployment -->
 
 ### Feature Area
