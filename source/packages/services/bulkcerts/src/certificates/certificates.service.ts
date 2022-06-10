@@ -62,7 +62,7 @@ export class CertificatesService {
         ow(req.certInfo, ow.object.nonEmpty);
         ow(req.caAlias, ow.string.nonEmpty);
 
-        const caEnvVarName = `SUPPLIER_CA_${req.caAlias}`;
+        const caEnvVarName = `SUPPLIER_CA_${req.caAlias.toUpperCase()}`;
         const rootCACertId: string = process.env[caEnvVarName];
 
 
