@@ -63,10 +63,7 @@ export class CertificatesService {
         ow(req.caAlias, ow.string.nonEmpty);
 
         const caEnvVarName = `SUPPLIER_CA_${req.caAlias.toUpperCase()}`;
-        console.log('caEnvVarName',caEnvVarName);
         const rootCACertId: string = process.env[caEnvVarName];
-        console.log('rootCACertId',rootCACertId);
-
 
         logger.debug(`certificates.service createChunk: rootCACertId: ${rootCACertId}`);
 
