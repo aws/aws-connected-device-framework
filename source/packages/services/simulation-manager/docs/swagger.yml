@@ -63,31 +63,40 @@ components:
     Simulation:
       type: "object"
       properties:
-        name:
-          type: "string"
-          description: "name of the simulation"
-        deviceCount:
-          type: "integer"
-          format: "int64"
-          description: "The number of devices to run the simulation for"
-          default: 1
-        modules:
+        taskOverrides:
           type: "object"
-          description: "A list of key: value s listing the modules that the simulation needs to execute. The bellow properties are provided as an example and key/values can be changed as requiered"
           properties:
-            simulation-engine:
+           taskRoleArn:
               type: "string"
-              description: "An example key value pair representing the module name and S3 path"
-              default: "simulations/modules/simulation-engine.zip"
-            data-generator:
-              type: "string"
-              description: "An example key value pair representing the module name and S3 path"
-              default: "simulations/modules/data-generator.zip"
-        tasks:
+              description: "optional IAM Role ARN to be used when launching the ECS task, the role name has be to prefixed with 'cdf-simulation-manager'"
+        simulation:
           type: "object"
-          description: "A list of different task that will be executed by the simulator. the Task names are dynamic and can be modified as needed"
-          additionalProperties:
-            $ref: "#/components/schemas/Task"
+          properties:
+            name:
+              type: "string"
+              description: "name of the simulation"
+            deviceCount:
+              type: "integer"
+              format: "int64"
+              description: "The number of devices to run the simulation for"
+              default: 1
+            modules:
+              type: "object"
+              description: "A list of key: value s listing the modules that the simulation needs to execute. The bellow properties are provided as an example and key/values can be changed as requiered"
+              properties:
+                simulation-engine:
+                  type: "string"
+                  description: "An example key value pair representing the module name and S3 path"
+                  default: "simulations/modules/simulation-engine.zip"
+                data-generator:
+                  type: "string"
+                  description: "An example key value pair representing the module name and S3 path"
+                  default: "simulations/modules/data-generator.zip"
+            tasks:
+              type: "object"
+              description: "A list of different task that will be executed by the simulator. the Task names are dynamic and can be modified as needed"
+              additionalProperties:
+                $ref: "#/components/schemas/Task"
 
     Task:
       type: "object"

@@ -14,9 +14,9 @@ import { Response } from 'express';
 import { inject } from 'inversify';
 import { interfaces, controller, response, requestBody, httpPost } from 'inversify-express-utils';
 
-import {handleError} from '../utils/errors';
-import {logger} from '../utils/logger';
-import { SimulationItem } from './simulations.model';
+import { handleError } from '../utils/errors';
+import { logger } from '../utils/logger';
+import { CreateSimulationRequest } from './simulations.model';
 import { SimulationsService } from './simulations.service';
 import { TYPES } from '../di/types';
 
@@ -24,17 +24,19 @@ import { TYPES } from '../di/types';
 export class SimulationsController implements interfaces.Controller {
 
     public constructor(
-        @inject(TYPES.SimulationsService) private _servcie: SimulationsService) {}
+        @inject(TYPES.SimulationsService) private simulationService: SimulationsService) { }
 
     @httpPost('/')
-    public async createSimulation(@requestBody() item: SimulationItem, @response() res: Response): Promise<void> {
+    public async createSimulation(@requestBody() request: CreateSimulationRequest, @response() res: Response): Promise<void> {
 
-        logger.info(`simulations.controller createSimulation: item:${JSON.stringify(item)}`);
+        logger.info(`simulations.controller createSimulation: request:${JSON.stringify(request)}`);
 
         try {
-           const simulationId = await this._servcie.createSimulation({item});
-            res.status(201).location(`/simulations/${simulationId}`);
-            // TODO: add id to location header
+            const simulationId = await this.simulationService.createSimulation(request);
+            res.location(`/simulations/${simulationId}`)
+                .header('x-simulationid', simulationId)
+                .status(201)
+                .send();
         } catch (err) {
             handleError(err, res);
         }

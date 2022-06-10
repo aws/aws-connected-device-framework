@@ -34,7 +34,8 @@ exports.handler = async (event: any, _context: any) => {
   await simulator.launch({
     simulationId: request.simulationId,
     instances: request.instances,
-    s3RootKey: request.s3RootKey
+    s3RootKey: request.s3RootKey,
+    taskOverrides: request.taskOverrides
   });
 
 };
