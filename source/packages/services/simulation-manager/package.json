@@ -9,7 +9,7 @@
     "lint": "npx eslint . --ext '.ts'",
     "build": "npx tsc -b && npx shx cp -R 'src/config' 'dist/config' && npx shx cp -R 'src/templates' 'dist/templates'",
     "test": "rushx lint && jest --silent --passWithNoTests",
-    "start": "rushx build && APP_CONFIG_DIR=${PWD}/src/config nodemon dist/lambda_proxy.js",
+    "start": "rushx build && APP_CONFIG_DIR=${PWD}/src/config nodemon dist/api_gateway_proxy.js",
     "bundle": "../../../infrastructure/bundle-package.bash simulation-manager"
   },
   "dependencies": {
