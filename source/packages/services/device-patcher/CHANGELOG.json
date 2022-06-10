@@ -2,6 +2,18 @@
   "name": "@cdf/device-patcher",
   "entries": [
     {
+      "version": "1.0.1",
+      "tag": "@cdf/device-patcher_v1.0.1",
+      "date": "Fri, 10 Jun 2022 19:47:35 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "should not run install dependencies step when running ansible playbook"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.0.0",
       "tag": "@cdf/device-patcher_v1.0.0",
       "date": "Thu, 12 May 2022 21:12:39 GMT",

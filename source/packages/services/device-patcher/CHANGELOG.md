@@ -1,6 +1,13 @@
 # Change Log - @cdf/device-patcher
 
-This log was last generated on Thu, 12 May 2022 21:12:39 GMT and should not be manually modified.
+This log was last generated on Fri, 10 Jun 2022 19:47:35 GMT and should not be manually modified.
+
+## 1.0.1
+Fri, 10 Jun 2022 19:47:35 GMT
+
+### Patches
+
+- should not run install dependencies step when running ansible playbook
 
 ## 1.0.0
 Thu, 12 May 2022 21:12:39 GMT

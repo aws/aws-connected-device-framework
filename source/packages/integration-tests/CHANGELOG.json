@@ -2,6 +2,18 @@
   "name": "@cdf/integration-tests",
   "entries": [
     {
+      "version": "3.2.1",
+      "tag": "@cdf/integration-tests_v3.2.1",
+      "date": "Fri, 10 Jun 2022 19:47:35 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "should not need to wait long for task status to change"
+          }
+        ]
+      }
+    },
+    {
       "version": "3.2.0",
       "tag": "@cdf/integration-tests_v3.2.0",
       "date": "Thu, 02 Jun 2022 00:45:32 GMT",
