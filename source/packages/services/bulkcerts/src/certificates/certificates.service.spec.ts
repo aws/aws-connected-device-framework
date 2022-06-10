@@ -108,7 +108,7 @@ describe('CertificatesService', () => {
                 country: 'US',
                 emailAddress: 'xxxxxxxxxxxx'
             },
-            caAlias: 'test-customerca',
+            caAlias: 'test_customerca',
             taskId: '123',
             chunkId: 456,
             quantity: 4
@@ -180,7 +180,7 @@ describe('CertificatesService', () => {
                 country: 'US',
                 emailAddress: 'xxxxxxxxxxxx'
             },
-            caAlias: 'test-customerca',
+            caAlias: 'test_customerca',
             taskId: '123',
             chunkId: 456,
             quantity: 4
@@ -223,7 +223,7 @@ describe('CertificatesService', () => {
                 country: 'US',
                 emailAddress: 'xxxxxxxxxxxxxx'
             },
-            caAlias: 'test-iotca',
+            caAlias: 'test_iotca',
             taskId: '123',
             chunkId: 456,
             quantity: 4
@@ -274,7 +274,7 @@ describe('CertificatesService', () => {
                 country: 'US',
                 emailAddress: 'xxxxxxxxxxxxxx'
             },
-            caAlias: 'test-acmpca',
+            caAlias: 'TEST_ACMPCA',
             taskId: '123',
             chunkId: 456,
             quantity: 4
@@ -441,7 +441,7 @@ describe('CertificatesService', () => {
                 country: 'US',
                 emailAddress: 'xxxxxxxxxxxx'
             },
-            caAlias: 'test-customerca',
+            caAlias: 'test_customerca',
             taskId: '123',
             chunkId: 1,
             quantity: 3
@@ -516,7 +516,7 @@ describe('CertificatesService', () => {
                 country: 'US',
                 emailAddress: 'xxxxxxxxxxxx'
             },
-            caAlias: 'test-customerca',
+            caAlias: 'test_customerca',
             taskId: '123',
             chunkId: 1,
             quantity: 3

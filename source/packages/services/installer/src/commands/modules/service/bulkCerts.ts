@@ -330,7 +330,7 @@ export class BulkCertificatesInstaller implements RestModule {
       answers.bulkCerts.suppliers.cas.forEach(supplier => {
         let alias = supplier.alias;
         if (!supplier.alias.startsWith('SUPPLIER_CA_')) {
-          alias = `SUPPLIER_CA_${supplier.alias}`;
+          alias = `SUPPLIER_CA_${supplier.alias.toUpperCase()}`;
         }
         if (alias == answers.bulkCerts.caAlias) {
           supplier.value = answers.bulkCerts.caValue;
