@@ -3,7 +3,7 @@
 <!-- [Device-Patcher]: agentless deployment -->
 
 ### Feature Area
-<!-- Specify the Module/Package where this feature is applicable: -->
+<!-- Specify the Module/Package where this feature is applicable or N/A: -->
 
 ### What feature would you like to see?
 
