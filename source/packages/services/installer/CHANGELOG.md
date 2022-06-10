@@ -1,6 +1,13 @@
 # Change Log - @cdf/installer
 
-This log was last generated on Thu, 02 Jun 2022 00:45:32 GMT and should not be manually modified.
+This log was last generated on Fri, 10 Jun 2022 03:02:06 GMT and should not be manually modified.
+
+## 0.7.1
+Fri, 10 Jun 2022 03:02:06 GMT
+
+### Patches
+
+- fix issues where SNS topic is not being retrieved from the right stack
 
 ## 0.7.0
 Thu, 02 Jun 2022 00:45:32 GMT

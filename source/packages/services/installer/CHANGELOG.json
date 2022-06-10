@@ -2,6 +2,18 @@
   "name": "@cdf/installer",
   "entries": [
     {
+      "version": "0.7.1",
+      "tag": "@cdf/installer_v0.7.1",
+      "date": "Fri, 10 Jun 2022 03:02:06 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix issues where SNS topic is not being retrieved from the right stack"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.7.0",
       "tag": "@cdf/installer_v0.7.0",
       "date": "Thu, 02 Jun 2022 00:45:32 GMT",

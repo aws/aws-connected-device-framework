@@ -2,6 +2,18 @@
   "name": "@cdf/simulation-manager",
   "entries": [
     {
+      "version": "3.0.1",
+      "tag": "@cdf/simulation-manager_v3.0.1",
+      "date": "Fri, 10 Jun 2022 03:02:06 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "allow user to specify custom IAM role arn when launching task"
+          }
+        ]
+      }
+    },
+    {
       "version": "3.0.0",
       "tag": "@cdf/simulation-manager_v3.0.0",
       "date": "Thu, 17 Feb 2022 09:27:38 GMT",

@@ -2,6 +2,18 @@
   "name": "@cdf/simulation-launcher",
   "entries": [
     {
+      "version": "3.1.0",
+      "tag": "@cdf/simulation-launcher_v3.1.0",
+      "date": "Fri, 10 Jun 2022 03:02:06 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "allow user to specify custom IAM role arn when launching task"
+          }
+        ]
+      }
+    },
+    {
       "version": "3.0.0",
       "tag": "@cdf/simulation-launcher_v3.0.0",
       "date": "Thu, 17 Feb 2022 09:27:38 GMT",
