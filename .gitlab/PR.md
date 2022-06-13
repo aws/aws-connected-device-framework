@@ -16,10 +16,9 @@
 - [ ] Lint passing
 - [ ] Unit tests passing
 - [ ] Integration tests passing
-- [ ] Change logs generated 
+- [ ] Change logs generated
 
 <!-- Refer to the development getting started doc to learn more source/docs/development/quickstart.md -->
 
 ##### Additional Notes:
 <!-- Any additional information that you think would be helpful when reviewing this PR.-->
-
