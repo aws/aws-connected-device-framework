@@ -59,7 +59,7 @@ export class AssetLibraryInstaller implements RestModule {
 
     public readonly type = 'SERVICE';
     public readonly dependsOnMandatory: ModuleName[] = ['apigw', 'deploymentHelper'];
-    public readonly dependsOnOptional: ModuleName[] = ['vpc'];
+    public readonly dependsOnOptional: ModuleName[] = ['vpc', 'kms'];
 
     public readonly stackName: string;
     private readonly neptuneStackName: string;
@@ -278,6 +278,11 @@ export class AssetLibraryInstaller implements RestModule {
             'vpc',
             updatedAnswers.modules,
             modeRequiresNeptune(updatedAnswers.assetLibrary.mode)
+        );
+        includeOptionalModule(
+            'kms',
+            updatedAnswers.modules,
+            modeRequiresOpenSearch(updatedAnswers.assetLibrary.mode)
         );
         return updatedAnswers;
     }

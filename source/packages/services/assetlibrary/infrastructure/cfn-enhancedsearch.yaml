@@ -437,14 +437,14 @@ Resources:
               EnableNonStringIndexing: !Ref EnableNonStringIndexing
         ApplicationName: !Sub 'cdf-${CdfService}-enhancedsearch-${Environment}'
         LambdaMemorySize: !Ref NeptunePollerLambdaMemorySize
-        LambdaRuntime: python3.6
+        LambdaRuntime: python3.9
         LambdaS3Bucket: !Join ["-", ["aws-neptune-customer-samples", !Ref "AWS::Region"]]
-        LambdaS3Key: "neptune-stream/lambda/python36/release_2022_03_14/neptune-to-es.zip"
+        LambdaS3Key: "neptune-stream/lambda/python39/release_2022_06_06/neptune-to-es.zip"
         ManagedPolicies: !Ref OpenSearchAccessPolicy
         LambdaLoggingLevel: !Ref NeptunePollerLambdaLoggingLevel
         StreamRecordsHandler: 
           # The published template in the Neptune documentation uses a three-level mapping here.
-          # The mapping is flattened into a single If because Gremlin and Python are fixed.
+          # The mapping is flattened into a single "If" because Gremlin and Python are fixed.
           Fn::If: 
             - EnableNonStringIndexingCondition
             - "neptune_to_es.neptune_gremlin_es_handler.ElasticSearchGremlinHandler"
