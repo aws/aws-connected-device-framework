@@ -2,6 +2,18 @@
   "name": "@cdf/installer",
   "entries": [
     {
+      "version": "0.7.2",
+      "tag": "@cdf/installer_v0.7.2",
+      "date": "Wed, 15 Jun 2022 03:43:04 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "when creating installer, it will uses pnpm installer by rush"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.7.1",
       "tag": "@cdf/installer_v0.7.1",
       "date": "Fri, 10 Jun 2022 03:02:06 GMT",

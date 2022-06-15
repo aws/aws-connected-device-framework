@@ -1,6 +1,13 @@
 # Change Log - @cdf/installer
 
-This log was last generated on Fri, 10 Jun 2022 03:02:06 GMT and should not be manually modified.
+This log was last generated on Wed, 15 Jun 2022 03:43:04 GMT and should not be manually modified.
+
+## 0.7.2
+Wed, 15 Jun 2022 03:43:04 GMT
+
+### Patches
+
+- when creating installer, it will uses pnpm installer by rush
 
 ## 0.7.1
 Fri, 10 Jun 2022 03:02:06 GMT
