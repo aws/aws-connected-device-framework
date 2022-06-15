@@ -1,6 +1,13 @@
 # Change Log - @cdf/installer
 
-This log was last generated on Wed, 15 Jun 2022 03:43:04 GMT and should not be manually modified.
+This log was last generated on Wed, 15 Jun 2022 16:42:34 GMT and should not be manually modified.
+
+## 0.8.0
+Wed, 15 Jun 2022 16:42:34 GMT
+
+### Minor changes
+
+- make greengrass config generators configurable
 
 ## 0.7.2
 Wed, 15 Jun 2022 03:43:04 GMT
