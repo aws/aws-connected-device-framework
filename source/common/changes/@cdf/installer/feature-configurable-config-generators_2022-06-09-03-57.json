@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/installer",
+      "comment": "make greengrass config generators configurable",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@cdf/installer",
+  "email": "jonasneu@amazon.com"
+}

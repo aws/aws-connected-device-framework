@@ -265,7 +265,7 @@ export interface Greengrass2Provisioning
   ProvisionedConcurrencyModuleAttribues {
   provisioningFunctionName?: string;
   assetLibraryFunctionName?: string;
-  installerConfigGenerators?: string;
+  installerConfigGenerators?: Record<string, string>;
   // Application Configuration
   promisesConcurrency?: number;
   corezBatchSize?: number;
