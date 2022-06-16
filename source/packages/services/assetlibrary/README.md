@@ -203,3 +203,4 @@ In the example above, retrieving the list of policies for `device001`, `device00
 - [Swagger](docs/swagger.yml)
 - [Templates user guide](docs/templates-user.md)
 - [Templates developer guide](docs/templates-developer.md)
+- [Integration Testing Asset Library](../../../packages/integration-tests/features/assetlibrary/README.md)

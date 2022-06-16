@@ -106,6 +106,28 @@ const GROUPSEARCH_LITE_FEATURES_GROUP_PATH_BA = `BA`;
 const GROUPSEARCH_LITE_FEATURES_GROUP_PATH_BB = `BB`;
 const GROUPSEARCH_LITE_FEATURES_GROUPS_PATHS = [GROUPSEARCH_LITE_FEATURES_GROUP_PATH_AA,GROUPSEARCH_LITE_FEATURES_GROUP_PATH_AB,GROUPSEARCH_LITE_FEATURES_GROUP_PATH_BA,GROUPSEARCH_LITE_FEATURES_GROUP_PATH_BB,GROUPSEARCH_LITE_FEATURES_GROUP_PATH_ROOT];
 
+const ENHANCEDSEARCH_FEATURES_DEVICE_TEMPLATE_ID = 'TEST-enhancedSearch-deviceTpl';
+const ENHANCEDSEARCH_FEATURES_GROUP_ALL = 'enhancedSearchGroup_all';
+const ENHANCEDSEARCH_FEATURES_GROUP_SUFFIXES = ['xxyy', 'xyyx'];
+const ENHANCEDSEARCH_FEATURES_DEVICES = [
+    {characters: "aaaa", groups: ["xxyy"], words: "apple orange kiwi"},
+    {characters: "aaab", groups: ["xxyy"], words: "cherry blackberry grapefruit"},
+    {characters: "aaba", groups: ["xxyy"], words: "pineapple pear orange"},
+    {characters: "aabb", groups: ["xxyy"], words: "pear kiwi orange"},
+    {characters: "abaa", groups: ["xxyy"], words: "cherry apple blackberry"},
+    {characters: "abab", groups: ["xxyy"], words: "orange pineapple apple"},
+    {characters: "abba", groups: ["xxyy"], words: "kiwi orange blackberry"},
+    {characters: "abbb", groups: ["xxyy"], words: "blackberry orange kiwi"},
+    {characters: "baaa", groups: ["xyyx"], words: "pineapple kiwi peach"},
+    {characters: "baab", groups: ["xyyx"], words: "banana pear grapefruit"},
+    {characters: "baba", groups: ["xyyx"], words: "grapefruit cherry apple"},
+    {characters: "babb", groups: ["xyyx"], words: "blackberry orange pineapple"},
+    {characters: "bbaa", groups: ["xyyx"], words: "orange banana pineapple"},
+    {characters: "bbab", groups: ["xyyx"], words: "kiwi strawberry banana"},
+    {characters: "bbba", groups: ["xyyx"], words: "orange apple banana"},
+    {characters: "bbbb", groups: ["xyyx"], words: "cherry banana potato"},
+];
+
 const devicesService:DevicesService = container.get(ASSETLIBRARY_CLIENT_TYPES.DevicesService);
 const groupsService:GroupsService = container.get(ASSETLIBRARY_CLIENT_TYPES.GroupsService);
 const templatesService:TemplatesService = container.get(ASSETLIBRARY_CLIENT_TYPES.TemplatesService);
@@ -1015,4 +1037,87 @@ Before({tags: '@setup_groupSearch_lite_feature'}, async function () {
 
 Before({tags: '@teardown_groupSearch_lite_feature'}, async function () {
     await teardown_groupSearch_lite_feature();
+});
+
+async function teardown_deviceSearch_enhanced_feature() {
+    await deleteAssetLibraryDevices(
+        ENHANCEDSEARCH_FEATURES_DEVICES.map(({characters}) => `TEST-enhancedSearch-${characters}`)
+    );
+    await deleteAssetLibraryGroups([
+        `/${ENHANCEDSEARCH_FEATURES_GROUP_ALL}`,
+        ...ENHANCEDSEARCH_FEATURES_GROUP_SUFFIXES.map(suffix => `/enhancedSearchGroup_${suffix}`)
+    ]);
+    await deleteAssetLibraryTemplates(
+        CategoryEnum.device, [ENHANCEDSEARCH_FEATURES_DEVICE_TEMPLATE_ID]
+    );
+}
+
+Before({tags: '@setup_deviceSearch_enhanced_feature'}, async function () {
+
+    // teardown first just in case
+    await teardown_deviceSearch_enhanced_feature();
+
+    // device template
+    const deviceType: TypeResource = {
+        templateId: ENHANCEDSEARCH_FEATURES_DEVICE_TEMPLATE_ID,
+        category: 'device',
+        properties: {
+            words: { type: ['string'] },
+            characters: { type: ['string']}
+        },
+        relations: {
+            out: {
+                'part_of_group': ['root']
+            }
+        }
+    };
+    await templatesService.createTemplate(deviceType, additionalHeaders);
+    await templatesService.publishTemplate(CategoryEnum.device, ENHANCEDSEARCH_FEATURES_DEVICE_TEMPLATE_ID, additionalHeaders);
+
+    // create group that all devices are part of
+    await groupsService.createGroup({
+        templateId: 'root',
+        parentPath: '/',
+        name: ENHANCEDSEARCH_FEATURES_GROUP_ALL,
+        attributes: {}   
+    });
+        
+    // create sub-groups that only a subset of devices is part of
+    await Promise.all(ENHANCEDSEARCH_FEATURES_GROUP_SUFFIXES.map(
+        (suffix) => groupsService.createGroup({
+            templateId: 'root',
+            parentPath: '/',
+            name: `enhancedSearchGroup_${suffix}`,
+            attributes: {}
+        })
+    ));
+
+
+    // create devices
+    await Promise.all(ENHANCEDSEARCH_FEATURES_DEVICES.map(
+        ({characters, words, groups}) => devicesService.createDevice({
+            templateId: ENHANCEDSEARCH_FEATURES_DEVICE_TEMPLATE_ID,
+            deviceId: `TEST-enhancedSearch-${characters}`,
+            attributes: {
+                words: words,
+                characters: characters,
+            },
+            groups: {
+                out: {
+                    part_of_group: [
+                        `/${ENHANCEDSEARCH_FEATURES_GROUP_ALL}`,
+                        ...groups.map((suffix) => `/enhancedSearchGroup_${suffix}`)
+                    ],
+                }
+            }
+        })
+    ));
+
+    // wait a short while for data to arrive in the OpenSearch index
+    return new Promise( resolve => setTimeout(resolve, 10000) );
+
+});
+
+Before({tags: '@teardown_deviceSearch_enhanced_feature'}, async function () {
+    await teardown_deviceSearch_enhanced_feature();
 });

@@ -4,7 +4,7 @@
 
 The Asset Library is capable of running in one of three modes:  `full`, `enhanced`, and `lite`.
 
-The `lite` version uses The AWS IoT Device Registry to store all devices and groups data, whereas the `full` version utilizes [AWS Neptune](https://aws.amazon.com/neptune/) to provide more advanced data modeling features.
+The `lite` version uses the AWS IoT Device Registry to store all devices and groups data, whereas the `full` version utilizes [Amazon Neptune](https://aws.amazon.com/neptune/) to provide more advanced data modeling features.
 In `enhanced` mode, an OpenSearch cluster is deployed as secondary data store and provides enhanced search functionality.
 
 The mode is determined via a configuration property at the time of deployment.  The following describes the differences in functionality between the two modes.

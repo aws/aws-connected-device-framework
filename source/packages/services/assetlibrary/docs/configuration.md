@@ -51,9 +51,7 @@ CORS_EXPOSED_HEADERS=content-type,location
 # the base path from the request to allow the module to map the incoming request to the correct lambda handler
 CUSTOMDOMAIN_BASEPATH=
 
-# The Asset Library mode. `full` (default) will enable the full feature set and
-# use Neptune as its datastore, whereas `lite` will offer a reduced feature set 
-# (see documentation) and use the AWS IoT Device Registry as its datastore.
+# The Asset Library mode: `full`, `enhanced`, or `lite`. See docs/modes.md for details.
 MODE=full
 
 # If true, fine-grained access control will be enabled. Refer to documentation 
