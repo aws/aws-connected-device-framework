@@ -1,6 +1,13 @@
 # Change Log - @cdf/assetlibrary
 
-This log was last generated on Wed, 27 Apr 2022 06:44:55 GMT and should not be manually modified.
+This log was last generated on Thu, 16 Jun 2022 19:05:36 GMT and should not be manually modified.
+
+## 6.0.7
+Thu, 16 Jun 2022 19:05:36 GMT
+
+### Patches
+
+- automatically attach NeptuneLoadFromS3Role to cluster
 
 ## 6.0.6
 Wed, 27 Apr 2022 06:44:55 GMT

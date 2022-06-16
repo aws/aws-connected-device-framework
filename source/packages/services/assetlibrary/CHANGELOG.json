@@ -2,6 +2,18 @@
   "name": "@cdf/assetlibrary",
   "entries": [
     {
+      "version": "6.0.7",
+      "tag": "@cdf/assetlibrary_v6.0.7",
+      "date": "Thu, 16 Jun 2022 19:05:36 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "automatically attach NeptuneLoadFromS3Role to cluster"
+          }
+        ]
+      }
+    },
+    {
       "version": "6.0.6",
       "tag": "@cdf/assetlibrary_v6.0.6",
       "date": "Wed, 27 Apr 2022 06:44:55 GMT",
