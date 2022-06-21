@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/auth-devicecert",
+      "comment": "update to node 16.x",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/auth-devicecert",
+  "email": "willsia@amazon.com"
+}

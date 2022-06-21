@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/certificate-activator",
+      "comment": "update to node 16.x",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/certificate-activator",
+  "email": "willsia@amazon.com"
+}

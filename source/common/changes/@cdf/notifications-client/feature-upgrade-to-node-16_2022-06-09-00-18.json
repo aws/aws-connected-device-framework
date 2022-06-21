@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/notifications-client",
+      "comment": "update to node 16.x",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/notifications-client",
+  "email": "willsia@amazon.com"
+}

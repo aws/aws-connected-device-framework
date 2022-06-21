@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/simulation-launcher",
+      "comment": "update to node 16.x",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/simulation-launcher",
+  "email": "willsia@amazon.com"
+}

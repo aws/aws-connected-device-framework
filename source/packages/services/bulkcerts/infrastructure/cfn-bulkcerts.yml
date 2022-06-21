@@ -286,7 +286,7 @@ Resources:
         - !Ref OpenSslLambdaLayerArn
       MemorySize: 128
       Role: !GetAtt ApiLambdaExecutionRole.Arn
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 300
       Environment:
         Variables:
@@ -333,7 +333,7 @@ Resources:
       Handler: packages/services/bulkcerts/dist/sns_handler.handler
       MemorySize: 512
       Role: !GetAtt SnsLambdaExecutionRole.Arn
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 300
       ReservedConcurrentExecutions: 3
       Environment:

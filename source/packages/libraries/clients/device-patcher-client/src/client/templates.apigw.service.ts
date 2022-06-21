@@ -11,30 +11,30 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import {injectable} from 'inversify';
+import { injectable } from 'inversify';
 import ow from 'ow';
 import * as request from 'superagent';
 
-import {RequestHeaders} from './common.model';
+import { RequestHeaders } from './common.model';
 import {
     CreatePatchTemplateParams,
     PatchTemplate,
     PatchTemplateList,
     UpdatePatchTemplateParams
 } from './templates.model';
-import {TemplatesService, TemplatesServiceBase} from './templates.service';
+import { TemplatesService, TemplatesServiceBase } from './templates.service';
 
 @injectable()
 export class TemplatesApigwService extends TemplatesServiceBase implements TemplatesService {
 
-    private readonly baseUrl:string;
+    private readonly baseUrl: string;
 
     public constructor() {
         super();
         this.baseUrl = process.env.DEVICE_PATCHER_BASE_URL;
     }
 
-    async createTemplate(template: CreatePatchTemplateParams, additionalHeaders?:RequestHeaders) : Promise<void> {
+    async createTemplate(template: CreatePatchTemplateParams, additionalHeaders?: RequestHeaders): Promise<void> {
         ow(template, ow.object.nonEmpty);
         ow(template.name, ow.string.nonEmpty);
         ow(template.playbookFileLocation, ow.string.nonEmpty);
@@ -52,7 +52,7 @@ export class TemplatesApigwService extends TemplatesServiceBase implements Templ
 
         const res = await request.post(url)
             .set(this.buildHeaders(additionalHeaders))
-            .field(template)
+            .field(template as any)
             .attach('playbookFile', template.playbookFileLocation)
 
         return res.body;
@@ -74,13 +74,13 @@ export class TemplatesApigwService extends TemplatesServiceBase implements Templ
 
         const res = await request.patch(url)
             .set(this.buildHeaders(additionalHeaders))
-            .field(template)
+            .field(template as any)
             .attach('playbookFile', template.playbookFileLocation)
 
         return res.body;
     }
 
-    async getTemplate(name: string, additionalHeaders?:RequestHeaders) : Promise<PatchTemplate> {
+    async getTemplate(name: string, additionalHeaders?: RequestHeaders): Promise<PatchTemplate> {
 
         ow(name, ow.string.nonEmpty);
 
@@ -91,7 +91,7 @@ export class TemplatesApigwService extends TemplatesServiceBase implements Templ
         return res.body;
     }
 
-    async listTemplates(additionalHeaders?:RequestHeaders) : Promise<PatchTemplateList> {
+    async listTemplates(additionalHeaders?: RequestHeaders): Promise<PatchTemplateList> {
 
         const url = `${this.baseUrl}${super.templatesRelativeUrl()}`;
 
@@ -100,7 +100,7 @@ export class TemplatesApigwService extends TemplatesServiceBase implements Templ
         return res.body;
     }
 
-    async deleteTemplate(name: string, additionalHeaders?:RequestHeaders) : Promise<void> {
+    async deleteTemplate(name: string, additionalHeaders?: RequestHeaders): Promise<void> {
 
         ow(name, ow.string.nonEmpty);
 

@@ -76,7 +76,7 @@ stages:
 #     - *common-artifacts
 
 default:
-  image: public.ecr.aws/lambda/nodejs:14
+  image: public.ecr.aws/lambda/nodejs:16
   before_script:
     - *common-install-deployment-dependencies
     - *common-git-steps
@@ -202,7 +202,7 @@ deployLive:
 
 release:
   image:
-    name: public.ecr.aws/lambda/nodejs:14
+    name: public.ecr.aws/lambda/nodejs:16
     entrypoint: [""]
   stage: release
   before_script:
