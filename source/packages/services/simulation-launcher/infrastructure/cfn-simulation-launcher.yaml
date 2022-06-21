@@ -299,7 +299,7 @@ Resources:
       Handler: packages/services/simulation-launcher/dist/sns_proxy.handler
       MemorySize: 128
       Role: !GetAtt LambdaExecutionRole.Arn
-      Runtime: nodejs12.x
+      Runtime: nodejs16.x
       Timeout: 300
       Environment:
         Variables:

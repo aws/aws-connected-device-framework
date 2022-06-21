@@ -313,7 +313,7 @@ Resources:
       Handler: packages/services/device-patcher/dist/lambda_apigw_proxy.handler
       MemorySize: 256
       Role: !GetAtt RESTLambdaExecutionRole.Arn
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 30
       Environment:
         Variables:
@@ -357,7 +357,7 @@ Resources:
       Handler: packages/services/device-patcher/dist/lambda_sqs_proxy.handler
       MemorySize: 128
       Role: !GetAtt SQSLambdaExecutionRole.Arn
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       AutoPublishAlias: live
       DeploymentPreference:
         Type: AllAtOnce
@@ -389,7 +389,7 @@ Resources:
       Handler: packages/services/device-patcher/dist/lambda_sqs_ssm_proxy.handler
       MemorySize: 128
       Role: !GetAtt SSMEventsLambdaExecutionRole.Arn
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       AutoPublishAlias: live
       DeploymentPreference:
         Type: AllAtOnce
