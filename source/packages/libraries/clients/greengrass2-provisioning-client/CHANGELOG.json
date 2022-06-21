@@ -2,6 +2,28 @@
   "name": "@cdf/greengrass2-provisioning-client",
   "entries": [
     {
+      "version": "1.0.6",
+      "tag": "@cdf/greengrass2-provisioning-client_v1.0.6",
+      "date": "Tue, 21 Jun 2022 00:47:55 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "update to node 16.x"
+          }
+        ],
+        "none": [
+          {
+            "comment": "fix(greengrasss2-client): minor env var naming update"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@cdf/assetlibrary-client\" from `^5.0.4` to `^5.0.5`"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.0.5",
       "tag": "@cdf/greengrass2-provisioning-client_v1.0.5",
       "date": "Thu, 07 Apr 2022 05:00:50 GMT",

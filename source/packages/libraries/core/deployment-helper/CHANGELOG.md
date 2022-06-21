@@ -1,6 +1,13 @@
 # Change Log - @cdf/deployment-helper
 
-This log was last generated on Wed, 27 Apr 2022 06:44:55 GMT and should not be manually modified.
+This log was last generated on Tue, 21 Jun 2022 00:47:55 GMT and should not be manually modified.
+
+## 3.1.1
+Tue, 21 Jun 2022 00:47:55 GMT
+
+### Patches
+
+- update to node 16.x
 
 ## 3.1.0
 Wed, 27 Apr 2022 06:44:55 GMT

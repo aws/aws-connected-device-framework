@@ -1,6 +1,13 @@
 # Change Log - @cdf/bulkcerts
 
-This log was last generated on Thu, 12 May 2022 01:58:21 GMT and should not be manually modified.
+This log was last generated on Tue, 21 Jun 2022 00:47:55 GMT and should not be manually modified.
+
+## 6.0.3
+Tue, 21 Jun 2022 00:47:55 GMT
+
+### Patches
+
+- update to node 16.x
 
 ## 6.0.2
 Thu, 12 May 2022 01:58:21 GMT

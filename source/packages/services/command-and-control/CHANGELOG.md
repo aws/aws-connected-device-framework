@@ -1,6 +1,13 @@
 # Change Log - @cdf/command-and-control
 
-This log was last generated on Fri, 08 Apr 2022 07:03:46 GMT and should not be manually modified.
+This log was last generated on Tue, 21 Jun 2022 00:47:55 GMT and should not be manually modified.
+
+## 0.0.6
+Tue, 21 Jun 2022 00:47:55 GMT
+
+### Patches
+
+- update to node 16.x
 
 ## 0.0.5
 Fri, 08 Apr 2022 07:03:46 GMT

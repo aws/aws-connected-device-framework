@@ -1,6 +1,6 @@
 {
   "name": "@cdf/command-and-control",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "CDF Command & Control",
   "author": "Dean Hart",
   "config": {
@@ -16,8 +16,8 @@
     "bundle": "../../../infrastructure/bundle-package.bash command-and-control"
   },
   "dependencies": {
-    "@cdf/assetlibrary-client": "^5.0.4",
-    "@cdf/config-inject": "^4.0.0",
+    "@cdf/assetlibrary-client": "^5.0.5",
+    "@cdf/config-inject": "^4.0.2",
     "@cdf/errors": "^4.0.0",
     "@cdf/express-middleware": "^3.0.0",
     "@cdf/lambda-invoke": "^3.0.0",

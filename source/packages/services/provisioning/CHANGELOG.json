@@ -2,6 +2,23 @@
   "name": "@cdf/provisioning",
   "entries": [
     {
+      "version": "5.1.1",
+      "tag": "@cdf/provisioning_v5.1.1",
+      "date": "Tue, 21 Jun 2022 00:47:55 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "update to node 16.x"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@cdf/config-inject\" from `^4.0.1` to `^4.0.2`"
+          }
+        ]
+      }
+    },
+    {
       "version": "5.1.0",
       "tag": "@cdf/provisioning_v5.1.0",
       "date": "Thu, 02 Jun 2022 00:45:32 GMT",

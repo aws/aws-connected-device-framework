@@ -1,6 +1,6 @@
 {
   "name": "@cdf/simulation-manager",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "CDF Simulator:  Simulation Manager REST API",
   "author": "Dean Hart",
   "scripts": {
@@ -15,7 +15,7 @@
   "dependencies": {
     "aws-sdk": "2.1048.0",
     "aws-serverless-express": "3.3.6",
-    "@cdf/config-inject": "^4.0.1",
+    "@cdf/config-inject": "^4.0.2",
     "body-parser": "1.19.0",
     "express": "4.17.1",
     "handlebars": "4.7.7",

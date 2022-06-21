@@ -1,6 +1,13 @@
 # Change Log - @cdf/events-alerts
 
-This log was last generated on Mon, 16 May 2022 03:04:28 GMT and should not be manually modified.
+This log was last generated on Tue, 21 Jun 2022 00:47:55 GMT and should not be manually modified.
+
+## 3.0.3
+Tue, 21 Jun 2022 00:47:55 GMT
+
+### Patches
+
+- update to node 16.x
 
 ## 3.0.2
 Mon, 16 May 2022 03:04:28 GMT

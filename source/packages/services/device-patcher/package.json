@@ -1,6 +1,6 @@
 {
   "name": "@cdf/device-patcher",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Device patcher Module",
   "author": "Hassan Khokhar",
   "config": {
@@ -17,7 +17,7 @@
   "dependencies": {
     "@cdf/errors": "^4.0.0",
     "@cdf/logger": "^4.0.0",
-    "@cdf/config-inject": "^4.0.1",
+    "@cdf/config-inject": "^4.0.2",
     "@cdf/express-middleware": "^3.0.0",
     "atob": "2.1.2",
     "aws-sdk": "2.1048.0",

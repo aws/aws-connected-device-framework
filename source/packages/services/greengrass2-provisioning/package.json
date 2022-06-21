@@ -1,6 +1,6 @@
 {
   "name": "@cdf/greengrass2-provisioning",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "CDF Greengrass V2 Provisioning",
   "author": "Dean Hart",
   "scripts": {
@@ -26,12 +26,12 @@
     "@aws-sdk/smithy-client": "3.38.0",
     "@aws-sdk/types": "3.38.0",
     "@aws-sdk/util-dynamodb": "3.38.0",
-    "@cdf/assetlibrary-client": "^5.0.4",
+    "@cdf/assetlibrary-client": "^5.0.5",
     "@cdf/errors": "^4.0.0",
     "@cdf/express-middleware": "^3.0.0",
     "@cdf/lambda-invoke": "^3.0.2",
     "@cdf/logger": "^4.0.0",
-    "@cdf/config-inject": "^4.0.1",
+    "@cdf/config-inject": "^4.0.2",
     "@cdf/provisioning-client": "^5.1.0",
     "@cdf/thing-list-builder": "~1.1.2",
     "@cdf/event-publisher": "~1.0.1",
