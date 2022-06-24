@@ -6,6 +6,12 @@ The certificate vendor manages the rotation of certificates involving a number o
 
 There are two flows for certificate rotation. In the fist case, device certificates are pre-created and registered before the rotation request. In this case the device requests a new certificate and is vended an S3 presigned URL in order to download the certificate package. In the second case, the device provides the certificate vendor module a CSR. In this way the device can request an updated certificate while keeping the private key on the device. The certificate vendor then uses a CA certificate registered with AWS IoT to create a device certificate from the CSR and return this certificate to the device.
 
+## Architecture
+
+The following represents the architecture of Certificate Vendor.
+
+![Architecture](<docs/images/cdf-core-hla-CertificateVendor.png>)
+
 ## Pre-requisites
 
 ### Pre-created certificates
