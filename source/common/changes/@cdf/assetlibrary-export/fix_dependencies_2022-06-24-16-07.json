@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/assetlibrary-export",
+      "comment": "Updated dependencies flagged as having security issues.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/assetlibrary-export",
+  "email": "deanhart@amazon.com"
+}

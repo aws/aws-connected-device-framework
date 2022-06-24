@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/commands",
+      "comment": "Updated dependencies flagged as having security issues.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/commands",
+  "email": "deanhart@amazon.com"
+}
