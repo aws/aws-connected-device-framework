@@ -18,7 +18,7 @@ import { ModuleName, ServiceModule } from '../../../models/modules';
 import { ConfigBuilder } from "../../../utils/configBuilder";
 import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
-import { deleteStack, getStackParameters, getStackResourceSummaries, packageAndDeployStack } from '../../../utils/cloudformation.util';
+import { deleteStack, getStackParameters, getStackResourceSummaries, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
 
 export class CertificateVendorInstaller implements ServiceModule {
 
@@ -35,7 +35,7 @@ export class CertificateVendorInstaller implements ServiceModule {
   ];
 
   public readonly dependsOnOptional: ModuleName[] = [];
-  
+
   private readonly stackName: string;
   private readonly assetLibraryStackName: string;
   private readonly commandsStackName: string;
@@ -46,7 +46,7 @@ export class CertificateVendorInstaller implements ServiceModule {
     this.commandsStackName = `cdf-commands-${environment}`;
   }
 
-  
+
 
   public async prompts(answers: Answers): Promise<Answers> {
 
@@ -185,6 +185,47 @@ export class CertificateVendorInstaller implements ServiceModule {
 
   }
 
+
+  private getParameterOverrides(answers: Answers): string[] {
+    const parameterOverrides = [
+      `Environment=${answers.environment}`,
+      `BucketName=${answers.s3.bucket}`,
+      `KmsKeyId=${answers.kms.id}`,
+      `OpenSslLambdaLayerArn=${answers.openSsl.arn}`,
+      `AssetLibraryFunctionName=${answers.certificateVendor.assetLibraryFunctionName}`,
+      `CommandsFunctionName=${answers.certificateVendor.commandsFunctionName}`,
+      `CustomResourceLambdaArn=${answers.deploymentHelper.lambdaArn}`,
+    ];
+
+    const addIfSpecified = (key: string, value: unknown) => {
+      if (value !== undefined) parameterOverrides.push(`${key}=${value}`)
+    };
+
+    addIfSpecified('CaCertificateId', answers.certificateVendor.caCertificateId);
+    addIfSpecified('RotatedCertificatePolicy', answers.certificateVendor.rotatedCertificatePolicy);
+    addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
+
+
+    return parameterOverrides;
+  }
+
+
+  public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    const tasks: ListrTask[] = [{
+      title: `Packaging module '${this.name}'`,
+      task: async () => {
+        await packageAndUploadTemplate({
+          answers: answers,
+          serviceName: 'certificatevendor',
+          templateFile: '../certificatevendor/infrastructure/cfn-certificatevendor.yml',
+          parameterOverrides: this.getParameterOverrides(answers),
+        });
+      },
+    }
+    ];
+    return [answers, tasks]
+  }
+
   public async install(answers: Answers): Promise<[Answers, ListrTask[]]> {
 
     ow(answers, ow.object.nonEmpty);
@@ -216,30 +257,14 @@ export class CertificateVendorInstaller implements ServiceModule {
       title: `Packaging and deploying stack '${this.stackName}'`,
       task: async () => {
 
-        const parameterOverrides = [
-          `Environment=${answers.environment}`,
-          `BucketName=${answers.s3.bucket}`,
-          `KmsKeyId=${answers.kms.id}`,
-          `OpenSslLambdaLayerArn=${answers.openSsl.arn}`,
-          `AssetLibraryFunctionName=${answers.certificateVendor.assetLibraryFunctionName}`,
-          `CommandsFunctionName=${answers.certificateVendor.commandsFunctionName}`,
-          `CustomResourceLambdaArn=${answers.deploymentHelper.lambdaArn}`,
-        ];
 
-        const addIfSpecified = (key: string, value: unknown) => {
-          if (value !== undefined) parameterOverrides.push(`${key}=${value}`)
-        };
-
-        addIfSpecified('CaCertificateId', answers.certificateVendor.caCertificateId);
-        addIfSpecified('RotatedCertificatePolicy', answers.certificateVendor.rotatedCertificatePolicy);
-        addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
 
         await packageAndDeployStack({
           answers: answers,
           stackName: this.stackName,
           serviceName: 'certificatevendor',
           templateFile: '../certificatevendor/infrastructure/cfn-certificatevendor.yml',
-          parameterOverrides,
+          parameterOverrides: this.getParameterOverrides(answers),
           needsPackaging: true,
           needsCapabilityNamedIAM: true,
         });

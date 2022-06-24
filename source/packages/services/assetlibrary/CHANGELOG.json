@@ -2,6 +2,47 @@
   "name": "@cdf/assetlibrary",
   "entries": [
     {
+      "version": "6.0.9",
+      "tag": "@cdf/assetlibrary_v6.0.9",
+      "date": "Fri, 24 Jun 2022 21:00:45 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Updated dependencies flagged as having security issues."
+          }
+        ]
+      }
+    },
+    {
+      "version": "6.0.8",
+      "tag": "@cdf/assetlibrary_v6.0.8",
+      "date": "Tue, 21 Jun 2022 00:47:55 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "update to node 16.x"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@cdf/config-inject\" from `^4.0.1` to `^4.0.2`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "6.0.7",
+      "tag": "@cdf/assetlibrary_v6.0.7",
+      "date": "Thu, 16 Jun 2022 19:05:36 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "automatically attach NeptuneLoadFromS3Role to cluster"
+          }
+        ]
+      }
+    },
+    {
       "version": "6.0.6",
       "tag": "@cdf/assetlibrary_v6.0.6",
       "date": "Wed, 27 Apr 2022 06:44:55 GMT",

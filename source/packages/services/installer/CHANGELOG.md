@@ -1,6 +1,48 @@
 # Change Log - @cdf/installer
 
-This log was last generated on Tue, 17 May 2022 00:04:26 GMT and should not be manually modified.
+This log was last generated on Tue, 21 Jun 2022 00:47:55 GMT and should not be manually modified.
+
+## 0.8.1
+Tue, 21 Jun 2022 00:47:55 GMT
+
+### Patches
+
+- update to node 16.x
+
+## 0.8.0
+Wed, 15 Jun 2022 16:42:34 GMT
+
+### Minor changes
+
+- make greengrass config generators configurable
+
+## 0.7.2
+Wed, 15 Jun 2022 03:43:04 GMT
+
+### Patches
+
+- when creating installer, it will uses pnpm installer by rush
+
+## 0.7.1
+Fri, 10 Jun 2022 03:02:06 GMT
+
+### Patches
+
+- fix issues where SNS topic is not being retrieved from the right stack
+
+## 0.7.0
+Thu, 02 Jun 2022 00:45:32 GMT
+
+### Minor changes
+
+- Added support for creating and registering AWS IoT device certificates using AWS ACM PCA.
+
+## 0.6.0
+Tue, 24 May 2022 04:06:34 GMT
+
+### Minor changes
+
+- introduce package only command
 
 ## 0.5.1
 Tue, 17 May 2022 00:04:26 GMT

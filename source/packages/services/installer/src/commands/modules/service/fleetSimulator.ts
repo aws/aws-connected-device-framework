@@ -19,7 +19,7 @@ import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
 import { customDomainPrompt } from '../../../prompts/domain.prompt';
 import ow from 'ow';
-import { deleteStack, getStackOutputs, getStackParameters, getStackResourceSummaries, packageAndDeployStack } from '../../../utils/cloudformation.util';
+import { deleteStack, getStackOutputs, getStackParameters, getStackResourceSummaries, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
 
 
 export class FleetSimulatorInstaller implements RestModule {
@@ -35,7 +35,7 @@ export class FleetSimulatorInstaller implements RestModule {
     'deploymentHelper',
     'assetLibrary'
   ];
-  
+
   public readonly dependsOnOptional: ModuleName[] = [];
 
   private readonly simulationLauncherStackName: string;
@@ -96,6 +96,83 @@ export class FleetSimulatorInstaller implements RestModule {
     return updatedAnswers;
   }
 
+
+  private getSimulationLauncherOverrides(answers: Answers): string[] {
+    const parameterOverrides = [
+      `Environment=${answers.environment}`,
+      `JmeterRepoName=${answers.fleetSimulator?.jmeterRepoName}`,
+      `VpcId=${answers.vpc?.id}`,
+      `PublicSubNetIds=${answers.vpc?.privateSubnetIds}`, // TODO:check how cfn uses this - should it be public or private subnets?
+      `CustomResourceLambdaArn=${answers.deploymentHelper.lambdaArn}`,
+      `KmsKeyId=${answers.kms.id}`,
+      `BucketName=${answers.s3.bucket}`,
+    ];
+
+    const addIfSpecified = (key: string, value: unknown) => {
+      if (value !== undefined) parameterOverrides.push(`${key}=${value}`)
+    };
+
+    addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
+    return parameterOverrides;
+  }
+
+
+  private getSimulationManagerOverrides(answers: Answers): string[] {
+    const parameterOverrides = [
+      `Environment=${answers.environment}`,
+      `TemplateSnippetS3UriBase=${answers.apigw.templateSnippetS3UriBase}`,
+      `ApiGatewayDefinitionTemplate=${answers.apigw.cloudFormationTemplate}`,
+      `AuthType=${answers.apigw.type}`,
+      `VpcId=${answers.vpc?.id ?? 'N/A'}`,
+      `CDFSecurityGroupId=${answers.vpc?.securityGroupId ?? ''}`,
+      `PrivateSubNetIds=${answers.vpc?.privateSubnetIds ?? ''}`,
+      `PrivateApiGatewayVPCEndpoint=${answers.vpc?.privateApiGatewayVpcEndpoint ?? ''}`,
+      `CustomResourceLambdaArn=${answers.deploymentHelper.lambdaArn}`,
+      `BucketName=${answers.s3.bucket}`,
+      `SimulationLauncherSnsTopic=${answers.fleetSimulator.snsTopic}`,
+      `AssetLibraryFunctionName=${answers.fleetSimulator.assetLibraryFunctionName}`,
+      `KmsKeyId=${answers.kms.id}`,
+
+    ]
+
+    const addIfSpecified = (key: string, value: unknown) => {
+      if (value !== undefined) parameterOverrides.push(`${key}=${value}`)
+    };
+
+    addIfSpecified('CognitoUserPoolArn', answers.apigw.cognitoUserPoolArn);
+    addIfSpecified('AuthorizerFunctionArn', answers.apigw.lambdaAuthorizerArn);
+    addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
+    return parameterOverrides;
+  }
+
+
+  public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    const tasks: ListrTask[] = [{
+      title: `Packaging module '${this.name} [Simulation Launcher]'`,
+      task: async () => {
+        await packageAndUploadTemplate({
+          answers: answers,
+          serviceName: 'simulation-launcher',
+          templateFile: '../simulation-launcher/infrastructure/cfn-simulation-launcher.yaml',
+          parameterOverrides: this.getSimulationLauncherOverrides(answers)
+        });
+      },
+    },
+    {
+      title: `Packaging module '${this.name} [Simulation Manager]'`,
+      task: async () => {
+        await packageAndUploadTemplate({
+          answers: answers,
+          serviceName: 'simulation-manager',
+          templateFile: '../simulation-manager/infrastructure/cfn-simulation-manager.yml',
+          parameterOverrides: this.getSimulationManagerOverrides(answers)
+        });
+      },
+    }
+    ];
+    return [answers, tasks]
+  }
+
   public async install(answers: Answers): Promise<[Answers, ListrTask[]]> {
 
     ow(answers, ow.object.nonEmpty);
@@ -112,28 +189,14 @@ export class FleetSimulatorInstaller implements RestModule {
     tasks.push({
       title: `Packaging and deploying stack '${this.simulationLauncherStackName}'`,
       task: async () => {
-        const parameterOverrides = [
-          `Environment=${answers.environment}`,
-          `JmeterRepoName=${answers.fleetSimulator?.jmeterRepoName}`,
-          `VpcId=${answers.vpc?.id}`,
-          `PublicSubNetIds=${answers.vpc?.privateSubnetIds}`, // TODO:check how cfn uses this - should it be public or private subnets?
-          `CustomResourceLambdaArn=${answers.deploymentHelper.lambdaArn}`,
-          `KmsKeyId=${answers.kms.id}`,
-          `BucketName=${answers.s3.bucket}`,
-        ];
 
-        const addIfSpecified = (key: string, value: unknown) => {
-          if (value !== undefined) parameterOverrides.push(`${key}=${value}`)
-        };
-
-        addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
 
         await packageAndDeployStack({
           answers: answers,
           stackName: this.simulationLauncherStackName,
           serviceName: 'simulation-launcher',
           templateFile: '../simulation-launcher/infrastructure/cfn-simulation-launcher.yaml',
-          parameterOverrides,
+          parameterOverrides: this.getSimulationLauncherOverrides(answers),
           needsPackaging: true,
           needsCapabilityNamedIAM: true,
         });
@@ -154,38 +217,12 @@ export class FleetSimulatorInstaller implements RestModule {
     tasks.push({
       title: `Packaging and deploying stack '${this.simulationManagerStackName}'`,
       task: async () => {
-
-        const parameterOverrides = [
-          `Environment=${answers.environment}`,
-          `TemplateSnippetS3UriBase=${answers.apigw.templateSnippetS3UriBase}`,
-          `ApiGatewayDefinitionTemplate=${answers.apigw.cloudFormationTemplate}`,
-          `AuthType=${answers.apigw.type}`,
-          `VpcId=${answers.vpc?.id ?? 'N/A'}`,
-          `CDFSecurityGroupId=${answers.vpc?.securityGroupId ?? ''}`,
-          `PrivateSubNetIds=${answers.vpc?.privateSubnetIds ?? ''}`,
-          `PrivateApiGatewayVPCEndpoint=${answers.vpc?.privateApiGatewayVpcEndpoint ?? ''}`,
-          `CustomResourceLambdaArn=${answers.deploymentHelper.lambdaArn}`,
-          `BucketName=${answers.s3.bucket}`,
-          `SimulationLauncherSnsTopic=${answers.fleetSimulator.snsTopic}`,
-          `AssetLibraryFunctionName=${answers.fleetSimulator.assetLibraryFunctionName}`,
-          `KmsKeyId=${answers.kms.id}`,
-
-        ]
-
-        const addIfSpecified = (key: string, value: unknown) => {
-          if (value !== undefined) parameterOverrides.push(`${key}=${value}`)
-        };
-
-        addIfSpecified('CognitoUserPoolArn', answers.apigw.cognitoUserPoolArn);
-        addIfSpecified('AuthorizerFunctionArn', answers.apigw.lambdaAuthorizerArn);
-        addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
-
         await packageAndDeployStack({
           answers: answers,
           stackName: this.simulationManagerStackName,
           serviceName: 'simulation-manager',
           templateFile: '../simulation-manager/infrastructure/cfn-simulation-manager.yml',
-          parameterOverrides,
+          parameterOverrides: this.getSimulationManagerOverrides(answers),
           needsPackaging: true,
           needsCapabilityNamedIAM: true,
         });
@@ -208,15 +245,16 @@ export class FleetSimulatorInstaller implements RestModule {
 
   public async generateLocalConfiguration(answers: Answers): Promise<string> {
 
-    const byParameterKey = await getStackParameters(this.simulationManagerStackName, answers.region)
-    const byResourceLogicalId = await getStackResourceSummaries(this.simulationManagerStackName, answers.region)
+    const simulationManagerByParameterKey = await getStackParameters(this.simulationManagerStackName, answers.region)
+    const simulationManagerByResourceLogicalId = await getStackResourceSummaries(this.simulationManagerStackName, answers.region)
+    const simulationLauncherByResourceLogicalId = await getStackResourceSummaries(this.simulationLauncherStackName, answers.region)
 
     const configBuilder = new ConfigBuilder()
-      .add(`AWS_S3_BUCKET`, byParameterKey('BucketName'))
-      .add(`ASSETLIBRARY_API_FUNCTION_NAME`, byParameterKey('AssetLibraryFunctionName'))
-      .add(`AWS_DYNAMODB_TABLE_SIMULATIONS`, byResourceLogicalId('SimulationsTable'))
-      .add(`AWS_DYNAMODB_TABLE_STATE`, byResourceLogicalId('SimulationDeviceState'))
-      .add(`AWS_SNS_TOPICS_LAUNCH`, byResourceLogicalId('SimulationLauncherSnsTopic'))
+      .add(`AWS_S3_BUCKET`, simulationManagerByParameterKey('BucketName'))
+      .add(`ASSETLIBRARY_API_FUNCTION_NAME`, simulationManagerByParameterKey('AssetLibraryFunctionName'))
+      .add(`AWS_DYNAMODB_TABLE_SIMULATIONS`, simulationManagerByResourceLogicalId('SimulationsTable'))
+      .add(`AWS_DYNAMODB_TABLE_STATE`, simulationManagerByResourceLogicalId('SimulationDeviceState'))
+      .add(`AWS_SNS_TOPICS_LAUNCH`, simulationLauncherByResourceLogicalId('SnsTopic'))
       .add(`AWS_IOT_HOST`, answers?.iotEndpoint)
 
     return configBuilder.config

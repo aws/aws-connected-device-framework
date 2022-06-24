@@ -6,7 +6,7 @@ The Provisioning module manages the provisioning of things, certificates and pol
 
 The following accepts `ThingName` as a parameter. A thing is created with the name set to `Parameters.ThingName`. As the `CDF.createDeviceCertificate` extension is set to `true`, a certificate is automatically created on behalf of the device, with the values of `Parameters.CertificatePem` and `Parameters.CaCertificatePem` auto-populated. These values are used in the registration of the certificate which is set to automatically activated and associated with the device. The existing `myPolicy` is attached to the certificate. As the `CDF.attachAdditionalPolicies` extension is set, the `attachAdditionalPolicies` policy is also associated with the certificate.
 
-```xml
+```json
 {
     "Parameters": {
         "ThingName": {
@@ -70,11 +70,37 @@ Refer to the [AWS IoT documentation](https://docs.aws.amazon.com/iot/latest/deve
 CDF extends AWS IoT Provisioning Templates by allowing the following extra configuration options to be applied to enhance the functionality of provisioning templates:
 
 ### `$.CDF.createDeviceCertificate` 
+
 If set to `true`, a certificate will be created on behalf of the device, which can then be used as configured in the template to register and associate with the device.  By default, is `false`.
+
+For the template to use the generated certificate it must have the `CertificatePem`  and `CaCertificatePem` template parameters defined. Note that the user of the template should not provide values for these parameters as they will be populated automatically:
+
+```json
+# Provisioning template extract
+{
+    "Parameters": {
+        "CertificatePem": {
+            "Type": "String"
+        },
+        "CaCertificatePem": {
+            "Type": "String"
+        },
+        ...
+    },
+    "Resources": {
+        ...
+    },
+    
+    "CDF": {
+        "createDeviceCertificate": true
+    }
+}
+```
 
 The following attributes, provided as part of the `POST /things` request body, are available to further configure this option:
 
 ```json
+# POST /things request body
 {
     ...
     "cdfProvisioningParameters": {
@@ -95,12 +121,61 @@ The following attributes, provided as part of the `POST /things` request body, a
 ```
 
 
+### `$.CDF.createDeviceAWSCertificate` 
+
+If set to `true`, a client certificate signed by the Amazon Root certificate authority will be created and attached to the device
+
+For the template to use the generated certificate it must have the `CertificateId` template parameter defined. Note that the user of the template should not provide a value for the parameter as it will be populated automatically:
+
+```json
+# Provisioning template extract
+{
+    "Parameters": {
+        "CertificateId": {
+            "Type": "String"
+        },
+        ...
+    },
+    "Resources": {
+        ...
+    },
+    
+    "CDF": {
+        "createDeviceAWSCertificate": true
+    }
+}
+```
+
+
 ### `$.CDF.registerDeviceCertificateWithoutCA` 
-If set to `true`, the certificate PEM provided is registered without a CA.  By default, is `false`. 
+
+If set to `true`, the certificate PEM provided is registered without a CA.
+
+For the template to use the generated certificate it must have the `CertificateId` template parameter defined. Note that the user of the template should not provide a value for the parameter as it will be populated automatically:
+
+```json
+# Provisioning template extract
+{
+    "Parameters": {
+        "CertificateId": {
+            "Type": "String"
+        },
+        ...
+    },
+    "Resources": {
+        ...
+    },
+    
+    "CDF": {
+        "registerDeviceCertificateWithoutCA": true
+    }
+}
+```
 
 The following attributes, provided as part of the `POST /things` request body, are available to further configure this option:
 
 ```json
+# POST /things request body
 {
     ...
     "cdfProvisioningParameters": {
@@ -113,13 +188,20 @@ The following attributes, provided as part of the `POST /things` request body, a
 
 ### `$.CDF.attachAdditionalPolicies`
 
-A standard AWS IoT Provisoning Template allows just a single IoT Policy attaching to the certificate. This setting allows attaching multiple additional policies.
+A standard AWS IoT Provisioning Template allows just a single IoT Policy attaching to the certificate. This setting allows attaching multiple additional policies.
 
 Specify names of existing policies, or name and definition of new policies to create, in the template as follows:
 
 ```json
+# Provisioning template extract
 {
-    ...
+    "Parameters": {
+        ...
+    },
+    "Resources": {
+        ...
+    },
+
     "CDF": {    
         "attachAdditionalPolicies": {
             "policies": [{
@@ -132,8 +214,59 @@ Specify names of existing policies, or name and definition of new policies to cr
 }
 ```
 
+### `$.CDF.useACMPCA`
 
 
+If set to `true`, an ACM PCA certificate is used to sign a device certificate instead of the default AWS IoT PKI.
+
+For the template to use the generated certificate it must have the `CertificateId` template parameter defined. Note that the user of the template should not provide a value for the parameter as it will be populated automatically:
+
+```json
+# Provisioning template extract
+{
+    "Parameters": {
+        "CertificateId": {
+            "Type": "String"
+        },
+        ...
+    },
+    "Resources": {
+        ...
+    },
+    
+    "CDF": {
+        "useACMPCA": true
+    }
+}
+```
+
+The following attributes, provided as part of the `POST /things` request body, are available to further configure this option:
+
+```json
+# POST /things request body
+{
+    ...
+    "cdfProvisioningParameters": {
+        // either provide a caArn or caAlias:
+        "caArn": "?",           
+        "caAlias": "?",
+
+        "csr": "?",                         // optional. If not provided, a CSR will be created on the devices behalf.         
+
+        // certificate information to apply:
+        "certInfo": {                       // optional. But mandatory if no csr was provided.
+            "commonName": "?",              // optional
+            "organization": "?",            // optional
+            "organizationalUnit": "?",      // optional
+            "locality": "?",                // optional
+            "stateName": "?",               // optional
+            "country": "?",                 // mandatory
+            "emailAddress": "?",            // optional
+            "daysExpiry": ?                 // optional
+    }
+    ...
+}
+```
 
 ### `$.CDF.clientIdMustMatchThingName` 
 

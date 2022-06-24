@@ -1,6 +1,20 @@
 # Change Log - @cdf/greengrass2-provisioning
 
-This log was last generated on Fri, 25 Mar 2022 06:23:54 GMT and should not be manually modified.
+This log was last generated on Tue, 21 Jun 2022 00:47:55 GMT and should not be manually modified.
+
+## 0.2.1
+Tue, 21 Jun 2022 00:47:55 GMT
+
+### Patches
+
+- update to node 16.x
+
+## 0.2.0
+Thu, 02 Jun 2022 00:45:32 GMT
+
+### Minor changes
+
+- Added support for creating and registering AWS IoT device certificates using AWS ACM PCA.
 
 ## 0.1.3
 Fri, 25 Mar 2022 06:23:54 GMT

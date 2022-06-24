@@ -11,14 +11,19 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import '@cdf/config-inject';
- 
+
 import AWS = require('aws-sdk');
+import { TaskOverride } from 'aws-sdk/clients/ecs';
 import { logger } from './utils/logger';
 
+
+export type SimulationTaskOverride = Pick<TaskOverride, 'taskRoleArn'>
+
 export interface LaunchParams {
-    simulationId:string;
+    simulationId: string;
     instances: number;
     s3RootKey: string;
+    taskOverrides?: SimulationTaskOverride;
 }
 
 interface InstanceParams {
@@ -30,7 +35,8 @@ interface InstanceParams {
     s3PropertiesKey: string;
     s3UploadKeyPrefix: string;
     subnetIds: string[];
-    securityGroupId:string;
+    securityGroupId: string;
+    taskOverrides: SimulationTaskOverride;
 }
 
 export class Simulation {
@@ -42,8 +48,8 @@ export class Simulation {
     private readonly _securityGroupId: string;
     private readonly _taskDefinitionArn: string;
 
-    constructor(region:string) {
-        this._ecs = new AWS.ECS({region});
+    constructor(region: string) {
+        this._ecs = new AWS.ECS({ region });
         this._bucket = process.env.AWS_S3_BUCKET;
         this._subnetId = process.env.AWS_ECS_SUBNETIDS;
         this._clusterId = process.env.AWS_ECS_CLUSTERID;
@@ -51,14 +57,14 @@ export class Simulation {
         this._taskDefinitionArn = process.env.AWS_ECS_TASKDEFINITIONARN;
     }
 
-    public async launch(params:LaunchParams) {
+    public async launch(params: LaunchParams) {
         logger.info(`simulation.launch.ts: launch: params:${JSON.stringify(params)}`);
 
         const subnetIds = this._subnetId;
         const clusterId = this._clusterId;
         const securityGroupId = this._securityGroupId;
 
-        const instanceParams:InstanceParams = {
+        const instanceParams: InstanceParams = {
             clusterId,
             simulationId: params.simulationId,
             instanceId: 1,
@@ -67,20 +73,22 @@ export class Simulation {
             s3PropertiesKey: `${params.s3RootKey}instances/1/properties`,
             s3UploadKeyPrefix: `${params.s3RootKey}instances/1/`,
             subnetIds: subnetIds.split(','),
-            securityGroupId
+            securityGroupId,
+            taskOverrides: params.taskOverrides
+
         };
-        for (let i=0; i<params.instances; i++) {
+        for (let i = 0; i < params.instances; i++) {
             await this.launchInstance(instanceParams);
-            instanceParams.instanceId=instanceParams.instanceId+1;
-            instanceParams.s3PropertiesKey=`${params.s3RootKey}instances/${instanceParams.instanceId}/properties`;
+            instanceParams.instanceId = instanceParams.instanceId + 1;
+            instanceParams.s3PropertiesKey = `${params.s3RootKey}instances/${instanceParams.instanceId}/properties`;
         }
 
     }
 
-    private async launchInstance(params:InstanceParams) : Promise<AWS.ECS.Types.RunTaskResponse> {
+    private async launchInstance(params: InstanceParams): Promise<AWS.ECS.Types.RunTaskResponse> {
         logger.debug(`launchInstance: in: params:${JSON.stringify(params)}`);
 
-        const runTaskParams:AWS.ECS.Types.RunTaskRequest = {
+        const runTaskParams: AWS.ECS.Types.RunTaskRequest = {
             cluster: params.clusterId,
             taskDefinition: this._taskDefinitionArn.split('/')[1],
             overrides: {
@@ -89,20 +97,21 @@ export class Simulation {
                     environment: [{
                         name: 'BUCKET',
                         value: params.s3Bucket
-                    },{
+                    }, {
                         name: 'EXTERNAL_PROPERTIES',
                         value: params.s3PropertiesKey
-                    },{
+                    }, {
                         name: 'TEST_PLAN',
                         value: params.s3TestPlanKey
-                    },{
+                    }, {
                         name: 'INSTANCE_ID',
                         value: params.instanceId.toString()
-                    },{
+                    }, {
                         name: 'UPLOAD_DIR',
                         value: params.s3UploadKeyPrefix
                     }]
-                }]
+                }],
+                taskRoleArn: params.taskOverrides?.taskRoleArn
             },
             networkConfiguration: {
                 awsvpcConfiguration: {

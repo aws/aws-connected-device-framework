@@ -2,6 +2,18 @@
   "name": "@cdf/bulkcerts-client",
   "entries": [
     {
+      "version": "2.0.5",
+      "tag": "@cdf/bulkcerts-client_v2.0.5",
+      "date": "Tue, 21 Jun 2022 00:47:55 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "update to node 16.x"
+          }
+        ]
+      }
+    },
+    {
       "version": "2.0.4",
       "tag": "@cdf/bulkcerts-client_v2.0.4",
       "date": "Thu, 07 Apr 2022 05:00:50 GMT",

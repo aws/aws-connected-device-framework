@@ -1,79 +1,107 @@
-#-----------------------------------------------------------------------------------------------------------------------
-#   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
-#
-#  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance
-#  with the License. A copy of the License is located at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-#  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES
-#  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions
-#  and limitations under the License.
-#-----------------------------------------------------------------------------------------------------------------------
-swagger: '2.0'
+openapi: 3.0.0
 info:
   title: 'AWS Connected Device Framework: Provisioning'
   description: |
-    The provisioning service utilizes [AWS IoT Device Provisioning](https://docs.aws.amazon.com/iot/latest/developerguide/iot-provision.html) to provide both programmatic (just-in-time) and bulk device provisioning capabilities.  The provisioning service simplifies the use of AWS IoT Device Provisioning by allowing for the use of S3 based provisioning templates, and abstracting a standard interface over both device provisioning capabilities.
+    The CDF Provisioning module utilizes [AWS IoT Device Provisioning](https://docs.aws.amazon.com/iot/latest/developerguide/iot-provision.html) to provide both programmatic (just-in-time) and bulk device provisioning capabilities. The Provisioning module simplifies the use of AWS IoT Device Provisioning by allowing for the use of S3 based provisioning templates, and abstracting a standard interface over both device provisioning capabilities.
 
-    In addition, the CDF Provisioning Service allows for extending the capabilities of the AWS IoT Device Provisioning templating functionality.  To provide an example, the AWS IoT Device Provisioning allows for creating certificate resources by providing a certificate signing request (CSR), a certificate ID of an existing device certificate, or a device certificate created with a CA certificate registered with AWS IoT.  This service extends these capabilities by also providing the ability to automatically create (and return) new keys and certificates for a device.
+    In addition, the CDF Provisioning module allows for extending the capabilities of the AWS IoT Device Provisioning templating functionality.  To provide an example, the AWS IoT Device Provisioning allows for creating certificate resources by providing a certificate signing request (CSR), a certificate ID of an existing device certificate, or a device certificate created with a CA certificate registered with AWS IoT.  This service extends these capabilities by also providing the ability to automatically create (and return) new keys and certificates for a device, or alternatively use ACM PCA to create the device certificates.
 
-    If used in conjunction with the CDF Asset Library service, provisioning templates can be assigned to one or more hierarchies, and then the appropriate provisioning template obtained based on the location of an asset within a hierarchy.
-
-
+    If used in conjunction with the CDF Asset Library module, provisioning templates can be assigned to one or more hierarchies, and then the appropriate provisioning template obtained based on the location of an asset within a hierarchy.
 
   version: 1.0.0
 
-
-consumes:
-- application/vnd.aws-cdf-v1.0+json
-produces:
-- application/vnd.aws-cdf-v1.0+json
-
-
 tags:
-
-- name: Things
-  description: |
-    The provisioning service provides the capability to provision a Thing in AWS IoT using AWS IoT Device Management's device onboarding feature. This allows for a provisioning template to be used to specify resources such as device certificates and device policies along with thing creation.
-
-- name: Bulkregistrations
-  description: |
-    The provisioning service provides the capability to register a number things in a bulk operation. This service uses AWS IoT Device Management's bulk registration capability to create an asyncronous registration task.
-
+  - name: Things
+    description: >
+      The Provisioning module provides the capability to provision a Thing in AWS IoT using AWS IoT Device Management's device onboarding feature. This allows for a provisioning template to be used to specify resources such as device certificates and device policies along with thing creation.
+  - name: Bulk Registrations
+    description: >
+      The Provisioning module provides the capability to register a number things in a bulk operation. This service uses AWS IoT Device Management's bulk registration capability to create an asyncronous registration task.
 
 paths:
 
-  
   /things:
     post:
       tags:
       - Things
       summary: Provision a new thing within the AWS IoT Device Registry
       operationId: provisionThing
-      parameters:
-      - in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/ProvisionRequest'
+      requestBody:
+        content:
+          application/vnd.aws-cdf-v1.0+json:
+            schema:
+              $ref: '#/components/schemas/ProvisionRequest'
+            examples:
+              basic:
+                description: Basic use of a provisioning template.
+                value:
+                  provisioningTemplateId: myTemplateName
+                  parameters:
+                    paramaterName1: myValue1
+                    paramaterName2: myValue2
+              createDeviceAWSCertificate:
+                description: Using a provisioning template with `createDeviceAWSCertificate` configured.
+                value:
+                  provisioningTemplateId: myTemplateName
+                  parameters:
+                    paramaterName1: myValue1
+                    paramaterName2: myValue2
+              createDeviceCertificate:
+                description: Using a provisioning template with `createDeviceCertificate` configured.
+                value:
+                  provisioningTemplateId: myTemplateName
+                  parameters:
+                    paramaterName1: myValue1
+                    paramaterName2: myValue2
+                  cdfProvisioningParameters:
+                    caId: fd92c2dd74c83b64571fca5cb8cc8bd441c9472841fb1a741fcc9845b5db12d4
+                    certInfo:
+                      country: US
+              registerDeviceCertificateWithoutCA:
+                description: Using a provisioning template with `registerDeviceCertificateWithoutCA` configured.
+                value:
+                  provisioningTemplateId: myTemplateName
+                  parameters:
+                    paramaterName1: myValue1
+                    paramaterName2: myValue2
+                  cdfProvisioningParameters:
+                    certificatePem: -----BEGIN CERTIFICATE-----\nMIICUTCCAfugAwIBAgIBADANBgkqhkiG9w0BAQQFADBXMQswCQYDVQQGEwJDTjEL\nMAkGA1UECBMCUE4xCzAJBgNVBAcTAkNOMQswCQYDVQQKEwJPTjELMAkGA1UECxMC\nVU4xFDASBgNVBAMTC0hlcm9uZyBZYW5nMB4XDTA1MDcxNTIxMTk0N1oXDTA1MDgx\nNDIxMTk0N1owVzELMAkGA1UEBhMCQ04xCzAJBgNVBAgTAlBOMQswCQYDVQQHEwJD\nTjELMAkGA1UEChMCT04xCzAJBgNVBAsTAlVOMRQwEgYDVQQDEwtIZXJvbmcgWWFu\nZzBcMA0GCSqGSIb3DQEBAQUAA0sAMEgCQQCp5hnG7ogBhtlynpOS21cBewKE/B7j\nV14qeyslnr26xZUsSVko36ZnhiaO/zbMOoRcKK9vEcgMtcLFuQTWDl3RAgMBAAGj\ngbEwga4wHQYDVR0OBBYEFFXI70krXeQDxZgbaCQoR4jUDncEMH8GA1UdIwR4MHaA\nFFXI70krXeQDxZgbaCQoR4jUDncEoVukWTBXMQswCQYDVQQGEwJDTjELMAkGA1UE\nCBMCUE4xCzAJBgNVBAcTAkNOMQswCQYDVQQKEwJPTjELMAkGA1UECxMCVU4xFDAS\nBgNVBAMTC0hlcm9uZyBZYW5nggEAMAwGA1UdEwQFMAMBAf8wDQYJKoZIhvcNAQEE\nBQADQQA/ugzBrjjK9jcWnDVfGHlk3icNRq0oV7Ri32z/+HQX67aRfgZu7KWdI+Ju\nWm7DCfrPNGVwFWUQOmsPue9rZBgO\n-----END CERTIFICATE-----
+                    certificateStatus: ACTIVE
+              attachAdditionalPolicies:
+                description: Using a provisioning template with `attachAdditionalPolicies` configured.
+                value:
+                  provisioningTemplateId: myTemplateName
+                  parameters:
+                    paramaterName1: myValue1
+                    paramaterName2: myValue2
+              useACMPCA:
+                description: Using a provisioning template with `useACMPCA` configured.
+                value:
+                  provisioningTemplateId: myTemplateName
+                  parameters:
+                    paramaterName1: myValue1
+                    paramaterName2: myValue2
+                  cdfProvisioningParameters:
+                    caAlias: myalias
+                    csr: -----BEGIN CERTIFICATE REQUEST-----\nMIICvDCCAaQCAQAwdzELMAkGA1UEBhMCVVMxDTALBgNVBAgMBFV0YWgxDzANBgNV\nBAcMBkxpbmRvbjEWMBQGA1UECgwNRGlnaUNlcnQgSW5jLjERMA8GA1UECwwIRGln\naUNlcnQxHTAbBgNVBAMMFGV4YW1wbGUuZGlnaWNlcnQuY29tMIIBIjANBgkqhkiG\n9w0BAQEFAAOCAQ8AMIIBCgKCAQEA8+To7d+2kPWeBv/orU3LVbJwDrSQbeKamCmo\nwp5bqDxIwV20zqRb7APUOKYoVEFFOEQs6T6gImnIolhbiH6m4zgZ/CPvWBOkZc+c\n1Po2EmvBz+AD5sBdT5kzGQA6NbWyZGldxRthNLOs1efOhdnWFuhI162qmcflgpiI\nWDuwq4C9f+YkeJhNn9dF5+owm8cOQmDrV8NNdiTqin8q3qYAHHJRW28glJUCZkTZ\nwIaSR6crBQ8TbYNE0dc+Caa3DOIkz1EOsHWzTx+n0zKfqcbgXi4DJx+C1bjptYPR\nBPZL8DAeWuA8ebudVT44yEp82G96/Ggcf7F33xMxe0yc+Xa6owIDAQABoAAwDQYJ\nKoZIhvcNAQEFBQADggEBAB0kcrFccSmFDmxox0Ne01UIqSsDqHgL+XmHTXJwre6D\nhJSZwbvEtOK0G3+dr4Fs11WuUNt5qcLsx5a8uk4G6AKHMzuhLsJ7XZjgmQXGECpY\nQ4mC3yT3ZoCGpIXbw+iP3lmEEXgaQL0Tx5LFl/okKbKYwIqNiyKWOMj7ZR/wxWg/\nZDGRs55xuoeLDJ/ZRFf9bI+IaCUd1YrfYcHIl3G87Av+r49YVwqRDT0VDV7uLgqn\n29XI1PpVUNCPQGn9p/eX6Qo7vpDaPybRtA2R7XLKjQaF9oXWeCUqy1hvJac9QFO2\n97Ob1alpHPoZ7mWiEuJwjBPii6a9M9G30nUo39lBi1w=\n-----END CERTIFICATE REQUEST-----\n
+                    certInfo:
+                      country: US
+                    
       responses:
         201:
           description: OK
-          schema:
-            $ref: '#/definitions/ProvisionResponse'
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: '#/components/schemas/ProvisionResponse'
         400:
-          $ref: '#/responses/BadRequest'
+          $ref: '#/components/responses/BadRequest'
         404:
-          $ref: '#/responses/NotFound'
+          $ref: '#/components/responses/NotFound'
 
   /things/{thingName}:
     parameters:
-    - name: thingName
-      in: path
-      description: Name of thing
-      required: true
-      type: string
+      - $ref: '#/components/parameters/thingName'
     get:
       tags:
       - Things
@@ -82,12 +110,14 @@ paths:
       responses:
         200:
           description: OK
-          schema:
-            $ref: '#/definitions/Thing'
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: "#/components/schemas/Thing"
         400:
-          $ref: '#/responses/BadRequest'
+          $ref: '#/components/responses/BadRequest'
         404:
-          $ref: '#/responses/NotFound'
+          $ref: '#/components/responses/NotFound'
     delete:
       tags:
       - Things
@@ -97,261 +127,348 @@ paths:
         204:
           description: OK
         400:
-          $ref: '#/responses/BadRequest'
+          $ref: '#/components/responses/BadRequest'
         404:
-          $ref: '#/responses/NotFound'
-          
+          $ref: '#/components/responses/NotFound'
           
   /things/{thingName}/certificates:
     parameters:
-    - name: thingName
-      in: path
-      description: Name of thing
-      required: true
-      type: string
+      - $ref: '#/components/parameters/thingName'
     patch:
       tags:
       - Things
       summary: Sets the status of all attached certificates.
-      operationId: updateThingCertificates
-      parameters:
-      - in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/PatchCertificateRequest'
+      operationId: updateCertificateStatus
+      requestBody:
+        content:
+          application/vnd.aws-cdf-v1.0+json:
+            schema:
+              $ref: '#/components/schemas/PatchCertificateRequest'
       responses:
         204:
           description: OK
         400:
-          $ref: '#/responses/BadRequest'
+          $ref: '#/components/responses/BadRequest'
         404:
-          $ref: '#/responses/NotFound'
+          $ref: '#/components/responses/NotFound'
           
   /bulkthings/{taskId}:
     parameters:
-    - name: taskId
-      in: path
-      description: Id of the registration task
-      required: true
-      type: string
-        
+      - $ref: '#/components/parameters/taskId'
     get:
       tags:
-      - Bulkregistrations
+      - Bulk Registrations
       summary: Retrieve details about a bulk registration task
       operationId: getBulkProvisionTask
       responses:
         200:
           description: OK
-          schema:
-            $ref: '#/definitions/BulkRegistrationTask'
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: "#/components/schemas/BulkRegistrationTask"
         400:
-          $ref: '#/responses/BadRequest'
+          $ref: '#/components/responses/BadRequest'
         404:
-          $ref: '#/responses/NotFound'
+          $ref: '#/components/responses/NotFound'
 
   /bulkthings:          
     post:
       tags:
-      - Bulkregistrations
+      - Bulkr Registrations
       summary: Bulk provision a set of new things within the AWS IoT Device Registry
       operationId: bulkProvisionThings
-      parameters:
-      - in: body
-        name: body
-        required: false
-        schema:
-          $ref: '#/definitions/BulkRegistrationRequest'
+      requestBody:
+        content:
+          application/vnd.aws-cdf-v1.0+json:
+            schema:
+              $ref: '#/components/schemas/BulkRegistrationRequest'
+            # examples:
       responses:
         201:
           description: OK
-          schema:
-            $ref: '#/definitions/BulkRegistrationTask'
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: '#/components/schemas/BulkRegistrationTask'
         400:
-          $ref: '#/responses/BadRequest'
+          $ref: '#/components/responses/BadRequest'
         404:
-          $ref: '#/responses/NotFound'
+          $ref: '#/components/responses/NotFound'
+
+components:
+
+  parameters:
+
+    thingName:
+      name: thingName
+      in: path
+      description: Name of thing
+      required: true
+      schema:
+        type: string
+
+    taskId:
+      name: taskId
+      in: path
+      description: ID of the registration task
+      required: true
+      schema:
+        type: string
       
-definitions:
+  schemas:
 
-  Thing:
-    type: object
-    properties:
-      thingName:
-        type: string
-      arn:
-        type: string
-      thingType:
-        type: string
-      attributes:
-        type: object
-        additionalProperties: true
-      taskId:
-        type: string
-      certificates:
-        type: array
-        items: 
-          $ref: '#/definitions/Certificate'
-      policies:
-        type: array
-        items:
-          $ref: '#/definitions/IotPolicy'
-      groups:
-        type: array
-        items:
-          $ref: '#/definitions/IotGroup'
-
-  Certificate:
-    type: object
-    properties:
-      certificateId:
-        type: string
-      arn:
-        type: string
-      certificateStatus:
-        type: string
-        enum:
-        - ACTIVE
-        - INACTIVE
-      certificatePem:
-        type: string
-
-  IotPolicy:
-    type: object
-    properties:
-      policyName:
-        type: string
-      arn:
-        type: string
-      policyDocument:
-        type: string
-
-  IotGroup:
-    type: object
-    properties:
-      groupName:
-        type: string
-      arn:
-        type: string
-      attributes:
-        type: object
-        additionalProperties: true
-
-
-  ProvisionRequest:
-    type: object
-    properties:
-      provisioningTemplateId:
-        type: string
-        description: Id of an existing provisioning template
-      parameters:
-        type: object
-        description: Map of key value pairs for all parameters defined in the provisioning template.
-        additionalProperties:
+    Thing:
+      type: object
+      properties:
+        thingName:
           type: string
-      cdfProvisioningParameters:
-        type: object
-        description: Optional parameters used by CDF in provisioning process.
-    description: Provisiong a new thing request
-        
-  ProvisionResponse:
-    type: object
-    properties:
-      certificatePem:
-        type: string
-      publicKey:
-        type: string
-      privateKey:
-        type: string
-      resourceArns:
-        type: object
-        properties:
-          policyLogicalName:
-            type: string
-          certificate:
-            type: string
-          thing:
-            type: string
-    
-  BulkRegistrationTask:
-    type: object
-    properties:
-      taskId:
-        type: string
-        description: Id of the registration task
-      status:
-        type: string
-        description: Status of the task
-      percentageProgress:
-        type: integer
-        format: int32
-        description: Percentage complete
-      successCount:
-        type: integer
-        format: int32
-        description: No. assets that were provisioned successful
-      failureCount:
-        type: integer
-        format: int32
-        description: No. assets that failed during provisioning
-      creationDate:
-        type: string
-        format: date-time
-        description: Date/time the task was created
-      lastModifiedDate:
-        type: string
-        format: date-time
-        description: Date/time the task was last updated
-    description: Thing bulk registration task
-        
-  BulkRegistrationTaskList:
-    properties:
-      tasks:
-        type: array
-        description:  a list of bulk registration tasks
-        items:
-          $ref: '#/definitions/BulkRegistrationTask'
-          
-  BulkRegistrationRequest:
-    type: object
-    properties:
-      provisioningTemplateId:
-        type: string
-        description: Id of an existing provisioning template
-      parameters:
-        type: array
-        description: List containing a map of key value pairs for all parameters defined in the provisioning template.  Each element in the list represents a new thing to provision.
-        items:
+        arn:
+          type: string
+        thingType:
+          type: string
+        attributes:
           type: object
+          additionalProperties: true
+        certificates:
+          type: array
+          items: 
+            $ref: '#/components/schemas/Certificate'
+        policies:
+          type: array
+          items:
+            $ref: '#/components/schemas/IotPolicy'
+        groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/IotGroup'
+  
+    Certificate:
+      type: object
+      properties:
+        certificateId:
+          type: string
+        arn:
+          type: string
+        certificateStatus:
+          type: string
+          enum:
+          - PENDING_ACTIVATION
+          - ACTIVE
+          - INACTIVE
+          - REVOKED
+        certificatePem:
+          type: string
+  
+    IotPolicy:
+      type: object
+      properties:
+        policyName:
+          type: string
+        arn:
+          type: string
+        policyDocument:
+          type: string
+  
+    IotGroup:
+      type: object
+      properties:
+        groupName:
+          type: string
+        arn:
+          type: string
+        attributes:
+          type: object
+          additionalProperties: true
+          
+    CertInfo:
+      type: object
+      properties:
+        commonName:
+          type: string
+          description: Common name to add to the generated certificate.
+        organization:
+          type: string
+          description: Organization to add to the generated certificate.
+        organizationalUnit:
+          type: string
+          description: Organizational unit to add to the generated certificate.
+        locality:
+          type: string
+          description: Locality to add to the generated certificate.
+        stateName:
+          type: string
+          description: State name to add to the generated certificate.
+        country:
+          type: string
+          description: Country to add to the generated certificate.
+        emailAddress:
+          type: string
+          description: Email address to add to the generated certificate.
+        daysExpiry:
+          type: number
+          description: Days expiry of the generated certificate.
+      required:
+        - country
+          
+    CreateDeviceCertificateParameters:
+      type: object
+      properties:
+        caId:
+          type: string
+          description: ID of registered CA certificate.
+        certInfo:
+          $ref: "#/components/schemas/CertInfo"
+          
+    RegisterDeviceCertificateWithoutCAParameters:
+      type: object
+      properties:
+        certificatePem:
+          type: string
+          description: Certificate to register.
+        certificateStatus:
+          type: string
+          enum:
+            - ACTIVE
+            - INACTIVE
+            
+    UseACMPCAParameters:
+      type: object
+      properties:
+        caArn:
+          type: string
+          description: ACM PCA CA arn. Either `caArn` or `caAlias` must be provided.
+        caAlias:
+          type: string
+          description: Alias of an ACM PCA CA arn. Either `caArn` or `caAlias` must be provided.
+        csr:
+          type: string
+          description: Certificate signing request.
+        certInfo:
+          $ref: "#/components/schemas/CertInfo"
+  
+    ProvisionRequest:
+      description: Provision a new thing request
+      type: object
+      properties:
+        provisioningTemplateId:
+          type: string
+          description: Id of an existing provisioning template
+        parameters:
+          type: object
+          description: Map of key value pairs for all parameters defined in the provisioning template.
           additionalProperties:
             type: string
-            
-  PatchCertificateRequest:
-    type: object
-    properties:
-      certificateStatus:
-        type: string
-        description: Certificate status
-  
+        cdfProvisioningParameters:
+          type: object
+          description: Optional parameters used by CDF in provisioning process.
+          oneOf:
+            - $ref: "#/components/schemas/CreateDeviceCertificateParameters"
+            - $ref: "#/components/schemas/RegisterDeviceCertificateWithoutCAParameters"
+            - $ref: "#/components/schemas/UseACMPCAParameters"
+      required:
+        - provisioningTemplateId
+        - parameters
+          
+    ProvisionResponse:
+      type: object
+      properties:
+        certificatePem:
+          type: string
+        publicKey:
+          type: string
+        privateKey:
+          type: string
+        resourceArns:
+          type: object
+          properties:
+            policyLogicalName:
+              type: string
+            certificate:
+              type: string
+            thing:
+              type: string
       
-  Error:
-    type: object
-    properties:
-      message:
-        type: string
+    BulkRegistrationTask:
+      type: object
+      properties:
+        taskId:
+          type: string
+          description: Id of the registration task
+        status:
+          type: string
+          description: Status of the task
+        percentageProgress:
+          type: integer
+          format: int32
+          description: Percentage complete
+        successCount:
+          type: integer
+          format: int32
+          description: No. assets that were provisioned successful
+        failureCount:
+          type: integer
+          format: int32
+          description: No. assets that failed during provisioning
+        creationDate:
+          type: string
+          format: date-time
+          description: Date/time the task was created
+        lastModifiedDate:
+          type: string
+          format: date-time
+          description: Date/time the task was last updated
+      description: Thing bulk registration task
 
-responses:          
-  Created:
-    description: Created successfully
-    headers:
-      location:
-        type: string
-  BadRequest:
-    description: Invalid input
-    schema:
-      $ref: '#/definitions/Error'
-  NotFound:
-    description: Not found
-    schema:
-      $ref: '#/definitions/Error'
+    BulkRegistrationRequest:
+      type: object
+      properties:
+        provisioningTemplateId:
+          type: string
+          description: Id of an existing provisioning template. Note at this moment CDF extebs
+        parameters:
+          type: array
+          description: List containing a map of key value pairs for all parameters defined in the provisioning template.  Each element in the list represents a new thing to provision.
+          items:
+            type: object
+            additionalProperties:
+              type: string
+              
+    PatchCertificateRequest:
+      type: object
+      properties:
+        certificateStatus:
+          type: string
+          description: Certificate status
+          enum:
+            - ACTIVE
+            - IN_ACTIVE
+
+      
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+
+  responses:          
+    Created:
+      description: Created successfully
+      headers:
+        location:
+          schema:
+            type: string
+
+    BadRequest:
+      description: Invalid input
+      content:
+        application/vnd.aws-cdf-v1.0+json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+    NotFound:
+      description: Not found
+      content:
+        application/vnd.aws-cdf-v1.0+json:
+          schema:
+            $ref: "#/components/schemas/Error"

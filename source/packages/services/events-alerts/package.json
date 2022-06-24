@@ -1,6 +1,6 @@
 {
   "name": "@cdf/events-alerts",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "description": "CDF Events (Alerts)",
   "author": "Dean Hart",
   "scripts": {
@@ -14,7 +14,7 @@
   "dependencies": {
     "@cdf/errors": "^4.0.0",
     "@cdf/logger": "^4.0.0",
-    "@cdf/config-inject": "^4.0.1",
+    "@cdf/config-inject": "^4.0.2",
     "@types/dot": "1.1.4",
     "amazon-dax-client": "1.2.7",
     "aws-sdk": "2.1048.0",

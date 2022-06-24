@@ -8,6 +8,12 @@ AWS_S3_TEMPLATES_BUCKET=
 AWS_S3_BULKREQUESTS_BUCKET=
 ```
 
+## The following is optional:
+
+```ini
+ACM_PCA_CROSS_ACCOUNT_ROLE_ARN=
+```
+
 ## The following may be overridden:
 
 ```ini

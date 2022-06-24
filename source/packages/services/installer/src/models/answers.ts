@@ -2,6 +2,7 @@ import { ModuleName } from "./modules";
 
 export interface Answers {
   accountId?: string;
+  dryRun?: boolean;
   customTags?: string;
   iotEndpoint?: string;
   iotCredentialEndpoint?: string;
@@ -84,6 +85,8 @@ export interface Vpc {
 
 export interface S3 {
   bucket?: string;
+  optionalDeploymentBucket?: string;
+  optionalDeploymentPrefix?: string;
 }
 
 export interface OpenSsl {
@@ -160,19 +163,19 @@ export interface BulkCerts extends RestServiceModuleAttribues {
   defaultAnswer?: boolean;
   chunksize: number;
   expiryDays?: number;
-  suppliers?: Suppliers;
+  suppliers?: CAAliases;
   caAlias?: string;
-  caValue?:string;
+  caValue?: string;
 }
 
-export interface Suppliers {
+export interface CAAliases {
   list?: string[];
   cas: CA[];
 }
 
 export interface CA {
-  alias:string;
-  value:string
+  alias: string;
+  value: string
 }
 export interface CertificateActivator extends ServiceModuleAttributes {
   provisioningFunctionName?: string;
@@ -262,7 +265,7 @@ export interface Greengrass2Provisioning
   ProvisionedConcurrencyModuleAttribues {
   provisioningFunctionName?: string;
   assetLibraryFunctionName?: string;
-  installerConfigGenerators?: string;
+  installerConfigGenerators?: Record<string, string>;
   // Application Configuration
   promisesConcurrency?: number;
   corezBatchSize?: number;
@@ -279,6 +282,13 @@ export interface Provisioning extends RestServiceModuleAttribues {
   templateSuffix?: string;
   templatesPrefix?: string;
   bulkRequestsPrefix?: string;
+
+  // ACM PCA specific
+  pcaCrossAccountRoleArn?: string;
+  setPcaAliases?: boolean;
+  pcaAliases?: CAAliases;
+  pcaAlias?: string;
+  pcaArn?:string;
 }
 
 export interface FleetSimulator extends RestServiceModuleAttribues {

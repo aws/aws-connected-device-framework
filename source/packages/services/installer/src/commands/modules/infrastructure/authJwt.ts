@@ -18,7 +18,7 @@ import inquirer from 'inquirer';
 import { CloudFormationClient, DescribeStacksCommand } from '@aws-sdk/client-cloudformation';
 import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
-import { deleteStack, packageAndDeployStack } from '../../../utils/cloudformation.util';
+import { deleteStack, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
 
 export class AuthJwtInstaller implements InfrastructureModule {
 
@@ -64,6 +64,37 @@ export class AuthJwtInstaller implements InfrastructureModule {
     return updatedAnswers
   }
 
+  private getParameterOverrides(answers: Answers): string[] {
+    const parameterOverrides = [
+      `Environment=${answers.environment}`,
+      `OpenSslLambdaLayerArn=${answers.openSsl.arn}`,
+      `JwtIssuer=${answers.authJwt.tokenIssuer}`,
+    ];
+    const addIfSpecified = (key: string, value: unknown) => {
+      if (value !== undefined) parameterOverrides.push(`${key}=${value}`)
+    };
+
+    addIfSpecified('LoggingLevel', answers.authJwt.loggingLevel);
+
+    return parameterOverrides;
+  }
+
+  public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    const tasks: ListrTask[] = [{
+      title: `Packaging '${this.name}'`,
+      task: async () => {
+        await packageAndUploadTemplate({
+          answers: answers,
+          templateFile: '../auth-jwt/infrastructure/cfn-auth-jwt.yaml',
+          parameterOverrides: this.getParameterOverrides(answers),
+          serviceName: 'auth-jwt',
+        });
+      }
+    }
+    ];
+    return [answers, tasks]
+  }
+
   public async install(answers: Answers): Promise<[Answers, ListrTask[]]> {
 
     ow(answers, ow.object.nonEmpty);
@@ -72,28 +103,18 @@ export class AuthJwtInstaller implements InfrastructureModule {
     ow(answers.authJwt.tokenIssuer, ow.string.nonEmpty);
 
     const tasks: ListrTask[] = [];
-      
+
     if ((answers.authJwt.redeploy ?? true)) {
       tasks.push({
         title: `Packaging and deploying stack '${this.stackName}'`,
         task: async () => {
-          const parameterOverrides = [
-            `Environment=${answers.environment}`,
-            `OpenSslLambdaLayerArn=${answers.openSsl.arn}`,
-            `JwtIssuer=${answers.authJwt.tokenIssuer}`,
-          ];
-          const addIfSpecified = (key: string, value: unknown) => {
-            if (value !== undefined) parameterOverrides.push(`${key}=${value}`)
-          };
-
-          addIfSpecified('LoggingLevel', answers.authJwt.loggingLevel);
 
           await packageAndDeployStack({
             answers: answers,
             stackName: this.stackName,
             serviceName: 'auth-jwt',
             templateFile: '../auth-jwt/infrastructure/cfn-auth-jwt.yaml',
-            parameterOverrides,
+            parameterOverrides: this.getParameterOverrides(answers),
             needsPackaging: true,
             needsCapabilityNamedIAM: true,
           });

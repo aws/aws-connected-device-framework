@@ -17,19 +17,24 @@ import { ProvisioningStepData } from './provisioningStep.model';
 import * as pem from 'pem';
 import { CreateDeviceCertificateParameters } from '../things.models';
 import clone from 'just-clone';
+import { CertUtils } from '../../utils/cert';
+import createMockInstance from 'jest-create-mock-instance';
 
 describe('CreateDeviceCertificateStepProcessor', () => {
     let instance: CreateDeviceCertificateStepProcessor;
 
-    // IoT mocks
     const mockIot = new AWS.Iot();
-
-    // SSM mock
     const mockSSM = new AWS.SSM();
+    let certUtils: jest.Mocked<CertUtils>;
+
+    beforeEach(() => {
+        jest.resetModules();
+        certUtils = createMockInstance(CertUtils);
+        instance = new CreateDeviceCertificateStepProcessor(certUtils, () => mockIot, () => mockSSM, 356);
+    })
+
 
     it('device certificate processor should create device cert and key', async () => {
-
-        instance = new CreateDeviceCertificateStepProcessor(() => mockIot, () => mockSSM, 356);
 
         const cert = {
             certificateDescription: {
@@ -63,6 +68,56 @@ describe('CreateDeviceCertificateStepProcessor', () => {
             };
         });
 
+        const privateKey = `-----BEGIN RSA PRIVATE KEY-----
+MIIEogIBAAKCAQB7DXbTjH2WGOwVHlGmZNw//JK9UIORmFRleYHXjR228WonlPD1
+cqLjVQVL9emTqntJ4vxye+KE1Fn0mevbqjEIXDZB4pZYO23gFkw12nprH1H5VPpZ
+4Qu0gPtyV5R334s6BH8AucN8PaqxfghMW1rCLrOsdDqW8x2m72+reOY55LDc7NF5
+T80k6/fzGKi2olJU28elCXmef4KmxAN79EMnx4Ud3cYpFMH7gd0gebZtJeaFY7iY
+2KV5XSPRnBgxh+uWsDLRpbXdlelsjWQFdDU54SP8GSy9E5UkTYUW4YxfOzKO2tsH
+gxzkeKp7ccXVgypX+V6dsb8W1h6xAt3Jd0D9AgMBAAECggEAHfOZCMUZjH9kd395
+wFashaak0Q/X9ohtgoWg5SakJPN+M0Q9ooDUxSDcuTCSOi808zcc24DsEgjeHHua
+vU0fwjkvu7m7fp54kCLdSf5z7b8h5N6aUWZFwxniGmLW8Jao/OY7Q6Hzwzn/YlSb
+EHrsDHfxo/hmineCsC93rvUulMiMtWWnv5ajQajWvz3JwX2NHlVnHxu1Bjab/UNk
+EPR9kHHIpiTy+abp45v6OZCGSdn0UHTjbrnCDLaMWw5LD+Zg7snFao8IKIVSVbSq
+MV+HcHsOhhJLT8KhnDG4VeEbCIZix1/DdrBhMIRDEOopLMTYUGxbPfIZR/YKVx9X
+mOhMAQKBgQDgltfTcQASEx5vCZd2FU5oGzAAmx+puGPjN06rtKIfeKH+1BwoWbH3
+fitpmr01lRuMm/2LGspSEt9+Gv8jKy2/K2/7cnV/QzNwSFDSmlvQB5OILhi6M8zB
+vNWW8C1ypJgn45l8KJINqEjj1HLc6EzB0KXXJvGmCq1qxhwU29fFUQKBgQCMQzg3
+NUWryXTQa98IBJSktOFa3bQUrrcwtIoetLIx++5uBkOnE4cyDlGbfVjg91zNzgim
+oUdQ/E6DR8Yy73n/6i4sxlava7FiXmk/aWYOJrVcG4iDczo42OhSruWkfLuCndzM
+qj3209mzT70DxrqQPlQcvSXrcA20egYho2sF7QKBgQDa8DHV3gLDm/+/HwqYAo08
+z8Qr0w061pYJmpEGskCZjW/ei8gnTclAC68mc8KfyYvhtu+j+6nf+KYGuSqfjig6
+hI3WAe6o8Unj25tusytt0PTxfH5+hqDE/OD7E4g6iloKCMZHUwWOas8jyqdu0saA
+6nXBGCXaR+5meFpHu0jNAQKBgAWMr0+34t7OJLoOWo+1pq/xnCz9Mp/S3dqmegSG
+/7nsjt15j/mvUx0O5fmx9u9HujtGWJ9HKEwy/2RAVb40LW6LtHH/EvTz3NvYgm+I
+2wnaTDitujQBPh97rY1/8AQXD1A2sMLERZlbfnSSxha9KSqF3MwaS8LJ9zDZ1x5D
+mfttAoGAYlSLDZMx3xu3gpdPjKClpoSMZYDivUWX8gHP89QyEwI1Al3McTGOez9N
+C+MmjmlIYbeIopXIuSjtNMgG5ABdf5/r0P5UpvCkVuNYEsqOEQe/qFjimB13WAkq
+ihEsxUIAwQk6QiciHcwBE7wZSHyna04WpxhKwD3aVEhspBihUHk=
+-----END RSA PRIVATE KEY-----`;
+
+        certUtils.createPrivateKey = jest.fn().mockResolvedValueOnce(privateKey);
+
+        const csr = `-----BEGIN CERTIFICATE REQUEST-----
+MIICqDCCAZACAQAwYzELMAkGA1UEBhMCVVMxCzAJBgNVBAgMAkNPMQ8wDQYDVQQH
+DAZEZW52ZXIxEzARBgNVBAoMClVuaXRUZXN0Q28xFDASBgNVBAMMC3VuaXR0ZXN0
+LmNvMQswCQYDVQQLDAJRQTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEB
+AN3H/buEbBwov2/QVNOD7v3i55BlaSgm683EW4a+FxI8/8A+d4GxAS2kOOC56gA1
+H2zYN3TP4diXo/GvsQ8AgcTA+28Quc8Mm4Wv6BUloggd3EuRfus/zt+krKgfeNy8
+tVNGtsaEw26qHSGQxLLUlhzLHRi7TeFdtcpU4fRVOVs2xeUZRKTvYKP3QB0V/U1l
+uv0BpqAuacC2VUURvqbWLm8P6gVC0JeQWIEWLColqiUzWVDH9yeJHf1aToO509+2
+uvHOB0M0QvHWo6xCJFwqnwDWek2C0w1ac00T3kL0DTW69RqVdM/KdJJzNWvXf1Sr
+hndeQbxYx5eZzE64itqN/9kCAwEAAaAAMA0GCSqGSIb3DQEBCwUAA4IBAQAoaWvl
+llFxswkACjSjFaUmj8z1RqZic3PXLi8Voy4uzY8DB0tZlOQCtOruyVbhG8cWcwTz
+Kk3HC9+5wB9jq+uk2CazCDDv312wz0ju0Ksc00Q9mHv7X6iu7BbG8d+6T57ISceU
+2j7CxmMCiyne8Ytr3c9XQieabi9va6DShoN+vX0VMBTxp3mGMo5uHHvyLoqfDxis
+q8pwAZvJcUfEIu5wFJ4hRjlykN+Rs5WqOk5DpFqTVUcHfMqsfI8ZeX3heDmc/vHc
+uw3icwmlsuNd7r8ASIyQhNzZG+INd4ykWKgS+qcIHxsTrJhvPa4PCQYmc5yU6oSv
+7IsoNkof2egAjxo2
+-----END CERTIFICATE REQUEST-----`;
+
+        certUtils.createCSR = jest.fn().mockResolvedValueOnce(csr);
+
         const unitTestStepInput: ProvisioningStepData = {
             template: {
                 Resources: {},
@@ -80,8 +135,7 @@ describe('CreateDeviceCertificateStepProcessor', () => {
                     organizationalUnit: 'QA',
                     locality: 'Denver',
                     stateName: 'CO',
-                    country: 'US',
-                    emailAddress: 'xxxxxxxxxxxx'
+                    country: 'US'
                 }
             },
             state: {}
@@ -111,12 +165,9 @@ describe('CreateDeviceCertificateStepProcessor', () => {
         expect(certInfo.organization).toEqual(cdfInputParams.certInfo.organization);
         expect(certInfo.organizationUnit).toEqual(cdfInputParams.certInfo.organizationalUnit);
         expect(certInfo.commonName).toEqual(cdfInputParams.certInfo.commonName);
-        expect(certInfo.emailAddress).toEqual(cdfInputParams.certInfo.emailAddress);
     });
 
     it('device certificate processor should throw an error if input does not have cdfProvisioningParameters', async () => {
-
-        instance = new CreateDeviceCertificateStepProcessor(() => mockIot, () => mockSSM, 365);
 
         const unitTestStepInput: ProvisioningStepData = {
             template: {
@@ -141,8 +192,6 @@ describe('CreateDeviceCertificateStepProcessor', () => {
     });
 
     it('device certificate processor should throw an error if cdfProvisioningParameters do not have caId', async () => {
-
-        instance = new CreateDeviceCertificateStepProcessor(() => mockIot, () => mockSSM, 365);
 
         const unitTestStepInput: ProvisioningStepData = {
             template: {
@@ -179,8 +228,6 @@ describe('CreateDeviceCertificateStepProcessor', () => {
     });
 
     it('device certificate processor should throw an error if cdfProvisioningParameters do not have certInfo', async () => {
-
-        instance = new CreateDeviceCertificateStepProcessor(() => mockIot, () => mockSSM, 365);
 
         const unitTestStepInput: ProvisioningStepData = {
             template: {

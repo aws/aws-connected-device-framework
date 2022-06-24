@@ -10,8 +10,8 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
- import ow from 'ow';
- import { Tag } from '../models/tags';
+import ow from 'ow';
+import { Tag } from '../models/tags';
 
 // For rules relating to tag keys and values, see
 // https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html#tag-restrictions
@@ -50,10 +50,10 @@ export class TagsList {
     const keyvals = tagsString.split(';');
     ow(keyvals.length % 2, ow.number.equal(0));
 
-    for (let idx=0; idx<keyvals.length/2; idx++) {
-      const key = keyvals[idx*2];
-      const value = keyvals[idx*2+1];
-      this.tags.push({key, value});
+    for (let idx = 0; idx < keyvals.length / 2; idx++) {
+      const key = keyvals[idx * 2];
+      const value = keyvals[idx * 2 + 1];
+      this.tags.push({ key, value });
     }
   }
 
@@ -61,7 +61,11 @@ export class TagsList {
     return this.tags.map(t => `${t.key}=${t.value}`);
   }
 
-  public get length() {
+  public asJSONFile(): { Key: string, Value: string }[] {
+    return this.tags.map(t => { return { Key: t.key, Value: t.value } });
+  }
+
+  public get length(): number {
     return this.tags.length;
   }
 }

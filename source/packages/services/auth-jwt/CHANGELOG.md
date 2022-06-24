@@ -1,6 +1,13 @@
 # Change Log - @cdf/auth-jwt
 
-This log was last generated on Thu, 17 Feb 2022 09:27:38 GMT and should not be manually modified.
+This log was last generated on Tue, 21 Jun 2022 00:47:55 GMT and should not be manually modified.
+
+## 3.0.1
+Tue, 21 Jun 2022 00:47:55 GMT
+
+### Patches
+
+- update to node 16.x
 
 ## 3.0.0
 Thu, 17 Feb 2022 09:27:38 GMT

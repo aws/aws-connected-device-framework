@@ -11,52 +11,66 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 export interface ProvisionThingRequest {
-    provisioningTemplateId:string;
-	parameters: {[key:string]:string};
+	provisioningTemplateId: string;
+	parameters: { [key: string]: string };
 	cdfProvisioningParameters?: CdfProvisioningParameters;
 }
 
-export interface CdfProvisioningParameters {
-	caId?: string;
-	certificatePem?: string;
-	certificateStatus?: string;
-	certInfo?: {
-		commonName?: string;
-		organization?: string;
-		organizationalUnit?: string;
-		locality?: string;
-		stateName?: string;
-		country?: string;
-		emailAddress?: string;
+export type CdfProvisioningParameters = CreateDeviceCertificateParameters | RegisterDeviceCertificateWithoutCAParameters | UseACMPCAParameters | undefined;
+
+export interface CreateDeviceCertificateParameters {
+	caId: string;
+	certInfo: CertInfo;
+}
+export interface RegisterDeviceCertificateWithoutCAParameters {
+	certificatePem: string;
+	certificateStatus?: CertificateStatus;
+}
+
+export interface UseACMPCAParameters {
+	caArn?: string;
+	caAlias?: string;
+
+	csr?: string;
+	certInfo: CertInfo;
+}
+
+export interface CertInfo {
+	commonName?: string;
+	organization?: string;
+	organizationalUnit?: string;
+	locality?: string;
+	stateName?: string;
+	country?: string;
+	emailAddress?: string;
+	daysExpiry?: number;
+}
+export interface ProvisionThingResponse {
+	certificatePem: string;
+	publicKey?: string;
+	privateKey?: string;
+	resourceArns?: {
+		policyLogicalName?: string;
+		certificate?: string;
+		thing?: string;
 	};
 }
 
-export interface ProvisionThingResponse {
-    certificatePem:string;
-    publicKey?:string;
-    privateKey?:string;
-    resourceArns?: {
-        policyLogicalName?:string;
-        certificate?:string;
-        thing?:string;
-    };
-}
-
 export interface Thing {
-    thingName: string;
-    arn: string;
-    thingType: string;
-    attributes: {[key:string]:string};
+	thingName: string;
+	arn: string;
+	thingType: string;
+	attributes: { [key: string]: string };
 	certificates?: ThingCertificate[];
 	policies?: ThingPolicy[];
 	groups?: ThingGroup[];
 }
 
 export interface ThingCertificate {
-	certificateId:string;
-	arn:string;
+	certificateId: string;
+	arn: string;
 	certificateStatus: CertificateStatus;
-	certificatePem:string;
+	certificatePem: string;
 }
 
 export enum CertificateStatus {
@@ -69,31 +83,31 @@ export enum CertificateStatus {
 }
 
 export interface ThingPolicy {
-	policyName:string;
-	arn:string;
-	policyDocument:string;
+	policyName: string;
+	arn: string;
+	policyDocument: string;
 }
 
 export interface ThingGroup {
-	groupName:string;
-	arn:string;
-	attributes?:{ [key: string] : string};
+	groupName: string;
+	arn: string;
+	attributes?: { [key: string]: string };
 }
 
 export interface BulkProvisionThingsRequest {
-	provisioningTemplateId:string;
-	parameters: {[key:string]:string}[];
+	provisioningTemplateId: string;
+	parameters: { [key: string]: string }[];
 }
 export interface BulkProvisionThingsResponse {
-	taskId:string;
-	creationDate?:Date;
-	lastModifiedDate?:Date;
-	status?:string;
-	successCount?:number;
-	failureCount?:number;
-	percentageProgress?:number;
+	taskId: string;
+	creationDate?: Date;
+	lastModifiedDate?: Date;
+	status?: string;
+	successCount?: number;
+	failureCount?: number;
+	percentageProgress?: number;
 }
 
 export interface RequestHeaders {
-	[key:string] : string;
+	[key: string]: string;
 }
