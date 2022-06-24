@@ -1,6 +1,6 @@
 {
   "name": "@cdf/bulkcerts",
-  "version": "6.0.3",
+  "version": "6.0.4",
   "description": "CDF Bulk Certificate Creation",
   "author": "Dean Hart",
   "config": {

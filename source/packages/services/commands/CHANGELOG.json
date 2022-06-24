@@ -2,6 +2,18 @@
   "name": "@cdf/commands",
   "entries": [
     {
+      "version": "5.0.4",
+      "tag": "@cdf/commands_v5.0.4",
+      "date": "Fri, 24 Jun 2022 21:00:45 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Updated dependencies flagged as having security issues."
+          }
+        ]
+      }
+    },
+    {
       "version": "5.0.3",
       "tag": "@cdf/commands_v5.0.3",
       "date": "Tue, 21 Jun 2022 00:47:55 GMT",

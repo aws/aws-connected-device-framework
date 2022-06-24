@@ -1,6 +1,13 @@
 # Change Log - @cdf/device-patcher
 
-This log was last generated on Tue, 21 Jun 2022 00:47:55 GMT and should not be manually modified.
+This log was last generated on Fri, 24 Jun 2022 21:00:45 GMT and should not be manually modified.
+
+## 1.0.3
+Fri, 24 Jun 2022 21:00:45 GMT
+
+### Patches
+
+- Updated dependencies flagged as having security issues.
 
 ## 1.0.2
 Tue, 21 Jun 2022 00:47:55 GMT

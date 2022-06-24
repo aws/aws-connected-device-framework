@@ -2,6 +2,18 @@
   "name": "@cdf/device-patcher",
   "entries": [
     {
+      "version": "1.0.3",
+      "tag": "@cdf/device-patcher_v1.0.3",
+      "date": "Fri, 24 Jun 2022 21:00:45 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Updated dependencies flagged as having security issues."
+          }
+        ]
+      }
+    },
+    {
       "version": "1.0.2",
       "tag": "@cdf/device-patcher_v1.0.2",
       "date": "Tue, 21 Jun 2022 00:47:55 GMT",

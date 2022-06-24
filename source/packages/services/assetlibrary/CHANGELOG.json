@@ -2,6 +2,18 @@
   "name": "@cdf/assetlibrary",
   "entries": [
     {
+      "version": "6.0.9",
+      "tag": "@cdf/assetlibrary_v6.0.9",
+      "date": "Fri, 24 Jun 2022 21:00:45 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Updated dependencies flagged as having security issues."
+          }
+        ]
+      }
+    },
+    {
       "version": "6.0.8",
       "tag": "@cdf/assetlibrary_v6.0.8",
       "date": "Tue, 21 Jun 2022 00:47:55 GMT",

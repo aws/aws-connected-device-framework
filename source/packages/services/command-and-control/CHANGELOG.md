@@ -1,6 +1,13 @@
 # Change Log - @cdf/command-and-control
 
-This log was last generated on Tue, 21 Jun 2022 00:47:55 GMT and should not be manually modified.
+This log was last generated on Fri, 24 Jun 2022 21:00:45 GMT and should not be manually modified.
+
+## 0.0.7
+Fri, 24 Jun 2022 21:00:45 GMT
+
+### Patches
+
+- Updated dependencies flagged as having security issues.
 
 ## 0.0.6
 Tue, 21 Jun 2022 00:47:55 GMT
