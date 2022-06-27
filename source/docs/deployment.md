@@ -57,10 +57,15 @@ If an authentication mechanism is applied to the CDF REST API's, a security peri
 ### Deploying from pre-bundled releases
 Each github release comes with a pre-bundled release artifact that can be used to simplify the deployment.
 
+Download the latest release tar files from [here](https://github.com/aws/aws-connected-device-framework/releases)
+
+Run below step in the folder where you downloaded the tar file:
+
 ```shell
 mkdir aws-connected-device-framework
 tar -xvf aws-connected-device-framework.tar -C aws-connected-device-framework
-aws-connected-device-framework> cd source
+cd aws-connected-device-framework/source
+aws-connected-device-framework> rush update
 ```
 **You can now skip to the `Deploying` step**
 
