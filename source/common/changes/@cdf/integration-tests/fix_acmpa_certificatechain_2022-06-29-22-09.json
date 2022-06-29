@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/integration-tests",
+      "comment": " updated ACM PCA integration to support registering certificates using CA's",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@cdf/integration-tests",
+  "email": "deanhart@amazon.com"
+}
