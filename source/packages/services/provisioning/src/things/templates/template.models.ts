@@ -25,7 +25,9 @@ export class CDFProvisioningTemplate extends AWSProvisioningTemplate {
         createDeviceCertificate?: boolean;
         createDeviceAWSCertificate?: boolean;
         registerDeviceCertificateWithoutCA?: boolean;
-        useACMPCA?: boolean;
+        acmpca?: {
+            mode: "REGISTER_WITH_CA" | "REGISTER_WTHOUT_CA"
+        }
         attachAdditionalPolicies?: [{
             name?: string;
             document?: string;

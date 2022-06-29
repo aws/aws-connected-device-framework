@@ -25,19 +25,43 @@ import { CertUtils } from '../../utils/cert';
 @injectable()
 export class UseACMPCAStepProcessor implements ProvisioningStepProcessor {
 
+    private iot: AWS.Iot;
+
     public constructor(
         @inject('deviceCertificateExpiryDays') private defaultExpiryDays: number,
         @inject(TYPES.CertUtils) private certUtils: CertUtils,
-        // as the ACMPCA may require cross-account, we use the factory directly that includes automatic STS expiration handling
+        @inject(TYPES.IotFactory) iotFactory: () => AWS.Iot,
+        // as the ACMPCA may be configured for cross-account access, we use the factory directly which includes automatic STS expiration handling
         @inject(TYPES.ACMPCAFactory) private acmpcaFactory: () => ACMPCA
     ) {        
+        this.iot = iotFactory();
     }
 
     public async process(stepData: ProvisioningStepData): Promise<void> {
         logger.debug(`UseACMPCAStepProcessor: process: in: stepData: ${JSON.stringify(stepData)}`);
 
+        const templateParams = stepData?.template?.CDF?.acmpca;
+        ow(templateParams, ow.object.message('Missing ACM PCA config in the provisioning template.'));
+        ow(templateParams.mode, ow.string.oneOf(['REGISTER_WITH_CA', 'REGISTER_WTHOUT_CA']));
+
         const cdfParams = stepData?.cdfProvisioningParameters as UseACMPCAParameters;
-        ow(cdfParams?.caAlias ?? cdfParams?.caArn, ow.string.message('Either `caAlias` or `caArn` must be provided.'));
+
+        if (templateParams.mode==='REGISTER_WITH_CA') {
+            if (cdfParams.awsiotCaAlias) {
+                cdfParams.awsiotCaArn = process.env[`CA_${cdfParams.awsiotCaAlias?.toUpperCase()}`];
+                ow(cdfParams.awsiotCaArn, ow.string.message('Invalid `awsiotCaAlias`.'));
+            } else {
+                ow(cdfParams.awsiotCaArn, ow.string.message('Either `awsiotCaAlias` or `awsiotCaArn` must be provided when the provisoning template is configured to use ACM PCA in `REGISTER_WITH_CA` mode.'));
+            }
+        }
+
+        if (cdfParams.acmpcaCaAlias) {
+            cdfParams.acmpcaCaArn = process.env[`PCA_${cdfParams.acmpcaCaAlias?.toUpperCase()}`];
+            ow(cdfParams.acmpcaCaArn, ow.string.message('Invalid `acmpcaCaAlias`.'));
+        } else {
+            ow(cdfParams.acmpcaCaArn, ow.string.message('Either `acmpcaCaAlias` or `acmpcaCaArn` must be provided.'));
+        }
+
         ow(cdfParams.certInfo, ow.object.message('`certInfo` must be provided.'));
 
         // create a csr if none provided
@@ -47,22 +71,27 @@ export class UseACMPCAStepProcessor implements ProvisioningStepProcessor {
             ow(cdfParams.csr, ow.string.message('No `csr` was provided, and auto-generation failed.'));
         }
 
-        // if a CA alias was provided, retrieve its corresponding arn
-        if (cdfParams.caAlias) {
-            cdfParams.caArn = process.env[`PCA_${cdfParams.caAlias?.toUpperCase()}`];
-            ow(cdfParams.caArn, ow.string.message('Invalid `caAlias`.'));
-        }
-
-        // create the certificate
-        const pem = await this.createCert(cdfParams.csr, cdfParams.caArn, cdfParams.certInfo);
-
-        // register the cert (without a CA)
-        const certificateId = await this.certUtils.registerCertificateWithoutCA(pem, CertificateStatus.ACTIVE);
+        // create the device certificate using ACM PCA
+        stepData.state.certificatePem = await this.createCert(cdfParams.csr, cdfParams.acmpcaCaArn, cdfParams.certInfo);
 
         if (stepData.parameters===undefined) {
             stepData.parameters = {};
         }
-        stepData.parameters.CertificateId = certificateId;
+
+        if (templateParams.mode==='REGISTER_WITH_CA') {
+            // register the device cert with AWS IoT using a CA
+            const caCertificatePem:string = await this.certUtils.getCaCertificate(cdfParams.awsiotCaArn);
+            const r = await this.iot.registerCertificate({
+                certificatePem: stepData.state.certificatePem,
+                caCertificatePem,
+                setAsActive: true,
+                status: CertificateStatus.ACTIVE
+            }).promise();
+            stepData.parameters.CertificateId = r.certificateId;
+        } else {
+            // register the device cert with AWS IoT without a CA
+            stepData.parameters.CertificateId = await this.certUtils.registerCertificateWithoutCA(stepData.state.certificatePem, CertificateStatus.ACTIVE);
+        }
 
         logger.debug(`UseACMPCAStepProcessor: process: exit:`);
     }
@@ -110,7 +139,9 @@ export class UseACMPCAStepProcessor implements ProvisioningStepProcessor {
                 }
             }
         }      
-        return getResponse.Certificate;
+
+        // the returned ACMPCA generated device certificate needs to include the full certificate chain
+        return `${getResponse.Certificate}\n${getResponse.CertificateChain}`;
     }
 
     private async sleep(time: number): Promise<void> {

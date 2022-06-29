@@ -33,9 +33,11 @@ The CA private key needs to be stored in SSM as a secure string using the follow
 
 Once the user has the public key in AWS IoT and the private key in SSM using the above convention. The provisioning module should be able to provision device certificates generated using a Customer provided CA
 
-## Using aliases to represent ACM PCA CA certificates
+## Using ACM PCA to issue device certificates
 
-When using ACM PCA to created certificates (see [CDF extensions to Provisioning Templates](docs/provisioning-templates.md) it is possible to define aliases to represent an ACM PCA CA Arn rather than having to provide the CA Arn itself. To use, define an environment variable (either using the installer, or within the Lambda console) with a name in the format of `PCA_<alias>` and a value of the ACM PCA CA Arn.
+Refer to [ACM Private CA Integration](./docs/acmpca-integration.md) for the why and how you would integrate ACM PCA with AWS IoT.
+
+When using ACM PCA to create device certificates (see [CDF extensions to Provisioning Templates](docs/provisioning-templates.md) it is possible to define aliases to represent ACM PCA CA Arns and AWS IoT CA Arns rather than having to provide the CA Arn itself. To use, define an environment variable (either using the installer, or within the Lambda console) with a name in the format of `PCA_<alias>` and a value of the CA Arn for AMC PCA hosted CAs, and likewise environment variables with a name in the format of `CA_<alias>` and a value of the CA Arn for AWS IoT hosted CAs.
 
 ## Useful Links
 
