@@ -57,4 +57,5 @@ export interface ACMCertificateChunkResponse {
 export interface ACMCertificate {
 	certificateArn: string;
 	certificate: string;
+	privateKey?: string;
 }

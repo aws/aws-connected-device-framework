@@ -173,6 +173,7 @@ export class CertificatesService {
         
         for(const result of results){
             certsZip.file(`${result.certificateArn}_cert.pem`, result.certificate);
+            certsZip.file(`${result.certificateArn}_key.pem`, result.privateKey);
         }
 
         return certsZip;
@@ -184,7 +185,7 @@ export class CertificatesService {
         const csr = await this.createCSR(privateKey, certInfo);
 
         const certificateResponse:ACMCertificate  = await this.getACMCertificate(csr, certInfo, caArn);
-
+        certificateResponse.privateKey = privateKey
 
         return certificateResponse;
 
