@@ -1,6 +1,11 @@
 # Change Log - @cdf/integration-tests
 
-This log was last generated on Tue, 21 Jun 2022 00:47:55 GMT and should not be manually modified.
+This log was last generated on Wed, 29 Jun 2022 00:56:16 GMT and should not be manually modified.
+
+## 3.2.3
+Wed, 29 Jun 2022 00:56:16 GMT
+
+_Version update only_
 
 ## 3.2.2
 Tue, 21 Jun 2022 00:47:55 GMT

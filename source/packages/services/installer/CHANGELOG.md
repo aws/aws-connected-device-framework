@@ -1,6 +1,13 @@
 # Change Log - @cdf/installer
 
-This log was last generated on Tue, 21 Jun 2022 00:47:55 GMT and should not be manually modified.
+This log was last generated on Wed, 29 Jun 2022 00:56:16 GMT and should not be manually modified.
+
+## 0.9.0
+Wed, 29 Jun 2022 00:56:16 GMT
+
+### Minor changes
+
+- update the command function reference for certificate vendor to point to command and control stack
 
 ## 0.8.1
 Tue, 21 Jun 2022 00:47:55 GMT

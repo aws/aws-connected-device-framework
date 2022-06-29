@@ -2,6 +2,23 @@
   "name": "@cdf/command-and-control",
   "entries": [
     {
+      "version": "1.0.0",
+      "tag": "@cdf/command-and-control_v1.0.0",
+      "date": "Wed, 29 Jun 2022 00:56:16 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "allow user to specify CONTINUOUS or SNAPSHOT when creating command with type Job"
+          }
+        ],
+        "major": [
+          {
+            "comment": "provide the option not to resolve thing group into individual things when resolving the targets"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.0.7",
       "tag": "@cdf/command-and-control_v0.0.7",
       "date": "Fri, 24 Jun 2022 21:00:45 GMT",

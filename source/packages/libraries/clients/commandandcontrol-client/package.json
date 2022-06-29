@@ -1,6 +1,6 @@
 {
   "name": "@cdf/commandandcontrol-client",
-  "version": "0.1.2",
+  "version": "1.0.0",
   "description": "CDF Command and Control Client",
   "author": "Dean Hart",
   "main": "dist/index.js",
