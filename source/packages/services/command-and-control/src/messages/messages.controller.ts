@@ -92,7 +92,7 @@ export class MessagesController implements interfaces.Controller {
         logger.debug(`messages.controller listRecipients: in: messageId:${messageId}, fromThingNameExclusive:${fromThingNameExclusive}, count:${count}`);
 
         try {
-            const [items, paginationKey] = await this.service.listRecipients(messageId, {thingName:fromThingNameExclusive}, count);
+            const [items, paginationKey] = await this.service.listRecipients(messageId, {targetName:fromThingNameExclusive}, count);
             const resources = this.assembler.toRecipientListResource(items, count, paginationKey);
             logger.debug(`messages.controller listRecipients: exit: ${JSON.stringify(resources)}`);
             res.status(200).send(resources);

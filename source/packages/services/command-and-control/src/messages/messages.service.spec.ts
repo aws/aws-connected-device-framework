@@ -51,15 +51,15 @@ describe('MessagesService', () => {
         underTest = new MessagesService(10, 'mocked-queue-url', mockedCommandsDao, mockedMessagesDao, mockedWorkflowFactory, mockedSQSFactory, mockedIotFactory);
     });
 
-    it('create - happy path', async() => {
+    it('create - happy path', async () => {
 
         // stubs
-        const command:CommandItem = {
+        const command: CommandItem = {
             id: 'c123',
-            
+
         }
 
-        const message:MessageItem = {
+        const message: MessageItem = {
             commandId: command.id
         }
 
@@ -93,15 +93,15 @@ describe('MessagesService', () => {
 
     });
 
-    it('create - happy path with payload params', async() => {
+    it('create - happy path with payload params', async () => {
 
         // stubs
-        const command:CommandItem = {
+        const command: CommandItem = {
             id: 'c123',
-            payloadParams: ['foo','bar']            
+            payloadParams: ['foo', 'bar']
         }
 
-        const message:MessageItem = {
+        const message: MessageItem = {
             commandId: command.id,
             payloadParamValues: {
                 foo: 'one',
@@ -139,15 +139,15 @@ describe('MessagesService', () => {
 
     });
 
-    it('create - failure path - missing payload params', async() => {
+    it('create - failure path - missing payload params', async () => {
 
         // stubs
-        const command:CommandItem = {
+        const command: CommandItem = {
             id: 'c123',
-            payloadParams: ['foo','bar']            
+            payloadParams: ['foo', 'bar']
         }
 
-        const message:MessageItem = {
+        const message: MessageItem = {
             commandId: command.id,
             payloadParamValues: {
                 foo: 'one'
@@ -172,10 +172,10 @@ describe('MessagesService', () => {
 
     });
 
-    it('processMessage - happy path', async() => {
+    it('processMessage - happy path', async () => {
 
         // stubs
-        const command:CommandItem = {
+        const command: CommandItem = {
             id: 'c123',
             deliveryMethod: {
                 type: 'TOPIC',
@@ -184,12 +184,12 @@ describe('MessagesService', () => {
             }
         }
 
-        const message:MessageItem = {
+        const message: MessageItem = {
             commandId: command.id,
             resolvedTargets: [
-                {thingName: 't1',correlationId: 'c1',status: 'success'},
-                {thingName: 't2',correlationId: 'c2',status: 'success'},
-                {thingName: 't3',correlationId: 'c3',status: 'success'}
+                { id: 't1', correlationId: 'c1', status: 'success', type: 'thing' },
+                { id: 't2', correlationId: 'c2', status: 'success', type: 'thing' },
+                { id: 't3', correlationId: 'c3', status: 'success', type: 'thing' }
             ]
         }
 
@@ -201,9 +201,9 @@ describe('MessagesService', () => {
         mockedMessagesDao.updateMessage = jest.fn().mockResolvedValueOnce(undefined);
         mockedMessagesDao.saveResolvedTargets = jest.fn().mockResolvedValueOnce(undefined);
 
-        const batchProgress:TaskBatchProgress = {
+        const batchProgress: TaskBatchProgress = {
             complete: 1,
-            total : 1
+            total: 1
         };
         mockedMessagesDao.incrementBatchesCompleted = jest.fn().mockResolvedValueOnce(batchProgress);
 
@@ -238,10 +238,10 @@ describe('MessagesService', () => {
 
     });
 
-    it('processMessage - failure path', async() => {
+    it('processMessage - failure path', async () => {
 
         // stubs
-        const command:CommandItem = {
+        const command: CommandItem = {
             id: 'c123',
             deliveryMethod: {
                 type: 'TOPIC',
@@ -250,12 +250,12 @@ describe('MessagesService', () => {
             }
         }
 
-        const message:MessageItem = {
+        const message: MessageItem = {
             commandId: command.id,
             resolvedTargets: [
-                {thingName: 't1',correlationId: 'c1',status: 'pending'},
-                {thingName: 't2',correlationId: 'c2',status: 'pending'},
-                {thingName: 't3',correlationId: 'c3',status: 'pending'}
+                { id: 't1', correlationId: 'c1', status: 'pending', type: 'thing' },
+                { id: 't2', correlationId: 'c2', status: 'pending', type: 'thing' },
+                { id: 't3', correlationId: 'c3', status: 'pending', type: 'thing' }
             ]
         }
 
@@ -268,9 +268,9 @@ describe('MessagesService', () => {
         mockedMessagesDao.updateMessage = jest.fn().mockResolvedValueOnce(undefined);
         mockedMessagesDao.saveResolvedTargets = jest.fn().mockResolvedValueOnce(undefined);
 
-        const batchProgress:TaskBatchProgress = {
+        const batchProgress: TaskBatchProgress = {
             complete: 1,
-            total : 1
+            total: 1
         };
         mockedMessagesDao.incrementBatchesCompleted = jest.fn().mockResolvedValueOnce(batchProgress);
 

@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/command-and-control",
+      "comment": "allow user to specify CONTINUOUS or SNAPSHOT when creating command with type Job",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@cdf/command-and-control",
+  "email": "willsia@amazon.com"
+}

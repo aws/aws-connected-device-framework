@@ -7,7 +7,7 @@
   "rushVersion": "5.47.0",
   "pnpmVersion": "6.24.1",
 
-  
+
   /**
    * (Required) This is the inventory of projects to be managed by Rush.
    *

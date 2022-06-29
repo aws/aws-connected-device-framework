@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/command-and-control",
+      "comment": "provide the option not to resolve thing group into individual things when resolving the targets",
+      "type": "major"
+    }
+  ],
+  "packageName": "@cdf/command-and-control",
+  "email": "willsia@amazon.com"
+}

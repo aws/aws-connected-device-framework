@@ -27,26 +27,27 @@ exports.handler = async (event: any, _context: unknown) => {
 
   if (event?.Records) {
     for (const r of event.Records) {
+      try {
+        if (r.eventSource !== 'aws:sqs') {
+          logger.warn(`lambda_sqs_handler handler: ignoring non-sqs events: ${JSON.stringify(r)}`);
+          continue;
+        }
 
-      if (r.eventSource !== 'aws:sqs') {
-        logger.warn(`lambda_sqs_handler handler: ignoring non-sqs events: ${JSON.stringify(r)}`);
-        continue;
-      }
-
-      const messageType = r.messageAttributes?.messageType?.stringValue;
-      const body = JSON.parse(r.body);
-
-
-      if (messageType==='Message::Delete') {
-        await messagesService.processMessageDeletion(body.messageId);
-      } else if (messageType==='Message::Recipient::Delete') {
-        await messagesService.processRecipientDeletion(body.messageId, body.thingName);
-      } else if (messageType.startsWith('Message::')) {
-        await messagesService.processMessage(body.message, body.command);
-      } else if (messageType==='Command::Delete') {
-        await commandsService.processCommandDeletion(body.commandId);
-      } else {
-        logger.warn(`lambda_sqs_handler handler: ignoring un-recognized sqs event`);
+        const messageType = r.messageAttributes?.messageType?.stringValue;
+        const body = JSON.parse(r.body);
+        if (messageType === 'Message::Delete') {
+          await messagesService.processMessageDeletion(body.messageId);
+        } else if (messageType === 'Message::Recipient::Delete') {
+          await messagesService.processRecipientDeletion(body.messageId, body.thingName);
+        } else if (messageType.startsWith('Message::')) {
+          await messagesService.processMessage(body.message, body.command);
+        } else if (messageType === 'Command::Delete') {
+          await commandsService.processCommandDeletion(body.commandId);
+        } else {
+          logger.warn(`lambda_sqs_handler handler: ignoring un-recognized sqs event`);
+        }
+      } catch (Exception) {
+        logger.error(`lambda_sqs_handler handler: error: ${Exception}`);
       }
     }
   }

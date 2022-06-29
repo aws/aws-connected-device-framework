@@ -1,4 +1,4 @@
-openapi: '3.0.2'
+openapi: "3.0.2"
 info:
   title: CDF Command & Control Service
   description: |
@@ -14,7 +14,7 @@ info:
 
     All with zero code!
 
-  version: '1.0'
+  version: "1.0"
 
 tags:
   - name: Commands
@@ -38,7 +38,7 @@ paths:
         content:
           application/vnd.aws-cdf-v1.0+json:
             schema:
-              $ref: '#/components/schemas/Command'
+              $ref: "#/components/schemas/Command"
             examples:
               simple_command_via_shadow:
                 summary: Send a simple command request via a shadow.
@@ -50,7 +50,7 @@ paths:
                 summary: Send a command request with a body via a topic to a device that must be online.
                 value:
                   name: set_temperature
-                  payloadTemplate: "{\"temperature\":\"{value}\"}"
+                  payloadTemplate: '{"temperature":"{value}"}'
                   payloadParams:
                     - value
                   deliveryMethod:
@@ -60,7 +60,7 @@ paths:
                 summary: Send a command request, expecting a response, via a topic.
                 value:
                   name: set_temperature
-                  payloadTemplate: "{\"temperature\":\"{value}\"}"
+                  payloadTemplate: '{"temperature":"{value}"}'
                   payloadParams:
                     - value
                   deliveryMethod:
@@ -70,75 +70,74 @@ paths:
                 summary: Send a command request via a Job with a payload containing a pre-signed url, custom rollout config, and custom abort config specified.
                 value:
                   name: enable_logging
-                  payloadTemplate: "{\"logging\":{\"enabled\":true,\"level\":\"{loggingLevel}\"},\"uploadUrl\":\"${aws:iot:s3-presigned-url:https://s3.region.amazonaws.com/bucket/logs}\"}"
+                  payloadTemplate: '{"logging":{"enabled":true,"level":"{loggingLevel}"},"uploadUrl":"${aws:iot:s3-presigned-url:https://s3.region.amazonaws.com/bucket/logs}"}'
                   payloadParams:
                     - loggingLevel
                   deliveryMethod:
                     type: JOB
                     expectReply: true
       responses:
-        '200':
+        "200":
           description: Command that was created
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: '#/components/schemas/Command'
+                $ref: "#/components/schemas/Command"
               examples:
                 simple_command_via_shadow_response:
-                  $ref: '#/components/examples/simple_command_via_shadow_response'
+                  $ref: "#/components/examples/simple_command_via_shadow_response"
                 command_with_config_via_topic_response:
-                  $ref: '#/components/examples/command_with_config_via_topic_response'
+                  $ref: "#/components/examples/command_with_config_via_topic_response"
                 command_expecting_reply_via_topic_response:
-                  $ref: '#/components/examples/command_expecting_reply_via_topic_response'
+                  $ref: "#/components/examples/command_expecting_reply_via_topic_response"
                 command_via_topic_with_custom_rollout_config_response:
-                  $ref: '#/components/examples/command_via_topic_with_custom_rollout_config_response'
+                  $ref: "#/components/examples/command_via_topic_with_custom_rollout_config_response"
     get:
       parameters:
-        - $ref: '#/components/parameters/tag'
-        - $ref: '#/components/parameters/fromCommandIdExclusive'
-        - $ref: '#/components/parameters/count'
+        - $ref: "#/components/parameters/tag"
+        - $ref: "#/components/parameters/fromCommandIdExclusive"
+        - $ref: "#/components/parameters/count"
       tags:
         - Commands
       summary: Returns a list of commands.
       responses:
-        '200':
+        "200":
           description: List of commands.
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: '#/components/schemas/CommandList'
+                $ref: "#/components/schemas/CommandList"
               examples:
                 list_of_commands_response:
-                  $ref: '#/components/examples/list_of_commands_response'     
-  
+                  $ref: "#/components/examples/list_of_commands_response"
+
   /commands/{commandId}:
     parameters:
-      - $ref: '#/components/parameters/commandId'
+      - $ref: "#/components/parameters/commandId"
     get:
       tags:
         - Commands
       summary: Returns a specific command.
       responses:
-        '200':
+        "200":
           description: Command that was created
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: '#/components/schemas/Command'
+                $ref: "#/components/schemas/Command"
               examples:
                 simple_command_via_shadow_response:
-                  $ref: '#/components/examples/simple_command_via_shadow_response'
+                  $ref: "#/components/examples/simple_command_via_shadow_response"
                 command_with_config_via_topic_response:
-                  $ref: '#/components/examples/command_with_config_via_topic_response'
+                  $ref: "#/components/examples/command_with_config_via_topic_response"
                 command_expecting_reply_via_topic_response:
-                  $ref: '#/components/examples/command_expecting_reply_via_topic_response'
+                  $ref: "#/components/examples/command_expecting_reply_via_topic_response"
                 command_via_topic_with_custom_rollout_config_response:
-                  $ref: '#/components/examples/command_via_topic_with_custom_rollout_config_response'
-
+                  $ref: "#/components/examples/command_via_topic_with_custom_rollout_config_response"
 
   /commands/{commandId}/messages:
     parameters:
-      - $ref: '#/components/parameters/commandId'
+      - $ref: "#/components/parameters/commandId"
     post:
       tags:
         - Messages
@@ -148,7 +147,7 @@ paths:
         content:
           application/vnd.aws-cdf-v1.0+json:
             schema:
-              $ref: '#/components/schemas/Message'
+              $ref: "#/components/schemas/Message"
             examples:
               send_simple_message:
                 summary: Send a message for a command with no payload params required.
@@ -173,7 +172,11 @@ paths:
                   targets:
                     awsIoT:
                       thingNames: ["my-thing-1"]
-                      thingGroupNames: ["my-group-1","my-group-2"]
+                      thingGroupNames:
+                        [
+                          { "name": "my-group-1", "expand": true },
+                          { "name": "my-group-2", "expand": true },
+                        ]
                     assetLibrary:
                       deviceIds: ["device001"]
                       groupPaths: ["/devices/provisioned"]
@@ -194,127 +197,126 @@ paths:
                             field: name
                             value: Colorado
       responses:
-        '200':
+        "200":
           description: Message that was created
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: '#/components/schemas/Message'
+                $ref: "#/components/schemas/Message"
               examples:
                 simple_message_created_response:
-                  $ref: '#/components/examples/simple_message_response'
+                  $ref: "#/components/examples/simple_message_response"
                 send_message_with_params_response:
-                  $ref: '#/components/examples/send_message_with_params_response'
+                  $ref: "#/components/examples/send_message_with_params_response"
                 send_message_with_multiple_targets_response:
-                  $ref: '#/components/examples/send_message_with_multiple_targets_response'
+                  $ref: "#/components/examples/send_message_with_multiple_targets_response"
                 send_message_with_asset_library_query_response:
-                  $ref: '#/components/examples/send_message_with_asset_library_query_response'
+                  $ref: "#/components/examples/send_message_with_asset_library_query_response"
 
     get:
       parameters:
-        - $ref: '#/components/parameters/fromCreatedAtExclusive'
-        - $ref: '#/components/parameters/count'      
+        - $ref: "#/components/parameters/fromCreatedAtExclusive"
+        - $ref: "#/components/parameters/count"
       tags:
         - Messages
       summary: Returns a list of messages for a given command.
       responses:
-        '200':
+        "200":
           description: List of message.
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: '#/components/schemas/MessageList'
+                $ref: "#/components/schemas/MessageList"
               examples:
                 list_of_messages_response:
-                  $ref: '#/components/examples/list_of_messages_response'
+                  $ref: "#/components/examples/list_of_messages_response"
 
   /messages/{messageId}:
     parameters:
-      - $ref: '#/components/parameters/messageId'
+      - $ref: "#/components/parameters/messageId"
     get:
       tags:
         - Messages
       summary: Returns a specific message.
       responses:
-        '200':
+        "200":
           description: Message that was created
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: '#/components/schemas/Message'
+                $ref: "#/components/schemas/Message"
               examples:
                 simple_message_response:
-                  $ref: '#/components/examples/simple_message_response'
+                  $ref: "#/components/examples/simple_message_response"
                 send_message_with_params_response:
-                  $ref: '#/components/examples/send_message_with_params_response'
+                  $ref: "#/components/examples/send_message_with_params_response"
                 send_message_with_multiple_targets_response:
-                  $ref: '#/components/examples/send_message_with_multiple_targets_response'
+                  $ref: "#/components/examples/send_message_with_multiple_targets_response"
                 send_message_with_asset_library_query_response:
-                  $ref: '#/components/examples/send_message_with_asset_library_query_response'
+                  $ref: "#/components/examples/send_message_with_asset_library_query_response"
 
   /messages/{messageId}/recipients:
     parameters:
-      - $ref: '#/components/parameters/messageId'
+      - $ref: "#/components/parameters/messageId"
     get:
       parameters:
-        - $ref: '#/components/parameters/fromThingNameExclusive'
-        - $ref: '#/components/parameters/count'
+        - $ref: "#/components/parameters/fromThingNameExclusive"
+        - $ref: "#/components/parameters/count"
       tags:
         - Replies
       summary: Returns a list of recipients of a specific message.
       responses:
-        '200':
+        "200":
           description: List of message recipients.
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: '#/components/schemas/RecipientList'
+                $ref: "#/components/schemas/RecipientList"
               examples:
                 list_of_replies_response:
-                  $ref: '#/components/examples/list_of_recipients_response'
+                  $ref: "#/components/examples/list_of_recipients_response"
 
   /messages/{messageId}/recipients/{thingName}:
     parameters:
-      - $ref: '#/components/parameters/messageId'
-      - $ref: '#/components/parameters/thingNamePath'
+      - $ref: "#/components/parameters/messageId"
+      - $ref: "#/components/parameters/thingNamePath"
     get:
       tags:
         - Replies
       summary: Returns a a specific recipient of a specific message.
       responses:
-        '200':
+        "200":
           description: Message recipient.
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: '#/components/schemas/Recipient'
-        '404':
+                $ref: "#/components/schemas/Recipient"
+        "404":
           description: Message and/o recipient not found.
-  
+
   /messages/{messageId}/recipients/{thingName}/replies:
     parameters:
-      - $ref: '#/components/parameters/messageId'
-      - $ref: '#/components/parameters/thingNamePath'
+      - $ref: "#/components/parameters/messageId"
+      - $ref: "#/components/parameters/thingNamePath"
     get:
       parameters:
-        - $ref: '#/components/parameters/fromReceivedAtExclusive'
-        - $ref: '#/components/parameters/count'
+        - $ref: "#/components/parameters/fromReceivedAtExclusive"
+        - $ref: "#/components/parameters/count"
       tags:
         - Replies
       summary: Returns a list of replies of a specific message if the command was configured to expect a reply.
       responses:
-        '200':
+        "200":
           description: List of message replies.
           content:
             application/vnd.aws-cdf-v1.0+json:
               schema:
-                $ref: '#/components/schemas/ReplyList'
+                $ref: "#/components/schemas/ReplyList"
               examples:
                 list_of_replies_response:
-                  $ref: '#/components/examples/list_of_replies_response'
-        '409':
+                  $ref: "#/components/examples/list_of_replies_response"
+        "409":
           description: Reply not expected.
-  
 
 components:
   parameters:
@@ -386,7 +388,6 @@ components:
           type: string
 
   schemas:
-
     EditableCommand:
       type: object
       properties:
@@ -397,9 +398,9 @@ components:
           properties:
             value:
               oneOf:
-                - $ref: '#/components/schemas/TopicDeliveryMethod'
-                - $ref: '#/components/schemas/ShadowDeliveryMethod'
-                - $ref: '#/components/schemas/JobDeliveryMethod'
+                - $ref: "#/components/schemas/TopicDeliveryMethod"
+                - $ref: "#/components/schemas/ShadowDeliveryMethod"
+                - $ref: "#/components/schemas/JobDeliveryMethod"
               discriminator:
                 propertyName: type
         payloadTemplate:
@@ -410,10 +411,10 @@ components:
             type: string
         enabled:
           type: boolean
-          
+
     Command:
       allOf:
-        - $ref: '#/components/schemas/EditableCommand'
+        - $ref: "#/components/schemas/EditableCommand"
         - type: object
           properties:
             id:
@@ -427,14 +428,14 @@ components:
               type: string
               format: date-time
               readOnly: true
-    
+
     CommandList:
       type: object
       properties:
         commands:
           type: array
           items:
-            $ref: '#/components/schemas/Command'
+            $ref: "#/components/schemas/Command"
         pagination:
           type: object
           description: Pagination details
@@ -465,7 +466,7 @@ components:
 
     TopicDeliveryMethod:
       allOf:
-        - $ref: '#/components/schemas/DeliveryMethod'
+        - $ref: "#/components/schemas/DeliveryMethod"
         - type: object
           properties:
             onlineOnly:
@@ -475,11 +476,11 @@ components:
 
     ShadowDeliveryMethod:
       allOf:
-        - $ref: '#/components/schemas/DeliveryMethod'
+        - $ref: "#/components/schemas/DeliveryMethod"
 
     JobDeliveryMethod:
       allOf:
-        - $ref: '#/components/schemas/DeliveryMethod'
+        - $ref: "#/components/schemas/DeliveryMethod"
         - type: object
           properties:
             presignedUrlConfig:
@@ -488,6 +489,11 @@ components:
                 expiresInSec:
                   type: number
                   description: Configuration information for pre-signed S3 URLs that may be referenced within the command payload. How long (in seconds) pre-signed URLs are valid. Valid values are 60 - 3600, the default value is 3600 seconds. Pre-signed URLs are generated when Jobs receives an MQTT request for the job document.
+            targetSelection:
+              type: string
+              enum:
+                - SNAPSHOT
+                - CONTINUOUS
             jobExecutionsRolloutConfig:
               type: object
               description: Allows you to create a staged rollout of the command.
@@ -553,7 +559,7 @@ components:
           readOnly: true
         payloadParamValues:
           type: object
-          additionalProperties: 
+          additionalProperties:
             type: object
             properties:
               value:
@@ -561,37 +567,46 @@ components:
                   - type: string
                   - type: integer
                   - type: boolean
-        targets:
+
+    Targets:
+      type: object
+      properties:
+        awsIot:
           type: object
           properties:
-            awsIot:
-              type: object
-              properties:
-                thingNames:
-                  type: array
-                  items: 
-                    type: string
-                thingGroupNames:
-                  type: array
-                  items: 
-                    type: string
-            assetLibrary:
-              type: object
-              properties:
-                deviceIds:
-                  type: array
-                  items: 
-                    type: string
-                groupPaths:
-                  type: array
-                  items: 
-                    type: string
-                query:
-                  type: string
+            thingNames:
+              type: array
+              items:
+                type: string
+            thingGroups:
+              type: array
+              items:
+                $ref: "#/components/schemas/ThingGroupTarget"
+        assetLibrary:
+          type: object
+          properties:
+            deviceIds:
+              type: array
+              items:
+                type: string
+            groupPaths:
+              type: array
+              items:
+                type: string
+            query:
+              type: string
+
+    ThingGroupTarget:
+      type: object
+      properties:
+        name:
+          type: string
+        expand:
+          type: boolean
 
     Message:
       allOf:
-        - $ref: '#/components/schemas/NewMessage'
+        - $ref: "#/components/schemas/NewMessage"
         - type: object
           properties:
             id:
@@ -621,7 +636,7 @@ components:
         messages:
           type: array
           items:
-            $ref: '#/components/schemas/Message'
+            $ref: "#/components/schemas/Message"
         pagination:
           type: object
           description: Pagination details
@@ -634,13 +649,17 @@ components:
             count:
               type: number
 
-
     Recipient:
       type: object
       properties:
         thingName:
           type: string
           readOnly: true
+        type:
+          type: string
+          enum:
+            - thing
+            - thingGroup
         status:
           type: string
           enum:
@@ -661,7 +680,7 @@ components:
         recipients:
           type: array
           items:
-            $ref: '#/components/schemas/Recipient'
+            $ref: "#/components/schemas/Recipient"
         pagination:
           type: object
           description: Pagination details
@@ -692,14 +711,13 @@ components:
           description: The reply. Can be any value.
           type: object
 
-
     ReplyList:
       type: object
       properties:
         replies:
           type: array
           items:
-            $ref: '#/components/schemas/Reply'
+            $ref: "#/components/schemas/Reply"
         pagination:
           type: object
           description: Pagination details
@@ -713,7 +731,6 @@ components:
               type: number
 
   examples:
-
     simple_command_via_shadow_response:
       summary: Response of sending a simple command request via a shadow.
       value:
@@ -727,7 +744,7 @@ components:
       value:
         id: Yb9VrtApSo
         name: set_temperature
-        payloadTemplate: "{\"temperature\":\"${value}\"}"
+        payloadTemplate: '{"temperature":"${value}"}'
         payloadParams:
           - value
         deliveryMethod:
@@ -739,7 +756,7 @@ components:
       value:
         id: Yb9VrtApSo
         name: set_temperature
-        payloadTemplate: "{\"temperature\":\"${value}\"}"
+        payloadTemplate: '{"temperature":"${value}"}'
         payloadParams:
           - value:
         deliveryMethod:
@@ -751,7 +768,7 @@ components:
       value:
         id: Yb9VrtApSo
         name: enable_logging
-        payloadTemplate: "{\"logging\":{\"enabled\":true,\"level\":\"${loggingLevel}\"},\"uploadUrl\":\"${aws:iot:s3-presigned-url:${s3Url}}\"}"
+        payloadTemplate: '{"logging":{"enabled":true,"level":"${loggingLevel}"},"uploadUrl":"${aws:iot:s3-presigned-url:${s3Url}}"}'
         payloadParams:
           - loggingLevel:
           - s3Url
@@ -766,7 +783,7 @@ components:
         commands:
           - id: Yb9VrtApSo
             name: enable_logging
-            payloadTemplate: "{\"logging\":{\"enabled\":true,\"level\":\"${loggingLevel}\"},\"uploadUrl\":\"${aws:iot:s3-presigned-url:https://s3.region.amazonaws.com/bucket/logs}\"}"
+            payloadTemplate: '{"logging":{"enabled":true,"level":"${loggingLevel}"},"uploadUrl":"${aws:iot:s3-presigned-url:https://s3.region.amazonaws.com/bucket/logs}"}'
             payloadParams:
               - loggingLevel:
             deliveryMethod:
@@ -775,7 +792,7 @@ components:
             createdAt: "2021-07-21T17:32:28Z"
           - id: UhoXNlnVnk
             name: set_temperature
-            payloadTemplate: "{\"temperature\":${value}}"
+            payloadTemplate: '{"temperature":${value}}'
             payloadParams:
               - value:
             deliveryMethod:
@@ -815,7 +832,11 @@ components:
         targets:
           awsIoT:
             thingNames: ["my-thing-1"]
-            groupNames: ["my-group-1","my-group-2"]
+            groupNames:
+              [
+                { "name": "my-group-1", "expand": true },
+                { "name": "my-group-2", "expand": true },
+              ]
           assetLibrary:
             deviceIds: ["device001"]
             groupPaths: ["/devices/provisioned"]

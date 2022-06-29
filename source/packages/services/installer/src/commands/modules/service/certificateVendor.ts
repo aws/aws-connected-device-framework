@@ -28,7 +28,7 @@ export class CertificateVendorInstaller implements ServiceModule {
   public readonly type = 'SERVICE';
   public readonly dependsOnMandatory: ModuleName[] = [
     'assetLibrary',
-    'commands',
+    'commandAndControl',
     'deploymentHelper',
     'kms',
     'openSsl',
@@ -38,14 +38,13 @@ export class CertificateVendorInstaller implements ServiceModule {
 
   private readonly stackName: string;
   private readonly assetLibraryStackName: string;
-  private readonly commandsStackName: string;
+  private readonly commandAndControlStackName: string;
 
   constructor(environment: string) {
     this.stackName = `cdf-certificatevendor-${environment}`
     this.assetLibraryStackName = `cdf-assetlibrary-${environment}`;
-    this.commandsStackName = `cdf-commands-${environment}`;
+    this.commandAndControlStackName = `cdf-commandandcontrol-${environment}`;
   }
-
 
 
   public async prompts(answers: Answers): Promise<Answers> {
@@ -246,7 +245,7 @@ export class CertificateVendorInstaller implements ServiceModule {
           answers.certificateVendor = {};
         }
         const assetlibrarybyResourceLogicalId = await getStackResourceSummaries(this.assetLibraryStackName, answers.region);
-        const commandsbyResourceLogicalId = await getStackResourceSummaries(this.commandsStackName, answers.region);
+        const commandsbyResourceLogicalId = await getStackResourceSummaries(this.commandAndControlStackName, answers.region);
         answers.certificateVendor.commandsFunctionName = commandsbyResourceLogicalId('RESTLambdaFunction');
         answers.certificateVendor.assetLibraryFunctionName = assetlibrarybyResourceLogicalId('LambdaFunction');
       }

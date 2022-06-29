@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/commandandcontrol-client",
+      "comment": "modifying the data model to support changes on the command and control module",
+      "type": "major"
+    }
+  ],
+  "packageName": "@cdf/commandandcontrol-client",
+  "email": "willsia@amazon.com"
+}
