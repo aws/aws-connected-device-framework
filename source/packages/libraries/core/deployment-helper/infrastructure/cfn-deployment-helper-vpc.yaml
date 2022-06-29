@@ -58,6 +58,8 @@ Resources:
       Environment:
         Variables:
           APP_CONFIG_DIR: 'packages/libraries/core/deployment-helper/dist/config'
+          COMMANDANDCONTROL_API_FUNCTION_NAME: !Sub "cdf-commandandcontrol-rest-${Environment}"
+          COMMANDANDCONTROL_MODE: lambda
 
   CustomResourceLambdaVPCRole:
     Type: AWS::IAM::Role

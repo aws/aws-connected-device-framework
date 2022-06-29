@@ -13,7 +13,7 @@
 import { WorkflowAction } from './workflow.interfaces';
 import { TYPES } from '../../di/types';
 import { injectable, inject } from 'inversify';
-import { MessageItem } from '../messages.models';
+import { MessageItem, Recipient } from '../messages.models';
 import { logger } from '../../utils/logger.util';
 import ow from 'ow';
 import { AwsIotThingListBuilder, THING_LIST_BUILDER_TYPES } from '@cdf/thing-list-builder';
@@ -27,25 +27,37 @@ export class ResolveTargetsAction implements WorkflowAction {
         @inject(TYPES.MessagesDao) private messagesDao: MessagesDao,
         @inject(THING_LIST_BUILDER_TYPES.AwsIotThingListBuilder) private awsIotThingListBuilder: AwsIotThingListBuilder) {
 
-        }
+    }
 
-    async process(message:MessageItem,command:CommandItem): Promise<boolean> {
+    async process(message: MessageItem, command: CommandItem): Promise<boolean> {
         logger.debug(`workflow.resolveTargets process: message:${JSON.stringify(message)}, command:${JSON.stringify(command)}`);
 
         ow(command, ow.object.plain);
         ow(message, ow.object.plain);
 
+        const skipResolveThingGroups: Recipient[] = message.targets?.awsIoT?.thingGroups?.filter(o => !o.expand).map(o => {
+            return {
+                id: o.name,
+                status: 'pending',
+                type: 'thingGroup'
+            }
+        }) ?? []
+
         const resolvedTargets = await this.awsIotThingListBuilder.listThings({
             thingNames: message.targets?.awsIoT?.thingNames,
-            thingGroupNames: message.targets?.awsIoT?.thingGroupNames,
+            thingGroupNames: message.targets?.awsIoT?.thingGroups?.filter(o => o.expand).map(o => o.name),
             assetLibraryDeviceIds: message.targets?.assetLibrary?.deviceIds,
             assetLibraryGroupPaths: message.targets?.assetLibrary?.groupPaths,
             assetLibraryQuery: message.targets?.assetLibrary?.query,
         });
-        message.resolvedTargets = resolvedTargets.thingNames?.map(t=> ({
-            thingName:t,
+
+        message.resolvedTargets = resolvedTargets.thingNames?.map(t => ({
+            id: t,
             status: 'pending',
+            type: 'thing'
         }));
+
+        message.resolvedTargets.push(...skipResolveThingGroups)
 
         await this.messagesDao.saveResolvedTargets(message);
 

@@ -15,6 +15,7 @@
     "@cdf/lambda-invoke": "^3.0.2",
     "@cdf/logger": "^4.0.0",
     "@cdf/config-inject": "^4.0.2",
+    "@cdf/commandandcontrol-client": "^0.1.2",
     "cfn-response-promise": "1.0.1",
     "http-errors": "1.8.0",
     "inversify": "5.1.1",
