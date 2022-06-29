@@ -221,9 +221,9 @@ Specify names of existing policies, or name and definition of new policies to cr
 ### `$.CDF.useACMPCA`
 
 
-If `$.CDF.useACMPCA` is provied with a value of `REGISTER_WITH_CA` or `REGISTER_WTHOUT_CA`, ACM PCA is used to issue a device certificate which is then registered within AWS IoT. Refer to [ACM Private CA Integration](./acmpca-integration.md) for further details.
+If `$.CDF.useACMPCA` is provied with a value of `REGISTER_WITH_CA` or `REGISTER_WITHOUT_CA`, ACM PCA is used to issue a device certificate which is then registered within AWS IoT. Refer to [ACM Private CA Integration](./acmpca-integration.md) for further details.
 
-When `REGISTER_WITH_CA` is provided, the device certificate will be registered and signed using a custom registered CA that represents the ACM PCA CA. If instead `REGISTER_WTHOUT_CA` then the device certificate is registered without using a CA.
+When `REGISTER_WITH_CA` is provided, the device certificate will be registered and signed using a custom registered CA that represents the ACM PCA CA. If instead `REGISTER_WITHOUT_CA` then the device certificate is registered without using a CA.
 
 For the template to use the generated certificate it must have the `CertificateId` template parameter defined. Note that the user of the template should not provide a value for the parameter as it will be populated automatically:
 
@@ -243,7 +243,7 @@ For the template to use the generated certificate it must have the `CertificateI
     "CDF": {
         "acmpca": {
             // mandatory if device certificates are to be issued from ACM PCA
-            "mode":  "REGISTER_WITH_CA" | "REGISTER_WTHOUT_CA"
+            "mode":  "REGISTER_WITH_CA" | "REGISTER_WITHOUT_CA"
     }
 }
 ```

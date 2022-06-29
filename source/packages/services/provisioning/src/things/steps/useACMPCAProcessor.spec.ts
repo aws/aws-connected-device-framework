@@ -64,7 +64,7 @@ describe('UseACMPCAStepProcessor', () => {
                 Parameters: {},
                 CDF: {
                     acmpca: {
-                        mode: 'REGISTER_WTHOUT_CA'
+                        mode: 'REGISTER_WITHOUT_CA'
                     }
                 }
             },
@@ -136,7 +136,7 @@ describe('UseACMPCAStepProcessor', () => {
                 Parameters: {},
                 CDF: {
                     acmpca: {
-                        mode: 'REGISTER_WTHOUT_CA'
+                        mode: 'REGISTER_WITHOUT_CA'
                     }
                 }
             },
@@ -209,7 +209,7 @@ describe('UseACMPCAStepProcessor', () => {
                 Parameters: {},
                 CDF: {
                     acmpca: {
-                        mode: 'REGISTER_WTHOUT_CA'
+                        mode: 'REGISTER_WITHOUT_CA'
                     }
                 }
             },
@@ -359,7 +359,7 @@ describe('UseACMPCAStepProcessor', () => {
                 Parameters: {},
                 CDF: {
                     acmpca: {
-                        mode: 'REGISTER_WTHOUT_CA'
+                        mode: 'REGISTER_WITHOUT_CA'
                     }
                 }
             },
@@ -399,7 +399,7 @@ describe('UseACMPCAStepProcessor', () => {
                 Parameters: {},
                 CDF: {
                     acmpca: {
-                        mode: 'REGISTER_WTHOUT_CA'
+                        mode: 'REGISTER_WITHOUT_CA'
                     }
                 }
             },
@@ -437,7 +437,7 @@ describe('UseACMPCAStepProcessor', () => {
                 Parameters: {},
                 CDF: {
                     acmpca: {
-                        mode: 'REGISTER_WTHOUT_CA'
+                        mode: 'REGISTER_WITHOUT_CA'
                     }
                 }
             },

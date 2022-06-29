@@ -42,7 +42,7 @@ export class UseACMPCAStepProcessor implements ProvisioningStepProcessor {
 
         const templateParams = stepData?.template?.CDF?.acmpca;
         ow(templateParams, ow.object.message('Missing ACM PCA config in the provisioning template.'));
-        ow(templateParams.mode, ow.string.oneOf(['REGISTER_WITH_CA', 'REGISTER_WTHOUT_CA']));
+        ow(templateParams.mode, ow.string.oneOf(['REGISTER_WITH_CA', 'REGISTER_WITHOUT_CA']));
 
         const cdfParams = stepData?.cdfProvisioningParameters as UseACMPCAParameters;
 

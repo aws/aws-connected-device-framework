@@ -18,11 +18,11 @@ When registering the X.509 device certificates issued by ACM PCA with AWS IoT in
 - Certificates used for multi-account registration are supported on the `iot:Data-ATS`, `iot:Data (legacy)`, `iot:Jobs`, and `iot:CredentialProvider` endpoint types, but not other endpoint types such as Greengrass V2.
 - Devices that use multi-account registration must send the [Server Name Indication (SNI) extension](https://tools.ietf.org/html/rfc3546#section-3.1) to the Transport Layer Security (TLS) protocol and provide the complete endpoint address in the host_name field, when they connect to AWS IoT.
 
-To use this mode, set `$.CDF.useACMPCA` to `REGISTER_WTHOUT_CA` in a [provisionig template](./provisioning-templates.md).
+To use this mode, set `$.CDF.useACMPCA` to `REGISTER_WITHOUT_CA` in a [provisionimg template](./provisioning-templates.md).
 
 #### Registering an ACM PCA CA as an AWS IoT CA
 
 In terms of AWS IoT this is the most reliable in terms of compatability with other systems, but is far more complex a step in configuring the ACM PCA CA hierarchy as access to the CA's private keys are required in order to register a ACM PCA CA as an AWS IoT CA. Refer to [IoT Provisioning Secret-free](https://github.com/aws-samples/iot-provisioning-secretfree/blob/master/doc/acm-provisioning-proto.md) AWS sample code for details on how to configure.
 
-To use this mode, set `$.CDF.useACMPCA` to `REGISTER_WTH_CA` in a [provisionig template](./provisioning-templates.md).
+To use this mode, set `$.CDF.useACMPCA` to `REGISTER_WTH_CA` in a [provisioning template](./provisioning-templates.md).
 
