@@ -71,7 +71,9 @@ CDF extends AWS IoT Provisioning Templates by allowing the following extra confi
 
 ### `$.CDF.createDeviceCertificate` 
 
-If set to `true`, a certificate will be created on behalf of the device, which can then be used as configured in the template to register and associate with the device.  By default, is `false`.
+If set to `true`, a device certificate signed by a custom CA will be created on behalf of the device without the need of the device providing a CSR.  By default, is `false`.
+
+Note that this feature is useful for prototyping workloads, but is not a security best practice for production workloads as this generates the private key and CSR on behalf of a device which means the private key needs to be loaded back onto the device. A security best pratice is for a device to generate its own CSR so that the private key never leaves the device.
 
 For the template to use the generated certificate it must have the `CertificatePem`  and `CaCertificatePem` template parameters defined. Note that the user of the template should not provide values for these parameters as they will be populated automatically:
 
@@ -123,7 +125,9 @@ The following attributes, provided as part of the `POST /things` request body, a
 
 ### `$.CDF.createDeviceAWSCertificate` 
 
-If set to `true`, a client certificate signed by the Amazon Root certificate authority will be created and attached to the device
+If set to `true`, a device certificate signed by the Amazon Root CA will be created on behalf of the device without the need of the device providing a CSR.  By default, is `false`.
+
+Note that this feature is useful for prototyping workloads, but is not a security best practice for production workloads as this generates the private key and CSR on behalf of a device which means the private key needs to be loaded back onto the device. A security best pratice is for a device to generate its own CSR so that the private key never leaves the device.
 
 For the template to use the generated certificate it must have the `CertificateId` template parameter defined. Note that the user of the template should not provide a value for the parameter as it will be populated automatically:
 
@@ -217,7 +221,9 @@ Specify names of existing policies, or name and definition of new policies to cr
 ### `$.CDF.useACMPCA`
 
 
-If set to `true`, an ACM PCA certificate is used to sign a device certificate instead of the default AWS IoT PKI.
+If `$.CDF.useACMPCA` is provied with a value of `REGISTER_WITH_CA` or `REGISTER_WITHOUT_CA`, ACM PCA is used to issue a device certificate which is then registered within AWS IoT. Refer to [ACM Private CA Integration](./acmpca-integration.md) for further details.
+
+When `REGISTER_WITH_CA` is provided, the device certificate will be registered and signed using a custom registered CA that represents the ACM PCA CA. If instead `REGISTER_WITHOUT_CA` then the device certificate is registered without using a CA.
 
 For the template to use the generated certificate it must have the `CertificateId` template parameter defined. Note that the user of the template should not provide a value for the parameter as it will be populated automatically:
 
@@ -235,7 +241,9 @@ For the template to use the generated certificate it must have the `CertificateI
     },
     
     "CDF": {
-        "useACMPCA": true
+        "acmpca": {
+            // mandatory if device certificates are to be issued from ACM PCA
+            "mode":  "REGISTER_WITH_CA" | "REGISTER_WITHOUT_CA"
     }
 }
 ```
@@ -246,12 +254,23 @@ The following attributes, provided as part of the `POST /things` request body, a
 # POST /things request body
 {
     ...
-    "cdfProvisioningParameters": {
-        // either provide a caArn or caAlias:
-        "caArn": "?",           
-        "caAlias": "?",
+    "cdfProvisioningParameters": {  
 
-        "csr": "?",                         // optional. If not provided, a CSR will be created on the devices behalf.         
+        // Mandatory. Either provide the ACM PCA CA ARN to issue the device certificate, 
+        //      or an alias that points to said AWS ACM PCA CA ARN:
+        "acmpcaCaArn": "?",           
+        "acmpcaCaAlias": "?",
+
+        // optional. Only required if the template "CDF.acmpca.mode" was set to "REGISTER_WITH_CA".
+        //      If so, either provide the AWS IoT CA ARN of the ACM PCA CA registered with AWS IoT, 
+        //      or an alias that points to said AWS IoT CA ARN:
+        "awsiotCaArn": "?",           
+        "awsiotCaAlias": "?",
+
+        // optional. If not provided, a CSR will be created on the devices behalf. Note that for production 
+        //      workloads it is a security best practice for the device to provide a CSR so that the private 
+        //      key is not exposed. For prototyping workloads, it is fine not to provide a CSR.
+        "csr": "?",                         
 
         // certificate information to apply:
         "certInfo": {                       // optional. But mandatory if no csr was provided.

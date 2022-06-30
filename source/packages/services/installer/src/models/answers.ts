@@ -284,11 +284,16 @@ export interface Provisioning extends RestServiceModuleAttribues {
   bulkRequestsPrefix?: string;
 
   // ACM PCA specific
+  pcaIntegrationEnabled?: boolean;
   pcaCrossAccountRoleArn?: string;
   setPcaAliases?: boolean;
   pcaAliases?: CAAliases;
   pcaAlias?: string;
   pcaArn?:string;
+  setIotCaAliases?: boolean;
+  iotCaAliases?: CAAliases;
+  iotCaAlias?: string;
+  iotCaArn?:string;
 }
 
 export interface FleetSimulator extends RestServiceModuleAttribues {
