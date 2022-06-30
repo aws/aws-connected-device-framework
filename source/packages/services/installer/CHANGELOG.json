@@ -2,6 +2,18 @@
   "name": "@cdf/installer",
   "entries": [
     {
+      "version": "0.10.0",
+      "tag": "@cdf/installer_v0.10.0",
+      "date": "Thu, 30 Jun 2022 00:07:08 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": " updated ACM PCA integration to support registering certificates using CA's"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.9.0",
       "tag": "@cdf/installer_v0.9.0",
       "date": "Wed, 29 Jun 2022 00:56:16 GMT",

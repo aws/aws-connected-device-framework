@@ -2,6 +2,23 @@
   "name": "@cdf/greengrass2-provisioning",
   "entries": [
     {
+      "version": "0.3.0",
+      "tag": "@cdf/greengrass2-provisioning_v0.3.0",
+      "date": "Thu, 30 Jun 2022 00:07:08 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": " updated ACM PCA integration to support registering certificates using CA's"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@cdf/provisioning-client\" from `^5.1.0` to `^5.2.0`"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.2.1",
       "tag": "@cdf/greengrass2-provisioning_v0.2.1",
       "date": "Tue, 21 Jun 2022 00:47:55 GMT",

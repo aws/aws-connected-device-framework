@@ -1,6 +1,13 @@
 # Change Log - @cdf/installer
 
-This log was last generated on Wed, 29 Jun 2022 00:56:16 GMT and should not be manually modified.
+This log was last generated on Thu, 30 Jun 2022 00:07:08 GMT and should not be manually modified.
+
+## 0.10.0
+Thu, 30 Jun 2022 00:07:08 GMT
+
+### Minor changes
+
+-  updated ACM PCA integration to support registering certificates using CA's
 
 ## 0.9.0
 Wed, 29 Jun 2022 00:56:16 GMT
