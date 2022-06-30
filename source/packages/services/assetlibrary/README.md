@@ -193,6 +193,7 @@ In the example above, retrieving the list of policies for `device001`, `device00
 - [Events](docs/events.md)
 - [Fine-gained access controll](docs/fine-grained-access-control.md)
 - [Asset Library modes: lite, full, enhanced](docs/modes.md)
+- [Enhanced Search](docs/enhanced-search.md)
 - [Profiles](docs/profiles.md)
 - [Swagger](docs/swagger.yml)
 - [Templates user guide](docs/templates-user.md)
