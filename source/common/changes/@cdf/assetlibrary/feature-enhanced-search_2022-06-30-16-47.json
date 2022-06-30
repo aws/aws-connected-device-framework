@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/assetlibrary",
+      "comment": "New \"enhanced mode\" for Asset Library",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@cdf/assetlibrary",
+  "email": "jonasneu@amazon.com"
+}
