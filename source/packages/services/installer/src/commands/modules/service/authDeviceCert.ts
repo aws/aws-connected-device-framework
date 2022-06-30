@@ -32,7 +32,7 @@ export class AuthDeviceCertInstaller implements ServiceModule {
   ];
   public readonly dependsOnOptional: ModuleName[] = [];
 
-  private readonly stackName: string;
+  public readonly stackName: string;
 
   constructor(environment: string) {
     this.stackName = `cdf-auth-devicecert-${environment}`

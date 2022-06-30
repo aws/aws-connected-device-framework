@@ -14,19 +14,19 @@ import chalk from 'chalk';
 
 export const feedback = {
   info: (message: string): void => {
-    chalk.green(message)
+    chalk.green(message);
   },
 
   section: (message: string): void => {
-    chalk.bgYellow(message)
+    chalk.bgYellow(message);
   },
 
   error: (message: string): void => {
-    chalk.bgRed(message)
+    chalk.bgRed(message);
   },
 
   status: (message: string): void => {
-    chalk.bgGreen(message)
+    chalk.bgGreen(message);
   }
 }
 

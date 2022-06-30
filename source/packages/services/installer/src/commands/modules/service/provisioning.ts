@@ -35,7 +35,7 @@ export class ProvisioningInstaller implements RestModule {
 
   public readonly dependsOnOptional: ModuleName[] = [];
 
-  private readonly stackName: string
+  public readonly stackName: string
 
   constructor(environment: string) {
     this.stackName = `cdf-provisioning-${environment}`;
@@ -382,6 +382,17 @@ export class ProvisioningInstaller implements RestModule {
         pca.value = answers.provisioning.pcaArn;
       }
       configBuilder.add(alias, pca.value);
+    });
+
+    answers.provisioning.iotCaAliases.cas.forEach(ca => {
+      let alias = ca.alias;
+      if (!ca.alias.startsWith('CA_')) {
+        alias = `CA_${ca.alias.toUpperCase()}`;
+      }
+      if (alias == answers.provisioning.iotCaAlias) {
+        ca.value = answers.provisioning.iotCaArn;
+      }
+      configBuilder.add(alias, ca.value);
     });
 
     configBuilder

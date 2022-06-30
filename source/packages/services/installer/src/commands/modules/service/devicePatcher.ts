@@ -35,7 +35,7 @@ export class DevicePatcherInstaller implements RestModule {
 
   public readonly dependsOnOptional: ModuleName[] = [];
 
-  private readonly stackName: string;
+  public readonly stackName: string;
 
   constructor(environment: string) {
     this.stackName = `cdf-device-patcher-${environment}`

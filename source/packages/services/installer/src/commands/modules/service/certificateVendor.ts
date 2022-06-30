@@ -36,7 +36,7 @@ export class CertificateVendorInstaller implements ServiceModule {
 
   public readonly dependsOnOptional: ModuleName[] = [];
 
-  private readonly stackName: string;
+  public readonly stackName: string;
   private readonly assetLibraryStackName: string;
   private readonly commandsStackName: string;
 

@@ -32,7 +32,7 @@ export class AssetLibraryExportInstaller implements ServiceModule {
     'kms',
   ];
   public readonly dependsOnOptional: ModuleName[] = ['vpc'];
-  private readonly stackName: string;
+  public readonly stackName: string;
 
   constructor(environment: string) {
     this.stackName = `cdf-assetlibrary-export-${environment}`

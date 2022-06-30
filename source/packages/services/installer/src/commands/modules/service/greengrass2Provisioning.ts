@@ -41,7 +41,7 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
     'greengrass2InstallerConfigGenerators'];
   public readonly dependsOnOptional: ModuleName[] = ['assetLibrary'];
 
-  private readonly stackName: string;
+  public readonly stackName: string;
   private readonly defaultInstallerConfigGenerators: Record<string, string>;
 
   constructor(environment: string) {
