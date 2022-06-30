@@ -151,7 +151,7 @@ Before({ tags: '@setup_acmpca_provisioning' }, async function () {
     const template = {
         Parameters: {
             ThingName: {
-                Type: String
+                Type: 'String'
             },
             CertificateId: {
                 Type: 'String'
@@ -174,7 +174,9 @@ Before({ tags: '@setup_acmpca_provisioning' }, async function () {
             }
         },
         CDF: {
-            useACMPCA: true
+            acmpca: {
+                mode: 'REGISTER_WITHOUT_CA'
+            }
         }
     };
     await uploadTemplate(ACMPCA_TEMPLATE_NAME, template);
