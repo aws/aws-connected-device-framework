@@ -26,7 +26,7 @@ Parameters:
     Type: AWS::EC2::VPC::Id
   PrivateSubNetIds:
     Description: >
-      Comma delimited list of private subnetIds to deploy Neptune into. Number of subnets must match the number of 
+      Comma delimited list of private subnetIds to deploy OpenSearch into. Number of subnets must match the number of 
       availability zones deployed into, i.e. only pass one subnet if operating in a single AZ.
     Type: List<AWS::EC2::Subnet::Id>
   NeptuneSecurityGroupId:

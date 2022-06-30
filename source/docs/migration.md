@@ -2,6 +2,10 @@
 
 While we endeavor to always make backward compatible changes, there may be times when we need to make changes that are not backward compatible. If these changes are made at the API level then the affected modules REST API vendor mime types will be versioned supporting both new and old versions, as well as the modules minor version bumped. But if the change affect something else such as how configuration is handled, or how applications are deployed, then the major versions of the modules will be bumped with migration notes added here.
 
+## Migrating an existing Asset Library deployment to Enhanced Search
+
+Starting with CDF Asset Library version 6.0.10 (part of CDF version 1.0.13), a new "enhanced" mode is available for CDF Asset Library. See the section [Migrating from full mode to enhanced mode](../packages/services/assetlibrary/docs/enhanced-search.md#migrating-from-full-mode-to-enhanced-mode) for guidance on migrating to enanced mode.
+
 ## Migrating from Release <=1.0.10 to 1.0.11
 
 ### Asset Library is now optional modules
@@ -49,7 +53,8 @@ In prior release of CDF, the deployment of modules was carried out using bash sc
 
 There are no changes on the CloudFormation definition of the stateful resources and or on the CloudFormation stack name itself. If you had deployed CDF in the past, as long as your answer in the installer wizard matches with the your current deployment the upgrade process should be seamless. The main changes within CloudFormation are mainly related to application configuration changes specified in the section above.
 
->**In production environment, its highly advised to take a snapshot of the stateful resources (e.g Neptune, DynamoDB) before re-deploying the services with this new installer.**  
+>**In production environment, its highly advised to take a snapshot of the stateful resources (e.g Neptune, DynamoDB) before re-deploying the services with this new installer.**
+
 ## Migrating from pre-open source version (CodeCommit repo) to open source version (GitHub repo)
 
 NOTE: The initial release of this open source version did not include the _greengrass-provisioning_ and _greengrass-deployment_ modules as their implementation was based on Greengrass V1. New versions of these modules supporting Greengrass V2 were released at a later date.
