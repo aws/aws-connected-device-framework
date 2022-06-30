@@ -2,6 +2,18 @@
   "name": "@cdf/installer",
   "entries": [
     {
+      "version": "0.11.0",
+      "tag": "@cdf/installer_v0.11.0",
+      "date": "Thu, 30 Jun 2022 21:32:50 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "added new cloud-to-env command that given the name of an existing deployed cdf environment will generate the necessary application configuration to run locally."
+          }
+        ]
+      }
+    },
+    {
       "version": "0.10.0",
       "tag": "@cdf/installer_v0.10.0",
       "date": "Thu, 30 Jun 2022 00:07:08 GMT",

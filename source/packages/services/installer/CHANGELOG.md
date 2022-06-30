@@ -1,6 +1,13 @@
 # Change Log - @cdf/installer
 
-This log was last generated on Thu, 30 Jun 2022 00:07:08 GMT and should not be manually modified.
+This log was last generated on Thu, 30 Jun 2022 21:32:50 GMT and should not be manually modified.
+
+## 0.11.0
+Thu, 30 Jun 2022 21:32:50 GMT
+
+### Minor changes
+
+- added new cloud-to-env command that given the name of an existing deployed cdf environment will generate the necessary application configuration to run locally.
 
 ## 0.10.0
 Thu, 30 Jun 2022 00:07:08 GMT
