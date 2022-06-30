@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/installer",
+      "comment": "added new cloud-to-env command that given the name of an existing deployed cdf environment will generate the necessary application configuration to run locally.",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@cdf/installer",
+  "email": "deanhart@amazon.com"
+}

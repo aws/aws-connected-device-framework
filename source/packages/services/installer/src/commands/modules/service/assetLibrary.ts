@@ -45,12 +45,13 @@ export class AssetLibraryInstaller implements RestModule {
     'deploymentHelper',
   ];
   public readonly dependsOnOptional: ModuleName[] = ['vpc'];
-  private readonly applicationStackName: string;
+
+  public readonly stackName: string;
   private readonly neptuneStackName: string;
 
   constructor(environment: string) {
     this.neptuneStackName = `cdf-assetlibrary-neptune-${environment}`
-    this.applicationStackName = `cdf-assetlibrary-${environment}`
+    this.stackName = `cdf-assetlibrary-${environment}`
   }
   includeOptionalModules: (answers: Answers) => Answers;
 
@@ -59,7 +60,7 @@ export class AssetLibraryInstaller implements RestModule {
     delete answers.assetLibrary?.redeploy;
 
     let updatedAnswers: Answers = await inquirer.prompt([
-      redeployIfAlreadyExistsPrompt(this.name, this.applicationStackName),
+      redeployIfAlreadyExistsPrompt(this.name, this.stackName),
     ], answers);
 
     if ((updatedAnswers.assetLibrary?.redeploy ?? true)) {
@@ -309,11 +310,11 @@ export class AssetLibraryInstaller implements RestModule {
     }
 
     tasks.push({
-      title: `Packaging and deploying stack '${this.applicationStackName}'`,
+      title: `Packaging and deploying stack '${this.stackName}'`,
       task: async () => {
         await packageAndDeployStack({
           answers: answers,
-          stackName: this.applicationStackName,
+          stackName: this.stackName,
           serviceName: 'assetlibrary',
           templateFile: '../assetlibrary/infrastructure/cfn-assetLibrary.yaml',
           parameterOverrides: this.getAssetLibraryParameterOverrides(answers),
@@ -347,7 +348,7 @@ export class AssetLibraryInstaller implements RestModule {
   public async generateLocalConfiguration(answers: Answers): Promise<string> {
 
     const byOutputKey = await getStackOutputs(this.neptuneStackName, answers.region)
-    const byParameterKey = await getStackParameters(this.applicationStackName, answers.region)
+    const byParameterKey = await getStackParameters(this.stackName, answers.region)
 
     const configBuilder = new ConfigBuilder()
 
@@ -360,7 +361,7 @@ export class AssetLibraryInstaller implements RestModule {
   }
 
   public async generatePostmanEnvironment(answers: Answers): Promise<PostmanEnvironment> {
-    const byOutputKey = await getStackOutputs(this.applicationStackName, answers.region)
+    const byOutputKey = await getStackOutputs(this.stackName, answers.region)
     return {
       key: 'assetlibrary_base_url',
       value: byOutputKey('ApiGatewayUrl'),
@@ -371,9 +372,9 @@ export class AssetLibraryInstaller implements RestModule {
   public async delete(answers: Answers): Promise<ListrTask[]> {
     const tasks: ListrTask[] = [];
     tasks.push({
-      title: `Deleting stack '${this.applicationStackName}'`,
+      title: `Deleting stack '${this.stackName}'`,
       task: async () => {
-        await deleteStack(this.applicationStackName, answers.region)
+        await deleteStack(this.stackName, answers.region)
       }
     });
 

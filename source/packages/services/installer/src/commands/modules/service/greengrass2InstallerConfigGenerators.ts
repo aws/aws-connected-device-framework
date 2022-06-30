@@ -28,7 +28,7 @@ export class Greengrass2InstallerConfigGeneratorsInstaller implements ServiceMod
   public readonly type = 'SERVICE';
   public readonly dependsOnMandatory: ModuleName[] = ['deploymentHelper'];
   public readonly dependsOnOptional: ModuleName[] = [];
-  private readonly stackName: string;
+  public readonly stackName: string;
 
 
   constructor(environment: string) {

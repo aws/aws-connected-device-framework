@@ -31,7 +31,7 @@ export class DeviceMonitoringInstaller implements ServiceModule {
     'assetLibrary',
   ];
   public readonly dependsOnOptional: ModuleName[] = [];
-  private readonly stackName: string;
+  public readonly stackName: string;
   private readonly assetLibraryStackName: string;
 
   constructor(environment: string) {

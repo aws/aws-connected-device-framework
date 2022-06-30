@@ -41,11 +41,14 @@ export class FleetSimulatorInstaller implements RestModule {
   private readonly simulationLauncherStackName: string;
   private readonly simulationManagerStackName: string;
   private readonly assetLibraryStackName: string;
+  public readonly stackName: string;
 
   constructor(environment: string) {
     this.simulationLauncherStackName = `cdf-simulation-launcher-${environment}`;
     this.simulationManagerStackName = `cdf-simulation-manager-${environment}`;
     this.assetLibraryStackName = `cdf-assetlibrary-${environment}`;
+
+    this.stackName = this.simulationManagerStackName;
   }
 
   public async prompts(answers: Answers): Promise<Answers> {
