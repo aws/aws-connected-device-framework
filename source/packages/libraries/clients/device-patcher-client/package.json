@@ -1,6 +1,6 @@
 {
   "name": "@cdf/device-patcher-client",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "CDF Device Patcher Client",
   "author": "Hassan khokhar <hkhokhar@amazon.com>",
   "main": "dist/index.js",
@@ -49,7 +49,7 @@
     "ts-jest": "26.5.6",
     "typescript": "4.2.4",
     "@types/dotenv-flow": "~3.2.0",
-    "@types/node": "14.6.1"
+    "@types/node": "16.11.7"
   },
   "jest": {
     "globals": {

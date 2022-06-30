@@ -245,15 +245,16 @@ export class FleetSimulatorInstaller implements RestModule {
 
   public async generateLocalConfiguration(answers: Answers): Promise<string> {
 
-    const byParameterKey = await getStackParameters(this.simulationManagerStackName, answers.region)
-    const byResourceLogicalId = await getStackResourceSummaries(this.simulationManagerStackName, answers.region)
+    const simulationManagerByParameterKey = await getStackParameters(this.simulationManagerStackName, answers.region)
+    const simulationManagerByResourceLogicalId = await getStackResourceSummaries(this.simulationManagerStackName, answers.region)
+    const simulationLauncherByResourceLogicalId = await getStackResourceSummaries(this.simulationLauncherStackName, answers.region)
 
     const configBuilder = new ConfigBuilder()
-      .add(`AWS_S3_BUCKET`, byParameterKey('BucketName'))
-      .add(`ASSETLIBRARY_API_FUNCTION_NAME`, byParameterKey('AssetLibraryFunctionName'))
-      .add(`AWS_DYNAMODB_TABLE_SIMULATIONS`, byResourceLogicalId('SimulationsTable'))
-      .add(`AWS_DYNAMODB_TABLE_STATE`, byResourceLogicalId('SimulationDeviceState'))
-      .add(`AWS_SNS_TOPICS_LAUNCH`, byResourceLogicalId('SimulationLauncherSnsTopic'))
+      .add(`AWS_S3_BUCKET`, simulationManagerByParameterKey('BucketName'))
+      .add(`ASSETLIBRARY_API_FUNCTION_NAME`, simulationManagerByParameterKey('AssetLibraryFunctionName'))
+      .add(`AWS_DYNAMODB_TABLE_SIMULATIONS`, simulationManagerByResourceLogicalId('SimulationsTable'))
+      .add(`AWS_DYNAMODB_TABLE_STATE`, simulationManagerByResourceLogicalId('SimulationDeviceState'))
+      .add(`AWS_SNS_TOPICS_LAUNCH`, simulationLauncherByResourceLogicalId('SnsTopic'))
       .add(`AWS_IOT_HOST`, answers?.iotEndpoint)
 
     return configBuilder.config

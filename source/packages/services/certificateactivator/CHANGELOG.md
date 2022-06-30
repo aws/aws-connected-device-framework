@@ -1,6 +1,13 @@
 # Change Log - @cdf/certificate-activator
 
-This log was last generated on Tue, 22 Mar 2022 07:59:08 GMT and should not be manually modified.
+This log was last generated on Tue, 21 Jun 2022 00:47:55 GMT and should not be manually modified.
+
+## 4.0.4
+Tue, 21 Jun 2022 00:47:55 GMT
+
+### Patches
+
+- update to node 16.x
 
 ## 4.0.3
 Tue, 22 Mar 2022 07:59:08 GMT

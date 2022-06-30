@@ -12,12 +12,12 @@
  *********************************************************************************************************************/
 import { CommandItem, CommandListPaginationKey, CommandResource, CommandResourceList, EditableCommandResource, JobDeliveryMethod, ShadowDeliveryMethod, TopicDeliveryMethod } from './commands.models';
 import { injectable } from 'inversify';
-import {logger} from '../utils/logger.util';
+import { logger } from '../utils/logger.util';
 
 @injectable()
 export class CommandsAssembler {
 
-    public toResource(item:CommandItem): CommandResource {
+    public toResource(item: CommandItem): CommandResource {
         logger.debug(`commands.assembler toResource: in: item:${JSON.stringify(item)}`);
 
         const resource: CommandResource = {
@@ -31,12 +31,12 @@ export class CommandsAssembler {
             updatedAt: item.updatedAt,
             tags: item.tags,
         }
-        
+
         logger.debug(`commands.assembler toResource: exit:${JSON.stringify(resource)}`);
         return resource;
     }
 
-    public toItem(resource:EditableCommandResource): CommandItem {
+    public toItem(resource: EditableCommandResource): CommandItem {
         logger.debug(`commands.assembler toItem: in: resource:${JSON.stringify(resource)}`);
 
         const item: CommandItem = {
@@ -67,6 +67,7 @@ export class CommandsAssembler {
                 deliveryMethod = {
                     type: 'JOB',
                     expectReply: res.expectReply,
+                    targetSelection: res.targetSelection
                 } as JobDeliveryMethod;
                 if (res.presignedUrlConfig?.expiresInSec) {
                     deliveryMethod.presignedUrlConfig = {
@@ -91,10 +92,10 @@ export class CommandsAssembler {
                 if (res.abortConfig) {
                     deliveryMethod.abortConfig = {
                         criteriaList: res.abortConfig.criteriaList?.map(c => ({
-                            failureType:c.failureType,
-                            action:c.action,
-                            thresholdPercentage:c.thresholdPercentage,
-                            minNumberOfExecutedThings:c.minNumberOfExecutedThings,
+                            failureType: c.failureType,
+                            action: c.action,
+                            thresholdPercentage: c.thresholdPercentage,
+                            minNumberOfExecutedThings: c.minNumberOfExecutedThings,
                         })),
                     }
                 }
@@ -110,15 +111,15 @@ export class CommandsAssembler {
         item.deliveryMethod = deliveryMethod;
 
 
-        
+
         logger.debug(`commands.assembler toItem: exit:${JSON.stringify(item)}`);
         return item;
     }
 
-    public toResourceList(commands:CommandItem[], count?: number, paginateFrom?:CommandListPaginationKey): CommandResourceList {
+    public toResourceList(commands: CommandItem[], count?: number, paginateFrom?: CommandListPaginationKey): CommandResourceList {
         logger.debug(`commands.assembler toResourceList: in: commands:${JSON.stringify(commands)}, count:${count}, paginateFrom:${JSON.stringify(paginateFrom)}`);
 
-        const list:CommandResourceList= {
+        const list: CommandResourceList = {
             commands: []
         };
 

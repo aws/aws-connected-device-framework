@@ -1,6 +1,6 @@
 {
   "name": "@cdf/commands",
-  "version": "5.0.2",
+  "version": "5.0.4",
   "description": "CDF Commands",
   "author": "Dean Hart",
   "scripts": {
@@ -15,11 +15,11 @@
     "@cdf/errors": "^4.0.0",
     "@cdf/logger": "^4.0.0",
     "@cdf/lambda-invoke": "^3.0.2",
-    "@cdf/assetlibrary-client": "^5.0.4",
+    "@cdf/assetlibrary-client": "^5.0.5",
     "@cdf/express-middleware": "^3.0.0",
-    "@cdf/config-inject": "^4.0.1",
-    "@cdf/provisioning-client": "^5.1.0",
-    "ajv": "6.10.2",
+    "@cdf/config-inject": "^4.0.2",
+    "@cdf/provisioning-client": "^5.2.0",
+    "ajv": "6.12.3",
     "aws-sdk": "2.1048.0",
     "body-parser": "1.19.0",
     "busboy": "0.3.1",

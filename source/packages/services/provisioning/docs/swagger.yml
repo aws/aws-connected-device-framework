@@ -74,15 +74,28 @@ paths:
                   parameters:
                     paramaterName1: myValue1
                     paramaterName2: myValue2
-              useACMPCA:
-                description: Using a provisioning template with `useACMPCA` configured.
+              acmpca_without_ca:
+                description: Using a provisioning template with `acmpca` configured in no CA mode.
                 value:
                   provisioningTemplateId: myTemplateName
                   parameters:
                     paramaterName1: myValue1
                     paramaterName2: myValue2
                   cdfProvisioningParameters:
-                    caAlias: myalias
+                    acmpcaCaAlias: myalias
+                    csr: -----BEGIN CERTIFICATE REQUEST-----\nMIICvDCCAaQCAQAwdzELMAkGA1UEBhMCVVMxDTALBgNVBAgMBFV0YWgxDzANBgNV\nBAcMBkxpbmRvbjEWMBQGA1UECgwNRGlnaUNlcnQgSW5jLjERMA8GA1UECwwIRGln\naUNlcnQxHTAbBgNVBAMMFGV4YW1wbGUuZGlnaWNlcnQuY29tMIIBIjANBgkqhkiG\n9w0BAQEFAAOCAQ8AMIIBCgKCAQEA8+To7d+2kPWeBv/orU3LVbJwDrSQbeKamCmo\nwp5bqDxIwV20zqRb7APUOKYoVEFFOEQs6T6gImnIolhbiH6m4zgZ/CPvWBOkZc+c\n1Po2EmvBz+AD5sBdT5kzGQA6NbWyZGldxRthNLOs1efOhdnWFuhI162qmcflgpiI\nWDuwq4C9f+YkeJhNn9dF5+owm8cOQmDrV8NNdiTqin8q3qYAHHJRW28glJUCZkTZ\nwIaSR6crBQ8TbYNE0dc+Caa3DOIkz1EOsHWzTx+n0zKfqcbgXi4DJx+C1bjptYPR\nBPZL8DAeWuA8ebudVT44yEp82G96/Ggcf7F33xMxe0yc+Xa6owIDAQABoAAwDQYJ\nKoZIhvcNAQEFBQADggEBAB0kcrFccSmFDmxox0Ne01UIqSsDqHgL+XmHTXJwre6D\nhJSZwbvEtOK0G3+dr4Fs11WuUNt5qcLsx5a8uk4G6AKHMzuhLsJ7XZjgmQXGECpY\nQ4mC3yT3ZoCGpIXbw+iP3lmEEXgaQL0Tx5LFl/okKbKYwIqNiyKWOMj7ZR/wxWg/\nZDGRs55xuoeLDJ/ZRFf9bI+IaCUd1YrfYcHIl3G87Av+r49YVwqRDT0VDV7uLgqn\n29XI1PpVUNCPQGn9p/eX6Qo7vpDaPybRtA2R7XLKjQaF9oXWeCUqy1hvJac9QFO2\n97Ob1alpHPoZ7mWiEuJwjBPii6a9M9G30nUo39lBi1w=\n-----END CERTIFICATE REQUEST-----\n
+                    certInfo:
+                      country: US
+              acmpca_with_ca:
+                description: Using a provisioning template with `acmpca` configured in CA mode.
+                value:
+                  provisioningTemplateId: myTemplateName
+                  parameters:
+                    paramaterName1: myValue1
+                    paramaterName2: myValue2
+                  cdfProvisioningParameters:
+                    acmpcaCaAlias: myalias1
+                    awsiotCaAlias: myalias2
                     csr: -----BEGIN CERTIFICATE REQUEST-----\nMIICvDCCAaQCAQAwdzELMAkGA1UEBhMCVVMxDTALBgNVBAgMBFV0YWgxDzANBgNV\nBAcMBkxpbmRvbjEWMBQGA1UECgwNRGlnaUNlcnQgSW5jLjERMA8GA1UECwwIRGln\naUNlcnQxHTAbBgNVBAMMFGV4YW1wbGUuZGlnaWNlcnQuY29tMIIBIjANBgkqhkiG\n9w0BAQEFAAOCAQ8AMIIBCgKCAQEA8+To7d+2kPWeBv/orU3LVbJwDrSQbeKamCmo\nwp5bqDxIwV20zqRb7APUOKYoVEFFOEQs6T6gImnIolhbiH6m4zgZ/CPvWBOkZc+c\n1Po2EmvBz+AD5sBdT5kzGQA6NbWyZGldxRthNLOs1efOhdnWFuhI162qmcflgpiI\nWDuwq4C9f+YkeJhNn9dF5+owm8cOQmDrV8NNdiTqin8q3qYAHHJRW28glJUCZkTZ\nwIaSR6crBQ8TbYNE0dc+Caa3DOIkz1EOsHWzTx+n0zKfqcbgXi4DJx+C1bjptYPR\nBPZL8DAeWuA8ebudVT44yEp82G96/Ggcf7F33xMxe0yc+Xa6owIDAQABoAAwDQYJ\nKoZIhvcNAQEFBQADggEBAB0kcrFccSmFDmxox0Ne01UIqSsDqHgL+XmHTXJwre6D\nhJSZwbvEtOK0G3+dr4Fs11WuUNt5qcLsx5a8uk4G6AKHMzuhLsJ7XZjgmQXGECpY\nQ4mC3yT3ZoCGpIXbw+iP3lmEEXgaQL0Tx5LFl/okKbKYwIqNiyKWOMj7ZR/wxWg/\nZDGRs55xuoeLDJ/ZRFf9bI+IaCUd1YrfYcHIl3G87Av+r49YVwqRDT0VDV7uLgqn\n29XI1PpVUNCPQGn9p/eX6Qo7vpDaPybRtA2R7XLKjQaF9oXWeCUqy1hvJac9QFO2\n97Ob1alpHPoZ7mWiEuJwjBPii6a9M9G30nUo39lBi1w=\n-----END CERTIFICATE REQUEST-----\n
                     certInfo:
                       country: US
@@ -335,12 +348,18 @@ components:
     UseACMPCAParameters:
       type: object
       properties:
-        caArn:
+        amcpcaCaArn:
           type: string
-          description: ACM PCA CA arn. Either `caArn` or `caAlias` must be provided.
-        caAlias:
+          description: ACM PCA CA arn. Either `amcpcaCaArn` or `amcpcaCaAlias` must be provided.
+        amcpcaCaAlias:
           type: string
-          description: Alias of an ACM PCA CA arn. Either `caArn` or `caAlias` must be provided.
+          description: Alias of an ACM PCA CA arn. Either `amcpcaCaArn` or `amcpcaCaAlias` must be provided.
+        awsiotCaArn:
+          type: string
+          description: AWS IoT CA arn. Either `awsiotCaArn` or `awsiotCaAlias` must be provided when ACMPCA mode configured as `REGISTER_WITH_CA`.
+        awsiotCaAlias:
+          type: string
+          description: Alias of an AWS IoT CA arn. Either `awsiotCaArn` or `awsiotCaAlias` must be provided when ACMPCA mode configured as `REGISTER_WITH_CA`.
         csr:
           type: string
           description: Certificate signing request.

@@ -72,7 +72,7 @@ export class TopicAction extends WorkflowPublishAction {
             for(const target of message.resolvedTargets) {
                 target.correlationId = super.uidGenerator();
                 msg.correlationId = target.correlationId
-                const thingTopic = this.topic.replace(/\$\{thingName\}/g, target.thingName);
+                const thingTopic = this.topic.replace(/\$\{thingName\}/g, target.id);
                 msg.topics = {
                     accepted: `${thingTopic}/${target.correlationId}/accepted`,
                     rejected: `${thingTopic}/${target.correlationId}/rejected`

@@ -1,6 +1,20 @@
 # Change Log - @cdf/assetlibrary-export
 
-This log was last generated on Mon, 28 Mar 2022 00:28:46 GMT and should not be manually modified.
+This log was last generated on Fri, 24 Jun 2022 21:00:45 GMT and should not be manually modified.
+
+## 3.1.3
+Fri, 24 Jun 2022 21:00:45 GMT
+
+### Patches
+
+- Updated dependencies flagged as having security issues.
+
+## 3.1.2
+Tue, 21 Jun 2022 00:47:55 GMT
+
+### Patches
+
+- update to node 16.x
 
 ## 3.1.1
 Mon, 28 Mar 2022 00:28:46 GMT

@@ -18,7 +18,7 @@ import { Recipient, RecipientList, RecipientListPaginationKey, ReplyListPaginati
 @injectable()
 export class MessagesAssembler {
 
-    public toMessageItem(resource:NewMessageResource) : MessageItem {
+    public toMessageItem(resource: NewMessageResource): MessageItem {
         logger.debug(`messages.assembler toMessageItem: in: resource:${JSON.stringify(resource)}`);
 
         const item: MessageItem = {
@@ -29,8 +29,13 @@ export class MessagesAssembler {
 
         if (resource.targets?.awsIoT) {
             item.targets.awsIoT = {
-                thingNames: resource.targets.awsIoT.thingNames,
-                thingGroupNames: resource.targets.awsIoT.thingGroupNames
+                thingNames: resource.targets.awsIoT?.thingNames,
+                thingGroups: resource.targets.awsIoT?.thingGroups?.map(o => {
+                    return {
+                        name: o.name,
+                        expand: o.expand === undefined ? true : o.expand
+                    }
+                })
             }
         }
 
@@ -46,7 +51,7 @@ export class MessagesAssembler {
         return item;
     }
 
-    public toMessageResource(item:MessageItem) : MessageResource {
+    public toMessageResource(item: MessageItem): MessageResource {
         logger.debug(`messages.assembler toMessageResource: in: item:${JSON.stringify(item)}`);
 
         const r: MessageResource = {
@@ -62,7 +67,7 @@ export class MessagesAssembler {
         if (item.targets?.awsIoT) {
             r.targets.awsIoT = {
                 thingNames: item.targets.awsIoT.thingNames,
-                thingGroupNames: item.targets.awsIoT.thingGroupNames
+                thingGroups: item.targets.awsIoT.thingGroups
             }
         }
 
@@ -85,6 +90,9 @@ export class MessagesAssembler {
             messages: []
         };
 
+        if (items === undefined)
+            return list
+
         if (count !== undefined || paginateFrom !== undefined) {
             list.pagination = {};
         }
@@ -99,7 +107,7 @@ export class MessagesAssembler {
             };
         }
 
-        list.messages = items.map(i=>this.toMessageResource(i));
+        list.messages = items.map(i => this.toMessageResource(i));
 
         logger.debug(`messages.assembler toMessageListResource: exit: ${JSON.stringify(list)}`);
         return list;
@@ -123,7 +131,7 @@ export class MessagesAssembler {
 
         if (paginateFrom !== undefined) {
             list.pagination.lastEvaluated = {
-                thingName: paginateFrom?.thingName
+                thingName: paginateFrom?.targetName
             };
         }
 
@@ -155,8 +163,8 @@ export class MessagesAssembler {
             };
         }
 
-        if (items!==undefined) {
-            list.replies = items.map(i => ({receivedAt: i.receivedAt, payload:i.payload, action:i.action}));
+        if (items !== undefined) {
+            list.replies = items.map(i => ({ receivedAt: i.receivedAt, payload: i.payload, action: i.action }));
         }
 
         logger.debug(`messages.assembler toReplyListResource: exit: ${JSON.stringify(list)}`);

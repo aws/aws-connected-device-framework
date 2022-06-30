@@ -12,150 +12,118 @@
  *********************************************************************************************************************/
 
 import { inject, injectable } from 'inversify';
-import { LambdaInvokerService, LAMBDAINVOKE_TYPES, LambdaApiGatewayEventBuilder } from '@cdf/lambda-invoke';
-
 import ow from 'ow';
-import { logger } from '../utils/logger';
-
+import { COMMANDANDCONTROL_CLIENT_TYPES, CommandsService, EditableCommandResource, MessagesService, NewMessageResource } from '@cdf/commandandcontrol-client';
 import { CustomResourceEvent } from './customResource.model';
 import { CustomResource } from './customResource';
 
 @injectable()
 export class RotateCertificatesJobCustomResource implements CustomResource {
 
-    protected headers:{[key:string]:string};
+    protected headers: { [key: string]: string };
     private DEFAULT_MIME_TYPE = 'application/vnd.aws-cdf-v1.0+json';
-    private mimeType:string;
+    private ROTATE_CERTIFICATES_TEMPLATE_ID = 'RotateCertificates'
+    private mimeType: string;
 
     constructor(
-        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService) private lambdaInvoker: LambdaInvokerService
+        @inject(COMMANDANDCONTROL_CLIENT_TYPES.CommandsService) private commandsService: CommandsService,
+        @inject(COMMANDANDCONTROL_CLIENT_TYPES.MessagesService) private messagesService: MessagesService
     ) {
-        this.mimeType=this.DEFAULT_MIME_TYPE;
+        this.mimeType = this.DEFAULT_MIME_TYPE;
     }
 
-    public async create(customResourceEvent: CustomResourceEvent) : Promise<unknown> {
-        const functionName = customResourceEvent?.ResourceProperties?.CommandsFunctionName;
-        const thingArn = customResourceEvent?.ResourceProperties?.ThingGroupArn;
-        const mqttGetTopic  = customResourceEvent?.ResourceProperties?.MQTTGetTopic;
-        const mqttAckTopic  = customResourceEvent?.ResourceProperties?.MQTTAckTopic;
+    public async create(customResourceEvent: CustomResourceEvent): Promise<unknown> {
+        const thingGroupArn = customResourceEvent?.ResourceProperties?.ThingGroupArn;
+        const mqttGetTopic = customResourceEvent?.ResourceProperties?.MQTTGetTopic;
+        const mqttAckTopic = customResourceEvent?.ResourceProperties?.MQTTAckTopic;
 
-        ow(functionName, ow.string.nonEmpty);
-        ow(thingArn, ow.string.nonEmpty);
+        ow(thingGroupArn, ow.string.nonEmpty);
         ow(mqttGetTopic, ow.string.nonEmpty);
         ow(mqttAckTopic, ow.string.nonEmpty);
 
-        await this.createRotateCertificatesJobTemplate(functionName);
-        const commandLocation = await this.createRotateCertificatesJob(functionName, thingArn, mqttGetTopic, mqttAckTopic);
-        await this.publishRotateCertificatesJob(functionName, commandLocation);
+        const thingGroupName = thingGroupArn.split('/')[1]
+
+        const tags = { templateId: this.ROTATE_CERTIFICATES_TEMPLATE_ID }
+
+        const commandResourceList = await this.commandsService.listCommands(tags)
+
+        let existingCommandId;
+
+        if (commandResourceList?.commands?.length < 1) {
+            const payload: EditableCommandResource = {
+                "operation": "RotateCertificates",
+                "deliveryMethod": {
+                    "type": "JOB",
+                    "expectReply": true,
+                    "targetSelection": "CONTINUOUS",
+                    "jobExecutionsRolloutConfig": {
+                        "maximumPerMinute": 120
+                    }
+                },
+                "payloadTemplate": "{\"get\":{\"subscribe\":\"${getSubscribeTopic}\",\"publish\":\"${getPublishTopic}\"},\"ack\":{\"subscribe\":\"${ackSubscribeTopic}\",\"publish\":\"${ackPublishTopic}\"}}",
+                "payloadParams": [
+                    "getSubscribeTopic",
+                    "getPublishTopic",
+                    "ackSubscribeTopic",
+                    "ackPublishTopic"
+                ],
+                "tags": {
+                    "templateId": this.ROTATE_CERTIFICATES_TEMPLATE_ID
+                }
+            };
+
+            existingCommandId = await this.commandsService.createCommand(payload);
+        } else {
+            existingCommandId = commandResourceList.commands[0].id
+        }
+
+        const messageResourceList = await this.messagesService.listMessages(existingCommandId)
+
+        if (messageResourceList?.messages?.length < 1) {
+            const oldText = '/+/';
+            const newText = '/{thingName}/';
+            const getSubscribeTopic = `${mqttGetTopic}/${oldText}/${newText}/+`;
+            const getPublishTopic = `${mqttGetTopic}/${oldText}/${newText}`;
+            const ackSubscribeTopic = `${mqttAckTopic}/${oldText}/${newText}/+`;
+            const ackPublishTopic = `${mqttAckTopic}/${oldText}/${newText}`;
+
+            const payload: NewMessageResource = {
+                commandId: existingCommandId,
+                "targets": {
+                    "awsIoT": {
+                        "thingGroups": [{ "name": thingGroupName, "expand": false }]
+                    }
+                },
+                "payloadParamValues": {
+                    getSubscribeTopic,
+                    getPublishTopic,
+                    ackSubscribeTopic,
+                    ackPublishTopic
+                }
+            };
+            await this.messagesService.createMessage(payload)
+        }
+
         return {};
     }
 
-    public async update(_customResourceEvent: CustomResourceEvent) : Promise<unknown> {
+    public async update(_customResourceEvent: CustomResourceEvent): Promise<unknown> {
         return {};
     }
 
-    public async delete(_customResourceEvent: CustomResourceEvent) : Promise<unknown> {
+    public async delete(_customResourceEvent: CustomResourceEvent): Promise<unknown> {
         return {};
     }
 
-    protected getHeaders(): {[key:string]:string} {
-        if (this.headers===undefined) {
+    protected getHeaders(): { [key: string]: string } {
+        if (this.headers === undefined) {
             const h = {
                 'Accept': this.mimeType,
                 'Content-Type': this.mimeType
             };
-            this.headers = {...h};
+            this.headers = { ...h };
         }
         return this.headers;
-    }
-
-    protected async createRotateCertificatesJobTemplate(functionName: string) : Promise<unknown> {
-        logger.debug(`RotateCertificatesJobCustomResource: createRotateCertificatesJobTemplate: in: `);
-        const payload = {
-            'templateId': 'RotateCertificates',
-            'description': 'Rotate certificates',
-            'operation' : 'RotateCertificates',
-            'document': '{"get":{"subscribe":"${cdf:parameter:getSubscribeTopic}","publish":"${cdf:parameter:getPublishTopic}"},"ack":{"subscribe":"${cdf:parameter:ackSubscribeTopic}","publish":"${cdf:parameter:ackPublishTopic}"}}',
-            'requiredDocumentParameters': [
-                'getSubscribeTopic',
-                'getPublishTopic',
-                'ackSubscribeTopic',
-                'ackPublishTopic'
-            ]
-        };
-        const path = '/templates';
-        try {
-            const createRotateCertificatesJobTemplate = new LambdaApiGatewayEventBuilder()
-            .setMethod('POST')
-            .setPath(path)
-            .setHeaders(this.getHeaders())
-            .setBody(payload);
-
-         const res = await this.lambdaInvoker.invoke(functionName, createRotateCertificatesJobTemplate);
-         logger.debug(`CommandsCommandCustomResource: create: create res: ${JSON.stringify(res)}`);
-         return res;
-        } catch(error) {
-            if (error.status === 409) {
-                logger.warn(`CommandsCommandCustomResource: createRotateCertificatesJobTemplate: error: RotateCertificates already exists`);
-                return {}
-            }
-            throw error;
-        }
-    }
-
-    protected async createRotateCertificatesJob(functionName: string, thingGroupArn: string, mqttGetTopic:string, mqttAckTopic:string) : Promise<string> {
-        logger.debug(`RotateCertificatesJobCustomResource: :createRotateCertificatesJob in: `);
-
-        const oldText = '/+/';
-        const newText = '/{thingName}/';
-        const getSubscribeTopic = `${mqttGetTopic}/${oldText}/${newText}/+`;
-        const getPublishTopic = `${mqttGetTopic}/${oldText}/${newText}`;
-        const ackSubscribeTopic = `${mqttAckTopic}/${oldText}/${newText}/+`;
-        const ackPublishTopic = `${mqttAckTopic}/${oldText}/${newText}`;
-
-        const payload = {
-            'templateId': 'RotateCertificates',
-            'targets': [ thingGroupArn ],
-            'type': 'CONTINUOUS',
-            'rolloutMaximumPerMinute': 120,
-            'documentParameters': {
-                'getSubscribeTopic': getSubscribeTopic,
-                'getPublishTopic': getPublishTopic,
-                'ackSubscribeTopic': ackSubscribeTopic,
-                'ackPublishTopic': ackPublishTopic
-            }
-        };
-
-        const path = '/commands';
-
-        const createRotateCertificatesJob = new LambdaApiGatewayEventBuilder()
-        .setMethod('POST')
-        .setPath(path)
-        .setHeaders(this.getHeaders())
-        .setBody(payload);
-
-        const result = await this.lambdaInvoker.invoke(functionName, createRotateCertificatesJob);
-
-        logger.debug(`RotateCertificatesJobCustomResource: :createRotateCertificatesJob out: ${JSON.stringify(result)}`);
-        return result?.header?.location;
-    }
-
-    protected async publishRotateCertificatesJob(functionName: string, commandLocation: string) : Promise<unknown> {
-        logger.debug(`RotateCertificatesJobCustomResource: :publishRotateCertificatesJob in: `);
-        const payload = {
-            'commandStatus': 'PUBLISHED'
-        };
-
-        const publishRotateCertificatesJob = new LambdaApiGatewayEventBuilder()
-        .setMethod('PATCH')
-        .setPath(commandLocation)
-        .setHeaders(this.getHeaders())
-        .setBody(payload);
-
-        const result = await this.lambdaInvoker.invoke(functionName, publishRotateCertificatesJob);
-
-        logger.debug(`RotateCertificatesJobCustomResource: :publishRotateCertificatesJob out: ${JSON.stringify(result)}`);
-        return {};
     }
 }
 

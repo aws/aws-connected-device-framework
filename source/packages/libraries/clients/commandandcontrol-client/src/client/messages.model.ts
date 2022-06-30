@@ -29,7 +29,10 @@ export interface MessageResource extends NewMessageResource {
 export interface Targets {
 	awsIoT?: {
 		thingNames?: string[];
-		thingGroupNames?: string[];
+		thingGroups?: {
+			name: string;
+			expand?: boolean
+		}[];
 	},
 	assetLibrary?: {
 		deviceIds?: string[];
@@ -39,7 +42,8 @@ export interface Targets {
 }
 
 export interface Recipient {
-	thingName: string;
+	id: string;
+	type: 'thing' | 'thingGroup'
 	status: string;
 	correlationId?: string;
 }
@@ -87,7 +91,7 @@ export interface MessageList {
 		lastEvaluated?: {
 			createdAt: number
 		},
-		count?:number,
+		count?: number,
 	};
 }
 

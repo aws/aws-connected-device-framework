@@ -272,7 +272,7 @@ Resources:
         - !Ref OpenSslLambdaLayerArn
       MemorySize: 128
       Role: !If [KmsKeyProvided, !GetAtt LambdaExecutionRoleWithCsr.Arn, !GetAtt LambdaExecutionRole.Arn]
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 30
       Environment:
         Variables:

@@ -1,6 +1,13 @@
 # Change Log - @cdf/greengrass2-provisioning-client
 
-This log was last generated on Thu, 07 Apr 2022 05:00:50 GMT and should not be manually modified.
+This log was last generated on Tue, 21 Jun 2022 00:47:55 GMT and should not be manually modified.
+
+## 1.0.6
+Tue, 21 Jun 2022 00:47:55 GMT
+
+### Patches
+
+- update to node 16.x
 
 ## 1.0.5
 Thu, 07 Apr 2022 05:00:50 GMT

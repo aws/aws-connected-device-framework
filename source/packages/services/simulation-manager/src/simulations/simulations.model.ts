@@ -10,8 +10,8 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { TaskOverride } from 'aws-sdk/clients/ecs';
 import { RunItem } from '../runs/runs.models';
-
 export interface SimulationItem {
 
     id?: string;
@@ -69,4 +69,11 @@ export interface TemplateProperties {
         devices: number;
         threads: number;
     };
+}
+
+export type SimulationTaskOverride = Pick<TaskOverride, 'taskRoleArn'>
+
+export interface CreateSimulationRequest {
+    simulation: SimulationItem;
+    taskOverrides: SimulationTaskOverride;
 }

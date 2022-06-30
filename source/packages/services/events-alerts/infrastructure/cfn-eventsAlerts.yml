@@ -169,7 +169,7 @@ Resources:
       Handler: packages/services/events-alerts/dist/lambda_proxy_ddbstream.handler
       MemorySize: 512
       Role: !GetAtt DynamoDBStreamLambdaExecutionRole.Arn
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 30
       Environment:
         Variables:

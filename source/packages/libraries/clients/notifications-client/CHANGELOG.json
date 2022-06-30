@@ -2,6 +2,18 @@
   "name": "@cdf/notifications-client",
   "entries": [
     {
+      "version": "4.0.5",
+      "tag": "@cdf/notifications-client_v4.0.5",
+      "date": "Tue, 21 Jun 2022 00:47:55 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "update to node 16.x"
+          }
+        ]
+      }
+    },
+    {
       "version": "4.0.4",
       "tag": "@cdf/notifications-client_v4.0.4",
       "date": "Thu, 07 Apr 2022 05:00:50 GMT",

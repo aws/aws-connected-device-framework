@@ -2,6 +2,18 @@
   "name": "@cdf/provisioning-client",
   "entries": [
     {
+      "version": "5.2.0",
+      "tag": "@cdf/provisioning-client_v5.2.0",
+      "date": "Thu, 30 Jun 2022 00:07:08 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": " updated ACM PCA integration to support registering certificates using CA's"
+          }
+        ]
+      }
+    },
+    {
       "version": "5.1.0",
       "tag": "@cdf/provisioning-client_v5.1.0",
       "date": "Thu, 02 Jun 2022 00:45:32 GMT",

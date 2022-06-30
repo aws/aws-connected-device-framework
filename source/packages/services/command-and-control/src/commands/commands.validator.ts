@@ -20,16 +20,16 @@ import { CommandItem, JobDeliveryMethod, TopicDeliveryMethod } from './commands.
 @injectable()
 export class CommandsValidator {
 
-    public validate(c:CommandItem) : void {
+    public validate(c: CommandItem): void {
         logger.debug(`commands.validator: validate: in: c:${JSON.stringify(c)}`);
-        
+
         ow(c, ow.object.nonEmpty);
         ow(c.id, ow.string.nonEmpty);
         ow(c.operation, ow.string.nonEmpty);
 
         ow(c.deliveryMethod?.type, ow.string.oneOf(['JOB', 'TOPIC', 'SHADOW']));
         ow(c.deliveryMethod?.expectReply, ow.boolean);
-        
+
         switch (c.deliveryMethod.type) {
             case 'TOPIC': {
                 const dm = c.deliveryMethod as TopicDeliveryMethod;
@@ -40,9 +40,12 @@ export class CommandsValidator {
                 // no additional validation required
                 break;
             }
-            case 'JOB':{
-                const dm = c.deliveryMethod as JobDeliveryMethod;                  
+            case 'JOB': {
+                const dm = c.deliveryMethod as JobDeliveryMethod;
                 const exponentialRate = dm.jobExecutionsRolloutConfig?.exponentialRate;
+
+                ow(dm.targetSelection, ow.string.oneOf(['CONTINUOUS', 'SNAPSHOT']))
+
                 if (exponentialRate) {
                     ow(exponentialRate.baseRatePerMinute, ow.number.greaterThan(0));
                     ow(exponentialRate.incrementFactor, ow.number.greaterThan(0));

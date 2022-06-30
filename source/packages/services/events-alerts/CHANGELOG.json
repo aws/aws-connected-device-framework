@@ -2,6 +2,23 @@
   "name": "@cdf/events-alerts",
   "entries": [
     {
+      "version": "3.0.3",
+      "tag": "@cdf/events-alerts_v3.0.3",
+      "date": "Tue, 21 Jun 2022 00:47:55 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "update to node 16.x"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@cdf/config-inject\" from `^4.0.1` to `^4.0.2`"
+          }
+        ]
+      }
+    },
+    {
       "version": "3.0.2",
       "tag": "@cdf/events-alerts_v3.0.2",
       "date": "Mon, 16 May 2022 03:04:28 GMT",

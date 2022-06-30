@@ -21,7 +21,7 @@ import {
     PROVISIONING_CLIENT_TYPES, ProvisionThingRequest, ProvisionThingResponse, ThingsService
 } from '@cdf/provisioning-client';
 
-import { Dictionary } from '../../../../libraries/core/lambda-invoke/src';
+import { Dictionary } from '@cdf/lambda-invoke';
 import { container } from '../../di/inversify.config';
 import { AUTHORIZATION_TOKEN, replaceTokens } from '../common/common.steps';
 
@@ -126,7 +126,7 @@ When('I provision a thing {string} using acmpca', async function (thingName: str
             ThingName: thingName
         },
         cdfProvisioningParameters: {
-            caArn: process.env.PROVISIONING_ACM_PCA_ARN,
+            acmpcaCaArn: process.env.PROVISIONING_ACM_PCA_ARN,
             certInfo: {
                 country: 'US'
             }

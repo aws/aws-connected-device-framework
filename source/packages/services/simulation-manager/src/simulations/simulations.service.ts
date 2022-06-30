@@ -19,28 +19,25 @@ import { generate } from 'shortid';
 import { TYPES } from '../di/types';
 import { logger } from '../utils/logger';
 import { SimulationsDao } from './simulations.dao';
-import { SimulationItem, SimulationStatus, TemplateProperties } from './simulations.model';
+import { CreateSimulationRequest, SimulationStatus, SimulationTaskOverride, TemplateProperties } from './simulations.model';
 
-export interface CreateSimulationRequest {
-    item: SimulationItem;
-}
 
 @injectable()
 export class SimulationsService {
 
     private readonly _sns: AWS.SNS;
-    private readonly _s3 : AWS.S3;
-    private readonly _s3Bucket:string;
-    private readonly _s3Prefix:string;
+    private readonly _s3: AWS.S3;
+    private readonly _s3Bucket: string;
+    private readonly _s3Prefix: string;
 
     public constructor(
         @inject(TYPES.SimulationsDao) private _dao: SimulationsDao,
         @inject(TYPES.S3Factory) s3Factory: () => AWS.S3,
         @inject(TYPES.SNSFactory) snsFactory: () => AWS.SNS) {
-            this._sns  =  snsFactory();
-            this._s3  =  s3Factory();
-            this._s3Bucket = process.env.AWS_S3_BUCKET;
-            this._s3Prefix = process.env.AWS_S3_PREFIX;
+        this._sns = snsFactory();
+        this._s3 = s3Factory();
+        this._s3Bucket = process.env.AWS_S3_BUCKET;
+        this._s3Prefix = process.env.AWS_S3_PREFIX;
     }
 
     public async createSimulation(request: CreateSimulationRequest): Promise<string> {
@@ -48,24 +45,29 @@ export class SimulationsService {
 
         // validation
         ow(request, ow.object.nonEmpty);
-        const item:SimulationItem = request.item;
-        ow(item, ow.object.nonEmpty);
-        ow(item.name, ow.string.nonEmpty);
-        ow(item.deviceCount, ow.number.greaterThan(0));
+        const { simulation, taskOverrides } = request;
+        ow(simulation, ow.object.nonEmpty);
+        ow(simulation.name, ow.string.nonEmpty);
+        ow(simulation.deviceCount, ow.number.greaterThan(0));
 
-        item.id = generate();
-        item.status = SimulationStatus.preparing;
-        await this._dao.save(item);
+        if (taskOverrides?.taskRoleArn) {
+            const [_, roleName] = taskOverrides?.taskRoleArn.split('/')
+            ow(roleName, ow.string.startsWith('cdf-simulation-launcher'))
+        }
+
+        simulation.id = generate();
+        simulation.status = SimulationStatus.preparing;
+        await this._dao.save(simulation);
 
         // TODO: run any configured setup tasks
 
         // launch any configured provisioning task asynchronously
-        const task = item.tasks.provisioning;
+        const task = simulation.tasks.provisioning;
         if (task) {
             const threadsPerInstance = Number(process.env.RUNNERS_THREADS);
             const numInstances = Math.ceil(task.threads.total / threadsPerInstance);
-            const devicesPerInstance = Math.ceil(item.deviceCount / numInstances);
-            const s3RootKey = `${this._s3Prefix}${item.id}/provisioning/`;
+            const devicesPerInstance = Math.ceil(simulation.deviceCount / numInstances);
+            const s3RootKey = `${this._s3Prefix}${simulation.id}/provisioning/`;
             const simulationPlanKey = `${s3RootKey}plan.jmx`;
 
             logger.debug(`simulations.service s3RootKey:${s3RootKey}`);
@@ -77,13 +79,13 @@ export class SimulationsService {
             // copy the test plan
 
             await this._s3.copyObject({
-                Bucket: this._s3Bucket,
                 CopySource: `/${this._s3Bucket}/${task.plan}`,
+                Bucket: this._s3Bucket,
                 Key: simulationPlanKey
             }).promise();
 
             // prepare the config for each instance
-            const properties:TemplateProperties = {
+            const properties: TemplateProperties = {
                 config: {
                     aws: {
                         iot: {
@@ -106,7 +108,7 @@ export class SimulationsService {
                     }
 
                 },
-                simulation: item,
+                simulation: simulation,
                 instance: {
                     id: 0,
                     devices: devicesPerInstance,
@@ -114,11 +116,11 @@ export class SimulationsService {
                 }
             };
 
-            const template = fs.readFileSync(process.env.TEMPLATES_PROVISIONING,'utf8');
+            const template = fs.readFileSync(process.env.TEMPLATES_PROVISIONING, 'utf8');
             const compiledTemplate = handlebars.compile(template);
 
-            for (let instanceId=1; instanceId<=numInstances; instanceId++) {
-                properties.instance.id=instanceId;
+            for (let instanceId = 1; instanceId <= numInstances; instanceId++) {
+                properties.instance.id = instanceId;
                 const propertyFile = compiledTemplate(properties);
 
                 const s3Key = `${s3RootKey}instances/${instanceId}/properties`;
@@ -130,30 +132,30 @@ export class SimulationsService {
             }
 
             // Launch provisioning tasks
-            await this.launchRunner(item.id, numInstances, s3RootKey);
-            item.status = SimulationStatus.provisioning;
-            await this._dao.save(item);
+            await this.launchRunner(simulation.id, numInstances, s3RootKey, taskOverrides);
+            simulation.status = SimulationStatus.provisioning;
+            await this._dao.save(simulation);
         }
 
-        logger.debug(`simulations.service create: exit:${item.id}`);
-        return item.id;
+        logger.debug(`simulations.service create: exit:${simulation.id}`);
+        return simulation.id;
 
     }
 
-    public async launchRunner(simulationId:string, instances:number, s3RootKey:string): Promise<void> {
+    public async launchRunner(simulationId: string, instances: number, s3RootKey: string, taskOverrides?: SimulationTaskOverride): Promise<void> {
         logger.debug(`simulations.service launchRunner: in: simulationId:${simulationId}, instances:${instances}, s3RootKey:${s3RootKey}`);
 
         ow(simulationId, ow.string.nonEmpty);
         ow(instances, ow.number.greaterThan(0));
         ow(s3RootKey, ow.string.nonEmpty);
 
-        const topic:string = process.env.AWS_SNS_TOPICS_LAUNCH;
+        const topic: string = process.env.AWS_SNS_TOPICS_LAUNCH;
 
         const msg = {
-            simulationId, instances, s3RootKey
+            simulationId, instances, s3RootKey, taskOverrides
         };
 
-        const params:AWS.SNS.Types.PublishInput = {
+        const params: AWS.SNS.Types.PublishInput = {
             Subject: 'LaunchRunner',
             Message: JSON.stringify(msg),
             TopicArn: topic

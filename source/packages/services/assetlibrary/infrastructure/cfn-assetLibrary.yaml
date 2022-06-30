@@ -260,7 +260,7 @@ Resources:
       Handler: packages/services/assetlibrary/dist/lambda_proxy.handler
       MemorySize: 512
       Role: !GetAtt LambdaExecutionRole.Arn
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       AutoPublishAlias: live
       DeploymentPreference:
         Type: AllAtOnce

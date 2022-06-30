@@ -1,6 +1,32 @@
 # Change Log - @cdf/integration-tests
 
-This log was last generated on Thu, 02 Jun 2022 00:45:32 GMT and should not be manually modified.
+This log was last generated on Thu, 30 Jun 2022 00:07:08 GMT and should not be manually modified.
+
+## 3.3.0
+Thu, 30 Jun 2022 00:07:08 GMT
+
+### Minor changes
+
+-  updated ACM PCA integration to support registering certificates using CA's
+
+## 3.2.3
+Wed, 29 Jun 2022 00:56:16 GMT
+
+_Version update only_
+
+## 3.2.2
+Tue, 21 Jun 2022 00:47:55 GMT
+
+### Patches
+
+- update to node 16.x
+
+## 3.2.1
+Fri, 10 Jun 2022 19:47:35 GMT
+
+### Patches
+
+- should not need to wait long for task status to change
 
 ## 3.2.0
 Thu, 02 Jun 2022 00:45:32 GMT

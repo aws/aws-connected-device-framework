@@ -1,6 +1,31 @@
 # Change Log - @cdf/command-and-control
 
-This log was last generated on Fri, 08 Apr 2022 07:03:46 GMT and should not be manually modified.
+This log was last generated on Wed, 29 Jun 2022 00:56:16 GMT and should not be manually modified.
+
+## 1.0.0
+Wed, 29 Jun 2022 00:56:16 GMT
+
+### Breaking changes
+
+- provide the option not to resolve thing group into individual things when resolving the targets
+
+### Minor changes
+
+- allow user to specify CONTINUOUS or SNAPSHOT when creating command with type Job
+
+## 0.0.7
+Fri, 24 Jun 2022 21:00:45 GMT
+
+### Patches
+
+- Updated dependencies flagged as having security issues.
+
+## 0.0.6
+Tue, 21 Jun 2022 00:47:55 GMT
+
+### Patches
+
+- update to node 16.x
 
 ## 0.0.5
 Fri, 08 Apr 2022 07:03:46 GMT

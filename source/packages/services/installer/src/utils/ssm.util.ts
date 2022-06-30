@@ -20,7 +20,7 @@ export class SsmUtils {
         this.ssm = new SSMClient({ region });
     }
 
-    public async storeParameter(path: string, value: string) {
+    public async storeParameter(path: string, value: string): Promise<void> {
         const parameterInput: PutParameterCommandInput = {
             Name: path,
             Value: value,

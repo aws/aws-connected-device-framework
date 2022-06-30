@@ -65,7 +65,7 @@ export class TagsList {
     return this.tags.map(t => { return { Key: t.key, Value: t.value } });
   }
 
-  public get length() {
+  public get length(): number {
     return this.tags.length;
   }
 }
