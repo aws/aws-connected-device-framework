@@ -2,6 +2,18 @@
   "name": "@cdf/bulkcerts",
   "entries": [
     {
+      "version": "6.1.0",
+      "tag": "@cdf/bulkcerts_v6.1.0",
+      "date": "Fri, 01 Jul 2022 05:48:17 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "Added feature to allow certificate creation via bulkcerts"
+          }
+        ]
+      }
+    },
+    {
       "version": "6.0.4",
       "tag": "@cdf/bulkcerts_v6.0.4",
       "date": "Fri, 24 Jun 2022 21:00:45 GMT",

@@ -1,6 +1,13 @@
 # Change Log - @cdf/installer
 
-This log was last generated on Thu, 30 Jun 2022 21:32:50 GMT and should not be manually modified.
+This log was last generated on Fri, 01 Jul 2022 05:48:17 GMT and should not be manually modified.
+
+## 0.12.0
+Fri, 01 Jul 2022 05:48:17 GMT
+
+### Minor changes
+
+- Updated bulkcert installer to support ACMPCA
 
 ## 0.11.0
 Thu, 30 Jun 2022 21:32:50 GMT
