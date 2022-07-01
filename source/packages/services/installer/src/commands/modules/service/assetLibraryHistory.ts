@@ -20,12 +20,13 @@ import { customDomainPrompt } from '../../../prompts/domain.prompt';
 import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
 
-import { deleteStack, getStackOutputs, getStackResourceSummaries, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
+import { deleteStack, getStackOutputs, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
 
 export class AssetLibraryHistoryInstaller implements RestModule {
 
   public readonly friendlyName = 'Asset Library History';
   public readonly name = 'assetLibraryHistory';
+  public readonly localProjectDir = 'assetlibraryhistory';
 
   public readonly type = 'SERVICE';
   public readonly dependsOnMandatory: ModuleName[] = [
@@ -130,7 +131,7 @@ export class AssetLibraryHistoryInstaller implements RestModule {
     return [answers, tasks];
   }
 
-  public generateApplicationConfiguration(answers: Answers): string {
+  private generateApplicationConfiguration(answers: Answers): string {
     const configBuilder = new ConfigBuilder()
     configBuilder
       .add(`CUSTOMDOMAIN_BASEPATH`, answers.assetLibraryHistory.customDomainBasePath)
@@ -147,14 +148,6 @@ export class AssetLibraryHistoryInstaller implements RestModule {
       value: byOutputKey('ApiGatewayUrl'),
       enabled: true
     }
-  }
-
-  public async generateLocalConfiguration(answers: Answers): Promise<string> {
-    const byResourceKey = await getStackResourceSummaries(this.stackName, answers.region)
-    const configBuilder = new ConfigBuilder()
-    configBuilder
-      .add(`AWS_DYNAMODB_TABLES_EVENTS`, byResourceKey('HistoryTable'))
-    return configBuilder.config;
   }
 
   public async delete(answers: Answers): Promise<ListrTask[]> {

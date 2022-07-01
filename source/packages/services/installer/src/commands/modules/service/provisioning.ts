@@ -19,13 +19,15 @@ import { customDomainPrompt } from '../../../prompts/domain.prompt';
 import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
 import ow from 'ow';
-import { deleteStack, getStackOutputs, getStackParameters, getStackResourceSummaries, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
+import { deleteStack, getStackOutputs, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
 import { Lambda } from '@aws-sdk/client-lambda';
 export class ProvisioningInstaller implements RestModule {
 
   public readonly friendlyName = 'Provisioning';
   public readonly name = 'provisioning';
+  public readonly localProjectDir = this.name;
   public readonly type = 'SERVICE';
+
   public readonly dependsOnMandatory: ModuleName[] = [
     'apigw',
     'kms',
@@ -364,7 +366,7 @@ export class ProvisioningInstaller implements RestModule {
     }
   }
 
-  public generateApplicationConfiguration(answers: Answers): string {
+  private generateApplicationConfiguration(answers: Answers): string {
     const configBuilder = new ConfigBuilder()
 
     if (answers.provisioning.setPcaAliases) {
@@ -407,19 +409,6 @@ export class ProvisioningInstaller implements RestModule {
       .add(`LOGGING_LEVEL`, answers.provisioning.loggingLevel);
 
     return configBuilder.config;
-  }
-
-
-  public async generateLocalConfiguration(answers: Answers): Promise<string> {
-    const byParameterKey = await getStackParameters(this.stackName, answers.region)
-    const byResourceLogicalId = await getStackResourceSummaries(this.stackName, answers.region)
-
-    const configBuilder = new ConfigBuilder()
-      .add(`AWS_S3_ROLE_ARN`, `arn:aws:iam::${answers.accountId}:role/${byResourceLogicalId('LambdaExecutionRole')}`)
-      .add(`AWS_S3_TEMPLATES_BUCKET`, byParameterKey('BucketName'))
-      .add(`AWS_S3_BULKREQUESTS_BUCKET`, byParameterKey('BucketName'))
-    return configBuilder.config
-
   }
 
   public async delete(answers: Answers): Promise<ListrTask[]> {

@@ -19,13 +19,14 @@ import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
 import { customDomainPrompt } from '../../../prompts/domain.prompt';
 import ow from 'ow';
-import { deleteStack, getStackOutputs, getStackParameters, getStackResourceSummaries, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
+import { deleteStack, getStackOutputs, getStackResourceSummaries, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
 
 
 export class FleetSimulatorInstaller implements RestModule {
 
   public readonly friendlyName = 'Fleet Simulator';
   public readonly name = 'fleetSimulator';
+  public readonly localProjectDir = 'simulation-manager';
 
   public readonly type = 'SERVICE';
   public readonly dependsOnMandatory: ModuleName[] = [
@@ -119,7 +120,6 @@ export class FleetSimulatorInstaller implements RestModule {
     return parameterOverrides;
   }
 
-
   private getSimulationManagerOverrides(answers: Answers): string[] {
     const parameterOverrides = [
       `Environment=${answers.environment}`,
@@ -147,7 +147,6 @@ export class FleetSimulatorInstaller implements RestModule {
     addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
     return parameterOverrides;
   }
-
 
   public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
     const tasks: ListrTask[] = [{
@@ -235,7 +234,7 @@ export class FleetSimulatorInstaller implements RestModule {
     return [answers, tasks];
   }
 
-  public generateApplicationConfiguration(answers: Answers): string {
+  private generateApplicationConfiguration(answers: Answers): string {
     const configBuilder = new ConfigBuilder()
       .add(`CORS_ORIGIN`, answers.apigw.corsOrigin)
       .add(`CUSTOMDOMAIN_BASEPATH`, answers.fleetSimulator.customDomainBasePath)
@@ -244,23 +243,6 @@ export class FleetSimulatorInstaller implements RestModule {
       .add(`RUNNERS_THREADS`, answers.fleetSimulator.runnerThreads)
       .add(`AWS_S3_PREFIX`, answers.fleetSimulator.s3Prefix)
     return configBuilder.config;
-  }
-
-  public async generateLocalConfiguration(answers: Answers): Promise<string> {
-
-    const simulationManagerByParameterKey = await getStackParameters(this.simulationManagerStackName, answers.region)
-    const simulationManagerByResourceLogicalId = await getStackResourceSummaries(this.simulationManagerStackName, answers.region)
-    const simulationLauncherByResourceLogicalId = await getStackResourceSummaries(this.simulationLauncherStackName, answers.region)
-
-    const configBuilder = new ConfigBuilder()
-      .add(`AWS_S3_BUCKET`, simulationManagerByParameterKey('BucketName'))
-      .add(`ASSETLIBRARY_API_FUNCTION_NAME`, simulationManagerByParameterKey('AssetLibraryFunctionName'))
-      .add(`AWS_DYNAMODB_TABLE_SIMULATIONS`, simulationManagerByResourceLogicalId('SimulationsTable'))
-      .add(`AWS_DYNAMODB_TABLE_STATE`, simulationManagerByResourceLogicalId('SimulationDeviceState'))
-      .add(`AWS_SNS_TOPICS_LAUNCH`, simulationLauncherByResourceLogicalId('SnsTopic'))
-      .add(`AWS_IOT_HOST`, answers?.iotEndpoint)
-
-    return configBuilder.config
   }
 
   public async generatePostmanEnvironment(answers: Answers): Promise<PostmanEnvironment> {

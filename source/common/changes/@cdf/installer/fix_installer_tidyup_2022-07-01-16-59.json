@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/installer",
+      "comment": " removed deprecated config-to-env, and cleaned up and renamed cloud-to-env to generate-local-config.",
+      "type": "major"
+    }
+  ],
+  "packageName": "@cdf/installer",
+  "email": "deanhart@amazon.com"
+}

@@ -18,7 +18,7 @@ import { ModuleName, ServiceModule } from '../../../models/modules';
 import { ConfigBuilder } from "../../../utils/configBuilder";
 import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
-import { deleteStack, getStackParameters, getStackResourceSummaries, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
+import { deleteStack, getStackResourceSummaries, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
 
 export class CertificateVendorInstaller implements ServiceModule {
 
@@ -45,7 +45,6 @@ export class CertificateVendorInstaller implements ServiceModule {
     this.assetLibraryStackName = `cdf-assetlibrary-${environment}`;
     this.commandAndControlStackName = `cdf-commandandcontrol-${environment}`;
   }
-
 
   public async prompts(answers: Answers): Promise<Answers> {
 
@@ -184,7 +183,6 @@ export class CertificateVendorInstaller implements ServiceModule {
 
   }
 
-
   private getParameterOverrides(answers: Answers): string[] {
     const parameterOverrides = [
       `Environment=${answers.environment}`,
@@ -207,7 +205,6 @@ export class CertificateVendorInstaller implements ServiceModule {
 
     return parameterOverrides;
   }
-
 
   public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
     const tasks: ListrTask[] = [{
@@ -273,8 +270,7 @@ export class CertificateVendorInstaller implements ServiceModule {
     return [answers, tasks];
   }
 
-
-  public generateApplicationConfiguration(answers: Answers): string {
+  private generateApplicationConfiguration(answers: Answers): string {
     const configBuilder = new ConfigBuilder()
 
     configBuilder
@@ -294,21 +290,6 @@ export class CertificateVendorInstaller implements ServiceModule {
       .add(`DEFAULTS_DEVICE_STATUS_SUCCESS_VALUE`, answers.certificateVendor.deviceStatusSuccessValue)
       .add(`DEFAULTS_CERTIFICATES_CERTIFICATEEXPIRYDAYS`, answers.certificateVendor.certificateExpiryInDays)
       .add(`REGISTRY_MODE`, answers.certificateVendor.registryMode)
-
-    return configBuilder.config;
-  }
-
-  public async generateLocalConfiguration(answers: Answers): Promise<string> {
-    const byParameterKey = await getStackParameters(this.stackName, answers.region)
-
-    const configBuilder = new ConfigBuilder()
-
-    configBuilder
-      .add(`AWS_IOT_ENDPOINT`, answers.iotEndpoint)
-      .add(`ASSETLIBRARY_API_FUNCTION_NAME`, byParameterKey('AssetLibraryFunctionName'))
-      .add(`AWS_S3_CERTIFICATES_BUCKET`, byParameterKey('BucketName'))
-      .add(`CERTIFICATES_CACERTIFICATEID`, byParameterKey('CERTIFICATES_CACERTIFICATEID'))
-      .add(`POLICIES_ROTATEDCERTIFICATEPOLICY`, byParameterKey('POLICIES_ROTATEDCERTIFICATEPOLICY'))
 
     return configBuilder.config;
   }

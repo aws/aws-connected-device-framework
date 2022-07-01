@@ -18,13 +18,14 @@ import inquirer from 'inquirer';
 import ow from 'ow';
 import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
-import { deleteStack, getStackParameters, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
+import { deleteStack, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
 
 export class AssetLibraryExportInstaller implements ServiceModule {
 
 
   public readonly friendlyName = 'Asset Library Export';
   public readonly name = 'assetLibraryExport';
+  public readonly localProjectDir = 'assetlibrary-export';
 
   public readonly type = 'SERVICE';
   public readonly dependsOnMandatory: ModuleName[] = [
@@ -177,7 +178,7 @@ export class AssetLibraryExportInstaller implements ServiceModule {
     return [answers, tasks];
   }
 
-  public generateApplicationConfiguration(answers: Answers): string {
+  private generateApplicationConfiguration(answers: Answers): string {
     const configBuilder = new ConfigBuilder()
 
     configBuilder
@@ -189,19 +190,6 @@ export class AssetLibraryExportInstaller implements ServiceModule {
       .add(`DEFAULTS_ETL_EXTRACT_DEVICEEXTRACTOR_ATTRIBUTES`, answers.assetLibraryExport.extractAttributes)
       .add(`DEFAULTS_ETL_EXTRACT_DEVICEEXTRACTOR_EXPANDCOMPONENTS`, answers.assetLibraryExport.extractExpandComponents)
       .add(`DEFAULTS_ETL_EXTRACT_DEVICEEXTRACTOR_INCLUDEGROUPS`, answers.assetLibraryExport.extractIncludeGroups)
-
-    return configBuilder.config;
-  }
-
-  public async generateLocalConfiguration(answers: Answers): Promise<string> {
-
-    const byParameterKey = await getStackParameters(this.stackName, answers.region)
-
-    const configBuilder = new ConfigBuilder()
-
-    configBuilder
-      .add(`NEPTUNEURL`, byParameterKey('NeptuneURL'))
-      .add(`AWS_S3_EXPORT_BUCKET`, byParameterKey('BucketName'))
 
     return configBuilder.config;
   }

@@ -18,7 +18,7 @@ import { ModuleName, ServiceModule } from '../../../models/modules';
 import { ConfigBuilder } from "../../../utils/configBuilder";
 import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
-import { deleteStack, getStackOutputs, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
+import { deleteStack, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
 
 export class Greengrass2InstallerConfigGeneratorsInstaller implements ServiceModule {
 
@@ -146,7 +146,7 @@ export class Greengrass2InstallerConfigGeneratorsInstaller implements ServiceMod
     return [answers, tasks];
   }
 
-  public generateApplicationConfiguration(answers: Answers): string {
+  private generateApplicationConfiguration(answers: Answers): string {
     const configBuilder = new ConfigBuilder()
 
     configBuilder
@@ -157,20 +157,6 @@ export class Greengrass2InstallerConfigGeneratorsInstaller implements ServiceMod
       .add(`DEVICE_PRIVATE_KEY_PATH`, answers.greengrass2InstallerConfigGenerators.devicePrivateKeyPath)
       .add(`DEVICE_CLAIM_CERTIFICATE_PATH`, answers.greengrass2InstallerConfigGenerators.deviceClaimCertificatePath)
       .add(`DEVICE_CLAIM_CERTIFICATE_PRIVATE_KEY_PATH`, answers.greengrass2InstallerConfigGenerators.deviceClaimCertificatePrivateKeyPath)
-
-    return configBuilder.config;
-  }
-
-
-  public async generateLocalConfiguration(answers: Answers): Promise<string> {
-    const configBuilder = new ConfigBuilder()
-
-    const byOutputKey = await getStackOutputs(this.stackName, answers.region)
-
-    configBuilder
-      .add(`AWS_IOT_ENDPOINT_DATA`, answers.iotEndpoint)
-      .add(`AWS_IOT_ENDPOINT_CREDENTIALS`, answers.iotCredentialEndpoint)
-      .add(`AWS_IOT_ROLE_ALIAS`, byOutputKey('TokenExchangeRoleAlias'))
 
     return configBuilder.config;
   }

@@ -8,8 +8,9 @@ import { GetFunctionCommand, GetFunctionCommandOutput, LambdaClient } from '@aws
 
 import { loadModules, RestModule } from '../models/modules';
 import { getCurrentAwsAccountId } from '../prompts/account.prompt';
+import { getMonorepoRoot } from '../prompts/paths.prompt';
 
-async function cloudToEnvAction (
+async function generateLocalConfigAction (
   environment: string,
   region: string,
   configFolderLocation: string
@@ -26,6 +27,8 @@ async function cloudToEnvAction (
   const accountId = await getCurrentAwsAccountId(region);
 
   const modules = loadModules(environment).filter(m => m.type === 'SERVICE');
+
+  const monorepoRoot = await getMonorepoRoot();
 
   for (const module of modules) {
 
@@ -53,8 +56,7 @@ async function cloudToEnvAction (
     let lambda: GetFunctionCommandOutput;
     try {
       lambda = await lambdaClient.send( new GetFunctionCommand({
-        FunctionName: functionName,
-        Qualifier: 'live'
+        FunctionName: functionName
       }));
     } catch (e) {
       continue;
@@ -72,7 +74,9 @@ async function cloudToEnvAction (
     }
 
     const moduleFile = path.join(moduleFolder,`${environment}.env`);
-    
+
+    const moduleProjectDir = path.join(monorepoRoot, 'source', 'packages', 'services', (module as RestModule).localProjectDir);
+
     // convert the lambdas environment config as the .env application config file
     const overrides = environmentVariables['APP_CONFIG'];
     if (overrides) {
@@ -83,13 +87,30 @@ async function cloudToEnvAction (
     }
 
     let appConfig = Object.entries(environmentVariables)
+      ?.sort()
       ?.map(([k,v])=>`${k}=${v}`)
       ?.join('\r\n');
     
-    appConfig = `# Run below command before starting the '${module.friendlyName}' module:\r\n# export CONFIG_LOCATION=${moduleFile}\r\nAWS_REGION=${region}\r\nAWS_ACCOUNTID=${accountId}\r\n${appConfig}`;
+    appConfig = `
+##########################################################################################
+####               '${module.friendlyName}' application configuration           
+##########################################################################################
+
+# To run the module locally
+#     cd ${moduleProjectDir}
+#     CONFIG_LOCATION=${moduleFile} npm run start
+
+AWS_REGION=${region}
+AWS_ACCOUNTID=${accountId}
+
+${appConfig}
+`;
 
     fs.writeFileSync(moduleFile, appConfig);
   }
+
+  console.log(`\nFinished exporting application configuration to '${configFolderLocation}'.\n`);
+  console.log(`If you are unsure on how to run a module locally, open the generated .env file for that module from the above mentioned folder. We have added instructions on how to start the module to the file to get you going.\n\n`);
 }
 
-export default cloudToEnvAction;
+export default generateLocalConfigAction;

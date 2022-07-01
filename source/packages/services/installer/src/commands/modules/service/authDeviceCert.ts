@@ -13,7 +13,6 @@
 import { Answers } from '../../../models/answers';
 import { ListrTask } from 'listr2';
 import { ModuleName, ServiceModule } from '../../../models/modules';
-import { ConfigBuilder } from "../../../utils/configBuilder";
 import ow from 'ow';
 import inquirer from 'inquirer';
 import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
@@ -121,20 +120,6 @@ export class AuthDeviceCertInstaller implements ServiceModule {
 
     return [answers, tasks];
   }
-
-  public generateApplicationConfiguration(answers: Answers): string {
-    const configBuilder = new ConfigBuilder()
-    configBuilder
-      .add(`LOGGING_LEVEL`, answers.authDeviceCert.loggingLevel)
-    return configBuilder.config;
-  }
-
-  public async generateLocalConfiguration(answers: Answers): Promise<string> {
-    const configBuilder = new ConfigBuilder()
-      .add(`AWS_ACCOUNTID`, answers.accountId)
-    return configBuilder.config;
-  }
-
 
   public async delete(answers: Answers): Promise<ListrTask[]> {
     const tasks: ListrTask[] = [];

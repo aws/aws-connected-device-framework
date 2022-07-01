@@ -20,12 +20,13 @@ import { customDomainPrompt } from '../../../prompts/domain.prompt';
 import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
 import { Lambda } from '@aws-sdk/client-lambda'
-import { deleteStack, getStackOutputs, getStackParameters, getStackResourceSummaries, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
+import { deleteStack, getStackOutputs, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
 
 export class BulkCertificatesInstaller implements RestModule {
 
   public readonly friendlyName = 'Bulk Certificates';
   public readonly name = 'bulkCerts';
+  public readonly localProjectDir = 'bulkcerts';
 
   public readonly type = 'SERVICE';
   public readonly dependsOnMandatory: ModuleName[] = [
@@ -320,7 +321,7 @@ export class BulkCertificatesInstaller implements RestModule {
     }
   }
 
-  public generateApplicationConfiguration(answers: Answers): string {
+  private generateApplicationConfiguration(answers: Answers): string {
     const configBuilder = new ConfigBuilder()
 
     if (answers.bulkCerts.setSupplier) {
@@ -356,23 +357,6 @@ export class BulkCertificatesInstaller implements RestModule {
       .add(`AWS_ACM_CONCURRENCY_LIMIT`,answers.bulkCerts.acmConcurrencyLimit)
     return configBuilder.config;
   }
-
-
-  public async generateLocalConfiguration(answers: Answers): Promise<string> {
-    const byParameterKey = await getStackParameters(this.stackName, answers.region)
-    const byResourceLogicalId = await getStackResourceSummaries(this.stackName, answers.region)
-
-    const configBuilder = new ConfigBuilder()
-
-    configBuilder
-      .add(`AWS_DYNAMODB_TASKS_TABLENAME`, byResourceLogicalId('BulkCertificatesTaskTable'))
-      .add(`AWS_S3_CERTIFICATES_BUCKET`, byParameterKey('BucketName'))
-      .add(`AWS_S3_CERTIFICATES_PREFIX`, byParameterKey('BucketKeyPrefix'))
-      .add(`EVENTS_REQUEST_TOPIC`, byResourceLogicalId('CertificatesRequestSnsTopic'))
-
-    return configBuilder.config;
-  }
-
 
   public async delete(answers: Answers): Promise<ListrTask[]> {
     const tasks: ListrTask[] = [];

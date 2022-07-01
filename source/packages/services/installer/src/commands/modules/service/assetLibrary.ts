@@ -13,16 +13,16 @@
 import { Answers } from '../../../models/answers';
 import { ListrTask } from 'listr2';
 import { ModuleName, RestModule, PostmanEnvironment } from '../../../models/modules';
-import { ConfigBuilder } from '../../../utils/configBuilder';
 import inquirer from 'inquirer';
 import ow from 'ow';
 import { customDomainPrompt } from '../../../prompts/domain.prompt';
 import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from '../../../prompts/applicationConfiguration.prompt';
-import { deleteStack, getStackOutputs, getStackParameters, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
+import { deleteStack, getStackOutputs, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
 import { enableAutoScaling, provisionedConcurrentExecutions } from '../../../prompts/autoscaling.prompt';
 import { getNeptuneInstancetypeList } from '../../../utils/instancetypes';
 import { includeOptionalModule } from '../../../utils/modules.util';
+import { ConfigBuilder } from '../../../utils/configBuilder';
 
 // CDF does not specify a Neptune engine version in its Cloudformation templates. When updating a CDF
 // deployment, the existing Neptune engine version remains unchanged, for new deployments the Neptune
@@ -36,8 +36,9 @@ const DEFAULT_NEPTUNE_INSTANCE_TYPE = 'db.r5.xlarge';
 
 export class AssetLibraryInstaller implements RestModule {
 
-  public readonly friendlyName = 'Asset Library';
+  public readonly friendlyName = 'Asset Library';  
   public readonly name = 'assetLibrary';
+  public readonly localProjectDir = 'assetlibrary';
 
   public readonly type = 'SERVICE';
   public readonly dependsOnMandatory: ModuleName[] = [
@@ -273,7 +274,6 @@ export class AssetLibraryInstaller implements RestModule {
     return parameterOverrides
   }
 
-
   public async install(answers: Answers): Promise<[Answers, ListrTask[]]> {
     const tasks: ListrTask[] = [];
 
@@ -328,7 +328,7 @@ export class AssetLibraryInstaller implements RestModule {
     return [answers, tasks];
   }
 
-  public generateApplicationConfiguration(answers: Answers): string {
+  private generateApplicationConfiguration(answers: Answers): string {
     const configBuilder = new ConfigBuilder()
 
     configBuilder
@@ -341,21 +341,6 @@ export class AssetLibraryInstaller implements RestModule {
       .add(`DEFAULTS_GROUPS_VALIDATEALLOWEDPARENTPATHS`, answers.assetLibrary?.defaultGroupsValidateAllowedParentPath)
       .add(`ENABLE_DFE_OPTIMIZATION`, answers.assetLibrary?.enableDfeOptimization)
       .add(`AUTHORIZATION_ENABLED`, answers.assetLibrary?.authorizationEnabled)
-
-    return configBuilder.config;
-  }
-
-  public async generateLocalConfiguration(answers: Answers): Promise<string> {
-
-    const byOutputKey = await getStackOutputs(this.neptuneStackName, answers.region)
-    const byParameterKey = await getStackParameters(this.stackName, answers.region)
-
-    const configBuilder = new ConfigBuilder()
-
-    configBuilder
-      .add(`AWS_NEPTUNE_URL`, byOutputKey('GremlinEndpoint'))
-      .add(`MODE`, byParameterKey('Mode'))
-      .add(`AWS_IOT_ENDPOINT`, answers.iotEndpoint)
 
     return configBuilder.config;
   }

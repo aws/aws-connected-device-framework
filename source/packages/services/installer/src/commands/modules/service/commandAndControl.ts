@@ -19,13 +19,14 @@ import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
 import { customDomainPrompt } from '../../../prompts/domain.prompt';
 import ow from 'ow';
-import { deleteStack, getStackOutputs, getStackParameters, getStackResourceSummaries, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
+import { deleteStack, getStackOutputs, getStackResourceSummaries, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
 import { includeOptionalModule } from '../../../utils/modules.util';
 
 export class CommandAndControlInstaller implements RestModule {
 
   public readonly friendlyName = 'Command And Control';
   public readonly name = 'commandAndControl';
+  public readonly localProjectDir = 'command-and-control';
 
   public readonly type = 'SERVICE';
   public readonly dependsOnMandatory: ModuleName[] = [
@@ -172,7 +173,7 @@ export class CommandAndControlInstaller implements RestModule {
     }
   }
 
-  public generateApplicationConfiguration(answers: Answers): string {
+  private generateApplicationConfiguration(answers: Answers): string {
     const configBuilder = new ConfigBuilder()
     configBuilder
       .add(`CUSTOMDOMAIN_BASEPATH`, answers.commandAndControl.customDomainBasePath)
@@ -181,24 +182,6 @@ export class CommandAndControlInstaller implements RestModule {
       .add(`PROVISIONING_TEMPLATES_ADDTHINGTOTHINGGROUP`, answers.commandAndControl.addThingToGroupTemplate)
 
     return configBuilder.config;
-  }
-
-  public async generateLocalConfiguration(answers: Answers): Promise<string> {
-    const byParameterKey = await getStackParameters(this.stackName, answers.region)
-    const byResourceLogicalId = await getStackResourceSummaries(this.stackName, answers.region)
-
-    const configBuilder = new ConfigBuilder()
-    configBuilder
-      .add(`COMMANDANDCONTROL_AWS_S3_BUCKET`, byParameterKey('BucketName'))
-      .add(`COMMANDANDCONTROL_AWS_S3_ROLE_ARN`, `arn:aws:iam::${answers.accountId}:role/${byResourceLogicalId('LambdaExecutionRole')}`)
-      .add(`COMMANDANDCONTROL_AWS_DYNAMODB_TABLE`, byResourceLogicalId('DataTable'))
-      .add(`COMMANDANDCONTROL_ASSETLIBRARY_API_FUNCTION_NAME`, byParameterKey('AssetLibraryFunctionName'))
-      .add(`COMMANDANDCONTROL_PROVISIONING_API_FUNCTION_NAME`, byParameterKey('ProvisioningFunctionName'))
-      .add(`COMMANDANDCONTROL_AWS_SQS_QUEUES_MESSAGES_QUEUEURL`, byResourceLogicalId('MessagesQueue'))
-      .add(`COMMANDANDCONTROL_AWS_SQS_QUEUES_COMMANDS_QUEUEURL`, byResourceLogicalId('CommandsQueue'))
-      .add(`COMMANDANDCONTROL_AWS_IOT_ENDPOINT`, answers.iotEndpoint)
-
-    return configBuilder.config
   }
 
   public async delete(answers: Answers): Promise<ListrTask[]> {
