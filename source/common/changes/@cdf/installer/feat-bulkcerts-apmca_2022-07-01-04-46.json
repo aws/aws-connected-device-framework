@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/installer",
+      "comment": "Updated bulkcert installer to support ACMPCA",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@cdf/installer",
+  "email": "bahavar@amazon.com"
+}

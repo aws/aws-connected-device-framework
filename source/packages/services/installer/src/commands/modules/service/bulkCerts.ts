@@ -219,7 +219,13 @@ export class BulkCertificatesInstaller implements RestModule {
           question: 'The chunk size that the number of requested certificates are split into',
           defaultConfiguration: 100,
           propertyName: 'chunksize'
-        }]),
+        },
+        {
+          question: 'Default number of concurrent threads for issuing ACM certificates:',
+          defaultConfiguration: 10,
+          propertyName: 'acmConcurrencyLimit'
+        }
+      ]),
       ...customDomainPrompt(this.name, answers),
     ], updatedAnswers);
 
@@ -324,7 +330,7 @@ export class BulkCertificatesInstaller implements RestModule {
       answers.bulkCerts.suppliers.cas.forEach(supplier => {
         let alias = supplier.alias;
         if (!supplier.alias.startsWith('SUPPLIER_CA_')) {
-          alias = `SUPPLIER_CA_${supplier.alias}`;
+          alias = `SUPPLIER_CA_${supplier.alias.toUpperCase()}`;
         }
         if (alias == answers.bulkCerts.caAlias) {
           supplier.value = answers.bulkCerts.caValue;
@@ -346,7 +352,8 @@ export class BulkCertificatesInstaller implements RestModule {
       .add(`CERTIFICATE_DEFAULT_EMAILADDRESS`, answers.bulkCerts.emailAddress)
       .add(`CERTIFICATE_DEFAULT_DISTINGUISHEDNAMEQUALIFIER`, answers.bulkCerts.distinguishedNameIdentifier)
       .add(`CERTIFICATE_DEFAULT_EXPIRYDAYS`, answers.bulkCerts.expiryDays)
-      .add(`DEFAULTS_CHUNKSIZE`, answers.bulkCerts.chunksize);
+      .add(`DEFAULTS_CHUNKSIZE`, answers.bulkCerts.chunksize)
+      .add(`AWS_ACM_CONCURRENCY_LIMIT`,answers.bulkCerts.acmConcurrencyLimit)
     return configBuilder.config;
   }
 

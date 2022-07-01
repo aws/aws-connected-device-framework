@@ -163,6 +163,7 @@ export interface BulkCerts extends RestServiceModuleAttribues {
   defaultAnswer?: boolean;
   chunksize: number;
   expiryDays?: number;
+  acmConcurrencyLimit?:number;
   suppliers?: CAAliases;
   caAlias?: string;
   caValue?: string;
