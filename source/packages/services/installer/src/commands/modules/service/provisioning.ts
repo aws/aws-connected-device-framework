@@ -371,11 +371,11 @@ export class ProvisioningInstaller implements RestModule {
 
     if (answers.provisioning.setPcaAliases) {
       if (!answers.provisioning.pcaAliases.list.includes(answers.provisioning.pcaAlias)) {
-        answers.provisioning.pcaAliases.cas.push({ alias: answers.provisioning.pcaAlias, value: answers.provisioning.pcaArn });
+        answers.provisioning.pcaAliases.cas?.push({ alias: answers.provisioning.pcaAlias, value: answers.provisioning.pcaArn });
       }
     }
 
-    answers.provisioning.pcaAliases?.cas.forEach(pca => {
+    answers.provisioning.pcaAliases?.cas?.forEach(pca => {
       let alias = pca.alias;
       if (!pca.alias.startsWith('PCA_')) {
         alias = `PCA_${pca.alias.toUpperCase()}`;
@@ -386,7 +386,7 @@ export class ProvisioningInstaller implements RestModule {
       configBuilder.add(alias, pca.value);
     });
 
-    answers.provisioning.iotCaAliases?.cas.forEach(ca => {
+    answers.provisioning.iotCaAliases?.cas?.forEach(ca => {
       let alias = ca.alias;
       if (!ca.alias.startsWith('CA_')) {
         alias = `CA_${ca.alias.toUpperCase()}`;
