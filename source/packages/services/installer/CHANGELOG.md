@@ -1,6 +1,13 @@
 # Change Log - @cdf/installer
 
-This log was last generated on Fri, 01 Jul 2022 05:48:17 GMT and should not be manually modified.
+This log was last generated on Fri, 01 Jul 2022 21:16:11 GMT and should not be manually modified.
+
+## 1.0.0
+Fri, 01 Jul 2022 21:16:11 GMT
+
+### Breaking changes
+
+-  removed deprecated config-to-env, and cleaned up and renamed cloud-to-env to generate-local-config.
 
 ## 0.12.0
 Fri, 01 Jul 2022 05:48:17 GMT
