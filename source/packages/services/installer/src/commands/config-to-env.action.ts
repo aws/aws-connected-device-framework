@@ -9,7 +9,7 @@ import {
 import fs from "fs";
 import { AnswersStorage } from "../utils/answersStorage";
 
-async function configAction(
+async function configToEnvAction(
   environment: string,
   region: string,
   deploymentConfig: string,
@@ -63,4 +63,4 @@ async function configAction(
   }
 }
 
-export default configAction;
+export default configToEnvAction;

@@ -434,7 +434,7 @@ export class CertificatesService {
             }
         }
             
-        return {certificateArn: data.CertificateArn, certificate: cert.Certificate};
+        return {certificateArn: data.CertificateArn, certificate: `${cert.Certificate}\n${cert.CertificateChain}`};
     }
 
     private async uploadStreamToS3(bucket: string, key: string, body: NodeJS.ReadableStream): Promise<string> {

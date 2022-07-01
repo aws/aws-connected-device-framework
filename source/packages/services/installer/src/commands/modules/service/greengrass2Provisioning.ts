@@ -41,10 +41,17 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
     'greengrass2InstallerConfigGenerators'];
   public readonly dependsOnOptional: ModuleName[] = ['assetLibrary'];
 
-  private readonly stackName: string;
+  public readonly stackName: string;
+  private readonly defaultInstallerConfigGenerators: Record<string, string>;
 
   constructor(environment: string) {
-    this.stackName = `cdf-greengrass2-provisioning-${environment}`
+    this.stackName = `cdf-greengrass2-provisioning-${environment}`;
+
+    // matches ManualInstallConfigLambda resource logical ID
+    const manualInstallConfigGenerator = `cdf-greengrass2-manual-config-generator-${environment}`
+    // matches FleetProvisioningConfigLambda resource logical ID
+    const fleetProvisioningConfigGenerator = `cdf-greengrass2-fleet-config-generator-${environment}`
+    this.defaultInstallerConfigGenerators = { MANUAL_INSTALL: manualInstallConfigGenerator, FLEET_PROVISIONING: fleetProvisioningConfigGenerator };
   }
 
   public async prompts(answers: Answers): Promise<Answers> {
@@ -65,6 +72,90 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
           default: updatedAnswers.greengrass2Provisioning?.useAssetLibrary ?? false,
           askAnswered: true,
         },
+      ], updatedAnswers);
+
+      updatedAnswers.greengrass2Provisioning.installerConfigGenerators = (
+        updatedAnswers.greengrass2Provisioning.installerConfigGenerators || this.defaultInstallerConfigGenerators
+      );
+      let configGeneratorsPromptAction: configGeneratorsPromptActionChoices;
+      enum configGeneratorsPromptActionChoices { Confirm, Add, Delete, }
+
+      while (configGeneratorsPromptAction != configGeneratorsPromptActionChoices.Confirm) {
+        if (Object.keys(updatedAnswers.greengrass2Provisioning.installerConfigGenerators).length === 0) {
+          configGeneratorsPromptAction = configGeneratorsPromptActionChoices.Add;
+        }
+        else {
+          const installerConfigGeneratorsAsStringList = (
+            Object.entries(updatedAnswers.greengrass2Provisioning.installerConfigGenerators)
+            .map(([k, v]) => ` * ${k}: ${v}`).join("\n")
+          );
+          (
+            { configGeneratorsPromptAction } = await inquirer.prompt([
+              {
+                type: 'list',
+                name: 'configGeneratorsPromptAction',
+                message: `The following config generator aliases are currently configured:\n${installerConfigGeneratorsAsStringList}\nWhat do you want to do next?`,
+                choices: [
+                  {name: 'confirm list and continue', value: configGeneratorsPromptActionChoices.Confirm},
+                  {name: 'add another config generator alias', value: configGeneratorsPromptActionChoices.Add},
+                  {name: 'delete an entry from the list', value: configGeneratorsPromptActionChoices.Delete},
+                ],
+                default: configGeneratorsPromptActionChoices.Confirm,
+              }
+            ], {})
+          );
+        }
+
+        if (configGeneratorsPromptAction === configGeneratorsPromptActionChoices.Add) {
+          const newConfigGenerator: {alias: string, lambda: string} = await inquirer.prompt([
+            {
+              type: 'input',
+              name: 'alias',
+              message: `Enter the config generator alias which will be used in requests to the CDF API`,
+              validate: (answer) => {
+                if (updatedAnswers.greengrass2Provisioning.installerConfigGenerators[answer] !== undefined) {
+                  return `The alias "${answer} is already in use, aliases must be unique."`;
+                }
+                if (answer.length === 0) {
+                  return "Please enter a value."
+                }
+                return true;
+              }
+            },
+            {
+              type: 'input',
+              name: 'lambda',
+              message: `Enter the the name of the Lambda that CDF will invoke for this config generator`,
+              validate: (answer) => {
+                if (answer.startsWith("arn:")) {
+                  return `Please enter the name of the Lambda, not the ARN."`;
+                }
+                if (answer.length === 0) {
+                  return "Please enter a value."
+                }
+                return true;
+              }
+            },
+          ], {});
+          updatedAnswers.greengrass2Provisioning.installerConfigGenerators[newConfigGenerator.alias] = newConfigGenerator.lambda;
+        }
+        else if (configGeneratorsPromptAction === configGeneratorsPromptActionChoices.Delete) {
+          const configGeneratorAliasesToDelete: {list: string[]} = await inquirer.prompt([
+            {
+              type: 'checkbox',
+              name: 'list',
+              message: `Select one or more config generators to delete from the list`,
+              choices: Object.keys(updatedAnswers.greengrass2Provisioning.installerConfigGenerators),
+              default: configGeneratorsPromptActionChoices.Confirm,
+            }
+          ], {});
+          configGeneratorAliasesToDelete.list.forEach(
+            (alias) => delete updatedAnswers.greengrass2Provisioning.installerConfigGenerators[alias]
+          );
+        }
+      }
+
+      updatedAnswers = await inquirer.prompt([
         enableAutoScaling(this.name, answers),
         provisionedConcurrentExecutions(this.name, answers),
         ...applicationConfigurationPrompt(this.name, answers, []),
@@ -77,7 +168,6 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
     return updatedAnswers;
   }
 
-
   private getParameterOverrides(answers: Answers): string[] {
     const parameterOverrides = [
       `Environment=${answers.environment}`,
@@ -89,7 +179,9 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
       `ArtifactsKeyPrefix=greengrass2/artifacts/`,
       `ProvisioningFunctionName=${answers.greengrass2Provisioning.provisioningFunctionName}`,
       `AssetLibraryFunctionName=${answers.greengrass2Provisioning.assetLibraryFunctionName ?? ''}`,
-      `InstallerConfigGenerators=${answers.greengrass2Provisioning.installerConfigGenerators ?? ''}`,
+      `InstallerConfigGenerators=${JSON.stringify(
+        answers.greengrass2Provisioning.installerConfigGenerators ?? this.defaultInstallerConfigGenerators
+      )}`,
       `EventBridgeBusName=${answers.eventBus.arn}`,
       `VpcId=${answers.vpc?.id ?? 'N/A'}`,
       `CDFSecurityGroupId=${answers.vpc?.securityGroupId ?? ''}`,
@@ -148,14 +240,8 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
         if (answers.greengrass2Provisioning === undefined) {
           answers.greengrass2Provisioning = {};
         }
-        const grenngrassInstallerbyResourceLogicalId = await getStackResourceSummaries(`cdf-greengrass2-installer-config-generators-${answers.environment}`, answers.region);
         const provisioningbyResourceLogicalId = await getStackResourceSummaries(`cdf-provisioning-${answers.environment}`, answers.region);
         const assetLibrarybyResourceLogicalId = await getStackResourceSummaries(`cdf-assetlibrary-${answers.environment}`, answers.region);
-
-        const manualInstallConfigGenerator = grenngrassInstallerbyResourceLogicalId('ManualInstallConfigLambda');
-        const fleetProvisioningConfigGenerator = grenngrassInstallerbyResourceLogicalId('FleetProvisioningConfigLambda');
-
-        answers.greengrass2Provisioning.installerConfigGenerators = JSON.stringify({ MANUAL_INSTALL: manualInstallConfigGenerator, FLEET_PROVISIONING: fleetProvisioningConfigGenerator });
 
         answers.greengrass2Provisioning.provisioningFunctionName = provisioningbyResourceLogicalId('LambdaFunction');
 

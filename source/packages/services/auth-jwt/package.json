@@ -1,6 +1,6 @@
 {
   "name": "@cdf/auth-jwt",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "API Gateway lambda authorizer that verifies JWT tokens.",
   "author": "Dean Hart",
   "main": "lib/index.js",
@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@cdf/errors": "^4.0.0",
-    "@cdf/config-inject": "^4.0.1",
+    "@cdf/config-inject": "^4.0.2",
     "axios": "0.21.2",
     "js-yaml": "4.1.0",
     "jsonwebtoken": "8.5.1",

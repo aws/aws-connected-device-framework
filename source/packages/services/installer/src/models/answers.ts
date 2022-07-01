@@ -266,7 +266,7 @@ export interface Greengrass2Provisioning
   ProvisionedConcurrencyModuleAttribues {
   provisioningFunctionName?: string;
   assetLibraryFunctionName?: string;
-  installerConfigGenerators?: string;
+  installerConfigGenerators?: Record<string, string>;
   // Application Configuration
   promisesConcurrency?: number;
   corezBatchSize?: number;
@@ -285,11 +285,16 @@ export interface Provisioning extends RestServiceModuleAttribues {
   bulkRequestsPrefix?: string;
 
   // ACM PCA specific
+  pcaIntegrationEnabled?: boolean;
   pcaCrossAccountRoleArn?: string;
   setPcaAliases?: boolean;
   pcaAliases?: CAAliases;
   pcaAlias?: string;
   pcaArn?:string;
+  setIotCaAliases?: boolean;
+  iotCaAliases?: CAAliases;
+  iotCaAlias?: string;
+  iotCaArn?:string;
 }
 
 export interface FleetSimulator extends RestServiceModuleAttribues {

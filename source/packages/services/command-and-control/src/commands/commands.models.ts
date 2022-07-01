@@ -10,7 +10,7 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
- export interface EditableCommandResource {
+export interface EditableCommandResource {
 	operation?: string;
 	deliveryMethod: TopicDeliveryMethod | ShadowDeliveryMethod | JobDeliveryMethod;
 	payloadTemplate?: string;
@@ -55,16 +55,18 @@ export interface ShadowDeliveryMethod extends AbstractDeliveryMethod {
 
 export interface JobDeliveryMethod extends AbstractDeliveryMethod {
 	type: 'JOB';
+	targetSelection: 'SNAPSHOT' | 'CONTINUOUS';
 	presignedUrlConfig?: {
 		expiresInSec?: number;
 	};
+
 	jobExecutionsRolloutConfig?: {
 		maximumPerMinute?: number;
 		exponentialRate?: {
 			baseRatePerMinute: number;
 			incrementFactor: number;
 			rateIncreaseCriteria: {
-				numberOfNotifiedThings?: number;	
+				numberOfNotifiedThings?: number;
 				numberOfSucceededThings?: number;
 			};
 		};
@@ -85,21 +87,21 @@ export interface JobDeliveryMethod extends AbstractDeliveryMethod {
 export type DeliveryMethod = 'JOB' | 'TOPIC' | 'SHADOW';
 
 export interface CommandResourceList {
-	commands:CommandResource[];
+	commands: CommandResource[];
 	pagination?: {
 		lastEvaluated?: {
-				commandId: string
+			commandId: string
 		},
-		count?:number,
+		count?: number,
 	};
 }
 
 export type CommandListPaginationKey = {
-	commandId:string;
+	commandId: string;
 }
 
 export type CommandListIdsByTagPaginationKey = {
-	tagKey:string;
-	tagValue:string;
-	commandId:string;
+	tagKey: string;
+	tagValue: string;
+	commandId: string;
 }

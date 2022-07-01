@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/bulkcerts",
+      "comment": "Added feature to allow certificate creation via bulkcerts",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@cdf/bulkcerts",
+  "email": "bahavar@amazon.com"
+}

@@ -2,9 +2,9 @@
 
 The `installer` module provides a set of tools for installing and managing CDF modules.
 
-## Prerequisite
+## Prerequisites
 
-### CDF Module Bundles
+#### CDF Module Bundles
 
 Ensure that CDF modules had been built and bundled ready for deployment.
 
@@ -12,11 +12,11 @@ Ensure that CDF modules had been built and bundled ready for deployment.
 aws-connected-device-framework/source> rush bundle
 ```
 
-### IAM Credentials
+#### IAM Credentials
 
 The installer executes a number of aws commands (e.g, `aws cloudformation package`, `aws cloudformation deploy`) to upload artifacts and deploy the modules to the target account. Ensure that you have IAM credential with the right policies set up on your shell when running the scripts below.
 
-## Build
+## Building the installer
 
 To build the installer module run this script
 
@@ -26,6 +26,8 @@ aws-connected-device-framework/source/packages/services/installer> rushx create:
 ```
 
 ## Commands
+
+> Note that in all the examples below the command to run the installer is given as `cdf-cli`. We have had some reports where the `cdf-cli` command cannot be found after building. The `rushx create:installer` command is meant to configure the `cdf-cli` alias but for some unknown reason it does not always create the alias. If you run into this issue, substitue `node dist/index.js` for `cdf-cli` to run.
 
 ### Deploying using the wizard
 
@@ -157,7 +159,27 @@ This retrieves the urls for all the CDF modules that expose a REST API endpoint 
 
 ### Local development
 
-You can generate the `env` file automatically for all the modules by running the following command:
+You can generate the `.env` file automatically for all the modules. There are 2 ways to this:
+
+#### Inspecting an cloud deployment to generate to .env application configuration file
+
+This mode will inspect an existing cloud deployment and figure out the required application configuration to run locally.
+
+| Argument            | Description                                                  |
+| ------------------- | ------------------------------------------------------------ |
+| `environment`       | the environment to deploy                                    |
+| `region`            | the region to deploy into                                    |
+| `output-folder`     | the folder to store the generated env file(s)                |
+
+```shell
+> cdf-cli cloud-to-env <environment> <region> <output-folder>
+```
+
+The `.env` file for each of the deployed modules will be generated in the `output-folder`.
+
+#### Converting an existing deployment configuration to .env application configuration file
+
+Instead of inspecting a cloud deployment, this mode will read the configuration file that is stored locally once a deployment has been run.
 
 | Argument            | Description                                                  |
 | ------------------- | ------------------------------------------------------------ |
@@ -172,8 +194,12 @@ You can generate the `env` file automatically for all the modules by running the
 
 The `.env` file for each of the deployed modules will be generated in the `output-folder`.
 
-If you want to run the module locally, you need to specify the `CONFIG_LOCATION` environment variable when starting the module. As an example, if you want to run the provisioning module locally:
+#### Runnning the applications locally
+
+Once you have the application configuration, and you want to run a module locally, you need to specify the `CONFIG_LOCATION` environment variable when starting the module. As an example, if you want to run the provisioning module locally:
 
 ```shell
-aws-connected-device-framework/source/packages/services/provisioning> export CONFIG_LOCATION=<path-to-provisioning-env-file>; npm run start
+aws-connected-device-framework> cd source/packages/services/provisioning
+aws-connected-device-framework/source/packages/services/provisioning> export CONFIG_LOCATION=<path-to-provisioning-env-file>
+aws-connected-device-framework/source/packages/services/provisioning> npm run start
 ```

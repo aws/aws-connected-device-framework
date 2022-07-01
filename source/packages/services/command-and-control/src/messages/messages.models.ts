@@ -34,7 +34,7 @@ export interface MessageItem {
 	statusMessage?: string;
 
 	resolvedTargets?: Recipient[];
-	  
+
 	batchesTotal?: number;
 	batchesComplete?: number;
 
@@ -45,7 +45,10 @@ export interface MessageItem {
 export interface Targets {
 	awsIoT?: {
 		thingNames?: string[];
-		thingGroupNames?: string[];
+		thingGroups?: {
+			name: string;
+			expand?: boolean
+		}[];
 	},
 	assetLibrary?: {
 		deviceIds?: string[];
@@ -57,7 +60,8 @@ export interface Targets {
 export type ResolvedTargetStatus = 'pending' | 'success' | 'failed';
 
 export interface Recipient {
-	thingName: string;
+	id: string;
+	type: 'thing' | 'thingGroup'
 	status: ResolvedTargetStatus;
 	statusMessage?: string;
 	correlationId?: string;
@@ -65,12 +69,12 @@ export interface Recipient {
 }
 
 export interface RecipientList {
-	recipients:Recipient[];
+	recipients: Recipient[];
 	pagination?: {
 		lastEvaluated?: {
-				thingName: string
+			thingName: string
 		},
-		count?:number,
+		count?: number,
 	};
 }
 
@@ -84,26 +88,26 @@ export interface ReplyItem {
 	receivedAt: Date;
 	action: string;
 	payload: unknown;
-	
+
 	pk?: string;
 	sk?: string;
 }
 
 export interface ReplyResourceList {
-	replies:ReplyResource[];
+	replies: ReplyResource[];
 	pagination?: {
 		lastEvaluated?: {
 			receivedAt: number
 		},
-		count?:number,
+		count?: number,
 	};
 }
 
-export type MessageStatus = 
-	'identifying_targets' | 
-	'sending' | 
-	'awaiting_replies' | 
-	'success' | 
+export type MessageStatus =
+	'identifying_targets' |
+	'sending' |
+	'awaiting_replies' |
+	'success' |
 	'failed';
 
 export interface TokenValues {
@@ -111,27 +115,27 @@ export interface TokenValues {
 }
 
 export interface MessageResourceList {
-	messages:MessageResource[];
+	messages: MessageResource[];
 	pagination?: {
 		lastEvaluated?: {
 			createdAt: number
 		},
-		count?:number,
+		count?: number,
 	};
 }
 
 export type MessageListPaginationKey = {
-	createdAt:number;
+	createdAt: number;
 }
 
 export type RecipientListPaginationKey = {
-	thingName:string;
+	targetName: string;
 }
 
 export type RecipientType = 'thing' | 'thingGroup';
 
 export type ReplyListPaginationKey = {
-	receivedAt:number;
+	receivedAt: number;
 }
 export interface TaskBatchProgress {
 	complete: number;

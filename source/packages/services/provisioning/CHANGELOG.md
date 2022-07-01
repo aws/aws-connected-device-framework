@@ -1,6 +1,20 @@
 # Change Log - @cdf/provisioning
 
-This log was last generated on Thu, 02 Jun 2022 00:45:32 GMT and should not be manually modified.
+This log was last generated on Thu, 30 Jun 2022 00:07:08 GMT and should not be manually modified.
+
+## 5.2.0
+Thu, 30 Jun 2022 00:07:08 GMT
+
+### Minor changes
+
+-  updated ACM PCA integration to support registering certificates using CA's
+
+## 5.1.1
+Tue, 21 Jun 2022 00:47:55 GMT
+
+### Patches
+
+- update to node 16.x
 
 ## 5.1.0
 Thu, 02 Jun 2022 00:45:32 GMT

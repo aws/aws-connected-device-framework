@@ -1,6 +1,13 @@
 # Change Log - @cdf/events-processor
 
-This log was last generated on Mon, 16 May 2022 03:04:28 GMT and should not be manually modified.
+This log was last generated on Tue, 21 Jun 2022 00:47:55 GMT and should not be manually modified.
+
+## 4.1.1
+Tue, 21 Jun 2022 00:47:55 GMT
+
+### Patches
+
+- update to node 16.x
 
 ## 4.1.0
 Mon, 16 May 2022 03:04:28 GMT

@@ -76,7 +76,7 @@ stages:
 #     - *common-artifacts
 
 default:
-  image: public.ecr.aws/lambda/nodejs:14
+  image: public.ecr.aws/lambda/nodejs:16
   before_script:
     - *common-install-deployment-dependencies
     - *common-git-steps
@@ -202,7 +202,7 @@ deployLive:
 
 release:
   image:
-    name: public.ecr.aws/lambda/nodejs:14
+    name: public.ecr.aws/lambda/nodejs:16
     entrypoint: [""]
   stage: release
   before_script:
@@ -211,5 +211,5 @@ release:
     - *default-run-condition
   script:
     # Create release package
-    - tar -cvf ../aws-connected-device-framework.tar --exclude=.git  --exclude=deploy --exclude=.history --exclude=temp .
+    - tar -cvf ../aws-connected-device-framework.tar --exclude=.git --exclude=node_modules --exclude=deploy --exclude=.history --exclude=temp .
     - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ../aws-connected-device-framework.tar "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/aws-connected-device-framework/${CI_JOB_ID}/aws-connected-device-framework.tar"'

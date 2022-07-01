@@ -35,7 +35,7 @@ export class CommandsInstaller implements RestModule {
     'provisioning'];
   public readonly dependsOnOptional: ModuleName[] = ['assetLibrary'];
 
-  private readonly stackName: string;
+  public readonly stackName: string;
   private readonly assetLibraryStackName: string;
   private readonly provisioningStackName: string;
 

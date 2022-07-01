@@ -39,10 +39,12 @@ export class NotificationsInstaller implements RestModule {
   public readonly dependsOnOptional: ModuleName[] = [];
   private readonly eventsProcessorStackName: string;
   private readonly eventsAlertStackName: string;
+  public readonly stackName: string;
 
   constructor(environment: string) {
     this.eventsProcessorStackName = `cdf-eventsProcessor-${environment}`
     this.eventsAlertStackName = `cdf-eventsAlerts-${environment}`;
+    this.stackName = this.eventsProcessorStackName;
   }
 
   public async prompts(answers: Answers): Promise<Answers> {

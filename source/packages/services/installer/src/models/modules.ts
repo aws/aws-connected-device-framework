@@ -69,6 +69,7 @@ export interface PostmanEnvironment {
   enabled: boolean;
 }
 export interface ServiceModule extends Module {
+  stackName: string;
   generateLocalConfiguration: (answers: Answers) => Promise<string>;
   generateApplicationConfiguration: (answers: Answers) => string;
 }

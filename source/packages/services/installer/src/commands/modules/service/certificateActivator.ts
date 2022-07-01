@@ -33,7 +33,7 @@ export class CertificateActivatorInstaller implements ServiceModule {
     'provisioning',
   ];
   public readonly dependsOnOptional: ModuleName[] = [];
-  private readonly stackName: string;
+  public readonly stackName: string;
   private readonly assetLibraryStackName: string;
   private readonly provisioningStackName: string;
 

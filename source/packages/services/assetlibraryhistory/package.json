@@ -1,6 +1,6 @@
 {
   "name": "@cdf/assetlibrary-history",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "CDF Asset Library History",
   "author": "Dean Hart",
   "config": {
@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@cdf/errors": "^4.0.0",
-    "@cdf/config-inject": "^4.0.1",
+    "@cdf/config-inject": "^4.0.2",
     "@cdf/logger": "^4.0.0",
     "@cdf/express-middleware": "^3.0.0",
     "atob": "2.1.2",
