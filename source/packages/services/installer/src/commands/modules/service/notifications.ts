@@ -19,7 +19,7 @@ import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
 import { customDomainPrompt } from '../../../prompts/domain.prompt';
 import ow from 'ow';
-import { deleteStack, getStackOutputs, getStackResourceSummaries, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
+import { deleteStack, getStackOutputs, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
 import { includeOptionalModule } from '../../../utils/modules.util';
 import { getDaxInstanceTypeList } from '../../../utils/instancetypes';
 
@@ -28,6 +28,7 @@ export class NotificationsInstaller implements RestModule {
 
   public readonly friendlyName = 'Notifications';
   public readonly name = 'notifications';
+  public readonly localProjectDir = 'events-processor';
 
   public readonly type = 'SERVICE';
   public readonly dependsOnMandatory: ModuleName[] = [
@@ -319,7 +320,6 @@ export class NotificationsInstaller implements RestModule {
     return configBuilder.config;
   }
 
-
   public async generatePostmanEnvironment(answers: Answers): Promise<PostmanEnvironment> {
     const byOutputKey = await getStackOutputs(this.eventsProcessorStackName, answers.region)
     return {
@@ -327,21 +327,6 @@ export class NotificationsInstaller implements RestModule {
       value: byOutputKey('ApiGatewayUrl'),
       enabled: true
     }
-  }
-
-  public async generateLocalConfiguration(answers: Answers): Promise<string> {
-
-    const byResourceLogicalId = await getStackResourceSummaries(this.eventsProcessorStackName, answers.region)
-
-    const configBuilder = new ConfigBuilder()
-      .add(`AWS_DYNAMODB_TABLES_EVENTCONFIG_NAME`, byResourceLogicalId('EventConfigTable'))
-      .add(`AWS_DYNAMODB_TABLES_EVENTNOTIFICATIONS_NAME`, byResourceLogicalId('EventNotificationsTable'))
-      .add(`AWS_IOT_ENDPOINT`, answers.iotEndpoint)
-      .add(`AWS_LAMBDA_DYNAMODBSTREAM_NAME`, byResourceLogicalId('DynamoDBStreamLambdaFunction'))
-      .add(`AWS_LAMBDA_LAMBDAINVOKE_ARN`, `arn:aws:iam::${answers.accountId}:role/${byResourceLogicalId('RESTLambdaExecutionRole')}`)
-      .add(`EVENTSPROCESSOR_AWS_SQS_ASYNCPROCESSING`, byResourceLogicalId('AsyncProcessingQueue'))
-
-    return configBuilder.config
   }
 
   public async delete(answers: Answers): Promise<ListrTask[]> {

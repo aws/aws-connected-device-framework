@@ -70,10 +70,9 @@ export interface PostmanEnvironment {
 }
 export interface ServiceModule extends Module {
   stackName: string;
-  generateLocalConfiguration: (answers: Answers) => Promise<string>;
-  generateApplicationConfiguration: (answers: Answers) => string;
 }
 export interface RestModule extends ServiceModule {
+  localProjectDir: string;
   generatePostmanEnvironment: (answers: Answers) => Promise<PostmanEnvironment>;
 }
 

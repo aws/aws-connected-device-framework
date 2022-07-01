@@ -20,12 +20,13 @@ import { ConfigBuilder } from "../../../utils/configBuilder";
 import { customDomainPrompt } from '../../../prompts/domain.prompt';
 import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
-import { deleteStack, getStackOutputs, getStackParameters, getStackResourceSummaries, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
+import { deleteStack, getStackOutputs, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
 
 export class DevicePatcherInstaller implements RestModule {
 
   public readonly friendlyName = 'Device Patcher';
   public readonly name = 'devicePatcher';
+  public readonly localProjectDir = 'device-patcher';
 
   public readonly type = 'SERVICE';
   public readonly dependsOnMandatory: ModuleName[] = [
@@ -135,7 +136,7 @@ export class DevicePatcherInstaller implements RestModule {
     return [answers, tasks];
   }
 
-  public generateApplicationConfiguration(answers: Answers): string {
+  private generateApplicationConfiguration(answers: Answers): string {
     const configBuilder = new ConfigBuilder()
     configBuilder
       .add(`CUSTOMDOMAIN_BASEPATH`, answers.devicePatcher.customDomainBasePath)
@@ -144,7 +145,6 @@ export class DevicePatcherInstaller implements RestModule {
     return configBuilder.config;
   }
 
-
   public async generatePostmanEnvironment(answers: Answers): Promise<PostmanEnvironment> {
     const byOutputKey = await getStackOutputs(this.stackName, answers.region)
     return {
@@ -152,27 +152,6 @@ export class DevicePatcherInstaller implements RestModule {
       value: byOutputKey('ApiGatewayUrl'),
       enabled: true
     }
-  }
-
-  public async generateLocalConfiguration(answers: Answers): Promise<string> {
-    const byResourceLogicalId = await getStackResourceSummaries(this.stackName, answers.region)
-    const byParameterKey = await getStackParameters(this.stackName, answers.region)
-
-    const table = byResourceLogicalId('Table');
-
-    const artifactsBucket = byParameterKey('ArtifactsBucket')
-    const artifactsKeyPrefix = byParameterKey('ArtifactsKeyPrefix')
-    const patchTasksQueue = byResourceLogicalId('AgentbasedPatchQueue')
-    const ssmManagedInstanceRole = byResourceLogicalId('SSMManagedInstanceRole');
-
-    const configBuilder = new ConfigBuilder()
-      .add(`AWS_DYNAMODB_TABLE_NAME`, table)
-      .add(`AWS_S3_ARTIFACTS_BUCKET`, artifactsBucket)
-      .add(`AWS_S3_ARTIFACTS_PREFIX`, artifactsKeyPrefix)
-      .add(`AWS_SQS_QUEUES_PATCH_TASKS`, patchTasksQueue)
-      .add(`AWS_SSM_MANAGED_INSTANCE_ROLE`, ssmManagedInstanceRole)
-
-    return configBuilder.config;
   }
 
   public async delete(answers: Answers): Promise<ListrTask[]> {
