@@ -51,21 +51,21 @@ The following table indicates which REST API's are available in which mode:
 
 | Endpoint | Description | `full` mode | `lite` mode |
 |---|---|---|---|
-| `POST /templates/devices/{templateId}` | Registers a new device template within the system, using the JSON Schema standard to define the device template attributes and constraints | ✅ | ✅ (string types supported only, defining allowed relations to other group types not supported, and required attributes not supported) |
-| `GET /templates/devices/{templateId}` | Find device template by ID | ✅ | ✅ |
-| `PATCH /templates/devices/{templateId}` | Update an existing device template | ✅ | ✅ (see `POST /templates/devices/{templateId}`) |
-| `DELETE /templates/devices/{templateId}` | Deletes an existing device template | ✅ | ✅ (deleting a template will deprecate the Thing Type, not delete it) |
-| `PUT /templates/devices/{templateId}/publish` | Publishes an existing device template | ✅ | ⛔ |
+| `POST /templates/device/{templateId}` | Registers a new device template within the system, using the JSON Schema standard to define the device template attributes and constraints | ✅ | ✅ (string types supported only, defining allowed relations to other group types not supported, and required attributes not supported) |
+| `GET /templates/device/{templateId}` | Find device template by ID | ✅ | ✅ |
+| `PATCH /templates/device/{templateId}` | Update an existing device template | ✅ | ✅ (see `POST /templates/devices/{templateId}`) |
+| `DELETE /templates/device/{templateId}` | Deletes an existing device template | ✅ | ✅ (deleting a template will deprecate the Thing Type, not delete it) |
+| `PUT /templates/device/{templateId}/publish` | Publishes an existing device template | ✅ | ⛔ |
 
 ### Group Templates
 
 | Endpoint | Description | `full` mode | `lite` mode |
 |---|---|---|---|
-| `POST /templates/groups/{templateId}` | Registers a new group template within the system, using the JSON Schema standard to define the group template attributes and constraints | ✅ | ⛔ |
-| `GET /templates/groups/{templateId}` | Find group template by ID | ✅ | ⛔ |
-| `PATCH /templates/groups/{templateId}` | Update an existing group template | ✅ | ⛔ |
-| `DELETE /templates/groups/{templateId}` | Deletes an existing group template | ✅ | ⛔ |
-| `PUT /templates/groups/{templateId}/publish` | Publishes an existing group template | ✅ | ⛔ |
+| `POST /templates/group/{templateId}` | Registers a new group template within the system, using the JSON Schema standard to define the group template attributes and constraints | ✅ | ⛔ |
+| `GET /templates/group/{templateId}` | Find group template by ID | ✅ | ⛔ |
+| `PATCH /templates/group/{templateId}` | Update an existing group template | ✅ | ⛔ |
+| `DELETE /templates/group/{templateId}` | Deletes an existing group template | ✅ | ⛔ |
+| `PUT /templates/group/{templateId}/publish` | Publishes an existing group template | ✅ | ⛔ |
 
 ### Device Profiles
 
