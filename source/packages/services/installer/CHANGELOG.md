@@ -1,6 +1,13 @@
 # Change Log - @cdf/installer
 
-This log was last generated on Tue, 05 Jul 2022 01:23:08 GMT and should not be manually modified.
+This log was last generated on Tue, 05 Jul 2022 04:26:27 GMT and should not be manually modified.
+
+## 1.0.2
+Tue, 05 Jul 2022 04:26:27 GMT
+
+### Patches
+
+- cdf-cli can now be run from any subdirectory
 
 ## 1.0.1
 Tue, 05 Jul 2022 01:23:08 GMT
