@@ -15,9 +15,11 @@ import { ListrTask } from 'listr2';
 import { ModuleName, ServiceModule } from '../../../models/modules';
 import ow from 'ow';
 import inquirer from 'inquirer';
+import path from 'path';
 import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
 import { deleteStack, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
+import { getMonorepoRoot } from '../../../prompts/paths.prompt';
 
 export class AuthDeviceCertInstaller implements ServiceModule {
 
@@ -73,13 +75,15 @@ export class AuthDeviceCertInstaller implements ServiceModule {
   }
 
   public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [{
       title: `Packaging module '${this.name}'`,
       task: async () => {
         await packageAndUploadTemplate({
           answers: answers,
           serviceName: 'auth-devicecert',
-          templateFile: '../auth-devicecert/infrastructure/cfn-auth-devicecert.yaml',
+          templateFile: 'infrastructure/cfn-auth-devicecert.yaml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'auth-devicecert'),
           parameterOverrides: this.getParameterOverrides(answers),
         });
       },
@@ -95,6 +99,7 @@ export class AuthDeviceCertInstaller implements ServiceModule {
     ow(answers.environment, ow.string.nonEmpty);
     ow(answers.authDeviceCert, ow.object.nonEmpty);
 
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [];
 
     if ((answers.authDeviceCert.redeploy ?? true) === false) {
@@ -104,13 +109,12 @@ export class AuthDeviceCertInstaller implements ServiceModule {
     tasks.push({
       title: `Packaging and deploying stack '${this.stackName}'`,
       task: async () => {
-
-
         await packageAndDeployStack({
           answers: answers,
           stackName: this.stackName,
           serviceName: 'auth-devicecert',
-          templateFile: '../auth-devicecert/infrastructure/cfn-auth-devicecert.yaml',
+          templateFile: 'infrastructure/cfn-auth-devicecert.yaml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'auth-devicecert'),
           parameterOverrides: this.getParameterOverrides(answers),
           needsPackaging: true,
           needsCapabilityNamedIAM: true,

@@ -19,8 +19,10 @@ import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
 import { customDomainPrompt } from '../../../prompts/domain.prompt';
 import ow from 'ow';
+import path from 'path';
 import { deleteStack, getStackOutputs, getStackResourceSummaries, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
 import { includeOptionalModule } from '../../../utils/modules.util';
+import { getMonorepoRoot } from '../../../prompts/paths.prompt';
 
 export class CommandAndControlInstaller implements RestModule {
 
@@ -102,13 +104,15 @@ export class CommandAndControlInstaller implements RestModule {
 
 
   public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [{
       title: `Packaging module '${this.name}'`,
       task: async () => {
         await packageAndUploadTemplate({
           answers: answers,
           serviceName: 'commandandcontrol',
-          templateFile: '../command-and-control/infrastructure/cfn-command-and-control.yml',
+          templateFile: 'infrastructure/cfn-command-and-control.yml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'command-and-control'),
           parameterOverrides: this.getParameterOverrides(answers),
         });
       },
@@ -124,6 +128,7 @@ export class CommandAndControlInstaller implements RestModule {
     ow(answers.environment, ow.string.nonEmpty);
     ow(answers.s3.bucket, ow.string.nonEmpty);
 
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [];
 
     if ((answers.commandAndControl.redeploy ?? true) === false) {
@@ -146,13 +151,12 @@ export class CommandAndControlInstaller implements RestModule {
     tasks.push({
       title: `Packaging and deploying stack '${this.stackName}'`,
       task: async () => {
-
-
         await packageAndDeployStack({
           answers: answers,
           stackName: this.stackName,
           serviceName: 'commandandcontrol',
-          templateFile: '../command-and-control/infrastructure/cfn-command-and-control.yml',
+          templateFile: 'infrastructure/cfn-command-and-control.yml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'command-and-control'),
           parameterOverrides: this.getParameterOverrides(answers),
           needsPackaging: true,
           needsCapabilityNamedIAM: true,

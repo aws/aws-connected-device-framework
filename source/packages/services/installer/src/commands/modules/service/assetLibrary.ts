@@ -15,6 +15,7 @@ import { ListrTask } from 'listr2';
 import { ModuleName, RestModule, PostmanEnvironment } from '../../../models/modules';
 import inquirer from 'inquirer';
 import ow from 'ow';
+import path from 'path';
 import { customDomainPrompt } from '../../../prompts/domain.prompt';
 import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from '../../../prompts/applicationConfiguration.prompt';
@@ -23,6 +24,7 @@ import { enableAutoScaling, provisionedConcurrentExecutions } from '../../../pro
 import { getNeptuneInstancetypeList } from '../../../utils/instancetypes';
 import { includeOptionalModule } from '../../../utils/modules.util';
 import { ConfigBuilder } from '../../../utils/configBuilder';
+import { getMonorepoRoot } from '../../../prompts/paths.prompt';
 
 // CDF does not specify a Neptune engine version in its Cloudformation templates. When updating a CDF
 // deployment, the existing Neptune engine version remains unchanged, for new deployments the Neptune
@@ -36,7 +38,7 @@ const DEFAULT_NEPTUNE_INSTANCE_TYPE = 'db.r5.xlarge';
 
 export class AssetLibraryInstaller implements RestModule {
 
-  public readonly friendlyName = 'Asset Library';  
+  public readonly friendlyName = 'Asset Library';
   public readonly name = 'assetLibrary';
   public readonly localProjectDir = 'assetlibrary';
 
@@ -200,12 +202,14 @@ export class AssetLibraryInstaller implements RestModule {
   }
 
   public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [{
       title: `Packaging module '${this.name} [Neptune]'`,
       task: async () => {
         await packageAndUploadTemplate({
           answers: answers,
-          templateFile: '../assetlibrary/infrastructure/cfn-neptune.yaml',
+          templateFile: 'infrastructure/cfn-neptune.yaml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'assetlibrary'),
           parameterOverrides: this.getNeptuneParameterOverrides(answers),
           needsPackaging: false,
           serviceName: 'assetlibrary',
@@ -218,7 +222,8 @@ export class AssetLibraryInstaller implements RestModule {
         await packageAndUploadTemplate({
           answers: answers,
           serviceName: 'assetlibrary',
-          templateFile: '../assetlibrary/infrastructure/cfn-assetLibrary.yaml',
+          templateFile: 'infrastructure/cfn-assetLibrary.yaml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'assetlibrary'),
           parameterOverrides: this.getAssetLibraryParameterOverrides(answers),
         });
       },
@@ -275,6 +280,7 @@ export class AssetLibraryInstaller implements RestModule {
   }
 
   public async install(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [];
 
     ow(answers, ow.object.nonEmpty);
@@ -293,7 +299,8 @@ export class AssetLibraryInstaller implements RestModule {
             answers: answers,
             stackName: this.neptuneStackName,
             serviceName: 'assetlibrary',
-            templateFile: '../assetlibrary/infrastructure/cfn-neptune.yaml',
+            templateFile: 'infrastructure/cfn-neptune.yaml',
+            cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'assetlibrary'),
             parameterOverrides: this.getNeptuneParameterOverrides(answers),
             needsCapabilityNamedIAM: true,
           })
@@ -316,7 +323,8 @@ export class AssetLibraryInstaller implements RestModule {
           answers: answers,
           stackName: this.stackName,
           serviceName: 'assetlibrary',
-          templateFile: '../assetlibrary/infrastructure/cfn-assetLibrary.yaml',
+          templateFile: 'infrastructure/cfn-assetLibrary.yaml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'assetlibrary'),
           parameterOverrides: this.getAssetLibraryParameterOverrides(answers),
           needsPackaging: true,
           needsCapabilityNamedIAM: true,

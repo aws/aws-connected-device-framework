@@ -12,6 +12,7 @@
  *********************************************************************************************************************/
 import ow from 'ow';
 import inquirer from 'inquirer';
+import path from 'path';
 import { ListrTask } from 'listr2';
 import { Answers } from '../../../models/answers';
 import { ModuleName, ServiceModule } from '../../../models/modules';
@@ -19,6 +20,7 @@ import { ConfigBuilder } from "../../../utils/configBuilder";
 import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
 import { deleteStack, getStackResourceSummaries, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
+import { getMonorepoRoot } from '../../../prompts/paths.prompt';
 
 export class CertificateVendorInstaller implements ServiceModule {
 
@@ -207,13 +209,15 @@ export class CertificateVendorInstaller implements ServiceModule {
   }
 
   public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [{
       title: `Packaging module '${this.name}'`,
       task: async () => {
         await packageAndUploadTemplate({
           answers: answers,
           serviceName: 'certificatevendor',
-          templateFile: '../certificatevendor/infrastructure/cfn-certificatevendor.yml',
+          templateFile: 'infrastructure/cfn-certificatevendor.yml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'certificatevendor'),
           parameterOverrides: this.getParameterOverrides(answers),
         });
       },
@@ -229,6 +233,7 @@ export class CertificateVendorInstaller implements ServiceModule {
     ow(answers.environment, ow.string.nonEmpty);
     ow(answers.s3.bucket, ow.string.nonEmpty);
 
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [];
 
     if ((answers.certificateVendor.redeploy ?? true) === false) {
@@ -252,14 +257,12 @@ export class CertificateVendorInstaller implements ServiceModule {
     tasks.push({
       title: `Packaging and deploying stack '${this.stackName}'`,
       task: async () => {
-
-
-
         await packageAndDeployStack({
           answers: answers,
           stackName: this.stackName,
           serviceName: 'certificatevendor',
-          templateFile: '../certificatevendor/infrastructure/cfn-certificatevendor.yml',
+          templateFile: 'infrastructure/cfn-certificatevendor.yml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'certificatevendor'),
           parameterOverrides: this.getParameterOverrides(answers),
           needsPackaging: true,
           needsCapabilityNamedIAM: true,

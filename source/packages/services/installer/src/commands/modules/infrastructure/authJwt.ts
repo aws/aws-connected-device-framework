@@ -15,10 +15,12 @@ import { ListrTask } from 'listr2';
 import { ModuleName, InfrastructureModule } from '../../../models/modules';
 import ow from 'ow';
 import inquirer from 'inquirer';
+import path from 'path';
 import { CloudFormationClient, DescribeStacksCommand } from '@aws-sdk/client-cloudformation';
 import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
 import { deleteStack, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
+import { getMonorepoRoot } from '../../../prompts/paths.prompt';
 
 export class AuthJwtInstaller implements InfrastructureModule {
 
@@ -80,12 +82,14 @@ export class AuthJwtInstaller implements InfrastructureModule {
   }
 
   public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [{
       title: `Packaging '${this.name}'`,
       task: async () => {
         await packageAndUploadTemplate({
           answers: answers,
-          templateFile: '../auth-jwt/infrastructure/cfn-auth-jwt.yaml',
+          templateFile: 'infrastructure/cfn-auth-jwt.yaml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'auth-jwt'),
           parameterOverrides: this.getParameterOverrides(answers),
           serviceName: 'auth-jwt',
         });
@@ -102,6 +106,7 @@ export class AuthJwtInstaller implements InfrastructureModule {
     ow(answers.authJwt, ow.object.nonEmpty);
     ow(answers.authJwt.tokenIssuer, ow.string.nonEmpty);
 
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [];
 
     if ((answers.authJwt.redeploy ?? true)) {
@@ -113,7 +118,8 @@ export class AuthJwtInstaller implements InfrastructureModule {
             answers: answers,
             stackName: this.stackName,
             serviceName: 'auth-jwt',
-            templateFile: '../auth-jwt/infrastructure/cfn-auth-jwt.yaml',
+            templateFile: 'infrastructure/cfn-auth-jwt.yaml',
+            cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'auth-jwt'),
             parameterOverrides: this.getParameterOverrides(answers),
             needsPackaging: true,
             needsCapabilityNamedIAM: true,

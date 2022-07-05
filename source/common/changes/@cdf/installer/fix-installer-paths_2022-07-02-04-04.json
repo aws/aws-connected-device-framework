@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/installer",
+      "comment": "cdf-cli can now be run from any subdirectory",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/installer",
+  "email": "jonasneu@amazon.com"
+}

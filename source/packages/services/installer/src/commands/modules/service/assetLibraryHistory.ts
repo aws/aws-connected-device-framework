@@ -16,11 +16,12 @@ import { ModuleName, RestModule, PostmanEnvironment } from '../../../models/modu
 import { ConfigBuilder } from "../../../utils/configBuilder";
 import ow from 'ow';
 import inquirer from 'inquirer';
+import path from 'path';
 import { customDomainPrompt } from '../../../prompts/domain.prompt';
 import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
-
 import { deleteStack, getStackOutputs, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
+import { getMonorepoRoot } from '../../../prompts/paths.prompt';
 
 export class AssetLibraryHistoryInstaller implements RestModule {
 
@@ -85,13 +86,15 @@ export class AssetLibraryHistoryInstaller implements RestModule {
   }
 
   public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [{
       title: `Packaging module '${this.name}'`,
       task: async () => {
         await packageAndUploadTemplate({
           answers: answers,
           serviceName: 'assetlibrary-history',
-          templateFile: '../assetlibraryhistory/infrastructure/cfn-assetLibraryHistory.yml',
+          templateFile: 'infrastructure/cfn-assetLibraryHistory.yml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'assetlibraryhistory'),
           parameterOverrides: this.getParameterOverrides(answers),
         });
       },
@@ -106,6 +109,7 @@ export class AssetLibraryHistoryInstaller implements RestModule {
     ow(answers.environment, ow.string.nonEmpty);
     ow(answers.assetLibraryHistory, ow.object.nonEmpty);
 
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [];
 
     if ((answers.assetLibraryHistory.redeploy ?? true) === false) {
@@ -119,7 +123,8 @@ export class AssetLibraryHistoryInstaller implements RestModule {
           answers: answers,
           stackName: this.stackName,
           serviceName: 'assetlibrary-history',
-          templateFile: '../assetlibraryhistory/infrastructure/cfn-assetLibraryHistory.yml',
+          templateFile: 'infrastructure/cfn-assetLibraryHistory.yml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'assetlibraryhistory'),
           parameterOverrides: this.getParameterOverrides(answers),
           needsPackaging: true,
           needsCapabilityNamedIAM: true,

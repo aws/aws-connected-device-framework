@@ -13,6 +13,7 @@
 import inquirer from 'inquirer';
 import { ListrTask } from 'listr2';
 import ow from 'ow';
+import path from 'path';
 
 import { Answers } from '../../../models/answers';
 import { ModuleName, RestModule, PostmanEnvironment } from '../../../models/modules';
@@ -21,6 +22,7 @@ import { customDomainPrompt } from '../../../prompts/domain.prompt';
 import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
 import { deleteStack, getStackOutputs, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
+import { getMonorepoRoot } from '../../../prompts/paths.prompt';
 
 export class DevicePatcherInstaller implements RestModule {
 
@@ -86,13 +88,15 @@ export class DevicePatcherInstaller implements RestModule {
   }
 
   public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [{
       title: `Packaging module '${this.name}'`,
       task: async () => {
         await packageAndUploadTemplate({
           answers: answers,
           serviceName: 'device-patcher',
-          templateFile: '../device-patcher/infrastructure/cfn-device-patcher.yml',
+          templateFile: 'infrastructure/cfn-device-patcher.yml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'device-patcher'),
           parameterOverrides: this.getParameterOverrides(answers),
         });
       },
@@ -111,6 +115,7 @@ export class DevicePatcherInstaller implements RestModule {
     ow(answers.apigw.templateSnippetS3UriBase, ow.string.nonEmpty);
     ow(answers.apigw.cloudFormationTemplate, ow.string.nonEmpty);
 
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [];
 
     if ((answers.devicePatcher.redeploy ?? true) === false) {
@@ -124,7 +129,8 @@ export class DevicePatcherInstaller implements RestModule {
           answers: answers,
           stackName: this.stackName,
           serviceName: 'device-patcher',
-          templateFile: '../device-patcher/infrastructure/cfn-device-patcher.yml',
+          templateFile: 'infrastructure/cfn-device-patcher.yml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'device-patcher'),
           parameterOverrides: this.getParameterOverrides(answers),
           needsPackaging: true,
           needsCapabilityNamedIAM: true,

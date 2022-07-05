@@ -13,12 +13,14 @@
 import inquirer from 'inquirer';
 import { ListrTask } from 'listr2';
 import ow from 'ow';
+import path from 'path';
 import { Answers } from '../../../models/answers';
 import { ModuleName, ServiceModule } from '../../../models/modules';
 import { ConfigBuilder } from "../../../utils/configBuilder";
 import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
 import { deleteStack, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
+import { getMonorepoRoot } from '../../../prompts/paths.prompt';
 
 export class Greengrass2InstallerConfigGeneratorsInstaller implements ServiceModule {
 
@@ -99,13 +101,15 @@ export class Greengrass2InstallerConfigGeneratorsInstaller implements ServiceMod
   }
 
   public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [{
       title: `Packaging module '${this.name}'`,
       task: async () => {
         await packageAndUploadTemplate({
           answers: answers,
           serviceName: 'greengrass2-installer-config-generators',
-          templateFile: '../greengrass2-installer-config-generators/infrastructure/cfn-greengrass2-installer-config-generators.yml',
+          templateFile: 'infrastructure/cfn-greengrass2-installer-config-generators.yml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'greengrass2-installer-config-generators'),
           parameterOverrides: this.getParameterOverrides(answers),
         });
       },
@@ -120,7 +124,7 @@ export class Greengrass2InstallerConfigGeneratorsInstaller implements ServiceMod
     ow(answers.s3.bucket, ow.string.nonEmpty);
     ow(answers.deploymentHelper.lambdaArn, ow.string.nonEmpty);
 
-
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [];
 
     if ((answers.greengrass2InstallerConfigGenerators.redeploy ?? true) === false) {
@@ -134,7 +138,8 @@ export class Greengrass2InstallerConfigGeneratorsInstaller implements ServiceMod
           answers: answers,
           stackName: this.stackName,
           serviceName: 'greengrass2-installer-config-generators',
-          templateFile: '../greengrass2-installer-config-generators/infrastructure/cfn-greengrass2-installer-config-generators.yml',
+          templateFile: 'infrastructure/cfn-greengrass2-installer-config-generators.yml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'greengrass2-installer-config-generators'),
           parameterOverrides: this.getParameterOverrides(answers),
           needsPackaging: true,
           needsCapabilityNamedIAM: true,
