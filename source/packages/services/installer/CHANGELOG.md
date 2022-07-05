@@ -1,6 +1,13 @@
 # Change Log - @cdf/installer
 
-This log was last generated on Fri, 01 Jul 2022 21:16:11 GMT and should not be manually modified.
+This log was last generated on Tue, 05 Jul 2022 01:23:08 GMT and should not be manually modified.
+
+## 1.0.1
+Tue, 05 Jul 2022 01:23:08 GMT
+
+### Patches
+
+- correctly export APP_CONFIG in cdf-cli generate-local-config
 
 ## 1.0.0
 Fri, 01 Jul 2022 21:16:11 GMT
