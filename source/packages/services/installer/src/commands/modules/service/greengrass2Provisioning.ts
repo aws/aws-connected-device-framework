@@ -13,7 +13,7 @@
 import inquirer from 'inquirer';
 import { ListrTask } from 'listr2';
 import ow from 'ow';
-
+import path from 'path';
 
 import { Answers } from '../../../models/answers';
 import { ModuleName, RestModule, PostmanEnvironment } from '../../../models/modules';
@@ -24,6 +24,7 @@ import { applicationConfigurationPrompt } from "../../../prompts/applicationConf
 import { deleteStack, getStackOutputs, getStackResourceSummaries, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
 import { enableAutoScaling, provisionedConcurrentExecutions } from '../../../prompts/autoscaling.prompt';
 import { includeOptionalModule } from '../../../utils/modules.util';
+import { getMonorepoRoot } from '../../../prompts/paths.prompt';
 
 export class Greengrass2ProvisioningInstaller implements RestModule {
 
@@ -204,13 +205,15 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
   }
 
   public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [{
       title: `Packaging module '${this.name}'`,
       task: async () => {
         await packageAndUploadTemplate({
           answers: answers,
           serviceName: 'greengrass2-provisioning',
-          templateFile: '../greengrass2-provisioning/infrastructure/cfn-greengrass2-provisioning.yml',
+          templateFile: 'infrastructure/cfn-greengrass2-provisioning.yml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'greengrass2-provisioning'),
           parameterOverrides: this.getParameterOverrides(answers),
         });
       },
@@ -229,6 +232,7 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
     ow(answers.apigw.templateSnippetS3UriBase, ow.string.nonEmpty);
     ow(answers.apigw.cloudFormationTemplate, ow.string.nonEmpty);
 
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [];
 
     if ((answers.greengrass2Provisioning.redeploy ?? true) === false) {
@@ -262,7 +266,8 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
           answers: answers,
           stackName: this.stackName,
           serviceName: 'greengrass2-provisioning',
-          templateFile: '../greengrass2-provisioning/infrastructure/cfn-greengrass2-provisioning.yml',
+          templateFile: 'infrastructure/cfn-greengrass2-provisioning.yml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'greengrass2-provisioning'),
           parameterOverrides: this.getParameterOverrides(answers),
           needsPackaging: true,
           needsCapabilityNamedIAM: true,

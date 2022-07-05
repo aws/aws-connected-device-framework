@@ -19,8 +19,11 @@ import { customDomainPrompt } from '../../../prompts/domain.prompt';
 import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
 import ow from 'ow';
+import path from 'path';
 import { deleteStack, getStackOutputs, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
 import { Lambda } from '@aws-sdk/client-lambda';
+import { getMonorepoRoot } from '../../../prompts/paths.prompt';
+
 export class ProvisioningInstaller implements RestModule {
 
   public readonly friendlyName = 'Provisioning';
@@ -302,13 +305,15 @@ export class ProvisioningInstaller implements RestModule {
   }
 
   public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [{
       title: `Packaging module '${this.name}'`,
       task: async () => {
         await packageAndUploadTemplate({
           answers: answers,
           serviceName: 'provisioning',
-          templateFile: '../provisioning/infrastructure/cfn-provisioning.yml',
+          templateFile: 'infrastructure/cfn-provisioning.yml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'provisioning'),
           parameterOverrides: this.getParameterOverrides(answers)
         });
       },
@@ -327,6 +332,7 @@ export class ProvisioningInstaller implements RestModule {
     ow(answers.apigw.templateSnippetS3UriBase, ow.string.nonEmpty);
     ow(answers.apigw.cloudFormationTemplate, ow.string.nonEmpty);
 
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [];
 
     if ((answers.provisioning.redeploy ?? true) === false) {
@@ -346,7 +352,8 @@ export class ProvisioningInstaller implements RestModule {
           answers: answers,
           stackName: this.stackName,
           serviceName: 'provisioning',
-          templateFile: '../provisioning/infrastructure/cfn-provisioning.yml',
+          templateFile: 'infrastructure/cfn-provisioning.yml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'provisioning'),
           parameterOverrides: this.getParameterOverrides(answers),
           needsPackaging: true,
           needsCapabilityNamedIAM: true,

@@ -16,11 +16,13 @@ import { ModuleName, RestModule, PostmanEnvironment } from '../../../models/modu
 import { ConfigBuilder } from "../../../utils/configBuilder";
 import inquirer from 'inquirer';
 import ow from 'ow';
+import path from 'path';
 import { customDomainPrompt } from '../../../prompts/domain.prompt';
 import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
 import { Lambda } from '@aws-sdk/client-lambda'
 import { deleteStack, getStackOutputs, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
+import { getMonorepoRoot } from '../../../prompts/paths.prompt';
 
 export class BulkCertificatesInstaller implements RestModule {
 
@@ -261,13 +263,15 @@ export class BulkCertificatesInstaller implements RestModule {
   }
 
   public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [{
       title: `Packaging module '${this.name}'`,
       task: async () => {
         await packageAndUploadTemplate({
           answers: answers,
           serviceName: 'bulkcerts',
-          templateFile: '../bulkcerts/infrastructure/cfn-bulkcerts.yml',
+          templateFile: 'infrastructure/cfn-bulkcerts.yml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'bulkcerts'),
           parameterOverrides: this.getParameterOverrides(answers),
         });
       },
@@ -287,6 +291,7 @@ export class BulkCertificatesInstaller implements RestModule {
     ow(answers.openSsl?.arn, ow.string.nonEmpty);
     ow(answers.s3?.bucket, ow.string.nonEmpty);
 
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [];
 
     if ((answers.bulkCerts.redeploy ?? true) === false) {
@@ -300,7 +305,8 @@ export class BulkCertificatesInstaller implements RestModule {
           answers: answers,
           stackName: this.stackName,
           serviceName: 'bulkcerts',
-          templateFile: '../bulkcerts/infrastructure/cfn-bulkcerts.yml',
+          templateFile: 'infrastructure/cfn-bulkcerts.yml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'bulkcerts'),
           parameterOverrides: this.getParameterOverrides(answers),
           needsPackaging: true,
           needsCapabilityNamedIAM: true,

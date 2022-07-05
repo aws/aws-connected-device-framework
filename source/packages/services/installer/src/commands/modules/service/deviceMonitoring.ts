@@ -13,13 +13,14 @@
 import inquirer from 'inquirer';
 import { ListrTask } from 'listr2';
 import ow from 'ow';
-
+import path from 'path';
 import { Answers } from '../../../models/answers';
 import { ModuleName, ServiceModule } from '../../../models/modules';
 import { ConfigBuilder } from "../../../utils/configBuilder";
 import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
 import { deleteStack, getStackResourceSummaries, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
+import { getMonorepoRoot } from '../../../prompts/paths.prompt';
 
 export class DeviceMonitoringInstaller implements ServiceModule {
 
@@ -73,13 +74,15 @@ export class DeviceMonitoringInstaller implements ServiceModule {
 
 
   public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [{
       title: `Packaging module '${this.name}'`,
       task: async () => {
         await packageAndUploadTemplate({
           answers: answers,
           serviceName: 'device-monitoring',
-          templateFile: '../device-monitoring/infrastructure/cfn-device-monitoring.yml',
+          templateFile: 'infrastructure/cfn-device-monitoring.yml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'device-monitoring'),
           parameterOverrides: this.getParameterOverrides(answers),
         });
       },
@@ -95,6 +98,7 @@ export class DeviceMonitoringInstaller implements ServiceModule {
     ow(answers.environment, ow.string.nonEmpty);
     ow(answers.s3.bucket, ow.string.nonEmpty);
 
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [];
 
     if ((answers.deviceMonitoring.redeploy ?? true) === false) {
@@ -121,7 +125,8 @@ export class DeviceMonitoringInstaller implements ServiceModule {
           answers: answers,
           stackName: this.stackName,
           serviceName: 'device-monitoring',
-          templateFile: '../device-monitoring/infrastructure/cfn-device-monitoring.yml',
+          templateFile: 'infrastructure/cfn-device-monitoring.yml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'device-monitoring'),
           parameterOverrides: this.getParameterOverrides(answers),
           needsPackaging: true,
           needsCapabilityNamedIAM: true,

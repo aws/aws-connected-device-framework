@@ -19,8 +19,10 @@ import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
 import { customDomainPrompt } from '../../../prompts/domain.prompt';
 import ow from 'ow';
+import path from 'path';
 import { deleteStack, getStackOutputs, getStackResourceSummaries, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
 import { includeOptionalModule } from '../../../utils/modules.util';
+import { getMonorepoRoot } from '../../../prompts/paths.prompt';
 
 export class CommandsInstaller implements RestModule {
 
@@ -108,13 +110,15 @@ export class CommandsInstaller implements RestModule {
   }
 
   public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [{
       title: `Packaging module '${this.name}'`,
       task: async () => {
         await packageAndUploadTemplate({
           answers: answers,
           serviceName: 'commands',
-          templateFile: '../commands/infrastructure/cfn-commands.yml',
+          templateFile: 'infrastructure/cfn-commands.yml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'commands'),
           parameterOverrides: this.getParameterOverrides(answers),
         });
       },
@@ -130,6 +134,7 @@ export class CommandsInstaller implements RestModule {
     ow(answers.environment, ow.string.nonEmpty);
     ow(answers.s3.bucket, ow.string.nonEmpty);
 
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [];
 
     if ((answers.commands.redeploy ?? true) === false) {
@@ -157,7 +162,8 @@ export class CommandsInstaller implements RestModule {
           answers: answers,
           stackName: this.stackName,
           serviceName: 'commands',
-          templateFile: '../commands/infrastructure/cfn-commands.yml',
+          templateFile: 'infrastructure/cfn-commands.yml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'commands'),
           parameterOverrides: this.getParameterOverrides(answers),
           needsPackaging: true,
           needsCapabilityNamedIAM: true,

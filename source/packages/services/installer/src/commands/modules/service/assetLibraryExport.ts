@@ -16,9 +16,11 @@ import { ModuleName, ServiceModule } from '../../../models/modules';
 import { ConfigBuilder } from "../../../utils/configBuilder";
 import inquirer from 'inquirer';
 import ow from 'ow';
+import path from 'path';
 import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
 import { deleteStack, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
+import { getMonorepoRoot } from '../../../prompts/paths.prompt';
 
 export class AssetLibraryExportInstaller implements ServiceModule {
 
@@ -129,13 +131,15 @@ export class AssetLibraryExportInstaller implements ServiceModule {
   }
 
   public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [{
       title: `Packaging module '${this.name}'`,
       task: async () => {
         await packageAndUploadTemplate({
           answers: answers,
           serviceName: 'assetlibrary-export',
-          templateFile: '../assetlibrary-export/infrastructure/cfn-assetlibrary-export.yaml',
+          templateFile: 'infrastructure/cfn-assetlibrary-export.yaml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'assetlibrary-export'),
           parameterOverrides: this.getParameterOverrides(answers),
         });
       },
@@ -150,6 +154,7 @@ export class AssetLibraryExportInstaller implements ServiceModule {
     ow(answers.environment, ow.string.nonEmpty);
     ow(answers.assetLibraryExport, ow.object.nonEmpty);
 
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [];
 
     if ((answers.assetLibraryExport.redeploy ?? true) === false) {
@@ -166,7 +171,8 @@ export class AssetLibraryExportInstaller implements ServiceModule {
           answers: answers,
           stackName: this.stackName,
           serviceName: 'assetlibrary-export',
-          templateFile: '../assetlibrary-export/infrastructure/cfn-assetlibrary-export.yaml',
+          templateFile: 'infrastructure/cfn-assetlibrary-export.yaml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'assetlibrary-export'),
           parameterOverrides: this.getParameterOverrides(answers),
           needsPackaging: true,
           needsCapabilityNamedIAM: true,

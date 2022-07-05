@@ -13,13 +13,14 @@
 import inquirer from 'inquirer';
 import { ListrTask } from 'listr2';
 import ow from 'ow';
-
+import path from 'path';
 import { Answers } from '../../../models/answers';
 import { ModuleName, ServiceModule } from '../../../models/modules';
 import { ConfigBuilder } from "../../../utils/configBuilder";
 import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
 import { deleteStack, getStackResourceSummaries, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
+import { getMonorepoRoot } from '../../../prompts/paths.prompt';
 
 export class CertificateActivatorInstaller implements ServiceModule {
 
@@ -84,13 +85,15 @@ export class CertificateActivatorInstaller implements ServiceModule {
   }
 
   public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [{
       title: `Packaging module '${this.name}'`,
       task: async () => {
         await packageAndUploadTemplate({
           answers: answers,
           serviceName: 'certificateactivator',
-          templateFile: '../certificateactivator/infrastructure/cfn-certificateactivator.yml',
+          templateFile: 'infrastructure/cfn-certificateactivator.yml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'certificateactivator'),
           parameterOverrides: this.getParameterOverrides(answers)
         });
       },
@@ -106,6 +109,7 @@ export class CertificateActivatorInstaller implements ServiceModule {
     ow(answers.environment, ow.string.nonEmpty);
     ow(answers.s3.bucket, ow.string.nonEmpty);
 
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [];
 
     if ((answers.certificateActivator.redeploy ?? true) === false) {
@@ -134,7 +138,8 @@ export class CertificateActivatorInstaller implements ServiceModule {
           answers: answers,
           stackName: this.stackName,
           serviceName: 'certificateactivator',
-          templateFile: '../certificateactivator/infrastructure/cfn-certificateactivator.yml',
+          templateFile: 'infrastructure/cfn-certificateactivator.yml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'certificateactivator'),
           parameterOverrides: this.getParameterOverrides(answers),
           needsPackaging: true,
           needsCapabilityNamedIAM: true,

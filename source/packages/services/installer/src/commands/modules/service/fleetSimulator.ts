@@ -19,8 +19,9 @@ import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
 import { customDomainPrompt } from '../../../prompts/domain.prompt';
 import ow from 'ow';
+import path from 'path';
 import { deleteStack, getStackOutputs, getStackResourceSummaries, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
-
+import { getMonorepoRoot } from '../../../prompts/paths.prompt';
 
 export class FleetSimulatorInstaller implements RestModule {
 
@@ -149,13 +150,15 @@ export class FleetSimulatorInstaller implements RestModule {
   }
 
   public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [{
       title: `Packaging module '${this.name} [Simulation Launcher]'`,
       task: async () => {
         await packageAndUploadTemplate({
           answers: answers,
           serviceName: 'simulation-launcher',
-          templateFile: '../simulation-launcher/infrastructure/cfn-simulation-launcher.yaml',
+          templateFile: 'infrastructure/cfn-simulation-launcher.yaml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'simulation-launcher'),
           parameterOverrides: this.getSimulationLauncherOverrides(answers)
         });
       },
@@ -166,7 +169,8 @@ export class FleetSimulatorInstaller implements RestModule {
         await packageAndUploadTemplate({
           answers: answers,
           serviceName: 'simulation-manager',
-          templateFile: '../simulation-manager/infrastructure/cfn-simulation-manager.yml',
+          templateFile: 'infrastructure/cfn-simulation-manager.yml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'simulation-manager'),
           parameterOverrides: this.getSimulationManagerOverrides(answers)
         });
       },
@@ -182,6 +186,7 @@ export class FleetSimulatorInstaller implements RestModule {
     ow(answers.environment, ow.string.nonEmpty);
     ow(answers.s3.bucket, ow.string.nonEmpty);
 
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [];
 
     if ((answers.fleetSimulator.redeploy ?? true) === false) {
@@ -191,13 +196,12 @@ export class FleetSimulatorInstaller implements RestModule {
     tasks.push({
       title: `Packaging and deploying stack '${this.simulationLauncherStackName}'`,
       task: async () => {
-
-
         await packageAndDeployStack({
           answers: answers,
           stackName: this.simulationLauncherStackName,
           serviceName: 'simulation-launcher',
-          templateFile: '../simulation-launcher/infrastructure/cfn-simulation-launcher.yaml',
+          templateFile: 'infrastructure/cfn-simulation-launcher.yaml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'simulation-launcher'),
           parameterOverrides: this.getSimulationLauncherOverrides(answers),
           needsPackaging: true,
           needsCapabilityNamedIAM: true,
@@ -223,7 +227,8 @@ export class FleetSimulatorInstaller implements RestModule {
           answers: answers,
           stackName: this.simulationManagerStackName,
           serviceName: 'simulation-manager',
-          templateFile: '../simulation-manager/infrastructure/cfn-simulation-manager.yml',
+          templateFile: 'infrastructure/cfn-simulation-manager.yml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'simulation-manager'),
           parameterOverrides: this.getSimulationManagerOverrides(answers),
           needsPackaging: true,
           needsCapabilityNamedIAM: true,
