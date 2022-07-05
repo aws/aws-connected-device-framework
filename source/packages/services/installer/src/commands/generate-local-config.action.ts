@@ -80,9 +80,9 @@ async function generateLocalConfigAction (
     // convert the lambdas environment config as the .env application config file
     const overrides = environmentVariables['APP_CONFIG'];
     if (overrides) {
-      overrides.split('/n')
-        ?.map(o=> o.split('='))
-        ?.forEach(o=> environmentVariables[o[0] = environmentVariables[o[1]]]);
+      overrides.split('\n')
+        ?.map(o => o.trim().split('='))
+        ?.forEach(o => environmentVariables[o[0]] = o[1]);
       delete environmentVariables['APP_CONFIG'];
     }
 

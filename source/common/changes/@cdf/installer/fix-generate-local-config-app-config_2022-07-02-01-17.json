@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/installer",
+      "comment": "correctly export APP_CONFIG in cdf-cli generate-local-config",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/installer",
+  "email": "jonasneu@amazon.com"
+}
