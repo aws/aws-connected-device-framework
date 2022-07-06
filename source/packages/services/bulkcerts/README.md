@@ -288,11 +288,8 @@ Content-Type: application/vnd.aws-cdf-v1.0+json
 [ "url1", "url2", ... ]
 ```
 
-
-
 ## Useful Links
 
 - [Application configuration](docs/configuration.md)
 - [Swagger](docs/swagger.yml)
-
-
+- [High-level architecture diagram](docs/images/bulkcerts.hla.png)

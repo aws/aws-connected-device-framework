@@ -205,5 +205,5 @@ An example AWS IoT policy:
 
 ## Useful Links
 
-- [Application configuration](docs/configuration.md)
-  
+* [Application configuration](docs/configuration.md)
+* [High-level architecture diagram](docs/images/certificatevendor-hla.png)
