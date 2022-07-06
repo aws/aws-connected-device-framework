@@ -44,3 +44,4 @@ When using ACM PCA to create device certificates (see [CDF extensions to Provisi
 - [Application configuration](docs/configuration.md)
 - [Provisioning templates](docs/provisioning-templates.md)
 - [Swagger](docs/swagger.yml)
+- [High-level architecture diagram](docs/images/provisioning.hla.png)
