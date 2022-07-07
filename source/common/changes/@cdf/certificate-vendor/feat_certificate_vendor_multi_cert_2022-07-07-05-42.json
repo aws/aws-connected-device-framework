@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/certificate-vendor",
+      "comment": "added capability to rotate multiple certs for a particular device and also to inheret policies from the old certificate",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@cdf/certificate-vendor",
+  "email": "bahavar@amazon.com"
+}

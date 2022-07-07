@@ -35,12 +35,14 @@ exports.handler = async (event: CertificateRequestModel, _context: unknown) => {
     if (event.action===Action.get) {
       if (event.csr !== undefined) {
         ow(event.csr, ow.string.nonEmpty);
-        await service.getWithCsr(event.deviceId, event.csr);
+        const previousCertificateId = (event?.previousCertificateId) ? event?.previousCertificateId : null
+        await service.getWithCsr(event.deviceId, event.csr, previousCertificateId);
       } else {
         await service.get(event.deviceId);
       }
     } else if (event.action===Action.ack) {
-      await service.ack(event.deviceId, event.certId);
+      const previousCertificateId = (event?.previousCertificateId) ? event?.previousCertificateId : null
+      await service.ack(event.deviceId, event.certId, previousCertificateId);
     } else {
       logger.error(`Unrecognized action: ${event.action}`);
     }

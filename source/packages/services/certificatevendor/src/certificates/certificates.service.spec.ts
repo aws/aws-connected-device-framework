@@ -21,6 +21,8 @@ let mockedIot: AWS.Iot;
 let mockedIotData: AWS.IotData;
 let mockedS3: AWS.S3;
 let mockedSSM: AWS.SSM;
+const accountId = '12345678';
+const region = 'us-west-2'
 const s3Bucket = 'myBucket';
 const s3Prefix = 'certificates';
 const s3Suffix = '';
@@ -31,11 +33,13 @@ const mqttAckSuccessTopic = 'cdf/certificates/device123/ack/accepted';
 const mqttAckFailureTopic = 'cdf/certificates/device123/ack/rejected';
 const thingGroupName = 'myTestGroup';
 const caCertificateId = 'abcdef123456';
+const useDefaultPolicy = true;
 const rotateCertPolicy = 'UnitTestDevicePolicy';
 const certificateExpiryDays = 100;
 const deletePreviousCertificate = false;
 const certId = 'cert123456';
 let instance: CertificateService;
+let instance2: CertificateService;
 
 const deviceId = 'device123';
 const deviceCsr = '-----BEGIN CERTIFICATE REQUEST-----\nMIICrzCCAZcCAQAwajELMAkGA1UEBhMCVVMxCzAJBgNVBAgMAkNPMREwDwYDVQQH\nDAhNb3JyaXNvbjERMA8GA1UECgwIUmVkUm9ja3MxETAPBgNVBAsMCENvbmNlcnRz\nMRUwEwYDVQQDDAxBQkNERUZHMTIzNDUwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAw\nggEKAoIBAQDtE7E3LnSLzFxFds9a7gzhOxqu262DrECCJ6E53rkZUyL+JroJeq0c\nNKaCujgCroD/ai3n9ms4rDBT73JvX3B5jXMAdQNdNxyvQgLzofTN2PjCUeDlpZEG\ntAKajuu2a5PqereZhCBBaJ/wf3yQEuBX0we6hioqiwKqHC2nEDoOY7yyf/IVsgFT\nVfodbdiGH7dUre6r/77RfKQQr4sEyUkknN+csrCOkfh1/tZWxMdUR1if3aTVhVmq\nWgik3cHF2SMs4Au7wji5CvyF27OLVFZ20uQ6UzLzTwc+PQfQLK2WSyQ4TuRYFsLP\nT1zr2TbjPNhqSKDZuca/l06TvJC9VbRfAgMBAAGgADANBgkqhkiG9w0BAQsFAAOC\nAQEAllcm8mzXgvlsVW6bhs0ioFuF9C3jA+WLqnSN/8Qe+TQckPzwNhbsMtrCn47W\nupS9b+6no/YtYHL5dzFq8gsKhR3dJx61qsW+NS91TU4Hn2dVIrzDmaphQrEa6oVn\nTk/596Nlg/k18HQxP47HzM4vn2Jfk5nDz+j1gUMSgnAq0bYPO/aMu5RoVbMNlkII\ntYwdk8wOmY1SVAveNp9Cxox4aO3vCx2oxMLc4xDg2QDKKl+46Om1f1R6ZZ8pJwEG\nNSY9fu36JhFcJ6/9CiIcl4KhNPTmpibJtRqQOzQBK9KuzPbIoBlfDPGDlIq/R/to\n9GNPPZHz9yJ6VXqJjsCa1PEL/g==\n-----END CERTIFICATE REQUEST-----\n';
@@ -68,11 +72,18 @@ describe('CertificatesService', () => {
             return mockedSSM;
         };
 
-        instance = new CertificateService(s3Bucket, s3Prefix, s3Suffix, presignedUrlExpiresInSeconds,
+        instance = new CertificateService(accountId, region, s3Bucket, s3Prefix, s3Suffix, presignedUrlExpiresInSeconds,
             mqttGetSuccessTopic, mqttGetFailureTopic, mqttAckSuccessTopic, mqttAckFailureTopic,
-            thingGroupName, caCertificateId, rotateCertPolicy, certificateExpiryDays, deletePreviousCertificate,
+            thingGroupName, caCertificateId, useDefaultPolicy, rotateCertPolicy, certificateExpiryDays, deletePreviousCertificate,
+            mockedRegistryManager, mockedIotFactory, mockedIotDataFactory, mockedS3Factory, mockedSsmFactory);
+
+        instance2 = new CertificateService(accountId, region, s3Bucket, s3Prefix, s3Suffix, presignedUrlExpiresInSeconds,
+            mqttGetSuccessTopic, mqttGetFailureTopic, mqttAckSuccessTopic, mqttAckFailureTopic,
+            thingGroupName, caCertificateId, false, rotateCertPolicy, certificateExpiryDays, deletePreviousCertificate,
             mockedRegistryManager, mockedIotFactory, mockedIotDataFactory, mockedS3Factory, mockedSsmFactory);
     });
+
+    
 
     it('requesting certificate for non-whitelisted device returns error', async() => {
 
@@ -350,10 +361,10 @@ describe('CertificatesService', () => {
             };
         });
 
-        const attachPrincipalPolicy = {};
-        const mockedAttachPrincipalPolicy = mockedIot.attachPrincipalPolicy = jest.fn().mockImplementationOnce(()=> {
+        const attachPolicy = {};
+        const mockedAttachPolicy = mockedIot.attachPolicy = jest.fn().mockImplementationOnce(()=> {
             return {
-              promise: () => attachPrincipalPolicy
+              promise: () => attachPolicy
             };
         });
 
@@ -372,14 +383,124 @@ describe('CertificatesService', () => {
         expect(mockedGetParameter).toBeCalledWith({Name:`cdf-ca-key-${caCertificateId}`,WithDecryption:true});
         expect(mockedRegisterCert).toBeCalled();
         expect(mockedAttachThingPrincipal).toBeCalledWith({principal:'arn:aws:iot:us-west-2:xxxxxxxxxx:cert/aa889ee7a74458d6ef4595c50be546982c6cf30d29c32481556639723cf550ce',thingName:deviceId});
-        expect(mockedAttachPrincipalPolicy).toBeCalledWith({principal:'arn:aws:iot:us-west-2:xxxxxxxxxx:cert/aa889ee7a74458d6ef4595c50be546982c6cf30d29c32481556639723cf550ce',policyName:rotateCertPolicy});
+        expect(mockedAttachPolicy).toBeCalledWith({target:'arn:aws:iot:us-west-2:xxxxxxxxxx:cert/aa889ee7a74458d6ef4595c50be546982c6cf30d29c32481556639723cf550ce',policyName:rotateCertPolicy});
 
         const publishedCert = registerParams.certificatePem.replace(/\n/g, '\\n');
+        const cerificateId = "aa889ee7a74458d6ef4595c50be546982c6cf30d29c32481556639723cf550ce";
         const expectedPublish:AWS.IotData.Types.PublishRequest = {
-            payload: `{"certificate":"${publishedCert}"}`,
+            payload: `{"certificate":"${publishedCert}","certificateId":"${cerificateId}"}`,
             qos: 1,
             topic: mqttGetSuccessTopic
         };
+
+        expect(mockedPublish).toBeCalledWith(expectedPublish);
+    });
+
+    it('requesting certificate with CSR with inherited policies returns success', async() => {
+
+        // mocks
+        const mockedIsWhitelisted = mockedRegistryManager.isWhitelisted = jest.fn(_deviceId => Promise.resolve(true));
+
+        const caCert = {
+            certificateDescription: {
+                certificateArn: `arn:aws:iot:us-west-2:1234567890:cacert/${caCertificateId}`,
+                certificateId: caCertificateId,
+                status: 'ACTIVE',
+                certificatePem: caPem,
+                ownedBy: '1234567890',
+                autoRegistrationStatus: 'ENABLE',
+                customerVersion: 2,
+                generationId: caCertificateId
+            }
+        };
+        const mockedDescribeCaCertificate = mockedIot.describeCACertificate = jest.fn().mockImplementationOnce(()=> {
+            return {
+              promise: () => caCert
+            };
+        });
+
+        const ssmParam = {
+            Parameter: {
+                Name: `cdf-ca-key-${caCertificateId}`,
+                Type: 'SecureString',
+                Value: caKey,
+                Version: 1
+            }
+        };
+        const mockedGetParameter = mockedSSM.getParameter = jest.fn().mockImplementationOnce(()=> {
+            return {
+              promise: () => ssmParam
+            };
+        });
+
+        const registerCert = {
+            certificateArn: 'arn:aws:iot:us-west-2:xxxxxxxxxx:cert/aa889ee7a74458d6ef4595c50be546982c6cf30d29c32481556639723cf550ce',
+            certificateId: 'aa889ee7a74458d6ef4595c50be546982c6cf30d29c32481556639723cf550ce'
+        };
+
+
+        let registerParams = {caCertificatePem:'',certificatePem:''};
+        const mockedRegisterCert = mockedIot.registerCertificate = jest.fn().mockImplementationOnce((params)=> {
+            registerParams = params;
+            return {
+              promise: () => registerCert
+            };
+        });
+
+        const attachThingPrincipal = {};
+        const mockedAttachThingPrincipal = mockedIot.attachThingPrincipal = jest.fn().mockImplementationOnce(()=> {
+            return {
+              promise: () => attachThingPrincipal
+            };
+        });
+
+
+        const previousCertificateId = "aa889ee7a74458d6ef4595c50be546982c6cf30d29c32481556639723cf550ce";
+        const EffectivePolicies = {
+            effectivePolicies: [
+                {"policyName": "unitTestPolicy1"}
+            ]
+
+        }
+        const mockedgetEffectivePolicies = mockedIot.getEffectivePolicies = jest.fn().mockImplementationOnce(()=> {
+            return {
+              promise: () => EffectivePolicies
+            };
+        });
+        const attachPolicy = {};
+        const mockedAttachPolicy = mockedIot.attachPolicy = jest.fn().mockImplementationOnce(()=> {
+            return {
+              promise: () => attachPolicy
+            };
+        });
+
+        const mockedPublish = mockedIotData.publish = jest.fn().mockImplementationOnce(()=> {
+            return {
+              promise: () => new MockPublishResponse()
+            };
+        });
+
+        // execute
+        await instance2.getWithCsr(deviceId, deviceCsr, previousCertificateId);
+
+        // verify mocks were called correctly
+        expect(mockedIsWhitelisted).toBeCalledWith(deviceId);
+        expect(mockedDescribeCaCertificate).toBeCalledWith({certificateId:caCertificateId});
+        expect(mockedGetParameter).toBeCalledWith({Name:`cdf-ca-key-${caCertificateId}`,WithDecryption:true});
+        expect(mockedRegisterCert).toBeCalled();
+        expect(mockedAttachThingPrincipal).toBeCalledWith({principal:'arn:aws:iot:us-west-2:xxxxxxxxxx:cert/aa889ee7a74458d6ef4595c50be546982c6cf30d29c32481556639723cf550ce',thingName:deviceId});
+        expect(mockedgetEffectivePolicies).toBeCalledWith({principal:'arn:aws:iot:us-west-2:12345678:cert/aa889ee7a74458d6ef4595c50be546982c6cf30d29c32481556639723cf550ce'});
+        expect(mockedAttachPolicy).toBeCalledTimes(1);
+
+
+        const publishedCert = registerParams.certificatePem.replace(/\n/g, '\\n');
+        const cerificateId = "aa889ee7a74458d6ef4595c50be546982c6cf30d29c32481556639723cf550ce";
+        const expectedPublish:AWS.IotData.Types.PublishRequest = {
+            payload: `{"certificate":"${publishedCert}","certificateId":"${cerificateId}"}`,
+            qos: 1,
+            topic: mqttGetSuccessTopic
+        };
+
         expect(mockedPublish).toBeCalledWith(expectedPublish);
     });
 

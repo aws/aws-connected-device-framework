@@ -108,6 +108,18 @@ MQTT PUBLISH BODY:
 }
 ```
 
+Example MQTT message body sent from the device to the AWS IoT Gateway to retrieve a certificate based on a provided CSR. That inherits its policies from an existing certificate:
+
+```sh
+MQTT SUBSCRIBE TOPIC:     cdf/certificates/thing001/get/+
+MQTT PUBLISH TOPIC:       cdf/certificates/thing001/get
+MQTT PUBLISH BODY:        
+{
+    "previousCertificateId" : "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    "csr":"-----BEGIN CERTIFICATE REQUEST-----\nCSR CONTENT\n-----END CERTIFICATE REQUEST-----"
+}
+```
+
 Upon receiving the request, the CDF Certificate Vendor module validates that the device is approved to received a new certificate. The registry to be used, whether the AWS IoT Device Registry or the CDF Asset Library module, is configured as part of the initial deployment. This reference implementation determines whether something is approved by checking its existence. If these behavior needs to be enhanced, refer to `src/registry/assetlibrary.service.ts` / `src/registry/deviceregistry.service.ts`
 
 If approved, the CDF Certificate Vendor module checks for the presence of a CSR in the request. If provided, the CSR is used to create a new device certificate and returned to the device. If not present, teh CDF Certificate Vendor module proceeds to download the S3 Object Metadata associated with the certificate package to retrieve the `certificateId`, activates the certificate within AWS IoT, then constructs and returns a pre-signed url to the device for secure downloading of the certificate package.  Finally the device status is updated to activated.
@@ -130,6 +142,7 @@ Certificate requested by the device with a CSR:
 {
     "deviceId": "device123",
     "action": "get",
+    "certificateId" : "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", 
     "certificate": "-----BEGIN CERTIFICATE-----\nCERTIFICATE CONTENT\n-----END CERTIFICATE-----"
 }
 ```

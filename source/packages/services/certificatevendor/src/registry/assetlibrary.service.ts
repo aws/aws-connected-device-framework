@@ -25,7 +25,7 @@ export class AssetLibraryRegistryManager implements RegistryManager {
         @inject(ASSETLIBRARY_CLIENT_TYPES.DevicesService) private devices:DevicesService) {}
 
     public async isWhitelisted(deviceId:string, _attributes?:{ [key: string] : string | number | boolean }) : Promise<boolean> {
-        logger.debug(`certificates.service isWhitelisted: in: deviceId:${deviceId}`);
+        logger.debug(`registry.assetLibrary isWhitelisted: in: deviceId:${deviceId}`);
 
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
 
@@ -35,7 +35,8 @@ export class AssetLibraryRegistryManager implements RegistryManager {
             const device = await this.devices.getDeviceByID(deviceId);
             whitelisted = (device!==undefined);
         } catch (err) {
-            logger.debug(`certificates.service isWhitelisted: err:${err}`);
+            console.log('error:',err);
+            logger.debug(`registry.assetLibrary isWhitelisted: err:${err}`);
             if (err.message==='Not Found') {
                 return false;
             } else {

@@ -189,6 +189,7 @@ export interface CertificateVendor extends ServiceModuleAttributes {
   assetLibraryFunctionName?: string;
   providingCSRs?: boolean;
   caCertificateId?: string;
+  useDefaultPolicy?: boolean;
   rotatedCertificatePolicy?: string;
   // Application Configuration
   certificatesPrefix?: string;

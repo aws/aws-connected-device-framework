@@ -18,8 +18,8 @@ import ow from 'ow';
 import { Iot } from 'aws-sdk';
 import { CertificateResponseModel } from './certificates.models';
 import { UpdateCertificateRequest, DescribeCACertificateRequest, DescribeCACertificateResponse,
-         RegisterCertificateRequest, RegisterCertificateResponse, ListThingPrincipalsResponse, ListPrincipalPoliciesResponse,
-         AttachThingPrincipalRequest, AttachPrincipalPolicyRequest, ListPrincipalThingsResponse } from 'aws-sdk/clients/iot';
+         RegisterCertificateRequest, RegisterCertificateResponse, ListThingPrincipalsResponse,
+         AttachThingPrincipalRequest, ListPrincipalThingsResponse, GetEffectivePoliciesResponse, ListAttachedPoliciesResponse } from 'aws-sdk/clients/iot';
 import { RegistryManager } from '../registry/registry.interfaces';
 
 @injectable()
@@ -31,6 +31,8 @@ export class CertificateService {
     private ssm: AWS.SSM;
 
     constructor(
+        @inject('aws.accountId') private accountId: string,
+        @inject('aws.region') private region: string,
         @inject('aws.s3.certificates.bucket') private s3Bucket: string,
         @inject('aws.s3.certificates.prefix') private s3Prefix: string,
         @inject('aws.s3.certificates.suffix') private s3Suffix: string,
@@ -41,6 +43,7 @@ export class CertificateService {
         @inject('mqtt.topics.ack.failure') private mqttAckFailureTopic: string,
         @inject('aws.iot.thingGroup.rotateCertificates') private thingGroupName: string,
         @inject('certificates.caCertificateId') private caCertificateId: string,
+        @inject('policies.useDefaultPolicy') private useDefaultPolicy: boolean,
         @inject('policies.rotatedCertificatePolicy') private rotatedCertificatePolicy: string,
         @inject('defaults.certificates.certificateExpiryDays') private certificateExpiryDays: number,
         @inject('features.deletePreviousCertificate') private deletePreviousCertificate: boolean,
@@ -58,11 +61,11 @@ export class CertificateService {
     public async get(deviceId:string): Promise<void> {
         logger.debug(`certificates.service get: in: deviceId:${deviceId}`);
 
-        ow(deviceId, 'deviceId', ow.string.nonEmpty);
-
         const response:CertificateResponseModel = {};
 
         try {
+
+            ow(deviceId, 'deviceId', ow.string.nonEmpty);
 
             // ensure device is whitelisted
             if (await this.registry.isWhitelisted(deviceId)!==true) {
@@ -97,15 +100,13 @@ export class CertificateService {
 
     }
 
-    public async getWithCsr(deviceId:string, csr:string): Promise<void> {
-        logger.debug(`certificates.service getWithCsr: in: deviceId:${deviceId}, csr: ${csr}`);
-
-        ow(deviceId, 'deviceId', ow.string.nonEmpty);
-        ow(csr, ow.string.nonEmpty);
-
+    public async getWithCsr(deviceId:string, csr:string, previousCertificateId?:string): Promise<void> {
+        logger.debug(`certificates.service getWithCsr: in: deviceId:${deviceId}, csr: ${csr}, previousCertificateId: ${previousCertificateId}`);
         const response:CertificateResponseModel = {};
 
         try {
+            ow(deviceId, 'deviceId', ow.string.nonEmpty);
+            ow(csr, ow.string.nonEmpty);
 
             // ensure device is whitelisted
             if (await this.registry.isWhitelisted(deviceId)!==true) {
@@ -120,13 +121,14 @@ export class CertificateService {
             const certificateArn = await this.registerCertificate(caPem, certificate);
 
             await this.attachCertificateToThing(certificateArn, deviceId);
-            await this.attachPolicyToCertificate(certificateArn, this.rotatedCertificatePolicy);
+            await this.attachPolicyToCertificate(certificateArn, this.rotatedCertificatePolicy, previousCertificateId);
 
             // update asset library status
             await this.registry.updateAssetStatus(deviceId);
 
             // send success to the device
             response.certificate = certificate;
+            response.certificateId = certificateArn.split('/')[1];
             await this.publishResponse(this.mqttGetSuccessTopic, deviceId, response);
 
         } catch (err) {
@@ -140,8 +142,8 @@ export class CertificateService {
 
     }
 
-    public async ack(deviceId:string, certId: string): Promise<void> {
-        logger.debug(`certificates.service ack: in: deviceId:${deviceId}, certId: ${certId}`);
+    public async ack(deviceId:string, certId: string, previousCertificateId?:string): Promise<void> {
+        logger.debug(`certificates.service ack: in: deviceId:${deviceId}, certId: ${certId} previousCertificateId: ${previousCertificateId}`);
 
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
         ow(certId, ow.string.nonEmpty);
@@ -163,7 +165,7 @@ export class CertificateService {
             await this.iot.removeThingFromThingGroup(params).promise();
 
             if (this.deletePreviousCertificate) {
-                await this.removePrevousCertificate(deviceId, certId);
+                await this.removePreviousCertificate(deviceId, certId,previousCertificateId);
             }
 
             // send success to the device
@@ -356,15 +358,35 @@ export class CertificateService {
         logger.debug('certificates.service attachCertificateToThing: exit:');
     }
 
-    private async attachPolicyToCertificate(certificateArn:string, policy: string) : Promise<void> {
-        logger.debug(`certificates.service attachPolicyToCertificate: in: certificateArn: ${certificateArn}, policy:${policy}`);
-        const params: AttachPrincipalPolicyRequest = {
-            principal: certificateArn,
-            policyName: policy
-        };
+    private async attachPolicyToCertificate(certificateArn:string, policy: string, previousCertificateId:string) : Promise<void> {
+        logger.debug(`certificates.service attachPolicyToCertificate: in: certificateArn: ${certificateArn}, policy:${policy}, previousCertificateId: ${previousCertificateId}, defaultPolicy:${this.rotatedCertificatePolicy}, useDefaultPolicy: ${this.useDefaultPolicy}`);
+        const params=[];
+        // Attach all policies associated with the previous certificate
+        if(previousCertificateId && !this.useDefaultPolicy){
+            logger.debug(`certificates.service attachPolicyToCertificate: Attaching inherited policies`);
+            const policies = await this.getEffectivePolicies(previousCertificateId);
+            for (const policy of policies.effectivePolicies) {
+                const param: Iot.AttachPolicyRequest = {
+                    target: certificateArn,
+                    policyName: policy.policyName
+                };
+                params.push(param);
+            }
+        }else{
+            // Attach the default policy
+            logger.debug(`certificates.service attachPolicyToCertificate: Attaching the default policy`);
+            const param: Iot.AttachPolicyRequest = {
+                target: certificateArn,
+                policyName: policy
+            };
+            params.push(param);
+    }
 
         try {
-            await this.iot.attachPrincipalPolicy(params).promise();
+            for (const param of params) {
+                await this.iot.attachPolicy(param).promise();
+            }
+            
         } catch (err) {
             logger.debug(`certificates.service attachPolicyToCertificate: err:${err}`);
             throw new Error('UNABLE_TO_ATTACH_POLICY');
@@ -373,31 +395,53 @@ export class CertificateService {
         logger.debug('certificates.service attachPolicyToCertificate: exit:');
     }
 
-    private async removePrevousCertificate(deviceId: string, certId: string): Promise<void> {
-        logger.debug(`certificates.service removePrevousCertificate: in: deviceId: ${deviceId}, certId:${certId}`);
-
+    private async removePreviousCertificate(deviceId: string, certId: string, previousCertificateId?: string): Promise<void> {
+        logger.debug(`certificates.service removePreviousCertificate: in: deviceId: ${deviceId}, certId:${certId}, previousCertificateId: ${previousCertificateId}`);
         const thingPrincipals: ListThingPrincipalsResponse = await this.iot.listThingPrincipals({thingName: deviceId}).promise();
         for (const principal of thingPrincipals.principals) {
             if (principal.includes(certId)) {
                 // this is the currently connected certificate, do not remove
                 continue;
+            } else if(previousCertificateId && !principal.includes(previousCertificateId)){
+                // Only delete the specified certificate
+                continue;
             }
 
+            
             await this.iot.detachThingPrincipal({thingName: deviceId, principal}).promise();
 
             const princpalThings: ListPrincipalThingsResponse = await this.iot.listPrincipalThings({principal}).promise();
             // delete this cert if no longer attached to any things
             if (princpalThings.things.length === 0) {
                 const certificateId = principal.split('/')[1];
-                const princpalPolicies: ListPrincipalPoliciesResponse = await this.iot.listPrincipalPolicies({principal}).promise();
+                const target = `arn:aws:iot:${this.region}:${this.accountId}:cert/${certificateId}`;
+                // const princpalPolicies: ListPrincipalPoliciesResponse = await this.iot.listPrincipalPolicies({principal}).promise();
+                const princpalPolicies: ListAttachedPoliciesResponse = await this.iot.listAttachedPolicies({target}).promise();
                 for (const policy of princpalPolicies.policies) {
-                    await this.iot.detachPrincipalPolicy({principal, policyName: policy.policyName}).promise();
+                    // await this.iot.detachPrincipalPolicy({principal, policyName: policy.policyName}).promise();
+                    await this.iot.detachPolicy({target, policyName: policy.policyName}).promise();
                 }
                 await this.iot.updateCertificate({certificateId, newStatus: 'INACTIVE'}).promise();
                 await this.iot.deleteCertificate({certificateId}).promise();
             }
         }
 
-        logger.debug('certificates.service removePrevousCertificate: exit:');
+        logger.debug('certificates.service removePreviousCertificate: exit:');
     }
+
+    private async getEffectivePolicies(certId:string): Promise <GetEffectivePoliciesResponse > {
+        
+        logger.debug(`certificates.service getEffectivePolicies: in: certId:${certId}`);
+        const params = {
+            principal : `arn:aws:iot:${this.region}:${this.accountId}:cert/${certId}`
+        }
+        
+        const policies = await this.iot.getEffectivePolicies(params).promise();
+
+        logger.debug(`certificates.service getEffectivePolicies: exit !!!`);
+        
+        return policies
+
+    }
+
 }
