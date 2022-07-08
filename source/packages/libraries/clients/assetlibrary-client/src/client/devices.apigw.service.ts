@@ -227,6 +227,25 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
             .set(this.buildHeaders(additionalHeaders));
     }
 
+    async detachFromDevices(deviceId: string, relationship: string, additionalHeaders?:RequestHeaders): Promise<void> {
+        ow(deviceId, 'deviceId', ow.string.nonEmpty);
+
+        if (relationship===undefined) {
+            relationship = '*';
+        }
+
+        const url = `${this.baseUrl}${super.deviceAttachedDevicesRelativeUrl(deviceId, relationship)}`;
+
+        await request.delete(url)
+            .set(this.buildHeaders(additionalHeaders));
+    }
+
+    async detachFromAllDevices(deviceId: string, additionalHeaders?:RequestHeaders): Promise<void> {
+        ow(deviceId, 'deviceId', ow.string.nonEmpty);
+
+        await this.detachFromDevices(deviceId, undefined, additionalHeaders);
+    }
+
     /**
      * Removes a device from an associated device
      *
@@ -263,6 +282,22 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
 
         await request.delete(url)
             .set(this.buildHeaders(additionalHeaders));
+    }
+
+    async detachFromGroups(deviceId: string, relationship: string, additionalHeaders?:RequestHeaders): Promise<void> {
+        ow(deviceId, 'deviceId', ow.string.nonEmpty);
+        if (relationship===undefined) {
+            relationship = '*';
+        }
+
+        const url = `${this.baseUrl}${super.deviceAttachedGroupsRelativeUrl(deviceId, relationship)}`;
+
+        await request.delete(url)
+            .set(this.buildHeaders(additionalHeaders));
+    }
+
+    async detachFromAllGroups(deviceId: string, additionalHeaders?:RequestHeaders): Promise<void> {
+        await this.detachFromGroups(deviceId, undefined, additionalHeaders);
     }
 
     /**

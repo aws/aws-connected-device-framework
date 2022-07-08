@@ -16,12 +16,15 @@ import ow from 'ow';
 
 import { AuthzServiceFull } from '../authz/authz.full.service';
 import { ClaimAccess } from '../authz/claims';
-import { RelatedEntityArrayMap, SortKeys, DirectionToRelatedEntityArrayMap, RelationDirection, OmniRelationDirection } from '../data/model';
+import {
+    DirectionToRelatedEntityArrayMap, OmniRelationDirection, RelatedEntityArrayMap,
+    RelationDirection, SortKeys
+} from '../data/model';
 import { Node } from '../data/node';
 import { TYPES } from '../di/types';
 import { Event, EventEmitter, Type } from '../events/eventEmitter.service';
 import { GroupsAssembler } from '../groups/groups.assembler';
-import { GroupItemList } from '../groups/groups.models';
+import { GroupItemList, GroupItem } from '../groups/groups.models';
 import { GroupsService } from '../groups/groups.service';
 import { DeviceProfileItem } from '../profiles/profiles.models';
 import { ProfilesService } from '../profiles/profiles.service';
@@ -29,7 +32,10 @@ import { Operation, TypeCategory } from '../types/constants';
 import { SchemaValidatorService } from '../types/schemaValidator.full.service';
 import { TypeDefinitionStatus } from '../types/types.models';
 import { TypesService } from '../types/types.service';
-import { DeviceNotFoundError, GroupNotFoundError, RelationValidationError, ProfileNotFoundError, SchemaValidationError, TemplateNotFoundError } from '../utils/errors';
+import {
+    DeviceNotFoundError, GroupNotFoundError, ProfileNotFoundError, RelationValidationError,
+    SchemaValidationError, TemplateNotFoundError
+} from '../utils/errors';
 import { logger } from '../utils/logger';
 import { TypeUtils } from '../utils/typeUtils';
 import { DevicesAssembler } from './devices.assembler';
@@ -66,9 +72,6 @@ export class DevicesServiceFull implements DevicesService {
         if (direction===undefined || direction===null) {
             direction = 'both';
         }
-        if (state===undefined || state===null) {
-            state = 'active';
-        }
         if (template===undefined || template===null) {
             template=TypeCategory.Device;
         }
@@ -77,7 +80,7 @@ export class DevicesServiceFull implements DevicesService {
         deviceId=deviceId.toLowerCase();
         relationship=relationship.toLowerCase();
         template=template.toLowerCase();
-        state=state.toLowerCase();
+        state=state?.toLowerCase();
         direction=direction.toLowerCase() as OmniRelationDirection;
 
         await this.authServiceFull.authorizationCheck([deviceId], [], ClaimAccess.R);
@@ -87,7 +90,11 @@ export class DevicesServiceFull implements DevicesService {
         const offsetAsInt = this.typeUtils.parseInt(offset);
         const countAsInt = this.typeUtils.parseInt(count);
 
-        const result  = await this.devicesDao.listRelated(deviceId, relationship, direction, template, {state}, offsetAsInt, countAsInt, sort);
+        const filteredBy = {};
+        if (state) {
+            filteredBy['state'] = state;
+        }
+        const result  = await this.devicesDao.listRelated(deviceId, relationship, direction, template, filteredBy, offsetAsInt, countAsInt, sort);
 
         const model = this.devicesAssembler.toRelatedDeviceModelsList(result, offsetAsInt, countAsInt);
         logger.debug(`devices.full.service listRelatedDevices: exit: model: ${JSON.stringify(model)}`);
@@ -621,6 +628,40 @@ export class DevicesServiceFull implements DevicesService {
         logger.debug(`device.full.service detachFromGroup: exit:`);
     }
 
+    public async detachFromGroups(deviceId:string, relationship?:string, direction?:RelationDirection) : Promise<void>{
+        logger.debug(`device.full.service detachFromGroups: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}`);
+
+        ow(deviceId, 'deviceId', ow.string.nonEmpty);
+        if (direction) {
+            ow(direction,'direction', ow.string.oneOf(['in','out']));
+        }
+
+        // any ids need to be lowercase
+        deviceId = deviceId.toLowerCase();
+        relationship = relationship?.toLowerCase();
+
+        // ensure user has access to the device
+        await this.authServiceFull.authorizationCheck([deviceId], undefined, ClaimAccess.U);
+
+        // get a list of all the attached groups
+        const groups:GroupItem[]=[];
+        let offset = 0;
+        const count = 20;
+        let g = await this.listRelatedGroups(deviceId, relationship, direction, undefined, offset, count, undefined);
+        while ((g?.results?.length??0)>0) {
+            groups.push(...g.results);
+            offset = offset + count;
+            g = await this.listRelatedGroups(deviceId, relationship, direction, undefined, offset, count, undefined);
+        }
+
+        // remove all the associations
+        for (const g of groups) {
+            await this.devicesDao.detachFromGroup(deviceId, g.relation, g.direction, g.groupPath);
+        }
+
+        logger.debug(`device.full.service detachFromGroups: exit:`);
+    }
+
     public async attachToDevice(deviceId:string, relationship:string, direction:RelationDirection, otherDeviceId:string): Promise<void> {
         logger.debug(`device.full.service attachToDevice: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, otherDeviceId:${otherDeviceId}`);
 
@@ -731,6 +772,40 @@ export class DevicesServiceFull implements DevicesService {
         });
 
         logger.debug(`device.full.service detachFromDevice: exit:`);
+    }
+
+    public async detachFromDevices(deviceId:string, relationship?:string, direction?:RelationDirection) : Promise<void>{
+        logger.debug(`device.full.service detachFromDevices: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}`);
+
+        ow(deviceId, 'deviceId', ow.string.nonEmpty);
+        if (direction) {
+            ow(direction,'direction', ow.string.oneOf(['in','out']));
+        }
+
+        // any ids need to be lowercase
+        deviceId = deviceId.toLowerCase();
+        relationship = relationship?.toLowerCase();
+
+        // ensure user has access to the device
+        await this.authServiceFull.authorizationCheck([deviceId], undefined, ClaimAccess.U);
+
+        // get a list of all the attached devices
+        const devices:DeviceItem[]=[];
+        let offset = 0;
+        const count = 20;
+        let d = await this.listRelatedDevices(deviceId, relationship, direction, undefined, undefined, offset, count, undefined);
+        while ((d?.results?.length??0)>0) {
+            devices.push(...d.results);
+            offset = offset + count;
+            d = await this.listRelatedDevices(deviceId, relationship, direction, undefined, undefined, offset, count, undefined);
+        }
+
+        // remove all the associations
+        for (const d of devices) {
+            await this.devicesDao.detachFromDevice(deviceId, d.relation, d.direction, d.deviceId);
+        }
+
+        logger.debug(`device.full.service detachFromDevices: exit:`);
     }
 
     public async updateComponent(deviceId:string, componentId:string, component:DeviceItem) : Promise<void> {

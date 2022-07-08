@@ -21,6 +21,7 @@ import { BaseDaoFull } from '../data/base.full.dao';
 import { CommonDaoFull } from '../data/common.full.dao';
 import {EntityTypeMap} from '../data/model';
 import { isRelatedEntityDto, isVertexDto, RelatedEntityDto, VertexDto } from '../data/full.model';
+import { Claims } from '../authz/claims';
 
 const __ = process.statics;
 
@@ -31,7 +32,8 @@ export class DevicesDaoFull extends BaseDaoFull {
         @inject('neptuneUrl') neptuneUrl: string,
         @inject(TYPES.CommonDao) private commonDao: CommonDaoFull,
         @inject(TYPES.FullAssembler) private fullAssembler: FullAssembler,
-	    @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph
+	    @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph,
+        @inject('authorization.enabled') private isAuthzEnabled: boolean
     ) {
         super(neptuneUrl, graphSourceFactory);
     }
@@ -40,7 +42,13 @@ export class DevicesDaoFull extends BaseDaoFull {
         logger.debug(`devices.full.dao listRelated: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, template:${template}, filterRelatedBy:${JSON.stringify(filterRelatedBy)}, offset:${offset}, count:${count}, sort:${sort}`);
 
         const id = `device___${deviceId}`;
-        return await this.commonDao.listRelated(id, relationship, direction, template, filterRelatedBy, offset, count, sort);
+
+        let authorizedPaths:string[];
+        if (this.isAuthzEnabled) {
+            authorizedPaths = Claims.getInstance().listPaths();
+        }
+
+        return await this.commonDao.listRelated(id, relationship, direction, template, filterRelatedBy, offset, count, sort, authorizedPaths);
 
     }
 
@@ -347,13 +355,11 @@ export class DevicesDaoFull extends BaseDaoFull {
 
         const conn = super.getConnection();
         try {
-            const result = await conn.traversal.V(sourceId).as('source').
+            await conn.traversal.V(sourceId).as('source').
                 outE(relationship).as('edge').
                 inV().has(process.t.id, targetId).as('target').
                 select('edge').dedup().drop().
                 iterate();
-
-            logger.debug(`devices.full.dao detachFromGroup: result:${JSON.stringify(result)}`);
         } finally {
             await conn.close();
         }

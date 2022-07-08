@@ -90,6 +90,21 @@ export interface DevicesService {
     detachFromDevice(deviceId: string, relationship: string, otherDeviceId: string, additionalHeaders?:RequestHeaders): Promise<void>;
 
     /**
+     * Removes a devices from associated devices
+     *
+     * @param deviceId Id of device to attach to the group
+     * @param relationship The relationship between the device and group. For example, this may reflect &#x60;locatedAt&#x60; or &#x60;manufacturedAt&#x60; relations.
+     */
+    detachFromDevices(deviceId: string, relationship: string, additionalHeaders?:RequestHeaders): Promise<void>;
+
+    /**
+     * Removes a device from associated devices
+     *
+     * @param deviceId Id of device to attach to the group
+     */
+    detachFromAllDevices(deviceId: string, additionalHeaders?:RequestHeaders): Promise<void>;
+
+    /**
      * Removes a device from an associated group
      *
      * @param deviceId Id of device to attach to the group
@@ -97,6 +112,21 @@ export interface DevicesService {
      * @param groupPath Path of group.
      */
     detachFromGroup(deviceId: string, relationship: string, groupPath: string, additionalHeaders?:RequestHeaders): Promise<void>;
+
+    /**
+     * Removes a device from all groups, associated via a specific relation
+     *
+     * @param deviceId Id of device to attach to the group
+     * @param relationship The relationship between the device and group. For example, this may reflect &#x60;locatedAt&#x60; or &#x60;manufacturedAt&#x60; relations.
+     */
+    detachFromGroups(deviceId: string, relationship: string, additionalHeaders?:RequestHeaders): Promise<void>;
+
+    /**
+     * Removes a device from all its associated groups
+     *
+     * @param deviceId Id of device to attach to the group
+     */
+    detachFromAllGroups(deviceId: string, additionalHeaders?:RequestHeaders): Promise<void>;
 
     /**
      * Find device by ID
@@ -146,12 +176,20 @@ export class DevicesServiceBase extends ClientServiceBase {
         return PathHelper.encodeUrl('devices', deviceId);
     }
 
+    protected deviceAttachedDevicesRelativeUrl(deviceId: string, relationship: string) : string {
+        return PathHelper.encodeUrl('devices', deviceId, relationship, 'devices');
+    }
+
     protected deviceAttachedDeviceRelativeUrl(deviceId: string, relationship: string, otherDeviceId: string) : string {
         return PathHelper.encodeUrl('devices', deviceId, relationship, 'devices', otherDeviceId);
     }
 
     protected deviceAttachedDirectionalDeviceRelativeUrl(deviceId: string, relationship: string, direction:string, otherDeviceId: string) : string {
         return PathHelper.encodeUrl('devices', deviceId, relationship, direction, 'devices', otherDeviceId);
+    }
+
+    protected deviceAttachedGroupsRelativeUrl(deviceId: string, relationship: string) : string {
+        return PathHelper.encodeUrl('devices', deviceId, relationship, 'groups');
     }
 
     protected deviceAttachedGroupRelativeUrl(deviceId: string, relationship: string, groupPath: string) : string {

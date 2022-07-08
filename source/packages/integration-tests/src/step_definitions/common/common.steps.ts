@@ -11,12 +11,16 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import { expect } from 'chai';
+import chai, { expect } from 'chai';
 import { Given, setDefaultTimeout, DataTable, Then, When } from '@cucumber/cucumber';
 import { JSONPath } from 'jsonpath-plus';
 import { sign } from 'jsonwebtoken';
+import deepEqualInAnyOrder from 'deep-equal-in-any-order';
 
 import { Readable } from "stream";
+
+chai.use(deepEqualInAnyOrder);
+
 
 setDefaultTimeout(10 * 1000);
 
@@ -105,6 +109,9 @@ export function validateExpectedAttributes<T>(model: T, data: DataTable, world?:
         } else if (expected.startsWith('{') && expected.endsWith('}')) {
             const json = JSON.parse(expected);
             expect(actual?.[0], expandedKey).to.deep.eq(json);
+        } else if (expected.startsWith('___deepEqualInAnyOrder___ ')) {
+            const json = JSON.parse(expected.replace('___deepEqualInAnyOrder___ ',''));
+            expect(actual?.[0], expandedKey).to.deep.equalInAnyOrder(json);
         } else {
             expect(String(actual?.[0]), expandedKey).to.eq(expected);
         }

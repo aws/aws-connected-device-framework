@@ -142,7 +142,7 @@ export class SearchDaoFull extends BaseDaoFull {
         }
 
         // if authz is enabled, only return results that the user is authorized to view
-        if (authorizedPaths!==undefined && authorizedPaths.length>0) {
+        if ((authorizedPaths?.length??0)>0) {
 
             // must reset all traversals so far as we need to use simplePath when FGAC is enabled to prevent cyclic checks
             traverser.select('a').dedup().fold().unfold().as('a');

@@ -34,9 +34,13 @@ export interface DevicesService {
 
     detachFromGroup(deviceId:string, relationship:string, direction:string, groupPath:string) : Promise<void> ;
 
+    detachFromGroups(deviceId:string, template?:string, relationship?:string, direction?:string) : Promise<void> ;
+
     attachToDevice(deviceId:string, relationship:string, direction:string,  otherDeviceId:string) : Promise<void> ;
 
     detachFromDevice(deviceId:string, relationship:string, direction:string, otherDeviceId:string) : Promise<void> ;
+
+    detachFromDevices(deviceId:string, template?:string, relationship?:string, direction?:string) : Promise<void> ;
 
     updateComponent(deviceId:string, componentId:string, model:DeviceItem) : Promise<void> ;
 
