@@ -18,13 +18,14 @@ import { AuthzServiceFull } from '../authz/authz.full.service';
 import { ClaimAccess } from '../authz/claims';
 import {
     DirectionToRelatedEntityArrayMap, OmniRelationDirection, RelatedEntityArrayMap,
+    RelatedEntityIdentifer,
     RelationDirection, SortKeys
 } from '../data/model';
 import { Node } from '../data/node';
 import { TYPES } from '../di/types';
 import { Event, EventEmitter, Type } from '../events/eventEmitter.service';
 import { GroupsAssembler } from '../groups/groups.assembler';
-import { GroupItemList, GroupItem } from '../groups/groups.models';
+import { GroupItemList } from '../groups/groups.models';
 import { GroupsService } from '../groups/groups.service';
 import { DeviceProfileItem } from '../profiles/profiles.models';
 import { ProfilesService } from '../profiles/profiles.service';
@@ -611,7 +612,7 @@ export class DevicesServiceFull implements DevicesService {
         await this.authServiceFull.authorizationCheck([deviceId], [groupPath], ClaimAccess.U);
 
         // Save to datastore
-        await this.devicesDao.detachFromGroup(deviceId, relationship, direction, groupPath);
+        await this.devicesDao.detachFromGroups(deviceId, [{relationship,direction,targetId:groupPath}]);
 
         // fire event
         await this.eventEmitter.fire({
@@ -643,20 +644,33 @@ export class DevicesServiceFull implements DevicesService {
         // ensure user has access to the device
         await this.authServiceFull.authorizationCheck([deviceId], undefined, ClaimAccess.U);
 
-        // get a list of all the attached groups
-        const groups:GroupItem[]=[];
+        // get a list of all the attached groups (permissions check is carried out as part of `listRelatedGroups` call)
         let offset = 0;
         const count = 20;
         let g = await this.listRelatedGroups(deviceId, relationship, direction, undefined, offset, count, undefined);
         while ((g?.results?.length??0)>0) {
-            groups.push(...g.results);
+            const relations:RelatedEntityIdentifer[]=[];
+            relations.push(...g.results.map(r=> ({relationship:r.relation, direction:r.direction, targetId:r.groupPath})));
+
+            // remove the associations
+            await this.devicesDao.detachFromGroups(deviceId, relations);
+
+            // fire change events
+            relations.forEach(async r=> {
+                await this.eventEmitter.fire({
+                    objectId: deviceId,
+                    type: Type.device,
+                    event: Event.modify,
+                    attributes: {
+                        deviceId,
+                        detachedFromGroup: r.targetId,
+                        relationship
+                    }
+                });
+            });
+
             offset = offset + count;
             g = await this.listRelatedGroups(deviceId, relationship, direction, undefined, offset, count, undefined);
-        }
-
-        // remove all the associations
-        for (const g of groups) {
-            await this.devicesDao.detachFromGroup(deviceId, g.relation, g.direction, g.groupPath);
         }
 
         logger.debug(`device.full.service detachFromGroups: exit:`);
@@ -757,7 +771,7 @@ export class DevicesServiceFull implements DevicesService {
         await this.authServiceFull.authorizationCheck([deviceId, otherDeviceId], [], ClaimAccess.U);
 
         // Save to datastore
-        await this.devicesDao.detachFromDevice(deviceId, relationship, direction, otherDeviceId);
+        await this.devicesDao.detachFromDevices(deviceId, [{relationship,direction,targetId:deviceId}]);
 
         // fire event
         await this.eventEmitter.fire({
@@ -789,20 +803,33 @@ export class DevicesServiceFull implements DevicesService {
         // ensure user has access to the device
         await this.authServiceFull.authorizationCheck([deviceId], undefined, ClaimAccess.U);
 
-        // get a list of all the attached devices
-        const devices:DeviceItem[]=[];
+        // get a list of all the attached devices (permissions check is carried out as part of `listRelatedGroups` call)
         let offset = 0;
         const count = 20;
         let d = await this.listRelatedDevices(deviceId, relationship, direction, undefined, undefined, offset, count, undefined);
         while ((d?.results?.length??0)>0) {
-            devices.push(...d.results);
+            const relations:RelatedEntityIdentifer[]=[];
+            relations.push(...d.results.map(r=> ({relationship:r.relation, direction:r.direction, targetId:r.deviceId})));
+            
+            // remove the associations
+            await this.devicesDao.detachFromDevices(deviceId, relations);
+
+            // fire change events
+            relations.forEach(async r=> {
+                await this.eventEmitter.fire({
+                    objectId: deviceId,
+                    type: Type.device,
+                    event: Event.modify,
+                    attributes: {
+                        deviceId,
+                        detachedFromDevice: r.targetId,
+                        relationship
+                    }
+                });
+            });
+
             offset = offset + count;
             d = await this.listRelatedDevices(deviceId, relationship, direction, undefined, undefined, offset, count, undefined);
-        }
-
-        // remove all the associations
-        for (const d of devices) {
-            await this.devicesDao.detachFromDevice(deviceId, d.relation, d.direction, d.deviceId);
         }
 
         logger.debug(`device.full.service detachFromDevices: exit:`);

@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { TypeCategory } from '../types/constants';
-import { ModelAttributeValue, StringArrayMap, DirectionToStringArrayMap, DirectionToRelatedEntityArrayMap } from '../data/model';
+import { ModelAttributeValue, StringArrayMap, DirectionToStringArrayMap, DirectionToRelatedEntityArrayMap, RelationDirection } from '../data/model';
 
 export class DeviceBaseResource {
 	deviceId: string;
@@ -93,7 +93,7 @@ export class DeviceItem {
 
 	// populated for related resources
 	relation?: string;
-	direction?: string;
+	direction?: RelationDirection;
 
 	groups?: DirectionToRelatedEntityArrayMap = {};
 
