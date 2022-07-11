@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/installer",
+      "comment": "add new question to enable/disable events publishing for greengrass2-provisioning module",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@cdf/installer",
+  "email": "willsia@amazon.com"
+}

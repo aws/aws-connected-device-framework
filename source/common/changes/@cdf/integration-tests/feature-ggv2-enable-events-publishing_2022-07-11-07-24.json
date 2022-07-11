@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/integration-tests",
+      "comment": "",
+      "type": "none"
+    }
+  ],
+  "packageName": "@cdf/integration-tests",
+  "email": "willsia@amazon.com"
+}
