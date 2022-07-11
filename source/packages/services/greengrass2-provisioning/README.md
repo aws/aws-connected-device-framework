@@ -634,6 +634,41 @@ Content-Type: application/vnd.aws-cdf-v1.0+json
 }
 ```
 
+## Events
+
+As part of the installation you enable the event publishing feature of the module by answering `Yes` to the wizard question `Do you want the module to publish all operation events to CDF EventBridge?`, when this is set to true, all events will be publish to CDF EventBridge.
+
+To subscribe to events published by CDF greengrass2-provisioning module, create an EventBridge rule with the pattern specified below:
+
+```json
+{
+  "source": ["com.aws.cdf.greengrass2-provisioning"]
+}
+```
+
+To subscribe to events related to **Cores** resource, specify `Cores Resource Changes` as the `detail-type`
+```json
+{
+  "source": ["com.aws.cdf.greengrass2-provisioning"],
+  "detail-type" :[ "Cores Resource Changes" ]
+}
+```
+
+To subscribe to events related to **Deployments** resource, specify `Deployments Resource Changes` as the `detail-type`
+```json
+{
+  "source": ["com.aws.cdf.greengrass2-provisioning"],
+  "detail-type" :[ "Deployments Resource Changes" ]
+}
+ ```
+
+To subscribe to events related to **Devices** resource, specify `Devices Resource Changes` as the `detail-type`
+```json
+{
+  "source": ["com.aws.cdf.greengrass2-provisioning"],
+  "detail-type" :[ "Devices Resource Changes" ]
+}
+```
 
 
 ## Additional Links
