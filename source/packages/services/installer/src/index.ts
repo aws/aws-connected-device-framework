@@ -2,7 +2,7 @@
 
 import chalk from 'chalk';
 import { Command } from 'commander';
-import { configCmd } from './commands/config.cmd';
+import { generateLocalConfigCmd } from './commands/generate-local-config.cmd';
 import { deleteCmd } from './commands/delete.cmd';
 import { deployCmd } from './commands/deploy.cmd';
 import { packageCmd } from './commands/package.cmd';
@@ -12,10 +12,10 @@ const program = new Command();
 
 program.name('cdf-cli')
   .usage('[options] command <arguments>')
-  .addCommand(deployCmd())
-  .addCommand(configCmd())
-  .addCommand(postmanCmd())
   .addCommand(packageCmd())
+  .addCommand(deployCmd())
+  .addCommand(postmanCmd())
+  .addCommand(generateLocalConfigCmd())
   .addCommand(deleteCmd())
   .showHelpAfterError('(add --help for additional information)')
   .showSuggestionAfterError();

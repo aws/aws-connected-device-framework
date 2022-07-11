@@ -31,6 +31,7 @@ export const container = new Container();
 container.bind<string>('aws.dynamodb.tasks.tableName').toConstantValue(process.env.AWS_DYNAMODB_TASKS_TABLENAME);
 container.bind<string>('aws.s3.certificates.bucket').toConstantValue(process.env.AWS_S3_CERTIFICATES_BUCKET);
 container.bind<string>('aws.s3.certificates.prefix').toConstantValue(process.env.AWS_S3_CERTIFICATES_PREFIX);
+container.bind<number>('aws.acm.concurrency.limit').toConstantValue(parseInt(process.env.AWS_ACM_CONCURRENCY_LIMIT));
 container.bind<string>('defaults.chunkSize').toConstantValue(process.env.DEFAULTS_CHUNKSIZE);
 container.bind<string>('deviceCertificateExpiryDays').toConstantValue(process.env.CERTIFICATE_DEFAULT_EXPIRYDAYS);
 container.bind<string>('events.request.topic').toConstantValue(process.env.EVENTS_REQUEST_TOPIC);
@@ -112,5 +113,18 @@ container.bind<interfaces.Factory<AWS.SNS>>(TYPES.SNSFactory)
             container.bind<AWS.SNS>(TYPES.SNS).toConstantValue(sns);
         }
         return container.get<AWS.SNS>(TYPES.SNS);
+    };
+});
+// ACMPCA
+decorate(injectable(), AWS.ACMPCA);
+container.bind<interfaces.Factory<AWS.ACMPCA>>(TYPES.ACMPCAFactory)
+    .toFactory<AWS.ACMPCA>(() => {
+    return () => {
+
+        if (!container.isBound(TYPES.ACMPCA)) {
+            const acmpma = new AWS.ACMPCA({region: process.env.AWS_REGION});
+            container.bind<AWS.ACMPCA>(TYPES.ACMPCA).toConstantValue(acmpma);
+        }
+        return container.get<AWS.ACMPCA>(TYPES.ACMPCA);
     };
 });

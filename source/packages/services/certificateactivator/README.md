@@ -1,4 +1,4 @@
- # CERTIFICATE ACTIVATOR
+# CERTIFICATE ACTIVATOR
 
 ## Introduction
 
@@ -20,3 +20,4 @@ The CDF Certificate Activator module is an opinionated reference implementation 
 ## Useful Links
 
 - [Application configuration](docs/configuration.md)
+- [High-level architecture diagram](docs/images/certificateactivator-hla.png)

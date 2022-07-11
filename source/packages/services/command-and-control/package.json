@@ -22,7 +22,7 @@
     "@cdf/express-middleware": "^3.0.0",
     "@cdf/lambda-invoke": "^3.0.0",
     "@cdf/logger": "^4.0.0",
-    "@cdf/provisioning-client": "^5.1.0",
+    "@cdf/provisioning-client": "^5.2.0",
     "@cdf/thing-list-builder": "^1.1.2",
     "ajv": "6.12.3",
     "aws-sdk": "2.1048.0",

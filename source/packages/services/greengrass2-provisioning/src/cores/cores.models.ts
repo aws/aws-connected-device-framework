@@ -143,12 +143,15 @@ export enum CertificateStatus {
 }
 
 export interface UseACMPCAParameters {
-    caArn?: string;
-    caAlias?: string;
+	acmpcaCaArn?: string;
+	acmpcaCaAlias?: string;
 
-    csr?: string;
-    certInfo: CertInfo;
-}
+	awsiotCaArn?: string;
+	awsiotCaAlias?: string;
+	
+	csr?: string;
+	certInfo: CertInfo;
+} 
 
 export interface CertInfo {
     commonName?: string;

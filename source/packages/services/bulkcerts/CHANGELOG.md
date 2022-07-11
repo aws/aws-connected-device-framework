@@ -1,6 +1,13 @@
 # Change Log - @cdf/bulkcerts
 
-This log was last generated on Fri, 24 Jun 2022 21:00:45 GMT and should not be manually modified.
+This log was last generated on Fri, 01 Jul 2022 05:48:17 GMT and should not be manually modified.
+
+## 6.1.0
+Fri, 01 Jul 2022 05:48:17 GMT
+
+### Minor changes
+
+- Added feature to allow certificate creation via bulkcerts
 
 ## 6.0.4
 Fri, 24 Jun 2022 21:00:45 GMT

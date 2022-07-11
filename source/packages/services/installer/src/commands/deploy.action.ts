@@ -99,7 +99,7 @@ async function deployAction(
 
 async function cleanUpConfig(answers: Answers): Promise<Answers> {
   // Remove unnecessary answers
-  delete answers?.bulkCerts?.suppliers;
+  delete answers?.bulkCerts?.suppliers?.list;
   delete answers?.bulkCerts?.setSupplier;
   delete answers?.bulkCerts?.caAlias;
   delete answers?.bulkCerts?.caValue;

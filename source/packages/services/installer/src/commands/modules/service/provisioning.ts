@@ -19,13 +19,18 @@ import { customDomainPrompt } from '../../../prompts/domain.prompt';
 import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
 import ow from 'ow';
-import { deleteStack, getStackOutputs, getStackParameters, getStackResourceSummaries, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
+import path from 'path';
+import { deleteStack, getStackOutputs, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
 import { Lambda } from '@aws-sdk/client-lambda';
+import { getMonorepoRoot } from '../../../prompts/paths.prompt';
+
 export class ProvisioningInstaller implements RestModule {
 
   public readonly friendlyName = 'Provisioning';
   public readonly name = 'provisioning';
+  public readonly localProjectDir = this.name;
   public readonly type = 'SERVICE';
+
   public readonly dependsOnMandatory: ModuleName[] = [
     'apigw',
     'kms',
@@ -35,7 +40,7 @@ export class ProvisioningInstaller implements RestModule {
 
   public readonly dependsOnOptional: ModuleName[] = [];
 
-  private readonly stackName: string
+  public readonly stackName: string
 
   constructor(environment: string) {
     this.stackName = `cdf-provisioning-${environment}`;
@@ -57,13 +62,26 @@ export class ProvisioningInstaller implements RestModule {
       updatedAnswers.provisioning = {};
     }
 
-    const pcaAliases = await this.getAliases(answers);
+    const pcaAliases = await this.getPcaAliases(answers);
     updatedAnswers.provisioning.pcaAliases = pcaAliases;
+
+
+    const iotCaAliases = await this.getIotCaAliases(answers);
+    updatedAnswers.provisioning.iotCaAliases = iotCaAliases;
 
     // eslint-disable-next-line
     const _ = this;
 
     updatedAnswers = await inquirer.prompt([
+
+      {
+        message: `ACM PCA integration enabled ?`,
+        type: 'confirm',
+        name: 'provisioning.pcaIntegrationEnabled',
+        default: answers.provisioning?.pcaIntegrationEnabled ?? false,
+        askAnswered: true
+      },
+
       {
         message: `If using ACM PCA, and ACM PCA is located in another AWS Account, enter the IAM cross-account role (leave blank otherwise)`,
         type: 'input',
@@ -76,13 +94,90 @@ export class ProvisioningInstaller implements RestModule {
           }
           return _.validateAcmPcaArn(answer);
         },
+        when(answers: Answers) {
+          return answers.provisioning?.pcaIntegrationEnabled;
+        },
+      },
+
+      {
+        message: `Create or modify AWS IoT CA alias list ?`,
+        type: 'confirm',
+        name: 'provisioning.setIotCaAliases',
+        default: answers.provisioning?.setIotCaAliases ?? true,
+        askAnswered: true,
+        when(answers: Answers) {
+          return answers.provisioning?.pcaIntegrationEnabled;
+        }
       },
       {
-        message: `Create or modify ACM PCA alias list (optional) ?`,
+        message: 'Select the AWS IoT CA aliases you wish to modify',
+        type: 'list',
+        name: 'provisioning.iotCaAlias',
+        choices: iotCaAliases.list,
+        pageSize: 20,
+        loop: false,
+        askAnswered: true,
+        default: iotCaAliases.list.length - 1,
+        validate(answer: string[]) {
+          if (answer?.length === 0) {
+            return false;
+          }
+          return true;
+        },
+        when(answers: Answers) {
+          return answers.provisioning?.setIotCaAliases === true && iotCaAliases.list?.length > 1;
+        }
+      },
+      {
+        message: `No AWS IoT CA alias was found. Create a new alias ?`,
+        type: 'confirm',
+        name: 'provisioning.setIotCaAliases',
+        default: answers.provisioning?.setIotCaAliases ?? true,
+        askAnswered: true,
+        when(answers: Answers) {
+          return answers.provisioning?.setIotCaAliases === true && iotCaAliases.list?.length === 1;
+        },
+      },
+      {
+        message: `Enter new AWS IoT CA alias name:`,
+        type: 'input',
+        name: 'provisioning.iotCaAlias',
+        default: answers.provisioning?.iotCaAlias,
+        askAnswered: true,
+        validate(answer: string[]) {
+          if (answer?.length === 0) {
+            return false;
+          }
+          return true;
+        },
+        when(answers: Answers) {
+          return answers.provisioning?.setIotCaAliases === true && (answers.provisioning.iotCaAliases.list?.length === 1 || answers.provisioning.iotCaAlias === "Create New AWS IoT CA alias");
+        },
+      },
+      {
+        message: `AWS IoT CA ARN:`,
+        type: 'input',
+        name: 'provisioning.iotCaArn',
+        default: answers.provisioning?.iotCaArn,
+        askAnswered: true,
+        validate(answer: string) {
+          return _.validateAwsIotCaArn(answer);
+        },
+        when(answers: Answers) {
+          return answers.provisioning?.setIotCaAliases === true;
+        },
+      },
+
+
+      {
+        message: `Create or modify ACM PCA CA alias list ?`,
         type: 'confirm',
         name: 'provisioning.setPcaAliases',
         default: answers.provisioning?.setPcaAliases ?? true,
-        askAnswered: true
+        askAnswered: true,
+        when(answers: Answers) {
+          return answers.provisioning?.pcaIntegrationEnabled;
+        },
       },
       {
         message: 'Select the ACM PCA aliases you wish to modify',
@@ -210,13 +305,15 @@ export class ProvisioningInstaller implements RestModule {
   }
 
   public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [{
       title: `Packaging module '${this.name}'`,
       task: async () => {
         await packageAndUploadTemplate({
           answers: answers,
           serviceName: 'provisioning',
-          templateFile: '../provisioning/infrastructure/cfn-provisioning.yml',
+          templateFile: 'infrastructure/cfn-provisioning.yml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'provisioning'),
           parameterOverrides: this.getParameterOverrides(answers)
         });
       },
@@ -235,6 +332,7 @@ export class ProvisioningInstaller implements RestModule {
     ow(answers.apigw.templateSnippetS3UriBase, ow.string.nonEmpty);
     ow(answers.apigw.cloudFormationTemplate, ow.string.nonEmpty);
 
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [];
 
     if ((answers.provisioning.redeploy ?? true) === false) {
@@ -247,14 +345,15 @@ export class ProvisioningInstaller implements RestModule {
 
         // If list is undefined it could be that we're deploying without prompt
         if (answers.provisioning?.pcaAliases === undefined) {
-          answers.provisioning.pcaAliases = await this.getAliases(answers)
+          answers.provisioning.pcaAliases = await this.getPcaAliases(answers)
         }
 
         await packageAndDeployStack({
           answers: answers,
           stackName: this.stackName,
           serviceName: 'provisioning',
-          templateFile: '../provisioning/infrastructure/cfn-provisioning.yml',
+          templateFile: 'infrastructure/cfn-provisioning.yml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'provisioning'),
           parameterOverrides: this.getParameterOverrides(answers),
           needsPackaging: true,
           needsCapabilityNamedIAM: true,
@@ -274,16 +373,16 @@ export class ProvisioningInstaller implements RestModule {
     }
   }
 
-  public generateApplicationConfiguration(answers: Answers): string {
+  private generateApplicationConfiguration(answers: Answers): string {
     const configBuilder = new ConfigBuilder()
 
     if (answers.provisioning.setPcaAliases) {
       if (!answers.provisioning.pcaAliases.list.includes(answers.provisioning.pcaAlias)) {
-        answers.provisioning.pcaAliases.cas.push({ alias: answers.provisioning.pcaAlias, value: answers.provisioning.pcaArn });
+        answers.provisioning.pcaAliases.cas?.push({ alias: answers.provisioning.pcaAlias, value: answers.provisioning.pcaArn });
       }
     }
 
-    answers.provisioning.pcaAliases.cas.forEach(pca => {
+    answers.provisioning.pcaAliases?.cas?.forEach(pca => {
       let alias = pca.alias;
       if (!pca.alias.startsWith('PCA_')) {
         alias = `PCA_${pca.alias.toUpperCase()}`;
@@ -292,6 +391,17 @@ export class ProvisioningInstaller implements RestModule {
         pca.value = answers.provisioning.pcaArn;
       }
       configBuilder.add(alias, pca.value);
+    });
+
+    answers.provisioning.iotCaAliases?.cas?.forEach(ca => {
+      let alias = ca.alias;
+      if (!ca.alias.startsWith('CA_')) {
+        alias = `CA_${ca.alias.toUpperCase()}`;
+      }
+      if (alias == answers.provisioning.iotCaAlias) {
+        ca.value = answers.provisioning.iotCaArn;
+      }
+      configBuilder.add(alias, ca.value);
     });
 
     configBuilder
@@ -308,19 +418,6 @@ export class ProvisioningInstaller implements RestModule {
     return configBuilder.config;
   }
 
-
-  public async generateLocalConfiguration(answers: Answers): Promise<string> {
-    const byParameterKey = await getStackParameters(this.stackName, answers.region)
-    const byResourceLogicalId = await getStackResourceSummaries(this.stackName, answers.region)
-
-    const configBuilder = new ConfigBuilder()
-      .add(`AWS_S3_ROLE_ARN`, `arn:aws:iam::${answers.accountId}:role/${byResourceLogicalId('LambdaExecutionRole')}`)
-      .add(`AWS_S3_TEMPLATES_BUCKET`, byParameterKey('BucketName'))
-      .add(`AWS_S3_BULKREQUESTS_BUCKET`, byParameterKey('BucketName'))
-    return configBuilder.config
-
-  }
-
   public async delete(answers: Answers): Promise<ListrTask[]> {
     const tasks: ListrTask[] = [];
     tasks.push({
@@ -333,7 +430,7 @@ export class ProvisioningInstaller implements RestModule {
 
   }
 
-  private async getAliases(answers: Answers): Promise<CAAliases> {
+  private async getPcaAliases(answers: Answers): Promise<CAAliases> {
     const lambda = new Lambda({ region: answers.region });
     let aliases: CAAliases;
 
@@ -370,8 +467,49 @@ export class ProvisioningInstaller implements RestModule {
 
   }
 
+  private async getIotCaAliases(answers: Answers): Promise<CAAliases> {
+    const lambda = new Lambda({ region: answers.region });
+    let aliases: CAAliases;
+
+    if (answers?.provisioning?.iotCaAliases === undefined) {
+      aliases = { list: [], cas: [] };
+    } else {
+      aliases = answers.provisioning.iotCaAliases;
+      aliases.list = aliases.cas?.map(ca => ca.alias) ?? [];
+    }
+
+    // append lambda suppliers if none are present in the config
+    try {
+      const config = await lambda.getFunctionConfiguration({ FunctionName: `cdf-provisioning-rest-${answers.environment}` });
+      const variables = config.Environment?.Variables;
+      const appConfigStr = variables['APP_CONFIG'] as string;
+      appConfigStr.split('\r\n').forEach(element => {
+        if (element.startsWith('CA_')) {
+          const [key, value] = element.split('=');
+          const alias = key.replace('CA_', '');
+
+          if (!aliases.list.includes(alias)) {
+            aliases.list.push(alias);
+            aliases.cas.push({ alias, value });
+          }
+        }
+      });
+    } catch (e) {
+      e.name === 'ResourceNotFoundException' && console.log(`No suppliers found`);
+    }
+    if (aliases.list.length == 0 || !aliases.list.includes("Create New Alias")) {
+      aliases.list.push("Create New Alias");
+    }
+    return aliases;
+
+  }
+
   private validateAcmPcaArn(arn: string): boolean {
     return /^arn:aws:acm-pca:\w+(?:-\w+)+:\d{12}:certificate-authority\/[A-Za-z0-9]+(?:-[A-Za-z0-9]+)+$/.test(arn);
+  }
+
+  private validateAwsIotCaArn(arn: string): boolean {
+    return /^arn:aws:iot:\w+(?:-\w+)+:\d{12}:cacert\/[A-Za-z0-9]+(?:-[A-Za-z0-9]+)+$/.test(arn);
   }
 
 }

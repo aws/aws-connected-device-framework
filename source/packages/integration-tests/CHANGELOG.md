@@ -1,6 +1,13 @@
 # Change Log - @cdf/integration-tests
 
-This log was last generated on Wed, 29 Jun 2022 00:56:16 GMT and should not be manually modified.
+This log was last generated on Thu, 30 Jun 2022 00:07:08 GMT and should not be manually modified.
+
+## 3.3.0
+Thu, 30 Jun 2022 00:07:08 GMT
+
+### Minor changes
+
+-  updated ACM PCA integration to support registering certificates using CA's
 
 ## 3.2.3
 Wed, 29 Jun 2022 00:56:16 GMT

@@ -19,13 +19,16 @@ import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
 import { customDomainPrompt } from '../../../prompts/domain.prompt';
 import ow from 'ow';
-import { deleteStack, getStackOutputs, getStackParameters, getStackResourceSummaries, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
+import path from 'path';
+import { deleteStack, getStackOutputs, getStackResourceSummaries, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
 import { includeOptionalModule } from '../../../utils/modules.util';
+import { getMonorepoRoot } from '../../../prompts/paths.prompt';
 
 export class CommandsInstaller implements RestModule {
 
   public readonly friendlyName = 'Commands';
   public readonly name = 'commands';
+  public readonly localProjectDir = this.name;
 
   public readonly type = 'SERVICE';
   public readonly dependsOnMandatory: ModuleName[] = [
@@ -35,7 +38,7 @@ export class CommandsInstaller implements RestModule {
     'provisioning'];
   public readonly dependsOnOptional: ModuleName[] = ['assetLibrary'];
 
-  private readonly stackName: string;
+  public readonly stackName: string;
   private readonly assetLibraryStackName: string;
   private readonly provisioningStackName: string;
 
@@ -107,13 +110,15 @@ export class CommandsInstaller implements RestModule {
   }
 
   public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [{
       title: `Packaging module '${this.name}'`,
       task: async () => {
         await packageAndUploadTemplate({
           answers: answers,
           serviceName: 'commands',
-          templateFile: '../commands/infrastructure/cfn-commands.yml',
+          templateFile: 'infrastructure/cfn-commands.yml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'commands'),
           parameterOverrides: this.getParameterOverrides(answers),
         });
       },
@@ -129,6 +134,7 @@ export class CommandsInstaller implements RestModule {
     ow(answers.environment, ow.string.nonEmpty);
     ow(answers.s3.bucket, ow.string.nonEmpty);
 
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [];
 
     if ((answers.commands.redeploy ?? true) === false) {
@@ -156,7 +162,8 @@ export class CommandsInstaller implements RestModule {
           answers: answers,
           stackName: this.stackName,
           serviceName: 'commands',
-          templateFile: '../commands/infrastructure/cfn-commands.yml',
+          templateFile: 'infrastructure/cfn-commands.yml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'commands'),
           parameterOverrides: this.getParameterOverrides(answers),
           needsPackaging: true,
           needsCapabilityNamedIAM: true,
@@ -177,7 +184,7 @@ export class CommandsInstaller implements RestModule {
     }
   }
 
-  public generateApplicationConfiguration(answers: Answers): string {
+  private generateApplicationConfiguration(answers: Answers): string {
     const configBuilder = new ConfigBuilder()
     configBuilder
       .add(`CUSTOMDOMAIN_BASEPATH`, answers.commands.customDomainBasePath)
@@ -189,24 +196,6 @@ export class CommandsInstaller implements RestModule {
       .add(`TEMPLATES_ADDTHINGTOGROUP`, answers.commands.addThingToGroupTemplate)
 
     return configBuilder.config;
-  }
-
-  public async generateLocalConfiguration(answers: Answers): Promise<string> {
-    const byParameterKey = await getStackParameters(this.stackName, answers.region)
-    const byResourceLogicalId = await getStackResourceSummaries(this.stackName, answers.region)
-
-    const configBuilder = new ConfigBuilder()
-    configBuilder
-      .add(`AWS_S3_BUCKET`, byParameterKey('BucketName'))
-      .add(`AWS_S3_ROLEARN`, `arn:aws:iam::${answers.accountId}:role/${byResourceLogicalId('PresignedUrlLambdaExecutionRole')}`)
-      .add(`MODE`, byParameterKey('Mode'))
-      .add(`TABLES_TEMPLATES`, byResourceLogicalId('TemplatesTable'))
-      .add(`TABLES_JOBS`, byResourceLogicalId('JobsTable'))
-      .add(`PROVISIONING_API_FUNCTION_NAME`, byParameterKey('ProvisioningFunctionName'))
-      .add(`ASSETLIBRARY_API_FUNCTION_NAME`, byParameterKey('AssetLibraryFunctionName'))
-      .add(`AWS_IOT_ENDPOINT`, answers.iotEndpoint)
-
-    return configBuilder.config
   }
 
   public async delete(answers: Answers): Promise<ListrTask[]> {

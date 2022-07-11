@@ -12,13 +12,15 @@
  *********************************************************************************************************************/
 import ow from 'ow';
 import inquirer from 'inquirer';
+import path from 'path';
 import { ListrTask } from 'listr2';
 import { Answers } from '../../../models/answers';
 import { ModuleName, ServiceModule } from '../../../models/modules';
 import { ConfigBuilder } from "../../../utils/configBuilder";
 import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
-import { deleteStack, getStackParameters, getStackResourceSummaries, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
+import { deleteStack, getStackResourceSummaries, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
+import { getMonorepoRoot } from '../../../prompts/paths.prompt';
 
 export class CertificateVendorInstaller implements ServiceModule {
 
@@ -36,7 +38,7 @@ export class CertificateVendorInstaller implements ServiceModule {
 
   public readonly dependsOnOptional: ModuleName[] = [];
 
-  private readonly stackName: string;
+  public readonly stackName: string;
   private readonly assetLibraryStackName: string;
   private readonly commandAndControlStackName: string;
 
@@ -45,7 +47,6 @@ export class CertificateVendorInstaller implements ServiceModule {
     this.assetLibraryStackName = `cdf-assetlibrary-${environment}`;
     this.commandAndControlStackName = `cdf-commandandcontrol-${environment}`;
   }
-
 
   public async prompts(answers: Answers): Promise<Answers> {
 
@@ -184,7 +185,6 @@ export class CertificateVendorInstaller implements ServiceModule {
 
   }
 
-
   private getParameterOverrides(answers: Answers): string[] {
     const parameterOverrides = [
       `Environment=${answers.environment}`,
@@ -208,15 +208,16 @@ export class CertificateVendorInstaller implements ServiceModule {
     return parameterOverrides;
   }
 
-
   public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [{
       title: `Packaging module '${this.name}'`,
       task: async () => {
         await packageAndUploadTemplate({
           answers: answers,
           serviceName: 'certificatevendor',
-          templateFile: '../certificatevendor/infrastructure/cfn-certificatevendor.yml',
+          templateFile: 'infrastructure/cfn-certificatevendor.yml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'certificatevendor'),
           parameterOverrides: this.getParameterOverrides(answers),
         });
       },
@@ -232,6 +233,7 @@ export class CertificateVendorInstaller implements ServiceModule {
     ow(answers.environment, ow.string.nonEmpty);
     ow(answers.s3.bucket, ow.string.nonEmpty);
 
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [];
 
     if ((answers.certificateVendor.redeploy ?? true) === false) {
@@ -255,14 +257,12 @@ export class CertificateVendorInstaller implements ServiceModule {
     tasks.push({
       title: `Packaging and deploying stack '${this.stackName}'`,
       task: async () => {
-
-
-
         await packageAndDeployStack({
           answers: answers,
           stackName: this.stackName,
           serviceName: 'certificatevendor',
-          templateFile: '../certificatevendor/infrastructure/cfn-certificatevendor.yml',
+          templateFile: 'infrastructure/cfn-certificatevendor.yml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'certificatevendor'),
           parameterOverrides: this.getParameterOverrides(answers),
           needsPackaging: true,
           needsCapabilityNamedIAM: true,
@@ -273,8 +273,7 @@ export class CertificateVendorInstaller implements ServiceModule {
     return [answers, tasks];
   }
 
-
-  public generateApplicationConfiguration(answers: Answers): string {
+  private generateApplicationConfiguration(answers: Answers): string {
     const configBuilder = new ConfigBuilder()
 
     configBuilder
@@ -294,21 +293,6 @@ export class CertificateVendorInstaller implements ServiceModule {
       .add(`DEFAULTS_DEVICE_STATUS_SUCCESS_VALUE`, answers.certificateVendor.deviceStatusSuccessValue)
       .add(`DEFAULTS_CERTIFICATES_CERTIFICATEEXPIRYDAYS`, answers.certificateVendor.certificateExpiryInDays)
       .add(`REGISTRY_MODE`, answers.certificateVendor.registryMode)
-
-    return configBuilder.config;
-  }
-
-  public async generateLocalConfiguration(answers: Answers): Promise<string> {
-    const byParameterKey = await getStackParameters(this.stackName, answers.region)
-
-    const configBuilder = new ConfigBuilder()
-
-    configBuilder
-      .add(`AWS_IOT_ENDPOINT`, answers.iotEndpoint)
-      .add(`ASSETLIBRARY_API_FUNCTION_NAME`, byParameterKey('AssetLibraryFunctionName'))
-      .add(`AWS_S3_CERTIFICATES_BUCKET`, byParameterKey('BucketName'))
-      .add(`CERTIFICATES_CACERTIFICATEID`, byParameterKey('CERTIFICATES_CACERTIFICATEID'))
-      .add(`POLICIES_ROTATEDCERTIFICATEPOLICY`, byParameterKey('POLICIES_ROTATEDCERTIFICATEPOLICY'))
 
     return configBuilder.config;
   }

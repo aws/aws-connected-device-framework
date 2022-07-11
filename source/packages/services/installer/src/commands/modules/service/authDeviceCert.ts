@@ -13,12 +13,13 @@
 import { Answers } from '../../../models/answers';
 import { ListrTask } from 'listr2';
 import { ModuleName, ServiceModule } from '../../../models/modules';
-import { ConfigBuilder } from "../../../utils/configBuilder";
 import ow from 'ow';
 import inquirer from 'inquirer';
+import path from 'path';
 import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
 import { deleteStack, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
+import { getMonorepoRoot } from '../../../prompts/paths.prompt';
 
 export class AuthDeviceCertInstaller implements ServiceModule {
 
@@ -32,7 +33,7 @@ export class AuthDeviceCertInstaller implements ServiceModule {
   ];
   public readonly dependsOnOptional: ModuleName[] = [];
 
-  private readonly stackName: string;
+  public readonly stackName: string;
 
   constructor(environment: string) {
     this.stackName = `cdf-auth-devicecert-${environment}`
@@ -74,13 +75,15 @@ export class AuthDeviceCertInstaller implements ServiceModule {
   }
 
   public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [{
       title: `Packaging module '${this.name}'`,
       task: async () => {
         await packageAndUploadTemplate({
           answers: answers,
           serviceName: 'auth-devicecert',
-          templateFile: '../auth-devicecert/infrastructure/cfn-auth-devicecert.yaml',
+          templateFile: 'infrastructure/cfn-auth-devicecert.yaml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'auth-devicecert'),
           parameterOverrides: this.getParameterOverrides(answers),
         });
       },
@@ -96,6 +99,7 @@ export class AuthDeviceCertInstaller implements ServiceModule {
     ow(answers.environment, ow.string.nonEmpty);
     ow(answers.authDeviceCert, ow.object.nonEmpty);
 
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [];
 
     if ((answers.authDeviceCert.redeploy ?? true) === false) {
@@ -105,13 +109,12 @@ export class AuthDeviceCertInstaller implements ServiceModule {
     tasks.push({
       title: `Packaging and deploying stack '${this.stackName}'`,
       task: async () => {
-
-
         await packageAndDeployStack({
           answers: answers,
           stackName: this.stackName,
           serviceName: 'auth-devicecert',
-          templateFile: '../auth-devicecert/infrastructure/cfn-auth-devicecert.yaml',
+          templateFile: 'infrastructure/cfn-auth-devicecert.yaml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'auth-devicecert'),
           parameterOverrides: this.getParameterOverrides(answers),
           needsPackaging: true,
           needsCapabilityNamedIAM: true,
@@ -121,20 +124,6 @@ export class AuthDeviceCertInstaller implements ServiceModule {
 
     return [answers, tasks];
   }
-
-  public generateApplicationConfiguration(answers: Answers): string {
-    const configBuilder = new ConfigBuilder()
-    configBuilder
-      .add(`LOGGING_LEVEL`, answers.authDeviceCert.loggingLevel)
-    return configBuilder.config;
-  }
-
-  public async generateLocalConfiguration(answers: Answers): Promise<string> {
-    const configBuilder = new ConfigBuilder()
-      .add(`AWS_ACCOUNTID`, answers.accountId)
-    return configBuilder.config;
-  }
-
 
   public async delete(answers: Answers): Promise<ListrTask[]> {
     const tasks: ListrTask[] = [];

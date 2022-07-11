@@ -1,6 +1,6 @@
 {
   "name": "@cdf/provisioning",
-  "version": "5.1.1",
+  "version": "5.2.0",
   "description": "CDF Provisioning",
   "author": "Dean Hart",
   "scripts": {

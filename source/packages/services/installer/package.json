@@ -1,6 +1,6 @@
 {
   "name": "@cdf/installer",
-  "version": "0.9.0",
+  "version": "1.0.2",
   "description": "CDF install wizard.",
   "author": "Dean Hart",
   "scripts": {

@@ -19,15 +19,18 @@ import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
 import { customDomainPrompt } from '../../../prompts/domain.prompt';
 import ow from 'ow';
-import { deleteStack, getStackOutputs, getStackResourceSummaries, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
+import path from 'path';
+import { deleteStack, getStackOutputs, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
 import { includeOptionalModule } from '../../../utils/modules.util';
 import { getDaxInstanceTypeList } from '../../../utils/instancetypes';
+import { getMonorepoRoot } from '../../../prompts/paths.prompt';
 
 const DEFAULT_DAX_INSTANCE_TYPE = 'dax.t2.medium';
 export class NotificationsInstaller implements RestModule {
 
   public readonly friendlyName = 'Notifications';
   public readonly name = 'notifications';
+  public readonly localProjectDir = 'events-processor';
 
   public readonly type = 'SERVICE';
   public readonly dependsOnMandatory: ModuleName[] = [
@@ -39,10 +42,12 @@ export class NotificationsInstaller implements RestModule {
   public readonly dependsOnOptional: ModuleName[] = [];
   private readonly eventsProcessorStackName: string;
   private readonly eventsAlertStackName: string;
+  public readonly stackName: string;
 
   constructor(environment: string) {
     this.eventsProcessorStackName = `cdf-eventsProcessor-${environment}`
     this.eventsAlertStackName = `cdf-eventsAlerts-${environment}`;
+    this.stackName = this.eventsProcessorStackName;
   }
 
   public async prompts(answers: Answers): Promise<Answers> {
@@ -215,13 +220,15 @@ export class NotificationsInstaller implements RestModule {
   }
 
   public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [{
       title: `Packaging module '${this.name} [Events Processor]'`,
       task: async () => {
         await packageAndUploadTemplate({
           answers: answers,
           serviceName: 'events-processor',
-          templateFile: '../events-processor/infrastructure/cfn-eventsProcessor.yml',
+          templateFile: 'infrastructure/cfn-eventsProcessor.yml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'events-processor'),
           parameterOverrides: this.getEventsProcessorOverrides(answers)
         });
       },
@@ -232,7 +239,8 @@ export class NotificationsInstaller implements RestModule {
         await packageAndUploadTemplate({
           answers: answers,
           serviceName: 'events-alerts',
-          templateFile: '../events-alerts/infrastructure/cfn-eventsAlerts.yml',
+          templateFile: 'infrastructure/cfn-eventsAlerts.yml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'events-alerts'),
           parameterOverrides: this.getEventsAlertsOverrides(answers),
         });
       },
@@ -248,6 +256,7 @@ export class NotificationsInstaller implements RestModule {
     ow(answers.environment, ow.string.nonEmpty);
     ow(answers.s3.bucket, ow.string.nonEmpty);
 
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [];
 
     if ((answers.notifications.redeploy ?? true) === false) {
@@ -257,14 +266,12 @@ export class NotificationsInstaller implements RestModule {
     tasks.push({
       title: `Packaging and deploying stack '${this.eventsProcessorStackName}'`,
       task: async () => {
-
-
-
         await packageAndDeployStack({
           answers: answers,
           stackName: this.eventsProcessorStackName,
           serviceName: 'events-processor',
-          templateFile: '../events-processor/infrastructure/cfn-eventsProcessor.yml',
+          templateFile: 'infrastructure/cfn-eventsProcessor.yml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'events-processor'),
           parameterOverrides: this.getEventsProcessorOverrides(answers),
           needsPackaging: true,
           needsCapabilityNamedIAM: true,
@@ -294,7 +301,8 @@ export class NotificationsInstaller implements RestModule {
           answers: answers,
           stackName: this.eventsAlertStackName,
           serviceName: 'events-alerts',
-          templateFile: '../events-alerts/infrastructure/cfn-eventsAlerts.yml',
+          templateFile: 'infrastructure/cfn-eventsAlerts.yml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'events-alerts'),
           parameterOverrides: this.getEventsAlertsOverrides(answers),
           needsPackaging: true,
           needsCapabilityNamedIAM: true,
@@ -317,7 +325,6 @@ export class NotificationsInstaller implements RestModule {
     return configBuilder.config;
   }
 
-
   public async generatePostmanEnvironment(answers: Answers): Promise<PostmanEnvironment> {
     const byOutputKey = await getStackOutputs(this.eventsProcessorStackName, answers.region)
     return {
@@ -325,21 +332,6 @@ export class NotificationsInstaller implements RestModule {
       value: byOutputKey('ApiGatewayUrl'),
       enabled: true
     }
-  }
-
-  public async generateLocalConfiguration(answers: Answers): Promise<string> {
-
-    const byResourceLogicalId = await getStackResourceSummaries(this.eventsProcessorStackName, answers.region)
-
-    const configBuilder = new ConfigBuilder()
-      .add(`AWS_DYNAMODB_TABLES_EVENTCONFIG_NAME`, byResourceLogicalId('EventConfigTable'))
-      .add(`AWS_DYNAMODB_TABLES_EVENTNOTIFICATIONS_NAME`, byResourceLogicalId('EventNotificationsTable'))
-      .add(`AWS_IOT_ENDPOINT`, answers.iotEndpoint)
-      .add(`AWS_LAMBDA_DYNAMODBSTREAM_NAME`, byResourceLogicalId('DynamoDBStreamLambdaFunction'))
-      .add(`AWS_LAMBDA_LAMBDAINVOKE_ARN`, `arn:aws:iam::${answers.accountId}:role/${byResourceLogicalId('RESTLambdaExecutionRole')}`)
-      .add(`EVENTSPROCESSOR_AWS_SQS_ASYNCPROCESSING`, byResourceLogicalId('AsyncProcessingQueue'))
-
-    return configBuilder.config
   }
 
   public async delete(answers: Answers): Promise<ListrTask[]> {

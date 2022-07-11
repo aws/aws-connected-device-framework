@@ -1,6 +1,6 @@
 {
   "name": "@cdf/integration-tests",
-  "version": "3.2.3",
+  "version": "3.3.0",
   "description": "CDF Integration Tests",
   "author": "Dean Hart",
   "scripts": {
@@ -26,7 +26,7 @@
     "@cdf/lambda-invoke": "^3.0.2",
     "@cdf/logger": "^4.0.0",
     "@cdf/notifications-client": "^4.0.5",
-    "@cdf/provisioning-client": "^5.1.0",
+    "@cdf/provisioning-client": "^5.2.0",
     "@cucumber/cucumber": "7.3.2",
     "atob": "2.1.2",
     "aws-iot-device-sdk-v2": "1.6.5",

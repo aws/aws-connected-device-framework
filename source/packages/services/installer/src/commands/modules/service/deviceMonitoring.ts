@@ -13,25 +13,27 @@
 import inquirer from 'inquirer';
 import { ListrTask } from 'listr2';
 import ow from 'ow';
-
+import path from 'path';
 import { Answers } from '../../../models/answers';
 import { ModuleName, ServiceModule } from '../../../models/modules';
 import { ConfigBuilder } from "../../../utils/configBuilder";
 import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
-import { deleteStack, getStackParameters, getStackResourceSummaries, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
+import { deleteStack, getStackResourceSummaries, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
+import { getMonorepoRoot } from '../../../prompts/paths.prompt';
 
 export class DeviceMonitoringInstaller implements ServiceModule {
 
   public readonly friendlyName = 'Device Monitoring';
   public readonly name = 'deviceMonitoring';
+  public readonly localProjectDir = 'device-monitoring';
 
   public readonly type = 'SERVICE';
   public readonly dependsOnMandatory: ModuleName[] = [
     'assetLibrary',
   ];
   public readonly dependsOnOptional: ModuleName[] = [];
-  private readonly stackName: string;
+  public readonly stackName: string;
   private readonly assetLibraryStackName: string;
 
   constructor(environment: string) {
@@ -72,13 +74,15 @@ export class DeviceMonitoringInstaller implements ServiceModule {
 
 
   public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [{
       title: `Packaging module '${this.name}'`,
       task: async () => {
         await packageAndUploadTemplate({
           answers: answers,
           serviceName: 'device-monitoring',
-          templateFile: '../device-monitoring/infrastructure/cfn-device-monitoring.yml',
+          templateFile: 'infrastructure/cfn-device-monitoring.yml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'device-monitoring'),
           parameterOverrides: this.getParameterOverrides(answers),
         });
       },
@@ -94,6 +98,7 @@ export class DeviceMonitoringInstaller implements ServiceModule {
     ow(answers.environment, ow.string.nonEmpty);
     ow(answers.s3.bucket, ow.string.nonEmpty);
 
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [];
 
     if ((answers.deviceMonitoring.redeploy ?? true) === false) {
@@ -120,7 +125,8 @@ export class DeviceMonitoringInstaller implements ServiceModule {
           answers: answers,
           stackName: this.stackName,
           serviceName: 'device-monitoring',
-          templateFile: '../device-monitoring/infrastructure/cfn-device-monitoring.yml',
+          templateFile: 'infrastructure/cfn-device-monitoring.yml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'device-monitoring'),
           parameterOverrides: this.getParameterOverrides(answers),
           needsPackaging: true,
           needsCapabilityNamedIAM: true,
@@ -131,20 +137,10 @@ export class DeviceMonitoringInstaller implements ServiceModule {
     return [answers, tasks];
   }
 
-  public generateApplicationConfiguration(answers: Answers): string {
+  private generateApplicationConfiguration(answers: Answers): string {
     const configBuilder = new ConfigBuilder()
     configBuilder
       .add(`LOGGING_LEVEL`, answers.deviceMonitoring.loggingLevel)
-    return configBuilder.config;
-  }
-
-  public async generateLocalConfiguration(answers: Answers): Promise<string> {
-
-    const byParameterKey = await getStackParameters(this.stackName, answers.region)
-
-    const configBuilder = new ConfigBuilder()
-      .add(`ASSETLIBRARY_API_FUNCTION_NAME`, byParameterKey('AssetLibraryFunctionName'))
-
     return configBuilder.config;
   }
 
