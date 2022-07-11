@@ -12,7 +12,7 @@
     "test": "rushx lint && jest --silent --passWithNoTests"
   },
   "dependencies": {
-    "@cdf/assetlibrary-client": "^5.0.5",
+    "@cdf/assetlibrary-client": "^5.1.0",
     "@cdf/lambda-invoke": "^3.0.2",
     "inversify": "5.1.1",
     "inversify-binding-decorators": "4.0.0",

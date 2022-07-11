@@ -12,7 +12,7 @@
     "test": "rushx lint && jest --silent --passWithNoTests"
   },
   "dependencies": {
-    "@cdf/assetlibrary-client": "^5.0.5",
+    "@cdf/assetlibrary-client": "^5.1.0",
     "@cdf/config-inject": "^4.0.2",
     "@cdf/lambda-invoke": "^3.0.0",
     "dotenv-flow": "~3.2.0",
