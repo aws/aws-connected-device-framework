@@ -35,7 +35,6 @@ export class AssetLibraryRegistryManager implements RegistryManager {
             const device = await this.devices.getDeviceByID(deviceId);
             whitelisted = (device!==undefined);
         } catch (err) {
-            console.log('error:',err);
             logger.debug(`registry.assetLibrary isWhitelisted: err:${err}`);
             if (err.message==='Not Found') {
                 return false;

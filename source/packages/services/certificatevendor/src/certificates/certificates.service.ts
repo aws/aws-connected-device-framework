@@ -410,15 +410,13 @@ export class CertificateService {
             
             await this.iot.detachThingPrincipal({thingName: deviceId, principal}).promise();
 
-            const princpalThings: ListPrincipalThingsResponse = await this.iot.listPrincipalThings({principal}).promise();
+            const principalThings: ListPrincipalThingsResponse = await this.iot.listPrincipalThings({principal}).promise();
             // delete this cert if no longer attached to any things
-            if (princpalThings.things.length === 0) {
+            if (principalThings.things.length === 0) {
                 const certificateId = principal.split('/')[1];
                 const target = `arn:aws:iot:${this.region}:${this.accountId}:cert/${certificateId}`;
-                // const princpalPolicies: ListPrincipalPoliciesResponse = await this.iot.listPrincipalPolicies({principal}).promise();
-                const princpalPolicies: ListAttachedPoliciesResponse = await this.iot.listAttachedPolicies({target}).promise();
-                for (const policy of princpalPolicies.policies) {
-                    // await this.iot.detachPrincipalPolicy({principal, policyName: policy.policyName}).promise();
+                const principalPolicies: ListAttachedPoliciesResponse = await this.iot.listAttachedPolicies({target}).promise();
+                for (const policy of principalPolicies.policies) {
                     await this.iot.detachPolicy({target, policyName: policy.policyName}).promise();
                 }
                 await this.iot.updateCertificate({certificateId, newStatus: 'INACTIVE'}).promise();

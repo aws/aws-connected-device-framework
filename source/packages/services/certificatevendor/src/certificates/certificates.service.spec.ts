@@ -38,8 +38,8 @@ const rotateCertPolicy = 'UnitTestDevicePolicy';
 const certificateExpiryDays = 100;
 const deletePreviousCertificate = false;
 const certId = 'cert123456';
-let instance: CertificateService;
-let instance2: CertificateService;
+let defaultPolicyInstance: CertificateService;
+let inheritPolicyInstance: CertificateService;
 
 const deviceId = 'device123';
 const deviceCsr = '-----BEGIN CERTIFICATE REQUEST-----\nMIICrzCCAZcCAQAwajELMAkGA1UEBhMCVVMxCzAJBgNVBAgMAkNPMREwDwYDVQQH\nDAhNb3JyaXNvbjERMA8GA1UECgwIUmVkUm9ja3MxETAPBgNVBAsMCENvbmNlcnRz\nMRUwEwYDVQQDDAxBQkNERUZHMTIzNDUwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAw\nggEKAoIBAQDtE7E3LnSLzFxFds9a7gzhOxqu262DrECCJ6E53rkZUyL+JroJeq0c\nNKaCujgCroD/ai3n9ms4rDBT73JvX3B5jXMAdQNdNxyvQgLzofTN2PjCUeDlpZEG\ntAKajuu2a5PqereZhCBBaJ/wf3yQEuBX0we6hioqiwKqHC2nEDoOY7yyf/IVsgFT\nVfodbdiGH7dUre6r/77RfKQQr4sEyUkknN+csrCOkfh1/tZWxMdUR1if3aTVhVmq\nWgik3cHF2SMs4Au7wji5CvyF27OLVFZ20uQ6UzLzTwc+PQfQLK2WSyQ4TuRYFsLP\nT1zr2TbjPNhqSKDZuca/l06TvJC9VbRfAgMBAAGgADANBgkqhkiG9w0BAQsFAAOC\nAQEAllcm8mzXgvlsVW6bhs0ioFuF9C3jA+WLqnSN/8Qe+TQckPzwNhbsMtrCn47W\nupS9b+6no/YtYHL5dzFq8gsKhR3dJx61qsW+NS91TU4Hn2dVIrzDmaphQrEa6oVn\nTk/596Nlg/k18HQxP47HzM4vn2Jfk5nDz+j1gUMSgnAq0bYPO/aMu5RoVbMNlkII\ntYwdk8wOmY1SVAveNp9Cxox4aO3vCx2oxMLc4xDg2QDKKl+46Om1f1R6ZZ8pJwEG\nNSY9fu36JhFcJ6/9CiIcl4KhNPTmpibJtRqQOzQBK9KuzPbIoBlfDPGDlIq/R/to\n9GNPPZHz9yJ6VXqJjsCa1PEL/g==\n-----END CERTIFICATE REQUEST-----\n';
@@ -72,12 +72,12 @@ describe('CertificatesService', () => {
             return mockedSSM;
         };
 
-        instance = new CertificateService(accountId, region, s3Bucket, s3Prefix, s3Suffix, presignedUrlExpiresInSeconds,
+        defaultPolicyInstance = new CertificateService(accountId, region, s3Bucket, s3Prefix, s3Suffix, presignedUrlExpiresInSeconds,
             mqttGetSuccessTopic, mqttGetFailureTopic, mqttAckSuccessTopic, mqttAckFailureTopic,
             thingGroupName, caCertificateId, useDefaultPolicy, rotateCertPolicy, certificateExpiryDays, deletePreviousCertificate,
             mockedRegistryManager, mockedIotFactory, mockedIotDataFactory, mockedS3Factory, mockedSsmFactory);
 
-        instance2 = new CertificateService(accountId, region, s3Bucket, s3Prefix, s3Suffix, presignedUrlExpiresInSeconds,
+        inheritPolicyInstance = new CertificateService(accountId, region, s3Bucket, s3Prefix, s3Suffix, presignedUrlExpiresInSeconds,
             mqttGetSuccessTopic, mqttGetFailureTopic, mqttAckSuccessTopic, mqttAckFailureTopic,
             thingGroupName, caCertificateId, false, rotateCertPolicy, certificateExpiryDays, deletePreviousCertificate,
             mockedRegistryManager, mockedIotFactory, mockedIotDataFactory, mockedS3Factory, mockedSsmFactory);
@@ -101,7 +101,7 @@ describe('CertificatesService', () => {
 
         // execute
         try {
-            await instance.get(deviceId);
+            await defaultPolicyInstance.get(deviceId);
             fail('DEVICE_NOT_WHITELISTED error should be thrown');
         } catch (err) {
             expect(err.message).toEqual('DEVICE_NOT_WHITELISTED');
@@ -141,7 +141,7 @@ describe('CertificatesService', () => {
 
         // execute
         try {
-            await instance.get(deviceId);
+            await defaultPolicyInstance.get(deviceId);
         } catch (err) {
             expect(err.message).toEqual('CERTIFICATE_NOT_FOUND');
         }
@@ -187,7 +187,7 @@ describe('CertificatesService', () => {
 
         // execute
         try {
-            await instance.get(deviceId);
+            await defaultPolicyInstance.get(deviceId);
             fail('MISSING_CERTIFICATE_ID error should be thrown');
         } catch (err) {
             expect(err.message).toEqual('MISSING_CERTIFICATE_ID');
@@ -238,7 +238,7 @@ describe('CertificatesService', () => {
         });
 
         // execute
-        await instance.get(deviceId);
+        await defaultPolicyInstance.get(deviceId);
 
         // verify mocks were called correctly
         expect(mockedIsWhitelisted).toBeCalledWith(deviceId);
@@ -288,7 +288,7 @@ describe('CertificatesService', () => {
 
         // execute
         try {
-            await instance.getWithCsr(deviceId, deviceCsr);
+            await defaultPolicyInstance.getWithCsr(deviceId, deviceCsr);
             fail('DEVICE_NOT_WHITELISTED error should be thrown');
         } catch (err) {
             expect(err.message).toEqual('DEVICE_NOT_WHITELISTED');
@@ -375,7 +375,7 @@ describe('CertificatesService', () => {
         });
 
         // execute
-        await instance.getWithCsr(deviceId, deviceCsr);
+        await defaultPolicyInstance.getWithCsr(deviceId, deviceCsr);
 
         // verify mocks were called correctly
         expect(mockedIsWhitelisted).toBeCalledWith(deviceId);
@@ -481,7 +481,7 @@ describe('CertificatesService', () => {
         });
 
         // execute
-        await instance2.getWithCsr(deviceId, deviceCsr, previousCertificateId);
+        await inheritPolicyInstance.getWithCsr(deviceId, deviceCsr, previousCertificateId);
 
         // verify mocks were called correctly
         expect(mockedIsWhitelisted).toBeCalledWith(deviceId);
@@ -520,7 +520,7 @@ describe('CertificatesService', () => {
 
         // execute
         try {
-            await instance.ack(deviceId, certId);
+            await defaultPolicyInstance.ack(deviceId, certId);
             fail('DEVICE_NOT_WHITELISTED error should be thrown');
         } catch (err) {
             expect(err.message).toEqual('DEVICE_NOT_WHITELISTED');
@@ -561,7 +561,7 @@ describe('CertificatesService', () => {
         });
 
         // execute
-        await instance.ack(deviceId, certId);
+        await defaultPolicyInstance.ack(deviceId, certId);
 
         // verify mocks were called correctly
         expect(mockedIsWhitelisted).toBeCalledWith(deviceId);
