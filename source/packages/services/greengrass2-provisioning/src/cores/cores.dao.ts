@@ -163,37 +163,6 @@
                  ':siKey3': createDelimitedAttribute(PkType.Template, templateName, PkType.TemplateVersion, templateVersion),
              }
  
-             if (deploymentStatus!==undefined) {
-                 // if a deployment status has been specified, update it
-                 setExpressions.push('#deploymentStatus=:deploymentStatus');
-                 params.ExpressionAttributeNames['#deploymentStatus'] = 'deploymentStatus';
-                 params.ExpressionAttributeValues[':deploymentStatus'] = deploymentStatus;
- 
-                 params.ExpressionAttributeNames['#siKey4'] = 'siKey4';
-                 params.ExpressionAttributeNames['#siKey5'] = 'siKey5';
-                 params.ExpressionAttributeNames['#siKey6'] = 'siKey6';
- 
-                 if (deploymentStatus!=='SUCCESSFUL') {
-                     // if a deployment has failed, update siKey 4/5/6 which are used for tracking failed deployments
-                     setExpressions.push('#siKey4=:siKey4', '#siKey5=:siKey5', '#siKey6=:siKey6');
-                     params.ExpressionAttributeValues[':siKey4'] = createDelimitedAttribute(PkType.DeploymentStatus, 'FAILED');
-                     params.ExpressionAttributeValues[':siKey5'] = createDelimitedAttribute(PkType.DeploymentStatus, 'FAILED', PkType.Template, templateName);
-                     params.ExpressionAttributeValues[':siKey6'] = createDelimitedAttribute(PkType.DeploymentStatus, 'FAILED', PkType.Template, templateName, PkType.TemplateVersion, templateVersion);
-                 } else {
-                     // else we remove the si keys
-                     removeExpressions.push('#siKey4', '#siKey5', '#siKey6');
-                 }
-             }
-             
-             params.ExpressionAttributeNames['#deploymentStatusMessage'] = 'deploymentStatusMessage';
- 
-             if (deploymentStatusMessage!==undefined) {
-                 setExpressions.push('#deploymentStatusMessage=:deploymentStatusMessage');
-                 params.ExpressionAttributeValues[':deploymentStatusMessage'] = deploymentStatusMessage;
-             } else {
-                 removeExpressions.push('#deploymentStatusMessage');
-             }
- 
          } else if (state==='reported') {
              // for repotred we always just update the template and version
              setExpressions.push('#templateName=:templateName', '#templateVersion=:templateVersion');
@@ -206,6 +175,37 @@
                  ':templateVersion': templateVersion,
              }
          }
+
+         if (deploymentStatus!==undefined) {
+            // if a deployment status has been specified, update it
+            setExpressions.push('#deploymentStatus=:deploymentStatus');
+            params.ExpressionAttributeNames['#deploymentStatus'] = 'deploymentStatus';
+            params.ExpressionAttributeValues[':deploymentStatus'] = deploymentStatus;
+
+            params.ExpressionAttributeNames['#siKey4'] = 'siKey4';
+            params.ExpressionAttributeNames['#siKey5'] = 'siKey5';
+            params.ExpressionAttributeNames['#siKey6'] = 'siKey6';
+
+            if (deploymentStatus!=='SUCCESSFUL') {
+                // if a deployment has failed, update siKey 4/5/6 which are used for tracking failed deployments
+                setExpressions.push('#siKey4=:siKey4', '#siKey5=:siKey5', '#siKey6=:siKey6');
+                params.ExpressionAttributeValues[':siKey4'] = createDelimitedAttribute(PkType.DeploymentStatus, 'FAILED');
+                params.ExpressionAttributeValues[':siKey5'] = createDelimitedAttribute(PkType.DeploymentStatus, 'FAILED', PkType.Template, templateName);
+                params.ExpressionAttributeValues[':siKey6'] = createDelimitedAttribute(PkType.DeploymentStatus, 'FAILED', PkType.Template, templateName, PkType.TemplateVersion, templateVersion);
+            } else {
+                // else we remove the si keys
+                removeExpressions.push('#siKey4', '#siKey5', '#siKey6');
+            }
+        }
+        
+        params.ExpressionAttributeNames['#deploymentStatusMessage'] = 'deploymentStatusMessage';
+
+        if (deploymentStatusMessage!==undefined) {
+            setExpressions.push('#deploymentStatusMessage=:deploymentStatusMessage');
+            params.ExpressionAttributeValues[':deploymentStatusMessage'] = deploymentStatusMessage;
+        } else {
+            removeExpressions.push('#deploymentStatusMessage');
+        }
  
          params.UpdateExpression = `SET ${setExpressions.join(',')}`;
          if (removeExpressions.length>0) params.UpdateExpression += ` REMOVE ${removeExpressions.join(',')}`;

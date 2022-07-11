@@ -63,7 +63,7 @@ export class CoresService {
         this.lambda = lambdaFactory();
     }
 
-    public async associateTemplate(coreName: string, templateName: string, templateVersion: number, state: 'desired' | 'reported', deploymentStatus?: string, deploymentStatusMessage?: string): Promise<void> {
+    public async associateTemplate(coreName: string, templateName: string, templateVersion: number, state: 'desired' | 'reported', deploymentId?: string, deploymentStatus?: string, deploymentStatusMessage?: string): Promise<void> {
         logger.debug(`cores.service associateTemplate: in: coreName:${coreName}, templateName:${templateName}, templateVersion:${templateVersion}, state:${state}, deploymentStatus:${deploymentStatus}, deploymentStatusMessage:${deploymentStatusMessage}`);
 
         ow(coreName, ow.string.nonEmpty);
@@ -77,14 +77,32 @@ export class CoresService {
         } else if (deploymentStatus === 'SUCCESSFUL') {
             // reported state where deployment was successful
             await this.coresDao.associateTemplate(coreName, templateName, templateVersion, state, deploymentStatus, deploymentStatusMessage);
+
+
         } else {
             // reported state where deployment was unsuccessful, so instead save this as a failed desired state instead of reported as the reported installed template/version would not have changed
             const existing = await this.coresDao.get(coreName);
             await this.coresDao.associateTemplate(coreName, existing?.template?.desired?.name, existing?.template?.desired?.version, 'desired', deploymentStatus, deploymentStatusMessage);
         }
 
-        logger.debug(`cores.service associateTemplate: exit`);
+        if (state === 'reported') {
+            await this.cdfEventPublisher.emitEvent<CoresEventPayload>(
+                {
+                    name: CoresEvent, payload: {
+                        coreName,
+                        status: deploymentStatus === 'SUCCESSFUL' ? 'success' : 'failed',
+                        operation: 'update',
+                        detail: {
+                            deploymentId,
+                            templateName,
+                            templateVersion
+                        },
+                        errorMessage: deploymentStatusMessage
+                    }
+                })
+        }
 
+        logger.debug(`cores.service associateTemplate: exit`);
     }
 
     public async associateFailedDeploymentStarts(cores: FailedCoreDeployment[]): Promise<void> {
@@ -273,11 +291,11 @@ export class CoresService {
         if (core.taskStatus === 'InProgress') {
             core.taskStatus = 'Success';
             core.updatedAt = new Date();
-            await this.cdfEventPublisher.emitEvent<CoresEventPayload>({ name: CoresEvent, payload: { name: core.name, taskId: task.id, operation: 'create', status: 'success' } })
+            await this.cdfEventPublisher.emitEvent<CoresEventPayload>({ name: CoresEvent, payload: { coreName: core.name, operation: 'create', status: 'success', detail: { taskId: task.id } } })
         }
 
         if (core.taskStatus === 'Failure') {
-            await this.cdfEventPublisher.emitEvent<CoresEventPayload>({ name: CoresEvent, payload: { name: core.name, taskId: task.id, operation: 'create', status: 'failed', errorMessage: core.statusMessage } })
+            await this.cdfEventPublisher.emitEvent<CoresEventPayload>({ name: CoresEvent, payload: { coreName: core.name, operation: 'create', status: 'failed', errorMessage: core.statusMessage, detail: { taskId: task.id } } })
         }
 
         // save final state
@@ -521,11 +539,11 @@ export class CoresService {
         if (core.taskStatus === 'InProgress') {
             core.taskStatus = 'Success';
             core.updatedAt = new Date();
-            await this.cdfEventPublisher.emitEvent<CoresEventPayload>({ name: CoresEvent, payload: { name, taskId: task.id, operation: 'delete', status: 'success' } })
+            await this.cdfEventPublisher.emitEvent<CoresEventPayload>({ name: CoresEvent, payload: { coreName: name, operation: 'delete', status: 'success', detail: { taskId: task.id } } })
         }
 
         if (core.taskStatus === 'Failure') {
-            await this.cdfEventPublisher.emitEvent<CoresEventPayload>({ name: CoresEvent, payload: { name, taskId: task.id, operation: 'delete', status: 'failed', errorMessage: core.statusMessage } })
+            await this.cdfEventPublisher.emitEvent<CoresEventPayload>({ name: CoresEvent, payload: { coreName: name, operation: 'delete', status: 'failed', errorMessage: core.statusMessage, detail: { taskId: task.id } } })
         }
 
         // save final state

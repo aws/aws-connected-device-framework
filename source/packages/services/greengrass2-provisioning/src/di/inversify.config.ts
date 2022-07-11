@@ -67,6 +67,8 @@ container.load(provisioningContainerModule);
 container.load(assetLibraryContainerModule);
 container.load(eventPublisherContainerModule);
 
+container.bind<boolean>('enablePublishEvents').toConstantValue(process.env.ENABLE_PUBLISH_EVENTS == 'true');
+
 container.bind<DynamoDbUtils>(TYPES.DynamoDbUtils).to(DynamoDbUtils).inSingletonScope();
 container.bind<S3Utils>(TYPES.S3Utils).to(S3Utils).inSingletonScope();
 

@@ -10,10 +10,10 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+import { container } from './di/inversify.config';
 import { CoreTasksService } from './coreTasks/coreTasks.service';
 import { DeploymentTasksService } from './deploymentTasks/deploymentTasks.service';
 import { DeviceTasksService } from './deviceTasks/deviceTasks.service';
-import { container } from './di/inversify.config';
 import { TYPES } from './di/types';
 import { logger } from './utils/logger.util';
 

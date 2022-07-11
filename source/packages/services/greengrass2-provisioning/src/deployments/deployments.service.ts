@@ -19,7 +19,7 @@ import {
     GreengrassV2Client
 } from '@aws-sdk/client-greengrassv2';
 import {
-    AddThingToThingGroupCommand, CreateThingGroupCommand, DescribeThingGroupCommand, IoTClient
+    AddThingToThingGroupCommand, CreateThingGroupCommand, DescribeThingGroupCommand, IoTClient, TagResourceCommand
 } from '@aws-sdk/client-iot';
 
 import { CoresService } from '../cores/cores.service';
@@ -30,6 +30,8 @@ import { TemplatesService } from '../templates/templates.service';
 import { logger } from '../utils/logger.util';
 import { Deployment, DeploymentEventPayload, DeploymentsEvent, NewDeployment } from './deployments.models';
 import { CDFEventPublisher, EVENT_PUBLISHER_TYPES } from "@cdf/event-publisher";
+
+export const DEPLOYMENT_TASK_ID_TAG_KEY = 'cdf-greengrass2-provisioning-deployment-task-id'
 
 @injectable()
 export class DeploymentsService {
@@ -170,7 +172,7 @@ export class DeploymentsService {
                     const r = await this.iot.send(new CreateThingGroupCommand({
                         thingGroupName,
                         tags: [{
-                            Key: 'cdf-greengrass2-provisioning-deployment-task-id',
+                            Key: DEPLOYMENT_TASK_ID_TAG_KEY,
                             Value: taskId
                         }]
                     }));
@@ -203,16 +205,28 @@ export class DeploymentsService {
                             iotJobConfiguration: template.jobConfig,
                             deploymentPolicies: template.deploymentPolicies,
                             tags: {
-                                'cdf-greengrass2-provisioning-deployment-task-id': taskId
+                                DEPLOYMENT_TASK_ID_TAGGING_KEY: taskId
                             }
                         }));
                         logger.silly(`deployments.service createDeployment: CreateDeploymentCommandOutput: ${JSON.stringify(r)}`);
+
                         template.deployment = {
                             id: r.deploymentId,
                             thingGroupName,
                             jobId: r.iotJobId
                         }
+
+                        const tagResourceOutput = await this.iot.send(new TagResourceCommand({
+                            resourceArn: r.iotJobArn,
+                            tags: [{
+                                Key: DEPLOYMENT_TASK_ID_TAG_KEY, Value: taskId
+                            }]
+                        }))
+
+                        logger.silly(`deployments.service createDeployment: TagResourceCommandOutput: ${JSON.stringify(tagResourceOutput)}`);
+
                     } catch (e) {
+                        console.log(JSON.stringify(e))
                         this.markAsFailed(deployment, `Failed to create deployment: ${e.name}`);
                     }
                 }

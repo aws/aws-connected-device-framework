@@ -129,36 +129,36 @@ export type CoreTaskStatus = 'Waiting' | 'InProgress' | 'Success' | 'Failure';
 export type CdfProvisioningParameters = CreateDeviceCertificateParameters | RegisterDeviceCertificateWithoutCAParameters | UseACMPCAParameters | undefined;
 
 export interface CreateDeviceCertificateParameters {
-	caId: string;
-	certInfo: CertInfo;
-} 
+    caId: string;
+    certInfo: CertInfo;
+}
 export interface RegisterDeviceCertificateWithoutCAParameters {
-	certificatePem: string;
-	certificateStatus?: CertificateStatus;
+    certificatePem: string;
+    certificateStatus?: CertificateStatus;
 }
 
 export enum CertificateStatus {
-	ACTIVE = 'ACTIVE',
-	INACTIVE = 'INACTIVE'
+    ACTIVE = 'ACTIVE',
+    INACTIVE = 'INACTIVE'
 }
 
 export interface UseACMPCAParameters {
-	caArn?: string;
-	caAlias?: string;
-	
-	csr?: string;
-	certInfo: CertInfo;
-} 
+    caArn?: string;
+    caAlias?: string;
+
+    csr?: string;
+    certInfo: CertInfo;
+}
 
 export interface CertInfo {
-	commonName?: string;
-	organization?: string;
-	organizationalUnit?: string;
-	locality?: string;
-	stateName?: string;
-	country?: string;
-	emailAddress?: string;
-	daysExpiry?:number;	
+    commonName?: string;
+    organization?: string;
+    organizationalUnit?: string;
+    locality?: string;
+    stateName?: string;
+    country?: string;
+    emailAddress?: string;
+    daysExpiry?: number;
 }
 
 export type InstallerConfigGenerators = { [alias: string]: string };
@@ -171,13 +171,29 @@ export type ConfigGeneratorEvent = {
     cdfProvisioningParameters?: CdfProvisioningParameters;
 }
 
-
 export const CoresEvent = 'Cores Resource Changes'
 
-export type CoresEventPayload = {
+export type CoreTemplateUpdateDetail = {
+    templateName: string,
+    templateVersion: number,
+    deploymentId: string
+
+}
+
+export type CoreCreationDetail = {
     taskId: string,
-    name: string,
-    operation: 'create' | 'delete'
+}
+
+export type CoreDeletionDetail = {
+    taskId: string,
+}
+
+export type CoresEventPayload = {
+    coreName: string,
+    operation: 'create' | 'delete' | 'update',
     status: 'success' | 'failed'
+    detail?: CoreTemplateUpdateDetail | CoreCreationDetail | CoreDeletionDetail
     errorMessage?: string
 }
+
+

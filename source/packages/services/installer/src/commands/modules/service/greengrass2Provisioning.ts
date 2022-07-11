@@ -66,6 +66,13 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
 
       updatedAnswers = await inquirer.prompt([
         {
+          message: `Do you want the module to publish all operation events to CDF EventBridge?`,
+          type: 'confirm',
+          name: 'greengrass2Provisioning.enablePublishEvents',
+          default: answers.greengrass2Provisioning?.enablePublishEvents ?? true,
+          askAnswered: true
+        },
+        {
           message: 'When using the Asset Library module as an enhanced device registry, the Greengrass2 Provisioning module can use it to help search across devices and groups to define the deployment targets. You have not chosen to install the Asset Library module - would you like to install it?\nNote: as there is additional cost associated with installing the Asset Library module, ensure you familiarize yourself with its capabilities and benefits in the online CDF github documentation.',
           type: 'confirm',
           name: 'greengrass2Provisioning.useAssetLibrary',
@@ -87,7 +94,7 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
         else {
           const installerConfigGeneratorsAsStringList = (
             Object.entries(updatedAnswers.greengrass2Provisioning.installerConfigGenerators)
-            .map(([k, v]) => ` * ${k}: ${v}`).join("\n")
+              .map(([k, v]) => ` * ${k}: ${v}`).join("\n")
           );
           (
             { configGeneratorsPromptAction } = await inquirer.prompt([
@@ -96,9 +103,9 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
                 name: 'configGeneratorsPromptAction',
                 message: `The following config generator aliases are currently configured:\n${installerConfigGeneratorsAsStringList}\nWhat do you want to do next?`,
                 choices: [
-                  {name: 'confirm list and continue', value: configGeneratorsPromptActionChoices.Confirm},
-                  {name: 'add another config generator alias', value: configGeneratorsPromptActionChoices.Add},
-                  {name: 'delete an entry from the list', value: configGeneratorsPromptActionChoices.Delete},
+                  { name: 'confirm list and continue', value: configGeneratorsPromptActionChoices.Confirm },
+                  { name: 'add another config generator alias', value: configGeneratorsPromptActionChoices.Add },
+                  { name: 'delete an entry from the list', value: configGeneratorsPromptActionChoices.Delete },
                 ],
                 default: configGeneratorsPromptActionChoices.Confirm,
               }
@@ -107,7 +114,7 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
         }
 
         if (configGeneratorsPromptAction === configGeneratorsPromptActionChoices.Add) {
-          const newConfigGenerator: {alias: string, lambda: string} = await inquirer.prompt([
+          const newConfigGenerator: { alias: string, lambda: string } = await inquirer.prompt([
             {
               type: 'input',
               name: 'alias',
@@ -140,7 +147,7 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
           updatedAnswers.greengrass2Provisioning.installerConfigGenerators[newConfigGenerator.alias] = newConfigGenerator.lambda;
         }
         else if (configGeneratorsPromptAction === configGeneratorsPromptActionChoices.Delete) {
-          const configGeneratorAliasesToDelete: {list: string[]} = await inquirer.prompt([
+          const configGeneratorAliasesToDelete: { list: string[] } = await inquirer.prompt([
             {
               type: 'checkbox',
               name: 'list',
@@ -176,6 +183,7 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
       `ApiGatewayDefinitionTemplate=${answers.apigw.cloudFormationTemplate}`,
       `KmsKeyId=${answers.kms.id}`,
       `ArtifactsBucket=${answers.s3.bucket}`,
+      `EnablePublishEvents=${answers.greengrass2Provisioning.enablePublishEvents}`,
       `ArtifactsKeyPrefix=greengrass2/artifacts/`,
       `ProvisioningFunctionName=${answers.greengrass2Provisioning.provisioningFunctionName}`,
       `AssetLibraryFunctionName=${answers.greengrass2Provisioning.assetLibraryFunctionName ?? ''}`,

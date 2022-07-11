@@ -103,7 +103,7 @@ async function cleanUpConfig(answers: Answers): Promise<Answers> {
   delete answers?.bulkCerts?.setSupplier;
   delete answers?.bulkCerts?.caAlias;
   delete answers?.bulkCerts?.caValue;
-
+  delete answers?.eventBus?.arn;
   delete answers?.provisioning?.pcaAliases;
   delete answers?.provisioning?.setPcaAliases;
   delete answers?.provisioning?.pcaAlias;

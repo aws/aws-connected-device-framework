@@ -272,6 +272,7 @@ export interface Greengrass2Provisioning
   devicesBatchSize?: number;
   deploymentsBatchSize?: number;
   useAssetLibrary?: boolean;
+  enablePublishEvents?: boolean;
 }
 
 export interface Provisioning extends RestServiceModuleAttribues {
@@ -288,7 +289,7 @@ export interface Provisioning extends RestServiceModuleAttribues {
   setPcaAliases?: boolean;
   pcaAliases?: CAAliases;
   pcaAlias?: string;
-  pcaArn?:string;
+  pcaArn?: string;
 }
 
 export interface FleetSimulator extends RestServiceModuleAttribues {

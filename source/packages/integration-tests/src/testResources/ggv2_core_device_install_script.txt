@@ -2,7 +2,7 @@
 
 cd /home/ssm-user
 curl -o certs.zip '{{{presigned_url}}}'
-unzip certs.zip
+unzip -o certs.zip
 sudo cp -R certs/* /greengrass/v2
 
 curl '{{{config_presigned_url}}}' > GreengrassCore/config.yaml
