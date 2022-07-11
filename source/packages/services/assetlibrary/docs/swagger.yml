@@ -627,6 +627,17 @@ paths:
                 $ref: "#/components/schemas/GroupList"
         "404":
           $ref: "#/components/responses/NotFound"
+    delete:
+      tags:
+        - Groups
+      summary: Remove a device's associated groups
+      operationId: detachFromGroups
+      responses:
+        "204":
+          description: successful operation
+        "404":
+          $ref: "#/components/responses/NotFound"
+
   "/devices/{deviceId}/{relationship}/groups/{groupPath}":
     parameters:
       - $ref: '#/components/parameters/deviceIdPath'
@@ -656,7 +667,6 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "404":
           $ref: "#/components/responses/NotFound"
-
 
   "/devices/{deviceId}/{relationship}/{direction}/groups/{groupPath}":
     parameters:
@@ -689,8 +699,6 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
 
-
-
   "/devices/{deviceId}/{relationship}/devices":
     parameters:
       - $ref: '#/components/parameters/deviceIdPath'
@@ -717,6 +725,16 @@ paths:
             application/vnd.aws-cdf-v2.0+json:
               schema:
                 $ref: "#/components/schemas/DeviceList"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      tags:
+        - Devices
+      summary: Remove a device's associated devices
+      operationId: detachFromDevices
+      responses:
+        "204":
+          description: successful operation
         "404":
           $ref: "#/components/responses/NotFound"
 
@@ -756,7 +774,6 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
 
-
   "/devices/{deviceId}/{relationship}/{direction}/devices/{otherDeviceId}":
     parameters:
       - $ref: '#/components/parameters/deviceIdPath'
@@ -793,7 +810,6 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "404":
           $ref: "#/components/responses/NotFound"
-
 
   "/devices/{deviceId}/components":
     parameters:

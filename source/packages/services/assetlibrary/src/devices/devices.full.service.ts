@@ -16,7 +16,11 @@ import ow from 'ow';
 
 import { AuthzServiceFull } from '../authz/authz.full.service';
 import { ClaimAccess } from '../authz/claims';
-import { RelatedEntityArrayMap, SortKeys, DirectionToRelatedEntityArrayMap, RelationDirection, OmniRelationDirection } from '../data/model';
+import {
+    DirectionToRelatedEntityArrayMap, OmniRelationDirection, RelatedEntityArrayMap,
+    RelatedEntityIdentifer,
+    RelationDirection, SortKeys
+} from '../data/model';
 import { Node } from '../data/node';
 import { TYPES } from '../di/types';
 import { Event, EventEmitter, Type } from '../events/eventEmitter.service';
@@ -29,7 +33,10 @@ import { Operation, TypeCategory } from '../types/constants';
 import { SchemaValidatorService } from '../types/schemaValidator.full.service';
 import { TypeDefinitionStatus } from '../types/types.models';
 import { TypesService } from '../types/types.service';
-import { DeviceNotFoundError, GroupNotFoundError, RelationValidationError, ProfileNotFoundError, SchemaValidationError, TemplateNotFoundError } from '../utils/errors';
+import {
+    DeviceNotFoundError, GroupNotFoundError, ProfileNotFoundError, RelationValidationError,
+    SchemaValidationError, TemplateNotFoundError
+} from '../utils/errors';
 import { logger } from '../utils/logger';
 import { TypeUtils } from '../utils/typeUtils';
 import { DevicesAssembler } from './devices.assembler';
@@ -66,9 +73,6 @@ export class DevicesServiceFull implements DevicesService {
         if (direction===undefined || direction===null) {
             direction = 'both';
         }
-        if (state===undefined || state===null) {
-            state = 'active';
-        }
         if (template===undefined || template===null) {
             template=TypeCategory.Device;
         }
@@ -77,7 +81,7 @@ export class DevicesServiceFull implements DevicesService {
         deviceId=deviceId.toLowerCase();
         relationship=relationship.toLowerCase();
         template=template.toLowerCase();
-        state=state.toLowerCase();
+        state=state?.toLowerCase();
         direction=direction.toLowerCase() as OmniRelationDirection;
 
         await this.authServiceFull.authorizationCheck([deviceId], [], ClaimAccess.R);
@@ -87,7 +91,11 @@ export class DevicesServiceFull implements DevicesService {
         const offsetAsInt = this.typeUtils.parseInt(offset);
         const countAsInt = this.typeUtils.parseInt(count);
 
-        const result  = await this.devicesDao.listRelated(deviceId, relationship, direction, template, {state}, offsetAsInt, countAsInt, sort);
+        const filteredBy = {};
+        if (state) {
+            filteredBy['state'] = state;
+        }
+        const result  = await this.devicesDao.listRelated(deviceId, relationship, direction, template, filteredBy, offsetAsInt, countAsInt, sort);
 
         const model = this.devicesAssembler.toRelatedDeviceModelsList(result, offsetAsInt, countAsInt);
         logger.debug(`devices.full.service listRelatedDevices: exit: model: ${JSON.stringify(model)}`);
@@ -604,7 +612,7 @@ export class DevicesServiceFull implements DevicesService {
         await this.authServiceFull.authorizationCheck([deviceId], [groupPath], ClaimAccess.U);
 
         // Save to datastore
-        await this.devicesDao.detachFromGroup(deviceId, relationship, direction, groupPath);
+        await this.devicesDao.detachFromGroups(deviceId, [{relationship,direction,targetId:groupPath}]);
 
         // fire event
         await this.eventEmitter.fire({
@@ -619,6 +627,53 @@ export class DevicesServiceFull implements DevicesService {
         });
 
         logger.debug(`device.full.service detachFromGroup: exit:`);
+    }
+
+    public async detachFromGroups(deviceId:string, relationship?:string, direction?:RelationDirection) : Promise<void>{
+        logger.debug(`device.full.service detachFromGroups: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}`);
+
+        ow(deviceId, 'deviceId', ow.string.nonEmpty);
+        if (direction) {
+            ow(direction,'direction', ow.string.oneOf(['in','out']));
+        }
+
+        // any ids need to be lowercase
+        deviceId = deviceId.toLowerCase();
+        relationship = relationship?.toLowerCase();
+
+        // ensure user has access to the device
+        await this.authServiceFull.authorizationCheck([deviceId], undefined, ClaimAccess.U);
+
+        // get a list of all the attached groups (permissions check is carried out as part of `listRelatedGroups` call)
+        let offset = 0;
+        const count = 20;
+        let g = await this.listRelatedGroups(deviceId, relationship, direction, undefined, offset, count, undefined);
+        while ((g?.results?.length??0)>0) {
+            const relations:RelatedEntityIdentifer[]=[];
+            relations.push(...g.results.map(r=> ({relationship:r.relation, direction:r.direction, targetId:r.groupPath})));
+
+            // remove the associations
+            await this.devicesDao.detachFromGroups(deviceId, relations);
+
+            // fire change events
+            relations.forEach(async r=> {
+                await this.eventEmitter.fire({
+                    objectId: deviceId,
+                    type: Type.device,
+                    event: Event.modify,
+                    attributes: {
+                        deviceId,
+                        detachedFromGroup: r.targetId,
+                        relationship
+                    }
+                });
+            });
+
+            offset = offset + count;
+            g = await this.listRelatedGroups(deviceId, relationship, direction, undefined, offset, count, undefined);
+        }
+
+        logger.debug(`device.full.service detachFromGroups: exit:`);
     }
 
     public async attachToDevice(deviceId:string, relationship:string, direction:RelationDirection, otherDeviceId:string): Promise<void> {
@@ -716,7 +771,7 @@ export class DevicesServiceFull implements DevicesService {
         await this.authServiceFull.authorizationCheck([deviceId, otherDeviceId], [], ClaimAccess.U);
 
         // Save to datastore
-        await this.devicesDao.detachFromDevice(deviceId, relationship, direction, otherDeviceId);
+        await this.devicesDao.detachFromDevices(deviceId, [{relationship,direction,targetId:deviceId}]);
 
         // fire event
         await this.eventEmitter.fire({
@@ -731,6 +786,53 @@ export class DevicesServiceFull implements DevicesService {
         });
 
         logger.debug(`device.full.service detachFromDevice: exit:`);
+    }
+
+    public async detachFromDevices(deviceId:string, relationship?:string, direction?:RelationDirection) : Promise<void>{
+        logger.debug(`device.full.service detachFromDevices: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}`);
+
+        ow(deviceId, 'deviceId', ow.string.nonEmpty);
+        if (direction) {
+            ow(direction,'direction', ow.string.oneOf(['in','out']));
+        }
+
+        // any ids need to be lowercase
+        deviceId = deviceId.toLowerCase();
+        relationship = relationship?.toLowerCase();
+
+        // ensure user has access to the device
+        await this.authServiceFull.authorizationCheck([deviceId], undefined, ClaimAccess.U);
+
+        // get a list of all the attached devices (permissions check is carried out as part of `listRelatedGroups` call)
+        let offset = 0;
+        const count = 20;
+        let d = await this.listRelatedDevices(deviceId, relationship, direction, undefined, undefined, offset, count, undefined);
+        while ((d?.results?.length??0)>0) {
+            const relations:RelatedEntityIdentifer[]=[];
+            relations.push(...d.results.map(r=> ({relationship:r.relation, direction:r.direction, targetId:r.deviceId})));
+            
+            // remove the associations
+            await this.devicesDao.detachFromDevices(deviceId, relations);
+
+            // fire change events
+            relations.forEach(async r=> {
+                await this.eventEmitter.fire({
+                    objectId: deviceId,
+                    type: Type.device,
+                    event: Event.modify,
+                    attributes: {
+                        deviceId,
+                        detachedFromDevice: r.targetId,
+                        relationship
+                    }
+                });
+            });
+
+            offset = offset + count;
+            d = await this.listRelatedDevices(deviceId, relationship, direction, undefined, undefined, offset, count, undefined);
+        }
+
+        logger.debug(`device.full.service detachFromDevices: exit:`);
     }
 
     public async updateComponent(deviceId:string, componentId:string, component:DeviceItem) : Promise<void> {

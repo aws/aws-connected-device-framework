@@ -221,12 +221,20 @@ export class DevicesServiceLite implements DevicesService {
 
         logger.debug(`device.lite.service attachToGroup: exit:`);
     }
+            
+    detachFromGroups(_deviceId: string, _relationship?: string, _direction?: string): Promise<void> {
+        throw new NotSupportedError();
+    }
 
     public async attachToDevice(_deviceId:string, _relationship:string, _direction:string, _otherDeviceId:string) : Promise<void> {
         throw new NotSupportedError();
     }
 
     public async detachFromDevice(_deviceId:string, _relationship:string, _direction:string, _otherDeviceId:string) : Promise<void> {
+        throw new NotSupportedError();
+    }
+    
+    public async detachFromDevices(_deviceId: string, _template?: string, _relationship?: string, _direction?: string): Promise<void> {
         throw new NotSupportedError();
     }
 

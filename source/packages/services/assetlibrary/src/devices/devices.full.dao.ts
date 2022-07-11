@@ -16,11 +16,13 @@ import {logger} from '../utils/logger';
 import {TYPES} from '../di/types';
 import {Node} from '../data/node';
 import { FullAssembler } from '../data/full.assembler';
-import { ModelAttributeValue, SortKeys, DirectionToRelatedEntityArrayMap, RelatedEntityArrayMap, RelationDirection } from '../data/model';
+import { ModelAttributeValue, SortKeys, DirectionToRelatedEntityArrayMap, RelatedEntityArrayMap, RelationDirection, RelatedEntityIdentifer } from '../data/model';
 import { BaseDaoFull } from '../data/base.full.dao';
 import { CommonDaoFull } from '../data/common.full.dao';
 import {EntityTypeMap} from '../data/model';
 import { isRelatedEntityDto, isVertexDto, RelatedEntityDto, VertexDto } from '../data/full.model';
+import { Claims } from '../authz/claims';
+import ow from 'ow';
 
 const __ = process.statics;
 
@@ -31,7 +33,8 @@ export class DevicesDaoFull extends BaseDaoFull {
         @inject('neptuneUrl') neptuneUrl: string,
         @inject(TYPES.CommonDao) private commonDao: CommonDaoFull,
         @inject(TYPES.FullAssembler) private fullAssembler: FullAssembler,
-	    @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph
+	    @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph,
+        @inject('authorization.enabled') private isAuthzEnabled: boolean
     ) {
         super(neptuneUrl, graphSourceFactory);
     }
@@ -40,7 +43,13 @@ export class DevicesDaoFull extends BaseDaoFull {
         logger.debug(`devices.full.dao listRelated: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, template:${template}, filterRelatedBy:${JSON.stringify(filterRelatedBy)}, offset:${offset}, count:${count}, sort:${sort}`);
 
         const id = `device___${deviceId}`;
-        return await this.commonDao.listRelated(id, relationship, direction, template, filterRelatedBy, offset, count, sort);
+
+        let authorizedPaths:string[];
+        if (this.isAuthzEnabled) {
+            authorizedPaths = Claims.getInstance().listPaths();
+        }
+
+        return await this.commonDao.listRelated(id, relationship, direction, template, filterRelatedBy, offset, count, sort, authorizedPaths);
 
     }
 
@@ -331,34 +340,12 @@ export class DevicesDaoFull extends BaseDaoFull {
         logger.debug(`devices.full.dao attachToGroup: exit:`);
     }
 
-    public async detachFromGroup(deviceId:string, relationship:string, direction:RelationDirection, groupPath:string) : Promise<void> {
-        logger.debug(`device.full.dao detachFromGroup: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, groupPath:${groupPath}`);
+    public async detachFromGroups(deviceId:string, relations:RelatedEntityIdentifer[]) : Promise<void> {
+        logger.debug(`device.full.dao detachFromGroups: in: deviceId:${deviceId}, relations:${JSON.stringify(relations)}`);
 
-        let sourceId:string;
-        let targetId:string;
+        await this.detachFromOthers(deviceId, relations.map(r=> ({relationship:r.relationship, direction:r.direction, targetId:`group___${r.targetId}`})) );
 
-        if (direction==='out') {
-            sourceId = `device___${deviceId}`;
-            targetId = `group___${groupPath}`;
-        } else {
-            sourceId = `group___${groupPath}`;
-            targetId = `device___${deviceId}`;
-        }
-
-        const conn = super.getConnection();
-        try {
-            const result = await conn.traversal.V(sourceId).as('source').
-                outE(relationship).as('edge').
-                inV().has(process.t.id, targetId).as('target').
-                select('edge').dedup().drop().
-                iterate();
-
-            logger.debug(`devices.full.dao detachFromGroup: result:${JSON.stringify(result)}`);
-        } finally {
-            await conn.close();
-        }
-
-        logger.debug(`devices.full.dao detachFromGroup: exit:`);
+        logger.debug(`devices.full.dao detachFromGroups: exit:`);
     }
 
     public async attachToDevice(deviceId:string, relationship:string, direction:RelationDirection, otherDeviceId:string, isAuthCheck:boolean) : Promise<void> {
@@ -388,29 +375,50 @@ export class DevicesDaoFull extends BaseDaoFull {
         logger.debug(`devices.full.dao attachToDevice: exit:`);
     }
 
-    public async detachFromDevice(deviceId:string, relationship:string, direction:string, otherDeviceId:string) : Promise<void> {
-        logger.debug(`device.full.dao detachFromDevice: in: deviceId:${deviceId}, relationship:${relationship}, direction:${direction}, otherDeviceId:${otherDeviceId}`);
+    public async detachFromDevices(deviceId:string, relations:RelatedEntityIdentifer[]) : Promise<void> {
+        logger.debug(`device.full.dao detachFromDevices: in: deviceId:${deviceId}, relations:${JSON.stringify(relations)}`);
 
-        const source = (direction==='out') ? deviceId : otherDeviceId;
-        const target = (direction==='out') ? otherDeviceId : deviceId;
+        await this.detachFromOthers(deviceId, relations.map(r=> ({relationship:r.relationship, direction:r.direction, targetId:`device___${r.targetId}`})) );
 
-        const sourceId = `device___${source}`;
-        const targetId = `device___${target}`;
+        logger.debug(`devices.full.dao detachFromDevices: exit:`);
+    }
+    
+    public async detachFromOthers(deviceId:string, relations:RelatedEntityIdentifer[]) : Promise<void> {
+        logger.debug(`device.full.dao detachFromOthers: in: deviceId:${deviceId}, relations:${JSON.stringify(relations)}`);
+
+        ow(deviceId, ow.string.nonEmpty);
+        ow(relations, ow.array.minLength(1));
+
+        const edgesToDelete : process.GraphTraversal[] = [];
+        for (const rel of relations) {
+            ow(rel.relationship, ow.string.nonEmpty);
+            ow(rel.direction, ow.string.oneOf(['in','out']));
+            ow(rel.targetId, ow.string.nonEmpty)
+
+            let t: process.GraphTraversal;
+            if (rel.direction==='out') {
+                t = __.outE(rel.relationship).as('e');
+            } else {
+                t = __.inE(rel.relationship).as('e');
+            }
+
+            t.otherV().has(process.t.id, rel.targetId).
+            select('e');
+
+            edgesToDelete.push(t);
+        }
 
         const conn = super.getConnection();
         try {
-            const result = await conn.traversal.V(sourceId).
-                outE(relationship).as('e').
-                inV().has(process.t.id, targetId).
-                select('e').dedup().drop().
-                iterate();
-
-            logger.debug(`devices.full.dao detachFromDevice: result:${JSON.stringify(result)}`);
+            await conn.traversal.V(`device___${deviceId}`).as('source').
+            union(...edgesToDelete)
+            .drop().iterate();
         } finally {
             await conn.close();
         }
 
-        logger.debug(`devices.full.dao detachFromDevice: exit:`);
+        logger.debug(`devices.full.dao detachFromOthers: exit:`);
     }
+
 
 }

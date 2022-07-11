@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { TypeCategory } from '../types/constants';
-import { ModelAttributeValue, StringArrayMap, DirectionToStringArrayMap, DirectionToRelatedEntityArrayMap } from '../data/model';
+import { ModelAttributeValue, StringArrayMap, DirectionToStringArrayMap, DirectionToRelatedEntityArrayMap, RelationDirection } from '../data/model';
 import { DeviceItem, DeviceBaseResource } from '../devices/devices.models';
 
 export class GroupBaseResource {
@@ -65,7 +65,7 @@ export class GroupItem {
 
 	// populated for related resources
 	relation?: string;
-	direction?: string;
+	direction?: RelationDirection;
 
 	public constructor(init?:Partial<GroupItem>) {
         Object.assign(this, init);

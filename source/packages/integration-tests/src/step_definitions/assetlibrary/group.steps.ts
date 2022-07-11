@@ -19,11 +19,10 @@ import {
     ASSETLIBRARY_CLIENT_TYPES,
 } from '@cdf/assetlibrary-client/dist';
 import { fail } from 'assert';
-import stringify from 'json-stable-stringify';
 
 import chai_string = require('chai-string');
 import {expect, use} from 'chai';
-import { RESPONSE_STATUS, AUTHORIZATION_TOKEN } from '../common/common.steps';
+import { RESPONSE_STATUS, AUTHORIZATION_TOKEN, validateExpectedAttributes } from '../common/common.steps';
 import {container} from '../../di/inversify.config';
 import {Dictionary} from '../../../../libraries/core/lambda-invoke/src';
 use(chai_string);
@@ -191,21 +190,8 @@ When('I attach group {string} to group {string} via {string}', async function (t
 
 Then('group {string} exists with attributes', async function (groupPath:string, data:DataTable) {
 
-    const d = data.rowsHash();
-    const r = await groupService.getGroup(groupPath, getAdditionalHeaders(this));
-
-    Object.keys(d).forEach( key => {
-        const val = d[key];
-        if (val.startsWith('{') || val.startsWith('[')) {
-            expect(stringify(r[key])).eq( stringify(JSON.parse(val)));
-        } else if (val==='___null___') {
-            expect(r[key]).eq(null);
-        } else if (val==='___undefined___') {
-            expect(r[key]).eq(undefined);
-        } else {
-            expect(r[key]).eq( val);
-        }
-    });
+    const group = await groupService.getGroup(groupPath, getAdditionalHeaders(this));
+    validateExpectedAttributes(group, data);
 
 });
 

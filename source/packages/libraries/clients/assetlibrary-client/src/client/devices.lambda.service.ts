@@ -245,6 +245,24 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
         await this.lambdaInvoker.invoke(this.functionName, event);
     }
 
+    async detachFromDevices(deviceId: string, relationship: string, additionalHeaders?: RequestHeaders): Promise<void> {
+        ow(deviceId, 'deviceId', ow.string.nonEmpty);
+        if (relationship===undefined) {
+            relationship = '*';
+        }
+
+        const event = new LambdaApiGatewayEventBuilder()
+            .setPath(super.deviceAttachedDevicesRelativeUrl(deviceId, relationship))
+            .setMethod('DELETE')
+            .setHeaders(super.buildHeaders(additionalHeaders));
+
+        await this.lambdaInvoker.invoke(this.functionName, event);
+    }
+
+    async detachFromAllDevices(deviceId: string, additionalHeaders?: RequestHeaders): Promise<void> {
+        await this.detachFromDevices(deviceId, undefined, additionalHeaders);
+    }
+
     /**
      * Removes a device from an associated device
      *
@@ -285,6 +303,24 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
             .setHeaders(super.buildHeaders(additionalHeaders));
 
         await this.lambdaInvoker.invoke(this.functionName, event);
+    }
+
+    async detachFromGroups(deviceId: string, relationship: string, additionalHeaders?: RequestHeaders): Promise<void> {
+        ow(deviceId, 'deviceId', ow.string.nonEmpty);
+        if (relationship===undefined) {
+            relationship = '*';
+        }
+
+        const event = new LambdaApiGatewayEventBuilder()
+            .setPath(super.deviceAttachedGroupsRelativeUrl(deviceId, relationship))
+            .setMethod('DELETE')
+            .setHeaders(super.buildHeaders(additionalHeaders));
+
+        await this.lambdaInvoker.invoke(this.functionName, event);
+    }
+
+    async detachFromAllGroups(deviceId: string, additionalHeaders?: RequestHeaders): Promise<void> {
+        await this.detachFromGroups(deviceId, undefined, additionalHeaders);
     }
 
     /**

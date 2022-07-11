@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/assetlibrary-client",
+      "comment": "Added new methods to deassociate all devices and groups from a device.",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@cdf/assetlibrary-client",
+  "email": "deanhart@amazon.com"
+}
