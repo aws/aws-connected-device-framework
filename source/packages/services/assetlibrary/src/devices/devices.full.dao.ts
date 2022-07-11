@@ -389,7 +389,7 @@ export class DevicesDaoFull extends BaseDaoFull {
         ow(deviceId, ow.string.nonEmpty);
         ow(relations, ow.array.minLength(1));
 
-        let edgesToDelete : process.GraphTraversal[] = [];
+        const edgesToDelete : process.GraphTraversal[] = [];
         for (const rel of relations) {
             ow(rel.relationship, ow.string.nonEmpty);
             ow(rel.direction, ow.string.oneOf(['in','out']));
