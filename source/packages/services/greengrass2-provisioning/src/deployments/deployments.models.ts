@@ -24,12 +24,15 @@ export interface Deployment extends NewDeployment {
 
 export type DeploymentTaskStatus = 'Waiting' | 'InProgress' | 'Success' | 'Failure';
 
-export const DeploymentsEvent = 'Deployments Resource Changes'
+export const DeploymentTaskCreatedEvent = 'DeploymentTask Created Event'
 
-export type DeploymentEventPayload = {
-	taskId: string,
-	coreName:string,
-	operation: 'create' | 'delete'
+export const DeploymentTaskDeletedEvent = 'DeploymentTask Deleted Event'
+
+export type deploymentTaskId = string;
+
+export type DeploymentTaskCreatedPayload = {
+	coreName: string,
+	taskId: deploymentTaskId,
 	status: 'success' | 'failed'
-	errorMessage?: string
+	message?: string
 }

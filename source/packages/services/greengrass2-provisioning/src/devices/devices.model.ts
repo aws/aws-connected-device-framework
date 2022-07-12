@@ -47,12 +47,19 @@ export interface DeviceItem {
     updatedAt?: Date;
 }
 
-export const DevicesEvent = 'Devices Resource Changes'
+export const DeviceCreatedEvent = 'Device Created Event'
 
-export type DeviceEventPayload = {
-    taskId: string,
+export const DeviceDeletedEvent = 'Device Deleted Event'
+
+export type deviceTaskId = string
+
+export type BaseDevicePayload = {
+    taskId: deviceTaskId,
     deviceName: string,
-    operation: 'create' | 'delete'
     status: 'success' | 'failed'
-    errorMessage?: string
+    message?: string
 }
+
+export type DeviceCreatedPayload = BaseDevicePayload
+
+export type DeviceDeletedPayload = BaseDevicePayload

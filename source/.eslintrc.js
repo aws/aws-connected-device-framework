@@ -15,7 +15,7 @@ module.exports = {
   ],
   ignorePatterns: [ "**/dist", "**/build", "**/deploy", "**/node_modules", "**/*.spec.ts" ] ,
   rules: {
-    "@typescript-eslint/no-unused-vars-experimental": "off",
+    "@typescript-eslint/no-unused-vars-experimental": "error",
     "@typescript-eslint/no-unused-vars": "off",
     "no-mixed-spaces-and-tabs": ["error", "smart-tabs"],
     "no-prototype-builtins": "off",

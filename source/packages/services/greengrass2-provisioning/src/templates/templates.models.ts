@@ -56,7 +56,7 @@ export interface TemplateItem {
 	deploymentPolicies?: DeploymentPolicy;
 
 	deployment?: {
-		id: string;
+		id	: string;
 		thingGroupName: string;
 		jobId:string;
 	}

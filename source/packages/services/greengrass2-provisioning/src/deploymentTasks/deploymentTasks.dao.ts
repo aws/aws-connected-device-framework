@@ -23,7 +23,7 @@ import { DocumentDbClientItem, DynamoDbUtils } from '../utils/dynamoDb.util';
 import { logger } from '../utils/logger.util';
 import { createDelimitedAttribute, expandDelimitedAttribute, PkType } from '../utils/pkUtils.util';
 import { DeploymentTask } from './deploymentTasks.models';
-import { DynamoDbPaginationKey, GSI1_INDEX_NAME } from '../common/common.models';
+import { DynamoDbPaginationKey, GSI1_INDEX_NAME, GSI3_INDEX_NAME } from '../common/common.models';
 
 @injectable()
 export class DeploymentTasksDao {
@@ -341,6 +341,36 @@ export class DeploymentTasksDao {
 
     }
 
+    public async getDeploymentIdByJobId(jobId: string): Promise<string> {
+        logger.debug(`deploymentTasks.dao getDeploymentIdByJobId: in: jobId:${jobId}`);
+
+        const params: QueryCommandInput = {
+            TableName: process.env.AWS_DYNAMODB_TABLE_NAME,
+            IndexName: GSI3_INDEX_NAME,
+            KeyConditionExpression: `#hash=:hash`,
+            ExpressionAttributeNames: {
+                '#hash': 'siKey3'
+            },
+            ExpressionAttributeValues: {
+                ':hash': createDelimitedAttribute(PkType.IotJob, jobId),
+            }
+        };
+
+        logger.silly(`deploymentTasks.dao getDeploymentIdByJobId: QueryInput: ${JSON.stringify(params)}`);
+
+        const results = await this.dbc.send(new QueryCommand(params));
+        if ((results?.Items?.length ?? 0) === 0) {
+            logger.debug('templates.dao getTemplateIdByJobId: exit: undefined');
+            return undefined;
+        }
+
+        logger.silly(`query result: ${JSON.stringify(results)}`);
+        const deploymentId: string = expandDelimitedAttribute(results.Items[0]?.siSort3)[1];
+
+        logger.debug(`templates.dao getDeploymentIdByJobId: exit: ${deploymentId}`);
+        return deploymentId;
+    }
+
     public async saveTaskDetail(taskId: string, deployment: Deployment): Promise<void> {
         logger.debug(`deploymentTasks.dao saveTaskDetail: in: taskId:${taskId}, deployment:${JSON.stringify(deployment)}`);
 
@@ -488,7 +518,7 @@ export class DeploymentTasksDao {
             } else if (sk.length === 2 && sk[0] === PkType.CoreDevice) {
                 // core device
                 d.push({
-                    coreName: item.name,                    
+                    coreName: item.name,
                     taskStatus: item.taskStatus,
                     statusMessage: item.statusMessage,
                     createdAt: new Date(item.createdAt),

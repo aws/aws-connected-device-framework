@@ -143,15 +143,15 @@ export enum CertificateStatus {
 }
 
 export interface UseACMPCAParameters {
-	acmpcaCaArn?: string;
-	acmpcaCaAlias?: string;
+    acmpcaCaArn?: string;
+    acmpcaCaAlias?: string;
 
-	awsiotCaArn?: string;
-	awsiotCaAlias?: string;
-	
-	csr?: string;
-	certInfo: CertInfo;
-} 
+    awsiotCaArn?: string;
+    awsiotCaAlias?: string;
+
+    csr?: string;
+    certInfo: CertInfo;
+}
 
 export interface CertInfo {
     commonName?: string;
@@ -174,29 +174,34 @@ export type ConfigGeneratorEvent = {
     cdfProvisioningParameters?: CdfProvisioningParameters;
 }
 
-export const CoresEvent = 'Cores Resource Changes'
+export const CoreCreatedEvent = 'Core Created Event'
 
-export type CoreTemplateUpdateDetail = {
+export const CoreDeletedEvent = 'Core Deleted Event'
+
+export const CoreTemplateUpdatedEvent = 'Core Template Updated Event'
+
+export type coreTaskId = string;
+
+export type deploymentTaskId = string;
+
+export type CoreBasePayload = {
+    coreName: string;
+    taskId: coreTaskId;
+    status: 'success' | 'failed'
+    message?: string;
+}
+
+export type CoreCreatedPayload = CoreBasePayload
+
+export type CoreDeletedPayload = CoreBasePayload
+
+export type CoreTemplateUpdatedPayload = Omit<CoreBasePayload, 'taskId'> &
+{
+    deploymentId: string,
+    deploymentTaskId: deploymentTaskId,
+    jobId: string;
     templateName: string,
     templateVersion: number,
-    deploymentId: string
-
-}
-
-export type CoreCreationDetail = {
-    taskId: string,
-}
-
-export type CoreDeletionDetail = {
-    taskId: string,
-}
-
-export type CoresEventPayload = {
-    coreName: string,
-    operation: 'create' | 'delete' | 'update',
-    status: 'success' | 'failed'
-    detail?: CoreTemplateUpdateDetail | CoreCreationDetail | CoreDeletionDetail
-    errorMessage?: string
 }
 
 

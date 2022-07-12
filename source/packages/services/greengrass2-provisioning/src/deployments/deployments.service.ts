@@ -28,7 +28,7 @@ import { TYPES } from '../di/types';
 import { TemplateItem } from '../templates/templates.models';
 import { TemplatesService } from '../templates/templates.service';
 import { logger } from '../utils/logger.util';
-import { Deployment, DeploymentEventPayload, DeploymentsEvent, NewDeployment } from './deployments.models';
+import { Deployment, DeploymentTaskCreatedEvent, DeploymentTaskCreatedPayload, NewDeployment } from './deployments.models';
 import { CDFEventPublisher, EVENT_PUBLISHER_TYPES } from "@cdf/event-publisher";
 
 export const DEPLOYMENT_TASK_ID_TAG_KEY = 'cdf-greengrass2-provisioning-deployment-task-id'
@@ -226,7 +226,6 @@ export class DeploymentsService {
                         logger.silly(`deployments.service createDeployment: TagResourceCommandOutput: ${JSON.stringify(tagResourceOutput)}`);
 
                     } catch (e) {
-                        console.log(JSON.stringify(e))
                         this.markAsFailed(deployment, `Failed to create deployment: ${e.name}`);
                     }
                 }
@@ -258,27 +257,25 @@ export class DeploymentsService {
         if (deployment.taskStatus === 'InProgress') {
             deployment.taskStatus = 'Success';
             deployment.updatedAt = new Date();
-            await this.cdfEventPublisher.emitEvent<DeploymentEventPayload>({
-                name: DeploymentsEvent,
+            await this.cdfEventPublisher.emitEvent<DeploymentTaskCreatedPayload>({
+                name: DeploymentTaskCreatedEvent,
                 payload: {
                     taskId: taskId,
                     coreName: deployment.coreName,
                     status: 'success',
-                    operation: 'create'
                 }
             })
         }
 
 
         if (deployment.taskStatus === 'Failure') {
-            await this.cdfEventPublisher.emitEvent<DeploymentEventPayload>({
-                name: DeploymentsEvent,
+            await this.cdfEventPublisher.emitEvent<DeploymentTaskCreatedPayload>({
+                name: DeploymentTaskCreatedEvent,
                 payload: {
                     taskId: taskId,
                     coreName: deployment.coreName,
                     status: 'failed',
-                    operation: 'create',
-                    errorMessage: deployment.statusMessage
+                    message: deployment.statusMessage
                 }
             })
         }
@@ -307,6 +304,13 @@ export class DeploymentsService {
         return deployment.taskStatus === 'InProgress';
     }
 
+    public async getDeploymentIdByJobId(jobId: string): Promise<string> {
+        logger.debug(`templates.service getDeploymentIdByJobId: in: jobId:${jobId}`);
+        ow(jobId, ow.string.nonEmpty);
+        const deploymentId = await this.deploymentTasksDao.getDeploymentIdByJobId(jobId);
+        logger.debug(`templates.service getDeploymentIdByJobId: exit: ${deploymentId}`);
+        return deploymentId;
+    }
 
 }
 
