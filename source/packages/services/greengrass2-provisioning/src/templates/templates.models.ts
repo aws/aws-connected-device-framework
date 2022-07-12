@@ -10,19 +10,19 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
- export interface EditableTemplateResource {
-	name:string;
+export interface EditableTemplateResource {
+	name: string;
 	components: Component[];
 	jobConfig?: JobConfig;
 	deploymentPolicies?: DeploymentPolicy;
 }
 export interface TemplateResource extends EditableTemplateResource {
-	version?: number|'current';
+	version?: number | 'current';
 
 	deployment?: {
 		id: string;
 		thingGroupName: string;
-		jobId:string;
+		jobId: string;
 	}
 
 	createdAt: Date;
@@ -32,33 +32,33 @@ export interface TemplateResource extends EditableTemplateResource {
 export interface TemplateListResource {
 	templates: TemplateResource[];
 	pagination?: {
-			lastEvaluated?: {
-					name: string
-			},
-			count?: number
+		lastEvaluated?: {
+			name: string
+		},
+		count?: number
 	};
 }
 export interface TemplateVersionListResource {
 	templates: TemplateResource[];
 	pagination?: {
-			lastEvaluated?: {
-					version: number
-			},
-			count?: number
+		lastEvaluated?: {
+			version: number
+		},
+		count?: number
 	};
 }
 
 export interface TemplateItem {
-	name:string;
-	version?: number|'current';
+	name: string;
+	version?: number | 'current';
 	components: Component[];
 	jobConfig?: JobConfig;
 	deploymentPolicies?: DeploymentPolicy;
 
 	deployment?: {
-		id	: string;
+		id: string;
 		thingGroupName: string;
-		jobId:string;
+		jobId: string;
 	}
 
 	createdAt?: Date;
