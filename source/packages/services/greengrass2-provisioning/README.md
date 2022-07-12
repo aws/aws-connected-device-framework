@@ -646,29 +646,17 @@ To subscribe to events published by CDF greengrass2-provisioning module, create 
 }
 ```
 
-To subscribe to events related to **Cores** resource, specify `Cores Resource Changes` as the `detail-type`
-```json
-{
-  "source": ["com.aws.cdf.greengrass2-provisioning"],
-  "detail-type" :[ "Cores Resource Changes" ]
-}
-```
+Here is the list of `detail-type` that are available if you want to filter out the events on a specific events
 
-To subscribe to events related to **Deployments** resource, specify `Deployments Resource Changes` as the `detail-type`
-```json
-{
-  "source": ["com.aws.cdf.greengrass2-provisioning"],
-  "detail-type" :[ "Deployments Resource Changes" ]
-}
- ```
-
-To subscribe to events related to **Devices** resource, specify `Devices Resource Changes` as the `detail-type`
-```json
-{
-  "source": ["com.aws.cdf.greengrass2-provisioning"],
-  "detail-type" :[ "Devices Resource Changes" ]
-}
-```
+| detail-type                  | Description                                      |
+| ---------------------------- | ------------------------------------------------ |
+| Core Created Event           | A new greengrass2 core is created                |
+| Core Deleted Event           | A greengrass2 core is deleted                    |
+| Core Template Updated Event  | A template had been deployed to greengrass2 core |
+| Device Create Event          | A greengrass client device is created            |
+| Device Deleted Event         | A greengrass client device is deleted            |
+| DeploymentTask Created Event | A deploymentTask is created                      |
+| DeploymentTask Deleted Event | A deploymentTask is deleted                      |
 
 
 ## Additional Links
