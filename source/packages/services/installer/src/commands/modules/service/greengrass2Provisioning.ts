@@ -185,7 +185,6 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
       `ApiGatewayDefinitionTemplate=${answers.apigw.cloudFormationTemplate}`,
       `KmsKeyId=${answers.kms.id}`,
       `ArtifactsBucket=${answers.s3.bucket}`,
-      `EnablePublishEvents=${answers.greengrass2Provisioning.enablePublishEvents}`,
       `ArtifactsKeyPrefix=greengrass2/artifacts/`,
       `ProvisioningFunctionName=${answers.greengrass2Provisioning.provisioningFunctionName}`,
       `AssetLibraryFunctionName=${answers.greengrass2Provisioning.assetLibraryFunctionName ?? ''}`,
@@ -203,6 +202,7 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
       if (value !== undefined) parameterOverrides.push(`${key}=${value}`)
     };
 
+    addIfSpecified('EnablePublishEvents', answers.greengrass2Provisioning.enablePublishEvents);
     addIfSpecified('ApplyAutoscaling', answers.greengrass2Provisioning.enableAutoScaling);
     addIfSpecified('ProvisionedConcurrentExecutions', answers.greengrass2Provisioning.provisionedConcurrentExecutions);
     addIfSpecified('CognitoUserPoolArn', answers.apigw.cognitoUserPoolArn);
