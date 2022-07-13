@@ -1,6 +1,13 @@
 # Change Log - @cdf/certificate-vendor
 
-This log was last generated on Tue, 21 Jun 2022 00:47:55 GMT and should not be manually modified.
+This log was last generated on Wed, 13 Jul 2022 23:37:54 GMT and should not be manually modified.
+
+## 5.1.0
+Wed, 13 Jul 2022 23:37:54 GMT
+
+### Minor changes
+
+- added capability to rotate multiple certs for a particular device and also to inheret policies from the old certificate
 
 ## 5.0.3
 Tue, 21 Jun 2022 00:47:55 GMT

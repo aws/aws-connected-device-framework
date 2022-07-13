@@ -2,6 +2,18 @@
   "name": "@cdf/installer",
   "entries": [
     {
+      "version": "1.1.1",
+      "tag": "@cdf/installer_v1.1.1",
+      "date": "Wed, 13 Jul 2022 23:37:54 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "added additional steps for the certificatevendor installer"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.1.0",
       "tag": "@cdf/installer_v1.1.0",
       "date": "Wed, 13 Jul 2022 02:04:06 GMT",
