@@ -2,6 +2,23 @@
   "name": "@cdf/greengrass2-provisioning",
   "entries": [
     {
+      "version": "0.4.0",
+      "tag": "@cdf/greengrass2-provisioning_v0.4.0",
+      "date": "Wed, 13 Jul 2022 02:04:06 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "the module should publish event when greengrass2-provisioning lambda is triggered by jobExecution IoT events"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@cdf/event-publisher\" from `~1.0.1` to `~1.1.0`"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.3.0",
       "tag": "@cdf/greengrass2-provisioning_v0.3.0",
       "date": "Thu, 30 Jun 2022 00:07:08 GMT",

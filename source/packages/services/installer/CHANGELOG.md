@@ -1,6 +1,13 @@
 # Change Log - @cdf/installer
 
-This log was last generated on Tue, 05 Jul 2022 04:26:27 GMT and should not be manually modified.
+This log was last generated on Wed, 13 Jul 2022 02:04:06 GMT and should not be manually modified.
+
+## 1.1.0
+Wed, 13 Jul 2022 02:04:06 GMT
+
+### Minor changes
+
+- add new question to enable/disable events publishing for greengrass2-provisioning module
 
 ## 1.0.2
 Tue, 05 Jul 2022 04:26:27 GMT

@@ -2,6 +2,18 @@
   "name": "@cdf/installer",
   "entries": [
     {
+      "version": "1.1.0",
+      "tag": "@cdf/installer_v1.1.0",
+      "date": "Wed, 13 Jul 2022 02:04:06 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "add new question to enable/disable events publishing for greengrass2-provisioning module"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.0.2",
       "tag": "@cdf/installer_v1.0.2",
       "date": "Tue, 05 Jul 2022 04:26:27 GMT",
