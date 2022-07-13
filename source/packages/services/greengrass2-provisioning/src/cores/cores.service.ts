@@ -34,7 +34,7 @@ import { TYPES } from '../di/types';
 import { logger } from '../utils/logger.util';
 import { S3Utils } from '../utils/s3.util';
 import { CoreListPaginationKey, CoresDao } from './cores.dao';
-import { ConfigGeneratorEvent, CoreItem, CoresEvent, CoresEventPayload, FailedCoreDeployment } from './cores.models';
+import { ConfigGeneratorEvent, CoreCreatedEvent, CoreCreatedPayload, CoreDeletedEvent, CoreDeletedPayload, CoreItem, FailedCoreDeployment } from './cores.models';
 
 import { CDFEventPublisher, EVENT_PUBLISHER_TYPES } from '@cdf/event-publisher'
 import { DeploymentTaskListPaginationKey, DeploymentTasksDao } from '../deploymentTasks/deploymentTasks.dao';
@@ -77,14 +77,17 @@ export class CoresService {
         } else if (deploymentStatus === 'SUCCESSFUL') {
             // reported state where deployment was successful
             await this.coresDao.associateTemplate(coreName, templateName, templateVersion, state, deploymentStatus, deploymentStatusMessage);
+
+
         } else {
             // reported state where deployment was unsuccessful, so instead save this as a failed desired state instead of reported as the reported installed template/version would not have changed
             const existing = await this.coresDao.get(coreName);
             await this.coresDao.associateTemplate(coreName, existing?.template?.desired?.name, existing?.template?.desired?.version, 'desired', deploymentStatus, deploymentStatusMessage);
         }
 
-        logger.debug(`cores.service associateTemplate: exit`);
 
+
+        logger.debug(`cores.service associateTemplate: exit`);
     }
 
     public async associateFailedDeploymentStarts(cores: FailedCoreDeployment[]): Promise<void> {
@@ -273,11 +276,11 @@ export class CoresService {
         if (core.taskStatus === 'InProgress') {
             core.taskStatus = 'Success';
             core.updatedAt = new Date();
-            await this.cdfEventPublisher.emitEvent<CoresEventPayload>({ name: CoresEvent, payload: { name: core.name, taskId: task.id, operation: 'create', status: 'success' } })
+            await this.cdfEventPublisher.emitEvent<CoreCreatedPayload>({ name: CoreCreatedEvent, payload: { coreName: core.name, status: 'success', taskId: task.id } })
         }
 
         if (core.taskStatus === 'Failure') {
-            await this.cdfEventPublisher.emitEvent<CoresEventPayload>({ name: CoresEvent, payload: { name: core.name, taskId: task.id, operation: 'create', status: 'failed', errorMessage: core.statusMessage } })
+            await this.cdfEventPublisher.emitEvent<CoreCreatedPayload>({ name: CoreCreatedEvent, payload: { coreName: core.name, status: 'failed', message: core.statusMessage, taskId: task.id } })
         }
 
         // save final state
@@ -517,15 +520,14 @@ export class CoresService {
             logger.error(`cores.service deleteCore: deleting core daat failed: ${e}`);
         }
 
-
         if (core.taskStatus === 'InProgress') {
             core.taskStatus = 'Success';
             core.updatedAt = new Date();
-            await this.cdfEventPublisher.emitEvent<CoresEventPayload>({ name: CoresEvent, payload: { name, taskId: task.id, operation: 'delete', status: 'success' } })
+            await this.cdfEventPublisher.emitEvent<CoreDeletedPayload>({ name: CoreDeletedEvent, payload: { coreName: name, status: 'success', taskId: task.id } })
         }
 
         if (core.taskStatus === 'Failure') {
-            await this.cdfEventPublisher.emitEvent<CoresEventPayload>({ name: CoresEvent, payload: { name, taskId: task.id, operation: 'delete', status: 'failed', errorMessage: core.statusMessage } })
+            await this.cdfEventPublisher.emitEvent<CoreDeletedPayload>({ name: CoreDeletedEvent, payload: { coreName: name, status: 'failed', message: core.statusMessage, taskId: task.id } })
         }
 
         // save final state

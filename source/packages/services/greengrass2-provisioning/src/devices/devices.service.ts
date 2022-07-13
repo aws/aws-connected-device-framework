@@ -13,7 +13,7 @@
 import { inject, injectable } from "inversify";
 import { DeviceTaskItem } from "../deviceTasks/deviceTasks.model";
 import { logger } from "../utils/logger.util";
-import { DeviceEventPayload, DeviceItem, DevicesEvent } from "./devices.model";
+import { DeviceCreatedEvent, DeviceCreatedPayload, DeviceDeletedEvent, DeviceDeletedPayload, DeviceItem } from "./devices.model";
 import ow from 'ow';
 import { TYPES } from "../di/types";
 import { DeviceTasksDao } from "../deviceTasks/deviceTasks.dao";
@@ -232,26 +232,24 @@ export class DevicesService {
             device.taskStatus = 'Success';
             device.updatedAt = new Date();
 
-            await this.cdfEventPublisher.emitEvent<DeviceEventPayload>({
-                name: DevicesEvent,
+            await this.cdfEventPublisher.emitEvent<DeviceCreatedPayload>({
+                name: DeviceCreatedEvent,
                 payload: {
                     taskId: task.id,
                     deviceName: device.name,
                     status: 'success',
-                    operation: 'create'
                 }
             })
         }
 
         if (device.taskStatus === 'Failure') {
-            await this.cdfEventPublisher.emitEvent<DeviceEventPayload>({
-                name: DevicesEvent,
+            await this.cdfEventPublisher.emitEvent<DeviceCreatedPayload>({
+                name: DeviceCreatedEvent,
                 payload: {
                     taskId: task.id,
                     deviceName: device.name,
                     status: 'failed',
-                    operation: 'create',
-                    errorMessage: device.statusMessage
+                    message: device.statusMessage
                 }
             })
         }
@@ -363,26 +361,24 @@ export class DevicesService {
         if (deviceItem.taskStatus === 'InProgress') {
             deviceItem.taskStatus = 'Success';
             deviceItem.updatedAt = new Date();
-            await this.cdfEventPublisher.emitEvent<DeviceEventPayload>({
-                name: DevicesEvent,
+            await this.cdfEventPublisher.emitEvent<DeviceDeletedPayload>({
+                name: DeviceDeletedEvent,
                 payload: {
                     taskId: task.id,
                     deviceName: device.name,
                     status: 'success',
-                    operation: 'delete'
                 }
             })
         }
 
         if (deviceItem.taskStatus === 'Failure') {
-            await this.cdfEventPublisher.emitEvent<DeviceEventPayload>({
-                name: DevicesEvent,
+            await this.cdfEventPublisher.emitEvent<DeviceDeletedPayload>({
+                name: DeviceDeletedEvent,
                 payload: {
                     taskId: task.id,
                     deviceName: device.name,
                     status: 'failed',
-                    operation: 'delete',
-                    errorMessage: deviceItem.statusMessage
+                    message: deviceItem.statusMessage
                 }
             })
         }

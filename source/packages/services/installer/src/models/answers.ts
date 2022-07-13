@@ -273,6 +273,7 @@ export interface Greengrass2Provisioning
   devicesBatchSize?: number;
   deploymentsBatchSize?: number;
   useAssetLibrary?: boolean;
+  enablePublishEvents?: boolean;
 }
 
 export interface Provisioning extends RestServiceModuleAttribues {

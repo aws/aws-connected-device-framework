@@ -72,6 +72,4 @@ export interface CoreTaskItem {
 
 export type CoreTaskStatus = 'Waiting' | 'InProgress' | 'Success' | 'Failure';
 
-export const CoreTasksEvent = 'CoreTasks Resource Changes'
-
 export type CoreTaskType = 'Create' | 'Delete'

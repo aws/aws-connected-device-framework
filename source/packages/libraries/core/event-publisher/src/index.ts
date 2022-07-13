@@ -27,8 +27,24 @@ export interface CDFEvent<T> {
     traceHeader?: string;
 }
 
+export interface CDFEventPublisher {
+    emitEvent<T>(event: CDFEvent<T>): Promise<void>
+    emitEvents<T>(events: CDFEvent<T>[]): Promise<void> 
+}
+
+
 @injectable()
-export class CDFEventPublisher {
+export class NoOpEventPublisher implements CDFEventPublisher {
+    emitEvent<T>(_event: CDFEvent<T>): Promise<void> {
+        return Promise.resolve();
+    }
+    emitEvents<T>(_events: CDFEvent<T>[]): Promise<void> {
+        return Promise.resolve();
+    }
+}
+
+@injectable()
+export class EventBridgePublisher implements CDFEventPublisher {
 
     private eventBridge: EventBridgeClient
     private readonly eventBridgeBusName: string
@@ -79,4 +95,3 @@ export class CDFEventPublisher {
         logger.debug(`cdfEventPublisher: emitEvents: exit:`)
     }
 }
-    

@@ -634,6 +634,30 @@ Content-Type: application/vnd.aws-cdf-v1.0+json
 }
 ```
 
+## Events
+
+As part of the installation you enable the event publishing feature of the module by answering `Yes` to the wizard question `Do you want the module to publish all operation events to CDF EventBridge?`, when this is set to true, all events will be publish to CDF EventBridge.
+
+To subscribe to events published by CDF greengrass2-provisioning module, create an EventBridge rule with the pattern specified below:
+
+```json
+{
+  "source": ["com.aws.cdf.greengrass2-provisioning"],
+  "detail-type" : [<look at the list below>]
+}
+```
+
+Here is the list of `detail-type` that are available if you want to filter out the events on a specific events
+
+| detail-type                  | Description                                      |
+| ---------------------------- | ------------------------------------------------ |
+| Core Created Event           | A new greengrass2 core is created                |
+| Core Deleted Event           | A greengrass2 core is deleted                    |
+| Core Template Updated Event  | A template had been deployed to greengrass2 core |
+| Device Created Event         | A greengrass client device is created            |
+| Device Deleted Event         | A greengrass client device is deleted            |
+| DeploymentTask Created Event | A deploymentTask is created                      |
+| DeploymentTask Deleted Event | A deploymentTask is deleted                      |
 
 
 ## Additional Links
