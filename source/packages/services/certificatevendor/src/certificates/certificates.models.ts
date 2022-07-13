@@ -1,3 +1,4 @@
+
 /*********************************************************************************************************************
  *  Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.                                           *
  *                                                                                                                    *
@@ -15,9 +16,11 @@ export interface CertificateRequestModel {
 	deviceId: string;
 	certId: string;
 	csr?: string;
+	previousCertificateId?:string;
 }
 
 export interface CertificateResponseModel {
+	certificateId?: string;
 	certificate?: string;
 	location?: string;
 	message?: string;
@@ -26,4 +29,9 @@ export interface CertificateResponseModel {
 export enum Action {
 	get = 'get',
 	ack = 'ack'
+}
+
+
+export interface Certificates{
+	[certificateId: string] : string
 }

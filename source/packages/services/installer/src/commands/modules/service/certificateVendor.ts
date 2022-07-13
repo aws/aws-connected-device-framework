@@ -66,7 +66,6 @@ export class CertificateVendorInstaller implements ServiceModule {
         default: false,
         askAnswered: true,
       },
-
       {
         message: 'Enter the CA certificate ID to be used to sign the certificates requested with a CSR:',
         type: 'input',
@@ -84,13 +83,20 @@ export class CertificateVendorInstaller implements ServiceModule {
         },
       },
       {
+        message: 'Will you be using the default policy for rotated certificates(answer No to inheret the policies from old cert)? ',
+        type: 'confirm',
+        name: 'certificateVendor.useDefaultPolicy',
+        default: true,
+        askAnswered: true,
+      },
+      {
         message: 'Enter the name of the policy to associate with certificates requested with a CSR:',
         type: 'input',
         name: 'certificateVendor.rotatedCertificatePolicy',
         default: updatedAnswers.certificateVendor?.rotatedCertificatePolicy,
         askAnswered: true,
         when(answers: Answers) {
-          return answers.certificateVendor?.providingCSRs ?? false;
+          return (answers.certificateVendor?.providingCSRs) && (answers.certificateVendor?.useDefaultPolicy);
         },
         validate(answer: string) {
           if ((answer?.length ?? 0) === 0) {
@@ -204,7 +210,6 @@ export class CertificateVendorInstaller implements ServiceModule {
     addIfSpecified('RotatedCertificatePolicy', answers.certificateVendor.rotatedCertificatePolicy);
     addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
 
-
     return parameterOverrides;
   }
 
@@ -292,6 +297,7 @@ export class CertificateVendorInstaller implements ServiceModule {
       .add(`DEFAULTS_DEVICE_STATUS_SUCCESS_KEY`, answers.certificateVendor.deviceStatusSuccessKey)
       .add(`DEFAULTS_DEVICE_STATUS_SUCCESS_VALUE`, answers.certificateVendor.deviceStatusSuccessValue)
       .add(`DEFAULTS_CERTIFICATES_CERTIFICATEEXPIRYDAYS`, answers.certificateVendor.certificateExpiryInDays)
+      .add('USE_DEFAULT_POLICY',answers.certificateVendor.useDefaultPolicy)
       .add(`REGISTRY_MODE`, answers.certificateVendor.registryMode)
 
     return configBuilder.config;

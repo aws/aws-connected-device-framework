@@ -30,6 +30,8 @@ import AWS = require('aws-sdk');
 export const container = new Container();
 
 // config
+container.bind<string>('aws.accountId').toConstantValue(process.env.AWS_ACCOUNTID);
+container.bind<string>('aws.region').toConstantValue(process.env.AWS_REGION);
 container.bind<string>('aws.s3.certificates.bucket').toConstantValue(process.env.AWS_S3_CERTIFICATES_BUCKET);
 container.bind<string>('aws.s3.certificates.prefix').toConstantValue(process.env.AWS_S3_CERTIFICATES_PREFIX);
 container.bind<string>('aws.s3.certificates.suffix').toConstantValue(process.env.AWS_S3_CERTIFICATES_SUFFIX);
@@ -40,11 +42,13 @@ container.bind<string>('mqtt.topics.ack.success').toConstantValue(process.env.MQ
 container.bind<string>('mqtt.topics.ack.failure').toConstantValue(process.env.MQTT_TOPICS_ACK_FAILURE);
 container.bind<string>('aws.iot.thingGroup.rotateCertificates').toConstantValue(process.env.AWS_IOT_THINGGROUP_ROTATECERTIFICATES);
 container.bind<string>('certificates.caCertificateId').toConstantValue(process.env.CERTIFICATES_CACERTIFICATEID);
+container.bind<boolean>('policies.useDefaultPolicy').toConstantValue(process.env.USE_DEFAULT_POLICY === 'true');
 container.bind<string>('policies.rotatedCertificatePolicy').toConstantValue(process.env.POLICIES_ROTATEDCERTIFICATEPOLICY);
 container.bind<string>('defaults.certificates.certificateExpiryDays').toConstantValue(process.env.DEFAULTS_CERTIFICATES_CERTIFICATEEXPIRYDAYS);
 container.bind<string>('defaults.device.status.success.key').toConstantValue(process.env.DEFAULTS_DEVICE_STATUS_SUCCESS_KEY);
 container.bind<string>('defaults.device.status.success.value').toConstantValue(process.env.DEFAULTS_DEVICE_STATUS_SUCCESS_VALUE);
 container.bind<boolean>('features.deletePreviousCertificate').toConstantValue(process.env.FEATURES_DELETEPREVIOUSCERTIFICATE === 'true');
+
 
 
 // configure which registry to use (used for whitelist checks and updating status post acknowkedgement)

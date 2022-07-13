@@ -250,15 +250,16 @@ Resources:
               - 'iot:ListThingPrincipals'
               - 'iot:DetachThingPrincipal'
               - 'iot:ListPrincipalThings'
-              - 'iot:ListPrincipalPolicies'
+              - 'iot:ListAttachedPolicies'
             Effect: Allow
             Resource: "*"
           - Sid: "iotcert"
             Action:
-              - 'iot:AttachPrincipalPolicy'
-              - 'iot:DetachPrincipalPolicy'
+              - 'iot:AttachPolicy'
+              - 'iot:DetachPolicy'
               - 'iot:UpdateCertificate'
               - 'iot:DeleteCertificate'
+              - 'iot:GetEffectivePolicies'
             Effect: Allow
             Resource: !Sub "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:cert/*"
 
@@ -283,6 +284,7 @@ Resources:
           AWS_S3_CERTIFICATES_BUCKET: !Ref BucketName
           CERTIFICATES_CACERTIFICATEID: !Ref CaCertificateId
           POLICIES_ROTATEDCERTIFICATEPOLICY: !Ref RotatedCertificatePolicy
+          AWS_ACCOUNTID: !Ref AWS::AccountId
       Tracing: Active
   
   IotEndpoint:
