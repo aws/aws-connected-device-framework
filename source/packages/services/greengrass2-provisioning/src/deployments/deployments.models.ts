@@ -28,11 +28,11 @@ export const DeploymentTaskCreatedEvent = 'DeploymentTask Created Event'
 
 export const DeploymentTaskDeletedEvent = 'DeploymentTask Deleted Event'
 
-export type deploymentTaskId = string;
+export type DeploymentTaskId = string;
 
 export type DeploymentTaskCreatedPayload = {
 	coreName: string,
-	taskId: deploymentTaskId,
+	taskId: DeploymentTaskId,
 	status: 'success' | 'failed'
 	message?: string
 }

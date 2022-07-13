@@ -51,10 +51,10 @@ export const DeviceCreatedEvent = 'Device Created Event'
 
 export const DeviceDeletedEvent = 'Device Deleted Event'
 
-export type deviceTaskId = string
+export type DeviceTaskId = string
 
 export type BaseDevicePayload = {
-    taskId: deviceTaskId,
+    taskId: DeviceTaskId,
     deviceName: string,
     status: 'success' | 'failed'
     message?: string

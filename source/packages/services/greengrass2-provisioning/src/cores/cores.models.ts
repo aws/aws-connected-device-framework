@@ -180,13 +180,13 @@ export const CoreDeletedEvent = 'Core Deleted Event'
 
 export const CoreTemplateUpdatedEvent = 'Core Template Updated Event'
 
-export type coreTaskId = string;
+export type CoreTaskId = string;
 
-export type deploymentTaskId = string;
+export type DeploymentTaskId = string;
 
 export type CoreBasePayload = {
     coreName: string;
-    taskId: coreTaskId;
+    taskId: CoreTaskId;
     status: 'success' | 'failed'
     message?: string;
 }
@@ -198,7 +198,7 @@ export type CoreDeletedPayload = CoreBasePayload
 export type CoreTemplateUpdatedPayload = Omit<CoreBasePayload, 'taskId'> &
 {
     deploymentId: string,
-    deploymentTaskId: deploymentTaskId,
+    deploymentTaskId: DeploymentTaskId,
     jobId: string;
     templateName: string,
     templateVersion: number,
