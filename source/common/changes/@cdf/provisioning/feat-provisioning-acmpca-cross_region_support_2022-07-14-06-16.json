@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/provisioning",
+      "comment": "Added cross region support for ACMPCA",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@cdf/provisioning",
+  "email": "bahavar@amazon.com"
+}
