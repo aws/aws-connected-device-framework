@@ -289,6 +289,7 @@ export interface Provisioning extends RestServiceModuleAttribues {
   // ACM PCA specific
   pcaIntegrationEnabled?: boolean;
   pcaCrossAccountRoleArn?: string;
+  pcaRegion?: string;
   setPcaAliases?: boolean;
   pcaAliases?: CAAliases;
   pcaAlias?: string;

@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/installer",
+      "comment": "added installer steps to add cross region support for provisioning with ACMPCA",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@cdf/installer",
+  "email": "bahavar@amazon.com"
+}

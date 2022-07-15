@@ -92,7 +92,24 @@ export class ProvisioningInstaller implements RestModule {
           if (answer?.length === 0) {
             return true;
           }
-          return _.validateAcmPcaArn(answer);
+          return _.validateAwsIAMRoleArn(answer);
+        },
+        when(answers: Answers) {
+          return answers.provisioning?.pcaIntegrationEnabled;
+        },
+      },
+
+      {
+        message: `If ACM PCA is located in a different region, enter the region name (leave blank for default region)`,
+        type: 'input',
+        name: 'provisioning.pcaRegion',
+        default: answers.provisioning?.pcaRegion ?? answers.region,
+        askAnswered: true,
+        validate(answer: string) {
+          if (answer?.length === 0) {
+            return false;
+          }
+          return true
         },
         when(answers: Answers) {
           return answers.provisioning?.pcaIntegrationEnabled;
@@ -404,6 +421,10 @@ export class ProvisioningInstaller implements RestModule {
       configBuilder.add(alias, ca.value);
     });
 
+    if ((answers?.provisioning?.pcaRegion?.length??0) > 0){
+        configBuilder.add(`ACM_REGION`,answers.provisioning.pcaRegion);
+    }
+
     configBuilder
       .add(`AWS_S3_BULKREQUESTS_PREFIX`, answers.provisioning.bulkRequestsPrefix)
       .add(`AWS_S3_TEMPLATES_PREFIX`, answers.provisioning.templatesPrefix)
@@ -509,7 +530,11 @@ export class ProvisioningInstaller implements RestModule {
   }
 
   private validateAwsIotCaArn(arn: string): boolean {
-    return /^arn:aws:iot:\w+(?:-\w+)+:\d{12}:cacert\/[A-Za-z0-9]+(?:-[A-Za-z0-9]+)+$/.test(arn);
+    return /^arn:aws:iot:\w+(?:-\w+)+:\d{12}:cacert\/[A-Za-z0-9]+(?:[A-Za-z0-9]+)+$/.test(arn);
+  }
+
+  private validateAwsIAMRoleArn(arn: string): boolean {
+    return /^arn:aws:iam::\d{12}:role\/[A-Za-z0-9]+(?:[A-Za-z0-9_-]+)+$/.test(arn);
   }
 
 }

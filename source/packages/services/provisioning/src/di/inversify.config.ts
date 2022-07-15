@@ -144,10 +144,12 @@ container.bind<interfaces.Factory<AWS.ACMPCA>>(TYPES.ACMPCAFactory)
     .toFactory<AWS.ACMPCA>(() => {
         return () => {
 
+            const region = process.env.ACM_REGION ?? process.env.AWS_REGION;
+
             // if not bound yet, or the STS token is expired, bind it
             if (!container.isBound(TYPES.ACMPCA) || isStsTokenAboutToExpire(acmPcaStsExpiresAt)) {
                 const acmpcaConfig: AWS.ACMPCA.ClientConfiguration = {
-                    region: process.env.AWS_REGION
+                    region
                 };
             
                 // ACM PCA may be held in a different account. If so, assume a role that allows access before creating the client
