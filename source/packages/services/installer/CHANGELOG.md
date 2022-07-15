@@ -1,6 +1,13 @@
 # Change Log - @cdf/installer
 
-This log was last generated on Wed, 13 Jul 2022 23:37:54 GMT and should not be manually modified.
+This log was last generated on Fri, 15 Jul 2022 15:57:02 GMT and should not be manually modified.
+
+## 1.2.0
+Fri, 15 Jul 2022 15:57:02 GMT
+
+### Minor changes
+
+- added installer steps to add cross region support for provisioning with ACMPCA
 
 ## 1.1.1
 Wed, 13 Jul 2022 23:37:54 GMT

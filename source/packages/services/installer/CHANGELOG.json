@@ -2,6 +2,18 @@
   "name": "@cdf/installer",
   "entries": [
     {
+      "version": "1.2.0",
+      "tag": "@cdf/installer_v1.2.0",
+      "date": "Fri, 15 Jul 2022 15:57:02 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "added installer steps to add cross region support for provisioning with ACMPCA"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.1.1",
       "tag": "@cdf/installer_v1.1.1",
       "date": "Wed, 13 Jul 2022 23:37:54 GMT",

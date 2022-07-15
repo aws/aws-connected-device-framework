@@ -1,6 +1,13 @@
 # Change Log - @cdf/provisioning
 
-This log was last generated on Thu, 30 Jun 2022 00:07:08 GMT and should not be manually modified.
+This log was last generated on Fri, 15 Jul 2022 15:57:02 GMT and should not be manually modified.
+
+## 5.3.0
+Fri, 15 Jul 2022 15:57:02 GMT
+
+### Minor changes
+
+- Added cross region support for ACMPCA
 
 ## 5.2.0
 Thu, 30 Jun 2022 00:07:08 GMT
