@@ -421,7 +421,7 @@ export class ProvisioningInstaller implements RestModule {
       configBuilder.add(alias, ca.value);
     });
 
-    if (answers?.provisioning?.pcaRegion.length > 0){
+    if ((answers?.provisioning?.pcaRegion?.length??0) > 0){
         configBuilder.add(`ACM_REGION`,answers.provisioning.pcaRegion);
     }
 

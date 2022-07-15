@@ -144,10 +144,7 @@ container.bind<interfaces.Factory<AWS.ACMPCA>>(TYPES.ACMPCAFactory)
     .toFactory<AWS.ACMPCA>(() => {
         return () => {
 
-            let region = process.env.AWS_REGION;
-            if (process.env?.ACM_REGION){
-                region = process.env?.ACM_REGION;
-            }
+            const region = process.env.ACM_REGION ?? process.env.AWS_REGION;
 
             // if not bound yet, or the STS token is expired, bind it
             if (!container.isBound(TYPES.ACMPCA) || isStsTokenAboutToExpire(acmPcaStsExpiresAt)) {
