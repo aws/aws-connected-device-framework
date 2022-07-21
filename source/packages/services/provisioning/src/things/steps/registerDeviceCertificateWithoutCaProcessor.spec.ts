@@ -31,10 +31,11 @@ describe('RegisterDeviceCertificateWithoutCAStepProcessor', () => {
     it('should register a certificate without a CA', async () => {
 
        const certificateId = 'bb889ee7a74078d6dd4595c50be836419c6cf30d29c32481c10e7c723cf550ce';
+       const certificateArn =  'arn:aws:iot:us-west-2:123456789012:cert/' + certificateId;
 
         const mockedRegisterCertificateWithoutCA = 
             certUtils.registerCertificateWithoutCA = 
-                jest.fn().mockImplementationOnce(()=> certificateId);
+                jest.fn().mockImplementationOnce(()=> ({certificateId, certificateArn}));
 
        const stepData: ProvisioningStepData = {
            template: {
