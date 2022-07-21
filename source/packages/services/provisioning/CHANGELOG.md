@@ -1,6 +1,13 @@
 # Change Log - @cdf/provisioning
 
-This log was last generated on Fri, 15 Jul 2022 15:57:02 GMT and should not be manually modified.
+This log was last generated on Thu, 21 Jul 2022 21:10:03 GMT and should not be manually modified.
+
+## 5.3.2
+Thu, 21 Jul 2022 21:10:03 GMT
+
+### Patches
+
+- fixed a bug where certificate ARN was not passed for policy attachment
 
 ## 5.3.0
 Fri, 15 Jul 2022 15:57:02 GMT
