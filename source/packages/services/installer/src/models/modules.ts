@@ -8,7 +8,6 @@ import { VpcInstaller } from "../commands/modules/infrastructure/vpc";
 import { AssetLibraryInstaller } from "../commands/modules/service/assetLibrary";
 import { AssetLibraryHistoryInstaller } from "../commands/modules/service/assetLibraryHistory";
 import { AuthDeviceCertInstaller } from "../commands/modules/service/authDeviceCert";
-import { AuthJwtInstaller } from "../commands/modules/infrastructure/authJwt";
 import { BulkCertificatesInstaller } from "../commands/modules/service/bulkCerts";
 import { CertificateActivatorInstaller } from "../commands/modules/service/certificateActivator";
 import { CertificateVendorInstaller } from "../commands/modules/service/certificateVendor";
@@ -31,7 +30,6 @@ export type ModuleName =
   | "eventBus"
   | "kms"
   | "openSsl"
-  | "authJwt"
   // service modules:
   | "assetLibrary"
   | "assetLibraryExport"
@@ -87,7 +85,6 @@ export const loadModules = (environment: string): Module[] => {
     new EvenBusInstaller(environment),
     new VpcInstaller(environment),
     new OpenSslInstaller(environment),
-    new AuthJwtInstaller(environment),
     // service modules:
     new AssetLibraryInstaller(environment),
     new AssetLibraryHistoryInstaller(environment),

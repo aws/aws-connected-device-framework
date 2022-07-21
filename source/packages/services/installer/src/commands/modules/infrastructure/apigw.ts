@@ -27,7 +27,7 @@ export class ApiGwInstaller implements InfrastructureModule {
   public readonly friendlyName = 'API Gateway';
   public readonly name = 'apigw';
   public readonly dependsOnMandatory: ModuleName[] = [];
-  public dependsOnOptional: ModuleName[] = ['authJwt'];
+  public dependsOnOptional: ModuleName[] = [];
   public readonly type = 'INFRASTRUCTURE';
 
   public async prompts(answers: Answers): Promise<Answers> {
@@ -128,24 +128,13 @@ export class ApiGwInstaller implements InfrastructureModule {
       },
 
       {
-        message: 'Use existing lambda authorizer:',
-        type: 'input',
-        name: 'apigw.useExistingLambdaAuthorizer',
-        default: answers.apigw?.useExistingLambdaAuthorizer ?? false,
-        askAnswered: true,
-        when(answers: Answers) {
-          return (answers.apigw?.type === 'LambdaRequest' || answers.apigw?.type === 'LambdaToken')
-        }
-      },
-
-      {
-        message: 'Enter the name of Lambda Authorizer Arn:',
+        message: 'Enter the Lambda Authorizer Arn:',
         type: 'input',
         name: 'apigw.lambdaAuthorizerArn',
         default: answers.apigw?.lambdaAuthorizerArn,
         askAnswered: true,
         when(answers: Answers) {
-          return (answers.apigw?.useExistingLambdaAuthorizer ?? false)
+          return (answers.apigw?.type === 'LambdaRequest' || answers.apigw?.type === 'LambdaToken')
         },
         validate(answer: ApiAuthenticationType) {
           if (answer?.length === 0) {
@@ -181,7 +170,6 @@ export class ApiGwInstaller implements InfrastructureModule {
     }
 
     includeOptionalModule('vpc', answers.modules, answers.apigw.type === 'Private')
-    includeOptionalModule('authJwt', answers.modules, answers.apigw.type === 'LambdaRequest' || answers.apigw.type === 'LambdaToken')
 
     return answers;
   }

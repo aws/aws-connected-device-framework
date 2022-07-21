@@ -20,7 +20,6 @@ export interface Answers {
   assetLibrary?: AssetLibrary;
   assetLibraryHistory?: AssetLibraryHistory;
   authDeviceCert?: AuthDeviceCert;
-  authJwt?: AuthJwt;
   bulkCerts?: BulkCerts;
   certificateActivator?: CertificateActivator;
   certificateVendor?: CertificateVendor;
@@ -70,7 +69,6 @@ export interface Apigw {
 
   cognitoUserPoolArn?: string;
 
-  useExistingLambdaAuthorizer?: boolean;
   lambdaAuthorizerArn?: string;
 }
 
@@ -144,9 +142,7 @@ export interface AssetLibraryExport extends ServiceModuleAttributes {
 export type AssetLibraryHistory = RestServiceModuleAttribues;
 
 export type AuthDeviceCert = ServiceModuleAttributes;
-export interface AuthJwt extends ServiceModuleAttributes {
-  tokenIssuer?: string;
-}
+
 
 export interface BulkCerts extends RestServiceModuleAttribues {
   setCertificateDefaults?: boolean;
