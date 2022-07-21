@@ -2,6 +2,18 @@
   "name": "@cdf/installer",
   "entries": [
     {
+      "version": "1.2.1",
+      "tag": "@cdf/installer_v1.2.1",
+      "date": "Thu, 21 Jul 2022 15:32:08 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "removed authJwt dependency when lambdaRequest or LambdaToken authorizer is specified"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.2.0",
       "tag": "@cdf/installer_v1.2.0",
       "date": "Fri, 15 Jul 2022 15:57:02 GMT",

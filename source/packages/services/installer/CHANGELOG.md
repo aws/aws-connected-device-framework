@@ -1,6 +1,13 @@
 # Change Log - @cdf/installer
 
-This log was last generated on Fri, 15 Jul 2022 15:57:02 GMT and should not be manually modified.
+This log was last generated on Thu, 21 Jul 2022 15:32:08 GMT and should not be manually modified.
+
+## 1.2.1
+Thu, 21 Jul 2022 15:32:08 GMT
+
+### Patches
+
+- removed authJwt dependency when lambdaRequest or LambdaToken authorizer is specified
 
 ## 1.2.0
 Fri, 15 Jul 2022 15:57:02 GMT
