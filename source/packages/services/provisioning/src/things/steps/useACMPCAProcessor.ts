@@ -88,9 +88,12 @@ export class UseACMPCAStepProcessor implements ProvisioningStepProcessor {
                 status: CertificateStatus.ACTIVE
             }).promise();
             stepData.parameters.CertificateId = r.certificateId;
+            stepData.parameters.CertificateArn = r.certificateArn;
         } else {
             // register the device cert with AWS IoT without a CA
-            stepData.parameters.CertificateId = await this.certUtils.registerCertificateWithoutCA(stepData.state.certificatePem, CertificateStatus.ACTIVE);
+            const r = await this.certUtils.registerCertificateWithoutCA(stepData.state.certificatePem, CertificateStatus.ACTIVE);
+            stepData.parameters.CertificateId  = r.certificateId;
+            stepData.parameters.CertificateArn = r.certificateArn;
         }
 
         logger.debug(`UseACMPCAStepProcessor: process: exit:`);

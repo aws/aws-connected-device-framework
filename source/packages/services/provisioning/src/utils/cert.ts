@@ -3,7 +3,7 @@ import { CertificateStatus, CertInfo } from "../things/things.models";
 import { logger } from "./logger";
 import * as pem from 'pem';
 import { TYPES } from '../di/types';
-import { DescribeCACertificateRequest, DescribeCACertificateResponse } from 'aws-sdk/clients/iot';
+import { DescribeCACertificateRequest, DescribeCACertificateResponse, RegisterCertificateWithoutCAResponse } from 'aws-sdk/clients/iot';
 import ow from 'ow';
 
 @injectable()
@@ -58,7 +58,7 @@ export class CertUtils {
         });
     }
 
-    public async registerCertificateWithoutCA(certificatePem: string, status: CertificateStatus): Promise<string> {
+    public async registerCertificateWithoutCA(certificatePem: string, status: CertificateStatus): Promise<RegisterCertificateWithoutCAResponse> {
         logger.debug(`CertUtils: registerCertificateWithoutCA: in: ${certificatePem}`);
 
         const params: AWS.Iot.RegisterCertificateWithoutCARequest = {
@@ -74,7 +74,7 @@ export class CertUtils {
             throw err;
         }
 
-        return result.certificateId;
+        return result;
     }
 
     public async getCaCertificate(caCertificateArn:string) : Promise<string> {

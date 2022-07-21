@@ -541,7 +541,10 @@ function mockRegisterCertificate(mockIot: Iot) : jest.Mock<any, any> {
 
 function mockRegisterCertificateWithoutCA(mockCertUtils: CertUtils) : jest.Mock<any, any> {
     const mockedRegisterCertificateWithoutCA = mockCertUtils.registerCertificateWithoutCA = jest.fn().mockImplementationOnce(() => {
-        return CERTIFICATE_ID;
+        return {
+            certificateId: CERTIFICATE_ID,
+            certificateARN: CERTIFICATE_ARN
+        }
     });
     return mockedRegisterCertificateWithoutCA;
 }
