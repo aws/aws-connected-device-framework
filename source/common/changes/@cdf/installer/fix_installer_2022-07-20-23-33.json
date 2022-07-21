@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/installer",
+      "comment": "removed authJwt dependency when lambdaRequest or LambdaToken authorizer is specified",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/installer",
+  "email": "hkhokhar@amazon.com"
+}
