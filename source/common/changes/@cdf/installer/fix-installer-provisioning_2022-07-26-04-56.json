@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/installer",
+      "comment": "fixed issue where PCA alias was not being updated",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/installer",
+  "email": "bahavar@amazon.com"
+}

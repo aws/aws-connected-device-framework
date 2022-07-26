@@ -392,7 +392,6 @@ export class ProvisioningInstaller implements RestModule {
 
   private generateApplicationConfiguration(answers: Answers): string {
     const configBuilder = new ConfigBuilder()
-
     if (answers.provisioning.setPcaAliases) {
       if (!answers.provisioning.pcaAliases.list.includes(answers.provisioning.pcaAlias)) {
         answers.provisioning.pcaAliases.cas?.push({ alias: answers.provisioning.pcaAlias, value: answers.provisioning.pcaArn });
@@ -401,12 +400,15 @@ export class ProvisioningInstaller implements RestModule {
 
     answers.provisioning.pcaAliases?.cas?.forEach(pca => {
       let alias = pca.alias;
-      if (!pca.alias.startsWith('PCA_')) {
-        alias = `PCA_${pca.alias.toUpperCase()}`;
-      }
+
       if (alias == answers.provisioning.pcaAlias) {
         pca.value = answers.provisioning.pcaArn;
       }
+
+      if (!pca.alias.startsWith('PCA_')) {
+        alias = `PCA_${pca.alias.toUpperCase()}`;
+      }
+      
       configBuilder.add(alias, pca.value);
     });
 
@@ -481,8 +483,8 @@ export class ProvisioningInstaller implements RestModule {
     } catch (e) {
       e.name === 'ResourceNotFoundException' && console.log(`No suppliers found`);
     }
-    if (aliases.list.length == 0 || !aliases.list.includes("Create New Alias")) {
-      aliases.list.push("Create New Alias");
+    if (aliases.list.length == 0 || !aliases.list.includes("Create New PCA alias")) {
+      aliases.list.push("Create New PCA alias");
     }
     return aliases;
 
