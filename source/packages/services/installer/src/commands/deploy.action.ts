@@ -104,8 +104,12 @@ async function cleanUpConfig(answers: Answers): Promise<Answers> {
   delete answers?.bulkCerts?.caAlias;
   delete answers?.bulkCerts?.caValue;
   delete answers?.eventBus?.arn;
-  delete answers?.provisioning?.pcaAliases;
+  delete answers?.provisioning?.iotCaAliases?.list;
+  delete answers?.provisioning?.pcaAliases?.list;
+  delete answers.provisioning?.pcaFinished 
+  delete answers.provisioning?.iotCaFinished; 
   delete answers?.provisioning?.setPcaAliases;
+  delete answers?.provisioning?.setIotCaAliases;
   delete answers?.provisioning?.pcaAlias;
   delete answers?.provisioning?.pcaArn;
   delete answers?.s3?.optionalDeploymentBucket;
