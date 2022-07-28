@@ -290,10 +290,12 @@ export interface Provisioning extends RestServiceModuleAttribues {
   pcaAliases?: CAAliases;
   pcaAlias?: string;
   pcaArn?:string;
+  pcaFinished?: boolean;
   setIotCaAliases?: boolean;
   iotCaAliases?: CAAliases;
   iotCaAlias?: string;
   iotCaArn?:string;
+  iotCaFinished?: boolean;
 }
 
 export interface FleetSimulator extends RestServiceModuleAttribues {
