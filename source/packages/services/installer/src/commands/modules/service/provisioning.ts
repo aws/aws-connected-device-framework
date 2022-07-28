@@ -128,8 +128,9 @@ export class ProvisioningInstaller implements RestModule {
       }],updatedAnswers);
 
       //Collect the IoT CA List
+      let iotCaFinished = false;
       if(answers.provisioning.setIotCaAliases){
-        while (!answers.provisioning?.iotCaFinished){
+        while (!iotCaFinished){
           const iotCaAliases = await this.getIotCaAliases(updatedAnswers);
           updatedAnswers.provisioning.iotCaAliases = iotCaAliases;
           updatedAnswers = await inquirer.prompt([..._.getIoTCAPrompt(answers,iotCaAliases)],updatedAnswers);
@@ -140,6 +141,7 @@ export class ProvisioningInstaller implements RestModule {
             const value = updatedAnswers.provisioning.iotCaArn;
             updatedAnswers.provisioning.iotCaAliases.cas.push({alias, value});
           }
+          iotCaFinished = answers.provisioning.iotCaFinished;
         }
       }
 
@@ -155,8 +157,9 @@ export class ProvisioningInstaller implements RestModule {
       }],updatedAnswers);
 
       //Collect the ACM PCA List
+      let pcaFinished = false;
       if(answers.provisioning.setPcaAliases){
-        while (!answers.provisioning?.pcaFinished){
+        while (!pcaFinished){
           const pcaAliases = await this.getPcaAliases(updatedAnswers);
           updatedAnswers.provisioning.pcaAliases = pcaAliases;
           updatedAnswers = await inquirer.prompt([..._.getPCAPrompt(answers,pcaAliases)],updatedAnswers);
@@ -168,6 +171,7 @@ export class ProvisioningInstaller implements RestModule {
             const value = updatedAnswers.provisioning.pcaArn;
             updatedAnswers.provisioning.pcaAliases.cas.push({alias, value});
           }
+          pcaFinished = answers.provisioning.pcaFinished;
           
         }
       }
@@ -311,7 +315,6 @@ export class ProvisioningInstaller implements RestModule {
 
   private generateApplicationConfiguration(answers: Answers): string {
     const configBuilder = new ConfigBuilder()
-
     if (answers.provisioning.setPcaAliases) {
       if (!answers.provisioning.pcaAliases.list.includes(answers.provisioning.pcaAlias)) {
         answers.provisioning.pcaAliases.cas?.push({ alias: answers.provisioning.pcaAlias, value: answers.provisioning.pcaArn });
@@ -320,12 +323,15 @@ export class ProvisioningInstaller implements RestModule {
 
     answers.provisioning.pcaAliases?.cas?.forEach(pca => {
       let alias = pca.alias;
-      if (!pca.alias.startsWith('PCA_')) {
-        alias = `PCA_${pca.alias.toUpperCase()}`;
-      }
+
       if (alias == answers.provisioning.pcaAlias) {
         pca.value = answers.provisioning.pcaArn;
       }
+
+      if (!pca.alias.startsWith('PCA_')) {
+        alias = `PCA_${pca.alias.toUpperCase()}`;
+      }
+      
       configBuilder.add(alias, pca.value);
     });
 
@@ -446,16 +452,17 @@ export class ProvisioningInstaller implements RestModule {
 
   }
 
-  private validateAcmPcaArn(arn: string): boolean {
-    return /^arn:aws:acm-pca:\w+(?:-\w+)+:\d{12}:certificate-authority\/[A-Za-z0-9]+(?:-[A-Za-z0-9]+)+$/.test(arn);
+  private validateAcmPcaArn(arn: string): boolean |string {
+    return (/^arn:aws:acm-pca:\w+(?:-\w+)+:\d{12}:certificate-authority\/[A-Za-z0-9]+(?:-[A-Za-z0-9]+)+$/.test(arn)) ? true : "Value is not a valid ACM PCA Arn";
+
   }
 
-  private validateAwsIotCaArn(arn: string): boolean {
-    return /^arn:aws:iot:\w+(?:-\w+)+:\d{12}:cacert\/[A-Za-z0-9]+(?:[A-Za-z0-9]+)+$/.test(arn);
+  private validateAwsIotCaArn(arn: string): boolean|string {
+    return (/^arn:aws:iot:\w+(?:-\w+)+:\d{12}:cacert\/[A-Za-z0-9]+(?:[A-Za-z0-9]+)+$/.test(arn))  ? true : "Value is not a valid AWS IoT CA Arn";
   }
 
-  private validateAwsIAMRoleArn(arn: string): boolean {
-    return /^arn:aws:iam::\d{12}:role\/[A-Za-z0-9]+(?:[A-Za-z0-9_-]+)+$/.test(arn);
+  private validateAwsIAMRoleArn(arn: string): boolean|string {
+    return (/^arn:aws:iam::\d{12}:role\/[A-Za-z0-9]+(?:[A-Za-z0-9_-]+)+$/.test(arn))  ? true : "Value is not a valid IAM Role Arn";
   }
 
   private getPCAPrompt( answers: Answers,pcaAliases:CAAliases): Question[]{
