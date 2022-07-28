@@ -1,6 +1,13 @@
 # Change Log - @cdf/installer
 
-This log was last generated on Thu, 21 Jul 2022 15:32:08 GMT and should not be manually modified.
+This log was last generated on Tue, 26 Jul 2022 14:46:23 GMT and should not be manually modified.
+
+## 1.2.2
+Tue, 26 Jul 2022 14:46:23 GMT
+
+### Patches
+
+- fixed issue where PCA alias was not being updated
 
 ## 1.2.1
 Thu, 21 Jul 2022 15:32:08 GMT

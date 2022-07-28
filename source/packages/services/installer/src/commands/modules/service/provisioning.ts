@@ -311,7 +311,6 @@ export class ProvisioningInstaller implements RestModule {
 
   private generateApplicationConfiguration(answers: Answers): string {
     const configBuilder = new ConfigBuilder()
-
     if (answers.provisioning.setPcaAliases) {
       if (!answers.provisioning.pcaAliases.list.includes(answers.provisioning.pcaAlias)) {
         answers.provisioning.pcaAliases.cas?.push({ alias: answers.provisioning.pcaAlias, value: answers.provisioning.pcaArn });
@@ -320,12 +319,15 @@ export class ProvisioningInstaller implements RestModule {
 
     answers.provisioning.pcaAliases?.cas?.forEach(pca => {
       let alias = pca.alias;
-      if (!pca.alias.startsWith('PCA_')) {
-        alias = `PCA_${pca.alias.toUpperCase()}`;
-      }
+
       if (alias == answers.provisioning.pcaAlias) {
         pca.value = answers.provisioning.pcaArn;
       }
+
+      if (!pca.alias.startsWith('PCA_')) {
+        alias = `PCA_${pca.alias.toUpperCase()}`;
+      }
+      
       configBuilder.add(alias, pca.value);
     });
 
