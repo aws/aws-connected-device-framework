@@ -277,6 +277,7 @@ Resources:
               - iot:DescribeThingGroup
               - iot:RemoveThingFromThingGroup
               - iot:ListTagsForResource
+              - iot:ListThingGroupsForThing
               - iot:TagResource
               - iot:UntagResource
               - iot:UpdateThingGroup

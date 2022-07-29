@@ -35,7 +35,7 @@ Headers:
 
 Body:
 {
-    "name": "reboot",
+    "operation": "reboot",
     "deliveryMethod": {
         "type": "TOPIC",
         "onlineOnly": true
@@ -137,7 +137,7 @@ Headers:
 
 Body:
 {
-    "name": "stats",
+    "operation": "stats",
     "deliveryMethod": {
         "type": "SHADOW",
         "expectReply": true
@@ -327,7 +327,7 @@ Headers:
 
 Body:
 {
-    "name": "rotate_logs",
+    "operation": "rotate_logs",
     "deliveryMethod": {
         "type": "JOB",
         "expectReply": true,
