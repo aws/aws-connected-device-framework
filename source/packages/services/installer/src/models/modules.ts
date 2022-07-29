@@ -104,8 +104,7 @@ export const loadModules = (environment: string): Module[] => {
     new Greengrass2ProvisioningInstaller(environment),
     new NotificationsInstaller(environment),
     new ProvisioningInstaller(environment),
-    new DevicePatcherInstaller(environment),
-    new OrganizationManagerInstaller(environment),
+    new OrganizationManagerInstaller(environment)
   ];
   return modules;
 };
