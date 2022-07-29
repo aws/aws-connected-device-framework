@@ -725,19 +725,6 @@ Resources:
             !Ref ExistingCDFSecurityGroupId,
         ]
 
-  PrivateApiGatewayVPCEndpointSsmParameter:
-    Type: "AWS::SSM::Parameter"
-    Properties:
-      Description: VPC endpoint for private api support
-      Name: !Sub '/cdf/networking/${Environment}/PrivateApiGatewayVPCEndpoint'
-      Type: String
-      Value:
-        !If [
-            Deploy,
-            !Ref PrivateApiGatewayVPCEndpoint,
-            !Ref ExistingPrivateApiGatewayVPCEndpoint,
-        ]
-
 Outputs:
   VpcId:
     Description: VpcId
