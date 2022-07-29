@@ -33,7 +33,7 @@ export class OrganizationManagerInstaller implements RestModule {
   public readonly friendlyName = 'Organization Manager';
   public readonly name = 'organizationManager';
 
-  public readonly dependsOnOptional: ModuleName[] = ['authJwt'];
+  public readonly dependsOnOptional: ModuleName[] = [];
   public readonly stackName: string;
 
   public async generatePostmanEnvironment(answers: Answers): Promise<PostmanEnvironment> {
