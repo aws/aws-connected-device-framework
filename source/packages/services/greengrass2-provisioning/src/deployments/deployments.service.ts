@@ -19,7 +19,7 @@ import {
     GreengrassV2Client
 } from '@aws-sdk/client-greengrassv2';
 import {
-    AddThingToThingGroupCommand, CreateThingGroupCommand, DescribeThingGroupCommand, IoTClient, TagResourceCommand
+    AddThingToThingGroupCommand, CreateThingGroupCommand, DescribeThingGroupCommand, IoTClient, ListThingGroupsForThingCommand, RemoveThingFromThingGroupCommand, TagResourceCommand
 } from '@aws-sdk/client-iot';
 
 import { CoresService } from '../cores/cores.service';
@@ -35,6 +35,8 @@ export const DEPLOYMENT_TASK_ID_TAG_KEY = 'cdf-greengrass2-provisioning-deployme
 
 @injectable()
 export class DeploymentsService {
+
+    private readonly DEPLOYMENT_THING_GROUP_PREFIX = 'cdf_ggv2_deploymentForTemplate_';
 
     private ggv2: GreengrassV2Client;
     private iot: IoTClient;
@@ -241,8 +243,29 @@ export class DeploymentsService {
             }
         }
 
-        // add thing to thing group
         if (this.isStillInProgress(deployment)) {
+            // remove from all existing deployment thing groups
+            try {
+                const listThingGroupsForThingOutput = await this.iot.send(new ListThingGroupsForThingCommand({
+                    thingName: deployment.coreName
+                }));
+                logger.silly(`deployments.service createDeployment: ListThingGroupsForThingOutput: ${JSON.stringify(listThingGroupsForThingOutput)}`);
+                const existingDeploymentThingGroups = listThingGroupsForThingOutput?.thingGroups?.filter(tg=> tg.groupName.startsWith(this.DEPLOYMENT_THING_GROUP_PREFIX));
+                logger.silly(`deployments.service createDeployment: deployment groups to remove from: ${JSON.stringify(existingDeploymentThingGroups)}`);
+                if ((existingDeploymentThingGroups?.length??0) > 0) {
+                    for (const tg of existingDeploymentThingGroups) {
+                        await this.iot.send(new RemoveThingFromThingGroupCommand({
+                            thingName: deployment.coreName,
+                            thingGroupArn: tg.groupArn
+                        }));
+                    }
+                }
+            } catch (e) {
+                logger.error(e);
+                this.markAsFailed(deployment, `Failed removing from existing deployment thing groups: ${e.name}`);
+            }
+
+            // add thing to new deployment thing group
             try {
                 await this.iot.send(new AddThingToThingGroupCommand({
                     thingName: deployment.coreName,
@@ -297,7 +320,7 @@ export class DeploymentsService {
     }
 
     private getTemplateVersionThingGroupTarget(template: TemplateItem): string {
-        return `cdf_ggv2_deploymentForTemplate_${template.name}_${template.version}`;
+        return `${this.DEPLOYMENT_THING_GROUP_PREFIX}${template.name}_${template.version}`;
     }
 
     private isStillInProgress(deployment: Deployment): boolean {

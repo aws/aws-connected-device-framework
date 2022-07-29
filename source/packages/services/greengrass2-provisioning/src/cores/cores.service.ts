@@ -260,7 +260,7 @@ export class CoresService {
             core.statusMessage = 'Core device already registered';
             core.updatedAt = new Date();
         } else {
-            const futures: Promise<any>[] = [
+            const futures: Promise<void>[] = [
                 this.createThingGroupIfNotExist(core.name),
                 this.createThingIfNotExist(core)
             ];

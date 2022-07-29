@@ -150,3 +150,19 @@ Then('the thing {string} is provisioned', async function (thingName: string) {
     const certificateId = certArn.split('/')[1];
     await iot.describeCertificate({ certificateId }).promise();
 });
+
+Then('thing {string} belongs to thing group {string}', async function (thingName: string, thingGroupName: string) {
+    thingName = replaceTokens(thingName);
+    thingGroupName = replaceTokens(thingGroupName);
+    const r = await iot.listThingGroupsForThing({thingName}).promise();
+    const exists = (r?.thingGroups?.filter(tg=>tg.groupName===thingGroupName)?.length??0)>0;
+    expect(exists).eq(true);
+});
+
+Then('thing {string} does not belong to thing group {string}', async function (thingName: string, thingGroupName: string) {
+    thingName = replaceTokens(thingName);
+    thingGroupName = replaceTokens(thingGroupName);
+    const r = await iot.listThingGroupsForThing({thingName}).promise();
+    const exists = (r?.thingGroups?.filter(tg=>tg.groupName===thingGroupName)?.length??0)>0;
+    expect(exists).eq(false);
+});

@@ -107,7 +107,7 @@ export class DevicesService {
         }))
 
         if (response.errorEntries) {
-            logger.warn(`devices.service associateDevicesWithCore: there are some error when associating devices: ${JSON.stringify(devices)} with core: ${coreName}`)
+            logger.error(`devices.service associateDevicesWithCore: associating devices failed: ${JSON.stringify(response.errorEntries)}`)
             const saveTaskDetailsFuture = devices.filter(o => o.taskStatus === 'Success')
                 .filter(device => response.errorEntries.find(o => o.thingName === device.name) !== undefined)
                 .map(device => {
