@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/command-and-control",
+      "comment": "fixed samples in documentation",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/command-and-control",
+  "email": "deanhart@amazon.com"
+}
