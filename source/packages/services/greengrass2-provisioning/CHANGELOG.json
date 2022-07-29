@@ -2,6 +2,18 @@
   "name": "@cdf/greengrass2-provisioning",
   "entries": [
     {
+      "version": "0.4.1",
+      "tag": "@cdf/greengrass2-provisioning_v0.4.1",
+      "date": "Fri, 29 Jul 2022 17:47:13 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Cores are now being removed from past deployment thing groups."
+          }
+        ]
+      }
+    },
+    {
       "version": "0.4.0",
       "tag": "@cdf/greengrass2-provisioning_v0.4.0",
       "date": "Wed, 13 Jul 2022 02:04:06 GMT",

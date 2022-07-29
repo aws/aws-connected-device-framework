@@ -2,6 +2,18 @@
   "name": "@cdf/integration-tests",
   "entries": [
     {
+      "version": "3.5.1",
+      "tag": "@cdf/integration-tests_v3.5.1",
+      "date": "Fri, 29 Jul 2022 17:47:13 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Cores are now being removed from past deployment thing groups."
+          }
+        ]
+      }
+    },
+    {
       "version": "3.5.0",
       "tag": "@cdf/integration-tests_v3.5.0",
       "date": "Fri, 29 Jul 2022 02:59:14 GMT",

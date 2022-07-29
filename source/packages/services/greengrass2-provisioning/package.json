@@ -1,6 +1,6 @@
 {
   "name": "@cdf/greengrass2-provisioning",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "CDF Greengrass V2 Provisioning",
   "author": "Dean Hart",
   "scripts": {

@@ -1,6 +1,13 @@
 # Change Log - @cdf/greengrass2-provisioning
 
-This log was last generated on Wed, 13 Jul 2022 02:04:06 GMT and should not be manually modified.
+This log was last generated on Fri, 29 Jul 2022 17:47:13 GMT and should not be manually modified.
+
+## 0.4.1
+Fri, 29 Jul 2022 17:47:13 GMT
+
+### Patches
+
+- Cores are now being removed from past deployment thing groups.
 
 ## 0.4.0
 Wed, 13 Jul 2022 02:04:06 GMT

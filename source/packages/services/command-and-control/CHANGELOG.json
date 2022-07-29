@@ -2,6 +2,18 @@
   "name": "@cdf/command-and-control",
   "entries": [
     {
+      "version": "1.0.1",
+      "tag": "@cdf/command-and-control_v1.0.1",
+      "date": "Fri, 29 Jul 2022 17:47:13 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fixed samples in documentation"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.0.0",
       "tag": "@cdf/command-and-control_v1.0.0",
       "date": "Wed, 29 Jun 2022 00:56:16 GMT",
