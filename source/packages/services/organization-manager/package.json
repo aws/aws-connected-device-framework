@@ -1,6 +1,6 @@
 {
   "name": "@cdf/organization-manager",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "This module associates cdf components with organizational units and uses this association to create control-tower-customization manifest file",
   "author": "William Sia",
   "config": {

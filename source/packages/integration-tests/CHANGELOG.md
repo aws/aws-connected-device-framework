@@ -1,6 +1,13 @@
 # Change Log - @cdf/integration-tests
 
-This log was last generated on Mon, 11 Jul 2022 22:20:13 GMT and should not be manually modified.
+This log was last generated on Fri, 29 Jul 2022 02:59:14 GMT and should not be manually modified.
+
+## 3.5.0
+Fri, 29 Jul 2022 02:59:14 GMT
+
+### Minor changes
+
+- add testing for organization-manager
 
 ## 3.4.0
 Mon, 11 Jul 2022 22:20:13 GMT

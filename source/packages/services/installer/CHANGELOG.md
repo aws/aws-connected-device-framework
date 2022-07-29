@@ -1,6 +1,13 @@
 # Change Log - @cdf/installer
 
-This log was last generated on Tue, 26 Jul 2022 14:46:23 GMT and should not be manually modified.
+This log was last generated on Fri, 29 Jul 2022 02:59:14 GMT and should not be manually modified.
+
+## 1.3.0
+Fri, 29 Jul 2022 02:59:14 GMT
+
+### Minor changes
+
+- add organization-manager module to installer
 
 ## 1.2.2
 Tue, 26 Jul 2022 14:46:23 GMT
