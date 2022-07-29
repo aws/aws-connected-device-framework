@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/deployment-helper",
+      "comment": "add the custom resource to publish stack events to eventbridge",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@cdf/deployment-helper",
+  "email": "willsia@amazon.com"
+}

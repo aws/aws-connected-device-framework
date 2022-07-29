@@ -34,7 +34,7 @@ Any other branches besides `main` and the release tags are considered experiment
 
 Implementing, deploying and maintaining IoT services can be significantly more complex than traditional software services due to a number of challenges faced:
 
-**Significant undifferentiated heavy lifting:**  It can take months, if not years, to build out an IoT platform.
+**Significant undifferentiated heavy lifting:**  It can take months, if not years, to build out an Facade API.
 
 **Skills gap:**  Finding product and IoT specialists is one problem, but then needing to find those same people who possess AWS knowledge is significantly harder.
 

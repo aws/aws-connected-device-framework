@@ -1,0 +1,34 @@
+title Organizational Unit Creation
+
+participant "<facade>" as f
+participant "<CDF>\nOrganization Manager" as om
+participant "<AWS>\nOrganizations" as ao
+
+note over f, om
+ 1) Create the Organizational Unit on Facade API
+end note
+
+f -> om: "POST /organizatonalUnits"
+activate om
+alt Admin Mode
+    om -> ao : Create Organizational Unit
+    activate ao 
+
+    alt Organizational Unit Creation Successful
+        ao --> om : Returns OU Id
+        om -> om: Set the OU Id From AWS Organizations response
+        om --> f : <201> Created
+
+    else Organizational Unit Creation Failed
+        ao --> om : Organizational Unit Creation Failed
+        deactivate ao
+        om --> f : <400> Bad Request
+    end
+
+else Normal Mode
+    om -> om : Set the OU Id from Request
+    om --> f : <201> Created
+end
+
+
+deactivate om

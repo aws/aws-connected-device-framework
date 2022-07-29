@@ -17,6 +17,12 @@ export const TYPES = {
     Iot: Symbol.for('Iot'),
     IotFactory: Symbol.for('Factory<Iot>'),
 
+    STS: Symbol.for('STS'),
+    STSFactory: Symbol.for('Factory<STS>'),
+
+    EventBridge: Symbol.for('EventBridge'),
+    EventBridgeFactory: Symbol.for('Factory<EventBridge>'),
+
     EC2: Symbol.for('EC2'),
     EC2Factory: Symbol.for('Factory<EC2>'),
 
@@ -51,5 +57,8 @@ export const TYPES = {
     IotDeviceDefenderCustomResource: Symbol.for('IotDeviceDefenderCustomResource'),
     
     EventSourceCustomResource: Symbol.for('EventSourceCustomResource'),
-    EventsCustomResource: Symbol.for('EventsCustomResource')
+    EventsCustomResource: Symbol.for('EventsCustomResource'),
+
+    StackEventsCustomResource: Symbol.for('StackEventsCustomResource')
+
 };

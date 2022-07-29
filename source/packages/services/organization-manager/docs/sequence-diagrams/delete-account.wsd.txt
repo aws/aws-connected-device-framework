@@ -1,0 +1,39 @@
+title Account Delete
+
+participant "<facade>" as f
+participant "<CDF>\nOrganization Manager" as om
+participant "<AWS>\nAWS Organizations" as ao
+
+note over f, om
+ 1) Delete the account on Facade API
+ (an async process)
+end note
+
+f -> om: "DELETE >/accounts/<account-name>"
+activate om
+
+alt Account in ACTIVE or PROVISIONED status
+
+alt Delete Account Admin Mode
+    om -> ao : Move Account to Suspended ou
+    activate ao
+    alt Move Account Successful
+      ao -> om : Move Account Success 
+      om -> om : Update the Account Status to SUSPENDED
+      om -> f : <204> No Content
+    else Move Account Failed
+      ao -> om: Move Account Failed
+      om -> f : <400> Server Error
+    end
+
+
+else Delete Account Normal Mode
+      om -> om : Update the Account Status to SUSPENDED
+      om -> f : <204> No Content
+end
+
+else Account not in ACTIVE or PROVISIONED status
+    om -> f : <409> Conflict
+end
+
+deactivate om

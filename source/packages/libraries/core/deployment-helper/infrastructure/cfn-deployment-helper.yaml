@@ -112,6 +112,21 @@ Resources:
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
+          - Sid: "iot"
+            Action:
+              - "iot:*"
+            Effect: Allow
+            Resource: "*"
+          - Sid: "sts"
+            Action:
+              - "sts:*"
+            Effect: Allow
+            Resource: "*"
+          - Sid: "eventbridge"
+            Action:
+              - "events:PutEvents"
+            Effect: Allow
+            Resource: "*"
           - Sid: "iampassrole"
             Action:
               - "iam:PassRole"
@@ -145,6 +160,22 @@ Resources:
               - "ec2:DescribeVpcEndpoints"
             Effect: Allow
             Resource: "*"
+
+  CustomResourceLambdaArnSsmParameter:
+    Type: "AWS::SSM::Parameter"
+    Properties:
+      Description: Custom Resource Lambda ARN
+      Name: !Sub "/cdf/deployment-helper/${Environment}/CustomResourceLambdaArn"
+      Type: String
+      Value: !GetAtt CustomResourceLambda.Arn
+
+  NotAvailableSsmParameter:
+    Type: "AWS::SSM::Parameter"
+    Properties:
+      Description: Store Emptry string in SSM parameter to be used for optional parameter
+      Name: !Sub "/cdf/deployment-helper/${Environment}/NotAvailable"
+      Type: String
+      Value: "N/A"
 
 Outputs:
   CustomResourceLambdaArn:

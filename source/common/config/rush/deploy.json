@@ -46,6 +46,7 @@
     "@cdf/installer",
     "@cdf/lambda-invoke",
     "@cdf/logger",
+    "@cdf/organization-manager",
     "@cdf/notifications-client",
     "@cdf/provisioning-client",
     "@cdf/provisioning",
@@ -140,147 +141,107 @@
     // }
     {
       "projectName": "@cdf/assetlibrary-client",
-      "dependenciesToExclude": [
-        "aws-sdk"
-      ]
+      "dependenciesToExclude": ["aws-sdk"]
     },
     {
       "projectName": "@cdf/assetlibraryhistory-client",
-      "dependenciesToExclude": [
-        "aws-sdk"
-      ]
+      "dependenciesToExclude": ["aws-sdk"]
     },
     {
       "projectName": "@cdf/commands-client",
-      "dependenciesToExclude": [
-        "aws-sdk"
-      ]
+      "dependenciesToExclude": ["aws-sdk"]
+    },
+    {
+      "projectName": "@cdf/organizationmanager-client",
+      "dependenciesToExclude": ["aws-sdk"]
     },
     {
       "projectName": "@cdf/notifications-client",
-      "dependenciesToExclude": [
-        "aws-sdk"
-      ]
+      "dependenciesToExclude": ["aws-sdk"]
     },
     {
       "projectName": "@cdf/provisioning-client",
-      "dependenciesToExclude": [
-        "aws-sdk"
-      ]
+      "dependenciesToExclude": ["aws-sdk"]
     },
     {
       "projectName": "@cdf/errors",
-      "dependenciesToExclude": [
-        "aws-sdk"
-      ]
+      "dependenciesToExclude": ["aws-sdk"]
     },
     {
       "projectName": "@cdf/express-middleware",
-      "dependenciesToExclude": [
-        "aws-sdk"
-      ]
+      "dependenciesToExclude": ["aws-sdk"]
     },
     {
       "projectName": "@cdf/lambda-invoke",
-      "dependenciesToExclude": [
-        "aws-sdk"
-      ]
+      "dependenciesToExclude": ["aws-sdk"]
     },
     {
       "projectName": "@cdf/logger",
-      "dependenciesToExclude": [
-        "aws-sdk"
-      ]
+      "dependenciesToExclude": ["aws-sdk"]
     },
     {
       "projectName": "@cdf/assetlibrary",
-      "dependenciesToExclude": [
-        "aws-sdk"
-      ]
+      "dependenciesToExclude": ["aws-sdk"]
     },
     {
       "projectName": "@cdf/assetlibrary-history",
-      "dependenciesToExclude": [
-        "aws-sdk"
-      ]
+      "dependenciesToExclude": ["aws-sdk"]
     },
     {
       "projectName": "@cdf/assetlibrary-export",
-      "dependenciesToExclude": [
-        "aws-sdk"
-      ]
+      "dependenciesToExclude": ["aws-sdk"]
     },
     {
       "projectName": "@cdf/auth-devicecert",
-      "dependenciesToExclude": [
-        "aws-sdk"
-      ]
+      "dependenciesToExclude": ["aws-sdk"]
     },
     {
       "projectName": "@cdf/auth-jwt",
-      "dependenciesToExclude": [
-        "aws-sdk"
-      ]
+      "dependenciesToExclude": ["aws-sdk"]
     },
     {
       "projectName": "@cdf/bulkcerts",
-      "dependenciesToExclude": [
-        "aws-sdk"
-      ]
+      "dependenciesToExclude": ["aws-sdk"]
     },
     {
       "projectName": "@cdf/certificate-activator",
-      "dependenciesToExclude": [
-        "aws-sdk"
-      ]
+      "dependenciesToExclude": ["aws-sdk"]
     },
     {
       "projectName": "@cdf/config-inject",
-      "dependenciesToExclude": [
-        "aws-sdk"
-      ]
+      "dependenciesToExclude": ["aws-sdk"]
     },
     {
       "projectName": "@cdf/certificate-vendor",
-      "dependenciesToExclude": [
-        "aws-sdk"
-      ]
+      "dependenciesToExclude": ["aws-sdk"]
     },
     {
       "projectName": "@cdf/commands",
-      "dependenciesToExclude": [
-        "aws-sdk"
-      ]
+      "dependenciesToExclude": ["aws-sdk"]
     },
     {
       "projectName": "@cdf/device-monitoring",
-      "dependenciesToExclude": [
-        "aws-sdk"
-      ]
+      "dependenciesToExclude": ["aws-sdk"]
     },
     {
       "projectName": "@cdf/events-alerts",
-      "dependenciesToExclude": [
-        "aws-sdk"
-      ]
+      "dependenciesToExclude": ["aws-sdk"]
     },
     {
       "projectName": "@cdf/events-processor",
-      "dependenciesToExclude": [
-        "aws-sdk"
-      ]
+      "dependenciesToExclude": ["aws-sdk"]
     },
     {
       "projectName": "@cdf/assetlibrary-export",
-      "dependenciesToExclude": [
-        "aws-sdk"
-      ]
+      "dependenciesToExclude": ["aws-sdk"]
     },
     {
       "projectName": "@cdf/deployment-helper",
-      "dependenciesToExclude": [
-        "aws-sdk"
-      ]
+      "dependenciesToExclude": ["aws-sdk"]
+    },
+    {
+      "projectName": "@cdf/organization-manager",
+      "dependenciesToExclude": ["aws-sdk"]
     }
   ]
 }

@@ -13,7 +13,6 @@
 import 'reflect-metadata';
 import '@cdf/config-inject'
 import { Container } from 'inversify';
-
 import {assetLibraryContainerModule} from '@cdf/assetlibrary-client';
 import {assetLibraryHistoryContainerModule} from '@cdf/assetlibraryhistory-client';
 import {commandsContainerModule} from '@cdf/commands-client';
@@ -22,8 +21,7 @@ import {notificationsContainerModule} from '@cdf/notifications-client';
 import {greengrass2ProvisioningContainerModule} from '@cdf/greengrass2-provisioning-client';
 import {devicePatcherContainerModule} from '@cdf/device-patcher-client';
 import {commandAndControlContainerModule} from '@cdf/commandandcontrol-client';
-
-
+import { organizationManagerContainerModule } from '@cdf/organizationmanager-client';
 // Load everything needed to the Container
 export const container = new Container();
 
@@ -36,3 +34,4 @@ container.load(notificationsContainerModule);
 container.load(greengrass2ProvisioningContainerModule);
 container.load(devicePatcherContainerModule)
 container.load(commandAndControlContainerModule);
+container.load(organizationManagerContainerModule);

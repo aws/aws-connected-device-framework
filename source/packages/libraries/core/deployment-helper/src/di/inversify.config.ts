@@ -59,6 +59,7 @@ import { commandAndControlContainerModule } from '@cdf/commandandcontrol-client'
 import { TYPES } from './types';
 
 import AWS = require('aws-sdk');
+import { StackEventsCustomResource } from '../customResources/stackEvents.customResource';
 // Load everything needed to the Container
 export const container = new Container();
 
@@ -109,6 +110,7 @@ container.bind<IotDeviceDefenderCustomResource>(TYPES.IotDeviceDefenderCustomRes
 container.bind<EventSourceCustomResource>(TYPES.EventSourceCustomResource).to(EventSourceCustomResource).inSingletonScope();
 container.bind<EventsCustomResource>(TYPES.EventsCustomResource).to(EventsCustomResource).inSingletonScope();
 
+container.bind<StackEventsCustomResource>(TYPES.StackEventsCustomResource).to(StackEventsCustomResource).inSingletonScope();
 
 
 
@@ -151,5 +153,35 @@ container.bind<interfaces.Factory<AWS.EC2>>(TYPES.EC2Factory)
                 container.bind<AWS.EC2>(TYPES.EC2).toConstantValue(ec2);
             }
             return container.get<AWS.EC2>(TYPES.EC2);
+        };
+    });
+
+
+// STS
+decorate(injectable(), AWS.STS);
+container.bind<interfaces.Factory<AWS.STS>>(TYPES.STSFactory)
+    .toFactory<AWS.STS>(() => {
+        return () => {
+
+            if (!container.isBound(TYPES.STS)) {
+                const sts = new AWS.STS();
+                container.bind<AWS.STS>(TYPES.STS).toConstantValue(sts);
+            }
+            return container.get<AWS.STS>(TYPES.STS);
+        };
+    });
+
+
+// EventBridge
+decorate(injectable(), AWS.EventBridge);
+container.bind<interfaces.Factory<AWS.EventBridge>>(TYPES.EventBridgeFactory)
+    .toFactory<AWS.EventBridge>(() => {
+        return (region: string) => {
+
+            if (!container.isBound(TYPES.EventBridge)) {
+                const eventBridge = new AWS.EventBridge({ region });
+                container.bind<AWS.EventBridge>(TYPES.EventBridge).toConstantValue(eventBridge);
+            }
+            return container.get<AWS.EventBridge>(TYPES.EventBridge);
         };
     });

@@ -1,0 +1,1 @@
+The transformation scripts in this folder are used when you want to deploy `aws-connected-device-framework` in multiple account mode. It replaces some of the the parameters in cloudformation from `String` to `AWS::SSM::Parameter::Value<String>` to allow one stack to refer to another stack resources using ssm parameter store.

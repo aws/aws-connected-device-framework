@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/events-processor",
+      "comment": "export variables required for eventsAlerts as ssm parameters",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@cdf/events-processor",
+  "email": "willsia@amazon.com"
+}

@@ -670,6 +670,73 @@ Resources:
       ResourceType: VPC
       TrafficType: !Ref VPCFlowLogsTrafficType
 
+  VpcIdSsmParameter:
+    Type: "AWS::SSM::Parameter"
+    Properties:
+      Description: VPC ID for the account
+      Name: !Sub '/cdf/networking/${Environment}/VpcId'
+      Type: String
+      Value: !If [Deploy, !Ref VPC, !Ref ExistingVpcId]
+
+  PrivateSubnetIdsSsmParameter:
+    Type: "AWS::SSM::Parameter"
+    Properties:
+      Description: Private subnet ids
+      Name: !Sub '/cdf/networking/${Environment}/PrivateSubnetIds'
+      Type: StringList
+      Value:
+        !If [
+            Deploy,
+            !Join [",", [!Ref PrivateSubnetOne, !Ref PrivateSubnetTwo]],
+            !Ref ExistingPrivateSubnetIds,
+        ]
+
+  PublicSubnetIdsSsmParameter:
+    Type: "AWS::SSM::Parameter"
+    Properties:
+      Description: Public subnet ids
+      Name: !Sub '/cdf/networking/${Environment}/PublicSubnetIds'
+      Type: StringList
+      Value: !If [Deploy,!Join [",", [!Ref PublicSubnetOne, !Ref PublicSubnetTwo]], !Ref ExistingPublicSubnetIds,]
+
+  PrivateRouteTableIdsSsmParameter:
+    Type: "AWS::SSM::Parameter"
+    Properties:
+      Description: Private Route Table Ids
+      Name: !Sub '/cdf/networking/${Environment}/PrivateRouteTableIds'
+      Type: StringList
+      Value:
+        !If [
+            Deploy,
+            !Join [",", [!Ref PrivateRouteTableOne, !Ref PrivateRouteTableTwo]],
+            !Ref ExistingPrivateRouteTableIds,
+        ]
+
+  CDFSecurityGroupIdSsmParameter:
+    Type: "AWS::SSM::Parameter"
+    Properties:
+      Description: CDF security group
+      Name: !Sub '/cdf/networking/${Environment}/CDFSecurityGroupId'
+      Type: String
+      Value:
+        !If [
+            Deploy,
+            !GetAtt CDFSecurityGroup.GroupId,
+            !Ref ExistingCDFSecurityGroupId,
+        ]
+
+  PrivateApiGatewayVPCEndpointSsmParameter:
+    Type: "AWS::SSM::Parameter"
+    Properties:
+      Description: VPC endpoint for private api support
+      Name: !Sub '/cdf/networking/${Environment}/PrivateApiGatewayVPCEndpoint'
+      Type: String
+      Value:
+        !If [
+            Deploy,
+            !Ref PrivateApiGatewayVPCEndpoint,
+            !Ref ExistingPrivateApiGatewayVPCEndpoint,
+        ]
 
 Outputs:
   VpcId:
