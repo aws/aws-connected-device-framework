@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/organizationmanager-client",
+      "comment": "client libraries to invoke Organization Manager API",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@cdf/organizationmanager-client",
+  "email": "willsia@amazon.com"
+}

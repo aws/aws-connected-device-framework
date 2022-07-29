@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/organization-manager",
+      "comment": "new module to associate cdf components to AWS accounts or organizational unit",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@cdf/organization-manager",
+  "email": "willsia@amazon.com"
+}

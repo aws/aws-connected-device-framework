@@ -1,0 +1,10 @@
+## The following env config needs defining per environment:
+
+ORGANIZATIONMANAGER_BASE_URL=
+ORGANIZATIONMANAGER_HEADERS=
+ORGANIZATIONMANAGER_MODE=
+ORGANIZATIONMANAGER_API_FUNCTION_NAME=
+
+
+## optional to override:
+LOGGING_LEVEL=info

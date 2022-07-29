@@ -1,0 +1,194 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Globals:
+  Api:
+    # Enable binary for zip file download
+    BinaryMediaTypes:
+      # This is equivalent to application/zip when deployed.
+      - application~1zip
+
+Description: CDF Sample Tenant Module
+
+Parameters:
+  Environment:
+    Description: Name of environment.  Used to name the created resources.
+    Type: String
+    MinLength: 1
+
+  ControlPlaneAccount:
+    Description: Account where control plane services are deployed
+    Type: String
+
+  ControlPlaneBusName:
+    Description: Arn for Control Plane EventBridge bus
+    Type: String
+    MinLength: 1
+
+Resources:
+  CDFTenantKmsKey:
+    Type: "AWS::KMS::Key"
+    Properties:
+      KeyPolicy:
+        Version: 2012-10-17
+        Id: cdf-tenant-default
+        Statement:
+          - Sid: Enable IAM User Permissions
+            Effect: Allow
+            Principal:
+              AWS: !Join
+                - ""
+                - - "arn:aws:iam::"
+                  - !Ref "AWS::AccountId"
+                  - ":root"
+            Action: "kms:*"
+            Resource: "*"
+
+  TenantArtifactBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "cdf-tenant-${AWS::AccountId}-artifacts-${AWS::Region}"
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
+  TenantArtifactBucketSsmParameter:
+    Type: "AWS::SSM::Parameter"
+    Properties:
+      Description: Bucket to store provisioning artifacts
+      Name: !Sub "/cdf/facade-tenant/${Environment}/templates/bucket"
+      Type: String
+      Value: !Ref TenantArtifactBucket
+
+  TenantKmsKeySsmParameter:
+    Type: "AWS::SSM::Parameter"
+    Properties:
+      Description: Kms Key used in Tenant account
+      Name: !Sub "/cdf/facade-tenant/${Environment}/key"
+      Type: String
+      Value: !Ref CDFTenantKmsKey
+
+
+  TenantAccountBus:
+    Type: AWS::Events::EventBus
+    Properties:
+      Name: !Sub "TenantAccountBus-${Environment}"
+
+  ControlPlaneEventBusToTenantAccountBusRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - events.amazonaws.com
+            Action:
+              - "sts:AssumeRole"
+      Path: /
+      Policies:
+        - PolicyName: PutEventsOnTenantAccountBus
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action: "events:PutEvents"
+                Resource: !GetAtt TenantAccountBus.Arn
+
+  TenantAccountBusDlqArn:
+    Type: AWS::SQS::Queue
+
+  ControlPlaneToTenantAccountBusSubscriptionRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: !Sub "TenantAccountBusSubscription-${AWS::AccountId}"
+      Description: !Sub "Cross account rule created by Account ${AWS::AccountId}"
+      EventBusName:
+        !Join [
+            ":",
+          [
+            !Sub "arn:aws:events:${AWS::Region}",
+            !Select [ 4, !Split [ ":", !Ref ControlPlaneBusName ] ],
+            !Select [ 5, !Split [ ":", !Ref ControlPlaneBusName ] ],
+          ],
+        ]
+      EventPattern:
+        source:
+          - "com.aws.cdf.controlplane"
+        account:
+          - !Ref "ControlPlaneAccount"
+        detail-type:
+          - prefix: "CDF"
+      State: ENABLED
+      Targets:
+        - Id: SendToTenantEventBus
+          Arn: !GetAtt TenantAccountBus.Arn
+          RoleArn: !GetAtt ControlPlaneEventBusToTenantAccountBusRole.Arn
+          DeadLetterConfig:
+            Arn: !GetAtt TenantAccountBusDlqArn.Arn
+
+  TenantAccountBusToEventBridgeLambdaRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Description: "Tenant Account Bus To CloudWatch log rule"
+      EventBusName: !GetAtt TenantAccountBus.Arn
+      EventPattern:
+        source:
+          - "com.aws.cdf.controlplane"
+        detail-type:
+          - prefix: "CDF events"
+      State: "ENABLED"
+      Targets:
+        - Arn: !GetAtt LogGroupForEvents.Arn
+          Id: LogTarget
+
+  LogGroupForEvents:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /aws/cdflogs/events/cross-account-subscription-test
+
+  LogGroupForEventsPolicy:
+    Type: AWS::Logs::ResourcePolicy
+    Properties:
+      PolicyName: EventBridgeToCWLogsPolicy
+      PolicyDocument: !Sub >
+        {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Sid": "EventBridgetoCWLogsCreateLogStreamPolicy",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "events.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "logs:CreateLogStream"
+              ],
+              "Resource": [
+                "${LogGroupForEvents.Arn}"
+              ]
+            },
+            {
+              "Sid": "EventBridgetoCWLogsPutLogEventsPolicy",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "events.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "logs:PutLogEvents"
+              ],
+              "Resource": [
+                "${LogGroupForEvents.Arn}"
+              ],
+              "Condition": {
+                "ArnEquals": {"AWS:SourceArn": "${TenantAccountBusToEventBridgeLambdaRule.Arn}"}
+              }
+            }
+          ]
+        }

@@ -22,6 +22,7 @@ import { FleetSimulatorInstaller } from "../commands/modules/service/fleetSimula
 import { DevicePatcherInstaller } from "../commands/modules/service/devicePatcher";
 import { AssetLibraryExportInstaller } from "../commands/modules/service/assetLibraryExport";
 import { CommandAndControlInstaller } from "../commands/modules/service/commandAndControl";
+import { OrganizationManagerInstaller } from "../commands/modules/service/organizationManager";
 
 export type ModuleName =
   // infrastructure modules:
@@ -46,6 +47,7 @@ export type ModuleName =
   | "greengrass2InstallerConfigGenerators"
   | "greengrass2Provisioning"
   | "notifications"
+  | "organizationManager"
   | "provisioning"
   | "vpc";
 
@@ -102,6 +104,8 @@ export const loadModules = (environment: string): Module[] => {
     new Greengrass2ProvisioningInstaller(environment),
     new NotificationsInstaller(environment),
     new ProvisioningInstaller(environment),
+    new DevicePatcherInstaller(environment),
+    new OrganizationManagerInstaller(environment),
   ];
   return modules;
 };

@@ -32,6 +32,7 @@ export interface Answers {
   devicePatcher?: DevicePatcher;
   provisioning?: Provisioning;
   fleetSimulator?: FleetSimulator;
+  organizationManager?: OrganizationManager;
 }
 
 export interface Kms {
@@ -106,6 +107,19 @@ export interface ProvisionedConcurrencyModuleAttribues
 export interface RestServiceModuleAttribues extends ServiceModuleAttributes {
   enableCustomDomain?: boolean;
   customDomainBasePath?: string;
+}
+
+export interface OrganizationManager extends RestServiceModuleAttribues {
+  controlTowerBucket?: string;
+  deleteAccountsEnabled?: boolean;
+  createAccountsEnabled?: boolean;
+  deleteOUsEnabled?: boolean;
+  createOUsEnabled?: boolean;
+  managementAccountRole?: string;
+  suspendedOU?: string;
+  organizationId?: string;
+  supportedRegions?: string[];
+  artifactBucketPrefix?: string;
 }
 
 export interface AssetLibrary

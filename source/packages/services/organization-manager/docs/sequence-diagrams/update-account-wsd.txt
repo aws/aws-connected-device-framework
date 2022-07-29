@@ -1,0 +1,77 @@
+title Account Update
+
+participant "<facade>" as f
+participant "<CDF>\nOrganization Manager" as om
+participant "<AWS>\nS3" as s3
+participant "<awslabs>\naws-control-tower-\ncustomizations" as ctc
+participant "<AWS>\nStep Functions" as sf
+participant "<AWS>\nCloudFormation" as cf
+participant "<AWS>\nEventBridge" as eb
+
+note over f, om
+ 1) Update the account on Facade API
+ (an async process)
+end note
+
+f -> om: "PATCH /organizatonalUnits/<ou-name>/accounts/<account-name>"
+activate om
+
+
+alt Account Update Successful
+
+om -> om : Update regions for the account &\nUpdate Account Status to PENDING
+
+om -> s3 : Update Manifest file
+activate s3
+activate ctc
+
+om --> f : <202> Accepted
+
+s3 -> ctc : Trigger Control Tower Customization CodePipeline
+deactivate s3
+
+ctc -> sf : Trigger StackSets Deployment\n StateMachine
+deactivate ctc
+activate sf
+
+sf -> cf : Deploy CDF Stacks
+activate cf
+
+note over sf, cf
+2) Deploying CDF Services as 
+CloudFormation StackSets to ACTIVE accounts
+
+end note
+
+alt CDF Deployment Successful
+    cf -> sf : StackSets Deployment Successful
+    sf -> eb : <Step Functions Event>\nState Machine Execution\nstatus: success
+    activate eb
+    eb -> om : Invoke
+    deactivate eb
+    om -> om : Update Account Status to PROVISIONED
+else CDF Deployment Failed
+    cf -> sf: StackSets Deployment Failed
+    deactivate cf
+
+    sf -> eb : <Step Functions Event>\nState Machine Execution\nstatus: failed
+    activate eb
+    deactivate sf
+
+    eb -> om : Invoke
+    deactivate eb
+
+    om -> om : Update Account Status to FAILED
+end
+
+else Account Is Not In Provisioned State
+    om --> f : <409> Conflict
+else Account Does Not Exist 
+    om --> f : <404> Not Found
+end
+
+
+else Bad Request
+    om --> f : <400> Bad Request
+end
+deactivate om

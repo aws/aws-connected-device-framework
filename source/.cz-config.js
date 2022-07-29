@@ -46,6 +46,7 @@ module.exports = {
         { name: 'greengrass2-provisioning' },
         { name: 'greengrass2-installer-config-generators' },
         { name: 'installers' },
+        { name: 'organization-manager' },
         { name: 'notifications' },
         { name: 'provisioning' },
         { name: 'simulation-launcher'},

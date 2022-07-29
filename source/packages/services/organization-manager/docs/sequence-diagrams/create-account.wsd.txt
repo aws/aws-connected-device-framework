@@ -1,0 +1,119 @@
+title Account Creation
+
+participant "<facade>" as f
+participant "<CDF>\nOrganization Manager" as om
+participant "<AWS>\nService Catalog" as sc
+participant "<AWS>\nControl Tower" as ct
+participant "<AWS>\nEventBridge" as eb
+participant "<AWS>\nS3" as s3
+participant "<awslabs>\naws-control-tower-\ncustomizations" as ctc
+participant "<AWS>\nStep Functions" as sf
+participant "<AWS>\nCloudFormation" as cf
+
+note over f, om
+ 1) Create the account on Facade API
+ (an async process)
+end note
+
+f -> om: "POST /organizatonalUnits/<ou-name>/accounts"
+
+ 
+alt Create Account 
+    om -> om :  Create Account with Status ACTIVE 
+    activate f
+    activate om
+    om-->f: <201> Created
+    om -> s3 :  Update Manifest File
+    activate s3
+    note over om, s3
+    2) Add the new account to the CTC
+    manifest file
+    end note
+
+else Create Account Admin Mode
+    
+    om -> om : Create Account with Status CREATING
+
+    om -> sc : Provision New Account
+    activate sc
+    sc --> om : Accepted
+    om-->f: <202> Accepted
+    sc -> ct : Create New Account
+    deactivate sc
+    activate ct
+    loop Until Account successfully created or failed)
+      ct->ct : Check Account Status
+    end
+
+    alt Account Creation Successful
+        ct -> eb : <Control Tower Event>\nCreateManagedAccount\nstatus: success
+        activate eb
+        
+        eb -> om : Invoke 
+        deactivate eb
+        
+        om -> om : Update Account Status to ACTIVE
+
+        om -> s3 : Update Manifest File
+        
+        activate ctc
+
+        s3 -> ctc : Trigger Control Tower Customization CodePipeline
+        deactivate s3
+
+        ctc -> sf : Trigger StackSets Deployment\n StateMachine
+        deactivate ctc
+        activate sf
+        
+        sf -> cf : Deploy CDF Stacks
+        activate cf
+
+        note over sf, cf
+        3) Deploying CDF Services as 
+        CloudFormation StackSets to ACTIVE accounts
+
+        end note
+        
+        alt CDF Deployment Successful
+            cf -> sf : StackSets Deployment Successful
+            sf -> eb : <Step Functions Event>\nState Machine Execution\nstatus: success
+            activate eb
+        
+            eb -> om : Invoke
+            deactivate eb
+        
+            om -> om : Update Account Status to PROVISIONED
+        
+        else CDF Deployment Failed
+
+            cf -> sf: StackSets Deployment Failed
+            deactivate cf
+        
+            sf -> eb : <Step Functions Event>\nState Machine Execution\nstatus: failed
+            activate eb
+            deactivate sf
+
+            eb -> om : Invoke
+            deactivate eb
+
+            om -> om : Update Account Status to FAILED
+            deactivate om
+        end
+
+    else Account Creation Failed
+        ct -> eb : <Control Tower Event>\nCreateManagedAccount\nstatus: failed
+        deactivate ct
+        activate eb
+        eb -> om : Invoke 
+        deactivate eb
+        om -> om : Update Account Status to FAILED
+    end
+
+else Organizational Unit Not Active
+
+ om --> f : <400> Bad Request
+
+end
+
+
+

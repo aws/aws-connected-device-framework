@@ -35,6 +35,15 @@ Resources:
         - java11
       RetentionPolicy: Delete
 
+  LayerVersionArnSsmParameter:
+    Type: "AWS::SSM::Parameter"
+    Properties:
+      Description: Layer Version ARN
+      Name: !Sub '/cdf/openssl/${Environment}/OpenSslLambdaLayerArn'
+      Type: String
+      Value: !Ref OpenSslLamdaLayer
+
+
 Outputs:
   LayerVersionArn:
     Description: Layer Version ARN

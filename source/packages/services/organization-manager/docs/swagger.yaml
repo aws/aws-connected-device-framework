@@ -1,0 +1,624 @@
+openapi: 3.0.0
+info:
+  title: "Connected Device Framework: Organization Manager"
+  description: |
+    The CDF Organization Manager provides an opinionated, but optional, AWS environment structure based on AWS best practices by constructing a well-architected multi-account organization with organization units (OU’s), based on security and compliance best practices, providing isolated operational boundaries between different workloads and resources.
+
+    The CDF Organization Manager can be configured to run with or without privileged access to AWS Organizations and AWS Control Tower. Privileged access feature will allow you to create AWS organization units and accounts. Non-priveleged access is used when you a platform team that handles the creation of AWS account, and you only use Organization Manager to register these accounts.
+
+    Each OU has guardrails applied to govern the overall AWS environment.
+
+  version: 1.0.0
+
+tags:
+  - name: Components
+    description: >
+      A deployable resource that can be associated with an Organizational Unit.
+
+      This resource will deployed for any account created under this Organizational Unit
+
+  - name: Organizational Units (OU's)
+    description: >
+      A container for a set of AWS Accounts within an Organization. Each OU represents a different workload.
+
+  - name: Accounts
+    description: >
+      An AWS Account.
+
+paths:
+  "/organizationalUnits/{ouId}/bulkcomponents":
+    parameters:
+      - $ref: "#/components/parameters/ouId"
+    get:
+      tags:
+        - Components
+      description: get list of components map to a organizational unit
+      operationId: bulkGetComponents
+      responses:
+        "200":
+          description: OK
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Component"
+              examples:
+                get_bulk_components_response:
+                  $ref: "#/components/examples/get_bulk_components_response"
+
+        400:
+          $ref: "#/components/responses/BadRequest"
+        404:
+          $ref: "#/components/responses/NotFound"
+    put:
+      description: Map a batch of components to organizational unit
+      operationId: bulkCreateComponents
+      tags:
+        - Components
+      requestBody:
+        content:
+          application/vnd.aws-cdf-v1.0+json:
+            schema:
+              $ref: "#/components/schemas/BulkComponents"
+            examples:
+              create_bulk_components_request:
+                $ref: "#/components/examples/create_bulk_components_request"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: "#/components/schemas/BulkComponentsResponse"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        404:
+          $ref: "#/components/responses/NotFound"
+
+  "/organizationalUnits":
+    post:
+      tags:
+        - Organizational Units (OU's)
+      summary: Creates an organizational unit.
+      description: >
+        Creates a new organizational unit within an existing organization.
+      operationId: createOrganizationalUnit
+      requestBody:
+        content:
+          application/vnd.aws-cdf-v1.0+json:
+            schema:
+              $ref: "#/components/schemas/NewOrganizationalUnit"
+            examples:
+              create_organizational_unit_request:
+                $ref: "#/components/examples/create_organizational_unit_request"
+
+      responses:
+        "201":
+          description: Created
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: "#/components/schemas/OrganizationalUnit"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "409":
+          $ref: "#/components/responses/Conflict"
+
+  "/organizationalUnits/{ouId}":
+    parameters:
+      - $ref: "#/components/parameters/ouId"
+    delete:
+      tags:
+        - Organizational Units (OU's)
+      summary: Delete an existing organizational unit.
+      description: >
+        Delete an existing organizational unit.
+      operationId: deleteOrganizationalUnit
+      responses:
+        "204":
+          $ref: "#/components/responses/NoContent"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    get:
+      tags:
+        - Organizational Units (OU's)
+      summary: Retrieves an organizational unit.
+      description: >
+        Retrieves an existing organizational unit.
+      operationId: getOrganizationalUnit
+      responses:
+        "200":
+          description: OK
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: "#/components/schemas/OrganizationalUnit"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  "/organizationalUnits/{ouId}/accounts":
+    parameters:
+      - $ref: "#/components/parameters/ouId"
+    post:
+      tags:
+        - Accounts
+      summary: Creates a new AWS Account.
+      description: >
+        Creates a new AWS Account within an existing organizational unit.
+      operationId: createAccount
+      requestBody:
+        content:
+          application/vnd.aws-cdf-v1.0+json:
+            schema:
+              $ref: "#/components/schemas/NewAccount"
+            examples:
+              create_account_request:
+                $ref: "#/components/examples/create_account_request"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: "#/components/schemas/Account"
+        "202":
+          description: Accepted
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: "#/components/schemas/Account"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "409":
+          $ref: "#/components/responses/Conflict"
+
+  "/accounts/{accountId}":
+    parameters:
+      - $ref: "#/components/parameters/accountId"
+    get:
+      tags:
+        - Accounts
+      summary: Retrieves an AWS Account.
+      description: |
+        Retrieves an existing account, either using its `createRequestAccountId` or `accountId` as the identifier.
+      operationId: getAccount
+      responses:
+        "200":
+          description: OK
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: "#/components/schemas/Account"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+    delete:
+      tags:
+        - Accounts
+      summary: Deletes an AWS Account.
+      description: |
+        Moves an existing account into the `suspended` OU which prevents it from being used any further.
+      operationId: deleteAccount
+      responses:
+        "202":
+          description: Accepted
+        "204":
+          description: No Content
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+    patch:
+      tags:
+        - Accounts
+      summary: Updates an existing AWS Account.
+      description: |
+        Updates an existing account using its `accountId` as the identifier.
+      operationId: updateAccount
+      requestBody:
+        content:
+          application/vnd.aws-cdf-v1.0+json:
+            schema:
+              $ref: "#/components/schemas/UpdateAccount"
+      responses:
+        "202":
+          description: Accepted
+          content:
+            application/vnd.aws-cdf-v1.0+json:
+              schema:
+                $ref: "#/components/schemas/Account"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+components:
+  schemas:
+    BulkComponentsResponse:
+      type: object
+      properties:
+        success:
+          type: integer
+          format: int32
+          description: No. components that succeed during mapping
+        failed:
+          type: integer
+          format: int32
+          description: No. components that failed during mapping
+        total:
+          type: integer
+          format: int32
+          description: total components that are mapped
+      description: Components Mapping Response
+
+    BulkComponents:
+      type: object
+      properties:
+        components:
+          type: array
+          items:
+            $ref: "#/components/schemas/Component"
+
+    Component:
+      type: object
+      properties:
+        name:
+          type: string
+          description: name of the component
+        description:
+          type: string
+          description: description of the component
+        runOrder:
+          type: integer
+          description: a positive integer that indicate the run order deployment of resource in the manifest file
+        resourceFile:
+          type: string
+          description: s3 location containing the cloudformation file for the component
+        bypassCheck:
+          type: boolean
+          description: Flag indicate whether this component (or CloudFormation) stack needs to publish stack event to Control Plane account
+        parameters:
+          type: array
+          description: List containing a map of key value pairs for all parameters that will be used when creating the cloudformation stackset.
+          items:
+            type: object
+            additionalProperties:
+              type: string
+
+    NewOrganizationalUnit:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The friendly name assign to the new OU.
+        id:
+          type: string
+          description: The unique identifier (ID) of an organization.
+        tags:
+          type: object
+          additionalProperties:
+            type: string
+      required:
+        - name
+
+    OrganizationalUnit:
+      allOf:
+        - $ref: "#/components/schemas/NewOrganizationalUnit"
+        - type: object
+          properties:
+            createdAt:
+              type: string
+              format: "date-time"
+              description: Date/time the template was created.
+              readOnly: true
+          required:
+            - name
+
+    UpdateAccount:
+      type: object
+      properties:
+        regions:
+          type: array
+          items:
+            type: string
+          description: A list of regions to provision the CDF services (defined at the OU) within the account.
+      required:
+        - regions
+
+    NewAccount:
+      type: object
+      properties:
+        accountId:
+          type: string
+          description: The AWS account id. Required when `CreateAccountInControlTower` is set to `false`
+        createAccountRequestId:
+          type: string
+          description: The provisioning token. Required when `CreateAccountInControlTower` is set to `true`. This can used to track the status of account creation
+        name:
+          type: string
+          description: The friendly name of the member account.
+        email:
+          type: string
+          description: The email address of the owner to assign to the new member account. This email address must not already be associated with another AWS account. You must use a valid email address to complete account creation. You can't access the root user of the account or remove an account that was created with an invalid email address.
+        ssoEmail:
+          type: string
+          description: The email for the sso user created for this new account.
+        ssoFirstName:
+          type: string
+          description: The first name for the sso user created for this new account.
+        ssoLastName:
+          type: string
+          description: The last name for the sso user created for this new account.
+        regions:
+          type: array
+          items:
+            type: string
+          description: A list of regions to provision the CDF services (defined at the OU) within the account.
+        tags:
+          type: object
+          additionalProperties:
+            type: string
+      required:
+        - name
+        - email
+        - ssoEmail
+        - ssoFirstName
+        - ssoLastName
+        - regions
+
+    Account:
+      allOf:
+        - $ref: "#/components/schemas/NewAccount"
+        - type: object
+          properties:
+            state:
+              type: string
+              description: |
+                The status of the account:
+                - `ACTIVE`: The account has been created.
+                - `CREATING`: The account is being created by AWS Control Tower.
+                - `FAILED`: The account has not been successfully created by Control Tower.
+                - `PENDING`: The account's cdf resources are added in the new regions or removed from regions.
+                - `PROVISIONED`: The account has been provisioned with the relevant CDF services and available for use.
+                - `SUSPENDED`: The account has been suspended as is no longer available for use.
+              readOnly: true
+              enum:
+                - ACTIVE
+                - CREATING
+                - FAILED
+                - PENDING
+                - PROVISIONED
+                - SUSPENDED
+            createdAt:
+              type: string
+              format: "date-time"
+              description: Date/time the template was created.
+              readOnly: true
+            updatedAt:
+              type: string
+              format: "date-time"
+              description: Date/time the template was updated.
+              readOnly: true
+
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+
+  parameters:
+    accountName:
+      name: accountName
+      in: path
+      description: Friendly name of the account.
+      required: true
+      schema:
+        type: string
+
+    accountId:
+      name: accountId
+      in: path
+      description: The accountId of the account.
+      required: true
+      schema:
+        type: string
+
+    organizationId:
+      name: organizationId
+      in: path
+      description: Unique ID of the organization.
+      required: true
+      schema:
+        type: string
+
+    ouId:
+      name: ouId
+      in: path
+      description: Id of the OU.
+      required: true
+      schema:
+        type: string
+
+    ouName:
+      name: ouName
+      in: path
+      description: Name of the OU.
+      required: true
+      schema:
+        type: string
+
+    paginationToken:
+      name: token
+      in: query
+      schema:
+        type: string
+
+    paginationLimit:
+      name: offset
+      in: query
+      schema:
+        type: integer
+        minimum: 0
+
+  responses:
+    Created:
+      description: Created successfully
+      headers:
+        location:
+          schema:
+            type: string
+
+    Accepted:
+      description: Accepted for processing
+      headers:
+        location:
+          schema:
+            type: string
+
+    NoContent:
+      description: No content
+
+    BadRequest:
+      description: Invalid input
+      content:
+        application/vnd.aws-cdf-v1.0+json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+    NotFound:
+      description: Not found
+      content:
+        application/vnd.aws-cdf-v1.0+json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+    Conflict:
+      description: Conflict
+      content:
+        application/vnd.aws-cdf-v1.0+json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+  examples:
+    create_account_request:
+      summary: Request to create account that has workloads in multiple regions.
+      value:
+        email: test@email.com
+        name: cdf-one
+        ssoEmail: test@email.com
+        regions:
+          - ap-southeast-2
+          - ap-southeast-1
+        ssoLastName: Smith
+        ssoFirstName: John
+        organizationalUnitId: ou-xxxx-xxxxxx
+        accountId: "111111111"
+
+    get_bulk_components_response:
+      summary: Response to get bulk components operation
+      value:
+        - name: cdf-openssl-layer
+          parameters:
+            Environment: development
+          description: template to provision openssl
+          runOrder: 1
+          resourceFile: s3://org-manager-artifact-XXXXXXXXXXXXX-ap-southeast-2/aws-connected-device-framework/0.0.1/cfn-openssl-layer.template
+          bypassCheck: true
+        - name: cdf-deployment-helper
+          parameters:
+            ArtifactsBucket: org-manager-artifact-XXXXXXXXXXXXX-ap-southeast-2
+            Environment: development
+          description: template to provision deployment helper
+          runOrder: 2
+          resourceFile: s3://org-manager-artifact-XXXXXXXXXXXXX-ap-southeast-2/aws-connected-device-framework/0.0.1/cfn-deployment-helper.template
+          bypassCheck: true
+        - name: cdf-sample-tenant-component
+          parameters:
+            ControlPlaneAccount: "XXXXXXXXXXXXX"
+            Environment: development
+            ControlPlaneBusName: arn:aws:events:ap-southeast-2:XXXXXXXXXXXXX:event-bus/cdf-development
+          description: template to provision deployment helper
+          runOrder: 2
+          resourceFile: s3://org-manager-artifact-XXXXXXXXXXXXX-ap-southeast-2/aws-connected-device-framework/0.0.1/cfn-sample-tenant-component.template
+          bypassCheck: true
+        - name: cdf-command-and-control
+          parameters:
+            Environment: development
+            ApplicationConfigurationOverride: ""
+            EventBusName: arn:aws:events:ap-southeast-2:XXXXXXXXXXXXX:event-bus/cdf-development
+            ApiGatewayDefinitionTemplate: cfn-apiGateway-noAuth.yaml
+            AssetLibraryFunctionName: "/cdf/deployment-helper/development/NotAvailable"
+            BucketName: "/cdf/facade-tenant/development/templates/bucket"
+            CDFSecurityGroupId: "/cdf/deployment-helper/development/NotAvailable"
+            CustomResourceLambdaArn: "/cdf/deployment-helper/development/CustomResourceLambdaArn"
+            KmsKeyId: "/cdf/facade-tenant/development/key"
+            PrivateApiGatewayVPCEndpoint: "/cdf/deployment-helper/development/NotAvailable"
+            PrivateSubNetIds: "/cdf/deployment-helper/development/NotAvailable"
+            ProvisioningFunctionName: "/cdf/deployment-helper/development/NotAvailable"
+            TemplateSnippetS3UriBase: s3://cdf-cfn-artifacts-XXXXXXXXXXXXX-ap-southeast-2/cloudformation/snippets/development/
+            TemplateVersion: 0.0.1
+            VpcId: "/cdf/deployment-helper/development/NotAvailable"
+          description: template to provision deployment helper
+          runOrder: 3
+          resourceFile: s3://org-manager-artifact-XXXXXXXXXXXXX-ap-southeast-2/aws-connected-device-framework/0.0.1/cfn-command-and-control.template
+          bypassCheck: false
+
+    create_organizational_unit_request:
+      summary: Request to create organizational unit
+      value:
+        id: ou-xxxx-xxxxxx
+        name: wl-development-test
+        tags:
+          createdBy: cdf
+
+    create_bulk_components_request:
+      summary: Request to associate list of components to organizational unit
+      value:
+        components:
+          - name: cdf-openssl-layer
+            parameters:
+              Environment: development
+            description: template to provision openssl
+            runOrder: 1
+            resourceFile: s3://org-manager-artifact-XXXXXXXXXXXXX-ap-southeast-2/aws-connected-device-framework/0.0.1/cfn-openssl-layer.template
+            bypassCheck: true
+          - name: cdf-deployment-helper
+            parameters:
+              ArtifactsBucket: org-manager-artifact-XXXXXXXXXXXXX-ap-southeast-2
+              Environment: development
+            description: template to provision deployment helper
+            runOrder: 2
+            resourceFile: s3://org-manager-artifact-XXXXXXXXXXXXX-ap-southeast-2/aws-connected-device-framework/0.0.1/cfn-deployment-helper.template
+            bypassCheck: true
+          - name: cdf-sample-tenant-component
+            parameters:
+              ControlPlaneAccount: "XXXXXXXXXXXXX"
+              Environment: development
+              ControlPlaneBusName: arn:aws:events:ap-southeast-2:XXXXXXXXXXXXX:event-bus/cdf-development
+            description: template to provision deployment helper
+            runOrder: 2
+            resourceFile: s3://org-manager-artifact-XXXXXXXXXXXXX-ap-southeast-2/aws-connected-device-framework/0.0.1/cfn-sample-tenant-component.template
+            bypassCheck: true
+          - name: cdf-command-and-control
+            parameters:
+              Environment: development
+              ApplicationConfigurationOverride: ""
+              EventBusName: arn:aws:events:ap-southeast-2:XXXXXXXXXXXXX:event-bus/cdf-development
+              ApiGatewayDefinitionTemplate: cfn-apiGateway-noAuth.yaml
+              AssetLibraryFunctionName: "/cdf/deployment-helper/development/NotAvailable"
+              BucketName: "/cdf/facade-tenant/development/templates/bucket"
+              CDFSecurityGroupId: "/cdf/deployment-helper/development/NotAvailable"
+              CustomResourceLambdaArn: "/cdf/deployment-helper/development/CustomResourceLambdaArn"
+              KmsKeyId: "/cdf/facade-tenant/development/key"
+              PrivateApiGatewayVPCEndpoint: "/cdf/deployment-helper/development/NotAvailable"
+              PrivateSubNetIds: "/cdf/deployment-helper/development/NotAvailable"
+              ProvisioningFunctionName: "/cdf/deployment-helper/development/NotAvailable"
+              TemplateSnippetS3UriBase: s3://cdf-cfn-artifacts-XXXXXXXXXXXXX-ap-southeast-2/cloudformation/snippets/development/
+              TemplateVersion: 0.0.1
+              VpcId: "/cdf/deployment-helper/development/NotAvailable"
+            description: template to provision deployment helper
+            runOrder: 3
+            resourceFile: s3://org-manager-artifact-XXXXXXXXXXXXX-ap-southeast-2/aws-connected-device-framework/0.0.1/cfn-command-and-control.template
+            bypassCheck: false

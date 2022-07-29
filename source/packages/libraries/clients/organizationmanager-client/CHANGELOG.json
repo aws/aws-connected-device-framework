@@ -1,0 +1,35 @@
+{
+  "name": "@cdf/assetlibrary-client",
+  "entries": [
+    {
+      "version": "4.1.1",
+      "tag": "@cdf/assetlibrary-client_v4.1.1",
+      "date": "Wed, 11 Aug 2021 01:26:49 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "opensource related minor changes"
+          }
+        ]
+      }
+    },
+    {
+      "version": "4.1.0",
+      "tag": "@cdf/assetlibrary-client_v4.1.0",
+      "date": "Fri, 23 Jul 2021 16:14:32 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "Return the groupPath of new groups at time of creation as a header."
+          }
+        ]
+      }
+    },
+    {
+      "version": "4.0.2",
+      "tag": "@cdf/assetlibrary-client_v4.0.2",
+      "date": "Wed, 21 Jul 2021 16:46:57 GMT",
+      "comments": {}
+    }
+  ]
+}

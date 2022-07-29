@@ -28,8 +28,10 @@ NOTIFICATIONS_STACK_NAME="cdf-eventsProcessor-$ENVIRONMENT"
 GREENGRASS_PROVISIONING_STACK_NAME="cdf-greengrass2-provisioning-$ENVIRONMENT"
 DEVICE_PATCHER_STACK_NAME="cdf-device-patcher-$ENVIRONMENT"
 COMMAND_AND_CONTROL_STACK_NAME="cdf-commandandcontrol-$ENVIRONMENT"
+ORGANIZATION_MANAGER_STACK_NAME="cdf-organizationmanager-$ENVIRONMENT"
 
 stack_exports=$(aws cloudformation list-exports $AWS_ARGS)
+
 
 assetlibrary_invoke_url_export="$ASSETLIBRARY_STACK_NAME-apigatewayurl"
 assetlibrary_invoke_url=$(echo $stack_exports \
@@ -76,6 +78,11 @@ devicepatcher_invoke_url=$(echo $stack_exports \
     | jq -r --arg devicepatcher_invoke_url_export "$devicepatcher_invoke_url_export" \
     '.Exports[] | select(.Name==$devicepatcher_invoke_url_export) | .Value')
 
+organizationmanager_invoke_url_export="$ORGANIZATION_MANAGER_STACK_NAME-apigatewayurl"
+organizationmanager_invoke_url=$(echo $stack_exports \
+    | jq -r --arg organizationmanager_invoke_url_export "$organizationmanager_invoke_url_export" \
+    '.Exports[] | select(.Name==$organizationmanager_invoke_url_export) | .Value')
+
 echo creating staging integration test config...
 
 export CONFIG_LOCATION="${CODEBUILD_SRC_DIR_source_infrastructure}/integration-tests/.env.${ENVIRONMENT}"
@@ -91,7 +98,7 @@ echo "COMMANDS_BASE_URL=${commands_invoke_url}" >> $CONFIG_LOCATION
 echo "ASSETLIBRARYHISTORY_BASE_URL=${assetlibraryhistory_invoke_url}" >> $CONFIG_LOCATION
 echo "ASSETLIBRARY_BASE_URL=${assetlibrary_invoke_url}" >> $CONFIG_LOCATION
 echo "COMMANDANDCONTROL_BASE_URL=${commandandcontrol_invoke_url}" >> $CONFIG_LOCATION
-
+echo "ORGANIZATIONMANAGER_BASE_URL=${organizationmanager_invoke_url}" >> $CONFIG_LOCATION
 
 echo "\naugmented configuration:\n$(cat $CONFIG_LOCATION)\n"
 
@@ -103,6 +110,7 @@ cd source/packages/integration-tests
 npm config set @cdf/integration-tests:environment $ENVIRONMENT
 npm run clean
 npm run build
+npm run integration-test -- "features/organizationmanager/*.feature"
 npm run integration-test -- "features/commandandcontrol/*.feature"
 npm run integration-test -- "features/greengrass2-provisioning/*.feature"
 npm run integration-test -- "features/device-patcher/*.feature"
@@ -113,6 +121,4 @@ npm run integration-test -- "features/assetlibrary/$ASSETLIBRARY_MODE/*.feature"
 npm run integration-test -- "features/bulkcerts/*.feature"
 npm run integration-test -- "features/commands/*.feature"
 npm run integration-test -- "features/notifications/*.feature"
-
-
 

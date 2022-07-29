@@ -108,6 +108,12 @@
       "shouldPublish": true
     },
     {
+      "packageName": "@cdf/organizationmanager-client",
+      "projectFolder": "packages/libraries/clients/organizationmanager-client",
+      "reviewCategory": "library",
+      "shouldPublish": true
+    },
+    {
       "packageName": "@cdf/notifications-client",
       "projectFolder": "packages/libraries/clients/notifications-client",
       "reviewCategory": "library",
@@ -242,6 +248,12 @@
     {
       "packageName": "@cdf/greengrass2-installer-config-generators",
       "projectFolder": "packages/services/greengrass2-installer-config-generators",
+      "reviewCategory": "production",
+      "shouldPublish": true
+    },
+    {
+      "packageName": "@cdf/organization-manager",
+      "projectFolder": "packages/services/organization-manager",
       "reviewCategory": "production",
       "shouldPublish": true
     },
