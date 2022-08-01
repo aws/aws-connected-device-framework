@@ -2,6 +2,18 @@
   "name": "@cdf/events-processor",
   "entries": [
     {
+      "version": "4.2.0",
+      "tag": "@cdf/events-processor_v4.2.0",
+      "date": "Fri, 29 Jul 2022 02:59:14 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "export variables required for eventsAlerts as ssm parameters"
+          }
+        ]
+      }
+    },
+    {
       "version": "4.1.1",
       "tag": "@cdf/events-processor_v4.1.1",
       "date": "Tue, 21 Jun 2022 00:47:55 GMT",

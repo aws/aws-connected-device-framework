@@ -104,6 +104,15 @@ Parameters:
       - 'false'
     MinLength: 1
 
+  EnablePublishEvents:
+    Description: Enables Publishing events to CDF EventBridge
+    Type: String
+    Default: 'false'
+    AllowedValues:
+      - 'true'
+      - 'false'
+    MinLength: 1
+
   KmsKeyId:
     Description: The KMS key ID used to encrypt DynamoDB and SQS.
     Type: String
@@ -267,6 +276,8 @@ Resources:
               - iot:DescribeThing
               - iot:DescribeThingGroup
               - iot:RemoveThingFromThingGroup
+              - iot:ListTagsForResource
+              - iot:ListThingGroupsForThing
               - iot:TagResource
               - iot:UntagResource
               - iot:UpdateThingGroup
@@ -364,6 +375,7 @@ Resources:
           AWS_SQS_QUEUES_CORE_TASKS_STATUS: !Ref CoreTasksStatusQueue
           PROVISIONING_API_FUNCTION_NAME: !Ref ProvisioningFunctionName
           ASSETLIBRARY_API_FUNCTION_NAME: !Ref AssetLibraryFunctionName
+          ENABLE_PUBLISH_EVENTS: !Ref EnablePublishEvents
       Tracing: Active
 
       VpcConfig:
@@ -414,6 +426,7 @@ Resources:
           APP_CONFIG_DIR: 'packages/services/greengrass2-provisioning/dist/config'
           APP_CONFIG: !Ref ApplicationConfigurationOverride
           AWS_EVENTBRIDGE_BUS_NAME: !Ref EventBridgeBusName
+          ENABLE_PUBLISH_EVENTS: !Ref EnablePublishEvents
           CDF_SERVICE_EVENTBRIDGE_SOURCE: !Ref CdfServiceEventBridgeSource
           AWS_ACCOUNTID: !Ref AWS::AccountId
           AWS_DYNAMODB_TABLE_NAME: !Ref Table
@@ -476,6 +489,7 @@ Resources:
           APP_CONFIG_DIR: 'packages/services/greengrass2-provisioning/dist/config'
           APP_CONFIG: !Ref ApplicationConfigurationOverride
           AWS_ACCOUNTID: !Ref AWS::AccountId
+          ENABLE_PUBLISH_EVENTS: !Ref EnablePublishEvents
           AWS_DYNAMODB_TABLE_NAME: !Ref Table
           AWS_EVENTBRIDGE_BUS_NAME: !Ref EventBridgeBusName
           CDF_SERVICE_EVENTBRIDGE_SOURCE: !Ref CdfServiceEventBridgeSource
@@ -517,6 +531,7 @@ Resources:
           AWS_DYNAMODB_TABLE_NAME: !Ref Table
           AWS_EVENTBRIDGE_BUS_NAME: !Ref EventBridgeBusName
           CDF_SERVICE_EVENTBRIDGE_SOURCE: !Ref CdfServiceEventBridgeSource
+          ENABLE_PUBLISH_EVENTS: !Ref EnablePublishEvents
 
       Tracing: Active
 

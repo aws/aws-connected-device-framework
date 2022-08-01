@@ -1,6 +1,6 @@
 {
   "name": "@cdf/commandandcontrol-client",
-  "version": "0.1.2",
+  "version": "1.0.0",
   "description": "CDF Command and Control Client",
   "author": "Dean Hart",
   "main": "dist/index.js",
@@ -12,7 +12,7 @@
     "test": "rushx lint && jest --silent --passWithNoTests"
   },
   "dependencies": {
-    "@cdf/assetlibrary-client": "^5.0.5",
+    "@cdf/assetlibrary-client": "^5.1.0",
     "@cdf/config-inject": "^4.0.2",
     "@cdf/lambda-invoke": "^3.0.0",
     "dotenv-flow": "~3.2.0",

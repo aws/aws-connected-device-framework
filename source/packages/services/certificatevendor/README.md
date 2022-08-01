@@ -22,49 +22,61 @@ The following resources are automatically created as part of the deployment and 
 
 A _thing group_ (default named `cdfRotateCertificates`).  Add devices to this thing group that require certificates rotating.
 
-Using the CDF Commands module (a required dependency), a command template is created to define the structure of an AWS IoT Job to request devices to rotate certificates.  Again using the CDF Commands module a command is created of that template to create a continuous AWS IoT Job targeting the _cdfRotateCertificates_ thing group.  Both the template and command creation is taken care of as part of the initial deployment.
+Using the CDF **Command and Control** module (an optional dependency), a command template is created to define the structure of an AWS IoT Job to request devices to rotate certificates.  Again using the CDF Command and Control module a message is created of that command template to create a continuous AWS IoT Job targeting the _cdfRotateCertificates_ thing group.  Both the template and command creation is taken care of as part of the initial deployment.
 
-Example CDF Commands module template:
+Example CDF Command and Control module template:
 ```json
 {
-    "templateId": "RotateCertificates",
-    "description": "Rotate certificates",
-    "operation" : "RotateCertificates",
-    "document": "{\"get\":{\"subscribe\":\"${cdf:parameter:getSubscribeTopic}\",\"publish\":\"${cdf:parameter:getPublishTopic}\"},\"ack\":{\"subscribe\":\"${cdf:parameter:ackSubscribeTopic}\",\"publish\":\"${cdf:parameter:ackPublishTopic}\"}}",
-    "requiredDocumentParameters": [
-        "getSubscribeTopic",
-        "getPublishTopic",
-        "ackSubscribeTopic",
-        "ackPublishTopic"
-    ]
+  "operation": "RotateCertificates",
+  "deliveryMethod": {
+    "type": "JOB",
+    "expectReply": true,
+    "targetSelection": "CONTINUOUS",
+    "jobExecutionsRolloutConfig": {
+      "maximumPerMinute": 120
+    }
+  },
+  "payloadTemplate": "{\"get\":{\"subscribe\":\"${getSubscribeTopic}\",\"publish\":\"${getPublishTopic}\"},\"ack\":{\"subscribe\":\"${ackSubscribeTopic}\",\"publish\":\"${ackPublishTopic}\"}}",
+  "payloadParams": [
+      "getSubscribeTopic",
+      "getPublishTopic",
+      "ackSubscribeTopic",
+      "ackPublishTopic"
+  ],
+  "tags": {
+      "templateId": "RotateCertificates"
+  }
 }
 ```
 
-Example CDF Commands module command:
+Example CDF Command and Control module command:
 
 * `{thingGroupArn}` is injected by the deployment script
 * `{thingName}` is to be replaced on the device side by the device itself
+* `{commandId}` is to be replaced by the id for `RotateCertificates` command template.
 
 ```json
 {
- "templateId": "RotateCertificates",
- "targets": ["{thingGroupArn}"],
- "type": "CONTINUOUS",
- "rolloutMaximumPerMinute": 120,
- "documentParameters": {
-        "getSubscribeTopic": "cdf/certificates/{thingName}/get/+",
-        "getPublishTopic": "cdf/certificates/{thingName}/get",
-        "ackSubscribeTopic": "cdf/certificates/{thingName}/ack/+",
-        "ackPublishTopic": "cdf/certificates/{thingName}/ack"
-    }
-}
+  "commandId": "<commandId>",
+  "targets": {
+      "awsIoT": {
+          "thingGroups": [{ "name": "<thingGroupName>", "expand": false }]
+      }
+  },
+  "documentParameters": {
+         "getSubscribeTopic": "cdf/certificates/{thingName}/get/+",
+         "getPublishTopic": "cdf/certificates/{thingName}/get",
+         "ackSubscribeTopic": "cdf/certificates/{thingName}/ack/+",
+         "ackPublishTopic": "cdf/certificates/{thingName}/ack"
+     }
+ }
 ```
 
 ## Certificate rotation flow
 
-As part of the device startup sequence it should subscribe to AWS IoT jobs.  
+As part of the device startup sequence it should subscribe to AWS IoT jobs.
 
-Add the device to the `cdfRotateCertificates` thing group.  This will send a job to the targetted device which instructs the device to start the certificate rotation process.  The Job document contains the publish and subscribe topics for certificate rotation.  
+Add the device to the `cdfRotateCertificates` thing group.  This will send a job to the targetted device which instructs the device to start the certificate rotation process.  The Job document contains the publish and subscribe topics for certificate rotation.
 
 Example job document (the device to replace the {thingName} token):
 
@@ -102,8 +114,20 @@ Example MQTT message body sent from the device to the AWS IoT Gateway to retriev
 ```sh
 MQTT SUBSCRIBE TOPIC:     cdf/certificates/thing001/get/+
 MQTT PUBLISH TOPIC:       cdf/certificates/thing001/get
-MQTT PUBLISH BODY:        
+MQTT PUBLISH BODY:
 {
+    "csr":"-----BEGIN CERTIFICATE REQUEST-----\nCSR CONTENT\n-----END CERTIFICATE REQUEST-----"
+}
+```
+
+Example MQTT message body sent from the device to the AWS IoT Gateway to retrieve a certificate based on a provided CSR. That inherits its policies from an existing certificate:
+
+```sh
+MQTT SUBSCRIBE TOPIC:     cdf/certificates/thing001/get/+
+MQTT PUBLISH TOPIC:       cdf/certificates/thing001/get
+MQTT PUBLISH BODY:
+{
+    "previousCertificateId" : "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
     "csr":"-----BEGIN CERTIFICATE REQUEST-----\nCSR CONTENT\n-----END CERTIFICATE REQUEST-----"
 }
 ```
@@ -130,6 +154,7 @@ Certificate requested by the device with a CSR:
 {
     "deviceId": "device123",
     "action": "get",
+    "certificateId" : "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
     "certificate": "-----BEGIN CERTIFICATE-----\nCERTIFICATE CONTENT\n-----END CERTIFICATE-----"
 }
 ```
@@ -155,7 +180,7 @@ If any failures occur during this flow, a rejected message is sent to the device
 
 ## Security
 
-An AWS IoT policy must exist and be associated with the certificates to enforce the device to use its thing name as the MQTT clientId.  
+An AWS IoT policy must exist and be associated with the certificates to enforce the device to use its thing name as the MQTT clientId.
 
 In addition the profile should be configured to allow devices to receive AWS IoT Jobs, and to allow for publishing requests to and receiving responses from the CDF Certificate Vendor module as itself.
 
@@ -170,9 +195,9 @@ An example AWS IoT policy:
         {
             "Effect": "Allow",
             "Action": ["iot:Connect"],
-            "Resource": ["*"],  
-            "Condition":{  
-                "Bool":{  
+            "Resource": ["*"],
+            "Condition":{
+                "Bool":{
                     "iot:Connection.Thing.IsAttached":["true"]
                 }
             }
@@ -205,5 +230,5 @@ An example AWS IoT policy:
 
 ## Useful Links
 
-- [Application configuration](docs/configuration.md)
-  
+* [Application configuration](docs/configuration.md)
+* [High-level architecture diagram](docs/images/certificatevendor-hla.png)

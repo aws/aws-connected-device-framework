@@ -19,13 +19,15 @@ import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
 import { customDomainPrompt } from '../../../prompts/domain.prompt';
 import ow from 'ow';
-import { deleteStack, getStackOutputs, getStackParameters, getStackResourceSummaries, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
-
+import path from 'path';
+import { deleteStack, getStackOutputs, getStackResourceSummaries, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
+import { getMonorepoRoot } from '../../../prompts/paths.prompt';
 
 export class FleetSimulatorInstaller implements RestModule {
 
   public readonly friendlyName = 'Fleet Simulator';
   public readonly name = 'fleetSimulator';
+  public readonly localProjectDir = 'simulation-manager';
 
   public readonly type = 'SERVICE';
   public readonly dependsOnMandatory: ModuleName[] = [
@@ -41,11 +43,14 @@ export class FleetSimulatorInstaller implements RestModule {
   private readonly simulationLauncherStackName: string;
   private readonly simulationManagerStackName: string;
   private readonly assetLibraryStackName: string;
+  public readonly stackName: string;
 
   constructor(environment: string) {
     this.simulationLauncherStackName = `cdf-simulation-launcher-${environment}`;
     this.simulationManagerStackName = `cdf-simulation-manager-${environment}`;
     this.assetLibraryStackName = `cdf-assetlibrary-${environment}`;
+
+    this.stackName = this.simulationManagerStackName;
   }
 
   public async prompts(answers: Answers): Promise<Answers> {
@@ -116,7 +121,6 @@ export class FleetSimulatorInstaller implements RestModule {
     return parameterOverrides;
   }
 
-
   private getSimulationManagerOverrides(answers: Answers): string[] {
     const parameterOverrides = [
       `Environment=${answers.environment}`,
@@ -145,15 +149,16 @@ export class FleetSimulatorInstaller implements RestModule {
     return parameterOverrides;
   }
 
-
   public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [{
       title: `Packaging module '${this.name} [Simulation Launcher]'`,
       task: async () => {
         await packageAndUploadTemplate({
           answers: answers,
           serviceName: 'simulation-launcher',
-          templateFile: '../simulation-launcher/infrastructure/cfn-simulation-launcher.yaml',
+          templateFile: 'infrastructure/cfn-simulation-launcher.yaml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'simulation-launcher'),
           parameterOverrides: this.getSimulationLauncherOverrides(answers)
         });
       },
@@ -164,7 +169,8 @@ export class FleetSimulatorInstaller implements RestModule {
         await packageAndUploadTemplate({
           answers: answers,
           serviceName: 'simulation-manager',
-          templateFile: '../simulation-manager/infrastructure/cfn-simulation-manager.yml',
+          templateFile: 'infrastructure/cfn-simulation-manager.yml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'simulation-manager'),
           parameterOverrides: this.getSimulationManagerOverrides(answers)
         });
       },
@@ -180,6 +186,7 @@ export class FleetSimulatorInstaller implements RestModule {
     ow(answers.environment, ow.string.nonEmpty);
     ow(answers.s3.bucket, ow.string.nonEmpty);
 
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [];
 
     if ((answers.fleetSimulator.redeploy ?? true) === false) {
@@ -189,13 +196,12 @@ export class FleetSimulatorInstaller implements RestModule {
     tasks.push({
       title: `Packaging and deploying stack '${this.simulationLauncherStackName}'`,
       task: async () => {
-
-
         await packageAndDeployStack({
           answers: answers,
           stackName: this.simulationLauncherStackName,
           serviceName: 'simulation-launcher',
-          templateFile: '../simulation-launcher/infrastructure/cfn-simulation-launcher.yaml',
+          templateFile: 'infrastructure/cfn-simulation-launcher.yaml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'simulation-launcher'),
           parameterOverrides: this.getSimulationLauncherOverrides(answers),
           needsPackaging: true,
           needsCapabilityNamedIAM: true,
@@ -221,7 +227,8 @@ export class FleetSimulatorInstaller implements RestModule {
           answers: answers,
           stackName: this.simulationManagerStackName,
           serviceName: 'simulation-manager',
-          templateFile: '../simulation-manager/infrastructure/cfn-simulation-manager.yml',
+          templateFile: 'infrastructure/cfn-simulation-manager.yml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'simulation-manager'),
           parameterOverrides: this.getSimulationManagerOverrides(answers),
           needsPackaging: true,
           needsCapabilityNamedIAM: true,
@@ -232,7 +239,7 @@ export class FleetSimulatorInstaller implements RestModule {
     return [answers, tasks];
   }
 
-  public generateApplicationConfiguration(answers: Answers): string {
+  private generateApplicationConfiguration(answers: Answers): string {
     const configBuilder = new ConfigBuilder()
       .add(`CORS_ORIGIN`, answers.apigw.corsOrigin)
       .add(`CUSTOMDOMAIN_BASEPATH`, answers.fleetSimulator.customDomainBasePath)
@@ -241,23 +248,6 @@ export class FleetSimulatorInstaller implements RestModule {
       .add(`RUNNERS_THREADS`, answers.fleetSimulator.runnerThreads)
       .add(`AWS_S3_PREFIX`, answers.fleetSimulator.s3Prefix)
     return configBuilder.config;
-  }
-
-  public async generateLocalConfiguration(answers: Answers): Promise<string> {
-
-    const simulationManagerByParameterKey = await getStackParameters(this.simulationManagerStackName, answers.region)
-    const simulationManagerByResourceLogicalId = await getStackResourceSummaries(this.simulationManagerStackName, answers.region)
-    const simulationLauncherByResourceLogicalId = await getStackResourceSummaries(this.simulationLauncherStackName, answers.region)
-
-    const configBuilder = new ConfigBuilder()
-      .add(`AWS_S3_BUCKET`, simulationManagerByParameterKey('BucketName'))
-      .add(`ASSETLIBRARY_API_FUNCTION_NAME`, simulationManagerByParameterKey('AssetLibraryFunctionName'))
-      .add(`AWS_DYNAMODB_TABLE_SIMULATIONS`, simulationManagerByResourceLogicalId('SimulationsTable'))
-      .add(`AWS_DYNAMODB_TABLE_STATE`, simulationManagerByResourceLogicalId('SimulationDeviceState'))
-      .add(`AWS_SNS_TOPICS_LAUNCH`, simulationLauncherByResourceLogicalId('SnsTopic'))
-      .add(`AWS_IOT_HOST`, answers?.iotEndpoint)
-
-    return configBuilder.config
   }
 
   public async generatePostmanEnvironment(answers: Answers): Promise<PostmanEnvironment> {

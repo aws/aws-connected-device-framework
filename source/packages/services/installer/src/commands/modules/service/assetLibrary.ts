@@ -13,16 +13,18 @@
 import { Answers } from '../../../models/answers';
 import { ListrTask } from 'listr2';
 import { ModuleName, RestModule, PostmanEnvironment } from '../../../models/modules';
-import { ConfigBuilder } from '../../../utils/configBuilder';
 import inquirer from 'inquirer';
 import ow from 'ow';
+import path from 'path';
 import { customDomainPrompt } from '../../../prompts/domain.prompt';
 import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from '../../../prompts/applicationConfiguration.prompt';
-import { deleteStack, getStackOutputs, getStackParameters, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
+import { deleteStack, getStackOutputs, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
 import { enableAutoScaling, provisionedConcurrentExecutions } from '../../../prompts/autoscaling.prompt';
 import { getNeptuneInstancetypeList } from '../../../utils/instancetypes';
 import { includeOptionalModule } from '../../../utils/modules.util';
+import { ConfigBuilder } from '../../../utils/configBuilder';
+import { getMonorepoRoot } from '../../../prompts/paths.prompt';
 
 // CDF does not specify a Neptune engine version in its Cloudformation templates. When updating a CDF
 // deployment, the existing Neptune engine version remains unchanged, for new deployments the Neptune
@@ -38,6 +40,7 @@ export class AssetLibraryInstaller implements RestModule {
 
   public readonly friendlyName = 'Asset Library';
   public readonly name = 'assetLibrary';
+  public readonly localProjectDir = 'assetlibrary';
 
   public readonly type = 'SERVICE';
   public readonly dependsOnMandatory: ModuleName[] = [
@@ -45,12 +48,13 @@ export class AssetLibraryInstaller implements RestModule {
     'deploymentHelper',
   ];
   public readonly dependsOnOptional: ModuleName[] = ['vpc'];
-  private readonly applicationStackName: string;
+
+  public readonly stackName: string;
   private readonly neptuneStackName: string;
 
   constructor(environment: string) {
     this.neptuneStackName = `cdf-assetlibrary-neptune-${environment}`
-    this.applicationStackName = `cdf-assetlibrary-${environment}`
+    this.stackName = `cdf-assetlibrary-${environment}`
   }
   includeOptionalModules: (answers: Answers) => Answers;
 
@@ -59,7 +63,7 @@ export class AssetLibraryInstaller implements RestModule {
     delete answers.assetLibrary?.redeploy;
 
     let updatedAnswers: Answers = await inquirer.prompt([
-      redeployIfAlreadyExistsPrompt(this.name, this.applicationStackName),
+      redeployIfAlreadyExistsPrompt(this.name, this.stackName),
     ], answers);
 
     if ((updatedAnswers.assetLibrary?.redeploy ?? true)) {
@@ -198,12 +202,14 @@ export class AssetLibraryInstaller implements RestModule {
   }
 
   public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [{
       title: `Packaging module '${this.name} [Neptune]'`,
       task: async () => {
         await packageAndUploadTemplate({
           answers: answers,
-          templateFile: '../assetlibrary/infrastructure/cfn-neptune.yaml',
+          templateFile: 'infrastructure/cfn-neptune.yaml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'assetlibrary'),
           parameterOverrides: this.getNeptuneParameterOverrides(answers),
           needsPackaging: false,
           serviceName: 'assetlibrary',
@@ -216,7 +222,8 @@ export class AssetLibraryInstaller implements RestModule {
         await packageAndUploadTemplate({
           answers: answers,
           serviceName: 'assetlibrary',
-          templateFile: '../assetlibrary/infrastructure/cfn-assetLibrary.yaml',
+          templateFile: 'infrastructure/cfn-assetLibrary.yaml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'assetlibrary'),
           parameterOverrides: this.getAssetLibraryParameterOverrides(answers),
         });
       },
@@ -272,8 +279,8 @@ export class AssetLibraryInstaller implements RestModule {
     return parameterOverrides
   }
 
-
   public async install(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [];
 
     ow(answers, ow.object.nonEmpty);
@@ -292,7 +299,8 @@ export class AssetLibraryInstaller implements RestModule {
             answers: answers,
             stackName: this.neptuneStackName,
             serviceName: 'assetlibrary',
-            templateFile: '../assetlibrary/infrastructure/cfn-neptune.yaml',
+            templateFile: 'infrastructure/cfn-neptune.yaml',
+            cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'assetlibrary'),
             parameterOverrides: this.getNeptuneParameterOverrides(answers),
             needsCapabilityNamedIAM: true,
           })
@@ -309,13 +317,14 @@ export class AssetLibraryInstaller implements RestModule {
     }
 
     tasks.push({
-      title: `Packaging and deploying stack '${this.applicationStackName}'`,
+      title: `Packaging and deploying stack '${this.stackName}'`,
       task: async () => {
         await packageAndDeployStack({
           answers: answers,
-          stackName: this.applicationStackName,
+          stackName: this.stackName,
           serviceName: 'assetlibrary',
-          templateFile: '../assetlibrary/infrastructure/cfn-assetLibrary.yaml',
+          templateFile: 'infrastructure/cfn-assetLibrary.yaml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'assetlibrary'),
           parameterOverrides: this.getAssetLibraryParameterOverrides(answers),
           needsPackaging: true,
           needsCapabilityNamedIAM: true,
@@ -327,7 +336,7 @@ export class AssetLibraryInstaller implements RestModule {
     return [answers, tasks];
   }
 
-  public generateApplicationConfiguration(answers: Answers): string {
+  private generateApplicationConfiguration(answers: Answers): string {
     const configBuilder = new ConfigBuilder()
 
     configBuilder
@@ -344,23 +353,8 @@ export class AssetLibraryInstaller implements RestModule {
     return configBuilder.config;
   }
 
-  public async generateLocalConfiguration(answers: Answers): Promise<string> {
-
-    const byOutputKey = await getStackOutputs(this.neptuneStackName, answers.region)
-    const byParameterKey = await getStackParameters(this.applicationStackName, answers.region)
-
-    const configBuilder = new ConfigBuilder()
-
-    configBuilder
-      .add(`AWS_NEPTUNE_URL`, byOutputKey('GremlinEndpoint'))
-      .add(`MODE`, byParameterKey('Mode'))
-      .add(`AWS_IOT_ENDPOINT`, answers.iotEndpoint)
-
-    return configBuilder.config;
-  }
-
   public async generatePostmanEnvironment(answers: Answers): Promise<PostmanEnvironment> {
-    const byOutputKey = await getStackOutputs(this.applicationStackName, answers.region)
+    const byOutputKey = await getStackOutputs(this.stackName, answers.region)
     return {
       key: 'assetlibrary_base_url',
       value: byOutputKey('ApiGatewayUrl'),
@@ -371,9 +365,9 @@ export class AssetLibraryInstaller implements RestModule {
   public async delete(answers: Answers): Promise<ListrTask[]> {
     const tasks: ListrTask[] = [];
     tasks.push({
-      title: `Deleting stack '${this.applicationStackName}'`,
+      title: `Deleting stack '${this.stackName}'`,
       task: async () => {
-        await deleteStack(this.applicationStackName, answers.region)
+        await deleteStack(this.stackName, answers.region)
       }
     });
 

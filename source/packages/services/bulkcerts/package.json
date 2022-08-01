@@ -1,6 +1,6 @@
 {
   "name": "@cdf/bulkcerts",
-  "version": "6.0.4",
+  "version": "6.1.0",
   "description": "CDF Bulk Certificate Creation",
   "author": "Dean Hart",
   "config": {
@@ -38,7 +38,8 @@
     "winston": "3.3.3",
     "winston-transport": "4.4.0",
     "dotenv-flow": "~3.2.0",
-    "dotenv": "^8.2.0"
+    "dotenv": "^8.2.0",
+    "p-limit": "3.1.0"
   },
   "devDependencies": {
     "@types/aws-lambda": "8.10.65",

@@ -69,3 +69,9 @@ export interface EntityTypeMap {
 
 export type RelationDirection = 'in'|'out';
 export type OmniRelationDirection = RelationDirection|'both';
+
+export interface RelatedEntityIdentifer {
+    relationship:string;
+    direction:RelationDirection;
+    targetId:string;
+}

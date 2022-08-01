@@ -20,7 +20,6 @@ export interface Answers {
   assetLibrary?: AssetLibrary;
   assetLibraryHistory?: AssetLibraryHistory;
   authDeviceCert?: AuthDeviceCert;
-  authJwt?: AuthJwt;
   bulkCerts?: BulkCerts;
   certificateActivator?: CertificateActivator;
   certificateVendor?: CertificateVendor;
@@ -33,6 +32,7 @@ export interface Answers {
   devicePatcher?: DevicePatcher;
   provisioning?: Provisioning;
   fleetSimulator?: FleetSimulator;
+  organizationManager?: OrganizationManager;
 }
 
 export interface Kms {
@@ -70,7 +70,6 @@ export interface Apigw {
 
   cognitoUserPoolArn?: string;
 
-  useExistingLambdaAuthorizer?: boolean;
   lambdaAuthorizerArn?: string;
 }
 
@@ -110,6 +109,19 @@ export interface RestServiceModuleAttribues extends ServiceModuleAttributes {
   customDomainBasePath?: string;
 }
 
+export interface OrganizationManager extends RestServiceModuleAttribues {
+  controlTowerBucket?: string;
+  deleteAccountsEnabled?: boolean;
+  createAccountsEnabled?: boolean;
+  deleteOUsEnabled?: boolean;
+  createOUsEnabled?: boolean;
+  managementAccountRole?: string;
+  suspendedOU?: string;
+  organizationId?: string;
+  supportedRegions?: string[];
+  artifactBucketPrefix?: string;
+}
+
 export interface AssetLibrary
   extends RestServiceModuleAttribues,
   ProvisionedConcurrencyModuleAttribues {
@@ -144,9 +156,7 @@ export interface AssetLibraryExport extends ServiceModuleAttributes {
 export type AssetLibraryHistory = RestServiceModuleAttribues;
 
 export type AuthDeviceCert = ServiceModuleAttributes;
-export interface AuthJwt extends ServiceModuleAttributes {
-  tokenIssuer?: string;
-}
+
 
 export interface BulkCerts extends RestServiceModuleAttribues {
   setCertificateDefaults?: boolean;
@@ -163,6 +173,7 @@ export interface BulkCerts extends RestServiceModuleAttribues {
   defaultAnswer?: boolean;
   chunksize: number;
   expiryDays?: number;
+  acmConcurrencyLimit?:number;
   suppliers?: CAAliases;
   caAlias?: string;
   caValue?: string;
@@ -189,6 +200,7 @@ export interface CertificateVendor extends ServiceModuleAttributes {
   assetLibraryFunctionName?: string;
   providingCSRs?: boolean;
   caCertificateId?: string;
+  useDefaultPolicy?: boolean;
   rotatedCertificatePolicy?: string;
   // Application Configuration
   certificatesPrefix?: string;
@@ -272,6 +284,7 @@ export interface Greengrass2Provisioning
   devicesBatchSize?: number;
   deploymentsBatchSize?: number;
   useAssetLibrary?: boolean;
+  enablePublishEvents?: boolean;
 }
 
 export interface Provisioning extends RestServiceModuleAttribues {
@@ -284,11 +297,19 @@ export interface Provisioning extends RestServiceModuleAttribues {
   bulkRequestsPrefix?: string;
 
   // ACM PCA specific
+  pcaIntegrationEnabled?: boolean;
   pcaCrossAccountRoleArn?: string;
+  pcaRegion?: string;
   setPcaAliases?: boolean;
   pcaAliases?: CAAliases;
   pcaAlias?: string;
   pcaArn?:string;
+  pcaFinished?: boolean;
+  setIotCaAliases?: boolean;
+  iotCaAliases?: CAAliases;
+  iotCaAlias?: string;
+  iotCaArn?:string;
+  iotCaFinished?: boolean;
 }
 
 export interface FleetSimulator extends RestServiceModuleAttribues {

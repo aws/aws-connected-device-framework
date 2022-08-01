@@ -21,6 +21,7 @@ import { BaseDaoFull } from '../data/base.full.dao';
 import { CommonDaoFull } from '../data/common.full.dao';
 import {EntityTypeMap} from '../data/model';
 import { isRelatedEntityDto, isVertexDto, RelatedEntityDto, VertexDto } from '../data/full.model';
+import { Claims } from '../authz/claims';
 
 const __ = process.statics;
 
@@ -31,7 +32,8 @@ export class GroupsDaoFull extends BaseDaoFull {
         @inject('neptuneUrl') neptuneUrl: string,
         @inject(TYPES.CommonDao) private commonDao: CommonDaoFull,
         @inject(TYPES.FullAssembler) private fullAssembler: FullAssembler,
-	    @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph
+	    @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph,
+        @inject('authorization.enabled') private isAuthzEnabled: boolean
     ) {
         super(neptuneUrl, graphSourceFactory);
     }
@@ -209,7 +211,13 @@ export class GroupsDaoFull extends BaseDaoFull {
         logger.debug(`groups.full.dao listRelated: in: groupPath:${groupPath}, relationship:${relationship}, direction:${direction}, template:${template}, filterRelatedBy:${JSON.stringify(filterRelatedBy)}, offset:${offset}, count:${count}, sort:${sort}`);
 
         const id = `group___${groupPath}`;
-        return await this.commonDao.listRelated(id, relationship, direction, template, filterRelatedBy, offset, count, sort);
+
+        let authorizedPaths:string[];
+        if (this.isAuthzEnabled) {
+            authorizedPaths = Claims.getInstance().listPaths();
+        }
+
+        return await this.commonDao.listRelated(id, relationship, direction, template, filterRelatedBy, offset, count, sort, authorizedPaths);
 
     }
 

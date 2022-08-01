@@ -48,10 +48,10 @@ Feature: GreengrassV2 Provisioning
       | $.cores[?(@.name=="IntegrationTestCore2")].taskStatus | Success                                                                |
       | $.cores[?(@.name=="IntegrationTestCore2")].createdAt  | ___regex___:^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}).(\d{3})Z$ |
       | $.cores[?(@.name=="IntegrationTestCore2")].updatedAt  | ___regex___:^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}).(\d{3})Z$ |
-    Then config file for "IntegrationTestCore1" exists with attributes:
+    And config file for "IntegrationTestCore1" exists with attributes:
       | $.system.thingName                           | IntegrationTestCore1 |
       | $.services['aws.greengrass.Nucleus'].version | 2.4.0                |
-    Then config file for "IntegrationTestCore2" should not exists
+    And config file for "IntegrationTestCore2" should not exists
 
 
   Scenario: Creating core with invalid provisioning template
@@ -105,7 +105,8 @@ Feature: GreengrassV2 Provisioning
       | $.createdAt                                                     | ___regex___:^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}).(\d{3})Z$ |
       | $.updatedAt                                                     | ___regex___:^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}).(\d{3})Z$ |
     And I pause for 10000ms
-    Then fleet summary should be updated with this attributes:
+    And thing "IntegrationTestCore1" belongs to thing group "cdf_ggv2_deploymentForTemplate_IntegrationTest_1"
+    And fleet summary should be updated with this attributes:
       | $.templates.IntegrationTest.latestVersion                    | 1 |
       | $.templates.IntegrationTest.versions.1.desiredInUse          | 2 |
       | $.templates.IntegrationTest.versions.1.lastDeploymentSuccess | 1 |
@@ -124,14 +125,14 @@ Feature: GreengrassV2 Provisioning
       | $.taskStatus | Success                                                                |
       | $.createdAt  | ___regex___:^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}).(\d{3})Z$ |
       | $.updatedAt  | ___regex___:^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}).(\d{3})Z$ |
-    Then greengrass2-provisioning client device "ClientDevice1" exists with attributes:
+    And greengrass2-provisioning client device "ClientDevice1" exists with attributes:
       | $.name     | ClientDevice1        |
       | $.coreName | IntegrationTestCore1 |
-    Then greengrass2-provisioning client device "ClientDevice2" exists with attributes:
+    And greengrass2-provisioning client device "ClientDevice2" exists with attributes:
       | $.name     | ClientDevice2        |
       | $.coreName | IntegrationTestCore1 |
-    Then device "ClientDevice1" should be associated with greengrass2 core "IntegrationTestCore1"
-    Then device "ClientDevice2" should be associated with greengrass2 core "IntegrationTestCore1"
+    And device "ClientDevice1" should be associated with greengrass2 core "IntegrationTestCore1"
+    And device "ClientDevice2" should be associated with greengrass2 core "IntegrationTestCore1"
 
   Scenario: Delete Client Device
     Given greengrass2-provisioning client device "ClientDevice1" exists with attributes:
@@ -178,8 +179,10 @@ Feature: GreengrassV2 Provisioning
       | $.taskStatus                                                    | Success                                                                |
       | $.createdAt                                                     | ___regex___:^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}).(\d{3})Z$ |
       | $.updatedAt                                                     | ___regex___:^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}).(\d{3})Z$ |
+    And thing "IntegrationTestCore1" does not belong to thing group "cdf_ggv2_deploymentForTemplate_IntegrationTest_1"
+    And thing "IntegrationTestCore1" belongs to thing group "cdf_ggv2_deploymentForTemplate_IntegrationTest_2"
     And I pause for 60000ms
-    Then fleet summary should be updated with this attributes:
+    And fleet summary should be updated with this attributes:
       | $.templates.IntegrationTest.latestVersion                    | 2 |
       | $.templates.IntegrationTest.versions.2.desiredInUse          | 1 |
       | $.templates.IntegrationTest.versions.2.lastDeploymentSuccess | 1 |
@@ -194,7 +197,7 @@ Feature: GreengrassV2 Provisioning
       | cores       | [{"name": "IntegrationTestCore1", "configFileGenerator": "MANUAL_INSTALL", "provisioningTemplate": "Greengrass2IntegrationTestProvisioningTemplate","provisioningParameters": {"ThingName": "IntegrationTestCore1"},"cdfProvisioningParameters": {"caId": "3d2ecfdb0eba2898626291e7e18a37cee791dbc81940a39e8ce922f9ff2feb32","certInfo": {"country": "US"}}}] |
     And I pause for 10000ms
     Then greengrass2-provisioning core device "IntegrationTestCore1" does not exist
-    Then greengrass2-provisioning client device "ClientDevice2" does not exist
+    And greengrass2-provisioning client device "ClientDevice2" does not exist
 
 
   @teardown_greengrass2_provisioning

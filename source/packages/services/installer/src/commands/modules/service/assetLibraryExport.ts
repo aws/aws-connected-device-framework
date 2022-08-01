@@ -16,15 +16,18 @@ import { ModuleName, ServiceModule } from '../../../models/modules';
 import { ConfigBuilder } from "../../../utils/configBuilder";
 import inquirer from 'inquirer';
 import ow from 'ow';
+import path from 'path';
 import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
-import { deleteStack, getStackParameters, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
+import { deleteStack, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
+import { getMonorepoRoot } from '../../../prompts/paths.prompt';
 
 export class AssetLibraryExportInstaller implements ServiceModule {
 
 
   public readonly friendlyName = 'Asset Library Export';
   public readonly name = 'assetLibraryExport';
+  public readonly localProjectDir = 'assetlibrary-export';
 
   public readonly type = 'SERVICE';
   public readonly dependsOnMandatory: ModuleName[] = [
@@ -32,7 +35,7 @@ export class AssetLibraryExportInstaller implements ServiceModule {
     'kms',
   ];
   public readonly dependsOnOptional: ModuleName[] = ['vpc'];
-  private readonly stackName: string;
+  public readonly stackName: string;
 
   constructor(environment: string) {
     this.stackName = `cdf-assetlibrary-export-${environment}`
@@ -128,13 +131,15 @@ export class AssetLibraryExportInstaller implements ServiceModule {
   }
 
   public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [{
       title: `Packaging module '${this.name}'`,
       task: async () => {
         await packageAndUploadTemplate({
           answers: answers,
           serviceName: 'assetlibrary-export',
-          templateFile: '../assetlibrary-export/infrastructure/cfn-assetlibrary-export.yaml',
+          templateFile: 'infrastructure/cfn-assetlibrary-export.yaml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'assetlibrary-export'),
           parameterOverrides: this.getParameterOverrides(answers),
         });
       },
@@ -149,6 +154,7 @@ export class AssetLibraryExportInstaller implements ServiceModule {
     ow(answers.environment, ow.string.nonEmpty);
     ow(answers.assetLibraryExport, ow.object.nonEmpty);
 
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [];
 
     if ((answers.assetLibraryExport.redeploy ?? true) === false) {
@@ -165,7 +171,8 @@ export class AssetLibraryExportInstaller implements ServiceModule {
           answers: answers,
           stackName: this.stackName,
           serviceName: 'assetlibrary-export',
-          templateFile: '../assetlibrary-export/infrastructure/cfn-assetlibrary-export.yaml',
+          templateFile: 'infrastructure/cfn-assetlibrary-export.yaml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'assetlibrary-export'),
           parameterOverrides: this.getParameterOverrides(answers),
           needsPackaging: true,
           needsCapabilityNamedIAM: true,
@@ -177,7 +184,7 @@ export class AssetLibraryExportInstaller implements ServiceModule {
     return [answers, tasks];
   }
 
-  public generateApplicationConfiguration(answers: Answers): string {
+  private generateApplicationConfiguration(answers: Answers): string {
     const configBuilder = new ConfigBuilder()
 
     configBuilder
@@ -189,19 +196,6 @@ export class AssetLibraryExportInstaller implements ServiceModule {
       .add(`DEFAULTS_ETL_EXTRACT_DEVICEEXTRACTOR_ATTRIBUTES`, answers.assetLibraryExport.extractAttributes)
       .add(`DEFAULTS_ETL_EXTRACT_DEVICEEXTRACTOR_EXPANDCOMPONENTS`, answers.assetLibraryExport.extractExpandComponents)
       .add(`DEFAULTS_ETL_EXTRACT_DEVICEEXTRACTOR_INCLUDEGROUPS`, answers.assetLibraryExport.extractIncludeGroups)
-
-    return configBuilder.config;
-  }
-
-  public async generateLocalConfiguration(answers: Answers): Promise<string> {
-
-    const byParameterKey = await getStackParameters(this.stackName, answers.region)
-
-    const configBuilder = new ConfigBuilder()
-
-    configBuilder
-      .add(`NEPTUNEURL`, byParameterKey('NeptuneURL'))
-      .add(`AWS_S3_EXPORT_BUCKET`, byParameterKey('BucketName'))
 
     return configBuilder.config;
   }

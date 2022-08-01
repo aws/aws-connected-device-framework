@@ -894,6 +894,42 @@ Resources:
     Properties:
       MessageRetentionPeriod: 1209600
 
+  EventNotificationsTableSsmParameter:
+    Type: "AWS::SSM::Parameter"
+    Properties:
+      Description: Event Notifications database table
+      Name: !Sub '/cdf/events-processor/${Environment}/EventNotificationsTable'
+      Type: String
+      Value: !Ref EventNotificationsTable
+  EventNotificationsTableArnSsmParameter:
+    Type: "AWS::SSM::Parameter"
+    Properties:
+      Description: Event Notifications database table arn
+      Name: !Sub '/cdf/events-processor/${Environment}/EventNotificationsTableArn'
+      Type: String
+      Value: !GetAtt EventNotificationsTable.Arn
+  EventNotificationsStreamArnSsmParameter:
+    Type: "AWS::SSM::Parameter"
+    Properties:
+      Description: Event Notifications database table stream
+      Name: !Sub '/cdf/events-processor/${Environment}/EventNotificationsStreamArn'
+      Type: String
+      Value: !GetAtt EventNotificationsTable.StreamArn
+  EventConfigTableSsmParameter:
+    Type: "AWS::SSM::Parameter"
+    Properties:
+      Description: Event Config database table
+      Name: !Sub '/cdf/events-processor/${Environment}/EventConfigTable'
+      Type: String
+      Value: !Ref EventConfigTable
+  EventConfigTableArnSsmParameter:
+    Type: "AWS::SSM::Parameter"
+    Properties:
+      Description: Event Config database table Arn
+      Name: !Sub '/cdf/events-processor/${Environment}/EventConfigTableArn'
+      Type: String
+      Value: !GetAtt EventConfigTable.Arn
+
 Outputs:
   RestApiFunctionName:
     Description: Events REST API lambda function name

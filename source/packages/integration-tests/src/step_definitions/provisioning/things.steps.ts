@@ -21,7 +21,7 @@ import {
     PROVISIONING_CLIENT_TYPES, ProvisionThingRequest, ProvisionThingResponse, ThingsService
 } from '@cdf/provisioning-client';
 
-import { Dictionary } from '../../../../libraries/core/lambda-invoke/src';
+import { Dictionary } from '@cdf/lambda-invoke';
 import { container } from '../../di/inversify.config';
 import { AUTHORIZATION_TOKEN, replaceTokens } from '../common/common.steps';
 
@@ -126,7 +126,7 @@ When('I provision a thing {string} using acmpca', async function (thingName: str
             ThingName: thingName
         },
         cdfProvisioningParameters: {
-            caArn: process.env.PROVISIONING_ACM_PCA_ARN,
+            acmpcaCaArn: process.env.PROVISIONING_ACM_PCA_ARN,
             certInfo: {
                 country: 'US'
             }
@@ -149,4 +149,20 @@ Then('the thing {string} is provisioned', async function (thingName: string) {
     const certArn = thingPrincipals.principals[0];
     const certificateId = certArn.split('/')[1];
     await iot.describeCertificate({ certificateId }).promise();
+});
+
+Then('thing {string} belongs to thing group {string}', async function (thingName: string, thingGroupName: string) {
+    thingName = replaceTokens(thingName);
+    thingGroupName = replaceTokens(thingGroupName);
+    const r = await iot.listThingGroupsForThing({thingName}).promise();
+    const exists = (r?.thingGroups?.filter(tg=>tg.groupName===thingGroupName)?.length??0)>0;
+    expect(exists).eq(true);
+});
+
+Then('thing {string} does not belong to thing group {string}', async function (thingName: string, thingGroupName: string) {
+    thingName = replaceTokens(thingName);
+    thingGroupName = replaceTokens(thingGroupName);
+    const r = await iot.listThingGroupsForThing({thingName}).promise();
+    const exists = (r?.thingGroups?.filter(tg=>tg.groupName===thingGroupName)?.length??0)>0;
+    expect(exists).eq(false);
 });

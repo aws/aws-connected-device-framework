@@ -3,6 +3,8 @@ import { CertificateStatus, CertInfo } from "../things/things.models";
 import { logger } from "./logger";
 import * as pem from 'pem';
 import { TYPES } from '../di/types';
+import { DescribeCACertificateRequest, DescribeCACertificateResponse, RegisterCertificateWithoutCAResponse } from 'aws-sdk/clients/iot';
+import ow from 'ow';
 
 @injectable()
 export class CertUtils {
@@ -56,7 +58,7 @@ export class CertUtils {
         });
     }
 
-    public async registerCertificateWithoutCA(certificatePem: string, status: CertificateStatus): Promise<string> {
+    public async registerCertificateWithoutCA(certificatePem: string, status: CertificateStatus): Promise<RegisterCertificateWithoutCAResponse> {
         logger.debug(`CertUtils: registerCertificateWithoutCA: in: ${certificatePem}`);
 
         const params: AWS.Iot.RegisterCertificateWithoutCARequest = {
@@ -72,7 +74,30 @@ export class CertUtils {
             throw err;
         }
 
-        return result.certificateId;
+        return result;
+    }
+
+    public async getCaCertificate(caCertificateArn:string) : Promise<string> {
+        logger.debug(`CertUtils getCaCertificate: in: caCertificateArn:${caCertificateArn}`);
+        ow(caCertificateArn, ow.string.nonEmpty);
+
+        const certificateId = caCertificateArn.split('/')[1]
+
+        const params: DescribeCACertificateRequest = {
+            certificateId
+        };
+
+        let caCertificatePem:string;
+        try {
+            const response:DescribeCACertificateResponse = await this._iot.describeCACertificate(params).promise();
+            caCertificatePem = response.certificateDescription.certificatePem;
+        } catch (err) {
+            logger.debug(`CertUtils getCaCertificate: err:${err}`);
+            throw new Error('UNABLE_TO_GET_CA_CERTIFICATE');
+        }
+
+        logger.debug('CertUtils getCaCertificate: exit:');
+        return caCertificatePem;
     }
 
 }

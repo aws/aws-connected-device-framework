@@ -1,6 +1,97 @@
 # Change Log - @cdf/installer
 
-This log was last generated on Tue, 21 Jun 2022 00:47:55 GMT and should not be manually modified.
+This log was last generated on Fri, 29 Jul 2022 02:59:14 GMT and should not be manually modified.
+
+## 1.3.0
+Fri, 29 Jul 2022 02:59:14 GMT
+
+### Minor changes
+
+- add organization-manager module to installer
+
+## 1.2.2
+Tue, 26 Jul 2022 14:46:23 GMT
+
+### Patches
+
+- fixed issue where PCA alias was not being updated
+
+## 1.2.1
+Thu, 21 Jul 2022 15:32:08 GMT
+
+### Patches
+
+- removed authJwt dependency when lambdaRequest or LambdaToken authorizer is specified
+
+## 1.2.0
+Fri, 15 Jul 2022 15:57:02 GMT
+
+### Minor changes
+
+- added installer steps to add cross region support for provisioning with ACMPCA
+
+## 1.1.1
+Wed, 13 Jul 2022 23:37:54 GMT
+
+### Patches
+
+- added additional steps for the certificatevendor installer
+
+## 1.1.0
+Wed, 13 Jul 2022 02:04:06 GMT
+
+### Minor changes
+
+- add new question to enable/disable events publishing for greengrass2-provisioning module
+
+## 1.0.2
+Tue, 05 Jul 2022 04:26:27 GMT
+
+### Patches
+
+- cdf-cli can now be run from any subdirectory
+
+## 1.0.1
+Tue, 05 Jul 2022 01:23:08 GMT
+
+### Patches
+
+- correctly export APP_CONFIG in cdf-cli generate-local-config
+
+## 1.0.0
+Fri, 01 Jul 2022 21:16:11 GMT
+
+### Breaking changes
+
+-  removed deprecated config-to-env, and cleaned up and renamed cloud-to-env to generate-local-config.
+
+## 0.12.0
+Fri, 01 Jul 2022 05:48:17 GMT
+
+### Minor changes
+
+- Updated bulkcert installer to support ACMPCA
+
+## 0.11.0
+Thu, 30 Jun 2022 21:32:50 GMT
+
+### Minor changes
+
+- added new cloud-to-env command that given the name of an existing deployed cdf environment will generate the necessary application configuration to run locally.
+
+## 0.10.0
+Thu, 30 Jun 2022 00:07:08 GMT
+
+### Minor changes
+
+-  updated ACM PCA integration to support registering certificates using CA's
+
+## 0.9.0
+Wed, 29 Jun 2022 00:56:16 GMT
+
+### Minor changes
+
+- update the command function reference for certificate vendor to point to command and control stack
 
 ## 0.8.1
 Tue, 21 Jun 2022 00:47:55 GMT

@@ -19,7 +19,7 @@ import {
     GreengrassV2Client
 } from '@aws-sdk/client-greengrassv2';
 import {
-    AddThingToThingGroupCommand, CreateThingGroupCommand, DescribeThingGroupCommand, IoTClient
+    AddThingToThingGroupCommand, CreateThingGroupCommand, DescribeThingGroupCommand, IoTClient, ListThingGroupsForThingCommand, RemoveThingFromThingGroupCommand, TagResourceCommand
 } from '@aws-sdk/client-iot';
 
 import { CoresService } from '../cores/cores.service';
@@ -28,11 +28,15 @@ import { TYPES } from '../di/types';
 import { TemplateItem } from '../templates/templates.models';
 import { TemplatesService } from '../templates/templates.service';
 import { logger } from '../utils/logger.util';
-import { Deployment, DeploymentEventPayload, DeploymentsEvent, NewDeployment } from './deployments.models';
+import { Deployment, DeploymentTaskCreatedEvent, DeploymentTaskCreatedPayload, NewDeployment } from './deployments.models';
 import { CDFEventPublisher, EVENT_PUBLISHER_TYPES } from "@cdf/event-publisher";
+
+export const DEPLOYMENT_TASK_ID_TAG_KEY = 'cdf-greengrass2-provisioning-deployment-task-id'
 
 @injectable()
 export class DeploymentsService {
+
+    private readonly DEPLOYMENT_THING_GROUP_PREFIX = 'cdf_ggv2_deploymentForTemplate_';
 
     private ggv2: GreengrassV2Client;
     private iot: IoTClient;
@@ -170,7 +174,7 @@ export class DeploymentsService {
                     const r = await this.iot.send(new CreateThingGroupCommand({
                         thingGroupName,
                         tags: [{
-                            Key: 'cdf-greengrass2-provisioning-deployment-task-id',
+                            Key: DEPLOYMENT_TASK_ID_TAG_KEY,
                             Value: taskId
                         }]
                     }));
@@ -203,15 +207,26 @@ export class DeploymentsService {
                             iotJobConfiguration: template.jobConfig,
                             deploymentPolicies: template.deploymentPolicies,
                             tags: {
-                                'cdf-greengrass2-provisioning-deployment-task-id': taskId
+                                DEPLOYMENT_TASK_ID_TAGGING_KEY: taskId
                             }
                         }));
                         logger.silly(`deployments.service createDeployment: CreateDeploymentCommandOutput: ${JSON.stringify(r)}`);
+
                         template.deployment = {
                             id: r.deploymentId,
                             thingGroupName,
                             jobId: r.iotJobId
                         }
+
+                        const tagResourceOutput = await this.iot.send(new TagResourceCommand({
+                            resourceArn: r.iotJobArn,
+                            tags: [{
+                                Key: DEPLOYMENT_TASK_ID_TAG_KEY, Value: taskId
+                            }]
+                        }))
+
+                        logger.silly(`deployments.service createDeployment: TagResourceCommandOutput: ${JSON.stringify(tagResourceOutput)}`);
+
                     } catch (e) {
                         this.markAsFailed(deployment, `Failed to create deployment: ${e.name}`);
                     }
@@ -228,8 +243,29 @@ export class DeploymentsService {
             }
         }
 
-        // add thing to thing group
         if (this.isStillInProgress(deployment)) {
+            // remove from all existing deployment thing groups
+            try {
+                const listThingGroupsForThingOutput = await this.iot.send(new ListThingGroupsForThingCommand({
+                    thingName: deployment.coreName
+                }));
+                logger.silly(`deployments.service createDeployment: ListThingGroupsForThingOutput: ${JSON.stringify(listThingGroupsForThingOutput)}`);
+                const existingDeploymentThingGroups = listThingGroupsForThingOutput?.thingGroups?.filter(tg=> tg.groupName.startsWith(this.DEPLOYMENT_THING_GROUP_PREFIX));
+                logger.silly(`deployments.service createDeployment: deployment groups to remove from: ${JSON.stringify(existingDeploymentThingGroups)}`);
+                if ((existingDeploymentThingGroups?.length??0) > 0) {
+                    for (const tg of existingDeploymentThingGroups) {
+                        await this.iot.send(new RemoveThingFromThingGroupCommand({
+                            thingName: deployment.coreName,
+                            thingGroupArn: tg.groupArn
+                        }));
+                    }
+                }
+            } catch (e) {
+                logger.error(e);
+                this.markAsFailed(deployment, `Failed removing from existing deployment thing groups: ${e.name}`);
+            }
+
+            // add thing to new deployment thing group
             try {
                 await this.iot.send(new AddThingToThingGroupCommand({
                     thingName: deployment.coreName,
@@ -244,27 +280,25 @@ export class DeploymentsService {
         if (deployment.taskStatus === 'InProgress') {
             deployment.taskStatus = 'Success';
             deployment.updatedAt = new Date();
-            await this.cdfEventPublisher.emitEvent<DeploymentEventPayload>({
-                name: DeploymentsEvent,
+            await this.cdfEventPublisher.emitEvent<DeploymentTaskCreatedPayload>({
+                name: DeploymentTaskCreatedEvent,
                 payload: {
                     taskId: taskId,
                     coreName: deployment.coreName,
                     status: 'success',
-                    operation: 'create'
                 }
             })
         }
 
 
         if (deployment.taskStatus === 'Failure') {
-            await this.cdfEventPublisher.emitEvent<DeploymentEventPayload>({
-                name: DeploymentsEvent,
+            await this.cdfEventPublisher.emitEvent<DeploymentTaskCreatedPayload>({
+                name: DeploymentTaskCreatedEvent,
                 payload: {
                     taskId: taskId,
                     coreName: deployment.coreName,
                     status: 'failed',
-                    operation: 'create',
-                    errorMessage: deployment.statusMessage
+                    message: deployment.statusMessage
                 }
             })
         }
@@ -286,13 +320,20 @@ export class DeploymentsService {
     }
 
     private getTemplateVersionThingGroupTarget(template: TemplateItem): string {
-        return `cdf_ggv2_deploymentForTemplate_${template.name}_${template.version}`;
+        return `${this.DEPLOYMENT_THING_GROUP_PREFIX}${template.name}_${template.version}`;
     }
 
     private isStillInProgress(deployment: Deployment): boolean {
         return deployment.taskStatus === 'InProgress';
     }
 
+    public async getDeploymentIdByJobId(jobId: string): Promise<string> {
+        logger.debug(`templates.service getDeploymentIdByJobId: in: jobId:${jobId}`);
+        ow(jobId, ow.string.nonEmpty);
+        const deploymentId = await this.deploymentTasksDao.getDeploymentIdByJobId(jobId);
+        logger.debug(`templates.service getDeploymentIdByJobId: exit: ${deploymentId}`);
+        return deploymentId;
+    }
 
 }
 

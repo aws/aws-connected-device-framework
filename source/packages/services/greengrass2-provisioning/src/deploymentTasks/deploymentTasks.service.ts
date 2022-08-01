@@ -21,17 +21,19 @@ import { AwsIotThingListBuilder, THING_LIST_BUILDER_TYPES } from '@cdf/thing-lis
 import { FailedCoreDeployment } from '../cores/cores.models';
 import { CoresService } from '../cores/cores.service';
 import { Deployment } from '../deployments/deployments.models';
-import { DeploymentsService } from '../deployments/deployments.service';
+import { DeploymentsService, DEPLOYMENT_TASK_ID_TAG_KEY } from '../deployments/deployments.service';
 import { TYPES } from '../di/types';
 import { TemplatesService } from '../templates/templates.service';
 import { logger } from '../utils/logger.util';
 import { CoreDeploymentListPaginationKey, DeploymentTaskListPaginationKey, DeploymentTasksDao } from './deploymentTasks.dao';
 import { DeploymentTask, NewDeploymentTask } from './deploymentTasks.models';
+import { DescribeJobCommand, IoTClient, ListTagsForResourceCommand } from '@aws-sdk/client-iot';
 
 @injectable()
 export class DeploymentTasksService {
 
     private sqs: SQSClient;
+    private iot: IoTClient;
 
     public constructor(
         @inject(TYPES.TemplatesService) private templatesService: TemplatesService,
@@ -39,7 +41,10 @@ export class DeploymentTasksService {
         @inject(TYPES.DeploymentsService) private deploymentsService: DeploymentsService,
         @inject(TYPES.CoresService) private coresService: CoresService,
         @inject(THING_LIST_BUILDER_TYPES.AwsIotThingListBuilder) private awsIotThingListBuilder: AwsIotThingListBuilder,
-        @inject(TYPES.SQSFactory) sqsFactory: () => SQSClient) {
+        @inject(TYPES.SQSFactory) sqsFactory: () => SQSClient,
+        @inject(TYPES.IotFactory) iotFactory: () => IoTClient,
+    ) {
+        this.iot = iotFactory();
         this.sqs = sqsFactory();
     }
 
@@ -134,6 +139,26 @@ export class DeploymentTasksService {
         return template;
     }
 
+    public async getByJobId(jobId: string): Promise<DeploymentTask> {
+        logger.debug(`deploymentTasks.service getByJobId: in: jobId:${jobId}`);
+
+        ow(jobId, ow.string.nonEmpty);
+
+        const describeJobResponse = await this.iot.send(new DescribeJobCommand({ jobId: jobId }))
+        const getTagsResponse = await this.iot.send(new ListTagsForResourceCommand({ resourceArn: describeJobResponse.job?.jobArn }))
+
+        let deploymentTask;
+        for (const tag of getTagsResponse.tags) {
+            if (tag.Key === DEPLOYMENT_TASK_ID_TAG_KEY) {
+                deploymentTask = this.get(tag.Value)
+                return deploymentTask
+            }
+        }
+
+        logger.debug(`deploymentTasks.service getByJobId: exit: deploymentTask:${JSON.stringify(deploymentTask)}`);
+        return deploymentTask;
+    }
+
     /**
      * Expand the targets of the provided task, then splitting into batches for async processing.
      * @param task 
@@ -146,10 +171,10 @@ export class DeploymentTasksService {
 
         // 1st expand the targets. Can take time if there's quite a few to expand, hence why this is function if carried out async to break out of the APIGW execution timeout 
         const expandedTargets = await this.awsIotThingListBuilder.listThings({
-            thingNames: task.targets.thingNames, 
-            thingGroupNames: task.targets.thingGroupNames, 
-            assetLibraryDeviceIds: task.targets.assetLibraryDeviceIds, 
-            assetLibraryGroupPaths: task.targets.assetLibraryGroupPaths, 
+            thingNames: task.targets.thingNames,
+            thingGroupNames: task.targets.thingGroupNames,
+            assetLibraryDeviceIds: task.targets.assetLibraryDeviceIds,
+            assetLibraryGroupPaths: task.targets.assetLibraryGroupPaths,
             assetLibraryQuery: task.targets.assetLibraryQuery
         });
         ow(expandedTargets?.thingNames, 'expanded targets', ow.array.nonEmpty);

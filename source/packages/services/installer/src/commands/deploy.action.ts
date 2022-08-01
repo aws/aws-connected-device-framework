@@ -3,9 +3,7 @@ import { Listr, ListrTask } from "listr2";
 import { Answers } from "../models/answers";
 import { loadModules, Module } from "../models/modules";
 import { getCurrentAwsAccountId } from "../prompts/account.prompt";
-import {
-  topologicallySortModules,
-} from "../prompts/modules.prompt";
+import { topologicallySortModules } from "../prompts/modules.prompt";
 import { AnswersStorage } from "../utils/answersStorage";
 import configWizard from "../utils/wizard";
 
@@ -24,26 +22,27 @@ async function deployAction(
 
   let answers: Answers;
 
-  const configFile = options["config"]
+  const configFile = options["config"];
 
   if (configFile !== undefined) {
-    answers = await AnswersStorage.loadFromFile(configFile,
-      {
-        environment, region, accountId
-      });
+    answers = await AnswersStorage.loadFromFile(configFile, {
+      environment,
+      region,
+      accountId
+    });
   } else {
-    const dryRun = options["dryrun"] !== undefined
+    const dryRun = options["dryrun"] !== undefined;
     answers = await configWizard(environment, region, dryRun);
     if (dryRun) {
       // Dry run only produced the config without running the deployment
-      answers = await cleanUpConfig(answers)
+      answers = await cleanUpConfig(answers);
       answersStorage.save(answers);
       return;
     }
   }
 
-  answers.s3.optionalDeploymentBucket = options["bucket"]
-  answers.s3.optionalDeploymentPrefix = options["prefix"]
+  answers.s3.optionalDeploymentBucket = options["bucket"];
+  answers.s3.optionalDeploymentPrefix = options["prefix"];
   /**
    * start the deployment...
    */
@@ -66,20 +65,26 @@ async function deployAction(
         throw new Error(`Module ${name} not found!`);
       }
       if (m.install) {
-        if (answers.modules.expandedMandatory.includes(m.name) || answers.modules.list.includes(m.name)) {
+        if (
+          answers.modules.expandedMandatory.includes(m.name) ||
+          answers.modules.list.includes(m.name)
+        ) {
           const [_, subTasks] = await m.install(answers);
           if (subTasks?.length > 0) {
             layerTasks.push({
               title: m.friendlyName,
               task: (_, parentTask): Listr =>
-                parentTask.newListr(subTasks, { concurrent: false }),
+                parentTask.newListr(subTasks, {
+                  concurrent: false
+                })
             });
           }
         }
       } else {
-        throw new Error(`Module ${name} has no install functionality defined!`);
+        throw new Error(
+          `Module ${name} has no install functionality defined!`
+        );
       }
-
     }
 
     const listr = new Listr(layerTasks, { concurrent: true });
@@ -87,7 +92,7 @@ async function deployAction(
   }
 
   // Remove unnecessary answers
-  answers = await cleanUpConfig(answers)
+  answers = await cleanUpConfig(answers);
   answersStorage.save(answers);
 
   const finishedAt = new Date().getTime();
@@ -96,16 +101,19 @@ async function deployAction(
   console.log(chalk.bgGreen(`\nDeployment complete! (${took}s)\n`));
 }
 
-
 async function cleanUpConfig(answers: Answers): Promise<Answers> {
   // Remove unnecessary answers
-  delete answers?.bulkCerts?.suppliers;
+  delete answers?.bulkCerts?.suppliers?.list;
   delete answers?.bulkCerts?.setSupplier;
   delete answers?.bulkCerts?.caAlias;
   delete answers?.bulkCerts?.caValue;
-
-  delete answers?.provisioning?.pcaAliases;
+  delete answers?.eventBus?.arn;
+  delete answers?.provisioning?.iotCaAliases?.list;
+  delete answers?.provisioning?.pcaAliases?.list;
+  delete answers.provisioning?.pcaFinished 
+  delete answers.provisioning?.iotCaFinished; 
   delete answers?.provisioning?.setPcaAliases;
+  delete answers?.provisioning?.setIotCaAliases;
   delete answers?.provisioning?.pcaAlias;
   delete answers?.provisioning?.pcaArn;
   delete answers?.s3?.optionalDeploymentBucket;

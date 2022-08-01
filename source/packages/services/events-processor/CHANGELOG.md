@@ -1,6 +1,13 @@
 # Change Log - @cdf/events-processor
 
-This log was last generated on Tue, 21 Jun 2022 00:47:55 GMT and should not be manually modified.
+This log was last generated on Fri, 29 Jul 2022 02:59:14 GMT and should not be manually modified.
+
+## 4.2.0
+Fri, 29 Jul 2022 02:59:14 GMT
+
+### Minor changes
+
+- export variables required for eventsAlerts as ssm parameters
 
 ## 4.1.1
 Tue, 21 Jun 2022 00:47:55 GMT

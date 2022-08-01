@@ -1,6 +1,39 @@
 # Change Log - @cdf/integration-tests
 
-This log was last generated on Tue, 21 Jun 2022 00:47:55 GMT and should not be manually modified.
+This log was last generated on Fri, 29 Jul 2022 17:47:13 GMT and should not be manually modified.
+
+## 3.5.1
+Fri, 29 Jul 2022 17:47:13 GMT
+
+### Patches
+
+- Cores are now being removed from past deployment thing groups.
+
+## 3.5.0
+Fri, 29 Jul 2022 02:59:14 GMT
+
+### Minor changes
+
+- add testing for organization-manager
+
+## 3.4.0
+Mon, 11 Jul 2022 22:20:13 GMT
+
+### Minor changes
+
+- Added new methods to deassociate all devices and groups from a device.
+
+## 3.3.0
+Thu, 30 Jun 2022 00:07:08 GMT
+
+### Minor changes
+
+-  updated ACM PCA integration to support registering certificates using CA's
+
+## 3.2.3
+Wed, 29 Jun 2022 00:56:16 GMT
+
+_Version update only_
 
 ## 3.2.2
 Tue, 21 Jun 2022 00:47:55 GMT

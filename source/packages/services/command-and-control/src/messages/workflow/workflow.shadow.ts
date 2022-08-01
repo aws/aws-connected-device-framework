@@ -49,7 +49,7 @@ export class ShadowAction extends WorkflowPublishAction {
         for(const target of message.resolvedTargets) {
             target.correlationId = super.uidGenerator();
             try {
-                await this.publish(target.thingName, command.operation, target.correlationId, payload);
+                await this.publish(target.id, command.operation, target.correlationId, payload);
                 target.status = 'success';
             } catch (e) {
                 target.status = 'failed';

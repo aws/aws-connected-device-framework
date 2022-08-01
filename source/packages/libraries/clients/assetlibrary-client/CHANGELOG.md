@@ -1,6 +1,13 @@
 # Change Log - @cdf/assetlibrary-client
 
-This log was last generated on Tue, 21 Jun 2022 00:47:55 GMT and should not be manually modified.
+This log was last generated on Mon, 11 Jul 2022 22:20:13 GMT and should not be manually modified.
+
+## 5.1.0
+Mon, 11 Jul 2022 22:20:13 GMT
+
+### Minor changes
+
+- Added new methods to deassociate all devices and groups from a device.
 
 ## 5.0.5
 Tue, 21 Jun 2022 00:47:55 GMT

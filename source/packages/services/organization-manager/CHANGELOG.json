@@ -1,0 +1,17 @@
+{
+  "name": "@cdf/organization-manager",
+  "entries": [
+    {
+      "version": "0.1.0",
+      "tag": "@cdf/organization-manager_v0.1.0",
+      "date": "Fri, 29 Jul 2022 02:59:14 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "new module to associate cdf components to AWS accounts or organizational unit"
+          }
+        ]
+      }
+    }
+  ]
+}

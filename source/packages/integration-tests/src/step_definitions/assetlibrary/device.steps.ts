@@ -14,11 +14,10 @@ import 'reflect-metadata';
 import { Given, setDefaultTimeout, When, DataTable, Then} from '@cucumber/cucumber';
 import { Device20Resource, DevicesService } from '@cdf/assetlibrary-client';
 import { fail } from 'assert';
-import stringify from 'json-stable-stringify';
 
 import chai_string = require('chai-string');
 import {expect, use} from 'chai';
-import { RESPONSE_STATUS, replaceTokens, AUTHORIZATION_TOKEN} from '../common/common.steps';
+import { RESPONSE_STATUS, replaceTokens, AUTHORIZATION_TOKEN, validateExpectedAttributes} from '../common/common.steps';
 import {ASSETLIBRARY_CLIENT_TYPES} from '@cdf/assetlibrary-client/dist';
 import {Dictionary} from '../../../../libraries/core/lambda-invoke/src';
 import {container} from '../../di/inversify.config';
@@ -168,6 +167,38 @@ When('I remove device {string} from group {string} related via {string}', async 
     }
 });
 
+When('I remove device {string} from groups related via {string}', async function (deviceId:string, relationship:string) {
+    try {
+        await deviceService.detachFromGroups(deviceId, relationship, getAdditionalHeaders(this));
+    } catch (err) {
+        this[RESPONSE_STATUS]=err.status;
+    }
+});
+
+When('I remove device {string} from all groups', async function (deviceId:string) {
+    try {
+        await deviceService.detachFromAllGroups(deviceId, getAdditionalHeaders(this));
+    } catch (err) {
+        this[RESPONSE_STATUS]=err.status;
+    }
+});
+
+When('I remove device {string} from devices related via {string}', async function (deviceId:string, relationship:string) {
+    try {
+        await deviceService.detachFromDevices(deviceId, relationship, getAdditionalHeaders(this));
+    } catch (err) {
+        this[RESPONSE_STATUS]=err.status;
+    }
+});
+
+When('I remove device {string} from all devices', async function (deviceId:string) {
+    try {
+        await deviceService.detachFromAllDevices(deviceId, getAdditionalHeaders(this));
+    } catch (err) {
+        this[RESPONSE_STATUS]=err.status;
+    }
+});
+
 When('I delete device {string}', async function (deviceId:string) {
     try {
         await deviceService.deleteDevice(deviceId, getAdditionalHeaders(this));
@@ -185,21 +216,8 @@ When('I get device {string}', async function (deviceId:string) {
 });
 
 Then('device {string} exists with attributes', async function (deviceId:string, data:DataTable) {
-    const d = data.rowsHash();
-    const r = await deviceService.getDeviceByID(deviceId, undefined, undefined, undefined, getAdditionalHeaders(this));
-
-    Object.keys(d).forEach( key => {
-        const val = replaceTokens(d[key]);
-        if (val.startsWith('{') || val.startsWith('[')) {
-            expect(stringify(r[key])).eq( stringify(JSON.parse(val)));
-        } else if (val==='___null___') {
-            expect(r[key]).eq(null);
-        } else if (val==='___undefined___') {
-            expect(r[key]).eq(undefined);
-        } else {
-            expect(r[key]).eq( val);
-        }
-    });
+    const device = await deviceService.getDeviceByID(deviceId, undefined, undefined, undefined, getAdditionalHeaders(this));
+    validateExpectedAttributes(device, data);
 });
 
 Then('device {string} is {string} {string} {string}', async function (deviceId, out, rel, groupPath) {

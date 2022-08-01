@@ -23,7 +23,7 @@ export interface ModuleListItem {
   checked: boolean;
 }
 
-export function buildServicesList(modules: Module[], chosen: string[]): ModuleListItem[] {
+export function buildServicesList(modules: Module[], chosen?: string[]): ModuleListItem[] {
   // get all service modules
   const modulesList: ModuleListItem[] = modules
     .filter(m => m.type === 'SERVICE')

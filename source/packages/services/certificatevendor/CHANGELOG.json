@@ -2,6 +2,18 @@
   "name": "@cdf/certificate-vendor",
   "entries": [
     {
+      "version": "5.1.0",
+      "tag": "@cdf/certificate-vendor_v5.1.0",
+      "date": "Wed, 13 Jul 2022 23:37:54 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "added capability to rotate multiple certs for a particular device and also to inheret policies from the old certificate"
+          }
+        ]
+      }
+    },
+    {
       "version": "5.0.3",
       "tag": "@cdf/certificate-vendor_v5.0.3",
       "date": "Tue, 21 Jun 2022 00:47:55 GMT",

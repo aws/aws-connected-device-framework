@@ -35,23 +35,41 @@ export class CommonDaoFull extends BaseDaoFull {
         super(neptuneUrl, graphSourceFactory);
     }
 
-    public async listRelated(entityDbId: string, relationship: string, direction:string, template:string, filterRelatedBy:{ [key: string] : ModelAttributeValue}, offset:number, count:number, sort:SortKeys) : Promise<Node> {
-        logger.debug(`common.full.dao listRelated: in: entityDbId:${entityDbId}, relationship:${relationship}, direction:${direction}, template:${template}, filterRelatedBy:${JSON.stringify(filterRelatedBy)}, offset:${offset}, count:${count}, ${JSON.stringify(sort)}`);
+    public async listRelated(entityDbId: string, relationship: string, direction:string, template:string, filterRelatedBy:{ [key: string] : ModelAttributeValue}, 
+        offset:number, count:number, sort:SortKeys, authorizedPaths:string[]) : Promise<Node> {
+        logger.debug(`common.full.dao listRelated: in: entityDbId:${entityDbId}, relationship:${relationship}, direction:${direction}, template:${template}, filterRelatedBy:${JSON.stringify(filterRelatedBy)}, offset:${offset}, count:${count}, ${JSON.stringify(sort)}, authorizedPaths:${authorizedPaths}`);
 
         // define the traversers that handle finding associated edges/vertices
-        const relatedIn = __.inE();
-        const relatedOut = __.outE();
+        const relatedIn = __.inE().as('e');
+        const relatedOut = __.outE().as('e');
 
-        // filter the edges based on the relationship type (if requiested)
+        // filter the edges based on the relationship type (if requested)
         if (relationship==='*') {
             relationship=undefined;
         }
-        if (relationship) {
+        if (relationship!==undefined) {
             [relatedIn, relatedOut].forEach(t=> t.hasLabel(relationship).as('e'));
         }
 
         // navigate to the linked vertex for each relation, filtering the type
-        [relatedIn, relatedOut].forEach(t=> t.as('e').otherV().hasLabel(template).as('v'));
+        [relatedIn, relatedOut].forEach(t=> t.otherV().hasLabel(template).as('v'));
+
+        // if authz is enabled, only return associated vertices that the user is authorized to view
+        if ((authorizedPaths?.length??0)>0) {
+            // must reset all traversals so far as we need to use simplePath when FGAC is enabled to prevent cyclic checks
+            [relatedIn, relatedOut].forEach(t=> t.dedup().fold().unfold().as('v'));
+
+            const authorizedPathIds = authorizedPaths.map(path=>`group___${path}`);
+            [relatedIn, relatedOut].forEach(t=> t.
+                local(
+                    __.until(
+                        __.hasId(process.P.within(authorizedPathIds))
+                    ).repeat(
+                        __.outE().has('isAuthCheck',true).otherV().simplePath().dedup()
+                    )
+                ).as('authorization')
+                .select('v'));
+        }
 
         // apply filtering to the linked vertex (if required)
         if (filterRelatedBy!==undefined) {
@@ -90,9 +108,9 @@ export class CommonDaoFull extends BaseDaoFull {
         if (offset!==undefined && count!==undefined) {
             // note: workaround for weird typescript issue. even though offset/count are declared as numbers
             // throughout, they are being interpreted as strings within gremlin, therefore need to force to int beforehand
-            const offsetAsInt = this.typeUtils.parseInt(offset);
-            const countAsInt = this.typeUtils.parseInt(count);
-            relatedUnion.range(offsetAsInt, offsetAsInt + countAsInt);
+            offset = this.typeUtils.parseInt(offset);
+            count = this.typeUtils.parseInt(count);
+            relatedUnion.range(offset, offset + count);
         }
 
         // build the main part of the query, unioning the related traversers with the main entity we want to return

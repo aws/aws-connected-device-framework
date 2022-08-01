@@ -2,6 +2,35 @@
   "name": "@cdf/deployment-helper",
   "entries": [
     {
+      "version": "3.3.0",
+      "tag": "@cdf/deployment-helper_v3.3.0",
+      "date": "Fri, 29 Jul 2022 02:59:14 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "add the custom resource to publish stack events to eventbridge"
+          }
+        ]
+      }
+    },
+    {
+      "version": "3.2.0",
+      "tag": "@cdf/deployment-helper_v3.2.0",
+      "date": "Wed, 29 Jun 2022 00:56:16 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "deployment-helper is using command and control client to invoke the module"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@cdf/commandandcontrol-client\" from `^0.1.2` to `^1.0.0`"
+          }
+        ]
+      }
+    },
+    {
       "version": "3.1.1",
       "tag": "@cdf/deployment-helper_v3.1.1",
       "date": "Tue, 21 Jun 2022 00:47:55 GMT",

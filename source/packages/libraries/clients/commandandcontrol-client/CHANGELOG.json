@@ -2,6 +2,18 @@
   "name": "@cdf/commandandcontrol-client",
   "entries": [
     {
+      "version": "1.0.0",
+      "tag": "@cdf/commandandcontrol-client_v1.0.0",
+      "date": "Wed, 29 Jun 2022 00:56:16 GMT",
+      "comments": {
+        "major": [
+          {
+            "comment": "modifying the data model to support changes on the command and control module"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.1.2",
       "tag": "@cdf/commandandcontrol-client_v0.1.2",
       "date": "Tue, 21 Jun 2022 00:47:55 GMT",

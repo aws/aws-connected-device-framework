@@ -118,6 +118,18 @@ export class DevicesController implements interfaces.Controller {
         await this.detachFromGroupWithDirection(deviceId, relationship, 'out', groupPath, res);
     }
 
+    @httpDelete('/:deviceId/:relationship/groups')
+    public async detachFromGroups(@requestParam('deviceId') deviceId: string, @requestParam('relationship') relationship: string,
+        @response() res: Response) : Promise<void> {
+
+        logger.info(`devices.controller detachFromGroups: in: deviceId:${deviceId}, relationship:${relationship}`);
+        try {
+            await this.devicesService.detachFromGroups(deviceId, relationship, undefined);
+        } catch (e) {
+            handleError(e,res);
+        }
+    }
+
     @httpPut('/:deviceId/:relationship/:direction/groups/:groupPath')
     public async attachToGroupWithDirection(@requestParam('deviceId') deviceId: string, @requestParam('relationship') relationship: string,
         @requestParam('direction') direction: string, @requestParam('groupPath') groupPath: string, @response() res: Response) : Promise<void> {
@@ -181,6 +193,18 @@ export class DevicesController implements interfaces.Controller {
 
         logger.info(`devices.controller detachFromDevice: in: deviceId:${deviceId}, relationship:${relationship}, otherDeviceId:${otherDeviceId}`);
         await this.detachFromDeviceWithDirection(deviceId, relationship, 'out', otherDeviceId, res);
+    }
+
+    @httpDelete('/:deviceId/:relationship/devices')
+    public async detachFromDevices(@requestParam('deviceId') deviceId: string, @requestParam('relationship') relationship: string,
+        @response() res: Response) : Promise<void> {
+
+        logger.info(`devices.controller detachFromDevices: in: deviceId:${deviceId}, relationship:${relationship}`);
+        try {
+            await this.devicesService.detachFromDevices(deviceId, relationship, undefined);
+        } catch (e) {
+            handleError(e,res);
+        }
     }
 
     @httpPut('/:deviceId/:relationship/:direction/devices/:otherDeviceId')

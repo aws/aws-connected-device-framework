@@ -1,0 +1,168 @@
+---
+#-----------------------------------------------------------------------------------------------------------------------
+#   Copyright Amazon.com Inc. or its affiliates. All Rights Reserved.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance
+#  with the License. A copy of the License is located at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  or in the 'license' file accompanying this file. This file is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES
+#  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions
+#  and limitations under the License.
+#-----------------------------------------------------------------------------------------------------------------------
+
+## include mappings
+- command: update
+  path: Mappings.SourceCode
+  value:
+    General:
+      S3Bucket: "%%BUCKET_NAME%%"
+      KeyPrefix: "%%SOLUTION_NAME%%/%%VERSION%%"
+      TemplateBucket: "%%TEMPLATE_BUCKET_NAME%%"
+
+- command: update
+  path: Resources.StackEvents
+  value:
+    Type: Custom::StackEvents
+    Version: 1.0
+    Properties:
+      ServiceToken: !Ref CustomResourceLambdaArn
+      EventBusName: !Ref EventBusName
+      StackName: !Ref AWS::StackName
+      TemplateVersion: !Ref TemplateVersion
+
+- command: update
+  path: Parameters.TemplateVersion
+  value:
+    Description: Version of the template used to trigger change
+    Type: String
+
+- command: update
+  path: Parameters.EventBusName
+  value:
+    Description: EventBus on the Control Plane account to publish stack events to
+    Type: String
+
+- command: update
+  path: Parameters.VpcId.Type
+  value: AWS::SSM::Parameter::Value<String>
+
+- command: update
+  path: Parameters.CDFSecurityGroupId.Type
+  value: AWS::SSM::Parameter::Value<String>
+
+- command: update
+  path: Parameters.PrivateSubNetIds.Type
+  value: AWS::SSM::Parameter::Value<List<String>>
+
+- command: update
+  path: Parameters.PrivateApiGatewayVPCEndpoint.Type
+  value: AWS::SSM::Parameter::Value<String>
+
+- command: update
+  path: Parameters.BucketName.Type
+  value: AWS::SSM::Parameter::Value<String>
+
+- command: update
+  path: Parameters.AssetLibraryFunctionName.Type
+  value: AWS::SSM::Parameter::Value<String>
+
+- command: update
+  path: Parameters.ProvisioningFunctionName.Type
+  value: AWS::SSM::Parameter::Value<String>
+
+- command: update
+  path: Parameters.CustomResourceLambdaArn.Type
+  value: AWS::SSM::Parameter::Value<String>
+
+- command: update
+  path: Parameters.KmsKeyId.Type
+  value: AWS::SSM::Parameter::Value<String>
+
+# Transform all CodeUri's
+
+- command: update
+  path: Resources.RESTLambdaFunction.Properties.CodeUri
+  value:
+    Bucket:
+      !Join [
+        "-",
+        [!FindInMap ["SourceCode", "General", "S3Bucket"], Ref: "AWS::Region"],
+      ]
+    Key:
+      !Join [
+        "/",
+        [
+          !FindInMap ["SourceCode", "General", "KeyPrefix"],
+          "cdf-command-and-control.zip",
+        ],
+      ]
+
+- command: update
+  path: Resources.TopicCommandResponseLambdaFunction.Properties.CodeUri
+  value:
+    Bucket:
+      !Join [
+        "-",
+        [!FindInMap ["SourceCode", "General", "S3Bucket"], Ref: "AWS::Region"],
+      ]
+    Key:
+      !Join [
+        "/",
+        [
+          !FindInMap ["SourceCode", "General", "KeyPrefix"],
+          "cdf-command-and-control.zip",
+        ],
+      ]
+
+- command: update
+  path: Resources.ShadowCommandResponseLambdaFunction.Properties.CodeUri
+  value:
+    Bucket:
+      !Join [
+        "-",
+        [!FindInMap ["SourceCode", "General", "S3Bucket"], Ref: "AWS::Region"],
+      ]
+    Key:
+      !Join [
+        "/",
+        [
+          !FindInMap ["SourceCode", "General", "KeyPrefix"],
+          "cdf-command-and-control.zip",
+        ],
+      ]
+
+- command: update
+  path: Resources.JobCommandResponseLambdaFunction.Properties.CodeUri
+  value:
+    Bucket:
+      !Join [
+        "-",
+        [!FindInMap ["SourceCode", "General", "S3Bucket"], Ref: "AWS::Region"],
+      ]
+    Key:
+      !Join [
+        "/",
+        [
+          !FindInMap ["SourceCode", "General", "KeyPrefix"],
+          "cdf-command-and-control.zip",
+        ],
+      ]
+
+- command: update
+  path: Resources.SQSLambdaFunction.Properties.CodeUri
+  value:
+    Bucket:
+      !Join [
+        "-",
+        [!FindInMap ["SourceCode", "General", "S3Bucket"], Ref: "AWS::Region"],
+      ]
+    Key:
+      !Join [
+        "/",
+        [
+          !FindInMap ["SourceCode", "General", "KeyPrefix"],
+          "cdf-command-and-control.zip",
+        ],
+      ]

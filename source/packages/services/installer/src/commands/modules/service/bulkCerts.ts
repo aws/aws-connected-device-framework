@@ -16,16 +16,19 @@ import { ModuleName, RestModule, PostmanEnvironment } from '../../../models/modu
 import { ConfigBuilder } from "../../../utils/configBuilder";
 import inquirer from 'inquirer';
 import ow from 'ow';
+import path from 'path';
 import { customDomainPrompt } from '../../../prompts/domain.prompt';
 import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
 import { Lambda } from '@aws-sdk/client-lambda'
-import { deleteStack, getStackOutputs, getStackParameters, getStackResourceSummaries, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
+import { deleteStack, getStackOutputs, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
+import { getMonorepoRoot } from '../../../prompts/paths.prompt';
 
 export class BulkCertificatesInstaller implements RestModule {
 
   public readonly friendlyName = 'Bulk Certificates';
   public readonly name = 'bulkCerts';
+  public readonly localProjectDir = 'bulkcerts';
 
   public readonly type = 'SERVICE';
   public readonly dependsOnMandatory: ModuleName[] = [
@@ -35,7 +38,7 @@ export class BulkCertificatesInstaller implements RestModule {
 
   public readonly dependsOnOptional: ModuleName[] = [];
 
-  private readonly stackName: string;
+  public readonly stackName: string;
 
   constructor(environment: string) {
     this.stackName = `cdf-bulkcerts-${environment}`
@@ -219,7 +222,13 @@ export class BulkCertificatesInstaller implements RestModule {
           question: 'The chunk size that the number of requested certificates are split into',
           defaultConfiguration: 100,
           propertyName: 'chunksize'
-        }]),
+        },
+        {
+          question: 'Default number of concurrent threads for issuing ACM certificates:',
+          defaultConfiguration: 10,
+          propertyName: 'acmConcurrencyLimit'
+        }
+      ]),
       ...customDomainPrompt(this.name, answers),
     ], updatedAnswers);
 
@@ -254,13 +263,15 @@ export class BulkCertificatesInstaller implements RestModule {
   }
 
   public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [{
       title: `Packaging module '${this.name}'`,
       task: async () => {
         await packageAndUploadTemplate({
           answers: answers,
           serviceName: 'bulkcerts',
-          templateFile: '../bulkcerts/infrastructure/cfn-bulkcerts.yml',
+          templateFile: 'infrastructure/cfn-bulkcerts.yml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'bulkcerts'),
           parameterOverrides: this.getParameterOverrides(answers),
         });
       },
@@ -280,6 +291,7 @@ export class BulkCertificatesInstaller implements RestModule {
     ow(answers.openSsl?.arn, ow.string.nonEmpty);
     ow(answers.s3?.bucket, ow.string.nonEmpty);
 
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [];
 
     if ((answers.bulkCerts.redeploy ?? true) === false) {
@@ -293,7 +305,8 @@ export class BulkCertificatesInstaller implements RestModule {
           answers: answers,
           stackName: this.stackName,
           serviceName: 'bulkcerts',
-          templateFile: '../bulkcerts/infrastructure/cfn-bulkcerts.yml',
+          templateFile: 'infrastructure/cfn-bulkcerts.yml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'bulkcerts'),
           parameterOverrides: this.getParameterOverrides(answers),
           needsPackaging: true,
           needsCapabilityNamedIAM: true,
@@ -314,7 +327,7 @@ export class BulkCertificatesInstaller implements RestModule {
     }
   }
 
-  public generateApplicationConfiguration(answers: Answers): string {
+  private generateApplicationConfiguration(answers: Answers): string {
     const configBuilder = new ConfigBuilder()
 
     if (answers.bulkCerts.setSupplier) {
@@ -324,7 +337,7 @@ export class BulkCertificatesInstaller implements RestModule {
       answers.bulkCerts.suppliers.cas.forEach(supplier => {
         let alias = supplier.alias;
         if (!supplier.alias.startsWith('SUPPLIER_CA_')) {
-          alias = `SUPPLIER_CA_${supplier.alias}`;
+          alias = `SUPPLIER_CA_${supplier.alias.toUpperCase()}`;
         }
         if (alias == answers.bulkCerts.caAlias) {
           supplier.value = answers.bulkCerts.caValue;
@@ -346,26 +359,10 @@ export class BulkCertificatesInstaller implements RestModule {
       .add(`CERTIFICATE_DEFAULT_EMAILADDRESS`, answers.bulkCerts.emailAddress)
       .add(`CERTIFICATE_DEFAULT_DISTINGUISHEDNAMEQUALIFIER`, answers.bulkCerts.distinguishedNameIdentifier)
       .add(`CERTIFICATE_DEFAULT_EXPIRYDAYS`, answers.bulkCerts.expiryDays)
-      .add(`DEFAULTS_CHUNKSIZE`, answers.bulkCerts.chunksize);
+      .add(`DEFAULTS_CHUNKSIZE`, answers.bulkCerts.chunksize)
+      .add(`AWS_ACM_CONCURRENCY_LIMIT`,answers.bulkCerts.acmConcurrencyLimit)
     return configBuilder.config;
   }
-
-
-  public async generateLocalConfiguration(answers: Answers): Promise<string> {
-    const byParameterKey = await getStackParameters(this.stackName, answers.region)
-    const byResourceLogicalId = await getStackResourceSummaries(this.stackName, answers.region)
-
-    const configBuilder = new ConfigBuilder()
-
-    configBuilder
-      .add(`AWS_DYNAMODB_TASKS_TABLENAME`, byResourceLogicalId('BulkCertificatesTaskTable'))
-      .add(`AWS_S3_CERTIFICATES_BUCKET`, byParameterKey('BucketName'))
-      .add(`AWS_S3_CERTIFICATES_PREFIX`, byParameterKey('BucketKeyPrefix'))
-      .add(`EVENTS_REQUEST_TOPIC`, byResourceLogicalId('CertificatesRequestSnsTopic'))
-
-    return configBuilder.config;
-  }
-
 
   public async delete(answers: Answers): Promise<ListrTask[]> {
     const tasks: ListrTask[] = [];

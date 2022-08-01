@@ -36,12 +36,13 @@ export class RegisterDeviceCertificateWithoutCAStepProcessor implements Provisio
         ow(cdfParams?.certificatePem, 'certificate pem', ow.string.nonEmpty);
         ow(cdfParams?.certificateStatus, 'certificate status', ow.string.nonEmpty);
 
-        const certificateId = await this.certUtils.registerCertificateWithoutCA(cdfParams.certificatePem, cdfParams.certificateStatus);
+        const r = await this.certUtils.registerCertificateWithoutCA(cdfParams.certificatePem, cdfParams.certificateStatus);
 
         if (stepData.parameters===undefined) {
             stepData.parameters = {};
         }
-        stepData.parameters.CertificateId = certificateId;
+        stepData.parameters.CertificateId = r.certificateId;
+        stepData.parameters.CertificateArn = r.certificateArn;
 
         logger.debug(`RegisterDeviceCertificateWithoutCAStepProcessor: process: exit:`);
     }

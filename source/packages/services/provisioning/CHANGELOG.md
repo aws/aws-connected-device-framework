@@ -1,6 +1,27 @@
 # Change Log - @cdf/provisioning
 
-This log was last generated on Tue, 21 Jun 2022 00:47:55 GMT and should not be manually modified.
+This log was last generated on Thu, 21 Jul 2022 21:10:03 GMT and should not be manually modified.
+
+## 5.3.2
+Thu, 21 Jul 2022 21:10:03 GMT
+
+### Patches
+
+- fixed a bug where certificate ARN was not passed for policy attachment
+
+## 5.3.0
+Fri, 15 Jul 2022 15:57:02 GMT
+
+### Minor changes
+
+- Added cross region support for ACMPCA
+
+## 5.2.0
+Thu, 30 Jun 2022 00:07:08 GMT
+
+### Minor changes
+
+-  updated ACM PCA integration to support registering certificates using CA's
 
 ## 5.1.1
 Tue, 21 Jun 2022 00:47:55 GMT

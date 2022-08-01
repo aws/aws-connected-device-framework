@@ -167,7 +167,7 @@ export class ThingsService {
         else if (cdfOptions.registerDeviceCertificateWithoutCA === true) {
             logger.debug(`things.service preProcessSteps: processing registerDeviceCertificateWithoutCA`);
             await this.registerDeviceCertificateWithoutCAStepProcessor.process(stepData);
-        } else if (cdfOptions.useACMPCA === true) {
+        } else if (cdfOptions.acmpca?.mode) {
             logger.debug(`things.service preProcessSteps: processing useACMPCA`);
             await this.useACMPAStepProcessor.process(stepData);
         }

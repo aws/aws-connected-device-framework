@@ -55,11 +55,29 @@ import {
 import { S3PutObjectCustomResource } from '../customResources/s3PutObject.customResource';
 import { VpcEndpointCustomResource } from '../customResources/vpcEndpoint.customResource';
 import { VpcEndpointCheckCustomResource } from '../customResources/vpcEndpointCheck.customResource';
+import { commandAndControlContainerModule } from '@cdf/commandandcontrol-client';
 import { TYPES } from './types';
 
 import AWS = require('aws-sdk');
+import { StackEventsCustomResource } from '../customResources/stackEvents.customResource';
 // Load everything needed to the Container
 export const container = new Container();
+
+// lambda invoker
+container.bind<LambdaInvokerService>(LAMBDAINVOKE_TYPES.LambdaInvokerService).to(LambdaInvokerService);
+decorate(injectable(), AWS.Lambda);
+container.bind<interfaces.Factory<AWS.Lambda>>(LAMBDAINVOKE_TYPES.LambdaFactory)
+    .toFactory<AWS.Lambda>((ctx: interfaces.Context) => {
+        return () => {
+
+            if (!container.isBound(LAMBDAINVOKE_TYPES.Lambda)) {
+                const lambda = new AWS.Lambda();
+                container.bind<AWS.Lambda>(LAMBDAINVOKE_TYPES.Lambda).toConstantValue(lambda);
+            }
+            return ctx.container.get<AWS.Lambda>(LAMBDAINVOKE_TYPES.Lambda);
+        };
+    });
+container.load(commandAndControlContainerModule);
 
 container.bind<CustomResourceManager>(TYPES.CustomResourceManager).to(CustomResourceManager).inSingletonScope();
 container.bind<AppConfigOverrideCustomResource>(TYPES.AppConfigOverrideCustomResource).to(AppConfigOverrideCustomResource).inSingletonScope();
@@ -92,22 +110,10 @@ container.bind<IotDeviceDefenderCustomResource>(TYPES.IotDeviceDefenderCustomRes
 container.bind<EventSourceCustomResource>(TYPES.EventSourceCustomResource).to(EventSourceCustomResource).inSingletonScope();
 container.bind<EventsCustomResource>(TYPES.EventsCustomResource).to(EventsCustomResource).inSingletonScope();
 
+container.bind<StackEventsCustomResource>(TYPES.StackEventsCustomResource).to(StackEventsCustomResource).inSingletonScope();
 
 
-// lambda invoker
-container.bind<LambdaInvokerService>(LAMBDAINVOKE_TYPES.LambdaInvokerService).to(LambdaInvokerService);
-decorate(injectable(), AWS.Lambda);
-container.bind<interfaces.Factory<AWS.Lambda>>(LAMBDAINVOKE_TYPES.LambdaFactory)
-    .toFactory<AWS.Lambda>((ctx: interfaces.Context) => {
-        return () => {
 
-            if (!container.isBound(LAMBDAINVOKE_TYPES.Lambda)) {
-                const lambda = new AWS.Lambda();
-                container.bind<AWS.Lambda>(LAMBDAINVOKE_TYPES.Lambda).toConstantValue(lambda);
-            }
-            return ctx.container.get<AWS.Lambda>(LAMBDAINVOKE_TYPES.Lambda);
-        };
-    });
 
 // S3
 decorate(injectable(), AWS.S3);
@@ -116,7 +122,7 @@ container.bind<interfaces.Factory<AWS.S3>>(TYPES.S3Factory)
         return () => {
 
             if (!container.isBound(TYPES.S3)) {
-                const s3 = new AWS.S3({region: process.env.AWS_REGION});
+                const s3 = new AWS.S3({ region: process.env.AWS_REGION });
                 container.bind<AWS.S3>(TYPES.S3).toConstantValue(s3);
             }
             return container.get<AWS.S3>(TYPES.S3);
@@ -130,7 +136,7 @@ container.bind<interfaces.Factory<AWS.Iot>>(TYPES.IotFactory)
         return () => {
 
             if (!container.isBound(TYPES.Iot)) {
-                const iot = new AWS.Iot({region: process.env.AWS_REGION});
+                const iot = new AWS.Iot({ region: process.env.AWS_REGION });
                 container.bind<AWS.Iot>(TYPES.Iot).toConstantValue(iot);
             }
             return container.get<AWS.Iot>(TYPES.Iot);
@@ -143,9 +149,39 @@ container.bind<interfaces.Factory<AWS.EC2>>(TYPES.EC2Factory)
         return () => {
 
             if (!container.isBound(TYPES.EC2)) {
-                const ec2 = new AWS.EC2({region: process.env.AWS_REGION});
+                const ec2 = new AWS.EC2({ region: process.env.AWS_REGION });
                 container.bind<AWS.EC2>(TYPES.EC2).toConstantValue(ec2);
             }
             return container.get<AWS.EC2>(TYPES.EC2);
+        };
+    });
+
+
+// STS
+decorate(injectable(), AWS.STS);
+container.bind<interfaces.Factory<AWS.STS>>(TYPES.STSFactory)
+    .toFactory<AWS.STS>(() => {
+        return () => {
+
+            if (!container.isBound(TYPES.STS)) {
+                const sts = new AWS.STS();
+                container.bind<AWS.STS>(TYPES.STS).toConstantValue(sts);
+            }
+            return container.get<AWS.STS>(TYPES.STS);
+        };
+    });
+
+
+// EventBridge
+decorate(injectable(), AWS.EventBridge);
+container.bind<interfaces.Factory<AWS.EventBridge>>(TYPES.EventBridgeFactory)
+    .toFactory<AWS.EventBridge>(() => {
+        return (region: string) => {
+
+            if (!container.isBound(TYPES.EventBridge)) {
+                const eventBridge = new AWS.EventBridge({ region });
+                container.bind<AWS.EventBridge>(TYPES.EventBridge).toConstantValue(eventBridge);
+            }
+            return container.get<AWS.EventBridge>(TYPES.EventBridge);
         };
     });

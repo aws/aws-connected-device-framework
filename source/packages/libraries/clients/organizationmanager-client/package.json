@@ -1,0 +1,79 @@
+{
+  "name": "@cdf/organizationmanager-client",
+  "version": "0.2.0",
+  "description": "CDF Organization Manager Client",
+  "author": "William Sia",
+  "main": "dist/index.js",
+  "types": "dist/index.d.js",
+  "scripts": {
+    "clean": "npx shx rm -rf dist tsconfig.tsbuildinfo bundle.zip .rush .nyc_output *.log",
+    "lint": "npx eslint . --ext '.ts'",
+    "build": "npx tsc -b",
+    "test": "rushx lint && NODE_ENV= NODE_CONFIG_DIR='./src/config' jest --silent --passWithNoTests"
+  },
+  "dependencies": {
+    "@cdf/lambda-invoke": "^3.0.0",
+    "dotenv-flow": "~3.2.0",
+    "inversify": "5.1.1",
+    "inversify-binding-decorators": "4.0.0",
+    "inversify-express-utils": "6.3.2",
+    "js-yaml": "4.1.0",
+    "logform": "2.2.0",
+    "ow": "0.23.0",
+    "readable-stream": "3.6.0",
+    "reflect-metadata": "0.1.13",
+    "superagent": "6.1.0",
+    "winston": "3.3.3",
+    "winston-transport": "4.4.0"
+  },
+  "peerDependencies": {
+    "aws-sdk": "2.804.0"
+  },
+  "devDependencies": {
+    "@types/node": "14.6.1",
+    "@types/superagent": "4.1.10",
+    "@types/dotenv-flow": "~3.2.0",
+    "@rushstack/eslint-config": "2.3.4",
+    "eslint": "7.26.0",
+    "cz-customizable": "~6.3.0",
+    "nyc": "15.1.0",
+    "shx": "0.3.3",
+    "aws-sdk": "2.804.0",
+    "@types/jest": "26.0.23",
+    "@typescript-eslint/eslint-plugin": "4.23.0",
+    "@typescript-eslint/parser": "4.23.0",
+    "jest-create-mock-instance": "1.1.0",
+    "jest-haste-map": "26.6.2",
+    "jest-mock-extended": "1.0.14",
+    "jest-mock": "26.6.2",
+    "jest-resolve": "26.6.2",
+    "jest": "26.6.3",
+    "ts-jest": "26.5.6",
+    "typescript": "4.2.4"
+  },
+  "jest": {
+    "globals": {
+      "NODE_CONFIG_STRICT_MODE": false,
+      "SUPPRESS_NO_CONFIG_WARNING": true
+    },
+    "roots": [
+      "<rootDir>/src"
+    ],
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testMatch": [
+      "<rootDir>/**/?(*.)+(spec|test).ts?(x)"
+    ],
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
+  },
+  "license": "ISC",
+  "private": true
+}

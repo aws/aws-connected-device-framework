@@ -50,3 +50,12 @@ export interface CommonName {
 	commonNameList?:string[];
 	commonNameStatic?:string;
 }
+export interface ACMCertificateChunkResponse {
+	certificates: ACMCertificate[];
+}
+
+export interface ACMCertificate {
+	certificateArn: string;
+	certificate: string;
+	privateKey?: string;
+}

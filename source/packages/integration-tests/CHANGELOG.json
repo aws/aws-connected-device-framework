@@ -2,6 +2,81 @@
   "name": "@cdf/integration-tests",
   "entries": [
     {
+      "version": "3.5.1",
+      "tag": "@cdf/integration-tests_v3.5.1",
+      "date": "Fri, 29 Jul 2022 17:47:13 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Cores are now being removed from past deployment thing groups."
+          }
+        ]
+      }
+    },
+    {
+      "version": "3.5.0",
+      "tag": "@cdf/integration-tests_v3.5.0",
+      "date": "Fri, 29 Jul 2022 02:59:14 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "add testing for organization-manager"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@cdf/organizationmanager-client\" from `^0.1.0` to `^0.2.0`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "3.4.0",
+      "tag": "@cdf/integration-tests_v3.4.0",
+      "date": "Mon, 11 Jul 2022 22:20:13 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "Added new methods to deassociate all devices and groups from a device."
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@cdf/assetlibrary-client\" from `^5.0.5` to `^5.1.0`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "3.3.0",
+      "tag": "@cdf/integration-tests_v3.3.0",
+      "date": "Thu, 30 Jun 2022 00:07:08 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": " updated ACM PCA integration to support registering certificates using CA's"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@cdf/provisioning-client\" from `^5.1.0` to `^5.2.0`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "3.2.3",
+      "tag": "@cdf/integration-tests_v3.2.3",
+      "date": "Wed, 29 Jun 2022 00:56:16 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@cdf/commandandcontrol-client\" from `^0.1.2` to `^1.0.0`"
+          }
+        ]
+      }
+    },
+    {
       "version": "3.2.2",
       "tag": "@cdf/integration-tests_v3.2.2",
       "date": "Tue, 21 Jun 2022 00:47:55 GMT",

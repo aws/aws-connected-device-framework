@@ -8,7 +8,6 @@ import { VpcInstaller } from "../commands/modules/infrastructure/vpc";
 import { AssetLibraryInstaller } from "../commands/modules/service/assetLibrary";
 import { AssetLibraryHistoryInstaller } from "../commands/modules/service/assetLibraryHistory";
 import { AuthDeviceCertInstaller } from "../commands/modules/service/authDeviceCert";
-import { AuthJwtInstaller } from "../commands/modules/infrastructure/authJwt";
 import { BulkCertificatesInstaller } from "../commands/modules/service/bulkCerts";
 import { CertificateActivatorInstaller } from "../commands/modules/service/certificateActivator";
 import { CertificateVendorInstaller } from "../commands/modules/service/certificateVendor";
@@ -23,6 +22,7 @@ import { FleetSimulatorInstaller } from "../commands/modules/service/fleetSimula
 import { DevicePatcherInstaller } from "../commands/modules/service/devicePatcher";
 import { AssetLibraryExportInstaller } from "../commands/modules/service/assetLibraryExport";
 import { CommandAndControlInstaller } from "../commands/modules/service/commandAndControl";
+import { OrganizationManagerInstaller } from "../commands/modules/service/organizationManager";
 
 export type ModuleName =
   // infrastructure modules:
@@ -31,7 +31,6 @@ export type ModuleName =
   | "eventBus"
   | "kms"
   | "openSsl"
-  | "authJwt"
   // service modules:
   | "assetLibrary"
   | "assetLibraryExport"
@@ -48,6 +47,7 @@ export type ModuleName =
   | "greengrass2InstallerConfigGenerators"
   | "greengrass2Provisioning"
   | "notifications"
+  | "organizationManager"
   | "provisioning"
   | "vpc";
 
@@ -69,10 +69,10 @@ export interface PostmanEnvironment {
   enabled: boolean;
 }
 export interface ServiceModule extends Module {
-  generateLocalConfiguration: (answers: Answers) => Promise<string>;
-  generateApplicationConfiguration: (answers: Answers) => string;
+  stackName: string;
 }
 export interface RestModule extends ServiceModule {
+  localProjectDir: string;
   generatePostmanEnvironment: (answers: Answers) => Promise<PostmanEnvironment>;
 }
 
@@ -87,7 +87,6 @@ export const loadModules = (environment: string): Module[] => {
     new EvenBusInstaller(environment),
     new VpcInstaller(environment),
     new OpenSslInstaller(environment),
-    new AuthJwtInstaller(environment),
     // service modules:
     new AssetLibraryInstaller(environment),
     new AssetLibraryHistoryInstaller(environment),
@@ -105,6 +104,7 @@ export const loadModules = (environment: string): Module[] => {
     new Greengrass2ProvisioningInstaller(environment),
     new NotificationsInstaller(environment),
     new ProvisioningInstaller(environment),
+    new OrganizationManagerInstaller(environment)
   ];
   return modules;
 };

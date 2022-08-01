@@ -64,6 +64,12 @@ export class MessagesService {
         message.status = 'identifying_targets';
         message.createdAt = new Date().getTime();
 
+        if (message.targets?.awsIoT?.thingGroups) {
+            for(const group of message.targets.awsIoT.thingGroups) {
+                ow(group.name,ow.string.nonEmpty)
+            }
+        }
+
         const command = (await this.commandsDao.get([message.commandId]))?.[0];
         if (command===undefined) {
             throw new Error(`NOT_FOUND: command with id '${message.commandId}' not found`);
@@ -328,13 +334,13 @@ export class MessagesService {
             r[0]?.forEach(async (recipient) => {
                 // delete the recipient, processing a page at a time. this will allow the delete method to be safely rerun in the edge case where deletion of millions of recipients of a message may fail due to exceeding lambda execution time limits
                 futures.push( 
-                    limit(()=> this.sqsSendRecipientForDeletion(messageId, recipient.thingName))
+                    limit(()=> this.sqsSendRecipientForDeletion(messageId, recipient.id))
                 );
             });
             await Promise.all(futures);
 
             exclusiveStart = r[1];
-            if (exclusiveStart?.thingName===undefined) {
+            if (exclusiveStart?.targetName===undefined) {
                 break;
             }
         }

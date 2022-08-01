@@ -16,16 +16,18 @@ import { ModuleName, RestModule, PostmanEnvironment } from '../../../models/modu
 import { ConfigBuilder } from "../../../utils/configBuilder";
 import ow from 'ow';
 import inquirer from 'inquirer';
+import path from 'path';
 import { customDomainPrompt } from '../../../prompts/domain.prompt';
 import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
-
-import { deleteStack, getStackOutputs, getStackResourceSummaries, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
+import { deleteStack, getStackOutputs, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
+import { getMonorepoRoot } from '../../../prompts/paths.prompt';
 
 export class AssetLibraryHistoryInstaller implements RestModule {
 
   public readonly friendlyName = 'Asset Library History';
   public readonly name = 'assetLibraryHistory';
+  public readonly localProjectDir = 'assetlibraryhistory';
 
   public readonly type = 'SERVICE';
   public readonly dependsOnMandatory: ModuleName[] = [
@@ -35,7 +37,7 @@ export class AssetLibraryHistoryInstaller implements RestModule {
   ];
 
   public readonly dependsOnOptional: ModuleName[] = [];
-  private readonly stackName: string;
+  public readonly stackName: string;
 
   constructor(environment: string) {
     this.stackName = `cdf-assetlibraryhistory-${environment}`
@@ -84,13 +86,15 @@ export class AssetLibraryHistoryInstaller implements RestModule {
   }
 
   public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [{
       title: `Packaging module '${this.name}'`,
       task: async () => {
         await packageAndUploadTemplate({
           answers: answers,
           serviceName: 'assetlibrary-history',
-          templateFile: '../assetlibraryhistory/infrastructure/cfn-assetLibraryHistory.yml',
+          templateFile: 'infrastructure/cfn-assetLibraryHistory.yml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'assetlibraryhistory'),
           parameterOverrides: this.getParameterOverrides(answers),
         });
       },
@@ -105,6 +109,7 @@ export class AssetLibraryHistoryInstaller implements RestModule {
     ow(answers.environment, ow.string.nonEmpty);
     ow(answers.assetLibraryHistory, ow.object.nonEmpty);
 
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [];
 
     if ((answers.assetLibraryHistory.redeploy ?? true) === false) {
@@ -118,7 +123,8 @@ export class AssetLibraryHistoryInstaller implements RestModule {
           answers: answers,
           stackName: this.stackName,
           serviceName: 'assetlibrary-history',
-          templateFile: '../assetlibraryhistory/infrastructure/cfn-assetLibraryHistory.yml',
+          templateFile: 'infrastructure/cfn-assetLibraryHistory.yml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'assetlibraryhistory'),
           parameterOverrides: this.getParameterOverrides(answers),
           needsPackaging: true,
           needsCapabilityNamedIAM: true,
@@ -130,7 +136,7 @@ export class AssetLibraryHistoryInstaller implements RestModule {
     return [answers, tasks];
   }
 
-  public generateApplicationConfiguration(answers: Answers): string {
+  private generateApplicationConfiguration(answers: Answers): string {
     const configBuilder = new ConfigBuilder()
     configBuilder
       .add(`CUSTOMDOMAIN_BASEPATH`, answers.assetLibraryHistory.customDomainBasePath)
@@ -147,14 +153,6 @@ export class AssetLibraryHistoryInstaller implements RestModule {
       value: byOutputKey('ApiGatewayUrl'),
       enabled: true
     }
-  }
-
-  public async generateLocalConfiguration(answers: Answers): Promise<string> {
-    const byResourceKey = await getStackResourceSummaries(this.stackName, answers.region)
-    const configBuilder = new ConfigBuilder()
-    configBuilder
-      .add(`AWS_DYNAMODB_TABLES_EVENTS`, byResourceKey('HistoryTable'))
-    return configBuilder.config;
   }
 
   public async delete(answers: Answers): Promise<ListrTask[]> {

@@ -13,7 +13,7 @@
 import inquirer from 'inquirer';
 import { ListrTask } from 'listr2';
 import ow from 'ow';
-
+import path from 'path';
 
 import { Answers } from '../../../models/answers';
 import { ModuleName, RestModule, PostmanEnvironment } from '../../../models/modules';
@@ -21,14 +21,16 @@ import { ConfigBuilder } from "../../../utils/configBuilder";
 import { customDomainPrompt } from '../../../prompts/domain.prompt';
 import { redeployIfAlreadyExistsPrompt } from '../../../prompts/modules.prompt';
 import { applicationConfigurationPrompt } from "../../../prompts/applicationConfiguration.prompt";
-import { deleteStack, getStackOutputs, getStackParameters, getStackResourceSummaries, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
+import { deleteStack, getStackOutputs, getStackResourceSummaries, packageAndDeployStack, packageAndUploadTemplate } from '../../../utils/cloudformation.util';
 import { enableAutoScaling, provisionedConcurrentExecutions } from '../../../prompts/autoscaling.prompt';
 import { includeOptionalModule } from '../../../utils/modules.util';
+import { getMonorepoRoot } from '../../../prompts/paths.prompt';
 
 export class Greengrass2ProvisioningInstaller implements RestModule {
 
   public readonly friendlyName = 'Greengrass V2 Provisioning';
   public readonly name = 'greengrass2Provisioning';
+  public readonly localProjectDir = 'greengrass2-provisioning';
 
   public readonly type = 'SERVICE';
   public readonly dependsOnMandatory: ModuleName[] = [
@@ -41,7 +43,7 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
     'greengrass2InstallerConfigGenerators'];
   public readonly dependsOnOptional: ModuleName[] = ['assetLibrary'];
 
-  private readonly stackName: string;
+  public readonly stackName: string;
   private readonly defaultInstallerConfigGenerators: Record<string, string>;
 
   constructor(environment: string) {
@@ -66,6 +68,13 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
 
       updatedAnswers = await inquirer.prompt([
         {
+          message: `Do you want the module to publish all operation events to CDF EventBridge?`,
+          type: 'confirm',
+          name: 'greengrass2Provisioning.enablePublishEvents',
+          default: answers.greengrass2Provisioning?.enablePublishEvents ?? true,
+          askAnswered: true
+        },
+        {
           message: 'When using the Asset Library module as an enhanced device registry, the Greengrass2 Provisioning module can use it to help search across devices and groups to define the deployment targets. You have not chosen to install the Asset Library module - would you like to install it?\nNote: as there is additional cost associated with installing the Asset Library module, ensure you familiarize yourself with its capabilities and benefits in the online CDF github documentation.',
           type: 'confirm',
           name: 'greengrass2Provisioning.useAssetLibrary',
@@ -87,7 +96,7 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
         else {
           const installerConfigGeneratorsAsStringList = (
             Object.entries(updatedAnswers.greengrass2Provisioning.installerConfigGenerators)
-            .map(([k, v]) => ` * ${k}: ${v}`).join("\n")
+              .map(([k, v]) => ` * ${k}: ${v}`).join("\n")
           );
           (
             { configGeneratorsPromptAction } = await inquirer.prompt([
@@ -96,9 +105,9 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
                 name: 'configGeneratorsPromptAction',
                 message: `The following config generator aliases are currently configured:\n${installerConfigGeneratorsAsStringList}\nWhat do you want to do next?`,
                 choices: [
-                  {name: 'confirm list and continue', value: configGeneratorsPromptActionChoices.Confirm},
-                  {name: 'add another config generator alias', value: configGeneratorsPromptActionChoices.Add},
-                  {name: 'delete an entry from the list', value: configGeneratorsPromptActionChoices.Delete},
+                  { name: 'confirm list and continue', value: configGeneratorsPromptActionChoices.Confirm },
+                  { name: 'add another config generator alias', value: configGeneratorsPromptActionChoices.Add },
+                  { name: 'delete an entry from the list', value: configGeneratorsPromptActionChoices.Delete },
                 ],
                 default: configGeneratorsPromptActionChoices.Confirm,
               }
@@ -107,7 +116,7 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
         }
 
         if (configGeneratorsPromptAction === configGeneratorsPromptActionChoices.Add) {
-          const newConfigGenerator: {alias: string, lambda: string} = await inquirer.prompt([
+          const newConfigGenerator: { alias: string, lambda: string } = await inquirer.prompt([
             {
               type: 'input',
               name: 'alias',
@@ -140,7 +149,7 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
           updatedAnswers.greengrass2Provisioning.installerConfigGenerators[newConfigGenerator.alias] = newConfigGenerator.lambda;
         }
         else if (configGeneratorsPromptAction === configGeneratorsPromptActionChoices.Delete) {
-          const configGeneratorAliasesToDelete: {list: string[]} = await inquirer.prompt([
+          const configGeneratorAliasesToDelete: { list: string[] } = await inquirer.prompt([
             {
               type: 'checkbox',
               name: 'list',
@@ -193,6 +202,7 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
       if (value !== undefined) parameterOverrides.push(`${key}=${value}`)
     };
 
+    addIfSpecified('EnablePublishEvents', answers.greengrass2Provisioning.enablePublishEvents);
     addIfSpecified('ApplyAutoscaling', answers.greengrass2Provisioning.enableAutoScaling);
     addIfSpecified('ProvisionedConcurrentExecutions', answers.greengrass2Provisioning.provisionedConcurrentExecutions);
     addIfSpecified('CognitoUserPoolArn', answers.apigw.cognitoUserPoolArn);
@@ -203,13 +213,15 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
   }
 
   public async package(answers: Answers): Promise<[Answers, ListrTask[]]> {
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [{
       title: `Packaging module '${this.name}'`,
       task: async () => {
         await packageAndUploadTemplate({
           answers: answers,
           serviceName: 'greengrass2-provisioning',
-          templateFile: '../greengrass2-provisioning/infrastructure/cfn-greengrass2-provisioning.yml',
+          templateFile: 'infrastructure/cfn-greengrass2-provisioning.yml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'greengrass2-provisioning'),
           parameterOverrides: this.getParameterOverrides(answers),
         });
       },
@@ -228,6 +240,7 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
     ow(answers.apigw.templateSnippetS3UriBase, ow.string.nonEmpty);
     ow(answers.apigw.cloudFormationTemplate, ow.string.nonEmpty);
 
+    const monorepoRoot = await getMonorepoRoot();
     const tasks: ListrTask[] = [];
 
     if ((answers.greengrass2Provisioning.redeploy ?? true) === false) {
@@ -261,7 +274,8 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
           answers: answers,
           stackName: this.stackName,
           serviceName: 'greengrass2-provisioning',
-          templateFile: '../greengrass2-provisioning/infrastructure/cfn-greengrass2-provisioning.yml',
+          templateFile: 'infrastructure/cfn-greengrass2-provisioning.yml',
+          cwd: path.join(monorepoRoot, 'source', 'packages', 'services', 'greengrass2-provisioning'),
           parameterOverrides: this.getParameterOverrides(answers),
           needsPackaging: true,
           needsCapabilityNamedIAM: true,
@@ -283,7 +297,7 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
     }
   }
 
-  public generateApplicationConfiguration(answers: Answers): string {
+  private generateApplicationConfiguration(answers: Answers): string {
     const configBuilder = new ConfigBuilder()
 
     configBuilder
@@ -297,29 +311,6 @@ export class Greengrass2ProvisioningInstaller implements RestModule {
 
     return configBuilder.config;
   }
-
-  public async generateLocalConfiguration(answers: Answers): Promise<string> {
-
-    const byParameterKey = await getStackParameters(this.stackName, answers.region)
-    const byResourceLogicalId = await getStackResourceSummaries(this.stackName, answers.region)
-
-    const configBuilder = new ConfigBuilder()
-      .add(`AWS_DYNAMODB_TABLE_NAME`, byResourceLogicalId('Table'))
-      .add(`AWS_EVENTBRIDGE_BUS_NAME`, byParameterKey('EventBridgeBusName'))
-      .add(`AWS_SQS_QUEUES_CORE_TASKS=`, byResourceLogicalId('CoreTasksQueue'))
-      .add(`AWS_SQS_QUEUES_DEPLOYMENT_TASKS`, byResourceLogicalId('DeploymentTasksQueue'))
-      .add(`AWS_SQS_QUEUES_DEVICE_TASKS`, byResourceLogicalId('DeploymentTasksQueue'))
-      .add(`AWS_SQS_QUEUES_CORE_TASKS_STATUS`, byResourceLogicalId('CoreTasksStatusQueue'))
-      .add(`AWS_S3_ARTIFACTS_BUCKET`, byParameterKey('ArtifactsBucket'))
-      .add(`AWS_S3_ARTIFACTS_PREFIX`, byParameterKey('ArtifactsKeyPrefix'))
-      .add(`PROVISIONING_API_FUNCTION_NAME`, byParameterKey('ProvisioningFunctionName'))
-      .add(`ASSETLIBRARY_API_FUNCTION_NAME`, byParameterKey('AssetLibraryFunctionName'))
-      .add(`CDF_SERVICE_EVENTBRIDGE_SOURCE`, byParameterKey('CdfServiceEventBridgeSource'))
-      .add(`INSTALLER_CONFIG_GENERATORS`, byParameterKey('InstallerConfigGenerators'))
-
-    return configBuilder.config;
-  }
-
 
   public async delete(answers: Answers): Promise<ListrTask[]> {
     const tasks: ListrTask[] = [];

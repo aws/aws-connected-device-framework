@@ -1,0 +1,44 @@
+title Organizational Unit Deletion
+
+participant "<facade>" as f
+participant "<CDF>\nOrganization Manager" as om
+participant "<AWS>\nOrganizations" as ao
+
+note over f, om
+ 1) Delete the Organizational Unit on Facade API
+end note
+
+f -> om: "DELETE /organizationalUnits/<ou-name>"
+activate om
+
+alt No Accounts Attached to Organizational Unit
+
+opt Normal Mode
+    om -> om : Set the Organizational Unit status to INACTIVE
+    om --> f : <204> No Content
+else Admin Mode
+    om -> ao : Delete Organizational Unit
+    activate ao 
+
+    alt Deletion Successful
+        ao --> om : Organizational Unit Deletion Successful
+        om -> om: Set the Organizational Unit status to INACTIVE
+        om --> f : <204> No Content
+    else Deletion Failed
+        ao --> om : Organizational Unit Deletion Failed
+        deactivate ao
+        om --> f : <400> Bad Request
+    end
+end
+    
+
+else Accounts Attached to Organizational Unit
+    om --> f : <409> Conflict
+
+else Organizational Unit Does Not Exists
+    om --> f : <404> Not Found
+
+
+end
+
+deactivate om
