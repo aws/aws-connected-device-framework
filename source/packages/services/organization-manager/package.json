@@ -15,7 +15,6 @@
     "start": "rushx build && APP_CONFIG_DIR=${PWD}/src/config nodemon dist/lambda_proxy.js",
     "start:eventbridge": "rushx build && APP_CONFIG_DIR=${PWD}/src/config  node dist/eventbridge_handler.js",
     "bundle": "../../../infrastructure/bundle-package.bash organization-manager"
-
   },
   "dependencies": {
     "@cdf/errors": "^4.0.0",
@@ -23,7 +22,7 @@
     "@cdf/lambda-invoke": "^3.0.0",
     "@cdf/config-inject": "^4.0.0",
     "@cdf/express-middleware": "^3.0.0",
-    "aws-sdk": "2.804.0",
+    "aws-sdk": "2.814.0",
     "express": "4.17.1",
     "inversify": "5.1.1",
     "inversify-binding-decorators": "4.0.0",
