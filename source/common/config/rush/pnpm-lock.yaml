@@ -148,7 +148,7 @@ specifiers:
   listr2: ~3.13.5
   lodash: 4.17.21
   luxon: 2.3.0
-  moment: 2.29.2
+  moment: 2.29.4
   morgan: 1.10.0
   multer: 1.4.5-lts.1
   mustache: 4.2.0
@@ -320,7 +320,7 @@ dependencies:
   listr2: 3.13.6
   lodash: 4.17.21
   luxon: 2.3.0
-  moment: 2.29.2
+  moment: 2.29.4
   morgan: 1.10.0
   multer: 1.4.5-lts.1
   mustache: 4.2.0
@@ -6016,8 +6016,8 @@ packages:
       xml2js: 0.4.19
     dev: false
 
-  /aws-sdk/2.804.0:
-    resolution: {integrity: sha512-a02pZdjL06MunElAZPPEjpghOp/ZA+16f+t4imh1k9FCDpsNVQrT23HRq/PMvRADA5uZZRkYwX8r9o6oH/1RlA==}
+  /aws-sdk/2.814.0:
+    resolution: {integrity: sha512-empd1m/J/MAkL6d9OeRpmg9thobULu0wk4v8W3JToaxGi2TD7PIdvE6yliZKyOVAdJINhBWEBhxR4OUIHhcGbQ==}
     engines: {node: '>= 0.8.0'}
     dependencies:
       buffer: 4.9.2
@@ -11475,8 +11475,8 @@ packages:
       obliterator: 1.6.1
     dev: false
 
-  /moment/2.29.2:
-    resolution: {integrity: sha512-UgzG4rvxYpN15jgCmVJwac49h9ly9NurikMWGPdVxm8GZD6XjkKPxDTjQQ43gtGgnV3X0cAyWDdP2Wexoquifg==}
+  /moment/2.29.4:
+    resolution: {integrity: sha512-5LC9SOxjSc2HF6vO2CyuTDNivEdoz2IvyJJGj6X8DJ0eFyfszE0QiEd+iXmBvUP3WHxSjFH/vIsA0EN00cgr8w==}
     dev: false
 
   /morgan/1.10.0:
@@ -14965,7 +14965,7 @@ packages:
     dev: false
 
   file:projects/assetlibrary-export.tgz:
-    resolution: {integrity: sha512-ehW/t2URC77g0XmGSSdQ2tYY8PuHxIAwkMkEeCFV+KpzsozmmWAr/IEwfy36uMoYKQDDli4M87kxsXoBWc/ROw==, tarball: file:projects/assetlibrary-export.tgz}
+    resolution: {integrity: sha512-MUT+4SVzbLKbvVT+cshquRxwR95Zx2ctZNbZQWJOHnMhykp91OREr1oZrJmxHLsB8y5lQHCBTEevQB1mEXCgbg==, tarball: file:projects/assetlibrary-export.tgz}
     name: '@rush-temp/assetlibrary-export'
     version: 0.0.0
     dependencies:
@@ -15006,7 +15006,7 @@ packages:
       logform: 2.1.2
       luxon: 2.3.0
       mime: 1.6.0
-      moment: 2.29.2
+      moment: 2.29.4
       nodemon: 2.0.6
       nyc: 15.1.0
       ow: 0.15.0
@@ -16399,7 +16399,7 @@ packages:
     dev: false
 
   file:projects/integration-tests.tgz_@aws-sdk+signature-v4-crt@3.38.0:
-    resolution: {integrity: sha512-ohmM++fqCPKTQw64lOmkijtvbYEmS/G6FMUconDNVRIsToFUhzUx6sgjun7bHEHvvcSz7ycZcEoTPMukGv9x2w==, tarball: file:projects/integration-tests.tgz}
+    resolution: {integrity: sha512-rhdY095IL4HV+JcPJ+u5Cw/b/MSLmxmFdlK5+Wc9L4684KoAmuc0iUhyo1vulLJHOGqNPXsG7OHONCj1UO8frw==, tarball: file:projects/integration-tests.tgz}
     id: file:projects/integration-tests.tgz
     name: '@rush-temp/integration-tests'
     version: 0.0.0
@@ -16583,7 +16583,7 @@ packages:
     dev: false
 
   file:projects/organization-manager.tgz:
-    resolution: {integrity: sha512-RL3Pn6eg8A1VQJmOKanOnTTCidAOiZn9+c//0GBghbvPriyxo2ZeYQQBQ0ihnNNdrTkFmuoi1JP8DKIpzwAWcA==, tarball: file:projects/organization-manager.tgz}
+    resolution: {integrity: sha512-G8e8FAxl5IWkE4WYBISvv6M5mHV5JdJuNRlNQH8Sywlm7a5d0HgJLicMI0bgbhiApw8X4VNTYuyxJeUKROKlzQ==, tarball: file:projects/organization-manager.tgz}
     name: '@rush-temp/organization-manager'
     version: 0.0.0
     dependencies:
@@ -16598,7 +16598,7 @@ packages:
       '@typescript-eslint/eslint-plugin': 4.23.0_7cfaee78cda985ff9bc3d8b5cb92a136
       '@typescript-eslint/parser': 4.23.0_eslint@7.26.0+typescript@4.2.4
       aws-lambda: 1.0.7
-      aws-sdk: 2.804.0
+      aws-sdk: 2.814.0
       body-parser: 1.19.2
       cors: 2.8.5
       eslint: 7.26.0
@@ -16636,7 +16636,7 @@ packages:
     dev: false
 
   file:projects/organizationmanager-client.tgz:
-    resolution: {integrity: sha512-9dFwAzNXBEnykcJ3XYarggwvpn6OEi1QPt0KL+H3n758PBrIE8Ms1HtOtudyvRrQSBjKVExZhTXwOu7lIrQBvQ==, tarball: file:projects/organizationmanager-client.tgz}
+    resolution: {integrity: sha512-rLZLc6Rq2mwPYC4n1DUmSBcE3fBNWwJQ+7zuWqNOYsu/RUIBZtpbVTFuKQYH/iapmg1hICB24jRi5jkBkV8WyA==, tarball: file:projects/organizationmanager-client.tgz}
     name: '@rush-temp/organizationmanager-client'
     version: 0.0.0
     dependencies:
@@ -16647,7 +16647,7 @@ packages:
       '@types/superagent': 4.1.10
       '@typescript-eslint/eslint-plugin': 4.23.0_7cfaee78cda985ff9bc3d8b5cb92a136
       '@typescript-eslint/parser': 4.23.0_eslint@7.26.0+typescript@4.2.4
-      aws-sdk: 2.804.0
+      aws-sdk: 2.814.0
       cz-customizable: 6.3.0
       dotenv-flow: 3.2.0
       eslint: 7.26.0
