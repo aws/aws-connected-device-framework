@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/assetlibrary-export",
+      "comment": "update momentjs dependencies",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/assetlibrary-export",
+  "email": "willsia@amazon.com"
+}

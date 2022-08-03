@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/organizationmanager-client",
+      "comment": "update aws-sdk version",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/organizationmanager-client",
+  "email": "willsia@amazon.com"
+}
