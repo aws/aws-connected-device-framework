@@ -1,6 +1,13 @@
 # Change Log - @cdf/assetlibrary-export
 
-This log was last generated on Fri, 24 Jun 2022 21:00:45 GMT and should not be manually modified.
+This log was last generated on Wed, 03 Aug 2022 02:00:13 GMT and should not be manually modified.
+
+## 3.1.4
+Wed, 03 Aug 2022 02:00:13 GMT
+
+### Patches
+
+- update momentjs dependencies
 
 ## 3.1.3
 Fri, 24 Jun 2022 21:00:45 GMT

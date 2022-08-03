@@ -2,6 +2,18 @@
   "name": "@cdf/organizationmanager-client",
   "entries": [
     {
+      "version": "0.2.1",
+      "tag": "@cdf/organizationmanager-client_v0.2.1",
+      "date": "Wed, 03 Aug 2022 02:00:13 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "update aws-sdk version"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.2.0",
       "tag": "@cdf/organizationmanager-client_v0.2.0",
       "date": "Fri, 29 Jul 2022 02:59:14 GMT",

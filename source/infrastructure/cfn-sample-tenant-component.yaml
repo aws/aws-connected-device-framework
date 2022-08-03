@@ -47,6 +47,10 @@ Resources:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: !Sub "cdf-tenant-${AWS::AccountId}-artifacts-${AWS::Region}"
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
       PublicAccessBlockConfiguration:
         BlockPublicAcls: true
         BlockPublicPolicy: true
@@ -68,7 +72,6 @@ Resources:
       Name: !Sub "/cdf/facade-tenant/${Environment}/key"
       Type: String
       Value: !Ref CDFTenantKmsKey
-
 
   TenantAccountBus:
     Type: AWS::Events::EventBus
@@ -107,11 +110,11 @@ Resources:
       Description: !Sub "Cross account rule created by Account ${AWS::AccountId}"
       EventBusName:
         !Join [
-            ":",
+          ":",
           [
             !Sub "arn:aws:events:${AWS::Region}",
-            !Select [ 4, !Split [ ":", !Ref ControlPlaneBusName ] ],
-            !Select [ 5, !Split [ ":", !Ref ControlPlaneBusName ] ],
+            !Select [4, !Split [":", !Ref ControlPlaneBusName]],
+            !Select [5, !Split [":", !Ref ControlPlaneBusName]],
           ],
         ]
       EventPattern:
