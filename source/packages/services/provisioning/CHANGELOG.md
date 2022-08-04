@@ -1,6 +1,13 @@
 # Change Log - @cdf/provisioning
 
-This log was last generated on Thu, 21 Jul 2022 21:10:03 GMT and should not be manually modified.
+This log was last generated on Thu, 04 Aug 2022 18:39:36 GMT and should not be manually modified.
+
+## 5.3.3
+Thu, 04 Aug 2022 18:39:36 GMT
+
+### Patches
+
+- fix small typo in documentation
 
 ## 5.3.2
 Thu, 21 Jul 2022 21:10:03 GMT

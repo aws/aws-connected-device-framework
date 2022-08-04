@@ -1,6 +1,13 @@
 # Change Log - @cdf/installer
 
-This log was last generated on Fri, 29 Jul 2022 02:59:14 GMT and should not be manually modified.
+This log was last generated on Thu, 04 Aug 2022 18:39:36 GMT and should not be manually modified.
+
+## 1.3.1
+Thu, 04 Aug 2022 18:39:36 GMT
+
+### Patches
+
+- fix installer issue when specifying PCA alias
 
 ## 1.3.0
 Fri, 29 Jul 2022 02:59:14 GMT
