@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/provisioning",
+      "comment": "fix small typo in documentation",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/provisioning",
+  "email": ""
+}

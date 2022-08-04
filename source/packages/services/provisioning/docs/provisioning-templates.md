@@ -221,7 +221,7 @@ Specify names of existing policies, or name and definition of new policies to cr
 ### `$.CDF.useACMPCA`
 
 
-If `$.CDF.useACMPCA` is provied with a value of `REGISTER_WITH_CA` or `REGISTER_WITHOUT_CA`, ACM PCA is used to issue a device certificate which is then registered within AWS IoT. Refer to [ACM Private CA Integration](./acmpca-integration.md) for further details.
+If `$.CDF.useACMPCA` is provided with a value of `REGISTER_WITH_CA` or `REGISTER_WITHOUT_CA`, ACM PCA is used to issue a device certificate which is then registered within AWS IoT. Refer to [ACM Private CA Integration](./acmpca-integration.md) for further details.
 
 When `REGISTER_WITH_CA` is provided, the device certificate will be registered and signed using a custom registered CA that represents the ACM PCA CA. If instead `REGISTER_WITHOUT_CA` then the device certificate is registered without using a CA.
 
