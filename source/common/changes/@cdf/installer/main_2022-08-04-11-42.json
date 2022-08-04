@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@cdf/installer",
+      "comment": "fix installer issue when specifying PCA alias",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cdf/installer",
+  "email": ""
+}
