@@ -228,6 +228,15 @@ A template is what defines what components should be deployed to a Greengrass2 c
 
 Replace `<template-name>` with the name of the template.
 
+**NOTE: The template name is used as part of creating a thing group name, thing group applies limitation on how the name can be defined. Refer to the points below for quick reference and refer to the link  on the thing group naming convention from the developer document**
+[Thing Group Developer Document](https://docs.aws.amazon.com/iot/latest/developerguide/thing-groups.html)
+
+```
+- Thing group names can't contain international characters, such as û, é and ñ.
+- You should not use personally identifiable information in your thing group name. The thing group name can appear in unencrypted communications and reports.
+- You should not use a colon character ( : ) in a thing group name. The colon character is used as a delimiter by other AWS IoT services and this can cause them to parse strings with thing group names incorrectly. 
+```
+
 #### Request
 
 ```sh
