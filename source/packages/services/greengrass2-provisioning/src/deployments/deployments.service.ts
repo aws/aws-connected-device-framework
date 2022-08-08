@@ -52,35 +52,6 @@ export class DeploymentsService {
         this.ggv2 = ggv2Factory();
     }
 
-    // public async get(name:string): Promise<Core> {
-    //     logger.debug(`deployments.service get: in: name:${name}`);
-
-    //     ow(name, ow.string.nonEmpty);
-
-    //     const coreFuture = this.coresDao.get(name);
-    //     const installedComponentsFuture = this.ggv2.send(
-    //         new ListInstalledComponentsCommand({
-    //             coreDeviceThingName: name
-    //             // TODO: manage pagination of installed components
-    //     }));
-    //     const [core, components] = await Promise.all([coreFuture, installedComponentsFuture]);
-    //     logger.silly(`deployments.service get: components:${JSON.stringify(components)}`);
-
-    //     core.installedComponents= [];
-    //     if ((components.installedComponents?.length??0)>0) {
-    //         for (const c of components.installedComponents) {
-    //             core.installedComponents.push({
-    //                 key: c.componentName,
-    //                 version: c.componentVersion
-    //                 // TODO: determine whether installed component matches what is on template or not
-    //             })
-    //         }
-    //     }
-
-    //     logger.debug(`deployments.service get: exit: ${JSON.stringify(core)}`);
-    //     return core;
-    // }
-
     public async createDeployments(taskId: string, deployments: NewDeployment[]): Promise<Deployment[]> {
         logger.debug(`deployments.service createDeployments: in: taskId:${taskId}, deployments: ${JSON.stringify(deployments)}`);
 
@@ -147,6 +118,7 @@ export class DeploymentsService {
         try {
             await this.ggv2.send(new GetCoreDeviceCommand({ coreDeviceThingName: deployment.coreName }));
         } catch (e) {
+            logger.error(`deployments.service createDeployment: error: ${JSON.stringify(e)}`);
             if (e.name === 'ResourceNotFoundException') {
                 this.markAsFailed(deployment, 'Core device not registered with Greengrass V2');
             } else {
@@ -181,6 +153,7 @@ export class DeploymentsService {
                     logger.silly(`deployments.service createDeployment: CreateThingGroupCommandOutput: ${JSON.stringify(r)}`);
                     thingGroupArn = r.thingGroupArn;
                 } catch (e) {
+                    logger.error(`deployments.service createDeployment: error: ${JSON.stringify(e)}`);
                     if (e.name === 'ResourceAlreadyExistsException') {
                         logger.warn(`deployments.service createDeployment: thingGroup: ${thingGroupName} already exists`);
                         const r = await this.iot.send(new DescribeThingGroupCommand({ thingGroupName }));
@@ -228,6 +201,7 @@ export class DeploymentsService {
                         logger.silly(`deployments.service createDeployment: TagResourceCommandOutput: ${JSON.stringify(tagResourceOutput)}`);
 
                     } catch (e) {
+                        logger.error(`deployments.service createDeployment: error: ${JSON.stringify(e)}`);
                         this.markAsFailed(deployment, `Failed to create deployment: ${e.name}`);
                     }
                 }
@@ -237,6 +211,7 @@ export class DeploymentsService {
                     try {
                         await this.templatesService.associateDeployment(template)
                     } catch (e) {
+                        logger.error(`deployments.service createDeployment: error: ${JSON.stringify(e)}`);
                         this.markAsFailed(deployment, `Failed to associate deployment with template: ${e.name}`);
                     }
                 }
@@ -272,6 +247,7 @@ export class DeploymentsService {
                     thingGroupName: template.deployment.thingGroupName
                 }));
             } catch (e) {
+                logger.error(`deployments.service createDeployment: error: ${JSON.stringify(e)}`);
                 this.markAsFailed(deployment, `Failed to add core device to deployment thing group target: ${e.name}`);
             }
         }

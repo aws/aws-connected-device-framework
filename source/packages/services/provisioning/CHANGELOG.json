@@ -2,6 +2,18 @@
   "name": "@cdf/provisioning",
   "entries": [
     {
+      "version": "5.3.3",
+      "tag": "@cdf/provisioning_v5.3.3",
+      "date": "Thu, 04 Aug 2022 18:39:36 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix small typo in documentation"
+          }
+        ]
+      }
+    },
+    {
       "version": "5.3.2",
       "tag": "@cdf/provisioning_v5.3.2",
       "date": "Thu, 21 Jul 2022 21:10:03 GMT",

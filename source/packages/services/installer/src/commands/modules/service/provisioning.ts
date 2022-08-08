@@ -116,69 +116,78 @@ export class ProvisioningInstaller implements RestModule {
         },
       }], updatedAnswers);
 
-      updatedAnswers = await inquirer.prompt([{
-        message: `Create or modify AWS IoT CA alias list ?`,
-        type: 'confirm',
-        name: 'provisioning.setIotCaAliases',
-        default: answers.provisioning?.setIotCaAliases ?? true,
-        askAnswered: true,
-        when(answers: Answers) {
-          return answers.provisioning?.pcaIntegrationEnabled;
-        }
-      }],updatedAnswers);
-
-      //Collect the IoT CA List
-      let iotCaFinished = false;
-      if(answers.provisioning.setIotCaAliases){
-        while (!iotCaFinished){
-          const iotCaAliases = await this.getIotCaAliases(updatedAnswers);
-          updatedAnswers.provisioning.iotCaAliases = iotCaAliases;
-          updatedAnswers = await inquirer.prompt([..._.getIoTCAPrompt(answers,iotCaAliases)],updatedAnswers);
-          // Update the iotCaAlias to upper case
-          updatedAnswers.provisioning.iotCaAlias = updatedAnswers.provisioning.iotCaAlias.toUpperCase();
-          if (!updatedAnswers.provisioning.iotCaAliases.list.includes(updatedAnswers.provisioning.iotCaAlias)){
-            const alias = updatedAnswers.provisioning.iotCaAlias; 
-            const value = updatedAnswers.provisioning.iotCaArn;
-            updatedAnswers.provisioning.iotCaAliases.cas.push({alias, value});
-          }
-          iotCaFinished = answers.provisioning.iotCaFinished;
-        }
+    updatedAnswers = await inquirer.prompt([{
+      message: `Create or modify AWS IoT CA alias list ?`,
+      type: 'confirm',
+      name: 'provisioning.setIotCaAliases',
+      default: answers.provisioning?.setIotCaAliases ?? true,
+      askAnswered: true,
+      when(answers: Answers) {
+        return answers.provisioning?.pcaIntegrationEnabled;
       }
+    }], updatedAnswers);
 
-      updatedAnswers = await inquirer.prompt([{
-        message: `Create or modify ACM PCA CA alias list ?`,
-        type: 'confirm',
-        name: 'provisioning.setPcaAliases',
-        default: answers.provisioning?.setPcaAliases ?? true,
-        askAnswered: true,
-        when(answers: Answers) {
-          return answers.provisioning?.pcaIntegrationEnabled;
-        },
-      }],updatedAnswers);
+    //Collect the IoT CA List
+    let iotCaFinished = false;
+    if (updatedAnswers.provisioning?.setIotCaAliases) {
+      while (!iotCaFinished) {
+        const iotCaAliases = await this.getIotCaAliases(updatedAnswers);
+        updatedAnswers.provisioning.iotCaAliases = iotCaAliases;
+        updatedAnswers = await inquirer.prompt([..._.getIoTCAPrompt(answers, iotCaAliases)], updatedAnswers);
+        // Update the iotCaAlias to upper case
+        if (updatedAnswers.provisioning.iotCaAlias === undefined) {
+          updatedAnswers.provisioning.iotCaFinished = true
+        } else {
+          updatedAnswers.provisioning.iotCaAlias = updatedAnswers.provisioning.iotCaAlias.toUpperCase();
+          if (!updatedAnswers.provisioning.iotCaAliases.list.includes(updatedAnswers.provisioning.iotCaAlias)) {
+            const alias = updatedAnswers.provisioning.iotCaAlias;
+            const value = updatedAnswers.provisioning.iotCaArn;
+            updatedAnswers.provisioning.iotCaAliases.cas.push({ alias, value });
+            updatedAnswers.provisioning.iotCaAliases.list.push(alias);
+          }
+        }
 
-      //Collect the ACM PCA List
-      let pcaFinished = false;
-      if(answers.provisioning.setPcaAliases){
-        while (!pcaFinished){
-          const pcaAliases = await this.getPcaAliases(updatedAnswers);
-          updatedAnswers.provisioning.pcaAliases = pcaAliases;
-          updatedAnswers = await inquirer.prompt([..._.getPCAPrompt(answers,pcaAliases)],updatedAnswers);
-          
+        iotCaFinished = updatedAnswers.provisioning.iotCaFinished;
+      }
+    }
+
+    updatedAnswers = await inquirer.prompt([{
+      message: `Create or modify ACM PCA CA alias list ?`,
+      type: 'confirm',
+      name: 'provisioning.setPcaAliases',
+      default: answers.provisioning?.setPcaAliases ?? true,
+      askAnswered: true,
+      when(answers: Answers) {
+        return answers.provisioning?.pcaIntegrationEnabled;
+      },
+    }], updatedAnswers);
+
+    //Collect the ACM PCA List
+    let pcaFinished = false;
+    if (updatedAnswers.provisioning?.setPcaAliases) {
+      while (!pcaFinished) {
+        const pcaAliases = await this.getPcaAliases(updatedAnswers);
+        updatedAnswers.provisioning.pcaAliases = pcaAliases;
+        updatedAnswers = await inquirer.prompt([..._.getPCAPrompt(answers, pcaAliases)], updatedAnswers);
+        if (updatedAnswers.provisioning.pcaAlias === undefined) {
+          updatedAnswers.provisioning.pcaFinished = true
+        } else {
           // Update the pcaAlias to upper case to be stored in the installer config
           updatedAnswers.provisioning.pcaAlias = updatedAnswers.provisioning.pcaAlias.toUpperCase();
-          if (!updatedAnswers.provisioning.pcaAliases.list.includes(updatedAnswers.provisioning.pcaAlias)){
-            const alias = updatedAnswers.provisioning.pcaAlias; 
+          if (!updatedAnswers.provisioning.pcaAliases.list.includes(updatedAnswers.provisioning.pcaAlias)) {
+            const alias = updatedAnswers.provisioning.pcaAlias;
             const value = updatedAnswers.provisioning.pcaArn;
-            updatedAnswers.provisioning.pcaAliases.cas.push({alias, value});
+            updatedAnswers.provisioning.pcaAliases.cas.push({ alias, value });
+            updatedAnswers.provisioning.pcaAliases.list.push(alias);
           }
-          pcaFinished = answers.provisioning.pcaFinished;
-          
         }
+        pcaFinished = updatedAnswers.provisioning.pcaFinished;
       }
+    }
 
-      updatedAnswers = await inquirer.prompt([
-        ...customDomainPrompt(this.name, answers),
-        ...applicationConfigurationPrompt(this.name, answers, [
+    updatedAnswers = await inquirer.prompt([
+      ...customDomainPrompt(this.name, answers),
+      ...applicationConfigurationPrompt(this.name, answers, [
         {
           question: 'Allow service to delete AWS IoT Certificates ?',
           defaultConfiguration: false,
@@ -209,8 +218,8 @@ export class ProvisioningInstaller implements RestModule {
           defaultConfiguration: 'bullkrequests/',
           propertyName: 'bulkRequestsPrefix',
         }
-      ])],updatedAnswers);
-      
+      ])], updatedAnswers);
+
 
 
     return updatedAnswers;
@@ -331,7 +340,7 @@ export class ProvisioningInstaller implements RestModule {
       if (!pca.alias.startsWith('PCA_')) {
         alias = `PCA_${pca.alias.toUpperCase()}`;
       }
-      
+
       configBuilder.add(alias, pca.value);
     });
 
@@ -346,8 +355,8 @@ export class ProvisioningInstaller implements RestModule {
       configBuilder.add(alias, ca.value);
     });
 
-    if ((answers?.provisioning?.pcaRegion?.length??0) > 0){
-        configBuilder.add(`ACM_REGION`,answers.provisioning.pcaRegion);
+    if ((answers?.provisioning?.pcaRegion?.length ?? 0) > 0) {
+      configBuilder.add(`ACM_REGION`, answers.provisioning.pcaRegion);
     }
 
     configBuilder
@@ -387,7 +396,7 @@ export class ProvisioningInstaller implements RestModule {
     }
     try {
       // append lambda ACM PCA Config to list if none are present in the configuration file
-      if (aliases.list.length == 0 ){
+      if (aliases.list.length == 0) {
         const config = await lambda.getFunctionConfiguration({ FunctionName: `cdf-provisioning-rest-${answers.environment}` });
         const variables = config.Environment?.Variables;
         const appConfigStr = variables['APP_CONFIG'] as string;
@@ -402,7 +411,7 @@ export class ProvisioningInstaller implements RestModule {
             }
           }
         });
-    }
+      }
     } catch (e) {
       e.name === 'ResourceNotFoundException' && console.log(`No suppliers found`);
     }
@@ -426,7 +435,7 @@ export class ProvisioningInstaller implements RestModule {
 
     // append lambda IoT CA list if none are present in the configuration file
     try {
-      if (aliases.list.length == 0 ){
+      if (aliases.list.length == 0) {
         const config = await lambda.getFunctionConfiguration({ FunctionName: `cdf-provisioning-rest-${answers.environment}` });
         const variables = config.Environment?.Variables;
         const appConfigStr = variables['APP_CONFIG'] as string;
@@ -441,7 +450,7 @@ export class ProvisioningInstaller implements RestModule {
             }
           }
         });
-    }
+      }
     } catch (e) {
       e.name === 'ResourceNotFoundException' && console.log(`No suppliers found`);
     }
@@ -452,23 +461,23 @@ export class ProvisioningInstaller implements RestModule {
 
   }
 
-  private validateAcmPcaArn(arn: string): boolean |string {
+  private validateAcmPcaArn(arn: string): boolean | string {
     return (/^arn:aws:acm-pca:\w+(?:-\w+)+:\d{12}:certificate-authority\/[A-Za-z0-9]+(?:-[A-Za-z0-9]+)+$/.test(arn)) ? true : "Value is not a valid ACM PCA Arn";
 
   }
 
-  private validateAwsIotCaArn(arn: string): boolean|string {
-    return (/^arn:aws:iot:\w+(?:-\w+)+:\d{12}:cacert\/[A-Za-z0-9]+(?:[A-Za-z0-9]+)+$/.test(arn))  ? true : "Value is not a valid AWS IoT CA Arn";
+  private validateAwsIotCaArn(arn: string): boolean | string {
+    return (/^arn:aws:iot:\w+(?:-\w+)+:\d{12}:cacert\/[A-Za-z0-9]+(?:[A-Za-z0-9]+)+$/.test(arn)) ? true : "Value is not a valid AWS IoT CA Arn";
   }
 
-  private validateAwsIAMRoleArn(arn: string): boolean|string {
-    return (/^arn:aws:iam::\d{12}:role\/[A-Za-z0-9]+(?:[A-Za-z0-9_-]+)+$/.test(arn))  ? true : "Value is not a valid IAM Role Arn";
+  private validateAwsIAMRoleArn(arn: string): boolean | string {
+    return (/^arn:aws:iam::\d{12}:role\/[A-Za-z0-9]+(?:[A-Za-z0-9_-]+)+$/.test(arn)) ? true : "Value is not a valid IAM Role Arn";
   }
 
-  private getPCAPrompt( answers: Answers,pcaAliases:CAAliases): Question[]{
+  private getPCAPrompt(answers: Answers, pcaAliases: CAAliases): Question[] {
     // eslint-disable-next-line
     const _ = this;
-    const questions = [ {
+    const questions = [{
       message: 'Select the ACM PCA aliases you wish to modify',
       type: 'list',
       name: 'provisioning.pcaAlias',
@@ -536,14 +545,14 @@ export class ProvisioningInstaller implements RestModule {
         return answers.provisioning?.setPcaAliases === true;
       },
     }
-  ];
+    ];
     return questions;
   }
 
-  private getIoTCAPrompt( answers: Answers,iotCaAliases:CAAliases): Question[]{
+  private getIoTCAPrompt(answers: Answers, iotCaAliases: CAAliases): Question[] {
     // eslint-disable-next-line
-    const _ =this;
-    const questions = [ 
+    const _ = this;
+    const questions = [
       {
         message: 'Select the AWS IoT CA aliases you wish to modify',
         type: 'list',
@@ -612,7 +621,7 @@ export class ProvisioningInstaller implements RestModule {
           return answers.provisioning?.setIotCaAliases === true;
         },
       }
-  ];
+    ];
     return questions;
   }
 }
