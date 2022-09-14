@@ -18,13 +18,15 @@ import { TYPES } from '../di/types';
 import { DevicesAssembler } from '../devices/devices.assembler';
 import { GroupsAssembler } from '../groups/groups.assembler';
 import { assembleSortKeys } from '../data/model';
+import { TypeUtils } from '../utils/typeUtils';
 
 @injectable()
 export class SearchAssembler {
 
     constructor(
         @inject(TYPES.DevicesAssembler) private devicesAssembler: DevicesAssembler,
-        @inject(TYPES.GroupsAssembler) private groupsAssembler: GroupsAssembler
+        @inject(TYPES.GroupsAssembler) private groupsAssembler: GroupsAssembler,
+        @inject(TYPES.TypeUtils) private typeUtils: TypeUtils
     ) {}
 
     public toSearchRequestModel(
@@ -88,8 +90,8 @@ export class SearchAssembler {
             }
         }
 
-        req.offset=offset;
-        req.count=count;
+        req.offset=this.typeUtils.parseInt(offset);
+        req.count=this.typeUtils.parseInt(count);
         req.sort = assembleSortKeys(sort);
 
         return req;
