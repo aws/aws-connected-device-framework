@@ -16,13 +16,15 @@ import { createMockInstance } from 'jest-create-mock-instance';
 import { SearchAssembler } from './search.assembler';
 import { DevicesAssembler } from '../devices/devices.assembler';
 import { GroupsAssembler } from '../groups/groups.assembler';
+import { TypeUtils } from '../utils/typeUtils';
 
 describe('SearchServiceAssembler', () => {
 
     let instance: SearchAssembler;
     let mockedDeviceAssembler: jest.Mocked<DevicesAssembler>;
     let mockedGroupAssembler: jest.Mocked<GroupsAssembler>;
-
+    let mockedTypeUtils: jest.Mocked<TypeUtils>;
+    
     let mockedSearchRequest: {
         types: string|string[]|undefined;
         ancestorPath: string|undefined;
@@ -42,7 +44,8 @@ describe('SearchServiceAssembler', () => {
     beforeEach(() => {
         mockedDeviceAssembler = createMockInstance(DevicesAssembler);
         mockedGroupAssembler = createMockInstance(GroupsAssembler);
-        instance = new SearchAssembler(mockedDeviceAssembler, mockedGroupAssembler);
+        mockedTypeUtils = createMockInstance(TypeUtils);
+        instance = new SearchAssembler(mockedDeviceAssembler, mockedGroupAssembler, mockedTypeUtils);
     });
 
     it('happy path to convert one search param to a search request model', async () => {
