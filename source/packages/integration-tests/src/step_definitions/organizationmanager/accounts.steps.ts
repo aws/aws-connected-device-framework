@@ -28,8 +28,7 @@ When('I create account with attributes', async function (data: DataTable) {
 });
 
 Given('account {string} associated with organizational unit {string}', async function (accountId: string, organizationalUnitId: string) {
-    let accounts;
-    accounts = await accountsService.listAccounts(organizationalUnitId);
+    const accounts = await accountsService.listAccounts(organizationalUnitId);
     expect(accounts.accounts.find(o => o.accountId === accountId), `${accountId} not associated with ${organizationalUnitId}`).to.not.equal(undefined)
 });
 
