@@ -18,16 +18,26 @@ AWS IoT | Thing Types | Pre-existing optional Thing Types to associate with new 
 AWS IoT | Thing Groups | Pre-existing optional Thing Groups to associate with new Things
 AWS IoT | Policies | Pre-existing optional Policies to associate with new Things
 
+## AWS IoT Device Provisioning template setup
+To be able to use predefined AWS IoT Device Provisioning template you need to store it in your CDF environment S3 bucket
+set up during installation phase. Default settings for AWS IoT Device Provisioning template file:
+
+```
+s3://[CDF environment S3 bucket]/templates/[provisioningTemplateId].json
+```
+`provisioningTemplateId` - is a custom provisioning template file name which you later reference in provision a new
+thing within the AWS IoT Device Registry request.
+
 ## Using Custom CA with CDF
 
-The provisioning module can provision a device using a customer provided CA. The modules uses the provisioning template to determine if the provisioning flow that will be executed will involve creating a device certificate from a customer provided CA. The custom CA flow within the provisioning module uses the CA stored in AWS IoT and gets the CA private key stored in SSM. 
+The provisioning module can provision a device using a customer provided CA. The modules uses the provisioning template to determine if the provisioning flow that will be executed will involve creating a device certificate from a customer provided CA. The custom CA flow within the provisioning module uses the CA stored in AWS IoT and gets the CA private key stored in SSM.
 
 Pre-reqs:
 - CA key pair generated following the link here AWS https://docs.aws.amazon.com/iot/latest/developerguide/manage-your-CA-certs.html
 
-To register a CA to be used by the provisioning module, the developer needs 2 items setup. The first is the CA public key and the second one is the CA private key. Following the guide to “manage your own CA Certs” The CA public key is configured within AWS IoT itself and does not need CDF specific configuration. 
+To register a CA to be used by the provisioning module, the developer needs 2 items setup. The first is the CA public key and the second one is the CA private key. Following the guide to “manage your own CA Certs” The CA public key is configured within AWS IoT itself and does not need CDF specific configuration.
 
-The CA private key needs to be stored in SSM as a secure string using the following convention for CDF provisioning module to be able to retrieve the certificate private key to generate new certificates. 
+The CA private key needs to be stored in SSM as a secure string using the following convention for CDF provisioning module to be able to retrieve the certificate private key to generate new certificates.
 
 `cdf-ca-key-${caCertId}`
 
