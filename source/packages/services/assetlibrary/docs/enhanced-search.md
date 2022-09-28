@@ -49,6 +49,7 @@ cdf-cli deploy <cdf-environment-name> <aws-region-name> -c ~/aws-connected-devic
 
 Confirm that this created a new CloudFormation stack named `cdf-assetlibrary-enhancedsearch-<cdf-environment-name>`.
 
+> :warning: Note: This solution includes adding a Neptune DB Cluster parameter group to enable Neptune streams. In order for those parameter group changes to take effect, all instances of the Neptune DB cluster need to be rebooted.
 ### Step 4: Deploy the "Export Neptune to ElasticSearch" solution
 
 1. Log into the AWS Console account that contains the CDF deployment you wish to migrate.
