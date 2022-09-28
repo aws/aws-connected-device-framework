@@ -70,7 +70,7 @@ Stack parameters for the Neptune-to-ElasticSearch CloudFormation stack:
 | NeptuneEngine | Select `gremlin` |
 | ExportScope | Select `all` |
 | CloneCluster | Select `yes` |
-| NeptuneClientSecurityGroup | The `CDFSecurityGroupId` output of the stack `cdf-network-<cdf-environment-name>` |
+| NeptuneClientSecurityGroup | The `NeptuneSecurityGroupID` output of the stack `cdf-assetlibrary-neptune-<cdf-environment-name>` |
 | AdditionalParams | Leave empty |
 | _ElasticSearch Configuration_ |
 | ElasticSearchEndpoint | The `OpenSearchDomainEndpoint` output of the stack `cdf-assetlibrary-enhancedsearch-<cdf-environment-name>` _without the `https://` prefix_. |
