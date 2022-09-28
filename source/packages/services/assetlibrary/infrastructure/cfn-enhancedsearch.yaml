@@ -286,6 +286,16 @@ Resources:
       SourceSecurityGroupId: !Ref NeptuneStreamPollerSG
       Description: Access from Neptune Stream Poller to OpenSearch
 
+  OpenSearchSGIngressRule3:
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+      GroupId: !Ref OpenSearchSG
+      FromPort: 443
+      ToPort: 443
+      IpProtocol: tcp
+      SourceSecurityGroupId: !GetAtt NeptuneStreamPoller.Outputs.HTTPSAccessSG
+      Description: Access for the Kinesis-to-opensearch lambda
+
   NeptuneSGIngressRule:
     Type: 'AWS::EC2::SecurityGroupIngress'
     Properties: 
