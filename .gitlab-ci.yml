@@ -82,6 +82,9 @@ default:
   before_script:
     - *common-install-deployment-dependencies
     - *common-git-steps
+  tags:
+    - arch:amd64
+    - size:large
 
 downloadInfastructureConfig:
   rules:
