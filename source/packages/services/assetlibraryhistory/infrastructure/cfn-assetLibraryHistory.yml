@@ -184,10 +184,18 @@ Resources:
                   - 'dynamodb:PutItem'
                   - 'dynamodb:UpdateItem'
                   - 'dynamodb:DeleteItem'
+                  - 'kinesis:DescribeStream'
+                  - 'kinesis:DescribeStreamSummary'
+                  - 'kinesis:GetRecords'
+                  - 'kinesis:GetShardIterator'
+                  - 'kinesis:ListShards'
+                  - 'kinesis:ListStreams'
+                  - 'kinesis:SubscribeToShard'
                 Effect: Allow
                 Resource:
                   - !GetAtt HistoryTable.Arn
                   - !Sub '${HistoryTable.Arn}/index/type-time-index'
+                  - !GetAtt EventsKinesisStream.Arn
 
   RESTLambdaExecutionRole:
     Type: AWS::IAM::Role
