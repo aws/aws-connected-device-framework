@@ -135,11 +135,13 @@ Resources:
     Properties:
       TopicRulePayload:
         Actions:
-          - Lambda:
-              FunctionArn: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${EventsLambdaFunction}'
+          - Kinesis:
+              PartitionKey: ${topic(4)}
+              RoleArn: !GetAtt LambdaExecutionRole.Arn
+              StreamName: !Ref EventsKinesisStream
         Description: 'Saves AssetLibrary configuration changes'
         AwsIotSqlVersion: '2016-03-23'
-        RuleDisabled: 'false'
+        RuleDisabled: false
         Sql: !Sub "SELECT * FROM '${AssetLibraryEventsTopic}'"
 
   LambdaInvocationPermission:
@@ -285,6 +287,13 @@ Resources:
         ReadCapacityUnits: '5'
         WriteCapacityUnits: '5'
 
+  EventsKinesisStream:
+    Type: AWS::Kinesis::Stream
+    Properties:
+      Name: !Sub 'cdf-assetlibrary-history-stream-${Environment}'
+      StreamModeDetails:
+        StreamMode: 'on-demand'
+
   EventsLambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -301,6 +310,15 @@ Resources:
           APP_CONFIG: !Ref ApplicationConfigurationOverride
           AWS_DYNAMODB_TABLE_EVENTS: !Ref HistoryTable
       Tracing: Active
+      Events:
+        Stream:
+          Type: Kinesis
+          Properties:
+            Stream: !GetAtt EventsKinesisStream.Arn
+            BatchSize: 100 # What should this be?
+            MaximumBatchingWindowInSeconds: 30
+            StartingPosition: LATEST
+            MaximumRetryAttempts: 1
 
   RESTLambdaFunction:
     Type: AWS::Serverless::Function
