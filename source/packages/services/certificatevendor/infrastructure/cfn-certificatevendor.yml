@@ -63,6 +63,12 @@ Parameters:
   RotatedCertificatePolicy:
     Type: String
     Default: ''
+  AcmpcaEnabled:
+    Type: String
+    Default: 'false'
+  AcmpcaCaArn:
+    Type: String
+    Default: ''
 
 Conditions:
   ThingGroupNameProvided: !Not [ !Equals [ !Ref ThingGroupName, "" ]]
@@ -151,6 +157,7 @@ Resources:
       ManagedPolicyArns:
         - !Ref ApplicationPolicies
         - !Ref ApplicationCsrPolicies
+        - !Ref ACMPolicy
         - arn:aws:iam::aws:policy/AWSLambdaExecute
         - arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess
     Condition: KmsKeyProvided
@@ -263,6 +270,20 @@ Resources:
             Effect: Allow
             Resource: !Sub "arn:aws:iot:${AWS::Region}:${AWS::AccountId}:cert/*"
 
+  ACMPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: "cdf-bulkcerts policy for accessing ACM PCA"
+      Path: "/cdf/provisioning/"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Action:
+              - 'acm-pca:IssueCertificate'
+              - 'acm-pca:GetCertificate'
+            Effect: Allow
+            Resource: "*"
+  
   LambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -284,6 +305,8 @@ Resources:
           AWS_S3_CERTIFICATES_BUCKET: !Ref BucketName
           CERTIFICATES_CACERTIFICATEID: !Ref CaCertificateId
           POLICIES_ROTATEDCERTIFICATEPOLICY: !Ref RotatedCertificatePolicy
+          ACMPCA_ENABLED: !Ref AcmpcaEnabled
+          ACMPCA_CA_ARN: !Ref AcmpcaCaArn
           AWS_ACCOUNTID: !Ref AWS::AccountId
       Tracing: Active
   

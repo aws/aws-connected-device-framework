@@ -16,7 +16,7 @@ import {logger} from '../utils/logger';
 import * as pem from 'pem';
 import ow from 'ow';
 import { Iot } from 'aws-sdk';
-import { CertificateResponseModel } from './certificates.models';
+import { CertificateResponseModel} from './certificates.models';
 import { UpdateCertificateRequest, DescribeCACertificateRequest, DescribeCACertificateResponse,
          RegisterCertificateRequest, RegisterCertificateResponse, ListThingPrincipalsResponse,
          AttachThingPrincipalRequest, ListPrincipalThingsResponse, GetEffectivePoliciesResponse, ListAttachedPoliciesResponse } from 'aws-sdk/clients/iot';
@@ -29,6 +29,7 @@ export class CertificateService {
     private iotData: AWS.IotData;
     private s3: AWS.S3;
     private ssm: AWS.SSM;
+    private acmpca: AWS.ACMPCA;
 
     constructor(
         @inject('aws.accountId') private accountId: string,
@@ -47,15 +48,19 @@ export class CertificateService {
         @inject('policies.rotatedCertificatePolicy') private rotatedCertificatePolicy: string,
         @inject('defaults.certificates.certificateExpiryDays') private certificateExpiryDays: number,
         @inject('features.deletePreviousCertificate') private deletePreviousCertificate: boolean,
+        @inject('acmpca.caArn') private acmpcaCaArn: string,
+        @inject('acmpca.enabled') private acmpcaEnabled: boolean,
         @inject(TYPES.RegistryManager) private registry:RegistryManager,
         @inject(TYPES.IotFactory) iotFactory: () => AWS.Iot,
         @inject(TYPES.IotDataFactory) iotDataFactory: () => AWS.IotData,
         @inject(TYPES.S3Factory) s3Factory: () => AWS.S3,
-        @inject(TYPES.SSMFactory) ssmFactory: () => AWS.SSM) {
+        @inject(TYPES.SSMFactory) ssmFactory: () => AWS.SSM,
+        @inject(TYPES.ACMPCAFactory) acmpcaFactory: () => AWS.ACMPCA) {
             this.iot = iotFactory();
             this.iotData = iotDataFactory();
             this.s3 = s3Factory();
             this.ssm = ssmFactory();
+            this.acmpca = acmpcaFactory();
     }
 
     public async get(deviceId:string): Promise<void> {
@@ -112,12 +117,16 @@ export class CertificateService {
             if (await this.registry.isWhitelisted(deviceId)!==true) {
                 throw new Error('DEVICE_NOT_WHITELISTED');
             }
-
+            
             const caPem:string = await this.getCaCertificate(this.caCertificateId);
-            const caKey:string = await this.getCAKey(this.caCertificateId);
-
-            const certificate:string = await this.createCertificateFromCsr(csr, caKey, caPem);
-
+            let certificate:string;
+            
+            if(this.acmpcaEnabled) {
+                certificate = await this.getACMCertificate(csr, this.acmpcaCaArn);
+            } else { // create certificate from SSM paramater and csr
+                certificate = await this.getSSMCertificate(csr, caPem);
+            }
+            
             const certificateArn = await this.registerCertificate(caPem, certificate);
 
             await this.attachCertificateToThing(certificateArn, deviceId);
@@ -440,6 +449,55 @@ export class CertificateService {
         
         return policies
 
+    }
+    
+    private async getSSMCertificate(csr: string, caPem: string): Promise<string> {
+        
+        const caKey:string = await this.getCAKey(this.caCertificateId);
+        const certificate:string = await this.createCertificateFromCsr(csr, caKey, caPem);
+        return certificate;
+    }
+    
+    private async getACMCertificate(csr: string, caArn: string): Promise<string> {
+        
+        const params: AWS.ACMPCA.IssueCertificateRequest = {
+            Csr: csr,
+            CertificateAuthorityArn: caArn,
+            SigningAlgorithm: "SHA256WITHRSA",
+            Validity: { Value: this.certificateExpiryDays, Type: "DAYS" }
+        };
+
+        const data: AWS.ACMPCA.IssueCertificateResponse = await this.acmpca.issueCertificate(params).promise();
+        let cert: AWS.ACMPCA.GetCertificateResponse;
+        
+        // eslint-disable-next-line no-constant-condition
+        while (true) {
+            try{
+                cert =  await this.acmpca.getCertificate({ CertificateAuthorityArn: caArn ,CertificateArn: data.CertificateArn }).promise();
+                break;
+            } catch(err){
+                if(err.code == "RequestInProgressException" ||err.code =="ThrottlingException"){
+                    // Need to factor in the time ACMPCA takes to issue the certificate using the retyDelay returned in the error payload
+                    await this.sleep(err.retryDelay); 
+                    continue
+                } else{
+                    break;
+                }
+            }
+        }
+        return cert.Certificate;
+    }
+    
+    private async sleep(time: number): Promise<void> {
+        return new Promise((resolve) => {
+            const timeout = setTimeout(() => {
+                logger.debug(`sleeping for: ${time}ms`);
+                clearTimeout(timeout);
+                resolve(undefined);
+            }, time);
+        }).then(() => {
+            return;
+        });
     }
 
 }

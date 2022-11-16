@@ -67,6 +67,32 @@ export class CertificateVendorInstaller implements ServiceModule {
         askAnswered: true,
       },
       {
+        message: 'Will you use ACMPCA to issue the certificate ?',
+        type: 'confirm',
+        name: 'certificateVendor.acmpcaEnabled',
+        default: false,
+        askAnswered: true,
+        when(answers: Answers) {
+          return answers.certificateVendor?.providingCSRs ?? false;
+        },
+      },
+      {
+        message: 'Enter the CAArn of ACMPCA to be used to sign the certificates with a CSR:',
+        type: 'input',
+        name: 'certificateVendor.caArnAcmpca',
+        default: updatedAnswers.certificateVendor?.caArnAcmpca,
+        askAnswered: true,
+        when(answers: Answers) {
+          return (answers.certificateVendor?.providingCSRs) && (answers.certificateVendor?.acmpcaEnabled);
+        },
+        validate(answer: string) {
+          if ((answer?.length ?? 0) === 0) {
+            return `You must enter the caARN of certificate ID.`;
+          }
+          return true;
+        },
+      },
+      {
         message: 'Enter the CA certificate ID to be used to sign the certificates requested with a CSR:',
         type: 'input',
         name: 'certificateVendor.caCertificateId',
@@ -207,6 +233,8 @@ export class CertificateVendorInstaller implements ServiceModule {
     };
 
     addIfSpecified('CaCertificateId', answers.certificateVendor.caCertificateId);
+    addIfSpecified('AcmpcaCaArn', answers.certificateVendor.caArnAcmpca);
+    addIfSpecified('AcmpcaEnabled', answers.certificateVendor.acmpcaEnabled);
     addIfSpecified('RotatedCertificatePolicy', answers.certificateVendor.rotatedCertificatePolicy);
     addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
 

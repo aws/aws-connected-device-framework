@@ -4,7 +4,8 @@
 
 The certificate vendor manages the rotation of certificates involving a number of moving parts across CDF and AWS IoT.
 
-There are two flows for certificate rotation. In the fist case, device certificates are pre-created and registered before the rotation request. In this case the device requests a new certificate and is vended an S3 presigned URL in order to download the certificate package. In the second case, the device provides the certificate vendor module a CSR. In this way the device can request an updated certificate while keeping the private key on the device. The certificate vendor then uses a CA certificate registered with AWS IoT to create a device certificate from the CSR and return this certificate to the device.
+There are two flows for certificate rotation. In the fist case, device certificates are pre-created and registered before the rotation request. In this case the device requests a new certificate and is vended an S3 presigned URL in order to download the certificate package. In the second case, the device provides the certificate vendor module a CSR. In this way the device can request an updated certificate while keeping the private key on the device. 
+There are two options for CSR case. One option is to use ACM PCA to issue the certificate, and another option is to create a certificate from a CA certificate registered with AWS IoT, and CA private key sored in EC2 Parameter store.
 
 ## Architecture
 
@@ -19,8 +20,35 @@ The following represents the architecture of Certificate Vendor.
 A certificate package comprising of the certificate, public key and private key is to be created and registered with AWS IoT.  This certificate package is to be zipped, and stored in S3 with the name of the zip matching the thing name of the intended device.  The `certificateId` is associated with the certificate package by setting the `x-amz-meta-certificateid` S3 user metadata attribute of the uploaded zip file.
 
 ### Certificate Creation with a device CSR
-
+#### Certiicate Creation with CA private key
 A CA certificate needs to be registered with AWS IoT. In addtion, the CA private key needs to be encrypted and stored in EC2 Parameter store so the certificate vendor module can sign device certificates using the CA.
+#### Certificate Creation from ACMPCA
+AWS Private Certificate Authority needs to be prepared and private CA needs to be created as prerequisite. 
+The private CA needs to be registered with AWS IoT. The example registration step is as follows.
+```
+1. Create Verification CSR
+  $ openssl genrsa -out verificationCert.key 2048
+2. Get IoT Core Registration Code
+  $ aws iot get-registration-code
+3. Create CSR. Insert the registration code in Common Name.
+  $ openssl req -new -key verificationCert.key -out verificationCert.csr
+4. Request to issue certificate to ACM PCA for verification. It will return certificate ARN.
+  $ aws acm-pca issue-certificate \
+  --region ap-northeast-1  \
+  --certificate-authority-arn arn:aws:acm-pca:ap-northeast-1:XXXXXXXXXXX:certificate-authority/12345678910 \
+  --csr fileb://verificationCert.csr  \
+  --signing-algorithm SHA256WITHRSA \
+  --validity Value=365,Type="DAYS"
+5. Call get-certificate to get certificate
+  $ aws acm-pca get-certificate --region ap-northeast-1 \
+--certificate-authority-arn arn:aws:acm-pca:ap-northeast-1:XXXXXXXXXXX:certificate-authority/12345678910 \
+--certificate-arn arn:aws:acm-pca:ap-northeast-1:XXXXXXXXXXX:certificate-authority/12345678910
+6. Store the Certificate as verify.crt. Transform \n into return code.
+7. Register to IoT Core by using Verification CSR and Root CA certification.
+  $ aws iot register-ca-certificate --ca-certificate file://Certificate.pem --verification-certificate file://Verify.crt --region ap-northeast-1 --set-as-active
+```
+The registered CA CertificateId and PCA Authority Arn needs to be inputted
+in the in the inquiry prompt in the installer as parameters.
 
 ## Deployment
 

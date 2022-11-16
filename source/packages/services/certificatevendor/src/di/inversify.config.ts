@@ -48,7 +48,8 @@ container.bind<string>('defaults.certificates.certificateExpiryDays').toConstant
 container.bind<string>('defaults.device.status.success.key').toConstantValue(process.env.DEFAULTS_DEVICE_STATUS_SUCCESS_KEY);
 container.bind<string>('defaults.device.status.success.value').toConstantValue(process.env.DEFAULTS_DEVICE_STATUS_SUCCESS_VALUE);
 container.bind<boolean>('features.deletePreviousCertificate').toConstantValue(process.env.FEATURES_DELETEPREVIOUSCERTIFICATE === 'true');
-
+container.bind<string>('acmpca.caArn').toConstantValue(process.env.ACMPCA_CA_ARN);
+container.bind<boolean>('acmpca.enabled').toConstantValue(process.env.ACMPCA_ENABLED === 'true');
 
 
 // configure which registry to use (used for whitelist checks and updating status post acknowkedgement)
@@ -119,5 +120,19 @@ container.bind<interfaces.Factory<AWS.SSM>>(TYPES.SSMFactory)
             container.bind<AWS.SSM>(TYPES.SSM).toConstantValue(ssm);
         }
         return container.get<AWS.SSM>(TYPES.SSM);
+    };
+});
+
+// ACMPCA
+decorate(injectable(), AWS.ACMPCA);
+container.bind<interfaces.Factory<AWS.ACMPCA>>(TYPES.ACMPCAFactory)
+    .toFactory<AWS.ACMPCA>(() => {
+    return () => {
+
+        if (!container.isBound(TYPES.ACMPCA)) {
+            const acmpma = new AWS.ACMPCA({region: process.env.AWS_REGION});
+            container.bind<AWS.ACMPCA>(TYPES.ACMPCA).toConstantValue(acmpma);
+        }
+        return container.get<AWS.ACMPCA>(TYPES.ACMPCA);
     };
 });

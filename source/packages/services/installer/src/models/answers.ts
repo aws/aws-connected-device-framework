@@ -199,7 +199,9 @@ export interface CertificateVendor extends ServiceModuleAttributes {
   commandsFunctionName?: string;
   assetLibraryFunctionName?: string;
   providingCSRs?: boolean;
+  acmpcaEnabled?: boolean;
   caCertificateId?: string;
+  caArnAcmpca?: string;
   useDefaultPolicy?: boolean;
   rotatedCertificatePolicy?: string;
   // Application Configuration
