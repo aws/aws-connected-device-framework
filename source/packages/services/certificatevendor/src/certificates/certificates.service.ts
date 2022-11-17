@@ -50,6 +50,7 @@ export class CertificateService {
         @inject('features.deletePreviousCertificate') private deletePreviousCertificate: boolean,
         @inject('acmpca.caArn') private acmpcaCaArn: string,
         @inject('acmpca.enabled') private acmpcaEnabled: boolean,
+        @inject('acmpca.singnalingAlgorithm') private acmpcaSignalingAlgorithm: string,
         @inject(TYPES.RegistryManager) private registry:RegistryManager,
         @inject(TYPES.IotFactory) iotFactory: () => AWS.Iot,
         @inject(TYPES.IotDataFactory) iotDataFactory: () => AWS.IotData,
@@ -463,41 +464,19 @@ export class CertificateService {
         const params: AWS.ACMPCA.IssueCertificateRequest = {
             Csr: csr,
             CertificateAuthorityArn: caArn,
-            SigningAlgorithm: "SHA256WITHRSA",
+            SigningAlgorithm: this.acmpcaSignalingAlgorithm,
             Validity: { Value: this.certificateExpiryDays, Type: "DAYS" }
         };
 
         const data: AWS.ACMPCA.IssueCertificateResponse = await this.acmpca.issueCertificate(params).promise();
         let cert: AWS.ACMPCA.GetCertificateResponse;
         
-        // eslint-disable-next-line no-constant-condition
-        while (true) {
-            try{
-                cert =  await this.acmpca.getCertificate({ CertificateAuthorityArn: caArn ,CertificateArn: data.CertificateArn }).promise();
-                break;
-            } catch(err){
-                if(err.code == "RequestInProgressException" ||err.code =="ThrottlingException"){
-                    // Need to factor in the time ACMPCA takes to issue the certificate using the retyDelay returned in the error payload
-                    await this.sleep(err.retryDelay); 
-                    continue
-                } else{
-                    break;
-                }
-            }
+        try {
+            cert = await this.acmpca.waitFor('certificateIssued', {CertificateAuthorityArn: caArn, CertificateArn: data.CertificateArn }).promise();
+        } catch(err){
+            logger.debug(`certificates.service acmpca.waitFor certificateIssued: err:${err}`);
+            throw new Error('UNABLE_TO_ISSUE_CERTIFICATE');
         }
         return cert.Certificate;
     }
-    
-    private async sleep(time: number): Promise<void> {
-        return new Promise((resolve) => {
-            const timeout = setTimeout(() => {
-                logger.debug(`sleeping for: ${time}ms`);
-                clearTimeout(timeout);
-                resolve(undefined);
-            }, time);
-        }).then(() => {
-            return;
-        });
-    }
-
 }

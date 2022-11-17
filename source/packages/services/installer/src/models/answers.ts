@@ -202,6 +202,7 @@ export interface CertificateVendor extends ServiceModuleAttributes {
   acmpcaEnabled?: boolean;
   caCertificateId?: string;
   caArnAcmpca?: string;
+  acmpcaSingnalingAlgorithm?: string;
   useDefaultPolicy?: boolean;
   rotatedCertificatePolicy?: string;
   // Application Configuration

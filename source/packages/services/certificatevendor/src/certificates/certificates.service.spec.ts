@@ -40,6 +40,7 @@ const certificateExpiryDays = 100;
 const deletePreviousCertificate = false;
 const acmpcaCaArn = 'arn:aws:acm-pca:ap-northeast-1:12345678910:certificate-authority/abcdefghi';
 const acmpcaEnabled = false;
+const acmpcaSingnalingAlgorithm = 'SHA256WITHRSA';
 const certId = 'cert123456';
 let defaultPolicyInstance: CertificateService;
 let inheritPolicyInstance: CertificateService;
@@ -81,12 +82,12 @@ describe('CertificatesService', () => {
 
         defaultPolicyInstance = new CertificateService(accountId, region, s3Bucket, s3Prefix, s3Suffix, presignedUrlExpiresInSeconds,
             mqttGetSuccessTopic, mqttGetFailureTopic, mqttAckSuccessTopic, mqttAckFailureTopic,
-            thingGroupName, caCertificateId, useDefaultPolicy, rotateCertPolicy, certificateExpiryDays, deletePreviousCertificate, acmpcaCaArn, acmpcaEnabled,
+            thingGroupName, caCertificateId, useDefaultPolicy, rotateCertPolicy, certificateExpiryDays, deletePreviousCertificate, acmpcaCaArn, acmpcaEnabled, acmpcaSingnalingAlgorithm,
             mockedRegistryManager, mockedIotFactory, mockedIotDataFactory, mockedS3Factory, mockedSsmFactory, mockedAcmpcaFactory);
 
         inheritPolicyInstance = new CertificateService(accountId, region, s3Bucket, s3Prefix, s3Suffix, presignedUrlExpiresInSeconds,
             mqttGetSuccessTopic, mqttGetFailureTopic, mqttAckSuccessTopic, mqttAckFailureTopic,
-            thingGroupName, caCertificateId, false, rotateCertPolicy, certificateExpiryDays, deletePreviousCertificate, acmpcaCaArn, acmpcaEnabled,
+            thingGroupName, caCertificateId, false, rotateCertPolicy, certificateExpiryDays, deletePreviousCertificate, acmpcaCaArn, acmpcaEnabled, acmpcaSingnalingAlgorithm,
             mockedRegistryManager, mockedIotFactory, mockedIotDataFactory, mockedS3Factory, mockedSsmFactory, mockedAcmpcaFactory);
     });
 

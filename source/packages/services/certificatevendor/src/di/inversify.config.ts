@@ -50,7 +50,7 @@ container.bind<string>('defaults.device.status.success.value').toConstantValue(p
 container.bind<boolean>('features.deletePreviousCertificate').toConstantValue(process.env.FEATURES_DELETEPREVIOUSCERTIFICATE === 'true');
 container.bind<string>('acmpca.caArn').toConstantValue(process.env.ACMPCA_CA_ARN);
 container.bind<boolean>('acmpca.enabled').toConstantValue(process.env.ACMPCA_ENABLED === 'true');
-
+container.bind<string>('acmpca.singnalingAlgorithm').toConstantValue(process.env.ACMPCA_SIGNALING_ALGORITHM);
 
 // configure which registry to use (used for whitelist checks and updating status post acknowkedgement)
 const registry=process.env.REGISTRY_MODE;

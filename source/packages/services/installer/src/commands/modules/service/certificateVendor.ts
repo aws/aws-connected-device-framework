@@ -93,6 +93,23 @@ export class CertificateVendorInstaller implements ServiceModule {
         },
       },
       {
+        message: 'Choose the Signaling Algorithmof ACMPCA to be used to sign the certificates with a CSR:',
+        type: 'list',
+        name: 'certificateVendor.acmpcaSingnalingAlgorithm',
+        choices: ['SHA256WITHECDSA','SHA384WITHECDSA','SHA512WITHECDSA', 'SHA256WITHRSA', 'SHA384WITHRSA', 'SHA512WITHRSA'],
+        default: updatedAnswers.certificateVendor?.acmpcaSingnalingAlgorithm,
+        askAnswered: true,
+        when(answers: Answers) {
+          return (answers.certificateVendor?.providingCSRs) && (answers.certificateVendor?.acmpcaEnabled);
+        },
+        validate(answer: string) {
+          if ((answer?.length ?? 0) === 0) {
+            return `You must choose Singnaling Algorithm.`;
+          }
+          return true;
+        },
+      },
+      {
         message: 'Enter the CA certificate ID to be used to sign the certificates requested with a CSR:',
         type: 'input',
         name: 'certificateVendor.caCertificateId',
@@ -235,6 +252,7 @@ export class CertificateVendorInstaller implements ServiceModule {
     addIfSpecified('CaCertificateId', answers.certificateVendor.caCertificateId);
     addIfSpecified('AcmpcaCaArn', answers.certificateVendor.caArnAcmpca);
     addIfSpecified('AcmpcaEnabled', answers.certificateVendor.acmpcaEnabled);
+    addIfSpecified('AcmpcaSingnalingAlgorithm', answers.certificateVendor.acmpcaSingnalingAlgorithm);
     addIfSpecified('RotatedCertificatePolicy', answers.certificateVendor.rotatedCertificatePolicy);
     addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
 
