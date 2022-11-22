@@ -123,16 +123,70 @@ container.bind<interfaces.Factory<AWS.SSM>>(TYPES.SSMFactory)
     };
 });
 
+// STS
+decorate(injectable(), AWS.STS);
+container.bind<interfaces.Factory<AWS.STS>>(TYPES.STSFactory)
+    .toFactory<AWS.STS>(() => {
+        return () => {
+
+            if (!container.isBound(TYPES.STS)) {
+                const sts = new AWS.STS({ region: process.env.AWS_REGION });
+                container.bind<AWS.STS>(TYPES.STS).toConstantValue(sts);
+            }
+            return container.get<AWS.STS>(TYPES.STS);
+        };
+    });
+    
 // ACMPCA
+let acmPcaStsExpiresAt: Date;
 decorate(injectable(), AWS.ACMPCA);
 container.bind<interfaces.Factory<AWS.ACMPCA>>(TYPES.ACMPCAFactory)
     .toFactory<AWS.ACMPCA>(() => {
     return () => {
+        
+        const region = process.env.ACM_REGION ?? process.env.AWS_REGION;
 
-        if (!container.isBound(TYPES.ACMPCA)) {
-            const acmpma = new AWS.ACMPCA({region: process.env.AWS_REGION});
-            container.bind<AWS.ACMPCA>(TYPES.ACMPCA).toConstantValue(acmpma);
+        // if not bound yet, or the STS token is expired, bind it
+        if (!container.isBound(TYPES.ACMPCA) || isStsTokenAboutToExpire(acmPcaStsExpiresAt)) {
+            const acmpcaConfig: AWS.ACMPCA.ClientConfiguration = {
+                region
+            };
+            
+            // ACM PCA may be held in a different account. If so, assume a role that allows access before creating the client
+            const crossAccountRole = process.env.ACM_PCA_CROSS_ACCOUNT_ROLE_ARN;
+            if (crossAccountRole) {
+                // these credentials will be used for ACM PCA access
+                const sts = container.get<AWS.STS>(TYPES.STS);
+                sts.assumeRole({
+                    RoleArn: crossAccountRole,
+                    RoleSessionName: 'cdf-certificatevendor'
+                }, (err, data) => {
+                    if (err) {
+                        throw err;
+                    } else {
+                        acmpcaConfig.credentials.accessKeyId = data.Credentials.AccessKeyId;
+                        acmpcaConfig.credentials.secretAccessKey = data.Credentials.SecretAccessKey;
+                        acmpcaConfig.credentials.sessionToken = data.Credentials.SessionToken;
+                        acmPcaStsExpiresAt = data.Credentials.Expiration;
+                    }
+                });
+            }
+            
+            const acmpca = new AWS.ACMPCA(acmpcaConfig);
+            if (container.isBound(TYPES.ACMPCA)) {
+                container.rebind<AWS.ACMPCA>(TYPES.ACMPCA).toConstantValue(acmpca);
+            } else {
+                container.bind<AWS.ACMPCA>(TYPES.ACMPCA).toConstantValue(acmpca);
+            }
         }
-        return container.get<AWS.ACMPCA>(TYPES.ACMPCA);
+        return container.get<AWS.ACMPCA>(TYPES.ACMPCA);     
     };
 });
+
+async function isStsTokenAboutToExpire(expiresAt: Date) {
+    if (expiresAt===undefined) {
+        return false;
+    }
+    const refreshTokenAt = new Date( Date.now() - 5 * 60 * 1000);
+    return (refreshTokenAt < expiresAt);
+}

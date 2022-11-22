@@ -56,6 +56,7 @@ export class CertificateService {
         @inject(TYPES.IotDataFactory) iotDataFactory: () => AWS.IotData,
         @inject(TYPES.S3Factory) s3Factory: () => AWS.S3,
         @inject(TYPES.SSMFactory) ssmFactory: () => AWS.SSM,
+        // as the ACMPCA may be configured for cross-account access, we use the factory directly which includes automatic STS expiration handling
         @inject(TYPES.ACMPCAFactory) acmpcaFactory: () => AWS.ACMPCA) {
             this.iot = iotFactory();
             this.iotData = iotDataFactory();
@@ -473,10 +474,11 @@ export class CertificateService {
         
         try {
             cert = await this.acmpca.waitFor('certificateIssued', {CertificateAuthorityArn: caArn, CertificateArn: data.CertificateArn }).promise();
-        } catch(err){
-            logger.debug(`certificates.service acmpca.waitFor certificateIssued: err:${err}`);
+        } catch(err) {
+            logger.debug(`certificates.service acmpca.waitFor certificateIssued: err: ${err}`);
             throw new Error('UNABLE_TO_ISSUE_CERTIFICATE');
         }
-        return cert.Certificate;
+        // the returned ACMPCA generated device certificate needs to include the full certificate chain
+        return `${cert.Certificate}\n${cert.CertificateChain}`;
     }
 }

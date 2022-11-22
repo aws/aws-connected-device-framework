@@ -58,6 +58,9 @@ export class CertificateVendorInstaller implements ServiceModule {
       return updatedAnswers;
     }
 
+    // eslint-disable-next-line
+    const _ = this;
+    
     updatedAnswers = await inquirer.prompt([
       {
         message: 'Will you be requesting certificates using a CSR?',
@@ -74,6 +77,38 @@ export class CertificateVendorInstaller implements ServiceModule {
         askAnswered: true,
         when(answers: Answers) {
           return answers.certificateVendor?.providingCSRs ?? false;
+        },
+      },
+      {
+        message: `If using ACM PCA, and ACM PCA is located in another AWS Account, enter the IAM cross-account role (leave blank otherwise)`,
+        type: 'input',
+        name: 'certificateVendor.acmpcaCrossAccountRoleArn',
+        default: answers.certificateVendor?.acmpcaCrossAccountRoleArn ?? '',
+        askAnswered: true,
+        validate(answer: string) {
+          if (answer?.length === 0) {
+            return true;
+          }
+          return _.validateAwsIAMRoleArn(answer);
+        },
+        when(answers: Answers) {
+          return (answers.certificateVendor?.providingCSRs) && (answers.certificateVendor?.acmpcaEnabled);
+        },
+      },
+      {
+        message: `If ACM PCA is located in a different region, enter the region name (leave blank for default region)`,
+        type: 'input',
+        name: 'certificateVendor.acmpcaRegion',
+        default: answers.certificateVendor?.acmpcaRegion ?? answers.region,
+        askAnswered: true,
+        validate(answer: string) {
+          if (answer?.length === 0) {
+            return false;
+          }
+          return true
+        },
+        when(answers: Answers) {
+          return (answers.certificateVendor?.providingCSRs) && (answers.certificateVendor?.acmpcaEnabled);
         },
       },
       {
@@ -255,7 +290,7 @@ export class CertificateVendorInstaller implements ServiceModule {
     addIfSpecified('AcmpcaSingnalingAlgorithm', answers.certificateVendor.acmpcaSingnalingAlgorithm);
     addIfSpecified('RotatedCertificatePolicy', answers.certificateVendor.rotatedCertificatePolicy);
     addIfSpecified('ApplicationConfigurationOverride', this.generateApplicationConfiguration(answers));
-
+    addIfSpecified('ACMPCACrossAccountRoleArn', answers.certificateVendor.acmpcaCrossAccountRoleArn);
     return parameterOverrides;
   }
 
@@ -326,6 +361,10 @@ export class CertificateVendorInstaller implements ServiceModule {
 
   private generateApplicationConfiguration(answers: Answers): string {
     const configBuilder = new ConfigBuilder()
+    
+     if ((answers?.certificateVendor?.acmpcaRegion?.length ?? 0) > 0) {
+      configBuilder.add(`ACM_REGION`, answers.certificateVendor.acmpcaRegion);
+    }
 
     configBuilder
       .add(`LOGGING_LEVEL`, answers.certificateVendor.loggingLevel)
@@ -358,6 +397,9 @@ export class CertificateVendorInstaller implements ServiceModule {
       }
     });
     return tasks
-
+  }
+  
+  private validateAwsIAMRoleArn(arn: string): boolean | string {
+    return (/^arn:aws:iam::\d{12}:role\/[A-Za-z0-9]+(?:[A-Za-z0-9_-]+)+$/.test(arn)) ? true : "Value is not a valid IAM Role Arn";
   }
 }

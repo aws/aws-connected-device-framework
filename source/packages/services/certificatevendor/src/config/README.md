@@ -10,6 +10,11 @@ POLICIES_ROTATEDCERTIFICATEPOLICY=
 ACMPCA_ENABLED=
 ACMPCA_CA_ARN=
 ```
+# The following is optional:
+
+```ini
+ACM_PCA_CROSS_ACCOUNT_ROLE_ARN=
+```
 
 ## The following may be overridden:
 

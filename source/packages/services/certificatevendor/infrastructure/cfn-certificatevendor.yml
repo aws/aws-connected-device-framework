@@ -72,11 +72,16 @@ Parameters:
   AcmpcaSingnalingAlgorithm:
     Type: String
     Default: 'SHA256WITHRSA'
+  ACMPCACrossAccountRoleArn:
+    Description: If ACM PCA functionality is to be used, and a ACM PCA is located within a different AWS Account, specify the cross-account IAM Role ARN.
+    Type: String
+    Default: ''
 
 Conditions:
   ThingGroupNameProvided: !Not [ !Equals [ !Ref ThingGroupName, "" ]]
   KmsKeyProvided: !Not [ !Equals [ !Ref KmsKeyId, "" ]]
   KmsKeyNotProvided: !Equals [ !Ref KmsKeyId, "" ]
+  ACMPCACrossAccountAccessRequired:  !Not [ !Equals [ !Ref ACMPCACrossAccountRoleArn, "" ] ] 
 
 Resources:
 
@@ -286,6 +291,11 @@ Resources:
               - 'acm-pca:GetCertificate'
             Effect: Allow
             Resource: "*"
+          # optional cross-account role access for ACM PCA
+          - Fn::If:
+              - ACMPCACrossAccountAccessRequired
+              - !Ref ACMPCACrossAccountRoleArn
+              - Ref: AWS::NoValue
   
   LambdaFunction:
     Type: AWS::Serverless::Function
@@ -312,6 +322,7 @@ Resources:
           ACMPCA_CA_ARN: !Ref AcmpcaCaArn
           ACMPCA_SIGNALING_ALGORITHM: !Ref AcmpcaSingnalingAlgorithm
           AWS_ACCOUNTID: !Ref AWS::AccountId
+          ACM_PCA_CROSS_ACCOUNT_ROLE_ARN: !Ref ACMPCACrossAccountRoleArn
       Tracing: Active
   
   IotEndpoint:
