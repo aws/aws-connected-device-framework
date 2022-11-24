@@ -47,8 +47,8 @@ The private CA needs to be registered with AWS IoT. The example registration ste
 7. Register to IoT Core by using Verification CSR and Root CA certification.
   $ aws iot register-ca-certificate --ca-certificate file://Certificate.pem --verification-certificate file://Verify.crt --region ap-northeast-1 --set-as-active
 ```
-The registered CA Certificate Arn and PCA Authority Arn needs to be inputted
-in the in the inquiry prompt, or request body as parameters.
+The registered CA Certificate ID and PCA Authority Arn needs to be inputted
+in the in the inquiry prompt in the installer, or request body as parameters.
 
 ## Deployment
 
@@ -174,7 +174,7 @@ MQTT PUBLISH TOPIC:       cdf/certificates/thing001/get
 MQTT PUBLISH BODY:
 {
     "csr":"-----BEGIN CERTIFICATE REQUEST-----\nCSR CONTENT\n-----END CERTIFICATE REQUEST-----"
-    "acmpcaParameters" :{
+    "acmpcaParameters" :{ // If not specified, the values specified in the installer will be used.
         // Mandatory. Either provide the ACM PCA CA ARN to issue the device certificate, 
         //      or an alias that points to said AWS ACM PCA CA ARN:
         "acmpcaCaArn": "?",           
