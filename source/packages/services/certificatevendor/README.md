@@ -47,8 +47,8 @@ The private CA needs to be registered with AWS IoT. The example registration ste
 7. Register to IoT Core by using Verification CSR and Root CA certification.
   $ aws iot register-ca-certificate --ca-certificate file://Certificate.pem --verification-certificate file://Verify.crt --region ap-northeast-1 --set-as-active
 ```
-The registered CA CertificateId and PCA Authority Arn needs to be inputted
-in the in the inquiry prompt in the installer as parameters.
+The registered CA Certificate Arn and PCA Authority Arn needs to be inputted
+in the in the inquiry prompt, or request body as parameters.
 
 ## Deployment
 
@@ -163,6 +163,40 @@ MQTT PUBLISH BODY:
 {
     "previousCertificateId" : "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
     "csr":"-----BEGIN CERTIFICATE REQUEST-----\nCSR CONTENT\n-----END CERTIFICATE REQUEST-----"
+}
+```
+
+Example MQTT message body sent from the device to the AWS IoT Gateway to retrieve a certificate based on a provided CSR. That use ACM PCA to issue a new certificate:
+
+```sh
+MQTT SUBSCRIBE TOPIC:     cdf/certificates/thing001/get/+
+MQTT PUBLISH TOPIC:       cdf/certificates/thing001/get
+MQTT PUBLISH BODY:
+{
+    "csr":"-----BEGIN CERTIFICATE REQUEST-----\nCSR CONTENT\n-----END CERTIFICATE REQUEST-----"
+    "acmpcaParameters" :{
+        // Mandatory. Either provide the ACM PCA CA ARN to issue the device certificate, 
+        //      or an alias that points to said AWS ACM PCA CA ARN:
+        "acmpcaCaArn": "?",           
+        "acmpcaCaAlias": "?",
+
+        // Mandatory. Either provide the AWS IoT CA ID of the ACM PCA CA registered with AWS IoT, 
+        //      or an alias that points to said AWS IoT CA ID:
+        "awsiotCaID": "?",           
+        "awsiotCaAlias": "?",
+        
+        // Optional. Certificate information to apply:
+        "certInfo": {                       // optional. 
+            "commonName": "?",              // optional
+            "organization": "?",            // optional
+            "organizationalUnit": "?",      // optional
+            "locality": "?",                // optional
+            "stateName": "?",               // optional
+            "country": "?",                 // optional
+            "emailAddress": "?",            // optional
+            "daysExpiry": ?                 // optional
+        }
+    }
 }
 ```
 

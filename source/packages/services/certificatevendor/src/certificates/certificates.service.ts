@@ -16,7 +16,7 @@ import {logger} from '../utils/logger';
 import * as pem from 'pem';
 import ow from 'ow';
 import { Iot } from 'aws-sdk';
-import { CertificateResponseModel} from './certificates.models';
+import { CertificateResponseModel, ACMPCAParameters, CertInfo} from './certificates.models';
 import { UpdateCertificateRequest, DescribeCACertificateRequest, DescribeCACertificateResponse,
          RegisterCertificateRequest, RegisterCertificateResponse, ListThingPrincipalsResponse,
          AttachThingPrincipalRequest, ListPrincipalThingsResponse, GetEffectivePoliciesResponse, ListAttachedPoliciesResponse } from 'aws-sdk/clients/iot';
@@ -107,8 +107,8 @@ export class CertificateService {
 
     }
 
-    public async getWithCsr(deviceId:string, csr:string, previousCertificateId?:string): Promise<void> {
-        logger.debug(`certificates.service getWithCsr: in: deviceId:${deviceId}, csr: ${csr}, previousCertificateId: ${previousCertificateId}`);
+    public async getWithCsr(deviceId:string, csr:string, previousCertificateId?:string, acmpcaParameters?:ACMPCAParameters): Promise<void> {
+        logger.debug(`certificates.service getWithCsr: in: deviceId:${deviceId}, csr: ${csr}, previousCertificateId: ${previousCertificateId}, ACMPCAParameters: certInfo:${JSON.stringify(acmpcaParameters)}`);
         const response:CertificateResponseModel = {};
 
         try {
@@ -116,16 +116,59 @@ export class CertificateService {
             ow(csr, ow.string.nonEmpty);
 
             // ensure device is whitelisted
-            if (await this.registry.isWhitelisted(deviceId)!==true) {
-                throw new Error('DEVICE_NOT_WHITELISTED');
-            }
+            //if (await this.registry.isWhitelisted(deviceId)!==true) {
+            //    throw new Error('DEVICE_NOT_WHITELISTED');
+            //}
             
-            const caPem:string = await this.getCaCertificate(this.caCertificateId);
+            let caPem:string;
             let certificate:string;
             
             if(this.acmpcaEnabled) {
-                certificate = await this.getACMCertificate(csr, this.acmpcaCaArn);
+                let caCertID: string;
+                let acmCaArn: string;
+                let certInfo: CertInfo;
+                
+                if (acmpcaParameters) {
+                    if (acmpcaParameters.awsiotCaAlias) {
+                        acmpcaParameters.awsiotCaID = process.env[`CA_${acmpcaParameters.awsiotCaAlias?.toUpperCase()}`];
+                        ow(acmpcaParameters.awsiotCaID, ow.string.message('Invalid `awsiotCaAlias`.'));
+                    } else {
+                        ow(acmpcaParameters.awsiotCaID, ow.string.message('Either `awsiotCaAlias` or `awsiotCaArn` must be provided'));
+                    }
+                    if (acmpcaParameters.acmpcaCaAlias) {
+                        acmpcaParameters.acmpcaCaArn = process.env[`PCA_${acmpcaParameters.acmpcaCaAlias?.toUpperCase()}`];
+                        ow(acmpcaParameters.acmpcaCaArn, ow.string.message('Invalid `acmpcaCaAlias`.'));
+                    } else {
+                        ow(acmpcaParameters.acmpcaCaArn, ow.string.message('Either `acmpcaCaAlias` or `acmpcaCaArn` must be provided.'));
+                    }
+                
+                    //prioritize requested parameters over parameters in installer
+                    if (acmpcaParameters.acmpcaCaArn) {
+                        acmCaArn = acmpcaParameters.acmpcaCaArn;
+                    } else {
+                        acmCaArn = this.acmpcaCaArn;
+                    }
+                    if (acmpcaParameters.awsiotCaID) {
+                        caCertID = acmpcaParameters.awsiotCaID;
+                    } else {
+                        caCertID = this.caCertificateId;
+                    }
+                    if (acmpcaParameters.certInfo) {
+                        certInfo = acmpcaParameters.certInfo;
+                    } else {
+                        certInfo = null;
+                    }
+                } else {
+                    acmCaArn = this.acmpcaCaArn;
+                    caCertID = this.caCertificateId;
+                    certInfo = null;
+                }
+                
+                caPem = await this.getCaCertificate(caCertID);
+                certificate = await this.getACMCertificate(csr, acmCaArn, certInfo);
+                
             } else { // create certificate from SSM paramater and csr
+                caPem = await this.getCaCertificate(this.caCertificateId);
                 certificate = await this.getSSMCertificate(csr, caPem);
             }
             
@@ -135,7 +178,7 @@ export class CertificateService {
             await this.attachPolicyToCertificate(certificateArn, this.rotatedCertificatePolicy, previousCertificateId);
 
             // update asset library status
-            await this.registry.updateAssetStatus(deviceId);
+            //await this.registry.updateAssetStatus(deviceId);
 
             // send success to the device
             response.certificate = certificate;
@@ -460,14 +503,35 @@ export class CertificateService {
         return certificate;
     }
     
-    private async getACMCertificate(csr: string, caArn: string): Promise<string> {
+    private async getACMCertificate(csr: string, caArn: string, certInfo?:CertInfo): Promise<string> {
+        logger.debug(`getACMCertificate: in: caArn:${caArn}, certInfo:${JSON.stringify(certInfo)}, csr:${csr}`);
         
-        const params: AWS.ACMPCA.IssueCertificateRequest = {
-            Csr: csr,
-            CertificateAuthorityArn: caArn,
-            SigningAlgorithm: this.acmpcaSignalingAlgorithm,
-            Validity: { Value: this.certificateExpiryDays, Type: "DAYS" }
-        };
+        let params: AWS.ACMPCA.IssueCertificateRequest;
+        
+        if (certInfo) {
+            params = {
+                Csr: csr,
+                CertificateAuthorityArn: caArn,
+                SigningAlgorithm: this.acmpcaSignalingAlgorithm,
+                Validity: { Value: this.certificateExpiryDays, Type: "DAYS" },
+                ApiPassthrough: {
+                    Subject: {
+                        Country: certInfo.country,
+                        Organization: certInfo.organization,
+                        OrganizationalUnit: certInfo.organizationalUnit,
+                        State: certInfo.stateName,
+                        CommonName: certInfo.commonName?.toString()
+                    }
+                }
+            };
+        } else {
+            params = {
+                Csr: csr,
+                CertificateAuthorityArn: caArn,
+                SigningAlgorithm: this.acmpcaSignalingAlgorithm,
+                Validity: { Value: this.certificateExpiryDays, Type: "DAYS" },
+            };
+        }
 
         const data: AWS.ACMPCA.IssueCertificateResponse = await this.acmpca.issueCertificate(params).promise();
         let cert: AWS.ACMPCA.GetCertificateResponse;
