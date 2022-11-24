@@ -116,9 +116,9 @@ export class CertificateService {
             ow(csr, ow.string.nonEmpty);
 
             // ensure device is whitelisted
-            //if (await this.registry.isWhitelisted(deviceId)!==true) {
-            //    throw new Error('DEVICE_NOT_WHITELISTED');
-            //}
+            if (await this.registry.isWhitelisted(deviceId)!==true) {
+                throw new Error('DEVICE_NOT_WHITELISTED');
+            }
             
             let caPem:string;
             let certificate:string;
@@ -178,7 +178,7 @@ export class CertificateService {
             await this.attachPolicyToCertificate(certificateArn, this.rotatedCertificatePolicy, previousCertificateId);
 
             // update asset library status
-            //await this.registry.updateAssetStatus(deviceId);
+            await this.registry.updateAssetStatus(deviceId);
 
             // send success to the device
             response.certificate = certificate;
