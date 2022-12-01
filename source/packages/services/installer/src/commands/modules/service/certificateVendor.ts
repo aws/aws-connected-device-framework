@@ -59,6 +59,10 @@ export class CertificateVendorInstaller implements ServiceModule {
       return updatedAnswers;
     }
     
+    if (updatedAnswers.certificateVendor === undefined) {
+      updatedAnswers.certificateVendor = {};
+    }
+    
     const pcaAliases = await this.getPcaAliases(answers);
     updatedAnswers.certificateVendor.pcaAliases = pcaAliases;
 
