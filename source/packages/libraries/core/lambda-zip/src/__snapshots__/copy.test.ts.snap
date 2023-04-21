@@ -1,0 +1,65 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`copy copies a single file when targeting file 1`] = `
+{
+  "a": "/a",
+}
+`;
+
+exports[`copy copies a whole directory when targeting a directory 1`] = `
+{
+  "nested": {
+    "a": "/level1a/level2a/a",
+    "b": "/level1a/level2a/b",
+  },
+}
+`;
+
+exports[`copy copies files matching pattern (*) 1`] = `
+{
+  "a": "/a",
+}
+`;
+
+exports[`copy copies files matching pattern (**/*) 1`] = `
+{
+  "a": "/a",
+  "level1a": {
+    "a": "/level1a/a",
+    "b": "/level1a/b",
+    "level2a": {
+      "a": "/level1a/level2a/a",
+      "b": "/level1a/level2a/b",
+    },
+    "level2b": {
+      "a": "/level1a/level2b/a",
+    },
+  },
+  "level1b": {
+    "level2a": {
+      "level3a": {
+        "level4a": {
+          "a": "/level1b/level2a/level3a/level4a",
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`copy copies files matching pattern (a) 1`] = `
+{
+  "a": "/a",
+}
+`;
+
+exports[`copy copies files matching pattern (level1a/**/b) 1`] = `
+{
+  "level1a": {
+    "b": "/level1a/b",
+    "level2a": {
+      "b": "/level1a/level2a/b",
+    },
+  },
+}
+`;
