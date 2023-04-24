@@ -12,6 +12,7 @@
     "test": "rushx lint && APP_CONFIG_DIR='src/config' jest --silent --passWithNoTests"
   },
   "dependencies": {
+    "@awssolutions/cdf-environment-sanitizer": "^0.0.0",
     "@cdf/errors": "^4.0.0",
     "@cdf/logger": "^4.0.0",
     "dotenv-flow": "~3.2.0",
