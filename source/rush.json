@@ -313,6 +313,12 @@
       "projectFolder": "packages/libraries/core/lambda-zip",
       "reviewCategory": "library",
       "shouldPublish": false
+    },
+    {
+      "packageName": "@awssolutions/cdf-client-request-signer",
+      "projectFolder": "packages/libraries/core/client-request-signer",
+      "reviewCategory": "library",
+      "shouldPublish": true
     }
   ],
   /**
