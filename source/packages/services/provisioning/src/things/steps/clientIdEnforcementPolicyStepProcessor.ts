@@ -15,16 +15,12 @@ import { ProvisioningStepProcessor } from './provisioningStepProcessor';
 import { ProvisioningStepData } from './provisioningStep.model';
 import { CDFProvisioningTemplate, ParamaterReference } from '../templates/template.models';
 import { logger } from '../../utils/logger';
-import * as util from 'util';
-import * as path from 'path';
-import * as fs from 'fs';
 import { TYPES } from '../../di/types';
 import AWS = require('aws-sdk');
 import ow from 'ow';
 @injectable()
 export class ClientIdEnforcementPolicyStepProcessor implements ProvisioningStepProcessor {
 
-  private _readFileAsync = util.promisify(fs.readFile);
   private _clientIdEnforcementPolicyTemplate:string;
 
   private _iot: AWS.Iot;
@@ -52,8 +48,8 @@ export class ClientIdEnforcementPolicyStepProcessor implements ProvisioningStepP
     logger.debug(`things.steps.ClientIdEnforcementPolicyStepProcessor createClientIdEnforcementPolicy: in: certificateArn:${certificateArn}`);
 
     if (this._clientIdEnforcementPolicyTemplate===null || this._clientIdEnforcementPolicyTemplate===undefined) {
-        const templateLocation = path.join(__dirname, `../policies/clientIdEnforcementPolicyTemplate.json`);
-        this._clientIdEnforcementPolicyTemplate = await this._readFileAsync(templateLocation, {encoding: 'utf8'});
+        const templateObject = await import('../policies/clientIdEnforcementPolicyTemplate.json');
+        this._clientIdEnforcementPolicyTemplate = JSON.stringify(templateObject);
     }
 
     let thingName:string;

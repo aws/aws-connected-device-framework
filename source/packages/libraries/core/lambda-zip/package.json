@@ -1,6 +1,6 @@
 {
   "name": "@awssolutions/cdf-lambda-zip",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "Compiles lambda handlers into zipped bundles",
   "main": "dist/index.js",
   "files": [

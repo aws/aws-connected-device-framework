@@ -10,7 +10,9 @@
     "build": "npx tsc -b && npx shx cp -R 'src/config' 'dist/config' && npx shx cp -R 'src/templates' 'dist/templates'",
     "test": "rushx lint && jest --silent --passWithNoTests",
     "start": "rushx build && APP_CONFIG_DIR=${PWD}/src/config nodemon dist/api_gateway_proxy.js",
-    "bundle": "../../../infrastructure/bundle-package.bash simulation-manager"
+    "bundle": "npm run bundle:build && npm run bundle:deploy",
+    "bundle:build": "lambda-zip --entry-point src/api_gateway_proxy.ts --copy templates:src/templates config:src/config",
+    "bundle:deploy": "node ../../../infrastructure/bundle-package.js"
   },
   "dependencies": {
     "aws-sdk": "2.1048.0",
@@ -24,7 +26,7 @@
     "inversify-express-utils": "6.3.2",
     "json2csv": "4.5.4",
     "js-yaml": "3.13.1",
-    "logform": "2.1.2",
+    "logform": "2.4.2",
     "ow": "0.17.0",
     "pick-some": "1.0.1",
     "readable-stream": "2.3.6",
@@ -36,6 +38,7 @@
     "dotenv": "^8.2.0"
   },
   "devDependencies": {
+    "@awssolutions/cdf-lambda-zip": "^0.0.0",
     "@rushstack/eslint-config": "2.3.1",
     "@types/aws-lambda": "8.10.65",
     "@types/aws-serverless-express": "3.3.2",

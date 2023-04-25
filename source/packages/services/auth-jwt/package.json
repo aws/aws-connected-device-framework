@@ -23,7 +23,7 @@
     "js-yaml": "4.1.0",
     "jsonwebtoken": "8.5.1",
     "jwk-to-pem": "2.0.4",
-    "logform": "2.2.0",
+    "logform": "2.4.2",
     "ow": "0.23.0",
     "reflect-metadata": "0.1.13",
     "uuid": "8.3.2",

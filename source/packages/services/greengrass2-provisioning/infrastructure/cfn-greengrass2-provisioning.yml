@@ -343,7 +343,7 @@ Resources:
     Properties:
       FunctionName: !Sub 'cdf-greengrass2-provisioning-rest-${Environment}'
       CodeUri: ../bundle.zip
-      Handler: packages/services/greengrass2-provisioning/dist/lambda_apigw_proxy.handler
+      Handler: lambda_apigw_proxy.handler
 
       MemorySize: 256
       Role: !GetAtt LambdaExecutionRole.Arn
@@ -361,7 +361,7 @@ Resources:
 
       Environment:
         Variables:
-          APP_CONFIG_DIR: 'packages/services/greengrass2-provisioning/dist/config'
+          APP_CONFIG_DIR: 'config'
           APP_CONFIG: !Ref ApplicationConfigurationOverride
           AWS_ACCOUNTID: !Ref AWS::AccountId
           AWS_EVENTBRIDGE_BUS_NAME: !Ref EventBridgeBusName
@@ -405,7 +405,7 @@ Resources:
     Properties:
       FunctionName: !Sub 'cdf-greengrass2-provisioning-sqs-${Environment}'
       CodeUri: ../bundle.zip
-      Handler: packages/services/greengrass2-provisioning/dist/lambda_sqs_proxy.handler
+      Handler: lambda_sqs_proxy.handler
 
       MemorySize: 256
       Role: !GetAtt LambdaExecutionRole.Arn
@@ -423,7 +423,7 @@ Resources:
 
       Environment:
         Variables:
-          APP_CONFIG_DIR: 'packages/services/greengrass2-provisioning/dist/config'
+          APP_CONFIG_DIR: 'config'
           APP_CONFIG: !Ref ApplicationConfigurationOverride
           AWS_EVENTBRIDGE_BUS_NAME: !Ref EventBridgeBusName
           ENABLE_PUBLISH_EVENTS: !Ref EnablePublishEvents
@@ -468,7 +468,7 @@ Resources:
     Properties:
       FunctionName: !Sub 'cdf-greengrass2-provisioning-job-${Environment}'
       CodeUri: ../bundle.zip
-      Handler: packages/services/greengrass2-provisioning/dist/lambda_job_execution_proxy.handler
+      Handler: lambda_job_execution_proxy.handler
 
       MemorySize: 256
       Role: !GetAtt LambdaExecutionRole.Arn
@@ -486,7 +486,7 @@ Resources:
 
       Environment:
         Variables:
-          APP_CONFIG_DIR: 'packages/services/greengrass2-provisioning/dist/config'
+          APP_CONFIG_DIR: 'config'
           APP_CONFIG: !Ref ApplicationConfigurationOverride
           AWS_ACCOUNTID: !Ref AWS::AccountId
           ENABLE_PUBLISH_EVENTS: !Ref EnablePublishEvents
@@ -507,7 +507,7 @@ Resources:
     Properties:
       FunctionName: !Sub 'cdf-greengrass2-provisioning-dynamoDb-${Environment}'
       CodeUri: ../bundle.zip
-      Handler: packages/services/greengrass2-provisioning/dist/lambda_ddbstream_proxy.handler
+      Handler: lambda_ddbstream_proxy.handler
 
       MemorySize: 256
       Role: !GetAtt LambdaExecutionRole.Arn
@@ -525,7 +525,7 @@ Resources:
 
       Environment:
         Variables:
-          APP_CONFIG_DIR: 'packages/services/greengrass2-provisioning/dist/config'
+          APP_CONFIG_DIR: 'config'
           APP_CONFIG: !Ref ApplicationConfigurationOverride
           AWS_ACCOUNTID: !Ref AWS::AccountId
           AWS_DYNAMODB_TABLE_NAME: !Ref Table

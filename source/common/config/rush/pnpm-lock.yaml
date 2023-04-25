@@ -4345,6 +4345,11 @@ packages:
       minimist: 1.2.6
     dev: false
 
+  /@colors/colors/1.5.0:
+    resolution: {integrity: sha512-ooWCrlZP11i8GImSjTHYHLkvFDP48nS4+204nGb1RiX/WXYHmJA2III9/e2DWVabCESdW7hBAEzHRqUn9OUVvQ==}
+    engines: {node: '>=0.1.90'}
+    dev: false
+
   /@cucumber/create-meta/5.0.0:
     resolution: {integrity: sha512-Z5kMZkUff00S3/KSnKzB/KOm2UIxMXY1xXmj2dQMlD49lV6v/W8EEvgDMNtQotQNSOQU5bDupmWQpk+o16tXIw==}
     dependencies:
@@ -5710,7 +5715,7 @@ packages:
   /@types/connect/3.4.35:
     resolution: {integrity: sha512-cdeYyv4KWoEgpBISTxWvqYsVy444DOqehiF3fM3ne10AmJ62RSyNkUnxMJXHQWRQQX2eR94m5y1IZyDwBjV9FQ==}
     dependencies:
-      '@types/node': 18.0.0
+      '@types/node': 18.11.19
     dev: false
 
   /@types/cookiejar/2.1.2:
@@ -6090,7 +6095,7 @@ packages:
   /@types/ws/8.5.3:
     resolution: {integrity: sha512-6YOoWjruKj1uLf3INHH7D3qTXwFfEsg1kf3c0uDdSBJwfa/llkwIjrAGV7j7mVgGNbzTQ3HiHKKDXl6bJPD97w==}
     dependencies:
-      '@types/node': 18.0.0
+      '@types/node': 18.11.19
     dev: false
 
   /@types/yargs-parser/21.0.0:
@@ -9817,10 +9822,6 @@ packages:
       bser: 2.1.1
     dev: false
 
-  /fecha/2.3.3:
-    resolution: {integrity: sha512-lUGBnIamTAwk4znq5BcqsDaxSmZ9nDVJaij6NvRt/Tg4R69gERA+otPKbS86ROw9nxVMw2/mp1fnaiWqbs6Sdg==}
-    dev: false
-
   /fecha/4.2.3:
     resolution: {integrity: sha512-OP2IUU6HeYKJi3i0z4A19kHMQoLVs4Hc+DPqqxI2h/DPZHTm/vjsfC6P0b4jCMy14XizLBqvndQ+UilD7707Jw==}
     dev: false
@@ -13055,16 +13056,6 @@ packages:
       wrap-ansi: 6.2.0
     dev: false
 
-  /logform/2.1.2:
-    resolution: {integrity: sha512-+lZh4OpERDBLqjiwDLpAWNQu6KMjnlXH2ByZwCuSqVPJletw0kTWJf5CgSNAUKn1KUkv3m2cUz/LK8zyEy7wzQ==}
-    dependencies:
-      colors: 1.4.0
-      fast-safe-stringify: 2.1.1
-      fecha: 2.3.3
-      ms: 2.1.3
-      triple-beam: 1.3.0
-    dev: false
-
   /logform/2.2.0:
     resolution: {integrity: sha512-N0qPlqfypFx7UHNn4B3lzS/b0uLqt2hmuoa+PpuXNYgozdJYAyauF5Ky0BWVjrxDlMWiT3qN4zPq3vVAfZy7Yg==}
     dependencies:
@@ -13072,6 +13063,16 @@ packages:
       fast-safe-stringify: 2.1.1
       fecha: 4.2.3
       ms: 2.1.3
+      triple-beam: 1.3.0
+    dev: false
+
+  /logform/2.4.2:
+    resolution: {integrity: sha512-W4c9himeAwXEdZ05dQNerhFz2XG80P9Oj0loPUMV23VC2it0orMHQhJm4hdnnor3rd1HsGf6a2lPwBM1zeXHGw==}
+    dependencies:
+      '@colors/colors': 1.5.0
+      fecha: 4.2.3
+      ms: 2.1.3
+      safe-stable-stringify: 2.4.3
       triple-beam: 1.3.0
     dev: false
 
@@ -14938,6 +14939,11 @@ packages:
       ret: 0.1.15
     dev: false
 
+  /safe-stable-stringify/2.4.3:
+    resolution: {integrity: sha512-e2bDA2WJT0wxseVd4lsDP4+3ONX6HpMXQa1ZhFQ7SU+GjvORCmShbCMltrtIDfkYhVHrOcPtj+KhmDBdPdZD1g==}
+    engines: {node: '>=10'}
+    dev: false
+
   /safer-buffer/2.1.2:
     resolution: {integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==}
     dev: false
@@ -16656,7 +16662,7 @@ packages:
       async: 2.6.4
       diagnostics: 1.1.1
       is-stream: 1.1.0
-      logform: 2.2.0
+      logform: 2.4.2
       one-time: 0.0.4
       readable-stream: 3.6.0
       stack-trace: 0.0.10
@@ -16671,7 +16677,7 @@ packages:
       '@dabh/diagnostics': 2.0.3
       async: 3.2.4
       is-stream: 2.0.1
-      logform: 2.2.0
+      logform: 2.4.2
       one-time: 1.0.0
       readable-stream: 3.6.0
       stack-trace: 0.0.10
@@ -16983,7 +16989,7 @@ packages:
     dev: false
 
   file:projects/assetlibrary-export.tgz:
-    resolution: {integrity: sha512-MUT+4SVzbLKbvVT+cshquRxwR95Zx2ctZNbZQWJOHnMhykp91OREr1oZrJmxHLsB8y5lQHCBTEevQB1mEXCgbg==, tarball: file:projects/assetlibrary-export.tgz}
+    resolution: {integrity: sha512-2a7kz6EzeuYcQsZ+voUXvBVEdS7oIQSaAb881XaMDXZd4Jo5/rxdFAAmw6784cEDNmusbF6W7r+zotTNVacWQg==, tarball: file:projects/assetlibrary-export.tgz}
     name: '@rush-temp/assetlibrary-export'
     version: 0.0.0
     dependencies:
@@ -17021,7 +17027,7 @@ packages:
       js-yaml: 3.13.1
       jsonwebtoken: 8.5.1
       lodash: 4.17.21
-      logform: 2.1.2
+      logform: 2.4.2
       luxon: 2.3.0
       mime: 1.6.0
       moment: 2.29.4
@@ -17047,7 +17053,7 @@ packages:
     dev: false
 
   file:projects/assetlibrary-history.tgz:
-    resolution: {integrity: sha512-9XENZ7USjo1StaD88it6Kqz8BRcvMfJRYbyKKD2Ii/PUYVyhpgw81edL7XYkBX0IVluiAP7tv6AEdvllaghKVA==, tarball: file:projects/assetlibrary-history.tgz}
+    resolution: {integrity: sha512-8yNyKWVKHgSdvQbk4FHF2KPXv+csXa7SsReK+yqKSNgR0DjjY2YNIAClMIWFsvHbjMq8ndlHq8bcIu9W1WNIGA==, tarball: file:projects/assetlibrary-history.tgz}
     name: '@rush-temp/assetlibrary-history'
     version: 0.0.0
     dependencies:
@@ -17082,7 +17088,7 @@ packages:
       jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
       js-yaml: 4.1.0
-      logform: 2.2.0
+      logform: 2.4.2
       morgan: 1.10.0
       nodemon: 2.0.7
       nyc: 15.1.0
@@ -17104,7 +17110,7 @@ packages:
     dev: false
 
   file:projects/assetlibrary.tgz:
-    resolution: {integrity: sha512-oCJNMlETu8gBwfyd1LL29q1qo3255TUJxaJZbSsgCKgrK9G1dam6KLDjY6cd/NtTeV7o/REPAEY7Y5r7OrObNg==, tarball: file:projects/assetlibrary.tgz}
+    resolution: {integrity: sha512-UX2972nHnE1dbEiAhYV/29m93bHqkKmNY/5NsEnSJb2paaaCJWPpXuh6O6QLGbvyGUnIm9TD/yeO/aE3IZ2mRg==, tarball: file:projects/assetlibrary.tgz}
     name: '@rush-temp/assetlibrary'
     version: 0.0.0
     dependencies:
@@ -17147,7 +17153,7 @@ packages:
       json-stable-stringify: 1.0.1
       jsonwebtoken: 8.5.1
       just-clone: 3.2.1
-      logform: 2.2.0
+      logform: 2.4.2
       mime: 2.5.2
       node-cache: 5.1.2
       nyc: 15.1.0
@@ -17213,7 +17219,7 @@ packages:
     dev: false
 
   file:projects/auth-devicecert.tgz:
-    resolution: {integrity: sha512-iEY0eWNIYYAhOl8JKHw8zhfudIucWnQ0JG5ukFpVuMVi9LZtFmcStN1LlOED1C2fY6DvaOuZy0BeTBuVlrVycw==, tarball: file:projects/auth-devicecert.tgz}
+    resolution: {integrity: sha512-0KN+ccdQcv7RjLSB+2QobS8x/Z7RZ11aT6qyQEs7KqKp/S8oSzEPuAR3nWp9hWC+duONcnvyoyg5K4FtMSVoPA==, tarball: file:projects/auth-devicecert.tgz}
     name: '@rush-temp/auth-devicecert'
     version: 0.0.0
     dependencies:
@@ -17234,7 +17240,7 @@ packages:
       jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
       js-yaml: 4.1.0
-      logform: 2.2.0
+      logform: 2.4.2
       nodemon: 2.0.7
       nyc: 15.1.0
       pem: 1.14.4
@@ -17253,7 +17259,7 @@ packages:
     dev: false
 
   file:projects/auth-jwt.tgz:
-    resolution: {integrity: sha512-XZLXOdTV6rsLhkOv0XqKXlWzOvzleqxBvNfVGXJ6cb7udJRTkCAZYO/CkyyBxdzHTpKgXJN5fXiEwndcPWIgnw==, tarball: file:projects/auth-jwt.tgz}
+    resolution: {integrity: sha512-4buoaiQY7Y/fJZ1/6dd5l6K9kkdy1d9kcu2wEvCVcRgXIFgYU0b1ffi8r+YJWDn0H3HWAy8QEx852LmNokvnFQ==, tarball: file:projects/auth-jwt.tgz}
     name: '@rush-temp/auth-jwt'
     version: 0.0.0
     dependencies:
@@ -17277,7 +17283,7 @@ packages:
       js-yaml: 4.1.0
       jsonwebtoken: 8.5.1
       jwk-to-pem: 2.0.4
-      logform: 2.2.0
+      logform: 2.4.2
       nodemon: 2.0.7
       nyc: 15.1.0
       ow: 0.23.0
@@ -17343,7 +17349,7 @@ packages:
     dev: false
 
   file:projects/bulkcerts.tgz:
-    resolution: {integrity: sha512-a8c97GAGxZuQUoqpwhkGC44BQccokMvEl0BODLBToFLXTPlWfLVf0LmnDYrqd/cJ7XfC/jjcBLJUWBLCDmgz6Q==, tarball: file:projects/bulkcerts.tgz}
+    resolution: {integrity: sha512-hG1D3oZGqFVPMdtY0PAXGVhStNAKKEqC+cwVVATQNVlidDGmN3bbvZrsSONepc562O+mfn2Wm3Ibk2fsE/D2sQ==, tarball: file:projects/bulkcerts.tgz}
     name: '@rush-temp/bulkcerts'
     version: 0.0.0
     dependencies:
@@ -17380,7 +17386,7 @@ packages:
       jest-resolve: 26.6.2
       js-yaml: 4.1.0
       jszip: 3.7.0
-      logform: 2.2.0
+      logform: 2.4.2
       nodemon: 2.0.7
       nyc: 15.1.0
       ow: 0.23.0
@@ -17489,7 +17495,7 @@ packages:
     dev: false
 
   file:projects/certificate-activator.tgz:
-    resolution: {integrity: sha512-unXOK504fn0kIfGUOtVEzF7cg1f146ZL1Z6YVOqp6up0aJQKuPNjYIV0PULgrGhKMyv936UktFfHSC0MBZ+KuQ==, tarball: file:projects/certificate-activator.tgz}
+    resolution: {integrity: sha512-VbHQNYvS93gFO0SakeVy94J+eb9Zqhdua7QrdchFlLw9sdMzUz4CusrA+RYeOzLeki9cbUGv8x6YjPhOgSAyVg==, tarball: file:projects/certificate-activator.tgz}
     name: '@rush-temp/certificate-activator'
     version: 0.0.0
     dependencies:
@@ -17516,7 +17522,7 @@ packages:
       jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
       js-yaml: 4.1.0
-      logform: 2.2.0
+      logform: 2.4.2
       nodemon: 2.0.7
       nyc: 15.1.0
       ow: 0.23.0
@@ -17538,7 +17544,7 @@ packages:
     dev: false
 
   file:projects/certificate-vendor.tgz:
-    resolution: {integrity: sha512-EYg0r2mdz592yAMrmktwgsDKbjndfTfoPksVbl6anAokrxUPxdhSlq3DsWEXli1m1ehchatJh6dSqSK+zBHkfA==, tarball: file:projects/certificate-vendor.tgz}
+    resolution: {integrity: sha512-qJFo0ZUNU52OykUhyfqZhsKlselof3uUlFd0/qrfXCMVXKr88mG6xS9oALeC1lxKlYDdD/SVjyMBCjV2RC/9Nw==, tarball: file:projects/certificate-vendor.tgz}
     name: '@rush-temp/certificate-vendor'
     version: 0.0.0
     dependencies:
@@ -17561,7 +17567,7 @@ packages:
       jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
       js-yaml: 4.1.0
-      logform: 2.2.0
+      logform: 2.4.2
       nodemon: 2.0.7
       nyc: 15.1.0
       ow: 0.23.0
@@ -17583,7 +17589,7 @@ packages:
     dev: false
 
   file:projects/command-and-control.tgz:
-    resolution: {integrity: sha512-nq6yzOgKYQrv8qVa19rDNotCkD0PSD72etv1TATmtoohFWUyGMc9AZT8lJgvhS3kS2uZ/T6wWjMpg/ZaB/bDSw==, tarball: file:projects/command-and-control.tgz}
+    resolution: {integrity: sha512-7mB7/418iWUyR/PLv0HQWZ6/3JfM+q7pXSip5loy5e4yanFh/QEhlYrP7crZuC6GdodvaK8y2GUj1bFBDQ2gzw==, tarball: file:projects/command-and-control.tgz}
     name: '@rush-temp/command-and-control'
     version: 0.0.0
     dependencies:
@@ -17619,7 +17625,7 @@ packages:
       jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
       js-yaml: 4.1.0
-      logform: 2.2.0
+      logform: 2.4.2
       ow: 0.23.0
       p-limit: 3.1.0
       readable-stream: 3.6.0
@@ -17730,7 +17736,7 @@ packages:
     dev: false
 
   file:projects/commands.tgz:
-    resolution: {integrity: sha512-LANpVnyPUk3INGEDivTBi/7A83xSmpO0yD0BCdWnQxy8A5TsaWoMX7RgJgatiBxBSl9+VUvtOnPj9X1xMPMbMg==, tarball: file:projects/commands.tgz}
+    resolution: {integrity: sha512-dtOJJ1OLc2n+u2ow4v3Ja+acuIbdSDPuE8zhQMjCtT8XIDl/nO9QolYs4MZW1AbF4Ts9+Bm3LELU8C9iYUeQ1g==, tarball: file:projects/commands.tgz}
     name: '@rush-temp/commands'
     version: 0.0.0
     dependencies:
@@ -17764,7 +17770,7 @@ packages:
       jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
       js-yaml: 4.1.0
-      logform: 2.2.0
+      logform: 2.4.2
       nodemon: 2.0.7
       ow: 0.23.0
       readable-stream: 3.6.0
@@ -17819,7 +17825,7 @@ packages:
     dev: false
 
   file:projects/deployment-helper.tgz:
-    resolution: {integrity: sha512-SWZfiVat5jsTNKUsb2sPVag2UwLLr5lUxokXcnU4cuhbqQweXHJbd9d00lJKAMk/qibv7GsLL3weY0KgUqo0FQ==, tarball: file:projects/deployment-helper.tgz}
+    resolution: {integrity: sha512-j6JCbcxFkfNbvIRadZjIWFnly8WZwghrbDf/hf4RPqwCHJjzuV5bHTgQpRTF8E+/rV66C/7k1+krrLyiuvwhpg==, tarball: file:projects/deployment-helper.tgz}
     name: '@rush-temp/deployment-helper'
     version: 0.0.0
     dependencies:
@@ -17848,7 +17854,7 @@ packages:
       jest-resolve: 26.6.2
       js-yaml: 4.1.0
       jsonwebtoken: 8.5.1
-      logform: 2.2.0
+      logform: 2.4.2
       nodemon: 2.0.7
       nyc: 15.1.0
       ow: 0.23.0
@@ -17869,7 +17875,7 @@ packages:
     dev: false
 
   file:projects/device-monitoring.tgz:
-    resolution: {integrity: sha512-WnlGjWIeJWxMZa82cHVUSyMMuPvSdxzvTX79VxAhQ4HXAL/XQlNtL/8NXrKDUepLP8OzA399QeRU97IGu5oS7g==, tarball: file:projects/device-monitoring.tgz}
+    resolution: {integrity: sha512-L0W2KWWtDO/OF5J4fCTH51OWrmGHWAQ/yYMjm6P+FNgqWzIqhyTzAxN7HQ+AOTmNs2yAX+tb6ouwzTY8bB/zHQ==, tarball: file:projects/device-monitoring.tgz}
     name: '@rush-temp/device-monitoring'
     version: 0.0.0
     dependencies:
@@ -17893,7 +17899,7 @@ packages:
       jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
       js-yaml: 4.1.0
-      logform: 2.2.0
+      logform: 2.4.2
       nodemon: 2.0.7
       nyc: 15.1.0
       ow: 0.23.0
@@ -17959,7 +17965,7 @@ packages:
     dev: false
 
   file:projects/device-patcher.tgz:
-    resolution: {integrity: sha512-DpOr01rHahFcfhfBcNgydMINM8PqIuTCieximOoHqeNfkH/ikCMHmnUiK5EfgU9SKOl1M9dCBgW0E0k+UIcsMA==, tarball: file:projects/device-patcher.tgz}
+    resolution: {integrity: sha512-O/6PFqNKURbkwzXIr2HsR5qpU08yB2g8/9QkkRxcD2TQxc/Z1fvzHJTpzBM7RLixHSfvMC8uJtD0Rxd5Z3ZrmQ==, tarball: file:projects/device-patcher.tgz}
     name: '@rush-temp/device-patcher'
     version: 0.0.0
     dependencies:
@@ -17999,7 +18005,7 @@ packages:
       jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
       js-yaml: 4.1.0
-      logform: 2.2.0
+      logform: 2.4.2
       mime: 2.5.2
       multer: 1.4.5-lts.1
       nyc: 15.1.0
@@ -18141,7 +18147,7 @@ packages:
     dev: false
 
   file:projects/events-alerts.tgz:
-    resolution: {integrity: sha512-spemjtBBbkT/V2rWFytRotm3elkMiGVdtQbB9N5OlGnrYrSnOdHJEnluijjPS20j9DUmvIKNDjEmhHcBap6ZGg==, tarball: file:projects/events-alerts.tgz}
+    resolution: {integrity: sha512-PgjV3jyKHHVCh5YAxKP7XUghtLjWUC8do8nzjfFMS12cQhYFxlFrRZ9Rrsiap7bX1Spa71+u7Nfox/g9q2bbSA==, tarball: file:projects/events-alerts.tgz}
     name: '@rush-temp/events-alerts'
     version: 0.0.0
     dependencies:
@@ -18169,7 +18175,7 @@ packages:
       jest-resolve: 26.6.2
       js-yaml: 4.1.0
       json-rules-engine: 5.3.0
-      logform: 2.2.0
+      logform: 2.4.2
       nodemon: 2.0.7
       nyc: 15.1.0
       ow: 0.23.0
@@ -18190,7 +18196,7 @@ packages:
     dev: false
 
   file:projects/events-processor.tgz:
-    resolution: {integrity: sha512-TbUPB0zzOGIdXVqeMDRjOtLMoGkgRKplX+/wPKgqC9Zt7V9OlELSe35jvGbbUV56proizHq+78ab7hOsYlL1SA==, tarball: file:projects/events-processor.tgz}
+    resolution: {integrity: sha512-YN1wSVqKzJVOProPiTljcDEClupIaPSLHlQVmfagk54gjGyYVK7LsUJmC5WVHAAZslfQA3EStargIC1D2SagKg==, tarball: file:projects/events-processor.tgz}
     name: '@rush-temp/events-processor'
     version: 0.0.0
     dependencies:
@@ -18225,7 +18231,7 @@ packages:
       jest-resolve: 26.6.2
       js-yaml: 4.1.0
       json-rules-engine: 5.3.0
-      logform: 2.2.0
+      logform: 2.4.2
       nodemon: 2.0.7
       nyc: 15.1.0
       ow: 0.23.0
@@ -18280,7 +18286,7 @@ packages:
     dev: false
 
   file:projects/greengrass2-installer-config-generators.tgz:
-    resolution: {integrity: sha512-6bumGuyivZtHTZutpfLRmbXFT7Y/U/lYiaQ50gNbD8nMr1Q1dHNF0CD5AJkAUMBGAmk5YiEvepG+Jss/r0x+fw==, tarball: file:projects/greengrass2-installer-config-generators.tgz}
+    resolution: {integrity: sha512-nMZdQlrZ46KhXcM0HSkZ5lIgiIYMHxZ+UCxkgDtp3hS+xnZfqN5S+pe0UfeLRZi0KtWrc/6yyaSyzGgxmPLLiQ==, tarball: file:projects/greengrass2-installer-config-generators.tgz}
     name: '@rush-temp/greengrass2-installer-config-generators'
     version: 0.0.0
     dependencies:
@@ -18301,7 +18307,7 @@ packages:
       jest-mock-console: 1.0.1_jest@26.6.3
       jest-mock-extended: 1.0.14_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
-      logform: 2.2.0
+      logform: 2.4.2
       nyc: 15.1.0
       ow: 0.23.0
       readable-stream: 3.6.0
@@ -18365,7 +18371,7 @@ packages:
     dev: false
 
   file:projects/greengrass2-provisioning.tgz:
-    resolution: {integrity: sha512-5q6UuLDtYUjGk6OHeMmw6Hpkw8Szi9CLKiVAxYhDdZPrnDBuanNYuc6RmQcyt5aQdexzRMLzxjBvfynACWmXJw==, tarball: file:projects/greengrass2-provisioning.tgz}
+    resolution: {integrity: sha512-nP3glVhIZRAAiBjV3y7TeXAN4JnWpYjx5oJGjz76Yf2jN7uc2NQWgnGK1SDycHeeDnlKOMmGg9v5Rcj5q8TEBw==, tarball: file:projects/greengrass2-provisioning.tgz}
     name: '@rush-temp/greengrass2-provisioning'
     version: 0.0.0
     dependencies:
@@ -18414,7 +18420,7 @@ packages:
       jest-resolve: 26.6.2
       js-yaml: 4.1.0
       just-clone: 3.2.1
-      logform: 2.2.0
+      logform: 2.4.2
       nyc: 15.1.0
       ow: 0.23.0
       p-limit: 3.1.0
@@ -18687,7 +18693,7 @@ packages:
     dev: false
 
   file:projects/organization-manager.tgz:
-    resolution: {integrity: sha512-G8e8FAxl5IWkE4WYBISvv6M5mHV5JdJuNRlNQH8Sywlm7a5d0HgJLicMI0bgbhiApw8X4VNTYuyxJeUKROKlzQ==, tarball: file:projects/organization-manager.tgz}
+    resolution: {integrity: sha512-gAvCceznPFP6YI4m+wtc6fj3uGWsm7AY4jg0R7bYrImJJejm3KZd+O3WCcA4a7BTpPpxia0/2+1ETTsMKyaHBQ==, tarball: file:projects/organization-manager.tgz}
     name: '@rush-temp/organization-manager'
     version: 0.0.0
     dependencies:
@@ -18719,7 +18725,7 @@ packages:
       js-yaml: 4.1.0
       json-to-pretty-yaml: 1.2.2
       jszip: 3.7.1
-      logform: 2.2.0
+      logform: 2.4.2
       ow: 0.23.0
       pem: 1.14.4
       readable-stream: 3.6.0
@@ -18828,7 +18834,7 @@ packages:
     dev: false
 
   file:projects/provisioning.tgz:
-    resolution: {integrity: sha512-9dVF/wh+jJ60QehfFc2MViWfrsCqvOftnIrDiDINW50swkBrRRyCUA4VbyMgScI2ZKzBpzwcNWjg+VdY8pgv7g==, tarball: file:projects/provisioning.tgz}
+    resolution: {integrity: sha512-C5U8Gt5pvgCPyIdX1xvk5Y7rFukfOvis3aDMpmYlNfK6eDnhpJmmq1I9MGVDqUtoHN0Qll0mTcy/Tmbbc6qMmQ==, tarball: file:projects/provisioning.tgz}
     name: '@rush-temp/provisioning'
     version: 0.0.0
     dependencies:
@@ -18865,7 +18871,7 @@ packages:
       js-yaml: 4.1.0
       jszip: 3.7.0
       just-clone: 3.2.1
-      logform: 2.2.0
+      logform: 2.4.2
       nodemon: 2.0.7
       nyc: 15.1.0
       ow: 0.23.0
@@ -18889,7 +18895,7 @@ packages:
     dev: false
 
   file:projects/simulation-launcher.tgz:
-    resolution: {integrity: sha512-s8KhM5wusZz3TN1d5xuldHPxpFlknPlLENg1YEBrJshvDxtNVM+k+gnK7rKCfPR0RzlsX2E3r4sdg9xKnwgoHg==, tarball: file:projects/simulation-launcher.tgz}
+    resolution: {integrity: sha512-CdgiOv/I4Qmz4ilXw6t7NUQHzgnq7W3A8WsZeGKa58PMHIYM5fpXIuPq7HlzLz/700MrJW+si4h/J/Ia9r9jGA==, tarball: file:projects/simulation-launcher.tgz}
     name: '@rush-temp/simulation-launcher'
     version: 0.0.0
     dependencies:
@@ -18909,7 +18915,7 @@ packages:
       jest-mock-extended: 1.0.10_jest@26.6.3+typescript@4.2.4
       jest-resolve: 26.6.2
       js-yaml: 3.13.1
-      logform: 2.1.2
+      logform: 2.4.2
       nodemon: 2.0.6
       ow: 0.17.0
       readable-stream: 2.3.6
@@ -18928,7 +18934,7 @@ packages:
     dev: false
 
   file:projects/simulation-manager.tgz:
-    resolution: {integrity: sha512-eI6obVYRwxsyMr8k7eGZduzp3NRPkxV7y2CN+feiCoBkBGWCUIennrG3QNh1rgZ3kyvXBDxvfKZ+snQBYmmA6Q==, tarball: file:projects/simulation-manager.tgz}
+    resolution: {integrity: sha512-kZEpHoQ+Wn3LbPPSOw0KlUzg7e8MAK9na8EgIlR2KTDJ77+O18umzLeIc4dbtPCX7h7F128TPe6vQGyUwqt+Xw==, tarball: file:projects/simulation-manager.tgz}
     name: '@rush-temp/simulation-manager'
     version: 0.0.0
     dependencies:
@@ -18962,7 +18968,7 @@ packages:
       jest-resolve: 26.6.2
       js-yaml: 3.13.1
       json2csv: 4.5.4
-      logform: 2.1.2
+      logform: 2.4.2
       nodemon: 2.0.6
       ow: 0.17.0
       pick-some: 1.0.1

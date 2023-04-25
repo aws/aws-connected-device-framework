@@ -9,7 +9,9 @@
     "build": "npx tsc -b && npx shx cp -R 'src/config' 'dist/' && npx shx cp -R 'src/things/policies' 'dist/things/policies'",
     "test": "rushx lint && jest",
     "start": "rushx build && APP_CONFIG_DIR=${PWD}/src/config nodemon dist/lambda_proxy.js",
-    "bundle": "../../../infrastructure/bundle-package.bash provisioning"
+    "bundle": "npm run bundle:build && npm run bundle:deploy",
+    "bundle:build": "lambda-zip --entry-point src/lambda_proxy.ts --copy config:src/config:.env.defaults",
+    "bundle:deploy": "node ../../../infrastructure/bundle-package.js"
   },
   "dependencies": {
     "@cdf/errors": "^4.0.0",
@@ -26,7 +28,7 @@
     "inversify-express-utils": "6.3.2",
     "js-yaml": "4.1.0",
     "jszip": "3.7.0",
-    "logform": "2.2.0",
+    "logform": "2.4.2",
     "ow": "0.23.0",
     "pem": "1.14.4",
     "readable-stream": "3.6.0",
@@ -41,6 +43,7 @@
     "dotenv": "^8.2.0"
   },
   "devDependencies": {
+    "@awssolutions/cdf-lambda-zip": "^0.0.0",
     "@rushstack/eslint-config": "2.3.4",
     "@types/body-parser": "1.19.0",
     "@types/cors": "2.8.10",

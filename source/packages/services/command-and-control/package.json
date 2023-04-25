@@ -13,7 +13,9 @@
     "build": "npx tsc -b && npx shx cp -R 'src/config' 'dist/'",
     "test": "rushx lint && NODE_ENV= jest --silent",
     "start": "rushx build && APP_CONFIG_DIR=${PWD}/src/config node dist/lambda_rest_handler.js",
-    "bundle": "../../../infrastructure/bundle-package.bash command-and-control"
+    "bundle": "npm run bundle:build && npm run bundle:deploy",
+    "bundle:build": "lambda-zip --entry-point src/lambda_*_handler.ts --copy config:src/config:.env.defaults",
+    "bundle:deploy": "node ../../../infrastructure/bundle-package.js"
   },
   "dependencies": {
     "@cdf/assetlibrary-client": "^5.1.0",
@@ -36,7 +38,7 @@
     "inversify-express-utils": "6.3.2",
     "inversify": "5.1.1",
     "js-yaml": "4.1.0",
-    "logform": "2.2.0",
+    "logform": "2.4.2",
     "ow": "0.23.0",
     "p-limit": "3.1.0",
     "readable-stream": "3.6.0",
@@ -52,6 +54,7 @@
     "aws-xray-sdk-core": "~3.3.4"
   },
   "devDependencies": {
+    "@awssolutions/cdf-lambda-zip": "^0.0.0",
     "@rushstack/eslint-config": "2.3.4",
     "@types/aws-lambda": "8.10.89",
     "@types/body-parser": "1.19.0",

@@ -104,7 +104,7 @@ Resources:
     Properties:
       FunctionName: !Sub "cdf-greengrass2-manual-config-generator-${Environment}"
       CodeUri: ../bundle.zip
-      Handler: packages/services/greengrass2-installer-config-generators/dist/lambda_manual_handler.handler
+      Handler: lambda_manual_handler.handler
       MemorySize: 256
       Role: !GetAtt LambdaExecutionRole.Arn
       Runtime: nodejs16.x
@@ -114,7 +114,7 @@ Resources:
         Type: AllAtOnce
       Environment:
         Variables:
-          APP_CONFIG_DIR: "packages/services/greengrass2-installer-config-generators/dist/config"
+          APP_CONFIG_DIR: "config"
           APP_CONFIG: !Ref ApplicationConfigurationOverride
           AWS_IOT_ROLE_ALIAS: !Sub "${TokenExchangeRoleAliasPrefix}-${Environment}"
           AWS_IOT_ENDPOINT_DATA: !GetAtt IotDataEndpoint.address
@@ -126,7 +126,7 @@ Resources:
     Properties:
       FunctionName: !Sub "cdf-greengrass2-fleet-config-generator-${Environment}"
       CodeUri: ../bundle.zip
-      Handler: packages/services/greengrass2-installer-config-generators/dist/lambda_fleetProvisioning_handler.handler
+      Handler: lambda_fleetProvisioning_handler.handler
       MemorySize: 256
       Role: !GetAtt LambdaExecutionRole.Arn
       Runtime: nodejs16.x
@@ -136,7 +136,7 @@ Resources:
         Type: AllAtOnce
       Environment:
         Variables:
-          APP_CONFIG_DIR: "packages/services/greengrass2-installer-config-generators/dist/config"
+          APP_CONFIG_DIR: "config"
           APP_CONFIG: !Ref ApplicationConfigurationOverride
           AWS_IOT_ROLE_ALIAS: !Sub "${TokenExchangeRoleAliasPrefix}-${Environment}"
           AWS_IOT_ENDPOINT_DATA: !Ref IotDataEndpoint

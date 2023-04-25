@@ -9,7 +9,9 @@
     "build": "npx tsc -b && npx shx cp -R 'src/config' 'dist/'",
     "test": "rushx lint && jest --silent",
     "start": "rushx build && APP_CONFIG_DIR=${PWD}/src/config nodemon dist/lambda_proxy.js",
-    "bundle": "../../../infrastructure/bundle-package.bash events-alerts"
+    "bundle": "npm run bundle:build && npm run bundle:deploy",
+    "bundle:build": "lambda-zip --entry-point src/lambda_proxy_ddbstream.ts --copy config:src/config:.env.defaults",
+    "bundle:deploy": "node ../../../infrastructure/bundle-package.js"
   },
   "dependencies": {
     "@cdf/errors": "^4.0.0",
@@ -23,7 +25,7 @@
     "inversify-binding-decorators": "4.0.0",
     "js-yaml": "4.1.0",
     "json-rules-engine": "5.3.0",
-    "logform": "2.2.0",
+    "logform": "2.4.2",
     "ow": "0.23.0",
     "reflect-metadata": "0.1.13",
     "uuid": "8.3.2",
@@ -34,6 +36,7 @@
     "dotenv": "^8.2.0"
   },
   "devDependencies": {
+    "@awssolutions/cdf-lambda-zip": "^0.0.0",
     "@types/cors": "2.8.10",
     "@types/uuid": "8.3.0",
 
