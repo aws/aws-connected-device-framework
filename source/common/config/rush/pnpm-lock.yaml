@@ -30,6 +30,7 @@ specifiers:
   '@rush-temp/bulkcerts': file:./projects/bulkcerts.tgz
   '@rush-temp/bulkcerts-client': file:./projects/bulkcerts-client.tgz
   '@rush-temp/cdf-client-request-signer': file:./projects/cdf-client-request-signer.tgz
+  '@rush-temp/cdf-environment-sanitizer': file:./projects/cdf-environment-sanitizer.tgz
   '@rush-temp/cdf-lambda-zip': file:./projects/cdf-lambda-zip.tgz
   '@rush-temp/certificate-activator': file:./projects/certificate-activator.tgz
   '@rush-temp/certificate-vendor': file:./projects/certificate-vendor.tgz
@@ -209,6 +210,7 @@ dependencies:
   '@rush-temp/bulkcerts': file:projects/bulkcerts.tgz
   '@rush-temp/bulkcerts-client': file:projects/bulkcerts-client.tgz
   '@rush-temp/cdf-client-request-signer': file:projects/cdf-client-request-signer.tgz
+  '@rush-temp/cdf-environment-sanitizer': file:projects/cdf-environment-sanitizer.tgz_esbuild@0.17.17
   '@rush-temp/cdf-lambda-zip': file:projects/cdf-lambda-zip.tgz
   '@rush-temp/certificate-activator': file:projects/certificate-activator.tgz
   '@rush-temp/certificate-vendor': file:projects/certificate-vendor.tgz
@@ -17434,6 +17436,32 @@ packages:
       - utf-8-validate
     dev: false
 
+  file:projects/cdf-environment-sanitizer.tgz_esbuild@0.17.17:
+    resolution: {integrity: sha512-aTbsiiVsdSqyXhlUUxNfz6oL5AmprjawslV/GsnDuB23a3+OOxO/fb9tUHZl1UbJo37MXJN41j4h8VYKZPk6LQ==, tarball: file:projects/cdf-environment-sanitizer.tgz}
+    id: file:projects/cdf-environment-sanitizer.tgz
+    name: '@rush-temp/cdf-environment-sanitizer'
+    version: 0.0.0
+    dependencies:
+      '@types/archiver': 5.3.2
+      '@types/glob': 8.0.1
+      '@types/jest': 29.4.4
+      '@types/node': 18.11.19
+      '@types/yargs': 17.0.24
+      glob: 8.1.0
+      jest: 29.4.3_@types+node@18.11.19
+      ts-jest: 29.0.5_3284db61681bf9266d06d0d2919b2000
+      typescript: 4.9.5
+      yargs: 17.6.2
+    transitivePeerDependencies:
+      - '@babel/core'
+      - '@jest/types'
+      - babel-jest
+      - esbuild
+      - node-notifier
+      - supports-color
+      - ts-node
+    dev: false
+
   file:projects/cdf-lambda-zip.tgz:
     resolution: {integrity: sha512-57wB9WbBq1yu4etB6C3rJpUCrJSvxtcs01iPGWtZeWc1hRbl7YgEUQuBLDuJMYkt/myaqD0OdGC1UBVxnqivHQ==, tarball: file:projects/cdf-lambda-zip.tgz}
     name: '@rush-temp/cdf-lambda-zip'
@@ -17759,7 +17787,7 @@ packages:
     dev: false
 
   file:projects/config-inject.tgz:
-    resolution: {integrity: sha512-VxFMPpZvc4A19CotFZ/fea6ES918WntNtvzj0rL02/ihS2ygLFo37vBUZ7JPFhdUFOzyKdQdzVJ1ivAL/lvJWw==, tarball: file:projects/config-inject.tgz}
+    resolution: {integrity: sha512-lV8qDA+TqBlb36AqAu/eTOetx8djWHzjI7aIEDpeddrSXbnHxI6JMm9p00l92GtRaxOHyQhmilSyoR6mogoQPQ==, tarball: file:projects/config-inject.tgz}
     name: '@rush-temp/config-inject'
     version: 0.0.0
     dependencies:
