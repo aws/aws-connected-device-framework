@@ -47,8 +47,8 @@ export class SchemaValidatorService {
         // remove any undefined properties from the input document
         const docAsJson = JSON.parse(JSON.stringify(document));
         Object.keys(docAsJson).forEach(k => {
-            if (docAsJson[k]===undefined || docAsJson[k]==={}) {
-                delete docAsJson[k];
+            if (docAsJson[k] === undefined) {
+              delete docAsJson[k];
             }
         });
         document = docAsJson;

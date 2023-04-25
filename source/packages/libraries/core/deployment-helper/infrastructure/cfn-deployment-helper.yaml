@@ -68,7 +68,7 @@ Resources:
     Properties:
       FunctionName: !Sub "cdf-cfnCustomResources-${Environment}"
       CodeUri: ../bundle.zip
-      Handler: packages/libraries/core/deployment-helper/dist/lambda_custom_resource_proxy.handler
+      Handler: lambda_custom_resource_proxy.handler
       MemorySize: 128
       Role: !GetAtt CustomResourceLambdaRole.Arn
       Runtime: nodejs16.x
@@ -76,7 +76,7 @@ Resources:
       Tracing: Active
       Environment:
         Variables:
-          APP_CONFIG_DIR: "packages/libraries/core/deployment-helper/dist/config"
+          APP_CONFIG_DIR: "config"
           COMMANDANDCONTROL_API_FUNCTION_NAME: !Sub "cdf-commandandcontrol-rest-${Environment}"
           COMMANDANDCONTROL_MODE: lambda
 

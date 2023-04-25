@@ -16,7 +16,7 @@
     "@cdf/config-inject": "^4.0.2",
     "aws-sdk": "2.1048.0",
     "js-yaml": "4.1.0",
-    "logform": "2.2.0",
+    "logform": "2.4.2",
     "pem": "1.14.4",
     "reflect-metadata": "0.1.13",
     "winston": "3.3.3",

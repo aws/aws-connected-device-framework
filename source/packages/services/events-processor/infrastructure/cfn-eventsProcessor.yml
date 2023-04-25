@@ -317,14 +317,14 @@ Resources:
     Properties:
       FunctionName: !Sub "cdf-eventsprocessor-ddbStream-${Environment}"
       CodeUri: ../bundle.zip
-      Handler: packages/services/events-processor/dist/lambda_proxy_ddbstream.handler
+      Handler: lambda_proxy_ddbstream.handler
       MemorySize: 512
       Role: !GetAtt DynamoDBStreamLambdaExecutionRole.Arn
       Runtime: nodejs16.x
       Timeout: 30
       Environment:
         Variables:
-          APP_CONFIG_DIR: "packages/services/events-processor/dist/config"
+          APP_CONFIG_DIR: "config"
           APP_CONFIG: !Ref ApplicationConfigurationOverride
           AWS_ACCOUNTID: !Ref AWS::AccountId
           AWS_DYNAMODB_TABLES_EVENTCONFIG_NAME: !Ref EventConfigTable
@@ -403,14 +403,14 @@ Resources:
     Properties:
       FunctionName: !Sub "cdf-eventsprocessor-invoke-${Environment}"
       CodeUri: ../bundle.zip
-      Handler: packages/services/events-processor/dist/lambda_proxy_invoke.handler
+      Handler: lambda_proxy_invoke.handler
       MemorySize: 512
       Role: !GetAtt LambdaInvokeExecutionRole.Arn
       Runtime: nodejs16.x
       Timeout: 30
       Environment:
         Variables:
-          APP_CONFIG_DIR: "packages/services/events-processor/dist/config"
+          APP_CONFIG_DIR: "config"
           APP_CONFIG: !Ref ApplicationConfigurationOverride
           AWS_ACCOUNTID: !Ref AWS::AccountId
           AWS_DYNAMODB_TABLES_EVENTCONFIG_NAME: !Ref EventConfigTable
@@ -449,14 +449,14 @@ Resources:
     Properties:
       FunctionName: !Sub "cdf-eventsprocessor-rest-${Environment}"
       CodeUri: ../bundle.zip
-      Handler: packages/services/events-processor/dist/lambda_proxy_restapi.handler
+      Handler: lambda_proxy_restapi.handler
       MemorySize: 256
       Role: !GetAtt RESTLambdaExecutionRole.Arn
       Runtime: nodejs16.x
       Timeout: 30
       Environment:
         Variables:
-          APP_CONFIG_DIR: "packages/services/events-processor/dist/config"
+          APP_CONFIG_DIR: "config"
           APP_CONFIG: !Ref ApplicationConfigurationOverride
           AWS_ACCOUNTID: !Ref AWS::AccountId
           AWS_DYNAMODB_TABLES_EVENTCONFIG_NAME: !Ref EventConfigTable
@@ -549,7 +549,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: ../bundle.zip
-      Handler: packages/services/events-processor/dist/lambda_proxy_sqs.handler
+      Handler: lambda_proxy_sqs.handler
 
       MemorySize: 512
       Role: !GetAtt AsyncProcessingLambdaRole.Arn
@@ -557,7 +557,7 @@ Resources:
       Timeout: 900
       Environment:
         Variables:
-          APP_CONFIG_DIR: "packages/services/events-processor/dist/config"
+          APP_CONFIG_DIR: "config"
           APP_CONFIG: !Ref ApplicationConfigurationOverride
           AWS_ACCOUNTID: !Ref AWS::AccountId
           AWS_DYNAMODB_TABLES_EVENTCONFIG_NAME: !Ref EventConfigTable

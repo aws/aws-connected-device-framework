@@ -9,7 +9,9 @@
     "build": "npx tsc -b && npx shx cp -R 'src/config' 'dist/'",
     "test": "rushx lint && NODE_ENV= jest --silent",
     "start": "rushx build && APP_CONFIG_DIR=${PWD}/src/config node dist/lambda_apigw_proxy.js",
-    "bundle": "../../../infrastructure/bundle-package.bash greengrass2-installer-config-generators"
+    "bundle": "npm run bundle:build && npm run bundle:deploy",
+    "bundle:build": "lambda-zip --entry-point src/lambda_*.ts --copy dist:dist --copy config:src/config",
+    "bundle:deploy": "node ../../../infrastructure/bundle-package.js"
   },
   "dependencies": {
     "@cdf/errors": "^4.0.0",
@@ -17,7 +19,7 @@
     "@cdf/config-inject": "^4.0.2",
     "aws-lambda": "1.0.6",
     "dotenv-flow": "3.2.0",
-    "logform": "2.2.0",
+    "logform": "2.4.2",
     "ow": "0.23.0",
     "readable-stream": "3.6.0",
     "reflect-metadata": "0.1.13",
@@ -27,6 +29,7 @@
     "dotenv": "^8.2.0"
   },
   "devDependencies": {
+    "@awssolutions/cdf-lambda-zip": "^0.0.0",
     "@rushstack/eslint-config": "2.3.4",
     "@types/aws-lambda": "8.10.84",
     "@types/dotenv-flow": "3.2.0",

@@ -134,7 +134,7 @@ Resources:
     Properties:
       FunctionName: !Sub 'cdf-certificateActivator-${Environment}'
       CodeUri: ../bundle.zip
-      Handler: packages/services/certificateactivator/dist/certificateactivator.handler
+      Handler: certificateactivator.handler
       Layers:
         - !Ref OpenSslLambdaLayerArn
       MemorySize: 128
@@ -146,7 +146,7 @@ Resources:
       Timeout: 30
       Environment:
         Variables:
-          APP_CONFIG_DIR: 'packages/services/certificateactivator/dist/config'
+          APP_CONFIG_DIR: 'config'
           APP_CONFIG: !Ref ApplicationConfigurationOverride
           ASSETLIBRARY_API_FUNCTION_NAME: !Ref AssetLibraryFunctionName
           PROVISIONING_API_FUNCTION_NAME: !Ref ProvisioningFunctionName

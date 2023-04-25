@@ -228,7 +228,7 @@ Resources:
     Properties:
       FunctionName: !Sub 'cdf-provisioning-rest-${Environment}'
       CodeUri: ../bundle.zip
-      Handler: packages/services/provisioning/dist/lambda_proxy.handler
+      Handler: lambda_proxy.handler
       Layers:
         - !Ref OpenSslLambdaLayerArn
       MemorySize: 512
@@ -239,7 +239,7 @@ Resources:
       Environment:
         Variables:
           APP_CONFIG: !Ref ApplicationConfigurationOverride
-          APP_CONFIG_DIR: 'packages/services/provisioning/dist/config'
+          APP_CONFIG_DIR: 'config'
           AWS_ACCOUNT_ID: !Ref AWS::AccountId
           AWS_S3_ROLE_ARN: !GetAtt LambdaExecutionRole.Arn
           AWS_S3_TEMPLATES_BUCKET: !Ref BucketName

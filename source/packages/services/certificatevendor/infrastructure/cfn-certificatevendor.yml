@@ -268,7 +268,7 @@ Resources:
     Properties:
       FunctionName: !Sub 'cdf-certificateVendor-${Environment}'
       CodeUri: ../bundle.zip
-      Handler: packages/services/certificatevendor/dist/lambda_proxy.handler
+      Handler: lambda_proxy.handler
       Layers:
         - !Ref OpenSslLambdaLayerArn
       MemorySize: 128
@@ -277,7 +277,7 @@ Resources:
       Timeout: 30
       Environment:
         Variables:
-          APP_CONFIG_DIR: 'packages/services/certificatevendor/dist/config'
+          APP_CONFIG_DIR: 'config'
           APP_CONFIG: !Ref ApplicationConfigurationOverride
           ASSETLIBRARY_API_FUNCTION_NAME: !Ref AssetLibraryFunctionName
           AWS_IOT_ENDPOINT: !GetAtt IotEndpoint.address
