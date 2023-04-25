@@ -30,7 +30,7 @@
     "@rushstack/eslint-config": "2.3.4",
     "eslint": "7.26.0",
 
-    "nodemon": "2.0.7",
+    "nodemon": "2.0.20",
     "nyc": "15.1.0",
     "shx": "0.3.3",
 

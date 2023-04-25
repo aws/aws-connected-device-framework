@@ -13,7 +13,7 @@
     "test": "rushx lint && jest --silent --passWithNoTests"
   },
   "dependencies": {
-    "express": "4.17.1"
+    "express": "4.18.2"
   },
   "devDependencies": {
     "@rushstack/eslint-config": "2.3.4",
@@ -34,7 +34,7 @@
     "ts-jest": "26.5.6",
     "typescript": "4.2.4",
 
-    "@types/express": "4.17.11"
+    "@types/express": "4.17.16"
   },
   "jest": {
     "globals": {
