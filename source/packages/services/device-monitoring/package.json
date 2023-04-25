@@ -21,9 +21,9 @@
     "http-errors": "1.8.0",
     "js-yaml": "4.1.0",
     "logform": "2.4.2",
-    "inversify": "5.1.1",
+    "inversify": "6.0.1",
     "inversify-binding-decorators": "4.0.0",
-    "inversify-express-utils": "6.3.2",
+    "inversify-express-utils": "6.4.3",
     "ow": "0.23.0",
     "readable-stream": "3.6.0",
     "reflect-metadata": "0.1.13",
@@ -40,7 +40,7 @@
     "@rushstack/eslint-config": "2.3.4",
     "eslint": "7.26.0",
 
-    "nodemon": "2.0.7",
+    "nodemon": "2.0.20",
     "nyc": "15.1.0",
     "shx": "0.3.3",
 

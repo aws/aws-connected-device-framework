@@ -17,6 +17,7 @@
    * and then specify those projects in the "additionalProjectsToInclude" list.
    */
   "deploymentProjectNames": [
+    "@awssolutions/cdf-client-request-signer",
     "@cdf/assetlibrary-client",
     "@cdf/assetlibrary-export",
     "@cdf/assetlibrary-history",

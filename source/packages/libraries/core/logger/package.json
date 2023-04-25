@@ -12,7 +12,7 @@
     "test": "rushx lint && jest --silent --passWithNoTests"
   },
   "dependencies": {
-    "logform": "2.2.0",
+    "logform": "2.4.2",
     "readable-stream": "3.6.0",
     "winston": "3.3.3",
     "winston-transport": "4.4.0"
