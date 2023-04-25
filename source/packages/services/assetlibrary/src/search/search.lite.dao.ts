@@ -10,15 +10,15 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { injectable, inject } from 'inversify';
-import {logger} from '../utils/logger';
-import {Node} from '../data/node';
-import {TYPES} from '../di/types';
-import { SearchRequestModel } from './search.models';
-import {NodeAssembler} from '../data/assembler';
 import { Iot } from 'aws-sdk';
+import { inject, injectable } from 'inversify';
+import { NodeAssembler } from '../data/assembler';
+import { Node } from '../data/node';
+import { TYPES } from '../di/types';
 import { TypeCategory } from '../types/constants';
 import { NotSupportedError } from '../utils/errors';
+import { logger } from '../utils/logger';
+import { SearchRequestModel } from './search.models';
 
 @injectable()
 export class SearchDaoLite {

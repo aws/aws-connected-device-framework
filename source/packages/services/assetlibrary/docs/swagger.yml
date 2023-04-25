@@ -922,6 +922,7 @@ paths:
       operationId: bulkGetGroups
       parameters:
         - $ref: '#/components/parameters/groupPathsQuery'
+        - $ref: '#/components/parameters/includeGroupsBooleanQuery'
       responses:
         "200":
           description: successful operation
@@ -939,6 +940,7 @@ paths:
   "/groups/{groupPath}":
     parameters:
       - $ref: '#/components/parameters/groupPathPath'
+      - $ref: '#/components/parameters/includeGroupsBooleanQuery'
     get:
       tags:
         - Groups
@@ -1058,9 +1060,6 @@ paths:
       summary: List all ancestor groups of a specific group.
       description: List all ancestor groups of a specific group.
       operationId: listGroupMemberships
-      parameters:
-        - $ref: '#/components/parameters/offsetQuery'
-        - $ref: '#/components/parameters/countQuery'
       responses:
         "200":
           description: successful operation
@@ -1391,7 +1390,17 @@ paths:
       parameters:
         - name: type
           in: query
-          description: Type of group/device to filter.  This can be the high level `group`
+          description: Type of group/device to filter for.  This can be the high level `group`
+            or `device`, as well as any custom group or device template that may
+            have been registered.
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+        - name: ntype
+          in: query
+          description: Type of group/device to filter out.  This can be the high level `group`
             or `device`, as well as any custom group or device template that may
             have been registered.
           explode: true
@@ -1404,6 +1413,14 @@ paths:
           description: The path of a common ancestor group to filter results by.
           schema:
             type: string
+        - name: includeAncestor
+          in: query
+          description: Whether or not to include the ancestor in the search. Defaults to false
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
         - name: eq
           in: query
           description: Filter an attribute based on an exact match. E.g.
@@ -1539,6 +1556,175 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "404":
           $ref: "#/components/responses/NotFound"
+    delete:
+      tags:
+        - Search
+      summary: Search for groups and devices, and delete the results.
+      description: >
+        Search results can be filtered by type, ancestorPath, and an arbitrary number of 
+        additional filter parameters. Each filter can reference a field of the search
+        result, for example `eq=fieldname:value` or traverse the asset library graph to 
+        reference a related entry, for example `eq=traversal1:out:traversal2:in:fieldname:value`.
+        All parameters are combined with a logical AND.
+
+        For all search parameters that include a search key and search value separated 
+        by a colon (:) character, the HTTP parameter must be assembled using the following 
+        sequence of steps:
+         1. URL-encode the search value.
+         2. Concatenate the search key (incl. any traversals), the colon character, and 
+            result of step 1.
+         3. URL-encode the output of step 2.
+        Failure to do so can yield incorrect search results for any search values that include
+        the colon character.
+
+        For example, a search for entries with an outgoing "manufactured_by" relation whose 
+        name starts with "Mfg+Asy Inc" should be expressed as:
+        `/search?startsWith=manufactured_by%3Aout%3Aname%3AMfg%252BAsy%2520Inc`
+      operationId: deleteSearch
+      parameters:
+        - name: type
+          in: query
+          description: Type of group/device to filter for.  This can be the high level `group`
+            or `device`, as well as any custom group or device template that may
+            have been registered.
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+        - name: ntype
+          in: query
+          description: Type of group/device to filter out.  This can be the high level `group`
+            or `device`, as well as any custom group or device template that may
+            have been registered.
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+        - name: ancestorPath
+          in: query
+          description: The path of a common ancestor group to filter results by.
+          schema:
+            type: string
+        - name: includeAncestor
+          in: query
+          description: Whether or not to include the ancestor in the search. Defaults to false
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+        - name: eq
+          in: query
+          description: Filter an attribute based on an exact match. E.g.
+            `?eq=firmwareVersion:ABC123`
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+        - name: neq
+          in: query
+          description: Filter by an attribute based on not matching. E.g.
+            `?neq=firmwareVersion:ABC123`
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+        - name: lt
+          in: query
+          description: Filter an attribute based on having a value less than. E.g.
+            `?lt=deploymentId:3`
+          explode: true
+          schema:
+            type: array
+            items:
+              type: number
+        - name: lte
+          in: query
+          description: Filter an attribute based on having a value less than or equal to.
+            E.g. `?lte=deploymentId:3`
+          explode: true
+          schema:
+            type: array
+            items:
+              type: number
+        - name: gt
+          in: query
+          description: Filter an attribute based on having a value greater than. E.g.
+            `?gt=deploymentId:3`
+          explode: true
+          schema:
+            type: array
+            items:
+              type: number
+        - name: gte
+          in: query
+          description: Filter an attribute based on having a value greater than or equal
+            to. E.g. `?gte=deploymentId:3`
+          explode: true
+          schema:
+            type: array
+            items:
+              type: number
+        - name: startsWith
+          in: query
+          description: >
+            Filter by an attribute based on starting with specific text. Case sensitive.
+            For example: `?startsWith=model:MOD123`
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+        - name: endsWith
+          in: query
+          description: >
+            Filter by an attribute based on ending with specific text. Case sensitive.
+            For example: `?endsWith=model:limited%20edition`
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+        - name: contains
+          in: query
+          description: >
+            Filter by an attribute based on ending with specific text. Case sensitive.
+            For example: `?endsWith=model:quattro`
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+        - name: exist
+          in: query
+          description: Return a match if the device/group in context has a matching relation/atrribute. E.g.
+            `?exists=installed_in:out:groupPath:/vehicle/001`
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+        - name: nexist
+          in: query
+          description: Return a match if the device/group in context does not have a matching relation/atrribute. E.g.
+            `?nxists=installed_in:out:groupPath:/vehicle/001`
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        "204":
+          description: successful operation
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+          
   /policies:
     post:
       tags:
@@ -1572,6 +1758,8 @@ paths:
           required: true
           schema:
             type: string
+        - $ref: '#/components/parameters/offsetQuery'
+        - $ref: '#/components/parameters/countQuery'
       responses:
         "200":
           description: successful operation
@@ -1824,6 +2012,13 @@ components:
         type: array
         items:
           type: string
+    includeGroupsBooleanQuery:
+      name: includeGroups
+      in: query
+      description: Specify false to exclude the groups parameter from the response body
+      schema:
+        type: boolean
+        default: true
     expandRelatedDevicesQuery:
       name: expandRelatedDevices
       in: query

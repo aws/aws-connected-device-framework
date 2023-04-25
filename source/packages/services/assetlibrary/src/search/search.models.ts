@@ -10,9 +10,9 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import {GroupBaseResource} from '../groups/groups.models';
-import { DeviceBaseResource} from '../devices/devices.models';
 import { SortKeys } from '../data/model';
+import { DeviceBaseResource } from '../devices/devices.models';
+import { GroupBaseResource } from '../groups/groups.models';
 
 export enum SearchRequestFilterDirection {
 	in = 'in',
@@ -34,30 +34,31 @@ export type SearchRequestFacet = {
 export type SearchRequestFilters = SearchRequestFilter[];
 
 export class SearchRequestModel {
-	types?: string[]=[];
-	ancestorPath?: string;
+    types?: string[] = [];
+    ntypes?: string[] = [];
+    ancestorPath?: string;
+    includeAncestor?: boolean;
 
-	eq?: SearchRequestFilters;
-	neq?: SearchRequestFilters;
-	lt?: SearchRequestFilters;
-	lte?: SearchRequestFilters;
-	gt?: SearchRequestFilters;
-	gte?: SearchRequestFilters;
-	startsWith?: SearchRequestFilters;
-	endsWith?: SearchRequestFilters;
-	contains?: SearchRequestFilters;
+    eq?: SearchRequestFilters;
+    neq?: SearchRequestFilters;
+    lt?: SearchRequestFilters;
+    lte?: SearchRequestFilters;
+    gt?: SearchRequestFilters;
+    gte?: SearchRequestFilters;
+    startsWith?: SearchRequestFilters;
+    endsWith?: SearchRequestFilters;
+    contains?: SearchRequestFilters;
 
-	exists?: SearchRequestFilters;
-	nexists?: SearchRequestFilters;
+    exists?: SearchRequestFilters;
+    nexists?: SearchRequestFilters;
 
-	facetField?: SearchRequestFacet;
+    facetField?: SearchRequestFacet;
 
-	summarize: boolean;
+    summarize: boolean;
 
-	offset?:number;
-	count?:number;
-	sort?:SortKeys;
-
+    offset?: number;
+    count?: number;
+    sort?: SortKeys;
 }
 
 export type FacetResults = {[key:string]: number};
