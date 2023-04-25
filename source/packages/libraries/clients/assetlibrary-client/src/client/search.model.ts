@@ -10,32 +10,34 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { GroupBaseResource } from './groups.model';
 import { DeviceBaseResource } from './devices.model';
+import { GroupBaseResource } from './groups.model';
 
 export enum SearchRequestFilterDirection {
-	in = 'in',
-	out = 'out'
+    in = 'in',
+    out = 'out',
 }
-export type SearchRequestFilterTraversal =  {
-	relation?: string;
-	direction?: SearchRequestFilterDirection;
+export type SearchRequestFilterTraversal = {
+    relation?: string;
+    direction?: SearchRequestFilterDirection;
 };
 export type SearchRequestFilter = {
-	traversals?: SearchRequestFilterTraversal[];
-	field: string;
-	value: string | number | boolean;
+    traversals?: SearchRequestFilterTraversal[];
+    field: string;
+    value: string | number | boolean;
 };
 export type SearchRequestFacet = {
-	traversals?: SearchRequestFilterTraversal[];
-	field: string;
+    traversals?: SearchRequestFilterTraversal[];
+    field: string;
 };
 
 export type SearchRequestFilters = SearchRequestFilter[];
 
 export class SearchRequestModel {
-    types?: string[]=[];
+    types?: string[] = [];
+    ntypes?: string[] = [];
     ancestorPath?: string;
+    includeAncestor?: boolean;
 
     eq?: SearchRequestFilters;
     neq?: SearchRequestFilters;
@@ -53,10 +55,14 @@ export class SearchRequestModel {
     facetField?: SearchRequestFacet;
 
     summarize?: boolean;
+    /** Attribute to sort results by. */
+    sort?: string;
 
-    public clone(other:SearchRequestModel) : void {
+    public clone(other: SearchRequestModel): void {
         this.types = other.types;
+        this.ntypes = other.ntypes;
         this.ancestorPath = other.ancestorPath;
+        this.includeAncestor = other.includeAncestor;
         this.eq = other.eq;
         this.neq = other.neq;
         this.lt = other.lt;
@@ -70,190 +76,226 @@ export class SearchRequestModel {
         this.nexist = other.nexist;
         this.facetField = other.facetField;
         this.summarize = other.summarize;
+        this.sort = other.sort;
     }
 
-	private buildQSValues(qsParam:string, filters:SearchRequestFilters, encodeKey?: boolean) : string[] {
-		const qs:string[]= [];
+    private buildQSValues(
+        qsParam: string,
+        filters: SearchRequestFilters,
+        encodeKey?: boolean
+    ): string[] {
+        const qs: string[] = [];
 
-		if (filters===undefined) {
-			return qs;
-		}
+        if (filters === undefined) {
+            return qs;
+        }
 
-		filters.forEach(f=> {
-			let key = `${qsParam}=`;
-			const v = `${this.traversalPathToQSValue(f.field, f.traversals)}:${encodeURIComponent(f.value)}`;
-			key = encodeKey ? `${key}${encodeURIComponent(v)}` : `${key}${v}`;
+        filters.forEach((f) => {
+            let key = `${qsParam}=`;
+            const v = `${this.traversalPathToQSValue(f.field, f.traversals)}:${encodeURIComponent(
+                f.value
+            )}`;
+            key = encodeKey ? `${key}${encodeURIComponent(v)}` : `${key}${v}`;
 
-			qs.push(key);
-		});
+            qs.push(key);
+        });
 
-		return qs;
-	}
+        return qs;
+    }
 
-	private traversalPathToQSValue(field: string, traversals?: SearchRequestFilterTraversal[]) : string {
-		const parts: string[] = [];
-		if (traversals!==undefined) {
-			traversals.forEach(t=> {
-				parts.push(t.relation);
-				parts.push(t.direction)
-			});
-		}
-		parts.push(field);
-		return parts.join(':');
-	}
+    private traversalPathToQSValue(
+        field: string,
+        traversals?: SearchRequestFilterTraversal[]
+    ): string {
+        const parts: string[] = [];
+        if (traversals !== undefined) {
+            traversals.forEach((t) => {
+                parts.push(t.relation);
+                parts.push(t.direction);
+            });
+        }
+        parts.push(field);
+        return parts.join(':');
+    }
 
-	public toHttpQueryString():string {
-		let qs:string[]= [];
+    public toHttpQueryString(): string {
+        let qs: string[] = [];
 
-		if (this.types) {
-			this.types.forEach(k=> qs.push(`type=${k}`));
-		}
+        if (this.types) {
+            this.types.forEach((k) => qs.push(`type=${k}`));
+        }
 
-		if (this.ancestorPath) {
-			qs.push(`ancestorPath=${this.ancestorPath}`);
-		}
+        if (this.ntypes) {
+            this.ntypes.forEach((k) => qs.push(`ntype=${k}`));
+        }
 
-		if (this.eq) {
-			qs = qs.concat(this.buildQSValues('eq', this.eq, true));
-		}
+        if (this.ancestorPath) {
+            qs.push(`ancestorPath=${this.ancestorPath}`);
+        }
 
-		if (this.neq) {
-			qs = qs.concat(this.buildQSValues('neq', this.neq, true));
-		}
+        if (this.includeAncestor) {
+            qs.push(`includeAncestor=${this.includeAncestor}`);
+        }
 
-		if (this.lt) {
-			qs = qs.concat(this.buildQSValues('lt', this.lt, true));
-		}
+        if (this.eq) {
+            qs = qs.concat(this.buildQSValues('eq', this.eq, true));
+        }
 
-		if (this.lte) {
-			qs = qs.concat(this.buildQSValues('lte', this.lte, true));
-		}
+        if (this.neq) {
+            qs = qs.concat(this.buildQSValues('neq', this.neq, true));
+        }
 
-		if (this.gt) {
-			qs = qs.concat(this.buildQSValues('gt', this.gt, true));
-		}
+        if (this.lt) {
+            qs = qs.concat(this.buildQSValues('lt', this.lt, true));
+        }
 
-		if (this.gte) {
-			qs = qs.concat(this.buildQSValues('gte', this.gte, true));
-		}
+        if (this.lte) {
+            qs = qs.concat(this.buildQSValues('lte', this.lte, true));
+        }
 
-		if (this.startsWith) {
-			qs = qs.concat(this.buildQSValues('startsWith', this.startsWith, true));
-		}
+        if (this.gt) {
+            qs = qs.concat(this.buildQSValues('gt', this.gt, true));
+        }
 
-		if (this.endsWith) {
-			qs = qs.concat(this.buildQSValues('endsWith', this.endsWith, true));
-		}
+        if (this.gte) {
+            qs = qs.concat(this.buildQSValues('gte', this.gte, true));
+        }
 
-		if (this.contains) {
-			qs = qs.concat(this.buildQSValues('contains', this.contains, true));
-		}
+        if (this.startsWith) {
+            qs = qs.concat(this.buildQSValues('startsWith', this.startsWith, true));
+        }
 
-    if (this.exist) {
-			qs = qs.concat(this.buildQSValues('exist', this.exist, true));
-		}
+        if (this.endsWith) {
+            qs = qs.concat(this.buildQSValues('endsWith', this.endsWith, true));
+        }
 
-		if (this.nexist) {
-			qs = qs.concat(this.buildQSValues('nexist', this.nexist, true));
-		}
+        if (this.contains) {
+            qs = qs.concat(this.buildQSValues('contains', this.contains, true));
+        }
 
-		if (this.summarize) {
-			qs.push(`summarize=${this.summarize}`);
-		}
+        if (this.exist) {
+            qs = qs.concat(this.buildQSValues('exist', this.exist, true));
+        }
 
-		if (this.facetField) {
-			const path = this.traversalPathToQSValue(this.facetField.field, this.facetField.traversals)
-			qs.push(`facetField=${encodeURIComponent(path)}`);
-		}
+        if (this.nexist) {
+            qs = qs.concat(this.buildQSValues('nexist', this.nexist, true));
+        }
 
-		return qs.join('&');
-	}
+        if (this.summarize) {
+            qs.push(`summarize=${this.summarize}`);
+        }
 
-	public toLambdaMultiValueQueryString(): {[key:string]:string[]} {
-		const qs:{[key:string]:string[]}= {};
+        if (this.facetField) {
+            const path = this.traversalPathToQSValue(
+                this.facetField.field,
+                this.facetField.traversals
+            );
+            qs.push(`facetField=${encodeURIComponent(path)}`);
+        }
 
-		if (this.types) {
-			qs['type']= this.types.map(v=> v);
-		}
+        if (this.sort) {
+            qs.push(`sort=${this.sort}`);
+        }
 
-		if (this.ancestorPath) {
-			qs['ancestorPath']=[this.ancestorPath];
-		}
+        return qs.join('&');
+    }
 
-		if (this.eq) {
-			const values=this.buildQSValues('eq', this.eq);
-			qs['eq'] = values.map(v=> v.split('=')[1]);
-		}
+    public toLambdaMultiValueQueryString(): { [key: string]: string[] } {
+        const qs: { [key: string]: string[] } = {};
 
-		if (this.neq) {
-			const values=this.buildQSValues('neq', this.neq);
-			qs['neq'] = values.map(v=> v.split('=')[1]);
-		}
+        if (this.types) {
+            qs['type'] = this.types.map((v) => v);
+        }
 
-		if (this.lt) {
-			const values=this.buildQSValues('lt', this.lt);
-			qs['lt'] = values.map(v=> v.split('=')[1]);
-		}
+        if (this.ntypes) {
+            qs['ntype'] = this.ntypes.map((v) => v);
+        }
 
-		if (this.lte) {
-			const values=this.buildQSValues('lte', this.lte);
-			qs['lte'] = values.map(v=> v.split('=')[1]);
-		}
+        if (this.ancestorPath) {
+            qs['ancestorPath'] = [this.ancestorPath];
+        }
 
-		if (this.gt) {
-			const values=this.buildQSValues('gt', this.gt);
-			qs['gt'] = values.map(v=> v.split('=')[1]);
-		}
+        if (this.includeAncestor) {
+            qs['includeAncestor'] = [`${this.includeAncestor}`];
+        }
 
-		if (this.gte) {
-			const values=this.buildQSValues('gte', this.gte);
-			qs['gte'] = values.map(v=> v.split('=')[1]);
-		}
+        if (this.eq) {
+            const values = this.buildQSValues('eq', this.eq);
+            qs['eq'] = values.map((v) => v.split('=')[1]);
+        }
 
-		if (this.startsWith) {
-			const values=this.buildQSValues('startsWith', this.startsWith);
-			qs['startsWith'] = values.map(v=> v.split('=')[1]);
-		}
+        if (this.neq) {
+            const values = this.buildQSValues('neq', this.neq);
+            qs['neq'] = values.map((v) => v.split('=')[1]);
+        }
 
-		if (this.endsWith) {
-			const values=this.buildQSValues('endsWith', this.endsWith);
-			qs['endsWith'] = values.map(v=> v.split('=')[1]);
-		}
+        if (this.lt) {
+            const values = this.buildQSValues('lt', this.lt);
+            qs['lt'] = values.map((v) => v.split('=')[1]);
+        }
 
-		if (this.contains) {
-			const values=this.buildQSValues('contains', this.contains);
-			qs['contains'] = values.map(v=> v.split('=')[1]);
-		}
-		if (this.exist) {
-			const values=this.buildQSValues('exist', this.exist);
-			qs['exist'] = values.map(v=> v.split('=')[1]);
-		}
+        if (this.lte) {
+            const values = this.buildQSValues('lte', this.lte);
+            qs['lte'] = values.map((v) => v.split('=')[1]);
+        }
 
-		if (this.nexist) {
-			const values=this.buildQSValues('nexist', this.nexist);
-			qs['nexist'] = values.map(v=> v.split('=')[1]);
-		}
+        if (this.gt) {
+            const values = this.buildQSValues('gt', this.gt);
+            qs['gt'] = values.map((v) => v.split('=')[1]);
+        }
 
-		if (this.summarize) {
-			qs['summarize']=[`${this.summarize}`];
-		}
+        if (this.gte) {
+            const values = this.buildQSValues('gte', this.gte);
+            qs['gte'] = values.map((v) => v.split('=')[1]);
+        }
 
-		if (this.facetField) {
-			qs['facetField']=[
-				this.traversalPathToQSValue(this.facetField.field, this.facetField.traversals)
-			];
-		}
+        if (this.startsWith) {
+            const values = this.buildQSValues('startsWith', this.startsWith);
+            qs['startsWith'] = values.map((v) => v.split('=')[1]);
+        }
 
-		return qs;
-	}
+        if (this.endsWith) {
+            const values = this.buildQSValues('endsWith', this.endsWith);
+            qs['endsWith'] = values.map((v) => v.split('=')[1]);
+        }
 
+        if (this.contains) {
+            const values = this.buildQSValues('contains', this.contains);
+            qs['contains'] = values.map((v) => v.split('=')[1]);
+        }
+        if (this.exist) {
+            const values = this.buildQSValues('exist', this.exist);
+            qs['exist'] = values.map((v) => v.split('=')[1]);
+        }
+
+        if (this.nexist) {
+            const values = this.buildQSValues('nexist', this.nexist);
+            qs['nexist'] = values.map((v) => v.split('=')[1]);
+        }
+
+        if (this.summarize) {
+            qs['summarize'] = [`${this.summarize}`];
+        }
+
+        if (this.facetField) {
+            qs['facetField'] = [
+                this.traversalPathToQSValue(this.facetField.field, this.facetField.traversals),
+            ];
+        }
+
+        if (this.sort) {
+            qs['sort'] = [`${this.sort}`];
+        }
+
+        return qs;
+    }
 }
 
 export interface SearchResultsModel {
-	results: (GroupBaseResource|DeviceBaseResource)[];
-	pagination?: {
-		offset:number;
-		count: number;
-	};
-	total?:number;
+    results: (GroupBaseResource | DeviceBaseResource)[];
+    pagination?: {
+        offset: number;
+        count: number;
+    };
+    total?: number;
 }

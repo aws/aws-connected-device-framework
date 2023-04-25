@@ -11,8 +11,8 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import { DeviceBaseResource, Device10Resource, Device20Resource } from './devices.model';
-import { GroupBaseResource, Group10Resource, Group20Resource } from './groups.model';
+import { Device10Resource, Device20Resource, DeviceBaseResource } from './devices.model';
+import { Group10Resource, Group20Resource, GroupBaseResource } from './groups.model';
 
 export interface DeviceProfileResource extends DeviceBaseResource {
     profileId: string;

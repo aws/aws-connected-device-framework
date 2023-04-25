@@ -14,7 +14,7 @@ import { DirectionStringToArrayMap, StringToArrayMap } from './common.model';
 
 /**
  * AWS Connected Device Framework: Dashboard Facade Group
-*/
+ */
 
 export interface GroupBaseResource {
     /**
@@ -41,15 +41,15 @@ export interface GroupBaseResource {
      * Description of the group.
      */
     description?: string;
-    attributes?: { [key: string]: string | number | boolean; };
+    attributes?: { [key: string]: string | number | boolean | null };
 }
 
 export interface Group10Resource extends GroupBaseResource {
-	groups?: StringToArrayMap;
+    groups?: StringToArrayMap;
 }
 
 export interface Group20Resource extends GroupBaseResource {
-	groups?: DirectionStringToArrayMap;
+    groups?: DirectionStringToArrayMap;
 }
 
 export interface BulkLoadGroups {
@@ -60,13 +60,13 @@ export class BulkLoadGroupsResponse {
     success: number;
     failed: number;
     total: number;
-    errors: {[key:string]:string};
+    errors: { [key: string]: string };
 }
 
 export interface GroupResourceList {
-	results: GroupBaseResource[];
-	pagination?: {
-		offset:number;
-		count: number;
-	};
+    results: GroupBaseResource[];
+    pagination?: {
+        offset: number;
+        count: number;
+    };
 }
