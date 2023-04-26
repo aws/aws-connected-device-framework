@@ -12,21 +12,41 @@
  *********************************************************************************************************************/
 
 import { injectable } from 'inversify';
-
 import { PathHelper } from '../utils/path.helper';
-import { ClientServiceBase } from './common.service';
 import {
-    CommandResource, CommandResourceList, EditableCommandResource, Tags
+    CommandResource,
+    CommandResourceList,
+    EditableCommandResource,
+    Tags,
 } from './commands.model';
 import { RequestHeaders } from './common.model';
+import { ClientServiceBase } from './common.service';
 
 export interface CommandsService {
-    createCommand(command: EditableCommandResource, additionalHeaders?: RequestHeaders) : Promise<string>;
-    updateCommand(commandId:string, command: EditableCommandResource, additionalHeaders?: RequestHeaders) : Promise<void>;
-    listCommands(tags?:Tags, fromCommandIdExclusive?:string, count?:number, additionalHeaders?: RequestHeaders) : Promise<CommandResourceList>;
-    getCommand(commandId:string, additionalHeaders?: RequestHeaders) : Promise<CommandResource>;
-    deleteCommand(commandId:string, additionalHeaders?: RequestHeaders) : Promise<void>;
+    createCommand(
+        command: EditableCommandResource,
+        additionalHeaders?: RequestHeaders
+    ): Promise<string>;
+    createNamedCommand(
+        commandId: string,
+        command: EditableCommandResource,
+        additionalHeaders?: RequestHeaders
+    ): Promise<string>;
+    updateCommand(
+        commandId: string,
+        command: EditableCommandResource,
+        additionalHeaders?: RequestHeaders
+    ): Promise<void>;
+    listCommands(
+        tags?: Tags,
+        fromCommandIdExclusive?: string,
+        count?: number,
+        additionalHeaders?: RequestHeaders
+    ): Promise<CommandResourceList>;
+    getCommand(commandId: string, additionalHeaders?: RequestHeaders): Promise<CommandResource>;
+    deleteCommand(commandId: string, additionalHeaders?: RequestHeaders): Promise<void>;
 }
+
 
 @injectable()
 export class CommandsServiceBase extends ClientServiceBase {

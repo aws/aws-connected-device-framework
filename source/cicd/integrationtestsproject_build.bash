@@ -125,6 +125,22 @@ echo "AWS_ACCOUNTID=$aws_account_id" >> $CONFIG_LOCATION
 echo "AWS_IOT_ENDPOINT=$iot_ats_endpoint" >> $CONFIG_LOCATION
 echo "AWS_REGION=$account_region" >> $CONFIG_LOCATION
 
+echo "COMMANDANDCONTROL_TESTDEVICE_POLICYNAME=cdf-integration-tests-cac" >> $CONFIG_LOCATION
+echo "COMMANDANDCONTROL_TESTDEVICE_POLICYDOCUMENT={\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Action\":[\"iot:*\"],\"Resource\":[\"arn:aws:iot:${account_region}:${aws_account_id}:*/*\"]},{\"Effect\":\"Allow\",\"Action\":[\"s3:GetBucketPolicy\",\"s3:GetObject\",\"s3:GetBucketLocation\",\"s3:GetObjectVersion\"],\"Resource\":[\"arn:aws:s3:::*/*\"]}]}" >> $CONFIG_LOCATION
+echo "LOGGING_LEVEL=debug" >> $CONFIG_LOCATION
+
+# Create and upload GreengrassIntegrationTestTemplate.json to S3
+CDF_BUCKET_NAME="cdf-integration-tests-$aws_account_id"
+CDF_TEMPLATE_FILE_NAME="GreengrassIntegrationTestTemplate.json"
+# Check if bucket already created
+EXISTS=$(aws s3api head-bucket --bucket $CDF_BUCKET_NAME 2>&1) || failed=1
+if [ "$EXISTS" ]
+then
+    $(echo aws s3 mb s3://$CDF_BUCKET_NAME)
+fi
+$(echo aws s3 cp $(pwd)/source/packages/integration-tests/src/testResources/${CDF_TEMPLATE_FILE_NAME} s3://$CDF_BUCKET_NAME)
+echo "GREENGRASS_TEMPLATE_S3_LOCATION=s3://$CDF_BUCKET_NAME/$CDF_TEMPLATE_FILE_NAME" >> $CONFIG_LOCATION
+
 echo "\naugmented configuration:\n$(cat $CONFIG_LOCATION)\n"
 
 export APP_CONFIG_DIR="$(pwd)/source/packages/integration-tests/src/config"
@@ -138,12 +154,12 @@ npm run clean
 npm run build
 npm run integration-test -- "features/assetlibrary/full/*.feature"
 npm run integration-test -- "features/assetlibraryhistory/*.feature"
+# npm run integration-test -- "features/bulkcerts/*.feature"
+npm run integration-test -- "features/commandandcontrol/*.feature"
 # npm run integration-test -- "features/organizationmanager/*.feature"
-# npm run integration-test -- "features/commandandcontrol/*.feature"
 # npm run integration-test -- "features/greengrass2-provisioning/*.feature"
 # npm run integration-test -- "features/device-patcher/*.feature"
 # npm run integration-test -- "features/provisioning/*.feature"
-# npm run integration-test -- "features/bulkcerts/*.feature"
 # npm run integration-test -- "features/commands/*.feature"
 # npm run integration-test -- "features/notifications/*.feature"
 

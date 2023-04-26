@@ -11,21 +11,18 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import '../config/env';
-
-import { ContainerModule, decorate, injectable, interfaces } from 'inversify';
-
 import { LAMBDAINVOKE_TYPES, LambdaInvokerService } from '@cdf/lambda-invoke';
-
+import { ContainerModule, decorate, injectable, interfaces } from 'inversify';
 import { CommandsApigwService } from '../client/commands.apigw.service';
 import { CommandsLambdaService } from '../client/commands.lambda.service';
 import { CommandsService } from '../client/commands.service';
 import { MessagesApigwService } from '../client/messages.apigw.service';
 import { MessagesLambdaService } from '../client/messages.lambda.service';
 import { MessagesService } from '../client/messages.service';
+import '../config/env';
 import { COMMANDANDCONTROL_CLIENT_TYPES } from './types';
-
 import AWS = require('aws-sdk');
+
 export const commandAndControlContainerModule = new ContainerModule (
     (
         bind: interfaces.Bind,

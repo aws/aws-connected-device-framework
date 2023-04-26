@@ -12,11 +12,17 @@
  *********************************************************************************************************************/
 
 import { injectable } from 'inversify';
-
 import { PathHelper } from '../utils/path.helper';
-import { ClientServiceBase } from './common.service';
-import { MessageResource, NewMessageResource, RecipientList, ReplyList, Recipient, MessageList } from './messages.model';
 import { RequestHeaders } from './common.model';
+import { ClientServiceBase } from './common.service';
+import {
+    MessageList,
+    MessageResource,
+    NewMessageResource,
+    Recipient,
+    RecipientList,
+    ReplyList,
+} from './messages.model';
 
 export interface MessagesService {
     createMessage(message: NewMessageResource, additionalHeaders?: RequestHeaders ): Promise<string>;

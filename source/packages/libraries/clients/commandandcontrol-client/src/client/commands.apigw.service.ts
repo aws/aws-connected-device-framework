@@ -11,61 +11,109 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
+import { signClientRequest } from '@awssolutions/cdf-client-request-signer';
+import createError from 'http-errors';
 import { injectable } from 'inversify';
 import ow from 'ow';
 import request from 'superagent';
-
 import { QSHelper } from '../utils/qs.helper';
 import {
-    CommandResource, CommandResourceList, EditableCommandResource, Tags
+    CommandResource,
+    CommandResourceList,
+    EditableCommandResource,
+    Tags,
 } from './commands.model';
 import { CommandsService, CommandsServiceBase } from './commands.service';
 import { RequestHeaders } from './common.model';
 
 @injectable()
 export class CommandsApigwService extends CommandsServiceBase implements CommandsService {
-
-    private readonly baseUrl:string;
+    private readonly baseUrl: string;
 
     public constructor() {
         super();
         this.baseUrl = process.env.COMMANDANDCONTROL_BASE_URL;
     }
 
-    async createCommand(command: EditableCommandResource, additionalHeaders?: RequestHeaders): Promise<string> {
+    async createCommand(
+        command: EditableCommandResource,
+        additionalHeaders?: RequestHeaders
+    ): Promise<string> {
         ow(command, ow.object.nonEmpty);
 
-        const res = await request.post(`${this.baseUrl}${super.commandsRelativeUrl()}`)
+        return await request
+            .post(`${this.baseUrl}${super.commandsRelativeUrl()}`)
+            .send(command)
             .set(this.buildHeaders(additionalHeaders))
-            .send(command);
-
-        const id = res.get('x-commandid');
-        return id;
+            .use(await signClientRequest())
+            .then((res) => {
+                return res.get('x-commandid');
+            })
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
+            });
     }
 
-    async updateCommand(commandId:string, command: EditableCommandResource, additionalHeaders?: RequestHeaders): Promise<void> {
+    async updateCommand(
+        commandId: string,
+        command: EditableCommandResource,
+        additionalHeaders?: RequestHeaders
+    ): Promise<void> {
         ow(command, ow.object.nonEmpty);
         ow(commandId, ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.commandRelativeUrl(commandId)}`;
 
-        const res = await request.patch(url)
+        return await request
+            .patch(url)
             .send(command)
-            .set(this.buildHeaders(additionalHeaders));
-
-        return res.body;
+            .set(this.buildHeaders(additionalHeaders))
+            .use(await signClientRequest())
+            .then((_res) => {
+                return;
+            })
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
+            });
     }
 
-    async listCommands(tags?:Tags, fromCommandIdExclusive?:string, count?:number, additionalHeaders?: RequestHeaders): Promise<CommandResourceList> {
+    async createNamedCommand(
+        commandId: string,
+        command: EditableCommandResource,
+        additionalHeaders?: RequestHeaders
+    ): Promise<string> {
+        ow(command, ow.object.nonEmpty);
+        ow(commandId, ow.string.nonEmpty);
 
+        return await request
+            .post(`${this.baseUrl}${super.commandRelativeUrl(commandId)}`)
+            .send(command)
+            .set(this.buildHeaders(additionalHeaders))
+            .use(await signClientRequest())
+            .then((res) => {
+                return res.get('x-commandid');
+            })
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
+            });
+    }
+
+    async listCommands(
+        tags?: Tags,
+        fromCommandIdExclusive?: string,
+        count?: number,
+        additionalHeaders?: RequestHeaders
+    ): Promise<CommandResourceList> {
         let url = `${this.baseUrl}${super.commandsRelativeUrl()}`;
-        let queryString = QSHelper.getQueryString({count, fromCommandIdExclusive});
-        if (tags && (Object.keys(tags).length??0) > 0) {
-            const tagsQS = Object.entries(tags).map(([k, v]) => `tag=${encodeURIComponent(k)}:${encodeURIComponent(v)}`).join('&');
+        let queryString = QSHelper.getQueryString({ count, fromCommandIdExclusive });
+        if (tags && (Object.keys(tags).length ?? 0) > 0) {
+            const tagsQS = Object.entries(tags)
+                .map(([k, v]) => `tag=${encodeURIComponent(k)}:${encodeURIComponent(v)}`)
+                .join('&');
             if (queryString) {
                 queryString += `&${tagsQS}`;
             } else {
-                queryString = tagsQS
+                queryString = tagsQS;
             }
         }
 
@@ -73,26 +121,46 @@ export class CommandsApigwService extends CommandsServiceBase implements Command
             url += `?${queryString}`;
         }
 
-        const res = await request.get(url)
-            .set(this.buildHeaders(additionalHeaders));
-
-        return res.body;
+        return await request
+            .get(url)
+            .set(this.buildHeaders(additionalHeaders))
+            .use(await signClientRequest())
+            .then((res) => {
+                return res.body;
+            })
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
+            });
     }
 
-    async getCommand(commandId: string, additionalHeaders?: RequestHeaders): Promise<CommandResource> {
-
+    async getCommand(
+        commandId: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<CommandResource> {
         const url = `${this.baseUrl}${super.commandRelativeUrl(commandId)}`;
-        const res = await request.get(url)
-            .set(this.buildHeaders(additionalHeaders));
-
-        return res.body;
+        return await request
+            .get(url)
+            .set(this.buildHeaders(additionalHeaders))
+            .use(await signClientRequest())
+            .then((res) => {
+                return res.body;
+            })
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
+            });
     }
 
     async deleteCommand(commandId: string, additionalHeaders?: RequestHeaders): Promise<void> {
-
         const url = `${this.baseUrl}${super.commandRelativeUrl(commandId)}`;
-        await request.delete(url)
-            .set(this.buildHeaders(additionalHeaders));
+        return await request
+            .delete(url)
+            .set(this.buildHeaders(additionalHeaders))
+            .use(await signClientRequest())
+            .then((_res) => {
+                return;
+            })
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
+            });
     }
-
 }

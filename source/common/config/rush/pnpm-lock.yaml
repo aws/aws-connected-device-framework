@@ -17120,12 +17120,13 @@ packages:
     dev: false
 
   file:projects/commandandcontrol-client.tgz:
-    resolution: {integrity: sha512-i00sbmTlnGvOvoCrNCEh+K2EllqF87fADaQWpiltoyXahw0LPYlbzShk5OHxxJ6FfOhK4P4Au5kexqa1SeCsYA==, tarball: file:projects/commandandcontrol-client.tgz}
+    resolution: {integrity: sha512-4MbDpYCxfkSKucvcKTjKp7qyb83uhyMS6XGQmJ7ztWtKsZXVyIbVOoqnbkvJMzTHgg7aOcTnNiuK+znknquHfg==, tarball: file:projects/commandandcontrol-client.tgz}
     name: '@rush-temp/commandandcontrol-client'
     version: 0.0.0
     dependencies:
       '@rushstack/eslint-config': 2.3.4_eslint@7.26.0+typescript@4.2.4
       '@types/dotenv-flow': 3.2.0
+      '@types/http-errors': 2.0.1
       '@types/jest': 26.0.23
       '@types/node': 16.11.7
       '@types/superagent': 4.1.10
@@ -17134,6 +17135,7 @@ packages:
       aws-sdk: 2.1048.0
       dotenv-flow: 3.2.0
       eslint: 7.26.0
+      http-errors: 2.0.0
       inversify: 6.0.1
       inversify-binding-decorators: 4.0.0
       inversify-express-utils: 6.4.3

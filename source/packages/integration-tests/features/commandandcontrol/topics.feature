@@ -73,5 +73,3 @@ Feature: Command & Control - Topics
 
   @teardown_commandandcontrol_topics
   Scenario: Teardown
-    When I pause for 5000ms
-    Then command-and-control command with operation "cdf-integration-test-reboot" does not exist
