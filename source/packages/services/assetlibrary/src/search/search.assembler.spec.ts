@@ -26,20 +26,22 @@ describe('SearchServiceAssembler', () => {
     let mockedTypeUtils: jest.Mocked<TypeUtils>;
     
     let mockedSearchRequest: {
-        types: string|string[]|undefined;
-        ancestorPath: string|undefined;
-        ltes: string|string[]|undefined;
-        eqs: string|string[]|undefined;
-        gts: string|string[]|undefined;
-        exists: string|string[]|undefined;
-        nexists: string|string[]|undefined;
-        neqs: string|string[]|undefined;
-        lts: string|string[]|undefined;
-        gtes: string|string[]|undefined;
-        facetField: string|undefined;
-        startsWiths: string|string[]|undefined;
-        endsWiths: string|string[]|undefined;
-        containses: string|string[]|undefined;
+        types: string | string[] | undefined;
+        ntypes: string | string[] | undefined;
+        ancestorPath: string | undefined;
+        includeAncestor: boolean | undefined;
+        ltes: string | string[] | undefined;
+        eqs: string | string[] | undefined;
+        gts: string | string[] | undefined;
+        exists: string | string[] | undefined;
+        nexists: string | string[] | undefined;
+        neqs: string | string[] | undefined;
+        lts: string | string[] | undefined;
+        gtes: string | string[] | undefined;
+        facetField: string | undefined;
+        startsWiths: string | string[] | undefined;
+        endsWiths: string | string[] | undefined;
+        containses: string | string[] | undefined;
     };
     beforeEach(() => {
         mockedDeviceAssembler = createMockInstance(DevicesAssembler);
@@ -49,10 +51,11 @@ describe('SearchServiceAssembler', () => {
     });
 
     it('happy path to convert one search param to a search request model', async () => {
-
         mockedSearchRequest = {
             types: 'auto_ecu',
+            ntypes: 'exclude_this',
             ancestorPath: undefined,
+            includeAncestor: undefined,
             eqs: 'installed_in:out:name:5AZVZ34HXGA10004',
             neqs: undefined,
             lts: undefined,
@@ -64,43 +67,47 @@ describe('SearchServiceAssembler', () => {
             containses: undefined,
             exists: undefined,
             nexists: undefined,
-            facetField: undefined
+            facetField: undefined,
         };
 
         const searchRequestModel = await instance.toSearchRequestModel(
-                mockedSearchRequest.types,
-                mockedSearchRequest.ancestorPath,
-                mockedSearchRequest.eqs,
-                mockedSearchRequest.neqs,
-                mockedSearchRequest.lts,
-                mockedSearchRequest.ltes,
-                mockedSearchRequest.gts,
-                mockedSearchRequest.gtes,
-                mockedSearchRequest.startsWiths,
-                mockedSearchRequest.endsWiths,
-                mockedSearchRequest.containses,
-                mockedSearchRequest.exists,
-                mockedSearchRequest.nexists,
-                mockedSearchRequest.facetField
-            );
+            mockedSearchRequest.types,
+            mockedSearchRequest.ntypes,
+            mockedSearchRequest.ancestorPath,
+            mockedSearchRequest.includeAncestor,
+            mockedSearchRequest.eqs,
+            mockedSearchRequest.neqs,
+            mockedSearchRequest.lts,
+            mockedSearchRequest.ltes,
+            mockedSearchRequest.gts,
+            mockedSearchRequest.gtes,
+            mockedSearchRequest.startsWiths,
+            mockedSearchRequest.endsWiths,
+            mockedSearchRequest.containses,
+            mockedSearchRequest.exists,
+            mockedSearchRequest.nexists,
+            mockedSearchRequest.facetField
+        );
 
         expect(searchRequestModel).toBeDefined();
         expect(searchRequestModel.types).toHaveLength(1);
         expect(searchRequestModel.types[0]).toEqual('auto_ecu');
+        expect(searchRequestModel.ntypes).toHaveLength(1);
+        expect(searchRequestModel.ntypes[0]).toEqual('exclude_this');
         expect(searchRequestModel.eq).toHaveLength(1);
         expect(searchRequestModel.eq[0].traversals).toHaveLength(1);
         expect(searchRequestModel.eq[0].traversals[0].relation).toEqual('installed_in');
         expect(searchRequestModel.eq[0].traversals[0].direction).toEqual('out');
         expect(searchRequestModel.eq[0].field).toEqual('name');
         expect(searchRequestModel.eq[0].value).toEqual('5AZVZ34HXGA10004');
-
     });
 
     it('happy path to convert all search params to search request model', async () => {
-
         mockedSearchRequest = {
             types: 'auto_ecu',
+            ntypes: 'exclude_this',
             ancestorPath: '/vehicle/engine/electronics',
+            includeAncestor: false,
             eqs: 'eqfield:eqval',
             neqs: 'neqfield:neqval',
             lts: 'ltfield:1',
@@ -112,29 +119,33 @@ describe('SearchServiceAssembler', () => {
             containses: 'confield:opq',
             exists: 'exfield:exval',
             nexists: 'nexfield:nexval',
-            facetField: undefined
+            facetField: undefined,
         };
 
         const searchRequestModel = await instance.toSearchRequestModel(
-                mockedSearchRequest.types,
-                mockedSearchRequest.ancestorPath,
-                mockedSearchRequest.eqs,
-                mockedSearchRequest.neqs,
-                mockedSearchRequest.lts,
-                mockedSearchRequest.ltes,
-                mockedSearchRequest.gts,
-                mockedSearchRequest.gtes,
-                mockedSearchRequest.startsWiths,
-                mockedSearchRequest.endsWiths,
-                mockedSearchRequest.containses,
-                mockedSearchRequest.exists,
-                mockedSearchRequest.nexists,
-                mockedSearchRequest.facetField
-            );
+            mockedSearchRequest.types,
+            mockedSearchRequest.ntypes,
+            mockedSearchRequest.ancestorPath,
+            mockedSearchRequest.includeAncestor,
+            mockedSearchRequest.eqs,
+            mockedSearchRequest.neqs,
+            mockedSearchRequest.lts,
+            mockedSearchRequest.ltes,
+            mockedSearchRequest.gts,
+            mockedSearchRequest.gtes,
+            mockedSearchRequest.startsWiths,
+            mockedSearchRequest.endsWiths,
+            mockedSearchRequest.containses,
+            mockedSearchRequest.exists,
+            mockedSearchRequest.nexists,
+            mockedSearchRequest.facetField
+        );
 
         expect(searchRequestModel).toBeDefined();
         expect(searchRequestModel.types).toHaveLength(1);
         expect(searchRequestModel.types[0]).toEqual('auto_ecu');
+        expect(searchRequestModel.ntypes).toHaveLength(1);
+        expect(searchRequestModel.ntypes[0]).toEqual('exclude_this');
         expect(searchRequestModel.eq).toHaveLength(1);
         expect(searchRequestModel.eq[0].field).toEqual('eqfield');
         expect(searchRequestModel.eq[0].value).toEqual('eqval');
@@ -171,10 +182,11 @@ describe('SearchServiceAssembler', () => {
     });
 
     it('should decode the encoded params to search request model', async () => {
-
         mockedSearchRequest = {
             types: 'auto_ecu',
+            ntypes: 'exclude_this',
             ancestorPath: undefined,
+            includeAncestor: undefined,
             eqs: 'driver:out:name:ap-northeast-1%3A55f70ca4-faaa-4aa0-8778-99a102174740',
             neqs: undefined,
             lts: undefined,
@@ -186,12 +198,14 @@ describe('SearchServiceAssembler', () => {
             containses: undefined,
             exists: undefined,
             nexists: undefined,
-            facetField: undefined
+            facetField: undefined,
         };
 
         const searchRequestModel = await instance.toSearchRequestModel(
             mockedSearchRequest.types,
+            mockedSearchRequest.ntypes,
             mockedSearchRequest.ancestorPath,
+            mockedSearchRequest.includeAncestor,
             mockedSearchRequest.eqs,
             mockedSearchRequest.neqs,
             mockedSearchRequest.lts,
@@ -214,14 +228,17 @@ describe('SearchServiceAssembler', () => {
         expect(searchRequestModel.eq[0].traversals[0].relation).toEqual('driver');
         expect(searchRequestModel.eq[0].traversals[0].direction).toEqual('out');
         expect(searchRequestModel.eq[0].field).toEqual('name');
-        expect(searchRequestModel.eq[0].value).toEqual('ap-northeast-1:55f70ca4-faaa-4aa0-8778-99a102174740');
+        expect(searchRequestModel.eq[0].value).toEqual(
+            'ap-northeast-1:55f70ca4-faaa-4aa0-8778-99a102174740'
+        );
     });
 
     it('should decode the encoded params to search request model', async () => {
-
         mockedSearchRequest = {
             types: 'user',
+            ntypes: undefined,
             ancestorPath: undefined,
+            includeAncestor: undefined,
             eqs: 'name:ap-northeast-1%3A55f70ca4-faaa-4aa0-8778-99a102174740',
             neqs: undefined,
             lts: undefined,
@@ -233,12 +250,14 @@ describe('SearchServiceAssembler', () => {
             containses: undefined,
             exists: undefined,
             nexists: undefined,
-            facetField: undefined
+            facetField: undefined,
         };
 
         const searchRequestModel = await instance.toSearchRequestModel(
             mockedSearchRequest.types,
+            mockedSearchRequest.ntypes,
             mockedSearchRequest.ancestorPath,
+            mockedSearchRequest.includeAncestor,
             mockedSearchRequest.eqs,
             mockedSearchRequest.neqs,
             mockedSearchRequest.lts,
@@ -258,6 +277,8 @@ describe('SearchServiceAssembler', () => {
         expect(searchRequestModel.types[0]).toEqual('user');
         expect(searchRequestModel.eq).toHaveLength(1);
         expect(searchRequestModel.eq[0].field).toEqual('name');
-        expect(searchRequestModel.eq[0].value).toEqual('ap-northeast-1:55f70ca4-faaa-4aa0-8778-99a102174740');
+        expect(searchRequestModel.eq[0].value).toEqual(
+            'ap-northeast-1:55f70ca4-faaa-4aa0-8778-99a102174740'
+        );
     });
 });

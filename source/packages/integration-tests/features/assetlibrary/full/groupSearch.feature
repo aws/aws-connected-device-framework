@@ -113,15 +113,22 @@ Feature: Group search
     And search result contains group "/groupsearch_feature/ba"
     And search result contains group "/groupsearch_feature/bb"
 
-  @teardown_groupSearch_feature
-  Scenario: Teardown
-    Given group "/groupSearch_feature/AA" does not exist
+  Scenario: Deleting including ancestor
+    When I delete with following attributes:
+      | ancestorPath    | /groupsearch_feature |
+      | includeAncestor | true                 |
+    Then group "/groupSearch_feature/AA" does not exist
     And group "/groupSearch_feature/AB" does not exist
     And group "/groupSearch_feature/BA" does not exist
     And group "/groupSearch_feature/BB" does not exist
     And group "/groupSearch_feature" does not exist
-    And draft assetlibrary group template "TEST-groupSearch-group" does not exist
+
+  @teardown_groupSearch_feature
+  Scenario: Teardown
+    Given draft assetlibrary group template "TEST-groupSearch-group" does not exist
     And published assetlibrary group template "TEST-groupSearch-group" does not exist
-
-
-
+    And group "/groupSearch_feature/AA" does not exist
+    And group "/groupSearch_feature/AB" does not exist
+    And group "/groupSearch_feature/BA" does not exist
+    And group "/groupSearch_feature/BB" does not exist
+    And group "/groupSearch_feature" does not exist

@@ -11,17 +11,17 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import 'reflect-metadata';
-import { setDefaultTimeout, When, DataTable, Then} from '@cucumber/cucumber';
-import { Device20Resource, DevicesService, BulkDevicesResource } from '@cdf/assetlibrary-client';
-import { fail } from 'assert';
-
-import chai_string = require('chai-string');
-import {expect, use} from 'chai';
-import { AUTHORIZATION_TOKEN } from '../common/common.steps';
+import { BulkDevicesResource, Device20Resource, DevicesService } from '@cdf/assetlibrary-client';
 import { ASSETLIBRARY_CLIENT_TYPES } from '@cdf/assetlibrary-client/dist';
 import { Dictionary } from '@cdf/lambda-invoke';
+import { DataTable, Then, When, setDefaultTimeout } from '@cucumber/cucumber';
+import { fail } from 'assert';
+import { expect, use } from 'chai';
+import 'reflect-metadata';
 import { container } from '../../di/inversify.config';
+import { AUTHORIZATION_TOKEN } from '../common/common.steps';
+
+import chai_string = require('chai-string');
 use(chai_string);
 
 /*
@@ -33,25 +33,25 @@ use(chai_string);
 
 setDefaultTimeout(10 * 1000);
 
-const deviceService:DevicesService = container.get(ASSETLIBRARY_CLIENT_TYPES.DevicesService);
+const deviceService: DevicesService = container.get(ASSETLIBRARY_CLIENT_TYPES.DevicesService);
 
-function getAdditionalHeaders(world:unknown) : Dictionary {
-    const authCode= world[AUTHORIZATION_TOKEN];
-    const headers =  {
-        Authorization: authCode,
+function getAdditionalHeaders(world: unknown): Dictionary {
+    const authCode = world[AUTHORIZATION_TOKEN];
+    const headers = {
+        authz: authCode,
         Accept: 'application/vnd.aws-cdf-v2.0+json',
         'Content-Type': 'application/vnd.aws-cdf-v2.0+json',
     };
     return headers;
 }
 
-async function bulkRegisterDevice (world:unknown, devicesToCreate:Device20Resource[]) {
+async function bulkRegisterDevice(world: unknown, devicesToCreate: Device20Resource[]) {
     const headers = getAdditionalHeaders(world);
     const bulkDeviceCreateBody: BulkDevicesResource = { devices: devicesToCreate };
     await deviceService.bulkCreateDevice(bulkDeviceCreateBody, undefined, headers);
 }
 
-function parseBulkDeviceTable(d:DataTable): Device20Resource[] {
+function parseBulkDeviceTable(d: DataTable): Device20Resource[] {
     const devices: Device20Resource[] = [];
     const deviceRows = d.rows();
     deviceRows.forEach((dr) => {
@@ -61,37 +61,42 @@ function parseBulkDeviceTable(d:DataTable): Device20Resource[] {
             description: dr[2],
             awsIotThingArn: dr[3],
             attributes: JSON.parse(dr[4]),
-            groups: JSON.parse(dr[5])
+            groups: JSON.parse(dr[5]),
         });
     });
     return devices;
 }
 
-When('I bulk create the following devices', async function (data:DataTable) {
+When('I bulk create the following devices', async function (data: DataTable) {
     const devices = parseBulkDeviceTable(data);
     await bulkRegisterDevice(this, devices);
 });
 
-Then('a bulk get of {string} returns the following devices', async function (devicesToGet: string, data:DataTable) {
-    const devices = parseBulkDeviceTable(data);
-    const devicesReceived = await deviceService.getDevicesByID(devicesToGet.split(','));
+Then(
+    'a bulk get of {string} returns the following devices',
+    async function (devicesToGet: string, data: DataTable) {
+        const devices = parseBulkDeviceTable(data);
+        const devicesReceived = await deviceService.getDevicesByID(devicesToGet.split(','));
 
-    if (devices.length === 0) {
-        expect(devicesReceived.results).to.be.empty;
-    } else {
-        expect(devicesReceived.results.length).to.equal(devices.length);
-        devices.forEach((d) => {
-            const dReceived = devicesReceived.results.filter((dr) => { return dr.deviceId === d.deviceId.toLowerCase() });
-    
-            if (dReceived.length !== 1) {
-                fail(`${d.deviceId} not found in AssetLibrary`);
-            }
-            expect(dReceived[0].deviceId).to.equal(d.deviceId.toLowerCase());
-            expect(dReceived[0].templateId).to.equal(d.templateId.toLowerCase());
-            expect(dReceived[0].description).to.equal(d.description);
-            expect(dReceived[0].awsIotThingArn).to.equal(d.awsIotThingArn);
-            expect(dReceived[0].state).to.equal('unprovisioned');
-            expect(dReceived[0].attributes).to.deep.equal(d.attributes);
-        });
+        if (devices.length === 0) {
+            expect(devicesReceived.results).to.be.empty;
+        } else {
+            expect(devicesReceived.results.length).to.equal(devices.length);
+            devices.forEach((d) => {
+                const dReceived = devicesReceived.results.filter((dr) => {
+                    return dr.deviceId === d.deviceId.toLowerCase();
+                });
+
+                if (dReceived.length !== 1) {
+                    fail(`${d.deviceId} not found in AssetLibrary`);
+                }
+                expect(dReceived[0].deviceId).to.equal(d.deviceId.toLowerCase());
+                expect(dReceived[0].templateId).to.equal(d.templateId.toLowerCase());
+                expect(dReceived[0].description).to.equal(d.description);
+                expect(dReceived[0].awsIotThingArn).to.equal(d.awsIotThingArn);
+                expect(dReceived[0].state).to.equal('unprovisioned');
+                expect(dReceived[0].attributes).to.deep.equal(d.attributes);
+            });
+        }
     }
-});
+);

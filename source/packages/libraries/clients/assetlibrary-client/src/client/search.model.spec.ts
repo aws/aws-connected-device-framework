@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import 'reflect-metadata';
-import {SearchRequestFilterDirection, SearchRequestModel} from './search.model';
+import { SearchRequestFilterDirection, SearchRequestModel } from './search.model';
 
 describe('SearchRequestModel', () => {
 

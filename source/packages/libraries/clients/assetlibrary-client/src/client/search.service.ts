@@ -10,13 +10,15 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import {ClientServiceBase} from './common.service';
-import {SearchRequestModel, SearchResultsModel} from './search.model';
-import {RequestHeaders} from './common.model';
-import {injectable} from 'inversify';
+import { injectable } from 'inversify';
+import { RequestHeaders } from './common.model';
+import { ClientServiceBase } from './common.service';
+import { SearchRequestModel, SearchResultsModel } from './search.model';
 
 export interface SearchService {
-    search(searchRequest:SearchRequestModel, offset?:number, count?:number, additionalHeaders?:RequestHeaders) : Promise<SearchResultsModel>;
+    search(searchRequest: SearchRequestModel, offset?: number, count?: number, additionalHeaders?: RequestHeaders) : Promise<SearchResultsModel>;
+
+    delete(searchRequest: SearchRequestModel, additionalHeaders?: RequestHeaders): Promise<void>;
 }
 
 @injectable()

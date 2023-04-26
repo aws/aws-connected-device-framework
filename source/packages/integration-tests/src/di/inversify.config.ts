@@ -10,18 +10,18 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import 'reflect-metadata';
-import '@cdf/config-inject'
-import { Container } from 'inversify';
-import {assetLibraryContainerModule} from '@cdf/assetlibrary-client';
-import {assetLibraryHistoryContainerModule} from '@cdf/assetlibraryhistory-client';
-import {commandsContainerModule} from '@cdf/commands-client';
-import {provisioningContainerModule} from '@cdf/provisioning-client';
-import {notificationsContainerModule} from '@cdf/notifications-client';
-import {greengrass2ProvisioningContainerModule} from '@cdf/greengrass2-provisioning-client';
-import {devicePatcherContainerModule} from '@cdf/device-patcher-client';
-import {commandAndControlContainerModule} from '@cdf/commandandcontrol-client';
+import { assetLibraryContainerModule } from '@cdf/assetlibrary-client';
+import { assetLibraryHistoryContainerModule } from '@cdf/assetlibraryhistory-client';
+import { commandAndControlContainerModule } from '@cdf/commandandcontrol-client';
+import { commandsContainerModule } from '@cdf/commands-client';
+import '@cdf/config-inject';
+import { devicePatcherContainerModule } from '@cdf/device-patcher-client';
+import { greengrass2ProvisioningContainerModule } from '@cdf/greengrass2-provisioning-client';
+import { notificationsContainerModule } from '@cdf/notifications-client';
 import { organizationManagerContainerModule } from '@cdf/organizationmanager-client';
+import { provisioningContainerModule } from '@cdf/provisioning-client';
+import { Container } from 'inversify';
+import 'reflect-metadata';
 // Load everything needed to the Container
 export const container = new Container();
 

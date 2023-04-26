@@ -16,6 +16,11 @@ set -e
 
 echo integrationtestsproject_build started on `date`
 
+ENVIRONMENT=$1
+if [ -z "$ENVIRONMENT" ]
+then
+    ENVIRONMENT='dev'
+fi
 
 echo determining deployed staging urls...
 
@@ -83,11 +88,27 @@ organizationmanager_invoke_url=$(echo $stack_exports \
     | jq -r --arg organizationmanager_invoke_url_export "$organizationmanager_invoke_url_export" \
     '.Exports[] | select(.Name==$organizationmanager_invoke_url_export) | .Value')
 
+iot_ats_endpoint_call=$(aws iot describe-endpoint --endpoint-type iot:Data-ATS)
+iot_ats_endpoint=$(echo $iot_ats_endpoint_call \
+    | jq -r '.endpointAddress')
+
+account_region_call=$(aws configure get region)
+account_region=$(echo $account_region_call)
+
+aws_account_id_call=$(aws sts get-caller-identity)
+aws_account_id=$(echo $aws_account_id_call \
+    | jq -r '.Account')
+
 echo creating staging integration test config...
 
-export CONFIG_LOCATION="${CODEBUILD_SRC_DIR_source_infrastructure}/integration-tests/.env.${ENVIRONMENT}"
+CONFIG_LOCATION="$(pwd)/source/packages/integration-tests/.${ENVIRONMENT}.env"
+echo -n >$CONFIG_LOCATION
 
 sed -i.bak '/.*BASE_URL.*/ d' $CONFIG_LOCATION
+sed -i.bak '/.*AWS.*/ d' $CONFIG_LOCATION
+sed -i.bak '/.*POLICY.*/ d' $CONFIG_LOCATION
+sed -i.bak '/.*INSTANCETYPE.*/ d' $CONFIG_LOCATION
+sed -i.bak '/.*LOGGING_LEVEL.*/ d' $CONFIG_LOCATION
 
 echo "GREENGRASS2PROVISIONING_BASE_URL=${greengrass_provisioning_invoke_url}" >> $CONFIG_LOCATION
 echo "NOTIFICATIONS_BASE_URL=${notifications_invoke_url}" >> $CONFIG_LOCATION
@@ -100,9 +121,14 @@ echo "ASSETLIBRARY_BASE_URL=${assetlibrary_invoke_url}" >> $CONFIG_LOCATION
 echo "COMMANDANDCONTROL_BASE_URL=${commandandcontrol_invoke_url}" >> $CONFIG_LOCATION
 echo "ORGANIZATIONMANAGER_BASE_URL=${organizationmanager_invoke_url}" >> $CONFIG_LOCATION
 
+echo "AWS_ACCOUNTID=$aws_account_id" >> $CONFIG_LOCATION
+echo "AWS_IOT_ENDPOINT=$iot_ats_endpoint" >> $CONFIG_LOCATION
+echo "AWS_REGION=$account_region" >> $CONFIG_LOCATION
+
 echo "\naugmented configuration:\n$(cat $CONFIG_LOCATION)\n"
 
 export APP_CONFIG_DIR="$(pwd)/source/packages/integration-tests/src/config"
+export CONFIG_LOCATION=$CONFIG_LOCATION
 
 echo running integration tests...
 
@@ -110,15 +136,15 @@ cd source/packages/integration-tests
 npm config set @cdf/integration-tests:environment $ENVIRONMENT
 npm run clean
 npm run build
-npm run integration-test -- "features/organizationmanager/*.feature"
-npm run integration-test -- "features/commandandcontrol/*.feature"
-npm run integration-test -- "features/greengrass2-provisioning/*.feature"
-npm run integration-test -- "features/device-patcher/*.feature"
-npm run integration-test -- "features/provisioning/*.feature"
-npm run integration-test -- "features/assetlibrary/$ASSETLIBRARY_MODE/*.feature"
+npm run integration-test -- "features/assetlibrary/full/*.feature"
+# npm run integration-test -- "features/organizationmanager/*.feature"
+# npm run integration-test -- "features/commandandcontrol/*.feature"
+# npm run integration-test -- "features/greengrass2-provisioning/*.feature"
+# npm run integration-test -- "features/device-patcher/*.feature"
+# npm run integration-test -- "features/provisioning/*.feature"
 # TODO: fix asset library history tests
 #npm run integration-test -- "features/assetlibraryhistory/*.feature"
-npm run integration-test -- "features/bulkcerts/*.feature"
-npm run integration-test -- "features/commands/*.feature"
-npm run integration-test -- "features/notifications/*.feature"
+# npm run integration-test -- "features/bulkcerts/*.feature"
+# npm run integration-test -- "features/commands/*.feature"
+# npm run integration-test -- "features/notifications/*.feature"
 

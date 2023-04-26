@@ -10,15 +10,18 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { SearchRequestModel, FacetResults} from './search.models';
-import { GroupItem } from '../groups/groups.models';
 import { DeviceItem } from '../devices/devices.models';
+import { GroupItem } from '../groups/groups.models';
+import { FacetResults, SearchRequestModel } from './search.models';
 
 export interface SearchService {
+    search(
+        model: SearchRequestModel
+    ): Promise<[(GroupItem | DeviceItem)[], number | string, number]>;
 
-    search(model: SearchRequestModel): Promise<[(GroupItem|DeviceItem)[],number|string,number]> ;
+    delete(model: SearchRequestModel): Promise<void>;
 
     facet(request: SearchRequestModel): Promise<FacetResults>;
 
-    summary(model: SearchRequestModel): Promise<number> ;
+    summary(model: SearchRequestModel): Promise<number>;
 }

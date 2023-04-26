@@ -10,37 +10,43 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import {inject, injectable} from 'inversify';
-import ow from 'ow';
-import {SearchRequestModel, SearchResultsModel} from './search.model';
-import {RequestHeaders} from './common.model';
-import {SearchService, SearchServiceBase} from './search.service';
 import {
     DictionaryArray,
-    LambdaApiGatewayEventBuilder,
     LAMBDAINVOKE_TYPES,
+    LambdaApiGatewayEventBuilder,
     LambdaInvokerService,
 } from '@cdf/lambda-invoke';
+import { inject, injectable } from 'inversify';
+import ow from 'ow';
+import { RequestHeaders } from './common.model';
+import { SearchRequestModel, SearchResultsModel } from './search.model';
+import { SearchService, SearchServiceBase } from './search.service';
 
 @injectable()
 export class SearchLambdaService extends SearchServiceBase implements SearchService {
     private functionName: string;
 
     constructor(
-        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService) private lambdaInvoker: LambdaInvokerService,
+        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
+        private lambdaInvoker: LambdaInvokerService
     ) {
         super();
         this.lambdaInvoker = lambdaInvoker;
-        this.functionName = process.env.ASSETLIBRARY_API_FUNCTION_NAME
+        this.functionName = process.env.ASSETLIBRARY_API_FUNCTION_NAME;
     }
 
-    public async search(searchRequest:SearchRequestModel, offset?:number, count?:number, additionalHeaders?:RequestHeaders) : Promise<SearchResultsModel> {
+    public async search(
+        searchRequest: SearchRequestModel,
+        offset?: number,
+        count?: number,
+        additionalHeaders?: RequestHeaders
+    ): Promise<SearchResultsModel> {
         ow(searchRequest, ow.object.nonEmpty);
 
         const req = new SearchRequestModel();
         req.clone(searchRequest);
 
-        let qs:DictionaryArray= {};
+        let qs: DictionaryArray = {};
         if (offset) {
             qs.offset = [`${offset}`];
         }
@@ -49,7 +55,7 @@ export class SearchLambdaService extends SearchServiceBase implements SearchServ
         }
         qs = {
             ...qs,
-            ...req.toLambdaMultiValueQueryString()
+            ...req.toLambdaMultiValueQueryString(),
         };
 
         const event = new LambdaApiGatewayEventBuilder()
@@ -60,5 +66,25 @@ export class SearchLambdaService extends SearchServiceBase implements SearchServ
 
         const res = await this.lambdaInvoker.invoke(this.functionName, event);
         return res.body;
+    }
+
+    public async delete(
+        searchRequest: SearchRequestModel,
+        additionalHeaders?: RequestHeaders
+    ): Promise<void> {
+        ow(searchRequest, ow.object.nonEmpty);
+
+        const req = new SearchRequestModel();
+        req.clone(searchRequest);
+
+        const qs = req.toLambdaMultiValueQueryString()
+
+        const event = new LambdaApiGatewayEventBuilder()
+            .setPath(super.searchRelativeUrl())
+            .setMultiValueQueryStringParameters(qs)
+            .setMethod('DELETE')
+            .setHeaders(super.buildHeaders(additionalHeaders));
+
+        await this.lambdaInvoker.invoke(this.functionName, event);
     }
 }

@@ -10,19 +10,24 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { SearchRequestModel, SearchRequestFilters, SearchRequestFilterDirection, SearchRequestFilterTraversal, SearchResultsResource } from './search.models';
-import { injectable, inject } from 'inversify';
-import { DeviceItem, determineIfDeviceItem, DeviceBaseResource } from '../devices/devices.models';
-import { GroupItem, determineIfGroupItem, GroupBaseResource } from '../groups/groups.models';
-import { TYPES } from '../di/types';
-import { DevicesAssembler } from '../devices/devices.assembler';
-import { GroupsAssembler } from '../groups/groups.assembler';
+import { inject, injectable } from 'inversify';
 import { assembleSortKeys } from '../data/model';
+import { DevicesAssembler } from '../devices/devices.assembler';
+import { DeviceBaseResource, DeviceItem, determineIfDeviceItem } from '../devices/devices.models';
+import { TYPES } from '../di/types';
+import { GroupsAssembler } from '../groups/groups.assembler';
+import { GroupBaseResource, GroupItem, determineIfGroupItem } from '../groups/groups.models';
 import { TypeUtils } from '../utils/typeUtils';
+import {
+    SearchRequestFilterDirection,
+    SearchRequestFilterTraversal,
+    SearchRequestFilters,
+    SearchRequestModel,
+    SearchResultsResource,
+} from './search.models';
 
 @injectable()
 export class SearchAssembler {
-
     constructor(
         @inject(TYPES.DevicesAssembler) private devicesAssembler: DevicesAssembler,
         @inject(TYPES.GroupsAssembler) private groupsAssembler: GroupsAssembler,
@@ -30,35 +35,44 @@ export class SearchAssembler {
     ) {}
 
     public toSearchRequestModel(
-        types:string|string[],
-        ancestorPath:string,
-        eqs:string|string[],
-        neqs:string|string[],
-        lts:string|string[],
-        ltes:string|string[],
-        gts:string|string[],
-        gtes:string|string[],
-        startsWiths:string|string[],
-        endsWiths:string|string[],
-        containses:string|string[],
-        exists:string|string[],
-        nexists:string|string[],
-        facetField:string,
-        offset?:number,
-        count?:number,
-        sort?:string
+        types: string | string[],
+        ntypes: string | string[],
+        ancestorPath: string,
+        includeAncestor: boolean,
+        eqs: string | string[],
+        neqs: string | string[],
+        lts: string | string[],
+        ltes: string | string[],
+        gts: string | string[],
+        gtes: string | string[],
+        startsWiths: string | string[],
+        endsWiths: string | string[],
+        containses: string | string[],
+        exists: string | string[],
+        nexists: string | string[],
+        facetField?: string,
+        offset?: number,
+        count?: number,
+        sort?: string
     ): SearchRequestModel {
-
         const req = new SearchRequestModel();
-        if (types!==undefined) {
+        if (types !== undefined) {
             if (typeof types === 'string') {
                 req.types.push(types);
             } else {
-                (<string[]>types).forEach(t=> req.types.push(t));
+                (<string[]>types).forEach((t) => req.types.push(t));
             }
         }
-        req.ancestorPath=ancestorPath;
+        if (ntypes !== undefined) {
+            if (typeof ntypes === 'string') {
+                req.ntypes.push(ntypes);
+            } else {
+                (<string[]>ntypes).forEach((t) => req.ntypes.push(t));
+            }
+        }
 
+        req.ancestorPath = ancestorPath;
+        req.includeAncestor = includeAncestor ? Boolean(includeAncestor) : undefined;
         req.eq = this.toSearchRequestFilters(eqs);
         req.neq = this.toSearchRequestFilters(neqs);
         req.lt = this.toSearchRequestFilters(lts);
@@ -72,58 +86,63 @@ export class SearchAssembler {
         req.exists = this.toSearchRequestFilters(exists);
         req.nexists = this.toSearchRequestFilters(nexists);
 
-        if (facetField!==undefined) {
+        if (facetField !== undefined) {
             const v = facetField.split(':');
             if (v.length % 2 === 1) {
                 // optional traversals
                 let traversals: SearchRequestFilterTraversal[];
-                if (v.length>1) {
+                if (v.length > 1) {
                     traversals = [];
-                    for(let i=0; i<v.length-1; i+=2) {
-                        traversals.push({relation:v[i], direction: SearchRequestFilterDirection[v[i+1]]});
+                    for (let i = 0; i < v.length - 1; i += 2) {
+                        traversals.push({
+                            relation: v[i],
+                            direction: SearchRequestFilterDirection[v[i + 1]],
+                        });
                     }
                 }
                 req.facetField = {
                     traversals,
-                    field:v[v.length-1]
+                    field: v[v.length - 1],
                 };
             }
         }
 
-        req.offset=this.typeUtils.parseInt(offset);
-        req.count=this.typeUtils.parseInt(count);
+        req.offset = this.typeUtils.parseInt(offset);
+        req.count = this.typeUtils.parseInt(count);
         req.sort = assembleSortKeys(sort);
 
         return req;
     }
 
-    private toSearchRequestFilters (filter:string|string[]): SearchRequestFilters {
+    private toSearchRequestFilters(filter: string | string[]): SearchRequestFilters {
+        let response: SearchRequestFilters;
 
-        let response:SearchRequestFilters;
-
-        if (filter!==undefined) {
+        if (filter !== undefined) {
             response = [];
             if (typeof filter === 'string') {
-                filter=[filter];
+                filter = [filter];
             }
-            (<string[]>filter).forEach(i=> {
+            (<string[]>filter).forEach((i) => {
                 const v = i.split(':');
-                if (v.length===2) {
+                if (v.length === 2) {
                     // no traversals
                     response.push({
-                        field:v[0],
-                        value: decodeURIComponent(v[1])
+                        field: v[0],
+                        value: decodeURIComponent(v[1]),
                     });
-                } else if (v.length>2 && v.length % 2 === 0) {
+                } else if (v.length > 2 && v.length % 2 === 0) {
                     // traversals
                     const traversals: SearchRequestFilterTraversal[] = [];
-                    for(let j=0; j<v.length-2; j+=2) {
-                        traversals.push({relation:v[j], direction: SearchRequestFilterDirection[v[j+1]]});
+                    for (let j = 0; j < v.length - 2; j += 2) {
+                        traversals.push({
+                            relation: v[j],
+                            direction: SearchRequestFilterDirection[v[j + 1]],
+                        });
                     }
                     response.push({
                         traversals,
-                        field:v[v.length-2],
-                        value: decodeURIComponent(v[v.length-1])
+                        field: v[v.length - 2],
+                        value: decodeURIComponent(v[v.length - 1]),
                     });
                 }
             });
@@ -132,25 +151,30 @@ export class SearchAssembler {
         return response;
     }
 
-    public toSearchResultsResource(items: (DeviceItem|GroupItem)[], version:string): SearchResultsResource {
-
-        if (items===undefined) {
+    public toSearchResultsResource(
+        items: (DeviceItem | GroupItem)[],
+        version: string
+    ): SearchResultsResource {
+        if (items === undefined) {
             return undefined;
         }
 
-        const resources:SearchResultsResource = {
-            results:[]
+        const resources: SearchResultsResource = {
+            results: [],
         };
 
-        items.forEach(item=> {
+        items.forEach((item) => {
             if (determineIfDeviceItem(item)) {
-                (<(GroupBaseResource|DeviceBaseResource)[]> resources.results).push(this.devicesAssembler.toDeviceResource(item, version));
+                (<(GroupBaseResource | DeviceBaseResource)[]>resources.results).push(
+                    this.devicesAssembler.toDeviceResource(item, version)
+                );
             } else if (determineIfGroupItem(item)) {
-                (<(GroupBaseResource|DeviceBaseResource)[]> resources.results).push(this.groupsAssembler.toGroupResource(item, version));
+                (<(GroupBaseResource | DeviceBaseResource)[]>resources.results).push(
+                    this.groupsAssembler.toGroupResource(item, version)
+                );
             }
         });
 
         return resources;
     }
-
 }
