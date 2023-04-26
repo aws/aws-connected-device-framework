@@ -16775,12 +16775,13 @@ packages:
     dev: false
 
   file:projects/bulkcerts-client.tgz:
-    resolution: {integrity: sha512-9S4kV8cC/5mxBjb+zJoydGY+Og7iZ6fOQtIgpOjp3X6xWeqUEG+DnlaHF7PA8PAueV/6JAq9xlKNE1voKZruEQ==, tarball: file:projects/bulkcerts-client.tgz}
+    resolution: {integrity: sha512-qi1TMLaO06uog85VpUOJrDHphAR/n54w18sRMZadDyfF+dSXREZ5krW6zsUwf8DRgYjKdhkqedZTiMiPEuQunQ==, tarball: file:projects/bulkcerts-client.tgz}
     name: '@rush-temp/bulkcerts-client'
     version: 0.0.0
     dependencies:
       '@rushstack/eslint-config': 2.3.4_eslint@7.26.0+typescript@4.2.4
       '@types/dotenv-flow': 3.2.0
+      '@types/http-errors': 2.0.1
       '@types/jest': 26.0.23
       '@types/node': 16.11.7
       '@types/superagent': 4.1.15
@@ -16789,6 +16790,7 @@ packages:
       aws-sdk: 2.1048.0
       dotenv-flow: 3.2.0
       eslint: 7.26.0
+      http-errors: 2.0.0
       inversify: 6.0.1
       inversify-binding-decorators: 4.0.0
       inversify-express-utils: 6.4.3
