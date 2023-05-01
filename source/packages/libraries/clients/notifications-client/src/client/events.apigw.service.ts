@@ -11,10 +11,11 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
+import { signClientRequest } from '@awssolutions/cdf-client-request-signer';
+import createError from 'http-errors';
 import { injectable } from 'inversify';
 import ow from 'ow';
 import * as request from 'superagent';
-
 import { QSHelper } from '../utils/qs.helper';
 import { RequestHeaders } from './common.model';
 import { EventResource, EventResourceList } from './events.model';
@@ -22,42 +23,66 @@ import { EventsService, EventsServiceBase } from './events.service';
 
 @injectable()
 export class EventsApigwService extends EventsServiceBase implements EventsService {
-
-    private readonly baseUrl:string;
+    private readonly baseUrl: string;
 
     public constructor() {
         super();
         this.baseUrl = process.env.NOTIFICATIONS_BASE_URL;
     }
 
-    async createEvent(eventSourceId: string, event: EventResource, additionalHeaders?: RequestHeaders): Promise<string> {
+    async createEvent(
+        eventSourceId: string,
+        event: EventResource,
+        additionalHeaders?: RequestHeaders
+    ): Promise<string> {
         ow(event, ow.object.nonEmpty);
         ow(eventSourceId, ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.eventSourceEventsRelativeUrl(eventSourceId)}`;
-        const res = await request.post(url)
+        return await request
+            .post(url)
             .set(this.buildHeaders(additionalHeaders))
-            .send(event);
-        const location = res.get('location');
-        return location?.split('/')[2];
+            .send(event)
+            .use(await signClientRequest())
+            .then((res) => {
+                const location = res.get('location');
+                return location?.split('/')[2];
+            })
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
+            });
     }
 
     async getEvent(eventId: string, additionalHeaders?: RequestHeaders): Promise<EventResource> {
         ow(eventId, ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.eventRelativeUrl(eventId)}`;
-        const res = await request.get(url)
-            .set(this.buildHeaders(additionalHeaders));
-
-        return res.body;
+        return await request
+            .get(url)
+            .set(this.buildHeaders(additionalHeaders))
+            .use(await signClientRequest())
+            .then((res) => {
+                return res.body;
+            })
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
+            });
     }
 
     async deleteEvent(eventId: string, additionalHeaders?: RequestHeaders): Promise<void> {
         ow(eventId, ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.eventRelativeUrl(eventId)}`;
-        await request.delete(url)
-            .set(this.buildHeaders(additionalHeaders));
+        return await request
+            .delete(url)
+            .set(this.buildHeaders(additionalHeaders))
+            .use(await signClientRequest())
+            .then((_res) => {
+                return;
+            })
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
+            });
     }
 
     async updateEvent(event: EventResource, additionalHeaders?: RequestHeaders): Promise<void> {
@@ -65,23 +90,41 @@ export class EventsApigwService extends EventsServiceBase implements EventsServi
         ow(event.eventId, ow.string.nonEmpty);
 
         const url = `${this.baseUrl}${super.eventRelativeUrl(event.eventId)}`;
-        await request.patch(url)
+        return await request
+            .patch(url)
             .set(this.buildHeaders(additionalHeaders))
-            .send(event);
+            .send(event)
+            .use(await signClientRequest())
+            .then((_res) => {
+                return;
+            })
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
+            });
     }
 
-    async listEventsForEventSource(eventSourceId: string, count?: number, fromEventId?: string, additionalHeaders?: RequestHeaders): Promise<EventResourceList> {
+    async listEventsForEventSource(
+        eventSourceId: string,
+        count?: number,
+        fromEventId?: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<EventResourceList> {
         ow(eventSourceId, ow.string.nonEmpty);
 
         let url = `${this.baseUrl}${super.eventSourceEventsRelativeUrl(eventSourceId)}`;
-        const queryString = QSHelper.getQueryString({count, fromEventId});
+        const queryString = QSHelper.getQueryString({ count, fromEventId });
         if (queryString) {
             url += `?${queryString}`;
         }
-        const res = await request.get(url)
-            .set(this.buildHeaders(additionalHeaders));
-
-        return res.body;
+        return await request
+            .get(url)
+            .set(this.buildHeaders(additionalHeaders))
+            .use(await signClientRequest())
+            .then((res) => {
+                return res.body;
+            })
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
+            });
     }
-
 }

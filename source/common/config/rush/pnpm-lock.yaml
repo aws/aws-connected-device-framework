@@ -18127,12 +18127,13 @@ packages:
     dev: false
 
   file:projects/notifications-client.tgz:
-    resolution: {integrity: sha512-Hm3PB3jZpBX6YRI4rFoUPVDkZr5sfOsALFZ7kdqOcD5+StAr3/DUIh4TOgodL9JvrNB55Cvs3H4YO1YicjId1Q==, tarball: file:projects/notifications-client.tgz}
+    resolution: {integrity: sha512-xRDlyO4gYqGFMN38TikxNeVj4KyBmYmJGR/V+UfR7iU59/a+25VpD/6xvHTqj8ov6IQqS6FeORa8aqwQrLZu+A==, tarball: file:projects/notifications-client.tgz}
     name: '@rush-temp/notifications-client'
     version: 0.0.0
     dependencies:
       '@rushstack/eslint-config': 2.3.4_eslint@7.26.0+typescript@4.2.4
       '@types/dotenv-flow': 3.2.0
+      '@types/http-errors': 2.0.1
       '@types/jest': 26.0.23
       '@types/node': 16.11.7
       '@types/superagent': 4.1.15
@@ -18141,6 +18142,7 @@ packages:
       aws-sdk: 2.1048.0
       dotenv-flow: 3.2.0
       eslint: 7.26.0
+      http-errors: 2.0.0
       inversify: 6.0.1
       inversify-binding-decorators: 4.0.0
       inversify-express-utils: 6.4.3

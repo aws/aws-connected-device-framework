@@ -10,26 +10,37 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import {inject, injectable} from 'inversify';
+
+import {
+    LAMBDAINVOKE_TYPES,
+    LambdaApiGatewayEventBuilder,
+    LambdaInvokerService,
+} from '@cdf/lambda-invoke';
+import { inject, injectable } from 'inversify';
 import ow from 'ow';
-import {EventSourceDetailResource, EventSourceResourceList} from './eventsources.model';
-import {RequestHeaders} from './common.model';
-import {EventsourcesService, EventsourcesServiceBase} from './eventsources.service';
-import {LambdaApiGatewayEventBuilder, LAMBDAINVOKE_TYPES, LambdaInvokerService} from '@cdf/lambda-invoke';
+import { RequestHeaders } from './common.model';
+import { EventSourceDetailResource, EventSourceResourceList } from './eventsources.model';
+import { EventsourcesService, EventsourcesServiceBase } from './eventsources.service';
 
 @injectable()
-export class EventsourcesLambdaService extends EventsourcesServiceBase implements EventsourcesService {
-
-    private functionName : string;
+export class EventsourcesLambdaService
+    extends EventsourcesServiceBase
+    implements EventsourcesService
+{
+    private functionName: string;
     constructor(
-        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService) private lambdaInvoker: LambdaInvokerService
+        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
+        private lambdaInvoker: LambdaInvokerService
     ) {
         super();
         this.lambdaInvoker = lambdaInvoker;
         this.functionName = process.env.NOTIFICATIONS_API_FUNCTION_NAME;
     }
 
-    async createEventSource(eventSource: EventSourceDetailResource, additionalHeaders?: RequestHeaders): Promise<string> {
+    async createEventSource(
+        eventSource: EventSourceDetailResource,
+        additionalHeaders?: RequestHeaders
+    ): Promise<string> {
         ow(eventSource, ow.object.nonEmpty);
 
         const ev = new LambdaApiGatewayEventBuilder()
@@ -54,8 +65,10 @@ export class EventsourcesLambdaService extends EventsourcesServiceBase implement
         return res.body;
     }
 
-    async getEventSource(eventSourceId: string, additionalHeaders?: RequestHeaders): Promise<EventSourceDetailResource> {
-
+    async getEventSource(
+        eventSourceId: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<EventSourceDetailResource> {
         ow(eventSourceId, ow.string.nonEmpty);
 
         const ev = new LambdaApiGatewayEventBuilder()
@@ -67,8 +80,11 @@ export class EventsourcesLambdaService extends EventsourcesServiceBase implement
         return res.body;
     }
 
-    async updateEventSource(eventSourceId: string, eventSource: EventSourceDetailResource, additionalHeaders?: RequestHeaders): Promise<void> {
-
+    async updateEventSource(
+        eventSourceId: string,
+        eventSource: EventSourceDetailResource,
+        additionalHeaders?: RequestHeaders
+    ): Promise<void> {
         ow(eventSourceId, ow.string.nonEmpty);
         ow(eventSource, ow.object.nonEmpty);
 
@@ -81,8 +97,10 @@ export class EventsourcesLambdaService extends EventsourcesServiceBase implement
         await this.lambdaInvoker.invoke(this.functionName, ev);
     }
 
-    async deleteEventSource(eventSourceId: string, additionalHeaders?: RequestHeaders): Promise<void> {
-
+    async deleteEventSource(
+        eventSourceId: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<void> {
         ow(eventSourceId, ow.string.nonEmpty);
 
         const ev = new LambdaApiGatewayEventBuilder()
