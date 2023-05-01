@@ -16,7 +16,6 @@ export interface DevicesService {
 
 @injectable()
 export class DevicesServiceBase extends ClientServiceBase {
-
     constructor() {
         super();
     }
@@ -29,7 +28,7 @@ export class DevicesServiceBase extends ClientServiceBase {
         return PathHelper.encodeUrl('devices', name);
     }
 
-    protected deviceTasksRelativeUrl(coreName:string): string {
+    protected deviceTasksRelativeUrl(coreName: string): string {
         return `/cores/${coreName}/deviceTasks`;
     }
 

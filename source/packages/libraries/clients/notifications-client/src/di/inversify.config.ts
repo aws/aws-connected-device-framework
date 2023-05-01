@@ -25,7 +25,7 @@ import { EventsourcesLambdaService } from '../client/eventsources.lambda.service
 import { EventsourcesService } from '../client/eventsources.service';
 import { MessagesDebugLambdaService } from '../client/messages.lambda.service';
 import { MessagesDebugService } from '../client/messages.service';
-import { MessagesDebugApigwService } from '../client/messgaes.apigw.service';
+import { MessagesDebugApigwService } from '../client/messages.apigw.service';
 import { SubscriptionsApigwService } from '../client/subscriptions.apigw.service';
 import { SubscriptionsLambdaService } from '../client/subscriptions.lambda.service';
 import { SubscriptionsService } from '../client/subscriptions.service';

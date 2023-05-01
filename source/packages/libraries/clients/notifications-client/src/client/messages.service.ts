@@ -10,19 +10,21 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import {injectable} from 'inversify';
+
+import { injectable } from 'inversify';
 import { RequestHeaders } from './common.model';
-import {CommonServiceBase} from './common.service';
+import { CommonServiceBase } from './common.service';
 import { SimulateIoTCoreMessageRequest } from './messages.model';
 
 export interface MessagesDebugService {
-    simulateIoTCoreMessage(message:SimulateIoTCoreMessageRequest, additionalHeaders?: RequestHeaders
-        ): Promise<void>;
+    simulateIoTCoreMessage(
+        message: SimulateIoTCoreMessageRequest,
+        additionalHeaders?: RequestHeaders
+    ): Promise<void>;
 }
 
 @injectable()
-export class MessagesDebugServiceBase extends CommonServiceBase  {
-
+export class MessagesDebugServiceBase extends CommonServiceBase {
     protected iotcoreRelativeUrl(): string {
         return `/messages/iotcore`;
     }

@@ -19,29 +19,28 @@ export interface NewTemplate {
 	enabled: boolean;
 }
  export interface Template extends NewTemplate {
-	version?: number;
+     version?: number;
 
-	deployment?: {
-		id: string;
-		thingGroupName: string;
-		jobId:string;
-	}
+     deployment?: {
+         id: string;
+         thingGroupName: string;
+         jobId: string;
+     };
 
-	createdAt?: Date;
-	updatedAt?: Date;
-}
+     createdAt?: Date;
+     updatedAt?: Date;
+ }
 
 export interface Component {
-	key: string;
+    key: string;
     version: string;
-	configurationUpdate?: {
-		merge?: string;
-		reset?: string[];
-	};
-	runWith?: {
-		posixUser: string;
-	};
-
+    configurationUpdate?: {
+        merge?: string;
+        reset?: string[];
+    };
+    runWith?: {
+        posixUser: string;
+    };
 }
 export interface JobConfig {
 	jobExecutionsRolloutConfig?: {

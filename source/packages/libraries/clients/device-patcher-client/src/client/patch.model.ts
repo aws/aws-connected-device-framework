@@ -10,52 +10,51 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { PatchType } from './templates.model'
+import { PatchType } from './templates.model';
 
 export class PatchTaskRequest {
-	patches: CreatePatchRequest[]
+    patches: CreatePatchRequest[];
 }
 
 export class PatchTaskResponse {
-	taskId: string;
-	createdAt: Date;
-	updatedAt: Date;
+    taskId: string;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 export interface CreatePatchRequest {
-	deviceId: string;
-	patchTemplateName: string;
-	patchType?: PatchType;
-	extraVars?: { [key: string]: string}
+    deviceId: string;
+    patchTemplateName: string;
+    patchType?: PatchType;
+    extraVars?: { [key: string]: string };
 }
 
 export interface UpdatePatchRequest {
-	patchId: string,
-	patchStatus?: string,
-	extraVars?: { [key: string]: string}
+    patchId: string;
+    patchStatus?: string;
+    extraVars?: { [key: string]: string };
 }
 
 export interface PatchResponse {
-	taskId?: string;
-	deviceId: string;
-	patchId: string;
-	patchTemplateName?: string;
-	patchStatus?: patchStatus;
-	createdAt?: Date;
-	updatedAt?: Date;
-	patchType?: PatchType;
-	statusMessage?: string;
-	associationId?: string;
-	extraVars?: { [key: string]: string}
+    taskId?: string;
+    deviceId: string;
+    patchId: string;
+    patchTemplateName?: string;
+    patchStatus?: patchStatus;
+    createdAt?: Date;
+    updatedAt?: Date;
+    patchType?: PatchType;
+    statusMessage?: string;
+    associationId?: string;
+    extraVars?: { [key: string]: string };
 }
 
-
 export enum patchStatus {
-	RETRY='retry',
-	CREATED='created',
-	PENDING='pending',
-	SUCCEESS='success',
-	FAILED='failed'
+    RETRY = 'retry',
+    CREATED = 'created',
+    PENDING = 'pending',
+    SUCCEESS = 'success',
+    FAILED = 'failed',
 }
 
 export class ListPatchResponse {

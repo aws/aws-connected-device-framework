@@ -11,13 +11,21 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import { EventsourcesService, EventsService, NOTIFICATIONS_CLIENT_TYPES, SubscriptionsService } from '@cdf/notifications-client/dist';
-import { getEventIdFromName, getAdditionalHeaders, getEventSourceIdFromName } from '../step_definitions/notifications/notifications.utils';
-
-import { Before, setDefaultTimeout} from '@cucumber/cucumber';
-import { container } from '../di/inversify.config';
+import {
+    EventsourcesService,
+    EventsService,
+    NOTIFICATIONS_CLIENT_TYPES,
+    SubscriptionsService,
+} from '@cdf/notifications-client/dist';
 import { EventSourceType } from '@cdf/notifications-client/dist/client/eventsources.model';
+import { Before, setDefaultTimeout } from '@cucumber/cucumber';
+import { container } from '../di/inversify.config';
 import { AUTHORIZATION_TOKEN } from '../step_definitions/common/common.steps';
+import {
+    getAdditionalHeaders,
+    getEventIdFromName,
+    getEventSourceIdFromName,
+} from '../step_definitions/notifications/notifications.utils';
 
 setDefaultTimeout(30 * 1000);
 
@@ -29,36 +37,63 @@ setDefaultTimeout(30 * 1000);
 // tslint:disable:no-invalid-this
 // tslint:disable:only-arrow-functions
 
-const eventsourceService:EventsourcesService = container.get(NOTIFICATIONS_CLIENT_TYPES.EventSourcesService);
-const eventService:EventsService = container.get(NOTIFICATIONS_CLIENT_TYPES.EventsService);
-const subscriptionsService:SubscriptionsService = container.get(NOTIFICATIONS_CLIENT_TYPES.SubscriptionsService);
+const eventsourceService: EventsourcesService = container.get(
+    NOTIFICATIONS_CLIENT_TYPES.EventSourcesService
+);
+const eventService: EventsService = container.get(NOTIFICATIONS_CLIENT_TYPES.EventsService);
+const subscriptionsService: SubscriptionsService = container.get(
+    NOTIFICATIONS_CLIENT_TYPES.SubscriptionsService
+);
 
-async function teardown_all(world:unknown, eventSourceName:string, eventName?:string) {
-    const eventSourceId = await getEventSourceIdFromName(eventsourceService, world,eventSourceName);
+async function teardown_all(world: unknown, eventSourceName: string, eventName?: string) {
+    const eventSourceId = await getEventSourceIdFromName(
+        eventsourceService,
+        world,
+        eventSourceName
+    );
     if (eventSourceId) {
         if (eventName) {
-            const eventId = await getEventIdFromName(eventsourceService, eventService, world, eventSourceName, eventName);
+            const eventId = await getEventIdFromName(
+                eventsourceService,
+                eventService,
+                world,
+                eventSourceName,
+                eventName
+            );
             if (eventId) {
                 try {
-                    const subscriptions = await subscriptionsService.listSubscriptionsForEvent(eventId, undefined, getAdditionalHeaders(world[AUTHORIZATION_TOKEN]));
-                    if (subscriptions?.results?.length>0) {
-                        for(const s of subscriptions.results) {
-                            await subscriptionsService.deleteSubscription(s.id, getAdditionalHeaders(world[AUTHORIZATION_TOKEN]));
+                    const subscriptions = await subscriptionsService.listSubscriptionsForEvent(
+                        eventId,
+                        undefined,
+                        getAdditionalHeaders(world[AUTHORIZATION_TOKEN])
+                    );
+                    if (subscriptions?.results?.length > 0) {
+                        for (const s of subscriptions.results) {
+                            await subscriptionsService.deleteSubscription(
+                                s.id,
+                                getAdditionalHeaders(world[AUTHORIZATION_TOKEN])
+                            );
                         }
                     }
                 } catch (e) {
                     // ignore
                 }
-                await eventService.deleteEvent(eventId, getAdditionalHeaders(world[AUTHORIZATION_TOKEN]));
+                await eventService.deleteEvent(
+                    eventId,
+                    getAdditionalHeaders(world[AUTHORIZATION_TOKEN])
+                );
             }
         }
-        await eventsourceService.deleteEventSource(eventSourceId, getAdditionalHeaders(world[AUTHORIZATION_TOKEN]));
+        await eventsourceService.deleteEventSource(
+            eventSourceId,
+            getAdditionalHeaders(world[AUTHORIZATION_TOKEN])
+        );
     }
 }
 
-async function teardown_event_sources(world:unknown) {
+async function teardown_event_sources(world: unknown) {
     /// teardown
-    await teardown_all(world,'TEST-iotcore');
+    await teardown_all(world, 'TEST-IoTCore');
 }
 
 Before({tags: '@setup_event_sources'}, async function () {

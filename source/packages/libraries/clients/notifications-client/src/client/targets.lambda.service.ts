@@ -10,26 +10,36 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import {inject, injectable} from 'inversify';
+
+import {
+    LAMBDAINVOKE_TYPES,
+    LambdaApiGatewayEventBuilder,
+    LambdaInvokerService,
+} from '@cdf/lambda-invoke';
+import { inject, injectable } from 'inversify';
 import ow from 'ow';
-import {RequestHeaders} from './common.model';
-import {LambdaApiGatewayEventBuilder, LAMBDAINVOKE_TYPES, LambdaInvokerService} from '@cdf/lambda-invoke';
-import { TargetsService, TargetsServiceBase } from './targets.service';
+import { RequestHeaders } from './common.model';
 import { TargetResource } from './targets.model';
+import { TargetsService, TargetsServiceBase } from './targets.service';
 
 @injectable()
 export class TargetsLambdaService extends TargetsServiceBase implements TargetsService {
-
-    private functionName : string;
+    private functionName: string;
     constructor(
-        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService) private lambdaInvoker: LambdaInvokerService
+        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
+        private lambdaInvoker: LambdaInvokerService
     ) {
         super();
         this.lambdaInvoker = lambdaInvoker;
         this.functionName = process.env.NOTIFICATIONS_API_FUNCTION_NAME;
     }
 
-    async createTarget(subscriptionId: string, targetType:string, target: TargetResource, additionalHeaders?: RequestHeaders): Promise<void> {
+    async createTarget(
+        subscriptionId: string,
+        targetType: string,
+        target: TargetResource,
+        additionalHeaders?: RequestHeaders
+    ): Promise<void> {
         ow(subscriptionId, ow.string.nonEmpty);
         ow(targetType, ow.string.nonEmpty);
         ow(target, ow.object.nonEmpty);
@@ -43,7 +53,12 @@ export class TargetsLambdaService extends TargetsServiceBase implements TargetsS
         await this.lambdaInvoker.invoke(this.functionName, ev);
     }
 
-    async deleteTarget(subscriptionId: string, targetType:string, targetId:string, additionalHeaders?: RequestHeaders): Promise<void> {
+    async deleteTarget(
+        subscriptionId: string,
+        targetType: string,
+        targetId: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<void> {
         ow(subscriptionId, ow.string.nonEmpty);
         ow(targetType, ow.string.nonEmpty);
         ow(targetId, ow.string.nonEmpty);
@@ -55,5 +70,4 @@ export class TargetsLambdaService extends TargetsServiceBase implements TargetsS
 
         await this.lambdaInvoker.invoke(this.functionName, ev);
     }
-
 }

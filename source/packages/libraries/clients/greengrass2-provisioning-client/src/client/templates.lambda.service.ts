@@ -10,28 +10,35 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import {inject, injectable} from 'inversify';
+
+import {
+    LAMBDAINVOKE_TYPES,
+    LambdaApiGatewayEventBuilder,
+    LambdaInvokerService,
+} from '@cdf/lambda-invoke';
+import { inject, injectable } from 'inversify';
 import ow from 'ow';
-import {RequestHeaders} from './common.model';
-import {LambdaInvokerService, LAMBDAINVOKE_TYPES, LambdaApiGatewayEventBuilder} from '@cdf/lambda-invoke';
-import {TemplatesServiceBase, TemplatesService} from './templates.service';
-import {Template, NewTemplate} from './templates.model';
+import { RequestHeaders } from './common.model';
+import { NewTemplate, Template } from './templates.model';
+import { TemplatesService, TemplatesServiceBase } from './templates.service';
 
 @injectable()
 export class TemplatesLambdaService extends TemplatesServiceBase implements TemplatesService {
-
     private functionName: string;
 
     constructor(
-        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService) private lambdaInvoker: LambdaInvokerService
+        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
+        private lambdaInvoker: LambdaInvokerService
     ) {
         super();
         this.lambdaInvoker = lambdaInvoker;
         this.functionName = process.env.GREENGRASS2PROVISIONING_API_FUNCTION_NAME;
     }
 
-    async createTemplate(template: NewTemplate, additionalHeaders?: RequestHeaders): Promise<void> {
-
+    async createTemplate(
+        template: NewTemplate,
+        additionalHeaders?: RequestHeaders
+    ): Promise<void> {
         ow(template, ow.object.nonEmpty);
         ow(template.name, ow.string.nonEmpty);
         ow(template.components, 'components', ow.array.nonEmpty);
@@ -47,11 +54,12 @@ export class TemplatesLambdaService extends TemplatesServiceBase implements Temp
             .setBody(template);
 
         await this.lambdaInvoker.invoke(this.functionName, event);
-
     }
 
-    async updateTemplate(template: NewTemplate, additionalHeaders?: RequestHeaders): Promise<void> {
-
+    async updateTemplate(
+        template: NewTemplate,
+        additionalHeaders?: RequestHeaders
+    ): Promise<void> {
         ow(template, ow.object.nonEmpty);
         ow(template.name, ow.string.nonEmpty);
         ow(template.components, 'components', ow.array.nonEmpty);
@@ -67,11 +75,9 @@ export class TemplatesLambdaService extends TemplatesServiceBase implements Temp
             .setBody(template);
 
         await this.lambdaInvoker.invoke(this.functionName, event);
-
     }
 
     async getLatestTemplate(name: string, additionalHeaders?: RequestHeaders): Promise<Template> {
-
         ow(name, ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
@@ -84,7 +90,6 @@ export class TemplatesLambdaService extends TemplatesServiceBase implements Temp
     }
 
     async deleteTemplate(name: string, additionalHeaders?: RequestHeaders): Promise<void> {
-
         ow(name, ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
@@ -94,5 +99,4 @@ export class TemplatesLambdaService extends TemplatesServiceBase implements Temp
 
         await this.lambdaInvoker.invoke(this.functionName, event);
     }
-
 }

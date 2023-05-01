@@ -11,109 +11,109 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
  export interface NewCoreTask {
-    coreVersion: string;
-	cores: NewCore[];
-    type: CoreTaskType;
-    options?: DeleteCoreTaskOptions;
-}
+     coreVersion: string;
+     cores: NewCore[];
+     type: CoreTaskType;
+     options?: DeleteCoreTaskOptions;
+ }
 
-export interface DeleteCoreTaskOptions {
-	deprovisionClientDevices: boolean;
-	deprovisionCores: boolean;
-}
+ export interface DeleteCoreTaskOptions {
+     deprovisionClientDevices: boolean;
+     deprovisionCores: boolean;
+ }
 
-export interface CoreTask {
-	id: string;
-	cores: Core[];
-    options?: DeleteCoreTaskOptions;
-	taskStatus: CoreTaskStatus;
-	statusMessage?: string;
-	createdAt: Date;
-	updatedAt?: Date;
-    type: CoreTaskType;
-    // no. of batches the task has been split into
-    batchesTotal?: number;
-    // no. of batches reporting as complete, regardless of whether success or not
-    batchesComplete?: number;
-}
+ export interface CoreTask {
+     id: string;
+     cores: Core[];
+     options?: DeleteCoreTaskOptions;
+     taskStatus: CoreTaskStatus;
+     statusMessage?: string;
+     createdAt: Date;
+     updatedAt?: Date;
+     type: CoreTaskType;
+     // no. of batches the task has been split into
+     batchesTotal?: number;
+     // no. of batches reporting as complete, regardless of whether success or not
+     batchesComplete?: number;
+ }
 
-export interface NewCore {
-	name: string;
+ export interface NewCore {
+     name: string;
 
-    provisioningTemplate: string;
-	provisioningParameters?: {[key : string] : string};
-    cdfProvisioningParameters?: CdfProvisioningParameters;
-}
+     provisioningTemplate: string;
+     provisioningParameters?: { [key: string]: string };
+     cdfProvisioningParameters?: CdfProvisioningParameters;
+ }
 
-export interface CoreList {
-    cores: Core[];
-    pagination?: {
-        lastEvaluated?: {
-            thingName: string
-        },
-        count?: number
-    };
-}
-export interface Core extends NewCore {
-	taskStatus: CoreTaskStatus;
-	statusMessage?: string;
-	createdAt: Date;
-	updatedAt?: Date;
-    
-    artifacts?:  {
-        [key : string] : Artifact
-    };
-    
-    device?: {
-        coreVersion?: string;
-        platform?: string;
-        architecture?: string;
-        status?: string;
-        lastStatusUpdateTimestamp?: Date;
-        tags?: {[key : string] : string};
-        installedComponents?: InstalledComponent[];
-        effectiveDeployments: EffectiveDeployment[];
-    };
+ export interface CoreList {
+     cores: Core[];
+     pagination?: {
+         lastEvaluated?: {
+             thingName: string;
+         };
+         count?: number;
+     };
+ }
+ export interface Core extends NewCore {
+     taskStatus: CoreTaskStatus;
+     statusMessage?: string;
+     createdAt: Date;
+     updatedAt?: Date;
 
-    template?: {
-        desired?: {
-            name: string;
-            version: number;
-        };
-        reported?: {
-            name: string;
-            version: number;
-            deploymentStatus: StaticRange;
-            jobStatus: string;
-        }
-    }
-}
+     artifacts?: {
+         [key: string]: Artifact;
+     };
 
-export interface Artifact {
-    bucket:string;
-    key:string;
-    createdAt?: Date;
-}
+     device?: {
+         coreVersion?: string;
+         platform?: string;
+         architecture?: string;
+         status?: string;
+         lastStatusUpdateTimestamp?: Date;
+         tags?: { [key: string]: string };
+         installedComponents?: InstalledComponent[];
+         effectiveDeployments: EffectiveDeployment[];
+     };
 
-export interface InstalledComponent {
-    name: string;
-    version: string;
-}
+     template?: {
+         desired?: {
+             name: string;
+             version: number;
+         };
+         reported?: {
+             name: string;
+             version: number;
+             deploymentStatus: StaticRange;
+             jobStatus: string;
+         };
+     };
+ }
 
-export interface EffectiveDeployment {
-    deploymentId: string;
-    deploymentName: string;
-    iotJobId?: string;
-    iotJobArn?: string;
-    description?: string;
-    targetArn?: string;
-    coreDeviceExecutionStatus?: string;
-    reason?: string;
-    createdAt?: Date;
-    updatedAt?: Date;
-}
+ export interface Artifact {
+     bucket: string;
+     key: string;
+     createdAt?: Date;
+ }
 
-export type CoreTaskStatus = 'Waiting'|'InProgress'|'Success'|'Failure';
+ export interface InstalledComponent {
+     name: string;
+     version: string;
+ }
+
+ export interface EffectiveDeployment {
+     deploymentId: string;
+     deploymentName: string;
+     iotJobId?: string;
+     iotJobArn?: string;
+     description?: string;
+     targetArn?: string;
+     coreDeviceExecutionStatus?: string;
+     reason?: string;
+     createdAt?: Date;
+     updatedAt?: Date;
+ }
+
+ export type CoreTaskStatus = 'Waiting' | 'InProgress' | 'Success' | 'Failure';
 
 export interface CdfProvisioningParameters {
     caId?: string;
@@ -125,7 +125,7 @@ export interface CdfProvisioningParameters {
         stateName?: string;
         country?: string;
         emailAddress?: string;
-        daysExpiry?:number;
+        daysExpiry?: number;
     };
 }
 
