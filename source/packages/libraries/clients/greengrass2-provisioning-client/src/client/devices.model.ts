@@ -34,7 +34,7 @@ export interface Device {
     provisioningParameters: { [key: string]: string };
     cdfProvisioningParameters: CdfProvisioningParameters;
     artifacts?: {
-        [key: string]: Artifact
+        [key: string]: Artifact;
     };
 }
 

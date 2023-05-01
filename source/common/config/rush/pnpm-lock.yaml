@@ -17803,12 +17803,13 @@ packages:
     dev: false
 
   file:projects/greengrass2-provisioning-client.tgz:
-    resolution: {integrity: sha512-mL+e9FFf/QM9MdmWKwc9ZJz3JFYcOh8zxIM+fTmigWZrjAY2NdctcT12l8tZaIezRWq+bjZjsqjaRRn8Adanpg==, tarball: file:projects/greengrass2-provisioning-client.tgz}
+    resolution: {integrity: sha512-Efr0zSVR12talj6ZKJEQ+ofb/dCq43h4sgoyzXbVdH3QRXC6FlWknH46PoCIWWxpZ+mScxNHJghr8Qk6m7RMOQ==, tarball: file:projects/greengrass2-provisioning-client.tgz}
     name: '@rush-temp/greengrass2-provisioning-client'
     version: 0.0.0
     dependencies:
       '@rushstack/eslint-config': 2.3.4_eslint@7.26.0+typescript@4.2.4
       '@types/dotenv-flow': 3.2.0
+      '@types/http-errors': 2.0.1
       '@types/jest': 26.0.23
       '@types/node': 16.11.7
       '@types/superagent': 4.1.15
@@ -17817,6 +17818,7 @@ packages:
       aws-sdk: 2.1048.0
       dotenv-flow: 3.2.0
       eslint: 7.26.0
+      http-errors: 2.0.0
       inversify: 6.0.1
       inversify-binding-decorators: 4.0.0
       inversify-express-utils: 6.4.3

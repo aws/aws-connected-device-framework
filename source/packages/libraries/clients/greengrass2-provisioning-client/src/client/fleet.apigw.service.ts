@@ -10,8 +10,9 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-/* tslint:disable:no-unused-variable member-ordering */
 
+import { signClientRequest } from '@awssolutions/cdf-client-request-signer';
+import createError from 'http-errors';
 import { injectable } from 'inversify';
 import * as request from 'superagent';
 import { RequestHeaders } from './common.model';
@@ -31,9 +32,16 @@ export class FleetApigwService extends FleetServiceBase implements FleetService 
     async getFleetSummary(additionalHeaders?: RequestHeaders): Promise<TemplateUsage> {
         const url = `${this.baseUrl}${super.fleetRelativeUrl('summary')}`;
 
-        const res = await request.get(url)
-            .set(this.buildHeaders(additionalHeaders));
-        return res.body;
-
+        return await request
+            .get(url)
+            .set(this.buildHeaders(additionalHeaders))
+            .use(await signClientRequest())
+            .then((res) => {
+                return res.body;
+            })
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
+            });
     }
 }
+

@@ -10,8 +10,9 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-/* tslint:disable:no-unused-variable member-ordering */
 
+import { signClientRequest } from '@awssolutions/cdf-client-request-signer';
+import createError from 'http-errors';
 import { injectable } from 'inversify';
 import ow from 'ow';
 import * as request from 'superagent';
@@ -45,12 +46,17 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
 
         const url = `${this.baseUrl}${super.deviceTasksRelativeUrl(task.coreName)}`;
 
-        const r = await request.post(url)
+        return await request
+            .post(url)
             .send(task)
-            .set(this.buildHeaders(additionalHeaders));
-
-        return r.header['x-taskid'];
-
+            .set(this.buildHeaders(additionalHeaders))
+            .use(await signClientRequest())
+            .then((res) => {
+                return res.header['x-taskid'];
+            })
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
+            });
     }
 
     async getDeviceTask(name: string, additionalHeaders?: RequestHeaders): Promise<DeviceTask> {
@@ -58,10 +64,16 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
 
         const url = `${this.baseUrl}${super.deviceTaskRelativeUrl(name)}`;
 
-        const r = await request.get(url)
-            .set(this.buildHeaders(additionalHeaders));
-
-        return r.body;
+        return await request
+            .get(url)
+            .set(this.buildHeaders(additionalHeaders))
+            .use(await signClientRequest())
+            .then((res) => {
+                return res.body;
+            })
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
+            });
     }
 
 
@@ -70,11 +82,16 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
 
         const url = `${this.baseUrl}${super.deviceRelativeUrl(name)}`;
 
-        const r = await request.get(url)
-            .set(this.buildHeaders(additionalHeaders));
-
-        return r.body;
-
+        return await request
+            .get(url)
+            .set(this.buildHeaders(additionalHeaders))
+            .use(await signClientRequest())
+            .then((res) => {
+                return res.body;
+            })
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
+            });
     }
 
     async deleteDevice(name: string, additionalHeaders?: RequestHeaders): Promise<void> {
@@ -82,9 +99,15 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
 
         const url = `${this.baseUrl}${super.deviceRelativeUrl(name)}`;
 
-        await request.delete(url)
-            .set(this.buildHeaders(additionalHeaders));
-
+        return await request
+            .delete(url)
+            .set(this.buildHeaders(additionalHeaders))
+            .use(await signClientRequest())
+            .then((_res) => {
+                return;
+            })
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
+            });
     }
-
 }

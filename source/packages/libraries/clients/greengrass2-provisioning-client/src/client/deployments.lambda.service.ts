@@ -10,26 +10,37 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import {inject, injectable} from 'inversify';
+
+import {
+    LAMBDAINVOKE_TYPES,
+    LambdaApiGatewayEventBuilder,
+    LambdaInvokerService,
+} from '@cdf/lambda-invoke';
+import { inject, injectable } from 'inversify';
 import ow from 'ow';
-import {RequestHeaders} from './common.model';
-import { LambdaInvokerService, LAMBDAINVOKE_TYPES, LambdaApiGatewayEventBuilder } from '@cdf/lambda-invoke';
-import { DeploymentsService, DeploymentsServiceBase } from './deployments.service';
+import { RequestHeaders } from './common.model';
 import { DeploymentTask, NewDeploymentTask } from './deployments.model';
+import { DeploymentsService, DeploymentsServiceBase } from './deployments.service';
 
 @injectable()
-export class DeploymentsLambdaService extends DeploymentsServiceBase implements DeploymentsService {
-
-    private functionName : string;
+export class DeploymentsLambdaService
+    extends DeploymentsServiceBase
+    implements DeploymentsService
+{
+    private functionName: string;
     constructor(
-        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService) private lambdaInvoker: LambdaInvokerService
+        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
+        private lambdaInvoker: LambdaInvokerService
     ) {
         super();
         this.lambdaInvoker = lambdaInvoker;
         this.functionName = process.env.GREENGRASS2PROVISIONING_API_FUNCTION_NAME;
     }
 
-    async createDeploymentTask(task:NewDeploymentTask, additionalHeaders?:RequestHeaders) : Promise<string> {
+    async createDeploymentTask(
+        task: NewDeploymentTask,
+        additionalHeaders?: RequestHeaders
+    ): Promise<string> {
         ow(task?.template?.name, 'template name', ow.string.nonEmpty);
         ow(task.targets, 'targets', ow.object.nonEmpty);
 
@@ -41,11 +52,12 @@ export class DeploymentsLambdaService extends DeploymentsServiceBase implements 
 
         const r = await this.lambdaInvoker.invoke(this.functionName, event);
         return r.header['x-taskid'];
-
     }
 
-    async getDeploymentTask(taskId: string, additionalHeaders?:RequestHeaders) : Promise<DeploymentTask> {
-
+    async getDeploymentTask(
+        taskId: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<DeploymentTask> {
         ow(taskId, ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
@@ -56,5 +68,4 @@ export class DeploymentsLambdaService extends DeploymentsServiceBase implements 
         const res = await this.lambdaInvoker.invoke(this.functionName, event);
         return res.body;
     }
-
 }
