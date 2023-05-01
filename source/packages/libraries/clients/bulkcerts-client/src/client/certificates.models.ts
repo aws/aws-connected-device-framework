@@ -17,57 +17,56 @@ export enum CommonNameGenerator {
     Static = 'static'
 }
 export interface CertificateChunkRequest {
-	taskId:string;
-	chunkId:number;
-	certInfo: CertificateInfo;
-	quantity:number;
-	caAlias:string;
+    taskId: string;
+    chunkId: number;
+    certInfo: CertificateInfo;
+    quantity: number;
+    caAlias: string;
 }
 
 export interface CertificateChunkResponse {
-	quantity: number;
-	location: string;
+    quantity: number;
+    location: string;
 }
 
 export interface CertificateInfo {
-	commonName?:CommonName|string;
-	organization?:string;
-	organizationalUnit?:string;
-	locality?:string;
-	stateName?:string;
-	country?:string;
-	emailAddress?:string;
-	distinguishedNameQualifier?:string;
-	includeCA?:boolean;
-
+    commonName?: CommonName | string;
+    organization?: string;
+    organizationalUnit?: string;
+    locality?: string;
+    stateName?: string;
+    country?: string;
+    emailAddress?: string;
+    distinguishedNameQualifier?: string;
+    includeCA?: boolean;
 }
 
 export interface CommonName {
-	generator?:CommonNameGenerator;
-	prefix?:string;
-	commonNameStart?:string;
-	commonNameList?:string[];
-	commonNameStatic?:string;
+    generator?: CommonNameGenerator;
+    prefix?: string;
+    commonNameStart?: string;
+    commonNameList?: string[];
+    commonNameStatic?: string;
 }
 
 export interface RequestHeaders {
-	[key:string] : string;
+    [key: string]: string;
 }
 
 export interface CertificateBatchTaskWithChunks extends CertificateBatchTaskWithDate {
-	chunksPending: number;
-	chunksTotal: number;
+    chunksPending: number;
+    chunksTotal: number;
 }
 export interface CertificateBatchTask {
-	taskId:string;
-	status:TaskStatus;
+    taskId: string;
+    status: TaskStatus;
 }
 export interface CertificateBatchTaskWithDate extends CertificateBatchTask {
-	batchDate:number;
+    batchDate: number;
 }
 
- export enum TaskStatus {
-	  PENDING = 'pending',
-	  IN_PROGRESS = 'in_progress',
-	  COMPLETE = 'complete'
-  }
+export enum TaskStatus {
+    PENDING = 'pending',
+    IN_PROGRESS = 'in_progress',
+    COMPLETE = 'complete',
+}

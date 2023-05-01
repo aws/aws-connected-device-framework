@@ -526,7 +526,7 @@ Resources:
 
       Environment:
         Variables:
-          APP_CONFIG_DIR: 'packages/services/command-and-control/dist/config'
+          APP_CONFIG_DIR: 'config'
           APP_CONFIG: !Ref ApplicationConfigurationOverride
           AWS_ACCOUNTID: !Ref AWS::AccountId
           ASSETLIBRARY_API_FUNCTION_NAME: !Ref AssetLibraryFunctionName

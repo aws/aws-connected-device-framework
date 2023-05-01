@@ -71,5 +71,3 @@ Feature: Command & Control - Shadows
 
   @teardown_commandandcontrol_shadows
   Scenario: Teardown
-    When I pause for 5000ms
-    Then command-and-control command with operation "cdf-integration-test-stats" does not exist

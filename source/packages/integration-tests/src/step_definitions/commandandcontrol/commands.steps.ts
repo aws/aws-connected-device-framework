@@ -10,16 +10,20 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+
+import {
+    COMMANDANDCONTROL_CLIENT_TYPES,
+    CommandResource,
+    CommandResourceList,
+    CommandsService,
+} from '@cdf/commandandcontrol-client';
+import { DataTable, Given, Then, When, setDefaultTimeout } from '@cucumber/cucumber';
+import { expect, use } from 'chai';
 import 'reflect-metadata';
-
-import { use, expect } from 'chai';
-import { setDefaultTimeout, DataTable, Then, When, Given } from '@cucumber/cucumber';
-
 import { container } from '../../di/inversify.config';
 import { buildModel, validateExpectedAttributes } from '../common/common.steps';
 import { getAdditionalHeaders } from '../notifications/notifications.utils';
 import { world } from './commandandcontrol.world';
-import { COMMANDANDCONTROL_CLIENT_TYPES, CommandResource, CommandsService , CommandResourceList} from '@cdf/commandandcontrol-client';
 
 import chai_string = require('chai-string');
 use(chai_string);
@@ -34,47 +38,85 @@ use(chai_string);
 
 setDefaultTimeout(10 * 1000);
 
-const commandsService: CommandsService = container.get(COMMANDANDCONTROL_CLIENT_TYPES.CommandsService);
+const commandsService: CommandsService = container.get(
+    COMMANDANDCONTROL_CLIENT_TYPES.CommandsService
+);
 
-Given('command-and-control command with operation {string} exists', async function (operation:string) {
-  delete world.lastCommand;
-  const commands = await listCommands();
-  const command = commands.filter(c => c.operation === operation)?.[0];
-  expect(command).to.not.be.undefined;
-  world.lastCommand = command;
-});
+Given(
+    'command-and-control command with operation {string} exists',
+    async function (operation: string) {
+        delete world.lastCommand;
+        const commands = await listCommands();
+        const command = commands.filter((c) => c.operation === operation)?.[0];
+        expect(command).to.not.be.undefined;
+        world.lastCommand = command;
+    }
+);
 
-Given('command-and-control command with operation {string} does not exist', async function (operation:string) {
-  delete world.lastCommand;
-  const commands = await listCommands();
-  const command = commands.filter(c => c.operation === operation)?.[0];
-  expect(command).to.be.undefined;
-});
+Given(
+    'command-and-control command with operation {string} does not exist',
+    async function (operation: string) {
+        delete world.lastCommand;
+        const commands = await listCommands();
+        const command = commands.filter((c) => c.operation === operation)?.[0];
+        expect(command).to.be.undefined;
+    }
+);
 
 When('I create command-and-control command with attributes:', async function (data: DataTable) {
-  delete world.lastCommand;
-  const command: CommandResource = buildModel(data);
-  world.lastCommand = command;
-  world.lastCommand.id = await commandsService.createCommand(command, getAdditionalHeaders(world.authToken));
+    delete world.lastCommand;
+    const command: CommandResource = buildModel(data);
+    world.lastCommand = command;
+    world.lastCommand.id = await commandsService.createCommand(
+        command,
+        getAdditionalHeaders(world.authToken)
+    );
 });
+
+When(
+    'I create named command-and-control command with attributes:',
+    async function (data: DataTable) {
+        delete world.lastCommand;
+        const command: CommandResource = buildModel(data);
+        world.lastCommand = command;
+        world.lastCommand.id = await commandsService.createNamedCommand(
+            'test_name',
+            command,
+            getAdditionalHeaders(world.authToken)
+        );
+    }
+);
 
 Then('last command-and-control command exists with attributes:', async function (data: DataTable) {
-  const command = await commandsService.getCommand(world.lastCommand.id, getAdditionalHeaders(world.authToken));
-  validateExpectedAttributes(command, data);
+    const command = await commandsService.getCommand(
+        world.lastCommand.id,
+        getAdditionalHeaders(world.authToken)
+    );
+    validateExpectedAttributes(command, data);
 });
 
-export async function listCommands() : Promise<CommandResource[]> {
-  const commands:CommandResource[]= [];
-  let r:CommandResourceList;
-  // eslint-disable-next-line no-constant-condition
-  while (true) {
-    r = await commandsService.listCommands(undefined, undefined, undefined, getAdditionalHeaders(world.authToken));
-    commands.push(...r.commands)
-    if (r.pagination?.lastEvaluated?.commandId) {
-      r = await commandsService.listCommands(undefined, r.pagination.lastEvaluated.commandId, undefined, getAdditionalHeaders(world.authToken));
-    } else {
-      break;
+export async function listCommands(): Promise<CommandResource[]> {
+    const commands: CommandResource[] = [];
+    let r: CommandResourceList;
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+        r = await commandsService.listCommands(
+            undefined,
+            undefined,
+            undefined,
+            getAdditionalHeaders(world.authToken)
+        );
+        commands.push(...r.commands);
+        if (r.pagination?.lastEvaluated?.commandId) {
+            r = await commandsService.listCommands(
+                undefined,
+                r.pagination.lastEvaluated.commandId,
+                undefined,
+                getAdditionalHeaders(world.authToken)
+            );
+        } else {
+            break;
+        }
     }
-  }
-  return commands;
+    return commands;
 }

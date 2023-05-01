@@ -20,10 +20,10 @@ export interface NewMessageResource {
 	targets?: Targets;
 }
 export interface MessageResource extends NewMessageResource {
-	id?: string;
-	status?: MessageStatus
-	createdAt?: Date;
-	updatedAt?: Date;
+    id?: string;
+    status?: MessageStatus;
+    createdAt?: Date;
+    updatedAt?: Date;
 }
 
 export interface Targets {
