@@ -11,53 +11,90 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-/* tslint:disable:no-unused-variable member-ordering */
+import { signClientRequest } from '@awssolutions/cdf-client-request-signer';
+import createError from 'http-errors';
 import { injectable } from 'inversify';
 import ow from 'ow';
 import * as request from 'superagent';
+import { AccountCreationRequest, AccountResource, AccountResourceList } from './accounts.model';
 import { AccountsService, AccountsServiceBase } from './accounts.service';
-import { AccountResource, AccountCreationRequest, AccountResourceList } from './accounts.model';
 import { RequestHeaders } from './common.model';
 
 @injectable()
 export class AccountsApigwService extends AccountsServiceBase implements AccountsService {
-
     private readonly baseUrl: string;
 
     public constructor() {
         super();
         this.baseUrl = process.env.ORGANIZATIONMANAGER_BASE_URL;
     }
-    async getAccount(accountId: string, additionalHeaders?: RequestHeaders): Promise<AccountResource> {
+    async getAccount(
+        accountId: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<AccountResource> {
         const url = `${this.baseUrl}${super.accountRelativeUrl(accountId)}`;
-        const res = await request.get(url)
-            .set(this.buildHeaders(additionalHeaders));
-
-        return res.body;
+        return await request
+            .get(url)
+            .set(this.buildHeaders(additionalHeaders))
+            .use(await signClientRequest())
+            .then((res) => {
+                return res.body;
+            })
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
+            });
     }
 
-    async listAccounts(organizationalUnitId: string, additionalHeaders?: RequestHeaders): Promise<AccountResourceList> {
-        const url = `${this.baseUrl}${super.accountsInOrganizationalUnitRelativeUrl(organizationalUnitId)}`;
-        const res = await request.get(url)
-            .set(this.buildHeaders(additionalHeaders));
-
-        return res.body;
+    async listAccounts(
+        organizationalUnitId: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<AccountResourceList> {
+        const url = `${this.baseUrl}${super.accountsInOrganizationalUnitRelativeUrl(
+            organizationalUnitId
+        )}`;
+        return await request
+            .get(url)
+            .set(this.buildHeaders(additionalHeaders))
+            .use(await signClientRequest())
+            .then((res) => {
+                return res.body;
+            })
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
+            });
     }
 
-    async createAccount(account: AccountCreationRequest, additionalHeaders?: RequestHeaders): Promise<string> {
+    async createAccount(
+        account: AccountCreationRequest,
+        additionalHeaders?: RequestHeaders
+    ): Promise<string> {
         ow(account, ow.object.nonEmpty);
         ow(account.organizationalUnitId, ow.string.nonEmpty);
 
-        const res = await request.post(`${this.baseUrl}${super.accountsInOrganizationalUnitRelativeUrl(account.organizationalUnitId)}`)
+        const res = await request
+            .post(
+                `${this.baseUrl}${super.accountsInOrganizationalUnitRelativeUrl(
+                    account.organizationalUnitId
+                )}`
+            )
             .set(this.buildHeaders(additionalHeaders))
-            .send(account);
+            .send(account)
+            .use(await signClientRequest());
 
         const location = res.get('Location');
         return location.substring(location.lastIndexOf('/') + 1);
     }
     async deleteAccount(accountId: string, additionalHeaders?: RequestHeaders): Promise<void> {
         ow(accountId, ow.string.nonEmpty);
-        await request.delete(`${this.baseUrl}${super.accountRelativeUrl(accountId)}`)
+        return await request
+            .delete(`${this.baseUrl}${super.accountRelativeUrl(accountId)}`)
             .set(this.buildHeaders(additionalHeaders))
+            .use(await signClientRequest())
+            .then((_res) => {
+                return;
+            })
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
+            });
     }
 }

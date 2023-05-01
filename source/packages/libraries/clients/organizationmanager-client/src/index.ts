@@ -10,15 +10,14 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-export * from './client/response.model';
 export * from './client/accounts.model';
-export * from './client/components.model';
 export * from './client/accounts.service';
-export * from './client/pagination.model';
+export * from './client/bulkComponents.service';
+export * from './client/components.model';
 export * from './client/manifest.model';
 export * from './client/organizationalUnits.model';
 export * from './client/organizationalUnits.service';
-export * from './client/bulkComponents.service';
-
-export {ORGMANLIBRARY_CLIENT_TYPES} from './di/types';
-export {organizationManagerContainerModule} from './di/inversify.config';
+export * from './client/pagination.model';
+export * from './client/response.model';
+export { organizationManagerContainerModule } from './di/inversify.config';
+export { ORGMANLIBRARY_CLIENT_TYPES } from './di/types';

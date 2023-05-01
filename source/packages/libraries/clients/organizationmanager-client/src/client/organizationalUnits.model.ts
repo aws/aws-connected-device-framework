@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
- export interface OrganizationalUnitResource {
+export interface OrganizationalUnitResource {
     name: string;
     id?: string;
     tags?: { [key: string]: string };
