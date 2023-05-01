@@ -17394,12 +17394,13 @@ packages:
     dev: false
 
   file:projects/device-patcher-client.tgz:
-    resolution: {integrity: sha512-6xFhOQyImyNduSqS42T8I+1ah1EkexJEIJwsgPc3GoJiwLeF78YajjhVF9wTlEbR2xnk1v50xfl0jX480hCqSA==, tarball: file:projects/device-patcher-client.tgz}
+    resolution: {integrity: sha512-kmnauZyXlcKwMoxB3yzrCiY9nDjWNfu1trIj8Aj2s3Hk0KWs+6Z/qPscjwBfL6hJdgHj5vEksDq4bEbDCo4AAw==, tarball: file:projects/device-patcher-client.tgz}
     name: '@rush-temp/device-patcher-client'
     version: 0.0.0
     dependencies:
       '@rushstack/eslint-config': 2.3.4_eslint@7.26.0+typescript@4.2.4
       '@types/dotenv-flow': 3.2.0
+      '@types/http-errors': 2.0.1
       '@types/jest': 26.0.23
       '@types/node': 16.11.7
       '@types/superagent': 4.1.15
@@ -17409,6 +17410,7 @@ packages:
       cz-customizable: 6.3.0
       dotenv-flow: 3.2.0
       eslint: 7.26.0
+      http-errors: 2.0.0
       inversify: 6.0.1
       inversify-binding-decorators: 4.0.0
       inversify-express-utils: 6.4.3
