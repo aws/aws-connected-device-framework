@@ -17,19 +17,28 @@ import { RequestHeaders } from "./common.model";
 import { BulkComponentsResource, BulkComponentsResult, ComponentResource } from "./components.model";
 
 export interface BulkComponentsService {
-    bulkCreateComponents(organizationalUnitId: string, bulkComponentsResource: BulkComponentsResource ,additionalHeaders?: RequestHeaders): Promise<BulkComponentsResult>
-    bulkGetComponents(organizationalUnitId: string, additionalHeaders?: RequestHeaders): Promise<ComponentResource[]>
-    bulkDeleteComponents(organizationalUnitId: string, additionalHeaders?: RequestHeaders): Promise<void>
+    bulkCreateComponents(
+        organizationalUnitId: string,
+        bulkComponentsResource: BulkComponentsResource,
+        additionalHeaders?: RequestHeaders
+    ): Promise<BulkComponentsResult>;
+    bulkGetComponents(
+        organizationalUnitId: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<ComponentResource[]>;
+    bulkDeleteComponents(
+        organizationalUnitId: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<void>;
 }
 
 @injectable()
 export class BulkComponentsServiceBase {
-
     protected MIME_TYPE = 'application/vnd.aws-cdf-v1.0+json';
 
     protected _headers: RequestHeaders = {
-        'Accept': this.MIME_TYPE,
-        'Content-Type': this.MIME_TYPE
+        Accept: this.MIME_TYPE,
+        'Content-Type': this.MIME_TYPE,
     };
 
     protected componentsRelativeUrl(organizationalUnit: string): string {
@@ -37,7 +46,6 @@ export class BulkComponentsServiceBase {
     }
 
     protected buildHeaders(additionalHeaders: RequestHeaders): RequestHeaders {
-
         let headers = Object.assign({}, this._headers);
 
         const customHeaders = process.env.ORGANIZATIONMANAGER_HEADERS;
@@ -54,7 +62,7 @@ export class BulkComponentsServiceBase {
         }
 
         const keys = Object.keys(headers);
-        keys.forEach(k => {
+        keys.forEach((k) => {
             if (headers[k] === undefined || headers[k] === null) {
                 delete headers[k];
             }
@@ -62,5 +70,4 @@ export class BulkComponentsServiceBase {
 
         return headers;
     }
-
 }

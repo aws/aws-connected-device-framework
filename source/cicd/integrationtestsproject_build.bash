@@ -141,6 +141,9 @@ fi
 $(echo aws s3 cp $(pwd)/source/packages/integration-tests/src/testResources/${CDF_TEMPLATE_FILE_NAME} s3://$CDF_BUCKET_NAME)
 echo "GREENGRASS_TEMPLATE_S3_LOCATION=s3://$CDF_BUCKET_NAME/$CDF_TEMPLATE_FILE_NAME" >> $CONFIG_LOCATION
 
+echo "PROVISIONING_TEMPLATES_BUCKET=$CDF_BUCKET_NAME" >> $CONFIG_LOCATION
+echo "PROVISIONING_TEMPLATES_PREFIX=templates/" >> $CONFIG_LOCATION
+
 echo "\naugmented configuration:\n$(cat $CONFIG_LOCATION)\n"
 
 export APP_CONFIG_DIR="$(pwd)/source/packages/integration-tests/src/config"
@@ -154,12 +157,11 @@ npm run clean
 npm run build
 npm run integration-test -- "features/assetlibrary/full/*.feature"
 npm run integration-test -- "features/assetlibraryhistory/*.feature"
-# npm run integration-test -- "features/bulkcerts/*.feature"
+npm run integration-test -- "features/bulkcerts/*.feature"
+npm run integration-test -- "features/commands/*.feature"
 npm run integration-test -- "features/commandandcontrol/*.feature"
-# npm run integration-test -- "features/organizationmanager/*.feature"
-# npm run integration-test -- "features/greengrass2-provisioning/*.feature"
-# npm run integration-test -- "features/device-patcher/*.feature"
-# npm run integration-test -- "features/provisioning/*.feature"
-# npm run integration-test -- "features/commands/*.feature"
-# npm run integration-test -- "features/notifications/*.feature"
-
+npm run integration-test -- "features/device-patcher/*.feature"
+npm run integration-test -- "features/greengrass2-provisioning/*.feature"
+npm run integration-test -- "features/notifications/*.feature"
+npm run integration-test -- "features/organizationmanager/*.feature"
+npm run integration-test -- "features/provisioning/*.feature"
