@@ -173,7 +173,7 @@ Body:
             "thingGroupNames": [ "my-group-1" ]
         }
     }, 
-    "payloadParams": {
+    "payloadParamValues": {
         "level": "high"
     }
 }
@@ -387,7 +387,7 @@ Body:
         "assetLibrary": {
             "query": {
                 "ancestorPath": "/devices/lightbulbs/color",
-                "eq:": [
+                "eq": [
                     {
                         "field": "firmware",
                         "value": "1.1.23"
