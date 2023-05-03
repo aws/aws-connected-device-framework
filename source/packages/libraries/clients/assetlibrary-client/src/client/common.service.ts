@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { injectable } from 'inversify';
-import {RequestHeaders} from './common.model';
+import { RequestHeaders } from './common.model';
 
 @injectable()
 export abstract class ClientServiceBase  {

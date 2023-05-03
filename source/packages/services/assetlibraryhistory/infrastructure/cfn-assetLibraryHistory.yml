@@ -303,14 +303,14 @@ Resources:
     Properties:
       FunctionName: !Sub 'cdf-assetLibraryHistory-events-${Environment}'
       CodeUri: ../bundle.zip
-      Handler: packages/services/assetlibraryhistory/dist/lambda_iot_rule.iot_rule_handler
+      Handler: lambda_iot_rule.iot_rule_handler
       MemorySize: 128
       Role: !GetAtt LambdaExecutionRole.Arn
       Runtime: nodejs16.x
       Timeout: 30
       Environment:
         Variables:
-          APP_CONFIG_DIR: 'packages/services/assetlibraryhistory/dist/config'
+          APP_CONFIG_DIR: 'config'
           APP_CONFIG: !Ref ApplicationConfigurationOverride
           AWS_DYNAMODB_TABLE_EVENTS: !Ref HistoryTable
       Tracing: Active
@@ -320,14 +320,14 @@ Resources:
     Properties:
       FunctionName: !Sub 'cdf-assetLibraryHistory-rest-${Environment}'
       CodeUri: ../bundle.zip
-      Handler: packages/services/assetlibraryhistory/dist/lambda_proxy.handler
+      Handler: lambda_proxy.handler
       MemorySize: 256
       Role: !GetAtt RESTLambdaExecutionRole.Arn
       Runtime: nodejs16.x
       Timeout: 30
       Environment:
         Variables:
-          APP_CONFIG_DIR: 'packages/services/assetlibraryhistory/dist/config'
+          APP_CONFIG_DIR: 'config'
           APP_CONFIG: !Ref ApplicationConfigurationOverride
           AWS_DYNAMODB_TABLE_EVENTS: !Ref HistoryTable
       Tracing: Active

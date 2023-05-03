@@ -1,9 +1,9 @@
 export interface TemplateUsage {
     templates: {
-        [templateName:string]: {
+        [templateName: string]: {
             latestVersion: number;
             versions: {
-                [templateVersion:number]: {
+                [templateVersion: number]: {
                     desiredInUse: number;
                     reportedInUse: number;
                     lastDeploymentSuccess: number;
@@ -11,6 +11,6 @@ export interface TemplateUsage {
                     lastDeploymentInProgress: number;
                 };
             };
-        };      
+        };
     };
 }

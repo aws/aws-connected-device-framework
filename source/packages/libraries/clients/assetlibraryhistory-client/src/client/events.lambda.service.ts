@@ -10,16 +10,22 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import {inject, injectable} from 'inversify';
-import ow from 'ow';
-import {Category, CategoryEventsRequest, Events, ObjectEventsRequest, RequestHeaders} from './events.model';
-import {EventsService, EventsServiceBase} from './events.service';
 import {
     Dictionary,
-    LambdaApiGatewayEventBuilder,
     LAMBDAINVOKE_TYPES,
+    LambdaApiGatewayEventBuilder,
     LambdaInvokerService,
 } from '@cdf/lambda-invoke';
+import { inject, injectable } from 'inversify';
+import ow from 'ow';
+import {
+    Category,
+    CategoryEventsRequest,
+    Events,
+    ObjectEventsRequest,
+    RequestHeaders,
+} from './events.model';
+import { EventsService, EventsServiceBase } from './events.service';
 
 @injectable()
 export class EventsLambdaService extends EventsServiceBase implements EventsService {

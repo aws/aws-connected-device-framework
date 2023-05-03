@@ -10,30 +10,38 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+
+import {
+    LAMBDAINVOKE_TYPES,
+    LambdaApiGatewayEventBuilder,
+    LambdaInvokerService,
+} from '@cdf/lambda-invoke';
 import { inject, injectable } from 'inversify';
 import ow from 'ow';
 import { RequestHeaders } from './common.model';
-import { LambdaInvokerService, LAMBDAINVOKE_TYPES, LambdaApiGatewayEventBuilder } from '@cdf/lambda-invoke';
-import { DevicesService, DevicesServiceBase } from './devices.service';
 import { Device, DeviceTask, NewDeviceTask } from './devices.model';
+import { DevicesService, DevicesServiceBase } from './devices.service';
 
 @injectable()
 export class DevicesLambdaService extends DevicesServiceBase implements DevicesService {
-
     private functionName: string;
     constructor(
-        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService) private lambdaInvoker: LambdaInvokerService
+        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
+        private lambdaInvoker: LambdaInvokerService
     ) {
         super();
         this.lambdaInvoker = lambdaInvoker;
         this.functionName = process.env.GREENGRASS2PROVISIONING_API_FUNCTION_NAME;
     }
 
-    async createDeviceTask(task: NewDeviceTask, additionalHeaders?: RequestHeaders): Promise<string> {
+    async createDeviceTask(
+        task: NewDeviceTask,
+        additionalHeaders?: RequestHeaders
+    ): Promise<string> {
         ow(task, ow.object.nonEmpty);
         ow(task.type, ow.string.oneOf(['Create', 'Delete']));
         ow(task.devices, 'devices', ow.array.nonEmpty);
-        
+
         for (const c of task.devices) {
             ow(c.name, 'client device name', ow.string.nonEmpty);
             ow(c.provisioningTemplate, 'client device provisioning template', ow.string.nonEmpty);
@@ -51,7 +59,6 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
 
         const res = await this.lambdaInvoker.invoke(this.functionName, event);
         return res?.header['x-taskid'];
-
     }
 
     async getDeviceTask(name: string, additionalHeaders?: RequestHeaders): Promise<DeviceTask> {
@@ -60,11 +67,10 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.deviceTaskRelativeUrl(name))
             .setMethod('GET')
-            .setHeaders(super.buildHeaders(additionalHeaders))
+            .setHeaders(super.buildHeaders(additionalHeaders));
 
         const res = await this.lambdaInvoker.invoke(this.functionName, event);
         return res.body;
-
     }
 
     async getDevice(name: string, additionalHeaders?: RequestHeaders): Promise<Device> {
@@ -73,12 +79,11 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.deviceRelativeUrl(name))
             .setMethod('GET')
-            .setHeaders(super.buildHeaders(additionalHeaders))
+            .setHeaders(super.buildHeaders(additionalHeaders));
 
         const res = await this.lambdaInvoker.invoke(this.functionName, event);
         return res.body;
     }
-
 
     async deleteDevice(name: string, additionalHeaders?: RequestHeaders): Promise<void> {
         ow(name, ow.string.nonEmpty);
@@ -86,10 +91,8 @@ export class DevicesLambdaService extends DevicesServiceBase implements DevicesS
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.deviceRelativeUrl(name))
             .setMethod('DELETE')
-            .setHeaders(super.buildHeaders(additionalHeaders))
+            .setHeaders(super.buildHeaders(additionalHeaders));
 
         await this.lambdaInvoker.invoke(this.functionName, event);
     }
-
-
 }

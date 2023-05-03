@@ -11,45 +11,54 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
+import {
+    LAMBDAINVOKE_TYPES,
+    LambdaApiGatewayEventBuilder,
+    LambdaInvokerService,
+} from '@cdf/lambda-invoke';
+import { inject, injectable } from 'inversify';
 import ow from 'ow';
-import { injectable, inject } from 'inversify';
-import { LambdaInvokerService, LAMBDAINVOKE_TYPES, LambdaApiGatewayEventBuilder } from '@cdf/lambda-invoke';
-
-import {ActivationService, ActivationServiceBase} from './activation.service';
-import {ActivationResponse} from './activation.model';
-import {RequestHeaders} from './common.model';
+import { ActivationResponse } from './activation.model';
+import { ActivationService, ActivationServiceBase } from './activation.service';
+import { RequestHeaders } from './common.model';
 
 
 @injectable()
 export class ActivationLambdaService extends ActivationServiceBase implements ActivationService {
-
-    private functionName : string;
+    private functionName: string;
     constructor(
-        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService) private lambdaInvoker: LambdaInvokerService
+        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
+        private lambdaInvoker: LambdaInvokerService
     ) {
         super();
         this.lambdaInvoker = lambdaInvoker;
         this.functionName = process.env.DEVICE_PATCHER_API_FUNCTION_NAME;
     }
 
-    public async createActivation(deviceId: string, additionalHeaders?:RequestHeaders): Promise<ActivationResponse> {
+    public async createActivation(
+        deviceId: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<ActivationResponse> {
         ow(deviceId, ow.string.nonEmpty);
 
         const requestBody = {
-            deviceId
-        }
+            deviceId,
+        };
 
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.activationsRelativeUrl())
             .setPath('POST')
             .setHeaders(super.buildHeaders(additionalHeaders))
-            .setBody(requestBody)
+            .setBody(requestBody);
 
         const res = await this.lambdaInvoker.invoke(this.functionName, event);
         return res.body;
     }
 
-    public async getActivation(activationId: string, additionalHeaders?:RequestHeaders): Promise<ActivationResponse> {
+    public async getActivation(
+        activationId: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<ActivationResponse> {
         ow(activationId, ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
@@ -61,7 +70,10 @@ export class ActivationLambdaService extends ActivationServiceBase implements Ac
         return res.body;
     }
 
-    public async deleteActivation(activationId: string, additionalHeaders?:RequestHeaders): Promise<void> {
+    public async deleteActivation(
+        activationId: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<void> {
         ow(activationId, ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()

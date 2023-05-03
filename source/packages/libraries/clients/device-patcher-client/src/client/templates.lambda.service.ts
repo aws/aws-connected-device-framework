@@ -11,39 +11,48 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import {inject, injectable} from 'inversify';
+import {
+    LAMBDAINVOKE_TYPES,
+    LambdaApiGatewayEventBuilder,
+    LambdaInvokerService,
+} from '@cdf/lambda-invoke';
+import { inject, injectable } from 'inversify';
 import ow from 'ow';
-import {RequestHeaders} from './common.model';
-import { LambdaInvokerService, LAMBDAINVOKE_TYPES, LambdaApiGatewayEventBuilder } from '@cdf/lambda-invoke';
-import { TemplatesServiceBase, TemplatesService } from './templates.service';
+import { RequestHeaders } from './common.model';
 import { CreatePatchTemplateParams, PatchTemplate, PatchTemplateList } from './templates.model';
+import { TemplatesService, TemplatesServiceBase } from './templates.service';
 
 @injectable()
 export class TemplatesLambdaService extends TemplatesServiceBase implements TemplatesService {
-
-    private functionName : string;
+    private functionName: string;
     constructor(
-        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService) private lambdaInvoker: LambdaInvokerService
+        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
+        private lambdaInvoker: LambdaInvokerService
     ) {
         super();
         this.lambdaInvoker = lambdaInvoker;
         this.functionName = process.env.DEVICE_PATCHER_API_FUNCTION_NAME;
     }
 
-    async createTemplate(_template: CreatePatchTemplateParams, _additionalHeaders?:RequestHeaders) : Promise<void> {
+    async createTemplate(
+        _template: CreatePatchTemplateParams,
+        _additionalHeaders?: RequestHeaders
+    ): Promise<void> {
         // files cannot be passed via multipart/form-data with the direct lambda invocation.
         // This requires extension of the API to support the content-type=json header with file content passed as a buffer
-        throw('NOT_IMPLEMENTED');
+        throw 'NOT_IMPLEMENTED';
     }
 
-    async updateTemplate(_template: CreatePatchTemplateParams, _additionalHeaders?:RequestHeaders) : Promise<void> {
+    async updateTemplate(
+        _template: CreatePatchTemplateParams,
+        _additionalHeaders?: RequestHeaders
+    ): Promise<void> {
         // files cannot be passed via multipart/form-data with the direct lambda invocation.
         // This requires extension of the API to support the content-type=json header with file content passed as a buffer
-        throw('NOT_IMPLEMENTED');
+        throw 'NOT_IMPLEMENTED';
     }
 
-    async getTemplate(name: string, additionalHeaders?:RequestHeaders) : Promise<PatchTemplate> {
-
+    async getTemplate(name: string, additionalHeaders?: RequestHeaders): Promise<PatchTemplate> {
         ow(name, ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
@@ -55,8 +64,7 @@ export class TemplatesLambdaService extends TemplatesServiceBase implements Temp
         return res.body;
     }
 
-    async listTemplates(additionalHeaders?:RequestHeaders) : Promise<PatchTemplateList> {
-
+    async listTemplates(additionalHeaders?: RequestHeaders): Promise<PatchTemplateList> {
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.templatesRelativeUrl())
             .setMethod('GET')
@@ -66,8 +74,7 @@ export class TemplatesLambdaService extends TemplatesServiceBase implements Temp
         return res.body;
     }
 
-    async deleteTemplate(name: string, additionalHeaders?:RequestHeaders) : Promise<void> {
-
+    async deleteTemplate(name: string, additionalHeaders?: RequestHeaders): Promise<void> {
         ow(name, ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
@@ -77,5 +84,4 @@ export class TemplatesLambdaService extends TemplatesServiceBase implements Temp
 
         await this.lambdaInvoker.invoke(this.functionName, event);
     }
-
 }

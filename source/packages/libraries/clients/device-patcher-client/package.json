@@ -12,12 +12,14 @@
     "test": "rushx lint && jest --silent --passWithNoTests"
   },
   "dependencies": {
+    "@awssolutions/cdf-client-request-signer": "^0.0.0",
     "@cdf/lambda-invoke": "^3.0.2",
-    "inversify": "5.1.1",
+    "http-errors": "~2.0.0",
+    "inversify": "6.0.1",
     "inversify-binding-decorators": "4.0.0",
-    "inversify-express-utils": "6.3.2",
+    "inversify-express-utils": "6.4.3",
     "js-yaml": "4.1.0",
-    "logform": "2.2.0",
+    "logform": "2.4.2",
     "ow": "0.23.0",
     "readable-stream": "3.6.0",
     "reflect-metadata": "0.1.13",
@@ -30,6 +32,7 @@
     "aws-sdk": "2.1048.0"
   },
   "devDependencies": {
+    "@types/http-errors": "~2.0.1",
     "@types/superagent": "4.1.15",
     "@rushstack/eslint-config": "2.3.4",
     "eslint": "7.26.0",

@@ -10,26 +10,38 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import {inject, injectable} from 'inversify';
+
+import {
+    LAMBDAINVOKE_TYPES,
+    LambdaApiGatewayEventBuilder,
+    LambdaInvokerService,
+} from '@cdf/lambda-invoke';
+import { inject, injectable } from 'inversify';
 import ow from 'ow';
-import {SubscriptionResource, SubscriptionResourceList} from './subscriptions.model';
-import {RequestHeaders} from './common.model';
-import {SubscriptionsService, SubscriptionsServiceBase} from './subscriptions.service';
-import {LambdaApiGatewayEventBuilder, LAMBDAINVOKE_TYPES, LambdaInvokerService} from '@cdf/lambda-invoke';
+import { RequestHeaders } from './common.model';
+import { SubscriptionResource, SubscriptionResourceList } from './subscriptions.model';
+import { SubscriptionsService, SubscriptionsServiceBase } from './subscriptions.service';
 
 @injectable()
-export class SubscriptionsLambdaService extends SubscriptionsServiceBase implements SubscriptionsService {
-
-    private functionName : string;
+export class SubscriptionsLambdaService
+    extends SubscriptionsServiceBase
+    implements SubscriptionsService
+{
+    private functionName: string;
     constructor(
-        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService) private lambdaInvoker: LambdaInvokerService
+        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
+        private lambdaInvoker: LambdaInvokerService
     ) {
         super();
         this.lambdaInvoker = lambdaInvoker;
         this.functionName = process.env.NOTIFICATIONS_API_FUNCTION_NAME;
     }
 
-    async createSubscription(eventId: string, subscription: SubscriptionResource, additionalHeaders?: RequestHeaders): Promise<string> {
+    async createSubscription(
+        eventId: string,
+        subscription: SubscriptionResource,
+        additionalHeaders?: RequestHeaders
+    ): Promise<string> {
         ow(eventId, ow.string.nonEmpty);
         ow(subscription, ow.object.nonEmpty);
 
@@ -45,7 +57,10 @@ export class SubscriptionsLambdaService extends SubscriptionsServiceBase impleme
         return location?.split('/')[2];
     }
 
-    async getSubscription(subscriptionId: string, additionalHeaders?: RequestHeaders): Promise<SubscriptionResource> {
+    async getSubscription(
+        subscriptionId: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<SubscriptionResource> {
         ow(subscriptionId, ow.string.nonEmpty);
 
         const ev = new LambdaApiGatewayEventBuilder()
@@ -57,11 +72,14 @@ export class SubscriptionsLambdaService extends SubscriptionsServiceBase impleme
         return res.body;
     }
 
-    async updateSubscription(subscription: SubscriptionResource, additionalHeaders?: RequestHeaders): Promise<void> {
+    async updateSubscription(
+        subscription: SubscriptionResource,
+        additionalHeaders?: RequestHeaders
+    ): Promise<void> {
         ow(subscription, ow.object.nonEmpty);
 
         const ev = new LambdaApiGatewayEventBuilder()
-        .setPath(super.subscriptionRelativeUrl(subscription.id))
+            .setPath(super.subscriptionRelativeUrl(subscription.id))
             .setMethod('PATCH')
             .setHeaders(super.buildHeaders(additionalHeaders))
             .setBody(subscription);
@@ -69,7 +87,10 @@ export class SubscriptionsLambdaService extends SubscriptionsServiceBase impleme
         await this.lambdaInvoker.invoke(this.functionName, ev);
     }
 
-    async deleteSubscription(subscriptionId: string, additionalHeaders?: RequestHeaders): Promise<void> {
+    async deleteSubscription(
+        subscriptionId: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<void> {
         ow(subscriptionId, ow.string.nonEmpty);
 
         const ev = new LambdaApiGatewayEventBuilder()
@@ -80,7 +101,10 @@ export class SubscriptionsLambdaService extends SubscriptionsServiceBase impleme
         await this.lambdaInvoker.invoke(this.functionName, ev);
     }
 
-    async listSubscriptionsForUser(userId: string, additionalHeaders?: RequestHeaders): Promise<SubscriptionResourceList> {
+    async listSubscriptionsForUser(
+        userId: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<SubscriptionResourceList> {
         ow(userId, ow.string.nonEmpty);
 
         const ev = new LambdaApiGatewayEventBuilder()
@@ -92,17 +116,20 @@ export class SubscriptionsLambdaService extends SubscriptionsServiceBase impleme
         return res.body;
     }
 
-    async listSubscriptionsForEvent(eventId: string, fromSubscriptionId?: string, additionalHeaders?: RequestHeaders): Promise<SubscriptionResourceList> {
+    async listSubscriptionsForEvent(
+        eventId: string,
+        fromSubscriptionId?: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<SubscriptionResourceList> {
         ow(eventId, ow.string.nonEmpty);
 
         const ev = new LambdaApiGatewayEventBuilder()
             .setPath(super.eventSubscriptionsRelativeUrl(eventId))
-            .setQueryStringParameters({fromSubscriptionId})
+            .setQueryStringParameters({ fromSubscriptionId })
             .setMethod('GET')
             .setHeaders(super.buildHeaders(additionalHeaders));
 
         const res = await this.lambdaInvoker.invoke(this.functionName, ev);
         return res.body;
     }
-
 }

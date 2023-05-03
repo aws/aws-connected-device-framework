@@ -12,7 +12,6 @@
  *********************************************************************************************************************/
 
 import { injectable } from 'inversify';
-
 import { PathHelper } from '../utils/path.helper';
 import { CertificateBatchTaskWithChunks, RequestHeaders } from './certificates.models';
 
@@ -24,36 +23,36 @@ export interface CertificatesService {
 
 @injectable()
 export class CertificatesServiceBase {
-
     protected MIME_TYPE = 'application/vnd.aws-cdf-v1.0+json';
 
     protected _headers: RequestHeaders = {
-        'Accept': this.MIME_TYPE,
-        'Content-Type': this.MIME_TYPE
+        Accept: this.MIME_TYPE,
+        'Content-Type': this.MIME_TYPE,
     };
 
-    protected certificateRelativeUrl() : string {
+    protected certificateRelativeUrl(): string {
         return '/certificates';
     }
 
-    protected getCertificatesRelativeUrl(taskId:string) : string {
+    protected getCertificatesRelativeUrl(taskId: string): string {
         return PathHelper.encodeUrl('certificates', taskId);
     }
 
-    protected getCertificatesTaskRelativeUrl(taskId:string) : string {
-        return PathHelper.encodeUrl('certificates', taskId,'task');
+    protected getCertificatesTaskRelativeUrl(taskId: string): string {
+        return PathHelper.encodeUrl('certificates', taskId, 'task');
     }
 
-    protected buildHeaders(additionalHeaders:RequestHeaders): RequestHeaders {
-
+    protected buildHeaders(additionalHeaders: RequestHeaders): RequestHeaders {
         let headers: RequestHeaders = Object.assign({}, this._headers);
 
         const customHeaders = process.env.BULKCERTS_HEADERS;
         if (customHeaders !== undefined) {
             try {
-                const headersFromConfig: RequestHeaders = JSON.parse(customHeaders) as unknown as RequestHeaders;
-                headers = {...headers, ...headersFromConfig};
-            } catch (err) { 
+                const headersFromConfig: RequestHeaders = JSON.parse(
+                    customHeaders
+                ) as unknown as RequestHeaders;
+                headers = { ...headers, ...headersFromConfig };
+            } catch (err) {
                 const wrappedErr = `Failed to parse configuration parameter BULKCERTS_HEADERS as JSON with error: ${err}`;
                 console.log(wrappedErr);
                 throw new Error(wrappedErr);
@@ -61,17 +60,16 @@ export class CertificatesServiceBase {
         }
 
         if (additionalHeaders !== null && additionalHeaders !== undefined) {
-            headers = {...headers, ...additionalHeaders};
+            headers = { ...headers, ...additionalHeaders };
         }
 
         const keys = Object.keys(headers);
-        keys.forEach(k=> {
-            if (headers[k]===undefined || headers[k]===null) {
+        keys.forEach((k) => {
+            if (headers[k] === undefined || headers[k] === null) {
                 delete headers[k];
             }
         });
 
         return headers;
     }
-
 }

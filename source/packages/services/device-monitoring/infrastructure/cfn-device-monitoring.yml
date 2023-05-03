@@ -111,14 +111,14 @@ Resources:
     Properties:
       FunctionName: !Sub 'cdf-deviceMonitoring-${Environment}'
       CodeUri: ../bundle.zip
-      Handler: packages/services/device-monitoring/dist/iot_lifecycle_event.lambda_handler
+      Handler: iot_lifecycle_event.lambda_handler
       MemorySize: 128
       Role: !GetAtt IoTLifecycleLambdaRole.Arn
       Runtime: nodejs16.x
       Timeout: 29
       Environment:
         Variables:
-          APP_CONFIG_DIR: 'packages/services/device-monitoring/dist/config'
+          APP_CONFIG_DIR: 'config'
           APP_CONFIG: !Ref ApplicationConfigurationOverride
           ASSETLIBRARY_API_FUNCTION_NAME: !Ref AssetLibraryFunctionName
       Tracing: Active

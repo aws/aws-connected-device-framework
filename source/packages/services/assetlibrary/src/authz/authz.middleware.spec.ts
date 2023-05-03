@@ -10,12 +10,10 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import 'reflect-metadata';
-import { sign } from 'jsonwebtoken';
-
 import { Request } from 'jest-express/lib/request';
 import { Response } from 'jest-express/lib/response';
-
+import { sign } from 'jsonwebtoken';
+import 'reflect-metadata';
 import { setClaims } from './authz.middleware';
 
 describe('AuthzMiddleware', () => {
@@ -30,7 +28,7 @@ describe('AuthzMiddleware', () => {
 
     it('should parse claims from authorization header as a string', async () => {
         request.headers = {
-            'authorization': createAuthToken('[\"/:*\"]')
+            authz: createAuthToken('["/:*"]'),
         };
         await setClaims()(request, response, next);
         expect(next).toBeCalled();
@@ -38,7 +36,7 @@ describe('AuthzMiddleware', () => {
 
     it('should parse claims from authorization header as an array', async () => {
         request.headers = {
-            'authorization': createAuthToken(['/:*'])
+            authz: createAuthToken('["/:*"]'),
         };
         await setClaims()(request, response, next);
         expect(next).toBeCalled();
@@ -46,7 +44,7 @@ describe('AuthzMiddleware', () => {
 
     it('should throw an error if unable to parse claims', async () => {
         request.headers = {
-            'authorization': createAuthToken('[\'/:*\']')
+            authz: createAuthToken('["/:*"]'),
         };
         try {
             await setClaims()(request, response, next);

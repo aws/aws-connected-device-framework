@@ -296,14 +296,14 @@ Resources:
     Properties:
       FunctionName: !Sub 'cdf-simulation-launcher-${Environment}'
       CodeUri: ../bundle.zip
-      Handler: packages/services/simulation-launcher/dist/sns_proxy.handler
+      Handler: sns_proxy.handler
       MemorySize: 128
       Role: !GetAtt LambdaExecutionRole.Arn
       Runtime: nodejs16.x
       Timeout: 300
       Environment:
         Variables:
-          APP_CONFIG_DIR: 'packages/services/simulation-launcher/dist/config'
+          APP_CONFIG_DIR: 'config'
           APP_CONFIG: !Ref ApplicationConfigurationOverride
           AWS_S3_BUCKET: !Ref BucketName
           AWS_ECS_SUBNETIDS: !Ref PublicSubNetIds

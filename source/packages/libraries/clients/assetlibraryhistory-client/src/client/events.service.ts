@@ -10,9 +10,15 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import {Category, CategoryEventsRequest, Events, ObjectEventsRequest, RequestHeaders} from './events.model';
-import {PathHelper} from '../utils/path.helper';
-import {injectable} from 'inversify';
+import { injectable } from 'inversify';
+import { PathHelper } from '../utils/path.helper';
+import {
+    Category,
+    CategoryEventsRequest,
+    Events,
+    ObjectEventsRequest,
+    RequestHeaders,
+} from './events.model';
 
 export interface EventsService {
     listObjectEvents(req: ObjectEventsRequest, additionalHeaders?: RequestHeaders): Promise<Events>;

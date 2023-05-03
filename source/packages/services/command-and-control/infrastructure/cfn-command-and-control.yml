@@ -299,7 +299,7 @@ Resources:
     Properties:
       FunctionName: !Sub 'cdf-commandandcontrol-rest-${Environment}'
       CodeUri: ../bundle.zip
-      Handler: packages/services/command-and-control/dist/lambda_rest_handler.handler
+      Handler: lambda_rest_handler.handler
 
       MemorySize: 512
       Role: !GetAtt LambdaExecutionRole.Arn
@@ -317,7 +317,7 @@ Resources:
 
       Environment:
         Variables:
-          APP_CONFIG_DIR: 'packages/services/command-and-control/dist/config'
+          APP_CONFIG_DIR: 'config'
           APP_CONFIG: !Ref ApplicationConfigurationOverride
           AWS_ACCOUNTID: !Ref AWS::AccountId
           AWS_DYNAMODB_TABLE: !Ref DataTable
@@ -356,7 +356,7 @@ Resources:
     Properties:
       FunctionName: !Sub 'cdf-commandandcontrol-topic-${Environment}'
       CodeUri: ../bundle.zip
-      Handler: packages/services/command-and-control/dist/lambda_topic_command_response_handler.handler
+      Handler: lambda_topic_command_response_handler.handler
 
       MemorySize: 256
       Role: !GetAtt LambdaExecutionRole.Arn
@@ -374,7 +374,7 @@ Resources:
 
       Environment:
         Variables:
-          APP_CONFIG_DIR: 'packages/services/command-and-control/dist/config'
+          APP_CONFIG_DIR: 'config'
           APP_CONFIG: !Ref ApplicationConfigurationOverride
           AWS_ACCOUNTID: !Ref AWS::AccountId
           AWS_S3_ROLE_ARN: !Sub '${LambdaExecutionRole.Arn}'
@@ -406,7 +406,7 @@ Resources:
     Properties:
       FunctionName: !Sub 'cdf-commandandcontrol-shadow-${Environment}'
       CodeUri: ../bundle.zip
-      Handler: packages/services/command-and-control/dist/lambda_shadow_command_response_handler.handler
+      Handler: lambda_shadow_command_response_handler.handler
 
       MemorySize: 256
       Role: !GetAtt LambdaExecutionRole.Arn
@@ -424,7 +424,7 @@ Resources:
 
       Environment:
         Variables:
-          APP_CONFIG_DIR: 'packages/services/command-and-control/dist/config'
+          APP_CONFIG_DIR: 'config'
           APP_CONFIG: !Ref ApplicationConfigurationOverride
           AWS_ACCOUNTID: !Ref AWS::AccountId
           AWS_S3_ROLE_ARN: !Sub '${LambdaExecutionRole.Arn}'
@@ -456,7 +456,7 @@ Resources:
     Properties:
       FunctionName: !Sub 'cdf-commandandcontrol-job-${Environment}'
       CodeUri: ../bundle.zip
-      Handler: packages/services/command-and-control/dist/lambda_job_command_response_handler.handler
+      Handler: lambda_job_command_response_handler.handler
 
       MemorySize: 256
       Role: !GetAtt LambdaExecutionRole.Arn
@@ -474,7 +474,7 @@ Resources:
 
       Environment:
         Variables:
-          APP_CONFIG_DIR: 'packages/services/command-and-control/dist/config'
+          APP_CONFIG_DIR: 'config'
           APP_CONFIG: !Ref ApplicationConfigurationOverride
           AWS_ACCOUNTID: !Ref AWS::AccountId
           ASSETLIBRARY_API_FUNCTION_NAME: !Ref AssetLibraryFunctionName
@@ -508,7 +508,7 @@ Resources:
     Properties:
       FunctionName: !Sub 'cdf-commandandcontrol-sqs-${Environment}'
       CodeUri: ../bundle.zip
-      Handler: packages/services/command-and-control/dist/lambda_sqs_handler.handler
+      Handler: lambda_sqs_handler.handler
 
       MemorySize: 256
       Role: !GetAtt LambdaExecutionRole.Arn
@@ -526,7 +526,7 @@ Resources:
 
       Environment:
         Variables:
-          APP_CONFIG_DIR: 'packages/services/command-and-control/dist/config'
+          APP_CONFIG_DIR: 'config'
           APP_CONFIG: !Ref ApplicationConfigurationOverride
           AWS_ACCOUNTID: !Ref AWS::AccountId
           ASSETLIBRARY_API_FUNCTION_NAME: !Ref AssetLibraryFunctionName

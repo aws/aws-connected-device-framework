@@ -10,30 +10,35 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import {inject, injectable} from 'inversify';
-import ow from 'ow';
-import {EventResource, EventResourceList} from './events.model';
-import {EventsService, EventsServiceBase} from './events.service';
-import {RequestHeaders} from './common.model';
+
 import {
-    LambdaApiGatewayEventBuilder,
     LAMBDAINVOKE_TYPES,
-    LambdaInvokerService
+    LambdaApiGatewayEventBuilder,
+    LambdaInvokerService,
 } from '@cdf/lambda-invoke';
+import { inject, injectable } from 'inversify';
+import ow from 'ow';
+import { RequestHeaders } from './common.model';
+import { EventResource, EventResourceList } from './events.model';
+import { EventsService, EventsServiceBase } from './events.service';
 
 @injectable()
 export class EventsLambdaService extends EventsServiceBase implements EventsService {
-
-    private functionName : string;
+    private functionName: string;
     constructor(
-        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService) private lambdaInvoker: LambdaInvokerService
+        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
+        private lambdaInvoker: LambdaInvokerService
     ) {
         super();
         this.lambdaInvoker = lambdaInvoker;
         this.functionName = process.env.NOTIFICATIONS_API_FUNCTION_NAME;
     }
 
-    async createEvent(eventSourceId: string, event: EventResource, additionalHeaders?: RequestHeaders): Promise<string> {
+    async createEvent(
+        eventSourceId: string,
+        event: EventResource,
+        additionalHeaders?: RequestHeaders
+    ): Promise<string> {
         ow(event, ow.object.nonEmpty);
         ow(eventSourceId, ow.string.nonEmpty);
 
@@ -85,7 +90,12 @@ export class EventsLambdaService extends EventsServiceBase implements EventsServ
         await this.lambdaInvoker.invoke(this.functionName, ev);
     }
 
-    async listEventsForEventSource(eventSourceId: string, count?: number, fromEventId?: string, additionalHeaders?: RequestHeaders): Promise<EventResourceList> {
+    async listEventsForEventSource(
+        eventSourceId: string,
+        count?: number,
+        fromEventId?: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<EventResourceList> {
         ow(eventSourceId, ow.string.nonEmpty);
 
         const ev = new LambdaApiGatewayEventBuilder()
@@ -96,7 +106,7 @@ export class EventsLambdaService extends EventsServiceBase implements EventsServ
         if (count && fromEventId) {
             ev.setQueryStringParameters({
                 count: `${count}`,
-                fromEventId
+                fromEventId,
             });
         }
 

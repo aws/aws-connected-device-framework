@@ -12,7 +12,7 @@
  *********************************************************************************************************************/
 export interface EventSourceSummaryResource {
     id?: string;
-    name:string;
+    name: string;
 }
 
 export interface EventSourceDetailResource extends EventSourceSummaryResource {
@@ -22,17 +22,16 @@ export interface EventSourceDetailResource extends EventSourceSummaryResource {
 
     dynamoDb?: DynamoDbConfig;
     iotCore?: IotCoreConfig;
-
 }
 
 export enum EventSourceType {
     ApiGateway = 'ApiGateway',
     DynamoDB = 'DynamoDB',
-    IoTCore = 'IoTCore'
+    IoTCore = 'IoTCore',
 }
 
 export class EventSourceResourceList {
-    results: EventSourceSummaryResource[]=[];
+    results: EventSourceSummaryResource[] = [];
 }
 
 type DynamoDbConfig = {
@@ -40,5 +39,5 @@ type DynamoDbConfig = {
 };
 type IotCoreConfig = {
     mqttTopic: string;
-    attributes: {[key:string]:string};
+    attributes: { [key: string]: string };
 };

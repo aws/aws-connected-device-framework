@@ -10,13 +10,13 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { Request, Response, NextFunction, RequestHandler } from 'express';
-import { Claims } from './claims';
 import * as als from 'async-local-storage';
-import { logger } from '../utils/logger';
+import { NextFunction, Request, RequestHandler, Response } from 'express';
 import { decode } from 'jsonwebtoken';
+import { logger } from '../utils/logger';
+import { Claims } from './claims';
 
-const JWT_HEADER = 'authorization';
+const JWT_HEADER = 'authz';
 const JWT_CLAIMS = 'cdf_al';
 const CLAIMS_REQUEST_ATTRIBUTE = 'claims';
 

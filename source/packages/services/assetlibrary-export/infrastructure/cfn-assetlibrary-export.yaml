@@ -139,14 +139,14 @@ Resources:
     Properties:
       FunctionName: !Sub 'cdf-assetLibrary-export-batch-${Environment}'
       CodeUri: ../bundle.zip
-      Handler: packages/services/assetlibrary-export/dist/lambda_sf_batch_proxy.export_handler
+      Handler: lambda_sf_batch_proxy.export_handler
       MemorySize: 1024
       Role: !GetAtt BatchExecutionRole.Arn
       Runtime: nodejs16.x
       Timeout: 900
       Environment:
         Variables:
-          APP_CONFIG_DIR: 'packages/services/assetlibrary-export/dist/config'
+          APP_CONFIG_DIR: 'config'
           APP_CONFIG: !Ref ApplicationConfigurationOverride
           NEPTUNEURL: !Ref NeptuneURL
           AWS_S3_EXPORT_BUCKET: !Ref BucketName
@@ -165,7 +165,7 @@ Resources:
     Properties:
       FunctionName: !Sub 'cdf-assetLibrary-export-etl-${Environment}'
       CodeUri: ../bundle.zip
-      Handler: packages/services/assetlibrary-export/dist/lambda_sf_etl_proxy.export_handler
+      Handler: lambda_sf_etl_proxy.export_handler
       MemorySize: 1024
       Role: !GetAtt ETLExecutionRole.Arn
       Runtime: nodejs16.x
@@ -173,7 +173,7 @@ Resources:
       Environment:
         Variables:
           APP_CONFIG: !Ref ApplicationConfigurationOverride
-          APP_CONFIG_DIR: 'packages/services/assetlibrary-export/dist/config'
+          APP_CONFIG_DIR: 'config'
           NEPTUNEURL: !Ref NeptuneURL
           AWS_S3_EXPORT_BUCKET: !Ref BucketName
 

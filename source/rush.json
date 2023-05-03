@@ -75,6 +75,12 @@
       "shouldPublish": true
     },
     {
+      "packageName": "@cdf/assetlibrary-export",
+      "projectFolder": "packages/services/assetlibrary-export",
+      "reviewCategory": "production",
+      "shouldPublish": true
+    },
+    {
       "packageName": "@cdf/bulkcerts-client",
       "projectFolder": "packages/libraries/clients/bulkcerts-client",
       "reviewCategory": "library",
@@ -123,8 +129,26 @@
       "shouldPublish": true
     },
     {
+      "packageName": "@cdf/config-inject",
+      "projectFolder": "packages/libraries/config/config-inject",
+      "reviewCategory": "library",
+      "shouldPublish": true
+    },
+    {
+      "packageName": "@cdf/deployment-helper",
+      "projectFolder": "packages/libraries/core/deployment-helper",
+      "reviewCategory": "library",
+      "shouldPublish": true
+    },
+    {
       "packageName": "@cdf/errors",
       "projectFolder": "packages/libraries/core/errors",
+      "reviewCategory": "library",
+      "shouldPublish": true
+    },
+    {
+      "packageName": "@cdf/event-publisher",
+      "projectFolder": "packages/libraries/core/event-publisher",
       "reviewCategory": "library",
       "shouldPublish": true
     },
@@ -147,8 +171,8 @@
       "shouldPublish": true
     },
     {
-      "packageName": "@cdf/config-inject",
-      "projectFolder": "packages/libraries/config/config-inject",
+      "packageName": "@cdf/thing-list-builder",
+      "projectFolder": "packages/libraries/core/thing-list-builder",
       "reviewCategory": "library",
       "shouldPublish": true
     },
@@ -159,9 +183,9 @@
       "shouldPublish": true
     },
     {
-      "packageName": "@cdf/thing-list-builder",
-      "projectFolder": "packages/libraries/core/thing-list-builder",
-      "reviewCategory": "library",
+      "packageName": "@cdf/integration-tests",
+      "projectFolder": "packages/integration-tests",
+      "reviewCategory": "tests",
       "shouldPublish": true
     },
     {
@@ -213,8 +237,20 @@
       "shouldPublish": true
     },
     {
+      "packageName": "@cdf/command-and-control",
+      "projectFolder": "packages/services/command-and-control",
+      "reviewCategory": "production",
+      "shouldPublish": true
+    },
+    {
       "packageName": "@cdf/device-monitoring",
       "projectFolder": "packages/services/device-monitoring",
+      "reviewCategory": "production",
+      "shouldPublish": true
+    },
+    {
+      "packageName": "@cdf/device-patcher",
+      "projectFolder": "packages/services/device-patcher",
       "reviewCategory": "production",
       "shouldPublish": true
     },
@@ -231,12 +267,6 @@
       "shouldPublish": true
     },
     {
-      "packageName": "@cdf/device-patcher",
-      "projectFolder": "packages/services/device-patcher",
-      "reviewCategory": "production",
-      "shouldPublish": true
-    },
-    {
       "packageName": "@cdf/greengrass2-provisioning",
       "projectFolder": "packages/services/greengrass2-provisioning",
       "reviewCategory": "production",
@@ -249,33 +279,15 @@
       "shouldPublish": true
     },
     {
+      "packageName": "@cdf/installer",
+      "projectFolder": "packages/services/installer",
+      "reviewCategory": "production",
+      "shouldPublish": true
+    },
+    {
       "packageName": "@cdf/organization-manager",
       "projectFolder": "packages/services/organization-manager",
       "reviewCategory": "production",
-      "shouldPublish": true
-    },
-    {
-      "packageName": "@cdf/provisioning",
-      "projectFolder": "packages/services/provisioning",
-      "reviewCategory": "production",
-      "shouldPublish": true
-    },
-    {
-      "packageName": "@cdf/deployment-helper",
-      "projectFolder": "packages/libraries/core/deployment-helper",
-      "reviewCategory": "library",
-      "shouldPublish": true
-    },
-    {
-      "packageName": "@cdf/event-publisher",
-      "projectFolder": "packages/libraries/core/event-publisher",
-      "reviewCategory": "library",
-      "shouldPublish": true
-    },
-    {
-      "packageName": "@cdf/integration-tests",
-      "projectFolder": "packages/integration-tests",
-      "reviewCategory": "tests",
       "shouldPublish": true
     },
     {
@@ -291,21 +303,27 @@
       "shouldPublish": true
     },
     {
-      "packageName": "@cdf/assetlibrary-export",
-      "projectFolder": "packages/services/assetlibrary-export",
+      "packageName": "@cdf/provisioning",
+      "projectFolder": "packages/services/provisioning",
       "reviewCategory": "production",
       "shouldPublish": true
     },
     {
-      "packageName": "@cdf/command-and-control",
-      "projectFolder": "packages/services/command-and-control",
-      "reviewCategory": "production",
+      "packageName": "@awssolutions/cdf-lambda-zip",
+      "projectFolder": "packages/libraries/core/lambda-zip",
+      "reviewCategory": "library",
+      "shouldPublish": false
+    },
+    {
+      "packageName": "@awssolutions/cdf-client-request-signer",
+      "projectFolder": "packages/libraries/core/client-request-signer",
+      "reviewCategory": "library",
       "shouldPublish": true
     },
     {
-      "packageName": "@cdf/installer",
-      "projectFolder": "packages/services/installer",
-      "reviewCategory": "production",
+      "packageName": "@awssolutions/cdf-environment-sanitizer",
+      "projectFolder": "packages/libraries/core/environment-sanitizer",
+      "reviewCategory": "library",
       "shouldPublish": true
     }
   ],

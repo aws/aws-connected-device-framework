@@ -256,7 +256,7 @@ Resources:
     Properties:
       FunctionName: !Sub 'cdf-assetLibrary-rest-${Environment}'
       CodeUri: ../bundle.zip
-      Handler: packages/services/assetlibrary/dist/lambda_proxy.handler
+      Handler: lambda_proxy.handler
       MemorySize: 512
       Role: !GetAtt LambdaExecutionRole.Arn
       Runtime: nodejs16.x
@@ -272,7 +272,7 @@ Resources:
       Environment:
         Variables:
           APP_CONFIG: !Ref ApplicationConfigurationOverride
-          APP_CONFIG_DIR: 'packages/services/assetlibrary/dist/config'
+          APP_CONFIG_DIR: 'config'
           MODE: !Ref Mode
           AWS_IOT_ENDPOINT: !GetAtt IotEndpoint.address
           AWS_NEPTUNE_URL: !Ref NeptuneURL

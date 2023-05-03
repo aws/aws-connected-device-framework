@@ -10,63 +10,68 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+
 export interface ProvisionThingRequest {
-	provisioningTemplateId: string;
-	parameters: { [key: string]: string };
-	cdfProvisioningParameters?: CdfProvisioningParameters;
+    provisioningTemplateId: string;
+    parameters: { [key: string]: string };
+    cdfProvisioningParameters?: CdfProvisioningParameters;
 }
 
-export type CdfProvisioningParameters = CreateDeviceCertificateParameters | RegisterDeviceCertificateWithoutCAParameters | UseACMPCAParameters | undefined;
+export type CdfProvisioningParameters =
+    | CreateDeviceCertificateParameters
+    | RegisterDeviceCertificateWithoutCAParameters
+    | UseACMPCAParameters
+    | undefined;
 
 export interface CreateDeviceCertificateParameters {
-	caId: string;
-	certInfo: CertInfo;
+    caId: string;
+    certInfo: CertInfo;
 }
 export interface RegisterDeviceCertificateWithoutCAParameters {
-	certificatePem: string;
-	certificateStatus?: CertificateStatus;
+    certificatePem: string;
+    certificateStatus?: CertificateStatus;
 }
 
 export interface UseACMPCAParameters {
-	acmpcaCaArn?: string;
-	acmpcaCaAlias?: string;
+    acmpcaCaArn?: string;
+    acmpcaCaAlias?: string;
 
-	awsiotCaArn?: string;
-	awsiotCaAlias?: string;
-	
-	csr?: string;
-	certInfo: CertInfo;
+    awsiotCaArn?: string;
+    awsiotCaAlias?: string;
+
+    csr?: string;
+    certInfo: CertInfo;
 }
 
 export interface CertInfo {
-	commonName?: string;
-	organization?: string;
-	organizationalUnit?: string;
-	locality?: string;
-	stateName?: string;
-	country?: string;
-	emailAddress?: string;
-	daysExpiry?: number;
+    commonName?: string;
+    organization?: string;
+    organizationalUnit?: string;
+    locality?: string;
+    stateName?: string;
+    country?: string;
+    emailAddress?: string;
+    daysExpiry?: number;
 }
 export interface ProvisionThingResponse {
-	certificatePem: string;
-	publicKey?: string;
-	privateKey?: string;
-	resourceArns?: {
-		policyLogicalName?: string;
-		certificate?: string;
-		thing?: string;
-	};
+    certificatePem: string;
+    publicKey?: string;
+    privateKey?: string;
+    resourceArns?: {
+        policyLogicalName?: string;
+        certificate?: string;
+        thing?: string;
+    };
 }
 
 export interface Thing {
-	thingName: string;
-	arn: string;
-	thingType: string;
-	attributes: { [key: string]: string };
-	certificates?: ThingCertificate[];
-	policies?: ThingPolicy[];
-	groups?: ThingGroup[];
+    thingName: string;
+    arn: string;
+    thingType: string;
+    attributes: { [key: string]: string };
+    certificates?: ThingCertificate[];
+    policies?: ThingPolicy[];
+    groups?: ThingGroup[];
 }
 
 export interface ThingCertificate {
@@ -92,9 +97,9 @@ export interface ThingPolicy {
 }
 
 export interface ThingGroup {
-	groupName: string;
-	arn: string;
-	attributes?: { [key: string]: string };
+    groupName: string;
+    arn: string;
+    attributes?: { [key: string]: string };
 }
 
 export interface BulkProvisionThingsRequest {

@@ -14,7 +14,7 @@ import { container } from './di/inversify.config';
 
 import { json } from 'body-parser';
 import { Application, NextFunction, Request, Response } from 'express';
-import { setVersionByAcceptHeader } from 'express-version-request';
+import expressVersionRequest from 'express-version-request';
 import { InversifyExpressServer } from 'inversify-express-utils';
 
 import { DEFAULT_MIME_TYPE, normalisePath } from '@cdf/express-middleware';
@@ -57,7 +57,7 @@ server.setConfig((app) => {
   app.use(json({ type: supportedVersions }));
 
   // extrapolate the version from the header and place on the request to make to easier for the controllers to deal with
-  app.use(setVersionByAcceptHeader());
+  app.use(expressVersionRequest.setVersionByAcceptHeader());
 
   // if authz is enabled, parse the claims
   if (process.env.AUTHORIZATION_ENABLED==="true") {

@@ -12,29 +12,28 @@
  *********************************************************************************************************************/
 
 import { injectable } from 'inversify';
-
 import { RequestHeaders } from './common.model';
 
 @injectable()
-export class CommonServiceBase  {
-
+export class CommonServiceBase {
     private DEFAULT_MIME_TYPE = 'application/vnd.aws-cdf-v2.0+json';
 
-    private readonly _headers:RequestHeaders = {
-        'Accept': this.DEFAULT_MIME_TYPE,
-        'Content-Type': this.DEFAULT_MIME_TYPE
+    private readonly _headers: RequestHeaders = {
+        Accept: this.DEFAULT_MIME_TYPE,
+        'Content-Type': this.DEFAULT_MIME_TYPE,
     };
 
-    protected buildHeaders(additionalHeaders:RequestHeaders) : RequestHeaders {
-
+    protected buildHeaders(additionalHeaders: RequestHeaders): RequestHeaders {
         let headers: RequestHeaders = Object.assign({}, this._headers);
 
         const customHeaders = process.env.NOTIFICATIONS_HEADERS;
         if (customHeaders !== undefined) {
             try {
-                const headersFromConfig: RequestHeaders = JSON.parse(customHeaders) as unknown as RequestHeaders;
-                headers = {...headers, ...headersFromConfig};
-            } catch (err) { 
+                const headersFromConfig: RequestHeaders = JSON.parse(
+                    customHeaders
+                ) as unknown as RequestHeaders;
+                headers = { ...headers, ...headersFromConfig };
+            } catch (err) {
                 const wrappedErr = `Failed to parse configuration parameter NOTIFICATIONS_HEADERS as JSON with error: ${err}`;
                 console.log(wrappedErr);
                 throw new Error(wrappedErr);
@@ -42,12 +41,12 @@ export class CommonServiceBase  {
         }
 
         if (additionalHeaders !== null && additionalHeaders !== undefined) {
-            headers = {...headers, ...additionalHeaders};
+            headers = { ...headers, ...additionalHeaders };
         }
 
         const keys = Object.keys(headers);
-        keys.forEach(k=> {
-            if (headers[k]===undefined || headers[k]===null) {
+        keys.forEach((k) => {
+            if (headers[k] === undefined || headers[k] === null) {
                 delete headers[k];
             }
         });

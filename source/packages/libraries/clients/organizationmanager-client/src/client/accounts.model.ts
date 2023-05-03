@@ -22,27 +22,29 @@ export interface AccountResource {
     ssoLastName: string;
     status: AccountStatus;
     organizationalUnitId: string;
-    regions: string[],
-    tags?: { [key: string]: string }
+    regions: string[];
+    tags?: { [key: string]: string };
 }
 
 export type AccountResourceList = {
-    accounts: AccountResource[],
+    accounts: AccountResource[];
     pagination?: {
         lastEvaluated?: {
-            accountName: string,
-            organizationId: string
-        },
-        count?: number
+            accountName: string;
+            organizationId: string;
+        };
+        count?: number;
     };
-}
+};
 
-export type AccountCreationRequest = Omit<AccountResource, "status"> & { createAccountRequestId?: string }
+export type AccountCreationRequest = Omit<AccountResource, 'status'> & {
+    createAccountRequestId?: string;
+};
 
 export type AccountUpdateRequest = {
-    accountName: string,
-    regions?: string[],
-    accountId?: string,
-    status?: string
-}
+    accountName: string;
+    regions?: string[];
+    accountId?: string;
+    status?: string;
+};
 

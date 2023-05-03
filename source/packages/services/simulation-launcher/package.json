@@ -9,13 +9,15 @@
     "build": "npx tsc -b && npx shx cp -R 'src/config' 'dist/config'",
     "test": "rushx lint && jest --silent",
     "start": "rushx build && APP_CONFIG_DIR=${PWD}/src/config nodemon dist/lambda_proxy.js",
-    "bundle": "../../../infrastructure/bundle-package.bash simulation-launcher"
+    "bundle": "npm run bundle:build && npm run bundle:deploy",
+    "bundle:build": "lambda-zip --entry-point src/sns_proxy.ts --copy config:src/config",
+    "bundle:deploy": "node ../../../infrastructure/bundle-package.js"
   },
   "dependencies": {
     "aws-sdk": "2.1048.0",
     "@cdf/config-inject": "^4.0.2",
     "js-yaml": "3.13.1",
-    "logform": "2.1.2",
+    "logform": "2.4.2",
     "ow": "0.17.0",
     "readable-stream": "2.3.6",
     "reflect-metadata": "0.1.13",
@@ -25,6 +27,7 @@
     "dotenv": "^8.2.0"
   },
   "devDependencies": {
+    "@awssolutions/cdf-lambda-zip": "^0.0.0",
     "@rushstack/eslint-config": "2.3.1",
     "@types/jest": "26.0.18",
     "@typescript-eslint/eslint-plugin": "4.9.1",
@@ -36,7 +39,7 @@
     "jest-mock": "26.6.2",
     "jest-mock-extended": "1.0.10",
     "jest-resolve": "26.6.2",
-    "nodemon": "2.0.6",
+    "nodemon": "2.0.20",
     "shx": "0.3.3",
     "ts-jest": "26.4.4",
     "typescript": "4.2.4",

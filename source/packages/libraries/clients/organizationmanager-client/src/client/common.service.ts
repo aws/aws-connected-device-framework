@@ -10,44 +10,42 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+
 import { injectable } from 'inversify';
-import {RequestHeaders} from './common.model';
+import { RequestHeaders } from './common.model';
 
 @injectable()
-export abstract class ClientServiceBase  {
-
+export abstract class ClientServiceBase {
     protected MIME_TYPE = 'application/vnd.aws-cdf-v1.0+json';
 
-    private readonly _headers:RequestHeaders = {
-        'Accept': this.MIME_TYPE,
-        'Content-Type': this.MIME_TYPE
+    private readonly _headers: RequestHeaders = {
+        Accept: this.MIME_TYPE,
+        'Content-Type': this.MIME_TYPE,
     };
 
-    protected buildHeaders(additionalHeaders:RequestHeaders) : RequestHeaders {
-
+    protected buildHeaders(additionalHeaders: RequestHeaders): RequestHeaders {
         let headers = Object.assign({}, this._headers);
 
         const customHeaders = process.env.ORGANIZATIONMANAGER_HEADERS;
 
         if (customHeaders) {
-            const headersFromConfig:RequestHeaders = customHeaders as unknown  as RequestHeaders;
+            const headersFromConfig: RequestHeaders = customHeaders as unknown as RequestHeaders;
             if (headersFromConfig !== null && headersFromConfig !== undefined) {
-                headers = {...headers, ...headersFromConfig};
+                headers = { ...headers, ...headersFromConfig };
             }
         }
 
         if (additionalHeaders !== null && additionalHeaders !== undefined) {
-            headers = {...headers, ...additionalHeaders};
+            headers = { ...headers, ...additionalHeaders };
         }
 
         const keys = Object.keys(headers);
-        keys.forEach(k=> {
-            if (headers[k]===undefined || headers[k]===null) {
+        keys.forEach((k) => {
+            if (headers[k] === undefined || headers[k] === null) {
                 delete headers[k];
             }
         });
 
         return headers;
     }
-
 }

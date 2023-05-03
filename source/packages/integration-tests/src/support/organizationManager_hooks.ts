@@ -45,20 +45,20 @@ const organizationalUnitService: OrganizationalUnitsService = container.get(ORGM
 const accountsService: AccountsService = container.get(ORGMANLIBRARY_CLIENT_TYPES.AccountsService);
 
 async function tearDown() {
-    for (let account of testAccounts) {
-        await accountsService.deleteAccount(account).catch(_err => { })
+    for (const account of testAccounts) {
+        await accountsService.deleteAccount(account).catch(_err => { console.log('error') })
     }
-    for (let ou of testOrganizationalUnits) {
-        await organizationalUnitService.deleteOrganizationalUnit(ou.id).catch(_err => { })
+    for (const ou of testOrganizationalUnits) {
+        await organizationalUnitService.deleteOrganizationalUnit(ou.id).catch(_err => { console.log('error') })
     }
-    for (let ou of organizationalUnitsWithComponents) {
-        await organizationalUnitService.deleteOrganizationalUnit(ou.id).catch(_err => { })
+    for (const ou of organizationalUnitsWithComponents) {
+        await organizationalUnitService.deleteOrganizationalUnit(ou.id).catch(_err => { console.log('error') })
     }
 }
 
 Before({ tags: '@setup_organizationmanager_feature' }, async function () {
     await tearDown();
-    for (let ou of organizationalUnitsWithComponents) {
+    for (const ou of organizationalUnitsWithComponents) {
         await organizationalUnitService.createOrganizationalUnit(ou)
     }
 });
