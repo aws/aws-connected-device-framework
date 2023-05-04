@@ -9,7 +9,7 @@
     "lint": "npx eslint . --ext '.ts'",
     "build": "npx tsc -b",
     "create:installer": "npx tsc -b && npx shx chmod +x dist/index.js && ../../../common/temp/pnpm-local/node_modules/.bin/pnpm link --global",
-    "test": "rushx lint && NODE_ENV= jest --silent"
+    "test": "rushx lint && NODE_ENV= jest --silent --maxWorkers=$JEST_MAX_WORKERS"
   },
   "bin": {
     "cdf-cli": "./dist/index.js"

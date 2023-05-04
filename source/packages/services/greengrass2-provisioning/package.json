@@ -3,11 +3,14 @@
   "version": "0.4.1",
   "description": "CDF Greengrass V2 Provisioning",
   "author": "Dean Hart",
+  "files": [
+    "bundle.zip"
+  ],
   "scripts": {
     "clean": "npx shx rm -rf dist tsconfig.tsbuildinfo bundle.zip .rush .nyc_output *.log",
     "lint": "npx eslint . --ext '.ts'",
     "build": "npx tsc -b && npx shx cp -R 'src/config' 'dist/'",
-    "test": "rushx lint && NODE_ENV= jest --passWithNoTests --silent",
+    "test": "rushx lint && NODE_ENV= jest --silent --passWithNoTests --maxWorkers=$JEST_MAX_WORKERS",
     "start": "rushx build && APP_CONFIG_DIR=${PWD}/src/config node dist/lambda_apigw_proxy.js",
     "bundle": "npm run bundle:build && npm run bundle:deploy",
     "bundle:build": "lambda-zip --entry-point src/lambda_*.ts --copy config:src/config",
@@ -103,6 +106,5 @@
       "json",
       "node"
     ]
-  },
-  "private": true
+  }
 }

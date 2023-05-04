@@ -8,7 +8,7 @@
     "clean:postrelease": "npx shx rm -rf dist deploy tsconfig.tsbuildinfo .rush .nyc_output *.log",
     "lint": "npx eslint . --ext '.ts'",
     "build": "npx tsc -b && npx shx cp -R 'src/config' 'dist/config' && npx shx cp -R 'src/templates' 'dist/templates'",
-    "test": "rushx lint && jest --silent --passWithNoTests",
+    "test": "rushx lint && jest --silent --passWithNoTests --maxWorkers=$JEST_MAX_WORKERS",
     "start": "rushx build && APP_CONFIG_DIR=${PWD}/src/config nodemon dist/api_gateway_proxy.js",
     "bundle": "npm run bundle:build && npm run bundle:deploy",
     "bundle:build": "lambda-zip --entry-point src/api_gateway_proxy.ts --copy templates:src/templates config:src/config",
