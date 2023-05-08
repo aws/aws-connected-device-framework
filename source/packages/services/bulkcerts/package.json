@@ -3,6 +3,9 @@
   "version": "6.1.0",
   "description": "CDF Bulk Certificate Creation",
   "author": "Dean Hart",
+  "files": [
+    "bundle.zip"
+  ],
   "config": {
     "environment": "development"
   },
@@ -10,7 +13,7 @@
     "clean": "npx shx rm -rf dist tsconfig.tsbuildinfo bundle.zip .rush .nyc_output *.log",
     "lint": "npx eslint . --ext '.ts'",
     "build": "npx tsc -b && npx shx cp -R 'src/config' 'dist/'",
-    "test": "rushx lint && APP_CONFIG_DIR=${PWD}/src/config CONFIG_LOCATION=${PWD}/src/config/.env.test jest",
+    "test": "rushx lint && APP_CONFIG_DIR=${PWD}/src/config CONFIG_LOCATION=${PWD}/src/config/.env.test jest --maxWorkers=$JEST_MAX_WORKERS",
     "start": "rushx build && APP_CONFIG_DIR=${PWD}/src/config nodemon dist/lambda_proxy.js",
     "bundle": "npm run bundle:build && npm run bundle:deploy",
     "bundle:build": "lambda-zip --entry-point src/lambda_*.ts --copy config:src/config:.env.defaults",
@@ -94,6 +97,5 @@
       "json",
       "node"
     ]
-  },
-  "private": true
+  }
 }

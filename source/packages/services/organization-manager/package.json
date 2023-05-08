@@ -3,6 +3,9 @@
   "version": "0.1.1",
   "description": "This module associates cdf components with organizational units and uses this association to create control-tower-customization manifest file",
   "author": "William Sia",
+  "files": [
+    "bundle.zip"
+  ],
   "config": {
     "environment": "development"
   },
@@ -11,7 +14,7 @@
     "lint": "npx eslint . --ext '.ts'",
     "build": "npx tsc -b && npx shx cp -R 'src/config' 'dist/'",
     "test": "rushx lint && NODE_ENV= NODE_CONFIG_DIR='./src/config' jest --silent",
-    "test:watch": "rushx lint && NODE_ENV= NODE_CONFIG_DIR='./src/config' jest --silent --watch",
+    "test:watch": "rushx lint && NODE_ENV= NODE_CONFIG_DIR='./src/config' jest --silent --watch --maxWorkers=$JEST_MAX_WORKERS",
     "start": "rushx build && APP_CONFIG_DIR=${PWD}/src/config nodemon dist/lambda_proxy.js",
     "start:eventbridge": "rushx build && APP_CONFIG_DIR=${PWD}/src/config  node dist/eventbridge_handler.js",
     "bundle": "npm run bundle:build && npm run bundle:deploy",
@@ -89,6 +92,5 @@
       "json",
       "node"
     ]
-  },
-  "private": true
+  }
 }

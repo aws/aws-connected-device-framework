@@ -11,7 +11,7 @@
     "clean": "npx shx rm -rf dist tsconfig.tsbuildinfo bundle.zip .rush .nyc_output *.log",
     "lint": "npx eslint . --ext '.ts'",
     "build": "npx tsc -b && npx shx cp -R 'src/config' 'dist/'",
-    "test": "rushx lint && NODE_ENV= jest --silent --passWithNoTests",
+    "test": "rushx lint && NODE_ENV= jest --silent --passWithNoTests --maxWorkers=$JEST_MAX_WORKERS",
     "start": "rushx build && APP_CONFIG_DIR=${PWD}/src/config nodemon dist/index.js",
     "bundle": "../../../infrastructure/bundle-package.bash auth-jwt"
 

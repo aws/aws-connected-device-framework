@@ -3,11 +3,14 @@
   "version": "5.3.3",
   "description": "CDF Provisioning",
   "author": "Dean Hart",
+  "files": [
+    "bundle.zip"
+  ],
   "scripts": {
     "clean": "npx shx rm -rf dist tsconfig.tsbuildinfo bundle.zip .rush .nyc_output *.log",
     "lint": "npx eslint . --ext '.ts'",
     "build": "npx tsc -b && npx shx cp -R 'src/config' 'dist/' && npx shx cp -R 'src/things/policies' 'dist/things/policies'",
-    "test": "rushx lint && jest",
+    "test": "rushx lint && jest --silent --maxWorkers=$JEST_MAX_WORKERS",
     "start": "rushx build && APP_CONFIG_DIR=${PWD}/src/config nodemon dist/lambda_proxy.js",
     "bundle": "npm run bundle:build && npm run bundle:deploy",
     "bundle:build": "lambda-zip --entry-point src/lambda_proxy.ts --copy config:src/config:.env.defaults",
@@ -87,6 +90,5 @@
       "json",
       "node"
     ]
-  },
-  "private": true
+  }
 }

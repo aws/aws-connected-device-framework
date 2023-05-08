@@ -95,7 +95,7 @@ async function createThing(thingName: string): Promise<void> {
             })
             .promise();
     } catch (e) {
-        let policyDocument = process.env.COMMANDANDCONTROL_TESTDEVICE_POLICYDOCUMENT;
+        const policyDocument = process.env.COMMANDANDCONTROL_TESTDEVICE_POLICYDOCUMENT;
 
         await iot
             .createPolicy({

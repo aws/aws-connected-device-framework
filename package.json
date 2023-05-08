@@ -1,0 +1,12 @@
+{
+    "description": "Placeholder package.json for allowing generic npm commands rather than rush directly. Be careful with paths because rush commands execute in the source directory.",
+    "scripts": {
+        "build": "npm run rush -- bundle",
+        "clean": "npm run rush -- clean",
+        "lint": "npm run rush -- lint",
+        "pack": "npm run rush -- publish --pack --include-all --publish --release-folder \"$PWD/artifacts/npm\"",
+        "postinstall": "npm run rush -- update",
+        "rush": "node source/cicd/rush.js",
+        "test": "JEST_MAX_WORKERS=1 npm run rush -- test"
+    }
+}
