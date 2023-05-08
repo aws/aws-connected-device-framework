@@ -16,7 +16,7 @@ import {
     CommandResource,
     CommandResourceList,
     CommandsService,
-} from '@cdf/commandandcontrol-client';
+} from '@awssolutions/cdf-commandandcontrol-client';
 import { DataTable, Given, Then, When, setDefaultTimeout } from '@cucumber/cucumber';
 import { expect, use } from 'chai';
 import 'reflect-metadata';

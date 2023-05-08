@@ -14,12 +14,19 @@ import { inject, injectable } from 'inversify';
 import ow from 'ow';
 
 import {
-    ASSETLIBRARY_CLIENT_TYPES, Device10Resource, DevicesService, Group10Resource, GroupsService,
-    SearchRequestModel, SearchService
-} from '@cdf/assetlibrary-client';
+    ASSETLIBRARY_CLIENT_TYPES,
+    Device10Resource,
+    DevicesService,
+    Group10Resource,
+    GroupsService,
+    SearchRequestModel,
+    SearchService,
+} from '@awssolutions/cdf-assetlibrary-client';
 import {
-    BulkProvisionThingsRequest, PROVISIONING_CLIENT_TYPES, ThingsService
-} from '@cdf/provisioning-client';
+    BulkProvisionThingsRequest,
+    PROVISIONING_CLIENT_TYPES,
+    ThingsService,
+} from '@awssolutions/cdf-provisioning-client';
 
 import { TYPES } from '../../di/types';
 import { TemplateModel } from '../../templates/templates.models';

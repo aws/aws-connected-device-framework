@@ -1,6 +1,6 @@
 {
-  "name": "@cdf/certificate-activator",
-  "version": "4.0.4",
+  "name": "@awssolutions/cdf-certificate-activator",
+  "version": "0.0.0",
   "description": "CDF Certificate Activator",
   "author": "Dean Hart",
   "config": {
@@ -18,12 +18,12 @@
     "bundle:deploy": "node ../../../infrastructure/bundle-package.js"
   },
   "dependencies": {
-    "@cdf/errors": "^4.0.0",
-    "@cdf/config-inject": "^4.0.2",
-    "@cdf/logger": "^4.0.0",
-    "@cdf/lambda-invoke": "^3.0.2",
-    "@cdf/assetlibrary-client": "^5.1.0",
-    "@cdf/provisioning-client": "^5.2.0",
+    "@awssolutions/cdf-errors": "^0.0.0",
+    "@awssolutions/cdf-config-inject": "^0.0.0",
+    "@awssolutions/cdf-logger": "^0.0.0",
+    "@awssolutions/cdf-lambda-invoke": "^0.0.0",
+    "@awssolutions/cdf-assetlibrary-client": "^0.0.0",
+    "@awssolutions/cdf-provisioning-client": "^0.0.0",
     "aws-sdk": "2.1048.0",
     "config": "3.3.6",
     "inversify": "6.0.1",

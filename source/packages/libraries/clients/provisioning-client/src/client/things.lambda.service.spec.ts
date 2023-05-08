@@ -13,7 +13,7 @@
 import 'reflect-metadata';
 import { createMockInstance } from 'jest-create-mock-instance';
 import { ThingsLambdaService } from './things.lambda.service';
-import { LambdaApiGatewayEvent, LambdaInvokerService } from '@cdf/lambda-invoke';
+import { LambdaApiGatewayEvent, LambdaInvokerService } from '@awssolutions/cdf-lambda-invoke';
 import {
     BulkProvisionThingsRequest,
     BulkProvisionThingsResponse,

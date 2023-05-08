@@ -1,6 +1,6 @@
 {
-  "name": "@cdf/certificate-vendor",
-  "version": "5.1.0",
+  "name": "@awssolutions/cdf-certificate-vendor",
+  "version": "0.0.0",
   "description": "CDF Certificate Vendor",
   "author": "Dean Hart",
   "scripts": {
@@ -14,11 +14,11 @@
     "bundle:deploy": "node ../../../infrastructure/bundle-package.js"
   },
   "dependencies": {
-    "@cdf/errors": "^4.0.0",
-    "@cdf/logger": "^4.0.0",
-    "@cdf/lambda-invoke": "^3.0.2",
-    "@cdf/assetlibrary-client": "^5.1.0",
-    "@cdf/config-inject": "^4.0.2",
+    "@awssolutions/cdf-errors": "^0.0.0",
+    "@awssolutions/cdf-logger": "^0.0.0",
+    "@awssolutions/cdf-lambda-invoke": "^0.0.0",
+    "@awssolutions/cdf-assetlibrary-client": "^0.0.0",
+    "@awssolutions/cdf-config-inject": "^0.0.0",
     "aws-sdk": "2.1048.0",
     "inversify": "6.0.1",
     "inversify-binding-decorators": "4.0.0",

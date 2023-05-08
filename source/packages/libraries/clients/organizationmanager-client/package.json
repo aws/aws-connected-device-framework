@@ -1,6 +1,6 @@
 {
-  "name": "@cdf/organizationmanager-client",
-  "version": "0.2.1",
+  "name": "@awssolutions/cdf-organizationmanager-client",
+  "version": "0.0.0",
   "description": "CDF Organization Manager Client",
   "author": "William Sia",
   "main": "dist/index.js",
@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@awssolutions/cdf-client-request-signer": "^0.0.0",
-    "@cdf/lambda-invoke": "^3.0.0",
+    "@awssolutions/cdf-lambda-invoke": "^0.0.0",
     "dotenv-flow": "~3.2.0",
     "http-errors": "~2.0.0",
     "inversify": "6.0.1",
@@ -29,7 +29,7 @@
     "winston-transport": "4.4.0"
   },
   "peerDependencies": {
-    "aws-sdk": "2.804.0"
+    "aws-sdk": "2.1048.0"
   },
   "devDependencies": {
     "@types/http-errors": "~2.0.1",
@@ -41,7 +41,7 @@
     "cz-customizable": "~6.3.0",
     "nyc": "15.1.0",
     "shx": "0.3.3",
-    "aws-sdk": "2.814.0",
+    "aws-sdk": "2.1048.0",
     "@types/jest": "26.0.23",
     "@typescript-eslint/eslint-plugin": "4.23.0",
     "@typescript-eslint/parser": "4.23.0",

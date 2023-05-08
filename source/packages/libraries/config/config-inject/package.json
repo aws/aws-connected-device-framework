@@ -1,6 +1,6 @@
 {
-  "name": "@cdf/config-inject",
-  "version": "4.0.2",
+  "name": "@awssolutions/cdf-config-inject",
+  "version": "0.0.0",
   "description": "this library load config from files and inject it into process.env to make it accessible as environment variables",
   "author": "Atul Bargaje <atulbar@amazon.com>",
   "main": "dist/index.js",
@@ -13,8 +13,8 @@
   },
   "dependencies": {
     "@awssolutions/cdf-environment-sanitizer": "^0.0.0",
-    "@cdf/errors": "^4.0.0",
-    "@cdf/logger": "^4.0.0",
+    "@awssolutions/cdf-errors": "^0.0.0",
+    "@awssolutions/cdf-logger": "^0.0.0",
     "dotenv-flow": "~3.2.0",
     "dotenv": "^8.2.0"
   },

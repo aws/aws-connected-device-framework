@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import { LAMBDAINVOKE_TYPES, LambdaInvokerService } from '@cdf/lambda-invoke';
+import { LAMBDAINVOKE_TYPES, LambdaInvokerService } from '@awssolutions/cdf-lambda-invoke';
 import { ContainerModule, decorate, injectable, interfaces } from 'inversify';
 import { CommandsApigwService } from '../client/commands.apigw.service';
 import { CommandsLambdaService } from '../client/commands.lambda.service';

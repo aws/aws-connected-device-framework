@@ -10,16 +10,16 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { assetLibraryContainerModule } from '@cdf/assetlibrary-client';
-import { assetLibraryHistoryContainerModule } from '@cdf/assetlibraryhistory-client';
-import { commandAndControlContainerModule } from '@cdf/commandandcontrol-client';
-import { commandsContainerModule } from '@cdf/commands-client';
-import '@cdf/config-inject';
-import { devicePatcherContainerModule } from '@cdf/device-patcher-client';
-import { greengrass2ProvisioningContainerModule } from '@cdf/greengrass2-provisioning-client';
-import { notificationsContainerModule } from '@cdf/notifications-client';
-import { organizationManagerContainerModule } from '@cdf/organizationmanager-client';
-import { provisioningContainerModule } from '@cdf/provisioning-client';
+import { assetLibraryContainerModule } from '@awssolutions/cdf-assetlibrary-client';
+import { assetLibraryHistoryContainerModule } from '@awssolutions/cdf-assetlibraryhistory-client';
+import { commandAndControlContainerModule } from '@awssolutions/cdf-commandandcontrol-client';
+import { commandsContainerModule } from '@awssolutions/cdf-commands-client';
+import '@awssolutions/cdf-config-inject';
+import { devicePatcherContainerModule } from '@awssolutions/cdf-device-patcher-client';
+import { greengrass2ProvisioningContainerModule } from '@awssolutions/cdf-greengrass2-provisioning-client';
+import { notificationsContainerModule } from '@awssolutions/cdf-notifications-client';
+import { organizationManagerContainerModule } from '@awssolutions/cdf-organizationmanager-client';
+import { provisioningContainerModule } from '@awssolutions/cdf-provisioning-client';
 import { Container } from 'inversify';
 import 'reflect-metadata';
 // Load everything needed to the Container

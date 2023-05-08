@@ -12,7 +12,7 @@
  *********************************************************************************************************************/
 
 import 'reflect-metadata';
-import '@cdf/config-inject';
+import '@awssolutions/cdf-config-inject';
 
 import { EventEmitter } from 'events';
 import { ContainerModule, decorate, injectable, interfaces } from 'inversify';

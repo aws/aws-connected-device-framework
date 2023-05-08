@@ -1,6 +1,6 @@
 {
-  "name": "@cdf/events-alerts",
-  "version": "3.0.3",
+  "name": "@awssolutions/cdf-events-alerts",
+  "version": "0.0.0",
   "description": "CDF Events (Alerts)",
   "author": "Dean Hart",
   "files": [
@@ -17,9 +17,9 @@
     "bundle:deploy": "node ../../../infrastructure/bundle-package.js"
   },
   "dependencies": {
-    "@cdf/errors": "^4.0.0",
-    "@cdf/logger": "^4.0.0",
-    "@cdf/config-inject": "^4.0.2",
+    "@awssolutions/cdf-errors": "^0.0.0",
+    "@awssolutions/cdf-logger": "^0.0.0",
+    "@awssolutions/cdf-config-inject": "^0.0.0",
     "@types/dot": "1.1.4",
     "amazon-dax-client": "1.2.7",
     "aws-sdk": "2.1048.0",

@@ -10,7 +10,12 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { OrganizationalUnitsService, OrganizationalUnitResource, ORGMANLIBRARY_CLIENT_TYPES, AccountsService } from '@cdf/organizationmanager-client';
+import {
+    OrganizationalUnitsService,
+    OrganizationalUnitResource,
+    ORGMANLIBRARY_CLIENT_TYPES,
+    AccountsService,
+} from '@awssolutions/cdf-organizationmanager-client';
 import { Before, setDefaultTimeout } from '@cucumber/cucumber';
 import { container } from '../di/inversify.config';
 

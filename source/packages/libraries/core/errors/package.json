@@ -1,6 +1,6 @@
 {
-  "name": "@cdf/errors",
-  "version": "4.0.0",
+  "name": "@awssolutions/cdf-errors",
+  "version": "0.0.0",
   "description": "Library for CDF base errors",
   "author": "Atul Bargaje",
   "main": "dist/index.js",

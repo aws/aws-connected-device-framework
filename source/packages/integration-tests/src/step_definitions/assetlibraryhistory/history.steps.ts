@@ -15,7 +15,7 @@ import {
     Events,
     EventsService,
     ObjectEventsRequest,
-} from '@cdf/assetlibraryhistory-client';
+} from '@awssolutions/cdf-assetlibraryhistory-client';
 import { DataTable, Then, When, setDefaultTimeout } from '@cucumber/cucumber';
 import { fail } from 'assert';
 import { expect, use } from 'chai';

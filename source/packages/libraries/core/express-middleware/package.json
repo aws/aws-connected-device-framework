@@ -1,6 +1,6 @@
 {
-  "name": "@cdf/express-middleware",
-  "version": "3.0.0",
+  "name": "@awssolutions/cdf-express-middleware",
+  "version": "0.0.0",
   "description": "REST API Express middleware",
   "author": "Dean Hart",
   "main": "dist/index.js",

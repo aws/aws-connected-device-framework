@@ -1,6 +1,6 @@
 {
-  "name": "@cdf/bulkcerts",
-  "version": "6.1.0",
+  "name": "@awssolutions/cdf-bulkcerts",
+  "version": "0.0.0",
   "description": "CDF Bulk Certificate Creation",
   "author": "Dean Hart",
   "files": [
@@ -20,10 +20,10 @@
     "bundle:deploy": "node ../../../infrastructure/bundle-package.js"
   },
   "dependencies": {
-    "@cdf/errors": "^4.0.0",
-    "@cdf/config-inject": "^4.0.2",
-    "@cdf/logger": "^4.0.0",
-    "@cdf/express-middleware": "^3.0.0",
+    "@awssolutions/cdf-errors": "^0.0.0",
+    "@awssolutions/cdf-config-inject": "^0.0.0",
+    "@awssolutions/cdf-logger": "^0.0.0",
+    "@awssolutions/cdf-express-middleware": "^0.0.0",
     "aws-sdk": "2.1048.0",
     "aws-serverless-express": "3.4.0",
     "body-parser": "1.20.1",
@@ -33,7 +33,7 @@
     "inversify-binding-decorators": "4.0.0",
     "inversify-express-utils": "6.4.3",
     "js-yaml": "4.1.0",
-    "jszip": "3.7.0",
+    "jszip": "3.10.1",
     "logform": "2.4.2",
     "ow": "0.23.0",
     "pem": "1.14.4",

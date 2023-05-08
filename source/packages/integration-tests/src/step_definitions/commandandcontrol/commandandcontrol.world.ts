@@ -1,5 +1,5 @@
 
-import { CommandResource } from '@cdf/commandandcontrol-client';
+import { CommandResource } from '@awssolutions/cdf-commandandcontrol-client';
 import { JobsTestClient } from './jobsTestClient';
 export interface CommandAndControlProvisioningWorld {
   lastCommand?: CommandResource;

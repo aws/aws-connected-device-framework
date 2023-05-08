@@ -11,12 +11,20 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import { Dictionary } from '@cdf/lambda-invoke';
-import { EventsourcesService, EventsService, SubscriptionsService, TargetsService } from '@cdf/notifications-client/dist';
-import { EventResource } from '@cdf/notifications-client/dist/client/events.model';
-import { EventSourceDetailResource } from '@cdf/notifications-client/dist/client/eventsources.model';
-import { SubscriptionResource, SubscriptionV2Resource } from '@cdf/notifications-client/dist/client/subscriptions.model';
-import { TargetResource } from '@cdf/notifications-client/dist/client/targets.model';
+import { Dictionary } from '@awssolutions/cdf-lambda-invoke';
+import {
+    EventsourcesService,
+    EventsService,
+    SubscriptionsService,
+    TargetsService,
+} from '@awssolutions/cdf-notifications-client/dist';
+import { EventResource } from '@awssolutions/cdf-notifications-client/dist/client/events.model';
+import { EventSourceDetailResource } from '@awssolutions/cdf-notifications-client/dist/client/eventsources.model';
+import {
+    SubscriptionResource,
+    SubscriptionV2Resource,
+} from '@awssolutions/cdf-notifications-client/dist/client/subscriptions.model';
+import { TargetResource } from '@awssolutions/cdf-notifications-client/dist/client/targets.model';
 import { DataTable } from '@cucumber/cucumber';
 import { AUTHORIZATION_TOKEN, buildModel } from '../common/common.steps';
 

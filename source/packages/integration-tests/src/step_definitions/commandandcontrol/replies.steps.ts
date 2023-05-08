@@ -17,7 +17,10 @@ import { setDefaultTimeout, DataTable, Then, When } from '@cucumber/cucumber';
 import axios from 'axios';
 
 import { container } from '../../di/inversify.config';
-import { COMMANDANDCONTROL_CLIENT_TYPES, MessagesService } from '@cdf/commandandcontrol-client';
+import {
+    COMMANDANDCONTROL_CLIENT_TYPES,
+    MessagesService,
+} from '@awssolutions/cdf-commandandcontrol-client';
 
 import {iot,mqtt,iotshadow, iotjobs} from 'aws-iot-device-sdk-v2';
 

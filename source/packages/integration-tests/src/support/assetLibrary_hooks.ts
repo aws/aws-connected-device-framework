@@ -21,7 +21,7 @@ import {
     RequestHeaders,
     TemplatesService,
     TypeResource,
-} from '@cdf/assetlibrary-client';
+} from '@awssolutions/cdf-assetlibrary-client';
 import { Before, setDefaultTimeout } from '@cucumber/cucumber';
 import { sign } from 'jsonwebtoken';
 import { container } from '../di/inversify.config';

@@ -11,8 +11,11 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import { EventsourcesService, NOTIFICATIONS_CLIENT_TYPES } from '@cdf/notifications-client/dist';
-import { EventSourceDetailResource } from '@cdf/notifications-client/dist/client/eventsources.model';
+import {
+    EventsourcesService,
+    NOTIFICATIONS_CLIENT_TYPES,
+} from '@awssolutions/cdf-notifications-client/dist';
+import { EventSourceDetailResource } from '@awssolutions/cdf-notifications-client/dist/client/eventsources.model';
 import { DataTable, Given, Then, When, setDefaultTimeout } from '@cucumber/cucumber';
 import { expect } from 'chai';
 import { container } from '../../di/inversify.config';

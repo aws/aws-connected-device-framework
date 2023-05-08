@@ -1,5 +1,10 @@
 import { DataTable, Then, When } from "@cucumber/cucumber";
-import { BulkComponentsService, BulkComponentsResource, ORGMANLIBRARY_CLIENT_TYPES, Manifest } from '@cdf/organizationmanager-client';
+import {
+    BulkComponentsService,
+    BulkComponentsResource,
+    ORGMANLIBRARY_CLIENT_TYPES,
+    Manifest,
+} from '@awssolutions/cdf-organizationmanager-client';
 import { container } from "../../di/inversify.config";
 import { world, getAdditionalHeaders } from "./organizationalManager.world";
 import { expect } from "chai";

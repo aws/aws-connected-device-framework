@@ -1,6 +1,6 @@
 {
-  "name": "@cdf/assetlibrary-export",
-  "version": "3.1.4",
+  "name": "@awssolutions/cdf-assetlibrary-export",
+  "version": "0.0.0",
   "description": "CDF Asset Library Export Service",
   "author": "Hassan Khokhar",
   "files": [
@@ -18,8 +18,8 @@
     "bundle:deploy": "node ../../../infrastructure/bundle-package.js"
   },
   "dependencies": {
-    "@cdf/logger": "^4.0.0",
-    "@cdf/config-inject": "^4.0.2",
+    "@awssolutions/cdf-logger": "^0.0.0",
+    "@awssolutions/cdf-config-inject": "^0.0.0",
     "aws-sdk": "2.1048.0",
     "gremlin": "3.4.8",
     "inversify": "6.0.1",

@@ -11,9 +11,13 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import { BulkDevicesResource, Device20Resource, DevicesService } from '@cdf/assetlibrary-client';
-import { ASSETLIBRARY_CLIENT_TYPES } from '@cdf/assetlibrary-client/dist';
-import { Dictionary } from '@cdf/lambda-invoke';
+import {
+    BulkDevicesResource,
+    Device20Resource,
+    DevicesService,
+} from '@awssolutions/cdf-assetlibrary-client';
+import { ASSETLIBRARY_CLIENT_TYPES } from '@awssolutions/cdf-assetlibrary-client/dist';
+import { Dictionary } from '@awssolutions/cdf-lambda-invoke';
 import { DataTable, Then, When, setDefaultTimeout } from '@cucumber/cucumber';
 import { fail } from 'assert';
 import { expect, use } from 'chai';

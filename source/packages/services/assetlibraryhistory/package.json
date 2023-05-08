@@ -1,6 +1,6 @@
 {
-  "name": "@cdf/assetlibrary-history",
-  "version": "5.0.1",
+  "name": "@awssolutions/cdf-assetlibrary-history",
+  "version": "0.0.0",
   "description": "CDF Asset Library History",
   "author": "Dean Hart",
   "files": [
@@ -21,10 +21,10 @@
   },
   "dependencies": {
     "@awssolutions/cdf-lambda-zip": "^0.0.0",
-    "@cdf/errors": "^4.0.0",
-    "@cdf/config-inject": "^4.0.2",
-    "@cdf/logger": "^4.0.0",
-    "@cdf/express-middleware": "^3.0.0",
+    "@awssolutions/cdf-errors": "^0.0.0",
+    "@awssolutions/cdf-config-inject": "^0.0.0",
+    "@awssolutions/cdf-logger": "^0.0.0",
+    "@awssolutions/cdf-express-middleware": "^0.0.0",
     "atob": "2.1.2",
     "aws-sdk": "2.1048.0",
     "body-parser": "1.20.1",

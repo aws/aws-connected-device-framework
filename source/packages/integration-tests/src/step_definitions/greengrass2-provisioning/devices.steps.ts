@@ -16,8 +16,12 @@ import { fail } from 'assert';
 import { expect, use } from 'chai';
 import { Given, setDefaultTimeout, DataTable, Then, When } from '@cucumber/cucumber';
 import {
-    Device, DevicesService, DeviceTask, GREENGRASS2_PROVISIONING_CLIENT_TYPES, NewDeviceTask
-} from '@cdf/greengrass2-provisioning-client';
+    Device,
+    DevicesService,
+    DeviceTask,
+    GREENGRASS2_PROVISIONING_CLIENT_TYPES,
+    NewDeviceTask,
+} from '@awssolutions/cdf-greengrass2-provisioning-client';
 
 import { container } from '../../di/inversify.config';
 import { buildModel, validateExpectedAttributes } from '../common/common.steps';

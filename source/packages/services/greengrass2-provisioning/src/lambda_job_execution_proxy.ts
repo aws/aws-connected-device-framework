@@ -15,7 +15,7 @@ import { CoresService } from './cores/cores.service';
 import { TYPES } from './di/types';
 import { logger } from './utils/logger.util';
 import { DeploymentTasksService } from './deploymentTasks/deploymentTasks.service';
-import { CDFEventPublisher, EVENT_PUBLISHER_TYPES } from '@cdf/event-publisher'
+import { CDFEventPublisher, EVENT_PUBLISHER_TYPES } from '@awssolutions/cdf-event-publisher';
 import { CoreTemplateUpdatedEvent, CoreTemplateUpdatedPayload } from './cores/cores.models';
 import { DeploymentsService } from './deployments/deployments.service';
 

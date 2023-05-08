@@ -2,61 +2,287 @@
  * This configuration file specifies NPM dependency version selections that affect all projects
  * in a Rush repo.  For full documentation, please see https://rushjs.io
  */
-{
-  "$schema": "https://developer.microsoft.com/json-schemas/rush/v5/common-versions.schema.json",
-
-  /**
-   * A table that specifies a "preferred version" for a given NPM package.  This feature is typically used
-   * to hold back an indirect dependency to a specific older version, or to reduce duplication of indirect dependencies.
-   *
-   * The "preferredVersions" value can be any SemVer range specifier (e.g. "~1.2.3").  Rush injects these values into
-   * the "dependencies" field of the top-level common/temp/package.json, which influences how the package manager
-   * will calculate versions.  The specific effect depends on your package manager.  Generally it will have no
-   * effect on an incompatible or already constrained SemVer range.  If you are using PNPM, similar effects can be
-   * achieved using the pnpmfile.js hook.  See the Rush documentation for more details.
-   *
-   * After modifying this field, it's recommended to run "rush update --full" so that the package manager
-   * will recalculate all version selections.
-   */
-  "preferredVersions": {
+ {
+    "$schema": "https://developer.microsoft.com/json-schemas/rush/v5/common-versions.schema.json",
+  
     /**
-     * When someone asks for "^1.0.0" make sure they get "1.2.3" when working in this repo,
-     * instead of the latest version.
+     * A table that specifies a "preferred version" for a given NPM package.  This feature is typically used
+     * to hold back an indirect dependency to a specific older version, or to reduce duplication of indirect dependencies.
+     *
+     * The "preferredVersions" value can be any SemVer range specifier (e.g. "~1.2.3").  Rush injects these values into
+     * the "dependencies" field of the top-level common/temp/package.json, which influences how the package manager
+     * will calculate versions.  The specific effect depends on your package manager.  Generally it will have no
+     * effect on an incompatible or already constrained SemVer range.  If you are using PNPM, similar effects can be
+     * achieved using the pnpmfile.js hook.  See the Rush documentation for more details.
+     *
+     * After modifying this field, it's recommended to run "rush update --full" so that the package manager
+     * will recalculate all version selections.
      */
-    "aws-sdk": "2.1048.0"
-  },
-
-  /**
-   * When set to true, for all projects in the repo, all dependencies will be automatically added as preferredVersions,
-   * except in cases where different projects specify different version ranges for a given dependency.  For older
-   * package managers, this tended to reduce duplication of indirect dependencies.  However, it can sometimes cause
-   * trouble for indirect dependencies with incompatible peerDependencies ranges.
-   *
-   * The default value is true.  If you're encountering installation errors related to peer dependencies,
-   * it's recommended to set this to false.
-   *
-   * After modifying this field, it's recommended to run "rush update --full" so that the package manager
-   * will recalculate all version selections.
-   */
-  // "implicitlyPreferredVersions": false,
-
-  /**
-   * The "rush check" command can be used to enforce that every project in the repo must specify
-   * the same SemVer range for a given dependency.  However, sometimes exceptions are needed.
-   * The allowedAlternativeVersions table allows you to list other SemVer ranges that will be
-   * accepted by "rush check" for a given dependency.
-   *
-   * IMPORTANT: THIS TABLE IS FOR *ADDITIONAL* VERSION RANGES THAT ARE ALTERNATIVES TO THE
-   * USUAL VERSION (WHICH IS INFERRED BY LOOKING AT ALL PROJECTS IN THE REPO).
-   * This design avoids unnecessary churn in this file.
-   */
-  "allowedAlternativeVersions": {
+    "preferredVersions": {
+      /**
+       * When someone asks for "^1.0.0" make sure they get "1.2.3" when working in this repo,
+       * instead of the latest version.
+       */
+      "aws-sdk": "2.1048.0"
+    },
+  
     /**
-     * For example, allow some projects to use an older TypeScript compiler
-     * (in addition to whatever "usual" version is being used by other projects in the repo):
+     * When set to true, for all projects in the repo, all dependencies will be automatically added as preferredVersions,
+     * except in cases where different projects specify different version ranges for a given dependency.  For older
+     * package managers, this tended to reduce duplication of indirect dependencies.  However, it can sometimes cause
+     * trouble for indirect dependencies with incompatible peerDependencies ranges.
+     *
+     * The default value is true.  If you're encountering installation errors related to peer dependencies,
+     * it's recommended to set this to false.
+     *
+     * After modifying this field, it's recommended to run "rush update --full" so that the package manager
+     * will recalculate all version selections.
      */
-    // "typescript": [
-    //   "~2.4.0"
-    // ]
+    // "implicitlyPreferredVersions": false,
+  
+    /**
+     * The "rush check" command can be used to enforce that every project in the repo must specify
+     * the same SemVer range for a given dependency.  However, sometimes exceptions are needed.
+     * The allowedAlternativeVersions table allows you to list other SemVer ranges that will be
+     * accepted by "rush check" for a given dependency.
+     *
+     * IMPORTANT: THIS TABLE IS FOR *ADDITIONAL* VERSION RANGES THAT ARE ALTERNATIVES TO THE
+     * USUAL VERSION (WHICH IS INFERRED BY LOOKING AT ALL PROJECTS IN THE REPO).
+     * This design avoids unnecessary churn in this file.
+     */
+    "allowedAlternativeVersions": {
+      /**
+       * For example, allow some projects to use an older TypeScript compiler
+       * (in addition to whatever "usual" version is being used by other projects in the repo):
+       */
+      "@types/jest": [
+        "^29.2.4",
+        "26.0.23",
+        "26.0.18"
+      ],
+      "@types/node": [
+        "10.17.27",
+        "16.11.7",
+        "^18.11.18",
+        "14.6.1"
+      ],
+      "@typescript-eslint/eslint-plugin": [
+        "4.23.0",
+        "4.9.1"
+      ],
+      "@typescript-eslint/parser": [
+        "4.23.0",
+        "4.9.1"
+      ],
+      "eslint": [
+        "7.26.0",
+        "7.15.0"
+      ],
+      "jest": [
+        "^29.3.1",
+        "26.6.3"
+      ],
+      "jsonwebtoken": [
+        "8.5.0",
+        "9.0.0"
+      ],
+      "ts-jest": [
+        "^29.0.3",
+        "26.5.6",
+        "26.4.4"
+      ],
+      "typescript": [
+        "~4.9.4",
+        "4.2.4"
+      ],
+      "cors": [
+        "2.8.5",
+        "~2.8.5"
+      ],
+      "dotenv-flow": [
+        "~3.2.0",
+        "3.2.0"
+      ],
+      "gremlin": [
+        "3.4.12",
+        "3.4.8"
+      ],
+      "inversify": [
+        "6.0.1",
+        "5.1.1"
+      ],
+      "inversify-express-utils": [
+        "6.4.3",
+        "6.3.2"
+      ],
+      "js-yaml": [
+        "4.1.0",
+        "3.13.1",
+        "~4.1.0"
+      ],
+      "just-clone": [
+        "3.2.1",
+        "~5.0.1",
+        "~3.2.1"
+      ],
+      "logform": [
+        "2.4.2",
+        "2.2.0"
+      ],
+      "mime": [
+        "2.5.2",
+        "1.6.0"
+      ],
+      "ow": [
+        "0.23.0",
+        "0.15.0",
+        "~0.28.1",
+        "0.17.0"
+      ],
+      "readable-stream": [
+        "3.6.0",
+        "2.3.6"
+      ],
+      "serverless-http": [
+        "2.7.0",
+        "2.3.1",
+        "~2.7.0"
+      ],
+      "winston": [
+        "3.3.3",
+        "3.2.1"
+      ],
+      "winston-transport": [
+        "4.4.0",
+        "4.3.0"
+      ],
+      "@rushstack/eslint-config": [
+        "2.3.4",
+        "2.3.1"
+      ],
+      "@types/cors": [
+        "2.8.10",
+        "2.8.8"
+      ],
+      "@types/dotenv-flow": [
+        "~3.2.0",
+        "3.2.0"
+      ],
+      "@types/express-serve-static-core": [
+        "4.17.19",
+        "4.17.16"
+      ],
+      "@types/jsonwebtoken": [
+        "8.5.0",
+        "9.0.0"
+      ],
+      "jest-mock-extended": [
+        "1.0.14",
+        "1.0.10"
+      ],
+      "http-errors": [
+        "~2.0.0",
+        "1.8.0"
+      ],
+      "superagent": [
+        "7.1.1",
+        "6.1.0"
+      ],
+      "@types/http-errors": [
+        "~2.0.1",
+        "1.8.0"
+      ],
+      "@types/superagent": [
+        "4.1.15",
+        "4.1.16",
+        "4.1.10"
+      ],
+      "shortid": [
+        "2.2.16",
+        "~2.2.16",
+        "2.2.15"
+      ],
+      "@types/shortid": [
+        "0.0.29",
+        "~0.0.29"
+      ],
+      "axios": [
+        "0.21.2",
+        "0.25.0"
+      ],
+      "@types/aws-lambda": [
+        "8.10.65",
+        "8.10.89",
+        "8.10.84",
+        "~8.10.83"
+      ],
+      "aws-serverless-express": [
+        "3.4.0",
+        "3.3.6"
+      ],
+      "@types/aws-serverless-express": [
+        "3.3.3",
+        "3.3.2"
+      ],
+      "@awssolutions/cdf-thing-list-builder": [
+        "^1.0.1-0",
+        "~1.0.1-0"
+      ],
+      "supports-color": [
+        "8.0.0",
+        "~8.0.0"
+      ],
+      "@types/js-yaml": [
+        "3.12.5",
+        "4.0.5",
+        "~4.0.3"
+      ],
+      "@aws-sdk/client-iot": [
+        "~3.37.0",
+        "3.38.0",
+        "~3.53.0"
+      ],
+      "aws-lambda": [
+        "1.0.6",
+        "~1.0.6"
+      ],
+      "yaml": [
+        "~1.10.2",
+        "1.10.2"
+      ],
+      "jest-mock-console": [
+        "1.0.1",
+        "^1.0.1"
+      ],
+      "@aws-sdk/client-greengrassv2": [
+        "3.38.0",
+        "~3.38.0"
+      ],
+      "@aws-sdk/client-lambda": [
+        "3.38.0",
+        "~3.53.0"
+      ],
+      "@aws-sdk/client-s3": [
+        "3.38.0",
+        "~3.53.0",
+        "~3.38.0"
+      ],
+      "@aws-sdk/lib-storage": [
+        "3.38.0",
+        "~3.53.0"
+      ],
+      "@aws-sdk/client-ec2": [
+        "~3.53.0",
+        "~3.38.0"
+      ],
+      "@aws-sdk/client-cloudformation": [
+        "~3.53.0",
+        "~3.38.0"
+      ],
+      "json-to-pretty-yaml": [
+        "1.2.2",
+        "~1.2.2"
+      ]
+    }
   }
-}
+  

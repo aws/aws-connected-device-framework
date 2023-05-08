@@ -63,247 +63,247 @@
     //   // "versionPolicyName": ""
     // },
     {
-      "packageName": "@cdf/assetlibrary-client",
+      "packageName": "@awssolutions/cdf-assetlibrary-client",
       "projectFolder": "packages/libraries/clients/assetlibrary-client",
       "reviewCategory": "library",
       "versionPolicyName": "external"
     },
     {
-      "packageName": "@cdf/assetlibraryhistory-client",
+      "packageName": "@awssolutions/cdf-assetlibraryhistory-client",
       "projectFolder": "packages/libraries/clients/assetlibraryhistory-client",
       "reviewCategory": "library",
       "versionPolicyName": "external"
     },
     {
-      "packageName": "@cdf/bulkcerts-client",
+      "packageName": "@awssolutions/cdf-bulkcerts-client",
       "projectFolder": "packages/libraries/clients/bulkcerts-client",
       "reviewCategory": "library",
       "versionPolicyName": "external"
     },
     {
-      "packageName": "@cdf/commands-client",
+      "packageName": "@awssolutions/cdf-commands-client",
       "projectFolder": "packages/libraries/clients/commands-client",
       "reviewCategory": "library",
       "versionPolicyName": "external"
     },
     {
-      "packageName": "@cdf/commandandcontrol-client",
+      "packageName": "@awssolutions/cdf-commandandcontrol-client",
       "projectFolder": "packages/libraries/clients/commandandcontrol-client",
       "reviewCategory": "library",
       "versionPolicyName": "external"
     },
     {
-      "packageName": "@cdf/device-patcher-client",
+      "packageName": "@awssolutions/cdf-device-patcher-client",
       "projectFolder": "packages/libraries/clients/device-patcher-client",
       "reviewCategory": "library",
       "versionPolicyName": "external"
     },
     {
-      "packageName": "@cdf/greengrass2-provisioning-client",
+      "packageName": "@awssolutions/cdf-greengrass2-provisioning-client",
       "projectFolder": "packages/libraries/clients/greengrass2-provisioning-client",
       "reviewCategory": "library",
       "versionPolicyName": "external"
     },
     {
-      "packageName": "@cdf/organizationmanager-client",
+      "packageName": "@awssolutions/cdf-organizationmanager-client",
       "projectFolder": "packages/libraries/clients/organizationmanager-client",
       "reviewCategory": "library",
       "versionPolicyName": "external"
     },
     {
-      "packageName": "@cdf/notifications-client",
+      "packageName": "@awssolutions/cdf-notifications-client",
       "projectFolder": "packages/libraries/clients/notifications-client",
       "reviewCategory": "library",
       "versionPolicyName": "external"
     },
     {
-      "packageName": "@cdf/provisioning-client",
+      "packageName": "@awssolutions/cdf-provisioning-client",
       "projectFolder": "packages/libraries/clients/provisioning-client",
       "reviewCategory": "library",
       "versionPolicyName": "external"
     },
     {
-      "packageName": "@cdf/config-inject",
+      "packageName": "@awssolutions/cdf-config-inject",
       "projectFolder": "packages/libraries/config/config-inject",
       "reviewCategory": "library",
       "versionPolicyName": "external"
     },
     {
-      "packageName": "@cdf/deployment-helper",
+      "packageName": "@awssolutions/cdf-deployment-helper",
       "projectFolder": "packages/libraries/core/deployment-helper",
       "reviewCategory": "library",
       "versionPolicyName": "external"
     },
     {
-      "packageName": "@cdf/errors",
+      "packageName": "@awssolutions/cdf-errors",
       "projectFolder": "packages/libraries/core/errors",
       "reviewCategory": "library",
       "versionPolicyName": "external"
     },
     {
-      "packageName": "@cdf/event-publisher",
+      "packageName": "@awssolutions/cdf-event-publisher",
       "projectFolder": "packages/libraries/core/event-publisher",
       "reviewCategory": "library",
       "versionPolicyName": "external"
     },
     {
-      "packageName": "@cdf/express-middleware",
+      "packageName": "@awssolutions/cdf-express-middleware",
       "projectFolder": "packages/libraries/core/express-middleware",
       "reviewCategory": "library",
       "versionPolicyName": "external"
     },
     {
-      "packageName": "@cdf/lambda-invoke",
+      "packageName": "@awssolutions/cdf-lambda-invoke",
       "projectFolder": "packages/libraries/core/lambda-invoke",
       "reviewCategory": "library",
       "versionPolicyName": "external"
     },
     {
-      "packageName": "@cdf/logger",
+      "packageName": "@awssolutions/cdf-logger",
       "projectFolder": "packages/libraries/core/logger",
       "reviewCategory": "library",
       "versionPolicyName": "external"
     },
     {
-      "packageName": "@cdf/thing-list-builder",
+      "packageName": "@awssolutions/cdf-thing-list-builder",
       "projectFolder": "packages/libraries/core/thing-list-builder",
       "reviewCategory": "library",
       "versionPolicyName": "internal"
     },
     {
-      "packageName": "@cdf/device-simulator-base",
+      "packageName": "@awssolutions/cdf-device-simulator-base",
       "projectFolder": "packages/libraries/simulator/device-simulator-base",
       "reviewCategory": "library",
       "versionPolicyName": "external"
     },
     {
-      "packageName": "@cdf/integration-tests",
+      "packageName": "@awssolutions/cdf-integration-tests",
       "projectFolder": "packages/integration-tests",
       "reviewCategory": "tests",
       "versionPolicyName": "external"
     },
     {
-      "packageName": "@cdf/assetlibrary",
+      "packageName": "@awssolutions/cdf-assetlibrary",
       "projectFolder": "packages/services/assetlibrary",
       "reviewCategory": "production",
       "versionPolicyName": "internal"
     },
     {
-      "packageName": "@cdf/assetlibrary-export",
+      "packageName": "@awssolutions/cdf-assetlibrary-export",
       "projectFolder": "packages/services/assetlibrary-export",
       "reviewCategory": "production",
       "versionPolicyName": "internal"
     },
     {
-      "packageName": "@cdf/assetlibrary-history",
+      "packageName": "@awssolutions/cdf-assetlibrary-history",
       "projectFolder": "packages/services/assetlibraryhistory",
       "reviewCategory": "production",
       "versionPolicyName": "internal"
     },
     {
-      "packageName": "@cdf/auth-devicecert",
+      "packageName": "@awssolutions/cdf-auth-devicecert",
       "projectFolder": "packages/services/auth-devicecert",
       "reviewCategory": "production",
       "versionPolicyName": "internal"
     },
     {
-      "packageName": "@cdf/auth-jwt",
+      "packageName": "@awssolutions/cdf-auth-jwt",
       "projectFolder": "packages/services/auth-jwt",
       "reviewCategory": "production",
       "versionPolicyName": "internal"
     },
     {
-      "packageName": "@cdf/bulkcerts",
+      "packageName": "@awssolutions/cdf-bulkcerts",
       "projectFolder": "packages/services/bulkcerts",
       "reviewCategory": "production",
       "versionPolicyName": "external"
     },
     {
-      "packageName": "@cdf/certificate-activator",
+      "packageName": "@awssolutions/cdf-certificate-activator",
       "projectFolder": "packages/services/certificateactivator",
       "reviewCategory": "production",
       "versionPolicyName": "internal"
     },
     {
-      "packageName": "@cdf/certificate-vendor",
+      "packageName": "@awssolutions/cdf-certificate-vendor",
       "projectFolder": "packages/services/certificatevendor",
       "reviewCategory": "production",
       "versionPolicyName": "internal"
     },
     {
-      "packageName": "@cdf/commands",
+      "packageName": "@awssolutions/cdf-commands",
       "projectFolder": "packages/services/commands",
       "reviewCategory": "production",
       "versionPolicyName": "internal"
     },
     {
-      "packageName": "@cdf/command-and-control",
+      "packageName": "@awssolutions/cdf-command-and-control",
       "projectFolder": "packages/services/command-and-control",
       "reviewCategory": "production",
       "versionPolicyName": "external"
     },
     {
-      "packageName": "@cdf/device-monitoring",
+      "packageName": "@awssolutions/cdf-device-monitoring",
       "projectFolder": "packages/services/device-monitoring",
       "reviewCategory": "production",
       "versionPolicyName": "external"
     },
     {
-      "packageName": "@cdf/device-patcher",
+      "packageName": "@awssolutions/cdf-device-patcher",
       "projectFolder": "packages/services/device-patcher",
       "reviewCategory": "production",
       "versionPolicyName": "external"
     },
     {
-      "packageName": "@cdf/events-alerts",
+      "packageName": "@awssolutions/cdf-events-alerts",
       "projectFolder": "packages/services/events-alerts",
       "reviewCategory": "production",
       "versionPolicyName": "external"
     },
     {
-      "packageName": "@cdf/events-processor",
+      "packageName": "@awssolutions/cdf-events-processor",
       "projectFolder": "packages/services/events-processor",
       "reviewCategory": "production",
       "versionPolicyName": "external"
     },
     {
-      "packageName": "@cdf/greengrass2-provisioning",
+      "packageName": "@awssolutions/cdf-greengrass2-provisioning",
       "projectFolder": "packages/services/greengrass2-provisioning",
       "reviewCategory": "production",
       "versionPolicyName": "external"
     },
     {
-      "packageName": "@cdf/greengrass2-installer-config-generators",
+      "packageName": "@awssolutions/cdf-greengrass2-installer-config-generators",
       "projectFolder": "packages/services/greengrass2-installer-config-generators",
       "reviewCategory": "production",
       "versionPolicyName": "external"
     },
     {
-      "packageName": "@cdf/installer",
+      "packageName": "@awssolutions/cdf-installer",
       "projectFolder": "packages/services/installer",
       "reviewCategory": "production",
       "versionPolicyName": "internal"
     },
     {
-      "packageName": "@cdf/organization-manager",
+      "packageName": "@awssolutions/cdf-organization-manager",
       "projectFolder": "packages/services/organization-manager",
       "reviewCategory": "production",
       "versionPolicyName": "external"
     },
     {
-      "packageName": "@cdf/simulation-launcher",
+      "packageName": "@awssolutions/cdf-simulation-launcher",
       "projectFolder": "packages/services/simulation-launcher",
       "reviewCategory": "production",
       "versionPolicyName": "internal"
     },
     {
-      "packageName": "@cdf/simulation-manager",
+      "packageName": "@awssolutions/cdf-simulation-manager",
       "projectFolder": "packages/services/simulation-manager",
       "reviewCategory": "production",
       "versionPolicyName": "internal"
     },
     {
-      "packageName": "@cdf/provisioning",
+      "packageName": "@awssolutions/cdf-provisioning",
       "projectFolder": "packages/services/provisioning",
       "reviewCategory": "production",
       "versionPolicyName": "external"

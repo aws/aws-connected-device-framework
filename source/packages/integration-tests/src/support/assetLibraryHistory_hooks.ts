@@ -19,7 +19,7 @@ import {
     TypeResource,
     Group10Resource,
     ASSETLIBRARY_CLIENT_TYPES,
-} from '@cdf/assetlibrary-client/dist';
+} from '@awssolutions/cdf-assetlibrary-client/dist';
 import {container} from '../di/inversify.config';
 import {sign} from 'jsonwebtoken';
 import {Dictionary} from '../../../libraries/core/lambda-invoke/src';

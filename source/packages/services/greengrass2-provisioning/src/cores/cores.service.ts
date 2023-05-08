@@ -25,8 +25,11 @@ import {
 } from '@aws-sdk/client-iot';
 import { InvokeCommand, LambdaClient } from '@aws-sdk/client-lambda';
 import {
-    PROVISIONING_CLIENT_TYPES, ProvisionThingRequest, ProvisionThingResponse, ThingsService
-} from '@cdf/provisioning-client';
+    PROVISIONING_CLIENT_TYPES,
+    ProvisionThingRequest,
+    ProvisionThingResponse,
+    ThingsService,
+} from '@awssolutions/cdf-provisioning-client';
 
 import { CoreTasksDao } from '../coreTasks/coreTasks.dao';
 import { CoreTaskItem } from '../coreTasks/coreTasks.models';
@@ -36,7 +39,7 @@ import { S3Utils } from '../utils/s3.util';
 import { CoreListPaginationKey, CoresDao } from './cores.dao';
 import { ConfigGeneratorEvent, CoreCreatedEvent, CoreCreatedPayload, CoreDeletedEvent, CoreDeletedPayload, CoreItem, FailedCoreDeployment } from './cores.models';
 
-import { CDFEventPublisher, EVENT_PUBLISHER_TYPES } from '@cdf/event-publisher'
+import { CDFEventPublisher, EVENT_PUBLISHER_TYPES } from '@awssolutions/cdf-event-publisher';
 import { DeploymentTaskListPaginationKey, DeploymentTasksDao } from '../deploymentTasks/deploymentTasks.dao';
 import { Deployment } from '../deployments/deployments.models';
 

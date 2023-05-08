@@ -11,8 +11,11 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import { COMMANDANDCONTROL_CLIENT_TYPES, CommandsService } from '@cdf/commandandcontrol-client';
-import { Dictionary } from '@cdf/lambda-invoke';
+import {
+    COMMANDANDCONTROL_CLIENT_TYPES,
+    CommandsService,
+} from '@awssolutions/cdf-commandandcontrol-client';
+import { Dictionary } from '@awssolutions/cdf-lambda-invoke';
 import { Before, setDefaultTimeout } from '@cucumber/cucumber';
 import fs from 'fs';
 import os from 'os';

@@ -16,7 +16,7 @@ import { Application, NextFunction, Request, Response } from 'express';
 import expressVersionRequest from 'express-version-request';
 import { InversifyExpressServer } from 'inversify-express-utils';
 
-import { normalisePath } from '@cdf/express-middleware';
+import { normalisePath } from '@awssolutions/cdf-express-middleware';
 
 import { logger } from './utils/logger.util';
 

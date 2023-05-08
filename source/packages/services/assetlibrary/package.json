@@ -1,6 +1,6 @@
 {
-  "name": "@cdf/assetlibrary",
-  "version": "6.1.0",
+  "name": "@awssolutions/cdf-assetlibrary",
+  "version": "0.0.0",
   "description": "CDF Asset Library",
   "author": "Dean Hart",
   "files": [
@@ -21,10 +21,10 @@
     "bundle:deploy": "node ../../../infrastructure/bundle-package.js"
   },
   "dependencies": {
-    "@cdf/errors": "^4.0.0",
-    "@cdf/logger": "^4.0.0",
-    "@cdf/config-inject": "^4.0.2",
-    "@cdf/express-middleware": "^3.0.0",
+    "@awssolutions/cdf-errors": "^0.0.0",
+    "@awssolutions/cdf-logger": "^0.0.0",
+    "@awssolutions/cdf-config-inject": "^0.0.0",
+    "@awssolutions/cdf-express-middleware": "^0.0.0",
     "ajv": "6.12.3",
     "async-local-storage": "2.3.1",
     "aws-sdk": "2.1048.0",

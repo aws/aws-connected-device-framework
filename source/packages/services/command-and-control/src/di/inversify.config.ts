@@ -11,13 +11,13 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import 'reflect-metadata';
-import '@cdf/config-inject'
+import '@awssolutions/cdf-config-inject';
 import AWS from 'aws-sdk';
 // import AWSXRay from 'aws-xray-sdk-core';
 import { Container, decorate, injectable, interfaces } from 'inversify';
-import { assetLibraryContainerModule } from '@cdf/assetlibrary-client';
-import { provisioningContainerModule } from '@cdf/provisioning-client';
-import { thingListBuilderContainerModule } from '@cdf/thing-list-builder';
+import { assetLibraryContainerModule } from '@awssolutions/cdf-assetlibrary-client';
+import { provisioningContainerModule } from '@awssolutions/cdf-provisioning-client';
+import { thingListBuilderContainerModule } from '@awssolutions/cdf-thing-list-builder';
 import { CommandsAssembler } from '../commands/commands.assembler';
 import { CommandsDao } from '../commands/commands.dao';
 import { CommandsService } from '../commands/commands.service';

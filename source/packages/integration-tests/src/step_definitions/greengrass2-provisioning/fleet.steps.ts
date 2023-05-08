@@ -15,16 +15,14 @@ import 'reflect-metadata';
 import { fail } from 'assert';
 import { use } from 'chai';
 import { setDefaultTimeout, DataTable, Then } from '@cucumber/cucumber';
-import {
-    GREENGRASS2_PROVISIONING_CLIENT_TYPES
-} from '@cdf/greengrass2-provisioning-client';
+import { GREENGRASS2_PROVISIONING_CLIENT_TYPES } from '@awssolutions/cdf-greengrass2-provisioning-client';
 
 import { container } from '../../di/inversify.config';
 import { getAdditionalHeaders } from '../notifications/notifications.utils';
 import { world } from './greengrass2.world';
 
 import chai_string = require('chai-string');
-import { FleetService } from '@cdf/greengrass2-provisioning-client';
+import { FleetService } from '@awssolutions/cdf-greengrass2-provisioning-client';
 import { validateExpectedAttributes } from '../common/common.steps';
 use(chai_string);
 

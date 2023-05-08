@@ -13,7 +13,7 @@
 
 import 'reflect-metadata';
 import { Before, Given, setDefaultTimeout, When, Then } from '@cucumber/cucumber';
-import { CertificatesService, CertificateBatch } from '@cdf/provisioning-client';
+import { CertificatesService, CertificateBatch } from '@awssolutions/cdf-provisioning-client';
 import chai_string = require('chai-string');
 import {expect, use} from 'chai';
 import { fail } from 'assert';

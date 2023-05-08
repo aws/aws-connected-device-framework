@@ -13,7 +13,11 @@
 import { injectable, inject } from 'inversify';
 import {logger} from '../utils/logger';
 import ow from 'ow';
-import { DevicesService, Device10Resource, ASSETLIBRARY_CLIENT_TYPES } from '@cdf/assetlibrary-client';
+import {
+    DevicesService,
+    Device10Resource,
+    ASSETLIBRARY_CLIENT_TYPES,
+} from '@awssolutions/cdf-assetlibrary-client';
 import { RegistryManager } from './registry.interfaces';
 
 @injectable()

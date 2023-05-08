@@ -1,6 +1,6 @@
 {
-  "name": "@cdf/command-and-control",
-  "version": "1.0.1",
+  "name": "@awssolutions/cdf-command-and-control",
+  "version": "0.0.0",
   "description": "CDF Command & Control",
   "author": "Dean Hart",
   "files": [
@@ -21,14 +21,14 @@
     "bundle:deploy": "node ../../../infrastructure/bundle-package.js"
   },
   "dependencies": {
-    "@cdf/assetlibrary-client": "^5.1.0",
-    "@cdf/config-inject": "^4.0.2",
-    "@cdf/errors": "^4.0.0",
-    "@cdf/express-middleware": "^3.0.0",
-    "@cdf/lambda-invoke": "^3.0.0",
-    "@cdf/logger": "^4.0.0",
-    "@cdf/provisioning-client": "^5.2.0",
-    "@cdf/thing-list-builder": "^1.1.2",
+    "@awssolutions/cdf-assetlibrary-client": "^0.0.0",
+    "@awssolutions/cdf-config-inject": "^0.0.0",
+    "@awssolutions/cdf-errors": "^0.0.0",
+    "@awssolutions/cdf-express-middleware": "^0.0.0",
+    "@awssolutions/cdf-lambda-invoke": "^0.0.0",
+    "@awssolutions/cdf-logger": "^0.0.0",
+    "@awssolutions/cdf-provisioning-client": "^0.0.0",
+    "@awssolutions/cdf-thing-list-builder": "^0.0.0",
     "ajv": "6.12.3",
     "aws-sdk": "2.1048.0",
     "body-parser": "1.20.1",

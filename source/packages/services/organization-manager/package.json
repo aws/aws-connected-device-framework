@@ -1,6 +1,6 @@
 {
-  "name": "@cdf/organization-manager",
-  "version": "0.1.1",
+  "name": "@awssolutions/cdf-organization-manager",
+  "version": "0.0.0",
   "description": "This module associates cdf components with organizational units and uses this association to create control-tower-customization manifest file",
   "author": "William Sia",
   "files": [
@@ -22,12 +22,12 @@
     "bundle:deploy": "node ../../../infrastructure/bundle-package.js"
   },
   "dependencies": {
-    "@cdf/errors": "^4.0.0",
-    "@cdf/logger": "^4.0.0",
-    "@cdf/lambda-invoke": "^3.0.0",
-    "@cdf/config-inject": "^4.0.0",
-    "@cdf/express-middleware": "^3.0.0",
-    "aws-sdk": "2.814.0",
+    "@awssolutions/cdf-errors": "^0.0.0",
+    "@awssolutions/cdf-logger": "^0.0.0",
+    "@awssolutions/cdf-lambda-invoke": "^0.0.0",
+    "@awssolutions/cdf-config-inject": "^0.0.0",
+    "@awssolutions/cdf-express-middleware": "^0.0.0",
+    "aws-sdk": "2.1048.0",
     "express": "4.18.2",
     "inversify": "6.0.1",
     "inversify-binding-decorators": "4.0.0",
@@ -45,7 +45,7 @@
     "cors": "~2.8.5",
     "json-to-pretty-yaml": "~1.2.2",
     "js-yaml": "~4.1.0",
-    "jszip": "~3.7.1",
+    "jszip": "3.10.1",
     "aws-lambda": "~1.0.6"
   },
   "devDependencies": {

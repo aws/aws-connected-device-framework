@@ -14,9 +14,13 @@
 import { Before, setDefaultTimeout} from '@cucumber/cucumber';
 import { resolve } from 'path';
 
-import { Dictionary } from '@cdf/lambda-invoke';
-import { TemplatesService, PatchType, CreatePatchTemplateParams } from '@cdf/device-patcher-client';
-import { DEVICE_PATCHER_CLIENT_TYPES } from '@cdf/device-patcher-client';
+import { Dictionary } from '@awssolutions/cdf-lambda-invoke';
+import {
+    TemplatesService,
+    PatchType,
+    CreatePatchTemplateParams,
+} from '@awssolutions/cdf-device-patcher-client';
+import { DEVICE_PATCHER_CLIENT_TYPES } from '@awssolutions/cdf-device-patcher-client';
 
 import { container } from '../di/inversify.config';
 import {AUTHORIZATION_TOKEN} from '../step_definitions/common/common.steps';
