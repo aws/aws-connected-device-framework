@@ -13,7 +13,7 @@
 import 'reflect-metadata';
 import '../config/env';
 import { ORGMANLIBRARY_CLIENT_TYPES } from './types';
-import { LAMBDAINVOKE_TYPES, LambdaInvokerService } from '@cdf/lambda-invoke';
+import { LAMBDAINVOKE_TYPES, LambdaInvokerService } from '@awssolutions/cdf-lambda-invoke';
 import AWS = require('aws-sdk');
 import { ContainerModule, decorate, injectable, interfaces } from 'inversify';
 import { AccountsService } from '../client/accounts.service';

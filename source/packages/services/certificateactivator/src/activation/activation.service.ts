@@ -16,8 +16,18 @@ import { TYPES } from '../di/types';
 import { logger } from '../utils/logger';
 import ow from 'ow';
 import { RegistrationEvent, CertificateRevocationList, CertificateStatus } from './activation.models';
-import { DevicesService, Device10Resource, PoliciesService ,ASSETLIBRARY_CLIENT_TYPES } from '@cdf/assetlibrary-client';
-import { ThingsService, ProvisionThingRequest, ProvisionThingResponse, PROVISIONING_CLIENT_TYPES } from '@cdf/provisioning-client';
+import {
+    DevicesService,
+    Device10Resource,
+    PoliciesService,
+    ASSETLIBRARY_CLIENT_TYPES,
+} from '@awssolutions/cdf-assetlibrary-client';
+import {
+    ThingsService,
+    ProvisionThingRequest,
+    ProvisionThingResponse,
+    PROVISIONING_CLIENT_TYPES,
+} from '@awssolutions/cdf-provisioning-client';
 import atob from 'atob';
 
 @injectable()

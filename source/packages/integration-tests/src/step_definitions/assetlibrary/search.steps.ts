@@ -20,8 +20,8 @@ import {
     SearchRequestModel,
     SearchResultsModel,
     SearchService,
-} from '@cdf/assetlibrary-client';
-import { Dictionary } from '@cdf/lambda-invoke';
+} from '@awssolutions/cdf-assetlibrary-client';
+import { Dictionary } from '@awssolutions/cdf-lambda-invoke';
 import { DataTable, Then, When, setDefaultTimeout } from '@cucumber/cucumber';
 import { expect, use } from 'chai';
 import 'reflect-metadata';

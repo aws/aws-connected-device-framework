@@ -16,7 +16,7 @@ import { InversifyExpressServer } from 'inversify-express-utils';
 import * as bodyParser from 'body-parser';
 import { logger } from './utils/logger';
 import { Request, Response, NextFunction, Application } from 'express';
-import { normalisePath } from '@cdf/express-middleware';
+import { normalisePath } from '@awssolutions/cdf-express-middleware';
 import cors = require('cors');
 
 const PORT = 3002;

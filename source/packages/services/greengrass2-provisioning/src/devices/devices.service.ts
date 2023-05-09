@@ -20,13 +20,16 @@ import { DeviceTasksDao } from "../deviceTasks/deviceTasks.dao";
 import { DescribeThingCommand, IoTClient } from "@aws-sdk/client-iot";
 import { BatchAssociateClientDeviceWithCoreDeviceCommand, BatchDisassociateClientDeviceFromCoreDeviceCommand, GreengrassV2Client } from "@aws-sdk/client-greengrassv2";
 import {
-    PROVISIONING_CLIENT_TYPES, ProvisionThingRequest, ProvisionThingResponse, ThingsService
-} from '@cdf/provisioning-client';
+    PROVISIONING_CLIENT_TYPES,
+    ProvisionThingRequest,
+    ProvisionThingResponse,
+    ThingsService,
+} from '@awssolutions/cdf-provisioning-client';
 import AdmZip from "adm-zip";
 import { S3Utils } from "../utils/s3.util";
 import { DevicesDao } from "./devices.dao";
 import pLimit from "p-limit";
-import { CDFEventPublisher, EVENT_PUBLISHER_TYPES } from "@cdf/event-publisher";
+import { CDFEventPublisher, EVENT_PUBLISHER_TYPES } from '@awssolutions/cdf-event-publisher';
 
 @injectable()
 export class DevicesService {

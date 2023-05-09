@@ -1,4 +1,4 @@
-import { Dictionary } from "@cdf/lambda-invoke";
+import { Dictionary } from '@awssolutions/cdf-lambda-invoke';
 
 export interface OrganizationManagerWorld {
     authToken?: string;
@@ -7,11 +7,10 @@ export interface OrganizationManagerWorld {
     lastAccountId?: string;
 }
 
-export const world : OrganizationManagerWorld = {
-};
+export const world: OrganizationManagerWorld = {};
 
 export function getAdditionalHeaders(world: OrganizationManagerWorld): Dictionary {
     return {
-        Authorization: world.authToken
+        Authorization: world.authToken,
     };
 }

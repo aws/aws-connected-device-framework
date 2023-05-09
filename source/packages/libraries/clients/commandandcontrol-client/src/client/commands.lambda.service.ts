@@ -16,7 +16,7 @@ import {
     LAMBDAINVOKE_TYPES,
     LambdaApiGatewayEventBuilder,
     LambdaInvokerService,
-} from '@cdf/lambda-invoke';
+} from '@awssolutions/cdf-lambda-invoke';
 import { inject, injectable } from 'inversify';
 import ow from 'ow';
 import { CommandResource, CommandResourceList, EditableCommandResource, Tags } from './commands.model';

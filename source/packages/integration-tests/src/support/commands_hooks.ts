@@ -11,10 +11,10 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { Before, setDefaultTimeout} from '@cucumber/cucumber';
-import { TemplatesService, TemplateModel } from '@cdf/commands-client';
+import { TemplatesService, TemplateModel } from '@awssolutions/cdf-commands-client';
 import {container} from '../di/inversify.config';
-import {COMMANDS_CLIENT_TYPES} from '@cdf/commands-client/dist';
-import { Dictionary } from '@cdf/lambda-invoke';
+import { COMMANDS_CLIENT_TYPES } from '@awssolutions/cdf-commands-client/dist';
+import { Dictionary } from '@awssolutions/cdf-lambda-invoke';
 import { AUTHORIZATION_TOKEN } from '../step_definitions/common/common.steps';
 
 setDefaultTimeout(30 * 1000);

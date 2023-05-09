@@ -16,7 +16,10 @@ import pLimit from 'p-limit';
 import { generate } from 'shortid';
 
 import { SendMessageCommand, SendMessageCommandOutput, SQSClient } from '@aws-sdk/client-sqs';
-import { AwsIotThingListBuilder, THING_LIST_BUILDER_TYPES } from '@cdf/thing-list-builder';
+import {
+    AwsIotThingListBuilder,
+    THING_LIST_BUILDER_TYPES,
+} from '@awssolutions/cdf-thing-list-builder';
 
 import { FailedCoreDeployment } from '../cores/cores.models';
 import { CoresService } from '../cores/cores.service';

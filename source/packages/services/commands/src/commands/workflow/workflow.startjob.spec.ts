@@ -14,8 +14,14 @@ import 'reflect-metadata';
 import { createMockInstance } from 'jest-create-mock-instance';
 
 import { TemplatesService } from '../../templates/templates.service';
-import { DevicesService, GroupsService, SearchService, SearchRequestModel, SearchResultsModel } from '@cdf/assetlibrary-client';
-import { ThingsService } from '@cdf/provisioning-client';
+import {
+    DevicesService,
+    GroupsService,
+    SearchService,
+    SearchRequestModel,
+    SearchResultsModel,
+} from '@awssolutions/cdf-assetlibrary-client';
+import { ThingsService } from '@awssolutions/cdf-provisioning-client';
 import { StartJobAction, TargetType } from './workflow.startjob';
 
 import AWS from 'aws-sdk';

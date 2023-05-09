@@ -19,7 +19,7 @@ import {
     LambdaApiGatewayEventBuilder,
     LAMBDAINVOKE_TYPES,
     LambdaInvokerService,
-} from '@cdf/lambda-invoke';
+} from '@awssolutions/cdf-lambda-invoke';
 
 @injectable()
 export class TemplatesLambdaService extends TemplatesServiceBase implements TemplatesService {

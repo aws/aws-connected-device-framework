@@ -14,7 +14,7 @@ import {
     LAMBDAINVOKE_TYPES,
     LambdaApiGatewayEventBuilder,
     LambdaInvokerService,
-} from '@cdf/lambda-invoke';
+} from '@awssolutions/cdf-lambda-invoke';
 import { inject, injectable } from 'inversify';
 import { sign } from 'jsonwebtoken';
 import { logger } from '../utils/logger';

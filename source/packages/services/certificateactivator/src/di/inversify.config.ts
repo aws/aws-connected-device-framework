@@ -11,11 +11,11 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
  import 'reflect-metadata';
- import '@cdf/config-inject';
-import { Container, decorate, injectable, interfaces } from 'inversify';
+ import '@awssolutions/cdf-config-inject';
+ import { Container, decorate, injectable, interfaces } from 'inversify';
 
-import { assetLibraryContainerModule } from '@cdf/assetlibrary-client';
-import { provisioningContainerModule } from '@cdf/provisioning-client';
+ import { assetLibraryContainerModule } from '@awssolutions/cdf-assetlibrary-client';
+ import { provisioningContainerModule } from '@awssolutions/cdf-provisioning-client';
 
 import { ActivationService } from '../activation/activation.service';
 import { TYPES } from './types';

@@ -10,7 +10,7 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-// import * as Errors from '@cdf/errors';
+// import * as Errors from '@awssolutions/cdf-errors';
 
 /**
  * APIGWAuthPolicyBuilder receives a set of allowed and denied methods and generates a valid

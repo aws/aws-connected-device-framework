@@ -12,7 +12,11 @@
  *********************************************************************************************************************/
 import { expect } from 'chai';
 import { Given, setDefaultTimeout, Then, DataTable, When} from '@cucumber/cucumber';
-import {TemplatesService, TemplateModel, COMMANDS_CLIENT_TYPES} from '@cdf/commands-client/dist';
+import {
+    TemplatesService,
+    TemplateModel,
+    COMMANDS_CLIENT_TYPES,
+} from '@awssolutions/cdf-commands-client/dist';
 import { fail } from 'assert';
 import stringify from 'json-stable-stringify';
 import {AUTHORIZATION_TOKEN, RESPONSE_STATUS} from '../common/common.steps';

@@ -1,6 +1,6 @@
 {
-  "name": "@cdf/greengrass2-provisioning-client",
-  "version": "1.0.6",
+  "name": "@awssolutions/cdf-greengrass2-provisioning-client",
+  "version": "0.0.0",
   "description": "CDF Greengrass V2 Provisioning Client",
   "author": "Dean Hart",
   "main": "dist/index.js",
@@ -13,8 +13,8 @@
   },
   "dependencies": {
     "@awssolutions/cdf-client-request-signer": "^0.0.0",
-    "@cdf/assetlibrary-client": "^5.1.0",
-    "@cdf/lambda-invoke": "^3.0.2",
+    "@awssolutions/cdf-assetlibrary-client": "^0.0.0",
+    "@awssolutions/cdf-lambda-invoke": "^0.0.0",
     "http-errors": "~2.0.0",
     "inversify": "6.0.1",
     "inversify-binding-decorators": "4.0.0",
@@ -74,6 +74,5 @@
       "node"
     ]
   },
-  "license": "ISC",
-  "private": true
+  "license": "ISC"
 }

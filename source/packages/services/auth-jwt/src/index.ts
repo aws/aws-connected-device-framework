@@ -10,11 +10,11 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import '@cdf/config-inject'
+import '@awssolutions/cdf-config-inject';
 import { Context, CustomAuthorizerEvent } from 'aws-lambda';
 import ow from 'ow';
 
-import * as Errors from '@cdf/errors';
+import * as Errors from '@awssolutions/cdf-errors';
 
 import { ApiGwCustomAuthorizer } from './api-gw.custom.authorizer';
 import { APIGWAuthPolicyBuilder } from './api-gw.policy.builder';

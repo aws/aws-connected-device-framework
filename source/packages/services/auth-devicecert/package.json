@@ -1,6 +1,6 @@
 {
-  "name": "@cdf/auth-devicecert",
-  "version": "5.0.2",
+  "name": "@awssolutions/cdf-auth-devicecert",
+  "version": "0.0.0",
   "description": "API Gateway custom authorizer that authenticates based on a supplied device certificate",
   "author": "Rahul Sareen",
   "scripts": {
@@ -12,8 +12,8 @@
     "bundle": "../../../infrastructure/bundle-package.bash auth-devicecert"
   },
   "dependencies": {
-    "@cdf/errors": "^4.0.0",
-    "@cdf/config-inject": "^4.0.2",
+    "@awssolutions/cdf-errors": "^0.0.0",
+    "@awssolutions/cdf-config-inject": "^0.0.0",
     "aws-sdk": "2.1048.0",
     "js-yaml": "4.1.0",
     "logform": "2.4.2",

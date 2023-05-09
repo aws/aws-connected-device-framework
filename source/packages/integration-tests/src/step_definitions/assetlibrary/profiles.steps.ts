@@ -16,7 +16,7 @@ import {
     DeviceProfileResource,
     GroupProfile20Resource,
     ProfilesService,
-} from '@cdf/assetlibrary-client/dist';
+} from '@awssolutions/cdf-assetlibrary-client/dist';
 import { DataTable, Given, Then, When, setDefaultTimeout } from '@cucumber/cucumber';
 import { fail } from 'assert';
 import { expect, use } from 'chai';

@@ -16,7 +16,10 @@ import { injectable, inject } from 'inversify';
 import { MessageItem, Recipient } from '../messages.models';
 import { logger } from '../../utils/logger.util';
 import ow from 'ow';
-import { AwsIotThingListBuilder, THING_LIST_BUILDER_TYPES } from '@cdf/thing-list-builder';
+import {
+    AwsIotThingListBuilder,
+    THING_LIST_BUILDER_TYPES,
+} from '@awssolutions/cdf-thing-list-builder';
 import { MessagesDao } from '../messages.dao';
 import { CommandItem } from '../../commands/commands.models';
 

@@ -16,8 +16,8 @@ import {
     EventsService,
     NOTIFICATIONS_CLIENT_TYPES,
     SubscriptionsService,
-} from '@cdf/notifications-client/dist';
-import { EventSourceType } from '@cdf/notifications-client/dist/client/eventsources.model';
+} from '@awssolutions/cdf-notifications-client/dist';
+import { EventSourceType } from '@awssolutions/cdf-notifications-client/dist/client/eventsources.model';
 import { Before, setDefaultTimeout } from '@cucumber/cucumber';
 import { container } from '../di/inversify.config';
 import { AUTHORIZATION_TOKEN } from '../step_definitions/common/common.steps';

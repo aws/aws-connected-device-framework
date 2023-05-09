@@ -12,7 +12,11 @@
  *********************************************************************************************************************/
 import 'reflect-metadata';
 import { inject, injectable } from 'inversify';
-import { DevicesService, Device10Resource, ASSETLIBRARY_CLIENT_TYPES } from '@cdf/assetlibrary-client';
+import {
+    DevicesService,
+    Device10Resource,
+    ASSETLIBRARY_CLIENT_TYPES,
+} from '@awssolutions/cdf-assetlibrary-client';
 import { logger } from './utils/logger';
 
 @injectable()

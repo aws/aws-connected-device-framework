@@ -16,8 +16,8 @@ import chai_string = require('chai-string');
 import { expect, use } from 'chai';
 import {Given, When, Then, setDefaultTimeout, DataTable} from '@cucumber/cucumber';
 
-import { ActivationService } from '@cdf/device-patcher-client';
-import { DEVICE_PATCHER_CLIENT_TYPES } from '@cdf/device-patcher-client';
+import { ActivationService } from '@awssolutions/cdf-device-patcher-client';
+import { DEVICE_PATCHER_CLIENT_TYPES } from '@awssolutions/cdf-device-patcher-client';
 
 import { container } from '../../di/inversify.config';
 import { world } from './device.world';

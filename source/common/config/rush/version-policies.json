@@ -54,6 +54,18 @@
   //   "mainProject": "my-app"
   // },
   // 
+   {
+    "definitionName": "lockStepVersion",
+    "policyName": "external",
+    "version": "0.0.0",
+    "nextBump": "minor"
+  },
+  {
+    "definitionName": "lockStepVersion",
+    "policyName": "internal",
+    "version": "0.0.0",
+    "nextBump": "minor"
+  }
   // {
   //   /**
   //    * (Required) Indicates the kind of version policy being defined ("lockStepVersion" or "individualVersion").

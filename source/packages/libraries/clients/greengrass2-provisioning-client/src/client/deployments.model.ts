@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import { SearchRequestModel } from '@cdf/assetlibrary-client';
+import { SearchRequestModel } from '@awssolutions/cdf-assetlibrary-client';
 
 export interface NewDeployment {
     coreName: string;

@@ -15,7 +15,11 @@ import { inject, injectable } from 'inversify';
 import { logger } from '../utils/logger';
 
 import {CustomResourceEvent} from './customResource.model';
-import { LambdaInvokerService, LAMBDAINVOKE_TYPES, LambdaApiGatewayEventBuilder } from '@cdf/lambda-invoke';
+import {
+    LambdaInvokerService,
+    LAMBDAINVOKE_TYPES,
+    LambdaApiGatewayEventBuilder,
+} from '@awssolutions/cdf-lambda-invoke';
 import { CustomResource } from './customResource';
 import ow from 'ow';
 

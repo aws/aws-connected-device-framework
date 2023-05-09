@@ -14,7 +14,12 @@ import 'reflect-metadata';
 import { setDefaultTimeout, DataTable, Then, When } from '@cucumber/cucumber';
 import chai_string = require('chai-string');
 import { use } from 'chai';
-import {GREENGRASS2_PROVISIONING_CLIENT_TYPES, NewDeploymentTask, DeploymentsService, DeploymentTask} from '@cdf/greengrass2-provisioning-client';
+import {
+    GREENGRASS2_PROVISIONING_CLIENT_TYPES,
+    NewDeploymentTask,
+    DeploymentsService,
+    DeploymentTask,
+} from '@awssolutions/cdf-greengrass2-provisioning-client';
 import {container} from '../../di/inversify.config';
 import { getAdditionalHeaders } from '../notifications/notifications.utils';
 import { buildModel, validateExpectedAttributes } from '../common/common.steps';
