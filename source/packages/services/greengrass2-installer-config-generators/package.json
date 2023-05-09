@@ -7,61 +7,16 @@
     "bundle.zip"
   ],
   "scripts": {
-    "clean": "npx shx rm -rf dist tsconfig.tsbuildinfo bundle.zip .rush .nyc_output *.log",
-    "lint": "npx eslint . --ext '.ts'",
     "build": "npx tsc -b && npx shx cp -R 'src/config' 'dist/'",
-    "test": "rushx lint && NODE_ENV= jest --silent --maxWorkers=$JEST_MAX_WORKERS",
-    "start": "rushx build && APP_CONFIG_DIR=${PWD}/src/config node dist/lambda_apigw_proxy.js",
     "bundle": "npm run bundle:build && npm run bundle:deploy",
     "bundle:build": "lambda-zip --entry-point src/lambda_*.ts --copy dist:dist --copy config:src/config",
-    "bundle:deploy": "node ../../../infrastructure/bundle-package.js"
-  },
-  "dependencies": {
-    "@awssolutions/cdf-errors": "^0.0.0",
-    "@awssolutions/cdf-logger": "^0.0.0",
-    "@awssolutions/cdf-config-inject": "^0.0.0",
-    "aws-lambda": "1.0.6",
-    "dotenv-flow": "3.2.0",
-    "logform": "2.4.2",
-    "ow": "0.23.0",
-    "readable-stream": "3.6.0",
-    "reflect-metadata": "0.1.13",
-    "winston-transport": "4.4.0",
-    "winston": "3.3.3",
-    "yaml": "~1.10.2",
-    "dotenv": "^8.2.0"
-  },
-  "devDependencies": {
-    "@awssolutions/cdf-lambda-zip": "^0.0.0",
-    "@rushstack/eslint-config": "2.3.4",
-    "@types/aws-lambda": "8.10.84",
-    "@types/dotenv-flow": "3.2.0",
-    "@types/jest": "26.0.23",
-    "@typescript-eslint/eslint-plugin": "4.23.0",
-    "@typescript-eslint/parser": "4.23.0",
-    "eslint": "7.26.0",
-    "jest-create-mock-instance": "1.1.0",
-    "jest-haste-map": "26.6.2",
-    "jest-mock-console": "1.0.1",
-    "jest-mock-extended": "1.0.14",
-    "jest-mock": "26.6.2",
-    "jest-resolve": "26.6.2",
-    "jest": "26.6.3",
-    "nyc": "15.1.0",
-    "shx": "0.3.3",
-    "ts-jest": "26.5.6",
-    "typescript": "4.2.4"
+    "bundle:deploy": "node ../../../infrastructure/bundle-package.js",
+    "clean": "npx shx rm -rf dist tsconfig.tsbuildinfo bundle.zip .rush .nyc_output *.log",
+    "lint": "npx eslint . --ext '.ts'",
+    "start": "rushx build && APP_CONFIG_DIR=${PWD}/src/config node dist/lambda_apigw_proxy.js",
+    "test": "rushx lint && NODE_ENV= jest --silent --maxWorkers=$JEST_MAX_WORKERS"
   },
   "jest": {
-    "roots": [
-      "<rootDir>/src"
-    ],
-    "transform": {
-      "^.+\\.tsx?$": "ts-jest"
-    },
-    "testMatch": [
-      "<rootDir>/**/?(*.)+(spec|test).ts?(x)"
-    ],
     "moduleFileExtensions": [
       "ts",
       "tsx",
@@ -69,6 +24,50 @@
       "jsx",
       "json",
       "node"
-    ]
+    ],
+    "roots": [
+      "<rootDir>/src"
+    ],
+    "testMatch": [
+      "<rootDir>/**/?(*.)+(spec|test).ts?(x)"
+    ],
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    }
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@awssolutions/cdf-config-inject": "^0.0.0",
+    "@awssolutions/cdf-errors": "^0.0.0",
+    "@awssolutions/cdf-lambda-zip": "^0.0.0",
+    "@awssolutions/cdf-logger": "^0.0.0",
+    "@rushstack/eslint-config": "2.3.4",
+    "@types/aws-lambda": "8.10.84",
+    "@types/dotenv-flow": "3.2.0",
+    "@types/jest": "26.0.23",
+    "@typescript-eslint/eslint-plugin": "4.23.0",
+    "@typescript-eslint/parser": "4.23.0",
+    "aws-lambda": "1.0.6",
+    "dotenv": "^8.2.0",
+    "dotenv-flow": "3.2.0",
+    "eslint": "7.26.0",
+    "jest": "26.6.3",
+    "jest-create-mock-instance": "1.1.0",
+    "jest-haste-map": "26.6.2",
+    "jest-mock": "26.6.2",
+    "jest-mock-console": "1.0.1",
+    "jest-mock-extended": "1.0.14",
+    "jest-resolve": "26.6.2",
+    "logform": "2.4.2",
+    "nyc": "15.1.0",
+    "ow": "0.23.0",
+    "readable-stream": "3.6.0",
+    "reflect-metadata": "0.1.13",
+    "shx": "0.3.3",
+    "ts-jest": "26.5.6",
+    "typescript": "4.2.4",
+    "winston": "3.3.3",
+    "winston-transport": "4.4.0",
+    "yaml": "~1.10.2"
   }
 }
