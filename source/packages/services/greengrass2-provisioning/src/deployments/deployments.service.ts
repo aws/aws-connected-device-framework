@@ -29,7 +29,7 @@ import { TemplateItem } from '../templates/templates.models';
 import { TemplatesService } from '../templates/templates.service';
 import { logger } from '../utils/logger.util';
 import { Deployment, DeploymentTaskCreatedEvent, DeploymentTaskCreatedPayload, NewDeployment } from './deployments.models';
-import { CDFEventPublisher, EVENT_PUBLISHER_TYPES } from "@cdf/event-publisher";
+import { CDFEventPublisher, EVENT_PUBLISHER_TYPES } from '@awssolutions/cdf-event-publisher';
 
 export const DEPLOYMENT_TASK_ID_TAG_KEY = 'cdf-greengrass2-provisioning-deployment-task-id'
 

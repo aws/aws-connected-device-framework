@@ -1,7 +1,8 @@
+import { sanitized } from '@awssolutions/cdf-environment-sanitizer';
 import { load } from 'dotenv-flow';
 import dotenv from "dotenv"
 
-// APP_CONFIG contains list of environment variables 
+// APP_CONFIG contains list of environment variables
 // This will be loaded first
 if (process.env.APP_CONFIG) {
   const result = dotenv.parse(process.env.APP_CONFIG)
@@ -23,4 +24,4 @@ if ((process.env.CONFIG_LOCATION?.length ?? 0) > 0) {
 load(fileLocations);
 
 console.log(`Module config-inject loaded config:`);
-console.log(process.env);
+console.log(sanitized(process.env));

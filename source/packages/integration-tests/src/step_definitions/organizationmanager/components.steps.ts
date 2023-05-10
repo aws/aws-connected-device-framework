@@ -1,5 +1,10 @@
 import { DataTable, Then, When } from "@cucumber/cucumber";
-import { BulkComponentsService, BulkComponentsResource, ORGMANLIBRARY_CLIENT_TYPES, Manifest } from '@cdf/organizationmanager-client';
+import {
+    BulkComponentsService,
+    BulkComponentsResource,
+    ORGMANLIBRARY_CLIENT_TYPES,
+    Manifest,
+} from '@awssolutions/cdf-organizationmanager-client';
 import { container } from "../../di/inversify.config";
 import { world, getAdditionalHeaders } from "./organizationalManager.world";
 import { expect } from "chai";
@@ -24,7 +29,7 @@ const bulkComponentsService: BulkComponentsService = container.get(ORGMANLIBRARY
 
 function saveManifestFileToTempFolder(bucket: string, key: string, filePath: string): Promise<void> {
     const ws = fs.createWriteStream(filePath);
-    return new Promise(async (resolve, reject) => {
+    return new Promise((resolve, reject) => {
         s3.send(new GetObjectCommand(
             {
                 Bucket: bucket,

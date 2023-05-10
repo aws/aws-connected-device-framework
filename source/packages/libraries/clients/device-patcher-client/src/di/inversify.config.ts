@@ -16,7 +16,7 @@ import '../config/env';
 
 import { ContainerModule, decorate, injectable, interfaces } from 'inversify';
 
-import { LAMBDAINVOKE_TYPES, LambdaInvokerService } from '@cdf/lambda-invoke';
+import { LAMBDAINVOKE_TYPES, LambdaInvokerService } from '@awssolutions/cdf-lambda-invoke';
 
 import { ActivationApigwService } from '../client/activation.apigw.service';
 import { ActivationLambdaService } from '../client/activation.lambda.service';

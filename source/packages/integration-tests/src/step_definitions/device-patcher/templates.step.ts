@@ -17,7 +17,12 @@ import { expect, use } from 'chai';
 import { fail } from 'assert';
 import { resolve } from 'path';
 
-import {DEVICE_PATCHER_CLIENT_TYPES, TemplatesService, CreatePatchTemplateParams, UpdatePatchTemplateParams} from '@cdf/device-patcher-client';
+import {
+    DEVICE_PATCHER_CLIENT_TYPES,
+    TemplatesService,
+    CreatePatchTemplateParams,
+    UpdatePatchTemplateParams,
+} from '@awssolutions/cdf-device-patcher-client';
 
 import {container} from '../../di/inversify.config';
 import {replaceTokens, RESPONSE_STATUS, validateExpectedAttributes} from '../common/common.steps';

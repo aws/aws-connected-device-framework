@@ -10,26 +10,46 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import {RequestHeaders} from './common.model';
-import {injectable} from 'inversify';
-import {CommonServiceBase} from './common.service';
-import {TargetResource} from './targets.model';
+
+import { injectable } from 'inversify';
 import { PathHelper } from '../utils/path.helper';
+import { RequestHeaders } from './common.model';
+import { CommonServiceBase } from './common.service';
+import { TargetResource } from './targets.model';
 
 export interface TargetsService {
-    createTarget(subscriptionId: string, targetType:string, target: TargetResource, additionalHeaders?: RequestHeaders): Promise<void>;
+    createTarget(
+        subscriptionId: string,
+        targetType: string,
+        target: TargetResource,
+        additionalHeaders?: RequestHeaders
+    ): Promise<void>;
 
-    deleteTarget(subscriptionId: string, targetType:string, targetId:string, additionalHeaders?: RequestHeaders): Promise<void>;
+    deleteTarget(
+        subscriptionId: string,
+        targetType: string,
+        targetId: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<void>;
 }
 
 @injectable()
-export class TargetsServiceBase extends CommonServiceBase  {
-
-    protected targetsRelativeUrl(subscriptionId: string, targetType:string): string {
+export class TargetsServiceBase extends CommonServiceBase {
+    protected targetsRelativeUrl(subscriptionId: string, targetType: string): string {
         return `/subscriptions/${subscriptionId}/targets/${targetType}`;
     }
 
-    protected targetRelativeUrl(subscriptionId: string, targetType:string, targetId:string): string {
-        return `/${PathHelper.encodeUrl('subscriptions', subscriptionId, 'targets', targetType, targetId)}`;
+    protected targetRelativeUrl(
+        subscriptionId: string,
+        targetType: string,
+        targetId: string
+    ): string {
+        return `/${PathHelper.encodeUrl(
+            'subscriptions',
+            subscriptionId,
+            'targets',
+            targetType,
+            targetId
+        )}`;
     }
 }

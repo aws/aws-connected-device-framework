@@ -14,8 +14,8 @@
 export type Manifest = {
     region: string;
     version: string;
-    resources: StackSetResource[]
-}
+    resources: StackSetResource[];
+};
 
 export interface StackParameter {
     parameter_key: string;
@@ -23,17 +23,15 @@ export interface StackParameter {
 }
 
 export interface DeploymentTarget {
-    accounts: string[]
+    accounts: string[];
 }
 
 export interface StackSetResource {
     name: string;
     description: string;
     resource_file: string;
-    deploy_method: "stack_set" | "scp";
+    deploy_method: 'stack_set' | 'scp';
     regions: string[];
-    deployment_targets: DeploymentTarget
-    parameters: StackParameter[]
+    deployment_targets: DeploymentTarget;
+    parameters: StackParameter[];
 }
-
-

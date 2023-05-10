@@ -23,8 +23,12 @@ import { } from '@aws-sdk/client-greengrassv2';
 import { GetObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import {
-    Core, CoresService, CoreTask, GREENGRASS2_PROVISIONING_CLIENT_TYPES, NewCoreTask
-} from '@cdf/greengrass2-provisioning-client';
+    Core,
+    CoresService,
+    CoreTask,
+    GREENGRASS2_PROVISIONING_CLIENT_TYPES,
+    NewCoreTask,
+} from '@awssolutions/cdf-greengrass2-provisioning-client';
 
 import { container } from '../../di/inversify.config';
 import { buildModel, streamToString, validateExpectedAttributes } from '../common/common.steps';

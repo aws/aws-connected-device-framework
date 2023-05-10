@@ -15,7 +15,11 @@ import { expect } from 'chai';
 import { Given, setDefaultTimeout, DataTable, Then, When } from '@cucumber/cucumber';
 import stringify from 'json-stable-stringify';
 
-import { CommandModel, COMMANDS_CLIENT_TYPES, CommandsService } from '@cdf/commands-client';
+import {
+    CommandModel,
+    COMMANDS_CLIENT_TYPES,
+    CommandsService,
+} from '@awssolutions/cdf-commands-client';
 
 import { Dictionary } from '../../../../libraries/core/lambda-invoke/src';
 import { container } from '../../di/inversify.config';

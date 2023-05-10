@@ -11,29 +11,34 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import { AccountCreationRequest, AccountResource, AccountResourceList } from "./accounts.model";
-import { RequestHeaders } from "./common.model";
 import { injectable } from 'inversify';
 import { PathHelper } from '../utils/path.helper';
+import { AccountCreationRequest, AccountResource, AccountResourceList } from './accounts.model';
+import { RequestHeaders } from './common.model';
 
 export interface AccountsService {
-    listAccounts(organizationalUnitId: string, additionalHeaders?: RequestHeaders): Promise<AccountResourceList>
+    listAccounts(
+        organizationalUnitId: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<AccountResourceList>;
 
-    getAccount(accountId: string, additionalHeaders?: RequestHeaders): Promise<AccountResource>
+    getAccount(accountId: string, additionalHeaders?: RequestHeaders): Promise<AccountResource>;
 
-    createAccount(account: AccountCreationRequest, additionalHeaders?: RequestHeaders): Promise<string>
+    createAccount(
+        account: AccountCreationRequest,
+        additionalHeaders?: RequestHeaders
+    ): Promise<string>;
 
-    deleteAccount(accountId: string, additionalHeaders?: RequestHeaders): Promise<void>
+    deleteAccount(accountId: string, additionalHeaders?: RequestHeaders): Promise<void>;
 }
 
 @injectable()
 export class AccountsServiceBase {
-
     protected MIME_TYPE = 'application/vnd.aws-cdf-v1.0+json';
 
     protected _headers: RequestHeaders = {
-        'Accept': this.MIME_TYPE,
-        'Content-Type': this.MIME_TYPE
+        Accept: this.MIME_TYPE,
+        'Content-Type': this.MIME_TYPE,
     };
 
     protected accountsRelativeUrl(): string {
@@ -49,7 +54,6 @@ export class AccountsServiceBase {
     }
 
     protected buildHeaders(additionalHeaders: RequestHeaders): RequestHeaders {
-
         let headers = Object.assign({}, this._headers);
 
         const customHeaders = process.env.ORGANIZATIONMANAGER_HEADERS;
@@ -66,7 +70,7 @@ export class AccountsServiceBase {
         }
 
         const keys = Object.keys(headers);
-        keys.forEach(k => {
+        keys.forEach((k) => {
             if (headers[k] === undefined || headers[k] === null) {
                 delete headers[k];
             }
@@ -74,5 +78,4 @@ export class AccountsServiceBase {
 
         return headers;
     }
-
 }

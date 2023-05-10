@@ -10,11 +10,11 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import {Policy, PolicyList} from './policies.model';
-import {RequestHeaders} from './common.model';
-import {ClientServiceBase} from './common.service';
-import {PathHelper} from '../utils/path.helper';
-import {injectable} from 'inversify';
+import { injectable } from 'inversify';
+import { PathHelper } from '../utils/path.helper';
+import { RequestHeaders } from './common.model';
+import { ClientServiceBase } from './common.service';
+import { Policy, PolicyList } from './policies.model';
 
 export interface PoliciesService {
     createPolicy(body: Policy, additionalHeaders?:RequestHeaders): Promise<void>;

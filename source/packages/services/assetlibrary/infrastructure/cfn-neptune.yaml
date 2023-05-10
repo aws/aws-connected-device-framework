@@ -87,7 +87,7 @@ Resources:
 
   NeptuneEngineVersionCheck:
     Type: Custom::NeptuneEngineVersionCheck
-    Version: 1.0
+    Version: 1.2
     Properties:
       ServiceToken:
         !Ref CustomResourceVPCLambdaArn

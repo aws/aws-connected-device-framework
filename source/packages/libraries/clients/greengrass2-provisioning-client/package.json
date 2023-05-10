@@ -1,6 +1,6 @@
 {
-  "name": "@cdf/greengrass2-provisioning-client",
-  "version": "1.0.6",
+  "name": "@awssolutions/cdf-greengrass2-provisioning-client",
+  "version": "0.0.0",
   "description": "CDF Greengrass V2 Provisioning Client",
   "author": "Dean Hart",
   "main": "dist/index.js",
@@ -9,16 +9,18 @@
     "clean": "npx shx rm -rf dist tsconfig.tsbuildinfo bundle.zip .rush .nyc_output *.log",
     "lint": "npx eslint . --ext '.ts'",
     "build": "npx tsc -b",
-    "test": "rushx lint && jest --silent --passWithNoTests"
+    "test": "rushx lint && jest --silent --passWithNoTests --maxWorkers=$JEST_MAX_WORKERS"
   },
   "dependencies": {
-    "@cdf/assetlibrary-client": "^5.1.0",
-    "@cdf/lambda-invoke": "^3.0.2",
-    "inversify": "5.1.1",
+    "@awssolutions/cdf-client-request-signer": "^0.0.0",
+    "@awssolutions/cdf-assetlibrary-client": "^0.0.0",
+    "@awssolutions/cdf-lambda-invoke": "^0.0.0",
+    "http-errors": "~2.0.0",
+    "inversify": "6.0.1",
     "inversify-binding-decorators": "4.0.0",
-    "inversify-express-utils": "6.3.2",
+    "inversify-express-utils": "6.4.3",
     "js-yaml": "4.1.0",
-    "logform": "2.2.0",
+    "logform": "2.4.2",
     "ow": "0.23.0",
     "readable-stream": "3.6.0",
     "reflect-metadata": "0.1.13",
@@ -31,6 +33,7 @@
     "aws-sdk": "2.1048.0"
   },
   "devDependencies": {
+    "@types/http-errors": "~2.0.1",
     "@types/node": "16.11.7",
     "@types/superagent": "4.1.15",
     "@rushstack/eslint-config": "2.3.4",
@@ -71,6 +74,5 @@
       "node"
     ]
   },
-  "license": "ISC",
-  "private": true
+  "license": "ISC"
 }

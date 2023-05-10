@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import { SearchRequestModel } from '@cdf/assetlibrary-client';
+import { SearchRequestModel } from '@awssolutions/cdf-assetlibrary-client';
 
 export interface NewMessageResource {
 	commandId: string;
@@ -20,10 +20,10 @@ export interface NewMessageResource {
 	targets?: Targets;
 }
 export interface MessageResource extends NewMessageResource {
-	id?: string;
-	status?: MessageStatus
-	createdAt?: Date;
-	updatedAt?: Date;
+    id?: string;
+    status?: MessageStatus;
+    createdAt?: Date;
+    updatedAt?: Date;
 }
 
 export interface Targets {

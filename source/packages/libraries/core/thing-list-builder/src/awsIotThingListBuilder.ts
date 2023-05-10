@@ -14,9 +14,14 @@
 import { inject, injectable } from 'inversify';
 
 import {
-    ASSETLIBRARY_CLIENT_TYPES, Device10Resource, DevicesService, Group10Resource, GroupsService,
-    SearchRequestModel, SearchService
-} from '@cdf/assetlibrary-client';
+    ASSETLIBRARY_CLIENT_TYPES,
+    Device10Resource,
+    DevicesService,
+    Group10Resource,
+    GroupsService,
+    SearchRequestModel,
+    SearchService,
+} from '@awssolutions/cdf-assetlibrary-client';
 
 import { THING_LIST_BUILDER_TYPES } from './di/types';
 import { ListThingsRequest, ListThingsResponse, TargetType } from './models';

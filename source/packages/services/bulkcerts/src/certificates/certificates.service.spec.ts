@@ -14,7 +14,7 @@
  
 
 import 'reflect-metadata';
-import '@cdf/config-inject'
+import '@awssolutions/cdf-config-inject';
 import { createMockInstance } from 'jest-create-mock-instance';
 import { CertificatesService } from './certificates.service';
 import AWS, { AWSError } from 'aws-sdk';

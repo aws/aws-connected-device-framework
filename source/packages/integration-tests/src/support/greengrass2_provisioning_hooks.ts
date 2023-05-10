@@ -17,8 +17,11 @@ import {
     DescribeInstancesCommand, EC2Client, TerminateInstancesCommand
 } from '@aws-sdk/client-ec2';
 import {
-    CoresService, DevicesService, GREENGRASS2_PROVISIONING_CLIENT_TYPES, TemplatesService
-} from '@cdf/greengrass2-provisioning-client';
+    CoresService,
+    DevicesService,
+    GREENGRASS2_PROVISIONING_CLIENT_TYPES,
+    TemplatesService,
+} from '@awssolutions/cdf-greengrass2-provisioning-client';
 
 import { container } from '../di/inversify.config';
 import { AUTHORIZATION_TOKEN } from '../step_definitions/common/common.steps';

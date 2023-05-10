@@ -1,71 +1,19 @@
 {
-  "name": "@cdf/deployment-helper",
-  "version": "3.3.0",
+  "name": "@awssolutions/cdf-deployment-helper",
+  "version": "0.0.0",
   "description": "CDF Deployment Helper",
   "author": "Hassan khokhar",
   "scripts": {
+    "build": "npx tsc -p tsconfig.build.json && npx shx cp -R 'src/config' 'dist/config'",
+    "bundle": "npm run bundle:build && npm run bundle:deploy",
+    "bundle:build": "lambda-zip --entry-point src/lambda_*.ts --copy config:src/config:.env.defaults",
+    "bundle:deploy": "node ../../../../infrastructure/bundle-package.js",
     "clean": "rushx clean:postrelease && npx shx rm -f bundle.zip",
-    "clean:postrelease": "npx shx rm -rf dist deploy tsconfig.tsbuildinfo .rush .nyc_output *.log",
+    "clean:postrelease": "npx shx rm -rf dist deploy *.tsbuildinfo .rush .nyc_output *.log",
     "lint": "npx eslint . --ext '.ts'",
-    "build": "npx tsc -b && npx shx cp -R 'src/config' 'dist/config'",
-    "test": "rushx lint && jest  --silent --passWithNoTests",
-    "bundle": "../../../../infrastructure/bundle-package.bash deployment-helper"
-  },
-  "dependencies": {
-    "@cdf/lambda-invoke": "^3.0.2",
-    "@cdf/logger": "^4.0.0",
-    "@cdf/config-inject": "^4.0.2",
-    "@cdf/commandandcontrol-client": "^1.0.0",
-    "cfn-response-promise": "1.0.1",
-    "http-errors": "1.8.0",
-    "inversify": "5.1.1",
-    "jsonwebtoken": "8.5.1",
-    "inversify-binding-decorators": "4.0.0",
-    "js-yaml": "4.1.0",
-    "logform": "2.2.0",
-    "ow": "0.23.0",
-    "readable-stream": "3.6.0",
-    "reflect-metadata": "0.1.13",
-    "superagent": "7.1.1",
-    "winston": "3.3.3",
-    "winston-transport": "4.4.0",
-    "dotenv-flow": "~3.2.0"
-  },
-  "devDependencies": {
-    "@types/superagent": "4.1.15",
-    "@types/jsonwebtoken": "8.5.0",
-    "@rushstack/eslint-config": "2.3.4",
-    "@types/aws-lambda": "8.10.65",
-    "nyc": "15.1.0",
-    "shx": "0.3.3",
-    "aws-sdk": "2.1048.0",
-    "@types/jest": "26.0.23",
-    "@typescript-eslint/eslint-plugin": "4.23.0",
-    "@typescript-eslint/parser": "4.23.0",
-    "jest-create-mock-instance": "1.1.0",
-    "eslint": "7.26.0",
-    "jest": "26.6.3",
-    "jest-express": "1.12.0",
-    "jest-haste-map": "26.6.2",
-    "jest-mock": "26.6.2",
-    "jest-mock-extended": "1.0.14",
-    "jest-resolve": "26.6.2",
-    "nodemon": "2.0.7",
-    "ts-jest": "26.5.6",
-    "typescript": "4.2.4",
-    "@types/node": "16.11.7",
-    "@types/dotenv-flow": "~3.2.0"
+    "test": "rushx lint && jest  --silent --passWithNoTests"
   },
   "jest": {
-    "roots": [
-      "<rootDir>/src"
-    ],
-    "transform": {
-      "^.+\\.tsx?$": "ts-jest"
-    },
-    "testMatch": [
-      "<rootDir>/**/?(*.)+(spec|test).ts?(x)"
-    ],
     "moduleFileExtensions": [
       "ts",
       "tsx",
@@ -73,7 +21,60 @@
       "jsx",
       "json",
       "node"
-    ]
+    ],
+    "roots": [
+      "<rootDir>/src"
+    ],
+    "testMatch": [
+      "<rootDir>/**/?(*.)+(spec|test).ts?(x)"
+    ],
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    }
   },
-  "private": true
+  "dependencies": {},
+  "devDependencies": {
+    "@awssolutions/cdf-commandandcontrol-client": "^0.0.0",
+    "@awssolutions/cdf-config-inject": "^0.0.0",
+    "@awssolutions/cdf-lambda-invoke": "^0.0.0",
+    "@awssolutions/cdf-lambda-zip": "^0.0.0",
+    "@awssolutions/cdf-logger": "^0.0.0",
+    "@rushstack/eslint-config": "2.3.4",
+    "@types/aws-lambda": "8.10.65",
+    "@types/dotenv-flow": "~3.2.0",
+    "@types/jest": "26.0.23",
+    "@types/jsonwebtoken": "8.5.0",
+    "@types/node": "16.11.7",
+    "@types/superagent": "4.1.15",
+    "@typescript-eslint/eslint-plugin": "4.23.0",
+    "@typescript-eslint/parser": "4.23.0",
+    "aws-sdk": "2.1048.0",
+    "cfn-response-promise": "1.0.1",
+    "dotenv-flow": "~3.2.0",
+    "eslint": "7.26.0",
+    "http-errors": "1.8.0",
+    "inversify": "6.0.1",
+    "inversify-binding-decorators": "4.0.0",
+    "jest": "26.6.3",
+    "jest-create-mock-instance": "1.1.0",
+    "jest-express": "1.12.0",
+    "jest-haste-map": "26.6.2",
+    "jest-mock": "26.6.2",
+    "jest-mock-extended": "1.0.14",
+    "jest-resolve": "26.6.2",
+    "js-yaml": "4.1.0",
+    "jsonwebtoken": "8.5.1",
+    "logform": "2.4.2",
+    "nodemon": "2.0.20",
+    "nyc": "15.1.0",
+    "ow": "0.23.0",
+    "readable-stream": "3.6.0",
+    "reflect-metadata": "0.1.13",
+    "shx": "0.3.3",
+    "superagent": "7.1.1",
+    "ts-jest": "26.5.6",
+    "typescript": "4.2.4",
+    "winston": "3.3.3",
+    "winston-transport": "4.4.0"
+  }
 }

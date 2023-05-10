@@ -1,20 +1,22 @@
-import { SearchRequestModel } from "@cdf/assetlibrary-client";
+import { SearchRequestModel } from '@awssolutions/cdf-assetlibrary-client';
 
 export interface ListThingsRequest {
-    thingNames?:string[],
-    thingGroupNames?:string[],
-    assetLibraryDeviceIds?:string[],
-    assetLibraryGroupPaths?:string[],
-    assetLibraryQuery?:SearchRequestModel
+    thingNames?: string[];
+    thingGroupNames?: string[];
+    assetLibraryDeviceIds?: string[];
+    assetLibraryGroupPaths?: string[];
+    assetLibraryQuery?: SearchRequestModel;
 }
 
 export interface ListThingsResponse {
-    thingNames?:string[],
-    arnsOutOfRegion?:string[],
+    thingNames?: string[];
+    arnsOutOfRegion?: string[];
 }
-
 
 export const enum TargetType {
-    awsIotThing, awsIotGroup, cdfDevice, cdfGroup, unknown
+    awsIotThing,
+    awsIotGroup,
+    cdfDevice,
+    cdfGroup,
+    unknown,
 }
-

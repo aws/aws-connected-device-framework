@@ -1,6 +1,6 @@
 {
-  "name": "@cdf/auth-devicecert",
-  "version": "5.0.2",
+  "name": "@awssolutions/cdf-auth-devicecert",
+  "version": "0.0.0",
   "description": "API Gateway custom authorizer that authenticates based on a supplied device certificate",
   "author": "Rahul Sareen",
   "scripts": {
@@ -8,15 +8,15 @@
     "lint": "npx eslint . --ext '.ts'",
 
     "build": "npx tsc -b && npx shx cp -R 'src/config' 'dist/'",
-    "test": "rushx lint && jest --silent",
+    "test": "rushx lint && NODE_ENV= jest --silent --maxWorkers=$JEST_MAX_WORKERS",
     "bundle": "../../../infrastructure/bundle-package.bash auth-devicecert"
   },
   "dependencies": {
-    "@cdf/errors": "^4.0.0",
-    "@cdf/config-inject": "^4.0.2",
+    "@awssolutions/cdf-errors": "^0.0.0",
+    "@awssolutions/cdf-config-inject": "^0.0.0",
     "aws-sdk": "2.1048.0",
     "js-yaml": "4.1.0",
-    "logform": "2.2.0",
+    "logform": "2.4.2",
     "pem": "1.14.4",
     "reflect-metadata": "0.1.13",
     "winston": "3.3.3",
@@ -30,7 +30,7 @@
     "@rushstack/eslint-config": "2.3.4",
     "eslint": "7.26.0",
 
-    "nodemon": "2.0.7",
+    "nodemon": "2.0.20",
     "nyc": "15.1.0",
     "shx": "0.3.3",
 

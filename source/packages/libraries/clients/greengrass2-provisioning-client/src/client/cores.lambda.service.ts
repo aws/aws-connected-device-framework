@@ -10,20 +10,25 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
+
+import {
+    LAMBDAINVOKE_TYPES,
+    LambdaApiGatewayEventBuilder,
+    LambdaInvokerService,
+} from '@awssolutions/cdf-lambda-invoke';
 import { inject, injectable } from 'inversify';
 import ow from 'ow';
-import { RequestHeaders } from './common.model';
-import { LambdaInvokerService, LAMBDAINVOKE_TYPES, LambdaApiGatewayEventBuilder } from '@cdf/lambda-invoke';
-import { CoresService, CoresServiceBase } from './cores.service';
-import { CoreTask, NewCoreTask, Core, CoreList } from './cores.model';
 import { DeploymentList } from '..';
+import { RequestHeaders } from './common.model';
+import { Core, CoreList, CoreTask, NewCoreTask } from './cores.model';
+import { CoresService, CoresServiceBase } from './cores.service';
 
 @injectable()
 export class CoresLambdaService extends CoresServiceBase implements CoresService {
-
     private functionName: string;
     constructor(
-        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService) private lambdaInvoker: LambdaInvokerService
+        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
+        private lambdaInvoker: LambdaInvokerService
     ) {
         super();
         this.lambdaInvoker = lambdaInvoker;
@@ -32,7 +37,7 @@ export class CoresLambdaService extends CoresServiceBase implements CoresService
 
     async createCoreTask(task: NewCoreTask, additionalHeaders?: RequestHeaders): Promise<string> {
         ow(task, ow.object.nonEmpty);
-        ow(task.type, 'type', ow.string.oneOf(['Create', 'Delete']))
+        ow(task.type, 'type', ow.string.oneOf(['Create', 'Delete']));
         ow(task.cores, 'cores', ow.array.nonEmpty);
 
         for (const c of task.cores) {
@@ -52,11 +57,9 @@ export class CoresLambdaService extends CoresServiceBase implements CoresService
 
         const res = await this.lambdaInvoker.invoke(this.functionName, event);
         return res?.header['x-taskid'];
-
     }
 
     async getCoreTask(taskId: string, additionalHeaders?: RequestHeaders): Promise<CoreTask> {
-
         ow(taskId, ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
@@ -69,7 +72,6 @@ export class CoresLambdaService extends CoresServiceBase implements CoresService
     }
 
     async getCore(name: string, additionalHeaders?: RequestHeaders): Promise<Core> {
-
         ow(name, ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
@@ -82,7 +84,6 @@ export class CoresLambdaService extends CoresServiceBase implements CoresService
     }
 
     async listCores(additionalHeaders?: RequestHeaders): Promise<CoreList> {
-
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.coresRelativeUrl())
             .setMethod('GET')
@@ -92,8 +93,10 @@ export class CoresLambdaService extends CoresServiceBase implements CoresService
         return res.body;
     }
 
-    async listDeploymentsByCore(coreName: string, additionalHeaders?: RequestHeaders): Promise<DeploymentList> {
-
+    async listDeploymentsByCore(
+        coreName: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<DeploymentList> {
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.deploymentsByCoreRelativeUrl(coreName))
             .setMethod('GET')
@@ -102,6 +105,4 @@ export class CoresLambdaService extends CoresServiceBase implements CoresService
         const res = await this.lambdaInvoker.invoke(this.functionName, event);
         return res.body;
     }
-
-
 }

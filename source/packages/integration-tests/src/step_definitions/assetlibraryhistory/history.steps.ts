@@ -10,22 +10,26 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import 'reflect-metadata';
-import { setDefaultTimeout, DataTable, Then, When} from '@cucumber/cucumber';
 import {
+    ASSETLIBRARYHISTORY_CLIENT_TYPES,
+    Events,
     EventsService,
     ObjectEventsRequest,
-    Events,
-    ASSETLIBRARYHISTORY_CLIENT_TYPES,
-} from '@cdf/assetlibraryhistory-client';
+} from '@awssolutions/cdf-assetlibraryhistory-client';
+import { DataTable, Then, When, setDefaultTimeout } from '@cucumber/cucumber';
 import { fail } from 'assert';
+import { expect, use } from 'chai';
 import stringify from 'json-stable-stringify';
+import 'reflect-metadata';
+import { Dictionary } from '../../../../libraries/core/lambda-invoke/src';
+import { container } from '../../di/inversify.config';
+import {
+    AUTHORIZATION_TOKEN,
+    RESPONSE_STATUS,
+    TIME_SCENARIO_STARTED,
+} from '../common/common.steps';
 
 import chai_string = require('chai-string');
-import {expect, use} from 'chai';
-import {AUTHORIZATION_TOKEN, RESPONSE_STATUS, TIME_SCENARIO_STARTED} from '../common/common.steps';
-import {container} from '../../di/inversify.config';
-import {Dictionary} from '../../../../libraries/core/lambda-invoke/src';
 use(chai_string);
 
 setDefaultTimeout(10 * 1000);

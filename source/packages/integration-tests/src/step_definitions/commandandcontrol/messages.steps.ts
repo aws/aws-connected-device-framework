@@ -19,7 +19,11 @@ import { container } from '../../di/inversify.config';
 import { buildModel, validateExpectedAttributes } from '../common/common.steps';
 import { getAdditionalHeaders } from '../notifications/notifications.utils';
 import { world } from './commandandcontrol.world';
-import { COMMANDANDCONTROL_CLIENT_TYPES, MessageResource, MessagesService } from '@cdf/commandandcontrol-client';
+import {
+    COMMANDANDCONTROL_CLIENT_TYPES,
+    MessageResource,
+    MessagesService,
+} from '@awssolutions/cdf-commandandcontrol-client';
 
 import chai_string = require('chai-string');
 use(chai_string);

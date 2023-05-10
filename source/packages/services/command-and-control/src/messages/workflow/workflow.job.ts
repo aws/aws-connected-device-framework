@@ -15,8 +15,10 @@ import { inject, injectable } from 'inversify';
 import ow from 'ow';
 
 import {
-    BulkProvisionThingsRequest, PROVISIONING_CLIENT_TYPES, ThingsService
-} from '@cdf/provisioning-client';
+    BulkProvisionThingsRequest,
+    PROVISIONING_CLIENT_TYPES,
+    ThingsService,
+} from '@awssolutions/cdf-provisioning-client';
 
 import { CommandItem, JobDeliveryMethod } from '../../commands/commands.models';
 import { TYPES } from '../../di/types';

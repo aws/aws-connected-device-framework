@@ -11,28 +11,42 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import { LambdaApiGatewayEventBuilder, LambdaInvokerService, LAMBDAINVOKE_TYPES } from "@cdf/lambda-invoke";
+import {
+    LAMBDAINVOKE_TYPES,
+    LambdaApiGatewayEventBuilder,
+    LambdaInvokerService,
+} from '@awssolutions/cdf-lambda-invoke';
 import { inject, injectable } from "inversify";
-import { BulkComponentsService, BulkComponentsServiceBase } from "./bulkComponents.service";
-import { RequestHeaders } from "./common.model";
 import ow from 'ow';
-import { BulkComponentsResource, BulkComponentsResult, ComponentResource } from "./components.model";
-
+import { BulkComponentsService, BulkComponentsServiceBase } from './bulkComponents.service';
+import { RequestHeaders } from './common.model';
+import {
+    BulkComponentsResource,
+    BulkComponentsResult,
+    ComponentResource,
+} from './components.model';
 
 @injectable()
-export class BulkComponentsLambdaService extends BulkComponentsServiceBase implements BulkComponentsService {
-
+export class BulkComponentsLambdaService
+    extends BulkComponentsServiceBase
+    implements BulkComponentsService
+{
     private functionName: string;
 
     constructor(
-        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService) private lambdaInvoker: LambdaInvokerService
+        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
+        private lambdaInvoker: LambdaInvokerService
     ) {
         super();
         this.lambdaInvoker = lambdaInvoker;
-        this.functionName = process.env.ORGANIZATIONMANAGER_API_FUNCTION_NAME
+        this.functionName = process.env.ORGANIZATIONMANAGER_API_FUNCTION_NAME;
     }
 
-    async bulkCreateComponents(organizationalUnitId: string, bulkComponentsResource: BulkComponentsResource, additionalHeaders?: RequestHeaders): Promise<BulkComponentsResult> {
+    async bulkCreateComponents(
+        organizationalUnitId: string,
+        bulkComponentsResource: BulkComponentsResource,
+        additionalHeaders?: RequestHeaders
+    ): Promise<BulkComponentsResult> {
         ow(organizationalUnitId, ow.string.nonEmpty);
         ow(bulkComponentsResource, ow.object.nonEmpty);
         ow(bulkComponentsResource.components, ow.array.minLength(1));
@@ -47,26 +61,31 @@ export class BulkComponentsLambdaService extends BulkComponentsServiceBase imple
         return res.body;
     }
 
-    async bulkGetComponents(organizationalUnitId: string, additionalHeaders?: RequestHeaders): Promise<ComponentResource[]> {
-        ow(organizationalUnitId, ow.string.nonEmpty)
+    async bulkGetComponents(
+        organizationalUnitId: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<ComponentResource[]> {
+        ow(organizationalUnitId, ow.string.nonEmpty);
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.componentsRelativeUrl(organizationalUnitId))
             .setMethod('GET')
             .setHeaders(super.buildHeaders(additionalHeaders));
 
         const res = await this.lambdaInvoker.invoke(this.functionName, event);
-        return res.body
+        return res.body;
     }
 
-    async bulkDeleteComponents(organizationalUnitId: string, additionalHeaders?: RequestHeaders): Promise<void> {
+    async bulkDeleteComponents(
+        organizationalUnitId: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<void> {
         ow(organizationalUnitId, ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.componentsRelativeUrl(organizationalUnitId))
             .setMethod('DELETE')
-            .setHeaders(super.buildHeaders(additionalHeaders))
+            .setHeaders(super.buildHeaders(additionalHeaders));
 
         await this.lambdaInvoker.invoke(this.functionName, event);
     }
-
 }

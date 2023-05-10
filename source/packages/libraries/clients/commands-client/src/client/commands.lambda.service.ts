@@ -20,7 +20,11 @@ import {
     RequestHeaders,
 } from './commands.model';
 import {CommandsService, CommandsServiceBase} from './commands.service';
-import {LAMBDAINVOKE_TYPES, LambdaInvokerService, LambdaApiGatewayEventBuilder} from '@cdf/lambda-invoke';
+import {
+    LAMBDAINVOKE_TYPES,
+    LambdaInvokerService,
+    LambdaApiGatewayEventBuilder,
+} from '@awssolutions/cdf-lambda-invoke';
 
 @injectable()
 export class CommandsLambdaService extends CommandsServiceBase implements CommandsService {

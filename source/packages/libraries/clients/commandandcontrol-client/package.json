@@ -1,6 +1,6 @@
 {
-  "name": "@cdf/commandandcontrol-client",
-  "version": "1.0.0",
+  "name": "@awssolutions/cdf-commandandcontrol-client",
+  "version": "0.0.0",
   "description": "CDF Command and Control Client",
   "author": "Dean Hart",
   "main": "dist/index.js",
@@ -9,18 +9,20 @@
     "clean": "npx shx rm -rf dist tsconfig.tsbuildinfo bundle.zip .rush .nyc_output *.log",
     "lint": "npx eslint . --ext '.ts'",
     "build": "npx tsc -b",
-    "test": "rushx lint && jest --silent --passWithNoTests"
+    "test": "rushx lint && jest --silent --passWithNoTests --maxWorkers=$JEST_MAX_WORKERS"
   },
   "dependencies": {
-    "@cdf/assetlibrary-client": "^5.1.0",
-    "@cdf/config-inject": "^4.0.2",
-    "@cdf/lambda-invoke": "^3.0.0",
+    "@awssolutions/cdf-client-request-signer": "^0.0.0",
+    "@awssolutions/cdf-assetlibrary-client": "^0.0.0",
+    "@awssolutions/cdf-config-inject": "^0.0.0",
+    "@awssolutions/cdf-lambda-invoke": "^0.0.0",
     "dotenv-flow": "~3.2.0",
-    "inversify": "5.1.1",
+    "http-errors": "~2.0.0",
+    "inversify": "6.0.1",
     "inversify-binding-decorators": "4.0.0",
-    "inversify-express-utils": "6.3.2",
+    "inversify-express-utils": "6.4.3",
     "js-yaml": "4.1.0",
-    "logform": "2.2.0",
+    "logform": "2.4.2",
     "ow": "0.23.0",
     "reflect-metadata": "0.1.13",
     "superagent": "6.1.0",
@@ -33,15 +35,13 @@
   },
   "devDependencies": {
     "@types/dotenv-flow": "~3.2.0",
+    "@types/http-errors": "~2.0.1",
     "@types/node": "16.11.7",
     "@types/superagent": "4.1.10",
-
     "@rushstack/eslint-config": "2.3.4",
     "eslint": "7.26.0",
-
     "nyc": "15.1.0",
     "shx": "0.3.3",
-
     "@types/jest": "26.0.23",
     "@typescript-eslint/eslint-plugin": "4.23.0",
     "@typescript-eslint/parser": "4.23.0",
@@ -53,7 +53,6 @@
     "jest": "26.6.3",
     "ts-jest": "26.5.6",
     "typescript": "4.2.4"
-
   },
   "jest": {
     "roots": [
@@ -74,6 +73,5 @@
       "node"
     ]
   },
-  "license": "ISC",
-  "private": true
+  "license": "ISC"
 }

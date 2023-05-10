@@ -17,7 +17,7 @@ import { json } from 'body-parser';
 import { Application, NextFunction, Request, Response } from 'express';
 import { InversifyExpressServer } from 'inversify-express-utils';
 
-import { normalisePath } from '@cdf/express-middleware';
+import { normalisePath } from '@awssolutions/cdf-express-middleware';
 
 import { logger } from './utils/logger.util';
 
@@ -35,56 +35,54 @@ const server = new InversifyExpressServer(container);
 const supportedVersions: string[] = process.env.SUPPORTED_API_VERSIONS?.split(',') || [];
 
 server.setConfig((app) => {
+    // xray initialization
+    // app.use(XRayExpress.openSegment('@awssolutions/cdf-command-and-control'));
 
-  // xray initialization
-  // app.use(XRayExpress.openSegment('@cdf/command-and-control'));
+    // only process requests that we can support the requested accept header
+    app.use((req: Request, res: Response, next: NextFunction) => {
+        if (supportedVersions.includes(req.headers['accept']) || req.method === 'OPTIONS') {
+            next();
+        } else {
+            res.status(415).send();
+        }
+    });
 
-  // only process requests that we can support the requested accept header
-  app.use( (req:Request, res:Response, next:NextFunction)=> {
-    if (supportedVersions.includes(req.headers['accept']) || req.method==='OPTIONS') {
-      next();
-    } else {
-      res.status(415).send();
+    app.use((req, _res, next) => {
+        const customDomainPath = process.env.CUSTOM_DOMAIN_BASE_PATH;
+        if (customDomainPath) {
+            req.url = normalisePath(req.url, customDomainPath);
+            logger.silly(`${customDomainPath} is removed from the request url`);
+        }
+        next();
+    });
+
+    app.use(json({ type: supportedVersions }));
+
+    // default the response's headers
+    app.use((req, res, next) => {
+        const ct = res.getHeader('Content-Type');
+        if (ct === undefined || ct === null) {
+            res.setHeader('Content-Type', req.headers['accept']);
+        }
+        next();
+    });
+
+    // enable cors
+    const corsAllowedOrigin = process.env.CORS_ORIGIN;
+    let exposedHeaders = process.env.CORS_EXPOSED_HEADERS;
+    if (exposedHeaders === null || exposedHeaders === '') {
+        exposedHeaders = undefined;
     }
-  });
- 
-  app.use((req, _res, next) => {
-      const customDomainPath = process.env.CUSTOM_DOMAIN_BASE_PATH;
-      if (customDomainPath) {
-          req.url = normalisePath(req.url, customDomainPath);
-          logger.silly(`${customDomainPath} is removed from the request url`)
-      }
-      next();
-  });
-
-  app.use(json({ type: supportedVersions }));
-
-  // default the response's headers
-  app.use( (req,res,next)=> {
-    const ct = res.getHeader('Content-Type');
-    if (ct===undefined || ct===null) {
-      res.setHeader('Content-Type', req.headers['accept']);
+    if (corsAllowedOrigin?.length > 0) {
+        const c = cors({
+            origin: corsAllowedOrigin,
+            exposedHeaders,
+        });
+        app.use(c);
     }
-    next();
-  });
 
-  // enable cors
-  const corsAllowedOrigin = process.env.CORS_ORIGIN;
-  let exposedHeaders = process.env.CORS_EXPOSED_HEADERS;
-  if (exposedHeaders === null || exposedHeaders === '') {
-      exposedHeaders = undefined;
-  }
-  if (corsAllowedOrigin?.length>0) {
-      const c = cors({
-          origin: corsAllowedOrigin,
-          exposedHeaders
-      });
-      app.use(c);
-  }
-
-  // xray initialization
-  // app.use(XRayExpress.closeSegment());
-  
+    // xray initialization
+    // app.use(XRayExpress.closeSegment());
 });
 
 export const serverInstance:Application = server.build();

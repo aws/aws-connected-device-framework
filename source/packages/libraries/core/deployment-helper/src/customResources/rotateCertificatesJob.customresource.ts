@@ -13,7 +13,13 @@
 
 import { inject, injectable } from 'inversify';
 import ow from 'ow';
-import { COMMANDANDCONTROL_CLIENT_TYPES, CommandsService, EditableCommandResource, MessagesService, NewMessageResource } from '@cdf/commandandcontrol-client';
+import {
+    COMMANDANDCONTROL_CLIENT_TYPES,
+    CommandsService,
+    EditableCommandResource,
+    MessagesService,
+    NewMessageResource,
+} from '@awssolutions/cdf-commandandcontrol-client';
 import { CustomResourceEvent } from './customResource.model';
 import { CustomResource } from './customResource';
 

@@ -10,24 +10,28 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { Policy, PolicyList } from './policies.model';
+import {
+    LAMBDAINVOKE_TYPES,
+    LambdaApiGatewayEventBuilder,
+    LambdaInvokerService,
+} from '@awssolutions/cdf-lambda-invoke';
 import { inject, injectable } from 'inversify';
 import ow from 'ow';
-import { PoliciesService, PoliciesServiceBase } from './policies.service';
 import { RequestHeaders } from './common.model';
-import { LambdaApiGatewayEventBuilder, LAMBDAINVOKE_TYPES, LambdaInvokerService } from '@cdf/lambda-invoke';
+import { Policy, PolicyList } from './policies.model';
+import { PoliciesService, PoliciesServiceBase } from './policies.service';
 
 @injectable()
 export class PoliciesLambdaService extends PoliciesServiceBase implements PoliciesService {
     private functionName: string;
 
     constructor(
-        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService) private lambdaInvoker: LambdaInvokerService,
+        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
+        private lambdaInvoker: LambdaInvokerService
     ) {
         super();
         this.lambdaInvoker = lambdaInvoker;
-        this.functionName = process.env.ASSETLIBRARY_API_FUNCTION_NAME
-
+        this.functionName = process.env.ASSETLIBRARY_API_FUNCTION_NAME;
     }
 
     async createPolicy(body: Policy, additionalHeaders?: RequestHeaders): Promise<void> {
@@ -42,14 +46,19 @@ export class PoliciesLambdaService extends PoliciesServiceBase implements Polici
         await this.lambdaInvoker.invoke(this.functionName, event);
     }
 
-    async listInheritedPoliciesByDevice(deviceId: string, type: string, additionalHeaders?: RequestHeaders): Promise<PolicyList> {
+    async listInheritedPoliciesByDevice(
+        deviceId: string,
+        type: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<PolicyList> {
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
         ow(type, 'type', ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.inheritedPoliciesRelativeUrl())
             .setQueryStringParameters({
-                deviceId, type
+                deviceId,
+                type,
             })
             .setMethod('GET')
             .setHeaders(super.buildHeaders(additionalHeaders));
@@ -58,24 +67,31 @@ export class PoliciesLambdaService extends PoliciesServiceBase implements Polici
         return res.body;
     }
 
-    async listInheritedPoliciesByGroups(additionalHeaders?: RequestHeaders, ...groupPaths: string[]): Promise<PolicyList> {
+    async listInheritedPoliciesByGroups(
+        additionalHeaders?: RequestHeaders,
+        ...groupPaths: string[]
+    ): Promise<PolicyList> {
         ow(groupPaths, 'groupPaths', ow.array.nonEmpty);
         ow(groupPaths, 'groupPaths', ow.array.minLength(1));
 
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.inheritedPoliciesRelativeUrl())
             .setMultiValueQueryStringParameters({
-                groupPath: groupPaths
+                groupPath: groupPaths,
             })
             .setMethod('GET')
             .setHeaders(super.buildHeaders(additionalHeaders));
 
         const res = await this.lambdaInvoker.invoke(this.functionName, event);
         return res.body;
-
     }
 
-    async listPolicies(type: string, offset?: number, count?: number, additionalHeaders?: RequestHeaders): Promise<PolicyList> {
+    async listPolicies(
+        type: string,
+        offset?: number,
+        count?: number,
+        additionalHeaders?: RequestHeaders
+    ): Promise<PolicyList> {
         ow(type, 'type', ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
@@ -83,7 +99,7 @@ export class PoliciesLambdaService extends PoliciesServiceBase implements Polici
             .setQueryStringParameters({
                 type,
                 offset: `${offset}`,
-                count: `${count}`
+                count: `${count}`,
             })
             .setMethod('GET')
             .setHeaders(super.buildHeaders(additionalHeaders));
@@ -104,7 +120,11 @@ export class PoliciesLambdaService extends PoliciesServiceBase implements Polici
         return res.body;
     }
 
-    async patchPolicy(policyId: string, body: Policy, additionalHeaders?: RequestHeaders): Promise<void> {
+    async patchPolicy(
+        policyId: string,
+        body: Policy,
+        additionalHeaders?: RequestHeaders
+    ): Promise<void> {
         ow(policyId, 'policyId', ow.string.nonEmpty);
         ow(body, 'body', ow.object.nonEmpty);
 

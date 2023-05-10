@@ -10,7 +10,12 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { OrganizationalUnitsService, OrganizationalUnitResource, ORGMANLIBRARY_CLIENT_TYPES, AccountsService } from '@cdf/organizationmanager-client';
+import {
+    OrganizationalUnitsService,
+    OrganizationalUnitResource,
+    ORGMANLIBRARY_CLIENT_TYPES,
+    AccountsService,
+} from '@awssolutions/cdf-organizationmanager-client';
 import { Before, setDefaultTimeout } from '@cucumber/cucumber';
 import { container } from '../di/inversify.config';
 
@@ -45,20 +50,20 @@ const organizationalUnitService: OrganizationalUnitsService = container.get(ORGM
 const accountsService: AccountsService = container.get(ORGMANLIBRARY_CLIENT_TYPES.AccountsService);
 
 async function tearDown() {
-    for (let account of testAccounts) {
-        await accountsService.deleteAccount(account).catch(_err => { })
+    for (const account of testAccounts) {
+        await accountsService.deleteAccount(account).catch(_err => { console.log('error') })
     }
-    for (let ou of testOrganizationalUnits) {
-        await organizationalUnitService.deleteOrganizationalUnit(ou.id).catch(_err => { })
+    for (const ou of testOrganizationalUnits) {
+        await organizationalUnitService.deleteOrganizationalUnit(ou.id).catch(_err => { console.log('error') })
     }
-    for (let ou of organizationalUnitsWithComponents) {
-        await organizationalUnitService.deleteOrganizationalUnit(ou.id).catch(_err => { })
+    for (const ou of organizationalUnitsWithComponents) {
+        await organizationalUnitService.deleteOrganizationalUnit(ou.id).catch(_err => { console.log('error') })
     }
 }
 
 Before({ tags: '@setup_organizationmanager_feature' }, async function () {
     await tearDown();
-    for (let ou of organizationalUnitsWithComponents) {
+    for (const ou of organizationalUnitsWithComponents) {
         await organizationalUnitService.createOrganizationalUnit(ou)
     }
 });

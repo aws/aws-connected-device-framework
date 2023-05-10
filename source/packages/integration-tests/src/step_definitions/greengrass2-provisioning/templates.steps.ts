@@ -17,8 +17,10 @@ import { expect, use } from 'chai';
 import { Given, setDefaultTimeout, DataTable, Then, When } from '@cucumber/cucumber';
 
 import {
-    GREENGRASS2_PROVISIONING_CLIENT_TYPES, Template, TemplatesService
-} from '@cdf/greengrass2-provisioning-client';
+    GREENGRASS2_PROVISIONING_CLIENT_TYPES,
+    Template,
+    TemplatesService,
+} from '@awssolutions/cdf-greengrass2-provisioning-client';
 
 import { container } from '../../di/inversify.config';
 import { replaceTokens, validateExpectedAttributes } from '../common/common.steps';

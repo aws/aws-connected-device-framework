@@ -1,6 +1,10 @@
 import { Given, DataTable, Then, When } from "@cucumber/cucumber";
 import { buildModel, validateExpectedAttributes } from '../common/common.steps';
-import { OrganizationalUnitResource, OrganizationalUnitsService, ORGMANLIBRARY_CLIENT_TYPES } from '@cdf/organizationmanager-client';
+import {
+    OrganizationalUnitResource,
+    OrganizationalUnitsService,
+    ORGMANLIBRARY_CLIENT_TYPES,
+} from '@awssolutions/cdf-organizationmanager-client';
 import { container } from "../../di/inversify.config";
 import { world, getAdditionalHeaders } from "./organizationalManager.world";
 import { expect } from "chai";

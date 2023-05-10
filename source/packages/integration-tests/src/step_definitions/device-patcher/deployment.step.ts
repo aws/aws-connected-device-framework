@@ -18,8 +18,8 @@ import { Then, When, setDefaultTimeout, DataTable } from '@cucumber/cucumber';
 import { replaceInFile, ReplaceInFileConfig } from 'replace-in-file';
 
 
-import { PatchService, CreatePatchRequest } from '@cdf/device-patcher-client';
-import { DEVICE_PATCHER_CLIENT_TYPES } from '@cdf/device-patcher-client';
+import { PatchService, CreatePatchRequest } from '@awssolutions/cdf-device-patcher-client';
+import { DEVICE_PATCHER_CLIENT_TYPES } from '@awssolutions/cdf-device-patcher-client';
 
 import { container } from '../../di/inversify.config';
 import { replaceTokens, RESPONSE_STATUS, validateExpectedAttributes } from '../common/common.steps';

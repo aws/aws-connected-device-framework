@@ -11,32 +11,39 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import ow from 'ow';
-import { injectable, inject } from 'inversify';
-import { LambdaInvokerService, LAMBDAINVOKE_TYPES, LambdaApiGatewayEventBuilder } from '@cdf/lambda-invoke';
-
-import {RequestHeaders} from './common.model';
-import {PatchServiceBase, PatchService} from './patch.service';
 import {
-    UpdatePatchRequest,
+    LAMBDAINVOKE_TYPES,
+    LambdaApiGatewayEventBuilder,
+    LambdaInvokerService,
+} from '@awssolutions/cdf-lambda-invoke';
+import { inject, injectable } from 'inversify';
+import ow from 'ow';
+import { RequestHeaders } from './common.model';
+import {
+    ListPatchResponse,
     PatchResponse,
     PatchTaskRequest,
-    PatchTaskResponse, ListPatchResponse
+    PatchTaskResponse,
+    UpdatePatchRequest,
 } from './patch.model';
+import { PatchService, PatchServiceBase } from './patch.service';
 
 @injectable()
 export class PatchLambdaService extends PatchServiceBase implements PatchService {
-    
-    private functionName : string;
+    private functionName: string;
     constructor(
-        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService) private lambdaInvoker: LambdaInvokerService
+        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
+        private lambdaInvoker: LambdaInvokerService
     ) {
         super();
         this.lambdaInvoker = lambdaInvoker;
         this.functionName = process.env.DEVICE_PATCHER_API_FUNCTION_NAME;
     }
 
-    public async createPatchTask(patchTaskRequest: PatchTaskRequest, additionalHeaders?:RequestHeaders): Promise<string> {
+    public async createPatchTask(
+        patchTaskRequest: PatchTaskRequest,
+        additionalHeaders?: RequestHeaders
+    ): Promise<string> {
         ow(patchTaskRequest, ow.object.nonEmpty);
         ow(patchTaskRequest.patches, ow.array.nonEmpty);
 
@@ -44,14 +51,17 @@ export class PatchLambdaService extends PatchServiceBase implements PatchService
             .setPath(super.patchTasksRelativeUrl())
             .setPath('POST')
             .setHeaders(super.buildHeaders(additionalHeaders))
-            .setBody(patchTaskRequest)
+            .setBody(patchTaskRequest);
 
         const res = await this.lambdaInvoker.invoke(this.functionName, event);
         const location = res.header?.location;
         return location.substring(location.lastIndexOf('/') + 1);
     }
 
-    public async getPatch(patchId: string, additionalHeaders?:RequestHeaders): Promise<PatchResponse> {
+    public async getPatch(
+        patchId: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<PatchResponse> {
         ow(patchId, ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
@@ -63,9 +73,11 @@ export class PatchLambdaService extends PatchServiceBase implements PatchService
         return res.body;
     }
 
-    public async getPatchTask(taskId: string, additionalHeaders?:RequestHeaders): Promise<PatchTaskResponse> {
+    public async getPatchTask(
+        taskId: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<PatchTaskResponse> {
         ow(taskId, ow.string.nonEmpty);
-
 
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.patchTaskRelativeUrl(taskId))
@@ -76,12 +88,15 @@ export class PatchLambdaService extends PatchServiceBase implements PatchService
         return res.body;
     }
 
-    public async listPatchesByTaskId(taskId: string, additionalHeaders?:RequestHeaders): Promise<ListPatchResponse> {
+    public async listPatchesByTaskId(
+        taskId: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<ListPatchResponse> {
         ow(taskId, ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.patchByTaskRelativeUrl(taskId))
-            .setQueryStringParameters({status})
+            .setQueryStringParameters({ status })
             .setMethod('GET')
             .setHeaders(super.buildHeaders(additionalHeaders));
 
@@ -89,12 +104,16 @@ export class PatchLambdaService extends PatchServiceBase implements PatchService
         return res.body;
     }
 
-    public async listPatchesByDeviceId(deviceId: string, status?: string, additionalHeaders?:RequestHeaders): Promise<ListPatchResponse> {
+    public async listPatchesByDeviceId(
+        deviceId: string,
+        status?: string,
+        additionalHeaders?: RequestHeaders
+    ): Promise<ListPatchResponse> {
         ow(deviceId, ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.patchByDeviceRelativeUrl(deviceId))
-            .setQueryStringParameters({status})
+            .setQueryStringParameters({ status })
             .setMethod('GET')
             .setHeaders(super.buildHeaders(additionalHeaders));
 
@@ -102,7 +121,10 @@ export class PatchLambdaService extends PatchServiceBase implements PatchService
         return res.body;
     }
 
-    public async updatePatch(patchRequest: UpdatePatchRequest, additionalHeaders?:RequestHeaders): Promise<void> {
+    public async updatePatch(
+        patchRequest: UpdatePatchRequest,
+        additionalHeaders?: RequestHeaders
+    ): Promise<void> {
         ow(patchRequest, ow.object.nonEmpty);
         ow(patchRequest.patchStatus, ow.string.nonEmpty);
         ow(patchRequest.patchId, ow.string.nonEmpty);
@@ -111,12 +133,12 @@ export class PatchLambdaService extends PatchServiceBase implements PatchService
             .setPath(super.patchesRelativeUrl(patchRequest.patchId))
             .setPath('POST')
             .setHeaders(super.buildHeaders(additionalHeaders))
-            .setBody(patchRequest)
+            .setBody(patchRequest);
 
         await this.lambdaInvoker.invoke(this.functionName, event);
     }
 
-    public async deletePatch(patchId: string, additionalHeaders?:RequestHeaders): Promise<void> {
+    public async deletePatch(patchId: string, additionalHeaders?: RequestHeaders): Promise<void> {
         ow(patchId, ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()

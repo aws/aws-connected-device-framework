@@ -15,7 +15,7 @@ import '../config/env';
 
 import { ContainerModule, decorate, injectable, interfaces } from 'inversify';
 
-import { LAMBDAINVOKE_TYPES, LambdaInvokerService } from '@cdf/lambda-invoke';
+import { LAMBDAINVOKE_TYPES, LambdaInvokerService } from '@awssolutions/cdf-lambda-invoke';
 
 import { EventsApigwService } from '../client/events.apigw.service';
 import { EventsLambdaService } from '../client/events.lambda.service';
@@ -25,7 +25,7 @@ import { EventsourcesLambdaService } from '../client/eventsources.lambda.service
 import { EventsourcesService } from '../client/eventsources.service';
 import { MessagesDebugLambdaService } from '../client/messages.lambda.service';
 import { MessagesDebugService } from '../client/messages.service';
-import { MessagesDebugApigwService } from '../client/messgaes.apigw.service';
+import { MessagesDebugApigwService } from '../client/messages.apigw.service';
 import { SubscriptionsApigwService } from '../client/subscriptions.apigw.service';
 import { SubscriptionsLambdaService } from '../client/subscriptions.lambda.service';
 import { SubscriptionsService } from '../client/subscriptions.service';

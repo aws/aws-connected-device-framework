@@ -4,6 +4,7 @@ Feature: Command & Control - Jobs
   Scenario: Setup
     When I pause for 5000ms
     Then command-and-control command with operation "cdf-integration-test-ota" does not exist
+    Then command-and-control command with operation "cdf-integration-test-ota-named" does not exist
     And thing "cdf-integration-test-cac-jobs-device1" exists
     And thing "cdf-integration-test-cac-jobs-device2" exists
 
@@ -39,11 +40,44 @@ Feature: Command & Control - Jobs
       | $.createdAt                                                                                             | ___regex___:^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}).(\d{3})Z$ |
       | $.updatedAt                                                                                             | ___regex___:^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}).(\d{3})Z$ |
 
+  Scenario: Create a named command
+    Given command-and-control command with operation "cdf-integration-test-ota-named" does not exist
+    When I create named command-and-control command with attributes:
+      | operation       | cdf-integration-test-ota-named                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+      | deliveryMethod  | {"type": "JOB",  "targetSelection": "SNAPSHOT" , "expectReply": true,"presignedUrlConfig": {"expiresInSec": 3600},"jobExecutionsRolloutConfig": {"maximumPerMinute": 50,"exponentialRate":{"baseRatePerMinute":20,"incrementFactor": 2,"rateIncreaseCriteria": {"numberOfNotifiedThings": 1000}}},"abortConfig": {"criteriaList": [{"action": "CANCEL","failureType": "FAILED","minNumberOfExecutedThings": 100,"thresholdPercentage": 20}]},"timeoutConfig": {"inProgressTimeoutInMinutes": 100}} |
+      | payloadTemplate | "{\"firmwareLocation\": \"${aws:iot:s3-presigned-url:${s3Url}}\"}"                                                                                                                                                                                                                                                                                                                                                                                               |
+      | payloadParams   | ["s3Url"]                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+      | tags            | {"cdf-integration-test": true}                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+    Then last command-and-control command exists with attributes:
+      | $.id                                                                                                    | test_name                                              |
+      | $.operation                                                                                             | cdf-integration-test-ota-named                                               |
+      | $.deliveryMethod.type                                                                                   | JOB                                                                    |
+      | $.deliveryMethod.expectReply                                                                            | true                                                                   |
+      | $.deliveryMethod.targetSelection                                                                        | SNAPSHOT                                                               |
+      | $.deliveryMethod.presignedUrlConfig.expiresInSec                                                        | 3600                                                                   |
+      | $.deliveryMethod.jobExecutionsRolloutConfig.maximumPerMinute                                            | 50                                                                     |
+      | $.deliveryMethod.jobExecutionsRolloutConfig.exponentialRate.baseRatePerMinute                           | 20                                                                     |
+      | $.deliveryMethod.jobExecutionsRolloutConfig.exponentialRate.incrementFactor                             | 2                                                                      |
+      | $.deliveryMethod.jobExecutionsRolloutConfig.exponentialRate.rateIncreaseCriteria.numberOfNotifiedThings | 1000                                                                   |
+      | $.deliveryMethod.abortConfig.criteriaList.length                                                        | 1                                                                      |
+      | $.deliveryMethod.abortConfig.criteriaList.[0].action                                                    | CANCEL                                                                 |
+      | $.deliveryMethod.abortConfig.criteriaList.[0].failureType                                               | FAILED                                                                 |
+      | $.deliveryMethod.abortConfig.criteriaList.[0].minNumberOfExecutedThings                                 | 100                                                                    |
+      | $.deliveryMethod.abortConfig.criteriaList.[0].thresholdPercentage                                       | 20                                                                     |
+      | $.deliveryMethod.timeoutConfig.inProgressTimeoutInMinutes                                               | 100                                                                    |
+      | $.payloadTemplate                                                                                       | "{\"firmwareLocation\": \"${aws:iot:s3-presigned-url:${s3Url}}\"}"     |
+      | $.payloadParams.length                                                                                  | 1                                                                      |
+      | $.payloadParams.[0]                                                                                     | s3Url                                                                  |
+      | $.tags.cdf-integration-test                                                                             | true                                                                   |
+      | $.createdAt                                                                                             | ___regex___:^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}).(\d{3})Z$ |
+      | $.updatedAt                                                                                             | ___regex___:^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}).(\d{3})Z$ |
+
+    
   Scenario: Send a message to a thing group
     Given command-and-control command with operation "cdf-integration-test-ota" exists
     When I send command-and-control message to last command with attributes:
       | targets | {"awsIoT": {"thingGroups": [{"name":"cdf-integration-test-cac-jobs-group1", "expand":true}]}} |
-      | payloadParamValues | {"s3Url": "s3://cdf-157731826412-us-west-2/integration-tests/provisioning/templates/GreengrassIntegrationTestTemplate.json"} |
+      | payloadParamValues | {"s3Url":"%property:GREENGRASS_TEMPLATE_S3_LOCATION%"} |
     And I wait until last command-and-control message has "awaiting_replies" status
     Then last command-and-control message exists with attributes:
       | $.id                                  | ___world___:lastMessageId                                              |
@@ -88,5 +122,3 @@ Feature: Command & Control - Jobs
 
   @teardown_commandandcontrol_jobs
   Scenario: Teardown
-    When I pause for 5000ms
-    Then command-and-control command with operation "cdf-integration-test-ota" does not exist

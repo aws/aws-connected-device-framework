@@ -236,7 +236,7 @@ Resources:
     Properties:
       FunctionName: !Sub 'cdf-simulation-manager-rest-${Environment}'
       CodeUri: ../bundle.zip
-      Handler: packages/services/simulation-manager/dist/api_gateway_proxy.handler
+      Handler: api_gateway_proxy.handler
       MemorySize: 512
       Role: !GetAtt RESTLambdaExecutionRole.Arn
       AutoPublishAlias: live
@@ -245,7 +245,7 @@ Resources:
       Environment:
         Variables:
           APP_CONFIG: !Ref ApplicationConfigurationOverride
-          APP_CONFIG_DIR: 'packages/services/simulation-manager/dist/config'
+          APP_CONFIG_DIR: 'config'
           AWS_DYNAMODB_TABLE_SIMULATIONS: !Ref SimulationsTable
           AWS_DYNAMODB_TABLE_STATE: !Ref SimulationDeviceState
           AWS_S3_BUCKET: !Ref BucketName

@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import 'reflect-metadata';
-import '@cdf/config-inject';
+import '@awssolutions/cdf-config-inject';
 
 import { Container, decorate, injectable, interfaces } from 'inversify';
 
@@ -22,10 +22,10 @@ import { LambdaClient } from '@aws-sdk/client-lambda';
 import { S3Client } from '@aws-sdk/client-s3';
 import { SQSClient } from '@aws-sdk/client-sqs';
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
-import { assetLibraryContainerModule } from '@cdf/assetlibrary-client';
-import { provisioningContainerModule } from '@cdf/provisioning-client';
-import { thingListBuilderContainerModule } from '@cdf/thing-list-builder';
-import { eventPublisherContainerModule } from '@cdf/event-publisher';
+import { assetLibraryContainerModule } from '@awssolutions/cdf-assetlibrary-client';
+import { provisioningContainerModule } from '@awssolutions/cdf-provisioning-client';
+import { thingListBuilderContainerModule } from '@awssolutions/cdf-thing-list-builder';
+import { eventPublisherContainerModule } from '@awssolutions/cdf-event-publisher';
 
 // Note: importing @controller's carries out a one time inversify metadata generation...
 import '../templates/templates.controller';

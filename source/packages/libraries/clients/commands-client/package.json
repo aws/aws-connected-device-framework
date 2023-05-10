@@ -1,6 +1,6 @@
 {
-  "name": "@cdf/commands-client",
-  "version": "5.0.5",
+  "name": "@awssolutions/cdf-commands-client",
+  "version": "0.0.0",
   "description": "CDF Commands Client",
   "author": "Dean Hart",
   "main": "dist/index.js",
@@ -9,15 +9,15 @@
     "clean": "npx shx rm -rf dist tsconfig.tsbuildinfo bundle.zip .rush .nyc_output *.log",
     "lint": "npx eslint . --ext '.ts'",
     "build": "npx tsc -b",
-    "test": "rushx lint && jest --silent --passWithNoTests"
+    "test": "rushx lint && jest --silent --passWithNoTests --maxWorkers=$JEST_MAX_WORKERS"
   },
   "dependencies": {
-    "@cdf/lambda-invoke": "^3.0.2",
-    "inversify": "5.1.1",
+    "@awssolutions/cdf-lambda-invoke": "^0.0.0",
+    "inversify": "6.0.1",
     "inversify-binding-decorators": "4.0.0",
-    "inversify-express-utils": "6.3.2",
+    "inversify-express-utils": "6.4.3",
     "js-yaml": "4.1.0",
-    "logform": "2.2.0",
+    "logform": "2.4.2",
     "ow": "0.23.0",
     "reflect-metadata": "0.1.13",
     "superagent": "7.1.1",

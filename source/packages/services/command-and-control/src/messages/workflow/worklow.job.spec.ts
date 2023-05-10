@@ -4,8 +4,8 @@ import { CommandItem } from "../../commands/commands.models";
 import { MessageItem } from "../messages.models";
 import { JobAction } from "./workflow.job";
 import createMockInstance from 'jest-create-mock-instance';
-import { ThingsLambdaService } from '@cdf/provisioning-client/src/client/things.lambda.service';
-import { ThingsService } from '@cdf/provisioning-client';
+import { ThingsLambdaService } from '@awssolutions/cdf-provisioning-client/src/client/things.lambda.service';
+import { ThingsService } from '@awssolutions/cdf-provisioning-client';
 
 describe('Workflow.Job', () => {
   let mockedIot: Iot;

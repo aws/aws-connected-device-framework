@@ -15,7 +15,9 @@ Feature: Device search
 
   @setup_deviceSearch_feature
   Scenario: Setup
-    Given published assetlibrary device template "TEST-deviceSearch-device" exists
+    Given my authorization is
+      | / | * |
+    And published assetlibrary device template "TEST-deviceSearch-device" exists
     And device "TEST-deviceSearch-001A" exists
     And device "TEST-deviceSearch-001B" exists
     And device "TEST-deviceSearch-002A" exists
@@ -23,162 +25,200 @@ Feature: Device search
     And group "/deviceSearch_feature" exists
 
   Scenario: Top level string attribute equals summary
+    Given my authorization is
+      | / | * |
     When I search with summary with following attributes:
-      | ancestorPath | /deviceSearch_feature |
-      | eq | deviceId:TEST-deviceSearch-001A |
+      | ancestorPath | /deviceSearch_feature           |
+      | eq           | deviceId:TEST-deviceSearch-001A |
     Then search result contains 1 total
 
   Scenario: Top level string attribute equals
-    When I search with following attributes:
-      | ancestorPath | /deviceSearch_feature |
-      | eq | deviceId:TEST-deviceSearch-001A |
+    Given my authorization is
+      | / | * |
+    And I search with following attributes:
+      | ancestorPath | /deviceSearch_feature           |
+      | eq           | deviceId:TEST-deviceSearch-001A |
     Then search result contains 1 results
     And search result contains device "test-devicesearch-001a"
 
   Scenario: Custom string attribute equals
+    Given my authorization is
+      | / | * |
     When I search with following attributes:
-      | type | device |
+      | type         | device                |
       | ancestorPath | /deviceSearch_feature |
-      | eq | pair:black-black |
+      | eq           | pair:black-black      |
     Then search result contains 1 results
     And search result contains device "test-devicesearch-001a"
 
   Scenario: Top level string attribute not equals
+    Given my authorization is
+      | / | * |
     And device "TEST-deviceSearch-001A" exists
     When I search with following attributes:
-      | ancestorPath | /deviceSearch_feature |
-      | neq | deviceId:TEST-deviceSearch-001A |
+      | ancestorPath | /deviceSearch_feature           |
+      | neq          | deviceId:TEST-deviceSearch-001A |
     Then search result contains 3 results
     And  search result contains device "test-devicesearch-001b"
     And search result contains device "test-devicesearch-002a"
     And search result contains device "test-devicesearch-002b"
 
   Scenario: Custom string attribute not equals
+    Given my authorization is
+      | / | * |
     And device "TEST-deviceSearch-001A" exists
     When I search with following attributes:
-      | type | device |
+      | type         | device                |
       | ancestorPath | /deviceSearch_feature |
-      | neq | pair:black-black |
+      | neq          | pair:black-black      |
     Then search result contains 3 results
     And  search result contains device "test-devicesearch-001b"
     And search result contains device "test-devicesearch-002a"
     And search result contains device "test-devicesearch-002b"
 
   Scenario: Top level string attribute starts with
+    Given my authorization is
+      | / | * |
     When I search with following attributes:
-      | ancestorPath | /deviceSearch_feature |
-      | startsWith | deviceId:TEST-deviceSearch-001 |
+      | ancestorPath | /deviceSearch_feature          |
+      | startsWith   | deviceId:TEST-deviceSearch-001 |
     Then search result contains 2 results
     And search result contains device "test-devicesearch-001a"
     And search result contains device "test-devicesearch-001b"
 
   Scenario: Custom string attribute starts with
+    Given my authorization is
+      | / | * |
     When I search with following attributes:
-      | type | device |
+      | type         | device                |
       | ancestorPath | /deviceSearch_feature |
-      | startsWith | pair:black |
+      | startsWith   | pair:black            |
     Then search result contains 2 results
     And search result contains device "test-devicesearch-001a"
     And search result contains device "test-devicesearch-001b"
 
   Scenario: Top level string attribute ends with
+    Given my authorization is
+      | / | * |
     When I search with following attributes:
       | ancestorPath | /deviceSearch_feature |
-      | endsWith | deviceId:b |
+      | endsWith     | deviceId:b            |
     Then search result contains 2 results
     And search result contains device "test-devicesearch-001b"
     And search result contains device "test-devicesearch-002b"
 
   Scenario: Custom string attribute ends with
+    Given my authorization is
+      | / | * |
     When I search with following attributes:
-      | type | device |
+      | type         | device                |
       | ancestorPath | /deviceSearch_feature |
-      | endsWith | pair:white |
+      | endsWith     | pair:white            |
     Then search result contains 2 results
     And search result contains device "test-devicesearch-001b"
     And search result contains device "test-devicesearch-002b"
 
   Scenario: Top level string attribute contains
+    Given my authorization is
+      | / | * |
     When I search with following attributes:
       | ancestorPath | /deviceSearch_feature |
-      | contains | deviceId:rch-002 |
+      | contains     | deviceId:rch-002      |
     Then search result contains 2 results
     And search result contains device "test-devicesearch-002a"
     And search result contains device "test-devicesearch-002b"
 
   Scenario: Custom string attribute contains
+    Given my authorization is
+      | / | * |
     When I search with following attributes:
-      | type | device |
+      | type         | device                |
       | ancestorPath | /deviceSearch_feature |
-      | contains | pair:white |
+      | contains     | pair:white            |
     Then search result contains 3 results
     And search result contains device "test-devicesearch-001b"
     And search result contains device "test-devicesearch-002a"
     And search result contains device "test-devicesearch-002b"
 
   Scenario: Custom number attribute less than
+    Given my authorization is
+      | / | * |
     When I search with following attributes:
-      | type | device |
+      | type         | device                |
       | ancestorPath | /deviceSearch_feature |
-      | lt | position:3 |
+      | lt           | position:3            |
     Then search result contains 2 results
     And search result contains device "test-devicesearch-001a"
     And search result contains device "test-devicesearch-001b"
 
   Scenario: Custom number attribute less than or equals
+    Given my authorization is
+      | / | * |
     When I search with following attributes:
-      | type | device |
+      | type         | device                |
       | ancestorPath | /deviceSearch_feature |
-      | lte | position:3 |
+      | lte          | position:3            |
     Then search result contains 3 results
     And search result contains device "test-devicesearch-001a"
     And search result contains device "test-devicesearch-001b"
     And search result contains device "test-devicesearch-002a"
 
   Scenario: Custom number attribute greater than
+    Given my authorization is
+      | / | * |
     When I search with following attributes:
-      | type | device |
+      | type         | device                |
       | ancestorPath | /deviceSearch_feature |
-      | gt | position:3 |
+      | gt           | position:3            |
     Then search result contains 1 results
     And search result contains device "test-devicesearch-002b"
 
   Scenario: Custom number attribute greater than or equals
+    Given my authorization is
+      | / | * |
     When I search with following attributes:
-      | type | device |
+      | type         | device                |
       | ancestorPath | /deviceSearch_feature |
-      | gte | position:3 |
+      | gte          | position:3            |
     Then search result contains 2 results
     And search result contains device "test-devicesearch-002a"
     And search result contains device "test-devicesearch-002b"
 
   Scenario: Multiple search criteria including a traversal
+    Given my authorization is
+      | / | * |
     When I search with following attributes:
-      | type | TEST-deviceSearch-device-004 | 
-      | eq | located_at:out:name:deviceSearch_feature,deviceId:TEST-deviceSearch-001A,pair:black-black |
+      | type | TEST-deviceSearch-device-004                                                              |
+      | eq   | located_at:out:name:deviceSearch_feature,deviceId:TEST-deviceSearch-001A,pair:black-black |
     Then search result contains 1 results
     And search result contains device "test-devicesearch-001a"
 
   Scenario: Multiple search criteria including a traversal with changed order of search criteria
+    Given my authorization is
+      | / | * |
     When I search with following attributes:
-      | type | TEST-deviceSearch-device-004 | 
-      | eq | deviceId:TEST-deviceSearch-001A,located_at:out:name:deviceSearch_feature,pair:black-black |
+      | type | TEST-deviceSearch-device-004                                                              |
+      | eq   | deviceId:TEST-deviceSearch-001A,located_at:out:name:deviceSearch_feature,pair:black-black |
     Then search result contains 1 results
     And search result contains device "test-devicesearch-001a"
 
   Scenario: Multiple search criteria including a traversal with another changed order of search criteria
+    Given my authorization is
+      | / | * |
     When I search with following attributes:
-      | type | TEST-deviceSearch-device-004 | 
-      | eq | deviceId:TEST-deviceSearch-001A,pair:black-black,located_at:out:name:deviceSearch_feature |
+      | type | TEST-deviceSearch-device-004                                                              |
+      | eq   | deviceId:TEST-deviceSearch-001A,pair:black-black,located_at:out:name:deviceSearch_feature |
     Then search result contains 1 results
     And search result contains device "test-devicesearch-001a"
 
- @teardown_deviceSearch_feature
- Scenario: Teardown
-   Given device "TEST-deviceSearch-001A" does not exist
-   And device "TEST-deviceSearch-001B" does not exist
-   And device "TEST-deviceSearch-002A" does not exist
-   And device "TEST-deviceSearch-002B" does not exist
-   And group "/deviceSearch_feature" does not exist
-   And draft assetlibrary device template "TEST-deviceSearch-device" does not exist
-   And published assetlibrary device template "TEST-deviceSearch-device" does not exist
+  @teardown_deviceSearch_feature
+  Scenario: Teardown
+    Given my authorization is
+      | / | * |
+    And device "TEST-deviceSearch-001A" does not exist
+    And device "TEST-deviceSearch-001B" does not exist
+    And device "TEST-deviceSearch-002A" does not exist
+    And device "TEST-deviceSearch-002B" does not exist
+    And group "/deviceSearch_feature" does not exist
+    And draft assetlibrary device template "TEST-deviceSearch-device" does not exist
+    And published assetlibrary device template "TEST-deviceSearch-device" does not exist

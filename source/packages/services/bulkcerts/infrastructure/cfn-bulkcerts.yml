@@ -297,7 +297,7 @@ Resources:
     Properties:
       FunctionName: !Sub 'cdf-bulkCerts-rest-${Environment}'
       CodeUri: ../bundle.zip
-      Handler: packages/services/bulkcerts/dist/lambda_proxy.handler
+      Handler: lambda_proxy.handler
       Layers:
         - !Ref OpenSslLambdaLayerArn
       MemorySize: 128
@@ -307,7 +307,7 @@ Resources:
       Environment:
         Variables:
           APP_CONFIG: !Ref ApplicationConfigurationOverride
-          APP_CONFIG_DIR: 'packages/services/bulkcerts/dist/config'
+          APP_CONFIG_DIR: 'config'
           AWS_DYNAMODB_TASKS_TABLENAME: !Ref BulkCertificatesTaskTable
           AWS_S3_CERTIFICATES_BUCKET: !Ref BucketName
           AWS_S3_CERTIFICATES_PREFIX: !Ref BucketKeyPrefix
@@ -346,7 +346,7 @@ Resources:
       CodeUri: ../bundle.zip
       Layers:
         - !Ref OpenSslLambdaLayerArn
-      Handler: packages/services/bulkcerts/dist/sns_handler.handler
+      Handler: lambda_sns_handler.handler
       MemorySize: 512
       Role: !GetAtt SnsLambdaExecutionRole.Arn
       Runtime: nodejs16.x
@@ -355,7 +355,7 @@ Resources:
       Environment:
         Variables:
           APP_CONFIG: !Ref ApplicationConfigurationOverride
-          APP_CONFIG_DIR: 'packages/services/bulkcerts/dist/config'
+          APP_CONFIG_DIR: 'config'
           AWS_DYNAMODB_TASKS_TABLENAME: !Ref BulkCertificatesTaskTable
           AWS_S3_CERTIFICATES_BUCKET: !Ref BucketName
           AWS_S3_CERTIFICATES_PREFIX: !Ref BucketKeyPrefix

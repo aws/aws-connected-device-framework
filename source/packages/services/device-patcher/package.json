@@ -1,90 +1,25 @@
 {
-  "name": "@cdf/device-patcher",
-  "version": "1.0.3",
+  "name": "@awssolutions/cdf-device-patcher",
+  "version": "0.0.0",
   "description": "Device patcher Module",
   "author": "Hassan Khokhar",
+  "files": [
+    "bundle.zip"
+  ],
+  "scripts": {
+    "build": "npx tsc -b && npx shx cp -R 'src/config' 'dist/'",
+    "bundle": "npm run bundle:build && npm run bundle:deploy",
+    "bundle:build": "lambda-zip --entry-point src/lambda_*.ts --copy config:src/config:.env.defaults",
+    "bundle:deploy": "node ../../../infrastructure/bundle-package.js",
+    "clean": "npx shx rm -rf dist tsconfig.tsbuildinfo bundle.zip .rush .nyc_output *.log",
+    "lint": "npx eslint . --ext '.ts'",
+    "start": "rushx build && APP_CONFIG_DIR=${PWD}/src/config node dist/lambda_apigw_proxy.js",
+    "test": "rushx lint && NODE_ENV= jest --silent --passWithNoTests --maxWorkers=$JEST_MAX_WORKERS"
+  },
   "config": {
     "environment": "development"
   },
-  "scripts": {
-    "clean": "npx shx rm -rf dist tsconfig.tsbuildinfo bundle.zip .rush .nyc_output *.log",
-    "lint": "npx eslint . --ext '.ts'",
-    "build": "npx tsc -b && npx shx cp -R 'src/config' 'dist/'",
-    "test": "rushx lint && NODE_ENV= jest --passWithNoTests --silent",
-    "start": "rushx build && APP_CONFIG_DIR=${PWD}/src/config node dist/lambda_apigw_proxy.js",
-    "bundle": "../../../infrastructure/bundle-package.bash device-patcher"
-  },
-  "dependencies": {
-    "@cdf/errors": "^4.0.0",
-    "@cdf/logger": "^4.0.0",
-    "@cdf/config-inject": "^4.0.2",
-    "@cdf/express-middleware": "^3.0.0",
-    "atob": "2.1.2",
-    "aws-sdk": "2.1048.0",
-    "body-parser": "1.19.0",
-    "btoa": "1.2.1",
-    "config": "3.3.6",
-    "cors": "2.8.5",
-    "dotenv-flow": "3.2.0",
-    "express": "4.17.1",
-    "express-version-request": "1.7.0",
-    "inversify": "5.1.1",
-    "inversify-binding-decorators": "4.0.0",
-    "inversify-express-utils": "6.3.2",
-    "js-yaml": "4.1.0",
-    "logform": "2.2.0",
-    "mime": "2.5.2",
-    "multer": "1.4.5-lts.1",
-    "ow": "0.23.0",
-    "readable-stream": "3.6.0",
-    "reflect-metadata": "0.1.13",
-    "serverless-http": "2.7.0",
-    "winston": "3.3.3",
-    "winston-transport": "4.4.0",
-    "uuid": "8.3.2",
-    "dotenv": "^8.2.0"
-  },
-  "devDependencies": {
-    "@types/atob": "2.1.2",
-    "@types/body-parser": "1.19.0",
-    "@types/btoa": "1.2.3",
-    "@types/config": "0.0.38",
-    "@types/cors": "2.8.10",
-    "@types/dotenv-flow": "3.2.0",
-    "@types/express": "4.17.11",
-    "@types/express-serve-static-core": "4.17.19",
-    "@types/express-version-request": "1.7.1",
-    "@types/multer": "1.4.7",
-    "@types/uuid": "8.3.0",
-
-    "@rushstack/eslint-config": "2.3.4",
-    "eslint": "7.26.0",
-
-    "nyc": "15.1.0",
-    "shx": "0.3.3",
-
-    "@types/jest": "26.0.23",
-    "@typescript-eslint/eslint-plugin": "4.23.0",
-    "@typescript-eslint/parser": "4.23.0",
-    "jest-create-mock-instance": "1.1.0",
-    "jest-haste-map": "26.6.2",
-    "jest-mock-extended": "1.0.14",
-    "jest-mock": "26.6.2",
-    "jest-resolve": "26.6.2",
-    "jest": "26.6.3",
-    "ts-jest": "26.5.6",
-    "typescript": "4.2.4"
-  },
   "jest": {
-    "roots": [
-      "<rootDir>/src"
-    ],
-    "transform": {
-      "^.+\\.tsx?$": "ts-jest"
-    },
-    "testMatch": [
-      "<rootDir>/**/?(*.)+(spec|test).ts?(x)"
-    ],
     "moduleFileExtensions": [
       "ts",
       "tsx",
@@ -92,7 +27,73 @@
       "jsx",
       "json",
       "node"
-    ]
+    ],
+    "roots": [
+      "<rootDir>/src"
+    ],
+    "testMatch": [
+      "<rootDir>/**/?(*.)+(spec|test).ts?(x)"
+    ],
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    }
   },
-  "private": true
+  "dependencies": {},
+  "devDependencies": {
+    "@awssolutions/cdf-config-inject": "^0.0.0",
+    "@awssolutions/cdf-errors": "^0.0.0",
+    "@awssolutions/cdf-express-middleware": "^0.0.0",
+    "@awssolutions/cdf-lambda-zip": "^0.0.0",
+    "@awssolutions/cdf-logger": "^0.0.0",
+    "@rushstack/eslint-config": "2.3.4",
+    "@types/atob": "2.1.2",
+    "@types/body-parser": "1.19.2",
+    "@types/btoa": "1.2.3",
+    "@types/config": "0.0.38",
+    "@types/cors": "2.8.10",
+    "@types/dotenv-flow": "3.2.0",
+    "@types/express": "4.17.16",
+    "@types/express-serve-static-core": "4.17.19",
+    "@types/express-version-request": "1.7.1",
+    "@types/jest": "26.0.23",
+    "@types/multer": "1.4.7",
+    "@types/uuid": "8.3.0",
+    "@typescript-eslint/eslint-plugin": "4.23.0",
+    "@typescript-eslint/parser": "4.23.0",
+    "atob": "2.1.2",
+    "aws-sdk": "2.1048.0",
+    "body-parser": "1.20.1",
+    "btoa": "1.2.1",
+    "config": "3.3.6",
+    "cors": "2.8.5",
+    "dotenv": "^8.2.0",
+    "dotenv-flow": "3.2.0",
+    "eslint": "7.26.0",
+    "express": "4.18.2",
+    "express-version-request": "1.7.0",
+    "inversify": "6.0.1",
+    "inversify-binding-decorators": "4.0.0",
+    "inversify-express-utils": "6.4.3",
+    "jest": "26.6.3",
+    "jest-create-mock-instance": "1.1.0",
+    "jest-haste-map": "26.6.2",
+    "jest-mock": "26.6.2",
+    "jest-mock-extended": "1.0.14",
+    "jest-resolve": "26.6.2",
+    "js-yaml": "4.1.0",
+    "logform": "2.4.2",
+    "mime": "2.5.2",
+    "multer": "1.4.5-lts.1",
+    "nyc": "15.1.0",
+    "ow": "0.23.0",
+    "readable-stream": "3.6.0",
+    "reflect-metadata": "0.1.13",
+    "serverless-http": "2.7.0",
+    "shx": "0.3.3",
+    "ts-jest": "26.5.6",
+    "typescript": "4.2.4",
+    "uuid": "8.3.2",
+    "winston": "3.3.3",
+    "winston-transport": "4.4.0"
+  }
 }

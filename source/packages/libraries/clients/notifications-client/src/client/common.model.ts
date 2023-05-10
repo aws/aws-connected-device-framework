@@ -11,5 +11,5 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 export interface RequestHeaders {
-    [key:string] : string;
+    [key: string]: string;
 }

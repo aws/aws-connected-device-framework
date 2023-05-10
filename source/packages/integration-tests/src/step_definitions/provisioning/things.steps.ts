@@ -18,10 +18,13 @@ import { expect, use } from 'chai';
 import { Before, Given, setDefaultTimeout, Then, When } from '@cucumber/cucumber';
 
 import {
-    PROVISIONING_CLIENT_TYPES, ProvisionThingRequest, ProvisionThingResponse, ThingsService
-} from '@cdf/provisioning-client';
+    PROVISIONING_CLIENT_TYPES,
+    ProvisionThingRequest,
+    ProvisionThingResponse,
+    ThingsService,
+} from '@awssolutions/cdf-provisioning-client';
 
-import { Dictionary } from '@cdf/lambda-invoke';
+import { Dictionary } from '@awssolutions/cdf-lambda-invoke';
 import { container } from '../../di/inversify.config';
 import { AUTHORIZATION_TOKEN, replaceTokens } from '../common/common.steps';
 
