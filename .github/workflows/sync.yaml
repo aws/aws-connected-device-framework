@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - '**'
+    tags:
+      - '*'
   workflow_dispatch: {}
 jobs:
   sync:
@@ -31,4 +33,5 @@ jobs:
           git config --global credential.'https://git-codecommit.*.amazonaws.com'.helper '!aws codecommit credential-helper $@'
           git config --global credential.UseHttpPath true
           git remote add code_commit_repo "https://git-codecommit.${{ secrets.REGION }}.amazonaws.com/v1/repos/${{ secrets.REPO }}"
-          git push code_commit_repo
+          git push code_commit_repo --force
+          git push code_commit_repo --tags
