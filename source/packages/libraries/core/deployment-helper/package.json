@@ -3,6 +3,9 @@
   "version": "0.0.0",
   "description": "CDF Deployment Helper",
   "author": "Hassan khokhar",
+  "files": [
+    "bundle.zip"
+  ],
   "scripts": {
     "build": "npx tsc -p tsconfig.build.json && npx shx cp -R 'src/config' 'dist/config'",
     "bundle": "npm run bundle:build && npm run bundle:deploy",
