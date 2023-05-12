@@ -32,7 +32,7 @@ phases:
       - rush update
       - rush bundle
       - JEST_MAX_WORKERS=1 rush test
-      - rush publish --pack --include-all --publish --release-folder ../artifacts/npm
+      - rush publish --pack --include-all --publish --release-folder ../artifacts/npm --version-policy external
 
 artifacts:
   files:

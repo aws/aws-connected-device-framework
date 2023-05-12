@@ -84,7 +84,7 @@
       "packageName": "@awssolutions/cdf-commands-client",
       "projectFolder": "packages/libraries/clients/commands-client",
       "reviewCategory": "library",
-      "versionPolicyName": "external"
+      "versionPolicyName": "internal"
     },
     {
       "packageName": "@awssolutions/cdf-commandandcontrol-client",
@@ -123,34 +123,40 @@
       "versionPolicyName": "external"
     },
     {
-      "packageName": "@awssolutions/cdf-config-inject",
-      "projectFolder": "packages/libraries/config/config-inject",
+      "packageName": "@awssolutions/cdf-client-request-signer",
+      "projectFolder": "packages/libraries/core/client-request-signer",
       "reviewCategory": "library",
       "versionPolicyName": "external"
     },
     {
-      "packageName": "@awssolutions/cdf-deployment-helper",
-      "projectFolder": "packages/libraries/core/deployment-helper",
+      "packageName": "@awssolutions/cdf-config-inject",
+      "projectFolder": "packages/libraries/config/config-inject",
       "reviewCategory": "library",
-      "versionPolicyName": "external"
+      "versionPolicyName": "internal"
+    },
+    {
+      "packageName": "@awssolutions/cdf-environment-sanitizer",
+      "projectFolder": "packages/libraries/core/environment-sanitizer",
+      "reviewCategory": "library",
+      "versionPolicyName": "internal"
     },
     {
       "packageName": "@awssolutions/cdf-errors",
       "projectFolder": "packages/libraries/core/errors",
       "reviewCategory": "library",
-      "versionPolicyName": "external"
+      "versionPolicyName": "internal"
     },
     {
       "packageName": "@awssolutions/cdf-event-publisher",
       "projectFolder": "packages/libraries/core/event-publisher",
       "reviewCategory": "library",
-      "versionPolicyName": "external"
+      "versionPolicyName": "internal"
     },
     {
       "packageName": "@awssolutions/cdf-express-middleware",
       "projectFolder": "packages/libraries/core/express-middleware",
       "reviewCategory": "library",
-      "versionPolicyName": "external"
+      "versionPolicyName": "internal"
     },
     {
       "packageName": "@awssolutions/cdf-lambda-invoke",
@@ -159,10 +165,16 @@
       "versionPolicyName": "external"
     },
     {
+      "packageName": "@awssolutions/cdf-lambda-zip",
+      "projectFolder": "packages/libraries/core/lambda-zip",
+      "reviewCategory": "library",
+      "versionPolicyName": "internal"
+    },
+    {
       "packageName": "@awssolutions/cdf-logger",
       "projectFolder": "packages/libraries/core/logger",
       "reviewCategory": "library",
-      "versionPolicyName": "external"
+      "versionPolicyName": "internal"
     },
     {
       "packageName": "@awssolutions/cdf-thing-list-builder",
@@ -174,31 +186,31 @@
       "packageName": "@awssolutions/cdf-device-simulator-base",
       "projectFolder": "packages/libraries/simulator/device-simulator-base",
       "reviewCategory": "library",
-      "versionPolicyName": "external"
+      "versionPolicyName": "internal"
     },
     {
-      "packageName": "@awssolutions/cdf-integration-tests",
-      "projectFolder": "packages/integration-tests",
-      "reviewCategory": "tests",
+      "packageName": "@awssolutions/cdf-deployment-helper",
+      "projectFolder": "packages/libraries/core/deployment-helper",
+      "reviewCategory": "production",
       "versionPolicyName": "external"
     },
     {
       "packageName": "@awssolutions/cdf-assetlibrary",
       "projectFolder": "packages/services/assetlibrary",
       "reviewCategory": "production",
-      "versionPolicyName": "internal"
+      "versionPolicyName": "external"
     },
     {
       "packageName": "@awssolutions/cdf-assetlibrary-export",
       "projectFolder": "packages/services/assetlibrary-export",
       "reviewCategory": "production",
-      "versionPolicyName": "internal"
+      "versionPolicyName": "external"
     },
     {
       "packageName": "@awssolutions/cdf-assetlibrary-history",
       "projectFolder": "packages/services/assetlibraryhistory",
       "reviewCategory": "production",
-      "versionPolicyName": "internal"
+      "versionPolicyName": "external"
     },
     {
       "packageName": "@awssolutions/cdf-auth-devicecert",
@@ -222,13 +234,13 @@
       "packageName": "@awssolutions/cdf-certificate-activator",
       "projectFolder": "packages/services/certificateactivator",
       "reviewCategory": "production",
-      "versionPolicyName": "internal"
+      "versionPolicyName": "external"
     },
     {
       "packageName": "@awssolutions/cdf-certificate-vendor",
       "projectFolder": "packages/services/certificatevendor",
       "reviewCategory": "production",
-      "versionPolicyName": "internal"
+      "versionPolicyName": "external"
     },
     {
       "packageName": "@awssolutions/cdf-commands",
@@ -309,21 +321,9 @@
       "versionPolicyName": "external"
     },
     {
-      "packageName": "@awssolutions/cdf-lambda-zip",
-      "projectFolder": "packages/libraries/core/lambda-zip",
-      "reviewCategory": "library",
-      "versionPolicyName": "internal"
-    },
-    {
-      "packageName": "@awssolutions/cdf-client-request-signer",
-      "projectFolder": "packages/libraries/core/client-request-signer",
-      "reviewCategory": "library",
-      "versionPolicyName": "external"
-    },
-    {
-      "packageName": "@awssolutions/cdf-environment-sanitizer",
-      "projectFolder": "packages/libraries/core/environment-sanitizer",
-      "reviewCategory": "library",
+      "packageName": "@awssolutions/cdf-integration-tests",
+      "projectFolder": "packages/integration-tests",
+      "reviewCategory": "tests",
       "versionPolicyName": "internal"
     }
   ],
