@@ -35,6 +35,21 @@ Feature: Device Patch Template
       | $.extraVars.commonVar1  | commonVarVal1Updated                                                   |
       | $.extraVars.commonVar2  | commonVarVal2Updated                                                   |
 
+  Scenario: Updating an existing patch template with a new template file
+    Given patch template "test-patch-template" exists
+    When I update patch template "test-patch-template" with a new template file and attributes
+      | description    | Description Update 2                                                            |
+      | extraVars      | { "commonVar1": "commonVarVal1Updated2", "commonVar2": "commonVarVal2Updated2"} |
+    Then  patch template "test-patch-template" exists with attributes
+      | $.name                  | test-patch-template                                                    |
+      | $.versionNo             | 3                                                                      |
+      | $.createdAt             | ___regex___:^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}).(\d{3})Z$ |
+      | $.updatedAt             | ___regex___:^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}).(\d{3})Z$ |
+      | $.description           | Description Update 2                                                   |
+      | $.patchType             | agentbased                                                             |
+      | $.extraVars.commonVar1  | commonVarVal1Updated2                                                  |
+      | $.extraVars.commonVar2  | commonVarVal2Updated2                                                  |
+
   Scenario: Delete a patch template "test-patch-template"
     Given patch template "test-patch-template" exists
     When I delete the patch template "test-patch-template"
