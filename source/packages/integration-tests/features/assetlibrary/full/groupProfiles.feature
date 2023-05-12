@@ -15,22 +15,35 @@ Feature: Groups Profiles
 
   @setup_groupProfiles_feature
   Scenario: Setup
+    Given my authorization is
+      | / | * |
+    And draft assetlibrary group template "TEST-groupProfiles-type" does not exist
+    And published assetlibrary group template "TEST-groupProfiles-type" does not exist
+    And assetlibrary group profile "TEST-groupProfiles-profile" of "TEST-groupProfiles-type" does not exist
+    And group "/TEST-groupProfiles-group001" does not exist
+    And group "/TEST-groupProfiles-group002" does not exist
+    And group "/TEST-groupProfiles-group003" does not exist
+    And group "/TEST-groupProfiles-group004" does not exist
+    And group "/TEST-groupProfiles-group005" does not exist
 
 
   Scenario: Create a new Group Template
-    Given draft assetlibrary group template "TEST-groupProfiles-type" does not exist
+    Given my authorization is
+      | / | * |
+    And draft assetlibrary group template "TEST-groupProfiles-type" does not exist
     And published assetlibrary group template "TEST-groupProfiles-type" does not exist
-    When I create the assetlibrary group template "TEST-groupProfiles-type" with attributes
+    When I create and publish the root authorized assetlibrary group template "TEST-groupProfiles-type" with attributes
       | properties | {"site":{"type":["string","null"]},"area":{"type":["string","null"]}} |
-      | required | ["site"] |
-    And publish assetlibrary group template "TEST-groupProfiles-type"
+      | required   | ["site"]                                                              |
     Then published assetlibrary group template "TEST-groupProfiles-type" exists with attributes
       | properties | {"site":{"type":["string","null"]},"area":{"type":["string","null"]}} |
-      | required | ["site"] |
+      | required   | ["site"]                                                              |
 
 
   Scenario: Create a new Group Profile
-    Given assetlibrary group profile "TEST-groupProfiles-profile" of "TEST-groupProfiles-type" does not exist
+    Given my authorization is
+      | / | * |
+    And assetlibrary group profile "TEST-groupProfiles-profile" of "TEST-groupProfiles-type" does not exist
     When I create the assetlibrary group profile "TEST-groupProfiles-profile" of "TEST-groupProfiles-type" with attributes
       | attributes | {"site": "A", "area": "1"} |
     Then assetlibrary group profile "TEST-groupProfiles-profile" of "TEST-groupProfiles-type" exists with attributes
@@ -38,7 +51,9 @@ Feature: Groups Profiles
 
 
   Scenario: Create a new Group Profile with invalid attribute fails
-    Given assetlibrary group profile "TEST-groupProfiles-profile-invalid" of "TEST-groupProfiles-type" does not exist
+    Given my authorization is
+      | / | * |
+    And assetlibrary group profile "TEST-groupProfiles-profile-invalid" of "TEST-groupProfiles-type" does not exist
     When I create the assetlibrary group profile "TEST-groupProfiles-profile-invalid" of "TEST-groupProfiles-type" with attributes
       | attributes | {"invalid_attribute": "abc123"} |
     Then it fails with a 400
@@ -46,49 +61,59 @@ Feature: Groups Profiles
 
 
   Scenario: Create a Group with no attributes, applying a profile applies all profile attributes
-    Given published assetlibrary group template "TEST-groupProfiles-type" exists
+    Given my authorization is
+      | / | * |
+    And published assetlibrary group template "TEST-groupProfiles-type" exists
     And assetlibrary group profile "TEST-groupProfiles-profile" of "TEST-groupProfiles-type" exists
-    And group "TEST-groupProfiles-group001" does not exist
+    And group "/TEST-groupProfiles-group001" does not exist
     When I create group "TEST-groupProfiles-group001" of "/" applying profile "TEST-groupProfiles-profile" with attributes
       | templateId | TEST-groupProfiles-type |
     Then group "/TEST-groupProfiles-group001" exists with attributes
-      | templateId | test-groupprofiles-type |
+      | templateId | test-groupprofiles-type    |
       | attributes | {"site": "A", "area": "1"} |
 
 
   Scenario: Create a Group with attributes, applying a profile appends the profile attributes
-    Given published assetlibrary group template "TEST-groupProfiles-type" exists
+    Given my authorization is
+      | / | * |
+    And published assetlibrary group template "TEST-groupProfiles-type" exists
     And assetlibrary group profile "TEST-groupProfiles-profile" of "TEST-groupProfiles-type" exists
     And group "/TEST-groupProfiles-group002" does not exist
     When I create group "TEST-groupProfiles-group002" of "/" applying profile "TEST-groupProfiles-profile" with attributes
       | templateId | TEST-groupProfiles-type |
-      | attributes | {"area": "2"} |
+      | attributes | {"area": "2"}           |
     Then group "/TEST-groupProfiles-group002" exists with attributes
-      | templateId | test-groupprofiles-type |
+      | templateId | test-groupprofiles-type    |
       | attributes | {"site": "A", "area": "2"} |
 
 
   Scenario: Applying a profile to an existing group appends the profiles attributes
-    Given group "/TEST-groupProfiles-group002" exists
+    Given my authorization is
+      | / | * |
+    And group "/TEST-groupProfiles-group002" exists
     When I update group "/TEST-groupProfiles-group002" with attributes
       | attributes | {"site":"B", "area": null } |
     Then group "/TEST-groupProfiles-group002" exists with attributes
       | templateId | test-groupprofiles-type |
-      | attributes | {"site": "B"} |
+      | attributes | {"site": "B"}           |
     When I update group "/TEST-groupProfiles-group002" applying profile "TEST-groupProfiles-profile"
     Then group "/TEST-groupProfiles-group002" exists with attributes
-      | templateId | test-groupprofiles-type |
+      | templateId | test-groupprofiles-type    |
       | attributes | {"site": "A", "area": "1"} |
 
 
   Scenario: Deleting a profile removes it
+    Given my authorization is
+      | / | * |
     Given assetlibrary group profile "TEST-groupProfiles-profile" of "TEST-groupProfiles-type" exists
     When I delete assetlibrary group profile "TEST-groupProfiles-profile" of "TEST-groupProfiles-type"
     Then  assetlibrary group profile "TEST-groupProfiles-profile" of "TEST-groupProfiles-type" does not exist
 
 
   Scenario: Creating a group, applying a profile that does not exist returns not found
-    Given assetlibrary group profile "TEST-groupProfiles-profile-XXX" of "TEST-groupProfiles-type" does not exist
+    Given my authorization is
+      | / | * |
+    And assetlibrary group profile "TEST-groupProfiles-profile-XXX" of "TEST-groupProfiles-type" does not exist
     When I create group "/TEST-groupProfiles-group005" of "/" applying profile "TEST-groupProfiles-profile-XXX" with attributes
       | templateId | TEST-groupProfiles-type |
     Then it fails with a 404
@@ -97,3 +122,13 @@ Feature: Groups Profiles
 
   @teardown_groupProfiles_feature
   Scenario: Teardown
+    Given my authorization is
+      | / | * |
+    And draft assetlibrary group template "TEST-groupProfiles-type" does not exist
+    And published assetlibrary group template "TEST-groupProfiles-type" does not exist
+    And assetlibrary group profile "TEST-groupProfiles-profile" of "TEST-groupProfiles-type" does not exist
+    And group "/TEST-groupProfiles-group001" does not exist
+    And group "/TEST-groupProfiles-group002" does not exist
+    And group "/TEST-groupProfiles-group003" does not exist
+    And group "/TEST-groupProfiles-group004" does not exist
+    And group "/TEST-groupProfiles-group005" does not exist

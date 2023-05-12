@@ -80,7 +80,13 @@ Then(
     'a bulk get of {string} returns the following devices',
     async function (devicesToGet: string, data: DataTable) {
         const devices = parseBulkDeviceTable(data);
-        const devicesReceived = await deviceService.getDevicesByID(devicesToGet.split(','));
+        const devicesReceived = await deviceService.getDevicesByID(
+            devicesToGet.split(','),
+            undefined,
+            undefined,
+            undefined,
+            getAdditionalHeaders(this)
+        );
 
         if (devices.length === 0) {
             expect(devicesReceived.results).to.be.empty;

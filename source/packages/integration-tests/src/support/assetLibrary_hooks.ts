@@ -18,10 +18,11 @@ import {
     Group20Resource,
     GroupsService,
     ProfilesService,
+    RelationTargetExpanded,
     RequestHeaders,
     TemplatesService,
     TypeResource,
-} from '@awssolutions/cdf-assetlibrary-client';
+} from '@awssolutions/cdf-assetlibrary-client/dist';
 import { Before, setDefaultTimeout } from '@cucumber/cucumber';
 import { sign } from 'jsonwebtoken';
 import { container } from '../di/inversify.config';
@@ -133,12 +134,9 @@ const GROUPMEMBERS_FEATURE_LINKABLE_DEVICE_TEMPLATE_ID_A =
     'TEST-groupMembers-deviceLinkableToGroupA';
 const GROUPMEMBERS_FEATURE_LINKABLE_DEVICE_TEMPLATE_ID_B =
     'TEST-groupMembers-deviceLinkableToGroupB';
-const GROUPMEMBERS_FEATURE_NOTLINKABLE_DEVICE_TEMPLATE_ID =
-    'TEST-groupMembers-deviceNotLinkableToGroup';
 const GROUPMEMBERS_FEATURE_DEVICE_TEMPLATE_IDS = [
     GROUPMEMBERS_FEATURE_LINKABLE_DEVICE_TEMPLATE_ID_A,
     GROUPMEMBERS_FEATURE_LINKABLE_DEVICE_TEMPLATE_ID_B,
-    GROUPMEMBERS_FEATURE_NOTLINKABLE_DEVICE_TEMPLATE_ID,
 ];
 const GROUPMEMBERS_FEATURE_GROUP_PATHS = [
     '/test-groupmembers-parent/child1',
@@ -303,7 +301,7 @@ async function teardown_devices_feature() {
     await deleteAssetLibraryTemplates(CategoryEnum.group, DEVICES_FEATURE_GROUP_TEMPLATE_IDS);
 }
 
-async function create_root_authorized_group_template(templateId: string) {
+export async function create_root_authorized_group_template(templateId: string) {
     const groupType: TypeResource = {
         templateId: templateId,
         category: 'group',
@@ -329,6 +327,45 @@ async function create_root_authorized_group_template(templateId: string) {
     await templatesService.updateTemplate(groupType, additionalHeaders);
 
     await templatesService.publishTemplate(CategoryEnum.group, templateId, additionalHeaders);
+}
+async function enable_root_group_template_self_auth() {
+    // First, check if self-auth already exists. Enabling it multiple times pollutes the database.
+    const currentRootTemplate = await templatesService.getTemplate(
+        CategoryEnum.group,
+        'root',
+        'published',
+        additionalHeaders
+    );
+
+    const parent = currentRootTemplate.relations?.out?.parent;
+    if (parent !== undefined) {
+        const authorizedRootParent = parent.find((item) => {
+            const itemExpanded = item as RelationTargetExpanded;
+            return itemExpanded.name === 'root' && itemExpanded.includeInAuth === true;
+        });
+        if (authorizedRootParent !== undefined) {
+            return;
+        }
+    }
+
+    // self-auth doesn't exist. Enable it.
+    const rootTemplate: TypeResource = {
+        templateId: 'root',
+        category: 'group',
+        relations: {
+            out: {
+                parent: [
+                    {
+                        name: 'root',
+                        includeInAuth: true,
+                    },
+                ],
+            },
+        },
+    };
+
+    await templatesService.updateTemplate(rootTemplate, additionalHeaders);
+    await templatesService.publishTemplate(CategoryEnum.group, 'root', additionalHeaders);
 }
 
 Before({ tags: '@setup_devices2_feature' }, async function () {
@@ -836,10 +873,16 @@ async function teardown_groupProfiles_feature() {
 }
 
 Before({ tags: '@setup_groupProfiles_feature' }, async function () {
+    // not testing auth here, so everything gets admin access
+    this[AUTHORIZATION_TOKEN] = authToken;
+
     await teardown_groupProfiles_feature();
 });
 
 Before({ tags: '@teardown_groupProfiles_feature' }, async function () {
+    // not testing auth here, so everything gets admin access
+    this[AUTHORIZATION_TOKEN] = authToken;
+
     await teardown_groupProfiles_feature();
 });
 
@@ -886,27 +929,23 @@ async function teardown_groupMembers_feature() {
 }
 
 Before({ tags: '@setup_groupMembers_feature' }, async function () {
+    // not testing auth here, so everything gets admin access
+    this[AUTHORIZATION_TOKEN] = authToken;
+
     // teardown first just in case
     await teardown_groupMembers_feature();
 
     // now go through the setup steps
-    const groupType: TypeResource = {
-        templateId: GROUPMEMBERS_FEATURE_GROUP_TEMPLATE_IDS[0],
-        category: 'group',
-    };
-    await templatesService.createTemplate(groupType, additionalHeaders);
-    await templatesService.publishTemplate(
-        CategoryEnum.group,
-        GROUPMEMBERS_FEATURE_GROUP_TEMPLATE_IDS[0],
-        additionalHeaders
-    );
+    await create_root_authorized_group_template(GROUPMEMBERS_FEATURE_GROUP_TEMPLATE_IDS[0]);
 
     const linkableDeviceTypeA: TypeResource = {
         templateId: GROUPMEMBERS_FEATURE_LINKABLE_DEVICE_TEMPLATE_ID_A,
         category: 'device',
         relations: {
             out: {
-                located_at: [GROUPMEMBERS_FEATURE_GROUP_TEMPLATE_IDS[0]],
+                located_at: [
+                    { name: GROUPMEMBERS_FEATURE_GROUP_TEMPLATE_IDS[0], includeInAuth: true },
+                ],
             },
         },
     };
@@ -922,7 +961,9 @@ Before({ tags: '@setup_groupMembers_feature' }, async function () {
         category: 'device',
         relations: {
             out: {
-                located_at: [GROUPMEMBERS_FEATURE_GROUP_TEMPLATE_IDS[0]],
+                located_at: [
+                    { name: GROUPMEMBERS_FEATURE_GROUP_TEMPLATE_IDS[0], includeInAuth: true },
+                ],
             },
         },
     };
@@ -932,20 +973,12 @@ Before({ tags: '@setup_groupMembers_feature' }, async function () {
         GROUPMEMBERS_FEATURE_LINKABLE_DEVICE_TEMPLATE_ID_B,
         additionalHeaders
     );
-
-    const unlinkableDeviceType: TypeResource = {
-        templateId: GROUPMEMBERS_FEATURE_NOTLINKABLE_DEVICE_TEMPLATE_ID,
-        category: 'device',
-    };
-    await templatesService.createTemplate(unlinkableDeviceType, additionalHeaders);
-    await templatesService.publishTemplate(
-        CategoryEnum.device,
-        GROUPMEMBERS_FEATURE_NOTLINKABLE_DEVICE_TEMPLATE_ID,
-        additionalHeaders
-    );
 });
 
 Before({ tags: '@teardown_groupMembers_feature' }, async function () {
+    // not testing auth here, so everything gets admin access
+    this[AUTHORIZATION_TOKEN] = authToken;
+
     await teardown_groupMembers_feature();
 });
 
@@ -999,22 +1032,7 @@ Before({ tags: '@setup_deviceSearch_feature' }, async function () {
     // Update the built-in 'root' group template to support defining a recursive parent relation that
     // is part of auth checks. This allows Group20Resource of type 'root' to have an auth path to its
     // parent, 'root' or '/'
-    const rootTemplate: TypeResource = {
-        templateId: 'root',
-        category: 'group',
-        relations: {
-            out: {
-                parent: [
-                    {
-                        name: 'root',
-                        includeInAuth: true,
-                    },
-                ],
-            },
-        },
-    };
-
-    templatesService.updateTemplate(rootTemplate, additionalHeaders);
+    await enable_root_group_template_self_auth();
 
     // now go through the setup steps
     const deviceType: TypeResource = {
@@ -1322,24 +1340,38 @@ async function teardown_groupSearch_feature() {
 }
 
 Before({ tags: '@setup_groupSearch_feature' }, async function () {
+    // not testing auth here, so everything gets admin access
+    this[AUTHORIZATION_TOKEN] = authToken;
+
     // teardown first just in case
     await teardown_groupSearch_feature();
 
-    // now go through the setup steps
+    // now go through setup steps
+    const templateId = GROUPSEARCH_FEATURES_GROUP_TEMPLATE_IDS[0];
+
+    await enable_root_group_template_self_auth();
+
     const groupType: TypeResource = {
-        templateId: GROUPSEARCH_FEATURES_GROUP_TEMPLATE_IDS[0],
+        templateId: templateId,
         category: 'group',
         properties: {
             pair: { type: ['string'] },
             position: { type: ['number'] },
         },
+        relations: {
+            out: {
+                parent: [
+                    {
+                        name: 'root',
+                        includeInAuth: true,
+                    },
+                ],
+            },
+        },
     };
+
     await templatesService.createTemplate(groupType, additionalHeaders);
-    await templatesService.publishTemplate(
-        CategoryEnum.group,
-        GROUPSEARCH_FEATURES_GROUP_TEMPLATE_IDS[0],
-        additionalHeaders
-    );
+    await templatesService.publishTemplate(CategoryEnum.group, templateId, additionalHeaders);
 
     const group: Group20Resource = {
         templateId: 'root',
@@ -1350,7 +1382,7 @@ Before({ tags: '@setup_groupSearch_feature' }, async function () {
     await groupsService.createGroup(group, undefined, additionalHeaders);
 
     const childGroup: Group20Resource = {
-        templateId: GROUPSEARCH_FEATURES_GROUP_TEMPLATE_IDS[0],
+        templateId: templateId,
         parentPath: '/groupSearch_feature',
         name: 'AA',
         attributes: {
@@ -1377,6 +1409,9 @@ Before({ tags: '@setup_groupSearch_feature' }, async function () {
 });
 
 Before({ tags: '@teardown_groupSearch_feature' }, async function () {
+    // not testing auth here, so everything gets admin access
+    this[AUTHORIZATION_TOKEN] = authToken;
+
     await teardown_groupSearch_feature();
 });
 
