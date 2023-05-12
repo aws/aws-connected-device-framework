@@ -276,7 +276,9 @@ export class GroupsServiceFull implements GroupsService {
             Operation.CREATE
         );
         if (this.validateAllowedParentPaths) {
-            if (group.groups.out === undefined) {
+            if (group.groups === undefined) {
+                group.groups = { out: {} };
+            } else if (group.groups.out === undefined) {
                 group.groups.out = {};
             }
             group.groups.out.parent = [{ id: group.parentPath }];

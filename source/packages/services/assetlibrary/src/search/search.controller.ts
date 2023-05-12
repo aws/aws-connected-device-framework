@@ -66,29 +66,29 @@ export class SearchController implements interfaces.Controller {
 
         const r: SearchResultsResource = { results: [] };
 
-        const searchRequest = this.searchAssembler.toSearchRequestModel(
-            types,
-            ntypes,
-            ancestorPath,
-            includeAncestor,
-            eqs,
-            neqs,
-            lts,
-            ltes,
-            gts,
-            gtes,
-            startsWiths,
-            endsWiths,
-            containses,
-            exists,
-            nexists,
-            facetField,
-            offset,
-            count,
-            sort
-        );
-
         try {
+            const searchRequest = this.searchAssembler.toSearchRequestModel(
+                types,
+                ntypes,
+                ancestorPath,
+                includeAncestor,
+                eqs,
+                neqs,
+                lts,
+                ltes,
+                gts,
+                gtes,
+                startsWiths,
+                endsWiths,
+                containses,
+                exists,
+                nexists,
+                facetField,
+                offset,
+                count,
+                sort
+            );
+
             if (summarize === 'true') {
                 const total = await this.searchService.summary(searchRequest);
                 r.total = total;
