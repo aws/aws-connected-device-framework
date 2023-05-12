@@ -1,6 +1,6 @@
 {
   "name": "@awssolutions/cdf-bulkcerts",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "CDF Bulk Certificate Creation",
   "author": "Dean Hart",
   "files": [

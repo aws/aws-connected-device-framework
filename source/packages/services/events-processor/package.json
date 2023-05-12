@@ -1,6 +1,6 @@
 {
   "name": "@awssolutions/cdf-events-processor",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "CDF Events (Processor)",
   "author": "Dean Hart",
   "files": [

@@ -1,6 +1,6 @@
 {
   "name": "@awssolutions/cdf-command-and-control",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "CDF Command & Control",
   "author": "Dean Hart",
   "files": [
@@ -41,14 +41,14 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@awssolutions/cdf-assetlibrary-client": "^0.0.0",
+    "@awssolutions/cdf-assetlibrary-client": "^0.0.1",
     "@awssolutions/cdf-config-inject": "^0.0.0",
     "@awssolutions/cdf-errors": "^0.0.0",
     "@awssolutions/cdf-express-middleware": "^0.0.0",
-    "@awssolutions/cdf-lambda-invoke": "^0.0.0",
+    "@awssolutions/cdf-lambda-invoke": "^0.0.1",
     "@awssolutions/cdf-lambda-zip": "^0.0.0",
     "@awssolutions/cdf-logger": "^0.0.0",
-    "@awssolutions/cdf-provisioning-client": "^0.0.0",
+    "@awssolutions/cdf-provisioning-client": "^0.0.1",
     "@awssolutions/cdf-thing-list-builder": "^0.0.0",
     "@rushstack/eslint-config": "2.3.4",
     "@types/aws-lambda": "8.10.89",

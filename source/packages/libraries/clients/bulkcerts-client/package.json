@@ -1,6 +1,6 @@
 {
   "name": "@awssolutions/cdf-bulkcerts-client",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Bulkcerts Client",
   "author": "Pouya Bahavar",
   "main": "dist/index.js",
@@ -12,8 +12,8 @@
     "test": "rushx lint && jest --silent --passWithNoTests --maxWorkers=$JEST_MAX_WORKERS"
   },
    "dependencies": {
-    "@awssolutions/cdf-client-request-signer": "^0.0.0",
-    "@awssolutions/cdf-lambda-invoke": "^0.0.0",
+    "@awssolutions/cdf-client-request-signer": "^0.0.1",
+    "@awssolutions/cdf-lambda-invoke": "^0.0.1",
     "http-errors": "~2.0.0",
     "inversify": "6.0.1",
     "inversify-binding-decorators": "4.0.0",
