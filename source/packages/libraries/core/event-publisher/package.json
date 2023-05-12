@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-eventbridge": "3.38.0",
-    "@awssolutions/cdf-lambda-invoke": "^0.0.0",
+    "@awssolutions/cdf-lambda-invoke": "^0.0.1",
     "@awssolutions/cdf-logger": "^0.0.0",
     "inversify": "6.0.1",
     "inversify-binding-decorators": "4.0.0",
