@@ -105,7 +105,8 @@ Then('{int} history records exist since the test started for {word} {string}', a
     }
 });
 
-Then('history record {int} contains attributes', async function (index:number, data:DataTable) {
+ // This hook removes auth metadata from checks. This allows tests to work with auth enabled or disabled.
+ Then('history record {int} contains attributes ignoring auth metadata', async function (index: number, data: DataTable) {
 
     const d = data.rowsHash();
 
@@ -117,7 +118,9 @@ Then('history record {int} contains attributes', async function (index:number, d
     Object.keys(d).forEach( key => {
         const val = d[key];
         if (val.startsWith('{') || val.startsWith('[')) {
-            expect(stringify(r[key])).eq( stringify(JSON.parse(val)));
+            expect(stringify(r[key]).replace(',"isAuthCheck":true', '')).eq(
+                stringify(JSON.parse(val)).replace(',"isAuthCheck":true', '')
+            );
         } else if (val==='___null___') {
             expect(r[key]).eq(null);
         } else if (val==='___undefined___') {
