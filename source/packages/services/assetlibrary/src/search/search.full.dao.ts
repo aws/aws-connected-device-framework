@@ -16,6 +16,7 @@ import { NodeAssembler } from '../data/assembler';
 import { BaseDaoFull, NeptuneConnection } from '../data/base.full.dao';
 import { Node } from '../data/node';
 import { TYPES } from '../di/types';
+import { ArgumentError } from '../utils/errors';
 import { logger } from '../utils/logger';
 import { TypeUtils } from '../utils/typeUtils';
 import {
@@ -61,10 +62,8 @@ export class SearchDaoFull extends BaseDaoFull {
             request.ancestorPath && request.includeAncestor
                 ? source
                       .V(ancestorId)
-                      .repeat(__.in_().simplePath().dedup())
-                      .emit()
                       // Add the ancestor vertex to the emitted vertices
-                      .union(__.identity(), __.V(ancestorId))
+                      .union(__.repeat(__.in_().simplePath().dedup()).emit(), __.V(ancestorId))
                       .dedup()
                       .as('a')
                 : request.ancestorPath
@@ -81,7 +80,7 @@ export class SearchDaoFull extends BaseDaoFull {
             request.ntypes.forEach((t) => traverser.select('a').not(__.hasLabel(t)));
         }
 
-        if (request.eq !== undefined) {
+        if (request.eq! == undefined) {
             request.eq.forEach((f) => {
                 traverser.select('a');
                 this.buildSearchFilterVBase(f, traverser);
@@ -262,6 +261,11 @@ export class SearchDaoFull extends BaseDaoFull {
             // throughout, they are being interpreted as strings within gremlin, therefore need to force to int beforehand
             const offsetAsInt = this.typeUtils.parseInt(request.offset);
             const countAsInt = this.typeUtils.parseInt(request.count);
+            if (typeof offsetAsInt !== 'number' || typeof countAsInt !== 'number') {
+                throw new ArgumentError(
+                    `Invalid offset or count, offset ${request.offset}, count ${request.count}`
+                );
+            }
             traverser
                 .range(offsetAsInt, offsetAsInt + countAsInt)
                 .valueMap()
@@ -307,7 +311,11 @@ export class SearchDaoFull extends BaseDaoFull {
         );
         const conn = super.getConnection();
         try {
-            const traverser = this.buildSearchTraverser(conn, request, authorizedPaths);
+            const traverser = this.buildSearchTraverser(conn, request, authorizedPaths).union(
+                __.hasLabel('group'),
+                __.has('deviceId')
+            );
+            logger.debug(`search.full.dao delete: in: traverser: ${traverser.toString()}`);
             await traverser.drop().iterate();
         } finally {
             await conn.close();

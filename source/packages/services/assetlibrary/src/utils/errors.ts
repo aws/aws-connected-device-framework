@@ -24,7 +24,7 @@ export function handleError(e: Error, res: Response): void {
             status = 400;
             json = {
                 error: e.message,
-                errors: (e as SchemaValidationError).errors
+                errors: (e as SchemaValidationError).errors,
             };
             break;
         }
@@ -40,6 +40,7 @@ export function handleError(e: Error, res: Response): void {
             break;
         }
         case 'InvalidCategoryError':
+        case 'InvalidQueryStringError':
         case 'ArgumentError':
             status = 400;
             break;
@@ -64,7 +65,7 @@ export function handleError(e: Error, res: Response): void {
         case 'ResourceAlreadyExistsException':
             status = 409;
             json = {
-                error: 'Item already exists.'
+                error: 'Item already exists.',
             };
             break;
 
@@ -73,15 +74,20 @@ export function handleError(e: Error, res: Response): void {
             break;
 
         default:
-            if (e.message.indexOf('with id already exists') >= 0) {   // thrown by neptune
+            if (e.message.indexOf('with id already exists') >= 0) {
+                // thrown by neptune
                 status = 409;
                 json = {
-                    error: 'Item already exists.'
+                    error: 'Item already exists.',
                 };
+            } else if (
+                e.hasOwnProperty('code') &&
+                e['code'] === 'InvalidRequestException' // thrown by IotData in event emitter
+            ) {
+                status = 400;
             } else {
                 status = 500;
             }
-
     }
 
     logger.error(`handleError: status:${status}, json:${JSON.stringify(json)}`);
@@ -161,5 +167,19 @@ export class NotAuthorizedError extends Error {
     constructor(message: string) {
         super(message);
         this.name = 'NotAuthorizedError';
+    }
+}
+
+export class InvalidQueryStringError extends Error {
+    constructor(message: string) {
+        super(message);
+        this.name = 'InvalidQueryStringError';
+    }
+}
+
+export class ArgumentError extends Error {
+    constructor(message: string) {
+        super(message);
+        this.name = 'ArgumentError';
     }
 }
