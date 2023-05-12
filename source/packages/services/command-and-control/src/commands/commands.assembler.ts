@@ -10,9 +10,18 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { CommandItem, CommandListPaginationKey, CommandResource, CommandResourceList, EditableCommandResource, JobDeliveryMethod, ShadowDeliveryMethod, TopicDeliveryMethod } from './commands.models';
 import { injectable } from 'inversify';
 import { logger } from '../utils/logger.util';
+import {
+    CommandItem,
+    CommandListPaginationKey,
+    CommandResource,
+    CommandResourceList,
+    EditableCommandResource,
+    JobDeliveryMethod,
+    ShadowDeliveryMethod,
+    TopicDeliveryMethod,
+} from './commands.models';
 
 @injectable()
 export class CommandsAssembler {
@@ -52,22 +61,22 @@ export class CommandsAssembler {
             case 'TOPIC':
                 deliveryMethod = {
                     type: 'TOPIC',
-                    expectReply: resource.deliveryMethod.expectReply,
+                    expectReply: resource.deliveryMethod.expectReply ?? false,
                     onlineOnly: resource.deliveryMethod.onlineOnly,
                 } as TopicDeliveryMethod;
                 break;
             case 'SHADOW':
                 deliveryMethod = {
                     type: 'SHADOW',
-                    expectReply: resource.deliveryMethod.expectReply,
+                    expectReply: resource.deliveryMethod.expectReply ?? false,
                 } as ShadowDeliveryMethod;
                 break;
             case 'JOB': {
                 const res = resource.deliveryMethod as JobDeliveryMethod;
                 deliveryMethod = {
                     type: 'JOB',
-                    expectReply: res.expectReply,
-                    targetSelection: res.targetSelection
+                    expectReply: res.expectReply ?? false,
+                    targetSelection: res.targetSelection,
                 } as JobDeliveryMethod;
                 if (res.presignedUrlConfig?.expiresInSec) {
                     deliveryMethod.presignedUrlConfig = {
