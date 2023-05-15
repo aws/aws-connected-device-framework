@@ -24,7 +24,7 @@ import {
     BulkLoadGroupsResponse,
     Group10Resource,
     Group20Resource,
-    GroupResourceList
+    GroupResourceList,
 } from './groups.model';
 import { GroupsService, GroupsServiceBase } from './groups.service';
 
@@ -54,11 +54,11 @@ export class GroupsApigwService extends GroupsServiceBase implements GroupsServi
             .send(body)
             .set(this.buildHeaders(additionalHeaders))
             .use(await signClientRequest())
-            .then(res => {
-                return res.headers['x-groupPath']
+            .then((res) => {
+                return res.headers['x-groupPath'];
             })
-            .catch(err => {
-                throw createError(err.response.status, err.response.text)
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
             });
     }
 
@@ -79,11 +79,11 @@ export class GroupsApigwService extends GroupsServiceBase implements GroupsServi
             .send(body)
             .set(this.buildHeaders(additionalHeaders))
             .use(await signClientRequest())
-            .then(res => {
-                return res.body
+            .then((res) => {
+                return res.body;
             })
-            .catch(err => {
-                throw createError(err.response.status, err.response.text)
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
             });
     }
 
@@ -96,11 +96,11 @@ export class GroupsApigwService extends GroupsServiceBase implements GroupsServi
             .delete(url)
             .set(this.buildHeaders(additionalHeaders))
             .use(await signClientRequest())
-            .then(_res => {
-                return
+            .then((_res) => {
+                return;
             })
-            .catch(err => {
-                throw createError(err.response.status, err.response.text)
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
             });
     }
 
@@ -120,11 +120,11 @@ export class GroupsApigwService extends GroupsServiceBase implements GroupsServi
             .get(url)
             .set(this.buildHeaders(additionalHeaders))
             .use(await signClientRequest())
-            .then(res => {
-                return res.body
+            .then((res) => {
+                return res.body;
             })
-            .catch(err => {
-                throw createError(err.response.status, err.response.text)
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
             });
     }
 
@@ -148,11 +148,11 @@ export class GroupsApigwService extends GroupsServiceBase implements GroupsServi
             .get(url)
             .set(this.buildHeaders(additionalHeaders))
             .use(await signClientRequest())
-            .then(res => {
-                return res.body
+            .then((res) => {
+                return res.body;
             })
-            .catch(err => {
-                throw createError(err.response.status, err.response.text)
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
             });
     }
 
@@ -175,11 +175,11 @@ export class GroupsApigwService extends GroupsServiceBase implements GroupsServi
             .get(url)
             .set(this.buildHeaders(additionalHeaders))
             .use(await signClientRequest())
-            .then(res => {
-                return res.body
+            .then((res) => {
+                return res.body;
             })
-            .catch(err => {
-                throw createError(err.response.status, err.response.text)
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
             });
     }
 
@@ -201,11 +201,11 @@ export class GroupsApigwService extends GroupsServiceBase implements GroupsServi
             .get(url)
             .set(this.buildHeaders(additionalHeaders))
             .use(await signClientRequest())
-            .then(res => {
-                return res.body
+            .then((res) => {
+                return res.body;
             })
-            .catch(err => {
-                throw createError(err.response.status, err.response.text)
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
             });
     }
 
@@ -229,11 +229,11 @@ export class GroupsApigwService extends GroupsServiceBase implements GroupsServi
             .send(body)
             .set(this.buildHeaders(additionalHeaders))
             .use(await signClientRequest())
-            .then(_res => {
-                return
+            .then((_res) => {
+                return;
             })
-            .catch(err => {
-                throw createError(err.response.status, err.response.text)
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
             });
     }
 
@@ -256,11 +256,11 @@ export class GroupsApigwService extends GroupsServiceBase implements GroupsServi
             .put(url)
             .set(this.buildHeaders(additionalHeaders))
             .use(await signClientRequest())
-            .then(_res => {
-                return
+            .then((_res) => {
+                return;
             })
-            .catch(err => {
-                throw createError(err.response.status, err.response.text)
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
             });
     }
 
@@ -284,11 +284,11 @@ export class GroupsApigwService extends GroupsServiceBase implements GroupsServi
             .delete(url)
             .set(this.buildHeaders(additionalHeaders))
             .use(await signClientRequest())
-            .then(_res => {
-                return
+            .then((_res) => {
+                return;
             })
-            .catch(err => {
-                throw createError(err.response.status, err.response.text)
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
             });
     }
 
@@ -338,11 +338,11 @@ export class GroupsApigwService extends GroupsServiceBase implements GroupsServi
             .get(url)
             .set(this.buildHeaders(additionalHeaders))
             .use(await signClientRequest())
-            .then(res => {
-                return res.body
+            .then((res) => {
+                return res.body;
             })
-            .catch(err => {
-                throw createError(err.response.status, err.response.text)
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
             });
     }
 
@@ -385,10 +385,10 @@ export class GroupsApigwService extends GroupsServiceBase implements GroupsServi
             .set(this.buildHeaders(additionalHeaders))
             .use(await signClientRequest())
             .then((res) => {
-                if (!res.ok) {
-                    throw createError(res.status, res.text);
-                }
                 return res.body;
+            })
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
             });
     }
 }
