@@ -14,8 +14,8 @@
   },
   "dependencies": {
     "@aws-sdk/client-iot": "~3.37.0",
-    "@awssolutions/cdf-assetlibrary-client": "^0.0.1",
-    "@awssolutions/cdf-lambda-invoke": "^0.0.1",
+    "@awssolutions/cdf-assetlibrary-client": "^0.0.2",
+    "@awssolutions/cdf-lambda-invoke": "^0.0.2",
     "@awssolutions/cdf-logger": "^0.0.0",
     "inversify-binding-decorators": "4.0.0",
     "inversify": "6.0.1",

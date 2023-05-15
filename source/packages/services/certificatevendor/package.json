@@ -1,6 +1,6 @@
 {
   "name": "@awssolutions/cdf-certificate-vendor",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "CDF Certificate Vendor",
   "author": "Dean Hart",
   "scripts": {
@@ -37,10 +37,10 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@awssolutions/cdf-assetlibrary-client": "^0.0.1",
+    "@awssolutions/cdf-assetlibrary-client": "^0.0.2",
     "@awssolutions/cdf-config-inject": "^0.0.0",
     "@awssolutions/cdf-errors": "^0.0.0",
-    "@awssolutions/cdf-lambda-invoke": "^0.0.1",
+    "@awssolutions/cdf-lambda-invoke": "^0.0.2",
     "@awssolutions/cdf-lambda-zip": "^0.0.0",
     "@awssolutions/cdf-logger": "^0.0.0",
     "@rushstack/eslint-config": "2.3.4",

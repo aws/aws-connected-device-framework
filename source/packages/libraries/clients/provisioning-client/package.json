@@ -1,6 +1,6 @@
 {
   "name": "@awssolutions/cdf-provisioning-client",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Provisioning Library Client",
   "author": "Rahul Sareen",
   "main": "dist/index.js",
@@ -12,8 +12,8 @@
     "test": "rushx lint && jest --silent --passWithNoTests --maxWorkers=$JEST_MAX_WORKERS"
   },
   "dependencies": {
-    "@awssolutions/cdf-client-request-signer": "^0.0.1",
-    "@awssolutions/cdf-lambda-invoke": "^0.0.1",
+    "@awssolutions/cdf-client-request-signer": "^0.0.2",
+    "@awssolutions/cdf-lambda-invoke": "^0.0.2",
     "http-errors": "~2.0.0",
     "inversify": "6.0.1",
     "inversify-binding-decorators": "4.0.0",

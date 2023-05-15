@@ -1,6 +1,6 @@
 {
   "name": "@awssolutions/cdf-organization-manager",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "This module associates cdf components with organizational units and uses this association to create control-tower-customization manifest file",
   "author": "William Sia",
   "files": [
@@ -48,7 +48,7 @@
     "@awssolutions/cdf-config-inject": "^0.0.0",
     "@awssolutions/cdf-errors": "^0.0.0",
     "@awssolutions/cdf-express-middleware": "^0.0.0",
-    "@awssolutions/cdf-lambda-invoke": "^0.0.1",
+    "@awssolutions/cdf-lambda-invoke": "^0.0.2",
     "@awssolutions/cdf-lambda-zip": "^0.0.0",
     "@awssolutions/cdf-logger": "^0.0.0",
     "@rushstack/eslint-config": "2.3.4",

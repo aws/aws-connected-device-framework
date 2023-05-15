@@ -1,6 +1,6 @@
 {
   "name": "@awssolutions/cdf-lambda-invoke",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Lambda Invoker Service",
   "author": "Hassan Khokhar",
   "main": "dist/index.js",

@@ -1,6 +1,6 @@
 {
   "name": "@awssolutions/cdf-assetlibrary-export",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "CDF Asset Library Export Service",
   "author": "Hassan Khokhar",
   "files": [

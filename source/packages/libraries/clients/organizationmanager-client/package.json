@@ -1,6 +1,6 @@
 {
   "name": "@awssolutions/cdf-organizationmanager-client",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "CDF Organization Manager Client",
   "author": "William Sia",
   "main": "dist/index.js",
@@ -12,8 +12,8 @@
     "test": "rushx lint && NODE_ENV= NODE_CONFIG_DIR='./src/config' jest --silent --passWithNoTests --maxWorkers=$JEST_MAX_WORKERS"
   },
   "dependencies": {
-    "@awssolutions/cdf-client-request-signer": "^0.0.1",
-    "@awssolutions/cdf-lambda-invoke": "^0.0.1",
+    "@awssolutions/cdf-client-request-signer": "^0.0.2",
+    "@awssolutions/cdf-lambda-invoke": "^0.0.2",
     "dotenv-flow": "~3.2.0",
     "http-errors": "~2.0.0",
     "inversify": "6.0.1",
