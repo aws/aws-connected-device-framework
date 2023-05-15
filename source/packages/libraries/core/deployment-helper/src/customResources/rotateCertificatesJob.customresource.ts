@@ -25,65 +25,70 @@ import { CustomResource } from './customResource';
 
 @injectable()
 export class RotateCertificatesJobCustomResource implements CustomResource {
-
     protected headers: { [key: string]: string };
     private DEFAULT_MIME_TYPE = 'application/vnd.aws-cdf-v1.0+json';
-    private ROTATE_CERTIFICATES_TEMPLATE_ID = 'RotateCertificates'
+    private ROTATE_CERTIFICATES_TEMPLATE_ID = 'RotateCertificates';
     private mimeType: string;
 
     constructor(
-        @inject(COMMANDANDCONTROL_CLIENT_TYPES.CommandsService) private commandsService: CommandsService,
-        @inject(COMMANDANDCONTROL_CLIENT_TYPES.MessagesService) private messagesService: MessagesService
+        @inject(COMMANDANDCONTROL_CLIENT_TYPES.CommandsService)
+        private commandsService: CommandsService,
+        @inject(COMMANDANDCONTROL_CLIENT_TYPES.MessagesService)
+        private messagesService: MessagesService
     ) {
         this.mimeType = this.DEFAULT_MIME_TYPE;
     }
 
     public async create(customResourceEvent: CustomResourceEvent): Promise<unknown> {
+        const functionName = customResourceEvent?.ResourceProperties?.FunctionName;
         const thingGroupArn = customResourceEvent?.ResourceProperties?.ThingGroupArn;
         const mqttGetTopic = customResourceEvent?.ResourceProperties?.MQTTGetTopic;
         const mqttAckTopic = customResourceEvent?.ResourceProperties?.MQTTAckTopic;
 
+        ow(functionName, ow.string.nonEmpty);
         ow(thingGroupArn, ow.string.nonEmpty);
         ow(mqttGetTopic, ow.string.nonEmpty);
         ow(mqttAckTopic, ow.string.nonEmpty);
 
-        const thingGroupName = thingGroupArn.split('/')[1]
+        process.env.COMMANDANDCONTROL_API_FUNCTION_NAME = functionName;
+        const thingGroupName = thingGroupArn.split('/')[1];
 
-        const tags = { templateId: this.ROTATE_CERTIFICATES_TEMPLATE_ID }
+        const tags = { templateId: this.ROTATE_CERTIFICATES_TEMPLATE_ID };
 
-        const commandResourceList = await this.commandsService.listCommands(tags)
+        const commandResourceList = await this.commandsService.listCommands(tags);
 
         let existingCommandId;
 
         if (commandResourceList?.commands?.length < 1) {
             const payload: EditableCommandResource = {
-                "operation": "RotateCertificates",
-                "deliveryMethod": {
-                    "type": "JOB",
-                    "expectReply": true,
-                    "targetSelection": "CONTINUOUS",
-                    "jobExecutionsRolloutConfig": {
-                        "maximumPerMinute": 120
-                    }
+                operation: 'RotateCertificates',
+                deliveryMethod: {
+                    type: 'JOB',
+                    expectReply: true,
+                    targetSelection: 'CONTINUOUS',
+                    jobExecutionsRolloutConfig: {
+                        maximumPerMinute: 120,
+                    },
                 },
-                "payloadTemplate": "{\"get\":{\"subscribe\":\"${getSubscribeTopic}\",\"publish\":\"${getPublishTopic}\"},\"ack\":{\"subscribe\":\"${ackSubscribeTopic}\",\"publish\":\"${ackPublishTopic}\"}}",
-                "payloadParams": [
-                    "getSubscribeTopic",
-                    "getPublishTopic",
-                    "ackSubscribeTopic",
-                    "ackPublishTopic"
+                payloadTemplate:
+                    '{"get":{"subscribe":"${getSubscribeTopic}","publish":"${getPublishTopic}"},"ack":{"subscribe":"${ackSubscribeTopic}","publish":"${ackPublishTopic}"}}',
+                payloadParams: [
+                    'getSubscribeTopic',
+                    'getPublishTopic',
+                    'ackSubscribeTopic',
+                    'ackPublishTopic',
                 ],
-                "tags": {
-                    "templateId": this.ROTATE_CERTIFICATES_TEMPLATE_ID
-                }
+                tags: {
+                    templateId: this.ROTATE_CERTIFICATES_TEMPLATE_ID,
+                },
             };
 
             existingCommandId = await this.commandsService.createCommand(payload);
         } else {
-            existingCommandId = commandResourceList.commands[0].id
+            existingCommandId = commandResourceList.commands[0].id;
         }
 
-        const messageResourceList = await this.messagesService.listMessages(existingCommandId)
+        const messageResourceList = await this.messagesService.listMessages(existingCommandId);
 
         if (messageResourceList?.messages?.length < 1) {
             const oldText = '/+/';
@@ -95,19 +100,19 @@ export class RotateCertificatesJobCustomResource implements CustomResource {
 
             const payload: NewMessageResource = {
                 commandId: existingCommandId,
-                "targets": {
-                    "awsIoT": {
-                        "thingGroups": [{ "name": thingGroupName, "expand": false }]
-                    }
+                targets: {
+                    awsIoT: {
+                        thingGroups: [{ name: thingGroupName, expand: false }],
+                    },
                 },
-                "payloadParamValues": {
+                payloadParamValues: {
                     getSubscribeTopic,
                     getPublishTopic,
                     ackSubscribeTopic,
-                    ackPublishTopic
-                }
+                    ackPublishTopic,
+                },
             };
-            await this.messagesService.createMessage(payload)
+            await this.messagesService.createMessage(payload);
         }
 
         return {};
@@ -124,13 +129,11 @@ export class RotateCertificatesJobCustomResource implements CustomResource {
     protected getHeaders(): { [key: string]: string } {
         if (this.headers === undefined) {
             const h = {
-                'Accept': this.mimeType,
-                'Content-Type': this.mimeType
+                Accept: this.mimeType,
+                'Content-Type': this.mimeType,
             };
             this.headers = { ...h };
         }
         return this.headers;
     }
 }
-
-
