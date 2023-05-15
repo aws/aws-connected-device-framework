@@ -14,7 +14,6 @@
   "dependencies": {
     "@awssolutions/cdf-client-request-signer": "^0.0.1",
     "@awssolutions/cdf-assetlibrary-client": "^0.0.1",
-    "@awssolutions/cdf-config-inject": "^0.0.0",
     "@awssolutions/cdf-lambda-invoke": "^0.0.1",
     "dotenv-flow": "~3.2.0",
     "http-errors": "~2.0.0",
