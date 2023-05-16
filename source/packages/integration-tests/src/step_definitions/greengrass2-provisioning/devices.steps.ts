@@ -21,7 +21,7 @@ import {
     DeviceTask,
     GREENGRASS2_PROVISIONING_CLIENT_TYPES,
     NewDeviceTask,
-} from '@awssolutions/cdf-greengrass2-provisioning-client';
+} from '@aws-solutions/cdf-greengrass2-provisioning-client';
 
 import { container } from '../../di/inversify.config';
 import { buildModel, validateExpectedAttributes } from '../common/common.steps';
@@ -29,7 +29,10 @@ import { getAdditionalHeaders } from '../notifications/notifications.utils';
 import { world } from './greengrass2.world';
 
 import chai_string = require('chai-string');
-import { GreengrassV2Client, ListClientDevicesAssociatedWithCoreDeviceCommand } from '@aws-sdk/client-greengrassv2';
+import {
+    GreengrassV2Client,
+    ListClientDevicesAssociatedWithCoreDeviceCommand,
+} from '@aws-sdk/client-greengrassv2';
 
 use(chai_string);
 /*
@@ -42,50 +45,63 @@ use(chai_string);
 
 setDefaultTimeout(10 * 1000);
 
-const devicesService: DevicesService = container.get(GREENGRASS2_PROVISIONING_CLIENT_TYPES.DevicesService);
+const devicesService: DevicesService = container.get(
+    GREENGRASS2_PROVISIONING_CLIENT_TYPES.DevicesService
+);
 
 const greengrass: GreengrassV2Client = new GreengrassV2Client({ region: process.env.AWS_REGION });
 
-
-Given('greengrass2-provisioning client device {string} does not exist', async function (name: string) {
-    try {
-        await devicesService.getDevice(name, getAdditionalHeaders(world.authToken));
-        expect.fail('Not found should have be thrown');
-    } catch (err) {
-        expect(err.status).to.eq(404);
+Given(
+    'greengrass2-provisioning client device {string} does not exist',
+    async function (name: string) {
+        try {
+            await devicesService.getDevice(name, getAdditionalHeaders(world.authToken));
+            expect.fail('Not found should have be thrown');
+        } catch (err) {
+            expect(err.status).to.eq(404);
+        }
     }
-});
+);
 
-Given('greengrass2-provisioning client device {string} exists with attributes:', async function (name: string, data: DataTable) {
-    let device: Device;
-    try {
-        device = await devicesService.getDevice(name, getAdditionalHeaders(world.authToken));
-    } catch (err) {
-        world.errStatus = err.status;
-        fail(`getDevice failed, err: ${JSON.stringify(err)}`);
+Given(
+    'greengrass2-provisioning client device {string} exists with attributes:',
+    async function (name: string, data: DataTable) {
+        let device: Device;
+        try {
+            device = await devicesService.getDevice(name, getAdditionalHeaders(world.authToken));
+        } catch (err) {
+            world.errStatus = err.status;
+            fail(`getDevice failed, err: ${JSON.stringify(err)}`);
+        }
+        validateExpectedAttributes(device, data);
     }
-    validateExpectedAttributes(device, data);
-});
+);
 
 Then('greengrass2-provisioning client device {string} exists', async function (name: string) {
     try {
-        await devicesService.getDevice(name, getAdditionalHeaders(world.authToken))
+        await devicesService.getDevice(name, getAdditionalHeaders(world.authToken));
     } catch (err) {
         world.errStatus = err.status;
         expect.fail('Should have been found');
     }
 });
 
-When('I create greengrass2-provisioning client device task with attributes:', async function (data: DataTable) {
-    delete world.lastClientDeviceTaskId;
-    try {
-        const task: NewDeviceTask = buildModel(data);
-        world.lastClientDeviceTaskId = await devicesService.createDeviceTask(task, getAdditionalHeaders(world.authToken));
-    } catch (err) {
-        world.errStatus = err.status;
-        fail(`createDeviceTask failed, err: ${JSON.stringify(err)}`);
+When(
+    'I create greengrass2-provisioning client device task with attributes:',
+    async function (data: DataTable) {
+        delete world.lastClientDeviceTaskId;
+        try {
+            const task: NewDeviceTask = buildModel(data);
+            world.lastClientDeviceTaskId = await devicesService.createDeviceTask(
+                task,
+                getAdditionalHeaders(world.authToken)
+            );
+        } catch (err) {
+            world.errStatus = err.status;
+            fail(`createDeviceTask failed, err: ${JSON.stringify(err)}`);
+        }
     }
-});
+);
 
 When('I delete client device {string}', async function (name: string) {
     delete world.lastClientDeviceTaskId;
@@ -97,58 +113,90 @@ When('I delete client device {string}', async function (name: string) {
     }
 });
 
-When('I create greengrass2-provisioning client device task with invalid attributes:', async function (data: DataTable) {
-    delete world.lastClientDeviceTaskId;
-    try {
-        const task: NewDeviceTask = buildModel(data);
-        world.lastClientDeviceTaskId = await devicesService.createDeviceTask(task, getAdditionalHeaders(world.authToken));
-    } catch (err) {
-        world.errStatus = err.status;
+When(
+    'I create greengrass2-provisioning client device task with invalid attributes:',
+    async function (data: DataTable) {
+        delete world.lastClientDeviceTaskId;
+        try {
+            const task: NewDeviceTask = buildModel(data);
+            world.lastClientDeviceTaskId = await devicesService.createDeviceTask(
+                task,
+                getAdditionalHeaders(world.authToken)
+            );
+        } catch (err) {
+            world.errStatus = err.status;
+        }
     }
-});
+);
 
-
-Then('last greengrass2-provisioning client device task fails with a {int}', function (status: number) {
-    expect(world.errStatus, 'response').eq(status);
-});
-
-
-Then('last greengrass2-provisioning client device task exists with attributes:', async function (data: DataTable) {
-    let task: DeviceTask;
-    try {
-        task = await devicesService.getDeviceTask(world.lastClientDeviceTaskId, getAdditionalHeaders(world.authToken));
-    } catch (err) {
-        world.errStatus = err.status;
-        fail(`getDeviceTask failed, err: ${JSON.stringify(err)}`);
+Then(
+    'last greengrass2-provisioning client device task fails with a {int}',
+    function (status: number) {
+        expect(world.errStatus, 'response').eq(status);
     }
-    validateExpectedAttributes(task, data);
-});
+);
 
-Then('device {string} should be associated with greengrass2 core {string}', async function (deviceName: string, coreName: string) {
-    try {
-        const listClientResponse = await greengrass.send(new ListClientDevicesAssociatedWithCoreDeviceCommand({
-            coreDeviceThingName: coreName
-        }))
-        const associatedDevices = listClientResponse.associatedClientDevices.map(o => o.thingName);
-        expect(associatedDevices).include(deviceName)
-
-    } catch (err) {
-        world.errStatus = err.status;
-        fail(`client device ${deviceName}} not associated with core ${coreName}, err: ${JSON.stringify(err)}`);
+Then(
+    'last greengrass2-provisioning client device task exists with attributes:',
+    async function (data: DataTable) {
+        let task: DeviceTask;
+        try {
+            task = await devicesService.getDeviceTask(
+                world.lastClientDeviceTaskId,
+                getAdditionalHeaders(world.authToken)
+            );
+        } catch (err) {
+            world.errStatus = err.status;
+            fail(`getDeviceTask failed, err: ${JSON.stringify(err)}`);
+        }
+        validateExpectedAttributes(task, data);
     }
-});
+);
 
-Then('device {string} should not be associated with greengrass2 core {string}', async function (deviceName: string, coreName: string) {
-    try {
-        const listClientResponse = await greengrass.send(new ListClientDevicesAssociatedWithCoreDeviceCommand({
-            coreDeviceThingName: coreName
-        }))
-        const associatedDevices = listClientResponse.associatedClientDevices.map(o => o.thingName);
-        expect(associatedDevices).not.include(deviceName)
-
-    } catch (err) {
-        world.errStatus = err.status;
-        fail(`client device ${deviceName}} not associated with core ${coreName}, err: ${JSON.stringify(err)}`);
+Then(
+    'device {string} should be associated with greengrass2 core {string}',
+    async function (deviceName: string, coreName: string) {
+        try {
+            const listClientResponse = await greengrass.send(
+                new ListClientDevicesAssociatedWithCoreDeviceCommand({
+                    coreDeviceThingName: coreName,
+                })
+            );
+            const associatedDevices = listClientResponse.associatedClientDevices.map(
+                (o) => o.thingName
+            );
+            expect(associatedDevices).include(deviceName);
+        } catch (err) {
+            world.errStatus = err.status;
+            fail(
+                `client device ${deviceName}} not associated with core ${coreName}, err: ${JSON.stringify(
+                    err
+                )}`
+            );
+        }
     }
-});
+);
 
+Then(
+    'device {string} should not be associated with greengrass2 core {string}',
+    async function (deviceName: string, coreName: string) {
+        try {
+            const listClientResponse = await greengrass.send(
+                new ListClientDevicesAssociatedWithCoreDeviceCommand({
+                    coreDeviceThingName: coreName,
+                })
+            );
+            const associatedDevices = listClientResponse.associatedClientDevices.map(
+                (o) => o.thingName
+            );
+            expect(associatedDevices).not.include(deviceName);
+        } catch (err) {
+            world.errStatus = err.status;
+            fail(
+                `client device ${deviceName}} not associated with core ${coreName}, err: ${JSON.stringify(
+                    err
+                )}`
+            );
+        }
+    }
+);

@@ -1,5 +1,5 @@
 {
-  "name": "@awssolutions/cdf-config-inject",
+  "name": "@aws-solutions/cdf-config-inject",
   "version": "0.0.0",
   "description": "this library load config from files and inject it into process.env to make it accessible as environment variables",
   "author": "Atul Bargaje <atulbar@amazon.com>",
@@ -12,9 +12,9 @@
     "test": "rushx lint && APP_CONFIG_DIR='src/config' jest --silent --passWithNoTests"
   },
   "dependencies": {
-    "@awssolutions/cdf-environment-sanitizer": "^0.0.0",
-    "@awssolutions/cdf-errors": "^0.0.0",
-    "@awssolutions/cdf-logger": "^0.0.0",
+    "@aws-solutions/cdf-environment-sanitizer": "^0.0.0",
+    "@aws-solutions/cdf-errors": "^0.0.0",
+    "@aws-solutions/cdf-logger": "^0.0.0",
     "dotenv-flow": "~3.2.0",
     "dotenv": "^8.2.0"
   },

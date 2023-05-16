@@ -19,22 +19,28 @@ import { SendMessageCommand, SendMessageCommandOutput, SQSClient } from '@aws-sd
 import {
     AwsIotThingListBuilder,
     THING_LIST_BUILDER_TYPES,
-} from '@awssolutions/cdf-thing-list-builder';
+} from '@aws-solutions/cdf-thing-list-builder';
 
 import { FailedCoreDeployment } from '../cores/cores.models';
 import { CoresService } from '../cores/cores.service';
 import { Deployment } from '../deployments/deployments.models';
-import { DeploymentsService, DEPLOYMENT_TASK_ID_TAG_KEY } from '../deployments/deployments.service';
+import {
+    DeploymentsService,
+    DEPLOYMENT_TASK_ID_TAG_KEY,
+} from '../deployments/deployments.service';
 import { TYPES } from '../di/types';
 import { TemplatesService } from '../templates/templates.service';
 import { logger } from '../utils/logger.util';
-import { CoreDeploymentListPaginationKey, DeploymentTaskListPaginationKey, DeploymentTasksDao } from './deploymentTasks.dao';
+import {
+    CoreDeploymentListPaginationKey,
+    DeploymentTaskListPaginationKey,
+    DeploymentTasksDao,
+} from './deploymentTasks.dao';
 import { DeploymentTask, NewDeploymentTask } from './deploymentTasks.models';
 import { DescribeJobCommand, IoTClient, ListTagsForResourceCommand } from '@aws-sdk/client-iot';
 
 @injectable()
 export class DeploymentTasksService {
-
     private sqs: SQSClient;
     private iot: IoTClient;
 
@@ -43,9 +49,10 @@ export class DeploymentTasksService {
         @inject(TYPES.DeploymentTasksDao) private deploymentTasksDao: DeploymentTasksDao,
         @inject(TYPES.DeploymentsService) private deploymentsService: DeploymentsService,
         @inject(TYPES.CoresService) private coresService: CoresService,
-        @inject(THING_LIST_BUILDER_TYPES.AwsIotThingListBuilder) private awsIotThingListBuilder: AwsIotThingListBuilder,
+        @inject(THING_LIST_BUILDER_TYPES.AwsIotThingListBuilder)
+        private awsIotThingListBuilder: AwsIotThingListBuilder,
         @inject(TYPES.SQSFactory) sqsFactory: () => SQSClient,
-        @inject(TYPES.IotFactory) iotFactory: () => IoTClient,
+        @inject(TYPES.IotFactory) iotFactory: () => IoTClient
     ) {
         this.iot = iotFactory();
         this.sqs = sqsFactory();
@@ -57,7 +64,10 @@ export class DeploymentTasksService {
         ow(request?.template?.name, 'template name', ow.string.nonEmpty);
         ow(request.targets, 'targets', ow.object.nonEmpty);
 
-        const template = await this.templatesService.get(request.template.name, request.template.version);
+        const template = await this.templatesService.get(
+            request.template.name,
+            request.template.version
+        );
         if (template === undefined) {
             throw new Error(`Requested template ${request.template.name} not found`);
         }
@@ -67,13 +77,13 @@ export class DeploymentTasksService {
             id: generate(),
             template: {
                 name: template.name,
-                version: template.version as number
+                version: template.version as number,
             },
             deployments: [],
             targets: request.targets,
             iotJobConfig: request.iotJobConfig,
             taskStatus: 'Waiting',
-            createdAt: new Date()
+            createdAt: new Date(),
         };
 
         // save it
@@ -87,9 +97,9 @@ export class DeploymentTasksService {
                 MessageAttributes: {
                     messageType: {
                         DataType: 'String',
-                        StringValue: `DeploymentTask`
-                    }
-                }
+                        StringValue: `DeploymentTask`,
+                    },
+                },
             })
         );
 
@@ -98,30 +108,56 @@ export class DeploymentTasksService {
     }
 
     public async getCoreDeploymentStatus(taskId: string, coreName: string): Promise<Deployment> {
-        logger.debug(`deploymentTasks.service getCoreDeploymentStatus: in: taskId:${taskId}, coreName:${coreName}`);
+        logger.debug(
+            `deploymentTasks.service getCoreDeploymentStatus: in: taskId:${taskId}, coreName:${coreName}`
+        );
 
         ow(taskId, ow.string.nonEmpty);
         ow(coreName, ow.string.nonEmpty);
 
         const deployment = await this.deploymentTasksDao.getCoreDeploymentStatus(taskId, coreName);
-        logger.debug(`deploymentTasks.service getCoreDeploymentStatus: exit: ${JSON.stringify(deployment)}`);
+        logger.debug(
+            `deploymentTasks.service getCoreDeploymentStatus: exit: ${JSON.stringify(deployment)}`
+        );
         return deployment;
     }
 
-    public async listCoresByDeploymentTask(taskId: string, count?: number, lastEvaluated?: CoreDeploymentListPaginationKey): Promise<[Deployment[], CoreDeploymentListPaginationKey]> {
-        logger.debug(`deploymentTasks.service listCoresByDeploymentTask: in: taskId:${taskId}, count:${count}, lastEvaluated:${JSON.stringify(lastEvaluated)}`);
+    public async listCoresByDeploymentTask(
+        taskId: string,
+        count?: number,
+        lastEvaluated?: CoreDeploymentListPaginationKey
+    ): Promise<[Deployment[], CoreDeploymentListPaginationKey]> {
+        logger.debug(
+            `deploymentTasks.service listCoresByDeploymentTask: in: taskId:${taskId}, count:${count}, lastEvaluated:${JSON.stringify(
+                lastEvaluated
+            )}`
+        );
         if (count) {
             count = Number(count);
         }
 
-        const deployments = await this.deploymentTasksDao.listCoresByDeploymentTask(taskId, count, lastEvaluated);
-        logger.debug(`deploymentTasks.service listCoresByDeploymentTask: exit: ${JSON.stringify(deployments)}`);
+        const deployments = await this.deploymentTasksDao.listCoresByDeploymentTask(
+            taskId,
+            count,
+            lastEvaluated
+        );
+        logger.debug(
+            `deploymentTasks.service listCoresByDeploymentTask: exit: ${JSON.stringify(
+                deployments
+            )}`
+        );
         return deployments;
     }
 
-
-    public async list(count?: number, lastEvaluated?: DeploymentTaskListPaginationKey): Promise<[DeploymentTask[], DeploymentTaskListPaginationKey]> {
-        logger.debug(`deploymentTasks.service list: in: count:${count}, lastEvaluated:${JSON.stringify(lastEvaluated)}`);
+    public async list(
+        count?: number,
+        lastEvaluated?: DeploymentTaskListPaginationKey
+    ): Promise<[DeploymentTask[], DeploymentTaskListPaginationKey]> {
+        logger.debug(
+            `deploymentTasks.service list: in: count:${count}, lastEvaluated:${JSON.stringify(
+                lastEvaluated
+            )}`
+        );
 
         if (count) {
             count = Number(count);
@@ -147,41 +183,51 @@ export class DeploymentTasksService {
 
         ow(jobId, ow.string.nonEmpty);
 
-        const describeJobResponse = await this.iot.send(new DescribeJobCommand({ jobId: jobId }))
-        const getTagsResponse = await this.iot.send(new ListTagsForResourceCommand({ resourceArn: describeJobResponse.job?.jobArn }))
+        const describeJobResponse = await this.iot.send(new DescribeJobCommand({ jobId: jobId }));
+        const getTagsResponse = await this.iot.send(
+            new ListTagsForResourceCommand({ resourceArn: describeJobResponse.job?.jobArn })
+        );
 
         let deploymentTask;
         for (const tag of getTagsResponse.tags) {
             if (tag.Key === DEPLOYMENT_TASK_ID_TAG_KEY) {
-                deploymentTask = this.get(tag.Value)
-                return deploymentTask
+                deploymentTask = this.get(tag.Value);
+                return deploymentTask;
             }
         }
 
-        logger.debug(`deploymentTasks.service getByJobId: exit: deploymentTask:${JSON.stringify(deploymentTask)}`);
+        logger.debug(
+            `deploymentTasks.service getByJobId: exit: deploymentTask:${JSON.stringify(
+                deploymentTask
+            )}`
+        );
         return deploymentTask;
     }
 
     /**
      * Expand the targets of the provided task, then splitting into batches for async processing.
-     * @param task 
+     * @param task
      */
     public async processDeploymentTask(task: DeploymentTask): Promise<void> {
-        logger.debug(`deploymentTasks.service processDeploymentTask: task:${JSON.stringify(task)}`);
+        logger.debug(
+            `deploymentTasks.service processDeploymentTask: task:${JSON.stringify(task)}`
+        );
 
         ow(task?.targets, 'targets', ow.object.nonEmpty);
         ow(task.id, 'task id', ow.string.nonEmpty);
 
-        // 1st expand the targets. Can take time if there's quite a few to expand, hence why this is function if carried out async to break out of the APIGW execution timeout 
+        // 1st expand the targets. Can take time if there's quite a few to expand, hence why this is function if carried out async to break out of the APIGW execution timeout
         const expandedTargets = await this.awsIotThingListBuilder.listThings({
             thingNames: task.targets.thingNames,
             thingGroupNames: task.targets.thingGroupNames,
             assetLibraryDeviceIds: task.targets.assetLibraryDeviceIds,
             assetLibraryGroupPaths: task.targets.assetLibraryGroupPaths,
-            assetLibraryQuery: task.targets.assetLibraryQuery
+            assetLibraryQuery: task.targets.assetLibraryQuery,
         });
         ow(expandedTargets?.thingNames, 'expanded targets', ow.array.nonEmpty);
-        task.deployments = expandedTargets.thingNames.map(t => { return { coreName: t, taskStatus: 'Waiting' } });
+        task.deployments = expandedTargets.thingNames.map((t) => {
+            return { coreName: t, taskStatus: 'Waiting' };
+        });
 
         // there could be 1000's of expanded targets to process, therefore split into batches for more efficient processing
         const batcher = <T>(items: T[]) =>
@@ -202,23 +248,25 @@ export class DeploymentTasksService {
         const limit = pLimit(parseInt(process.env.PROMISES_CONCURRENCY));
         for (const batch of batches) {
             sqsFutures.push(
-                limit(() => this.sqs.send(
-                    new SendMessageCommand({
-                        QueueUrl: process.env.AWS_SQS_QUEUES_DEPLOYMENT_TASKS,
-                        MessageBody: JSON.stringify({
-                            id: task.id,
-                            templateName: task.template.name,
-                            templateVersion: task.template.version,
-                            deployments: batch
-                        }),
-                        MessageAttributes: {
-                            messageType: {
-                                DataType: 'String',
-                                StringValue: `DeploymentTaskBatch`
-                            }
-                        }
-                    })
-                ))
+                limit(() =>
+                    this.sqs.send(
+                        new SendMessageCommand({
+                            QueueUrl: process.env.AWS_SQS_QUEUES_DEPLOYMENT_TASKS,
+                            MessageBody: JSON.stringify({
+                                id: task.id,
+                                templateName: task.template.name,
+                                templateVersion: task.template.version,
+                                deployments: batch,
+                            }),
+                            MessageAttributes: {
+                                messageType: {
+                                    DataType: 'String',
+                                    StringValue: `DeploymentTaskBatch`,
+                                },
+                            },
+                        })
+                    )
+                )
             );
         }
         await Promise.all(sqsFutures);
@@ -226,8 +274,17 @@ export class DeploymentTasksService {
         logger.debug(`deploymentTasks.service processDeploymentTask: exit:`);
     }
 
-    public async processDeploymentTaskBatch(taskId: string, templateName: string, templateVersion: number, deployments: Deployment[]): Promise<void> {
-        logger.debug(`deploymentTasks.service processDeploymentTaskBatch: in: taskId:${taskId}, templateName:${templateName}, templateVersion:${templateVersion}, deployments:${JSON.stringify(deployments)}`);
+    public async processDeploymentTaskBatch(
+        taskId: string,
+        templateName: string,
+        templateVersion: number,
+        deployments: Deployment[]
+    ): Promise<void> {
+        logger.debug(
+            `deploymentTasks.service processDeploymentTaskBatch: in: taskId:${taskId}, templateName:${templateName}, templateVersion:${templateVersion}, deployments:${JSON.stringify(
+                deployments
+            )}`
+        );
 
         let failed = false;
         let failedReason: string;
@@ -248,22 +305,44 @@ export class DeploymentTasksService {
             await this.deploymentTasksDao.saveDeploymentTask(task, false);
 
             // create the deployments
-            processedDeployments = (await this.deploymentsService.createDeployments(taskId, deployments));
-
+            processedDeployments = await this.deploymentsService.createDeployments(
+                taskId,
+                deployments
+            );
         } catch (e) {
-            logger.error(`deploymentTasks.service processDeploymentTaskBatch: e: ${e.name}: ${e.message}`);
+            logger.error(
+                `deploymentTasks.service processDeploymentTaskBatch: e: ${e.name}: ${e.message}`
+            );
             failed = true;
             failedReason = e.message;
         }
 
         // update the batch and task
-        await this.saveBatchStatus(taskId, templateName, templateVersion, processedDeployments, failed, failedReason);
+        await this.saveBatchStatus(
+            taskId,
+            templateName,
+            templateVersion,
+            processedDeployments,
+            failed,
+            failedReason
+        );
 
         logger.debug(`deploymentTasks.service processDeploymentTaskBatch: exit:`);
     }
 
-    private async saveBatchStatus(taskId: string, templateName: string, templateVersion: number, deployments: Deployment[], failed: boolean, failedReason: string): Promise<void> {
-        logger.debug(`deploymentTasks.service saveBatchStatus: in: taskId:${taskId}, templateName:${templateName}, templateVersion:${templateVersion}, failed:${failed}, failedReason:${failedReason}, deployments:${JSON.stringify(deployments)}`);
+    private async saveBatchStatus(
+        taskId: string,
+        templateName: string,
+        templateVersion: number,
+        deployments: Deployment[],
+        failed: boolean,
+        failedReason: string
+    ): Promise<void> {
+        logger.debug(
+            `deploymentTasks.service saveBatchStatus: in: taskId:${taskId}, templateName:${templateName}, templateVersion:${templateVersion}, failed:${failed}, failedReason:${failedReason}, deployments:${JSON.stringify(
+                deployments
+            )}`
+        );
 
         // update the batch progress
         const batchProgress = await this.deploymentTasksDao.incrementBatchesCompleted(taskId);
@@ -272,19 +351,19 @@ export class DeploymentTasksService {
         const task = await this.deploymentTasksDao.get(taskId, true);
         if (task !== undefined) {
             // determine if any have failed
-            const failedDeployments = deployments.filter(d => d.taskStatus === 'Failure');
+            const failedDeployments = deployments.filter((d) => d.taskStatus === 'Failure');
             const hasFailed = failedDeployments.length > 0;
 
             // if we have failed core deployments at this point (unable to start deployment), we need to update their core device deployment statuses
             if (hasFailed) {
-                const failedCores: FailedCoreDeployment[] = failedDeployments.map(d => {
+                const failedCores: FailedCoreDeployment[] = failedDeployments.map((d) => {
                     return {
                         name: d.coreName,
                         templateName: templateName,
                         templateVersion: templateVersion,
                         deploymentStatus: d.taskStatus,
                         deploymentStatusMessage: d.statusMessage,
-                    }
+                    };
                 });
                 await this.coresService.associateFailedDeploymentStarts(failedCores);
             }
@@ -298,7 +377,7 @@ export class DeploymentTasksService {
             task.deployments = deployments;
 
             // if all batches have been completed, update the overall task state to complete
-            if ((batchProgress.complete === batchProgress.total) && task.taskStatus !== 'Failure') {
+            if (batchProgress.complete === batchProgress.total && task.taskStatus !== 'Failure') {
                 task.taskStatus = 'Success';
                 task.updatedAt = new Date();
             }

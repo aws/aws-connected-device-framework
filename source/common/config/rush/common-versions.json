@@ -224,7 +224,7 @@
         "3.3.3",
         "3.3.2"
       ],
-      "@awssolutions/cdf-thing-list-builder": [
+      "@aws-solutions/cdf-thing-list-builder": [
         "^1.0.1-0",
         "~1.0.1-0"
       ],

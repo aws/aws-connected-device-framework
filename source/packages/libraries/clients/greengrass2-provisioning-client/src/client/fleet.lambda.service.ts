@@ -15,7 +15,7 @@ import {
     LAMBDAINVOKE_TYPES,
     LambdaApiGatewayEventBuilder,
     LambdaInvokerService,
-} from '@awssolutions/cdf-lambda-invoke';
+} from '@aws-solutions/cdf-lambda-invoke';
 import { inject, injectable } from 'inversify';
 import { RequestHeaders } from './common.model';
 import { TemplateUsage } from './fleet.model';

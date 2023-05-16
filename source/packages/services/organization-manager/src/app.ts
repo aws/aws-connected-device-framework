@@ -16,7 +16,7 @@ import { InversifyExpressServer } from 'inversify-express-utils';
 import * as bodyParser from 'body-parser';
 import { logger } from './utils/logger';
 import { Request, Response, NextFunction, Application } from 'express';
-import { normalisePath } from '@awssolutions/cdf-express-middleware';
+import { normalisePath } from '@aws-solutions/cdf-express-middleware';
 import cors = require('cors');
 
 const PORT = 3002;
@@ -41,7 +41,7 @@ server.setConfig((app) => {
         const customDomainPath = process.env.CUSTOM_DOMAIN_BASE_PATH;
         if (customDomainPath) {
             req.url = normalisePath(req.url, customDomainPath);
-            logger.silly(`${customDomainPath} is removed from the request url`)
+            logger.silly(`${customDomainPath} is removed from the request url`);
         }
         next();
     });
@@ -66,7 +66,7 @@ server.setConfig((app) => {
     if (corsAllowedOrigin !== null && corsAllowedOrigin !== '') {
         const c = cors({
             origin: corsAllowedOrigin,
-            exposedHeaders
+            exposedHeaders,
         });
         app.use(c);
     }

@@ -16,9 +16,9 @@ import {
     MessagesDebugService,
     NOTIFICATIONS_CLIENT_TYPES,
     SubscriptionsService,
-} from '@awssolutions/cdf-notifications-client/dist';
-import { SimulateIoTCoreMessageRequest } from '@awssolutions/cdf-notifications-client/dist/client/messages.model';
-import { SubscriptionResource } from '@awssolutions/cdf-notifications-client/dist/client/subscriptions.model';
+} from '@aws-solutions/cdf-notifications-client/dist';
+import { SimulateIoTCoreMessageRequest } from '@aws-solutions/cdf-notifications-client/dist/client/messages.model';
+import { SubscriptionResource } from '@aws-solutions/cdf-notifications-client/dist/client/subscriptions.model';
 import { DataTable, Given, Then, When, setDefaultTimeout } from '@cucumber/cucumber';
 import { fail } from 'assert';
 import { expect, use } from 'chai';

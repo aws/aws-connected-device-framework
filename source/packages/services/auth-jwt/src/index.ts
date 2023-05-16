@@ -10,11 +10,11 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import '@awssolutions/cdf-config-inject';
+import '@aws-solutions/cdf-config-inject';
 import { Context, CustomAuthorizerEvent } from 'aws-lambda';
 import ow from 'ow';
 
-import * as Errors from '@awssolutions/cdf-errors';
+import * as Errors from '@aws-solutions/cdf-errors';
 
 import { ApiGwCustomAuthorizer } from './api-gw.custom.authorizer';
 import { APIGWAuthPolicyBuilder } from './api-gw.policy.builder';
@@ -26,8 +26,10 @@ const _apiGwCustomAuth = new ApiGwCustomAuthorizer();
 /**
  * Lambda entry point for Custom Authorizer.
  */
-export async function handler(event: CustomAuthorizerEvent, context: Context) : Promise<void> {
-    logger.debug(`index: handler: in: event:${JSON.stringify(event)}, context:${JSON.stringify(context)}`);
+export async function handler(event: CustomAuthorizerEvent, context: Context): Promise<void> {
+    logger.debug(
+        `index: handler: in: event:${JSON.stringify(event)}, context:${JSON.stringify(context)}`
+    );
 
     ow(event, ow.object.nonEmpty);
     ow(event.authorizationToken, ow.string.nonEmpty);
@@ -39,9 +41,9 @@ export async function handler(event: CustomAuthorizerEvent, context: Context) : 
 
         const apiOptions = {
             region: _awsRegion,
-            apiId
+            apiId,
         };
-        const authCheck = await _apiGwCustomAuth.verify({token});
+        const authCheck = await _apiGwCustomAuth.verify({ token });
         const policy = new APIGWAuthPolicyBuilder('user', awsAccountId, apiOptions);
         if (authCheck.isValid) {
             policy.allowAllMethods();
@@ -53,7 +55,6 @@ export async function handler(event: CustomAuthorizerEvent, context: Context) : 
         logger.debug(`index: handler: apigwPolicy:${JSON.stringify(apigwPolicy)}`);
 
         context.succeed(apigwPolicy);
-
     } catch (err) {
         logger.debug(`index: handler: err: ${err.message}`);
         context.fail('Unauthorized');
@@ -73,7 +74,7 @@ function getAccountId(context: Context) {
     return invokedFnArnParsed[4];
 }
 
-function getApiId(event:CustomAuthorizerEvent) {
+function getApiId(event: CustomAuthorizerEvent) {
     let apiId;
     if (event.requestContext) {
         apiId = event.requestContext.apiId;
@@ -92,5 +93,4 @@ function getApiId(event:CustomAuthorizerEvent) {
     }
     logger.debug(`index: getApiId: apiId: ${apiId}`);
     return apiId;
-
 }

@@ -1,5 +1,5 @@
 {
-  "name": "@awssolutions/cdf-installer",
+  "name": "@aws-solutions/cdf-installer",
   "version": "0.0.0",
   "description": "CDF install wizard.",
   "author": "Dean Hart",
@@ -15,7 +15,7 @@
     "cdf-cli": "./dist/index.js"
   },
   "dependencies": {
-    "@awssolutions/cdf-config-inject": "^0.0.0",
+    "@aws-solutions/cdf-config-inject": "^0.0.0",
     "@aws-sdk/client-cloudformation": "~3.53.0",
     "@aws-sdk/client-iam": "~3.53.0",
     "@aws-sdk/client-iot": "~3.53.0",

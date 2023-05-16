@@ -1,5 +1,5 @@
 {
-  "name": "@awssolutions/cdf-simulation-manager",
+  "name": "@aws-solutions/cdf-simulation-manager",
   "version": "0.0.0",
   "description": "CDF Simulator:  Simulation Manager REST API",
   "author": "Dean Hart",
@@ -17,7 +17,7 @@
   "dependencies": {
     "aws-sdk": "2.1048.0",
     "aws-serverless-express": "3.3.6",
-    "@awssolutions/cdf-config-inject": "^0.0.0",
+    "@aws-solutions/cdf-config-inject": "^0.0.0",
     "body-parser": "1.20.1",
     "express": "4.18.2",
     "handlebars": "4.7.7",
@@ -38,7 +38,7 @@
     "dotenv": "^8.2.0"
   },
   "devDependencies": {
-    "@awssolutions/cdf-lambda-zip": "^0.0.0",
+    "@aws-solutions/cdf-lambda-zip": "^0.0.0",
     "@rushstack/eslint-config": "2.3.1",
     "@types/aws-lambda": "8.10.65",
     "@types/aws-serverless-express": "3.3.2",
