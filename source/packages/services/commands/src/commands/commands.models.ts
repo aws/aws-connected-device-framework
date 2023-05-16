@@ -10,92 +10,91 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { SearchRequestModel } from '@awssolutions/cdf-assetlibrary-client';
+import { SearchRequestModel } from '@aws-solutions/cdf-assetlibrary-client';
 
 export interface CommandSummaryModel {
-	commandId:string;
-	description:string;
-	templateId:string;
-	commandStatus:CommandStatus;
+    commandId: string;
+    description: string;
+    templateId: string;
+    commandStatus: CommandStatus;
 }
 export interface CommandModel extends CommandSummaryModel {
-	jobStatus:JobStatus;
-	targets?:string[];
-	targetQuery?:SearchRequestModel;
-	documentParameters?: {[key:string]:string};
-	jobParameters?: {[key:string]:string};
-	files?: {[key:string]:S3FileModel};
-	type:CommandType;
-	jobId?:string;
-	
-	rolloutMaximumPerMinute?:number;
-	jobExecutionsRolloutConfig?: JobExecutionsRolloutConfig;
-	abortConfig?: AbortConfig;
-	timeoutConfig?: TimeoutConfig;
+    jobStatus: JobStatus;
+    targets?: string[];
+    targetQuery?: SearchRequestModel;
+    documentParameters?: { [key: string]: string };
+    jobParameters?: { [key: string]: string };
+    files?: { [key: string]: S3FileModel };
+    type: CommandType;
+    jobId?: string;
+
+    rolloutMaximumPerMinute?: number;
+    jobExecutionsRolloutConfig?: JobExecutionsRolloutConfig;
+    abortConfig?: AbortConfig;
+    timeoutConfig?: TimeoutConfig;
 }
 
 export interface JobExecutionsRolloutConfig {
-	maximumPerMinute: number;
-	exponentialRate: {
-		baseRatePerMinute: number;
-		incrementFactor: number;
-		rateIncreaseCriteria: {
-			numberOfNotifiedThings: number;
-			numberOfSucceededThings: number;
-		}
-
-	}
+    maximumPerMinute: number;
+    exponentialRate: {
+        baseRatePerMinute: number;
+        incrementFactor: number;
+        rateIncreaseCriteria: {
+            numberOfNotifiedThings: number;
+            numberOfSucceededThings: number;
+        };
+    };
 }
 
 export interface AbortConfigCriteria {
-	failureType: 'FAILED'|'REJECTED'|'TIMED_OUT'|'ALL';
-	action: 'CANCEL';
-	thresholdPercentage: number;
-	minNumberOfExecutedThings: number;
+    failureType: 'FAILED' | 'REJECTED' | 'TIMED_OUT' | 'ALL';
+    action: 'CANCEL';
+    thresholdPercentage: number;
+    minNumberOfExecutedThings: number;
 }
 
 export interface AbortConfig {
-	criteriaList: AbortConfigCriteria[];
+    criteriaList: AbortConfigCriteria[];
 }
 
 export interface TimeoutConfig {
-	inProgressTimeoutInMinutes: number;
+    inProgressTimeoutInMinutes: number;
 }
 
 export interface S3FileModel {
-	bucketName:string;
-	key:string;
+    bucketName: string;
+    key: string;
 }
 
 export interface CommandListModel {
-	results:CommandSummaryModel[];
-	pagination?: {
-		offset:number,
-		count:number
-	};
+    results: CommandSummaryModel[];
+    pagination?: {
+        offset: number;
+        count: number;
+    };
 }
 
 export interface ExecutionSummaryModel {
-	thingName:string;
-	executionNumber: number;
-	status:ExecutionStatus;
+    thingName: string;
+    executionNumber: number;
+    status: ExecutionStatus;
 }
 
 export interface ExecutionModel extends ExecutionSummaryModel {
-	statusDetails?: {[key:string] : string};
-	createdAt?:Date;
-	lastUpdatedAt:Date;
-	queuedAt:Date;
-	startedAt?:Date;
-	percentComplete?:number;
+    statusDetails?: { [key: string]: string };
+    createdAt?: Date;
+    lastUpdatedAt: Date;
+    queuedAt: Date;
+    startedAt?: Date;
+    percentComplete?: number;
 }
 
 export interface ExecutionSummaryListModel {
-	results:ExecutionSummaryModel[];
-	pagination?: {
-		maxResults:number,
-		nextToken:string
-	};
+    results: ExecutionSummaryModel[];
+    pagination?: {
+        maxResults: number;
+        nextToken: string;
+    };
 }
 
 // export interface ExecutionListModel {
@@ -107,28 +106,28 @@ export interface ExecutionSummaryListModel {
 // }
 
 export enum CommandType {
-	CONTINUOUS = 'CONTINUOUS',
-	SNAPSHOT = 'SNAPSHOT'
+    CONTINUOUS = 'CONTINUOUS',
+    SNAPSHOT = 'SNAPSHOT',
 }
 
 export enum CommandStatus {
-	DRAFT = 'DRAFT',
-	PUBLISHED = 'PUBLISHED',
-	CANCELLED = 'CANCELLED'
+    DRAFT = 'DRAFT',
+    PUBLISHED = 'PUBLISHED',
+    CANCELLED = 'CANCELLED',
 }
 
 export enum JobStatus {
-	IN_PROGRESS = 'IN_PROGRESS',
-	CANCELLED = 'CANCELLED',
-	COMPLETED = 'COMPLETED'
+    IN_PROGRESS = 'IN_PROGRESS',
+    CANCELLED = 'CANCELLED',
+    COMPLETED = 'COMPLETED',
 }
 
 export enum ExecutionStatus {
-	QUEUED = 'QUEUED',
-	IN_PROGRESS = 'IN_PROGRESS',
-	FAILED = 'FAILED',
-	SUCCESS = 'SUCCESS',
-	CANCELED = 'CANCELED',
-	REJECTED = 'REJECTED',
-	REMOVED = 'REMOVED'
+    QUEUED = 'QUEUED',
+    IN_PROGRESS = 'IN_PROGRESS',
+    FAILED = 'FAILED',
+    SUCCESS = 'SUCCESS',
+    CANCELED = 'CANCELED',
+    REJECTED = 'REJECTED',
+    REMOVED = 'REMOVED',
 }

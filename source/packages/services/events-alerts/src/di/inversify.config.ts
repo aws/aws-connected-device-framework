@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import 'reflect-metadata';
-import '@awssolutions/cdf-config-inject';
+import '@aws-solutions/cdf-config-inject';
 
 import { Container, decorate, injectable, interfaces } from 'inversify';
 
@@ -31,28 +31,39 @@ import AmazonDaxClient = require('amazon-dax-client');
 export const container = new Container();
 
 // config
-container.bind<string>('aws.dynamoDb.tables.eventConfig.name').toConstantValue(process.env.AWS_DYNAMODB_TABLES_EVENTCONFIG_NAME);
-container.bind<string>('aws.dynamoDb.tables.eventConfig.gsi1').toConstantValue(process.env.AWS_DYNAMODB_TABLES_EVENTCONFIG_GSI1);
+container
+    .bind<string>('aws.dynamoDb.tables.eventConfig.name')
+    .toConstantValue(process.env.AWS_DYNAMODB_TABLES_EVENTCONFIG_NAME);
+container
+    .bind<string>('aws.dynamoDb.tables.eventConfig.gsi1')
+    .toConstantValue(process.env.AWS_DYNAMODB_TABLES_EVENTCONFIG_GSI1);
 container.bind<string>('aws.region').toConstantValue(process.env.AWS_REGION);
 container.bind<string>('aws.accountId').toConstantValue(process.env.AWS_ACCOUNTID);
 container.bind<SNSTarget>(TYPES.SNSTarget).to(SNSTarget).inSingletonScope();
 container.bind<DynamoDBTarget>(TYPES.DynamoDBTarget).to(DynamoDBTarget).inSingletonScope();
-container.bind<MessageCompilerService>(TYPES.MessageCompilerService).to(MessageCompilerService).inSingletonScope();
-container.bind<MessageCompilerDao>(TYPES.MessageCompilerDao).to(MessageCompilerDao).inSingletonScope();
+container
+    .bind<MessageCompilerService>(TYPES.MessageCompilerService)
+    .to(MessageCompilerService)
+    .inSingletonScope();
+container
+    .bind<MessageCompilerDao>(TYPES.MessageCompilerDao)
+    .to(MessageCompilerDao)
+    .inSingletonScope();
 
-container.bind<DynamoDbTargetDao>(TYPES.DynamoDbTargetDao).to(DynamoDbTargetDao).inSingletonScope();
+container
+    .bind<DynamoDbTargetDao>(TYPES.DynamoDbTargetDao)
+    .to(DynamoDbTargetDao)
+    .inSingletonScope();
 
 container.bind<AlertAssembler>(TYPES.AlertAssembler).to(AlertAssembler).inSingletonScope();
 
 // for 3rd party objects, we need to use factory injectors
 
 decorate(injectable(), AWS.SNS);
-container.bind<interfaces.Factory<AWS.SNS>>(TYPES.SNSFactory)
-    .toFactory<AWS.SNS>(() => {
+container.bind<interfaces.Factory<AWS.SNS>>(TYPES.SNSFactory).toFactory<AWS.SNS>(() => {
     return () => {
-
         if (!container.isBound(TYPES.SNS)) {
-            const sns = new AWS.SNS({region: process.env.AWS_REGION});
+            const sns = new AWS.SNS({ region: process.env.AWS_REGION });
             container.bind<AWS.SNS>(TYPES.SNS).toConstantValue(sns);
         }
         return container.get<AWS.SNS>(TYPES.SNS);
@@ -60,33 +71,42 @@ container.bind<interfaces.Factory<AWS.SNS>>(TYPES.SNSFactory)
 });
 
 decorate(injectable(), AWS.DynamoDB.DocumentClient);
-container.bind<interfaces.Factory<AWS.DynamoDB.DocumentClient>>(TYPES.DocumentClientFactory)
+container
+    .bind<interfaces.Factory<AWS.DynamoDB.DocumentClient>>(TYPES.DocumentClientFactory)
     .toFactory<AWS.DynamoDB.DocumentClient>(() => {
-    return () => {
-
-        if (!container.isBound(TYPES.DocumentClient)) {
-            const dc = new AWS.DynamoDB.DocumentClient({region: process.env.AWS_REGION});
-            container.bind<AWS.DynamoDB.DocumentClient>(TYPES.DocumentClient).toConstantValue(dc);
-        }
-        return container.get<AWS.DynamoDB.DocumentClient>(TYPES.DocumentClient);
-    };
-});
-container.bind<interfaces.Factory<AWS.DynamoDB.DocumentClient>>(TYPES.CachableDocumentClientFactory)
-    .toFactory<AWS.DynamoDB.DocumentClient>(() => {
-    return () => {
-
-        if (!container.isBound(TYPES.CachableDocumentClient)) {
-            // if we have DAX configured, return a DAX enabled DocumentClient, but if not just return the normal one
-            let dc:AWS.DynamoDB.DocumentClient;
-            if (process.env.AWS_DYNAMODB_DAX_ENDPOINTS!==undefined) {
-                const dax = new AmazonDaxClient({endpoints: process.env.AWS_DYNAMODB_DAX_ENDPOINTS, region: process.env.AWS_REGION});
-                dc = new AWS.DynamoDB.DocumentClient({service:dax});
-            } else {
-                const dcf = container.get<interfaces.Factory<AWS.DynamoDB.DocumentClient>>(TYPES.DocumentClientFactory);
-                dc = <AWS.DynamoDB.DocumentClient> dcf();
+        return () => {
+            if (!container.isBound(TYPES.DocumentClient)) {
+                const dc = new AWS.DynamoDB.DocumentClient({ region: process.env.AWS_REGION });
+                container
+                    .bind<AWS.DynamoDB.DocumentClient>(TYPES.DocumentClient)
+                    .toConstantValue(dc);
             }
-            container.bind<AWS.DynamoDB.DocumentClient>(TYPES.CachableDocumentClient).toConstantValue(dc);
-        }
-        return container.get<AWS.DynamoDB.DocumentClient>(TYPES.CachableDocumentClient);
-    };
-});
+            return container.get<AWS.DynamoDB.DocumentClient>(TYPES.DocumentClient);
+        };
+    });
+container
+    .bind<interfaces.Factory<AWS.DynamoDB.DocumentClient>>(TYPES.CachableDocumentClientFactory)
+    .toFactory<AWS.DynamoDB.DocumentClient>(() => {
+        return () => {
+            if (!container.isBound(TYPES.CachableDocumentClient)) {
+                // if we have DAX configured, return a DAX enabled DocumentClient, but if not just return the normal one
+                let dc: AWS.DynamoDB.DocumentClient;
+                if (process.env.AWS_DYNAMODB_DAX_ENDPOINTS !== undefined) {
+                    const dax = new AmazonDaxClient({
+                        endpoints: process.env.AWS_DYNAMODB_DAX_ENDPOINTS,
+                        region: process.env.AWS_REGION,
+                    });
+                    dc = new AWS.DynamoDB.DocumentClient({ service: dax });
+                } else {
+                    const dcf = container.get<interfaces.Factory<AWS.DynamoDB.DocumentClient>>(
+                        TYPES.DocumentClientFactory
+                    );
+                    dc = <AWS.DynamoDB.DocumentClient>dcf();
+                }
+                container
+                    .bind<AWS.DynamoDB.DocumentClient>(TYPES.CachableDocumentClient)
+                    .toConstantValue(dc);
+            }
+            return container.get<AWS.DynamoDB.DocumentClient>(TYPES.CachableDocumentClient);
+        };
+    });

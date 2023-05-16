@@ -1,5 +1,5 @@
 {
-  "name": "@awssolutions/cdf-client-request-signer",
+  "name": "@aws-solutions/cdf-client-request-signer",
   "description": "Make api gateway calls with IAM credentials",
   "version": "0.0.2",
   "main": "dist/index.js",

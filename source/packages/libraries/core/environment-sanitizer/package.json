@@ -1,5 +1,5 @@
 {
-  "name": "@awssolutions/cdf-environment-sanitizer",
+  "name": "@aws-solutions/cdf-environment-sanitizer",
   "version": "0.0.0",
   "description": "Tools to sanitize process.env, for secure logging",
   "main": "dist/index.js",

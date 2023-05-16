@@ -20,7 +20,7 @@ import {
     GREENGRASS2_PROVISIONING_CLIENT_TYPES,
     Template,
     TemplatesService,
-} from '@awssolutions/cdf-greengrass2-provisioning-client';
+} from '@aws-solutions/cdf-greengrass2-provisioning-client';
 
 import { container } from '../../di/inversify.config';
 import { replaceTokens, validateExpectedAttributes } from '../common/common.steps';
@@ -40,73 +40,86 @@ use(chai_string);
 
 setDefaultTimeout(10 * 1000);
 
-const templatesService: TemplatesService = container.get(GREENGRASS2_PROVISIONING_CLIENT_TYPES.TemplatesService);
+const templatesService: TemplatesService = container.get(
+    GREENGRASS2_PROVISIONING_CLIENT_TYPES.TemplatesService
+);
 
-Given('greengrass2-provisioning template {string} does not exist', async function (name:string) {
+Given('greengrass2-provisioning template {string} does not exist', async function (name: string) {
     try {
         await templatesService.getLatestTemplate(name, getAdditionalHeaders(world.authToken));
         expect.fail('Not found should have be thrown');
     } catch (err) {
-        world.errStatus=err.status;
+        world.errStatus = err.status;
         expect(err.status).to.eq(404);
     }
 });
 
-When('I create greengrass2-provisioning template {string} with attributes:', async function (templateName:string, data:DataTable) {
-    try {
-        const template:Template = buildTemplateModel(data);
-        template.name = templateName;
-        await templatesService.createTemplate(template, getAdditionalHeaders(world.authToken));
-    } catch (err) {
-        world.errStatus=err.status;
-        fail(`createTemplate failed, err: ${JSON.stringify(err)}`);
+When(
+    'I create greengrass2-provisioning template {string} with attributes:',
+    async function (templateName: string, data: DataTable) {
+        try {
+            const template: Template = buildTemplateModel(data);
+            template.name = templateName;
+            await templatesService.createTemplate(template, getAdditionalHeaders(world.authToken));
+        } catch (err) {
+            world.errStatus = err.status;
+            fail(`createTemplate failed, err: ${JSON.stringify(err)}`);
+        }
     }
-});
+);
 
-When('I update greengrass2-provisioning template {string} with attributes:', async function (templateName:string, data:DataTable) {
-    try {
-        const template:Template = buildTemplateModel(data);
-        template.name = templateName;
-        await templatesService.updateTemplate(template, getAdditionalHeaders(world.authToken));
-    } catch (err) {
-        world.errStatus=err.status;
-        fail(`updateTemplate failed, err: ${JSON.stringify(err)}`);
+When(
+    'I update greengrass2-provisioning template {string} with attributes:',
+    async function (templateName: string, data: DataTable) {
+        try {
+            const template: Template = buildTemplateModel(data);
+            template.name = templateName;
+            await templatesService.updateTemplate(template, getAdditionalHeaders(world.authToken));
+        } catch (err) {
+            world.errStatus = err.status;
+            fail(`updateTemplate failed, err: ${JSON.stringify(err)}`);
+        }
     }
-});
+);
 
-Then('greengrass2-provisioning template {string} exists with attributes:', async function (name:string, data:DataTable) {
-
-    let template:Template;
-    try {
-        template = await templatesService.getLatestTemplate(name, getAdditionalHeaders(world.authToken));
-    } catch (err) {
-        world.errStatus=err.status;
-        fail(`getLatestTemplate failed, err: ${JSON.stringify(err)}`);
+Then(
+    'greengrass2-provisioning template {string} exists with attributes:',
+    async function (name: string, data: DataTable) {
+        let template: Template;
+        try {
+            template = await templatesService.getLatestTemplate(
+                name,
+                getAdditionalHeaders(world.authToken)
+            );
+        } catch (err) {
+            world.errStatus = err.status;
+            fail(`getLatestTemplate failed, err: ${JSON.stringify(err)}`);
+        }
+        validateExpectedAttributes(template, data);
     }
-    validateExpectedAttributes(template, data);
-});
+);
 
-Then('greengrass2-provisioning template {string} exists', async function (name:string) {
+Then('greengrass2-provisioning template {string} exists', async function (name: string) {
     try {
         await templatesService.getLatestTemplate(name, getAdditionalHeaders(world.authToken));
     } catch (err) {
-        world.errStatus=err.status;
+        world.errStatus = err.status;
         expect.fail('Should have been found');
     }
 });
 
-function buildTemplateModel<T>(data:DataTable) : T {
+function buildTemplateModel<T>(data: DataTable): T {
     const d = data.rowsHash();
 
-    const resource = { } as T;
+    const resource = {} as T;
 
-    Object.keys(d).forEach( key => {
+    Object.keys(d).forEach((key) => {
         const value = replaceTokens(d[key]);
         if (value.startsWith('{') || value.startsWith('[')) {
             resource[key] = JSON.parse(value);
-        } else if (value==='___null___') {
+        } else if (value === '___null___') {
             resource[key] = null;
-        } else if (value==='___undefined___') {
+        } else if (value === '___undefined___') {
             delete resource[key];
         } else {
             resource[key] = value;

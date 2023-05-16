@@ -18,7 +18,7 @@ import {
     LambdaApiGatewayEventBuilder,
     LAMBDAINVOKE_TYPES,
     LambdaInvokerService,
-} from '@awssolutions/cdf-lambda-invoke';
+} from '@aws-solutions/cdf-lambda-invoke';
 import { RequestHeaders } from './common.model';
 import {
     MessageList,

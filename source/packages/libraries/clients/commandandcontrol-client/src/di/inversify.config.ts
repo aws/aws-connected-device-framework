@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import { LAMBDAINVOKE_TYPES, LambdaInvokerService } from '@awssolutions/cdf-lambda-invoke';
+import { LAMBDAINVOKE_TYPES, LambdaInvokerService } from '@aws-solutions/cdf-lambda-invoke';
 import { ContainerModule, decorate, injectable, interfaces } from 'inversify';
 import { CommandsApigwService } from '../client/commands.apigw.service';
 import { CommandsLambdaService } from '../client/commands.lambda.service';
@@ -23,7 +23,7 @@ import '../config/env';
 import { COMMANDANDCONTROL_CLIENT_TYPES } from './types';
 import AWS = require('aws-sdk');
 
-export const commandAndControlContainerModule = new ContainerModule (
+export const commandAndControlContainerModule = new ContainerModule(
     (
         bind: interfaces.Bind,
         _unbind: interfaces.Unbind,
@@ -31,29 +31,38 @@ export const commandAndControlContainerModule = new ContainerModule (
         _rebind: interfaces.Rebind
     ) => {
         if (process.env.COMMANDANDCONTROL_MODE === 'lambda') {
-            bind<CommandsService>(COMMANDANDCONTROL_CLIENT_TYPES.CommandsService).to(CommandsLambdaService);
-            bind<MessagesService>(COMMANDANDCONTROL_CLIENT_TYPES.MessagesService).to(MessagesLambdaService);
+            bind<CommandsService>(COMMANDANDCONTROL_CLIENT_TYPES.CommandsService).to(
+                CommandsLambdaService
+            );
+            bind<MessagesService>(COMMANDANDCONTROL_CLIENT_TYPES.MessagesService).to(
+                MessagesLambdaService
+            );
 
             if (!isBound(LAMBDAINVOKE_TYPES.LambdaInvokerService)) {
                 // always check to see if bound first incase it was bound by another client
-                bind<LambdaInvokerService>(LAMBDAINVOKE_TYPES.LambdaInvokerService).to(LambdaInvokerService);
+                bind<LambdaInvokerService>(LAMBDAINVOKE_TYPES.LambdaInvokerService).to(
+                    LambdaInvokerService
+                );
                 decorate(injectable(), AWS.Lambda);
-                bind<interfaces.Factory<AWS.Lambda>>(LAMBDAINVOKE_TYPES.LambdaFactory)
-                    .toFactory<AWS.Lambda>((ctx: interfaces.Context) => {
-                        return () => {
-
-                            if (!isBound(LAMBDAINVOKE_TYPES.Lambda)) {
-                                const lambda = new AWS.Lambda({region:process.env.AWS_REGION});
-                                bind<AWS.Lambda>(LAMBDAINVOKE_TYPES.Lambda).toConstantValue(lambda);
-                            }
-                            return ctx.container.get<AWS.Lambda>(LAMBDAINVOKE_TYPES.Lambda);
-                        };
-                    });
+                bind<interfaces.Factory<AWS.Lambda>>(
+                    LAMBDAINVOKE_TYPES.LambdaFactory
+                ).toFactory<AWS.Lambda>((ctx: interfaces.Context) => {
+                    return () => {
+                        if (!isBound(LAMBDAINVOKE_TYPES.Lambda)) {
+                            const lambda = new AWS.Lambda({ region: process.env.AWS_REGION });
+                            bind<AWS.Lambda>(LAMBDAINVOKE_TYPES.Lambda).toConstantValue(lambda);
+                        }
+                        return ctx.container.get<AWS.Lambda>(LAMBDAINVOKE_TYPES.Lambda);
+                    };
+                });
             }
-
         } else {
-            bind<CommandsService>(COMMANDANDCONTROL_CLIENT_TYPES.CommandsService).to(CommandsApigwService);
-            bind<MessagesService>(COMMANDANDCONTROL_CLIENT_TYPES.MessagesService).to(MessagesApigwService);
+            bind<CommandsService>(COMMANDANDCONTROL_CLIENT_TYPES.CommandsService).to(
+                CommandsApigwService
+            );
+            bind<MessagesService>(COMMANDANDCONTROL_CLIENT_TYPES.MessagesService).to(
+                MessagesApigwService
+            );
         }
     }
 );

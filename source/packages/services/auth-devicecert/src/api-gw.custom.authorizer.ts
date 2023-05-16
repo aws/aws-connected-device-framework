@@ -10,11 +10,11 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import * as Errors from '@awssolutions/cdf-errors';
+import * as Errors from '@aws-solutions/cdf-errors';
 import * as pem from 'pem';
 import AWS = require('aws-sdk');
 import { logger } from './utils/logger';
-import {promisify} from 'util';
+import { promisify } from 'util';
 
 /**
  * Class implementing custom authorization needed by CDF APIs.
@@ -23,29 +23,27 @@ import {promisify} from 'util';
  */
 
 export class ApiGwCustomAuthorizer {
-
-    private _ssm:AWS.SSM;
-    private caCert:string;
+    private _ssm: AWS.SSM;
+    private caCert: string;
 
     private _verifySigningChain = promisify(pem.verifySigningChain);
 
-    constructor(region:string, ssm?:AWS.SSM) {
-        if (ssm!==undefined) {
+    constructor(region: string, ssm?: AWS.SSM) {
+        if (ssm !== undefined) {
             this._ssm = ssm;
         } else {
-            this. _ssm = new AWS.SSM({region});
+            this._ssm = new AWS.SSM({ region });
         }
-
     }
 
-    private async validateCert(certificate:string, caCertificate:string[]) : Promise<boolean> {
+    private async validateCert(certificate: string, caCertificate: string[]): Promise<boolean> {
         return await this._verifySigningChain(certificate, caCertificate);
     }
 
-    private async getCACertificateId () : Promise<string> {
+    private async getCACertificateId(): Promise<string> {
         const params = {
             Name: 'cdf-rootca-pem',
-            WithDecryption: true
+            WithDecryption: true,
         };
         const res = await this._ssm.getParameter(params).promise();
         return res.Parameter?.Value;
@@ -66,7 +64,7 @@ export class ApiGwCustomAuthorizer {
         if (this.caCert === null || this.caCert === undefined) {
             this.caCert = await this.getCACertificateId();
         }
-        const caCertArray:string[] = [this.caCert];
+        const caCertArray: string[] = [this.caCert];
         const validCert = await this.validateCert(unescaped_deviceCert, caCertArray);
         logger.debug(`Device is Valid: ${validCert}`);
         return validCert;

@@ -19,7 +19,7 @@ import {
     EditableCommandResource,
     MessagesService,
     NewMessageResource,
-} from '@awssolutions/cdf-commandandcontrol-client';
+} from '@aws-solutions/cdf-commandandcontrol-client';
 import { CustomResourceEvent } from './customResource.model';
 import { CustomResource } from './customResource';
 

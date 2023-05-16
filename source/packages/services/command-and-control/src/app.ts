@@ -17,7 +17,7 @@ import { json } from 'body-parser';
 import { Application, NextFunction, Request, Response } from 'express';
 import { InversifyExpressServer } from 'inversify-express-utils';
 
-import { normalisePath } from '@awssolutions/cdf-express-middleware';
+import { normalisePath } from '@aws-solutions/cdf-express-middleware';
 
 import { logger } from './utils/logger.util';
 
@@ -36,7 +36,7 @@ const supportedVersions: string[] = process.env.SUPPORTED_API_VERSIONS?.split(',
 
 server.setConfig((app) => {
     // xray initialization
-    // app.use(XRayExpress.openSegment('@awssolutions/cdf-command-and-control'));
+    // app.use(XRayExpress.openSegment('@aws-solutions/cdf-command-and-control'));
 
     // only process requests that we can support the requested accept header
     app.use((req: Request, res: Response, next: NextFunction) => {
@@ -85,7 +85,7 @@ server.setConfig((app) => {
     // app.use(XRayExpress.closeSegment());
 });
 
-export const serverInstance:Application = server.build();
+export const serverInstance: Application = server.build();
 serverInstance.listen(PORT);
 
 logger.info(`Server started on port ${PORT} :)`);

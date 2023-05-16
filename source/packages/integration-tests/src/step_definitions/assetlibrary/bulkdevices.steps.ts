@@ -15,9 +15,9 @@ import {
     BulkDevicesResource,
     Device20Resource,
     DevicesService,
-} from '@awssolutions/cdf-assetlibrary-client';
-import { ASSETLIBRARY_CLIENT_TYPES } from '@awssolutions/cdf-assetlibrary-client/dist';
-import { Dictionary } from '@awssolutions/cdf-lambda-invoke';
+} from '@aws-solutions/cdf-assetlibrary-client';
+import { ASSETLIBRARY_CLIENT_TYPES } from '@aws-solutions/cdf-assetlibrary-client/dist';
+import { Dictionary } from '@aws-solutions/cdf-lambda-invoke';
 import { DataTable, Then, When, setDefaultTimeout } from '@cucumber/cucumber';
 import { fail } from 'assert';
 import { expect, use } from 'chai';

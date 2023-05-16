@@ -1,5 +1,5 @@
 {
-  "name": "@awssolutions/cdf-errors",
+  "name": "@aws-solutions/cdf-errors",
   "version": "0.0.0",
   "description": "Library for CDF base errors",
   "author": "Atul Bargaje",

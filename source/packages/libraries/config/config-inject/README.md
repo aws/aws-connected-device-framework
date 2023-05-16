@@ -1,28 +1,33 @@
-# @awssolutions/cdf-config-inject
+# @aws-solutions/cdf-config-inject
 
 node-config variables are injected into inversify IoC container.
 If you are using inversify with node-config this library will be useful.
 If property is not found, injection will fail fast and you will get initialization error.
 
 ## Getting Started
-Add "@awssolutions/cdf-config-inject": "^1.0.0" to the dependencies section of the package.json file or run: 
+
+Add "@aws-solutions/cdf-config-inject": "^1.0.0" to the dependencies section of the package.json file or run:
+
 ```
-npm install @awssolutions/cdf-config-inject
+npm install @aws-solutions/cdf-config-inject
 ```
 
 ## Usage
+
 - Instantiate and load config injector into your inversify container
 - add @inject annotation with config variables
 
-
 Instante CDFConfigInjector in your inversify.config.js and load it into container as follows
+
 ```javascript
-	import { CDFConfigInjector } from @awssolutions/cdf-config-inject;
-	
+	import { CDFConfigInjector } from @aws-solutions/cdf-config-inject;
+
     const configInjector = new CDFConfigInjector();
     container.load(configInjector.getConfigModule());
-``` 
+```
+
 Inject config variables from config files into your services as follows
+
 ```javascript
 @injectable()
 export class TestService {
@@ -32,10 +37,10 @@ export class TestService {
 ```
 
 Configuration YAML for above injection should look like :
+
 ```yaml
 aws:
   region: 'us-west-2'
   db:
     connection_url: 'https://testdb'
 ```
-

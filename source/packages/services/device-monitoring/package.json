@@ -1,5 +1,5 @@
 {
-  "name": "@awssolutions/cdf-device-monitoring",
+  "name": "@aws-solutions/cdf-device-monitoring",
   "version": "0.0.2",
   "description": "CDF Device Monitoring",
   "author": "Rahul Sareen",
@@ -46,11 +46,11 @@
   "dependencies": {
   },
   "devDependencies": {
-    "@awssolutions/cdf-assetlibrary-client": "^0.0.2",
-    "@awssolutions/cdf-config-inject": "^0.0.0",
-    "@awssolutions/cdf-errors": "^0.0.0",
-    "@awssolutions/cdf-lambda-invoke": "^0.0.2",
-    "@awssolutions/cdf-logger": "^0.0.0",
+    "@aws-solutions/cdf-assetlibrary-client": "^0.0.2",
+    "@aws-solutions/cdf-config-inject": "^0.0.0",
+    "@aws-solutions/cdf-errors": "^0.0.0",
+    "@aws-solutions/cdf-lambda-invoke": "^0.0.2",
+    "@aws-solutions/cdf-logger": "^0.0.0",
     "dotenv": "^8.2.0",
     "dotenv-flow": "~3.2.0",
     "http-errors": "1.8.0",
@@ -65,7 +65,7 @@
     "superagent": "7.1.1",
     "winston": "3.3.3",
     "winston-transport": "4.4.0",
-    "@awssolutions/cdf-lambda-zip": "^0.0.0",
+    "@aws-solutions/cdf-lambda-zip": "^0.0.0",
     "@rushstack/eslint-config": "2.3.4",
     "@types/dotenv-flow": "~3.2.0",
     "@types/jest": "26.0.23",

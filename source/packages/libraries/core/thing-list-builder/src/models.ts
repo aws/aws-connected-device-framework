@@ -1,4 +1,4 @@
-import { SearchRequestModel } from '@awssolutions/cdf-assetlibrary-client';
+import { SearchRequestModel } from '@aws-solutions/cdf-assetlibrary-client';
 
 export interface ListThingsRequest {
     thingNames?: string[];

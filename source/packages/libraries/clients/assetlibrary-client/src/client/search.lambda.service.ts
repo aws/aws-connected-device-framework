@@ -15,7 +15,7 @@ import {
     LAMBDAINVOKE_TYPES,
     LambdaApiGatewayEventBuilder,
     LambdaInvokerService,
-} from '@awssolutions/cdf-lambda-invoke';
+} from '@aws-solutions/cdf-lambda-invoke';
 import { inject, injectable } from 'inversify';
 import ow from 'ow';
 import { RequestHeaders } from './common.model';
@@ -77,7 +77,7 @@ export class SearchLambdaService extends SearchServiceBase implements SearchServ
         const req = new SearchRequestModel();
         req.clone(searchRequest);
 
-        const qs = req.toLambdaMultiValueQueryString()
+        const qs = req.toLambdaMultiValueQueryString();
 
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.searchRelativeUrl())

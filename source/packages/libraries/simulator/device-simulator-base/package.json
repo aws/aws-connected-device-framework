@@ -1,5 +1,5 @@
 {
-  "name": "@awssolutions/cdf-device-simulator-base",
+  "name": "@aws-solutions/cdf-device-simulator-base",
   "version": "0.0.0",
   "description": "CDF Device Simulator base - extend to create your own device simulator.",
   "author": "Dean Hart <deanhart@amazon.com>",

@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import 'reflect-metadata';
-import '@awssolutions/cdf-config-inject';
+import '@aws-solutions/cdf-config-inject';
 
 import AWS = require('aws-sdk');
 import { Container, decorate, injectable, interfaces } from 'inversify';
@@ -44,10 +44,18 @@ container.bind<string>('aws.s3.export.bucket').toConstantValue(process.env.AWS_S
 container.bind<string>('aws.s3.export.prefix').toConstantValue(process.env.AWS_S3_EXPORT_PREFIX);
 container.bind<string>('defaults.batch.by').toConstantValue(process.env.DEFAULTS_BATCH_BY);
 container.bind<string>('defaults.batch.size').toConstantValue(process.env.DEFAULTS_BATCH_SIZE);
-container.bind<string>('defaults.etl.extract.deviceExtractor.attributes').toConstantValue(process.env.DEFAULTS_ETL_EXTRACT_DEVICEEXTRACTOR_ATTRIBUTES);
-container.bind<boolean>('defaults.etl.extract.deviceExtractor.expandComponents').toConstantValue(process.env.DEFAULTS_ETL_EXTRACT_DEVICEEXTRACTOR_EXPANDCOMPONENTS === 'true');
-container.bind<boolean>('defaults.etl.extract.deviceExtractor.includeGroups').toConstantValue(process.env.DEFAULTS_ETL_EXTRACT_DEVICEEXTRACTOR_INCLUDEGROUPS === 'true');
-container.bind<string>('defaults.etl.load.type').toConstantValue(process.env.DEFAULTS_ETL_LOAD_TYPE);
+container
+    .bind<string>('defaults.etl.extract.deviceExtractor.attributes')
+    .toConstantValue(process.env.DEFAULTS_ETL_EXTRACT_DEVICEEXTRACTOR_ATTRIBUTES);
+container
+    .bind<boolean>('defaults.etl.extract.deviceExtractor.expandComponents')
+    .toConstantValue(process.env.DEFAULTS_ETL_EXTRACT_DEVICEEXTRACTOR_EXPANDCOMPONENTS === 'true');
+container
+    .bind<boolean>('defaults.etl.extract.deviceExtractor.includeGroups')
+    .toConstantValue(process.env.DEFAULTS_ETL_EXTRACT_DEVICEEXTRACTOR_INCLUDEGROUPS === 'true');
+container
+    .bind<string>('defaults.etl.load.type')
+    .toConstantValue(process.env.DEFAULTS_ETL_LOAD_TYPE);
 container.bind<string>('neptuneUrl').toConstantValue(process.env.NEPTUNEURL);
 
 container.load(full.FullContainerModule);
@@ -77,14 +85,12 @@ container.bind<S3Utils>(TYPES.S3Utils).to(S3Utils).inSingletonScope();
 
 // S3
 decorate(injectable(), AWS.S3);
-container.bind<interfaces.Factory<AWS.S3>>(TYPES.S3Factory)
-    .toFactory<AWS.S3>(() => {
-        return () => {
-
-            if (!container.isBound(TYPES.S3)) {
-                const s3 = new AWS.S3({region: process.env.AWS_REGION});
-                container.bind<AWS.S3>(TYPES.S3).toConstantValue(s3);
-            }
-            return container.get<AWS.S3>(TYPES.S3);
-        };
-    });
+container.bind<interfaces.Factory<AWS.S3>>(TYPES.S3Factory).toFactory<AWS.S3>(() => {
+    return () => {
+        if (!container.isBound(TYPES.S3)) {
+            const s3 = new AWS.S3({ region: process.env.AWS_REGION });
+            container.bind<AWS.S3>(TYPES.S3).toConstantValue(s3);
+        }
+        return container.get<AWS.S3>(TYPES.S3);
+    };
+});

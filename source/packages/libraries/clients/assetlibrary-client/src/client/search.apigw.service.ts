@@ -10,7 +10,7 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { signClientRequest } from '@awssolutions/cdf-client-request-signer';
+import { signClientRequest } from '@aws-solutions/cdf-client-request-signer';
 import createError from 'http-errors';
 import { injectable } from 'inversify';
 import ow from 'ow';
@@ -54,11 +54,11 @@ export class SearchApigwService extends SearchServiceBase implements SearchServi
             .get(url)
             .set(super.buildHeaders(additionalHeaders))
             .use(await signClientRequest())
-            .then(res => {
-                return res.body
+            .then((res) => {
+                return res.body;
             })
-            .catch(err => {
-                throw createError(err.response.status, err.response.text)
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
             });
     }
 
@@ -81,11 +81,11 @@ export class SearchApigwService extends SearchServiceBase implements SearchServi
             .delete(url)
             .set(super.buildHeaders(additionalHeaders))
             .use(await signClientRequest())
-            .then(_res => {
-                return
+            .then((_res) => {
+                return;
             })
-            .catch(err => {
-                throw createError(err.response.status, err.response.text)
+            .catch((err) => {
+                throw createError(err.response.status, err.response.text);
             });
     }
 }
