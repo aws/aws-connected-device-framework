@@ -41,6 +41,6 @@ npx shx rm -rf $abs_deploy_dir
 npx shx rm -rf $package_dir/bundle.zip
 npx shx mkdir -p $abs_deploy_dir
 
-rush deploy --overwrite --project @aws-solutions/cdf-$package_name --target-folder $abs_deploy_dir
+rush deploy --overwrite --project @awssolutions/cdf-$package_name --target-folder $abs_deploy_dir
 
 cd $abs_deploy_dir && zip --symlinks -rq $package_dir/bundle.zip *

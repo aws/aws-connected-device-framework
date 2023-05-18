@@ -15,8 +15,8 @@ import {
     EventsService,
     EventsourcesService,
     NOTIFICATIONS_CLIENT_TYPES,
-} from '@aws-solutions/cdf-notifications-client/dist';
-import { EventResource } from '@aws-solutions/cdf-notifications-client/dist/client/events.model';
+} from '@awssolutions/cdf-notifications-client/dist';
+import { EventResource } from '@awssolutions/cdf-notifications-client/dist/client/events.model';
 import { DataTable, Given, Then, When, setDefaultTimeout } from '@cucumber/cucumber';
 import { expect, use } from 'chai';
 import { container } from '../../di/inversify.config';

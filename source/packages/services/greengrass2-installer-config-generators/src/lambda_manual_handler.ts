@@ -10,22 +10,20 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import '@aws-solutions/cdf-config-inject';
+ import '@awssolutions/cdf-config-inject';
 
-import {
-    ManualProvisioningConfig,
-    manualProvisioningHandler,
-} from './generators/manual.generator';
-
-const handlerConfig: ManualProvisioningConfig = {
-    certificateFilePath: process.env.DEVICE_CERTIFICATE_FILE_PATH,
-    privateKeyPath: process.env.DEVICE_PRIVATE_KEY_PATH,
-    rootCaPath: process.env.DEVICE_ROOT_CA_PATH,
-    rootPath: process.env.DEVICE_ROOT_PATH,
-    awsRegion: process.env.AWS_REGION,
-    iotRoleAlias: process.env.AWS_IOT_ROLE_ALIAS,
-    iotDataEndpoint: process.env.AWS_IOT_ENDPOINT_DATA,
-    iotCredEndpoint: process.env.AWS_IOT_ENDPOINT_CREDENTIALS,
-};
-
-exports.handler = manualProvisioningHandler(handlerConfig);
+ import { ManualProvisioningConfig, manualProvisioningHandler } from './generators/manual.generator';
+ 
+ const handlerConfig:ManualProvisioningConfig = {
+   certificateFilePath: process.env.DEVICE_CERTIFICATE_FILE_PATH,
+   privateKeyPath: process.env.DEVICE_PRIVATE_KEY_PATH,
+   rootCaPath: process.env.DEVICE_ROOT_CA_PATH,
+   rootPath: process.env.DEVICE_ROOT_PATH,
+   awsRegion: process.env.AWS_REGION,
+   iotRoleAlias: process.env.AWS_IOT_ROLE_ALIAS,
+   iotDataEndpoint: process.env.AWS_IOT_ENDPOINT_DATA,
+   iotCredEndpoint: process.env.AWS_IOT_ENDPOINT_CREDENTIALS,
+ }
+ 
+ exports.handler = manualProvisioningHandler(handlerConfig);
+ 

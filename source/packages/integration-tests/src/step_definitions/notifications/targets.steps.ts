@@ -14,8 +14,8 @@ import {
     NOTIFICATIONS_CLIENT_TYPES,
     SubscriptionsService,
     TargetsService,
-} from '@aws-solutions/cdf-notifications-client/dist';
-import { TargetResource } from '@aws-solutions/cdf-notifications-client/dist/client/targets.model';
+} from '@awssolutions/cdf-notifications-client/dist';
+import { TargetResource } from '@awssolutions/cdf-notifications-client/dist/client/targets.model';
 import { DataTable, When, setDefaultTimeout } from '@cucumber/cucumber';
 import { expect, use } from 'chai';
 import { container } from '../../di/inversify.config';

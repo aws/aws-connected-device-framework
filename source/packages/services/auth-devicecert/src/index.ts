@@ -10,36 +10,36 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import '@aws-solutions/cdf-config-inject';
+import '@awssolutions/cdf-config-inject';
 import { logger } from './utils/logger';
-import * as Errors from '@aws-solutions/cdf-errors';
+import * as Errors from '@awssolutions/cdf-errors';
 import { ApiGwCustomAuthorizer } from './api-gw.custom.authorizer';
-import { APIGWAuthPolicyBuilder, ApiOptions, Policy } from './api-gw.policy.builder';
+import {APIGWAuthPolicyBuilder, ApiOptions, Policy} from './api-gw.policy.builder';
 
 /**
  * overridable for unit testing
  */
-let _apiGwCustomAuth: ApiGwCustomAuthorizer;
-let _awsRegion: string;
+let _apiGwCustomAuth : ApiGwCustomAuthorizer;
+let _awsRegion:string;
 
-export function setAwsRegion(awsRegion: string): void {
-    _awsRegion = awsRegion;
+export function setAwsRegion(awsRegion:string) : void {
+    _awsRegion=awsRegion;
 }
-export function setApiGwCustomAuthorizer(apiGwCustomAuth: ApiGwCustomAuthorizer): void {
-    _apiGwCustomAuth = apiGwCustomAuth;
+export function setApiGwCustomAuthorizer(apiGwCustomAuth:ApiGwCustomAuthorizer) : void {
+    _apiGwCustomAuth=apiGwCustomAuth;
 }
 
 /**
  * Lambda entry point for Custom Authorizer.
  */
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
-export async function handler(event: any, context: any, callback: any): Promise<Policy> {
+export async function handler(event: any, context: any, callback: any) : Promise<Policy>{
     logger.info(`handler input : ${JSON.stringify({ Context: context, Event: event })}`);
 
-    if (_awsRegion === undefined) {
+    if (_awsRegion===undefined) {
         _awsRegion = process.env.AWS_REGION;
     }
-    if (_apiGwCustomAuth === undefined) {
+    if (_apiGwCustomAuth===undefined) {
         _apiGwCustomAuth = new ApiGwCustomAuthorizer(_awsRegion);
     }
 
@@ -66,9 +66,9 @@ export async function handler(event: any, context: any, callback: any): Promise<
                 return undefined;
             }
         }
-        const apiOptions: ApiOptions = {
+        const apiOptions:ApiOptions = {
             region: _awsRegion,
-            apiId,
+            apiId
         };
         const devicecert = event.headers.devicecert;
         const deviceid = event.headers.deviceid;
@@ -79,10 +79,10 @@ export async function handler(event: any, context: any, callback: any): Promise<
         } else {
             policy.allowAllMethods();
         }
-        return policy.build();
+        return  policy.build();
     } catch (err) {
         logger.info(`$$$$$ Authorizer ERR: ${JSON.stringify(err)}`);
-        throw err;
+       throw err;
     }
 }
 

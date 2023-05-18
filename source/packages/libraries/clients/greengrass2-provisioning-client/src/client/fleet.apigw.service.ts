@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import { signClientRequest } from '@aws-solutions/cdf-client-request-signer';
+import { signClientRequest } from '@awssolutions/cdf-client-request-signer';
 import createError from 'http-errors';
 import { injectable } from 'inversify';
 import * as request from 'superagent';
@@ -21,6 +21,7 @@ import { FleetService, FleetServiceBase } from './fleet.service';
 
 @injectable()
 export class FleetApigwService extends FleetServiceBase implements FleetService {
+
     private readonly baseUrl: string;
 
     public constructor() {
@@ -43,3 +44,4 @@ export class FleetApigwService extends FleetServiceBase implements FleetService 
             });
     }
 }
+

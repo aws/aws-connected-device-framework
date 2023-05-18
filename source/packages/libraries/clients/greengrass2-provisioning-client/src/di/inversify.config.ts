@@ -16,7 +16,7 @@ import '../config/env';
 
 import { ContainerModule, decorate, injectable, interfaces } from 'inversify';
 
-import { LAMBDAINVOKE_TYPES, LambdaInvokerService } from '@aws-solutions/cdf-lambda-invoke';
+import { LAMBDAINVOKE_TYPES, LambdaInvokerService } from '@awssolutions/cdf-lambda-invoke';
 
 import { CoresApigwService } from '../client/cores.apigw.service';
 import { CoresLambdaService } from '../client/cores.lambda.service';
@@ -43,57 +43,37 @@ export const greengrass2ProvisioningContainerModule = new ContainerModule(
         isBound: interfaces.IsBound,
         _rebind: interfaces.Rebind
     ) => {
+
         if (process.env.GREENGRASSPROVISIONING_MODE === 'lambda') {
-            bind<TemplatesService>(GREENGRASS2_PROVISIONING_CLIENT_TYPES.TemplatesService).to(
-                TemplatesLambdaService
-            );
-            bind<CoresService>(GREENGRASS2_PROVISIONING_CLIENT_TYPES.CoresService).to(
-                CoresLambdaService
-            );
-            bind<DeploymentsService>(GREENGRASS2_PROVISIONING_CLIENT_TYPES.DeploymentsService).to(
-                DeploymentsLambdaService
-            );
-            bind<FleetService>(GREENGRASS2_PROVISIONING_CLIENT_TYPES.FleetService).to(
-                FleetLambdaService
-            );
-            bind<DevicesService>(GREENGRASS2_PROVISIONING_CLIENT_TYPES.DevicesService).to(
-                DevicesLambdaService
-            );
+
+            bind<TemplatesService>(GREENGRASS2_PROVISIONING_CLIENT_TYPES.TemplatesService).to(TemplatesLambdaService);
+            bind<CoresService>(GREENGRASS2_PROVISIONING_CLIENT_TYPES.CoresService).to(CoresLambdaService);
+            bind<DeploymentsService>(GREENGRASS2_PROVISIONING_CLIENT_TYPES.DeploymentsService).to(DeploymentsLambdaService);
+            bind<FleetService>(GREENGRASS2_PROVISIONING_CLIENT_TYPES.FleetService).to(FleetLambdaService);
+            bind<DevicesService>(GREENGRASS2_PROVISIONING_CLIENT_TYPES.DevicesService).to(DevicesLambdaService);
 
             if (!isBound(LAMBDAINVOKE_TYPES.LambdaInvokerService)) {
                 // always check to see if bound first incase it was bound by another client
-                bind<LambdaInvokerService>(LAMBDAINVOKE_TYPES.LambdaInvokerService).to(
-                    LambdaInvokerService
-                );
+                bind<LambdaInvokerService>(LAMBDAINVOKE_TYPES.LambdaInvokerService).to(LambdaInvokerService);
                 decorate(injectable(), AWS.Lambda);
-                bind<interfaces.Factory<AWS.Lambda>>(
-                    LAMBDAINVOKE_TYPES.LambdaFactory
-                ).toFactory<AWS.Lambda>((ctx: interfaces.Context) => {
-                    return () => {
-                        if (!isBound(LAMBDAINVOKE_TYPES.Lambda)) {
-                            const lambda = new AWS.Lambda({ region: process.env.AWS_REGION });
-                            bind<AWS.Lambda>(LAMBDAINVOKE_TYPES.Lambda).toConstantValue(lambda);
-                        }
-                        return ctx.container.get<AWS.Lambda>(LAMBDAINVOKE_TYPES.Lambda);
-                    };
-                });
+                bind<interfaces.Factory<AWS.Lambda>>(LAMBDAINVOKE_TYPES.LambdaFactory)
+                    .toFactory<AWS.Lambda>((ctx: interfaces.Context) => {
+                        return () => {
+
+                            if (!isBound(LAMBDAINVOKE_TYPES.Lambda)) {
+                                const lambda = new AWS.Lambda({ region: process.env.AWS_REGION });
+                                bind<AWS.Lambda>(LAMBDAINVOKE_TYPES.Lambda).toConstantValue(lambda);
+                            }
+                            return ctx.container.get<AWS.Lambda>(LAMBDAINVOKE_TYPES.Lambda);
+                        };
+                    });
             }
         } else {
-            bind<TemplatesService>(GREENGRASS2_PROVISIONING_CLIENT_TYPES.TemplatesService).to(
-                TemplatesApigwService
-            );
-            bind<CoresService>(GREENGRASS2_PROVISIONING_CLIENT_TYPES.CoresService).to(
-                CoresApigwService
-            );
-            bind<DeploymentsService>(GREENGRASS2_PROVISIONING_CLIENT_TYPES.DeploymentsService).to(
-                DeploymentsApigwService
-            );
-            bind<FleetService>(GREENGRASS2_PROVISIONING_CLIENT_TYPES.FleetService).to(
-                FleetApigwService
-            );
-            bind<DevicesService>(GREENGRASS2_PROVISIONING_CLIENT_TYPES.DevicesService).to(
-                DevicesApigwService
-            );
+            bind<TemplatesService>(GREENGRASS2_PROVISIONING_CLIENT_TYPES.TemplatesService).to(TemplatesApigwService);
+            bind<CoresService>(GREENGRASS2_PROVISIONING_CLIENT_TYPES.CoresService).to(CoresApigwService);
+            bind<DeploymentsService>(GREENGRASS2_PROVISIONING_CLIENT_TYPES.DeploymentsService).to(DeploymentsApigwService);
+            bind<FleetService>(GREENGRASS2_PROVISIONING_CLIENT_TYPES.FleetService).to(FleetApigwService);
+            bind<DevicesService>(GREENGRASS2_PROVISIONING_CLIENT_TYPES.DevicesService).to(DevicesApigwService);
         }
     }
 );

@@ -18,7 +18,7 @@ import {
     GroupsService,
     TemplatesService,
     TypeResource,
-} from '@aws-solutions/cdf-assetlibrary-client/dist';
+} from '@awssolutions/cdf-assetlibrary-client/dist';
 import { Before, setDefaultTimeout } from '@cucumber/cucumber';
 import { sign } from 'jsonwebtoken';
 import { Dictionary } from '../../../libraries/core/lambda-invoke/src';

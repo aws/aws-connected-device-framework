@@ -17,42 +17,42 @@
    * and then specify those projects in the "additionalProjectsToInclude" list.
    */
   "deploymentProjectNames": [
-    "@aws-solutions/cdf-client-request-signer",
-    "@aws-solutions/cdf-assetlibrary-client",
-    "@aws-solutions/cdf-assetlibrary-export",
-    "@aws-solutions/cdf-assetlibrary-history",
-    "@aws-solutions/cdf-assetlibrary",
-    "@aws-solutions/cdf-assetlibraryhistory-client",
-    "@aws-solutions/cdf-auth-devicecert",
-    "@aws-solutions/cdf-auth-jwt",
-    "@aws-solutions/cdf-bulkcerts",
-    "@aws-solutions/cdf-certificate-activator",
-    "@aws-solutions/cdf-certificate-vendor",
-    "@aws-solutions/cdf-command-and-control",
-    "@aws-solutions/cdf-commandandcontrol-client",
-    "@aws-solutions/cdf-commands-client",
-    "@aws-solutions/cdf-commands",
-    "@aws-solutions/cdf-config-inject",
-    "@aws-solutions/cdf-deployment-helper",
-    "@aws-solutions/cdf-device-monitoring",
-    "@aws-solutions/cdf-device-patcher",
-    "@aws-solutions/cdf-device-simulator-base",
-    "@aws-solutions/cdf-errors",
-    "@aws-solutions/cdf-events-alerts",
-    "@aws-solutions/cdf-events-processor",
-    "@aws-solutions/cdf-express-middleware",
-    "@aws-solutions/cdf-greengrass2-installer-config-generators",
-    "@aws-solutions/cdf-greengrass2-provisioning-client",
-    "@aws-solutions/cdf-greengrass2-provisioning",
-    "@aws-solutions/cdf-installer",
-    "@aws-solutions/cdf-lambda-invoke",
-    "@aws-solutions/cdf-logger",
-    "@aws-solutions/cdf-organization-manager",
-    "@aws-solutions/cdf-notifications-client",
-    "@aws-solutions/cdf-provisioning-client",
-    "@aws-solutions/cdf-provisioning",
-    "@aws-solutions/cdf-simulation-launcher",
-    "@aws-solutions/cdf-simulation-manager"
+    "@awssolutions/cdf-client-request-signer",
+    "@awssolutions/cdf-assetlibrary-client",
+    "@awssolutions/cdf-assetlibrary-export",
+    "@awssolutions/cdf-assetlibrary-history",
+    "@awssolutions/cdf-assetlibrary",
+    "@awssolutions/cdf-assetlibraryhistory-client",
+    "@awssolutions/cdf-auth-devicecert",
+    "@awssolutions/cdf-auth-jwt",
+    "@awssolutions/cdf-bulkcerts",
+    "@awssolutions/cdf-certificate-activator",
+    "@awssolutions/cdf-certificate-vendor",
+    "@awssolutions/cdf-command-and-control",
+    "@awssolutions/cdf-commandandcontrol-client",
+    "@awssolutions/cdf-commands-client",
+    "@awssolutions/cdf-commands",
+    "@awssolutions/cdf-config-inject",
+    "@awssolutions/cdf-deployment-helper",
+    "@awssolutions/cdf-device-monitoring",
+    "@awssolutions/cdf-device-patcher",
+    "@awssolutions/cdf-device-simulator-base",
+    "@awssolutions/cdf-errors",
+    "@awssolutions/cdf-events-alerts",
+    "@awssolutions/cdf-events-processor",
+    "@awssolutions/cdf-express-middleware",
+    "@awssolutions/cdf-greengrass2-installer-config-generators",
+    "@awssolutions/cdf-greengrass2-provisioning-client",
+    "@awssolutions/cdf-greengrass2-provisioning",
+    "@awssolutions/cdf-installer",
+    "@awssolutions/cdf-lambda-invoke",
+    "@awssolutions/cdf-logger",
+    "@awssolutions/cdf-organization-manager",
+    "@awssolutions/cdf-notifications-client",
+    "@awssolutions/cdf-provisioning-client",
+    "@awssolutions/cdf-provisioning",
+    "@awssolutions/cdf-simulation-launcher",
+    "@awssolutions/cdf-simulation-manager"
   ],
   /**
    * When deploying a local Rush project, the package.json "devDependencies" are normally excluded.
@@ -141,107 +141,107 @@
     //   ]
     // }
     {
-      "projectName": "@aws-solutions/cdf-assetlibrary-client",
+      "projectName": "@awssolutions/cdf-assetlibrary-client",
       "dependenciesToExclude": ["aws-sdk"]
     },
     {
-      "projectName": "@aws-solutions/cdf-assetlibraryhistory-client",
+      "projectName": "@awssolutions/cdf-assetlibraryhistory-client",
       "dependenciesToExclude": ["aws-sdk"]
     },
     {
-      "projectName": "@aws-solutions/cdf-commands-client",
+      "projectName": "@awssolutions/cdf-commands-client",
       "dependenciesToExclude": ["aws-sdk"]
     },
     {
-      "projectName": "@aws-solutions/cdf-organizationmanager-client",
+      "projectName": "@awssolutions/cdf-organizationmanager-client",
       "dependenciesToExclude": ["aws-sdk"]
     },
     {
-      "projectName": "@aws-solutions/cdf-notifications-client",
+      "projectName": "@awssolutions/cdf-notifications-client",
       "dependenciesToExclude": ["aws-sdk"]
     },
     {
-      "projectName": "@aws-solutions/cdf-provisioning-client",
+      "projectName": "@awssolutions/cdf-provisioning-client",
       "dependenciesToExclude": ["aws-sdk"]
     },
     {
-      "projectName": "@aws-solutions/cdf-errors",
+      "projectName": "@awssolutions/cdf-errors",
       "dependenciesToExclude": ["aws-sdk"]
     },
     {
-      "projectName": "@aws-solutions/cdf-express-middleware",
+      "projectName": "@awssolutions/cdf-express-middleware",
       "dependenciesToExclude": ["aws-sdk"]
     },
     {
-      "projectName": "@aws-solutions/cdf-lambda-invoke",
+      "projectName": "@awssolutions/cdf-lambda-invoke",
       "dependenciesToExclude": ["aws-sdk"]
     },
     {
-      "projectName": "@aws-solutions/cdf-logger",
+      "projectName": "@awssolutions/cdf-logger",
       "dependenciesToExclude": ["aws-sdk"]
     },
     {
-      "projectName": "@aws-solutions/cdf-assetlibrary",
+      "projectName": "@awssolutions/cdf-assetlibrary",
       "dependenciesToExclude": ["aws-sdk"]
     },
     {
-      "projectName": "@aws-solutions/cdf-assetlibrary-history",
+      "projectName": "@awssolutions/cdf-assetlibrary-history",
       "dependenciesToExclude": ["aws-sdk"]
     },
     {
-      "projectName": "@aws-solutions/cdf-assetlibrary-export",
+      "projectName": "@awssolutions/cdf-assetlibrary-export",
       "dependenciesToExclude": ["aws-sdk"]
     },
     {
-      "projectName": "@aws-solutions/cdf-auth-devicecert",
+      "projectName": "@awssolutions/cdf-auth-devicecert",
       "dependenciesToExclude": ["aws-sdk"]
     },
     {
-      "projectName": "@aws-solutions/cdf-auth-jwt",
+      "projectName": "@awssolutions/cdf-auth-jwt",
       "dependenciesToExclude": ["aws-sdk"]
     },
     {
-      "projectName": "@aws-solutions/cdf-bulkcerts",
+      "projectName": "@awssolutions/cdf-bulkcerts",
       "dependenciesToExclude": ["aws-sdk"]
     },
     {
-      "projectName": "@aws-solutions/cdf-certificate-activator",
+      "projectName": "@awssolutions/cdf-certificate-activator",
       "dependenciesToExclude": ["aws-sdk"]
     },
     {
-      "projectName": "@aws-solutions/cdf-config-inject",
+      "projectName": "@awssolutions/cdf-config-inject",
       "dependenciesToExclude": ["aws-sdk"]
     },
     {
-      "projectName": "@aws-solutions/cdf-certificate-vendor",
+      "projectName": "@awssolutions/cdf-certificate-vendor",
       "dependenciesToExclude": ["aws-sdk"]
     },
     {
-      "projectName": "@aws-solutions/cdf-commands",
+      "projectName": "@awssolutions/cdf-commands",
       "dependenciesToExclude": ["aws-sdk"]
     },
     {
-      "projectName": "@aws-solutions/cdf-device-monitoring",
+      "projectName": "@awssolutions/cdf-device-monitoring",
       "dependenciesToExclude": ["aws-sdk"]
     },
     {
-      "projectName": "@aws-solutions/cdf-events-alerts",
+      "projectName": "@awssolutions/cdf-events-alerts",
       "dependenciesToExclude": ["aws-sdk"]
     },
     {
-      "projectName": "@aws-solutions/cdf-events-processor",
+      "projectName": "@awssolutions/cdf-events-processor",
       "dependenciesToExclude": ["aws-sdk"]
     },
     {
-      "projectName": "@aws-solutions/cdf-assetlibrary-export",
+      "projectName": "@awssolutions/cdf-assetlibrary-export",
       "dependenciesToExclude": ["aws-sdk"]
     },
     {
-      "projectName": "@aws-solutions/cdf-deployment-helper",
+      "projectName": "@awssolutions/cdf-deployment-helper",
       "dependenciesToExclude": ["aws-sdk"]
     },
     {
-      "projectName": "@aws-solutions/cdf-organization-manager",
+      "projectName": "@awssolutions/cdf-organization-manager",
       "dependenciesToExclude": ["aws-sdk"]
     }
   ]

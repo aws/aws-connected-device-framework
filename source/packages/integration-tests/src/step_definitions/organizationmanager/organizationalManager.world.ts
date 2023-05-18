@@ -1,4 +1,4 @@
-import { Dictionary } from '@aws-solutions/cdf-lambda-invoke';
+import { Dictionary } from '@awssolutions/cdf-lambda-invoke';
 
 export interface OrganizationManagerWorld {
     authToken?: string;

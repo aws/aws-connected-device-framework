@@ -13,52 +13,43 @@
 import { injectable, inject } from 'inversify';
 
 import { TYPES } from '../di/types';
-import { CustomResourceEvent } from './customResource.model';
+import {CustomResourceEvent} from './customResource.model';
 import { CustomResource } from './customResource';
-import { logger } from '@aws-solutions/cdf-lambda-invoke/dist/utils/logger';
+import { logger } from '@awssolutions/cdf-lambda-invoke/dist/utils/logger';
 
 @injectable()
 export class S3PutObjectCustomResource implements CustomResource {
+
     private s3: AWS.S3;
 
-    constructor(@inject(TYPES.S3Factory) s3Factory: () => AWS.S3) {
+    constructor(
+        @inject(TYPES.S3Factory) s3Factory: () => AWS.S3,
+    ) {
         this.s3 = s3Factory();
     }
 
-    public async create(customResourceEvent: CustomResourceEvent): Promise<unknown> {
-        logger.info(
-            `S3PutObjectCustomResource: create: customResourceEvent:${JSON.stringify(
-                customResourceEvent
-            )}`
-        );
+    public async create(customResourceEvent: CustomResourceEvent) : Promise<unknown> {
+        logger.info(`S3PutObjectCustomResource: create: customResourceEvent:${JSON.stringify(customResourceEvent)}`);
 
-        const params: AWS.S3.PutObjectRequest = {
+        const params:AWS.S3.PutObjectRequest = {
             Bucket: customResourceEvent.ResourceProperties.BucketName,
             Key: customResourceEvent.ResourceProperties.Key,
             ACL: customResourceEvent.ResourceProperties.ACL,
             Body: customResourceEvent.ResourceProperties.Body,
-            ContentType: customResourceEvent.ResourceProperties.ContentType,
+            ContentType: customResourceEvent.ResourceProperties.ContentType
         };
 
         await this.s3.putObject(params).promise();
         return {};
     }
 
-    public async update(customResourceEvent: CustomResourceEvent): Promise<unknown> {
-        logger.info(
-            `S3PutObjectCustomResource: update: customResourceEvent:${JSON.stringify(
-                customResourceEvent
-            )}`
-        );
+    public async update(customResourceEvent: CustomResourceEvent) : Promise<unknown> {
+        logger.info(`S3PutObjectCustomResource: update: customResourceEvent:${JSON.stringify(customResourceEvent)}`);
         return await this.create(customResourceEvent);
     }
 
-    public async delete(customResourceEvent: CustomResourceEvent): Promise<unknown> {
-        logger.info(
-            `S3PutObjectCustomResource: delete: customResourceEvent:${JSON.stringify(
-                customResourceEvent
-            )}`
-        );
+    public async delete(customResourceEvent: CustomResourceEvent) : Promise<unknown> {
+        logger.info(`S3PutObjectCustomResource: delete: customResourceEvent:${JSON.stringify(customResourceEvent)}`);
         return {};
     }
 }

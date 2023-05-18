@@ -16,17 +16,13 @@ import {
     Group20Resource,
     GroupResourceList,
     GroupsService,
-} from '@aws-solutions/cdf-assetlibrary-client/dist';
+} from '@awssolutions/cdf-assetlibrary-client/dist';
 import { DataTable, Given, Then, When, setDefaultTimeout } from '@cucumber/cucumber';
 import { fail } from 'assert';
 import { expect, use } from 'chai';
 import { Dictionary } from '../../../../libraries/core/lambda-invoke/src';
 import { container } from '../../di/inversify.config';
-import {
-    AUTHORIZATION_TOKEN,
-    RESPONSE_STATUS,
-    validateExpectedAttributes,
-} from '../common/common.steps';
+import { AUTHORIZATION_TOKEN, RESPONSE_STATUS, validateExpectedAttributes } from '../common/common.steps';
 
 import chai_string = require('chai-string');
 use(chai_string);

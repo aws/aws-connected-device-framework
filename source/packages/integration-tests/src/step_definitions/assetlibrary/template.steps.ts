@@ -16,8 +16,8 @@ import {
     StatusEnum,
     TemplatesService,
     TypeResource,
-} from '@aws-solutions/cdf-assetlibrary-client';
-import { Dictionary } from '@aws-solutions/cdf-lambda-invoke';
+} from '@awssolutions/cdf-assetlibrary-client';
+import { Dictionary } from '@awssolutions/cdf-lambda-invoke';
 import { DataTable, Given, Then, When, setDefaultTimeout } from '@cucumber/cucumber';
 import { fail } from 'assert';
 import { expect } from 'chai';

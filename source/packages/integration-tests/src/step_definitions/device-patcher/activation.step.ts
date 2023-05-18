@@ -14,19 +14,16 @@
 import 'reflect-metadata';
 import chai_string = require('chai-string');
 import { expect, use } from 'chai';
-import { Given, When, Then, setDefaultTimeout, DataTable } from '@cucumber/cucumber';
+import {Given, When, Then, setDefaultTimeout, DataTable} from '@cucumber/cucumber';
 
-import { ActivationService } from '@aws-solutions/cdf-device-patcher-client';
-import { DEVICE_PATCHER_CLIENT_TYPES } from '@aws-solutions/cdf-device-patcher-client';
+import { ActivationService } from '@awssolutions/cdf-device-patcher-client';
+import { DEVICE_PATCHER_CLIENT_TYPES } from '@awssolutions/cdf-device-patcher-client';
 
 import { container } from '../../di/inversify.config';
 import { world } from './device.world';
 
-import {
-    getAdditionalHeaders,
-    RESPONSE_STATUS,
-    validateExpectedAttributes,
-} from '../common/common.steps';
+import {getAdditionalHeaders, RESPONSE_STATUS, validateExpectedAttributes} from '../common/common.steps';
+
 
 use(chai_string);
 /*
@@ -39,74 +36,62 @@ use(chai_string);
 
 setDefaultTimeout(10 * 1000);
 
-const activationService: ActivationService = container.get(
-    DEVICE_PATCHER_CLIENT_TYPES.ActivationService
-);
+const activationService: ActivationService = container.get(DEVICE_PATCHER_CLIENT_TYPES.ActivationService);
 
-When('I create an activation for {string} edge device', async function (deviceId: string) {
+
+When('I create an activation for {string} edge device', async function(deviceId:string) {
     try {
-        this['activation'] = await activationService.createActivation(
-            deviceId,
-            getAdditionalHeaders(world.authToken)
-        );
+        this['activation'] = await activationService.createActivation(deviceId, getAdditionalHeaders(world.authToken));
     } catch (e) {
-        this[RESPONSE_STATUS] = e.status;
+        this[RESPONSE_STATUS]=e.status;
     }
 });
 
-When('I delete the activation for {string} edge device', async function (_deviceId: string) {
+When('I delete the activation for {string} edge device', async function(_deviceId: string) {
     const activationId = this['activation'].activationId;
     try {
-        await activationService.deleteActivation(
-            activationId,
-            getAdditionalHeaders(world.authToken)
-        );
+        await activationService.deleteActivation(activationId, getAdditionalHeaders(world.authToken));
     } catch (e) {
-        this[RESPONSE_STATUS] = e.status;
+        this[RESPONSE_STATUS]=e.status;
     }
 });
 
-Then(
-    'an activation exists for {string} with attributes',
-    async function (_deviceId: string, data: DataTable) {
-        const activationId = this['activation'].activationId;
-        let activation;
-        try {
-            activation = await activationService.getActivation(
-                activationId,
-                getAdditionalHeaders(world.authToken)
-            );
-        } catch (e) {
-            this[RESPONSE_STATUS] = e.status;
-        }
-
-        validateExpectedAttributes(activation, data);
+Then('an activation exists for {string} with attributes', async function(_deviceId: string, data:DataTable) {
+    const activationId = this['activation'].activationId;
+    let activation;
+    try {
+        activation = await activationService.getActivation(activationId, getAdditionalHeaders(world.authToken));
+    } catch (e) {
+        this[RESPONSE_STATUS]=e.status;
     }
-);
 
-Then('an activation is created with attributes', async function (data: DataTable) {
+    validateExpectedAttributes(activation, data);
+});
+
+Then('an activation is created with attributes', async function(data:DataTable) {
     const activation = this['activation'];
     validateExpectedAttributes(activation, data);
 });
 
-Given('an activation {string} does not exist', async function (activationId: string) {
+Given('an activation {string} does not exist', async function(activationId: string) {
     try {
         await activationService.getActivation(activationId, getAdditionalHeaders(world.authToken));
         expect.fail('Not found should have been thrown');
     } catch (err) {
-        this[RESPONSE_STATUS] = err.status;
+        this[RESPONSE_STATUS]=err.status;
         expect(err.status).to.eq(404);
     }
 });
 
-Then('the activation does not exists for {string}', async function (_deviceId: string) {
+Then('the activation does not exists for {string}', async function(_deviceId:string) {
     const activationId = this['activation'].activationId;
     try {
-        this['activation'] = await activationService.getActivation(
-            activationId,
-            getAdditionalHeaders(world.authToken)
-        );
+        this['activation'] = await activationService.getActivation(activationId, getAdditionalHeaders(world.authToken));
     } catch (e) {
         expect(e.status).eq(404);
     }
 });
+
+
+
+

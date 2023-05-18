@@ -14,7 +14,7 @@
 import { injectable } from 'inversify';
 import ow from 'ow';
 import * as request from 'superagent';
-import { signClientRequest } from '@aws-solutions/cdf-client-request-signer';
+import { signClientRequest } from '@awssolutions/cdf-client-request-signer';
 import createError from 'http-errors';
 import { RequestHeaders } from './common.model';
 import { DeploymentTask, NewDeploymentTask } from './deployments.model';
@@ -71,3 +71,4 @@ export class DeploymentsApigwService extends DeploymentsServiceBase implements D
             });
     }
 }
+

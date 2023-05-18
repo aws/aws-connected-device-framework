@@ -10,16 +10,16 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { assetLibraryContainerModule } from '@aws-solutions/cdf-assetlibrary-client';
-import { assetLibraryHistoryContainerModule } from '@aws-solutions/cdf-assetlibraryhistory-client';
-import { commandAndControlContainerModule } from '@aws-solutions/cdf-commandandcontrol-client';
-import { commandsContainerModule } from '@aws-solutions/cdf-commands-client';
-import '@aws-solutions/cdf-config-inject';
-import { devicePatcherContainerModule } from '@aws-solutions/cdf-device-patcher-client';
-import { greengrass2ProvisioningContainerModule } from '@aws-solutions/cdf-greengrass2-provisioning-client';
-import { notificationsContainerModule } from '@aws-solutions/cdf-notifications-client';
-import { organizationManagerContainerModule } from '@aws-solutions/cdf-organizationmanager-client';
-import { provisioningContainerModule } from '@aws-solutions/cdf-provisioning-client';
+import { assetLibraryContainerModule } from '@awssolutions/cdf-assetlibrary-client';
+import { assetLibraryHistoryContainerModule } from '@awssolutions/cdf-assetlibraryhistory-client';
+import { commandAndControlContainerModule } from '@awssolutions/cdf-commandandcontrol-client';
+import { commandsContainerModule } from '@awssolutions/cdf-commands-client';
+import '@awssolutions/cdf-config-inject';
+import { devicePatcherContainerModule } from '@awssolutions/cdf-device-patcher-client';
+import { greengrass2ProvisioningContainerModule } from '@awssolutions/cdf-greengrass2-provisioning-client';
+import { notificationsContainerModule } from '@awssolutions/cdf-notifications-client';
+import { organizationManagerContainerModule } from '@awssolutions/cdf-organizationmanager-client';
+import { provisioningContainerModule } from '@awssolutions/cdf-provisioning-client';
 import { Container } from 'inversify';
 import 'reflect-metadata';
 // Load everything needed to the Container
@@ -32,6 +32,6 @@ container.load(commandsContainerModule);
 container.load(provisioningContainerModule);
 container.load(notificationsContainerModule);
 container.load(greengrass2ProvisioningContainerModule);
-container.load(devicePatcherContainerModule);
+container.load(devicePatcherContainerModule)
 container.load(commandAndControlContainerModule);
 container.load(organizationManagerContainerModule);

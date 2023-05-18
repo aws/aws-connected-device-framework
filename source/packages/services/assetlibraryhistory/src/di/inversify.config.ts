@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import 'reflect-metadata';
-import '@aws-solutions/cdf-config-inject';
+import '@awssolutions/cdf-config-inject';
 
 import { Container, decorate, injectable, interfaces } from 'inversify';
 
@@ -36,9 +36,7 @@ export const container = new Container();
 
 // allow config to be injected
 
-container
-    .bind<string>('aws.dynamoDb.tables.events')
-    .toConstantValue(process.env.AWS_DYNAMODB_TABLE_EVENTS);
+container.bind<string>('aws.dynamoDb.tables.events').toConstantValue(process.env.AWS_DYNAMODB_TABLE_EVENTS);
 
 container.bind<HttpHeaderUtils>(TYPES.HttpHeaderUtils).to(HttpHeaderUtils).inSingletonScope();
 
@@ -47,38 +45,24 @@ container.bind<EventsService>(TYPES.EventsService).to(EventsService).inSingleton
 
 container.bind<QueryService>(TYPES.QueryService).to(QueryService).inSingletonScope();
 
-container
-    .bind<EventActionFactory>(TYPES.EventActionFactory)
-    .to(EventActionFactory)
-    .inSingletonScope();
+container.bind<EventActionFactory>(TYPES.EventActionFactory).to(EventActionFactory).inSingletonScope();
 container.bind<CreateAction>(TYPES.CreateEventAction).to(CreateAction).inSingletonScope();
 container.bind<UpdateAction>(TYPES.UpdateEventAction).to(UpdateAction).inSingletonScope();
 container.bind<DeleteAction>(TYPES.DeleteEventAction).to(DeleteAction).inSingletonScope();
-container
-    .bind<UpdateComponentParentAction>(TYPES.UpdateComponentParentEventAction)
-    .to(UpdateComponentParentAction)
-    .inSingletonScope();
-container
-    .bind<PublishTemplateAction>(TYPES.PublishTemplateEventAction)
-    .to(PublishTemplateAction)
-    .inSingletonScope();
-container
-    .bind<UnsupportedAction>(TYPES.UnsupportedEventAction)
-    .to(UnsupportedAction)
-    .inSingletonScope();
+container.bind<UpdateComponentParentAction>(TYPES.UpdateComponentParentEventAction).to(UpdateComponentParentAction).inSingletonScope();
+container.bind<PublishTemplateAction>(TYPES.PublishTemplateEventAction).to(PublishTemplateAction).inSingletonScope();
+container.bind<UnsupportedAction>(TYPES.UnsupportedEventAction).to(UnsupportedAction).inSingletonScope();
 
 // for 3rd party objects, we need to use factory injectors
 decorate(injectable(), AWS.DynamoDB.DocumentClient);
-container
-    .bind<interfaces.Factory<AWS.DynamoDB.DocumentClient>>(TYPES.DocumentClientFactory)
+container.bind<interfaces.Factory<AWS.DynamoDB.DocumentClient>>(TYPES.DocumentClientFactory)
     .toFactory<AWS.DynamoDB.DocumentClient>(() => {
-        return () => {
-            if (!container.isBound(TYPES.DocumentClient)) {
-                const dc = new AWS.DynamoDB.DocumentClient({ region: process.env.AWS_REGION });
-                container
-                    .bind<AWS.DynamoDB.DocumentClient>(TYPES.DocumentClient)
-                    .toConstantValue(dc);
-            }
-            return container.get<AWS.DynamoDB.DocumentClient>(TYPES.DocumentClient);
-        };
-    });
+    return () => {
+
+        if (!container.isBound(TYPES.DocumentClient)) {
+            const dc = new AWS.DynamoDB.DocumentClient({region: process.env.AWS_REGION});
+            container.bind<AWS.DynamoDB.DocumentClient>(TYPES.DocumentClient).toConstantValue(dc);
+        }
+        return container.get<AWS.DynamoDB.DocumentClient>(TYPES.DocumentClient);
+    };
+});
