@@ -14,8 +14,8 @@
 import {
     COMMANDANDCONTROL_CLIENT_TYPES,
     CommandsService,
-} from '@aws-solutions/cdf-commandandcontrol-client';
-import { Dictionary } from '@aws-solutions/cdf-lambda-invoke';
+} from '@awssolutions/cdf-commandandcontrol-client';
+import { Dictionary } from '@awssolutions/cdf-lambda-invoke';
 import { Before, setDefaultTimeout } from '@cucumber/cucumber';
 import fs from 'fs';
 import os from 'os';

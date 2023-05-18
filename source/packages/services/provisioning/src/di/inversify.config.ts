@@ -11,18 +11,26 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import 'reflect-metadata';
-// import '@aws-solutions/cdf-config-inject';
-import '@aws-solutions/cdf-config-inject';
+// import '@awssolutions/cdf-config-inject';
+import '@awssolutions/cdf-config-inject'
 
 import { Container, decorate, injectable, interfaces } from 'inversify';
 
 // Note: importing @controller's carries out a one time inversify metadata generation...
 import '../things/things.controller';
 import '../things/bulkthings.controller';
-import { AttachAdditionalPoliciesProcessor } from '../things/steps/attachAdditionalPoliciesProcessor';
-import { ClientIdEnforcementPolicyStepProcessor } from '../things/steps/clientIdEnforcementPolicyStepProcessor';
-import { CreateDeviceCertificateStepProcessor } from '../things/steps/createDeviceCertificateProcessor';
-import { RegisterDeviceCertificateWithoutCAStepProcessor } from '../things/steps/registerDeviceCertificateWithoutCaProcessor';
+import {
+    AttachAdditionalPoliciesProcessor
+} from '../things/steps/attachAdditionalPoliciesProcessor';
+import {
+    ClientIdEnforcementPolicyStepProcessor
+} from '../things/steps/clientIdEnforcementPolicyStepProcessor';
+import {
+    CreateDeviceCertificateStepProcessor
+} from '../things/steps/createDeviceCertificateProcessor';
+import {
+    RegisterDeviceCertificateWithoutCAStepProcessor
+} from '../things/steps/registerDeviceCertificateWithoutCaProcessor';
 import { ThingsService } from '../things/things.service';
 import { TYPES } from './types';
 import { UseACMPCAStepProcessor } from '../things/steps/useACMPCAProcessor';
@@ -37,176 +45,148 @@ export const container = new Container();
 // config
 
 container.bind<string>('aws.s3.roleArn').toConstantValue(process.env.AWS_S3_ROLE_ARN);
-container
-    .bind<string>('aws.s3.templates.bucket')
-    .toConstantValue(process.env.AWS_S3_TEMPLATES_BUCKET);
-container
-    .bind<string>('aws.s3.templates.prefix')
-    .toConstantValue(process.env.AWS_S3_TEMPLATES_PREFIX);
-container
-    .bind<string>('aws.s3.templates.suffix')
-    .toConstantValue(process.env.AWS_S3_TEMPLATES_SUFFIX);
-container
-    .bind<string>('aws.s3.bulkrequests.bucket')
-    .toConstantValue(process.env.AWS_S3_BULKREQUESTS_BUCKET);
-container
-    .bind<string>('aws.s3.bulkrequests.prefix')
-    .toConstantValue(process.env.AWS_S3_BULKREQUESTS_PREFIX);
-container
-    .bind<boolean>('features.delete.certificates')
-    .toConstantValue(process.env.FEATURES_DELETE_CERTIFICATES === 'true');
-container
-    .bind<boolean>('features.delete.policies')
-    .toConstantValue(process.env.FEATURES_DELETE_POLICIES === 'true');
+container.bind<string>('aws.s3.templates.bucket').toConstantValue(process.env.AWS_S3_TEMPLATES_BUCKET);
+container.bind<string>('aws.s3.templates.prefix').toConstantValue(process.env.AWS_S3_TEMPLATES_PREFIX);
+container.bind<string>('aws.s3.templates.suffix').toConstantValue(process.env.AWS_S3_TEMPLATES_SUFFIX);
+container.bind<string>('aws.s3.bulkrequests.bucket').toConstantValue(process.env.AWS_S3_BULKREQUESTS_BUCKET);
+container.bind<string>('aws.s3.bulkrequests.prefix').toConstantValue(process.env.AWS_S3_BULKREQUESTS_PREFIX);
+container.bind<boolean>('features.delete.certificates').toConstantValue(process.env.FEATURES_DELETE_CERTIFICATES === 'true');
+container.bind<boolean>('features.delete.policies').toConstantValue(process.env.FEATURES_DELETE_POLICIES === 'true');
 container.bind<string>('aws.region').toConstantValue(process.env.AWS_REGION);
 container.bind<string>('aws.accountId').toConstantValue(process.env.AWS_ACCOUNTID);
-container
-    .bind<string>('deviceCertificateExpiryDays')
-    .toConstantValue(process.env.DEVICE_CERTIFICATE_EXPIRY_DAYS);
+container.bind<string>('deviceCertificateExpiryDays').toConstantValue(process.env.DEVICE_CERTIFICATE_EXPIRY_DAYS);
 
 container.bind<ThingsService>(TYPES.ThingsService).to(ThingsService).inSingletonScope();
 container.bind<CertUtils>(TYPES.CertUtils).to(CertUtils).inSingletonScope();
 
-container
-    .bind<ClientIdEnforcementPolicyStepProcessor>(TYPES.ClientIdEnforcementPolicyStepProcessor)
-    .to(ClientIdEnforcementPolicyStepProcessor)
-    .inSingletonScope();
-container
-    .bind<CreateDeviceCertificateStepProcessor>(TYPES.CreateDeviceCertificateStepProcessor)
-    .to(CreateDeviceCertificateStepProcessor)
-    .inSingletonScope();
-container
-    .bind<CreateAwsCertiticateProcessor>(TYPES.CreateAwsCertiticateProcessor)
-    .to(CreateAwsCertiticateProcessor)
-    .inSingletonScope();
-container
-    .bind<RegisterDeviceCertificateWithoutCAStepProcessor>(
-        TYPES.RegisterDeviceCertificateWithoutCAStepProcessor
-    )
-    .to(RegisterDeviceCertificateWithoutCAStepProcessor)
-    .inSingletonScope();
-container
-    .bind<UseACMPCAStepProcessor>(TYPES.UseACMPCAStepProcessor)
-    .to(UseACMPCAStepProcessor)
-    .inSingletonScope();
-container
-    .bind<AttachAdditionalPoliciesProcessor>(TYPES.AttachAdditionalPoliciesProcessor)
-    .to(AttachAdditionalPoliciesProcessor)
-    .inSingletonScope();
+container.bind<ClientIdEnforcementPolicyStepProcessor>(TYPES.ClientIdEnforcementPolicyStepProcessor).to(ClientIdEnforcementPolicyStepProcessor).inSingletonScope();
+container.bind<CreateDeviceCertificateStepProcessor>(TYPES.CreateDeviceCertificateStepProcessor).to(CreateDeviceCertificateStepProcessor).inSingletonScope();
+container.bind<CreateAwsCertiticateProcessor>(TYPES.CreateAwsCertiticateProcessor).to(CreateAwsCertiticateProcessor).inSingletonScope();
+container.bind<RegisterDeviceCertificateWithoutCAStepProcessor>(TYPES.RegisterDeviceCertificateWithoutCAStepProcessor).to(RegisterDeviceCertificateWithoutCAStepProcessor).inSingletonScope();
+container.bind<UseACMPCAStepProcessor>(TYPES.UseACMPCAStepProcessor).to(UseACMPCAStepProcessor).inSingletonScope();
+container.bind<AttachAdditionalPoliciesProcessor>(TYPES.AttachAdditionalPoliciesProcessor).to(AttachAdditionalPoliciesProcessor).inSingletonScope();
 
 // for 3rd party objects, we need to use factory injectors
 // IoT
 decorate(injectable(), AWS.Iot);
-container.bind<interfaces.Factory<AWS.Iot>>(TYPES.IotFactory).toFactory<AWS.Iot>(() => {
-    return () => {
-        if (!container.isBound(TYPES.Iot)) {
-            const iot = new AWS.Iot({ region: process.env.AWS_REGION });
-            container.bind<AWS.Iot>(TYPES.Iot).toConstantValue(iot);
-        }
-        return container.get<AWS.Iot>(TYPES.Iot);
-    };
-});
+container.bind<interfaces.Factory<AWS.Iot>>(TYPES.IotFactory)
+    .toFactory<AWS.Iot>(() => {
+        return () => {
+
+            if (!container.isBound(TYPES.Iot)) {
+                const iot = new AWS.Iot({ region: process.env.AWS_REGION });
+                container.bind<AWS.Iot>(TYPES.Iot).toConstantValue(iot);
+            }
+            return container.get<AWS.Iot>(TYPES.Iot);
+        };
+    });
 
 // S3
 decorate(injectable(), AWS.S3);
-container.bind<interfaces.Factory<AWS.S3>>(TYPES.S3Factory).toFactory<AWS.S3>(() => {
-    return () => {
-        if (!container.isBound(TYPES.S3)) {
-            const s3 = new AWS.S3({ region: process.env.AWS_REGION });
-            container.bind<AWS.S3>(TYPES.S3).toConstantValue(s3);
-        }
-        return container.get<AWS.S3>(TYPES.S3);
-    };
-});
+container.bind<interfaces.Factory<AWS.S3>>(TYPES.S3Factory)
+    .toFactory<AWS.S3>(() => {
+        return () => {
+
+            if (!container.isBound(TYPES.S3)) {
+                const s3 = new AWS.S3({ region: process.env.AWS_REGION });
+                container.bind<AWS.S3>(TYPES.S3).toConstantValue(s3);
+            }
+            return container.get<AWS.S3>(TYPES.S3);
+        };
+    });
 
 // SSM
 decorate(injectable(), AWS.SSM);
-container.bind<interfaces.Factory<AWS.SSM>>(TYPES.SSMFactory).toFactory<AWS.SSM>(() => {
-    return () => {
-        if (!container.isBound(TYPES.SSM)) {
-            const ssm = new AWS.SSM({ region: process.env.AWS_REGION });
-            container.bind<AWS.SSM>(TYPES.SSM).toConstantValue(ssm);
-        }
-        return container.get<AWS.SSM>(TYPES.SSM);
-    };
-});
+container.bind<interfaces.Factory<AWS.SSM>>(TYPES.SSMFactory)
+    .toFactory<AWS.SSM>(() => {
+        return () => {
+
+            if (!container.isBound(TYPES.SSM)) {
+                const ssm = new AWS.SSM({ region: process.env.AWS_REGION });
+                container.bind<AWS.SSM>(TYPES.SSM).toConstantValue(ssm);
+            }
+            return container.get<AWS.SSM>(TYPES.SSM);
+        };
+    });
 
 // STS
 decorate(injectable(), AWS.STS);
-container.bind<interfaces.Factory<AWS.STS>>(TYPES.STSFactory).toFactory<AWS.STS>(() => {
-    return () => {
-        if (!container.isBound(TYPES.STS)) {
-            const sts = new AWS.STS({ region: process.env.AWS_REGION });
-            container.bind<AWS.STS>(TYPES.STS).toConstantValue(sts);
-        }
-        return container.get<AWS.STS>(TYPES.STS);
-    };
-});
+container.bind<interfaces.Factory<AWS.STS>>(TYPES.STSFactory)
+    .toFactory<AWS.STS>(() => {
+        return () => {
+
+            if (!container.isBound(TYPES.STS)) {
+                const sts = new AWS.STS({ region: process.env.AWS_REGION });
+                container.bind<AWS.STS>(TYPES.STS).toConstantValue(sts);
+            }
+            return container.get<AWS.STS>(TYPES.STS);
+        };
+    });
 
 // SNS
 decorate(injectable(), AWS.SNS);
-container.bind<interfaces.Factory<AWS.SNS>>(TYPES.SNSFactory).toFactory<AWS.SNS>(() => {
-    return () => {
-        if (!container.isBound(TYPES.SNS)) {
-            const sns = new AWS.SNS({ region: process.env.AWS_REGION });
-            container.bind<AWS.SNS>(TYPES.SNS).toConstantValue(sns);
-        }
-        return container.get<AWS.SNS>(TYPES.SNS);
-    };
-});
+container.bind<interfaces.Factory<AWS.SNS>>(TYPES.SNSFactory)
+    .toFactory<AWS.SNS>(() => {
+        return () => {
+            if (!container.isBound(TYPES.SNS)) {
+                const sns = new AWS.SNS({ region: process.env.AWS_REGION });
+                container.bind<AWS.SNS>(TYPES.SNS).toConstantValue(sns);
+            }
+            return container.get<AWS.SNS>(TYPES.SNS);
+        };
+    });
 
-// ACMPCA
+
+// ACMPCA 
 let acmPcaStsExpiresAt: Date;
 decorate(injectable(), AWS.ACMPCA);
-container.bind<interfaces.Factory<AWS.ACMPCA>>(TYPES.ACMPCAFactory).toFactory<AWS.ACMPCA>(() => {
-    return () => {
-        const region = process.env.ACM_REGION ?? process.env.AWS_REGION;
+container.bind<interfaces.Factory<AWS.ACMPCA>>(TYPES.ACMPCAFactory)
+    .toFactory<AWS.ACMPCA>(() => {
+        return () => {
 
-        // if not bound yet, or the STS token is expired, bind it
-        if (!container.isBound(TYPES.ACMPCA) || isStsTokenAboutToExpire(acmPcaStsExpiresAt)) {
-            const acmpcaConfig: AWS.ACMPCA.ClientConfiguration = {
-                region,
-            };
+            const region = process.env.ACM_REGION ?? process.env.AWS_REGION;
 
-            // ACM PCA may be held in a different account. If so, assume a role that allows access before creating the client
-            const crossAccountRole = process.env.ACM_PCA_CROSS_ACCOUNT_ROLE_ARN;
-            if (crossAccountRole) {
-                // these credentials will be used for ACM PCA access
-                const sts = container.get<AWS.STS>(TYPES.STS);
-                sts.assumeRole(
-                    {
+            // if not bound yet, or the STS token is expired, bind it
+            if (!container.isBound(TYPES.ACMPCA) || isStsTokenAboutToExpire(acmPcaStsExpiresAt)) {
+                const acmpcaConfig: AWS.ACMPCA.ClientConfiguration = {
+                    region
+                };
+            
+                // ACM PCA may be held in a different account. If so, assume a role that allows access before creating the client
+                const crossAccountRole = process.env.ACM_PCA_CROSS_ACCOUNT_ROLE_ARN;
+                if (crossAccountRole) {
+                    // these credentials will be used for ACM PCA access
+                    const sts = container.get<AWS.STS>(TYPES.STS);
+                    sts.assumeRole({
                         RoleArn: crossAccountRole,
-                        RoleSessionName: 'cdf-provisioning',
-                    },
-                    (err, data) => {
+                        RoleSessionName: 'cdf-provisioning'
+                    }, (err, data) => {
                         if (err) {
                             throw err;
                         } else {
                             acmpcaConfig.credentials.accessKeyId = data.Credentials.AccessKeyId;
-                            acmpcaConfig.credentials.secretAccessKey =
-                                data.Credentials.SecretAccessKey;
+                            acmpcaConfig.credentials.secretAccessKey = data.Credentials.SecretAccessKey;
                             acmpcaConfig.credentials.sessionToken = data.Credentials.SessionToken;
                             acmPcaStsExpiresAt = data.Credentials.Expiration;
                         }
-                    }
-                );
+                    });
+                }
+            
+                const acmpca = new AWS.ACMPCA(acmpcaConfig);
+                if (container.isBound(TYPES.ACMPCA)) {
+                    container.rebind<AWS.ACMPCA>(TYPES.ACMPCA).toConstantValue(acmpca);
+                } else {
+                    container.bind<AWS.ACMPCA>(TYPES.ACMPCA).toConstantValue(acmpca);
+                }
             }
-
-            const acmpca = new AWS.ACMPCA(acmpcaConfig);
-            if (container.isBound(TYPES.ACMPCA)) {
-                container.rebind<AWS.ACMPCA>(TYPES.ACMPCA).toConstantValue(acmpca);
-            } else {
-                container.bind<AWS.ACMPCA>(TYPES.ACMPCA).toConstantValue(acmpca);
-            }
-        }
-        return container.get<AWS.ACMPCA>(TYPES.ACMPCA);
-    };
-});
+            return container.get<AWS.ACMPCA>(TYPES.ACMPCA);
+        };
+    });
 
 async function isStsTokenAboutToExpire(expiresAt: Date) {
-    if (expiresAt === undefined) {
+    if (expiresAt===undefined) {
         return false;
     }
-    const refreshTokenAt = new Date(Date.now() - 5 * 60 * 1000);
-    return refreshTokenAt < expiresAt;
+    const refreshTokenAt = new Date( Date.now() - 5 * 60 * 1000);
+    return (refreshTokenAt < expiresAt);
 }

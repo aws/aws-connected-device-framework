@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import { signClientRequest } from '@aws-solutions/cdf-client-request-signer';
+import { signClientRequest } from '@awssolutions/cdf-client-request-signer';
 import createError from 'http-errors';
 import { injectable } from 'inversify';
 import ow from 'ow';
@@ -117,3 +117,4 @@ export class TemplatesApigwService extends TemplatesServiceBase implements Templ
             });
     }
 }
+

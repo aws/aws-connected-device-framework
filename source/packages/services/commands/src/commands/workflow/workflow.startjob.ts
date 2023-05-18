@@ -21,12 +21,12 @@ import {
     GroupsService,
     SearchRequestModel,
     SearchService,
-} from '@aws-solutions/cdf-assetlibrary-client';
+} from '@awssolutions/cdf-assetlibrary-client';
 import {
     BulkProvisionThingsRequest,
     PROVISIONING_CLIENT_TYPES,
     ThingsService,
-} from '@aws-solutions/cdf-provisioning-client';
+} from '@awssolutions/cdf-provisioning-client';
 
 import { TYPES } from '../../di/types';
 import { TemplateModel } from '../../templates/templates.models';
@@ -40,6 +40,7 @@ import { WorkflowAction } from './workflow.interfaces';
 import AWS = require('aws-sdk');
 @injectable()
 export class StartJobAction implements WorkflowAction {
+
     private _iot: AWS.Iot;
     private _s3: AWS.S3;
 
@@ -47,61 +48,47 @@ export class StartJobAction implements WorkflowAction {
         @inject(TYPES.CommandsValidator) private commandsValidator: CommandsValidator,
         @inject(TYPES.TemplatesService) private templatesService: TemplatesService,
         @inject(TYPES.CommandsDao) private commandsDao: CommandsDao,
-        @inject(ASSETLIBRARY_CLIENT_TYPES.DevicesService)
-        private assetLibraryDeviceClient: DevicesService,
-        @inject(ASSETLIBRARY_CLIENT_TYPES.GroupsService)
-        private assetLibraryGroupClient: GroupsService,
-        @inject(ASSETLIBRARY_CLIENT_TYPES.SearchService)
-        private assetLibrarySearchClient: SearchService,
+        @inject(ASSETLIBRARY_CLIENT_TYPES.DevicesService) private assetLibraryDeviceClient: DevicesService,
+        @inject(ASSETLIBRARY_CLIENT_TYPES.GroupsService) private assetLibraryGroupClient: GroupsService,
+        @inject(ASSETLIBRARY_CLIENT_TYPES.SearchService) private assetLibrarySearchClient: SearchService,
         @inject(PROVISIONING_CLIENT_TYPES.ThingsService) private thingsService: ThingsService,
         @inject('aws.s3.bucket') private s3Bucket: string,
         @inject('aws.s3.prefix') private s3Prefix: string,
         @inject('aws.s3.roleArn') private s3RoleArn: string,
         @inject('aws.jobs.maxTargets') private maxTargets: number,
         @inject(TYPES.S3Factory) s3Factory: () => AWS.S3,
-        @inject(TYPES.IotFactory) iotFactory: () => AWS.Iot
-    ) {
-        this._iot = iotFactory();
-        this._s3 = s3Factory();
+        @inject(TYPES.IotFactory) iotFactory: () => AWS.Iot ) {
+            this._iot = iotFactory();
+            this._s3  =  s3Factory();
     }
 
-    async execute(existing: CommandModel, updated: CommandModel): Promise<boolean> {
-        logger.debug(
-            `workflow.startjob execute: existing:${JSON.stringify(
-                existing
-            )}, updated:${JSON.stringify(updated)}`
-        );
+    async execute(existing:CommandModel, updated:CommandModel): Promise<boolean> {
+        logger.debug(`workflow.startjob execute: existing:${JSON.stringify(existing)}, updated:${JSON.stringify(updated)}`);
 
-        const [merged, template] = await this.buildCommand(existing, updated);
+        const [merged,template] = await this.buildCommand(existing, updated);
 
         // validate the merged document
         this.commandsValidator.validate(merged);
 
-        if (template.requiredDocumentParameters !== undefined) {
-            for (const key of template.requiredDocumentParameters) {
+        if (template.requiredDocumentParameters !== undefined ) {
+            for(const key of template.requiredDocumentParameters) {
                 // validation: check we have all document parameters required by the template defined for the command
-                if (
-                    merged.documentParameters === undefined ||
-                    !merged.documentParameters.hasOwnProperty(key)
-                ) {
+                if (merged.documentParameters===undefined || !merged.documentParameters.hasOwnProperty(key)) {
                     throw new Error(`MISSING_REQUIRED_DOCUMENT_PARAMETER: ${key}`);
                 }
                 // replace any required document parameters in the job document with the command files
                 const token = `\${cdf:parameter:${key}}`;
-                template.document = template.document.replace(
-                    token,
-                    merged.documentParameters[key]
-                );
+                template.document = template.document.replace(token, merged.documentParameters[key]);
             }
         }
 
         // validation: check we have all files required by the template defined for the command
-        if (template.requiredFiles !== undefined && template.requiredFiles.length > 0) {
-            for (const key of template.requiredFiles) {
+        if (template.requiredFiles !== undefined && template.requiredFiles.length>0 ) {
+            for (const key of template.requiredFiles ) {
                 const s3Key = `${this.s3Prefix}${merged.commandId}/files/${key}`;
                 const s3Params = {
                     Bucket: this.s3Bucket,
-                    Key: s3Key,
+                    Key: s3Key
                 };
 
                 try {
@@ -124,11 +111,7 @@ export class StartJobAction implements WorkflowAction {
         template.document = JSON.stringify(jsonDoc);
 
         // build the target list
-        const jobTargets = await this.buildTargetList(
-            merged.commandId,
-            merged.targets,
-            merged.targetQuery
-        );
+        const jobTargets = await this.buildTargetList(merged.commandId, merged.targets, merged.targetQuery);
 
         // create the AWS IoT job
         const params = this.assembleCreateJobRequest(jobTargets, template, merged);
@@ -139,53 +122,40 @@ export class StartJobAction implements WorkflowAction {
             throw new Error(`AWS IoT job creation failed: ${(<AWS.AWSError>err).message}`);
         }
 
-        updated.jobId = params.jobId;
+        updated.jobId=params.jobId;
 
         // save the updated job info
         await this.commandsDao.update(updated);
 
         logger.debug('workflow.startjob execute: exit:true');
         return true;
+
     }
 
-    public ___testonly___buildTargetList(
-        commandId: string,
-        targets: string[],
-        targetQuery: SearchRequestModel
-    ): Promise<string[]> {
+    public ___testonly___buildTargetList(commandId:string, targets:string[], targetQuery:SearchRequestModel) : Promise<string[]> {
         return this.buildTargetList(commandId, targets, targetQuery);
     }
 
-    private async buildTargetList(
-        commandId: string,
-        targets: string[],
-        targetQuery: SearchRequestModel
-    ): Promise<string[]> {
-        logger.debug(
-            `workflow.startjob buildTargetList: commandId:${commandId}, targets:${targets}, targetQuery:${JSON.stringify(
-                targetQuery
-            )}`
-        );
+    private async buildTargetList(commandId:string, targets:string[], targetQuery:SearchRequestModel) : Promise<string[]> {
+        logger.debug(`workflow.startjob buildTargetList: commandId:${commandId}, targets:${targets}, targetQuery:${JSON.stringify(targetQuery)}`);
 
         ow(commandId, ow.string.nonEmpty);
         // ow(targets, ow.array.nonEmpty.minLength(1));
 
-        let awsThingTargets: string[] = [];
-        const awsGroupTargets: string[] = [];
-        const cdfDeviceTargets: string[] = [];
-        const cdfGroupTargets: string[] = [];
+        let awsThingTargets:string[]=[];
+        const awsGroupTargets:string[]=[];
+        const cdfDeviceTargets:string[]=[];
+        const cdfGroupTargets:string[]=[];
 
         // if we have a target query specified, retrieve all the asset library groups/devices it relates to
-        if (targetQuery !== undefined) {
+        if (targetQuery!==undefined) {
             let searchResults = await this.assetLibrarySearchClient.search(targetQuery);
-            logger.verbose(
-                `workflow.startjob buildTargetList: searchResults:${JSON.stringify(searchResults)}`
-            );
-            while (searchResults.results.length > 0) {
-                for (const r of searchResults.results) {
+            logger.verbose(`workflow.startjob buildTargetList: searchResults:${JSON.stringify(searchResults)}`);
+            while (searchResults.results.length>0) {
+                for(const r of searchResults.results) {
                     if (this.isDevice(r)) {
                         const awsIotThingArn = (r as Device10Resource).awsIotThingArn;
-                        if (awsIotThingArn !== undefined) {
+                        if (awsIotThingArn!==undefined) {
                             awsThingTargets.push(awsIotThingArn);
                         }
                     } else {
@@ -193,29 +163,26 @@ export class StartJobAction implements WorkflowAction {
                     }
                 }
                 // possibly paginated results?
-                if (searchResults.pagination !== undefined) {
+                if (searchResults.pagination!==undefined) {
                     const offset = searchResults.pagination.offset;
                     const count = searchResults.pagination.count;
-                    searchResults = await this.assetLibrarySearchClient.search(
-                        targetQuery,
-                        offset + count
-                    );
+                    searchResults = await this.assetLibrarySearchClient.search(targetQuery, offset+count );
                 } else {
-                    searchResults.results = [];
+                    searchResults.results=[];
                 }
             }
         }
 
         // figure out the type of each target
-        if (targets !== undefined) {
-            for (const target of targets) {
+        if (targets!==undefined) {
+            for(const target of targets) {
                 const targetType = this.getTargetType(target);
                 switch (targetType) {
                     case TargetType.awsIotThing:
-                        awsThingTargets.push(target);
+                    awsThingTargets.push(target);
                         break;
                     case TargetType.awsIotGroup:
-                        awsGroupTargets.push(target);
+                    awsGroupTargets.push(target);
                         break;
                     case TargetType.cdfDevice:
                         cdfDeviceTargets.push(target);
@@ -229,60 +196,36 @@ export class StartJobAction implements WorkflowAction {
         }
 
         // if we have too many aws iot thing groups as targets, we can't proceed
-        const maxGroups =
-            awsThingTargets.length === 0 &&
-            cdfDeviceTargets.length === 0 &&
-            cdfGroupTargets.length === 0
-                ? this.maxTargets
-                : this.maxTargets - 1;
-        if (awsGroupTargets.length > maxGroups) {
+        const maxGroups = (awsThingTargets.length===0 && cdfDeviceTargets.length===0 && cdfGroupTargets.length===0) ? this.maxTargets : this.maxTargets-1;
+        if (awsGroupTargets.length>maxGroups) {
             throw new Error('MAX_GROUPS_EXCEEDED');
         }
 
         // for CDF groups, we need to get the thing arn of all devices related to the group
-        if (cdfGroupTargets.length > 0) {
-            logger.debug(
-                `workflow.startjob buildTargetList: creating CDFGroupTargets cdfGroupTargets: ${JSON.stringify(
-                    cdfGroupTargets
-                )}`
-            );
-            for (const groupPath of cdfGroupTargets) {
+        if (cdfGroupTargets.length>0) {
+            logger.debug(`workflow.startjob buildTargetList: creating CDFGroupTargets cdfGroupTargets: ${JSON.stringify(cdfGroupTargets)}`);
+            for(const groupPath of cdfGroupTargets) {
                 let result = await this.assetLibraryGroupClient.listGroupMembersDevices(groupPath);
-                while (result.results !== undefined) {
-                    for (const device of result.results) {
+                while (result.results!==undefined) {
+                    for(const device of result.results) {
                         if (device.awsIotThingArn) {
                             awsThingTargets.push(device.awsIotThingArn);
                         }
                     }
-                    if (result.pagination === undefined) {
+                    if (result.pagination===undefined) {
                         break;
                     }
                     const offset = result.pagination.offset + result.pagination.count;
-                    result = await this.assetLibraryGroupClient.listGroupMembersDevices(
-                        groupPath,
-                        null,
-                        null,
-                        offset,
-                        result.pagination.count
-                    );
+                    result = await this.assetLibraryGroupClient.listGroupMembersDevices(groupPath, null, null, offset, result.pagination.count);
                 }
             }
         }
 
         // for CDF devices, we need to get its corresponding thing arn
-        if (cdfDeviceTargets.length > 0) {
-            logger.debug(
-                `workflow.startjob buildTargetList: creating CDFDeviceTargets, cdfDeviceTargets: ${JSON.stringify(
-                    cdfDeviceTargets
-                )}`
-            );
-            const result = await this.assetLibraryDeviceClient.getDevicesByID(
-                cdfDeviceTargets,
-                false,
-                [],
-                []
-            );
-            for (const device of result.results) {
+        if (cdfDeviceTargets.length>0) {
+            logger.debug(`workflow.startjob buildTargetList: creating CDFDeviceTargets, cdfDeviceTargets: ${JSON.stringify(cdfDeviceTargets)}`);
+            const result = await this.assetLibraryDeviceClient.getDevicesByID(cdfDeviceTargets, false, [], []);
+            for(const device of result.results) {
                 if (device.awsIotThingArn) {
                     awsThingTargets.push(device.awsIotThingArn);
                 }
@@ -291,10 +234,10 @@ export class StartJobAction implements WorkflowAction {
 
         // if the no. devices is greater than the available slots we have, they need flattening into an ephemeral group
         const maxDevices = this.maxTargets - awsGroupTargets.length;
-        if (awsThingTargets.length > maxDevices) {
+        if (awsThingTargets.length>maxDevices) {
             const ephemeralGroupArn = await this.buildEphemeralGroup(commandId, awsThingTargets);
             awsGroupTargets.push(ephemeralGroupArn);
-            awsThingTargets = [];
+            awsThingTargets=[];
         }
 
         // what we have left should be the list of thing and group arns.  one final step, make sure they're unique
@@ -304,60 +247,43 @@ export class StartJobAction implements WorkflowAction {
         return jobTargets;
     }
 
-    public ___testonly___buildEphemeralGroup(
-        commandId: string,
-        awsThingTargets: string[]
-    ): Promise<string> {
+    public ___testonly___buildEphemeralGroup(commandId:string, awsThingTargets:string[]): Promise<string> {
         return this.buildEphemeralGroup(commandId, awsThingTargets);
     }
 
-    private async buildEphemeralGroup(
-        commandId: string,
-        awsThingTargets: string[]
-    ): Promise<string> {
-        logger.debug(
-            `workflow.startjob buildEphemeralGroup: commandId:${commandId},  awsThingTargets:${awsThingTargets}`
-        );
+    private async buildEphemeralGroup(commandId:string, awsThingTargets:string[]): Promise<string> {
+        logger.debug(`workflow.startjob buildEphemeralGroup: commandId:${commandId},  awsThingTargets:${awsThingTargets}`);
 
         // create the new group
         const thingGroupName = `ephemeral-${commandId}`;
-        const thingGroupResponse = await this._iot.createThingGroup({ thingGroupName }).promise();
+        const thingGroupResponse = await this._iot.createThingGroup({thingGroupName}).promise();
 
         // add the target things to the group
-        const params: BulkProvisionThingsRequest = {
+        const params:BulkProvisionThingsRequest = {
             provisioningTemplateId: process.env.TEMPLATES_ADDTHINGTOGROUP,
-            parameters: awsThingTargets.map((thing) => ({
-                ThingName: thing,
-                ThingGroupName: thingGroupName,
-            })),
+            parameters: awsThingTargets.map(thing=> ({ThingName:thing, ThingGroupName:thingGroupName}))
         };
-
+        
         // wait until the task is complete
         let task = await this.thingsService.bulkProvisionThings(params);
         task = await this.thingsService.getBulkProvisionTask(task.taskId);
-        while (task.status !== 'Completed') {
-            if (
-                task.status === 'Failed' ||
-                task.status === 'Cancelled' ||
-                task.status === 'Cancelling'
-            ) {
-                throw new Error('EPHEMERAL_GROUP_CREATION_FAILURE');
+        while (task.status!=='Completed') {
+            if (task.status==='Failed' || task.status==='Cancelled' || task.status==='Cancelling') {
+                throw new Error ('EPHEMERAL_GROUP_CREATION_FAILURE');
             }
-            await new Promise((resolve) => setTimeout(resolve, 2500));
+            await new Promise((resolve) => setTimeout(resolve,2500));
             task = await this.thingsService.getBulkProvisionTask(task.taskId);
         }
 
-        logger.debug(
-            `workflow.startjob buildEphemeralGroup: exit:${thingGroupResponse.thingGroupArn}`
-        );
+        logger.debug(`workflow.startjob buildEphemeralGroup: exit:${thingGroupResponse.thingGroupArn}`);
         return thingGroupResponse.thingGroupArn;
     }
 
-    public ___testonly___getTargetType(target: string): TargetType {
+    public ___testonly___getTargetType(target:string): TargetType {
         return this.getTargetType(target);
     }
 
-    private getTargetType(target: string): TargetType {
+    private getTargetType(target:string): TargetType {
         // arn:aws:iot:us-east-1:xxxxxxxxxxxx:thing/MyLightBulb
         if (target.startsWith('arn:aws:iot:')) {
             const elements = target.split(':');
@@ -375,72 +301,53 @@ export class StartJobAction implements WorkflowAction {
     }
 
     private isDevice(arg: unknown): arg is Device10Resource {
-        return arg && arg['deviceId'] && typeof arg['deviceId'] === 'string';
+        return arg && arg['deviceId'] && typeof(arg['deviceId']) === 'string';
     }
 
-    private async buildCommand(
-        existing: CommandModel,
-        updated: CommandModel
-    ): Promise<[CommandModel, TemplateModel]> {
-        logger.debug(
-            `workflow.startjob buildCommand: existing:${JSON.stringify(
-                existing
-            )}, updated:${JSON.stringify(updated)}`
-        );
+
+    private async buildCommand(existing:CommandModel, updated:CommandModel) : Promise<[CommandModel, TemplateModel]> {
+        logger.debug(`workflow.startjob buildCommand: existing:${JSON.stringify(existing)}, updated:${JSON.stringify(updated)}`);
 
         // merge the existing command with the updated
-        const merged: CommandModel = { ...existing, ...updated };
+        const merged:CommandModel = {...existing, ...updated};
 
         // retrieve the template for the command
         const template = await this.templatesService.get(merged.templateId);
 
         // merge template config (command config overrides template config)
         if (merged.abortConfig) {
-            merged.abortConfig = { ...template.abortConfig, ...merged.abortConfig };
+            merged.abortConfig = {...template.abortConfig, ...merged.abortConfig};
         } else {
             merged.abortConfig = template.abortConfig;
         }
         if (merged.jobExecutionsRolloutConfig) {
-            merged.jobExecutionsRolloutConfig = {
-                ...template.jobExecutionsRolloutConfig,
-                ...merged.jobExecutionsRolloutConfig,
-            };
+            merged.jobExecutionsRolloutConfig = {...template.jobExecutionsRolloutConfig, ...merged.jobExecutionsRolloutConfig};
         } else {
             merged.jobExecutionsRolloutConfig = template.jobExecutionsRolloutConfig;
         }
         if (merged.timeoutConfig) {
-            merged.timeoutConfig = { ...template.timeoutConfig, ...merged.timeoutConfig };
+            merged.timeoutConfig = {...template.timeoutConfig, ...merged.timeoutConfig};
         } else {
             merged.timeoutConfig = template.timeoutConfig;
         }
-        logger.debug(
-            `workflow.startjob buildCommand: exit: ${JSON.stringify([merged, template])}`
-        );
-        return [merged, template];
+        logger.debug(`workflow.startjob buildCommand: exit: ${JSON.stringify([merged, template])}`);
+        return [merged,template];
     }
 
-    private assembleCreateJobRequest(
-        jobTargets: string[],
-        template: TemplateModel,
-        command: CommandModel
-    ): AWS.Iot.CreateJobRequest {
-        logger.debug(
-            `workflow.startjob assembleCreateJobRequest: in: jobTargets:${JSON.stringify(
-                jobTargets
-            )}, template:${JSON.stringify(template)}, command:${JSON.stringify(jobTargets)}`
-        );
+    private assembleCreateJobRequest(jobTargets:string[], template:TemplateModel, command:CommandModel) : AWS.Iot.CreateJobRequest {
+        logger.debug(`workflow.startjob assembleCreateJobRequest: in: jobTargets:${JSON.stringify(jobTargets)}, template:${JSON.stringify(template)}, command:${JSON.stringify(jobTargets)}`);
         const params: AWS.Iot.CreateJobRequest = {
             jobId: `cdf-${command.commandId}`,
             targets: jobTargets,
             document: template.document,
-            targetSelection: command.type,
+            targetSelection: command.type
         };
 
         if (template.presignedUrlExpiresInSeconds) {
             params.presignedUrlConfig = {
                 expiresInSec: template.presignedUrlExpiresInSeconds,
-                roleArn: this.s3RoleArn,
-            };
+                roleArn: this.s3RoleArn
+            }
         }
 
         if (command.abortConfig) {
@@ -453,16 +360,12 @@ export class StartJobAction implements WorkflowAction {
             params.timeoutConfig = command.timeoutConfig;
         }
 
-        logger.debug(
-            `workflow.startjob assembleCreateJobRequest: exit: ${JSON.stringify(params)}`
-        );
+        logger.debug(`workflow.startjob assembleCreateJobRequest: exit: ${JSON.stringify(params)}`);
         return params;
     }
+
 }
 
 export const enum TargetType {
-    awsIotThing,
-    awsIotGroup,
-    cdfDevice,
-    cdfGroup,
+    awsIotThing, awsIotGroup, cdfDevice, cdfGroup
 }

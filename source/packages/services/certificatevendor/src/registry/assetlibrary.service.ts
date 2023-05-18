@@ -11,27 +11,24 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { injectable, inject } from 'inversify';
-import { logger } from '../utils/logger';
+import {logger} from '../utils/logger';
 import ow from 'ow';
 import {
     DevicesService,
     Device10Resource,
     ASSETLIBRARY_CLIENT_TYPES,
-} from '@aws-solutions/cdf-assetlibrary-client';
+} from '@awssolutions/cdf-assetlibrary-client';
 import { RegistryManager } from './registry.interfaces';
 
 @injectable()
 export class AssetLibraryRegistryManager implements RegistryManager {
+
     constructor(
         @inject('defaults.device.status.success.key') private successStatusKey: string,
         @inject('defaults.device.status.success.value') private successStatusValue: string,
-        @inject(ASSETLIBRARY_CLIENT_TYPES.DevicesService) private devices: DevicesService
-    ) {}
+        @inject(ASSETLIBRARY_CLIENT_TYPES.DevicesService) private devices:DevicesService) {}
 
-    public async isWhitelisted(
-        deviceId: string,
-        _attributes?: { [key: string]: string | number | boolean }
-    ): Promise<boolean> {
+    public async isWhitelisted(deviceId:string, _attributes?:{ [key: string] : string | number | boolean }) : Promise<boolean> {
         logger.debug(`registry.assetLibrary isWhitelisted: in: deviceId:${deviceId}`);
 
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
@@ -40,10 +37,10 @@ export class AssetLibraryRegistryManager implements RegistryManager {
 
         try {
             const device = await this.devices.getDeviceByID(deviceId);
-            whitelisted = device !== undefined;
+            whitelisted = (device!==undefined);
         } catch (err) {
             logger.debug(`registry.assetLibrary isWhitelisted: err:${err}`);
-            if (err.message === 'Not Found') {
+            if (err.message==='Not Found') {
                 return false;
             } else {
                 throw new Error('UNABLE_TO_CHECK_WHITELIST');
@@ -56,27 +53,24 @@ export class AssetLibraryRegistryManager implements RegistryManager {
         return whitelisted;
     }
 
-    public async updateAssetStatus(deviceId: string): Promise<void> {
+    public async updateAssetStatus(deviceId:string) : Promise<void> {
         logger.debug(`certificates.service updateAssetStatus: in: deviceId:${deviceId}`);
 
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
 
-        if (this.successStatusKey === undefined || this.successStatusKey === null) {
-            logger.warn(
-                'certificates.service updateAssetStatus: exit: successStatusKey not set, therefore not updating asset library'
-            );
+        if (this.successStatusKey===undefined || this.successStatusKey === null) {
+            logger.warn('certificates.service updateAssetStatus: exit: successStatusKey not set, therefore not updating asset library');
             return;
         }
 
-        if (this.successStatusValue === undefined || this.successStatusValue === null) {
-            logger.warn(
-                'certificates.service updateAssetStatus: exit: successStatusValue not set, therefore not updating asset library'
-            );
+        if (this.successStatusValue===undefined || this.successStatusValue === null) {
+            logger.warn('certificates.service updateAssetStatus: exit: successStatusValue not set, therefore not updating asset library');
             return;
         }
 
-        const device: Device10Resource = {
-            attributes: {},
+        const device:Device10Resource = {
+            attributes: {
+            }
         };
         device.attributes[this.successStatusKey] = this.successStatusValue;
 
@@ -89,4 +83,5 @@ export class AssetLibraryRegistryManager implements RegistryManager {
 
         logger.debug('certificates.service updateAssetStatus: exit:');
     }
+
 }

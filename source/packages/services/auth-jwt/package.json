@@ -1,5 +1,5 @@
 {
-  "name": "@aws-solutions/cdf-auth-jwt",
+  "name": "@awssolutions/cdf-auth-jwt",
   "version": "0.0.0",
   "description": "API Gateway lambda authorizer that verifies JWT tokens.",
   "author": "Dean Hart",
@@ -17,8 +17,8 @@
 
   },
   "dependencies": {
-    "@aws-solutions/cdf-errors": "^0.0.0",
-    "@aws-solutions/cdf-config-inject": "^0.0.0",
+    "@awssolutions/cdf-errors": "^0.0.0",
+    "@awssolutions/cdf-config-inject": "^0.0.0",
     "axios": "0.21.2",
     "js-yaml": "4.1.0",
     "jsonwebtoken": "8.5.1",

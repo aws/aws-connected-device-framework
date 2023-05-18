@@ -10,134 +10,134 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { SearchRequestModel } from '@aws-solutions/cdf-assetlibrary-client';
+import { SearchRequestModel } from '@awssolutions/cdf-assetlibrary-client';
 
 export interface NewMessageResource {
-    commandId: string;
-    payloadParamValues?: TokenValues;
-    targets?: Targets;
+	commandId: string;
+	payloadParamValues?: TokenValues;
+	targets?: Targets;
 }
 export interface MessageResource extends NewMessageResource {
-    id?: string;
-    status?: MessageStatus;
-    createdAt?: Date;
-    updatedAt?: Date;
+	id?: string;
+	status?: MessageStatus
+	createdAt?: Date;
+	updatedAt?: Date;
 }
 
 export interface MessageItem {
-    id?: string;
-    commandId: string;
-    payloadParamValues?: TokenValues;
-    targets?: Targets;
+	id?: string;
+	commandId: string;
+	payloadParamValues?: TokenValues;
+	targets?: Targets;
 
-    status?: MessageStatus;
-    statusMessage?: string;
+	status?: MessageStatus
+	statusMessage?: string;
 
-    resolvedTargets?: Recipient[];
+	resolvedTargets?: Recipient[];
 
-    batchesTotal?: number;
-    batchesComplete?: number;
+	batchesTotal?: number;
+	batchesComplete?: number;
 
-    createdAt?: number;
-    updatedAt?: number;
+	createdAt?: number;
+	updatedAt?: number;
 }
 
 export interface Targets {
-    awsIoT?: {
-        thingNames?: string[];
-        thingGroups?: {
-            name: string;
-            expand?: boolean;
-        }[];
-    };
-    assetLibrary?: {
-        deviceIds?: string[];
-        groupPaths?: string[];
-        query?: SearchRequestModel;
-    };
+	awsIoT?: {
+		thingNames?: string[];
+		thingGroups?: {
+			name: string;
+			expand?: boolean
+		}[];
+	},
+	assetLibrary?: {
+		deviceIds?: string[];
+		groupPaths?: string[];
+		query?: SearchRequestModel
+	}
 }
 
 export type ResolvedTargetStatus = 'pending' | 'success' | 'failed';
 
 export interface Recipient {
-    id: string;
-    type: 'thing' | 'thingGroup';
-    status: ResolvedTargetStatus;
-    statusMessage?: string;
-    correlationId?: string;
-    jobId?: string;
+	id: string;
+	type: 'thing' | 'thingGroup'
+	status: ResolvedTargetStatus;
+	statusMessage?: string;
+	correlationId?: string;
+	jobId?: string;
 }
 
 export interface RecipientList {
-    recipients: Recipient[];
-    pagination?: {
-        lastEvaluated?: {
-            thingName: string;
-        };
-        count?: number;
-    };
+	recipients: Recipient[];
+	pagination?: {
+		lastEvaluated?: {
+			thingName: string
+		},
+		count?: number,
+	};
 }
 
 export interface ReplyResource {
-    receivedAt: Date;
-    action: string;
-    payload: unknown;
+	receivedAt: Date;
+	action: string;
+	payload: unknown;
 }
 
 export interface ReplyItem {
-    receivedAt: Date;
-    action: string;
-    payload: unknown;
+	receivedAt: Date;
+	action: string;
+	payload: unknown;
 
-    pk?: string;
-    sk?: string;
+	pk?: string;
+	sk?: string;
 }
 
 export interface ReplyResourceList {
-    replies: ReplyResource[];
-    pagination?: {
-        lastEvaluated?: {
-            receivedAt: number;
-        };
-        count?: number;
-    };
+	replies: ReplyResource[];
+	pagination?: {
+		lastEvaluated?: {
+			receivedAt: number
+		},
+		count?: number,
+	};
 }
 
 export type MessageStatus =
-    | 'identifying_targets'
-    | 'sending'
-    | 'awaiting_replies'
-    | 'success'
-    | 'failed';
+	'identifying_targets' |
+	'sending' |
+	'awaiting_replies' |
+	'success' |
+	'failed';
 
 export interface TokenValues {
-    [key: string]: string | number | boolean;
+	[key: string]: string | number | boolean;
 }
 
 export interface MessageResourceList {
-    messages: MessageResource[];
-    pagination?: {
-        lastEvaluated?: {
-            createdAt: number;
-        };
-        count?: number;
-    };
+	messages: MessageResource[];
+	pagination?: {
+		lastEvaluated?: {
+			createdAt: number
+		},
+		count?: number,
+	};
 }
 
 export type MessageListPaginationKey = {
-    createdAt: number;
-};
+	createdAt: number;
+}
 
 export type RecipientListPaginationKey = {
-    targetName: string;
-};
+	targetName: string;
+}
 
 export type RecipientType = 'thing' | 'thingGroup';
 
 export type ReplyListPaginationKey = {
-    receivedAt: number;
-};
+	receivedAt: number;
+}
 export interface TaskBatchProgress {
-    complete: number;
-    total: number;
+	complete: number;
+	total: number;
 }

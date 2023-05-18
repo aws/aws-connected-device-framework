@@ -15,7 +15,7 @@ import {
     Events,
     EventsService,
     ObjectEventsRequest,
-} from '@aws-solutions/cdf-assetlibraryhistory-client';
+} from '@awssolutions/cdf-assetlibraryhistory-client';
 import { DataTable, Then, When, setDefaultTimeout } from '@cucumber/cucumber';
 import { fail } from 'assert';
 import { expect, use } from 'chai';
@@ -44,97 +44,89 @@ const RESULTS = 'results';
 // tslint:disable:no-invalid-this
 // tslint:disable:only-arrow-functions
 
-const eventsService: EventsService = container.get(ASSETLIBRARYHISTORY_CLIENT_TYPES.EventsService);
-function getAdditionalHeaders(world: unknown): Dictionary {
-    return {
-        Authorization: world[AUTHORIZATION_TOKEN],
+const eventsService:EventsService = container.get(ASSETLIBRARYHISTORY_CLIENT_TYPES.EventsService);
+function getAdditionalHeaders(world:unknown) : Dictionary {
+    return  {
+        Authorization: world[AUTHORIZATION_TOKEN]
     };
 }
 
-When(
-    'I retrieve {int} history records for {word} {string}',
-    async function (qty: number, category: string, objectId: string) {
-        try {
-            const params: ObjectEventsRequest = {
-                category: `${category}s`,
-                objectId,
-                limit: qty,
-            };
-            const r = await eventsService.listObjectEvents(params, getAdditionalHeaders(this));
-            this[RESULTS] = r;
-            expect(r.events.length).eq(qty);
-        } catch (err) {
-            this[RESPONSE_STATUS] = err.status;
-            fail(`Expected response, instead: ${err}`);
+When('I retrieve {int} history records for {word} {string}', async function ( qty:number, category:string, objectId:string) {
+
+    try {
+        const params:ObjectEventsRequest = {
+            category: `${category}s`,
+            objectId,
+            limit: qty
+        };
+        const r = await eventsService.listObjectEvents(params, getAdditionalHeaders(this));
+        this[RESULTS]=r;
+        expect(r.events.length).eq(qty);
+    } catch (err) {
+        this[RESPONSE_STATUS]=err.status;
+        fail(`Expected response, instead: ${err}`);
+    }
+});
+
+When('I retrieve next {int} history records for {word} {string}', async function ( qty:number, category:string, objectId:string) {
+
+    const token = (this[RESULTS] as Events).pagination.token;
+
+    try {
+        const params:ObjectEventsRequest = {
+            category: `${category}s`,
+            objectId,
+            token,
+            limit: qty
+        };
+        const r = await eventsService.listObjectEvents(params, getAdditionalHeaders(this));
+        this[RESULTS]=r;
+        expect(r.events.length).eq(qty);
+    } catch (err) {
+        this[RESPONSE_STATUS]=err.status;
+        fail(`Expected response, instead: ${err}`);
+    }
+});
+
+Then('{int} history records exist since the test started for {word} {string}', async function (qty:number, category:string, objectId:string) {
+
+    try {
+        const params:ObjectEventsRequest = {
+            category: `${category}s`,
+            objectId,
+            timeFrom: this[TIME_SCENARIO_STARTED]
+        };
+        const r = await eventsService.listObjectEvents(params, getAdditionalHeaders(this));
+        this[RESULTS]=r;
+        expect(r.events.length).eq(qty);
+    } catch (err) {
+        this[RESPONSE_STATUS]=err.status;
+        fail(`Expected response, instead: ${err}`);
+    }
+});
+
+ // This hook removes auth metadata from checks. This allows tests to work with auth enabled or disabled.
+ Then('history record {int} contains attributes ignoring auth metadata', async function (index: number, data: DataTable) {
+
+    const d = data.rowsHash();
+
+    const e:Events = this[RESULTS];
+    expect(e.events.length).gte(index-1);
+
+    const r = (this[RESULTS] as Events).events[index-1];
+
+    Object.keys(d).forEach( key => {
+        const val = d[key];
+        if (val.startsWith('{') || val.startsWith('[')) {
+            expect(stringify(r[key]).replace(',"isAuthCheck":true', '')).eq(
+                stringify(JSON.parse(val)).replace(',"isAuthCheck":true', '')
+            );
+        } else if (val==='___null___') {
+            expect(r[key]).eq(null);
+        } else if (val==='___undefined___') {
+            expect(r[key]).eq(undefined);
+        } else {
+            expect(r[key]).eq( val);
         }
-    }
-);
-
-When(
-    'I retrieve next {int} history records for {word} {string}',
-    async function (qty: number, category: string, objectId: string) {
-        const token = (this[RESULTS] as Events).pagination.token;
-
-        try {
-            const params: ObjectEventsRequest = {
-                category: `${category}s`,
-                objectId,
-                token,
-                limit: qty,
-            };
-            const r = await eventsService.listObjectEvents(params, getAdditionalHeaders(this));
-            this[RESULTS] = r;
-            expect(r.events.length).eq(qty);
-        } catch (err) {
-            this[RESPONSE_STATUS] = err.status;
-            fail(`Expected response, instead: ${err}`);
-        }
-    }
-);
-
-Then(
-    '{int} history records exist since the test started for {word} {string}',
-    async function (qty: number, category: string, objectId: string) {
-        try {
-            const params: ObjectEventsRequest = {
-                category: `${category}s`,
-                objectId,
-                timeFrom: this[TIME_SCENARIO_STARTED],
-            };
-            const r = await eventsService.listObjectEvents(params, getAdditionalHeaders(this));
-            this[RESULTS] = r;
-            expect(r.events.length).eq(qty);
-        } catch (err) {
-            this[RESPONSE_STATUS] = err.status;
-            fail(`Expected response, instead: ${err}`);
-        }
-    }
-);
-
-// This hook removes auth metadata from checks. This allows tests to work with auth enabled or disabled.
-Then(
-    'history record {int} contains attributes ignoring auth metadata',
-    async function (index: number, data: DataTable) {
-        const d = data.rowsHash();
-
-        const e: Events = this[RESULTS];
-        expect(e.events.length).gte(index - 1);
-
-        const r = (this[RESULTS] as Events).events[index - 1];
-
-        Object.keys(d).forEach((key) => {
-            const val = d[key];
-            if (val.startsWith('{') || val.startsWith('[')) {
-                expect(stringify(r[key]).replace(',"isAuthCheck":true', '')).eq(
-                    stringify(JSON.parse(val)).replace(',"isAuthCheck":true', '')
-                );
-            } else if (val === '___null___') {
-                expect(r[key]).eq(null);
-            } else if (val === '___undefined___') {
-                expect(r[key]).eq(undefined);
-            } else {
-                expect(r[key]).eq(val);
-            }
-        });
-    }
-);
+    });
+});

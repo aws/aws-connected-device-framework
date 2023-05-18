@@ -1,5 +1,5 @@
 {
-  "name": "@aws-solutions/cdf-express-middleware",
+  "name": "@awssolutions/cdf-express-middleware",
   "version": "0.0.0",
   "description": "REST API Express middleware",
   "author": "Dean Hart",

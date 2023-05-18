@@ -10,7 +10,7 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { LAMBDAINVOKE_TYPES, LambdaInvokerService } from '@aws-solutions/cdf-lambda-invoke';
+import { LAMBDAINVOKE_TYPES, LambdaInvokerService } from '@awssolutions/cdf-lambda-invoke';
 import { ContainerModule, decorate, injectable, interfaces } from 'inversify';
 import { DevicesApigwService } from '../client/devices.apigw.service';
 import { DevicesLambdaService } from '../client/devices.lambda.service';

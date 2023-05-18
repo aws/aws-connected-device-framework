@@ -10,32 +10,29 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { inject, injectable } from 'inversify';
+import {inject, injectable} from 'inversify';
 import ow from 'ow';
-import { TemplateModel } from './templates.models';
-import { RequestHeaders } from './commands.model';
-import { TemplatesService, TemplatesServiceBase } from './templates.service';
+import {TemplateModel} from './templates.models';
+import {RequestHeaders} from './commands.model';
+import {TemplatesService, TemplatesServiceBase} from './templates.service';
 import {
     LambdaApiGatewayEventBuilder,
     LAMBDAINVOKE_TYPES,
     LambdaInvokerService,
-} from '@aws-solutions/cdf-lambda-invoke';
+} from '@awssolutions/cdf-lambda-invoke';
 
 @injectable()
 export class TemplatesLambdaService extends TemplatesServiceBase implements TemplatesService {
-    private functionName: string;
+
+    private functionName : string;
     constructor(
-        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService)
-        private lambdaInvoker: LambdaInvokerService
+        @inject(LAMBDAINVOKE_TYPES.LambdaInvokerService) private lambdaInvoker: LambdaInvokerService
     ) {
         super();
         this.lambdaInvoker = lambdaInvoker;
         this.functionName = process.env.COMMANDS_API_FUNCTION_NAME;
     }
-    async createTemplate(
-        template: TemplateModel,
-        additionalHeaders?: RequestHeaders
-    ): Promise<void> {
+    async createTemplate(template: TemplateModel, additionalHeaders?: RequestHeaders): Promise<void> {
         ow(template, ow.object.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
@@ -47,11 +44,8 @@ export class TemplatesLambdaService extends TemplatesServiceBase implements Temp
         await this.lambdaInvoker.invoke(this.functionName, event);
     }
 
-    async getTemplate(
-        templateId: string,
-        additionalHeaders?: RequestHeaders
-    ): Promise<TemplateModel> {
-        ow(templateId, 'templateId', ow.string.nonEmpty);
+    async getTemplate(templateId: string, additionalHeaders?: RequestHeaders): Promise<TemplateModel> {
+        ow(templateId,'templateId', ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.templateRelativeUrl(templateId))
@@ -60,9 +54,11 @@ export class TemplatesLambdaService extends TemplatesServiceBase implements Temp
 
         const res = await this.lambdaInvoker.invoke(this.functionName, event);
         return res.body;
+
     }
 
     async listTemplates(additionalHeaders?: RequestHeaders): Promise<TemplateModel> {
+
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.templatesRelativeUrl())
             .setMethod('GET')
@@ -72,10 +68,7 @@ export class TemplatesLambdaService extends TemplatesServiceBase implements Temp
         return res.body;
     }
 
-    async updateTemplate(
-        template: TemplateModel,
-        additionalHeaders?: RequestHeaders
-    ): Promise<void> {
+    async updateTemplate(template: TemplateModel, additionalHeaders?: RequestHeaders): Promise<void> {
         ow(template, ow.object.nonEmpty);
         ow(template.templateId, ow.string.nonEmpty);
 
@@ -90,7 +83,7 @@ export class TemplatesLambdaService extends TemplatesServiceBase implements Temp
     }
 
     async deleteTemplate(templateId: string, additionalHeaders?: RequestHeaders): Promise<void> {
-        ow(templateId, 'templateId', ow.string.nonEmpty);
+        ow(templateId,'templateId', ow.string.nonEmpty);
 
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.templateRelativeUrl(templateId))
@@ -99,4 +92,5 @@ export class TemplatesLambdaService extends TemplatesServiceBase implements Temp
 
         await this.lambdaInvoker.invoke(this.functionName, event);
     }
+
 }

@@ -1,5 +1,5 @@
 {
-  "name": "@aws-solutions/cdf-logger",
+  "name": "@awssolutions/cdf-logger",
   "description": "Common logging capability for platform.",
   "version": "0.0.0",
   "author": "Atul Bargaje <atulbar@amazon.com>",

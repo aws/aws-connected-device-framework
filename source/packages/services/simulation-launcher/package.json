@@ -1,5 +1,5 @@
 {
-  "name": "@aws-solutions/cdf-simulation-launcher",
+  "name": "@awssolutions/cdf-simulation-launcher",
   "version": "0.0.0",
   "description": "CDF Device Simulator: Simulation launcher",
   "scripts": {
@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "aws-sdk": "2.1048.0",
-    "@aws-solutions/cdf-config-inject": "^0.0.0",
+    "@awssolutions/cdf-config-inject": "^0.0.0",
     "js-yaml": "3.13.1",
     "logform": "2.4.2",
     "ow": "0.17.0",
@@ -27,7 +27,7 @@
     "dotenv": "^8.2.0"
   },
   "devDependencies": {
-    "@aws-solutions/cdf-lambda-zip": "^0.0.0",
+    "@awssolutions/cdf-lambda-zip": "^0.0.0",
     "@rushstack/eslint-config": "2.3.1",
     "@types/jest": "26.0.18",
     "@typescript-eslint/eslint-plugin": "4.9.1",

@@ -2,7 +2,7 @@ import {
     AccountResource,
     AccountsService,
     ORGMANLIBRARY_CLIENT_TYPES,
-} from '@aws-solutions/cdf-organizationmanager-client';
+} from '@awssolutions/cdf-organizationmanager-client';
 import { fail } from 'assert';
 import { expect } from 'chai';
 import { Given, DataTable, Then, When } from '@cucumber/cucumber';

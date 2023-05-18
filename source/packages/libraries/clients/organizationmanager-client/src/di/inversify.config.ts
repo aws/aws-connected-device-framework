@@ -13,7 +13,7 @@
 import 'reflect-metadata';
 import '../config/env';
 import { ORGMANLIBRARY_CLIENT_TYPES } from './types';
-import { LAMBDAINVOKE_TYPES, LambdaInvokerService } from '@aws-solutions/cdf-lambda-invoke';
+import { LAMBDAINVOKE_TYPES, LambdaInvokerService } from '@awssolutions/cdf-lambda-invoke';
 import AWS = require('aws-sdk');
 import { ContainerModule, decorate, injectable, interfaces } from 'inversify';
 import { AccountsService } from '../client/accounts.service';
@@ -33,44 +33,34 @@ export const organizationManagerContainerModule = new ContainerModule(
         isBound: interfaces.IsBound,
         _rebind: interfaces.Rebind
     ) => {
+
         if (process.env.ORGANIZATIONMANAGER_MODE === 'lambda') {
-            bind<AccountsService>(ORGMANLIBRARY_CLIENT_TYPES.AccountsService).to(
-                AccountsLambdaService
-            );
-            bind<OrganizationalUnitsService>(
-                ORGMANLIBRARY_CLIENT_TYPES.OrganizationalUnitsService
-            ).to(OrganizationalUnitsLambdaService);
-            bind<BulkComponentsService>(ORGMANLIBRARY_CLIENT_TYPES.BulkComponentsService).to(
-                BulkComponentsLambdaService
-            );
+            bind<AccountsService>(ORGMANLIBRARY_CLIENT_TYPES.AccountsService).to(AccountsLambdaService);
+            bind<OrganizationalUnitsService>(ORGMANLIBRARY_CLIENT_TYPES.OrganizationalUnitsService).to(OrganizationalUnitsLambdaService);
+            bind<BulkComponentsService>(ORGMANLIBRARY_CLIENT_TYPES.BulkComponentsService).to(BulkComponentsLambdaService);
+
 
             if (!isBound(LAMBDAINVOKE_TYPES.LambdaInvokerService)) {
-                bind<LambdaInvokerService>(LAMBDAINVOKE_TYPES.LambdaInvokerService).to(
-                    LambdaInvokerService
-                );
+                bind<LambdaInvokerService>(LAMBDAINVOKE_TYPES.LambdaInvokerService).to(LambdaInvokerService);
                 decorate(injectable(), AWS.Lambda);
-                bind<interfaces.Factory<AWS.Lambda>>(
-                    LAMBDAINVOKE_TYPES.LambdaFactory
-                ).toFactory<AWS.Lambda>((ctx: interfaces.Context) => {
-                    return () => {
-                        if (!isBound(LAMBDAINVOKE_TYPES.Lambda)) {
-                            const lambda = new AWS.Lambda({ region: process.env.AWS_REGION });
-                            bind<AWS.Lambda>(LAMBDAINVOKE_TYPES.Lambda).toConstantValue(lambda);
-                        }
-                        return ctx.container.get<AWS.Lambda>(LAMBDAINVOKE_TYPES.Lambda);
-                    };
-                });
+                bind<interfaces.Factory<AWS.Lambda>>(LAMBDAINVOKE_TYPES.LambdaFactory)
+                    .toFactory<AWS.Lambda>((ctx: interfaces.Context) => {
+                        return () => {
+
+                            if (!isBound(LAMBDAINVOKE_TYPES.Lambda)) {
+                                const lambda = new AWS.Lambda({ region: process.env.AWS_REGION });
+                                bind<AWS.Lambda>(LAMBDAINVOKE_TYPES.Lambda).toConstantValue(lambda);
+                            }
+                            return ctx.container.get<AWS.Lambda>(LAMBDAINVOKE_TYPES.Lambda);
+                        };
+                    });
             }
+
         } else {
-            bind<AccountsService>(ORGMANLIBRARY_CLIENT_TYPES.AccountsService).to(
-                AccountsApigwService
-            );
-            bind<OrganizationalUnitsService>(
-                ORGMANLIBRARY_CLIENT_TYPES.OrganizationalUnitsService
-            ).to(OrganizationalUnitsApigwService);
-            bind<BulkComponentsService>(ORGMANLIBRARY_CLIENT_TYPES.BulkComponentsService).to(
-                BulkComponentsApigwService
-            );
+            bind<AccountsService>(ORGMANLIBRARY_CLIENT_TYPES.AccountsService).to(AccountsApigwService);
+            bind<OrganizationalUnitsService>(ORGMANLIBRARY_CLIENT_TYPES.OrganizationalUnitsService).to(OrganizationalUnitsApigwService);
+            bind<BulkComponentsService>(ORGMANLIBRARY_CLIENT_TYPES.BulkComponentsService).to(BulkComponentsApigwService);
         }
     }
 );
+

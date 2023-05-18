@@ -15,69 +15,56 @@ import {
     OrganizationalUnitResource,
     ORGMANLIBRARY_CLIENT_TYPES,
     AccountsService,
-} from '@aws-solutions/cdf-organizationmanager-client';
+} from '@awssolutions/cdf-organizationmanager-client';
 import { Before, setDefaultTimeout } from '@cucumber/cucumber';
 import { container } from '../di/inversify.config';
 
 setDefaultTimeout(30 * 1000);
 
-const testOrganizationalUnits: OrganizationalUnitResource[] = [
-    {
-        id: 'ou-12345',
-        name: 'first ou',
-    },
-    {
-        id: 'ou-99999',
-        name: 'second ou',
-    },
-];
+const testOrganizationalUnits: OrganizationalUnitResource[] = [{
+    id: 'ou-12345',
+    name: 'first ou'
+}, {
+    id: 'ou-99999',
+    name: 'second ou'
+}]
 
-const organizationalUnitsWithComponents: OrganizationalUnitResource[] = [
-    {
-        id: 'ou-55555',
-        name: 'third ou',
-        tags: {
-            createBy: 'cdf',
-        },
-    },
-    {
-        id: 'ou-66666',
-        name: 'fourth ou',
-        tags: {
-            createBy: 'cdf',
-        },
-    },
-];
+const organizationalUnitsWithComponents: OrganizationalUnitResource[] = [{
+    id: 'ou-55555',
+    name: 'third ou',
+    tags: {
+        "createBy": "cdf"
+    }
+},
+{
+    id: 'ou-66666',
+    name: 'fourth ou',
+    tags: {
+        "createBy": "cdf"
+    }
+}]
 
-const testAccounts = ['22222', '33333', '44444'];
+const testAccounts = ['22222', '33333', '44444']
 
-const organizationalUnitService: OrganizationalUnitsService = container.get(
-    ORGMANLIBRARY_CLIENT_TYPES.OrganizationalUnitsService
-);
+const organizationalUnitService: OrganizationalUnitsService = container.get(ORGMANLIBRARY_CLIENT_TYPES.OrganizationalUnitsService);
 const accountsService: AccountsService = container.get(ORGMANLIBRARY_CLIENT_TYPES.AccountsService);
 
 async function tearDown() {
     for (const account of testAccounts) {
-        await accountsService.deleteAccount(account).catch((_err) => {
-            console.log('error');
-        });
+        await accountsService.deleteAccount(account).catch(_err => { console.log('error') })
     }
     for (const ou of testOrganizationalUnits) {
-        await organizationalUnitService.deleteOrganizationalUnit(ou.id).catch((_err) => {
-            console.log('error');
-        });
+        await organizationalUnitService.deleteOrganizationalUnit(ou.id).catch(_err => { console.log('error') })
     }
     for (const ou of organizationalUnitsWithComponents) {
-        await organizationalUnitService.deleteOrganizationalUnit(ou.id).catch((_err) => {
-            console.log('error');
-        });
+        await organizationalUnitService.deleteOrganizationalUnit(ou.id).catch(_err => { console.log('error') })
     }
 }
 
 Before({ tags: '@setup_organizationmanager_feature' }, async function () {
     await tearDown();
     for (const ou of organizationalUnitsWithComponents) {
-        await organizationalUnitService.createOrganizationalUnit(ou);
+        await organizationalUnitService.createOrganizationalUnit(ou)
     }
 });
 

@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 
-import { signClientRequest } from '@aws-solutions/cdf-client-request-signer';
+import { signClientRequest } from '@awssolutions/cdf-client-request-signer';
 import createError from 'http-errors';
 import { injectable } from 'inversify';
 import ow from 'ow';
@@ -22,6 +22,7 @@ import { DevicesService, DevicesServiceBase } from './devices.service';
 
 @injectable()
 export class DevicesApigwService extends DevicesServiceBase implements DevicesService {
+
     private readonly baseUrl: string;
 
     public constructor() {
@@ -29,10 +30,7 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
         this.baseUrl = process.env.GREENGRASS2PROVISIONING_BASE_URL;
     }
 
-    async createDeviceTask(
-        task: NewDeviceTask,
-        additionalHeaders?: RequestHeaders
-    ): Promise<string> {
+    async createDeviceTask(task: NewDeviceTask, additionalHeaders?: RequestHeaders): Promise<string> {
         ow(task, ow.object.nonEmpty);
         ow(task.devices, 'devices', ow.array.nonEmpty);
         ow(task.devices, 'devices', ow.array.nonEmpty);
@@ -77,6 +75,7 @@ export class DevicesApigwService extends DevicesServiceBase implements DevicesSe
                 throw createError(err.response.status, err.response.text);
             });
     }
+
 
     async getDevice(name: string, additionalHeaders?: RequestHeaders): Promise<Device> {
         ow(name, ow.string.nonEmpty);
