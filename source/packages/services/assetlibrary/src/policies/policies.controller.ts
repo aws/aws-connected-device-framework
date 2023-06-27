@@ -79,7 +79,7 @@ export class PoliciesController implements interfaces.Controller {
         }
 
         try {
-            if (typeof type !== "string") {
+            if (type !== undefined && typeof type !== "string") {
                 throw new ArgumentError(`Invalid "type" query: ${JSON.stringify(type)}. Please provided only one "type" query string`)
             }
 

@@ -337,12 +337,10 @@ export class SubscriptionService {
         logger.debug(`subscription.service update: in: updated:${JSON.stringify(updated)}`);
 
         // validate input
-        const { id: subscriptionId, ...rest } = updated;
-        ow(rest, ow.object.nonEmpty);
-        ow(subscriptionId, ow.string.nonEmpty);
+        ow(updated.id, ow.string.nonEmpty);
 
         if (!('enabled' in updated)) {
-            ow(updated.ruleParameterValues, "ruleParameterValues", ow.array.minLength(1))
+            ow(updated.ruleParameterValues, ow.object.nonEmpty);
         }
 
         if (updated.ruleParameterValues === undefined) {

@@ -1754,8 +1754,7 @@ paths:
       parameters:
         - name: type
           in: query
-          description: Policy type to refilterturn
-          required: true
+          description: Policy type to filter return
           schema:
             type: string
         - $ref: '#/components/parameters/offsetQuery'
