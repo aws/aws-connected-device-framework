@@ -193,6 +193,7 @@ export class MessagesService {
 
         if (count) {
             count = Number(count);
+            ow(count, ow.number.greaterThanOrEqual(1));
         }
 
         if (exclusiveStart?.createdAt) {
@@ -213,6 +214,7 @@ export class MessagesService {
 
         if (count) {
             count = Number(count);
+            ow(count, ow.number.greaterThanOrEqual(1));
         }
 
         const result = await this.messagesDao.listRecipients(messageId, exclusiveStart, count);
@@ -247,15 +249,15 @@ export class MessagesService {
         // TODO: retrieve message and recipient concurrently to speed things up
         const message = await this.messagesDao.getMessageById(messageId);
         if (message===undefined) {
-            throw new Error('MESSAGE_NOT_FOUND');
+            throw new Error('NOT_FOUND: Message not found');
         }
         const recipient = await this.messagesDao.getRecipient(messageId, thingName);
         if (recipient===undefined) {
-            throw new Error('RECIPIENT_NOT_FOUND');
+            throw new Error('NOT_FOUND: Recipient not found');
         }
         const command = (await this.commandsDao.get([message.commandId]))?.[0];
         if (command===undefined) {
-            throw new Error('COMMAND_NOT_FOUND');
+            throw new Error('NOT_FOUND: Command not found');
         }
         
         // if the command was SHADOW/TOPIC then we retrieve the replies from our own datastore. But if JOB then we need to retrieve them from the job system.

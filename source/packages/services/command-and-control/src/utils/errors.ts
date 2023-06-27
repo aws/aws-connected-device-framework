@@ -16,8 +16,13 @@ import { logger } from './logger.util';
 export function handleError(e:Error, res:Response): void {
     logger.error(`handleError: ${e}`);
 
-    if (e.name === 'ArgumentError' || e.message.startsWith('MISSING_REQUIRED')
-     || e.message.startsWith('FAILED_VALIDATION') || e.message === 'UNSUPPORTED_TRANSITION' ) {
+    if (
+        e.name === 'ArgumentError' ||
+        e.message.startsWith('MISSING_REQUIRED') ||
+        e.message.startsWith('FAILED_VALIDATION') ||
+        e.message === 'UNSUPPORTED_TRANSITION' ||
+        e.hasOwnProperty('code') && e['code'] === 'ValidationException'
+    ) {
         res.status(400).json({error: e.message}).end();
     } else if (e.message.startsWith('NOT_FOUND')) {
         res.status(404).json({error: e.message}).end();

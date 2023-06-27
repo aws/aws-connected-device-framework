@@ -19,7 +19,8 @@ export function handleError(e:Error, res:Response): void {
     if (
         e.name === 'ArgumentError' ||
         e.message === 'UNSUPPORTED_TARGET_TYPE' ||
-        e.message.startsWith('INVALID_TABLE')
+        e.message.startsWith('INVALID_TABLE') ||
+        (e.hasOwnProperty('code') && ['InvalidParameter', 'ValidationException'].includes(e['code']))
     ) {
         res.status(400).json({ error: e.message }).end();
     } else if (e.message?.endsWith('NOT_FOUND')) {

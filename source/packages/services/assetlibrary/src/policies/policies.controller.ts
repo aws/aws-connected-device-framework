@@ -17,7 +17,7 @@ import { PolicyModel, PolicyListModel } from './policies.models';
 import { PoliciesService } from './policies.service';
 import {TYPES} from '../di/types';
 import {logger} from '../utils/logger';
-import {handleError} from '../utils/errors';
+import {ArgumentError, handleError} from '../utils/errors';
 
 @controller('/policies')
 export class PoliciesController implements interfaces.Controller {
@@ -79,6 +79,10 @@ export class PoliciesController implements interfaces.Controller {
         }
 
         try {
+            if (typeof type !== "string") {
+                throw new ArgumentError(`Invalid "type" query: ${JSON.stringify(type)}. Please provided only one "type" query string`)
+            }
+
             const results = await this.policiesService.listPolicies(type, offset, count);
             r.results=results;
         } catch (e) {

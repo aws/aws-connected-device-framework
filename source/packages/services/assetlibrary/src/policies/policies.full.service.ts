@@ -21,7 +21,7 @@ import { Operation, TypeCategory } from '../types/constants';
 import ow from 'ow';
 import { PoliciesService } from './policies.service';
 import { SchemaValidatorService } from '../types/schemaValidator.full.service';
-import { SchemaValidationError } from '../utils/errors';
+import { NotFoundError, SchemaValidationError } from '../utils/errors';
 
 @injectable()
 export class PoliciesServiceFull implements PoliciesService {
@@ -60,7 +60,13 @@ export class PoliciesServiceFull implements PoliciesService {
     public async create(policy: PolicyModel) : Promise<string> {
         logger.debug(`policies.full.service create: in: model: ${JSON.stringify(policy)}`);
 
-        ow(policy, ow.object.nonEmpty);
+        ow(policy, ow.object.exactShape({
+            policyId: ow.string.nonEmpty,
+            type: ow.string.nonEmpty,
+            description: ow.string,
+            appliesTo: ow.array.ofType(ow.string.nonEmpty),
+            document: ow.string.nonEmpty,
+        }));
         ow(policy.policyId, ow.string.nonEmpty);
         ow(policy.type, ow.string.nonEmpty);
         ow(policy.document, ow.string.nonEmpty);
@@ -99,12 +105,18 @@ export class PoliciesServiceFull implements PoliciesService {
 
         ow(updated, ow.object.nonEmpty);
         ow(updated.policyId, ow.string.nonEmpty);
+        ow(updated.type, ow.string.nonEmpty);
+        ow(updated.appliesTo, ow.array.ofType(ow.string));
 
         // any ids need to be lowercase
         this.setIdsToLowercase(updated);
 
         // Save to datastore
         const existingPolicy = await this.policiesDao.get(updated.policyId);
+        if (existingPolicy === undefined) {
+            throw new NotFoundError(`Policy with id ${updated.policyId} doesn't exist`);
+        }
+
         const existingModel = this.policiesAssembler.toModelFromPolicy(existingPolicy);
 
         const id = await this.policiesDao.update(existingModel, updated);

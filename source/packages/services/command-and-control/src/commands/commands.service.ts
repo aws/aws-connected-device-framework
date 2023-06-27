@@ -76,6 +76,7 @@ export class CommandsService {
 
         if (count) {
             count = Number(count);
+            ow(count, ow.number.greaterThanOrEqual(1));
         }
 
         // if a filter (tags) have been provided then we need to get the list of commands that match the tags. if not we can simply list all

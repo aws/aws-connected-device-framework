@@ -69,7 +69,21 @@ export class SubscriptionService {
                     continue;
                 }
                 if (existingSnsSubscriptions === undefined) {
-                    existingSnsSubscriptions = await this.snsTarget.listSubscriptions(subscription.sns?.topicArn);
+                    try {
+                        existingSnsSubscriptions = await this.snsTarget.listSubscriptions(subscription.sns?.topicArn);
+                    } catch (err) {
+                        if (err.hasOwnProperty('code') && err['code'] === 'NotFound') {
+                            // the listSubscriptions call throws a "NotFound" error if the topic does not exist. 
+                            // in the case where deleting by-user, the topic gets deleted before the deletion of subscriptions gets updated in the dao.
+                            // we catch the error and act like no subscriptions are found on the topic.
+                            // this does not update subscriptions in the dao.
+                            logger.debug(`subscription.service get: assuming subscription delete is in-progress from error: ${JSON.stringify(err)}`);
+                            existingSnsSubscriptions = { Subscriptions: [] };
+                        } else {
+                            throw err;
+                        }
+                        
+                    }
                 }
                 const matches = existingSnsSubscriptions.Subscriptions?.filter(s => s.Endpoint === target.getId());
                 if (matches?.length > 0) {
@@ -323,8 +337,9 @@ export class SubscriptionService {
         logger.debug(`subscription.service update: in: updated:${JSON.stringify(updated)}`);
 
         // validate input
-        ow(updated, ow.object.nonEmpty);
-        ow(updated.id, ow.string.nonEmpty);
+        const { id: subscriptionId, ...rest } = updated;
+        ow(rest, ow.object.nonEmpty);
+        ow(subscriptionId, ow.string.nonEmpty);
 
         if (!('enabled' in updated)) {
             ow(updated.ruleParameterValues, "ruleParameterValues", ow.array.minLength(1))

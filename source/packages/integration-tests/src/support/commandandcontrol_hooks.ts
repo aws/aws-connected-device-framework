@@ -219,8 +219,8 @@ async function deleteThingGroup(thingGroupName: string) {
 }
 
 async function teardown_commandandcontrol_topics_feature() {
-    await createThing('cdf-integration-test-cac-topics-device1');
-    await createThing('cdf-integration-test-cac-topics-device2');
+    await deleteThing('cdf-integration-test-cac-topics-device1');
+    await deleteThing('cdf-integration-test-cac-topics-device2');
 }
 
 Before({ tags: '@setup_commandandcontrol_topics' }, async function () {

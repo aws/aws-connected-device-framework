@@ -275,7 +275,7 @@ export class MessagesDao {
         const siKey2 = createDelimitedAttribute(PkType.Command, commandId);
 
         let exclusiveStartKey: DocumentClient.Key;
-        if (exclusiveStart?.createdAt) {
+        if (exclusiveStart?.createdAt !== undefined) {
             exclusiveStartKey = {
                 siKey2,
                 siSort2: createDelimitedAttribute(PkType.Message, exclusiveStart.createdAt),

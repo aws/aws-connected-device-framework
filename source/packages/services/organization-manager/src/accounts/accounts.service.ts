@@ -283,6 +283,7 @@ export class AccountsService {
         ow(account.ssoFirstName, ow.string.nonEmpty);
         ow(account.ssoLastName, ow.string.nonEmpty);
         ow(account.organizationalUnitId, ow.string.nonEmpty);
+        ow(account.regions, ow.array.nonEmpty);
         ow(account.regions, ow.array.minLength(1));
 
         const { createAccountRequestId, accountId, tags, ...accountItem } = account;
