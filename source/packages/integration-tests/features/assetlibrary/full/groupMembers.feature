@@ -87,12 +87,12 @@ Feature: Group Members
     And group contains group "/test-groupmembers-parent/child2"
 
   # This scenario fails with auth enabled. https://sim.amazon.com/issues/BONNELL-366
-  # Scenario:  Active device members are returned
-  #   Given my authorization is
-  #     | / | * |
-  #   When I retrieve "TEST-groupMembers-deviceLinkableToGroupB" device members of "/TEST-groupMembers-parent"
-  #   Then group contains 1 devices
-  #   And group contains device "test-groupmembers-device002"
+  Scenario:  Active device members are returned
+    Given my authorization is
+      | / | * |
+    When I retrieve "TEST-groupMembers-deviceLinkableToGroupB" device members of "/TEST-groupMembers-parent"
+    Then group contains 1 devices
+    And group contains device "test-groupmembers-device002"
 
 
   @teardown_groupMembers_feature
