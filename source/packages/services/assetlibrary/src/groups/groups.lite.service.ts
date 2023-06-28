@@ -12,7 +12,7 @@
  *********************************************************************************************************************/
 import { injectable, inject } from 'inversify';
 import { GroupItem, BulkGroupsResult, GroupMemberItemList, GroupItemList} from './groups.models';
-import {logger} from '../utils/logger';
+import {logger} from '@awssolutions/simple-cdf-logger';
 import {TypeCategory} from '../types/constants';
 import ow from 'ow';
 import { GroupsService } from './groups.service';

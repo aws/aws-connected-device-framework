@@ -31,7 +31,7 @@ import { TYPES } from '../di/types';
 import { GroupsAssembler } from '../groups/groups.assembler';
 import { GroupResourceList } from '../groups/groups.models';
 import { InvalidQueryStringError, handleError } from '../utils/errors';
-import { logger } from '../utils/logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { DevicesAssembler } from './devices.assembler';
 import { Device10Resource, Device20Resource, DeviceResourceList } from './devices.models';
 import { DevicesService } from './devices.service';

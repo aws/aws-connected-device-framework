@@ -17,7 +17,7 @@ import {
 } from '@awssolutions/cdf-lambda-invoke';
 import { inject, injectable } from 'inversify';
 import { sign } from 'jsonwebtoken';
-import { logger } from '../utils/logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { CustomResource } from './customResource';
 import { CustomResourceEvent } from './customResource.model';
 

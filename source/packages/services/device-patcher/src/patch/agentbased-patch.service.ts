@@ -14,7 +14,7 @@ import ow from 'ow';
 import { inject, injectable } from 'inversify';
 
 import { TYPES } from '../di/types';
-import { logger } from '../utils/logger.util';
+import { logger } from '@awssolutions/simple-cdf-logger';
 
 import { AssociationModel, PatchItem, PatchSource } from './patch.model';
 import { ActivationDao } from '../activation/activation.dao';

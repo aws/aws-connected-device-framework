@@ -14,7 +14,7 @@ import { injectable, inject } from 'inversify';
 import { ProvisioningStepProcessor } from './provisioningStepProcessor';
 import { ProvisioningStepData } from './provisioningStep.model';
 import { CDFProvisioningTemplate, ParamaterReference } from '../templates/template.models';
-import { logger } from '../../utils/logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { TYPES } from '../../di/types';
 import AWS = require('aws-sdk');
 import ow from 'ow';

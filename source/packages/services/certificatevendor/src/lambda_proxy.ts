@@ -10,7 +10,7 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { logger } from './utils/logger';
+import { getRequestIdFromContext, logger, setRequestId } from '@awssolutions/simple-cdf-logger';
 import { handleError } from './utils/errors';
 import {container} from './di/inversify.config';
 import { TYPES } from './di/types';
@@ -22,6 +22,9 @@ let service:CertificateService;
 
 exports.handler = async (event: CertificateRequestModel, _context: unknown) => {
   logger.debug(`handler: event: ${JSON.stringify(event)}`);
+
+  // apply the awsRequestId to the logger so all logs reflect the requestId
+  setRequestId(getRequestIdFromContext(_context));
 
   try {
     ow(event.deviceId, ow.string.nonEmpty);

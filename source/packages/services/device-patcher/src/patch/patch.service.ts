@@ -16,7 +16,7 @@ import {inject, injectable} from 'inversify';
 
 
 import {TYPES} from '../di/types';
-import {logger} from '../utils/logger.util';
+import {logger} from '@awssolutions/simple-cdf-logger';
 
 import {PatchDao} from './patch.dao';
 import {PatchManager} from './patch.manager';

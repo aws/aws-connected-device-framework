@@ -20,7 +20,7 @@ import { v1 as uuid } from 'uuid';
 import pLimit from 'p-limit';
 
 import { TYPES } from '../di/types';
-import { logger } from '../utils/logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { ACMCertificate, CertificateChunkRequest, CertificateInfo, CommonName } from './certificates.models';
 import { CertificatesTaskDao } from './certificatestask.dao';
 
@@ -128,7 +128,7 @@ export class CertificatesService {
         const jszip = new JSZip();
         const certsZip = jszip.folder('certs');
 
-        
+
         const chunkStart = (chunkId - 1) * this.defaultChunkSize;
         const chunkEnd = ((chunkId - 1) * this.defaultChunkSize) + quantity;
 
@@ -157,9 +157,9 @@ export class CertificatesService {
 
         const chunkStart = (chunkId - 1) * this.defaultChunkSize;
         const chunkEnd = ((chunkId - 1) * this.defaultChunkSize) + quantity;
-        
+
         const limit = pLimit(this.acmConcurrencyLimit ?? this._defaultAcmConcurrencyLimit);
-        
+
         for (let i = chunkStart; i < chunkEnd; ++i) {
             promises.push(
                 limit(async () => {
@@ -170,7 +170,7 @@ export class CertificatesService {
         }
 
         const results = await Promise.all(promises);
-        
+
         for(const result of results){
             certsZip.file(`${result.certificateArn}_cert.pem`, result.certificate);
             certsZip.file(`${result.certificateArn}_key.pem`, result.privateKey);
@@ -393,7 +393,7 @@ export class CertificatesService {
     }
 
     private async getACMCertificate(csr: string, certInfo: CertificateInfo, caArn: string): Promise<ACMCertificate> {
-        
+
         const params: AWS.ACMPCA.IssueCertificateRequest = {
             Csr: csr,
             CertificateAuthorityArn: caArn,
@@ -413,11 +413,11 @@ export class CertificatesService {
             };
             params.ApiPassthrough = apiPassthrough
         }
-        
-        
+
+
         const data: AWS.ACMPCA.IssueCertificateResponse = await this._acmpca.issueCertificate(params).promise();
         let cert: AWS.ACMPCA.GetCertificateResponse;
-        
+
         // eslint-disable-next-line no-constant-condition
         while (true) {
             try{
@@ -426,14 +426,14 @@ export class CertificatesService {
             } catch(err){
                 if(err.code == "RequestInProgressException" ||err.code =="ThrottlingException"){
                     // Need to factor in the time ACMPCA takes to issue the certificate using the retyDelay returned in the error payload
-                    await this.sleep(err.retryDelay); 
+                    await this.sleep(err.retryDelay);
                     continue
                 } else{
                     break;
                 }
             }
         }
-            
+
         return {certificateArn: data.CertificateArn, certificate: `${cert.Certificate}\n${cert.CertificateChain}`};
     }
 

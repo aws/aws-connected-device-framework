@@ -16,7 +16,7 @@ import { inject } from 'inversify';
 import { ProvisionThingRequest, ProvisionThingResponse, ThingDetailModel, PatchCertificateRequest } from './things.models';
 import { ThingsService } from './things.service';
 import {TYPES} from '../di/types';
-import {logger} from '../utils/logger';
+import {logger} from '@awssolutions/simple-cdf-logger';
 import {handleError} from '../utils/errors';
 import ow from 'ow';
 

@@ -16,7 +16,7 @@ import { DynamoDbPaginationKey, GSI1_INDEX_NAME } from "../common/common.models"
 import { DeviceItem } from "../devices/devices.model";
 import { TYPES } from "../di/types";
 import { DocumentDbClientItem, DynamoDbUtils } from "../utils/dynamoDb.util";
-import { logger } from "../utils/logger.util";
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { createDelimitedAttribute, expandDelimitedAttribute, PkType } from "../utils/pkUtils.util";
 import { DeviceTaskItem } from "./deviceTasks.model";
 import ow from 'ow';

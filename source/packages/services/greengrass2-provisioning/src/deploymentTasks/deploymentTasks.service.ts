@@ -27,7 +27,7 @@ import { Deployment } from '../deployments/deployments.models';
 import { DeploymentsService, DEPLOYMENT_TASK_ID_TAG_KEY } from '../deployments/deployments.service';
 import { TYPES } from '../di/types';
 import { TemplatesService } from '../templates/templates.service';
-import { logger } from '../utils/logger.util';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { CoreDeploymentListPaginationKey, DeploymentTaskListPaginationKey, DeploymentTasksDao } from './deploymentTasks.dao';
 import { DeploymentTask, NewDeploymentTask } from './deploymentTasks.models';
 import { DescribeJobCommand, IoTClient, ListTagsForResourceCommand } from '@aws-sdk/client-iot';
@@ -164,7 +164,7 @@ export class DeploymentTasksService {
 
     /**
      * Expand the targets of the provided task, then splitting into batches for async processing.
-     * @param task 
+     * @param task
      */
     public async processDeploymentTask(task: DeploymentTask): Promise<void> {
         logger.debug(`deploymentTasks.service processDeploymentTask: task:${JSON.stringify(task)}`);
@@ -172,7 +172,7 @@ export class DeploymentTasksService {
         ow(task?.targets, 'targets', ow.object.nonEmpty);
         ow(task.id, 'task id', ow.string.nonEmpty);
 
-        // 1st expand the targets. Can take time if there's quite a few to expand, hence why this is function if carried out async to break out of the APIGW execution timeout 
+        // 1st expand the targets. Can take time if there's quite a few to expand, hence why this is function if carried out async to break out of the APIGW execution timeout
         const expandedTargets = await this.awsIotThingListBuilder.listThings({
             thingNames: task.targets.thingNames,
             thingGroupNames: task.targets.thingGroupNames,

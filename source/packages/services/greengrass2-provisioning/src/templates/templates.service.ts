@@ -20,7 +20,7 @@ import {
 } from '@aws-sdk/client-greengrassv2';
 
 import { TYPES } from '../di/types';
-import { logger } from '../utils/logger.util';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import {
     TemplateListPaginationKey, TemplatesDao, TemplateVersionListPaginationKey
 } from './templates.dao';

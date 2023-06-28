@@ -16,7 +16,7 @@ import ow from 'ow';
 
 import { CommandItem } from '../../commands/commands.models';
 import { TYPES } from '../../di/types';
-import { logger } from '../../utils/logger.util';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { MessageItem } from '../messages.models';
 import { WorkflowAction } from './workflow.interfaces';
 import { InvalidTransitionAction } from './workflow.invalidTransition';
@@ -66,7 +66,7 @@ export class WorkflowFactory {
                     default:
                         return [this.invalidTransitionAction];
                 }
-                
+
             }
 
             default:

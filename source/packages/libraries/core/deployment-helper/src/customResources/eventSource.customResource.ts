@@ -5,7 +5,7 @@
 #-------------------------------------------------------------------------------*/
 import { inject, injectable } from 'inversify';
 
-import { logger } from '../utils/logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 
 import {CustomResourceEvent} from './customResource.model';
 import {
@@ -52,11 +52,11 @@ export class EventSourceCustomResource implements CustomResource {
         } catch (err) {
             return response;
         }
-        
+
         const eventSourceId = response?.header?.location?.split('/');
-        
+
         logger.debug(`EventSourceCustomResource: create: eventSourceId: ${eventSourceId[eventSourceId.length - 1]}`);
-        
+
         return { eventSourceId: eventSourceId[eventSourceId.length - 1] };
 
     }

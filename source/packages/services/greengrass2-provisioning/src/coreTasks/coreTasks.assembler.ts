@@ -14,22 +14,22 @@
 
  import { CoresAssembler } from '../cores/cores.assembler';
  import { TYPES } from '../di/types';
- import { logger } from '../utils/logger.util';
+ import { logger } from '@awssolutions/simple-cdf-logger';
  import { CoreTaskListPaginationKey } from './coreTasks.dao';
  import {
      CoreTaskItem, CoreTaskListResource, CoreTaskResource, NewCoreTaskResource
  } from './coreTasks.models';
- 
+
  @injectable()
  export class CoreTasksAssembler {
- 
- 
-     constructor( 
+
+
+     constructor(
          @inject(TYPES.CoresAssembler) private coresAssembler: CoresAssembler) {}
- 
+
      public toResource(item:CoreTaskItem): CoreTaskResource {
          logger.debug(`coreTasks.assembler toResource: in: item:${JSON.stringify(item)}`);
- 
+
          const resource: CoreTaskResource = {
              id: item.id,
              coreVersion: item.coreVersion,
@@ -41,14 +41,14 @@
              type: item.type,
              options: item.options
          }
-         
+
          logger.debug(`coreTasks.assembler toResource: exit:${JSON.stringify(resource)}`);
          return resource;
      }
- 
+
      public toItem(resource:NewCoreTaskResource): CoreTaskItem {
          logger.debug(`coreTasks.assembler toItem: in: resource:${JSON.stringify(resource)}`);
- 
+
          const item: CoreTaskItem = {
              coreVersion: resource.coreVersion,
              cores: resource.cores,
@@ -56,39 +56,38 @@
              options: resource.options
 
          }
-         
+
          logger.debug(`coreTasks.assembler toItem: exit:${JSON.stringify(item)}`);
          return item;
      }
- 
+
      public toListResource(items:CoreTaskItem[], count?:number, paginateFrom?:CoreTaskListPaginationKey ): CoreTaskListResource {
          logger.debug(`coreTasks.assembler toListResource: in: items:${JSON.stringify(items)}, count:${count}, paginateFrom:${JSON.stringify(paginateFrom)}`);
- 
+
          const list:CoreTaskListResource= {
              tasks:[]
          };
- 
+
          if (count!==undefined || paginateFrom!==undefined) {
              list.pagination = {};
          }
- 
+
          if (count!==undefined) {
              list.pagination.count=count;
          }
- 
+
          if (paginateFrom!==undefined) {
              list.pagination.lastEvaluated = {
                  taskId: paginateFrom?.taskId
              };
          }
- 
+
          if ((items?.length??0)>0) {
              items.forEach(i=> list.tasks.push(this.toResource(i)));
          }
- 
+
          logger.debug(`coreTasks.assembler toListResource: exit: ${JSON.stringify(list)}`);
          return list;
- 
+
      }
  }
- 

@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { injectable, inject } from 'inversify';
-import {logger} from '../utils/logger';
+import {logger} from '@awssolutions/simple-cdf-logger';
 import { TypeModel, TypeDefinitionModel, TypeDefinitionStatus} from './types.models';
 import { SchemaValidationResult } from './schemaValidator.full.service';
 import {TypeCategory} from './constants';

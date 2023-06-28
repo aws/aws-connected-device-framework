@@ -14,7 +14,7 @@
 import { injectable } from 'inversify';
 import ow from 'ow';
 
-import { logger } from '../utils/logger.util';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { CommandItem, JobDeliveryMethod, TopicDeliveryMethod } from './commands.models';
 
 @injectable()

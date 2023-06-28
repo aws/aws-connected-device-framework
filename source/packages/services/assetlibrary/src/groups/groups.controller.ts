@@ -16,7 +16,7 @@ import { inject } from 'inversify';
 import { GroupBaseResource, GroupResourceList, GroupMemberResourceList } from './groups.models';
 import { GroupsService } from './groups.service';
 import {TYPES} from '../di/types';
-import {logger} from '../utils/logger';
+import {logger} from '@awssolutions/simple-cdf-logger';
 import {TypeCategory} from '../types/constants';
 import {InvalidQueryStringError, handleError} from '../utils/errors';
 import { DeviceResourceList } from '../devices/devices.models';

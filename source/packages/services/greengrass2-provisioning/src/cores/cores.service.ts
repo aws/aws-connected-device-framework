@@ -34,7 +34,7 @@ import {
 import { CoreTasksDao } from '../coreTasks/coreTasks.dao';
 import { CoreTaskItem } from '../coreTasks/coreTasks.models';
 import { TYPES } from '../di/types';
-import { logger } from '../utils/logger.util';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { S3Utils } from '../utils/s3.util';
 import { CoreListPaginationKey, CoresDao } from './cores.dao';
 import { ConfigGeneratorEvent, CoreCreatedEvent, CoreCreatedPayload, CoreDeletedEvent, CoreDeletedPayload, CoreItem, FailedCoreDeployment } from './cores.models';

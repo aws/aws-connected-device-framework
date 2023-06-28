@@ -5,7 +5,7 @@
 #-------------------------------------------------------------------------------*/
 import { inject, injectable } from 'inversify';
 
-import { logger } from '../utils/logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 
 import {CustomResourceEvent} from './customResource.model';
 import {
@@ -42,24 +42,24 @@ export class EventsCustomResource implements CustomResource {
 
         const invocationPromises = body.map((singleEvent: unknown)  => {
             logger.debug(`EventsCustomResource: create: event: ${JSON.stringify(singleEvent)}`);
-            
+
             // create the event
             const apiEvent = new LambdaApiGatewayEventBuilder()
                 .setMethod('POST')
                 .setPath(`/eventsources/${eventSourceId}/events`)
                 .setHeaders(headers)
                 .setBody(singleEvent);
-                
+
             return this.lambdaInvoker.invoke(functionName, apiEvent);
         });
 
         /* eslint @typescript-eslint/no-explicit-any: 0 */
         const responses = Promise.allSettled(invocationPromises).then((results: any) => {
             results.forEach((result: unknown) => {
-                logger.debug(`EventsCustomResource: create: result: ${JSON.stringify(result)}`);    
+                logger.debug(`EventsCustomResource: create: result: ${JSON.stringify(result)}`);
             });
         });
-        
+
         return responses;
 
     }

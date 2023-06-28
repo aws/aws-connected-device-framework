@@ -19,7 +19,7 @@ import { InversifyExpressServer } from 'inversify-express-utils';
 
 import { normalisePath } from '@awssolutions/cdf-express-middleware';
 
-import { logger } from './utils/logger.util';
+import { getRequestIdFromRequest, logger, setRequestId } from '@awssolutions/simple-cdf-logger';
 
 // import AWSXRay from 'aws-xray-sdk';
 // const XRayExpress = AWSXRay.express;
@@ -37,6 +37,12 @@ const supportedVersions: string[] = process.env.SUPPORTED_API_VERSIONS?.split(',
 server.setConfig((app) => {
     // xray initialization
     // app.use(XRayExpress.openSegment('@awssolutions/cdf-command-and-control'));
+
+    // apply the awsRequestId to the logger so all logs reflect the requestId
+    app.use((req: Request, _res: Response, next: NextFunction) => {
+        setRequestId(getRequestIdFromRequest(req));
+        next();
+    });
 
     // only process requests that we can support the requested accept header
     app.use((req: Request, res: Response, next: NextFunction) => {

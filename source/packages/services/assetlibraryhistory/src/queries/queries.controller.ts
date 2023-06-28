@@ -14,7 +14,7 @@ import { Response } from 'express';
 import { interfaces, controller, response, httpGet, queryParam, requestParam} from 'inversify-express-utils';
 import { inject } from 'inversify';
 import {TYPES} from '../di/types';
-import {logger} from '../utils/logger';
+import {logger} from '@awssolutions/simple-cdf-logger';
 import {handleError} from '../utils/errors';
 import { QueryService } from './queries.service';
 import { StateHistoryListModel } from '../events/events.models';

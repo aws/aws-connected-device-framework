@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { injectable, inject } from 'inversify';
-import { logger } from '../utils/logger.util';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import ow from 'ow';
 import { TYPES } from '../di/types';
 import { DynamoDbTargetDao } from './dynamoDb.target.dao';

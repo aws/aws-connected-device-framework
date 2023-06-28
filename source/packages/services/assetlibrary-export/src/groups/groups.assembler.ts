@@ -12,7 +12,7 @@
  *********************************************************************************************************************/
 import { injectable, inject } from 'inversify';
 import { GroupItem, GroupMemberItemList, determineIfGroup20Resource, Group10Resource, Group20Resource, GroupBaseResource, GroupItemList, GroupResourceList, GroupMemberResourceList, determineIfGroupItem, BulkGroupsResource} from './groups.models';
-import {logger} from '../utils/logger';
+import {logger} from '@awssolutions/simple-cdf-logger';
 import {Node} from '../data/node';
 import { DevicesAssembler } from '../devices/devices.assembler';
 import { TYPES } from '../di/types';

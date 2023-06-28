@@ -12,7 +12,7 @@
  *********************************************************************************************************************/
 import { Response } from 'express';
 import { SchemaValidationResult, ValidateRelationshipsByIdsResult } from '../types/schemaValidator.full.service';
-import { logger } from './logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 
 export function handleError(e: Error, res: Response): void {
     logger.error(`handleError: ${e}`);

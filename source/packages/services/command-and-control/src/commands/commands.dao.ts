@@ -15,7 +15,7 @@ import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import { inject, injectable } from 'inversify';
 
 import { TYPES } from '../di/types';
-import { logger } from '../utils/logger.util';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { createDelimitedAttribute, createDelimitedAttributePrefix, expandDelimitedAttribute, PkType } from '../utils/pkUtils.util';
 import { CommandItem, CommandListIdsByTagPaginationKey, CommandListPaginationKey, Tags } from './commands.models';
 
@@ -98,7 +98,7 @@ export class CommandsDao {
         if ((results?.Count??0) === 0) {
             logger.debug('commands.dao list: exit: [undefined,undefined]');
             return [undefined,undefined];
-        } 
+        }
 
         const commands = this.assembleCommands(results.Items);
 
@@ -146,7 +146,7 @@ export class CommandsDao {
         if ((results?.Count??0) === 0) {
             logger.debug('commands.dao listIds: exit: [undefined,undefined]');
             return [undefined,undefined];
-        } 
+        }
 
         const commandIds:string[]=[];
         for(const i of results.Items) {
@@ -196,7 +196,7 @@ export class CommandsDao {
 
         /////// the main command item to save...
         const commandDbItem = {
-            PutRequest: {   
+            PutRequest: {
                 Item: {
                     pk: createDelimitedAttribute(PkType.Command, command.id),
                     sk: createDelimitedAttribute(PkType.Command, command.id),
@@ -275,7 +275,7 @@ export class CommandsDao {
             RequestItems: {
             }
         };
-        
+
         const commandDbItem:DocumentClient.WriteRequest = {
             DeleteRequest: {
                 Key: {
@@ -298,7 +298,7 @@ export class CommandsDao {
                 };
                 params.RequestItems[this.table].push(tagDbItem);
             });
-        }     
+        }
 
         logger.silly(`commands.dao delete: params:${JSON.stringify(params)}`);
         const r = await this.dynamoDbUtils.batchWriteAll(params);

@@ -20,7 +20,7 @@ import { SendMessageCommand, SendMessageCommandOutput, SQSClient } from '@aws-sd
 import { CoreItem } from '../cores/cores.models';
 import { CoresService } from '../cores/cores.service';
 import { TYPES } from '../di/types';
-import { logger } from '../utils/logger.util';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { CoreTaskListPaginationKey, CoreTasksDao } from './coreTasks.dao';
 import { CoreTaskItem } from './coreTasks.models';
 import { DeviceTasksService } from '../deviceTasks/deviceTasks.service';

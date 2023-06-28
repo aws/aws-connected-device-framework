@@ -29,7 +29,7 @@ import {
 } from '../data/model';
 import { Node } from '../data/node';
 import { TYPES } from '../di/types';
-import { logger } from '../utils/logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { DevicesAssembler } from './devices.assembler';
 import { DeviceItem } from './devices.models';
 

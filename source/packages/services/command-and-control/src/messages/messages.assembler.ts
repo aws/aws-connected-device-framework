@@ -12,7 +12,7 @@
  *********************************************************************************************************************/
 import { injectable } from 'inversify';
 
-import { logger } from '../utils/logger.util';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { Recipient, RecipientList, RecipientListPaginationKey, ReplyListPaginationKey, ReplyResourceList, MessageItem, MessageListPaginationKey, MessageResourceList, NewMessageResource, ReplyItem, MessageResource } from './messages.models';
 
 @injectable()

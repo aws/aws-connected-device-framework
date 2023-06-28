@@ -12,7 +12,7 @@
  *********************************************************************************************************************/
 import { inject, injectable } from "inversify";
 import { ComponentItem } from "../components/components.model";
-import { logger } from "../utils/logger";
+import { logger } from '@awssolutions/simple-cdf-logger';
 import {
     ComponentsByOrganizationalUnitMap,
     Manifest,

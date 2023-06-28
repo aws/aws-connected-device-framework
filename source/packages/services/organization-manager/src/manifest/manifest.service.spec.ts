@@ -22,9 +22,9 @@ import { ComponentsDao } from '../components/components.dao';
 import { ComponentItem } from '../components/components.model';
 import S3, { ManagedUpload } from 'aws-sdk/clients/s3';
 import JSZip from 'jszip';
-import { logger } from '../utils/logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 
-const expectedManifestFile = 
+const expectedManifestFile =
 `region: ap-southeast-2
 version: 2021-03-15
 resources:
@@ -164,8 +164,8 @@ describe('TemplatesService', function () {
 
     it('createManifestFile: happy path', async () => {
         let fileStream: NodeJS.ReadableStream;
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment     
-        // @ts-ignore 
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         mockS3.upload = (params: S3.Types.PutObjectRequest, callback?: (err: Error, data: ManagedUpload.SendData) => void): ManagedUpload => {
             fileStream = params.Body as NodeJS.ReadableStream
             callback(null, { eTag: 'somefakeEtag' } as unknown as ManagedUpload.SendData)

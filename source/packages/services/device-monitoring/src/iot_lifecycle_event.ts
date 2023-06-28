@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { AssetLibUpdate } from './assetlib_update';
-import { logger } from './utils/logger';
+import { getRequestIdFromContext, logger, setRequestId } from '@awssolutions/simple-cdf-logger';
 import { container } from './di/inversify.config';
 import {TYPES} from './di/types';
 
@@ -20,6 +20,8 @@ let assetLib:AssetLibUpdate;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 exports.lambda_handler = async (event: any, _context: unknown) => {
   logger.debug(`event: ${JSON.stringify(event)}`);
+
+  setRequestId(getRequestIdFromContext(_context));
 
   if (assetLib===undefined) {
     assetLib = container.get(TYPES.AssetLibUpdate);

@@ -14,7 +14,7 @@ import {process, structure} from 'gremlin';
 import {inject, injectable} from 'inversify';
 import ow from 'ow';
 
-import {logger} from '../utils/logger';
+import {logger} from '@awssolutions/simple-cdf-logger';
 import {TYPES} from '../di/types';
 
 import {BaseDaoFull} from '../data/base.full.dao';

@@ -14,7 +14,7 @@ import { injectable, inject } from 'inversify';
 import ow from 'ow';
 
 import { TYPES } from '../../di/types';
-import { logger } from '../../utils/logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 
 import { ProvisioningStepData } from './provisioningStep.model';
 import { ProvisioningStepProcessor } from './provisioningStepProcessor';
@@ -33,7 +33,7 @@ export class UseACMPCAStepProcessor implements ProvisioningStepProcessor {
         @inject(TYPES.IotFactory) iotFactory: () => AWS.Iot,
         // as the ACMPCA may be configured for cross-account access, we use the factory directly which includes automatic STS expiration handling
         @inject(TYPES.ACMPCAFactory) private acmpcaFactory: () => ACMPCA
-    ) {        
+    ) {
         this.iot = iotFactory();
     }
 
@@ -106,9 +106,9 @@ export class UseACMPCAStepProcessor implements ProvisioningStepProcessor {
             Csr: csr,
             CertificateAuthorityArn: caArn,
             SigningAlgorithm: "SHA256WITHRSA",
-            Validity: { 
-                Value: certInfo.daysExpiry ?? this.defaultExpiryDays, 
-                Type: "DAYS" 
+            Validity: {
+                Value: certInfo.daysExpiry ?? this.defaultExpiryDays,
+                Type: "DAYS"
             },
             ApiPassthrough: {
                 Subject: {
@@ -122,26 +122,26 @@ export class UseACMPCAStepProcessor implements ProvisioningStepProcessor {
         };
 
         const issueResponse: ACMPCA.IssueCertificateResponse = await this.acmpcaFactory().issueCertificate(params).promise();
-        
+
         let getResponse: ACMPCA.GetCertificateResponse;
         // eslint-disable-next-line no-constant-condition
         while (true) {
             try{
-                getResponse =  await this.acmpcaFactory().getCertificate({ 
+                getResponse =  await this.acmpcaFactory().getCertificate({
                     CertificateAuthorityArn: caArn,
-                    CertificateArn: issueResponse.CertificateArn 
+                    CertificateArn: issueResponse.CertificateArn
                 }).promise();
                 break;
             } catch(err) {
                 if(err.code === 'RequestInProgressException' || err.code === 'ThrottlingException') {
                     // Need to factor in the time ACMPCA takes to issue the certificate using the retryDelay returned in the error payload
-                    await this.sleep(err.retryDelay); 
+                    await this.sleep(err.retryDelay);
                     continue
                 } else {
                     throw err;
                 }
             }
-        }      
+        }
 
         // the returned ACMPCA generated device certificate needs to include the full certificate chain
         return `${getResponse.Certificate}\n${getResponse.CertificateChain}`;

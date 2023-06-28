@@ -14,7 +14,7 @@ import 'reflect-metadata';
 import { send } from 'cfn-response-promise';
 import { CloudFormationCustomResourceCreateEvent, CloudFormationCustomResourceDeleteEvent, CloudFormationCustomResourceUpdateEvent, Context } from 'aws-lambda';
 
-import {logger} from './utils/logger';
+import {logger} from '@awssolutions/simple-cdf-logger';
 
 exports.handler = async (event: CloudFormationCustomResourceCreateEvent|CloudFormationCustomResourceUpdateEvent|CloudFormationCustomResourceDeleteEvent, context: Context) => {
     logger.debug(`Event:${JSON.stringify(event)} Context: ${JSON.stringify(context)}`);

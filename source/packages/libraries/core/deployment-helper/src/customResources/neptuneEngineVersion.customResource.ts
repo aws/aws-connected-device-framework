@@ -13,7 +13,7 @@
 import { injectable } from 'inversify';
 import * as request from 'superagent';
 
-import { logger } from '../utils/logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 
 import {CustomResourceEvent} from './customResource.model';
 import { CustomResource } from './customResource';

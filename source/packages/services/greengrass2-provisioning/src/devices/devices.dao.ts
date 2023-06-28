@@ -16,7 +16,7 @@ import { DynamoDbPaginationKey, GSI1_INDEX_NAME, GSI4_INDEX_NAME } from "../comm
 import { Artifact } from "../cores/cores.models";
 import { TYPES } from "../di/types";
 import { DocumentDbClientItem } from "../utils/dynamoDb.util";
-import { logger } from "../utils/logger.util";
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { createDelimitedAttribute, expandDelimitedAttribute, PkType } from "../utils/pkUtils.util";
 import { DeviceItem } from "./devices.model";
 
@@ -76,12 +76,12 @@ export class DevicesDao {
             if (sk.length === 2 && sk[0] === PkType.ClientDevice) {
                 // main client device item
                 let coreName;
-                
+
                 if (item.siKey2) {
                     const sk2 = expandDelimitedAttribute(item.siKey2)
                     coreName = sk2[1];
                 }
-                
+
                 c[thingName] = {
                     name: item.name,
                     coreName,

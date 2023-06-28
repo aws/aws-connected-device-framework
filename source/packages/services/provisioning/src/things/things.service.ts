@@ -12,7 +12,7 @@
  *********************************************************************************************************************/
 import { injectable, inject } from 'inversify';
 import { ProvisionThingResponse, ThingDetailModel, ThingCertificateModel, CertificateStatus, ThingPolicyModel, ThingGroupModel, BulkProvisionThingsResponse, CdfProvisioningParameters } from './things.models';
-import { logger } from '../utils/logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import AWS = require('aws-sdk');
 import { TYPES } from '../di/types';
 import { CDFProvisioningTemplate } from './templates/template.models';

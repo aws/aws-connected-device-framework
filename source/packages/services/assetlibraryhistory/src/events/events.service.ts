@@ -12,7 +12,7 @@
  *********************************************************************************************************************/
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../di/types';
-import {logger} from '../utils/logger';
+import {logger} from '@awssolutions/simple-cdf-logger';
 import { EventActionFactory } from './actions/eventaction.factory';
 import { EventModel } from './events.models';
 import { EventAction } from './actions/eventaction.interfaces';

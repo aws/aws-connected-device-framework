@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { injectable } from 'inversify';
-import {logger} from '../utils/logger.util';
+import {logger} from '@awssolutions/simple-cdf-logger';
 import {PatchResource, PatchItem, PatchListResource} from './patch.model';
 import {PatchListPaginationKey} from './patchTask.dao';
 

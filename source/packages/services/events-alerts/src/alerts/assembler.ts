@@ -12,7 +12,7 @@
  *********************************************************************************************************************/
 import { injectable } from 'inversify';
 import { RawAlert, AssembledAlert, EmailTargetItem, SMSTargetItem, DynamodDBTargetItem, PushTargetItem, MQTTTargetItem } from './models';
-import { logger } from '../utils/logger.util';
+import { logger } from '@awssolutions/simple-cdf-logger';
 
 @injectable()
 export class AlertAssembler {

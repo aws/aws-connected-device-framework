@@ -14,7 +14,7 @@ import { Request, Response } from 'express';
 import { interfaces, controller, request, response, requestParam, requestBody, httpPost, httpGet, httpPatch, httpDelete } from 'inversify-express-utils';
 import { inject } from 'inversify';
 import {TYPES} from '../di/types';
-import {logger} from '../utils/logger';
+import {logger} from '@awssolutions/simple-cdf-logger';
 import {handleError} from '../utils/errors';
 import { TypeCategory } from '../types/constants';
 import { DeviceProfileItem, GroupProfileItem, DeviceProfileResource, GroupProfileResource, ProfileResourceList } from './profiles.models';

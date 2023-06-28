@@ -25,7 +25,7 @@ import { TYPES } from '../di/types';
 import { SearchAssembler } from '../search/search.assembler';
 import { SearchResultsResource } from '../search/search.models';
 import { handleError } from '../utils/errors';
-import { logger } from '../utils/logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { SearchService } from './search.service';
 
 @controller('')

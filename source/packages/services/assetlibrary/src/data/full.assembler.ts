@@ -12,7 +12,7 @@
  *********************************************************************************************************************/
 import 'reflect-metadata';
 import { injectable } from 'inversify';
-import {logger} from '../utils/logger';
+import {logger} from '@awssolutions/simple-cdf-logger';
 import {Node, NodeAttributeValue} from './node';
 import { ModelAttributeValue, safeExtractLabels } from './model';
 import { TypeCategory } from '../types/constants';

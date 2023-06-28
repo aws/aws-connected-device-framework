@@ -14,7 +14,7 @@ import { controller, interfaces, response, requestParam, requestBody, httpPost, 
 import { ComponentsService } from './components.service';
 import { inject } from 'inversify';
 import { TYPES } from '../di/types';
-import { logger } from '../utils/logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { BulkComponentsResource, BulkComponentsResult, ComponentResource } from './components.model';
 import { handleError } from '../utils/errors';
 import { Response } from 'express';

@@ -19,7 +19,7 @@ import { GroupsAssembler } from '../groups/groups.assembler';
 import { GroupItem } from '../groups/groups.models';
 import { TypeCategory } from '../types/constants';
 import { NotSupportedError } from '../utils/errors';
-import { logger } from '../utils/logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { SearchDaoLite } from './search.lite.dao';
 import { FacetResults, SearchRequestModel } from './search.models';
 

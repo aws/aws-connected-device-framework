@@ -13,7 +13,7 @@
 import { injectable, inject } from 'inversify';
 import { ProvisioningStepProcessor } from './provisioningStepProcessor';
 import { ProvisioningStepData } from './provisioningStep.model';
-import { logger } from '../../utils/logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { TYPES } from '../../di/types';
 import AWS = require('aws-sdk');
 import ow from 'ow';
@@ -28,7 +28,7 @@ export class CreateDeviceCertificateStepProcessor implements ProvisioningStepPro
   private _ssm: AWS.SSM;
 
   public constructor(
-    @inject(TYPES.CertUtils) private certUtils: CertUtils,  
+    @inject(TYPES.CertUtils) private certUtils: CertUtils,
     @inject(TYPES.IotFactory) iotFactory: () => AWS.Iot,
     @inject(TYPES.SSMFactory) ssmFactory: () => AWS.SSM,
     @inject('deviceCertificateExpiryDays') private defaultExpiryDays: number) {

@@ -43,7 +43,7 @@ import {
     SchemaValidationError,
     TemplateNotFoundError,
 } from '../utils/errors';
-import { logger } from '../utils/logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { TypeUtils } from '../utils/typeUtils';
 import { DevicesAssembler } from './devices.assembler';
 import { DevicesDaoFull } from './devices.full.dao';

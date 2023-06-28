@@ -12,7 +12,7 @@
  *********************************************************************************************************************/
 import { injectable } from 'inversify';
 
-import { logger } from '../utils/logger.util';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { DeviceItem, DeviceResource } from './devices.model';
 
 @injectable()

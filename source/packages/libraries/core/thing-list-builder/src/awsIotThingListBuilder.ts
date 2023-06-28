@@ -25,7 +25,7 @@ import {
 
 import { THING_LIST_BUILDER_TYPES } from './di/types';
 import { ListThingsRequest, ListThingsResponse, TargetType } from './models';
-import { logger } from './utils/logger.util';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import ow from 'ow';
 import { IoTClient, ListThingsInThingGroupCommand } from '@aws-sdk/client-iot';
 

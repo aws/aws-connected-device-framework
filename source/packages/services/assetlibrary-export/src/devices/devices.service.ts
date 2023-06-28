@@ -13,7 +13,7 @@
 import { injectable, inject } from 'inversify';
 import ow from 'ow';
 
-import {logger} from '../utils/logger';
+import {logger} from '@awssolutions/simple-cdf-logger';
 import { TYPES } from '../di/types';
 
 import { DeviceItemList } from './devices.models';

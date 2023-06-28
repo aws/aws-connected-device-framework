@@ -12,11 +12,11 @@
  *********************************************************************************************************************/
  import ow from 'ow';
  import { Document } from 'yaml';
- 
+
  import { InstallerConfig } from '../installerConfig/installer.models';
- import { logger } from '../utils/logger.util';
+ import { logger } from '@awssolutions/simple-cdf-logger';
  import { ConfigGeneratorEvent, ConfigGeneratorHandler } from './models';
- 
+
  export type ManualProvisioningConfig = {
    certificateFilePath: string;
    privateKeyPath: string;
@@ -27,16 +27,16 @@
    iotDataEndpoint: string;
    iotCredEndpoint: string;
  }
- 
+
  export const manualProvisioningHandler = (
    handlerConfig:ManualProvisioningConfig
  ): ConfigGeneratorHandler => async (
    event: ConfigGeneratorEvent): Promise<unknown> => {
    logger.debug(`manualProvisioningHandler: in: event: ${JSON.stringify(event)}`);
- 
+
    ow(event?.coreDeviceName, ow.string.nonEmpty);
    ow(event.version, ow.string.nonEmpty);
- 
+
    const configJson: InstallerConfig = {
      system: {
        certificateFilePath: handlerConfig.certificateFilePath,
@@ -58,18 +58,17 @@
        }
      }
    };
- 
+
    const doc = new Document();
    doc.directivesEndMarker = true;
    doc.contents = configJson;
- 
+
    const configYaml = String(doc);
- 
+
    logger.debug(`manualProvisioningHandler: exit: ${configYaml}`);
    return {config: configYaml};
- 
+
  };
- 
- 
- 
- 
+
+
+

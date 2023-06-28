@@ -12,7 +12,7 @@
  *********************************************************************************************************************/
 import { process, structure } from 'gremlin';
 import { injectable, inject } from 'inversify';
-import {logger} from '../utils/logger';
+import {logger} from '@awssolutions/simple-cdf-logger';
 import {TYPES} from '../di/types';
 import { ProfileNode } from './profiles.models';
 import { NodeAttributeValue } from '../data/node';
@@ -117,9 +117,9 @@ export class ProfilesDaoFull extends BaseDaoFull {
         const conn = super.getConnection();
         try {
             const traversal = conn.traversal.V(id);
-            // drop() step terminates a traversal, process all drops as part of a final union step 
+            // drop() step terminates a traversal, process all drops as part of a final union step
             const dropTraversals: process.GraphTraversal[] = [];
-        
+
             for (const [key, val] of Object.entries(n.attributes)) {
                 if (val !== undefined) {
                     if (val === null) {

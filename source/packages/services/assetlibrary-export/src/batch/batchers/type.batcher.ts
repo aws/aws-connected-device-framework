@@ -15,7 +15,7 @@ import { generate } from 'shortid';
 import * as _ from 'lodash';
 
 import { TYPES } from '../../di/types';
-import { logger } from '../../utils/logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 
 import { TypeCategory } from '../../types/constants';
 import { TypesService } from '../../types/types.service';

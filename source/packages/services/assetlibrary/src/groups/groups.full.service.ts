@@ -27,7 +27,7 @@ import { TypeDefinitionStatus } from '../types/types.models';
 import { TypesService } from '../types/types.service';
 import { RelationValidationError, ProfileNotFoundError, SchemaValidationError, TemplateNotFoundError, GroupNotFoundError, NotFoundError } from '../utils/errors';
 import { owCheckOptionalNumber } from '../utils/inputValidation.util';
-import { logger } from '../utils/logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { TypeUtils } from '../utils/typeUtils';
 import { GroupsAssembler } from './groups.assembler';
 import { GroupsDaoFull } from './groups.full.dao';

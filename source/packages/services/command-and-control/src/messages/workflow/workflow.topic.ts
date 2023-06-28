@@ -16,7 +16,7 @@ import ow from 'ow';
 
 import { CommandItem, TopicDeliveryMethod } from '../../commands/commands.models';
 import { TYPES } from '../../di/types';
-import { logger } from '../../utils/logger.util';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { MessageItem } from '../messages.models';
 import { WorkflowPublishAction } from './workflow.publishAction';
 
@@ -47,7 +47,7 @@ export class TopicAction extends WorkflowPublishAction {
             operation: command.operation,
             payload,
         };
-        
+
         // if there are no tokens to be replaced in the topic, its a shared topic
         const isSharedTopic = this.topic.indexOf('${')<0;
 
@@ -64,9 +64,9 @@ export class TopicAction extends WorkflowPublishAction {
             await this.publish(this.topic, msg);
 
         } else {
-            
+
             // TODO: validate message has all required payload params identified/provided
-            
+
             // enumerate all the targeted things, publishing to device specific topics
             ow(message.resolvedTargets, ow.array.minLength(1));
             for(const target of message.resolvedTargets) {
@@ -98,7 +98,7 @@ export class TopicAction extends WorkflowPublishAction {
 
         // we remove the status field to prevent any accidental overwrites when saving to the db in future steps
         delete message.status;
-        
+
         logger.debug(`workflow.topic process: exit:true, message:${JSON.stringify(message)}`);
         return true;
     }

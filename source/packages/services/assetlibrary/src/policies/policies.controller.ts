@@ -16,7 +16,7 @@ import { inject } from 'inversify';
 import { PolicyModel, PolicyListModel } from './policies.models';
 import { PoliciesService } from './policies.service';
 import {TYPES} from '../di/types';
-import {logger} from '../utils/logger';
+import {logger} from '@awssolutions/simple-cdf-logger';
 import {ArgumentError, handleError} from '../utils/errors';
 
 @controller('/policies')

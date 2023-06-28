@@ -26,7 +26,7 @@ import {
 } from 'inversify-express-utils';
 import {inject} from 'inversify';
 import {TYPES} from '../di/types';
-import {logger} from '../utils/logger';
+import {logger} from '@awssolutions/simple-cdf-logger';
 import {AccountsService} from './accounts.service';
 import {
     AccountCreationRequest,

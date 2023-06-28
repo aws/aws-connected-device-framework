@@ -132,8 +132,7 @@
       "packageName": "@awssolutions/simple-cdf-logger",
       "projectFolder": "packages/libraries/core/simple-cdf-logger",
       "reviewCategory": "library",
-      "versionPolicyName": "external",
-      "tags": ["core"]
+      "versionPolicyName": "external"
     },
     {
       "packageName": "@awssolutions/cdf-config-inject",

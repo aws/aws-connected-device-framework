@@ -12,7 +12,7 @@
  *********************************************************************************************************************/
 import { TYPES } from './di/types';
 import { container } from './di/inversify.config';
-import { logger } from './utils/logger.util';
+import { logger } from '@awssolutions/simple-cdf-logger';
 
 
 import { ActivationService } from './activation/activation.service';

@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { injectable } from 'inversify';
-import {logger} from '../utils/logger.util';
+import {logger} from '@awssolutions/simple-cdf-logger';
 import { ActivationResource, ActivationItem } from './activation.model';
 
 @injectable()

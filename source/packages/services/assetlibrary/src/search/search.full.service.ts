@@ -19,7 +19,7 @@ import { TYPES } from '../di/types';
 import { GroupsAssembler } from '../groups/groups.assembler';
 import { GroupItem } from '../groups/groups.models';
 import { TypeCategory } from '../types/constants';
-import { logger } from '../utils/logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { SearchDaoFull } from './search.full.dao';
 import { FacetResults, SearchRequestModel } from './search.models';
 import { SearchService } from './search.service';

@@ -12,7 +12,7 @@
  *********************************************************************************************************************/
 import { inject, injectable } from "inversify";
 import { EventBridgeClient, PutEventsCommand, PutEventsRequestEntry, } from "@aws-sdk/client-eventbridge";
-import { logger } from "./utils/logger.util";
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { EVENT_PUBLISHER_TYPES } from "./di/types";
 
 import ow from 'ow';
@@ -29,7 +29,7 @@ export interface CDFEvent<T> {
 
 export interface CDFEventPublisher {
     emitEvent<T>(event: CDFEvent<T>): Promise<void>
-    emitEvents<T>(events: CDFEvent<T>[]): Promise<void> 
+    emitEvents<T>(events: CDFEvent<T>[]): Promise<void>
 }
 
 

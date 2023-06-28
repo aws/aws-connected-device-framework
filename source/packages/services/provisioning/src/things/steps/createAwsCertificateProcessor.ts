@@ -1,6 +1,6 @@
 import { inject, injectable } from "inversify";
 import { TYPES } from "../../di/types";
-import { logger } from "../../utils/logger";
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { ProvisioningStepData } from "./provisioningStep.model";
 import { ProvisioningStepProcessor } from "./provisioningStepProcessor";
 

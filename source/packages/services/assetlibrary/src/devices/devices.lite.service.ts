@@ -13,7 +13,7 @@
 import { injectable, inject } from 'inversify';
 import { BulkDevicesResult, DeviceItemList, DeviceItem} from './devices.models';
 import { DevicesService } from './devices.service';
-import {logger} from '../utils/logger';
+import {logger} from '@awssolutions/simple-cdf-logger';
 import ow from 'ow';
 import { TYPES } from '../di/types';
 import { DevicesDaoLite } from './devices.lite.dao';
@@ -99,7 +99,7 @@ export class DevicesServiceLite implements DevicesService {
         if (groups.some(g=> g.status!=='fulfilled')) {
             throw {name:'ArgumentError', message:'GROUP_NOT_FOUND'};
         }
-        
+
         // create device and associated groups
         const id = await this.devicesDao.create(node, groupIds);
 
@@ -221,7 +221,7 @@ export class DevicesServiceLite implements DevicesService {
 
         logger.debug(`device.lite.service attachToGroup: exit:`);
     }
-            
+
     detachFromGroups(_deviceId: string, _relationship?: string, _direction?: string): Promise<void> {
         throw new NotSupportedError();
     }
@@ -233,7 +233,7 @@ export class DevicesServiceLite implements DevicesService {
     public async detachFromDevice(_deviceId:string, _relationship:string, _direction:string, _otherDeviceId:string) : Promise<void> {
         throw new NotSupportedError();
     }
-    
+
     public async detachFromDevices(_deviceId: string, _template?: string, _relationship?: string, _direction?: string): Promise<void> {
         throw new NotSupportedError();
     }

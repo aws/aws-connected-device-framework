@@ -15,7 +15,7 @@ import { CoreTasksService } from './coreTasks/coreTasks.service';
 import { DeploymentTasksService } from './deploymentTasks/deploymentTasks.service';
 import { DeviceTasksService } from './deviceTasks/deviceTasks.service';
 import { TYPES } from './di/types';
-import { logger } from './utils/logger.util';
+import { logger } from '@awssolutions/simple-cdf-logger';
 
 const coreTasksSvc: CoreTasksService = container.get(TYPES.CoreTasksService);
 const deploymentTasksSvc: DeploymentTasksService = container.get(TYPES.DeploymentTasksService);

@@ -12,7 +12,7 @@
  *********************************************************************************************************************/
 import { injectable, inject } from 'inversify';
 import { DeviceState, DeviceItem, DeviceItemList, DeviceBaseResource, Device10Resource, Device20Resource, determineIfDevice20Resource, DeviceResourceList, BulkDevicesResource} from './devices.models';
-import {logger} from '../utils/logger';
+import {logger} from '@awssolutions/simple-cdf-logger';
 import {Node, StringNodeMap} from '../data/node';
 import {TypeCategory} from '../types/constants';
 import { TYPES } from '../di/types';

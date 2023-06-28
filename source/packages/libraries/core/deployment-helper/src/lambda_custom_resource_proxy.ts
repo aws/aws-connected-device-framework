@@ -15,7 +15,7 @@ import { send } from 'cfn-response-promise';
 import { container } from './di/inversify.config';
 import { TYPES } from './di/types';
 
-import { logger } from './utils/logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import {CustomResourceManager} from './customResources/customResource.manager';
 import {CustomResourceEvent} from './customResources/customResource.model';
 

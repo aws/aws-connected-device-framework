@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { process } from 'gremlin';
-import {logger} from '../utils/logger';
+import {logger} from '@awssolutions/simple-cdf-logger';
 import {Node} from './node';
 import { ThingDocument, ThingGroupDocument } from 'aws-sdk/clients/iot';
 import { TypeCategory } from '../types/constants';

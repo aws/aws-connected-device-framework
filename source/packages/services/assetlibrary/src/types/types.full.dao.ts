@@ -12,7 +12,7 @@
  *********************************************************************************************************************/
 import { process, structure } from 'gremlin';
 import { injectable, inject } from 'inversify';
-import {logger} from '../utils/logger';
+import {logger} from '@awssolutions/simple-cdf-logger';
 import { TYPES } from '../di/types';
 import { TypeModel, TypeVersionModel, TypeRelationsModel, TypeDefinitionStatus, isRelationTargetExpanded, RelationTarget, RelationTargetExpanded } from './types.models';
 import * as jsonpatch from 'fast-json-patch';

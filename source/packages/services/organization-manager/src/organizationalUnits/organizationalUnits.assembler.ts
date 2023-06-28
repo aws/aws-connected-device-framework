@@ -12,7 +12,7 @@
  *********************************************************************************************************************/
 
 import {injectable} from "inversify";
-import {logger} from "../utils/logger";
+import {logger} from '@awssolutions/simple-cdf-logger';
 import {OrganizationalUnitItem, OrganizationalUnitResource} from "./organizationalUnits.model";
 
 @injectable()

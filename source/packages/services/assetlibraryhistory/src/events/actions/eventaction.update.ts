@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { TYPES } from '../../di/types';
-import { logger } from '../../utils/logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { injectable, inject } from 'inversify';
 import { EventAction } from './eventaction.interfaces';
 import { EventsDao } from '../events.dao';
@@ -41,7 +41,7 @@ export class UpdateAction implements EventAction {
             changedState = JSON.parse(event.payload);
         }
         const mergedState = Object.assign(existingState, changedState);
-        
+
         if (event.attributes!==undefined) {
             if (event.attributes['attachedToGroup']!==undefined) {
                 if (mergedState['groups']===undefined) {
@@ -80,14 +80,14 @@ export class UpdateAction implements EventAction {
                 });
 
                 mergedState['groups']['out'][event.attributes['relationship']] = newRelationship;
-            } 
+            }
         }
 
         if (event.event === 'modify' && event.type === 'devices') {
             const state = JSON.parse(existingEvent.state);
             if(state['groups'] !== undefined) {
                 mergedState['groups'] = state['groups'];
-            } 
+            }
             if(state['devices'] !== undefined) {
                 mergedState['devices'] = state['devices'];
             }

@@ -13,7 +13,7 @@
 import 'reflect-metadata';
 import { container } from './di/inversify.config';
 import { Context, EventBridgeEvent } from 'aws-lambda';
-import { logger } from './utils/logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { TYPES } from './di/types';
 import { ManifestService } from './manifest/manifest.service';
 import { AccountsService } from './accounts/accounts.service';

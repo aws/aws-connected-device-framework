@@ -12,7 +12,7 @@
  *********************************************************************************************************************/
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../di/types';
-import { logger } from '../utils/logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { ComponentsDao } from './components.dao';
 import ow from 'ow';
 import { BulkComponentsResult, ComponentResource, ComponentResourceList } from './components.model';

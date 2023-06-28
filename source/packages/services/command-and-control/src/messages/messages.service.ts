@@ -19,7 +19,7 @@ import pLimit from 'p-limit';
 import { CommandsDao } from '../commands/commands.dao';
 import { CommandItem } from '../commands/commands.models';
 import { TYPES } from '../di/types';
-import { logger } from '../utils/logger.util';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { MessagesDao } from './messages.dao';
 import {
     MessageItem, MessageListPaginationKey, Recipient, RecipientListPaginationKey, ReplyItem, ReplyListPaginationKey
@@ -32,7 +32,7 @@ import { ResponseAction } from '../responses/responses.models';
 
 @injectable()
 export class MessagesService {
-    
+
     private readonly uidGenerator:ShortUniqueId;
     private sqs: AWS.SQS;
     private iot: AWS.Iot;
@@ -92,7 +92,7 @@ export class MessagesService {
         logger.debug(`messages.service: create: exit:${message.id}`);
         return message.id;
     }
- 
+
     public async processMessage(message:MessageItem, command:CommandItem): Promise<void> {
       logger.debug(`messages.service: processMessage: message:${JSON.stringify(message)}, command:${JSON.stringify(command)}`);
 
@@ -131,8 +131,8 @@ export class MessagesService {
         } catch (e) {
             logger.error(`messages.service: processMessage: e: ${e.name}: ${e.message}`);
             failed=true;
-            failedReason=e.message;   
-        } 
+            failedReason=e.message;
+        }
 
         // update the batch and task
         await this.saveBatchStatus(message, failed, failedReason, command.deliveryMethod.expectReply);
@@ -158,7 +158,7 @@ export class MessagesService {
                 message.statusMessage = latest.statusMessage ?? failedReason;
                 message.updatedAt = new Date().getTime();
             }
-            
+
             // if all batches have been completed, update the overall task state to complete
             if ((batchProgress.complete===batchProgress.total) && message.status!=='failed') {
                 if (expectReply===true) {
@@ -259,7 +259,7 @@ export class MessagesService {
         if (command===undefined) {
             throw new Error('NOT_FOUND: Command not found');
         }
-        
+
         // if the command was SHADOW/TOPIC then we retrieve the replies from our own datastore. But if JOB then we need to retrieve them from the job system.
         let result:[ReplyItem[],ReplyListPaginationKey];
         if (command.deliveryMethod.type==='JOB') {
@@ -324,18 +324,18 @@ export class MessagesService {
 
     public async processMessageDeletion(messageId: string) : Promise<void> {
         logger.debug(`messages.service processMessageDeletion: in: messageId:${messageId}`);
-        
+
         const limit = pLimit(this.promisesConcurrency);
-        
+
         // retrieve all recipients of the message
         let exclusiveStart: RecipientListPaginationKey;
         // eslint-disable-next-line no-constant-condition
         while (true) {
             const futures:Promise<SendMessageResult>[]= [];
-            const r = await this.listRecipients(messageId, exclusiveStart);            
+            const r = await this.listRecipients(messageId, exclusiveStart);
             r[0]?.forEach(async (recipient) => {
                 // delete the recipient, processing a page at a time. this will allow the delete method to be safely rerun in the edge case where deletion of millions of recipients of a message may fail due to exceeding lambda execution time limits
-                futures.push( 
+                futures.push(
                     limit(()=> this.sqsSendRecipientForDeletion(messageId, recipient.id))
                 );
             });

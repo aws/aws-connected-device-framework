@@ -12,11 +12,11 @@
  *********************************************************************************************************************/
  import { Response } from 'express';
 
- import { logger } from './logger.util';
- 
+ import { logger } from '@awssolutions/simple-cdf-logger';
+
  export function handleError(e:Error, res:Response): void {
      logger.error(`errors.util handleError: in: ${e}`);
- 
+
      if (e.name === 'ArgumentError' || e.message === 'FAILED_VALIDATION' || e.message === 'UNSUPPORTED_TARGET_TYPE' || e.message.startsWith('INVALID_COMPONENT:')) {
          res.status(400).json({error: res.statusMessage}).end();
      } else if (e.message?.endsWith('NOT_FOUND')) {
@@ -34,7 +34,6 @@
      } else {
          res.status(500).json({error: res.statusMessage}).end();
      }
- 
+
      logger.error(`errors.util handleError: exit: ${res.status}`);
  }
- 

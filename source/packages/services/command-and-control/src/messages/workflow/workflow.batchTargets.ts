@@ -14,7 +14,7 @@ import { WorkflowAction } from './workflow.interfaces';
 import { TYPES } from '../../di/types';
 import { injectable, inject } from 'inversify';
 import { MessageItem } from '../messages.models';
-import { logger } from '../../utils/logger.util';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import ow from 'ow';
 import { MessagesDao } from '../messages.dao';
 import { CommandItem, DeliveryMethod } from '../../commands/commands.models';
@@ -23,7 +23,7 @@ import { SendMessageResult } from 'aws-sdk/clients/sqs';
 
 @injectable()
 export class BatchTargetsAction implements WorkflowAction {
-    
+
     private sqs: AWS.SQS;
 
     constructor(
@@ -50,7 +50,7 @@ export class BatchTargetsAction implements WorkflowAction {
                 chunks[chunk] = ([] as T[]).concat(chunks[chunk] || [], item);
                 return chunks;
             }, []);
-        const batches = batcher(message.resolvedTargets);   
+        const batches = batcher(message.resolvedTargets);
         message.batchesTotal = batches.length;
         message.batchesComplete = 0;
         message.status = 'sending';
@@ -63,7 +63,7 @@ export class BatchTargetsAction implements WorkflowAction {
         for (const batch of batches) {
             // replace full list of resolved targets with the batch, so the message item now represents a batch
             message.resolvedTargets = batch;
-            sqsFutures.push( 
+            sqsFutures.push(
                 limit(()=> this.sqsSendMessage(message, command))
             );
         }
@@ -74,7 +74,7 @@ export class BatchTargetsAction implements WorkflowAction {
     }
 
     private getBatchSize(deliveryMethod:DeliveryMethod) : number {
-        switch(deliveryMethod) {    
+        switch(deliveryMethod) {
             case 'JOB':
                 return this.jobMessagesBatchSize;
             case 'TOPIC':

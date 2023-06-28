@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { inject, injectable } from 'inversify';
-import { logger } from '../utils/logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { TYPES } from '../di/types';
 import { AccountsItem, AccountComponentModel, AccountResource, AccountUpdateRequest, DynamoDbPaginationKey, AccountListPaginationKey } from './accounts.models';
 import { createDelimitedAttribute, createDelimitedAttributePrefix, expandDelimitedAttribute, PkType } from "../utils/pkUtils.util";

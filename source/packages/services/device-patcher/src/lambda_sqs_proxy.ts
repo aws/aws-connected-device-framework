@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { container } from './di/inversify.config';
-import { logger } from './utils/logger.util';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { TYPES } from './di/types';
 import { PatchService } from './patch/patch.service';
 import { PatchItem } from './patch/patch.model';

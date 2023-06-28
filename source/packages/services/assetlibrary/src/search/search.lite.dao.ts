@@ -17,7 +17,7 @@ import { Node } from '../data/node';
 import { TYPES } from '../di/types';
 import { TypeCategory } from '../types/constants';
 import { NotSupportedError } from '../utils/errors';
-import { logger } from '../utils/logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { SearchRequestModel } from './search.models';
 
 @injectable()

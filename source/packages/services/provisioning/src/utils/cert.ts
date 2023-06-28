@@ -1,6 +1,6 @@
 import { inject, injectable } from 'inversify';
 import { CertificateStatus, CertInfo } from "../things/things.models";
-import { logger } from "./logger";
+import { logger } from '@awssolutions/simple-cdf-logger';
 import * as pem from 'pem';
 import { TYPES } from '../di/types';
 import { DescribeCACertificateRequest, DescribeCACertificateResponse, RegisterCertificateWithoutCAResponse } from 'aws-sdk/clients/iot';

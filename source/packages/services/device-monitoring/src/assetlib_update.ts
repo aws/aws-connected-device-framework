@@ -17,7 +17,7 @@ import {
     Device10Resource,
     ASSETLIBRARY_CLIENT_TYPES,
 } from '@awssolutions/cdf-assetlibrary-client';
-import { logger } from './utils/logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 
 @injectable()
 export class AssetLibUpdate {

@@ -17,7 +17,7 @@ import { BaseDaoFull, NeptuneConnection } from '../data/base.full.dao';
 import { Node } from '../data/node';
 import { TYPES } from '../di/types';
 import { ArgumentError } from '../utils/errors';
-import { logger } from '../utils/logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { TypeUtils } from '../utils/typeUtils';
 import {
     FacetResults,

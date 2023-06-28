@@ -13,7 +13,7 @@
 
 import { injectable, inject } from "inversify";
 import { TYPES } from "../di/types";
-import { logger } from "../utils/logger";
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { AccountResource, AccountCreationRequest, AccountUpdateRequest, AccountComponentModel, AccountRegionUpdateRequest, AccountListPaginationKey, AccountsItem } from "./accounts.models";
 import ow from "ow";
 import { ProvisionProductInput } from "aws-sdk/clients/servicecatalog";

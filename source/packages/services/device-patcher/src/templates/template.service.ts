@@ -13,7 +13,7 @@
 import ow from 'ow';
 import {inject, injectable} from 'inversify';
 
-import { logger } from '../utils/logger.util';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { TYPES } from '../di/types';
 import { S3Utils } from '../utils/s3.util';
 import { owCheckUnprintableChar, owCheckOversizeString } from '../utils/inputValidation.util';

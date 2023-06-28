@@ -13,7 +13,7 @@
 
 import { injectable } from "inversify";
 import { AccountCreationRequest, AccountListPaginationKey, AccountResource, AccountResourceList, AccountsItem, AccountStatus } from "./accounts.models";
-import { logger } from "../utils/logger";
+import { logger } from '@awssolutions/simple-cdf-logger';
 
 @injectable()
 export class AccountsAssembler {

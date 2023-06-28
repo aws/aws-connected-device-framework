@@ -12,7 +12,7 @@
  *********************************************************************************************************************/
 import { process, structure } from 'gremlin';
 import { injectable, inject } from 'inversify';
-import {logger} from '../utils/logger';
+import {logger} from '@awssolutions/simple-cdf-logger';
 import { PolicyModel, AttachedPolicy, Policy} from './policies.models';
 import { TYPES } from '../di/types';
 import { BaseDaoFull } from '../data/base.full.dao';

@@ -14,7 +14,7 @@ import { injectable, inject } from 'inversify';
 import ow from 'ow';
 
 import { TYPES } from '../di/types';
-import {logger} from '../utils/logger';
+import {logger} from '@awssolutions/simple-cdf-logger';
 
 import { TypesDao } from './types.dao';
 import { TypeModel, TypeDefinitionStatus} from './types.models';

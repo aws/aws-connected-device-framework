@@ -20,7 +20,7 @@ import ShortUniqueId from 'short-unique-id';
 import { TYPES } from '../di/types';
 import { MessageItem, MessageListPaginationKey } from '../messages/messages.models';
 import { MessagesService } from '../messages/messages.service';
-import { logger } from '../utils/logger.util';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { CommandsDao } from './commands.dao';
 import {
     CommandItem,
@@ -320,7 +320,9 @@ export class CommandsService {
         const futures: Promise<void>[] = [];
         const limit = pLimit(this.promisesConcurrency);
         for (const m of messages) {
-            futures.push(limit(() => this.messagesService.deleteMessage(m.id)));
+            futures.push(
+                limit(() => this.messagesService.deleteMessage(m.id))
+            );
         }
         await Promise.all(futures);
 

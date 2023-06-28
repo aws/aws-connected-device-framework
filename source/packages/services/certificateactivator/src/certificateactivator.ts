@@ -10,7 +10,7 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { logger } from './utils/logger';
+import { logger, setRequestId, getRequestIdFromContext } from '@awssolutions/simple-cdf-logger';
 import {container} from './di/inversify.config';
 import { TYPES } from './di/types';
 import { ActivationService } from './activation/activation.service';
@@ -21,13 +21,14 @@ let service:ActivationService;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 exports.handler = async (event: any, _context: any) => {
   logger.debug(`handler: event: ${JSON.stringify(event)}`);
+  setRequestId(getRequestIdFromContext(_context));
 
   try {
     ow(event.certificateId, ow.string.nonEmpty);
     ow(event.caCertificateId, ow.string.nonEmpty);
     ow(event.timestamp, ow.number.integer);
     ow(event.awsAccountId, ow.string.nonEmpty);
-    
+
   } catch (e) {
     // validation errors shoudn't be retried by Lambda, so
     // log an error and then return something instead of passing the error up

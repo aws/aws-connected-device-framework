@@ -13,7 +13,7 @@
 import { injectable, inject } from 'inversify';
 import * as pem from 'pem';
 import { TYPES } from '../di/types';
-import { logger } from '../utils/logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import ow from 'ow';
 import { RegistrationEvent, CertificateRevocationList, CertificateStatus } from './activation.models';
 import {
@@ -71,7 +71,7 @@ export class ActivationService {
             throw e;
         }
 
-        // check whether device has been whitelisted      
+        // check whether device has been whitelisted
         let deviceId:string;
         try {
             deviceId = await this.getDeviceIdFromCertificate(jitrEvent.certificateId);
@@ -209,7 +209,7 @@ export class ActivationService {
         let provisionResponse:ProvisionThingResponse;
         try {
             provisionResponse = await this.things.provisionThing(provisionRequest);
-        } catch (e) {   
+        } catch (e) {
             logger.error(`activation.service: provisionThing: error with provisioning:${e.message}`);
             throw e;
         }

@@ -12,7 +12,7 @@
  *********************************************************************************************************************/
 import { Response } from './responses.models';
 import { injectable, inject } from 'inversify';
-import {logger} from '../utils/logger.util';
+import {logger} from '@awssolutions/simple-cdf-logger';
 import {TYPES} from '../di/types';
 import { createDelimitedAttribute, PkType } from '../utils/pkUtils.util';
 import { DynamoDbUtils } from '../utils/dynamoDb.util';

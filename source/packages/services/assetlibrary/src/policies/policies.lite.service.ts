@@ -12,7 +12,7 @@
  *********************************************************************************************************************/
 import { injectable } from 'inversify';
 import { PolicyModel} from './policies.models';
-import {logger} from '../utils/logger';
+import {logger} from '@awssolutions/simple-cdf-logger';
 import { PoliciesService } from './policies.service';
 import { NotSupportedError } from '../utils/errors';
 

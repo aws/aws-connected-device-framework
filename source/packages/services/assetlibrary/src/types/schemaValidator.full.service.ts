@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { inject, injectable } from 'inversify';
-import {logger} from '../utils/logger';
+import {logger} from '@awssolutions/simple-cdf-logger';
 import Ajv from 'ajv';
 import { Operation, TypeCategory } from './constants';
 import { TemplateDefinitionJson, TypeDefinitionModel, TypeModel } from './types.models';
@@ -87,7 +87,7 @@ export class SchemaValidatorService {
             if (validate.errors.length > maxErrors) {
                 result.errors['too many errors'] = `results truncated due to greater than maximum ${maxErrors} errors. Check logs for full error list.`
             }
-            
+
         }
 
         logger.debug(`schemaValidator.full.service validate: exit: result: ${JSON.stringify(result)}`);
@@ -191,7 +191,7 @@ export class SchemaValidatorService {
         }
 
         logger.silly(`schemaValidator.full.service validateSubType: schema:${JSON.stringify(subTypeSchema)}`);
-        
+
         const result = await this.validate(subTypeSchema['$id'], subTypeSchema, instance, op);
         logger.debug(`schemaValidator.full.service validateSubType: exit:${JSON.stringify(result)}`);
         return result;
@@ -276,7 +276,7 @@ export class SchemaValidatorService {
         validateOutgoingRelations(groups?.out, groupLabels);
         validateIncomingRelations(devices?.in, deviceLabels);
         validateOutgoingRelations(devices?.out, deviceLabels);
-        
+
         const response = {
             groupLabels,
             deviceLabels,

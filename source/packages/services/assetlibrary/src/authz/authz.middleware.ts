@@ -13,7 +13,7 @@
 import * as als from 'async-local-storage';
 import { NextFunction, Request, RequestHandler, Response } from 'express';
 import { decode } from 'jsonwebtoken';
-import { logger } from '../utils/logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { Claims } from './claims';
 
 const JWT_HEADER = 'authz';

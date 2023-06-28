@@ -12,37 +12,37 @@
  *********************************************************************************************************************/
  import { inject, injectable } from 'inversify';
  import ow from 'ow';
- 
+
  import {
      BatchWriteCommandInput, DynamoDBDocumentClient, PutCommand, PutCommandInput, QueryCommand,
      QueryCommandInput, UpdateCommand, UpdateCommandInput
  } from '@aws-sdk/lib-dynamodb';
- 
+
  import { DynamoDbPaginationKey, GSI1_INDEX_NAME } from '../common/common.models';
  import { CoreItem } from '../cores/cores.models';
  import { TYPES } from '../di/types';
  import { DocumentDbClientItem, DynamoDbUtils } from '../utils/dynamoDb.util';
- import { logger } from '../utils/logger.util';
+ import { logger } from '@awssolutions/simple-cdf-logger';
  import { createDelimitedAttribute, expandDelimitedAttribute, PkType } from '../utils/pkUtils.util';
  import { CoreTaskItem } from './coreTasks.models';
- 
+
  @injectable()
  export class CoreTasksDao {
-     
+
      private dbc: DynamoDBDocumentClient;
- 
+
      public constructor(
          @inject(TYPES.DynamoDbUtils) private dynamoDbUtils:DynamoDbUtils,
          @inject(TYPES.DynamoDBDocumentFactory) ddcFactory: () => DynamoDBDocumentClient,
      ) {
          this.dbc = ddcFactory()
      }
- 
+
      public async get(taskId:string, summarize=false) : Promise<CoreTaskItem> {
          logger.debug(`coreTasks.dao get: in: taskId:${taskId}, summarize:${summarize}`);
- 
+
          const taskDbId =  createDelimitedAttribute(PkType.CoreDeviceTask, taskId);
- 
+
          const params:QueryCommandInput = {
              TableName: process.env.AWS_DYNAMODB_TABLE_NAME,
              KeyConditionExpression: `#pk=:pk`,
@@ -54,7 +54,7 @@
              },
              ScanIndexForward: true
          };
- 
+
          if (summarize) {
              // only return the summary record if the summary is all we need
              params.KeyConditionExpression+=' AND #sk=:sk';
@@ -66,31 +66,31 @@
              logger.debug('coreTasks.dao get: exit: undefined');
              return undefined;
          }
- 
+
          const task = this.assemble(results.Items)?.[0];
          logger.debug(`coreTasks.dao get: exit: ${JSON.stringify(task)}`);
          return task;
      }
- 
+
      public async saveCoreTask(task:CoreTaskItem, saveBatchProgress:boolean) : Promise<void> {
          logger.debug(`coreTasks.dao saveCoreTask: in: task:${JSON.stringify(task)}, saveBatchProgress:${saveBatchProgress}`);
- 
+
          ow(task, ow.object.nonEmpty);
          ow(task.id, ow.string.nonEmpty);
          ow(task.taskStatus, ow.string.nonEmpty);
- 
+
          if ((task.cores?.length??0)>0) {
              for(const core of task.cores) {
                  ow(core?.name, ow.string.nonEmpty);
              }
          }
- 
+
          const params:BatchWriteCommandInput = {
              RequestItems: {
                  [process.env.AWS_DYNAMODB_TABLE_NAME]: []
              }
          };
- 
+
          // main task item
          const taskDbId =  createDelimitedAttribute(PkType.CoreDeviceTask, task.id);
          const taskItem = {
@@ -111,7 +111,7 @@
              }
          };
          params.RequestItems[process.env.AWS_DYNAMODB_TABLE_NAME].push(taskItem);
- 
+
          // batch processing status item
          if (task.batchesTotal>0 && saveBatchProgress) {
              const batchDbId =  createDelimitedAttribute(PkType.CoreDeviceTask, task.id, 'batches');
@@ -129,10 +129,10 @@
              };
              params.RequestItems[process.env.AWS_DYNAMODB_TABLE_NAME].push(batchSummaryItem);
          }
- 
+
          if ((task.cores?.length??0)>0) {
              for(const core of task.cores) {
- 
+
                  // core device task detail item
                  const coreDbId = createDelimitedAttribute(PkType.CoreDevice, core.name);
                  const coreDeviceTaskDetailItem = {
@@ -149,7 +149,7 @@
                      }
                  };
                  params.RequestItems[process.env.AWS_DYNAMODB_TABLE_NAME].push(coreDeviceTaskDetailItem);
- 
+
                  // core device thing item
                  const coreDeviceItem = {
                      PutRequest: {
@@ -176,7 +176,7 @@
                      }
                  };
                  params.RequestItems[process.env.AWS_DYNAMODB_TABLE_NAME].push(coreDeviceItem);
- 
+
                  if ((core as CoreItem).artifacts!==undefined) {
                      for(const [name, artifact] of Object.entries((core as CoreItem).artifacts)) {
                          const artifactDbId = createDelimitedAttribute(PkType.CoreDevice, core.name, PkType.Artifact, name);
@@ -197,25 +197,25 @@
                  }
              }
          }
- 
- 
+
+
          const result = await this.dynamoDbUtils.batchWriteAll(params);
          if (this.dynamoDbUtils.hasUnprocessedItems(result)) {
              throw new Error('SAVE_CORE_TASK_FAILED');
          }
- 
+
          logger.debug(`coreTasks.dao saveCoreTask: exit:`);
-    
+
      }
- 
+
      public async saveTaskDetail(taskId:string, core:CoreItem) : Promise<void> {
          logger.debug(`coreTasks.dao saveTaskDetail: in: taskId:${taskId}, core:${JSON.stringify(core)}`);
- 
+
          ow(taskId, ow.string.nonEmpty);
          ow(core, ow.object.nonEmpty);
          ow(core.name, ow.string.nonEmpty);
- 
- 
+
+
          // core device task detail item
          const taskDbId = createDelimitedAttribute(PkType.CoreDeviceTask, taskId);
          const coreDbId = createDelimitedAttribute(PkType.CoreDevice, core.name);
@@ -231,22 +231,22 @@
                  updatedAt: core.updatedAt?.toISOString()
              }
          };
- 
+
          await this.dbc.send(new PutCommand(coreDeviceTaskDetailItem));
- 
+
          logger.debug(`coreTasks.dao saveTaskDetail: exit:`);
-    
+
      }
- 
+
      public async incrementBatchesCompleted(taskId:string ) : Promise<TaskBatchProgress> {
          logger.debug(`coreTasks.dao incrementBatchProgress: in: taskId:${taskId}`);
- 
+
          // validation
          ow(taskId, ow.string.nonEmpty);
- 
+
          const taskDbId =  createDelimitedAttribute(PkType.CoreDeviceTask, taskId);
          const batchDbId =  createDelimitedAttribute(PkType.CoreDeviceTask, taskId, 'batches');
-         
+
          const params: UpdateCommandInput = {
              TableName: process.env.AWS_DYNAMODB_TABLE_NAME,
              Key: {
@@ -259,7 +259,7 @@
              },
              ReturnValues: 'ALL_NEW'
          };
- 
+
          const result = await this.dbc.send( new UpdateCommand(params) );
          const response:TaskBatchProgress = {
              complete: result.Attributes['batchesComplete'],
@@ -268,20 +268,20 @@
          logger.debug(`coreTasks.dao incrementBatchProgress: exit: ${JSON.stringify(response)}`);
          return response;
      }
- 
+
      private assemble(items:DocumentDbClientItem[]) : CoreTaskItem[] {
          logger.debug(`coreTasks.dao assemble: items:${JSON.stringify(items)}`);
          if ((items?.length??0)===0) {
              return undefined;
          }
- 
+
          const ct: {[taskId:string]: CoreTaskItem} = {};
          const c: {[taskId:string]: CoreItem[]} = {};
          items.forEach(item => {
              const pk = expandDelimitedAttribute(item.pk);
              const sk = expandDelimitedAttribute(item.sk);
              const taskId = pk[1];
- 
+
              if (sk.length===2 && sk[0]===PkType.CoreDeviceTask) {
                  // core task main item
                  ct[taskId] = {
@@ -320,15 +320,15 @@
          Object.keys(ct).forEach(k => {
              ct[k].cores = c[k];
          });
- 
+
          const response = Object.values(ct);
          logger.debug(`coreTasks.dao assemble: exit:${JSON.stringify(response)}`);
          return response;
      }
- 
+
      public async list(count?:number, exclusiveStart?:CoreTaskListPaginationKey): Promise<[CoreTaskItem[],CoreTaskListPaginationKey]> {
          logger.debug(`coreTasks.dao list: in: count:${count}, exclusiveStart:${JSON.stringify(exclusiveStart)}`);
- 
+
          let exclusiveStartKey:DynamoDbPaginationKey;
          if (exclusiveStart?.taskId) {
              exclusiveStartKey = {
@@ -337,7 +337,7 @@
                  siKey1: PkType.CoreDeviceTask,
              }
          }
- 
+
          const params:QueryCommandInput = {
              TableName: process.env.AWS_DYNAMODB_TABLE_NAME,
              IndexName: GSI1_INDEX_NAME,
@@ -352,16 +352,16 @@
              ExclusiveStartKey: exclusiveStartKey,
              Limit: count
          };
- 
+
          logger.silly(`coreTasks.dao list: params: ${JSON.stringify(params)}`);
- 
+
          const results = await this.dbc.send( new QueryCommand(params) );
          if ((results?.Items?.length??0)===0) {
              logger.debug('coreTasks.dao list: exit: undefined');
              return [undefined,undefined];
          }
          logger.silly(`coreTasks.dao list: results: ${JSON.stringify(results)}`);
- 
+
          const response = this.assemble(results.Items);
          let paginationKey:CoreTaskListPaginationKey;
          if (results.LastEvaluatedKey) {
@@ -370,18 +370,18 @@
                  taskId: lastEvaluatedTaskId
              }
          }
- 
+
          logger.debug(`coreTasks.dao list: exit: response:${JSON.stringify(response)}, paginationKey:${paginationKey}`);
          return [response, paginationKey];
      }
  }
- 
- 
+
+
  export interface TaskBatchProgress {
      complete:number;
      total:number;
  }
- 
+
  export type CoreTaskListPaginationKey = {
      taskId:string;
  }

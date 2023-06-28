@@ -17,7 +17,7 @@ import ow from 'ow';
 
 import { CommandItem, ShadowDeliveryMethod } from '../../commands/commands.models';
 import { TYPES } from '../../di/types';
-import { logger } from '../../utils/logger.util';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { MessageItem } from '../messages.models';
 import { WorkflowPublishAction } from './workflow.publishAction';
 
@@ -43,7 +43,7 @@ export class ShadowAction extends WorkflowPublishAction {
         ow(message, ow.object.nonEmpty);
 
         const payload = super.replacePayloadTokens(message,command);
-                    
+
         // enumerate all the targeted things, publishing to device specific topics
         ow(message.resolvedTargets, ow.array.minLength(1));
         for(const target of message.resolvedTargets) {

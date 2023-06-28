@@ -10,7 +10,7 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import { logger } from './utils/logger.util';
+import { getRequestIdFromContext, logger, setRequestId } from '@awssolutions/simple-cdf-logger';
 import { container } from './di/inversify.config';
 import { SNSTarget, SNSMessages } from './targets/sns.target';
 import { TYPES } from './di/types';
@@ -27,6 +27,9 @@ const assembler: AlertAssembler = container.get(TYPES.AlertAssembler);
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 exports.handler = async (event: any, _context: unknown) => {
     logger.debug(`handler: event: ${JSON.stringify(event)}`);
+
+    // apply the awsRequestId to the logger so all logs reflect the requestId
+    setRequestId(getRequestIdFromContext(_context));
 
     // review all the incoming records
     for (const rec of event.Records) {

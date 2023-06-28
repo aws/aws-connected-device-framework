@@ -16,7 +16,7 @@ import btoa from 'btoa';
 import atob from 'atob';
 
 import {TYPES} from '../di/types';
-import {logger} from '../utils/logger.util';
+import {logger} from '@awssolutions/simple-cdf-logger';
 import {createDelimitedAttribute, expandDelimitedAttribute, PkType} from '../utils/pKUtils.util';
 
 import {PatchTaskItem, PatchTaskList } from './patchTask.model';

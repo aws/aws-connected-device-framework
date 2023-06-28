@@ -15,7 +15,7 @@ import { PolicyModel, AttachedPolicy} from './policies.models';
 import { PoliciesAssembler} from './policies.assembler';
 import { TYPES } from '../di/types';
 import { PoliciesDaoFull} from './policies.full.dao';
-import {logger} from '../utils/logger';
+import {logger} from '@awssolutions/simple-cdf-logger';
 import {EventEmitter, Type, Event} from '../events/eventEmitter.service';
 import { Operation, TypeCategory } from '../types/constants';
 import ow from 'ow';
@@ -27,7 +27,7 @@ import { owCheckOptionalNumber } from '../utils/inputValidation.util';
 @injectable()
 export class PoliciesServiceFull implements PoliciesService {
 
-    constructor( 
+    constructor(
         @inject(TYPES.EventEmitter) private eventEmitter: EventEmitter,
         @inject(TYPES.PoliciesAssembler) private policiesAssembler: PoliciesAssembler,
         @inject(TYPES.PoliciesDao) private policiesDao: PoliciesDaoFull,

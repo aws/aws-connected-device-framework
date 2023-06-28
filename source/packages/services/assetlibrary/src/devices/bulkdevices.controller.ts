@@ -15,7 +15,7 @@ import { interfaces, controller, response, request, requestBody, httpPost, httpP
 import { inject } from 'inversify';
 import { DevicesService } from './devices.service';
 import {TYPES} from '../di/types';
-import {logger} from '../utils/logger';
+import {logger} from '@awssolutions/simple-cdf-logger';
 import {InvalidQueryStringError, handleError} from '../utils/errors';
 import { BulkDevicesResource, BulkDevicesResult, DeviceResourceList } from './devices.models';
 import { DevicesAssembler } from './devices.assembler';

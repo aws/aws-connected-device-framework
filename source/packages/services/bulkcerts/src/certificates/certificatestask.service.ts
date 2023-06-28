@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { injectable, inject } from 'inversify';
-import {logger} from '../utils/logger';
+import {logger} from '@awssolutions/simple-cdf-logger';
 import {v1 as uuid} from 'uuid';
 import AWS = require('aws-sdk');
 import { TYPES } from '../di/types';
@@ -45,13 +45,13 @@ export class CertificatesTaskService {
     public async createTask(quantity:number, caAlias:string,certInfo:CertificateInfo) : Promise<string> {
         logger.debug(`certificatestask.service createTask: in: quantity: ${quantity}, caAlias: ${caAlias}, certInfo:${JSON.stringify(certInfo)}`);
 
-        
+
         ow(caAlias, ow.string.nonEmpty);
         if (certInfo?.daysExpiry) {
-            /* 
+            /*
                 SSL Certificate Max validity period
-                The maximum validity period of TLS/SSL certificates is currently at 825 days (2 years, 3 month, and 5 days). 
-                The validity period was sheared from 10 years down to 5 years, and finally to 2 years, owing to the security 
+                The maximum validity period of TLS/SSL certificates is currently at 825 days (2 years, 3 month, and 5 days).
+                The validity period was sheared from 10 years down to 5 years, and finally to 2 years, owing to the security
                 concerns associated with protracted validity periods.
             */
             ow(certInfo.daysExpiry, ow.number.greaterThan(0).lessThanOrEqual(825));
@@ -68,7 +68,7 @@ export class CertificatesTaskService {
         if (typeof (certInfo['commonName']['quantity']) && certInfo['commonName']['quantity'] >0 ) {
             quantity = certInfo['commonName']['quantity'];
         }
-        
+
         this.validateCommonName(certInfo);
 
         ow(quantity, ow.number.greaterThan(0));
@@ -118,7 +118,7 @@ export class CertificatesTaskService {
         if (certInfo.commonNameList === undefined) {
             certInfo.commonNameList = [];
         }
-        
+
         if (certInfo.organization === undefined) {
             certInfo.organization = this.organization;
         }
@@ -190,11 +190,11 @@ export class CertificatesTaskService {
 
     private validateCertInfo(certInfo: CertificateInfo): CertInfoValidationResult {
         logger.debug(`certificatestask.service validateCertInfo: in: certInfo:${JSON.stringify(certInfo)}`);
-        
+
         const commonNameRE = /^[0-9A-Fa-f]+$/g;
         // remove any undefined properties from the input document
         const docAsJson = JSON.parse(JSON.stringify(certInfo));
-        
+
         Object.keys(docAsJson).forEach(k => {
             if (docAsJson[k] === undefined) {
                 delete docAsJson[k];
@@ -248,7 +248,7 @@ export class CertificatesTaskService {
                     if (typeof commonName['commonNameStatic'] === 'undefined') {
                         result.isValid = false;
                         result.errors['ArgumentError'] = 'certinfo/commonName property missing';
-                    } 
+                    }
                 }
             } else {
                 result.isValid = false;
@@ -260,7 +260,7 @@ export class CertificatesTaskService {
         logger.debug(`certificatestask.service validateCertInfo: exit:${JSON.stringify(result)}`);
         return result;
     }
-    
+
 
     private constructCommonName(certInfo:CertificateInfo): CertificateInfo {
         logger.debug(`certificatestask.service constructCommonName: in:${JSON.stringify(certInfo)}`);
@@ -342,6 +342,6 @@ export class CertificatesTaskService {
         commonNameValue = Buffer.from(commonNameValue.toString()).toString('base64');
         logger.silly(`certificates.service createCommonName: commonNameValue:${commonNameValue} length:${commonNameValue?.length}`);
         ow(commonNameValue,`base64 encoded commonName` ,ow.string.maxLength(64));
-        
+
     }
 }

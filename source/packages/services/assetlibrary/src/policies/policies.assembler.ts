@@ -13,7 +13,7 @@
 import { process } from 'gremlin';
 import { injectable } from 'inversify';
 import { PolicyModel, AttachedPolicy, Policy} from './policies.models';
-import {logger} from '../utils/logger';
+import {logger} from '@awssolutions/simple-cdf-logger';
 
 @injectable()
 export class PoliciesAssembler {

@@ -13,7 +13,7 @@
 
 import ow from 'ow';
 
-import { logger } from './utils/logger.util';
+import { logger } from '@awssolutions/simple-cdf-logger';
 
 exports.handler = async (event: IotRuleJobEvent | IotRuleJobExecutionEvent, _context: unknown) : Promise<void> => {
   logger.debug(`lambda_job_command_response_handler: event: ${JSON.stringify(event)}`);
@@ -29,7 +29,7 @@ exports.handler = async (event: IotRuleJobEvent | IotRuleJobExecutionEvent, _con
     }
   } else {
     logger.debug(`lambda_job_command_response_handler: event: ${JSON.stringify(event)}`);
-  
+
 
   }
 
@@ -71,5 +71,5 @@ interface IotRuleJobExecutionEvent {
   status: 'SUCCEEDED' | 'FAILED' | 'REJECTED' | 'CANCELED' | 'REMOVED' | 'TIMED_OUT';
   statusDetails: {
     [key: string] : string;
-  } 
+  }
 }

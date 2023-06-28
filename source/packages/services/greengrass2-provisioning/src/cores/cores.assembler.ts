@@ -12,16 +12,16 @@
  *********************************************************************************************************************/
  import { injectable } from 'inversify';
 
- import { logger } from '../utils/logger.util';
+ import { logger } from '@awssolutions/simple-cdf-logger';
  import { CoreListPaginationKey } from './cores.dao';
  import { CoreItem, CoreListResource, CoreResource, NewCoreResource } from './cores.models';
- 
+
  @injectable()
  export class CoresAssembler {
- 
+
      public toResource(item:CoreItem): CoreResource {
          logger.debug(`cores.assembler toResource: in: item:${JSON.stringify(item)}`);
- 
+
          const resource: CoreResource = {
              name: item.name,
              provisioningTemplate: item.provisioningTemplate,
@@ -36,14 +36,14 @@
              createdAt: item.createdAt,
              updatedAt: item.updatedAt,
          }
-         
+
          logger.debug(`cores.assembler toResource: exit:${JSON.stringify(resource)}`);
          return resource;
      }
- 
+
      public toItem(resource:NewCoreResource): CoreItem {
          logger.debug(`cores.assembler toItem: in: resource:${JSON.stringify(resource)}`);
- 
+
          const item: CoreItem = {
              name: resource.name,
              provisioningTemplate: resource.provisioningTemplate,
@@ -51,54 +51,53 @@
              cdfProvisioningParameters: resource.cdfProvisioningParameters,
              configFileGenerator: resource.configFileGenerator,
          }
-         
+
          logger.debug(`cores.assembler toItem: exit:${JSON.stringify(item)}`);
          return item;
      }
- 
+
      // TODO: pagination
      public toListResource(items:CoreItem[], count?:number, paginateFrom?:CoreListPaginationKey ): CoreListResource {
          logger.debug(`cores.assembler toListResource: in: items:${JSON.stringify(items)}, count:${count}, paginateFrom:${JSON.stringify(paginateFrom)}`);
- 
+
          const list:CoreListResource= {
              cores:[]
          };
- 
+
          if (count!==undefined || paginateFrom!==undefined) {
              list.pagination = {};
          }
- 
+
          if (count!==undefined) {
              list.pagination.count=count;
          }
- 
+
          if (paginateFrom!==undefined) {
              list.pagination.lastEvaluated = {
                  thingName: paginateFrom?.thingName
              };
-         }        
- 
+         }
+
          if ((items?.length??0)>0) {
              items.forEach(i=> list.cores.push(this.toResource(i)));
          }
- 
+
          logger.debug(`cores.assembler toListResource: exit: ${JSON.stringify(list)}`);
          return list;
- 
+
      }
- 
+
      public toResourceArray(items:CoreItem[]): CoreResource[] {
          logger.debug(`cores.assembler toResourceArray: in: items:${JSON.stringify(items)}`);
- 
+
          const reources:CoreResource[]=[];
- 
+
          if ((items?.length??0)>0) {
              items.forEach(i=> reources.push(this.toResource(i)));
          }
- 
+
          logger.debug(`cores.assembler toResourceArray: exit: ${JSON.stringify(reources)}`);
          return reources;
- 
+
      }
  }
- 

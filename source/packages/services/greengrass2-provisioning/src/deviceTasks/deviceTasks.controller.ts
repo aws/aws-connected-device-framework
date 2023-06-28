@@ -15,7 +15,7 @@ import { controller, httpGet, httpPost, interfaces, requestBody, requestParam, r
 import { TYPES } from "../di/types";
 import { DeviceTasksService } from "./deviceTasks.service";
 import { Response } from 'express';
-import { logger } from "../utils/logger.util";
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { handleError } from "../utils/errors.util";
 import { NewDeviceTaskResource } from "./deviceTasks.model";
 import { DeviceTasksAssembler } from "./deviceTasks.assembler";

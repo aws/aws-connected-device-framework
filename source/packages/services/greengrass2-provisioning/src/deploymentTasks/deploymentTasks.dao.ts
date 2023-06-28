@@ -20,7 +20,7 @@ import {
 import { Deployment } from '../deployments/deployments.models';
 import { TYPES } from '../di/types';
 import { DocumentDbClientItem, DynamoDbUtils } from '../utils/dynamoDb.util';
-import { logger } from '../utils/logger.util';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { createDelimitedAttribute, expandDelimitedAttribute, PkType } from '../utils/pkUtils.util';
 import { DeploymentTask } from './deploymentTasks.models';
 import { DynamoDbPaginationKey, GSI1_INDEX_NAME, GSI3_INDEX_NAME } from '../common/common.models';

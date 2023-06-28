@@ -24,7 +24,7 @@ import { DEVICE_PATCHER_CLIENT_TYPES } from '@awssolutions/cdf-device-patcher-cl
 
 import { container } from '../di/inversify.config';
 import {AUTHORIZATION_TOKEN} from '../step_definitions/common/common.steps';
-import {logger} from '../step_definitions/utils/logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import {DescribeInstancesCommand, EC2Client, TerminateInstancesCommand} from '@aws-sdk/client-ec2';
 
 

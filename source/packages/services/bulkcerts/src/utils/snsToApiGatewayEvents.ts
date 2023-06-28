@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import ow from 'ow';
-import { logger } from './logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 export class SnsToApiGatewayEvents {
 
     public buildApiGatewayEventFromSnsEvent(subject:string, snsMessage:Message): string {

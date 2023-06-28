@@ -12,7 +12,7 @@
  *********************************************************************************************************************/
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../di/types';
-import {logger} from '../utils/logger';
+import {logger} from '@awssolutions/simple-cdf-logger';
 import * as pem from 'pem';
 import ow from 'ow';
 import { Iot } from 'aws-sdk';
@@ -386,7 +386,7 @@ export class CertificateService {
             for (const param of params) {
                 await this.iot.attachPolicy(param).promise();
             }
-            
+
         } catch (err) {
             logger.debug(`certificates.service attachPolicyToCertificate: err:${err}`);
             throw new Error('UNABLE_TO_ATTACH_POLICY');
@@ -407,7 +407,7 @@ export class CertificateService {
                 continue;
             }
 
-            
+
             await this.iot.detachThingPrincipal({thingName: deviceId, principal}).promise();
 
             const principalThings: ListPrincipalThingsResponse = await this.iot.listPrincipalThings({principal}).promise();
@@ -428,16 +428,16 @@ export class CertificateService {
     }
 
     private async getEffectivePolicies(certId:string): Promise <GetEffectivePoliciesResponse > {
-        
+
         logger.debug(`certificates.service getEffectivePolicies: in: certId:${certId}`);
         const params = {
             principal : `arn:aws:iot:${this.region}:${this.accountId}:cert/${certId}`
         }
-        
+
         const policies = await this.iot.getEffectivePolicies(params).promise();
 
         logger.debug(`certificates.service getEffectivePolicies: exit !!!`);
-        
+
         return policies
 
     }

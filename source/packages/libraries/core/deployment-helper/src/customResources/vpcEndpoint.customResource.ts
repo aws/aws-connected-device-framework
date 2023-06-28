@@ -14,7 +14,7 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from '../di/types';
 import { CustomResourceEvent } from './customResource.model';
 import { CustomResource } from './customResource';
-import { logger } from '../utils/logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { VpcEndpointRouteTableIdList, VpcEndpointSubnetIdList } from 'aws-sdk/clients/ec2';
 
 @injectable()

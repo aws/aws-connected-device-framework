@@ -18,7 +18,7 @@ import {
 
 import { TYPES } from '../di/types';
 import { handleError } from '../utils/errors.util';
-import { logger } from '../utils/logger.util';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { CoreTasksAssembler } from './coreTasks.assembler';
 import { NewCoreTaskResource } from './coreTasks.models';
 import { CoreTasksService } from './coreTasks.service';

@@ -15,7 +15,7 @@ import { inject } from "inversify";
 import { controller, httpDelete, httpGet, interfaces, queryParam, requestParam, response } from "inversify-express-utils";
 import { TYPES } from "../di/types";
 import { handleError } from "../utils/errors.util";
-import { logger } from "../utils/logger.util";
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { DevicesAssembler } from './devices.assembler';
 import { DevicesService } from "./devices.service";
 

@@ -24,7 +24,7 @@ import { TypesService } from '../types/types.service';
 import {
     ProfileNotFoundError, RelationValidationError, SchemaValidationError, TemplateNotFoundError
 } from '../utils/errors';
-import { logger } from '../utils/logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { ProfilesAssembler } from './profiles.assembler';
 import { ProfilesDaoFull } from './profiles.full.dao';
 import { DeviceProfileItem, GroupProfileItem, ProfileItemList } from './profiles.models';

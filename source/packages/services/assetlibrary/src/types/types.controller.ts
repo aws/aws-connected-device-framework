@@ -34,7 +34,7 @@ import {
     TypeResourceList,
 } from '../types/types.models';
 import { handleError } from '../utils/errors';
-import { logger } from '../utils/logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { TypeCategory } from './constants';
 import { TypesService } from './types.service';
 

@@ -15,7 +15,7 @@ import { inject, injectable } from 'inversify';
 import { TYPES } from '../di/types';
 import AWS = require('aws-sdk');
 import { ComponentItem } from './components.model';
-import { logger } from '../utils/logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { createDelimitedAttribute, createDelimitedAttributePrefix, PkType } from '../utils/pkUtils.util';
 
 @injectable()

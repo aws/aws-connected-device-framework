@@ -14,7 +14,7 @@ import { injectable, inject } from 'inversify';
 import { generate } from 'shortid';
 
 import { TYPES } from '../../di/types';
-import { logger } from '../../utils/logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 
 import { Batch, Batcher, Batches } from '../batch.service';
 import { TypeCategory } from '../../types/constants';

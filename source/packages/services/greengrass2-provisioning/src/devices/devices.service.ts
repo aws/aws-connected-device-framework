@@ -12,7 +12,7 @@
  *********************************************************************************************************************/
 import { inject, injectable } from "inversify";
 import { DeviceTaskItem } from "../deviceTasks/deviceTasks.model";
-import { logger } from "../utils/logger.util";
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { DeviceCreatedEvent, DeviceCreatedPayload, DeviceDeletedEvent, DeviceDeletedPayload, DeviceItem } from "./devices.model";
 import ow from 'ow';
 import { TYPES } from "../di/types";

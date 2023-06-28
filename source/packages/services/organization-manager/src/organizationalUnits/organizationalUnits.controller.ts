@@ -21,7 +21,7 @@ import {
     response
 } from "inversify-express-utils";
 import { Response } from "express";
-import { logger } from "../utils/logger";
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { handleError } from "../utils/errors";
 import { inject } from "inversify";
 import { TYPES } from "../di/types";

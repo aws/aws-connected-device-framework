@@ -14,7 +14,7 @@ import { inject, injectable } from 'inversify';
 
 import { DevicesAssembler } from '../devices/devices.assembler';
 import { TYPES } from '../di/types';
-import { logger } from '../utils/logger.util';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { DeviceTaskItem, DeviceTaskResource, NewDeviceTaskResource } from './deviceTasks.model';
 
 @injectable()

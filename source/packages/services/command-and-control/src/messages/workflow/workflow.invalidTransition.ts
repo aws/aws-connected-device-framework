@@ -14,7 +14,7 @@ import { WorkflowAction } from './workflow.interfaces';
 import { injectable } from 'inversify';
 import { MessageItem } from '../messages.models';
 import { CommandItem } from '../../commands/commands.models';
-import { logger } from '../../utils/logger.util';
+import { logger } from '@awssolutions/simple-cdf-logger';
 
 @injectable()
 export class InvalidTransitionAction implements WorkflowAction {

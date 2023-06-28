@@ -18,7 +18,7 @@ import yaml from 'js-yaml';
 import JSZip from 'jszip';
 import { OrganizationalUnitsDao } from "../organizationalUnits/organizationalUnits.dao";
 import { Manifest, ComponentsByOrganizationalUnitMap } from "./manifest.model";
-import { logger } from "../utils/logger";
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { ComponentsDao } from "../components/components.dao";
 import { PutObjectRequest } from "aws-sdk/clients/s3";
 

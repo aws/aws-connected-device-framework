@@ -13,22 +13,22 @@
  import { Response } from 'express';
  import { inject } from 'inversify';
  import { controller, httpGet, interfaces, response } from 'inversify-express-utils';
- 
+
  import { TYPES } from '../di/types';
  import { handleError } from '../utils/errors.util';
- import { logger } from '../utils/logger.util';
+ import { logger } from '@awssolutions/simple-cdf-logger';
  import { TemplateUsage } from './fleet.model';
  import { FleetService } from './fleet.service';
- 
+
  @controller('/fleet')
  export class FleetController implements interfaces.Controller {
- 
+
      constructor( @inject(TYPES.FleetService) private fleetService: FleetService) {}
- 
+
      @httpGet('/summary')
      public async listTemplateUsage(@response() res: Response) : Promise<TemplateUsage> {
          logger.debug(`fleet.controller listTemplateUsage: in:`);
- 
+
          let r:TemplateUsage;
          try {
              r = await this.fleetService.listTemplateUsage();
@@ -39,4 +39,3 @@
          return r;
      }
  }
- 

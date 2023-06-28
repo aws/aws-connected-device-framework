@@ -16,7 +16,7 @@ import { inject, injectable } from 'inversify';
 import createHttpError from 'http-errors';
 
 import { LAMBDAINVOKE_TYPES } from './di/types';
-import { logger } from './utils/logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 
 import {LambdaApiGatewayEventBuilder, LambdaApiGatewayEventResponse} from './lambdainvoker.model';
 

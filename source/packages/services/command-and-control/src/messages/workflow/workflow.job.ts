@@ -22,7 +22,7 @@ import {
 
 import { CommandItem, JobDeliveryMethod } from '../../commands/commands.models';
 import { TYPES } from '../../di/types';
-import { logger } from '../../utils/logger.util';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { MessageItem, Recipient } from '../messages.models';
 import { WorkflowPublishAction } from './workflow.publishAction';
 

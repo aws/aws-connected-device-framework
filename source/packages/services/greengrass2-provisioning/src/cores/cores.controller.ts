@@ -18,7 +18,7 @@ import {
 import { DeploymentList } from '../deploymentTasks/deploymentTasks.models';
 import { TYPES } from '../di/types';
 import { handleError } from '../utils/errors.util';
-import { logger } from '../utils/logger.util';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { CoresAssembler } from './cores.assembler';
 import { CoresService } from './cores.service';
 

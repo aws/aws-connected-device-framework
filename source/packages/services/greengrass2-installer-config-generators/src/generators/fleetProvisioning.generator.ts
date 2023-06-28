@@ -12,11 +12,11 @@
  *********************************************************************************************************************/
  import ow from 'ow';
  import { Document } from 'yaml';
- 
+
  import { InstallerConfig } from '../installerConfig/installer.models';
- import { logger } from '../utils/logger.util';
+ import { logger } from '@awssolutions/simple-cdf-logger';
  import { ConfigGeneratorEvent, ConfigGeneratorHandler } from './models';
- 
+
  export type FleetProvisioningConfig = {
    rootCaPath: string;
    rootPath: string;
@@ -27,17 +27,17 @@
    claimCertificatePath: string;
    claimCertificatePrivateKeyPath: string;
  }
- 
+
  export const fleetProvisioningHandler = (
    handlerConfig:FleetProvisioningConfig
  ): ConfigGeneratorHandler => async (
    event: ConfigGeneratorEvent): Promise<unknown> => {
    logger.debug(`fleetProvisioningHandler: in: event: ${JSON.stringify(event)}`);
- 
+
    ow(event?.coreDeviceName, ow.string.nonEmpty);
    ow(event.version, ow.string.nonEmpty);
    ow(event.provisioningTemplate, ow.string.nonEmpty);
- 
+
    const configJson: InstallerConfig = {
      services: {
        'aws.greengrass.Nucleus': {
@@ -66,20 +66,19 @@
        }
      }
    };
- 
- 
+
+
    const doc = new Document();
    doc.directivesEndMarker = true;
    doc.contents = configJson;
- 
+
    const configYaml = String(doc);
- 
+
    logger.debug(`fleetProvisioningHandler: exit: ${configYaml}`);
    return {config: configYaml};
- 
+
  };
- 
- 
- 
- 
- 
+
+
+
+

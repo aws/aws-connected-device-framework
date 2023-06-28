@@ -15,7 +15,7 @@ import { injectable, inject } from 'inversify';
 import ow from 'ow';
 
 import { TYPES } from '../di/types';
-import { logger } from './logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 
 @injectable()
 export class S3Utils {

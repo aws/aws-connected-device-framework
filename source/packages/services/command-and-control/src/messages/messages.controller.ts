@@ -14,7 +14,7 @@ import { Response } from 'express';
 import { interfaces, controller, response, httpPost, requestBody, requestParam, httpGet, queryParam, httpDelete } from 'inversify-express-utils';
 import { inject } from 'inversify';
 import {TYPES} from '../di/types';
-import {logger} from '../utils/logger.util';
+import {logger} from '@awssolutions/simple-cdf-logger';
 import {handleError} from '../utils/errors';
 import { MessagesService } from './messages.service';
 import { MessageResource, NewMessageResource, Recipient } from './messages.models';
@@ -23,7 +23,7 @@ import { MessagesAssembler } from './messages.assembler';
 @controller('')
 export class MessagesController implements interfaces.Controller {
 
-    constructor( 
+    constructor(
         @inject(TYPES.MessagesService) private service: MessagesService,
         @inject(TYPES.MessagesAssembler) private assembler: MessagesAssembler) {
 
@@ -66,7 +66,7 @@ export class MessagesController implements interfaces.Controller {
     }
 
     @httpGet('/commands/:commandId/messages')
-    public async listMessages(@requestParam('commandId') commandId: string, 
+    public async listMessages(@requestParam('commandId') commandId: string,
         @queryParam('fromCreatedAtExclusive') fromCreatedAtExclusive: number,
         @queryParam('count') count: number,
         @response() res: Response) : Promise<void> {
@@ -84,7 +84,7 @@ export class MessagesController implements interfaces.Controller {
     }
 
     @httpGet('/messages/:messageId/recipients')
-    public async listRecipients(@requestParam('messageId') messageId: string, 
+    public async listRecipients(@requestParam('messageId') messageId: string,
         @queryParam('fromThingNameExclusive') fromThingNameExclusive: string,
         @queryParam('count') count: number,
         @response() res: Response) : Promise<void> {
@@ -102,7 +102,7 @@ export class MessagesController implements interfaces.Controller {
     }
 
     @httpGet('/messages/:messageId/recipients/:thingName')
-    public async getRecipient(@requestParam('messageId') messageId: string, @requestParam('thingName') thingName: string, 
+    public async getRecipient(@requestParam('messageId') messageId: string, @requestParam('thingName') thingName: string,
         @response() res: Response) : Promise<Recipient> {
 
         logger.debug(`messages.controller getRecipient: in: messageId:${messageId}, thingName:${thingName}`);
@@ -111,7 +111,7 @@ export class MessagesController implements interfaces.Controller {
             recipient = await this.service.getRecipient(messageId, thingName);
             if (recipient===undefined) {
                 res.status(404);
-            } 
+            }
         } catch (e) {
             handleError(e,res);
         }
@@ -120,7 +120,7 @@ export class MessagesController implements interfaces.Controller {
     }
 
     @httpGet('/messages/:messageId/recipients/:thingName/replies')
-    public async listReplies(@requestParam('messageId') messageId: string, 
+    public async listReplies(@requestParam('messageId') messageId: string,
         @requestParam('thingName') thingName: string,
         @queryParam('fromReceivedAtExclusive') fromReceivedAtExclusive: number,
         @queryParam('count') count: number,

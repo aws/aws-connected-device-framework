@@ -12,7 +12,7 @@
  *********************************************************************************************************************/
 import 'reflect-metadata';
 import { createMockInstance } from 'jest-create-mock-instance';
-import { logger } from '../utils/logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { CertificatesTaskService } from './certificatestask.service';
 import {CertificateInfo} from './certificatestask.models';
 import AWS, { AWSError } from 'aws-sdk';
@@ -259,7 +259,7 @@ describe('CertificatesService', () => {
             expect(message.quantity).toEqual(i === expectedChunks ? 15 : 50);
         }
     });
-    
+
     it('Create Task with invalid country Code', async () => {
         const certInfo = Object.assign({},certInfoSequential);
         certInfo.country = 'fail'
@@ -272,7 +272,7 @@ describe('CertificatesService', () => {
         }
 
     });
-    
+
     it('Create Task with invalid commonName, base64 commonname exceeds 64 charchters ', async () => {
         const certInfo = Object.assign({},certInfoSequential);
         certInfo.commonName = '`unit-test::`AB1CD79EFAB1CD79EFABCDEFABCDEFABCDEFABCDEF${static}'
@@ -290,7 +290,7 @@ describe('CertificatesService', () => {
 });
 
 
-    
+
 
 
 

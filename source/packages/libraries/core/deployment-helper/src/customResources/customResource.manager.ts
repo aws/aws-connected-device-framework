@@ -26,7 +26,7 @@ import { IotEventsCustomResource } from "./iotEvents.customresource";
 import { CustomResource } from "./customResource";
 import { IotThingGroupCustomResource } from "./iotThingGroup.customresource";
 import { S3PutObjectCustomResource } from "./s3PutObject.customResource";
-import { logger } from '@awssolutions/cdf-lambda-invoke/dist/utils/logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { AssetLibraryBulkGroupsCustomResource } from "./assetLibraryBulkGroups.customResource";
 import { AssetLibraryPolicyCustomResource } from "./assetLibraryPolicy.customResource";
 import { AssetLibraryTemplateCustomResource } from "./assetLibraryTemplate.customResource";

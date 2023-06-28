@@ -14,7 +14,7 @@ import { WorkflowAction } from './workflow.interfaces';
 import { TYPES } from '../../di/types';
 import { injectable, inject } from 'inversify';
 import { MessageItem, Recipient } from '../messages.models';
-import { logger } from '../../utils/logger.util';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import ow from 'ow';
 import {
     AwsIotThingListBuilder,

@@ -16,7 +16,7 @@ import ow from 'ow';
 import { TYPES } from '../di/types';
 import { TemplateItem } from '../templates/templates.models';
 import { TemplatesService } from '../templates/templates.service';
-import { logger } from '../utils/logger.util';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { FleetDao } from './fleet.dao';
 import { TemplateUsage } from './fleet.model';
 
@@ -92,7 +92,7 @@ export class FleetService {
             if (result.status === 'fulfilled') {
                 if (result.value) {
                     r.templates[result.value.name].latestVersion = result.value.version as number;
-                } 
+                }
             }
         }
 

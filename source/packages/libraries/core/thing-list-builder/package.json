@@ -17,6 +17,7 @@
     "@awssolutions/cdf-assetlibrary-client": "^0.0.2",
     "@awssolutions/cdf-lambda-invoke": "^0.0.2",
     "@awssolutions/cdf-logger": "^0.0.0",
+    "@awssolutions/simple-cdf-logger": "^2.1.3",
     "inversify-binding-decorators": "4.0.0",
     "inversify": "6.0.1",
     "logform": "2.4.2",
@@ -27,7 +28,7 @@
   },
   "devDependencies": {
     "@types/superagent": "4.1.15",
-    
+
     "@rushstack/eslint-config": "2.3.4",
     "eslint": "7.26.0",
 

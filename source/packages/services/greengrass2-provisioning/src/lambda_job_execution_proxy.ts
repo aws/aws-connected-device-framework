@@ -13,7 +13,7 @@
 import { container } from './di/inversify.config';
 import { CoresService } from './cores/cores.service';
 import { TYPES } from './di/types';
-import { logger } from './utils/logger.util';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { DeploymentTasksService } from './deploymentTasks/deploymentTasks.service';
 import { CDFEventPublisher, EVENT_PUBLISHER_TYPES } from '@awssolutions/cdf-event-publisher';
 import { CoreTemplateUpdatedEvent, CoreTemplateUpdatedPayload } from './cores/cores.models';

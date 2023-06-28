@@ -12,7 +12,7 @@
  *********************************************************************************************************************/
 
 import { StringArrayMap } from '../data/model';
-import { logger } from '../utils/logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { TypeCategory } from './constants';
 
 export interface TypeModel {

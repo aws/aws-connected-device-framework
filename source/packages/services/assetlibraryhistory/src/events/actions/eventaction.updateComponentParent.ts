@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { TYPES } from '../../di/types';
-import { logger } from '../../utils/logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { injectable, inject } from 'inversify';
 import { EventAction } from './eventaction.interfaces';
 import { EventsDao } from '../events.dao';

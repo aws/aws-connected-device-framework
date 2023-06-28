@@ -12,7 +12,7 @@
  *********************************************************************************************************************/
 import { Response } from 'express';
 import { interfaces, controller, response, httpPost, requestBody, requestParam} from 'inversify-express-utils';
-import {logger} from '../utils/logger';
+import {logger} from '@awssolutions/simple-cdf-logger';
 
 import { inject } from 'inversify';
 import { TYPES } from '../di/types';

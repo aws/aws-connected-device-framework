@@ -13,7 +13,7 @@
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import { injectable, inject } from 'inversify';
 
-import { logger } from './logger.util';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { TYPES } from '../di/types';
 
 @injectable()

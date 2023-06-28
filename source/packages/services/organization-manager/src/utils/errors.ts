@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { Response } from 'express';
-import { logger } from './logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 
 // https://github.com/aws/aws-sdk-net/issues/1495
 const ERRORS_429 = [

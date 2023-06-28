@@ -18,7 +18,7 @@ import { InversifyExpressServer } from 'inversify-express-utils';
 
 import { normalisePath } from '@awssolutions/cdf-express-middleware';
 
-import { logger, setRequestId } from '@awssolutions/simple-cdf-logger';
+import { logger, setRequestId, getRequestIdFromRequest } from '@awssolutions/simple-cdf-logger';
 
 import cors = require('cors');
 
@@ -31,7 +31,7 @@ const supportedVersions: string[] = process.env.SUPPORTED_API_VERSIONS?.split(',
 server.setConfig((app) => {
   // apply the awsRequestId to the logger so all logs reflect the requestId
   app.use((req: Request, _res: Response, next: NextFunction) => {
-    setRequestId(req['context']['awsRequestId']);
+    setRequestId(getRequestIdFromRequest(req));
     next();
   });
 

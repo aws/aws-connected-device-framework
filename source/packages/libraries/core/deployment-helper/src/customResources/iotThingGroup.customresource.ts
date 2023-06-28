@@ -18,7 +18,7 @@ import {TYPES} from '../di/types';
 import {CustomResourceEvent} from './customResource.model';
 import {CustomResource} from './customResource';
 import ow from 'ow';
-import { logger } from '../utils/logger';
+import { logger } from '@awssolutions/simple-cdf-logger';
 
 interface IotThingGroupCustomResourceOutput{
      thingGroupName?: string;

@@ -12,23 +12,23 @@
  *********************************************************************************************************************/
  import { process, structure } from 'gremlin';
  import { injectable, inject } from 'inversify';
- import {logger} from '../utils/logger';
+ import {logger} from '@awssolutions/simple-cdf-logger';
  import {TYPES} from '../di/types';
  import { BaseDaoFull } from '../data/base.full.dao';
- 
+
  @injectable()
  export class InitDaoFull extends BaseDaoFull {
- 
+
      public constructor(
          @inject('neptuneUrl') neptuneUrl: string,
          @inject(TYPES.GraphSourceFactory) graphSourceFactory: () => structure.Graph
      ) {
          super(neptuneUrl, graphSourceFactory);
      }
- 
+
      public async isInitialized(): Promise<boolean> {
          logger.debug('init.dao isInitialized: in: ');
- 
+
          let query;
          const conn = super.getConnection();
          try {
@@ -36,22 +36,22 @@
          } finally {
              conn.close();
          }
- 
+
          logger.debug(`init.dao isInitialized: query: ${JSON.stringify(query)}`);
- 
+
          let initialized=true;
- 
+
          if (query===undefined || query.value===null) {
              initialized=false;
          }
- 
+
          logger.debug(`init.dao isInitialized: exit: initialized: ${initialized}`);
          return initialized;
      }
- 
+
      public async initialize(): Promise<void> {
          logger.debug('init.dao initialize: in:');
- 
+
          const conn = super.getConnection();
          try {
              await conn.traversal.addV('type').property(process.t.id, 'type___device').
@@ -62,10 +62,10 @@
              conn.close();
          }
      }
- 
+
      public async getVersion(): Promise<number> {
          logger.debug('init.dao getVersion: in: ');
- 
+
          let results;
          const id = 'app_version';
          const conn = super.getConnection();
@@ -75,24 +75,24 @@
          } finally {
              conn.close();
          }
- 
+
          logger.debug(`init.dao getVersion: results: ${JSON.stringify(results)}`);
- 
+
          let version=0;
          if (results?.value?.['version']) {
              version = results.value['version'][0] as number;
          }
- 
+
          logger.debug(`init.dao getVersion: exit: version: ${version}`);
          return version;
      }
- 
+
      public async setVersion(version:number): Promise<void> {
          logger.debug(`init.dao setVersion: in: version:${version}`);
- 
+
          const currentVersion = await this.getVersion();
          const id = 'app_version';
- 
+
          const conn = super.getConnection();
          if (currentVersion===0) {
              await conn.traversal.addV(id).
@@ -104,19 +104,19 @@
                  property(process.cardinality.single, 'version', version).
                  iterate();
          }
- 
+
          logger.debug(`init.dao setVersion: exit:`);
      }
- 
+
      public async upgrade_from_0() : Promise<void> {
          logger.debug(`init.dao upgrade_from_0: in:`);
- 
+
          const conn = super.getConnection();
          try {
- 
+
              // set groupPath of root group '/'
              await conn.traversal.V('group___/').property('groupPath','/').iterate();
- 
+
              await conn.traversal.V('type___device').as('type').
                  // add missing template id
                  property(process.cardinality.single, 'templateId', 'device').
@@ -163,7 +163,7 @@
                      property('status','published').
                      from_('type').to('definition').
                  next();
- 
+
              // add type definition for the root group template
              await conn.traversal.V('type___group').as('type').
                  // add missing template id
@@ -202,13 +202,12 @@
                      property('status','published').
                      from_('type').to('definition').
                  next();
- 
+
          } finally {
              conn.close();
          }
- 
+
          logger.debug(`init.dao upgrade_from_0: exit:`);
- 
+
      }
  }
- 
