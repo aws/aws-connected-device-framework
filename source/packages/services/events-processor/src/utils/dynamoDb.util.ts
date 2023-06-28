@@ -14,11 +14,10 @@ import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import { injectable, inject } from 'inversify';
 
 import { TYPES } from '../di/types';
-import { logger } from './logger.util';
+import { logger } from '@awssolutions/simple-cdf-logger';
 
 @injectable()
 export class DynamoDbUtils {
-
     private readonly MAX_RETRIES = 3;
     private readonly DEFAULT_MAX_WRITE_BATCH_SIZE = 25;
     private readonly DEFAULT_MAX_GET_BATCH_SIZE = 100;
@@ -26,29 +25,39 @@ export class DynamoDbUtils {
     private _dc: AWS.DynamoDB.DocumentClient;
 
     public constructor(
-        @inject(TYPES.CachableDocumentClientFactory) documentClientFactory: () => AWS.DynamoDB.DocumentClient
+        @inject(TYPES.CachableDocumentClientFactory)
+        documentClientFactory: () => AWS.DynamoDB.DocumentClient
     ) {
         this._dc = documentClientFactory();
     }
 
-    public putAttributeIfDefined(writeRequest: AWS.DynamoDB.DocumentClient.WriteRequest, key: string, value: unknown): void {
+    public putAttributeIfDefined(
+        writeRequest: AWS.DynamoDB.DocumentClient.WriteRequest,
+        key: string,
+        value: unknown
+    ): void {
         if (value !== undefined) {
             writeRequest.PutRequest.Item[key] = value;
         }
     }
 
-    public removeUndefinedParameter(input: AWS.DynamoDB.DocumentClient.PutItemInputAttributeMap): AWS.DynamoDB.DocumentClient.PutItemInputAttributeMap {
-        logger.debug(`dynamoDb.util removeUndefinedParameter: in: params:${JSON.stringify(input)}`);
+    public removeUndefinedParameter(
+        input: AWS.DynamoDB.DocumentClient.PutItemInputAttributeMap
+    ): AWS.DynamoDB.DocumentClient.PutItemInputAttributeMap {
+        logger.debug(
+            `dynamoDb.util removeUndefinedParameter: in: params:${JSON.stringify(input)}`
+        );
         for (const key of Object.keys(input)) {
             if (input[key] === undefined) {
                 // NodeJS DynamoDB DAX Client does not like undefined value
-                delete input[key]
+                delete input[key];
             }
         }
-        logger.debug(`dynamoDb.util removeUndefinedParameter: exit: params:${JSON.stringify(input)}`);
-        return input
+        logger.debug(
+            `dynamoDb.util removeUndefinedParameter: exit: params:${JSON.stringify(input)}`
+        );
+        return input;
     }
-
 
     public hasUnprocessedItems(result: AWS.DynamoDB.DocumentClient.BatchWriteItemOutput): boolean {
         const has = result !== undefined && result.UnprocessedItems !== undefined;
@@ -60,11 +69,20 @@ export class DynamoDbUtils {
         return has;
     }
 
-    public async batchWriteAll(params: AWS.DynamoDB.DocumentClient.BatchWriteItemInput, attempt = 1): Promise<AWS.DynamoDB.DocumentClient.BatchWriteItemOutput> {
-        logger.debug(`dynamoDb.util batchWriteAll: in: params:${JSON.stringify(params)}, attempt=${attempt}`);
+    public async batchWriteAll(
+        params: AWS.DynamoDB.DocumentClient.BatchWriteItemInput,
+        attempt = 1
+    ): Promise<AWS.DynamoDB.DocumentClient.BatchWriteItemOutput> {
+        logger.debug(
+            `dynamoDb.util batchWriteAll: in: params:${JSON.stringify(params)}, attempt=${attempt}`
+        );
 
         if (attempt > this.MAX_RETRIES) {
-            logger.error(`dynamoDb.util batchWriteAll: the following items failed writing:\n${JSON.stringify(params.RequestItems)}`);
+            logger.error(
+                `dynamoDb.util batchWriteAll: the following items failed writing:\n${JSON.stringify(
+                    params.RequestItems
+                )}`
+            );
             return params.RequestItems;
         }
 
@@ -75,12 +93,18 @@ export class DynamoDbUtils {
         while (chunks.length) {
             const chunk = chunks.shift();
             const response = await this._dc.batchWrite(chunk).promise();
-            if (response.UnprocessedItems !== undefined && Object.keys(response.UnprocessedItems).length > 0) {
+            if (
+                response.UnprocessedItems !== undefined &&
+                Object.keys(response.UnprocessedItems).length > 0
+            ) {
                 const retryParams: DocumentClient.BatchWriteItemInput = {
-                    RequestItems: response.UnprocessedItems
+                    RequestItems: response.UnprocessedItems,
                 };
                 const retryResponse = await this.batchWriteAll(retryParams, attempt++);
-                if (retryResponse.UnprocessedItems !== undefined && Object.keys(retryResponse.UnprocessedItems).length > 0) {
+                if (
+                    retryResponse.UnprocessedItems !== undefined &&
+                    Object.keys(retryResponse.UnprocessedItems).length > 0
+                ) {
                     // even after max retries we have failed items, therefore return all unprocessed items
                     return this.joinChunksIntoOutputBatchWrite(retryResponse, chunks);
                 }
@@ -89,14 +113,22 @@ export class DynamoDbUtils {
 
         logger.debug(`dynamoDb.util batchWriteAll: exit:`);
         return undefined;
-
     }
 
-    public async batchGetAll(params: AWS.DynamoDB.DocumentClient.BatchGetItemInput, attempt = 1): Promise<AWS.DynamoDB.DocumentClient.BatchGetItemOutput> {
-        logger.debug(`dynamoDb.util batchGetAll: in: params:${JSON.stringify(params)}, attempt=${attempt}`);
+    public async batchGetAll(
+        params: AWS.DynamoDB.DocumentClient.BatchGetItemInput,
+        attempt = 1
+    ): Promise<AWS.DynamoDB.DocumentClient.BatchGetItemOutput> {
+        logger.debug(
+            `dynamoDb.util batchGetAll: in: params:${JSON.stringify(params)}, attempt=${attempt}`
+        );
 
         if (attempt > this.MAX_RETRIES) {
-            logger.error(`dynamoDb.util batchGetAll: the following items failed writing:\n${JSON.stringify(params.RequestItems)}`);
+            logger.error(
+                `dynamoDb.util batchGetAll: the following items failed writing:\n${JSON.stringify(
+                    params.RequestItems
+                )}`
+            );
             return params.RequestItems;
         }
 
@@ -111,10 +143,12 @@ export class DynamoDbUtils {
             response = this.mergeBatchGetOutput(response, { Responses: r.Responses });
             if (r.UnprocessedKeys !== undefined && Object.keys(r.UnprocessedKeys).length > 0) {
                 const retryParams: DocumentClient.BatchGetItemInput = {
-                    RequestItems: r.UnprocessedKeys
+                    RequestItems: r.UnprocessedKeys,
                 };
                 const retryResponse = await this.batchGetAll(retryParams, attempt++);
-                response = this.mergeBatchGetOutput(response, { Responses: retryResponse.Responses });
+                response = this.mergeBatchGetOutput(response, {
+                    Responses: retryResponse.Responses,
+                });
             }
         }
 
@@ -122,8 +156,15 @@ export class DynamoDbUtils {
         return response;
     }
 
-    private splitBatchWriteIntoChunks(batch: AWS.DynamoDB.DocumentClient.BatchWriteItemInput, maxBatchSize?: number): AWS.DynamoDB.DocumentClient.BatchWriteItemInput[] {
-        logger.debug(`dynamoDb.util splitBatchWriteIntoChunks: in: batch:${JSON.stringify(batch)}, maxBatchSize:${maxBatchSize}`);
+    private splitBatchWriteIntoChunks(
+        batch: AWS.DynamoDB.DocumentClient.BatchWriteItemInput,
+        maxBatchSize?: number
+    ): AWS.DynamoDB.DocumentClient.BatchWriteItemInput[] {
+        logger.debug(
+            `dynamoDb.util splitBatchWriteIntoChunks: in: batch:${JSON.stringify(
+                batch
+            )}, maxBatchSize:${maxBatchSize}`
+        );
 
         if (maxBatchSize === undefined) {
             maxBatchSize = this.DEFAULT_MAX_WRITE_BATCH_SIZE;
@@ -131,19 +172,21 @@ export class DynamoDbUtils {
 
         // dynamodb max batch size is max 25 items, therefore split into smaller chunks if needed...
         let itemCount = 0;
-        Object.keys(batch.RequestItems).forEach(k => itemCount += batch.RequestItems[k].length);
+        Object.keys(batch.RequestItems).forEach(
+            (k) => (itemCount += batch.RequestItems[k].length)
+        );
 
         const chunks: AWS.DynamoDB.DocumentClient.BatchWriteItemInput[] = [];
         if (itemCount > maxBatchSize) {
             let chunkSize = 0;
             let chunk: AWS.DynamoDB.DocumentClient.BatchWriteItemInput;
-            Object.keys(batch.RequestItems).forEach(table => {
+            Object.keys(batch.RequestItems).forEach((table) => {
                 if (chunk === undefined) {
                     chunk = this.newBatchWriteItemInput(table);
                 } else {
                     chunk.RequestItems[table] = [];
                 }
-                batch.RequestItems[table].forEach(item => {
+                batch.RequestItems[table].forEach((item) => {
                     if (chunkSize >= maxBatchSize) {
                         // we've exceeded the max batch size, therefore save this and start with a new one
                         chunks.push(chunk);
@@ -156,17 +199,25 @@ export class DynamoDbUtils {
                 });
             });
             chunks.push(chunk);
-
         } else {
             chunks.push(batch);
         }
 
-        logger.debug(`dynamoDb.util splitBatchWriteIntoChunks: exit: chunks:${JSON.stringify(chunks)}`);
+        logger.debug(
+            `dynamoDb.util splitBatchWriteIntoChunks: exit: chunks:${JSON.stringify(chunks)}`
+        );
         return chunks;
     }
 
-    private splitBatchGetIntoChunks(batch: AWS.DynamoDB.DocumentClient.BatchGetItemInput, maxBatchSize?: number): AWS.DynamoDB.DocumentClient.BatchGetItemInput[] {
-        logger.debug(`dynamoDb.util splitBatchGetIntoChunks: in: batch:${JSON.stringify(batch)}, maxBatchSize:${maxBatchSize}`);
+    private splitBatchGetIntoChunks(
+        batch: AWS.DynamoDB.DocumentClient.BatchGetItemInput,
+        maxBatchSize?: number
+    ): AWS.DynamoDB.DocumentClient.BatchGetItemInput[] {
+        logger.debug(
+            `dynamoDb.util splitBatchGetIntoChunks: in: batch:${JSON.stringify(
+                batch
+            )}, maxBatchSize:${maxBatchSize}`
+        );
 
         if (maxBatchSize === undefined) {
             maxBatchSize = this.DEFAULT_MAX_GET_BATCH_SIZE;
@@ -174,19 +225,21 @@ export class DynamoDbUtils {
 
         // dynamodb max get batch size is max 100 items, therefore split into smaller chunks if needed...
         let itemCount = 0;
-        Object.keys(batch.RequestItems).forEach(k => itemCount += batch.RequestItems[k].Keys.length);
+        Object.keys(batch.RequestItems).forEach(
+            (k) => (itemCount += batch.RequestItems[k].Keys.length)
+        );
 
         const chunks: AWS.DynamoDB.DocumentClient.BatchGetItemInput[] = [];
         if (itemCount > maxBatchSize) {
             let chunkSize = 0;
             let chunk: AWS.DynamoDB.DocumentClient.BatchGetItemInput;
-            Object.keys(batch.RequestItems).forEach(table => {
+            Object.keys(batch.RequestItems).forEach((table) => {
                 if (chunk === undefined) {
                     chunk = this.newBatchGetItemInput(table);
                 } else {
                     chunk.RequestItems[table] = { Keys: [] };
                 }
-                batch.RequestItems[table].Keys.forEach(item => {
+                batch.RequestItems[table].Keys.forEach((item) => {
                     if (chunkSize >= maxBatchSize) {
                         // we've exceeded the max batch size, therefore save this and start with a new one
                         chunks.push(chunk);
@@ -199,24 +252,35 @@ export class DynamoDbUtils {
                 });
             });
             chunks.push(chunk);
-
         } else {
             chunks.push(batch);
         }
 
-        logger.debug(`dynamoDb.util splitBatchGetIntoChunks: exit: chunks:${JSON.stringify(chunks)}`);
+        logger.debug(
+            `dynamoDb.util splitBatchGetIntoChunks: exit: chunks:${JSON.stringify(chunks)}`
+        );
         return chunks;
     }
 
-    public test___splitBatchWriteIntoChunks(params: AWS.DynamoDB.DocumentClient.BatchWriteItemInput, maxBatchSize?: number): AWS.DynamoDB.DocumentClient.BatchWriteItemInput[] {
+    public test___splitBatchWriteIntoChunks(
+        params: AWS.DynamoDB.DocumentClient.BatchWriteItemInput,
+        maxBatchSize?: number
+    ): AWS.DynamoDB.DocumentClient.BatchWriteItemInput[] {
         return this.splitBatchWriteIntoChunks(params, maxBatchSize);
     }
 
-    private joinChunksIntoOutputBatchWrite(unprocessed: AWS.DynamoDB.DocumentClient.BatchWriteItemOutput, remaining: AWS.DynamoDB.DocumentClient.BatchWriteItemInput[]): AWS.DynamoDB.DocumentClient.BatchWriteItemOutput {
-        logger.debug(`dynamoDb.util joinChunksIntoOutputBatchWrite: in: unprocessed:${JSON.stringify(unprocessed)}, remaining:${JSON.stringify(remaining)}`);
+    private joinChunksIntoOutputBatchWrite(
+        unprocessed: AWS.DynamoDB.DocumentClient.BatchWriteItemOutput,
+        remaining: AWS.DynamoDB.DocumentClient.BatchWriteItemInput[]
+    ): AWS.DynamoDB.DocumentClient.BatchWriteItemOutput {
+        logger.debug(
+            `dynamoDb.util joinChunksIntoOutputBatchWrite: in: unprocessed:${JSON.stringify(
+                unprocessed
+            )}, remaining:${JSON.stringify(remaining)}`
+        );
 
-        remaining.forEach(chunk => {
-            Object.keys(chunk.RequestItems).forEach(table => {
+        remaining.forEach((chunk) => {
+            Object.keys(chunk.RequestItems).forEach((table) => {
                 if (unprocessed.UnprocessedItems[table] === undefined) {
                     unprocessed.UnprocessedItems[table] = [];
                 }
@@ -224,16 +288,26 @@ export class DynamoDbUtils {
             });
         });
 
-        logger.debug(`dynamoDb.util joinChunksIntoOutputBatchWrite: exit: unprocessed:${JSON.stringify(unprocessed)}`);
+        logger.debug(
+            `dynamoDb.util joinChunksIntoOutputBatchWrite: exit: unprocessed:${JSON.stringify(
+                unprocessed
+            )}`
+        );
         return unprocessed;
     }
 
-    private mergeBatchGetOutput(response: AWS.DynamoDB.DocumentClient.BatchGetItemOutput, toMerge: AWS.DynamoDB.DocumentClient.BatchGetItemOutput): AWS.DynamoDB.DocumentClient.BatchGetItemOutput {
-
-        logger.debug(`dynamoDb.util mergeBatchGetOutput: in: response:${JSON.stringify(response)}, toMerge:${JSON.stringify(toMerge)}`);
+    private mergeBatchGetOutput(
+        response: AWS.DynamoDB.DocumentClient.BatchGetItemOutput,
+        toMerge: AWS.DynamoDB.DocumentClient.BatchGetItemOutput
+    ): AWS.DynamoDB.DocumentClient.BatchGetItemOutput {
+        logger.debug(
+            `dynamoDb.util mergeBatchGetOutput: in: response:${JSON.stringify(
+                response
+            )}, toMerge:${JSON.stringify(toMerge)}`
+        );
 
         if (toMerge.Responses) {
-            Object.keys(toMerge.Responses).forEach(table => {
+            Object.keys(toMerge.Responses).forEach((table) => {
                 if (response.Responses[table] === undefined) {
                     response.Responses[table] = [];
                 }
@@ -242,26 +316,30 @@ export class DynamoDbUtils {
         }
 
         if (toMerge.UnprocessedKeys) {
-            Object.keys(toMerge.UnprocessedKeys).forEach(table => {
+            Object.keys(toMerge.UnprocessedKeys).forEach((table) => {
                 if (response.UnprocessedKeys[table] === undefined) {
                     response.UnprocessedKeys[table] = { Keys: [] };
                 }
                 response.UnprocessedKeys[table].Keys.push(...toMerge.UnprocessedKeys[table].Keys);
             });
-
         }
 
         logger.debug(`dynamoDb.util mergeBatchGetOutput: exit:${JSON.stringify(response)}`);
         return response;
     }
 
-    public test___joinChunksIntoOutputBatchWrite(unprocessed: AWS.DynamoDB.DocumentClient.BatchWriteItemOutput, remaining: AWS.DynamoDB.DocumentClient.BatchWriteItemInput[]): AWS.DynamoDB.DocumentClient.BatchWriteItemOutput {
+    public test___joinChunksIntoOutputBatchWrite(
+        unprocessed: AWS.DynamoDB.DocumentClient.BatchWriteItemOutput,
+        remaining: AWS.DynamoDB.DocumentClient.BatchWriteItemInput[]
+    ): AWS.DynamoDB.DocumentClient.BatchWriteItemOutput {
         return this.joinChunksIntoOutputBatchWrite(unprocessed, remaining);
     }
 
-    private newBatchWriteItemInput(table?: string): AWS.DynamoDB.DocumentClient.BatchWriteItemInput {
+    private newBatchWriteItemInput(
+        table?: string
+    ): AWS.DynamoDB.DocumentClient.BatchWriteItemInput {
         const r: DocumentClient.BatchWriteItemInput = {
-            RequestItems: {}
+            RequestItems: {},
         };
         if (table !== undefined) {
             r.RequestItems[table] = [];
@@ -271,14 +349,13 @@ export class DynamoDbUtils {
 
     private newBatchGetItemInput(table?: string): AWS.DynamoDB.DocumentClient.BatchGetItemInput {
         const r: DocumentClient.BatchGetItemInput = {
-            RequestItems: {}
+            RequestItems: {},
         };
         if (table !== undefined) {
             r.RequestItems[table] = {
-                Keys: []
+                Keys: [],
             };
         }
         return r;
     }
-
 }

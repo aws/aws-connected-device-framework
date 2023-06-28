@@ -18,7 +18,7 @@ import { InversifyExpressServer } from 'inversify-express-utils';
 
 import { normalisePath } from '@awssolutions/cdf-express-middleware';
 
-import { logger, setRequestId } from './utils/logger.util';
+import { logger, setRequestId } from '@awssolutions/simple-cdf-logger';
 
 import cors = require('cors');
 

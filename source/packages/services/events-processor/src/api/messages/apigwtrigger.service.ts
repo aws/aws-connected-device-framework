@@ -12,30 +12,27 @@
  *********************************************************************************************************************/
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../di/types';
-import {logger} from '../../utils/logger.util';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import ow from 'ow';
 import { FilterService } from '../../filter/filter.service';
 import { CommonEvent } from '../../transformers/transformers.model';
 
 @injectable()
 export class ApigwTriggerService {
+    constructor(@inject(TYPES.FilterService) private filter: FilterService) {}
 
-    constructor(@inject(TYPES.FilterService) private filter: FilterService) {
-    }
-
-    public async invoke(event: CommonEvent) : Promise<void> {
+    public async invoke(event: CommonEvent): Promise<void> {
         logger.debug(`apigwtrigger.service invoke: in: model:${JSON.stringify(event)}`);
 
         // validate input
-        ow(event,'resource', ow.object.nonEmpty);
+        ow(event, 'resource', ow.object.nonEmpty);
         ow(event.eventSourceId, ow.string.nonEmpty);
         ow(event.principal, ow.string.nonEmpty);
         ow(event.principalValue, ow.string.nonEmpty);
 
         // process the message
         await this.filter.filter([event]);
- 
+
         logger.debug(`apigwtrigger.service invoke: exit`);
     }
-
 }

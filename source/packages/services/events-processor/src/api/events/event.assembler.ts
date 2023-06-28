@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { injectable, inject } from 'inversify';
-import {logger} from '../../utils/logger.util';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { EventItem, EventResource, EventResourceList, EventConditionsUtils } from './event.models';
 import { PaginationKey } from '../subscriptions/subscription.dao';
 import { TYPES } from '../../di/types';
@@ -19,13 +19,12 @@ import { ExpressionParser, ExpressionSanitizer } from '../../utils/expression.ut
 
 @injectable()
 export class EventAssembler {
+    constructor(@inject(TYPES.EventConditionsUtils) private ecu: EventConditionsUtils) {}
 
-    constructor( @inject(TYPES.EventConditionsUtils) private ecu: EventConditionsUtils) {}
-
-    public toItem(resource:EventResource, principal?:string): EventItem {
+    public toItem(resource: EventResource, principal?: string): EventItem {
         logger.debug(`event.assembler toItem: in: resource:${JSON.stringify(resource)}`);
 
-        const item:EventItem = {
+        const item: EventItem = {
             id: resource.eventId,
             eventSourceId: resource.eventSourceId,
             name: resource.name,
@@ -36,16 +35,16 @@ export class EventAssembler {
             templates: resource.templates,
             supportedTargets: resource.supportedTargets,
             templateProperties: this.extractTemplateProperties(resource.templates),
-            disableAlertThreshold: resource.disableAlertThreshold
+            disableAlertThreshold: resource.disableAlertThreshold,
         };
         logger.debug(`event.assembler toItem: exit: ${JSON.stringify(item)}`);
         return item;
     }
 
-    public toResource(item:EventItem): EventResource {
+    public toResource(item: EventItem): EventResource {
         logger.debug(`event.assembler toResource: in: item:${JSON.stringify(item)}`);
 
-        const resource:EventResource = {
+        const resource: EventResource = {
             eventId: item.id,
             eventSourceId: item.eventSourceId,
             name: item.name,
@@ -56,51 +55,61 @@ export class EventAssembler {
             templates: item.templates,
             supportedTargets: item.supportedTargets,
             templateProperties: item.templateProperties,
-            disableAlertThreshold: item.disableAlertThreshold
+            disableAlertThreshold: item.disableAlertThreshold,
         };
 
         logger.debug(`event.assembler toResource: exit: node: ${JSON.stringify(resource)}`);
         return resource;
-
     }
 
-    public toResourceList(items:EventItem[], count?:number, paginateFrom?:PaginationKey): EventResourceList {
-        logger.debug(`subscription.assembler toResourceList: in: items:${JSON.stringify(items)}, count:${count}, paginateFrom:${JSON.stringify(paginateFrom)}`);
+    public toResourceList(
+        items: EventItem[],
+        count?: number,
+        paginateFrom?: PaginationKey
+    ): EventResourceList {
+        logger.debug(
+            `subscription.assembler toResourceList: in: items:${JSON.stringify(
+                items
+            )}, count:${count}, paginateFrom:${JSON.stringify(paginateFrom)}`
+        );
 
-        const list:EventResourceList= {
-            results:[]
+        const list: EventResourceList = {
+            results: [],
         };
 
-        if (count!==undefined || paginateFrom!==undefined) {
+        if (count !== undefined || paginateFrom !== undefined) {
             list.pagination = {
                 offset: {
                     eventSourceId: paginateFrom.eventSourceId,
-                    eventId: paginateFrom.eventId
+                    eventId: paginateFrom.eventId,
                 },
-                count
+                count,
             };
         }
 
-        items.forEach(i=> list.results.push(this.toResource(i)));
+        items.forEach((i) => list.results.push(this.toResource(i)));
 
         logger.debug(`subscription.assembler toResourceList: exit: ${JSON.stringify(list)}`);
         return list;
-
     }
 
-    private extractTemplateProperties(templateMap: {[key: string]: string}) : string[] {
-        logger.debug(`event.assembler extractTemplateProperties: in: templateMap:${JSON.stringify(templateMap)}`);
+    private extractTemplateProperties(templateMap: { [key: string]: string }): string[] {
+        logger.debug(
+            `event.assembler extractTemplateProperties: in: templateMap:${JSON.stringify(
+                templateMap
+            )}`
+        );
 
-        if (templateMap===undefined || Object.keys(templateMap).length===0) {
+        if (templateMap === undefined || Object.keys(templateMap).length === 0) {
             logger.debug(`event.assembler extractTemplateProperties: out: templateProperties:[]`);
             return [];
         }
 
-        let templateProperties:string[] = [];
+        let templateProperties: string[] = [];
 
-        if(templateMap) {
+        if (templateMap) {
             // Iterate over all templates
-            Object.keys(templateMap).forEach(k => {
+            Object.keys(templateMap).forEach((k) => {
                 const template = templateMap[k];
                 // Sanitize each template
                 const expressionSanitizer = new ExpressionSanitizer(template);
@@ -110,15 +119,17 @@ export class EventAssembler {
                 const expressionParser = new ExpressionParser(sanitizedExpression);
 
                 templateProperties = templateProperties.concat(expressionParser.extractKeys());
-
             });
         }
         // clear duplicates
         templateProperties = templateProperties.filter((v, i, a) => a.indexOf(v) === i);
 
-        logger.debug(`event.assembler extractTemplateProperties: out: templateProperties:${JSON.stringify(templateProperties)}`);
+        logger.debug(
+            `event.assembler extractTemplateProperties: out: templateProperties:${JSON.stringify(
+                templateProperties
+            )}`
+        );
         // Return list of all keys within all templates
         return templateProperties;
     }
-
 }

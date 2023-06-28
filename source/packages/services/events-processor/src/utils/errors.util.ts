@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { Response } from 'express';
-import { logger } from './logger.util';
+import { logger } from '@awssolutions/simple-cdf-logger';
 
 export function handleError(e: Error, res: Response): void {
     logger.error(`errors.util handleError: in: ${e}`);

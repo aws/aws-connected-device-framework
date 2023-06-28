@@ -11,11 +11,16 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { injectable, inject } from 'inversify';
-import { logger } from '../../utils/logger.util';
+import { logger } from '@awssolutions/simple-cdf-logger';
 import { TYPES } from '../../di/types';
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import { EventItem } from './event.models';
-import { createDelimitedAttribute, PkType, createDelimitedAttributePrefix, expandDelimitedAttribute } from '../../utils/pkUtils.util';
+import {
+    createDelimitedAttribute,
+    PkType,
+    createDelimitedAttributePrefix,
+    expandDelimitedAttribute,
+} from '../../utils/pkUtils.util';
 import { PaginationKey } from '../subscriptions/subscription.dao';
 import { DynamoDbUtils } from '../../utils/dynamoDb.util';
 import { MessageTemplates } from '../messages/messageTemplates.model';
@@ -24,14 +29,14 @@ import ow from 'ow';
 type EventItemMap = { [subscriptionId: string]: EventItem };
 @injectable()
 export class EventDao {
-
     private _cachedDc: AWS.DynamoDB.DocumentClient;
 
     public constructor(
         @inject('aws.dynamoDb.tables.eventConfig.name') private eventConfigTable: string,
         @inject('aws.dynamoDb.tables.eventConfig.gsi1') private eventConfigGSI1: string,
         @inject(TYPES.DynamoDbUtils) private dynamoDbUtils: DynamoDbUtils,
-        @inject(TYPES.CachableDocumentClientFactory) cachableDocumentClientFactory: () => AWS.DynamoDB.DocumentClient,
+        @inject(TYPES.CachableDocumentClientFactory)
+        cachableDocumentClientFactory: () => AWS.DynamoDB.DocumentClient
     ) {
         this._cachedDc = cachableDocumentClientFactory();
     }
@@ -50,8 +55,7 @@ export class EventDao {
         ow(item.id, ow.string.nonEmpty);
 
         const params: DocumentClient.BatchWriteItemInput = {
-            RequestItems: {
-            }
+            RequestItems: {},
         };
 
         const eventSourceDbId = createDelimitedAttribute(PkType.EventSource, item.eventSourceId);
@@ -60,7 +64,12 @@ export class EventDao {
         const eventDynamoDBItem = this.dynamoDbUtils.removeUndefinedParameter({
             pk: eventSourceDbId,
             sk: eventDbId,
-            gsi1Sort: createDelimitedAttribute(PkType.Event, item.id, PkType.EventSource, item.eventSourceId),
+            gsi1Sort: createDelimitedAttribute(
+                PkType.Event,
+                item.id,
+                PkType.EventSource,
+                item.eventSourceId
+            ),
             name: item.name,
             principal: item.principal,
             conditions: item.conditions,
@@ -69,13 +78,13 @@ export class EventDao {
             templates: item.templates,
             supportedTargets: item.supportedTargets,
             templateProperties: item.templateProperties,
-            disableAlertThreshold: item.disableAlertThreshold
-        })
+            disableAlertThreshold: item.disableAlertThreshold,
+        });
 
         const eventCreate = {
             PutRequest: {
-                Item: eventDynamoDBItem
-            }
+                Item: eventDynamoDBItem,
+            },
         };
 
         const typeCreate = {
@@ -85,8 +94,8 @@ export class EventDao {
                     sk: createDelimitedAttribute(PkType.Type, PkType.Event),
                     name: item.name,
                     gsi1Sort: createDelimitedAttribute(PkType.Event, item.enabled, item.id),
-                }
-            }
+                },
+            },
         };
 
         params.RequestItems[this.eventConfigTable] = [eventCreate, typeCreate];
@@ -110,12 +119,12 @@ export class EventDao {
             KeyConditionExpression: `#sk = :sk AND begins_with( #gsi1Sort, :gsi1Sort )`,
             ExpressionAttributeNames: {
                 '#sk': 'sk',
-                '#gsi1Sort': 'gsi1Sort'
+                '#gsi1Sort': 'gsi1Sort',
             },
             ExpressionAttributeValues: {
                 ':sk': createDelimitedAttribute(PkType.Event, eventId),
-                ':gsi1Sort': createDelimitedAttributePrefix(PkType.Event, eventId)
-            }
+                ':gsi1Sort': createDelimitedAttributePrefix(PkType.Event, eventId),
+            },
         };
 
         const results = await this._cachedDc.query(params).promise();
@@ -135,7 +144,6 @@ export class EventDao {
 
         const events: EventItemMap = {};
         for (const i of results) {
-
             const eventId = expandDelimitedAttribute(i.sk)[1];
 
             const event: EventItem = {
@@ -149,7 +157,7 @@ export class EventDao {
                 templates: i.templates,
                 supportedTargets: i.supportedTargets,
                 templateProperties: i.templateProperties,
-                disableAlertThreshold: i.disableAlertThreshold
+                disableAlertThreshold: i.disableAlertThreshold,
             };
 
             events[eventId] = event;
@@ -166,7 +174,7 @@ export class EventDao {
 
         // start to build up delete requests
         const deleteParams: DocumentClient.BatchWriteItemInput = {
-            RequestItems: {}
+            RequestItems: {},
         };
         deleteParams.RequestItems[this.eventConfigTable] = [];
 
@@ -176,11 +184,11 @@ export class EventDao {
             IndexName: this.eventConfigGSI1,
             KeyConditionExpression: `#sk=:sk`,
             ExpressionAttributeNames: {
-                '#sk': 'sk'
+                '#sk': 'sk',
             },
             ExpressionAttributeValues: {
-                ':sk': createDelimitedAttribute(PkType.Event, eventId)
-            }
+                ':sk': createDelimitedAttribute(PkType.Event, eventId),
+            },
         };
 
         const results = await this._cachedDc.query(findByGSIParams).promise();
@@ -192,9 +200,9 @@ export class EventDao {
                     DeleteRequest: {
                         Key: {
                             pk: item.pk,
-                            sk: item.sk
-                        }
-                    }
+                            sk: item.sk,
+                        },
+                    },
                 });
             }
         }
@@ -204,9 +212,9 @@ export class EventDao {
             DeleteRequest: {
                 Key: {
                     pk: createDelimitedAttribute(PkType.Event, eventId),
-                    sk: createDelimitedAttribute(PkType.Type, PkType.Event)
-                }
-            }
+                    sk: createDelimitedAttribute(PkType.Type, PkType.Event),
+                },
+            },
         });
 
         // delete them
@@ -218,23 +226,31 @@ export class EventDao {
         logger.debug(`event.dao delete: exit:`);
     }
 
-    public async listEventsForEventSource(eventSourceId: string, count?: number, from?: PaginationKey): Promise<[EventItem[], PaginationKey]> {
-        logger.debug(`event.dao listEventsForEventSource: in: eventSourceId:${eventSourceId}, count:${count}, from:${JSON.stringify(from)}`);
+    public async listEventsForEventSource(
+        eventSourceId: string,
+        count?: number,
+        from?: PaginationKey
+    ): Promise<[EventItem[], PaginationKey]> {
+        logger.debug(
+            `event.dao listEventsForEventSource: in: eventSourceId:${eventSourceId}, count:${count}, from:${JSON.stringify(
+                from
+            )}`
+        );
 
         const params: DocumentClient.QueryInput = {
             TableName: this.eventConfigTable,
             KeyConditionExpression: `#hash=:hash AND begins_with(#range, :range)`,
             ExpressionAttributeNames: {
                 '#hash': 'pk',
-                '#range': 'sk'
+                '#range': 'sk',
             },
             ExpressionAttributeValues: {
                 ':hash': createDelimitedAttribute(PkType.EventSource, eventSourceId),
-                ':range': createDelimitedAttributePrefix(PkType.Event)
+                ':range': createDelimitedAttributePrefix(PkType.Event),
             },
             Select: 'ALL_ATTRIBUTES',
             ExclusiveStartKey: from,
-            Limit: count
+            Limit: count,
         };
 
         logger.debug(`event.dao listEventsForEventSource: params:${JSON.stringify(params)}`);
@@ -246,9 +262,13 @@ export class EventDao {
 
         const lastEvaluatedKey = results.LastEvaluatedKey;
         const events = this.assemble(results.Items);
-        const response: EventItem[] = Object.keys(events).map(k => events[k]);
+        const response: EventItem[] = Object.keys(events).map((k) => events[k]);
 
-        logger.debug(`event.dao listEventsForEventSource: exit: response${JSON.stringify(response)}, lastEvaluatedKey:${JSON.stringify(lastEvaluatedKey)}`);
+        logger.debug(
+            `event.dao listEventsForEventSource: exit: response${JSON.stringify(
+                response
+            )}, lastEvaluatedKey:${JSON.stringify(lastEvaluatedKey)}`
+        );
         return [response, lastEvaluatedKey];
     }
 
@@ -270,5 +290,4 @@ export class EventDao {
 
         return templates;
     }
-
 }

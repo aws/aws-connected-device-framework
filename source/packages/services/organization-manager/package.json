@@ -51,6 +51,7 @@
     "@awssolutions/cdf-lambda-invoke": "^0.0.2",
     "@awssolutions/cdf-lambda-zip": "^0.0.0",
     "@awssolutions/cdf-logger": "^0.0.0",
+    "@awssolutions/simple-cdf-logger": "^2.1.3",
     "@rushstack/eslint-config": "2.3.4",
     "@types/aws-lambda": "~8.10.83",
     "@types/body-parser": "1.19.2",
