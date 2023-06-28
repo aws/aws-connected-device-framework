@@ -44,7 +44,7 @@ paths:
       operationId: createTemplate
       requestBody:
         content:
-          multipart/form-data:
+          application/vnd.aws-cdf-v1.0+json:
             schema:
               $ref: '#/components/schemas/CreatePatchTemplate'
       responses:
@@ -394,11 +394,9 @@ components:
     CreatePatchTemplate:
       type: object
       properties:
-        playbookFile:
+        playbookFileContent:
           type: string
-          format: binary
-          description: Path to the playbook file
-          example: /home/user/playbook.yml
+          description: A base64 encoded string of the playbook file
         name:
           type: string
           description: Name of template.
@@ -418,11 +416,11 @@ components:
       required:
         - name
         - patchType
-        - playbookFile
+        - playbookFileContent
       example:
         name: ggv2 installer template
         patchType: "agentbased"
-        playbookFile: "/usr/bin/device-patcher/ggv2-ec2-amazonlinux2-installer-playbook.yml"
+        playbookFileContent: "LS0tCi0gaG9zdHM6IGFsbAogIHJlbW90ZV91c2VyOiBlYzJfdXNlcgogIGdhdGhlcl9mYWN0czogZmFsc2UKICBiZWNvbWU6IHllcwogIHRhc2tzOgogICAgLSBwaW5nOgo="
         extraVars[key1]: val1
         extraVars[key2]: val2
 

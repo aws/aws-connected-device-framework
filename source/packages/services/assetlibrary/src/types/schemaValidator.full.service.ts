@@ -65,15 +65,24 @@ export class SchemaValidatorService {
             // make the error messages as friendly as possibly, extracting what's useful from the errors
             logger.debug(`schemaValidator.full.service validate: validate.errors: ${JSON.stringify(validate.errors)}`);
             result.isValid = false;
-            validate.errors.forEach( (err) => {
-                if (err.keyword==='required' && err.dataPath==='') {
-                    result.errors[ (err.params as  Ajv.DependenciesParams).missingProperty] = err.message;
-                } if (err.keyword==='additionalProperties') {
+            const maxErrors = 20;
+            // truncate to include only 20 errors, to prevent data amplification by sending a large, invalid payload.
+            for (let i = 0; i < validate.errors.length && i < maxErrors; ++i) {
+                const err = validate.errors[i];
+                if (err.keyword === 'required' && err.dataPath === '') {
+                    result.errors[(err.params as Ajv.DependenciesParams).missingProperty] =
+                        err.message;
+                }
+                if (err.keyword === 'additionalProperties') {
                     result.errors[`${err.dataPath} ${JSON.stringify(err.params)}`] = err.message;
                 } else {
-                    result.errors[ err.dataPath] = err.message;
+                    result.errors[err.dataPath] = err.message;
                 }
-            });
+            }
+            if (validate.errors.length > maxErrors) {
+                result.errors['too many errors'] = `results truncated due to greater than maximum ${maxErrors} errors. Check logs for full error list.`
+            }
+            
         }
 
         logger.debug(`schemaValidator.full.service validate: exit: result: ${JSON.stringify(result)}`);

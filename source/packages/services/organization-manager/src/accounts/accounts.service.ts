@@ -285,6 +285,7 @@ export class AccountsService {
         ow(account.organizationalUnitId, ow.string.nonEmpty);
         ow(account.regions, ow.array.nonEmpty);
         ow(account.regions, ow.array.minLength(1));
+        ow(account.regions, ow.array.maxLength(40));
 
         const { createAccountRequestId, accountId, tags, ...accountItem } = account;
 

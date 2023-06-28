@@ -50,7 +50,7 @@ export class BulkGroupsController implements interfaces.Controller {
             logger.info(`bulkgroups.controller bulkGetGroups: in: groupPaths:${groupPaths}`);
             try {
                 const includeGroups = (groups!=='false');
-                let groupPathsAsArray = groupPaths.split(',');
+                let groupPathsAsArray = (groupPaths ?? '').split(',');
                 // remove duplicate group paths if any
                 groupPathsAsArray = groupPathsAsArray.filter((item, index) => groupPathsAsArray.indexOf(item) === index);
 

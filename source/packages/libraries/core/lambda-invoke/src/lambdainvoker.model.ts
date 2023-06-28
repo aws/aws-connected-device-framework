@@ -120,7 +120,7 @@ export class LambdaApiGatewayEventResponse implements ApiGatewayInvokeResponsePa
 }
 
 export class Dictionary {
-    [key:string]: string;
+    [key:string]: any;
 }
 export class DictionaryArray {
     [key:string]: string[];

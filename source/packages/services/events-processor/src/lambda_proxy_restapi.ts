@@ -12,6 +12,11 @@
  *********************************************************************************************************************/
 
 import serverlessHttp from 'serverless-http';
-import {serverInstance} from './app' ;
+import { serverInstance } from './app';
 
-exports.handler = serverlessHttp(serverInstance);
+exports.handler = serverlessHttp(serverInstance, {
+    request: function (req: any, event: any, context: any) {
+        req.event = event;
+        req.context = context;
+    },
+});

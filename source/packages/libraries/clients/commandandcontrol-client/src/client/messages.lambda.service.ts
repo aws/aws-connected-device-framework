@@ -86,10 +86,7 @@ export class MessagesLambdaService extends MessagesServiceBase implements Messag
         const event = new LambdaApiGatewayEventBuilder()
             .setPath(super.commandMessagesRelativeUrl(commandId))
             .setMethod('GET')
-            .setQueryStringParameters({
-                fromCreatedAtExclusive: `${fromCreatedAtExclusive}`,
-                count: `${count}`,
-            })
+            .setQueryStringParameters({ fromCreatedAtExclusive, count })
             .setHeaders(super.buildHeaders(additionalHeaders));
 
         const res = await this.lambdaInvoker.invoke(this.functionName, event);

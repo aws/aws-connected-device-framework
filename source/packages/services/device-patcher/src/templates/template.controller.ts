@@ -65,7 +65,9 @@ export class PatchTemplateController implements interfaces.Controller {
 
             ow(template.name, ow.string.nonEmpty);
             ow(template.patchType, ow.string.nonEmpty);
+            //ow(template.playbookFileContents, ow.string.nonEmpty);
 
+            template.playbookName = template.playbookName ?? template.name;
             template.playbookFile = req.file.buffer;
             template.playbookName = req.file.originalname;
 

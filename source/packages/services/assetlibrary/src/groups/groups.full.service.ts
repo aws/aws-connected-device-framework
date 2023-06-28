@@ -25,13 +25,7 @@ import { Operation, TypeCategory } from '../types/constants';
 import { SchemaValidatorService } from '../types/schemaValidator.full.service';
 import { TypeDefinitionStatus } from '../types/types.models';
 import { TypesService } from '../types/types.service';
-import {
-    GroupNotFoundError,
-    ProfileNotFoundError,
-    RelationValidationError,
-    SchemaValidationError,
-    TemplateNotFoundError,
-} from '../utils/errors';
+import { RelationValidationError, ProfileNotFoundError, SchemaValidationError, TemplateNotFoundError, GroupNotFoundError, NotFoundError } from '../utils/errors';
 import { logger } from '../utils/logger';
 import { TypeUtils } from '../utils/typeUtils';
 import { GroupsAssembler } from './groups.assembler';
@@ -91,6 +85,10 @@ export class GroupsServiceFull implements GroupsService {
         await this.authServiceFull.authorizationCheck(groupPaths, [], ClaimAccess.R);
 
         const result = await this.groupsDao.get(groupPaths, includeGroups);
+
+        if (result === undefined) {
+            throw new NotFoundError('no group is found with provided path');
+        }
 
         const model = this.groupsAssembler.toGroupItems(result);
         logger.debug(`groups.full.service get: exit: model: ${JSON.stringify(model)}`);

@@ -30,12 +30,9 @@ In order to deploy an ansible Patch, the first step is to create a patch templat
 
 ```bash
 curl --location --request POST '<endpoint>/patchTemplates' \
-    --header 'Content-Type: multipart/form-data' \
-    --header 'Accept: application/vnd.aws-cdf-v1.0+json' \
-    --form 'name="sampleTemplate"' \
-    --form 'playbookFile=@"<path-to-playbook-file>"' \
-    --form 'patchType="agentbased"' \
-    --form 'description="Sample Patch Template"'
+  --header 'Accept: application/vnd.aws-cdf-v1.0+json' \
+  --header 'Content-type: application/vnd.aws-cdf-v1.0+json' \
+  --data '{"name": "sampleTemplate", "playbookFileContents": "LS0tCi0gaG9zdHM6IGFsbAogIHJlbW90ZV91c2VyOiBlYzJfdXNlcgogIGdhdGhlcl9mYWN0czogZmFsc2UKICBiZWNvbWU6IHllcwogIHRhc2tzOgogICAgLSBwaW5nOgo=", "patchType": "agentbased", "description": "Benji doing test"}'
 ```
 
 #### RESPONSE
