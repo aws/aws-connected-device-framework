@@ -18,7 +18,7 @@ import { GroupsService } from './groups.service';
 import {TYPES} from '../di/types';
 import {logger} from '../utils/logger';
 import {TypeCategory} from '../types/constants';
-import {handleError} from '../utils/errors';
+import {InvalidQueryStringError, handleError} from '../utils/errors';
 import { DeviceResourceList } from '../devices/devices.models';
 import { GroupsAssembler } from './groups.assembler';
 import { DevicesAssembler } from '../devices/devices.assembler';
@@ -94,6 +94,14 @@ export class GroupsController implements interfaces.Controller {
 
         const categoryTemplate = (category.toLowerCase()==='groups') ? TypeCategory.Group : TypeCategory.Device;
         try {
+
+            if (Array.isArray(template)) {
+                throw new InvalidQueryStringError('Only one `template` query param can be provided.');
+            }
+            if (Array.isArray(state)) {
+                throw new InvalidQueryStringError('Only one `state` query param can be provided.');
+            }
+
             const sortKeys = assembleSortKeys(sort);
             const items = await this.groupsService.getMembers(groupPath, categoryTemplate, template, state, offset, count, sortKeys);
             if (items===undefined) {
@@ -177,6 +185,14 @@ export class GroupsController implements interfaces.Controller {
             let r: GroupResourceList = {results:[]};
 
             try {
+
+                if (Array.isArray(direction)) {
+                    throw new InvalidQueryStringError('Only one `direction` query param can be provided.');
+                }
+                if (Array.isArray(template)) {
+                    throw new InvalidQueryStringError('Only one `template` query param can be provided.');
+                }
+
                 const sortKeys = assembleSortKeys(sort);
                 const items = await this.groupsService.listRelatedGroups(groupPath, relationship, direction, template, offset, count, sortKeys);
                 r = this.groupsAssembler.toGroupResourceList(items, req['version']);
@@ -202,6 +218,17 @@ export class GroupsController implements interfaces.Controller {
             let r: DeviceResourceList = {results:[]};
 
             try {
+
+                if (Array.isArray(direction)) {
+                    throw new InvalidQueryStringError('Only one `direction` query param can be provided.');
+                }
+                if (Array.isArray(template)) {
+                    throw new InvalidQueryStringError('Only one `template` query param can be provided.');
+                }
+                if (Array.isArray(state)) {
+                    throw new InvalidQueryStringError('Only one `state` query param can be provided.');
+                }
+
                 const sortKeys = assembleSortKeys(sort);
                 const items = await this.groupsService.listRelatedDevices(groupPath, relationship, direction, template, state, offset, count, sortKeys);
                 r = this.devicesAssembler.toDeviceResourceList(items, req['version']);

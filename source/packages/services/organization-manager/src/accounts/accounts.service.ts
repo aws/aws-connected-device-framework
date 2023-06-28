@@ -21,6 +21,7 @@ import { AccountsDao } from "./accounts.dao";
 import { AccountsAssembler } from "./accounts.assembler";
 import { ComponentResourceList } from "../components/components.model";
 import { OrganizationalUnitsDao } from "../organizationalUnits/organizationalUnits.dao";
+import { owCheckUnprintableChar, owCheckOversizeString } from '../utils/inputValidation.util';
 
 @injectable()
 export class AccountsService {
@@ -283,6 +284,8 @@ export class AccountsService {
         ow(account.ssoFirstName, ow.string.nonEmpty);
         ow(account.ssoLastName, ow.string.nonEmpty);
         ow(account.organizationalUnitId, ow.string.nonEmpty);
+        owCheckOversizeString(account.organizationalUnitId, 2048, 'account.organizationalUnitId');
+        owCheckOversizeString(account.accountId, 2048, 'account.accountId');
         ow(account.regions, ow.array.nonEmpty);
         ow(account.regions, ow.array.minLength(1));
         ow(account.regions, ow.array.maxLength(40));
@@ -291,9 +294,9 @@ export class AccountsService {
 
         let accountResource;
 
-        const organizationalUnit = await this.organizationalUnitsDao.getOrganizationalUnit(account.organizationalUnitId);
+        const organizationalUnitIds = (await this.organizationalUnitsDao.getOrganizationalUnits()).map(ou => ou.id);
 
-        if (organizationalUnit === undefined) {
+        if (!organizationalUnitIds.includes(account.organizationalUnitId)) {
             throw new Error("FAILED_VALIDATION");
         }
 
@@ -309,6 +312,8 @@ export class AccountsService {
             });
         } else {
             ow(accountId, ow.string.nonEmpty);
+            owCheckUnprintableChar(accountId, 'accountId');
+            owCheckOversizeString(accountId, 2048, 'accountId');
             accountResource = await this.accountsDao.createAccount({
                 ...accountItem,
                 accountId,

@@ -25,7 +25,7 @@ import util from 'util';
 import ow from 'ow';
 import * as NodeCache from 'node-cache';
 import { TypesDaoFull } from './types.full.dao';
-import { TemplateNotFoundError } from '../utils/errors';
+import { SchemaValidationError, TemplateNotFoundError } from '../utils/errors';
 
 @injectable()
 export class SchemaValidatorService {
@@ -55,7 +55,12 @@ export class SchemaValidatorService {
 
         // if its an update, validation may be different therefore always compile rather than reuse existing
         this._validator.removeSchema(schemaId);
-        const validate = this._validator.compile(jsonSchema);
+        let validate: Ajv.ValidateFunction;
+        try {
+            validate = this._validator.compile(jsonSchema);
+        } catch (err) {
+            throw new SchemaValidationError(err.message);
+        }
 
         const result = new SchemaValidationResult();
         const valid= await validate(document);

@@ -29,6 +29,7 @@ import { ProfilesAssembler } from './profiles.assembler';
 import { ProfilesDaoFull } from './profiles.full.dao';
 import { DeviceProfileItem, GroupProfileItem, ProfileItemList } from './profiles.models';
 import { ProfilesService } from './profiles.service';
+import {owCheckUnprintableChar} from '../utils/inputValidation.util';
 
 @injectable()
 export class ProfilesServiceFull implements ProfilesService {
@@ -103,7 +104,14 @@ export class ProfilesServiceFull implements ProfilesService {
         ow(model.profileId, ow.string.nonEmpty);
         ow(model.templateId, ow.string.nonEmpty);
         ow(model.category, ow.string.nonEmpty);
-
+        if (model.description) {
+            owCheckUnprintableChar(model.description, 'model.description');
+        }
+        if (model instanceof DeviceProfileItem) {
+            model = model as DeviceProfileItem;
+            owCheckUnprintableChar(model.awsIotThingArn, 'model.awsIotThingArn');
+            owCheckUnprintableChar(model.imageUrl, 'model.imageUrl');
+        }
         // remove any non printable characters from the id
         model.profileId = model.profileId.replace(/[^\x20-\x7E]+/g, '');
 
@@ -141,6 +149,14 @@ export class ProfilesServiceFull implements ProfilesService {
         ow(model.profileId, ow.string.nonEmpty);
         ow(model.templateId, ow.string.nonEmpty);
         ow(model.category, ow.string.nonEmpty);
+        if (model.description) {
+            owCheckUnprintableChar(model.description, 'model.description');
+        }
+        if (model instanceof DeviceProfileItem) {
+            model = model as DeviceProfileItem;
+            owCheckUnprintableChar(model.awsIotThingArn, 'model.awsIotThingArn');
+            owCheckUnprintableChar(model.imageUrl, 'model.imageUrl');
+        }
 
         // any ids need to be lowercase
         this.setIdsToLowercase(model);

@@ -22,6 +22,7 @@ import ow from 'ow';
 import { PoliciesService } from './policies.service';
 import { SchemaValidatorService } from '../types/schemaValidator.full.service';
 import { NotFoundError, SchemaValidationError } from '../utils/errors';
+import { owCheckOptionalNumber } from '../utils/inputValidation.util';
 
 @injectable()
 export class PoliciesServiceFull implements PoliciesService {
@@ -167,6 +168,9 @@ export class PoliciesServiceFull implements PoliciesService {
 
     public async listPolicies(type?:string, offset?:number, count?:number): Promise<PolicyModel[]> {
         logger.debug(`policies.full.service listPolicies: in: type:${type}, offset:${offset}, count:${count}`);
+
+        owCheckOptionalNumber(count, 1, 10000, 'count');
+        owCheckOptionalNumber(offset, 0, Number.MAX_SAFE_INTEGER, 'offset');
 
         // any ids need to be lowercase
         if (type!==undefined) {

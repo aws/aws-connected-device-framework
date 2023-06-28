@@ -17,7 +17,7 @@ import { BulkGroupsResource, BulkGroupsResult, GroupMemberResourceList } from '.
 import { GroupsService } from './groups.service';
 import {TYPES} from '../di/types';
 import {logger} from '../utils/logger';
-import {handleError} from '../utils/errors';
+import {InvalidQueryStringError, handleError} from '../utils/errors';
 import { GroupsAssembler } from './groups.assembler';
 
 @controller('/bulkgroups')
@@ -50,7 +50,19 @@ export class BulkGroupsController implements interfaces.Controller {
             logger.info(`bulkgroups.controller bulkGetGroups: in: groupPaths:${groupPaths}`);
             try {
                 const includeGroups = (groups!=='false');
-                let groupPathsAsArray = (groupPaths ?? '').split(',');
+                let groupPathsAsArray: string[];
+                if (groupPaths) {
+                    if (Array.isArray(groupPaths)) {
+                        groupPathsAsArray = groupPaths;
+                    } else if (typeof groupPaths === 'string') {
+                        groupPathsAsArray = groupPaths.split(',').filter(gp => gp !== '');
+                    }
+                } else {
+                    // throw a 400 error if no `groupPaths` is provided
+                    const errorMessage = 'Missing required query parameter `groupPaths`.';
+                    res.statusMessage = errorMessage;
+                    throw new InvalidQueryStringError(errorMessage);                    
+                }
                 // remove duplicate group paths if any
                 groupPathsAsArray = groupPathsAsArray.filter((item, index) => groupPathsAsArray.indexOf(item) === index);
 

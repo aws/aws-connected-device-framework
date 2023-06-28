@@ -89,7 +89,7 @@ describe('ActivationService', () => {
     });
 
     it('should delete an activation', async () => {
-        const activationId:string = 'activation-001';
+        const activationId: string = 'a1b2c3d4-a1bc-1a23-a1b2-abcd1234ef56';
 
 
         const mockedSSMDeleteActivationResponse = new MockAWSPromise<AWS.SSM.Types.CreateActivationResult>();

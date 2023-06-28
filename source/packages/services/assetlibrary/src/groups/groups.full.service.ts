@@ -26,6 +26,7 @@ import { SchemaValidatorService } from '../types/schemaValidator.full.service';
 import { TypeDefinitionStatus } from '../types/types.models';
 import { TypesService } from '../types/types.service';
 import { RelationValidationError, ProfileNotFoundError, SchemaValidationError, TemplateNotFoundError, GroupNotFoundError, NotFoundError } from '../utils/errors';
+import { owCheckOptionalNumber } from '../utils/inputValidation.util';
 import { logger } from '../utils/logger';
 import { TypeUtils } from '../utils/typeUtils';
 import { GroupsAssembler } from './groups.assembler';
@@ -462,6 +463,8 @@ export class GroupsServiceFull implements GroupsService {
 
         ow(groupPath, 'groupPath', ow.string.nonEmpty);
         ow(category, 'category', ow.string.nonEmpty);
+        owCheckOptionalNumber(count, 1, 10000, 'count');
+        owCheckOptionalNumber(offset, 0, Number.MAX_SAFE_INTEGER, 'offset');
 
         // any ids need to be lowercase
         groupPath = groupPath.toLowerCase();
@@ -533,6 +536,7 @@ export class GroupsServiceFull implements GroupsService {
         logger.debug(`groups.full.service delete: in: groupPath: ${groupPath}`);
 
         ow(groupPath, 'groupPath', ow.string.nonEmpty);
+        ow(groupPath, 'cannot delete root group', ow.string.not.equals('/'));
 
         // any ids need to be lowercase
         groupPath = groupPath.toLowerCase();
@@ -724,6 +728,8 @@ export class GroupsServiceFull implements GroupsService {
 
         ow(groupPath, 'groupPath', ow.string.nonEmpty);
         ow(relationship, 'relationship', ow.string.nonEmpty);
+        owCheckOptionalNumber(count, 1, 10000, 'count');
+        owCheckOptionalNumber(offset, 0, Number.MAX_SAFE_INTEGER, 'offset');
 
         // defaults
         if (direction === undefined || direction === null) {
@@ -784,6 +790,8 @@ export class GroupsServiceFull implements GroupsService {
 
         ow(groupPath, 'groupPath', ow.string.nonEmpty);
         ow(relationship, 'relationship', ow.string.nonEmpty);
+        owCheckOptionalNumber(count, 1, 10000, 'count');
+        owCheckOptionalNumber(offset, 0, Number.MAX_SAFE_INTEGER, 'offset');
 
         // defaults
         if (direction === undefined || direction === null) {

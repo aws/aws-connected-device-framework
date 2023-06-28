@@ -14,21 +14,18 @@ import ow from 'ow';
 import { v1 as uuid } from 'uuid';
 import { inject, injectable } from 'inversify';
 
-import {TYPES} from '../di/types';
-import {logger} from '../utils/logger.util';
+import { TYPES } from '../di/types';
+import { logger } from '../utils/logger.util';
 
 import { PatchListPaginationKey, PatchTaskDao } from './patchTask.dao';
 
-import {
-    PatchTaskItem,
-} from './patchTask.model';
+import { PatchTaskItem } from './patchTask.model';
 
 import { PatchService } from './patch.service';
 import { PatchItem } from './patch.model';
 
 @injectable()
 export class PatchTaskService {
-
     constructor(
         @inject(TYPES.PatchTaskDao) private patchTaskDao: PatchTaskDao,
         @inject(TYPES.PatchService) private patchService: PatchService
@@ -39,13 +36,16 @@ export class PatchTaskService {
 
         ow(task, 'Patch Information', ow.object.nonEmpty);
         ow(task.patches, ow.array.nonEmpty);
+        ow(task.patches, 'PatchTask.patches', ow.array.ofType(ow.object));
+
+        // if any of the tasks have bad input, fail fast and do not save anything
+        this.patchService.validate(task.patches);
 
         task.taskId = uuid();
         task.createdAt = new Date();
         task.updatedAt = task.createdAt;
 
-        
-        task.patches.forEach(patch => patch.taskId = task.taskId);
+        task.patches.forEach((patch) => (patch.taskId = task.taskId));
 
         await this.patchTaskDao.save(task);
 
@@ -64,14 +64,18 @@ export class PatchTaskService {
         const task = await this.patchTaskDao.get(taskId);
 
         if (!task) {
-           throw new Error("NOT_FOUND");
+            throw new Error('NOT_FOUND');
         }
 
         logger.debug(`patch.service getPatchTask: exit: patch: ${JSON.stringify(task)}`);
         return task;
     }
 
-    public async getPatches(taskId: string, count?:number, exclusiveStartKey?:PatchListPaginationKey): Promise<[PatchItem[], PatchListPaginationKey]> {
+    public async getPatches(
+        taskId: string,
+        count?: number,
+        exclusiveStartKey?: PatchListPaginationKey
+    ): Promise<[PatchItem[], PatchListPaginationKey]> {
         logger.debug(`PatchTaskService getPatchs: in: taskId: ${taskId}`);
 
         ow(taskId, 'Patch Id', ow.string.nonEmpty);
@@ -87,7 +91,5 @@ export class PatchTaskService {
         logger.debug(`patch.service getPatchs: exit: patchs: ${JSON.stringify(result)}`);
 
         return result;
-
     }
-
 }

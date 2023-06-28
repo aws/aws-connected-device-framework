@@ -12,6 +12,7 @@
  *********************************************************************************************************************/
 import { inject, injectable } from 'inversify';
 import { Claims } from '../authz/claims';
+import { owCheckOptionalNumber } from '../utils/inputValidation.util';
 import { DevicesAssembler } from '../devices/devices.assembler';
 import { DeviceItem } from '../devices/devices.models';
 import { TYPES } from '../di/types';
@@ -40,6 +41,8 @@ export class SearchServiceFull implements SearchService {
         logger.debug(`search.full.service search: in: model: ${JSON.stringify(model)}`);
 
         // TODO: validation
+        owCheckOptionalNumber(model.count, 1, 10000, 'count');
+        owCheckOptionalNumber(model.offset, 0, Number.MAX_SAFE_INTEGER, 'offset');
 
         // all ids must be lowercase
         this.setIdsToLowercase(model);

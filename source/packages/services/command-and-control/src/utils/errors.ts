@@ -23,7 +23,7 @@ export function handleError(e:Error, res:Response): void {
         e.message === 'UNSUPPORTED_TRANSITION' ||
         e.hasOwnProperty('code') && e['code'] === 'ValidationException'
     ) {
-        res.status(400).json({error: e.message}).end();
+        res.status(400).json({error: res.statusMessage}).end();
     } else if (e.message.startsWith('NOT_FOUND')) {
         res.status(404).json({error: e.message}).end();
     } else if (e.name==='ResourceNotFoundException') {
@@ -34,7 +34,7 @@ export function handleError(e:Error, res:Response): void {
     } else if (e.message === 'TEMPLATE_IN_USE' ) {
         res.status(409).json({error: 'Template in use'}).end();
     } else {
-        res.status(500).json({error: e.message}).end();
+        res.status(500).json({error: res.statusMessage}).end();
     }
 
     logger.error(`handleError: res.status: ${res.status}`);

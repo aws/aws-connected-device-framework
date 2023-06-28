@@ -11,6 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import { injectable, inject } from 'inversify';
+import ow from 'ow';
 import { GroupItem, GroupMemberItemList, determineIfGroup20Resource, Group10Resource, Group20Resource, GroupBaseResource, GroupItemList, GroupResourceList, GroupMemberResourceList, determineIfGroupItem, BulkGroupsResource} from './groups.models';
 import {logger} from '../utils/logger';
 import {Node} from '../data/node';
@@ -206,6 +207,8 @@ export class GroupsAssembler {
 
     public fromBulkGroupsResource(res: BulkGroupsResource): GroupItem[] {
         logger.debug(`group.assembler fromBulkGroupsResource: in: res: ${JSON.stringify(res)}`);
+
+        ow(res, ow.object.hasKeys('groups').message('Missing required field `groups`.'))
 
         if (res===undefined) {
             logger.debug(`group.assembler fromBulkGroupsResource: exit: res: undefined`);

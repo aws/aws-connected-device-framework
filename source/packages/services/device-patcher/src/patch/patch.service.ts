@@ -32,6 +32,18 @@ export class PatchService {
         @inject(TYPES.PatchManager) private patchManager: PatchManager
     ) {}
 
+    public validate(patches: PatchItem[]) {
+        for (const patch of patches) {  
+            logger.debug(`PatchService.validate: in: patch: ${patch}`);
+            ow(patch, 'Patch Information', ow.object.nonEmpty);
+            ow(patch.patchId, 'Patch Id', ow.optional.string.nonEmpty);
+            ow(patch.patchTemplateName, 'Patch Template Name', ow.optional.string.nonEmpty);
+            ow(patch.patchStatus, 'Patch Status', ow.optional.string.nonEmpty);
+            ow(patch.patchType, 'Patch Type', ow.optional.string.nonEmpty);
+            ow(patch.deviceId, 'Patch Device Id', ow.optional.string.nonEmpty);
+        }
+    }
+
     public async createBulk(patches: PatchItem[]): Promise<void> {
         logger.debug(`PatchService.createPatch: in: patches: ${JSON.stringify(patches)}`);
 

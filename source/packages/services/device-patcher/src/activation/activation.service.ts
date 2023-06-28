@@ -19,6 +19,12 @@ import {logger} from '../utils/logger.util';
 import {ActivationItem} from './activation.model';
 import {ActivationDao} from './activation.dao';
 
+import { TextEncoder } from 'util'
+
+// Device ID needs to satisfy this regex: in L59 it's assigned to `DefaultInstanceName` and will be check against `this.ssm.createActivation`
+// https://docs.aws.amazon.com/systems-manager/latest/APIReference/API_CreateActivation.html#API_CreateActivation_RequestSyntax
+const DEVICE_ID_REGEX = /^([\p{L}\p{Z}\p{N}_.:/=+\-@]*)$/u;
+
 @injectable()
 export class ActivationService {
 
@@ -37,6 +43,11 @@ export class ActivationService {
 
         ow(activation, ow.object.nonEmpty);
         ow(activation.deviceId, ow.string.nonEmpty);
+        ow(activation.deviceId, ow.string.matches(DEVICE_ID_REGEX));
+        ow(
+            new TextEncoder().encode(activation.deviceId).length,
+            ow.number.lessThanOrEqual(2048).message((val) => `deviceId can not exceed 2048 bytes, got ${val}`)
+        );
 
         // check if the device already has an activation
         // cleanup the activation from ssm, if it has an activation
@@ -123,6 +134,11 @@ export class ActivationService {
         logger.info(`ActivationService: deleteActivationByDeviceId: in: deviceId: ${deviceId}`);
 
         ow(deviceId, ow.string.nonEmpty);
+        ow(deviceId, ow.string.matches(DEVICE_ID_REGEX));
+        ow(
+            (new TextEncoder().encode(deviceId)).length,
+            ow.number.lessThanOrEqual(2048).message(val => `deviceId can not exceed 2048 bytes, got ${val}`),
+        );
 
         let activation:ActivationItem;
         try {
@@ -144,6 +160,8 @@ export class ActivationService {
         logger.info(`ActivationService: deleteActivation: in: activationId: ${activationId}`);
 
         ow(activationId, ow.string.nonEmpty);
+        // https://docs.aws.amazon.com/systems-manager/latest/APIReference/API_DeleteActivation.html#API_DeleteActivation_RequestParameters
+        ow(activationId, ow.string.matches(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/))
 
         await this.activationDao.delete(activationId);
 
@@ -154,8 +172,13 @@ export class ActivationService {
         try {
             await this.ssm.deleteActivation(params).promise();
         } catch (err) {
-            logger.error(`activation.service ssm.deleteActivation`, {err});
-            throw err;
+            // SSM will throw `InvalidActivation` exception when an activation with given activationId doesn't exist
+            // in this case, no deletion is needed and we fall through with a no-op, otherwise, throw the exception
+            if (err.code !== 'InvalidActivation') {
+                logger.error(`activation.service ssm.deleteActivation error: ${JSON.stringify(err)}`);
+                throw err;
+            }
+            logger.debug('activation.service ssm.deleteActivation get InvalidationActivation, falling through with no-op')
         }
         logger.debug(`ActivationService: deleteActivation: exit`);
 

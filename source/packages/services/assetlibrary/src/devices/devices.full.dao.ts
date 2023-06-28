@@ -386,7 +386,7 @@ export class DevicesDaoFull extends BaseDaoFull {
             }
 
             // Check if related groups or devices part of update request
-            if (groups.in || groups.out || devices.in || devices.out) {
+            if (groups !== undefined && (groups.in || groups.out || devices.in || devices.out)){
                 // Update request contains relationships to enforce. This requires current
                 // relationships be dropped where specified and new relations created.
                 logger.info(

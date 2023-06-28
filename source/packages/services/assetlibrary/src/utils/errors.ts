@@ -23,7 +23,7 @@ export function handleError(e: Error, res: Response): void {
         case 'SchemaValidationError': {
             status = 400;
             json = {
-                error: e.message,
+                error: res.statusMessage,
                 errors: (e as SchemaValidationError).errors,
             };
             break;
@@ -32,7 +32,7 @@ export function handleError(e: Error, res: Response): void {
             status = 400;
             const ive = e as RelationValidationError;
             json = {
-                error: e.message,
+                error: res.statusMessage,
                 invalidDeviceIds: ive.issues.invalidDeviceIds,
                 invalidGroupPaths: ive.issues.invalidGroupPaths,
                 invalidRelations: ive.issues.invalidRelations,
@@ -42,7 +42,9 @@ export function handleError(e: Error, res: Response): void {
         case 'InvalidCategoryError':
         case 'InvalidQueryStringError':
         case 'ArgumentError':
+        case 'TypeError':
             status = 400;
+            json = { error: e.message };
             break;
 
         case 'NotAuthorizedError':
@@ -55,6 +57,7 @@ export function handleError(e: Error, res: Response): void {
         case 'DeviceNotFoundError':
         case 'GroupNotFoundError':
             status = 404;
+            json = { error: e.message };
             break;
 
         case 'TemplateInUseError':
@@ -74,8 +77,9 @@ export function handleError(e: Error, res: Response): void {
             break;
 
         default:
-            if (e.message.indexOf('with id already exists') >= 0) {
-                // thrown by neptune
+            if (
+                e.message.indexOf('with id already exists') >= 0 // thrown by neptune
+            ) {
                 status = 409;
                 json = {
                     error: 'Item already exists.',
@@ -85,6 +89,18 @@ export function handleError(e: Error, res: Response): void {
                 e['code'] === 'InvalidRequestException' // thrown by IotData in event emitter
             ) {
                 status = 400;
+            } else if (
+                e.message.indexOf('Unexpected server response: 429') >= 0 // thrown by neptune throttle
+            ) {
+                status = 429;
+                json = {
+                    error: 'Too Many Requests',
+                };
+            } else if (
+                e.hasOwnProperty('code') &&
+                e['code'] === 'TimeLimitExceededException' // thrown when large volume of data is taking too long to retrieve
+            ) {
+                status = 504;
             } else {
                 status = 500;
             }

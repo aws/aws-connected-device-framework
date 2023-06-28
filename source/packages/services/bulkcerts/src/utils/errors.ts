@@ -23,7 +23,7 @@ export function handleError(e:Error, res:Response): void {
     } else if (e.message === 'NOT_FOUND') {
         res.status(404).json({error: 'Resource does not exist'}).end();
     } else {
-        res.status(500).json({error: e.message}).end();
+        res.status(500).json({error: res.statusMessage}).end();
     }
 
     logger.error(`handleError: res.status: ${res.statusCode} ${res.statusMessage}`);

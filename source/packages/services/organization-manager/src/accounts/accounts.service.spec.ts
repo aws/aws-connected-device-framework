@@ -69,7 +69,7 @@ describe("AccountsService", function () {
         mockedAccountsDao.getAccountByName.mockResolvedValue(accountItemToReturn);
         mockedAccountsDao.getAccountById.mockResolvedValue(accountItemToReturn);
 
-        mockedOrganizationalUnitsDao.getOrganizationalUnit = jest.fn().mockResolvedValueOnce({});
+        mockedOrganizationalUnitsDao.getOrganizationalUnits = jest.fn().mockResolvedValueOnce([{ id: 'ou-org-1' }]);
 
         mockedServiceCatalog.searchProductsAsAdmin = jest.fn().mockReturnValueOnce({
             promise: () =>

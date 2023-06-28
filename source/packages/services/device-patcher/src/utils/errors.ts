@@ -13,37 +13,43 @@
 import { Response } from 'express';
 import { logger } from './logger.util';
 
-export function handleError(e:Error, res:Response): void {
+// https://github.com/aws/aws-sdk-net/issues/1495
+const ERRORS_429 = [
+    'ProvisionedThroughputExceededException',
+    'RequestTimeout',
+    'RequestThrottledException',
+    'Throttling',
+    'ThrottlingException',
+    'TooManyRequestsException',
+];
+
+export function handleError(e: Error, res: Response): void {
     logger.error(`handleError: ${e}`);
 
     if (
-        e.name === 'ArgumentError' ||
         e.message.startsWith('MISSING_REQUIRED') ||
         e.message === 'FAILED_VALIDATION' ||
         e.message === 'UNSUPPORTED_TRANSITION' ||
         e.message === 'UNSUPPORTED_PATCH_STATUS' ||
-        e.message === 'BAD_REQUEST'
+        e.message === 'BAD_REQUEST' ||
+        (e.hasOwnProperty('code') && e['code'] === 'ValidationException')
     ) {
-        res.status(400).json({error: e.message}).end();
-    } else if (
-        e.message.endsWith('NOT_FOUND'))
-    {
-        res.status(404).json({error: 'Item not found'}).end();
-    } else if (
-        e.name==='ResourceNotFoundException')
-    {
-        res.status(404).json({error: e.message}).end();
-    } else if (
-        e.name === 'ConditionalCheckFailedException' ||
-        e.message === 'CONFLICT')
-    {
-        res.status(409).json({error: 'Item already exists'}).end();
-    } else if (
-        e.message === 'DEVICE_NOT_ACTIVATED_AS_HYBRID_INSTANCE'
-    ) {
-        res.status(409).json({error: e.message})
+        res.status(400).json({ error: res.statusMessage }).end();
+    } else if (e.name === 'ArgumentError') {
+        // ow input validation error
+        res.status(400).json({ error: e.message }).end();
+    } else if (e.message.endsWith('NOT_FOUND')) {
+        res.status(404).json({ error: 'Item not found' }).end();
+    } else if (e.name === 'ResourceNotFoundException') {
+        res.status(404).json({ error: res.statusMessage }).end();
+    } else if (e.name === 'ConditionalCheckFailedException' || e.message === 'CONFLICT') {
+        res.status(409).json({ error: 'Item already exists' }).end();
+    } else if (e.message === 'DEVICE_NOT_ACTIVATED_AS_HYBRID_INSTANCE') {
+        res.status(409).json({ error: res.statusMessage });
+    } else if (e.hasOwnProperty('code') && ERRORS_429.includes(e['code'])) {
+        res.status(429).end();
     } else {
-        res.status(500).json({error: e.message}).end();
+        res.status(500).json({ error: res.statusMessage }).end();
     }
 
     logger.error(`handleError: res.status: ${res.status}`);

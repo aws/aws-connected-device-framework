@@ -51,7 +51,7 @@
     "@types/superagent": "4.1.15",
     "@typescript-eslint/eslint-plugin": "4.23.0",
     "@typescript-eslint/parser": "4.23.0",
-    "aws-sdk": "2.1048.0",
+    "aws-sdk": "2.1386.0",
     "cfn-response-promise": "1.0.1",
     "dotenv-flow": "~3.2.0",
     "eslint": "7.26.0",

@@ -18,11 +18,11 @@
      logger.error(`errors.util handleError: in: ${e}`);
  
      if (e.name === 'ArgumentError' || e.message === 'FAILED_VALIDATION' || e.message === 'UNSUPPORTED_TARGET_TYPE' || e.message.startsWith('INVALID_COMPONENT:')) {
-         res.status(400).json({error: e.message}).end();
+         res.status(400).json({error: res.statusMessage}).end();
      } else if (e.message?.endsWith('NOT_FOUND')) {
          res.status(404).json({error: 'Item not found'}).end();
      } else if (e.name==='ResourceNotFoundException') {
-         res.status(404).json({error: e.message}).end();
+         res.status(404).json({error: res.statusMessage}).end();
      } else if (e.name === 'ConditionalCheckFailedException' || e.name === 'ResourceAlreadyExistsException') {
          res.status(409).json({error: 'Item already exists'}).end();
      } else if (e.message === 'SUBSCRIPTION_FOR_USER_PRINCIPAL_ALREADY_EXISTS') {
@@ -32,7 +32,7 @@
      } else if (e.message==='NOT_IMPLEMENTED' ) {
          res.status(501).json({error: 'TODO:  Not yet implemented'}).end();
      } else {
-         res.status(500).json({error: e.message}).end();
+         res.status(500).json({error: res.statusMessage}).end();
      }
  
      logger.error(`errors.util handleError: exit: ${res.status}`);

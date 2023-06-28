@@ -18,13 +18,13 @@ export function handleError(e:Error, res:Response): void {
 
     if (e.name === 'ArgumentError' || e.message === 'FAILED_VALIDATION' || e.message.startsWith('REGISTRATION_FAILED:')
         || e.message.startsWith('INVALID_PROVISIONING_TEMPLATE:')) {
-        res.status(400).json({error: e.message}).end();
+        res.status(400).json({error: res.statusMessage}).end();
 
     } else if (e.message === 'NOT_FOUND' || e.name === "ResourceNotFoundException") {
         res.status(404).json({error: 'Resource does not exist'}).end();
 
     } else {
-        res.status(500).json({error: e.message}).end();
+        res.status(500).json({error: res.statusMessage}).end();
     }
 
     logger.error(`handleError: res.status: ${res.statusCode} ${res.statusMessage}`);

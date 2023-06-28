@@ -63,7 +63,7 @@
     "@typescript-eslint/eslint-plugin": "4.23.0",
     "@typescript-eslint/parser": "4.23.0",
     "ajv": "6.12.3",
-    "aws-sdk": "2.1048.0",
+    "aws-sdk": "2.1386.0",
     "aws-xray-sdk": "~3.3.4",
     "aws-xray-sdk-core": "~3.3.4",
     "body-parser": "1.20.1",

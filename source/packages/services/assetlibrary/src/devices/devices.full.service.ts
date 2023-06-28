@@ -49,6 +49,7 @@ import { DevicesAssembler } from './devices.assembler';
 import { DevicesDaoFull } from './devices.full.dao';
 import { BulkDevicesResult, DeviceItem, DeviceItemList, DeviceState } from './devices.models';
 import { DevicesService } from './devices.service';
+import { owCheckOptionalNumber } from '../utils/inputValidation.util';
 
 @injectable()
 export class DevicesServiceFull implements DevicesService {
@@ -87,6 +88,8 @@ export class DevicesServiceFull implements DevicesService {
 
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
         ow(relationship, 'relationship', ow.string.nonEmpty);
+        owCheckOptionalNumber(count, 1, 10000, 'count');
+        owCheckOptionalNumber(offset, 0, Number.MAX_SAFE_INTEGER, 'offset');
 
         // defaults
         if (direction === undefined || direction === null) {
@@ -153,6 +156,8 @@ export class DevicesServiceFull implements DevicesService {
 
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
         ow(relationship, 'relationship', ow.string.nonEmpty);
+        owCheckOptionalNumber(count, 1, 10000, 'count');
+        owCheckOptionalNumber(offset, 0, Number.MAX_SAFE_INTEGER, 'offset');
 
         // defaults
         if (direction === undefined || direction === null) {
@@ -1191,7 +1196,7 @@ export class DevicesServiceFull implements DevicesService {
 
         ow(deviceId, 'deviceId', ow.string.nonEmpty);
         ow(componentId, 'componentId', ow.string.nonEmpty);
-        ow(component, ow.object.nonEmpty);
+        ow(component, ow.object.hasKeys('deviceId', 'category', 'templateId'));
 
         // any ids need to be lowercase
         deviceId = deviceId.toLowerCase();

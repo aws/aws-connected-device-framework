@@ -16,6 +16,7 @@ import {inject, injectable} from 'inversify';
 import { logger } from '../utils/logger.util';
 import { TYPES } from '../di/types';
 import { S3Utils } from '../utils/s3.util';
+import { owCheckUnprintableChar, owCheckOversizeString } from '../utils/inputValidation.util';
 
 import { PatchTemplateItem } from './template.model';
 import { PatchTemplatesDao, TemplateListPaginationKey } from './template.dao';
@@ -34,8 +35,12 @@ export class PatchTemplatesService {
 
         ow(template, 'Template Information', ow.object.nonEmpty);
         ow(template.name, ow.string.nonEmpty);
+        owCheckUnprintableChar(template.name, 'template.name');
+        owCheckOversizeString(template.name, 2048, 'template.name');
         ow(template.patchType, ow.string.nonEmpty);
         ow(template.playbookName, ow.string.nonEmpty);
+        owCheckUnprintableChar(template.playbookName, 'template.playbookName');
+        owCheckOversizeString(template.playbookName, 2048, 'template.playbookName');
         ow(template.playbookFile, ow.object.hasKeys('buffer'));
 
         const existingTemplate = await this.patchTemplatesDao.get(template.name);
@@ -66,6 +71,8 @@ export class PatchTemplatesService {
 
         ow(template, 'Template Information', ow.object.nonEmpty);
         ow(template.name, ow.string.nonEmpty);
+        owCheckUnprintableChar(template.name, 'template.name')
+        owCheckOversizeString(template.name, 2048, 'template.name');
 
         const existingTemplate = await this.patchTemplatesDao.get(template.name);
 

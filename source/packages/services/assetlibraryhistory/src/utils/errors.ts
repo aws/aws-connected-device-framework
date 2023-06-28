@@ -34,7 +34,7 @@ export function handleError(e: Error, res: Response): void {
     } else if (e.message === 'ALREADY_INITIALIZED') {
         res.status(409).json({ error: 'Already initialized' }).end();
     } else {
-        res.status(500).json({ error: e.message }).end();
+        res.status(500).json({ error: res.statusMessage }).end();
     }
 
     logger.error(`handleError: res.status: ${res.statusCode} ${res.statusMessage}`);

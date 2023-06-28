@@ -14,6 +14,7 @@
 import {inject, injectable} from 'inversify';
 import {TYPES} from "../di/types";
 import {logger} from "../utils/logger";
+import { owCheckUnprintableChar, owCheckOversizeString } from '../utils/inputValidation.util';
 import ow from "ow";
 import {OrganizationalUnitResource} from "./organizationalUnits.model";
 import {Tag, Tags} from "aws-sdk/clients/organizations";
@@ -79,6 +80,8 @@ export class OrganizationalUnitsService {
 
         ow(request, ow.object.nonEmpty)
         ow(request.name, ow.string.nonEmpty)
+        owCheckUnprintableChar(request.name, 'request.name');
+        owCheckOversizeString(request.name, 2048, 'request.name');
         ow(request.tags, ow.object.nonEmpty)
 
         request.createdAt = new Date()
@@ -89,6 +92,8 @@ export class OrganizationalUnitsService {
             request.id = await this.createOrganizationalUnitInMaster(name, tags)
         } else {
             ow(request.id, ow.string.nonEmpty)
+            owCheckUnprintableChar(request.id, 'request.id');
+            owCheckOversizeString(request.id, 2048, 'request.id');
             logger.debug(`organizationmanager.service createOrganizationalUnit: registering existing ou:${request.id}`)
         }
         await this.organizationalUnitsDao.createOrganizationalUnit(this.organizationalUnitsAssembler.toItem(request))

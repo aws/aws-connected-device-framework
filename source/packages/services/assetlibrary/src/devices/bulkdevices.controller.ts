@@ -16,7 +16,7 @@ import { inject } from 'inversify';
 import { DevicesService } from './devices.service';
 import {TYPES} from '../di/types';
 import {logger} from '../utils/logger';
-import {handleError} from '../utils/errors';
+import {InvalidQueryStringError, handleError} from '../utils/errors';
 import { BulkDevicesResource, BulkDevicesResult, DeviceResourceList } from './devices.models';
 import { DevicesAssembler } from './devices.assembler';
 
@@ -64,19 +64,31 @@ export class BulkDevicesController implements interfaces.Controller {
 
         logger.info(`bulkdevices.controller  bulkGetDevices: in: deviceIds:${deviceIds}, components:${components}, attributes:${attributes}, groups:${groups}`);
         try {
-            let deviceIdsAsArray = deviceIds.split(',');
+            let deviceIdsAsArray: string[];
+            if (deviceIds) {
+                if (Array.isArray(deviceIds)) {
+                    deviceIdsAsArray = deviceIds;
+                } else if (typeof deviceIds === 'string') {
+                    deviceIdsAsArray = deviceIds.split(',').filter(deviceId => deviceId !== '');
+                }
+            } else {
+                // throw a 400 error if no `deviceId` is provided
+                const errorMessage = 'Missing required query parameter `deviceId`.';
+                res.statusMessage = errorMessage;
+                throw new InvalidQueryStringError(errorMessage);
+            }
             // remove duplicate deviceIds if any
             deviceIdsAsArray = deviceIdsAsArray.filter((item, index) => deviceIdsAsArray.indexOf(item) === index);
 
             const expandComponents = (components==='true');
             const includeGroups = (groups!=='false');
 
-            let attributesArray:string[];
-            if (attributes!==undefined) {
-                if(attributes==='') {
-                    attributesArray=[];
-                } else {
-                    attributesArray=attributes.split(',');
+            let attributesArray: string[];
+            if (attributes) {
+                if(Array.isArray(attributes)) {
+                    attributesArray = attributes;
+                } else if (typeof attributes === 'string') {
+                    attributesArray = attributes.split(',').filter(attr => attr !== '');
                 }
             }
 

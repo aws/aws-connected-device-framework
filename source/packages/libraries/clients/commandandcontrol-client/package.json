@@ -30,7 +30,7 @@
     "winston-transport": "4.4.0"
   },
   "peerDependencies": {
-    "aws-sdk": "2.1048.0"
+    "aws-sdk": "2.1386.0"
   },
   "devDependencies": {
     "@types/dotenv-flow": "~3.2.0",
