@@ -257,6 +257,8 @@ paths:
           $ref: "#/components/responses/Created"
         "400":
           $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/ConcurrentModificationException"
     get:
       tags:
         - Templates
@@ -293,6 +295,8 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "404":
           $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/ConcurrentModificationException"
     delete:
       tags:
         - Templates
@@ -361,6 +365,8 @@ paths:
           $ref: "#/components/responses/Created"
         "400":
           $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/ConcurrentModificationException"
     get:
       tags:
         - Templates
@@ -405,6 +411,8 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "404":
           $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/ConcurrentModificationException"
     delete:
       tags:
         - Templates
@@ -2130,6 +2138,10 @@ components:
         application/vnd.aws-cdf-v2.0+json:
           schema:
             $ref: "#/components/schemas/Error"
+    ConcurrentModificationException:
+      description: ConcurrentModificationException
+      schema:
+        $ref: "#/components/schemas/Error"
   requestBodies:
     TemplateDefinition:
       content:
