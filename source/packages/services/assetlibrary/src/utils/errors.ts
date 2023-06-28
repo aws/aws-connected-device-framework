@@ -97,10 +97,12 @@ export function handleError(e: Error, res: Response): void {
                     error: 'Too Many Requests',
                 };
             } else if (
-                e.hasOwnProperty('code') &&
-                e['code'] === 'TimeLimitExceededException' // thrown when large volume of data is taking too long to retrieve
+                e.message.indexOf('TimeLimitExceededException') >= 0 // thrown when large volume of data is taking too long to retrieve 
             ) {
-                status = 504;
+                status = 598; // this is the status code returned by the underlying service
+                json = {
+                    error: 'Underlying service timed out'
+                };
             } else {
                 status = 500;
             }
