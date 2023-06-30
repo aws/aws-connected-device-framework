@@ -71,7 +71,7 @@ Resources:
       Handler: lambda_custom_resource_proxy.handler
       MemorySize: 128
       Role: !GetAtt CustomResourceLambdaRole.Arn
-      Runtime: nodejs16.x
+      Runtime: nodejs18.x
       Timeout: 60
       Tracing: Active
       Environment:

@@ -142,7 +142,7 @@ Resources:
       Handler: lambda_sf_batch_proxy.export_handler
       MemorySize: 1024
       Role: !GetAtt BatchExecutionRole.Arn
-      Runtime: nodejs16.x
+      Runtime: nodejs18.x
       Timeout: 900
       Environment:
         Variables:
@@ -168,7 +168,7 @@ Resources:
       Handler: lambda_sf_etl_proxy.export_handler
       MemorySize: 1024
       Role: !GetAtt ETLExecutionRole.Arn
-      Runtime: nodejs16.x
+      Runtime: nodejs18.x
       Timeout: 900
       Environment:
         Variables:

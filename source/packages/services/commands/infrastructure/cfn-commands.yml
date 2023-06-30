@@ -356,7 +356,7 @@ Resources:
       Handler: packages/services/commands/dist/presignedurl_iot_rule.presignedurl_rule_handler
       MemorySize: 128
       Role: !GetAtt PresignedUrlLambdaExecutionRole.Arn
-      Runtime: nodejs16.x
+      Runtime: nodejs18.x
       Timeout: 30
       Environment:
         Variables:
@@ -378,7 +378,7 @@ Resources:
       Handler: packages/services/commands/dist/job_lifecycle_iot_rule.job_lifecycle_rule_handler
       MemorySize: 128
       Role: !GetAtt JobLifecycleLambdaExecutionRole.Arn
-      Runtime: nodejs16.x
+      Runtime: nodejs18.x
       Timeout: 30
       Environment:
         Variables:
@@ -400,7 +400,7 @@ Resources:
       Handler: packages/services/commands/dist/lambda_proxy.handler
       MemorySize: 256
       Role: !GetAtt RESTLambdaExecutionRole.Arn
-      Runtime: nodejs16.x
+      Runtime: nodejs18.x
       Timeout: 30
       Environment:
         Variables:

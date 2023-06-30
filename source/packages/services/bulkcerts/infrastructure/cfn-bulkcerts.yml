@@ -302,7 +302,7 @@ Resources:
         - !Ref OpenSslLambdaLayerArn
       MemorySize: 128
       Role: !GetAtt ApiLambdaExecutionRole.Arn
-      Runtime: nodejs16.x
+      Runtime: nodejs18.x
       Timeout: 300
       Environment:
         Variables:
@@ -349,7 +349,7 @@ Resources:
       Handler: lambda_sns_handler.handler
       MemorySize: 512
       Role: !GetAtt SnsLambdaExecutionRole.Arn
-      Runtime: nodejs16.x
+      Runtime: nodejs18.x
       Timeout: 300
       ReservedConcurrentExecutions: 3
       Environment:

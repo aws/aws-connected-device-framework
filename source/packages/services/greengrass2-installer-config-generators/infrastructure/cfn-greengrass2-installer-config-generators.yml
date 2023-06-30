@@ -107,7 +107,7 @@ Resources:
       Handler: lambda_manual_handler.handler
       MemorySize: 256
       Role: !GetAtt LambdaExecutionRole.Arn
-      Runtime: nodejs16.x
+      Runtime: nodejs18.x
       Timeout: 30
       AutoPublishAlias: live
       DeploymentPreference:
@@ -129,7 +129,7 @@ Resources:
       Handler: lambda_fleetProvisioning_handler.handler
       MemorySize: 256
       Role: !GetAtt LambdaExecutionRole.Arn
-      Runtime: nodejs16.x
+      Runtime: nodejs18.x
       Timeout: 30
       AutoPublishAlias: live
       DeploymentPreference:

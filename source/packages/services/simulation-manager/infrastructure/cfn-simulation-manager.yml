@@ -240,7 +240,7 @@ Resources:
       MemorySize: 512
       Role: !GetAtt RESTLambdaExecutionRole.Arn
       AutoPublishAlias: live
-      Runtime: nodejs16.x
+      Runtime: nodejs18.x
       Timeout: 30
       Environment:
         Variables:

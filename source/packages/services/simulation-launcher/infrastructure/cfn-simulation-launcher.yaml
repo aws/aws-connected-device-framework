@@ -299,7 +299,7 @@ Resources:
       Handler: sns_proxy.handler
       MemorySize: 128
       Role: !GetAtt LambdaExecutionRole.Arn
-      Runtime: nodejs16.x
+      Runtime: nodejs18.x
       Timeout: 300
       Environment:
         Variables:

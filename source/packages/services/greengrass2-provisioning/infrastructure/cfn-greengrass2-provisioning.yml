@@ -347,7 +347,7 @@ Resources:
 
       MemorySize: 256
       Role: !GetAtt LambdaExecutionRole.Arn
-      Runtime: nodejs16.x
+      Runtime: nodejs18.x
       Timeout: 29
 
       AutoPublishAlias: live
@@ -409,7 +409,7 @@ Resources:
 
       MemorySize: 256
       Role: !GetAtt LambdaExecutionRole.Arn
-      Runtime: nodejs16.x
+      Runtime: nodejs18.x
       Timeout: 900
 
       AutoPublishAlias: live
@@ -472,7 +472,7 @@ Resources:
 
       MemorySize: 256
       Role: !GetAtt LambdaExecutionRole.Arn
-      Runtime: nodejs16.x
+      Runtime: nodejs18.x
       Timeout: 30
 
       AutoPublishAlias: live
@@ -511,7 +511,7 @@ Resources:
 
       MemorySize: 256
       Role: !GetAtt LambdaExecutionRole.Arn
-      Runtime: nodejs16.x
+      Runtime: nodejs18.x
       Timeout: 30
 
       AutoPublishAlias: live

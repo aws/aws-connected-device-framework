@@ -320,7 +320,7 @@ Resources:
       Handler: lambda_proxy_ddbstream.handler
       MemorySize: 512
       Role: !GetAtt DynamoDBStreamLambdaExecutionRole.Arn
-      Runtime: nodejs16.x
+      Runtime: nodejs18.x
       Timeout: 30
       Environment:
         Variables:
@@ -406,7 +406,7 @@ Resources:
       Handler: lambda_proxy_invoke.handler
       MemorySize: 512
       Role: !GetAtt LambdaInvokeExecutionRole.Arn
-      Runtime: nodejs16.x
+      Runtime: nodejs18.x
       Timeout: 30
       Environment:
         Variables:
@@ -452,7 +452,7 @@ Resources:
       Handler: lambda_proxy_restapi.handler
       MemorySize: 256
       Role: !GetAtt RESTLambdaExecutionRole.Arn
-      Runtime: nodejs16.x
+      Runtime: nodejs18.x
       Timeout: 30
       Environment:
         Variables:
@@ -553,7 +553,7 @@ Resources:
 
       MemorySize: 512
       Role: !GetAtt AsyncProcessingLambdaRole.Arn
-      Runtime: nodejs16.x
+      Runtime: nodejs18.x
       Timeout: 900
       Environment:
         Variables:
