@@ -3,7 +3,7 @@
   "author": "Dean Hart",
   "scripts": {},
   "engines": {
-    "node": "=14",
+    "node": "=18",
     "pnpm": "=6"
   },
   "private": true,

@@ -68,7 +68,8 @@
       ],
       "@typescript-eslint/eslint-plugin": [
         "4.23.0",
-        "4.9.1"
+        "4.9.1",
+        "7.26.0"
       ],
       "@typescript-eslint/parser": [
         "4.23.0",
