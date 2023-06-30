@@ -59,9 +59,9 @@ describe('lambdaZip', () => {
                 expect(passedOptions.external).toContain(external);
         });
 
-        it('configures for node 16 compatibility by default', async () => {
+        it('configures for node 18 compatibility by default', async () => {
             const passedOptions = await exec();
-            expect(passedOptions.target).toBe('node16');
+            expect(passedOptions.target).toBe('node18');
         });
     });
 

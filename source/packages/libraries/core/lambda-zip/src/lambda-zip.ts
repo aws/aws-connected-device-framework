@@ -10,7 +10,7 @@ const defaultBuildOptions: BuildOptions = {
     bundle: true,
     minify: true,
     platform: 'node',
-    target: 'node16',
+    target: 'node18',
     treeShaking: true,
 };
 
