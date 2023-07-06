@@ -13,7 +13,7 @@
 
 import { Before, setDefaultTimeout } from '@cucumber/cucumber';
 
-import AWS = require('aws-sdk');
+import AWS from 'aws-sdk'
 setDefaultTimeout(30 * 1000);
 /*
     Cucumber describes current scenario context as “World”. It can be used to store the state of the scenario

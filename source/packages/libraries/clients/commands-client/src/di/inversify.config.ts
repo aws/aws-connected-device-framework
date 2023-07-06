@@ -26,7 +26,7 @@ import { TemplatesLambdaService } from '../client/templates.lambda.service';
 import { TemplatesService } from '../client/templates.service';
 import { COMMANDS_CLIENT_TYPES } from './types';
 
-import AWS = require('aws-sdk');
+import AWS from 'aws-sdk'
 export const commandsContainerModule = new ContainerModule (
     (
         bind: interfaces.Bind,

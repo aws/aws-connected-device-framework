@@ -14,7 +14,7 @@
 import 'reflect-metadata';
 import { AccountsDao } from "./accounts.dao";
 import { AccountsItem } from "./accounts.models";
-import AWS = require('aws-sdk');
+import AWS from 'aws-sdk'
 
 describe('AccountsDao', function () {
 

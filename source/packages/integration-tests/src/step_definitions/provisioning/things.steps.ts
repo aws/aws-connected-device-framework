@@ -28,7 +28,7 @@ import { Dictionary } from '@awssolutions/cdf-lambda-invoke';
 import { container } from '../../di/inversify.config';
 import { AUTHORIZATION_TOKEN, replaceTokens } from '../common/common.steps';
 
-import AWS = require('aws-sdk');
+import AWS from 'aws-sdk'
 import chai_string = require('chai-string');
 import { ACMPCA_TEMPLATE_NAME, AWS_ISSUED_CERTIFICATE_TEMPLATE_NAME } from '../../support/provisioning_hooks';
 

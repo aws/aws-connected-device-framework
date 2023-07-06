@@ -15,7 +15,7 @@ import { inject, injectable } from 'inversify';
 import { TYPES } from '../di/types';
 import { logger } from '../utils/logger';
 
-import AWS = require('aws-sdk');
+import AWS from 'aws-sdk'
 
 @injectable()
 export class EventEmitter {

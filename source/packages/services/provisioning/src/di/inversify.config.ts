@@ -35,7 +35,7 @@ import { ThingsService } from '../things/things.service';
 import { TYPES } from './types';
 import { UseACMPCAStepProcessor } from '../things/steps/useACMPCAProcessor';
 
-import AWS = require('aws-sdk');
+import AWS from 'aws-sdk'
 import { CertUtils } from '../utils/cert';
 import { CreateAwsCertiticateProcessor } from '../things/steps/createAwsCertificateProcessor';
 

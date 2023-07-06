@@ -15,7 +15,7 @@ import { logger } from '../utils/logger';
 import { TYPES } from '../di/types';
 import { AccountsItem, AccountComponentModel, AccountResource, AccountUpdateRequest, DynamoDbPaginationKey, AccountListPaginationKey } from './accounts.models';
 import { createDelimitedAttribute, createDelimitedAttributePrefix, expandDelimitedAttribute, PkType } from "../utils/pkUtils.util";
-import AWS = require('aws-sdk');
+import AWS from 'aws-sdk'
 import { TransactWriteItemList, Update } from 'aws-sdk/clients/dynamodb';
 @injectable()
 export class AccountsDao {

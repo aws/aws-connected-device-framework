@@ -12,7 +12,7 @@
  *********************************************************************************************************************/
 import '@awssolutions/cdf-config-inject';
 
-import AWS = require('aws-sdk');
+import AWS from 'aws-sdk'
 import { TaskOverride } from 'aws-sdk/clients/ecs';
 import { logger } from './utils/logger';
 

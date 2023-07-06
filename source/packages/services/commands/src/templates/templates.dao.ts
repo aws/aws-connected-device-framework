@@ -14,7 +14,7 @@ import { injectable, inject } from 'inversify';
 import {logger} from '../utils/logger';
 import {TYPES} from '../di/types';
 import { TemplateModel, TemplateListModel, TemplateSummaryModel } from './templates.models';
-import AWS = require('aws-sdk');
+import AWS from 'aws-sdk'
 
 @injectable()
 export class TemplatesDao {

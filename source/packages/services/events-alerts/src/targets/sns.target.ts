@@ -13,7 +13,7 @@
 import { injectable, inject } from 'inversify';
 import { logger } from '../utils/logger.util';
 import { TYPES } from '../di/types';
-import AWS = require('aws-sdk');
+import AWS from 'aws-sdk'
 
 @injectable()
 export class SNSTarget {

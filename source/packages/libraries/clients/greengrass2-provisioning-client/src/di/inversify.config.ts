@@ -29,7 +29,7 @@ import { TemplatesLambdaService } from '../client/templates.lambda.service';
 import { TemplatesService } from '../client/templates.service';
 import { GREENGRASS2_PROVISIONING_CLIENT_TYPES } from './types';
 
-import AWS = require('aws-sdk');
+import AWS from 'aws-sdk'
 import { FleetLambdaService } from '../client/fleet.lambda.service';
 import { FleetService } from '../client/fleet.service';
 import { FleetApigwService } from '../client/fleet.apigw.service';

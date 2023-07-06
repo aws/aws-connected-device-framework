@@ -24,7 +24,7 @@ import { logger } from '../utils/logger';
 import { ACMCertificate, CertificateChunkRequest, CertificateInfo, CommonName } from './certificates.models';
 import { CertificatesTaskDao } from './certificatestask.dao';
 
-import AWS = require('aws-sdk');
+import AWS from 'aws-sdk'
 @injectable()
 export class CertificatesService {
 

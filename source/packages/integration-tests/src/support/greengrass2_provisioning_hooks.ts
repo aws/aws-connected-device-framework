@@ -27,7 +27,7 @@ import { container } from '../di/inversify.config';
 import { AUTHORIZATION_TOKEN } from '../step_definitions/common/common.steps';
 import { getAdditionalHeaders } from '../step_definitions/notifications/notifications.utils';
 
-import AWS = require('aws-sdk');
+import AWS from 'aws-sdk'
 import { logger } from '../step_definitions/utils/logger';
 import { world } from '../step_definitions/greengrass2-provisioning/greengrass2.world';
 setDefaultTimeout(30 * 1000);

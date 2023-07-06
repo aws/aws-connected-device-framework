@@ -37,7 +37,7 @@ import { CommandModel } from '../commands.models';
 import { CommandsValidator } from '../commands.validator';
 import { WorkflowAction } from './workflow.interfaces';
 
-import AWS = require('aws-sdk');
+import AWS from 'aws-sdk'
 @injectable()
 export class StartJobAction implements WorkflowAction {
 

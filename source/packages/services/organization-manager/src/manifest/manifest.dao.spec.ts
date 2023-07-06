@@ -11,7 +11,7 @@
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
 import 'reflect-metadata';
-import AWS = require('aws-sdk');
+import AWS from 'aws-sdk'
 import { ManifestDao } from "./manifest.dao";
 
 describe('Templates Dao', () => {
