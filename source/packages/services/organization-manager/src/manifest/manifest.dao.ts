@@ -15,7 +15,7 @@ import { TYPES } from "../di/types";
 import { AccountsByRegionListMap, RegionListByOrganizationalUnitMap } from "./manifest.model";
 import { createDelimitedAttributePrefix, PkType } from "../utils/pkUtils.util";
 import { logger } from "../utils/logger";
-import AWS = require('aws-sdk');
+import AWS from 'aws-sdk'
 
 @injectable()
 export class ManifestDao {

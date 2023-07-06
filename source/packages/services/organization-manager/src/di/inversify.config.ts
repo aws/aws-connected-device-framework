@@ -14,7 +14,7 @@ import '@awssolutions/cdf-config-inject';
 import { Container, decorate, injectable, interfaces } from 'inversify';
 import { TYPES } from './types';
 import { HttpHeaderUtils } from '../utils/httpHeaders';
-import AWS = require('aws-sdk');
+import AWS from 'aws-sdk'
 
 
 // Note: importing @controller's carries out a one time inversify metadata generation...

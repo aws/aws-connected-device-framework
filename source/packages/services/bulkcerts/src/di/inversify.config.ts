@@ -22,7 +22,7 @@ import '../certificates/certificates.controller';
 import '../certificates/supplier.controller';
 import { TYPES } from './types';
 
-import AWS = require('aws-sdk');
+import AWS from 'aws-sdk'
 
 // Load everything needed to the Container
 export const container = new Container();

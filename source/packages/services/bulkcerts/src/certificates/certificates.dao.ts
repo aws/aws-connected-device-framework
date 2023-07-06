@@ -12,7 +12,7 @@
  *********************************************************************************************************************/
 import { injectable,inject } from 'inversify';
 import {logger} from '../utils/logger';
-import AWS = require('aws-sdk');
+import AWS from 'aws-sdk'
 import { TYPES } from '../di/types';
 import ow from 'ow';
 import { DynamoDB } from 'aws-sdk';

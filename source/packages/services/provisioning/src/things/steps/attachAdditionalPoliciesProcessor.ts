@@ -15,7 +15,7 @@ import { ProvisioningStepProcessor } from './provisioningStepProcessor';
 import { ProvisioningStepData } from './provisioningStep.model';
 import { logger } from '../../utils/logger';
 import { TYPES } from '../../di/types';
-import AWS = require('aws-sdk');
+import AWS from 'aws-sdk'
 import ow from 'ow';
 import {generate} from 'shortid';
 

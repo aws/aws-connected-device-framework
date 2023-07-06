@@ -44,7 +44,7 @@ import { VpcEndpointCheckCustomResource } from '../customResources/vpcEndpointCh
 import { commandAndControlContainerModule } from '@awssolutions/cdf-commandandcontrol-client';
 import { TYPES } from './types';
 
-import AWS = require('aws-sdk');
+import AWS from 'aws-sdk'
 import { StackEventsCustomResource } from '../customResources/stackEvents.customResource';
 // Load everything needed to the Container
 export const container = new Container();

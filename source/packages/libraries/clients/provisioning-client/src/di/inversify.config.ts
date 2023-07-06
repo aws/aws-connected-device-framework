@@ -20,7 +20,7 @@ import { ThingsApigwService } from '../client/things.apigw.service';
 import { ThingsLambdaService } from '../client/things.lambda.service';
 import { PROVISIONING_CLIENT_TYPES } from './types';
 
-import AWS = require('aws-sdk');
+import AWS from 'aws-sdk'
 export const provisioningContainerModule = new ContainerModule (
     (
         bind: interfaces.Bind,

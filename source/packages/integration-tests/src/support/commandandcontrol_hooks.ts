@@ -26,7 +26,7 @@ import {
 } from '../step_definitions/commandandcontrol/commandandcontrol.world';
 import { listCommands } from '../step_definitions/commandandcontrol/commands.steps';
 import { AUTHORIZATION_TOKEN } from '../step_definitions/common/common.steps';
-import AWS = require('aws-sdk');
+import AWS from 'aws-sdk'
 import path = require('path');
 
 setDefaultTimeout(30 * 1000);

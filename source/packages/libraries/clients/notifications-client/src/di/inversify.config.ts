@@ -34,7 +34,7 @@ import { TargetsLambdaService } from '../client/targets.lambda.service';
 import { TargetsService } from '../client/targets.service';
 import { NOTIFICATIONS_CLIENT_TYPES } from './types';
 
-import AWS = require('aws-sdk');
+import AWS from 'aws-sdk'
 export const notificationsContainerModule = new ContainerModule (
     (
         bind: interfaces.Bind,

@@ -32,7 +32,7 @@ import { TemplatesLambdaService } from '../client/templates.lambda.service';
 import { TemplatesService } from '../client/templates.service';
 import '../config/env';
 import { ASSETLIBRARY_CLIENT_TYPES } from './types';
-import AWS = require('aws-sdk');
+import AWS from 'aws-sdk'
 
 export const assetLibraryContainerModule = new ContainerModule(
     (
