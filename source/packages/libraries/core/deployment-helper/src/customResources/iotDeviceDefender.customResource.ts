@@ -18,6 +18,7 @@ import { CustomResource } from './customResource';
 import { logger } from '@awssolutions/cdf-lambda-invoke/dist/utils/logger';
 import Iot, { AuditCheckConfigurations } from 'aws-sdk/clients/iot';
 import ow from 'ow';
+import AWS from 'aws-sdk'
 
 @injectable()
 export class IotDeviceDefenderCustomResource implements CustomResource {

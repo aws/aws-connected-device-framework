@@ -16,6 +16,7 @@ import { TYPES } from '../di/types';
 import {CustomResourceEvent} from './customResource.model';
 import { CustomResource } from './customResource';
 import { logger } from '@awssolutions/cdf-lambda-invoke/dist/utils/logger';
+import AWS from 'aws-sdk'
 
 @injectable()
 export class S3PutObjectCustomResource implements CustomResource {

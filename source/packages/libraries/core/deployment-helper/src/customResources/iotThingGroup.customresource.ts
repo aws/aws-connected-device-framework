@@ -19,6 +19,7 @@ import {CustomResourceEvent} from './customResource.model';
 import {CustomResource} from './customResource';
 import ow from 'ow';
 import { logger } from '../utils/logger';
+import AWS from 'aws-sdk'
 
 interface IotThingGroupCustomResourceOutput{
      thingGroupName?: string;

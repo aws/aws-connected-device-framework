@@ -16,6 +16,7 @@ import { TYPES } from '../di/types';
 import { logger } from '../utils/logger';
 import {CustomResourceEvent} from './customResource.model';
 import { CustomResource } from './customResource';
+import AWS from 'aws-sdk'
 
 @injectable()
 export class AppConfigOverrideCustomResource implements CustomResource {
