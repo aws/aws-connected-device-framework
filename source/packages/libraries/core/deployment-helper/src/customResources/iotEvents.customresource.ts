@@ -15,6 +15,7 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from '../di/types';
 import { CustomResourceEvent } from './customResource.model';
 import { CustomResource } from './customResource';
+import AWS from 'aws-sdk'
 
 @injectable()
 export class IotEventsCustomResource implements CustomResource {

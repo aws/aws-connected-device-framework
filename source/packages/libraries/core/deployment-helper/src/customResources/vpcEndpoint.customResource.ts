@@ -16,6 +16,7 @@ import { CustomResourceEvent } from './customResource.model';
 import { CustomResource } from './customResource';
 import { logger } from '../utils/logger';
 import { VpcEndpointRouteTableIdList, VpcEndpointSubnetIdList } from 'aws-sdk/clients/ec2';
+import AWS from 'aws-sdk'
 
 @injectable()
 export class VpcEndpointCustomResource implements CustomResource {
