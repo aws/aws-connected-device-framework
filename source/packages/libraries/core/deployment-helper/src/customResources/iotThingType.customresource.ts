@@ -17,6 +17,7 @@ import { CustomResourceEvent } from './customResource.model';
 import { CustomResource } from './customResource';
 import { logger } from '@awssolutions/cdf-lambda-invoke/dist/utils/logger';
 import ow from 'ow';
+import AWS from 'aws-sdk'
 
 @injectable()
 export class IotThingTypeCustomResource implements CustomResource {

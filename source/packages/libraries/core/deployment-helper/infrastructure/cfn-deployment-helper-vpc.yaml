@@ -41,7 +41,7 @@ Resources:
       FunctionName: !Sub "cdf-cfnCustomResourcesVPC-${Environment}"
       CodeUri: ../bundle.zip
       Handler: lambda_custom_resource_proxy.handler
-      MemorySize: 128
+      MemorySize: 512
       Role: !GetAtt CustomResourceLambdaVPCRole.Arn
       Runtime: nodejs18.x
       Timeout: 60
