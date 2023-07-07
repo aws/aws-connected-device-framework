@@ -24,7 +24,7 @@ import { DoNothingRegistryManager } from '../registry/donothing.service';
 import { RegistryManager } from '../registry/registry.interfaces';
 import { TYPES } from './types';
 
-import AWS = require('aws-sdk');
+import AWS from 'aws-sdk'
 
 // Load everything needed to the Container
 export const container = new Container();

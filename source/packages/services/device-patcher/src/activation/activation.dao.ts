@@ -10,7 +10,7 @@
  *  OR CONDITIONS OF ANY KIND, express or implied. See the License for the specific language governing permissions    *
  *  and limitations under the License.                                                                                *
  *********************************************************************************************************************/
-import AWS = require('aws-sdk');
+import AWS from 'aws-sdk'
 import {inject, injectable} from 'inversify';
 
 import {logger} from '../utils/logger.util';

@@ -13,7 +13,7 @@
 import { injectable, inject } from 'inversify';
 import {logger} from '../utils/logger';
 import {v1 as uuid} from 'uuid';
-import AWS = require('aws-sdk');
+import AWS from 'aws-sdk'
 import { TYPES } from '../di/types';
 import ow from 'ow';
 import { CertificatesTaskDao } from './certificatestask.dao';

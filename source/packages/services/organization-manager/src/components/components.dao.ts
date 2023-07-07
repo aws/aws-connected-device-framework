@@ -13,7 +13,7 @@
  *********************************************************************************************************************/
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../di/types';
-import AWS = require('aws-sdk');
+import AWS from 'aws-sdk'
 import { ComponentItem } from './components.model';
 import { logger } from '../utils/logger';
 import { createDelimitedAttribute, createDelimitedAttributePrefix, PkType } from '../utils/pkUtils.util';

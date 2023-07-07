@@ -14,7 +14,7 @@ import { injectable, inject } from 'inversify';
 import {logger} from '../utils/logger';
 import {TYPES} from '../di/types';
 import { StateHistoryModel, StateHistoryListModel } from './events.models';
-import AWS = require('aws-sdk');
+import AWS from 'aws-sdk'
 import { DocumentClient, AttributeValue } from 'aws-sdk/clients/dynamodb';
 import btoa from 'btoa';
 import atob from 'atob';

@@ -16,7 +16,7 @@ import { ProvisioningStepData } from './provisioningStep.model';
 import { CDFProvisioningTemplate, ParamaterReference } from '../templates/template.models';
 import { logger } from '../../utils/logger';
 import { TYPES } from '../../di/types';
-import AWS = require('aws-sdk');
+import AWS from 'aws-sdk'
 import ow from 'ow';
 @injectable()
 export class ClientIdEnforcementPolicyStepProcessor implements ProvisioningStepProcessor {

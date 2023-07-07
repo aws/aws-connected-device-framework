@@ -21,7 +21,7 @@ import { GroupsServiceLite } from '../groups/groups.lite.service';
 import { SearchServiceLite } from '../search/search.lite.service';
 import { DevicesServiceLite } from '../devices/devices.lite.service';
 
-import AWS = require('aws-sdk');
+import AWS from 'aws-sdk'
 import { TypesDaoLite } from '../types/types.lite.dao';
 import { GroupsDaoLite } from '../groups/groups.lite.dao';
 import { DevicesDaoLite } from '../devices/devices.lite.dao';

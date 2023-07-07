@@ -12,7 +12,7 @@
  *********************************************************************************************************************/
 import * as Errors from '@awssolutions/cdf-errors';
 import * as pem from 'pem';
-import AWS = require('aws-sdk');
+import AWS from 'aws-sdk'
 import { logger } from './utils/logger';
 import {promisify} from 'util';
 
