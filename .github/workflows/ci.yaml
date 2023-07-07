@@ -24,7 +24,7 @@ jobs:
         shell: bash
         run: |
           npm install -g @microsoft/rush
-      
+
       - name: Install Dependencies
         shell: bash
         run: |
@@ -34,6 +34,11 @@ jobs:
         shell: bash
         run: |
           npm run lint
+
+      - name: Run bundle and build
+        shell: bash
+        run: |
+          npm run build
 
       - name: Run unit tests
         shell: bash
